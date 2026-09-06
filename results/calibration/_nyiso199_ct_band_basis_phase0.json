@@ -1,0 +1,188 @@
+{
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "arm_bands": {
+    "committed": 0.843,
+    "econ_low": 0.661,
+    "econ_high": 0.658
+  },
+  "arm_band_source": "the CT_PEAKER curve's OWN registered phys_* keys (nyiso_campd_marginal_hr_summary.csv p50s, n=70) \u2014 zero values chosen",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "D1_offer_delta": {
+        "rows_moved": 101,
+        "rows_total": 812,
+        "cells_moved": {
+          "CT_PEAKER|committed": 22,
+          "CT_PEAKER|econ": 79
+        },
+        "pmax_max_abs_delta_mw": 0.0,
+        "availability_max_abs_delta": 0.0,
+        "by_band": {
+          "committed": {
+            "rows": 22,
+            "nameplate_mw": 346.7,
+            "keeper_offer_cap_wtd": 67.05,
+            "arm_offer_cap_wtd": 49.65,
+            "delta_usd_mwh": -17.41,
+            "delta_std_over_hours": 0.0
+          },
+          "econ": {
+            "rows": 79,
+            "nameplate_mw": 2464.4,
+            "keeper_offer_cap_wtd": 61.11,
+            "arm_offer_cap_wtd": 47.43,
+            "delta_usd_mwh": -13.68,
+            "delta_std_over_hours": 0.0221
+          },
+          "peak": {
+            "rows": 27,
+            "nameplate_mw": 208.8,
+            "keeper_offer_cap_wtd": 183.63,
+            "arm_offer_cap_wtd": 183.63,
+            "delta_usd_mwh": 0.0,
+            "delta_std_over_hours": 0.0
+          }
+        }
+      },
+      "D2_reachability": {
+        "keeper_mean_itm_available_mw": 99.3,
+        "arm_mean_itm_available_mw": 399.2,
+        "keeper_itm_bound_twh": 0.8698,
+        "arm_itm_bound_twh": 3.4967,
+        "model_dispatch_twh": 0.4211
+      },
+      "D3_price_exposure_indicator": {
+        "keeper_mean_lmp": 32.319,
+        "arm_mean_lmp": 31.431,
+        "delta_pct": -2.75,
+        "keeper_p95": 48.35,
+        "arm_p95": 46.01,
+        "hours_price_falls": 8759,
+        "note": "same-weights merit-order crossing on the LP's own offer stack; an INDICATOR, never the scored C3a"
+      },
+      "D4_footprint_no_meter_no_residual": {
+        "newly_itm_twh": 2.627,
+        "newly_itm_mean_mw": 299.9
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "D1_offer_delta": {
+        "rows_moved": 103,
+        "rows_total": 809,
+        "cells_moved": {
+          "CT_PEAKER|committed": 22,
+          "CT_PEAKER|econ": 81
+        },
+        "pmax_max_abs_delta_mw": 0.0,
+        "availability_max_abs_delta": 0.0,
+        "by_band": {
+          "committed": {
+            "rows": 22,
+            "nameplate_mw": 346.7,
+            "keeper_offer_cap_wtd": 73.95,
+            "arm_offer_cap_wtd": 56.55,
+            "delta_usd_mwh": -17.41,
+            "delta_std_over_hours": 0.0
+          },
+          "econ": {
+            "rows": 81,
+            "nameplate_mw": 2468.1,
+            "keeper_offer_cap_wtd": 67.44,
+            "arm_offer_cap_wtd": 53.75,
+            "delta_usd_mwh": -13.69,
+            "delta_std_over_hours": 0.0223
+          },
+          "peak": {
+            "rows": 27,
+            "nameplate_mw": 208.8,
+            "keeper_offer_cap_wtd": 190.83,
+            "arm_offer_cap_wtd": 190.83,
+            "delta_usd_mwh": 0.0,
+            "delta_std_over_hours": 0.0
+          }
+        }
+      },
+      "D2_reachability": {
+        "keeper_mean_itm_available_mw": 93.9,
+        "arm_mean_itm_available_mw": 341.9,
+        "keeper_itm_bound_twh": 0.8227,
+        "arm_itm_bound_twh": 2.9953,
+        "model_dispatch_twh": 0.3923
+      },
+      "D3_price_exposure_indicator": {
+        "keeper_mean_lmp": 38.293,
+        "arm_mean_lmp": 37.374,
+        "delta_pct": -2.4,
+        "keeper_p95": 60.92,
+        "arm_p95": 56.81,
+        "hours_price_falls": 8760,
+        "note": "same-weights merit-order crossing on the LP's own offer stack; an INDICATOR, never the scored C3a"
+      },
+      "D4_footprint_no_meter_no_residual": {
+        "newly_itm_twh": 2.1725,
+        "newly_itm_mean_mw": 248.0
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "D1_offer_delta": {
+        "rows_moved": 103,
+        "rows_total": 809,
+        "cells_moved": {
+          "CT_PEAKER|committed": 22,
+          "CT_PEAKER|econ": 81
+        },
+        "pmax_max_abs_delta_mw": 0.0,
+        "availability_max_abs_delta": 0.0,
+        "by_band": {
+          "committed": {
+            "rows": 22,
+            "nameplate_mw": 346.7,
+            "keeper_offer_cap_wtd": 98.45,
+            "arm_offer_cap_wtd": 81.1,
+            "delta_usd_mwh": -17.35,
+            "delta_std_over_hours": 0.0717
+          },
+          "econ": {
+            "rows": 81,
+            "nameplate_mw": 2468.1,
+            "keeper_offer_cap_wtd": 89.51,
+            "arm_offer_cap_wtd": 75.83,
+            "delta_usd_mwh": -13.68,
+            "delta_std_over_hours": 0.0252
+          },
+          "peak": {
+            "rows": 27,
+            "nameplate_mw": 208.8,
+            "keeper_offer_cap_wtd": 223.28,
+            "arm_offer_cap_wtd": 223.28,
+            "delta_usd_mwh": 0.0,
+            "delta_std_over_hours": 0.0
+          }
+        }
+      },
+      "D2_reachability": {
+        "keeper_mean_itm_available_mw": 275.6,
+        "arm_mean_itm_available_mw": 520.0,
+        "keeper_itm_bound_twh": 2.4139,
+        "arm_itm_bound_twh": 4.5556,
+        "model_dispatch_twh": 1.3564
+      },
+      "D3_price_exposure_indicator": {
+        "keeper_mean_lmp": 58.464,
+        "arm_mean_lmp": 56.864,
+        "delta_pct": -2.74,
+        "keeper_p95": 125.17,
+        "arm_p95": 119.38,
+        "hours_price_falls": 8758,
+        "note": "same-weights merit-order crossing on the LP's own offer stack; an INDICATOR, never the scored C3a"
+      },
+      "D4_footprint_no_meter_no_residual": {
+        "newly_itm_twh": 2.1417,
+        "newly_itm_mean_mw": 244.5
+      }
+    }
+  }
+}

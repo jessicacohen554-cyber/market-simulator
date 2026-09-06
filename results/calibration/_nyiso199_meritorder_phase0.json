@@ -1,0 +1,3534 @@
+{
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "bundle": "results/calibration/nyiso196_extract_basis",
+  "basis": "committed artifacts only; no LP; mc_base = the assembled P0 objective",
+  "years": {
+    "2023": {
+      "year": 2023,
+      "zones": [
+        "Capital_Hudson",
+        "Long_Island",
+        "Lower_Hudson",
+        "NYC",
+        "NYISO_external",
+        "Upstate_West"
+      ],
+      "classes": {
+        "CC_REGULAR": {
+          "lp_units": 122,
+          "lp_nameplate_mw": 7405.6,
+          "n_bench_plants": 21,
+          "annual": {
+            "model_twh": 33.8404,
+            "meter_campd_gross_twh": 33.4548,
+            "eia923_class_twh": 33.0122,
+            "envelope_twh": 43.3503,
+            "model_cf_of_available_pct": 78.06,
+            "meter_cf_of_available_pct": 77.17,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 4948.7,
+            "mean_lmp": 35.09
+          },
+          "deficit_total_gwh": 1620.8,
+          "deficit_hours": 4253,
+          "surplus_total_gwh": 2006.4,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 32,
+              "deficit_gwh": 14.5,
+              "share_pct": 0.9,
+              "mean_model_mw": 5654.3,
+              "mean_meter_mw": 6107.6,
+              "mean_env_mw": 5656.7,
+              "mean_headroom_mw": 2.4,
+              "mean_lmp": 135.3
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 4221,
+              "deficit_gwh": 1606.3,
+              "share_pct": 99.1,
+              "mean_model_mw": 3848.8,
+              "mean_meter_mw": 4229.4,
+              "mean_env_mw": 4934.7,
+              "mean_headroom_mw": 1085.9,
+              "mean_lmp": 35.31
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 3214.0,
+              "mean_available_mw": 2227.6,
+              "energy_twh": 18.9402,
+              "utilisation_pct_of_available": 97.06,
+              "cap_wtd_offer_mean": 25.52,
+              "cap_wtd_offer_p50": 24.15,
+              "hours_offer_below_lmp": 8687,
+              "energy_twh_when_offer_below_lmp": 18.7916,
+              "mean_unrun_mw_when_offer_below_lmp": 63.8,
+              "cap_wtd_heat_rate": 6.5191
+            },
+            "econ": {
+              "nameplate_mw": 3033.1,
+              "mean_available_mw": 2010.5,
+              "energy_twh": 14.2578,
+              "utilisation_pct_of_available": 80.96,
+              "cap_wtd_offer_mean": 28.73,
+              "cap_wtd_offer_p50": 27.35,
+              "hours_offer_below_lmp": 7910,
+              "energy_twh_when_offer_below_lmp": 13.457,
+              "mean_unrun_mw_when_offer_below_lmp": 306.5,
+              "cap_wtd_heat_rate": 7.1986
+            },
+            "peak": {
+              "nameplate_mw": 1158.5,
+              "mean_available_mw": 710.6,
+              "energy_twh": 0.7243,
+              "utilisation_pct_of_available": 11.64,
+              "cap_wtd_offer_mean": 54.91,
+              "cap_wtd_offer_p50": 50.8,
+              "hours_offer_below_lmp": 358,
+              "energy_twh_when_offer_below_lmp": 0.1246,
+              "mean_unrun_mw_when_offer_below_lmp": 364.3,
+              "cap_wtd_heat_rate": 18.1222
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 15,
+              "lmp_hi": 20,
+              "hours": 6,
+              "mean_lmp": 19.69,
+              "model_cf_of_available_pct": 67.14,
+              "meter_cf_of_available_pct": 73.26,
+              "model_twh": 0.0143,
+              "meter_twh": 0.0156
+            },
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 736,
+              "mean_lmp": 23.53,
+              "model_cf_of_available_pct": 67.78,
+              "meter_cf_of_available_pct": 65.72,
+              "model_twh": 2.2739,
+              "meter_twh": 2.2049
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2239,
+              "mean_lmp": 27.63,
+              "model_cf_of_available_pct": 74.1,
+              "meter_cf_of_available_pct": 73.61,
+              "model_twh": 7.7961,
+              "meter_twh": 7.7439
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2446,
+              "mean_lmp": 32.47,
+              "model_cf_of_available_pct": 78.75,
+              "meter_cf_of_available_pct": 77.79,
+              "model_twh": 9.5265,
+              "meter_twh": 9.4108
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1369,
+              "mean_lmp": 37.26,
+              "model_cf_of_available_pct": 79.56,
+              "meter_cf_of_available_pct": 76.46,
+              "model_twh": 5.6368,
+              "meter_twh": 5.4172
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1460,
+              "mean_lmp": 44.15,
+              "model_cf_of_available_pct": 83.71,
+              "meter_cf_of_available_pct": 83.38,
+              "model_twh": 6.3361,
+              "meter_twh": 6.3113
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 392,
+              "mean_lmp": 54.62,
+              "model_cf_of_available_pct": 86.32,
+              "meter_cf_of_available_pct": 86.38,
+              "model_twh": 1.8016,
+              "meter_twh": 1.8029
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 63,
+              "mean_lmp": 72.23,
+              "model_cf_of_available_pct": 88.87,
+              "meter_cf_of_available_pct": 89.62,
+              "model_twh": 0.3099,
+              "meter_twh": 0.3125
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 36,
+              "mean_lmp": 128.39,
+              "model_cf_of_available_pct": 42.34,
+              "meter_cf_of_available_pct": 82.85,
+              "model_twh": 0.0813,
+              "meter_twh": 0.159
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 13,
+              "mean_lmp": 200.39,
+              "model_cf_of_available_pct": 86.34,
+              "meter_cf_of_available_pct": 103.59,
+              "model_twh": 0.0638,
+              "meter_twh": 0.0766
+            }
+          ]
+        },
+        "CC_CHP": {
+          "lp_units": 108,
+          "lp_nameplate_mw": 3653.9,
+          "n_bench_plants": 16,
+          "annual": {
+            "model_twh": 15.7509,
+            "meter_campd_gross_twh": 17.5907,
+            "eia923_class_twh": 14.8022,
+            "envelope_twh": 21.7149,
+            "model_cf_of_available_pct": 72.54,
+            "meter_cf_of_available_pct": 81.01,
+            "forced_floor_twh": 4.382,
+            "mean_available_mw": 2478.9,
+            "mean_lmp": 31.53
+          },
+          "deficit_total_gwh": 2421.6,
+          "deficit_hours": 6392,
+          "surplus_total_gwh": 581.9,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 32,
+              "deficit_gwh": 17.5,
+              "share_pct": 0.7,
+              "mean_model_mw": 2992.0,
+              "mean_meter_mw": 3537.6,
+              "mean_env_mw": 2992.0,
+              "mean_headroom_mw": -0.0,
+              "mean_lmp": 136.38
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 24,
+              "deficit_gwh": 47.1,
+              "share_pct": 1.9,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 1963.7,
+              "mean_env_mw": 2836.1,
+              "mean_headroom_mw": 2836.1,
+              "mean_lmp": 101.8
+            },
+            "INTERIOR_free": {
+              "hours": 6336,
+              "deficit_gwh": 2357.1,
+              "share_pct": 97.3,
+              "mean_model_mw": 1759.5,
+              "mean_meter_mw": 2131.5,
+              "mean_env_mw": 2474.8,
+              "mean_headroom_mw": 715.3,
+              "mean_lmp": 32.11
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1020.9,
+              "mean_available_mw": 767.0,
+              "energy_twh": 5.7513,
+              "utilisation_pct_of_available": 85.6,
+              "cap_wtd_offer_mean": 24.94,
+              "cap_wtd_offer_p50": 23.49,
+              "hours_offer_below_lmp": 7654,
+              "energy_twh_when_offer_below_lmp": 5.2644,
+              "mean_unrun_mw_when_offer_below_lmp": 87.8,
+              "cap_wtd_heat_rate": 7.1262
+            },
+            "econ": {
+              "nameplate_mw": 2152.0,
+              "mean_available_mw": 1441.3,
+              "energy_twh": 9.8789,
+              "utilisation_pct_of_available": 78.24,
+              "cap_wtd_offer_mean": 27.78,
+              "cap_wtd_offer_p50": 25.96,
+              "hours_offer_below_lmp": 6411,
+              "energy_twh_when_offer_below_lmp": 8.248,
+              "mean_unrun_mw_when_offer_below_lmp": 207.9,
+              "cap_wtd_heat_rate": 9.0049
+            },
+            "peak": {
+              "nameplate_mw": 481.0,
+              "mean_available_mw": 270.5,
+              "energy_twh": 0.1476,
+              "utilisation_pct_of_available": 6.23,
+              "cap_wtd_offer_mean": 49.2,
+              "cap_wtd_offer_p50": 45.28,
+              "hours_offer_below_lmp": 508,
+              "energy_twh_when_offer_below_lmp": 0.0888,
+              "mean_unrun_mw_when_offer_below_lmp": 153.8,
+              "cap_wtd_heat_rate": 18.0719
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 0,
+              "lmp_hi": 15,
+              "hours": 143,
+              "mean_lmp": 10.31,
+              "model_cf_of_available_pct": 48.97,
+              "meter_cf_of_available_pct": 60.6,
+              "model_twh": 0.1445,
+              "meter_twh": 0.1789
+            },
+            {
+              "lmp_lo": 15,
+              "lmp_hi": 20,
+              "hours": 573,
+              "mean_lmp": 17.55,
+              "model_cf_of_available_pct": 63.66,
+              "meter_cf_of_available_pct": 69.05,
+              "model_twh": 0.7279,
+              "meter_twh": 0.7895
+            },
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 1252,
+              "mean_lmp": 23.0,
+              "model_cf_of_available_pct": 68.94,
+              "meter_cf_of_available_pct": 67.91,
+              "model_twh": 2.0238,
+              "meter_twh": 1.9935
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2303,
+              "mean_lmp": 27.42,
+              "model_cf_of_available_pct": 72.18,
+              "meter_cf_of_available_pct": 77.05,
+              "model_twh": 3.9386,
+              "meter_twh": 4.204
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2089,
+              "mean_lmp": 32.3,
+              "model_cf_of_available_pct": 70.56,
+              "meter_cf_of_available_pct": 80.39,
+              "model_twh": 3.7612,
+              "meter_twh": 4.2852
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1205,
+              "mean_lmp": 37.53,
+              "model_cf_of_available_pct": 74.82,
+              "meter_cf_of_available_pct": 88.77,
+              "model_twh": 2.4031,
+              "meter_twh": 2.8511
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 895,
+              "mean_lmp": 43.99,
+              "model_cf_of_available_pct": 83.24,
+              "meter_cf_of_available_pct": 96.8,
+              "model_twh": 2.0631,
+              "meter_twh": 2.3993
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 216,
+              "mean_lmp": 54.69,
+              "model_cf_of_available_pct": 84.06,
+              "meter_cf_of_available_pct": 103.24,
+              "model_twh": 0.5199,
+              "meter_twh": 0.6385
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 36,
+              "mean_lmp": 72.24,
+              "model_cf_of_available_pct": 91.85,
+              "meter_cf_of_available_pct": 111.98,
+              "model_twh": 0.0968,
+              "meter_twh": 0.118
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 37,
+              "mean_lmp": 108.75,
+              "model_cf_of_available_pct": 36.48,
+              "meter_cf_of_available_pct": 86.69,
+              "model_twh": 0.0391,
+              "meter_twh": 0.0929
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 11,
+              "mean_lmp": 201.87,
+              "model_cf_of_available_pct": 100.0,
+              "meter_cf_of_available_pct": 121.2,
+              "model_twh": 0.0328,
+              "meter_twh": 0.0398
+            }
+          ]
+        },
+        "ST_GAS": {
+          "lp_units": 88,
+          "lp_nameplate_mw": 8902.4,
+          "n_bench_plants": 11,
+          "annual": {
+            "model_twh": 9.9519,
+            "meter_campd_gross_twh": 8.912,
+            "eia923_class_twh": 8.1406,
+            "envelope_twh": 28.9375,
+            "model_cf_of_available_pct": 34.39,
+            "meter_cf_of_available_pct": 30.8,
+            "forced_floor_twh": 4.6855,
+            "mean_available_mw": 3303.4,
+            "mean_lmp": 36.38
+          },
+          "deficit_total_gwh": 1052.0,
+          "deficit_hours": 3175,
+          "surplus_total_gwh": 2091.9,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 995,
+              "deficit_gwh": 284.0,
+              "share_pct": 27.0,
+              "mean_model_mw": 448.5,
+              "mean_meter_mw": 734.0,
+              "mean_env_mw": 2892.5,
+              "mean_headroom_mw": 2444.0,
+              "mean_lmp": 40.36
+            },
+            "INTERIOR_free": {
+              "hours": 2180,
+              "deficit_gwh": 768.0,
+              "share_pct": 73.0,
+              "mean_model_mw": 955.3,
+              "mean_meter_mw": 1307.6,
+              "mean_env_mw": 3181.2,
+              "mean_headroom_mw": 2225.9,
+              "mean_lmp": 35.72
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1874.7,
+              "mean_available_mw": 737.4,
+              "energy_twh": 3.3367,
+              "utilisation_pct_of_available": 51.65,
+              "cap_wtd_offer_mean": 43.08,
+              "cap_wtd_offer_p50": 40.67,
+              "hours_offer_below_lmp": 1220,
+              "energy_twh_when_offer_below_lmp": 1.0408,
+              "mean_unrun_mw_when_offer_below_lmp": 114.5,
+              "cap_wtd_heat_rate": 11.7718
+            },
+            "econ": {
+              "nameplate_mw": 5692.4,
+              "mean_available_mw": 2070.4,
+              "energy_twh": 5.9299,
+              "utilisation_pct_of_available": 32.7,
+              "cap_wtd_offer_mean": 47.41,
+              "cap_wtd_offer_p50": 45.58,
+              "hours_offer_below_lmp": 666,
+              "energy_twh_when_offer_below_lmp": 1.6578,
+              "mean_unrun_mw_when_offer_below_lmp": 652.6,
+              "cap_wtd_heat_rate": 12.4942
+            },
+            "peak": {
+              "nameplate_mw": 1335.4,
+              "mean_available_mw": 495.5,
+              "energy_twh": 0.703,
+              "utilisation_pct_of_available": 16.19,
+              "cap_wtd_offer_mean": 164.57,
+              "cap_wtd_offer_p50": 162.34,
+              "hours_offer_below_lmp": 10,
+              "energy_twh_when_offer_below_lmp": 0.0067,
+              "mean_unrun_mw_when_offer_below_lmp": 284.4,
+              "cap_wtd_heat_rate": 47.3896
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 300,
+              "mean_lmp": 23.93,
+              "model_cf_of_available_pct": 31.03,
+              "meter_cf_of_available_pct": 27.19,
+              "model_twh": 0.2301,
+              "meter_twh": 0.2017
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2168,
+              "mean_lmp": 27.72,
+              "model_cf_of_available_pct": 25.39,
+              "meter_cf_of_available_pct": 22.42,
+              "model_twh": 1.6464,
+              "meter_twh": 1.454
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2479,
+              "mean_lmp": 32.54,
+              "model_cf_of_available_pct": 28.85,
+              "meter_cf_of_available_pct": 25.87,
+              "model_twh": 2.2836,
+              "meter_twh": 2.0474
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1562,
+              "mean_lmp": 37.16,
+              "model_cf_of_available_pct": 31.12,
+              "meter_cf_of_available_pct": 28.36,
+              "model_twh": 1.6258,
+              "meter_twh": 1.4816
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1595,
+              "mean_lmp": 44.27,
+              "model_cf_of_available_pct": 44.58,
+              "meter_cf_of_available_pct": 37.52,
+              "model_twh": 2.5825,
+              "meter_twh": 2.1734
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 531,
+              "mean_lmp": 54.45,
+              "model_cf_of_available_pct": 55.85,
+              "meter_cf_of_available_pct": 52.27,
+              "model_twh": 1.2242,
+              "meter_twh": 1.1458
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 75,
+              "mean_lmp": 72.46,
+              "model_cf_of_available_pct": 65.96,
+              "meter_cf_of_available_pct": 70.18,
+              "model_twh": 0.2139,
+              "meter_twh": 0.2276
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 26,
+              "mean_lmp": 127.31,
+              "model_cf_of_available_pct": 44.99,
+              "meter_cf_of_available_pct": 63.94,
+              "model_twh": 0.0589,
+              "meter_twh": 0.0837
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 24,
+              "mean_lmp": 184.59,
+              "model_cf_of_available_pct": 66.2,
+              "meter_cf_of_available_pct": 74.0,
+              "model_twh": 0.0866,
+              "meter_twh": 0.0968
+            }
+          ]
+        },
+        "CT_PEAKER": {
+          "lp_units": 128,
+          "lp_nameplate_mw": 3019.9,
+          "n_bench_plants": 23,
+          "annual": {
+            "model_twh": 0.4211,
+            "meter_campd_gross_twh": 2.3015,
+            "eia923_class_twh": 2.1139,
+            "envelope_twh": 20.6213,
+            "model_cf_of_available_pct": 2.04,
+            "meter_cf_of_available_pct": 11.16,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 2354.0,
+            "mean_lmp": 36.69
+          },
+          "deficit_total_gwh": 1903.6,
+          "deficit_hours": 6400,
+          "surplus_total_gwh": 23.1,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 6400,
+              "deficit_gwh": 1903.6,
+              "share_pct": 100.0,
+              "mean_model_mw": 50.4,
+              "mean_meter_mw": 347.9,
+              "mean_env_mw": 2349.2,
+              "mean_headroom_mw": 2298.8,
+              "mean_lmp": 37.91
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 346.7,
+              "mean_available_mw": 294.5,
+              "energy_twh": 0.029,
+              "utilisation_pct_of_available": 1.13,
+              "cap_wtd_offer_mean": 67.05,
+              "cap_wtd_offer_p50": 64.94,
+              "hours_offer_below_lmp": 67,
+              "energy_twh_when_offer_below_lmp": 0.0151,
+              "mean_unrun_mw_when_offer_below_lmp": 58.3,
+              "cap_wtd_heat_rate": 15.1344
+            },
+            "econ": {
+              "nameplate_mw": 2464.4,
+              "mean_available_mw": 1897.0,
+              "energy_twh": 0.4067,
+              "utilisation_pct_of_available": 2.45,
+              "cap_wtd_offer_mean": 61.3,
+              "cap_wtd_offer_p50": 59.44,
+              "hours_offer_below_lmp": 92,
+              "energy_twh_when_offer_below_lmp": 0.1133,
+              "mean_unrun_mw_when_offer_below_lmp": 455.9,
+              "cap_wtd_heat_rate": 12.9684
+            },
+            "peak": {
+              "nameplate_mw": 208.8,
+              "mean_available_mw": 162.6,
+              "energy_twh": 0.0007,
+              "utilisation_pct_of_available": 0.05,
+              "cap_wtd_offer_mean": 184.26,
+              "cap_wtd_offer_p50": 181.46,
+              "hours_offer_below_lmp": 7,
+              "energy_twh_when_offer_below_lmp": 0.0005,
+              "mean_unrun_mw_when_offer_below_lmp": 81.6,
+              "cap_wtd_heat_rate": 51.2042
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 257,
+              "mean_lmp": 24.0,
+              "model_cf_of_available_pct": 0.0,
+              "meter_cf_of_available_pct": 1.36,
+              "model_twh": 0.0,
+              "meter_twh": 0.0077
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2089,
+              "mean_lmp": 27.78,
+              "model_cf_of_available_pct": 0.0,
+              "meter_cf_of_available_pct": 3.01,
+              "model_twh": 0.0,
+              "meter_twh": 0.1467
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2490,
+              "mean_lmp": 32.57,
+              "model_cf_of_available_pct": 0.02,
+              "meter_cf_of_available_pct": 7.51,
+              "model_twh": 0.001,
+              "meter_twh": 0.4388
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1576,
+              "mean_lmp": 37.12,
+              "model_cf_of_available_pct": 0.2,
+              "meter_cf_of_available_pct": 10.2,
+              "model_twh": 0.0077,
+              "meter_twh": 0.3833
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1658,
+              "mean_lmp": 44.24,
+              "model_cf_of_available_pct": 2.39,
+              "meter_cf_of_available_pct": 19.87,
+              "model_twh": 0.0943,
+              "meter_twh": 0.7835
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 564,
+              "mean_lmp": 54.57,
+              "model_cf_of_available_pct": 14.45,
+              "meter_cf_of_available_pct": 30.6,
+              "model_twh": 0.1932,
+              "meter_twh": 0.4093
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 76,
+              "mean_lmp": 72.86,
+              "model_cf_of_available_pct": 40.9,
+              "meter_cf_of_available_pct": 42.44,
+              "model_twh": 0.0752,
+              "meter_twh": 0.078
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 23,
+              "mean_lmp": 126.3,
+              "model_cf_of_available_pct": 23.94,
+              "meter_cf_of_available_pct": 28.49,
+              "model_twh": 0.0138,
+              "meter_twh": 0.0164
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 27,
+              "mean_lmp": 184.89,
+              "model_cf_of_available_pct": 57.41,
+              "meter_cf_of_available_pct": 60.11,
+              "model_twh": 0.0359,
+              "meter_twh": 0.0376
+            }
+          ]
+        },
+        "CT_CHP": {
+          "lp_units": 25,
+          "lp_nameplate_mw": 370.8,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.4999,
+            "meter_campd_gross_twh": 1.9561,
+            "eia923_class_twh": 2.4336,
+            "envelope_twh": 2.8477,
+            "model_cf_of_available_pct": 52.67,
+            "meter_cf_of_available_pct": 68.69,
+            "forced_floor_twh": 0.0402,
+            "mean_available_mw": 325.1,
+            "mean_lmp": 36.66
+          },
+          "deficit_total_gwh": 776.3,
+          "deficit_hours": 5365,
+          "surplus_total_gwh": 320.1,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 24,
+              "deficit_gwh": 9.5,
+              "share_pct": 1.2,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 397.0,
+              "mean_env_mw": 344.5,
+              "mean_headroom_mw": 344.5,
+              "mean_lmp": 143.51
+            },
+            "INTERIOR_free": {
+              "hours": 5341,
+              "deficit_gwh": 766.8,
+              "share_pct": 98.8,
+              "mean_model_mw": 116.5,
+              "mean_meter_mw": 260.1,
+              "mean_env_mw": 330.2,
+              "mean_headroom_mw": 213.7,
+              "mean_lmp": 35.23
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 140.6,
+              "mean_available_mw": 123.0,
+              "energy_twh": 0.6944,
+              "utilisation_pct_of_available": 64.47,
+              "cap_wtd_offer_mean": 33.48,
+              "cap_wtd_offer_p50": 31.83,
+              "hours_offer_below_lmp": 5481,
+              "energy_twh_when_offer_below_lmp": 0.5225,
+              "mean_unrun_mw_when_offer_below_lmp": 26.5,
+              "cap_wtd_heat_rate": 8.4395
+            },
+            "econ": {
+              "nameplate_mw": 205.0,
+              "mean_available_mw": 179.9,
+              "energy_twh": 0.7299,
+              "utilisation_pct_of_available": 46.31,
+              "cap_wtd_offer_mean": 30.9,
+              "cap_wtd_offer_p50": 29.47,
+              "hours_offer_below_lmp": 7361,
+              "energy_twh_when_offer_below_lmp": 0.7218,
+              "mean_unrun_mw_when_offer_below_lmp": 81.0,
+              "cap_wtd_heat_rate": 7.5741
+            },
+            "peak": {
+              "nameplate_mw": 25.2,
+              "mean_available_mw": 22.2,
+              "energy_twh": 0.0804,
+              "utilisation_pct_of_available": 41.32,
+              "cap_wtd_offer_mean": 32.16,
+              "cap_wtd_offer_p50": 30.65,
+              "hours_offer_below_lmp": 6405,
+              "energy_twh_when_offer_below_lmp": 0.0803,
+              "mean_unrun_mw_when_offer_below_lmp": 9.5,
+              "cap_wtd_heat_rate": 7.9716
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 221,
+              "mean_lmp": 23.92,
+              "model_cf_of_available_pct": 33.59,
+              "meter_cf_of_available_pct": 32.63,
+              "model_twh": 0.0234,
+              "meter_twh": 0.0227
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2129,
+              "mean_lmp": 27.82,
+              "model_cf_of_available_pct": 31.81,
+              "meter_cf_of_available_pct": 47.28,
+              "model_twh": 0.2181,
+              "meter_twh": 0.3241
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2553,
+              "mean_lmp": 32.62,
+              "model_cf_of_available_pct": 47.51,
+              "meter_cf_of_available_pct": 64.43,
+              "model_twh": 0.3942,
+              "meter_twh": 0.5346
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1526,
+              "mean_lmp": 37.18,
+              "model_cf_of_available_pct": 52.27,
+              "meter_cf_of_available_pct": 81.7,
+              "model_twh": 0.2621,
+              "meter_twh": 0.4098
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1650,
+              "mean_lmp": 44.2,
+              "model_cf_of_available_pct": 76.19,
+              "meter_cf_of_available_pct": 86.4,
+              "model_twh": 0.4107,
+              "meter_twh": 0.4657
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 555,
+              "mean_lmp": 54.58,
+              "model_cf_of_available_pct": 88.53,
+              "meter_cf_of_available_pct": 88.42,
+              "model_twh": 0.1604,
+              "meter_twh": 0.1603
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 76,
+              "mean_lmp": 72.9,
+              "model_cf_of_available_pct": 92.32,
+              "meter_cf_of_available_pct": 93.28,
+              "model_twh": 0.0229,
+              "meter_twh": 0.0232
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 25,
+              "mean_lmp": 128.47,
+              "model_cf_of_available_pct": 37.45,
+              "meter_cf_of_available_pct": 100.63,
+              "model_twh": 0.0031,
+              "meter_twh": 0.0083
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 25,
+              "mean_lmp": 186.26,
+              "model_cf_of_available_pct": 61.48,
+              "meter_cf_of_available_pct": 92.81,
+              "model_twh": 0.0049,
+              "meter_twh": 0.0075
+            }
+          ]
+        },
+        "ST_CHP": {
+          "lp_units": 5,
+          "lp_nameplate_mw": 323.5,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.3399,
+            "meter_campd_gross_twh": 0.6726,
+            "eia923_class_twh": 1.1692,
+            "envelope_twh": 1.7081,
+            "model_cf_of_available_pct": 78.44,
+            "meter_cf_of_available_pct": 39.38,
+            "forced_floor_twh": 0.0393,
+            "mean_available_mw": 195.0,
+            "mean_lmp": 36.09
+          },
+          "deficit_total_gwh": 84.0,
+          "deficit_hours": 1768,
+          "surplus_total_gwh": 751.3,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 82,
+              "deficit_gwh": 2.2,
+              "share_pct": 2.6,
+              "mean_model_mw": 14.5,
+              "mean_meter_mw": 41.5,
+              "mean_env_mw": 14.5,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 35.94
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 602,
+              "deficit_gwh": 42.7,
+              "share_pct": 50.8,
+              "mean_model_mw": 4.5,
+              "mean_meter_mw": 75.4,
+              "mean_env_mw": 181.3,
+              "mean_headroom_mw": 176.8,
+              "mean_lmp": 37.88
+            },
+            "INTERIOR_free": {
+              "hours": 1084,
+              "deficit_gwh": 39.1,
+              "share_pct": 46.5,
+              "mean_model_mw": 38.6,
+              "mean_meter_mw": 74.7,
+              "mean_env_mw": 147.4,
+              "mean_headroom_mw": 108.8,
+              "mean_lmp": 31.95
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 106.9,
+              "mean_available_mw": 66.9,
+              "energy_twh": 0.4257,
+              "utilisation_pct_of_available": 72.65,
+              "cap_wtd_offer_mean": 31.1,
+              "cap_wtd_offer_p50": 29.51,
+              "hours_offer_below_lmp": 6840,
+              "energy_twh_when_offer_below_lmp": 0.4161,
+              "mean_unrun_mw_when_offer_below_lmp": 7.2,
+              "cap_wtd_heat_rate": 8.0809
+            },
+            "econ": {
+              "nameplate_mw": 170.1,
+              "mean_available_mw": 100.6,
+              "energy_twh": 0.7746,
+              "utilisation_pct_of_available": 87.87,
+              "cap_wtd_offer_mean": 30.81,
+              "cap_wtd_offer_p50": 29.25,
+              "hours_offer_below_lmp": 6755,
+              "energy_twh_when_offer_below_lmp": 0.7144,
+              "mean_unrun_mw_when_offer_below_lmp": 0.0,
+              "cap_wtd_heat_rate": 7.4205
+            },
+            "peak": {
+              "nameplate_mw": 46.4,
+              "mean_available_mw": 27.5,
+              "energy_twh": 0.1416,
+              "utilisation_pct_of_available": 58.88,
+              "cap_wtd_offer_mean": 34.25,
+              "cap_wtd_offer_p50": 32.54,
+              "hours_offer_below_lmp": 4447,
+              "energy_twh_when_offer_below_lmp": 0.1319,
+              "mean_unrun_mw_when_offer_below_lmp": 0.0,
+              "cap_wtd_heat_rate": 8.1625
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 365,
+              "mean_lmp": 23.82,
+              "model_cf_of_available_pct": 73.08,
+              "meter_cf_of_available_pct": 29.87,
+              "model_twh": 0.0508,
+              "meter_twh": 0.0207
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2200,
+              "mean_lmp": 27.71,
+              "model_cf_of_available_pct": 67.51,
+              "meter_cf_of_available_pct": 36.73,
+              "model_twh": 0.284,
+              "meter_twh": 0.1545
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2523,
+              "mean_lmp": 32.52,
+              "model_cf_of_available_pct": 79.82,
+              "meter_cf_of_available_pct": 37.94,
+              "model_twh": 0.3606,
+              "meter_twh": 0.1714
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1524,
+              "mean_lmp": 37.26,
+              "model_cf_of_available_pct": 72.77,
+              "meter_cf_of_available_pct": 40.39,
+              "model_twh": 0.217,
+              "meter_twh": 0.1204
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1536,
+              "mean_lmp": 44.26,
+              "model_cf_of_available_pct": 89.84,
+              "meter_cf_of_available_pct": 42.48,
+              "model_twh": 0.3006,
+              "meter_twh": 0.1421
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 489,
+              "mean_lmp": 54.52,
+              "model_cf_of_available_pct": 97.69,
+              "meter_cf_of_available_pct": 46.05,
+              "model_twh": 0.1069,
+              "meter_twh": 0.0504
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 73,
+              "mean_lmp": 72.39,
+              "model_cf_of_available_pct": 98.48,
+              "meter_cf_of_available_pct": 50.81,
+              "model_twh": 0.0151,
+              "meter_twh": 0.0078
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 29,
+              "mean_lmp": 128.7,
+              "model_cf_of_available_pct": 48.88,
+              "meter_cf_of_available_pct": 51.03,
+              "model_twh": 0.0027,
+              "meter_twh": 0.0028
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 21,
+              "mean_lmp": 188.71,
+              "model_cf_of_available_pct": 72.28,
+              "meter_cf_of_available_pct": 75.01,
+              "model_twh": 0.0024,
+              "meter_twh": 0.0025
+            }
+          ]
+        }
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "zones": [
+        "Capital_Hudson",
+        "Long_Island",
+        "Lower_Hudson",
+        "NYC",
+        "NYISO_external",
+        "Upstate_West"
+      ],
+      "classes": {
+        "CC_REGULAR": {
+          "lp_units": 129,
+          "lp_nameplate_mw": 7416.6,
+          "n_bench_plants": 21,
+          "annual": {
+            "model_twh": 37.0672,
+            "meter_campd_gross_twh": 36.4404,
+            "eia923_class_twh": 34.0604,
+            "envelope_twh": 43.5262,
+            "model_cf_of_available_pct": 85.16,
+            "meter_cf_of_available_pct": 83.72,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 4968.7,
+            "mean_lmp": 38.96
+          },
+          "deficit_total_gwh": 1748.1,
+          "deficit_hours": 4220,
+          "surplus_total_gwh": 2374.9,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 58,
+              "deficit_gwh": 34.5,
+              "share_pct": 2.0,
+              "mean_model_mw": 5109.0,
+              "mean_meter_mw": 5703.2,
+              "mean_env_mw": 5112.1,
+              "mean_headroom_mw": 3.2,
+              "mean_lmp": 93.83
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 4162,
+              "deficit_gwh": 1713.6,
+              "share_pct": 98.0,
+              "mean_model_mw": 4281.5,
+              "mean_meter_mw": 4693.2,
+              "mean_env_mw": 4994.8,
+              "mean_headroom_mw": 713.3,
+              "mean_lmp": 41.2
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 3219.0,
+              "mean_available_mw": 2277.5,
+              "energy_twh": 19.7248,
+              "utilisation_pct_of_available": 98.87,
+              "cap_wtd_offer_mean": 26.21,
+              "cap_wtd_offer_p50": 22.96,
+              "hours_offer_below_lmp": 8715,
+              "energy_twh_when_offer_below_lmp": 19.6443,
+              "mean_unrun_mw_when_offer_below_lmp": 23.7,
+              "cap_wtd_heat_rate": 6.5245
+            },
+            "econ": {
+              "nameplate_mw": 3039.1,
+              "mean_available_mw": 2027.1,
+              "energy_twh": 16.3073,
+              "utilisation_pct_of_available": 91.84,
+              "cap_wtd_offer_mean": 29.06,
+              "cap_wtd_offer_p50": 25.9,
+              "hours_offer_below_lmp": 8478,
+              "energy_twh_when_offer_below_lmp": 16.0618,
+              "mean_unrun_mw_when_offer_below_lmp": 134.0,
+              "cap_wtd_heat_rate": 7.206
+            },
+            "peak": {
+              "nameplate_mw": 1158.5,
+              "mean_available_mw": 664.2,
+              "energy_twh": 1.2944,
+              "utilisation_pct_of_available": 22.25,
+              "cap_wtd_offer_mean": 52.42,
+              "cap_wtd_offer_p50": 43.3,
+              "hours_offer_below_lmp": 963,
+              "energy_twh_when_offer_below_lmp": 0.3538,
+              "mean_unrun_mw_when_offer_below_lmp": 269.6,
+              "cap_wtd_heat_rate": 18.1222
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 349,
+              "mean_lmp": 23.56,
+              "model_cf_of_available_pct": 75.19,
+              "meter_cf_of_available_pct": 65.36,
+              "model_twh": 1.2582,
+              "meter_twh": 1.0938
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2058,
+              "mean_lmp": 27.67,
+              "model_cf_of_available_pct": 81.03,
+              "meter_cf_of_available_pct": 74.89,
+              "model_twh": 8.1618,
+              "meter_twh": 7.5442
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2206,
+              "mean_lmp": 32.44,
+              "model_cf_of_available_pct": 86.35,
+              "meter_cf_of_available_pct": 85.21,
+              "model_twh": 9.4236,
+              "meter_twh": 9.2993
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1653,
+              "mean_lmp": 37.59,
+              "model_cf_of_available_pct": 87.77,
+              "meter_cf_of_available_pct": 89.21,
+              "model_twh": 7.2538,
+              "meter_twh": 7.3726
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1256,
+              "mean_lmp": 44.32,
+              "model_cf_of_available_pct": 89.83,
+              "meter_cf_of_available_pct": 91.82,
+              "model_twh": 5.7724,
+              "meter_twh": 5.9005
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 853,
+              "mean_lmp": 54.4,
+              "model_cf_of_available_pct": 89.59,
+              "meter_cf_of_available_pct": 86.61,
+              "model_twh": 3.8915,
+              "meter_twh": 3.7617
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 173,
+              "mean_lmp": 72.09,
+              "model_cf_of_available_pct": 89.97,
+              "meter_cf_of_available_pct": 81.55,
+              "model_twh": 0.7558,
+              "meter_twh": 0.6851
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 162,
+              "mean_lmp": 116.86,
+              "model_cf_of_available_pct": 68.19,
+              "meter_cf_of_available_pct": 78.77,
+              "model_twh": 0.5185,
+              "meter_twh": 0.599
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 50,
+              "mean_lmp": 178.39,
+              "model_cf_of_available_pct": 13.62,
+              "meter_cf_of_available_pct": 79.43,
+              "model_twh": 0.0316,
+              "meter_twh": 0.1843
+            }
+          ]
+        },
+        "CC_CHP": {
+          "lp_units": 107,
+          "lp_nameplate_mw": 3649.0,
+          "n_bench_plants": 16,
+          "annual": {
+            "model_twh": 19.3313,
+            "meter_campd_gross_twh": 19.9629,
+            "eia923_class_twh": 17.0174,
+            "envelope_twh": 23.4225,
+            "model_cf_of_available_pct": 82.53,
+            "meter_cf_of_available_pct": 85.23,
+            "forced_floor_twh": 4.3407,
+            "mean_available_mw": 2673.8,
+            "mean_lmp": 37.88
+          },
+          "deficit_total_gwh": 1606.0,
+          "deficit_hours": 5320,
+          "surplus_total_gwh": 974.4,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 69,
+              "deficit_gwh": 31.5,
+              "share_pct": 2.0,
+              "mean_model_mw": 2740.7,
+              "mean_meter_mw": 3197.5,
+              "mean_env_mw": 2741.0,
+              "mean_headroom_mw": 0.3,
+              "mean_lmp": 86.19
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 56,
+              "deficit_gwh": 144.5,
+              "share_pct": 9.0,
+              "mean_model_mw": 103.4,
+              "mean_meter_mw": 2684.4,
+              "mean_env_mw": 2908.5,
+              "mean_headroom_mw": 2805.1,
+              "mean_lmp": 137.78
+            },
+            "INTERIOR_free": {
+              "hours": 5195,
+              "deficit_gwh": 1429.9,
+              "share_pct": 89.0,
+              "mean_model_mw": 2218.8,
+              "mean_meter_mw": 2494.0,
+              "mean_env_mw": 2674.5,
+              "mean_headroom_mw": 455.7,
+              "mean_lmp": 40.29
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1015.9,
+              "mean_available_mw": 804.6,
+              "energy_twh": 6.4721,
+              "utilisation_pct_of_available": 91.83,
+              "cap_wtd_offer_mean": 27.24,
+              "cap_wtd_offer_p50": 23.7,
+              "hours_offer_below_lmp": 8570,
+              "energy_twh_when_offer_below_lmp": 6.4247,
+              "mean_unrun_mw_when_offer_below_lmp": 53.4,
+              "cap_wtd_heat_rate": 7.1119
+            },
+            "econ": {
+              "nameplate_mw": 2152.0,
+              "mean_available_mw": 1571.6,
+              "energy_twh": 12.4644,
+              "utilisation_pct_of_available": 90.54,
+              "cap_wtd_offer_mean": 29.66,
+              "cap_wtd_offer_p50": 25.41,
+              "hours_offer_below_lmp": 8119,
+              "energy_twh_when_offer_below_lmp": 11.8487,
+              "mean_unrun_mw_when_offer_below_lmp": 106.3,
+              "cap_wtd_heat_rate": 9.0049
+            },
+            "peak": {
+              "nameplate_mw": 481.0,
+              "mean_available_mw": 297.6,
+              "energy_twh": 0.4807,
+              "utilisation_pct_of_available": 18.44,
+              "cap_wtd_offer_mean": 48.42,
+              "cap_wtd_offer_p50": 39.36,
+              "hours_offer_below_lmp": 1592,
+              "energy_twh_when_offer_below_lmp": 0.2767,
+              "mean_unrun_mw_when_offer_below_lmp": 131.4,
+              "cap_wtd_heat_rate": 18.0719
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 15,
+              "lmp_hi": 20,
+              "hours": 7,
+              "mean_lmp": 19.41,
+              "model_cf_of_available_pct": 83.14,
+              "meter_cf_of_available_pct": 67.9,
+              "model_twh": 0.0147,
+              "meter_twh": 0.012
+            },
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 458,
+              "mean_lmp": 23.44,
+              "model_cf_of_available_pct": 68.2,
+              "meter_cf_of_available_pct": 58.72,
+              "model_twh": 0.8048,
+              "meter_twh": 0.6929
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 2269,
+              "mean_lmp": 27.66,
+              "model_cf_of_available_pct": 75.08,
+              "meter_cf_of_available_pct": 69.82,
+              "model_twh": 4.2827,
+              "meter_twh": 3.9824
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2120,
+              "mean_lmp": 32.48,
+              "model_cf_of_available_pct": 85.48,
+              "meter_cf_of_available_pct": 86.01,
+              "model_twh": 4.7606,
+              "meter_twh": 4.7906
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1603,
+              "mean_lmp": 37.36,
+              "model_cf_of_available_pct": 87.0,
+              "meter_cf_of_available_pct": 92.04,
+              "model_twh": 3.7957,
+              "meter_twh": 4.0155
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1308,
+              "mean_lmp": 44.79,
+              "model_cf_of_available_pct": 89.72,
+              "meter_cf_of_available_pct": 96.71,
+              "model_twh": 3.3085,
+              "meter_twh": 3.5663
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 674,
+              "mean_lmp": 55.3,
+              "model_cf_of_available_pct": 90.2,
+              "meter_cf_of_available_pct": 100.88,
+              "model_twh": 1.7739,
+              "meter_twh": 1.984
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 134,
+              "mean_lmp": 75.7,
+              "model_cf_of_available_pct": 84.26,
+              "meter_cf_of_available_pct": 99.82,
+              "model_twh": 0.3296,
+              "meter_twh": 0.3905
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 143,
+              "mean_lmp": 110.05,
+              "model_cf_of_available_pct": 54.55,
+              "meter_cf_of_available_pct": 94.52,
+              "model_twh": 0.2266,
+              "meter_twh": 0.3925
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 44,
+              "mean_lmp": 174.82,
+              "model_cf_of_available_pct": 26.85,
+              "meter_cf_of_available_pct": 106.71,
+              "model_twh": 0.0343,
+              "meter_twh": 0.1363
+            }
+          ]
+        },
+        "ST_GAS": {
+          "lp_units": 88,
+          "lp_nameplate_mw": 8902.4,
+          "n_bench_plants": 11,
+          "annual": {
+            "model_twh": 8.7394,
+            "meter_campd_gross_twh": 10.6624,
+            "eia923_class_twh": 9.9132,
+            "envelope_twh": 24.7338,
+            "model_cf_of_available_pct": 35.33,
+            "meter_cf_of_available_pct": 43.11,
+            "forced_floor_twh": 3.9423,
+            "mean_available_mw": 2823.5,
+            "mean_lmp": 39.63
+          },
+          "deficit_total_gwh": 2577.8,
+          "deficit_hours": 6849,
+          "surplus_total_gwh": 654.8,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 1,
+              "deficit_gwh": 0.8,
+              "share_pct": 0.0,
+              "mean_model_mw": 3048.7,
+              "mean_meter_mw": 3832.8,
+              "mean_env_mw": 3063.0,
+              "mean_headroom_mw": 14.4,
+              "mean_lmp": 325.54
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 703,
+              "deficit_gwh": 302.4,
+              "share_pct": 11.7,
+              "mean_model_mw": 344.2,
+              "mean_meter_mw": 774.4,
+              "mean_env_mw": 2414.4,
+              "mean_headroom_mw": 2070.3,
+              "mean_lmp": 56.02
+            },
+            "INTERIOR_free": {
+              "hours": 6145,
+              "deficit_gwh": 2274.6,
+              "share_pct": 88.2,
+              "mean_model_mw": 759.8,
+              "mean_meter_mw": 1129.9,
+              "mean_env_mw": 2635.2,
+              "mean_headroom_mw": 1875.5,
+              "mean_lmp": 36.54
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1874.7,
+              "mean_available_mw": 612.9,
+              "energy_twh": 2.94,
+              "utilisation_pct_of_available": 54.75,
+              "cap_wtd_offer_mean": 43.99,
+              "cap_wtd_offer_p50": 38.15,
+              "hours_offer_below_lmp": 2348,
+              "energy_twh_when_offer_below_lmp": 1.5831,
+              "mean_unrun_mw_when_offer_below_lmp": 108.8,
+              "cap_wtd_heat_rate": 11.7718
+            },
+            "econ": {
+              "nameplate_mw": 5692.4,
+              "mean_available_mw": 1787.0,
+              "energy_twh": 5.2538,
+              "utilisation_pct_of_available": 33.56,
+              "cap_wtd_offer_mean": 48.95,
+              "cap_wtd_offer_p50": 44.32,
+              "hours_offer_below_lmp": 1075,
+              "energy_twh_when_offer_below_lmp": 2.4049,
+              "mean_unrun_mw_when_offer_below_lmp": 510.1,
+              "cap_wtd_heat_rate": 12.4942
+            },
+            "peak": {
+              "nameplate_mw": 1335.4,
+              "mean_available_mw": 423.5,
+              "energy_twh": 0.5818,
+              "utilisation_pct_of_available": 15.68,
+              "cap_wtd_offer_mean": 165.63,
+              "cap_wtd_offer_p50": 160.05,
+              "hours_offer_below_lmp": 6,
+              "energy_twh_when_offer_below_lmp": 0.0023,
+              "mean_unrun_mw_when_offer_below_lmp": 343.2,
+              "cap_wtd_heat_rate": 47.3896
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 309,
+              "mean_lmp": 23.71,
+              "model_cf_of_available_pct": 21.45,
+              "meter_cf_of_available_pct": 27.53,
+              "model_twh": 0.1384,
+              "meter_twh": 0.1776
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 1988,
+              "mean_lmp": 27.84,
+              "model_cf_of_available_pct": 21.16,
+              "meter_cf_of_available_pct": 29.92,
+              "model_twh": 0.9285,
+              "meter_twh": 1.3131
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2112,
+              "mean_lmp": 32.51,
+              "model_cf_of_available_pct": 23.04,
+              "meter_cf_of_available_pct": 34.45,
+              "model_twh": 1.1664,
+              "meter_twh": 1.7443
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1679,
+              "mean_lmp": 37.61,
+              "model_cf_of_available_pct": 30.17,
+              "meter_cf_of_available_pct": 40.6,
+              "model_twh": 1.4382,
+              "meter_twh": 1.9351
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1367,
+              "mean_lmp": 44.32,
+              "model_cf_of_available_pct": 45.05,
+              "meter_cf_of_available_pct": 48.38,
+              "model_twh": 2.213,
+              "meter_twh": 2.3766
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 898,
+              "mean_lmp": 54.69,
+              "model_cf_of_available_pct": 59.69,
+              "meter_cf_of_available_pct": 62.78,
+              "model_twh": 2.1455,
+              "meter_twh": 2.2567
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 182,
+              "mean_lmp": 71.53,
+              "model_cf_of_available_pct": 68.28,
+              "meter_cf_of_available_pct": 72.74,
+              "model_twh": 0.461,
+              "meter_twh": 0.4911
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 165,
+              "mean_lmp": 117.05,
+              "model_cf_of_available_pct": 41.26,
+              "meter_cf_of_available_pct": 52.05,
+              "model_twh": 0.214,
+              "meter_twh": 0.27
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 60,
+              "mean_lmp": 176.98,
+              "model_cf_of_available_pct": 20.23,
+              "meter_cf_of_available_pct": 57.55,
+              "model_twh": 0.0344,
+              "meter_twh": 0.0979
+            }
+          ]
+        },
+        "CT_PEAKER": {
+          "lp_units": 130,
+          "lp_nameplate_mw": 3023.6,
+          "n_bench_plants": 22,
+          "annual": {
+            "model_twh": 0.3923,
+            "meter_campd_gross_twh": 2.096,
+            "eia923_class_twh": 1.9108,
+            "envelope_twh": 19.324,
+            "model_cf_of_available_pct": 2.03,
+            "meter_cf_of_available_pct": 10.85,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 2205.9,
+            "mean_lmp": 40.01
+          },
+          "deficit_total_gwh": 1750.1,
+          "deficit_hours": 5620,
+          "surplus_total_gwh": 46.4,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 5620,
+              "deficit_gwh": 1750.1,
+              "share_pct": 100.0,
+              "mean_model_mw": 49.9,
+              "mean_meter_mw": 361.3,
+              "mean_env_mw": 2211.9,
+              "mean_headroom_mw": 2162.0,
+              "mean_lmp": 42.08
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 346.7,
+              "mean_available_mw": 294.5,
+              "energy_twh": 0.0536,
+              "utilisation_pct_of_available": 2.08,
+              "cap_wtd_offer_mean": 73.95,
+              "cap_wtd_offer_p50": 68.83,
+              "hours_offer_below_lmp": 69,
+              "energy_twh_when_offer_below_lmp": 0.0159,
+              "mean_unrun_mw_when_offer_below_lmp": 52.7,
+              "cap_wtd_heat_rate": 15.1344
+            },
+            "econ": {
+              "nameplate_mw": 2468.1,
+              "mean_available_mw": 1759.3,
+              "energy_twh": 0.3759,
+              "utilisation_pct_of_available": 2.44,
+              "cap_wtd_offer_mean": 69.44,
+              "cap_wtd_offer_p50": 64.83,
+              "hours_offer_below_lmp": 97,
+              "energy_twh_when_offer_below_lmp": 0.1188,
+              "mean_unrun_mw_when_offer_below_lmp": 474.2,
+              "cap_wtd_heat_rate": 12.9576
+            },
+            "peak": {
+              "nameplate_mw": 208.8,
+              "mean_available_mw": 152.2,
+              "energy_twh": 0.0002,
+              "utilisation_pct_of_available": 0.01,
+              "cap_wtd_offer_mean": 193.64,
+              "cap_wtd_offer_p50": 186.74,
+              "hours_offer_below_lmp": 1,
+              "energy_twh_when_offer_below_lmp": 0.0,
+              "mean_unrun_mw_when_offer_below_lmp": 115.4,
+              "cap_wtd_heat_rate": 51.2042
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 287,
+              "mean_lmp": 23.81,
+              "model_cf_of_available_pct": 0.0,
+              "meter_cf_of_available_pct": 0.31,
+              "model_twh": 0.0,
+              "meter_twh": 0.0019
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 1923,
+              "mean_lmp": 27.95,
+              "model_cf_of_available_pct": 0.0,
+              "meter_cf_of_available_pct": 1.24,
+              "model_twh": 0.0001,
+              "meter_twh": 0.0522
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2112,
+              "mean_lmp": 32.57,
+              "model_cf_of_available_pct": 0.02,
+              "meter_cf_of_available_pct": 3.98,
+              "model_twh": 0.0008,
+              "meter_twh": 0.1847
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1504,
+              "mean_lmp": 37.39,
+              "model_cf_of_available_pct": 0.2,
+              "meter_cf_of_available_pct": 8.97,
+              "model_twh": 0.0067,
+              "meter_twh": 0.2957
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1569,
+              "mean_lmp": 43.82,
+              "model_cf_of_available_pct": 0.69,
+              "meter_cf_of_available_pct": 17.75,
+              "model_twh": 0.024,
+              "meter_twh": 0.6154
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 941,
+              "mean_lmp": 54.71,
+              "model_cf_of_available_pct": 7.33,
+              "meter_cf_of_available_pct": 33.53,
+              "model_twh": 0.1549,
+              "meter_twh": 0.7084
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 199,
+              "mean_lmp": 71.98,
+              "model_cf_of_available_pct": 22.79,
+              "meter_cf_of_available_pct": 36.53,
+              "model_twh": 0.1032,
+              "meter_twh": 0.1655
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 164,
+              "mean_lmp": 118.32,
+              "model_cf_of_available_pct": 21.06,
+              "meter_cf_of_available_pct": 14.52,
+              "model_twh": 0.0802,
+              "meter_twh": 0.0553
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 61,
+              "mean_lmp": 178.36,
+              "model_cf_of_available_pct": 15.82,
+              "meter_cf_of_available_pct": 12.03,
+              "model_twh": 0.0223,
+              "meter_twh": 0.017
+            }
+          ]
+        },
+        "CT_CHP": {
+          "lp_units": 22,
+          "lp_nameplate_mw": 368.4,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.1402,
+            "meter_campd_gross_twh": 2.2215,
+            "eia923_class_twh": 2.1717,
+            "envelope_twh": 2.8477,
+            "model_cf_of_available_pct": 40.04,
+            "meter_cf_of_available_pct": 78.01,
+            "forced_floor_twh": 0.0402,
+            "mean_available_mw": 325.1,
+            "mean_lmp": 40.01
+          },
+          "deficit_total_gwh": 1240.3,
+          "deficit_hours": 6786,
+          "surplus_total_gwh": 159.1,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 182,
+              "deficit_gwh": 8.0,
+              "share_pct": 0.6,
+              "mean_model_mw": 335.8,
+              "mean_meter_mw": 379.9,
+              "mean_env_mw": 336.8,
+              "mean_headroom_mw": 1.0,
+              "mean_lmp": 57.3
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 25,
+              "deficit_gwh": 9.6,
+              "share_pct": 0.8,
+              "mean_model_mw": 3.5,
+              "mean_meter_mw": 386.9,
+              "mean_env_mw": 344.5,
+              "mean_headroom_mw": 340.9,
+              "mean_lmp": 139.46
+            },
+            "INTERIOR_free": {
+              "hours": 6579,
+              "deficit_gwh": 1222.7,
+              "share_pct": 98.6,
+              "mean_model_mw": 72.7,
+              "mean_meter_mw": 258.5,
+              "mean_env_mw": 327.4,
+              "mean_headroom_mw": 254.7,
+              "mean_lmp": 37.11
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 139.4,
+              "mean_available_mw": 123.0,
+              "energy_twh": 0.5028,
+              "utilisation_pct_of_available": 46.68,
+              "cap_wtd_offer_mean": 37.11,
+              "cap_wtd_offer_p50": 32.92,
+              "hours_offer_below_lmp": 5096,
+              "energy_twh_when_offer_below_lmp": 0.4742,
+              "mean_unrun_mw_when_offer_below_lmp": 29.6,
+              "cap_wtd_heat_rate": 8.4624
+            },
+            "econ": {
+              "nameplate_mw": 203.9,
+              "mean_available_mw": 179.9,
+              "energy_twh": 0.5831,
+              "utilisation_pct_of_available": 37.0,
+              "cap_wtd_offer_mean": 36.25,
+              "cap_wtd_offer_p50": 32.51,
+              "hours_offer_below_lmp": 5392,
+              "energy_twh_when_offer_below_lmp": 0.5638,
+              "mean_unrun_mw_when_offer_below_lmp": 75.2,
+              "cap_wtd_heat_rate": 7.584
+            },
+            "peak": {
+              "nameplate_mw": 25.2,
+              "mean_available_mw": 22.2,
+              "energy_twh": 0.0665,
+              "utilisation_pct_of_available": 34.16,
+              "cap_wtd_offer_mean": 36.86,
+              "cap_wtd_offer_p50": 32.93,
+              "hours_offer_below_lmp": 5129,
+              "energy_twh_when_offer_below_lmp": 0.0662,
+              "mean_unrun_mw_when_offer_below_lmp": 9.3,
+              "cap_wtd_heat_rate": 7.9716
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 287,
+              "mean_lmp": 23.84,
+              "model_cf_of_available_pct": 3.39,
+              "meter_cf_of_available_pct": 65.25,
+              "model_twh": 0.0032,
+              "meter_twh": 0.0606
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 1918,
+              "mean_lmp": 27.97,
+              "model_cf_of_available_pct": 4.46,
+              "meter_cf_of_available_pct": 67.43,
+              "model_twh": 0.0277,
+              "meter_twh": 0.4187
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2117,
+              "mean_lmp": 32.57,
+              "model_cf_of_available_pct": 12.57,
+              "meter_cf_of_available_pct": 72.49,
+              "model_twh": 0.0863,
+              "meter_twh": 0.4976
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1527,
+              "mean_lmp": 37.42,
+              "model_cf_of_available_pct": 53.1,
+              "meter_cf_of_available_pct": 77.01,
+              "model_twh": 0.2617,
+              "meter_twh": 0.3795
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1546,
+              "mean_lmp": 43.85,
+              "model_cf_of_available_pct": 76.56,
+              "meter_cf_of_available_pct": 83.5,
+              "model_twh": 0.3843,
+              "meter_twh": 0.4191
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 942,
+              "mean_lmp": 54.72,
+              "model_cf_of_available_pct": 90.71,
+              "meter_cf_of_available_pct": 94.89,
+              "model_twh": 0.2812,
+              "meter_twh": 0.2941
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 198,
+              "mean_lmp": 72.03,
+              "model_cf_of_available_pct": 93.43,
+              "meter_cf_of_available_pct": 104.28,
+              "model_twh": 0.0617,
+              "meter_twh": 0.0689
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 164,
+              "mean_lmp": 118.53,
+              "model_cf_of_available_pct": 55.54,
+              "meter_cf_of_available_pct": 106.69,
+              "model_twh": 0.031,
+              "meter_twh": 0.0596
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 61,
+              "mean_lmp": 178.53,
+              "model_cf_of_available_pct": 15.1,
+              "meter_cf_of_available_pct": 112.1,
+              "model_twh": 0.0031,
+              "meter_twh": 0.0232
+            }
+          ]
+        },
+        "ST_CHP": {
+          "lp_units": 5,
+          "lp_nameplate_mw": 323.5,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.0802,
+            "meter_campd_gross_twh": 0.5566,
+            "eia923_class_twh": 0.8721,
+            "envelope_twh": 1.7803,
+            "model_cf_of_available_pct": 60.68,
+            "meter_cf_of_available_pct": 31.26,
+            "forced_floor_twh": 0.0373,
+            "mean_available_mw": 203.2,
+            "mean_lmp": 39.79
+          },
+          "deficit_total_gwh": 146.2,
+          "deficit_hours": 3356,
+          "surplus_total_gwh": 669.9,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 57,
+              "deficit_gwh": 3.0,
+              "share_pct": 2.0,
+              "mean_model_mw": 6.9,
+              "mean_meter_mw": 59.1,
+              "mean_env_mw": 6.9,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 34.17
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 420,
+              "deficit_gwh": 15.9,
+              "share_pct": 10.9,
+              "mean_model_mw": 4.2,
+              "mean_meter_mw": 42.1,
+              "mean_env_mw": 181.3,
+              "mean_headroom_mw": 177.1,
+              "mean_lmp": 49.41
+            },
+            "INTERIOR_free": {
+              "hours": 2879,
+              "deficit_gwh": 127.4,
+              "share_pct": 87.1,
+              "mean_model_mw": 17.2,
+              "mean_meter_mw": 61.4,
+              "mean_env_mw": 197.5,
+              "mean_headroom_mw": 180.4,
+              "mean_lmp": 31.85
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 106.9,
+              "mean_available_mw": 69.5,
+              "energy_twh": 0.3718,
+              "utilisation_pct_of_available": 61.05,
+              "cap_wtd_offer_mean": 36.43,
+              "cap_wtd_offer_p50": 32.41,
+              "hours_offer_below_lmp": 5312,
+              "energy_twh_when_offer_below_lmp": 0.3399,
+              "mean_unrun_mw_when_offer_below_lmp": 9.9,
+              "cap_wtd_heat_rate": 8.0809
+            },
+            "econ": {
+              "nameplate_mw": 170.1,
+              "mean_available_mw": 105.0,
+              "energy_twh": 0.6055,
+              "utilisation_pct_of_available": 65.81,
+              "cap_wtd_offer_mean": 37.06,
+              "cap_wtd_offer_p50": 33.37,
+              "hours_offer_below_lmp": 4776,
+              "energy_twh_when_offer_below_lmp": 0.5698,
+              "mean_unrun_mw_when_offer_below_lmp": 0.3,
+              "cap_wtd_heat_rate": 7.4205
+            },
+            "peak": {
+              "nameplate_mw": 46.4,
+              "mean_available_mw": 28.7,
+              "energy_twh": 0.1135,
+              "utilisation_pct_of_available": 45.2,
+              "cap_wtd_offer_mean": 40.64,
+              "cap_wtd_offer_p50": 36.58,
+              "hours_offer_below_lmp": 3377,
+              "energy_twh_when_offer_below_lmp": 0.1116,
+              "mean_unrun_mw_when_offer_below_lmp": 0.3,
+              "cap_wtd_heat_rate": 8.1625
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 290,
+              "mean_lmp": 23.76,
+              "model_cf_of_available_pct": 11.91,
+              "meter_cf_of_available_pct": 40.62,
+              "model_twh": 0.0042,
+              "meter_twh": 0.0145
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 1953,
+              "mean_lmp": 27.92,
+              "model_cf_of_available_pct": 12.29,
+              "meter_cf_of_available_pct": 33.99,
+              "model_twh": 0.0379,
+              "meter_twh": 0.1048
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 2116,
+              "mean_lmp": 32.52,
+              "model_cf_of_available_pct": 42.55,
+              "meter_cf_of_available_pct": 31.03,
+              "model_twh": 0.174,
+              "meter_twh": 0.1269
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 1683,
+              "mean_lmp": 37.59,
+              "model_cf_of_available_pct": 78.79,
+              "meter_cf_of_available_pct": 29.93,
+              "model_twh": 0.2839,
+              "meter_twh": 0.1078
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 1377,
+              "mean_lmp": 44.21,
+              "model_cf_of_available_pct": 87.02,
+              "meter_cf_of_available_pct": 30.8,
+              "model_twh": 0.2825,
+              "meter_twh": 0.1
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 928,
+              "mean_lmp": 54.64,
+              "model_cf_of_available_pct": 95.89,
+              "meter_cf_of_available_pct": 30.87,
+              "model_twh": 0.2234,
+              "meter_twh": 0.0719
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 188,
+              "mean_lmp": 71.89,
+              "model_cf_of_available_pct": 96.7,
+              "meter_cf_of_available_pct": 30.4,
+              "model_twh": 0.048,
+              "meter_twh": 0.0151
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 169,
+              "mean_lmp": 117.86,
+              "model_cf_of_available_pct": 55.11,
+              "meter_cf_of_available_pct": 26.32,
+              "model_twh": 0.0242,
+              "meter_twh": 0.0116
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 56,
+              "mean_lmp": 179.47,
+              "model_cf_of_available_pct": 13.35,
+              "meter_cf_of_available_pct": 25.59,
+              "model_twh": 0.0021,
+              "meter_twh": 0.0041
+            }
+          ]
+        }
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "zones": [
+        "Capital_Hudson",
+        "Long_Island",
+        "Lower_Hudson",
+        "NYC",
+        "NYISO_external",
+        "Upstate_West"
+      ],
+      "classes": {
+        "CC_REGULAR": {
+          "lp_units": 129,
+          "lp_nameplate_mw": 7416.6,
+          "n_bench_plants": 21,
+          "annual": {
+            "model_twh": 35.1018,
+            "meter_campd_gross_twh": 33.8802,
+            "eia923_class_twh": 33.5445,
+            "envelope_twh": 41.7707,
+            "model_cf_of_available_pct": 84.03,
+            "meter_cf_of_available_pct": 81.11,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 4768.3,
+            "mean_lmp": 59.7
+          },
+          "deficit_total_gwh": 1745.8,
+          "deficit_hours": 3504,
+          "surplus_total_gwh": 2967.4,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 60,
+              "deficit_gwh": 16.9,
+              "share_pct": 1.0,
+              "mean_model_mw": 5249.9,
+              "mean_meter_mw": 5532.3,
+              "mean_env_mw": 5254.5,
+              "mean_headroom_mw": 4.6,
+              "mean_lmp": 152.13
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 3444,
+              "deficit_gwh": 1728.8,
+              "share_pct": 99.0,
+              "mean_model_mw": 3861.5,
+              "mean_meter_mw": 4363.5,
+              "mean_env_mw": 4803.6,
+              "mean_headroom_mw": 942.1,
+              "mean_lmp": 60.93
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 3219.0,
+              "mean_available_mw": 2193.8,
+              "energy_twh": 18.8329,
+              "utilisation_pct_of_available": 98.0,
+              "cap_wtd_offer_mean": 40.67,
+              "cap_wtd_offer_p50": 35.02,
+              "hours_offer_below_lmp": 8652,
+              "energy_twh_when_offer_below_lmp": 18.6113,
+              "mean_unrun_mw_when_offer_below_lmp": 42.9,
+              "cap_wtd_heat_rate": 6.5245
+            },
+            "econ": {
+              "nameplate_mw": 3039.1,
+              "mean_available_mw": 1958.6,
+              "energy_twh": 15.4806,
+              "utilisation_pct_of_available": 90.23,
+              "cap_wtd_offer_mean": 43.26,
+              "cap_wtd_offer_p50": 37.42,
+              "hours_offer_below_lmp": 8451,
+              "energy_twh_when_offer_below_lmp": 15.1794,
+              "mean_unrun_mw_when_offer_below_lmp": 161.4,
+              "cap_wtd_heat_rate": 7.206
+            },
+            "peak": {
+              "nameplate_mw": 1158.5,
+              "mean_available_mw": 615.9,
+              "energy_twh": 1.4647,
+              "utilisation_pct_of_available": 27.15,
+              "cap_wtd_offer_mean": 83.58,
+              "cap_wtd_offer_p50": 65.5,
+              "hours_offer_below_lmp": 1584,
+              "energy_twh_when_offer_below_lmp": 0.5793,
+              "mean_unrun_mw_when_offer_below_lmp": 254.9,
+              "cap_wtd_heat_rate": 18.1222
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 22,
+              "mean_lmp": 23.03,
+              "model_cf_of_available_pct": 55.88,
+              "meter_cf_of_available_pct": 54.97,
+              "model_twh": 0.0534,
+              "meter_twh": 0.0525
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 172,
+              "mean_lmp": 28.35,
+              "model_cf_of_available_pct": 63.78,
+              "meter_cf_of_available_pct": 63.98,
+              "model_twh": 0.5408,
+              "meter_twh": 0.5425
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 856,
+              "mean_lmp": 32.65,
+              "model_cf_of_available_pct": 76.35,
+              "meter_cf_of_available_pct": 71.08,
+              "model_twh": 3.2084,
+              "meter_twh": 2.9868
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 869,
+              "mean_lmp": 37.9,
+              "model_cf_of_available_pct": 81.86,
+              "meter_cf_of_available_pct": 77.56,
+              "model_twh": 3.3398,
+              "meter_twh": 3.1645
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2258,
+              "mean_lmp": 44.77,
+              "model_cf_of_available_pct": 84.94,
+              "meter_cf_of_available_pct": 81.51,
+              "model_twh": 8.6831,
+              "meter_twh": 8.3324
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 2173,
+              "mean_lmp": 56.36,
+              "model_cf_of_available_pct": 89.67,
+              "meter_cf_of_available_pct": 87.9,
+              "model_twh": 9.1133,
+              "meter_twh": 8.9335
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1446,
+              "mean_lmp": 73.58,
+              "model_cf_of_available_pct": 90.91,
+              "meter_cf_of_available_pct": 83.54,
+              "model_twh": 6.5707,
+              "meter_twh": 6.0381
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 709,
+              "mean_lmp": 114.13,
+              "model_cf_of_available_pct": 81.79,
+              "meter_cf_of_available_pct": 77.11,
+              "model_twh": 3.0195,
+              "meter_twh": 2.8467
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 255,
+              "mean_lmp": 179.87,
+              "model_cf_of_available_pct": 46.17,
+              "meter_cf_of_available_pct": 79.24,
+              "model_twh": 0.5728,
+              "meter_twh": 0.9831
+            }
+          ]
+        },
+        "CC_CHP": {
+          "lp_units": 107,
+          "lp_nameplate_mw": 3649.0,
+          "n_bench_plants": 16,
+          "annual": {
+            "model_twh": 20.3443,
+            "meter_campd_gross_twh": 21.1072,
+            "eia923_class_twh": 16.9617,
+            "envelope_twh": 24.1972,
+            "model_cf_of_available_pct": 84.08,
+            "meter_cf_of_available_pct": 87.23,
+            "forced_floor_twh": 4.299,
+            "mean_available_mw": 2762.2,
+            "mean_lmp": 57.92
+          },
+          "deficit_total_gwh": 1899.2,
+          "deficit_hours": 4823,
+          "surplus_total_gwh": 1136.3,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 79,
+              "deficit_gwh": 42.9,
+              "share_pct": 2.3,
+              "mean_model_mw": 3093.9,
+              "mean_meter_mw": 3637.6,
+              "mean_env_mw": 3093.9,
+              "mean_headroom_mw": -0.0,
+              "mean_lmp": 152.29
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 123,
+              "deficit_gwh": 347.8,
+              "share_pct": 18.3,
+              "mean_model_mw": 72.2,
+              "mean_meter_mw": 2899.9,
+              "mean_env_mw": 3067.9,
+              "mean_headroom_mw": 2995.7,
+              "mean_lmp": 166.66
+            },
+            "INTERIOR_free": {
+              "hours": 4621,
+              "deficit_gwh": 1508.5,
+              "share_pct": 79.4,
+              "mean_model_mw": 2324.1,
+              "mean_meter_mw": 2650.6,
+              "mean_env_mw": 2765.3,
+              "mean_headroom_mw": 441.2,
+              "mean_lmp": 63.08
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1015.9,
+              "mean_available_mw": 825.1,
+              "energy_twh": 6.6233,
+              "utilisation_pct_of_available": 91.64,
+              "cap_wtd_offer_mean": 39.32,
+              "cap_wtd_offer_p50": 33.35,
+              "hours_offer_below_lmp": 8486,
+              "energy_twh_when_offer_below_lmp": 6.4975,
+              "mean_unrun_mw_when_offer_below_lmp": 60.3,
+              "cap_wtd_heat_rate": 7.1119
+            },
+            "econ": {
+              "nameplate_mw": 2152.0,
+              "mean_available_mw": 1620.9,
+              "energy_twh": 12.7608,
+              "utilisation_pct_of_available": 89.87,
+              "cap_wtd_offer_mean": 42.74,
+              "cap_wtd_offer_p50": 34.93,
+              "hours_offer_below_lmp": 8127,
+              "energy_twh_when_offer_below_lmp": 12.1406,
+              "mean_unrun_mw_when_offer_below_lmp": 129.3,
+              "cap_wtd_heat_rate": 9.0049
+            },
+            "peak": {
+              "nameplate_mw": 481.0,
+              "mean_available_mw": 316.3,
+              "energy_twh": 1.2036,
+              "utilisation_pct_of_available": 43.44,
+              "cap_wtd_offer_mean": 72.11,
+              "cap_wtd_offer_p50": 54.92,
+              "hours_offer_below_lmp": 3285,
+              "energy_twh_when_offer_below_lmp": 0.6459,
+              "mean_unrun_mw_when_offer_below_lmp": 127.5,
+              "cap_wtd_heat_rate": 18.0719
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 15,
+              "lmp_hi": 20,
+              "hours": 3,
+              "mean_lmp": 18.53,
+              "model_cf_of_available_pct": 56.56,
+              "meter_cf_of_available_pct": 48.63,
+              "model_twh": 0.0043,
+              "meter_twh": 0.0037
+            },
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 90,
+              "mean_lmp": 23.97,
+              "model_cf_of_available_pct": 54.25,
+              "meter_cf_of_available_pct": 43.97,
+              "model_twh": 0.1115,
+              "meter_twh": 0.0904
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 372,
+              "mean_lmp": 27.85,
+              "model_cf_of_available_pct": 68.88,
+              "meter_cf_of_available_pct": 55.14,
+              "model_twh": 0.5804,
+              "meter_twh": 0.4647
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 855,
+              "mean_lmp": 32.79,
+              "model_cf_of_available_pct": 75.84,
+              "meter_cf_of_available_pct": 66.39,
+              "model_twh": 1.6051,
+              "meter_twh": 1.405
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 894,
+              "mean_lmp": 37.64,
+              "model_cf_of_available_pct": 79.46,
+              "meter_cf_of_available_pct": 75.71,
+              "model_twh": 1.8109,
+              "meter_twh": 1.7254
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2291,
+              "mean_lmp": 44.93,
+              "model_cf_of_available_pct": 82.81,
+              "meter_cf_of_available_pct": 83.91,
+              "model_twh": 5.1621,
+              "meter_twh": 5.2304
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 1927,
+              "mean_lmp": 56.47,
+              "model_cf_of_available_pct": 93.25,
+              "meter_cf_of_available_pct": 94.93,
+              "model_twh": 5.1832,
+              "meter_twh": 5.2765
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1421,
+              "mean_lmp": 73.01,
+              "model_cf_of_available_pct": 93.46,
+              "meter_cf_of_available_pct": 99.62,
+              "model_twh": 3.9286,
+              "meter_twh": 4.1877
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 697,
+              "mean_lmp": 114.62,
+              "model_cf_of_available_pct": 78.69,
+              "meter_cf_of_available_pct": 98.15,
+              "model_twh": 1.6565,
+              "meter_twh": 2.0662
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 210,
+              "mean_lmp": 179.45,
+              "model_cf_of_available_pct": 46.76,
+              "meter_cf_of_available_pct": 101.85,
+              "model_twh": 0.3017,
+              "meter_twh": 0.6571
+            }
+          ]
+        },
+        "ST_GAS": {
+          "lp_units": 88,
+          "lp_nameplate_mw": 8902.4,
+          "n_bench_plants": 11,
+          "annual": {
+            "model_twh": 9.6064,
+            "meter_campd_gross_twh": 13.7374,
+            "eia923_class_twh": 13.7121,
+            "envelope_twh": 25.4312,
+            "model_cf_of_available_pct": 37.77,
+            "meter_cf_of_available_pct": 54.02,
+            "forced_floor_twh": 3.7055,
+            "mean_available_mw": 2903.1,
+            "mean_lmp": 60.6
+          },
+          "deficit_total_gwh": 4520.1,
+          "deficit_hours": 7469,
+          "surplus_total_gwh": 389.1,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 683,
+              "deficit_gwh": 736.7,
+              "share_pct": 16.3,
+              "mean_model_mw": 252.4,
+              "mean_meter_mw": 1331.0,
+              "mean_env_mw": 2394.3,
+              "mean_headroom_mw": 2142.0,
+              "mean_lmp": 102.55
+            },
+            "INTERIOR_free": {
+              "hours": 6786,
+              "deficit_gwh": 3783.4,
+              "share_pct": 83.7,
+              "mean_model_mw": 942.0,
+              "mean_meter_mw": 1499.6,
+              "mean_env_mw": 2697.9,
+              "mean_headroom_mw": 1755.8,
+              "mean_lmp": 56.24
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 1874.7,
+              "mean_available_mw": 615.5,
+              "energy_twh": 2.7866,
+              "utilisation_pct_of_available": 51.68,
+              "cap_wtd_offer_mean": 69.06,
+              "cap_wtd_offer_p50": 59.22,
+              "hours_offer_below_lmp": 2421,
+              "energy_twh_when_offer_below_lmp": 1.5436,
+              "mean_unrun_mw_when_offer_below_lmp": 134.8,
+              "cap_wtd_heat_rate": 11.7718
+            },
+            "econ": {
+              "nameplate_mw": 5692.4,
+              "mean_available_mw": 1852.1,
+              "energy_twh": 6.4031,
+              "utilisation_pct_of_available": 39.47,
+              "cap_wtd_offer_mean": 69.1,
+              "cap_wtd_offer_p50": 61.84,
+              "hours_offer_below_lmp": 2231,
+              "energy_twh_when_offer_below_lmp": 3.9156,
+              "mean_unrun_mw_when_offer_below_lmp": 562.6,
+              "cap_wtd_heat_rate": 12.4942
+            },
+            "peak": {
+              "nameplate_mw": 1335.4,
+              "mean_available_mw": 435.5,
+              "energy_twh": 0.5598,
+              "utilisation_pct_of_available": 14.68,
+              "cap_wtd_offer_mean": 189.71,
+              "cap_wtd_offer_p50": 180.8,
+              "hours_offer_below_lmp": 23,
+              "energy_twh_when_offer_below_lmp": 0.0188,
+              "mean_unrun_mw_when_offer_below_lmp": 265.6,
+              "cap_wtd_heat_rate": 47.3896
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 14,
+              "mean_lmp": 22.76,
+              "model_cf_of_available_pct": 15.58,
+              "meter_cf_of_available_pct": 18.99,
+              "model_twh": 0.006,
+              "meter_twh": 0.0073
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 125,
+              "mean_lmp": 28.19,
+              "model_cf_of_available_pct": 17.72,
+              "meter_cf_of_available_pct": 25.18,
+              "model_twh": 0.0466,
+              "meter_twh": 0.0663
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 826,
+              "mean_lmp": 32.96,
+              "model_cf_of_available_pct": 19.3,
+              "meter_cf_of_available_pct": 26.49,
+              "model_twh": 0.3716,
+              "meter_twh": 0.51
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 765,
+              "mean_lmp": 37.83,
+              "model_cf_of_available_pct": 21.94,
+              "meter_cf_of_available_pct": 30.25,
+              "model_twh": 0.4457,
+              "meter_twh": 0.6146
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2294,
+              "mean_lmp": 44.75,
+              "model_cf_of_available_pct": 23.89,
+              "meter_cf_of_available_pct": 39.19,
+              "model_twh": 1.4937,
+              "meter_twh": 2.4502
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 2146,
+              "mean_lmp": 55.99,
+              "model_cf_of_available_pct": 39.6,
+              "meter_cf_of_available_pct": 55.94,
+              "model_twh": 2.7021,
+              "meter_twh": 3.8169
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1599,
+              "mean_lmp": 73.12,
+              "model_cf_of_available_pct": 62.58,
+              "meter_cf_of_available_pct": 76.73,
+              "model_twh": 3.1336,
+              "meter_twh": 3.842
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 727,
+              "mean_lmp": 114.35,
+              "model_cf_of_available_pct": 49.99,
+              "meter_cf_of_available_pct": 81.03,
+              "model_twh": 1.062,
+              "meter_twh": 1.7214
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 264,
+              "mean_lmp": 181.77,
+              "model_cf_of_available_pct": 35.74,
+              "meter_cf_of_available_pct": 73.42,
+              "model_twh": 0.3451,
+              "meter_twh": 0.7089
+            }
+          ]
+        },
+        "CT_PEAKER": {
+          "lp_units": 130,
+          "lp_nameplate_mw": 3023.6,
+          "n_bench_plants": 22,
+          "annual": {
+            "model_twh": 1.3564,
+            "meter_campd_gross_twh": 2.7572,
+            "eia923_class_twh": 2.8512,
+            "envelope_twh": 19.3007,
+            "model_cf_of_available_pct": 7.03,
+            "meter_cf_of_available_pct": 14.29,
+            "forced_floor_twh": 0.0,
+            "mean_available_mw": 2203.3,
+            "mean_lmp": 61.04
+          },
+          "deficit_total_gwh": 1697.2,
+          "deficit_hours": 6204,
+          "surplus_total_gwh": 296.5,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_free": {
+              "hours": 6204,
+              "deficit_gwh": 1697.2,
+              "share_pct": 100.0,
+              "mean_model_mw": 112.9,
+              "mean_meter_mw": 386.5,
+              "mean_env_mw": 2202.8,
+              "mean_headroom_mw": 2089.9,
+              "mean_lmp": 60.54
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 346.7,
+              "mean_available_mw": 291.0,
+              "energy_twh": 0.2142,
+              "utilisation_pct_of_available": 8.4,
+              "cap_wtd_offer_mean": 98.75,
+              "cap_wtd_offer_p50": 88.04,
+              "hours_offer_below_lmp": 141,
+              "energy_twh_when_offer_below_lmp": 0.0336,
+              "mean_unrun_mw_when_offer_below_lmp": 38.3,
+              "cap_wtd_heat_rate": 15.1344
+            },
+            "econ": {
+              "nameplate_mw": 2468.1,
+              "mean_available_mw": 1760.5,
+              "energy_twh": 1.2849,
+              "utilisation_pct_of_available": 8.33,
+              "cap_wtd_offer_mean": 92.59,
+              "cap_wtd_offer_p50": 83.73,
+              "hours_offer_below_lmp": 181,
+              "energy_twh_when_offer_below_lmp": 0.236,
+              "mean_unrun_mw_when_offer_below_lmp": 411.0,
+              "cap_wtd_heat_rate": 12.9576
+            },
+            "peak": {
+              "nameplate_mw": 208.8,
+              "mean_available_mw": 151.8,
+              "energy_twh": 0.0013,
+              "utilisation_pct_of_available": 0.09,
+              "cap_wtd_offer_mean": 227.58,
+              "cap_wtd_offer_p50": 214.22,
+              "hours_offer_below_lmp": 9,
+              "energy_twh_when_offer_below_lmp": 0.0006,
+              "mean_unrun_mw_when_offer_below_lmp": 73.3,
+              "cap_wtd_heat_rate": 51.2042
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 14,
+              "mean_lmp": 23.08,
+              "model_cf_of_available_pct": 0.0,
+              "meter_cf_of_available_pct": 3.52,
+              "model_twh": 0.0,
+              "meter_twh": 0.001
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 104,
+              "mean_lmp": 28.13,
+              "model_cf_of_available_pct": 0.43,
+              "meter_cf_of_available_pct": 1.48,
+              "model_twh": 0.001,
+              "meter_twh": 0.0033
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 784,
+              "mean_lmp": 33.04,
+              "model_cf_of_available_pct": 0.83,
+              "meter_cf_of_available_pct": 2.04,
+              "model_twh": 0.014,
+              "meter_twh": 0.0345
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 734,
+              "mean_lmp": 37.67,
+              "model_cf_of_available_pct": 1.23,
+              "meter_cf_of_available_pct": 3.28,
+              "model_twh": 0.0193,
+              "meter_twh": 0.0517
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2281,
+              "mean_lmp": 44.67,
+              "model_cf_of_available_pct": 1.25,
+              "meter_cf_of_available_pct": 6.41,
+              "model_twh": 0.0618,
+              "meter_twh": 0.3178
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 2216,
+              "mean_lmp": 56.03,
+              "model_cf_of_available_pct": 2.09,
+              "meter_cf_of_available_pct": 15.66,
+              "model_twh": 0.1009,
+              "meter_twh": 0.7568
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1629,
+              "mean_lmp": 73.27,
+              "model_cf_of_available_pct": 13.6,
+              "meter_cf_of_available_pct": 27.53,
+              "model_twh": 0.5002,
+              "meter_twh": 1.0123
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 728,
+              "mean_lmp": 114.35,
+              "model_cf_of_available_pct": 29.67,
+              "meter_cf_of_available_pct": 25.24,
+              "model_twh": 0.5006,
+              "meter_twh": 0.4259
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 270,
+              "mean_lmp": 182.35,
+              "model_cf_of_available_pct": 25.32,
+              "meter_cf_of_available_pct": 24.57,
+              "model_twh": 0.1585,
+              "meter_twh": 0.1538
+            }
+          ]
+        },
+        "CT_CHP": {
+          "lp_units": 22,
+          "lp_nameplate_mw": 368.4,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.6747,
+            "meter_campd_gross_twh": 2.1721,
+            "eia923_class_twh": 2.3829,
+            "envelope_twh": 2.8477,
+            "model_cf_of_available_pct": 58.81,
+            "meter_cf_of_available_pct": 76.28,
+            "forced_floor_twh": 0.0402,
+            "mean_available_mw": 325.1,
+            "mean_lmp": 61.07
+          },
+          "deficit_total_gwh": 783.0,
+          "deficit_hours": 5756,
+          "surplus_total_gwh": 285.6,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 441,
+              "deficit_gwh": 27.0,
+              "share_pct": 3.4,
+              "mean_model_mw": 341.1,
+              "mean_meter_mw": 402.2,
+              "mean_env_mw": 341.7,
+              "mean_headroom_mw": 0.6,
+              "mean_lmp": 79.45
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 101,
+              "deficit_gwh": 40.5,
+              "share_pct": 5.2,
+              "mean_model_mw": 0.4,
+              "mean_meter_mw": 400.9,
+              "mean_env_mw": 344.5,
+              "mean_headroom_mw": 344.1,
+              "mean_lmp": 184.21
+            },
+            "INTERIOR_free": {
+              "hours": 5214,
+              "deficit_gwh": 715.6,
+              "share_pct": 91.4,
+              "mean_model_mw": 123.9,
+              "mean_meter_mw": 261.1,
+              "mean_env_mw": 327.4,
+              "mean_headroom_mw": 203.5,
+              "mean_lmp": 57.51
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 139.4,
+              "mean_available_mw": 123.0,
+              "energy_twh": 0.6561,
+              "utilisation_pct_of_available": 60.91,
+              "cap_wtd_offer_mean": 53.91,
+              "cap_wtd_offer_p50": 47.36,
+              "hours_offer_below_lmp": 5681,
+              "energy_twh_when_offer_below_lmp": 0.5812,
+              "mean_unrun_mw_when_offer_below_lmp": 20.6,
+              "cap_wtd_heat_rate": 8.4624
+            },
+            "econ": {
+              "nameplate_mw": 203.9,
+              "mean_available_mw": 179.9,
+              "energy_twh": 0.947,
+              "utilisation_pct_of_available": 60.09,
+              "cap_wtd_offer_mean": 50.15,
+              "cap_wtd_offer_p50": 44.64,
+              "hours_offer_below_lmp": 6584,
+              "energy_twh_when_offer_below_lmp": 0.9346,
+              "mean_unrun_mw_when_offer_below_lmp": 38.2,
+              "cap_wtd_heat_rate": 7.584
+            },
+            "peak": {
+              "nameplate_mw": 25.2,
+              "mean_available_mw": 22.2,
+              "energy_twh": 0.1082,
+              "utilisation_pct_of_available": 55.61,
+              "cap_wtd_offer_mean": 51.98,
+              "cap_wtd_offer_p50": 46.09,
+              "hours_offer_below_lmp": 6169,
+              "energy_twh_when_offer_below_lmp": 0.1072,
+              "mean_unrun_mw_when_offer_below_lmp": 4.9,
+              "cap_wtd_heat_rate": 7.9716
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 14,
+              "mean_lmp": 23.15,
+              "model_cf_of_available_pct": 2.81,
+              "meter_cf_of_available_pct": 69.11,
+              "model_twh": 0.0001,
+              "meter_twh": 0.003
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 100,
+              "mean_lmp": 28.1,
+              "model_cf_of_available_pct": 3.65,
+              "meter_cf_of_available_pct": 47.81,
+              "model_twh": 0.0012,
+              "meter_twh": 0.0152
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 778,
+              "mean_lmp": 33.08,
+              "model_cf_of_available_pct": 9.06,
+              "meter_cf_of_available_pct": 57.48,
+              "model_twh": 0.0226,
+              "meter_twh": 0.1432
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 743,
+              "mean_lmp": 37.66,
+              "model_cf_of_available_pct": 27.15,
+              "meter_cf_of_available_pct": 59.09,
+              "model_twh": 0.0641,
+              "meter_twh": 0.1394
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2286,
+              "mean_lmp": 44.71,
+              "model_cf_of_available_pct": 38.61,
+              "meter_cf_of_available_pct": 59.7,
+              "model_twh": 0.284,
+              "meter_twh": 0.4391
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 2209,
+              "mean_lmp": 56.07,
+              "model_cf_of_available_pct": 77.95,
+              "meter_cf_of_available_pct": 75.92,
+              "model_twh": 0.554,
+              "meter_twh": 0.5396
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1631,
+              "mean_lmp": 73.27,
+              "model_cf_of_available_pct": 94.5,
+              "meter_cf_of_available_pct": 97.25,
+              "model_twh": 0.5111,
+              "meter_twh": 0.526
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 730,
+              "mean_lmp": 114.32,
+              "model_cf_of_available_pct": 79.26,
+              "meter_cf_of_available_pct": 108.02,
+              "model_twh": 0.1966,
+              "meter_twh": 0.2679
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 269,
+              "mean_lmp": 182.49,
+              "model_cf_of_available_pct": 44.92,
+              "meter_cf_of_available_pct": 107.91,
+              "model_twh": 0.0411,
+              "meter_twh": 0.0987
+            }
+          ]
+        },
+        "ST_CHP": {
+          "lp_units": 5,
+          "lp_nameplate_mw": 323.5,
+          "n_bench_plants": 3,
+          "annual": {
+            "model_twh": 1.4401,
+            "meter_campd_gross_twh": 0.4996,
+            "eia923_class_twh": 0.7997,
+            "envelope_twh": 1.8788,
+            "model_cf_of_available_pct": 76.65,
+            "meter_cf_of_available_pct": 26.59,
+            "forced_floor_twh": 0.0365,
+            "mean_available_mw": 214.5,
+            "mean_lmp": 60.75
+          },
+          "deficit_total_gwh": 57.9,
+          "deficit_hours": 2017,
+          "surplus_total_gwh": 998.3,
+          "deficit_by_binding_lp_bound": {
+            "AT_ENVELOPE_outage": {
+              "hours": 498,
+              "deficit_gwh": 6.0,
+              "share_pct": 10.4,
+              "mean_model_mw": 6.1,
+              "mean_meter_mw": 18.2,
+              "mean_env_mw": 6.1,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 39.65
+            },
+            "AT_ENVELOPE_no_outage": {
+              "hours": 0,
+              "deficit_gwh": 0.0,
+              "share_pct": 0.0,
+              "mean_model_mw": 0.0,
+              "mean_meter_mw": 0.0,
+              "mean_env_mw": 0.0,
+              "mean_headroom_mw": 0.0,
+              "mean_lmp": 0.0
+            },
+            "INTERIOR_at_floor": {
+              "hours": 111,
+              "deficit_gwh": 4.4,
+              "share_pct": 7.6,
+              "mean_model_mw": 0.4,
+              "mean_meter_mw": 40.2,
+              "mean_env_mw": 288.5,
+              "mean_headroom_mw": 288.1,
+              "mean_lmp": 171.14
+            },
+            "INTERIOR_free": {
+              "hours": 1408,
+              "deficit_gwh": 47.4,
+              "share_pct": 81.9,
+              "mean_model_mw": 16.9,
+              "mean_meter_mw": 50.5,
+              "mean_env_mw": 200.2,
+              "mean_headroom_mw": 183.4,
+              "mean_lmp": 47.18
+            }
+          },
+          "bands": {
+            "committed": {
+              "nameplate_mw": 106.9,
+              "mean_available_mw": 72.8,
+              "energy_twh": 0.4883,
+              "utilisation_pct_of_available": 76.55,
+              "cap_wtd_offer_mean": 50.04,
+              "cap_wtd_offer_p50": 43.51,
+              "hours_offer_below_lmp": 6717,
+              "energy_twh_when_offer_below_lmp": 0.4667,
+              "mean_unrun_mw_when_offer_below_lmp": 8.3,
+              "cap_wtd_heat_rate": 8.0809
+            },
+            "econ": {
+              "nameplate_mw": 170.1,
+              "mean_available_mw": 111.3,
+              "energy_twh": 0.8091,
+              "utilisation_pct_of_available": 82.99,
+              "cap_wtd_offer_mean": 50.96,
+              "cap_wtd_offer_p50": 45.1,
+              "hours_offer_below_lmp": 6280,
+              "energy_twh_when_offer_below_lmp": 0.7836,
+              "mean_unrun_mw_when_offer_below_lmp": 0.1,
+              "cap_wtd_heat_rate": 7.4205
+            },
+            "peak": {
+              "nameplate_mw": 46.4,
+              "mean_available_mw": 30.4,
+              "energy_twh": 0.1747,
+              "utilisation_pct_of_available": 65.69,
+              "cap_wtd_offer_mean": 55.82,
+              "cap_wtd_offer_p50": 49.36,
+              "hours_offer_below_lmp": 5066,
+              "energy_twh_when_offer_below_lmp": 0.1729,
+              "mean_unrun_mw_when_offer_below_lmp": 0.2,
+              "cap_wtd_heat_rate": 8.1625
+            }
+          },
+          "revealed_supply_curve": [
+            {
+              "lmp_lo": 20,
+              "lmp_hi": 25,
+              "hours": 14,
+              "mean_lmp": 22.97,
+              "model_cf_of_available_pct": 10.83,
+              "meter_cf_of_available_pct": 36.91,
+              "model_twh": 0.0002,
+              "meter_twh": 0.0008
+            },
+            {
+              "lmp_lo": 25,
+              "lmp_hi": 30,
+              "hours": 118,
+              "mean_lmp": 28.21,
+              "model_cf_of_available_pct": 11.77,
+              "meter_cf_of_available_pct": 16.42,
+              "model_twh": 0.0026,
+              "meter_twh": 0.0037
+            },
+            {
+              "lmp_lo": 30,
+              "lmp_hi": 35,
+              "hours": 798,
+              "mean_lmp": 32.98,
+              "model_cf_of_available_pct": 40.14,
+              "meter_cf_of_available_pct": 30.19,
+              "model_twh": 0.0395,
+              "meter_twh": 0.0297
+            },
+            {
+              "lmp_lo": 35,
+              "lmp_hi": 40,
+              "hours": 781,
+              "mean_lmp": 37.8,
+              "model_cf_of_available_pct": 56.83,
+              "meter_cf_of_available_pct": 30.07,
+              "model_twh": 0.0749,
+              "meter_twh": 0.0396
+            },
+            {
+              "lmp_lo": 40,
+              "lmp_hi": 50,
+              "hours": 2244,
+              "mean_lmp": 44.69,
+              "model_cf_of_available_pct": 59.24,
+              "meter_cf_of_available_pct": 25.18,
+              "model_twh": 0.2621,
+              "meter_twh": 0.1114
+            },
+            {
+              "lmp_lo": 50,
+              "lmp_hi": 65,
+              "hours": 2319,
+              "mean_lmp": 56.48,
+              "model_cf_of_available_pct": 91.95,
+              "meter_cf_of_available_pct": 28.06,
+              "model_twh": 0.4978,
+              "meter_twh": 0.1519
+            },
+            {
+              "lmp_lo": 65,
+              "lmp_hi": 90,
+              "hours": 1498,
+              "mean_lmp": 73.88,
+              "model_cf_of_available_pct": 98.15,
+              "meter_cf_of_available_pct": 26.03,
+              "model_twh": 0.3778,
+              "meter_twh": 0.1002
+            },
+            {
+              "lmp_lo": 90,
+              "lmp_hi": 150,
+              "hours": 725,
+              "mean_lmp": 114.34,
+              "model_cf_of_available_pct": 83.54,
+              "meter_cf_of_available_pct": 26.43,
+              "model_twh": 0.1525,
+              "meter_twh": 0.0482
+            },
+            {
+              "lmp_lo": 150,
+              "lmp_hi": null,
+              "hours": 263,
+              "mean_lmp": 182.08,
+              "model_cf_of_available_pct": 44.88,
+              "meter_cf_of_available_pct": 19.28,
+              "model_twh": 0.0326,
+              "meter_twh": 0.014
+            }
+          ]
+        }
+      }
+    }
+  }
+}
