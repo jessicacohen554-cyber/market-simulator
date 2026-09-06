@@ -355,3 +355,55 @@ evidence and the comment is only the corroboration.
 `d13d1cba` is complete and every hunk is INERT for a CAISO backcast. G-CTRL
 form 4 stands; no control solve is spent.** §1.2's single LIVE hunk and its
 `co2` restriction remain the only exception on the whole chain.
+
+### §1.5 — G-DRIFT EXTENSION: `d13d1cba` → `d520b891` (SCN-LOAD). The one delta that moved a table a CAISO backcast config carries
+
+10 files, +1,944 / −263. Eight are the new `scripts/lib/load_forecast/*` intake
+package (not imported by any solve path) and `data/datacenter.py` (+82, read
+only when `datacenter_load_path != "off"`). The tenth is
+`config/constants.py`, +735 / −263 — and constants.py IS on the backcast path
+(rule 5 `[R-NO-MAGIC]`), so it was audited by **extracting and comparing the
+values of every top-level constant the diff touches**, at both shas, rather
+than by reading the commit subject.
+
+Four constants are touched. Their values, compared object-to-object:
+
+| constant | changed? | verdict |
+|---|---|---|
+| `CORRELATED_OUTAGE_CURVE` | **identical** | the one constant here that a backcast genuinely reads did not move. |
+| `DATACENTER_ADDITIONS_MW` | changed (all 5 ISOs incl. CAISO) | read only by `data/datacenter.py`; the CAISO backcast config carries `datacenter_load_path='off'`, so the reader never runs. |
+| `ELECTRIFICATION_LAYERS` | changed (ERCOT/NEISO/NYISO — **not CAISO**) | same reader, same gate. |
+| `DEMAND_GROWTH_RATES` | changed, **CAISO included** | §1.5.1 — the one that needed a real proof. |
+
+### §1.5.1 — `DEMAND_GROWTH_RATES["CAISO"]` moved, and the backcast is still byte-identical — measured, not argued
+
+The CAISO row genuinely changed:
+
+| path | before | after |
+|---|---|---|
+| `mid.near` | 0.028 | **0.032425** |
+| `mid.long` | 0.025 | **0.016710** |
+| `low` / `high` | 0.015/0.015, 0.042/0.035 | 0.017371/0.010026, 0.048638/0.023394 |
+
+and `backcast_config("CAISO", …)` carries `demand_growth_path='mid'` in all
+three years — i.e. the changed row IS selected by the config. So "forecast-only"
+would have been an assertion, not a finding. The proof is that the *span* is
+empty, not that the table is unread: `runner._scale_demand` compounds
+`range(config.weather_year, year)`, and a backcast pins `weather_year == year`.
+Executed at HEAD on the real per-year configs:
+
+| year | `weather_year` | `year == weather_year` | scale factor | demand array identical |
+|---|--:|:--:|--:|:--:|
+| 2023 | 2023 | ✔ | 1.000000000000 | ✔ |
+| 2024 | 2024 | ✔ | 1.000000000000 | ✔ |
+| 2025 | 2025 | ✔ | 1.000000000000 | ✔ |
+
+The function's own docstring says the same ("A backcast (`year == weather_year`)
+still gets a factor of 1"), but the table is the evidence. The only other
+consumer, `capacity_evolution/retirements.py:340`, is unreachable for the
+reason §1.3.1 already established: the calibration lane never calls
+`evolve_fleet`.
+
+**⇒ Chain complete through `d520b891`; every hunk INERT for a CAISO backcast.
+G-CTRL form 4 stands, no control solve spent, and §1.2's `import_co2_tons`
+hunk with its `co2` restriction remains the only LIVE exception on the chain.**
