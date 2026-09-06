@@ -50,13 +50,28 @@ ALL_ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM")
 # The phase-2 legs, as released by the director (§0au.3): PJM gets the FULL
 # 2021-2025 span because its rule-29 screen passed; CAISO, ERCOT and MISO get
 # the 2021-2023 window, whose 2022 bridge year exercises the mechanism's second
-# largest binding delta at half the LP. NEISO and NYISO are DEFERRED.
-LEGS = {
+# largest binding delta at half the LP. NEISO and NYISO were DEFERRED there.
+#
+# PHASE 3 (2026-09-06) adds the two deferred ISOs on the same 2021-2023 window,
+# and is why the span registry now covers all six and the ISO set is selectable
+# with ``--isos`` rather than hard-coded. **The default is unchanged**, so
+# ``p2_predeclare.py`` with no arguments still reproduces the phase-2
+# declaration exactly; phase 3 passes ``--isos NEISO NYISO --out
+# docs/handoffs/d76/p3_predeclare.json`` and writes a separate file, leaving
+# phase 2's committed record untouched.
+SPANS = {
     "PJM": (2021, 2025),
     "CAISO": (2021, 2023),
     "ERCOT": (2021, 2023),
     "MISO": (2021, 2023),
+    "NEISO": (2021, 2023),
+    "NYISO": (2021, 2023),
 }
+
+#: The phase-2 default ISO set. Not widened — phase 3 selects its own.
+PHASE2_ISOS = ("PJM", "CAISO", "ERCOT", "MISO")
+
+LEGS = {iso: SPANS[iso] for iso in PHASE2_ISOS}
 
 # Both legs of every A/B carry this flag; it is decision-neutral (the harness
 # help: "Byte-identical fleet outcome") and it is what makes the whole-ledger
@@ -162,7 +177,16 @@ def predeclare_one(iso: str) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="docs/handoffs/d76/p2_predeclare.json")
+    ap.add_argument(
+        "--isos", nargs="+", default=None, choices=sorted(SPANS),
+        help="ISOs to declare (default: the phase-2 four). Phase 3 passes "
+             "NEISO NYISO and its own --out, leaving phase 2's record intact.",
+    )
     args = ap.parse_args()
+
+    if args.isos:
+        LEGS.clear()
+        LEGS.update({iso: SPANS[iso] for iso in args.isos})
 
     ok, notes = stop1()
     keys = leg_keys()
