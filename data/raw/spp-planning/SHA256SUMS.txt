@@ -10,3 +10,18 @@ e9b494a820a2691d2dee41d3d04b4c65148dee25d4215c4afc2c9c40d3446616  2025_ITP_Repor
 95772845caf6b34dcc2d73cdd35b402d33f4ed249882f0f0866e8ddc603486f8  SPP_Planning_Criteria_v5.0A.pdf                   # tracked
 05892a607dd63fa254dfdfef9903841e05f6eeed62ac3291ea9c7f541a97e791  Long_Term_PRM_Policy_Paper.pdf                    # tracked
 e0bc365b0b1b1dfd87912734b699d4bed787eaec77410783b0666cfbc89679c9  spp-system-interfaces-stakeholder-reference-guide.pdf  # tracked
+# --- appended 2026-09-06 by lane SPP-13 (FTP-route probe + row-11 sweep). Same rule: checksums
+# are of the artifact AS SERVED by www.spp.org; the docx is the guide extracted unmodified from the zip.
+27c0005bba17063ce61b06c484c08b9b57356275e271d7794794318824b2c5c7  SPP_Public_Data_Access_20230707.pdf              # tracked (0.24 MB) — names ftp://pubftp.spp.org
+e2e8478bc8b0fd5fba8201b4c1f4197a4983d88a2406d710cba2fe230cdebee7  SPP_Markets_Public_Data_Guide_and_Samples_v35.zip # NOT tracked (82.6 MB) — guide docx + 71 sample files
+a27652eda42359f3074979ad6235564e62cb1579ed6b41b88e4b27f1ac2cc09c  SPP_Markets_Public_Data_Guide_v35.docx            # tracked (0.28 MB) — member of the zip, byte-identical
+1780e9735dc54e6a2c32178d22696df970af301421ce0c7aa8d0b01741df539c  ITP_Manual_v3.3.pdf                               # tracked (1.27 MB)
+78731f0b0abfe55a5e1bcef419184d27b797a7e1d4a8b91dc64f4e80eb24ca6e  20_Year_Assessment_Manual.pdf                     # tracked (0.54 MB)
+5989b06c4cd1f04f45f65ed70749839868d9fd2f4f12fba0b7781789f493cce9  2022_20-Year_Assessment_Report_v1.0.pdf           # NOT tracked (5.3 MB) — transcriptions/2022_20-Year_Assessment_Report_v1.0.txt
+e9da478cb00ec8b56eb7bdcb4ac5a256db9303621158f035c298ba0f9d8827fc  2025_ITP_Constraint_Assessment_for_Approval_2024-12-02.pdf  # tracked (0.30 MB)
+d3de297c2e419ea81cd19dfc35428da9df4957510d956ba865b5863276347b82  2026_ITP_Constraint_Assessment_for_Review_2026-02-04.pdf    # tracked (0.26 MB)
+# sample-file payloads landed from the v35 zip into their product directories (see each dir's README):
+956f6709058e96f80f6a2457b274e8f25633194a8e876b2f7ef317e86ba59cd0  ../spp-genmix/GenMix_2024_SPP.csv                 # tracked (12.4 MB)
+4c2415fbb67de213af21c25b067b46a1c997c0c0d7f0b585642975848edb37ba  ../spp-genmix/GenMixYTD_SPP.csv                   # tracked (10.4 MB)
+3c21af94f69d12b04a22cb43838b83f1e452606ddc5e8cedf14edf63650c6b36  GenMix365_SPP.csv                                 # NOT landed — its span 2024-12-16..2025-12-16 is covered by the two above
+0c804a73fffc12893aa4d8810d140da489a469e9dc1c85e251581a1a9340a675  ../spp-hourly-load/Peak_Load_by_Month.csv         # tracked (2 KB)

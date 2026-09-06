@@ -170,6 +170,9 @@ chart-read caveat, which is material and is not repeated here.
 
 ### 5. N↔S transfer capability and SPS tie ratings — manifest row 11, **NOT FOUND**
 
+> **SWEPT 2026-09-06 by lane SPP-13 — see §7 below.** All four candidates named at the end of
+> this section were fetched and read; none is public. Nothing in this section was changed.
+
 The plan expects the ITP report to carry a transfer-capability table to transcribe
 (`_spp_config`'s N↔S TTC, and the SPS tie ratings). **The 2025 ITP Assessment
 Report does not contain one.** It is a project-portfolio document — needs,
@@ -202,3 +205,112 @@ item — never buried in a guess.
   `load-forecast` datatype shape.
 - `data/raw/spp-{hourly-load,genmix,binding-constraints,or-mcp}/` — the blocked
   `portal.spp.org` products.
+
+---
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route (rows 5–9) and the row-11 sweep
+
+Charter: `docs/multi-iso/spp-addition-plan-2026-09.md` §5 row SPP-13 (card **P11**).
+FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`. URLs and checksums: `SOURCES.md`,
+`SHA256SUMS.txt`. Transcriptions added here are **`pypdf` `extract_text`** output (page
+markers `=====PDFPAGE n=====`), not `pdfminer` as the earlier ones — `pdfminer` would not
+import in the session; the docx text is `word/document.xml` with tags stripped, one paragraph
+per line. All unedited.
+
+### 6. The FTP public-data route — DOCUMENTED, ANONYMOUS, and blocked only by this session's egress
+
+`SPP_Public_Data_Access_20230707.pdf` (v3.0, July 2023), printed p. 2, verbatim:
+*"Programmatic (API) access to public data is via FTP."* — Production
+**`ftp://pubftp.spp.org`**, Member Test `ftp://pubftp-mte.itespp.org`.
+
+`SPP_Markets_Public_Data_Guide_v35.docx`, "FTP Site Access" (p. 11), verbatim: *"User:
+anonymous · Password: <use an email address>"*. **No Marketplace credential is required for
+the FTP route** — the `X-SPP-UI-Token` that blocks `portal.spp.org` (SPP-12 §2) is a property
+of the web UI, not of the data.
+
+| Product | FTP folder (PRD) | File grammar (guide pp. 12–22) |
+|---|---|---|
+| RTBM LMP by settlement location | `ftp://pubftp.spp.org/Markets/RTBM/LMP_By_SETTLEMENT_LOC/` | `RTBM-LMP-SL-YYYYMMDDHHMM.csv` (5-min) · `RTBM-LMP-DAILY-SL-YYYYMMDD.csv` · **`RTBM-LMP-MONTHLY-SL-YYYYMM.csv`** · `YYYY-RTBM-LMP-SL-ANNUAL-ROLLUP.csv` (zipped) |
+| DA LMP by settlement location | `ftp://pubftp.spp.org/Markets/DA/LMP_By_SETTLEMENT_LOC/` | `DA-LMP-SL-YYYYMMDDHHMM.csv` · **`DA-LMP-Monthly-SL-YYYYMM.csv`** |
+| RTBM binding constraints | `ftp://pubftp.spp.org/Markets/RTBM/BINDING_CONSTRAINTS/` | `RTBM-BC-YYYYMMDDHHMM.csv` (5-min) · `RTBM-DAILY-BC-YYYYMMDD.csv` · monthly/yearly rollups per the DA grammar |
+| DA binding constraints | `ftp://pubftp.spp.org/Markets/DA/BINDING_CONSTRAINTS/` | `DA-BC-YYYYMMDDHHMM.csv` · `DA-BC-MONTHLY-YYYYMM.csv` · `DA-BC-YEARLY-YYYY.zip`; `By_Day/` under each month |
+| DA congestion $ by constraint | `ftp://pubftp.spp.org/Markets/DA/Congestion-Constraint` | `CONGESTION-CONSTRAINT-YYYYMM.csv` (monthly) |
+| Hourly load by area | `ftp://pubftp.spp.org/Operational_Data/HourlyLoad/` | `DAILY_HOURLY_LOAD-YYYYMMDD.csv` (deleted after roll-up) · **`HOURLY_LOAD-YYYYMM.csv`** |
+| Peak load by month | `ftp://pubftp.spp.org/Operational_Data/Peak_Load/` | `Peak_Load_by_Month.csv` (replaced monthly) |
+| Generation mix historical | `ftp://pubftp.spp.org/Operational_Data/GEN_MIX/` | `GenMix_YYYY_SPP.csv` · `GenMixYTD_SPP.csv` · `GenMix365_SPP.csv` · `GenMix2Hour_SPP.csv` (+ `_SWPW`) |
+| DA MCP | `ftp://pubftp.spp.org/Markets/DA/MCP/` | `DA-MCP-YYYYMMDDHHMM.csv` (daily, hourly rows) |
+| RTBM MCP | `ftp://pubftp.spp.org/Markets/RTBM/MCP/` | `RTBM-MCP-YYYYMMDDHHMM.csv` (5-min) · `RTBM-MCP-DAILY-YYYYMMDD.csv` · `RTBM_MCP_YYYY.csv` (zipped) |
+| VER curtailment (5-min) | `ftp://pubftp.spp.org/Operational_Data/VER_Curtailment/` | `VER-Curtailments-YYYYMMDD.csv` |
+| Historical tie flow | `ftp://pubftp.spp.org/Operational_Data/TIE_FLOW_HISTORICAL` | `TieFlows_<MON><YEAR>-SPP.csv` (monthly, 1-min) |
+| Permanent / temporary flowgates | `ftp://pubftp.spp.org/Operational_Data/Flowgates/Permanent%20Flowgates/` (…`Temporary Flowgates/`, `Archived Temporary Flowgates/`) | `Flowgates.csv` · `Temp_Flowgate.csv` · `Temp_Flowgate_Archive.csv` |
+
+Guide p. 8 (the "Data Locations Summary" head-note), verbatim: *"Public Data files will be zipped (.zip) after 2 years."* — so the
+2023 monthly files are inside a yearly zip, exactly as the portal route already assumed
+(`scripts/data/build_spp_lmp_reference.py` docstring).
+
+**Probed 2026-09-06 from this session — the route is transport-blocked here, not refused by
+SPP.** The session's egress is an HTTPS `CONNECT` relay; a `CONNECT pubftp.spp.org:21` tunnel
+opens (`200 Connection Established`) but **no FTP banner ever arrives** and the relay closes
+the tunnel after ~36 s with 0 bytes sent / 0 payload bytes received. The discriminating
+control: `CONNECT ftp.gnu.org:21` and `CONNECT ftp.debian.org:21` — two known-live anonymous
+FTP servers that greet on connect — behave identically (no banner within 20 s). Ports 443 and
+990 on `pubftp.spp.org` reset immediately after the TLS ClientHello; plain `http://` returns
+the relay's own `503 upstream connect error`; the `WebFetch` tool answers *"Unsupported
+protocol ftp:"*. Conclusion: **the egress relays TLS-on-443 only; FTP (server-speaks-first,
+plaintext, port 21) cannot traverse it from any session with this network policy.** No
+credential is missing. Full probe log: FINDING §1.
+
+**What that means for the builder.** `scripts/data/build_spp_lmp_reference.py` was NOT
+edited: the charter allowed an FTP transport only if the route worked from here, and it does
+not. The exact FTP paths the flag would use are the first two rows of the table above; the
+monthly-SL grammar is identical to the portal's (`{DA-LMP-Monthly,RTBM-LMP-MONTHLY}-SL-YYYYMM.csv`),
+so the parse step is unchanged.
+
+### 7. Row 11 — N↔S transfer capability and SPS tie ratings: SWEPT, NOT PUBLIC
+
+All four candidates SPP-12 §5 named were fetched and read in the charter's order. **None
+states an N↔S MW figure or an SPS tie MW rating.** Per document:
+
+1. **ITP Manual v3.3** (76 pp., `ITP_Manual_v3.3.pdf`). A methodology manual. Its §2.2.3
+   "Constraint Assessment" (printed p. 25) defines how the constraint list is built for the
+   economic model, and §4 defines a flowgate's congestion score (footnote 27, printed p. 30:
+   *"The shadow price represents the potential reduction in total SPP production costs if the
+   limit on a congested flowgate could be increased by 1 MW"*); it names no interface and
+   states no rating. FCITC appears only as the generator-outlet-facility screen
+   (§2.2.2.3, printed p. 24).
+2. **2022 20-Year Assessment Report v1.0** (102 pp., text only — 5.3 MB payload not tracked).
+   A project-portfolio report. North–south flow is discussed **qualitatively** — e.g. §5.3.9
+   *Potter County Interchange–Tolk Station 345 kV*, printed p. 84: *"the north-south flow from
+   this area into southern/central Texas becomes disrupted"* — with no transfer-capability
+   MW anywhere in the document. Its only "transfer capability" usage is the siting-rank ratio
+   (printed p. 33: *"sited at the top 15% ranked sites in the region by ratio of transfer
+   capability"*), the same object SPP-12 found in the 2025 ITP report.
+3. **20-Year Assessment Manual** (17 pp., `20_Year_Assessment_Manual.pdf`). Printed p. 12,
+   verbatim: *"Unless other information is available, each constraint's rating will be
+   selected based upon the applicable Rating A (normal rating) or Rating B (emergency rating)
+   in the power flow model."* — i.e. ratings live in the (CEII) powerflow model, not in the
+   manual. DC ties are §"DC Ties and Lines" (printed p. 10), no MW.
+4. **ITP Postings folder** (`?id=31491`, 781 documents). Swept by title for transfer /
+   interface / tie / rating / constraint / SPS / manual. The only hits are the per-cycle
+   **Constraint Assessment** transmittals (2015–2026). The two current ones were fetched:
+   - *2025 ITP Constraint Assessment Final Posting for Approval* (12-02-2024), p. 1: the
+     approved list includes *"4) Interfaces and Nomograms"* and *"Ratings for the
+     **MHEB_SPC_W, MHEX_S, SPPSPSTIES, and SPSNMTIES** and select monitored elements have
+     been relaxed to allow for the event files to reasonably simulate congestion"*. **This is
+     the first public naming of the SPS tie interfaces as ITP-modelled objects**
+     (`SPPSPSTIES` = SPP↔SPS ties; `SPSNMTIES` = SPS↔New Mexico ties). The ratings
+     themselves are in `2025 ITP Constraint Assessment Recommendation.xlsx`, posted to
+     **GlobalScape → ITP → NCD (CEII, RSD) → NDA**, marked *"CONTAINS CONFIDENTIAL AND
+     PROTECTED MATERIAL … DO NOT RELEASE"*.
+   - *2026 ITP Constraint Assessment Posting (East Interconnection)* (02-04-2026): same
+     structure (`2026 ITP Constraint Assessment_02042026.xlsx`, same GlobalScape path,
+     NDA-gated).
+
+**Verdict for card P11 / SPP-20:** the N↔S transfer capability and the SPS tie ratings are
+**not public on `www.spp.org`** — they exist as rows of an NDA/CEII workbook. Rule 14
+`[R-ACCURATE]` therefore governs exactly as SPP-12 §5 said: SPP-20 registers a **Tier-3
+reconciled estimate with the misalignment documented in place**, and the real value stays an
+open root-cause item. Two things this sweep adds for that estimate: the interface names to
+cite (`SPPSPSTIES`, `SPSNMTIES`), and the fact that the measured substitute — the RTBM
+binding-constraint archive's `Real Time Effective Limit` column per flowgate (schema in
+`../spp-binding-constraints/README.md`) — is public on the FTP route and is the SPP-53 input.

@@ -1,0 +1,3722 @@
+
+=====PDFPAGE 1=====
+ 
+ 
+2022 
+20-YEAR 
+ASSESSMENT 
+REPORT  
+ 
+By SPP Engineering 
+Published on 7/31/2023 
+Version 1.0 
+
+=====PDFPAGE 2=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  i 
+REVISION HISTORY 
+DATE OR VERSION 
+NUMBER AUTHOR CHANGE DESCRIPTION COMMENTS 
+06/21/2023 v0.1 SPP Staff Post Draft Report For TWG/ESWG review/approval 
+on 6/28/2023 
+06/23/2023 v0.2 SPP Staff Post updated Draft Report 
+For TWG/ESWG review/approval 
+on 6/28/2023. The following 
+sections were updated: Executive 
+Summary, Introduction, 5.4, 5.5 
+& 6, and some minor non-
+substantive clean-up. 
+06/26/2023 v0.3 SPP Staff Post updated Draft Report 
+For TWG/ESWG review/approval 
+on 6/28/2023. The following 
+sections were updated: Executive 
+Summary (graphic at top of 
+section), some project names 
+updated for consistency, Rate 
+Impacts tables updated and 
+summary Rate Impacts table 
+added 
+06/30/2023 v0.4 SPP Staff Posted updated Draft 
+Report 
+Updated per TWG/ESWG 
+feedback; posted for MOPC 
+review/approval. The following 
+sections were updated: Executive 
+Summary (graphic, some 
+verbiage); changed carbon 
+capture & sequestration from 
+CCS to CC&S; Corrected MTEP20 
+to MTEP21 in external resource 
+plan; Updated unique mon-con 
+pairs in section 3.1; replaced 
+figure 5.4 to correct axis); 
+updated section 5.5 verbiage to 
+clarify no NTCs issued from 20YA 
+07/14/2023 v1.0 SPP Staff Post Final Report 
+MOPC approved report on 
+7/10/2023. Posting 7/14/2023 
+for Board review and approval 
+on 7/25/2023. 
+07/31/2023 v1.0 SPP Staff Post Final Report Board approved 7/25/2023; 
+posting to SPP.org 
+ 
+  
+=====PDFPAGE 3=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  ii 
+CONTENTS 
+REVISION HISTORY .......................................................................................................................................................... I 
+FIGURES ............................................................................................................................................................................. IV 
+TABLES ............................................................................................................................................................................... VI 
+EXECUTIVE SUMMARY .................................................................................................................................................. 7 
+1 INTRODUCTION ................................................................................................................................................... 12 
+1.1 The 2022 20-Year Assessment ................................................................................................................... 12 
+1.2 Report Structure .............................................................................................................................................. 12 
+1.3 Stakeholder Collaboration ........................................................................................................................... 13 
+1.4 20YA Mitigation ............................................................................................................................................... 14 
+1.5 20YA Successes and Challenges ............................................................................................................... 14 
+1.5.1 20YA Successes .................................................................................................................................. 14 
+1.5.2 20YA Challenges and Limitations ............................................................................................... 14 
+2 MODEL DEVELOPMENT .................................................................................................................................... 16 
+2.1 Model Assumptions ....................................................................................................................................... 16 
+2.1.1 Futures Development ...................................................................................................................... 16 
+2.1.2 Renewable Policy Review ............................................................................................................... 20 
+2.2 Resource Expansion ....................................................................................................................................... 21 
+2.2.1 Renewable Resource Expansion Plan ........................................................................................ 21 
+2.2.2 Conventional Resource Expansion Plan.................................................................................... 22 
+2.2.3 External Resource Plan .................................................................................................................... 31 
+2.2.4 Siting Plan ............................................................................................................................................ 33 
+2.3 Market Economic Model .............................................................................................................................. 43 
+2.3.1 Load and Energy Forecasts............................................................................................................ 43 
+2.3.2 Generation Resources ..................................................................................................................... 44 
+2.3.3 Fuel Prices ............................................................................................................................................ 46 
+2.3.4 Emissions .............................................................................................................................................. 47 
+2.4 Constraint Assessment.................................................................................................................................. 49 
+3 NEEDS ASSESSMENT ......................................................................................................................................... 50 
+3.1 Economic Needs.............................................................................................................................................. 50 
+3.1.1 Future 1 Economic Needs .............................................................................................................. 51 
+3.1.2 Future 2 Economic Needs .............................................................................................................. 54 
+3.1.3 Future 3 Economic Needs .............................................................................................................. 56 
+3.1.4 Future 4 Economic Needs .............................................................................................................. 59 
+3.2 Public Policy Needs ........................................................................................................................................ 61 
+4 SOLUTION DEVELOPMENT AND EVALUATION ....................................................................................... 62 
+4.1 Economic Project Screening ....................................................................................................................... 62 
+4.2 Public Policy Project Screening ................................................................................................................. 62 
+5 PORTFOLIO DEVELOPMENT ............................................................................................................................ 64 
+5.1 Portfolio Development Process ................................................................................................................. 64 
+5.2 Project Selection and Grouping ................................................................................................................ 64 
+=====PDFPAGE 4=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  iii 
+5.2.1 Economic Grouping ......................................................................................................................... 64 
+5.3 Project Narratives ........................................................................................................................................... 82 
+5.3.1 2nd Fort Smith 500/345 kV transformer .................................................................................... 82 
+5.3.2 Fort Smith-Thistle 345 kV new line ............................................................................................ 82 
+5.3.3 Flint Creek-Buffalo Flats 345 kV new line................................................................................. 82 
+5.3.4 Sooner-Fort Smith 345 kV new line ........................................................................................... 83 
+5.3.5 Huben-Lacygne 345 kV new line ................................................................................................ 83 
+5.3.6 Riverside Station-Matthewson 345 kV new line .................................................................... 83 
+5.3.7 Gracemont-Anadarko 345 kV new line; New Anadarko 345/138 kV transformer ... 84 
+5.3.8 White Swan-Eagle 345 kV new line ............................................................................................ 84 
+5.3.9 Potter County Interchange-Tolk Station 345 kV new line ................................................. 84 
+5.3.10 Ellendale-Twin Brooks 345 kV transformer Line Tap to Groton; Broadland-Groton 345 kV 
+new line 85 
+5.3.11 Sibley-Nashua 345 kV new line ................................................................................................... 85 
+5.3.12 Sibley-Hawthorne 345 kV new line ............................................................................................ 85 
+5.3.13 Cimarron-Norman Hill 345 kV new line ................................................................................... 85 
+5.4 Adjusted Production Cost Benefits .......................................................................................................... 86 
+5.5 Rate Impacts ..................................................................................................................................................... 87 
+6 SENSITIVITY ANALYSIS ...................................................................................................................................... 94 
+6.1 Sensitivity Input Data .................................................................................................................................... 94 
+6.2 Sensitivity Results ........................................................................................................................................... 96 
+7 GLOSSARY .............................................................................................................................................................. 99 
+ 
+=====PDFPAGE 5=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  iv 
+FIGURES  
+Figure 0.1: 20YA Future 1 and Future 2 EHV Projects ...................................................................................................... 9 
+Figure 0.2: 20YA Future 3 and Future 4 EHV Projects .................................................................................................... 10 
+Figure 2.1: Future 1 Monthly Generation by Month and Resource Class .............................................................. 24 
+Figure 2.2: Future 2 Monthly Generation by Month and Resource Class .............................................................. 25 
+Figure 2.3: Future 3 and Future 4 Monthly Generation by Month and Resource Class .................................... 26 
+Figure 2.4: Carbon Tax Impacts on CO2 Emissions.......................................................................................................... 28 
+Figure 2.5: Nameplate and Accredited Capacity Additions ......................................................................................... 31 
+Figure 2.6: Capacity Additions by Unit Type and Area .................................................................................................. 32 
+Figure 2.7: 2042 Future 1 Utility-Scale Solar Siting Plan ............................................................................................... 33 
+Figure 2.8: 2042 Future 2 Utility-Scale Solar Siting Plan ............................................................................................... 34 
+Figure 2.9: 2042 Future 3 and Future 4 Utility-Scale Solar Siting Plan .................................................................... 34 
+Figure 2.10: 2042 Future 1 Wind Siting Plan ..................................................................................................................... 35 
+Figure 2.11: 2042 Future 2 Wind Siting Plan ..................................................................................................................... 36 
+Figure 2.12: 2042 Future 3 and Future 4 Wind Siting Plan .......................................................................................... 36 
+Figure 2.13: 2042 Future 1 Conventional Siting Plan ..................................................................................................... 37 
+Figure 2.14: 2042 Future 2 Conventional Siting Plan ..................................................................................................... 38 
+Figure 2.15: 2042 Future 3 and Future 4 Conventional Siting Plan .......................................................................... 38 
+Figure 2.16: 2042 Future 1 Energy Storage Siting Plan ................................................................................................. 39 
+Figure 2.17: 2042 Future 2 Energy Storage Siting Plan ................................................................................................. 40 
+Figure 2.18: 2042 Future 3 and Future 4 Energy Storage Siting Plan ...................................................................... 40 
+Figure 2.19: 2042 Future 2 Distributed Solar Siting Plan .............................................................................................. 41 
+Figure 2.20: 2042 Future 3 and Future 4 Distributed Solar Siting Plan ................................................................... 42 
+Figure 2.21: SPP Peak Load ...................................................................................................................................................... 43 
+Figure 2.22: Monthly Energy.................................................................................................................................................... 44 
+Figure 2.23: Projected Cumulative Retirements for 2023 ITP and 20YA ................................................................. 45 
+Figure 2.24: Annual Nameplate Capacity by Fuel Type ................................................................................................. 45 
+Figure 2.25: Total Generation by Technology Type ........................................................................................................ 46 
+Figure 2.26: Average Fuel Cost ............................................................................................................................................... 47 
+Figure 2.27: 2042 Emissions ..................................................................................................................................................... 48 
+Figure 2.28: 2042 Emissions by Zone ................................................................................................................................... 48 
+Figure 2.29: Constraint Assessment Process ..................................................................................................................... 49 
+Figure 3.1: Future 1 Economic Needs .................................................................................................................................. 51 
+Figure 3.2: Future 2 Economic Needs .................................................................................................................................. 54 
+Figure 3.3: Future 3 Economic Needs .................................................................................................................................. 56 
+Figure 3.4: Future 4 Economic Needs .................................................................................................................................. 59 
+Figure 5.1: Portfolio Development Process ........................................................................................................................ 64 
+Figure 5.2: Future 1 and Future 2 EHV Economic Projects ........................................................................................... 75 
+Figure 5.3: Future 3 and Future 4 EHV Economic Portfolio ......................................................................................... 77 
+=====PDFPAGE 6=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  v 
+Figure 5.4: B/C Comparison to Final Groupings............................................................................................................... 80 
+Figure 5.5: Future 3 and Future 4 CO2 Emissions ............................................................................................................ 81 
+Figure 5.6: Future 3 and Future 4 CO2 Emissions by Zone ........................................................................................... 81 
+Figure 5.7: APC Calculations .................................................................................................................................................... 86 
+Figure 5.8: B/C Ratios by Future ............................................................................................................................................. 87 
+Figure 6.1: Gas Price Sensitivity .............................................................................................................................................. 94 
+Figure 6.2: Demand Sensitivity ............................................................................................................................................... 95 
+Figure 6.3: Solar and Wind Sensitivity ................................................................................................................................. 95 
+Figure 6.4: Future 1 Sensitivity Analysis APC Benefit ($MM) ....................................................................................... 96 
+Figure 6.5: Future 2 Sensitivity Analysis APC Benefit ($MM) ....................................................................................... 97 
+Figure 6.6: Future 3 Sensitivity Analysis APC Benefit ($MM) ....................................................................................... 97 
+Figure 6.7: Future 4 Sensitivity Analysis APC Benefit ($MM) ....................................................................................... 98 
+ 
+  
+=====PDFPAGE 7=====
+Southwest Power Pool, Inc. 
+2022 20-Year Assessment Report  vi 
+TABLES 
+Table 0.1: EHV Project List ........................................................................................................................................................ 11 
+Table 0.2: One-year EHV APC Benefits and B/C ratios .................................................................................................. 11 
+Table 2.1: Future Drivers ........................................................................................................................................................... 20 
+Table 2.2: 20YA RPS by State................................................................................................................................................... 20 
+Table 2.3: Minimum Renewable Additions by Future .................................................................................................... 21 
+Table 2.4: EnCompass Financial Inputs ................................................................................................................................ 22 
+Table 2.5: New Generation Alternatives .............................................................................................................................. 23 
+Table 2.6: Scoped Nameplate Capacity ............................................................................................................................... 23 
+Table 2.7: EnCompass Recommended Capacity Additions (GW) .............................................................................. 25 
+Table 2.8: Solar & Wind Nameplate Amount Updates.................................................................................................. 27 
+Table 2.9: Updated Nameplate and ELCC Amounts in MW ........................................................................................ 29 
+Table 2.10: Conventional Generation Additions by Zone ............................................................................................ 30 
+Table 3.1: Future 1 Economic Needs .................................................................................................................................... 53 
+Table 3.2: Future 2 Economic Needs .................................................................................................................................... 56 
+Table 3.3: Future 3 Economic Needs .................................................................................................................................... 58 
+Table 3.4: Future 4 Economic Needs .................................................................................................................................... 61 
+Table 5.1: Initial Economic Project Grouping: Future 1 ................................................................................................. 66 
+Table 5.2: Initial Economic Project Grouping: Future 2 ................................................................................................. 68 
+Table 5.3: Initial Economic Project Grouping: Future 3 ................................................................................................. 69 
+Table 5.4: Initial Economic Project Grouping: Future 4 ................................................................................................. 70 
+Table 5.5: Future 1 Constraints ............................................................................................................................................... 71 
+Table 5.6: Future 2 Constraints ............................................................................................................................................... 72 
+Table 5.7: Future 3 Constraints ............................................................................................................................................... 73 
+Table 5.8: Future 4 Constraints ............................................................................................................................................... 74 
+Table 5.9: Future 1 and Future 2 Final Economic Portfolio .......................................................................................... 76 
+Table 5.10: Future 3 and Future 4 Final Economic Portfolio ....................................................................................... 79 
+Table 5.11: Final Groupings Costs ......................................................................................................................................... 80 
+Table 5.12: Results for SPP ($ are in Millions) ................................................................................................................... 87 
+Table 5.13: Future 1 Rate Impacts by Zone ....................................................................................................................... 88 
+Table 5.14: Future 1 Rate Impacts by State ....................................................................................................................... 89 
+Table 5.15: Future 2 Rate Impacts by Zone ....................................................................................................................... 89 
+Table 5.16: Future 2 Rate Impacts by State ....................................................................................................................... 90 
+Table 5.17: Future 3 Rate Impacts by Zone ....................................................................................................................... 91 
+Table 5.18: Future 3 Rate Impacts by State ....................................................................................................................... 91 
+Table 5.19: Future 4 Rate Impacts by Zone ....................................................................................................................... 92 
+Table 5.20: Future 4 Rate Impacts by State ....................................................................................................................... 93 
+Table 5.21: Total Rate Impacts by Future ........................................................................................................................... 93 
+Table 7.1: Glossary .................................................................................................................................................................... 101 
+=====PDFPAGE 8=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  7 
+ 
+EXECUTIVE SUMMARY 
+ 
+The 20-Year Assessment (20YA) is SPP’s long-range regional transmission planning roadmap that will 
+be used to inform shorter-term regional planning processes. There are no Notifications to Construct 
+(NTCs) requested for issuance from the 20YA. The goal of the 20YA is to develop a collection of extra 
+high voltage (EHV)1 transmission projects for the SPP region to leverage in its integrated transmission 
+planning process. The 20YA identifies economic and public policy EHV transmission projects further 
+into the future that are needed to provide a grid flexible enough to provide benefits to the region 
+across multiple scenarios. The assessment results in the identification of projects that economically 
+deliver energy within the SPP region while addressing a reasonable range of future industry 
+uncertainty. The resulting library of projects from the 20YA will provide a source of candidate projects 
+that will inform the shorter-term ITP assessments for the purpose of injecting longer-term vision into 
+those assessments.  
+Over 35 months, SPP and its member organizations collaborated on the 2022 20YA. As part of this 
+collaboration effort, the MISO Transmission Expansion Plan (MTEP21) Long-Range Transmission 
+Planning Tranche 1 projects were included in the models utilized for this 20YA.2 SPP evaluated more 
+than 463 solutions. The analysis resulted in a recommendation of 13 new transmission projects, 
+                                                 
+1 EHV projects are classified as projects with a nominal voltage higher than 300 kV.  
+2 https://cdn.misoenergy.org/MTEP21%20LRTP%20Tranche%201%20Portfolio626133.zip   
+
+=====PDFPAGE 9=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  8 
+ 
+including 1,206 miles of new EHV transmission for Futures 1 and 2 and 896 miles of new EHV 
+infrastructure for Futures 3 and 4.  
+Four different scenarios, also known as futures, were considered to account for variations in system 
+conditions over the 20-year horizon. These futures are briefly described below and further discussed in 
+Section 2. 
+ Future 1: Reference Case 
+o Continuation of industry trends and regulations, retiring older conventional fossil fuel 
+generators primarily by age, standard load forecasts, and continued additions of 
+renewable resources including wind, solar, and storage. 
+ Future 2: Emerging Technologies Case 
+o The emerging technologies future is driven by the emergence of key technologies such 
+as electric vehicles and distributed generation. Fossil fuel generators are retired earlier, 
+and higher additions of solar, wind, and energy storage resources are made compared 
+to the reference case. This future anticipates increased investments in cleaner and more 
+efficient power sources. 
+ Future 3: Accelerated Decarbonization Case 
+o The accelerated decarbonization future envisions aggressive energy and environmental 
+policy changes. It involves the retirement of all coal and oil generation, driven by 
+ambitious emission reduction targets. Federal policies undergo significant changes, 
+including carbon cuts and a carbon tax. Other changes to electricity demand and usage 
+such as an increase level of energy efficiency from end-use customers and a push 
+towards electric heating are also considered. Higher additions of solar, wind, and 
+energy storage resources are expected due to policy-driven incentives and 
+technological advancements. This future represents a bold approach to achieving 
+emission reduction goals and expanding renewable energy sources. 
+ Future 4: SPP-MISO Zero Hurdle Rate Case 
+o The SPP-MISO Zero Hurdle Rate future focuses on improving market efficiency 
+between the SPP and MISO regions. It eliminates hurdle rates, enabling smoother 
+market participation and resource coordination. The input modeling assumptions are 
+the same as in the accelerated decarbonization future, with the only difference being 
+the eliminated hurdle rate.  
+Taking into consideration the conventional retirements and the new renewable additions, there is a 
+substantial shortfall in the amount of firm capacity needed to meet the increased demand observed in 
+this assessment. Conventional generation additions ranged from 19.8 to 23.6 GW within the four 
+futures. This is a key indirect outcome of the study, as this assessment is intended to show the 
+transmission roadmap. However, a substantial amount of new conventional-like generation will be 
+needed in the future based on the criteria observed in this 20YA. Without these resources, the model 
+=====PDFPAGE 10=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  9 
+ 
+would have observed a signifant number of hours with unserved energy. The real world effect of this 
+would likely be periods of load shed when renewable energy was low.  
+While the assessment solved 106 total congestion needs across all four futures, the trend of larger 
+congestion was observed on Central/Northeast Oklahoma’s underlying 138 kV system. Southwest 
+Missouri needs were prominent in Future 1 and Future 2, while Northwest Missouri needs were 
+observed in Future 3 and Future 4. 
+This assessment produced a separate portfolio of EHV projects for each future. However, Future 1 and 
+Future 2 resulted in the same final portfolio, and Future 3 and Future 4 resulted in the same final 
+portfolio. There were also several projects that were beneficial in all four futures. Below is a map of the 
+two EHV groupings and a summary of the new projects identified. 
+ 
+Figure 0.1: 20YA Future 1 and Future 2 EHV Projects 
+ 
+
+=====PDFPAGE 11=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  10 
+ 
+ 
+Figure 0.2: 20YA Future 3 and Future 4 EHV Projects 
+Two projects were in all four futures, while all the others were either in the Future 1 and Future 2 
+portfolio or the Future 3 and Future 4 portfolio. The engineering and construction cost of these final 
+portfolios ranged from $1.55 billion to $1.37 billion in 2023$, respectively. 
+EHV Project Description F1/F2 F3/F4 Cost Estimate 
+Fort Smith-Thistle 345 kV new line (316 miles) X X $466,017,786 
+Sooner-Fort Smith 345 kV new line (200 miles) X X $295,421,353 
+Flint Creek-Buffalo Flats 345 kV new line (241 miles) X  $354,689,361 
+Huben-Lacygne 345 kV new line (138 miles) X  $203,648,712 
+Riverside Station-Matthewson 345 kV new line (126 miles) X  $185,435,505 
+New Anadarko 345/138 kV transformer 
+Gracemont-Anadarko 345 kV new line (5 miles) 
+New substation at Anadarko 345 kV 
+X  $30,102,922 
+
+=====PDFPAGE 12=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  11 
+ 
+EHV Project Description F1/F2 F3/F4 Cost Estimate 
+Fort Smith 500/345 kV transformer X  $14,864,515 
+Tap Split Rock-Sioux City-Split Rock 345 kV  
+New substation at Eagle 345 kV  
+Tap branch from Fort Thompson-Grand Prairie 345 kV  
+New substation at White Swan 345 kV  
+New substation at Beresford 345 kV  
+New Beresford 345/115 kV transformer 
+New Eagle-Beresford 345 kV new line (111 miles) 
+New Beresford-White Swan 345 kV new line (20 miles) 
+ X $246,420,649 
+Potter County Interchange-Tolk Station 345 kV new line (104 miles)  X $152,524,551 
+Tap Twin Brooks-Ellendale 345 kV  
+New substation at Groton Tap 345 kV  
+New Groton Tap-Groton 345 kV new line 
+New Broadland-Groton 345 kV new line (77 miles) 
+ X $112,778,339 
+Sibley-Nashua 345 kV new line (30 miles)  X $43,969,609 
+Sibley-Hawthorne 345 kV circuit 2 new line (21 miles)  X $30,225,793 
+Cimarron-Norman Hill 345 kV circuit 2 new line (17 miles)  X $25,473,756 
+Table 0.1: EHV Project List 
+The analysis determined that the adjusted production cost (APC) savings for the final EHV portfolios 
+range from $457.3M (Future 1, in 2042$) and $1,171.9M (Future 3, in 2042$). These reductions in APC 
+can be attributed to the benefits provided by the EHV portfolio projects only. One-year benefit-to-
+cost (B/C) ratios ranged from 1.57 (Future 1) to 4.35 (Future 3). The Table 0.2 below shows APC 
+benefits and the associated B/C ratios for each future. 
+One-Year Results Future 1 Future 2 Future 3 Future 4 
+APC Benefit 
+(2042$) $457.3 $626.5 $1,171.9 $1,168.3 
+Cost 
+(2042$) $292.0 $292.0 $269.3 $269.3 
+Net Benefit 
+(2042$) $165.3 $334.5 $902.6 $899.0 
+B/C Ratio 1.57 2.15 4.35 4.34 
+Table 0.2: One-year EHV APC Benefits and B/C ratios 
+ 
+ 
+=====PDFPAGE 13=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  12 
+ 
+1 INTRODUCTION 
+1.1 THE 2022 20-YEAR ASSESSMENT 
+The SPP 20YA process is designed to facilitate 
+transmission investment to meet the long-term economic 
+and public policy transmission needs of the region. The 
+process is guided by requirements outlined in Attachment 
+O to the SPP Open Access Transmission Tariff (SPP OATT), 
+the 20-Year Assessment Manual (20YA Manual),3 the 
+Integrated Transmission Planning Manual (ITP Manual),4 
+and the 2022 20-Year Assessment Scope (20YA Scope).5 
+These guidelines provide a framework for conducting the 
+assessment and ensure consistency and transparency in 
+the process. 
+The 20YA process encourages industry stakeholders, 
+customers, and other relevant entities, to contribute their 
+perspectives and insights during the assessment. The goal is to incorporate diverse viewpoints and 
+ensure that the planning process considers a wide range of interests and concerns. 
+1.2 REPORT STRUCTURE 
+This report provides an overview of the 2022 20YA conducted for the SPP transmission system, 
+focusing on the 20-year horizon with a specific emphasis on the year 2042. The assessment involved 
+the evaluation of four future market scenarios, known as "futures." 
+The Model Development section (section 2) of the report summarizes the inputs used in the modeling 
+process and explain the underlying approach and key steps taken during the analysis development. It 
+also outlines the fundamental assumptions made throughout the study. 
+The Needs Assessment section (section 3) through the Portfolio Development section (section 5) delve 
+into the specific results of the assessment. These sections describe the projects identified as having 
+merit for consideration and present portfolio recommendations, along with their associated benefits 
+and costs. 
+When referring to the "SPP footprint" within the study, it generally pertains to the Balancing Authority 
+Area defined in the OATT. This area's transmission facilities are under the functional control of the SPP 
+                                                 
+3 20YA Manual: https://spp.org/Documents/59716/20_Year_Assessment_Manual.pdf  
+4 ITP Manual v2.13: https://spp.org/Documents/69468/ITP%20Manual%20Version%202.13.pdf  
+5 2022 20YA scope: https://spp.org/Documents/63932/2022%2020-
+Year%20Assessment%20Scope%20v1.0%20MOPC%20Approved.pdf 
+Stakeholder 
+Collaboration
+TWG
+ESWG
+MDAG
+MOPC
+SPC
+BOD
+=====PDFPAGE 14=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  13 
+ 
+Regional Transmission Organization (RTO), unless stated otherwise. All reports and documents 
+mentioned in this report are accessible on the SPP website. 
+During the study, SPP's staff and stakeholders exchanged proprietary information, which was 
+extensively utilized in the 20YA. However, this report does not contain any confidential marketing 
+data, pricing information, marketing strategies, or other sensitive data that is not suitable for public 
+release. Instead, it focuses on disclosing planning and operational matters, including the outcome of 
+specific contingencies, operating transfer capabilities, and plans for new facilities, which are 
+considered non-sensitive information. 
+1.3 STAKEHOLDER COLLABORATION  
+In the development of the 20YA, stakeholders played a significant role through their active 
+involvement in meetings held from 2020 to 2023. These meetings provided a platform for members, 
+liaison members, industry specialists, and consultants to engage in discussions and contribute to the 
+formulation of assumptions and procedures for the assessment. 
+Various organizational groups within SPP were involved in the process to ensure comprehensive input 
+and evaluation. These groups include: 
+ Transmission Working Group (TWG) 
+o This group focuses on transmission-related matters and contributed expertise and 
+insights regarding transmission infrastructure and operations. 
+ Economic Studies Working Group (ESWG) 
+o The ESWG contributed economic perspectives and analysis to assess the financial 
+aspects of the transmission system. 
+ Model Development Advisory Group (MDAG) 
+o The MDAG provided guidance on modeling methodologies and techniques used in the 
+assessment. 
+ Markets and Operations Policy Committee (MOPC) 
+o The MOPC discussed policy considerations related to market operations and policies 
+influencing the transmission system. 
+ Strategic Planning Committee (SPC) 
+o The SPC oversaw the overall strategic direction and planning of the organization and 
+provided guidance on long-term transmission planning. 
+ Board of Directors (Board) 
+o The Board, as the governing body of SPP, would have had oversight and final decision-
+making authority on key matters related to the 20YA. 
+Throughout the process, SPP staff acted as facilitators for these working groups and committees, 
+ensuring that all perspectives were heard and taken into account. The engagement of stakeholders 
+and their valuable feedback played an instrumental role in refining the 20YA, aligning with SPP's 
+commitment to inclusivity and collaborative decision-making. 
+=====PDFPAGE 15=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  14 
+ 
+1.4 20YA MITIGATION  
+The original timeline for the 20YA of the SPP transmission system aimed to have the SPP Board review 
+and approve the assessment during the regular October 2022 Board meeting. However, due to various 
+challenges encountered during the study period, the schedule had to be adjusted. 
+To address the challenges and ensure a thorough assessment, the timeline was revised, and the new 
+completion date was set for July 2023. The adjustments to the schedule were discussed and approved 
+during the April 2022 meeting of the Markets and Operations Policy Committee (MOPC). 
+Subsequently, a tariff waiver was submitted to FERC in order to extend the deadline, which was 
+approved in December 2022. 
+1.5 20YA SUCCESSES AND CHALLENGES 
+This 20YA, SPP’s first 20-year study since the 2013 ITP20 assessment, presented SPP and its 
+stakeholders with numerous challenges and opportunities for success. 
+1.5.1 20YA SUCCESSES 
+The completion of the 20YA alone should be considered a success. SPP broke barriers in both 
+modeling and assessing the transmission system throughout the course of the study, including many 
+firsts. 
+The following represent the firsts associated with this 20YA. First study to: 
+ Model 50 and 60 GW of nameplate wind capacity 
+ Model more than 20 GW of solar (Up to 65 GW in Future 3 and Future 4) 
+ Include increased peak demand growth rates and energy rates due to electrification 
+ Remove the SPP/MISO hurdle rate 
+ Model 9+ GW of energy storage resources 
+ Retire 100% of SPP’s existing coal and oil fleet 
+These firsts for SPP’s stakeholders and System Planning staff, along with the EHV solutions developed 
+to accomplish the objective of the study, will provide SPP a path forward as SPP moves into its next 
+round of 10-year studies, including the development and implementation of the proposed 
+consolidated planning process. 
+1.5.2 20YA CHALLENGES AND LIMITATIONS 
+The 20YA also had numerous challenges and study limitations. Although the previous section detailed 
+the study’s biggest successes, those ‘firsts’ were heavily associated with much of the challenges from 
+this study. The scope assumptions themselves were challenging. The amount of renewables and 
+conventional retirements alone caused different congestion patterns and new system constraints not 
+yet observed in the normal ITP process. Increasing levels of retirements made the congestion more 
+=====PDFPAGE 16=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  15 
+ 
+challenging to solve, increasing run times so much that SPP had to alter its constraint filtering process 
+to ensure simulation times were manageable.  
+The increased number of energy storage resources also revealed a limitation with the PROMOD 
+software dispatch algorithm, which led to energy storage resources adding to congestion or causing 
+increased usage of conventional resources. This is counter intuitive to their expected usage and brings 
+about some level of uncertainty to the approved base models and project testing results. 
+Mid-study the Planning Reserve Margin (PRM) was increased to 15%, but according to the 20YA 
+Manual, the previous value of 12% was required to be utilized. This change would have led to the 
+need for additional capacity from new generation. The new capacity would have most likely come in 
+the form of additional conventional resources like combustion turbines. This increase in conventional 
+generation, paired with optimal siting, could have affected congestion patterns on the system. 
+Lastly, this was the first 20YA since the Transmission Planning Improvement Task Force (TPITF) 
+redesign of the regional planning process. The TPITF's redesign of the regional planning process 
+aimed to enhance the efficiency and effectiveness of transmission planning. However, the overlapping 
+occurrence of multiple assessments created a complex situation. The tight timeline estimates, other 
+ITP delays, and the noted 20YA challenges were contributors that impacted the overall schedule of the 
+20YA. 
+  
+=====PDFPAGE 17=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  16 
+ 
+2 MODEL DEVELOPMENT 
+2.1 MODEL ASSUMPTIONS 
+2.1.1 FUTURES DEVELOPMENT  
+When considering the range of reasonable future market scenarios, stakeholders determined that the 
+best option was to utilize the typical ITP reference case and emerging technologies framework, as well 
+as include two new futures that explore accelerated decarbonization and reduced hurdle rates 
+between SPP and Midcontinent Independent System Operator (MISO). Table 2.1 below details 
+adjustments that were made to specific assumptions across futures such as fossil fuel retirements, an 
+increase in utility-scale solar, an increase in wind, energy storage resource additions, renewable policy, 
+and hurdle rates. 
+ FUTURE 1: REFERENCE CASE 
+The reference case future is based on the continuation of existing industry trends and environmental 
+regulations. In this future scenario, for the specified year 20, coal generators over the age of 56 were 
+retired, while gas-fired and oil generators over 50 years old were also phased out. However, 
+exceptions to these retirement requirements were allowed based on utility-specific Integrated 
+Resource Plans (IRPs) submitted by stakeholders. 
+To determine coal prices, long-term industry forecasts were considered. Natural gas prices, on the 
+other hand, were determined according to the guidelines outlined in the TP Manual. Further details 
+can be found in section 2.3.3. 
+In this future, there were additional solar and wind resources compared to the 10-year ITP 
+assessments. These additions were driven by various factors, including favorable economics, public 
+appeal, and the trends observed in historical renewable installations and Generator Interconnection 
+(GI) requests. 
+Additionally, battery energy storage resources were incorporated in proportion (20%) to the approved 
+solar capacity. This indicates a recognition of the importance of energy storage technologies in 
+complementing renewable energy generation and improving grid reliability. 
+ FUTURE 2: EMERGING TECHNOLOGIES  
+In the emerging technologies future, the transformation of the energy landscape is driven by the 
+emergence of key technologies such as electric vehicles (EVs) and distributed generation. The decision 
+was made to retire coal generators older than 52 years and gas-fired and oil generators older than 48 
+years, with some flexibility granted to generator owners upon approval by the ESWG. 
+=====PDFPAGE 18=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  17 
+ 
+The future also takes into account advancements in technology that decrease capital costs and 
+increase energy conversion efficiency, leading to higher additions of solar, wind, and energy storage 
+resources compared to the reference case. 
+Furthermore, this future recognizes the potential for state and/or federal policies to promote the 
+adoption of these technologies as part of efforts to modernize the grid. The alignment of renewable 
+resource potential with company IRP goals was also considered to the extent possible, indicating a 
+strategic approach to incorporating renewables into the energy mix. 
+Overall, this future scenario anticipates the influence of EVs, distributed generation, renewable energy 
+technologies, and supportive policies on the energy sector, leading to retirement of older fossil fuel 
+generators and increased investments in cleaner and more efficient sources of power. Additionally, 
+Future 2 assumes environmental regulations, as they currently stand, will be maintained leading to no 
+changes to industry forecasts for coal and natural gas prices. 
+ FUTURE 3: ACCELERATED DECARBONIZATION  
+The accelerated decarbonization future envisions a scenario where a new administration implements 
+an aggressive energy and environmental policy change. This future is characterized by significant 
+transformation to the generation fleet driven by the retirement of all coal oil generation. The main 
+objective was to achieve a 93% to 95% reduction in emissions by 2042 compared to 2017 levels. 
+The assumption underlying this future is that federal policies will undergo significant changes, 
+resulting in mandated carbon cuts and the implementation of a carbon tax. These policy measures are 
+aimed at accelerating the transition to a low-carbon economy while simultaneously driving up the cost 
+of coal and natural gas generation. Additionally, governmental policies are included that incent a 
+change in space heating from natural gas to electric.  
+Moreover, this future anticipates significantly higher additions of solar, wind, and energy storage 
+resources compared to the previous futures. Peak demand and energy demand increased due to 
+switching to electric home heating and increased electric transportation. These increased deployments 
+are driven by both the change in environmental policy and advancements in technology that reduce 
+capital costs and improve energy conversion efficiency. The combination of favorable policy changes 
+and technological progress creates a more conducive environment for the expansion of renewable 
+energy sources and energy storage systems. 
+Overall, the accelerated decarbonization future presents a scenario where a new administration 
+implements bold energy and environmental policies. The retirement of coal generators and oil 
+generation, driven by ambitious emission reduction targets, is at the core of this future. Federal policy 
+changes, including carbon cuts and a carbon tax, play a crucial role. Higher additions of solar, wind, 
+and energy storage resources and increased demand are expected due to both policy-driven 
+incentives and technological advancements along with increased levels of electrification due to space 
+heating requirements and electric vehicles. 
+=====PDFPAGE 19=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  18 
+ 
+ FUTURE 4: SPP-MISO ZERO HURDLE RATE  
+The SPP-MISO Zero Hurdle Rate future emphasizes the potential advantages that can be achieved 
+through improved market efficiency between SPP and the MISO. In this future scenario, both the SPP-
+MISO and MISO-SPP hurdle rates are set to zero. 
+By eliminating these hurdle rates, barriers to market participation and resource coordination between 
+SPP and MISO are removed. This creates a more seamless and efficient energy market between the 
+two regions. While the hurdle rate changes are the primary focus of this future, all other input 
+modeling assumptions remain the same as in the accelerated decarbonization future.  
+Table 2.1 summarizes the drivers and how they were considered in each future. 
+  
+=====PDFPAGE 20=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  19 
+ 
+ 
+ DRIVERS 
+KEY 
+ASSUMPTIONS Future 1  Future 2  Future 3  Future 4  
+Peak Demand 
+Growth Rates 
+As submitted in load 
+forecast 
+As submitted in load 
+forecast 
+Moderate increase due 
+to switching to electric 
+home heating and 
+increased electric 
+transportation, 
+potential shift to a 
+winter peaking SPP 
+Moderate increase due 
+to switching to electric 
+home heating and 
+increased electric 
+transportation, 
+potential shift to a 
+winter peaking SPP 
+Energy Demand 
+Growth Rates 
+As submitted in load 
+forecast 
+Increase due to 
+electrification growth 
+Higher demand due to 
+electrification 
+compared to F2 due to 
+aggressive policy 
+Higher demand due to 
+electrification 
+compared to F2 due to 
+aggressive policy 
+Natural Gas 
+Prices 
+Current industry 
+forecast 
+Current industry 
+forecast 
+Increase prices 
+influenced by 
+emissions pricing policy 
+Increase prices 
+influenced by 
+emissions pricing 
+policy 
+Coal Prices Current industry 
+forecast 
+Current industry 
+forecast 
+Increase prices 
+influenced by 
+emissions pricing policy 
+Increase prices 
+influenced by 
+emissions pricing 
+policy 
+Emissions Prices Current industry 
+forecast 
+Current industry 
+forecast 
+$25/ton national CO2 
+carbon tax 
+$25/ton national CO2 
+carbon tax 
+Fossil Fuel 
+Retirements 
+Coal age-based 56+,  
+Gas/Oil age-based 
+50+, subject to 
+generator owner (GO) 
+review 
+Coal age-based 52+,  
+Gas/Oil age-based 
+48+, subject to GO 
+review and ESWG 
+approval 
+All Coal and Oil retired. 
+More Gas retirements, 
+driven by higher 
+emission reduction 
+levels relative to F2 
+driven by new policy 
+All Coal and Oil retired. 
+More Gas retirements, 
+driven by higher 
+emission reduction 
+levels relative to F2 
+driven by new policy 
+Environmental 
+Regulations Current regulations Current regulations 
+Federal Policy, 
+mandated carbon cuts, 
+carbon tax 
+Federal Policy, 
+mandated carbon cuts, 
+carbon tax 
+Demand 
+Response 
+As submitted in load 
+forecast 
+As submitted in load 
+forecast 
+Increase from F2 
+assumed to reduce 
+peak demand 
+associated with electric 
+space heating by 10% 
+Increase from F2 
+assumed to reduce 
+peak demand 
+associated with electric 
+space heating by 10% 
+Distributed 
+Generation 
+(Solar) 
+As submitted in load 
+forecast 900 MW 950 MW 950 MW 
+=====PDFPAGE 21=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  20 
+ 
+ 
+ DRIVERS 
+KEY 
+ASSUMPTIONS Future 1  Future 2  Future 3  Future 4  
+Energy 
+Efficiency 
+As submitted in load 
+forecast 
+As submitted in load 
+forecast 
+Assumed increase in 
+energy efficiency 
+resulted in a 3.8% 
+reduction in energy 
+from forecasted levels 
+Assumed increase in 
+energy efficiency 
+resulted in a 3.8% 
+reduction in energy 
+from forecasted levels 
+Storage (MW) 3,800 9,450 9,500 9,500 
+Total Renewable Capacity 
+Solar (GW) 19 27 656 65 
+Wind (GW) 41 50 627 62 
+Table 2.1: Future Drivers 
+2.1.2 RENEWABLE POLICY REVIEW 
+Renewable policy requirements enacted by state laws, public power initiatives and courts are the only 
+public policy initiatives considered in this 20YA via the Renewable Policy Review (RPR). Table 2.2 shows 
+the Renewable Policy Standards (RPS) as percentages for each state with a standard in place.  
+State RPS Type Generation 
+Type8 
+Capacity- or 
+Energy- Based 
+Year 20 
+Percent 
+Kansas Goal Both Capacity (MW) 20% 
+Minnesota Mandate Both Energy (MWh) 25% 
+Missouri Mandate Both Energy (MWh) 15% 
+Montana Mandate Both Energy (MWh) 15% 
+North Dakota Goal Both Energy (MWh) 10% 
+New Mexico Mandate Both Energy (MWh) 80% 
+South Dakota Goal Both Energy (MWh) 10% 
+Texas Mandate Both Capacity (MW) 5% 
+Table 2.2: 20YA RPS by State 
+                                                 
+6 Future 3 and Future 4 original solar capacity was 48 GW. 
+7 Future 3 and Future 4 original wind capacity was 65 GW. 
+8 A generation type of “Both” indicates that it can be met by wind and/or solar. 
+=====PDFPAGE 22=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  21 
+ 
+The ESWG approved both of the following methodologies for the 20YA: 
+1) The year 10 values were used for 20YA except for states with requirements beyond year 10 
+(New Mexico has 80% requirement). 
+2) Proxy Future 3 and Future 4 peak values were calculated using Future 1 and Future 2 peaks, 
+load review monthly peak values, and space heating profiles. Kansas and Texas were only 
+states with capacity RPS. The peak of space heating profiles were added in order to estimate 
+winter peak. For summer peaking demand groups, if proxy winter peak is greater than summer 
+peak, then the proxy winter peak was used. For winter peaking demand groups, the proxy 
+winter peak was used.  
+The 20YA RPR focused on renewable requirements through 2042. 
+2.2 RESOURCE EXPANSION 
+In order to evaluate transmission for a 20-year horizon, a key component begins with identifying the 
+resource outlook for each future. The SPP generation portfolio will not be the same in 20 years, due to 
+the changing load forecasts, resource retirements and fast-changing mix of resource additions. SPP 
+developed resource expansion plans to meet renewable portfolio standards, resource reserve margin 
+requirements, and future specific renewable and emerging technology projections.  
+2.2.1 RENEWABLE RESOURCE EXPANSION PLAN 
+SPP analyzed each utility to determine if the assumed renewable mandates and goals identified by the 
+renewable policy review could be met with existing generation and initial resource projections for 
+2042. If the analysis projected a utility would be unable to meet requirements, additional resources 
+were assigned to the utilities from the total projected renewable amounts to meet renewable portfolio 
+standards. For states with a standard that could be met by either wind or solar generation, a ratio of 
+50% wind additions to 50% solar additions was utilized. This split was representative of the active GI 
+queue requests for wind and solar resources. 
+The incremental renewables assigned to meet renewable mandates and goals in the SPP footprint are 
+show below in Table 2.3. 
+ 
+2042 Minimum Renewable Nameplate 
+Capacity Additions (MW) 
+Future 1 Future 2 Future 3 and 
+Future 4 
+Wind 2,020.1 2,107.0 2,056.7 
+Solar 2,020.1 2,107.0 2,056.7 
+Total 4,040.3 4,214.0 4,113.4 
+Table 2.3: Minimum Renewable Additions by Future 
+=====PDFPAGE 23=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  22 
+ 
+After SPP ensured the RPS were met by assigning renewables, the remaining projected renewable 
+capacity to each pricing zone was accredited. 
+SPP assigned projected solar additions based on the load-ratio share for each pricing zone. SPP also 
+accredited projected wind additions to deficient zones to maximize the available accreditation of 
+renewables for each zone, up to the 12% zonal renewable cap. Resources were accredited in the 
+following order: 
+ Existing generation 
+ Policy wind and solar additions 
+ Projected solar additions 
+ Projected storage additions 
+ Projected wind additions 
+ Conventional additions 
+2.2.2 CONVENTIONAL RESOURCE EXPANSION PLAN  
+ BACKGROUND 
+SPP used EnCompass power planning software, a zonal and nodal based modeling tool, to develop 
+resource plans for the 20YA models. The results of the expansion planning efforts discussed here were 
+imported into the PROMOD models used for the 20YA needs assessment. 
+An EnCompass model database for the SPP region was developed from the latest 20YA PROMOD 
+database, including generation assumptions, fuel costs, renewable energy profiles, SPP region 
+demand, and energy requirements. Transmission topology was excluded from the model.  
+SPP utilized some generic assumptions for capital financing as shown in Table 2.4 when optimizing to 
+find the least cost generation expansion plan. 
+KEY FINANCIAL INPUTS SPP Region 
+Debt/Equity Spilt (%/%) 50/50 
+Debt Rate (%) 5 
+Return on Equity (%) 10 
+Income Tax Rate (%) 25 
+WACC9 (used as discount rate) (%) 6.875 
+General Escalation Rate (%) 2 
+Table 2.4: EnCompass Financial Inputs 
+                                                 
+9 The Weighted Average Cost of Capital (WACC) is used to optimize the timing of capital investment decisions by 
+EnCompass for maximum benefit. 
+=====PDFPAGE 24=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  23 
+ 
+Cost and performance assumptions of new resource options used in the expansion planning analysis were developed from 
+Energy Information Administration (EIA)10 and National Renewable Energy Laboratory (NREL)11 data and are shown in Table 
+2.5: New Generation Alternatives 
+. 
+TECHNOLOGY 
+New Generation Alternatives 
+Size (MW) 
+Heat Rate 
+(MMBtu/
+MWh) 
+Capital Cost 
+(2021$/kW) 
+Variable 
+O&M 
+(2021$/ 
+MWh) 
+Fixed O&M 
+($/kW-yr) 
+CO2 
+Emissions 
+(lbs/MMBtu) 
+WIND 200  $1,552 $0.00 $27.57  
+SOLAR 150  $1,328 $0.00 $15.97  
+ENERGY 
+STORAGE 
+(4-HR) 
+50 90% RT Eff. $1,318 $0.00 $25.96  
+CC12 418 6.370 $1,183 $1.96 $14.76 117 
+CC W/ CC&S13 377 7,124 $2,777 $6.61 $28.89 12 
+CT14 237 9,905 $777 $4.71 $7.33 117 
+SMR15 600 10,443 $7,759 $3.14 $99.46  
+Table 2.5: New Generation Alternatives 
+SPP collaborated with stakeholders to determine the nameplate capacity of wind, solar, and 4-hour 
+storage resources needed to meet SPP’s goals in the 20YA study. These nameplate capacities were 
+approved by the ESWG and are shown below in Table 2.6: Scoped Nameplate Capacity. 
+RESOURCE 
+TYPE 
+Future 1 Future 2 Future 3 Future 4 
+Scoped Amount 
+(MW) 
+Scoped Amount 
+(MW) 
+Scoped Amount 
+(MW) 
+Scoped Amount 
+(MW) 
+Wind 41,000 50,000 65,000 65,000 
+Solar 19,000 27,000 48,000 48,000 
+Energy 
+Storage 3,800 9,450 9,500 9,500 
+Table 2.6: Scoped Nameplate Capacity  
+                                                 
+10 2022 EIA Report Link: https://www.eia.gov/outlooks/aeo/assumptions/pdf/table_8.2.pdf 
+11 2021 NREL ATB Link: https://data.openei.org/files/4129/2021-ATB-Data_Master_new.xlsm 
+12 CC: Combined Cycle 
+13 CC&S: Carbon Capture and Sequestration 
+14 CT: Combustion Turbine 
+15 SMR: Small Modular Reactor 
+=====PDFPAGE 25=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  24 
+ 
+ FUTURE 1 AND FUTURE 2 ENCOMPASS EXPANSION PLANNING 
+20YA EnCompass models were created for both Future 1 and Future 2 with the addition of the 
+applicable scoped amounts of wind, solar, and storage. The region was still about 20 GW and 19 GW, 
+respectively, short of the required level of capacity and energy shortages existing during the summer 
+months prior to conducting any expansion planning.  
+Figure 2.1 and Figure 2.2 shows this energy shortfall. 
+ 
+Figure 2.1: Future 1 Monthly Generation by Month and Resource Class 
+
+=====PDFPAGE 26=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  25 
+ 
+ 
+Figure 2.2: Future 2 Monthly Generation by Month and Resource Class 
+SPP configured the EnCompass software to select from only the combustion turbine (CT) or combined 
+cycle (CC) prototypes to meet the capacity and energy needs of the Future 1 and Future 2 models. 
+EnCompass determined that at least 36 CCs and 27 CTs were needed for Future 1. The Future 2 model 
+resulted in the addition of 32 CCs and 30 CTs to meet the requirements of the SPP Region shown 
+below in Table 2.7. 
+Resource Type 
+EnCompass Recommended 
+Capacity Additions (GW) 
+Future 1 Future 2 
+CC 13.6 12.1 
+CT 6.4 7.1 
+Total 20.0 19.2 
+Table 2.7: EnCompass Recommended Capacity Additions (GW)  
+
+=====PDFPAGE 27=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  26 
+ 
+ FUTURE 3 AND FUTURE 4 ENCOMPASS EXPANSION PLANNING 
+Per the 20YA Scope, the Future 3 and Future 4 PROMOD models utilized the same resource mix and 
+only differed by the hurdle rate applied to energy transfers with external regions.  
+A single 20YA EnCompass model was created for Future 3 and Future 4 with the addition of the 
+scoped amounts of wind, solar, and storage from Future 2. During initial PROMOD simulations, prior 
+to expansion planning, it was identified that the scoped amounts of wind, solar, and storage for Future 
+3 and Future 4 would not be enough to meet the targeted goal of a 93% to 95% reduction in carbon 
+dioxide (CO2) emissions from 2017 levels.  
+EnCompass limited thetotal amount of CO2 emissions in the SPP region to be in-line with the goal of a 
+93% reduction from 2017 levels.  
+After adding the Future 3 and Future 4 scoped resources and enforcing the CO2 limit, the SPP region 
+was approximately 18 GW short of the required level of capacity. Significant energy shortages also 
+existeded during the summer months. Figure 2.3 shows this energy shortfall. 
+ 
+Figure 2.3: Future 3 and Future 4 Monthly Generation by Month and Resource Class 
+Next, SPP configured the EnCompass software to select from CC with Carbon Capture and 
+Sequestration (CC&S), small modular reactors (SMRs), wind, and solar resources to meet the energy 
+needs of the Future 3 and Future 4 models. Standard CCs and CTs were not included in this round of 
+
+=====PDFPAGE 28=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  27 
+ 
+expansion planning because they did not have any carbon-reduction advantage and many of the 
+modeled CTs had low capacity factors in the existing model. The addition of new storage resources 
+could have been selected by EnCompass, but because of the known PROMOD issues, storage assets 
+were not included for selection by EnCompass.  
+EnCompass selected 10 CC with CC&S resources in addition to incremental solar and reduced wind 
+resources to most cost effectively meet the capacity and energy requirements. The total amount of 
+wind resources was 62 GW and the amount of solar was 65 GW. The EnCompass updated amounts for 
+wind and solar are summarized in Table 2.8 below: 
+ Solar (MW) Wind (MW) 
+Original Scoped 48,000 65,000 
+EnCompass Recommended 65,000 62,000 
+Table 2.8: Solar & Wind Nameplate Amount Updates 
+Following the implementation of the new resource amounts, the EnCompass model was run as a 
+dispatch production cost simulation. Upon review of the modeling results, SPP identified seven gas-
+fired resources that never dispatched and were selected for retirement consistent with the 20YA 
+Scope.  
+After retirement of the additional units, the SPP region was found to be short of its firm capacity 
+needs by about 9 GW. Filling the firm capacity need was found best served by additional CT units. 
+EnCompass selected 37 additional CTs to fill the capacity needs.  
+In order to influence a carbon reduction target in PROMOD, a carbon tax value was developed using 
+EnCompass. The EnCompass Future 3 and Future 4 models were simulated with all the additional 
+resources included from the expansion planning simulations as a dispatch production cost simulation 
+with increasing levels of carbon taxation. During these runs, the EnCompass annual limit on CO2 
+emissions was removed. Figure 2.4 shows the impacts on total CO2 emissions of increasing CO2 
+taxation levels.  
+=====PDFPAGE 29=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  28 
+ 
+ 
+Figure 2.4: Carbon Tax Impacts on CO2 Emissions 
+EnCompass identified that a $10/ton CO2 tax was enough to reach the 93% reduction target. 
+Increasing the carbon taxation value had a significantly diminishing return after about $25/ton. Since 
+PROMOD has a known issue with storage asset dispatch and the goal was to achieve a 93% to 95% 
+reduction in CO2 emissions, a carbon tax of $25/ton was selected for use in PROMOD. 
+ ZONAL CONVENTIONAL RESOURCE PLANNING 
+SPP used the results from the EnCompass power planning software and the renewable resource 
+expansion plans for each future as inputs to the corresponding zonal conventional resource expansion 
+plan to ensure appropriate resource adequacy within the SPP footprint. 
+Pricing zones that did not meet the 12%16 planning reserve margin requirement set by the SPP 
+Planning Criteria at the time of the study received capacity from the conventional resource plan. SPP 
+calculated projected reserve margins for each pricing zone using existing generation, future-specific 
+retirements, projected renewable generation, fleet power purchase agreements, and load projections 
+through 2042. Each zone that was not meeting its minimum reserve requirement was assigned 
+conventional resources. 
+                                                 
+16 At the time of publishing this report the planning reserve margin has since increased to 15%; however, this 
+increase was approved after the 20YA scoping and completion of the conventional resource expansion plan.  
+
+=====PDFPAGE 30=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  29 
+ 
+The nameplate amount of conventional generation capacity was counted toward each zone’s PRM 
+requirement. Existing wind and solar capacity, was counted according to their accredited Effective 
+Load-Carrying Capability, as calculated and extrapolated from the 2020 ELCC Wind and Solar Study 
+Report.17 ELCC identifies the capacity value of resources by determining the amount of load the 
+resources will be able to serve during peak hours. 
+These updated values and respective ELCC Amounts, reflected in MW and percent of nameplate, are 
+shown in Table 2.9. 
+RESOURCE 
+TYPE 
+Future 1 Future 2 Future 3 Future 4 
+Scoped 
+Amount 
+(MW) 
+ELCC 
+Amount 
+(MW) 
+Scoped 
+Amount 
+(MW) 
+ELCC 
+Amount 
+(MW) 
+EnCompass 
+Results 
+Amount 
+(MW) 
+ELCC 
+Amount 
+(MW) 
+EnCompass 
+Results 
+Amount  
+(MW) 
+ELCC 
+Amount 
+(MW) 
+Wind 41,000 6,150  
+(24%) 
+50,000 7,000  
+(14%) 62,000 7,750 
+(13%) 62,000 7,750 
+(13%) 
+Solar 19,000 9,880  
+(52%) 
+27,000 11,700  
+(43%) 65,000 11,750 
+(18%) 65,000 11,750 
+(18%) 
+Energy 
+Storage 3,800 3,294  
+(87%) 
+9,450 5,859  
+(62%) 9,500 5,872  
+(62%) 9,500 5,872 
+(62%) 
+Table 2.9: Updated Nameplate and ELCC Amounts in MW 
+Before giving each zone accreditation from the renewable resource plan, the ELCC amounts were 
+reduced by the amount of firm service determined in the generation review. Remaining amounts of 
+renewable accreditation were awarded to each pricing zone based upon load ratio share until there 
+was no additional accreditation available or zones reached their required planning reserve margin. If a 
+zone did not ultimately meet its planning reserve margin, it was identified as a zonal shortfall and 
+designated to be assigned conventional capacity from the conventional resource plan.  
+The results from the EnCompass software were applied in conjunction with the 12% planning reserve 
+margin requirement at a zonal level to determine the final zonal allocation of CCs and CTs. 
+Table 2.10 shows the total nameplate conventional generation additions in MWs by zone and future 
+to meet futures definitions and resource adequacy requirements. To limit unnecessary conventional 
+resource additions, SPP identified some zones as sharing capacity from the conventional resource 
+plan. For zones with shared units, the zone with the highest percentage of ownership was identified 
+for the siting milestone. 
+                                                 
+17 https://www.spp.org/documents/65169/2020%20elcc%20wind%20and%20solar%20study%20report.pdf   
+=====PDFPAGE 31=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  30 
+ 
+Zone Conventional Generation Additions (MW) 
+Future 1 Future 2 Future 3 Future 4 
+AEPW 4,174 4,024 4,188 4,188 
+EMDE 237 154 280 280 
+GMO 711 641 664 664 
+GRDA 1,095 980 697 697 
+KCPL 1,105 892 1,896 1,896 
+LES 40 0 24 24 
+MIDW 148 126 128 128 
+NPPD 1,925 1,867 2,178 2,178 
+OKGE 2,340 1,908 3,385 3,385 
+OPPD 1,580 1,415 1,529 1,529 
+SPRM 121 83 337 337 
+SPS 2,893 2,717 2,717 2,717 
+SUNC 0 0 178 178 
+SWPA 0 0 0 0 
+UMZ 2,523 2,195 2,929 2,929 
+WERE 2,703 2,383 2,145 2,145 
+WFEC 507 446 374 374 
+TOTAL 22,102 19,831 23,646 23,646 
+Table 2.10: Conventional Generation Additions by Zone 
+Figure 2.5 shows nameplate and accredited capacity additions by future and technology for the SPP 
+region.  
+ 
+=====PDFPAGE 32=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  31 
+ 
+ 
+Figure 2.5: Nameplate and Accredited Capacity Additions 
+2.2.3 EXTERNAL RESOURCE PLAN 
+When developing renewable resource plans, SPP did not directly consider renewable policy 
+requirements for external regions. However, the MISO and Tennessee Valley Authority (TVA) 
+renewable resource expansion and siting plans were based on the 2021 MISO Transmission Expansion 
+Planning (MTEP21) futures. 
+SPP also incorporated conventional resource plans for external regions included in the market 
+simulations. SPP surveyed each region for load and generation and assessed each to determine the 
+capacity shortfall. The MISO and TVA resource expansion and siting plans were based on the MTEP21 
+futures, while Associated Electric Cooperative Incoorporated (AECI) and Saskatchewan Power (SASK) 
+resource expansion and siting plans were based on the SPP resource plan assumptions. Figure 2.6 
+shows the cumulative capacity additions in 2042 by unit type for these external regions for all futures.  
+0
+10
+20
+30
+40
+50
+60
+70
+Conventional
+Energy Storage
+Solar
+Wind
+Conventional
+Energy Storage
+Solar
+Wind
+Conventional
+Energy Storage
+Solar
+Wind
+Future 1 Future 2 Futures 3&4
+Capacity (GW)
+Nameplate and Accredited Capacity Additions
+Nameplate
+Accreditation
+=====PDFPAGE 33=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  32 
+ 
+ 
+Figure 2.6: Capacity Additions by Unit Type and Area 
+  
+0
+20
+40
+60
+80
+100
+120
+140
+Battery Storage
+Combined Cycle (Existing)
+CT Gas
+Solar PV
+Wind
+Battery Storage
+Combined Cycle (Existing)
+CT Gas
+Solar PV
+Wind
+Battery Storage
+CT Gas
+Solar PV
+Wind
+Combined Cycle (Existing)
+CT Gas
+Solar PV
+Wind
+AECI MISO SASK TVA
+Capacity (GW)
+External Resource Plan Additions
+Future 1
+Future 2
+Futures 3&4
+=====PDFPAGE 34=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  33 
+ 
+2.2.4 SITING PLAN 
+SPP sited projected renewable and conventional resources according to various site attributes for each 
+technology in accordance with the ITP Resource Siting Manual,18 except as noted in this report. Future 
+1 and Future 2 utilized the 2022 ITP Future 2 Year-10 siting plan as a starting point and then added 
+sites according to the ITP Resource Siting Manual to reach scoped amounts. Future 3 and Future 4 
+utilized Future 2 plans as a starting point. The remaining 12 GW of wind needed was sited at the top 
+15% ranked sites in the region by ratio of transfer capability. The remaining 38 GW of solar needed 
+was allocated to areas by load-ratio share to be sited. Each area’s top ranked sites received a pro-rata 
+amount of the allocated capacity based on ratio of transfer capability of sites utilized. The site 
+repository was expanded to include retiring conventional sites for wind and solar placement. 
+ SOLAR SITING 
+Figure 2.7 through Figure 2.9 show the selected sites and allocation of utility solar capacity across the 
+SPP footprint in megawatts. 
+ 
+Figure 2.7: 2042 Future 1 Utility-Scale Solar Siting Plan 
+                                                 
+18 Documented in the ITP Resource Siting Manual 
+
+=====PDFPAGE 35=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  34 
+ 
+ 
+Figure 2.8: 2042 Future 2 Utility-Scale Solar Siting Plan 
+ 
+Figure 2.9: 2042 Future 3 and Future 4 Utility-Scale Solar Siting Plan 
+ 
+
+=====PDFPAGE 36=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  35 
+ 
+ WIND SITING 
+Figure 2.10 through Figure 2.12 show the selected siting and allocation of wind capacity across the 
+SPP footprint in megawatts. 
+ 
+Figure 2.10: 2042 Future 1 Wind Siting Plan 
+
+=====PDFPAGE 37=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  36 
+ 
+ 
+Figure 2.11: 2042 Future 2 Wind Siting Plan 
+ 
+Figure 2.12: 2042 Future 3 and Future 4 Wind Siting Plan 
+ 
+
+=====PDFPAGE 38=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  37 
+ 
+ CONVENTIONAL SITING 
+Conventional generation was sited according to the zone of majority ownership, stakeholder 
+preferences, generator outlet capability, scope of GOFs needed, and preference for existing and 
+assumed retirement sites over previous ITP sites. Figure 2.13 through Figure 2.14 show the selected 
+sites for conventional generation across the SPP footprint. 
+ 
+Figure 2.13: 2042 Future 1 Conventional Siting Plan 
+
+=====PDFPAGE 39=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  38 
+ 
+ 
+Figure 2.14: 2042 Future 2 Conventional Siting Plan 
+ 
+Figure 2.15: 2042 Future 3 and Future 4 Conventional Siting Plan 
+ 
+
+=====PDFPAGE 40=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  39 
+ 
+ ENERGY STORAGE SITING 
+Energy storage sites were based on energy storage GI queue requests, the assumption that energy 
+storage will largely be co-located with wind and solar, and transfer capability at available sites with 
+consideration of the solar and wind siting plans. Sites were selected to achieve some balance between 
+stand-alone, wind-associated, and solar-associated batteries. For sites associated with energy storage 
+requests in the GI queue, sited amounts were capped at the queue request amounts or siting 
+availability. Figure 2.16 through Figure 2.18 show the selected sites for energy storage generation 
+across the SPP footprint.  
+ 
+Figure 2.16: 2042 Future 1 Energy Storage Siting Plan 
+
+=====PDFPAGE 41=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  40 
+ 
+ 
+Figure 2.17: 2042 Future 2 Energy Storage Siting Plan 
+ 
+Figure 2.18: 2042 Future 3 and Future 4 Energy Storage Siting Plan 
+ 
+
+=====PDFPAGE 42=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  41 
+ 
+ DISTRIBUTED SOLAR SITING 
+Distributed solar generation was allocated to the top 10% of load buses for each load area on a pro-
+rata basis utilizing load review data. SPP considered stakeholder feedback in the selection of sites for 
+this technology. Future 1 did not include any additional distributed solar beyond the submitted load 
+forecast. Figure 2.19 and Figure 2.20 show the selected sites and allocation of distributed solar 
+capacity across the SPP footprint in megawatts. 
+ 
+Figure 2.19: 2042 Future 2 Distributed Solar Siting Plan 
+
+=====PDFPAGE 43=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  42 
+ 
+ 
+Figure 2.20: 2042 Future 3 and Future 4 Distributed Solar Siting Plan 
+  
+
+=====PDFPAGE 44=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  43 
+ 
+2.3 MARKET ECONOMIC MODEL 
+2.3.1 LOAD AND ENERGY FORECASTS 
+The 20YA load review focused on load data through 2042. Energy per area was obtained from publicly 
+available sources, and stakeholders were asked to identify/update the following parameters: 
+ Assignment of loads to companies 
+ Forecast system peak load (MW)  
+ Loss factors  
+ Load factors  
+ Load demand group assignments 
+ Monthly peak and energy allocations 
+ Station service loads 
+ Additional load due to space heating 
+ Resource planning peak loads and load factors 
+The ESWG and TWG approved the load review used in the market economic models.  
+Figure 2.21 shows the total coincident peak load for 2042. As discussed in section 2.1.1: Futures 
+Development, the peak loads in Future 2, Future 3, and Future 4 increase due to increased levels of 
+electrification.  
+ 
+Figure 2.21: SPP Peak Load 
+64.9 65.0
+66.5
+0.0
+10.0
+20.0
+30.0
+40.0
+50.0
+60.0
+70.0
+80.0
+2042
+GW
+20YA SPP Coincident Peak Load
+Future 1
+Future 2
+Futures 3&4
+=====PDFPAGE 45=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  44 
+ 
+Figure 2.22 shows the monthly energy per future for 2042. Similarly, the monthly energy values 
+increase in each successive future due to increased electrification.  
+ 
+Figure 2.22: Monthly Energy 
+2.3.2 GENERATION RESOURCES 
+Existing generation data originated from the Hitachi Simulation Ready Data Fall 2019 Reference Case 
+and was built upon with SPP stakeholder reviewed information provided through ESWG, TWG, and 
+MDWG. The ESWG was responsible for reviewing and approving all economic data. 
+Figure 2.23 identifies the amount of retired conventional generation compared to retirements 
+identified in the 2023 ITP Base Reliability models. The figure reflects the final set of retirements based 
+on the approved futures assumptions. The 2023 ITP values are displayed for reference to illustrate the 
+continued increase in 20-year retirements. 
+ 
+0
+5
+10
+15
+20
+25
+30
+35
+40
+45
+Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+Monthly Energy (TWh)
+20YA Monthly Energy
+Future 1 Future 2 Futures 3&4
+=====PDFPAGE 46=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  45 
+ 
+ 
+Figure 2.23: Projected Cumulative Retirements for 2023 ITP and 20YA 
+Figure 2.24 and Figure 2.25 detail the annual nameplate capacity and energy by unit/fuel type, 
+respectively for Future 1, Future 2, Future 3, and Future 4. 
+ 
+Figure 2.24: Annual Nameplate Capacity by Fuel Type 
+0
+5,000
+10,000
+15,000
+20,000
+25,000Capacity (MW)
+2023 ITP / 20YA Projected Cumulative Retirements
+Coal Gas Nuclear Oil
+0
+10,000
+20,000
+30,000
+40,000
+50,000
+60,000
+70,000
+2042 2042 2042
+Futures 3&4
+MW
+Nameplate Capacity (20YA)
+Coal Gas Nuclear Hydro Wind Solar Other
+=====PDFPAGE 47=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  46 
+ 
+ 
+Figure 2.25: Total Generation by Technology Type 
+Generator operating characteristics, such as operating and maintenance (O&M) costs, heat rates, and 
+energy limits were also provided to ESWG to review. 
+2.3.3 FUEL PRICES 
+The Hitachi fundamental forecast Spring 2022 and Wood Mackenzie fundamental forecast Fall 2022 
+were utilized for the fuel price forecasts. SPP averaged the Hitachi and Wood Mackenzie fundamental 
+forecasts for the average natural gas prices.  
+Figure 2.26 shows the annual average natural gas and coal prices for the study horizon.  
+ -
+ 50,000,000
+ 100,000,000
+ 150,000,000
+ 200,000,000
+ 250,000,000
+ 300,000,000
+ 350,000,000
+ 400,000,000
+ 450,000,000
+Future 1 Future 2 Future 3 Future 4
+Total Generation (MWh)
+20YA Total Generation by Technology Type
+Battery Storage Coal Gas
+Hydro Nuclear Other
+Pumped Storage Solar Wind
+=====PDFPAGE 48=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  47 
+ 
+ 
+Figure 2.26: Average Fuel Cost 
+2.3.4 EMISSIONS 
+Per the 20YA Scope, the Future 3 and Future 4 PROMOD models had the same resource mix and only 
+differ by the hurdle rate applied to energy transfers with external regions. Following the EnCompass 
+analysis, which determined a sufficient carbon tax for emission reduction goals, a $25/ton carbon tax 
+was enacted in PROMOD Future 3 and Future 4. It can be observed in the figure below that post-
+PROMOD implementation, that the $25/ton carbon tax was not able to get emissions levels into the 
+93%-95% reduction from 2017 levels that was cited as the emissions target during EnCompass 
+scenario development and analysis. Future 3 and Future 4 were able to achieve 90% and 91% 
+reductions, respectively, in CO2 emissions from 2017 levels. This failure to meet emissions targets is 
+attributed to the lack of transmission limitations given in zonal EnCompass simulation, as well as 
+underdeveloped battery dispatch operations in PROMOD.  
+Figure 2.27 displays total CO2 emissions across Future 3 and Future 4, as well as provides a range for 
+the desired emissions reduction target. 
+0
+1
+2
+3
+4
+5
+6
+7
+8
+Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+Cost ($/MMBtu)
+2042 Average Fuel Cost
+Average Coal Cost Average Natural Gas Cost
+=====PDFPAGE 49=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  48 
+ 
+ 
+Figure 2.27: 2042 Emissions 
+Figure 2.28 provides a view on cumulative CO2 emissions across regions within SPP. 
+ 
+Figure 2.28: 2042 Emissions by Zone  
+15,041,685
+13,960,817 Tons, 93% R 
+Reduction (2017)
+Tons, 95%  
+Reduction (2017)
+0
+2,000,000
+4,000,000
+6,000,000
+8,000,000
+10,000,000
+12,000,000
+14,000,000
+16,000,000
+F3 F4
+Tons CO2
+2042 CO2 Emissions
+Total (Tons) 93% CO2 Reduction 95% CO2 Reduction
+F3, 15.04 Million Tons
+F4, 13.96 Million Tons
+95% Reduction (2017)
+7.84 Million Tons
+93% Reduction (2017) 
+10.98 Million Tons
+ -
+ 2.00
+ 4.00
+ 6.00
+ 8.00
+ 10.00
+ 12.00
+ 14.00
+ 16.00Million Tons CO2
+Zone
+2042 CO2 Emissions by Zone, F3 and F4
+F3 (Tons) F4 (Tons)
+F3 Cumulative Emissions F4 Cumulative Emissions
+95% CO2 Reduction 93% CO2 Reduction
+=====PDFPAGE 50=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  49 
+ 
+2.4 CONSTRAINT ASSESSMENT 
+SPP considers transmission constraints when reliably managing the flow of energy across physical 
+bottlenecks on the transmission system in the least-costly manner. Developing these study-specific 
+constraints plays a critical part in determining transmission needs, as the constraint assessment 
+identifies future bottlenecks and fine-tunes the market economic models. 
+SPP conducted an assessment to develop a list of transmission constraints for use in the security-
+constrained unit commitment (SCUC) and security-constrained economic dispatch (SCED) analysis for 
+all futures. Stakeholder reviewed elements identified by this assessment which limit the incremental 
+transfer of power throughout the transmission system, both under system intact and contingency 
+situations. The TWG approved the final recommended set of events for inclusion in the event files. SPP 
+defined the initial list of constraints leveraging the SPP permanent flowgate list,19 which consists of 
+NERC-defined flowgates that are impactful to modeled regions and recent temporary flowgates 
+identified by SPP in real time. SPP used MTEP20 constraints to help evaluate and validate constraints 
+identified within MISO and other neighboring areas. SPP also considered constraints identified in 
+neighboring areas for inclusion as a part of the ITP study constraint list. 
+ 
+Figure 2.29: Constraint Assessment Process 
+  
+                                                 
+19 Posted on SPP OASIS 
+SPP Permanent 
+Flowgate workbook
+Future Constraints
+20YA Constraints
+=====PDFPAGE 51=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  50 
+ 
+3 NEEDS ASSESSMENT 
+SPP and its stakeholders worked together to forecast and analyze the regional transmission system’s 
+economic and public policy needs for the 20YA.  
+3.1 ECONOMIC NEEDS 
+SPP determined economic needs based on the congestion score associated with a constraint 
+(comprised of a monitored element and a contingent element pair). SPP calculated the congestion 
+score by multiplying the number of hours a constraint is congested in the model by the average 
+shadow price of that constraint. In the 20YA, a list of constraints was developed for each scenario and 
+ranked based upon the congestion score associated with each constraint. 
+There were 106 total needs identified across all four futures, 55 of them being unique monitored-
+contingent element pairs. The top 25 unique constraints with a congestion score greater than $50,000 
+were identified as economic needs within each future. Additional constraints with the same monitored 
+element paired with a different contingency were also included if this congestion score was met. 
+Additional constraints identified in this manner are labeled as “Repeat” in the tables below. Some 
+needs appeared in multiple futures. The trend of larger congestion scores was observed on 
+Central/Northeast Oklahoma’s underlying 138kV system. Southwest Missouri needs were prominent in 
+future one and two, while Northwest Missouri constraints were observed in futures three and four. 
+The economic needs identified are shown in Figure 3.1 through Figure 3.4. They are also listed, along 
+with their congestion score and ranking by future in Table 3.1 through Table 3.4.  
+  
+=====PDFPAGE 52=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  51 
+ 
+3.1.1 FUTURE 1 ECONOMIC NEEDS 
+ 
+Figure 3.1: Future 1 Economic Needs  
+
+=====PDFPAGE 53=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  52 
+ 
+Constraint (Monitored – Contingent) Internal / 
+External 
+Congestion 
+Score 
+Rank Within 
+Future 
+Butler-Midian 138 kV for the loss of (FTLO) 
+Weaver 138 kV-Tallgrass 115 kV  Internal 3,612,815 1 
+Tulsa North-46th Street Tap 138 kV FTLO Tulsa 
+North-Cherokee Data Center West Tap 138 kV  Internal 3,060,684 2 
+Springfield-Clay 161 kV FTLO Huben-Morgan 
+345 kV  Internal 2,648,823 3 
+Morrill-Gering Tap 115 kV FTLO Wayside-Stegall-
+Wayside line reactor 230 kV  Internal 2,610,960 4 
+Tulsa North-Pine & Peoria West Tap 138 kV FTLO 
+Tulsa North 345/138 kV transformer Internal 2,107,037 5 
+Granite Falls-Marshall Tap 115 kV FTLO Lyon 
+County 345/115 kV transformer  Internal 1,732,114 6 
+Carlisle Interchange 230/115 kV transformer 
+FTLO Allen Sub-Lubbock South Interchange 115 
+kV  
+Internal 1,203,414 7 
+Lubbock South Interchange-Lubbock East 
+Interchange 115 kV FTLO Lubbock East 
+Interchange-Jones Station 230 kV  
+Internal 1,122,447 8 
+Springfield-Clay 161 kV FTLO John Twitty Energy 
+Center-James River 161 kV  Internal 917,485 Repeat of 3 
+Red Willow 345/115 kV transformer FTLO Gerald 
+Gentleman Station-Red Willow 345 kV  Internal 752,995 9 
+Woodward-Pine Bluff Dierks 115 kVFTLO LR 
+145th Street-Wrightsville 115 kV  External 715,626 10 
+Leeds-Wilton Tap 115 kV FTLO Ramsey-Balta 230 
+kV  Internal 697,131 11 
+Stillwater Kinze-Kinze 138 kV FTLO Cleveland-
+Sooner 345 kV  Internal 600,059 12 
+Tulsa North-Cherokee Data Center East Tap FTLO 
+Tulsa North 345 kV-Igloo Valley 345 kV  Internal 590,311 13 
+Sunny Side-Rocky Point 138 kV FTLO Sunny 
+Side-Uniroyal 138 kV  Internal 590,184 14 
+Cleveland (GRDA)-Cleveland (AECI) 138 kV FTLO 
+Tulsa North-Cleveland 345 kV  Internal 555,923 15 
+Gavins Point-Yankton Junction 115 kV FTLO 
+Gavins Point-Spirit Mound 115 kV  Internal 523,170 16 
+Split Rock 345/115 kV transformer-circuit 10 
+FTLO Split Rock 345/115 kV transformer circuit 
+11 
+External 507,354 17 
+Kerr-Maid 161 kV circuit 2 FTLO Kerr-Maid 161 
+kV circuit 1 Internal 494,252 18 
+=====PDFPAGE 54=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  53 
+ 
+Constraint (Monitored – Contingent) Internal / 
+External 
+Congestion 
+Score 
+Rank Within 
+Future 
+Aurora-Reeds Spring 161 kV FTLO Beaver-Eureka 
+Springs 161 kV  Internal 482,141 19 
+Webb City Tap-Osage 138 kV FTLO Cleveland-
+Sooner 345 kV  Internal 438,481 20 
+East Manhattan-Levee 115 kV FTLO North 
+Manhattan 230/115 kV transformer Internal 372,086 21 
+Morgan 345/161 kV transformer 1 FTLO Morgan-
+Brookline 345 kV  External 357,666 22 
+Roseau 230 kV-Moranvi 230 kV FTLO Base Case External 352,000 23 
+Viola 345/138 kV transformer FTLO Wichita-Viola 
+345 kV  Internal 330,270 24 
+Morrill-Gering Tap 115 kV FTLO Dunlap-Box 
+Butte 115 kV  Internal 308,175 Repeat of 4 
+Potter County Interchange transformer 345/230 
+kV FTLO Hitchland Interchange-Moore County 
+Interchange 230 kV  
+Internal 307,334 25 
+Table 3.1: Future 1 Economic Needs 
+  
+=====PDFPAGE 55=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  54 
+ 
+3.1.2 FUTURE 2 ECONOMIC NEEDS 
+ 
+Figure 3.2: Future 2 Economic Needs 
+Constraint (Monitored – Contigent) Internal / 
+External Congestion Score 
+Rank 
+Within 
+Future 
+Tulsa North-Pine & Peoria West Tap 138 
+kV FTLO Tulsa North 345 kV/138 kV 
+transformer 
+Internal 5,122,851 1 
+Butler-Midian 138 kV FTLO Weaver-
+Tallgrass 115 kV  Internal 4,071,869 2 
+Granite Falls-Marshall Tap 115 kV FTLO 
+Lyon County 345/115 kV transformer  Internal 1,857,121 3 
+Springfield-Clay 161 kV FTLO Huben-
+Morgan 345 kV  Internal 1,612,163 4 
+Lubbock South Interchange-Lubbock East 
+Interchange 115 kV FTLO Lubbock East 
+Interchange-Jones Station 230 kV  
+Internal 1,375,502 5 
+
+=====PDFPAGE 56=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  55 
+ 
+Constraint (Monitored – Contigent) Internal / 
+External Congestion Score 
+Rank 
+Within 
+Future 
+Tulsa North-46th Street Tap 138 kV FTLO 
+Tulsa North-Cherokee Data Center West 
+Tap 138 kV  
+Internal 1,334,926 6 
+Coteau 230/138 kV transformer FTLO 
+Herbert 230 kV-Pasqua 230 kV  External 1,174,837 7 
+Morrill-Gering Tap 115 kV FTLO Wayside-
+Stegall-Wayside line reactor 230 kV  Internal 1,038,993 8 
+Carlisle Interchange 230/115 kV 
+Transformer FTLO Allen Sub-Lubbock 
+South Interchange 115 kV 
+Internal 909,153 9 
+70th & Bluff 161/115 kV transformer FTLO 
+Sub 3454-Wagener 345 kV Internal 798,285 10 
+Springfield-Clay 161 kV FTLO John Twitty 
+Energy Center-James River 161 kV  Internal 745,751 Repeat of 4 
+Tulsa North-Cherokee Data Center East 
+Tap 138 kV FTLO Tulsa North 345 kV-
+Igloo Valley 345 kV  
+Internal 693,553 11 
+Roseau 230 kV-Moranvi 230 kV FTLO Base 
+Case External 678,639 12 
+Sub 1214-70th & Bluff 161 kV FTLO Sub 
+3454-Wagener 345 kV  Internal 627,018 13 
+Morgan 345/161 kV transformer FTLO 
+Morgan-Brookline 345 kV  External 595,780 14 
+Split Rock 345/115 kV transformer circuit 
+10 FTLO Split Rock 345/115 kV 
+transformer circuit 11 
+External 566,924 15 
+North Battleford-Landis 138 kV FTLO 
+Coteau Creek-Milden-Grid Line Tap 138 
+kV  
+External 566,322 16 
+Sunny Side-Rocky Point 138 kV FTLO 
+Sunny Side-Uniroyal 138 kV  Internal 538,293 17 
+Morgan-Brookline 161 kV FTLO Morgan-
+Brookline 345 kV  Internal 533,921 18 
+Potter County Interchange transformer 
+345/230 kV FTLO Hitchland Interchange-
+Moore County Interchange 230 kV  
+Internal 513,962 19 
+Red Willow 345/115 kV transformer FTLO 
+Gerald Gentleman Station-Red Willow 345 
+kV  
+Internal 435,452 20 
+Kerr-Maid 161 kV circuit 2 FTLO Kerr-
+Maid 161 kV circuit 1 Internal 395,087 21 
+=====PDFPAGE 57=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  56 
+ 
+Constraint (Monitored – Contigent) Internal / 
+External Congestion Score 
+Rank 
+Within 
+Future 
+Cimarron 345/138 kV transformer circuit 1 
+FTLO Cimarron 345/138 kV Transofmer 
+circuit 2 
+Internal 392,479 22 
+Aurora-Reeds Spring 161 kV FTLO Beaver-
+Eureka Springs 161 kV  Internal 387,069 23 
+Gracemont-Anadarko Switchyard 138 kV 
+FTLO Minco-Gracemont 345 kV  Internal 386,910 24 
+Cleveland (GRDA)-Cleveland (AECI) 138 
+kV FTLO Tulsa North-Cleveland 345 kV  Internal 372,311 25 
+Table 3.2: Future 2 Economic Needs 
+3.1.3 FUTURE 3 ECONOMIC NEEDS 
+ 
+Figure 3.3: Future 3 Economic Needs 
+
+=====PDFPAGE 58=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  57 
+ 
+Constraint (Monitored – Contigent) Internal / 
+External 
+Congestion 
+Score 
+Rank 
+Within 
+Future 
+Swift Current 230/138 kV transformer circuit 2 FTLO 
+Swift Current 230/138 kV transformer circuit 1 External 6,213,593 1 
+Big Creek-Warren 161 kV FTLO Enon Tap-
+Montgomery 345 kV  External 4,268,560 2 
+Assiniboia 230/138 kV transformer FTLO Poplar 
+River-Assiniboia 230 kV  External 4,215,467 3 
+Butler-Midian 138 kV FTLO Weaver-Tallgrass 115 kV  Internal 3,866,563 4 
+Tulsa North-46th Street Tap 138 kV FTLO Tulsa 
+North-Cherokee Data Center West Tap 138 kV  Internal 2,182,229 5 
+Bismark-East Bismark 115 kV FTLO Base Case Internal 2,019,468 6 
+Coteau 230/138 kV transformer FTLO Herbert 230 
+kV-Pasqua 230 kV  External 1,979,117 7 
+Long Prairie-Little Sauk Tap 115 kV FTLO Inmann-
+Searl Junction 230 kV  External 1,930,322 8 
+Lubbock South Interchange-Lubbock East 
+Interchange 115 kV FTLO Lubbock East Interchange-
+Jones Station 230 kV  
+Internal 1,853,552 9 
+Chub Lake 345/115 kV transformer FTLO Helena-
+Scott County 345 kV  External 1,696,617 10 
+Roseau 230 kV-Moranvi 230 kV FTLO Base Case External 1,621,093 11 
+Glaslyn-Brada 138 kV FTLO Golden Lake-Brada 230 
+kV  External 1,464,594 12 
+Morrill-Gering Tap 115 kV FTLO Dunlap-Box Butte 
+115 kV  Internal 1,439,764 13 
+Hawthorne 345/161 kV circuit 20 FTLO Hawthorne 
+345/161 kV circuit 22 Internal 1,161,862 14 
+Raun-Tekamah 161 kV FTLO Raun-Sub 34541 345 
+kV  Internal 1,026,512 15 
+Morrill-Gering Tap 115 kV FTLO Wayside-Stegall-
+Wayside Line Reactor 230 kV  Internal 989,915 Repeat of 
+14 
+Carlisle Interchange 230/115 kV FTLO Allen Sub-
+Lubbock South Interchange 115 kV  Internal 902,412 16 
+Craig-Lenexa South 161 kV circuit 2 FTLO Craig-
+Lenexa South 161 kV circuit 1 Internal 888,029 17 
+Ramsey Transformer 230/115 kV FTLO Ramsey Cap 
+Bank-Prairie 230 kV  External 807,320 18 
+Sullivan 161/138 kV FTLO Fletcher-Salem Tap 345 
+kV  External 802,316 19 
+Palmyra-Hannibal West 161 kV FTLO Montgomery -
+Spencer Creek 345 kV  External 777,648 20 
+=====PDFPAGE 59=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  58 
+ 
+Constraint (Monitored – Contigent) Internal / 
+External 
+Congestion 
+Score 
+Rank 
+Within 
+Future 
+Forman 230/115 kV transformer FTLO Hankson-
+Wahpeton 230 kV  External 776,441 21 
+Cimarron 345/138 kV transfomer circuit 1 FTLO 
+Cimarron 345/138 kV transformer circuit 2 Internal 746,400 22 
+Huron-Huron 'B' Tap 115 kV FTLO Huron-Huron 
+West Park 115 kV  Internal 725,974 23 
+Gran Grae-Nelson Dewey 161 kV FTLO Adams-
+Mitchell County 345 kV  External 684,589 24 
+Palmyra-Hannibal West 161 kV FTLO Palmyra Tap-
+Spencer Creek 345 kV  External 672,082 Repeat of 
+20 
+Tulsa North-Cherokee Data Center East Tap 138 kV 
+FTLO American Airlines-Mingo Road Airport 138 kV  Internal 651,878 25 
+Table 3.3: Future 3 Economic Needs 
+=====PDFPAGE 60=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  59 
+ 
+3.1.4 FUTURE 4 ECONOMIC NEEDS 
+ 
+Figure 3.4: Future 4 Economic Needs 
+  
+
+=====PDFPAGE 61=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  60 
+ 
+Constraint Internal / 
+External 
+Congestion 
+Score 
+Rank 
+Within 
+Future 
+Assiniboia 230/138 kV transformer FTLO Poplar 
+River-Assiniboia 230 kV  External 4,214,685 1 
+Butler-Midian 138 kV FTLO Weaver-Tallgrass 115 
+kV  Internal 3,802,143 2 
+Tulsa North-46th Street Tap 138 kV FTLO Tulsa 
+North-Cherokee Data Center West Tap 138 kV  Internal 2,119,104 3 
+Bismark 115 kV-East Bismark 115 kV FTLO Base 
+Case Internal 2,096,873 4 
+Coteau 230/138 kV FTLO Herbert 230 kV-Pasqua 
+230 kV  External 1,981,688 5 
+Lubbock South Interchange-Lubbock East 
+Interchange 115 kV FTLO Lubbock East 
+Interchange-Jones Station 230 kV  
+Internal 1,850,917 6 
+Morrill-Gering Tap 115 kV FTLO Dunlap-Box Butte 
+115 kV  Internal 1,477,300 7 
+Raun-Tekamah 161 kV FTLO Raun-Sub 34541 345 
+kV  Internal 1,191,977 8 
+Hawthorne 345/161 kV transformer circuit 20 FTLO 
+Hawthorne 345/161 kV transformer circuit 22 Internal 1,175,696 9 
+Morrill-Gering Tap 115 kV FTLO Wayside-Stegall-
+Wayside Line Reactor 230 kV  Internal 944,133 Repeat 
+of 7 
+Carlisle Interchange 230/115 kV transformer FTLO 
+Allen Sub-Lubbock South Interchange 115 kV  Internal 893,072 10 
+Forman 230 kV/115 kV transformer FTLO 
+Hankson-Wahpeton 230 kV  External 835,536 11 
+Craig-Lenexa 161 kV circuit 2 FTLO Craig-Lenexa 
+161 kV circuit 1 Internal 818,284 12 
+Ramsey 230/115 kV transformer FTLO Ramsey 
+capacitor bank-Prairie 230 kV  External 815,001 13 
+Cimarron 345/138 kv transformer circuit 1 FTLO 
+Cimarron 345/138 kV transformer circuit 2 Internal 749,385 14 
+Huron-Huron 'B' Tap 115 kV FTLO Huron-Huron 
+West Park 115 kV  Internal 721,909 15 
+Morgan 345/161 kV transformer FTLO Morgan-
+Brookline 345 kV  External 710,150 16 
+Gran Grae-Nelson Dewey 161 kV FTLO Adams-
+Mitchell County 345 kV  External 694,544 17 
+Moberly-Salisbury 161 kV FTLO Thomas Hill-
+Salisbury 161 kV  Internal 687,125 18 
+Split Rock 230/115 kV transformer circuit 7 FTLO 
+Sioux City-Eagle 230 kV  External 656,968 19 
+=====PDFPAGE 62=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  61 
+ 
+Constraint Internal / 
+External 
+Congestion 
+Score 
+Rank 
+Within 
+Future 
+Tulsa North-Cherokee Data Center East Tap 138 kV 
+FTLO American Airlines-Mingo Road Airport 138 
+kV  
+Internal 618,205 20 
+Granite Falls-Willmarth 230 kV FTLO Big Stone 
+South-Alexandria Substation 345 kV circuit C1 Internal 611,252 21 
+Tulsa North-Pine & Peoria West Tap 138 kV FTLO 
+Tulsa North 345/138 kV Transformer Internal 586,543 22 
+North Rochester-Byron 345 kV FTLO Wilmarth-
+Winnebago 345 kV  External 491,778 23 
+Cleveland (GRDA)-Cleveland (AECI) 138 kV circuit 
+Z1 FTLO Tulsa North 345 kV-Cleveland 345 kV  Internal 478,614 24 
+Granite Falls-Marshall Tap 115 kV FTLO Lyon 
+County 345/115 kV transformer circuit 9 Internal 476,402 25 
+Table 3.4: Future 4 Economic Needs 
+3.2 PUBLIC POLICY NEEDS 
+Policy needs were analyzed based on the curtailment of renewable energy such that an energy-based 
+renewable portfolio standard is not able to be met. Each zone with an energy mandate or goal was 
+analyzed on a utility-by-state level for renewable curtailments to determine if they met their mandate 
+or goal. Policy needs are the result of an inability to dispatch renewable generation due to congestion, 
+and any utility-by-state not meeting its renewable mandate or goal. 
+All utilities met their overall renewable mandates and goals, thus no policy needs were identified.  
+  
+=====PDFPAGE 63=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  62 
+ 
+4 SOLUTION DEVELOPMENT AND 
+EVALUATION 
+Solutions were evaluated in each applicable scenario and modeled to determine their effectiveness in 
+mitigating the needs identified in the needs assessment. SPP analyzed 463 solutions, all of which were 
+developed by SPP, stakeholders, and external contractors. SPP developed a standardized conceptual 
+cost template to calculate a conceptual cost estimate for each project to utilize during screening.  
+4.1 ECONOMIC PROJECT SCREENING 
+Solutions were evaluated to determine their effectiveness in mitigating transmission congestion in the 
+study horizon. A one-year benefit-to-cost (B/C) ratio was calculated for each project based on its 
+projected adjusted production cost (APC) savings in each future for the study year. SPP also calculated 
+two additional metrics to support project evaluation, the cost per congestion relief and the net benefit 
+metric. The cost per congestion relief metric helps assess the efficiency of projects in reducing 
+congestion, with lower values being desirable. The net benefit metric considers the APC reduction for 
+SPP minus the cost of the solution, providing an indication of the overall value generated by the 
+project.  
+The annual change in APC for all SPP pricing zones is considered the one-year benefit to the SPP 
+region for the study year. The one-year benefit is divided by the one-year cost of the project to 
+develop a one-year B/C ratio for each project. The one-year cost, or projected annual transmission 
+revenue requirement (ATRR), is calculated using a historical SPP average net plant carrying charge 
+(NPCC) multiplied by the project conceptual cost. The NPCC used for this assessment was 16.36%.  
+The correlation of congestion in different areas of the system was identified and accounted for during 
+the economic screening process. Where appropriate, this included adding new flowgates to screening 
+simulations to ensure potential congestion created by projects would be captured, as well as pairing 
+certain projects to ensure correlated congestion would be resolved by a more comprehensive solution 
+set. These adjustments ensure the projected benefits of projects are not over or understated. 
+4.2 PUBLIC POLICY PROJECT SCREENING 
+It's important to note that the absence of public policy needs in the assessment does not imply that 
+there are no public policy goals or objectives relevant to the energy or infrastructure sector. Public 
+policy needs can encompass a wide range of factors, such as renewable energy integration, 
+environmental sustainability, grid resilience, and equitable access to energy resources, among others. 
+While the focus of the assessment may have been on addressing transmission congestion, it's possible 
+that other studies or initiatives are addressing public policy needs separately. Public policy 
+=====PDFPAGE 64=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  63 
+ 
+considerations often require ongoing evaluation and adaptation to changing circumstances, so it's 
+important to periodically reassess and incorporate them into planning processes as needed. 
+If public policy needs arise in the future or if there are other planning studies underway to address 
+those needs, it may be beneficial to consider their integration into the evaluation and screening 
+processes to ensure a holistic approach to infrastructure planning and development. 
+  
+=====PDFPAGE 65=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  64 
+ 
+5 PORTFOLIO DEVELOPMENT 
+5.1 PORTFOLIO DEVELOPMENT PROCESS 
+Figure 5.1 shows a high-level overview of the portfolio development process. The process starts with 
+the utilization of project metric results in project grouping and continues through the development of 
+a consolidated portfolio that comprehensively addresses the system’s needs. 
+5.2 PROJECT SELECTION AND GROUPING 
+Once all solutions were screened, draft groupings were developed in parallel to address the different 
+need types across the system. SPP used conceptual cost estimates during the project screening phase. 
+5.2.1 ECONOMIC GROUPING 
+All projects with a one-year B/C ratio of at least 1.0 during the project screening phase were further 
+evaluated while developing project groupings. In addition, certain projects below this threshold were 
+selected to help address needs downstream of other solutions. Projects were evaluated and grouped 
+based on one-year project cost, one-year APC benefit, and congestion relief for the economic needs. 
+Three economic project groupings were developed for each future, resulting in 12 total groupings: 
+1. Highest Net APC Benefit (HN): Projects with the highest APC benefit minus project cost, with 
+consideration of overlap if multiple projects mitigate congestion on the same economic needs. 
+Project Selection Metrics 
+Highest Net APC Benefit 
+Most Needs Addressed 
+Cost Effective 
+Economic Grouping 
+Future 1 
+Economic Grouping 
+Future 1 
+Economic Grouping 
+Future 1 
+Economic Grouping 
+Future 1 
+EHV Solutions 
+Future 1 
+EHV Solutions 
+Future 2 
+EHV Solutions 
+Future 3 
+EHV Solutions 
+Future 4 
+Figure 5.1: Portfolio Development Process 
+=====PDFPAGE 66=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  65 
+ 
+2. Most Needs Addressed (MN): Projects that appeared in the top five solutions for any need 
+most frequently, with consideration of overlap. 
+3. Cost-Effective (CE): Projects with the highest B/C Ratio for each individual economic need. 
+The following tables identify a comprehensive list of economic projects included in the twelve initial 
+groupings for each future. Some projects appeared in multiple groupings and/or multiple futures. 
+Description 
+Future 1 
+HN MN CE 
+Terminal upgrades on the Butler-Midian 138 kV    X 
+New 230/115 kV transformer at Carlisle Interchange  X X X 
+New 345/115 kV transformer at Split Rock X  X 
+Rebuild Tulsa North-46th Street Tap 138 kV    X 
+Rebuild Gavin’s Point-Yankton Junction 115 kV    X 
+New Potter County Interchange 345/230 kV transformer  X X X 
+Rebuild East Manhattan-Levee 115 kV  X X X 
+Rebuild Morrill-Gering Tap 115 kV  X  X 
+Rebuild Tulsa North-46th Street Tap 138 kV  
+Rebuild Tulsa North-Cherokee Energy Center East Tap 138 kV  
+Rebuild Tulsa North-Pine & Peoria West Tap 138 kV  
+  X 
+Rebuild Kerr-Maid 161 kV circuits 1 and 2   X 
+New Red Willow 345/115 kV transformer X X X 
+New Lubbock South Interchange-Lubbock East Interchange 230 kV  X X X 
+Rebuild Sunnyside-Rocky Point 138 kV    X 
+New Monett 345/161 kV transformer  
+New Blackberry-Monett 345 kV 
+New Monett 345 kV substation 
+  X 
+New Huben-LaCygne 345 kV    X 
+New Pittsburg-Fort Smith 345 kV    X 
+New Morgan 345/161 kV transformer 
+New Brookline 345/161 kV transformer 
+New Fort Smith 345/161 kV transformer  
+Rebuild Big Creek-Warrenton 161 kV  
+Rebuild Coffman-Huben 161 kV  
+Rebuild Gleason-Conway Tyler 161 kV  
+Rebuild Mansfield North-Logan 161 kV  
+Rebuild Morrilton East-Gleason 161 kV  
+Rebuild Willow Springs-Cabool 161 kV  
+Rebuild Aurora H.T.-Reeds Spring 161 kV  
+Rebuild Craig-Lenexa 161 kV circuit 2 
+Rebuild Springfield-Clay161 kV  
+X X X 
+New Byron-Winnebago 345 kV X X X 
+New Riverside Station-Hunter 345 kV X X X 
+New Harvey-Jamestown 230 kV   X 
+=====PDFPAGE 67=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  66 
+ 
+Description 
+Future 1 
+HN MN CE 
+Rebuild Butler-Midian 138 kV  
+Rebuild Butler South-Tallgrass 138 kV  
+Rebuild Weaver-Tallgrass 138 kV  
+X X  
+New 345/138 kV transformer at Tap Bus 1  
+New 345/161 kV transformer at Tap Bus 1  
+New Catoosa-Catoosa Int. 138 kV  
+New substation at Tap Bus 1 345 kV 
+Rebuild Tulsa North-Cherokee Data Center East Tap 138 kV  
+Tap Tulsa North-Igloo Valley 345 kV  
+X X  
+New Rodman 345/138 kV transformer  
+New Rebar-Rodman 138 kV  
+New Rodman 138 kV substation 
+New Rodman 345 kV substation 
+Tap Sunny Side-Hugo 345 kV  
+X X  
+New Raun-Eagle 345 kV X X  
+New Sooner-Fort Smith 345 kV X X  
+Table 5.1: Initial Economic Project Grouping: Future 1 
+  
+=====PDFPAGE 68=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  67 
+ 
+Description Future 2 
+HN MN CE 
+New Riverside Station-Matthewson 345 kV X X X 
+New Carlisle Interchange 230/115 kV transformer X  X 
+New Split Rock 345/115 kV transformer X  X 
+New Chub Lake 345/115 kV transformer X  X 
+New Lubbock South Interchange-Lubbock East Interchange 230 
+kV X  X 
+New Red Willow 345/115 kV transformer  X  X 
+Rebuild Morrill-Gering Tap 115 kV  X  X 
+Rebuild Butler-Midian 138 kV    X 
+Rebuild Tulsa North-Pine & Peoria West Tap 138 kV    X 
+Rebuild Tulsa North-46th Street Tap 138 kV  
+Rebuild Tusla North-Cherokee Energy Center East Tap 138 kV  
+Rebuild Tulsa North-Pine & Peoria West Tap 138 kV  
+  X 
+New Gracemont-Anadarko 138 kV    X 
+New Potter County Interchange 345/230 kV transformer    X 
+New Lone Grove-South Wilson 138 kV   X 
+New 70th & Bluff 161/115 kV transformer 
+Rebuild Sub 1214-70th & Bluff 161 kV    X 
+New Delaware-Ranch Road 345 kV    X 
+New Monett 345/161 kV transformer  
+New Jasper-Monett 345 kV  
+New Monett 345 kV substation 
+  X 
+Rebuild Roseau-Moranville 230 kV    X 
+Tap Tulsa North-Igloo Valley 345 kV  
+New Catoosa 345 kV substation 
+New Catoosa 345/138 kV transformer  
+New Catoosa 345/161 kV transformer  
+New Catoosa-Catoosa Int. 138 kV  
+Rebuild Tulsa North-Cherokee Data Center East Tap 138 kV  
+X X  
+New Sooner-Fort Smith 345 kV X X  
+New Fort Smith-Thistle 345 kV X X  
+New Flint Creek-Buffalo Flats 345 kV  X X  
+Rebuild Butler-Midian 138 kV  
+Rebuild Butler South-Tallgrass 138 kV  
+Rebuild Weaver-Tallgrass 138 kV  
+X   
+New Potter County Interchange 345/230 kV transformer 
+New RB-Spurlock-Moore County Interchange East Bus 115 kV  X   
+New Anadarko 345/138 kV transformer  
+New Gracemont-Anadarko 345 kV  
+New Anadarko 345 kV substation 
+X   
+New Rodman 345/138 kV transformer  
+New Rebar-Rodman 138 kV  X   
+=====PDFPAGE 69=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  68 
+ 
+Description Future 2 
+HN MN CE 
+New Rodman 138 kV substation 
+New Rodman 345 kV substation 
+Tap Sunny Side-Hugo 345 kV  
+New Huben-LaCygne 345 kV  X   
+Table 5.2: Initial Economic Project Grouping: Future 2 
+Description Future 3 
+HN MN CE 
+New Fort Smith-Thistle 345 kV X X X 
+New Swift Current-Pasqua 230 kV X X X 
+New Hawthorne 345/161 kV transformer  X X X 
+New Adams-Mitchell County 345 kV  X X X 
+Tap Tulsa North-Igloo Valley 345 kV  
+New Catoosa 345 kV substation 
+New Catoosa 345/138 kV transformer  
+New Catoosa 345/161 kV transformer  
+New Catoosa-Catoosa Int. 138 kV  
+New Catoosa 345 kV substation 
+Rebuild Tulsa North-Cherokee Data Center East Tap 138 kV  
+X X X 
+Rebuild Bismarck-Bismarck Expressway 115 kV  X X X 
+Rebuild Morrill-Gering Tap 115 kV X X X 
+New Carlisle Interchange 230/115 kV transformer  X X X 
+New Lubbock South Interchange-Lubbock East Interchange 230 
+kV X X X 
+Tap Twin Brooks-Ellendale 345 kV  
+New Groton Tap 345 kV substation 
+New Groton Tap-Groton 345 kV 
+New Broadland-Groton 345 kV  
+X X X 
+Rebuild Roseau-Moranville 230 kV  X X X 
+New Palmyra-Hannibal West 161 kV  X X X 
+Rebuild Raun-Tekemah 161 kV  X X X 
+New Ramsey-Pickert 230 kV X X X 
+New 230/138 kV transformer at Swift Current X  X 
+New Assiniboia-Pasqua 230 kV  X  X 
+New Sooner-Fort Smith 345 kV   X 
+New Mohawk-Tulsa North 138 kV    X 
+New Cimarron-Norman Hill 345 kV   X 
+Tap Split Rock-Sioux City 345 kV  
+New Eagle 345 kV substation 
+Tap Fort Thompson-Grand Prairie 345 kV  
+New White Swan 345 kV substation 
+New Beresford 345 kV substation 
+New Beresford 345/115 kV transformer 
+  X 
+=====PDFPAGE 70=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  69 
+ 
+Description Future 3 
+HN MN CE 
+New Eagle-Beresford 345 kV  
+New White Swan-Beresford 345 kV  
+New Cimarron-Seminole 345 kV X X  
+Tap Fort Thompson-Grand Prairie 345 kV  
+New Platte Creek 345 kV substation 
+Tap Split Rock-Sioux City 345 kV  
+New Canton 345 kV substation 
+Tap Split Rock-White 345 kV  
+New Moody County 345 kV substation 
+Tap Virgil Fodness-Utica Junction 230 kV  
+New Turner County 345 kV substation 
+New Turner County 230 kV substation 
+New Hanlon 345 kV substation 
+New Hanlon 345/230 kV transformer  
+New Turner County 345/230 kV transformer  
+New Hanlon-Broadland 345 kV  
+New Hanlon-Moody County 345 kV  
+New Hanlon-Turner County 345 kV  
+New Thedford-Platte Creek 345 kV  
+New Turner County-Canton 345 kV  
+New Turner County-Platte Creek 345 kV  
+X X  
+Table 5.3: Initial Economic Project Grouping: Future 3 
+Description 
+Future 4 
+HN MN CE 
+New Hawthorne 345/161 kV transformer  X X X 
+Rebuild Moberly-Salisbury 161 kV  X X X 
+New Lubbock South-Lubbock East 230 kV X X X 
+New Chub Lake 345/115 kV transformer  X X X 
+New Ramsey-Pickert 230 kV  X X X 
+New Huben-Brookline 345 kV   X X 
+New Adams-Mitchell County 345 kV  X  X 
+New Gracemont-Anadarko 138 kV    X 
+Rebuild Morrill-Gering Tap 115 kV    X 
+Tap Tulsa North-Igloo Valley 345 kV  
+New Catoosa 345 kV substation 
+New Catoosa 345/138 kV transformer  
+New Catoosa 345/161 kV transformer  
+New Catoosa-Catoosa Int. 138 kV  
+Rebuild Tulsa North-Cherokee Data Center East Tap 138 kV  
+  X 
+New Cimarron-Norman Hill 345 kV   X 
+New Viola 345/138 kV transformer    X 
+=====PDFPAGE 71=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  70 
+ 
+Description 
+Future 4 
+HN MN CE 
+New Raun 3-Eagle 345 kV    X 
+Rebuild Coffman-Huben 161 kV  
+Rebuild Mansfield-Logan 161 kV  
+Rebuild Willow Springs-Cabool 161 kV  
+Rebuild Aurora H.T.-Reeds Spring 161 kV  
+Rebuild Craig-Lenexa 161 kV circuit 2 
+Rebuild Springfield-Clay 161 kV  
+  X 
+New Riverside Station-Sooner 345 kV    X 
+New Sooner-Fort Smith 345 kV    X 
+New Anadarko 345/138 kV transformer  
+New Gracemont-Anadarko 345 kV  
+New Anadarko 345 kV substation 
+X X  
+New Hanlon 345/230 kV transformer  
+New Hanlon-BEPC-Broadland 345 kV  
+New Split Rock-Hanlon 345 kV  
+New Hanlon 345 kV substation 
+X X  
+New Fort Smith-Thistle 345 kV  X X  
+New Riverside Station-Hunter 345 kV  X X  
+New Jasper-Flint Creek 345 kV X   
+Table 5.4: Initial Economic Project Grouping: Future 4 
+  
+=====PDFPAGE 72=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  71 
+ 
+ ITERATIVE PROJECT SELECTION 
+All twelve groupings above were modeled and evaluated for each future, regardless of which future 
+the grouping was developed for. The groupings were evaluated on the aforementioned criteria for 
+each future. The groupings that provided the most congestion relief within SPP for each future were 
+selected to advance. The portfolio groups selected for further development were: 
+ Future 1: Future 2 Highest Net (HN) 
+ Future 2: Future 2 Highest Net (HN) 
+ Future 3: Future 3 Cost-Effective (CE) 
+ Future 4: Future 3 Highest Net (HN) 
+These portfolios groups were evaluated for elements that showed high remaining congestion 
+($100M+). The following constraints were addressed in iterative runs to relieve congestion: 
+Future 1 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Fort Smith 345/161 kV transformer FTLO 
+Fort Smith 500/345 kV transformer $525 New Fort Smith 500/345 kV 
+transformer  
+Viola 345/138kV transformer FTLO Wichita-
+Viola 345 kV $218 New Viola 345/138 kV transformer  
+Granite Falls-Marshall Tap Motor Operated 
+Switch 115 kV FTLO Lyon County 345/115 
+kV transformer 
+$199 Rebuild Granite Falls-Marshall Tap 
+Motor Operated Switch 115 kV  
+Springfield-Clay 161 kV FTLO John Twitty 
+Energy Center-James River 161 kV $146 Rebuild Springfield-Clay 161 kV  
+Butler-Midian FTLO Weaver-Tallgrass 138 kV $115 Reconductor Butler-Midian 138 kV 
+Line 
+Red Willow 345/161 kV transformer FTLO 
+Gentleman-Red Willow 345 kV $110 New 345/115 kV transformer Red 
+Willow 
+Table 5.5: Future 1 Constraints 
+Future 2 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Fort Smith 345/161 kV transformer FTLO 
+Fort Smith 500/345 kV transformer $642 New Fort Smith 500/345 kV 
+transformer  
+Granite Falls-Marshall Tap Motor Operated 
+Switch 115 kV FTLO Lyon County 345/115 kV 
+transformer 
+$245 Rebuild Granite Falls-Marshall Tap 
+Motor Operated Switch 115 kV  
+=====PDFPAGE 73=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  72 
+ 
+Future 2 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Butler-Midian FTLO Weaver-Tallgrass 138 kV $141 Reconductor Butler-Midian 138 kV 
+Tulsa North 345/138 kV transformer FTLO 
+Tulsa North-Igloo Valley 345 kV $115 
+Rebuild Tulsa North-46th St. Tap 
+138 kV  
+Rebuild Tulsa North-Cherokee Data 
+Center East Tap 138 kV  
+Rebuild Tulsa North-Pine & Peoria 
+West Tap 138 kV  
+Hawthorne #20 345/161 kV transformer 
+FTLO Hawthorne #22 345/161 kV 
+transformer 
+$115 3rd Hawthorne 345/161 kV 
+transformer  
+McDowell Creek-Potter County 230 kV FTLO 
+Hitchland-Potter County $111 Reconductor McDowell Creek-
+Potter County 230 kV 
+Viola 345/138 kV transformer FTLO Wichita-
+Viola 345 kV $104 New Viola 345/138 kV transformer  
+Table 5.6: Future 2 Constraints 
+  
+=====PDFPAGE 74=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  73 
+ 
+Future 3 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Fort Smith 345/161 kV transformer FTLO 
+Fort Smith 500/345 kV transformer $866 New Fort Smith 500/345 kV 
+transformer  
+Tekemah-Sub 1226 FTLO Raun-Sub 3451 
+for Raun Reactor 345 kV  $446 Reconductor Tekamah-Sub 1226 
+161 kV Line 
+Butler-Midian FTLO Weaver-Tallgrass 138 
+kV $361 
+Rebuild Butler-Midian 138 kV  
+Rebuild Butler South-Tallgrass 
+138 kV  
+Rebuild Weaver-Tallgrass 138 kV  
+Potter County 345/230 kV transformer 
+FTLO Hitchland-Moore County 230 kV $238 New Potter County 345/230 kV 
+transformer  
+Granite Falls-Willmar FTLO Big Stone 
+South-Alexandria substation 345 kV $185 New Chub Lake 345/115 kV 
+transformer  
+Cimarron 345/138 kV transformer circuit 1 
+FTLO Cimarron 345/138 kV transformer 
+circuit 2 
+$169 New Cimarron 345/138 kV 
+transformer  
+Craig Lenexa 161kV circuit 1 FTLO Craig-
+Lenexa 161 kV circuit 2  $134 New 161 kV line from Craig-
+Lenexa 
+Neosho 345/138 kV transformer circuit 3 
+FTLO Neosho 345/138 kV transformer 
+circuit 4  
+$107 New Neosho 345/138 kV 
+transformer  
+Tulsa North 345/138 kV transformer FTLO 
+Tulsa North-Igloo Valley 345 kV $101 
+Rebuild Tulsa North-46th St. Tap 
+138 kV  
+Rebuild Tulsa North-Cherokee 
+Data Center East Tap 138 kV  
+Rebuild Tulsa North-Pine & 
+Peoria West Tap 138 kV 
+Table 5.7: Future 3 Constraints 
+Future 4 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Fort Smith 345/161 kV transformer FTLO 
+Fort Smith 500/345 kV transformer $640 New Fort Smith 500/345 kV 
+transformer  
+Tekemah-Sub 1226 FTLO Raun-Sub 3451 
+for Raun Reactor 345 kV $479 Reconductor Tekamah-Sub 1226 
+161 kV 
+=====PDFPAGE 75=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  74 
+ 
+Future 4 
+Constraint 
+Remaining 
+Congestion 
+($MM) 
+Attempted Solution 
+Butler-Midian FTLO Weaver-Tallgrass 138 
+kV $368 
+Rebuild-Butler-Midian 138 kV  
+Rebuild-Butler South-Tallgrass 
+138 kV  
+Rebuild-Weaver-Tallgrass 138 kV  
+Cimarron 345/138 kV transformer circuit 1 
+FTLO Cimarron 345/138 kV transformer 
+circuit 2 
+$245 New Cimarron 345/138 kV 
+transformer  
+Potter County 345/230 kV transformer 
+FTLO Hitchland-Moore County 230 kV $231 New Potter County 345/230 kV 
+transformer  
+Granite Falls-Willmar FTLO Big Stone 
+South-Alexandria substation-MRES 345 kV $182 New Chub Lake 345/115 kV 
+transformer  
+Tulsa North 345/138 kV transformer FTLO 
+Tulsa North-Igloo Valley 345 kV $139 
+Rebuild Tulsa North-46th St. Tap 
+138 kV  
+Rebuild Tulsa North-Cherokee 
+Data Center East Tap 138 kV  
+Rebuild Tulsa North-Pine & 
+Peoria West Tap 138 kV 
+Craig Lenexa 161kV circuit 1 FTLO Craig-
+Lenexa 161 kV circuit 2 $136 New 161 kV line from Craig- 
+Lenexa 
+Neosho 345/138 kV transformer circuit 3 
+FTLO Neosho 345/138 kV transformer 
+circuit 4 
+$102 New Neosho 345/138 kV 
+transformer circuit 3 
+Table 5.8: Future 4 Constraints 
+These projects were run individually, and also as additions to the portfolio groups that were identified 
+as the best portfolio group for the future containing the newly identified constraints. Projects that 
+performed well individually and continued to drive down portfolio costs for the identified projects 
+were added to portfolios for the final economic groupings. 
+ FINAL ECONOMIC GROUPINGS 
+The selected grouping for each future was the grouping that provided the highest net benefit to the 
+SPP region when comparing APC savings to the cost of the projects. All initial and iterative portfolio 
+results were analyzed for each individual future and held to be independent trials for each. However, 
+Futures 1 and 2 shared one recommended portfolio of projects that performed best in each trial run. 
+Futures 3 and 4 also shared one recommended portfolio of projects. Figure 5.2 and Figure 5.3 show 
+the final EHV economic projects on a map. Table 5.9 and Table 5.10 groupings. show the final list of 
+projects in the economic groupings. In a normal ITP assessment, SPP performs subtraction runs to 
+remove projects from the groupings that are not cost beneficial when included in a model with other 
+solutions. That effort was not done for this 20YA because the intention is to identify a collection of 
+=====PDFPAGE 76=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  75 
+ 
+projects that may be beneficial in the future under a wide range of circumstances. Removing projects 
+from consideration via subtraction run analysis is counterproductive to the idea of the 20YA. 
+ 
+Figure 5.2: Future 1 and Future 2 EHV Economic Projects 
+Project Description SPP EHV Cost Estimate 
+New Fort Smith-Thistle 345 kV X $466,017,786 
+New Flint Creek-Buffalo Flats 345 kV  X $354,689,361 
+New Sooner-Fort Smith 345 kV  X $295,421,353 
+New Huben-Lacygne 345 kV  X $203,648,712 
+New Riverside Station-Matthewson 345 kV  X $185,435,505 
+New Anadarko 345/138 kV transformer  
+X $30,102,922 New Gracemont-Anadarko 345 kV  
+New Anadarko 345 kV substation  
+New Fort Smith 500/345 kV transformer X $14,864,515 
+
+=====PDFPAGE 77=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  76 
+ 
+Project Description SPP EHV Cost Estimate 
+New Rodman 345/138 kV transformer  
+  $36,725,986 
+New Rebar-Rodman 138 kV  
+New Rodman 138 kV substation 
+New Rodman 345 kV substation 
+Tap Sunnyside-Hugo 345 kV  
+Tap Tulsa North-Igloo Valley 345 kV  
+ $36,465,944 
+New Catoosa 345 kV substation 
+New Catoosa 345/138 kV transformer 
+New Catoosa 345/161 kV transformer  
+New Catoosa-Catoosa Int. 138 kV  
+Rebuild Tulsa North-Cherokee Data Center East Tap 
+138 kV  
+Rebuild Granite Falls-Marshall Tap 115 kV   $31,061,970 
+Rebuild Morrill-Gering Tap 115 kV   $25,046,302 
+Rebuild Butler-Midian 138 kV  
+ $24,849,939 Rebuild Butler-Tallgrass 138 kV  
+Rebuild Weaver-Tallgrass 138 kV  
+New Potter County 345/230 kV transformer circuit 2  
+ $21,275,782 
+New Rita Blanca-Spurlock-Moore 115 kV circuit 2  
+Rebuild Butler-Midian 138 kV   $15,435,426 
+Split Rock 345/115 kV transformer circuit 3   $8,306,343 
+Chub Lake 345/115 kV transformer circuit 2   $8,306,343 
+Replace Red Willow 345/115 kV transformer   $8,306,343 
+Viola 345/138 kV transformer circuit 2   $8,306,343 
+Red Willow 345/115 kV transformer circuit 2   $8,306,343 
+Fort Smith 345/161 kV transformer circuit 2   $8,306,343 
+Rebuild Springfield-Clay 161 kV   $7,739,298 
+Rebuild Lubbock South Interchange-Lubbock East 
+Interchange 115 kV   $7,061,421 
+Carlisle Interchange 230/115 kV transformer   $5,879,128 
+Cleveland 138 kV terminal upgrade   $483,360 
+Table 5.9: Future 1 and Future 2 Final Economic Portfolio 
+=====PDFPAGE 78=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  77 
+ 
+ 
+Figure 5.3: Future 3 and Future 4 EHV Economic Portfolio 
+  
+
+=====PDFPAGE 79=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  78 
+ 
+Project Description SPP 
+EHV Cost Estimate 
+New Fort Smith-Thistle 345 kV X  $466,017,786  
+New Sooner-Fort Smith 345 kV  X $295,421,353  
+Tap Split Rock-Sioux City-Split Rock 345 kV  
+X $246,420,649  
+New Eagle 345 kV substation 
+Tap Fort Thompson-Grand Prairie 345 kV  
+New White Swan 345 kV substation 
+New Beresford 345 kV substation 
+New Beresford 345/115 kV transformer  
+New Eagle-Beresford 345 kV  
+New White Swan-Beresford 345 kV  
+New Potter County Interchange-Tolk Station 345 kV  X  $152,524,551  
+Tap Twin Brooks-Ellendale 345 kV  
+X $112,778,339 
+New Groton Tap 345 kV substation 
+New Groton Tap-Groton 345 kV  
+New Broadland-Groton 345 kV  
+New Sibley-Nashua 345 kV  X  $43,969,609  
+New Sibley-Hawthorn 345 kV circuit 2  X  $30,225,793  
+New Cimarron-Norman Hill 345 kV circuit 2  X  $25,473,756  
+New Adams-Mitchell County 345 kV circuit 2   $11,023,317  
+New Swift Current-Pasqua 230 kV    $161,447,581  
+New Ramsey-Pickert 230 kV    $89,277,309  
+New Assiniboia-Pasqua 230 kV    $85,824,112  
+Rebuild Raun-Tekamah 161 kV    $42,652,387  
+Tap Tulsa North-Igloo Valley 345 kV  
+  
+  
+  
+  
+  
+  
+$36,465,944  
+New Catoosa 345 kV substation 
+New Catoosa 345/138 kV transformer  
+New Catoosa 345/161 kV transformer  
+New Catoosa-Catoosa Int. 138 kV circuit 1  
+=====PDFPAGE 80=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  79 
+ 
+Project Description SPP 
+EHV Cost Estimate 
+Rebuild Tulsa North-Cherokee Data Center East Tap 138 
+kV  
+New Palmyra-Hannibal West 161 kV circuit 2    $27,765,832  
+Rebuild Morrill-Gering Tap 115 kV    $25,046,302  
+Rebuild Tekamah-S1226 161 kV    $23,999,875  
+Rebuild Tulsa North-46th Street Tap 138 kV    
+  
+  
+$22,518,205  Rebuild Tulsa North-Cherokee Data Center East 138 kV  
+Rebuild Tulsa North-Pine & Peoria West Tap 138 kV  
+Rebuild Roseau-Moranville 230 kV    $9,498,902  
+Fort Smith 345/161 kV transformer circuit 2    $8,306,343  
+Hawthorne 345/161 kV transformer circuit 3    $8,306,343  
+White 345/115 kV transformer circuit 2    $8,306,343  
+New Lubbock South Interchange-Lubbock East 
+Interchange 230 kV    $6,602,967  
+New Mohawk-Tulsa North 138 kV   $6,097,303  
+Carlisle Interchange 230/115 kV transformer circuit 2    $5,879,128  
+Swift Current 230/138 kV transformer    $5,879,128  
+Cleveland 138 kV terminal upgrade    $483,360  
+Bismark-Bismarck Expressway 115 kV rebuild    $207,080 
+Table 5.10: Future 3 and Future 4 Final Economic Portfolio 
+Future Portfolio E&C Cost 
+(2023$) 
+Portfolio E&C Cost 
+EHV Only (2023$) 
+1 
+$1,812,042,768 $1,550,180,154 
+2 
+3 
+$1,958,419,597 $1,372,831,837 
+4 
+Table 5.11 shows a summary of E&C costs for both the EHV only solutions and the full set of projects 
+for all futures.  
+  
+=====PDFPAGE 81=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  80 
+ 
+Future Portfolio E&C Cost 
+(2023$) 
+Portfolio E&C Cost 
+EHV Only (2023$) 
+1 
+$1,812,042,768 $1,550,180,154 
+2 
+3 
+$1,958,419,597 $1,372,831,837 
+4 
+Table 5.11: Final Groupings Costs 
+Figure 5.4 shows a B/C comparison of all the final groupings of EHV and non-EHV solutions. 
+ 
+Figure 5.4: B/C Comparison to Final Groupings 
+Figure 5.5 shows emissions data for the final Future 3 and Future 4 portfolios and performance of the 
+projects in relation to carbon emission goals discussed in Section 2.3: Market Economic Model (MEM) 
+of this report. Economic projects are expected to reduce the emissions in both futures, Future 3 is not 
+able to meet the emissions target with the implementation of the portfolio.  
+0
+1
+2
+3
+4
+5
+$0.00
+$0.20
+$0.40
+$0.60
+$0.80
+$1.00
+$1.20
+$1.40
+$1.60
+$1.80
+Future 1 Future 2 Future 3 Future 4
+Y20 B/C Ratio
+Y20 APC Benefit
+Billions
+Future
+Y20 APC Benefit Y20 B/C Ratio
+=====PDFPAGE 82=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  81 
+ 
+ 
+Figure 5.5: Future 3 and Future 4 CO2 Emissions 
+In addition, Figure 5.6 shows zonal contributions of CO2 to the overall market output. 
+ 
+Figure 5.6: Future 3 and Future 4 CO2 Emissions by Zone  
+93% Reduction 
+(2017)
+95% Reduction 
+(2017)
+ -
+ 2,000,000
+ 4,000,000
+ 6,000,000
+ 8,000,000
+ 10,000,000
+ 12,000,000
+ 14,000,000
+Future 3 Future 4
+Tons of CO2
+CO2 Emissions, Future 3 and Future 4
+93% Reduction in Emissions (2017) 95% Reduction in Emissions (2017)
+F3 Total 
+F4 Total 
+ -
+ 2
+ 4
+ 6
+ 8
+ 10
+ 12
+ 14
+Million Tons CO2
+Zone
+CO2 Emissions by Zone, Future 3 and Future 4
+Future 3 Future 4
+F3 Cumulative Emissions F4 Cumulative Emissions
+=====PDFPAGE 83=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  82 
+ 
+5.3 PROJECT NARRATIVES  
+5.3.1 2ND FORT SMITH 500/345 KV TRANSFORMER 
+Less than a mile from the Arkansas-Oklahoma border, the complex system of interconnected 345 kV 
+lines spanning most of SPP’s footprint meets the 500 kV system of the Southern and Southeastern 
+United States. The interconnection between these points occurs in four different 500/345 kV 
+transformers. Since many solutions being proposed within groupings require removing excess 
+production from the 345 kV system and dispersing it across the bordering 500 kV system, more 
+infrastructure is needed to be able to support new 345 kV lines anchored at Fort Smith. 
+Adding a fifth transformer at this location alleviates the burden at the interconnection point between 
+the two systems and provides easier access for energy to travel to and from the Fort Smith location. 
+Needs analysis and solution development identified one interconnection point as the best for 345 kV 
+projects originating in Fort Smith. Adding a duplicate of the existing transformer at this point 
+facilitates energy transfer optimally. 
+5.3.2 FORT SMITH-THISTLE 345 KV NEW LINE 
+In Springfield, Missouri, located in the southwest corner of the state, near the seam with American 
+Electric Cooperative, Inc. (AECI), the Springfield-Clay 345 kV Line becomes congested for the loss of 
+the Huben-Morgan 345kV Line, located in AECI. This congestion is driven primarily by the McCartney 
+Gas Power Station in Greene County, Missouri, directly to the northeast of the Springfield-Clay line. 
+While this problem indicates congestion in this area, it also exposes the need for more transmission 
+capability in western Missouri, central Kansas, western Arkansas, and northeastern Oklahoma. 
+Designed to alleviate congestion by providing more EHV routes for energy, a 345 kV line from Thistle 
+to Fort Smith branches a significant transmission gap. This project spans three states and alleviates 
+excessive energy on a highly interconnected bus in central Kansas that carries a lot of flow from the 
+Great Plains to urban areas to the east (Wichita, Kansas City) and south (Oklahoma City, Tulsa). This 
+energy is instead subverted to the Fort Smith transformer and dispersed across the 500 kV system, 
+giving it a route that bypasses the rest of the high congestion in the system. 
+5.3.3 FLINT CREEK-BUFFALO FLATS 345 KV NEW LINE 
+Located to the northeast of the Fort Smith-Thistle 345 kV new line, this line relieves congestion by 
+removing additional surplus energy from the west of Arkansas, working in conjunction with Fort 
+Smith-Thistle 345 kV line to transmit energy from Eastern parts of SPP’s system to central Kansas, 
+skipping over many high-load areas to reach open transmission in the Great Plains. This allows the 
+excessive amounts of energy on the surrounding system to be transmitted most effectively to high-
+load zones towards the east (Wichita and Kansas City) and south (Oklahoma City). Via the bypass 
+established with this project, more power is supplied directly to the 500kV system. This reduces 
+congestion on the surrounding 345 kV lines to the high load areas being served, providing paths for 
+=====PDFPAGE 84=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  83 
+ 
+energy in the far-reaching extremities of SPP in the west and north to flow on essential 345 kV lines 
+that have been newly relieved of congestion. 
+5.3.4  SOONER-FORT SMITH 345 KV NEW LINE  
+Another line intended to carry energy to the 500/345 kV interconnect from western parts of SPP’s 
+territory, bypassing high-load areas, Sooner-Fort Smith 345 kV aims to address congestion present in 
+multiple parts of Oklahoma. The focus is on congestion present in the central to northeast part of the 
+state, particularly in load-heavy Tulsa and Oklahoma City. The conveniently located Sooner bus allows 
+power to be rerouted over areas of particularly high congestion such as the Tulsa North system to the 
+east and Wichita to the north, addressing issues on the Butler-Midian and Weaver-Tallgrass lines. 
+5.3.5 HUBEN-LACYGNE 345 KV NEW LINE 
+Like the Fort Smith to Thistle line, this project was analyzed due to considerable amounts of 
+congestion at the seam with AECI near Springfield, Missouri. In one case, congestion was worsened 
+significantly on a 161 kV line from Morgan-Brookline for loss of the Morgan-Brookline 345 kV line, 
+both of which are lines interconnecting across the SPP-AECI seam. With portions of western Missouri 
+spanning from Kansas City to Jefferson City devoid of multiple 345 kV routes, Huben-LaCygne 345 kV 
+was designed as a solution to provide both north-south and west-east flows and provides more 
+interconnection between SPP’s system with neighboring AECI.  
+Flows on this line relieve congestion not only on lines downstream of the seam at the Huben end, but 
+also in the Kansas City metro, and downstream lines extending west into SPP’s system, particularly to 
+the Wichita/western Kansas region. 
+5.3.6 RIVERSIDE STATION-MATTHEWSON 345 KV NEW LINE  
+Spanning a substantial portion of Oklahoma and running from west-east, this project connects 
+Riverside Station (southwest of Tulsa) to Matthewson (northwest of Oklahoma City) via a 345 kV line 
+designed to address congestion on many needs without identified EHV solutions. This line attempts to 
+divert excessive flow from central, rural parts of SPP’s system that interconnect to the SPP system at 
+large via multiple 345 kV lines. Like the Fort Smith projects, the energy is instead moved directly east, 
+bypassing high load areas with congestion already present. However, this project instead sends the 
+energy to another area with identified needs, helping to alleviate some congestion on lines in Tulsa 
+North with projected infrastructure that alleviates local needs. 
+This project was included in the original portfolios due to its ability to lessen the burden on congested 
+elements throughout the entire system as a standalone project with a passing B/C ratio. Benefits from 
+the project extend into areas of SPP far downstream from any identified needs, including areas 
+southwest of Oklahoma City such as Piedmont and Anadarko that show high congestion. 
+=====PDFPAGE 85=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  84 
+ 
+5.3.7 GRACEMONT-ANADARKO 345 KV NEW LINE; NEW ANADARKO 
+345/138 KV TRANSFORMER  
+In southwestern Oklahoma, Gracemont interconnects to the Oklahoma City 345 kV system to the 
+north and north Texas (and the greater ERCOT system) to the south. Designed to relieve congestion 
+for one specific need, the Gracemont – Anadarko 345 kV line provides congestion relief on the nearby 
+138 kV system to the East for the loss of the Minco-Gracemont 345 kV line north of the Gracemont 
+interconnection point. As the energy flowing to the interconnection point at Gracemont from north 
+Texas loses its primary path north via 345 kV transmission, a substantial portion of this flow redirects 
+to the 138 kV system beginning with a transformer at Gracemont. The highly connected Anadarko 
+interconnection point cannot support this influx of energy with its current 138 kV connection to 
+Gracemont. 
+This project proposes making a significant upgrade to the infrastructure gapping Gracemont and 
+Anadarko by also providing a 345 kV route to Anadarko, where it then interconnects to the 138 kV 
+system via a transformer located at the more central Anadarko. The 138 kV system can then more 
+effectively transmit the excess energy to the greater system, most notably load-heavy Oklahoma City 
+to the immediate northeast, and Fort Smith’s 500 and 345 kV interconnects in the East. 
+5.3.8 WHITE SWAN-EAGLE 345 KV NEW LINE 
+A west-east project situated in South Dakota, this bridges gaps in the 345 kV transmission from west 
+to east, providing more ability for excess energy generated on the Great Plains to the west to extend 
+east into a region interconnected to multiple load centers in SPP’s system, including the southern 345 
+kV transmission path extending from the interconnection point at Eagle to Sioux Falls, Sioux City, 
+Omaha, and Kansas City. Supporting infrastructure includes additional substations and line taps to 
+ensure this EHV project with high benefit connects successfully to the greater SPP footprint. 
+5.3.9 POTTER COUNTY INTERCHANGE-TOLK STATION 345 KV NEW 
+LINE  
+Introduced to the preferred portfolio for F3/F4 as a supplementary project, this attempts to relieve the 
+high amounts of congestion on the 345/230 kV transformer at the Tuco Interchange for the loss of the 
+Tuco-Yoakum 345 kV line. The flow from the 345 kV to the 230 kV system at Tuco becomes congested 
+as the north-south flow from this area into southern/central Texas becomes disrupted. The Potter 
+County Interchange -Tolk Station line effectively flows in both directions, supplying a path for excess 
+energy on the 345 kV system to flow north when necessary or supplying a path for energy to reach 
+the system and be routed to the Tuco transformer, or west into New Mexico, as needed. 
+=====PDFPAGE 86=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  85 
+ 
+5.3.10 ELLENDALE-TWIN BROOKS 345 KV TRANSFORMER LINE TAP TO 
+GROTON; BROADLAND-GROTON 345 KV NEW LINE 
+Consisting of two major 345 kV lines, one running west-east and one running north-south, this project 
+relieves congestion in SPP’s northern footprint, specifically in South Dakota. Having a high B/C, this 
+project provides additional flows from north to south, carrying excess power away from a heavily 
+congested 115 kV system to the south at Broadland. This is one necessary line to bridge a gap in 345 
+kV transmission in South Dakota, with the additional fix being another west-east flow from Ellendale 
+to Twin Brooks, further establishing SPP’s interconnectivity near the seams from their territory to 
+further East. 
+5.3.11 SIBLEY-NASHUA 345 KV NEW LINE 
+To better route power from underutilized lines in the greater Kansas City area, a bypass project such 
+as Sibley-Nashua 345 kV proves effective in providing energy to a point tied to multiple high-load 
+areas by 345 kV lines. This project's design allows it to inject more energy from the Sibley point to a 
+point at Nashua northwest of Hawthorne, allowing more energy to flow southeast to the Hawthorne 
+transformers. This project also gives energy a byway to the rest of the system without first flowing 
+through the load-heavy zone at Hawthorne, routing it directly to a point that interconnects with 
+central Kansas and SPP’s footprint north of Kansas City. 
+This project also mitigates the risk of outages on other lines from Sibley to Hawthorne, east of Kansas 
+City. By rerouting power, contingencies that show loss of these Eastern lines improve in congestion 
+costs. 
+5.3.12 SIBLEY-HAWTHORNE 345 KV NEW LINE 
+Implemented in F3/F4 scenarios primarily to relieve congestion resulting from an anticipated 
+additional transformer at Hawthorne for 345/161 kV conversion, this project is an additional 345 kV 
+line running from Sibley to Hawthorne parallel to one that is already in place as additional routing for 
+power to and from Kansas City and the greater outlying system. Like the Sibley-Nashua project, this 
+line also directs more energy to support infrastructure at load-heavy Hawthorne in the event of 
+several outage contingencies in the surrounding area. 
+This is consistent with the general portfolio theme of creating more east/west interconnection but also 
+serves to mitigate congestion near Hawthorne, one of the areas identified as particularly congested in 
+the 20Y model study for Futures 3 and 4. 
+5.3.13 CIMARRON-NORMAN HILL 345 KV NEW LINE  
+This project with a high B/C ratio in the F3/F4 scenarios, was implemented to relieve congestion 
+particularly on one Cimarron 345/138 kV transformer for the loss of the other. However, the benefits 
+significantly extend beyond addressing this need to instead address system needs at large, by 
+constructing a new path for flows out of the very interconnected Cimarron bus to the Oklahoma City 
+=====PDFPAGE 87=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  86 
+ 
+area. This allows energy that does not have the ability to flow from the 345 kV system at Cimarron to 
+the 138 kV system at the same location, and allows it to continue east, addressing demand in 
+Oklahoma City before continuing on to the Fort Smith interconnect and the Eastern United States.  
+5.4 ADJUSTED PRODUCTION COST BENEFITS  
+Adjusted Production Cost (APC) is a measure of the impact on production cost savings by Locational 
+Marginal Prices (LMP), accounting for purchases and sales of energy between each area of the 
+transmission grid. APC is determined from using a production cost modeling tool that accounts for 
+hourly commitment and dispatch profiles during the simulation year. The calculation, performed on an 
+hourly basis, is as follows:  
+ 
+ 
+Figure 5.7: APC Calculations 
+Production costs = Fuel and non-fuel operations & maintenance (O&M) costs of utility-owned or 
+cost-of service-contracted generation. 
+Revenue from Sales = MW Sold by Zone × Avg. Zonal LMPGeneration-Weighted 
+Cost of Purchases = MW Purchased by Zone × Avg. Zonal LMPLoad-Weighted  
+APC captures the monetary cost associated with fuel prices, run times, grid congestion, unit operating 
+costs, energy purchases, energy sales, and other factors that directly relate to energy production by 
+generating resources in the SPP footprint. Additional transmission projects aim to relieve system 
+congestion and reduce costs via some combination of a more economical generation dispatch, more 
+economical purchases, and optimal revenue from sales. 
+Economic projects were proposed based on their potential to mitigate congestion of the top 
+constraints and stakeholder recommendations. For each economic project, the APC for the SPP 
+footprint was calculated with and without the proposed EHV projects for all 8,760 hours of 2042.  
+Four different values are calculated and shown in  
+ One-Year Results Future 1  Future 2 Future 3  Future 4  
+APC Benefit 
+(2042$) $457.3 $626.5 $1,171.9 $1,168.3 
+Cost 
+(2042$) $292.0 $292.0 $269.3 $269.3 
+Net Benefit 
+(2042$) $165.3 $334.5 $902.6 $899.0 
+B/C 1.57 2.15 4.35 4.34 
+APC Production
+Cost
+Revenue 
+from Sales
+Cost of 
+Purchases
+=====PDFPAGE 88=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  87 
+ 
+Table 5.12 for each future: 
+ 1-Year APC Benefit = Reduction in APC from the non-EHV simulation when compared to the 
+results with the EHV solutions included 
+ 1-Year ATRR = First year annual transmission revenue right (ATRR) collected, i.e. 1-year cost of 
+the EHV projects 
+ Net Benefit = One year benefit minus one year cost 
+ B/C = One year benefit divided by one year cost 
+ 
+ One-Year Results Future 1  Future 2 Future 3  Future 4  
+APC Benefit 
+(2042$) $457.3 $626.5 $1,171.9 $1,168.3 
+Cost 
+(2042$) $292.0 $292.0 $269.3 $269.3 
+Net Benefit 
+(2042$) $165.3 $334.5 $902.6 $899.0 
+B/C 1.57 2.15 4.35 4.34 
+Table 5.12: Results for SPP ($ are in Millions) 
+Figure 5.8 shows the B/C for each future.  
+ 
+Figure 5.8: B/C Ratios by Future 
+5.5 RATE IMPACTS 
+There are no NTCs requested for issuance from the 20YA; however, per the 20YA Manual, staff is 
+providing the rate impact information. The projected impact of the project plan on the energy bill of a 
+typical residential customer within the SPP region was calculated and reported on a $/kWh basis. The 
+rate impact to the average retail residential ratepayer in SPP was computed for each future. With all 
+projects currently staged for 2042, the first year benefits and first year costs were used to calculate 
+rate impacts. Because 2042 represents the year with the maximum costs and the minimum benefit, the 
+1.57
+2.15
+4.35 4.34
+0.00
+0.50
+1.00
+1.50
+2.00
+2.50
+3.00
+3.50
+4.00
+4.50
+5.00
+Future 1 Future 2 Future 3 Future 4
+B/C Ratios by Future
+=====PDFPAGE 89=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  88 
+ 
+rate impact results are conservative. All benefits and costs are shown in 2042$ using a 2.0% inflation 
+rate.  
+Rate impact costs and benefits are allocated to the average retail residential ratepayer in each zone 
+using residential retail allocation percentages specific to each zone. Costs and benefits allocated to 
+each zone are divided by zone-specific sales projections to determine the impact per kWh of 
+consumption, and then multiplied by the average monthly consumption in each zone: 
+Zone 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+AEPW $57,435.59 $168,126.00 $1.11 $3.26 ($2.15) 
+EMDE $6,710.12 $12,597.00 $1.10 $2.07 ($0.97) 
+GMO $10,964.86 $16,698.00 $1.08 $1.65 ($0.57) 
+GRDA $5,529.76 $161,191.00 $0.41 $11.83 ($11.43) 
+KACY $2,593.75 $8,073.00 $0.00 $0.00 $0.00 
+KCPL $20,779.89 $4,295.00 $1.13 $0.60 $0.53 
+LES $4,143.09 $89.00 $1.10 $0.02 $1.08 
+MIDW $2,110.25 ($3,532.00) $0.85 ($1.42) $2.27 
+NPPD $18,465.14 ($3,403.00) $0.88 ($0.16) $1.05 
+OKGE $38,162.19 $68,427.00 $0.90 $1.61 ($0.71) 
+OPPD $14,467.64 $5,667.00 $0.74 $0.29 $0.45 
+SPRM $3,750.98 $3,606.00 $1.16 $1.12 $0.04 
+SPS $31,813.75 ($16,835.00) $0.95 ($0.51) $1.46 
+SUNC $6,164.42 ($2,333.00) $0.94 ($0.36) $1.30 
+SWPA $2,195.08 $3,357.00 $0.59 $0.91 ($0.31) 
+UMZ $27,758.07 $8,234.00 $0.45 $0.13 $0.31 
+WERE $28,039.59 $6,566.00 $0.94 $0.22 $0.72 
+WFEC $10,930.14 $16,446.00 $0.71 $1.07 ($0.36) 
+TOTAL $292,014.30 $457,269.00 $0.84 $1.32 ($0.48) 
+Table 5.13: Future 1 Rate Impacts by Zone 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Arkansas $18,843.42 $47,859.91 $0.99 $2.51 ($1.52) 
+Iowa $3,343.14 $892.63 $0.46 $0.12 $0.34 
+Kansas $49,123.18 $18,523.53 $0.96 $0.36 $0.60 
+Louisiana $7,931.71 $23,217.77 $1.11 $3.26 ($2.15) 
+Minnesota $334.44 $99.21 $0.45 $0.13 $0.31 
+=====PDFPAGE 90=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  89 
+ 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Missouri $31,995.10 $37,195.30 $1.11 $1.29 ($0.18) 
+Montana $1,185.47 $351.65 $0.45 $0.13 $0.31 
+Oklahoma $71,956.83 $294,176.13 $0.85 $3.48 ($2.63) 
+Nebraska $37,674.47 $2,655.15 $0.82 $0.06 $0.77 
+New Mexico $13,380.54 ($2,501.37) $0.90 ($0.17) $1.07 
+North Dakota $14,660.01 $4,348.66 $0.45 $0.13 $0.31 
+South Dakota $7,406.97 $2,171.64 $0.45 $0.13 $0.32 
+Texas $33,949.58 $28,210.74 $1.00 $0.83 $0.17 
+Wyoming $229.43 $68.06 $0.45 $0.13 $0.31 
+TOTAL $292,014.30 $457,269.00 $0.84 $1.32 ($0.48) 
+Table 5.14: Future 1 Rate Impacts by State 
+Zone 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-Cost Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+AEPW $57,435.59 $271,601.00 $1.11 $5.26 ($4.15) 
+EMDE $6,710.12 $21,485.00 $1.10 $3.53 ($2.43) 
+GMO $10,964.86 $6,190.00 $1.08 $0.61 $0.47 
+GRDA $5,529.76 $187,514.00 $0.41 $13.77 ($13.36) 
+KACY $2,593.75 $2,489.00 $0.00 $0.00 $0.00 
+KCPL $20,779.89 $1,177.00 $1.13 $0.18 $0.95 
+LES $4,143.09 ($2,421.00) $1.10 ($0.64) $1.75 
+MIDW $2,110.25 ($5,420.00) $0.85 ($2.18) $3.03 
+NPPD $18,465.14 ($14,542.00) $0.88 ($0.70) $1.58 
+OKGE $38,162.19 $157,785.00 $0.90 $3.71 ($2.81) 
+OPPD $14,467.64 $3,197.00 $0.74 $0.16 $0.58 
+SPRM $3,750.98 $7,557.00 $1.16 $2.34 ($1.18) 
+SPS $31,813.75 ($31,944.00) $0.95 ($0.96) $1.91 
+SUNC $6,164.42 ($9,856.00) $0.94 ($1.51) $2.45 
+SWPA $2,195.08 $10,386.00 $0.59 $2.80 ($2.21) 
+UMZ $27,758.07 ($10,319.00) $0.45 ($0.17) $0.61 
+WERE $28,039.59 ($4,135.00) $0.94 ($0.14) $1.07 
+WFEC $10,930.14 $35,765.00 $0.71 $2.32 ($1.61) 
+TOTAL $292,014.30 $626,509.00 $0.84 $1.81 ($0.97) 
+Table 5.15: Future 2 Rate Impacts by Zone 
+=====PDFPAGE 91=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  90 
+ 
+ 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Arkansas $18,843.42 $86,083.30 $0.99 $4.51 ($3.52) 
+Iowa $3,343.14 ($1,328.45) $0.46 ($0.18) $0.64 
+Kansas $49,123.18 ($3,448.74) $0.96 ($0.07) $1.03 
+Louisiana $7,931.71 $37,507.40 $1.11 $5.26 ($4.15) 
+Minnesota $334.44 ($124.33) $0.45 ($0.17) $0.61 
+Missouri $31,995.10 $33,957.32 $1.11 $1.18 ($0.07) 
+Montana $1,185.47 ($440.69) $0.45 ($0.17) $0.61 
+Oklahoma $71,956.83 $457,056.79 $0.85 $5.40 ($4.55) 
+Nebraska $37,674.47 ($13,880.82) $0.82 ($0.30) $1.13 
+New Mexico $13,380.54 ($3,807.14) $0.90 ($0.26) $1.16 
+North Dakota $14,660.01 ($5,449.83) $0.45 ($0.17) $0.61 
+South Dakota $7,406.97 ($2,775.59) $0.45 ($0.17) $0.62 
+Texas $33,949.58 $43,245.08 $1.00 $1.27 ($0.27) 
+Wyoming $229.43 ($85.29) $0.45 ($0.17) $0.61 
+TOTAL $292,014.30 $626,509.00 $0.84 $1.81 ($0.97) 
+Table 5.16: Future 2 Rate Impacts by State 
+Zone 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+AEPW $52,825.51 $237,804.00 $1.02 $4.61 ($3.59) 
+EMDE $6,171.53 $11,631.00 $1.01 $1.91 ($0.90) 
+GMO $10,084.76 $16,605.00 $1.00 $1.64 ($0.64) 
+GRDA $5,085.91 $100,804.00 $0.37 $7.40 ($7.03) 
+KACY $2,385.56 $3,670.00 $0.00 $0.00 $0.00 
+KCPL $19,111.99 ($754.00) $1.04 $0.14 $0.90 
+LES $3,810.54 ($1,098.00) $1.01 ($0.29) $1.31 
+MIDW $1,940.87 ($2,318.00) $0.78 ($0.93) $1.71 
+NPPD $16,983.04 $38,113.00 $0.81 $1.83 ($1.01) 
+OKGE $35,099.10 $206,598.00 $0.82 $4.86 ($4.03) 
+=====PDFPAGE 92=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  91 
+ 
+Zone 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+OPPD $13,306.39 ($3,929.00) $0.68 ($0.20) $0.89 
+SPRM $3,449.90 $12,942.00 $1.07 $4.01 ($2.94) 
+SPS $29,260.22 $158,654.00 $0.88 $4.76 ($3.88) 
+SUNC $5,669.63 ($7,969.00) $0.87 ($1.22) $2.08 
+SWPA $2,018.89 $9,423.00 $0.54 $2.54 ($2.00) 
+UMZ $26,954.93 $339,686.00 $0.43 $5.46 ($5.02) 
+WERE $25,788.99 $16,523.00 $0.86 $0.55 $0.31 
+WFEC $9,328.21 $35,499.00 $0.61 $2.31 ($1.70) 
+TOTAL $269,275.98 $1,171,884.00 $0.78 $3.39 ($2.61) 
+Table 5.17: Future 3 Rate Impacts by Zone 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Arkansas $17,330.95 $83,012.34 $0.91 $4.35 ($3.44) 
+Iowa $3,235.84 $38,815.79 $0.45 $5.34 ($4.89) 
+Kansas $45,175.93 $15,557.82 $0.89 $0.31 $0.58 
+Louisiana $7,295.07 $32,840.12 $1.02 $4.61 ($3.59) 
+Minnesota $324.76 $4,092.63 $0.43 $5.46 ($5.02) 
+Missouri $29,427.01 $40,947.48 $1.02 $1.42 ($0.40) 
+Montana $1,151.17 $14,507.01 $0.43 $5.46 ($5.02) 
+Oklahoma $65,664.89 $406,970.05 $0.78 $4.81 ($4.03) 
+Nebraska $34,694.55 $43,046.80 $0.76 $0.94 ($0.18) 
+New Mexico $12,157.28 $62,812.43 $0.82 $4.24 ($3.42) 
+North Dakota $14,235.84 $179,400.09 $0.43 $5.46 ($5.02) 
+South Dakota $7,189.94 $90,102.02 $0.43 $5.44 ($5.01) 
+Texas $31,169.95 $156,971.76 $0.92 $4.62 ($3.71) 
+Wyoming $222.80 $2,807.67 $0.43 $5.46 ($5.02) 
+TOTAL $269,275.98 $1,171,884.00 $0.78 $3.39 ($2.61) 
+Table 5.18: Future 3 Rate Impacts by State 
+=====PDFPAGE 93=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  92 
+ 
+Zone 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+AEPW $52,825.51 $229,276.00 $1.02 $4.44 ($3.42) 
+EMDE $6,171.53 $13,225.00 $1.01 $2.17 ($1.16) 
+GMO $10,084.76 $14,915.00 $1.00 $1.47 ($0.48) 
+GRDA $5,085.91 $93,117.00 $0.37 $6.84 ($6.46) 
+KACY $2,385.56 $2,515.00 $0.00 $0.00 $0.00 
+KCPL $19,111.99 ($4,457.00) $1.04 ($0.09) $1.13 
+LES $3,810.54 ($373.00) $1.01 ($0.10) $1.11 
+MIDW $1,940.87 ($1,840.00) $0.78 ($0.74) $1.52 
+NPPD $16,983.04 $43,830.00 $0.81 $2.10 ($1.29) 
+OKGE $35,099.10 $197,928.00 $0.82 $4.65 ($3.83) 
+OPPD $13,306.39 ($3,411.00) $0.68 ($0.18) $0.86 
+SPRM $3,449.90 $11,947.00 $1.07 $3.70 ($2.63) 
+SPS $29,260.22 $144,570.00 $0.88 $4.34 ($3.46) 
+SUNC $5,669.63 ($8,029.00) $0.87 ($1.23) $2.09 
+SWPA $2,018.89 $9,478.00 $0.54 $2.56 ($2.01) 
+UMZ $26,954.93 $381,711.00 $0.43 $6.13 ($5.70) 
+WERE $25,788.99 $11,024.00 $0.86 $0.37 $0.49 
+WFEC $9,328.21 $32,848.00 $0.61 $2.13 ($1.53) 
+TOTAL $269,275.98 $1,168,274.00 $0.78 $3.38 ($2.60) 
+Table 5.19: Future 4 Rate Impacts by Zone 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Arkansas $17,330.95 $80,229.04 $0.91 $4.21 ($3.30) 
+Iowa $3,235.84 $43,629.14 $0.45 $6.00 ($5.56) 
+Kansas $45,175.93 $7,624.02 $0.89 $0.15 $0.74 
+Louisiana $7,295.07 $31,662.42 $1.02 $4.44 ($3.42) 
+Minnesota $324.76 $4,598.96 $0.43 $6.13 ($5.70) 
+Missouri $29,427.01 $37,230.86 $1.02 $1.29 ($0.27) 
+Montana $1,151.17 $16,301.77 $0.43 $6.13 ($5.70) 
+Oklahoma $65,664.89 $386,535.93 $0.78 $4.57 ($3.79) 
+Nebraska $34,694.55 $51,225.07 $0.76 $1.12 ($0.36) 
+New Mexico $12,157.28 $57,339.52 $0.82 $3.87 ($3.05) 
+North Dakota $14,235.84 $201,594.96 $0.43 $6.13 ($5.70) 
+=====PDFPAGE 94=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  93 
+ 
+State 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year 
+Benefit 2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+South Dakota $7,189.94 $101,252.07 $0.43 $6.12 ($5.68) 
+Texas $31,169.95 $145,895.21 $0.92 $4.30 ($3.38) 
+Wyoming $222.80 $3,155.03 $0.43 $6.13 ($5.70) 
+TOTAL $269,275.98 $1,168,274.00 $0.78 $3.38 ($2.60) 
+Table 5.20: Future 4 Rate Impacts by State 
+Future 
+One-Year ATRR 
+Costs 2042 
+($thousands) 
+One-Year Benefit 
+2042 
+($thousands) 
+Rate Impact-
+Cost 
+Rate Impact 
+Benefit 
+Net Impact 
+(2042$) 
+Future 1 $292,014.30 $457,269.00 $0.84 $1.32 ($0.48) 
+Future 2 $292,014.30 $626,509.00 $0.84 $1.81 ($0.97) 
+Future 3 $269,275.98 $1,171,884.00 $0.78 $3.39 ($2.61) 
+Future 4 $269,275.98 $1,168,274.00 $0.78 $3.38 ($2.60) 
+Table 5.21: Total Rate Impacts by Future 
+  
+=====PDFPAGE 95=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  94 
+ 
+6 SENSITIVITY ANALYSIS 
+6.1 SENSITIVITY INPUT DATA 
+Sensitivity models were developed to assess how versatile the plan is in handling a range of 
+uncertainties. SPP created economic sensitivity models to adjust some of the initial assumptions. 
+Adjusted assumptions include market wide load demand amounts, Henry Hub gas prices, and 
+renewable resource capacity factors. 
+Figure 6.1 shows the Henry Hub gas prices for the base case and sensitivities. Adjustments were based 
+on the 2023 EIA AEO High and Low Oil and Gas Supply cases.20 The High Supply case is characterized 
+by ample supply, therefore reducing natural gas prices. Alternatively, for the Low Supply case, supply 
+is limited increasing the cost of natural gas.  
+ 
+Figure 6.1: Gas Price Sensitivity 
+Figure 6.2 shows the demand levels base case and sensitivities. Adjustments were based on the 2023 
+EIA AEO High and Low Economic Growth cases. 
+                                                 
+20 EIA Annual Energy Outlook 2023: https://www.eia.gov/outlooks/aeo/ 
+$7.13
+$5.20
+$10.32
+$0.00
+$2.00
+$4.00
+$6.00
+$8.00
+$10.00
+$12.00
+Base High Supply Low Supply
+Henry Hub Spot Price ($/MMBtu)
+Gas Price Sensitivity, All Cases
+=====PDFPAGE 96=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  95 
+ 
+ 
+Figure 6.2: Demand Sensitivity 
+Figure 6.3 shows the capacity factors for solar and wind in the base case and sensitivities. Adjustments 
+were based on the 20YA Manual guidance of 10%. 
+ 
+Figure 6.3: Solar and Wind Sensitivity 
+310
+320
+330
+340
+350
+360
+370
+380
+390
+400
+410
+420
+F1 F2 F3 & F4
+Total Annual Energy (TWh)
+Demand Sensitivity
+0%
+10%
+20%
+30%
+40%
+50%
+60%
+Solar Wind Solar Wind Solar Wind
+F1 F2 F3 & F4
+Capacity Factor
+Solar and Wind Capacity Factor Sensitivity
+Base High Supply Low Supply
+=====PDFPAGE 97=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  96 
+ 
+6.2 SENSITIVITY RESULTS 
+Each sensitivity was tested with the base portfolio, which included the non-EHV and external to SPP 
+projects, to establish a baseline measure for EHV portfolio benefit in which to compare. Portfolios 
+were run under each future using each of the ten sensitivities to show the range of benefits provided 
+by each portfolio under the alternative forecasts presented by each sensitivity. Benefit ranges for each 
+sensitivity are shown alongside the expected portfolio costs with a +/- 30% range to cost applied. 
+Results are indicative of the expected range of APC benefits that project portfolios will have in each 
+future for the differing senstitivities. Costs and Benefits were evaluated on a 1-year basis for the model 
+year (2042) with results displayed in 2042$. 
+ 
+Figure 6.4: Future 1 Sensitivity Analysis APC Benefit ($MM) 
+ 
+$204 
+$457 
+$439 
+$343 
+$340 
+$349 
+$380 
+$461 
+$479 
+$528 
+$527 
+$602 
+ $150  $250  $350  $450  $550  $650  $750
+Portfolio Cost
+Solar Capacity
+Demand
+Wind Capacity
+Renewable Capacity
+Gas Prices
+Adjusted Production Cost Benefit ($MM)
+Sensitivity
+Future 1 Sensitivity Analysis
+=====PDFPAGE 98=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  97 
+ 
+ 
+Figure 6.5: Future 2 Sensitivity Analysis APC Benefit ($MM) 
+ 
+Figure 6.6: Future 3 Sensitivity Analysis APC Benefit ($MM) 
+ 
+$204 
+$615 
+$572 
+$501 
+$497 
+$494 
+$380 
+$627 
+$640 
+$695 
+$706 
+$782 
+ $150  $250  $350  $450  $550  $650  $750
+Portfolio Cost
+Solar Capacity
+Demand
+Wind Capacity
+Renewable Capacity
+Gas Prices
+Adjusted Production Cost Benefit ($MM)
+Sensitivity
+Future 2 Sensitivity Analysis
+$188 
+$1,147 
+$1,046 
+$1,172 
+$1,172 
+$1,056 
+$350 
+$1,172 
+$1,266 
+$1,312 
+$1,319 
+$1,361 
+ $100  $300  $500  $700  $900  $1,100  $1,300
+Portfolio Cost
+Solar Capacity
+Demand
+Wind Capacity
+Renewable Capacity
+Gas Prices
+Adjusted Production Cost Benefit ($MM)
+Sensitivity
+Future 3 Sensitivity Analysis
+=====PDFPAGE 99=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  98 
+ 
+ 
+Figure 6.7: Future 4 Sensitivity Analysis APC Benefit ($MM) 
+  
+$188 
+$1,153 
+$1,065 
+$1,168 
+$1,168 
+$1,062 
+$350 
+$1,188 
+$1,277 
+$1,362 
+$1,362 
+$1,392 
+ $100  $300  $500  $700  $900  $1,100  $1,300
+Portfolio Cost
+Solar Capacity
+Demand
+Wind Capacity
+Renewable Capacity
+Gas Prices
+Adjusted Production Cost Benefit ($MM)
+Sensitivity
+Future 4 Sensitivity Analysis
+=====PDFPAGE 100=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  99 
+ 
+7 GLOSSARY 
+Acronym Name 
+20YA 20-Year Assessment 
+20YA Manual 20-Year Assessment Manual 
+20YA Scope 2022 20-Year Assessment Scope 
+ABB ABB Group licenses the PROMOD enterprise software SPP uses for economic simulations  
+AECI Associated Electric Cooperative Incorporated 
+APC Adjusted production cost = Production Cost $ + Purchases $-Sales $ 
+ARR Auction Revenue Rights 
+ATC Available transfer capacity 
+ATRR Annual Transmission Revenue Requirement 
+BAA Balancing Authority Area 
+BAU Business as usual 
+B/C Benefit-to-Cost Ratio 
+BES Bulk-Electric System 
+CC Combined cycle 
+CLR Cost per loading relief 
+CT Combustion turbine 
+CVR Cost per voltage relief 
+DPP Detailed Project Proposal 
+E&C Engineering and construction cost 
+ERCOT Electric Reliability Council of Texas (ERCOT) 
+EHV Extra-high voltage 
+ESWG Economic Studies Working Group 
+FCITC First contingency incremental transfer capacity 
+FERC Federal Energy Regulatory Commission 
+=====PDFPAGE 101=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  100 
+ 
+Acronym Name 
+FTLO For the loss of 
+GI Generator Interconnection 
+GIA Generator Interconnection Agreement 
+GOF Generator outlet facilities 
+GW Gigawatt 
+GWh Gigawatt hour 
+HV High voltage 
+IFTS Interruption of firm transmission service 
+IRP Integrated resource plan 
+IS 
+Integrated System, which includes the Western Area Power Administration’s Upper Great 
+Plains Region (Western-UGP), Basin Electric Power Cooperative, and the Heartland 
+Consumers Power District 
+ITP Integrated Transmission Planning 
+ITP Manual Integrated Transmission Planning Manual  
+kV Kilovolt  
+LMP 
+Locational Marginal Price = the market-clearing price for energy at a given Price Node 
+equivalent to the marginal cost of serving demand at the Price Node, while meeting SPP 
+Operating Reserve requirements 
+MISO Midcontinent Independent System Operator 
+MTEP19 2019 MISO Transmission Expansion Plan 
+MTEP20 2020 MISO Transmission Expansion Plan 
+MTEP MISO Transmission Expansion Plan 
+MDAG Model Development Advisory Group 
+MMWG Multi-regional Modeling Working Group 
+MOPC Markets and Operations Policy Committee 
+MW Megawatt 
+NERC North American Electric Reliability Corporation 
+NITSA Network Integration Transmission Service Agreement 
+NPV Net present value 
+=====PDFPAGE 102=====
+Southwest Power Pool, Inc. 
+ 
+2022 20-Year Assessment Report  101 
+ 
+Acronym Name 
+NREL National Renewable Energy Laboratory 
+NCLL Non-consequential load loss 
+NTC Notification to Construct 
+PPA Power Purchase Agreement 
+PST Phase-shifting transformer 
+RCAR Regional Cost Allocation Review 
+RPS Renewable portfolio standards 
+SASK Saskatchewan Power 
+SCED Security-Constrained Economic Dispatch 
+SCUC Security-Constrained Unit Commitment 
+SPC Strategic Planning Committee 
+SPP OATT SPP Open Access Transmission Tariff 
+TO Transmission Owner 
+TSR Transmission Service Request 
+TVA Tennessee Valley Authority 
+TWG Transmission Working Group 
+US EIA United States Energy Information Administration 
+VSL Voltage stability limit 
+WACC Weighted Average Cost of Capital 
+Table 7.1: Glossary 
