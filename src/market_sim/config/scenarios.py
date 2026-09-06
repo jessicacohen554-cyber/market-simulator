@@ -8824,8 +8824,11 @@ class ScenarioConfig:
     # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
     # scarcity adder in non-scarce hours from omitting load-side reserve supply
     # (it already counts thermal headroom + storage). Built by
-    # scripts/data/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
-    # scripts/data/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
+    # scripts/data/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025,
+    # scripts/data/build_ercot_as_2023.py for 2023 and
+    # scripts/data/build_ercot_as_backyear.py for 2018-2022 (measured 60-Day
+    # Load Resource awards; 2020-2022 built 2026-09-06, ercot-252 — consumed
+    # only where the from_year below admits them). GATED — alters dispatch volumes,
     # re-run the volume calibration. Default off; ERCOT co-opt only.
     ercot_load_resource_reserve_from_year: int = 2023  # First weather year the
     # load-resource RRS-UFR credit applies to. Default 2023 = credit every

@@ -21,8 +21,10 @@ ERCOT's raw-data terms — see `docs/data-licensing.md` §3.
   NP3-966-ER, NP3-965-ER).
 - `scripts/build_ercot_as_by_restype_from_60day.py` →
   `ercot_<year>_as_by_restype_hourly.parquet`.
-- `scripts/build_ercot_as_2023.py`, `scripts/build_ercot_as_withholding.py` →
-  `ercot_<year>_as_up_mw.parquet`.
+- `scripts/data/build_ercot_as_2023.py` (2023),
+  `scripts/data/build_ercot_as_withholding.py` (2024/2025),
+  `scripts/data/build_ercot_as_backyear.py` (2018–2022, from the 60-Day
+  Load Resource Data awards below) → `ercot_<year>_as_up_mw.parquet`.
 
 **Consumers:** `scripts/curate_ancillary_services.py` (reads the MCPC award
 prices from the 60-day DAM AS awards zips — `zone="SYSTEM"`, ERCOT is a
@@ -107,3 +109,43 @@ route the owner used for the NP6 HSL 2024/2025 intake — see
 unblocks `scripts/fetch_ercot_as_reports.py --years 2018 2019 2020 2021
 2022` (or the manual files can be dropped straight into this directory)
 with no further code changes on the fetch/list side.
+
+## 60-Day DAM Disclosure back-year drop (landed 2026-09-06) and the load-resource RRS series (ercot-252)
+
+The "blocked" status above describes the FREE MIS path and is unchanged for
+the NP3-911 2-Day family (still 2023-12-10 onward). The 60-Day DAM Disclosure
+family (NP3-966-ER) for posting-years 2018–2022 has since landed by the
+manual route (b) — the owner's `data.ercot.com` download — as the
+`60d_DAM_{Gen_Resource_Data,Load_Resource_Data,Load_Resource_ASOffers,
+Generation_Resource_ASOffers,Energy*}_<posting-year>*.parquet` files in this
+directory. Two source facts matter for any consumer:
+
+- **Files are keyed by POSTING year**, each spanning deliveries Nov 2 (Y−1)
+  .. Nov 1 (Y). A delivery year needs the Y and Y+1 files; delivery 2022's
+  Nov 2 – Dec 31 tail lives in the posting-year-2023 disclosure, of which
+  only the Gen Resource half is in the repo
+  (`data/raw/ercot/60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2023_Jan-Mar.parquet`).
+  The 2023 **Load** Resource Data file is NOT in the repo.
+- **The RRS split.** `RRS Awarded` is the only RRS column through
+  2022-10-14; from 2022-10-15 both the Gen and Load Resource files carry
+  `RRSPFR/RRSFFR/RRSUFR Awarded` instead. Generator `RRSUFR Awarded` is 0 in
+  every file (verified) — RRS-UFR is a load-side product.
+
+`ercot_{2020,2021,2022}_as_up_mw.parquet` (built 2026-09-06, session
+ercot-252, `scripts/data/build_ercot_as_backyear.py`): the co-opt
+load-resource credit's `rrsufr_mw` for a back year is the **measured
+Load Resource RRS award total** read directly off `60d_DAM_Load_Resource_Data`
+(pre-split `RRS Awarded`; post-split the three components summed — the LR
+PFR share is ~4 %, a ~40 MW definitional difference from the UFR-only 2023+
+series). 2020 and 2021 are fully covered (8,760 h each; means 595 / 562 MW).
+2022 is covered for 7,319 h (mean 1,042 MW over the year); its **Nov 2 –
+Dec 31 tail (1,441 h) is reconstructed** from the measured residual identity
+`ASPLAN_RRS − gen_RRS_awards − 753.1 MW`, the offset being the within-year
+mean self-arranged/un-awarded share over the covered hours (corr 0.921) —
+recorded in the parquet metadata, the same class of within-year
+reconciliation the 2023 series documents for its Oct 2 – Dec 9 gap. 2018 and
+2019 are buildable with `--year 2018 2019` and were deliberately left
+unbuilt (locked-test-tier years; rule 22 permits the intake, the `final`
+preparation session owns it). Whether any solve consumes a back-year file is
+the `ercot_load_resource_reserve_from_year` recipe gate (2023 in every
+keeper), untouched by the intake.

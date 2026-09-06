@@ -38,9 +38,12 @@ Scope of the columns written:
   repo, so they are withheld until reconciled (the keeper runs
   ``as_reserve_withholding`` off, so it does not read them).
 * ``load`` is left zero: the model reads it from nowhere (the load-resource
-  RRS-UFR credit reads ``ercot_<year>_as_up_mw.parquet`` instead), and the
-  60-Day *Load* Resource **awards** file (``60d_DAM_Load_Resource_Data``) is
-  not in the repo — only the offers file is. Build it here if/when that lands.
+  RRS-UFR credit reads ``ercot_<year>_as_up_mw.parquet`` instead). The 60-Day
+  *Load* Resource **awards** file (``60d_DAM_Load_Resource_Data``) landed for
+  posting-years 2018-2022 on 2026-09-06 (``data/raw/ercot-AS/``) and feeds the
+  back-year ``rrsufr_mw`` series through
+  ``scripts/data/build_ercot_as_backyear.py``; it is still not in the repo for
+  2023+, and this column stays zero because nothing consumes it.
 * ``thermal_total`` = gas_cc + gas_ct + gas_st + coal.
 
 Run:
