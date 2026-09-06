@@ -314,6 +314,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     miso_clean_tier_rows: { cell: ".", fc: "." },
     state_carbon_pricing: { cell: "O" },
     mass_cap_lp_row: { cell: "U" },
+    mass_cap_schedule: { cell: ".", fc: "U", ev: "SCN-CAP (2026-09-06): field + CAP-STATE-TIGHT case landed for every ISO (rule 28c); PJM UNTESTED and NOT byte-identical to REF under the case — PJM IS in CAP_AND_TRADE_PROGRAMS (partial RGGI: MD/DE/NJ, VA exited 2024), so an ISO absent from the schedule falls through, as the chartered order requires, to the published REGIONAL RGGI budget in 2027-2030 (57.3 -> 52.5 Mt, membership-weighted; slack-or-not UNMEASURED against the member footprint) — inert in 2026 and 2031+. ROUTED to SCN-DESK (FINDING §5 item 1), pinned by test; the PJM policy lane does not solve the case. Backcast lane '.' by construction. Evidence: docs/handoffs/FINDING-scn-cap-2026-09-06.md" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: "." },
