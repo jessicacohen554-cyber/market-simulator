@@ -63,23 +63,119 @@ mechanism measured INERT in the candidate screen year (screen it where it is liv
 
 ## 2. The resolved carbon trajectory under the S2 floor, per ISO
 
-<!-- FILL -->
+Resolved $/tCO2 through the live chain a solve uses, measured by the phase-0 re-census. **REF is
+the campaign base** (every policy axis at its `ScenarioConfig` default, so `carbon_price_path`
+= `"zero"`); **ARM** is REF + the one override `carbon_price_path="mid"`.
+
+| ISO | state program? | REF 2027 | ARM 2027 | **Δ 2027** | arm at 2027 |
+|---|---|---|---|---|---|
+| **ERCOT** | no | 0.0000 | 3.7500 | **+3.7500** | **LIVE** |
+| **PJM** | no | 0.0000 | 3.7500 | **+3.7500** | **LIVE** |
+| **MISO** | no | 0.0000 | 3.7500 | **+3.7500** | **LIVE** |
+| CAISO | CARB | 32.1259 | 32.1259 | **0.0000** | INERT (floor) |
+| NYISO | RGGI | 25.2908 | 25.2908 | **0.0000** | INERT (floor) |
+| NEISO | RGGI | 27.8783 | 27.8783 | **0.0000** | INERT (floor) |
+
+**The floor is doing exactly what ruling S2 says it does.** On the three program ISOs the state
+allowance price exceeds the RFF mid path in every horizon year, so `max()` returns the program and
+naming a federal path changes nothing. On the three without a program the adder is `0.0`, so
+`max(0.0, path)` **is** the path. One expression, both halves.
+
+---
 
 ## 3. The paired T0 result at 2027
 
-<!-- FILL: headline pair table per ISO -->
+### 3.1 ERCOT — LIVE, and the mechanism is textbook
 
-### 3.1 STOP-gate verdicts
+| metric | REF | CARB | Δ |
+|---|---|---|---|
+| resolved carbon $/t | 0.0000 | 3.7500 | **+3.7500** |
+| **`emissions_mt`** (in-ISO, scored) | 255.9732 | 255.0452 | **−0.9280 (−0.36 %)** |
+| **`import_co2_mt_reported`** | **0.0000** | **0.0000** | **0.0000** |
+| load-weighted price $/MWh | 982.313 | 984.247 | **+1.934** |
+| `unserved_mwh` | 4,621,769.86 | 4,621,769.86 | 0.0 |
+| `clean_share` | 0.3519 | 0.3519 | 0.0 |
 
-<!-- FILL -->
+**The 2026 year of both arms is bit-identical** — `lw_price` 91.037 vs 91.037 — and they diverge
+only at 2027. That is §1's arithmetic confirmed by measurement rather than asserted: the pair is a
+genuine pair exactly where the RFF path becomes live, and a null everywhere before it.
 
-### 3.2 Coal→gas re-ordering
+**Coal→gas re-ordering, which the PRECOMMIT predicted for ERCOT, is visible and close to 1:1:**
 
-<!-- FILL -->
+| fuel | Δ CO2 (Mt) | Δ generation (TWh) |
+|---|---|---|
+| **coal** | **−1.3719** | **−1.2901** |
+| **gas_cc** | **+0.5205** | **+1.2719** |
+| gas_ct | +0.0525 | +0.1544 |
+| gas_st | −0.1291 | −0.1707 |
+| hydro / nuclear / solar / wind | 0.0000 | **0.0000 (exactly)** |
+
+Coal sheds 1.29 TWh and gas-CC picks up 1.27 TWh at roughly the same energy — a merit-order
+substitution, not a demand response. The CO2 falls because the substituted MWh carries ~0.41 t
+rather than ~1.06 t. **Every zero-carbon class moves exactly 0.0000 TWh**, so the footprint claim
+holds without qualification.
+
+### 3.2 STOP-gate verdicts — ERCOT
+
+| gate | verdict | detail |
+|---|---|---|
+| **G1** premise | **PASS** | Δ resolved carbon `+3.7500` = the pre-declared value exactly |
+| **G2** CO2 does not rise | **PASS** | 255.9732 → 255.0452 Mt (−0.36 %) |
+| **G3** price does not fall | **PASS** | 982.313 → 984.247 $/MWh (+1.934) |
+| **G4** magnitude | **REPORTED MISS** | Δp/Δcarbon = **0.5157 t/MWh**, inside the structural bound [0, 1.08]; **above** my declared band [0.9, 1.5] $/MWh and above WS-4c's 1.68 point |
+| **G5** fossil confinement | **PASS** | partition reproduces `emissions_mt`; no zero-carbon class books a CO2 decrease |
+| **G6** import books no in-ISO CO2 | **PASS** | `emissions_by_fuel_mt["import"]` = 0.0 / 0.0 |
+| **G7** no non-target flip | **PASS** | invariants identical: FAIL 1 / WARN 2 in **both** arms |
+| **G8** unserved energy | **PASS** | unchanged (but see §3.3 — REF is already non-zero) |
+
+**VERDICT: ARM NOT KILLED.** The gate promotes nothing.
+
+### 3.3 THE CAVEAT THAT GOVERNS ERCOT'S PRICE NUMBER — read this before quoting +$1.934
+
+**ERCOT's forecast REF is adequacy-collapsed at 2027, in both arms**, and the price level is
+therefore **not campaign-grade**:
+
+| | 2026 | **2027** |
+|---|---|---|
+| load-weighted price | $91.04 | **$982.31** |
+| reserve margin | +3.3 % | **−6.5 %** |
+| I3 slack | 0.06 % of load (55 h) | **0.68 % of load, 641 h, 4,621.8 GWh** |
+| invariants | I3 **FAIL**, I12 WARN, I14 WARN | same |
+
+This is the **known G-S4 ERCOT adequacy defect** the plan already records (§5.1 row 3: *"ERCOT
+saturates … adequacy collapse, G-S4 stands"*), not something this arm caused — the two arms carry
+it identically, which is why **G7 passes and G8's "no change" is truthful but not reassuring**.
+The honest split:
+
+- **ROBUST to the defect:** the **CO2 delta and the coal→gas re-ordering**. Those are merit-order
+  effects — a carbon price reorders the stack by `rate × price` whether or not the stack clears
+  the load — and both arms shed the same 4,621.8 GWh.
+- **NOT campaign-grade:** the **price delta and the implied rate**. In 641 hours the price is set
+  by scarcity, not by a fossil unit, and a carbon adder moves a VOLL-set price by ~$0. Those hours
+  dilute Δp toward zero while still carrying load-weight.
+
+**A structural consequence worth stating, because it cuts against my own miss:** if the scarcity
+hours contribute ≈0 to Δp, then `0.5157 = (mean marginal fossil rate) × (fossil-marginal load
+share)`, so the **true fossil-marginal rate is HIGHER than 0.5157** — consistent with coal being
+marginal in a materially larger share of ERCOT's 2027 hours than either my band or WS-4c's
+load-following rate assumed. **My G4 band is not merely "missed high"; it was built on the wrong
+regime.** I did not revise it, and it is reported at full magnitude in §5.
+
+**G8's design limitation, found by this result and worth carrying forward.** My PRECOMMIT wrote
+G8 as *"`unserved_mwh` does not become non-zero in CARB while zero in REF"*. It passes here — and
+it would have passed identically had REF been carrying 4.6 TWh of unserved energy for a reason the
+arm was responsible for. The gate tests a **transition**, and cannot see a REF that is **already**
+broken. A future paired-probe gate should assert a REF-side adequacy precondition, not only a
+no-worsening condition. Flagged, not silently patched — the gate is pre-registered and stays as
+written for this lane.
 
 ## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
-<!-- FILL: the six-ISO leakage table + the tranche that moves + displaced fraction -->
+<!-- FILL: completed as each ISO lands. ERCOT row below. -->
+
+| ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
+|---|---|---|---|---|
+| **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
 
 ## 5. My misses, reported at full magnitude
 
