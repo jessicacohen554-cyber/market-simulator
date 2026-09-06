@@ -44,7 +44,7 @@ reserve co-optimisation before a keeper exists (M2 is last, playbook §5).
 | EIA-930 SWPP extracts | `data/raw/SWPP_fueltype.parquet`, `SWPP_region.parquet` | per-BA extracts |
 | SPP hub LMP actuals | `data/raw/_validation-source/actual_lmp_hourly_SPP.parquet` | 2023–2025, `year/hour/rt/da`, 8760 rows/yr, mean of `SPPNORTH_HUB`/`SPPSOUTH_HUB` |
 | Its builder | `scripts/data/build_spp_lmp_reference.py` | reads the `portal.spp.org` file-browser API (see §2.4 — the API has moved) |
-| CAMPD CEMS unit-level | `data/raw/campd-unit-level/<ST>_<yr>.parquet` 2019–2026 | present: KS ND SD AR LA MO TX IA MN MT · **missing: OK NE NM WY** |
+| CAMPD CEMS unit-level | `data/raw/campd-unit-level/<ST>_<yr>.parquet` 2019–2026 | present: KS ND SD AR LA MO TX IA MN MT · **missing: OK NE NM** — **CORRECTED by SPP-10 (audit §2.4): no EIA-860 plant with BA `SWPP` is in WY** (Wyoming files under `WAUW`); `CO` IS in the footprint (19.5 MW solar, no CEMS units). SPP-11 landed OK/NE/NM/WY × 2023–2026 anyway; the WY files are inert for SPP. `campd.ISO_STATES["SPP"]` = the 14-state list of audit row 21, WY excluded, CO retained |
 | Dashboard colour | `docs/codebase-site/css/shared.css:84,1051,1139`; `js/backcast-runs.js:122` | `--iso-spp: #14B8A6` already reserved |
 | SPP as MISO's neighbour | `model/interchange/spec.py:1046-1069` (`NeighborInterface("SPP")`), `:1139` (`MISO_SEAM_DIBA["SPP"]`), `:1247+` ladders; `data/neighbor_price.py:117` | **keep** — the MISO keeper depends on it |
 | ERCOT↔SPP DC ties | `config/constants.py:4591-4605` `ERCOT_DC_TIE_ZONE_MAP["SWPP"]` (Monticello 600 / Oklaunion 220 MW) | ERCOT-side only |
@@ -73,6 +73,7 @@ curtailment / HSL · per-zone wind shape · zonal gas hub · PRM / VRL / VOLL / 
 | Memory classes | `scripts/run_isos_concurrent.py:119-126` | add SPP (KeyError otherwise) |
 | Solve workflow dropdown | `.github/workflows/calibration-solve.yml:57` | add SPP |
 | Data profiles | `configs/data-profiles.yaml` `isos:` tokens + `profiles:` | **token trap**: `spp` ⊂ `DAMLZHBSPP_*.zip` (ERCOT settlement-point zips). Tokens must be delimiter-bounded: `[swpp, "_spp.", "-spp.", "/spp/"]` + a unit test |
+| **Solve-surface fingerprint (capx D79, landed 2026-09-06)** | `config/solve_surface.py::SURFACE_ISOS` is a hardcoded six-tuple pinned equal to `SUPPORTED_ISOS` by `tests/unit/config/test_solve_surface.py:114`; `solve_surface_declared.py` holds per-ISO declared hashes | add `"SPP"` to `SURFACE_ISOS` in the SAME commit as `_ISO_BUILDERS`; run `scripts/solve_surface_register.py --diff origin/main HEAD` and confirm **zero moved rows for the six ISOs** (ISO projection: an SPP key added inside an ISO-keyed table changes only SPP's row); `--declare` the names whose SPP projection is new (an undeclared row stays out of the key; CI check 5 requires the declaration in the adding PR) |
 | Neighbour namespace | `data/neighbor_price.py::_HR_GAS_ELASTIC` keys are GLOBAL (`"SPP"`, `"PJM"` are MISO's seams) | SPP's neighbours named `MISO` / `ERCOT` (free); assert uniqueness |
 | ~22 six-tuple tests | `tests/unit/model/test_capacity.py:3436`, `test_storage.py:177,1797`, `test_ccs_retrofit.py:1491`, `tests/unit/data/test_fleet.py:820,1531,2654`, … | extend, or document as deliberate exclusion (capacity-market subsets `_CURVE_ISOS`/`_CAPACITY_ISOS`; carbon `PATH_ONLY_ISOS`) |
 
@@ -110,14 +111,15 @@ row verbatim and numbered in the ledger §2.
 
 | Card | Question | Recommendation to present | W1 evidence it needs | Ruling |
 |---|---|---|---|---|
-| **P1** topology | 2 zones (SPP-North / SPP-South) vs 3 (+ the SPS / Texas-Panhandle pocket) | Register **2 zones** in W2 (`_SPP_STATE_ZONES`: ND SD NE MN MT IA KS MO WY → North; OK TX NM AR LA → South, sub-BA-refined where the audit says a state straddles); the SPS pocket becomes the pre-declared first structural lever **SPP-54** — promoted to W2 only if SPP-12 measures SPS-tie binding share ≥ N↔S share. Rationale: N→S wind export is SPP's system-level corridor and is hub-scorable today (N/S hub spread is a measured zonal benchmark); the SPS pocket is real (persistent negative SPS prices, largest curtailment share) but needs a second TTC (OASIS-blocked) and an SPS price series whose availability is unverified. Rule 1: a real structure enters regardless of fit — hence the pre-declared lever rather than a permanent omission | mean / p90 \|SPPNORTH−SPPSOUTH\| by year (SPP-12); binding-constraint share SPS-tie vs N↔S (SPP-12); sub-BA energy shares (SPP-11) | — |
-| **P2** MISO seam from SPP's side | MISO already prices SPP from its side; no cross-ISO reconciler exists | **Per-ISO, independent (rule 25).** First keeper serves the **measured EIA-930 `Total interchange` schedule** (`_SCALAR_INTERCHANGE_ISOS` += SPP — the PJM/NYISO/NEISO precedent, playbook §8.2, rule 13-admissible). A priced `NeighborInterface("MISO")` off `actual_lmp_hourly_zonal_MISO.parquet` (MISO-West/South rows) is registered as the **forward** mechanism, default-off, validated in SPP-51 with `--priced-interchange`. The RDT wheel nets to zero at the SPP boundary and is ignored | SWPP↔MISO DIBA duration curve (SPP-11) | — |
-| **P3** ERCOT DC ties | import node vs neighbour vs ignore | `NeighborInterface("ERCOT")`, 820 MW (the same CDR ratings ERCOT's map cites), border zone `SPP-South`; **inert** under the served schedule, armed with P2's priced seams in SPP-51. No import node (≈1.5 % of peak) | SWPP↔ERCO flows (SPP-11) | — |
-| **P4** reserves | arm co-optimisation now or defer | **Defer.** M2 is last (playbook §5); MISO's co-opt was inert at its zone count and its tail question closed negative — SPP must prove non-inertness on its own data (rule 25). Shard cells `U`; SPP-56 queued last | — | — |
-| **P5** scarcity seed | seed ORDC `default_scenario_overrides` like NEISO? | **No seed at registration.** `voll=2000.0` (FERC 831 offer cap; doc 02). SPP's scarcity is VRL / reserve-shortage-driven — a different object from NEISO's winter-gas overlay — and is designed by SPP-55 (Fable) after a committed control exists. Seeding flips `test_iso_config.py:531` and is therefore a ruling, never a default | `actual_tail.json` SPP counts at $200 and $300 (SPP-31 — reported at sitting #2 as a forecast from the hourly parquet) | — |
-| **P6** `TAIL_THRESHOLD` | $200 or $300 | **$200** (summer-heat / winter-storm regime like ERCOT/MISO, not NE city-gate gas), in all three copies | tail counts at both | — |
-| **P7** first-solve screen (rule 29) | there is no keeper, so 29(b) "keeper is control" is vacuous | **Control = none.** The first full 2023–2025 bundle IS the baseline and becomes every later SPP lane's 29(b) control. Screen year = the year with the **largest mean \|N−S\| hub spread** (a zero-LP, residual-blind statistic — the only structure beyond copperplate is the N↔S link, and its footprint is the spread). STOP gate structural only: link binds in the measured direction/season; fuel-mix within order of magnitude of EIA-923; no unserved energy / negative-price absurdities. Never "did C3a pass". Screen bundle deleted before merge (29c) | spread by year (SPP-12) | — |
-| **P8** W6 routing | who charters forecast-program entry | **ROUTE to the capx director** with a card once a keeper exists; this desk never writes `program-status.json` / `ff-verdicts.json` / `GOLDEN_ISOS` | — | — |
+| **P1** topology | 2 zones (SPP-North / SPP-South) vs 3 (+ the SPS / Texas-Panhandle pocket) | Register **2 zones** in W2 (`_SPP_STATE_ZONES`: ND SD NE MN MT IA KS MO WY → North; OK TX NM AR LA → South, sub-BA-refined where the audit says a state straddles); the SPS pocket becomes the pre-declared first structural lever **SPP-54** — promoted to W2 only if SPP-12 measures SPS-tie binding share ≥ N↔S share. Rationale: N→S wind export is SPP's system-level corridor and is hub-scorable today (N/S hub spread is a measured zonal benchmark); the SPS pocket is real (persistent negative SPS prices, largest curtailment share) but needs a second TTC (OASIS-blocked) and an SPS price series whose availability is unverified. Rule 1: a real structure enters regardless of fit — hence the pre-declared lever rather than a permanent omission | mean / p90 \|SPPNORTH−SPPSOUTH\| by year (SPP-12); binding-constraint share SPS-tie vs N↔S (SPP-12); sub-BA energy shares (SPP-11) | **RULED r#2 (2026-09-06): "2 zones now; two ranked levers"** — register SPP-North/SPP-South in W2; pre-declare BOTH the SPS/Texas-Panhandle pocket (SPP-54) AND an Oklahoma pocket (SPP-57); SPP-12's per-flowgate binding share + shadow-price value vs the N↔S corridor RANKS them; the ranking test is this ruling |
+| **P2** MISO seam from SPP's side | MISO already prices SPP from its side; no cross-ISO reconciler exists | **Per-ISO, independent (rule 25).** First keeper serves the **measured EIA-930 `Total interchange` schedule** (`_SCALAR_INTERCHANGE_ISOS` += SPP — the PJM/NYISO/NEISO precedent, playbook §8.2, rule 13-admissible). A priced `NeighborInterface("MISO")` off `actual_lmp_hourly_zonal_MISO.parquet` (MISO-West/South rows) is registered as the **forward** mechanism, default-off, validated in SPP-51 with `--priced-interchange`. The RDT wheel nets to zero at the SPP boundary and is ignored | SWPP↔MISO DIBA duration curve (SPP-11) | **RULED r#2: "Served schedule first, priced seam default-off"** — first keeper serves measured EIA-930 Total interchange; `NeighborInterface("MISO")` and `("AECI")` (the largest measured counterparty, +2.0…+2.6 TWh/yr export) registered default-off, anchored to measured prices; SPP-51 validates |
+| **P3** ERCOT DC ties | import node vs neighbour vs ignore | `NeighborInterface("ERCOT")`, 820 MW (the same CDR ratings ERCOT's map cites), border zone `SPP-South`; **inert** under the served schedule, armed with P2's priced seams in SPP-51. No import node (≈1.5 % of peak) | SWPP↔ERCO flows (SPP-11) | **RULED r#2: ACCEPTED** — `NeighborInterface("ERCOT")`, 820 MW, border SPP-South, default-off |
+| **P4** reserves | arm co-optimisation now or defer | **Defer.** M2 is last (playbook §5); MISO's co-opt was inert at its zone count and its tail question closed negative — SPP must prove non-inertness on its own data (rule 25). Shard cells `U`; SPP-56 queued last | — | **RULED r#2: ACCEPTED** — deferred; cells `U`; SPP-56 last |
+| **P5** scarcity seed | seed ORDC `default_scenario_overrides` like NEISO? | **No seed at registration.** `voll=2000.0` (FERC 831 offer cap; doc 02). SPP's scarcity is VRL / reserve-shortage-driven — a different object from NEISO's winter-gas overlay — and is designed by SPP-55 (Fable) after a committed control exists. Seeding flips `test_iso_config.py:531` and is therefore a ruling, never a default | `actual_tail.json` SPP counts at $200 and $300 (SPP-31 — reported at sitting #2 as a forecast from the hourly parquet) | **RULED r#2: ACCEPTED** — no seed; `voll=2000.0`; SPP-55 designs VRL later |
+| **P6** `TAIL_THRESHOLD` | $200 or $300 | **$200** (summer-heat / winter-storm regime like ERCOT/MISO, not NE city-gate gas), in all three copies | tail counts at both | **RULED r#2: $200** (all three copies) |
+| **P7** first-solve screen (rule 29) | there is no keeper, so 29(b) "keeper is control" is vacuous | **Control = none.** The first full 2023–2025 bundle IS the baseline and becomes every later SPP lane's 29(b) control. Screen year = the year with the **largest mean \|N−S\| hub spread** (a zero-LP, residual-blind statistic — the only structure beyond copperplate is the N↔S link, and its footprint is the spread). STOP gate structural only: link binds in the measured direction/season; fuel-mix within order of magnitude of EIA-923; no unserved energy / negative-price absurdities. Never "did C3a pass". Screen bundle deleted before merge (29c) | spread by year (SPP-12) | **RULED r#2: "Control = none; screen 2024, structural STOP gate only"** — SPP-12's hourly per-hub mean/p90 overrides 2024 if it disagrees; PRECOMMIT states the hub-spread limitation (Nebraska vs central-Oklahoma two-point spread, audit §6.1) |
+| **P8** W6 routing | who charters forecast-program entry | **ROUTE to the capx director** with a card once a keeper exists; this desk never writes `program-status.json` / `ff-verdicts.json` / `GOLDEN_ISOS` | — | **RULED r#2: ROUTE to the capx director after a keeper exists** |
+| **P9** EIA-930 SWPP defective hours (raised by the audit §3.4) | a 100× unit slip on 2023-06-12 21:00 inflates `NG: WND` by 3.6 TWh (caught on demand, not on fuel-mix columns); two low-side demand dropouts (2025-06-21 05:00 = 1,505 MW; 2024-07-19 00:00) no screen catches | benchmark-side fix in SPP-31 (existing median-ratio test applied to `NG:` columns when building benchmarks, six ISOs byte-identical); the low-side demand screen is a repo-wide defect with cache-key risk → ROUTED to the audit track; SPP-40's PRECOMMIT names the two hours; no new `ScenarioConfig` parameter in W2–W4 | audit §3.4 | **RULED r#2: "Benchmark-side fix in SPP-31; demand-side routed"** |
 
 Two further defaults that need no card, recorded here so no lane re-litigates them: `_MULTI_YEAR_ISOS`
 gains SPP in W2 (rule 16 — a single-year SPP keeper is refused from day one); the SPP profile's
@@ -162,7 +164,8 @@ W5  Calibration loop — §5.7 lever queue, ONE lever = ONE lane = ONE PR, seque
     SPP-51 seams (P2/P3 priced, --priced-interchange A/B)  [OPUS]
     SPP-52 HSL / curtailment as first-class metric          [OPUS]
     SPP-53 N↔S TTC from binding-constraint frequency        [FABLE]
-    SPP-54 SPS-pocket third zone (P1 pre-declared lever)    [FABLE]
+    SPP-54 SPS-pocket third zone   ┐ P1 pre-declared levers, RANKED by SPP-12's per-flowgate
+    SPP-57 Oklahoma-pocket zone    ┘ binding share + shadow price vs the N↔S corridor  [FABLE]
     SPP-55 VRL-based scarcity design                        [FABLE]
     SPP-56 reserve co-optimisation (M2, LAST)               [FABLE]
                                            ▼
@@ -192,7 +195,7 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 |---|---|---|---|---|---|---|
 | **SPP-10** audit — **LANDED 2026-09-06** (`docs/multi-iso/spp-data-audit.md`; `FINDING-spp-10-2026-09-06.md`) | OPUS · census against the MISO audit recipe; recommends, never decides | shared | `docs/multi-iso/spp-data-audit.md` (new); `00-iso-addition-protocol.md` §0 row + §3; `01-data-needs-and-upload-manifest.md` SPP rows | — | `FINDING-spp-10-<date>.md` = the audit doc | fleet census by BA `SWPP` off EIA-860 parquet (plants / MW by fuel vs SPP published totals); distinct plant states vs `campd-unit-level/` present → missing `<ST>_<yr>` list; SWPP 930 spans; **registry-values table** with a citation per value |
 | **SPP-11** EPA/EIA fetch — **LANDED 2026-09-06** (all four items GOT, blocked table empty; `docs/handoffs/FINDING-spp-11-2026-09-06.md`) | OPUS · reproducible fetches with existing scripts | shared | `data/raw/campd-unit-level/{OK,NE,NM,WY}_{2023,2024,2025,2026}.parquet`; `data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv` + `SOURCES.md`; `data/raw/eia-930-interchange/SWPP interchange hourly.parquet`; `data/raw/gas-prices/eia_delivered_gas_{OK,KS,TX,NM}_monthly_2023-2025.csv` + SOURCES; edits: `fetch_eia930_subba_demand.py` (`SUBBA_NAMES["SPP"]`), `fetch_eia930_interchange.py` only if not BA-parametrised | arrow schema equal to sibling files (the CAMPD fetcher already asserts this) | `FINDING-spp-11-2026-09-06.md` | DONE: 16 CEMS parquets (OK/NE/NM/WY × 2023-2026), schema == `KS_2024` all 16; SWPP sub-BA 447,049 rows / 17 sub-BAs / 0 interior gaps, reconciling to 0.9995-0.9999 of the BA `Demand`; SWPP interchange 268,177 rows / 11 DIBAs; four state delivered-gas series. READMEs/SOURCES rows added; no existing raw file rewritten. **`SHA256SUMS.txt` deliberately not extended** — its header scopes it to the untracked 2018 files, and these are tracked. Env carries NO `EPA_API_KEY`/`EIA_API_KEY`, so each credentialled route used its key-free EIA equivalent (documented in place). **Open, routed to the desk:** §6 row 14's NRC intake has no owning lane (charter TASK stops at item 4, no NRC path in FILES YOU OWN) — assign it. |
-| **SPP-12** portal/spp.org fetch | OPUS · API re-discovery + transcription against a manifest | shared | `build_spp_lmp_reference.py` (`--per-hub` → `_validation-source/actual_lmp_hourly_zonal_SPP.parquet`); `data/raw/spp-hourly-load/`, `spp-genmix/`, `spp-binding-constraints/`, `spp-or-mcp/`, `spp-hsl/` (each with README + SOURCES); `data/raw/spp-planning/` PDFs or transcriptions (ITP, Planning Criteria PRM, Market Protocols VRL/offer cap, LTLF, MMU SOM) | listings return non-empty; a 2025 monthly file range-fetches | `FINDING-spp-12-<date>.md` with the reachable/blocked table and **the P1/P7 numbers** (hub spread by year; SPS-tie vs N↔S binding share) | anything still blocked becomes a manual-manifest row (§6) with the exact URL; never a guessed value |
+| **SPP-12** portal/spp.org fetch — **RUNNING (owner-confirmed r#2, branch not yet known); addendum issued r#2 (§8)** | OPUS · API re-discovery + transcription against a manifest | shared | `build_spp_lmp_reference.py` (`--per-hub` → `_validation-source/actual_lmp_hourly_zonal_SPP.parquet`); `data/raw/spp-hourly-load/`, `spp-genmix/`, `spp-binding-constraints/`, `spp-or-mcp/`, `spp-hsl/` (each with README + SOURCES); `data/raw/spp-planning/` PDFs or transcriptions (ITP, Planning Criteria PRM, Market Protocols VRL/offer cap, LTLF, MMU SOM) | listings return non-empty; a 2025 monthly file range-fetches | `FINDING-spp-12-<date>.md` with the reachable/blocked table and **the P1/P7 numbers** (hub spread by year; SPS-tie vs N↔S binding share) | anything still blocked becomes a manual-manifest row (§6) with the exact URL; never a guessed value |
 | **SPP-20** register | FABLE · topology + market-object choices + the pin flip + rule-27 core scope | shared → spp | see §2.3 list + `_spp_config()`, `zone_assignment.py` (`_ISO_TO_BA_CODE`, `_LARGEST_ZONE`, `_EGRID_VINTAGE`, `_SPP_STATE_ZONES`, `_spp_zone`), `campd.py::ISO_STATES`, `eia930/frames.py::_ISO_TO_HOURLY_BA`, `eia930/demand.py` (`_load_spp_hourly_demand`, `DEMAND_LOADERS`, `_SCALAR_INTERCHANGE_ISOS`), `renewables.py::RENEWABLE_ZONE_ALLOCATION`, `transmission_expansion.py::TRANSMISSION_BASE_STATIC_VINTAGE`, `fleet/models.py::BA_CODE_TO_ISO`, `capacity_market.py` all-six dicts, `constants.py` all-six dicts, `fuel_trajectories.py` three dicts, `interchange/registry.py::INTERCHANGE_INJECTIONS["SPP"]`, `interchange/spec.py::INTERFACE_NEIGHBORS["SPP"]` (no `IMPORT_ZONE`/tranches), `scripts/lib/{load_forecast,confirmed_retirements,nuclear_license_status,transmission_expansion}/spp.py`, `configs/data-profiles.yaml`, `docs/multi-iso/README.md` "seven" | `validate_topology()`; fleet census equals SPP-10's; `hydrate_data.py --list` shows the `spp` profile owning `SWPP*` and NOT `DAMLZHBSPP_*`; `pytest tests/unit/config tests/curation tests/unit/data -q`; `python scripts/ci_refactor_guards.py`; `check_mechanism_matrix.py` (no field added ⇒ nothing owed) | `FINDING-spp-20-<date>.md` = registry entry table (dict → value → citation) + the six-keeper byte-identity proof | **six keepers unmoved**: replay-hash MISO's keeper fleet/offer arrays (the one ISO whose code names SPP) + goldens + `test_persisted_identity` for the rest; `test_iso_config` scarcity checkpoint still `["ERCOT","NEISO"]` unless P5 ruled otherwise; **no new `ScenarioConfig` field** |
 | **SPP-21** matrix shard | OPUS · mechanical shard emission + queue transcription | code | `docs/codebase-site/data/mechanism-matrix.js:1460` `isos:`; new `data/mechanism-matrix/SPP.js` (a cell for EVERY id: `U` where ISO-applicable, `·` where n/a, `keeper: ""`); `data/mechanism-matrix-assemble.js:29` `EV_KEY` `SPP:'S'`; `mechanism-matrix.html:113-118` script tag; `scripts/lib/mech_matrix.py` `ISO_ORDER` / `ISO_EV_KEY` / `ISO_FIELD_STEMS["SPP"]=("spp",)`; `docs/mechanism-testing-matrix.md` §2 similarity note + new **§5.7 SPP lever queue** (cross-cutting 5.7 → 5.8) | `python scripts/check_mechanism_matrix.py` exit 0 (shard covers exactly the base id set) | `FINDING-spp-21-<date>.md` | **ONE commit**; `pytest tests/unit/config/test_mechanism_matrix_*.py`; 7-column `file://` preview; a one-line cross-desk notice appended to the capx and SCN ledgers: "7 shards from now on — every rule-28(c) cell line includes SPP" |
 | **SPP-30** outages + tranches | OPUS · frozen derives (rule 23) | spp | `data/raw/campd-unit-outages-SPP.csv` (+ `-short`, `-layup`, `-e923` siblings as emitted), `campd-partial-outages-SPP.csv`, SPP rows of the committed-pct / thermal-tranche / bin-assignment CSVs | windows > 0 in every CEMS state incl. OK/NE; zero full-year fallbacks | `FINDING-spp-30-<date>.md` (windows per state-year, units covered %) | `derive_campd_unit_outages.py --iso SPP --years 2023 2024 2025` → `derive_cc_committed_pct.py --iso SPP` → `derive_thermal_tranches.py --iso SPP` → `tag_mixed_plants.py` → `build_offer_curve_overrides.py`; every output header cites source + method |
@@ -429,6 +432,26 @@ the hub-spread table, the binding-share table, and the manual manifest rows that
 LANDED. Report to the owner: hub spread by year and the binding share first — the desk serves P1 on them.
 ```
 
+#### SPP-12 ADDENDUM (issued r#2, 2026-09-06 — paste into the RUNNING SPP-12 session; it widens the FINDING, never the file set)
+
+```
+SPP-12 ADDENDUM from SPP-DESK (r#2). Two additions, both inside your existing charter's spirit:
+(A) NRC LICENCE STATUS — Wolf Creek (EIA 210, KS) and Cooper (EIA 8036, NE): fetch the licence
+    expiry / renewal status from the NRC info-finder into data/raw/nuclear-license-status/spp.csv
+    in the SAME unified-CSV shape as the six existing ISO files there (+ a SOURCES row). SPP-11
+    routed this to the desk because neither lane owned the path; it is yours now. The spec module
+    scripts/lib/nuclear_license_status/spp.py stays SPP-20's.
+(B) BINDING-SHARE TABLE — add a FOURTH flowgate group. Card P1 was RULED "2 zones now; two ranked
+    levers": the SPS/Texas-Panhandle pocket (SPP-54) AND an Oklahoma pocket (SPP-57) are both
+    pre-declared, and YOUR table ranks them. Groups: N↔S corridor · SPS-tie · OKLAHOMA-INTERNAL
+    (Osage–Webber Tap, Russett–South Brown, the OKC/Tulsa FCA flowgates — audit §6.1 names them)
+    · other. Report per year: share of RT binding hours AND mean shadow price per group.
+(C) P7 CONFIRMATION — report mean and p90 |SPPNORTH − SPPSOUTH| per year explicitly; the desk ruled
+    2024 the screen year on the MMU's published +$12 on-peak DA spread, and your hourly number
+    overrides it if it disagrees. Say so in one line in your FINDING.
+Everything else in your charter is unchanged. Rule 13/14/23/27/28 as issued.
+```
+
 ### W2 — registration (issued at sitting #2 after P1–P8 are ruled; SPP-21 may go first, it is disjoint)
 
 #### SPP-20 `[FABLE]` — register SPP: topology + every registry + the pin flip (ONE PR)
@@ -492,6 +515,25 @@ BUILD, exactly as the rulings say:
   IsoMemoryClass("SPP", peak_gb=<state your estimate and mark it measured-in-SPP-40>, per_plant=True,
   co_opt=False).
 - Neighbour-name uniqueness assert in neighbor_price.py (G10). No hour loops anywhere (rule 2).
+RULINGS APPLIED (r#2, 2026-09-06 — ledger §2 P1–P9 are verbatim and BIND this lane):
+- P1: zones = SPP-North / SPP-South. State map per audit §5 rows 4/5: North = ND SD NE MN MT IA KS
+  MO CO; South = OK TX NM AR LA; **WY is NOT in the footprint** (no SWPP plant — audit §2.4);
+  campd.ISO_STATES["SPP"] = ("AR","CO","IA","KS","LA","MN","MO","MT","ND","NE","NM","OK","SD","TX").
+  Sub-BA grouping for load shares: North = EDE INDN KACY KCPL LES MPS NPPD OPPD SECI SPRM WAUE WR;
+  South = CSWS GRDA OKGE SPS WFEC (EDE straddles at 1.8 % — state which side and why).
+  PRM 0.15 (Planning Criteria Rev 4.1A §4, audit row 1); voll 2000 (Order 831, row 2);
+  STATE_RPS_FLOORS["SPP"] all-zero on the ERCOT precedent with the real row routed to the forecast
+  lane (row 13) and no ACP (row 14); _EGRID_VINTAGE is a shared scalar — no SPP entry (row 17).
+- P2/P3: INTERFACE_NEIGHBORS["SPP"] = MISO + AECI + ERCOT (820 MW, border SPP-South), all
+  DEFAULT-OFF; _SCALAR_INTERCHANGE_ISOS += "SPP" (served schedule, positive = net export).
+- P4/P5: no reserve spec, no scarcity seed. P6: TAIL_THRESHOLD["SPP"] = 200 in all three files.
+- D79 (landed after this charter was written): add "SPP" to config/solve_surface.py::SURFACE_ISOS
+  in the SAME commit as _ISO_BUILDERS (test_solve_surface pins the two tuples equal); run
+  `uv run python scripts/solve_surface_register.py --diff origin/main HEAD` and record ZERO moved
+  rows for the six ISOs in the FINDING; `--declare` the names whose SPP projection is new.
+- State in the FINDING that `_screen_demand_spikes` now fires on SPP 2023 (the 100× hour) and on no
+  other ISO, so its docstring's "no-op on every training year" promise needs the SPP exception
+  written in (audit §3.4). Do NOT add a low-side screen (P9 routed it).
 PROOF BEFORE PUSH: get_iso_config("SPP").validate_topology(); the fleet census equals SPP-10's;
 python scripts/hydrate_data.py --list; pytest tests/unit/config tests/curation tests/unit/data -q;
 python scripts/ci_refactor_guards.py; python scripts/check_mechanism_matrix.py --base origin/main;
@@ -610,6 +652,13 @@ BUILD: derive_actual_lmp.py --iso SPP → actual_lmp.json SPP block (da, rt, da_
 the zonal hub entries in the shape MISO uses) → build_calibration_reference.py for SPP 2023–2025 →
 derive_actual_tail.py and derive_actual_amplitude.py (regenerate; report SPP tail counts at $200 AND
 $300 for the record) → scripts/audit_eia923_completeness.py.
+P9 (RULED r#2): the committed SWPP hourly file carries a 100× unit slip at 2023-06-12 21:00 that
+inflates NG: WND by ~3.59 TWh. When you build the generation benchmark, apply the SAME median-ratio
+test _screen_demand_spikes uses (2.5× the annual median) to every NG: column and interpolate the
+flagged hour — inside the benchmark builder, never in data/raw. PROVE the six registered ISOs'
+benchmark blocks are byte-identical afterwards (they have no such hour). Report the 2023 SWPP wind
+TWh before and after. The two LOW-side demand hours (2025-06-21 05:00, 2024-07-19 00:00) are NOT
+yours — routed to the audit track; list them in the FINDING as known artifacts only.
 RULES THAT BITE: 13 (benchmarks are measured outcomes used ONLY as the score, never as an input),
 14, 27 (derive_actual_lmp.py is ≥ 300 lines — Edit tool, fetch-back verify), 28 (no cell moves).
 EXIT: docs/handoffs/FINDING-spp-31-<date>.md with the SPP benchmark table (per year: load TWh,
@@ -746,7 +795,12 @@ DO, in order:
     magnitude of fuel-mix vs EIA-923, the STRUCTURAL STOP gate (link binds in the measured
     direction; no unserved energy; no negative-price absurdity; fuel classes within order of
     magnitude), wall-clock/peak-GB to be measured, and the statement "control = none; this bundle
-    becomes the 29(b) control for every later SPP lane". PUSH IT before solving.
+    becomes the 29(b) control for every later SPP lane". The PRECOMMIT ALSO states (P7 as ruled):
+    (i) the hub spread is a Nebraska-vs-central-Oklahoma two-point spread, not a zonal price
+    difference (audit §6.1), so it screens the link's direction/season and is never read as a zonal
+    price validation; (ii) the two known low-side EIA-930 hours (2025-06-21 05:00 = 1,505 MW,
+    2024-07-19 00:00) as 1-in-8,760 artifacts the loader does not yet screen (P9 routed).
+    PUSH IT before solving.
 (1) SCREEN: run_calibration_full.py --iso SPP --year <screen year> --commitment --out-dir
     results/calibration/_spp40_screen. Grade against the STOP gate ONLY — it may kill, never
     promote, and never reads a residual. A kill = report and stop; the remaining years are not spent.
@@ -783,7 +837,8 @@ row → LANDED; plan §1 rows 2–4 ticked. Report to the owner: determination +
 | SPP-51 `[OPUS]` | pre-declared execution of SPP-33's numbers | arm `hr_by_year` on `INTERFACE_NEIGHBORS["SPP"]` MISO/ERCOT; A/B served vs `--priced-interchange` on the P7 screen year; keeper = control (29b); STOP gate = interchange duration curve sign/magnitude vs EIA-930; matrix cell for the seam mechanism |
 | SPP-52 `[OPUS]` | execution | curtailment as a first-class metric (playbook §8.3): reference curtailment rate → the uncurtailed fallback set; report modeled vs reported curtailment; wind-shape arming if SPP-32 left it as an input only |
 | SPP-53 `[FABLE]` | TTC is a design object | N↔S TTC from the binding-constraint frequency method (doc 04) via `derive_ttc_limits.py`; rule 14: the measured value stays even if the fit worsens; documents the ITP-vs-link misalignment |
-| SPP-54 `[FABLE]` | topology change | the SPS / Texas-Panhandle pocket as a third zone, promoted only on the P1 pre-declared condition (SPS-tie binding share) and scored leave-one-year-out (rule 22) |
+| SPP-54 `[FABLE]` | topology change | the SPS / Texas-Panhandle pocket as a third zone (own sub-BA `SPS`, 12.6 % of load; Lubbock FCA). RANKED against SPP-57 by SPP-12's per-flowgate binding share + shadow price vs the N↔S corridor (P1 as ruled); the higher-ranked pocket is issued first; scored leave-one-year-out (rule 22) |
+| SPP-57 `[FABLE]` | topology change | an Oklahoma pocket (OKC/Tulsa split of SPP-South — Osage–Webber $75/MWh and Russett–S.Brown $61/MWh are the market's two highest-value constraints, audit §6.1). Needs a `CSWS` sub-allocation for its load share and a TTC; same ranking test and LOYO scoring as SPP-54 |
 | SPP-55 `[FABLE]` | mechanism design | VRL-based scarcity: an in-LP reserve demand curve (closer to MISO's RBDC than to the post-solve ORDC overlay), designed against the SPP tail counts; screen structural only |
 | SPP-56 `[FABLE]` | mechanism design, LAST | reserve co-optimisation Reg/Spin/Supp on the `da-mcp`/`rtbm-mcp` measured prices; must first prove non-inertness (MISO precedent) |
 
@@ -798,8 +853,8 @@ capx director** after a card (P8). This desk never writes it.
 
 | Lane | FINDING | Landed |
 |---|---|---|
-| SPP-10 | `docs/handoffs/FINDING-spp-10-<date>.md` / `docs/multi-iso/spp-data-audit.md` | — |
-| SPP-11 | `docs/handoffs/FINDING-spp-11-<date>.md` | — |
+| SPP-10 | `docs/handoffs/FINDING-spp-10-2026-09-06.md` / `docs/multi-iso/spp-data-audit.md` | 2026-09-06 (PR #5254) |
+| SPP-11 | `docs/handoffs/FINDING-spp-11-2026-09-06.md` | 2026-09-06 (PRs #5239, #5243, #5247) |
 | SPP-12 | `docs/handoffs/FINDING-spp-12-<date>.md` | — |
 
 ## 10. Ledger
