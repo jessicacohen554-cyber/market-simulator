@@ -283,6 +283,24 @@ cap. No 2022/2026 budget rows are landed (holdout quarantine, rule 22), so those
 years leave the row inert (adder path). Design:
 `docs/handoffs/emissions-mass-cap-plan-2026-07.md`.
 
+**The budget schedule (SCN-CAP, owner ruling S12 2026-09-06).** A third, first-ranked
+budget source sits ahead of the scalar: `config.mass_cap_tons_by_year`, a
+`{ISO: {year: metric tonnes}}` schedule read by `cap_and_trade.scheduled_power_sector_budget`
+— sparse knots interpolated linearly between years and edge-held outside them (the last
+knot holds flat after 2050; YAML/JSON string keys coerced back to int), `None` for an ISO the
+schedule does not name so the scalar → published → inert order below it is untouched. It
+exists because a *declining* cap had no expression: `mass_cap_tons` is one number for every
+year, and after 2025 the published RGGI path falls back to the eleven-state regional total,
+wildly slack for any one ISO (`FINDING-scn-ws1a-2026-09-05.md` §4.1). The precedence is
+therefore **schedule → scalar → published → inert**, one composition point (rule 19). The
+field is forecast-only: `__post_init__` coerces it to `None` in backcast/hindcast (rule 13),
+and it is cache-optional at `None`, so every backcast keeper and every committed forecast key
+is byte-identical. The levels are the owner's (rule 1) and live only in the campaign case
+`configs/scenario_campaign_matrix.yaml::CAP-STATE-TIGHT` — WS-1a §4.2's linear decline to 20 %
+of the 2025 per-state budget by 2050 on CAISO/NYISO/NEISO, CAISO anchored to the model's own
+REF-2026 CO2 because CARB publishes no power-sector budget. Read-out and binding table:
+`docs/handoffs/FINDING-scn-cap-2026-09-06.md`.
+
 **Row-path boundary (documented limitation).** On the row path the scalar
 wrapper `resolve_carbon_price` returns the trajectory fallback (0 by default) —
 the cap row carries the carbon cost, so member MC must not also carry an adder

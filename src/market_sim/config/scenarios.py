@@ -1521,6 +1521,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "voluntary_clean_demand_path",
     "voluntary_wtp_ceiling_usd_per_mwh",
     "voluntary_eligible_fuels",
+    # SCN-CAP (owner ruling S12): the mass-cap budget SCHEDULE. Default None =
+    # no schedule, dropped from the hash there, so every pre-existing cache key
+    # of all six ISOs — every backcast keeper included — is byte-stable; an
+    # armed schedule keys distinctly. Coerced to None in backcast/hindcast, so
+    # the backcast key is byte-stable too. SHARED field — very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "mass_cap_tons_by_year",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2063,6 +2071,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "voluntary_clean_demand_path": "'off'",
     "voluntary_wtp_ceiling_usd_per_mwh": "None",
     "voluntary_eligible_fuels": "None",
+    # SCN-CAP: the mass-cap budget schedule, registered at its shipping
+    # default (None = no schedule). Registered IN THE SAME COMMIT as the field.
+    "mass_cap_tons_by_year": "None",
 }
 
 
@@ -2957,6 +2968,29 @@ class ScenarioConfig:
     mass_cap_enabled: bool = False
     mass_cap_program: str | None = None  # pollutant/program label for the row
     mass_cap_tons: float | None = None  # explicit annual budget (tons CO2)
+    mass_cap_tons_by_year: dict[str, dict[int, float]] | None = None  # A
+    # DECLINING power-sector budget SCHEDULE, {ISO: {year: metric tonnes CO2}}
+    # (SCN-CAP, owner ruling S12 2026-09-06 on card D-2(c): "Commit the 80 %
+    # slope and build the field"; the schedule's shape is
+    # FINDING-scn-ws1a-2026-09-05.md §4.2, the field is its §4.1(a) build).
+    # WHY A SCHEDULE: mass_cap_tons is ONE number for every year, and the
+    # published RGGI budget after 2025 falls back to the 11-state regional
+    # total — "wildly slack" — so a declining cap (the CAP-STATE-TIGHT case,
+    # plan §3.5) had no expression. READ FIRST by policy.cap_and_trade.
+    # _power_sector_cap, ahead of the scalar and the published schedule:
+    # sparse {year: tonnes} knots per ISO, linearly interpolated between knots
+    # and edge-held outside them (the federal_ces_target_by_year knot
+    # convention; YAML/JSON str keys coerced back to int). An ISO ABSENT from
+    # the mapping falls through to the existing scalar -> published -> inert
+    # order unchanged, so on ERCOT/MISO (no program) nothing is built and on
+    # PJM the published fallback keeps whatever it did before. Needs
+    # mass_cap_enabled=True to reach the row at all. THE LEVELS ARE THE
+    # OWNER'S (rule 1 [R-STRUCT]; S12) and live in the campaign case
+    # configs/scenario_campaign_matrix.yaml `CAP-STATE-TIGHT`, never here.
+    # None (default) = byte-identical: registered in _CACHE_KEY_OPTIONAL_FIELDS
+    # at None. FORECAST-ONLY: __post_init__ coerces it to None in backcast /
+    # hindcast (the datacenter_load_path pattern) — a scored backcast keeps the
+    # measured published budget or the scalar, never a scenario slope (rule 13).
     carbon_program_price_path: str | None = None  # "low"/"mid"/"high" — named
     # RGGI/CARB projected program-price path (policy.cap_and_trade.
     # named_program_price, P-1D), an explicit alternative to the default
@@ -16475,6 +16509,47 @@ class ScenarioConfig:
                 f"{self.carbon_price_delta!r}"
             )
 
+        # SCN-CAP (owner ruling S12): the mass-cap budget SCHEDULE is a
+        # forecast-only scenario lever. Validate its shape, then COERCE it to
+        # None in any non-forward run — the EXACT datacenter_load_path /
+        # electrification_path construction below, for the rule-13 reason: a
+        # scored backcast or a capacity hindcast bounds its emissions by the
+        # measured published budget or an explicit scalar, never by a scenario
+        # slope, and coercing at the config seam keeps every backcast keeper
+        # and hindcast leg BYTE-IDENTICAL (the field is cache-optional at None).
+        # The scalar mass_cap_tons and mass_cap_enabled are deliberately NOT
+        # touched: they pre-date this field and are live in backcast.
+        _cap_sched = self.mass_cap_tons_by_year
+        if _cap_sched is not None:
+            if not isinstance(_cap_sched, dict) or len(_cap_sched) == 0:
+                raise ValueError(
+                    "mass_cap_tons_by_year must be None (no schedule) or a "
+                    "non-empty {ISO: {year: metric tonnes}} mapping; got "
+                    f"{_cap_sched!r}"
+                )
+            for _iso_key, _knots in _cap_sched.items():
+                if not isinstance(_knots, dict) or len(_knots) == 0:
+                    raise ValueError(
+                        f"mass_cap_tons_by_year[{_iso_key!r}] must be a "
+                        "non-empty {year: metric tonnes} mapping; got "
+                        f"{_knots!r}"
+                    )
+                for _k, _v in _knots.items():
+                    try:
+                        int(_k)
+                    except (TypeError, ValueError) as exc:
+                        raise ValueError(
+                            f"mass_cap_tons_by_year[{_iso_key!r}] knot key "
+                            f"{_k!r} is not a year"
+                        ) from exc
+                    if float(_v) <= 0.0:
+                        raise ValueError(
+                            f"mass_cap_tons_by_year[{_iso_key!r}] knot {_k!r}: "
+                            f"{_v!r} is not a positive tonnage budget"
+                        )
+            if self.mode == "backcast" or self.hindcast:
+                self.mass_cap_tons_by_year = None
+
         # capx-D34, owner ruling Q26: `carbon_price` KEEPS its documented
         # replace semantics (precedence (1) of policy.carbon.
         # resolve_carbon_price) — no field, no default move, no resolver
@@ -18241,6 +18316,7 @@ TIER_TAGS: dict[str, int] = {
     "mass_cap_enabled": 1,
     "mass_cap_program": 1,
     "mass_cap_tons": 1,
+    "mass_cap_tons_by_year": 1,
     "carbon_program_price_path": 1,
     "net_cone_forward_escalation": 2,
     "demand_growth_rate": 1,

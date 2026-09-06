@@ -316,6 +316,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     miso_clean_tier_rows: { cell: ".", fc: "." },
     state_carbon_pricing: { cell: "K" },
     mass_cap_lp_row: { cell: "U" },
+    mass_cap_schedule: { cell: ".", fc: "U", ev: "SCN-CAP (2026-09-06): field + CAP-STATE-TIGHT case landed for every ISO (rule 28c); CAISO UNTESTED — a zero-LP build lane, nothing solved. Zero-LP phase 0 from the committed pre-D77 REF (FINDING §3): the S12 schedule BINDS on CAISO in every year 2026-2030, so the program-ISO policy lane SOLVES case 13 under P5; the verdict is that lane's. Backcast lane '.' by construction (rule 13: the field is coerced to None in backcast/hindcast). Evidence: docs/handoffs/FINDING-scn-cap-2026-09-06.md" },
     ira_credits: { cell: "K", fc: "K" },
     federal_ces: { cell: ".", fc: "U" },
     carbon_price_delta: { cell: ".", fc: "." },
