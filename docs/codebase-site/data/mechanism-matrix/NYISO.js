@@ -303,7 +303,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "K", fc: "K", ev: "FFR-1C (runs nyiso-2026-2026-ffr1c-i7-{before,after}); origin FF-2B §2.3/§4" },
-    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0 (scn-ws4-probe): relocate regime, DC high block 1,417->7,083 MW; the flattening holds the 2026 peak essentially flat (-0.04 GW) at +2.8 % energy. All 14 invariants PASS in all three arms, backstop 0.0, unserved 0.0. Import line +0.156 Mt with HQ_hydro (EF 0) FLAT at firm depth and the increment on the 0.428 rungs" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS5A-LOAD 2026-09-06 T1-F 2026-2030: the sharpest anchor diagnostic in the campaign - WS-4b's ORGANIC peak prediction (mid anchor, untouched by SCN-LOAD) lands within 0.4 GW (30.2->32.4 predicted vs 30.22->32.77) while their LOAD-HI prediction (high anchor, retired 10 GW -> 2,567 MW) misses by 3.3 GW, so the peak RISES above REF instead of flattening and I7/I12 read WORSE not better. The DC axis is now nearly degenerate here (high-mid gap 0.851 GW at 2030; arms differ <= 0.079 Mt). All three arms 14/14 PASS, zero unserved, backstop never fires. Import line + in all five years, 7-25 % of the delta. gas_cc_ccs 6,475 MW / 24.42 TWh at 0.2578 t/MWh. FINDING-scn-ws5a-load-nyiso-2026-09-06.md" },
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },

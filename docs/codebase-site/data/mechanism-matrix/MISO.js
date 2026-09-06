@@ -302,7 +302,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "K", fc: "K", ev: "FFR-1C (runs miso-2026-2026-ffr1c-i7-{before,after})" },
-    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0 (scn-ws4-probe): relocate regime, DC high block 1,190->22,950 MW; LOAD-HI holds the 2026 peak 0.11 GW UNDER its ORGANIC twin at identical energy. CO2 +8.992 Mt on the fossil stack, implied marginal rate 0.484 vs 0.749 fleet average (coal inframarginal, 292 TWh). I3 crosses on the case at 2026 (REF 0.0070 % PASS -> 0.0109 % FAIL), earlier than SCN-WS4b pre-declared (2029-30)" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS5A-LOAD 2026-09-06 T1-F 2026-2030: the shape effect is the campaign's most precise pre-declaration - SCN-WS4b said LOAD-HI's peak sits 3.6 GW below its ORGANIC twin by 2030 and it measures 3.91 GW (180.65 vs 184.56) at 0.07 % energy difference and 0.068 Mt CO2, on a DC anchor re-derived after they wrote it. Where WS-4b disclosed two readings the PROSE wins at HEAD: I3 FAILS in REF, where the board's bare key has it passing. CO2 +72.86 Mt; 2026 reproduces WS-4c's T0 rate to 0.006 t/MWh (0.4901 vs 0.484) then crosses above 1.0 by 2030. Backstop to its cap with 42.4 TWh still shed. gas_cc_ccs 334.5/484.1 MW from 2029, no carbon program. FINDING-scn-ws5a-load-miso-2026-09-06.md" },
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },
