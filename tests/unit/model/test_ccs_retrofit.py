@@ -1149,9 +1149,7 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         cfg = self._armed()
         ref = _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF)
         twice = _gas_cc("TWICE", heat_rate=6.3, emission_rate=2.0 * self.ER_REF)
-        fleet, log = _screen(
-            [ref, twice], HIGH_PRICES, config=cfg, carbon_price=200.0
-        )
+        fleet, log = _screen([ref, twice], HIGH_PRICES, config=cfg, carbon_price=200.0)
         by_id = {e["unit_id"]: e for e in log}
         self.assertEqual(set(by_id), {"REF", "TWICE"})
         base_fom = (
@@ -1186,9 +1184,7 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         self.assertEqual([e["unit_id"] for e in log], ["TWICE"])
         conv = {g.unit_id: g for g in fleet}["TWICE"]
         self.assertEqual(conv.fuel_type, "gas_cc_ccs")
-        self.assertAlmostEqual(
-            conv.vom, 2.0 + log[0]["vom_adder_per_mwh"], places=12
-        )
+        self.assertAlmostEqual(conv.vom, 2.0 + log[0]["vom_adder_per_mwh"], places=12)
         self.assertAlmostEqual(
             conv.vom, 2.0 + 2.0 * cfg.ccs_retrofit_vom_adder, places=9
         )
@@ -1214,9 +1210,7 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         def ratio(entry):
             # ``annual_net_savings_per_mw`` IS the in-window uplift (key name
             # kept for the runner's per-year retrofit logging).
-            return (
-                entry["annual_net_savings_per_mw"] / entry["retrofit_capex_per_mw"]
-            )
+            return entry["annual_net_savings_per_mw"] / entry["retrofit_capex_per_mw"]
 
         # The HR-penalty term, per host MWh, in $/MWh: the extra fuel burned.
         hours = float(HIGH_PRICES.shape[1])
