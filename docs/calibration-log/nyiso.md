@@ -12538,3 +12538,61 @@ it, guarded byte-identical). Records:
 `docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`,
 `results/calibration/PREREG-nyiso201-threeway-2025-screen.md` (+ Addendum A),
 `_nyiso201_screen_gates_a3_2025.json`, `scripts/probes/nyiso201_screen_gates.py`.
+
+## nyiso-202 — 2026-09-06
+
+**KEEPER PROMOTED: `2026-09-06-nyiso-196-extract-basis` → `2026-09-06-nyiso-202-startup-aware`.**
+The one live candidate nyiso-201 handed forward — `nyiso_gas_bridge_startup_aware` **alone**, whose
+2025 screen had never been spent — cleared **every** pre-registered gate and the span it earned was
+registered and promoted. **Two LPs:** one rule-29 screen on 2025 (deleted before merge, 29(c)) and
+one span `--year 2023 2024 2025` in ONE invocation and ONE bundle.
+
+**The screen (2025), all gates CLEAR.** S-1 was the only gate re-pointed, and it is a narrowing:
+nyiso-201's *"`CT_PEAKER` rises inside the CT band's newly-in-the-money bound"* has no subject in an
+arm that does not arm the CT band, so S-1 became this arm's own arithmetic — nyiso-200's A1 form,
+*"the bridge's D-2 volume must NOT RISE, fall inside the keeper's own 0.5701 TWh"* — and read
+**0.5701 → 0.1434 TWh**. Gate (a) dark-meter forcing 0.0010 → 0.0010 (Δ 0.0000); gate (b) 7314
+977 unit-h / 19.617 GWh with **134 of 347** runs kept and 50978 228 unit-h / 9.011 GWh with **40 of
+66** kept, so no floor anchors on a dropped run and neither draws a D-4 conviction; S-3 confinement
+clean (no non-gas non-import class moves > 0.005 TWh); C3a **−6.9 → −6.3 %** and C3b 0.154 both
+PASS → PASS; G-ENGAGE 939/1,554 CC, 95/164 state, 386/508 steam runs dropped. Gate (a) and (b) are
+nyiso-201's corrected constructions reused **byte-identically**, and this session changed **no
+solve-path code at all**.
+
+**The span: DETERMINATION CALIBRATED, grade 7 of 8, fails 0, C3c the lone ledgered caveat —
+IDENTICAL to the superseded keeper's headline with ZERO criterion flips in either direction.** The
+promotion therefore rests entirely on the structural half, which is measured and large:
+**dark-meter forced energy 0.5963 → 0.2336 TWh** across the span (2023 0.2515 → 0.2296; 2024 0.3438
+→ **0.0030**, eliminating Astoria 8906's 0.3436 TWh conviction; 2025 0.0010 unchanged); **C8 forced
+share down on every class-year** (`CC_REGULAR` 2.8/0.8/1.2 → 1.1/0.3/0.4 %, `ST_GAS` 16.6/22.4/18.2
+→ 15.5/19.9/17.2 %); C1 `CC_REGULAR` toward its actual in both scored years (+0.83 → +0.37, +3.01 →
++2.39 TWh). G-DELTA computed = exactly the one field (both refuted partners recorded FALSE), G-DOF
++0, control = the keeper's committed bundle (form 4; G-DRIFT **empirical** — the committed
+`_nyiso198_rebuild_checks_2024.json` regenerates byte-identically, 0 of 42 differing leaves — so no
+control solve was spent).
+
+**Regressions at full magnitude, none a flip, all inside band:** `CC_CHP` is the away class and was
+**named in the PREREG before the span was solved** (+0.95 → +1.18, +2.31 → +2.65 TWh; share +1.9 →
++2.1 pp vs ±3); `ST_CHP` +0.17 → +0.21, +0.21 → +0.29; `ST_GAS` 2023 +1.81 → +1.92 (2024 improves);
+C3a 2023 +4.6 → +5.7 %, 2024 +4.7 → +6.5 % vs ±10 %; **C3b-2024 0.175 → 0.185 vs ≤0.20 is the
+tightest remaining margin in the model** (0.015 of room, was 0.025) and is the successor's first
+watch item.
+
+**Reported and not hidden:** the D-4 failure-ROW count rises 5 → 6 while the forcing it purports to
+measure falls 61 % — the attribution artifact nyiso-201 §7(4) established. At 8906 in 2023 the
+bridge row shrinks 0.0463 → 0.0011 TWh and the `reliability_floor` row beneath it now convicts at
+0.2271, total 0.2501 → 0.2282, a **fall**; D-2 adds no failure and C8 PASSES. **That new row is the
+handed-forward object:** with the bridge floor gone at 8906 the NYC persistent-base limb is its sole
+remaining forcer, and nyiso-201 §5.3 already named that limb's **BASIS** — a fleet-aggregate
+when-available cool-day CF p25 applied per unit across a fleet spanning 0.667–0.956 online — as the
+open, source-data-only, zero-LP object (its membership question is closed negative; never type a
+per-plant list).
+
+`complete` is NOT re-declared — NYISO stays in `calibration-complete.json`'s `withdrawn` block, so
+no D-5(b) re-key is owed and no holdout year was touched (2023–2025 only). Registered, status page
+and matrix shard + §5.5 prose header re-stamped, `audit_keepers --iso NYISO` PASS, parity OK, the
+superseded `nyiso-198` run pruned under keeper-only retention. Records:
+`docs/FINDING-nyiso202-bridge-startup-aware-2026-09-06.md`,
+`results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md` (pushed with zero solves,
++ Addendum A), `_nyiso202_screen_gates_a1_2025.json`, `scripts/probes/nyiso202_screen_gates.py`,
+`scripts/gen_nyiso202_attestation.py`.

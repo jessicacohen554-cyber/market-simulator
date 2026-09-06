@@ -5,13 +5,13 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-198 (2026-09-06). The single arm of the pre-registered screen (results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md, with Addendum A pushed BEFORE the 2024 screen and Addendum B \u2014 the owner ruling authorizing the span \u2014 BEFORE the span; record docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md): cc_duct_peaking_row_scoped: a combined-cycle plant's duct-burner peaking share is taken as 100 * max(0, SUM over the rows flagged 'Duct Burners == Y' of (nameplate - net_summer)) / SUM over all the plant's CC rows of nameplate, instead of summing that gap over EVERY combined-cycle row. A duct burner fires into the HRSG and raises the STEAM turbine's output, and EIA-860 reports the attribute at that grain: across the whole Generator_Y operable combined-cycle population the column reads Y/N only on CA and CS rows and X (not applicable) on every one of the 1,213 CT rows, so the plant-level sum books the CT rows' ambient/site derate as duct capability and offers it at the class peak band (2.25x base heat rate == phys_peak, i.e. pure physical cost). At Cricket Valley 57185 that is 203.7 of 296.4 MW (69 %) on rows the filing marks as having no duct burner; fleet-wide 726.5 MW, 68 % of NYISO's combined-cycle peak band. The denominator, the clip, the duct-fired plant selection rule, cc_duct_peaking_cap_pct and every consumer are unchanged, so the two forms differ ONLY in which rows enter the numerator. Zero new or retuned constants, zero new DOF entries; the field is a bool; nothing is selected, swept or tuned and no residual enters the construction. Admitted under rules 14 [R-ACCURATE] and 13 [R-MEASURED] on the nyiso-196 precedent, and by the owner ruling of 2026-09-06 recorded in the PREREG's Addendum B; no offer_curve_by_group band multiplier and no phys_* value moves, so rule 1's carve-out is not invoked. Control = the keeper's COMMITTED bundle (form 4; G-DRIFT audited in the PREREG \u00a75 and Addendum B \u00a7B.4). The 2024 screen's own S-4 gate STOPPED this arm on C1-2024 CC_REGULAR (PASS -> FAIL); the span was solved under the owner's ruling and every regression is reported at full magnitude in the FINDING.",
-  "note": "cc_duct_peaking_row_scoped: a combined-cycle plant's duct-burner peaking share is taken as 100 * max(0, SUM over the rows flagged 'Duct Burners == Y' of (nameplate - net_summer)) / SUM over all the plant's CC rows of nameplate, instead of summing that gap over EVERY combined-cycle row. A duct burner fires into the HRSG and raises the STEAM turbine's output, and EIA-860 reports the attribute at that grain: across the whole Generator_Y operable combined-cycle population the column reads Y/N only on CA and CS rows and X (not applicable) on every one of the 1,213 CT rows, so the plant-level sum books the CT rows' ambient/site derate as duct capability and offers it at the class peak band (2.25x base heat rate == phys_peak, i.e. pure physical cost). At Cricket Valley 57185 that is 203.7 of 296.4 MW (69 %) on rows the filing marks as having no duct burner; fleet-wide 726.5 MW, 68 % of NYISO's combined-cycle peak band. The denominator, the clip, the duct-fired plant selection rule, cc_duct_peaking_cap_pct and every consumer are unchanged, so the two forms differ ONLY in which rows enter the numerator. Zero new or retuned constants, zero new DOF entries; the field is a bool; nothing is selected, swept or tuned and no residual enters the construction. Admitted under rules 14 [R-ACCURATE] and 13 [R-MEASURED] on the nyiso-196 precedent, and by the owner ruling of 2026-09-06 recorded in the PREREG's Addendum B; no offer_curve_by_group band multiplier and no phys_* value moves, so rule 1's carve-out is not invoked.",
+  "attested_by": "session nyiso-202 (2026-09-06). The single arm of the pre-registered screen (results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md, pushed with ZERO solves; its Addendum A records the 2025 screen BEFORE the span was launched; record docs/FINDING-nyiso202-bridge-startup-aware-2026-09-06.md): nyiso_gas_bridge_startup_aware: the NYISO gas commitment bridge's shared detector (G-61 path (b)) admits a detected P0 run as an ANCHOR \u2014 for the min-run extension, the online-hours state floor and the gap bridges alike \u2014 only when that run's own P0 energy margin per MW repays the unit's published startup cost, the SAME constant the economic bridge already prices (_ra_bridge_unit_params: the CAMPD-bin startup where the bin carries one, else the per-fuel COMMITMENT_PARAMS_BY_FUEL class table). The defect it repairs is the P0-pattern dependence nyiso-199 \u00a78.3 measured and nyiso-200 confirmed is the DETECTOR's, not the offer band's: a phantom P0 fragment \u2014 a run the unit's own economics say it would never have started \u2014 was being extended into a min-load hold, i.e. a floor binding in hours its own driver evidence says the unit is off, which rule 17 [R-FLOOR-WINDOW] calls a bug by definition whatever it does to the residual. Zero new or retuned constants, zero new DOF entries; the field is a bool; nothing is selected, swept or tuned and no residual enters the construction. No offer_curve_by_group band multiplier and no phys_* value moves, so rule 1 [R-STRUCT]'s price-tuning carve-out is NOT invoked. The measured-conduct eligibility gate the nyiso-199 handoff named is REFUSED under rule 13 [R-MEASURED] (an in-solve hourly meter pin has no forward analogue) and was not built. Control = the keeper's COMMITTED bundle (form 4; G-DRIFT re-validated empirically at this HEAD, 0 of 42 differing leaves). The rule-29 screen on 2025 CLEARED every pre-registered gate \u2014 S-1 (re-pointed to this arm's own arithmetic: bridge volume must not rise, fall inside 0.5701 TWh), S-3 confinement, the corrected dark-meter forcing gate (a), the named-plant gate (b), C3a/C3b do-no-harm and G-ENGAGE \u2014 before the span was spent.",
+  "note": "nyiso_gas_bridge_startup_aware: the NYISO gas commitment bridge's shared detector (G-61 path (b)) admits a detected P0 run as an ANCHOR \u2014 for the min-run extension, the online-hours state floor and the gap bridges alike \u2014 only when that run's own P0 energy margin per MW repays the unit's published startup cost, the SAME constant the economic bridge already prices (_ra_bridge_unit_params: the CAMPD-bin startup where the bin carries one, else the per-fuel COMMITMENT_PARAMS_BY_FUEL class table). The defect it repairs is the P0-pattern dependence nyiso-199 \u00a78.3 measured and nyiso-200 confirmed is the DETECTOR's, not the offer band's: a phantom P0 fragment \u2014 a run the unit's own economics say it would never have started \u2014 was being extended into a min-load hold, i.e. a floor binding in hours its own driver evidence says the unit is off, which rule 17 [R-FLOOR-WINDOW] calls a bug by definition whatever it does to the residual. Zero new or retuned constants, zero new DOF entries; the field is a bool; nothing is selected, swept or tuned and no residual enters the construction. No offer_curve_by_group band multiplier and no phys_* value moves, so rule 1 [R-STRUCT]'s price-tuning carve-out is NOT invoked. The measured-conduct eligibility gate the nyiso-199 handoff named is REFUSED under rule 13 [R-MEASURED] (an in-solve hourly meter pin has no forward analogue) and was not built.",
   "computed_checks": {
    "G_CONTROL": {
     "control": "the keeper's COMMITTED bundle (rule 29(b) form 4; no control solve)",
     "control_base": "origin/main",
-    "g_drift": "results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md \u00a75 (5b5af5ab..982ba9aa) + Addendum B \u00a7B.4 (821c11c5..1ce47fc0) \u2014 every solve-path hunk INERT for a NYISO backcast, with two empirical checks: the keeper's own unit_outage_extract_basis_share reproduces to the digit at HEAD (Cricket Valley 2024 mean 0.5763 vs the committed 0.576) and the committed nyiso-197 Linden rebuild re-runs at HEAD with an empty git diff",
+    "g_drift": "results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md \u00a73 \u2014 validated EMPIRICALLY at this HEAD, not by reading hunks: the committed keeper-sha probe record _nyiso198_rebuild_checks_2024.json (the keeper recipe's per-plant / per-band LP pmax, 42 leaves) re-run at HEAD reproduces 0 of 42 differing leaves, max |delta| 0.0, including the record's own VERDICT field \u2014 the regenerated file is byte-identical to the committed one (git status clean after the re-run)",
     "committed_keeper_on_disk_by_year": {
      "2023": {
       "hours_differing": 0,
@@ -32,30 +32,76 @@
    "G_DELTA": {
     "baseline": "nyiso196_extract_basis",
     "delta_fields": {
-     "cc_duct_peaking_row_scoped": [
+     "nyiso_gas_bridge_startup_aware": [
       null,
       true
      ]
     },
     "head_defaults_not_recipe": [
-     "ccs_retrofit_fixed_cost_co2_scaling"
+     "cc_duct_peaking_row_scoped",
+     "ccs_retrofit_fixed_cost_co2_scaling",
+     "ccs_retrofit_vom_adder",
+     "miso_gas_marginal_commodity_pricing",
+     "miso_gas_variable_transport",
+     "miso_seam_neighbour_anchored_ladder",
+     "nyiso_ct_peaker_bands_measured",
+     "voluntary_clean_demand_path"
     ],
+    "head_defaults_note": "a field the keeper never serialised, or recorded at a since-flipped ScenarioConfig default, which the arm records at the HEAD default: added or re-defaulted after the keeper solved, reported, never counted as a recipe delta",
     "pass": true
    },
    "G_INPUTS": {
-    "eia860_operable_sheet": "data/raw/eia-860/eia860_generator_operable.parquet",
-    "sha256": "b6703157c00fb1d1f487b9c07e6c366c3ed0d559da4b4a378dcd30c131643bdb",
-    "cc_rows": 1941,
-    "ct_rows": 1213,
-    "ct_rows_flagged_Y": 0,
-    "rows_by_prime_mover_and_flag": {
-     "CA/N": 194,
-     "CA/Y": 466,
-     "CS/N": 49,
-     "CS/Y": 19,
-     "CT/X": 1213
+    "source": "market_sim.model.commitment.COMMITMENT_PARAMS_BY_FUEL, read through _ra_bridge_unit_params \u2014 the CAMPD bin's own startup_cost_per_mw where the bin carries one, else this per-fuel class table by heat rate",
+    "commitment_params_by_fuel": {
+     "gas_cc": [
+      {
+       "heat_rate_below": 6.5,
+       "min_down_hours": 8,
+       "startup_per_mw": 63.8
+      },
+      {
+       "heat_rate_below": 7.5,
+       "min_down_hours": 6,
+       "startup_per_mw": 48.6
+      },
+      {
+       "heat_rate_below": 99.0,
+       "min_down_hours": 4,
+       "startup_per_mw": 24.1
+      }
+     ],
+     "gas_ct": [
+      {
+       "heat_rate_below": 10.0,
+       "min_down_hours": 1,
+       "startup_per_mw": 12.3
+      },
+      {
+       "heat_rate_below": 11.0,
+       "min_down_hours": 1,
+       "startup_per_mw": 24.5
+      },
+      {
+       "heat_rate_below": 99.0,
+       "min_down_hours": 1,
+       "startup_per_mw": 19.0
+      }
+     ],
+     "gas_st": [
+      {
+       "heat_rate_below": 10.0,
+       "min_down_hours": 8,
+       "startup_per_mw": 55.0
+      },
+      {
+       "heat_rate_below": 99.0,
+       "min_down_hours": 12,
+       "startup_per_mw": 75.0
+      }
+     ]
     },
-    "basis": "the premise of the repair, computed: the Duct Burners attribute is reported only on CA/CS (steam) rows, and NO CT row in the operable population carries it",
+    "eligibility_is_physics_not_class_names": "rule 18 [R-PHYSICS]: _ra_bridge_unit_params gates on min_down_hours > 0 and rejects an incremental econ/peak tranche (startup 0), so the 1 h min-down CT classes are never bridged and the screen never floors above a plant's minimum stable load",
+    "new_constants_introduced": 0,
     "pass": true
    },
    "G_DOF": {
@@ -63,147 +109,201 @@
     "n_residual": 6,
     "added_entries": 0,
     "added_scalars": 0,
-    "basis": "a CONSTRUCTION repair inside a measured input: the share is computed from EIA-860's own columns at the grain the filing reports the flag. No threshold, no cap, no table, no per-plant entry; the field is a bool (PREREG \u00a72, \u00a73). Contrast cc_duct_peaking_cap_pct, the existing remedy for the same conflation, which IS a chosen number (8.0 for PJM, None elsewhere) \u2014 this arm chooses nothing and leaves that field alone.",
+    "basis": "an ADMISSIBILITY test inside an existing mechanism, priced off an existing registered constant: the field is a bool and it selects no value. No threshold is chosen, no table is added, no per-plant entry is typed, and no rule 1 [R-STRUCT] authorized-price-tuning channel is used, so nothing enters the ledger and rule 20 [R-DOF]'s 'a residual closable only by a tuned value' clause is not engaged",
     "pass": true
    },
    "G_ENGAGE": {
-    "by_plant_year": {
-     "2023:57185": {
-      "arm_peak_band_max_mw": 74.47,
-      "predicted_move_mw": 168.47
+    "census_legs_logged": [
+     {
+      "leg": "gas_cc_state",
+      "runs_detected": 228,
+      "runs_dropped": 122,
+      "dropped_hours": 1122,
+      "units_with_drops": 3
      },
-     "2023:56940": {
-      "arm_peak_band_max_mw": 4.7,
-      "predicted_move_mw": 100.24
+     {
+      "leg": "gas_cc",
+      "runs_detected": 1576,
+      "runs_dropped": 1173,
+      "dropped_hours": 7186,
+      "units_with_drops": 13
      },
-     "2023:54547": {
-      "arm_peak_band_max_mw": 70.9,
-      "predicted_move_mw": 87.99
+     {
+      "leg": "gas_st",
+      "runs_detected": 422,
+      "runs_dropped": 351,
+      "dropped_hours": 10194,
+      "units_with_drops": 6
      },
-     "2023:57664": {
-      "arm_peak_band_max_mw": 21.33,
-      "predicted_move_mw": 87.75
+     {
+      "leg": "gas_cc_state",
+      "runs_detected": 210,
+      "runs_dropped": 159,
+      "dropped_hours": 807,
+      "units_with_drops": 2
      },
-     "2023:2539": {
-      "arm_peak_band_max_mw": 4.31,
-      "predicted_move_mw": 75.91
+     {
+      "leg": "gas_cc",
+      "runs_detected": 2303,
+      "runs_dropped": 1523,
+      "dropped_hours": 8943,
+      "units_with_drops": 13
      },
-     "2023:50006": {
-      "arm_peak_band_max_mw": 4.73,
-      "predicted_move_mw": 53.58
+     {
+      "leg": "gas_st",
+      "runs_detected": 1065,
+      "runs_dropped": 867,
+      "dropped_hours": 19467,
+      "units_with_drops": 7
      },
-     "2024:57185": {
-      "arm_peak_band_max_mw": 74.47,
-      "predicted_move_mw": 168.47
+     {
+      "leg": "gas_cc_state",
+      "runs_detected": 164,
+      "runs_dropped": 95,
+      "dropped_hours": 365,
+      "units_with_drops": 3
      },
-     "2024:56940": {
-      "arm_peak_band_max_mw": 4.7,
-      "predicted_move_mw": 100.24
+     {
+      "leg": "gas_cc",
+      "runs_detected": 1554,
+      "runs_dropped": 939,
+      "dropped_hours": 4561,
+      "units_with_drops": 13
      },
-     "2024:54547": {
-      "arm_peak_band_max_mw": 70.9,
-      "predicted_move_mw": 87.99
+     {
+      "leg": "gas_st",
+      "runs_detected": 508,
+      "runs_dropped": 386,
+      "dropped_hours": 17984,
+      "units_with_drops": 7
+     }
+    ],
+    "n_census_legs": 9,
+    "n_per_plant_census_blocks": 3,
+    "bridge_volume_by_year": {
+     "2023": {
+      "keeper_twh": 1.0034,
+      "arm_twh": 0.3439,
+      "delta_twh": -0.6595,
+      "pre_solve_bound_twh": 1.0034,
+      "does_not_rise": true,
+      "inside_bound": true
      },
-     "2024:57664": {
-      "arm_peak_band_max_mw": 21.33,
-      "predicted_move_mw": 87.75
+     "2024": {
+      "keeper_twh": 0.5728,
+      "arm_twh": 0.1166,
+      "delta_twh": -0.4562,
+      "pre_solve_bound_twh": 0.5728,
+      "does_not_rise": true,
+      "inside_bound": true
      },
-     "2024:2539": {
-      "arm_peak_band_max_mw": 4.31,
-      "predicted_move_mw": 75.91
-     },
-     "2024:50006": {
-      "arm_peak_band_max_mw": 4.73,
-      "predicted_move_mw": 53.58
-     },
-     "2025:57185": {
-      "arm_peak_band_max_mw": 74.47,
-      "predicted_move_mw": 168.47
-     },
-     "2025:56940": {
-      "arm_peak_band_max_mw": 4.7,
-      "predicted_move_mw": 100.24
-     },
-     "2025:54547": {
-      "arm_peak_band_max_mw": 70.9,
-      "predicted_move_mw": 87.99
-     },
-     "2025:57664": {
-      "arm_peak_band_max_mw": 21.33,
-      "predicted_move_mw": 87.75
-     },
-     "2025:2539": {
-      "arm_peak_band_max_mw": 4.31,
-      "predicted_move_mw": 75.91
-     },
-     "2025:50006": {
-      "arm_peak_band_max_mw": 4.73,
-      "predicted_move_mw": 53.58
+     "2025": {
+      "keeper_twh": 0.5701,
+      "arm_twh": 0.1434,
+      "delta_twh": -0.4267,
+      "pre_solve_bound_twh": 0.5701,
+      "does_not_rise": true,
+      "inside_bound": true
      }
     },
-    "prediction_source": "_nyiso198_rebuild_checks_2024.json \u2014 Set B (the chp_layup / chp_duty_curve / reserve_duty cohorts) unchanged exactly, Set A scaling by peak_off * pct_row / pct_cur, residual 0.000 MW at all 31 plants",
-    "cricket_valley_2024_peak_band_mw": 74.47,
-    "keeper_cricket_valley_2024_peak_band_mw": 245.64,
+    "note": "the census line is the PREREG \u00a72 F-3 fail-loud signal: a solve log with no 'run screen, leg \u2026' line did not arm the leg",
+    "pass": true
+   },
+   "B1_DARK_FORCING": {
+    "by_year": {
+     "2023": {
+      "keeper_dark_total_twh": 0.2515,
+      "arm_dark_total_twh": 0.2296,
+      "keeper_by_plant": {
+       "2480": 0.0014,
+       "8906": 0.2501
+      },
+      "arm_by_plant": {
+       "2480": 0.0014,
+       "8906": 0.2282
+      },
+      "keeper_d4_failure_rows": 2,
+      "arm_d4_failure_rows": 3
+     },
+     "2024": {
+      "keeper_dark_total_twh": 0.3438,
+      "arm_dark_total_twh": 0.003,
+      "keeper_by_plant": {
+       "2480": 0.0002,
+       "8906": 0.3436
+      },
+      "arm_by_plant": {
+       "2480": 0.0002,
+       "54574": 0.0028
+      },
+      "keeper_d4_failure_rows": 2,
+      "arm_d4_failure_rows": 2
+     },
+     "2025": {
+      "keeper_dark_total_twh": 0.001,
+      "arm_dark_total_twh": 0.001,
+      "keeper_by_plant": {
+       "8006": 0.001
+      },
+      "arm_by_plant": {
+       "8006": 0.001
+      },
+      "keeper_d4_failure_rows": 1,
+      "arm_d4_failure_rows": 1
+     }
+    },
+    "measure": "nyiso-200 \u00a77(a), never a failure-row count",
     "pass": true
    },
    "B2_EFFECT": {
-    "by_year": {
+    "arm_class_twh_by_year": {
      "2023": {
-      "cricket_valley_arm_twh": 5.3911,
-      "class_twh": {
-       "CC_CHP": 15.9427,
-       "CC_REGULAR": 34.9871,
-       "CT_CHP": 1.279,
-       "CT_PEAKER": 0.3408,
-       "OTHER": 2.1973,
-       "ST_CHP": 1.2379,
-       "ST_GAS": 9.0337,
-       "biomass": 0.8395,
-       "hydro": 26.6159,
-       "import": 23.3205,
-       "nuclear": 27.4871,
-       "oil": 0.1493,
-       "solar": 0.2797,
-       "wind": 4.5903
-      }
+      "CC_CHP": 15.9808,
+      "CC_REGULAR": 33.378,
+      "CT_CHP": 1.5552,
+      "CT_PEAKER": 0.4405,
+      "OTHER": 2.1973,
+      "ST_CHP": 1.3817,
+      "ST_GAS": 10.0607,
+      "biomass": 0.8395,
+      "hydro": 26.6158,
+      "import": 23.3473,
+      "nuclear": 27.4871,
+      "oil": 0.1499,
+      "solar": 0.2798,
+      "wind": 4.5907
      },
      "2024": {
-      "cricket_valley_arm_twh": 4.0815,
-      "class_twh": {
-       "CC_CHP": 19.4484,
-       "CC_REGULAR": 38.1882,
-       "CT_CHP": 0.8885,
-       "CT_PEAKER": 0.331,
-       "OTHER": 2.2014,
-       "ST_CHP": 0.9209,
-       "ST_GAS": 8.0337,
-       "biomass": 0.7597,
-       "hydro": 26.739,
-       "import": 20.6673,
-       "nuclear": 26.9532,
-       "oil": 0.4461,
-       "solar": 0.5861,
-       "wind": 6.0116
-      }
+      "CC_CHP": 19.6708,
+      "CC_REGULAR": 36.4551,
+      "CT_CHP": 1.2364,
+      "CT_PEAKER": 0.4105,
+      "OTHER": 2.2014,
+      "ST_CHP": 1.1575,
+      "ST_GAS": 8.7927,
+      "biomass": 0.7597,
+      "hydro": 26.739,
+      "import": 20.7511,
+      "nuclear": 26.9532,
+      "oil": 0.4435,
+      "solar": 0.5861,
+      "wind": 6.0116
      },
      "2025": {
-      "cricket_valley_arm_twh": 4.4457,
-      "class_twh": {
-       "CC_CHP": 20.4522,
-       "CC_REGULAR": 36.4844,
-       "CT_CHP": 1.4807,
-       "CT_PEAKER": 1.0476,
-       "OTHER": 1.9483,
-       "ST_CHP": 1.3271,
-       "ST_GAS": 8.8057,
-       "biomass": 0.6724,
-       "hydro": 24.0589,
-       "import": 19.2561,
-       "nuclear": 28.3416,
-       "oil": 1.2895,
-       "solar": 0.9813,
-       "wind": 7.0487
-      }
+      "CC_CHP": 20.5018,
+      "CC_REGULAR": 34.7633,
+      "CT_CHP": 1.7228,
+      "CT_PEAKER": 1.3954,
+      "OTHER": 1.9483,
+      "ST_CHP": 1.4702,
+      "ST_GAS": 9.644,
+      "biomass": 0.6724,
+      "hydro": 24.0589,
+      "import": 19.3574,
+      "nuclear": 28.3416,
+      "oil": 1.2848,
+      "solar": 0.9813,
+      "wind": 7.0487
      }
     },
     "keeper_side": "the keeper's committed class_hourly and payload (FINDING \u00a75)",

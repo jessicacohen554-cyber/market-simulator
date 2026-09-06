@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-06-nyiso-202-startup-aware",
+  "label": "nyiso 202 startup aware",
+  "date": "2026-09-06",
+  "shorthand": "nyiso-202-startup-aware",
+  "definition": "nyiso-202 span: keeper recipe + nyiso_gas_bridge_startup_aware (commitment-real run screen), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-06-nyiso-202-startup-aware.js",
+  "bundle": "results/calibration/nyiso202_startup_aware"
+}

@@ -1,16 +1,14 @@
 {
-  "timestamp": "2026-09-06T04:12:18",
+  "timestamp": "2026-09-06T15:39:33",
   "git": {
-    "sha": "a8f42835",
-    "basis_sha": "1ce47fc0624baa479dea0caeba5506adeb55790b",
-    "branch": "claude/nyiso-backcast-calibration-jnciv2",
-    "dirty": true,
-    "changed_files": [
-      "scripts/gen_nyiso198_attestation.py"
-    ],
+    "sha": "c7523509",
+    "basis_sha": "2617a5d3c1f402bf2acdededfa466a85c43f2a71",
+    "branch": "claude/nyiso-202-backcast-calibration-3xdzby",
+    "dirty": false,
+    "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "nyiso-198 FULL SPAN arm: cc_duct_peaking_row_scoped on the 2026-09-06-nyiso-196-extract-basis keeper recipe, solved under the owner ruling of 2026-09-06 ('Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper..'). PREREG results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md + Addendum A + Addendum B, all pushed before the work they govern. Control = the keeper's committed bundle (rule 29(b) form 4); no control solve.",
+  "model_changes_note": "nyiso-202 span: keeper recipe + nyiso_gas_bridge_startup_aware (commitment-real run screen), 2023-2025",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -96,7 +94,7 @@
       "cc_capacity_reconcile": true,
       "egrid_steam_collapse_heat_rates": true,
       "unit_outage_extract_basis_share": true,
-      "cc_duct_peaking_row_scoped": true
+      "nyiso_gas_bridge_startup_aware": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -113,7 +111,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "a8f42835"
+    "git_sha": "c7523509"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -196,6 +194,9 @@
     "federal_ces_replaces_state_rps": false,
     "federal_ces_target_by_year": null,
     "federal_ces_acp_usd_per_mwh": null,
+    "voluntary_clean_demand_path": "off",
+    "voluntary_wtp_ceiling_usd_per_mwh": null,
+    "voluntary_eligible_fuels": null,
     "rps_enabled": false,
     "miso_rps_compliance_regions": false,
     "miso_clean_tier_rows": false,
@@ -271,13 +272,13 @@
     "offshore_wind_cf_override": null,
     "ccs_retrofit_hr_penalty": 0.12,
     "ccs_retrofit_capex_kw": 1521.4,
-    "ccs_retrofit_vom_adder": 8.0,
+    "ccs_retrofit_vom_adder": 2.95,
     "ccs_retrofit_capture_rate": 0.9,
     "ccs_retrofit_available_year": 2028,
     "ccs_retrofit_max_gw_per_year": 3.0,
     "ccs_retrofit_min_remaining_life": 15,
     "ccs_retrofit_capex_co2_scaling": true,
-    "ccs_retrofit_fixed_cost_co2_scaling": false,
+    "ccs_retrofit_fixed_cost_co2_scaling": true,
     "heat_rate_bin_count": null,
     "use_campd_bins": true,
     "campd_bins_path": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
@@ -450,6 +451,7 @@
     "nyiso_gas_bridge_st_min_run_hours": 13.0,
     "nyiso_gas_bridge_ct": false,
     "nyiso_gas_bridge_ct_min_load_frac": 0.238,
+    "nyiso_gas_bridge_startup_aware": true,
     "nyiso_gas_bridge_plant_exclusions": true,
     "nyiso_gas_bridge_reserve_duty_exclusions": true,
     "nyiso_gas_bridge_ct_min_run_hours": 2.0,
@@ -765,6 +767,7 @@
     "caiso_st_gas_committed_measured": false,
     "caiso_st_gas_peak_measured": false,
     "caiso_ct_peaker_committed_measured": false,
+    "nyiso_ct_peaker_bands_measured": false,
     "caiso_offer_surface_conditional": false,
     "caiso_offer_surface_binned_path": null,
     "caiso_offer_surface_netload_pcts": [
@@ -799,7 +802,7 @@
     "cc_peaking_per_plant": true,
     "cc_duct_peaking": true,
     "cc_duct_peaking_cap_pct": null,
-    "cc_duct_peaking_row_scoped": true,
+    "cc_duct_peaking_row_scoped": false,
     "cc_nameplate_summer_derate": true,
     "summer_derate_basis_aware": false,
     "commission_year_cod_fallback": false,
@@ -1038,6 +1041,9 @@
     "miso_zonal_gas_basis": false,
     "miso_zonal_gas_basis_skip_923_priced": false,
     "miso_winter_citygate_daily": false,
+    "miso_gas_marginal_commodity_pricing": false,
+    "miso_gas_variable_transport": false,
+    "miso_seam_neighbour_anchored_ladder": false,
     "caiso_zonal_gas_basis": false,
     "caiso_asymmetric_path_ratings": false,
     "caiso_per_year_import_caps": false,
@@ -1093,7 +1099,8 @@
     "locality_capacity_curves": false,
     "capacity_market_supply_clearing_by_iso": null,
     "capacity_going_forward_bar_published_by_iso": null,
-    "capacity_adequacy_requirement_published_by_iso": null
+    "capacity_adequacy_requirement_published_by_iso": null,
+    "capacity_no_default_cap_convention_by_iso": null
   },
   "environment": {
     "python_version": "3.11.15",
