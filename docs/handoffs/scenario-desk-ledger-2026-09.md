@@ -7,7 +7,8 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #13, amendment 1) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #14) ·
+**r#14 (HEAD `5375be8b`):** quiet on the SCN side — r#13 + am.1 merged (#5165); **SCN-WS5A-RESOLVE not yet dispatched** (one refresh; asked, not graded); the policy lanes correctly unlaunched (P1 absent); the audit stays EXIT 0. The delta is the capx track's (79 commits): **D65-B-R's batch, D78-R's two legs and D81's full window are all SOLVING now** — the queue is saturated, so **rule 12 makes RESOLVE's PJM/CAISO/MISO legs wait for a slot**: one sentence added to its charter (confirm no other per-plant solve before each heavy leg; NEISO/NYISO may start any time). CLAUDE.md gained one line (capx D67-ARM: the PJM published adequacy requirement) — INERT for every SCN leg (a `{iso: bool}` gate no campaign case sets); D75-R and D76 added default-off fields — RESOLVE's G-DRIFT classifies them. NYISO promoted to nyiso-202 (CALIBRATED), marker unchanged, §2.1b NEISO only. No card; nothing new issued.
 **r#13 am.1 — RULING S13 (D-5) = HOLD until SCN-WS5A-RESOLVE and the policy half land.** No Stage-B grant; nothing full-horizon is chartered; D-5 is re-presented the refresh both are on main, with the amended cost table and the post-fix NEISO REF. The only lane to launch now is SCN-WS5A-RESOLVE.
 **r#13 (HEAD `13ee0c89`):** **STAGE A-LOAD IS COMPLETE AT THE FROZEN PIN — 16/16 legs, the synthesis, the D-5 cost table (313.7 min of LP, 3.92 min per solve-year, ~4.7 h wall) — and RULING S8 WAS NEVER EXECUTED**, because its amendment had no session to land in (the desk's third addendum-to-nobody in a day) and the lane finished at its own freeze, correctly; it scoped the re-solve for the desk (13 of 16 legs) and named the blocker the desk missed: **D77 moves no key, so a naive re-solve hits the pre-fix cache** → **SCN-WS5A-RESOLVE issued** as a standalone lane (new out-dir per ISO redirecting `CACHE_ROOT`, a per-leg cache-hit proof, the S5 identity reproduced on the campaign REFs, same-id re-registration). **SCN-FIX2 and SCN-CAP both LANDED complete**: the carbon form is the committed path ladder (and CARB-HI is LIVE on NYISO/NEISO at full horizon, 2031–2047 — a Stage B fact), the voluntary levels are relabelled committed, `mass_cap_tons_by_year` ships inert and `CAP-STATE-TIGHT` binds on NYISO and CAISO in every year and is slack on NEISO; PJM is NOT byte-identical under the case (partial RGGI fallthrough) — the policy charter is re-cut as **v4** with that fixed and P1 pointing at the RESOLVE PRECOMMIT. capx D80 landed: the audit is **EXIT 0 on main**. **Card D-5 PRESENTED** with the cost table and a HOLD recommendation (gate Stage B on the re-solve and the policy half).
 **r#12 am.2 —** owner: "I don't have any forecast sessions going for prompt 3." Correct — the six policy lanes were never launched (gated on P1), so the cap addendum had no target; **WITHDRAWN**, the cap case folded into the ONE combined policy charter (v3, §5) as case 13 under P5 with gates G10–G12. Standing rule from r#12 am.2: **the desk issues addenda only to lanes that are verifiably running; anything for an unlaunched lane goes into its charter.**
@@ -226,6 +227,39 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#14 — 2026-09-06, main HEAD `5375be8b`
+
+*(This refresh's PR.)* Delta from the r#13 pin `13ee0c89`: **79 commits**, none SCN's beyond r#13's own
+merge (#5165). `CLAUDE.md` +1 line: capx D67-ARM's `capacity_adequacy_requirement_published_by_iso`
+entry in the Capacity Evolution section — a `{iso: bool}` gate no scenario case sets, INERT for every SCN
+leg (the WS-5A ADDENDUM verified the same for D67's build). `scenarios.py` +142: capx D75-R (PJM VRE ELCC
+vintage axis, default-OFF) and D76 (measured-hindcast screen-peak gate, default-OFF) — both inside the
+RESOLVE lane's G-DRIFT window, both expected INERT for a forecast load leg; the lane classifies them.
+
+**GRADED BY CONTENT:**
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS5A-RESOLVE** | **NO EVIDENCE OF DISPATCH — one refresh; asked, not graded** | No branch, no PR, no `results/scn-campaign-load-2026-09-06-r2/`. Issued at r#13 in chat. |
+| **SCN-WS5A-POLICY-<ISO> ×6** | **NOT LAUNCHED — correct** | P1 (RESOLVE's PRECOMMIT) does not exist. |
+| **audit** | `forecast-invariant-artifacts` **EXIT 0** at HEAD, re-run. | — |
+
+**Rule 12 now binds the RESOLVE lane from outside the SCN track.** Capx r#49: D65-B-R's batch (every bare
+key, per-plant ISOs included), D78-R's two legs and D81's full window are **all solving at once** — the
+director calls the queue saturated. RESOLVE's NEISO and NYISO legs are small and may start any time; its
+PJM, CAISO and MISO legs (per-plant, 8.9–9.65 GB) may run only when nothing else per-plant is solving.
+One sentence added to the charter (§5): before each of those three legs, confirm with the owner that no
+capx per-plant solve is live; never assume the slot. Recorded in §4.
+
+**Capx (deconfliction).** D65-B-R found D65-B's screen ran without `--golden-posture` (a director charter
+gap, not SCN's); D81 measures D54 §4.2's bias at zero; NYISO promoted to `nyiso-202` (CALIBRATED) with
+gate (a) re-keyed by the owner's lane, Q51 still parked, `complete` still {ERCOT, NEISO, PJM}; D67-ARM /
+D76 / D75-R / D79 undispatched on their side. No SCN file held. No HOLD.
+
+**Issued:** nothing new. **Cards:** none (D-5 held under S13; D-1(b)/D-1(c) open and dormant).
+
+---
 
 ### r#13 amendment 1 — 2026-09-06: ruling S13 on card D-5
 
@@ -1528,6 +1562,7 @@ SCN-WS4a may not write, `results/cache.py` being another lane's region.
 | `configs/scenario_campaign_matrix.yaml` (the five carbon-form rows), `tests/scoring/test_scenario_campaign_configs.py`, `constants.py` REGION `VOLUNTARY_*` (words), `scenarios.py` the three `voluntary_*` docstrings (words) | **SCN-FIX2** | 3 | FIX1's r#11 items, re-chartered after FIX1 landed on the r#10 text. |
 | `scenarios.py` **REGION the `mass_cap_*` block (~:2941) + the two registration lines**, `policy/cap_and_trade.py::_power_sector_cap`, the YAML `CAP-STATE-TIGHT` case, new `tests/unit/policy/test_mass_cap_schedule.py`, `docs/codebase/05-policy.md` (one paragraph), the matrix row + six cells (last commit) | **SCN-CAP** | 3 | Rebases on SCN-FIX2 if it lands first (both touch the YAML, disjoint case blocks). |
 | `results/scn-campaign-load-2026-09-06-r2/<ISO>/` (new), the five re-solved ISOs' campaign sidecars (same ids), `results/scn-campaign-load-2026-09-06/<ISO>/` for those five (DELETED on re-registration; ERCOT's stay), `invariant-failures.json` (their keys), the synthesis FINDING (a dated ADDENDUM section only), STATUS, `PRECOMMIT-/FINDING-scn-ws5a-resolve-*.md`, the five `datacenter_load_block` cells | **SCN-WS5A-RESOLVE** | 3 | capx D65-B-R writes bare-id sidecars to the same dir — distinct ids, append-only. |
+| *(compute, not a file)* the single per-plant solve slot (rule 12) | **capx D65-B-R batch / D78-R / D81 (LIVE r#14)** ↔ **SCN-WS5A-RESOLVE**'s PJM / CAISO / MISO legs | 3 | The owner sequences; the RESOLVE charter asks before each heavy leg. |
 | `frontend/data/hindcast/<iso>-2026-2030-scn-campaign-policy-2026-09-06-<case>.json`, `results/scn-campaign-policy-2026-09-06/<ISO>/`, `PRECOMMIT-/FINDING-scn-ws5a-policy-<iso>-*.md`, the ISO's three shard cells | **SCN-WS5A-POLICY-<ISO>** | 3 | Per-ISO disjoint. The D65-B batch writes other run ids to the same sidecar dir — append-only. |
 
 ---
@@ -1669,7 +1704,7 @@ THE PIN: `origin/main` at the moment you write your PRECOMMIT — at or after `f
 
 THE CACHE BLOCKER, and the recipe that defeats it (STATUS doc): D77 moves no cache key, so a re-solve at the same key HITS the pre-fix bundle and returns the numbers it was meant to replace. Therefore: (1) a NEW out-dir per ISO, `results/scn-campaign-load-2026-09-06-r2/<ISO>/<CASE>/`, and `run_full_horizon.py --out-dir` pointing there (it redirects `cache.CACHE_ROOT` to the out-dir — read `scripts/run_full_horizon.py` ~:736–750 and confirm before relying on it); (2) NEVER link or copy a pre-fix bundle into the new root (the WS-4c harness helper that "links arm bundles into the shared cache root" must not be used); (3) prove every re-solved leg is a fresh solve: its `run_config.json` `git_sha` equals the pin, its wall time is a solve's not a cache read's, and its 2028–2030 `gas_cc_ccs` emission rate is `measured host × 0.10`, not ~0.37. A leg whose numbers reproduce the pre-fix bundle to the digit is a CACHE HIT and a STOP — report it, never register it.
 
-THE 13 LEGS, in rule-12 order: NEISO REF + LOAD-HI (≈11 min); NYISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈61 min); then ONE AT A TIME: PJM REF + LOAD-HI (≈80 min), CAISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈65 min), MISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈80 min, peak RSS 9.65 GB — nothing else may solve). Rebase BETWEEN legs, never DURING one; HEAD GUARD `[ "$(git rev-parse HEAD)" = "$H0" ] || exit 90` around every solve; years sequential.
+THE 13 LEGS, in rule-12 order: NEISO REF + LOAD-HI (≈11 min); NYISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈61 min); then ONE AT A TIME: PJM REF + LOAD-HI (≈80 min), CAISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈65 min), MISO REF + LOAD-HI + LOAD-HI-ORGANIC (≈80 min, peak RSS 9.65 GB — nothing else may solve). [r#14] The capx track is solving concurrently (D65-B-R's every-bare-key batch, D78-R, D81 — capx ledger r#49): before EACH of the PJM / CAISO / MISO legs, confirm with the owner that no capx per-plant solve is live and record the answer in your FINDING; never assume the slot. NEISO and NYISO may start at once. Rebase BETWEEN legs, never DURING one; HEAD GUARD `[ "$(git rev-parse HEAD)" = "$H0" ] || exit 90` around every solve; years sequential.
 
 THE PAIRED CHECK (ruling S5's, at model grain, on YOUR ISOs — D77 proved it on a bare NEISO t1f, you prove it on the campaign REFs): per re-solved REF, per retrofitted unit-year, `emission_rate_co2` = the host's measured CAMPD rate × (1 − 0.90) to rel. tol 1e-9 (D77 §4b gate 1); confinement — no non-converted unit's rate moves vs the pre-fix bundle; every zero-carbon class's generation identical to the pre-fix bundle in 2026–2027 (the pre-2028 inertness measured, not argued); and the 2030 CO2 level pre-fix vs post-fix per ISO beside the contamination each FINDING pre-declared (NEISO ≈5.60 Mt, NYISO ≈5.29, CAISO ≈5.04, PJM/MISO small). STOP gates, structural and STOP-only: (G1) the identity above; (G2) confinement; (G3) 2026–2027 zero-carbon identity; (G4) no non-target load-bearing invariant flips PASS → FAIL vs the pre-fix leg (a flip on I3/I7/I12 caused by re-ordered dispatch is reported with its cause, not a STOP — say which); (G5) the cache-hit test above. Nothing is gated on a residual. Pre-declare per ISO the expected sign and order of magnitude of the 2030 level change and whether the LOAD-HI delta moves (NEISO §2.3 predicted ≈6.3 % of its ΔCO2 rode on defective units; PJM's arms carry different CCS fleets so its delta does not cancel).
 
