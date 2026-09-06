@@ -719,9 +719,7 @@ def main(argv: list[str] | None = None) -> int:
     # lives in the classification, not in the consumption) and their own
     # measured bucket is published as refused rather than hidden.
     consumed_classes = [
-        c
-        for c in active_classes
-        if not (args.st_split_report_only and c == "ST_GAS")
+        c for c in active_classes if not (args.st_split_report_only and c == "ST_GAS")
     ]
     if args.st_split_report_only and st_cut is None:
         raise SystemExit(
@@ -1057,9 +1055,7 @@ def main(argv: list[str] | None = None) -> int:
     _reported_not_consumed = {
         cls: {
             "base_hr": round(geom[cls]["base_hr"], 3),
-            "bands": {
-                b: _f(static[cls][b]) for b in ("econ_low", "econ_high", "peak")
-            },
+            "bands": {b: _f(static[cls][b]) for b in ("econ_low", "econ_high", "peak")},
             "unarmed": {"committed": _f(static[cls]["committed"])},
             "gates": {
                 "G1_capacity_reconciliation": g1.get(cls),
