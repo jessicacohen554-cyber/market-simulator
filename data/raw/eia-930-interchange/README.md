@@ -62,6 +62,53 @@ Sum-of-legs vs the BA-level `Total interchange` column of
 3.91 / 1.66 / 2.36 TWh for 2023 / 2024 / 2025 — the usual gap between the
 per-seam legs and EIA's imbalance-adjusted BA total, plus the NaN hours.
 
+**WIDENED to 2019-2025 on 2026-09-06 by lane SPP-15** (`docs/handoffs/
+FINDING-spp-15-2026-09-06.md`; plan §8 SPP-15, r#4 am.1; §6 row 15), through
+the producer's own `--merge` path, which keeps every already-committed
+`(local_time, diba)` row and adds only hours the file did not carry:
+
+    python scripts/data/fetch_eia930_interchange.py --ba SWPP --source bulk \
+        --years 2019 2020 2021 2022 --merge
+
+**Byte-identity of the committed window, proven either side of the merge:**
+the 2023-01-01 01:00 .. 2026-01-01 00:00 slice is **268,177 rows** before and
+after, and the sha256 of its canonical `(local_time, diba, mw)` serialization
+is `243889469b96680815f64b8499d957ed4388630b36207dce8547ba26f7c75a3d` on both
+sides. The file itself is rewritten (whole-file parquet: 268,177 -> 618,817
+rows, sha256 `2d06a21c…` -> `807056bb…`), which is the merge doing its job;
+no in-sample value moved. **Rule 22 `[R-HOLDOUT]`: data prep, not a spend** —
+nothing solved, scored or registered, and SPP holds no tier marker.
+
+The back years add **350,640 rows** = 10 DIBAs x 35,064 hours,
+2019-01-01 01:00 .. 2023-01-01 00:00. `SIKE` is absent (it first appears
+2025-06-01); the other ten run the full grain in all four years. Two things a
+seam consumer must handle:
+
+* **Value coverage is far worse in the early years.** Hours that are NaN for
+  *every* DIBA at once: **2,040 (2019) / 2,256 (2020) / 503 (2021) / 313
+  (2022)** — 23 % and 26 % of 2019 and 2020, against 97 / 361 / 936 in
+  2023-2025. They are not scattered: 103 contiguous blocks, ~50 % of them
+  Saturday and ~49 % Friday local (the largest are Thanksgiving 2019 and the
+  Nov/Dec 2020 holiday weekends, 96 h each). This is EIA's own submission
+  history for SWPP interchange, not a fetch artifact, and it is carried as
+  absence. **Routed to SPP-33:** a seam calibration on 2019 or 2020 is fitting
+  ~three quarters of the hours, with the missing quarter concentrated on
+  weekends — a systematically non-random hole.
+* **Two impossible `AECI` prints, carried unmodified** (the §4.3 class of the
+  2023-2025 window): **−5,360,453 MW** at 2020-03-17 14:00 and
+  **−5,380,676 MW** at 2020-03-17 15:00, on a tie whose rest-of-series lives
+  in ±1,500 MW. They are five orders of magnitude out and they dominate every
+  aggregate that includes them: SWPP's 2020 system net reads **−9.77 TWh**
+  with them and **+0.97 TWh** without, and `AECI`'s own 2020 net **−10.37 TWh**
+  vs **+0.37 TWh**. No repair is applied here (data/raw is immutable; the
+  repair is a consumer's decision). The `MISO` **−5,340 MW** print at
+  2021-02-15 09:00 is *not* in this class — it is Winter Storm Uri, and the
+  seam really did carry it; do not filter it with the other two.
+
+System net, excluding the two impossible prints: **+1.98 / +0.97 / +2.62 /
++6.16 TWh** for 2019 / 2020 / 2021 / 2022 — SWPP is a net exporter in every
+back year, as it is in 2023-2025.
+
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
 
