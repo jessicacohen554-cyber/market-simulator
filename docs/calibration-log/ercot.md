@@ -13302,4 +13302,25 @@ the DATA" is the authority.
 PASS, `build_status.py --check --iso ERCOT` in sync. Full record:
 `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §Addendum 1 (2026-09-06).
 
+**(6) ADDENDUM — the 2022 C1 miss has a SECOND, code-side owner, found this session
+(zero-LP).** §5 above routes the miss to the absent HSL archive, which is right but not the
+whole story. ERCOT's no-HSL backcast years do NOT ride delivered-as-CF: `renewable_bound_provenance`
+returns **`forecast_uncurtailed`** for 2022 (ERCOT is in `_UNCURTAILED_FALLBACK_ISOS`; reference
+rates wind 0.070784 / solar 0.072927, both from 2025), so the bound is the delivered profile
+**grossed UP** by ×1.076 / ×1.079. Both curtailment mechanisms then self-disable
+(`scripts/run_calibration.py` L2687, L2805) on the stated premise *"renewables ride
+delivered-as-CF … to avoid double-curtailment"* — a premise that is false in precisely this
+branch. The gross-up adds **10.04 TWh**, the LP claws back 3.62 on its own, net **+6.42 TWh** —
+the exact excess the touchpoint measures. The codebase's own FORECAST leg
+(`renewables.py` L2496-2513) pairs gross-up + ceiling deliberately and names the backcast
+no-HSL years as the same construction, so the two legs disagree and it is the backcast one that
+is wrong. Candidate repair is a predicate correction with ZERO DOF (test the bound's provenance,
+not HSL-file existence; only `delivered_pinned` skips the ceilings). **NOT ARMED — put to the
+owner**, because it is byte-identical in every training year and live ONLY on held-out years,
+so it can neither be identified on 2023-2025 nor screened where its footprint is largest without
+spending a holdout. A rule-clean test that touches no held-out year is proposed: withhold the
+2023 HSL parquet, solve the no-HSL branch on 2023 both ways, score against 2023's known actuals.
+Full record: `docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`. No code changed, no
+LP solved, no mechanism tested, no matrix cell touched, no keeper changed.
+
 **Next shorthand: ercot-252** (ercot-199 remains unclaimed)
