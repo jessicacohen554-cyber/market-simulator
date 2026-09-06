@@ -1,0 +1,11 @@
+{
+  "control_bare_pjm_t1h_at_head": "aef81c84c4609c76",
+  "arm_sector_gate_at_head": "f546407cf3489761",
+  "screen_span_control_2021_2023": "e47fee08f5f37d6f",
+  "screen_span_arm_2021_2023": "0265ce2b262ad37f",
+  "anchor_d57_armA_committed": "f0e050e820c1159a",
+  "anchor_d67_measured_alloff_control": "7297dcb3b92be3fb",
+  "anchor_d45r_committed": "c6091bd5b62bbc3f",
+  "arm_differs_from_control": true,
+  "control_matches_d57_armA": false
+}
