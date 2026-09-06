@@ -356,6 +356,73 @@
 > `ruff format` move was differenced against) — **not one of them reverses the
 > dispatch's substantive finding, which is confirmed and strengthened: the flip set
 > is 6 of 6, and it held.**
+>
+> ---
+>
+> ### ⬆️ **DATED CODA — 2026-09-06, ~01:25Z, THIS SAME LANE, AT `a9af100e`. TWO CORRECTIONS TO THE BLOCK ABOVE, BOTH THIS LANE'S OWN.**
+>
+> Written after the close-out poll, appended rather than folded in, so the
+> superseded readings stay visible.
+>
+> **🔴 CORRECTION 1 — the PIN DISCIPLINE paragraph above is WRONG, and the reading
+> I drew from it is WITHDRAWN.** It states *"`origin/main` did NOT move during this
+> session — re-polled at open and at close, both `5fdd4374`"* and reasons from that
+> to *"the ambient merge rate went to zero inside this window."* **The close-out
+> poll — taken after that paragraph was written and pushed — reads `origin/main` at
+> `a9af100e`, eighteen commits on from the pin.** The mid-session poll that showed
+> it stationary was simply taken during a quiet minute. **The rate did not go to
+> zero: `5fdd4374..a9af100e` is 18 commits in ~13 minutes, ≈ one per 43 s — the
+> same order as v33's one-per-~30 s, which stands as the better estimate.** The
+> claim was mine, the error was mine, and it is corrected here rather than edited
+> away.
+>
+> **🔵 This lane's own PR merged inside its own session** — **#4938**, merge commit
+> **`a9af100e`**, carrying `b7828082`. v34 is verified intact on `main` at board
+> line 3, with v33 at 360 and v32 at 787, and the board diff over the whole window
+> is that one commit and nothing else.
+>
+> **🟢 CORRECTION 2 — Y-18 IS ALREADY EXECUTED, AND THE FR-22 RED IS CLOSED.** The
+> table above lists Y-18 as chartered-and-pending with its object reproduced. **It
+> landed six minutes BEFORE this lane's own commit**: **`d67da487`** (PR **#4933**,
+> **2026-09-06 01:16:40Z**), *"Close the FR-22 parity red: adjudicate the two
+> unaccounted mechanisms"* — `scripts/lib/forecast_parity_registry.py` **+83**, a
+> 307-line FINDING, the **ERCOT and NYISO matrix shards re-stamped** (rule 28
+> duty (b), correctly, in the executing session), and the parity tests rewritten.
+> **Re-read at `a9af100e`, explicitly a later-pin reading and not one of the
+> pin-anchored readings above:**
+>
+> ```
+> check_forecast_parity  →  exit 0
+> SUMMARY: 6 keeper posture(s); 0 unaccounted, 14 filed gap(s),
+>          0 registry failure(s), 0 error(s)
+> ```
+>
+> **2 unaccounted → 0.** So the `FR-22 backcast→forecast parity` row in the
+> four-run table is a reading at pin `5fdd4374` and is **superseded at any later
+> pin**. It does not disturb the flip-set result: FR-22 was never in R-AE's six,
+> and the six were green with it red.
+>
+> **🟠 Y-19 is NOT closed — still exit 1, still 20 — and the re-read SHARPENS the
+> ratchet point rather than weakening it.** At `a9af100e` the audit reads **50
+> sidecars (was 47), 700 records (was 658), 39 FAILs declared, and the undeclared
+> count UNCHANGED at 20.** Three further sidecars landed in this window **and all
+> three declared properly.** That is the useful refinement: **the backlog does not
+> grow automatically with every registration — it grows when a registering lane
+> omits the declaration**, which is a duty-compliance question. It leaves the
+> charter-scoping observation intact (17 → 20 across the director's pin and mine,
+> attributed by sha to `c2912cc3`) and makes the proposed remedy sharper: a
+> declare-or-fail ratchet at registration time closes the *inflow*, and a sweep
+> closes the *standing 20*. Still routed to the director; still not adjudicated
+> here.
+>
+> **What this coda does NOT change.** **Every reading in the block above remains
+> pin-anchored at `5fdd4374` and stands exactly as taken there, once**, per the
+> dispatch's pin discipline: the six R-AE checks across runs 2562/2563/2564/2565,
+> **leg 4 reading 14** (`protected: false`, not re-read here — one reading per
+> lane), the nine-gate ledger, keepers, markers, freeze scope, stage-0 2 of 7, the
+> R-AI clocks, and the 17-vs-20 measurement with its `c2912cc3` attribution.
+> **v28 … v33 remain untouched; this coda is inserted inside v34's own block and
+> is insertion-only, like the block it closes.**
 
 > # 🟡 **OWNER RULINGS R-AY · R-AZ (2026-09-06, ~00:15Z SITTING, TWO CARDS, BOTH ANSWERED)** — RECORDS-ONLY LANE **v33**, director pin `a22afd02` (00:08Z) → **THIS LANE'S PIN `144eabe3`, ~00:20Z**. **G2 IS STILL *NOT* DECLARED: leg 4 reads `protected: false` at a TWELFTH reading, taken by THIS LANE'S OWN API CALL. THE FLIP SET IS 4 OF 6 AND UNMOVED — but this lane's own per-job reading identifies BOTH remaining reds by name, and NEITHER is a code defect: one was fixed on `main` after the reading run was created, and the other is a RECORDS-DESK DUTY that re-opens on every keeper promotion.**
 >
