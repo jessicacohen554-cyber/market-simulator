@@ -910,3 +910,227 @@ Manifests committed under `results/regression-goldens/wc-a3-{before,after}/`.
 tree (its docstring: "Y-11 STOP (2026-09-05), left RED deliberately"), and
 `TestDispatchPerformance::test_full_year_200_generator_fleet` is a 15 s solve-wall
 threshold that read 20.2 s while the two replays were running and passes alone (5.6 s).
+
+## WALLCLOCK A-4 — the year-1 premium re-profiled after A-1/A-2; one site memoized, residual stated (2026-09-06)
+
+Wallclock desk item **A-4** (`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-4;
+desk log `docs/handoffs/wallclock-desk-log-2026-09.md` row A-4). Session
+`wc-a4-year1-memo`, branch `claude/wc-a4-year1-memo-bwtyyn`. Conditions as §PERF-B above:
+determinism pin (`MARKET_SIM_HIGHS_THREADS=1`, `MARKET_SIM_WARMSTART=1`,
+`MARKET_SIM_WARMSTART_XYEAR=0`), 4 vCPU / 15 GB container, `uv.lock` env, keeper-recipe
+replay through `scripts/capture_keeper_goldens.py`. **The two byte-gate arms solved
+SEQUENTIALLY, not concurrently** — the §PERF-B host-noise caveat therefore does *not* apply
+to the phase lines below, and the run-to-run band is readable off the warm years directly
+(±0.9 s on `data_prep`, ±6 s on `solve_p0`).
+
+**The item's premise was already half-discharged when this session opened, and the profile
+says so.** A-4 was chartered off PERF-A §2.4's *"~70 s off every ERCOT/NEISO run's first
+year"*. Measured at the post-A-1/A-2 merge base `0a50feb4`, the NEISO year-1 premium is
+**8.85 s** — already under the charter's own 10 s stop line before anything was changed.
+A-1 and A-2 removed the rest at the source, exactly as the item anticipated ("lower priority
+once A-1/A-2 land"). What follows is the re-profile the item asks for, the one site it
+turned up, and the residual.
+
+### 1. The attribution — cProfile, one keeper-replay year per ISO, A-2 mirrors warm
+
+`scripts/capture_keeper_goldens.py`'s own kwargs reconstruction driven from a scratch
+harness that narrows the replay to one year and wraps `solve_and_persist` in `cProfile`;
+bundles written to a throwaway dir and deleted. NEISO keeper
+`2026-08-17-neiso-99-joint-p1` **2023**; ERCOT keeper `2026-09-05-ercot248-two-config-keeper`
+via the bare `ERCOT` capture key — **the forward config on 2024–2025 (R-AW), replayed on
+2024 only** — the retired `ERCOT__carveout-2023` key is not used. Profiled `data_prep`:
+**NEISO 21.8 s**, **ERCOT 85.0 s** (the profiler taxes Python-heavy frames ~1.3–2.2×; the
+un-profiled numbers are in §3).
+
+| site | NEISO 2023 cum / own / calls | ERCOT 2024 cum / own / calls | verdict |
+|---|---|---|---|
+| **`fleet/eia860._egrid_boundary_hr_repairs_for`** | **4.739 / 0.010 / 1** | **4.550 / 0.010 / 1** | **the only ≥3 s once-per-process pure function of on-disk inputs — memoized here** |
+| ‣ its per-plant `operating_year` dictcomp (`eia860.py:647`) | 3.740 / 0.064 / 1 | 3.910 / 0.073 / 1 | inside the above; the same `groupby`-per-plant shape A-1 vectorized in `cod_ramp` |
+| `fleet/eia860._rows_to_generators` | 5.244 / **0.073** / 6 | 4.687 / **0.027** / 2 | **NOT a candidate**: its cumulative *is* the boundary repair beneath it; own time <0.1 s |
+| `zone_assignment.build_zone_lookup` (the derivation) | **0.129** / 0.001 / 15 | **0.118** / 0.000 / 8 | **NOT a candidate**: 0.13 s, already collapsed by A-2 |
+| ‣ `_build_zone_lookup_cached` / `_plnt23` | 0.128 / 1 · 0.064 / 1 | 0.117 / 1 · 0.066 / 1 | |
+| ‣ `_zone_from_location` (per-plant walk) | 0.003 / 0.002 / 2823 | 0.002 / 0.001 / 2135 | |
+| `egrid_sheets.read_egrid_sheet` (3 mirror reads) | 0.296 / 3 | 0.184 / 3 | A-2, warm |
+| `cod_ramp._load_cod_map` | 0.132 / 1 | 0.174 / 1 | A-1, landed |
+
+**Both named A-4 candidates are measured NOT to be candidates.** `build_zone_lookup`'s
+derivation reads **0.13 s** on both ISOs and `_rows_to_generators` **0.07 / 0.03 s** of own
+time — A-2's sheet mirror already took the cost out from under them, and the 5.24 s
+`_rows_to_generators` cumulative that looks like a target is the boundary repair it calls.
+Memoizing either would buy tenths of a second at the price of hashing a 21 MB workbook, and
+`_rows_to_generators` returns Pydantic `Generator` objects whose round-trip identity would be
+a far harder proof than the seconds justify. **Left alone, deliberately.**
+
+**PERF-A §2.4's "two EIA-860 vintage keys on ERCOT" is not what the keeper does.** Measured:
+`_egrid_boundary_hr_repairs_for` reads **`ncalls == 1`** in the ERCOT forward keeper's 2024
+replay — one `(egrid_path, eia_path)` key, because the keeper resolves no
+`eia860_vintage_year`. A config that does would pay the derivation once per vintage, and the
+memo is keyed on both paths' bytes, so it covers that case too.
+
+**The cold-mirror control, for completeness.** The first process on this container ran before
+the A-2 mirrors existed: `read_egrid_sheet` **63.456 s** across its three reads and year-1
+`data_prep` **88.1 s** (vs 21.8 s warm) — an independent reproduction of §WALLCLOCK A-2's
+cold-miss cost, and the reason every number above is quoted from a re-run with the mirrors on
+disk.
+
+**The ≥3 s ERCOT `data_prep` sites that are NOT year-1 premium**, listed so a later lane does
+not re-charter them as one: `outages._ercot_dam_plant_frames` 7.369 s (`lru_cache` keyed
+`(year, hours)`), `eia930.demand.load_demand` 6.454 s / 2 calls, `assembly.build_base_fleet`
+13.636 s and `assembly.bins_to_fleet` 13.481 s (both take `year`, uncached, once per year),
+`eia930.zonal_shares._zonal_shares_from_raw` → `curate_zonal_shares.parse_ercot_shares`
+4.364 s / **2 calls in one year** (year-parameterized and uncached — a genuine repeated-parse
+finding, but a *within-year* one, so it is not A-4's object and is handed forward). Every one
+of these is paid again in year 2, so none of them is the year-1 premium.
+
+### 2. The change
+
+| Change | Where landed | Measured effect |
+|---|---|---|
+| (i) `data/disk_memo.py` (**new**): A-2's content-addressed pattern generalized from a DataFrame to a mapping — sha256 over every source file's bytes plus the caller's parameters names a JSON memo beside the anchor source. JSON never pickle; every value re-typed and re-validated on read; a non-finite value is **refused for writing** rather than served from a memo whose identity cannot be proved; every failure mode (unhashable source, corrupt/hand-edited file, wrong value type, unwritable dir) degrades to the caller's own `compute`; a fresh dict per call | branch commit `e0d55a5b` | see (iii) |
+| (ii) `data/egrid_sheets.py`: A-2's inline `_workbook_digest` body replaced by the shared `content_digest`. **Byte-compatible** — the three mirrors already on disk keep their names (`18751623c0bd0d88`, `34b4ed0ca1914829`, `d44ec93a6b902fec`) and are still served, asserted against a frozen oracle in `tests/test_egrid_sheets.py` | same commit | 0 s by construction; the point is that A-2's measured win is not silently re-spent |
+| (iii) `fleet/eia860._egrid_boundary_hr_repairs_for` becomes a resolver — `lru_cache` for the life of the process, `memoized_mapping` across processes — over the unchanged derivation, now `_egrid_boundary_hr_repairs_compute`. The accepted set is logged by the resolver, so a boundary-reconciled plant is named on the memo-hit path too | same commit | isolated: **2.166 → 0.058 s (37×)** on the canonical EIA-860 vintage, **12.688 → 0.455 s** across all eight vintage dirs. In-solve: §3 |
+
+The memo is `data/raw/fleet-egrid/<xlsx-stem>.<sha256[:16]>.egrid_boundary_hr_repairs.json`,
+28 bytes, gitignored beside A-2's parquet mirrors. **No flag arms it** and nothing invalidates
+it by hand: a re-released eGRID workbook or a different EIA-860 vintage hashes differently, so
+its memo simply does not exist yet.
+
+### 3. Gates
+
+**Gate (1) — dict equality vs the direct derivation, on every EIA-860 source pair on disk.**
+`_egrid_boundary_hr_repairs_compute` (the frozen derivation) against
+`_egrid_boundary_hr_repairs_for` on a memo miss *and* on a memo hit, over the canonical
+`data/raw/eia-860` plus all seven committed `vintage_<year>/`. Equality is `==` **plus** a
+per-item `repr` comparison (so a sign or a last-place bit cannot hide) **plus** a type check
+(`int` keys, `float` values) in both arms. Each dir was measured cold, once, after a warm-up
+read.
+
+| EIA-860 dir | repairs out | `direct == miss == hit` | compute s | memo-miss s | memo-hit s |
+|---|---|---|---|---|---|
+| `eia-860` (canonical) | 1 | **True** | 2.166 | 2.089 | **0.058** |
+| `vintage_2018` | 0 | **True** | 1.256 | 1.323 | 0.056 |
+| `vintage_2019` | 0 | **True** | 1.297 | 1.593 | 0.057 |
+| `vintage_2020` | 1 | **True** | 1.430 | 1.557 | 0.056 |
+| `vintage_2021` | 1 | **True** | 1.514 | 1.566 | 0.056 |
+| `vintage_2022` | 1 | **True** | 1.507 | 1.639 | 0.058 |
+| `vintage_2023` | 1 | **True** | 1.790 | 1.788 | 0.057 |
+| `vintage_2024` | 1 | **True** | 1.728 | 1.919 | 0.057 |
+| **all eight** | | **8/8 True** | **12.688** | 13.474 | **0.455** |
+
+The accepted set is `{55641: 6.880032798350796}` on every dir that produces one — the
+Riverside 55641 case `_egrid_boundary_hr_repairs` documents, unchanged, at full precision.
+2018/2019 legitimately produce `{}` (the plant is not in those vintages' operable set), and
+the empty mapping is memoized like any other.
+
+**Gate (2) — hermetic unit cover.** `tests/unit/data/test_disk_memo.py`, 43 tests, fast tier:
+digest stability / source-byte sensitivity / parameter length-prefixing (so `("ab","c")` and
+`("a","bc")` cannot collide) / every-source-hashed / order sensitivity; miss-then-hit with a
+counted `compute`; type survival; a fresh object per call; namespace and parameter isolation;
+**float exactness on ten adversarial values** (0.1, 1/3, 5e-324, 1.797…e308, −0.0, 6.0, …)
+compared by `repr`; the integer-literal decode path; non-finite refusal on all three of NaN /
+±inf; source-change invalidation on *either* source; corrupt, malformed and wrong-type memos
+all recomputing; missing source; unwritable directory; no temp file left behind; and an AST
+walk asserting the module has no pickle import, name, attribute or `allow_pickle` keyword.
+Plus `tests/test_egrid_sheets.py` at **9 tests** — A-2's 8, unchanged, and the new digest
+byte-compatibility assertion.
+
+**Fast tier on the branch: 8,425 passed, 44 skipped, 1 xfailed, 542 subtests passed,
+0 failed** in 276 s (`pytest -m "not slow and not integration and not fulldata" -n auto`).
+Nothing pre-existing to except: the five CAISO `test_interchange_parity` failures and the
+`test_gate_a_provenance` failure §WALLCLOCK A-2 had to control for were fixed on main in the
+interval, and the `test_golden_manifest_provenance` carve-out failure §WALLCLOCK A-3 left red
+was retired by Y-14.
+
+**Byte gate — merge-base control.** The charter's instrument (perfb-session2 §6), not the
+stale stage-0 goldens. NEISO keeper `2026-08-17-neiso-99-joint-p1`, full 8760 × 2023–2025,
+replayed on a sparse worktree at the merge base **`0a50feb4`** (`wc-a4-before`) and on the
+branch tree **`9e05bd74`** (`wc-a4-after`); both manifests record `git_dirty: false`, and
+both arms read the one `data/raw` through the `MARKET_SIM_DATA_ROOT` seam. **No `G-DRIFT`
+audit is needed to establish the control**: `git diff 0a50feb4 HEAD` is exactly the six files
+of this change (`disk_memo.py`, `egrid_sheets.py`, `eia860.py`, two test files, `.gitignore`),
+and only three of them are on the solve path.
+
+`scripts/regression_gate.py --mode byte`:
+
+* **check [1] golden bundle diff — PASS**: NEISO, 9 files, 32 numeric columns, atol=rtol=0.
+* check [2] reshuffle localization: **zero in all three years** — Σ|hourly Δ| = 0.0 GWh,
+  0.000 % of total gen; annual gen 96,984.5 / 103,923.3 / 107,314.6 GWh, Δ +0.0000 both arms
+  (the same three totals §WALLCLOCK A-1 and A-2 record).
+* check [3] smoke — **PASS** (24 passed).
+* check [4] `audit_keepers` — **PASS**. `legitimacy(--keepers)` — **FAIL, pre-existing by
+  control**: the standing NYISO Long Island `transfer_security_limit` capacity-deliverability
+  gap (`ValueError: nyiso_li_lcr_tsl=True but no published Long Island
+  transfer_security_limit for delivery year 2023/2024`). Re-run on the **merge-base worktree
+  at `0a50feb4`** it exits **rc=1** with the identical exception, so the script's overall
+  `RESULT: FAIL` is check [4] alone — exactly as §PERF-B RESUME, §WALLCLOCK A-1, A-2 and A-3
+  record.
+
+Fidelity oracle, **both arms identically**: 258 recorded flags replayed identically, 714
+`scenario_config` fields matched and the same 2 drifted (`ccs_retrofit_capex_kw`,
+`fixed_om_gas_cc_ccs` — the base config moved since the keeper was frozen, and it moved for
+both arms, so it cancels in the control). Manifests committed under
+`results/regression-goldens/wc-a4-{before,after}/`; the two 109 MB bundles were **deleted
+before merge** per rule 29 `[R-SCREEN]` (c).
+
+**Phase lines, both arms (SEQUENTIAL, not concurrent):**
+
+| arm | year | data_prep | solve_p0 | markup | solve_p1 | results_write | total |
+|---|---|---|---|---|---|---|---|
+| before (`0a50feb4`) | 2023 | **16.3** | 101.3 | 4.8 | 39.2 | 10.9 | 172.4 |
+| before (`0a50feb4`) | 2024 | 7.4 | 98.7 | 5.6 | 32.0 | 10.6 | 154.3 |
+| before (`0a50feb4`) | 2025 | 7.5 | 114.3 | 5.2 | 37.7 | 12.2 | 177.0 |
+| after (`9e05bd74`) | 2023 | **12.1** | 108.1 | 5.3 | 42.3 | 10.3 | 178.1 |
+| after (`9e05bd74`) | 2024 | 8.3 | 101.7 | 5.4 | 34.9 | 8.8 | 159.2 |
+| after (`9e05bd74`) | 2025 | 7.1 | 108.2 | 5.5 | 38.8 | 9.0 | 168.6 |
+
+**Year-1 `data_prep` 16.3 → 12.1 s (−4.2 s, −26 %). The year-1 vs warm-year premium
+8.85 → 4.40 s (−50 %).** The warm years move +0.9 / −0.4 s — noise, in both directions, which
+is what a change confined to a once-per-process cache should look like; `solve_p0` moves
++6.8 / +3.0 / −6.1 s and `solve_p1` +3.1 / +2.9 / +1.1 s, i.e. the same band, in both
+directions, with the LP untouched. The in-solve −4.2 s exceeds the isolated bench's −2.11 s
+because the memo also makes the *source reads* unnecessary — on a hit neither eGRID mirror nor
+the EIA-860 generator parquet is opened for this path at all.
+
+**Cold-miss cost, stated.** The first process against a new (workbook, vintage) pair still
+runs the derivation and additionally writes a 28-byte JSON: the write is unmeasurable against
+the ~2 s derivation, and every later process pays 0.058 s. A fresh clone therefore pays the
+old cost exactly once, per vintage it actually touches.
+
+### 4. The residual — 4.4 s, and why the item stops here
+
+The charter's stop condition is *"the year-1 vs warm-year `data_prep` gap is under 10 s or the
+remaining sites are genuine parse cost"*. **Both hold.** The gap was 8.85 s before this change
+and is **4.40 s** after it, and no remaining site is a ≥3 s pure function of on-disk inputs —
+§1's table is exhaustive over both ISOs at that bar.
+
+What the 4.4 s is, from the profile's once-called frames inside `data_prep` (NEISO 2023, all
+below the 3 s bar):
+
+| residual site | profiled cum | what it is |
+|---|---:|---|
+| `data/cache_control.retained_footprint` (+ `largest_retained_frames`) | 1.893 s | a **disk scan of `results/`**, not a derivation of a model input — nothing to memoize (its answer is the tree it is measuring), and outside this item's file scope |
+| `egrid_sheets.read_egrid_sheet` × 3 | 0.296 s | A-2's mirror reads — genuine parquet parse |
+| `cod_ramp._load_cod_map` | 0.132 s | A-1, at its floor |
+| `zone_assignment._build_zone_lookup_cached` | 0.128 s | §1: 0.13 s, refused |
+| everything else | — | distributed first-touch cost across many small `lru_cache`s and module imports; no single frame reaches 0.5 s |
+
+So the residual is **one disk scan plus genuine parse cost**, spread thin. A third memo would
+be hashing 21 MB of workbook to save tenths of a second. **The item is closed on the
+measurement, not on a budget.**
+
+**ERCOT, stated honestly.** ERCOT's evidence here is the one-year profile (§1) and the
+ISO-agnostic isolated bench (§3); a multi-year ERCOT A/B was **not** spent — it is ~3 h of LP
+per arm for a change whose ERCOT-side effect the profile already bounds at one
+`ncalls == 1` frame of 4.55 s profiled / ~2 s un-profiled. **Do not quote an ERCOT year-1
+premium number from this section**; none was measured.
+
+**Reach.** Every ISO and every invocation — `_egrid_boundary_hr_repairs_for` is ISO-agnostic —
+but **once per process**, so ~−4 s on a 3-year replay, not −12 s. Against the ≥10 %-wall
+adoption rule: **cleared on `data_prep` year-1** (−26 %); **not** cleared as a share of the
+3-year NEISO wall (4.2 s of 503.7 s ≈ 0.8 %).
+
+**Class: BYTE-IDENTICAL.** No LP, objective, bound or row is touched; no `ScenarioConfig`
+default, no keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted
+and nothing dashboard-registered. The one observable non-value change is a log line: on a memo
+hit the per-plant derivation WARNING is not re-emitted, so the resolver logs the accepted set
+(plant and reconciled rate) itself, at the same severity, on both paths.

@@ -1,5 +1,56 @@
 # Changelog
 
+## 2026-09-06 — wallclock A-4: the year-1 `data_prep` premium re-profiled after A-1/A-2; one site memoized on disk (byte-identical)
+
+Wallclock desk item A-4 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2). Wall-clock
+only. **No LP, objective, bound or row change, no `ScenarioConfig` default, no keeper /
+marker / matrix shard / registry / workflow edit, nothing promoted, nothing registered.**
+
+- **The re-profile (the item's actual ask).** `cProfile` over a one-year keeper replay per
+  ISO through the `capture_keeper_goldens` machinery — NEISO `2026-08-17-neiso-99-joint-p1`
+  **2023**, and ERCOT `2026-09-05-ercot248-two-config-keeper` via the bare `ERCOT` key (the
+  forward config on 2024–2025 per R-AW, replayed on **2024** only; the retired
+  `ERCOT__carveout-2023` key is not used). **Exactly one site is ≥3 s cumulative, once per
+  process, and a pure function of on-disk inputs**: `fleet/eia860._egrid_boundary_hr_repairs_for`
+  — NEISO 4.739 s, ERCOT 4.550 s, `ncalls == 1` on both.
+- **Both named A-4 candidates are measured NOT to be candidates and are left alone.**
+  `zone_assignment.build_zone_lookup`'s derivation reads **0.129 / 0.118 s** and
+  `fleet/eia860._rows_to_generators` **0.073 / 0.027 s** of *own* time — A-2's sheet mirror
+  already took the cost out from under them, and `_rows_to_generators`'s 5.24 s cumulative is
+  the boundary repair it calls. Every other ≥3 s `data_prep` site is year-keyed or takes
+  `year`, so year 2 pays it again and it is not a year-1 premium at all.
+- **The change.** New `src/market_sim/data/disk_memo.py` generalizes A-2's content-addressed
+  pattern from a DataFrame to a mapping: sha256 over every source file's bytes plus the
+  caller's parameters names a JSON memo beside the anchor source. JSON never pickle; values
+  re-typed and re-validated on read; a non-finite value is refused for writing rather than
+  served from a memo whose identity cannot be proved; every failure degrades to the caller's
+  own `compute`; a fresh dict per call. `egrid_sheets.py`'s inline digest is replaced by the
+  shared `content_digest`, **byte-compatible** so mirrors already on disk keep their names.
+  `_egrid_boundary_hr_repairs_for` becomes the resolver (`lru_cache` per process + the memo
+  across processes) over the unchanged derivation, now `_egrid_boundary_hr_repairs_compute`.
+- **Gate (1), dict equality vs the direct derivation, every EIA-860 source pair on disk:**
+  `direct == miss == hit` **True on 8/8** (canonical + seven `vintage_<year>/`), compared by
+  `==` *and* per-item `repr` *and* key/value type. **2.166 → 0.058 s (37×)** on the canonical
+  vintage, **12.688 → 0.455 s** across all eight. Accepted set `{55641: 6.880032798350796}`
+  unchanged at full precision.
+- **Byte gate — merge-base control, arms solved SEQUENTIALLY:** NEISO full 8760 × 2023–2025
+  from a sparse worktree at `0a50feb4` and the branch tree at `9e05bd74` (whose diff is
+  exactly this change's six files), both `git_dirty: false`.
+  `regression_gate.py --mode byte` **check [1] PASS** (9 files, 32 numeric columns,
+  atol=rtol=0), zero reshuffle in all three years, smoke PASS (24), `audit_keepers` PASS;
+  check [4] `legitimacy(--keepers)` FAIL is **pre-existing by control** (the standing NYISO
+  Long Island `transfer_security_limit` gap, rc=1 with the identical exception on the
+  `0a50feb4` worktree). Manifests under `results/regression-goldens/wc-a4-{before,after}/`;
+  bundles deleted before merge per rule 29 `[R-SCREEN]` (c).
+- **Fast tier on the branch: 8,425 passed, 44 skipped, 1 xfailed, 542 subtests passed,
+  0 failed** in 276 s — nothing pre-existing to except.
+- **In-solve effect:** NEISO year-1 `data_prep` **16.3 → 12.1 s (−4.2 s, −26 %)**; the year-1
+  vs warm-year premium **8.85 → 4.40 s (−50 %)**. Warm years move +0.9 / −0.4 s — noise, as a
+  once-per-process cache should. **Residual stated and the item closed on it:** 4.4 s, of
+  which the largest single item is `cache_control.retained_footprint` at 1.9 s (a disk scan of
+  `results/`, not a derivation), the rest genuine parse and distributed first-touch cost with
+  no frame ≥0.5 s. Record: `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-4.
+
 ## 2026-09-06 — wallclock A-1: the COD map's per-plant reduction vectorized — RETRO EVIDENCE for merged commit `be598ead` (byte-identical)
 
 Docs + two golden manifests only. **No source file, no LP change, no `ScenarioConfig` default,
