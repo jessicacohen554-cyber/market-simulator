@@ -7,6 +7,14 @@ its year loop (``_scale_demand`` over the once-loaded weather-year base, then
 ``screen_peak_demand_mw``. A 0.000 MW match proves the demand path -- and with
 it every SCN load-table hunk in the drift window -- INERT for this recipe by
 measurement rather than by argument (rule 29 [R-SCREEN] clause (b), G-DRIFT).
+
+**capx D76 extension (2026-09-06).** The seam reproduction this probe performs
+is the same object the D76 six-ISO peak census needs, so it is factored out
+here into :func:`seam_context`, :func:`seam_peak_mw` and
+:func:`measured_peak_mw` and IMPORTED by ``docs/handoffs/d76/peak_census.py``
+rather than copied (D76 charter: "extend, do not fork"). ``main()`` is
+unchanged in behaviour -- it now calls the helpers, and its committed
+``gdrift_peak_probe.json`` re-derives byte-identically.
 """
 
 import json
@@ -37,33 +45,124 @@ ISO = "PJM"
 YEARS = range(2021, 2026)
 
 
+class SeamContext:
+    """The runner-preamble state the capacity-screen seam peak is built from.
+
+    Holds exactly what ``runner.run_scenario`` has resolved by the time it
+    reaches the top of its year loop: the ISO-defaulted config, the topology-
+    extended ``iso_config`` (hence ``zone_names``), whether the ISO carries an
+    interchange import node, and the ONCE-loaded weather-year demand base.
+    """
+
+    def __init__(self, iso, config, iso_config, zone_names, base, import_generators):
+        self.iso = iso
+        self.config = config
+        self.iso_config = iso_config
+        self.zone_names = zone_names
+        self.base = base
+        self.import_generators = import_generators
+
+
+def seam_context(iso: str, config, first_year: int) -> SeamContext:
+    """Reproduce ``runner.run_scenario``'s preamble for ``iso`` exactly.
+
+    Interchange topology first (it can extend the node set), then the EIA-860
+    vintage pin, then the once-loaded weather-year base -- the same order and
+    the same arguments the runner uses, so the base array this returns is the
+    one ``_scale_demand`` is handed in production.
+
+    Args:
+        iso: ISO code, e.g. ``"PJM"``.
+        config: The ISO-defaulted :class:`ScenarioConfig` for the recipe.
+        first_year: The window's first year, passed to the topology helper
+            exactly as the runner passes its start year.
+
+    Returns:
+        The populated :class:`SeamContext`.
+    """
+    iso_config = get_iso_config(iso)
+    spec = get_interchange_spec(config, iso)
+    import_generators = build_interchange_fleet(spec, 0.0)
+    iso_config = apply_interchange_topology(
+        iso_config, spec, config, year=first_year, extend_node=bool(import_generators)
+    )
+    set_eia860_vintage(
+        config.eia860_vintage_year
+        if (config.mode == "backcast" or config.hindcast)
+        else None
+    )
+    base = load_demand(
+        iso,
+        config.weather_year,
+        iso_config,
+        td_loss_factor=config.td_loss_factor,
+        include_interchange=not import_generators,
+        strict_demand_profile=config.strict_demand_profile,
+        ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
+    )
+    if config.hours < base.shape[1]:
+        base = base[:, : config.hours]
+    return SeamContext(
+        iso, config, iso_config, iso_config.zone_names, base, import_generators
+    )
+
+
+def seam_peak_mw(ctx: SeamContext, year: int) -> float:
+    """The capacity screens' seam peak for ``year``, as ``runner.py`` builds it.
+
+    ``_scale_demand`` over the once-loaded weather-year base, then
+    ``add_load_layers``, then the system-coincident max -- ``runner.py`` lines
+    2029-2031, the GROWTH path the capacity screens consume regardless of
+    hindcast mode.
+
+    Args:
+        ctx: The seam context from :func:`seam_context`.
+        year: The target (entering) year.
+
+    Returns:
+        The seam peak in MW.
+    """
+    dem = _scale_demand(ctx.base, ctx.config, year)
+    dem = add_load_layers(dem, ctx.config, ctx.iso, year, ctx.zone_names)
+    return float(dem.sum(axis=0).max())
+
+
+def measured_peak_mw(ctx: SeamContext, year: int) -> float:
+    """The MEASURED peak of ``year``, as the hindcast LP's own load branch sees it.
+
+    The same ``load_demand`` call ``runner.py`` makes for ``year_base_demand``
+    on the hindcast branch (line 2472), so this is the load the LP actually
+    dispatches in that year -- the quantity the seam peak above is supposed to
+    be, and in every non-weather year is not.
+
+    Args:
+        ctx: The seam context from :func:`seam_context`.
+        year: The target year.
+
+    Returns:
+        The measured system-coincident peak in MW.
+    """
+    dem = load_demand(
+        ctx.iso,
+        year,
+        ctx.iso_config,
+        td_loss_factor=ctx.config.td_loss_factor,
+        include_interchange=not ctx.import_generators,
+        strict_demand_profile=ctx.config.strict_demand_profile,
+        ercot_tie_zonal_interchange=ctx.config.ercot_tie_zonal_interchange,
+    )
+    if ctx.config.hours < dem.shape[1]:
+        dem = dem[:, : ctx.config.hours]
+    return float(dem.sum(axis=0).max())
+
+
 def main() -> int:
     cfg = apply_iso_scenario_defaults(
         build_config(ISO, 2021, 2025, "realized", vintage=2020,
                      entry_screen_diagnostics=True),
         ISO,
     )
-    # Reproduce runner.run_scenario's preamble exactly: interchange topology
-    # first (it can extend the node set), then the vintage pin, then the
-    # once-loaded weather-year base.
-    iso_config = get_iso_config(ISO)
-    spec = get_interchange_spec(cfg, ISO)
-    import_generators = build_interchange_fleet(spec, 0.0)
-    iso_config = apply_interchange_topology(
-        iso_config, spec, cfg, year=2021, extend_node=bool(import_generators)
-    )
-    zone_names = iso_config.zone_names
-    set_eia860_vintage(
-        cfg.eia860_vintage_year if (cfg.mode == "backcast" or cfg.hindcast) else None
-    )
-
-    base = load_demand(ISO, cfg.weather_year, iso_config,
-                       td_loss_factor=cfg.td_loss_factor,
-                       include_interchange=not import_generators,
-                       strict_demand_profile=cfg.strict_demand_profile,
-                       ercot_tie_zonal_interchange=cfg.ercot_tie_zonal_interchange)
-    if cfg.hours < base.shape[1]:
-        base = base[:, : cfg.hours]
+    ctx = seam_context(ISO, cfg, 2021)
 
     print(f"weather_year={cfg.weather_year}  growth_vintage={cfg.demand_growth_vintage}")
     print("growth rates read: " +
@@ -73,9 +172,7 @@ def main() -> int:
     print(hdr); print("-" * len(hdr))
     out, worst = {}, 0.0
     for year in YEARS:
-        dem = _scale_demand(base, cfg, year)
-        dem = add_load_layers(dem, cfg, ISO, year, zone_names)
-        peak = float(dem.sum(axis=0).max())
+        peak = seam_peak_mw(ctx, year)
         committed = json.loads((ARM_A / f"evolution_{year}.json").read_text())
         ref = float(committed["screen_peak_demand_mw"])
         delta = peak - ref
