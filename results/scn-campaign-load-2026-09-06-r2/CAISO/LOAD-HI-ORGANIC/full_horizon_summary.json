@@ -18,11 +18,11 @@
     "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
     "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md \u00a74"
   },
-  "cache_key": "a3472da093262e47",
-  "run_dir": "/home/user/market-simulator/results/CAISO/a3472da093262e47",
+  "cache_key": "ff8c04bc4eef6605",
+  "run_dir": "/home/user/market-simulator/results/CAISO/ff8c04bc4eef6605",
   "error": null,
-  "total_wall_s": 1238.5,
-  "global_peak_rss_mb": 4987.7,
+  "total_wall_s": 1635.4,
+  "global_peak_rss_mb": 4977.4,
   "n_solved_years": 5,
   "solved_years": [
     2026,
@@ -34,28 +34,28 @@
   "per_year_perf": [
     {
       "year": 2026,
-      "wall_s": 587.7,
-      "peak_rss_mb": 4589.3
+      "wall_s": 817.0,
+      "peak_rss_mb": 4875.4
     },
     {
       "year": 2027,
-      "wall_s": 156.0,
-      "peak_rss_mb": 3876.1
+      "wall_s": 201.4,
+      "peak_rss_mb": 3878.0
     },
     {
       "year": 2028,
-      "wall_s": 156.2,
-      "peak_rss_mb": 4218.8
+      "wall_s": 213.2,
+      "peak_rss_mb": 4323.6
     },
     {
       "year": 2029,
-      "wall_s": 190.0,
-      "peak_rss_mb": 4840.8
+      "wall_s": 207.9,
+      "peak_rss_mb": 4180.9
     },
     {
       "year": 2030,
-      "wall_s": 148.4,
-      "peak_rss_mb": 4987.7
+      "wall_s": 195.7,
+      "peak_rss_mb": 4977.4
     }
   ],
   "invariants": [
@@ -63,7 +63,7 @@
       "id": "I1",
       "name": "energy balance",
       "status": "PASS",
-      "detail": "max |supply\u2212demand| = 1.237e-10 MW (year 2030); tol 1.0"
+      "detail": "max |supply\u2212demand| = 1.564e-10 MW (year 2030); tol 1.0"
     },
     {
       "id": "I2",
@@ -75,7 +75,7 @@
       "id": "I3",
       "name": "unserved/dump",
       "status": "FAIL",
-      "detail": "2029: slack 0.02% of load (34 h, 69.6 GWh, peak 6,225 MW); 2030: slack 0.06% of load (76 h, 188.8 GWh, peak 7,282 MW)"
+      "detail": "2029: slack 0.02% of load (35 h, 69.6 GWh, peak 6,226 MW); 2030: slack 0.06% of load (70 h, 188.8 GWh, peak 7,283 MW)"
     },
     {
       "id": "I4",
@@ -257,14 +257,14 @@
     },
     {
       "year": 2028,
-      "lw_price": 67.918,
-      "max_hourly_price": 976.4,
+      "lw_price": 66.976,
+      "max_hourly_price": 975.4,
       "neg_price_hour_frac": 0.0,
       "hours_ge_100": 38,
       "hours_ge_500": 38,
       "hours_ge_1000": 0,
       "hours_ge_2000": 0,
-      "co2_mt": 40.1847,
+      "co2_mt": 36.945,
       "peak_demand_mw": 56779.242,
       "reserve_margin": 0.014255,
       "rps_dual": 50.0,
@@ -285,8 +285,8 @@
       "capacity_by_fuel_mw": {
         "biomass": 743.2,
         "coal": 50.0,
-        "gas_cc": 13402.8,
-        "gas_cc_ccs": 2980.6,
+        "gas_cc": 13401.2,
+        "gas_cc_ccs": 2982.2,
         "gas_ct": 13746.0,
         "hydro": 6568.4,
         "import": 12171.0,
@@ -298,30 +298,30 @@
       "generation_by_fuel_mwh": {
         "biomass": 5989597.4,
         "coal": 359448.6,
-        "gas_cc": 83053877.2,
-        "gas_cc_ccs": 14909280.6,
-        "gas_ct": 13761829.3,
+        "gas_cc": 78209564.6,
+        "gas_cc_ccs": 22773366.9,
+        "gas_ct": 10899807.3,
         "hydro": 18803222.0,
-        "import": 43388111.2,
+        "import": 43223982.7,
         "nuclear": 18197222.4,
         "oil": 331.7,
         "solar": 56804693.7,
         "wind": 16461787.0
       },
-      "total_gen_mwh": 271729401.2,
-      "storage_discharge_mwh": 8390347.9,
-      "storage_charge_mwh": 9917761.0
+      "total_gen_mwh": 271723024.4,
+      "storage_discharge_mwh": 8331238.4,
+      "storage_charge_mwh": 9852274.6
     },
     {
       "year": 2029,
-      "lw_price": 72.695,
-      "max_hourly_price": 1133.8,
+      "lw_price": 70.144,
+      "max_hourly_price": 1132.1,
       "neg_price_hour_frac": 0.0,
       "hours_ge_100": 104,
       "hours_ge_500": 52,
       "hours_ge_1000": 14,
       "hours_ge_2000": 0,
-      "co2_mt": 39.9165,
+      "co2_mt": 29.7384,
       "peak_demand_mw": 59353.021,
       "reserve_margin": 0.105711,
       "rps_dual": 50.0,
@@ -343,8 +343,8 @@
       "capacity_by_fuel_mw": {
         "biomass": 743.2,
         "coal": 50.0,
-        "gas_cc": 12426.4,
-        "gas_cc_ccs": 5957.0,
+        "gas_cc": 12404.3,
+        "gas_cc_ccs": 5979.1,
         "gas_ct": 19331.6,
         "hydro": 6568.4,
         "import": 12171.0,
@@ -356,30 +356,30 @@
       "generation_by_fuel_mwh": {
         "biomass": 5989597.4,
         "coal": 359448.6,
-        "gas_cc": 76529942.9,
-        "gas_cc_ccs": 25829140.7,
-        "gas_ct": 11188162.0,
+        "gas_cc": 63299862.8,
+        "gas_cc_ccs": 44681353.6,
+        "gas_ct": 6731929.1,
         "hydro": 18803222.0,
-        "import": 43677908.1,
+        "import": 42815599.8,
         "nuclear": 18197222.4,
         "oil": 454.0,
         "solar": 66338055.6,
         "wind": 18305338.0
       },
-      "total_gen_mwh": 285218491.6,
-      "storage_discharge_mwh": 10428052.4,
-      "storage_charge_mwh": 12349565.4
+      "total_gen_mwh": 285522083.2,
+      "storage_discharge_mwh": 11899287.5,
+      "storage_charge_mwh": 14124392.1
     },
     {
       "year": 2030,
-      "lw_price": 93.683,
-      "max_hourly_price": 1164.8,
+      "lw_price": 90.99,
+      "max_hourly_price": 1163.0,
       "neg_price_hour_frac": 0.0,
       "hours_ge_100": 182,
       "hours_ge_500": 149,
       "hours_ge_1000": 36,
       "hours_ge_2000": 0,
-      "co2_mt": 41.5031,
+      "co2_mt": 29.4458,
       "peak_demand_mw": 62062.88,
       "reserve_margin": 0.152982,
       "rps_dual": 50.0,
@@ -400,8 +400,8 @@
       "capacity_by_fuel_mw": {
         "biomass": 743.2,
         "coal": 50.0,
-        "gas_cc": 9447.1,
-        "gas_cc_ccs": 8936.3,
+        "gas_cc": 9415.0,
+        "gas_cc_ccs": 8968.4,
         "gas_ct": 26601.1,
         "hydro": 6568.4,
         "import": 12171.0,
@@ -413,22 +413,22 @@
       "generation_by_fuel_mwh": {
         "biomass": 5989597.4,
         "coal": 359448.6,
-        "gas_cc": 58574642.8,
-        "gas_cc_ccs": 51372320.9,
-        "gas_ct": 20057069.2,
+        "gas_cc": 48651649.1,
+        "gas_cc_ccs": 68439025.7,
+        "gas_ct": 14968928.5,
         "hydro": 18803222.0,
-        "import": 47829705.1,
+        "import": 46470355.4,
         "nuclear": 9082363.7,
         "oil": 1300.8,
         "solar": 66338055.6,
         "wind": 20148889.0
       },
-      "total_gen_mwh": 298556615.1,
-      "storage_discharge_mwh": 8588797.8,
-      "storage_charge_mwh": 10185204.4
+      "total_gen_mwh": 299252835.8,
+      "storage_discharge_mwh": 12215831.9,
+      "storage_charge_mwh": 14508459.2
     }
   ],
-  "run_config_path": "/home/user/market-simulator/results/scn-campaign-load-2026-09-06/CAISO/LOAD-HI-ORGANIC/run_config.json",
+  "run_config_path": "results/scn-campaign-load-2026-09-06-r2/CAISO/LOAD-HI-ORGANIC/run_config.json",
   "set_overrides": {},
   "case": "LOAD-HI-ORGANIC",
   "campaign": "scn-campaign-load-2026-09-06",
