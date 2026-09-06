@@ -660,6 +660,128 @@ NYISO)**. CAISO/NYISO have a live capture lane; **MISO has none**, and `miso-200
 moving that keeper, so a MISO golden captured now would be stale on arrival. That
 sequencing is the director's call, not this lane's.
 
+## WALLCLOCK A-1 — the COD map's per-plant reduction vectorized, measured (2026-09-06, retro)
+
+**This is a RETRO-MEASUREMENT of an already-merged commit.** Wallclock desk item **A-1**
+(`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-1) landed as commit `be598ead`
+through PR #4875 (merge `fc05c5c3`) carrying `src/market_sim/data/cod_ramp.py` and
+`tests/unit/data/test_cod_ramp.py` **only**. The charter's dated row here and the CHANGELOG
+entry never landed, the PR body is empty and the worker session is archived, so **no
+measurement was ever on record** (desk log `docs/handoffs/wallclock-desk-log-2026-09.md`
+§2.5). Every number below was re-measured from scratch in session `wc-a1-evidence-docs`
+(branch `claude/wc-a1-evidence-docs-ss527f`); nothing is carried forward from the original
+session's transcript, and this section is docs + two golden manifests only — no code changed.
+
+Conditions as §PERF-B above: determinism pin (`MARKET_SIM_HIGHS_THREADS=1`,
+`MARKET_SIM_WARMSTART=1`, `MARKET_SIM_WARMSTART_XYEAR=0`), 4 vCPU / 15 GB container,
+`uv.lock` env, NEISO keeper `2026-08-17-neiso-99-joint-p1` replayed full 8760 × 2023–2025
+through `scripts/capture_keeper_goldens.py`. **The two arms solved concurrently**, so every
+solve wall below carries the §PERF-B host-noise caveat and only the phase-structure delta is
+the signal.
+
+| Change | Where landed | Measured effect |
+|---|---|---|
+| (i) `_load_cod_map`'s `for code, grp in work.groupby("pc")` per-plant reduction (14,330 groups, each paying a `DataFrame.dropna` / `sort_values` / `iloc`) replaced by `_reduce_cod_groups` — one stable sort on the plant code plus numpy segment reductions over the resulting contiguous slices, with the per-plant arithmetic unchanged | commit `be598ead` (PR #4875, merged `fc05c5c3`) | `_load_cod_map` on the canonical `data/raw/eia-860` vintage **16.20 → 0.07 s (231×)**; the reduction in isolation **15.78 → 0.010 s**. Across all eight committed vintage directories **91.60 → 0.38 s**. In-solve on the NEISO keeper replay, year-1 `data_prep` **72.9 → 35.9 s (−37.0 s, −51 %)**; 2024 and 2025 move −1.1 / −0.6 s, i.e. noise. **The win is once per process, not once per year** — `_load_cod_map` is `lru_cache`d on the vintage directory, so it lands in whichever year first builds the map and nowhere else. |
+
+**Gate (1) — dict equality vs the shipped loop, on every EIA-860 vintage directory on disk.**
+The frozen pre-A-1 loop survives as `_ref_reduce_cod_groups` / `_ref_load_cod_map` in
+`tests/unit/data/test_cod_ramp.py` and is the oracle. Both implementations were run at HEAD
+against every vintage directory — the canonical `data/raw/eia-860` (whose map is the union of
+the operable schedule **and** the within-window retiree parquet) plus the seven committed
+`vintage_<year>/` dirs. Each arm was timed once, back to back, after a warm-up read so
+neither pays the cold page cache:
+
+| EIA-860 dir | unit rows in | plants out | retiree parquet | `vec == ref` | `_load_cod_map` old → new | reduction only |
+|---|---|---|---|---|---|---|
+| `eia-860` (canonical) | 28,245 | 14,334 | yes | **True** | **16.20 → 0.07 s** (231×) | 15.78 → 0.010 s |
+| `vintage_2018` | 22,118 | 9,676 | no | **True** | 8.92 → 0.05 s (178×) | 8.40 → 0.006 s |
+| `vintage_2019` | 22,731 | 10,272 | no | **True** | 9.32 → 0.04 s (258×) | 9.42 → 0.007 s |
+| `vintage_2020` | 23,417 | 10,907 | no | **True** | 10.24 → 0.04 s (258×) | 9.37 → 0.006 s |
+| `vintage_2021` | 24,645 | 11,545 | no | **True** | 10.45 → 0.04 s (254×) | 10.52 → 0.007 s |
+| `vintage_2022` | 25,378 | 12,022 | no | **True** | 11.58 → 0.04 s (272×) | 11.02 → 0.007 s |
+| `vintage_2023` | 26,010 | 12,595 | no | **True** | 12.07 → 0.04 s (288×) | 11.36 → 0.008 s |
+| `vintage_2024` | 26,854 | 13,397 | no | **True** | 12.82 → 0.06 s (210×) | 11.97 → 0.008 s |
+| **all eight** | | | | **8/8 True** | **91.60 → 0.38 s** | |
+
+`plants out` exceeds the number of EIA-860 plant groups on the seven `vintage_<year>/` dirs
+because the master-registry `year_built` back-fill adds plants the operable schedule omits;
+that back-fill is outside the reducer and identical in both arms. The whole unit file passes
+at HEAD unmodified: **46 passed, 8 subtests passed** in 129 s — the 8 subtests being one per
+vintage directory in `TestLoadCodMapVintageParity`, plus the hermetic
+`TestReduceCodGroupsMatchesShippedLoop` cases (the half-integer rounding boundary, the
+pairwise-summation block sizes 1/2/7/8/9/127/128/129/300, the NaN-`rm` sort position).
+
+**Byte gate — merge-base control on the A-1 commit itself.** The charter's instrument
+(perfb-session2 §6) rather than the stale stage-0 goldens, and here it is exact rather than
+approximate: the "before" arm is a worktree at **`be598ead~1` = `2886235c`** and the "after"
+arm a worktree at **`be598ead`**, so the two trees are parent-and-commit. A full-tree diff
+between them (excluding `.git`, `.venv`, `__pycache__`) reports **exactly two files**:
+`src/market_sim/data/cod_ramp.py` and `tests/unit/data/test_cod_ramp.py` — and the test is
+not on the solve path, so the solve-path delta is one file. No `G-DRIFT` audit is needed to
+establish the control; the commit *is* the control. Both worktrees were clean
+(`git_dirty: false` in both manifests) and read one `data/raw` through the
+`MARKET_SIM_DATA_ROOT` seam.
+
+`scripts/regression_gate.py --mode byte`:
+
+* **check [1] golden bundle diff — PASS**: NEISO, 9 files, 32 numeric columns, atol=rtol=0.
+* check [2] reshuffle localization: **zero in all three years** — Σ|hourly Δ| = 0.0 GWh,
+  0.000 % of total gen; annual gen 96,984.5 / 103,923.3 / 107,314.6 GWh, Δ +0.0000 both arms
+  (the same three totals §WALLCLOCK A-2 records, independently reproduced).
+* check [3] smoke — **PASS** (24 passed).
+* check [4] `audit_keepers` — **PASS**. `legitimacy(--keepers)` — **FAIL, pre-existing by
+  control**: the standing NYISO Long Island `transfer_security_limit` capacity-deliverability
+  gap (`ValueError: nyiso_li_lcr_tsl=True but no published Long Island
+  transfer_security_limit for delivery year 2023/2024`). Proven independent of these arms by
+  running it on **plain `origin/main`**, where it exits **rc=1** with the identical exception
+  — so the script's overall `RESULT: FAIL` is check [4] alone, exactly as §PERF-B RESUME,
+  §WALLCLOCK A-2 and §WALLCLOCK A-3 record.
+
+Fidelity oracle, **both arms identically**: 258 recorded flags replayed identically, 714
+`scenario_config` fields matched and the same 2 drifted (`ccs_retrofit_capex_kw`,
+`fixed_om_gas_cc_ccs` — base config moved since the keeper was frozen, and it moved for both
+arms, so it cancels in the control). Manifests committed under
+`results/regression-goldens/wc-a1-{before,after}/`; the two 109 MB bundles were **deleted
+before merge** per rule 29 `[R-SCREEN]` (c).
+
+**Phase lines, both arms (concurrent):**
+
+| arm | year | data_prep | solve_p0 | markup | solve_p1 | results_write | total |
+|---|---|---|---|---|---|---|---|
+| before (`2886235c`) | 2023 | **72.9** | 81.4 | 4.2 | 31.7 | 3.6 | 193.8 |
+| before (`2886235c`) | 2024 | 6.8 | 82.9 | 4.2 | 24.1 | 3.3 | 121.3 |
+| before (`2886235c`) | 2025 | 5.8 | 85.9 | 3.9 | 28.1 | 3.2 | 127.0 |
+| after (`be598ead`) | 2023 | **35.9** | 84.2 | 4.2 | 33.6 | 4.0 | 161.9 |
+| after (`be598ead`) | 2024 | 5.7 | 78.5 | 4.5 | 26.3 | 3.2 | 118.2 |
+| after (`be598ead`) | 2025 | 5.2 | 82.5 | 4.2 | 33.8 | 3.4 | 129.1 |
+
+Year-1 `data_prep` **−37.0 s (−51 %)**; 2024/2025 −1.1 / −0.6 s. Every other phase moves
+within the ±35 % host-noise band the §PERF-B caveat describes and in both directions
+(`solve_p0` −3.4/+2.9/+3.4 s, `solve_p1` +1.9/−2.2/−5.7 s), which is what a change confined
+to `data_prep` should look like. The replay covers the keeper's full registered span because
+`capture_keeper_goldens.py` has no year selector; 2023 is the only year A-1 can move, and it
+is the year the byte gate's year-1 map is built in.
+
+**Stacking with A-2, restated from that section, not re-derived.** §WALLCLOCK A-2 already
+records the joint arithmetic: at base `5b5af5a` NEISO year-1 `data_prep` was **71.3 s**; A-1
+alone took it to **36.7 s**; A-2 (measured on top of A-1, at base `fc05c5c34`) takes it to
+**10.8 s** — a combined −85 % on the year-1 phase. This session's independent re-measurement
+of the A-1 leg, on a different pair of trees and a different day, reads **72.9 → 35.9 s**,
+i.e. within ~2 % of both endpoints of that record. **Do not add** A-2's superseded first-pass
+−25.2 s (measured at the pre-A-1 base) to A-1's own number; that double-counts ~10 s of the
+same phase, which is exactly why A-2 was re-measured.
+
+**Reach.** Every ISO and every invocation — `_load_cod_map` is ISO-agnostic — but **once per
+process**, so ~−37 s on a 3-year replay, not −111 s. PERF-A §2.4 records the map being built
+under **two** EIA-860 vintage keys on ERCOT, which would pay the reduction twice; that is
+inference from the cache-key structure, not a per-ISO measurement here, and must not be
+quoted as one. Against the ≥10 %-wall adoption rule: **cleared on `data_prep` year-1**
+(−51 %); **not** cleared as a share of the 3-year NEISO wall (37.0 s of 442.1 s ≈ 8 %).
+
+**Class: BYTE-IDENTICAL.** No LP, objective, bound or row is touched; no `ScenarioConfig`
+default, no keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted
+and nothing dashboard-registered.
+
 ## WALLCLOCK A-2 — eGRID xlsx off the solve path, measured (2026-09-05, re-measured 2026-09-06)
 
 Executes item **A-2** of `docs/handoffs/wallclock-opportunities-2026-09.md` §2, on
