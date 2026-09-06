@@ -1,5 +1,54 @@
 # Changelog
 
+## 2026-09-06 — wallclock 3a: the per-ISO anchor table re-baselined on main (docs only)
+
+Wave-3 item 3a of the wall-clock desk (`docs/handoffs/wallclock-desk-log-2026-09.md` §1 row 3a),
+run once every wave-1/2 item was merged or closed. **Docs only** — no code, no `ScenarioConfig`
+default, no keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted,
+nothing dashboard-registered; every bundle captured was deleted before the PR (rule 29
+`[R-SCREEN]` (c)). Full record, with every number: `docs/handoffs/wallclock-baseline-2026-07.md`
+§WALLCLOCK 3a.
+
+- **Why re-baseline.** §PERF-B's anchor table predates A-1/A-2/A-4 (which removed the year-1
+  `data_prep` premium), **A-3 (which changed what `total` means** — the `hourly/` sidecar block
+  now runs *inside* `results_write` as `sidecars`, where before it ran after the timing line and
+  was booked to no phase), and **B** (calibration-CLI default ON, so a real calibration run's
+  `solve_p1` no longer resembles a pinned replay's).
+- **Two arm families, and they must not be confused.** (1) **Pinned anchor** — `--all
+  --max-concurrency 1` under `HIGHS_THREADS=1 WARMSTART=1 WARMSTART_XYEAR=0`, all six ISOs,
+  every fidelity oracle clean; the P1 seed is **off by construction** here. (2)
+  **Calibration-CLI default** — `XYEAR=1` + `MARKET_SIM_P1_BASIS_SEED=1`, NEISO and ERCOT, empty
+  basis cache per arm; **not goldens, not a byte instrument.**
+- **The gap A-3 closed, measured.** Process wall vs Σ per-year `total`: the assessment measured
+  **28.4 s on one NEISO year** (243.3 vs 271.7); this session measures **3.2 s across three
+  NEISO years** (305.6 vs 308.8) and **4.0 s across ERCOT's two** (1,114.0 vs 1,118.0). The
+  sidecar cost did not vanish, it is now *reported*: `sidecars` is 3.6–5.5 s on NEISO/NYISO,
+  13.5–14.2 s on CAISO, 13.8–21.8 s on ERCOT, and **24.0–26.0 s on MISO/PJM** — over half of
+  `results_write` there.
+- **Attribution, stated because the arm-2 delta is two mechanisms, not one.** On ERCOT
+  (2024+2025) `total` **1,764.4 → 1,114.0 s (−36.9 %)** decomposes exactly: `solve_p1`
+  **−546.9 s** (item B), `solve_p0` **−165.7 s on 2025 alone** (the pre-existing cross-year warm
+  start; 2024's −29.2 s is host noise at *identical* 250,529 P0 iterations on both arms), against
+  `markup` **+91.9 s** of export/apply overhead. On NEISO the P1 seed is **provably inert** —
+  2023 P1 iterations are **62,954 on both arms, identical to the digit** — so none of its
+  −17 % is B.
+- **Cross-session reproduction.** The pinned arm reproduces §WALLCLOCK B's OFF-arm iteration
+  counts exactly (NYISO 2023 P0 269,416 / P1 268,305; CAISO 2023 P0 300,609 / P1 290,022), and
+  the CLI-default arm lands within 0.2 % of its ON-arm P1 counts (ERCOT 2025 78,731 vs 78,856).
+  Wall deltas between sessions remain inside the §PERF-B ±35 % host-noise band; iteration counts
+  are the reliable instrument.
+- **Ledger.** A-1+A-2+A-4 took NEISO year-1 `data_prep` **71.3 → 12.1 s** (measured here at
+  **14.0 s** pinned / 9.0 s CLI-default, three days and several `main` merges later). **A-5 was
+  already on main since 2026-09-02** (PR #4579) — the assessment doc's "not on main" row is
+  stale and is corrected in the baseline doc, not by editing the assessment. **A-6 is not a
+  landed change**: measured-negative (peak 13.28 → 13.27 GB) and reverted (`d9ad2ae3`).
+- **Environmental, recorded:** `data/clean` is absent in a fresh container and CAISO/NYISO refuse
+  to solve without it (`regenerate_clean.py`, 56 datatypes) — the solve-path face of the check-[4]
+  artifact §WALLCLOCK B reports; and **PJM's `pjm-da-virtuals` corpus is gitignored under PJM
+  DataMiner2 licensing**, so its capture fails until re-fetched (72 parquets, 22 MB). Neither is
+  the §PERF-B OOM — and that OOM **did not reproduce**: MISO (13.28 GB) and PJM (13.29 GB) both
+  completed all three years at 8760 h with the swapfile untouched.
+
 ## 2026-09-06 — wallclock B: the cold-rebuilt P1 seeded from the same year's P0 basis (WARM-START CLASS; calibration default ON)
 
 Wallclock desk item B (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3). Owner memo
