@@ -487,3 +487,72 @@ and the memo path again after `cache_clear()` to force the on-disk hit.
 **⇒ Chain complete through `1aab49a0`; every hunk INERT for a CAISO backcast,
 with the two fleet-path files re-verified rather than carried forward on §1.1's
 earlier result. G-CTRL form 4 stands; no control solve spent.**
+
+### §1.7 — `1aab49a0` → `7a42c7c5`, and a note on how the rest of this audit will be kept
+
+6 files, +69 / −18. Four are `scripts/lib/load_forecast/*` (the intake package;
+no solve path imports it). The two in scope:
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `src/market_sim/config/constants.py` | +1 | **INERT** | one name added to an existing `from market_sim.config.capacity_market import (…)` block (`resolve_capacity_going_forward_bar_published`). A re-export made available, not a value changed — and the constant *values* audited in §1.5 are untouched. |
+| `src/market_sim/policy/carbon.py` | +27 | **INERT — RE-VERIFIED** | `float(resolution.price_adder)` → `float(resolution.price_adder or 0.0)`: a None-guard that can only change behaviour where the old code raised `TypeError`. Because carbon.py moved again, §1.4.1's measurement was re-run rather than carried forward — CAISO backcast carbon still **exactly** 33.03 / 35.23 / 28.06. |
+
+**How the remainder of this audit is kept, stated so it is a method and not a
+drift.** `main` is advancing several times an hour while the corpus downloads,
+and a section per delta is becoming less readable without becoming more
+truthful. The audit that actually binds under rule 29(b) is the one against the
+sha **the arm is solved at**, so:
+
+* the incremental sections above stand as the record of what was checked and
+  when — including the three occasions a delta touched a file a CAISO backcast
+  genuinely reads (§1.4.1 carbon, §1.5.1 demand growth, §1.6 the fleet path),
+  each measured on the number rather than argued;
+* the remaining pre-solve deltas are folded into **one consolidated re-audit
+  from the keeper's `fa23c1f7` to the solve-time HEAD**, recorded in the
+  FINDING before any LP is spent. A consolidated audit over the whole span is
+  strictly stronger than the sum of the increments — it cannot miss a hunk that
+  was added and then revised between two of them.
+
+Nothing about the standard changes: every hunk on the backcast path is
+classified INERT with its reason, or it is LIVE and earns a control solve.
+
+---
+
+## §8 — P-2's COMPARATORS, pinned from committed bytes before the gate runs
+
+P-2 asks whether the rebuilt classifier reproduces "the frozen bucket
+populations to **±3 resources and ±5 % capacity** per bucket (46 CC / 100 CT)".
+Those two legs do **not** have equally good comparators, and that is stated here
+rather than discovered afterwards:
+
+* **The capacity leg has a committed comparator.** The frozen artifact's own
+  `_provenance.gates.G1_capacity_reconciliation` carries the bucket capacities,
+  so the ±5 % bands are computable from bytes on disk:
+
+  | bucket | frozen `bucket_mw` | `fleet_mw` | ratio | **±5 % band P-2 must land in** |
+  |---|--:|--:|--:|---|
+  | `CC_REGULAR` | 11,935 | 13,708 | 0.871 | **[11,338 , 12,532] MW** |
+  | `CT_PEAKER` | 9,950 | 7,616 | 1.306 | **[9,452 , 10,448] MW** |
+
+* **The unit-count leg does not.** Neither `caiso_offer_curve_measured.json`
+  nor `caiso_offer_surface_condbinned.json` records a per-bucket resource
+  count; 46 / 100 appears only in the parent PRECOMMIT's prose (its §1 and
+  P-2), presumably read off the derive's stdout when the artifact was frozen on
+  2026-08-02. It is used as written, but it is **weaker evidence than the
+  capacity leg**, and if the two legs disagree the capacity leg is the one with
+  a committed source behind it.
+
+Worth noting for what it already implies about the object: the CT bucket is
+**9,950 MW against a 7,616 MW CT_PEAKER fleet** — a 2,334 MW excess, sitting
+squarely on the 2,859 MW of OTC/RMR steamers the derive's own provenance note
+discloses. That is the contamination stated in the frozen artifact's own gate
+block, before any new measurement. It is **not** evidence for G-BIMODAL, which
+asks a different and harder question — whether the CT-side *capacity density*
+separates into two modes — and which is scored only on the pooled 2023–25
+population.
+
+The bands the repair would move, also pinned here so the FINDING quotes them
+from one place: `CC_REGULAR` econ_low/econ_high/peak = 1.066 / 1.072 / 1.386
+(base HR 7.442); `CT_PEAKER` = 1.145 / 1.166 / 1.166 (base HR 10.862);
+`committed` unarmed at 1.030 and 1.166 respectively.
