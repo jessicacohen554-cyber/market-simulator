@@ -272,6 +272,15 @@ all six ISOs. The 30 that changed are the 30 re-formed cases; the six `REF` rows
   format-red on `main` and were deliberately **not** touched: `scripts/run_calibration.py` and
   `src/market_sim/data/fuel/basis/miso.py` (already routed onward by SCN-FIX1).
 
+### 3.4 Push integrity (rule 27 `[R-PUSH]`)
+
+Three small text-only commits, rebased onto `origin/main` `acbb5350` so the pack carries only this
+lane's objects, pushed over `git push` (CLAUDE.md Git & Pushing: transport by pack size; this pack
+is a few KB). Every file was edited in place with the Edit tool and pushed as the exact on-disk
+bytes — no regenerated full-file content anywhere. All five pushed files were fetched back and
+compared line-count + SHA-256 against local: **five of five MATCH**, including the two large ones
+(`scenarios.py` 18,782 lines, `constants.py` 5,222 lines). No core file shrank.
+
 ---
 
 ## 4. Files touched
