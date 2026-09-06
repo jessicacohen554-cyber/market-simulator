@@ -91,15 +91,25 @@ class TestCampaignMatrix(unittest.TestCase):
                 len(set(keys.values())), len(keys), f"{iso} cases collide: {keys}"
             )
 
-    def test_the_carbon_ladder_is_the_additive_delta_form(self):
-        # G-C1 is live at this commit: an explicit carbon_price_path SUPPRESSES
-        # the program trajectory, so a path-form ladder is a carbon CUT on
-        # CAISO/NYISO/NEISO. The committed ladder must therefore be additive.
-        for case in ("CARB-LO", "CARB-MID", "CARB-HI"):
+    def test_the_carbon_ladder_is_the_committed_rff_path_form(self):
+        # SCN-FIX2 (2026-09-06) switched the ladder to the form owner ruling S3
+        # committed. G-C1 -- an explicit carbon_price_path SUPPRESSING the
+        # program trajectory, which made a path-form ladder a carbon CUT on
+        # CAISO/NYISO/NEISO -- was killed at the resolver by SCN-WS1c executing
+        # ruling S2 (the floor), so the committed form is now the safe one.
+        # This pins the FORM in both directions: the interim additive
+        # carbon_price_delta stand-in must not come back silently either.
+        for case, path in (
+            ("CARB-LO", "low"),
+            ("CARB-MID", "mid"),
+            ("CARB-HI", "high"),
+        ):
             overrides = self.sweep.cases[case]
-            self.assertIn("carbon_price_delta", overrides)
-            self.assertNotIn("carbon_price_path", overrides)
-            self.assertGreater(overrides["carbon_price_delta"], 0.0)
+            self.assertEqual(overrides, {"carbon_price_path": path})
+        for case in ("CARB-MID+LOAD-HI", "ALL-CLEAN"):
+            overrides = self.sweep.cases[case]
+            self.assertEqual(overrides["carbon_price_path"], "mid")
+            self.assertNotIn("carbon_price_delta", overrides)
 
     def test_load_high_declares_its_datacenter_pairing(self):
         # G-L3: growth-high and DC-high are independent axes, so each high case
@@ -146,7 +156,8 @@ class TestCampaignMatrix(unittest.TestCase):
         self.assertEqual(corner["datacenter_load_path"], "high")
         self.assertEqual(corner["demand_growth_path"], "high")
         self.assertEqual(corner["federal_ces_acp_usd_per_mwh"], 50.0)
-        self.assertEqual(corner["carbon_price_delta"], 25.0)
+        # SCN-FIX2: the corner's carbon half is CARB-MID's committed path form.
+        self.assertEqual(corner["carbon_price_path"], "mid")
         for case in ("VOL-MID", "VOL-HI", "CES-P20+VOL-HI", "ALL-CLEAN"):
             for field in self.sweep.cases[case]:
                 self.assertNotIn(

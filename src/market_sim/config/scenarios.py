@@ -3435,10 +3435,12 @@ class ScenarioConfig:
     # LEVELS: owner ruling S3 (card D-2) committed the memo's box-5 defaults —
     # s_base mid = the latest NREL national voluntary share (2023: 0.08) held
     # flat, low/high = the series' own range; f_commit low 0 / high 1.0; WTP
-    # low/high = the endpoints of the cited $2-7/MWh public REC range. TWO
-    # CELLS S3 DID NOT REACH stay LABELLED ILLUSTRATIVE (owner-set under D-2,
-    # re-presented in FINDING-scn-ws3b-2026-09-06.md §4): f_commit MID (0.5
-    # placeholder) and the WTP-ceiling MID level (4.5 placeholder). The
+    # low/high = the endpoints of the cited $2-7/MWh public REC range. THE TWO
+    # CELLS S3 DID NOT REACH ARE NOW COMMITTED TOO — owner ruling S9
+    # (2026-09-06, card D-2(b), verbatim "Take the placeholders as committed"),
+    # at the values already shipped under their former ILLUSTRATIVE label:
+    # f_commit MID (0.5) and the WTP-ceiling MID level (4.5). No number moved
+    # (SCN-FIX2); the re-presentation is FINDING-scn-ws3b-2026-09-06.md §4. The
     # campaign cases VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN
     # (configs/scenario_campaign_matrix.yaml) are expressible on this field
     # and are HELD under owner ruling S5 (Stage A-POLICY) until the CCS
@@ -3451,9 +3453,10 @@ class ScenarioConfig:
     # and the shortfall is the un-procured volume (memo §2.1; the ACP analogue
     # of the compliance rows, FFR-6B §6.3). None (default) = the cited
     # constants.VOLUNTARY_WTP_CEILING_USD_PER_MWH at the path (low 2.0 / mid
-    # 4.5 ILLUSTRATIVE / high 7.0); an explicit value is a LABELLED
-    # sensitivity and must be > 0 (a zero ceiling is a row with a free escape
-    # — dual pinned at zero, inert but looks armed — refused). Refused with
+    # 4.5, COMMITTED by owner ruling S9 2026-09-06 / high 7.0); an explicit
+    # value is a LABELLED sensitivity and must be > 0 (a zero ceiling is a row
+    # with a free escape — dual pinned at zero, inert but looks armed —
+    # refused). Refused with
     # the path "off" (a dangling price with no row is an unregistered knob,
     # rule 24 [R-REGISTRY]). Coerced to None in backcast/hindcast with the
     # path. Cache-optional at None.
@@ -3464,9 +3467,11 @@ class ScenarioConfig:
     # the indicator coefficient 1.0). None (default) = constants.
     # VOLUNTARY_ELIGIBLE_FUELS_DEFAULT = (wind, solar, offshore_wind,
     # geothermal), the voluntary RENEWABLE market's set (Green-e: hydro and
-    # biomass excluded). *** OWNER BOX D-3c IS OPEN: that default is the memo
-    # §4.1 RECOMMENDATION, not a ruled level (S1 ruled the axis, S3 its
-    # levels; neither reached the eligible set). *** Nuclear and gas_cc_ccs
+    # biomass excluded). *** COMMITTED: owner ruling S10 (2026-09-06, card
+    # D-3c, verbatim "Ratify the default as built") ratifies exactly that set,
+    # so it is no longer the memo §4.1 recommendation but the ruled default —
+    # every eligible unit credited, no additionality or vintage mask (S1 ruled
+    # the axis, S3 its levels, S10 the eligible set). *** Nuclear and gas_cc_ccs
     # ("carbon-free" programs, memo §4.2 — Google 24/7 CFE, Microsoft
     # 100/100/0 count carbon-free) enter ONLY through this labelled override
     # for a named arm, never by default: with nuclear admitted the row in a
