@@ -27,6 +27,7 @@ from market_sim.config.constants import (
     START_YEAR,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.solve_surface import surface_stamp
 from market_sim.results import cache
 from market_sim.results.emissions import (
     IMPORT_CO2_DISCLOSURE,
@@ -381,6 +382,10 @@ def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
 
     payload = {
         "cache_key": cache_key,
+        # Beside every recorded key (capx D79): the registry rows the run solved
+        # on, so `key = f(config, moved rows, epochs)` reproduces from the
+        # artifact. Read from the run's own config, never recomputed elsewhere.
+        "solve_surface": surface_stamp(iso, config),
         "iso": iso,
         "config": asdict(config),
         "years": years,

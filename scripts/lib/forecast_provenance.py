@@ -13,6 +13,7 @@ scored**. This module is that record. Every verdict and board artifact carries::
     {"scored_at_sha": "<12-char HEAD sha>",     # the code the score ran against
      "scored_at_date": "YYYY-MM-DDTHH:MM:SSZ",  # UTC, when it ran
      "cache_epoch": "<config cache key>",       # the config identity it scored
+     "solve_surface": {...},                    # the registry surface it solved on
      "schema": "forecast-provenance/v1"}
 
 ``cache_epoch`` is READ from the run's own artifacts (``run_config.json``'s
@@ -20,6 +21,12 @@ scored**. This module is that record. Every verdict and board artifact carries::
 actually solved under, not whatever the code would produce today. It is ``None``
 when the artifact does not carry one; an absent epoch is recorded as absent
 rather than guessed.
+
+``solve_surface`` (capx D79) is read the SAME way, from the artifact's own
+``solve_surface`` block, and for the same reason: it is the registry surface the
+run solved on, which today's code may no longer have. A run scored before the
+fingerprint existed records ``None`` and keeps its historical stamp, exactly as
+D60 §7 treats the hex-less t1x ``cache_epoch``s.
 
 Consumers:
 
@@ -50,7 +57,12 @@ REPO = Path(__file__).resolve().parents[2]
 
 #: Fields every stamped artifact carries. Named once so the CI staleness check
 #: and the tests agree with the emitters instead of re-listing string literals.
-PROVENANCE_FIELDS = ("scored_at_sha", "scored_at_date", "cache_epoch")
+PROVENANCE_FIELDS = (
+    "scored_at_sha",
+    "scored_at_date",
+    "cache_epoch",
+    "solve_surface",
+)
 
 #: Where a provenance stamp is stored inside a stamped artifact.
 PROVENANCE_KEY = "provenance"
@@ -108,16 +120,38 @@ def cache_epoch_from(*artifacts: object) -> str | None:
     return None
 
 
+def solve_surface_from(*artifacts: object) -> dict | None:
+    """Return the ``solve_surface`` block carried by the first artifact with one.
+
+    Searched exactly like :func:`cache_epoch_from`, and READ rather than
+    recomputed for the same reason (capx D79): the surface that matters is the
+    one the run solved on. ``None`` when no artifact carries one — a run scored
+    before the fingerprint existed, recorded as absent rather than guessed.
+    """
+    for art in artifacts:
+        if not isinstance(art, dict):
+            continue
+        for candidate in (art, *(art.get(w) for w in ("meta", "run_config"))):
+            if not isinstance(candidate, dict):
+                continue
+            block = candidate.get("solve_surface")
+            if isinstance(block, dict) and block:
+                return block
+    return None
+
+
 def stamp(*artifacts: object, cache_epoch: str | None = None) -> dict:
     """Build the provenance stamp for an artifact about to be written.
 
     ``artifacts`` are searched for a ``cache_key`` (see :func:`cache_epoch_from`)
-    unless ``cache_epoch`` is passed explicitly. Always returns every field in
+    unless ``cache_epoch`` is passed explicitly, and for a ``solve_surface``
+    block (see :func:`solve_surface_from`). Always returns every field in
     :data:`PROVENANCE_FIELDS`, using ``None`` for anything unavailable, so a
     consumer can distinguish "not recorded" from "recorded as empty".
     """
     return {
         "schema": SCHEMA,
+        "solve_surface": solve_surface_from(*artifacts),
         "scored_at_sha": head_sha(),
         "scored_at_date": utc_now(),
         "cache_epoch": (

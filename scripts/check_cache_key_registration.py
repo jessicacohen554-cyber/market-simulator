@@ -63,6 +63,38 @@ itself (rule 26 ``[R-DELETE]``, which parks the value in
 the live default against — so a flip still cannot land silently, and the frozen
 drop value stays put, which is the whole point of (b′-1).
 
+**5. Solve-surface declaration (FAILS the PR).** Since capx D79 (owner ruling
+Q54) the key also sees the registry TABLES — ``constants.py``,
+``capacity_market.py``, ``fuel_trajectories.py`` and the four other
+``solve_surface.SURFACE_MODULES`` — through a per-name, per-ISO value
+fingerprint dropped at each name's FROZEN hash in
+``config/solve_surface_declared.py``. A surface name with no declaration cannot
+be compared against anything, so it silently stays OUT of every key: the same
+"registration is a no-op" failure check 2 exists for, one layer down. So every
+module-level SCREAMING_CASE name in those modules must carry a ``DECLARED``
+entry. The remedy is one command, and it moves no key:
+``python3 scripts/solve_surface_register.py --declare-missing``.
+
+**6. Solve-surface ledger append-only (FAILS the PR; needs ``--base``).** A
+``DECLARED`` entry is the FROZEN hash ``moved_rows()`` compares the live surface
+against, so editing one restores the pre-change key and re-serves the pre-change
+bundle — the exact hazard the fingerprint closes. The ledger is therefore
+APPEND-ONLY, on the same rule 26 ``[R-DELETE]`` terms as check 4: a NEW name
+adds a line, an existing line is never edited, and a line for a name that has
+LEFT the surface STAYS (retired at its last hash, exactly as
+``_CACHE_KEY_RETIRED_FIELDS`` preserves a deleted field's value). A repaired
+table declares nothing: it pays at ``PINNED_SURFACE_ROWS_BY_ISO`` in
+``tests/regression/test_persisted_identity.py``, whose dated cause block IS the
+ledger entry the lane owes.
+
+**7. Epoch ledger cross-check (WARNS; needs ``--base``).** A new
+``**Epoch <date>`` heading in ``results/cache.py``'s ledger that declares no
+``solve_surface.SolveEpoch`` and carries no "KEY ADVANCE" marker is a same-key
+invalidation nothing mechanical can act on — the D77 shape, where the entry
+existed and every key stayed put. WARN, not FAIL: an entry may legitimately be
+prose-only (the D65-B-R batch is D77's re-solve), and the owner priced the
+attestation guard separately (design §6.4, card row 5).
+
 Defaults are compared as ``ast.unparse``-normalized SOURCE TEXT, so reformatting
 and comment churn are invisible, and any default form (a literal, a
 ``field(default_factory=...)``, an expression) is expressible.
@@ -70,16 +102,20 @@ and comment churn are invisible, and any default form (a literal, a
 Stdlib only (``ast`` + ``git show``): no import of the package, no ``uv sync``,
 runs in seconds and cannot itself be broken by a config-module import error.
 
+Stdlib only for checks 1-4; checks 5-7 read the surface modules with ``ast``
+too, so the whole guard still imports nothing from the package.
+
 Usage::
 
-    python3 scripts/check_cache_key_registration.py                  # checks 2 + 3
-    python3 scripts/check_cache_key_registration.py --base <sha>     # checks 1 + 2 + 3
+    python3 scripts/check_cache_key_registration.py               # checks 2 + 3 + 5
+    python3 scripts/check_cache_key_registration.py --base <sha>  # every check
 """
 
 from __future__ import annotations
 
 import argparse
 import ast
+import re
 import subprocess
 from pathlib import Path
 
@@ -91,6 +127,18 @@ _DECLARED = "_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS"
 _FLIPS = "_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS"
 _RETIRED = "_CACHE_KEY_RETIRED_FIELDS"
 _EPOCH_LEDGER_REL = "src/market_sim/results/cache.py"
+
+# --- the capx D79 solve surface (checks 5-7) -------------------------------- #
+_SURFACE_REL = "src/market_sim/config/solve_surface.py"
+_SURFACE_DECLARED_REL = "src/market_sim/config/solve_surface_declared.py"
+_SURFACE_DECLARED = "DECLARED"
+_SURFACE_MODULES_NAME = "SURFACE_MODULES"
+_SOLVE_EPOCHS_NAME = "SOLVE_EPOCHS"
+#: Same shape ``solve_surface._NAME_RE`` uses at runtime: a module-level
+#: SCREAMING_CASE name, no leading underscore (private composition pieces are
+#: covered transitively through the public tables they compose into).
+_SURFACE_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
+_EPOCH_HEADING_RE = re.compile(r"^\*\*Epoch ([0-9]{4}-[0-9]{2}-[0-9]{2}[a-z]?)\b")
 
 
 def _norm(expr: str) -> str:
@@ -248,6 +296,157 @@ def append_only_violations(
     return breaches
 
 
+def surface_module_paths(surface_src: str) -> list[str]:
+    """Return the repo-relative ``.py`` paths of ``SURFACE_MODULES``.
+
+    Read out of ``solve_surface.py`` with ``ast`` rather than imported, so the
+    guard stays stdlib-only and works against an arbitrary git blob.
+    """
+    for node in ast.walk(ast.parse(surface_src)):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        tgts = [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+        if not any(
+            isinstance(t, ast.Name) and t.id == _SURFACE_MODULES_NAME for t in tgts
+        ):
+            continue
+        return [
+            "src/" + elt.value.replace(".", "/") + ".py"
+            for elt in getattr(node.value, "elts", [])
+            if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+        ]
+    return []
+
+
+def surface_names(sources: dict[str, str]) -> set[str]:
+    """Return every module-level surface name defined across ``sources``.
+
+    Args:
+        sources: ``{repo-relative path: source text}`` for the surface modules.
+
+    Returns:
+        The SCREAMING_CASE module-level assignment targets — the same set
+        ``solve_surface.surface_fingerprint()`` builds at runtime.
+    """
+    names: set[str] = set()
+    for src in sources.values():
+        for stmt in ast.parse(src).body:
+            tgts = (
+                [stmt.target]
+                if isinstance(stmt, ast.AnnAssign)
+                else list(stmt.targets)
+                if isinstance(stmt, ast.Assign)
+                else []
+            )
+            names.update(
+                t.id
+                for t in tgts
+                if isinstance(t, ast.Name) and _SURFACE_NAME_RE.match(t.id)
+            )
+    return names
+
+
+def declared_surface(source: str) -> dict[str, str]:
+    """Return ``{name: normalized declaration text}`` from ``DECLARED``.
+
+    The value is ``ast.unparse``d, so a by-ISO ``{iso: hash}`` mapping compares
+    as one string and reformatting is invisible. Empty for a blob predating the
+    ledger.
+    """
+    out: dict[str, str] = {}
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        tgts = [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+        if not any(isinstance(t, ast.Name) and t.id == _SURFACE_DECLARED for t in tgts):
+            continue
+        if isinstance(node.value, ast.Dict):
+            for k, v in zip(node.value.keys, node.value.values):
+                if isinstance(k, ast.Constant) and isinstance(k.value, str):
+                    out[k.value] = ast.unparse(v)
+    return out
+
+
+def solve_epoch_ids(surface_src: str) -> set[str]:
+    """Return the ``SolveEpoch`` ids declared in ``SOLVE_EPOCHS``."""
+    ids: set[str] = set()
+    for node in ast.walk(ast.parse(surface_src)):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        tgts = [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+        if not any(
+            isinstance(t, ast.Name) and t.id == _SOLVE_EPOCHS_NAME for t in tgts
+        ):
+            continue
+        for elt in getattr(node.value, "elts", []):
+            for arg in getattr(elt, "args", []):
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                    ids.add(arg.value)
+                    break
+            for kw in getattr(elt, "keywords", []):
+                if (
+                    kw.arg == "id"
+                    and isinstance(kw.value, ast.Constant)
+                    and isinstance(kw.value.value, str)
+                ):
+                    ids.add(kw.value.value)
+    return ids
+
+
+def epoch_headings(ledger_src: str) -> dict[str, str]:
+    """Return ``{epoch id: its heading paragraph}`` from the cache-epoch ledger.
+
+    The paragraph is everything up to the next blank line, which is where an
+    entry states whether it is a KEY ADVANCE or a same-key invalidation.
+    """
+    out: dict[str, str] = {}
+    lines = ledger_src.splitlines()
+    for i, line in enumerate(lines):
+        match = _EPOCH_HEADING_RE.match(line)
+        if not match:
+            continue
+        para = []
+        for follow in lines[i:]:
+            if not follow.strip():
+                break
+            para.append(follow)
+        out[match.group(1)] = "\n".join(para)
+    return out
+
+
+def surface_append_only_violations(
+    base_declared: dict[str, str],
+    head_declared: dict[str, str],
+    head_names: set[str],
+) -> list[str]:
+    """Return the append-only breaches in the solve-surface ledger.
+
+    Pure, so the tests drive it on synthetic source with no git. Mirrors
+    :func:`append_only_violations` with one difference that IS the rule 26
+    ``[R-DELETE]`` half: a name that has left the surface keeps its line, so
+    REMOVING an entry is a breach whether or not the name still exists.
+
+    Args:
+        base_declared: The ledger at the merge base.
+        head_declared: The ledger at HEAD.
+        head_names: Surface names at HEAD (reported, never a licence to drop).
+
+    Returns:
+        Human-readable breach descriptions; empty when the change is an append.
+    """
+    breaches: list[str] = []
+    for name, was in sorted(base_declared.items()):
+        if name not in head_declared:
+            where = "still on the surface" if name in head_names else "retired"
+            breaches.append(
+                f"{name}: entry REMOVED ({where}); a declaration is never "
+                f"dropped -- a retired name keeps its last hash (was {was})"
+            )
+        elif head_declared[name] != was:
+            breaches.append(f"{name}: {was} -> {head_declared[name]} (EDITED)")
+    return breaches
+
+
 def _blob(ref: str, rel: str) -> str | None:
     """``git show ref:rel``, or None when the path does not exist at that ref."""
     try:
@@ -374,8 +573,78 @@ def main(argv: list[str] | None = None) -> int:
             + "\n    REMEDY: register the field, or drop the stale flip line."
         )
 
-    # --- check 1 + 4: PR-only, need the merge base --------------------------
+    # --- check 5: every surface name is declared (always) -------------------
+    head_surface_src = (_REPO / _SURFACE_REL).read_text()
+    surface_sources = {
+        rel: (_REPO / rel).read_text()
+        for rel in surface_module_paths(head_surface_src)
+        if (_REPO / rel).exists()
+    }
+    head_names = surface_names(surface_sources)
+    head_surface_declared = declared_surface(
+        (_REPO / _SURFACE_DECLARED_REL).read_text()
+    )
+    undeclared = sorted(head_names - set(head_surface_declared))
+    if undeclared:
+        failures.append(
+            f"{len(undeclared)} solve-surface name(s) have no entry in "
+            f"{_SURFACE_DECLARED}, so they can never enter a cache key and a "
+            f"change to their value would be invisible (capx D79):\n      "
+            + "\n      ".join(undeclared)
+            + "\n    REMEDY (one command, and it moves NO key -- a name declared "
+            "at its live hash\n    is by construction unmoved):\n"
+            "      python3 scripts/solve_surface_register.py --declare-missing"
+        )
+
+    # --- check 1 + 4 + 6 + 7: PR-only, need the merge base ------------------
     if args.base:
+        base_surface_declared = declared_surface(
+            _blob(args.base, _SURFACE_DECLARED_REL) or ""
+        )
+        surface_breaches = surface_append_only_violations(
+            base_surface_declared, head_surface_declared, head_names
+        )
+        if surface_breaches:
+            failures.append(
+                f"{len(surface_breaches)} {_SURFACE_DECLARED} entr(y/ies) changed "
+                f"in this PR; the ledger is APPEND-ONLY:\n      "
+                + "\n      ".join(surface_breaches)
+                + """
+    WHY THIS FAILS (capx D79). The entry is the FROZEN hash moved_rows()
+    compares the live registry against, not a description of today's value.
+    Editing it RESTORES the pre-change key, so the repaired table re-serves the
+    bundle solved on the old one -- the exact hazard the fingerprint closes.
+
+    REMEDY:
+      * a table's VALUE changed -> declare NOTHING. Leaving the frozen line put
+        is what makes the row enter the key. Pay for it with a dated cause block
+        at PINNED_SURFACE_ROWS_BY_ISO in
+        tests/regression/test_persisted_identity.py;
+      * a table was DELETED -> its line STAYS, retired at its last hash, so
+        every historical key is unmoved (rule 26 [R-DELETE]);
+      * a table was ADDED -> `solve_surface_register.py --declare-missing`."""
+            )
+
+        base_epochs = set(epoch_headings(_blob(args.base, _EPOCH_LEDGER_REL) or ""))
+        head_epochs = epoch_headings((_REPO / _EPOCH_LEDGER_REL).read_text())
+        declared_ids = solve_epoch_ids(head_surface_src)
+        unmechanized = sorted(
+            eid
+            for eid in set(head_epochs) - base_epochs
+            if eid not in declared_ids and "KEY ADVANCE" not in head_epochs[eid].upper()
+        )
+        if unmechanized:
+            print(
+                f"\nWARN (check 7): {len(unmechanized)} new cache-epoch ledger "
+                f"entr(y/ies) declare no solve_surface.SolveEpoch and are not "
+                f"marked KEY ADVANCE, so no key moves for them: "
+                f"{', '.join(unmechanized)}.\n"
+                "  If the invalidation is real, declare it in SOLVE_EPOCHS "
+                f"({_SURFACE_REL}) with its scope (modes / isos / reaches_year) "
+                "so the key carries its id for exactly the configs the prose "
+                "names.\n  Prose-only is legitimate when a re-solve already "
+                "covers it -- say so in the entry.\n"
+            )
         base_src = _blob(args.base, _CONFIG_REL)
         if base_src is None:
             print(f"note: {_CONFIG_REL} absent at {args.base}; new-field check skipped")
@@ -433,7 +702,9 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"ok: {len(head_fields)} {_CLASS} fields, "
         f"{len(head_registry)} registered in {_REGISTRY}, all resolve; "
-        f"{len(head_declared)} declared defaults all match HEAD"
+        f"{len(head_declared)} declared defaults all match HEAD; "
+        f"{len(head_names)} solve-surface names across "
+        f"{len(surface_sources)} module(s), all declared"
     )
     return 0
 

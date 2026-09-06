@@ -36,12 +36,32 @@ The ledger below stays load-bearing for everything the stored config cannot see
 (a behavior change that is not a ``ScenarioConfig`` field at all), and it stays
 the only surface on which a same-key invalidation is visible to a READER.
 
+Since 2026-09-06 the key sees one more thing: **the SOLVE SURFACE** (capx D79,
+owner ruling Q54). ``market_sim.config.solve_surface`` fingerprints the seven
+registry modules' module-level values per name and per ISO, and ``cache_key()``
+carries any row whose live hash differs from its FROZEN declaration in
+``config/solve_surface_declared.py``. So the largest class of same-key
+invalidation the ledger below exists for — *"a change to a measured input
+basis"*, a re-derived ``DEMAND_GROWTH_RATES``, a repaired demand curve — now
+moves the key by itself, scoped to the ISOs whose rows moved, and the bundle
+records what it solved on in ``solve_surface.json`` beside its ``config.yaml``.
+Landing declared every name at its live hash, so it moved ZERO keys and
+invalidated nothing (`docs/handoffs/capxd79-solve-surface-no-op-record.json`).
+**What it still cannot see is CODE** — the D55 class, a behaviour change with no
+value and no field behind it — which is why everything below stands unchanged.
+
 **The epoch is a dated ledger entry, not a code token.** There is deliberately
 no ``CACHE_EPOCH`` constant: a constant that entered ``ScenarioConfig`` would
 move the key of *every* config including the backcast keepers (a solve-affecting
 change under rule 24 and a rule-28 matrix row for a non-mechanism), and one that
-did not enter the key would be inert. The epoch is therefore materialized on two
-surfaces, both human-read:
+did not enter the key would be inert. A code-level invalidation may instead be
+declared MECHANICALLY and in SCOPE as a ``solve_surface.SolveEpoch`` — the same
+prose scope (mode, ISOs, "whose horizon reaches 2028") stated so the key carries
+its id for exactly those configs. ``SOLVE_EPOCHS`` is EMPTY at D79's landing by
+owner ruling Q54 row 4 (the 2026-09-06b entry below stays prose; the D65-B-R
+batch is its re-solve), so an entry here is still written as prose first, and the
+epoch is what makes it bite. The epoch is materialized on two surfaces, both
+human-read:
 
 * **Key advances** — when a change legitimately re-keys the DEFAULT config —
   are recorded at ``PINNED_DEFAULT_CACHE_KEY`` in
@@ -966,6 +986,7 @@ six current keepers' input surfaces and cache keys were attested unchanged
 across all three ``scenarios.py``-touching Wave-1 merges (§W1-X close doc §1).
 """
 
+import json
 from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
@@ -975,6 +996,7 @@ import yaml
 
 from market_sim.config import paths
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.solve_surface import surface_stamp
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results.outputs import FleetContext, read_fleet_context
 
@@ -988,6 +1010,13 @@ from market_sim.results.outputs import FleetContext, read_fleet_context
 CACHE_ROOT = paths.RESULTS_ROOT
 
 _CONFIG_FILENAME = "config.yaml"
+
+#: The solve-surface stamp written beside every bundle's ``config.yaml`` (capx
+#: D79): which registry rows this bundle was solved on, which of them had moved
+#: off their declaration and so entered the key, and which epochs applied. With
+#: ``config.yaml`` it makes ``key = f(config, moved rows, epochs)`` reproducible
+#: from the bundle alone.
+_SOLVE_SURFACE_FILENAME = "solve_surface.json"
 
 
 @contextmanager
@@ -1250,7 +1279,9 @@ def save_result(
     """Persist a dispatch result and its config to the cache.
 
     Writes the result as Parquet and, if not already present, the full
-    config as ``config.yaml`` in the same directory.
+    config as ``config.yaml`` in the same directory, plus the solve-surface
+    stamp ``solve_surface.json`` (capx D79) recording which registry rows the
+    bundle was solved on.
 
     Args:
         result: The solved dispatch result to cache.
@@ -1274,6 +1305,11 @@ def save_result(
     path.parent.mkdir(parents=True, exist_ok=True)
     result.to_parquet(path, context=context, demand=demand)
     config.to_yaml_full(path.parent / _CONFIG_FILENAME)
+    # Rewritten on every save (never `if not exists`): the surface can move
+    # between two years of one run, and the stamp must date the bytes on disk.
+    (path.parent / _SOLVE_SURFACE_FILENAME).write_text(
+        json.dumps(surface_stamp(iso, config), indent=2, sort_keys=True) + "\n"
+    )
     return path
 
 

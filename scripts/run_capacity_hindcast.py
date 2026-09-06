@@ -158,6 +158,7 @@ from market_sim.config.scenarios import (  # noqa: E402
     ScenarioConfig,
     crossover_unbridges_year,
 )  # isort: skip
+from market_sim.config.solve_surface import surface_stamp  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.pipeline.api import run_scenario  # noqa: E402
@@ -2538,6 +2539,10 @@ def main(argv: list[str] | None = None) -> int:
         ),
         # -- 3. run outcome ------------------------------------------------- #
         "cache_key": key,
+        # Beside every recorded key (capx D79): which registry rows this run
+        # solved on, which had moved off their declaration and so entered the
+        # key, and which solve epochs applied.
+        "solve_surface": surface_stamp(iso, record_config),
         "bundle": str(bundle),
         "solved_years": solved,
         "bridged_years": bridged,

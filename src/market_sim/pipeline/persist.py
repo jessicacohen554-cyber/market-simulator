@@ -35,6 +35,7 @@ from pathlib import Path
 
 from market_sim.config.paths import REPO_ROOT
 from market_sim.config.plant_taxonomy import fossil_classes
+from market_sim.config.solve_surface import surface_stamp
 
 logger = logging.getLogger(__name__)
 
@@ -343,6 +344,12 @@ def write_run_config(
             )
         },
         "scenario_config": dataclasses.asdict(cfg),
+        # capx D79: which registry rows this run solved on, which had moved off
+        # their declaration and so entered the cache key, and which solve epochs
+        # applied. ADDITIVE and top-level, outside ``scenario_config``, so the
+        # ``--reuse-solved`` comparator (which diffs only ``scenario_config``)
+        # and every cache key are untouched — the ``resolved_inputs`` pattern.
+        "solve_surface": surface_stamp(str(meta.get("iso")), cfg),
         # Runtime environment mirror (same block stamped into meta.json). Kept
         # OUTSIDE scenario_config so the --reuse-solved comparator — which only
         # diffs scenario_config — is unaffected.
