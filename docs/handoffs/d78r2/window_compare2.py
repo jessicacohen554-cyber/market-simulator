@@ -455,7 +455,19 @@ def w123(ctl_leds, arm_leds, sec) -> dict:
             u for u in only_c if sector_of(u, sec) != "1" and u not in a_gone
         )
         unexplained_a = sorted(u for u in only_a if u not in c_gone)
-        exact = div is None or y <= div
+        # W1's "exact" form is the IDENTICAL-FLEET form, so it runs while the
+        # prior-exit sets still agree — i.e. STRICTLY BEFORE the first divergent
+        # year, since at D itself the two screens already see different fleets.
+        # W5's exactness limb uses ``y <= D`` instead, and that asymmetry is
+        # deliberate: an offer reads the PRIOR year's prices, so at D it still
+        # reads a price vector the two legs share. (Instrument repair made
+        # BEFORE any LP: the code had `y <= div` here, stricter than the
+        # PRECOMMIT §4 definition it implements — "in an exact year (identical
+        # fleets)". The PRECOMMIT's text is the governing definition and is
+        # unchanged; only this implementation moved, and it moved toward the
+        # weaker, correct form rather than away from it. Over-strong gates are
+        # the D78-R W4 failure mode.)
+        exact = div is None or y < div
         row = {
             "form": "exact" if exact else "fleet-delta",
             "only_control_rows": len(only_c),
