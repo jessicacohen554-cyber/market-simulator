@@ -7,6 +7,8 @@
  "n_fell": 784,
  "n_rose": 0,
  "dE_implied_gwh": 935.462,
+ "POST_HOC_reported_only_dE_plant_dedup_gwh": 261.461,
+ "POST_HOC_n_plants": 79,
  "S1_band_gwh": [
   311.821,
   2806.386

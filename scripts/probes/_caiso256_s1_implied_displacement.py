@@ -156,6 +156,23 @@ def main() -> None:
         de += e
         rows.append({"unit": str(repaired["unit_ids"][i]), "zone": zn, "pmax": float(pmax[i]),
                      "mc_old": float(np.mean(hi)), "mc_new": float(np.mean(lo)), "hours_in_band": n, "mwh": e})
+    # POST-HOC, REPORTED ONLY (added after the 2023 screen was scored; never a
+    # gate): the same count with at most ONE tranche's worth of MW per
+    # (plant, hour), so sibling tranches of one plant whose bands all contain
+    # lambda are not counted five times over. Recorded for an owner re-charter,
+    # not for this session's verdict, which stays on the registered count.
+    plant_hours: dict[str, np.ndarray] = {}
+    plant_cap: dict[str, float] = {}
+    for i in np.flatnonzero(fell):
+        zn = zone_name(zone[i])
+        if zn not in lam.columns:
+            continue
+        pkey = str(repaired["unit_ids"][i]).split("_econ")[0].split("_peak")[0].split("_comm")[0]
+        lz = lam[zn].to_numpy(dtype=float)
+        hit = ((lz >= mc_new[i]) & (lz < mc_old[i])).astype(float) * float(pmax[i])
+        plant_hours[pkey] = np.maximum(plant_hours.get(pkey, np.zeros(T)), hit)
+        plant_cap[pkey] = max(plant_cap.get(pkey, 0.0), float(pmax[i]))
+    de_dedup = float(sum(v.sum() for v in plant_hours.values()))
     n_tgt = int(tgt.sum())
     rose = int((tgt & ((mc_new.mean(axis=-1) if mc_new.ndim == 2 else mc_new) > (mc_old.mean(axis=-1) if mc_old.ndim == 2 else mc_old) + 1e-9)).sum())
     res = {
@@ -163,6 +180,8 @@ def main() -> None:
         "definition": "dE_implied = sum_i pmax_i * #{t: mc_new_i <= lambda_z(i),t < mc_old_i} over CT_PEAKER tranches whose P0 offer fell; lambda = keeper committed P1 zonal price; first-order, price held fixed",
         "n_target_tranches": n_tgt, "n_fell": int(fell.sum()), "n_rose": rose,
         "dE_implied_gwh": round(de / 1e3, 3),
+        "POST_HOC_reported_only_dE_plant_dedup_gwh": round(de_dedup / 1e3, 3),
+        "POST_HOC_n_plants": len(plant_hours),
         "S1_band_gwh": [round(de / 3e3, 3), round(3 * de / 1e3, 3)],
         "keeper_ct_peaker_twh": None,
         "top_rows": sorted(rows, key=lambda r: -r["mwh"])[:12],
