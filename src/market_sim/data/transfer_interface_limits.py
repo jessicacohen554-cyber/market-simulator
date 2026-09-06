@@ -54,6 +54,90 @@ logger = logging.getLogger(__name__)
 
 DATATYPE = "transfer-interface-limits"
 
+#: Fraction of covered hours in which the MEASURED flow may exceed a published
+#: limit before that year's series is judged inadmissible as an enforceable
+#: security limit (``ScenarioConfig.pjm_interface_feed_admissibility_gate``).
+#:
+#: DECLARED EX ANTE and never swept (rule 29 ``[R-SCREEN]`` clause (c); pjm-167
+#: PRECOMMIT ``PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md``).
+#: 5 % is the conventional materiality bar, not a tuned value: the partition it
+#: produces on PJM's "Average Eastern" series is IDENTICAL for any threshold in
+#: (2.1 %, 17.5 %) — an eightfold range — so no result selects it.
+#:
+#: Why a limit is judged by its own flows. A transfer limit is a statement that
+#: flow above it is insecure; a posting the realized flow exceeds in a QUARTER
+#: of all hours is not that statement. Measured on PJM "Average Eastern"
+#: (pjm-167 §2.2): 2019 1.6 %, 2020 18.7 %, 2021 27.9 %, 2022 17.5 %,
+#: 2023 2.1 %, 2024 0.0 %, 2025 0.0 % — and the distinct-value count over ~8760
+#: hours moves 7,063 / 1 / 85 / 58 / 5,677 / 8,767 / 8,750 across the same
+#: years. Pre-2023 the feed posts a near-static seasonal LIMIT-SET value; from
+#: 2024 it posts the hourly-averaged TLC the mechanism's docstring describes.
+#: They are different quantities under one series name, which is exactly rule 14
+#: ``[R-ACCURATE]``'s named exception ("a different time/area aggregation"), and
+#: enforcing the early vintage verbatim is what rule 14 calls making results
+#: LESS reflective of reality.
+PJM_INTERFACE_FEED_MAX_EXCEEDANCE_FRAC: float = 0.05
+
+
+def interface_series_admissibility(
+    frame: pd.DataFrame, name: str
+) -> tuple[bool, dict[str, float]]:
+    """Judge one published limit series against its own measured flows.
+
+    The clean datatype carries ``transfer_mw`` beside ``limit_mw`` and its
+    schema reserves that column for exactly this use — *"carried ONLY for
+    crosswalk sanity checks (binding frequency / flow direction), never as a
+    dispatch target"*. Nothing here reads a model output, a price or a scoring
+    target: it compares two columns of one published feed to each other.
+
+    A series is INADMISSIBLE when the measured flow exceeds the posted limit in
+    more than :data:`PJM_INTERFACE_FEED_MAX_EXCEEDANCE_FRAC` of the hours where
+    both are present. Hours missing either column are excluded rather than
+    counted as passes, so a sparse series cannot pass by absence.
+
+    Args:
+        frame: The year's dense hourly interface frame from
+            :func:`load_interface_hourly`.
+        name: The published series name, e.g. ``"Average Eastern"``.
+
+    Returns:
+        ``(admissible, diagnostics)``. ``diagnostics`` carries
+        ``exceedance_frac``, ``n_hours``, ``n_exceed``, ``max_excess_mw`` and
+        ``n_distinct_limits`` — the last reported for provenance only, never
+        applied as a second test (rule 19 ``[R-ONE-MECH]``: one criterion).
+        An absent or empty series is reported ``admissible=True`` with
+        ``n_hours=0``, leaving the caller's existing missing-series contract
+        untouched.
+    """
+    sub = frame[frame["interface"] == name]
+    diag: dict[str, float] = {
+        "exceedance_frac": 0.0,
+        "n_hours": 0.0,
+        "n_exceed": 0.0,
+        "max_excess_mw": 0.0,
+        "n_distinct_limits": 0.0,
+    }
+    if sub.empty:
+        return True, diag
+    limit = pd.to_numeric(sub["limit_mw"], errors="coerce").to_numpy(dtype=float)
+    flow = (
+        pd.to_numeric(sub["transfer_mw"], errors="coerce").to_numpy(dtype=float)
+        if "transfer_mw" in sub.columns
+        else np.full(limit.shape, np.nan)
+    )
+    both = np.isfinite(limit) & np.isfinite(flow)
+    diag["n_distinct_limits"] = float(np.unique(limit[np.isfinite(limit)]).size)
+    if not both.any():
+        # No measured flow to judge against — the test cannot fire, so the
+        # series keeps the pre-gate behaviour rather than being refused blind.
+        return True, diag
+    excess = flow[both] - limit[both]
+    diag["n_hours"] = float(both.sum())
+    diag["n_exceed"] = float((excess > 0.0).sum())
+    diag["exceedance_frac"] = diag["n_exceed"] / diag["n_hours"]
+    diag["max_excess_mw"] = float(excess.max())
+    return diag["exceedance_frac"] <= PJM_INTERFACE_FEED_MAX_EXCEEDANCE_FRAC, diag
+
 
 def load_interface_hourly(iso: str, year: int) -> pd.DataFrame | None:
     """Return the year's dense hourly interface-limit frame, or ``None``.
@@ -103,7 +187,9 @@ def _series_hourly(frame: pd.DataFrame, name: str, hours: int) -> np.ndarray | N
 PJM_EASTERN_INTERFACE_SERIES = "Average Eastern"
 
 
-def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray:
+def pjm_eastern_interface_hourly(
+    year: int, hours: int, admissibility_gate: bool = False
+) -> np.ndarray:
     """The measured EMAAC-import-cut hourly limit (``pjm_east_interface_cut``).
 
     Returns the ``(hours,)`` "Average Eastern" published limit — the joint
@@ -128,6 +214,20 @@ def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray:
     analyst remembering. Same posture as ``pjm_da_virtual_bids``. See
     ``docs/FINDING-pjm119-silent-overlay-degradation-2026-07.md``.
 
+    ``admissibility_gate`` (GATED default-off,
+    ``ScenarioConfig.pjm_interface_feed_admissibility_gate``; pjm-167): judge
+    the year's posted series against its OWN measured flows through
+    :func:`interface_series_admissibility` before enforcing it, and where it
+    fails, return an all-``+inf`` array so the joint cut is non-binding and the
+    two links keep their static per-link TTCs — the same posture a forecast year
+    already takes. This is rule 14 ``[R-ACCURATE]``'s named exception, not a
+    licence to drop measured data: the pre-2023 vintage of this feed is a
+    near-static seasonal limit-set posting, a DIFFERENT QUANTITY from the
+    post-2023 hourly TLC under one series name, and the model enforced it as a
+    hard LP bound below flows PJM actually carried (pjm-167 §2). The
+    fall-through is LOGGED AT WARNING with its full arithmetic and is selected
+    by the feed alone — never by a price, a residual or any model output.
+
     Raises:
         FileNotFoundError: No clean partition for ``year``, or the partition
             carries no "Average Eastern" series.
@@ -147,6 +247,28 @@ def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray:
             "series — run scripts/regenerate_clean.py "
             "transfer-interface-limits (the mechanism never silently no-ops)"
         )
+    if admissibility_gate:
+        ok, diag = interface_series_admissibility(frame, PJM_EASTERN_INTERFACE_SERIES)
+        if not ok:
+            logger.warning(
+                "pjm_east_interface_cut %d: %r is INADMISSIBLE as an enforceable "
+                "security limit and the joint EMAAC import cut is NOT APPLIED "
+                "this year (the links keep their static per-link TTCs, the "
+                "forecast-lane posture). The measured flow exceeds the posted "
+                "limit in %.1f%% of %d covered hours (bar %.1f%%), by up to "
+                "%.0f MW; the series takes %d distinct values over the year. "
+                "This is a LOUD, RECORDED fall-through under "
+                "ScenarioConfig.pjm_interface_feed_admissibility_gate — not the "
+                "silent degradation pjm-119 forbids.",
+                year,
+                PJM_EASTERN_INTERFACE_SERIES,
+                100.0 * diag["exceedance_frac"],
+                int(diag["n_hours"]),
+                100.0 * PJM_INTERFACE_FEED_MAX_EXCEEDANCE_FRAC,
+                diag["max_excess_mw"],
+                int(diag["n_distinct_limits"]),
+            )
+            return np.full(hours, np.inf, dtype=float)
     out = np.where(np.isnan(measured), np.inf, measured)
     # Non-positive published limits clamp to 0 (no secure transfer that
     # hour), matching the per-link overlay's convention.
@@ -220,7 +342,11 @@ def pjm_apsouth_interface_hourly(year: int, hours: int) -> np.ndarray:
 
 
 def pjm_interface_ttc_hourly(
-    ttc: np.ndarray, iso_config, year: int, hours: int
+    ttc: np.ndarray,
+    iso_config,
+    year: int,
+    hours: int,
+    admissibility_gate: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Expand static TTC to measured hourly forward caps on the mapped links.
 
@@ -236,6 +362,20 @@ def pjm_interface_ttc_hourly(
         ``(ttc_hourly, ttc_import)`` — the ``(hours, n_links)`` forward-
         direction cap matrix and the static ``(n_links,)`` array kept as the
         reverse-direction bound.
+
+    ``admissibility_gate`` (GATED default-off,
+    ``ScenarioConfig.pjm_interface_feed_admissibility_gate``; pjm-167): each
+    mapped series is judged against its OWN measured flows by
+    :func:`interface_series_admissibility`, and one that fails is DROPPED from
+    that link's stack — so a link whose every mapped series fails keeps its
+    static rating, while a link with one good and one bad series (the pre/post
+    pairs) still rides the good one. Measured on the six consumed series
+    (pjm-167 §2.2 addendum): AEP/DOM, both AP-South and both Bedington postings
+    clear at 0.0-1.0 % in EVERY year 2019-2025, and "Average Central" at
+    <=2.5 %; only "Average Eastern" (18.7 / 27.9 / 17.5 % in 2020/21/22) and
+    "Average Western" (6.2 / 6.7 / 9.7 %) fail, and only there. The gate is
+    therefore INERT for 2019 and 2023-2025 on every link, so every committed
+    backcast keeper is byte-identical under it.
 
     Raises:
         FileNotFoundError: No clean partition for ``year``, or the partition
@@ -272,6 +412,30 @@ def pjm_interface_ttc_hourly(
             continue
         stack = []
         for name in series_names:
+            if admissibility_gate:
+                ok, diag = interface_series_admissibility(frame, name)
+                if not ok:
+                    logger.warning(
+                        "pjm_measured_interface_limits %d: series %r is "
+                        "INADMISSIBLE as an enforceable security limit and is "
+                        "DROPPED from %s->%s (the link keeps its static rating "
+                        "unless another mapped series carries it). The measured "
+                        "flow exceeds the posted limit in %.1f%% of %d covered "
+                        "hours (bar %.1f%%), by up to %.0f MW; the series takes "
+                        "%d distinct values over the year. Loud, recorded "
+                        "fall-through under "
+                        "ScenarioConfig.pjm_interface_feed_admissibility_gate.",
+                        year,
+                        name,
+                        zones[0],
+                        zones[1],
+                        100.0 * diag["exceedance_frac"],
+                        int(diag["n_hours"]),
+                        100.0 * PJM_INTERFACE_FEED_MAX_EXCEEDANCE_FRAC,
+                        diag["max_excess_mw"],
+                        int(diag["n_distinct_limits"]),
+                    )
+                    continue
             measured = _series_hourly(frame, name, hours)
             if measured is None:
                 logger.warning(

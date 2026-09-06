@@ -1545,6 +1545,25 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "capacity_screen_peak_measured_hindcast",
+    # pjm-167: the per-solve-year EIA-860 vintage gate
+    # (FINDING-pjm167-input-clock-2021-2022-2026-09-06.md §3; GATED default
+    # False => every backcast reads the canonical 2025ER snapshot exactly as
+    # before, byte-identical). Dropped from the hash at its declared False so
+    # every pre-existing cache key of all six ISOs — every backcast keeper and
+    # every committed forecast bundle included — is byte-stable; an armed run
+    # carries a different fleet registry and so keys distinctly. SHARED field —
+    # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "eia860_vintage_tracks_solve_year",
+    # pjm-167: the PJM interface-feed admissibility gate
+    # (FINDING-pjm167-input-clock-2021-2022-2026-09-06.md §2; GATED default
+    # False => every published series is enforced verbatim exactly as before,
+    # byte-identical). Dropped from the hash at its declared False so every
+    # pre-existing key of all six ISOs is byte-stable; an armed run can drop a
+    # series from the LP's bounds and so keys distinctly. SHARED field — very
+    # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "pjm_interface_feed_admissibility_gate",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2097,6 +2116,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # its shipping default (False = the de-grown weather-year peak). Registered
     # IN THE SAME COMMIT as the field.
     "capacity_screen_peak_measured_hindcast": "False",
+    "eia860_vintage_tracks_solve_year": "False",
+    "pjm_interface_feed_admissibility_gate": "False",
 }
 
 
@@ -4375,6 +4396,40 @@ class ScenarioConfig:
     # of retired-2023->25 units), a correctness/provenance refinement rather than
     # a scarcity driver; gated, recalibrate before a keeper. See
     # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
+    #   CAVEAT on that "small" measured effect: it was measured on ERCOT inside
+    #   2023-2025, where the current snapshot and the year-matched vintage
+    #   genuinely nearly agree. It does NOT generalise to the out-of-training
+    #   years the program span now reaches (rule 22, 2019-2025). Measured for
+    #   PJM (pjm-167): the canonical snapshot yields an IDENTICAL 38,722 MW coal
+    #   fleet in 2021, 2022 and 2023, while the year-matched vintages carry
+    #   48,708 / 41,945 / 37,118 MW -- a 9,986 MW (39 %) understatement in 2021,
+    #   where the model then dispatches 95.4 % of its own coal ceiling and sits
+    #   5,723 MW below EIA-930 metered coal peak. The COD ramp cannot repair
+    #   this: it ages out units it is GIVEN, and a unit that retired before the
+    #   snapshot was never given.
+    eia860_vintage_tracks_solve_year: bool = False
+    # ^ Per-solve-year EIA-860 vintage (backcast overlay, pjm-167 --
+    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # sec 3; PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md). The field
+    # above is a RUN-level scalar while a rule-16 [R-ALLYEARS] bundle spans
+    # three years, so it cannot express "each year reads its own annual
+    # release". When True in backcast mode, the vintage is resolved from the
+    # YEAR BEING SOLVED through paths.resolve_backcast_eia860_vintage, which
+    # both backcast entry points share (rule 19 [R-ONE-MECH]); a year with no
+    # committed vintage_<year>/ directory falls through to the canonical
+    # snapshot, so the gate is safe on any span. An explicit
+    # eia860_vintage_year still wins, keeping its exact present meaning and its
+    # frozen cache key.
+    #
+    # Rule 13/14 admissibility: the vintage is selected by CALENDAR YEAR alone
+    # -- never by a residual, a gate or any model output -- and each vintage is
+    # the year's own published EIA-860 registry, the most accurate available
+    # statement of what existed. It regenerates for any year and responds to
+    # changed conditions, and a FORECAST is untouched (forecast keeps the
+    # latest snapshot, and the hindcast lane keeps its explicit pin).
+    #
+    # Zero fitted scalars. Off by default; byte-identical off, and off for
+    # every ISO until a screen clears its pre-registered structural gates.
     # Mothballed-but-operating re-carry (the Cottonwood lane,
     # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
     # canonical snapshot's OP filter drops OA (out-of-service / mothballed)
@@ -14377,6 +14432,54 @@ class ScenarioConfig:
     # as pjm_measured_interface_limits (forecast years keep the static
     # seeds). Off by default; byte-identical off.
     pjm_east_interface_cut: bool = False
+
+    # PJM interface-feed ADMISSIBILITY gate (backcast overlay, pjm-167 --
+    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # sec 2; PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md).
+    # Judges each published limit series against its OWN measured flows before
+    # the LP enforces it, and where the posting is not an enforceable security
+    # limit, that series is not applied for that year -- the joint EMAAC cut
+    # goes non-binding and the per-link overlay drops the series, so the links
+    # keep their static per-link TTCs, which is the posture a FORECAST year
+    # already takes.
+    #
+    # THE DEFECT. PJM's "Average Eastern" posting changes basis across the
+    # 2023 boundary: pre-2023 it is a near-static seasonal LIMIT-SET value (one
+    # distinct value across all of 2020; 85 across 2021) and from 2024 it is
+    # the hourly-averaged TLC this mechanism's docstring describes (8,767
+    # distinct values). Enforced verbatim, the early vintage is a hard LP bound
+    # BELOW flows PJM actually carried -- the measured flow exceeds the posted
+    # limit in 27.9 % of 2021 hours by up to 5,242 MW, against 0.0 % in 2024
+    # and 2025 -- and it produced 74 hours of unserved energy at VOLL in
+    # PJM_EMAAC alone (51 % of the 2021 C3a error), inverting PJM's real
+    # east-west price gradient (model EMAAC +$34.50 against the rest of PJM;
+    # actual NJ Hub -$5.43 against AEP-Dayton).
+    #
+    # Rule 14 [R-ACCURATE]'s NAMED EXCEPTION, not a licence to drop measured
+    # data: the two vintages are "a different time/area aggregation" under one
+    # series name, so using the early one literally makes results LESS
+    # reflective of reality. The test is one criterion on one feed
+    # (data.transfer_interface_limits.interface_series_admissibility), reading
+    # the clean datatype's own transfer_mw column -- which its schema reserves
+    # for exactly this ("carried ONLY for crosswalk sanity checks (binding
+    # frequency / flow direction), never as a dispatch target"). Nothing reads
+    # a price, a residual or any model output.
+    #
+    # DISCRIMINATING, measured on all six consumed series 2019-2025: AEP/DOM,
+    # both AP-South and both Bedington postings clear at 0.0-1.0 % in EVERY
+    # year, and "Average Central" at <=2.5 %. Only "Average Eastern" (18.7 /
+    # 27.9 / 17.5 % in 2020/21/22) and "Average Western" (6.2 / 6.7 / 9.7 %)
+    # fail, and only in those three years. So the gate is INERT for 2019 and
+    # for 2023-2025 on every link, and every committed backcast keeper is
+    # byte-identical under it.
+    #
+    # Zero fitted scalars. The 5 % bar is declared ex ante in the PRECOMMIT and
+    # never swept (rule 29 [R-SCREEN] clause (c)); the partition it produces is
+    # identical for any threshold in (2.1 %, 17.5 %), an eightfold range, so no
+    # result selects it. The fall-through is LOGGED AT WARNING with its full
+    # arithmetic -- a loud, recorded degradation, never the silent one pjm-119
+    # forbids. Off by default; byte-identical off.
+    pjm_interface_feed_admissibility_gate: bool = False
 
     # PJM measured AP-SOUTH interface cut (backcast/calibration overlay,
     # pjm-134 — results/calibration/FINDING-pjm134-dominion-zonal-inversion-

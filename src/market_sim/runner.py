@@ -1470,14 +1470,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # weather-year inputs are fixed across the run, so the vintage is set once
     # here, before any load. None (forecast, or no committed vintage dir) resets
     # to the canonical snapshot. See config.paths.set_eia860_vintage.
-    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.paths import (
+        resolve_backcast_eia860_vintage,
+        set_eia860_vintage,
+    )
 
     # A capacity hindcast (plan §1.3) is forecast-mode but initialises from a
     # vintage snapshot (the 2020 Final release) so the modelled start-year fleet
     # matches what actually existed -- the vintage is honoured under
     # config.hindcast too. A plain forecast resets to the canonical snapshot.
+    #
+    # In BACKCAST mode the weather year IS the solved year, so it is the year
+    # eia860_vintage_tracks_solve_year resolves against (pjm-167). The hindcast
+    # leg keeps the explicit pin alone -- resolve_backcast_eia860_vintage gives
+    # an explicit eia860_vintage_year precedence, and the tracking gate is
+    # passed only on the backcast leg, so a hindcast is untouched either way.
     set_eia860_vintage(
-        config.eia860_vintage_year
+        resolve_backcast_eia860_vintage(
+            config.eia860_vintage_year,
+            int(config.weather_year) if config.mode == "backcast" else None,
+            config.mode == "backcast"
+            and getattr(config, "eia860_vintage_tracks_solve_year", False),
+        )
         if (config.mode == "backcast" or config.hindcast)
         else None
     )
