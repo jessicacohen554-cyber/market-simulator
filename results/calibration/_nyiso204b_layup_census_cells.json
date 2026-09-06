@@ -1,0 +1,31 @@
+{
+  "criterion": "derive_campd_bridge_layup_exclusions: median(grossLoad) == 0 in EVERY (year, 4h block) cell; BLOCK_HOURS=4 -> 6 blocks x 3 years = 18 cells",
+  "plants": {
+    "2480": {
+      "annual_online_share": 0.029425182481751824,
+      "qualifies_laid_up": true,
+      "total_cells": 18,
+      "zero_cells": 18
+    },
+    "2517": {
+      "annual_online_share": 0.38594890510948904,
+      "qualifies_laid_up": false,
+      "total_cells": 18,
+      "zero_cells": 15
+    },
+    "2625": {
+      "annual_online_share": 0.29923205596107055,
+      "qualifies_laid_up": true,
+      "total_cells": 18,
+      "zero_cells": 18
+    },
+    "8006": {
+      "annual_online_share": 0.1462515206812652,
+      "qualifies_laid_up": true,
+      "total_cells": 18,
+      "zero_cells": 18
+    }
+  },
+  "session": "nyiso-204b",
+  "status": "ZERO LP \u2014 CAMPD conduct only"
+}
