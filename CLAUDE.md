@@ -319,6 +319,22 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     requires its own declaration, so the distinction is enforced, not merely disciplined. Re-solving
     an ALREADY-SPENT locked test remains a governance breach rather than a CI failure — CI checks
     the grant, not the spend history, which is what the marker's `locked_test` note records.)*
+    **RE-CHECKED AT REGISTRATION since 2026-09-06** (owner ruling **R-AZ**, audit-program director
+    sitting, card "Marker gate"): the `--year` gate reads the marker once, at LAUNCH, so a
+    multi-hour solve can outlive the authorization it started under — the Z-6 case, where a NYISO
+    2022 validation solve launched under the D56-R `complete` marker and `main` withdrew that
+    marker (nyiso-193) while the LP ran, leaving only the lane's own discipline between a withdrawn
+    marker and a committed sidecar (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md`
+    §1a). `scripts/dashboard_add_run.py` — the single seam where a run's solve years become a
+    committed sidecar — now re-asks the SAME question at registration
+    (`enforce_registration_marker_gate` → `holdout_policy.registration_refusals`, so the tier map
+    and freeze precedence stay defined once), refusing any run whose years fall outside 2023–2025
+    unless the ISO holds that tier's marker **at the time of registration** and the tier is not
+    frozen. It runs before the sidecar, payload and bench parts are written, so a refused run
+    leaves nothing behind. **There is no bypass flag: a registration that fails this check is not a
+    registration** — the marker is restored by an explicit owner act and the run re-registered, or
+    the run stays unregistered and git history is the record (rule 15). This is a fourth gate, not
+    a change to the launch gate's semantics, and it changes no already-registered run.
 1. `[R-FROZEN-DERIVE]` **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.
