@@ -51,7 +51,7 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | Lane | Wave | Model | Profile | Status | Branch realised | PR | FINDING |
 |---|---|---|---|---|---|---|---|
 | SPP-10 audit + doc 00 fix | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-10-audit-k7wq`) | — | — |
-| SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-11-fetch-epa-eia-m3rd`) | — | — |
+| SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | **LANDED 2026-09-06** — all four §6 items 1–4 GOT, blocked table EMPTY | `claude/spp-11-fetch-epa-eia-xs70mz` (stem issued `…-m3rd`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-11-2026-09-06.md` |
 | SPP-12 portal.spp.org + spp.org fetch | W1 | Opus | shared | ISSUED r#1 | — (stem `claude/spp-12-fetch-portal-x9cn`) | — | — |
 | SPP-20 register (pin flip) | W2 | Fable | shared→spp | CHARTERED · blocked on P1–P8 + G12 | — | — | — |
 | SPP-21 matrix shard + §5.7 | W2 | Opus | code | HELD r#1 (base file written by capx D78-R2 30 min before the pin) · issue at sitting #2 | — | — | — |
