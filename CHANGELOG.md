@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-06 — SPP addition program chartered (docs only)
+
+A seventh ISO — SPP (Southwest Power Pool) — gets a plan and a standing workstream director.
+**Docs only**: no code, no `ScenarioConfig` field or default, no data, no solve, no keeper /
+marker / matrix shard / registry / workflow edit; SPP is still NOT registered (`_ISO_BUILDERS`
+holds six) and every six-ISO pin is untouched.
+
+- **`docs/multi-iso/spp-addition-plan-2026-09.md`** — definition of done (a 2023–2025 SPP keeper on
+  the backcast dashboard, six existing keepers' cache keys unmoved throughout); the verified state at
+  charter (what SPP data already exists, the five-place six-ISO pin, the `spp`/`DAMLZHBSPP_*` token
+  trap, the moved portal.spp.org API); the eight owner cards P1–P8 (topology by audit — owner ruling
+  O-1; per-ISO seam representation; ERCOT DC ties; reserves deferred; no scarcity seed; tail
+  threshold; the first-solve rule-29 screen with no incumbent control; forecast entry routed); the
+  wave graph W1–W6 with `[FABLE]`/`[OPUS]` labels per lane; the lane table; the fetch/upload manifest
+  (every row a fetch lane first — owner ruling O-3); hard gates G1–G18; the prompt pack (W1–W4 charters
+  in full, W5 reserved, W6 routed to the capx director).
+- **`docs/handoffs/spp-desk-handoff-2026-09-06.md`** + **`spp-desk-ledger-2026-09.md`** — the SPP
+  ADDITION DESK (standalone — owner ruling O-2), mirroring the scenario desk's §0–§7 structure and the
+  capx director's refresh doctrine: first-act read order, grade-by-content, ask-before-LOST, never
+  read a green check as proof, cards via AskUserQuestion, one sitting = one ledger entry, errors
+  against interest, collision register against the capx / SCN / per-ISO lanes.
+- Index lines in `docs/README.md` and `docs/multi-iso/README.md`.
+
 ## 2026-09-06 — wallclock 3a: the per-ISO anchor table re-baselined on main (docs only)
 
 Wave-3 item 3a of the wall-clock desk (`docs/handoffs/wallclock-desk-log-2026-09.md` §1 row 3a),
