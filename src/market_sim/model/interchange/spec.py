@@ -1370,6 +1370,142 @@ MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR: dict[
     },
 }
 
+# MISO PJM seam — the HOURLY neighbour-anchored ladder, as per-band OFFSETS
+# (miso-231).  Applied price: pi_k(t) = pjm_border(t) + delta_k, assembled at
+# solve time against the measured hourly western-border DA series
+# (data.eia_loader.measured_miso_pjm_border_prices — the SAME series
+# miso_pjm_lmp_import_pricing already reads hourly into the solve).  So band k
+# clears in hour t iff spread(t) = MISO_price(t) - border(t) > delta_k.
+#
+# THE DEFECT IT ATTACKS.  miso-226 measured what the annual neighbour anchor
+# above does and does not do, and the miso-230 keeper carries the non-claim
+# forward verbatim: it repairs the ladder's LEVEL and not its RESPONSIVENESS.
+#   corr(imports, own price)  keeper +0.750 -> arm +0.725  vs MEASURED -0.101
+#   price-decile slope d1-d10 keeper -3,573 -> arm -3,217   vs MEASURED +1,322
+# 3 % of the distance on the correlation, 10 % of the sign error on the slope.
+# The structural reason: a FIXED price ladder is cleared by the LP against its
+# OWN internal price, so re-anchoring moves where the bands sit and not WHEN
+# they clear — the bands still leave merit exactly when MISO's price falls,
+# which is when MISO actually imports most.
+#
+# THE CONSTRUCTION is the synthesis of two mechanisms already registered here:
+# miso_pjm_lmp_import_pricing's hourly measured anchor (which prices every band
+# identically, "no flow-responsive slope") and the Q-Q ladder's per-band depth
+# slope (which is frozen annually).  This is the first with both.  Derived by
+# derive_miso_seam_ladders.py::derive_pjm_neighbour_hourly — byte-for-byte the
+# incumbent estimator (same _derive_one/qq coupling, same midpoint-depth grid on
+# the same SEAM_FLOW_TRANCHES, same measured EIA-930 flows, same no-wash
+# reconciliation), reading the DA-minus-border SPREAD instead of either price.
+# Zero fitted parameters; identical rule-23 [R-FROZEN-DERIVE] re-derive trigger.
+#
+# WHAT PHASE 0 MEASURES (scripts/probes/_miso231_hourly_seam_phase0.py, zero-LP),
+# driven by the MEASURED record alone and scored against the MEASURED seam flow:
+#   corr(sim, measured flow)   incumbent -0.253 / annual -0.262 / HOURLY +0.271
+# i.e. both fixed ladders are NEGATIVELY correlated with the measured hourly
+# flow — they get the hour-to-hour seam backwards — and the hourly form flips the
+# sign.  It closes ~58 % of the correlation distance (vs the annual form's 3 %)
+# and ~48 % of the slope's sign error; the slope STAYS NEGATIVE, so this is a
+# partial repair and is reported as one.  It also undoes the annual form's own
+# reported volume cost: 4,649 / 3,673 / 3,199 MW against the measured 4,674 /
+# 3,678 / 3,198 — within 0.5 % in all three years.
+#
+# WHY THIS IS NOT THE REFUTED SPREAD HURDLE (derive_miso_seam_ladders' own
+# docstring records the seam being moved OFF a spread basis because the measured
+# flow "is uncorrelated with the RT LMP spread, r = +0.06"):
+#   (1) that is the RT spread against MISO's hub; the DA spread against the PJM
+#       western border correlates with flow at +0.240 / +0.265 / +0.194, against
+#       corr(flow, MISO DA) of -0.136 / -0.039 / -0.059;
+#   (2) a hurdle is ONE threshold, this is the same 8-band ladder, and the Q-Q
+#       coupling puts the shallow bands at NEGATIVE offsets (band 1 at -$29.17 in
+#       2023) so they clear even when MISO is far below PJM — exactly the
+#       "46-56 % of import MWh inside the $2 hurdle" a hurdle deletes.
+#
+# The deeply negative EXPORT offsets are the measured record speaking, not a
+# clamp: the PJM seam almost never exports, so P[flow < -L] ~ 0 and the export
+# quantile lands at the spread's sample floor — an effectively never-clearing
+# rung, the same role the annual ladder's flat $7.02 export bands play.
+#
+# PJM ONLY, a DATA boundary rather than a choice (rule 14 [R-ACCURATE]): no
+# measured SPP or SOCO/TVA price series is held under data/raw.  Entries here
+# OVERLAY the per-year table and DISPLACE the annual neighbour overlay on any row
+# they cover (alternatives, never stacked — rule 19 [R-ONE-MECH]); no hurdle is
+# added on top, since delta_k is a measured spread quantile that already embeds
+# delivery/wheeling.  Gated by ScenarioConfig.miso_seam_neighbour_hourly_ladder
+# (default off); byte-identical when False, and a no-op for any year absent here
+# or when the measured border series is unavailable.
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2023: {
+        "PJM": {
+            "import": (-29.17, -9.84, -3.98, -0.11, 2.43, 4.62, 7.05, 11.20),
+            "export": (
+                -93.98,
+                -121.47,
+                -121.47,
+                -121.47,
+                -121.47,
+                -121.47,
+                -121.47,
+                -121.47,
+            ),
+        },
+    },
+    2024: {
+        "PJM": {
+            "import": (-13.87, -6.23, -1.91, 1.04, 3.46, 6.18, 10.47, 19.31),
+            "export": (
+                -35.03,
+                -65.32,
+                -74.37,
+                -74.37,
+                -74.37,
+                -74.37,
+                -74.37,
+                -74.37,
+            ),
+        },
+    },
+    2025: {
+        "PJM": {
+            "import": (-15.79, -6.12, -0.67, 2.64, 5.82, 9.68, 16.93, 29.86),
+            "export": (
+                -60.49,
+                -166.07,
+                -166.07,
+                -166.07,
+                -166.07,
+                -166.07,
+                -166.07,
+                -166.07,
+            ),
+        },
+    },
+}
+
+#: The pooled 2023-2025 HOURLY neighbour-anchored PJM offsets — the FORWARD
+#: story (rule 13 [R-MEASURED]): the multi-year revealed spread structure a
+#: forecast year regenerates from, the same two-track design the incumbent and
+#: annual neighbour ladders both use.
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[
+    str, dict[str, tuple[float, ...]]
+] = {
+    "PJM": {
+        "import": (-15.84, -6.72, -1.88, 1.16, 3.59, 6.23, 9.66, 16.08),
+        "export": (
+            -56.08,
+            -152.99,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+        ),
+    },
+}
+
+
 #: The pooled 2023-2025 neighbour-anchored PJM ladder — the FORWARD story
 #: (rule 13): the multi-year revealed neighbour-priced seam structure a forecast
 #: year regenerates from, the same two-track design the incumbent ladder uses.

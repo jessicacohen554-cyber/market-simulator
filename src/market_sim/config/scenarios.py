@@ -1223,6 +1223,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # branch, and the flag is REFUSED without miso_seam_measured_ladder); an
     # armed run reprices the PJM seam's 16 band rows and hashes distinctly.
     "miso_seam_neighbour_anchored_ladder",
+    # miso-231: byte-identical OFF (the hourly overlay is read only inside the
+    # armed branch, and the flag is REFUSED without miso_seam_measured_ladder);
+    # an armed run reprices the PJM seam's 16 band rows HOURLY and hashes
+    # distinctly. Registered WITH the field, per the nyiso-119 discipline.
+    "miso_seam_neighbour_hourly_ladder",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -1967,6 +1972,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-225 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_anchored_ladder": "False",
+    # Added by miso-231 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_neighbour_hourly_ladder": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -15126,6 +15134,41 @@ class ScenarioConfig:
     # PRECOMMIT-miso225-transport-seam-joint-2026-09-06.md.
     miso_seam_neighbour_anchored_ladder: bool = False
 
+    # MISO seam import ladder anchored on the neighbour's own price HOUR BY HOUR
+    # (miso-231), the successor miso-226 named and the miso-230 keeper carries
+    # forward. The annual overlay above repairs the ladder's LEVEL and not its
+    # RESPONSIVENESS: corr(imports, own price) moved +0.750 -> +0.725 against a
+    # MEASURED -0.101, 3 % of the distance, because a FIXED price ladder is
+    # cleared by the LP against its OWN internal price — re-anchoring moves
+    # where the bands sit, not WHEN they clear, so they still leave merit
+    # exactly when MISO's price falls, which is when MISO imports most. Armed,
+    # band k's offer becomes pi_k(t) = pjm_border(t) + delta_k, assembled at
+    # solve time against the measured hourly western-border DA series
+    # (data.eia_loader.measured_miso_pjm_border_prices — the SAME series
+    # miso_pjm_lmp_import_pricing already reads hourly into the solve), so band
+    # k clears iff spread(t) > delta_k. The delta_k offsets are the identical
+    # Q-Q duration coupling read off the DA-minus-border SPREAD (interchange
+    # spec MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR, derived by
+    # derive_miso_seam_ladders.py::derive_pjm_neighbour_hourly, rule 23). Zero
+    # fitted parameters. It is the synthesis of two mechanisms already
+    # registered here — that flag's hourly measured anchor (which prices every
+    # band identically, "no flow-responsive slope") and this ladder's per-band
+    # depth slope (which is frozen annually) — and the first with both. Phase 0
+    # (zero-LP, scripts/probes/_miso231_hourly_seam_phase0.py) measures both
+    # fixed ladders NEGATIVELY correlated with the measured hourly seam flow
+    # (-0.253 / -0.262) and this form at +0.271: a sign flip on agreement with
+    # reality, ~58 % of the correlation distance and ~48 % of the slope's sign
+    # error, with the slope STILL NEGATIVE (a partial repair, reported as one).
+    # PJM ONLY — the same data boundary the annual overlay states. DISPLACES the
+    # annual overlay on the rows it covers (alternatives, never stacked, rule 19
+    # [R-ONE-MECH]); no hurdle is added on top, since delta_k is a measured
+    # spread quantile that already embeds delivery/wheeling. REFUSED without
+    # miso_seam_measured_ladder (there is no ladder to overlay). Off by default;
+    # byte-identical off, and a no-op for a year absent from the table or when
+    # the measured border series is unavailable. See results/calibration/
+    # PRECOMMIT-miso231-hourly-seam-ladder-2026-09-06.md.
+    miso_seam_neighbour_hourly_ladder: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -19096,6 +19139,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_gas_marginal_commodity_pricing": 3,
     "miso_gas_variable_transport": 3,
     "miso_seam_neighbour_anchored_ladder": 3,
+    "miso_seam_neighbour_hourly_ladder": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,

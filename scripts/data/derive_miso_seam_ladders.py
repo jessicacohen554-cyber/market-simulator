@@ -90,8 +90,10 @@ Usage:
     python scripts/data/derive_miso_seam_ladders.py --years 2025
 
 Output is hand-rounded (prices to cents) into
-``interchange_config.MISO_SEAM_LADDER_BY_YEAR``, with this script cited as
-the derivation.
+``interchange_config.MISO_SEAM_LADDER_BY_YEAR``, its neighbour-anchored overlay
+``MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR`` (:func:`derive_pjm_neighbour`) and the
+hourly OFFSET overlay ``MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR``
+(:func:`derive_pjm_neighbour_hourly`), with this script cited as the derivation.
 """
 
 from __future__ import annotations
@@ -287,6 +289,81 @@ def derive_pjm_neighbour(g: pd.DataFrame) -> tuple[dict[str, list[float]], list[
     )
 
 
+def derive_pjm_neighbour_hourly(
+    g: pd.DataFrame,
+) -> tuple[dict[str, list[float]], list[str]]:
+    """Derive the PJM seam's HOURLY neighbour-anchored ladder as OFFSETS.
+
+    miso-226 measured what the annual neighbour anchor of
+    :func:`derive_pjm_neighbour` does and does not do: it repairs the ladder's
+    LEVEL and not its RESPONSIVENESS.  ``corr(imports, own price)`` moved
+    +0.750 -> +0.725 against a MEASURED -0.101 — 3 % of the distance — because
+    a FIXED price ladder is cleared by the LP against its OWN internal price,
+    so re-anchoring changes where the bands sit and not when they clear.  The
+    bands still leave merit exactly when MISO's price falls, which is when MISO
+    actually imports most.
+
+    This is the successor miso-226 named.  Band ``k``'s offer becomes hourly::
+
+        pi_k(t) = pjm_border(t) + delta_k
+
+    so band ``k`` clears in hour ``t`` iff ``spread(t) > delta_k``, with
+    ``spread = MISO hub DA - PJM western-border DA``.  The returned ladder holds
+    the OFFSETS ``delta_k``, not prices; the applied price is assembled at solve
+    time against the measured hourly border series
+    (:func:`market_sim.data.eia_loader.measured_miso_pjm_border_prices`, the
+    same series ``miso_pjm_lmp_import_pricing`` already reads hourly into the
+    solve).
+
+    The estimator is byte-for-byte the incumbent one — the same
+    :func:`_derive_one` / :func:`qq_import` / :func:`qq_export` Q-Q duration
+    coupling, the same midpoint-depth grid on the same ``SEAM_FLOW_TRANCHES``,
+    the same measured seam flows, the same no-wash reconciliation.  The ONLY
+    change is which measured series the coupling reads, which is the same single
+    degree of freedom :func:`derive_pjm_neighbour` exercised:
+
+    ======================  ==================================================
+    incumbent               MISO hub DA
+    annual neighbour        PJM western-border DA
+    **this**                **DA - border SPREAD**
+    ======================  ==================================================
+
+    Nothing is fitted.  The no-wash reconciliation carries through unchanged:
+    both directions share the same ``pjm_border(t)``, so an ordering constraint
+    on the offsets is the same constraint on the applied hourly prices.
+
+    WHY THIS IS NOT THE REFUTED SPREAD HURDLE (this module's own docstring
+    records the seam being moved OFF a spread basis because the measured flow
+    "is uncorrelated with the RT LMP spread (r = +0.06)"), both legs measured in
+    ``scripts/probes/_miso231_hourly_seam_phase0.py``:
+
+    1. That statistic is the **RT** spread against MISO's hub.  The **DA**
+       spread against the **PJM western border** correlates with measured flow
+       at +0.240 / +0.265 / +0.194 (2023/24/25), against ``corr(flow, MISO DA)``
+       of -0.136 / -0.039 / -0.059.  The spread carries the sign the seam needs.
+    2. A hurdle is ONE threshold; this is the same 8-band ladder, and the Q-Q
+       coupling puts the shallow bands at NEGATIVE offsets (band 1 at -$29.17 in
+       2023), so they clear even when MISO is far below PJM — which is exactly
+       the "46-56 % of measured import MWh moves at spreads inside/below the $2
+       hurdle" a hurdle deletes.  Nothing is gated away, and the measured annual
+       volume is reproduced within 0.5 % in all three years.
+
+    PJM ONLY, the same DATA boundary :func:`derive_pjm_neighbour` states (rule
+    14 ``[R-ACCURATE]``): no measured SPP or SOCO/TVA price series is held under
+    ``data/raw``, so those seams keep the incumbent anchor.
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    spec = {n.name: n for n in INTERFACE_NEIGHBORS["MISO"]}["PJM"]
+    notes: list[str] = []
+    g = g.dropna(subset=["pjm_border", "da", spec.name])
+    spread = (g["da"] - g["pjm_border"]).to_numpy(dtype=float)
+    return (
+        _derive_one(spread, g[spec.name].to_numpy(dtype=float), spec, notes),
+        notes,
+    )
+
+
 def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]:
     """Score each seam's ladder against its measured flow, driven by actual DA.
 
@@ -366,6 +443,15 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
     print(f'        "export": {tuple(nb["export"])},')
     for n in nb_notes:
         print(f"  note (neighbour): {n}")
+    hb, hb_notes = derive_pjm_neighbour_hourly(g)
+    print(
+        '    # miso-231 HOURLY NEIGHBOUR-ANCHORED "PJM" '
+        "(OFFSETS delta_k; applied price = pjm_border(t) + delta_k):"
+    )
+    print(f'        "import": {tuple(hb["import"])},')
+    print(f'        "export": {tuple(hb["export"])},')
+    for n in hb_notes:
+        print(f"  note (hourly): {n}")
     for seam, s in offline_score(g, ladders).items():
         print(
             f"  offline P9 {seam}: {s['sim_twh']:+.2f} TWh vs {s['act_twh']:+.2f} "

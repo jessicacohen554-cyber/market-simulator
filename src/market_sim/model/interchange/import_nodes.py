@@ -653,7 +653,12 @@ def inject_reference_price_firm_import(fleet_arrays, iso: str, year: int) -> boo
     return applied
 
 
-def _inject_seam_ladder(fleet_arrays, mc: np.ndarray, ladder) -> bool:
+def _inject_seam_ladder(
+    fleet_arrays,
+    mc: np.ndarray,
+    ladder,
+    hourly_anchor: dict[str, np.ndarray] | None = None,
+) -> bool:
     """Reprice every reference-price band row of ``mc`` from ``ladder``.
 
     Shared core of the per-ISO measured seam-ladder injectors: ``ladder`` is
@@ -661,9 +666,18 @@ def _inject_seam_ladder(fleet_arrays, mc: np.ndarray, ladder) -> bool:
     entry (``None`` no-ops). Rows are matched by the reference-node unit-id
     convention (``<zone><mark><seam>#<k>``); non-band rows and seams absent
     from the ladder are untouched.
+
+    ``hourly_anchor`` (miso-231) makes a seam's ladder HOURLY: when it carries
+    an entry for the seam, that seam's registry values are read as per-band
+    OFFSETS and the applied cost becomes ``anchor[seam] + offset_k`` — an
+    hourly vector rather than a scalar. Seams absent from the mapping keep the
+    scalar reading, so a partial hourly overlay composes with the annual
+    ladders on the other seams exactly as the annual overlay already does.
+    ``mc`` is hour-indexed on its second axis, so no other machinery changes.
     """
     if not ladder:
         return False
+    anchors = hourly_anchor or {}
 
     applied = False
     for row, uid in enumerate(fleet_arrays.unit_ids):
@@ -681,7 +695,8 @@ def _inject_seam_ladder(fleet_arrays, mc: np.ndarray, ladder) -> bool:
         k = int(k_str) - 1
         if not 0 <= k < len(prices):
             continue
-        mc[row, :] = prices[k]
+        anchor = anchors.get(name)
+        mc[row, :] = prices[k] if anchor is None else anchor + prices[k]
         applied = True
     return applied
 

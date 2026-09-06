@@ -283,6 +283,7 @@ def inject_miso_seam_ladder_prices(
     iso: str,
     year: int,
     neighbour_anchored: bool = False,
+    neighbour_hourly: bool = False,
 ) -> bool:
     """Overwrite MISO's seam band rows of ``mc`` with the measured Q-Q ladders.
 
@@ -314,6 +315,20 @@ def inject_miso_seam_ladder_prices(
     incumbent anchor unchanged, so the argument is byte-identical when ``False``
     and deliberately partial when ``True``.
 
+    ``neighbour_hourly`` (miso-231,
+    ``ScenarioConfig.miso_seam_neighbour_hourly_ladder``) makes that overlay
+    HOURLY, which is the successor miso-226 named after measuring that the
+    annual form repairs the ladder's LEVEL and not its RESPONSIVENESS
+    (corr(imports, own price) +0.750 → +0.725 against a measured −0.101). The
+    PJM seam's registry values are then read as per-band OFFSETS and band ``k``
+    is priced at ``pjm_border(t) + delta_k`` — the measured hourly western-border
+    DA series ``miso_pjm_lmp_import_pricing`` already reads into the solve —
+    so band ``k`` clears iff ``spread(t) > delta_k`` and its merit position
+    tracks the neighbour's supply cost in the hour it is offered rather than in
+    an annual quantile. It DISPLACES ``neighbour_anchored`` on the seams it
+    covers (alternatives, never stacked) and degrades to it, never to an
+    unpriced seam, when the year or the measured series is missing.
+
     No hurdle is added on top: the ladder prices are revealed clearing
     thresholds that already embed delivery/wheeling costs. Band capacities,
     the measured (month × hour-of-day) seam deliverability envelopes
@@ -331,19 +346,49 @@ def inject_miso_seam_ladder_prices(
     from market_sim.config.interchange_config import (
         MISO_SEAM_LADDER_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
+        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
     )
+    from market_sim.data.eia_loader import measured_miso_pjm_border_prices
 
     if iso != "MISO":
         return False
     ladder = MISO_SEAM_LADDER_BY_YEAR.get(year)
-    if neighbour_anchored and ladder is not None:
-        overlay = MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR.get(year)
-        if overlay:
+    if ladder is None:
+        return False
+    anchors: dict[str, np.ndarray] = {}
+    # miso-231's HOURLY overlay is tried FIRST and DISPLACES the annual one on
+    # any seam it covers (rule 19 [R-ONE-MECH]: alternatives, never stacked).
+    # It degrades to the annual overlay — not to an unpriced seam — whenever
+    # its year is absent from the table or the measured border series is
+    # unavailable, so an armed run is never silently cheaper than the keeper.
+    hourly = (
+        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR.get(year)
+        if neighbour_hourly
+        else None
+    )
+    if hourly:
+        border = measured_miso_pjm_border_prices(iso, year, int(mc.shape[1]))
+        if border is not None:
+            ladder = {**ladder, **hourly}
+            # PJM only — the same data boundary the annual overlay states.
+            anchors = {seam: border for seam in hourly}
+        else:
+            hourly = None
+    if neighbour_anchored:
+        overlay = {
             # Per-seam overlay: a seam absent from the neighbour table (SPP,
             # South — no measured neighbour price exists under data/raw) keeps
-            # its incumbent MISO-hub-anchored ladder untouched.
+            # its incumbent MISO-hub-anchored ladder untouched; a seam the
+            # hourly overlay already took keeps THAT (never both).
+            seam: bands
+            for seam, bands in (
+                MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR.get(year) or {}
+            ).items()
+            if seam not in anchors
+        }
+        if overlay:
             ladder = {**ladder, **overlay}
-    return _inject_seam_ladder(fleet_arrays, mc, ladder)
+    return _inject_seam_ladder(fleet_arrays, mc, ladder, hourly_anchor=anchors)
 
 
 def split_miso_south_external_node(iso_config: ISOConfig) -> ISOConfig:
