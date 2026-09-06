@@ -940,3 +940,254 @@ Addendum D lands **now** (before leg 3). The **rows themselves** are written and
 at one sha, against one committed table — and so that no leg's FC-7 is read before its
 identification row was pre-declared here. Every re-score happens **after that leg's final
 rebase** (X-6b: no orphaned `scored_at_sha`).
+
+---
+
+## Addendum R3 (2026-09-06) — the D60-R3 relaunch: STATE AT START, before any solve, any row and any registration
+
+D60-R2 (PR #4824) landed only its state-at-start commit and Addendum D, then went
+silent; the owner ruled it dead at director r#42 amendment 2 and issued **D60-R3**,
+re-emitted and dispatched at r#43 with the D65/D71 HEAD-drift instrument folded in.
+This addendum is the relaunch's first commit and it carries **zero solve**.
+
+### R3.1 The twin check — CLEAR
+
+Executed at session start with `git fetch origin --prune`, at base `fca3b656`:
+
+- **No `claude/capx-d60r*` branch exists on origin.** `git ls-remote --heads origin`
+  returns exactly two refs — `main` and `claude/scn-ws4c-load-hi-probes-o85iyi` (the
+  SCN-WS4c lane, disjoint). The fetch pruned a stale remote-tracking ref for this
+  session's own branch name; origin has never held it.
+- **The only commits mentioning "D60-R2" / "D60-R3" newer than `342c7593` are the
+  director's own** (`8cdc5d7f` r#43, `eca6c798` r#42 am.2) — docs only
+  (`capx-director-handoff` / `-ledger` / `-prompt-pack`), the issuance of this session,
+  not a twin's output.
+- **`frontend/data/forecast/ff-verdicts.json` has NOT been touched since `342c7593`**
+  (`git log 342c7593..origin/main -- …/ff-verdicts.json` → empty). `program-status.json`
+  carries only the three backcast gate-(a) re-keys the charter named (`32f8de52` NYISO,
+  `4d1ed3ad` MISO, `e2412b82` CAISO) — **no forecast verdict moved**.
+
+No twin is mid-flight. D60-R3 proceeds.
+
+### R3.2 Every bare forecast key re-resolved through the harness path — **ZERO DRIFT, 17/17**
+
+Resolved exactly as Addendum A §A.2 and R2.2 resolved them
+(`run_full_horizon.reference_config(iso, 2026, 2030|2050, False, golden_posture=True)`
+→ `apply_iso_scenario_defaults` → `cache_key()` for t1f/t3;
+`run_capacity_hindcast.build_config(iso, 2021, 2025, "realized", vintage=2020,
+entry_screen_diagnostics=True)` → same → `cache_key()` for t1h). Config construction
+only; no fleet build, no solve.
+
+| bare key | pin (source) | resolved at HEAD | verdict |
+|---|---|---|---|
+| `ercot-t1f` | `0c3e9cd5b5993bdf` (§A.2) | `0c3e9cd5b5993bdf` | **HIT** |
+| `caiso-t1f` | `29f8eb372810195f` (§A.2) | `29f8eb372810195f` | **HIT** — leg 3 runs on it |
+| `pjm-t1f` | `09996eca71ee80fd` (§C.1) | `09996eca71ee80fd` | **HIT** — leg 4 runs on it |
+| `miso-t1f` | `b1a73a087064ffd8` (§A.1) | `b1a73a087064ffd8` | **HIT** — registered |
+| `nyiso-t1f` | `19a9690bb12c8459` (§A.2) | `19a9690bb12c8459` | **HIT** — registered |
+| `neiso-t1f` | `18515067bf4d2fbe` (§A.2) | `18515067bf4d2fbe` | **HIT** |
+| `neiso-t3` | `f04fd06348e1623d` (§A.2) | `f04fd06348e1623d` | **HIT** — leg 5 runs on it |
+| `ercot-t1h` | `82b27751be747552` (§A.2) | `82b27751be747552` | **HIT** |
+| `caiso-t1h` | `7da58199acd362ee` (§A.2) | `7da58199acd362ee` | **HIT** |
+| `pjm-t1h` | `aef81c84c4609c76` (finding §3) | `aef81c84c4609c76` | **HIT** |
+| `miso-t1h` | `687bd75f2828bea1` (§A.2) | `687bd75f2828bea1` | **HIT** |
+| `nyiso-t1h` | `6e70a637b3465542` (§A.2) | `6e70a637b3465542` | **HIT** |
+| `neiso-t1h` | `f3988df3068020d1` (§A.2) | `f3988df3068020d1` | **HIT** |
+
+And the four pinned defaults, against finding §6:
+
+| config | finding §6 "after" | resolved at HEAD | verdict |
+|---|---|---|---|
+| `ScenarioConfig()` | `e5ecd4105ada3e58` | `e5ecd4105ada3e58` | **HIT** |
+| `ScenarioConfig(mode="backcast")` | `6a2845e50951394e` | `6a2845e50951394e` | **HIT** |
+| `ScenarioConfig(ccs_retrofit_capex_co2_scaling=False)` | `4c6b03ae098b6e3e` | `4c6b03ae098b6e3e` | **HIT** |
+| same, backcast | `8211c72bb1960adc` | `8211c72bb1960adc` | **HIT** |
+
+**Seventeen of seventeen.** STOP 1 stands unchanged for all three remaining legs.
+
+### R3.3 The three STATE-AT-START assertions the charter demanded, each MEASURED
+
+**(a) D65 Act A is key-neutral.** `ccs_retrofit_fixed_cost_co2_scaling` is registered in
+`_CACHE_KEY_OPTIONAL_FIELDS` at its shipping `False` (`scenarios.py:1941`), so it drops
+from the hash at its default. Measured, not asserted:
+
+| config | key |
+|---|---|
+| `ScenarioConfig()` | `e5ecd4105ada3e58` |
+| `ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False)` | `e5ecd4105ada3e58` — **identical** |
+| `ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=True)` | `2186aa915ad19c59` — **distinct** |
+
+The default and the explicit `False` collide exactly; an armed run keys distinctly. Every
+one of the seventeen keys above therefore carries D65 Act A's landing without moving.
+
+**(b) The R-AZ registration gate does NOT touch this lane's registration path.** R-AZ
+(`ee0c1676`) changed six files: `CLAUDE.md`, `docs/governance/rule-history.md`, its own
+FINDING, **`scripts/dashboard_add_run.py`**, **`scripts/lib/holdout_policy.py`** and
+`tests/scoring/test_registration_marker_gate.py`. This lane registers through
+`scripts/register_forecast_run.py`, which imports **neither** `holdout_policy` nor
+`dashboard_add_run` (grep for `holdout_policy|dashboard_add_run|registration_refusals|
+enforce_registration_marker_gate` over that file: **zero hits**). The gate is a BACKCAST
+registration gate on the backcast registry; the forecast namespace is disjoint by
+construction (plan §7.5). **Not touched — no STOP.**
+
+**(c) The SCN sidecars are not the board.** The three SCN hindcast sidecars named in the
+charter — and the three more that landed under this session (`fbef3a91`, SCN-WS2b's NEISO
+ladder) — are `frontend/data/hindcast/neiso-2026-2030-scn-ws2-ladder-{bau,ces-20,ces-40}.json`
+and their siblings, registered under their own campaign keys. **No file under
+`frontend/data/forecast/` is touched by any of them.**
+
+### R3.4 main moved twice under this session — both times DISJOINT, both kept verbatim
+
+The charter's base pin was `04e6906d`; this session opened at `fca3b656` and, during the
+history deepen described in §R3.5, `origin/main` advanced again to **`fbef3a91`** (PRs
+#4932–#4936: SCN-WS2b, SCN-WS4c, miso-222, Y-18 FR-22 parity). Measured as a structural
+diff rather than asserted:
+
+- `git diff --stat fca3b656..fbef3a91 -- frontend/data/forecast/` → **empty**.
+- `git diff --stat fca3b656..fbef3a91 -- src/market_sim/` → **empty**.
+
+So the seventeen keys of §R3.2, resolved at `fca3b656`, hold verbatim at `fbef3a91`; this
+lane's base is `fbef3a91` and every one of those lanes' edits survives untouched. The one
+new file worth naming because it sits near this lane's surface is
+`scripts/lib/forecast_parity_registry.py` (Y-18): a **parity registry read by
+`tests/scoring/test_forecast_parity.py`**, not by the solve path and not by
+`register_forecast_run.py`.
+
+### R3.5 Two environment facts that would have corrupted every number in this finding
+
+Both are recorded because they were found and repaired **before the first solve**, and
+because neither is visible in a bundle after the fact.
+
+1. **The container's stack did not match the committed record.** `pip install -r
+   requirements.txt` failed on a Debian-owned PyYAML (`Cannot uninstall PyYAML 6.0.1,
+   RECORD file not found`), and the packages it did not overwrite left the environment at
+   **highspy 1.15.1 / pandas 3.0.5 / pydantic 2.13.5** — against `requirements.txt`'s
+   pins of **1.14.0 / 3.0.3 / 2.13.4**. A different HiGHS build is a different LP solver,
+   and D65 §3b's whole drift argument rests on the stack being identical to the committed
+   control's. Repaired with `pip install --force-reinstall --no-deps highspy==1.14.0
+   pandas==3.0.3 pydantic==2.13.4 pydantic-core==2.46.4`. The stack this lane solves on is
+   now **python 3.11.15, highspy 1.14.0, numpy 2.4.6, scipy 1.17.1, pandas 3.0.3, pyarrow
+   24.0.0, pydantic 2.13.4** — D65 §3b's recorded control stack, to the digit.
+2. **The clone is SHALLOW** (`.git/shallow` present; 183 first-parent commits, floor
+   2026-09-04 19:07), so `9e48ff6` — the `git.sha` of the committed `neiso-t1f` bundle and
+   the charter's bisect endpoint — was **not a resolvable revision**. Deepened with
+   `git fetch --deepen=400 origin main` (183 → 1,049 first-parent commits, floor
+   2026-08-11), which brings every committed bundle's `basis_sha` into range. As with
+   §R2.4, `data/clean` was absent and was regenerated **once**, before the first leg; the
+   per-leg wall-clock figures in the finding exclude it.
+
+### R3.6 The blast-radius boundary, pinned at ZERO LP cost — and why no bisect was spent
+
+The charter folds in D65 §3b/§3c and asks for a `git bisect` over `9e48ff6..HEAD`
+(≤ 8 probes × ~5 min) to name the drift hunk. **That bisect's object was already
+achieved, by a stronger instrument, before this lane opened.** D65 §3d pins the hunk by a
+**one-hunk revert** — a copy of the exact HEAD tree with only that hunk reverted, verified
+by `diff -r` to differ in exactly one file and one hunk, reproducing the pre-drift 2027
+ledger exactly (33 rows / 2,369.81 MW / `reserve_margin` 0.045867 / gas_cc 10,713.803). A
+bisect names a *commit*; §3d names the *lines* and proves them causal. Re-running the
+bisect to re-derive a weaker fact would spend ~40 LP-minutes for nothing.
+
+What the bisect *would* still have supplied, and what §3d does not, is the **commit
+boundary** — needed to classify committed bundles pre/post. That is a **content**
+question, not a solve question, and it is answered by a binary search over `main`'s
+first-parent chain for the hunk's own docstring marker (`git show <sha>:…retirements.py |
+grep`), ten probes, seconds, zero LP:
+
+- **`da007e0f6f73f64a248ed92b4f922f0a06a52c6e`** — PR #4747,
+  `claude/capx-d55-retention-key-fix-xqrcfv`, **2026-09-04 19:06:53 −0700** — the FIRST
+  commit on `main` carrying the hunk. The hunk itself is commit **`32f9628c`** ("capx D55:
+  floor-retention key 1 as the class constant (D32 §3.2 / R2) …").
+- Its first-parent predecessor **`3e9f191a`** (PR #4746, capx D54) is the last pre-hunk
+  commit on `main`.
+
+**The hunk, named as the charter asks (commit, file, function, lines, and what it does in
+words).** `src/market_sim/model/capacity_evolution/retirements.py::_floor_retention_merit`,
+key 1 of the reliability-floor retention sort. D55 replaced the per-unit quotient
+`(FOM × multiplier × pmax × 1000) / (pmax × accreditation_fraction)` with the
+class-constant `(FOM × multiplier × 1000) / accreditation_fraction`. The two are equal in
+exact arithmetic and **not** in IEEE-754: the quotient form put same-fuel units on 4–5
+distinct floats at the 1e-11 level, so the tuple sort consulted the CO2 and heat-rate keys
+only *inside a rounding bucket*, and the designed three-key ordering was reproduced only
+piecewise. **This is an intentional repair** — of the defect recorded as D32 §3.2 — and
+what it also does, necessarily, is change the retention **sort order**. Under the
+charter's clause (c) that reading is explicit: *"if it is an intentional repair (D55's is),
+the committed bundles are stale and the re-solves you run ARE the remedy."* This lane
+therefore names it and **does not touch it**.
+
+**Why it is silent** (D65 §3d, restated because it is what makes the staleness invisible):
+`_apply_reliability_floor` has three call sites and only two are logged
+(`retirements.py:2565`, `:3486`); the call at `:2517` — the pipeline **admission-cap**
+screen, invoked for its in-place mutation of the `scheduled` set — discards its return, so
+`floor_retained` is `[]` on both sides of the hunk and the diagnostic that exists to make
+floor behaviour visible is blind to it. That is D65's second routed item, not this lane's.
+
+### R3.7 Every committed forecast bundle classified — 28 PRE-hunk, 5 POST-hunk
+
+Classified by ancestry of each bundle's own `git.basis_sha` against `da007e0f`
+(`git merge-base --is-ancestor`). "PRE-hunk" means **solved on the other side of the D55
+ordering change, so its reproduction at HEAD is not established** — it does not by itself
+mean the bundle's numbers move (see the two measured counter-examples below).
+
+| bundle (`results/ff-*/…/run_config.json`) | ISO | cache key | basis | date | side |
+|---|---|---|---|---|---|
+| `ff-t1f-d45r/miso` | MISO | `8d8bc63a0d4378a9` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d45r/nyiso` | NYISO | `cc7d1050a8090c76` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d45r/pjm` | PJM | `321f04e9060787f0` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d46/caiso` | CAISO | `772b1e5abc7fc80c` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d46/ercot` | ERCOT | `873d8c0e6cab52ae` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d46/neiso` | NEISO | `6690e4d6d66bc819` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d50/ercot` | ERCOT | `0c3e9cd5b5993bdf` | `a35c9f9bc0d1` | 2026-09-04 | **PRE** |
+| `ff-t1f-d50/neiso` | NEISO | `18515067bf4d2fbe` | `a35c9f9bc0d1` | 2026-09-04 | **PRE** |
+| `ff-t1f-d50/pjm` | PJM | `167e65187f32056b` | `c9f1d26e3463` | 2026-09-04 | POST |
+| `ff-t1f-d60/miso` | MISO | `b1a73a087064ffd8` | `b87c057ae4bb` | 2026-09-05 | POST |
+| `ff-t1f-d60/nyiso` | NYISO | `19a9690bb12c8459` | `b87c057ae4bb` | 2026-09-05 | POST |
+| `ff-t1f-d65-a1/neiso` | NEISO | `8ebed20ae90ec0e7` | `e5ac39f1b2a6` | 2026-09-05 | POST |
+| `ff-t1f-d65-ctl/neiso` | NEISO | `18515067bf4d2fbe` | `e5ac39f1b2a6` | 2026-09-05 | POST |
+| `ff-t1f-s123/verify` | MISO | `587dc5b32ba71ceb` | `54ca19ae0782` | 2026-08-30 | PRE |
+| `ff-t1f-s4hydro/neiso-control` | NEISO | `9a7f68fc7dcac931` | `6136a2964264` | 2026-08-30 | PRE |
+| `ff-t1f-s4hydro/neiso` | NEISO | `9a7f68fc7dcac931` | `6136a2964264` | 2026-08-30 | PRE |
+| `ff-t1f-s6-pjm/ledger` | PJM | `31a19d815fa319a7` | `54ca19ae0782` | 2026-08-30 | PRE |
+| `ff-t3-neiso-golden/bau-d46` + its 4 FC-6 arms | NEISO | `67678e58b2d0526c` (+4) | `d375bde39a32` | 2026-09-03 | PRE (×5) |
+| `ff-t3-neiso-golden/bau-prera-2026-08-31` + its 5 FC-6 arms | NEISO | `a4b11ef4aaa1be35` (+5) | `9e56f0fecd86` | 2026-08-30 | PRE (×6) |
+| `ff-t3-neiso-golden/bau` + its 4 FC-6 arms | NEISO | `706e7ba8e6582d42` (+4) | `a5523fac1b18` / `5083e29e2562` | 2026-09-01 | PRE (×5) |
+
+**28 PRE-hunk, 5 POST-hunk, 33 total.** Two measured counter-examples keep "PRE" from
+being read as "wrong": D55's own A/B measured `miso-t1h` **byte-identical** across the
+hunk (retirements and `pipeline_events` every year, 21/21 FC-3 rows — commit `8181bc64`),
+while D65 measured `neiso-t1f` **materially changed** (7 rows, −124.92 MW of gas_cc in
+2027). The hunk is a *tie-break ordering* change: it bites only where the reliability
+floor has ties to break and headroom to spend. Everything not on one of those two lists is
+**unmeasured**, and this lane says so rather than guessing.
+
+### R3.8 The bare keys, by side — and the residue D60-R3 will leave
+
+| bare key | registered run | side today | after this lane lands |
+|---|---|---|---|
+| `caiso-t1f` | `caiso-2026-2030-d46-remeasure` | PRE | **POST** (leg 3) |
+| `pjm-t1f` | `pjm-2026-2030-d45r-remeasure` | PRE | **POST** (leg 4) |
+| `neiso-t3` | `neiso-2026-2050-t3-golden3-bau` | PRE | **POST** (leg 5) |
+| `miso-t1f` | `miso-2026-2030-d60-arm` | POST | POST |
+| `nyiso-t1f` | `nyiso-2026-2030-d60-arm` | POST | POST |
+| `pjm-t1h` | `pjm-2021-2025-realized-t1h-d57-clearing` | POST | POST |
+| `ercot-t1f` | `ercot-2026-2030-d50-ccscapex` | PRE | **PRE — residue** |
+| `neiso-t1f` | `neiso-2026-2030-d50-ccscapex` | PRE | **PRE — residue** (the D65 case) |
+| `ercot-t1h` | `ercot-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
+| `caiso-t1h` | `caiso-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
+| `miso-t1h` | `miso-…-t1h-d53-sectorgate-d51ratio` | PRE | **PRE — residue** (measured INERT by D55) |
+| `nyiso-t1h` | `nyiso-…-t1h-d52-devintage` | PRE | **PRE — residue** |
+| `neiso-t1h` | `neiso-2021-2025-realized-t1h-d45r` | PRE | **PRE — residue** |
+
+**Seven bare keys remain PRE-hunk after this lane lands.** They are D60-R3's *routed
+residue*, not its scope: the charter's owed list is three legs, and re-solving seven more
+keys is a separate campaign for the director to charter. `neiso-t1f` is the one with a
+measured magnitude already attached (D65 §3c) and is the obvious first rung.
+
+### R3.9 What is OWED, unchanged from §R2.3
+
+Three re-solves — `caiso-t1f` (prior `caiso-2026-2030-d46-remeasure`, `772b1e5abc7fc80c`,
+HOLD → `caiso-t1f-pre-d60`), `pjm-t1f` (prior `pjm-2026-2030-d45r-remeasure`,
+`321f04e9060787f0`, HOLD → `pjm-t1f-pre-d60`), `neiso-t3` GOLDEN-3 (prior
+`neiso-2026-2050-t3-golden3-bau`, `67678e58b2d0526c`, HOLD → `neiso-t3-pre-d60`); the
+seven Q37 attestation rows and the artifact-only re-scores (Addendum D); the finding's §5,
+§8 and its §8-blast-radius. Verified at HEAD: none of the three `-pre-d60` priors exists
+yet, and the six that D60 wrote are untouched.
