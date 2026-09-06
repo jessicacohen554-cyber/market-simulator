@@ -16,7 +16,22 @@ DATA PROFILE `pjm`. Model Opus.
 
 ## 0. The answer in one paragraph
 
-*(filled at close — see §8.)*
+**PJM's own published default gross Avoidable Cost Rate is the operand the model's ATB FOM proxy was
+standing in for, and substituting it moves the 2022/23 capacity price from 1.52× the published
+Resource Clearing Price to 0.936× with the cleared position +0.27 pt from the published — at zero
+free parameters, no scalar field, and a vintage rule fixed in code before any solve. It also removes
+a spurious +4.0 GW of 2023 gas-CC entry (FC-2 `gas_cc` FAIL → PASS). It is nonetheless NOT
+recommended for arming: the lane's own pre-registered STOP 5 fired — the 2024/25 price moved 165.84
+→ 188.57 $/MW-day, through the CENSUS (the arm's earlier exits left 1,582 MW fewer standing) rather
+than the offer side, a channel D61's fixed-fleet zero-solve instrument could not see — and FC-3 gets
+worse where it was already failing (`retire.total_gw` 18.70 → 20.14 against 15.06 actual, recall
+0.60 → 0.55), largely because 4.137 GW of oil over-exits: oil's published bar falls only
+$1.64/kW-yr while the clearing price falls $29.32, so a class whose bar falls less than the price
+does is left above it. Phase 0 reproduced the committed control to 0.0000 $/MW-day and 0.0000 pt;
+the screen gate passed on all five legs on the pre-named year; the G-DRIFT audit found no LIVE hunk
+across 54 changed solve-path files, so no control solve was spent. §8 is DO-NOT-ARM as it stands,
+with the oil/steam offer convention (D67, whose scope this lane widens to include oil) and the
+2024/25 census (D66) routed ahead of it.**
 
 ---
 
@@ -230,30 +245,265 @@ D57 envelope (14 min / 9.3 GB). STOP 7 not fired.
 
 ---
 
-## 5. THE FULL WINDOW — 2021–2025 realized, one bundle
+## 5. THE FULL WINDOW — 2021–2025 realized, ONE bundle, arm vs the committed control
 
-*(filled at close.)*
+**Arm** `results/hindcast/pjm-2021-2025-realized-t1h-d62-pubbar/PJM/b98060898fceb3da/` — the D57
+recipe **plus** `--capacity-going-forward-bar-published`, one
+`--start-year 2021 --end-year 2025` invocation, years sequential. Solved [2021, 2023, 2024, 2025],
+2022 the rule-22 bridge — the control's own span. **Control:** the committed `pjm-t1h`
+(`f0e050e820c1159a`), differenced, never re-solved (§2). Key `b98060898fceb3da`, pre-computed and
+matched. Every number: `docs/handoffs/d62/full-window-2026-09-06.json`.
+
+### 5.1 The clearing, per delivery year
+
+| DY | control price · ratio · Δpos | **arm price · ratio · Δpos** | control `how` / uncleared | **arm `how` / uncleared** |
+|---|---|---|---|---|
+| 2022/23 | 76.10 · 1.522× · −0.48 pt | **46.78 · 0.936× · +0.27 pt** | marginal offer / 429 | **marginal offer / 649** |
+| 2023/24 | 82.81 · 2.426× · −0.98 | **54.72 · 1.603× · −0.31** | marginal offer / 168 | **marginal offer / 15** |
+| 2024/25 | 165.84 · 5.734× · −2.79 | **188.57 · 6.520× · −3.29** | marginal offer / 8 | **curve at census / 0** |
+| 2025/26 | 451.61 (cap) · 1.673× · −3.88 | **451.61 (cap) · 1.673× · −5.04** | curve at census / 0 | curve at census / 0 |
+
+`R` (requirement) and `Q_0` (the price-taking block) are **identical to the MW in every year** —
+155,047.5 / 30,577.9, 161,117.0 / 32,652.3, 166,810.0 / 27,959.7, 148,798.1 / 24,000.2. Nothing
+outside the screened fleet moved in any year.
+
+**2022/23 is the headline.** The published bar plus the reactive leg put the model's PJM capacity
+price at **$46.78 against the market's $50.00 — 0.936×, a 6.4 % miss** where the ATB proxy read
+1.522×, and the cleared position lands **+0.27 pt** from the published 1.0510 where the control sat
+−0.48 pt away. That is the D61 §2d measurement confirmed in a real solve, and it is the largest
+single improvement the D57 clearing half has taken since it was built.
+
+**2023/24 improves and misses its bracket.** 2.426× → **1.603×**, against a pre-declared 1.28–1.56:
+**outside the top of the band by +0.043**. Position −0.98 → **−0.31 pt** against a declared
+−0.3…0: **outside by 0.01 pt**. Both misses are reported at full magnitude and neither is smoothed;
+the arm's 2023 census is 4.6 GW smaller than the control's (1.0881 → 1.0597) because of §5.3's
+2022 exits, which is why the zero-solve bracket — computed on the control's fleet — did not hold.
+
+### 5.2 **STOP 5 FIRED** — the 2024/25 price moved
+
+The PRECOMMIT's STOP 5 reads, verbatim: *"The 2024/25 price moving — every offer already clears
+there; if it moves, something other than the chartered mechanism moved."* **It moved: 165.84 →
+188.57 $/MW-day, +13.7 %, and the ratio went the wrong way, 5.734× → 6.520×.** The STOP is recorded
+as FIRED on its own text. It is not reinterpreted to pass.
+
+What the evidence says the cause is, stated separately from the verdict:
+
+| 2024/25 | control | arm |
+|---|---:|---:|
+| `how` | marginal offer sets price | **curve at census sets price** |
+| offers / uncleared | 769 / **8** | 835 / **0** |
+| `R` requirement MW | 166,810.0 | **166,810.0** (identical) |
+| `Q_0` price takers MW | 27,959.7 | **27,959.7** (identical) |
+| census MW | 172,158.6 | **170,576.6** (−1,582) |
+| census position | 1.0321 | **1.0226** |
+
+Every offer clears in the arm — **more completely than in the control**, where 8 were uncleared — so
+the offer side behaves exactly as D61 predicted for this year, and the curve is read at the census.
+The requirement and the price-taking block are identical to the MW. The only thing that moved is
+the **census**, and it moved because the arm's own 2022–2023 exits (§5.3) left 1,582 MW fewer
+screened MW standing in 2024; on a downward-sloping VRR curve a smaller census is a higher price.
+
+So the moving part is **the chartered mechanism propagating through capacity evolution** — a channel
+D61's zero-solve instrument could not represent at all, because it re-clears a FIXED committed stack
+and cannot let year *t*'s exits change year *t+2*'s fleet. The STOP's *literal text* is met; its
+*stated reason* ("something other than the chartered mechanism moved") is not. **Both halves are
+reported, and the arm is not promoted on the strength of the second** (§8).
+
+2025/26 shows the same channel without the price: the price is unchanged at the cap in both arms
+(451.61), but the position falls 0.9661 → 0.9545, so Δpos vs the published widens −3.88 → −5.04 pt.
+
+### 5.3 What the arm retires, and why 2024's census is smaller
+
+Economic (pipeline-executed) exits over the window, GW:
+
+| | control | arm |
+|---|---|---|
+| `gas_st` | 9.464 | **9.464** (identical, to the MW) |
+| `oil` | 0.000 | **4.137** |
+| `coal` | 0.441 | **0.000** |
+| `gas_cc` | 2.254 | **0.000** |
+
+Two large composition moves, in opposite directions, both traceable to one thing — **the clearing
+price falls further than most bars do**:
+
+* **Oil over-exits by 4.137 GW.** Oil's bar falls only $1.64/kW-yr (25.00 → 23.36) and it gains the
+  $2.199 reactive credit, so its offer drops $11.69/MW-day — but the clearing price drops $29.32,
+  because coal's bar falls $29.30 and the CT plateau the price lands on is $18.25-based. A class
+  whose bar falls **less** than the price does is left above it: oil's whole 3.72 GW goes uncleared,
+  is paid $0, fails, and exits in 2022. **This was pre-declared** — *"oil 3.7 GW uncleared unless
+  reactive+energy clears it"* — and reactive+energy does not clear it.
+* **Coal and gas-CC stop exiting economically at all.** Coal's bar halves (58.50 → 29.20), so coal
+  clears at the lower price in every year and never fails the screen: economic coal exits go
+  **0.441 → 0.000 GW**. This is the **opposite** of the pre-declared sign (*"economic coal exits UP
+  from 0.44 GW"*), which D61 §2d item 5 derived by holding the price fixed while halving the bar;
+  in a real solve the price falls with the bar and coal clears instead.
+
+### 5.4 FC-3 (retirements) and FC-2 (additions), at full magnitude
+
+| FC-3 | actual | control | **arm** |
+|---|---:|---:|---:|
+| `retire.total_gw` | 15.062 | 18.702 (**FAIL**, +24.2 %) | **20.144 (FAIL, +33.7 %)** — moves AWAY |
+| coal GW | 10.299 | 6.016 (−41.6 %) | **5.575 (−45.9 %)** |
+| gas_cc GW | 0.434 | 2.328 (+437 %) | **0.075 (−82.8 %)** — large improvement |
+| gas_st GW | 2.702 | 10.297 (+281 %) | **10.297 (+281 %)** — unchanged, as declared |
+| oil GW | 0.613 | 0.051 (−91.6 %) | **4.188 (+584 %)** — the over-exit |
+| gas_ct / biomass GW | 0.808 / 0.207 | 0.000 / 0.009 | 0.000 / 0.009 (unchanged) |
+| unit recall ≥300 MW | 20 | 12/20 = 0.60 (**FAIL**) | **11/20 = 0.55 (FAIL)** |
+| plant recall | | 0.70 | 0.70 (unchanged) |
+| release precision, economic | | 0.116 | **0.171** (improves) |
+| release precision, all | | 0.407 | **0.423** (improves) |
+| T-R10a / T-R10b | | PASS / PASS | **PASS / PASS** |
+| BLK-10 backstop fired | | 1.013 GW | 1.013 GW (unchanged) |
+
+| FC-2 | actual GW | control | **arm** |
+|---|---:|---:|---:|
+| gas_cc additions | 8.525 | 12.118 (**FAIL**, +42.1 %) | **8.118 (PASS, −4.8 %)** |
+| wind / solar / gas_ct / storage | 1.619 / 13.066 / 0.442 / 0.283 | 3.000 / 9.762 / 1.013 / 0.000 | **unchanged** |
+| wind SHARE band | | delta 0.049 pp (**PASS**) | **delta 0.070 pp (FAIL)** |
+
+**A non-target load-bearing criterion flipped PASS → FAIL:** the wind *share* band. It is arithmetic,
+not a wind effect — wind's absolute build is identical in both arms, and its share rose only because
+the 4.0 GW of gas-CC entry disappeared from the denominator. Reported because the flip is real.
+
+**CO2 is untouched**, as a capacity-side mechanism should leave it: 274.98 / 277.34 / 320.35 Mt
+(control) vs **274.68 / 276.83 / 320.24** (arm) for 2023–2025, against actuals of 407.14 / 420.61 /
+448.67 — a −0.1 % to −0.2 % move on a −33 % standing gap.
+
+### 5.5 Resource envelope
+
+Four solve years sequential; per-year P0 107–273 s cold, P1 27–83 s warm; peak RSS **7.18 GB**.
+Inside the D57 envelope (14 min / 9.3 GB). **STOP 7 not fired.**
 
 ---
 
-## 6. Against the pre-declared signs, at full magnitude
+## 6. Against the pre-declared signs, graded at full magnitude
 
-*(filled at close.)*
+The PRECOMMIT §5 declarations, verbatim, each with its measured outcome. **7 HIT · 2 NEAR-MISS ·
+3 MISS · 1 STOP.**
+
+| # | pre-declared | measured | grade |
+|---|---|---|---|
+| 1 | 2022/23 ratio 1.52 → ≈1.06 (0.87–1.06) | **0.936** | **HIT** (inside) |
+| 2 | 2022/23 position −0.48 → +0.1…+0.3 pt | **+0.267 pt** | **HIT** (inside) |
+| 3 | 2022/23 coal uncleared 5.4 → ≤ 0.2 GW | **0.238 GW** | **NEAR-MISS** (+0.038; D61's own S6 row rounds the same 238 MW to "0.2") |
+| 4 | 2022/23 steam 8.8 GW UNCHANGED | **8,801.9 MW, identical** | **HIT** |
+| 5 | 2022/23 oil 3.7 GW uncleared unless reactive+energy clears it | **3,722.8 MW uncleared; it does not clear it** | **HIT** |
+| 6 | 2023/24 ratio 2.43 → ≈1.56 (1.28–1.56) | **1.603** | **MISS** (+0.043 above the band) |
+| 7 | 2023/24 position −0.98 → −0.3…0 pt | **−0.31 pt** | **NEAR-MISS** (0.01 outside) |
+| 8 | 2024/25 5.73 → 5.04 then FROZEN (all offers clear) | **6.52; all offers DO clear (0 uncleared vs the control's 8)** | **STOP 5 FIRED** (§5.2) |
+| 9 | 2025/26 unchanged | **price identical at the cap; position −1.16 pt** | **HIT on price, partial on position** |
+| 10 | FC-3 economic coal exits UP from 0.44 GW | **0.441 → 0.000 GW** | **MISS, opposite direction** (§5.3) |
+| 11 | FC-3 gas-steam 9.5 GW unchanged | **9.464 → 9.464 GW, to the MW** | **HIT** |
+| 12 | FC-3 gas-CC 2023 entry below +4 GW | **the +4.0 GW entry is gone; FC-2 gas_cc FAIL → PASS** | **HIT** |
+| 13 | FC-3 `retire.total_gw` toward 15.06 actual | **18.702 → 20.144, away** | **MISS** |
+| 14 | determination expected to STAY HOLD | **HOLD** (thermal-retire band FAIL, recall band FAIL in both arms) | **HIT** |
 
 ---
 
-## 7. STOPs — none fired
+## 7. STOPs — one fired, six did not
 
-*(filled at close.)*
+| # | STOP | outcome |
+|---|---|---|
+| 1 | Phase 0 mismatch | **NOT FIRED** — 0.0000 $/MW-day and 0.0000 pt in all four years (§3.1) |
+| 2 | bare `pjm-t1h` key moved by THIS lane | **NOT FIRED** — HEAD's bare key `aef81c84c4609c76` unmoved with the field absent and with an explicit `None`; the default pin `e5ecd4105ada3e58` and the bare-backcast pin `6a2845e50951394e` unmoved. Independently re-verified by capx D60-R3 at the merge HEAD: **17 of 17 keys unmoved**, both pinned defaults included. *(Stated precisely: a hand-written `{"PJM": False}` mapping IS a non-default value and keys distinctly, exactly as every registered optional field does and as the cache-key ledger intends so control arms stay separable. The CLI's `--no-` form sets the mapping to `None`, which is key-neutral — that is the path a control arm takes.)* |
+| 3 | any other ISO's key moved | **NOT FIRED** — the gate is a `{iso: bool}` mapping absent for every other ISO, and the five non-PJM ISOs have no intaken table, so the resolver returns the ATB path for every unit (tested) |
+| 4 | a residual-selected column or convention (rule 21) | **NOT FIRED** — the vintage rule was fixed in the PRECOMMIT and in code before any solve, is asserted from `pjm.csv` by test, and was not revisited after any number was seen |
+| 5 | **the 2024/25 price moving** | **FIRED** — 165.84 → 188.57 $/MW-day (§5.2). Cause identified: the arm's own earlier exits shrank the 2024 census by 1,582 MW while `R` and `Q_0` stayed identical to the MW |
+| 6 | the price landed through any scalar not in `pjm.csv` | **NOT FIRED** — every number the arm uses is a row of `pjm.csv` with source doc and page; no scalar field exists for them and `check_cache_key_registration` confirms none was added |
+| 7 | wall/RSS beyond the D57 envelope | **NOT FIRED** — 7.18 GB peak, inside 9.3 GB |
 
 ---
 
-## 8. §8 RECOMMENDATION
+## 8. §8 RECOMMENDATION — **DO NOT ARM, as it stands**
 
-*(filled at close.)*
+**The mechanism is right and the arm is not ready.** Both halves, plainly:
+
+**What the measurement establishes.** PJM's published default gross ACR *is* the operand the model's
+ATB FOM proxy was standing in for, and substituting it is rule 14 `[R-ACCURATE]` in its plainest
+form. In 2022/23 it puts the model's capacity price **within 6.4 % of the market's** (0.936× against
+1.522×) with the cleared position **inside a quarter-point of the published** (+0.27 pt against
+−0.48 pt), at **zero free parameters** — no adder, haircut, shading factor or per-class cap, no
+scalar field, and a vintage rule fixed in code before any solve. It also fixes a real FC-2 defect:
+the spurious +4.0 GW of 2023 gas-CC entry disappears and `additions.gas_cc` goes **FAIL → PASS**.
+Nothing about that is undone by §8's verdict.
+
+**Why it is still DO-NOT-ARM.** Three things, in order of weight:
+
+1. **STOP 5 fired** (§5.2). A STOP written before the solve fired on its own text, and this lane
+   does not promote past its own pre-registration. That the cause turns out to be the chartered
+   mechanism's multi-year propagation rather than an unchartered channel is the right thing to
+   *record*; it is not a licence to re-read the STOP as passing.
+2. **FC-3 gets worse where it was already failing.** `retire.total_gw` moves 18.702 → 20.144 against
+   an actual 15.062, and unit recall 0.60 → 0.55. The arm trades a large price-formation gain for a
+   composition loss, and the composition is what FC-3 grades.
+3. **The oil over-exit is a real defect of the joint posture, not noise.** 4.137 GW of oil exits
+   because its published bar falls less than the clearing price does. It is arithmetically correct
+   given the mechanism, and it is still 6.7× the actual oil retirement.
+
+**Draft owner card text** *(the director's to serve or not; nothing here arms anything)*:
+
+> **Card — capx D62: arm the published going-forward bar for PJM?**
+> capx D62 built `capacity_going_forward_bar_published_by_iso` (GATED default-off, zero DOF, no
+> scalar field) and measured it against the committed `pjm-t1h`. **For:** the 2022/23 clearing price
+> goes 1.52× → **0.936×** the published RCP and the cleared position −0.48 → **+0.27 pt**, on PJM's
+> own published operand replacing an ATB proxy that is 1.15–2.0× it, with the spurious +4 GW of 2023
+> gas-CC entry removed (FC-2 `gas_cc` FAIL → PASS). **Against:** the lane's own pre-registered STOP 5
+> FIRED (the 2024/25 price moved 165.84 → 188.57 through the census, not the offer side);
+> `retire.total_gw` 18.70 → 20.14 against 15.06 actual; recall 0.60 → 0.55; and 4.1 GW of oil
+> over-exits because its bar falls less than the clearing price does. **The lane's own recommendation
+> is DO-NOT-ARM as it stands**, and to route the oil convention (D67) and the 2024/25 census (D66)
+> first — the two objects D61 named and this arm did not touch. A narrower question the owner may
+> prefer to put instead: *should the published bar be armed for the classes PJM publishes a
+> technology-class default for, with the steam/oil class held on its own convention until D67?* —
+> which is a partition, not a level, and would need its own A/B.
 
 ---
 
 ## 9. What this lane does NOT close, and what it routes
 
-*(filled at close.)*
+1. **D66 — the 2024/25–2025/26 supply CENSUS.** Confirmed as the residual it was named as: in both
+   arms every offer clears in those years and the curve is read at the census, so **no offer-side
+   operand of any size can move them.** This arm makes the point sharper, not weaker — it moved the
+   2024/25 price by moving the census, and in the wrong direction.
+2. **D67 — the below-cap offer convention for regulated / self-supplied steam.** Unmoved and
+   unmovable here: gas-steam is 8,801.9 MW uncleared and 9.464 GW economically exited in **both**
+   arms, to the MW. **And this lane adds OIL to that card's scope** — the two share PJM's single
+   "Steam Oil & Gas" published class, and §5.3 shows the class's bar is the one whose relationship
+   to the clearing price the published table does not repair.
+3. **The D57 settlement's indifference guard** (§4.3). Five rows read as failing at ~1 ULP because
+   `eas + (gfc − eas)` lands below `gfc` after cancellation. Zero decision effect here (all five
+   `entry_capped`, 125.2 MW, none admitted), but it is a latent boundary defect that the published
+   bar makes reachable by putting a 330-unit CT plateau at the clearing price. The repair belongs to
+   D57's settlement, not to a bar lane: compare with the same relative tolerance the settlement used.
+4. **Nuclear's published bar is ABOVE the model's proxy** (162.43 vs 130.00 $/kW-yr, §1.1) — the one
+   class where the ATB estimate is *below* the published operand. It is inert on this horizon (all 31
+   units' offers are censored at 0 under both bars, §4.2), and it will not be inert in a forecast
+   where nuclear margins compress. Recorded, not adjusted.
+5. **`gas_cc_ccs` has no published PJM class** and keeps the ATB path under an armed gate (basis
+   `atb_fom_unpublished`). Inert before `ccs_retrofit_available_year` (2028); a forecast lane that
+   arms this gate past 2028 owes that class its own identification.
+6. **Every other ISO stays `U`** (rule 25). ERCOT is `n/a` by market design; CAISO, MISO, NYISO and
+   NEISO each cap offers against a going-forward-cost concept but publish **no generic
+   technology-class default an owner may elect**, so each would need its own intake and its own
+   identification in its own lane. No verdict transfers.
+
+## 10. Governance attestation
+
+**Rule 1 `[R-STRUCT]`** — structure first: the published bar is the market's own operand, not a level
+tuned to a residual; the arm is refused promotion despite improving the headline price. **Rule 5** —
+no magic numbers; every value is a `pjm.csv` row with source doc and page. **Rules 13 / 14** — both
+inputs pass the forward test (each regenerates from the next filing and responds only to the tariff);
+the SOM's uplift, regulation and black-start rows FAIL it and are refused by name; every published
+price, position and SOM figure in this document is a validation observable and enters nothing.
+**Rule 19 `[R-ONE-MECH]`** — one bar at three sites (screen, offer cap, floor merit key), one
+out-of-market leg. **Rule 21 `[R-DOF]`** — zero free parameters; the vintage rule was fixed in code
+and in the pushed PRECOMMIT before any solve and was never revisited. **Rule 22** — 2021–2025
+realized hindcast, forecast mode, only; no out-of-training year solved or scored. **Rule 24** — no
+scalar knob exists or may be added; `check_cache_key_registration` green. **Rule 25 `[R-ISO-SCOPE]`**
+— PJM's data and PJM's cell only. **Rule 27 `[R-PUSH]`** — edited locally, pushed as exact on-disk
+bytes, every ≥300-line file blob-verified after each push. **Rule 28** — one base row and a cell in
+all six shards; `check_mechanism_matrix.py` green (and the 239 line anchors this lane's own
+`scenarios.py` insertions shifted were measured — 0 at base, 49 with the change — and repaired).
+**Rule 29** — G-DRIFT in place of a control solve, the screen year named before it ran, the screen
+gate structural and STOP-only; the screen bundle was written outside the repository and never
+reached `results/`, so clause (c) is satisfied by construction. **Nothing armed.**

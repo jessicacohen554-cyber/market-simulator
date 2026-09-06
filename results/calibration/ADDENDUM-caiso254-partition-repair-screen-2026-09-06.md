@@ -313,3 +313,45 @@ carries the protective load alone.
 `argmax_y F(y)` and F contains no criterion — naming it instead on "which year
 my gate can see" would be gate-shopping, which is precisely what §3.1 exists to
 prevent. The limitation is disclosed, not designed around.
+
+### §1.4 — G-DRIFT EXTENSION: `bc77b189` → `d13d1cba` (the SCN-WS1c carbon lane)
+
+`main` advanced again mid-fetch. 5 files, +318 / −34 — and unlike the two
+earlier deltas this one lands on the **carbon** path, which a CAISO backcast
+genuinely uses (CAISO's marginal cost carries a CARB allowance adder). It was
+therefore audited on the number, not on the narrative.
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `src/market_sim/config/scenario_resolvers.py` | +28 | **INERT** | comment-only — verified by filtering the diff to non-`#`, non-blank changed lines: **empty**. |
+| `src/market_sim/results/cache.py` | +51 | **INERT** | docstring-only (the S2 cache-epoch entry); no `def`/`import`/assignment/`return`/`if` line changed. |
+| `src/market_sim/config/scenarios.py` | +18 | **INERT** | one new `__post_init__` warning, guarded `if self.mode == "forecast" and self.carbon_price_path not in ("zero", None)`. A `mode="backcast"` config never reaches it, and it emits a `RuntimeWarning` rather than changing a value. |
+| `src/market_sim/policy/cap_and_trade.py` | +63 | **INERT** | the S2 repair is explicitly in the **forecast** branch ("the forecast branch previously returned a zero adder whenever a non-default `carbon_price_path` was set"). The backcast branch — the measured auction average — is untouched, and the keeper carries `mass_cap_enabled: False`, `mass_cap_tons: None`, `mass_cap_program: None`. |
+| `src/market_sim/policy/carbon.py` | +192 | **INERT — VERIFIED ON THE NUMBER** | §1.4.1. |
+
+### §1.4.1 — The carbon price itself, measured at HEAD against the keeper's frozen basis
+
+Owner ruling S2 makes a named `carbon_price_path` a **floor** under the state
+program (`resolved_base_trajectory_price` → `max(program, RFF path)`) instead of
+a replacement. That is a real semantic change to `carbon.py`, so the claim that
+it cannot move a CAISO backcast was **executed rather than argued** —
+`resolve_carbon_price` was called at HEAD on the actual per-year
+`backcast_config("CAISO", …)`, and compared to the carbon basis frozen into
+`caiso_offer_curve_measured.json`, which is the basis the keeper's offer
+multipliers were derived against:
+
+| year | `resolve_carbon_price` at HEAD | `STATE_CARBON_PRICE_BY_ISO["CAISO"]` | frozen artifact basis | match |
+|---|--:|--:|--:|:--:|
+| 2023 | 33.03 | 33.03 | 33.03 | ✔ |
+| 2024 | 35.23 | 35.23 | 35.23 | ✔ |
+| 2025 | 28.06 | 28.06 | 28.06 | ✔ |
+
+Exact in all three years. The floor's own documentation states the same result
+from the other direction — the RFF mid path never exceeds a program trajectory,
+so the leg is "an exact NO-OP on CAISO, NYISO and NEISO" — but the table is the
+evidence and the comment is only the corroboration.
+
+**⇒ The chain `fa23c1f7` (keeper) → `82f79693` → `fbef3a91` → `bc77b189` →
+`d13d1cba` is complete and every hunk is INERT for a CAISO backcast. G-CTRL
+form 4 stands; no control solve is spent.** §1.2's single LIVE hunk and its
+`co2` restriction remain the only exception on the whole chain.
