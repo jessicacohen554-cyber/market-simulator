@@ -1,0 +1,181 @@
+{
+ "S0_d62_reproduced": {
+  "2022": {
+   "census_mw": 181435.072,
+   "dpos_pt": 0.2671879691610757,
+   "how": "marginal_offer_sets_price",
+   "ledger_pos": 1.053672,
+   "ledger_price": 46.782279,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 1370,
+   "n_uncleared": 667,
+   "pos": 1.0536718796916107,
+   "price": 46.7823,
+   "price_takers_mw": 30577.888,
+   "ratio": 0.935646,
+   "requirement_mw": 155047.538,
+   "uncleared_firm_mw": {
+    "coal": 237.8,
+    "gas_cc": 2052.1,
+    "gas_ct": 3086.0,
+    "gas_st": 8801.9,
+    "oil": 3722.8
+   }
+  },
+  "2023": {
+   "census_mw": 170728.853,
+   "dpos_pt": -0.30578059347126096,
+   "how": "marginal_offer_sets_price",
+   "ledger_pos": 1.052142,
+   "ledger_price": 54.722053,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 840,
+   "n_uncleared": 15,
+   "pos": 1.0521421940652873,
+   "price": 54.7221,
+   "price_takers_mw": 32652.261,
+   "ratio": 1.6033430999121006,
+   "requirement_mw": 161116.99,
+   "uncleared_firm_mw": {
+    "coal": 93.8,
+    "gas_st": 1115.8
+   }
+  },
+  "2024": {
+   "census_mw": 170576.589,
+   "dpos_pt": -3.292004306611873,
+   "how": "all_offers_clear_curve_sets_price",
+   "ledger_pos": 1.02258,
+   "ledger_price": 188.572361,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 835,
+   "n_uncleared": 0,
+   "pos": 1.0225799569338814,
+   "price": 188.57259511654783,
+   "price_takers_mw": 27959.698,
+   "ratio": 6.5204908408211555,
+   "requirement_mw": 166810.017,
+   "uncleared_firm_mw": {}
+  },
+  "2025": {
+   "census_mw": 142027.451,
+   "dpos_pt": -5.040213709735286,
+   "how": "all_offers_clear_curve_sets_price",
+   "ledger_pos": 0.954498,
+   "ledger_price": 451.61,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 835,
+   "n_uncleared": 0,
+   "pos": 0.954497862902647,
+   "price": 451.60999999999996,
+   "price_takers_mw": 24000.204,
+   "ratio": 1.673125370480142,
+   "requirement_mw": 148798.088,
+   "uncleared_firm_mw": {}
+  }
+ },
+ "S74_no_default_cap_price_takers": {
+  "2022": {
+   "census_mw": 181435.072,
+   "dpos_pt": 0.2671879691610757,
+   "how": "marginal_offer_sets_price",
+   "ledger_pos": 1.053672,
+   "ledger_price": 46.782279,
+   "moved_to_price_takers_mw_by_fuel": {
+    "gas_st": 8801.9,
+    "oil": 3722.8
+   },
+   "n_offers": 834,
+   "n_uncleared": 261,
+   "pos": 1.0536718796916107,
+   "price": 46.7823,
+   "price_takers_mw": 43102.674999999814,
+   "ratio": 0.935646,
+   "requirement_mw": 155047.538,
+   "uncleared_firm_mw": {
+    "coal": 237.8,
+    "gas_cc": 2052.1,
+    "gas_ct": 15539.0
+   }
+  },
+  "2023": {
+   "census_mw": 170728.853,
+   "dpos_pt": -0.25513590445918055,
+   "how": "marginal_offer_sets_price",
+   "ledger_pos": 1.052142,
+   "ledger_price": 54.722053,
+   "moved_to_price_takers_mw_by_fuel": {
+    "gas_st": 1115.8
+   },
+   "n_offers": 830,
+   "n_uncleared": 29,
+   "pos": 1.052648640955408,
+   "price": 52.6056,
+   "price_takers_mw": 33768.06199999999,
+   "ratio": 1.5413302080281277,
+   "requirement_mw": 161116.99,
+   "uncleared_firm_mw": {
+    "coal": 231.6,
+    "gas_cc": 846.3
+   }
+  },
+  "2024": {
+   "census_mw": 170576.589,
+   "dpos_pt": -3.292004306611873,
+   "how": "all_offers_clear_curve_sets_price",
+   "ledger_pos": 1.02258,
+   "ledger_price": 188.572361,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 835,
+   "n_uncleared": 0,
+   "pos": 1.0225799569338814,
+   "price": 188.57259511654783,
+   "price_takers_mw": 27959.698,
+   "ratio": 6.5204908408211555,
+   "requirement_mw": 166810.017,
+   "uncleared_firm_mw": {}
+  },
+  "2025": {
+   "census_mw": 142027.451,
+   "dpos_pt": -5.040213709735286,
+   "how": "all_offers_clear_curve_sets_price",
+   "ledger_pos": 0.954498,
+   "ledger_price": 451.61,
+   "moved_to_price_takers_mw_by_fuel": {},
+   "n_offers": 835,
+   "n_uncleared": 0,
+   "pos": 0.954497862902647,
+   "price": 451.60999999999996,
+   "price_takers_mw": 24000.204,
+   "ratio": 1.673125370480142,
+   "requirement_mw": 148798.088,
+   "uncleared_firm_mw": {}
+  }
+ },
+ "admission_d57_2022": {
+  "decided:coal": 5834.6,
+  "decided:gas_st": 7333.7,
+  "entry_capped:gas_cc": 2160.1,
+  "entry_capped:gas_st": 2130.8,
+  "entry_capped:oil": 3329.4,
+  "executed:gas_st": 7333.7
+ },
+ "admission_d62_2022": {
+  "decided:coal": 258.5,
+  "decided:gas_st": 8264.7,
+  "decided:oil": 4136.5,
+  "entry_capped:gas_cc": 2160.1,
+  "entry_capped:gas_ct": 3567.4,
+  "entry_capped:gas_st": 1199.8,
+  "executed:gas_st": 8264.7,
+  "executed:oil": 4136.5
+ },
+ "admission_d62_2023": {
+  "decided:gas_st": 1199.8,
+  "executed:gas_st": 1199.8,
+  "re_confirmed:coal": 102.0,
+  "reversed:coal": 156.5
+ },
+ "d57_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/f0e050e820c1159a/",
+ "d62_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d62-pubbar/PJM/b98060898fceb3da/"
+}

@@ -146,6 +146,7 @@ from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_adequacy_requirement_published,
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_supply_clearing,
+    resolve_capacity_no_default_cap_convention,
 )
 from market_sim.config.iso_configs import (  # noqa: E402
     apply_iso_scenario_defaults,
@@ -523,6 +524,18 @@ META_RECORD_SPEC = RecordSpec(
             "armed row; the raw mapping is recorded below",
         ),
         "capacity_adequacy_requirement_published_by_iso": FromConfig(),
+        # capx D74: the no-default-cap price-taker convention gate, recorded
+        # through its ONE predicate so the record reads the RESOLVED gate
+        # (FFR-3R; it also requires the D62 bar gate), with the raw mapping
+        # recorded beside it.
+        "capacity_no_default_cap_convention": Derived(
+            lambda cfg, ctx: bool(
+                resolve_capacity_no_default_cap_convention(cfg, ctx["iso"])
+            ),
+            "resolve_capacity_no_default_cap_convention(cfg, iso): the armed "
+            "row AND the published-bar gate; the raw mapping is recorded below",
+        ),
+        "capacity_no_default_cap_convention_by_iso": FromConfig(),
         # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
@@ -682,6 +695,7 @@ def build_config(
     capacity_market_supply_clearing: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
     capacity_adequacy_requirement_published: "bool | None" = None,
+    capacity_no_default_cap_convention: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
     locality_capacity_curves: "bool | None" = None,
@@ -934,6 +948,15 @@ def build_config(
                 "capacity_adequacy_requirement_published_by_iso": (
                     {iso: True} if capacity_adequacy_requirement_published else None
                 ),
+                # capx D74: the no-default-cap price-taker convention gate —
+                # default-off for every ISO; None inherits the shipped default,
+                # True arms the D74 A/B posture for the INVOKED ISO (distinct
+                # cache key; requires the D62 bar gate). Same shape as the three
+                # siblings above; an explicit --no-... is passed outside this
+                # None-drop dict.
+                "capacity_no_default_cap_convention_by_iso": (
+                    {iso: True} if capacity_no_default_cap_convention else None
+                ),
                 # capx D52: NYISO adequacy-requirement devintage gates —
                 # default-off; None inherits the shipped default, True arms
                 # the D52 A/B measurement posture (distinct cache key).
@@ -1121,6 +1144,14 @@ def build_config(
         **(
             {"capacity_adequacy_requirement_published_by_iso": None}
             if capacity_adequacy_requirement_published is False
+            else {}
+        ),
+        # capx D74: the same explicit-OFF passthrough for the no-default-cap
+        # convention gate (registered at None, so an explicit None still drops
+        # and the off arm keeps its recipe key).
+        **(
+            {"capacity_no_default_cap_convention_by_iso": None}
+            if capacity_no_default_cap_convention is False
             else {}
         ),
     )
@@ -1726,6 +1757,29 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--capacity-no-default-cap-convention",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D74 (2026-09-06) arm: a screened thermal unit whose PUBLISHED "
+            "resource class carries NO default gross Avoidable Cost Rate for "
+            "the delivery year the screen prices (PJM Manual 18 Rev 62 "
+            "§5.4.8.4(B): 'Steam Oil & Gas' is 'NA' through DY 2025/26; §5.4.1: "
+            "an offer above $0 needs a unit-specific ACR filing 'or ... the "
+            "default gross ACR of the applicable resource type, if available') "
+            "is a $0 PRICE TAKER in the D57 stack and EXEMPT from the merchant "
+            "screen in that year — its exit is its owner's filing (steps 0/1b). "
+            "REQUIRES --capacity-going-forward-bar-published (the convention is "
+            "a limb of the published table; the resolver refuses otherwise). "
+            "Generic in form, PJM-scoped by DATA (rule 25): an ISO with no "
+            "intaken table has no 'NA' cell and the gate is inert. OMIT to "
+            "inherit the shipped default (off, owner-armed only); "
+            "--capacity-no-default-cap-convention arms it for the invoked ISO "
+            "(distinct cache key); --no-capacity-no-default-cap-convention is "
+            "the explicit OFF control."
+        ),
+    )
+    parser.add_argument(
         "--capacity-adequacy-requirement-published",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2259,6 +2313,7 @@ def main(argv: list[str] | None = None) -> int:
         capacity_adequacy_requirement_published=(
             args.capacity_adequacy_requirement_published
         ),
+        capacity_no_default_cap_convention=args.capacity_no_default_cap_convention,
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         locality_capacity_curves=args.locality_capacity_curves,
