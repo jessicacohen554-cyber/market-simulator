@@ -11381,6 +11381,49 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-197, ZERO solves, phase 0 only — keeper
+`2026-09-06-nyiso-196-extract-basis` UNCHANGED, nothing registered, NO cell verdict moves).** The
+nyiso-196 "NEW TOP OF QUEUE (U) — Linden 50006 `CC_CHP` placement" item below is **VOID: the
+regression it names does not exist in the committed artifacts.** Decoding both registered payloads
+on the same basis, Linden goes **6.325 → 6.549 / 6.197 → 6.440 / 6.162 → 6.390 TWh — it GAINED
++224 / +243 / +227 GWh** under the extract-basis repair, exactly what its own availability census
+(+302 / +326 / +314 GWh available) predicts, and it is the second-largest gainer of the energy
+Cricket Valley released in all three years. The nyiso-196 §4.2 row mixed two bases: its *keeper*
+column is the prior keeper's PAYLOAD (full plant, carrying the measured 1.25 TWh/yr CHP add-back)
+and its *arm* column is the arm's LP GRID series (no add-back). Linden is the only plant in that
+table with a non-zero measured BTM hold-out, so it is the only row the mismatch can move — every
+other row reproduces to the digit, `CC_CHP` control Sithe 54547 (measured share 0.0 %) included;
+the provenance is nyiso-196's own `_nyiso196_screen_gates.json`
+(`moved_plants[1]`: `keeper_gwh` 6196.9 payload vs `screen_gwh` 5235.5 LP = the printed 5.24), and
+the row is self-refuting (an availability RISE producing a 15 % energy fall at a plant online
+8,760/8,760 h). **Step 2 found NO measured input the model contradicts**, so per the session brief
+no PREREG was written and no LP was run: (a) availability is the extract's own scale-invariant
+share and the plant is not capacity-bound (at its envelope only 896 / 586 h, 416 / 467 GWh of
+headroom unused); (b) LP `pmax` 757.76 MW is within 2.8 % / 1.3 % of NYISO's registered net
+capability (737.1 / 748.2 MW summer) and the 22.21 % hold-out is itself the Gold-Book ÷ 923
+measurement, while `chp_layup_duty_curve`'s census deliberately abstains at Linden; (c) the VFT
+limb is refuted — the Gold Book carries Linden Cogen as an INTERNAL NYCA Zone-J station (PTID
+23786), and nyiso-196's I-1 already measured 0 of 8,760 h of binding import capability;
+(d) delivered gas is a real unrepaired mismatch (a Linden NJ plant on Transco Z6 NON-NY charged
+the NYC citygate, matched 11/12 months) but has **no committed Z6 non-NY series** to swap and
+pushes the residual the wrong way. **The cell is RE-SPECIFIED and filed to the owner court, with
+the opposite sign:** against NYISO's Gold Book Table III-2a net energy (4,390.7 / 4,288.7 GWh for
+CY2023 / CY2024) the keeper's LP grid dispatch is **+904.9 / +901.8 GWh OVER (+20.6 % / +21.0 %)**
+— the extract-basis repair *increased* it (prior +680.9 / +658.8) — and Linden alone is **+0.814
+of the `CC_CHP` class's +2.327 TWh** 923 over-run in 2024. It is an OFFER-POSITION object
+(committed band `mc_base` $23.36 / $27.19 clears the modelled NYC LMP in 99.8 % / 98.7 % of
+below-envelope hours; LP CF 79.8 % / 78.2 % against a market 68.0 % / 65.4 %), and a `CC_CHP`
+band multiplier may only be pre-registered on an owner ruling with an ex-ante non-residual ground
+(rule 1 carve-out (a)–(e)) — this session proposes no value. Also filed: a scorer-side card on the
+plant-grain comparand (the CAMPD gross series at 50006 peaks 27–34 % above NYISO's registered
+station capability and the repo's own `parasitic_load_factors.parquet` flags the plant
+`out_of_band` in every year), and an add-back-basis assertion for the screen-gate probe pattern.
+Records: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
+`results/calibration/_nyiso197_linden_phase0.json`, `_nyiso197_linden_rebuild_{2023,2024}.json`,
+`scripts/probes/nyiso197_linden_*.py`. **NEXT (U): Cricket Valley 57185's part-load bucket (b−)
+906 GWh in 2024** — untouched by this session and now the queue's live plant-grain item.
+
+
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-196, ONE rule-29 2024 screen + ONE 2023–2025 bundle,
 NO control solve — PROMOTION; keeper → `2026-09-06-nyiso-196-extract-basis`, CALIBRATED).** The
 nyiso-195 "NEW TOP OF QUEUE (U) — the AVAILABILITY side" item was executed as a full decomposition of
@@ -11409,9 +11452,12 @@ re-entry is a NEW owner declaration). Cells: `unit_outage_extract_basis_share` K
 / `campd_outage_merit_order_guard` unchanged K. Records: `docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md`,
 `results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md`, `_nyiso196_*.json`,
 `scripts/probes/nyiso196_*.py`, `scripts/gen_nyiso196_attestation.py`.
-**NEW TOP OF QUEUE (U) — Linden 50006 `CC_CHP` placement** (NYC node behind the Linden VFT; `chp_layup_duty_curve`,
+**~~NEW TOP OF QUEUE (U) — Linden 50006 `CC_CHP` placement~~ — VOID 2026-09-06 (nyiso-197): the −1.0 TWh
+fall does not exist (a CHP add-back basis mismatch in §4.2; Linden ROSE +224 / +243 / +227 GWh). The cell is
+re-specified with the opposite sign and filed to the owner court — see the nyiso-197 block above.**
+*(Original text, verbatim:)* "NEW TOP OF QUEUE (U) — Linden 50006 `CC_CHP` placement (NYC node behind the Linden VFT; `chp_layup_duty_curve`,
 `nyiso_chp_btm_measured` hold-out 22.2 %): −1.0 TWh/yr under this keeper with its own availability up;
-phase 0 first (why the LP re-placed released combined-cycle energy off Linden), never a lever. Second:
+phase 0 first (why the LP re-placed released combined-cycle energy off Linden), never a lever." Second:
 Cricket Valley's part-load bucket (b−) 906 GWh in 2024 (the plant now 0.53 TWh UNDER its meter) — a
 loading object the R'd wall / econ-ramp levers do not reach. Owner-court items unchanged, plus the
 `complete` re-entry declaration on this keeper.

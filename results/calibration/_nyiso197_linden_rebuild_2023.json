@@ -1,0 +1,180 @@
+{
+  "session": "nyiso-197",
+  "status": "PHASE 0 part 2 \u2014 NO LP, MEASUREMENT ONLY",
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "year": 2023,
+  "R1_capacity_ladder": {
+    "lp_units": [
+      {
+        "row": 387,
+        "unit_id": "CC_CHP_NYC_p50006_committed",
+        "pmax_mw": 118.87,
+        "pmin_mw": 0.0,
+        "heat_rate": 8.3033,
+        "mc_base_mean": 23.357,
+        "mc_base_p10": 15.637,
+        "mc_base_p90": 31.945,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 388,
+        "unit_id": "CC_CHP_NYC_p50006_econc00",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 9.2413,
+        "mc_base_mean": 25.201,
+        "mc_base_p10": 16.636,
+        "mc_base_p90": 34.729,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 389,
+        "unit_id": "CC_CHP_NYC_p50006_econc01",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 9.6411,
+        "mc_base_mean": 26.161,
+        "mc_base_p10": 17.433,
+        "mc_base_p90": 35.871,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 390,
+        "unit_id": "CC_CHP_NYC_p50006_econc02",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 10.0409,
+        "mc_base_mean": 27.122,
+        "mc_base_p10": 18.23,
+        "mc_base_p90": 37.012,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 391,
+        "unit_id": "CC_CHP_NYC_p50006_econc03",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 10.4406,
+        "mc_base_mean": 28.082,
+        "mc_base_p10": 19.028,
+        "mc_base_p90": 38.153,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 392,
+        "unit_id": "CC_CHP_NYC_p50006_econc04",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 10.8404,
+        "mc_base_mean": 29.042,
+        "mc_base_p10": 19.825,
+        "mc_base_p90": 39.295,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 393,
+        "unit_id": "CC_CHP_NYC_p50006_econc05",
+        "pmax_mw": 96.74,
+        "pmin_mw": 0.0,
+        "heat_rate": 11.2402,
+        "mc_base_mean": 30.002,
+        "mc_base_p10": 20.622,
+        "mc_base_p90": 40.436,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      },
+      {
+        "row": 394,
+        "unit_id": "CC_CHP_NYC_p50006_peak",
+        "pmax_mw": 58.45,
+        "pmin_mw": 0.0,
+        "heat_rate": 20.7583,
+        "mc_base_mean": 47.532,
+        "mc_base_p10": 28.231,
+        "mc_base_p90": 69.001,
+        "avail_mean": 0.86,
+        "avail_min": 0.5878
+      }
+    ],
+    "lp_pmax_total_mw": 757.76,
+    "eia860_nameplate_mw": 974.1,
+    "eia860_summer_mw": 904.2,
+    "campd_observed_peak_mw_extract_basis": 1275.0,
+    "campd_hourly_max_mw_meter": 1237.1,
+    "measured_btm_share_pct": 22.21,
+    "goldbook": {
+      "edition": "2024-NYCA-Generators.xlsx",
+      "mw": 800.0,
+      "cap_sum": 790.8,
+      "cap_win": 924.9,
+      "net_sum": 737.1,
+      "net_win": 806.8,
+      "net_energy_gwh": 4390.7
+    },
+    "lp_pmax_over_goldbook_net_sum": 1.028
+  },
+  "R2_envelope_vs_price": {
+    "lp_annual_gwh": 5295.6,
+    "envelope_annual_gwh": 5708.8,
+    "goldbook_net_energy_gwh": 4390.7,
+    "lp_minus_goldbook_gwh": 904.9,
+    "lp_cf_on_lp_pmax": 0.7978,
+    "goldbook_cf_on_goldbook_net_sum": 0.68,
+    "hours_at_envelope": 896,
+    "hours_below_envelope": 7864,
+    "energy_at_envelope_gwh": 579.7,
+    "headroom_below_envelope_gwh": 415.8,
+    "below_env_share_nyc_lmp_clears_cheapest_tranche": 0.9976,
+    "below_env_share_nyc_lmp_clears_dearest_tranche": 0.097,
+    "nyc_lmp_mean": 36.62,
+    "cheapest_tranche": "CC_CHP_NYC_p50006_committed",
+    "cheapest_tranche_mc_mean": 23.357,
+    "dearest_tranche": "CC_CHP_NYC_p50006_peak",
+    "dearest_tranche_mc_mean": 47.532
+  },
+  "R3_delivered_gas": {
+    "eia860_pipeline_1": "TRANSCONTINENTAL GAS PIPELINE",
+    "eia860_plant_state_county": "NJ / Union (Linden)",
+    "model_zone": "NYC",
+    "committed_nyc_hub_monthly_usd_mmbtu": {
+      "1": 3.3011,
+      "2": 3.8539,
+      "3": 2.2209,
+      "4": 1.7383,
+      "5": 1.4645,
+      "6": 1.4276,
+      "7": 1.7311,
+      "8": 1.273,
+      "9": 1.4215,
+      "10": 1.4186,
+      "11": 2.202,
+      "12": 2.2829
+    },
+    "lp_delivered_gas_monthly_usd_mmbtu": {
+      "1": 3.3011,
+      "2": 2.8676,
+      "3": 2.2209,
+      "4": 1.7383,
+      "5": 1.4645,
+      "6": 1.4276,
+      "7": 1.7311,
+      "8": 1.273,
+      "9": 1.4223,
+      "10": 1.4186,
+      "11": 2.202,
+      "12": 2.2829
+    },
+    "note": "the model charges the NYC-zone hub (Transco Z6 NY, the NYC citygate); the plant is physically in Linden NJ on Transco Zone 6 NON-NY. No Z6 non-NY series is committed in this repo."
+  },
+  "R4_duty_reach": {
+    "chp_layup_duty_curve_armed": true,
+    "plant_in_layup_census": false,
+    "plant_in_duty_curve": false
+  }
+}
