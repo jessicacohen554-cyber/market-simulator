@@ -116,14 +116,43 @@ class TestCampaignMatrix(unittest.TestCase):
     def test_blocked_cases_are_commented_not_live(self):
         # CES-T80 LEFT this list at SCN-LEVELS (2026-09-06): SCN-WS2a landed
         # its two fields and owner card D-2 -> S3 committed its level, so both
-        # of its blockers cleared. The four below are still blocked on the one
-        # missing field `voluntary_clean_demand_path` (SCN-WS3b), except
-        # CAP-STATE-TIGHT, which is blocked on a missing schedule field AND on
+        # of its blockers cleared. VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN
+        # LEFT it at SCN-WS3b (2026-09-06): their one missing field
+        # `voluntary_clean_demand_path` landed (they stay HELD under owner
+        # ruling S5, which is a release question, not a config one). Only
+        # CAP-STATE-TIGHT remains: blocked on a missing schedule field AND on
         # a level S3 did not reach.
         text = MATRIX.read_text()
-        for case in ("VOL-MID", "VOL-HI", "ALL-CLEAN", "CAP-STATE-TIGHT"):
+        for case in ("CAP-STATE-TIGHT",):
             self.assertNotIn(case, self.sweep.cases, f"{case} must not be live yet")
             self.assertIn(case, text, f"{case} must still be named, commented")
+
+    def test_voluntary_cases_are_live_on_the_one_field(self):
+        # SCN-WS3b (2026-09-06): the four cases the plan §3.5 table lists on the
+        # voluntary axis, each carrying the axis as a path label and nothing
+        # else voluntary (levels live in constants.VOLUNTARY_*, never here).
+        self.assertEqual(
+            self.sweep.cases["VOL-MID"], {"voluntary_clean_demand_path": "mid"}
+        )
+        self.assertEqual(
+            self.sweep.cases["VOL-HI"], {"voluntary_clean_demand_path": "high"}
+        )
+        combo = self.sweep.cases["CES-P20+VOL-HI"]
+        self.assertEqual(combo["voluntary_clean_demand_path"], "high")
+        self.assertEqual(combo["federal_ces_premium_usd_per_mwh"], 20.0)
+        self.assertNotIn("federal_ces_target_by_year", combo)
+        corner = self.sweep.cases["ALL-CLEAN"]
+        self.assertEqual(corner["voluntary_clean_demand_path"], "high")
+        self.assertEqual(corner["datacenter_load_path"], "high")
+        self.assertEqual(corner["demand_growth_path"], "high")
+        self.assertEqual(corner["federal_ces_acp_usd_per_mwh"], 50.0)
+        self.assertEqual(corner["carbon_price_delta"], 25.0)
+        for case in ("VOL-MID", "VOL-HI", "CES-P20+VOL-HI", "ALL-CLEAN"):
+            for field in self.sweep.cases[case]:
+                self.assertNotIn(
+                    field,
+                    ("voluntary_wtp_ceiling_usd_per_mwh", "voluntary_eligible_fuels"),
+                )
 
     def test_ces_target_case_is_live_at_the_committed_level(self):
         # Owner card D-2 -> S3 (2026-09-06, SCN-DESK r#5 am.1): the plan's
