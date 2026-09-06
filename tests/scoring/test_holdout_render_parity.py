@@ -26,9 +26,15 @@ pins the three seams the render depends on:
   3. the removed render paths are GONE, not merely unreferenced (rule 26
      [R-DELETE]: a dead render path is a re-armable answer).
 
-Plus the one designation that deliberately SURVIVES: rule 22's tier caveat, as
-a single footnote, because a validation number must still never read as a
-certified out-of-sample skill number.
+AMENDED SAME DAY (owner instruction, verbatim): *"Delete the stupid per year
+determination from the run explorer I do not need narrative from you in my
+results viewing ANYWHERE I just want the scores and charts and make it so every
+iso with holdout years run has them SHOW up in the report."* So the run
+explorer's Report is SCORES AND CHARTS ONLY, and rule 22's tier caveat — which
+the first amendment kept here as a footnote — moves entirely to the Calibration
+Status page's per-year table, the surface rule 30(b) already owns. This file now
+pins BOTH halves: the fold still folds (so every ISO's held-out years render as
+ordinary year columns), and no narrative panel may come back.
 
 Each assertion is accompanied by a negative control in
 ``TestGuardActuallyGuards`` that mutates the source back toward the
@@ -55,7 +61,27 @@ REMOVED_SYMBOLS = (
     "holdoutYearBanner",
     "TIER_LABEL",
     "foldedHoldoutBlocks",
+    # Deleted 2026-09-06 by the same-day narrative-strip instruction. Each one
+    # rendered PROSE into the results view: the run-definition panel (whose
+    # registry text had become a per-year determination essay), the ablation
+    # twin + market story, and the auto-generated diagnostic findings.
+    "populateAblationDelta",
+    "diagFindings",
+    "ablationDelta",
 )
+
+# Prose the Report must never render again. Matched as literal substrings of the
+# source because each is the panel's own visible heading or CSS hook.
+REMOVED_PROSE = (
+    "Run Definition",
+    "Rule 22 — held-out years",
+    "Zero-forcing ablation twin",
+    "Market story",
+    "bc-narration",
+    "Auto-generated findings",
+)
+
+STATUS_JS = REPO_ROOT / "docs" / "codebase-site" / "js" / "calibration-status.js"
 
 
 def source() -> str:
@@ -96,8 +122,21 @@ def check_removed_symbols_absent(src: str) -> list[str]:
     return [s for s in REMOVED_SYMBOLS if re.search(rf"\b{s}\b", src)]
 
 
-def check_rule22_footnote_present(src: str) -> bool:
-    return "Rule 22 — held-out years" in src
+def check_removed_prose_absent(src: str) -> list[str]:
+    return [t for t in REMOVED_PROSE if t in src]
+
+
+def check_rule22_tier_reading_on_status_page(src: str) -> bool:
+    """Rule 22's reading must live SOMEWHERE — it is the status page's job now.
+
+    The run explorer no longer marks a held-out year at all (owner instruction
+    2026-09-06), so the only thing standing between a validation number and
+    being quoted as a certified out-of-sample skill number is the Calibration
+    Status page's per-year table: a Tier column plus the line that says a
+    held-out row is reported, not gating. That is rule 30(b)'s surface and it is
+    what this check pins.
+    """
+    return "Held-out years are reported, not gating" in src and "Tier" in src
 
 
 class TestHoldoutRendersAsAnOrdinaryYear(unittest.TestCase):
@@ -141,13 +180,29 @@ class TestHoldoutRendersAsAnOrdinaryYear(unittest.TestCase):
             "banner (rule-history §14).",
         )
 
-    def test_rule22_tier_caveat_survives_as_a_footnote(self):
-        """The one designation that is REQUIRED to stay (rule 22)."""
+    def test_report_renders_no_narrative_prose(self):
+        """Scores and charts only — owner instruction 2026-09-06."""
+        still = check_removed_prose_absent(self.src)
+        self.assertEqual(
+            still,
+            [],
+            f"narrative panel(s) present again in the run explorer: {still}. "
+            "The Report is scores and charts only; the run definition, the "
+            "rule-22 footnote, the ablation twin / market story and the "
+            "auto-generated diagnostics were DELETED, not hidden.",
+        )
+
+    def test_rule22_tier_reading_lives_on_the_status_page(self):
+        """Rule 22's substance survives the strip — on rule 30(b)'s surface."""
         self.assertTrue(
-            check_rule22_footnote_present(self.src),
-            "The rule-22 tier caveat footnote is missing. De-designating the "
-            "held-out years must not delete rule 22's own reading: a validation "
-            "number must never read as a certified out-of-sample skill number.",
+            check_rule22_tier_reading_on_status_page(
+                STATUS_JS.read_text(encoding="utf-8")
+            ),
+            "The Calibration Status page must keep its per-year Tier column and "
+            "the 'reported, not gating' line: with the run explorer stripped of "
+            "every designation, it is the only surface that stops a validation "
+            "number being read as a certified out-of-sample skill number "
+            "(rule 22, rule 30(b)).",
         )
 
     def test_the_fold_plumbing_itself_is_untouched(self):
@@ -208,10 +263,15 @@ class TestGuardActuallyGuards(unittest.TestCase):
             check_removed_symbols_absent(mutated), ["renderHoldoutPanelCombined"]
         )
 
-    def test_footnote_check_fires_when_the_caveat_is_dropped(self):
-        mutated = self.src.replace("Rule 22 — held-out years", "", 1)
-        self.assertNotEqual(mutated, self.src, "mutation did not apply")
-        self.assertFalse(check_rule22_footnote_present(mutated))
+    def test_prose_check_fires_on_a_restored_narrative_panel(self):
+        mutated = self.src + '\n      html += `<h2>Run Definition</h2>`;\n'
+        self.assertEqual(check_removed_prose_absent(mutated), ["Run Definition"])
+
+    def test_status_tier_check_fires_when_the_reading_is_dropped(self):
+        src = STATUS_JS.read_text(encoding="utf-8")
+        mutated = src.replace("Held-out years are reported, not gating", "", 1)
+        self.assertNotEqual(mutated, src, "mutation did not apply")
+        self.assertFalse(check_rule22_tier_reading_on_status_page(mutated))
 
 
 if __name__ == "__main__":
