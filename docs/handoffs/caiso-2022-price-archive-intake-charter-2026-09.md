@@ -98,3 +98,27 @@ Steps, for the lane that executes it (Opus/Fable — it touches
 DAM only (~1 h; buys H-3 and the DA diagnostic; C3a/C3b/C3c still SKIPPED
 in 2022) — or DAM + RTM (~1 day of background fetching; buys the scored
 price) — and whether to run it in this session or a fresh one.
+
+## §6 — Owner decision (card, 2026-09-06): "DAM now, RTM in a fresh session" — EXECUTED (DAM)
+
+* **Source verification, strongest form:** a GroupZip re-download of the
+  2023-01-01 DAM v12 archive reproduces the byte-pinned manifest line in
+  `data/raw/lmp-data/CAISO/SHA256SUMS.txt` **sha256-identical** (`6523fedd…`).
+  The README's "Re-fetchability: NONE" claim is corrected in place.
+* **Fetcher landed:** `scripts/data/fetch_caiso_oasis_grp.py` (GroupZip per
+  trade date, version 12 for DAM / 3 for RTM, local-midnight-in-UTC start,
+  Content-Disposition filename, AUP-throttle detection, extract-and-discard
+  through `fold_caiso_oasis_grp_zips.fold`, resumable, JSON summary).
+* **Intertie builder extended:** `fetch_caiso_intertie_lmp.py
+  --from-grp-windows` builds the MALIN / PALOVRDE delivered LMP from the
+  folded windows with the same `_to_hourly_nodal_lmp` construction; existing
+  (year, hub) rows are never touched (row-identity asserted before commit).
+* **The 2022 DAM crawl ran in session caiso-261**; its result (dates fetched /
+  missing, the aggregate written, the intertie rows) is in the caiso-261
+  closing addendum of `docs/calibration-log/caiso.md`.
+* **RTM 2022 → a fresh session** on this charter: size the hour-group
+  delivery first (`RTM_LMP_GRP` at `version=3` was 7 groups/day in the
+  tracked Jan-2023 zips; at `version=1` one operating hour per request), then
+  crawl with `--market rtm`, fold, `postprocess_oasis_downloads.py`,
+  `derive_actual_lmp.py` (RT + DA), `derive_actual_tail.py`.
+

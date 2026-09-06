@@ -44,6 +44,19 @@ resolve before the full pull, exactly like fetch_caiso_oasis's "validate on firs
 Usage:
     python scripts/data/fetch_caiso_intertie_lmp.py --probe --years 2024
     python scripts/data/fetch_caiso_intertie_lmp.py --years 2023 2024 2025
+    # aged-out years, from the folded OASIS GroupZip windows (caiso-261):
+    python scripts/data/fetch_caiso_intertie_lmp.py --from-grp-windows --years 2022
+
+``--from-grp-windows`` (caiso-261, 2026-09-06) builds the same delivered nodal
+LMP from the per-day ``dam_grp_{Ymd}_{Ymd}.csv`` windows that
+``fold_caiso_oasis_grp_zips.py`` extracts from OASIS *GroupZip* all-node bulk
+archives (``fetch_caiso_oasis_grp.py``) — the primary-publisher route to trade
+dates the per-node API has aged out (2022 for the validation touchpoint). The
+windows carry exactly the long-form columns ``_to_hourly_nodal_lmp`` reads
+(``INTERVALSTARTTIME_GMT, NODE, LMP_TYPE, MW``), so the construction is
+byte-for-byte the API path's; only the transport differs. Years NOT requested
+are never touched (the (year, hub) replace-only merge below), so existing rows
+stay row-identical — assert that before committing.
 """
 
 from __future__ import annotations
@@ -164,6 +177,35 @@ def _fetch_node_year(
     return pd.concat(frames, ignore_index=True)
 
 
+def _raw_from_grp_windows(node: str, year: int) -> pd.DataFrame | None:
+    """Long-form PRC_LMP rows for ``node`` in ``year`` from the folded GRP windows.
+
+    Reads every ``dam_grp_{Ymd}_{Ymd}.csv`` under ``data/raw/lmp-data/CAISO``
+    whose trade date falls in ``year`` (plus the last day of the prior year and
+    the first of the next, so the local-calendar edges are covered) and keeps
+    the node's rows. Returns ``None`` when no window carries the node.
+    """
+    from scripts.data.fold_caiso_oasis_grp_zips import LMP_DIR
+
+    frames = []
+    for path in sorted(LMP_DIR.glob("dam_grp_*_*.csv")):
+        ymd = path.name.split("_")[2]
+        y = int(ymd[:4])
+        if y not in (year - 1, year, year + 1):
+            continue
+        if y != year and ymd[4:] not in ("1231", "0101"):
+            continue
+        df = pd.read_csv(
+            path, usecols=["INTERVALSTARTTIME_GMT", "NODE", "LMP_TYPE", "MW"]
+        )
+        sub = df[df["NODE"] == node]
+        if not sub.empty:
+            frames.append(sub)
+    if not frames:
+        return None
+    return pd.concat(frames, ignore_index=True)
+
+
 def _to_hourly_nodal_lmp(df: pd.DataFrame, year: int) -> np.ndarray | None:
     """Raw OASIS PRC_LMP rows -> (8760,) delivered nodal LMP on the local calendar.
 
@@ -246,6 +288,11 @@ def main() -> None:
         help="validate the intertie node names with one cheap call each",
     )
     ap.add_argument("--deadline-minutes", type=float, default=None)
+    ap.add_argument(
+        "--from-grp-windows",
+        action="store_true",
+        help="build from the folded OASIS GroupZip windows instead of the per-node API",
+    )
     args = ap.parse_args()
 
     if args.probe:
@@ -264,7 +311,11 @@ def main() -> None:
             series = []
             for node in nodes:
                 print(f"=== {year} {hub} {node} ===", flush=True)
-                raw = _fetch_node_year(node, year, args.window, args.sleep, deadline)
+                raw = (
+                    _raw_from_grp_windows(node, year)
+                    if args.from_grp_windows
+                    else _fetch_node_year(node, year, args.window, args.sleep, deadline)
+                )
                 if raw is None:
                     print(f"  {node}: no data — skipped", file=sys.stderr)
                     continue
