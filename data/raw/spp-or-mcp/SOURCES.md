@@ -47,3 +47,8 @@ this directory or its README was taken from memory.
 | `marketplace.spp.org` | `302` to `portal.spp.org` | not a separate route |
 | `oasis.oati.com/SWPP` | blocked (per plan §2.4) | login required |
 | `www.spp.org` | **200, fully reachable** | planning PDFs — see `data/raw/spp-planning/` |
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route
+
+- **FTP folders (PRD):** `ftp://pubftp.spp.org/Markets/DA/MCP/` · `ftp://pubftp.spp.org/Markets/RTBM/MCP/` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6).
+- Schema source: the v35 zip's `DA-MCP-202601300100.csv`, `RTBM-MCP-DAILY-20260123.csv`, `RTBM-MCP-202601291620.csv` samples (not landed).

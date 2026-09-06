@@ -47,3 +47,12 @@ this directory or its README was taken from memory.
 | `marketplace.spp.org` | `302` to `portal.spp.org` | not a separate route |
 | `oasis.oati.com/SWPP` | blocked (per plan §2.4) | login required |
 | `www.spp.org` | **200, fully reachable** | planning PDFs — see `data/raw/spp-planning/` |
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route
+
+- **Reference:** `SPP Public Data Access` v3.0 (July 2023) — <https://www.spp.org/Documents/28853/SPP%20Public%20Data%20Access%2020230707.pdf>
+  (tracked at `data/raw/spp-planning/SPP_Public_Data_Access_20230707.pdf`), p. 2: programmatic access is FTP, `ftp://pubftp.spp.org`.
+- **Credential:** `SPP Markets Public Data Guide v35` (tracked as `data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`), "FTP Site Access": user `anonymous`, password = an email address.
+- **Folders:** `ftp://pubftp.spp.org/Markets/RTBM/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/Congestion-Constraint`
+- **Probed 2026-09-06:** `CONNECT pubftp.spp.org:21` through the session egress → tunnel opens, **no FTP banner within 36 s**, relay closes; identical for control hosts `ftp.gnu.org:21` and `ftp.debian.org:21` → **egress policy blocks FTP**, not SPP. Ports 443/990 reset after ClientHello. `WebFetch`: "Unsupported protocol ftp:".
+- **Schema source:** sample files inside <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (82.6 MB, not tracked; sha256 in `data/raw/spp-planning/SHA256SUMS.txt`).

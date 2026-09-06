@@ -135,3 +135,51 @@ same products; the FTP route has not been tried and may not need the UI token.
 (the `data/raw/` contract). Record the observed schema, span and timezone in the
 table above this line when the first files land.
 
+
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-13: FTP route documented (anonymous), egress-blocked; schema verified from SPP's own samples
+
+FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`. Route reference and probe log:
+`data/raw/spp-planning/README.md` §6.
+
+**Route.** SPP's *Public Data Access* guide (v3.0, July 2023) names the programmatic route:
+**`ftp://pubftp.spp.org`**, and the *Markets Public Data Guide v35* states the credential —
+**`anonymous` / any email address**. No Marketplace token is needed. Folders (PRD):
+`Markets/RTBM/BINDING_CONSTRAINTS/` and `Markets/DA/BINDING_CONSTRAINTS/`; grammar
+`RTBM-BC-YYYYMMDDHHMM.csv` (5-min) · `RTBM-DAILY-BC-YYYYMMDD.csv` · `DA-BC-YYYYMMDDHHMM.csv`
+(daily, hourly rows) · `DA-BC-MONTHLY-YYYYMM.csv` · `DA-BC-YEARLY-YYYY.zip`, with daily runs
+under a `By_Day/` folder inside each month and files older than 2 years zipped. **From this
+session the route is transport-blocked** — the egress relays TLS-on-443 only; a port-21
+tunnel never delivers a banner, and the same is true for `ftp.gnu.org` / `ftp.debian.org`
+(control). The four-group table below therefore stays **UNSERVED**, for a different reason
+than SPP-12 recorded: not a credential, a network policy. **This directory still carries no
+2023–2025 data.**
+
+**Schema — now VERIFIED from the v35 sample files** (SPP's own publication, dated
+2026-01-28/29; the samples are one interval / one day and are NOT landed here):
+
+| File | Header (verbatim) | Notes |
+|---|---|---|
+| `RTBM-DAILY-BC-20260128.csv` (21,592 rows) | `Interval,GMTIntervalEnd,Constraint Name,Constraint Type,NERCID,TLR Level,State,Shadow Price,Monitored Facility,Contingent Facility,Source Limit,Real Time Effective Limit,Initial Effective Limit,Interconnect` | one row per constraint per 5-min interval; `Interval` is **local Central time**, `GMTIntervalEnd` is UTC (6 h ahead on the sample's January day); `State` ∈ {`BINDING`, `BREACHED`, `ACTIVATED`}; `Constraint Type` ∈ {`FG` flowgate, `WRC`, …}; `Interconnect` ∈ {`E`, `W`} (East = the RTO footprint) |
+| `RTBM-BC-202601291600.csv` (87 rows) | same 14 columns | the single-interval file |
+| `DA-BC-202601290100.csv` (64 rows) | `Interval,GMTIntervalEnd,Constraint Name,Constraint Type,NERCID,State,Shadow Price,Monitored Facility,Contingent Facility, Contingency Name,Interconnect` | one row per constraint per **hour**, whole operating day in one file; no effective-limit columns |
+| `Congestion-Constraint-202512.csv` (381 rows) | `DATE,CONSTRAINTNAME,MONITORED_FACILITY,CONTINGENT_FACILITY,CONTINGENCY_NAME,TOTAL,INTERCONNECT` | **monthly DA congestion dollars by constraint** (`Markets/DA/Congestion-Constraint`) — a tiny complement to the four-group table (dollars, not binding hours) |
+| `M2M-Current-Flowgate-List-20260129.csv` (66 rows) | `NERCID, Constraint Name, Monitoring RTO, NON Monitoring RTO` | the M2M seam flowgates (e.g. `FORTIEHANWAH`-class rows) |
+
+Sample rows, verbatim, so the grouping session knows what a flowgate name looks like:
+`BEAEURFLIBRO,FG,5218,CME,ACTIVATED,0.0000,LN BEAVER1 - EURK_SPA,CSWS AECI:FLINTCRK BROOK_LN:345:1:,307,297.79,297.79,E` and
+`PAOLI2_9404_A_LN,MCE,,BINDING,1492.7777,LN PAOLI2 - LEXNGT2,BASE,BASE,E`. The `Monitored
+Facility` string (`LN <from> - <to>`) plus `Contingent Facility` is what maps a row to a
+group; the four-group spec above is **unchanged** by this update (rule 1 — fixed before the
+data). The `Real Time Effective Limit` column is the measured per-flowgate limit SPP-53 needs.
+
+**Timezone confirmed against the samples:** `Interval` is Central Prevailing Time and
+`GMTIntervalEnd` is UTC; the January sample shows the 6-hour (CST) offset.
+
+**Oklahoma group membership — re-checked, as the spec above asked.** `docs/multi-iso/spp-data-audit.md`
+§6.1 now exists (SPP-10 landed, PR #5254) and names exactly the two flowgates carried above —
+*Osage–Webber Tap 138 kV, northern Oklahoma* (RT avg shadow $75.47/MWh 2025) and
+*Russett–South Brown 138 kV, southern Oklahoma* (RT $61/MWh) — plus the 2024 FCAs Oklahoma City
+and Tulsa (Lubbock and Kansas City are the other two, and belong to `sps_tie` / `other`
+respectively). The starting list stands; nothing was added or removed.
