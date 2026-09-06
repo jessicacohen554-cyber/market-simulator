@@ -1,0 +1,189 @@
+{
+  "applied_basis": {
+    "fleet_hourly_p25": 0.16629202320362052,
+    "fleet_hourly_p25_mw": 586.1128649834809,
+    "pooled_unit_hour_p25_capweighted": 0.11179557380789414,
+    "pooled_unit_hour_p25_unweighted": 0.026197697449863826,
+    "sum_per_unit_p25_mw": 347.12037712280875
+  },
+  "basis_grid": {
+    "fleet_daily_mean_p25": 0.1748470706763017,
+    "fleet_hourly_p25": 0.16629202320362052,
+    "per_unit": {
+      "2490": {
+        "daily_mean_p25": 0.10951403148528405,
+        "hourly_p25": 0.025008545561745976
+      },
+      "2500": {
+        "daily_mean_p25": 0.18596095317700095,
+        "hourly_p25": 0.18854237365687745
+      },
+      "8906": {
+        "daily_mean_p25": 0.0,
+        "hourly_p25": 0.0
+      }
+    }
+  },
+  "coverage_positive_hours": {
+    "2490": {
+      "2023": 6811,
+      "2024": 6890,
+      "2025": 7634
+    },
+    "2500": {
+      "2023": 8357,
+      "2024": 7900,
+      "2025": 8605
+    },
+    "8906": {
+      "2023": 5341,
+      "2024": 6354,
+      "2025": 6812
+    }
+  },
+  "fleet_forcing_twh": {
+    "added": 1.5104930096218296,
+    "floored": 10.06189108349513,
+    "observed": 19.210423
+  },
+  "gap_sizing_fleet": {
+    "added_twh_basis_matched": 1.3773023101443576,
+    "added_twh_frozen": 1.5104930096218296,
+    "basis_matched_floor_pct": 0.16629202320362052,
+    "delta_twh": -0.13319069947747209,
+    "frozen_floor_pct": 0.175,
+    "relative_change": -0.04975986740788263
+  },
+  "object": {
+    "distribution": "pro_rata",
+    "driver": "tmax",
+    "exclude_plant_codes": [],
+    "frozen_floor_pct": 0.175,
+    "iso": "NYISO",
+    "plant_class": "ST_GAS",
+    "threshold_c": -50.0,
+    "zone": "NYC"
+  },
+  "plants": {
+    "2490": {
+      "all_hours": {
+        "own_p25": 0.10951403148528405,
+        "own_p50": 0.189368012776637,
+        "share_below_frozen_frac": 0.48657998783454987,
+        "zero_share": 0.1889066301703163
+      },
+      "cool_day_median_cf_by_block": {
+        "h00-05": 0.1106548026465891,
+        "h06-13": 0.11864020077572439,
+        "h14-21": 0.1836641569701118,
+        "h22-23": 0.11179557380789414
+      },
+      "cool_hour_zero_share": 0.2469012837538734,
+      "forcing_twh": {
+        "added": 0.9263629539883639,
+        "floored": 3.164608901541588,
+        "observed": 4.632742
+      },
+      "gap_sizing": {
+        "added_twh_basis_matched": 0.841859027340653,
+        "added_twh_frozen": 0.9263629539883639,
+        "delta_twh": -0.08450392664771089,
+        "measured_band_share": 0.005322384428223844
+      },
+      "name": "Arthur Kill Generating Station",
+      "nameplate_mw": 876.6,
+      "online_share": 0.8110933698296837,
+      "share_of_fleet_added": 0.6132851645704008,
+      "share_of_fleet_observed": 0.24115772984280465
+    },
+    "2500": {
+      "all_hours": {
+        "own_p25": 0.18854237365687745,
+        "own_p50": 0.28806104018970624,
+        "share_below_frozen_frac": 0.15488138686131386,
+        "zero_share": 0.054820559610705595
+      },
+      "cool_day_median_cf_by_block": {
+        "h00-05": 0.2834886427263775,
+        "h06-13": 0.28691794082387406,
+        "h14-21": 0.28806104018970624,
+        "h22-23": 0.29034723892137054
+      },
+      "cool_hour_zero_share": 0.07226648959716689,
+      "forcing_twh": {
+        "added": 0.3696728656830044,
+        "floored": 4.7920288263992425,
+        "observed": 8.509228
+      },
+      "gap_sizing": {
+        "added_twh_basis_matched": 0.3319488512906743,
+        "added_twh_frozen": 0.3696728656830044,
+        "delta_twh": -0.037724014392330085,
+        "measured_band_share": 0.03976581508515815
+      },
+      "name": "Ravenswood",
+      "nameplate_mw": 1724.8,
+      "online_share": 0.9451794403892944,
+      "share_of_fleet_added": 0.24473656172401387,
+      "share_of_fleet_observed": 0.4429484972819183
+    },
+    "8906": {
+      "all_hours": {
+        "own_p25": 0.0,
+        "own_p50": 0.3302660546161412,
+        "share_below_frozen_frac": 0.3331812652068126,
+        "zero_share": 0.29641879562043794
+      },
+      "cool_day_median_cf_by_block": {
+        "h00-05": 0.32296985446791515,
+        "h06-13": 0.3262869455243805,
+        "h14-21": 0.3264842163228436,
+        "h22-23": 0.32457324274167576
+      },
+      "cool_hour_zero_share": 0.39005090748118637,
+      "forcing_twh": {
+        "added": 0.2144571899504614,
+        "floored": 2.1052533555542996,
+        "observed": 6.068453
+      },
+      "gap_sizing": {
+        "added_twh_basis_matched": 0.2034944315130304,
+        "added_twh_frozen": 0.2144571899504614,
+        "delta_twh": -0.010962758437430997,
+        "measured_band_share": 0.0012545620437956204
+      },
+      "name": "Astoria Generating Station",
+      "nameplate_mw": 923.2,
+      "online_share": 0.7035812043795621,
+      "share_of_fleet_added": 0.14197827370558527,
+      "share_of_fleet_observed": 0.31589377287527715
+    }
+  },
+  "prorata_test": {
+    "2490": {
+      "avail_share": 0.338380339356344,
+      "gen_share": 0.19242924210275064,
+      "ratio": 0.5686773719441952
+    },
+    "2500": {
+      "avail_share": 0.5619286753305311,
+      "gen_share": 0.682919684497507,
+      "ratio": 1.215313819135156
+    },
+    "8906": {
+      "avail_share": 0.09969098531312479,
+      "gen_share": 0.12465107339974241,
+      "ratio": 1.2503745750753605
+    }
+  },
+  "step0": {
+    "abs_gap": 0.0001529293236982865,
+    "frozen_floor_pct": 0.175,
+    "reproduced_base_24h": 0.1748470706763017
+  },
+  "years": [
+    2023,
+    2024,
+    2025
+  ]
+}
