@@ -231,3 +231,23 @@ disposition is chosen, in the FINDING, and the owner's formula decides.
 ---
 
 *(nyiso-200, 2026-09-06. Pushed before any arm was solved. Zero solves at time of push.)*
+
+---
+
+# ADDENDUM A — RESULTS (recorded after the screens; nothing above was edited)
+
+* **A1-2023: STOP** at S-4 (C8/D-4). S-1 pass (bridge forced 1.0034 → 0.3439 TWh), S-2 pass,
+  S-3 pass, C1 zero flips, C3a +4.6 → +5.7 % PASS, C3b unchanged; ONE new D-4 row —
+  `reliability_floor × ST_GAS` 8906, 0.2271 TWh / 5,400 h / median 0.0 MW — which is the keeper's
+  own 8906 bridge conviction (1,400 h) migrating to the floor beneath it after the screen removed
+  the bridge there (1,400 → 34 h); 8906's total forcing 0.2501 → 0.2282 TWh, dispatch 976 → 981
+  GWh. Census: 1,173 / 1,576 CC, 122 / 228 state, 351 / 422 steam runs dropped. **A1-2025 not
+  spent.**
+* **A3-2023: STOP** at S-4 (named plants). S-1 pass (`CT_PEAKER` +0.702 ≤ 2.627), S-2 pass,
+  S-3 pass (zero flips; C3a +4.6 → +0.9 %; C3b unchanged), C8/D-4 pass at the span guard (no new
+  row; 8906 reliability row median 13.6 MW, pass); bridge floors at 7314 542 h / 10.0 GWh and
+  50978 153 h / 5.1 GWh, every one anchored on a run that repaid its start. **A3-2025 not spent.**
+* Both bundles deleted before merge (rule 29(c)); every number lives in
+  `_nyiso200_screen_gates_{a1,a3}_2023.json` and `docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`.
+* Keeper UNCHANGED. Nothing registered, nothing promoted, no span spent. The two gate
+  constructions that fired are handed forward as the next PREREG's corrections (FINDING §7).

@@ -11566,6 +11566,52 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-200, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
+both STOPPED at their own pre-registered gates on 2023 and deleted before merge (29c) — SPAN NEVER
+SPENT, nothing registered, nothing promoted; keeper `2026-09-06-nyiso-196-extract-basis` UNCHANGED;
+NEW leg `nyiso_gas_bridge_startup_aware` registered on the `gas_commitment_bridge` base row.)** The
+nyiso-199 "NEW TOP OF QUEUE (U) — `nyiso_gas_bridge_min_run`'s P0-PATTERN DEPENDENCE" item was
+executed, and phase 0 re-attributed its trigger first: **the nyiso-199 §8.3 STOP was a one-year
+scorer artifact** — 7314 and 50978 are `ct_only` CEMS reporters the span scorer skips (nyiso-150
+union guard), un-flagged only by the preliminary 2025 vintage, and a one-year screen bundle's
+union was {2025} alone; 2 of 2 of those failures are skipped at the span guard, 0 survive
+(scorer-only repair landed: `legitimacy_diagnostics.ct_only_guard_years` unions over the training
+span for every bundle, protective direction only). **The object is nonetheless REAL and it is the
+detector's:** every bridge leg anchors on a P0 pattern a base-cost LP manufactures, and a run that
+cannot repay one start is one the driver's own economics say never started (rule 17). **The repair
+is the detector's own G-61 path (b) commitment-real run screen** (registered for CAISO, never wired
+for NYISO), zero DOF, bar = the bridge's own registered startup constant; the measured-conduct
+gate the nyiso-199 handoff named is REFUSED on rule 13 and on nyiso-144's own 7314 ruling.
+**SCREEN A1-2023 (the leg alone):** 1,173 of 1,576 CC runs and 351 of 422 steam runs are
+phantom-anchored; bridge forced **1.0034 → 0.3439 TWh**; zero C1 flips (`CC_REGULAR` +0.83 →
++0.37 TWh); C3a +4.6 → +5.7 % PASS; **STOPPED on the D-4 row COUNT** by an attribution shift at
+Astoria 8906 (its bridge conviction migrates to the reliability floor beneath; the plant's total
+forcing FELL 0.2501 → 0.2282 TWh). **SCREEN A3-2023 (the three-way pairing with
+`nyiso_ct_peaker_bands_measured` + `cc_duct_peaking_row_scoped`):** every companion gate CLEAR —
+`ST_GAS` +1.81 → **+0.46 TWh**, `CT_PEAKER` −1.69 → **−0.99**, `CC_REGULAR` +0.83 → +1.43 (PASS),
+C3a **+4.6 → +0.9 %**, C3b unchanged, zero flips, **no new D-4 row at the span guard** — **STOPPED
+on the named-plant gate** that demanded zero bridge floor at 7314 / 50978 (542 h / 153 h remain,
+every hour on a run that repaid its start). A3-2025, the exposed year, was NOT spent: the pairing's
+2025 price exposure is UNMEASURED.
+
+**NEW TOP OF QUEUE (O) — re-screen the THREE-WAY arm on 2025 under CORRECTED gates, pre-registered
+before the solve** (`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md` §7): (a) the C8/D-4
+companion compares forced energy per dark-meter plant like-for-like, never a failure-row count —
+the count rises whenever the higher of two composed floors is removed at a plant the lower one also
+floors; (b) the named-plant STOP is "a floor anchored on a DROPPED run" (zero by construction) or a
+new D-4 conviction at the span guard, not "any floor"; (c) C3a-2025 stays the named risk. Span only
+if it clears, registered, promotion under the owner's formula with `CC_REGULAR` (+0.6 TWh in 2023)
+named as the class that moves away. **SECOND (O): the floor under the floor** — the reliability
+floor's persistent-base limb asserts ~0.23 TWh at Astoria 8906, a plant whose 2023 meter is dark
+74 % of the time and which the lay-up census does not exclude (not 18/18 dark); a source-data
+membership question on `reliability_floor_plant_exclusions` (rule 23), never a residual. **THIRD:**
+the run screen ALONE is a keeper-change candidate in its own right under gate (a). Records:
+`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
+`results/calibration/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
+`_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
+`scripts/probes/nyiso200_*.py`.
+
+
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-199, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
 both deleted before merge (29c) — SPAN NEVER SPENT, nothing registered, nothing promoted; keeper
 `2026-09-06-nyiso-196-extract-basis` UNCHANGED; NEW field `nyiso_ct_peaker_bands_measured`
