@@ -1,0 +1,365 @@
+{
+  "lane": "capx D75-R phase 0 (zero LP)",
+  "arm_a_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/f0e050e820c1159a",
+  "gate": "PER YEAR, ON THE SIGN: accredited VRE MW must fall in every in-scope delivery year (director ruling R3). A STOP gate only (rule 29): it may kill the arm, never promote it, and it is not read against the target residual.",
+  "declared_solar_mix": {
+    "fixed_tilt_share": 0.12007675217127853,
+    "basis": "PJM ELCC/RRS Table 5 pp.16-17, 2026/2027 BRA installed MW (Fixed-Tilt 1,189 / Tracking 8,713) \u2014 a declared CROSS-VINTAGE reconciliation under rule 14's misalignment exception (director ruling R1), never a fitted weight"
+  },
+  "gate_armed_check": {
+    "control": false,
+    "arm": true
+  },
+  "fleet_vre_check": {
+    "2021": {
+      "fuels": [
+        "biomass",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "gas_st",
+        "nuclear",
+        "oil"
+      ],
+      "vre_mw_in_fleet": {}
+    },
+    "2022": {
+      "fuels": [
+        "biomass",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "gas_st",
+        "nuclear",
+        "oil"
+      ],
+      "vre_mw_in_fleet": {}
+    },
+    "2023": {
+      "fuels": [
+        "biomass",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "nuclear",
+        "oil"
+      ],
+      "vre_mw_in_fleet": {}
+    },
+    "2024": {
+      "fuels": [
+        "biomass",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "nuclear",
+        "oil"
+      ],
+      "vre_mw_in_fleet": {}
+    },
+    "2025": {
+      "fuels": [
+        "biomass",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "nuclear",
+        "oil"
+      ],
+      "vre_mw_in_fleet": {}
+    },
+    "holds": true
+  },
+  "accreditation_pools": {
+    "2022/2023": {
+      "wind_mw": 10153.9,
+      "solar_mw": 4549.8,
+      "provenance": "evolution_2021.json (prior_results)"
+    },
+    "2023/2024": {
+      "wind_mw": 10153.9,
+      "solar_mw": 4549.8,
+      "provenance": "evolution_2022.json carries no adequacy block; reconstructed as evolution_2021 pools + that year's renewable_additions (empty) \u2014 ROUTED, see FINDING \u00a76 item 3"
+    },
+    "2024/2025": {
+      "wind_mw": 10153.9,
+      "solar_mw": 4549.8,
+      "provenance": "evolution_2023.json (prior_results)"
+    },
+    "2025/2026": {
+      "wind_mw": 11653.9,
+      "solar_mw": 6990.4,
+      "provenance": "evolution_2024.json (prior_results)"
+    }
+  },
+  "d75_predeclared": {
+    "sign": "DOWN in all three in-scope delivery years, at every candidate mix",
+    "magnitude_at_pjm_published_mix_mw": {
+      "2023/2024": -754.6,
+      "2024/2025": -332.9,
+      "2025/2026": -148.3
+    },
+    "window_total_mw": -1235.8,
+    "position": "residual WIDENS in 2024/25 and 2025/26 (model below published) and NARROWS in 2023/24 (model above published)"
+  },
+  "years": {
+    "2022/2023": {
+      "model_year": 2022,
+      "in_scope": false,
+      "wind_pool_mw": 10153.9,
+      "solar_pool_mw": 4549.8,
+      "pool_provenance": "evolution_2021.json (prior_results)",
+      "census_mw": 181435.072,
+      "census_position": 1.17019,
+      "requirement_mw": 155047.538,
+      "incumbent": {
+        "credit": {
+          "wind": 0.41,
+          "solar": 0.1064
+        },
+        "accredited_wind_mw": 4163.099,
+        "accredited_solar_mw": 484.099,
+        "accredited_vre_mw": 4647.198
+      },
+      "vintaged": {
+        "credit": {
+          "wind": 0.41,
+          "solar": 0.1064
+        },
+        "accredited_wind_mw": 4163.099,
+        "accredited_solar_mw": 484.099,
+        "accredited_vre_mw": 4647.198
+      },
+      "delta_accredited_vre_mw": 0.0,
+      "delta_by_class_mw": {
+        "wind": 0.0,
+        "solar": 0.0
+      },
+      "published_ratings_applied": null
+    },
+    "2023/2024": {
+      "model_year": 2023,
+      "in_scope": true,
+      "wind_pool_mw": 10153.9,
+      "solar_pool_mw": 4549.8,
+      "pool_provenance": "evolution_2022.json carries no adequacy block; reconstructed as evolution_2021 pools + that year's renewable_additions (empty) \u2014 ROUTED, see FINDING \u00a76 item 3",
+      "census_mw": 175317.505,
+      "census_position": 1.088138,
+      "requirement_mw": 161116.99,
+      "incumbent": {
+        "credit": {
+          "wind": 0.41,
+          "solar": 0.1064
+        },
+        "accredited_wind_mw": 4163.099,
+        "accredited_solar_mw": 484.099,
+        "accredited_vre_mw": 4647.198
+      },
+      "vintaged": {
+        "credit": {
+          "wind": 0.15,
+          "solar": 0.520788
+        },
+        "accredited_wind_mw": 1523.085,
+        "accredited_solar_mw": 2369.48,
+        "accredited_vre_mw": 3892.565
+      },
+      "delta_accredited_vre_mw": -754.633,
+      "delta_by_class_mw": {
+        "wind": -2640.014,
+        "solar": 1885.381
+      },
+      "published_ratings_applied": {
+        "wind": 0.15,
+        "solar": 0.520788
+      },
+      "position": {
+        "model_before": 1.08814,
+        "model_after": 1.08345,
+        "delta_pt": -0.4684,
+        "published": {
+          "frame_a": 1.0552,
+          "frame_b": 1.05172
+        },
+        "gap_pt_before": {
+          "frame_a": -3.293,
+          "frame_b": -3.642
+        },
+        "gap_pt_after": {
+          "frame_a": -2.825,
+          "frame_b": -3.174
+        },
+        "residual": {
+          "frame_a": "narrows",
+          "frame_b": "narrows"
+        }
+      }
+    },
+    "2024/2025": {
+      "model_year": 2024,
+      "in_scope": true,
+      "wind_pool_mw": 10153.9,
+      "solar_pool_mw": 4549.8,
+      "pool_provenance": "evolution_2023.json (prior_results)",
+      "census_mw": 172158.571,
+      "census_position": 1.032064,
+      "requirement_mw": 166810.017,
+      "incumbent": {
+        "credit": {
+          "wind": 0.41,
+          "solar": 0.1064
+        },
+        "accredited_wind_mw": 4163.099,
+        "accredited_solar_mw": 484.099,
+        "accredited_vre_mw": 4647.198
+      },
+      "vintaged": {
+        "credit": {
+          "wind": 0.21,
+          "solar": 0.479587
+        },
+        "accredited_wind_mw": 2132.319,
+        "accredited_solar_mw": 2182.025,
+        "accredited_vre_mw": 4314.344
+      },
+      "delta_accredited_vre_mw": -332.854,
+      "delta_by_class_mw": {
+        "wind": -2030.78,
+        "solar": 1697.926
+      },
+      "published_ratings_applied": {
+        "wind": 0.21,
+        "solar": 0.479587
+      },
+      "position": {
+        "model_before": 1.03206,
+        "model_after": 1.03007,
+        "delta_pt": -0.1996,
+        "published": {
+          "frame_a": 1.05551,
+          "frame_b": 1.05395
+        },
+        "gap_pt_before": {
+          "frame_a": 2.345,
+          "frame_b": 2.188
+        },
+        "gap_pt_after": {
+          "frame_a": 2.544,
+          "frame_b": 2.388
+        },
+        "residual": {
+          "frame_a": "widens",
+          "frame_b": "widens"
+        }
+      }
+    },
+    "2025/2026": {
+      "model_year": 2025,
+      "in_scope": true,
+      "wind_pool_mw": 11653.9,
+      "solar_pool_mw": 6990.4,
+      "pool_provenance": "evolution_2024.json (prior_results)",
+      "census_mw": 143757.827,
+      "census_position": 0.966127,
+      "requirement_mw": 148798.088,
+      "incumbent": {
+        "credit": {
+          "wind": 0.41,
+          "solar": 0.1064
+        },
+        "accredited_wind_mw": 4778.099,
+        "accredited_solar_mw": 743.779,
+        "accredited_vre_mw": 5521.878
+      },
+      "vintaged": {
+        "credit": {
+          "wind": 0.38,
+          "solar": 0.135197
+        },
+        "accredited_wind_mw": 4428.482,
+        "accredited_solar_mw": 945.081,
+        "accredited_vre_mw": 5373.563
+      },
+      "delta_accredited_vre_mw": -148.315,
+      "delta_by_class_mw": {
+        "wind": -349.617,
+        "solar": 201.302
+      },
+      "published_ratings_applied": {
+        "wind": 0.38,
+        "solar": 0.135197
+      },
+      "position": {
+        "model_before": 0.96613,
+        "model_after": 0.96513,
+        "delta_pt": -0.0997,
+        "published": {
+          "frame_a": 1.00489,
+          "frame_b": 1.00992
+        },
+        "gap_pt_before": {
+          "frame_a": 3.877,
+          "frame_b": 4.379
+        },
+        "gap_pt_after": {
+          "frame_a": 3.976,
+          "frame_b": 4.479
+        },
+        "residual": {
+          "frame_a": "widens",
+          "frame_b": "widens"
+        }
+      }
+    }
+  },
+  "sign_gate": {
+    "per_year": {
+      "2023/2024": {
+        "delta_mw": -754.633,
+        "declared_sign": "DOWN",
+        "sign_holds": true,
+        "d75_predeclared_magnitude_mw": -754.6
+      },
+      "2024/2025": {
+        "delta_mw": -332.854,
+        "declared_sign": "DOWN",
+        "sign_holds": true,
+        "d75_predeclared_magnitude_mw": -332.9
+      },
+      "2025/2026": {
+        "delta_mw": -148.315,
+        "declared_sign": "DOWN",
+        "sign_holds": true,
+        "d75_predeclared_magnitude_mw": -148.3
+      }
+    },
+    "PASS": true,
+    "window_total_delta_mw": -1235.802
+  },
+  "d75_cross_check": {
+    "2023/2024": {
+      "d75_hand_mw": -754.6,
+      "d75r_code_mw": -754.633,
+      "abs_diff_mw": 0.033
+    },
+    "2024/2025": {
+      "d75_hand_mw": -332.9,
+      "d75r_code_mw": -332.854,
+      "abs_diff_mw": 0.046
+    },
+    "2025/2026": {
+      "d75_hand_mw": -148.3,
+      "d75r_code_mw": -148.315,
+      "abs_diff_mw": 0.015
+    },
+    "max_abs_diff_mw": 0.046
+  },
+  "inert_check": {
+    "2022/2023": {
+      "delta_accredited_vre_mw": 0.0,
+      "expected": 0.0,
+      "holds": true,
+      "why": "PRE-ELCC: PJM's ELCC construct first applied to the 2023/2024 BRA, so this delivery year has no published class rating of any kind and is out of scope (ruling R2). The registry has no row and the resolver falls through to the incumbent curve."
+    }
+  }
+}

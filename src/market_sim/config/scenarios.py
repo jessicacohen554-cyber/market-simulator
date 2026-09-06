@@ -1408,6 +1408,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # THE SAME COMMIT as the fields (the nyiso-119 discipline).
     "pjm_accreditation_design_vintage",
     "pjm_demand_response_supply",
+    # capx D75-R: the VRE half of the SAME devintage (its predicate requires
+    # pjm_accreditation_design_vintage, so the two can never separate). Dropped
+    # from the hash at its False default so every pre-existing cache key of all
+    # six ISOs is byte-stable; an armed run keys distinctly. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "pjm_vre_accreditation_vintage",
     # capx D50: the CCS retrofit capex-scaling + CHP-exclusion construction
     # repair (GATED default off, byte-identical unarmed — the off path never
     # enters the scaling branch or the candidate filter). Dropped from the hash
@@ -2038,6 +2044,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # registered at their shipping False defaults (armed runs key distinctly).
     "pjm_accreditation_design_vintage": "False",
     "pjm_demand_response_supply": "False",
+    # capx D75-R: the VRE half of the same devintage, registered at its
+    # shipping False default (an armed run keys distinctly).
+    "pjm_vre_accreditation_vintage": "False",
     # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
     # its shipping False default (an armed run keys distinctly).
     "ccs_retrofit_capex_co2_scaling": "False",
@@ -16459,6 +16468,77 @@ class ScenarioConfig:
     # construction — it carries no per-ISO number and nothing is transferred
     # (rule 25 [R-ISO-SCOPE]); it is the same repair in every ISO because the
     # defect is in one shared seam.
+    pjm_vre_accreditation_vintage: bool = False  # GATED default-OFF (capx
+    # D75-R 2026-09-06, executing FINDING-capx-d75-2026-09-06.md §8 —
+    # itself executing FINDING-capx-d66-2026-09-06.md §8 card B — under the
+    # director's rulings R1/R2/R3 of 2026-09-06). THE VRE HALF of the capx D48
+    # accreditation-design devintage, and a SUB-GATE inside that family: the
+    # predicate (capacity_evolution/retirements.py::
+    # vre_accreditation_vintage_armed) requires this field AND
+    # pjm_accreditation_design_vintage AND an entry for the ISO in
+    # constants.RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO, so the VRE half can
+    # never be vintaged while the thermal half is not (rule 19 [R-ONE-MECH] —
+    # a mixed accreditation basis is the exact failure D45 §2.2 measured and
+    # D48 exists to remove).
+    #
+    # WHAT IT REPAIRS: RENEWABLE_ELCC_CURVES_BY_ISO["PJM"] is digitized from
+    # PJM's 2026/27 + 2027/28 BRA final ratings (the ER24-99 MARGINAL-ELCC
+    # construct) and CLAMPS on every PJM pool in the 2021-2025 hindcast window
+    # — wind >= 3,956 MW -> 0.41, solar <= 9,902 MW -> 0.1064 — so the model
+    # accredits PJM VRE at the 2026/27 rating in EVERY delivery year, three of
+    # which cleared on a different published rating set under a different
+    # (class-average) construct. Armed, resolve_renewable_capacity_credit
+    # reads rung 0, the delivery year's OWN published class rating, through
+    # resolve_renewable_vintage_credit: DY 2023/24 wind 15 % / solar 38 %
+    # fixed, 54 % tracking; DY 2024/25 21 / 33 / 50 (the December 2023 FINAL
+    # study, NOT the December 2021 preliminary set the repository carried
+    # alone before the D75-R intake — the 2024/25 BRA was delayed and
+    # re-executed, FERC ER23-729, and PJM re-ran the study); DY 2025/26
+    # 38 / 10 / 14 (the delivery year's own final ratings, which differ from
+    # the wired 2026/27 set even though both are post-reform). NO hold-last at
+    # either edge: pre-ELCC years and every year from 2026/27 on fall through
+    # to the incumbent curve, which is the right basis there.
+    #
+    # ZERO scalar fields and ZERO free parameters beyond ONE reconciliation
+    # declared at the seam (rules 5/21/24): every rating is a published PJM
+    # class rating reconciled BYTE-FOR-BYTE to its committed source row by
+    # test, and the model's single `solar` class is blended from PJM's two
+    # published solar classes at PJM's OWN published Table-5 installed-MW mix
+    # (constants.PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE = 1189/(1189+8713) =
+    # 12.01 % fixed) — a documented CROSS-VINTAGE reconciliation under rule 14
+    # [R-ACCURATE]'s misalignment exception, ruled by the director (R1) because
+    # PJM publishes no pre-reform fixed/tracking MW pairing in any of seven
+    # primary documents (FINDING-capx-d75 §2). The conclusion is mix-INSENSITIVE
+    # (FINDING §3): DY 2024/25's break-even blend 0.5527 exceeds PJM's own
+    # tracking rating 0.50, so the implied fixed share is NEGATIVE and no
+    # admissible mix flips the sign. FORBIDDEN BY NAME: a split sized to the
+    # position residual, or backed out of PJM's cleared solar UCAP (rule 13).
+    #
+    # SIGN (rule 14), pre-declared in PRECOMMIT-capx-d75 §6 before any lane
+    # measured against it: accredited VRE DOWN in all three in-scope delivery
+    # years — -754.6 / -332.9 / -148.3 MW at PJM's published mix — so the
+    # census position falls; the residual NARROWS in 2023/24 and WIDENS in
+    # 2024/25 and 2025/26. The reason to prefer these ratings is rule 14, never
+    # the residual: they are the ISO's own published accreditation for the
+    # delivery year each auction cleared on.
+    #
+    # WHY DEFAULT-OFF, AND WHY A SECOND KEY: pjm_accreditation_design_vintage
+    # is ARMED for PJM through iso_configs.py::_pjm_config's
+    # default_scenario_overrides (owner ruling 2026-09-05 on the D57 A/B), so
+    # keying this axis off it alone would arm an untested mechanism by DEFAULT
+    # in every PJM forecast run and move the shipped pjm-t1h recipe key. A
+    # separate default-OFF key keeps arming an owner decision (rules 5/24/28)
+    # while the predicate's composition keeps the halves inseparable in the one
+    # direction that matters. Registered in _CACHE_KEY_OPTIONAL_FIELDS at False
+    # (unarmed keys byte-stable, armed keys distinctly); coerced to the
+    # DATACLASS DEFAULT in a plain backcast exactly as the D48 pair is (a
+    # forecast-lane mechanism — a backcast runs no capacity evolution).
+    # Hindcast harness: run_capacity_hindcast.py --pjm-vre-accreditation-
+    # vintage. SCOPE: PJM-only by construction (the registry holds one ISO and
+    # the predicate requires an entry) — rule 25 [R-ISO-SCOPE]; every other
+    # ISO's run and every backcast keeper is byte-identical, and no ISO
+    # inherits PJM's verdict. Placed at the END of the field list so no
+    # existing matrix `:line` anchor shifts.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -17054,6 +17134,11 @@ class ScenarioConfig:
             )
             self.pjm_demand_response_supply = (
                 type(self).__dataclass_fields__["pjm_demand_response_supply"].default
+            )
+            # capx D75-R: the VRE half of the same devintage, same class of
+            # forecast-lane mechanism, same coercion to the DATACLASS DEFAULT.
+            self.pjm_vre_accreditation_vintage = (
+                type(self).__dataclass_fields__["pjm_vre_accreditation_vintage"].default
             )
             # capx D51: the MISO dated-net accounting-ratio gate is the same
             # class of forecast-lane adequacy mechanism — coerced to the
@@ -18539,6 +18624,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_net_icr_requirement": 1,
     "pjm_accreditation_design_vintage": 1,
     "pjm_demand_response_supply": 1,
+    "pjm_vre_accreditation_vintage": 1,
     "nyiso_requirement_forecast_peak": 1,
     "nyiso_requirement_vintage_factors": 1,
     "adequacy_accounting_ratio_dated_net": 1,

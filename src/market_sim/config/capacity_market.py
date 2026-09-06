@@ -2774,6 +2774,137 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
     },
 }
 
+# --------------------------------------------------------------------------- #
+# The DELIVERY-YEAR VINTAGE axis on VRE accreditation (capx D75-R, 2026-09-06)
+# --------------------------------------------------------------------------- #
+# THE DEFECT (FINDING-capx-d66-2026-09-06.md §8 card B, measured in
+# FINDING-capx-d75-2026-09-06.md §3): RENEWABLE_ELCC_CURVES_BY_ISO["PJM"] above
+# is digitized from PJM's 2026/27 + 2027/28 BRA final ratings — the ER24-99
+# MARGINAL-ELCC construct — and both classes CLAMP on every PJM pool in the
+# 2021-2025 hindcast window (wind >= 3,956 MW -> 0.41; solar <= 9,902 MW ->
+# 0.1064). So the model accredits PJM VRE at the 2026/27 rating in EVERY
+# delivery year, including three whose auctions cleared on a DIFFERENT published
+# rating set under a DIFFERENT (class-average) construct. That is the same
+# mixed-vintage defect capx D48 repaired on the thermal and requirement halves,
+# left open on the VRE half — which is why this registry is keyed and gated in
+# the D48 family rather than as a mechanism of its own (rule 19 [R-ONE-MECH]).
+#
+# EVERY VALUE IS A PUBLISHED PJM CLASS RATING, transcribed to
+# data/raw/capacity-market/elcc/pjm/pjm.csv with source doc + page + sha256 per
+# row by the D75-R intake, and reconciled to those committed rows BYTE-FOR-BYTE
+# by tests/unit/data/test_renewable_elcc_curves.py. ZERO free parameters beyond
+# the ONE declared reconciliation named below (rules 5/13/21/23).
+#
+# THE ONE RECONCILIATION, DECLARED AT THE SEAM (director ruling R1, 2026-09-06,
+# on FINDING-capx-d75-2026-09-06.md §8(a) option (1)). The model carries ONE
+# `solar` class; PJM rates TWO (Solar Fixed Panel / Solar Tracking Panel).
+# Blending them needs a fixed-tilt / tracking installed-MW split, and PJM
+# PUBLISHES NO SUCH SPLIT FOR ANY PRE-REFORM VINTAGE — seven primary documents
+# read, none carries the pairing (FINDING §2). The ruling: carry PJM's OWN
+# published Table-5 mix as a documented CROSS-VINTAGE reconciliation under rule
+# 14 [R-ACCURATE]'s misalignment exception — a published PJM number on the wrong
+# vintage, stated as such here and in the finding, with FINDING §3's bracket
+# recorded as its sensitivity. It is the 2026/27 pairing the solar curve above
+# already reconciles against (Fixed-Tilt 1,189 MW vs Tracking 8,713 MW), written
+# as the arithmetic rather than a rounded literal so no magic number exists
+# (rule 5) and the test re-derives it from the same committed rows.
+#
+# WHAT IS FORBIDDEN HERE, BY NAME (rule 13 [R-MEASURED], ruling R1): a split
+# sized to the position residual; a split backed out of PJM's cleared solar
+# UCAP (that would derive an input from the very outcome the census is compared
+# against); and any adder, haircut or blend weight chosen for what it does to a
+# gate. The EIA-860 `Fixed Tilt?` / `Single-Axis Tracking?` derivation — the one
+# route that regenerates forward from the model's own build (FINDING §8(a)
+# option (2)) — is a SEPARATE data-intake card and is deliberately not taken
+# here.
+#
+# THE CONCLUSION IS MIX-INSENSITIVE, which is why one declared mix is enough to
+# decide the card: the sign is DOWN in every in-scope delivery year at every
+# admissible mix, and DY 2024/25's break-even blend is 0.5527 — ABOVE PJM's own
+# tracking rating of 0.50 — so the implied fixed share is NEGATIVE (-0.310) and
+# no admissible mix can flip it (FINDING §3).
+PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE: float = 1189.0 / (1189.0 + 8713.0)
+"""Fixed-tilt share of PJM's rated solar fleet, 12.01 % (2026/27 pairing).
+
+PJM's ELCC/RRS Table 5 (pp.16-17) installed MW for the 2026/2027 BRA —
+Fixed-Tilt Solar 1,189 MW against Tracking Solar 8,713 MW — the ONLY vintages
+for which PJM pairs installed MW with class ratings at all. Applied to the
+PRE-reform vintages below as a declared cross-vintage reconciliation (director
+ruling R1; rule 14's misalignment exception), never as a fitted weight.
+"""
+
+# Per-delivery-year published VRE ELCC class ratings for the ISOs that publish
+# them, read at rung 0 of resolve_renewable_capacity_credit's ladder under the
+# default-OFF ``ScenarioConfig.pjm_vre_accreditation_vintage`` gate (predicate
+# :func:`~market_sim.model.capacity_evolution.retirements.
+# vre_accreditation_vintage_armed`, which additionally requires D48's own gate —
+# see its docstring for why the VRE half can never be vintaged while the thermal
+# half is not). Keyed by the delivery-year label
+# :func:`~market_sim.data.capacity_deliverability.resolve_delivery_year`
+# builds, exactly as the D48 thermal and requirement halves are.
+#
+# NO HOLD-LAST, DELIBERATELY. A delivery year absent from the table — every year
+# from 2026/27 onward, and every pre-ELCC year through 2022/23 — falls straight
+# through to the penetration-indexed curve above, which is digitized from the
+# 2026/27+ ratings and is the right basis there. Carrying a pre-reform class
+# rating forward past the reform would be exactly the mixed-vintage error this
+# registry exists to remove. Pre-ELCC years (PJM's ELCC construct first applied
+# to the 2023/2024 BRA, ratings posted 2021-12-16) have no published rating of
+# any kind and stay on the incumbent curve, out of this card's scope.
+RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO: dict[str, dict[str, dict[str, float]]] = {
+    "PJM": {
+        # 2023/2024 BRA — the FIRST delivery year PJM's ELCC construct applied
+        # to (its ratings posted 2021-12-16; the December 2021 report's own
+        # Table 3 is titled "Comparison of ELCC Class Ratings, 2024/2025 BRA vs
+        # 2023/2024 BRA"). Onshore Wind 15 %, Solar Fixed Panel 38 %, Solar
+        # Tracking Panel 54 %. Class-average construct.
+        "2023/2024": {
+            "wind": 0.15,
+            "solar": (
+                PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE * 0.38
+                + (1.0 - PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE) * 0.54
+            ),
+        },
+        # 2024/2025 — the December 2023 study's FINAL ratings, NOT the December
+        # 2021 preliminary set (wind 16 %, solar 36/54 %) the repo carried
+        # alone until the D75-R intake. The 2024/25 BRA was delayed and
+        # re-executed (FERC ER23-729) and PJM re-ran the ELCC study; the
+        # December 2023 report states in terms that "only the 2024/2025 values
+        # are final". Onshore Wind 21 %, Solar Fixed 33 %, Solar Tracking 50 %.
+        # Wiring the superseded set would put a stale published number on the
+        # accreditation path, which rule 14 forbids as squarely as an estimate.
+        "2024/2025": {
+            "wind": 0.21,
+            "solar": (
+                PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE * 0.33
+                + (1.0 - PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE) * 0.50
+            ),
+        },
+        # 2025/2026 — PJM's FINAL ratings for the delivery year, applied to its
+        # Third Incremental Auction (posted 2025-03-12). The first
+        # marginal-ELCC delivery year, and the one this card would leave
+        # mis-vintaged if the axis stopped at the reform boundary: the wired
+        # 2026/27 set reads 41 / 8 / 11 % where this delivery year's own final
+        # ratings are 38 / 10 / 14 % (FINDING-capx-d75 §5). Rating the thermal
+        # classes at all, this posting independently CONFIRMS
+        # THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"] == "2025/2026".
+        #
+        # OPEN, AND NOT CLOSED HERE (FINDING §5): this is the 3IA vintage. The
+        # 2025/26 BRA (held July 2024) cleared on the ratings current then, and
+        # that report's tables are images that do not extract. This lane reads
+        # the delivery year's FINAL ratings — the same "what did this delivery
+        # year actually settle on" question the 2024/25 row answers with the
+        # Dec-2023 study — and says so rather than leaving it implicit.
+        "2025/2026": {
+            "wind": 0.38,
+            "solar": (
+                PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE * 0.10
+                + (1.0 - PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE) * 0.14
+            ),
+        },
+    },
+}
+
 # Published CLASS-AVERAGE accreditation held behind its own default-off gate
 # (``ScenarioConfig.caiso_nqc_accreditation``, FFR-3P 2026-08-04). Read at rung
 # 0 of the SAME ladder as RENEWABLE_ELCC_CURVES_BY_ISO by the SAME resolver

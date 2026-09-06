@@ -1095,6 +1095,12 @@ def apply_economic_new_entry(
             peak_demand_mw=(peak_demand_mw if peak_demand_mw > 0.0 else None),
             curves_enabled=config.renewable_elcc_curves,
             nqc_curves_enabled=config.caiso_nqc_accreditation,
+            # capx D75-R: a VRE candidate is paid for the firm MW the delivery
+            # year's own accreditation would credit it with — the same ladder
+            # the adequacy ledger applies (rule 19), so a candidate can never
+            # be screened on one accreditation and counted on another.
+            config=config,
+            year=year,
         )
         return firm_price * float(credit or 0.0)
 

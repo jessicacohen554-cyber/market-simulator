@@ -14,10 +14,12 @@ target). Ends with the #2063 regression lock (ira_phaseout_fraction fields).
 
 import unittest
 
+from market_sim.config.capacity_market import PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE
 from market_sim.config.constants import (
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
     RENEWABLE_ELCC_CURVES_BY_ISO,
+    RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO,
     RenewableElccCurve,
     evaluate_renewable_elcc_curve,
 )
@@ -29,6 +31,7 @@ from market_sim.model.capacity import (
     capacity_reserve_position,
     renewable_credits_applied,
     resolve_renewable_capacity_credit,
+    vre_accreditation_vintage_armed,
 )
 from tests.helpers.builders import no_hydro_accreditation
 
@@ -628,6 +631,382 @@ class TestIraPhaseoutRegression2063(unittest.TestCase):
         expected = {2030: 1.0, 2033: 1.0, 2034: 0.75, 2035: 0.50, 2036: 0.0, 2050: 0.0}
         for year, frac in expected.items():
             self.assertEqual(ira_phaseout_fraction(year, config), frac)
+
+
+class TestPjmVreAccreditationVintage(unittest.TestCase):
+    """capx D75-R — the delivery-year VINTAGE axis on PJM VRE accreditation.
+
+    Three duties, in the order the rules impose them: the encoded ratings are
+    PJM's own published numbers and nothing else (rules 13/23 — reconciled
+    byte-for-byte to the committed source rows); the gate is default-OFF and
+    inert everywhere it is not armed (rules 5/24/25 — every other ISO and every
+    unarmed run byte-identical); and the axis cannot be devintaged apart from
+    the D48 thermal half (rule 19).
+    """
+
+    _PJM_DY_PUBLISHED = {
+        # delivery year -> (raw study_vintage label, wind %, fixed %, tracking %)
+        "2023/2024": (
+            "2023/2024 BRA (final for DY 2023/2024; posted 2021-12-16)",
+            15.0,
+            38.0,
+            54.0,
+        ),
+        "2024/2025": (
+            "2024/2025 (Dec 2023 ELCC Report -- FINAL for DY 2024/2025)",
+            21.0,
+            33.0,
+            50.0,
+        ),
+        "2025/2026": (
+            "2025/2026 3IA (final for DY 2025/2026; posted 2025-03-12)",
+            38.0,
+            10.0,
+            14.0,
+        ),
+    }
+
+    @staticmethod
+    def _raw_pjm_rows():
+        import csv
+
+        path = RAW_DIR / "capacity-market" / "elcc" / "pjm" / "pjm.csv"
+        with path.open(newline="") as fh:
+            return list(csv.DictReader(fh))
+
+    @staticmethod
+    def _armed(**kw) -> ScenarioConfig:
+        return ScenarioConfig(
+            mode="forecast",
+            iso="PJM",
+            hindcast=True,
+            pjm_accreditation_design_vintage=True,
+            pjm_vre_accreditation_vintage=True,
+            **kw,
+        )
+
+    # --- provenance: every encoded rating is a published PJM class rating --- #
+
+    def test_every_vintage_rating_rederives_from_the_committed_rows(self):
+        """Wind verbatim; solar the declared mix of PJM's two solar classes.
+
+        This is the whole DOF story of the mechanism (rule 21): the only thing
+        that is not a transcribed number is the fixed/tracking blend weight,
+        and that weight is itself PJM's own published 2026/27 installed-MW
+        pairing, re-derived here from the same committed rows rather than
+        typed. Nothing is fitted, and there is nothing else to fit.
+        """
+        rows = self._raw_pjm_rows()
+
+        def _rating(vintage: str, cls: str) -> float:
+            hits = [
+                float(r["elcc_pct"])
+                for r in rows
+                if r["study_vintage"] == vintage and r["resource_class"] == cls
+            ]
+            self.assertEqual(len(hits), 1, f"{vintage} / {cls}")
+            return hits[0]
+
+        def _official_mw(cls: str) -> float:
+            hits = [
+                float(r["penetration_pct"])
+                for r in rows
+                if r["study_vintage"] == "2026/2027 BRA (official/final)"
+                and r["resource_class"] == cls
+            ]
+            self.assertEqual(len(hits), 1, cls)
+            return hits[0]
+
+        # The declared cross-vintage reconciliation, re-derived from the ONLY
+        # installed-MW pairing PJM publishes (ELCC/RRS Table 5, 2026/27).
+        fixed_mw = _official_mw("Fixed-Tilt Solar")
+        tracking_mw = _official_mw("Tracking Solar")
+        fixed_share = fixed_mw / (fixed_mw + tracking_mw)
+        self.assertAlmostEqual(fixed_share, PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE, 12)
+
+        table = RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO["PJM"]
+        self.assertEqual(set(table), set(self._PJM_DY_PUBLISHED))
+        for dy, (vintage, wind, fixed, tracking) in self._PJM_DY_PUBLISHED.items():
+            # Whichever naming that vintage's posting used for its two solar
+            # classes — PJM renamed them at the reform.
+            fixed_label = (
+                "Solar Fixed Panel"
+                if any(
+                    r["study_vintage"] == vintage
+                    and r["resource_class"] == "Solar Fixed Panel"
+                    for r in rows
+                )
+                else "Fixed-Tilt Solar"
+            )
+            tracking_label = (
+                "Solar Tracking Panel"
+                if fixed_label == "Solar Fixed Panel"
+                else "Tracking Solar"
+            )
+            self.assertEqual(_rating(vintage, "Onshore Wind"), wind, dy)
+            self.assertEqual(_rating(vintage, fixed_label), fixed, dy)
+            self.assertEqual(_rating(vintage, tracking_label), tracking, dy)
+            self.assertAlmostEqual(table[dy]["wind"], wind / 100.0, 12, dy)
+            self.assertAlmostEqual(
+                table[dy]["solar"],
+                fixed_share * fixed / 100.0 + (1.0 - fixed_share) * tracking / 100.0,
+                12,
+                dy,
+            )
+
+    def test_the_2024_25_row_is_the_final_study_not_the_superseded_one(self):
+        # The repository also carries PJM's December 2021 preliminary 2024/25
+        # set (wind 16 %, solar 36/54 %). Wiring THAT would be a stale
+        # published number on the accreditation path — rule 14 forbids it as
+        # squarely as an estimate (FINDING-capx-d75 §1.1).
+        superseded = {
+            r["resource_class"]: float(r["elcc_pct"])
+            for r in self._raw_pjm_rows()
+            if "Dec 2021 ELCC Report" in r["study_vintage"]
+        }
+        self.assertEqual(superseded["Onshore Wind"], 16.0)
+        encoded = RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO["PJM"]["2024/2025"]
+        self.assertAlmostEqual(encoded["wind"], 0.21, 12)
+        self.assertNotAlmostEqual(encoded["wind"], 0.16, 3)
+
+    # --- the gate: default-off, PJM-only, never apart from the D48 half ----- #
+
+    def test_default_config_is_unarmed_and_the_ladder_is_unchanged(self):
+        config = ScenarioConfig(mode="forecast", iso="PJM", hindcast=True)
+        self.assertFalse(config.pjm_vre_accreditation_vintage)
+        self.assertFalse(vre_accreditation_vintage_armed(config, "PJM"))
+        for year in (2023, 2024, 2025):
+            for fuel, expected in (("wind", 0.41), ("solar", 0.1064)):
+                self.assertAlmostEqual(
+                    resolve_renewable_capacity_credit(
+                        fuel,
+                        "PJM",
+                        installed_mw=(10153.9 if fuel == "wind" else 4549.8),
+                        peak_demand_mw=150000.0,
+                        curves_enabled=True,
+                        config=config,
+                        year=year,
+                    ),
+                    expected,
+                    9,
+                )
+
+    def test_armed_credits_are_the_delivery_years_own_published_ratings(self):
+        config = self._armed()
+        table = RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO["PJM"]
+        for year, dy in ((2023, "2023/2024"), (2024, "2024/2025"), (2025, "2025/2026")):
+            for fuel in ("wind", "solar"):
+                self.assertAlmostEqual(
+                    resolve_renewable_capacity_credit(
+                        fuel,
+                        "PJM",
+                        installed_mw=5000.0,
+                        peak_demand_mw=150000.0,
+                        curves_enabled=True,
+                        config=config,
+                        year=year,
+                    ),
+                    table[dy][fuel],
+                    12,
+                    f"{year} {fuel}",
+                )
+
+    def test_no_hold_last_at_either_edge(self):
+        # Pre-ELCC years (PJM's construct began with the 2023/2024 BRA) and
+        # every year from 2026/27 on fall THROUGH to the incumbent curve.
+        # Carrying a pre-reform class rating forward past the reform would
+        # rebuild the mixed-vintage error the axis exists to remove.
+        config = self._armed()
+        for year in (2021, 2022, 2026, 2030):
+            self.assertAlmostEqual(
+                resolve_renewable_capacity_credit(
+                    "wind",
+                    "PJM",
+                    installed_mw=10153.9,
+                    peak_demand_mw=150000.0,
+                    curves_enabled=True,
+                    config=config,
+                    year=year,
+                ),
+                0.41,
+                9,
+                str(year),
+            )
+
+    def test_the_vre_half_cannot_be_armed_without_the_d48_thermal_half(self):
+        # rule 19 [R-ONE-MECH]: a basis vintaged on one half and not the other
+        # is the exact failure D45 §2.2 measured and D48 exists to remove.
+        lone = ScenarioConfig(
+            mode="forecast",
+            iso="PJM",
+            hindcast=True,
+            pjm_accreditation_design_vintage=False,
+            pjm_vre_accreditation_vintage=True,
+        )
+        self.assertFalse(vre_accreditation_vintage_armed(lone, "PJM"))
+        self.assertAlmostEqual(
+            resolve_renewable_capacity_credit(
+                "wind",
+                "PJM",
+                installed_mw=10153.9,
+                peak_demand_mw=150000.0,
+                curves_enabled=True,
+                config=lone,
+                year=2024,
+            ),
+            0.41,
+            9,
+        )
+
+    def test_inert_on_every_other_iso(self):
+        # rule 25 [R-ISO-SCOPE]: the registry holds one ISO and the predicate
+        # requires an entry, so the flag armed on another ISO's run cannot
+        # move a single MW — nothing transfers, and no ISO inherits PJM's
+        # verdict.
+        config = self._armed()
+        for iso in ("MISO", "NYISO", "NEISO", "CAISO", "ERCOT"):
+            self.assertFalse(vre_accreditation_vintage_armed(config, iso))
+            for fuel in ("wind", "solar"):
+                self.assertEqual(
+                    resolve_renewable_capacity_credit(
+                        fuel,
+                        iso,
+                        installed_mw=5000.0,
+                        peak_demand_mw=100000.0,
+                        curves_enabled=True,
+                        config=config,
+                        year=2024,
+                    ),
+                    resolve_renewable_capacity_credit(
+                        fuel,
+                        iso,
+                        installed_mw=5000.0,
+                        peak_demand_mw=100000.0,
+                        curves_enabled=True,
+                    ),
+                    f"{iso} {fuel}",
+                )
+
+    def test_year_none_is_byte_identical_to_the_pre_d75r_resolver(self):
+        config = self._armed()
+        for fuel in ("wind", "solar"):
+            self.assertEqual(
+                resolve_renewable_capacity_credit(
+                    fuel,
+                    "PJM",
+                    installed_mw=5000.0,
+                    peak_demand_mw=150000.0,
+                    curves_enabled=True,
+                    config=config,
+                    year=None,
+                ),
+                resolve_renewable_capacity_credit(
+                    fuel,
+                    "PJM",
+                    installed_mw=5000.0,
+                    peak_demand_mw=150000.0,
+                    curves_enabled=True,
+                ),
+                fuel,
+            )
+
+    def test_a_plain_backcast_coerces_the_gate_off(self):
+        # A forecast-lane mechanism: capacity evolution never runs in a plain
+        # backcast, so an armed flag there would be an unregistered posture.
+        backcast = ScenarioConfig(
+            mode="backcast", iso="PJM", pjm_vre_accreditation_vintage=True
+        )
+        self.assertFalse(backcast.pjm_vre_accreditation_vintage)
+
+    # --- the ledger: one accreditation, applied and reported alike ---------- #
+
+    def test_ledger_and_its_diagnostic_move_together(self):
+        # The ledger's credit and the ledger's RECORD of that credit resolve
+        # through the same rung, or the evolution trail would misreport what
+        # the screen priced (rule 19).
+        config = self._armed()
+        wind_pool, solar_pool = 10153.9, 4549.8
+        for year, dy in ((2023, "2023/2024"), (2024, "2024/2025"), (2025, "2025/2026")):
+            applied = renewable_credits_applied(
+                [],
+                wind_pool,
+                solar_pool,
+                "PJM",
+                peak_demand_mw=150000.0,
+                elcc_curves_enabled=True,
+                config=config,
+                accreditation_year=year,
+            )
+            table = RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO["PJM"][dy]
+            for fuel in ("wind", "solar"):
+                self.assertAlmostEqual(applied[fuel], table[fuel], 12, f"{year} {fuel}")
+            with no_hydro_accreditation():
+                firm = accredited_firm_capacity_mw(
+                    [],
+                    wind_pool,
+                    solar_pool,
+                    0.0,
+                    iso="PJM",
+                    peak_demand_mw=150000.0,
+                    elcc_curves_enabled=True,
+                    config=config,
+                    accreditation_year=year,
+                )
+            expected_vre = wind_pool * table["wind"] + solar_pool * table["solar"]
+            self.assertAlmostEqual(
+                firm - _pjm_non_vre_firm_mw(config, year), expected_vre, 6, str(year)
+            )
+
+    def test_accredited_vre_falls_in_every_in_scope_delivery_year(self):
+        """The pre-declared SIGN (PRECOMMIT-capx-d75 §6), locked as a test.
+
+        DOWN in all three in-scope delivery years. This is a property of PJM's
+        own published ratings against the clamped 2026/27 curve, not a target:
+        it is asserted here so a later edit to either side cannot silently
+        invert the mechanism's direction without a test saying so.
+        """
+        armed, control = (
+            self._armed(),
+            ScenarioConfig(mode="forecast", iso="PJM", hindcast=True),
+        )
+        wind_pool, solar_pool = 10153.9, 4549.8
+        for year in (2023, 2024, 2025):
+            deltas = []
+            for config in (control, armed):
+                credits = renewable_credits_applied(
+                    [],
+                    wind_pool,
+                    solar_pool,
+                    "PJM",
+                    peak_demand_mw=150000.0,
+                    elcc_curves_enabled=True,
+                    config=config,
+                    accreditation_year=year,
+                )
+                deltas.append(
+                    wind_pool * credits["wind"] + solar_pool * credits["solar"]
+                )
+            self.assertLess(deltas[1], deltas[0], f"DY {year}/{year + 1}")
+
+
+def _pjm_non_vre_firm_mw(config: ScenarioConfig, year: int) -> float:
+    """The firm MW an empty PJM fleet contributes outside the VRE pools.
+
+    Isolates the VRE term of :func:`accredited_firm_capacity_mw` without
+    re-implementing the ledger: the same call with both pools zeroed.
+    """
+    with no_hydro_accreditation():
+        return accredited_firm_capacity_mw(
+            [],
+            0.0,
+            0.0,
+            0.0,
+            iso="PJM",
+            peak_demand_mw=150000.0,
+            elcc_curves_enabled=True,
+            config=config,
+            accreditation_year=year,
+        )
 
 
 if __name__ == "__main__":

@@ -490,6 +490,9 @@ META_RECORD_SPEC = RecordSpec(
         # FromConfig so the record reads the SOLVED gates (FFR-3R).
         "pjm_accreditation_design_vintage": FromConfig(cast=bool),
         "pjm_demand_response_supply": FromConfig(cast=bool),
+        # capx D75-R: the VRE half of the same devintage. FromConfig so the
+        # record reads the SOLVED gate (FFR-3R).
+        "pjm_vre_accreditation_vintage": FromConfig(cast=bool),
         # capx D57: the capacity-market supply-clearing gate (the PJM clearing
         # half). Derived through the ONE predicate so the record reads the
         # RESOLVED gate — an armed row over a curve gate that is off resolves
@@ -696,6 +699,7 @@ def build_config(
     neiso_net_icr_requirement: "bool | None" = None,
     pjm_accreditation_design_vintage: "bool | None" = None,
     pjm_demand_response_supply: "bool | None" = None,
+    pjm_vre_accreditation_vintage: "bool | None" = None,
     capacity_market_supply_clearing: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
     capacity_adequacy_requirement_published: "bool | None" = None,
@@ -925,6 +929,10 @@ def build_config(
                 # arms the D48 A/B measurement posture (distinct cache key).
                 "pjm_accreditation_design_vintage": pjm_accreditation_design_vintage,
                 "pjm_demand_response_supply": pjm_demand_response_supply,
+                # capx D75-R: the VRE half of the same devintage — default-off
+                # even for PJM (unlike the two above, which _pjm_config arms),
+                # so None inherits OFF and True arms the D75-R A/B posture.
+                "pjm_vre_accreditation_vintage": pjm_vre_accreditation_vintage,
                 # capx D57: the capacity-market supply-clearing gate (the PJM
                 # clearing half, DESIGN-capx-d54 §7.1) — a {iso: bool} row
                 # for THIS ISO only; default None. None (omit) inherits the
@@ -1698,6 +1706,25 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--pjm-vre-accreditation-vintage",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D75-R (2026-09-06) PJM-only arm, the VRE half of the D48 "
+            "devintage: accredit wind and solar at the delivery year's OWN "
+            "published PJM ELCC class ratings (constants.RENEWABLE_ELCC_"
+            "VINTAGE_RATINGS_BY_ISO — DY 2023/24 15 / 38 / 54 %, DY 2024/25 "
+            "21 / 33 / 50 % from the December 2023 FINAL study, DY 2025/26 "
+            "38 / 10 / 14 %) instead of the 2026/27+ marginal-ELCC curve, "
+            "which clamps to one value across the whole hindcast window. "
+            "REQUIRES --pjm-accreditation-design-vintage (rule 19: the VRE "
+            "and thermal halves are never devintaged apart) and is inert on "
+            "every other ISO. OMIT to inherit the shipped default (off, "
+            "unlike the two D48 gates PJM's ISOConfig arms); "
+            "--pjm-vre-accreditation-vintage arms it (distinct cache key)."
+        ),
+    )
+    parser.add_argument(
         "--capacity-market-supply-clearing",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2345,6 +2372,7 @@ def main(argv: list[str] | None = None) -> int:
         neiso_net_icr_requirement=args.neiso_net_icr_requirement,
         pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
         pjm_demand_response_supply=args.pjm_demand_response_supply,
+        pjm_vre_accreditation_vintage=args.pjm_vre_accreditation_vintage,
         capacity_market_supply_clearing=args.capacity_market_supply_clearing,
         capacity_going_forward_bar_published=(
             args.capacity_going_forward_bar_published
