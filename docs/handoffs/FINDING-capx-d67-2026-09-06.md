@@ -331,6 +331,60 @@ reported beside them and the divergence is attributed, not hidden.**
   present, and `check_cache_key_registration.py` is green (800 fields, 255 registered, all declared
   defaults matching HEAD).
 
+### 7.1 Full span — 2021–2025, both arms at HEAD, graded at full magnitude
+
+The control's key is **`aef81c84c4609c76`** — the shipped bare `pjm-t1h` — so the control *is* the
+shipped posture. Arm `3f4070767f29472a`. Wall **13 / 12 min**, inside the D57 envelope (14 min);
+solved **sequentially**, not concurrently.
+
+**The operand lands exactly.** `arm − published = 0.000 MW` in all four screened years:
+
+| DY | control R | arm R | published RR | arm − published | ΔR |
+|---|---:|---:|---:|---:|---:|
+| 2022/23 | 146,816.460 | 163,268.900 | 163,268.9 | **0.000** | +16,452.440 |
+| 2023/24 | 156,782.028 | 163,166.200 | 163,166.2 | **0.000** | +6,384.172 |
+| 2024/25 | 166,810.017 | 164,107.600 | 164,107.6 | **0.000** | −2,702.417 |
+| 2025/26 | 152,912.298 | 144,450.000 | 144,450.0 | **0.000** | −8,462.298 |
+
+**The pre-declared signs: 4 of 4 correct, 2 HIT, 2 SIGN-OK-magnitude-over.**
+
+| DY | control census | arm census | move | declared | grade |
+|---|---:|---:|---:|---:|---|
+| 2022/23 | 1.235795 | 1.111265 | **−12.45 pt** | −9.7 | SIGN OK (over) |
+| 2023/24 | 1.118225 | 1.055476 | **−6.27 pt** | −3.8 | SIGN OK (over) |
+| 2024/25 | 1.039347 | 1.051736 | **+1.24 pt** | +1.6 | **HIT** |
+| 2025/26 | 0.942260 | 0.993091 | **+5.08 pt** | +5.6 | **HIT** |
+
+**P1 confirmed in full**: 2024/25 and 2025/26 rise, 2022/23 and 2023/24 fall. This card is not a
+one-way residual improver, exactly as the charter said and as the PRECOMMIT re-declared — it moves
+two delivery years **away** from the published position and two toward it, and both are reported at
+full magnitude.
+
+**Why the two FALL years overshoot, stated rather than excused.** §7's magnitudes were computed
+holding the entering census fixed (`1/ΔR`), which is exact for a single screened year but not
+across a span: the arm's own 2022–2023 exits change the census every later year sees. 2022/23 is
+the first screened year, so its census is identical in both arms (185,264.2 MW entering) and the
+overshoot there is not compounding — it is the fixed-census approximation itself, on the largest
+ΔR in the span (+16.5 GW).
+
+**G6 — the D62 invariant: the 2024/25 price MOVED, −$1,252.60/firm-MW-yr** (60,765.11 → 59,512.51),
+and this is reported as fired rather than argued away. The charter's text is *"the 2024/25 price
+must not move on the census (every offer clears there once the D62 bar lands); if it moves for any
+other reason, STOP."* **Its parenthetical premise does not hold in this configuration**: D62 is
+default-off and NOT armed in this lane (its own §8 reads DO NOT ARM as it stands), so 2024/25 is a
+**marginal-offer** year in both arms — `how = marginal_offer_sets_price`, 15 uncleared in the
+control and 19 in the arm — and in a marginal-offer year *any* movement of the requirement or the
+census necessarily moves the price. The movement is fully attributed and both parts are the
+chartered mechanism, not a second one: the requirement fell 2,702.4 MW (the direct effect) **and**
+the entering census fell 775.6 MW (173,598.0 → 172,822.4) because the arm's own 2022–2023 exits
+left less standing — the same capacity-evolution propagation D62's STOP 5 fired on. **The invariant
+as written is therefore untestable at this configuration**, and this lane does not claim it cleared.
+
+**Where the effect lands.** 2021 is byte-identical (no screen). Thereafter the whole difference is
+a handful of thermal rows: 2022 `gas_st −2,130.8` / `gas_cc −1,176.7`; 2023–2024 `gas_cc −816.4`
+(+ `coal −32.6` from 2024); 2025 adds `gas_ct −1,012.8`, the entry-side channel §6.2 isolated. No
+renewable, storage or hydro row moves in any year.
+
 ---
 
 ## 8. What this lane surfaces and ROUTES, rather than absorbing
@@ -347,5 +401,27 @@ every ISO's T1-H recipe whose `weather_year` differs from its solve years — no
 opposite sign) and **card C** (the `data/clean` rebuild that makes row S10 attributable). **The gas
 row is not attempted**: it is the already-chartered steam over-exit (D61 §4 card (c)) seen one year
 downstream, and repairing it here would double-count a chartered mechanism (rule 19).
+
+### 8.1 What the owner is being asked, and what this lane does not claim
+
+**This is not a promotion request and it is not a keeper candidate.** "Keeper" is a backcast-
+calibration designation (rule 15, `keepers/<ISO>.json`); this is a forecast-lane mechanism on the
+PJM T1-H hindcast and registers on the forecast namespace. The gate ships **default-off with no
+`_pjm_config` override**, and rule 29 is explicit that a screen may kill an arm and never promote
+one.
+
+**What the evidence supports.** The mechanism is structurally right by the standard rule 1
+`[R-STRUCT]` sets: it replaces a reconstruction with the market's own published denominator, at one
+seam, with zero free parameters and both conventions fixed before any solve. Its footprint is
+confined to the rows it claims, its identity holds to 0.000 MW in every screened year, and it moves
+**two of four delivery years away from the published position** — which is the signature of a real
+operand rather than a fitted one, and is why the screen was structural.
+
+**What it does not settle.** The two FALL years are a genuine cost, not an artifact to be tuned
+away: 2022/23 and 2023/24 end further from the published position than the control. Under rule 1
+that is not by itself disqualifying — a structurally correct mechanism stays in even when the
+residual worsens, and the root cause is then pursued — but it is the owner's call, and the
+candidate root cause is named in §8(a) below rather than absorbed here. **G6 could not be tested**
+at this configuration (§7.1), so the D62 interaction remains open.
 
 **Nothing arms without an owner ruling.**
