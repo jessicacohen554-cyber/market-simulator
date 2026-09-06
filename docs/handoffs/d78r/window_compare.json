@@ -1,0 +1,2590 @@
+{
+  "control": {
+    "2021": {
+      "pool_rows": 0,
+      "pool_mw": 0,
+      "pool_by_sector": {},
+      "pool_max_row_mw": 0.0,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 0,
+      "executed_economic_mw": 0,
+      "executed_economic_by_sector": {},
+      "retirements_all_mw": 0,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {},
+      "uncleared_mw_by_fuel": null,
+      "sector1_in_stack": {
+        "units": 0,
+        "accredited_mw": 0
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": null,
+        "peak_demand_mw": 149590.0,
+        "screen_peak_demand_mw": 126887.926,
+        "screen_adequacy_requirement_mw": null
+      }
+    },
+    "2022": {
+      "pool_rows": 129,
+      "pool_mw": 10686.443,
+      "pool_by_sector": {
+        "1": {
+          "rows": 26,
+          "mw": 1993.188
+        },
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "pool_max_row_mw": 1254.6,
+      "decided_rows": 129,
+      "decided_mw": 10686.443,
+      "decided_by_sector": {
+        "1": {
+          "rows": 26,
+          "mw": 1993.188
+        },
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 115,
+      "executed_economic_mw": 9464.455,
+      "executed_economic_by_sector": {
+        "1": {
+          "rows": 12,
+          "mw": 771.2
+        },
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "retirements_all_mw": 12943.013,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 38,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 181435.072,
+        "census_position": 1.111265,
+        "cleared_mw": 170224.366,
+        "cleared_position": 1.042601,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+        "n_offers": 1399,
+        "n_uncleared": 133,
+        "offered_mw": 158103.444,
+        "price_per_firm_mw_yr": 33000.034,
+        "price_takers_mw": 23331.628,
+        "price_usd_per_mw_day": 90.411052,
+        "requirement_mw": 163268.9
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 1172.069,
+        "gas_st": 9536.643
+      },
+      "sector1_in_stack": {
+        "units": 384,
+        "accredited_mw": 38596.976
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": "planned_55460_CT1",
+            "fuel": "gas_cc",
+            "mw": 356.8,
+            "source": "planned",
+            "unit_id": "planned_55460_CT1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_55460_CT2",
+            "fuel": "gas_cc",
+            "mw": 356.8,
+            "source": "planned",
+            "unit_id": "planned_55460_CT2",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_55460_ST1",
+            "fuel": "gas_cc",
+            "mw": 354.4,
+            "source": "planned",
+            "unit_id": "planned_55460_ST1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS1",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS2",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS2",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS3",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS3",
+            "zone": "PJM_AEP_Ohio"
+          }
+        ],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [
+          {
+            "derate_mw": 306.76500000000004,
+            "fuel": "coal",
+            "mw_after": 3.2849999999999793,
+            "mw_before": 310.05,
+            "unit_id": "COAL_PJM_ComEd_p883_mustrun"
+          },
+          {
+            "derate_mw": 34.08500000000001,
+            "fuel": "coal",
+            "mw_after": 0.3649999999999977,
+            "mw_before": 34.45,
+            "unit_id": "COAL_PJM_ComEd_p883_committed"
+          },
+          {
+            "derate_mw": 327.21600000000007,
+            "fuel": "coal",
+            "mw_after": 3.5039999999999782,
+            "mw_before": 330.72,
+            "unit_id": "COAL_PJM_ComEd_p883_econ"
+          },
+          {
+            "derate_mw": 13.634,
+            "fuel": "coal",
+            "mw_after": 0.14599999999999907,
+            "mw_before": 13.78,
+            "unit_id": "COAL_PJM_ComEd_p883_peak"
+          }
+        ],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6,
+          "wind": 1500.0
+        },
+        "peak_demand_mw": null,
+        "screen_peak_demand_mw": 135090.596,
+        "screen_adequacy_requirement_mw": 163268.9
+      }
+    },
+    "2023": {
+      "pool_rows": 23,
+      "pool_mw": 828.467,
+      "pool_by_sector": {
+        "1": {
+          "rows": 3,
+          "mw": 127.566
+        },
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "pool_max_row_mw": 176.79,
+      "decided_rows": 23,
+      "decided_mw": 828.467,
+      "decided_by_sector": {
+        "1": {
+          "rows": 3,
+          "mw": 127.566
+        },
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 23,
+      "executed_economic_mw": 828.467,
+      "executed_economic_by_sector": {
+        "1": {
+          "rows": 3,
+          "mw": 127.566
+        },
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "retirements_all_mw": 2624.467,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 20,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 173335.903,
+        "census_position": 1.062327,
+        "cleared_mw": 170432.642,
+        "cleared_position": 1.044534,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "CC_REGULAR_PJM_ComEd_p55131_peak",
+        "n_offers": 849,
+        "n_uncleared": 39,
+        "offered_mw": 142174.432,
+        "price_per_firm_mw_yr": 31578.947,
+        "price_takers_mw": 31161.471,
+        "price_usd_per_mw_day": 86.517664,
+        "requirement_mw": 163166.2
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 2076.245,
+        "gas_cc": 787.043
+      },
+      "sector1_in_stack": {
+        "units": 179,
+        "accredited_mw": 35494.23
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": "planned_63931_GEN1",
+            "fuel": "gas_cc",
+            "mw": 607.0,
+            "source": "planned",
+            "unit_id": "planned_63931_GEN1",
+            "zone": "PJM_ComEd"
+          },
+          {
+            "eia860_id": "planned_63931_GEN2",
+            "fuel": "gas_cc",
+            "mw": 607.0,
+            "source": "planned",
+            "unit_id": "planned_63931_GEN2",
+            "zone": "PJM_ComEd"
+          }
+        ],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "gas_cc": 4000.0,
+          "solar": 2440.6
+        },
+        "peak_demand_mw": 147605.0,
+        "screen_peak_demand_mw": 143823.528,
+        "screen_adequacy_requirement_mw": 163166.2
+      }
+    },
+    "2024": {
+      "pool_rows": 6,
+      "pool_mw": 3158.006,
+      "pool_by_sector": {
+        "1": {
+          "rows": 6,
+          "mw": 3158.006
+        }
+      },
+      "pool_max_row_mw": 1003.4,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 6,
+      "capped_mw": 3158.006,
+      "capped_by_sector": {
+        "1": {
+          "rows": 6,
+          "mw": 3158.006
+        }
+      },
+      "executed_economic_rows": 14,
+      "executed_economic_mw": 1221.988,
+      "executed_economic_by_sector": {
+        "1": {
+          "rows": 14,
+          "mw": 1221.988
+        }
+      },
+      "retirements_all_mw": 1465.988,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 34,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 173512.396,
+        "census_position": 1.057309,
+        "cleared_mw": 168633.36,
+        "cleared_position": 1.027578,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+        "n_offers": 835,
+        "n_uncleared": 20,
+        "offered_mw": 150541.858,
+        "price_per_firm_mw_yr": 60577.666,
+        "price_takers_mw": 22970.538,
+        "price_usd_per_mw_day": 165.966209,
+        "requirement_mw": 164107.6
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 4029.594
+      },
+      "sector1_in_stack": {
+        "units": 176,
+        "accredited_mw": 35373.042
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [],
+        "renewable_additions": [
+          {
+            "mw": 1500.0,
+            "tech": "wind",
+            "zone": "PJM_ComEd"
+          },
+          {
+            "mw": 2440.6,
+            "tech": "solar",
+            "zone": "PJM_Dominion"
+          }
+        ],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6,
+          "wind": 1500.0
+        },
+        "peak_demand_mw": 153121.0,
+        "screen_peak_demand_mw": 153121.0,
+        "screen_adequacy_requirement_mw": 164107.6
+      }
+    },
+    "2025": {
+      "pool_rows": 0,
+      "pool_mw": 0,
+      "pool_by_sector": {},
+      "pool_max_row_mw": 0.0,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 0,
+      "executed_economic_mw": 0,
+      "executed_economic_by_sector": {},
+      "retirements_all_mw": 1.0,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 144164.35,
+        "census_position": 0.998023,
+        "cleared_mw": 144164.35,
+        "cleared_position": 0.998023,
+        "how": "all_offers_clear_curve_sets_price",
+        "marginal_unit": null,
+        "n_offers": 821,
+        "n_uncleared": 0,
+        "offered_mw": 124381.653,
+        "price_per_firm_mw_yr": 130767.451,
+        "price_takers_mw": 19782.698,
+        "price_usd_per_mw_day": 358.266988,
+        "requirement_mw": 144450.0
+      },
+      "uncleared_mw_by_fuel": {},
+      "sector1_in_stack": {
+        "units": 162,
+        "accredited_mw": 28703.232
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": null,
+            "fuel": "gas_cc",
+            "mw": 4000.0,
+            "source": "economic",
+            "unit_id": "gas_cc_new_2023c2025_2",
+            "zone": "PJM_AEP_Ohio"
+          }
+        ],
+        "renewable_additions": [
+          {
+            "mw": 2440.6,
+            "tech": "solar",
+            "zone": "PJM_Dominion"
+          }
+        ],
+        "storage_additions": [],
+        "announced_derates": [
+          {
+            "derate_mw": 153.75,
+            "fuel": "coal",
+            "mw_after": 30.749999999999993,
+            "mw_before": 184.5,
+            "unit_id": "COAL_PJM_EMAAC_p594_mustrun"
+          },
+          {
+            "derate_mw": 17.083333333333336,
+            "fuel": "coal",
+            "mw_after": 3.416666666666666,
+            "mw_before": 20.5,
+            "unit_id": "COAL_PJM_EMAAC_p594_committed"
+          },
+          {
+            "derate_mw": 164.0,
+            "fuel": "coal",
+            "mw_after": 32.8,
+            "mw_before": 196.8,
+            "unit_id": "COAL_PJM_EMAAC_p594_econ"
+          },
+          {
+            "derate_mw": 6.833333333333333,
+            "fuel": "coal",
+            "mw_after": 1.3666666666666663,
+            "mw_before": 8.2,
+            "unit_id": "COAL_PJM_EMAAC_p594_peak"
+          }
+        ],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6
+        },
+        "peak_demand_mw": 160560.0,
+        "screen_peak_demand_mw": 163019.507,
+        "screen_adequacy_requirement_mw": 144450.0
+      }
+    }
+  },
+  "arm": {
+    "2021": {
+      "pool_rows": 0,
+      "pool_mw": 0,
+      "pool_by_sector": {},
+      "pool_max_row_mw": 0.0,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 0,
+      "executed_economic_mw": 0,
+      "executed_economic_by_sector": {},
+      "retirements_all_mw": 0,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {},
+      "uncleared_mw_by_fuel": null,
+      "sector1_in_stack": {
+        "units": 0,
+        "accredited_mw": 0
+      },
+      "sector_gated": null,
+      "footprint": {
+        "thermal_additions": [],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": null,
+        "peak_demand_mw": 149590.0,
+        "screen_peak_demand_mw": 126887.926,
+        "screen_adequacy_requirement_mw": null
+      }
+    },
+    "2022": {
+      "pool_rows": 103,
+      "pool_mw": 8693.255,
+      "pool_by_sector": {
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "pool_max_row_mw": 1254.6,
+      "decided_rows": 103,
+      "decided_mw": 8693.255,
+      "decided_by_sector": {
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 103,
+      "executed_economic_mw": 8693.255,
+      "executed_economic_by_sector": {
+        "2": {
+          "rows": 30,
+          "mw": 8134.6
+        },
+        "3": {
+          "rows": 8,
+          "mw": 113.3
+        },
+        "4": {
+          "rows": 3,
+          "mw": 80.0
+        },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
+        "6": {
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
+        }
+      },
+      "retirements_all_mw": 12171.813,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 181435.072,
+        "census_position": 1.111265,
+        "cleared_mw": 170224.366,
+        "cleared_position": 1.042601,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+        "n_offers": 1399,
+        "n_uncleared": 133,
+        "offered_mw": 158103.444,
+        "price_per_firm_mw_yr": 33000.034,
+        "price_takers_mw": 23331.628,
+        "price_usd_per_mw_day": 90.411052,
+        "requirement_mw": 163268.9
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 1172.069,
+        "gas_st": 9536.643
+      },
+      "sector1_in_stack": {
+        "units": 384,
+        "accredited_mw": 38596.976
+      },
+      "sector_gated": {
+        "mw": 41221.62900000001,
+        "mw_by_fuel": {
+          "coal": 18010.595999999998,
+          "gas_cc": 8435.399999999998,
+          "gas_ct": 6663.5329999999985,
+          "gas_st": 1561.1999999999998,
+          "nuclear": 5745.0,
+          "oil": 805.8999999999996
+        },
+        "mw_by_sector": {
+          "1": 41221.62900000001
+        },
+        "units": 384,
+        "unknown_sector_mw": 0.0,
+        "unknown_sector_units": 0,
+        "year": 2022
+      },
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": "planned_55460_CT1",
+            "fuel": "gas_cc",
+            "mw": 356.8,
+            "source": "planned",
+            "unit_id": "planned_55460_CT1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_55460_CT2",
+            "fuel": "gas_cc",
+            "mw": 356.8,
+            "source": "planned",
+            "unit_id": "planned_55460_CT2",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_55460_ST1",
+            "fuel": "gas_cc",
+            "mw": 354.4,
+            "source": "planned",
+            "unit_id": "planned_55460_ST1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS1",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS1",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS2",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS2",
+            "zone": "PJM_AEP_Ohio"
+          },
+          {
+            "eia860_id": "planned_62949_GPS3",
+            "fuel": "gas_cc",
+            "mw": 612.0,
+            "source": "planned",
+            "unit_id": "planned_62949_GPS3",
+            "zone": "PJM_AEP_Ohio"
+          }
+        ],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [
+          {
+            "derate_mw": 306.76500000000004,
+            "fuel": "coal",
+            "mw_after": 3.2849999999999793,
+            "mw_before": 310.05,
+            "unit_id": "COAL_PJM_ComEd_p883_mustrun"
+          },
+          {
+            "derate_mw": 34.08500000000001,
+            "fuel": "coal",
+            "mw_after": 0.3649999999999977,
+            "mw_before": 34.45,
+            "unit_id": "COAL_PJM_ComEd_p883_committed"
+          },
+          {
+            "derate_mw": 327.21600000000007,
+            "fuel": "coal",
+            "mw_after": 3.5039999999999782,
+            "mw_before": 330.72,
+            "unit_id": "COAL_PJM_ComEd_p883_econ"
+          },
+          {
+            "derate_mw": 13.634,
+            "fuel": "coal",
+            "mw_after": 0.14599999999999907,
+            "mw_before": 13.78,
+            "unit_id": "COAL_PJM_ComEd_p883_peak"
+          }
+        ],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6,
+          "wind": 1500.0
+        },
+        "peak_demand_mw": null,
+        "screen_peak_demand_mw": 135090.596,
+        "screen_adequacy_requirement_mw": 163268.9
+      }
+    },
+    "2023": {
+      "pool_rows": 20,
+      "pool_mw": 700.901,
+      "pool_by_sector": {
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "pool_max_row_mw": 176.79,
+      "decided_rows": 20,
+      "decided_mw": 700.901,
+      "decided_by_sector": {
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 20,
+      "executed_economic_mw": 700.901,
+      "executed_economic_by_sector": {
+        "2": {
+          "rows": 17,
+          "mw": 691.238
+        },
+        "3": {
+          "rows": 2,
+          "mw": 5.943
+        },
+        "5": {
+          "rows": 1,
+          "mw": 3.72
+        }
+      },
+      "retirements_all_mw": 2496.901,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 174053.119,
+        "census_position": 1.066723,
+        "cleared_mw": 170432.642,
+        "cleared_position": 1.044534,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "CC_REGULAR_PJM_ComEd_p55131_peak",
+        "n_offers": 861,
+        "n_uncleared": 51,
+        "offered_mw": 142891.648,
+        "price_per_firm_mw_yr": 31578.947,
+        "price_takers_mw": 31161.471,
+        "price_usd_per_mw_day": 86.517664,
+        "requirement_mw": 163166.2
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 2076.245,
+        "gas_cc": 787.043,
+        "gas_st": 717.216
+      },
+      "sector1_in_stack": {
+        "units": 191,
+        "accredited_mw": 36211.446
+      },
+      "sector_gated": {
+        "mw": 38619.72899999999,
+        "mw_by_fuel": {
+          "coal": 17004.595999999994,
+          "gas_cc": 8435.399999999998,
+          "gas_ct": 6663.5329999999985,
+          "gas_st": 771.1999999999999,
+          "nuclear": 5745.0
+        },
+        "mw_by_sector": {
+          "1": 38619.72899999999
+        },
+        "units": 191,
+        "unknown_sector_mw": 8876.3,
+        "unknown_sector_units": 12,
+        "year": 2023
+      },
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": "planned_63931_GEN1",
+            "fuel": "gas_cc",
+            "mw": 607.0,
+            "source": "planned",
+            "unit_id": "planned_63931_GEN1",
+            "zone": "PJM_ComEd"
+          },
+          {
+            "eia860_id": "planned_63931_GEN2",
+            "fuel": "gas_cc",
+            "mw": 607.0,
+            "source": "planned",
+            "unit_id": "planned_63931_GEN2",
+            "zone": "PJM_ComEd"
+          }
+        ],
+        "renewable_additions": [],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "gas_cc": 4000.0,
+          "solar": 2440.6
+        },
+        "peak_demand_mw": 147605.0,
+        "screen_peak_demand_mw": 143823.528,
+        "screen_adequacy_requirement_mw": 163166.2
+      }
+    },
+    "2024": {
+      "pool_rows": 0,
+      "pool_mw": 0,
+      "pool_by_sector": {},
+      "pool_max_row_mw": 0.0,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 0,
+      "executed_economic_mw": 0,
+      "executed_economic_by_sector": {},
+      "retirements_all_mw": 244.0,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 174350.799,
+        "census_position": 1.062418,
+        "cleared_mw": 168659.256,
+        "cleared_position": 1.027736,
+        "how": "marginal_offer_sets_price",
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6018_committed",
+        "n_offers": 850,
+        "n_uncleared": 25,
+        "offered_mw": 151380.262,
+        "price_per_firm_mw_yr": 60317.154,
+        "price_takers_mw": 22970.538,
+        "price_usd_per_mw_day": 165.252476,
+        "requirement_mw": 164107.6
+      },
+      "uncleared_mw_by_fuel": {
+        "coal": 5584.785
+      },
+      "sector1_in_stack": {
+        "units": 191,
+        "accredited_mw": 36211.446
+      },
+      "sector_gated": {
+        "mw": 38619.72899999999,
+        "mw_by_fuel": {
+          "coal": 17004.595999999994,
+          "gas_cc": 8435.399999999998,
+          "gas_ct": 6663.5329999999985,
+          "gas_st": 771.1999999999999,
+          "nuclear": 5745.0
+        },
+        "mw_by_sector": {
+          "1": 38619.72899999999
+        },
+        "units": 191,
+        "unknown_sector_mw": 10090.3,
+        "unknown_sector_units": 13,
+        "year": 2024
+      },
+      "footprint": {
+        "thermal_additions": [],
+        "renewable_additions": [
+          {
+            "mw": 1500.0,
+            "tech": "wind",
+            "zone": "PJM_ComEd"
+          },
+          {
+            "mw": 2440.6,
+            "tech": "solar",
+            "zone": "PJM_Dominion"
+          }
+        ],
+        "storage_additions": [],
+        "announced_derates": [],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6,
+          "wind": 1500.0
+        },
+        "peak_demand_mw": 153121.0,
+        "screen_peak_demand_mw": 153121.0,
+        "screen_adequacy_requirement_mw": 164107.6
+      }
+    },
+    "2025": {
+      "pool_rows": 0,
+      "pool_mw": 0,
+      "pool_by_sector": {},
+      "pool_max_row_mw": 0.0,
+      "decided_rows": 0,
+      "decided_mw": 0,
+      "decided_by_sector": {},
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 0,
+      "executed_economic_mw": 0,
+      "executed_economic_by_sector": {},
+      "retirements_all_mw": 1.0,
+      "floor_retained_mw": 0,
+      "throughput_deferred_mw": 0,
+      "sector1_pipeline_rows": 0,
+      "unknown_pipeline_rows": 0,
+      "clearing": {
+        "census_mw": 145835.975,
+        "census_position": 1.009595,
+        "cleared_mw": 145835.975,
+        "cleared_position": 1.009595,
+        "how": "all_offers_clear_curve_sets_price",
+        "marginal_unit": null,
+        "n_offers": 850,
+        "n_uncleared": 0,
+        "offered_mw": 126053.278,
+        "price_per_firm_mw_yr": 86485.025,
+        "price_takers_mw": 19782.698,
+        "price_usd_per_mw_day": 236.945273,
+        "requirement_mw": 144450.0
+      },
+      "uncleared_mw_by_fuel": {},
+      "sector1_in_stack": {
+        "units": 191,
+        "accredited_mw": 30374.856
+      },
+      "sector_gated": {
+        "mw": 38619.72899999999,
+        "mw_by_fuel": {
+          "coal": 17004.595999999994,
+          "gas_cc": 8435.399999999998,
+          "gas_ct": 6663.5329999999985,
+          "gas_st": 771.1999999999999,
+          "nuclear": 5745.0
+        },
+        "mw_by_sector": {
+          "1": 38619.72899999999
+        },
+        "units": 191,
+        "unknown_sector_mw": 10090.3,
+        "unknown_sector_units": 13,
+        "year": 2025
+      },
+      "footprint": {
+        "thermal_additions": [
+          {
+            "eia860_id": null,
+            "fuel": "gas_cc",
+            "mw": 4000.0,
+            "source": "economic",
+            "unit_id": "gas_cc_new_2023c2025_2",
+            "zone": "PJM_AEP_Ohio"
+          }
+        ],
+        "renewable_additions": [
+          {
+            "mw": 2440.6,
+            "tech": "solar",
+            "zone": "PJM_Dominion"
+          }
+        ],
+        "storage_additions": [],
+        "announced_derates": [
+          {
+            "derate_mw": 153.75,
+            "fuel": "coal",
+            "mw_after": 30.749999999999993,
+            "mw_before": 184.5,
+            "unit_id": "COAL_PJM_EMAAC_p594_mustrun"
+          },
+          {
+            "derate_mw": 17.083333333333336,
+            "fuel": "coal",
+            "mw_after": 3.416666666666666,
+            "mw_before": 20.5,
+            "unit_id": "COAL_PJM_EMAAC_p594_committed"
+          },
+          {
+            "derate_mw": 164.0,
+            "fuel": "coal",
+            "mw_after": 32.8,
+            "mw_before": 196.8,
+            "unit_id": "COAL_PJM_EMAAC_p594_econ"
+          },
+          {
+            "derate_mw": 6.833333333333333,
+            "fuel": "coal",
+            "mw_after": 1.3666666666666663,
+            "mw_before": 8.2,
+            "unit_id": "COAL_PJM_EMAAC_p594_peak"
+          }
+        ],
+        "confirmed_derates": [],
+        "ccs_retrofits": [],
+        "entry_decided_mw_by_tech": {
+          "solar": 2440.6
+        },
+        "peak_demand_mw": 160560.0,
+        "screen_peak_demand_mw": 163019.507,
+        "screen_adequacy_requirement_mw": 144450.0
+      }
+    }
+  },
+  "gates": {
+    "W0": {
+      "control": {
+        "rows": {
+          "failing_rows": {
+            "measured": 129,
+            "d78": 677,
+            "match": false
+          },
+          "failing_mw": {
+            "measured": 10686.443,
+            "d78": 29727.898,
+            "match": false
+          },
+          "n_offers": {
+            "measured": 1399,
+            "d78": 1370,
+            "match": false
+          },
+          "offered_mw": {
+            "measured": 158103.444,
+            "d78": 150857.184,
+            "match": false
+          },
+          "price_takers_mw": {
+            "measured": 23331.628,
+            "d78": 30577.888,
+            "match": false
+          },
+          "price_usd_per_mw_day": {
+            "measured": 90.411052,
+            "d78": 67.760162,
+            "match": false
+          },
+          "cleared_position": {
+            "measured": 1.042601,
+            "d78": 1.048349,
+            "match": false
+          },
+          "decided_rows": {
+            "measured": 129,
+            "d78": 79,
+            "match": false
+          },
+          "decided_mw": {
+            "measured": 10686.443,
+            "d78": 13177.472,
+            "match": false
+          },
+          "executed_mw": {
+            "measured": 9464.455,
+            "d78": 7333.7,
+            "match": false
+          }
+        },
+        "pass": false
+      },
+      "arm": {
+        "rows": {
+          "failing_rows": {
+            "measured": 103,
+            "d78": 451,
+            "match": false
+          },
+          "failing_mw": {
+            "measured": 8693.255,
+            "d78": 26251.375,
+            "match": false
+          },
+          "n_offers": {
+            "measured": 1399,
+            "d78": 1370,
+            "match": false
+          },
+          "offered_mw": {
+            "measured": 158103.444,
+            "d78": 150857.184,
+            "match": false
+          },
+          "price_takers_mw": {
+            "measured": 23331.628,
+            "d78": 30577.888,
+            "match": false
+          },
+          "price_usd_per_mw_day": {
+            "measured": 90.411052,
+            "d78": 67.760162,
+            "match": false
+          },
+          "cleared_position": {
+            "measured": 1.042601,
+            "d78": 1.048349,
+            "match": false
+          },
+          "decided_rows": {
+            "measured": 103,
+            "d78": 128,
+            "match": false
+          },
+          "decided_mw": {
+            "measured": 8693.255,
+            "d78": 13354.701,
+            "match": false
+          },
+          "executed_mw": {
+            "measured": 8693.255,
+            "d78": 8736.687,
+            "match": false
+          }
+        },
+        "pass": false
+      },
+      "pass": false
+    },
+    "W1": {
+      "per_year": {
+        "2021": {
+          "form": "exact",
+          "only_control_rows": 0,
+          "only_control_mw": 0,
+          "only_control_by_sector": {},
+          "only_arm_rows": 0,
+          "only_arm_mw": 0,
+          "only_arm_by_sector": {},
+          "shared_rows": 0,
+          "shared_mw_identical": true,
+          "unexplained_control_only": [],
+          "n_unexplained_control_only": 0,
+          "unexplained_arm_only": [],
+          "n_unexplained_arm_only": 0,
+          "pass": true
+        },
+        "2022": {
+          "form": "exact",
+          "only_control_rows": 26,
+          "only_control_mw": 1993.188,
+          "only_control_by_sector": {
+            "1": {
+              "rows": 26,
+              "mw": 1993.188
+            }
+          },
+          "only_arm_rows": 0,
+          "only_arm_mw": 0,
+          "only_arm_by_sector": {},
+          "shared_rows": 103,
+          "shared_mw_identical": true,
+          "unexplained_control_only": [],
+          "n_unexplained_control_only": 0,
+          "unexplained_arm_only": [],
+          "n_unexplained_arm_only": 0,
+          "pass": true
+        },
+        "2023": {
+          "form": "fleet-delta",
+          "only_control_rows": 3,
+          "only_control_mw": 127.566,
+          "only_control_by_sector": {
+            "1": {
+              "rows": 3,
+              "mw": 127.566
+            }
+          },
+          "only_arm_rows": 0,
+          "only_arm_mw": 0,
+          "only_arm_by_sector": {},
+          "shared_rows": 20,
+          "shared_mw_identical": true,
+          "unexplained_control_only": [],
+          "n_unexplained_control_only": 0,
+          "unexplained_arm_only": [],
+          "n_unexplained_arm_only": 0,
+          "pass": true
+        },
+        "2024": {
+          "form": "fleet-delta",
+          "only_control_rows": 6,
+          "only_control_mw": 3158.006,
+          "only_control_by_sector": {
+            "1": {
+              "rows": 6,
+              "mw": 3158.006
+            }
+          },
+          "only_arm_rows": 0,
+          "only_arm_mw": 0,
+          "only_arm_by_sector": {},
+          "shared_rows": 0,
+          "shared_mw_identical": true,
+          "unexplained_control_only": [],
+          "n_unexplained_control_only": 0,
+          "unexplained_arm_only": [],
+          "n_unexplained_arm_only": 0,
+          "pass": true
+        },
+        "2025": {
+          "form": "fleet-delta",
+          "only_control_rows": 0,
+          "only_control_mw": 0,
+          "only_control_by_sector": {},
+          "only_arm_rows": 0,
+          "only_arm_mw": 0,
+          "only_arm_by_sector": {},
+          "shared_rows": 0,
+          "shared_mw_identical": true,
+          "unexplained_control_only": [],
+          "n_unexplained_control_only": 0,
+          "unexplained_arm_only": [],
+          "n_unexplained_arm_only": 0,
+          "pass": true
+        }
+      },
+      "pass": true
+    },
+    "W2": {
+      "per_year": {
+        "2021": {
+          "sector1_counts": {
+            "decided": 0,
+            "entry_capped": 0,
+            "floor_retained": 0,
+            "throughput_deferred": 0,
+            "pipeline_events_any": 0,
+            "retirements_economic": 0,
+            "unknown_sector_pipeline": 0
+          },
+          "pass": true
+        },
+        "2022": {
+          "sector1_counts": {
+            "decided": 0,
+            "entry_capped": 0,
+            "floor_retained": 0,
+            "throughput_deferred": 0,
+            "pipeline_events_any": 0,
+            "retirements_economic": 0,
+            "unknown_sector_pipeline": 0
+          },
+          "pass": true
+        },
+        "2023": {
+          "sector1_counts": {
+            "decided": 0,
+            "entry_capped": 0,
+            "floor_retained": 0,
+            "throughput_deferred": 0,
+            "pipeline_events_any": 0,
+            "retirements_economic": 0,
+            "unknown_sector_pipeline": 0
+          },
+          "pass": true
+        },
+        "2024": {
+          "sector1_counts": {
+            "decided": 0,
+            "entry_capped": 0,
+            "floor_retained": 0,
+            "throughput_deferred": 0,
+            "pipeline_events_any": 0,
+            "retirements_economic": 0,
+            "unknown_sector_pipeline": 0
+          },
+          "pass": true
+        },
+        "2025": {
+          "sector1_counts": {
+            "decided": 0,
+            "entry_capped": 0,
+            "floor_retained": 0,
+            "throughput_deferred": 0,
+            "pipeline_events_any": 0,
+            "retirements_economic": 0,
+            "unknown_sector_pipeline": 0
+          },
+          "pass": true
+        }
+      },
+      "pass": true
+    },
+    "W3": {
+      "per_year": {
+        "2021": {
+          "arm_only_decided_rows": 0,
+          "arm_only_decided_mw": 0,
+          "from_control_entry_capped": 0,
+          "from_fleet_delta": 0,
+          "n_unexplained_decided": 0,
+          "unexplained_decided": [],
+          "arm_only_executed_rows": 0,
+          "arm_only_executed_mw": 0,
+          "n_unexplained_executed": 0,
+          "unexplained_executed": [],
+          "pass": true
+        },
+        "2022": {
+          "arm_only_decided_rows": 0,
+          "arm_only_decided_mw": 0,
+          "from_control_entry_capped": 0,
+          "from_fleet_delta": 0,
+          "n_unexplained_decided": 0,
+          "unexplained_decided": [],
+          "arm_only_executed_rows": 0,
+          "arm_only_executed_mw": 0,
+          "n_unexplained_executed": 0,
+          "unexplained_executed": [],
+          "pass": true
+        },
+        "2023": {
+          "arm_only_decided_rows": 0,
+          "arm_only_decided_mw": 0,
+          "from_control_entry_capped": 0,
+          "from_fleet_delta": 0,
+          "n_unexplained_decided": 0,
+          "unexplained_decided": [],
+          "arm_only_executed_rows": 0,
+          "arm_only_executed_mw": 0,
+          "n_unexplained_executed": 0,
+          "unexplained_executed": [],
+          "pass": true
+        },
+        "2024": {
+          "arm_only_decided_rows": 0,
+          "arm_only_decided_mw": 0,
+          "from_control_entry_capped": 0,
+          "from_fleet_delta": 0,
+          "n_unexplained_decided": 0,
+          "unexplained_decided": [],
+          "arm_only_executed_rows": 0,
+          "arm_only_executed_mw": 0,
+          "n_unexplained_executed": 0,
+          "unexplained_executed": [],
+          "pass": true
+        },
+        "2025": {
+          "arm_only_decided_rows": 0,
+          "arm_only_decided_mw": 0,
+          "from_control_entry_capped": 0,
+          "from_fleet_delta": 0,
+          "n_unexplained_decided": 0,
+          "unexplained_decided": [],
+          "arm_only_executed_rows": 0,
+          "arm_only_executed_mw": 0,
+          "n_unexplained_executed": 0,
+          "unexplained_executed": [],
+          "pass": true
+        }
+      },
+      "pass": true
+    },
+    "W4": {
+      "band": {
+        "per_year": {
+          "2021": {
+            "decided_mw": 0,
+            "capped_mw": 0,
+            "cap_binds": false,
+            "g_y_mw": 0.0
+          },
+          "2022": {
+            "decided_mw": 10686.443,
+            "capped_mw": 0,
+            "cap_binds": false,
+            "g_y_mw": 0.0
+          },
+          "2023": {
+            "decided_mw": 828.467,
+            "capped_mw": 0,
+            "cap_binds": false,
+            "g_y_mw": 0.0
+          },
+          "2024": {
+            "decided_mw": 0,
+            "capped_mw": 3158.006,
+            "cap_binds": true,
+            "g_y_mw": 1003.4
+          },
+          "2025": {
+            "decided_mw": 0,
+            "capped_mw": 0,
+            "cap_binds": false,
+            "g_y_mw": 0.0
+          }
+        },
+        "sum_decided_mw_control": 11514.91,
+        "sum_g_mw": 1003.4,
+        "band_lo_mw": 10511.51,
+        "band_hi_mw": 12518.31,
+        "definition": "sum_y decided_mw(control-P) +/- sum_y g_y; g_y = max single-row MW in control-P's year-y failing pool (decided u entry_capped), 0 where the cap does not bind"
+      },
+      "arm_sum_decided_mw": 9394.156,
+      "delta_vs_control_mw": -2120.754,
+      "delta_frac": -0.18417,
+      "pass": false
+    },
+    "W5": {
+      "per_year": {
+        "2021": {
+          "form": "exact",
+          "footprint": {
+            "thermal_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "renewable_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "storage_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "announced_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "confirmed_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "ccs_retrofits": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "entry_decided_mw_by_tech": {
+              "identical": true,
+              "control": null,
+              "arm": null
+            },
+            "peak_demand_mw": {
+              "identical": true,
+              "control": 149590.0,
+              "arm": 149590.0
+            },
+            "screen_peak_demand_mw": {
+              "identical": true,
+              "control": 126887.926,
+              "arm": 126887.926
+            },
+            "screen_adequacy_requirement_mw": {
+              "identical": true,
+              "control": null,
+              "arm": null
+            }
+          },
+          "footprint_all_identical": true,
+          "clearing": {},
+          "clearing_all_identical": true,
+          "stack": {
+            "identical": 0,
+            "changed": 0,
+            "only_first": 0,
+            "only_second": 0,
+            "changed_ids": [],
+            "only_first_ids": [],
+            "only_second_ids": []
+          },
+          "pass": true
+        },
+        "2022": {
+          "form": "exact",
+          "footprint": {
+            "thermal_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "renewable_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "storage_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "announced_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "confirmed_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "ccs_retrofits": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "entry_decided_mw_by_tech": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "peak_demand_mw": {
+              "identical": true,
+              "control": null,
+              "arm": null
+            },
+            "screen_peak_demand_mw": {
+              "identical": true,
+              "control": 135090.596,
+              "arm": 135090.596
+            },
+            "screen_adequacy_requirement_mw": {
+              "identical": true,
+              "control": 163268.9,
+              "arm": 163268.9
+            }
+          },
+          "footprint_all_identical": true,
+          "clearing": {
+            "census_mw": {
+              "control": 181435.072,
+              "arm": 181435.072,
+              "identical": true
+            },
+            "census_position": {
+              "control": 1.111265,
+              "arm": 1.111265,
+              "identical": true
+            },
+            "cleared_mw": {
+              "control": 170224.366,
+              "arm": 170224.366,
+              "identical": true
+            },
+            "cleared_position": {
+              "control": 1.042601,
+              "arm": 1.042601,
+              "identical": true
+            },
+            "how": {
+              "control": "marginal_offer_sets_price",
+              "arm": "marginal_offer_sets_price",
+              "identical": true
+            },
+            "marginal_unit": {
+              "control": "COAL_PJM_AEP_Ohio_p6166_committed",
+              "arm": "COAL_PJM_AEP_Ohio_p6166_committed",
+              "identical": true
+            },
+            "n_offers": {
+              "control": 1399,
+              "arm": 1399,
+              "identical": true
+            },
+            "n_uncleared": {
+              "control": 133,
+              "arm": 133,
+              "identical": true
+            },
+            "offered_mw": {
+              "control": 158103.444,
+              "arm": 158103.444,
+              "identical": true
+            },
+            "price_per_firm_mw_yr": {
+              "control": 33000.034,
+              "arm": 33000.034,
+              "identical": true
+            },
+            "price_takers_mw": {
+              "control": 23331.628,
+              "arm": 23331.628,
+              "identical": true
+            },
+            "price_usd_per_mw_day": {
+              "control": 90.411052,
+              "arm": 90.411052,
+              "identical": true
+            },
+            "requirement_mw": {
+              "control": 163268.9,
+              "arm": 163268.9,
+              "identical": true
+            }
+          },
+          "clearing_all_identical": true,
+          "stack": {
+            "identical": 1399,
+            "changed": 0,
+            "only_first": 0,
+            "only_second": 0,
+            "changed_ids": [],
+            "only_first_ids": [],
+            "only_second_ids": []
+          },
+          "pass": true
+        },
+        "2023": {
+          "form": "fleet-delta",
+          "footprint": {
+            "thermal_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "renewable_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "storage_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "announced_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "confirmed_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "ccs_retrofits": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "entry_decided_mw_by_tech": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "peak_demand_mw": {
+              "identical": true,
+              "control": 147605.0,
+              "arm": 147605.0
+            },
+            "screen_peak_demand_mw": {
+              "identical": true,
+              "control": 143823.528,
+              "arm": 143823.528
+            },
+            "screen_adequacy_requirement_mw": {
+              "identical": true,
+              "control": 163166.2,
+              "arm": 163166.2
+            }
+          },
+          "footprint_all_identical": true,
+          "clearing": {
+            "census_mw": {
+              "control": 173335.903,
+              "arm": 174053.119,
+              "identical": false
+            },
+            "census_position": {
+              "control": 1.062327,
+              "arm": 1.066723,
+              "identical": false
+            },
+            "cleared_mw": {
+              "control": 170432.642,
+              "arm": 170432.642,
+              "identical": true
+            },
+            "cleared_position": {
+              "control": 1.044534,
+              "arm": 1.044534,
+              "identical": true
+            },
+            "how": {
+              "control": "marginal_offer_sets_price",
+              "arm": "marginal_offer_sets_price",
+              "identical": true
+            },
+            "marginal_unit": {
+              "control": "CC_REGULAR_PJM_ComEd_p55131_peak",
+              "arm": "CC_REGULAR_PJM_ComEd_p55131_peak",
+              "identical": true
+            },
+            "n_offers": {
+              "control": 849,
+              "arm": 861,
+              "identical": false
+            },
+            "n_uncleared": {
+              "control": 39,
+              "arm": 51,
+              "identical": false
+            },
+            "offered_mw": {
+              "control": 142174.432,
+              "arm": 142891.648,
+              "identical": false
+            },
+            "price_per_firm_mw_yr": {
+              "control": 31578.947,
+              "arm": 31578.947,
+              "identical": true
+            },
+            "price_takers_mw": {
+              "control": 31161.471,
+              "arm": 31161.471,
+              "identical": true
+            },
+            "price_usd_per_mw_day": {
+              "control": 86.517664,
+              "arm": 86.517664,
+              "identical": true
+            },
+            "requirement_mw": {
+              "control": 163166.2,
+              "arm": 163166.2,
+              "identical": true
+            }
+          },
+          "clearing_all_identical": false,
+          "stack": {
+            "identical": 849,
+            "changed": 0,
+            "only_first": 0,
+            "only_second": 12,
+            "changed_ids": [],
+            "only_first_ids": [],
+            "only_second_ids": [
+              "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+              "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+              "ST_GAS_PJM_AEP_Ohio_p1353_peak",
+              "ST_GAS_PJM_AEP_Ohio_p2935_committed",
+              "ST_GAS_PJM_AEP_Ohio_p2935_econ",
+              "ST_GAS_PJM_AEP_Ohio_p2935_peak",
+              "ST_GAS_PJM_ComEd_p972_committed",
+              "ST_GAS_PJM_ComEd_p972_econ",
+              "ST_GAS_PJM_ComEd_p972_peak",
+              "ST_GAS_PJM_Dominion_p3775_committed",
+              "ST_GAS_PJM_Dominion_p3775_econ",
+              "ST_GAS_PJM_Dominion_p3775_peak"
+            ]
+          },
+          "pass": true
+        },
+        "2024": {
+          "form": "fleet-delta",
+          "footprint": {
+            "thermal_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "renewable_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "storage_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "announced_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "confirmed_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "ccs_retrofits": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "entry_decided_mw_by_tech": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "peak_demand_mw": {
+              "identical": true,
+              "control": 153121.0,
+              "arm": 153121.0
+            },
+            "screen_peak_demand_mw": {
+              "identical": true,
+              "control": 153121.0,
+              "arm": 153121.0
+            },
+            "screen_adequacy_requirement_mw": {
+              "identical": true,
+              "control": 164107.6,
+              "arm": 164107.6
+            }
+          },
+          "footprint_all_identical": true,
+          "clearing": {
+            "census_mw": {
+              "control": 173512.396,
+              "arm": 174350.799,
+              "identical": false
+            },
+            "census_position": {
+              "control": 1.057309,
+              "arm": 1.062418,
+              "identical": false
+            },
+            "cleared_mw": {
+              "control": 168633.36,
+              "arm": 168659.256,
+              "identical": false
+            },
+            "cleared_position": {
+              "control": 1.027578,
+              "arm": 1.027736,
+              "identical": false
+            },
+            "how": {
+              "control": "marginal_offer_sets_price",
+              "arm": "marginal_offer_sets_price",
+              "identical": true
+            },
+            "marginal_unit": {
+              "control": "COAL_PJM_AEP_Ohio_p6166_committed",
+              "arm": "COAL_PJM_AEP_Ohio_p6018_committed",
+              "identical": false
+            },
+            "n_offers": {
+              "control": 835,
+              "arm": 850,
+              "identical": false
+            },
+            "n_uncleared": {
+              "control": 20,
+              "arm": 25,
+              "identical": false
+            },
+            "offered_mw": {
+              "control": 150541.858,
+              "arm": 151380.262,
+              "identical": false
+            },
+            "price_per_firm_mw_yr": {
+              "control": 60577.666,
+              "arm": 60317.154,
+              "identical": false
+            },
+            "price_takers_mw": {
+              "control": 22970.538,
+              "arm": 22970.538,
+              "identical": true
+            },
+            "price_usd_per_mw_day": {
+              "control": 165.966209,
+              "arm": 165.252476,
+              "identical": false
+            },
+            "requirement_mw": {
+              "control": 164107.6,
+              "arm": 164107.6,
+              "identical": true
+            }
+          },
+          "clearing_all_identical": false,
+          "stack": {
+            "identical": 156,
+            "changed": 679,
+            "only_first": 0,
+            "only_second": 15,
+            "changed_ids": [
+              "CC_CHP_PJM_AEP_Ohio_p57908_committed",
+              "CC_CHP_PJM_ATSI_p55990_committed",
+              "CC_CHP_PJM_Central_PA_p54333_committed",
+              "CC_CHP_PJM_ComEd_p50326_committed",
+              "CC_CHP_PJM_ComEd_p55216_committed",
+              "CC_CHP_PJM_ComEd_p55216_peak",
+              "CC_CHP_PJM_Dominion_p10633_committed",
+              "CC_CHP_PJM_Dominion_p10633_peak",
+              "CC_CHP_PJM_EMAAC_p10030_committed",
+              "CC_CHP_PJM_EMAAC_p10061_committed",
+              "CC_CHP_PJM_EMAAC_p10061_peak",
+              "CC_CHP_PJM_EMAAC_p10805_committed",
+              "CC_CHP_PJM_EMAAC_p50410_peak",
+              "CC_CHP_PJM_EMAAC_p55801_committed",
+              "CC_CHP_PJM_EMAAC_p55801_peak",
+              "CC_CHP_PJM_SWMAAC_p54832_committed",
+              "CC_CHP_PJM_SWMAAC_p54832_peak",
+              "CC_CHP_PJM_SWMAAC_p58207_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p10099_committed",
+              "CC_REGULAR_PJM_AEP_Ohio_p10099_peak"
+            ],
+            "only_first_ids": [],
+            "only_second_ids": [
+              "CC_REGULAR_PJM_Dominion_p3797_peak",
+              "CC_REGULAR_PJM_Dominion_p3804_peak",
+              "CC_REGULAR_PJM_Dominion_p54844_peak",
+              "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+              "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+              "ST_GAS_PJM_AEP_Ohio_p1353_peak",
+              "ST_GAS_PJM_AEP_Ohio_p2935_committed",
+              "ST_GAS_PJM_AEP_Ohio_p2935_econ",
+              "ST_GAS_PJM_AEP_Ohio_p2935_peak",
+              "ST_GAS_PJM_ComEd_p972_committed",
+              "ST_GAS_PJM_ComEd_p972_econ",
+              "ST_GAS_PJM_ComEd_p972_peak",
+              "ST_GAS_PJM_Dominion_p3775_committed",
+              "ST_GAS_PJM_Dominion_p3775_econ",
+              "ST_GAS_PJM_Dominion_p3775_peak"
+            ]
+          },
+          "pass": false
+        },
+        "2025": {
+          "form": "fleet-delta",
+          "footprint": {
+            "thermal_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "renewable_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "storage_additions": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "announced_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "confirmed_derates": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "ccs_retrofits": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "entry_decided_mw_by_tech": {
+              "identical": true,
+              "control": "\u2026",
+              "arm": "\u2026"
+            },
+            "peak_demand_mw": {
+              "identical": true,
+              "control": 160560.0,
+              "arm": 160560.0
+            },
+            "screen_peak_demand_mw": {
+              "identical": true,
+              "control": 163019.507,
+              "arm": 163019.507
+            },
+            "screen_adequacy_requirement_mw": {
+              "identical": true,
+              "control": 144450.0,
+              "arm": 144450.0
+            }
+          },
+          "footprint_all_identical": true,
+          "clearing": {
+            "census_mw": {
+              "control": 144164.35,
+              "arm": 145835.975,
+              "identical": false
+            },
+            "census_position": {
+              "control": 0.998023,
+              "arm": 1.009595,
+              "identical": false
+            },
+            "cleared_mw": {
+              "control": 144164.35,
+              "arm": 145835.975,
+              "identical": false
+            },
+            "cleared_position": {
+              "control": 0.998023,
+              "arm": 1.009595,
+              "identical": false
+            },
+            "how": {
+              "control": "all_offers_clear_curve_sets_price",
+              "arm": "all_offers_clear_curve_sets_price",
+              "identical": true
+            },
+            "marginal_unit": {
+              "control": null,
+              "arm": null,
+              "identical": true
+            },
+            "n_offers": {
+              "control": 821,
+              "arm": 850,
+              "identical": false
+            },
+            "n_uncleared": {
+              "control": 0,
+              "arm": 0,
+              "identical": true
+            },
+            "offered_mw": {
+              "control": 124381.653,
+              "arm": 126053.278,
+              "identical": false
+            },
+            "price_per_firm_mw_yr": {
+              "control": 130767.451,
+              "arm": 86485.025,
+              "identical": false
+            },
+            "price_takers_mw": {
+              "control": 19782.698,
+              "arm": 19782.698,
+              "identical": true
+            },
+            "price_usd_per_mw_day": {
+              "control": 358.266988,
+              "arm": 236.945273,
+              "identical": false
+            },
+            "requirement_mw": {
+              "control": 144450.0,
+              "arm": 144450.0,
+              "identical": true
+            }
+          },
+          "clearing_all_identical": false,
+          "stack": {
+            "identical": 202,
+            "changed": 619,
+            "only_first": 0,
+            "only_second": 29,
+            "changed_ids": [
+              "CC_CHP_PJM_ComEd_p55216_peak",
+              "CC_CHP_PJM_Dominion_p10633_peak",
+              "CC_CHP_PJM_EMAAC_p10061_peak",
+              "CC_CHP_PJM_EMAAC_p50410_peak",
+              "CC_CHP_PJM_EMAAC_p55801_peak",
+              "CC_CHP_PJM_SWMAAC_p54832_peak",
+              "CC_CHP_PJM_SWMAAC_p58207_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p10099_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p55297_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p55350_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p55502_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p55503_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p55736_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p57794_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p59326_peak",
+              "CC_REGULAR_PJM_AEP_Ohio_p59773_peak",
+              "CC_REGULAR_PJM_ATSI_p55701_peak",
+              "CC_REGULAR_PJM_ATSI_p59764_peak",
+              "CC_REGULAR_PJM_ATSI_p60376_peak",
+              "CC_REGULAR_PJM_Central_PA_p3176_peak"
+            ],
+            "only_first_ids": [],
+            "only_second_ids": [
+              "CC_REGULAR_PJM_Dominion_p3797_peak",
+              "CC_REGULAR_PJM_Dominion_p3804_peak",
+              "CC_REGULAR_PJM_Dominion_p54844_peak",
+              "COAL_PJM_AEP_Ohio_p1040_committed",
+              "COAL_PJM_AEP_Ohio_p1040_econ",
+              "COAL_PJM_AEP_Ohio_p1040_peak",
+              "COAL_PJM_AEP_Ohio_p1384_committed",
+              "COAL_PJM_AEP_Ohio_p1384_econ",
+              "COAL_PJM_AEP_Ohio_p1384_peak",
+              "COAL_PJM_ATSI_p2936_committed",
+              "COAL_PJM_ATSI_p2936_econ",
+              "COAL_PJM_ATSI_p2936_mustrun",
+              "COAL_PJM_ATSI_p2936_peak",
+              "COAL_PJM_Dominion_p7213_committed",
+              "COAL_PJM_Dominion_p7213_peak",
+              "COAL_PJM_West_APS_p3954_committed",
+              "COAL_PJM_West_APS_p3954_peak",
+              "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+              "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+              "ST_GAS_PJM_AEP_Ohio_p1353_peak"
+            ]
+          },
+          "pass": false
+        }
+      },
+      "pass": false
+    },
+    "ALL_PASS": false
+  },
+  "reported": {
+    "executed_economic_by_year": {
+      "2021": {
+        "control": 0,
+        "arm": 0
+      },
+      "2022": {
+        "control": 9464.455,
+        "arm": 8693.255
+      },
+      "2023": {
+        "control": 828.467,
+        "arm": 700.901
+      },
+      "2024": {
+        "control": 1221.988,
+        "arm": 0
+      },
+      "2025": {
+        "control": 0,
+        "arm": 0
+      }
+    },
+    "window_executed_economic_mw": {
+      "control": 11514.91,
+      "arm": 9394.156
+    },
+    "window_retirements_all_mw": {
+      "control": 17034.468,
+      "arm": 14913.714
+    },
+    "decided_by_year": {
+      "2021": {
+        "control": 0,
+        "arm": 0
+      },
+      "2022": {
+        "control": 10686.443,
+        "arm": 8693.255
+      },
+      "2023": {
+        "control": 828.467,
+        "arm": 700.901
+      },
+      "2024": {
+        "control": 0,
+        "arm": 0
+      },
+      "2025": {
+        "control": 0,
+        "arm": 0
+      }
+    },
+    "score": {
+      "control": {
+        "fc3": {
+          "total_gw": {
+            "actual": 15.062,
+            "model": 18.058,
+            "err_frac": 0.199,
+            "band": "FAIL"
+          },
+          "unit_recall_gt300": {
+            "recall": 0.65,
+            "matched": 13,
+            "n_big_actual": 20,
+            "band": "FAIL",
+            "plant_recall_frac": 0.7,
+            "plant_matched": 14
+          },
+          "false_retire": {
+            "false_gw": 8.065,
+            "frac_of_model": 0.447,
+            "grain": "per-fuel-excess",
+            "band": "FAIL"
+          },
+          "release_precision_window": {
+            "economic": {
+              "released_mw": 11514.91,
+              "released_mw_at_real_exit_plants": 1400.33,
+              "released_mw_no_plant_identity": 0.0,
+              "precision": 0.122
+            },
+            "all": {
+              "released_mw": 18057.835,
+              "released_mw_at_real_exit_plants": 7607.255,
+              "released_mw_no_plant_identity": 0.0,
+              "precision": 0.421
+            }
+          },
+          "per_fuel": {
+            "biomass": {
+              "actual_gw": 0.207,
+              "model_gw": 0.009,
+              "err_frac": -0.955
+            },
+            "coal": {
+              "actual_gw": 10.299,
+              "model_gw": 6.797,
+              "err_frac": -0.34
+            },
+            "gas_cc": {
+              "actual_gw": 0.434,
+              "model_gw": 0.903,
+              "err_frac": 1.081
+            },
+            "gas_ct": {
+              "actual_gw": 0.808,
+              "model_gw": 0.0,
+              "err_frac": -1.0
+            },
+            "gas_st": {
+              "actual_gw": 2.702,
+              "model_gw": 10.297,
+              "err_frac": 2.811
+            },
+            "oil": {
+              "actual_gw": 0.613,
+              "model_gw": 0.051,
+              "err_frac": -0.916
+            }
+          }
+        },
+        "loyo": {
+          "folds": {
+            "2023": {
+              "recall": 0.667,
+              "recall_band": "FAIL",
+              "matched": 8,
+              "n_big_actual": 12,
+              "false_retire_gw_raw": 9.368,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            },
+            "2024": {
+              "recall": 0.579,
+              "recall_band": "FAIL",
+              "matched": 11,
+              "n_big_actual": 19,
+              "false_retire_gw_raw": 8.074,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            },
+            "2025": {
+              "recall": 0.684,
+              "recall_band": "FAIL",
+              "matched": 13,
+              "n_big_actual": 19,
+              "false_retire_gw_raw": 8.08,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            }
+          },
+          "holds_2of3": {
+            "recall_pass": false,
+            "tr10a_pass": true,
+            "tr10b_pass": true
+          }
+        }
+      },
+      "arm": {
+        "fc3": {
+          "total_gw": {
+            "actual": 15.062,
+            "model": 15.937,
+            "err_frac": 0.058,
+            "band": "PASS"
+          },
+          "unit_recall_gt300": {
+            "recall": 0.55,
+            "matched": 11,
+            "n_big_actual": 20,
+            "band": "FAIL",
+            "plant_recall_frac": 0.7,
+            "plant_matched": 14
+          },
+          "false_retire": {
+            "false_gw": 7.166,
+            "frac_of_model": 0.45,
+            "grain": "per-fuel-excess",
+            "band": "FAIL"
+          },
+          "release_precision_window": {
+            "economic": {
+              "released_mw": 9394.156,
+              "released_mw_at_real_exit_plants": 1372.13,
+              "released_mw_no_plant_identity": 0.0,
+              "precision": 0.146
+            },
+            "all": {
+              "released_mw": 15937.081,
+              "released_mw_at_real_exit_plants": 7579.055,
+              "released_mw_no_plant_identity": 0.0,
+              "precision": 0.476
+            }
+          },
+          "per_fuel": {
+            "biomass": {
+              "actual_gw": 0.207,
+              "model_gw": 0.009,
+              "err_frac": -0.955
+            },
+            "coal": {
+              "actual_gw": 10.299,
+              "model_gw": 5.575,
+              "err_frac": -0.459
+            },
+            "gas_cc": {
+              "actual_gw": 0.434,
+              "model_gw": 0.775,
+              "err_frac": 0.787
+            },
+            "gas_ct": {
+              "actual_gw": 0.808,
+              "model_gw": 0.0,
+              "err_frac": -1.0
+            },
+            "gas_st": {
+              "actual_gw": 2.702,
+              "model_gw": 9.526,
+              "err_frac": 2.526
+            },
+            "oil": {
+              "actual_gw": 0.613,
+              "model_gw": 0.051,
+              "err_frac": -0.916
+            }
+          }
+        },
+        "loyo": {
+          "folds": {
+            "2023": {
+              "recall": 0.5,
+              "recall_band": "FAIL",
+              "matched": 6,
+              "n_big_actual": 12,
+              "false_retire_gw_raw": 8.597,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            },
+            "2024": {
+              "recall": 0.579,
+              "recall_band": "FAIL",
+              "matched": 11,
+              "n_big_actual": 19,
+              "false_retire_gw_raw": 7.175,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            },
+            "2025": {
+              "recall": 0.579,
+              "recall_band": "FAIL",
+              "matched": 11,
+              "n_big_actual": 19,
+              "false_retire_gw_raw": 7.181,
+              "false_retire_band_raw": "FAIL",
+              "tr10a": "PASS",
+              "tr10b": "PASS"
+            }
+          },
+          "holds_2of3": {
+            "recall_pass": false,
+            "tr10a_pass": true,
+            "tr10b_pass": true
+          }
+        }
+      }
+    }
+  },
+  "flip_condition": {
+    "limbs": {
+      "a_purity": false,
+      "b_fidelity": true,
+      "c_composition": true,
+      "d_loyo": true
+    },
+    "detail": {
+      "c": {
+        "control_precision": 0.122,
+        "arm_precision": 0.146,
+        "every_row_non_sector1": true
+      },
+      "d": {
+        "folds_computed": true,
+        "control_folds": {
+          "2023": "FAIL",
+          "2024": "FAIL",
+          "2025": "FAIL"
+        },
+        "arm_folds": {
+          "2023": "FAIL",
+          "2024": "FAIL",
+          "2025": "FAIL"
+        },
+        "folds_lost": [],
+        "holds_2of3_control": {
+          "recall_pass": false,
+          "tr10a_pass": true,
+          "tr10b_pass": true
+        },
+        "holds_2of3_arm": {
+          "recall_pass": false,
+          "tr10a_pass": true,
+          "tr10b_pass": true
+        }
+      }
+    },
+    "recommendation": "HOLD-and-route"
+  }
+}

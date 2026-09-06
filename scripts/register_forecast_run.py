@@ -371,6 +371,21 @@ VERDICT_MAP = {
     # on the PRECOMMIT's pre-stated condition
     # (PRECOMMIT-capx-d74-pjm-steam-oil-convention-2026-09-06.md §7).
     "pjm-2021-2025-realized-t1h-d74-nodefaultcap": "pjm-t1h-d74-nodefaultcap",
+    # capx-D78-R (2026-09-06): the D53/D78 retirement-screen SECTOR GATE on the
+    # FULL 2021-2025 window, with the sign line moved off per-year executions
+    # (which D78's G6 wrongly gated) onto the DECIDED COHORT and the WINDOW
+    # TOTAL. ONE arm, SUFFIXED BY CHARTER, never the bare key; the same-HEAD
+    # control-P is solved and NEVER registered (deleted before merge, rule
+    # 29(c)). The partition is exact in all five years -- every control-only
+    # failing row is sector-1, the arm-only set is EMPTY, the 2022 auction is
+    # byte-identical -- and the window decided total falls by exactly the
+    # control's sector-1 decided MW (2,120.754). NOTHING ARMS: two of the
+    # lane's own pre-registered gates fired (W4's lower edge was mis-derived,
+    # W5's fleet-delta form did not admit the E&AS offer propagation), so the
+    # pre-stated recommendation is HOLD-and-route
+    # (FINDING-capx-d78r-2026-09-06.md section 6;
+    # PRECOMMIT-capx-d78r-full-window-2026-09-06.md section 6).
+    "pjm-2021-2025-realized-t1h-d78-sectorgate": "pjm-t1h-d78r-sectorgate",
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the
