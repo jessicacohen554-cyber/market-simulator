@@ -24,7 +24,7 @@ collision-map files) · `needs-revert` (strayed into another item's file) · `me
 | B-0 | P1 basis-seed owner memo (+ the missing ERCOT bench) | 2026-09-05 22:45 UTC (wave 1f, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-b0-p1-seed-memo-9euk97` | #4862 (draft) + #4880 (bench) | **merged**, memo on main with the ERCOT forward-2025 OFF/ON bench and the §3/§6.3 placeholders filled; **UNSIGNED** — the Owner decision block (memo L366–377) has no box ticked and no signature (§2.6) | `8209201c` (commit `2d0900d0`) | bench: seed ON `solve_p1` 287.1 → 139.3 s, P1 iters 273,893 → 78,856, objective identical, total gen Δ 0 MWh, max Δ price 1.1e-12, 0 dual-degenerate hours, 16 unit-hours marginal-tie reshuffle; year total 717.4 → 581.5 s |
 | B | P1 basis seed on the cold-rebuild route | wave 2a — handed 00:20 and re-handed 02:20 UTC; memo SIGNED (A) FLIP 2026-09-06 by chat instruction ("Flip it and do it"), recorded on main by `c9789b9d` | claude-fable-5-1 | TWO owner-launched sessions (§2.12): `claude/p1-basis-seed-impl-oby2ka` (`session_01NwQRGYeMchhFewGgmrfVhD`, 03:25 UTC) and `claude/wc-b-p1-basis-seed-9557mm` (first commit 01:59 UTC) | `claude/p1-basis-seed-impl-oby2ka` (canonical, on main) · `claude/wc-b-p1-basis-seed-9557mm` (parallel, conflicting) | #5033 (code, merged 04:03) + #5054 (CHANGELOG draft, `wc-b-before` manifest, capture-oracle fix, merged 04:30) · #5061 (9557mm, OPEN, 9-file conflict with main) | **merged, complete** — evidence landed via #5075 (`90ce9a91`, `wc-b-after` ERCOT manifest) and #5091 (`c316b2fa`: ERCOT/NEISO/NYISO/CAISO gate tables, CHANGELOG gates, A-6-revert note `9062303e`); placeholders filled, both manifests on main. Byte gate seed-OFF check [1] PASS ERCOT 2024+2025 (7 files, 28 cols) + NEISO 2023 (5 files, 20 cols) at atol=rtol=0, merge-base `34f3ce35`; neutrality ON vs OFF: objective and total gen identical on every arm, prices dual-degenerate-only (none on ERCOT/NYISO; CAISO only on zero-load import nodes); class WARM-START stated. #5061 duplicate closed (§2.13) | `37f994fd` (code), `6a718f1c`, `90ce9a91`, `c316b2fa` (evidence) | **main's numbers (oby2ka):** ERCOT 2025 P1 349.2 → 142.0 s (2.46×), iters 273,893 → 78,856; ERCOT 2024 two-pass P1 628.1 → 225.1 s (pass 2 seeded from pass 1's P1 basis 332.9 → 92.8 s), year total 990.9 → 605.7 s (−39 %); NYISO 2023 P1 96.4 → 67.6 s; CAISO 2023 P1 354.5 → 123.1 s; peak RSS +0.6 GB on ERCOT (13.27 GB). Seed cost sits in `p1_post` (basis export ~17 s + apply ~3 s per pass). 9557mm's measurement (PR #5061, its own tree): ERCOT 2025 P1 396.2 → 180.6 s (2.19×), iters 273,893 → 78,856 (the memo's exact integers), P0 identical, objective relΔ 8e-16, total gen Δ 0, 0/61,320 dual-degenerate hours, peak RSS +0.05 GB; byte gate PASS ERCOT (7 files) + NEISO (9 files) seed-OFF. oby2ka's numbers pending |
 | A-4 | on-disk memo for the remaining year-1 caches | 2026-09-06 00:20 UTC (wave 2b, handed to owner; A-1 ✓ A-2 ✓) | claude-opus-5 | owner-launched | `claude/wc-a4-year1-memo-bwtyyn` | #4988 | **merged, complete** (`7201e699`; code `e0d55a5b`, evidence `9cb50a72`): NEW `data/disk_memo.py` (content-addressed JSON mapping memo, never pickle), `egrid_sheets.py` digest shared (A-2 mirror names byte-compatible), `fleet/eia860._egrid_boundary_hr_repairs_for` memoized across processes; profile found it the ONLY ≥3 s once-per-process pure-input site left (`build_zone_lookup` 0.13 s, `_rows_to_generators` own <0.1 s); NEISO 3-yr byte gate check [1] PASS (9 files, 32 cols, atol=rtol=0), smoke PASS, audit_keepers PASS, legitimacy pre-existing by control; §WALLCLOCK A-4 + CHANGELOG + `wc-a4-{before,after}` manifests on main; diff confined to the collision map | `7201e699` | boundary repair 2.166 → 0.058 s (37×), 12.69 → 0.46 s over all 8 vintages; NEISO year-1 `data_prep` 16.3 → 12.1 s (−26 %), residual 4.4 s = disk scan + genuine parse — **item stops here per charter (<10 s gap)** |
-| 3a | re-baseline anchor table on main | wave 3 — after every wave-1/2 PR merged or closed | claude-opus-5 | — | `claude/wc-3a-rebaseline` | — | **handed to owner 2026-09-06 07:20 UTC** — A-6 closed ✓, B merged with evidence ✓ (§2.14) | — | n/a (docs) |
+| 3a | re-baseline anchor table on main | wave 3 — after every wave-1/2 PR merged or closed | claude-opus-5 | — | `claude/wc-3a-rebaseline` | — | **merged, complete** — #5140 (`c5cc0ec0`, 15:03 UTC; branch `claude/wc-3a-rebaseline-zufbva`, commit `83ce90ab`), docs only (baseline doc +215, CHANGELOG +49), `wc-rebaseline` bundles deleted before the PR; §WALLCLOCK 3a on main `d1aa877f`: two arm families (pinned anchor, all six ISOs; calibration-CLI default for NEISO + ERCOT), before/after per item cited, process-wall gap 28.4 → 1.1 s/yr (§2.15) | `c5cc0ec0` | n/a (docs) |
 
 ## 2. Decisions and findings
 
@@ -242,6 +242,44 @@ either way as pre-existing. Every wave-1/2 item is merged or closed, so wave 3 i
 the 3a prompt was handed at this sweep. When 3a merges, the desk writes the closing ledger row
 and stops.
 
+### 2.15 CLOSING LEDGER — 3a merged, the desk stops here (2026-09-06 15:07 UTC)
+
+#5140 landed §WALLCLOCK 3a (anchor on main `d1aa877f`). Every wave-1/2/3 item is merged or
+closed; zero open PRs; no `wc-` branch on origin but this log. The cumulative result of the
+desk, each number from the section that measured it:
+
+* **NEISO year-1 `data_prep` 71.3 → 12.1 s** (A-1 + A-2 + A-4, measured on top of one
+  another; residual 4.4 s is disk scan + genuine parse). Anchor at HEAD: NEISO 2023 `data_prep`
+  14.0 s pinned / 9.0 s CLI-default, against 125.5 s in the assessment's §1 profile.
+* **A-3** put the `hourly/` sidecar block on the clock: the process-wall vs `total` gap is
+  **28.4 → 1.1 s per year**; `sidecars` is now reported inside `results_write` (3.8–5.5 s
+  NEISO, 19.5–21.8 s ERCOT, 24–26 s MISO/PJM per year).
+* **B's P1 seconds, seed OFF → ON** (WARM-START CLASS, calibration-CLI default ON): ERCOT 2025
+  **349.2 → 142.0 s** (273,893 → 78,856 iters), ERCOT 2024 two-pass **628.1 → 225.1 s**, NYISO
+  2023 **96.4 → 67.6 s**, CAISO 2023 **354.5 → 123.1 s**; inert on NEISO/PJM/MISO by
+  construction (their P1 re-solves the live model; NEISO 2023 P1 62,954 iters on both arms).
+  On the ERCOT two-year CLI-default arm the seed is worth −546.9 s of `solve_p1` against
+  +91.9 s of export/apply overhead; the pre-existing cross-year P0 warm start adds −165.7 s on
+  2025; two-year `total` 1,764.4 → 1,114.0 s (−37 %). NEISO three-year `total` 369.2 → 305.6 s
+  (−17 %), none of it B.
+* **A-6's peak is unchanged**: process VmHWM 13.28 → 13.27 GB, measured-negative, reverted.
+  The ERCOT peak is live payload at the P1 rebuild; anchor peaks at HEAD are ERCOT 12.83,
+  MISO 13.28, PJM 13.29 GB with the swapfile untouched — the §PERF-B "PJM/MISO do not fit"
+  negative did not reproduce on the current keeper recipes (3a states this is a recipe change,
+  not a fix).
+* **A-5** was already on main since #4579 (2026-09-02); the assessment's A-5 row stays stale by
+  design, the correction lives in §WALLCLOCK 3a.
+
+Two things 3a hands to whoever owns the container recipe, not to this desk: a fresh container
+has no `data/clean` (CAISO/NYISO recipes refuse to solve until `scripts/regenerate_clean.py`
+runs — the same fresh-container artifact behind `regression_gate` check [4]), and the PJM
+keeper needs `scripts/data/fetch_pjm_da_virtuals.py` first (licensing, not memory). One desk
+lesson stays on the record (§2.12): never re-hand a prompt whose first handing may already
+have been launched.
+
+**The desk is closed.** The `claude/wc-desk-log` branch is left for the owner's usual merge
+and delete; the closed `claude/wc-b-p1-basis-seed-9557mm` branch may be deleted with it.
+
 ## 3. Timeline
 
 | when (UTC) | event |
@@ -263,3 +301,4 @@ and stops.
 | 2026-09-06 04:56 | sweep #10 (owner "refresh"): **A-6 closed measured-negative and REVERTED** (#5040 evidence, #5041 revert, #5042 pointer; VmHWM 13.28 → 13.27 GB); **memo SIGNED (A) FLIP** (`c9789b9d`); **B code on main** via #5033 + #5054 (`claude/p1-basis-seed-impl-oby2ka`), evidence arm running, placeholders open; **duplicate B implementation #5061** (`claude/wc-b-p1-basis-seed-9557mm`, complete with evidence) conflicts with main in 9 files — desk recommends close, owner decides (§2.12). Open PRs: #5061 (wc), #5065, #5072 (unrelated). 3a held until B's evidence PR lands. Main `2fa2f23a` (40 merges since `1ce47fc0`, incl. desk-log #5031) |
 | 2026-09-06 ~05:05 | owner decision (card): close #5061, keep main's B implementation (§2.13); desk closed #5061 with a standing-down comment. 3a still held on oby2ka's evidence PR |
 | 2026-09-06 07:16 | sweep #11 (owner "refresh"): **B evidence on main** (#5075 `90ce9a91`, #5091 `c316b2fa`) — wave 2 complete; zero open PRs; no lane-file change since. **3a handed to owner** (§2.14). Main `d1aa877f` |
+| 2026-09-06 15:07 | sweep #12 (owner "refresh"): **3a merged** (#5140 `c5cc0ec0`) — every item merged or closed, zero open PRs. Closing ledger written (§2.15). **Desk closed.** Main `2617a5d3` |
