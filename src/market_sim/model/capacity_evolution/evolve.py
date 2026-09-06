@@ -55,6 +55,32 @@ from .retirements import (
 )
 
 
+#: The ``retrofit_log`` columns carried onto each ``ccs_retrofits`` ledger row
+#: (capx D65-B-R step 0). These are exactly the quantities a CCS-seam screen
+#: gate is stated over, so persisting them makes those gates checkable from a
+#: committed bundle instead of by replay:
+#:
+#: * ``capex_scale`` / ``fixed_cost_scale`` -- the D50 seam-1 and D65 seam-4
+#:   island-size factors this host was charged at (both ``1.0`` when the
+#:   respective gate is off, so an unarmed run's rows are inert);
+#: * ``retrofit_capex_per_mw`` and ``annual_net_savings_per_mw`` (the in-window
+#:   uplift) -- the two sides of the ``uplift/capex`` identity;
+#: * ``vom_adder_per_mwh`` -- the capture VOM this host actually paid, which is
+#:   the same value the conversion adds to ``gen.vom``;
+#: * ``old_hr`` / ``old_emission_rate`` -- the host's pre-conversion heat rate
+#:   and measured CO2 rate, i.e. the ``er``/``phys`` band a host-population gate
+#:   is read over (``phys = old_hr * CO2 lb-per-MMBtu factor``).
+_CCS_RETROFIT_LEDGER_SCALING_FIELDS: tuple[str, ...] = (
+    "capex_scale",
+    "fixed_cost_scale",
+    "retrofit_capex_per_mw",
+    "annual_net_savings_per_mw",
+    "vom_adder_per_mwh",
+    "old_hr",
+    "old_emission_rate",
+)
+
+
 def _pkg_ns():
     """Return the shared package namespace (:mod:`market_sim.model.capacity_evolution`).
 
@@ -662,12 +688,29 @@ def evolve_fleet(
         # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
         # unit_id, not a new column. Detect by comparing fuel_type before/after.
         _post_ccs = {g.unit_id: g for g in fleet}
+        # capx D65-B-R step 0: carry the screen's own per-host SCALING record
+        # onto the ledger row. Before this, ``retrofit_log`` -- which holds the
+        # island size each host was charged for and the uplift that size bought
+        # -- was computed, threaded to the next year's screen and then DROPPED,
+        # so the D50/D65 seam gates (``uplift/capex`` against ``capex_scale``,
+        # the ``er``/``phys`` host band) were unreadable from the artifacts the
+        # runner writes and had to be reconstructed offline from CAMPD. That is
+        # the D65 §3d defect class (a diagnostic blind to its own mechanism);
+        # see FINDING-capx-d65b-2026-09-06.md §6.4. Additive ledger keys only:
+        # no config field, no cache key, and an unarmed run writes the inert
+        # 1.0 scales.
+        _rl_by_uid = {entry["unit_id"]: entry for entry in retrofit_log}
         events["ccs_retrofits"].extend(
             {
                 "unit_id": uid,
                 "mw": float(_post_ccs[uid].pmax_mw),
                 "from_fuel": _pre_ccs[uid],
                 "to_fuel": _post_ccs[uid].fuel_type,
+                **{
+                    _k: float(_rl_by_uid[uid][_k])
+                    for _k in _CCS_RETROFIT_LEDGER_SCALING_FIELDS
+                    if uid in _rl_by_uid and _rl_by_uid[uid].get(_k) is not None
+                },
             }
             for uid in _pre_ccs
             if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]

@@ -18,13 +18,16 @@ import unittest
 
 import numpy as np
 
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import ScenarioConfig, cache_key_drop_defaults
 from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     Generator,
     aggregate_fleet_by_efficiency,
     assemble_mc,
     generators_to_fleet_arrays,
+)
+from market_sim.model.capacity_evolution.evolve import (
+    _CCS_RETROFIT_LEDGER_SCALING_FIELDS,
 )
 from market_sim.model.capacity import (
     CumulativeDeployment,
@@ -1349,6 +1352,146 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
             ratio(off["HI"]) - ratio(off["LO"]),
             ratio(by_id["HI"]) - ratio(by_id["LO"]),
         )
+
+
+class TestRetrofitLedgerCarriesTheScalingRecord(unittest.TestCase):
+    """capx D65-B-R step 0: the ``ccs_retrofits`` ledger row carries its scales.
+
+    The D65-B screen could not evaluate its own G2 gate (``uplift/capex`` against
+    ``k``) because :func:`evolve_fleet` recorded a conversion as
+    ``{unit_id, mw, from_fuel, to_fuel}`` and dropped the ``retrofit_log`` that
+    carries the island sizing — so the host band and the identity had to be
+    reconstructed offline from CAMPD (FINDING-capx-d65b-2026-09-06.md §6.4, the
+    D65 §3d defect class: a diagnostic blind to the mechanism it exists to make
+    visible). These rows are what make a CCS-seam gate readable from a committed
+    bundle instead of by replay.
+
+    The keys are LEDGER data, not config, so nothing here may move a cache key —
+    asserted directly rather than argued.
+    """
+
+    def _prior(self, fleet, prices):
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=T)
+        from types import SimpleNamespace
+
+        return {
+            "fleet_arrays": arrays,
+            "dispatch_result": SimpleNamespace(dispatch=np.zeros((len(fleet), T))),
+            "prices": prices,
+            "mc_cost": np.full((len(fleet), T), 29.6),
+            "peak_demand": 0.0,
+            "zone_names": ["Z0"],
+        }
+
+    def _evolve_with_events(self, fleet, config):
+        """Run a full ``evolve_fleet`` year with event recording armed."""
+        from market_sim.results.evolution_ledger import new_events
+
+        events = new_events()
+        _fleet, _tracker, _renew, retrofit_log, _floor = evolve_fleet(
+            fleet,
+            self._prior(fleet, HIGH_PRICES),
+            2030,
+            config,
+            {},
+            gas_price_per_mmbtu=4.0,
+            carbon_price=120.0,
+            events=events,
+        )
+        return events, retrofit_log
+
+    def test_ledger_row_carries_every_scaling_field(self):
+        cfg = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=True,
+        )
+        events, retrofit_log = self._evolve_with_events(
+            [_gas_cc("HOT", heat_rate=7.0, emission_rate=0.60)], cfg
+        )
+        self.assertEqual(len(retrofit_log), 1, "fixture must convert its one host")
+        rows = events["ccs_retrofits"]
+        self.assertEqual([r["unit_id"] for r in rows], ["HOT"])
+        row = rows[0]
+        for key in _CCS_RETROFIT_LEDGER_SCALING_FIELDS:
+            self.assertIn(key, row, f"{key} missing from the ledger row")
+            self.assertIsInstance(row[key], float)
+        # The persisted values ARE the screen's own, not a re-derivation.
+        log_entry = retrofit_log[0]
+        for key in _CCS_RETROFIT_LEDGER_SCALING_FIELDS:
+            self.assertAlmostEqual(row[key], float(log_entry[key]), places=9)
+        # ... and the pre-existing keys are untouched.
+        self.assertEqual(row["from_fuel"], "gas_cc")
+        self.assertEqual(row["to_fuel"], "gas_cc_ccs")
+
+    def test_the_uplift_over_capex_identity_is_readable_from_the_row(self):
+        # G2's object: on the armed seam a host's island is sized by ``k``, so
+        # its capex carries ``k`` and the per-unit-of-capex uplift falls as
+        # ``1/k``. Both sides of that ratio now live on the ledger row, which is
+        # the whole point of persisting them.
+        cfg = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=True,
+        )
+        er_ref = 6.3 * 0.057
+        events, _log = self._evolve_with_events(
+            [
+                _gas_cc("REF", heat_rate=6.3, emission_rate=er_ref),
+                _gas_cc("HOT", heat_rate=6.3, emission_rate=er_ref * 1.5),
+            ],
+            cfg,
+        )
+        by_id = {r["unit_id"]: r for r in events["ccs_retrofits"]}
+        self.assertEqual(set(by_id), {"REF", "HOT"})
+        # k is the island factor: 1.0 at the reference host, 1.5 at the hot one.
+        self.assertAlmostEqual(by_id["REF"]["capex_scale"], 1.0, places=6)
+        self.assertAlmostEqual(by_id["HOT"]["capex_scale"], 1.5, places=6)
+        # Seam 4 charges the fixed-cost legs at the SAME factor.
+        for uid in ("REF", "HOT"):
+            self.assertAlmostEqual(
+                by_id[uid]["fixed_cost_scale"], by_id[uid]["capex_scale"], places=9
+            )
+        # capex carries k exactly, so capex/k is host-invariant.
+        self.assertAlmostEqual(
+            by_id["REF"]["retrofit_capex_per_mw"] / by_id["REF"]["capex_scale"],
+            by_id["HOT"]["retrofit_capex_per_mw"] / by_id["HOT"]["capex_scale"],
+            places=6,
+        )
+
+    def test_an_unarmed_run_writes_the_inert_unit_scales(self):
+        # Off, both factors are identically 1.0 — so a pre-D50 posture's rows
+        # are self-describing rather than silent, and the row shape does not
+        # depend on which gates are armed.
+        cfg = _fixture_config(ccs_retrofit_capex_co2_scaling=False)
+        events, _log = self._evolve_with_events(
+            [_gas_cc("HOT", heat_rate=7.0, emission_rate=0.60)], cfg
+        )
+        row = events["ccs_retrofits"][0]
+        self.assertAlmostEqual(row["capex_scale"], 1.0, places=9)
+        self.assertAlmostEqual(row["fixed_cost_scale"], 1.0, places=9)
+
+    def test_persisting_the_record_moves_no_cache_key(self):
+        # A LEDGER field is not a config field. Stated as an assertion because
+        # this lane's whole batch is a re-key event and a step-0 key move would
+        # be indistinguishable from Act B's.
+        import dataclasses
+
+        # No ScenarioConfig field bears any of these names, so none of them can
+        # reach the hash: the record is written by the ledger, not configured.
+        cfg_fields = {f.name for f in dataclasses.fields(ScenarioConfig)}
+        for key in _CCS_RETROFIT_LEDGER_SCALING_FIELDS:
+            self.assertNotIn(key, cfg_fields)
+        # Nor is any of them a cache-key drop default, which is the other route
+        # a name reaches the hash by.
+        for key in _CCS_RETROFIT_LEDGER_SCALING_FIELDS:
+            self.assertNotIn(key, cache_key_drop_defaults())
+        # Belt and braces: the whole six-ISO bare-key set is invariant to the
+        # ledger record's presence, because the record is not read while hashing.
+        keys_now = {
+            (iso, mode): ScenarioConfig(iso=iso, mode=mode).cache_key()
+            for iso in ("ERCOT", "NEISO", "NYISO", "CAISO", "PJM", "MISO")
+            for mode in ("forecast", "backcast")
+        }
+        self.assertEqual(len(set(keys_now.values())), len(keys_now))
 
 
 if __name__ == "__main__":

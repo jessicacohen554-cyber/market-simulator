@@ -42,6 +42,17 @@ The schema (one object per scenario-year)::
                             # mc_mean_usd_mwh) of the screen that emitted it.
       "thermal_additions":  [{"unit_id","fuel","mw","zone","source","eia860_id"}],
       "ccs_retrofits":      [{"unit_id","mw","from_fuel","to_fuel"}],
+                            # capx D65-B-R: each row also carries the screen's
+                            # own per-host scaling record -- capex_scale,
+                            # fixed_cost_scale (the D50 seam-1 / D65 seam-4
+                            # island-size factors, 1.0 when the gate is off),
+                            # retrofit_capex_per_mw, annual_net_savings_per_mw
+                            # (the in-window uplift), vom_adder_per_mwh, and the
+                            # host's pre-conversion old_hr / old_emission_rate.
+                            # Before this the retrofit_log was computed, threaded
+                            # to the next year's screen and dropped, so a seam
+                            # gate stated over those quantities was unreadable
+                            # from the bundle (FINDING-capx-d65b §6.4).
       "renewable_additions":[{"zone","tech","mw"}],
       "storage_additions":  [{"unit_id","tech","mw","zone","duration_h"}],
       "fleet_by_fuel_before": {fuel: mw}, "fleet_by_fuel_after": {fuel: mw},
