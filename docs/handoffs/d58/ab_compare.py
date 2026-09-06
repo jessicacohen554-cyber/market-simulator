@@ -25,6 +25,15 @@ _LEGACY_RE = re.compile(r"^(\d+)_")
 
 # Rows that must be identical between the arms if the gate is a pure
 # candidate-set partition (PREDECL §3 P4 / screen gate S5).
+#
+# REPAIRED 2026-09-06, capx D58: this tuple originally omitted
+# ``capacity_clearing``, so S5 read PASS on the D58 screen while the gate was
+# in fact moving 34.2 GW out of the capacity auction's sell-offer stack and
+# depressing PJM's clearing price 9.67 % — the second seam the gate was
+# supposed to be tested for. The omission is recorded as a miss against the
+# pre-declaration's own instrumentation (FINDING §5); the key is added here so
+# the check tests what S5 claims to test. `capacity_clearing` is the FIRST key
+# any future sector-gate leg on a clearing-armed ISO should read.
 FOOTPRINT_KEYS = (
     "thermal_additions",
     "renewable_additions",
@@ -36,6 +45,7 @@ FOOTPRINT_KEYS = (
     "peak_demand_mw",
     "screen_peak_demand_mw",
     "screen_adequacy_requirement_mw",
+    "capacity_clearing",
 )
 
 
@@ -125,6 +135,23 @@ def summarize(bundle: Path, sec: dict[int, int], real: dict[int, float]) -> dict
                 for k in ("decided", "entry_capped", "executed", "re_confirmed", "reversed")
             },
             "sector_gated": led.get("sector_gated"),
+            "capacity_clearing": {
+                k: v
+                for k, v in (led.get("capacity_clearing") or {}).items()
+                if not isinstance(v, (list, dict))
+            },
+            "retirements_rows": len(led.get("retirements") or []),
+            "retirements_mw": round(
+                sum(float(r.get("mw") or 0.0) for r in (led.get("retirements") or [])), 3
+            ),
+            "retirements_economic_mw": round(
+                sum(
+                    float(r.get("mw") or 0.0)
+                    for r in (led.get("retirements") or [])
+                    if r.get("reason") != "announced"
+                ),
+                3,
+            ),
             "retirements": led.get("retirements"),
             "capacity_reserve_position": led.get("capacity_reserve_position"),
             "adequacy_requirement_mw": led.get("adequacy_requirement_mw"),
