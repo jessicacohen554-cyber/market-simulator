@@ -4611,6 +4611,18 @@ def run_year(
                 "OVERLAYS the measured Q-Q ladder, and there is nothing to "
                 "overlay when the ladder itself is off (rule 19 [R-ONE-MECH])"
             )
+        # miso-231: the same fail-closed guard for the HOURLY overlay, for the
+        # same reason and at the same point of use.
+        if getattr(config, "miso_seam_neighbour_hourly_ladder", False) and not getattr(
+            config, "miso_seam_measured_ladder", False
+        ):
+            raise ValueError(
+                "miso_seam_neighbour_hourly_ladder requires "
+                "miso_seam_measured_ladder: the hourly neighbour-anchored PJM "
+                "entry OVERLAYS the measured Q-Q ladder, and there is nothing "
+                "to overlay when the ladder itself is off (rule 19 "
+                "[R-ONE-MECH])"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
@@ -4624,8 +4636,16 @@ def run_year(
             neighbour = bool(
                 getattr(config, "miso_seam_neighbour_anchored_ladder", False)
             )
+            neighbour_hourly = bool(
+                getattr(config, "miso_seam_neighbour_hourly_ladder", False)
+            )
             if inject_miso_seam_ladder_prices(
-                fleet_arrays, mc_base, iso, year, neighbour_anchored=neighbour
+                fleet_arrays,
+                mc_base,
+                iso,
+                year,
+                neighbour_anchored=neighbour,
+                neighbour_hourly=neighbour_hourly,
             ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
@@ -4634,11 +4654,17 @@ def run_year(
                     iso,
                     year,
                     (
-                        "PJM WESTERN-BORDER DA quantiles on the PJM seam "
-                        "(miso-225 neighbour-anchored), MISO DA hub quantiles "
-                        "on SPP/South"
-                        if neighbour
-                        else "MISO DA hub quantiles"
+                        "HOURLY PJM western-border DA + measured spread "
+                        "offsets on the PJM seam (miso-231), MISO DA hub "
+                        "quantiles on SPP/South"
+                        if neighbour_hourly
+                        else (
+                            "PJM WESTERN-BORDER DA quantiles on the PJM seam "
+                            "(miso-225 neighbour-anchored), MISO DA hub "
+                            "quantiles on SPP/South"
+                            if neighbour
+                            else "MISO DA hub quantiles"
+                        )
                     ),
                 )
         # [measured: per-seam Q-Q band ladders — PJM settlement-grade tie-line

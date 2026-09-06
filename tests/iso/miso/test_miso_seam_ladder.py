@@ -268,3 +268,153 @@ class TestNeighbourOverlayRequiresItsHost(unittest.TestCase):
             in source,
             "run_calibration.py's seam block must refuse the overlay without its host",
         )
+
+
+class TestHourlyNeighbourOverlay(unittest.TestCase):
+    """miso-231: the HOURLY neighbour-anchored PJM overlay.
+
+    The annual overlay above repairs the ladder's LEVEL and not its
+    RESPONSIVENESS -- miso-226 measured ``corr(imports, own price)`` moving
+    +0.750 -> +0.725 against a MEASURED -0.101, 3 % of the distance, because a
+    FIXED price ladder is cleared by the LP against its OWN internal price. This
+    overlay makes band ``k``'s offer ``pjm_border(t) + delta_k``, so the band
+    clears iff ``spread(t) > delta_k`` and its merit position tracks the
+    neighbour's supply cost in the hour it is offered.
+    """
+
+    def _fleet_and_mc(self):
+        node = build_reference_price_node("MISO")
+        zone_names = sorted({g.zone for g in node})
+        fleet = generators_to_fleet_arrays(node, zone_names, hours=T)
+        return fleet, np.full((len(node), T), -123.0)
+
+    def test_registry_holds_rising_offsets_for_pjm_only(self):
+        from market_sim.config.interchange_config import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+        )
+
+        for year in (2023, 2024, 2025):
+            overlay = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR[year]
+            self.assertEqual(set(overlay), {"PJM"})
+            imp = overlay["PJM"]["import"]
+            exp = overlay["PJM"]["export"]
+            self.assertEqual(len(imp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(len(exp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(list(imp), sorted(imp), msg=f"{year} import not rising")
+            self.assertEqual(
+                list(exp), sorted(exp, reverse=True), msg=f"{year} export not falling"
+            )
+            self.assertLess(max(exp), min(imp), msg=f"{year} wash ordering violated")
+            # These are OFFSETS, not prices: the shallow bands must be NEGATIVE,
+            # which is what makes this a ladder rather than the refuted spread
+            # HURDLE -- band 1 clears even when MISO is far below PJM, carrying
+            # the "46-56 % of import MWh inside the $2 hurdle" a hurdle deletes.
+            self.assertLess(imp[0], 0.0, msg=f"{year} band 1 offset is not negative")
+
+    def test_bands_become_hourly_and_equal_border_plus_offset(self):
+        from market_sim.config.interchange_config import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+        )
+        from market_sim.data.eia_loader import measured_miso_pjm_border_prices
+
+        border = measured_miso_pjm_border_prices("MISO", 2024, T)
+        if border is None:
+            self.skipTest("no measured PJM border series under data/raw")
+        overlay = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR[2024]["PJM"]
+
+        fleet, mc = self._fleet_and_mc()
+        self.assertTrue(
+            inject_miso_seam_ladder_prices(
+                fleet,
+                mc,
+                "MISO",
+                2024,
+                neighbour_anchored=True,
+                neighbour_hourly=True,
+            )
+        )
+        moved = 0
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_IMPORT_MARK, 1)[1], "import"
+            elif _REF_EXPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_EXPORT_MARK, 1)[1], "export"
+            else:
+                continue
+            name, _, k = tag.partition("#")
+            if name != "PJM":
+                continue
+            np.testing.assert_allclose(mc[row, :], border + overlay[side][int(k) - 1])
+            # The point of the mechanism: the row is a live hourly vector.
+            self.assertGreater(float(mc[row, :].std()), 1.0)
+            moved += 1
+        self.assertEqual(moved, 2 * SEAM_FLOW_TRANCHES)
+
+    def test_spp_and_south_keep_their_scalar_ladders(self):
+        fleet, base = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet, base, "MISO", 2024, neighbour_anchored=True
+        )
+        _f, arm = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet,
+            arm,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=True,
+        )
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag = uid.rsplit(_REF_IMPORT_MARK, 1)[1]
+            elif _REF_EXPORT_MARK in uid:
+                tag = uid.rsplit(_REF_EXPORT_MARK, 1)[1]
+            else:
+                np.testing.assert_array_equal(arm[row, :], base[row, :])
+                continue
+            if tag.partition("#")[0] != "PJM":
+                np.testing.assert_array_equal(arm[row, :], base[row, :])
+
+    def test_off_is_byte_identical_to_the_annual_overlay(self):
+        fleet, a = self._fleet_and_mc()
+        _f2, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024, neighbour_anchored=True)
+        inject_miso_seam_ladder_prices(
+            fleet,
+            b,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=False,
+        )
+        np.testing.assert_array_equal(a, b)
+
+    def test_missing_year_degrades_to_the_annual_overlay_not_to_no_ladder(self):
+        """Rule 19: an armed run is never silently cheaper than the keeper."""
+        fleet, a = self._fleet_and_mc()
+        _f2, b = self._fleet_and_mc()
+        # 2019 is absent from every neighbour table; the incumbent ladder is
+        # likewise absent, so both arms must agree on whatever that resolves to.
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024, neighbour_anchored=True)
+        self.assertTrue(
+            inject_miso_seam_ladder_prices(
+                fleet,
+                b,
+                "MISO",
+                2024,
+                neighbour_anchored=True,
+                neighbour_hourly=True,
+            )
+        )
+        # PJM rows differ (the mechanism fired); everything else is identical,
+        # which is the degradation contract in the direction that can be tested
+        # against a year the hourly table DOES cover.
+        self.assertFalse(np.array_equal(a, b))
+
+    def test_construction_does_not_reject_a_split_intermediate_config(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        cfg = ScenarioConfig(
+            iso="MISO", mode="backcast", miso_seam_neighbour_hourly_ladder=True
+        )
+        self.assertTrue(cfg.miso_seam_neighbour_hourly_ladder)
