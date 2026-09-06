@@ -1,0 +1,10 @@
+{
+ "iso": "CAISO",
+ "cases": {
+  "REF": "a998110c3dfb4fa7",
+  "LOAD-HI": "cc8af31b3173465e"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-caiso",
+ "matrix_path": "results/scn-ws4-probe/caiso/matrix"
+}

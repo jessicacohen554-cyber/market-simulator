@@ -1,0 +1,5 @@
+case,year,tech,potential_mwh,delivered_mwh,curtailed_mwh,curtailment_rate,curtailed_mwh_bau,curtailment_rate_bau,curtailed_mwh_delta,curtailment_rate_delta
+REF,2026,wind,16461787.00729065,16461787.007290654,0.0,0.0,0.0,0.0,0.0,0.0
+REF,2026,solar,56804693.73463921,56804693.73463921,0.0,0.0,0.0,0.0,0.0,0.0
+LOAD-HI,2026,wind,16461787.00729065,16461787.007290654,0.0,0.0,0.0,0.0,0.0,0.0
+LOAD-HI,2026,solar,56804693.73463921,56804693.73463921,0.0,0.0,0.0,0.0,0.0,0.0
