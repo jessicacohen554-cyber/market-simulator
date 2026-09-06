@@ -316,3 +316,46 @@ D67-ARM as well as the two acts, so its FC-map delta has three causes. **The gat
 unaffected**, exactly as Addendum E predicted: G0'–G5' read only `ccs_retrofits`, and G4' comes back
 `changed: none` — so neither live hunk moved a single invariant here, and the retrofit set is a
 clean two-act reading. The disclosure stands for the *board row*, not for the gates.
+
+### 5.6 `miso-t1f` — the retrofit gates CLEAR; **G4' FIRES**, and the flip is provably not the acts'
+
+Solve key **`74359fedbf2eadd6`** = the pre-declaration exactly. Solve-path guard clean. **5/5 years,
+53.9 min, 9.63 GB.**
+
+| year | rows | MW | D64 §2.4 ceiling | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 1 | 334.5 | 0.48 GW | 0.5761 | 7.256 | 1.6044 |
+| 2029 | 2 | 283.7 | 0.72 GW | 0.5771 | 7.646 | 1.6071 |
+| 2030 | 0 | 0.0 | 0.72 GW | — | — | — |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** |
+| **G1'** | **PASS** — all 3 rows inside **MISO's** D64 band **1.26–1.39**, measured **1.2898–1.3930** |
+| **G5'** | **PASS** — 0.334 / 0.284 / 0.000 GW, every year under its ceiling |
+| **G4'** | **FIRES** — **I3 unserved/dump PASS → FAIL** (I14 also PASS → WARN) |
+
+**Reported as fired. This session does not declare it passed.**
+
+**But the flip is provably not the two acts', on the arm's own arithmetic.** I3 fails **starting in
+2026** — `2026: slack 0.02 % of load (19 h, 111.6 GWh)`, `2027: 0.03 %` — and **the mechanism is
+inert before 2028**: `apply_ccs_retrofit` returns at `if year < config.ccs_retrofit_available_year`
+(2028) before reading either field, and G0' independently measured **0 retrofit rows in 2026 and
+2027**. A mechanism that does not execute cannot have caused a failure in the years it does not
+execute in.
+
+**The cause is the demand vintage, pre-registered as a confound before this batch ran.** MISO's
+prior (`ff-t1f-d60/miso`) was solved at **`2ef4326e`**, which D65-B §5's G-DRIFT table names
+explicitly as **PRE-hunk on SCN-LOAD `d14a7ed0`** (`DEMAND_GROWTH_RATES`, all six ISOs). Higher
+demand growth ⇒ more unserved energy ⇒ I3 fails and the load-weighted price rises out of I14's band.
+D65-B §5 consequence 2 stated exactly this in advance: *"the batch's board-level before/after is
+confounded by the demand vintage for the four pre-hunk ISOs … reported at full magnitude and
+attributed, never netted"* — and named `2ef4326e (miso)` as one of the four.
+
+So G4' as written fires on a **cross-vintage** comparison, because the only prior available for MISO
+is on the old demand table. **Routed with §5.2/§5.3, not resolved here.** The three fired gates share
+one root: Addendum C's gates compare a HEAD solve against a prior that predates HEAD, and two of the
+three firings are measuring that gap rather than the arm.
+
+**The retrofit seam itself is clean on this leg** — G1' inside MISO's own band, G5' under every
+ceiling, G2' exact — which is the part of the leg the two acts actually reach.
