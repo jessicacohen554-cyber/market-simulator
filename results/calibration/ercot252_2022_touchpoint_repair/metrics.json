@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-05-run250-2022-touchpoint-carveout",
+  "run_id": "2026-09-06-run252-2022-touchpoint-repair",
   "iso": "ERCOT",
-  "label": "run250 2022 touchpoint carveout",
+  "label": "run252 2022 touchpoint repair",
   "target_years": [
     2022
   ],
@@ -9,17 +9,15 @@
     2022
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.5,
-  "determination": "NOT-YET",
-  "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_shape, price_tail"
-  ],
+  "rubric_version": 3.6,
+  "determination": "CALIBRATED",
+  "reasons": [],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -34,12 +32,12 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -68,16 +66,16 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 5,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 0
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2022": "+0.1%"
+        "2022": "+1.6%"
       }
     },
     "diurnal_amplitude": {
@@ -103,13 +101,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 6,
+      "pass": 7,
       "total": 7
     },
     "free": {
-      "pass": 4,
+      "pass": 5,
       "total": 5
     },
-    "headline": "C1 all 6/7 \u00b7 free 4/5"
+    "headline": "C1 all 7/7 \u00b7 free 5/5"
   }
 }
