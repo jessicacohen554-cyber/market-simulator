@@ -1110,9 +1110,7 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
         except Exception:
             tier = holdout_policy.TIER_TRAIN  # unreadable year -- strictest path
         if tier != holdout_policy.TIER_TRAIN:
-            _reclassify(
-                rec, "c3c-holdout-year-2026-09-05", C3C_HOLDOUT_RULE_REASON
-            )
+            _reclassify(rec, "c3c-holdout-year-2026-09-05", C3C_HOLDOUT_RULE_REASON)
 
     # In-training years keep the lone-failure guard, measured over what is STILL
     # failing after the holdout reclassification above.
@@ -2810,6 +2808,16 @@ def score_governance(
     those two assertions and nothing else — ``no_pinning_to_actuals`` and
     ``outage_filter_exogenous_net_load`` are never scoped, and the forbidden-flag
     machine check is untouched.
+
+    **Owner ruling R-AY (2026-09-06, rule 21 ``[R-DOF]`` cross-reference).** Each
+    price-tuned band multiplier declared here is a ledgered free parameter whose
+    identification source is the ruling itself ("price residual, authorized
+    channel (rules 1/13 amendment 2026-09-05)"), reported at full magnitude on the
+    determination basis. R-AY confirms condition (e) from the audit rubric's side
+    and moves NO gate: this function's logic is exactly what the 2026-09-05
+    carve-out installed, and the DOF-ledger half of condition (e) is not
+    machine-checked here (``audit_keepers`` E8 validates the ledger's shape).
+    Genealogy: ``docs/governance/rule-history.md`` §11 and §13.
     """
     sc = (config or {}).get("scenario_config", {})
     meta = (config or {}).get("meta", {})
