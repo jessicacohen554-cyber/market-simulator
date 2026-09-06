@@ -7522,3 +7522,76 @@ EXIT: PRECOMMIT, FINDING with the phase-0 block table, the screen, the window, �
 
 
 ## r#49 NOTE (2026-09-06): D80 LANDED (#5151); D65-B-R / D78-R / D81 are RUNNING checkpoints; D78-R exists on TWO stems (`-s35hos` merged and running; `-csniwn` = PR #5160, a duplicate to close). D67-ARM, D76, D75-R and D79 have never been dispatched — paste each ONCE; one session per prompt.
+
+## D78-R2 — the sector-gate seam on the full window, RE-SOLVED at a HEAD carrying D81 + D67-ARM, with W5 restated as a tested E&AS-propagation identity and W4's lower edge corrected — plus the `exempt_unit_ids` deletion (D81 rec 2, director decision (a)) (r#50; D78-R §6 items 1–3) — **CHARTERED r#50, DISPATCHABLE (registers after D65-B-R)**
+
+```
+You are the D78-R2 session of the capacity-expansion track. Binding charter: pack §D78-R2 (this
+section) + `FINDING-capx-d78r-2026-09-06.md` (§3 the identities; §3.4 the E&AS propagation; §4 the W4
+construction error and the corrected edge; §6 the flip condition and its three successor items) +
+`FINDING-capx-d81-2026-09-06.md` §8 item 2 (`exempt_unit_ids` has no producer) + D78 PRECOMMIT §7 / D58
+§5 (the flip condition (a)–(d)). The seam repair (D78) and the dated/retrofit routing (D81) and the PJM
+published requirement (D67-ARM) are ALL ON MAIN; `retirement_sector_gate` stays default-off. DATA
+PROFILE: pjm. MODEL: Opus. BRANCH (suggested): claude/capx-d78r2-full-window — FRESH off origin/main.
+
+STEP 0 — THE DELETION (rule 26's spirit, director decision (a)): `exempt_unit_ids` has no producer
+since D81 routed every channel to `exit_exempt_unit_ids`. Delete the parameter; rewrite D78's T3 as a
+NEGATIVE test on the residual construction (a unit absent from `margins` and absent from
+`exit_exempt_unit_ids` is `Q_0` at $0 — the only remaining path); assert the bare `pjm-t1h` key and
+every backcast key unmoved (a structural API parameter, not a config field).
+STEP 1 — PRE-DECLARE, in a PRECOMMIT before any solve: (W4′) window decided total ∈ [Σdecided_ctl −
+Σ(sector-1 decided_ctl), Σdecided_ctl + Σg_y], both edges computed on the SAME-HEAD control leg after
+it solves and before the arm (D74 §9 item 3's procedure); the point value Σdecided_ctl − Σ(sector-1
+decided_ctl) is the exact-partition prediction. (W5′) shared-stack `A_g`, fuel and cleared-flag
+identical in every year; offers identical in the first divergent year; thereafter offers differ ONLY
+through the prior year's price vector — TESTED, not assumed: the offer delta is zero for every unit
+whose E&AS operand is zero (CT / ST / oil in the hindcast prices), and non-zero only where the prior
+year's zonal price differs. W1/W2/W3 as D78-R. G-DRIFT hunk by hunk from D78-R's close (`f9b377a8`) to
+HEAD, `constants.py` first. DIFF THE WHOLE LEDGER (D81 rec 4): the comparator differences EVERY
+committed block of the two legs and explains each difference — an assertion list is the floor, not
+the ceiling.
+STEP 2 — TWO LEGS at HEAD (~35 min, PJM solo, sequential): control-P and the arm, 2021–2025; HEAD
+GUARD around each; rebase BETWEEN legs, never during; if main moves under the lane, re-audit and
+re-attribute (W0′) before grading. Grade (a)–(d); pre-stated: ARM iff all four MET; HOLD-and-route
+otherwise. Arm registered SUFFIXED (`pjm-t1h-d78r2-sectorgate`) AFTER D65-B-R's batch registers;
+PJM cell letter; bundles' slim sets only. Rules 1, 12, 13, 14, 19, 21, 22, 24, 25, 26, 27, 28, 29.
+EXIT: PRECOMMIT, FINDING with the whole-ledger diff, the four-condition grade, the arming
+recommendation; the deletion in the same PR.
+```
+
+## D76 — PHASE 2 (r#50): the measured-hindcast screen peak on the PJM FULL SPAN, then the 2021–2023 window on CAISO / ERCOT / MISO; NEISO and NYISO deferred — **CHARTERED r#50, DISPATCHABLE (registers after D65-B-R); ARMING = owner card on the phase-2 numbers**
+
+```
+You are the D76 phase-2 session of the capacity-expansion track. Binding charter: pack §D76 + this
+phase-2 section + `FINDING-capx-d76-2026-09-06.md` (§2 the six-ISO census; §3 the screen years and
+the 2021–2023 window offer; §4 the seam and every consumer; §6–§7 the PJM screen PASS and what the
+mechanism did; §8 routes). The gate `capacity_screen_peak_measured_hindcast` is BUILT, default-OFF,
+on main. DATA PROFILE: pjm first, then caiso / ercot / miso. MODEL: Opus. BRANCH (suggested):
+claude/capx-d76-p2-full-span — FRESH off origin/main.
+PRECONDITION (a STOP, not a suggestion): this section IS the director's release of phase 2; nothing
+past phase 2 — no arming, no override, no default flip — without a further release.
+DIRECTOR'S CALLS (§0au.3): window = 2021–2023 for CAISO, ERCOT and MISO (the bridge year exercises
+2022's large delta at half the LP; §3.1 items 1–2); PJM = the FULL 2021–2025 span (its screen
+passed); NEISO (smallest footprint) and NYISO (requirement-moot at HEAD through the D52 gates)
+DEFERRED — say so, do not solve them.
+LEG 1 — PJM full span, two legs at HEAD (control at HEAD: every committed T1-H control is PRE-hunk on
+`DEMAND_GROWTH_RATES`; D67-ARM is on main so PJM's requirement is peak-independent in-table — the
+remaining effect runs through accreditation, the floor/backstop and the CR-1 position; pre-declare
+that). FC-3 at full magnitude: the `gas_st` survival phase 1 measured (+7,333.7 / +9,464.5 MW) against
+2.702 GW of actual steam exits — this is D74's object seen from the demand side; report, never gate.
+LEGS 2–4 — CAISO, ERCOT, MISO on 2021–2023, sequential (rule 12; per-plant multi-zone LPs, ~7 GB a
+year): the structural STOP gate on the 2022 bridge ledger AND the 2023 solved ledger — the arm's
+screen peak = the measured peak to the MW; every non-peak operand byte-identical; no non-target
+load-bearing flip; DIFF THE WHOLE LEDGER and explain every difference (D81 rec 4). Pre-declare each
+ISO's requirement move from phase 0's census before its leg.
+Every leg: PRECOMMIT before the first solve; HEAD GUARD; rebase BETWEEN legs, never during; re-audit
+each rebase delta hunk by hunk; a matched cache key is NOT a G-DRIFT verdict; bundles DELETED before
+merge (rule 29(c)) — every number in the FINDING. Registration of any arm row AFTER D65-B-R's batch.
+EXIT: FINDING-capx-d76-p2-<date>.md — the four ISOs' tables, PJM's FC rows at full magnitude, the
+arming card drafted for the director (never served by the lane), matrix cells per ISO (rule 25:
+each ISO's own letter). Rules 1, 12, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
+```
+
+## D79 — PHASE 1 RESERVED pending owner card C-22 / Q54 (served r#50). If ADOPT: Opus or Fable (rule 27 core scope — `cache.py` + `scenarios.py`), the §6 build spec verbatim, frozen-hash landing (zero key moves), backcast keys included, scoped-epoch list empty, attestation guard WARN; the persisted-identity pins re-asserted unmoved; no bundle, no board byte.
+
+## D82 — RESERVED (updated r#50): now also carries D81 rec 3 — 2,306.4 MW of DY2022 pending dated capacity is UNCOMPETITIVE at its net-ACR cap under the ATB FOM proxy (a different number under the D62 bar); whether real PJM dated units clear is checkable against the BRA record as a validation observable. Still needs a design read before a charter.
