@@ -241,3 +241,42 @@ ceiling-census cell into a floor on a *solved* quantity — the same "a band is 
 error Addendum C itself warns about for ERCOT's G1', committed one paragraph later in its own table.
 
 **NYISO is not registered pending the same adjudication.** Legs proceed.
+
+### 5.4 `caiso-t1f` — ALL GATES CLEARED, and it is the CONTROL CASE that confirms the mechanism
+
+Solve key **`17770cdad3230938`** = the pre-declaration exactly. Solve-path guard clean. **5/5 years,
+35.5 min, 4.53 GB.**
+
+| year | rows | MW | % of cap | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 10 | 2,996.6 | 99.9 % | 0.3707 | 6.822 | 1.0324 |
+| 2029 | 8 | 2,996.9 | 99.9 % | 0.3868 | 7.287 | 1.0772 |
+| 2030 | 4 | 2,892.2 | 96.4 % | 0.3742 | 6.650 | 1.0422 |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 22 rows; `capex/k` host-invariant within every year |
+| **G1'** | **NOT GATED** — no published CAISO band. Reported: `er/phys` 0.8633–1.4151 over 22 rows |
+| **G4'** | **PASS** — invariants **identical** to the committed `caiso-t1f`: `changed: none`. I7 and I12 were already FAIL pre-D65-B; **zero flips** |
+| **G5'** | **PASS** — cap-bound in all three years, as D64 §2.4 predicts |
+
+**This leg is the one that turns §5.2/§5.3 from a correlation into a mechanism.** CAISO is the third
+carbon-priced ISO and the only one whose cap does **not** unbind — and the reason is visible in a
+single column, the one step 0 made readable:
+
+| ISO | MW-wtd `k` 2028 → 2030 | cap in 2030 |
+|---|---|---|
+| NEISO | 0.9952 → **1.3032** | **59.5 %** (unbinds) |
+| NYISO | 1.0544 → **1.2235** (2029) | **33.3 %** (unbinds) |
+| **CAISO** | 1.0324 → **1.0422** | **96.4 %** (stays bound) |
+
+**CAISO's surviving host pool never leaves `k` ≈ 1.03–1.08.** It is not that CAISO is exempt from
+the seam — the seam is armed identically — it is that CAISO's eligible fleet still has ~3 GW/yr of
+**near-reference** hosts to convert in every year, so the screen never has to reach the `k` > 1.2
+tail. NEISO and NYISO exhaust theirs and are pushed into that tail.
+
+So the unbinding is not a level effect and not an ISO quirk: **it is a fleet-composition effect,
+predicted by `k` and by nothing else.** That is the D50/D64 seam behaving as constructed, and it is
+the strongest structural evidence this lane produces. Stated here because it also means the two
+fired G5' STOPs are measuring *host exhaustion*, which is a real market fact, not a defect in the
+arm.
