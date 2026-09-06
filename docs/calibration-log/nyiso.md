@@ -12319,3 +12319,44 @@ zero-LP census named as the transfer question (rule 25). **nyiso-197 §8 item 4 
 screen-gate probe now removes the payload's CHP add-back so both sides of a plant-grain comparison
 are LP grid; it caught a fabricated −898 GWh fall at Linden on this session's first pass (truth
 +351). `complete` remains withdrawn; no marker requested.
+
+## 2026-09-06 — nyiso-198 (cont.): the span under the owner ruling reads NOT-YET (fails 3); recommendation DO NOT PROMOTE; keeper unchanged
+
+**Owner ruling, in session, verbatim:** *"Is this a recommended keeper candidate? If so plz promote.
+If structural integrity improves but gates regress that may still be a keeper.."* — recorded in the
+PREREG's **Addendum B** and pushed at `a8f42835` **before the span solve**, together with the
+G-DRIFT re-check on the rebased base (`821c11c5..1ce47fc0`, 42 commits, 3 on the solve path, all
+INERT) and, in §B.2, the arm's most likely second failure **named in advance**.
+
+**Run `2026-09-06-nyiso-198-duct-row`** (bundle `nyiso198_duct_rowscope`, `--year 2023 2024 2025` in
+ONE invocation, rule 16; registered the same session, rule 15). Attestation computed and PASSING on
+every check: G-CONTROL max |Δprice| disk-vs-git **0.0** all three years, G-DELTA **exactly the one
+flag**, G-INPUTS the EIA-860 sheet pinned with `CT ∧ Y = 0 of 1,213` recomputed, G-DOF 13 /
+`n_residual` 6 verbatim with **0 added**, G-ENGAGE the solved fleet carrying the predicted band.
+
+**DETERMINATION: CALIBRATED (grade 7, fails 0) → NOT-YET (grade 5, FAILS 3).** C1 13/14 free 9/10,
+**C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh / +2.5 → +3.4 pp FAIL**; **C3a-2025 −6.9 % → −10.3 % FAIL**
+— exactly the risk §B.2 named before the solve; **C3c FAIL** as collateral (the standing rule
+reclassifies it only when it is the LONE failure; magnitude unchanged at 3 / 1 / 4 h vs 10 / 13 /
+42). C2 / C3b / C4 / C6 / C8 PASS. Span, same signature every year: `CC_REGULAR` +1.147 / +1.121 /
++1.383 TWh, `ST_GAS` −0.918 / −0.706 / −0.801, `CT_PEAKER` −0.080 / −0.061 / −0.309, prices −3.10 /
+−4.20 / −3.68 %.
+
+**RECOMMENDATION: DO NOT PROMOTE.** The owner's formula is *"may still be a keeper"* — permissive,
+not automatic. The structural half is not in doubt (zero DOF; the mechanism lands on the builder's
+own predicted value at all 31 plants with residual 0.000 MW). But the determination does not
+regress, it **collapses**: both load-bearing families the keeper held are lost. The precedents
+differ in kind — nyiso-193 promoted a NOT-YET whose arm carried **zero `ScenarioConfig` deltas** and
+fixed a keeper that could not be reproduced at all; nyiso-196 **improved** the determination. Rule
+14 `[R-ACCURATE]` governs the disposition and **both** its clauses bind: the error is not buried
+back in the inaccurate input (`cc_duct_peaking_row_scoped` stays in the codebase, default off,
+measured, registered and documented) and the half-repair is not shipped either — the root cause it
+exposed is unfixed. **Keeper UNCHANGED: `2026-09-06-nyiso-196-extract-basis`.** Matrix cell **R**
+with the re-test condition stated: re-arm it **paired** with the merit-order repair, never alone.
+
+**What is now known regardless of disposition.** The keeper's C1-2024 `CC_REGULAR` PASS stands on
+**726.5 MW of mis-classified capacity** — the cell is an over-run currently held in band by a
+construction defect, not by physics. The merit-order object is sized: `ST_GAS` −0.7 to −0.9 TWh plus
+`CT_PEAKER` −0.06 to −0.31 TWh. And ~3–4 % of price level rides on this one mechanism, which is the
+scale of the C3a budget in both directions (2024 +4.7 %, 2025 −6.9 %) — so C3a-2025's headroom is
+not independent slack.
