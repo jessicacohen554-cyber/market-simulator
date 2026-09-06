@@ -245,30 +245,25 @@ def keeper_sweep():
     return cfp.run(REPO)
 
 
-# FR-22 fields that are OPEN — armed in a keeper with neither a
-# forecast-orchestrator consumer nor a registry declaration. They are NOT
-# tolerated and NOT filed away: the dedicated "FR-22 backcast->forecast parity"
-# CI job (``scripts/check_forecast_parity.py``, ci.yml ``forecast-parity-guard``)
-# still exits non-zero on exactly these two, which is where the signal lives and
-# where a forecast-program lane will clear it. Pinned here so the FAST tier stays
-# green on the known two while still reddening on a THIRD — the property FR-22
-# actually protects is "a new keeper mechanism cannot quietly fork the two
-# paths", and that property is fully preserved by an exact-set pin.
+# FR-22 CLOSED 2026-09-06 (session Y-18,
+# docs/handoffs/FINDING-y18-fr22-parity-2026-09-06.md). The two long-open
+# unaccounted fields were adjudicated on their own merits against rule 13
+# ``[R-MEASURED]`` and landed on OPPOSITE dispositions, which is why the pin
+# below is now empty rather than merely shorter:
 #
-# Deciding each one's real disposition (a GAP filing vs BACKCAST_ONLY vs wiring
-# it forward) is a forecast-program adjudication, NOT a housekeeping call — see
-# docs/handoffs/house-2-baseline-wave-2026-08-09.md §4 and
-# docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md.
-_FR22_OPEN_UNACCOUNTED: frozenset[str] = frozenset(
-    {
-        # ERCOT keeper: measured storage AS SOC reservation (ercot-167). Its
-        # only call site is the BACKCAST orchestrator, scripts/run_calibration.py.
-        "ercot_storage_as_soc_reserve",
-        # NYISO keeper: measured external-seam deliverability envelope
-        # (src/market_sim/data/nyiso_seam_envelope.py).
-        "nyiso_seam_deliverability_envelope",
-    }
-)
+#   * ``ercot_storage_as_soc_reserve`` -> BACKCAST_ONLY. Its measured awards are
+#     a per-historical-year 60-Day-DAM corpus with no forward artifact, and its
+#     forecast substitute (``ercot_storage_as_endogenous``) is named in the
+#     function docstring AND enforced by a mutual-exclusion validator.
+#   * ``nyiso_seam_deliverability_envelope`` -> GAP. Its own module asserts
+#     rule-13 forward regeneration verbatim, so BACKCAST_ONLY was REFUSED; it is
+#     filed beside its rule-19 superseding twin ``nyiso_seam_par_attribution``,
+#     which owner ruling R-X reserves to the forecast desk.
+#
+# The assertion is now the strong form — ZERO unaccounted, in every ISO — so the
+# property FR-22 protects ("a new keeper mechanism cannot quietly fork the two
+# paths") is enforced without an exemption list to rot. A newly-armed mechanism
+# with no consumer and no declaration reds this test immediately.
 
 
 def test_all_six_keepers_resolve(keeper_sweep):
@@ -285,29 +280,14 @@ def test_all_six_keepers_resolve(keeper_sweep):
     for rep in reports:
         assert rep.errors == [], rep.iso
         assert rep.verdicts, f"{rep.iso}: no armed mechanisms read — sweep is blind"
-        unaccounted = set(v.field for v in rep.by_status("UNACCOUNTED"))
-        # Subset, not equality: a forecast lane clearing one of the open two
-        # must not red this test on its way out.
-        new = sorted(unaccounted - _FR22_OPEN_UNACCOUNTED)
-        assert not new, (
-            f"{rep.iso}: {new} armed in the keeper with no forecast-orchestrator "
-            "consumer and no registry declaration — resolve it or declare it in "
-            "scripts/lib/forecast_parity_registry.py"
+        unaccounted = sorted(v.field for v in rep.by_status("UNACCOUNTED"))
+        assert not unaccounted, (
+            f"{rep.iso}: {unaccounted} armed in the keeper with no "
+            "forecast-orchestrator consumer and no registry declaration — "
+            "resolve it or declare it in scripts/lib/forecast_parity_registry.py"
         )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "FR-22 open parity gaps: ercot_storage_as_soc_reserve (ERCOT keeper) and "
-        "nyiso_seam_deliverability_envelope (NYISO keeper) are UNACCOUNTED, so the "
-        "checker exits 1. This test mirrors the dedicated forecast-parity-guard CI "
-        "job's verdict, which stays RED on them by design; wiring or declaring them "
-        "is a forecast-program lane's job (docs/handoffs/"
-        "ffr-1e-forecast-parity-check-2026-07-31.md). strict=True: when that lane "
-        "lands, this marker must be removed rather than left to rot."
-    ),
-)
 def test_check_exits_zero_on_the_current_keepers():
     assert cfp.main([]) == 0
 

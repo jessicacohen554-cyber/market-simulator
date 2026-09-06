@@ -309,6 +309,45 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "objective-side and shared, so the LP is unchanged either way",
         evidence=(_BACKCAST_ORCH,),
     ),
+    # ercot-167 measured storage AS SOC reservation (Y-18, 2026-09-06). The
+    # quantity is Sigma_p award_p(t) x duration_p. The DURATIONS are published
+    # and forward-safe (reserves.spec.ERCOT_AS_PRODUCT_DURATION_H, Nodal
+    # Protocols 3.17.3); the AWARDS are not — model/storage.py reads them from
+    # data/raw/ercot-AS/ercot_{year}_{as_by_restype,storage_as_products}
+    # _hourly.parquet, a PER-HISTORICAL-YEAR 60-Day DAM PWRSTR corpus whose
+    # documented forward behaviour is an all-zero (inert) floor when the file
+    # is absent. Both limbs of the rule 13 test therefore fail: no forward-year
+    # artifact, and a frozen historical award series does not respond to a
+    # changed forward fleet. Not a bare assertion — the function's own docstring
+    # states it (storage.py:620-623), a construction-time validator makes the
+    # field mutually exclusive with the forward substitute
+    # (scenarios.py:16697-16701), the forecast orchestrator branches on that
+    # substitute (runner.py:4630), and the whole measured-award family is gated
+    # `and not ercot_storage_as_endogenous` inside the SHARED reserves builder
+    # under the comment "backcast-only record (the forward story is
+    # ercot_storage_as_endogenous)" (reserves/spec.py:1365-1371, 2124-2131).
+    # That last point is also why the FFR-1E sibling row above
+    # (ercot_storage_capability_measured / ercot_storage_as_deployment) does not
+    # carry over: `storage_as_commitment` being "shared" is a checker-TIER fact
+    # about which module reads the flag, not an admissibility fact — its shared
+    # reads are themselves endogenous-gated. Adjudication: Y-18 finding 1.2-1.3.
+    ParityDeclaration(
+        fields=("ercot_storage_as_soc_reserve",),
+        disposition=BACKCAST_ONLY,
+        why="ercot-167 measured storage AS SOC reservation — floors battery SOC "
+        "at the MEASURED 60-Day-DAM PWRSTR award x the PUBLISHED per-product "
+        "duration (Nodal Protocols 3.17.3). Measured source: the per-year "
+        "data/raw/ercot-AS/ercot_{year}_*_hourly.parquet corpus, which has no "
+        "forward-year artifact (missing file -> all-zero inert floor) and does "
+        "not respond to a changed forward fleet. Forecast substitute: "
+        "ercot_storage_as_endogenous, which prices the AS/energy split itself — "
+        "named in the function docstring (model/storage.py:620-623) and "
+        "ENFORCED by a construction-time mutual-exclusion validator "
+        "(scenarios.py:16697-16701), so the two can never both be armed. Gated "
+        "at scripts/run_calibration.py:4826-4832, whose third clause is "
+        "`and not getattr(config, 'ercot_storage_as_endogenous', False)`",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/model/storage.py"),
+    ),
     ParityDeclaration(
         fields=("neiso_oil_burn_budget",),
         disposition=BACKCAST_ONLY,
@@ -536,6 +575,50 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "tests/scoring/test_forecast_parity.py on the same question",
         finding="docs/FINDING-fr22-gap-leg2-2026-09.md",
         evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_par_attribution.py"),
+    ),
+    # The superseded HALF of that same NYISO pair (Y-18, 2026-09-06). It is the
+    # `elif` limb at run_calibration.py:2739-2756 — armed in the keeper but
+    # SHADOWED at runtime by nyiso_seam_par_attribution above (rule 19
+    # [R-ONE-MECH]: exactly one of the two applies). Shadowing is a fact about
+    # the current keeper, not an admissibility answer, which is why the field
+    # still needs a row: a keeper that later drops the PAR attribution
+    # re-exposes the fork.
+    #
+    # BACKCAST_ONLY IS NOT AVAILABLE HERE, and the reason is the code's rather
+    # than this row's: data/nyiso_seam_envelope.py:50-58 carries a section headed
+    # "Admissibility (rule 13 [R-MEASURED])" answering BOTH limbs of the test
+    # affirmatively — "It regenerates for a forward year from the forward tie set
+    # by the same frozen formula and responds to changed conditions … a new tie
+    # such as CHPE is picked up automatically". The construction is a frozen
+    # formula over the TIE SET (p90 of the directionally-clipped net schedule per
+    # (month x hod) bin at the definitional NYISO_SEAM_FLOW_PERCENTILE), not a
+    # per-year artifact like ercot_storage_as_soc_reserve above, and not the
+    # measured outage/derate schedule that makes ercot_gtc_limits_measured
+    # backcast-only. A BACKCAST_ONLY row would assert a non-regenerability the
+    # code denies — the caiso_ct_peaker_committed_measured reasoning below.
+    #
+    # It is filed GAP beside its SUPERSEDING twin rather than wired forward
+    # because the two are ONE question: wiring the shadowed limb while the limb
+    # that actually fires stays open would arm two-of-four links forward and
+    # four-of-four in backcast, a worse fork than the one being closed. Owner
+    # ruling R-X reserved that call to the forecast desk, and the twin's row
+    # above already names this field as pinned open "on the same question".
+    # Adjudication + the desk's stated question: the Y-18 finding, 2.2-2.5.
+    ParityDeclaration(
+        fields=("nyiso_seam_deliverability_envelope",),
+        disposition=GAP,
+        why="nyiso-125 two-link external seam deliverability envelope (NYC / "
+        "Long_Island measured p90 directional MIS P-32 envelope in place of the "
+        "flat symmetric statics), armed in the NYISO keeper and consumed only "
+        "by the backcast orchestrator's TTC overlay block. Its own module "
+        "asserts rule-13 forward regeneration and condition-response verbatim, "
+        "so BACKCAST_ONLY would assert a non-regenerability the code denies; "
+        "but it is the rule-19 SUPERSEDED half of a pair whose superseding half "
+        "(nyiso_seam_par_attribution) is itself an open GAP under owner ruling "
+        "R-X, so wiring this limb forward alone would widen the fork rather "
+        "than close it. Both halves are the forecast desk's single call",
+        finding="docs/handoffs/FINDING-y18-fr22-parity-2026-09-06.md",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/data/nyiso_seam_envelope.py"),
     ),
     # Same fork class again, one keeper later: armed by the caiso-241 promotion
     # (2026-09-03, #4663) whose lane left the FR-22 duty undischarged. Filed by
