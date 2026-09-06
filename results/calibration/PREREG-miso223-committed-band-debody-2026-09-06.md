@@ -250,3 +250,38 @@ number reproduces exactly from that instrument: body too high **36/36** months, 
 from the committed-band footprint.
 
 **No pre-registered value, gate band, or kill condition is amended by this addendum.**
+
+---
+
+## ADDENDUM C (owner correction, before the arm's result existed) — §7's CONTROL SOLVE IS WITHDRAWN
+
+**Owner instruction, verbatim: "Why are you running a control the control is the last
+keeper no more controls" / "Launch the probe no control".** The control solve is cancelled,
+its partial bundle deleted, and the arm re-launched alone.
+
+**The owner is right and §7 was a rule violation, not a judgement call.** Rule 29(b)
+`[R-SCREEN]` makes G-CTRL **form 4** — differencing against the incumbent keeper's COMMITTED
+numbers — the **DEFAULT**, and says a control solve is earned only by a **LIVE hunk** found in
+an explicit `G-DRIFT` audit that classifies *every* changed hunk on the backcast path with its
+reason cited. §7 did no such audit. It counted files (`66 files / +5,985 / −856`) and named two
+that looked solve-adjacent, which is precisely the reasoning rule 29(b) forbids in terms:
+
+> *"A 'files changed, therefore void' heuristic with no audit behind it is not a reason to
+> spend an LP."*
+
+Addendum B then compounded it by treating the ref shift as a reason the control was *more*
+necessary, when the rule's remedy for a moved HEAD is the audit, not an LP.
+
+**What changes.** §7 is WITHDRAWN. `scripts/probes/_miso223_screen_gates.py` sets
+`CONTROL = KEEPER`, so G-1 and G-2 difference the arm against
+`miso220_nonsteamlift_B/hourly/system_2024.parquet` — the same committed object §2's
+body/tail differencing already used, and the same one the phase-0 instrument reads.
+
+**What does NOT change: no gate band, no kill condition, and no pre-registered value.** S-1,
+S-2, G-1 (−$2.2…−$1.0), G-2 (|Δ| < $3.0) and G-3 are untouched, as is the named
+`CC_REGULAR`-2024 kill exposure. The screen year is still 2024 and the arm is still the same
+11 already-registered values. One LP is spent on this screen, not two.
+
+**Recorded against myself:** the session spent two OOM-killed control attempts and a CI
+detour on a control it was never entitled to run. The correct sequence was the G-DRIFT audit
+first — cost seconds — and a control solve only if it returned LIVE.
