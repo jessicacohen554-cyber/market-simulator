@@ -95,6 +95,51 @@ on:
       - "docs/handoffs/audit-program-director-board-2026-08.md"
       - "docs/model-audit-release-plan-2026-08.md"
       - "docs/FINDING-*.md"
+      # Y-26 (2026-09-06): THE GLOB ABOVE DOES NOT REACH THE PATH THE PROGRAM
+      # ACTUALLY WRITES TO. In a GitHub path filter a single `*` does not cross
+      # `/`, so `docs/FINDING-*.md` matches docs/FINDING-*.md (191 files at
+      # bed0a064) and NOT docs/handoffs/FINDING-*.md (147 files, growing) — and
+      # only ONE docs/handoffs path was enrolled, by exact filename. Raised by
+      # docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md §5, which is
+      # itself a file in the unenrolled path.
+      #
+      # Census over the last 60 merged PRs at bed0a064 (and re-run over all 195
+      # non-empty merges in local history, same answer): 25/60 = 42% of merged
+      # PRs trigger ZERO CI today. The three prefixes below are the ones the
+      # census proves are records-shaped and unenrolled; together they rescue
+      # 24 of those 25 (86 of 88 over the 195-merge window).
+      #
+      #   docs/handoffs/**      12 of 25 rescued alone — FINDINGs, PRECOMMITs,
+      #                         handoff prompts; the live convention.
+      #   results/calibration/** 7 of 25 rescued alone — PREREG / PRECOMMIT /
+      #                         ADDENDUM records + phase-0 JSON. Rule 29
+      #                         [R-SCREEN] MANDATES these docs and rule 29(c)
+      #                         deletes the bundle, so the .md IS the record:
+      #                         records-shaped despite living under results/.
+      #   docs/calibration-log/** per-ISO calibration history (CLAUDE.md
+      #                         Reference Docs). 1 PR rescued alone over 195.
+      #
+      # Measured NOT to need enrolling, and deliberately left out (rule 26
+      # [R-DELETE] discipline — do not add these speculatively):
+      #   docs/multi-iso/**   0 PRs rescued alone in either window; it only ever
+      #                       co-occurs with docs/handoffs/**, already rescued.
+      #   docs/governance/**  0 PRs touched in either window.
+      #   data/raw/**         2 PRs, but data intake is NOT records-shaped and
+      #                       this is the ~7.5 GB tree nine jobs sparse-exclude
+      #                       on purpose. Enrolling it is a separate decision;
+      #                       such a PR still deadlocks. See the FINDING.
+      #
+      # COST, stated rather than buried: this repo is PRIVATE and runner minutes
+      # are billed. A CI run is ~21 BILLED minutes (10 jobs, billed per job
+      # rounded up; fast-tests alone is ~12 of them) — not the ~10 min of wall
+      # time cited above. At 589 merged PRs/week and a 44% newly-enrolled share
+      # that is ~260 PRs/week × 21 min ≈ 5,500 runner-min/week. That is
+      # material; the alternatives (and why a lane must not choose one
+      # unilaterally) are in
+      # docs/handoffs/FINDING-y26-ci-path-filter-2026-09-06.md §5.
+      - "docs/handoffs/**"
+      - "results/calibration/**"
+      - "docs/calibration-log/**"
 
 permissions:
   contents: read
