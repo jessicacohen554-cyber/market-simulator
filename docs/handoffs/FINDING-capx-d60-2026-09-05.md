@@ -218,6 +218,68 @@ and `neiso-t3` differ from their controls in **one** substantive field
 `capacity_market_supply_clearing_by_iso={'PJM': True}`). Everything else that differs is
 schema growth resolving to a cache-neutral `False`/`None`, or list-vs-tuple serialization.
 
+### 5.0b Control first — all three legs' controls reproduce at HEAD with ZERO non-provenance diffs
+
+D47 §1 established that a claim of "N rows moved" is worthless without first proving the
+control reproduces under the scorer you are about to use. Done here for **all three** legs
+before any of them was launched, at zero LP: each control bundle was re-scored from its own
+committed inputs by the HEAD scorer and diffed row-by-row against its committed verdict.
+
+| control | determination | reasons / caveats | rubric | non-provenance diffs |
+|---|---|---|---|---|
+| `caiso-2026-2030-d46-remeasure` (`772b1e5abc7fc80c`) | HOLD → HOLD | identical | 1.0 → 1.1 | **0** |
+| `pjm-2026-2030-d45r-remeasure` (`321f04e9060787f0`) | HOLD → HOLD | identical | 1.0 → 1.1 | **0** |
+| `neiso-2026-2050-t3-golden3-bau` (`67678e58b2d0526c`) | HOLD → HOLD | identical | 1.0 → 1.1 | **0** |
+
+**The rubric advanced 1.0 → 1.1 between the controls' scoring and this HEAD, and it is measured
+INERT on all three** — every category status, every row's `row` / `status` / `detail` /
+`gating`, both derived surfaces. So an FC row that moves on a leg below is attributable to
+**the run**, never to the scorer version. That is the whole purpose of running the control
+first, and it is the reason the legs' gradings can be read at face value.
+
+**One input was pinned by this exercise rather than assumed.** GOLDEN-3's FC-4 consumes a
+committed T1-X crossover score, and NEISO has *two* candidates on disk. Scoring with
+`neiso-2023-2027-crossover-capxd14` reproduces five of the control's FC-4 metrics and misses
+three (`price 2025` 21.3 → 21.8 %, `gas_twh 2024` 13.2 → 12.6 %, `coal_twh 2024` 84.0 →
+66.4 %); **`neiso-2023-2027-crossover-rcrepair` matches every one**. This is the same trap
+D47 §1 documented for FC-3 (GOLDEN-3 consumes D46's re-solved T1-H, not GOLDEN-2's leg) — the
+obvious guess is the wrong artifact, and it would have manufactured a false FC-4 movement on
+leg 5. The golden's full committed input set is therefore:
+
+```
+--hindcast-score  results/hindcast/neiso-2021-2025-realized-t1h-d46/NEISO/da19b85495178949/score.json
+--crossover-score results/hindcast/neiso-2023-2027-crossover-rcrepair/NEISO/07e416f3f8072e7c/crossover_score.json
+--corridor        results/ff-corridor/dispositions/neiso-t3.json
+--benchmark-corridor results/ff-corridor/benchmark-corridor-anchors.json
+--paired-invariants  <bundle>/fc6/paired_invariants.json
+--driver-battery     <bundle>/fc6/driver-battery-neiso-<date>.json
+--attestation        <bundle>/forecast_attestation.json
+```
+
+### 5.0c A correction to Addendum B's premise, recorded before leg 5 runs
+
+Addendum B pre-declared that GOLDEN-3's FC-5 and FC-6 "were `SKIPPED` on `bau-d46` … they stay
+SKIPPED and are reported as such". **That premise is false against the committed record.** Both
+the bundle verdict and the board's `neiso-t3` entry read **FC-5 CAVEAT** and **FC-6 CAVEAT**,
+carried in `caveats` as `["FC-5 external corridor", "FC-6 driver response"]` — 54 authored
+disposition rows (28 IN CORRIDOR / 26 EXPLAINED / 0 UNEXPLAINED) and a four-arm driver battery
+with two vacuous gate rows. Addendum B contradicts itself in the same paragraph, saying both
+"SKIPPED" and "`neiso-t3` carries them as caveats today"; the second half is the true one.
+
+This matters because it changes what leg 5's outcome means. `score_fc5` and `score_fc6` read
+the **authored** verdicts and statuses in those artifacts and never recompute them against the
+run, so scoring the new golden *without* them yields FC-5 SKIPPED / FC-6 SKIPPED — an **FC-map
+move where §6.4 P16 pre-declared none**, i.e. the charter's STOP, caused by Addendum B's own
+false premise rather than by anything the model did. Scoring *with* them reproduces CAVEAT
+mechanically, but the FC-5 table carries run-specific `model_value`s (e.g.
+`capacity:total@2030` = 33.5307 GW) measured on the pre-flip, pre-D55-hunk run.
+
+**Neither branch is taken on assertion.** Leg 5 is scored both ways, and the carried table is
+reconciled row-by-row against the new run's own 2030/2035/2040 values before anything is
+registered. Where the two agree the carry is honest and is disclosed as a carry; where they
+diverge the disposition is not this lane's to re-author and the registration is a STOP, routed
+per the charter — *report, do not register as bare*.
+
 
 ---
 
