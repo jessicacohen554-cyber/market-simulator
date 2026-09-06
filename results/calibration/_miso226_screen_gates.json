@@ -1,0 +1,196 @@
+{
+ "probe": "miso-226 screen gates (2023, blind) \u2014 the SEAM ARM ALONE",
+ "arm": "results/calibration/miso226_seamalone_S",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift",
+ "control": "form 4 \u2014 the committed keeper (G-DRIFT 07099620..47e306d3 ALL INERT)",
+ "solve_log": "/tmp/claude-0/-home-user-market-simulator/d6c5e586-4b3b-5c5f-bb5f-a56ad1c47ddc/scratchpad/miso226_solve.log",
+ "gates": {
+  "S1": {
+   "pass": true,
+   "s1a_identity_pass_reported_only": false,
+   "armed_fields": {
+    "miso_seam_neighbour_anchored_ladder": {
+     "arm_value": true,
+     "keeper_value": "<absent>",
+     "ok": true
+    }
+   },
+   "other_diffs": [
+    "ccs_retrofit_vom_adder"
+   ],
+   "other_diffs_reachability_exempt": {
+    "ccs_retrofit_vom_adder": "capx D65-B; forecast-mode CCS retrofit screen, inert below 2028, unreachable by a backcast 2023 solve (G-DRIFT INERT)"
+   },
+   "other_diffs_not_exempt_STOP": [],
+   "year_scoped_diffs": [],
+   "fields_absent_from_keeper": [
+    "capacity_adequacy_requirement_published_by_iso",
+    "capacity_going_forward_bar_published_by_iso",
+    "capacity_no_default_cap_convention_by_iso",
+    "cc_duct_peaking_row_scoped",
+    "ccs_retrofit_fixed_cost_co2_scaling",
+    "federal_ces_acp_usd_per_mwh",
+    "federal_ces_target_by_year",
+    "miso_gas_marginal_commodity_pricing",
+    "miso_gas_variable_transport",
+    "miso_seam_neighbour_anchored_ladder",
+    "nyiso_ct_peaker_bands_measured",
+    "nyiso_gas_bridge_startup_aware",
+    "unit_outage_extract_basis_share",
+    "voluntary_clean_demand_path",
+    "voluntary_eligible_fuels",
+    "voluntary_wtp_ceiling_usd_per_mwh"
+   ]
+  },
+  "S2": {
+   "solve_log_checked": true,
+   "neighbour_seam_line_in_solve_log": true,
+   "fuel_marginal_commodity_line_in_solve_log_MUST_BE_ABSENT": false,
+   "transport_clause_in_solve_log_MUST_BE_ABSENT": false,
+   "winter_shape_overlay_line_report_only": true,
+   "pass": true
+  },
+  "G2": {
+   "pass": true,
+   "min_cheap_hour_delta_mw": 150.0,
+   "n_cheap_hours": 1230,
+   "keeper_cheap_hour_import_mw": 3043.0,
+   "arm_cheap_hour_import_mw": 3624.0,
+   "cheap_hour_delta_mw": 581.0,
+   "annual_delta_twh": 3.18,
+   "keeper_annual_twh": 45.754,
+   "arm_annual_twh": 48.934,
+   "static_prediction_cheap_hour_mw_report_only": 700.7,
+   "realized_fraction_of_static_report_only": 0.829,
+   "static_prediction_annual_mw_report_only": 534.9,
+   "miso225_joint_arm_cheap_hour_delta_mw": -75.0
+  },
+  "G4": {
+   "pass": true,
+   "flips_pass_to_fail": [],
+   "inconclusive_within_approximation": [
+    "CT_PEAKER"
+   ],
+   "vol_band_twh": 8.0,
+   "load_twh": 640.993,
+   "a_gen_twh": 616.259,
+   "c2_scored": false,
+   "note": "C2 (system-volume family) is UNSCORED ex ante: a single-year replay writes no metrics.json.",
+   "cells": {
+    "CC_CHP": {
+     "actual": 21.311,
+     "keeper_model": 19.627,
+     "keeper_err": -1.684,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 19.341,
+     "arm_err": -1.97,
+     "arm_share_pp": -0.19,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.286
+    },
+    "CC_REGULAR": {
+     "actual": 141.817,
+     "keeper_model": 137.645,
+     "keeper_err": -4.172,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 136.384,
+     "arm_err": -5.433,
+     "arm_share_pp": 0.0,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -1.261
+    },
+    "CT_PEAKER": {
+     "actual": 17.038,
+     "keeper_model": 9.053,
+     "keeper_err": -7.985,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 8.75,
+     "arm_err": -8.289,
+     "arm_share_pp": -1.29,
+     "arm_pass": false,
+     "class_hourly_delta_twh": -0.304
+    },
+    "ST_CHP": {
+     "actual": 5.203,
+     "keeper_model": 2.53,
+     "keeper_err": -2.672,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 2.497,
+     "arm_err": -2.706,
+     "arm_share_pp": -0.42,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.034
+    },
+    "ST_GAS": {
+     "actual": 13.94,
+     "keeper_model": 14.483,
+     "keeper_err": 0.544,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 14.118,
+     "arm_err": 0.178,
+     "arm_share_pp": 0.12,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.365
+    },
+    "COAL_PRB": {
+     "actual": 121.671,
+     "keeper_model": 120.114,
+     "keeper_err": -1.557,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 119.398,
+     "arm_err": -2.273,
+     "arm_share_pp": 0.4,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.716
+    },
+    "COAL_LIGNITE": {
+     "actual": 7.047,
+     "keeper_model": 6.382,
+     "keeper_err": -0.665,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 6.351,
+     "arm_err": -0.696,
+     "arm_share_pp": -0.07,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.031
+    },
+    "COAL_BIT": {
+     "actual": 57.069,
+     "keeper_model": 54.146,
+     "keeper_err": -2.923,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 54.022,
+     "arm_err": -3.048,
+     "arm_share_pp": -0.14,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.125
+    }
+   }
+  },
+  "G5": {
+   "pass": true,
+   "leg_a_concentration_pass": true,
+   "leg_b_slack_dump_pass": true,
+   "n_hours_with_remerit": 6022,
+   "n_hours_without_remerit": 2738,
+   "import_delta_mw_remerit_hours": 527.2,
+   "import_delta_mw_zero_remerit_hours": 1.9,
+   "slack_twh_keeper": 0.0,
+   "slack_twh_arm": 0.0,
+   "dump_twh_keeper": 0.0,
+   "dump_twh_arm": 0.0,
+   "max_slack_dump_delta_twh": 0.01
+  }
+ },
+ "price_report_only": {
+  "gated": false,
+  "keeper_body_mean": 33.342,
+  "arm_body_mean": 33.034,
+  "body_delta": -0.308,
+  "tail_delta": -0.094,
+  "annual_lw_delta": -0.257,
+  "lw_body_delta": -0.276,
+  "miso225_joint_arm_body_delta": -1.917
+ },
+ "verdict": "ARM SURVIVES THE SCREEN"
+}

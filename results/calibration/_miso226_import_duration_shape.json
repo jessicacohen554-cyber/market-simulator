@@ -1,0 +1,121 @@
+{
+ "probe": "miso-226 \u2014 import duration SHAPE: does the neighbour anchor move the level, the slope, or both?",
+ "year": 2023,
+ "keeper": "2026-09-05-miso-220-nonsteam-lift",
+ "arm": "miso226_seamalone_S (seam-alone neighbour-anchored PJM ladder)",
+ "bins": "deciles of the MEASURED MISO-Indiana hub price",
+ "deciles": [
+  {
+   "decile": 1,
+   "n": 875,
+   "actual_hub_mean": 15.74,
+   "measured_pjm_seam_mw": 5739.0,
+   "keeper_import_mw": 2837.0,
+   "arm_import_mw": 3417.0,
+   "arm_minus_keeper_mw": 580.0
+  },
+  {
+   "decile": 2,
+   "n": 876,
+   "actual_hub_mean": 20.25,
+   "measured_pjm_seam_mw": 5321.0,
+   "keeper_import_mw": 3801.0,
+   "arm_import_mw": 4362.0,
+   "arm_minus_keeper_mw": 561.0
+  },
+  {
+   "decile": 3,
+   "n": 876,
+   "actual_hub_mean": 22.73,
+   "measured_pjm_seam_mw": 5002.0,
+   "keeper_import_mw": 4540.0,
+   "arm_import_mw": 5011.0,
+   "arm_minus_keeper_mw": 470.0
+  },
+  {
+   "decile": 4,
+   "n": 875,
+   "actual_hub_mean": 24.51,
+   "measured_pjm_seam_mw": 4562.0,
+   "keeper_import_mw": 4957.0,
+   "arm_import_mw": 5347.0,
+   "arm_minus_keeper_mw": 390.0
+  },
+  {
+   "decile": 5,
+   "n": 878,
+   "actual_hub_mean": 26.19,
+   "measured_pjm_seam_mw": 4535.0,
+   "keeper_import_mw": 5296.0,
+   "arm_import_mw": 5636.0,
+   "arm_minus_keeper_mw": 340.0
+  },
+  {
+   "decile": 6,
+   "n": 874,
+   "actual_hub_mean": 28.18,
+   "measured_pjm_seam_mw": 4291.0,
+   "keeper_import_mw": 5535.0,
+   "arm_import_mw": 5851.0,
+   "arm_minus_keeper_mw": 316.0
+  },
+  {
+   "decile": 7,
+   "n": 877,
+   "actual_hub_mean": 30.61,
+   "measured_pjm_seam_mw": 4254.0,
+   "keeper_import_mw": 5931.0,
+   "arm_import_mw": 6227.0,
+   "arm_minus_keeper_mw": 296.0
+  },
+  {
+   "decile": 8,
+   "n": 875,
+   "actual_hub_mean": 33.8,
+   "measured_pjm_seam_mw": 4244.0,
+   "keeper_import_mw": 6283.0,
+   "arm_import_mw": 6533.0,
+   "arm_minus_keeper_mw": 249.0
+  },
+  {
+   "decile": 9,
+   "n": 878,
+   "actual_hub_mean": 39.1,
+   "measured_pjm_seam_mw": 4374.0,
+   "keeper_import_mw": 6636.0,
+   "arm_import_mw": 6839.0,
+   "arm_minus_keeper_mw": 203.0
+  },
+  {
+   "decile": 10,
+   "n": 876,
+   "actual_hub_mean": 76.73,
+   "measured_pjm_seam_mw": 4417.0,
+   "keeper_import_mw": 6410.0,
+   "arm_import_mw": 6634.0,
+   "arm_minus_keeper_mw": 225.0
+  }
+ ],
+ "slope_d1_minus_d10_mw": {
+  "measured_pjm_seam": 1322.0,
+  "keeper": -3573.0,
+  "arm": -3217.0,
+  "note": "POSITIVE = imports MORE when MISO is cheap (the measured behaviour). NEGATIVE = imports more when MISO is expensive (the model's inversion)."
+ },
+ "level_mean_mw": {
+  "measured_pjm_seam": 4674.0,
+  "keeper": 5223.0,
+  "arm": 5586.0
+ },
+ "annual_twh_BASES_DIFFER_do_not_difference": {
+  "measured_pjm_seam_gross_inbound": 40.94,
+  "model_all_seam_keeper": 45.754,
+  "model_all_seam_arm": 48.934,
+  "note": "the measured column is the PJM seam alone; the model columns are PJM + SPP + South + Manitoba. miso-224's stamp cites a different measured comparator (EIA-930 37.9 TWh) against the model's all-seam total. This session reports both and adjudicates neither."
+ },
+ "responsiveness_corr_with_own_model_price": {
+  "keeper": 0.75,
+  "arm": 0.725,
+  "measured_vs_actual_hub": -0.101
+ }
+}

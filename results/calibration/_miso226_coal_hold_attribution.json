@@ -1,0 +1,78 @@
+{
+ "probe": "miso-226 phase 0 (queue item 2) \u2014 attribution of the LP's cheap-hour coal hold across the keeper's armed coal commitment structure",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift (miso220_nonsteamlift_B)",
+ "year": 2023,
+ "hour_set": "the 1,230 hours the REAL MISO-Indiana hub cleared < $20 (miso-225's G-3 set)",
+ "A_keeper_coal_by_band_family": {
+  "n_cheap_hours": 1230,
+  "coal_mw_all_hours": 20639.0,
+  "coal_mw_cheap_hours": 18349.0,
+  "by_family": {
+   "mustrun": {
+    "mw_all_hours": 7825.0,
+    "pct_all_hours": 37.9,
+    "mw_cheap_hours": 8000.0,
+    "pct_cheap_hours": 43.6
+   },
+   "committed": {
+    "mw_all_hours": 9237.0,
+    "pct_all_hours": 44.8,
+    "mw_cheap_hours": 8900.0,
+    "pct_cheap_hours": 48.5
+   },
+   "econ": {
+    "mw_all_hours": 3486.0,
+    "pct_all_hours": 16.9,
+    "mw_cheap_hours": 1415.0,
+    "pct_cheap_hours": 7.7
+   },
+   "peak": {
+    "mw_all_hours": 92.0,
+    "pct_all_hours": 0.4,
+    "mw_cheap_hours": 35.0,
+    "pct_cheap_hours": 0.2
+   }
+  },
+  "price_insensitive_mw_cheap_hours": 16900.0,
+  "price_insensitive_pct_cheap_hours": 92.1,
+  "displaceable_mw_cheap_hours": 1449.0
+ },
+ "B_static_displacement_by_band_family": {
+  "n_cheap_hours": 1230,
+  "n_tranches": 2929,
+  "static_coal_delta_mw_total": -1473.0,
+  "static_coal_delta_mw_by_family": {
+   "mustrun": -5.0,
+   "committed": -371.0,
+   "econ": -1094.0,
+   "peak": -3.0,
+   "other": 0.0
+  },
+  "coal_in_merit_mw_keeper_basis_by_family": {
+   "mustrun": 7536.0,
+   "committed": 9472.0,
+   "econ": 2315.0,
+   "peak": 14.0,
+   "other": 0.0
+  },
+  "coal_in_merit_mw_ruled_basis_by_family": {
+   "mustrun": 7531.0,
+   "committed": 9101.0,
+   "econ": 1220.0,
+   "peak": 11.0,
+   "other": 0.0
+  },
+  "prereg_static_total_for_reference": -1470.0
+ },
+ "reconciliation": {
+  "miso225_static_demanded_mw": -1470.0,
+  "miso225_lp_realized_mw": -404.0,
+  "miso225_realized_fraction_of_static": 0.275,
+  "keeper_price_taking_plus_takeorpay_coal_mw": 16900.0,
+  "keeper_price_taking_plus_takeorpay_pct": 92.1,
+  "keeper_econ_plus_peak_coal_mw": 1449.0,
+  "realized_fraction_of_the_econ_band_alone": 0.279,
+  "static_displacement_charged_to_the_committed_band_mw": -371.0,
+  "static_displacement_charged_to_the_econ_band_mw": -1094.0
+ }
+}
