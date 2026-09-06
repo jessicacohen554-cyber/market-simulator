@@ -14,13 +14,27 @@ and flipped EVERY registered NYISO run to NOT-YET, the keeper included
 
 WHAT THIS CHECKS, in two tiers:
 
-* **HARD (exit non-zero).** The part's ``meta.builderFingerprint`` differs from
-  the fingerprint of the builder sources at HEAD — or is ABSENT, which means the
-  part predates the stamp. Either way the part provably was not written by the
-  builder that would run now, so a C1 verdict scored against it is not
-  reproducible. Fixing it means regenerating the part
-  (``run_calibration_full.py --rebuild-benchmark <bundle>`` then
-  ``dashboard_add_run.py``) and re-verifying that ISO's keeper.
+* **HARD (exit non-zero).** The PAYLOAD fingerprint of the builder state that
+  wrote the part — resolved from the ``meta.builderFingerprint`` it records,
+  per ``scripts/lib/bench_stamp.part_payload_fingerprint`` — differs from
+  HEAD's, or cannot be resolved at all (an unknown builder state, or a part
+  predating the stamp). Either way the part cannot be shown to reproduce, so a
+  C1 verdict scored against it is not reproducible. Fixing it means
+  regenerating the part (``run_calibration_full.py --rebuild-benchmark
+  <bundle>`` then ``dashboard_add_run.py``) and re-verifying that ISO's keeper.
+
+  **The decision moved from the AGGREGATE to the PAYLOAD on 2026-09-06** (Y-17,
+  director's option (a) on ``FINDING-y15-flipset-sweep-2026-09-06.md`` §3.5;
+  this lane: ``FINDING-y17-bench-payload-fingerprint-2026-09-06.md``).
+  ``bench_stamp.py`` is a member of its own ``BUILDER_SOURCES``, so an edit to
+  the STAMPING logic moved the aggregate for every part in existence — which
+  made the aggregate degenerate as a reproducibility test, unable to return
+  "equal" for any part built before such an edit even when its payload sources
+  were byte-identical to HEAD's. The aggregate is NOT deleted: it remains the
+  recorded provenance stamp, the key the payload state is resolved from, and
+  the identity the SOFT tier's drift is measured against. A part whose
+  aggregate is superseded but whose payload resolves to HEAD's is reported as
+  a ``notice`` — visible, never gating.
 * **SOFT (reported, never gates).** The fingerprint matches but engine commits
   under ``src/market_sim/data|config`` have landed since the part was last
   committed. The builder imports the engine for the plant→class map, the CHP
@@ -66,7 +80,13 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from scripts.lib.backcast_artifacts import load_bench_part  # noqa: E402
-from scripts.lib.bench_stamp import builder_fingerprint, part_fingerprint  # noqa: E402
+from scripts.lib.bench_stamp import (  # noqa: E402
+    builder_fingerprint,
+    part_fingerprint,
+    part_payload_fingerprint,
+    payload_fingerprint,
+    payload_origin,
+)
 
 BENCH_DIR = REPO / "frontend" / "data" / "backcast" / "bench"
 
@@ -177,13 +197,16 @@ def main() -> int:
     args = ap.parse_args()
 
     current = builder_fingerprint()
-    print(f"builder fingerprint at HEAD: {current}")
+    current_payload = payload_fingerprint()
+    print(f"builder fingerprint at HEAD: {current} (aggregate, recorded stamp)")
+    print(f"payload fingerprint at HEAD: {current_payload} (decides STALE)")
     if not BENCH_DIR.exists():
         print("no bench parts on disk — nothing to check")
         return 0
 
     stale: list[str] = []
     soft: list[str] = []
+    superseded: dict[str, list[str]] = {}
     for iso_dir in sorted(BENCH_DIR.iterdir()):
         if not iso_dir.is_dir():
             continue
@@ -191,24 +214,39 @@ def main() -> int:
             continue
         for part in sorted(iso_dir.glob("*.json.gz")):
             rel = str(part.relative_to(REPO))
-            fp = part_fingerprint(load_bench_part(part))
+            obj = load_bench_part(part)
+            fp = part_fingerprint(obj)
+            payload_fp = part_payload_fingerprint(obj)
+            origin = payload_origin(obj)
             sha, instant = _last_commit(rel)
-            if fp != current:
+            if payload_fp != current_payload:
                 stale.append(rel)
                 print(
-                    f"::error file={rel}::bench part is STALE — carries builder "
-                    f"fingerprint {fp or '(none: predates the stamp)'} but HEAD's "
-                    f"is {current}. Every {iso_dir.name} C1 verdict scored against "
-                    f"it is not reproducible from the builder at HEAD. Regenerate "
-                    f"(run_calibration_full.py --rebuild-benchmark <bundle>, then "
-                    f"dashboard_add_run.py) and re-verify {iso_dir.name}'s keeper."
+                    f"::error file={rel}::bench part is STALE — its builder's "
+                    f"PAYLOAD fingerprint is "
+                    f"{payload_fp or '(unresolvable: unknown builder state)'} "
+                    f"but HEAD's is {current_payload} (recorded aggregate stamp: "
+                    f"{fp or 'none: predates the stamp'}). Every {iso_dir.name} C1 "
+                    f"verdict scored against it is not reproducible from the "
+                    f"builder at HEAD. Regenerate (run_calibration_full.py "
+                    f"--rebuild-benchmark <bundle>, then dashboard_add_run.py) and "
+                    f"re-verify {iso_dir.name}'s keeper."
                 )
                 continue
+            if origin == "historical":
+                # The part predates HEAD's stamping logic but its PAYLOAD sources
+                # were identical, so its numbers ARE what the builder at HEAD
+                # would produce. Collected and reported ONCE per distinct stamp
+                # below rather than annotated per part: an edit to bench_stamp.py
+                # puts every part in this state at once, and 24 identical notices
+                # is the kind of noise that trains a reader to skip the output —
+                # the failure mode this gate exists to prevent (Y-17).
+                superseded.setdefault(fp or "", []).append(rel)
             n = _engine_commits_since(instant, sha)
             if n:
                 soft.append(rel)
                 print(
-                    f"::warning file={rel}::bench part matches the builder at HEAD "
+                    f"::warning file={rel}::bench part reproduces at HEAD "
                     f"but {n} engine commit(s) under {', '.join(ENGINE_PATHS)} have "
                     f"landed since it was committed ({_as_utc(instant)}). Those can "
                     f"move the plant->class map, the CHP shares or the EIA-923 "
@@ -216,14 +254,28 @@ def main() -> int:
                     f"marginal C1 verdict."
                 )
 
+    for old, rels in sorted(superseded.items()):
+        names = ", ".join(
+            f"{Path(r).parent.name}/{Path(r).stem.split('.')[0]}" for r in sorted(rels)
+        )
+        print(
+            f"::notice::{len(rels)} part(s) carry superseded aggregate stamp "
+            f"{old or '(none: predates the stamp)'} (HEAD's is {current}) but their "
+            f"builder's payload sources hash to {current_payload}, identical to "
+            f"HEAD's — so their numbers ARE reproducible. Provenance note only; not "
+            f"gated. Parts: {names}"
+        )
+
     n_parts = sum(
         1
         for d in BENCH_DIR.iterdir()
         if d.is_dir() and (not args.iso or d.name == args.iso.upper())
         for _ in d.glob("*.json.gz")
     )
+    n_superseded = sum(len(v) for v in superseded.values())
     print(
         f"bench freshness: {n_parts} part(s) checked, {len(stale)} STALE, "
+        f"{n_superseded} on a superseded stamp with a reproducing payload, "
         f"{len(soft)} with engine drift"
     )
     if stale and not args.warn_only:

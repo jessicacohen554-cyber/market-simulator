@@ -100,16 +100,31 @@ def test_committed_bench_parts_rewrite_byte_identical():
     builder fingerprint was added, the contract is sharper, and this test now
     pins both halves:
 
-    * a part written by the builder at HEAD MUST re-write to identical bytes;
-    * a part that does NOT re-write identically MUST be one the stamp already
-      flags as stale — i.e. every byte difference is accounted for by the
-      staleness mechanism, and UNEXPLAINED drift still fails.
+    * a part carrying HEAD's AGGREGATE stamp MUST re-write to identical bytes;
+    * a part whose aggregate stamp is superseded may differ — but ONLY in the
+      ``meta.builderFingerprint`` field the writer restamps. Its ``bench``
+      block, and every other meta key, must be untouched.
+
+    THE PREDICATE IS THE AGGREGATE, NOT ``is_stale`` (Y-17, 2026-09-06).
+    ``is_stale`` now answers the PAYLOAD question, which is deliberately blind
+    to ``bench_stamp.py`` — so it no longer predicts a byte diff, because the
+    field that gets rewritten is the aggregate. Using it here would have made
+    this test red for all 24 parts the moment the two measures split. The
+    aggregate is the right predicate: it is exactly what the writer stamps, so
+    "aggregate moved" is precisely the set of parts allowed to differ.
+
+    The second clause is a STRENGTHENING, not a relaxation. The old test only
+    asked whether a differing part was flagged; this one asks WHAT differs, so
+    a payload change smuggled in alongside a stamp move now fails here — which
+    is the claim the payload fingerprint rests on, checked against the real
+    committed artifacts rather than argued.
     """
     parts = _committed_bench_parts()
     if not parts:
         pytest.skip("no committed bench parts in this checkout")
+    current = bench_stamp.builder_fingerprint()
     unexplained = []
-    stale_seen = []
+    restamped = []
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
         for path in parts:
@@ -119,18 +134,32 @@ def test_committed_bench_parts_rewrite_byte_identical():
             out = ba.write_bench_part(tmp, iso, year, part["meta"], part["bench"])
             if out.read_bytes() == path.read_bytes():
                 continue
-            if bench_stamp.is_stale(part):
-                stale_seen.append(f"{iso}/{year}")
+            if bench_stamp.part_fingerprint(part) == current:
+                unexplained.append(f"{iso}/{year}: carries HEAD's stamp yet differs")
+                continue
+            # Superseded stamp: the ONLY licensed difference is the stamp field.
+            new = ba.load_bench_part(out)
+            moved = sorted(
+                k
+                for k in set(part["meta"]) | set(new["meta"])
+                if part["meta"].get(k) != new["meta"].get(k)
+            )
+            if moved != ["builderFingerprint"]:
+                unexplained.append(f"{iso}/{year}: meta keys moved {moved}")
+            elif part["bench"] != new["bench"]:
+                unexplained.append(f"{iso}/{year}: bench payload moved")
             else:
-                unexplained.append(f"{iso}/{year}")
+                restamped.append(f"{iso}/{year}")
     assert not unexplained, (
-        "bench part re-write drift NOT explained by the staleness stamp: "
-        f"{unexplained} — these parts carry the current builder fingerprint yet "
-        "do not reproduce, which means the writer is non-deterministic"
+        "bench part re-write drift NOT explained by a stamp restamp: "
+        f"{unexplained} — a part carrying HEAD's aggregate must reproduce "
+        "byte-identically, and a part on a superseded aggregate may differ only "
+        "in meta.builderFingerprint. Anything else means the writer is "
+        "non-deterministic or a payload moved."
     )
-    # `stale_seen` is expected to be non-empty until every ISO regenerates its
-    # part (nyiso-148 §11); it is reported by scripts/check_bench_freshness.py,
-    # not gated here.
+    # `restamped` is expected to be non-empty whenever the aggregate has moved
+    # since the parts were last written (e.g. any edit to bench_stamp.py); it is
+    # reported by scripts/check_bench_freshness.py, not gated here.
 
 
 def test_write_bench_part_pins_year_and_stamps_the_builder():
