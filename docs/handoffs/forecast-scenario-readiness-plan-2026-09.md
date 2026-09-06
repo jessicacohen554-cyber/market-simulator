@@ -936,6 +936,7 @@ voluntary axis from Stage A? Two stems produced nothing across three refreshes; 
 **relaunch now** (zero-LP build, ready-in-waiting). **D-9:** direct the capx director to charter the
 CCS emission-rate seam repair as a named lane? At capx r#45 the seam is named but no lane carries it,
 and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
+**RULED 2026-09-06 (SCN-DESK r#9 amendment 1) — S6 (D-8): "Relaunch now, third stem"** → SCN-WS3b-r3 issued (`claude/scn-ws3b3-voluntary-demand-q7mv`; the VOL-* cases stay S5-held). **S7 (D-9): "Yes, name it the capx director's next lane"** — routed to the capx ledger as an owner direction; the S5 paired check (`emission_rate` follows the retrofit) is that lane's gate; the desk charters nothing on the seam.
 
 ---
 
@@ -1233,5 +1234,6 @@ leg without the grant.
   re-derived the load constants the pre-declaration chain scored against. r#9: A-LOAD frozen at
   `1cc45bb2` with 0 of 16 legs solved at its last commit (D-5 still not presentable); WS-1b-r2's ERCOT
   2027 pair NOT KILLED with the REF adequacy-collapsed at 2027; **the CCS seam is unchartered on the
-  capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). Zero
+  capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
+  now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
