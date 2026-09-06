@@ -478,6 +478,40 @@ class TestCommitmentRealRunScreen(unittest.TestCase):
         self.assertTrue((floor[0, 22:28] > 0).all())
         self.assertEqual(stats["runs_dropped"], 0)
 
+    def test_per_unit_census_makes_the_identity_falsifiable(self):
+        """nyiso-201 gate (b): the screen CLAIMS no floor anchors on a dropped
+        run. The per-unit census is what lets a screen check that at plant
+        grain instead of asserting it — a unit carrying floor with zero KEPT
+        runs would falsify it. Recorded for every eligible row, dropped or not.
+        """
+        # Dropped: the phantom. Floor is empty, so kept == 0 is consistent.
+        p0, lmp, mc = self._case(margin=5.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        self.assertEqual(
+            stats["per_unit"][0],
+            {"detected": 1, "kept": 0, "dropped": 1, "dropped_hours": 2},
+        )
+        self.assertFalse((floor > 0).any())  # zero kept runs => zero floor
+
+        # Kept: the commitment-real run. Floor is non-empty and kept > 0.
+        p0, lmp, mc = self._case(margin=30.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        self.assertEqual(
+            stats["per_unit"][0],
+            {"detected": 1, "kept": 1, "dropped": 0, "dropped_hours": 0},
+        )
+        self.assertTrue((floor > 0).any())
+
+    def test_census_is_diagnostics_only(self):
+        """A supplied stats dict changes no floor (rule: the floor arithmetic
+        never reads the census)."""
+        p0, lmp, mc = self._case(margin=30.0)
+        a = self._floor(p0, lmp, mc, startup_aware=True, stats=None)
+        b = self._floor(p0, lmp, mc, startup_aware=True, stats={})
+        np.testing.assert_array_equal(a, b)
+
     def test_stats_dict_never_changes_the_floor(self):
         p0, lmp, mc = self._case(margin=5.0)
         a = self._floor(p0, lmp, mc, startup_aware=False, stats={})
