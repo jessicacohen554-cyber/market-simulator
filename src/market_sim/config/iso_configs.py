@@ -1260,6 +1260,42 @@ def _pjm_config() -> ISOConfig:
             "pjm_accreditation_design_vintage": True,
             "pjm_demand_response_supply": True,
             "capacity_market_supply_clearing_by_iso": {"PJM": True},
+            # capx D67-ARM, OWNER RULING Q52 (capx ledger §3, r#47 amendment 1:
+            # "ARM for PJM") on the measured D67 A/B. The adequacy
+            # requirement's OPERAND becomes PJM's own published whole-RTO
+            # Reliability Requirement for delivery year Y/Y+1, in place of the
+            # model's `screen peak × FPR` reconstruction, at the ONE seam
+            # (`gross_adequacy_requirement_mw`) the reliability floor, the
+            # reserve-margin build backstop and the CR-1 position all reach
+            # through (rule 19 [R-ONE-MECH]).
+            #
+            # Armed the D57/Q44 way -- through this ISOConfig override, NOT a
+            # flip of the shared `ScenarioConfig` default, which stays `None`
+            # (so no `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry is needed,
+            # no other ISO's key moves, and every backcast key is
+            # byte-identical; a PJM plain backcast coerces the field back to
+            # `None` with its key unmoved). An explicit caller still wins:
+            # `--no-capacity-adequacy-requirement-published` reaches the
+            # pre-arm posture and keeps its key `15a723ba3b6dc856`.
+            #
+            # Rule 21 [R-DOF]: ZERO free parameters. The MW is digitized from
+            # the committed `data/raw/capacity-market/demand-curve/pjm/pjm.csv`
+            # `reliability_requirement` rows and reconciled against them
+            # byte-for-byte by test; the vintage rule (whole-RTO, never the
+            # FRR-adjusted RPM comparator) and the hold-last rule (out-of-table
+            # years fall through to the FPR path, which itself holds last) were
+            # both fixed before any solve and neither is selectable by a
+            # result. Rule 25 [R-ISO-SCOPE]: generic in form, PJM-scoped by
+            # data -- another ISO arms on its own market's published table.
+            #
+            # Evidence: FINDING-capx-d67-2026-09-06.md §4 (phase 0, all four
+            # checks to 0.000 MW), §6.1 (the structural screen, G1-G5 PASS) and
+            # §7.1 (the full span: `arm - published = 0.000 MW` in all four
+            # screened delivery years, and the pre-declared signs 4 of 4 --
+            # 2022/23 and 2023/24 FALL, 2024/25 and 2025/26 RISE, which is why
+            # this is a real operand rather than a one-way residual improver).
+            # Execution: PRECOMMIT-capx-d67arm-2026-09-06.md.
+            "capacity_adequacy_requirement_published_by_iso": {"PJM": True},
         },
     )
 

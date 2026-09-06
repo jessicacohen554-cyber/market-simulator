@@ -56,6 +56,34 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06f — capx D67-ARM / owner ruling Q52: the PJM adequacy
+requirement's OPERAND becomes PJM's own published whole-RTO Reliability
+Requirement. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for PJM's forecast
+recipes only, and for no backcast and no other ISO at all.**
+
+``capacity_adequacy_requirement_published_by_iso`` is armed ``{"PJM": True}``
+through ``config/iso_configs.py::_pjm_config`` ``default_scenario_overrides``
+— the D57/Q44 pattern — **not** a flip of the shared ``ScenarioConfig``
+default, which stays ``None``. So there is no
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` entry, no other ISO's key moves,
+and a PJM plain backcast coerces the field back to ``None`` with its key
+unmoved. The bare PJM T1-H recipe advances ``15a723ba3b6dc856`` ->
+``a9c66d8ea25acb9d``; an explicit ``--no-capacity-adequacy-requirement-
+published`` reaches the pre-arm posture and KEEPS ``15a723ba3b6dc856``, so
+every pre-arm bundle's recipe stays both reachable and identified.
+
+Because the key advances, **nothing is silently re-interpreted**: the D57-era
+bundle that held the bare ``pjm-t1h`` id keeps its own key
+(``f0e050e820c1159a``) under the preserved id ``pjm-t1h-pre-d67``, with its own
+verdict standing. Two explicit control legs DO change meaning and are re-pinned
+rather than left ambiguous: the three-``--no-`` D57 control now carries the
+requirement armed and keys ``61dfbc5c48af076b``, and arm B's two-``--no-`` leg
+keys ``2d5bebd2bceed991``; adding the fourth ``--no-`` flag restores
+``c5ec052057905966`` / ``6ba67a81ed4d2ed6`` exactly. Evidence:
+``FINDING-capx-d67-2026-09-06.md`` §4 / §6.1 / §7.1; execution and every
+pre-declared key ``PRECOMMIT-capx-d67arm-2026-09-06.md`` §2, graded in
+``FINDING-capx-d67arm-2026-09-06.md``.
+
 **Epoch 2026-09-06e — capx D81: the PENDING owner-filed dated block and the
 this-year CCS retrofit no longer sit in the D57 stack's $0 price-taking block
 either — the same SAME-KEY semantic change as epoch 2026-09-06d, extended to
@@ -70,9 +98,25 @@ not yet taken effect. ``evolve_fleet`` now routes ``_dated_exempt`` and
 producer. No ``ScenarioConfig`` field is added or changed, so no key moves.
 What is invalidated: any bundle solved in **forecast mode** on an ISO whose
 ``capacity_market_supply_clearing_by_iso`` row is on (PJM alone at this date)
-with ``fossil_announced_exits_enabled`` on — and no such bundle is committed or
-registered anywhere (capx D57/D58/D78's probes were all deleted before merge
-under rule 29(c)). What is NOT invalidated: every backcast of every ISO (a
+with ``fossil_announced_exits_enabled`` on.
+
+  **CORRECTED 2026-09-06 by capx D67-ARM (this entry's blast radius was
+  understated).** This clause continued "— and no such bundle is committed or
+  registered anywhere (capx D57/D58/D78's probes were all deleted before merge
+  under rule 29(c))". The statement about the deleted probes is right; it
+  missed the one REGISTERED bundle. ``frontend/data/hindcast/pjm-2021-2025-
+  realized-t1h-d57-clearing.json`` — the run holding the bare ``pjm-t1h`` key
+  when D81 landed — records ``capacity_market_supply_clearing_by_iso =
+  {'PJM': True}`` AND ``fossil_announced_exits_enabled = True`` at cache key
+  ``f0e050e820c1159a``, i.e. BOTH of this epoch's arming conditions. It was in
+  the blast radius. Repaired rather than merely noted: capx D67-ARM re-solved
+  the shipped PJM posture at a HEAD that carries D81, registered it as the bare
+  ``pjm-t1h``, and preserved the D57-era record verbatim at ``pjm-t1h-pre-d67``
+  (epoch 2026-09-06f above). Nothing was re-scored and no verdict, gate,
+  determination, marker or freeze file moved — the correction is a records act.
+  Record: ``PRECOMMIT-capx-d67arm-2026-09-06.md`` §3.3.
+
+What is NOT invalidated: every backcast of every ISO (a
 backcast reaches neither step 1b nor the clearing), every clearing-off ISO
 (with the clearing off the routing is byte-identical, asserted by test), and
 every year below ``ccs_retrofit_available_year`` = 2028 on the retrofit limb,
