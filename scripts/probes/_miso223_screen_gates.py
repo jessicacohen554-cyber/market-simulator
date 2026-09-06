@@ -13,6 +13,10 @@ G-1  direction/size    2024 body (bottom-90%) mean price falls by $1.0-$2.2
 G-2  confinement       2024 tail (top-10%) mean price moves by less than |$3.0|
 G-3  no flip           no 2024 C1/C2 cell flips PASS -> FAIL
 
+EVERY comparison is arm vs the COMMITTED KEEPER (rule 29(b) form 4). G-1 and G-2
+therefore read the keeper's own committed 2024 sidecar as the baseline, which is
+the same object the PREREG's section 2 differencing already used.
+
 Usage::
 
     python3 scripts/probes/_miso223_screen_gates.py
@@ -30,7 +34,12 @@ REPO = Path(__file__).resolve().parents[2]
 CAL = REPO / "results" / "calibration"
 KEEPER = CAL / "miso220_nonsteamlift_B"
 ARM = CAL / "miso223_debody_B"
-CONTROL = CAL / "miso223_control_A"
+#: Rule 29(b) G-CTRL **form 4**: the incumbent keeper's COMMITTED bundle IS the
+#: control. No control solve is spent. The session originally planned one on a
+#: "66 solve-path files changed since the keeper's git_sha" reading — which is
+#: exactly the "files changed, therefore void" heuristic rule 29(b) names as NOT
+#: a reason to spend an LP, absent the per-hunk G-DRIFT audit it requires.
+CONTROL = KEEPER
 YEAR = 2024
 
 REVERTED = {
@@ -127,7 +136,8 @@ def main() -> None:
     rows.append(gate_g3())
     verdict = "SCREEN CLEARED" if all(r["pass"] for r in rows) else "SCREEN KILLS THE ARM"
     out = {"probe": "miso-223 screen gates", "year": YEAR, "arm": str(ARM),
-           "control": str(CONTROL), "keeper": str(KEEPER),
+           "control": "COMMITTED KEEPER (rule 29(b) form 4 — no control solve)",
+           "keeper": str(KEEPER),
            "prereg": "results/calibration/PREREG-miso223-committed-band-debody-2026-09-06.md",
            "gates": rows, "verdict": verdict}
     dest = CAL / "_miso223_screen_gates.json"
