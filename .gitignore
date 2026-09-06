@@ -287,6 +287,21 @@ frontend/data/forecast/program-status.js
 # — while the nested per-ISO LP cache dir each self-contained arm writes is
 # transient and regenerable from config.
 /results/scn-ws0-smoke/*/*/NEISO/
+# SCN-WS1b carbon probe + ladder (results/scn-ws1-probe/, scn-ws1-ladder/):
+# same class as the two smoke trees above. The slim artifacts ARE committed —
+# each T0 arm's summary + run_config, each ladder's matrix bundle, and the
+# scoring / delta-report / campaign-rollup tables that are the evidence behind
+# docs/handoffs/FINDING-scn-ws1b-2026-09-06.md — while the nested per-ISO LP
+# cache each arm and each ladder case writes is transient and regenerable from
+# config. Six ISOs here rather than one, so the pattern is per-ISO.
+/results/scn-ws1-probe/*/*/ERCOT/
+/results/scn-ws1-probe/*/*/CAISO/
+/results/scn-ws1-probe/*/*/PJM/
+/results/scn-ws1-probe/*/*/MISO/
+/results/scn-ws1-probe/*/*/NYISO/
+/results/scn-ws1-probe/*/*/NEISO/
+/results/scn-ws1-probe/*/*.log
+/results/scn-ws1-ladder/*/*.log
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
@@ -444,6 +459,31 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-d60/*/*/*/hourly/
 /results/ff-t1f-d60/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d60/*.log
+
+# capx D65 Act A (2026-09-05): the CCS fourth-seam A/B — arm A1
+# (ff-t1f-d65-a1, NEISO t1f with ccs_retrofit_fixed_cost_co2_scaling armed,
+# key 8ebed20ae90ec0e7) and the SAME-HEAD one-field control (ff-t1f-d65-ctl,
+# the explicit --no- form, which resolves to the bare key 18515067bf4d2fbe).
+# The control was solved under rule 29(b)'s LIVE clause after the arm caught
+# HEAD drift that voided G-CTRL form 4, so BOTH bundles are evidence and both
+# are committed slim. Same class and same slim-vs-heavy split as
+# /results/ff-t1f-d50/ and /results/ff-t1f-d60/ above: the committed record is
+# full_horizon_summary.json + run_config.json + the resolved config.yaml + the
+# evolution_<year>.json ledgers (which carry the ccs_retrofits rows every table
+# in docs/handoffs/FINDING-capx-d65-2026-09-05.md is read off, so the finding is
+# auditable without a re-solve); the per-year dispatch parquet, npz, hourly
+# sidecars and floor-retention dumps are heavy (~16 MB) and regenerable from the
+# config, per the pack-size rule in CLAUDE.md's Git & Pushing.
+/results/ff-t1f-d65-a1/*/*/*/*.parquet
+/results/ff-t1f-d65-a1/*/*/*/*.npz
+/results/ff-t1f-d65-a1/*/*/*/hourly/
+/results/ff-t1f-d65-a1/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d65-a1/*.log
+/results/ff-t1f-d65-ctl/*/*/*/*.parquet
+/results/ff-t1f-d65-ctl/*/*/*/*.npz
+/results/ff-t1f-d65-ctl/*/*/*/hourly/
+/results/ff-t1f-d65-ctl/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d65-ctl/*.log
 
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision

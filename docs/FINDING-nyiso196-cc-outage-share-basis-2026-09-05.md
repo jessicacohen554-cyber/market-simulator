@@ -153,10 +153,25 @@ scored by `calibration_verdict.py --run-id` from committed artifacts only.
 | Bethpage 50292 | 0.19 → 0.26 vs 0.46 | 0.31 → 0.40 vs 0.49 | 0.43 → 0.49 vs 0.65 |
 | CPV Valley 56940 | 3.62 → 3.66 vs 4.38 | 4.30 → 4.40 vs 4.98 | 3.85 → 3.96 vs 4.70 |
 | Selkirk 10725 `CC_CHP` | 0.15 → 0.04 vs 0.16 | 0.26 → 0.05 vs 0.11 | 0.34 → 0.19 vs 0.38 |
-| **Linden 50006 `CC_CHP`** | 6.33 → **5.31** vs 7.23 | 6.20 → **5.24** vs 7.34 | 6.16 → **5.21** vs 7.44 |
+| **Linden 50006 `CC_CHP`** | 6.33 → ~~5.31~~ **6.55** vs 7.23 | 6.20 → ~~5.24~~ **6.44** vs 7.34 | 6.16 → ~~5.21~~ **6.39** vs 7.44 | *(CORRECTED 2026-09-06, nyiso-197 — see the note below §4.2)* |
 | Bethlehem 2539 | 4.91 → 4.88 vs 4.18 | 5.97 → 6.05 vs 5.54 | 5.70 → 5.87 vs 5.27 |
 | Saranac 54574 | 0.12 → 0.14 vs 0.25 | 0.47 → 0.57 vs 0.37 | 0.53 → 0.67 vs 0.40 |
 | Sithe 54547 `CC_CHP` | 4.23 → 4.29 vs 4.06 | 7.37 → 7.49 vs 6.29 | 7.65 → 7.76 vs 6.33 |
+
+> **CORRECTION 2026-09-06 (nyiso-197) — the Linden row above was WRONG and regression (i) below
+> is VOID.** Its *keeper* column is the prior keeper's **payload** (full plant, carrying the
+> measured 1.25 TWh/yr CHP add-back) while its *arm* column is the arm's **LP grid** series (no
+> add-back); Linden is the only plant in this table with a non-zero measured BTM hold-out, so it
+> is the only row the mismatch can move — every other row reproduces from the committed payloads
+> to the digit, Sithe 54547 `CC_CHP` (measured share 0.0 %) included. On the committed payloads
+> Linden **GAINED** +224 / +243 / +227 GWh, which is what its own availability census
+> (+302 / +326 / +314 GWh available) predicts. The provenance is in this session's own record:
+> `_nyiso196_screen_gates.json` `S3_direction.moved_plants[1]` carries `keeper_gwh` 6196.9
+> (payload) against `screen_gwh` 5235.5 (LP) — the 5.24 printed above. **Nothing else in this
+> document changes**: the repair, the screen, the determination and every other §4.2 row are
+> unaffected, and the promotion never rested on this row. Evidence:
+> `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
+> `results/calibration/_nyiso197_linden_phase0.json`. Original text preserved below, unedited.
 
 **Regressions, stated:** (i) **Linden 50006 falls ~1.0 TWh in every year, AWAY from a 7.2–7.4 TWh
 meter, although its own availability ROSE (+0.3 TWh/yr)** — the LP re-placed the released
@@ -198,10 +213,20 @@ Bethlehem +0.08 / +0.17 TWh further above its meter in 2024 / 2025; Sithe +0.05 
 
 ## 6. Handed forward
 
-1. **Linden 50006 `CC_CHP`** (NYC node): −1.0 TWh/yr away from a 7.3 TWh meter under this keeper,
+1. ~~**Linden 50006 `CC_CHP`** (NYC node): −1.0 TWh/yr away from a 7.3 TWh meter under this keeper,
    with its availability up — the largest plant-grain miss the class cell now hides. Object:
    its placement against the Linden VFT / NYC steam and its CHP duty (`chp_layup_duty_curve`,
-   `nyiso_chp_btm_measured` hold-out 22.2 %) — measure before any lever.
+   `nyiso_chp_btm_measured` hold-out 22.2 %) — measure before any lever.~~
+   **VOID 2026-09-06 (nyiso-197): the fall does not exist** — see the correction note above §4.2.
+   Linden ROSE +224 / +243 / +227 GWh on the committed payloads. The cell is re-specified and
+   filed to the owner court: the model delivers **+0.90 TWh/yr (+21 %) MORE** from Linden Cogen
+   into Zone J than NYISO's Gold Book Table III-2a says the station delivered (4,390.7 / 4,288.7
+   GWh for CY2023 / CY2024, PTID 23786), at a merit position where its committed band clears the
+   modelled NYC LMP in 99 % of hours. The VFT limb is refuted (the Gold Book carries Linden as an
+   internal Zone-J station, and I-1 already measured 0 of 8,760 h of binding import capability);
+   the duty limb is inert (the lay-up census abstains at Linden). Any lever is an OFFER-position
+   lever on `CC_CHP` and needs an owner ruling under rule 1's carve-out conditions.
+   Evidence: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`.
 2. **The deriver's id resolution** (`derive_campd_unit_outages.unit_capacity_mw`): a CAMPD stack
    id must never resolve to a CA (steam) generator; the shared EIA-860 `Unit Code` links the CA
    row to its CTs. A record-only follow-up (rule 23: re-derive only citing this defect); the

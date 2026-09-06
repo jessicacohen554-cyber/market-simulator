@@ -117,7 +117,15 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     Forcing-legitimacy now rests on the DOF ledger plus the D-2 / `legitimacy_diagnostics.json`
     mechanism attribution (the C8 forced-share gate and D-4 off-window-binding check) alone.
     Already-registered twins may remain on the dashboard as historical artifacts; no new twin is
-    produced (probe, candidate, or keeper).*
+    produced (probe, candidate, or keeper).* *Cross-reference (owner ruling R-AY, 2026-09-06,
+    Model Audit & Release-Finalization Program, card "DOF / C6" — "Count them in the DOF ledger,
+    C6 passes under the declaration"): an `offer_curve_by_group` band multiplier tuned on price
+    through the rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` authorized channel IS a ledgered free
+    parameter whose identification source is the ruling itself — "price residual, authorized
+    channel (rules 1/13 amendment 2026-09-05)" — not a measured input; it is reported at full
+    magnitude on the determination basis; and its presence does NOT by itself make the residual
+    it closes an "open root-cause issue" under this rule, while every OTHER tuned value still
+    does and no gate moves. Genealogy: `docs/governance/rule-history.md` §13.*
 1. `[R-HOLDOUT]` **Hold out data across three tiers — train, validation, locked test — and never let a
     locked-test result re-enter tuning.** *(Amendment genealogy:
     `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f), indexed in
@@ -311,6 +319,22 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     requires its own declaration, so the distinction is enforced, not merely disciplined. Re-solving
     an ALREADY-SPENT locked test remains a governance breach rather than a CI failure — CI checks
     the grant, not the spend history, which is what the marker's `locked_test` note records.)*
+    **RE-CHECKED AT REGISTRATION since 2026-09-06** (owner ruling **R-AZ**, audit-program director
+    sitting, card "Marker gate"): the `--year` gate reads the marker once, at LAUNCH, so a
+    multi-hour solve can outlive the authorization it started under — the Z-6 case, where a NYISO
+    2022 validation solve launched under the D56-R `complete` marker and `main` withdrew that
+    marker (nyiso-193) while the LP ran, leaving only the lane's own discipline between a withdrawn
+    marker and a committed sidecar (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md`
+    §1a). `scripts/dashboard_add_run.py` — the single seam where a run's solve years become a
+    committed sidecar — now re-asks the SAME question at registration
+    (`enforce_registration_marker_gate` → `holdout_policy.registration_refusals`, so the tier map
+    and freeze precedence stay defined once), refusing any run whose years fall outside 2023–2025
+    unless the ISO holds that tier's marker **at the time of registration** and the tier is not
+    frozen. It runs before the sidecar, payload and bench parts are written, so a refused run
+    leaves nothing behind. **There is no bypass flag: a registration that fails this check is not a
+    registration** — the marker is restored by an explicit owner act and the run re-registered, or
+    the run stays unregistered and git history is the record (rule 15). This is a fourth gate, not
+    a change to the launch gate's semantics, and it changes no already-registered run.
 1. `[R-FROZEN-DERIVE]` **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.
@@ -453,6 +477,45 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     that obeyed rule 29 exactly ("never registered on the dashboard") turned the parity gate red
     *by obeying it*, because the bundle was committed and outlived its PR. The two duties compose
     only when the bundle does not reach `main` at all.
+
+1. `[R-TOUCHPOINT-FOLD]` **A touchpoint is the keeper, on another year — publish it that way, never
+    as a separate run to click into.** *(Owner ruling 2026-09-05, verbatim: "the runs should all be
+    combined with the keeper in html not separate runs… like it's the same config I don't need to
+    click into multiple things to see the results".)* A rule-22 validation touchpoint IS the
+    designated keeper's frozen recipe replayed on a held-out year — same config, different year —
+    so splitting it onto its own dashboard card makes a reader open two pages to read one
+    configuration. Every touchpoint session owes three things, in the session that produces it:
+    - **(a) STAMP IT TO THE KEEPER.** Run `scripts/stamp_touchpoint_holdout.py --run-id <touchpoint>
+      --keeper-id <keeper>` so the sidecar carries `holdout.keeper`. That one field is what folds
+      the run: the Run Explorer hides it from the run list, offers its years in the **keeper's**
+      year selector, and renders every folded year as columns of ONE combined *Validation
+      Touchpoints* panel on the keeper's page beside the in-sample column. A deep link to a folded
+      id still resolves — it opens the keeper on that year — so no URL breaks. An unstamped
+      touchpoint is a second card for the same config, which is the defect this rule names.
+    - **(b) PUT IT ON THE CALIBRATION STATUS PAGE.** `scripts/build_status.py --iso <ISO>` derives
+      the **holdout ladder** (one row per held-out year, scored per year) from the registry
+      automatically — so the duty is to *rebuild and commit the status part*, never to hand-author
+      a block that would go stale the moment a rung is re-spent. Per-year is the load-bearing
+      detail: a multi-year touchpoint bundle carries ONE run-level determination that can hide a
+      rung which passed on its own (NEISO 2020+2021 reads NOT-YET as a bundle; 2021 alone is
+      CALIBRATED). Where the two rungs of a bundle diverge, the sidecar also carries a `perYear`
+      block so the panel and the ladder both say which year did what.
+    - **(c) A HELD-OUT YEAR NEVER DOWNGRADES THE ISO.** *(Owner ruling 2026-09-05, verbatim: "An
+      iso can stay calibrated even if it degrades on holdout years".)* The ISO's calibration
+      determination is the **train-tier (2023–2025) verdict** and nothing else. A validation-tier
+      score is iterable model-SELECTION evidence that rule 22 already forbids quoting as a skill
+      number, so it cannot certify and it cannot decertify. A degraded rung is REPORTED — on the
+      keeper's panel, on the status card, and in the session's assessment doc — and the ISO's
+      headline is untouched. Both surfaces state this in place rather than leaving a reader to
+      infer that a NOT-YET rung beside a CALIBRATED headline is a contradiction.
+
+    The companion scorer change is rubric **v3.6** (owner, same sitting, verbatim: *"c3c should be
+    an accepted caveat on all holdout years"*): on an out-of-training year the C3c standing rule's
+    **lone-failure condition is dropped**, so C3c reads CAVEAT there whatever else that year does.
+    Every other guard is untouched — governance must still pass, supporting-tier only, never a
+    PASS, both caveat budgets checked first — and in-training years keep the lone-failure guard,
+    now measured over what is still failing after the holdout reclassification. Rationale and the
+    measured no-op effect over every registered run: `scripts/calibration_verdict.py` header, v3.6.
 
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered

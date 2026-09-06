@@ -11923,3 +11923,102 @@ Records: `FINDING-miso220-nonsteam-offer-lift-2026-09-05.md`;
 `_miso220_marginal_class.json`, `_miso220_screen_gates.json`.
 
 * Next number: **miso-221**.
+
+## miso-221 (2026-09-06) — the PEAK-BAND RESHAPE is measured UNREACHABLE on the authorized channel: **killed at rule-29 phase 0, ZERO LP minutes**, and the kill generalises past the lever
+
+**Keeper UNCHANGED: `2026-09-05-miso-220-nonsteam-lift`** (bundle
+`miso220_nonsteamlift_B`), determination CALIBRATED, C3c the single ledgered caveat.
+**No solve, no screen, no bundle, no dashboard registration** — rule 15 `[R-DASHBOARD]`
+registers completed runs and this session produced none. Rule 22: 2023–2025 only.
+Record `results/calibration/FINDING-miso221-peak-band-reshape-2026-09-06.md`; instrument
+`scripts/probes/_miso221_peak_shape_phase0.py` → `_miso221_peak_shape.json`.
+
+**A governance correction that scoped the whole session.** The charter named the shape
+knob as "`peak` **and `pct_peaking`**". Rule 1 `[R-STRUCT]`'s 2026-09-05 carve-out,
+condition (a), admits the four `offer_curve_by_group` band multipliers **only** and
+excludes the structural shares (`econ_low_share`, `pct_peaking`) **by name**. Moving
+capacity between tranches is exactly that exclusion, so the charter's own mechanism was
+never admissible; a capacity-reshape form needs an owner amendment, not a lever. Every
+candidate tested moves band multipliers only, asserted in code (`_assert_scope`).
+
+**The charter's diagnosis was right and its lever still fails.** `CT_PEAKER|econ` **is**
+the dominant block above the clearing price (**49.9 / 46.6 / 27.6 %** of it), so the
+channel does reach the right capacity. Three forms, all measured zero-solve at the
+model's own dispatched quantity (reconstruction residual ≤ **$0.14 / $0.17 / $1.35**
+against the keeper's committed duals):
+
+1. **`peak` ×4.5 is nearly free and nearly inert.** Object-hour mean price moves
+   **−$0.04 / −$0.03 / +$3.04**; 0 / 0 / 1 of 15 hours cross $200. It costs only
+   0.0008–0.0051 TWh, because the keeper's `CT_PEAKER|peak` band produces
+   **0.0007 / 0.0019 / 0.0001 TWh** of committed energy all year — so F-2 is *not* what
+   stops it. It is 4.6–12.6 % of the above-price block, so the clearing point simply
+   settles on the next tranche.
+2. **The mean-preserving `econ` spread — the only reshape that protects the
+   `CT_PEAKER`-2023 cell — cannot reach, and moves 2023 backwards** (−$0.62 / +$0.53 /
+   +$2.78; ceiling **$194.26** even at δ = 0.88, an `econ_low` of 0.22), because the
+   marginal tranche sits in the lower half of the block it re-slices. (It arms the
+   already-configured `offer_curve_smoothing_n` = 6 ramp: the keeper's equal
+   `econ_low`/`econ_high` = 1.10 fail the builder's `pk_m > lo_m` test, so `CT_PEAKER`
+   alone among MISO's spread-carrying fossil classes has a *flat* econ block.)
+3. **The level lift has reach but no room.** ×1.5, the smallest tested, removes
+   **7.74 TWh** of `CT_PEAKER`-2023 against **0.015 TWh** of C1 headroom — **516×** —
+   while putting **0 of 15** hours above $200 with a **$52.50** ceiling. Reported against
+   interest: correcting for the `reliability_floor × CT_PEAKER` mechanism (2.2619 TWh
+   forced in 2023, window h14-21, the object's own hours) bounds the true displacement at
+   ≈ 6.8 TWh — still 450× the headroom and still ~2× outside the band. **2023 is
+   unreachable at every value** (ceiling $56.47 even at ×5.0, because `COAL|econ`,
+   `CC_REGULAR|peak` and the unreachable non-tranche block take the margin there), and
+   rule 1 condition (b) makes 2023 govern.
+
+**THE MEASUREMENT THAT GENERALISES.** At the model's own 2025 annual maximum
+(`07-28 HE19`, **$187.04** against an actual **$683.21**) the capacity above the clearing
+price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block** carrying **no
+`offer_curve_by_group` entry at all** — and resolving that block by `fuel_type` shows it
+is **not a mixed bag: it is 90.9 / 91.8 / 98.7 % OIL** (2,898 / 2,898 / 2,856 MW above
+price, cap-weighted **$241.11 / $248.65 / $241.30**), essentially the whole ~2.9 GW MISO
+oil fleet, on the legacy override/CSV path. **The offer-curve channel controls 10.2 % of
+the supply that would have to be re-priced, at the hour where it controls the most, and
+the block it cannot reach is already priced in the tail.** miso-220's unreachable-block
+declaration (oil / biomass / `ST_CHP`) is promoted from a footnote to the finding.
+
+**So the model's stack is not missing tail-priced capacity — it is missing the tightness
+to reach it.** It holds ~2.9 GW at ~$241 plus ~2.5 GW between $200 and the measured
+actual in 2025, and at 2025's three tightest object hours only **329 / 1,044 / 1,719 MW**
+separates the clearing price from $200.
+
+**Consequence for the lane: C3c is not an offer-curve problem in MISO.** With the
+reserve/scarcity family closed arithmetically (miso-219 — zero shortfall in all 26,280
+hours) and `maxgen_emergency_tier_pricing` contributing exactly $0 (load slack 0.000
+MWh), the remaining levers must **remove capacity from the stack** in those hours or
+**re-price the non-tranche fleet**. The owner-court **ELMP / emergency-supply mapping**
+(filed miso-219 §5/§9) is the only named candidate acting on the right object.
+
+**Also re-measured against the current keeper** (the charter's numbers were on
+miso-217): model hours RT > $200 are **3 / 7 / 0** against actual **30 / 37 / 88**, and
+the model's **entire 2025 price distribution tops out at $187.04** — so 2025's C3c count
+is 0, not "see below". `CT_PEAKER|peak` is no longer entirely out of merit: under
+miso-220's `peak` = 4.4 it holds the margin in **2 of 2025's 15 object hours**, which is
+what made the `peak` limb worth testing rather than dismissing.
+
+**G-DRIFT recorded though no arm was solved** (rule 29(b) form 4), because it is cheap
+and it tells the next session whether the control still holds: `4545300d..b2bd9fdb` over
+the solve path = **43 files, +2,136 / −553, every hunk INERT**. `scripts/run_calibration.py`
+— the backcast orchestrator itself — is **unchanged**; the clean-tier / federal-CES /
+carbon family is gated off by `rps_enabled` false, `miso_clean_tier_rows` false and
+`carbon_price` 0.0; all three new `ScenarioConfig` fields are default-off; the rest is
+forecast-only, wall-clock (byte-identical by construction), dead-code deletion, reflow or
+reporting. **`miso220_nonsteamlift_B` remains a valid control at HEAD — the next MISO arm
+owes no control solve.**
+
+**Matrix (rule 28b): no cell verdict moved, deliberately.** The matrix carries no
+peak-band-reshape row; the mechanism is `offer_curve_by_group`, MISO's own `K`, and
+nothing here refutes it — three *parameterisations* of it were refuted. The cell keeps
+`K` with the evidence appended (the miso-215 "evidence about the container" form). No
+`ScenarioConfig` field added, so no base row and no other shard touched.
+
+**Standing items unchanged:** miso-214's result that 62–70 % of the missing CT energy was
+produced below the plant's own delivered cost (unreachable by any offer or price
+mechanism — nothing here is presented as closing the class gap); and every 2025 C1 cell
+`SKIPPED` on a preliminary EIA-923 vintage (71/96 prior plants missing, 26 % reporting),
+so 2025 fuelmix becomes gated against a configuration never scored there once the vintage
+completes.

@@ -276,3 +276,76 @@ def authorized(marker_doc: dict, iso: str, tier: str) -> bool:
         with no marker block (fail closed).
     """
     return iso in marker_blocks(marker_doc).get(tier, {})
+
+
+def registration_refusals(
+    years, iso: str, marker_doc: dict, freeze_doc: dict
+) -> list[str]:
+    """Return why ``iso`` may not REGISTER a run covering ``years`` (empty = may).
+
+    The REGISTRATION-TIME half of the rule-22 spend gate, minted by owner
+    ruling **R-AZ** (audit-program director sitting 2026-09-06, card "Marker
+    gate": *"Re-check at registration"*).
+
+    The launch-time gate
+    (``run_calibration_full.enforce_holdout_year_gate``) reads the marker
+    exactly ONCE, when the LP starts — so a multi-hour solve can outlive the
+    authorization it launched under. Z-6 is the case that produced the ruling
+    (``docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md``
+    §1a): a NYISO 2022 validation-tier solve launched under the D56-R
+    ``complete`` marker, ``main`` withdrew that marker (nyiso-193) while the
+    LP ran, and the only thing standing between a withdrawn marker and a
+    committed sidecar was the lane's own discipline. This function re-asks the
+    SAME question at the seam where a run's solve years become a committed
+    artifact.
+
+    Same tier map, same primitives, same precedence as the launch gate —
+    freeze first and fail closed (:func:`frozen_tiers`), then the per-tier
+    marker (:func:`split_breach_by_tier` + :func:`authorized`). This module
+    stays the single policy home, so no caller re-derives a tier. The one
+    DIFFERENCE is that registration carries no flag: there is no
+    ``--holdout-authorized`` equivalent and no bypass, because a registration
+    that fails this check is not a registration.
+
+    Args:
+        years: The run's solve years (the bundle's ``meta.json`` ``years``).
+        iso: Model ISO id of the run being registered.
+        marker_doc: Parsed ``calibration-complete.json`` (or ``{}``), read at
+            REGISTRATION time — that freshness is the whole point.
+        freeze_doc: Parsed ``holdout-freeze.json`` (or ``{}``).
+
+    Returns:
+        Human-readable refusal strings, one per unmet tier, each naming the
+        ISO, the years, the tier and the marker/freeze state. Empty when every
+        out-of-training year the run covers is authorized.
+    """
+    breach = sorted({int(y) for y in years} - CALIBRATION_YEARS)
+    if not breach:
+        return []
+    frozen = frozen_tiers(freeze_doc)
+    out: list[str] = []
+    for tier, yrs in sorted(split_breach_by_tier(breach).items()):
+        block = TIER_MARKER_BLOCK[tier]
+        held = authorized(marker_doc, iso, tier)
+        if tier in frozen:
+            # The freeze outranks the marker for the tiers it covers, so say
+            # so even when the ISO does hold the block — otherwise a lane
+            # reads "add the marker" off a refusal a marker cannot lift.
+            out.append(
+                f"{iso} year(s) {yrs} are {tier}-tier, and that tier is under "
+                f"an ACTIVE HOLDOUT SPEND FREEZE (frozen tiers "
+                f"{sorted(frozen)}; see {FREEZE_FILE}), which suspends every "
+                f"ISO's authorization for it regardless of the '{block}' "
+                f"marker ({iso} "
+                + ("holds" if held else "does not hold")
+                + f" '{block}')"
+            )
+            continue
+        if not held:
+            out.append(
+                f"{iso} year(s) {yrs} are {tier}-tier, and {iso} does not "
+                f"carry the '{block}' marker in {MARKER_FILE} AT REGISTRATION "
+                f"TIME (a marker present when the solve LAUNCHED does not "
+                f"authorize a registration after it was withdrawn)"
+            )
+    return out

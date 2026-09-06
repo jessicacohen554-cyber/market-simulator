@@ -1,0 +1,785 @@
+{
+  "session": "nyiso-197",
+  "status": "PHASE 0 part 1 \u2014 NO LP, MEASUREMENT ONLY",
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "prior_keeper": "2026-09-05-nyiso-192-astoria-panel",
+  "plant": 50006,
+  "btm_artifact_row": {
+    "plant_code": 50006.0,
+    "plant_name": "Linden Cogen Plant",
+    "gb_stations": "Linden Cogen",
+    "years_pooled": "2022-2023-2024",
+    "gb_gwh_pooled": 12844.3,
+    "eia923_gwh_pooled": 16512.2,
+    "grid_share": 0.7779,
+    "btm_pct": 22.21,
+    "source": "NYISO Gold Book Table III-2a Net Energy GWh (2023/2024/2025 editions -> CY2022/2023/2024) "
+  },
+  "years": {
+    "2023": {
+      "L1_linden_buckets": {
+        "zone": "NYC",
+        "group": "CC_CHP",
+        "npl_mw": 974.0,
+        "model_gwh": 6549.2,
+        "prior_model_gwh": 6325.2,
+        "campd_gross_gwh": 7231.5,
+        "net_vs_campd_gwh": -682.3,
+        "online_h_model": 8760,
+        "online_h_campd": 8752,
+        "buckets_gwh": {
+          "a_model_on_meter_off": 5.8,
+          "b_plus_loading_excess": 175.0,
+          "b_minus_loading_deficit": 863.1,
+          "c_meter_on_model_off": 0.0,
+          "identity_check_gwh": -0.0
+        },
+        "b_minus_by_month_gwh": {
+          "1": 75.6,
+          "2": 109.6,
+          "3": 54.0,
+          "4": 27.1,
+          "5": 33.0,
+          "6": 89.5,
+          "7": 91.4,
+          "8": 85.9,
+          "9": 80.3,
+          "10": 49.3,
+          "11": 54.1,
+          "12": 113.3
+        },
+        "b_minus_by_hour_gwh": {
+          "0": 28.0,
+          "1": 24.4,
+          "2": 22.0,
+          "3": 22.8,
+          "4": 28.5,
+          "5": 35.3,
+          "6": 41.9,
+          "7": 44.8,
+          "8": 41.4,
+          "9": 38.7,
+          "10": 38.3,
+          "11": 36.8,
+          "12": 34.5,
+          "13": 32.8,
+          "14": 34.0,
+          "15": 37.0,
+          "16": 40.3,
+          "17": 45.3,
+          "18": 45.9,
+          "19": 44.5,
+          "20": 41.8,
+          "21": 37.8,
+          "22": 35.0,
+          "23": 31.1
+        },
+        "b_minus_by_zone_lmp_quartile_gwh": {
+          "1": 135.3,
+          "2": 196.8,
+          "3": 228.2,
+          "4": 302.7
+        },
+        "b_plus_by_month_gwh": {
+          "1": 23.7,
+          "2": 14.2,
+          "3": 22.4,
+          "4": 42.9,
+          "5": 31.8,
+          "6": 3.6,
+          "7": 2.6,
+          "8": 2.2,
+          "9": 6.5,
+          "10": 11.1,
+          "11": 12.7,
+          "12": 1.3
+        },
+        "model_mw_stats": {
+          "max": 878.6,
+          "mean": 747.6,
+          "p95": 839.6
+        },
+        "campd_mw_stats": {
+          "max": 1237.1,
+          "mean": 825.5,
+          "p95": 1032.5
+        }
+      },
+      "L2_comparand_ladder": {
+        "campd_gross_twh": 7.2315,
+        "eia923_net_twh": 5.6442,
+        "measured_btm_holdout_twh": 1.2536,
+        "goldbook_grid_delivery_twh_implied": 4.3906,
+        "model_payload_full_plant_twh": 6.5492,
+        "model_lp_grid_twh": 5.2956,
+        "prior_model_lp_grid_twh": 5.0716,
+        "model_lp_minus_goldbook_twh": 0.905,
+        "prior_lp_minus_goldbook_twh": 0.681,
+        "model_payload_minus_923net_twh": 0.905,
+        "campd_gross_minus_923net_twh": 1.5873,
+        "cems": {
+          "available": true,
+          "n_cems_units": 6,
+          "unit_gross_max_mw": {
+            "004001": 310.0,
+            "005001": 193.0,
+            "006001": 194.0,
+            "007001": 192.0,
+            "008001": 194.0,
+            "009001": 192.0
+          },
+          "plant_gross_gwh": 7455.2,
+          "plant_hourly_max_mw": 1272.0,
+          "plant_hourly_mean_mw": 851.0,
+          "heat_input_mmbtu": 52072475.0,
+          "implied_gross_hr_btu_per_kwh": 6985.0,
+          "co2_t_per_mwh_gross": 0.3768,
+          "steam_load_reported": 0.0,
+          "implied_net_hr_btu_per_kwh": 9226.0
+        },
+        "eia923": {
+          "available": true,
+          "net_gwh": 5644.2,
+          "by_prime_mover_gwh": {
+            "CA": 1476.5,
+            "CT": 4167.7
+          },
+          "ba_code": [
+            "NYIS"
+          ]
+        }
+      },
+      "L3_displacement": {
+        "linden_delta_gwh": 224.0,
+        "hours_linden_fell": 28,
+        "linden_fall_in_those_hours_gwh": -1.1,
+        "class_delta_gwh_all_hours": {
+          "CC_CHP": 199.9,
+          "CC_REGULAR": -250.8,
+          "CT_CHP": 9.5,
+          "CT_PEAKER": -3.9,
+          "OTHER": 0.0,
+          "ST_CHP": -1.2,
+          "ST_GAS": 40.7,
+          "biomass": 0.0,
+          "hydro": 0.1,
+          "import": -2.1,
+          "nuclear": 0.0,
+          "oil": -0.1,
+          "solar": -0.0,
+          "wind": -0.0
+        },
+        "class_delta_gwh_in_linden_fall_hours": {
+          "CC_CHP": -1.7,
+          "CC_REGULAR": 1.9,
+          "CT_CHP": -0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": -0.3,
+          "biomass": 0.0,
+          "hydro": -0.2,
+          "import": 0.1,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "zone_class_delta_gwh_all_hours": {
+          "Capital_Hudson|CC_REGULAR": -404.2,
+          "Capital_Hudson|CC_CHP": -40.3,
+          "Upstate_West|ST_GAS": -6.8,
+          "Long_Island|ST_GAS": -3.1,
+          "NYC|CT_PEAKER": -2.6,
+          "Upstate_West|ST_CHP": -2.3,
+          "Long_Island|CT_PEAKER": -1.2,
+          "Long_Island|CT_CHP": -0.6,
+          "Upstate_West|CT_CHP": -0.1,
+          "Capital_Hudson|CT_PEAKER": -0.1,
+          "Upstate_West|CT_PEAKER": -0.1,
+          "NYC|ST_CHP": 1.1,
+          "Capital_Hudson|ST_GAS": 1.6,
+          "NYC|CT_CHP": 10.1,
+          "Upstate_West|CC_REGULAR": 12.0,
+          "Upstate_West|CC_CHP": 23.9,
+          "NYC|ST_GAS": 49.0,
+          "Long_Island|CC_REGULAR": 67.0,
+          "NYC|CC_REGULAR": 74.1,
+          "NYC|CC_CHP": 216.1
+        },
+        "zone_class_delta_gwh_in_fall_hours": {
+          "NYC|CC_CHP": -1.1,
+          "Capital_Hudson|CC_CHP": -0.7,
+          "Long_Island|ST_GAS": -0.2,
+          "NYC|ST_GAS": -0.1,
+          "Upstate_West|ST_GAS": -0.0,
+          "NYC|ST_CHP": -0.0,
+          "Upstate_West|CT_CHP": -0.0,
+          "Capital_Hudson|CT_PEAKER": 0.0,
+          "NYC|CT_CHP": 0.0,
+          "Upstate_West|ST_CHP": 0.0,
+          "Long_Island|CT_PEAKER": 0.0,
+          "Long_Island|CT_CHP": 0.0,
+          "Upstate_West|CT_PEAKER": 0.0,
+          "Capital_Hudson|ST_GAS": 0.0,
+          "NYC|CT_PEAKER": 0.0,
+          "Upstate_West|CC_REGULAR": 0.0,
+          "NYC|CC_REGULAR": 0.0,
+          "Upstate_West|CC_CHP": 0.1,
+          "Long_Island|CC_REGULAR": 0.2,
+          "Capital_Hudson|CC_REGULAR": 1.6
+        },
+        "plant_delta_gwh_bottom8": [
+          "-593.2 57185 Cricket Valley Energy Capital_Hudson|CC_REGULAR",
+          "-112.0 10725 Selkirk Cogen Capital_Hudson|CC_CHP",
+          "-57.3 2539 Bethlehem Energy Center Capital_Hudson|CC_REGULAR",
+          "-17.0 54131 World Generation X Upstate_West|CC_CHP",
+          "-9.0 50978 Carr Street Generating Stati Upstate_West|CC_REGULAR",
+          "-8.9 50450 Indeck Oswego Energy Center Upstate_West|CC_CHP",
+          "-6.8 2527 Greenidge Generation LLC Upstate_West|ST_GAS",
+          "-4.2 54914 Brooklyn Navy Yard Cogenerat NYC|CC_CHP"
+        ],
+        "plant_delta_gwh_top8": [
+          "+26.5 2500:ST_GAS Ravenswood NYC|ST_GAS",
+          "+31.5 2500:CC_REGULAR Ravenswood NYC|CC_REGULAR",
+          "+34.0 56940 CPV Valley Energy Center Capital_Hudson|CC_REGULAR",
+          "+53.5 54547 Sithe Independence Station Upstate_West|CC_CHP",
+          "+61.5 50292:CC_REGULAR Bethpage Power Plant Long_Island|CC_REGULAR",
+          "+63.9 56259 Empire Generating Co LLC Capital_Hudson|CC_CHP",
+          "+210.7 55405 Athens Generating Plant Capital_Hudson|CC_REGULAR",
+          "+224.0 50006 Linden Cogen Plant NYC|CC_CHP"
+        ],
+        "zone_mean_price_delta": {
+          "Capital_Hudson": 0.058,
+          "Long_Island": 0.032,
+          "Lower_Hudson": 0.059,
+          "NYC": 0.061,
+          "NYISO_external": -0.202,
+          "Upstate_West": -0.287
+        },
+        "zone_mean_price_delta_in_fall_hours": {
+          "Capital_Hudson": -0.351,
+          "Long_Island": -0.28,
+          "Lower_Hudson": -0.356,
+          "NYC": -0.359,
+          "NYISO_external": -0.095,
+          "Upstate_West": -0.223
+        },
+        "slack_dump_delta_gwh": {
+          "slack": 0.0,
+          "dump": 0.0
+        }
+      }
+    },
+    "2024": {
+      "L1_linden_buckets": {
+        "zone": "NYC",
+        "group": "CC_CHP",
+        "npl_mw": 974.0,
+        "model_gwh": 6439.9,
+        "prior_model_gwh": 6196.9,
+        "campd_gross_gwh": 7344.1,
+        "net_vs_campd_gwh": -904.2,
+        "online_h_model": 8760,
+        "online_h_campd": 8760,
+        "buckets_gwh": {
+          "a_model_on_meter_off": 0.0,
+          "b_plus_loading_excess": 61.6,
+          "b_minus_loading_deficit": 965.8,
+          "c_meter_on_model_off": 0.0,
+          "identity_check_gwh": 0.0
+        },
+        "b_minus_by_month_gwh": {
+          "1": 211.0,
+          "2": 104.1,
+          "3": 101.3,
+          "4": 27.6,
+          "5": 35.3,
+          "6": 77.1,
+          "7": 103.3,
+          "8": 60.1,
+          "9": 72.3,
+          "10": 52.1,
+          "11": 23.2,
+          "12": 98.6
+        },
+        "b_minus_by_hour_gwh": {
+          "0": 34.3,
+          "1": 31.7,
+          "2": 29.1,
+          "3": 29.6,
+          "4": 34.6,
+          "5": 41.3,
+          "6": 45.5,
+          "7": 43.9,
+          "8": 41.1,
+          "9": 40.5,
+          "10": 40.6,
+          "11": 39.9,
+          "12": 39.5,
+          "13": 37.6,
+          "14": 38.6,
+          "15": 40.6,
+          "16": 44.6,
+          "17": 47.8,
+          "18": 49.0,
+          "19": 47.8,
+          "20": 46.9,
+          "21": 43.3,
+          "22": 40.1,
+          "23": 38.1
+        },
+        "b_minus_by_zone_lmp_quartile_gwh": {
+          "1": 89.8,
+          "2": 210.4,
+          "3": 288.5,
+          "4": 377.1
+        },
+        "b_plus_by_month_gwh": {
+          "1": 0.2,
+          "2": 0.8,
+          "3": 6.0,
+          "4": 16.0,
+          "5": 12.5,
+          "6": 0.8,
+          "7": 0.9,
+          "8": 2.3,
+          "9": 0.6,
+          "10": 17.4,
+          "11": 3.3,
+          "12": 0.7
+        },
+        "model_mw_stats": {
+          "max": 878.8,
+          "mean": 735.1,
+          "p95": 839.7
+        },
+        "campd_mw_stats": {
+          "max": 1178.7,
+          "mean": 838.4,
+          "p95": 1081.3
+        }
+      },
+      "L2_comparand_ladder": {
+        "campd_gross_twh": 7.3441,
+        "eia923_net_twh": 5.6255,
+        "measured_btm_holdout_twh": 1.2494,
+        "goldbook_grid_delivery_twh_implied": 4.3761,
+        "model_payload_full_plant_twh": 6.4399,
+        "model_lp_grid_twh": 5.1905,
+        "prior_model_lp_grid_twh": 4.9475,
+        "model_lp_minus_goldbook_twh": 0.8144,
+        "prior_lp_minus_goldbook_twh": 0.5714,
+        "model_payload_minus_923net_twh": 0.8144,
+        "campd_gross_minus_923net_twh": 1.7186,
+        "cems": {
+          "available": true,
+          "n_cems_units": 6,
+          "unit_gross_max_mw": {
+            "004001": 330.0,
+            "005001": 190.0,
+            "006001": 191.0,
+            "007001": 188.0,
+            "008001": 187.0,
+            "009001": 186.0
+          },
+          "plant_gross_gwh": 7594.9,
+          "plant_hourly_max_mw": 1215.0,
+          "plant_hourly_mean_mw": 864.6,
+          "heat_input_mmbtu": 52904889.0,
+          "implied_gross_hr_btu_per_kwh": 6966.0,
+          "co2_t_per_mwh_gross": 0.3758,
+          "steam_load_reported": 0.0,
+          "implied_net_hr_btu_per_kwh": 9404.0
+        },
+        "eia923": {
+          "available": true,
+          "net_gwh": 5625.5,
+          "by_prime_mover_gwh": {
+            "CA": 1370.8,
+            "CT": 4254.7
+          },
+          "ba_code": [
+            "NYIS"
+          ]
+        }
+      },
+      "L3_displacement": {
+        "linden_delta_gwh": 243.0,
+        "hours_linden_fell": 6,
+        "linden_fall_in_those_hours_gwh": -0.2,
+        "class_delta_gwh_all_hours": {
+          "CC_CHP": 213.1,
+          "CC_REGULAR": -670.9,
+          "CT_CHP": 74.7,
+          "CT_PEAKER": 42.0,
+          "OTHER": 0.0,
+          "ST_CHP": 44.8,
+          "ST_GAS": 255.5,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 15.1,
+          "nuclear": 0.0,
+          "oil": 17.9,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "class_delta_gwh_in_linden_fall_hours": {
+          "CC_CHP": -0.1,
+          "CC_REGULAR": 0.2,
+          "CT_CHP": -0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.2,
+          "biomass": 0.0,
+          "hydro": -0.0,
+          "import": -0.1,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "zone_class_delta_gwh_all_hours": {
+          "Capital_Hudson|CC_REGULAR": -977.4,
+          "Capital_Hudson|CC_CHP": -160.2,
+          "Upstate_West|CT_CHP": -0.0,
+          "Upstate_West|ST_CHP": 0.1,
+          "Capital_Hudson|CT_PEAKER": 1.0,
+          "Upstate_West|CT_PEAKER": 6.0,
+          "Upstate_West|ST_GAS": 6.5,
+          "Long_Island|CT_CHP": 9.5,
+          "Long_Island|CT_PEAKER": 12.9,
+          "NYC|CT_PEAKER": 19.1,
+          "NYC|ST_CHP": 44.7,
+          "Capital_Hudson|ST_GAS": 54.3,
+          "Long_Island|ST_GAS": 56.0,
+          "NYC|CT_CHP": 63.5,
+          "NYC|CC_REGULAR": 81.9,
+          "Upstate_West|CC_CHP": 101.6,
+          "Long_Island|CC_REGULAR": 102.0,
+          "Upstate_West|CC_REGULAR": 116.9,
+          "NYC|ST_GAS": 138.6,
+          "NYC|CC_CHP": 271.9
+        },
+        "zone_class_delta_gwh_in_fall_hours": {
+          "NYC|CC_CHP": -0.2,
+          "Capital_Hudson|CC_CHP": -0.1,
+          "Upstate_West|ST_GAS": -0.0,
+          "NYC|CC_REGULAR": -0.0,
+          "NYC|ST_CHP": -0.0,
+          "NYC|CT_CHP": -0.0,
+          "Long_Island|CT_CHP": -0.0,
+          "Upstate_West|ST_CHP": -0.0,
+          "Upstate_West|CT_PEAKER": -0.0,
+          "Capital_Hudson|ST_GAS": -0.0,
+          "Upstate_West|CT_CHP": -0.0,
+          "NYC|CT_PEAKER": 0.0,
+          "Long_Island|CT_PEAKER": 0.0,
+          "Capital_Hudson|CT_PEAKER": 0.0,
+          "NYC|ST_GAS": 0.0,
+          "Long_Island|CC_REGULAR": 0.0,
+          "Upstate_West|CC_REGULAR": 0.1,
+          "Capital_Hudson|CC_REGULAR": 0.1,
+          "Long_Island|ST_GAS": 0.2,
+          "Upstate_West|CC_CHP": 0.2
+        },
+        "plant_delta_gwh_bottom8": [
+          "-1331.7 57185 Cricket Valley Energy Capital_Hudson|CC_REGULAR",
+          "-212.5 10725 Selkirk Cogen Capital_Hudson|CC_CHP",
+          "-19.1 50450 Indeck Oswego Energy Center Upstate_West|CC_CHP",
+          "-6.4 50451 Indeck Yerkes Energy Center Upstate_West|CC_CHP",
+          "-0.3 54099 Ticonderoga Mill Upstate_West|ST_CHP",
+          "-0.1 10621 CH Resources Syracuse Upstate_West|CC_REGULAR",
+          "-0.1 56234 Caithness Long Island Energy Long_Island|CC_REGULAR",
+          "-0.0 10025:CT_CHP RED-Rochester, LLC Upstate_West|CT_CHP"
+        ],
+        "plant_delta_gwh_top8": [
+          "+52.6 2490 Arthur Kill Generating Stati NYC|ST_GAS",
+          "+58.1 56940 CPV Valley Energy Center Capital_Hudson|CC_REGULAR",
+          "+63.5 2493:CT_CHP East River NYC|CT_CHP",
+          "+87.4 50292:CC_REGULAR Bethpage Power Plant Long_Island|CC_REGULAR",
+          "+104.6 54574 Saranac Facility Upstate_West|CC_REGULAR",
+          "+120.2 54547 Sithe Independence Station Upstate_West|CC_CHP",
+          "+243.0 50006 Linden Cogen Plant NYC|CC_CHP",
+          "+264.5 55405 Athens Generating Plant Capital_Hudson|CC_REGULAR"
+        ],
+        "zone_mean_price_delta": {
+          "Capital_Hudson": 0.56,
+          "Long_Island": 0.482,
+          "Lower_Hudson": 0.569,
+          "NYC": 0.525,
+          "NYISO_external": 0.431,
+          "Upstate_West": 0.426
+        },
+        "zone_mean_price_delta_in_fall_hours": {
+          "Capital_Hudson": -0.264,
+          "Long_Island": -0.168,
+          "Lower_Hudson": -0.272,
+          "NYC": -0.274,
+          "NYISO_external": -0.102,
+          "Upstate_West": -0.259
+        },
+        "slack_dump_delta_gwh": {
+          "slack": 0.0,
+          "dump": 0.0
+        }
+      }
+    },
+    "2025": {
+      "L1_linden_buckets": {
+        "zone": "NYC",
+        "group": "CC_CHP",
+        "npl_mw": 974.0,
+        "model_gwh": 6389.7,
+        "prior_model_gwh": 6162.3,
+        "campd_gross_gwh": 7437.7,
+        "net_vs_campd_gwh": -1048.0,
+        "online_h_model": 8760,
+        "online_h_campd": 8760,
+        "buckets_gwh": {
+          "a_model_on_meter_off": 0.0,
+          "b_plus_loading_excess": 76.1,
+          "b_minus_loading_deficit": 1124.1,
+          "c_meter_on_model_off": 0.0,
+          "identity_check_gwh": -0.0
+        },
+        "b_minus_by_month_gwh": {
+          "1": 142.4,
+          "2": 119.8,
+          "3": 110.8,
+          "4": 47.8,
+          "5": 18.5,
+          "6": 88.7,
+          "7": 132.9,
+          "8": 104.3,
+          "9": 104.4,
+          "10": 63.3,
+          "11": 56.8,
+          "12": 134.4
+        },
+        "b_minus_by_hour_gwh": {
+          "0": 45.6,
+          "1": 43.6,
+          "2": 42.3,
+          "3": 43.0,
+          "4": 45.9,
+          "5": 49.3,
+          "6": 50.6,
+          "7": 48.2,
+          "8": 45.6,
+          "9": 44.4,
+          "10": 45.2,
+          "11": 44.2,
+          "12": 43.9,
+          "13": 42.8,
+          "14": 42.5,
+          "15": 44.5,
+          "16": 47.3,
+          "17": 50.3,
+          "18": 51.9,
+          "19": 52.2,
+          "20": 51.6,
+          "21": 51.3,
+          "22": 49.5,
+          "23": 48.3
+        },
+        "b_minus_by_zone_lmp_quartile_gwh": {
+          "1": 164.9,
+          "2": 234.6,
+          "3": 305.3,
+          "4": 419.3
+        },
+        "b_plus_by_month_gwh": {
+          "1": 16.9,
+          "2": 5.8,
+          "3": 2.1,
+          "4": 3.5,
+          "5": 27.3,
+          "6": 7.0,
+          "7": 0.3,
+          "8": 1.0,
+          "9": 0.1,
+          "10": 2.1,
+          "11": 2.7,
+          "12": 7.3
+        },
+        "model_mw_stats": {
+          "max": 884.0,
+          "mean": 729.4,
+          "p95": 835.4
+        },
+        "campd_mw_stats": {
+          "max": 1188.4,
+          "mean": 849.1,
+          "p95": 1071.5
+        }
+      },
+      "L2_comparand_ladder": {
+        "campd_gross_twh": 7.4377,
+        "eia923_net_twh": 5.74,
+        "measured_btm_holdout_twh": 1.2749,
+        "goldbook_grid_delivery_twh_implied": 4.4651,
+        "model_payload_full_plant_twh": 6.3897,
+        "model_lp_grid_twh": 5.1148,
+        "prior_model_lp_grid_twh": 4.8874,
+        "model_lp_minus_goldbook_twh": 0.6497,
+        "prior_lp_minus_goldbook_twh": 0.4223,
+        "model_payload_minus_923net_twh": 0.6497,
+        "campd_gross_minus_923net_twh": 1.6977,
+        "cems": {
+          "available": true,
+          "n_cems_units": 6,
+          "unit_gross_max_mw": {
+            "004001": 296.0,
+            "005001": 190.0,
+            "006001": 191.0,
+            "007001": 189.0,
+            "008001": 190.0,
+            "009001": 184.0
+          },
+          "plant_gross_gwh": 7667.7,
+          "plant_hourly_max_mw": 1223.0,
+          "plant_hourly_mean_mw": 875.3,
+          "heat_input_mmbtu": 54504289.0,
+          "implied_gross_hr_btu_per_kwh": 7108.0,
+          "co2_t_per_mwh_gross": 0.3839,
+          "steam_load_reported": 0.0,
+          "implied_net_hr_btu_per_kwh": 9496.0
+        },
+        "eia923": {
+          "available": true,
+          "net_gwh": 5740.0,
+          "by_prime_mover_gwh": {
+            "CA": 1554.9,
+            "CT": 4185.1
+          },
+          "ba_code": [
+            "NYIS"
+          ]
+        }
+      },
+      "L3_displacement": {
+        "linden_delta_gwh": 227.4,
+        "hours_linden_fell": 32,
+        "linden_fall_in_those_hours_gwh": -1.4,
+        "class_delta_gwh_all_hours": {
+          "CC_CHP": 154.5,
+          "CC_REGULAR": -331.7,
+          "CT_CHP": -2.8,
+          "CT_PEAKER": 46.1,
+          "OTHER": 0.0,
+          "ST_CHP": 0.6,
+          "ST_GAS": 89.7,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 29.6,
+          "nuclear": 0.0,
+          "oil": 10.8,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "class_delta_gwh_in_linden_fall_hours": {
+          "CC_CHP": 0.6,
+          "CC_REGULAR": 2.0,
+          "CT_CHP": -0.3,
+          "CT_PEAKER": -0.1,
+          "OTHER": 0.0,
+          "ST_CHP": -0.0,
+          "ST_GAS": -1.0,
+          "biomass": 0.0,
+          "hydro": -3.9,
+          "import": -0.1,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "zone_class_delta_gwh_all_hours": {
+          "Capital_Hudson|CC_REGULAR": -755.1,
+          "Capital_Hudson|CC_CHP": -148.5,
+          "NYC|ST_GAS": -8.8,
+          "NYC|CT_CHP": -6.1,
+          "Upstate_West|CT_PEAKER": -0.0,
+          "Upstate_West|CT_CHP": -0.0,
+          "Upstate_West|ST_CHP": 0.1,
+          "Upstate_West|ST_GAS": 0.5,
+          "NYC|ST_CHP": 0.5,
+          "Capital_Hudson|CT_PEAKER": 1.7,
+          "Long_Island|CT_CHP": 3.0,
+          "Long_Island|CT_PEAKER": 18.9,
+          "NYC|CT_PEAKER": 20.6,
+          "Long_Island|ST_GAS": 28.7,
+          "Long_Island|CC_REGULAR": 51.3,
+          "Capital_Hudson|ST_GAS": 69.2,
+          "Upstate_West|CC_CHP": 78.3,
+          "Upstate_West|CC_REGULAR": 136.8,
+          "NYC|CC_CHP": 224.8,
+          "NYC|CC_REGULAR": 235.5
+        },
+        "zone_class_delta_gwh_in_fall_hours": {
+          "NYC|CC_CHP": -1.5,
+          "Long_Island|ST_GAS": -0.9,
+          "Long_Island|CC_REGULAR": -0.5,
+          "Long_Island|CT_CHP": -0.3,
+          "Capital_Hudson|CC_REGULAR": -0.3,
+          "Capital_Hudson|CC_CHP": -0.2,
+          "Long_Island|CT_PEAKER": -0.1,
+          "Capital_Hudson|ST_GAS": -0.1,
+          "NYC|ST_GAS": -0.0,
+          "Upstate_West|CT_PEAKER": -0.0,
+          "Upstate_West|ST_GAS": -0.0,
+          "Upstate_West|ST_CHP": -0.0,
+          "NYC|ST_CHP": -0.0,
+          "NYC|CT_CHP": -0.0,
+          "Capital_Hudson|CT_PEAKER": 0.0,
+          "Upstate_West|CT_CHP": 0.0,
+          "NYC|CT_PEAKER": 0.0,
+          "Upstate_West|CC_REGULAR": 0.7,
+          "NYC|CC_REGULAR": 2.0,
+          "Upstate_West|CC_CHP": 2.3
+        },
+        "plant_delta_gwh_bottom8": [
+          "-1145.6 57185 Cricket Valley Energy Capital_Hudson|CC_REGULAR",
+          "-143.4 10725 Selkirk Cogen Capital_Hudson|CC_CHP",
+          "-19.8 50450 Indeck Oswego Energy Center Upstate_West|CC_CHP",
+          "-14.8 8906 Astoria Generating Station NYC|ST_GAS",
+          "-9.4 50451 Indeck Yerkes Energy Center Upstate_West|CC_CHP",
+          "-8.9 2500:ST_GAS Ravenswood NYC|ST_GAS",
+          "-6.1 2493:CT_CHP East River NYC|CT_CHP",
+          "-5.7 50458 Indeck Corinth Energy Center Capital_Hudson|CC_CHP"
+        ],
+        "plant_delta_gwh_top8": [
+          "+28.6 55375 Astoria Energy NYC|CC_REGULAR",
+          "+53.7 50292:CC_REGULAR Bethpage Power Plant Long_Island|CC_REGULAR",
+          "+61.4 2625 Bowline Point Capital_Hudson|ST_GAS",
+          "+109.5 54547 Sithe Independence Station Upstate_West|CC_CHP",
+          "+135.5 54574 Saranac Facility Upstate_West|CC_REGULAR",
+          "+184.5 57664 Astoria Energy II NYC|CC_REGULAR",
+          "+227.4 50006 Linden Cogen Plant NYC|CC_CHP",
+          "+370.2 55405 Athens Generating Plant Capital_Hudson|CC_REGULAR"
+        ],
+        "zone_mean_price_delta": {
+          "Capital_Hudson": 0.286,
+          "Long_Island": 0.238,
+          "Lower_Hudson": 0.288,
+          "NYC": 0.262,
+          "NYISO_external": 0.168,
+          "Upstate_West": 0.095
+        },
+        "zone_mean_price_delta_in_fall_hours": {
+          "Capital_Hudson": -0.941,
+          "Long_Island": -0.932,
+          "Lower_Hudson": -0.959,
+          "NYC": -0.963,
+          "NYISO_external": -0.715,
+          "Upstate_West": -1.065
+        },
+        "slack_dump_delta_gwh": {
+          "slack": 0.0,
+          "dump": 0.0
+        }
+      }
+    }
+  }
+}

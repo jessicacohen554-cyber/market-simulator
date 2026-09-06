@@ -425,6 +425,52 @@
         </div>`;
       }
 
+      // Rule-22 TOUCHPOINT LADDER — every held-out year this keeper's frozen
+      // recipe has been replayed on, scored per YEAR (a multi-year touchpoint
+      // bundle carries one run-level determination that can hide a rung which
+      // passed on its own). Auto-derived by scripts/build_status.py from the
+      // registry, so it cannot go stale against what was actually scored.
+      //
+      // It is REPORTED, never gating. The ISO's determination above is the
+      // train-tier (2023-2025) verdict, and rule 22 as amended 2026-09-05 is
+      // explicit that a held-out year which degrades does NOT downgrade the
+      // ISO: a validation-tier score is iterable model-selection evidence, not
+      // a certification. The card says so rather than leaving a reader to
+      // infer that a NOT-YET rung beside a CALIBRATED headline is a conflict.
+      if (keeper.holdout_ladder && keeper.holdout_ladder.length) {
+        const L = keeper.holdout_ladder;
+        const TIER_TXT = { validation: 'validation holdout', locked_test: 'locked test' };
+        const rows = L.map(h => {
+          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(h.run_id)}`;
+          const det = String(h.determination || '—');
+          const cls = det === 'CALIBRATED' ? 'clr-good' : (det === 'NOT-YET' ? 'clr-bad' : '');
+          return `<tr>
+            <td><strong>${esc(String(h.year))}</strong><span style="display:block;font-size:0.68rem;color:var(--text-muted)">${esc(TIER_TXT[h.tier] || h.tier || 'holdout')}</span></td>
+            <td class="${cls}" style="font-weight:600">${esc(det)}</td>
+            <td style="font-size:0.78rem">${esc(h.note || (h.reasons || []).join('; ') || '—')}</td>
+            <td style="font-size:0.72rem"><a class="run-id-link" href="${runLink}">${esc(h.run_id)}</a></td>
+          </tr>`;
+        }).join('');
+        const anyDeg = L.some(h => h.determination && h.determination !== 'CALIBRATED');
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">HOLDOUT LADDER</span>
+            This keeper's frozen recipe replayed on ${L.length === 1 ? 'a year' : `${L.length} years`} it was never tuned on,
+            beside <strong>${esc(effectiveDet(keeper))}</strong> in-sample.
+            ${anyDeg
+              ? 'A rung below does not downgrade the ISO &mdash; a validation-tier score is iterable model-selection evidence, never a certification (rule 22).'
+              : 'Every rung holds.'}
+          </p>
+          <div class="bc-table-wrap" style="margin-top:6px">
+            <table style="font-size:0.8rem;width:100%">
+              <thead><tr><th>Year</th><th>Determination</th><th>Reading</th><th>Run</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>`;
+      }
+
       // Keeper run info
       if (keeper.run_id) {
         const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
