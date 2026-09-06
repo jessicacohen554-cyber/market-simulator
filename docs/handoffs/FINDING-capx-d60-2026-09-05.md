@@ -179,7 +179,45 @@ what a *different* lane armed.
 
 ## 5. The re-solves
 
-*(filled below as each leg lands)*
+*(legs 1-2 landed with D60; legs 3-5 are D60-R3's and are filled below as each lands)*
+
+### 5.0 D60-R3's state at start — the pins re-measured, and the environment repaired first
+
+D60 died after legs 1-2; D60-R never launched; D60-R2 landed its state-at-start commit and
+Addendum D and went silent (owner ruled it dead, director r#42 am.2). **D60-R3** is the third
+issue and it re-established the pins from the committed record before spending an LP.
+Pre-declaration: `PREDECL-capx-d60-2026-09-05.md` **Addendum R3**, pushed before any solve.
+
+**Seventeen of seventeen keys unmoved** — thirteen bare forecast keys plus the four pinned
+defaults, all resolved through the real harness path (§R3.2). STOP 1 therefore stands for all
+three remaining legs, reading against `29f8eb372810195f`, `09996eca71ee80fd` and
+`f04fd06348e1623d`. The three charter assertions were **measured, not argued** (§R3.3): D65
+Act A's `ccs_retrofit_fixed_cost_co2_scaling` is key-neutral at its default (default and
+explicit `False` collide on `e5ecd4105ada3e58`; explicit `True` keys distinctly to
+`2186aa915ad19c59`); the R-AZ registration-time marker gate touches `dashboard_add_run.py` and
+`lib/holdout_policy.py`, neither of which `register_forecast_run.py` imports, so this lane's
+registration path is untouched; and the SCN sidecars live in `frontend/data/hindcast/`, never
+the board.
+
+**Two environment defects were found and repaired before the first solve**, both invisible in
+a bundle afterwards (§R3.5). The container's `pip install -r requirements.txt` failed on a
+Debian-owned PyYAML and left **highspy 1.15.1 / pandas 3.0.5 / pydantic 2.13.5** against pins
+of **1.14.0 / 3.0.3 / 2.13.4** — a different HiGHS build is a different LP solver, and D65
+§3b's entire drift argument rests on the stack matching the committed control's. Forced to the
+pins. And the clone was **shallow**, so `9e48ff6` was not a resolvable revision; deepened
+183 -> 1,049 first-parent commits.
+
+Three further gates, all green at HEAD before any solve: `test_d60_arming_batch.py` **17
+passed**, `check_cache_key_registration.py --base origin/main` **ok (798 fields, 253
+registered, all resolve)**, `test_persisted_identity.py` **14 passed**. And each leg's
+**mechanism delta was verified field-by-field against its own control's committed
+`scenario_config`** before it was launched, confirming Addenda A.4 / C.2 exactly: `caiso-t1f`
+and `neiso-t3` differ from their controls in **one** substantive field
+(`ccs_retrofit_capex_co2_scaling` absent -> `True`); `pjm-t1f` in **four** (that plus
+`pjm_accreditation_design_vintage`, `pjm_demand_response_supply` and
+`capacity_market_supply_clearing_by_iso={'PJM': True}`). Everything else that differs is
+schema growth resolving to a cache-neutral `False`/`None`, or list-vs-tuple serialization.
+
 
 ---
 
@@ -233,3 +271,114 @@ D60's CCS flip is inert on all five (2023–2027 horizons, §3.3), so it neither
 this. Repairing the t1x stamps is a different lane's question and is **routed**, not absorbed.
 
 ---
+
+---
+
+## 8-blast-radius. The HEAD drift D65 found, its hunk named, and every committed forecast bundle placed on one side of it
+
+Director r#43 folded D65 §3b/§3c into this lane (capx D71): the committed `neiso-t1f`
+(`18515067bf4d2fbe`, `git.sha` `9e48ff6`) **no longer reproduces at HEAD from its own
+recipe** — NEISO 2027 economic retirements read 33 rows / 2,369.81 MW on the committed side
+and 40 rows / 2,244.89 MW at HEAD, deterministically, on an identical stack. The charter asked
+for a `git bisect` over `9e48ff6..HEAD` to name the responsible hunk.
+
+**No bisect was spent, and the object was still delivered — by a stronger instrument.** D65
+§3d had already pinned the hunk with a **one-hunk revert**: a copy of the exact HEAD tree with
+only that hunk reverted (`diff -r` verified: one differing file, one hunk) reproduces the
+pre-drift 2027 ledger exactly. A bisect names a *commit*; the revert names the *lines* and
+proves them causal. What the bisect would still have supplied is the **commit boundary**, and
+that is a content question rather than a solve question — a binary search over `main`'s
+first-parent chain for the hunk's own docstring marker returns it in ten `git show | grep`
+probes and seconds:
+
+| | commit | date | role |
+|---|---|---|---|
+| last PRE-hunk commit on `main` | `3e9f191a` (PR #4746, capx D54) | 2026-09-04 19:06:34 −0700 | the boundary's left edge |
+| **first POST-hunk commit on `main`** | **`da007e0f`** (PR #4747, `capx-d55-retention-key-fix`) | **2026-09-04 19:06:53 −0700** | the boundary |
+| the hunk's own commit | `32f9628c` | — | *"capx D55: floor-retention key 1 as the class constant (D32 §3.2 / R2)"* |
+
+**The hunk, in words.** `src/market_sim/model/capacity_evolution/retirements.py::_floor_retention_merit`
+— key 1 of the reliability-floor retention sort. capx D55 replaced the per-unit quotient
+`(FOM × multiplier × pmax × 1000) / (pmax × accreditation_fraction)` with the class constant
+`(FOM × multiplier × 1000) / accreditation_fraction`. The two are equal in exact arithmetic and
+**not** in IEEE-754: the quotient form put same-fuel units on 4–5 distinct floats at the 1e-11
+level, so Python's tuple sort consulted the CO2 and heat-rate keys only *inside a rounding
+bucket* and the designed three-key ordering was reproduced only piecewise. **It is an
+intentional repair** of the defect recorded at D32 §3.2 — and what it also does, necessarily,
+is change the retention **sort order**. Under the charter's own clause, *"if it is an
+intentional repair (D55's is), the committed bundles are stale and the re-solves you run ARE
+the remedy"*: this lane **names it and does not touch it**.
+
+**Why the staleness is silent** (D65 §3d, restated because it is what makes this hard to see):
+`_apply_reliability_floor` has three call sites and only two are logged — the returns at
+`retirements.py:2565` and `:3486` become `floor_retention_log`, while the call at `:2517`, the
+pipeline **admission-cap** screen invoked for its in-place mutation of the `scheduled` set,
+**discards its return**. So `floor_retained` is `[]` on both sides of the hunk and the
+diagnostic that exists to make floor behaviour visible is blind to exactly the pass D55
+re-orders. That is D65's second routed item, not this lane's.
+
+### Every committed forecast bundle, placed — 28 PRE-hunk, 5 POST-hunk
+
+Classified by ancestry of each bundle's own `git.basis_sha` against `da007e0f`. **"PRE-hunk"
+means the bundle was solved on the other side of the ordering change, so its reproduction at
+HEAD is not established** — it does not by itself mean the numbers move.
+
+| bundle (`results/ff-*/…`) | ISO | cache key | basis | date | side |
+|---|---|---|---|---|---|
+| `ff-t1f-d45r/miso` | MISO | `8d8bc63a0d4378a9` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d45r/nyiso` | NYISO | `cc7d1050a8090c76` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d45r/pjm` | PJM | `321f04e9060787f0` | `334be8c2a322` | 2026-09-04 | PRE |
+| `ff-t1f-d46/caiso` | CAISO | `772b1e5abc7fc80c` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d46/ercot` | ERCOT | `873d8c0e6cab52ae` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d46/neiso` | NEISO | `6690e4d6d66bc819` | `d375bde39a32` | 2026-09-03 | PRE |
+| `ff-t1f-d50/ercot` | ERCOT | `0c3e9cd5b5993bdf` | `a35c9f9bc0d1` | 2026-09-04 | **PRE** |
+| `ff-t1f-d50/neiso` | NEISO | `18515067bf4d2fbe` | `a35c9f9bc0d1` | 2026-09-04 | **PRE** |
+| `ff-t1f-d50/pjm` | PJM | `167e65187f32056b` | `c9f1d26e3463` | 2026-09-04 | POST |
+| `ff-t1f-d60/miso` | MISO | `b1a73a087064ffd8` | `b87c057ae4bb` | 2026-09-05 | POST |
+| `ff-t1f-d60/nyiso` | NYISO | `19a9690bb12c8459` | `b87c057ae4bb` | 2026-09-05 | POST |
+| `ff-t1f-d65-a1/neiso` | NEISO | `8ebed20ae90ec0e7` | `e5ac39f1b2a6` | 2026-09-05 | POST |
+| `ff-t1f-d65-ctl/neiso` | NEISO | `18515067bf4d2fbe` | `e5ac39f1b2a6` | 2026-09-05 | POST |
+| `ff-t1f-s123/verify` | MISO | `587dc5b32ba71ceb` | `54ca19ae0782` | 2026-08-30 | PRE |
+| `ff-t1f-s4hydro/neiso-control` | NEISO | `9a7f68fc7dcac931` | `6136a2964264` | 2026-08-30 | PRE |
+| `ff-t1f-s4hydro/neiso` | NEISO | `9a7f68fc7dcac931` | `6136a2964264` | 2026-08-30 | PRE |
+| `ff-t1f-s6-pjm/ledger` | PJM | `31a19d815fa319a7` | `54ca19ae0782` | 2026-08-30 | PRE |
+| `ff-t3-neiso-golden/bau-d46` + 4 FC-6 arms | NEISO | `67678e58b2d0526c` +4 | `d375bde39a32` | 2026-09-03 | PRE (×5) |
+| `ff-t3-neiso-golden/bau-prera-2026-08-31` + 5 FC-6 arms | NEISO | `a4b11ef4aaa1be35` +5 | `9e56f0fecd86` | 2026-08-30 | PRE (×6) |
+| `ff-t3-neiso-golden/bau` + 4 FC-6 arms | NEISO | `706e7ba8e6582d42` +4 | `a5523fac1b18` / `5083e29e2562` | 2026-09-01 | PRE (×5) |
+
+**Two measured counter-examples keep "PRE" from being read as "wrong".** capx D55's own A/B
+measured `miso-t1h` **byte-identical** across the hunk (retirements and `pipeline_events` every
+year, 21/21 FC-3 rows — commit `8181bc64`); D65 measured `neiso-t1f` **materially changed**
+(7 rows, −124.92 MW of gas_cc in 2027, with an almost disjoint gas-CC economic-exit set). The
+hunk is a **tie-break ordering** change: it bites only where the reliability floor has ties to
+break and headroom to spend. Every other PRE-hunk bundle is **unmeasured**, and this finding
+says so rather than guessing.
+
+### The bare keys, by side — and D60-R3's routed residue
+
+| bare key | registered run | side today | after this lane |
+|---|---|---|---|
+| `caiso-t1f` | `caiso-2026-2030-d46-remeasure` | PRE | **POST** (leg 3) |
+| `pjm-t1f` | `pjm-2026-2030-d45r-remeasure` | PRE | **POST** (leg 4) |
+| `neiso-t3` | `neiso-2026-2050-t3-golden3-bau` | PRE | **POST** (leg 5) |
+| `miso-t1f` | `miso-2026-2030-d60-arm` | POST | POST |
+| `nyiso-t1f` | `nyiso-2026-2030-d60-arm` | POST | POST |
+| `pjm-t1h` | `pjm-2021-2025-realized-t1h-d57-clearing` | POST | POST |
+| `ercot-t1f` | `ercot-2026-2030-d50-ccscapex` | PRE | **PRE — residue** |
+| `neiso-t1f` | `neiso-2026-2030-d50-ccscapex` | PRE | **PRE — residue** (the D65 case, magnitude measured) |
+| `ercot-t1h` | `ercot-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
+| `caiso-t1h` | `caiso-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
+| `miso-t1h` | `miso-…-t1h-d53-sectorgate-d51ratio` | PRE | **PRE — residue** (measured INERT by D55) |
+| `nyiso-t1h` | `nyiso-…-t1h-d52-devintage` | PRE | **PRE — residue** |
+| `neiso-t1h` | `neiso-2021-2025-realized-t1h-d45r` | PRE | **PRE — residue** |
+
+**Seven bare keys remain PRE-hunk after this lane lands.** They are D60-R3's *routed residue*,
+not its scope — the charter's owed list is three legs, and re-solving seven more keys is a
+separate campaign for the director to charter. `neiso-t1f` is the rung with a measured
+magnitude already attached and is the obvious first.
+
+**Board staleness, read before the legs** (`check_forecast_staleness.py`, HEAD `75a5500fdd89`):
+155 stamped / 129 scored, newest verdicts evidence `e7412237e4e1` @ 2026-09-05T20:47:38Z, with
+**29 solve-affecting commits landed since** against a threshold of 10 — the FR-21 WARN. That
+WARN is the same fact this section measures, from the other end.
+
