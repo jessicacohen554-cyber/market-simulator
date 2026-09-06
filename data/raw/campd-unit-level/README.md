@@ -31,11 +31,20 @@ CA-only list left it unobservable — the FINDING-caiso193 §2 state-scope gap;
 `ISO_STATES["CAISO"]` is now `("CA", "NV")` on the NYISO NY+NJ fleet-filtered
 template. NV spans 2018–2026 (2026 = H1 quarters via `--quarters 1 2`).
 
+**39 states since 2026-09-06 (SPP-11): + NE NM OK WY**, the SPP footprint's
+CEMS states, landed for **2023–2026** only (`docs/handoffs/FINDING-spp-11-2026-09-06.md`;
+`docs/multi-iso/spp-addition-plan-2026-09.md` §6 row 1). SPP is not a
+registered ISO yet, so these four states are absent from `campd.ISO_STATES`
+until SPP-20 registers it; the parquets are the critical-path input for
+SPP-30's outage windows and thermal tranches. Their 2026 vintage is Q1,
+matching every other `<ST>_2026.parquet` in the corpus. 2018–2022 for these
+four states is a later rule-22 intake batch, not landed here.
+
 | Years | Status |
 |---|---|
-| 2023–2025 | complete (35 states each) — the calibration window |
+| 2023–2025 | complete (35 states each; **39 incl. NE NM OK WY since 2026-09-06**) — the calibration window |
 | 2018–2021 | **complete** (34 states 2026-07-05 + NV 2026-08-16) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
-| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. |
+| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. NE/NM/OK/WY H1-2026 (Q1) intaken 2026-09-06 under `--holdout-intake SPP` (SPP-11 charter); their 2022 is not landed. |
 
 **RESOLVED 2026-07-08 — EIA-923 2018–2021 (parasitic net conversion) source gap
 closed, re-derive still open.** The v2 rate artifact converts CAMPD gross → net
