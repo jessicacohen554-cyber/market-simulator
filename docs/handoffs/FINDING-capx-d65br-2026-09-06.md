@@ -198,3 +198,46 @@ scheduled — and it is the leg that says whether the unbinding persists once RG
 
 **Per Addendum C's "STOP-only, per leg", the NEISO leg is stopped; the remaining legs proceed.**
 NEISO is **not registered** pending adjudication.
+
+### 5.3 `nyiso-t1f` — **G5' FIRES TWICE**, and NEISO's signature REPEATS
+
+Solve key **`f62431376dd9df03`** = the pre-declaration exactly. Solve-path guard clean. **5/5 years,
+14.2 min, 3.15 GB, 0 FAIL / 0 WARN on all 14 invariants.**
+
+| year | rows | MW | % of cap | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 13 | 2,984.4 | 99.5 % | 0.3786 | 7.057 | 1.0544 |
+| **2029** | 19 | **2,271.5** | **75.7 %** | 0.4394 | 8.094 | 1.2235 |
+| **2030** | 1 | **1,000.0** | **33.3 %** | 0.3600 | 6.300 | 1.0025 |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 33 rows, `capex/k` host-invariant within every year (2028 `1,323,595.6`; 2029 `1,200,860.1`; 2030 `1,141,276.9`) |
+| **G1'** | **NOT GATED** — no published NYISO band. Reported: `er/phys` 0.8419–1.4801 over 33 rows |
+| **G4'** | **PASS** — 0 FAIL / 0 WARN, so nothing can have flipped |
+| **G5'** | **FIRES on 2029 AND 2030** |
+
+**Reported as fired, not reinterpreted.** Same routing as §5.2, and the same conflict with D64
+§2.3, which names **NEISO and NYISO together** in the sentence that calls a below-cap year *"the
+informative surprise, not a STOP."*
+
+**THE SIGNATURE REPEATS ACROSS BOTH RGGI ISOs, AND THAT IS THE FINDING.** Two independent markets,
+same construction, same shape:
+
+| | 2028 | 2029 | 2030 |
+|---|---|---|---|
+| NEISO | 98.8 % of cap, `k` 0.9952 | 98.0 %, `k` 1.3347 | **59.5 %**, `k` 1.3032 |
+| NYISO | 99.5 % of cap, `k` 1.0544 | **75.7 %**, `k` 1.2235 | **33.3 %**, `k` 1.0025 |
+
+Both start cap-bound at a MW-weighted `k` ≈ 1.0 — the sub-reference and reference hosts — and both
+unbind as the surviving pool moves to `k` > 1.2, i.e. hosts charged **>20 % more per captured
+tonne** under the correctly-sized island. **The efficient hosts are consumed first and the
+expensive tail cannot carry the accurate per-tonne cost.** A single ISO doing this is an anecdote;
+both doing it, at different carbon prices and different fleets, is the seam's thesis reproduced.
+
+It also sharpens what the gate got wrong. D64 §2.4's "cap-bound" cell was computed **at the hour
+ceiling on the SHIPPED shape**; §2.3's expectation sentence is about the A/B. Addendum C promoted a
+ceiling-census cell into a floor on a *solved* quantity — the same "a band is a window, not a floor"
+error Addendum C itself warns about for ERCOT's G1', committed one paragraph later in its own table.
+
+**NYISO is not registered pending the same adjudication.** Legs proceed.
