@@ -1,0 +1,143 @@
+{
+ "probe": "miso-226 phase 0 \u2014 static re-merit of the neighbour-anchored PJM import ladder at the KEEPER's own unmoved prices (seam-alone arm)",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift (miso220_nonsteamlift_B)",
+ "year": 2023,
+ "seam": "PJM",
+ "interface_limit_mw": 7300.0,
+ "band_width_mw": 912.5,
+ "composition": "uniform per-band derate (keeper miso_seam_envelope_merit_cap=False)",
+ "ladder_import_incumbent": [
+  13.4,
+  16.25,
+  19.79,
+  24.09,
+  27.86,
+  32.78,
+  37.99,
+  46.55
+ ],
+ "ladder_import_neighbour": [
+  9.71,
+  12.74,
+  15.71,
+  20.11,
+  24.3,
+  28.8,
+  34.22,
+  41.96
+ ],
+ "ladder_import_delta": [
+  -3.69,
+  -3.51,
+  -4.08,
+  -3.98,
+  -3.56,
+  -3.98,
+  -3.77,
+  -4.59
+ ],
+ "ladder_export_incumbent": [
+  12.34,
+  11.72,
+  11.72,
+  11.72,
+  11.72,
+  11.72,
+  11.72,
+  11.72
+ ],
+ "ladder_export_neighbour": [
+  7.73,
+  7.02,
+  7.02,
+  7.02,
+  7.02,
+  7.02,
+  7.02,
+  7.02
+ ],
+ "export_leg": {
+  "hours_any_export_band_in_merit_incumbent": 0,
+  "hours_any_export_band_in_merit_neighbour": 0,
+  "note": "an export band clears only when the bus price is BELOW it; both ladders' export rungs sit far under the model's bus price, so the overlay's export leg is structurally inert and the arm is a pure import-side test"
+ },
+ "by_hour_set": {
+  "all": {
+   "hour_set": "all 8760 hours",
+   "n_hours": 8760,
+   "keeper_bus_price_mean": 34.535,
+   "keeper_hub_price_mean": 34.638,
+   "keeper_import_mw_mean": 5223.1,
+   "envelope_derate_frac_mean": 0.8447,
+   "static_in_merit_mw_incumbent": 4392.9,
+   "static_in_merit_mw_neighbour": 4927.8,
+   "static_delta_mw": 534.9,
+   "bands_remerited_mean": 0.687,
+   "hours_with_any_remerit_pct": 68.7
+  },
+  "actual_sub20": {
+   "hour_set": "the 1,230 hours the REAL Indiana hub cleared < $20 (the frozen G-2 set)",
+   "n_hours": 1230,
+   "keeper_bus_price_mean": 27.994,
+   "keeper_hub_price_mean": 27.994,
+   "keeper_import_mw_mean": 3042.8,
+   "envelope_derate_frac_mean": 0.9,
+   "static_in_merit_mw_incumbent": 3629.2,
+   "static_in_merit_mw_neighbour": 4329.9,
+   "static_delta_mw": 700.7,
+   "bands_remerited_mean": 0.856,
+   "hours_with_any_remerit_pct": 85.6
+  }
+ },
+ "model_sub20_hours": 0,
+ "band_marginality_in_g2_hours": {
+  "band1": {
+   "incumbent_price": 13.4,
+   "neighbour_price": 9.71,
+   "pct_g2_hours_in_merit_incumbent": 100.0,
+   "pct_g2_hours_in_merit_neighbour": 100.0
+  },
+  "band2": {
+   "incumbent_price": 16.25,
+   "neighbour_price": 12.74,
+   "pct_g2_hours_in_merit_incumbent": 100.0,
+   "pct_g2_hours_in_merit_neighbour": 100.0
+  },
+  "band3": {
+   "incumbent_price": 19.79,
+   "neighbour_price": 15.71,
+   "pct_g2_hours_in_merit_incumbent": 100.0,
+   "pct_g2_hours_in_merit_neighbour": 100.0
+  },
+  "band4": {
+   "incumbent_price": 24.09,
+   "neighbour_price": 20.11,
+   "pct_g2_hours_in_merit_incumbent": 90.6,
+   "pct_g2_hours_in_merit_neighbour": 100.0
+  },
+  "band5": {
+   "incumbent_price": 27.86,
+   "neighbour_price": 24.3,
+   "pct_g2_hours_in_merit_incumbent": 48.7,
+   "pct_g2_hours_in_merit_neighbour": 90.0
+  },
+  "band6": {
+   "incumbent_price": 32.78,
+   "neighbour_price": 28.8,
+   "pct_g2_hours_in_merit_incumbent": 2.2,
+   "pct_g2_hours_in_merit_neighbour": 36.7
+  },
+  "band7": {
+   "incumbent_price": 37.99,
+   "neighbour_price": 34.22,
+   "pct_g2_hours_in_merit_incumbent": 0.0,
+   "pct_g2_hours_in_merit_neighbour": 0.4
+  },
+  "band8": {
+   "incumbent_price": 46.55,
+   "neighbour_price": 41.96,
+   "pct_g2_hours_in_merit_incumbent": 0.0,
+   "pct_g2_hours_in_merit_neighbour": 0.0
+  }
+ }
+}
