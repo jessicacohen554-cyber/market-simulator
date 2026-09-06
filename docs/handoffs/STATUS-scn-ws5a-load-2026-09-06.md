@@ -62,3 +62,43 @@ loop** on the three ISOs that *are* authorized — was delivered in-session; its
 - **Complete:** ERCOT, NEISO, NYISO — solved, registered, delta-reported, FINDING written.
 - **Running / queued:** PJM, then MISO, then CAISO (each alone, rule 12).
 - Backcast byte-identity untouched; DOF ledger carries **zero** free parameters.
+
+---
+
+## Routed defect — `collate_scenario_campaign.py` differences sums over DIFFERENT ISO sets
+
+Found while pre-flighting the sanctioned collation tool against the three completed ISOs,
+**before** it reached this lane's synthesis. Not fixed here: `scripts/collate_scenario_campaign.py`
+is SCN-WS0's file and this lane's charter says consume, never modify.
+
+**The defect.** The `six-ISO modeled system` scope in `campaign_delta_table.csv` computes
+`emissions_mt_delta` as *(sum over the case's ISOs)* − *(sum over the reference case's ISOs)*,
+without restricting both to a common set. When a case has incomplete ISO coverage the two sums
+span different systems and the delta is meaningless.
+
+**Measured, on the three ISOs complete at the time:**
+
+| system-scope `LOAD-HI-ORGANIC`, 2030 | Mt |
+|---|---|
+| reported `emissions_mt_delta` | **+5.4620** |
+| correct delta on the common {ERCOT, NYISO} set | **+18.8300** |
+| error | **−13.368**, exactly NEISO's REF 2030 level |
+
+`LOAD-HI-ORGANIC` summed 2 ISOs (ERCOT, NYISO — NEISO has no ORGANIC leg because phase 0
+measured its DC axis degenerate) while `REF` summed 3. The understatement is **71 %**.
+
+**This is structural, not a partial-results transient.** At full completion `REF` and `LOAD-HI`
+will cover **6** ISOs while `LOAD-HI-ORGANIC` covers **4** — PJM and NEISO ship
+`LOAD-HI == LOAD-HI-ORGANIC` byte-for-byte, so their ORGANIC arm is correctly never solved
+(SCN-WS4b §3, reproduced by this lane's phase 0). So any campaign with a legitimately
+degenerate arm hits this.
+
+**Mitigations.** The tool *does* emit `isos` and `isos_missing` per case, so the coverage is
+disclosed and the defect is detectable — it is a wrong number beside honest metadata, not a
+silent one. This lane's synthesis will compute every cross-ISO delta on the **common ISO set**
+and will not quote the system-scope ORGANIC row.
+
+**Suggested repair (for whoever owns the file):** restrict both operands to
+`isos(case) ∩ isos(reference_case)` before summing, and label the row with that intersection;
+or emit the row as `null` with the coverage mismatch named, rather than a computable-looking
+number. Either is preferable to a delta a reader cannot tell is malformed.
