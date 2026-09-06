@@ -376,6 +376,37 @@ def _published_power_sector_budget(
     return None
 
 
+def scheduled_power_sector_budget(config: ScenarioConfig, year: int) -> float | None:
+    """Return the scenario budget SCHEDULE's tonnage for ``year``, or ``None``.
+
+    Reads ``config.mass_cap_tons_by_year`` — ``{ISO: {year: metric tonnes}}``,
+    the SCN-CAP schedule field (owner ruling S12, 2026-09-06; the declining
+    ``CAP-STATE-TIGHT`` budget of ``FINDING-scn-ws1a-2026-09-05.md`` §4.2).
+    Sparse knots are interpolated **linearly** between years and **edge-held**
+    outside them (the last knot holds flat after 2050, the first before it) —
+    the same knot convention as ``federal_ces_target_by_year``. YAML / JSON
+    round-trips stringify the year keys; they are coerced back so an on-disk
+    ``run_config.json`` and the in-memory config resolve identically.
+
+    Returns ``None`` when no schedule is configured or when ``config.iso`` is
+    absent from it, so :func:`_power_sector_cap`'s existing scalar → published
+    → inert order is untouched for every ISO the schedule does not name.
+    Unit-free by construction: the knots are already metric tonnes, directly
+    comparable to ``emission_rate[g] * P[g,t]``.
+    """
+    schedule = getattr(config, "mass_cap_tons_by_year", None)
+    if not schedule:
+        return None
+    knots_raw = schedule.get(config.iso)
+    if not knots_raw:
+        return None
+    knots = {int(k): float(v) for k, v in knots_raw.items()}
+    years = np.array(sorted(knots), dtype=float)
+    tons = np.array([knots[int(y)] for y in years], dtype=float)
+    # np.interp holds the edge values outside [years[0], years[-1]].
+    return float(np.interp(float(year), years, tons))
+
+
 def _power_sector_cap(
     config: ScenarioConfig,
     program: CapAndTradeProgram,
@@ -386,18 +417,27 @@ def _power_sector_cap(
 
     Sources the annual tonnage budget (metric tonnes CO2) in precedence order:
 
-    1. An explicit ``config.mass_cap_tons`` scenario budget when set (a bespoke
-       counterfactual cap; taken as-is, already in metric tonnes).
-    2. Otherwise the ISO program's **published** budget for ``year``
+    1. The scenario budget **schedule** ``config.mass_cap_tons_by_year`` when
+       it names ``config.iso`` (:func:`scheduled_power_sector_budget`, SCN-CAP /
+       owner ruling S12 — the declining ``CAP-STATE-TIGHT`` budget, linearly
+       interpolated between knots and edge-held; metric tonnes).
+    2. Otherwise an explicit ``config.mass_cap_tons`` scenario budget when set
+       (a bespoke counterfactual cap; taken as-is, already in metric tonnes).
+    3. Otherwise the ISO program's **published** budget for ``year``
        (:func:`_published_power_sector_budget`) — the RGGI/CARB schedules landed
        in ``constants.py``, unit-converted to metric tonnes.
 
-    Returns ``None`` when neither is available (no explicit budget and no
-    published schedule for the year, e.g. a holdout-quarantined year), leaving
-    the row inert and the adder path active. The endogenous dual of a row built
-    here is a power-sector, no-bank scenario allowance price (plan §2, §8).
+    Returns ``None`` when none is available (no schedule entry, no explicit
+    budget and no published schedule for the year, e.g. a holdout-quarantined
+    year), leaving the row inert and the adder path active. The endogenous
+    dual of a row built here is a power-sector, no-bank scenario allowance
+    price (plan §2, §8). One composition point for the budget (rule 19
+    [R-ONE-MECH]): the schedule ADDS a source ahead of the scalar, it never
+    stacks on it.
     """
-    cap_tons = getattr(config, "mass_cap_tons", None)
+    cap_tons = scheduled_power_sector_budget(config, year)
+    if cap_tons is None:
+        cap_tons = getattr(config, "mass_cap_tons", None)
     if cap_tons is None:
         cap_tons = _published_power_sector_budget(program, year)
     if cap_tons is None:
