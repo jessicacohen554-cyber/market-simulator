@@ -7,8 +7,24 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #3) ·
-**r#3 (HEAD `ea273339`):** **BOTH r#2 FINDINGS WERE SELF-CORRECTED BY THE LANES THEMSELVES,
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #4) ·
+**r#4 (HEAD `21deb4a7`):** **NOTHING NEW IS UNBLOCKED BY CODE — and the one real unblock this
+refresh is GOVERNANCE, is not this desk's to take, and nobody has taken it.** NYISO promoted
+`2026-09-06-nyiso-196-extract-basis` — **CALIBRATED, grade 7, zero fails, C3c the lone ledgered
+caveat** — and the withdrawal block's own re-entry clause reads *"re-entry is a NEW explicit
+owner declaration on a keeper scoring CALIBRATED."* **That condition is now MET and the marker
+has NOT been re-declared**: `complete` still reads {ERCOT, NEISO, PJM}, so NYISO's §2.1b leg (a)
+is still FAIL and Q45's lapsed premise is still lapsed — **on a technicality that a single owner
+declaration clears.** Disclosed and routed to the capx director per charter §0.4; this desk
+declares no marker · **SCN-WS4b and SCN-MX-R are LOST** — issued r#2, re-emitted r#3, still no
+branch and no PR at r#4, which is the charter's two-refresh threshold → **relaunched verbatim
+under `-r2` stems, recorded never-launched against interest, NOT graded as running** ·
+**SCN-WS2a's PRECOMMIT and docs legs merged** (#4892) but the probe, the FINDING and the CES
+matrix row are still owed — the lane has PRs so it is not lost, it is owed · SCN-WS1b and
+SCN-WS2b launched by the owner; no branches yet, which is expected within a refresh · the desk's
+own r#3 PR merged (#4888), so the ledger conflict is closed · §2.1b gate unchanged **today**:
+**NEISO only** — and NYISO is one declaration away from being the second.
+*(previous)* **r#3 (HEAD `ea273339`):** **BOTH r#2 FINDINGS WERE SELF-CORRECTED BY THE LANES THEMSELVES,
 BEFORE ANY r#2 PROMPT WAS DISPATCHED** — SCN-WS0 landed items 5 and 6 plus the G-E4 rider
 (`e8c7072d`, `79034547`, `47ba0610`) and SCN-WS1a minted the `carbon_price_path` +
 `policy_bundle` rows with a cell in every shard (`717de664`) and scored its CAISO T0
@@ -72,6 +88,74 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#4 — 2026-09-06, main HEAD `21deb4a75fd2d2c1d1b2c8ed4070968fe818313c`
+
+*(PR #4894.)* Delta from the r#3 pin `ea273339`: **14 commits** — the desk's own r#3 (#4888,
+merged), SCN-WS2a's two branch commits (#4892), wallclock A-2/A-6, and nyiso-196.
+
+**THE ANSWER TO "WHAT ELSE IS UNBLOCKED": nothing, by code.** Checked against every queued
+lane's actual precondition, not its label:
+
+| lane | precondition | state at `21deb4a7` |
+|---|---|---|
+| **SCN-WS4c** | WS-0 ✓, WS-4a ✓, **WS-4b** | still blocked — WS-4b is LOST, relaunched here |
+| **SCN-WS3b** | D-3 ruled + WS-3a boxes + WS-2a ✓ + WS-4a ✓ | blocked on **the card alone**; both code preconditions met since r#3 |
+| **SCN-WS5A** ×6 | the whole wave-2 set | blocked — WS-1b/WS-2b in flight, WS-2a owed, WS-4b/c not started |
+| **Stage B** | card D-5 **and** an open §2.1b gate | not issuable; D-5 is held until Stage A's measured cost table exists, which is the correct order |
+
+**THE ONE REAL UNBLOCK IS GOVERNANCE, AND IT IS NOT THIS DESK'S TO TAKE.** On 2026-09-06 the
+owner-track lane nyiso-196 promoted `2026-09-06-nyiso-196-extract-basis` and it reads
+**CALIBRATED — grade 7, fails 0, C3c the lone ledgered caveat**, on a rule 14 + rule 13 + rule 1
+basis with zero free parameters and zero new DOF entries. NYISO's `withdrawn` block states its
+own re-entry condition verbatim: *"re-entry is a NEW explicit owner declaration on a keeper
+scoring CALIBRATED."* **The condition is satisfied. The declaration has not been made** —
+`calibration-complete.json` `complete` still reads {ERCOT, NEISO, PJM} at this pin. Consequences,
+stated because they are this desk's to track even though the act is not:
+- FF §2.1b leg (a) for NYISO stays **FAIL** while the marker is absent, so no NYISO forecast
+  campaign is authorizable, and **Q45's premise stays lapsed** — the capx director recorded at
+  r#40 that no re-authorization card is served until a CALIBRATED NYISO keeper returns. **It has
+  returned.**
+- If and when the owner re-declares, NYISO becomes the **second** ISO whose Stage-B campaign is
+  askable, behind NEISO — which changes what card D-5 should ask for when Stage A lands.
+- **This desk declares nothing.** Markers, keepers and defaults are the owner's, and the backcast
+  records lane is the capx director's queue (charter §0.4: disclose per case, never fix).
+  **Routed to the capx director**; surfaced to the owner in this refresh's report. Recorded here
+  so that if the marker is *deliberately* being withheld, the reason is asked for rather than
+  assumed.
+
+**LOST — two lanes, and the charter's own threshold decides it, not judgement.** SCN-WS4b and
+SCN-MX-R were issued at r#2 and re-emitted/narrowed at r#3. At r#4 `git ls-remote origin
+'refs/heads/claude/scn-*'` returns **nothing** for either, and no PR exists. That is **two
+refreshes after issuance**, which is the charter's LOST threshold. Applying the relaunch protocol
+exactly as written: **re-issued verbatim under fresh `-r2` stems, recorded "never launched"
+against interest, and NOT re-graded as running.** The r#2/r#3 stems are burned. This is the
+second time the desk has had to note the same asymmetry: the five r#1 lanes all launched within
+hours, so a lane that shows no branch across two refreshes was almost certainly never dispatched
+rather than silently failing.
+
+**RE-GRADED — SCN-WS2a, the one lane still mid-charter.** Its two branch commits merged at #4892:
+`73e5351f` (the `05-policy.md` + G-S6 docstring legs, item 6's doc half) and `6e6449ab` (the
+NEISO T0 PRECOMMIT, `PRECOMMIT-scn-ws2a-2026-09-05.md`, pushed before the solve as rule 29
+requires). **Still owed: the probe result, the postures tests, the FINDING, and the CES matrix
+row** — `federal_ces_target_by_year` remains absent from `mechanism-matrix.js` at this pin
+(verified: 0 occurrences), so the rule 28 duty-(c) gap SCN-MX-R was chartered to diagnose is now
+confirmed across **three** pins. The lane holds merged PRs, so it is **owed, not lost**; the
+relaunch protocol does not apply to it and SCN-WS2a-R stays withdrawn.
+
+**Launched by the owner, not yet visible:** SCN-WS1b and SCN-WS2b. No branches at this pin, which
+is normal inside one refresh — both were dispatched after r#3. They are graded RUNNING on the
+owner's statement, and will be graded by content at r#5.
+
+**Capx deconfliction.** No new capx lane since r#3; D65's branch is still live (`43b3a737`) and
+touches no SCN region. The matrix tree has three pending SCN writers (WS-1b, WS-2b, live WS-2a)
+plus capx — the last-commit one-line protocol stands unchanged.
+
+**Issued:** SCN-WS4b-r2, SCN-MX-R-r2 (both verbatim relaunches).
+**Cards:** none ruled; all open. **One new routing item, not a card:** the NYISO marker
+re-declaration, which belongs to the owner and the capx director.
+
+---
 
 ### r#3 — 2026-09-06, main HEAD `ea2733395077f15b365273032c8821f86b18b1fb`
 
@@ -283,16 +367,18 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 |---|---|---|---|---|---|
 | **SCN-WS0** | Emissions grain (by fuel / by zone / import line / unserved) + multi-metric matrix frame + `report_scenario_deltas.py` + `collate_scenario_campaign.py` + the scenario YAML set + `--set` override + `scenario` registration kind; one paired NEISO T0 to exercise it | **LANDED r#3 — all six items** | `claude/scn-ws0-k7m2-8743yi` (merged, PRs #4869/#4877) | **Opus** | Completed itself between refreshes, **including the G-E4 cap-row rider the desk was about to charter**. T0 STOP gate PASS, 0 FAIL/0 WARN × 14 invariants per arm, both arms registered (`scn-ws0-smoke`). `FINDING-scn-ws0-2026-09-05.md`. **Its result is the leakage number** (§0 r#3). Unblocks WS-1b, WS-2b, WS-4b/c, WS-5. **SCN-WS0-R WITHDRAWN undispatched.** |
 | **SCN-WS1a** | Federal carbon-price semantics (G-C1, gated on D-1) + the two seam defects (G-C2, G-C3) + the pre-declared `CAP-STATE-TIGHT` case | **LANDED r#3 (complete under its card gate, matrix duty discharged)** | `claude/scn-ws1a-carbon-d1-eupbi5` (merged, PRs #4856/#4860/#4867/#4887) | **Fable** | Items 2–4 + Phase 0 + the D-1 evidence memo; item 1 correctly withheld on the open card. **`717de664` minted the `carbon_price_path` + `policy_bundle` rows and a cell in all six shards** — the r#2 finding was true at its pin and the lane repaired it itself. `a147362b` scored the CAISO T0: every structural gate row passes. Item 1 remains the only thing D-1 blocks. |
-| **SCN-WS2a** | The endogenous national CES **target** row (G-S1, G-S3) + the two new fields + the three state/federal postures | **CHECKPOINT r#3 — LIVE, working its owed items** | `claude/scn-ws2a-federal-ces-qm512t` (merged PR #4870; **2 commits unmerged**) | **Fable** | Items 1–2 on main. On the branch: `73e5351f` the docs legs, `6e6449ab` the **T0 PRECOMMIT pushed before the solve** (rule 29 honoured). Still owed: the probe result, the postures tests, the matrix row, the FINDING. **SCN-WS2a-R WITHDRAWN undispatched — it would be a twin.** |
+| **SCN-WS2a** | The endogenous national CES **target** row (G-S1, G-S3) + the two new fields + the three state/federal postures | **CHECKPOINT r#4 — OWED, not lost** | `claude/scn-ws2a-federal-ces-qm512t` (all merged, PRs #4870/#4892) | **Fable** | Items 1–2, the docs legs (`73e5351f`) and the T0 PRECOMMIT (`6e6449ab`, pushed before the solve) all on main. **Still owed: the probe result, the postures tests, the FINDING, and the CES matrix row** (`federal_ces_target_by_year` absent from the matrix at three consecutive pins). Holds merged PRs → the relaunch protocol does NOT apply; SCN-WS2a-R stays withdrawn. |
 | **SCN-WS3a** | Voluntary clean-demand **design memo** (no code, no solve) | **LANDED r#2** | `claude/scn-ws3a-voluntary-demand-{s8iukw, 9f1you}` (both merged, PRs #4857/#4859) | **Fable** | Memo + 5 owner boxes (D-3, new **D-3b**, new **D-3c**, the D-6 brief, the D-2 voluntary sub-levels) + a cross-check addendum. **Launched twice**; no divergence between the instances. |
 | **SCN-WS4a** | DC zone shares for ERCOT + MISO; NEISO `{}` re-check; the D-4 constant-vs-published gap list | **LANDED r#2** | `claude/scn-ws4a-datacenter-shares-yf7wvi` (merged, PR #4863) | **Opus** | ERCOT already populated (plan §2.4 corrected); MISO populated + validated on published totals; NEISO `{}` re-confirmed; D-4 gap list presentable unedited. |
-| **SCN-WS1b** | Six-ISO carbon paired T0 probe + NEISO/ERCOT T1-F ladder + the per-ISO leakage line | **ISSUED r#3** | `claude/scn-ws1b-carbon-sixiso-h6rt` | **Opus** | UNBLOCKED by WS-0 item 5. Runs the **reduced form** (`--set carbon_price_delta=25`) while D-1 is open. Carries WS-0's leakage duty: the import line beside CO2, per ISO. |
-| **SCN-WS2b** | Premium-ladder re-prove at HEAD posture + `scripts/ces_national_clearing.py` | **ISSUED r#3** | `claude/scn-ws2b-ces-ladder-clearing-p9wf` | **Opus** | UNBLOCKED by WS-0 item 5. Independent of live SCN-WS2a — it consumes committed premium legs, not the target row. |
+| **SCN-WS1b** | Six-ISO carbon paired T0 probe + NEISO/ERCOT T1-F ladder + the per-ISO leakage line | **RUNNING r#4** (owner-confirmed launch; no branch yet, normal inside one refresh — graded by content at r#5) | `claude/scn-ws1b-carbon-sixiso-h6rt` | **Opus** | UNBLOCKED by WS-0 item 5. Runs the **reduced form** (`--set carbon_price_delta=25`) while D-1 is open. Carries WS-0's leakage duty: the import line beside CO2, per ISO. |
+| **SCN-WS2b** | Premium-ladder re-prove at HEAD posture + `scripts/ces_national_clearing.py` | **RUNNING r#4** (owner-confirmed launch; no branch yet — graded by content at r#5) | `claude/scn-ws2b-ces-ladder-clearing-p9wf` | **Opus** | UNBLOCKED by WS-0 item 5. Independent of live SCN-WS2a — it consumes committed premium legs, not the target row. |
 | **SCN-WS0-R** | *(WS-0's owed half)* | **WITHDRAWN r#3, NEVER DISPATCHED** | — | — | Its entire scope landed on main between r#2 and r#3, riders included. Recorded so no successor re-issues it. |
 | **SCN-WS2a-R** | *(WS-2a's owed half)* | **WITHDRAWN r#3, NEVER DISPATCHED** | — | — | SCN-WS2a is live with a pushed PRECOMMIT; dispatching -R would build the twin the D60-R2 precedent exists to prevent. If WS-2a is silent for two refreshes the relaunch protocol applies then. |
-| **SCN-MX-R** | **NARROWED r#3:** diagnose why `check_mechanism_matrix.py` exits 0 on a PR adding two `ScenarioConfig` fields with no row; stamp the CES row **only if** live SCN-WS2a lands without it | **ISSUED r#3 (narrowed)** | `claude/scn-mxr-matrix-duty-repair-j5tv` | **Fable** | Carbon half done by WS-1a itself. The gate defect is confirmed across **two pins**, so it is not a one-off. `scripts/` stays un-edited: diagnose and route. |
-| **SCN-WS4b** | Pre-declared adequacy reading per ISO under LOAD-HI + the LOAD-HI / LOAD-HI-ORGANIC case comments + the "backstop-built" column | **RE-EMITTED r#3 (issued r#2, no branch — NOT graded lost)** | `claude/scn-ws4b-loadhi-adequacy-b2np` | **Fable** | One refresh absent; the LOST threshold is two. Dispatch status asked, charter re-emitted verbatim. Campaign-YAML ownership stands with it (§4). |
-| **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b alone** now. |
+| **SCN-MX-R** | *(the r#2/r#3 stem)* | **LOST r#4 — NEVER LAUNCHED** | `claude/scn-mxr-matrix-duty-repair-j5tv` (burned) | — | No branch, no PR, two refreshes after issuance. Relaunch protocol applied; not re-graded as running. |
+| **SCN-MX-R-r2** | Diagnose why `check_mechanism_matrix.py` exits 0 on a PR adding two `ScenarioConfig` fields with no row (now confirmed across **three** pins); the one verified-outstanding cache-epoch entry; the CES row **only if** SCN-WS2a lands without it | **RELAUNCHED r#4 (verbatim)** | `claude/scn-mxr2-matrix-duty-repair-t7bq` | **Fable** | `scripts/` stays un-edited: diagnose and route. |
+| **SCN-WS4b** | *(the r#2/r#3 stem)* | **LOST r#4 — NEVER LAUNCHED** | `claude/scn-ws4b-loadhi-adequacy-b2np` (burned) | — | No branch, no PR, two refreshes after issuance. Relaunch protocol applied; not re-graded as running. |
+| **SCN-WS4b-r2** | Pre-declared adequacy reading per ISO under LOAD-HI + the LOAD-HI / LOAD-HI-ORGANIC case comments + the "backstop-built" column + the per-ISO import-line expectation | **RELAUNCHED r#4 (verbatim)** | `claude/scn-ws4b2-loadhi-adequacy-x3mc` | **Fable** | Campaign-YAML ownership stands with it (§4). **The last thing blocking SCN-WS4c.** |
+| **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED (wave 3)** | — | Opus | Precondition: WS-3b on main. |
 | **SCN-WS5A-\<ISO\>** ×6 + **-SYNTH** | Stage A campaign, T1-F 2026–2030, all six ISOs | **QUEUED (wave 3)** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
@@ -436,6 +522,16 @@ Stems are recorded so a relaunch (`…-r2`) can never collide with the original.
 | r#3 | SCN-WS2b | **Opus** `claude-opus-5` | `claude/scn-ws2b-ces-ladder-clearing-p9wf` | `ercot` then `neiso` | plan §7 "WS-2b", verbatim |
 | r#3 | SCN-MX-R | **Fable** `claude-fable-5-1` | `claude/scn-mxr-matrix-duty-repair-j5tv` | `code` | r#2 repair charter, **narrowed at r#3** to the CI-gate diagnosis + a conditional CES stamp |
 | r#3 | SCN-WS4b | **Fable** `claude-fable-5-1` | `claude/scn-ws4b-loadhi-adequacy-b2np` | `all` | r#2 charter **re-emitted verbatim** |
+
+**r#4 issuance (relaunches).**
+
+| refresh | lane | model (id) | branch stem issued | data profile | body used |
+|---|---|---|---|---|---|
+| r#4 | SCN-WS4b-r2 | **Fable** `claude-fable-5-1` | `claude/scn-ws4b2-loadhi-adequacy-x3mc` | `all` | the r#3 charter **verbatim** |
+| r#4 | SCN-MX-R-r2 | **Fable** `claude-fable-5-1` | `claude/scn-mxr2-matrix-duty-repair-t7bq` | `code` | the r#3 narrowed charter **verbatim** |
+
+**Burned stems, never to be reused:** `claude/scn-ws4b-loadhi-adequacy-b2np`,
+`claude/scn-mxr-matrix-duty-repair-j5tv` (LOST at r#4), plus the r#3 withdrawals below.
 
 **Withdrawn at r#3, never dispatched:** SCN-WS0-R (`claude/scn-ws0r-registration-t0-m4qk`) and
 SCN-WS2a-R (`claude/scn-ws2ar-ces-postures-probe-w8dr`). Their stems are burned and must not be

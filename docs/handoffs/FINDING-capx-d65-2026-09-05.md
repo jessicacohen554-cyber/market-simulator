@@ -19,10 +19,10 @@ was solved. §9 states the exact re-cut D65-B would need if Q47 rules (A).
 |---|---|---|
 | 1 | Does the seam build clean? | **Yes.** One field, one validator, one `ccs.py` change, one CLI pair, six pre-solve tests. Zero DOF — no new constant, no new reference host, no ISO's fitted number. Both pinned keys unmoved with the field absent AND explicitly `False`. |
 | 2 | Phase 0 (zero LP) | **REPRODUCED, to the MW and to 5e-12 on the per-unit clearing ratio**, on all six ISOs × 2028–2030 through the CODE path (§2). |
-| 3 | G-DRIFT | **58 files, +4,867/−574 since the control's `git_sha`; EVERY hunk INERT.** Config-level drift measured at **0 field diffs across all 784 fields**. G-CTRL form 4 valid — **no control solve spent** (§3). |
-| 4 | A1 (NEISO t1f, seam 4 alone) | *(§4)* |
-| 5 | The STOPs | *(§5)* |
-| 6 | ARM / DO-NOT-ARM | *(§8)* |
+| 3 | G-DRIFT | **WRONG, and the arm caught it (§3b).** The audit read all 58 files' hunks as INERT; A1's ledger then differed from the committed control in **2027**, a year the seam cannot reach. A HEAD control was solved under rule 29(b)'s LIVE clause and is **byte-identical to A1 before 2028**, so the seam is inert as designed and the difference is HEAD drift. Bisected to code: the pre-drift source reproduces the committed 2027 with **zero** differing ledger keys (§3c). |
+| 4 | A1 (NEISO t1f, seam 4 alone) | **The seam RE-ORDERS; it does not re-select.** 2028: every host lost is `k` 1.55–1.71, every host gained is `k` 0.95–1.06 — no exceptions — with MW-weighted `er` **0.5752 → 0.3912** and `hr` 7.305 → 7.029. But the 3 GW/yr cap binds in every year on both arms, so the **cumulative** 2028–30 set is 34 rows either way and differs by **one swap** (`er` 0.4385 → 0.4353, −0.7 %). Quoting 2028 alone overstates the mechanism by an order of magnitude (§4.2). |
+| 5 | The STOPs | **None fired**, each read against evidence rather than asserted — including a 2,590-row census check that every `k = 1` row is invariant and every `k > 1` row strictly harder (§5). |
+| 6 | ARM / DO-NOT-ARM | **ARM, but ONLY COUPLED WITH ACT B — do not arm Act A alone**: seam 4 multiplies an uncited 2.7× VOM level by `k`, compounding the error on exactly the hosts it re-prices. Card C-17 / Q49 drafted (§8). |
 
 ---
 
@@ -180,8 +180,10 @@ timing/diagnostics accounting.
 inside it."* No existing metric moves; the arm's summary simply carries two keys the control's does
 not, and those two are not differenced.
 
-**Conclusion: all hunks INERT ⇒ G-CTRL form 4 is VALID.** The audit cost seconds; a control solve
-would have cost ~8 minutes and told us only that two numbers differ, not which line did it.
+**Conclusion as written at the time: all hunks INERT ⇒ G-CTRL form 4 is VALID, no control solve
+spent.** **THIS CONCLUSION IS WRONG AND IS SUPERSEDED BY §3b**, which the arm itself surfaced. It is
+left standing above, unedited, because a pre-registration that is quietly corrected after the fact
+is worth nothing — the audit as actually recorded is what §3b grades.
 
 ---
 
@@ -363,3 +365,174 @@ in-function hunks — D57's `supply_clearing_armed` short-circuit, D59's `locali
 | 3 | any NEISO/NYISO year converting more than the cap, or ERCOT/MISO gaining a row | **NOT FIRED.** No A1 year exceeds 3,000 MW (§4). NYISO was not solved (the cap did not move — see §4). ERCOT and MISO are not arms in this lane, and Phase 0 reads **0 rows for both under seam 4**, so neither can gain one. |
 | 4 | key drift — a realized key ≠ its pre-declared value, or a collision with a committed key | **NOT FIRED.** A1's realized bundle key is **`8ebed20ae90ec0e7`**, exactly the value pre-declared in the PRECOMMIT before the solve, and a repo-wide grep found no committed artifact carrying it. |
 | 5 | byte-inertness failing on the committed `neiso-t1f` recipe with the field absent / `False` | **NOT FIRED — and now measured on real solves rather than argued.** The explicit-`False` CLI path resolves to the control's own key `18515067bf4d2fbe`; the ScenarioConfig default and bare-backcast pins are unmoved; and the HEAD control's 2026 result parquet is **byte-identical to A1's across all 12 columns**, with its 2027 ledger identical to A1's on **every key**. |
+
+---
+
+## 3c. The drift bisected — it is CODE, and it reproduces
+
+The pre-drift source tree (`git archive 9e48ff6 src scripts configs`, run against the same
+`data/` through `MARKET_SIM_DATA_ROOT`) was solved for NEISO 2026–2027 on the same recipe:
+
+| 2027 | `retirements` | `reserve_margin` | `fleet_by_fuel_after` gas_cc |
+|---|---|---|---|
+| **old source `9e48ff6`** | **33 rows / 2,369.81 MW** | 0.045867 | 10,713.803 |
+| **committed control** | **33 rows / 2,369.81 MW** | 0.045867 | 10,713.803 |
+| HEAD control | 40 rows / 2,244.89 MW | 0.050821 | 10,838.721 |
+
+**The old source reproduces the committed control's 2027 with ZERO differing ledger keys**, and
+its 2026 likewise (0 diff keys, against HEAD's 2 additive-key diffs). So the probe is faithful, the
+committed bundle is reproducible at its own sha, and the divergence is **entirely inside
+`src/` + `scripts/` + `configs/`** — the only trees the archive replaced. It is code drift, it is
+deterministic, and it reproduces on demand.
+
+**Magnitude, for whoever owns it:** NEISO's 2027 economic-retirement set changes by **7 rows and
+−124.92 MW of gas_cc**, with an almost disjoint membership in the gas-CC economic channel — the
+plants that retire at HEAD (p3236, p51030, p54324, p10726, p55068, p10307) are largely the
+high-`er` hosts the pre-drift run instead kept alive to convert in 2028, and vice versa. That is a
+material change to a forecast leg, and it is silent: the committed `neiso-t1f` ledger no longer
+describes what HEAD produces from its own recipe.
+
+**Named open item, routed not inferred.** The suspect hunk is capx D55's `_floor_retention_merit`
+(the only ungated existing-code change in `retirements.py`, and an intentional ordering change),
+but NEISO's 2027 `floor_retained` is `[]` on both sides, so it is a **candidate, not a
+demonstrated cause**. §3d records the surgical test this lane ran on it. Whatever the hunk turns
+out to be, the consequence is the director's, not this lane's: **every committed forecast bundle
+solved before it is now stale against HEAD**, which is a blast-radius question of exactly the kind
+D60-R2 is already handling — this finding hands it a reproducible instrument and a measured
+magnitude rather than a suspicion.
+
+---
+
+## 4. Arm A1 — NEISO t1f, seam 4 alone, against the HEAD control
+
+**One field, one difference.** `--ccs-retrofit-fixed-cost-co2-scaling` vs
+`--no-ccs-retrofit-fixed-cost-co2-scaling`, same HEAD, same recipe, same machine. Arm
+`8ebed20ae90ec0e7` (10.4 min); control `18515067bf4d2fbe` (10.9 min, 3.38 GB). **Both: 5/5 years
+solved, 14 invariants scored, 0 FAIL, 0 WARN.**
+
+### 4.1 What converts
+
+| year | HEAD control (seam 4 OFF) | arm A1 (seam 4 ON) | % of the 3 GW/yr cap |
+|---|---|---|---|
+| 2028 | 11 rows / 2,974.9 MW · MW-wtd `er` 0.5752 · `hr` 7.305 | **12 / 2,950.4 MW · `er` 0.3912 · `hr` 7.029** | 99.2 % → 98.3 % |
+| 2029 | 14 / 2,922.4 · `er` 0.3725 · `hr` 7.170 | **9 / 2,962.7 · `er` 0.4477 · `hr` 7.333** | 97.4 % → 98.8 % |
+| 2030 | 9 / 2,905.3 · `er` 0.3650 · `hr` 7.551 | **13 / 2,913.5 · `er` 0.4675 · `hr` 7.670** | 96.8 % → 97.1 % |
+| **cumulative 2028–30** | **34 / 8,802.6 MW · `er` 0.4385 · `hr` 7.341** | **34 / 8,826.6 MW · `er` 0.4353 · `hr` 7.342** | — |
+
+### 4.2 The result, stated plainly — the seam RE-ORDERS, it does not re-select
+
+**In 2028 the effect is exactly the seam's signature and it is total.** Against the HEAD control the
+2028 set loses **9 hosts, every one of them `k` 1.55–1.71** (`er` 0.557–0.613), and gains **10, every
+one of them `k` 0.95–1.06** (`er` 0.340–0.380). Not one exception in either direction. MW-weighted
+`er` falls **0.5752 → 0.3912** and MW-weighted `hr` **7.305 → 7.029**: the docstring's
+"efficient hosts win" ordering, which D49 §1.4 found inverted, is restored outright.
+
+**Over the whole window it very nearly cancels.** The cap binds in every year on both arms
+(96.8–99.2 % of 3,000 MW), so the annual budget — not the screen — sets how much converts. The
+cumulative converted set is **34 rows on both sides**, differing by exactly **one swap**: a 130.0 MW
+`k` 1.61 host out, a 154.0 MW `k` 1.04 host in. Cumulative MW-weighted `er` moves **0.4385 → 0.4353
+(−0.7 %)** and cumulative `hr` is unchanged to three decimals (7.341 vs 7.342).
+
+That is the honest headline, and it is not what a per-year reading suggests: **under a binding
+annual cap, seam 4's NEISO effect is almost entirely a re-ordering of which hosts convert first,
+not a change in which hosts convert at all.** The per-year composition swings hard (2028 `er`
+0.575 → 0.391, then 2029 and 2030 swing back as each arm draws from the residual its own 2028 left
+behind) precisely *because* the totals are pinned by the cap. Anyone quoting the 2028 number alone
+would overstate the mechanism by an order of magnitude.
+
+### 4.3 The pre-registered expectations, graded
+
+| # | expectation (PRECOMMIT §5 / D64 §4.4) | reading |
+|---|---|---|
+| 1 | NEISO conversions cap-bound **2,940–3,000 MW every year** | **HIT in mechanism, MISSED on the band in 2030.** The cap binds in all three years (98.3 / 98.8 / 97.1 % of 3,000), but 2030 lands at **2,913.5 MW, 26.5 MW below the band's floor**. Reported as a miss, not rounded into a pass — though the band was calibrated on the *committed* control's numbers and the **HEAD control is itself outside it** in 2029 (2,922.4) and 2030 (2,905.3), so the band describes the pre-drift baseline rather than the seam. |
+| 2 | the MW-weighted `er` of the **2028** set falls below D50's 0.550 | **HIT, decisively: 0.3912** (and 0.5752 → 0.3912 against the HEAD control's own 2028). |
+| 3 | every year's set ranks by `hr` within the in-merit hosts | **PARTIAL.** Clean in 2028 (`hr` 7.305 → 7.029, and the lost/gained split is perfectly separated on `k`). Not in 2029–30, where each arm draws from the residual pool its own 2028 created — an artifact of the binding cap, not of the ranking. Cumulative `hr` is flat (7.341 vs 7.342). |
+| 4 | ERCOT / MISO, if solved: 0 rows, byte-identical | **NOT SOLVED — not needed.** Phase 0's code-path census reads **0 rows for both under seam 4** (and for ERCOT under the shipped construction too), so there is nothing for a solve to find. |
+
+### 4.4 Conditional arms — neither triggered, and why
+
+- **NYISO (the second RGGI witness)** was to be solved **only if A1 moved the cap.** It did not:
+  the cap binds in every year on both arms and the cumulative totals differ by 24 MW (0.3 %).
+  **Not solved.**
+- **GOLDEN-3** was to be solved **only if the cap unbound or the composition moved by more than the
+  cap-packing unit.** The cap did not unbind, and the cumulative composition moved by a single
+  swap. The per-year composition does move by more than one packing unit — but that is the
+  re-ordering §4.2 describes, inside a window whose totals are cap-pinned, and the GOLDEN-3
+  horizon (RGGI to $67/t by 2040, §45Q ending 2032) is per-tonne-dominant on both sides where
+  D64 §2.3 already expected no change in kind. **Not solved**, and the judgement is recorded here
+  rather than left implicit.
+
+---
+
+## 8. ARM / DO-NOT-ARM — the recommendation, and the owner card
+
+### 8.1 The recommendation: **ARM, but ONLY COUPLED WITH ACT B. Do NOT arm Act A alone.**
+
+The seam itself is sound and this lane recommends it on the merits: it is a construction repair
+with a published basis (ATB 2024's own methodology sentence; NETL Rev 4a's 95.5 % / 100 %
+decomposition), it carries **zero DOF**, it introduces no constant and no reference host, it is a
+posture rather than a transfer (rule 25 intact), and it is byte-inert off — measured, not argued.
+Rule 14 keeps an accurate construction whichever way it moves the answer, and this one moves it the
+*unhelpful* way for high-`er` hosts, which is the signature of a repair rather than a fit.
+
+**But arming it ALONE would build a faithful shape on an unfaithful level, and the compounding runs
+the wrong way.** `ccs_retrofit_vom_adder` = 8.0 $/MWh is `needs-citation` and **2.7–3.6× every
+published basis** (ATB 2024: 2.95 $/MWh 2026$; NETL Rev 4a: 2.23). Seam 4 multiplies that level by
+`k`, so a `k` = 1.8 host is charged 2.7× too much **and then 1.8× again** — the error compounds
+precisely on the hosts the seam exists to re-price. The measured consequence is not marginal: on
+D64 §2.4's census, seam 4 at the shipped 8.0 closes the carbon-0 screen **completely** (ERCOT / PJM
+/ MISO all to 0 rows), while seam 4 at the published level leaves **0.4–5.7 GW per ISO-year
+clearing by 0.1–4 %**. Arming Act A alone would therefore commit the model to the claim that *no
+merchant NGCC retrofit ever clears on §45Q at carbon 0* — a stronger claim than the evidence
+supports, resting on an uncited number, and pointing the opposite way from the market D64 §2.4
+describes (every announced project close enough to need something else).
+
+**The NEISO evidence supports the coupling too, from the other side.** Under a binding cap the
+shape change is nearly free: cumulative composition moves 0.7 % and the converted set differs by a
+single swap (§4.2). So arming Act A alone buys very little where the cap binds, while spending the
+whole carbon-0 closure where it does not. The two acts are not independent, exactly as D64 §2.4
+said; the level decides *how much* the shape closes.
+
+### 8.2 Owner card — drafted for the director
+
+> **Card C-17 / Q49 — capx D65 Act A: arm the CCS retrofit fixed-cost shape gate?**
+>
+> **What it is.** `ccs_retrofit_fixed_cost_co2_scaling` (built, GATED default off, requires the D50
+> gate): scale `ΔFOM` and the capture VOM adder by the same `k = captured / captured_ref` seam 1
+> already applies to the island's capex, because both legs are TPC fractions in their own sources
+> (ATB 2024 fossil methodology; NETL Rev 4a B31A→B31B.90 at 95.5 % / 100 %). Zero DOF, no constant
+> changed, a posture not a transfer, byte-inert off and byte-inert on every horizon ending before
+> 2028.
+>
+> **What it measures (NEISO t1f A/B vs a same-HEAD one-field control, both 0 FAIL / 0 WARN on 14
+> invariants).** 2028: every host lost is `k` 1.55–1.71, every host gained is `k` 0.95–1.06, with
+> MW-weighted `er` 0.575 → 0.391 and `hr` 7.305 → 7.029 — the inverted ordering D49 §1.4 named is
+> restored outright. Over 2028–2030 the 3 GW/yr cap binds in every year on both arms and the
+> cumulative set is 34 rows either way, differing by one swap (cumulative `er` 0.4385 → 0.4353).
+> At zero LP the seam closes PJM's 2029 residual (5 rows / 1.68 GW → 0) and MISO's (up to
+> 4 / 0.53 GW → 0), and leaves ERCOT at 0 throughout.
+>
+> **Options.**
+> **(A) ARM COUPLED — recommended.** Flip Act A's default together with Act B's re-identification
+> (card C-15 / Q47 option A), in one PR and one re-key event, after D60-R2's finding lands. The
+> shape and the level are coupled: seam 4 on an uncited 2.7× level compounds the error on exactly
+> the hosts it re-prices, and it is that pairing — not either half — that D64 §2.4 measured.
+> **(B) ARM ALONE now.** Buys the ordering repair, but commits the carbon-0 closure to the uncited
+> 8.0 and would need re-solving again when Q47 lands. **Not recommended.**
+> **(C) HOLD both.** The field stays built and off; D64 §2.4's disclosure — that D50's carbon-0
+> closure rests on an uncited number — stays on the record and on the `ccs_retrofit_screen` matrix
+> row, where this lane has now put it. Defensible, and strictly better than (B).
+>
+> **Precondition on any arming path:** the widened ATB extract and its source-consistency test
+> (D64 STOP 6), because Act B is the half that carries a value.
+>
+> **Blast radius if armed:** every forecast bare key re-keys (the (b′-1) declared-flip pattern, the
+> frozen drop value staying `"False"`); backcast and every horizon ending before 2028 are
+> byte-identical by construction. Solve cost, per D64 §3: NEISO 8 min, NYISO 12, GOLDEN-3 33, with
+> PJM and CAISO owed anyway under Q42.
+
+### 8.3 What this lane did NOT do, stated so it is not assumed
+
+Nothing is armed. No default moved. No constant changed. No keeper, sidecar, determination or
+dashboard row moved. NYISO and GOLDEN-3 were not solved (their triggers did not fire, §4.4), PJM
+was never this lane's arm, and Act B was not touched in any form.
