@@ -143,6 +143,7 @@ if str(_ROOT) not in sys.path:
 
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
+    resolve_capacity_adequacy_requirement_published,
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_supply_clearing,
 )
@@ -511,6 +512,17 @@ META_RECORD_SPEC = RecordSpec(
             "armed row; the raw mapping is recorded below",
         ),
         "capacity_going_forward_bar_published_by_iso": FromConfig(),
+        # capx D67: the PUBLISHED adequacy-requirement gate, recorded through
+        # its ONE predicate so the record reads the RESOLVED gate (FFR-3R),
+        # with the raw mapping recorded beside it.
+        "capacity_adequacy_requirement_published": Derived(
+            lambda cfg, ctx: bool(
+                resolve_capacity_adequacy_requirement_published(cfg, ctx["iso"])
+            ),
+            "resolve_capacity_adequacy_requirement_published(cfg, iso): the "
+            "armed row; the raw mapping is recorded below",
+        ),
+        "capacity_adequacy_requirement_published_by_iso": FromConfig(),
         # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
@@ -669,6 +681,7 @@ def build_config(
     pjm_demand_response_supply: "bool | None" = None,
     capacity_market_supply_clearing: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
+    capacity_adequacy_requirement_published: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
     locality_capacity_curves: "bool | None" = None,
@@ -913,6 +926,14 @@ def build_config(
                 "capacity_going_forward_bar_published_by_iso": (
                     {iso: True} if capacity_going_forward_bar_published else None
                 ),
+                # capx D67: the published adequacy-requirement gate —
+                # default-off for every ISO; None inherits the shipped
+                # default, True arms the D67 A/B posture for the INVOKED ISO
+                # (distinct cache key). Same shape as the two siblings above;
+                # an explicit --no-... is passed outside this None-drop dict.
+                "capacity_adequacy_requirement_published_by_iso": (
+                    {iso: True} if capacity_adequacy_requirement_published else None
+                ),
                 # capx D52: NYISO adequacy-requirement devintage gates —
                 # default-off; None inherits the shipped default, True arms
                 # the D52 A/B measurement posture (distinct cache key).
@@ -1090,6 +1111,16 @@ def build_config(
         **(
             {"capacity_going_forward_bar_published_by_iso": None}
             if capacity_going_forward_bar_published is False
+            else {}
+        ),
+        # capx D67: the same explicit-OFF passthrough. No ISOConfig arms this
+        # gate today, so it is belt-and-braces — but it must exist BEFORE any
+        # arming card, and passing None explicitly keeps the off arm on the
+        # bare recipe key (the field is registered in
+        # _CACHE_KEY_OPTIONAL_FIELDS at None, so an explicit None still drops).
+        **(
+            {"capacity_adequacy_requirement_published_by_iso": None}
+            if capacity_adequacy_requirement_published is False
             else {}
         ),
     )
@@ -1695,6 +1726,32 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--capacity-adequacy-requirement-published",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D67 (2026-09-06) arm: the adequacy REQUIREMENT the "
+            "retirement reliability floor, the reserve-margin build backstop "
+            "and the CR-1 position all test becomes the ISO's OWN PUBLISHED "
+            "Reliability Requirement in MW for the delivery year the screen "
+            "prices (the whole-RTO row, digitized from "
+            "data/raw/capacity-market/demand-curve/), in place of the "
+            "model-peak x FPR RECONSTRUCTION. D66 measured that operand as "
+            "78 %% (2024/25) and 67 %% (2025/26) of the D57 clearing's "
+            "remaining position error. Armed, the requirement is independent "
+            "of the model's peak in every in-table delivery year; pre-table "
+            "years, the in-table gap and everything past the published "
+            "forward edge fall through to the FPR path unchanged. Generic in "
+            "form, PJM-scoped by DATA (rule 25): an ISO with no intaken table "
+            "keeps its existing construction in every year. OMIT to inherit "
+            "the shipped default (off, owner-armed only); "
+            "--capacity-adequacy-requirement-published arms it for the "
+            "invoked ISO (distinct cache key); "
+            "--no-capacity-adequacy-requirement-published is the explicit OFF "
+            "control."
+        ),
+    )
+    parser.add_argument(
         "--locality-capacity-curves",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2198,6 +2255,9 @@ def main(argv: list[str] | None = None) -> int:
         capacity_market_supply_clearing=args.capacity_market_supply_clearing,
         capacity_going_forward_bar_published=(
             args.capacity_going_forward_bar_published
+        ),
+        capacity_adequacy_requirement_published=(
+            args.capacity_adequacy_requirement_published
         ),
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,

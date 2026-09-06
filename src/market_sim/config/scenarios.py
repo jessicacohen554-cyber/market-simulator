@@ -1457,6 +1457,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. SHARED field — very end, per HOUSE-3. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "capacity_going_forward_bar_published_by_iso",
+    # capx D67: the PUBLISHED adequacy-requirement gate (the PJM requirement
+    # operand, FINDING-capx-d66-2026-09-06.md §8 card A; GATED default None ⇒
+    # every ISO off, byte-identical — the requirement keeps the peak × FPR
+    # reconstruction and no published table is read). Dropped from the hash at
+    # its None default so every pre-existing cache key of all six ISOs is
+    # byte-stable (the bare pjm-t1h recipe key aef81c84c4609c76 at the D67 base
+    # 4e3cabad unmoved — PRECOMMIT §8 STOP 2); an armed row keys distinctly.
+    # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline).
+    "capacity_adequacy_requirement_published_by_iso",
     # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
     # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
     # the hash there, so every pre-existing cache key of all six ISOs — every
@@ -1977,6 +1987,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D62: the published going-forward-bar gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_going_forward_bar_published_by_iso": "None",
+    # capx D67: the published adequacy-requirement gate, registered at its
+    # shipping None default (an armed {iso: True} row keys distinctly).
+    "capacity_adequacy_requirement_published_by_iso": "None",
     # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
     # shipping defaults (None = no row / no escape declared; an armed row keys
     # distinctly). Registered IN THE SAME COMMIT as the fields.
@@ -15783,6 +15796,66 @@ class ScenarioConfig:
     # own market caps sell offers with, and an ISO with no intaken table keeps
     # the ATB path for every unit (rule 25 [R-ISO-SCOPE]; nothing transfers —
     # another ISO's analogue is that ISO's lane, on its own filings).
+    capacity_adequacy_requirement_published_by_iso: dict[str, bool] | None = None
+    # GATED default-OFF (capx D67 2026-09-06, executing FINDING-capx-d66-
+    # 2026-09-06.md §8 card A). A {iso: bool} mapping, the FOURTH member of the
+    # per-ISO capacity-gate family, resolved through ONE predicate
+    # (config/capacity_market.py::
+    # resolve_capacity_adequacy_requirement_published) so no consumer can arm
+    # it a second way. WHAT IT CHANGES: the OPERAND of the adequacy
+    # requirement — HEAD reconstructs it as ``model screen peak × FPR``, so the
+    # bar the retirement reliability floor, the reserve-margin build backstop
+    # and the CR-1 position all test moves with the model's own peak forecast;
+    # armed, the requirement is the ISO's OWN published Reliability
+    # Requirement in MW for the delivery year the screen prices
+    # (constants.RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO, read at
+    # retirements.gross_adequacy_requirement_mw — the one seam all three
+    # consume, so the requirement stays ONE object, rule 19 [R-ONE-MECH]).
+    # WHY. D66 §3.1 decomposed the D57 clearing's remaining position error
+    # additively and measured the REQUIREMENT — not the supply census — as
+    # 78 % of it in 2024/25 and 67 % in 2025/26: the model's screen peak runs
+    # 2,481 MW (1.6 %) and 4,636 MW (3.0 %) above the peak PJM's own
+    # Reliability Requirement implies, and ``FPR × Δpeak`` reproduces
+    # ``R_model − R_published`` to the MW with ZERO residual. Armed, the
+    # requirement becomes independent of the model's peak in every in-table
+    # delivery year (∂R/∂peak = 0) — the auction's own denominator.
+    # ZERO free parameters (rules 21/24 [R-DOF]/[R-REGISTRY]): no scalar field
+    # exists for these MW and none may be added — the values are DATA with
+    # source doc and page, digitized from the committed demand-curve rows and
+    # reconciled against them byte-for-byte by test. The VINTAGE RULE is fixed
+    # in code, never chosen per run: the WHOLE-RTO ``reliability_requirement``
+    # row pairs with the model's whole-RTO census, and the
+    # ``_frr_adj + ee_addback`` pair — which reproduces PJM's published cleared
+    # position to four decimals (D66 §1.2) — is the RPM-ONLY comparator and is
+    # deliberately NOT the model's requirement, because RPM is net of a
+    # 31.0 / 31.3 / 32.1 / 10.9 GW FRR block the model does not carve out.
+    # HOLD-LAST, likewise fixed ex ante
+    # (PRECOMMIT-capx-d67-pjm-requirement-operand-2026-09-06.md §4): pre-table
+    # years, the in-table gap (PJM's 2026/27 and 2027/28 publish an FPR but no
+    # Reliability Requirement row) and every year past the 2028/29 forward edge
+    # fall through to the FPR path, which holds-last the published FPR — which
+    # for PJM IS the last published RR/peak ratio, since PJM constructs
+    # ``RR = peak × FPR`` by definition. So no absolute MW is ever held over a
+    # forward horizon (rule 13's forward test), no new constant is introduced,
+    # and every forecast year past 2028/29 is byte-identical to the off path.
+    # INDEPENDENT of the two gates above: the requirement is the adequacy bar
+    # with or without a cleared stack or a published bar, so it requires
+    # neither; armed alongside them, one requirement serves all three.
+    # WHY DEFAULT-OFF: arming is an owner decision on the D67 A/B (suffixed
+    # pjm-t1h-d67-pubreq vs a HEAD control; rules 22/24/28/29), graded against
+    # the PRECOMMIT's pre-declared signs. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at None (unarmed keys byte-stable; an armed
+    # row keys distinctly); coerced to None in a plain backcast exactly as the
+    # three gates above are (a forecast-lane mechanism — a backcast runs no
+    # capacity evolution). Hindcast harness:
+    # run_capacity_hindcast.py --capacity-adequacy-requirement-published (sets
+    # the invoked ISO's row); full horizon: run_full_horizon.py's flag of the
+    # same name. SCOPE: generic in form, PJM-scoped by DATA — an ISO with no
+    # intaken table keeps its existing construction in every year, so the flag
+    # armed on another ISO's run is inert by construction (rule 25
+    # [R-ISO-SCOPE]; NEISO's published Net ICR is the same idea already built
+    # as its own resolver under its own gate, capx D40, because the two series
+    # are different published quantities on different bases).
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -16541,6 +16614,12 @@ class ScenarioConfig:
             # a plain backcast runs no capacity evolution at all. Keeps every
             # backcast keeper's cache_key + run_config.json byte-identical.
             self.capacity_going_forward_bar_published_by_iso = None
+            # capx D67: the published adequacy-requirement gate, coerced for the
+            # same reason — the requirement it re-operands is the CAPACITY
+            # SCREEN's, and a plain backcast runs no capacity evolution at all.
+            # Keeps every backcast keeper's cache_key + run_config.json
+            # byte-identical.
+            self.capacity_adequacy_requirement_published_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
@@ -17656,6 +17735,7 @@ TIER_TAGS: dict[str, int] = {
     "locality_capacity_curves": 1,
     "capacity_market_supply_clearing_by_iso": 1,
     "capacity_going_forward_bar_published_by_iso": 1,
+    "capacity_adequacy_requirement_published_by_iso": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

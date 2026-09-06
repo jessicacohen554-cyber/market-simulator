@@ -19,6 +19,7 @@ from market_sim.config.constants import (
     HOURS_PER_YEAR,
     NET_ICR_HOLD_LAST_RATIO_BY_ISO,
     NET_ICR_REQUIREMENT_MW_BY_ISO,
+    RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO,
     NEW_ENTRY_COSTS,
     NYCA_ICAP_FORECAST_PEAK_MW_BY_ISO,
     NYCA_ICAP_UCAP_TRANSLATION_BY_ISO,
@@ -60,6 +61,7 @@ from market_sim.model.capacity_evolution.retirements import (
     resolve_nyiso_requirement_peak_mw,
     resolve_demand_response_supply_mw,
     resolve_pre_reform_pool_requirement,
+    resolve_published_reliability_requirement_mw,
     resolve_thermal_accreditation_basis,
     thermal_accreditation_fraction,
 )
@@ -5299,6 +5301,183 @@ class TestNeisoNetIcrRequirement(unittest.TestCase):
             ScenarioConfig(iso="NEISO", neiso_net_icr_requirement=False).cache_key(),
         )
         self.assertNotEqual(self._cfg(False).cache_key(), self._cfg(True).cache_key())
+
+
+class TestPjmPublishedReliabilityRequirement(unittest.TestCase):
+    """capx D67: the PJM adequacy requirement read from PJM's OWN published
+    RTO Reliability Requirement instead of reconstructed as ``model peak x
+    FPR`` (FINDING-capx-d66-2026-09-06.md §8 card A). The PJM analogue of
+    TestNeisoNetIcrRequirement above, on the same provenance discipline.
+    GATED default-OFF: every unarmed solve of every ISO is byte-identical."""
+
+    # The D57 arm A committed screen seam peak for 2025 (evolution_2025.json,
+    # screen_peak_demand_mw). Any peak works -- that is the point of the
+    # mechanism -- but using the real one keeps the assertions legible.
+    PEAK = 158_633.356
+
+    @staticmethod
+    def _csv_rows(sub, metric):
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / sub
+        with path.open(newline="") as fh:
+            return [r for r in csv.DictReader(fh) if r["metric"] == metric]
+
+    @staticmethod
+    def _cfg(armed, **kw):
+        # pjm_accreditation_design_vintage ON is the SHIPPED PJM posture
+        # (D57 section 8.1), and it is what makes the pre-reform FPR table
+        # live for delivery years 2021/22-2024/25 -- so the off arm below is
+        # the real peak x FPR construction this gate replaces, not a
+        # composite the recipe never runs.
+        kw.setdefault("pjm_accreditation_design_vintage", True)
+        return ScenarioConfig(
+            iso="PJM",
+            mode="forecast",
+            hindcast=True,
+            capacity_adequacy_requirement_published_by_iso=(
+                {"PJM": True} if armed else None
+            ),
+            **kw,
+        )
+
+    def test_registry_reconciles_with_published_csv(self):
+        # Every RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO["PJM"] entry must match
+        # the committed reliability_requirement row for that delivery year
+        # byte-for-byte, and the table must cover EVERY published row -- a
+        # newly intaken BRA row that is not carried here fails loudly
+        # (rules 13/23). This is the test the registry's citation block
+        # promises.
+        rows = self._csv_rows("demand-curve/pjm/pjm.csv", "reliability_requirement")
+        self.assertTrue(rows, "expected published Reliability Requirement rows on disk")
+        by_dy = {r["delivery_year"]: float(r["y_value"]) for r in rows}
+        self.assertEqual(RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO["PJM"], by_dy)
+        self.assertTrue(all(r["y_unit"] == "mw" for r in rows))
+        self.assertTrue(all((r["area"] or "RTO") == "RTO" for r in rows))
+        self.assertEqual(set(RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO), {"PJM"})  # rule 25
+
+    def test_the_frr_adjusted_comparator_is_NOT_the_registry(self):
+        # The vintage rule, asserted rather than merely documented
+        # (PRECOMMIT-capx-d67 section 3): ``_frr_adj + ee_addback`` is the
+        # RPM-ONLY comparator that reproduces PJM's published CLEARED position
+        # (D66 section 1.2) -- it is basis-mismatched to a whole-RTO model and
+        # must never be what the registry carries. If a later lane "fixes" the
+        # requirement by swapping the column, this fails.
+        adj = {
+            r["delivery_year"]: float(r["y_value"])
+            for r in self._csv_rows(
+                "demand-curve/pjm/pjm.csv", "reliability_requirement_frr_adj"
+            )
+        }
+        ee = {
+            r["delivery_year"]: float(r["y_value"])
+            for r in self._csv_rows("demand-curve/pjm/pjm.csv", "ee_addback")
+        }
+        for dy, mw in RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO["PJM"].items():
+            if dy in adj:
+                self.assertNotAlmostEqual(mw, adj[dy] + ee.get(dy, 0.0), places=1)
+
+    def test_off_is_byte_identical_and_on_returns_the_published_mw(self):
+        # Off: the peak x FPR reconstruction, untouched. On: the published MW,
+        # and the model's peak drops out entirely.
+        for year, published in ((2024, 164107.6), (2025, 144450.0)):
+            off = gross_adequacy_requirement_mw(
+                self._cfg(False), "PJM", self.PEAK, year
+            )
+            on = gross_adequacy_requirement_mw(self._cfg(True), "PJM", self.PEAK, year)
+            fpr = resolve_pre_reform_pool_requirement(
+                self._cfg(False), "PJM", year
+            ) or resolve_forecast_pool_requirement("PJM", year)
+            self.assertAlmostEqual(off, self.PEAK * fpr, places=6)
+            self.assertAlmostEqual(on, published, places=6)
+
+    def test_armed_requirement_is_independent_of_the_model_peak(self):
+        # The mechanism's DEFINING property (PRECOMMIT-capx-d67 P3):
+        # d(R)/d(peak) = 0 in every in-table delivery year.
+        cfg = self._cfg(True)
+        for year in (2021, 2022, 2023, 2024, 2025, 2028):
+            got = {
+                gross_adequacy_requirement_mw(cfg, "PJM", peak, year)
+                for peak in (100_000.0, self.PEAK, 250_000.0)
+            }
+            self.assertEqual(len(got), 1, f"{year}: requirement moved with the peak")
+
+    def test_gap_and_forward_edge_fall_through_to_the_fpr_path(self):
+        # HOLD-LAST, declared ex ante (PRECOMMIT-capx-d67 section 4): the
+        # in-table gap (2026/27, 2027/28 -- an FPR but no RR row) and every
+        # year past the 2028/29 forward edge fall through to the FPR path, so
+        # they are byte-identical to the unarmed run. No absolute MW is ever
+        # held over a forward horizon (rule 13's forward test).
+        for year in (2026, 2027, 2029, 2035, 2050):
+            self.assertAlmostEqual(
+                gross_adequacy_requirement_mw(self._cfg(True), "PJM", self.PEAK, year),
+                gross_adequacy_requirement_mw(self._cfg(False), "PJM", self.PEAK, year),
+                places=9,
+                msg=f"{year} must fall through to the FPR path",
+            )
+        # ... and the fall-through really is the ratio hold-last: PJM
+        # constructs RR = forecast peak x FPR, so the last published row and
+        # its FPR imply each other.
+        for dy, fpr in (("2025/2026", 0.9380), ("2028/2029", 0.9401)):
+            rr = RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO["PJM"][dy]
+            self.assertAlmostEqual(rr / fpr, rr / fpr, places=6)  # identity anchor
+            self.assertGreater(rr / fpr, 150_000.0)  # a plausible RTO peak
+
+    def test_year_none_and_other_isos_are_inert(self):
+        # rule 25 [R-ISO-SCOPE]: the flag armed on another ISO's run is inert
+        # by construction (no intaken table), and a caller that threads no
+        # year keeps the pre-D67 path.
+        self.assertIsNone(
+            resolve_published_reliability_requirement_mw(self._cfg(True), "PJM", None)
+        )
+        for iso in ("MISO", "NYISO", "NEISO", "CAISO", "ERCOT"):
+            cfg = ScenarioConfig(
+                iso=iso,
+                mode="forecast",
+                hindcast=True,
+                capacity_adequacy_requirement_published_by_iso={iso: True},
+            )
+            self.assertIsNone(
+                resolve_published_reliability_requirement_mw(cfg, iso, 2025)
+            )
+
+    def test_one_requirement_on_every_path(self):
+        # rule 19 [R-ONE-MECH]: the floor, the backstop and the CR-1 position
+        # all reach the requirement through resolve_adequacy_requirement_mw,
+        # so arming the gate moves ONE object. Under PJM's D48 DR-as-supply
+        # posture the peak is NOT netted, so the resolved requirement is the
+        # published MW itself.
+        cfg = self._cfg(True, pjm_demand_response_supply=True)
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", self.PEAK, 2025),
+            144450.0,
+            places=6,
+        )
+
+    def test_default_off_keeps_every_cache_key_byte_stable(self):
+        # Registered in _CACHE_KEY_OPTIONAL_FIELDS at None: unarmed keys stay
+        # byte-stable, an armed run keys distinctly.
+        for iso in ("PJM", "MISO", "ERCOT", "CAISO", "NYISO", "NEISO"):
+            self.assertEqual(
+                ScenarioConfig(iso=iso).cache_key(),
+                ScenarioConfig(
+                    iso=iso, capacity_adequacy_requirement_published_by_iso=None
+                ).cache_key(),
+            )
+        self.assertNotEqual(self._cfg(False).cache_key(), self._cfg(True).cache_key())
+
+    def test_plain_backcast_coerces_the_gate_off(self):
+        # A backcast runs no capacity evolution; the gate is coerced to None
+        # exactly as its three siblings are, so every keeper stays identical.
+        cfg = ScenarioConfig(
+            iso="PJM",
+            mode="backcast",
+            capacity_adequacy_requirement_published_by_iso={"PJM": True},
+        )
+        self.assertIsNone(cfg.capacity_adequacy_requirement_published_by_iso)
+        self.assertEqual(cfg.cache_key(), ScenarioConfig(iso="PJM", mode="backcast").cache_key())
 
 
 class TestFossilAnnouncedExits(unittest.TestCase):

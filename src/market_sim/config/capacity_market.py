@@ -974,6 +974,70 @@ def resolve_capacity_going_forward_bar_published(
     return bool(by_iso.get(iso, False))
 
 
+def resolve_capacity_adequacy_requirement_published(
+    config: "object | None", iso: "str | None" = None
+) -> bool:
+    """Return whether ``iso``'s adequacy requirement is its OWN PUBLISHED MW.
+
+    capx D67 (2026-09-06), executing ``docs/handoffs/
+    FINDING-capx-d66-2026-09-06.md`` §8 card A. The fourth member of this
+    module's per-ISO capacity-gate family, resolved exactly like its three
+    siblings above.
+
+    Resolution:
+
+    * ``config.capacity_adequacy_requirement_published_by_iso`` (a
+      ``{iso: bool}`` mapping, GATED default ``None`` => every ISO off =>
+      byte-identical) must carry a ``True`` row for ``iso``.
+
+    WHAT IT CHANGES: the OPERAND of the adequacy requirement the retirement
+    reliability floor, the reserve-margin build backstop and the CR-1 position
+    all test — ``model screen peak x FPR``, a RECONSTRUCTION, becomes the ISO's
+    own published Reliability Requirement in MW for the delivery year the
+    screen prices (:data:`RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO`, read at
+    :func:`~market_sim.model.capacity_evolution.retirements.
+    gross_adequacy_requirement_mw`). Because all three consume the one
+    resolver, the requirement stays ONE object on every path (rule 19
+    [R-ONE-MECH]; DESIGN-capx-d54 §3).
+
+    WHY. D66 §3.1 decomposed the D57 clearing's remaining position error
+    additively and measured the REQUIREMENT — not the supply census — as 78 %
+    of it in 2024/25 and 67 % in 2025/26: the model's screen peak runs 2,481 MW
+    (1.6 %) and 4,636 MW (3.0 %) above the peak PJM's own Reliability
+    Requirement implies, and ``FPR x delta-peak`` reproduces
+    ``R_model - R_published`` to the MW with zero residual. Reading the
+    published MW makes the requirement INDEPENDENT of the model's peak in every
+    in-table delivery year, which is what the auction's own denominator is.
+
+    NO SCALAR FIELD EXISTS and none may be added (rule 24 [R-REGISTRY]): the
+    values are DATA with source doc and page, digitized from the committed
+    demand-curve rows and reconciled against them byte-for-byte by test.
+
+    INDEPENDENT of the clearing half and of the published-bar gate: the
+    requirement is the adequacy bar with or without a cleared sell-offer stack,
+    so this gate requires neither. Armed alongside them, one requirement serves
+    all three.
+
+    Generic in form, PJM-scoped by DATA (rule 25 [R-ISO-SCOPE]): an ISO with no
+    intaken table keeps its existing construction in every year, so the flag
+    armed on another ISO's run is inert by construction — another ISO's
+    analogue is that ISO's lane, on its own filings. NEISO's published Net ICR
+    is the SAME idea already built as its own resolver (capx D40); it keeps
+    its own gate rather than being folded in here, because the two series are
+    different published quantities on different bases.
+
+    ``iso=None`` or a config without the mapping is ``False`` so every
+    pre-existing call path is byte-identical. Duck-typed via ``getattr`` like
+    its siblings.
+    """
+    if config is None or iso is None:
+        return False
+    by_iso = getattr(config, "capacity_adequacy_requirement_published_by_iso", None)
+    if not by_iso:
+        return False
+    return bool(by_iso.get(iso, False))
+
+
 @dataclass(frozen=True)
 class ClearedCapacityPrice:
     """The PRE-PRICED capacity object a cleared market hands its price takers.
@@ -3543,6 +3607,98 @@ FORECAST_POOL_REQUIREMENT_PRE_REFORM_BY_ISO: dict[str, dict[str, float]] = {
         "2022/2023": 1.0868,  # PPP posted 2021-02-08, Table 1 (IRM 14.5 %)
         "2023/2024": 1.0901,  # PPP posted 2022-02-28, Table 1 (IRM 14.8 %)
         "2024/2025": 1.0894,  # PPP workbook, Planning Parameters sheet (IRM 14.7 %)
+    },
+}
+
+# Published RTO-wide Reliability Requirement, in UCAP MW, keyed by delivery-year
+# label "YYYY/YYYY+1" — the ABSOLUTE adequacy requirement of the auction whose
+# delivery year the retirement screen prices (capx D67, 2026-09-06, executing
+# FINDING-capx-d66-2026-09-06.md §8 card A).
+#
+# WHY. HEAD reconstructs the requirement as ``model screen peak × FPR``, so the
+# bar the reliability floor, the build backstop and the CR-1 position test moves
+# with the model's own peak forecast rather than sitting where PJM set it. D66
+# §3.1 decomposed the D57 clearing's remaining position error additively and
+# measured that leg at 78 % of it in 2024/25 and 67 % in 2025/26: the model's
+# screen peak runs 2,481 MW (1.6 %) and 4,636 MW (3.0 %) above the peak PJM's
+# own Reliability Requirement implies, and ``FPR × Δpeak`` reproduces
+# ``R_model − R_published`` to the MW with ZERO residual. Reading the published
+# MW makes the requirement independent of the model's peak in every in-table
+# delivery year (∂R/∂peak = 0), which is what the auction's own denominator is.
+#
+# THE SERIES. Digitized from the committed demand-curve rows
+# (data/raw/capacity-market/demand-curve/pjm/pjm.csv, metric
+# ``reliability_requirement``, RTO area) and reconciled against them
+# byte-for-byte by tests/unit/model/test_capacity.py — a published market-design
+# input, never a fit target (rules 13/23), on the SAME provenance discipline
+# NET_ICR_REQUIREMENT_MW_BY_ISO carries below. Every row cites its RPM BRA
+# Planning Parameters workbook, sheet and row.
+#
+# THE WHOLE-RTO ROW IS THE OPERAND, and the choice is fixed in code rather than
+# per run (PRECOMMIT-capx-d67 §3). PJM also publishes ``reliability_requirement
+# _frr_adj`` and ``ee_addback``, whose SUM is the denominator that reproduces
+# PJM's published cleared position to four decimals in all four years (D66 §1.2)
+# — but that pair is the RPM-ONLY comparator and is basis-mismatched to this
+# model: the model runs the entire RTO, all load and all resources, while RPM is
+# net of an FRR block of 31.0 / 31.3 / 32.1 / 10.9 GW across these years. The
+# model's census is whole-RTO, so its requirement is the whole-RTO row.
+# Selecting between the two by result would be rule-21 [R-DOF] territory.
+#
+# CONSUMER. ``retirements.gross_adequacy_requirement_mw`` — armed ONLY by the
+# default-OFF ``ScenarioConfig.capacity_adequacy_requirement_published_by_iso``
+# gate (rule 28 row ``capacity_adequacy_requirement_published``); off, every
+# solve of every ISO is byte-identical. The value returned is GROSS of demand
+# response, the same basis ``peak × FPR`` returns at that seam, so the D48
+# DR-as-supply branch in ``resolve_adequacy_requirement_mw`` decides netting
+# unchanged: this gate moves the requirement's OPERAND, never its netting
+# convention, its peak or its accreditation.
+#
+# HOLD-LAST / GAPS (declared ex ante, PRECOMMIT-capx-d67 §4). An in-table
+# delivery year returns the published MW. The in-table GAP (2026/27 and 2027/28
+# publish an FPR but no Reliability Requirement row), every pre-table year, and
+# every year strictly BEYOND the 2028/29 forward edge all return ``None`` and
+# fall through to the FPR path — which itself holds-last the published FPR.
+# That fall-through IS the ratio hold-last NEISO's sibling implements
+# explicitly: for PJM the last published RR-to-forecast-peak ratio *is* the
+# published FPR, because PJM constructs ``RR = forecast peak × FPR`` by
+# definition and the arithmetic closes on the committed rows (2025/26:
+# 144,450 ÷ 0.9380 = 153,997.9; 2028/29: 156,012.885 ÷ 0.9401 = 165,953.7). So
+# no absolute MW is ever held over a forward horizon (which would fail the
+# rule-13 forward test), no new constant is introduced, the held bar still
+# scales with load, and the mechanism's footprint is exactly the delivery years
+# the published table covers — every forecast year past 2028/29 is
+# byte-identical to the unarmed path.
+#
+# FORWARD STORY (rule 13). The Reliability Requirement is a recurring published
+# planning quantity: PJM re-derives and posts it for EVERY delivery year in the
+# BRA Planning Parameters, and it responds to load, reserve margin and
+# accreditation-design conditions by construction. New rows are intaken on
+# publication (rule 23 [R-FROZEN-DERIVE]), never against a residual.
+RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        # 2021/2022 PPP workbook dated 2018-05-03, '2021-2022 Parameters'
+        # sheet, Reliability Requirement row, RTO column.
+        "2021/2022": 166355.1,
+        # 2022/2023 PPP workbook, 'Planning Parameters' sheet, same row/column.
+        "2022/2023": 163268.9,
+        # 2023/2024 PPP workbook dated 2022-06-21, same sheet/row/column.
+        "2023/2024": 163166.2,
+        # 2024/2025 PPP workbook dated 2024-05-08, same sheet/row/column.
+        "2024/2025": 164107.6,
+        # 2025/2026 PPP workbook posted 2024-04-08, same sheet/row/column. The
+        # level drops ~20 GW against 2024/25 because this is the FIRST
+        # post-CIFP delivery year: the requirement moves to the accredited-UCAP
+        # basis (FPR 1.0894 -> 0.9380), which is the same regime break D48
+        # vintages the accreditation side of.
+        "2025/2026": 144450.0,
+        # 2026/2027 and 2027/2028: NO Reliability Requirement row is committed
+        # (both publish an FPR). Deliberately absent, not zero — an in-table
+        # gap falls through to the FPR path (see HOLD-LAST / GAPS above); a
+        # mid-table hole is a data problem hold-last must not paper over.
+        # 2028/2029 PPP workbook initially posted 2026-03-20 (FFR-2C intake
+        # 2026-08-02), 'Planning Parameters' sheet, Reliability Requirement row
+        # (A15), RTO column. Carried at the published precision.
+        "2028/2029": 156012.88535,
     },
 }
 

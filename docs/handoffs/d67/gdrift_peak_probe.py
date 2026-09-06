@@ -15,6 +15,8 @@ from pathlib import Path
 
 sys.path[:0] = ["src", "."]
 
+# ruff: noqa: E402  (sys.path must be set before market_sim resolves)
+
 from market_sim.config.iso_configs import (
     apply_iso_scenario_defaults,
     get_iso_config,
@@ -64,7 +66,7 @@ def main() -> int:
         base = base[:, : cfg.hours]
 
     print(f"weather_year={cfg.weather_year}  growth_vintage={cfg.demand_growth_vintage}")
-    print(f"growth rates read: " +
+    print("growth rates read: " +
           ", ".join(f"{y}:{_get_growth_rate(cfg, y):.6f}" for y in range(2021, 2026)))
     print()
     hdr = f"{'year':>6} {'screen peak @HEAD':>19} {'arm A committed':>17} {'delta MW':>12}"
