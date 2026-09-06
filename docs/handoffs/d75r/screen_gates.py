@@ -110,15 +110,23 @@ def _thermal_firm_by_fuel(led: dict) -> dict[str, float]:
     return {k: round(v, 6) for k, v in out.items()}
 
 
-def year_row(ctl: dict, arm: dict, year: int) -> dict:
+def year_row(ctl: dict, arm: dict, year: int, prior_ctl: dict | None = None) -> dict:
     exp = PHASE0.get(year, {})
     dy = exp.get("dy")
     cc_c = ctl.get("capacity_clearing") or {}
     cc_a = arm.get("capacity_clearing") or {}
     cr_c = ctl.get("renewable_credit_applied") or {}
     cr_a = arm.get("renewable_credit_applied") or {}
-    wind_pool = ctl.get("wind_cap_mw")
-    solar_pool = ctl.get("solar_cap_mw")
+    # THE POOLS THE SCREEN ACCREDITS are ``prior_results``' — i.e.
+    # evolution_{Y-1}'s — not this year's end-of-year pools (which include the
+    # year's own additions). Using the wrong vintage here inverts the sign of
+    # the reported delta in any year with VRE additions, which is exactly the
+    # instrument defect this lane caught on its own full-window run and fixed.
+    # `gate_identity.holds` was always computed on the CREDITS and so was never
+    # affected; only the reported MW were.
+    _pools_src = prior_ctl if prior_ctl is not None else ctl
+    wind_pool = _pools_src.get("wind_cap_mw")
+    solar_pool = _pools_src.get("solar_cap_mw")
 
     row: dict = {
         "delivery_year": dy,
@@ -271,7 +279,25 @@ def main() -> int:
         ctl, arm = _led(args.control, year), _led(args.arm, year)
         if ctl is None or arm is None:
             continue
-        out["years"][str(year)] = year_row(ctl, arm, year)
+        # The accrediting pools are evolution_{Y-1}'s. Where that ledger
+        # carries no adequacy block (the evolution_2022 gap this lane routes),
+        # roll forward from the last ledger that does, exactly as phase 0 does.
+        prior = _led(args.control, year - 1)
+        if prior is not None and prior.get("wind_cap_mw") is None:
+            base = _led(args.control, year - 2)
+            if base is not None and base.get("wind_cap_mw") is not None:
+                pools = {
+                    "wind": base["wind_cap_mw"],
+                    "solar": base["solar_cap_mw"],
+                }
+                for add in prior.get("renewable_additions") or []:
+                    if add.get("tech") in pools:
+                        pools[add["tech"]] += float(add["mw"])
+                prior = {
+                    "wind_cap_mw": pools["wind"],
+                    "solar_cap_mw": pools["solar"],
+                }
+        out["years"][str(year)] = year_row(ctl, arm, year, prior)
 
     legs = {"identity": [], "confinement": [], "inert": []}
     for y, row in out["years"].items():
