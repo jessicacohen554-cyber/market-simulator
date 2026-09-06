@@ -107,3 +107,29 @@ Central time, `GMTIntervalEnd` UTC. Prices are $/MW at 4-decimal precision; the 
 interval shows `Spin` = `Supp` = 0 with `RegUPService` 142.65, which is the ordinary SPP
 pattern of contingency-reserve prices sitting at zero outside shortage — the SPP-56 question
 is how often they do not.
+
+
+---
+
+## STATUS UPDATE 2026-09-06 (lane SPP-14) — THE PORTAL ROUTE IS OPEN; THIS DIRECTORY IS SERVED
+
+The "portal blocked" status above is **superseded**. `portal.spp.org`'s file-browser
+download and listing calls both answer **anonymously over plain HTTPS** — no
+`X-SPP-UI-Token`, no cookie, no FTP — and honour `Range`. What SPP-12 measured were
+two path-shape artifacts, not an authorization wall: the download route serves
+*files* (a folder path 404s correctly), and the listing returns `[]` only for
+`path=` **empty**, the SPA's own first call, while `path=%2F` returns the real
+directory array. The corroborating witness is the open-source `gridstatus` client,
+which reads these same URLs with a bare `pandas.read_csv(url)` and carries no
+credential at all. Full route table, the licence position and the whole alternative-
+source sweep: `SOURCES.md` beside this file, `data/raw/spp-lmp-alt/SOURCES.md`, and
+`docs/handoffs/FINDING-spp-14-2026-09-06.md`.
+
+**Do not re-derive the access route from the "how to fill this directory" paragraph
+above** — it is kept as the incident record, not as instructions.
+
+**Landed:** `da-mcp-2023.zip`, `da-mcp-2024.zip` (418,589 / 417,669 B). **RTBM MCP is
+reachable on the same route and deliberately not landed** — ~47 MB per year, ~141 MB
+for the span, which is not a pack this lane pushes for a row scoped to SPP-56 alone:
+`python scripts/data/fetch_spp_alt_portal.py --product rtbm-mcp --years 2023 2024`.
+2025 is served per-month for both products.

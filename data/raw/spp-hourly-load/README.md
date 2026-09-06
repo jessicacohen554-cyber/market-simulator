@@ -111,3 +111,30 @@ load occurred. Files replaced monthly."*). Header `MKTINTERVAL,LOCALINTERVAL,MON
 span **2024-02 → 2026-01**, `INTERCONNECTION` ∈ {`EAST`, `WEST`}; both a UTC and a local
 stamp per row (e.g. `2024-02-16 15:40:00,2024-02-16 09:40:00` — a 6 h offset in February).
 Use: a zero-cost check of the model's monthly peak against SPP's own, for 2024–2025 East.
+
+
+---
+
+## STATUS UPDATE 2026-09-06 (lane SPP-14) — THE PORTAL ROUTE IS OPEN; THIS DIRECTORY IS SERVED
+
+The "portal blocked" status above is **superseded**. `portal.spp.org`'s file-browser
+download and listing calls both answer **anonymously over plain HTTPS** — no
+`X-SPP-UI-Token`, no cookie, no FTP — and honour `Range`. What SPP-12 measured were
+two path-shape artifacts, not an authorization wall: the download route serves
+*files* (a folder path 404s correctly), and the listing returns `[]` only for
+`path=` **empty**, the SPA's own first call, while `path=%2F` returns the real
+directory array. The corroborating witness is the open-source `gridstatus` client,
+which reads these same URLs with a bare `pandas.read_csv(url)` and carries no
+credential at all. Full route table, the licence position and the whole alternative-
+source sweep: `SOURCES.md` beside this file, `data/raw/spp-lmp-alt/SOURCES.md`, and
+`docs/handoffs/FINDING-spp-14-2026-09-06.md`.
+
+**Do not re-derive the access route from the "how to fill this directory" paragraph
+above** — it is kept as the incident record, not as instructions.
+
+**Landed:** `hourly-load-2023.zip`, `hourly-load-2024.zip` — SPP's own yearly
+archives of the daily `DAILY_HOURLY_LOAD-YYYYMMDD.csv` files. **2025 is not yet
+rolled into a year zip** (SPP zips a year about two years on), so it is served as 365
+daily files at `/2025/` and is fetched per-day from the same route when a lane needs
+it. SPP changed this product's format on **2026-03-24** (wide -> long); 2023-2025 are
+the wide format.
