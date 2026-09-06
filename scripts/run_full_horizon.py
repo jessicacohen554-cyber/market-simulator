@@ -1006,10 +1006,31 @@ def apply_set_overrides(config: ScenarioConfig, overrides: dict) -> ScenarioConf
 
     Applied AFTER the runner's own posture resolution, so an explicit ``--set``
     is the last word on the field it names and nothing silently re-derives over
-    it. ``dataclasses.replace`` re-runs ``__post_init__``, so every registered
-    guard (the D23/D34 carbon inversion warnings, the mutual-exclusion checks)
-    fires on the overridden config exactly as it would on a YAML that set the
-    same field.
+    it. ``ScenarioConfig.with_overrides`` re-runs ``__post_init__`` (it wraps
+    ``dataclasses.replace``), so every registered guard (the D23/D34 carbon
+    inversion warnings, the mutual-exclusion checks) fires on the overridden
+    config exactly as it would on a YAML that set the same field.
+
+    USE ``with_overrides``, NEVER A BARE ``dataclasses.replace`` (capx D60-R4,
+    2026-09-06). ``replace`` re-invokes ``__init__`` with EVERY field, which
+    :func:`~market_sim.config.scenarios.explicitly_set_fields` cannot tell apart
+    from a caller who set everything, so it returns ``None`` — and the config
+    returned here is still UNRESOLVED: ``iso_configs.apply_iso_scenario_defaults``
+    runs later, inside ``runner.run_scenario_iso``, and on a ``None`` provenance
+    record it falls back to the pre-OVERRIDE-FIX value comparison. An explicit
+    ``--set pjm_demand_response_supply=false`` then equals the ScenarioConfig
+    field default, reads as "unset", and the ISO default SILENTLY RE-ARMS it.
+    Measured at HEAD before the repair: a PJM leg with all three of that ISO's
+    ``default_scenario_overrides`` set OFF via ``--set`` resolved to cache key
+    ``09996eca71ee80fd`` — bit-for-bit the ARM's key — i.e. a control arm for
+    any ISO-armed flag was inexpressible through the registered channel
+    (rule 24 ``[R-REGISTRY]``). ``with_overrides`` unions the named fields into
+    the record, so the same leg resolves to ``167e65187f32056b`` with the three
+    gates OFF. Blast radius of the defect is EMPTY: of the 14 committed
+    ``run_config.json`` files carrying a non-empty ``set_overrides``, none names
+    a field any ISO arms (all set ``demand_growth_path`` /
+    ``datacenter_load_path`` / ``carbon_price_path`` / ``carbon_price_delta``).
+    Guard: ``tests/scoring/test_set_override_beats_iso_default.py``.
 
     Args:
         config: The resolved forecast config.
@@ -1018,15 +1039,13 @@ def apply_set_overrides(config: ScenarioConfig, overrides: dict) -> ScenarioConf
     Returns:
         The overridden config, or ``config`` itself when there is nothing to do.
     """
-    import dataclasses
-
     if not overrides:
         return config
     print(
         "  --set overrides: "
         + ", ".join(f"{k}={v!r}" for k, v in sorted(overrides.items()))
     )
-    return dataclasses.replace(config, **overrides)
+    return config.with_overrides(**overrides)
 
 
 # --------------------------------------------------------------------------- #
