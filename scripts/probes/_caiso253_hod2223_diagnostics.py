@@ -13,6 +13,10 @@ charter closed, so the next session inherits measurements rather than a null.
     concentrated in the gas-spike months?).
 (d) The keeper's **storage** net at 22-23 — caiso-252's P-A2 falsification put
     evening storage discharge in the displacement path.
+(e) **The diurnal SHAPE of each price series**, normalised to its own annual
+    mean — the mechanism behind the raw-hub discriminator's sign at 22-23.
+(f) The raw-hub discriminator against **MALIN** as well as PALOVRDE — is the
+    north corridor the alternative carrier? (caiso-88 closed its depth.)
 
 Output: ``results/calibration/_caiso253_hod2223_diagnostics.json``.
 """
@@ -183,11 +187,54 @@ def main() -> None:
                         round(float(np.nanmean(a[HOD == h])), 1) for h in range(24)
                     ]
                 }
+        # (e) diurnal SHAPE, each series normalised to its own annual mean
+        ml = measured_intertie_hub_price_raw("CAISO", y, T, "MALIN")
+        da_full = pd.to_numeric(
+            lmp[lmp["year"] == y].sort_values("hour")["da"], errors="coerce"
+        ).to_numpy(float)[:T]
+        rt_full = pd.to_numeric(
+            lmp[lmp["year"] == y].sort_values("hour")["rt"], errors="coerce"
+        ).to_numpy(float)[:T]
+        shape = {}
+        for name, ser in (("caiso_da", da_full), ("palovrde", pv), ("malin", ml)):
+            if ser is None:
+                continue
+            mk = meas & np.isfinite(ser)
+            lv = float(np.nanmean(ser[mk]))
+            shape[name] = {
+                "level": round(lv, 2),
+                "by_hod_over_own_mean": [
+                    round(float(np.nanmean(ser[(HOD == h) & mk]) / lv), 3)
+                    for h in range(24)
+                ],
+            }
+        # (f) raw-hub discriminator against MALIN as well as PALOVRDE
+        malin = {}
+        for basis, a in (("DA", da_full), ("RT", rt_full)):
+            malin[basis] = {}
+            for lab, hods in (
+                ("gap_22_23", GAP),
+                ("ovn_0_5", OVN),
+                ("eve_18_21", (18, 19, 20, 21)),
+            ):
+                mm = np.isin(HOD, hods) & np.isfinite(a)
+                row = {
+                    "vs_PALOVRDE": round(
+                        float(np.nanmedian((a - pv)[mm & np.isfinite(pv)])), 2
+                    )
+                }
+                if ml is not None:
+                    row["vs_MALIN"] = round(
+                        float(np.nanmedian((a - ml)[mm & np.isfinite(ml)])), 2
+                    )
+                malin[basis][lab] = row
         res["years"][y] = {
             "a_would_it_clear": clear,
             "b_who_serves": serve,
             "c_seasonality": seas,
             "d_storage": stor,
+            "e_diurnal_shape": shape,
+            "f_malin_vs_palovrde": malin,
             "storage_columns": list(st.columns),
         }
         print(f"\n===== {y} =====")
@@ -218,6 +265,18 @@ def main() -> None:
             )
         for c, v in stor.items():
             print(f"  (d) {c} by hod:", [round(x) for x in v["by_hod"]])
+        for name, sh in shape.items():
+            b = sh["by_hod_over_own_mean"]
+            print(
+                f"  (e) {name:9s} lvl {sh['level']:6.2f} | hod22 {b[22]:.3f} hod23 {b[23]:.3f} "
+                f"| hod00 {b[0]:.3f} hod04 {b[4]:.3f} hod05 {b[5]:.3f}"
+            )
+        for basis in ("DA", "RT"):
+            g = malin[basis]["gap_22_23"]
+            print(
+                f"  (f) {basis} 22-23 raw-hub: vs PV {g['vs_PALOVRDE']:+.2f} "
+                f"| vs MALIN {g.get('vs_MALIN', float('nan')):+.2f}"
+            )
     OUT.write_text(json.dumps(res, indent=1, default=float) + "\n")
 
 

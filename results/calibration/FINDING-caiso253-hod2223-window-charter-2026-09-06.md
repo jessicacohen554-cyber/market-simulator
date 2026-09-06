@@ -111,6 +111,8 @@ is real; it is the arm that is refused.**
 
 ### §3.1 — WHY leg 3 fails: the DSW hub peaks LATER than CAISO
 
+(`_caiso253_hod2223_diagnostics.json` leg **e**.)
+
 Each series normalised to its own annual mean, so this is SHAPE, not level:
 
 | year | series | hod 22 | hod 23 | hod 00 | hod 04 | hod 05 |
@@ -183,6 +185,8 @@ because it makes the parity hours pass is gate-shopping. **The identification
 requirement, not the mechanism, is the open item.**
 
 ### §3.5 — Malin is not the alternative carrier
+
+(`_caiso253_hod2223_diagnostics.json` leg **f**.)
 
 Raw-hub discriminator at 22–23 against MALIN instead of PALOVRDE: DA −2.34 /
 −0.74 / −0.71 (2023/24/25) against PV's −3.21 / −0.36 / −0.03 — **no better,
