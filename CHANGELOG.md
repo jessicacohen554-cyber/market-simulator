@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-06 — wallclock A-1: the COD map's per-plant reduction vectorized — RETRO EVIDENCE for merged commit `be598ead` (byte-identical)
+
+Docs + two golden manifests only. **No source file, no LP change, no `ScenarioConfig` default,
+no keeper / marker / matrix shard / registry / workflow edit, nothing promoted, nothing
+registered.** Wallclock desk item A-1 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2)
+shipped through PR #4875 (commit `be598ead`, merge `fc05c5c3`) carrying `cod_ramp.py` + its
+unit test **only** — the charter's baseline-doc row and this entry never landed, and the PR
+body was empty, so no measurement was on record (desk log §2.5). Re-measured from scratch:
+
+- **The change (already on main, unmodified here):** `_load_cod_map`'s
+  `for code, grp in work.groupby("pc")` per-plant reduction — 14,330 groups, each paying a
+  `DataFrame.dropna` / `sort_values` / `iloc` — replaced by `_reduce_cod_groups`: one stable
+  sort on the plant code plus numpy segment reductions over the resulting contiguous slices.
+  The per-plant arithmetic is unchanged, including the pairwise summation order (`reduceat`
+  is *not* a drop-in: it flips the `round` for the 15 of 14,334 plants whose exact mean is a
+  half-integer).
+- **Gate (1), dict equality vs the frozen shipped loop, every EIA-860 vintage directory:**
+  `vec == ref` **True on all 8** (the canonical `data/raw/eia-860` plus seven
+  `vintage_<year>/`). `_load_cod_map` **16.20 → 0.07 s (231×)** on the canonical vintage
+  (14,334 plants), **91.60 → 0.38 s** across all eight; the reduction in isolation
+  15.78 → 0.010 s. Unit file at HEAD: 46 passed, 8 subtests passed.
+- **Byte gate — merge-base control on the commit itself:** NEISO keeper
+  `2026-08-17-neiso-99-joint-p1` replayed full 8760 × 2023–2025 under the determinism pin from
+  worktrees at `be598ead~1` (`2886235c`) and `be598ead`, which differ in exactly two files
+  (`cod_ramp.py` and its test). `regression_gate.py --mode byte` **check [1] PASS**
+  (9 files, 32 numeric columns, atol=rtol=0), zero reshuffle in all three years, smoke PASS,
+  `audit_keepers` PASS; check [4] `legitimacy(--keepers)` FAIL is **pre-existing by control**
+  (the standing NYISO Long Island `transfer_security_limit` gap, rc=1 on plain `origin/main`).
+  Manifests under `results/regression-goldens/wc-a1-{before,after}/`; bundles deleted before
+  merge per rule 29 `[R-SCREEN]` (c).
+- **In-solve effect:** NEISO year-1 `data_prep` **72.9 → 35.9 s (−37.0 s, −51 %)**; 2024/2025
+  −1.1 / −0.6 s (noise) — the map is `lru_cache`d, so the win is **once per process**.
+  Independently reproduces the A-1 leg of the stacking §WALLCLOCK A-2 records (71.3 → 36.7 s
+  from A-1 alone, → 10.8 s with A-2). Record:
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-1.
+
 ## 2026-09-05 — wallclock A-3: class-band sidecar vectorized, sidecar block put on the clock (byte-identical)
 
 `scripts/run_calibration_full.py` only (plus its unit test, the baseline-doc row and two
