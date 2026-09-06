@@ -4674,6 +4674,66 @@ sign argument to every basis and bound.
 
 ### 5.3 PJM — **NO failing criterion** (keeper `2026-08-15-pjm-162-inputclock`, CALIBRATED — **PROMOTED at pjm-163 (2026-08-16)** from `2026-08-04-pjm-152-collapse`: the DEBUG-B measured-input repair replay (`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`; owner promotion card, audit row O1) — the incumbent recipe re-solved fresh at the corrected PJM EIA-930 fueltype input clock (NG:* was +1 h early in local-2023/2024; value-preserving re-placement, byte-verified cell-for-cell) with the four DataMiner read sites moved onto absolute UTC stamps. **Zero value diffs** on every shared recipe field, ZERO free parameters (DOF ledger carried VERBATIM 19/6, asserted by `gen_pjm163_inputclock_attestation.py`), every criterion **PASS → PASS** vs the incumbent (finding §9, zero fails), determination re-verified not re-asserted (`calibration_verdict.py --run-id` → CALIBRATED, identical criterion-for-criterion, D-5(b)); bench/PJM 2023+2024 recomputed, 2025 byte-identical; ≤2022 extract years stay on the early clock, chartered separately (finding §6 / audit O3, owner-signed same sitting). Rule-28 re-stamps: `diurnal_price_amplitude` + `seam_flow_envelopes` evidence annotated pre-repair-basis, verdicts NOT re-adjudicated. PRIOR PROMOTION, kept as history: **PROMOTED at pjm-153 (2026-08-04)** from `2026-08-03-pjm-151-seam-envelope`: a rule 26 `[R-DELETE]` debt discharge with **BIT-IDENTICAL dispatch** (E1 `max |dMW| = 0.0` over all 166,440 class-hours in each of 2023/2024/2025, zero breaches) and **zero value diffs** on every shared recipe field. The keeper moves because the superseded recipe named a `ScenarioConfig` field HEAD no longer has and so was not replayable as recorded; structural integrity improves and **nothing regresses**. determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs, identical criterion-for-criterion to the superseded run. pjm-153 also generated the governance attestation pjm-152 shipped without, which is what made the run scoreable at all); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**; **THE LEVER QUEUE IS CLEARED AT pjm-153 (2026-08-04) — see the block immediately below**
 
+**pjm-166 (2026-09-06): THE HELD-OUT C1 OBJECT IS NOT A MERIT-ORDER-POSITION
+OBJECT — the coal↔CC framing is REFUTED AT PHASE 0 and is now DO-NOT-REDO.**
+Zero mechanisms armed, swept or tuned; zero cell verdicts moved; no
+`ScenarioConfig` field touched (rule 28 c silent); keeper **UNCHANGED** at
+`2026-08-15-pjm-162-inputclock`. One LP ran and it was a **control**, not an arm.
+`results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md` +
+`PRECOMMIT-pjm166-c1-object-2026-09-06.md`.
+
+* **The dispatch premise is factually inverted.** On measured EIA-923 delivered
+  receipts, **2021 and 2022 are the two DEAREST-gas and two CHEAPEST-coal years**
+  of 2021-2025 (gas $4.12/$7.12, ranks 4 and 5; coal $2.07/$2.62, ranks 1 and 2 —
+  against gas $3.26/$2.85, ranks 2 and 1, in 2023/2024). Not "the cheapest
+  delivered-gas year in the span".
+* **The sign test fails.** `CC_REGULAR` over-runs **+28.7 / +22.3 TWh in the two
+  dearest-gas years** and only **−3.4 / +0.5 TWh in the two cheapest**. An offer
+  position that made gas too cheap would over-dispatch gas *most* where gas is
+  *cheapest*. Wrong shape for this residual.
+* **The elasticity is already right** — coal share of (coal + `CC_REGULAR`) on
+  `ln(delivered gas/coal)`, 36 in-sample months: actual `0.2637 + 0.0772·x`,
+  model `0.2631 + 0.0686·x`; **slope ratio 0.888, intercept gap −0.0007**. Worth
+  0.7 pp extrapolated to the held-out years against a 3.6 pp gap.
+* **Coal is not saturated** — model coal runs **0.25-0.68 of its own annual peak**
+  in 2021's high-ratio months, on a *larger* 2021 fleet (36.9 vs 31.3 GW). The
+  `COAL_BIT` −9.45 TWh is not a capacity or availability ceiling.
+* **It is not a swap at all.** Total fossil is **+19.6 / +26.7 TWh over** in the
+  held-out years against **−3.7 / −7.9** in 2023/2024, while model demand matches
+  measured EIA-930 **within ±2.2 TWh in every year**. An additive over-generation,
+  not a reordering. **Correction to the standing narrative:** coal-under is
+  **2021 only** — 2022 coal is **+2.0 TWh, slightly over** (the touchpoint
+  assessment's own criterion table says so; its §3.1/§5 prose generalised past it).
+* **The one quantity that crosses the tier boundary** is the DA-virtual layer's
+  net cleared position: **+7.40 / +6.48 / −0.89 in-sample vs −6.14 / −9.91
+  held-out** — 6 to 10 TWh of net phantom DEMAND, which physical gas must serve.
+  This is **pjm-158's own standing warning realized out of sample**, on a cell
+  already `K` and owner-escalated inside the closed price-formation frontier
+  (pjm-142). **RE-MEASURED, NOT RE-OPENED — not a lever.** At pjm-158's measured
+  channel gain it bounds ~21 % of 2021's and ~44 % of 2022's `CC_REGULAR` miss;
+  **55-79 % stays unexplained** and this session does not claim otherwise.
+* **Two candidates tested and NOT confirmed, so they are not re-tried:**
+  (a) `ST_GAS` is **not floor-forced** — 76 % of its 2021 energy is `econlo`/`econhi`
+  economic, `mustrun` **0.00**, so rule 17 `[R-FLOOR-WINDOW]` does not fire;
+  (b) the `ST_GAS`↔`CT_PEAKER` substitution hypothesis **FAILS its own test** —
+  monthly delta correlation is **+0.077 / −0.165 / +0.497 / +0.178 / +0.076**,
+  positive in four of five years, so the annual near-offset is coincidence.
+* **FILED, NOT PURSUED:** the model's `ST_GAS` runs a near-constant CF of its own
+  peak (0.156/0.184/0.157/0.156/0.242) while the measured class swings 3.8 → 14.8
+  TWh. An **in-sample** question for 2023-2025; chasing it from a held-out year is
+  the fitting rule 22 step 3 forbids.
+* **G-DRIFT is STRUCTURALLY UNDISCHARGEABLE for this keeper** — its recorded
+  `git_sha` `457ae04` (2026-08-15) does not exist at HEAD and is not in
+  `docs/governance/citation-commit-map.txt`: it predates the **2026-08-16 history
+  rewrite** by one day, and the clone was deepened to 11,640 commits without
+  resolving it. There is **no diff to classify**, which is stronger than NEISO's
+  "too large to classify". An unclassifiable diff is LIVE, and a LIVE hunk is what
+  earns a control solve under rule 29 (b) — so PJM's same-HEAD in-sample control
+  (`pjm_headctrl_k162`, 2023-2025, no holdout year) was solved on
+  pre-registered thresholds. Its bundle is **deleted before merge** per rule 29 (c),
+  following the `neiso_headctrl_k99` precedent; every number cited from it lives in
+  the FINDING.
+
 **pjm-155 (2026-08-04): THE PJM LANE IS PARKED PENDING OWNER. No LP built, no
 solve launched, no bundle, no run registered, no mechanism armed, NO CELL VERDICT
 MOVED, no year touched outside 2023–2025.** Ran as Lane B of the
