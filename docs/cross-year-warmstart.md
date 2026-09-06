@@ -448,7 +448,7 @@ solved it **from no basis at all** — a full cold P1 costing about as much as P
 cross-year machinery applied to the one place in a year it never reached: the
 P0 model's optimal basis is exported once (the same `export_cross_year_basis`
 the cross-year holder already takes on that branch, now taken whenever the seed
-is armed) *before* the model is released and `malloc_trim()` runs (A-6), and the
+is armed) *before* the model is released, and the
 second model installs it through `apply_cross_year_basis` before its first
 solve — same `T`, same `unit_ids`, so `_cross_year_column_map` is the identity on
 every per-hour block; `alien=True`, so HiGHS repairs the few statuses the
@@ -506,7 +506,17 @@ seed off and on.
 **Measured (this wave — the shipped surface, determinism pin except the two gate
 env vars, one ERCOT arm at a time, 6 GiB swapfile):**
 
-<!-- WC_B_TABLES -->
+| ISO-year | `solve_p1` OFF → ON | P1 iterations OFF → ON | objective / total gen | prices | per-unit reshuffle |
+|---|---|---|---|---|---|
+| ERCOT 2025 (one-pass) | 349.2 → **142.0 s** (2.46×) | 273,893 → **78,856** | identical / Δ 0 MWh | max \|Δ\| 1.1e-12, 0 degenerate hours | 16 unit-hours, 0.0007 % |
+| ERCOT 2024 (two-pass; pass 2 seeded from pass 1's P1) | 628.1 → **225.1 s** (295.3→132.2 + 332.9→92.8) | 252,042 / 250,291 → **83,748 / 69,667** | identical / Δ 0 | max \|Δ\| 3.7e-13, 0 | 4 unit-hours, 0.00001 % |
+| NYISO 2023 | 96.4 → **67.6 s** | 268,305 → **108,037** | identical / Δ 0 | max \|Δ\| 2.2e-13, 0 | 7,290 unit-hours, 0.031 %, LMP identical on all |
+| CAISO 2023 | 354.5 → **123.1 s** (2.88×) | 290,022 → **94,098** | identical / Δ 0 | CA zones bit-identical; 1,315 zone-hours differ on the zero-load import nodes WECC_PNW/DSW (dual degeneracy, up to 88 $/MWh, not scored) | 5,783 unit-hours, 0.041 %, LMP identical on all |
+
+Byte gate with the seed OFF (merge-base control `34f3ce35` vs branch, determinism pin):
+`regression_gate.py --mode byte` check [1] **PASS** — ERCOT 2024–2025 (7 files, 28 numeric
+columns) and NEISO 2023 (5 files, 20 columns) at atol=rtol=0; zero reshuffle. Full record,
+phase lines, peak RSS (+0.6 GB on ERCOT) and the CAISO reading: baseline doc §WALLCLOCK B.
 
 Pinning tests: `tests/unit/pipeline/test_xyear_warmstart_default.py`
 (`TestResolveP1BasisSeedDefault`, `TestP1BasisSeedGate`) — resolver precedence,

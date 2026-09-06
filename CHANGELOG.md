@@ -12,8 +12,8 @@ matrix shard / registry / workflow edit, nothing promoted, nothing registered; t
 bundles were deleted.
 
 - **The change.** `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 model's basis
-  is exported (the export the cross-year holder already took there) before `model = None` /
-  `malloc_trim()` (A-6 kept) and installed on the second `DispatchModel` through
+  is exported (the export the cross-year holder already took there) before `model = None`
+  and installed on the second `DispatchModel` through
   `apply_cross_year_basis` (identity column map, `alien=True`) before its first solve. An
   adaptive re-solve pass (C-1b `reuse_p0_from`) is seeded from the previous pass's P1 basis
   when that pass exported one (new `export_p1_basis` kwarg → `EnergySolveResult.p1_basis`; set
@@ -37,7 +37,20 @@ bundles were deleted.
   ERCOT capture was refused on that key alone (the subset invariant is asserted at the solve
   site). The HiGHS solve log line now carries `simplex iterations N, objective X` (reads after
   `h.run()`; byte-inert).
-- **Gates.** <!-- WC_B_CHANGELOG_GATES -->
+- **Gates.** (1) Byte-identity with the seed OFF, merge-base control `34f3ce35` vs branch under
+  the determinism pin: `regression_gate.py --mode byte` check [1] **PASS** — ERCOT 2024–2025
+  (7 files, 28 numeric columns, atol=rtol=0) and NEISO 2023 (5 files, 20 columns); zero
+  reshuffle; smoke PASS; `audit_keepers` PASS; `legitimacy` red by control (and green once
+  `data/clean/capacity-deliverability` is regenerated — a fresh-container artifact, recorded).
+  (2) Seed ON vs OFF through `diff_warmstart_bundles.py` + `hourly/system`: objective and total
+  generation identical on every arm; per-unit differences marginal-tie only with the LMP
+  identical at every moved unit-hour; price differences confined to dual-degenerate hours —
+  none on ERCOT/NYISO, and on CAISO only on the zero-load import nodes (CA zones bit-identical).
+  **P1: ERCOT 2025 349.2 → 142.0 s (273,893 → 78,856 iters); ERCOT 2024 two-pass 628.1 → 225.1 s
+  (pass 2 seeded from pass 1's P1 basis: 332.9 → 92.8 s); NYISO 2023 96.4 → 67.6 s; CAISO 2023
+  354.5 → 123.1 s.** Peak RSS +0.6 GB on ERCOT (13.27 GB, inside the s3 envelope). (3) Fast tier:
+  12 failures, 9 pre-existing by control and 3 order-sensitive passes in isolation, none in a
+  touched file; `test_xyear_warmstart_default.py` 10 → 23. Full record: baseline doc §WALLCLOCK B.
 - Docs: `docs/cross-year-warmstart.md` "Same-year P1 basis seed"; the evidence record
   `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B; the memo's decision block;
   `tests/unit/pipeline/test_xyear_warmstart_default.py` +13 tests.
