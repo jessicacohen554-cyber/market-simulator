@@ -92,7 +92,7 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#42 + am.1, main HEAD 546279a5, 2026-09-05 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#42 + am.1 + am.2, main HEAD d66d5e6b, 2026-09-05 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT ercot248-two-config-keeper CALIBRATED (2022 touchpoints both NOT-YET; C1 an input
   gap) · NEISO neiso-99-joint-p1 CALIBRATED (ladder walked: 2022 CAL · 2021 CAL · 2020 NOT-YET) · PJM
   pjm-162-inputclock CALIBRATED (2022 + 2021 touchpoints both NOT-YET; input-clock does not close
@@ -121,11 +121,15 @@ STATE AT HANDOFF (r#42 + am.1, main HEAD 546279a5, 2026-09-05 — VERIFY, DON'T 
   (pack §D68 / §D69, Fable). HELD: D58 + D63 on D60-R2; T3-NYISO-GOLDEN on the marker. QUEUED-NAMED:
   D66 (PJM 2024/25 census), D67 (steam below-cap convention), D60-R3 (if D60-R2 dead), a
   carbon-response root-cause lane (D21's P1 defect + SCN-WS0's leakage finding, same object).
-- OWNER-TIER OPEN: **Q47 (AMENDED: Act A arming + Act B together; rec. A ARM COUPLED after D60-R2/-R3)** ·
-  **Q51** (re-declare NYISO complete, fourth; rec. A complete only, Q45 restored) ·
-  **Q48** (PJM co-opt arming; rec. A defer until D62) · **Q49** (declare MISO complete; rec. A
-  declare with the three facts in the entry) · **Q50** (re-declare CAISO complete only; rec. A) ·
-  D60-R2 alive? NEXT cards: D58 arming; D62 arming; NYISO re-authorization when CALIBRATED again.
+- OWNER-TIER OPEN: NONE — Q1–Q51 spent (r#42 am.2, owner live: D60-R2 DEAD → D60-R3 ISSUED; Q47 ARM
+  COUPLED after D60-R3 → D65-B chartered released-conditional; Q48 DEFER until D62; Q49 DECLINE — MISO
+  stays unmarked, D68 closed; Q50 HOLD until caiso-253 lands → re-serve then; Q51 HOLD one refresh →
+  re-serve at r#43 if NYISO's keeper is unmoved). Gate (a) FAIL for CAISO/MISO/NYISO is the OWNER'S
+  CHOICE — do not re-serve those cards before their stated conditions. NEXT cards: Q50/Q51 re-serves;
+  D58 arming; D62 arming.
+- IN FLIGHT / ISSUED: D60-R3 (issued am.2, dispatch now; sole board writer) · D62 (issued r#41, still
+  unlaunched — dispatch now, registration waits on D60-R3) · D65-B (chartered; dispatch AFTER D60-R3's
+  finding merges) · D58 + D63 held on D60-R3 · D69/D70 held on their cards · T3-NYISO held.
 - OTHER DESKS: SCN-DESK (WS-0 landed with the leakage finding; WS-1a partial; WS-2a code landed with
   two ScenarioConfig fields and NO matrix row — flagged) · wall-clock (A-1/A-3/A-6 merged; B-0 memo
   UNSIGNED) · audit v32 (R-AU..R-AX; open: flip, G2 prompt, Z-6, E11/prune-timing, G-1/G-2 labels,
