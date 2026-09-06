@@ -134,6 +134,61 @@
    "censored_units_re_offered": {}
   }
  },
+ "S6R": {
+  "2022": {
+   "price": 46.78223392596911,
+   "ratio": 0.9356446785193822,
+   "pos": 1.0536718964575849,
+   "dpos_pt": 0.26718964575849213,
+   "how": "marginal_offer_sets_price",
+   "uncleared_firm_mw": {
+    "coal": 237.8,
+    "gas_cc": 2052.1,
+    "gas_st": 8801.9,
+    "oil": 3722.9
+   },
+   "n_offers": 1370,
+   "n_uncleared": 684,
+   "censored_units_re_offered": {}
+  },
+  "2023": {
+   "price": 46.782233925969116,
+   "ratio": 1.370707117666836,
+   "pos": 1.0540420856226547,
+   "dpos_pt": -0.11579143773452483,
+   "how": "marginal_offer_sets_price",
+   "uncleared_firm_mw": {
+    "coal": 237.8,
+    "gas_cc": 2145.2,
+    "gas_st": 1981.6
+   },
+   "n_offers": 907,
+   "n_uncleared": 180,
+   "censored_units_re_offered": {}
+  },
+  "2024": {
+   "price": 145.67728889823317,
+   "ratio": 5.037250653465877,
+   "pos": 1.0320636859595782,
+   "dpos_pt": -2.34363140404219,
+   "how": "all_offers_clear_curve_sets_price",
+   "uncleared_firm_mw": {},
+   "n_offers": 769,
+   "n_uncleared": 0,
+   "censored_units_re_offered": {}
+  },
+  "2025": {
+   "price": 451.60999999999996,
+   "ratio": 1.673125370480142,
+   "pos": 0.9661268832970488,
+   "dpos_pt": -3.877311670295114,
+   "how": "all_offers_clear_curve_sets_price",
+   "uncleared_firm_mw": {},
+   "n_offers": 761,
+   "n_uncleared": 0,
+   "censored_units_re_offered": {}
+  }
+ },
  "S6_censored_bound": {
   "2022": {
    "price": 91.58310973026411,
