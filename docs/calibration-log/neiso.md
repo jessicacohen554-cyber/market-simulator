@@ -3210,9 +3210,24 @@ source the **ruling**. No `ScenarioConfig` default moved; no other ISO touched.
 ### E — holdout
 
 The 2020/2021/2022 validation touchpoints were re-run on the **frozen, already-promoted** recipe and
-re-stamped to the keeper (rule 30(a)/(b)) — **nothing is fitted to a held-out year**: the scalar was
-identified on the 2023–2025 in-sample bias alone and promoted before any touchpoint was solved
-(rule 22 step 3/4). Rule 30(c) untouched: NEISO's determination is its train-tier verdict, and a
+re-stamped to the keeper (rule 30(a)/(b), run `2026-09-06-neiso-106-touchpoints-2020`) — **nothing is
+fitted to a held-out year**: the scalar was identified on the 2023–2025 in-sample bias alone and
+promoted before any touchpoint was solved (rule 22 step 3/4).
+
+| year | pre-cut | superseded keeper | **this keeper** | **predicted before the solve** | C3a |
+|---|---:|---:|---:|---:|---|
+| 2020 | +13.707 % | +3.897 % | **+6.964 %** | +6.983 % | PASS |
+| 2021 | +9.079 % | +3.989 % | **+5.588 %** | +5.590 % | PASS |
+| 2022 | −0.601 % | −3.311 % | **−2.466 %** | −2.458 % | PASS |
+
+**All three land within 0.02 pp of a value predicted from that year's own measured pass-through
+before the LP ran** — the same accuracy the in-sample years showed. **All six years 2020–2025 now
+PASS C3a**, and the bundle scores `CALIBRATED` with **0 degraded criteria** against the in-sample
+column (7 held, C3c carried). That is the strongest evidence this session produced that the
+coefficient is a **measured physical response and not a fitted one**: the per-year model is
+predictive *out* of the training window at in-sample accuracy — six years, one config, six hits —
+which the training years alone could not have shown. The superseded touchpoint runs are **pruned**
+under rule 15 keeper-only retention. Rule 30(c) untouched: NEISO's determination is its train-tier verdict, and a
 held-out year can neither certify nor decertify it. **The touch-once locked test (2019 / H1-2026) is
 UNTOUCHED and remains frozen for every ISO.**
 
@@ -3226,7 +3241,16 @@ cannot move a shape. Two diagnostic rows got **worse** and are disclosed in the 
 than left in a JSON file: a D-4 off-window row at 26 MW plant 54605 worth **0.0001 TWh**, and three
 D-2 forced shares that all moved *toward* their caps; C8 still PASSES because every class involved
 is immaterial under rule 20's own 2 %-of-load floor, and the D-4 row is not worked because working
-it would be chasing four parts in a billion.
+it would be chasing four parts in a billion. **And one defect was found that is NOT NEISO's to
+fix and was NOT fixed**: the Calibration Status **per-year ladder** renders `NOT-YET` on every year
+of both NEISO's *and MISO's* `CALIBRATED` keepers, because `build_status.build_years` scores each
+year in isolation and the rule 1(b) `years_held` exact-set check is then compared against a
+one-year *display* subset. The check is right; the caller is asking a run-level question about one
+row. It is **pre-existing** (identical at the neiso-105 promotion on `main`), it leaves every
+run-level determination correct, and its fix lands in the shared scorer and would change MISO's
+published page — which a NEISO lane must not do (rule 25 `[R-ISO-SCOPE]`). Escalated with a
+measured blast radius and a proposed one-line fix in
+`results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`.
 
 **Next shorthand: `neiso-107`.** No NEISO lever is open, and **the offer-level lane is CLOSED by its
 own pre-committed stop rule** — do not re-size this scalar. The live objects are unchanged: C3c
