@@ -102,3 +102,45 @@ and will not quote the system-scope ORGANIC row.
 `isos(case) ∩ isos(reference_case)` before summing, and label the row with that intersection;
 or emit the row as `null` with the coverage mismatch named, rather than a computable-looking
 number. Either is preferable to a delta a reader cannot tell is malformed.
+
+---
+
+## CORRECTION — my CCS mechanism claim is FALSIFIED by PJM, and the S5 finding is WIDER
+
+**What I claimed** (NEISO FINDING §2.2, and repeated in the NYISO FINDING): the CCS retrofit
+screen is armed by a **state carbon program**, so `gas_cc_ccs` would appear in NEISO / NYISO /
+CAISO and **not** in ERCOT / PJM / MISO. Registered as a falsifiable prediction; ERCOT, NEISO
+and NYISO all confirmed it, and I reported it as "3/3 confirming".
+
+**PJM falsifies it.** PJM carries **no** state carbon program and still shows
+**909.8 MW of `gas_cc_ccs` in 2029 and 2030** (0 MW in 2026–2028).
+
+**Why the claim was wrong.** `model/capacity_evolution/ccs.py` values the retrofit as *"the
+incremental uplift over the best unabated state, with the certificate and §45Q … as bid
+offsets"*. **§45Q is a federal credit and is independent of any carbon price**, so the screen
+can clear on 45Q alone. A carbon price is a *magnitude* driver, not the arming condition. I
+over-read capx D50's "at carbon 0 the repair closes the screen" as meaning the screen cannot
+open at carbon 0 at all; D50's ERCOT evidence is one ISO's result, not a general condition.
+
+**The corrected picture, as measured:**
+
+| ISO | state carbon program | `gas_cc_ccs` | first year |
+|---|---|---|---|
+| NEISO | RGGI | **8,833 MW** | 2028 |
+| NYISO | RGGI | **6,475 MW** | 2028 |
+| PJM | **none** | **909.8 MW** | **2029** |
+| ERCOT | none | **0** | — |
+| MISO / CAISO | none / CARB | *pending* | — |
+
+So: a carbon program makes the retrofit **large and early**; §45Q alone makes it **small and
+late**; and ERCOT shows zero, so 45Q alone is not sufficient everywhere either. *Hypothesis,
+not a claim, for whoever owns the screen:* ERCOT's REF is in extreme shortage (load-weighted
+price $4,438/MWh at 2030), so an unabated CC already earns enormous margin and the
+**incremental** uplift from retrofitting — which costs capex and heat rate — may be negative
+there. Untested by this lane.
+
+**Why this matters more, not less.** It **widens** the S5 finding. Contamination from the
+SCN-WS2b emission-rate defect is **not confined to the three state-carbon ISOs**; any ISO
+whose 45Q economics clear can carry mis-rated `gas_cc_ccs`. The magnitude in PJM is small
+relative to its ~470 Mt (unlike NEISO's 41.9 % or NYISO's 25.3 %), but the *scope* claim in
+those two FINDINGs was too narrow and is corrected here rather than left standing.
