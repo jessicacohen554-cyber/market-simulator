@@ -1688,9 +1688,12 @@ def _spp_config() -> ISOConfig:
     rated interface** (rule 14 ``[R-ACCURATE]``; owner ruling P11): no
     document in the tree carries an SPP North↔South transfer capability —
     the 2025 ITP Assessment Report is a project portfolio with no rated
-    interface (FINDING-spp-12 §6), SPP OASIS is host-blocked, and the two
-    candidate documents (ITP Manual v3.3, 2022 20-Year Assessment) answered
-    HTTP 503 on 2026-09-06 (FINDING-spp-20). The MMU's ">6,000 MW SPP↔MISO
+    interface (FINDING-spp-12 §6), SPP OASIS is host-blocked, and SPP-13's
+    row-11 sweep of the four candidate documents (ITP Manual v3.3, the 2022
+    20-Year Assessment Report + Manual, the ITP Postings folder) found that
+    NONE states an MW — the rated interface data is NDA / CEII, not public
+    (FINDING-spp-13 §0; the two PDFs also answered HTTP 503 to this lane on
+    2026-09-06). The MMU's ">6,000 MW SPP↔MISO
     AC interties" is a SEAM rating, not the internal corridor, and is
     deliberately not borrowed. The placeholder is the North zone's own
     EIA-860 2025 ER summer capability (48,711.8 MW; audit §2.4 state table:
