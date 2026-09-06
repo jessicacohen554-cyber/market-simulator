@@ -884,6 +884,15 @@ results/hindcast/*/*/*/evolution_*.json
 # check and FC-3 attribution read against same-HEAD controls that were deleted
 # before merge (rule 29(c)) -- same one-bundle carve-out.
 !results/hindcast/pjm-2021-2025-realized-t1h-d74-nodefaultcap/*/*/evolution_*.json
+# capx D78-R (2026-09-06): the PJM retirement-screen SECTOR GATE full-window arm
+# (suffixed pjm-t1h-d78r-sectorgate). Its ledgers carry the `capacity_clearing`
+# block AND the `pipeline_events` rows (decided / entry_capped, per screen year)
+# that the D78-R finding's whole evidence base reads: the W1 candidate identity
+# (every control-only failing row sector-1, the arm-only set empty, all five
+# years), W2's zero-sector-1 composition, W3's provenance and the W4 window
+# decided total -- every one of them graded against a same-HEAD control-P that
+# was deleted before merge (rule 29(c)) -- same one-bundle carve-out.
+!results/hindcast/pjm-2021-2025-realized-t1h-d78-sectorgate/*/*/evolution_*.json
 # capx D52 (2026-09-04): the NYISO adequacy-requirement devintage A/B arm
 # (suffixed nyiso-t1h-d52-devintage) and its CONDITIONAL curve-ON probe
 # (nyiso-t1h-d52-curveon). Their ledgers carry the new D52 seam observability

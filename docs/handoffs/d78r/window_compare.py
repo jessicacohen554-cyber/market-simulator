@@ -546,8 +546,12 @@ def flip_condition(g: dict, rep: dict) -> dict:
             if cf[y].get("recall_band") == "PASS"
             and af.get(y, {}).get("recall_band") != "PASS"
         ]
-        d = not lost
+        # An ABSENT loyo block is NOT ADJUDICABLE, never a vacuous pass:
+        # `not lost` over zero folds would read True. Run
+        # `score_capacity_hindcast.py --flip-gate-extras` to populate it.
+        d = None if not cf else not lost
         detail["d"] = {
+            "folds_computed": bool(cf),
             "control_folds": {y: cf[y].get("recall_band") for y in sorted(cf)},
             "arm_folds": {y: af.get(y, {}).get("recall_band") for y in sorted(af)},
             "folds_lost": lost,
