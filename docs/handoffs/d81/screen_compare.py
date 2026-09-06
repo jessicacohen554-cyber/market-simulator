@@ -185,13 +185,22 @@ def main() -> None:
         ),
     }
 
+    # A shared row is "identical" only if its fuel, offer, accredited MW AND
+    # ITS CLEARED FLAG all match. The cleared flag was MISSING from this
+    # comparison until the full window was read (FINDING §5.2): the mechanism's
+    # real effect is a re-composition of the marginal tie band, which is
+    # invisible to a fuel/offer/A_g comparison. Repaired STRICTLY — the gate now
+    # catches a difference it previously passed over — and reported as the third
+    # instrument defect rather than silently fixed.
     shared_mismatch = [
         u
         for u in shared
         if c_stack[u][0] != a_stack[u][0]
         or abs(c_stack[u][1] - a_stack[u][1]) > OFFER_TOL
         or abs(c_stack[u][2] - a_stack[u][2]) > MW_TOL
+        or c_stack[u][3] != a_stack[u][3]
     ]
+    cleared_flips = [u for u in shared if c_stack[u][3] != a_stack[u][3]]
     non_dated_added = [u for u in added if u not in dated]
     gates["G3"] = {
         "question": "footprint confined to the rows the mechanism claims",
@@ -205,6 +214,8 @@ def main() -> None:
         "shared_rows": len(shared),
         "shared_rows_not_byte_identical": shared_mismatch[:20],
         "n_shared_mismatch": len(shared_mismatch),
+        "n_shared_cleared_flag_flips": len(cleared_flips),
+        "shared_cleared_flag_flips": cleared_flips[:20],
         "pass": (
             not non_dated_added and not dropped and not shared_mismatch and bool(added)
         ),
@@ -326,6 +337,28 @@ def main() -> None:
             "sum_vs_total_residual_mw": round(abs(d_off - sum_a), 6),
             "rounding_bound_mw": round(len(add) * 0.0005, 4),
             "within_rounding_bound": abs(d_off - sum_a) <= len(add) * 0.0005,
+            "block_cleared_mw": round(
+                sum(as_[u][2] for u in blk if u in as_ and as_[u][3]), 3
+            ),
+            "block_uncleared_mw": round(
+                sum(as_[u][2] for u in blk if u in as_ and not as_[u][3]), 3
+            ),
+            "merchant_rows_flipped_to_cleared": len(
+                [u for u in sh if not cs[u][3] and as_[u][3]]
+            ),
+            "merchant_rows_flipped_to_uncleared": len(
+                [u for u in sh if cs[u][3] and not as_[u][3]]
+            ),
+            "merchant_flipped_accredited_mw": round(
+                sum(as_[u][2] for u in sh if cs[u][3] != as_[u][3]), 3
+            ),
+            "cleared_mw": [cc["cleared_mw"], ac["cleared_mw"]],
+            "n_uncleared": [cc["n_uncleared"], ac["n_uncleared"]],
+            "marginal_unit": [cc.get("marginal_unit"), ac.get("marginal_unit")],
+            "pipeline_rows": [
+                len(ctl[yy].get("pipeline_events") or []),
+                len(arm[yy].get("pipeline_events") or []),
+            ],
             "block_units_in_SAME_year_decision_rows": {
                 "ctl": len(decision_unit_ids(ctl[yy]) & blk),
                 "arm": len(decision_unit_ids(arm[yy]) & blk),
