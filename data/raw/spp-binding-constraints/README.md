@@ -183,3 +183,74 @@ data). The `Real Time Effective Limit` column is the measured per-flowgate limit
 *Russett–South Brown 138 kV, southern Oklahoma* (RT $61/MWh) — plus the 2024 FCAs Oklahoma City
 and Tulsa (Lubbock and Kansas City are the other two, and belong to `sps_tie` / `other`
 respectively). The starting list stands; nothing was added or removed.
+
+
+---
+
+## STATUS UPDATE 2026-09-06 (lane SPP-14) — THE PORTAL ROUTE IS OPEN; THIS DIRECTORY IS SERVED
+
+The "portal blocked" status above is **superseded**. `portal.spp.org`'s file-browser
+download and listing calls both answer **anonymously over plain HTTPS** — no
+`X-SPP-UI-Token`, no cookie, no FTP — and honour `Range`. What SPP-12 measured were
+two path-shape artifacts, not an authorization wall: the download route serves
+*files* (a folder path 404s correctly), and the listing returns `[]` only for
+`path=` **empty**, the SPA's own first call, while `path=%2F` returns the real
+directory array. The corroborating witness is the open-source `gridstatus` client,
+which reads these same URLs with a bare `pandas.read_csv(url)` and carries no
+credential at all. Full route table, the licence position and the whole alternative-
+source sweep: `SOURCES.md` beside this file, `data/raw/spp-lmp-alt/SOURCES.md`, and
+`docs/handoffs/FINDING-spp-14-2026-09-06.md`.
+
+**Do not re-derive the access route from the "how to fill this directory" paragraph
+above** — it is kept as the incident record, not as instructions.
+
+### What SPP-14 measured, and what it did NOT commit
+
+**The four-group table is COMPUTED.** The whole RTBM binding-constraint archive was
+pulled and parsed in-session — `/2023/2023.zip` (58.7 MB), `/2024/2024.zip` (70.1 MB),
+`/2025/RTBM-BC-YEARLY-2025.csv.zip` (25.0 MB), inflating to 1.68 GB of yearly-rollup
+CSV — and the four-group binding-share and shadow-price table for 2023-2025 is in
+`docs/handoffs/FINDING-spp-14-2026-09-06.md` §5, with the derived group membership in
+§4.1. **Card P1's ranking of SPP-54 vs SPP-57 now has its measured input.**
+
+**The payload is not committed** (charter: the table goes in the FINDING; 154 MB of
+zips is not this lane's pack). Git history is the record, per rule 15; the pull is one
+command against the route in `SOURCES.md`.
+
+**Landed instead — the two flowgate registries**, which are small, permanent, and are
+what makes the group membership measured rather than asserted:
+
+| File | Rows | Carries |
+|---|---|---|
+| `Flowgates.csv` | 823 | permanent flowgates: `From Area`/`To Area` control-area codes, `Voltage`, seasonal `Normal`/`Emergency` MW ratings, `IROLLimit` |
+| `Temp_Flowgate.csv` | 3,298 | the `TMP*`/`TEMP*` temporary constraints that carry most SPP binding: same area codes, `NormLimit`/`EmerLimit`, `CreatedTime` |
+
+**The four groups are UNCHANGED.** They were fixed in this README before any data
+existed (rule 1 `[R-STRUCT]`) and SPP-14 changed no group, no definition, and no
+ranking test. What this README expressly reserved to "the session with the data" —
+*"the actual membership has to be derived from the delivered flowgate names, which is
+a judgement the session with the data makes and records"* — is recorded area-code by
+area-code in FINDING-spp-14 §4.1. Both Oklahoma flowgates the README names are present
+in the delivered data (`LN OSAGE_OG - WEBBTAP4`, `LN RUSSETT - SBROWN`), as is the
+`SPSNMTIES` interface SPP-13 §4 named.
+
+### SCHEMA CORRECTION — SPP-53 cannot get its limit from this archive
+
+`FINDING-spp-13` §3 recorded a **14-column** schema including **`Real Time Effective
+Limit`**, read from the v35 zip's `RTBM-DAILY-BC-20260128.csv` sample, and concluded
+that column was SPP-53's measured N<->S limit input. **The archive SPP serves carries
+only 10 columns for the whole calibration span.** Measured 2026-09-06 by fetching the
+header of the served file for each date: 2023-06-01, 2024-06-01 (via the yearly
+rollups), 2025-06-01, 2025-12-01, 2026-01-28, 2026-03-23 and 2026-03-24 are all **10**
+columns; 2026-04-01, -04-08, -04-15, -05-01, -06-01, -07-01, -08-01 and -09-01 are
+**14**. The break is the same **2026-03-24** format change the `gridstatus` client
+records for hourly load. So:
+
+- **2023-2025 have no effective-limit column at all** — the row-8 archive cannot supply
+  SPP-53's measured N<->S limit for the years the model calibrates on;
+- from **2026-04** forward it can.
+
+SPP-53 therefore stays on the rule-14 `[R-ACCURATE]` Tier-3 reconciled estimate that
+ruling P11 set for SPP-20. The better measured substitute now in the tree is
+`Flowgates.csv`'s seasonal `Normal`/`Emergency` MW ratings, which are published, dated
+and per-flowgate.

@@ -52,3 +52,43 @@ this directory or its README was taken from memory.
 
 - **FTP folders (PRD):** `ftp://pubftp.spp.org/Markets/DA/MCP/` · `ftp://pubftp.spp.org/Markets/RTBM/MCP/` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6).
 - Schema source: the v35 zip's `DA-MCP-202601300100.csv`, `RTBM-MCP-DAILY-20260123.csv`, `RTBM-MCP-202601291620.csv` samples (not landed).
+
+
+## Appended 2026-09-06 by lane SPP-14 — THE PORTAL ROUTE IS OPEN, ANONYMOUS, OVER HTTPS
+
+**This supersedes the "Blocked / alternative hosts" row above for `portal.spp.org`.**
+Lane SPP-14 re-probed the portal while sweeping third-party sources and found both
+file-browser calls answering anonymously over plain HTTPS — no `X-SPP-UI-Token`, no
+cookie, no FTP. The two corrections, each measured 2026-09-06:
+
+| Call | SPP-12 read | SPP-14 measured |
+|---|---|---|
+| `GET /file-browser-api/download/<fs>?path=<FILE path>` | `404`, zero bytes | **HTTP 200, `text/csv`**, the real file. The 404s were path-shaped: the route serves *files*, so a folder path — or a path that does not exist in that product's archive layout — 404s correctly |
+| `GET /file-browser-api/?fsName=<fs>&path=%2F&type=folder` | `200 []` at "every path/type form" | **HTTP 200 with the real JSON directory array.** The literal `[]` reproduces only for `path=` **empty**, which is the SPA's own first call — an empty-path artifact, not authorization |
+| `Range:` requests | not tried | **honoured** (`Accept-Ranges: bytes`, `206`), so an archived `<year>/<year>.zip` is read member-by-member without downloading the body |
+
+Corroborating witness: the open-source `gridstatus` package's SPP client reads these
+same URLs with a bare `pandas.read_csv(url)` and carries no credential at all
+(`gridstatus/spp.py` v0.36.0, sdist read 2026-09-06 from `files.pythonhosted.org`).
+
+**Licence.** SPP states no licence or redistribution restriction on these public
+market files; they are published as SPP's public data (guide: `SPP Public Data
+Access` v3.0, tracked in `data/raw/spp-planning/`). Landed byte-for-byte, unmodified.
+
+**Producer:** `scripts/data/fetch_spp_alt_portal.py` (rows 6-9);
+`scripts/data/build_spp_lmp_reference.py` **runs unmodified** against this route (row 5).
+
+### Landed by SPP-14 (row 9 — DA MCP 2023 and 2024)
+
+| File | Portal path (`fsName=da-mcp`) | Bytes |
+|---|---|---|
+| `da-mcp-2023.zip` | `/2023/2023.zip` | 418,589 |
+| `da-mcp-2024.zip` | `/2024/2024.zip` | 417,669 |
+
+**RTBM MCP is reachable on the same route and deliberately NOT landed here:**
+`fsName=rtbm-mcp`, `/2023/2023.zip` = 47,156,480 B and `/2024/2024.zip` =
+47,605,298 B — ~141 MB for the three years, which is a pack this lane will not push
+for a row the plan scopes to SPP-56 alone. Fetch it when SPP-56 needs it:
+`python scripts/data/fetch_spp_alt_portal.py --product rtbm-mcp --years 2023 2024`.
+2025 is served per-month at `/2025/<MM>/` (plus a `2025AnnualRollup` folder) for both
+products, not as a year zip.
