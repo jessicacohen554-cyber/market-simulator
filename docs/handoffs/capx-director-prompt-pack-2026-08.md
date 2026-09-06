@@ -6062,7 +6062,7 @@ EXIT: the finding with the census, the adjudicated home, the arithmetic of what 
 would do to D57's price ratio and composition, and the D62 build charter draft; pushed.
 ```
 
-## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41; NOT LAUNCHED at r#42; RE-EMITTED AND DISPATCHED at r#43** with FOUR marked `[r#43]` changes and nothing else (D60-R2 → D60-R3 in both hold clauses; D65 recorded LANDED with D65-B named as the future writer of the same regions; the two director-verified G-DRIFT facts marked re-verify-don't-assume; **the D65 hunk-level lesson made binding on `retirements.py`**, D62's own seam-1 file) plus rule 29(c) stated explicitly. **This section IS the issued text — paste it as written**
+## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41; NOT LAUNCHED at r#42; RE-EMITTED AND DISPATCHED at r#43** with FOUR marked `[r#43]` changes and nothing else (D60-R2 → D60-R3 in both hold clauses; D65 recorded LANDED with D65-B named as the future writer of the same regions; the two director-verified G-DRIFT facts marked re-verify-don't-assume; **the D65 hunk-level lesson made binding on `retirements.py`**, D62's own seam-1 file) plus rule 29(c) stated explicitly. **This section IS the issued text.** — **DISPATCHED AND LIVE at r#44 (PRs #4949/#4958/#4962):** PRECOMMIT before the first line of build; mechanism built to charter (one `{iso: bool}` gate, default-off, no scalar); **Phase 0 PASS to 0.0000 $/MW-day and 0.0000 pt on all four DYs; SCREEN GATE PASS on all five legs on the pre-named DY 2022/23 — ratio 1.522 → 0.936×, position −0.477 → +0.267 pt, both inside the declared bands, landing on its own pre-solve arithmetic TO THE CENT; the footprint IS the arithmetic class by class (nuclear moves zero both sides); reactive enters once at 3.6e-16**; two disclosures against interest. OWED: §§5–9, the full T1-H window; registration correctly withheld behind D60-R3. **Do NOT re-paste while live**
 
 ```
 You are capx lane D62 for the market-simulator repo — the BUILD + A/B of the object D61 relocated
@@ -6322,7 +6322,7 @@ blob-verify calibration-complete.json and program-status.json after push. EXIT: 
 landed, both gates green, finding pushed.
 ```
 
-## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (caiso-253 landed, arm refused, keeper unchanged) and RULED HOLD AGAIN: "hold until caiso-253b resolves" (#4923's open PRECOMMIT). Re-serve condition for r#44: caiso-253b lands. Do not paste until then**
+## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (caiso-253 landed, arm refused, keeper unchanged) and RULED HOLD AGAIN at r#43 ("hold until caiso-253b resolves"). **RE-SERVED A THIRD TIME at r#44 with that condition MET (caiso-253b resolved, #4964; keeper unmoved) and HELD AGAIN: "hold until caiso-254 resolves"** — served with the unbounded-wait problem named (CAISO's lane has run continuously 252 → 253 → 253b → 254, so each hold buys a new successor) and a terminating option offered and declined. Re-serve condition for r#45: caiso-254 lands. Do not paste until then**
 
 ```
 You are the D69 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6369,7 +6369,7 @@ dispatched, D68 lands first and D69 rebases onto it; both edit disjoint ISO bloc
 bytes + blob-verify both JSON files. EXIT: declaration landed, gates green, finding pushed.
 ```
 
-## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (the keeper survived a full refresh byte-unmoved) and RULED HOLD AGAIN: "hold, nyiso-197 is live" (#4919's open CHP add-back basis question could move the keeper a fifth time). Re-serve condition for r#44: nyiso-197 lands AND the keeper reads CALIBRATED. Do not paste until then**
+## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (the keeper survived a full refresh byte-unmoved) and RULED HOLD AGAIN: "hold, nyiso-197 is live" (#4919's open CHP add-back basis question could move the keeper a fifth time). Re-serve condition: nyiso-197 lands AND the keeper reads CALIBRATED. **NOT SERVED at r#44 — nyiso-197 has no commit in the delta** (the NYISO lane that landed is the C8 unit-grain measurement on the nyiso-193 card, a different object). Do not paste until then**
 
 ```
 You are the D70 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6420,7 +6420,7 @@ exact bytes; blob-verify calibration-complete.json + program-status.json after p
 declaration landed, both gates green, finding pushed.
 ```
 
-## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2; NEVER DISPATCHED; RE-EMITTED AND DISPATCHED at r#43** with a new STATE AT START block (what main took since the charter was written) and an extended collision note. **This section IS the issued text — paste it as written**
+## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2; NEVER DISPATCHED; RE-EMITTED AND DISPATCHED at r#43** with a new STATE AT START block (what main took since the charter was written) and an extended collision note. **This section IS the issued text.** — **DISPATCHED AND LIVE at r#44 (PRs #4946/#4955/#4959/#4963):** state at start 17/17 keys unmoved with all three charter assertions MEASURED; two environment defects (off-pin highspy/pandas/pydantic, a shallow clone) repaired before the first solve; control-first on all three legs, 0 non-provenance diffs, the rubric 1.0→1.1 advance INERT; the GOLDEN-3 FC-4 input pinned not guessed; NO second drift hunk; §8-blast-radius landed, 28 of 33 bundles PRE-hunk; **§5.0e — the lane rebased under its own running solve, killed the leg, and made the failure mode mechanical (`exit 90`); 'rebase BETWEEN legs, never DURING one' is now doctrine**. OWED: the three legs, the Q37 rows, §5 and the close. **Do NOT re-paste while live**
 
 ```
 You are the D60-R3 session of the capacity-expansion track — the THIRD launch of D60's owed half (pack
