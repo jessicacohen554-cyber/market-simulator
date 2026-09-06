@@ -5503,6 +5503,66 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-221 (2026-09-06) — THE PEAK-BAND RESHAPE: **KILLED AT PHASE 0,
+> ZERO LP MINUTES**, and the kill generalises beyond the lever. NO SOLVE, NO SCREEN, NO
+> BUNDLE, NO REGISTRATION, NO KEEPER MOVE, NO FIELD ADDED. Keeper UNCHANGED at
+> `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Record
+> `FINDING-miso221-peak-band-reshape-2026-09-06.md`; instrument
+> `scripts/probes/_miso221_peak_shape_phase0.py`, record `_miso221_peak_shape.json`.
+> **GOVERNANCE CORRECTION FIRST: the charter's lever was never admissible.** It named the
+> shape knob as "`peak` and `pct_peaking`"; rule 1 `[R-STRUCT]`'s carve-out condition (a)
+> admits the four band multipliers ONLY and **excludes the structural shares
+> (`econ_low_share`, `pct_peaking`)** by name. Moving capacity between tranches is exactly
+> that exclusion, so every candidate tested moves band multipliers only (asserted in code
+> by `_assert_scope`). A capacity-reshape form needs an owner amendment, not a lever.
+> **THE CHARTER'S DIAGNOSIS WAS RIGHT AND ITS LEVER STILL FAILS.** `CT_PEAKER|econ` IS the
+> dominant block above the clearing price (**49.9 / 46.6 / 27.6 %** of it), so the channel
+> reaches the right capacity. Three forms, all measured zero-solve at the model's own
+> dispatched quantity (reconstruction residual ≤ **$0.14 / $0.17 / $1.35** against the
+> keeper's committed duals): **(1) `peak` ×4.5 is nearly free and nearly inert** — mean
+> object-hour price moves **−$0.04 / −$0.03 / +$3.04**, 0/0/1 of 15 hours cross $200, and it
+> costs only 0.0008–0.0051 TWh because the keeper's `CT_PEAKER|peak` band produces
+> **0.0007 / 0.0019 / 0.0001 TWh** all year; it is 4.6–12.6 % of the above-price block, so
+> the clearing point just settles on the next tranche. **(2) The mean-preserving `econ`
+> spread cannot reach and moves 2023 BACKWARDS** (−$0.62 / +$0.53 / +$2.78; ceiling
+> **$194.26** even at δ = 0.88, an `econ_low` of 0.22), because the marginal tranche sits in
+> the lower half of the block it re-slices. **(3) The level lift has reach but no room** —
+> ×1.5, the smallest tested, removes **7.74 TWh** of `CT_PEAKER`-2023 against **0.015 TWh**
+> of C1 headroom (**516×**; floor-corrected bound 6.8 TWh, still 450× and ~2× outside the
+> band) while putting **0 of 15** hours above $200 with a **$52.50** ceiling. **2023 is
+> unreachable at EVERY value** — its ceiling is $56.47 even at ×5.0, because `COAL|econ`,
+> `CC_REGULAR|peak` and the unreachable non-tranche block take the margin there — and rule 1
+> condition (b) makes 2023 govern.
+> **THE MEASUREMENT THAT GENERALISES, and the one to carry forward.** At the model's own
+> 2025 annual maximum (`07-28 HE19`, **$187.04** vs actual **$683.21**) the capacity above
+> the clearing price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block** —
+> wind, nuclear, solar, imports, hydro, biomass, oil — carrying **no `offer_curve_by_group`
+> entry at all**. **The offer-curve channel controls 10.2 % of the supply that would have to
+> be re-priced, at the hour where it controls the most.** miso-220's unreachable-block
+> declaration (oil / biomass / ST_CHP) widens to hydro and imports and becomes the BINDING
+> constraint in 2025, where it is 35.7 % of the above-price capacity on the object average.
+> **CONSEQUENCE FOR THE LANE: C3c IS NOT AN OFFER-CURVE PROBLEM IN MISO.** With the
+> reserve/scarcity family closed arithmetically (miso-219: zero shortfall in all 26,280 h)
+> and `maxgen_emergency_tier_pricing` contributing exactly $0 (load slack 0.000 MWh), the
+> remaining levers must **remove capacity from the stack** in those hours or **re-price the
+> non-tranche fleet**. The owner-court **ELMP / emergency-supply mapping** (filed miso-219
+> §5/§9) is the only named candidate that acts on the right object, and this measurement
+> strengthens the case for taking it to the owner.
+> **NO CELL VERDICT MOVED, and that is the correct outcome, not an omission.** The matrix
+> carries no `peak`-band-reshape row: the mechanism is `offer_curve_by_group`, MISO's own
+> **`K`**, and nothing here refutes it — this session refuted three *parameterisations* of
+> it. So the cell stays `K` with the miso-221 evidence appended, exactly the miso-215
+> "evidence about the container, no verdict" form. No `ScenarioConfig` field was added, so
+> no base row was minted and no other shard was touched (rule 28c not engaged).
+> **G-DRIFT (rule 29(b) form 4) RECORDED THOUGH NO ARM WAS SOLVED**: `4545300d..b2bd9fdb`
+> over the solve path = 43 files, +2,136/−553, **every hunk INERT** — `scripts/run_calibration.py`
+> itself is UNCHANGED; the clean-tier/federal-CES/carbon family is gated off by
+> `rps_enabled` false / `miso_clean_tier_rows` false / `carbon_price` 0.0; the three new
+> `ScenarioConfig` fields are all default-off; the rest is forecast-only, wall-clock
+> (byte-identical by construction), dead-code deletion, reflow or reporting.
+> **`miso220_nonsteamlift_B` remains a valid control at HEAD; no control solve is owed.**
+
+
 > **QUEUE STAMP miso-220 (2026-09-05) — THE NON-STEAM FOSSIL OFFER LIFT (×1.10, steam gas
 > held): **PROMOTED, KEEPER → `2026-09-05-miso-220-nonsteam-lift`, DETERMINATION CALIBRATED**,
 > every pre-registered kill SILENT and all six predictions HELD. **The standing C3a-2025
