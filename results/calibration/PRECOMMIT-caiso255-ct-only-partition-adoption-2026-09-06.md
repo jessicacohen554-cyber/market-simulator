@@ -362,3 +362,106 @@ the full `--year 2023 2024 2025` bundle in ONE invocation (rule 16
 consolidated G-DRIFT re-audit (§6.2); a FINDING scoring P-1…P-9; the
 `docs/calibration-log/caiso.md` entry; and the rule-28 CAISO matrix-shard
 stamp. Keeper promotion is decided on §5(8) and on nothing else.
+
+---
+
+## §9 — THE CONSOLIDATED G-DRIFT AUDIT, RECORDED BEFORE ANY LP IS SPENT (§6.2 discharged)
+
+`fa23c1f7` (keeper) → `173d0a78` (HEAD), the full rule-29(b) scope: **54 files,
++6,470 / −546**. caiso-253 and caiso-254 audited this span in three links; the
+consolidated pass exists to catch what a link boundary can hide — a hunk added
+in one link and revised in another. **11 files were touched in more than one
+link**, so no incremental classification of them is exact at HEAD.
+
+Rather than re-argue 54 files, the audit was **executed**. Three instruments,
+each stronger than the hunk-reading it replaces:
+
+### §9.1 — Instrument 1: every `ScenarioConfig` default, both shas
+
+794 → 801 fields dumped and compared by value. **ZERO pre-existing field
+defaults changed.** Seven fields added, all `False` / `None`:
+`capacity_adequacy_requirement_published_by_iso`,
+`capacity_going_forward_bar_published_by_iso`, `cc_duct_peaking_row_scoped`,
+`ccs_retrofit_fixed_cost_co2_scaling`, `federal_ces_acp_usd_per_mwh`,
+`federal_ces_target_by_year`, `unit_outage_extract_basis_share`. None appears
+in the keeper's recipe (they post-date it), so each takes its default.
+
+This is what makes the audit tractable: a default-off gate can only matter if
+its `False` branch differs from the old code, which instrument 3 settles.
+
+### §9.2 — Instrument 2: every top-level constant, both shas
+
+265 → 266 constants compared by value. **One added**
+(`RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO` — capacity-evolution step 6, which a
+`mode="backcast"` run never enters: `results/cache.py:337-339`). **None
+removed.** **Four changed:** `DATACENTER_ADDITIONS_MW`,
+`DATACENTER_ZONE_SHARE`, `ELECTRIFICATION_LAYERS` — read only by
+`data/datacenter.py`, and the keeper's `run_config.json` carries
+`datacenter_load_path = 'off'`, verified from the committed bytes — and
+`DEMAND_GROWTH_RATES`, which **is** selected by the backcast config and is
+settled empirically by instrument 3.
+
+### §9.3 — Instrument 3: the LP's ACTUAL INPUTS, rebuilt at both shas
+
+A sparse worktree at `fa23c1f7` sharing the same `data/` tree by symlink, so
+both arms read identical bytes on disk; `market_sim` imported from the worktree
+in one arm and from HEAD in the other; **two `fleet_only` rebuilds per year on
+the keeper's own recipe** (`caiso252_b1_notrim/meta.json` +
+`derived_run_year_inputs`), differenced on every LP-visible array.
+
+| year | units | `unit_ids` | `mc_base` | `pmax` | `pmin` | `min_gen` | `availability` | `heat_rate` | `emission_rate` | `vom` | demand (7×8760) |
+|---|--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| 2023 | 1,662 | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 2024 | 1,656 | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 2025 | 1,661 | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+
+**Every LP input is BIT-IDENTICAL** (sha256 over the raw array bytes, 18 fields
+per year plus demand). Evidence:
+`results/calibration/_caiso255_gdrift_input_identity.json`.
+
+That one measurement discharges the whole input side of the span at once —
+`constants.py`, `scenarios.py`, `offer_curves.py`, `campd_bins.py`,
+`assembly.py`, `arrays.py`, `outages.py`, `eia860.py`, `egrid_sheets.py`,
+`zone_assignment.py`, `carbon.py`, `cap_and_trade.py`, `backcast_config.py`,
+`cod_ramp.py` — including `DEMAND_GROWTH_RATES` (demand identical) and the
+`import_co2_tons` clamp (post-solve, and `co2` is not in `CRITERIA`).
+
+**Two hunks that would have read as inert and are worth naming, because the
+measurement is what settles them, not the reasoning:**
+
+* **`cc_duct_peaking_row_scoped` sits on a LIVE path.** The keeper carries
+  `cc_duct_peaking = True`, so both new call sites are reached every build.
+  Measured: `cc_duct_peaking_pct(False)` at HEAD returns **544 plants, keys
+  identical, zero value differences** against the keeper sha's no-arg form.
+* **`model/interchange/spec.py` changed the WECC border carbon adder's
+  operand** — `getattr(config, "carbon_price", 0.0)` (the keeper's
+  `carbon_price` is **0.0**) → `resolve_carbon_price(config, year)` (CAISO
+  **33.03 / 35.23 / 28.06**). At 0.428 tCO2e/MWh that is a ~$12–15/MWh swing on
+  a CAISO import price, so it is the one hunk on this span that could have been
+  large. It is **measurably inert**: all **11** WECC import/export units are in
+  the fleet arrays with real marginal costs (`WECC_DSW_DSW_CCGT` 46.854,
+  `..._daytime_clean` 32.472, `WECC_PNW_PNW_midC` 43.000, …) and `mc_base` is
+  bit-identical in all three years — consistent with that block's own comment
+  that it builds an *informational corridor inventory* while the LP's per-hub
+  import generators come from `transmission.build_caiso_per_hub_intertie`.
+
+### §9.4 — What instrument 3 does NOT cover, and how it is closed
+
+Identical inputs leave LP **construction** and **solve**:
+
+| file | Δ | verdict |
+|---|--:|---|
+| `model/lp/rows.py` | +224 | **INERT — UNREACHED.** Entirely the clean-tier / federal-CES qualifying-spec row family (SCN-WS2a), whose vector form is new and whose tuple form the file states stays byte-identical. The keeper's committed `run_config.json` carries `rps_enabled: False`, `miso_clean_tier_rows: False`, `miso_rps_compliance_regions: False`, `federal_ces_enabled: False`, `mass_cap_enabled: False` — no clean-tier row is built at all. |
+| `model/lp/__init__.py` | +15 | **INERT** — docstring plus the same clean-tier plumbing; `None` (the default) "adds no rows, byte-identical to before". |
+| `policy/clean_tiers.py`, `policy/federal_ces.py`, `policy/cap_and_trade.py` | +420 | **INERT — UNREACHED** on the same five committed flags. |
+| `model/lp/model.py` | +47 | **INERT** — §6: a diagnostic `HighsInfo` read **after** `h.run()`, formatted into a log line. |
+| `pipeline/solve.py` | +151 | **LIVE — NEUTRALIZED by `--no-p1-basis-seed`** (§6.1). Not classified inert; made unreached. |
+| `runner.py`, `matrix.py`, `capacity_evolution/*`, `capacity_market.py`, `avoidable_cost_rate.py`, `scenario_resolvers.py` | +~1,000 | **INERT — UNREACHED.** The calibration lane rebuilds each year with `fleet.build_base_fleet` and never calls `evolve_fleet` (`results/cache.py:337-339`); `runner.py` is the forecast orchestrator. |
+| `results/export.py`, `results/outputs.py`, `results/emissions.py` | +295 | **INERT / co2-only**, post-solve. Additive `co2_cap_*` reporting fields that are `0.0` / `[]` / `0` with no mass cap. The one LIVE hunk (`import_co2_tons`) touches `co2` alone, which is not in `CRITERIA` — **this session never differences `co2` against the keeper.** |
+| `scripts/lib/*`, `data/benchmark_corridor.py`, `data/reserve_requirements.py` | +~300 | **INERT** — dashboard/matrix/parity tooling and dead-code removal; nothing on the solve path imports them. |
+
+**⇒ THE CONSOLIDATED AUDIT IS COMPLETE. Every LP input is bit-identical,
+measured; every construction-path hunk is unreached on the keeper's own
+committed flags; and the single LIVE solve-path hunk is turned off rather than
+argued away. G-CTRL FORM 4 STANDS — `caiso252_b1_notrim`'s committed bundle is
+the control, and NO control solve is spent.**
