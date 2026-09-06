@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-06T17:00:01",
+  "timestamp": "2026-09-06T19:13:37",
   "git": {
-    "sha": "fb3fbad0",
-    "basis_sha": "13ee0c89dc62f10f8eb74ba17f14b5215fba01c3",
-    "branch": "claude/miso-backcast-calibration-m2nkfn",
+    "sha": "284722a04",
+    "basis_sha": "284722a04808f5d7a288e962eccdf6c6ee95a8b6",
+    "branch": "claude/miso-ct-netload-drag-uo450f",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-227 full-span keeper candidate: neighbour-anchored PJM seam ladder on the miso-220 recipe",
+  "model_changes_note": "miso-230 full span: MISO-derived CT net-load drag [10,21) + seam neighbour-anchored ladder",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -206,6 +206,7 @@
       "st_gas_mustrun_oom_level": true,
       "miso_zonal_gas_basis_skip_923_priced": true,
       "miso_intermediate_gas_offer_margin": true,
+      "ct_netload_drag": true,
       "miso_seam_neighbour_anchored_ladder": true
     },
     "coal_bit_passthrough_sigmoid": false,
@@ -223,7 +224,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "fb3fbad0"
+    "git_sha": "284722a04"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -773,12 +774,12 @@
     "gas_st_drag_cap": 0.34,
     "gas_st_drag_seasonal": false,
     "gas_st_drag_seasonal_path": null,
-    "ct_netload_drag": false,
-    "ct_drag_slope_per_gw": 0.00703,
-    "ct_drag_intercept": -0.1427,
-    "ct_drag_cap": 0.47,
-    "ct_drag_ramp_start": 15,
-    "ct_drag_ramp_end": 22,
+    "ct_netload_drag": true,
+    "ct_drag_slope_per_gw": 0.01303,
+    "ct_drag_intercept": -0.8108,
+    "ct_drag_cap": 0.4394,
+    "ct_drag_ramp_start": 10,
+    "ct_drag_ramp_end": 21,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1198,7 +1199,9 @@
     "capacity_market_supply_clearing_by_iso": null,
     "capacity_going_forward_bar_published_by_iso": null,
     "capacity_adequacy_requirement_published_by_iso": null,
-    "capacity_no_default_cap_convention_by_iso": null
+    "capacity_no_default_cap_convention_by_iso": null,
+    "capacity_screen_peak_measured_hindcast": false,
+    "pjm_vre_accreditation_vintage": false
   },
   "environment": {
     "python_version": "3.11.15",

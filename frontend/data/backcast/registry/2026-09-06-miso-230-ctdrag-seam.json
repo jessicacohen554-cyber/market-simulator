@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-06-miso-230-ctdrag-seam",
+  "label": "miso 230 ctdrag seam",
+  "date": "2026-09-06",
+  "shorthand": "miso-230-ctdrag-seam",
+  "definition": "miso-230 full span: MISO-derived CT net-load drag [10,21) + seam neighbour-anchored ladder",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-06-miso-230-ctdrag-seam.js",
+  "bundle": "results/calibration/miso230_ctdrag_seam_K"
+}
