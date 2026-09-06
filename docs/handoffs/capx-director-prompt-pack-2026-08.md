@@ -7931,3 +7931,90 @@ charter after a zero-LP read of `capacity_evolution`'s 2022-bridge path. **D84 R
 PJM's 2025/26 3IA THERMAL class ratings differ from the wired 2026/27 set (gas CC 78 vs 74,
 CT 63 vs 60, steam 74 vs 73, diesel 92 vs 91; D75-R §6 item 4): D48's own half, the
 "other half" of D66 card B; a follow-on card after D75-R-ARM lands, never a blocker on it.
+
+## r#52 NOTE (2026-09-06): D65-B-R reached 6/7 (leg 6 merged #5250) and its branch was merged and DELETED again — the COMPLETION charter below is the sitting's only issuance and the program's critical path (D75-R-ARM and D76 phase 3 both wait on its board write). D78-R3 is RUNNING (`claude/capx-d78r3-perdy-set`, PRECOMMIT `e79a4ddd`) — do NOT re-dispatch it. D75-R FACADE FIX is EXECUTED and open as PR #5257 — merge it, do not re-issue. D75-R-ARM and D76 PHASE 3 keep their dispatch STOPs unmet and are NOT re-emitted here.
+
+## D65-B-R COMPLETION — leg 7, the board write, and the finding's §0/§6 (r#52; the batch's last third, re-dispatched after its branch merged and was deleted)
+
+```
+You are the D65-B-R COMPLETION session of the capacity-expansion track. The D65-B-R batch (owner
+ruling Q47, "Arm coupled, after D60-R3") is 6 of 7 legs done and ON MAIN; its branch merged and was
+deleted, so you start fresh. You are FINISHING it, not re-opening it. MODEL: Opus. DATA PROFILE: all.
+BRANCH: claude/capx-d65br-completion — FRESH off origin/main. Base: origin/main at your first fetch.
+
+BINDING CHARTER: pack §D65-B-R (the original, whose STEP 3 and STEP 4 you are completing) + this
+section + `docs/handoffs/FINDING-capx-d65br-2026-09-06.md` (§1–§5.6, all six landed legs — their
+numbers STAND and are NOT re-solved) + `PRECOMMIT-capx-d65b-2026-09-06.md` Addendum C (the pre-declared
+per-ISO gates) + `FINDING-capx-d64-2026-09-05.md` §2.3 and §2.4 (the per-ISO census table every gate is
+read from). Capx ledger §0aw is this charter's grading record.
+
+WHAT IS ALREADY DONE — DO NOT REDO ANY OF IT. Legs 1-6 (`ercot-t1f`, `neiso-t1f`, `nyiso-t1f`,
+`caiso-t1f`, `pjm-t1f`, `miso-t1f`) are solved and their artifacts are committed under
+`results/ff-t1f-d65br/{ercot,neiso,nyiso,caiso,pjm,miso}/`. Step 0 (the persisted `retrofit_log`
+scaling fields) and Steps 1-2 (the re-pin, the all-INERT G-DRIFT, Addendum C) are on main. The ERCOT
+screen is NOT re-run (rule 29: a screen bundle is spent once).
+
+STEP A — LEG 7, the only solve you spend: `neiso-t3` GOLDEN-3 (~33 min), sequential, scored, verdict,
+registered in place with its `-pre-d65b` prior, graded against Addendum C's G0'-G6' exactly as legs 1-6
+were. D64 §2.3 POSITIVELY INDICATES this leg — that is an expectation to test, never a target to hit;
+report the measurement whichever way it falls. HEAD GUARD, mandatory: H0=$(git rev-parse HEAD);
+<solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. Rebase BETWEEN legs only, never during one;
+re-audit any rebase delta hunk by hunk before proceeding (REBASE-THEN-RE-AUDIT), with `constants.py`
+read first — a matched cache key is not a G-DRIFT verdict, and since D79 the solve-surface fingerprint
+is in the key but the audit still reads `constants.py` first.
+
+STEP B — THE BOARD WRITE, for ALL SEVEN legs at once. This is the deliverable the rest of the program
+is waiting on. Measured at r#52: `frontend/data/forecast/ff-verdicts.json` was last touched by D63
+(#5108) — this batch has written NO board byte at all, so all seven rows are yours, not just leg 7's.
+Register through the SINGLE `scripts/register_forecast_run.py` path over the `frontend/data/forecast/`
+namespace (rule 15: NEVER the backcast registry; the backcast CI gates stay blind to this namespace).
+The generated `registry/<id>.json` / `runs/<id>.js` / `manifest.js` / `program-status.js` are gitignored
+and rebuilt by the Pages deploy; the COMMITTED inputs are the hindcast sidecars + `ff-verdicts.json` +
+the `program-status.json` board seed. State in the finding that the board is now in ONE demand vintage
+(post-`d14a7ed0`) and say which rows moved because of that rather than because of the acts.
+
+STEP C — FINDING §0 AND §6, plus one ordering repair. Fill §0 "The verdicts" (currently the placeholder
+"*(filled at the close of the batch)*") with the per-ISO Addendum C grade and the batch verdict. Fill
+§6 Governance, and MOVE it: §6 currently sits at line ~142 BETWEEN §5.1 and §5.2, so §5.2-§5.6 read as
+if they were inside governance. Put §6 after §5.7. Governance carries the rule-27 blob checks, the D8
+curated DOF rows for the flipped default, the D77 §8 blast-radius reconciliation (every retrofit row now
+carries the captured rate), the D50 §6.2 radius, and an explicit statement that the D72-prehunk
+`neiso-t1f` residue key is DISCHARGED by this batch's re-solve.
+
+STEP C-2 — THE BASIS DISCLOSURE, and it is the director's defect, not yours. Your leg 6 established the
+general form: "All three fired gates share one root: Addendum C compares a HEAD solve against a prior
+that predates HEAD, and two of the three are measuring that gap, not the arm." That is true, it is a
+defect in the charter I wrote, and §0 must say so in those terms. Concretely: G5' fired on `neiso-t1f`
+and `nyiso-t1f` (VOIDED as a STOP by director adjudication r#51 §0av.3(b) on the narrower ground that
+the gate contradicted D64 §2.3's own sentence — those legs REGISTER), and G4' fired on `miso-t1f` and is
+provably not the acts' (I3 fails from 2026; `apply_ccs_retrofit` returns at year <
+`ccs_retrofit_available_year` before reading either field; G0' measured 0 rows in 2026 and 2027). Record
+all three as ONE root with its arithmetic. This is a BASIS DISCLOSURE, not a re-grade: no leg's numbers
+change, no gate is retro-declared passed, no prior is re-solved, and each fired gate stays reported at
+full magnitude. If leg 7 fires a gate whose root is the same vintage gap, grade it the same way — fired,
+disclosed, with the arithmetic that shows what it measured.
+
+STEP D — MATRIX (rule 28): the `ccs_retrofit_screen` row's def/note carries Act B; the
+`ccs_retrofit_fixed_cost_co2_scaling` row's cells read `fc: K` where the arm is now the bare leg. Six
+shards, ONE line each, in the last commit — a lane edits only the cells its own evidence covers.
+
+STOP GATES. (1) Leg 7 exceeding the D60 wall/RSS envelope (G6') — stop and report, do not retry blind.
+(2) The HEAD guard tripping (exit 90) — rebase, re-audit, re-solve that leg. (3) Any board row you
+cannot reconcile to a committed leg artifact — stop; do not hand-author a row. (4) A gate you cannot
+grade from a committed document — stop and route to the director rather than inventing a band.
+
+DO NOT: re-solve legs 1-6 or the ERCOT screen; arm anything (this batch arms nothing beyond Q47's
+already-landed Acts A+B); touch the backcast registry, another desk's ledger, or any ISO shard your
+evidence does not cover; widen scope to D82/D83/D84.
+
+COLLISIONS: you are the SOLE writer of `ff-verdicts.json` and `program-status.json` until your board
+write lands — D67-ARM, D78-R and D81's queued rows all sit behind you, which is why this is the critical
+path. D78-R3 is RUNNING on `claude/capx-d78r3-perdy-set` and writes docs + JSON only; you will not
+collide, but rebase between legs and re-audit if it merges under you. Rules 12, 15, 22 (forecast mode
+only), 24, 25, 27, 28, 29.
+
+EXIT: leg 7 solved, scored and registered with its prior; all seven board rows written and committed;
+FINDING §0 and §6 filled with §6 correctly ordered and the basis disclosure in §0; six matrix shards
+stamped; rule-27 blob verification recorded for any file >=300 lines you push. Nothing else arms. Report
+the batch verdict and the seven-row before/after board table in your close.
+```
