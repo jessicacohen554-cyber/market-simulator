@@ -435,6 +435,18 @@ jobs:
           # a missing corpus surfaces as FileNotFoundError or a skip-count
           # rise over the 31-skip baseline. Measurement record + rerun recipe:
           # docs/handoffs/perf-recheck-2026-08.md §1.3.
+          #
+          # y21 (2026-09-06) added /data/raw/load-forecast/ under that contract.
+          # SCN-LOAD (d14a7ed0, PR #4970) armed the electrification layers off
+          # curated load-forecast inputs, which gave the fast-tier test
+          # tests/unit/data/test_electrification_layers.py a data/raw
+          # dependency without extending this list. It surfaced exactly as the
+          # contract above says it would ("a missing corpus surfaces as
+          # FileNotFoundError"): the ERCOT EV leg raised on the absent
+          # ercot_ev_hourly_profile_2030.csv and reddened Fast test tier on
+          # main for every PR. The corpus is tracked, 18 files / 4.9 MiB, so
+          # honoring the dependency costs nothing measurable against the
+          # ~2.0 GiB materialized set.
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -513,6 +525,7 @@ jobs:
             /data/raw/eia-930/eia_demand_meta.parquet
             /data/raw/ercot-AS/ercot_*_as_by_restype_hourly.parquet
             /data/raw/ercot/ASPLANNP433_*.parquet
+            /data/raw/load-forecast/
             /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
             /data/raw/CAISO-AS/asreq_ALL_2023*.csv
             /data/raw/CAISO-AS/asreq_ALL_2024*.csv
