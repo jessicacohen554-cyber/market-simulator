@@ -77,3 +77,39 @@ same products; the FTP route has not been tried and may not need the UI token.
 (the `data/raw/` contract). Record the observed schema, span and timezone in the
 table above this line when the first files land.
 
+
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-13: FTP route documented; TWO real payload files landed from SPP's own sample zip
+
+FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`. Route reference and probe log:
+`data/raw/spp-planning/README.md` §6.
+
+**Route.** `ftp://pubftp.spp.org/Operational_Data/GEN_MIX/`, anonymous (user `anonymous`,
+password = an email address — *Markets Public Data Guide v35*, "FTP Site Access"). Files:
+`GenMix_YYYY_SPP.csv` (one per year), `GenMixYTD_SPP.csv`, `GenMix365_SPP.csv`,
+`GenMix2Hour_SPP.csv`, each with a `_SWPW` twin for the Western BAA. **Egress-blocked from
+this session** (port-21 tunnels never deliver a banner; same for control FTP hosts) — so the
+2023 file and the 2024-01-01..02-14 gap below remain manual-manifest rows.
+
+**Landed — raw, unmodified, from the *SPP Markets Public Data Guide and Samples v35* zip**
+(<https://www.spp.org/Documents/75871/…v35.zip>, `www.spp.org`, HTTP 200; the zip's sha256
+and the files' own sha256 are in `data/raw/spp-planning/SHA256SUMS.txt`). These are SPP's
+published product files shipped as the guide's samples, not synthetic examples:
+
+| File | Rows | Span (`GMTTIME`, UTC) | Cadence | Notes |
+|---|---|---|---|---|
+| `GenMix_2024_SPP.csv` | 79,103 | **2024-02-15 06:00Z → 2025-01-01 06:00Z** | 5-min (78,163 steps of 5 min; 708 of 10 min; 112 of 15 min — i.e. **13,346 missing 5-min slots**, 14.4 % of the 92,449 the span implies; 0 duplicates) | SPP's own "2024" file starts 15 Feb; Jan 1–Feb 14 2024 is **not in it** |
+| `GenMixYTD_SPP.csv` | 89,826 | **2025-01-01 06:00Z → 2025-12-16 21:25Z** | 5-min (87,612 / 1,632 / 231 steps of 5 / 10 / 15 min; 10,872 missing slots, 10.8 %; 0 duplicates) | year-to-date as of the zip build (Dec 2025) |
+| `GenMix365_SPP.csv` | 94,089 | 2024-12-16 20:25Z → 2025-12-16 19:30Z | 5-min | **NOT landed** — fully covered by the two above; sha256 recorded |
+
+Schema (verbatim header, 22 columns): `GMTTIME,COAL_MKT,COAL_SELF,DIESEL_FUEL_OIL_MKT,DIESEL_FUEL_SELF,HYDRO_MKT,HYDRO_SELF,NATURAL_GAS_MKT,NATURAL_GAS_SELF,NUCLEAR_MKT,NUCLEAR_SELF,SOLAR_MKT,SOLAR_SELF,WASTE_DISPOSAL_SERVICES_MKT,WASTE_DISPOSAL_SERVICES_SELF,WIND_MKT,WIND_SELF,WASTE_HEAT_MKT,WASTE_HEAT_SELF,OTHER_MKT,OTHER_SELF,LOAD`.
+**Values are MW, not percentages** — the "percentage generation by fuel type" wording in
+SPP's page metadata (table above) is wrong for the historical files; the guide (p. 18) says
+*"MW of generation by fuel type in use. Each fuel type split by market vs. self-commit
+status"*, and `LOAD` is the STLF-sourced load (guide: *"source of the data column is
+STLF"*). So delivered wind = `WIND_MKT + WIND_SELF` in MW per 5-min interval, which is the
+HSL denominator this directory was opened for — **for 2024-02-15 onward only**.
+
+**Timezone confirmed:** the stamp is `GMTTIME` in UTC with a `Z` suffix; the files are
+written newest-first. Convert to Central Prevailing Time before any hour-of-day use.

@@ -1,0 +1,2611 @@
+
+=====PDFPAGE 1=====
+INTEGRATED 
+TRANSMISSION 
+PLANNING MANUAL 
+By SPP Staff 
+Published on July 14, 2026 
+Version 3.3 
+ 
+=====PDFPAGE 2=====
+Southwest Power Pool, Inc.  
+ 
+REVISION HISTORY 
+DATE OR 
+VERSION 
+NUMBER 
+AUTHOR CHANGE DESCRIPTION COMMENTS 
+1.0 SPP Staff Initial Draft approved by the MOPC.  
+1.1 SPP Staff Incorporated TWG and ESWG edits to the ITPNT and 
+ITP20 sections.  
+1.2 SPP Staff Revised Draft approved by the MOPC.  
+1.3 ESWG Accepted Task Force Edits  
+2.0 SPP Staff Implementation of the TPITF recommendations New ITP process 
+utilized for 2019 ITP 
+2.1 SPP Staff Incorporate RR276, renewable VOM Pricing  
+2.2 SPP Staff Incorporate RR 314: ITP Manual Model Build Updates  
+2.3 SPP Staff Incorporate RR 321: Clean up Items MOPC Approval 
+10/16/2018 
+2.4 SPP Staff Incorporate RR 362: Renewable Curtailment Pricing MOPC Approval 
+7/19/2019 
+2.5 SPP Staff 
+Incorporate RR 368: Section 4.2.6 Clarification (Local 
+Planning Criteria) 
+Incorporate RR 384: Section 2.1.1 Base Reliability 
+Generator Retirement Modeling 
+MOPC Approval 
+10/15/2019 
+=====PDFPAGE 3=====
+Southwest Power Pool, Inc.  
+ 
+DATE OR 
+VERSION 
+NUMBER 
+AUTHOR CHANGE DESCRIPTION COMMENTS 
+2.6 SPP Staff 
+Incorporate RR388: Sections 2.2.1.6.2 and 2.3.1.1 - 
+Resource Plan and PST Modeling 
+Incorporate RR392: Sections 2.1, 2.1.1, 2.1.1.1, 2.1.4, 
+10.3 - Modeling and Process Waiver Updates 
+Incorporate RR395: Section 2.2.1.7 - Natural Gas Price 
+Forecast Methodology 
+Incorporate RR396: Section 7.2 - Sensitivity Scoping 
+During Futures Development 
+MOPC Approval 
+01/15/2020 
+2.7 SPP Staff 
+Incorporate RR367: Load Forecasts for Resource 
+Planning purposes 
+Incorporate RR379: ITP Market Powerflow Peak Hour 
+Selection 
+MOPC Approval 
+10/15/2019 
+2.8 SPP Staff Incorporate RR403: Change to ITP Operational Model 
+Development  
+2.9 SPP Staff Incorporate RR448: Removing RPS Table from ITP 
+Manual and placing in Scope 
+MOPC Approval 
+4/13/2021 
+2.10 SPP Staff 
+Incorporate RR450: Section 5.1.1.4 & 5.1.1.4.1: 
+Establish operating guides in ITP Manual 
+Incorporate RR478: Section 2.2.2.1.2: Conventional 
+Resource Expansion Plan 
+Note: RR 476 approved at MOPC, but is pending 
+FERC approval of tariff changes before those changes 
+will be applied to ITP Manual. 
+MOPC Approval 
+1/10/2022 
+2.11 SPP Staff 
+Incorporate RR482: Section 2.2.1.4: Resource addition 
+request approvals  
+Incorporate RR485: Section 2.2.1.10: Renewable 
+pricing 
+MOPC Approval 
+4/11/2022 
+=====PDFPAGE 4=====
+Southwest Power Pool, Inc.  
+ 
+DATE OR 
+VERSION 
+NUMBER 
+AUTHOR CHANGE DESCRIPTION COMMENTS 
+2.12 SPP Staff 
+Incorporate RR489: Section 2.1.1: Generation 
+Resources & Section 2.1.2: Long-Term Firm 
+Transmission Service 
+MOPC Approval 
+7/11/2022 
+2.12 SPP Staff 
+Incorporate RR498: Section 2.2.1.4: SPP Resource 
+Addition Requests 
+Incorporate RR500: Section 2: Model Development & 
+Section 10.3: Data Submission Update 
+MOPC Approval 
+10/11/2022 
+2.13 SPP Staff Incorporate RR452: Section 4.2.6 & Section 5.3.5: 
+Transmission Owner Evaluation Process 
+FERC Approved 
+Language 5/26/2023. 
+Effective immediately 
+2.14 SPP Staff Incorporate RR552: Section 2.1.1: ITP Base Reliability 
+Resource Inclusion 
+MOPC Approval 
+07/10/2023 
+2.15 SPP Staff Incorporate RR576: Section 2.2.1.7 Fuel Prices and 
+RR586: Section 5.1.1.2 Non-Transmission Solutions 
+MOPC Approval 
+10/16/2023 
+2.16 SPP Staff Incorporate RR577: Sections 2.2.3, 3.2, 4.4, 4.4.1, 4.4.2, 
+and 5.3.4 
+MOPC Approval 
+01/16/2024 
+2.17 SPP Staff Incorporate RR645: Section 6.1 and RR646: Section 
+2.2.3.1 
+MOPC Approval 
+10/15/2024 
+3.0 SPP Staff 
+Incorporate RR669: ITP Manual Cleanup 
+Incorporate RR649: HITT T1 NRIS+ (CRIS) 
+Implementation Section: 2.1.1.4 (formerly Section 
+2.1.1.1 in ITP Manual v2.17)  
+MOPC Approval of 
+RR669 04/15/2025 
+ 
+FERC Acceptance of 
+RR649 on 2/24/2025 
+effective 2/1/2025 
+(Docket #:  
+ER25-464) 
+=====PDFPAGE 5=====
+Southwest Power Pool, Inc.  
+ 
+DATE OR 
+VERSION 
+NUMBER 
+AUTHOR CHANGE DESCRIPTION COMMENTS 
+3.1 SPP Staff 
+Incorporate RR679: ITP Manual Update - Five-Year 
+Average Enhancement (SIR 756) Section: 2.1.2 
+Incorporate RR476: Storage as a Transmission-Only 
+Asset Section 5.1.1.2, Section 5.1.1.3 & Section 5.3.2 
+MOPC Approval of 
+RR679 on 7/15/2025 
+ 
+FERC acceptance of 
+RR476 on 5/26/2023 
+effective 4/15/2025 
+(Docket #: ER22-
+2344) 
+3.2 SPP Staff 
+1. Incorporate RR696 (SIR764): Integrate and 
+Operate High Impact Large Loads 
+Section: 2.1.3 and 4.4 
+2. Incorporate RR708 (SIR786): DPP Window – 
+Additional Postings 
+Section: 5.1 
+3. Incorporate RR726 (SIR783): RTOE Engineering 
+Governing Language 
+Section: 1.3, 1.5, 2.0, 2.1, 2.1.1, 2.1.2, 2.1.4, 
+2.1.4.1, 2.1.5, 2.2, 2.5, 3.2, 4.1.2, 4.2.1, 11.3 
+1. FERC acceptance of 
+RR696 on 
+1/14/2026 effective 
+1/14/2026 (Docket 
+#: ER26-247) 
+2. FERC acceptance of 
+RR708 on 
+1/13/2026 effective 
+1/26/2026 (Docket 
+# ER26-599) 
+3. MOPC Approval 
+of RR726 on 
+1/13/2026 
+3.3 SPP Staff 
+ITP Manual updated to incorporate: 
+1. RR720 (SIR795): Conditional High Impact Large 
+Load 
+Sections: 2.1.3 and 4.4 
+2. RR770 (SIR858): Load Forecast Alignment for 
+Long Term Planning 
+Section: 2.1.3  
+3. RR777 (SIR853): Aging Infrastructure Language 
+Clarifications 
+Sections: 5.1.3 and 6.1 
+4. RR779 (SIR73): Economic Topology Optimization 
+Need Consideration 
+Section: 4.4.1 
+1. FERC acceptance of 
+RR720 on 6/5/2026, 
+effective 7/1/2026 
+(Docket #: ER26-
+1323) 
+2. MOPC approval of 
+RR770 on 
+7/14/2026 
+3. MOPC approval of 
+RR777 on 
+7/14/2026 
+4. MOPC approval of 
+RR779 on 
+7/14/2026 
+=====PDFPAGE 6=====
+Southwest Power Pool, Inc. 
+ 
+TABLE OF CONTENTS 
+REVISION HISTORY .......................................................................................................................................................... I 
+TABLE OF CONTENTS .................................................................................................................................................... 5 
+1 INTRODUCTION ..................................................................................................................................................... 1 
+1.1 Purpose ................................................................................................................................................................. 1 
+1.2 Revision Request Process ............................................................................................................................... 2 
+1.3 Overview of the SPP ITP Assessment ......................................................................................................... 2 
+1.3.1 Organizational Group Support ......................................................................................................... 2 
+1.4 Working Group Ownership ............................................................................................................................ 3 
+1.4.1 Economic Studies Working Group................................................................................................... 3 
+1.4.2 Transmission Working Group ............................................................................................................ 3 
+1.4.3 Model Development Advisory Group ............................................................................................ 4 
+1.4.4 Seams Steering Committee ................................................................................................................ 4 
+1.4.5 Strategic Planning Committee .......................................................................................................... 4 
+1.4.6 Markets and Operations Policy Committee ................................................................................. 4 
+1.4.7 Regional State Committee .................................................................................................................. 4 
+1.4.8 SPP Board of Directors ......................................................................................................................... 4 
+1.5 ITP Assessment Schedule ............................................................................................................................... 5 
+1.6 Study Scope Document .................................................................................................................................. 5 
+1.7 Consideration of NERC Standard TPL-001............................................................................................... 6 
+2 MODEL DEVELOPMENT ....................................................................................................................................... 6 
+2.1 Base Reliability Model Overview .................................................................................................................. 7 
+2.1.1 Generation Resources .......................................................................................................................... 8 
+2.1.2 Long-Term Firm Transmission Service ......................................................................................... 10 
+2.1.3 Load Forecasts ....................................................................................................................................... 12 
+2.1.4 Topology ................................................................................................................................................. 13 
+2.1.5 External Transactions .......................................................................................................................... 14 
+2.1.6 Base Reliability Model Approval ..................................................................................................... 14 
+2.2 Market Economic Model Overview.......................................................................................................... 15 
+2.2.1 Model Assumptions and Data ......................................................................................................... 15 
+=====PDFPAGE 7=====
+Southwest Power Pool, Inc. 
+ 
+2.2.2 Resource Plan ........................................................................................................................................ 22 
+2.2.3 Constraint Assessment ....................................................................................................................... 25 
+2.3 Market Powerflow Model Overview ........................................................................................................ 26 
+2.3.1 DC/AC Conversion ............................................................................................................................... 27 
+2.3.2 Reactive Device Settings ................................................................................................................... 28 
+2.4 Operational Model Development ............................................................................................................ 28 
+2.5 Interregional Coordination ......................................................................................................................... 29 
+3 BENCHMARKING ................................................................................................................................................. 29 
+3.1 Powerflow Model ........................................................................................................................................... 29 
+3.2 Economic Model ............................................................................................................................................. 29 
+4 NEEDS ASSESSMENT ......................................................................................................................................... 29 
+4.1 Economic Needs Assessment .................................................................................................................... 29 
+4.1.1 SCUC/SCED Analysis ........................................................................................................................... 30 
+4.1.2 Need Identification .............................................................................................................................. 30 
+4.2 Reliability Needs Assessment .................................................................................................................... 32 
+4.2.1 Base Reliability Model ........................................................................................................................ 33 
+4.2.2 Market Powerflow Model .................................................................................................................. 34 
+4.2.3 Non-Converged Contingencies ...................................................................................................... 36 
+4.2.4 First-Tier Consideration ..................................................................................................................... 36 
+4.2.5 Violation Filtering ................................................................................................................................. 36 
+4.2.6 Zonal Planning Criteria....................................................................................................................... 36 
+4.2.7 Short-Circuit Analysis ......................................................................................................................... 37 
+4.3 Public Policy Needs Assessment .............................................................................................................. 37 
+4.4 Persistent Operational Needs Assessment ........................................................................................... 38 
+4.4.1 Economic Operational Needs .......................................................................................................... 38 
+4.4.2 Reliability Operational Needs .......................................................................................................... 39 
+5 SOLUTION DEVELOPMENT AND EVALUATION ...................................................................................... 40 
+5.1 Detailed Project Proposal Process ........................................................................................................... 40 
+5.1.1 Solutions .................................................................................................................................................. 40 
+5.1.2 SPP Developed Solutions .................................................................................................................. 42 
+5.1.3 Aging Infrastructure Project Consideration ............................................................................... 43 
+5.2 Cost Estimates ................................................................................................................................................. 43 
+5.3 Solution Evaluation Process ....................................................................................................................... 43 
+=====PDFPAGE 8=====
+Southwest Power Pool, Inc. 
+ 
+5.3.1 Economic Solution Evaluation ......................................................................................................... 43 
+5.3.2 Reliability Solution Evaluation ......................................................................................................... 44 
+5.3.3 Public Policy Solution Evaluation ................................................................................................... 45 
+5.3.4 Persistent Operational Solution Evaluation ................................................................................ 45 
+5.3.5 Zonal Planning Criteria Solution Evaluation .............................................................................. 46 
+6 PORTFOLIO DEVELOPMENT ........................................................................................................................... 47 
+6.1 Portfolio Development Methodologies ................................................................................................. 47 
+6.1.1 Economic Portfolio Development .................................................................................................. 47 
+6.1.2 Reliability Portfolio Development .................................................................................................. 48 
+6.1.3 Public Policy Portfolio Development ............................................................................................ 48 
+6.1.4 Persistent Operational Portfolio Development ......................................................................... 48 
+6.1.5 Portfolio Synergy .................................................................................................................................. 49 
+6.2 Portfolio Consolidation ................................................................................................................................ 49 
+6.3 Project Staging ................................................................................................................................................ 49 
+6.3.1 Economic Projects ................................................................................................................................ 50 
+6.3.2 Reliability Projects ................................................................................................................................ 50 
+6.3.3 Public Policy Projects .......................................................................................................................... 51 
+6.4 Final Reliability Assessment ........................................................................................................................ 52 
+7 INFORMATIONAL PORTFOLIO ANALYSIS ................................................................................................. 53 
+7.1 Benefit Metrics ................................................................................................................................................. 53 
+7.2 Sensitivity Analysis ......................................................................................................................................... 53 
+8 DELIVERABLES ...................................................................................................................................................... 54 
+8.1 Final Report ...................................................................................................................................................... 54 
+9 ISSUANCE OF NTCS ........................................................................................................................................... 55 
+10 SPP AND STAKEHOLDER ACCOUNTABILITY ........................................................................................ 56 
+10.1 Project Schedule ............................................................................................................................................. 56 
+10.2 Point of Contact .............................................................................................................................................. 56 
+10.3 Late Data and Process Waiver ................................................................................................................... 57 
+10.3.1 Late Data ............................................................................................................................................ 57 
+10.3.2 Late Data Submission and Approval Process ....................................................................... 57 
+10.3.3 Process Waiver ................................................................................................................................. 58 
+10.4 MOPC Report ................................................................................................................................................... 59 
+11 APPENDICIES .................................................................................................................................................... 60 
+=====PDFPAGE 9=====
+Southwest Power Pool, Inc. 
+ 
+11.1 History of the ITP Assessment ................................................................................................................... 60 
+11.1.1 The Transmission Planning Improvement Task Force ....................................................... 61 
+11.2 Acronyms ........................................................................................................................................................... 63 
+11.3 Definitions ......................................................................................................................................................... 66 
+ 
+ 
+=====PDFPAGE 10=====
+Southwest Power Pool, Inc. Introduction 
+ITP Manual Version 3.3 1 
+1 INTRODUCTION 
+1.1 PURPOSE 
+The SPP Open Access Transmission Tariff (OATT or SPP Tariff) Attachment O requires Southwest 
+Power Pool, Inc. (SPP) to conduct the Integrated Transmission Planning (ITP) assessment in 
+accordance with this ITP Manual. This manual will outline the methodology, criteria, 
+assumptions, and data necessary for the ITP assessment. 
+The ITP assessment is a regional planning process built to leverage knowledge of the 
+transmission system’s reliability, public policy, operational, and economic needs, as well as 
+compliance, generator interconnection, and transmission service request impacts to develop a 
+cost-effective transmission portfolio over a 10-year planning horizon. A common set of 
+foundational modeling assumptions will be utilized as the starting point for all planning studies. 
+System needs resulting from generator interconnection and transmission service requests will be 
+identified within the currently established timelines for those processes. However, the evaluation 
+of transmission service needs and associated projects will be coordinated with those identified 
+in the ITP assessment to facilitate continuity in the overall transmission expansion plan. This 
+targeted approach is both forward-looking and proactive, designed to facilitate a cost-effective 
+and responsive transmission network that adheres to the ITP principles (listed in History of the 
+ITP Assessment), while following the Federal Energy Regulatory Commission (FERC) “Nine 
+Transmission Principles”.1 
+Analyses will be performed following the adoption of the study assumptions and will focus on 
+cost-effectiveness and flexibility, while taking into account reliability, public policy, operational, 
+and economic considerations in project or portfolio recommendations. The assessment of a 
+project or group of projects’ performance may include: 
+• Performance across multiple futures 
+• Ability to solve multiple need types 
+• Reliability impacts related to compliance with North American Electric Reliability 
+Corporation (NERC) Standard TPL-0012 
+• Operational impacts 
+ 
+1 These FERC principles are coordination, openness, transparency, information exchange, comparability, 
+dispute resolution, regional participation, economic planning (congestion) studies, and cost allocation for 
+new projects, as described more fully in Order 890, Final Rule, pages 245-323. 
+2 NERC TPL-001 
+=====PDFPAGE 11=====
+Southwest Power Pool, Inc. Introduction 
+ITP Manual Version 3.3 2 
+Cost-effective analysis is a form of economic analysis that allows for the most effective planning 
+over a longer- versus shorter-term period. The objective is to produce the most economical 
+project planning over the longer-term horizon. 
+This manual includes standardized language detailing ITP assessment items that were reviewed 
+by the appropriate SPP stakeholder groups and approved by the Markets and Operations Policy 
+Committee (MOPC). This standardization will provide specific details on each scope item and 
+eliminate the need for repetitive reviews and approvals to help facilitate the performance of a 
+planning cycle that produces an annual report. An ITP assessment scope will be developed for 
+each ITP assessment for items that will require SPP stakeholder review and approval with each 
+new study. This process is described further in Section 1.6 (Study Scope Document) of this 
+manual. 
+1.2 REVISION REQUEST PROCESS 
+A request to make additions, deletions, revisions, or clarifications to this ITP Manual shall be 
+made in accordance with the SPP revision request process.3 
+1.3 OVERVIEW OF THE SPP ITP ASSESSMENT 
+The ITP assessment is SPP’s approach to planning transmission upgrades needed to maintain 
+reliability, provide economic benefits, and achieve public policy goals for the SPP East Region 
+and the SPP West Region in the near- and long-term horizons. The ITP assessment enables SPP 
+and stakeholders to facilitate the development of a reliable and flexible transmission grid that 
+provides regional customers improved access to the region’s diverse resources. 
+The ITP assessments assesses transmission needs over a 10-year horizon and are intended to 
+produce either separate reports or a combined report annually for the SPP East Region and the 
+SPP West Region. It is designed to create synergies by integrating SPP transmission planning 
+activities that incorporate reliability, economic, policy, and operational components in the 
+overall assessment of the transmission grids. The ITP assessment works in concert with SPP’s 
+existing sub-regional planning stakeholder process and parallels the NERC transmission 
+planning reliability standards compliance process. 
+1.3.1 ORGANIZATIONAL GROUP SUPPORT 
+The Economic Studies Working Group (ESWG) identifies and maintains the economic data, data 
+sources, models, economic planning methodology and processes, and benefit metrics to be 
+used in the evaluation of economic expansion needs in the SPP region. 
+ 
+3 SPP Revision Requests 
+=====PDFPAGE 12=====
+Southwest Power Pool, Inc. Introduction 
+ITP Manual Version 3.3 3 
+The Transmission Working Group (TWG) oversees and maintains the study processes for 
+reliability and compliance to be used in the evaluation of reliability expansion needs in the SPP 
+region. 
+The Operating Reliability Working Group (ORWG) identifies and maintains operational data, data 
+sources, and models to be used in the evaluation of persistent operational expansion needs in 
+the SPP region. 
+The ORWG, TWG, and ESWG are responsible for identifying needs associated with persistent 
+operational issues. 
+The ITP recommended plan will be reviewed and may be endorsed by ESWG, TWG and MOPC. 
+1.4 WORKING GROUP OWNERSHIP 
+1.4.1 ECONOMIC STUDIES WORKING GROUP 
+Generally, the ESWG will be responsible for review of data and results for the following items: 
+• Scope  
+• Scenarios development 
+• Load forecasts 
+• Existing and planned generation  
+• Renewable policy requirements 
+• Resource plan  
+• Market economic model 
+• Economic analysis 
+• Recommended plan 
+• Benefit metrics 
+• Sensitivities 
+• Assessment report 
+1.4.2 TRANSMISSION WORKING GROUP 
+Generally, the TWG will be responsible for review of the data and results for the following items: 
+• Scope 
+• Transmission topology 
+• Load forecasts 
+• Existing and planned generation 
+• Base reliability models 
+• Market powerflow models 
+• Constraint assessment 
+=====PDFPAGE 13=====
+Southwest Power Pool, Inc. Introduction 
+ITP Manual Version 3.3 4 
+• Reliability analysis 
+• Recommended plan 
+• Assessment report 
+1.4.3 MODEL DEVELOPMENT ADVISORY GROUP 
+Generally, the Model Development Advisory Group (MDAG) will be responsible for review of the 
+data for the following items: 
+• Load forecasts 
+• Existing and planned generation  
+• Transmission topology 
+1.4.4 SEAMS STEERING COMMITTEE 
+The Seams Steering Committee (SSC) will be responsible for the review of the following: 
+• Seams impacts 
+1.4.5 STRATEGIC PLANNING COMMITTEE 
+The Strategic Planning Committee (SPC) will provide input for the following items: 
+• Scenarios development 
+• Policy decisions 
+1.4.6 MARKETS AND OPERATIONS POLICY COMMITTEE 
+MOPC will make a recommendation to the SPP Board of Directors (Board) regarding approval 
+decisions of the following items: 
+• Assessment report 
+1.4.7 REGIONAL STATE COMMITTEE 
+The Regional State Committee (RSC) will review the following items: 
+• Assessment report 
+1.4.8 SPP BOARD OF DIRECTORS 
+The Board will make approval decisions for the following items: 
+=====PDFPAGE 14=====
+Southwest Power Pool, Inc. Introduction 
+ITP Manual Version 3.3 5 
+• Assessment report 
+• Recommended plan 
+1.5 ITP ASSESSMENT SCHEDULE 
+The planning cycle, as illustrated in Figure 1.1, will consist of scope development and model 
+development for approximately 12 months and a planning assessment period of approximately 
+12 months separately for the SPP East Region and the SPP West Region. The scope and model 
+developments for the succeeding cycle will begin concurrently with the planning assessment 
+period of the preceding study resulting in a 12-month overlap. This planning cycle will result in 
+an annual assessment report with a set of recommended projects for the SPP East Region and 
+the SPP West Region. 
+The SPP East Region and the SPP West Region assessments will also satisfy the NERC Standard 
+TPL-001 short-circuit and portions of the NERC Standard TPL-001 steady-state assessment 
+requirements. The SPP East Region and the SPP West Region ITP assessments will assess years 
+two, five, and 10 for reliability, public policy, operational, and economic needs. 
+ 
+Figure 1.1: ITP Cycle 
+1.6 STUDY SCOPE DOCUMENT 
+To provide context under which to assess the future performance of the existing transmission 
+system and any needed improvements, certain assumptions and methodologies may change 
+with each study cycle. Maintaining the ability to update these assumptions from study to study 
+will provide the flexibility needed for the transmission planning process. The study scope 
+document describes those items that will require SPP stakeholder review and approval with each 
+new study. Those study scope items will be approved by the appropriate working groups during 
+the scope development phase at the beginning of each planning cycle. 
+1 2 3 4 5 6 7 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 12 1 2 3 4 5 6 7 8 9 10 11 12
+CC ITP Economic Model Build
+DD ITP Economic Model Build
+Model
+BB ITP Economic Model Build
+Model 
+Year BB ITP
+Year BB TPL Stability/Short Circuit Assessment
+Scope
+Model
+MDWG PF/SC Model Build
+Year CC TPL Stability/Short Circuit Assessment
+MDWG Dynamic Model 
+Year EE
+Model
+Year DD ITP
+Model 
+EE ITP  Rel Model Build
+MDWG PF/SC Model MDWG Dynamic Model 
+Year DD TPL Stability /Short Circuit Assessment
+EE ITP Economic Model Build
+CC ITP Scope
+DD ITP Scope
+EE ITP Scope
+MDWG Dynamic Model Build
+DD ITP  Rel Model Build
+Year CC ITP
+Year BB Year DDYear AA Year CC
+Model 
+MDWG PF/SC Model Build MDWG Dynamic Model Build
+CC  ITP Rel  Model Build
+=====PDFPAGE 15=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 6 
+1.7 CONSIDERATION OF NERC STANDARD TPL-001 
+The analyses performed for the holistic planning assessment described in this manual allow SPP 
+to meet the requirements of the SPP Tariff, as well as a portion of the NERC standards for 
+transmission planning requirements detailed in NERC Standard TPL-001. This allows for a 
+consistent approach in the planning processes while allowing SPP to issue Notifications to 
+Construct (NTCs) to Transmission Owners (TOs) to construct upgrades needed to meet certain 
+NERC Standard TPL-001 Table 1 requirements.  
+Section 4.2 (Reliability Needs Assessment) detailed in this manual will describe the assessment 
+of transmission system planning events in NERC Standard TPL-001 Table 1 for which non-
+consequential load loss or the interruption of firm transmission service is not allowed. A 
+common powerflow analysis for the ITP assessment and NERC Standard TPL-001 will be 
+performed for these planning events. Additionally, the short-circuit analysis required by NERC 
+Standard TPL-001 will be performed and a subset of those needs will be considered as ITP 
+needs.  
+While these analyses will be common to both the ITP assessment and the requirements of the 
+NERC Standard TPL-001, SPP will continue to compile and issue a separate annual report (SPP 
+Compliance Assessment) to fully document SPP’s compliance with all NERC Standard TPL-001 
+requirements. 
+2 MODEL DEVELOPMENT 
+Table 2.1 lists the model sets for the ITP assessment cycle. Separate base reliability and market 
+economic model sets will be built for the SPP East Region and the SPP West Region. After the 
+model sets are finalized for the ITP assessment, no model changes will be accepted to update 
+the model. Any identified model changes after the models are finalized will be required to be 
+submitted during the detailed project proposal (DPP) window as detailed in Section 5.1.1.4 
+(Model Adjustments). 
+DESCRIPTION YEAR 2 YEAR 5 YEAR 10 TOTAL 
+Base Reliability Summer 
+Winter 
+Light Load 
+Non-coincident 
+Peak (3) 
+Summer 
+Winter 
+Light Load 
+Non-coincident 
+Peak (3) 
+Summer 
+Winter 
+Light Load 
+Non-coincident 
+Peak (3) 
+9 
+Market Economic 
+Model 
+One Future (1) Each Future (1-3) Each Future (1-3) 3-7 
+=====PDFPAGE 16=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 7 
+Market Powerflow 
+Model 
+One Future’s 
+Peak and Off-
+Peak (2) 
+Each Futures’ 
+Peak and Off-
+Peak (2-6) 
+Each Futures’ 
+Peak and Off-
+Peak (2-6) 
+6-14 
+Table 2.1: ITP Model Sets 
+2.1 BASE RELIABILITY MODEL OVERVIEW 
+The base reliability model sets will be the base model set for all of SPP’s planning processes 
+including transmission service, generator interconnection, and compliance studies. Each of the 
+base reliability models will be an indicative representation of how entities within SPP responsible 
+for serving network load would do so utilizing network resources only. These models will consist 
+of non-coincident peak load forecasts, assumed long-term firm transmission service usage 
+levels, and expected conventional and renewable resource output levels. 
+Model data related to the NERC MOD-032 standard, should be in accordance with the SPP 
+Model Development Procedure Manual.4 Information needed to develop the models will be 
+provided by SPP TOs and stakeholders with appropriate review opportunities by SPP and 
+stakeholders, prior to receiving final approval. Information from the Eastern Interconnection 
+Reliability Assessment Group (ERAG) Multiregional Modeling Working Group (MMWG) models 
+along with applicable data from the SPP East Region entities and neighboring entities will be 
+used to provide the external information in the SPP East Region models. Information from the 
+Western Electricity Coordinating Council (WECC) models along with applicable data from the 
+SPP West Region entities and neighboring entities will be used to provide the external 
+information in the SPP West Region models. These inputs, described in the following sections, 
+include but are not limited to: 
+• Generation resources 
+• Load forecasts 
+• Definition of the SPP footprint 
+• Topology 
+• Modeling of firm transmission service 
+• Direct current (DC) tie modeling 
+• DC line modeling 
+• Phase-shifting transformers (PSTs) 
+• NTC re-evaluation requests 
+Separate short-circuit models for the SPP East Region and the SPP West Region footprints will 
+be developed for a short-circuit assessment in consideration of NERC Standard TPL-001. 
+ 
+4 MDAG Model Development Procedure Manual: found in MDAG Reference Documents folder. 
+=====PDFPAGE 17=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 8 
+2.1.1 GENERATION RESOURCES 
+SPP will build applicable models for both the SPP East Region and SPP West Region footprints 
+to support assessments in/for each region. For each set of models, SPP will build the models for 
+the applicable region’s footprint and use additional data from the region’s applicable 
+Interconnection wide models and neighboring Entities to develop external data for the specific 
+regional models. For the SPP East Region, the MMWG models will be used to provide the 
+Eastern Interconnection external data. For the SPP West Region, the WECC models will be used 
+to provide the Western Interconnection external data. The following requirements must also 
+take into account and, as applicable, meet the design data requirements for the current version 
+of the MMWG and 2025 WECC models used to build the base reliability models for the SPP East 
+Region footprint and the SPP West Region footprint, respectively. 
+2.1.1.1 RESOURCE INCLUSION AND AVAILABILITY 
+Generation resources5 shall be included in the base reliability model if any of the following 
+requirements are met: 
+1. The generation resource is existing and in service. 
+2. The planned generation resource has an effective Generator Interconnection Agreement 
+(GIA), not on suspension. 
+3. The planned generation resource is approved by the TWG as meeting the requirements 
+detailed in Section 2.1.1.4 (Generation Resource Waiver Requests) of this manual. 
+4. The planned generation resource has been identified by SPP as necessary6 to solve a 
+model and is approved for inclusion by the TWG7 with considerations such as:  
+a. Resources in the generator interconnection queue. 
+b. Resources have been included in an approved SPP-developed resource plan. 
+2.1.1.2 RESOURCE DISPATCH 
+Generation resources will be available for dispatch in the base reliability model if either of the 
+following criteria are met: 
+1. The resource has approved long-term transmission service with an effective transmission 
+service agreement, or 
+2. SPP has identified the resource as necessary to solve a model. 
+ 
+5 Associated transmission upgrades will be modeled in accordance with the SPP Tariff. 
+6 Reactive resources or previously approved transmission upgrades will also be considered as potential 
+solutions. 
+7 Resources added for this criteria will not be included in the market economic model and market 
+powerflow unless they are also identified in the resource planning process. 
+=====PDFPAGE 18=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 9 
+If a generation resource is utilized solely for reactive support, it will be dispatched to its Pmin 
+value in the appropriate model(s). TWG approval will include the specific models for which the 
+generation resource, reactive resource, or transmission upgrade will be included. 
+Dispatch will not surpass the lesser of gross Pmax or net designated resource amount plus the 
+station service load. Additionally, the total dispatch of resources that share a Point of 
+Interconnection (POI) will be limited to the total GIA(s) Interconnection Service amount(s) 
+granted at the POI adjusted for the total station service load. 
+Generation resources that have been mothballed or are planned for retirement must be 
+submitted to SPP through SPP’s MOD Application and the SPP Request Management System 
+(RMS) for the base reliability model. Upon receiving this information, if the resource is still listed 
+in the applicable Service Agreement, the resource may be dispatched to address shortfall. If 
+planned retired generation resources are identified for dispatch, SPP will notify the modeling 
+entity to coordinate the dispatch for the affected parties.  
+Resources considered required to be online may be modified in order to displace renewable 
+generation in the planning models. These resource types include but are not limited to: area 
+slack machines, hydroelectric, cogen, landfill gas, and nuclear. 
+2.1.1.3 SHORTFALL PROCESS8 
+Shortfall occurs when an entity does not have enough dispatchable generation to serve the 
+entity’s load. When a shortfall scenario appears in the models, the following actions will be taken 
+in this order until the load is served:   
+1. Exhaust the dispatchable generation of the network customer. 
+2. Exhaust the independent power producers (IPP) dispatchable generation in the same 
+model area. 
+3. Dispatch the remaining unused, dispatchable generation on a pro rata basis within SPP 
+footprint. 
+4. When all other options have been exhausted, including the waiver process, include 
+generation resources9 from the most recently approved ITP resource plan. 
+2.1.1.4 GENERATION RESOURCE WAIVER REQUESTS 
+Certain generation resources and associated transmission service requests that have not fully 
+completed the processes defined in Attachment V and either Z1 or Section 30.2.2 of the SPP 
+Tariff but have a high probability of going into service or obtaining an effective transmission 
+ 
+8 Renewable generation or other generation with operating restrictions shall not be used.  
+9 Study needs generated by the addition of these generation resources will not automatically generate 
+NTCs. 
+=====PDFPAGE 19=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 10 
+service agreement can be included in the base reliability model. Generation resources that meet 
+all of the following requirements will be included:  
+1. A formal request has been sent to SPP requesting the generation resource be included in 
+the base reliability model. 
+2. The generation resource has an effective interim GIA. 
+3. The generation resource has entered the aggregate transmission service study or 
+equivalent transmission service evaluation process publicly posted on OASIS and, if 
+required for transmission service, has a completed facilities study that is awaiting final 
+results without unmitigated third-party impacts. 
+4. The generation resource has acquired air and environmental permits where applicable. 
+5. The generation resource has started construction with major equipment funding and 
+procurement contracts awarded.  
+If a generation resource does not meet all of the above requirements, a formal request for 
+resource inclusion in the base reliability model can be submitted to the TWG for approval. The 
+TWG will take the following information into account in deciding whether to approve the waiver: 
+1. A formal request has been sent to SPP requesting the generation resource be included in 
+the base reliability model, including any additional information deemed relevant by the 
+requesting entity. The request should identify which transmission upgrades will be 
+deferred, if applicable. 
+2. The generation resource has a mitigation plan for the deferred transmission upgrades 
+until it makes a financial commitment to complete the required upgrades. 
+3. A Definitive Interconnection System Impact Study (DISIS) agreement for the generation 
+resource has been executed, an interim GIA has been requested, and a GIA will be 
+entered into when applicable. 
+4. A Request for Proposal (RFP) for the generation resource has been awarded, if 
+applicable. 
+2.1.2 LONG-TERM FIRM TRANSMISSION SERVICE 
+SPP long-term Point-To-Point and Network Integration Transmission Service commitments are 
+generally modeled at expected usage of firm transmission service reservations in each year and 
+season, as supplied by SPP stakeholders during the SPP modeling process. Commitments with 
+external entities are coordinated with those entities through the ERAG MMWG and through 
+WECC as well as other entities.   
+The modeling of long-term firm transmission service in the base reliability models will result in a 
+change in generation dispatch for the defined source and sink of the service and will vary by 
+=====PDFPAGE 20=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 11 
+season, year and generation type.10 All DC tie set points will be modeled with expected usage 
+for the season as submitted by stakeholders, not exceeding long-term firm transmission service. 
+Resources related to a long-term firm transmission service reservation with a single plant as the 
+source will be dispatched to meet the modeled usage. Conventional resources related to long-
+term firm transmission service reservations with a fleet of resources as the source will be 
+dispatched based on economic merit order within each resource fleet, as needed to serve the 
+service commitments and applicable load. The fleet of conventional resources will be dispatched 
+after renewable resources. Renewable resources will be dispatched based upon the following 
+seasonal methodologies:11 
+• Light load models: Refer to the MDAG Model Development Procedure Manual12 for 
+information on Off Peak/Light Load models for the SPP East Region and the SPP West 
+Region. 
+• Peak models: Refer to the MDAG Procedure Manual for information on Peak/Light Load 
+models for the SPP East Region and the SPP West Region.  
+2.1.2.1 EASTERN INTERCONNECTION 
+For load pseudo-tied into the SPP BA, SPP will coordinate with the external entity and the owner 
+of the load to model the long-term firm transmission service in the planning models as follows: 
+• Firm Point-To-Point Transmission Service: Model up to the long-term firm transmission 
+service amount 
+• Network Integration Transmission Service: Model up to the firm load amount 
+2.1.2.2 WESTERN INTERCONNECTION 
+2.1.2.2.1 PSEUDO-TIES 
+General Requirements13  
+1) It is recommended that elements be modeled in the area in which the facility is physically 
+connected, especially when the elements are located a significant distance from the SPP 
+West Balancing Authority Area. 
+a. In the figure below, Generation is physically interconnected to the transmission 
+system in Area A, but generation serves load in BA 3. The generation is pseudo-
+tied to BA 3, so it is not within BA 1. For WECC base cases, the generation would 
+ 
+10 Resources may be added to a source or sink definition if the requirements in Section 2.1.1 (Generation 
+Resources) are met. 
+11 The renewable dispatch methodology may necessitate a change to the modeled expected usage of firm 
+transmission service. 
+12 MDAG Model Development Procedure Manual: found on spp.org under MDAG Reference Documents. 
+13 As noted in the latest WECC Data Preparation Manual (DPM) found under Approved Documents: 
+https://www.wecc.org/committees/srs 
+=====PDFPAGE 21=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 12 
+be modeled in Area A and the BA code would be used to show that the 
+generation is part of BA 3. The Area C coordinator would provide the dispatch to 
+the Area A coordinator for each case. Generation would be scheduled to Area C 
+through appropriate interchange schedules. 
+ 
+2) The Area Coordinator for the SPP West Balancing Authority Area is responsible for 
+coordinating output. 
+3) The Area Coordinator for the transmission interconnection facilities is responsible for 
+coordinating voltage schedules and other case-specific conditions required to capture 
+facility operating requirements. 
+2.1.3 LOAD FORECASTS 
+The ITP assessment will require load forecasts for SPP TOs and stakeholders within the SPP 
+footprint, as well as areas outside of the SPP footprint, for the corresponding study years. The 
+load forecast will be submitted to SPP using the process described in the Model Development 
+Procedure Manual. The load will represent each individual load-serving entity’s peak conditions 
+without losses per season (i.e., non-coincident conditions for the SPP region).  
+Load forecasts for High Impact Large Load (HILL), as specified in Attachment BA of the SPP 
+OATT, are eligible to be submitted if the Transmission Customer or Network Customer has 
+executed a Service Agreement for the HILL Delivery Point under Attachment AQ and/or 
+Attachment AX of the SPP OATT. If the HILL delivery point is only served by a Conditional High 
+Impact Large Load (CHILL) Service Agreement, the load forecast is not eligible to be included, as 
+that load is taking non-firm transmission service. 
+For planning years two through 10, SPP will make a comparison between the load forecasts 
+utilized in the ITP assessment and the forecasted Net Peak Demand submitted for the Resource 
+Adequacy process. If, for any planning year and for the load associated with a given 
+Transmission Owner and the corresponding Load Responsible Entity or Entities, the difference 
+between the ITP load forecast and the forecasted Net Peak Demand exceeds four percent (4%), 
+the Transmission Provider will initiate a review process with the applicable entities.  
+
+=====PDFPAGE 22=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 13 
+As part of this review process, Data Submitters may be required to provide justification for the 
+observed differences or submit updated load forecasts, as appropriate. Based on this review, SPP 
+may request updates to one or both forecasts to ensure consistency between the ITP and 
+Resource Adequacy processes. If the review process does not resolve the four percent (4%) 
+difference between forecasts, the Transmission Provider may escalate the issue to the 
+appropriate stakeholder working group or groups for further review and potential action. 
+This comparison and any resulting review process will be completed by June 1 of the applicable 
+study cycle year. Any updates to load forecasts resulting from this process that occur after the 
+model build schedule model finalization date shall be addressed in accordance with Section 10.3 
+of this Manual. 
+2.1.4 TOPOLOGY 
+The topology used to account for the SPP transmission system, excluding future generation 
+resources and associated interconnection facilities, will be the existing transmission system and 
+any upgrades or facilities that are included in the SPP Transmission Expansion Plan (STEP) and 
+have been approved for construction.14 In-service dates of upgrades with NTC/NTC-C should be 
+consistent with the latest information supplied by the TO in the project tracking process. 
+Upgrades that have met the requirements for NTC withdrawal or reevaluation will be excluded 
+from the base reliability model as specified in SPP business practices.  
+The base reliability models will be developed to reflect the expected state of the transmission 
+system over the long-term horizon. Transmission outages known during the annual model 
+building process that meet NERC TPL-001 requirements shall be modeled. Transmission outages 
+that do not meet NERC TPL-001 requirements will not be modeled. Temporary facilities shall not 
+be modeled and transmission lines operated in real-time as normally open shall be modeled as 
+normally open.   
+For topology updates outside the SPP footprint, the Eastern Interconnection model areas will be 
+obtained from the latest ERAG MMWG model set and the Western Interconnection model areas 
+will be obtained from the latest applicable WECC model set. SPP will coordinate with the 
+appropriate external entities and request applicable first-tier planned upgrades that should be 
+included in the models. 
+2.1.4.1 PHASE-SHIFTING TRANSFORMERS 
+PSTs will be modeled in accordance with the guidelines documented in the MDAG Model 
+Development Procedure Manual for the SPP East Region footprint and in accordance with the 
+ 
+14 This includes upgrades identified through the generator interconnection process and those approved 
+by Southwestern Power Administration. 
+=====PDFPAGE 23=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 14 
+guidelines documented in the WECC DPM for the SPP West Region footprint unless otherwise 
+determined. 
+2.1.5 EXTERNAL TRANSACTIONS 
+Transaction data between entities external to the SPP footprint, not including those with 
+transmission service with SPP, will be obtained directly from the external entity, if available, or 
+from the latest ERAG MMWG models for the SPP East Region footprint and the applicable latest 
+WECC models for the SPP West Region footprint that most closely align with the corresponding 
+study year models.  
+2.1.6 BASE RELIABILITY MODEL APPROVAL 
+All data requests and review opportunities for the ITP base reliability model set and ITP short-
+circuit model(s) will be administered through the TWG, and the TWG will approve the base 
+reliability and short-circuit models.  
+ITP base reliability model development deadlines are established with MDAG stakeholder 
+coordination and approval. Unless alternative base reliability data submission deadlines are 
+established under the approved ITP Scope, the MDAG Model Development Procedure Manual 
+model build schedule identified deadlines establishes the initiating point for late data 
+submission under Section 10.3 (Late Data and Process Waiver). 
+2.1.6.1 TOPOLOGY AND RATING FINALIZATION PASS 
+After completion of the associated MDAG Model Development Procedure Manual model build 
+schedule, base reliability models may be updated for topology and rating information that does 
+not significantly impact the economic model development process. This update will occur when 
+models are updated with the latest ITP project portfolio for the final reliability assessment 
+milestone. Updates will also be included in the economic model. Topology and rating data 
+updates may include the following modeling items:  
+• Buses  
+• Alternating current (AC) transmission lines  
+• HVDC transmission facilities  
+• Transformers  
+• Reactive Power Compensation Static VAR Systems (SVS) 
+The topology and ratings finalization pass is included within the schedule section of the ITP 
+Scope document.  
+After the model sets are finalized for the ITP assessment, no topology and ratings changes will 
+be accepted to update the model. Any identified topology and ratings changes will be required 
+to be submitted during the DPP window as detailed in Section 5.1.1.4 (Model Adjustments). 
+=====PDFPAGE 24=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 15 
+2.2 MARKET ECONOMIC MODEL OVERVIEW 
+Each market economic model simulation is an hourly security-constrained unit commitment and 
+economic dispatch utilizing a DC representation of the transmission system. 
+The assumptions for each of the economic models are detailed later in this section. 
+(Note that WECC does not currently build economic models similar to the 
+MEMs; therefore, this section applies to the MEM model builds and 
+related information for the SPP East Region and the SPP West Region. 
+WECC does build an Anchor Data Set model, which has some economic 
+data; however, it is not typically used by WECC entities. Anchor Data Set 
+Bus number and Owner Assignment information is provided for reference 
+in the WECC DPM.) 
+2.2.1 MODEL ASSUMPTIONS AND DATA 
+2.2.1.1 FUTURE DEVELOPMENT 
+Due to the uncertainties involved in forecasting future system conditions, a number of diverse 
+futures will be considered that take different assumptions into account. Consideration of 
+multiple futures allows for a transmission expansion plan that is sufficiently flexible to meet a 
+variety of needs that may develop as economic, environmental, regulatory, public policy, and 
+technological changes arise that affect the industry. The futures will be developed by the ESWG 
+with input from the SPC and the TWG and will be subject to the approval of MOPC.   
+Economic models will be developed for three study years (years two, five, and 10). A single 
+future will be developed for year two, due to the limited uncertainty in policy or other factors 
+impacting the system that could occur in such a short time frame. Up to three futures will be 
+developed for years five and 10, during the scoping of each successive annual assessment. The 
+futures will consist of a reference case, as determined by the ITP study scope, and up to two 
+additional futures designed to assimilate expected or plausible future scenarios. Details about 
+the reference case and any other future case(s) will be included in the ITP study scope 
+document. As a result, up to seven total economic models may be developed to support 
+economic assessments. 
+During the development of the futures, SPP will solicit stakeholders for potential public policy 
+drivers to be considered in the study through a survey within the SPP annual data request. 
+Timing for the submission of public policy drivers that SPP stakeholders request to be 
+considered shall be included in the study schedule. Any drivers requested to be considered by 
+SPP stakeholders that are excluded from the study, as well as an explanation for the exclusion, 
+shall be detailed in the ITP assessment report. 
+=====PDFPAGE 25=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 16 
+2.2.1.2 LOAD AND ENERGY FORECASTS 
+The ITP assessment will require load forecasts for areas within and outside the SPP footprint for 
+each of the study years. The load will represent each individual load-serving entity’s peak 
+conditions without losses per season (i.e., non-coincident peak conditions for the SPP region). 
+Resource obligations will be determined for the footprint taking into consideration non-scalable 
+and scalable loads. 
+For the economic model development process, SPP will obtain load data to utilize in the ITP 
+assessment by the following unless directed otherwise by the ESWG: 
+• Peak load: The source shall be the no-loss aggregated bus load totals (MW) based on 
+the current base reliability models.  
+• Hourly load shape: The primary source shall be third-party vendor data. If the primary 
+source is not available or is not appropriate, SPP will create a synthetic load shape based 
+on historical data points and FERC Form 714 information. 
+• Monthly peak and energy percentages: The primary source shall be third-party vendor 
+data. If the primary source is not available or is not appropriate, SPP will calculate the 
+monthly peak and energy percentages by using hourly load shape data. 
+• Load factor: As a primary source, annual load factors shall be provided by SPP 
+stakeholders. If the primary source is not available or is not appropriate, SPP will 
+calculate load factors by utilizing hourly load shapes. 
+• Transmission loss factor: As a primary source annual loss factors shall be provided by SPP 
+stakeholders. If the primary source is not available or is not appropriate, SPP will utilize 
+previous ITP study values. 
+• Demand mapping: The primary source shall be the economic load ownership legend15 
+reviewed as part of the SPP annual data request. If the primary source is not available or 
+is not appropriate, SPP stakeholders will provide load bus and ID mappings to demand 
+groups. 
+• Resource planning peak load: A separate, optional load forecast, reflecting the no-loss 
+aggregated bus load totals (MW), and which includes controllable load curtailing 
+programs. This forecast will be used for the conventional resource plan. 
+• Resource planning load factor: Load factor associated with resource planning peak load. 
+This load factor will be used for the conventional resource plan. 
+External region load forecasts will be taken from the base reliability model set and each region 
+will be allowed to review load forecast data prior to use in the ITP assessment. If readily available 
+and appropriate, load forecasts from the most current neighboring entity’s study will be used for 
+their region in the ITP assessment in place of the base reliability model data. The use of their 
+load forecast will be future specific. If there is not a future comparable to the ITP future, as 
+determined by SPP and the ESWG, the load forecast would be determined utilizing base 
+ 
+15 Table within the SPP annual data request that maps loads according to their attributes to groups of 
+demands for the economic model. 
+=====PDFPAGE 26=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 17 
+reliability model data. The data sources approved by the ESWG to be used will be documented 
+in the study report. 
+2.2.1.3 RENEWABLE POLICY REVIEW 
+After the forecasted load is finalized, renewable policy standards (RPS) will be assessed for 
+utilities within the SPP footprint. The ITP study scope will detail mandate and goal values for 
+each utility with respect to the load submitted as part of the SPP annual data request. For those 
+utilities that span multiple states, the approved powerflow models and geographical information 
+system (GIS) data will be used to calculate each utility’s load obligation in the corresponding 
+state for purposes of calculating mandates and goals. 
+The previous ITP study’s mandate and goal values will be used as a starting point for the current 
+study’s calculations. Any changes to these values will be reviewed by the CAWG and approved 
+by the ESWG. Ultimately, the renewable policy review results will be reviewed by the CAWG and 
+approved by the ESWG. The values for mandates and goals will consider forward-looking 
+legislation set by the states that either should be or must be met, depending on the state, in 
+years five and 10. Both capacity- and energy-based mandates and goals will be assessed for 
+fulfillment during development of the resource plan. Those that are energy-based also will be 
+assessed during the policy needs assessment.  
+Renewable energy credits will be accommodated appropriately as provided to SPP. 
+If any significant changes to renewable mandates or goals occur during an ITP assessment, SPP 
+stakeholders can bring them to the ESWG for review and potential approval for use in the ITP 
+assessment. If exemptions to the mandates or goals are allowed (e.g., the applicable technology 
+is cost prohibitive or municipals are exempt), those exemptions will be considered as SPP is 
+notified during the renewable policy review. 
+2.2.1.4 GENERATION RESOURCE INCLUSION 
+Generation resources included in the base reliability model will be incorporated into the 
+economic model, as appropriate.16 Resources identified by SPP as necessary to solve the base 
+reliability model shall not be included in the economic and powerflow models, unless the 
+resources meet the requirements of adding generation described in this section. 
+Incremental to the resources included in the base reliability models, a generator interconnection 
+resource and its associated network upgrades will be included in the economic models if they 
+meet all of the following requirements: 
+ 
+16 Generally, smaller resources that are not included in the economic data supplied by the vendor but are 
+modeled in the powerflow are not included in the economic model for consideration in the production 
+cost simulation. Examples are units reported publicly as behind-the-meter or small municipal generation.  
+=====PDFPAGE 27=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 18 
+1. A formal request has been sent to SPP17 requesting the generation capacity be included. 
+2. The generating resource has an effective GIA that is not on suspension or an effective 
+interim GIA. 
+3. The generating resource will have a firm contract for delivery through ownership and 
+operation of the resource or procurement of a purchase power agreement (PPA) from 
+the generation owner. 
+If a generating resource does not meet all the above requirements, a request for generation 
+capacity to be included in the economic models can be made to ESWG for review and 
+approval. The request may be made by either a stakeholder or SPP. Additional generation 
+resources to be considered for inclusion in the economic model may have, but are not 
+limited to, all or a subset of the following attributes: 
+1. Registered in the SPP Market; 
+2. Expected to be in service within two years of the study year; 
+3. Have a good standing GIA; not on suspension; 
+4. Have cost allocation amounts from assigned network upgrades that total to less than 
+$100 million out of Generator Interconnection Studies; 
+5. A DISIS agreement for the generating resource has been executed, an interim GIA 
+has been requested, and a GIA will be entered into, when applicable; or 
+6. An RFP for the generating resource has been awarded, if applicable. 
+TWG will review the requests and provide any feedback to ESWG prior to the ESWG’s review. 
+Approved generating resources will be added to the applicable economic model based on the 
+expected in-service date. All other resource expansion needs will be determined through the 
+SPP resource expansion planning process as detailed in Section 2.2.2.1 (Resource Expansion 
+Plan). 
+2.2.1.5 GENERATION RESOURCES 
+Third-party vendor data will be used as the starting point for generation parameters needed for 
+the economic model set. Data related to the physical characteristics of generators will be 
+reviewed and updated as needed by the SPP stakeholders to provide company-specific values 
+through the SPP annual data request. 
+The third-party vendor data to be utilized as a starting point may include: 
+• Generator name 
+• Category type 
+• Conventional variable operation & maintenance (VOM) 
+• Conventional fixed operation & maintenance (FOM) 
+• Heat rate 
+ 
+17 Submitted through SPP RMS: https://spprms.issuetrak.com/. 
+=====PDFPAGE 28=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 19 
+• Heat rate profile 
+• Physical state location 
+• Annual maintenance hours 
+• Forced outage rate 
+• Effluents (percentage removed) 
+• Emission rates 
+• Fuel forecast 
+• Hydro energy limits 
+• Seasonal max capacity by year 
+• Retirement date 
+• Commission date 
+• Must-run designation 
+2.2.1.6 TOPOLOGY 
+The topology used in the economic models to account for the transmission system of SPP and 
+external entities will follow the same guidelines detailed in Section 2.1 (Base Reliability Model 
+Overview) with the following exceptions: 
+• The topology utilized for each study year’s annual simulation will be based on the 
+summer- peak base reliability model developed for that year. 
+• Long-term transmission outages as forecasted by the data submitting entity will not be 
+included. 
+2.2.1.6.1 DC LINES 
+DC lines are included in the economic model through an import of the base reliability powerflow 
+data. The range of allowable hourly operation will be based on: 
+• Operational practice (current or future expected), and 
+• Expected flows from the SPP powerflow models. 
+2.2.1.6.2 PHASE-SHIFTING TRANSFORMERS 
+In the market economic models, SPP PSTs with auto-adjust enabled in the base reliability 
+models may adjust up to the full angle range. For PSTs with auto-adjust disabled, the PSTs will 
+be modeled at a fixed angle, unless determined otherwise by the TWG and ESWG. 
+2.2.1.6.3 DC TIES 
+For DC ties that connect SPP to the Texas and western interconnections, hourly profiles will be 
+developed based on at least three years of historical flows across each DC tie and will be capped 
+at long-term firm transmission service amounts. These transactions will be modeled as fixed with 
+no assumed curtailment price. 
+=====PDFPAGE 29=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 20 
+2.2.1.7 FUEL PRICES 
+Fuel price forecasts for the reference case future, including oil, uranium, coal, and associated 
+transportation costs, will be based upon the selected vendor’s latest dataset identified by SPP 
+and approved by ESWG. Natural gas price forecasts will be determined from multiple reputable 
+fuel forecast datasets identified by SPP, approved by the ESWG and documented in the 
+respective approved ITP assessment scope. 
+2.2.1.8 EMISSION PRICES 
+Emission price forecasts for the reference case future, including CO2, SO2 and NOX, will be 
+based upon the latest vendor data set. 
+Potential adjustments to the emission prices for the non-reference case future(s) will be 
+determined by the ESWG to appropriately reflect each future and will be described in the ITP 
+study scope document. 
+2.2.1.9 HURDLE RATES 
+Hurdle rates for all futures will be based upon the latest vendor data set. Any adjustments to the 
+hurdle rates will be determined by the ESWG and will be described in the ITP study scope 
+document. 
+2.2.1.10 RENEWABLE PRICING 
+The economic modeling of wind and solar resources include two primary parameters that 
+impact pricing: curtailment price and VOM.  
+Wind and solar resources include an hourly profile. The curtailment price for wind and solar is 
+the price at which the resource will curtail. If the locational marginal price (LMP) at the 
+generation bus is greater than or equal to the curtailment price, the unit will generate energy in 
+accordance with the hourly profile. If the LMP at the generation bus is less than the curtailment 
+price, the unit generation will be curtailed. As a result, the curtailment prices impact the dispatch 
+of wind and solar units in the economic models but do not impact the operating cost of the 
+units. 
+To model a curtailment price reflective of market operation for wind and solar units, current IRS 
+legislation will be utilized to account for projected production tax credit (PTC) impacts.  
+=====PDFPAGE 30=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 21 
+Both existing and projected wind and solar units will have a negative curtailment price18 that 
+reflects the “grossed-up” value of a PTC19 in accordance with applicable laws and regulations. 
+Investment tax credits (ITC) will not be considered in the adjustment of curtailment prices unless 
+defined in the ITP Scope. If no PTC nor ITC is applicable, existing and projected units will have a 
+$0/MWh curtailment price. 
+For the purposes of applying the above curtailment price modeling criteria to additional wind 
+and solar amounts determined by the renewable resource expansion plan, SPP and the ESWG 
+will estimate the additional wind and solar amounts per year and use information from the 
+resource siting plan to determine appropriate curtailment price methodology for additional 
+units.20 
+If any significant changes to the PTC rules occur during an ITP assessment, SPP staff or 
+stakeholders can bring information to the ESWG for review and potential approval for use in the 
+ITP assessment. Any resulting deviations from this standard curtailment pricing will be noted in 
+the study report. 
+The VOM for wind and solar resources defines the unit operating cost per MWh of energy 
+generated. This operating cost is included in production cost calculations. The VOM parameter 
+does not impact dispatch, curtailment, or LMPs in the economic model simulations.  
+For all wind and solar units, the VOM shall be $0/MWh to reflect the low operating cost of 
+renewable resources. 
+2.2.1.11 MUST RUN UNITS 
+Must-run units in the ITP assessment are dispatched during all available hours to their minimum 
+capacity states, regardless of economics. Must-run statuses will be removed from all units at the 
+start of each study. In the development of the ITP study scope, the ESWG will determine if must-
+run units will be allowed and the criteria needed for such designation. Individual generating 
+units meeting must-run criteria will be identified by SPP or stakeholders during the generation 
+review and subject to approval by the ESWG. 
+ 
+18 The negative curtailment price will be adjusted for inflation to the study year using a typically assumed 
+inflation rate for the study. 
+19 Reflecting a IRS published PTC value and federal corporate income tax rate at the commencement of 
+the study where the “grossed-up” PTC value = PTC/(1-corporate tax rate). 
+20 For example, approximate projected wind amounts per year can be determined from existing wind 
+amounts and projected wind amounts by linear interpolation or other means and wind site rankings from 
+the Resource Siting Plan can be used by assuming highest rank sites receive earlier i n-service dates. 
+=====PDFPAGE 31=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 22 
+2.2.2 RESOURCE PLAN 
+2.2.2.1 RESOURCE EXPANSION PLAN 
+After forecasted load and existing and planned generation have been defined through the SPP 
+annual data request, analysis will be conducted to determine new (conventional and renewable) 
+resource additions required in years five and 10 for each future in the economic and market 
+powerflow model. Resource additions are included to develop realistic future-year models by 
+accounting for reserve margin requirements, historical trends, economics, etc. The resource-
+planning phase will identify new units and the associated parameters for these new units, but 
+will not include any siting considerations, which will be addressed in Section 2.2.2.2 (Resource 
+Siting Plan). The year two models will be assessed to evaluate whether the reserve margin 
+requirements are being met at the SPP BA level. 
+2.2.2.1.1 RENEWABLE RESOURCE EXPANSION PLAN 
+SPP shall develop a resource plan to meet renewable expectations for the region. This will 
+include capacity as required through the renewable policy review, as well as capacity identified 
+through criteria developed by SPP and stakeholders. Consideration will be given to the futures 
+being studied and factors such as government regulations, historical trends, natural gas prices, 
+installation trends, integrated resource plan (IRP) projections, and SPP stakeholder feedback.  
+ 
+Renewable additions will be computed using criteria that can be applied uniformly across 
+pricing zones.21 For example, each pricing zone should have renewable capacity of at least a 
+certain percentage of their annual peak-load responsibility. Renewable resources other than 
+wind and solar (such as biomass) shall only be added to the model as defined in Sections 2.2.1.4 
+(Generation Resource Inclusion) and 2.2.1.5 (Generation Resources). 
+External regions and areas that are economically dispatched in the model may include 
+renewable additions beyond the units planned at the time of study. An appropriate resource 
+plan from the most current external entity’s study will be used for their region in the ITP 
+assessment, if readily available and appropriate. These resource plans are future-specific. 
+If there is not an appropriate or available resource plan of a future comparable to a given ITP 
+future, as determined by SPP and the ESWG, these renewable additions shall be determined by 
+SPP and the ESWG in each study. Consideration will be given to the futures being studied and 
+factors such as government regulations, historical trends, natural gas prices, installation trends 
+(nationwide and location-specific), integrated resource projections, and feedback from external 
+entities. 
+ 
+21 Renewables are not necessarily sited within the pricing zone, but pricing zones can be assigned 
+ownership of the renewable generation. 
+=====PDFPAGE 32=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 23 
+2.2.2.1.2 CONVENTIONAL RESOURCE EXPANSION PLAN 
+Each pricing zone shall be assessed for resource adequacy by accounting for load projections, 
+existing generation, new wind and solar additions, capacity accreditation for all renewable units, 
+fleet PPAs, and DC tie accreditations. Each pricing zone’s resource shortfall shall be computed 
+based on the SPP reserve margin requirement in effect at the commencement of the resource 
+planning milestone of the study. 
+The conventional resource expansion plan process begins with the identification of a publicly 
+available source for generator prototype parameters, which shall be documented in the study 
+scope. 
+SPP will identify the optimal mix of new conventional resource additions needed in all futures for 
+the SPP region. The ESWG will review and approve the methodology for development of 
+resource plans for each new ITP study with decisions documented in the study scope document. 
+The magnitude of resource additions will be based on resource shortfalls. Ownership of 
+conventional unit additions will be allocated to pricing zones such that each pricing zone 
+approximately meets the reserve margin requirement. Joint ownership of unit additions may be 
+used to avoid excessive additions of new resources to individual pricing zones.  
+External regions also will be analyzed for resource shortfalls. An appropriate resource plan from 
+the most current neighboring entity’s study will be used for their region in the ITP assessment, if 
+readily available and SPP and stakeholders find it appropriate. The use of their resource plan is 
+future specific. If there is not a future comparable to the ITP future, as determined by SPP and 
+the ESWG, then conventional additions to address shortfalls shall be added to external regions 
+with a resource mix that is as close as possible to the SPP conventional resource addition mix for 
+that future. For example, if SPP conventional resource additions include 60% combined cycles 
+and 40% combustion turbines, a ratio as close as possible to this 60/40 ratio would be used to 
+guide conventional resource additions in external regions. 
+2.2.2.2 RESOURCE SITING PLAN 
+2.2.2.2.1 SITING PROCESS 
+The resource plan will identify resource additions that need to be sited to meet study objectives. 
+A spatial location and electrical POI for each new resource within the SPP region will be selected. 
+This effort will be conducted as a screening level exercise to identify sites and will not be 
+intended to provide or replace a fully scoped power-plant siting study. Siting guidelines are 
+documented in the ITP Resource Siting Manual,22 which is owned and approved by the ESWG 
+and the TWG. 
+ 
+22 The ITP Resource Siting Manual can be found on spp.org under the ESWG Reference Documents: 
+https://spp.org/spp-documents-filings/?id=19027 
+=====PDFPAGE 33=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 24 
+2.2.2.2.2 SITE REPOSITORY 
+The site repository stores sites, usage, suitability attributes, prioritization, and SPP stakeholder 
+feedback from study to study. Each site is classified by technology type and includes applicable 
+qualitative and quantitative site suitability attributes and qualifications. The ITP Resource Siting 
+Manual will detail how sites will be prioritized and ranked. 
+2.2.2.2.3 PROCESS FLOW 
+The siting process will generally adhere to all of the following steps: 
+1. Update the site repositories with the latest powerflow and generator interconnection 
+queue information to account for actual resource development between planning cycles. 
+2. Post repositories and request applicable SPP stakeholders to provide feedback and 
+additional sites for consideration and supportive rationale. 
+3. Assess whether the site repositories include an adequate and diverse amount of sites to 
+fulfill the requirements of the resource plan and are representative of remaining 
+technical renewable potential across the SPP region. 
+4. Develop additional conventional resource sites and conceptual solar and wind sites as 
+needed. 
+5. Rank and select sites. 
+6. Post site prioritization and selections for review. 
+7. Make any necessary adjustments and repost for approval. 
+2.2.2.2.4 SITING FOR EXTERNAL REGIONS 
+The resource siting plan for each of the modeled regions external to SPP will be based on the 
+corresponding company’s resource plan in their most current regional planning study, as 
+available and appropriate. If this data is not available or appropriate, as determined by SPP and 
+the ESWG, SPP will coordinate with the corresponding entity to closely resemble the same logic 
+as those sited through the SPP siting plan. 
+2.2.2.3 GENERATION OUTLET FACILITIES 
+Once the resource and siting plans have been finalized, SPP will reconsider the First Contingency 
+Incremental Transfer Capability (FCITC) analysis completed during the siting process to develop 
+any necessary generator outlet facilities (GOFs). This GOF process is intended to proxy the 
+evaluation of a resource in the generator interconnection process to develop necessary 
+upgrades.  
+Transmission distribution factors (TDFs) will be calculated for each transmission facility with each 
+generation resource at its full nameplate value under system intact and contingency conditions. 
+Overloaded lines with a TDF above the threshold used in the generator interconnection process 
+will be used as an indicator that a GOF may be necessary. In the instance that multiple resource 
+plan units are sited with electrically similar interconnection points, the TDFs will be calculated 
+=====PDFPAGE 34=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 25 
+with each resource dispatched at maximum capacity simultaneously to ensure the final GOF is 
+sized appropriately.  
+When TDFs on overloaded transmission facilities meet or exceed the minimum threshold, GOFs 
+will not be guaranteed for inclusion in the ITP models. SPP will use engineering judgment, such 
+as the consideration of a unit’s expected dispatch and the impact a GOF may have on potential 
+economic and/or reliability needs, to recommend GOF inclusion.  
+All GOFs recommended for inclusion in the models will be reviewed and approved by the TWG. 
+2.2.3 CONSTRAINT ASSESSMENT 
+SPP maintains a list of flowgates to monitor based on reliability and economic issues seen in 
+real-time. The constraint assessment is used to identify potential future constraints for each 
+future and year of study.  
+To create these additional constraints, SPP will perform economic simulations to identify 
+additional or breaching elements in the system that occur during the reliability peak and off-
+peak hours.23 System flows under two levels of constraint will be analyzed: 
+• Copper Plate: No defined constraints. 
+• Initial constraint list based on NERC and SPP permanent and temporary flowgates.24 
+2.2.3.1 CONTINGENCY SCREENING 
+Due to software and time limitations, large contingency lists are not feasible. The contingency 
+lists will be created with the goal of including the most impactful contingencies for constraint 
+identification.  
+After the initial economic simulation dispatch results have been created, the resulting 
+contingencies will be limited to the following types of planning events identified in the NERC 
+Standard TPL-001 for the 100 kV-and-above transmission system: 
+• P1.2 and P1.3 single-branch contingencies on the 100 kV and above system exceeding 
+50 percent loading in the peak and off-peak hours under system intact conditions for the 
+translated areas. 
+• P1.2 and P1.3 single-branch contingencies on the 200 kV and above system exceeding 
+10 percent loading in the peak and off-peak hours under system intact conditions for the 
+SPP footprint. 
+• Contingencies included in the SPP permanent and temporary flowgates, including P7 
+events. 
+ 
+23 Defined in Section 2.3 (Market Powerflow Model Overview). 
+24 Temporary flowgates included in the initial constraint list will be based on engineering judgement. This 
+includes, but is not limited to, temporary flowgates associated with an economic operational need.  
+=====PDFPAGE 35=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 26 
+• Other P1, P2, P4 and P5 events as potential contingencies. 
+Contingencies meeting these criteria that are inconsistent with operation of the SPP Integrated 
+Marketplace or create simulation anomalies may be excluded from further evaluation. 
+2.2.3.2 CONSTRAINT IDENTIFICATION 
+Facilities exceeding their thermal limits under system intact and contingency conditions will be 
+assessed for potential inclusion as constraints. Flow violations occurring in either of the reliability 
+hours will be automatically included unless SPP and stakeholders deem otherwise during the 
+constraint review. Flow violations occurring in the annual hourly simulations will be considered 
+for inclusion based on the following information, at a minimum: 
+• Number of violation hours and/or violation loading thresholds. 
+• The ability of the simulation to reach a valid25 dispatch solution due to a given 
+constraint.26 
+• Preliminary economic model simulation results. 
+• Performance of constraints in prior SPP expansion plan studies. 
+The ESWG and TWG will be given the opportunity to review the resulting constraints. After the 
+review is completed, TWG approval will be requested before completion of the milestone. 
+ 
+In addition to the approved list of constraints, some 69 kV constraints may be included in the 
+constraint list as needed to properly control the dispatch of resources on the 69 kV system and 
+capture congestion in developing 100 kV and above solutions. These constraints will be 
+suggested or provided by SPP stakeholders. 
+2.3 MARKET POWERFLOW MODEL OVERVIEW 
+Each market powerflow model is an AC powerflow representation of a specific one-hour 
+snapshot of a market economic model simulation with SPP acting as its own balancing authority. 
+Each market economic model developed for the ITP assessment will have two corresponding AC 
+powerflow models representative of system conditions of those hours within the year. The peak 
+hour will be the hour with the highest total megawatt output of wind resources within SPP 
+selected from the top 1% of SPP coincident peak load hours. The off-peak hour will be the hour 
+with the highest wind penetration between April and May between the hours of 12 a.m. – 6 a.m. 
+(off-peak).  
+The models will be developed by matching the dispatch and load in each market powerflow 
+model to the dispatch and load in the respective hour of the economic model simulations. This 
+ 
+25 All constraints and generating parameters honored. 
+26 A constraint may be removed and considered as a reliability need during the Market Powerflow 
+analysis. 
+=====PDFPAGE 36=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 27 
+process will be described later in Section 2.3.1 (DC/AC Conversion). After the conversion is 
+complete, SPP and stakeholders will assess reactive power flows on the system that the 
+economic modeling tools are unable to represent. Some of the market powerflow models will be 
+used to meet the requirements of a sensitivity case necessary for NERC Standard TPL-001 
+compliance. 
+The system operating points for the peak and off-peak AC powerflow will be consistent with the 
+corresponding hours of the economic model simulations utilized in the economic analysis. 
+2.3.1 DC/AC CONVERSION 
+2.3.1.1 GENERATION 
+Unit commitment and dispatch will be determined in the economic model simulation to derive 
+an hourly generation profile for the simulated system. For development of the market 
+powerflow model, this simulation will not include generator-forced outages and will account for 
+approximated transmission losses modeled in the economic model at the load buses. 
+The following parameters will guide how the resource plans, both internal and external, are 
+modeled with regards to reactive settings. Stakeholders are given the opportunity to review 
+certain reactive device settings during the market powerflow model review period described in 
+Section 2.3.2 (Reactive Device Settings) of the ITP Manual.  
+All resources (excluding distributed generation such as rooftop solar) included in the internal or 
+external resource plans will be modeled as directly injecting power at the POI (i.e., ESWG 
+approved site). Maximum and minimum reactive capability of generators will be determined by 
+utilizing a 0.95 power factor and the maximum real power capability of the resource. Resources 
+sited where existing generation is already interconnected will follow the voltage schedule and 
+remote bus determination of the existing plant. The following information is resource fuel type 
+specific and references settings observed in the powerflow modeling software utilized in the ITP 
+process. The following settings apply to both the internal and external resource plans, unless 
+determined otherwise by the TWG. 
+2.3.1.1.1 CONVENTIONAL GENERATION 
+The control mode for conventional generation will be set to ”not a wind machine”. The voltage 
+schedule (i.e., vsched) will be set at 1.015 per unit for system peak models and 1.00 per unit for 
+off peak models, unless a voltage set point warning is observed. For sites with no existing 
+generation, the remote bus will be the POI of the new resource. Adjustments to the voltage 
+schedule may be made on a case-by-case basis due to nearby existing generators. 
+2.3.1.1.2 SOLAR, WIND, OR ENERGY STORAGE RESOURCES 
+The control mode for utility scale renewable and energy storage resources will be “+ or – Q 
+limits” based on WPF. WPF will be set at .95. The voltage schedule will be set at 1.015 per unit 
+=====PDFPAGE 37=====
+Southwest Power Pool, Inc. Model Development 
+ITP Manual Version 3.3 28 
+for system peak models and 1.00 per unit for off peak models, unless a voltage set point 
+warning is observed. For sites with no existing generation, the remote bus will be the POI of the 
+new resource. Distributed generation will be modeled at a 1.0 power factor. Adjustments to the 
+voltage schedule may be made on a case-by-case basis due to nearby existing generators. 
+2.3.1.2 LOAD FORECASTS 
+Hourly load values will be calculated for each defined group of demands in the economic model 
+simulation considering annual peak demand and energy, monthly allocations of demand and 
+energy, and the hourly load shape. The resulting load for each group of demands in each hour 
+will be allocated on a pro-rata basis to the individual bus loads assigned to that demand group. 
+The real power demand for each reliability hour will be incorporated into the AC powerflow 
+models directly from the economic model simulation output. Reactive power demands will be 
+calculated for each bus load based on the power factor of the equivalent load in the respective 
+base reliability model. 
+2.3.1.3 INTERCHANGE 
+Economic model simulation will determine the exchange of energy between SPP and 
+neighboring systems. 
+2.3.2 REACTIVE DEVICE SETTINGS 
+After the DC/AC conversion process is complete, SPP and stakeholders will have an opportunity 
+to review the settings for transmission facilities that provide reactive support for the 
+transmission system. SPP stakeholders will submit changes to set points for capacitors, reactors, 
+tap changers for transformers, remote buses, voltage schedules for generators, and static VAR 
+compensators. These adjustments will improve the response of the transmission system under 
+system intact and contingency conditions as well as provide confidence to SPP and stakeholders 
+that potential violations are based on realistic system conditions prior to the reliability needs 
+assessment.  
+After all reactive device setting adjustments have been received, SPP will apply the adjustments 
+to the appropriate models before final posting and approval by the TWG. 
+2.4 OPERATIONAL MODEL DEVELOPMENT 
+SPP will identify case(s) in which the reliability and manual commitment economic operational 
+needs are present to evaluate whether the needs are addressed with proposed solutions. SPP 
+may develop ITP planning models to replicate congested economic operational needs for 
+solution evaluation as described in Section 5.3.4 (Persistent Operational Solution Evaluation). 
+=====PDFPAGE 38=====
+Southwest Power Pool, Inc. Benchmarking 
+ITP Manual Version 3.3 29 
+2.5 INTERREGIONAL COORDINATION 
+During the development of each ITP model, SPP will work with external entities from the SPP 
+East Region and SPP West Region footprints as applicable to acquire necessary modeling 
+information. Where appropriate, information from recent interregional planning processes will 
+be leveraged. External entities will be given the opportunity to review the models concurrent 
+with SPP stakeholders. 
+3 BENCHMARKING 
+3.1 POWERFLOW MODEL 
+An ITP powerflow model will be validated against SPP operational data, which may include a 
+comparison of topology and ratings. ITP powerflow models will be benchmarked against the 
+previous study models, which may include a comparison of topology, generation, load, ratings, 
+and area interchange. 
+3.2 ECONOMIC MODEL 
+The year two economic model will be utilized to validate modeling parameters to determine if 
+operation is reflective of the SPP system. Data validation may include: temporary flowgates, 
+capacity factor by unit type, maintenance outages, operating and spinning reserves, average 
+energy costs, system LMPs (zonal, average, max, etc.), interchange, APC comparison, and 
+renewable generation profiles. Data may be compared to the most recent applicable SPP 
+operational data and previous study models. 
+4 NEEDS ASSESSMENT 
+SPP will conduct economic, reliability, public policy, and operational needs assessments, as 
+detailed in this section, which will result in a comprehensive list of needs to be posted for SPP 
+stakeholders. Section 0 (Solution Development and Evaluation) further describes the 
+development and submittal of solutions to this needs list. 
+4.1 ECONOMIC NEEDS ASSESSMENT 
+The economic needs assessment will be performed in parallel with the reliability, public policy, 
+and operational needs assessments. The economic needs of the system will be identified for 
+=====PDFPAGE 39=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 30 
+each future and study year. Economic model simulations derive nodal LMPs by dispatching 
+generation economically while honoring the transmission constraints defined for the system. 
+LMPs reflect the congestion occurring on the transmission system’s binding or breaching 
+constraints. The simulation results will reveal constraints causing the most congestion and the 
+additional cost of dispatching around those constraints. This is the starting point for constraints 
+to be considered for economic needs for the study. 
+4.1.1 SCUC/SCED ANALYSIS 
+The economic needs of the system will be identified to develop a portfolio for each future. All of 
+the economic system needs will be identified through the use of a security-constrained unit 
+commitment (SCUC)/security-constrained economic dispatch (SCED) simulation that accounts 
+for every hour of the study years. 
+The SCUC/SCED simulation requires a dual-optimization process. During the SCUC, the hourly 
+least-cost combination of units that should be committed (turned on or off) is determined, 
+subject to unit-specific operational constraints (e.g., ramping, minimum output, min/max 
+runtime, startup cost, etc.) and some critical location-specific transmission reliability constraints 
+(e.g., must-run operational limits). The SCUC does not explicitly consider transmission grid 
+operational costs. 
+The second process is the SCED solution of the units committed by the SCUC process. In the 
+SCED process, the units are dispatched (exact unit output determined) in a least-cost manner 
+subject to various transmission operational constraints (e.g., line thermal limits) and transmission 
+reliability constraints (e.g., N-1 contingencies). 
+The SCUC and SCED simulation will solve using nodal LMPs, which will commit and dispatch the 
+generation economically based on unit characteristics, load information, and transmission 
+constraints. These analyses will determine potential issues including congestion, LMP variation, 
+and trapped generation. 
+4.1.2 NEED IDENTIFICATION 
+The following process will be used to filter and rank the congested constraints of each future 
+and study year to target a list of economic needs for the study: 
+1. Binding constraints will be ranked from highest to lowest congestion score. Congestion 
+score is defined as the product of a given constraint’s average shadow price27 and the 
+number of hours that constraint is binding. 
+ 
+27 The shadow price represents the potential reduction in total SPP production costs if the limit on a 
+congested flowgate could be increased by 1 MW. 
+=====PDFPAGE 40=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 31 
+ 
+Figure 4.1: Congestion Score Formula 
+2. A list of binding constraints will be reduced to the congested flowgates that have 
+greater than $50,000/MW in annual flowgate congestion score. However, additional 
+constraints may be included if SPP determines the inclusion would better define an 
+economic need overall.28 SPP may consider flowgates with lower congestion scores in 
+the SPP West Region footprint based on the latest economic analysis available to be 
+documented in the study scope document. 
+3. Constraints with monitored elements not interconnected with the SPP transmission 
+system that provide less than $1 million in annual potential benefit to SPP will be 
+removed unless SPP determines the constraints are related to a target area or a 
+historically congested market-to-market flowgate and warrant further analysis.29 
+ 
+ 
+28 As an example, the most congested, unique, monitored element and other constraints with the same 
+monitored element would only be considered one need. Each additional constraint included would better 
+define the economic need overall. 
+29 Potential benefit is determined by relaxing the rating of the monitored element of a flowgate to relieve 
+congestion. 
+SCUC/SCED
+Transmission 
+Congestion
+Qualitative 
+Assessment
+Top 
+Constraints
+=====PDFPAGE 41=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 32 
+Figure 4.2: Economic Need Development 
+The constraint list will be condensed by identifying the target areas (top areas of known or 
+forecasted congestion) to more efficiently focus the combined efforts of SPP and stakeholders 
+to identify the most valuable solutions. In addition to using congestion scores to rank 
+constraints, SPP may also include additional information, such as the relationship of constraints 
+to: 
+• Each other 
+• Integrated Marketplace congestion30 
+• Operational issues 
+• Regional Cost Allocation Review (RCAR) issues 
+• Seams issues 
+• Operational, reliability, and/or policy needs 
+• Generator interconnection and transmission service study queue limitations 
+• Transmission corridors with limited capacity 
+• Power transfer distribution factor flowgates used to represent thermal, stability, or 
+contractual limitations 
+• Facilities that are thermally limited by terminal equipment 
+In the analysis portion of this milestone, all needs will be reviewed to determine the underlying 
+drivers. Subsequently, a need may be invalidated as a result of further analysis. Generation 
+dispatch, transmission flows, LMPs, and surrounding loads will be among the items considered 
+in identifying the drivers for each need. 
+A more qualitative assessment may be used to limit the number of needs to meet the study 
+schedule and objectives. This assessment will consider the number of binding constraints with 
+similar attributes, recommended constraints, and/or target areas for additional analysis, 
+mitigation need dates, general transmission solution lead times, and other project staging 
+considerations. 
+As part of the needs posting, SPP will provide general explanations and rationale surrounding 
+the grouping of constraints as well as high-level scopes for any necessary additional analysis to 
+be performed on economic needs to develop a recommended portfolio of projects. 
+Economic issues in the first-tier areas may be included in the needs list along with an indication 
+that there is potential for seams solutions. 
+4.2 RELIABILITY NEEDS ASSESSMENT 
+The reliability needs assessment will be performed in parallel with the economic, public policy, 
+and operational needs assessments. All needs will be identified by assessing the performance of 
+ 
+30 SPP will relate the economic needs to historic congestion in the SPP Integrated Marketplace and 
+external markets as reported in quarterly and annual market monitor reports. 
+=====PDFPAGE 42=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 33 
+the SPP transmission system under system intact and contingency conditions. SPP will utilize 
+Table 1 from the NERC Standard TPL-001 as the basis for the contingencies to be assessed 
+during the study. Contingencies that do not allow for non-consequential load loss (NCLL) or the 
+interruption of firm transmission service (IFTS) will be analyzed during the reliability needs 
+assessment. SPP Planning Criteria31 will be utilized to determine if a potential regional reliability 
+violation will be considered as a reliability need.  
+Thermal violations identified in the market powerflow model during the reliability assessment 
+may not have met the constraint assessment criteria to be defined as a constraint or may be 
+related to a defined constraint in the economic model. Reliability needs will be evaluated for 
+reclassification as an economic need during or after the needs assessment to ensure proper 
+evaluation of system needs. If reclassification is justified, SPP will inform stakeholders via email 
+or the SPP website. 
+4.2.1 BASE RELIABILITY MODEL 
+Contingency analysis for the base reliability model will consist of analyzing P0, P1, and P2.1 
+planning events identified in NERC Standard TPL-001 Table 1 for each of the models. The 
+voltage level for monitored and contingent elements in the SPP footprint are described in more 
+detail in Table 4.1. The voltage level for monitored and contingent elements in the SPP West 
+Region footprint will be 100kV and above. 
+ 
+31 SPP Planning Criteria 
+=====PDFPAGE 43=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 34 
+ P0, P1, P2.1 
+Monitored Element Contingent Element 
+Year 2 Summer 
+69 kV + 69 kV + 
+Year 2 Winter 
+Year 2 Light Load 
+Year 5 Summer 
+Year 5 Winter 
+Year 5 Light Load 
+Year 10 Summer 
+100 kV+32 100 kV+31 Year 10 Winter 
+Year 10 Light Load 
+Table 4.1: NERC Standard TPL-001 Planning Events as Monitored and Contingent Elements 
+The base reliability models will be analyzed with the remaining contingencies from Table 1 in the 
+NERC Standard TPL-001 that do not allow for NCLL or IFTS as detailed in Table 4.2. 
+ 
+OTHER PLANNING EVENTS33 
+Monitored Element Contingent Element34 
+Year 2 Summer 100 kV+ 100kV/300 kV+ 
+Year 2 Light Load 100 kV+ 100kV/300 kV+ 
+Year 5 Summer 100 kV+ 100kV/300 kV+ 
+Year 10 Summer 100 kV+ 100kV/300 kV+ 
+Table 4.2: Remaining Contingencies for Monitored and Contingent Elements 
+4.2.2 MARKET POWERFLOW MODEL 
+Contingency analysis for the market powerflow models will consist of analyzing P0, P1, and P2.1 
+planning events identified in NERC Standard TPL-001 Table 1 for each of the models. The 
+ 
+32 In addition, 69 kV facilities will be both contingent and monitored elements for informational purposes 
+only. This data will inform the solution and portfolio development process to ensure solutions can 
+mitigate violations for the entire study period.   
+33 Other planning events include P2.2, P2.3, P3.1-P3.5, P4.1-P4.5, and P.5. 
+34 Some planning events allow/disallow NCLL or IFTS based upon the voltage level of the contingent 
+element.   
+=====PDFPAGE 44=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 35 
+voltage level for monitored and contingent elements in the SPP footprint are described in more 
+detail in Table 4.3. 
+ P0, P1, P2.1 
+Monitored Element Contingent Element 
+Reference Case Year 2 Peak 
+100 kV+ with select 69 
+kV facilities 
+100 kV+ with select 69 
+kV facilities 
+Reference Case Year 2 Off-
+Peak 
+Reference Case Year 5 Peak 
+Reference Case Year 5 Off-
+Peak 
+Reference Case Year 10 Peak 
+100 kV+ 100 kV+ 
+Reference Case Year 10 Off-
+Peak 
+FX Year 5 Peak 
+FX Year 5 Off-Peak 
+FX Year 10 Peak 
+FX Year 10 Off-Peak 
+Table 4.3: NERC Standard TPL-001 Planning Events as Monitored and Contingent Elements 
+The remaining contingencies in Table 1 of the NERC Standard TPL-001 that do not allow for 
+NCLL or IFTS will be analyzed if a violation was observed in the same year/season of the base 
+reliability model as detailed in Table 4.4. 
+ OTHER PLANNING EVENTS35 
+Monitored Element Contingent Element36 
+Reference Case 
+Year 2 Peak 100 kV+ 100kV/300 kV+ 
+Reference Case 
+Year 2 Off-Peak 100 kV+ 100kV/300 kV+ 
+Reference Case 
+Year 5 Peak 100 kV+ 100kV/300 kV+ 
+Table 4.4: Remaining Contingencies for Monitored and Contingent Elements 
+ 
+35 Other planning events include P2.2, P2.3, P3.1-P3.5, P4.1-P4.5, and P.5. 
+36 Some planning events allow/disallow NCLL or IFTS based upon the voltage level of the contingent 
+element. 
+=====PDFPAGE 45=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 36 
+4.2.3 NON-CONVERGED CONTINGENCIES 
+SPP will use engineering judgment to resolve non-converged cases from the contingency 
+analysis. If these contingencies cannot be solved, the potential violations will be identified as 
+reliability needs along with the result of the analysis (e.g., voltage collapse). 
+4.2.4 FIRST-TIER CONSIDERATION 
+During the reliability needs assessment, first-tier areas will be monitored to identify potential 
+reliability needs. After vetting with the appropriate neighboring entity and receiving their 
+consent, first-tier potential issues will be posted in conjunction with the SPP needs list. The first-
+tier potential issues list will not serve as solicitation of SPP stakeholders for solutions to address 
+first-tier issues, but the list will be used to evaluate whether there are solutions that address SPP 
+and first-tier issues concurrently. 
+4.2.5 VIOLATION FILTERING 
+SPP will review the list of potential violations to determine the list of valid violations that will be 
+included in the needs assessment.  
+As part of the violation filtering, observed thermal overloads in the market models will receive 
+additional review. The SCUC/SCED simulations honor identified constraints by limiting the 
+dispatch potential of the fleet of generation resources, ensuring constraints will not be 
+overloaded. In theory, a thermal violation should only be considered a reliability need if a 
+constraint was not modeled or breached its thermal limit in the economic simulation. In the 
+instance that an economic constraint or similar monitored element/contingency element pair 
+(mon/con pair) is identified as a thermal overload in the AC contingency results, it will be 
+invalidated as a reliability need. Invalidating these type of thermal overloads will allow the 
+economic potential of the constraint(s) to be evaluated to determine if cost-beneficial solution is 
+available. 
+4.2.6 ZONAL PLANNING CRITERIA 
+Zonal Planning Criteria (ZPC) will be collected in accordance with the SPP Tariff. Voltage-based 
+ZPC that is more stringent than the criteria specified in the SPP Planning Criteria will be utilized 
+during the needs assessment to identify potential Order 890 criteria violations.37 For any ZPC 
+ 
+37 Order 890 criteria violations are potential violations identified pursuant to FERC’s nine planning 
+principles, which are coordination, openness, transparency, information exchange, comparability, dispute 
+resolution, regional coordination, economic planning studies, and cost allocation. 
+=====PDFPAGE 46=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 37 
+violations exceeding non-voltage-based criteria, TOs will submit the following to SPP via RMS in 
+accordance with the SPP Tariff and ITP study schedule: 
+• ZPC exceedance, 
+• Methodology used to identify the ZPC exceedance, 
+• Supporting information used to determine the ZPC exceedance, and 
+• Viable solutions to the ZPC exceedance. 
+SPP will review the submitted ZPC exceedances and post the confirmed ZPC exceedances on a 
+secure SPP website at the time of the ITP needs assessment posting. 
+4.2.7 SHORT-CIRCUIT ANALYSIS 
+All short-circuit needs will be classified as reliability needs and will be identified by determining 
+maximum available fault current on the SPP transmission system compared to the respective 
+equipment fault-interrupting duty capabilities under system intact conditions. SPP will monitor 
+all bulk electric system and SPP Tariff facilities for the short-circuit analysis.  
+A year two summer peak ITP model will be developed for the short-circuit analysis. This short-
+circuit model differs from the powerflow models in that all modeled generation and 
+transmission equipment are placed in operation to simulate the maximum available fault 
+current. 
+SPP will simulate three-phase faults and single line-to-ground faults and provide the following 
+analysis results to the TOs as requested: 
+• Full bus-fault current and line-out results using an automatic sequencing fault 
+calculation. 
+• Full bus-fault current and line-out results using an American National Standards Institute 
+fault calculation. 
+The TOs will be required to evaluate the results and respond to SPP if any fault-interrupting 
+equipment will have its duty ratings exceeded by the maximum available fault current (potential 
+violation). For equipment that is seen to have its duty rating exceeded, the TO will provide SPP 
+with the applicable duty rating of the equipment. 
+Potential violations of SPP Tariff facilities will be identified as a need to be included in the needs 
+assessment. SPP will work directly with the facility owners on all remaining potential violations to 
+ensure that proper mitigation of issues is completed. 
+4.3 PUBLIC POLICY NEEDS ASSESSMENT 
+The public policy needs assessment will be performed in parallel with the reliability, economic, 
+and operational needs assessments, for each future and study year. Needs driven by public 
+=====PDFPAGE 47=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 38 
+policy arise if the economic simulations identify conditions on the system that keep a utility from 
+meeting its regulatory or statutory mandates and goals as defined by the renewable policy 
+review and/or future specific public policy assumptions identified in the study scope. 
+4.4 PERSISTENT OPERATIONAL NEEDS ASSESSMENT 
+Persistent operational needs may be either economic or reliability related. The criteria for 
+identifying these needs are described in this section. The needs identified that are being 
+impacted by the HILL taking CHILL service under the SPP OATT, will be evaluated by the ESWG 
+and TWG for endorsement to be included. SPP may propose additional needs to account for 
+operational issues not meeting the criteria thresholds or other problematic operational issues 
+observed in operating the transmission system not fitting the given criteria. These additional 
+needs will be presented to the ESWG and TWG for review and endorsement. 
+4.4.1 ECONOMIC OPERATIONAL NEEDS 
+The economic operational needs assessment will be performed prior to the benchmarking 
+milestone. SPP will classify flowgates meeting either of the following criteria as economic needs: 
+1. The flowgate was congested, either in a breached or binding state, and/or was addressed 
+by an economic topology optimization request in the real-time balancing market 
+solution for at least a combined 20 percent of the previous 24 months, or 
+2. The flowgate had congestion costs38 totaling more than $10 million over the previous 24 
+months excluding the effects of prior outage conditions, or 
+3. The flowgate had congestion costs39 totaling more than $50 million over the previous 24 
+months including the effects of prior outage conditions. 
+Congestion cost for outages will be provided for informational purposes. 
+SPP also will identify economic needs considering manual commitments of uneconomic 
+generation for local area voltage support, according to either of the following criteria: 
+1. Manual commitment events that include startup and extension 25 percent of the year, or 
+2. Manual commitments that do not exceed 25 percent of the year but cost over $1 million 
+dollars over 24 months. 
+ 
+38 Congestion costs will be calculated using the same methodology as the SPP violation relaxation limit 
+process. 
+39 Congestion costs will be calculated using the same methodology as the SPP violation relaxation limit 
+process. 
+=====PDFPAGE 48=====
+Southwest Power Pool, Inc. Needs Assessment 
+ITP Manual Version 3.3 39 
+4.4.2 RELIABILITY OPERATIONAL NEEDS 
+SPP also will identify facilities as reliability needs due to system reconfiguration using agreed 
+upon (by SPP and the transmission operator) operating guides or operating instructions, if they 
+meet the following criteria: 
+1. High- or low-voltage issues where system reconfiguration is implemented40 10 percent 
+of the year due to non-outage issues,41 or 
+2. Thermal loading issues where system reconfiguration through the use of an agreed upon 
+operating guide has been implemented42 in real-time 25 percent of the year. 
+SPP will identify facilities as reliability needs due to pre-contingency or calculated post-
+contingency System Operating Limit (SOL) exceedances43 that have occurred in real-time 
+operations if they meet the following criteria: 
+1. The total pre-contingency or calculated post-contingency thermal SOL exceedances, 
+calculated as total cumulative minutes, over the previous 24 months exceeded 4 days, or 
+2. The total pre-contingency or calculated post-contingency voltage exceedances, 
+calculated as total cumulative minutes, over the previous 24 months exceeded 4 days. 
+ 
+ 
+40 “Implemented” shall mean the reconfiguration is in effect on the real-time system during periods of 
+time where pre-contingent or calculated post-contingent SOL exceedances would have occurred.  
+41 Switched shunts and generator MVAR adjustments will be optimized prior to needs being identified . If 
+potential non-consequential load loss is 100 MW or greater, the risk to the load would need to be present 
+one percent of the time. 
+42 “Implemented” shall mean the reconfiguration is in effect on the real-time system during periods of 
+time where pre-contingent or calculated post-contingent SOL exceedances would have occurred. 
+43 Pre-contingency and calculated post-contingency SOL exceedances are determined through 
+coordination between the Transmission Owner, Transmission Operator, and SPP Reliability Coordinator 
+and are based on their Real-Time Assessments in accordance with the applicable SPP FAC-011 
+methodology(ies) and the applicable Transmission Owner FAC-008 methodology(ies). 
+=====PDFPAGE 49=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 40 
+5 SOLUTION DEVELOPMENT AND 
+EVALUATION 
+5.1 DETAILED PROJECT PROPOSAL PROCESS 
+Pursuant to the SPP Tariff and SPP business practices, SPP will open a 30-day DPP transmission 
+planning response window in which SPP stakeholders can submit solutions to system needs 
+identified during the needs assessment. Solutions submitted outside the DPP window may also 
+be considered in solution development and evaluation. Solutions to the posted needs may 
+include transmission solutions, model adjustments, operating guides, and non-transmission 
+solutions. 
+If additional unique needs are identified after the initial notification, the Transmission Provider 
+shall notify stakeholders and adjust the DPP response window as follows: 
+1. Automatic Extension: 
+The DPP window will be extended by 15 calendar days if any of the following conditions 
+are met: 
+• The needs are located within the defined Target Area as outlined in the study scope; 
+• The additional needs result from new model postings or revisions to auxiliary files; or 
+• A magnitude assessment performed by staff determines that the additional needs 
+represent more than 20% of the total unique needs in the area (including both 
+“from” and “to” areas). 
+Note: The ESWG and TWG may vote to waive this 15-day extension requirement. 
+2. Minimum Response Time: 
+If none of the above conditions are met, the response window will not be extended 
+unless fewer than ten (10) calendar days remain. In that case, the window will be 
+extended to ensure a minimum of ten (10) calendar days for stakeholder response. 
+5.1.1 SOLUTIONS 
+During the DPP window, all DPP submittals must be submitted through SPP’s RMS for tracking 
+purposes using the most current DPP submittal form, located on the SPP website. This allows 
+SPP to track the submission as well as communicate with the individual project submitter. SPP 
+will develop solutions to the needs posted in the needs assessment in accordance with the 
+project schedule. 
+=====PDFPAGE 50=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 41 
+5.1.1.1 TRANSMISSION PROJECTS 
+Transmission projects require new, rebuilt, upgraded, or replacement facilities. 
+5.1.1.2 STORAGE AS TRANSMISSION-ONLY ASSET (SATOA) 
+Transmission expansion may include any facilities that are eligible to be included in the 
+transmission system as provided for under the SPP tariff, including SATOA. Any SATOA may only 
+inject and withdraw energy in the Energy and Operating Reserve Markets to the extent 
+necessary to receive energy from the transmission system and to inject energy into the 
+transmission system to provide the services for which the SATOA was issued an NTC.  
+Operation of SATOA in real-time will be under the functional control of the Transmission 
+Provider (TP). For each SATOA included in the ITP, the TP in conjunction with the transmission 
+operator will develop an operating guide specifying the operating practices applicable to the 
+SATOA and consistent with the system performance requirements determined through the 
+planning study supporting the selection of the SATOA for inclusion in the ITP. The operating 
+guide will include limitations on the operation of the SATOA above the maximum capacity 
+determined to be needed to address the need. The operating guides will also address any 
+scenario when a SATOA might be utilized under emergency conditions to relieve a system 
+condition that it was not explicitly issued to address. SATOAs will be considered for this usage 
+after routine congestion management has been tried, but before load shedding. 
+5.1.1.3 NON-TRANSMISSION SOLUTIONS 
+Non-transmission solutions are generally considered technologies and methods that can 
+complement the transmission grid in a predictable way, and provide certainties required for 
+planning purposes. Flexible AC Transmission Systems (FACTS) and Power Flow Controllers (PFC) 
+are examples of technologies that can be used as non-transmission solutions, and Dynamic Line 
+Rating technologies are examples of technologies that do not meet this definition. As provided 
+for under Attachment O, Section III.7.c., storage facilities that are not proposed as SATOA may 
+be considered as alternatives to transmission assets to address system needs when participating 
+as generation or demand-side resources. 
+5.1.1.4 MODEL ADJUSTMENTS 
+In the instance that a need is included in the needs assessment due to incorrect or outdated 
+information included in any of the models, SPP stakeholders are encouraged to submit 
+appropriate model adjustments to mitigate the issue. 
+5.1.1.5 OPERATING GUIDES & PLANNING GUIDES 
+The section defines how and when a transmission operating guide (TOG) is modeled in ITP 
+models and has no effect upon how operating guides are implemented in real-time. In most 
+cases, TOGs are not intended to indefinitely defer needed transmission upgrades. 
+=====PDFPAGE 51=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 42 
+SPP shall maintain a list of TOGs submitted by the respective TOs that should be considered for 
+use in ITP assessments. This list will be reviewed annually as part of the SPP annual data request 
+and any necessary changes, additions, or withdrawals will be made at that time. An effective 
+TOG shall continue to be considered in ITP assessments unless and until the facility-owning TO 
+or transmission operator withdraws the TOG. 
+For a TOG to be considered for use in the ITP as a possible mitigation plan, it shall be included 
+in the TO’s submitted list of TOGs. An effective TOG must state the system conditions under 
+which the TOG is to be used and describe, in detail, the action the operators will take. TOs must 
+provide sufficient modeling data to simulate the operators’ actions. The TO and transmission 
+operator shall coordinate on the TOG, including documentations on why it is a current 
+mitigation plan. The TOG must be approved by someone in charge of operations from the TO or 
+transmission operator submitting the TOG, as well SPP Operations staff.  
+In the case of TOGs affecting facilities owned by multiple parties, the affected parties must 
+coordinate on the addition or removal of any TOG from the planning process. The entities shall 
+agree on the inclusion or removal of an effective TOG from the ITP assessment. 
+A TOG can be considered an effective solution for facilities that are not listed in the TOG if in the 
+act of implementing the TOG for the elements listed, other overloads or voltage violations are 
+corrected, with the consent of the impacted TOs in coordination with the transmission 
+operators. 
+5.1.1.5.1 ADDITIONAL TOG REQUIREMENTS 
+1. A TOG requiring generation redispatch must indicate if generator location is critical and, 
+if so, must state in detail which units or plants will be redispatched. Absence of such data 
+indicates location is not critical and generators may be selected from the fleet the entity 
+has authority to run. The ramp rate of the generation must be capable of relieving the 
+overload or voltage issue within the time allowed as specified in the TOG. The modeling 
+data files must also redispatch other generation to make up for any and all energy 
+deficits introduced by the TOG’s change in dispatch. 
+2. A TOG must not cause a violation elsewhere on the transmission system. 
+3. A TOG must be executable within the time duration applicable to the facility ratings. 
+4. TOGs meant for dynamic stability will not be considered for steady-state conditions. 
+5. A TOG shall include the means by which system control is implemented (i.e., manual or 
+supervisory control). 
+5.1.2 SPP DEVELOPED SOLUTIONS 
+In addition to solutions submitted by SPP stakeholders through the DPP process, SPP may 
+develop solutions internally to mitigate needs. 
+=====PDFPAGE 52=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 43 
+5.1.3 AGING INFRASTRUCTURE PROJECT CONSIDERATION 
+Projects classified by a TO as “aging infrastructure” or “age and condition” may be submitted 
+through the Transmission Owner Project Evaluation Process (TOPEP) or as a DPP. 
+TO’s submitting projects through the TOPEP should refer to SPP Business Practice 7400 for 
+further guidance and information. 
+Such projects submitted as a DPP will be evaluated along with all other DPPs for inclusion in that 
+ITP cycle’s portfolio. These projects may be considered higher priority solutions given their 
+multi-value driver potential. 
+5.2 COST ESTIMATES 
+The cost estimates used for projects tested in the initial project development phase will be 
+conceptual estimates as described in SPP business practices. The conceptual estimates will be 
+developed by SPP and will utilize standardized estimates and multipliers that are based on 
+historical data. Study estimates may be determined for projects during the initial project 
+development if historical data is limited or unavailable.  
+The draft portfolio and high performing projects as determined by SPP that pass the initial 
+screening phase, detailed in Section 6 (Portfolio Development) of this manual, will be designated 
+for study estimates as described in business practices. The study estimates will provide a more 
+refined cost estimate for potential project approval. Prior to the solution development phase, 
+SPP will make a preliminary determination of any proposed upgrades that are potentially 
+competitive according to Attachment Y, Section I, for the limited purpose of determining the 
+appropriate party to prepare the study estimate. SPP, or a designated third party, will prepare 
+study estimates for potentially competitive upgrades. Incumbent TO(s) will prepare study 
+estimates for potentially non-competitive upgrades. All study estimates will utilize the 
+standardized cost estimate reporting template (SCERT) for all upgrades that are required to 
+complete that project. 
+5.3 SOLUTION EVALUATION PROCESS 
+5.3.1 ECONOMIC SOLUTION EVALUATION 
+All solutions44 will be evaluated based on their one-year benefit-to-cost ratio (B/C) and 40-year 
+net present value (NPV) B/C, using conceptual cost estimates. If a solution mitigates congestion 
+for an economic need and has at least a 0.5 one-year B/C or a 1.0 40-year NPV B/C, it will be 
+ 
+44 Regardless of the type of need the solution was submitted to address. 
+=====PDFPAGE 53=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 44 
+included for further consideration during portfolio development. For the 40-year NPV B/C, the 
+average SPP net plant carrying charge and an in-service date of year five will be applied. 
+Potential seams projects will be identified and flagged as such if they meet either of the 
+following criteria: 
+• Interconnects SPP with a non-SPP TO. 
+• Adjusted production cost benefit to a neighboring entity is at least 20 percent of total 
+benefit of SPP and the neighboring entity. 
+When flagged as a potential seams project, SPP will apply a minimum of 20 percent of the total 
+project cost to the applicable neighboring entity. SPP will work to determine what level of cost-
+sharing will make it viable for the SPP entity and whether or not there is an opportunity for cost-
+sharing with a neighboring entity. SPP will work with the appropriate neighboring entity to 
+evaluate any potential seams projects and determine if there is a willingness to proceed jointly. 
+5.3.2 RELIABILITY SOLUTION EVALUATION 
+All solutions45 will be evaluated against reliability needs. SPP will use the following metrics to 
+evaluate potential benefits-to-proposed cost:46 
+• Cost per loading relief (CLR46)– relates the cost of a proposed solution to the amount of 
+thermal loading relief for a need. 
+• Cost per voltage relief (CVR46) – relates the cost of a proposed solution to the amount of 
+voltage support relief for a need. 
+The CLR and CVR metrics will be calculated for every solution against each need it mitigates. 
+Solutions that change the status of a unit requested to be offline due to seasonal availability 
+(not outage related), may be used to mitigate violations identified as a result of the resource 
+being made available. The metric calculations will provide a ranking of the solutions for each 
+need. SPP will use the metrics as a tool during project selection for the reliability portfolio 
+development.  
+Potential seams projects will be identified and flagged as such if they meet either of the 
+following criteria: 
+• Interconnects SPP with a non-SPP TO. 
+• Addresses an identified first-tier potential reliability issue. 
+ 
+45 Regardless of the type of need the solution was submitted to address. 
+46 Relief score calculations can be found in the TWG Reliability Screening Metrics document approved by 
+the TWG: found on spp.org under the TWG Reference Documents. 
+=====PDFPAGE 54=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 45 
+SPP will determine what level of cost-sharing of any potential seams project would make it 
+viable for the SPP region and whether or not there is an opportunity for cost-sharing with a 
+neighboring entity. SPP will work with the appropriate neighboring entity to evaluate any 
+potential seams projects and determine if there is a willingness to proceed jointly. 
+Solutions involving storage as a transmission asset will be evaluated using additional criteria to 
+reflect their unique characteristics. These additional criteria could include but are not limited to: 
+1. Ability of the proposed SATOA to address transmission need (e.g., loading, voltage, 
+stability, congestion) in the hours that the need is determined to exist, 
+2. Assurance of sufficient Energy and/or reactive capability (MWh/MVAr) to charge or 
+discharge Energy for any period identified as necessary in the planning study. 
+3. Assessment of system reliability impacts applicable to inverter-based facilities on the 
+same basis and in a manner comparable to such analysis in the Generator 
+Interconnection Procedures applicable to storage Resources as inverter-based facilities. 
+4. Life-cycle cost comparisons, including consideration of the period that is required to 
+address the transmission need, which may be different than the life cycle of alternatives. 
+5. Additional qualitative considerations that may support comparative evaluation to other 
+solutions to the need(s), such as lead time to develop, right of way, expandability, and 
+operational flexibility. 
+5.3.3 PUBLIC POLICY SOLUTION EVALUATION 
+Policy solutions will be evaluated based upon whether or not they resolve a public policy need. 
+Projects that mitigate public policy needs will be included for further consideration during 
+portfolio development. 
+5.3.4 PERSISTENT OPERATIONAL SOLUTION EVALUATION 
+A subset of solutions will be evaluated to address persistent operational needs utilizing the 
+filtering criteria, as approved by the TWG, ESWG and ORWG. Reliability solutions will be 
+evaluated by the CLR and CVR metrics described in Section 5.3.2 (Reliability Solution Evaluation). 
+SPP will track congested economic operational needs against needs identified in the current ITP, 
+identify differences between real-time market operations and planning models, and determine 
+the need for and impact of planning model adjustments and analysis. SPP will make a 
+recommendation to applicable stakeholder working groups on how to address unresolved 
+reliability or economic operational needs. Recommendations may include, but are not limited to, 
+transmission upgrades, operational mitigations, or additional analysis to be performed in a 
+future ITP study. 
+=====PDFPAGE 55=====
+Southwest Power Pool, Inc. Solution Development and Evaluation 
+ITP Manual Version 3.3 46 
+5.3.5 ZONAL PLANNING CRITERIA SOLUTION EVALUATION 
+The solutions submitted along with the ZPC exceedances will be evaluated in accordance with 
+Section 5.3.2 (Reliability Solution Evaluation). A subset of solutions may be provided to the local 
+TO to evaluate against the ZPC exceedances during the solution development phase of the ITP 
+assessment. TOs will notify SPP of solutions that mitigate any of their ZPC exceedances. 
+Solutions that mitigate ZPC exceedances will be considered for project displacement during 
+portfolio development. 
+ 
+=====PDFPAGE 56=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 47 
+6 PORTFOLIO DEVELOPMENT 
+6.1 PORTFOLIO DEVELOPMENT METHODOLOGIES 
+Portfolios will be developed for each need type and evaluated for synergies as described in this 
+section. SPP will consider stakeholder feedback when selecting a portfolio for each future. 
+Specific solutions and the reasoning for inclusion or exclusion in the draft or final portfolios will 
+be available for discussion at the planning summit or other open SPP stakeholder forums such 
+as a working group meetings. 
+In developing the draft or final portfolios, consideration of the following information may be 
+given to the top-ranking solutions, as applicable. It must be noted that these considerations 
+may result in changes in top-ranking solutions, including the elimination of solutions: 
+1. One-year project cost, APC benefit, and B/C. 
+2. 40-year NPV cost, APC benefit, and B/C. 
+3. Congestion relief that a project provides for the economic needs of that future and year. 
+4. Project overlap, or when two or more projects that relieve the same congestion are in a 
+single portfolio. 
+5. The potential for a project to mitigate multiple economic needs. 
+6. Any potential routing or environmental concerns with projects. 
+7. Any long-term concerns about the viability of projects. 
+8. Seam and non-seam project overlap. 
+9. Relief of downstream and/or upstream issues, tested by event file modification. 
+10. The potential for a project to mitigate reliability, operational, and public policy needs, 
+which covers current market congestion. 
+11. The potential for a project to address non-thermal issues. 
+12. The need for new infrastructure versus leveraging existing infrastructure. 
+13. Larger-scale solutions that provide more robustness and additional qualitative benefits. 
+6.1.1 ECONOMIC PORTFOLIO DEVELOPMENT 
+Solutions mitigating economic needs are ranked by their cost effectiveness, net APC benefit and 
+qualitative benefits for each need or set of needs and categorized into one or more of the 
+following groupings: 
+• Cost effective: Solutions with the lowest cost with respect to the congestion relief they 
+provide on individual flowgates will be selected. 
+• Highest net APC benefit: Solutions with the highest difference between one-year APC 
+benefit and one-year project cost will be selected. 
+=====PDFPAGE 57=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 48 
+• Multi-variable: Top-ranking projects in the other two groupings, as well as qualitative 
+benefits that the other groupings may not capture, will be considered when selecting 
+projects. 
+Study estimates for the top-ranking projects from each economic grouping will be developed 
+consistent with Section 5.2 (Cost Estimates) of this manual. Once study estimates are applied to 
+the top-ranking solutions in each grouping, the limited set of solutions will be ranked again to 
+reflect the cost refinement.  
+The top-ranking economic projects will be tested in a new set of base models that include the 
+corresponding reliability, policy, and operational economic portfolios. The economic projects will 
+be tested individually within each group to assure only those with at least a 0.9 one-year B/C or 
+1.0 40-year NPV B/C move forward. 
+6.1.2 RELIABILITY PORTFOLIO DEVELOPMENT 
+Solutions mitigating reliability needs will be ranked and displaced according to the reliability 
+metrics, then assessed from a qualitative standpoint. SPP will review this draft portfolio of 
+solutions to determine if a better overall project can be selected from a qualitative standpoint. 
+After SPP has reviewed the draft portfolio, study estimates for the top-ranking projects from the 
+reliability grouping will be developed consistent with Section 5.2 (Cost Estimates). Additional 
+study estimates may be developed if a project performs well according to reliability metrics or is 
+considered a high-performing project from a qualitative standpoint. When study estimates are 
+developed, the reliability metrics are recalculated with the refined cost estimates and the 
+portfolio is updated to consider the impact of SPP stakeholder feedback or solutions that have 
+higher or lower costs than originally estimated. Additional study estimates may be developed 
+until the final reliability portfolio is determined for each future. 
+6.1.3 PUBLIC POLICY PORTFOLIO DEVELOPMENT 
+Solutions mitigating public policy needs will be ranked by need based on their APC benefit in 
+relation to their conceptual cost. Once study-level cost estimates are available, the ranking will 
+be adjusted for that limited set of top-ranking solutions based on the updated cost. The 
+highest-ranked project for each need will be selected for a grouping and tested individually 
+within the policy grouping to ensure there is no redundancy of need mitigation within the set of 
+projects. 
+6.1.4 PERSISTENT OPERATIONAL PORTFOLIO DEVELOPMENT 
+Solutions mitigating persistent operational needs are ranked by the appropriate metrics 
+depending on whether the need is economic or reliability based. Solutions identified to mitigate 
+persistent operational issues will be compared with the other portfolios to ensure efficiencies are 
+gained by identifying the most cost effective projects to meet all needs. Economic solutions will 
+=====PDFPAGE 58=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 49 
+be ranked based on their project cost compared to the cost incurred without the project. SPP 
+and stakeholders will determine the criteria for development of the operational portfolio, which 
+will be included in each study scope. Reliability solutions will be evaluated using the CLR and 
+CVR metric concept. 
+6.1.5 PORTFOLIO SYNERGY 
+After the economic, reliability, operational, and policy portfolios are selected, checks for 
+redundancy amongst the portfolios will be performed. The most economic set of projects within 
+those portfolios meeting the same set of needs will be selected for further evaluation. 
+6.2 PORTFOLIO CONSOLIDATION 
+To determine a recommended plan, the portfolios of potential projects must be consolidated. 
+SPP and stakeholders will discuss, determine and document details of the study-specific 
+consolidation criteria during each study scope development. 
+6.3 PROJECT STAGING 
+A project implementation plan will be developed for the final consolidated portfolio(s). The final 
+portfolio(s) will be structured such that each element can be implemented in a staged manner as 
+actual system developments approach the assumptions resulting in the need for that element. 
+To help stage the projects, SPP will utilize simulation results for years two, five, and 10.  
+Each project classification will have its own methodology to determine a need date for upgrades 
+to be included in the consolidated portfolio. Step changes between models, such as new 
+generation or transmission upgrades in an area where an upgrade has been identified, may 
+conflict with staging results for methods described in this section. In these instances, SPP will 
+consider these step changes within the model set to inform need date recommendations. 
+During project staging, SPP will also consider future assumptions, current market conditions, 
+and other available transmission system information. 
+If any projects with existing NTCs show an earlier need date than the need date on the NTC 
+letter, SPP may recommend acceleration of the project. 
+Staging for each type of project is described in the following three sections. Staging for 
+persistent operational projects are included in Sections 6.3.1 (Economic Projects) and 6.3.2 
+(Reliability Projects). 
+If a project is classified as more than solely economic, reliability, or public policy, the project will 
+be staged to meet the earliest need date established through the single-project classification 
+sections. 
+=====PDFPAGE 59=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 50 
+6.3.1 ECONOMIC PROJECTS 
+Projects deemed necessary to meet the economic needs of the system due to persistent 
+operational issues will have a need date the same as the issue date of the NTC.  
+Other economic projects in the final consolidated portfolio will be staged in the first year that 
+the B/C ratio of each upgrade exceeds 1.0. A linear interpolation of B/C ratios between each of 
+the study years will be used to determine the need date. For example, an upgrade identified to 
+address an economic need in year 10 will be staged between year five and year 10, based on 
+linear interpolation of B/C ratios between the year five and year 10 models. Figure 6.1 represents 
+the linear interpolation of B/C ratios of an upgrade. In this example, if year five is 2020 and year 
+10 is 2025, the need date would be 2024. 
+ 
+Figure 6.1: Economic Project Staging Example 
+6.3.2 RELIABILITY PROJECTS 
+Projects necessary to meet the reliability needs of the system due to persistent operational 
+issues will have a need date the same as the issue date of the NTC.  
+Reliability projects in the final consolidated portfolio will be staged based on the year and 
+season when the needs addressed by each project appear on the transmission system. All 
+upgrades that solve year two violations will be initially staged for an in-service date in the 
+corresponding season in which the violation occurs for year two. 
+For upgrades that solve reliability needs in year five and year 10, the staging process will use a 
+linear interpolation to evaluate thermal loading or the per-unit voltage value of the season in 
+
+=====PDFPAGE 60=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 51 
+which the violation appears and the previous year’s model on record. For example, a violation 
+that occurs in year five summer peak will be staged between the summer peaks of year two and 
+year five, based on the results of linear interpolation between the year two and year five 
+summer-peak models. Figure 6.2 represents the linear interpolation for thermal loading on a 
+transmission line. In this example, if year two is 2021 and year five is 2024, the need date would 
+be June 1, 2024: 
+ 
+Figure 6.2: Reliability Project Staging Example 
+6.3.3 PUBLIC POLICY PROJECTS 
+Policy projects in the final consolidated portfolio will be staged according to when the public 
+policy needs are resolved. A linear interpolation of the progress towards mitigating the public 
+policy needs between each of the study years will be used to determine the staging date. For 
+example, an upgrade identified to address public policy needs in year 10 will be staged between 
+year five and year 10, based on linear interpolation of progress towards mitigating the public 
+policy need between the year five and year 10 models. Figure 6.3 represents the linear 
+interpolation of progress towards resolving a public policy need. In this example, if year five is 
+2020 and year 10 is 2025, the need date would be 2024. 
+
+=====PDFPAGE 61=====
+Southwest Power Pool, Inc. Portfolio Development 
+ITP Manual Version 3.3 52 
+ 
+Figure 6.3: Public Policy Project Staging Example 
+6.4 FINAL RELIABILITY ASSESSMENT 
+To evaluate and confirm the effectiveness of all identified upgrades for the recommended 
+portfolio, a final reliability assessment will be performed. The base reliability and market 
+powerflow models will be modified to include the recommended portfolio and model 
+adjustments identified during solution development, regardless of project classification. A 
+contingency analysis will be performed to identify any new reliability violations on this updated 
+set of powerflow models.  
+If any new reliability violations are observed in the modified base reliability models, the 
+recommended portfolio may be modified with a new or modified solution. The final portfolio 
+will include the changes determined from the incremental reliability assessments. 
+If any new reliability violations are observed in the modified market powerflow models, they will 
+be documented in the ITP assessment report: however, no solutions will be developed. SPP will 
+perform a spot check contingency analysis on economic solutions. This analysis will be used to 
+determine the effect of potential dispatch changes as constraints are removed or adjusted due 
+to the solutions and ensure that those changes do not result in additional reliability violations.  
+The analyses described in this section will begin as SPP develop draft portfolios to identify 
+projects that may have adverse impacts to the transmission system as quickly as possible.  
+
+=====PDFPAGE 62=====
+Southwest Power Pool, Inc. Informational Portfolio Analysis 
+ITP Manual Version 3.3 53 
+The results of the final reliability assessment on the recommended portfolio will be documented 
+in the ITP assessment report. Any upgrades added to the recommended portfolio as a result of 
+the final reliability assessment will be identified. 
+7 INFORMATIONAL PORTFOLIO 
+ANALYSIS 
+7.1 BENEFIT METRICS 
+Benefit metrics will be used to measure the value and economic impacts of the final 
+consolidated portfolio to be expected from the ITP assessment. Generally, a single portfolio will 
+be tested in the approved future(s) by computing benefits and costs over a 40-year timeframe. 
+For further detail on the metrics in Table 7.1, refer to the Benefit Metrics Manual.47 
+ITP ASSESSMENT BENEFIT METRICS 
+Adjusted Production Cost 
+Savings Due to Lower Ancillary Service Needs and Production Costs 
+Avoided or Delayed Reliability Projects 
+Marginal Energy Losses Benefit 
+Capacity Cost Savings Due to Reduced On-Peak Transmission Losses 
+Reduction of Emission Rates and Values 
+Public Policy Benefits 
+Assumed Benefit of Mandated Reliability Projects 
+Mitigation of Transmission Outage Costs 
+Increased Wheeling Through and Out Revenues 
+Table 7.1: ITP Assessment Benefit Metrics 
+7.2 SENSITIVITY ANALYSIS 
+Sensitivity analyses will be defined in the scope and conducted to measure the flexibility of the 
+final portfolio in each ITP assessment. Generally, these sensitivities will not be used to select the 
+ 
+47 Benefit Metrics Manual can be found on spp.org under the ESWG Reference Documents: 
+https://spp.org/spp-documents-filings/?id=19027 
+=====PDFPAGE 63=====
+Southwest Power Pool, Inc. Deliverables 
+ITP Manual Version 3.3 54 
+proposed transmission projects, nor to filter out projects. Sensitivities may consider variations in 
+demand, fuel prices, renewable energy, or other relevant considerations as determined during 
+futures development. 
+8 DELIVERABLES 
+8.1 FINAL REPORT 
+The deliverable for each ITP assessment will be a report detailing the analysis, results, and 
+recommendations for a cost-effective and robust portfolio(s) that takes into account the 
+likelihood of the future(s) studied. In addition to analysis details and results, a SPP 
+recommended transmission plan for the Board to consider for approval will be included in the 
+final report. 
+Parts of each ITP study report will be incorporated into the annual STEP report. 
+ 
+=====PDFPAGE 64=====
+Southwest Power Pool, Inc. Issuance of NTCs 
+ITP Manual Version 3.3 55 
+9 ISSUANCE OF NTCS 
+When projects are approved by the Board, SPP will issue NTCs in accordance with the SPP Tariff 
+and SPP business practices. 
+ 
+=====PDFPAGE 65=====
+Southwest Power Pool, Inc. SPP and Stakeholder Accountability 
+ITP Manual Version 3.3 56 
+10 SPP AND STAKEHOLDER 
+ACCOUNTABILITY 
+SPP and stakeholders will introduce steps to focus on accountability for timelines and 
+milestones that consist of mechanisms designed to promote the timely exchanges of data, 
+reviews, and approvals within the transmission planning process. 
+10.1 PROJECT SCHEDULE 
+SPP will develop a project schedule in parallel with the development of the scope of each 
+successive study. This schedule will identify the timing, duration, and responsible parties for all 
+data exchanges, reviews, and approvals required to complete the ITP assessment. SPP will 
+coordinate with SPP stakeholders in the development of this schedule and formally vet the final 
+schedule with SPP stakeholders upon the completion of the study scope.  
+This schedule will be maintained by SPP and regularly reviewed at appropriate SPP stakeholder 
+meetings to keep affected parties informed of upcoming milestones to ensure the timely 
+completion of the planning process. 
+10.2 POINT OF CONTACT 
+Clear and timely two-way communication between SPP and stakeholders is vital to the 
+successful completion of the annual study process and the use of a central point of contact 
+(CPOC) will increase the coordination and timely delivery of information necessary to meet 
+scheduled milestones.  
+Using the project schedule described in this section, SPP stakeholders will appoint a CPOC to 
+work with SPP to coordinate the timely flow of information. Once provided to SPP, a list of SPP 
+stakeholder contacts will be developed and posted on SPP’s secure website, viewable to those 
+with access to the website48 and corresponding ITP assessment folder. 
+SPP stakeholders have flexibility when identifying the CPOC for their respective companies, 
+which include: 
+• Identifying a specific person who will coordinate the various requests that come out of 
+the planning process.  
+• Assigning individuals who will be responsible for specific parts of the planning process. 
+For example, identifying a CPOC who will be responsible for coordinating the submission 
+ 
+48 Access to the website can be requested through SPP RMS. 
+=====PDFPAGE 66=====
+Southwest Power Pool, Inc. SPP and Stakeholder Accountability 
+ITP Manual Version 3.3 57 
+of all data required to support the modeling and planning processes. Another individual 
+may be responsible for project review and cost-estimate submittals. 
+• Providing SPP with an email address to be used for requests that will target specific 
+groups with their organization instead of naming an individual. For example, 
+modeling@abcinc.com can be used to target the entire modeling team. Email addresses 
+can be provided for company groups that will be responsible for the various parts of the 
+planning process. 
+10.3 LATE DATA AND PROCESS WAIVER 
+10.3.1 LATE DATA 
+Data Owners49 are responsible for providing the data necessary to model their assets to SPP. All 
+required data must be received by SPP and reviewed by Data Submitters per the specific 
+deadlines and milestones listed in the ITP schedule50 for model development. The schedule will 
+be provided to all stakeholders and posted on the SPP website. If the applicable deadlines are 
+not met, SPP will use the most appropriate modeling data on file as proxy data. Typically, this 
+will be the most recently submitted data. Failure to perform the required reviews in a timely 
+manner should not cause a delay in the corresponding process. In the event review deadlines 
+are missed, the items requiring review or approval will be used as is and the process will move 
+forward without delay.  
+Late data updates to the ITP models can cause major impacts to the ITP schedule and 
+overlapping model development timelines for various SPP planning assessments. The ITP 
+assessment satisfies a portion of SPP’s NERC TPL-001 compliance requirements, which are 
+required to be completed on an annual basis. ITP study milestone completion is dependent on a 
+timely model build. Additionally, timely delivery of ITP models is necessary in various tariff 
+services assessment processes and committed timelines, including SPP processes such as 
+Delivery Point Addition, Transmission Services, and Generator Interconnection. 
+10.3.2 LATE DATA SUBMISSION AND APPROVAL PROCESS 
+Data submitted after the applicable deadlines for milestones listed in the ITP schedule for model 
+development will require a late data submission form sent via RMS. If a specific data submission 
+requires the use of a separate process, software, or other applicable tools, the submitting entity 
+shall provide evidence of that data submission being provided through the separate process, 
+ 
+49 From the SPP Model Development Procedure Manual, Data Owner is defined as “The entity that is 
+responsible for ensuring the accuracy and timely submission of data to the SPP, as Planning Coordinator, 
+in accordance with the SPP Model Development Procedure Manual.” 
+50 Coordination amongst the TWG, ESWG, and MDAG will be necessary as it relates to the model 
+development schedules for the SPP planning processes. 
+=====PDFPAGE 67=====
+Southwest Power Pool, Inc. SPP and Stakeholder Accountability 
+ITP Manual Version 3.3 58 
+software, or other applicable tool at the same time as the late data submission form. SPP will not 
+consider a request to incorporate late data prior to submission of the late data submission form 
+and receipt of the relevant late data. The submitting entity will be required to explain why the 
+data is late and the estimated benefits of adding the late data to the applicable models. SPP will 
+have up to ten business days after receiving the late data submission form to develop the 
+estimated impacts to the scope, schedule, and costs of accepting the late data and 
+communicate the late data submission form, with SPP’s estimated impacts to the scope, 
+schedule, and costs of accepting the late data to the ESWG and TWG members. In situations 
+where there are no material impacts to the scope, schedule, or cost, SPP staff will notify TWG 
+and ESWG members of the changes as “information only” but will not require any approvals 
+unless a TWG or ESWG member requests a vote. In situations where the late data does have a 
+material impact to scope, schedule, cost, or a member call for a vote, then SPP staff will 
+communicate via email that the late data will be discussed at the next regularly scheduled 
+working group meeting for approval or rejection. SPP may request an out-of-schedule meeting 
+to review and vote on a waiver request. If approved by either the TWG or ESWG and there are 
+no adverse impacts to the study process, schedule or costs, then the data change will be applied 
+to the applicable ITP models. If approved by either the TWG or ESWG and there are expected 
+adverse impacts to the study process, schedule or costs, then the applicable working group will 
+seek approval of a process waiver per Section 10.3.3 (Process Waiver). If rejected by both the 
+TWG and ESWG, the data changes will not be applied to the ITP models. Data that was 
+submitted on time but was missed or was applied incorrectly will be incorporated without the 
+late data submission form or approvals to the necessary models unless there is a significant 
+impact to the ITP schedule. SPP staff will inform the appropriate working groups at the next 
+scheduled meeting(s) of the situation and request, if necessary, approval or rejection of the 
+change. 
+10.3.3 PROCESS WAIVER 
+SPP or an applicable working group may request a waiver if a process issue causes an expected 
+adverse impact to the study results, process, schedule, or costs. SPP will assess the issue and 
+provide feedback to the appropriate working group(s) for consideration of a waiver as necessary 
+and determined by SPP. If applicable, upon a working group recommendation, SPP may move 
+forward with a waiver request.  
+An entity or SPP may solicit MOPC for a delay in the posting of the final study report or for the 
+approval of additional effort that would require unbudgeted dollars to augment or provide 
+additional support for SPP to meet study schedule milestones to meet the posting date of the 
+final study report. The waiver request should include background information on the issue and 
+the rationale for requesting the delay or the need for unbudgeted dollars to support staff 
+efforts. In support of the waiver process, SPP will provide MOPC with the project schedule 
+impacts, schedule mitigation plans and an estimate of any costs associated with accommodating 
+the waiver to support MOPC’s decision-making process. 
+=====PDFPAGE 68=====
+Southwest Power Pool, Inc. SPP and Stakeholder Accountability 
+ITP Manual Version 3.3 59 
+SPP may request that MOPC conduct an email vote or out-of-schedule meeting to review and 
+vote on a waiver request. 
+10.4 MOPC REPORT 
+SPP will provide a quarterly report to MOPC highlighting the assessment milestones from the 
+preceding quarter. Updates will be given on adherence to milestone timelines in regard to data 
+review and submittal, scheduled reviews and approvals, and on issues that may have required 
+mitigation for the process to remain on schedule. 
+A summary of the participation of SPP and stakeholders will inform MOPC of the importance of 
+the successful completion of milestones and adherence to deadlines critical to produce a 
+complete, high quality, and timely report and portfolio. Issues requiring mitigation, as 
+mentioned previously in this section, whether through the actions of SPP or stakeholders will be 
+presented in sufficient detail to give MOPC a clear picture of the issue and remedies put in place 
+to avoid potential impacts to the process schedule. 
+ 
+=====PDFPAGE 69=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 60 
+11 APPENDICIES 
+11.1 HISTORY OF THE ITP ASSESSMENT 
+In January 2009, the Board created the Synergistic Planning Project Team (SPPT) to address gaps 
+and conflicts in SPP’s transmission planning processes; to develop a holistic, proactive approach 
+to planning that optimizes individual processes; and to position SPP to respond to national 
+energy priorities. 
+The SPPT recommended that the organization adopt a new set of planning principles, develop 
+and implement an ITP assessment, develop a plan to monitor the construction of projects 
+approved through the ITP assessment, identify priority projects that continue to appear in 
+system reviews to relieve congestion on existing constraints, and connect SPP’s eastern and 
+western regions. The SPPT recommended the RSC establish a “highway/byway” cost allocation 
+methodology for approved projects.51 
+The SPPT developed an integrated set of principles that should guide SPP in the development of 
+its comprehensive ITP assessment: 
+1. SPP’s primary function is to “keep the lights on,” and one way that is accomplished is to 
+provide transmission service for customers within the SPP region. In order to meet this 
+long-term function, SPP must plan for and construct a robust transmission system. This 
+robust transmission system should be large in both scale and geography so as to 
+provide flexibility to meet SPP’s future needs. 
+2. SPP’s planning process for a robust transmission system must consider transmission as 
+an enabler to meet short-term and long-term needs. Planning of SPP’s transmission 
+system must take into consideration the anticipated location of future generation 
+facilities and should incorporate various scenarios regarding load growth, demand 
+response, energy efficiency, fuel prices, environmental and governmental regulations and 
+policies, and other factors.  
+3. SPP’s planning processes should take a long-term view (20 or more years) of the benefits 
+and costs of all projects while also expediting priority system investments.  
+4. As a priority, through the RSC and the membership, SPP should resolve the uncertainties 
+associated with financing transmission projects by establishing the appropriate regional 
+cost allocation methodologies. This effort should result in a reduction of the number of 
+cost allocation mechanisms that exist today. SPP members, customers, and interested 
+parties must participate in this effort with their regulators to establish the appropriate 
+cost recovery methods.  
+ 
+51 The Highway/Byway methodology was approved by FERC on June 17, 2010.  
+=====PDFPAGE 70=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 61 
+5. Once SPP has developed and obtained the approval of a robust transmission plan for the 
+region, the BOD and RSC should ensure that construction is commenced and completed 
+according to an established timeline. 
+SPP began performing its planning duties in accordance with the ITP assessment in July 2010. 
+11.1.1 THE TRANSMISSION PLANNING IMPROVEMENT TASK 
+FORCE 
+In February 2015, the Transmission Planning Improvement Task Force (TPITF) was assembled by 
+the SPC and the MOPC and given the responsibility for developing recommendations to 
+improve the regional planning processes. Their objective was to make the SPP transmission 
+planning process more responsive to the effects of the continued growth of SPP’s transmission 
+system, changes in the SPP markets, challenges and opportunities presented by changing 
+federal and state energy and environmental regulations and increasing NERC compliance 
+requirements. The TPITF was tasked with reviewing, evaluating and proposing recommendations 
+on the following: 
+1.  The methodologies and modeling practices used in the generator interconnection 
+studies, aggregate transmission service studies, integrated transmission planning (near-
+term, 10-year, and 20-year assessments), SPP assessments for compliance with NERC TPL 
+standards and the MDAG model development process to ensure effectiveness, 
+consistency and to determine if gaps exist between the various processes.  
+2.  The utilization of data, including data collected by operations, which will benchmark the 
+real-time and planning horizon assessments to ensure consistency in the planning 
+process. 
+3.  The appropriateness of the planning cycle and assessments, including the effectiveness 
+of using production cost modeling in more assessments; development, use and 
+weighting of futures, scenarios and sensitivities; the metrics used to evaluate proposed 
+projects, in particular those that evaluate the impact on rate payers; and planning the 
+transmission system beyond the traditional planning criteria of first contingency (“N-1”) 
+in accordance with the approved NERC Standard TPL-001. 
+The TPITF recommendation whitepaper,52 was intended to represent a consolidated, coordinated 
+approach in planning, managing, and maintaining the SPP transmission system, with a particular 
+emphasis on increasing the availability of transmission service to SPP’s customers without 
+unduly compromising system reliability. The recommendations in the TPITF recommendation 
+whitepaper were intended to enable the cost-effective use of capital-intensive generating 
+resources for the benefit of all end-use customers in the SPP footprint and to further develop 
+and enhance policies, tools and practices to optimize the use of the transmission system. The 
+ 
+52 TPITF SPP Planning Process Improvement Recommendations 
+=====PDFPAGE 71=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 62 
+TPITF developed five recommendations to accomplish this scope of work that are discussed in 
+detail throughout this manual: 
+1. Replace the current ITP schedules with an annual transmission expansion plan. 
+2. Create a standardized scope.53 
+3. Establish a common planning model for use across the various SPP planning processes. 
+4. Utilize a holistic planning process. 
+5. Create SPP staff/stakeholder accountability process for the timely exchanges of data, 
+reviews and approvals. 
+ 
+ 
+53 ITP Scope Documents 
+=====PDFPAGE 72=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 63 
+11.2 ACRONYMS 
+ACRONYM TERM 
+AECI Associated Electric Cooperative, Inc. 
+AC Alternating Current 
+APC Adjusted Production Cost 
+B/C Benefit-to-Cost Ratio 
+BA Balancing Authority 
+CLR Cost per Loading Relief 
+CPOC Central Point of Contact 
+CVR Cost per Voltage Relief 
+DC Direct Current 
+DISIS Definitive Interconnection System Impact Study 
+DPP Detailed Project Proposal 
+EHV Extra High Voltage 
+ERAG Eastern Interconnection Reliability Assessment Group 
+ERCOT Electric Reliability Council of Texas 
+ESWG [SPP] Economic Studies Working Group 
+FCITC First Contingency Incremental Transfer Capability 
+FERC Federal Energy Regulatory Commission 
+FOM Fixed Operation & Maintenance [Costs] 
+GIA Generator Interconnection Agreement 
+GIS Geographical Information System 
+IFTS Interruption of Firm Transmission Service 
+=====PDFPAGE 73=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 64 
+ACRONYM TERM 
+IRP Integrated Resource Plan 
+ITC Investment Tax Credit 
+ITP Integrated Transmission Planning 
+ITPNT ITP Near-Term Assessment 
+ITP10 ITP 10-Year Assessment 
+LMP Locational Marginal Price 
+LPC Local Planning Criteria 
+MDAG [SPP] Model Development Advisory Group 
+MISO Midcontinent Independent Transmission System Operator, Inc. 
+MMWG [ERAG] Multiregional Modeling Working Group 
+MOPC [SPP] Markets and Operations Policy Committee 
+MW Megawatt 
+MWh Megawatt-Hour 
+NCLL Non-Consequential Load Loss 
+NERC North American Electric Reliability Corporation 
+NERC TPL NERC Transmission Planning Standards 
+NPV Net Present Value 
+NTC Notification to Construct 
+NTC-C Notification to Construct with Conditions 
+OATT Open Access Transmission Tariff 
+ORWG [SPP] Operating Reliability Working Group 
+PPA Power Purchase Agreement 
+PST Phase-Shifting Transformer 
+=====PDFPAGE 74=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 65 
+ACRONYM TERM 
+PTC Production Tax Credit 
+RFP Request for Proposal 
+RMS [SPP] Request Management System 
+RPS Renewable Policy Standard 
+RR Revision Request 
+RSC Regional State Committee 
+SCED Security-Constrained Economic Dispatch 
+SCERT Standardized Cost Estimate Reporting Template 
+SCUC Security-Constrained Unit Commitment 
+SERC SERC Reliability Corporation 
+SPC [SPP] Strategic Planning Committee 
+SPP Southwest Power Pool, Inc. 
+SPPT Synergistic Planning Project Team 
+SSC [SPP] Seams Steering Committee 
+STEP SPP Transmission Expansion Plan 
+TDF Transmission Distribution Factor 
+TO Transmission Owner 
+TPITF [SPP] Transmission Planning Improvement Task Force 
+TWG [SPP] Transmission Working Group 
+VOM Variable Operation & Maintenance [Costs] 
+WECC Western Electricity Coordinating Council 
+=====PDFPAGE 75=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 66 
+11.3 DEFINITIONS54 
+1. Market Economic Models – model set containing all economic parameters and 
+powerflow data necessary to perform SCUC/SCED simulations 
+2. Market Powerflow Models – model set containing all powerflow data, including load and 
+generation dispatch from the SCUC/SCED simulations 
+3. Base Reliability Models – model set representative of how load responsible entities 
+within SPP would serve load utilizing only resources with long-term firm transmission 
+service 
+4. Balancing Authority – an entity responsible for maintaining a load, generation, and 
+interchange balance within its region 
+5. Congestion Score – the product of a constraint’s annual average shadow price and the 
+number hours the constraint binds; value used to rank economic needs by severity 
+and/or longevity 
+6. Detailed Project Proposal – a submittal form in which stakeholders may submit solutions 
+to solve ITP needs 
+7. First-Tier – The non-SPP transmission system that is electrically interconnected to the 
+SPP transmission system and extends throughout the interconnected entity’s footprint 
+8. Grouping – specific to economic portfolio development; set of projects that are selected 
+by economic characteristics (cost-effectiveness, net APC benefit, etc.) from initial 
+screening runs and meet a 0.9 one-year B/C or 1.0 40-year B/C within the set of projects 
+9. Light Load Model – model representative of each submitting entity’s Spring one-hour 
+system minimum load between April and May for the Eastern Interconnection footprint 
+and between March and May for the Western Interconnection footprint, non-coincident 
+to the SPP system 
+10. Manual Commitments - a commitment of a resource outside of the automated market 
+process to alleviate constraints 
+11. Net Plant Carrying Charge - annual percentage that is applied to a utility’s depreciated 
+plant costs to calculate an annual revenue requirement billed on Schedule 11 of the SPP 
+Tariff; calculated by a transmission owner’s revenue requirement divided by the net 
+transmission plant investment. 
+12. Notification to Construct: A written notice from SPP directing an entity that has been 
+selected to construct one or more transmission project(s) to begin or continue 
+implementation of the transmission project(s) in accordance with Attachment Y of the 
+SPP Tariff. 
+13. SPP Open Access Transmission Tariff: SPP governing document filed for compliance with 
+FERC Order 888 
+14. Reference-Case Future – one future (of up to three) that will be included in each ITP 
+assessment; reflective of a future scenario in which there are no major policy changes 
+ 
+54 Additional definitions in the latest WECC Data Preparation Manual (DPM) found under Approved 
+Documents: https://www.wecc.org/committees/srs 
+=====PDFPAGE 76=====
+Southwest Power Pool, Inc. Appendicies 
+ITP Manual Version 3.3 67 
+15. Revision Request – an SPP mechanism by which SPP governing documents can be 
+revised through the stakeholder process 
+16. Seams – areas of or near the boundary of the SPP footprint that are directly impacted by 
+the operation of SPP and non-SPP systems 
+17. Shadow Price – the potential reduction in total production costs if the limit on a 
+congested flowgate were to be increased by 1 MW 
+18. State Estimator – a standard industry tool that produces a powerflow model based on 
+available real-time metering information; information regarding the current status of 
+lines, generators, transformers, and other equipment; bus load distribution factors; and a 
+representation of the electric network to provide a complete description of system 
+conditions, including conditions at buses for which real-time information is unavailable. 
+19. SPP Transmission Expansion Plan – The plan that describes the transmission expansion 
+projects being considered over the planning period and developed through the 
+stakeholder process in accordance with the SPP Tariff and approved by the Board. 
+20. Study Scope – document specific to each individual ITP assessment to be developed by 
+SPP staff and stakeholders containing study assumptions to be utilized that are not 
+included in the ITP Manual 
+21. Summer Peak Model – model representative of each submitting entity’s one-hour system 
+peak load between June and September for the Eastern Interconnection and between 
+June and August for the Western Interconnection/WECC, non-coincident to the SPP 
+system 
+22. Winter Peak Model – model representative of each submitting entity’s one-hour system 
+peak load between December and March for the Eastern Interconnection and between 
+December and February for the Western Interconnection/WECC, non-coincident to the 
+SPP system 
+ 
