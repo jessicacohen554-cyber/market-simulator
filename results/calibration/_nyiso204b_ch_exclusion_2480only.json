@@ -1,0 +1,146 @@
+{
+  "arm": {
+    "exclude_plant_codes": [
+      2480
+    ]
+  },
+  "keeper": "2026-09-06-nyiso-202-startup-aware",
+  "limb": {
+    "distribution": "cheapest_first (CSV column empty -> dataclass default)",
+    "driver": "tmax",
+    "floor_pct": 0.0973,
+    "plant_class": "ST_GAS",
+    "threshold_c": 31.1,
+    "zone": "Capital_Hudson"
+  },
+  "session": "nyiso-204",
+  "status": "ZERO LP \u2014 two fleet_only reconstructions per year, no solve",
+  "years": {
+    "2023": {
+      "binding_hours": 504,
+      "plants": {
+        "2480": {
+          "arm_binding_hours": 0,
+          "arm_forced_twh": 0.0,
+          "arm_peak_floor_mw": 0.0,
+          "ctrl_binding_hours": 192,
+          "ctrl_forced_twh": 0.001800132407834353,
+          "ctrl_peak_floor_mw": 9.874171356,
+          "delta_twh": -0.001800132407834353,
+          "is_candidate": true
+        },
+        "2625": {
+          "arm_binding_hours": 288,
+          "arm_forced_twh": 0.03180076032995483,
+          "arm_peak_floor_mw": 156.899513442,
+          "ctrl_binding_hours": 288,
+          "ctrl_forced_twh": 0.035620729509008,
+          "ctrl_peak_floor_mw": 188.108311356,
+          "delta_twh": -0.0038199691790531723,
+          "is_candidate": false
+        },
+        "8006": {
+          "arm_binding_hours": 24,
+          "arm_forced_twh": 0.0010258542025035297,
+          "arm_peak_floor_mw": 42.74392510431374,
+          "ctrl_binding_hours": 24,
+          "ctrl_forced_twh": 0.0012149800687887061,
+          "ctrl_peak_floor_mw": 50.62416953286276,
+          "delta_twh": -0.00018912586628517646,
+          "is_candidate": false
+        }
+      },
+      "share_of_delta_taken_off_non_candidates_pct": 69.01253355381682,
+      "total_arm_forced_twh": 0.03282661453245836,
+      "total_ctrl_forced_twh": 0.03863584198563106,
+      "total_delta_twh": -0.005809227453172701,
+      "zonal_target_arm_mean_mw": 65.13217169138561,
+      "zonal_target_ctrl_mean_mw": 76.65841663815688,
+      "zonal_target_shrink_pct": 15.035850533122098
+    },
+    "2024": {
+      "binding_hours": 432,
+      "plants": {
+        "2480": {
+          "arm_binding_hours": 0,
+          "arm_forced_twh": 0.0,
+          "arm_peak_floor_mw": 0.0,
+          "ctrl_binding_hours": 24,
+          "ctrl_forced_twh": 0.00018912586628517644,
+          "ctrl_peak_floor_mw": 7.880244428549019,
+          "delta_twh": -0.00018912586628517644,
+          "is_candidate": true
+        },
+        "2625": {
+          "arm_binding_hours": 408,
+          "arm_forced_twh": 0.07063726649939484,
+          "arm_peak_floor_mw": 212.24121391200003,
+          "ctrl_binding_hours": 408,
+          "ctrl_forced_twh": 0.075642136241168,
+          "ctrl_peak_floor_mw": 243.45001182599995,
+          "delta_twh": -0.00500486974177316,
+          "is_candidate": false
+        },
+        "8006": {
+          "arm_binding_hours": 0,
+          "arm_forced_twh": 0.0,
+          "arm_peak_floor_mw": 0.0,
+          "ctrl_binding_hours": 0,
+          "ctrl_forced_twh": 0.0,
+          "ctrl_peak_floor_mw": 0.0,
+          "delta_twh": 0.0,
+          "is_candidate": false
+        }
+      },
+      "share_of_delta_taken_off_non_candidates_pct": 96.35875960326698,
+      "total_arm_forced_twh": 0.07063726649939486,
+      "total_ctrl_forced_twh": 0.07583126210745318,
+      "total_delta_twh": -0.005193995608058319,
+      "zonal_target_arm_mean_mw": 163.5121909708214,
+      "zonal_target_ctrl_mean_mw": 175.53532895243788,
+      "zonal_target_shrink_pct": 6.849412054751792
+    },
+    "2025": {
+      "binding_hours": 600,
+      "plants": {
+        "2480": {
+          "arm_binding_hours": 0,
+          "arm_forced_twh": 0.0,
+          "arm_peak_floor_mw": 0.0,
+          "ctrl_binding_hours": 0,
+          "ctrl_forced_twh": 0.0,
+          "ctrl_peak_floor_mw": 0.0,
+          "delta_twh": 0.0,
+          "is_candidate": true
+        },
+        "2625": {
+          "arm_binding_hours": 576,
+          "arm_forced_twh": 0.08510409269107201,
+          "arm_peak_floor_mw": 212.24121391200003,
+          "ctrl_binding_hours": 576,
+          "ctrl_forced_twh": 0.089066879266176,
+          "ctrl_peak_floor_mw": 236.89990718099997,
+          "delta_twh": -0.003962786575103979,
+          "is_candidate": false
+        },
+        "8006": {
+          "arm_binding_hours": 24,
+          "arm_forced_twh": 0.0012854246176800003,
+          "arm_peak_floor_mw": 53.55935907000001,
+          "ctrl_binding_hours": 24,
+          "ctrl_forced_twh": 0.0013652022187440002,
+          "ctrl_peak_floor_mw": 56.88342578100001,
+          "delta_twh": -7.977760106400001e-05,
+          "is_candidate": false
+        }
+      },
+      "share_of_delta_taken_off_non_candidates_pct": 99.99999999999925,
+      "total_arm_forced_twh": 0.086389517308752,
+      "total_ctrl_forced_twh": 0.09043208148492,
+      "total_delta_twh": -0.004042564176168009,
+      "zonal_target_arm_mean_mw": 143.98252884791998,
+      "zonal_target_ctrl_mean_mw": 150.7201358082,
+      "zonal_target_shrink_pct": 4.470276598512369
+    }
+  }
+}
