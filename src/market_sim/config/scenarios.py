@@ -1482,6 +1482,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the fields.
     "federal_ces_target_by_year",
     "federal_ces_acp_usd_per_mwh",
+    # SCN-WS3b: the voluntary clean-demand scenario axis (owner ruling S1 on
+    # card D-3). All three default to their inert values ("off" = no row; None
+    # = the cited constants / default eligible set) and are dropped from the
+    # hash there, so every pre-existing cache key of all six ISOs — every
+    # backcast keeper included — is byte-stable; an armed run keys
+    # distinctly. Coerced to these same defaults in backcast/hindcast, so the
+    # backcast key is byte-stable too. SHARED fields — very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the fields (the nyiso-119 discipline).
+    "voluntary_clean_demand_path",
+    "voluntary_wtp_ceiling_usd_per_mwh",
+    "voluntary_eligible_fuels",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2005,6 +2016,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # distinctly). Registered IN THE SAME COMMIT as the fields.
     "federal_ces_target_by_year": "None",
     "federal_ces_acp_usd_per_mwh": "None",
+    # SCN-WS3b: the voluntary clean-demand axis, registered at its three
+    # shipping defaults ("off" = no row; None = the cited constants). Registered
+    # IN THE SAME COMMIT as the fields.
+    "voluntary_clean_demand_path": "'off'",
+    "voluntary_wtp_ceiling_usd_per_mwh": "None",
+    "voluntary_eligible_fuels": "None",
 }
 
 
@@ -3281,6 +3298,90 @@ class ScenarioConfig:
     # S3 (2026-09-06), the same $50 the SCN-WS2a probe used under its former
     # "illustrative" label — carried as the `CES-T80` case override in
     # configs/scenario_campaign_matrix.yaml, never as a default here.
+    # --- Voluntary clean-energy demand (SCN-WS3b; owner ruling S1 2026-09-06
+    # on card D-3; the design memo docs/handoffs/voluntary-clean-demand-
+    # design-memo-2026-09-05.md §2.1/§3/§5). A DECLARED, forecast-only,
+    # publicly-anchored, DEFAULT-OFF scenario axis over the ffr-5b null — the
+    # same admissibility class as carbon_price_path / datacenter_load_path
+    # (memo §1). "off" = today, byte-identical: NO ROW. Three fields, one
+    # contiguous block. ---
+    voluntary_clean_demand_path: str = "off"  # "off" | "low" | "mid" | "high" —
+    # selects the (s_base, f_commit, WTP) trajectories from the cited
+    # constants.VOLUNTARY_* tables (the datacenter_load_path grammar, no
+    # sampler lever). When not "off", policy/voluntary_demand.py builds ONE
+    # annual volumetric clean-attribute row per ISO-year as one more region
+    # of the clean-tier row family (model/lp/rows.py — the seam SCN-WS2a
+    # relaxed; this is its second consumer, after the federal CES target row):
+    #   Σ W + Σ S + Σ_{g ∈ eligible} P + escape ≥ V(ISO, y)   [MWh]
+    # with an ALL-ZONE mask (annual REC matching — any zone's certificate
+    # serves any buyer in the ISO), V = s_base·w_ISO·E_nonDC + f_commit·E_DC
+    # read from the run's own demand AFTER the load layers fold in (the DC
+    # half rides the existing datacenter_load_path block, so a high-DC case
+    # and a high-voluntary case are coherent by construction, memo §3.4), and
+    # the escape priced at the buyer's WILLINGNESS-TO-PAY ceiling. The dual is
+    # the voluntary REC/PPA attribute price (0 slack; (0, w] binding; = w when
+    # the escape fires and the shortfall is the un-procured volume), delivered
+    # through the EXISTING clean_attribute_price_by_fuel → max(EAC, RPS dual,
+    # clean dual) screen seam — no new consumer (rule 19 [R-ONE-MECH]). NOT
+    # suppressed by federal_ces_replaces_state_rps (a voluntary buyer is not a
+    # state row and exists under any federal policy). No netting logic against
+    # a federal CES target row is built (owner box D-6 OPEN — the campaign
+    # reports both nettings at the report layer; in dispatch the two rows are
+    # independent constraints, FFR-6B §6.4). No hourly (24/7) row (D-3b:
+    # deferred to the isolated scope2-lce-portfolio tool).
+    # FORECAST-ONLY (rule 13): __post_init__ validates the label, then COERCES
+    # this whole block to its dataclass defaults in mode="backcast" or a
+    # hindcast (the datacenter_load_path construction), so every backcast
+    # keeper, every hindcast and every crossover is BYTE-IDENTICAL and the
+    # ffr-5b null is preserved in every scored run; policy.voluntary_demand.
+    # validate_voluntary_config is the defense in depth. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at "off" (an armed run keys distinctly).
+    # LEVELS: owner ruling S3 (card D-2) committed the memo's box-5 defaults —
+    # s_base mid = the latest NREL national voluntary share (2023: 0.08) held
+    # flat, low/high = the series' own range; f_commit low 0 / high 1.0; WTP
+    # low/high = the endpoints of the cited $2-7/MWh public REC range. TWO
+    # CELLS S3 DID NOT REACH stay LABELLED ILLUSTRATIVE (owner-set under D-2,
+    # re-presented in FINDING-scn-ws3b-2026-09-06.md §4): f_commit MID (0.5
+    # placeholder) and the WTP-ceiling MID level (4.5 placeholder). The
+    # campaign cases VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN
+    # (configs/scenario_campaign_matrix.yaml) are expressible on this field
+    # and are HELD under owner ruling S5 (Stage A-POLICY) until the CCS
+    # emission-rate seam is repaired — nobody solves them until the desk
+    # releases A-POLICY.
+    voluntary_wtp_ceiling_usd_per_mwh: float | None = None  # The buyer's
+    # willingness-to-pay CEILING for the clean attribute, real 2026$/MWh
+    # (REAL_DOLLAR_BASE_YEAR): the voluntary row's escape price, so its dual
+    # can never exceed it — above the ceiling the buyer forgoes the attribute
+    # and the shortfall is the un-procured volume (memo §2.1; the ACP analogue
+    # of the compliance rows, FFR-6B §6.3). None (default) = the cited
+    # constants.VOLUNTARY_WTP_CEILING_USD_PER_MWH at the path (low 2.0 / mid
+    # 4.5 ILLUSTRATIVE / high 7.0); an explicit value is a LABELLED
+    # sensitivity and must be > 0 (a zero ceiling is a row with a free escape
+    # — dual pinned at zero, inert but looks armed — refused). Refused with
+    # the path "off" (a dangling price with no row is an unregistered knob,
+    # rule 24 [R-REGISTRY]). Coerced to None in backcast/hindcast with the
+    # path. Cache-optional at None.
+    voluntary_eligible_fuels: list[str] | None = None  # The voluntary row's
+    # QUALIFYING SET as fleet fuel-type names (FUEL_TYPE_MAP; wind and solar
+    # are the family's zone columns and MUST be listed — an ineligible listing
+    # would be silently overridden — the rest resolve to generator columns at
+    # the indicator coefficient 1.0). None (default) = constants.
+    # VOLUNTARY_ELIGIBLE_FUELS_DEFAULT = (wind, solar, offshore_wind,
+    # geothermal), the voluntary RENEWABLE market's set (Green-e: hydro and
+    # biomass excluded). *** OWNER BOX D-3c IS OPEN: that default is the memo
+    # §4.1 RECOMMENDATION, not a ruled level (S1 ruled the axis, S3 its
+    # levels; neither reached the eligible set). *** Nuclear and gas_cc_ccs
+    # ("carbon-free" programs, memo §4.2 — Google 24/7 CFE, Microsoft
+    # 100/100/0 count carbon-free) enter ONLY through this labelled override
+    # for a named arm, never by default: with nuclear admitted the row in a
+    # nuclear-heavy ISO is slack at the fleet's existing output and the dual
+    # is zero until V exceeds nuclear + VRE (the CX-6a crushing effect). A
+    # gas_cc_ccs listing credits at 1.0 in this name-tuple form, NOT at the
+    # federal target row's 0.95 capture fraction (documented limitation; the
+    # voluntary row never credits CCS by default — the routed capx CCS
+    # emission-rate seam is untouched by this field). Refused with the path
+    # "off"; an unknown name is a hard error at build time. Coerced to None
+    # in backcast/hindcast with the path. Cache-optional at None.
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
     # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
@@ -16323,6 +16424,80 @@ class ScenarioConfig:
         if self.mode == "backcast" or self.hindcast:
             self.electrification_path = "off"
 
+        # SCN-WS3b voluntary clean-energy demand (owner ruling S1, card D-3):
+        # validate the path label, then COERCE THE WHOLE voluntary_* BLOCK to
+        # its dataclass defaults in any non-forward run — the EXACT
+        # datacenter_load_path / electrification_path construction directly
+        # above, for the same reason: a backcast/hindcast pins measured load
+        # and is scored on actuals (rule 22), so a voluntary attribute row
+        # there would be a fitted driver in a scored run — precisely the
+        # ffr-5b null S1 preserves. Coerced TO THE DATACLASS DEFAULT, never a
+        # literal (FFR-3D: the field is in _CACHE_KEY_OPTIONAL_FIELDS, which
+        # is neutral AT THE DEFAULT ONLY), so every backcast keeper and
+        # hindcast leg stays BYTE-IDENTICAL whatever the default becomes. The
+        # companions (ceiling, eligible set) are coerced with the path so a
+        # forecast config copied into a backcast carries no dangling knob.
+        # policy.voluntary_demand.validate_voluntary_config is the standalone
+        # defense in depth against a post-construction mutation/bypass.
+        if self.voluntary_clean_demand_path not in ("off", "low", "mid", "high"):
+            raise ValueError(
+                "ScenarioConfig.voluntary_clean_demand_path must be one of "
+                "('off', 'low', 'mid', 'high'), got "
+                f"{self.voluntary_clean_demand_path!r}"
+            )
+        if self.mode == "backcast" or self.hindcast:
+            for _vol_field in (
+                "voluntary_clean_demand_path",
+                "voluntary_wtp_ceiling_usd_per_mwh",
+                "voluntary_eligible_fuels",
+            ):
+                setattr(
+                    self,
+                    _vol_field,
+                    type(self).__dataclass_fields__[_vol_field].default,
+                )
+        # The two companions are consumed only while the row exists; set with
+        # the path "off" they are dangling knobs with no row (rule 24
+        # [R-REGISTRY] — the federal target row's "ACP without a target"
+        # refusal, same shape).
+        if self.voluntary_wtp_ceiling_usd_per_mwh is not None:
+            if float(self.voluntary_wtp_ceiling_usd_per_mwh) <= 0.0:
+                raise ValueError(
+                    "voluntary_wtp_ceiling_usd_per_mwh must be > 0 when set "
+                    f"(got {self.voluntary_wtp_ceiling_usd_per_mwh!r}): a zero "
+                    "ceiling is a row with a free escape — its dual is pinned "
+                    "at zero and the row is inert while looking armed."
+                )
+            if self.voluntary_clean_demand_path == "off":
+                raise ValueError(
+                    "voluntary_wtp_ceiling_usd_per_mwh is set but "
+                    "voluntary_clean_demand_path is 'off': there is no row to "
+                    "price (a dangling price with no row is an unregistered "
+                    "knob, rule 24)."
+                )
+        if self.voluntary_eligible_fuels is not None:
+            if self.voluntary_clean_demand_path == "off":
+                raise ValueError(
+                    "voluntary_eligible_fuels is set but "
+                    "voluntary_clean_demand_path is 'off': there is no row to "
+                    "credit (rule 24)."
+                )
+            _vol_fuels = list(self.voluntary_eligible_fuels)
+            if not _vol_fuels or not all(isinstance(f, str) for f in _vol_fuels):
+                raise ValueError(
+                    "voluntary_eligible_fuels must be None (the cited default "
+                    "set) or a non-empty list of fleet fuel-type names; got "
+                    f"{self.voluntary_eligible_fuels!r}"
+                )
+            for _base in ("wind", "solar"):
+                if _base not in _vol_fuels:
+                    raise ValueError(
+                        f"voluntary_eligible_fuels must include {_base!r}: the "
+                        "clean-tier family's wind/solar zone columns always "
+                        "credit at 1.0, so an ineligible listing would be "
+                        "silently overridden."
+                    )
+
         # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
         # the shipped DEFAULT in a plain backcast. Capacity evolution / the
         # capacity-price seam run only in forecast mode, so the escalation axis
@@ -17667,6 +17842,9 @@ TIER_TAGS: dict[str, int] = {
     "federal_ces_replaces_state_rps": 1,
     "federal_ces_target_by_year": 1,
     "federal_ces_acp_usd_per_mwh": 1,
+    "voluntary_clean_demand_path": 2,
+    "voluntary_wtp_ceiling_usd_per_mwh": 2,
+    "voluntary_eligible_fuels": 2,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,
