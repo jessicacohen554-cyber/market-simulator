@@ -13407,3 +13407,78 @@ storage sidecar, the DMM 2025 RA-import basis, Panoche.
 field, no new matrix row, no `complete` declaration.**
 
 **Next number: caiso-256.**
+
+## caiso-256 — 2026-09-06
+
+**OBJECT A — caiso-255b's RANKED-FIRST QUEUE ITEM, "THE MODEL OVER-CYCLES
+STORAGE", IS REFUTED ON BASIS. ZERO LP, NOTHING ARMED, KEEPER UNCHANGED** at
+`2026-09-05-caiso-252-b1-notrim` (CALIBRATED). Branch
+`claude/caiso-storage-over-cycling-ymodu3` off `main` `ba894c9c`.
+`PRECOMMIT-caiso256-storage-cycling-basis-2026-09-06.md` (`885c405e`) pushed
+before the probe ran; `FINDING-caiso256-storage-cycling-basis-2026-09-06.md`;
+probe `scripts/probes/_caiso256_storage_cycling_basis.py`; artifact
+`results/calibration/_caiso256_storage_cycling_basis.json`.
+
+**THE BASIS.** caiso-255b's 35.4 / 42.1 GWh/d (2025) is the keeper's
+`storage_<year>.parquet` summed over BOTH techs — `li_ion` **and**
+`pumped_storage` — against EIA-930 `NG: OTH`, which excludes pumped storage by
+construction (caiso-168 §3). This is the caiso-121 all-tech-vs-PS-excluding
+error that caiso-168 §8 #1 already forbids, recurring on a different
+statistic. G-BASIS reproduces it to the digit (**35.37 / 42.10** =
+li_ion 28.79/33.87 + PS 6.58/8.23).
+
+**BATTERY-ONLY, THE SIGN REVERSES.** Loader clock, `NG: OTH` split into its
+hour-separated positive/negative parts: actual **11.03 / 20.79 / 30.84** GWh/d
+discharged vs model `li_ion` **10.32 / 19.29 / 28.79** — the model
+**UNDER**-cycles by **6.4 / 7.2 / 6.7 %** in every year, at a ratio stable
+across a 2.8× build-out.
+
+**IT IS NOT FLEET, AND IT IS NOT THE CAP** — both pre-registered predictions
+FALSIFIED against my own story: p99 net-discharge ratio **1.122 / 1.006 /
+1.001** (caiso-255b's 1.35/1.21/1.14× was the PS-summed single maximum; the
+battery-only max ratio is 0.94/0.93/0.93 — one spike hour carried the claim);
+and the armed `caiso_storage_shape_anchor` cap, rebuilt from the shipped
+builder on the keeper's own `fleet_only` rebuild, has **28 / 30 / 34 %
+headroom** at hod 19 (cap 2,950 / 6,121 / 8,551 MW vs mean discharge
+2,135 / 4,298 / 5,623) and binds in only **46 / 28 / 15 %** of those hours.
+
+**THE 7 % IS CONDUCT WITH A SHAPE**: short at hod 17–19 (2025 **−499 /
+−551 MW**), long 22–05 (+138 … +490) — `FINDING-caiso127 §2`'s
+evening/overnight storage pin, measured a **fourth** time on a fourth keeper
+with its overnight sign unchanged; the lever is S2 (DA/RT two-settlement,
+caiso-129 §5 / caiso-169 §5), **unfunded under caiso-201**. 2023's belly
+charge excess (+9 %, −513 … −581 MW at hod 11–14) is the caiso-168 cell with
+its lever space closed. Realised margin after RTE **$29.95 / 24.53 / 22.69**
+vs the $5.002 hurdle. Hod 22–23 the model is long storage battery-only too
+(+235/+199, +161/+191, +276/+414) — caiso-255b §6 #2 stands and is
+strengthened.
+
+**CONSEQUENCE.** Every mechanism the handoff named (the spread,
+`battery_dispatch_adder`, a cycling/degradation cost, `storage_daily_cycling`,
+an SOC/duration bound) REDUCES cycling and would move the battery volume the
+WRONG way on the correct basis — none is a lever, additional to caiso-100/101,
+caiso-168 §8 #3, caiso-169 §9 #1–#4 and caiso-176. The handoff's "what spread
+reproduces 28.5 GWh/d" is not answered: wrong basis, and a rule-13 pin.
+
+**DISCLOSURES.** (a) The decisive gate's value was seen BEFORE the PRECOMMIT
+was pushed — the sidecar's `tech` column made the composition visible while
+reading its schema and I ran the per-tech sums; the PRECOMMIT records them as
+seen and pre-registers every other gate, all computed after the push. (b) Four
+of five predictions falsified; P-2 was wrong in the direction that would have
+supported a fleet-size story. (c) caiso-255b's actual-side 28.5 / 33.3 is not
+reproduced and is not on this basis (30.84 / 35.67 hour-separated); both bases
+put the battery-only model BELOW the actual. (d) PS reported beside the
+caiso-141/145 wall, no comparator constructed (caiso-168 §8 #4).
+
+**DO-NOT-REDO adds (FINDING §6):** never sum `storage_<year>.parquet` over
+techs against `NG: OTH` (filter `tech == "li_ion"`); never re-open "the model
+over-cycles storage"; never propose a cycling cost / throughput adder /
+SOC horizon / duration bound for the battery-only residual (it under-cycles);
+never quote 1.35/1.21/1.14× as a battery fleet statement or use the single
+annual max as the fleet proxy (p99 1.12/1.01/1.00); never read the evening
+battery shortfall as cap-bound.
+
+Matrix: evidence appended on `battery_dispatch_adder` and
+`storage_measured_anchors`, NO verdict move. No run registered (none
+produced), no keeper change, no `ScenarioConfig` field, no `complete`
+declaration.

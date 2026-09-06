@@ -1,0 +1,320 @@
+{
+ "session": "caiso-256",
+ "basis": {
+  "caiso255b_published_2025_all_tech": {
+   "dis": 35.4,
+   "chg": 42.1
+  },
+  "reproduced_as_li_ion_plus_pumped_storage": true,
+  "actual_series": "EIA-930 CISO NG: OTH via _eia_hourly_frame_filled; discharge = hour-separated positive part, charge = negative part",
+  "note": "NG: OTH excludes pumped storage (FINDING-caiso168 \u00a73); the all-tech sum is the caiso-121 basis error named in caiso-168 \u00a78 #1"
+ },
+ "years": {
+  "2023": {
+   "actual_ng_oth_gwh_per_day": {
+    "discharge": 11.03,
+    "charge": 11.15
+   },
+   "model_li_ion_gwh_per_day": {
+    "discharge": 10.32,
+    "charge": 12.14
+   },
+   "model_pumped_storage_gwh_per_day": {
+    "discharge": 6.16,
+    "charge": 7.7
+   },
+   "model_all_tech_gwh_per_day": {
+    "discharge": 16.48,
+    "charge": 19.84
+   },
+   "li_ion_hours_both_legs_gt_1mw": 2,
+   "battery_only_ratio_model_over_actual": {
+    "discharge": 0.9359,
+    "charge": 1.0892
+   },
+   "implied_rte": {
+    "actual": 0.9893,
+    "model": 0.85
+   },
+   "p99_net_discharge_mw": {
+    "actual": 3140.3,
+    "model": 3523.5
+   },
+   "max_net_discharge_mw": {
+    "actual": 4551.0,
+    "model": 4257.6
+   },
+   "cycling_intensity_h_per_day": {
+    "actual": 3.511,
+    "model": 2.929,
+    "ratio": 0.8341
+   },
+   "fleet_ratio_p99_model_over_actual": 1.122,
+   "hod_diff_li_ion_net_minus_oth_mw": [
+    227.6,
+    308.8,
+    345.3,
+    215.7,
+    -5.5,
+    -156.9,
+    115.8,
+    79.9,
+    -154.2,
+    -338.0,
+    -371.6,
+    -513.8,
+    -535.6,
+    -581.9,
+    -485.7,
+    -160.7,
+    -389.3,
+    -369.7,
+    110.7,
+    172.9,
+    185.6,
+    172.8,
+    235.3,
+    198.7
+   ],
+   "belly_max_abs_diff_mw": 581.9,
+   "hod22_23_diff_mw": [
+    235.3,
+    198.7
+   ],
+   "spread": {
+    "lambda_discharge_weighted": 65.05,
+    "lambda_charge_weighted": 29.83,
+    "raw_spread": 35.22,
+    "margin_after_rte": 29.95,
+    "hurdle_adder_plus_eps": 5.002,
+    "eta_dis": 0.922,
+    "P5_pass": true
+   },
+   "G_CAP": {
+    "skipped": false,
+    "hod19_share_at_cap": 0.4603,
+    "hod19_mean_dis_mw": 2135.1,
+    "hod19_mean_cap_mw": 2949.9,
+    "annual_max_cap_mw": 4495.4,
+    "annual_max_dis_mw": 4257.6,
+    "pass": false
+   },
+   "P4_pass": false
+  },
+  "2024": {
+   "actual_ng_oth_gwh_per_day": {
+    "discharge": 20.79,
+    "charge": 23.91
+   },
+   "model_li_ion_gwh_per_day": {
+    "discharge": 19.29,
+    "charge": 22.69
+   },
+   "model_pumped_storage_gwh_per_day": {
+    "discharge": 6.16,
+    "charge": 7.7
+   },
+   "model_all_tech_gwh_per_day": {
+    "discharge": 25.45,
+    "charge": 30.39
+   },
+   "li_ion_hours_both_legs_gt_1mw": 2,
+   "battery_only_ratio_model_over_actual": {
+    "discharge": 0.9278,
+    "charge": 0.9489
+   },
+   "implied_rte": {
+    "actual": 0.8693,
+    "model": 0.85
+   },
+   "p99_net_discharge_mw": {
+    "actual": 5905.4,
+    "model": 5942.2
+   },
+   "max_net_discharge_mw": {
+    "actual": 7414.0,
+    "model": 6914.6
+   },
+   "cycling_intensity_h_per_day": {
+    "actual": 3.52,
+    "model": 3.246,
+    "ratio": 0.9221
+   },
+   "fleet_ratio_p99_model_over_actual": 1.0062,
+   "hod_diff_li_ion_net_minus_oth_mw": [
+    40.2,
+    175.1,
+    343.1,
+    409.6,
+    298.6,
+    5.1,
+    -178.0,
+    -187.5,
+    -60.1,
+    -389.6,
+    -411.0,
+    -179.5,
+    -74.8,
+    -121.2,
+    -166.4,
+    266.7,
+    101.2,
+    -241.4,
+    9.0,
+    -21.2,
+    -77.1,
+    -162.2,
+    160.8,
+    190.6
+   ],
+   "belly_max_abs_diff_mw": 411.0,
+   "hod22_23_diff_mw": [
+    160.8,
+    190.6
+   ],
+   "spread": {
+    "lambda_discharge_weighted": 44.39,
+    "lambda_charge_weighted": 16.88,
+    "raw_spread": 27.51,
+    "margin_after_rte": 24.53,
+    "hurdle_adder_plus_eps": 5.002,
+    "eta_dis": 0.922,
+    "P5_pass": true
+   },
+   "G_CAP": {
+    "skipped": false,
+    "hod19_share_at_cap": 0.2849,
+    "hod19_mean_dis_mw": 4298.0,
+    "hod19_mean_cap_mw": 6121.1,
+    "annual_max_cap_mw": 7344.4,
+    "annual_max_dis_mw": 6914.6,
+    "pass": false
+   },
+   "P4_pass": false
+  },
+  "2025": {
+   "actual_ng_oth_gwh_per_day": {
+    "discharge": 30.84,
+    "charge": 35.67
+   },
+   "model_li_ion_gwh_per_day": {
+    "discharge": 28.79,
+    "charge": 33.87
+   },
+   "model_pumped_storage_gwh_per_day": {
+    "discharge": 6.58,
+    "charge": 8.23
+   },
+   "model_all_tech_gwh_per_day": {
+    "discharge": 35.37,
+    "charge": 42.1
+   },
+   "li_ion_hours_both_legs_gt_1mw": 10,
+   "battery_only_ratio_model_over_actual": {
+    "discharge": 0.9334,
+    "charge": 0.9496
+   },
+   "implied_rte": {
+    "actual": 0.8647,
+    "model": 0.85
+   },
+   "p99_net_discharge_mw": {
+    "actual": 8130.0,
+    "model": 8138.5
+   },
+   "max_net_discharge_mw": {
+    "actual": 9745.0,
+    "model": 9059.2
+   },
+   "cycling_intensity_h_per_day": {
+    "actual": 3.794,
+    "model": 3.537,
+    "ratio": 0.9324
+   },
+   "fleet_ratio_p99_model_over_actual": 1.001,
+   "hod_diff_li_ion_net_minus_oth_mw": [
+    -31.1,
+    138.1,
+    367.0,
+    490.2,
+    346.4,
+    97.9,
+    -108.1,
+    27.3,
+    220.8,
+    -172.4,
+    -246.6,
+    -156.6,
+    -127.2,
+    -112.2,
+    -181.8,
+    -22.3,
+    108.1,
+    -499.8,
+    -551.2,
+    -267.6,
+    -240.6,
+    -87.1,
+    276.0,
+    413.7
+   ],
+   "belly_max_abs_diff_mw": 246.6,
+   "hod22_23_diff_mw": [
+    276.0,
+    413.7
+   ],
+   "spread": {
+    "lambda_discharge_weighted": 44.08,
+    "lambda_charge_weighted": 18.18,
+    "raw_spread": 25.89,
+    "margin_after_rte": 22.69,
+    "hurdle_adder_plus_eps": 5.002,
+    "eta_dis": 0.922,
+    "P5_pass": true
+   },
+   "G_CAP": {
+    "skipped": false,
+    "hod19_share_at_cap": 0.1452,
+    "hod19_mean_dis_mw": 5622.7,
+    "hod19_mean_cap_mw": 8551.1,
+    "annual_max_cap_mw": 10029.1,
+    "annual_max_dis_mw": 9059.2,
+    "pass": false
+   },
+   "P4_pass": true
+  }
+ },
+ "gates": {
+  "G_BASIS": {
+   "reproduced": true,
+   "ratio_in_band_all_years": true,
+   "band": [
+    0.9,
+    1.0
+   ],
+   "pass": true
+  },
+  "G_INTENSITY_P1": {
+   "tol": 0.05,
+   "pass": false
+  },
+  "G_FLEET_BATT_P2": {
+   "band": [
+    0.88,
+    0.98
+   ],
+   "pass": false
+  },
+  "G_CAP_P3": {
+   "min_share": 0.5,
+   "pass": false
+  },
+  "D_PROFILE_P4": {
+   "belly_max_abs_mw": 400.0,
+   "pass": false
+  },
+  "D_SPREAD_P5": {
+   "pass": true
+  }
+ }
+}
