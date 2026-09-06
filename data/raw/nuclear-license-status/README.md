@@ -25,8 +25,14 @@ intake vintage and responds to changed conditions (SLR grants, restarts, uprates
 ## Scope
 
 61 EIA-860 nuclear generator rows sit in the six modeled ISOs' balancing
-authorities; **2 are excluded** (Cooper, Wolf Creek — SPP, not a modeled ISO),
-leaving **59 units**: CAISO 2, ERCOT 4, NEISO 3, MISO 14, NYISO 4, PJM 32. One row
+authorities, of which **59 units** are the six-ISO registry: CAISO 2, ERCOT 4,
+NEISO 3, MISO 14, NYISO 4, PJM 32. The remaining **2 — Cooper and Wolf Creek —
+are SPP**, and were excluded while SPP was not a modeled ISO. They now have their
+own `spp.csv`, added 2026-09-06 by lane SPP-12 under the SPP-DESK r#2 addendum
+(`docs/handoffs/FINDING-spp-12-2026-09-06.md`), **ahead of** SPP's registration in
+`config/iso_configs._ISO_BUILDERS` — which is SPP-20's flip, not this file's. Until
+that lands, `spp.csv` is committed data that no ISO-keyed consumer reads, exactly
+as the paragraph below says of this whole registry. One row
 per unit (the NRC unit / EIA generator ID). Diablo Canyon 1-2 also appear in
 `confirmed-retirements` (SB 846 state exit) — cross-referenced here via
 `confirmed_retirement_ref`, **not duplicated**.
@@ -64,6 +70,7 @@ the markdown snapshots under `md/` (below), NOT the live HTML.
 | `neiso.csv` | `5912fa505339cf01057dc3361ee93f7f637e238a424e55005ddacef65714f188` |
 | `nyiso.csv` | `99dd2189e7076a7fd9ec3f41ea450ecd86c4bb5bdf5096ec2bce36c01edbd19b` |
 | `pjm.csv`   | `f7f06a7304cec77d5b5843924434526b25746971d9ddff1524f7a6cd5e804a94` |
+| `spp.csv`   | `b9d7e18c1969e786b2d57b6911bdc5db22a2c9ff5fea8a2852723f4d32edd0d2` |
 
 ## Per-ISO status (intake 2026-07-20)
 
