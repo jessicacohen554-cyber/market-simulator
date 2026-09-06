@@ -287,6 +287,21 @@ frontend/data/forecast/program-status.js
 # — while the nested per-ISO LP cache dir each self-contained arm writes is
 # transient and regenerable from config.
 /results/scn-ws0-smoke/*/*/NEISO/
+# SCN-WS1b carbon probe + ladder (results/scn-ws1-probe/, scn-ws1-ladder/):
+# same class as the two smoke trees above. The slim artifacts ARE committed —
+# each T0 arm's summary + run_config, each ladder's matrix bundle, and the
+# scoring / delta-report / campaign-rollup tables that are the evidence behind
+# docs/handoffs/FINDING-scn-ws1b-2026-09-06.md — while the nested per-ISO LP
+# cache each arm and each ladder case writes is transient and regenerable from
+# config. Six ISOs here rather than one, so the pattern is per-ISO.
+/results/scn-ws1-probe/*/*/ERCOT/
+/results/scn-ws1-probe/*/*/CAISO/
+/results/scn-ws1-probe/*/*/PJM/
+/results/scn-ws1-probe/*/*/MISO/
+/results/scn-ws1-probe/*/*/NYISO/
+/results/scn-ws1-probe/*/*/NEISO/
+/results/scn-ws1-probe/*/*.log
+/results/scn-ws1-ladder/*/*.log
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
