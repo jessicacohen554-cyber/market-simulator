@@ -5,7 +5,13 @@
 `PREREG-neiso104-fossil-offer-level-2026-09-06.md`; drift audit:
 `ADDENDUM-neiso104-gdrift-2026-09-06.md`.
 
-**LP spent: 2 single-year solves (2025 arm + 2025 control). The full span was NOT spent.**
+**LP spent: 2 single-year solves (2025 arm + 2025 control). The full span was NOT spent.** Both
+were genuine solves, not cache hits — control P0/P1 116.312 s / 188,559 then 38.027 s / 58,989
+simplex iterations (objective 3,649,433,820.3964); arm 127.021 s / 188,740 then 40.941 s / 59,473
+(objective 3,554,608,783.6457).
+
+**READ WITH `ADDENDUM-neiso104-env-correction-2026-09-06.md`**, which corrects an environment
+claim made in this session and downgrades "bit-identical" to the tolerances actually measured.
 Nothing registered on the dashboard (rule 29(2): a screen bundle is never registered). No keeper
 change, no `ScenarioConfig` default moved, no holdout year touched. Both bundles are **deleted
 before merge** (rule 29(c)); every number below is the record.
@@ -31,9 +37,21 @@ scalar."* **The scalar is not being raised.** Back-solving 4.53 % × 0.765/0.525
 screen is the sweep condition (c) forbids, and it is not done here or proposed.
 
 **Second result, independent of the arm and arguably worth more: NEISO's keeper is NOT stale.**
-The same-HEAD control reproduces the committed keeper **bit-identically** — $71.3866/MWh against
-$71.3866/MWh, and **0.0000 TWh** summed absolute class-energy difference — despite 111
-live-candidate files and 28,119 changed lines on the NEISO backcast path.
+The same-HEAD control reproduces the committed keeper to **4 dp on load-weighted price**
+($71.3866/MWh against $71.3866/MWh) and to **0.001 TWh on every class** (0.0000 TWh summed
+absolute difference) — despite 111 live-candidate files and 28,119 changed lines on the NEISO
+backcast path, **and despite four environment deltas** (highspy 1.14.0 -> 1.15.1, pandas 3.0.3 ->
+3.0.5, pydantic 2.13.4 -> 2.13.5, kernel v20 -> v24).
+
+> **CORRECTED 2026-09-06** by `ADDENDUM-neiso104-env-correction-2026-09-06.md`. This paragraph
+> originally read "reproduces the committed keeper **bit-identically**" and this session
+> separately claimed the replay environment matched the keeper's exactly. **Both were wrong.**
+> The environment did NOT match (the four deltas above, printed by the replay driver's own guard
+> in the first four lines of both logs and not read); and no per-cell comparison was run, so the
+> measurement supports the two tolerances stated above, not bit-identity. The reproduction is
+> *stronger* for having held across the environment deltas, but it is stated more weakly because
+> that is what was measured. It cannot now be tightened without a re-solve: both bundles were
+> deleted under rule 29(c).
 
 ---
 
@@ -117,7 +135,8 @@ substitute verdict. What can be said from measured deltas alone: the largest cla
 
 **(b) G-DRIFT's path triage over-flags, and the control proved it.** The addendum classified 111
 files / 28,119 lines as live candidates and, unable to hand-classify them, took the stricter
-branch and spent a control. **The control then reproduced the committed keeper bit-identically**,
+branch and spent a control. **The control then reproduced the committed keeper to the tolerances
+of §0** (price 4 dp, class energy 0.001 TWh; see the correction addendum),
 which means every one of those hunks was in fact INERT for NEISO's backcast and **G-CTRL form 4
 would have been valid** — the keeper's committed bundle *was* the control all along, and the
 control solve was unnecessary in hindsight.
