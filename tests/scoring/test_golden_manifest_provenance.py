@@ -213,6 +213,48 @@ class GoldenManifestSchemaTest(unittest.TestCase):
         fails, _ = cgm.check_manifest(LIVE_MANIFEST)
         self.assertEqual(fails, [], f"live manifest fails its own gate: {fails}")
 
+    def test_every_committed_manifest_passes_and_reports_one_note_per_entry(self):
+        """Byte-for-byte over the committed manifests, not a fixture.
+
+        Two invariants at once: the v3 reader accepts every manifest on disk
+        (backward compatibility, all of them), and the per-config coverage
+        lines are additional to the entry notes rather than mixed into them —
+        which is what keeps the gate's printed counts unmoved.
+        """
+        manifests = cgm.find_manifests()
+        self.assertGreater(len(manifests), 40, "expected the committed corpus")
+        entries = notes_seen = 0
+        for path in manifests:
+            with self.subTest(manifest=path.parent.name):
+                fails, notes = cgm.check_manifest(path)
+                self.assertEqual(fails, [], f"{path}: {fails}")
+            entries += len(json.loads(path.read_text()).get("keepers", {}))
+            notes_seen += len([n for n in notes if cgm.COVERAGE_MARK not in n])
+        self.assertEqual(notes_seen, entries, "one entry note per manifest entry")
+
+    def test_committed_manifests_report_ercot_per_config_coverage(self):
+        """The Y-25 object on real data: ERCOT no longer reads a bare CURRENT.
+
+        ``wc-b-*`` holds a golden of the composed keeper under the bare key. At
+        v2 the gate said only "golden CURRENT", which reads as full coverage of
+        an ISO that designates TWO configs. It now states both.
+        """
+        goldens = REPO_ROOT / "results" / "regression-goldens"
+        _, notes = cgm.check_manifest(goldens / "wc-b-after" / "manifest.json")
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n]
+        self.assertEqual(len(cover), 1, cover)
+        self.assertIn("ERCOT partition coverage", cover[0])
+        self.assertIn("forward CURRENT", cover[0])
+        self.assertIn("carveout-2023 UNCOVERED", cover[0])
+        self.assertIn("R-AW", cover[0])
+        # perfb-stage0 holds the retired-key historical record beside a stale
+        # forward golden: still uncovered, and said to be a record.
+        _, notes = cgm.check_manifest(LIVE_MANIFEST)
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        self.assertIn("forward STALE", cover)
+        self.assertIn("carveout-2023 UNCOVERED", cover)
+        self.assertIn("historical capture record", cover)
+
     def test_partition_entries_agree_with_the_keeper_shard(self):
         """A ``<ISO>__<role>`` entry names a config its ISO actually designates.
 
@@ -494,11 +536,13 @@ class PartitionStalenessLookupTest(unittest.TestCase):
         shard.update(over)
         (self.keepers / "ERCOT.json").write_text(json.dumps(shard))
 
-    def _manifest(self, keepers, tag="s1"):
+    def _manifest(self, keepers, tag="s1", version=2):
         p = self.goldens / tag / "manifest.json"
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(
-            json.dumps({"schema_version": 2, "stage_tag": tag, "keepers": keepers})
+            json.dumps(
+                {"schema_version": version, "stage_tag": tag, "keepers": keepers}
+            )
         )
         return p
 
@@ -763,6 +807,246 @@ class PartitionStalenessLookupTest(unittest.TestCase):
         fails, _ = cgm.check_manifest(p)
         self.assertTrue(any("keeper_snapshot" in f for f in fails))
 
+    # --- per-config coverage reporting (Y-25, 2026-09-06) ---
+
+    def test_coverage_reports_every_designated_config_of_a_partitioned_iso(self):
+        """The defect: one CURRENT line read as full coverage of two configs."""
+        (self.registry / "run-forward.json").write_text("{}")
+        p = self._manifest(
+            {"ERCOT": _entry(keeper_id="run-forward", iso="ERCOT", years=[2024, 2025])}
+        )
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [], "coverage is reported, never failed")
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n]
+        self.assertEqual(len(cover), 1, cover)
+        self.assertIn("forward CURRENT", cover[0])
+        self.assertIn("carveout-x UNCOVERED", cover[0])
+        self.assertIn("no entry in this manifest", cover[0])
+
+    def test_coverage_reports_a_fully_covered_partition(self):
+        (self.registry / "run-forward.json").write_text("{}")
+        (self.registry / "run-carveout.json").write_text("{}")
+        p = self._manifest(
+            {
+                "ERCOT": _entry(
+                    keeper_id="run-forward", iso="ERCOT", years=[2024, 2025]
+                ),
+                "ERCOT__carveout-x": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                ),
+            }
+        )
+        _, notes = cgm.check_manifest(p)
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        self.assertIn("forward CURRENT", cover)
+        self.assertIn("carveout-x CURRENT", cover)
+        self.assertNotIn("UNCOVERED", cover)
+
+    def test_coverage_carries_the_per_config_staleness_reason(self):
+        p = self._manifest(
+            {"ERCOT": _entry(keeper_id="run-older", iso="ERCOT", years=[2024, 2025])}
+        )
+        _, notes = cgm.check_manifest(p)
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        self.assertIn("forward STALE", cover)
+        self.assertIn("live keeper: run-forward", cover)
+
+    def test_a_retired_capture_key_reads_uncovered_by_ruling(self):
+        """ERCOT's real shape: covered forward, uncovered carve-out (R-AW).
+
+        UNCOVERED must distinguish "nobody captured it" from "the owner
+        retired the capture" — the second is a decision, not a gap.
+        """
+        self._write_shard(
+            config_partition={
+                "configs": [
+                    {"role": "forward", "run_id": "run-forward", "years": [2024, 2025]},
+                    {
+                        "role": "carveout-2023",
+                        "run_id": "run-carveout",
+                        "years": [2023],
+                    },
+                ]
+            }
+        )
+        (self.registry / "run-forward.json").write_text("{}")
+        # (a) no entry at all under the retired key.
+        p = self._manifest(
+            {"ERCOT": _entry(keeper_id="run-forward", iso="ERCOT", years=[2024, 2025])}
+        )
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [])
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        self.assertIn("forward CURRENT", cover)
+        self.assertIn("carveout-2023 UNCOVERED", cover)
+        self.assertIn("RETIRED", cover)
+        self.assertIn("R-AW", cover)
+        # (b) a historical record present under the retired key: still
+        #     UNCOVERED, and said to be a record rather than a gap.
+        p = self._manifest(
+            {
+                "ERCOT": _entry(
+                    keeper_id="run-forward", iso="ERCOT", years=[2024, 2025]
+                ),
+                "ERCOT__carveout-2023": _entry(
+                    keeper_id="run-carveout", iso="ERCOT", years=[2023]
+                ),
+            },
+            tag="s2",
+        )
+        fails, notes = cgm.check_manifest(p)
+        self.assertEqual(fails, [])
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        self.assertIn("carveout-2023 UNCOVERED", cover)
+        self.assertIn("historical capture record", cover)
+
+    def test_a_one_config_iso_gets_no_coverage_line(self):
+        (self.keepers / "PJM.json").write_text(json.dumps({"keeper": "run-pjm"}))
+        (self.registry / "run-pjm.json").write_text("{}")
+        _, notes = cgm.check_manifest(
+            self._manifest({"PJM": _entry(keeper_id="run-pjm", iso="PJM")})
+        )
+        self.assertEqual([n for n in notes if cgm.COVERAGE_MARK in n], [])
+
+    def test_coverage_lines_are_excluded_from_every_entry_tally(self):
+        """The dispatch's constraint: adding coverage moves no count."""
+        (self.registry / "run-forward.json").write_text("{}")
+        _, notes = cgm.check_manifest(
+            self._manifest(
+                {
+                    "ERCOT": _entry(
+                        keeper_id="run-forward", iso="ERCOT", years=[2024, 2025]
+                    )
+                }
+            )
+        )
+        entry_notes = [n for n in notes if cgm.COVERAGE_MARK not in n]
+        self.assertEqual(len(entry_notes), 1, entry_notes)
+        # The strings main() tallies on must not leak out of a coverage line.
+        cover = [n for n in notes if cgm.COVERAGE_MARK in n][0]
+        for tallied in ("PRUNED", "golden STALE", "capture key RETIRED", "LEGACY v1"):
+            self.assertNotIn(tallied, cover)
+
+    # --- schema v3: the config identity on the entry (Y-25, 2026-09-06) ---
+
+    def _v3_entry(self, role, config_id, **over):
+        """A partition entry carrying the v3 identity block."""
+        e = _entry(keeper_id="run-composed", iso="ERCOT", years=[2024, 2025])
+        e["partition"] = {
+            "iso": "ERCOT",
+            "role": role,
+            "designated_years": [2024, 2025],
+            "config_id": config_id,
+            "config_bundle": f"results/calibration/{config_id}",
+            "shard_run_id": "run-composed",
+            "composed": True,
+        }
+        e.update(over)
+        return e
+
+    def _composed_shard(self):
+        """Both roles designating ONE run — the ercot-248 shape."""
+        self._write_shard(
+            keeper="run-composed",
+            config_partition={
+                "configs": [
+                    {
+                        "role": "forward",
+                        "run_id": "run-composed",
+                        "source_run_id": "run-fwd-src",
+                        "years": [2024, 2025],
+                    },
+                    {
+                        "role": "carveout-x",
+                        "run_id": "run-composed",
+                        "source_run_id": "run-carve-src",
+                        "years": [2023],
+                    },
+                ]
+            },
+        )
+
+    def test_shard_config_identity_separates_roles_composed_onto_one_run(self):
+        """The v3 object: ``live_keeper`` cannot tell the two configs apart."""
+        self._composed_shard()
+        self.assertEqual(cgm.live_keeper("ERCOT"), "run-composed")
+        self.assertEqual(cgm.live_keeper("ERCOT__carveout-x"), "run-composed")
+        self.assertEqual(cgm.shard_config_identity("ERCOT"), "run-fwd-src")
+        self.assertEqual(
+            cgm.shard_config_identity("ERCOT__carveout-x"), "run-carve-src"
+        )
+
+    def test_config_identity_falls_back_to_the_run_id_and_to_none(self):
+        self.assertEqual(cgm.shard_config_identity("ERCOT"), "run-forward")
+        self.assertIsNone(cgm.shard_config_identity("ERCOT__no-such-role"))
+        (self.keepers / "PJM.json").write_text(json.dumps({"keeper": "run-pjm"}))
+        self.assertIsNone(cgm.shard_config_identity("PJM"))
+
+    def test_v3_partition_entry_must_carry_the_identity_keys(self):
+        self._composed_shard()
+        e = self._v3_entry("forward", "run-fwd-src")
+        del e["partition"]["config_id"]
+        p = self._manifest({"ERCOT": e}, version=3)
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(any("partition block missing 'config_id'" in f for f in fails))
+        # ...and the same entry is clean at v2, where the keys are optional.
+        fails, _ = cgm.check_manifest(self._manifest({"ERCOT": e}, tag="s2"))
+        self.assertEqual(fails, [])
+
+    def test_v3_partition_key_entry_without_a_block_fails(self):
+        self._composed_shard()
+        e = _entry(keeper_id="run-composed", iso="ERCOT", years=[2023])
+        p = self._manifest({"ERCOT__carveout-x": e}, version=3)
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(any("requires a 'partition' block" in f for f in fails))
+
+    def test_v2_entries_are_never_held_to_the_v3_identity_keys(self):
+        """Backward compatibility, stated as a test: v2 is enforced as before."""
+        self._composed_shard()
+        e = _entry(keeper_id="run-composed", iso="ERCOT", years=[2024, 2025])
+        e["partition"] = {
+            "iso": "ERCOT",
+            "role": "forward",
+            "designated_years": [2024, 2025],
+        }
+        fails, _ = cgm.check_manifest(self._manifest({"ERCOT": e}))
+        self.assertEqual(fails, [], "a v2 partition entry needs no identity keys")
+
+    def test_partition_block_must_agree_with_its_key(self):
+        e = _entry(keeper_id="run-carveout", iso="ERCOT", years=[2023])
+        e["partition"] = {"iso": "MISO", "role": "forward", "designated_years": [2023]}
+        fails, _ = cgm.check_manifest(self._manifest({"ERCOT__carveout-x": e}))
+        joined = " ".join(fails)
+        self.assertIn("partition.iso", joined)
+        self.assertIn("partition.role", joined)
+
+    def test_a_manifest_from_a_newer_schema_fails_rather_than_passing_unread(self):
+        p = self._manifest({"PJM": _entry()}, version=cgm.MAX_SCHEMA_VERSION + 1)
+        fails, _ = cgm.check_manifest(p)
+        self.assertTrue(any("reads at most" in f for f in fails))
+
+    def test_a_golden_of_a_superseded_config_reads_stale_on_a_matching_run_id(self):
+        """THE v3 payoff: same run id, different config → STALE, not CURRENT.
+
+        Under v2 this entry matched ``live_keeper`` and read CURRENT, because
+        the composed run id is all the entry recorded.
+        """
+        self._composed_shard()
+        (self.registry / "run-composed.json").write_text("{}")
+        stale = self._v3_entry("forward", "run-an-older-config")
+        fails, notes = cgm.check_manifest(self._manifest({"ERCOT": stale}))
+        self.assertEqual(fails, [])
+        joined = " ".join(notes)
+        self.assertIn("golden STALE", joined)
+        self.assertIn("config is now run-fwd-src", joined)
+        self.assertIn("captured run-an-older-config", joined)
+        self.assertNotIn("live keeper: None", joined)
+        # ...and the matching identity still reads CURRENT.
+        ok = self._v3_entry("forward", "run-fwd-src")
+        fails, notes = cgm.check_manifest(self._manifest({"ERCOT": ok}, tag="s2"))
+        self.assertEqual(fails, [])
+        self.assertTrue(any("golden CURRENT" in n for n in notes))
+
     def test_retired_key_with_a_retired_block_is_reported_as_marked(self):
         e = _entry(keeper_id="run-carveout", iso="ERCOT", years=[2023])
         e["retired"] = {"declared": "2026-09-05", "ruling": "R-AW"}
@@ -986,6 +1270,36 @@ class PartitionCaptureKeyTest(unittest.TestCase):
         bare = m.resolve_capture_targets(["ERCOT"])["ERCOT"]
         self.assertEqual(m._partition_block(bare), block)
 
+    def test_partition_block_carries_the_v3_config_identity(self):
+        """Schema v3 on LIVE data: which config, not just which run.
+
+        The ercot-248 consolidation designates ONE run for both roles, so the
+        run id is shared and ``config_id`` is the only thing in the entry that
+        separates the forward golden from a carve-out one.
+        """
+        m = self.mod
+        fwd = m._partition_block(m.resolve_capture_targets(["ERCOT"])["ERCOT"])
+        self.assertEqual(fwd["config_id"], "2026-08-25-234-eastex-identity")
+        self.assertEqual(
+            fwd["config_bundle"], "results/calibration/ercot234_eastex_identity"
+        )
+        self.assertEqual(fwd["shard_run_id"], "2026-09-05-ercot248-two-config-keeper")
+        self.assertEqual(fwd["designated_years"], [2024, 2025])
+        self.assertTrue(fwd["composed"], "both ERCOT roles share one run id")
+        self.assertEqual(fwd["composed_roles"], ["carveout-2023", "forward"])
+        # Every v3 key the gate requires, and the identity the gate reads live.
+        for key in cgm.REQUIRED_PARTITION_V3_KEYS:
+            self.assertIn(key, fwd)
+        self.assertEqual(fwd["config_id"], cgm.shard_config_identity("ERCOT"))
+        self.assertNotEqual(
+            cgm.shard_config_identity("ERCOT"),
+            cgm.shard_config_identity("ERCOT__carveout-2023"),
+            "the two configs must be distinguishable; live_keeper cannot",
+        )
+        self.assertEqual(
+            cgm.live_keeper("ERCOT"), cgm.live_keeper("ERCOT__carveout-2023")
+        )
+
     def test_partition_block_is_absent_for_a_bare_capture(self):
         info = self.mod.resolve_capture_targets(["NEISO"])["NEISO"]
         self.assertIsNone(self.mod._partition_block(info))
@@ -1061,6 +1375,52 @@ class CaptureToolSchemaTest(unittest.TestCase):
             "2026-08-25-236-swcap-clip-k33",
         )
         self.assertEqual(sorted(man["keepers"]), ["ERCOT", "ERCOT__carveout-x"])
+
+    def test_manifest_version_declares_what_the_entries_actually_satisfy(self):
+        """A v3 capture merged into a pre-v3 file must not re-label it.
+
+        Defect A's reasoning applied to the schema stamp: one capture may not
+        make a claim on behalf of entries it did not write.
+        """
+        m = self.mod
+        old = _entry(keeper_id="a", iso="ERCOT")
+        old["partition"] = {
+            "iso": "ERCOT",
+            "role": "carveout-x",
+            "designated_years": [2023],
+        }
+        new = _entry(keeper_id="b", iso="ERCOT")
+        new["partition"] = {
+            "iso": "ERCOT",
+            "role": "forward",
+            "designated_years": [2024, 2025],
+            "config_id": "b-src",
+            "shard_run_id": "b",
+        }
+        self.assertEqual(m.manifest_version({"ERCOT__carveout-x": old}), 2)
+        self.assertEqual(m.manifest_version({"ERCOT": new}), 3)
+        self.assertEqual(
+            m.manifest_version({"ERCOT": new, "ERCOT__carveout-x": old}), 2
+        )
+        # A one-config ISO carries no partition block and is v3-clean.
+        self.assertEqual(m.manifest_version({"PJM": _entry()}), 3)
+
+        m.write_manifest("mixed", {"ERCOT__carveout-x": old})
+        p = m.write_manifest("mixed", {"ERCOT": new})
+        man = json.loads(p.read_text())
+        self.assertEqual(man["schema_version"], 2, "mixed file stays honest")
+        self.assertEqual(man["keepers"]["ERCOT__carveout-x"], old)
+        p = m.write_manifest("fresh", {"ERCOT": new})
+        self.assertEqual(json.loads(p.read_text())["schema_version"], 3)
+        # Whatever it declares, the gate must accept it.
+        saved = (cgm.GOLDENS_ROOT, cgm.REPO)
+        cgm.GOLDENS_ROOT = cgm.REPO = m.GOLDENS_ROOT
+        try:
+            for tag in ("mixed", "fresh"):
+                fails, _ = cgm.check_manifest(m.GOLDENS_ROOT / tag / "manifest.json")
+                self.assertEqual(fails, [], f"{tag}: {fails}")
+        finally:
+            cgm.GOLDENS_ROOT, cgm.REPO = saved
 
     def test_basis_sha_helper_is_origin_durable(self):
         """basis_sha must resolve in main even when git_sha is a branch commit."""

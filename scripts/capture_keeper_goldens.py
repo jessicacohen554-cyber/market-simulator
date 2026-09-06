@@ -78,6 +78,21 @@ A partition entry additionally carries a ``partition`` block naming its ISO,
 role, the shard's DESIGNATED year span for that config, and the ruling that
 declared the partition.
 
+**Schema v3 (Y-25, 2026-09-06) — the config's IDENTITY on the entry.** The
+ercot-248 consolidation composed both ERCOT roles onto ONE registered run, so
+``keeper_id`` stopped identifying a configuration: forward and carve-out
+entries carry the same run id, and which config a ``role`` names is answerable
+only from the live shard — a file that moves. v3 stamps the answer into the
+entry: ``partition.config_id`` (the run whose CONFIGURATION was replayed —
+``config_partition.configs[].source_run_id``, else ``run_id``) with
+``config_bundle``, ``shard_run_id`` (what was actually replayed) and
+``composed`` / ``composed_roles``. ``designated_years`` → ``config_id`` is the
+year-set-to-config map the partition needed and v2 could not express. Purely
+ADDITIVE: ``check_golden_manifest.MIN_SCHEMA_VERSION`` stays 2, every committed
+v2 entry parses and is enforced unchanged, and :func:`manifest_version` keeps a
+file at v2 until every partition entry in it carries the identity keys, so
+merging a v3 capture never re-labels an older entry.
+
 **R-AW (owner ruling, audit-program director sitting 2026-09-05, card "ERCOT
 key"), verbatim: "The golden config should be the 2024:2025 one not 2023".**
 Read as: the ERCOT stage-0 golden captures the FORWARD config on its designated
@@ -185,6 +200,7 @@ logger = logging.getLogger("capture_keeper_goldens")
 
 from scripts.check_golden_manifest import (  # noqa: E402  (after sys.path insert)
     FORWARD_ROLE,
+    REQUIRED_PARTITION_V3_KEYS,
     RETIRED_CAPTURE_KEYS,
 )
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
@@ -795,6 +811,18 @@ def _fidelity_check(
 def _partition_block(info: dict) -> dict | None:
     """Return the entry's ``partition`` block, or None for a bare-ISO capture.
 
+    **Schema v3 (Y-25, 2026-09-06)** adds the config IDENTITY, which the
+    ercot-248 consolidation took away from ``keeper_id``: both ERCOT roles now
+    designate one composed run, so the run id no longer says which of the two
+    configurations a golden replayed. The block therefore records
+    ``designated_years`` → ``config_id`` — the run whose CONFIGURATION this is
+    (``source_run_id`` when the role was composed from an earlier run, else the
+    role's own ``run_id``) — plus ``shard_run_id`` (what the shard designates,
+    i.e. the run actually replayed) and ``composed`` (whether that run carries
+    more than one role). Stamped into the entry for the same reason
+    ``keeper_snapshot`` is: a shard edit must not be able to change what an
+    already-written golden claims to be.
+
     ``designated_years`` is the span the ISO's shard assigns to THIS config —
     since R-AW also the span the capture replays, so it equals the entry's
     ``years``; the replayed run's REGISTERED span is recorded separately as the
@@ -809,10 +837,24 @@ def _partition_block(info: dict) -> dict | None:
         return None
     shard = keeper_store.load_shard(info["iso"], REPO) or {}
     part = shard.get("config_partition") or {}
+    shard_run_id = str(cfg.get("run_id", ""))
+    roles_on_this_run = [
+        c.get("role")
+        for c in partition_configs(info["iso"])
+        if str(c.get("run_id", "")) == shard_run_id
+    ]
     return {
         "iso": info["iso"],
         "role": info["role"],
         "designated_years": [int(y) for y in cfg.get("years", [])],
+        # v3 identity: WHICH config, independent of the run it is registered
+        # under. ``config_id`` survives a later consolidation or re-keying of
+        # the shard; ``shard_run_id`` is what was replayed.
+        "config_id": str(cfg.get("source_run_id") or cfg.get("run_id", "")),
+        "config_bundle": str(cfg.get("source_bundle") or cfg.get("bundle", "")),
+        "shard_run_id": shard_run_id,
+        "composed": len(roles_on_this_run) > 1,
+        "composed_roles": sorted(r for r in roles_on_this_run if r),
         "label": cfg.get("label", ""),
         "declared": part.get("declared", ""),
         "ruling_source": part.get("ruling_source", ""),
@@ -1001,7 +1043,35 @@ def _run_subprocess(key: str, stage_tag: str) -> int:
     return subprocess.call(cmd, env=env, cwd=REPO)
 
 
-MANIFEST_SCHEMA_VERSION = 2
+# v3 (2026-09-06): a partition entry carries its config IDENTITY
+# (partition.config_id / shard_run_id), because a composed keeper's run id no
+# longer identifies a config. Additive — check_golden_manifest still reads and
+# enforces every v2 manifest unchanged (its MIN_SCHEMA_VERSION stays 2).
+MANIFEST_SCHEMA_VERSION = 3
+
+
+def manifest_version(entries: dict[str, dict]) -> int:
+    """Return the schema version the merged ``entries`` actually satisfy.
+
+    :data:`MANIFEST_SCHEMA_VERSION` when every partition entry carries the v3
+    identity keys (:data:`check_golden_manifest.REQUIRED_PARTITION_V3_KEYS`),
+    else 2. A manifest declares the version its CONTENTS meet, never the
+    version of the tool that last touched it: merging one new v3 capture into
+    a file holding pre-v3 partition entries must not re-label those entries as
+    something they are not — the same defect-A reasoning that moved provenance
+    per-entry, applied to the schema stamp itself. A mixed file therefore stays
+    v2 (where the identity keys are optional) until every partition entry in it
+    is re-captured, and the gate still reads ``config_id`` wherever one is
+    present, so a v2-declared file gets the v3 benefit for the entries that
+    have it.
+    """
+    for entry in entries.values():
+        part = entry.get("partition")
+        if isinstance(part, dict) and not all(
+            k in part for k in REQUIRED_PARTITION_V3_KEYS
+        ):
+            return 2
+    return MANIFEST_SCHEMA_VERSION
 
 
 def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
@@ -1012,6 +1082,10 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
     other — the v1 failure mode this function used to have. The same merge is
     what makes a config-partition entry (keyed ``<ISO>__<role>``) purely
     additive: it lands beside the bare-ISO entry rather than replacing it.
+
+    The declared ``schema_version`` is :func:`manifest_version` of the MERGED
+    entries, so a v3 capture merged into a file with pre-v3 partition entries
+    leaves the file honestly at v2.
     """
     manifest_path = GOLDENS_ROOT / stage_tag / "manifest.json"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1020,7 +1094,7 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
         existing = json.loads(manifest_path.read_text()).get("keepers", {})
     existing.update(entries)
     payload = {
-        "schema_version": MANIFEST_SCHEMA_VERSION,
+        "schema_version": manifest_version(existing),
         "stage_tag": stage_tag,
         "hash_scheme": "sha256-of-canonical-column-float64-bytes",
         "note": (
@@ -1033,7 +1107,10 @@ def write_manifest(stage_tag: str, entries: dict[str, dict]) -> Path:
             "<ISO>__<role> (e.g. ERCOT__forward) is a CONFIG-PARTITION "
             "member: the role is verbatim that ISO's "
             "keepers/<ISO>.json config_partition.configs[].role, the entry "
-            "carries an extra 'partition' block, and it is an ordinary v2 entry "
+            "carries an extra 'partition' block naming the CONFIG it captured "
+            "(schema v3: designated_years -> config_id, plus shard_run_id — a "
+            "composed keeper's run id is shared by several roles and does not "
+            "identify a config), and it is an ordinary entry "
             "in every other respect — additive, so the bare-ISO entries are "
             "untouched. check_golden_manifest.live_keeper resolves both key "
             "forms. A partitioned ISO's BARE entry is its forward config "

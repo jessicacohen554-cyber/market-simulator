@@ -40,6 +40,33 @@ entries are ordinary schema-v2 entries in every other respect and are validated
 identically — the representation is additive, so nothing here special-cases
 them beyond the key split.
 
+**Schema v3: the entry names WHICH CONFIG it captured (Y-25, 2026-09-06).**
+The ercot-248 consolidation composed both of ERCOT's designated configs onto
+ONE registered run, so ``keeper_id`` stopped identifying a config: the forward
+and carve-out entries carry the same run id, and only the shard could say which
+config each ``role`` currently stands for. That is defect B's shape again — a
+manifest entry whose meaning lives in a file that moves — and it is why the two
+configs could not both be represented at v2 in any way that survives a shard
+edit. Schema v3 pins the config identity INTO the entry's ``partition`` block:
+``designated_years`` → ``config_id`` (the run whose configuration this is: the
+shard's ``source_run_id``, else its ``run_id``), alongside ``shard_run_id`` (the
+run the shard designates for the role, composed or not). ADDITIVE and
+BACKWARD-COMPATIBLE: ``MIN_SCHEMA_VERSION`` stays 2, every committed v2 entry
+parses and is enforced exactly as before, and the v3 identity keys are required
+only of a manifest that declares v3 (:data:`REQUIRED_PARTITION_V3_KEYS`). A
+version above :data:`MAX_SCHEMA_VERSION` FAILS rather than passing unread.
+
+**Per-config coverage (Y-25, 2026-09-06).** For an ISO whose shard designates
+more than one config, a bare ``golden CURRENT`` line answered a question nobody
+asked: it reported the FORWARD config and said nothing about the rest of the
+partition, so a manifest covering one of ERCOT's two configs read exactly like
+full coverage. :func:`config_coverage` adds one report line per partitioned ISO
+present in a manifest, stating each designated config as CURRENT / STALE /
+UNCOVERED with its reason — ERCOT reads *"forward CURRENT; carveout-2023
+UNCOVERED"*. It is a REPORT, never a failure: the carve-out is uncovered by
+ruling (R-AW retired its capture key), and a gate cannot demand a capture the
+owner retired. It changes no entry count.
+
 **The bare key of a partitioned ISO is its FORWARD role (R-AW, 2026-09-05).**
 Owner ruling, audit-program director sitting 2026-09-05 (card "ERCOT key"),
 verbatim: *"The golden config should be the 2024:2025 one not 2023"*. Read as:
@@ -102,12 +129,43 @@ FORBIDDEN_TOP_LEVEL_KEYS = ("git_sha", "git_dirty", "env", "highspy_version")
 
 MIN_SCHEMA_VERSION = 2
 
+# The highest schema this gate can read. A manifest declaring more is FAILED,
+# not waved through: a future field this gate silently ignores is exactly the
+# class of silence defects A and B were.
+MAX_SCHEMA_VERSION = 3
+
+# The schema at which a partition entry must carry its config IDENTITY, not
+# just its role. Below it the identity keys are optional (every committed v2
+# entry predates them); at or above it they are required of any entry carrying
+# a ``partition`` block.
+PARTITION_IDENTITY_SCHEMA_VERSION = 3
+
+# Keys a v3 ``partition`` block must carry. ``config_id`` is the identity the
+# composed keeper took away from ``keeper_id``: the run whose CONFIGURATION
+# this entry replayed (keepers/<ISO>.json config_partition.configs[].
+# source_run_id, else run_id). ``shard_run_id`` is the run the shard designates
+# for the role — equal to ``keeper_id`` at capture time, and the two differ
+# from ``config_id`` whenever several roles are composed onto one run.
+REQUIRED_PARTITION_V3_KEYS = (
+    "iso",
+    "role",
+    "designated_years",
+    "config_id",
+    "shard_run_id",
+)
+
 # Separator between the ISO and the config-partition role in a manifest key
 # (``ERCOT__carveout-2023``). Must match
 # ``capture_keeper_goldens.PARTITION_KEY_SEP``; duplicated rather than imported
 # because this gate is deliberately stdlib-only and importable with no solve
 # dependencies (the capture tool pulls in numpy/highspy at import time).
 PARTITION_KEY_SEP = "__"
+
+# Marker that identifies a per-config COVERAGE line among the notes. Coverage
+# lines are a separate report about the capture programme, not entry findings,
+# so they are filtered out before every entry tally: adding them must not move
+# one count this gate prints.
+COVERAGE_MARK = " partition coverage): "
 
 # The config_partition role a partitioned ISO's BARE capture key resolves to:
 # the config the model uses going forward. Named in the shard verbatim
@@ -279,6 +337,134 @@ def designated_years(key: str) -> list[int] | None:
     return sorted(int(y) for y in cfg["years"])
 
 
+def shard_config_identity(key: str) -> str | None:
+    """Return the run whose CONFIGURATION the shard designates for ``key``.
+
+    The schema-v3 identity (:data:`REQUIRED_PARTITION_V3_KEYS`), read live:
+    ``config_partition.configs[].source_run_id`` when the role's config came
+    from an earlier run (ERCOT's consolidation kept both), else the role's own
+    ``run_id``. None for a key that resolves to no partition config.
+
+    Why it is not simply ``live_keeper``: after the ercot-248 consolidation
+    BOTH ERCOT roles designate the one composed ``run_id``, so ``live_keeper``
+    returns the same string for both and cannot distinguish a golden of the
+    forward config from a golden of the carve-out. This can.
+    """
+    iso, role = resolve_role(key)
+    if role is None:
+        return None
+    rec = _load_shard(iso)
+    cfg = _partition_config(rec, role) if rec is not None else None
+    if cfg is None:
+        return None
+    ident = cfg.get("source_run_id") or cfg.get("run_id")
+    return str(ident) if ident else None
+
+
+def live_state(key: str, entry: dict) -> tuple[str, str]:
+    """Return ``(state, detail)`` for one entry against the live keeper shards.
+
+    ``state`` is ``"CURRENT"`` or ``"STALE"``; ``detail`` is the parenthetical
+    that explains a STALE reading (empty when CURRENT). Extracted so
+    :func:`check_manifest` and :func:`config_coverage` cannot drift into two
+    answers for one question. A retired capture key never reaches here —
+    :func:`check_manifest` reports those as historical records instead.
+
+    Two things make an entry stale: the shard designates a different RUN, or
+    (schema v3) it designates the same run but a different CONFIG. The second
+    only became possible when the ercot-248 consolidation composed several
+    roles onto one run id; an entry that stamped its ``config_id`` can be
+    judged on it, and one that did not (every v2 entry) is judged on the run
+    id alone, exactly as before.
+    """
+    keeper_id = entry.get("keeper_id")
+    part = entry.get("partition")
+    current = live_keeper(key)
+    state = "CURRENT" if current == keeper_id else "STALE"
+    stamped = part.get("config_id") if isinstance(part, dict) else None
+    live_ident = shard_config_identity(key)
+    if state == "CURRENT" and stamped and live_ident and stamped != live_ident:
+        return "STALE", (
+            f" (run {keeper_id} is still designated, but its "
+            f"{resolve_role(key)[1]!r} config is now {live_ident}; this golden "
+            f"captured {stamped})"
+        )
+    if state == "CURRENT":
+        return state, ""
+    if current is None and PARTITION_KEY_SEP in key:
+        # Distinguish "the shard no longer designates this role" from an
+        # ordinary supersession — otherwise a typo'd or retired role reads
+        # identically to a golden that simply aged.
+        _iso, _, _role = key.partition(PARTITION_KEY_SEP)
+        return state, (
+            f" (keepers/{_iso.upper()}.json designates no config_partition "
+            f"role {_role!r})"
+        )
+    return state, f" (live keeper: {current})"
+
+
+def config_coverage(rel: str, keepers: dict) -> list[str]:
+    """Report per-config golden coverage for each partitioned ISO in a manifest.
+
+    A bare ``golden CURRENT`` line reports the ISO's FORWARD config and says
+    nothing about the rest of its partition, so a manifest covering one of
+    ERCOT's two configs reads exactly like full coverage. One line per
+    partitioned ISO states every config the shard designates as
+    ``CURRENT`` / ``STALE`` / ``UNCOVERED`` with its reason — ERCOT reads
+    *"forward CURRENT …; carveout-2023 UNCOVERED …"*.
+
+    ``UNCOVERED`` covers three distinct situations, named in the reason so they
+    are never conflated: no entry at all; only entries under a capture key
+    RETIRED by ruling (a historical record, deliberately not compared); or a
+    role whose capture key is retired outright. The ERCOT carve-out is the
+    third-plus-second case — uncovered BY RULING (R-AW), not by oversight.
+
+    Returns:
+        Report lines (possibly empty). This is a REPORT, never a failure: a
+        gate cannot demand a capture the owner retired, and coverage is not an
+        invariant of the manifest but of the capture programme.
+    """
+    lines: list[str] = []
+    for iso in sorted({resolve_role(k)[0] for k in keepers}):
+        rec = _load_shard(iso)
+        cfgs = [
+            c
+            for c in ((rec or {}).get("config_partition") or {}).get("configs") or []
+            if isinstance(c, dict) and c.get("role")
+        ]
+        if len(cfgs) < 2:
+            continue  # a one-config ISO has no coverage question to answer
+        parts: list[str] = []
+        for cfg in cfgs:
+            role = str(cfg["role"])
+            keys = sorted(
+                k
+                for k in keepers
+                if resolve_role(k)[0] == iso
+                and (resolve_role(k)[1] or "").lower() == role.lower()
+            )
+            live = [k for k in keys if k not in RETIRED_CAPTURE_KEYS]
+            if live:
+                key = live[0]
+                state, detail = live_state(key, keepers[key])
+                parts.append(f"{role} {state} [{key}]{detail}")
+                continue
+            retired_key = f"{iso}{PARTITION_KEY_SEP}{role}"
+            ruling = RETIRED_CAPTURE_KEYS.get(retired_key, "").split(" ", 1)[0]
+            if keys:
+                why = (
+                    f"only the RETIRED capture key {keys[0]} ({ruling}) — a "
+                    f"historical capture record, not compared to the live shard"
+                )
+            elif ruling:
+                why = f"capture key {retired_key} RETIRED ({ruling}); no entry"
+            else:
+                why = "no entry in this manifest"
+            parts.append(f"{role} UNCOVERED ({why})")
+        lines.append(f"{rel} ({iso}{COVERAGE_MARK}" + "; ".join(parts))
+    return lines
+
+
 def find_manifests() -> list[Path]:
     """Return every committed golden manifest, sorted by path."""
     return sorted(GOLDENS_ROOT.glob("*/manifest.json"))
@@ -324,6 +510,12 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
             f">= {MIN_SCHEMA_VERSION} (see the module docstring, defect A). Stage "
             f"tag {path.parent.name!r} is not on the LEGACY_V1_MANIFESTS ratchet "
             f"list, so it must be written by the current capture tool."
+        )
+    elif version > MAX_SCHEMA_VERSION:
+        fails.append(
+            f"{rel}: schema_version is {version!r} but this gate reads at most "
+            f"{MAX_SCHEMA_VERSION} — a manifest written by a newer capture tool "
+            f"must not be validated against fields this gate cannot see."
         )
 
     for key in FORBIDDEN_TOP_LEVEL_KEYS:
@@ -414,6 +606,47 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
                     f"the run's registered span (rule 22)"
                 )
 
+        # Schema v3: a partition entry says WHICH CONFIG it captured, in its
+        # own bytes. Optional at v2 (every committed v2 entry predates it) and
+        # required at v3 — the ratchet, applied to the block's contents and to
+        # its presence on a partition-keyed entry alike.
+        part = entry.get("partition")
+        v3 = isinstance(version, int) and version >= PARTITION_IDENTITY_SCHEMA_VERSION
+        if part is not None and not isinstance(part, dict):
+            fails.append(f"{where}: 'partition' must be an object, got {type(part)}")
+        elif isinstance(part, dict):
+            _iso, _role = resolve_role(key)
+            if part.get("iso") not in (None, _iso):
+                fails.append(
+                    f"{where}: partition.iso {part.get('iso')!r} != the key's ISO "
+                    f"{_iso!r}"
+                )
+            if (
+                PARTITION_KEY_SEP in key
+                and part.get("role") != key.partition(PARTITION_KEY_SEP)[2]
+            ):
+                fails.append(
+                    f"{where}: partition.role {part.get('role')!r} does not match "
+                    f"the role in the key"
+                )
+            if v3:
+                for req in REQUIRED_PARTITION_V3_KEYS:
+                    if req not in part:
+                        fails.append(
+                            f"{where}: schema v{version} partition block missing "
+                            f"{req!r} — a composed keeper's run id does not "
+                            f"identify a config, so the entry must name it "
+                            f"(config_id)"
+                        )
+                if not part.get("designated_years"):
+                    fails.append(f"{where}: partition.designated_years is empty")
+        elif v3 and PARTITION_KEY_SEP in key:
+            fails.append(
+                f"{where}: schema v{version} requires a 'partition' block on a "
+                f"config-partition entry — without it the entry names a role "
+                f"but not the config the role stood for"
+            )
+
         # --- A RETIRED capture key (owner ruling): a historical record. Every
         #     v2 invariant above still applied; the live-shard comparison does
         #     not, because the ruling retired the CAPTURE, not the record of
@@ -430,10 +663,8 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
             continue
 
         # --- The visible coupling. Reported, never failed. ---
-        current = live_keeper(key)
-        state = "CURRENT" if current == keeper_id else "STALE"
+        state, detail = live_state(key, entry)
         if state == "CURRENT":
-            detail = ""
             # R-AW: a CURRENT golden of a partitioned config replays exactly
             # the span the shard designates to that config — for the bare key,
             # the forward role's. The composed run's registered span is wider
@@ -449,23 +680,13 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
                     f"{_role!r} — a partitioned config's golden replays exactly "
                     f"its designated span (R-AW)"
                 )
-        elif current is None and PARTITION_KEY_SEP in key:
-            # Distinguish "the shard no longer designates this role" from an
-            # ordinary supersession — otherwise a typo'd or retired role reads
-            # identically to a golden that simply aged.
-            _iso, _, _role = key.partition(PARTITION_KEY_SEP)
-            detail = (
-                f" (keepers/{_iso.upper()}.json designates no config_partition "
-                f"role {_role!r})"
-            )
-        else:
-            detail = f" (live keeper: {current})"
         notes.append(
             f"{where}: {keeper_id} — provenance run "
             f"{'PRUNED from registry' if pruned else 'registered'}, "
             f"golden {state}{detail}"
         )
 
+    notes += config_coverage(str(rel), keepers)
     return fails, notes
 
 
@@ -504,8 +725,12 @@ def main() -> int:
         all_fails += fails
         all_notes += notes
 
-    legacy_notes = [n for n in all_notes if "LEGACY v1" in n]
-    live_notes = [n for n in all_notes if "LEGACY v1" not in n]
+    # Coverage lines are a report about the capture PROGRAMME, not entry
+    # findings — split off before any tally so they move no count.
+    coverage_notes = [n for n in all_notes if COVERAGE_MARK in n]
+    entry_notes = [n for n in all_notes if COVERAGE_MARK not in n]
+    legacy_notes = [n for n in entry_notes if "LEGACY v1" in n]
+    live_notes = [n for n in entry_notes if "LEGACY v1" not in n]
 
     for note in live_notes:
         print(f"  {note}")
@@ -520,16 +745,27 @@ def main() -> int:
             f"to list them"
         )
 
+    for note in coverage_notes:
+        print(f"  {note}")
+
     pruned = sum(1 for n in live_notes if "PRUNED" in n)
     stale = sum(1 for n in live_notes if "golden STALE" in n)
     retired = sum(1 for n in live_notes if "capture key RETIRED" in n)
     print(
-        f"golden-manifest: {len(paths)} manifest(s), {len(all_notes)} entr(ies) "
+        f"golden-manifest: {len(paths)} manifest(s), {len(entry_notes)} entr(ies) "
         f"({len(live_notes)} enforced / {len(legacy_notes)} legacy); of the "
         f"enforced, {pruned} with a pruned provenance run, {stale} stale vs the "
         f"live keeper, {retired} under a retired capture key (historical, not "
         f"compared)"
     )
+    if coverage_notes:
+        uncovered = sum(n.count("UNCOVERED") for n in coverage_notes)
+        print(
+            f"  partition coverage: {len(coverage_notes)} partitioned-ISO "
+            f"report(s), {uncovered} designated config(s) UNCOVERED — reported, "
+            f"never failed (the ERCOT carve-out is uncovered BY RULING: R-AW "
+            f"retired its capture key, so the gate must not demand it)"
+        )
     if pruned:
         print(
             "  note: a pruned provenance run is NOT a failure — keeper-only retention "
