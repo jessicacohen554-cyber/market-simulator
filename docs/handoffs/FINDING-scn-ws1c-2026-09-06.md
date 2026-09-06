@@ -298,8 +298,27 @@ before the adder branch — untouched, and no mass-cap run's behaviour changes.
 **No default moves beyond the ruled semantics.** No `ScenarioConfig` field is added, removed or
 re-defaulted; no bundle's field values change; no flag flips.
 
-**No file outside the lane's declared regions was touched**, so nothing is routed to SCN-DESK on
-that count.
+**No file outside the lane's declared regions was touched** apart from the two matrix base rows
+disclosed in §6.
+
+### 5.1 ROUTED TO SCN-DESK — a rule-28(c) breach on `main`, not this lane's
+
+`scripts/check_mechanism_matrix.py` **fails on pristine `origin/main`** at `bc77b189`
+(reproduced by checking out `origin/main` clean and running the checker):
+
+> `::error … absent-shared ratchet: shared field capacity_going_forward_bar_published_by_iso is
+> in neither the mechanism matrix … nor the mechanism-matrix-gaps.json absent_shared ratchet
+> (rule 28c). Add its row (plus a cell line in each mechanism-matrix/<ISO>.js shard), or name it
+> in the owning family row's def/note.`
+
+That field is the **capacity-expansion track's** (it landed with the capx D60-R3 merge), it is
+outside this lane's file regions, and rule 28(d) makes the cell the owning lane's to write —
+so SCN-WS1c does **not** fix it. It is reported here because it will turn the
+`mechanism-matrix-guard` CI job red on **every** open PR until that lane discharges the duty,
+including this one, and a reader of a red gate on this PR should not spend time looking in this
+diff for the cause. **This lane's own matrix state is clean:** with that one pre-existing error
+set aside, the checker reports integrity OK, keeper stamps matching, both ratchets OK, and all
+seven matrix files pass `node --check`.
 
 ---
 
