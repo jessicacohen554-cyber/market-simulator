@@ -11,8 +11,8 @@
     "capacity_market_clearing": true,
     "datacenter_load_path": "mid",
     "correlated_forced_outage": true,
-    "cache_key": "5e2c52ea81694c10",
-    "bundle": "/home/user/market-simulator/results/NEISO/5e2c52ea81694c10",
+    "cache_key": "8878d29743555b45",
+    "bundle": "/home/user/market-simulator/results/NEISO/8878d29743555b45",
     "solved_years": [
       2026,
       2027,
@@ -22,33 +22,33 @@
     ],
     "n_solved_years": 5,
     "error": null,
-    "total_wall_s": 320.4,
-    "global_peak_rss_mb": 3428.1,
+    "total_wall_s": 326.4,
+    "global_peak_rss_mb": 3682.7,
     "per_year_perf": [
       {
         "year": 2026,
-        "wall_s": 113.6,
-        "peak_rss_mb": 3316.2
+        "wall_s": 112.1,
+        "peak_rss_mb": 3252.9
       },
       {
         "year": 2027,
-        "wall_s": 47.6,
-        "peak_rss_mb": 3058.6
+        "wall_s": 42.6,
+        "peak_rss_mb": 2876.4
       },
       {
         "year": 2028,
-        "wall_s": 68.3,
-        "peak_rss_mb": 2999.5
+        "wall_s": 51.9,
+        "peak_rss_mb": 2822.5
       },
       {
         "year": 2029,
-        "wall_s": 44.6,
-        "peak_rss_mb": 3428.1
+        "wall_s": 61.9,
+        "peak_rss_mb": 3564.0
       },
       {
         "year": 2030,
-        "wall_s": 46.2,
-        "peak_rss_mb": 3190.1
+        "wall_s": 57.7,
+        "peak_rss_mb": 3682.7
       }
     ],
     "year_summary": [
@@ -79,9 +79,9 @@
       {
         "year": 2028,
         "reserve_margin": 0.0394,
-        "lw_price": 55.66,
+        "lw_price": 52.63,
         "max_hourly_price": 283.6,
-        "co2_mt": 15.86,
+        "co2_mt": 9.87,
         "hours_ge_500": 0,
         "retire_mw": 0.0,
         "builds_thermal_mw": 0.0,
@@ -91,9 +91,9 @@
       {
         "year": 2029,
         "reserve_margin": 0.044,
-        "lw_price": 60.43,
+        "lw_price": 51.59,
         "max_hourly_price": 284.9,
-        "co2_mt": 14.02,
+        "co2_mt": 4.76,
         "hours_ge_500": 0,
         "retire_mw": 1.6,
         "builds_thermal_mw": 0.0,
@@ -103,9 +103,9 @@
       {
         "year": 2030,
         "reserve_margin": 0.084,
-        "lw_price": 67.67,
-        "max_hourly_price": 87.3,
-        "co2_mt": 13.37,
+        "lw_price": 54.02,
+        "max_hourly_price": 84.9,
+        "co2_mt": 6.11,
         "hours_ge_500": 0,
         "retire_mw": 0.0,
         "builds_thermal_mw": 1000.0,
@@ -113,7 +113,7 @@
         "builds_storage_mw": 0.0
       }
     ],
-    "started_utc": "2026-09-06T04:24:07Z",
+    "started_utc": "2026-09-06T19:29:21Z",
     "bridged_years": [],
     "campaign": "scn-campaign-load-2026-09-06",
     "case": "REF",
@@ -206,11 +206,11 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-09-06T04:24:07Z",
+  "registered_utc": "2026-09-06T19:29:21Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "1ffd11b7b066",
-    "scored_at_date": "2026-09-06T04:24:07Z",
-    "cache_epoch": "5e2c52ea81694c10"
+    "scored_at_sha": "1b95d4307cb6",
+    "scored_at_date": "2026-09-06T19:29:21Z",
+    "cache_epoch": "8878d29743555b45"
   }
 }
