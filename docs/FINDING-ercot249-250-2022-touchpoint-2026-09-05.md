@@ -257,3 +257,60 @@ the environment confounds the comparison in §1.
    **only** on 2023–2025.
 4. Consider extending the ladder to 2021 and 2020 once (1) lands — both years have GTC raws,
    `actual_tail.json` rows and ORDC reserve series already committed.
+
+---
+
+## Addendum 1 (2026-09-06, session ercot-251) — ONE arm survives on the site; the FORWARD arm is pruned
+
+**Owner ruling, verbatim:** *"Register and fold the better performing one into the keeper
+there's no reason to keep 2 configs"*.
+
+**What changed.** The ERCOT lane now carries the **CARVE-OUT** arm alone —
+`2026-09-05-run250-2022-touchpoint-carveout`, folded into keeper
+`2026-09-05-ercot248-two-config-keeper` by its `holdout.keeper` stamp, so 2022 renders as an
+ordinary year column in the keeper's own report (rule 30(a) `[R-TOUCHPOINT-FOLD]`). The
+**FORWARD** arm `2026-09-05-run249-2022-touchpoint-forward` was pruned from all three stores
+(`scripts/prune_iso_runs.py --iso ERCOT`). §§0–7 above are UNCHANGED and remain the record of
+both arms: **this addendum retracts nothing**, and §1's table is the surviving citation for
+the pruned arm's numbers, as is git history for its bytes (rule 15 `[R-DASHBOARD]`).
+
+**Correction to a claim made in the ercot-251 session, before it acted.** Both arms were
+already registered (sidecar + payload + bench part) and already stamped on 2026-09-05 — an
+earlier reading that they were unregistered grepped `ercot249`/`ercot250` against run ids that
+are `run249`/`run250`. No re-solve was needed; one was launched on that mistaken premise and
+killed before writing any artifact. The genuine defect was the duplication the owner names:
+two runs claiming the same held-out year on the same keeper.
+
+**The governance point, at full magnitude.** §0's designation — declared ex ante in
+`calibration-complete.json` *"so the touchpoint can never be config-shopped after its result is
+seen"* — named the FORWARD config for 2022. That designation is now **superseded by owner
+ruling**, and the surviving arm **was chosen after both results were seen**, on the 2022 result
+itself. The marker entry records the supersession with the prior text preserved verbatim.
+
+**What the selection moves: the price criteria only.** On C1 — the criterion 2022 actually
+fails, and the subject of §2 — the arms are **0.2 TWh apart** (−10.39 vs −10.59 TWh against a
+±8.00 TWh band). The separation is C3a (+0.0 % vs −1.5 %), C3b (0.220 vs 0.250) and C3c
+(64 h vs 38 h against a 196 h actual tail). **No determination moves.**
+
+**Re-score at rubric v3.6** (committed artifacts only, no solve). §1's table reports three
+failures because both arms' `metrics.json` were written at **v3.5**. Under the current scorer,
+v3.6 drops the C3c lone-failure condition on an out-of-training year, so C3c is the
+auto-ledgered holdout caveat and **both arms read NOT-YET on {C1, C3b}** — one fewer failing
+criterion on each side, and the same verdict. §1's paragraph *"C3c does not reclassify … guard
+(a) requires it to be the lone failure"* was correct at v3.5 and is superseded by v3.6.
+
+**§2 is unchanged and quantified further.** Measured on the kept arm's committed hourlies:
+**zero dump and zero slack in all 8,760 hours**, so the +6.42 TWh renewable excess displaces
+thermal one-for-one; a first-difference regression of each class on renewables (controlling for
+demand) puts CC_REGULAR's share of a marginal renewable MW at **0.555** (ST_GAS 0.206,
+CT_PEAKER 0.083, coal 0.052, CC_CHP 0.036). Closing C1 needs **+2.39 TWh of the 6.42**, a 37 %
+capture against a measured 56 %, and the other classes absorb their shares without leaving
+band (ST_GAS ≈ +3.7, coal ≈ +4.0, CT ≈ −0.8 TWh). §8 item 1 — the HSL 2022 upload — therefore
+stands as the first-order fix, still owner-side, still zero-DOF. Caveat: an hourly-difference
+elasticity is a short-run response, not the level response to removing a persistent gross-up;
+it argues for sufficiency, only the re-run proves it.
+
+**Unchanged by this action:** rule 22 (2022 is validation tier, ITERABLE, model-SELECTION
+evidence, never a certified out-of-sample skill number; 2019 remains frozen and never granted),
+rule 30(c) (ERCOT stays **CALIBRATED** on the train tier 2023–2025), the keeper, every recipe,
+the DOF ledger, and `mechanism-matrix/ERCOT.js`. No LP was solved.

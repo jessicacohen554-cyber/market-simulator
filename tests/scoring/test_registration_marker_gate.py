@@ -280,10 +280,24 @@ class TestCommittedHoldoutSidecarsStillValid:
             refusals = hp.registration_refusals(years, iso, marker, freeze)
             assert refusals == [], f"{path.name}: {refusals}"
             checked.append((path.stem, iso, sorted(years)))
-        # The five rule-32 validation touchpoints on main at 2026-09-06. A new
+        # The FOUR rule-32 validation touchpoints on main at 2026-09-06. A new
         # holdout run adds a row here; a row VANISHING means a registered
         # holdout bundle was pruned or its years changed.
-        assert len(checked) >= 5, checked
+        #
+        # WAS 5 until 2026-09-06 (session ercot-251). ERCOT had registered BOTH
+        # halves of its two-config keeper on 2022 (run249 forward, run250
+        # carve-out), so one held-out year was claimed twice on one keeper. The
+        # owner ruled -- verbatim: "Register and fold the better performing one
+        # into the keeper there's no reason to keep 2 configs" -- and run249 was
+        # pruned from all three stores, leaving run250 folded into
+        # 2026-09-05-ercot248-two-config-keeper. This tripwire fired exactly as
+        # designed and the drop is the RECORDED decision, not a silent loss:
+        # frontend/data/backcast/calibration-complete.json
+        # (complete.ERCOT.config_2022_designation, which the same ruling
+        # superseded), docs/calibration-log/ercot.md (ercot-251) and
+        # docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md Addendum 1
+        # carry the pruned arm's numbers; git history carries its bytes.
+        assert len(checked) >= 4, checked
         assert {iso for _, iso, _ in checked} <= {"ERCOT", "NEISO", "PJM"}, (
             "every registered holdout run must belong to a `complete` ISO"
         )

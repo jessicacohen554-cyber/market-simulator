@@ -13222,4 +13222,84 @@ belongs to a later 2023–2025 session). No mechanism tested ⇒
 `mechanism-matrix/ERCOT.js` untouched (matrix consulted and cited). No keeper
 changed.
 
-**Next shorthand: ercot-251** (ercot-199 remains unclaimed)
+## ercot-251 — 2026-09-06 — ONE 2022 TOUCHPOINT, NOT TWO (owner ruling, ZERO-SOLVE): the ERCOT lane keeps the **CARVE-OUT** arm `2026-09-05-run250-2022-touchpoint-carveout` folded into the keeper and prunes the FORWARD arm; the ex-ante "2022 runs the forward config" designation is SUPERSEDED, and the after-the-result nature of the choice is recorded at full magnitude
+
+**Owner instruction (verbatim, 2026-09-06):** *"Register and fold the better
+performing one into the keeper there's no reason to keep 2 configs"*.
+
+**(0) What was ALREADY true, corrected in this session.** Both 2022 arms were
+already REGISTERED (sidecar + `runs/<id>.js` payload + `bench/ERCOT/2022.json.gz`)
+and already STAMPED (`holdout.keeper` → `2026-09-05-ercot248-two-config-keeper`),
+i.e. rule 15 `[R-DASHBOARD]` and rule 30(a) `[R-TOUCHPOINT-FOLD]` were satisfied on
+2026-09-05. An earlier reading in this session that they were unregistered was
+WRONG — it grepped the registry for `ercot249`/`ercot250` when the run ids are
+`run249`/`run250` — and no re-solve was needed. A replay was launched on that
+mistaken premise and **killed before it wrote any artifact**; its scratch dir was
+removed and nothing from it reached the tree. The only real defect was the one the
+owner names: **two runs claiming the same held-out year on the same keeper**, so
+the keeper's report offered 2022 twice.
+
+**(1) What changed — three stores, one run.** `scripts/prune_iso_runs.py --iso ERCOT
+--keep 2026-09-05-ercot248-two-config-keeper --keep 2026-09-05-run250-2022-touchpoint-carveout`
+deleted the forward arm's sidecar, payload and bundle dir together (no
+`--force-uncite` needed: it is cited by no governance surface).
+`scripts/build_status.py --iso ERCOT` rebuilt the status part — 0 `run249`
+references remain, ERCOT still reads **CALIBRATED**. **No LP was solved, no
+parameter tuned, no recipe changed, no keeper changed, no mechanism tested**
+(`mechanism-matrix/ERCOT.js` untouched; rule 26 `[R-MECH-MATRIX]` duty (b) not
+triggered).
+
+**(2) THE GOVERNANCE POINT, stated at full magnitude.** The `complete` marker's
+`config_2022_designation` had DECLARED EX ANTE, before any 2022 solve, that the
+touchpoint runs the FORWARD config — in its own words, *"so the touchpoint can
+never be config-shopped after its result is seen; changing this designation is a
+new owner ruling."* **This is that new owner ruling, and the arm it keeps was
+chosen after both results were seen, on the 2022 result itself.** The ruling is
+recorded, not laundered: the marker entry carries the supersession with the prior
+designation preserved verbatim, and says plainly what the choice does and does not
+move.
+
+**(3) What the choice actually moves — the price criteria only.** On C1, the
+criterion the touchpoint actually fails, the two arms are **0.2 TWh apart**:
+
+| | 249 FORWARD (pruned) | 250 CARVE-OUT (kept) | band |
+|---|---|---|---|
+| C1 CC_REGULAR | −10.59 TWh | −10.39 TWh | ±8.00 TWh |
+| C3a mean LMP | −1.5 % | **+0.0 %** | ±10 % |
+| C3b NRMSE | 0.250 | **0.220** | ≤0.20 |
+| C3c tail (RT >$200) | 38 h (0.19×) | **64 h (0.33×)** | vs 196 h actual |
+| C2 / C4 / C6 / C8 | PASS | PASS | — |
+
+Both arms read **NOT-YET on {C1, C3b}** under rubric **v3.6** — note this differs
+from the arms' committed `metrics.json`, which were scored at v3.5 and list three
+failures: on an out-of-training year v3.6 drops C3c's lone-failure condition, so
+C3c is the auto-ledgered holdout caveat on either arm. Re-scored this session from
+committed artifacts only (`scripts/calibration_verdict.py`, no solve).
+
+**(4) Rules 22 and 30(c) unchanged.** 2022 is validation tier and ITERABLE —
+model-SELECTION evidence, never quotable as a certified out-of-sample skill number
+(that is 2019 alone, spent once, still frozen and never granted for any ISO). And a
+held-out year never downgrades the ISO: ERCOT's determination is the train-tier
+2023–2025 verdict, **CALIBRATED**, with the 2022 NOT-YET reported beside it.
+
+**(5) The 2022 C1 miss is unchanged and still an INPUT gap.** No action here
+touches it. It remains the absent `data/raw/ercot-hsl/np6/2022/` archive ⇒ both
+curtailment ceilings self-disable ⇒ renewables ride
+`RENEWABLE_BOUND_FORECAST_UNCURTAILED` (+4.84 TWh wind, +1.58 TWh solar) displacing
+gas CC. Measured on the kept arm's committed hourlies this session: **zero dump and
+zero slack in all 8,760 hours**, so the excess displaces thermal one-for-one, and a
+first-difference regression of each class on renewables (controlling for demand)
+puts **CC_REGULAR's share of the marginal renewable MW at 0.555** (ST_GAS 0.206,
+CT_PEAKER 0.083, coal 0.052). Closing the C1 band needs +2.39 TWh of the 6.42 TWh
+excess — a 37 % capture against a measured 56 % — so the HSL upload is the
+first-order fix and plausibly sufficient, though only the re-run proves it. Owner
+action: drop the NP4-732-CD / NP4-737-CD (or NP4-742/745) 2022 archives into
+`data/raw/ercot-hsl/np6/2022/`, run `scripts/data/build_ercot_hsl.py --year 2022`,
+re-run the touchpoint. Zero DOF; rule 22's "what is held out is the SCORE, never
+the DATA" is the authority.
+
+**Gates at HEAD:** `check_registry_payload_parity` OK, `audit_keepers --iso ERCOT`
+PASS, `build_status.py --check --iso ERCOT` in sync. Full record:
+`docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §Addendum 1 (2026-09-06).
+
+**Next shorthand: ercot-252** (ercot-199 remains unclaimed)
