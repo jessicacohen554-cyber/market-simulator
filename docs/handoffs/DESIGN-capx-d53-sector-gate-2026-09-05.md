@@ -245,6 +245,31 @@ fleet the cap counts. The realized-year execution floor (D42 (c)) tests the post
 unchanged. The reserve-margin backstop (BLK-10) and the CCS retrofit screen (step 2) are
 untouched.
 
+> **CROSS-REFERENCE, 2026-09-06 (capx D58 → owner ruling Q53 → capx D78) — the "same seam, set
+> union" construction above was CORRECT FOR MISO AND WRONG IN GENERAL, and it is no longer how
+> the gate enters the screen.** `FINDING-capx-d58-2026-09-06.md` §3 proved at the line that on
+> an ISO with the D57 capacity-supply clearing armed (PJM alone at that date) the
+> `exempt_unit_ids` union did a second job this section never claimed: a gated unit never
+> entered `margins`, so it never entered the sell-offer stack, so its accredited MW fell into
+> the $0 price-taking block — 34,172.4 MW moved, `n_offers` 1,370 → 1,000, PJM's 2022 clearing
+> price 67.76 → 61.21 $/MW-day (−9.67 %), and 41 merchant rows / 2,910.2 MW failed that the
+> control passed, inverting this design's own §3 P5 sign line (economic exits ROSE). The owner
+> ruled (Q53, reading 1) that a sector-1 unit MUST STILL OFFER at its cost-based net-ACR price
+> — PJM's must-offer requirement (Manual 18 Rev 62 §1.2 / §5.4.1 / §5.4.7) keys on
+> existing-and-in-footprint, never on ownership — and that only its exit is exempt. Since capx
+> D78 (`DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md` §3) the gated set enters
+> `apply_economic_retirements` on its OWN parameter, `exit_exempt_unit_ids`: evaluated,
+> offered and settled like any screened unit, then partitioned out of `margins` after the
+> clearing and before either decision rule. **The table above and the sentence "a gated unit
+> is never in `margins`" describe the exit decision only**: a gated unit is now in `margins`
+> for evaluation and offering and leaves it before anything that decides an exit reads it, so
+> every EXIT-side claim here (never decided / capped / re-confirmed / reversed / pipelined; the
+> cap, the floor, the backstop untouched) is unchanged and re-asserted by test, and on MISO —
+> where the clearing is off — the two constructions are byte-identical. The dated-plant
+> exemption (row a/b) keeps its D54 §4.2 price-taker reading and is routed, not moved (D78
+> design §4). This note corrects the record by reference; the text above is preserved as the
+> design D53 measured on MISO.
+
 ### 1.9 The additions-screen mirror — NAMED, not built
 
 Utility builds are IRP-driven too: a regulated utility adds a CC or a solar farm because its

@@ -1,0 +1,18 @@
+{
+  "head_control_full_2021_2025": "15a723ba3b6dc856",
+  "head_arm_full_2021_2025": "bc387828f931e0ac",
+  "head_control_screen_2021_2023": "afda79ba04cbfdbf",
+  "head_arm_screen_2021_2023": "d527c3299b8c00b5",
+  "d58_keys_at_99c75b3d": {
+    "control_full": "aef81c84c4609c76",
+    "arm_full": "f546407cf3489761",
+    "control_screen": "e47fee08f5f37d6f",
+    "arm_screen": "0265ce2b262ad37f"
+  },
+  "reverted_d65b_control_full": "aef81c84c4609c76",
+  "reverted_d65b_arm_full": "f546407cf3489761",
+  "reverted_d65b_control_screen": "e47fee08f5f37d6f",
+  "reverted_d65b_arm_screen": "0265ce2b262ad37f",
+  "move_attributed_to_d65b_entirely": true,
+  "arm_differs_from_control": true
+}
