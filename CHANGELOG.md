@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-09-06 — wallclock B: the cold-rebuilt P1 seeded from the same year's P0 basis (WARM-START CLASS; calibration default ON)
+
+Wallclock desk item B (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3). Owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
+instruction. Wall-clock only: **the LP, its objective, bounds and rows are untouched**; the
+change is **WARM-START CLASS, not byte-identical** — it moves the simplex starting point of the
+cold-rebuilt P1 on the three bridge ISOs (ERCOT / NYISO gas commitment bridges, CAISO RA
+must-offer) and nothing else. No `ScenarioConfig` field or default, no keeper shard / marker /
+matrix shard / registry / workflow edit, nothing promoted, nothing registered; the probe
+bundles were deleted.
+
+- **The change.** `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 model's basis
+  is exported (the export the cross-year holder already took there) before `model = None` /
+  `malloc_trim()` (A-6 kept) and installed on the second `DispatchModel` through
+  `apply_cross_year_basis` (identity column map, `alien=True`) before its first solve. An
+  adaptive re-solve pass (C-1b `reuse_p0_from`) is seeded from the previous pass's P1 basis
+  when that pass exported one (new `export_p1_basis` kwarg → `EnergySolveResult.p1_basis`; set
+  by the ercot-221 pass 1 and every ercot-230 iteration), else from the P0 basis.
+- **Gate — the P-2 shape.** `MARKET_SIM_P1_BASIS_SEED`, global default OFF; the calibration
+  CLIs default it ON through `run_calibration.resolve_p1_basis_seed_default`
+  (`--no-p1-basis-seed` opts out, an explicit env var is honored). Armed only inside the
+  cross-year gate and only on the backcast callers, so `MARKET_SIM_WARMSTART_XYEAR=0` (the
+  goldens / replay / merge-base-control pin) and the forecast path (explicit `xyear_warmstart`
+  bool) stay cold and byte-identical; `--report` / `--replay-bundle` / `--rebuild-benchmark`
+  and the direct `solve_and_persist` callers stay OFF.
+- **A latent crash on main, fixed here.** The cold-P1 branch exported the cross-year basis
+  from `model` guarded on the gate but not on the model's existence; a reused-P0 pass (C-1b)
+  has none, so under the calibration default `XYEAR=1` every ERCOT adaptive pass 2 raised
+  `AttributeError` at that export (reproduced at the merge base on the trivial LP; the s3
+  measurements ran under the `XYEAR=0` pin and never saw it). Pinned by test with the seed off
+  and on.
+- **Tooling.** `capture_keeper_goldens.py`'s fidelity oracle no longer fails on the `years`
+  key: since R-AW / Y-14 the bare `ERCOT` key replays the forward config on its designated
+  2024–2025 span while the composed keeper's `meta.json` records 2023–2025, so every post-Y-14
+  ERCOT capture was refused on that key alone (the subset invariant is asserted at the solve
+  site). The HiGHS solve log line now carries `simplex iterations N, objective X` (reads after
+  `h.run()`; byte-inert).
+- **Gates.** <!-- WC_B_CHANGELOG_GATES -->
+- Docs: `docs/cross-year-warmstart.md` "Same-year P1 basis seed"; the evidence record
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B; the memo's decision block;
+  `tests/unit/pipeline/test_xyear_warmstart_default.py` +13 tests.
+
 ## 2026-09-06 — wallclock A-4: the year-1 `data_prep` premium re-profiled after A-1/A-2; one site memoized on disk (byte-identical)
 
 Wallclock desk item A-4 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2). Wall-clock
