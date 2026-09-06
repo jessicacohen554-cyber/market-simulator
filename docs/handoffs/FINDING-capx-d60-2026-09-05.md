@@ -306,6 +306,48 @@ in the first place. The probe bundle is a throwaway diagnostic under rule 29 and
 outside `results/`; it never reaches `main` (rule 29(c)), and these four numbers are the whole
 record of it.
 
+### 5.0e A process defect against myself: I rebased under a running solve, and killed the leg for it
+
+**What happened.** Leg 3 (CAISO) launched at 01:54:41 on HEAD `81022b2d`+this lane's commits.
+Four minutes in, a routine `git fetch && git rebase origin/main` — the discipline this program
+requires *before every push* — replayed the branch onto `bc77b189`, which had just taken capx
+D62's build. `git rebase` checks out the new tree, so **four solve-path files were rewritten on
+disk at 01:59:11 while the LP was running**: `config/scenarios.py`,
+`config/capacity_market.py`, `model/capacity_evolution/retirements.py` and
+`data/avoidable_cost_rate.py` (measured by mtime against the solve's own start time).
+
+**Why that is fatal to the run rather than merely untidy.** Two independent reasons, and either
+one alone is disqualifying:
+
+1. **Provenance.** `write_run_config` stamps `git.sha` when it writes, i.e. at the *end* of the
+   run. The bundle would have recorded `bc77b189` for a run whose capacity-evolution code was
+   `81022b2d`'s for its first four minutes. Every blast-radius classification in the section
+   above is computed from exactly that field — a lane that spent this session measuring which
+   side of a code boundary each committed bundle sits on cannot then commit a bundle whose own
+   stamp is false.
+2. **Code mixing.** CPython caches modules after import, so already-imported code is safe; a
+   module imported *lazily* later is not. `data/avoidable_cost_rate.py` is precisely that kind
+   of on-demand import inside the capacity-evolution path, and D62 changed it. The run could
+   have been a genuine mixture of two source trees, undetectably.
+
+**What was done.** The leg was killed, the partial bundle deleted, and the leg re-run from zero
+at the settled HEAD `bc77b189`. **Cost: ~5 minutes.** No partial artifact reached `results/` and
+none reached `main`.
+
+**The re-check the restart required, and its result.** capx D62 added a `ScenarioConfig` field
+(the PJM published-ACR bar, gated default-off), so STOP 1 had to be re-read at the new HEAD
+rather than assumed to carry. Re-resolved through the harness path: **17 of 17 keys unmoved**,
+including all three legs' targets (`29f8eb372810195f`, `09996eca71ee80fd`,
+`f04fd06348e1623d`) and both pinned defaults. D62's field is measured key-neutral, exactly as a
+gated default-off field should be.
+
+**The general lesson, worth more than the five minutes.** *"Rebase before every push"* and
+*"never mutate the working tree under a running solve"* are both correct and they conflict
+whenever a solve outlives a fetch. The resolution is ordering, not judgement: **rebase between
+legs, never during one.** This lane now enforces it mechanically — the leg driver records
+`HEAD` before the solve and refuses to score or register if `HEAD` moved during it
+(`exit 90`), so the failure mode cannot recur silently even if the discipline lapses again.
+
 
 ---
 
