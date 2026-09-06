@@ -297,7 +297,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "O", fc: "O" },
-    datacenter_load_block: { cell: "K", fc: "K" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0+T1-F (scn-ws4-probe): the high path enters the TAIL regime in 2030 — dc_E>=E, block added on top, energy 800->1,797 TWh and peak 94->267 GW in one year, so 53.40 % of load sheds in all 8,760 h. Below that, RELOCATE flattens: 2026 peak -9.07 GW while the minimum rises +9.94 GW (LF 0.664->0.776), so I12 reads IN BAND 2027-2029 where REF fails all four — an artefact, never adequacy. Shape dominates volume: LOAD-HI vs LOAD-HI-ORGANIC carry the same energy and near-identical CO2 (202.85 vs 203.94 Mt) at $36.23 vs $80.34 LW and unserved 0.0 vs 143.4 GWh" },
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "O", ev: "fh-1 gate probe (docs/handoffs/fh-1-full-forward-harness-2026-08.md §7); FFR-3Q-3 five-year re-cut (docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md; runs ercot-2021-2025-t1ff-armr-ffr3q3-pipeline / -legacy)" },
