@@ -319,6 +319,18 @@ frontend/data/forecast/program-status.js
 /results/scn-ws4-probe-t1f/*/*/ERCOT/
 /results/scn-ws4-probe-t1f/*/*/NEISO/
 /results/scn-ws4-probe-t1f/*/*.log
+# SCN-WS5A-LOAD Stage A-LOAD campaign (results/scn-campaign-load-2026-09-06/):
+# same class as the probe trees above, with one difference worth stating — this
+# campaign's per-leg out-dirs are ALREADY slim by construction, because
+# run_ces_leg.py solves into the DEFAULT results/<ISO>/<cache_key>/ cache
+# (redirect_cache=False, so the bundle and report can assemble legs by key) and
+# that tree is ignored higher up. So each leg's out-dir holds only its
+# full_horizon_summary.json + run_config.json, which ARE committed as the
+# evidence behind docs/handoffs/FINDING-scn-ws5a-load-<iso>-2026-09-06.md,
+# alongside each ISO's matrix bundle and delta-report tables. Only stray logs
+# are ignored here.
+/results/scn-campaign-load-2026-09-06/*/*.log
+/results/scn-campaign-load-2026-09-06/*/*/*.log
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
