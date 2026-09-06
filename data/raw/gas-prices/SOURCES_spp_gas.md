@@ -78,8 +78,72 @@ Permian gas has cleared below zero when takeaway is constrained. They are
 carried verbatim. Any consumer that floors fuel cost at zero should do so
 explicitly and say why, rather than treating the print as bad data.
 
-## Back years
+## Back years — 2019-2022 LANDED 2026-09-06 (SPP-15)
 
-2019-2022 and 2026 are available in the same workbooks (they span 2002-01
-onward) and are a later rule-22 intake, not this lane's. Nothing here is
-solved or scored.
+`eia_delivered_gas_{OK,KS,TX,NM}_monthly_2019-2022.csv` — the same four EIA
+series `N3045<ST>3`, same schema, same $/Mcf units, cut from the **same
+committed workbooks** for 2019-01 .. 2022-12. Landed by lane SPP-15
+(`docs/handoffs/FINDING-spp-15-2026-09-06.md`; charter
+`docs/multi-iso/spp-addition-plan-2026-09.md` §8 SPP-15, r#4 am.1; §6 row 15).
+
+**No new evidence workbook is committed, because there is nothing new to
+commit.** The four `hist_xls/N3045<ST>3m.xls` workbooks were re-fetched from
+`https://www.eia.gov/dnav/ng/hist_xls/` on 2026-09-06 (HTTP 200, all four) and
+are **sha256-identical** to the committed `eia_N3045<ST>3m_2026-09-06.xls`
+files — EIA has published no revision, so the committed workbooks remain the
+evidence for the back years too.
+
+**The transcription is verified, not asserted.** The cut used here reproduces
+all four committed `_2023-2025.csv` files **byte-identically** (`cmp` clean on
+OK, KS, TX and NM) from those workbooks before it was applied to the
+2019-2022 window — so the back-year files are the same convention, not a
+parallel one. Same NA sentinel, same 2-decimal value format, same CRLF.
+
+**Rule 22 `[R-HOLDOUT]`: DATA PREP, not a spend.** Nothing solved, scored or
+registered; SPP holds no tier marker and none is claimed.
+
+| State | 2019 n | 2020 n | 2021 n | 2022 n | 2019 mean | 2020 mean | 2021 mean | 2022 mean | 2022 range |
+|---|---|---|---|---|---|---|---|---|---|
+| OK | **0** | **0** | **0** | 12 | — | — | — | 7.03 | 5.47–9.47 |
+| KS | 12 | 12 | 12 | 12 | 3.11 | 2.69 | 10.43 | 7.27 | 5.43–9.68 |
+| TX | 12 | 12 | 12 | 12 | 2.43 | 2.15 | 9.52 | 6.34 | 4.50–8.69 |
+| NM | 12 | 12 | 12 | 12 | 1.42 | 1.67 | 5.97 | 4.64 | 2.87–6.18 |
+
+### The Oklahoma gap is much larger than the 2025 hole above
+
+`N3045OK3` publishes **149 months in total, and NOTHING between 2014-04 and
+2021-12** — the series resumes at 2022-01, runs to 2024-12, and stops again
+(the 2025 hole this file already records). Published months per year:
+2013 → 9, **2014 → 3, 2015-2021 → 0**, 2022 → 12, 2023 → 12, 2024 → 12,
+2025 → 0. So **all 36 months of 2019, 2020 and 2021 are `NA`** in
+`eia_delivered_gas_OK_monthly_2019-2022.csv`, and only 2022 carries values.
+
+This is EIA's own publication record, visible in the committed workbook — it
+is carried as absence and **never filled** (rule 14 `[R-ACCURATE]`). It widens
+the problem already flagged for SPP-32 rather than changing it: of the seven
+years 2019-2025, Oklahoma delivered gas exists for **three** (2022, 2023,
+2024). Oklahoma is the most SPP-relevant of the four states (OKGE + CSWS +
+WFEC + GRDA are ~36 % of SWPP demand), so a state-series-per-zone mapping
+cannot lean on OK alone. The same two routes apply and the same fallback is
+still wrong: a silent substitution of Henry Hub or a national average is a
+fitted input in all but name. Either document a neighbouring-state
+substitution (KS is published for every month of 2019-2025) or take the
+pipeline-hub route (Panhandle Eastern / NGPL Mid-Continent).
+
+### February 2021 is real
+
+Winter Storm Uri prints **$65.23/Mcf (KS)**, **$61.88 (TX)** and **$24.82
+(NM)** for 2021-02, against $2.90-$3.78 in the neighbouring months — a 17-21x
+monthly spike. These are not data errors and are carried verbatim; the same
+event is the `MISO` −5,340 MW interchange print of 2021-02-15 recorded in
+`../eia-930-interchange/README.md`. Any 2021 fuel-cost handling that clips
+outliers will delete the single most important month of the year.
+
+New Mexico's negative-basis behaviour also predates the window this file
+already documents: 2019 runs down to **$0.47/Mcf** (2019-08) — same
+Permian/San Juan takeaway story, not yet below zero.
+
+### Still out of scope here
+
+2026 and pre-2019 are in the same workbooks and are not landed by this lane.
+Nothing here is solved or scored.
