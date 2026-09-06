@@ -425,3 +425,132 @@ PR** — CI enforces that half. Nothing is stamped in phase 0, because nothing w
 .venv/bin/python docs/handoffs/d76/peak_census.py          # §2, ~6 min, zero LP
 .venv/bin/python docs/handoffs/d76/i7_i12_reading.py       # §3.2, seconds, committed artifacts only
 ```
+
+---
+
+# PHASE 1 — the gate, and the PJM screen. **SCREEN GATE: PASS. NOTHING ARMS.**
+
+Phase 1 released by the owner 2026-09-06. Pre-registered in
+`PRECOMMIT-capx-d76-measured-screen-peak-2026-09-06.md`, **pushed before any solve** (`8ad280ed`,
+corrected `83970d7a`/`c6ec71a9`). Instruments: `docs/handoffs/d76/screen_gate.{py,json}`.
+
+## 5. What was built
+
+`capacity_screen_peak_measured_hindcast: bool = False` — one gate, one seam (`runner.py:2094-2106`),
+**zero scalar fields, zero free parameters**. Armed, and only under the LP's own branch predicate
+(`config.hindcast and not config.is_crossover_forward_year(year)`), the capacity screens' peak is the
+solve year's measured load. It **replaces** the de-grown peak (rule 19); the measured array is built
+once per year by the new shared constructor `runner._hindcast_measured_demand` and the LP's own
+`year_base_demand` **reuses that same object**, so the screens and the LP cannot be handed two
+different measured loads and an armed year performs exactly the demand reads an unarmed year does.
+
+Registered in `_CACHE_KEY_OPTIONAL_FIELDS` (at its declared `False`),
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` and `TIER_TAGS` in the same commit as the field; harness flag
+`--capacity-screen-peak-measured-hindcast`; matrix base row + all six ISO shard cells (rule 28c,
+`check_mechanism_matrix --base origin/main`: 0 errors). Twelve tests
+(`tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py`): 9 passed, 14 subtests.
+
+## 6. The screen — PJM, screen year 2023, window 2021-2023, both legs at the same HEAD
+
+Control `afda79ba04cbfdbf` (explicit OFF; **equal to the bare recipe key** for this window) vs arm
+`097f51b894d8540c`. Solved `[2021, 2023]`, bridged `[2022]`, **sequentially** — the D67 lane measured
+two concurrent PJM per-plant LPs at ~9 GB each OOM this 15 GB box and lost a leg to the kernel
+silently, so rule 12's two-invocation allowance was deliberately not taken.
+
+> **Correction to PRECOMMIT §3, recorded against interest.** The PRECOMMIT names the keys as
+> `36f6240ced74ebb5` / `46971ddf07bdeb18`. Those literals were computed **without**
+> `--entry-screen-diagnostics`, which both legs were actually run with; with it they are
+> `afda79ba04cbfdbf` / `097f51b894d8540c`, reproduced exactly by the resolver. **The property the
+> STOP asserts is untouched** — the control key equals the bare 2021-2023 key digit for digit and the
+> arm keys distinctly — only the transcription was wrong. (`afda79ba04cbfdbf` is independently the
+> key the D78 lane records as its own PJM 2021-2023 `control-P`, which confirms the control leg
+> reproduces the shipped bare recipe for this window.)
+
+### 6.1 STOP gates
+
+| STOP | verdict | evidence |
+|---|---|---|
+| 1 — no pre-existing key moves | **PASS** | 12 recipe keys (6 ISOs × T1-H/T1-X): explicit-OFF == bare, armed distinct |
+| 2 — the identity, to the MW | **PASS** | 2022 seam peak **148,528.000** vs measured 148,528.0 → **Δ 0.000 MW**; 2023 **147,605.000** vs 147,605.0 → **Δ 0.000 MW**; and Δ 0.000 MW against the ledger's own `peak_demand_mw` in both solved years |
+| 3 — non-peak operands | **PASS (with a LITERAL MISS, below)** | `scenario_config` differs in **exactly one field — this lane's own gate**; the five top-level `run_config` differences are per-leg bookkeeping only |
+| 4 — footprint confined | **PASS** | `peak_demand_mw` and `adequacy_requirement_mw` identical to the digit in both solved years (149,590.0 / 163,023.182 and 147,605.0 / 160,904.211) |
+| 5 — no non-target load-bearing flip | **UNTESTABLE at this configuration** | a truncated 2021-2023 window produces **no scorer output at all** — no `forecast_verdict.json` in either leg. **This lane does not claim it cleared.** |
+| 6 — one measured load per armed year | **PASS** | asserted by test: the armed and unarmed demand-load multisets are identical (`[2023, 2024, 2024, 2024, 2025, 2025]`) |
+
+**The STOP 2 result is the whole structural claim, and it lands exactly.** Note the 2022 row: 2022 is
+the *bridge* year — evolved, never solved — and the identity holds there too, which is the gate
+firing where it must (the bridge evolves the fleet against the seam peak).
+
+**STOP 3's LITERAL MISS, reported at full magnitude and NOT reclassified.** The PRECOMMIT required
+the 2021 pre-screen ledger to be *identical*. It differs — in **1 field of 36**:
+`screen_peak_demand_mw`, 126,887.926 (control) → 149,590.0 (arm). That is the D52 **observability**
+field `runner.py:2180` writes unconditionally, in a year where no screen consumes it (the
+requirement block is guarded on `prior_results`, §1(e)); **every decision field is identical** and
+`fleet_by_fuel_after` does not move at all in 2021. The honest reading is that the pre-registration
+was over-broad — it should have said "every decision field" — and because this is now
+**post-result**, the text stands as written and the miss is reported rather than edited away. The
+grader kills the arm if any *decision* field moves in the pre-screen year; none did.
+
+> **Two grader/text corrections, both recorded.** (a) **STOP 4, corrected BEFORE any evidence
+> existed** (2026-09-06T17:01Z, verified 0 ledgers on disk, `83970d7a`): as first written it
+> required `reserve_margin` to be identical, which is wrong — it is `firm/peak − 1` computed *after*
+> evolution, an exiting-side quantity that moves with the fleet the screens leave behind. It moved to
+> §5 as reported. (b) **The grader, corrected AFTER the result** (`c6ec71a9` + this commit): it first
+> compared every *top-level* `run_config` key and reported a STOP 3 FAIL on `cache_key` / `run_dir` /
+> `timestamp` — per-leg bookkeeping the PRECOMMIT never named, whose object is "every **gate**
+> recorded in run_config.json". The **script** was corrected to the pre-registered text and the gate
+> was **not** relaxed — the D67 lane's own resolution of the identical mistake.
+
+## 7. What the mechanism DID — reported, not gated (PRECOMMIT §5)
+
+The pre-solve arithmetic reproduces through the solve almost exactly: phase 0 predicted a requirement
+move of **+14,604** and **+4,122 MW**; the solve delivers **+14,603.770** and **+4,122.183**.
+
+| | 2022 (bridge) | 2023 (screen year) |
+|---|---:|---:|
+| seam peak, control → arm | 135,090.596 → **148,528.000** (+13,437.404) | 143,823.528 → **147,605.000** (+3,781.472) |
+| screen requirement | 146,816.46 → 161,420.23 (**+14,603.770**) | 156,782.028 → 160,904.211 (**+4,122.183**) |
+| screen entering firm | 185,264.153 → 185,264.153 (**identical**) | 176,977.725 → 183,798.066 (+6,820.341) |
+| screen reserve position | 1.261876 → 1.147713 | 1.128814 → 1.142283 |
+| economic exits | 82 rows / 10,812.3 MW → 44 rows / 3,478.6 MW (**−7,333.7 MW**) | 115 rows / 4,901.5 MW → 7 rows / 1,796.0 MW (**−3,105.5 MW**) |
+| `reserve_margin` (post-evolution) | — | 0.175897 → **0.241802** |
+
+**One channel, essentially one fuel.** In 2022 the entering firm census is **identical to the
+milliwatt**, so the entire effect that year is the requirement/position channel and nothing else.
+Thermal additions are identical in both years (6 rows / 2,904.0 MW; 2 rows / 1,214.0 MW), and
+`floor_retained` is **empty in both legs in every year** — so the mechanism is *not* working through
+the reliability floor binding; it is the economic screen's own margin-against-position test. The
+fleet moves in exactly two fuels: `gas_st` +7,333.7 MW (2022) and +9,464.5 MW (2023), with a
+second-order `gas_cc` +974.7 MW in 2023.
+
+**Pre-declared expectations: both directional calls HIT.** #1 (fewer exits, a longer 2023 fleet) —
+HIT. #4 (`reserve_margin` rises) — HIT, +6.6 pts. **#5, "what would surprise me", did NOT occur:**
+zero renewable, storage or hydro rows moved in any year, which is STOP 4 holding on the exiting side
+as well as the entering side.
+
+## 8. Routed, not absorbed — and what this lane does NOT claim
+
+**(a) The steam over-exit.** In the CONTROL, PJM's entire `gas_st` fleet goes to **0.0 MW by 2023**;
+in the arm **9,464.5 MW survives**. That is the same over-exit D62 §9 and D74 chartered from the
+other side (D74 measured `gas_st` 10.297 → 0.833 GW against 2.702 GW of actual exits), and this
+screen shows the **de-grown screen peak is a contributing cause of it** — the control was screening
+PJM's steam fleet against a bar 14.6 GW too low. **This lane does not claim the level.** A 2021-2023
+screen cannot judge FC-3 (there is no scorer output at all, STOP 5), rule 29 forbids promoting an arm
+on a screen, and the full span is not spent here. Routed to the D61 §4 card (c) / D74 successor lane,
+which owns the steam convention; the peak is this lane's object and the two compose.
+
+**(b) What is untested.** STOP 5 entirely (§6.1). The D67 interaction, stated ex ante in PRECOMMIT
+§5.3 and unchanged: D67 is default-off at HEAD, so this screen ran on the peak-dependent `peak × FPR`
+path; once Q52's arming leg lands, PJM's requirement leg goes to zero in every in-table DY and the
+remaining effect runs through accreditation and the CR-1 position only. The other five ISOs — whose
+fixed screen year is 2025, i.e. the full span (§3.1) — are not screened here at all.
+
+**(c) Nothing arms.** The gate ships default-OFF with no `ISOConfig` override in any ISO. Arming
+changes the screen operand of every hindcast bundle in the repository and therefore every FC-1 /
+FC-3 T1-H row on the forecast board: it is an **owner card**, and a rule-29 screen may kill an arm
+and may never promote one. This is not a promotion request and not a keeper candidate ("keeper" is a
+backcast designation; this is a forecast-lane mechanism).
+
+**(d) Bundles deleted before merge (rule 29(c)).** Both screen bundles are removed from
+`results/hindcast/` in this PR; this FINDING and `docs/handoffs/d76/screen_gate.json` carry every
+number the lane will ever cite, and git history is the record for the bytes.
