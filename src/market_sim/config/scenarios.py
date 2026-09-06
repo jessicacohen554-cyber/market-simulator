@@ -1544,6 +1544,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "capacity_screen_peak_measured_hindcast",
+    # pjm-167: the per-solve-year EIA-860 vintage gate
+    # (FINDING-pjm167-input-clock-2021-2022-2026-09-06.md §3; GATED default
+    # False => every backcast reads the canonical 2025ER snapshot exactly as
+    # before, byte-identical). Dropped from the hash at its declared False so
+    # every pre-existing cache key of all six ISOs — every backcast keeper and
+    # every committed forecast bundle included — is byte-stable; an armed run
+    # carries a different fleet registry and so keys distinctly. SHARED field —
+    # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "eia860_vintage_tracks_solve_year",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2096,6 +2106,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # its shipping default (False = the de-grown weather-year peak). Registered
     # IN THE SAME COMMIT as the field.
     "capacity_screen_peak_measured_hindcast": "False",
+    "eia860_vintage_tracks_solve_year": "False",
 }
 
 
@@ -4372,6 +4383,40 @@ class ScenarioConfig:
     # of retired-2023->25 units), a correctness/provenance refinement rather than
     # a scarcity driver; gated, recalibrate before a keeper. See
     # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
+    #   CAVEAT on that "small" measured effect: it was measured on ERCOT inside
+    #   2023-2025, where the current snapshot and the year-matched vintage
+    #   genuinely nearly agree. It does NOT generalise to the out-of-training
+    #   years the program span now reaches (rule 22, 2019-2025). Measured for
+    #   PJM (pjm-167): the canonical snapshot yields an IDENTICAL 38,722 MW coal
+    #   fleet in 2021, 2022 and 2023, while the year-matched vintages carry
+    #   48,708 / 41,945 / 37,118 MW -- a 9,986 MW (39 %) understatement in 2021,
+    #   where the model then dispatches 95.4 % of its own coal ceiling and sits
+    #   5,723 MW below EIA-930 metered coal peak. The COD ramp cannot repair
+    #   this: it ages out units it is GIVEN, and a unit that retired before the
+    #   snapshot was never given.
+    eia860_vintage_tracks_solve_year: bool = False
+    # ^ Per-solve-year EIA-860 vintage (backcast overlay, pjm-167 --
+    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # sec 3; PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md). The field
+    # above is a RUN-level scalar while a rule-16 [R-ALLYEARS] bundle spans
+    # three years, so it cannot express "each year reads its own annual
+    # release". When True in backcast mode, the vintage is resolved from the
+    # YEAR BEING SOLVED through paths.resolve_backcast_eia860_vintage, which
+    # both backcast entry points share (rule 19 [R-ONE-MECH]); a year with no
+    # committed vintage_<year>/ directory falls through to the canonical
+    # snapshot, so the gate is safe on any span. An explicit
+    # eia860_vintage_year still wins, keeping its exact present meaning and its
+    # frozen cache key.
+    #
+    # Rule 13/14 admissibility: the vintage is selected by CALENDAR YEAR alone
+    # -- never by a residual, a gate or any model output -- and each vintage is
+    # the year's own published EIA-860 registry, the most accurate available
+    # statement of what existed. It regenerates for any year and responds to
+    # changed conditions, and a FORECAST is untouched (forecast keeps the
+    # latest snapshot, and the hindcast lane keeps its explicit pin).
+    #
+    # Zero fitted scalars. Off by default; byte-identical off, and off for
+    # every ISO until a screen clears its pre-registered structural gates.
     # Mothballed-but-operating re-carry (the Cottonwood lane,
     # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
     # canonical snapshot's OP filter drops OA (out-of-service / mothballed)

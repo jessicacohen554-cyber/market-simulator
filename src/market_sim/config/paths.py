@@ -131,6 +131,46 @@ def set_eia860_vintage(year: int | None) -> Path:
     return _ACTIVE_EIA_860_DIR
 
 
+def resolve_backcast_eia860_vintage(
+    explicit_vintage: int | None,
+    solve_year: int | None,
+    tracks_solve_year: bool,
+) -> int | None:
+    """Return the EIA-860 vintage year a BACKCAST solve should read.
+
+    One resolution, one place (rule 19 ``[R-ONE-MECH]``) for the two backcast
+    entry points that arm the vintage — ``scripts/run_calibration.py::run_year``
+    and ``runner.run_scenario_iso``. Precedence:
+
+    1. an explicit ``ScenarioConfig.eia860_vintage_year`` always wins, so the
+       existing pin keeps its exact meaning and its cache key;
+    2. else, when ``ScenarioConfig.eia860_vintage_tracks_solve_year`` is armed,
+       the **solved year** — each year of a rule-16 multi-year bundle reads its
+       own annual release rather than one run-level scalar;
+    3. else ``None`` — the canonical 2025-Early-Release snapshot, filtered to
+       the solved year by the COD ramp, exactly as today.
+
+    A year with no committed ``vintage_<year>/`` directory falls through to the
+    canonical snapshot inside :func:`set_eia860_vintage`, so (2) degrades to (3)
+    rather than failing. Selection is by calendar year only — nothing here reads
+    a model output or a scoring target (rules 13/14).
+
+    Args:
+        explicit_vintage: ``ScenarioConfig.eia860_vintage_year``.
+        solve_year: The year being solved, or ``None`` when the caller has no
+            single year in hand.
+        tracks_solve_year: ``ScenarioConfig.eia860_vintage_tracks_solve_year``.
+
+    Returns:
+        The vintage year to pass to :func:`set_eia860_vintage`, or ``None``.
+    """
+    if explicit_vintage is not None:
+        return int(explicit_vintage)
+    if tracks_solve_year and solve_year is not None:
+        return int(solve_year)
+    return None
+
+
 EIA_930_DIR: Path = RAW_DATA_DIR / "eia-930"
 ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # PJM Day-Ahead energy market offers from DataMiner2 (energy_market_offers feed).

@@ -2436,10 +2436,19 @@ def run_year(
     # for one (backcast knob; None resets to the canonical 2025ER snapshot the
     # COD ramp filters to the solved year). Must precede every fleet / storage /
     # renewable / COD-map load below so they all read the same vintage.
-    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.paths import (
+        resolve_backcast_eia860_vintage,
+        set_eia860_vintage,
+    )
 
     set_eia860_vintage(
-        config.eia860_vintage_year if config.mode == "backcast" else None
+        resolve_backcast_eia860_vintage(
+            config.eia860_vintage_year,
+            year,
+            getattr(config, "eia860_vintage_tracks_solve_year", False),
+        )
+        if config.mode == "backcast"
+        else None
     )
     # Arm/disarm the CAISO FSNO sub-zonal partition for this solve BEFORE the
     # first get_iso_config / zone-lookup call, so the LP and every bare

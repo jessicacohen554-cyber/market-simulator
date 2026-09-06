@@ -194,6 +194,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     wefor_statistical_stack: { cell: "K" },
     correlated_forced_outage: { cell: ".", fc: "I" },
     retiree_cems_cap: { cell: "." },
+    eia860_vintage_tracks_solve_year: { cell: "U", ev: "Row added by pjm-167 (2026-09-06) with the field, per rule 28(c). ISO-agnostic engine, but the verdict is strictly per-ISO (rule 25 [R-ISO-SCOPE]): PJM\u0027s measured registry gap does not transfer, and this ISO enters UNTESTED. Its own gap is unmeasured \u2014 the census in FINDING-pjm167-input-clock-2021-2022-2026-09-06.md \u00a73.3 is PJM-only. Default OFF, byte-identical here." },
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "K", ev: "nyiso-132 (FINDING-nyiso132-solar-cf-level-2026-08-07.md); nyiso-130 prereg §2-§3" },
     vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: NYISO is deliberately OUT of _UNCURTAILED_FALLBACK_ISOS (immaterial ~1.1 %/yr, locally-driven curtailment; docs/multi-iso/nyiso-uncurtailed-hsl-finding-2026-07.md); delivered NYIS profile. Row minted miso-206 (rule 28c)." },

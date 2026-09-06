@@ -194,6 +194,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     wefor_statistical_stack: { cell: "K" },
     correlated_forced_outage: { cell: ".", fc: "I" },
     retiree_cems_cap: { cell: "K" },
+    eia860_vintage_tracks_solve_year: { cell: "O", ev: "pjm-167 (2026-09-06): BUILT default-OFF from the zero-LP diagnosis in FINDING-pjm167-input-clock-2021-2022-2026-09-06.md \u00a73, NOT ARMED. Measured by fleet_only census, no LP: the canonical snapshot gives an IDENTICAL 38,722 MW PJM coal fleet in 2021/2022/2023 against year-matched vintages of 48,708 / 41,945 / 37,118 MW; in 2021 the model dispatches 95.4 % of its own coal ceiling and is 5,723 MW below EIA-930 metered coal peak in 8,291 of 8,760 hours, and its ST_GAS peak is 117.3 % of the gas-steam capacity that existed. Screen pre-registered before any solve in PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md (screen year 2021, chosen on footprint; seven structural STOP gates; a same-HEAD control earned under rule 29(b) because the diff since pjm-166\u0027s control is 59 files / +9,088 lines). OPEN until that screen runs; 2023 loses 1,605 MW of coal under the arm, so promotion needs a leave-one-year-out re-score of 2023-2025." },
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "." },
     vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: PJM is not in _UNCURTAILED_FALLBACK_ISOS; backcast wind/solar keep the delivered EIA-930 PJM hourly profile (delivered_pinned). Row minted miso-206 (rule 28c)." },

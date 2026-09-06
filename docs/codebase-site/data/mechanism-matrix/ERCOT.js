@@ -194,6 +194,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     wefor_statistical_stack: { cell: "K" },
     correlated_forced_outage: { cell: "K", fc: "K" },
     retiree_cems_cap: { cell: "." },
+    eia860_vintage_tracks_solve_year: { cell: "U", ev: "Row added by pjm-167 (2026-09-06) with the field, per rule 28(c). ISO-agnostic engine, but the verdict is strictly per-ISO (rule 25 [R-ISO-SCOPE]): PJM\u0027s measured registry gap does not transfer, and this ISO enters UNTESTED. Its own gap is unmeasured \u2014 the census in FINDING-pjm167-input-clock-2021-2022-2026-09-06.md \u00a73.3 is PJM-only. Default OFF, byte-identical here." },
     solar_deliverability: { cell: "U" },
     vre_avg_cf_level: { cell: "." },
     vre_reference_rate_curtailment_grossup: { cell: ".", ev: "dormant at HEAD: every ERCOT backcast year carries a built NP6 HSL parquet (measured_potential), so the fallback never fires; the same reference rate is used only under ercot_wtx_curtailment_driver in forecast mode (its own row). Row minted miso-206 (rule 28c); no ERCOT verdict taken (rule 28d)." },
