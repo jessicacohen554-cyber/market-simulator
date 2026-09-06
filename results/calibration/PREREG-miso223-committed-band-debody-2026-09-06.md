@@ -285,3 +285,39 @@ S-2, G-1 (−$2.2…−$1.0), G-2 (|Δ| < $3.0) and G-3 are untouched, as is the
 **Recorded against myself:** the session spent two OOM-killed control attempts and a CI
 detour on a control it was never entitled to run. The correct sequence was the G-DRIFT audit
 first — cost seconds — and a control solve only if it returned LIVE.
+
+---
+
+## ADDENDUM D — THE `G-DRIFT` AUDIT §7 OWED, DONE PROPERLY. **ALL HUNKS INERT ⇒ FORM 4 IS VALID**
+
+Rule 29(b) requires this audit *before* an arm is solved, and it is what §7 replaced with a
+file count. Run at `4545300d..HEAD`, over `src/market_sim scripts/run_calibration.py
+scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference`.
+Every changed hunk on the backcast path, with its reason:
+
+| changed file(s) | classification | reason |
+|---|---|---|
+| `model/lp/rows.py` (+172/−52) | **INERT** | The additions are entirely `_validate_credit_vector` / `_resolve_clean_region_gen_coeff` / `clean_region_zone_mask` — the clean-tier / federal-CES row machinery, gated by `miso_clean_tier_rows`, default-off and absent from the keeper's recipe. |
+| `data/outages.py` (+136/−33) | **INERT** | Every new branch is behind `unit_outage_extract_basis_share` — a NEW `ScenarioConfig` field, default `False`, **absent from the keeper's recorded config** so it resolves to the default. Guard reads `if (extract_basis_share and iso != "ERCOT")`. |
+| `config/constants.py` (+547/−263) | **INERT** | Every MISO-touching line is in the **2026 Long-Term Load Forecast** table (LTLF workshop deck intake). A `mode="backcast"` run never reads the LTLF. |
+| `config/scenarios.py` (+529/**−0**) | **INERT** | Purely additive — no deletion, so no existing default moved. |
+| `pipeline/solve.py` (+134/−5) | **INERT** | Cross-year warm-start basis plumbing (`_xwarm`, `xyear_cache`, `_p1_seed`, `export_p1_basis`). `replay_keeper` pins `MARKET_SIM_WARMSTART_XYEAR=0` at import, so the arm never enters it. |
+| `scripts/lib/load_forecast/*` (+1,417) | **INERT** | Forecast lane; a backcast solve never imports it. |
+| `capacity_evolution/{retirements,ccs,evolve}.py`, `config/capacity_market.py`, `data/{datacenter,cod_ramp,avoidable_cost_rate}.py` | **INERT** | Forecast-only path — reached solely through `evolve_fleet`, which a backcast run never enters (the caiso-162 reachability finding). |
+| `policy/{carbon,cap_and_trade,clean_tiers,federal_ces}.py` (+577) | **INERT** | Policy rows; backcast carbon price is 0 and the clean-tier/CES flags are default-off. |
+| `results/{emissions,export,outputs,cache,metrics}.py`, `matrix.py` | **INERT** | Post-solve reporting, cache-key documentation and diagnostics accounting — never priced. |
+| `scripts/lib/{bench_stamp,mech_matrix,holdout_policy,forecast_parity_registry}.py` | **INERT** | Session tooling and registration-time gates, not the solve path. |
+| `data/fleet/eia860.py`, `data/egrid_sheets.py` | **INERT** | The eGRID sheet-reader refactor; same frames, pinned by `tests/test_egrid_sheets.py`. Already classified INERT and **measured** at miso-222 (keeper fleet rebuilt at the newer sha reproduced the older rebuild with 0 differences across 45 object hours). |
+| `data/raw/_validation-source/actual_lmp.json` (+64/−2) | **INERT for every screen gate** | It is the ACTUALS file: it can move C3a/C3b/C3c, none of which is a screen gate. G-1/G-2 are model-vs-model; G-3 reads C1/C2, which score against EIA-923/930. |
+
+**VERDICT: no LIVE hunk. G-CTRL form 4 is valid and no control solve was ever owed** — which
+is what the owner said. §7's claim is withdrawn on the evidence, not merely on instruction.
+
+**One residual caveat, reported because form 4 depends on it.** The committed keeper was
+solved through `run_calibration_full` (cross-year warm start ON by CLI default); the arm runs
+through `replay_keeper`, which pins it OFF. The documented behaviour of that switch is that
+**prices are bit-identical** and only marginal-tie dispatch reshuffles by ~0.003 %. G-1 and
+G-2 are price gates and are therefore unaffected. G-3 reads class ENERGY, where 0.003 % of
+~100 TWh is ~0.003 TWh — small against the named `CC_REGULAR`-2024 headroom of 0.053 TWh but
+not negligible, so a G-3 miss inside ~0.005 TWh of the band edge is to be read as
+inconclusive rather than as a kill.
