@@ -28,13 +28,11 @@ the STOP gate.
 | **G3** byte identity | **PASS** — 0 cache keys moved, default `e5ecd4105ada3e58` stable, **0 of 90** committed `run_config.json` files on the changed branch, backcast 2023–25 trajectories identical in all six ISOs |
 
 Tests: `tests/unit/policy/` **311 passed**, and the **full `tests/unit` suite is at exact parity
-with clean `HEAD`** — 244 failed / 4319 passed against a 244 failed / 4276 passed baseline, the
-same 244 failures test-for-test (all pre-existing, from the unhydrated `data/raw` tree), +43
-passing from this lane's new tests. Blast radius, measured rather than asserted: **exactly two
-assertions in the repository asserted the old REPLACE semantics**, and both are flipped — the
-one the charter names (`test_cap_and_trade.py:135`) and a **second copy the charter did not
-know about**, `tests/unit/model/test_capacity.py::TestStateCarbonProgram::
-test_caiso_forward_years_use_projected_program_price` (§3.1).
+with the base commit** (§3.2 carries the arithmetic). Blast radius, measured rather than
+asserted: **exactly two assertions in the repository asserted the old REPLACE semantics**, and
+both are flipped — the one the charter names (`test_cap_and_trade.py:135`) and a **second copy
+the charter did not know about**, `tests/unit/model/test_capacity.py::TestStateCarbonProgram::
+test_caiso_forward_years_use_projected_program_price`, which the parity check found (§3.1).
 
 **`policy_bundle="tight"` is now an exact NO-OP on CAISO, NYISO and NEISO.** It stops being a
 cut; it does not become an increase. That is the ruled outcome (§2), stated here plainly because
@@ -242,6 +240,29 @@ SCN-DESK; nothing else in the diff depends on it.
 **This is also why the full-suite parity check was worth running.** The policy-suite result
 alone (311 passed) would have looked complete and shipped a red branch.
 
+### 3.2 Full-suite parity, and the accounting that makes it exact
+
+Three full `tests/unit` runs, all in this session:
+
+| run | tree | result |
+|---|---|---|
+| baseline | clean, at the branch point `fca3b656` | **244 failed** / 4276 passed / 10 errors |
+| final | this branch, rebased onto `bc77b189` | **264 failed** / 4338 passed / 10 errors |
+| reconciliation | pristine `origin/main` at `bc77b189`, the two newly-failing files only | **20 failed** / 28 passed |
+
+**264 − 20 = 244 = the baseline, and the failure sets match test-for-test.** The 20 arrived with
+`main`, not with this lane: the two rebases this branch took (the shared-file protocol requires
+the matrix commit to follow a fresh `git fetch origin main`) pulled in the capx D60-R3 / D62
+merges, whose `tests/unit/config/test_mechanism_matrix_shared_ratchet.py` (5) and
+`tests/unit/model/test_d62_published_going_forward_bar.py` (15) fail on **pristine `origin/main`**
+— verified by checking out `origin/main` clean and running exactly those two files. The five
+ratchet failures are the same `capacity_going_forward_bar_published_by_iso` rule-28(c) breach
+§5.1 routes; the fifteen D62 ones are that lane's own feature tests.
+
+The 244 baseline failures are themselves pre-existing and environmental — this container runs
+`DATA PROFILE: neiso` unhydrated, so every test needing a `data/raw` subtree errors or fails
+identically on both sides. **This lane adds zero failures and +62 passes.**
+
 ---
 
 ## 4. Byte identity — measured, by name
@@ -345,7 +366,10 @@ disclosed in §6.
 
 That field is the **capacity-expansion track's** (it landed with the capx D60-R3 merge), it is
 outside this lane's file regions, and rule 28(d) makes the cell the owning lane's to write —
-so SCN-WS1c does **not** fix it. It is reported here because it will turn the
+so SCN-WS1c does **not** fix it. The same breach fails five tests in
+`tests/unit/config/test_mechanism_matrix_shared_ratchet.py` on pristine `main`, and the same
+lane's `tests/unit/model/test_d62_published_going_forward_bar.py` fails fifteen more there
+(§3.2) — twenty pre-existing failures on `main` that any lane rebasing onto it now inherits. It is reported here because it will turn the
 `mechanism-matrix-guard` CI job red on **every** open PR until that lane discharges the duty,
 including this one, and a reader of a red gate on this PR should not spend time looking in this
 diff for the cause. **This lane's own matrix state is clean:** with that one pre-existing error
