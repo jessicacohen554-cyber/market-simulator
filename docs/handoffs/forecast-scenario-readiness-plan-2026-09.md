@@ -922,6 +922,20 @@ file, not this desk's, and is routed. Recommendation: **hold Stage A's policy ha
 is repaired**; the load half (`LOAD-HI`, `LOAD-HI-ORGANIC`) and the pure-carbon T0 probes below
 2028 are unaffected and can proceed. The alternative — run Stage A now and re-run the affected
 cases after the repair — spends the campaign's compute twice.
+**RULED 2026-09-06 (SCN-DESK r#6 amendment 1) — S5: HOLD THE POLICY HALF, RUN THE LOAD HALF NOW.**
+Stage A splits at the `gas_cc_ccs` line: **A-LOAD** (`REF` / `LOAD-HI` / `LOAD-HI-ORGANIC` six-ISO
+T1-F + the sub-2028 carbon T0 probes) released, issued when SCN-WS4c landed (r#7), running as
+`SCN-WS5A-LOAD`; **A-POLICY** (every CES case, every carbon case at or above 2028, `ALL-CLEAN`,
+`VOL-*`) HELD until the capx CCS emission-rate seam is repaired and a paired check confirms
+`emission_rate` follows the retrofit. *(This `RULED` line was owed at r#6 am.1 and appended at r#9 —
+the ruling itself was recorded in the desk ledger §2 at the time.)*
+
+**D-8 and D-9 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#9); desk cards, live copy in the ledger §2.**
+**D-8:** SCN-WS3b — relaunch under a third stem now, hold until the CCS repair lands, or drop the
+voluntary axis from Stage A? Two stems produced nothing across three refreshes; recommendation
+**relaunch now** (zero-LP build, ready-in-waiting). **D-9:** direct the capx director to charter the
+CCS emission-rate seam repair as a named lane? At capx r#45 the seam is named but no lane carries it,
+and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 
 ---
 
@@ -1210,3 +1224,14 @@ leg without the grant.
   and issues the four lanes they release: SCN-WS1c (floor), SCN-WS3b (voluntary), SCN-LEVELS
   (commit the levels), SCN-LOAD (the full intake), alongside SCN-WS4c from the base refresh.
   Zero solves, zero code, zero defaults, zero markers.
+- 2026-09-06 — **SCN-DESK r#6 → r#9 (main HEAD `0e20e8cf` at r#9).** r#6: all four ruling-released
+  lanes landed (WS-1c, WS-2b, LEVELS, LOAD); WS-2b found the CCS emission-rate seam that sign-flips
+  NEISO's 2030 CO2 → card D-7 → **S5** (r#6 am.1, the `RULED` line appended to §6 at r#9). r#7: WS-4c
+  landed (19 arms, 20 HIT / 3 SPLIT / 3 MISS; the fossil-average heuristic biased; G-DRIFT vindicated)
+  and Stage A-LOAD issued; WS-1b-r2's phase 0 killed the desk's own 2026 charter (every RFF path
+  anchors at $0 in 2026) — 2027 scope ratified. r#8: A-LOAD running as one six-ISO lane; S4's intake
+  re-derived the load constants the pre-declaration chain scored against. r#9: A-LOAD frozen at
+  `1cc45bb2` with 0 of 16 legs solved at its last commit (D-5 still not presentable); WS-1b-r2's ERCOT
+  2027 pair NOT KILLED with the REF adequacy-collapsed at 2027; **the CCS seam is unchartered on the
+  capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). Zero
+  solves, zero code, zero defaults, zero markers, at every refresh.
