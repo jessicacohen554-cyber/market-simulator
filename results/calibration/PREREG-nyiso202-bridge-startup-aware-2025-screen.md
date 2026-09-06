@@ -275,3 +275,46 @@ written in the FINDING before the disposition is chosen, and the owner's formula
 ---
 
 *(nyiso-202, 2026-09-06. Pushed before the arm was solved. Zero solves at time of push.)*
+
+---
+
+# ADDENDUM A — SCREEN RESULTS (recorded after the screen; nothing above was edited)
+
+**VERDICT: CLEAR — every pre-registered gate passes. ONE screen LP spent. The span is therefore
+solved under §6.** Machine record: `results/calibration/_nyiso202_screen_gates_a1_2025.json`.
+
+| gate | reading | verdict |
+|---|---|---|
+| **S-1** direction / bound *(re-pointed)* | bridge D-2 volume **0.5701 → 0.1434 TWh**, a FALL of 0.4267 inside the 0.5701 bound; does not rise | **pass** |
+| **S-2** census identity | 19 plants in the per-plant census; keeper bundle slim, so reported not gated | pass |
+| **S-3** confinement | gas family **−0.026 TWh**, import **+0.023**; **no** non-gas non-import class moves > 0.005 TWh at all | **pass** |
+| **(a)** dark-meter forced energy | keeper **0.0010** → screen **0.0010 TWh**, **Δ 0.0000**; the one dark plant (8006) is unmoved; D-2 adds no failure; the screen's D-4 failure list is the keeper's own 2025 row and nothing else | **pass** |
+| **(b)** named plants 7314 / 50978 | 7314 **977 unit-h / 19.617 GWh**, census 347 detected / **134 kept** / 213 dropped; 50978 **228 unit-h / 9.011 GWh**, census 66 / **40 kept** / 26 — reported at full magnitude; no floor with zero kept runs; no D-4 conviction at either (both `ct_only`-restored by the span guard, which named 9 plants incl. 7314 and 50978) | **pass** |
+| **(c)** C3a / C3b do-no-harm | C3a **−6.9 % → −6.3 %** (61.84 → 62.27 vs actual 66.43), **PASS → PASS**; C3b 0.154 → 0.154, PASS → PASS. System mean 58.86 → 59.293, p95 125.52 → 126.18, hours > $300 unchanged at 4 | **pass** |
+| **(d)** no load-bearing flip | zero C1 flips, zero C2 flips — **vacuous on volume in 2025** as §0.6 declared ex ante | pass (vacuous) |
+| **G-ENGAGE** | all three legs logged: `gas_cc` **939 of 1,554** P0 runs dropped (4,561 h, 13 units), `gas_cc_state` **95 of 164** (365 h, 3 units), `gas_st` **386 of 508** (17,984 h, 7 units); 19-plant per-plant census present | **pass** |
+
+**The §0.5 pre-declared REPORTED item, at full magnitude, and it resolves the OTHER way from the
+three-way arm.** At Astoria 8906 in 2025 the run screen removes the bridge row entirely
+(0.0205 TWh / 686 h → gone) and the reliability floor beneath it grows 3,512 → **4,083 h** and
+0.2520 → **0.2554 TWh**, so the plant's **total** forced energy **FALLS 0.2725 → 0.2554 TWh**.
+nyiso-201 §5.4 measured the same composition under the THREE-WAY arm as a **RISE** to 0.3061 TWh;
+the difference is the other two fields' dispatch effect, not the run screen's. Both of 8906's rows
+remain `pass` on the D-4 rider (median 80.976 MW both sides).
+
+**The volume picture on 2025, REPORTED and NOT gated (§0.6) and NOT judged (rule 1)** — the 2025
+actuals are the preliminary vintage that is *why* C1 is skipped:
+
+| class | actual | keeper | arm | keeper err | arm err | |
+|---|---|---|---|---|---|---|
+| `CC_REGULAR` | 33.544 | 35.102 | 34.763 | +1.558 | **+1.219** | toward |
+| `CT_PEAKER` | 2.851 | 1.356 | 1.395 | −1.495 | **−1.456** | toward |
+| `ST_GAS` | 13.712 | 9.606 | 9.644 | −4.106 | **−4.068** | toward |
+| **`CC_CHP`** | 16.962 | 20.344 | 20.502 | +3.382 | **+3.540** | **AWAY** |
+| `ST_CHP` | 0.800 | 1.440 | 1.470 | +0.640 | +0.670 | away |
+
+**`CC_CHP` is the away class — exactly the class §6 named before the solve**, and `ST_CHP` the
+second, exactly as the 2023 table predicted. Unlike the three-way arm, the 2023 direction
+**reproduces** on 2025: `CC_REGULAR`, `CT_PEAKER` and `ST_GAS` all move toward their actuals.
+
+*(nyiso-202, 2026-09-06. One screen solve, gates CLEAR; the span proceeds under §6.)*

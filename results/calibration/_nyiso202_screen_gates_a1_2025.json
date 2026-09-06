@@ -1,0 +1,498 @@
+{
+  "session": "nyiso-202",
+  "arm": "a1",
+  "year": 2025,
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "screen_bundle": "results/calibration/nyiso202_screen_a1_2025",
+  "prereg": "results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md",
+  "class_energy_twh": {
+    "CC_CHP": {
+      "keeper": 20.344,
+      "screen": 20.502,
+      "delta": 0.157
+    },
+    "CC_REGULAR": {
+      "keeper": 35.102,
+      "screen": 34.763,
+      "delta": -0.338
+    },
+    "CT_CHP": {
+      "keeper": 1.675,
+      "screen": 1.723,
+      "delta": 0.048
+    },
+    "CT_PEAKER": {
+      "keeper": 1.356,
+      "screen": 1.395,
+      "delta": 0.039
+    },
+    "OTHER": {
+      "keeper": 1.948,
+      "screen": 1.948,
+      "delta": 0.0
+    },
+    "ST_CHP": {
+      "keeper": 1.44,
+      "screen": 1.47,
+      "delta": 0.03
+    },
+    "ST_GAS": {
+      "keeper": 9.606,
+      "screen": 9.644,
+      "delta": 0.038
+    },
+    "biomass": {
+      "keeper": 0.672,
+      "screen": 0.672,
+      "delta": 0.0
+    },
+    "hydro": {
+      "keeper": 24.059,
+      "screen": 24.059,
+      "delta": 0.0
+    },
+    "import": {
+      "keeper": 19.335,
+      "screen": 19.357,
+      "delta": 0.023
+    },
+    "nuclear": {
+      "keeper": 28.342,
+      "screen": 28.342,
+      "delta": 0.0
+    },
+    "oil": {
+      "keeper": 1.284,
+      "screen": 1.285,
+      "delta": 0.001
+    },
+    "solar": {
+      "keeper": 0.981,
+      "screen": 0.981,
+      "delta": 0.0
+    },
+    "wind": {
+      "keeper": 7.049,
+      "screen": 7.049,
+      "delta": 0.0
+    }
+  },
+  "bridge": {
+    "keeper_forced_twh_by_class": {
+      "CC_REGULAR": 0.408,
+      "ST_GAS": 0.1621
+    },
+    "screen_forced_twh_by_class": {
+      "CC_REGULAR": 0.1304,
+      "ST_GAS": 0.013
+    },
+    "keeper_total_twh": 0.5701,
+    "screen_total_twh": 0.1434,
+    "delta_twh": -0.4267,
+    "pre_solve_bound_twh": 0.5701,
+    "screen_floored_unit_hours_by_plant": {
+      "2490": {
+        "unit_hours": 35,
+        "floor_gwh": 2.076
+      },
+      "2500": {
+        "unit_hours": 8,
+        "floor_gwh": 0.371
+      },
+      "2517": {
+        "unit_hours": 207,
+        "floor_gwh": 8.981
+      },
+      "2527": {
+        "unit_hours": 273,
+        "floor_gwh": 5.11
+      },
+      "2539": {
+        "unit_hours": 8767,
+        "floor_gwh": 1989.376
+      },
+      "7314": {
+        "unit_hours": 977,
+        "floor_gwh": 19.617
+      },
+      "50292": {
+        "unit_hours": 907,
+        "floor_gwh": 38.639
+      },
+      "50978": {
+        "unit_hours": 228,
+        "floor_gwh": 9.011
+      },
+      "54574": {
+        "unit_hours": 158,
+        "floor_gwh": 3.822
+      },
+      "55375": {
+        "unit_hours": 620,
+        "floor_gwh": 20.307
+      },
+      "55405": {
+        "unit_hours": 50,
+        "floor_gwh": 13.811
+      },
+      "56196": {
+        "unit_hours": 7128,
+        "floor_gwh": 1273.794
+      },
+      "56234": {
+        "unit_hours": 8730,
+        "floor_gwh": 1456.842
+      },
+      "56940": {
+        "unit_hours": 292,
+        "floor_gwh": 30.271
+      },
+      "57185": {
+        "unit_hours": 189,
+        "floor_gwh": 25.535
+      },
+      "57664": {
+        "unit_hours": 450,
+        "floor_gwh": 35.809
+      }
+    },
+    "keeper_floors_available": false,
+    "keeper_floors_note": "the committed keeper bundle is SLIM (no floors/ sidecar): the keeper's per-plant bridge footprint is read from its committed D-4 unit-conduct rows instead, which is the same quantity in TWh",
+    "keeper_bridge_unit_conduct_twh_by_plant": {
+      "2539": 0.1023,
+      "50292": 0.114,
+      "54574": 0.0026,
+      "55405": 0.0634,
+      "56234": 0.0057,
+      "56940": 0.0079,
+      "57185": 0.0334,
+      "2490": 0.1046,
+      "2516": 0.0035,
+      "2517": 0.0267,
+      "2527": 0.0068,
+      "8906": 0.0205
+    }
+  },
+  "gates": {
+    "S1_direction_bound": {
+      "bridge_volume_delta_twh": -0.4267,
+      "keeper_total_twh": 0.5701,
+      "screen_total_twh": 0.1434,
+      "rises": false,
+      "fall_inside_bound": true,
+      "pre_solve_bound_twh": 0.5701,
+      "STOP": false,
+      "note": "the screen can only remove anchors: bridge volume must not rise, and its fall must sit inside the keeper's own bridge volume"
+    },
+    "S2_census_identity": {
+      "census": {
+        "armed_log_line_present": true,
+        "legs": {
+          "gas_cc_state": {
+            "runs_detected": 164,
+            "runs_dropped": 95,
+            "dropped_hours": 365,
+            "units_with_drops": 3
+          },
+          "gas_cc": {
+            "runs_detected": 1554,
+            "runs_dropped": 939,
+            "dropped_hours": 4561,
+            "units_with_drops": 13
+          },
+          "gas_st": {
+            "runs_detected": 508,
+            "runs_dropped": 386,
+            "dropped_hours": 17984,
+            "units_with_drops": 7
+          }
+        },
+        "runs_dropped": 1420,
+        "runs_detected": 2226
+      },
+      "screen_plants_with_bridge_floor": [
+        2490,
+        2500,
+        2517,
+        2527,
+        2539,
+        7314,
+        50292,
+        50978,
+        54574,
+        55375,
+        55405,
+        56196,
+        56234,
+        56940,
+        57185,
+        57664
+      ],
+      "n_screen_plants_with_bridge_floor": 16,
+      "keeper_floors_available": false,
+      "STOP": false,
+      "note": "floor moves only where a run was dropped; the committed keeper bundle is SLIM (no floors/ sidecar), so the plant-grain identity is REPORTED, not gated -- gate (b) carries the falsifiable per-plant leg via the F-1 census"
+    },
+    "S3_confinement": {
+      "gas_family_total_delta_twh": -0.026,
+      "import_delta_twh": 0.023,
+      "non_gas_non_import_deltas_twh": {},
+      "non_gas_tolerance_twh": 0.05,
+      "STOP": false
+    },
+    "A_dark_plant_forced_energy": {
+      "construction": "nyiso-200 FINDING 7(a): total D-4 unit-conduct floored_twh over EVERY mechanism at plants whose measured median over their own binding hours is 0.0 MW. NOT a failure-row count.",
+      "keeper_total_twh": 0.001,
+      "screen_total_twh": 0.001,
+      "delta_twh": 0.0,
+      "per_plant": {
+        "8006": {
+          "keeper_twh": 0.001,
+          "screen_twh": 0.001,
+          "delta_twh": 0.0
+        }
+      },
+      "worst_single_plant_rise_twh": 0.0,
+      "single_plant_tolerance_twh": 0.05,
+      "D2_new_failure": false,
+      "D4_failure_rows_reported_not_gated": {
+        "keeper": [
+          "2025 reliability_floor \u00d7 ST_GAS: plant 8006 is floored for 0.0010 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 17 hours the floor actually binds for it (inside h0-23) is 0.000 MW (58.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ],
+        "screen": [
+          "2025 reliability_floor \u00d7 ST_GAS: plant 8006 is floored for 0.0010 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 17 hours the floor actually binds for it (inside h0-23) is 0.000 MW (58.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ]
+      },
+      "D4_guard_notes": {
+        "keeper": [
+          "2025: ct_only vintage guard extended the flag from sibling-year vintages for 9 plant(s): 2682, 50744, 50978, 52168, 54041, 54131, 54592, 54593, 7314"
+        ],
+        "screen": [
+          "2025: ct_only vintage guard extended the flag from sibling-year vintages for 9 plant(s): 2682, 50744, 50978, 52168, 54041, 54131, 54592, 54593, 7314"
+        ]
+      },
+      "aggregate_tolerance_twh": 0.05,
+      "STOP": false
+    },
+    "B_named_plants": {
+      "construction": "nyiso-200 FINDING 7(b): a bridge floor ANCHORED ON A DROPPED RUN (zero by construction of the screen; falsified by a plant with floor and zero kept runs) OR a new D-4 conviction at the span guard. A floor on a run that repaid its start is the mechanism working, not the defect, and is REPORTED at full magnitude.",
+      "plants": {
+        "7314": {
+          "screen_bridge_floored_unit_hours": 977,
+          "screen_bridge_floor_gwh": 19.617,
+          "run_census": {
+            "detected": 347,
+            "kept": 134,
+            "dropped": 213,
+            "dropped_hours": 909
+          },
+          "floor_with_zero_kept_runs": false,
+          "new_D4_conviction": false,
+          "D4_convictions_screen": []
+        },
+        "50978": {
+          "screen_bridge_floored_unit_hours": 228,
+          "screen_bridge_floor_gwh": 9.011,
+          "run_census": {
+            "detected": 66,
+            "kept": 40,
+            "dropped": 26,
+            "dropped_hours": 114
+          },
+          "floor_with_zero_kept_runs": false,
+          "new_D4_conviction": false,
+          "D4_convictions_screen": []
+        }
+      },
+      "census_available": true,
+      "STOP": false
+    },
+    "C_companions": {
+      "C1_cells": {
+        "CC_REGULAR": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 35.102,
+            "actual": 33.544,
+            "share_pp": 1.53,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 34.764,
+            "actual": 33.544,
+            "share_pp": 1.28,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "CC_CHP": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 20.344,
+            "actual": 16.962,
+            "share_pp": 2.71,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 20.501,
+            "actual": 16.962,
+            "share_pp": 2.83,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "CT_PEAKER": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 1.356,
+            "actual": 2.851,
+            "share_pp": -1.09,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 1.395,
+            "actual": 2.851,
+            "share_pp": -1.06,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "ST_GAS": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 9.606,
+            "actual": 13.712,
+            "share_pp": -2.92,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 9.644,
+            "actual": 13.712,
+            "share_pp": -2.89,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "ST_CHP": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 1.44,
+            "actual": 0.8,
+            "share_pp": 0.49,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 1.47,
+            "actual": 0.8,
+            "share_pp": 0.51,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "COAL_BIT": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 0.0,
+            "actual": 0.0,
+            "share_pp": 0.0,
+            "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 0.0,
+            "actual": 0.0,
+            "share_pp": 0.0,
+            "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        }
+      },
+      "C1_pass_to_fail_flips": [],
+      "C1_all_skipped_this_year": true,
+      "C2_cells": {
+        "gas": {
+          "keeper": "SKIPPED",
+          "screen": "SKIPPED",
+          "keeper_magnitude": "-1.0%",
+          "screen_magnitude": "-1.1%"
+        },
+        "coal": {
+          "keeper": "SKIPPED",
+          "screen": "SKIPPED",
+          "keeper_magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band",
+          "screen_magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+        }
+      },
+      "C2_pass_to_fail_flips": [],
+      "C3a_price_mean": {
+        "keeper": {
+          "status": "PASS",
+          "model": 61.84,
+          "actual": 66.43,
+          "magnitude": "-6.9%"
+        },
+        "screen": {
+          "status": "PASS",
+          "model": 62.27,
+          "actual": 66.43,
+          "magnitude": "-6.3%"
+        }
+      },
+      "C3b_price_shape": {
+        "keeper": {
+          "status": "PASS",
+          "model": 0.154,
+          "magnitude": "NRMSE 0.154"
+        },
+        "screen": {
+          "status": "PASS",
+          "model": 0.154,
+          "magnitude": "NRMSE 0.154"
+        }
+      },
+      "system_price": {
+        "keeper": {
+          "mean": 58.86,
+          "p95": 125.52,
+          "hours_gt_300": 4
+        },
+        "screen": {
+          "mean": 59.293,
+          "p95": 126.18,
+          "hours_gt_300": 4
+        }
+      },
+      "STOP": false
+    },
+    "G_engage": {
+      "census": {
+        "armed_log_line_present": true,
+        "legs": {
+          "gas_cc_state": {
+            "runs_detected": 164,
+            "runs_dropped": 95,
+            "dropped_hours": 365,
+            "units_with_drops": 3
+          },
+          "gas_cc": {
+            "runs_detected": 1554,
+            "runs_dropped": 939,
+            "dropped_hours": 4561,
+            "units_with_drops": 13
+          },
+          "gas_st": {
+            "runs_detected": 508,
+            "runs_dropped": 386,
+            "dropped_hours": 17984,
+            "units_with_drops": 7
+          }
+        },
+        "runs_dropped": 1420,
+        "runs_detected": 2226
+      },
+      "n_plants_in_per_plant_census": 19,
+      "STOP": false,
+      "note": "a screen log with no run-screen census line did not arm the leg"
+    }
+  },
+  "VERDICT": "CLEAR"
+}
