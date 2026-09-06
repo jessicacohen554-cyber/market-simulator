@@ -1,0 +1,82 @@
+{
+ "session": "caiso-255b",
+ "years": {
+  "2023": {
+   "actual_ng_oth_mw": 80.6,
+   "model_net_mw": 612.8,
+   "model_discharge_mw": 680.3,
+   "gap_net_minus_actual_mw": 532.3,
+   "direction": "model OVER-discharges",
+   "P2_actual_pct_err_vs_caiso253": -70.6,
+   "P2_model_pct_err_vs_caiso253": 0.0,
+   "model_max_discharge_mw": 6153.0,
+   "actual_max_mw": 4551.0,
+   "fleet_ratio_model_over_actual": 1.352,
+   "model_cc_regular_at_2223_mw": 7920.7
+  },
+  "2024": {
+   "actual_ng_oth_mw": 1108.1,
+   "model_net_mw": 1657.5,
+   "model_discharge_mw": 1683.0,
+   "gap_net_minus_actual_mw": 549.4,
+   "direction": "model OVER-discharges",
+   "P2_actual_pct_err_vs_caiso253": -47.5,
+   "P2_model_pct_err_vs_caiso253": 0.0,
+   "model_max_discharge_mw": 8992.0,
+   "actual_max_mw": 7414.0,
+   "fleet_ratio_model_over_actual": 1.213,
+   "model_cc_regular_at_2223_mw": 8046.2
+  },
+  "2025": {
+   "actual_ng_oth_mw": 2011.5,
+   "model_net_mw": 2718.8,
+   "model_discharge_mw": 2769.2,
+   "gap_net_minus_actual_mw": 707.3,
+   "direction": "model OVER-discharges",
+   "P2_actual_pct_err_vs_caiso253": -39.8,
+   "P2_model_pct_err_vs_caiso253": 0.0,
+   "model_max_discharge_mw": 11137.0,
+   "actual_max_mw": 9745.0,
+   "fleet_ratio_model_over_actual": 1.143,
+   "model_cc_regular_at_2223_mw": 7212.0
+  }
+ },
+ "gates": {
+  "G_ID": {
+   "legs": {
+    "2023": {
+     "belly_mean_mw": -998.9,
+     "belly_frac_negative": 0.8469,
+     "gross_throughput_gwh": 8092.6,
+     "net_gwh": -43.7,
+     "neutrality_ratio": 0.0054
+    },
+    "2024": {
+     "belly_mean_mw": -2777.9,
+     "belly_frac_negative": 0.9698,
+     "gross_throughput_gwh": 16314.4,
+     "net_gwh": -1140.5,
+     "neutrality_ratio": 0.0699
+    },
+    "2025": {
+     "belly_mean_mw": -4311.6,
+     "belly_frac_negative": 0.974,
+     "gross_throughput_gwh": 24275.9,
+     "net_gwh": -1761.2,
+     "neutrality_ratio": 0.0725
+    }
+   },
+   "G_ID_1_sign_pass": true,
+   "G_ID_2_growth_pass": true,
+   "G_ID_3_neutrality_pass": true,
+   "pass": true
+  }
+ },
+ "verdict": {
+  "G_ID": "PASS - NG: OTH is CAISO's battery fleet",
+  "G_GAP": "the model OVER-discharges storage at hod 22-23 in EVERY year once aligned on the model's clock - the OPPOSITE of the premise caiso-253's re-pointing rests on",
+  "G_FLEET": "model storage power capability EXCEEDS the actual series' own maximum in all three years, so the object is NOT a short fleet",
+  "P2": "HOLDS on the model side (+0.0% all years) and FALSIFIED on the actual side: caiso-253's actuals were read off the RAW parquet's hour-ENDING stamps instead of the loader's model-clock frame",
+  "queue_item": "caiso-253 queue item 1 (storage re-pointing) is REFUTED"
+ }
+}
