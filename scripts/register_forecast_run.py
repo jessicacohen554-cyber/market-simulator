@@ -328,7 +328,23 @@ VERDICT_MAP = {
     # default_scenario_overrides), so arm A IS the shipped posture and takes
     # the bare `pjm-t1h` key; the D45-R census leg moves to `pjm-t1h-pre-d57`
     # (above). Arm B keeps its suffix as the isolating control.
-    "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h",
+    # RE-POINTED AGAIN by capx-D67-ARM (2026-09-06, OWNER RULING Q52 — capx
+    # ledger §3, r#47 amendment 1: "ARM for PJM"): the PUBLISHED ADEQUACY
+    # REQUIREMENT (`capacity_adequacy_requirement_published_by_iso[PJM]`) is
+    # ARMED through the same `_pjm_config` override path, so the shipped-posture
+    # bare key advances 15a723ba3b6dc856 -> a9c66d8ea25acb9d and the D57 arm-A
+    # record (f0e050e820c1159a) is preserved verbatim at `pjm-t1h-pre-d67` —
+    # the D45-R / D57 convention, its own verdict standing, nothing re-scored.
+    # The D67-ARM re-solve of the bare recipe at HEAD takes `pjm-t1h`.
+    # Why a re-solve rather than a re-point of D67's own arm bundle: capx D81
+    # merged between, and it is LIVE on this recipe (it routes the pending
+    # owner-filed dated block out of the D57 stack's $0 price-taking residual
+    # and into the priced sell-offer stack), so the D67 §7.1 arm was solved on
+    # a different offer stack than HEAD produces. That also repairs D81's own
+    # cache-epoch entry, which had understated its blast radius by exactly this
+    # bundle (results/cache.py, epoch 2026-09-06e, corrected in place).
+    # PRECOMMIT-capx-d67arm-2026-09-06.md §2/§3 · FINDING-capx-d67arm-2026-09-06.md.
+    "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h-pre-d67",
     # capx-D62 (2026-09-06): the PJM PUBLISHED GOING-FORWARD BAR
     # (`capacity_going_forward_bar_published_by_iso[PJM]` ON — the retirement
     # screen's bar, and through the D57 identity the sell-offer cap, becomes

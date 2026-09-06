@@ -6641,22 +6641,36 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # decomposition PRECOMMIT-capx-d65b-2026-09-06.md §3.1 uses. The Q44
         # posture this test asserts is untouched: three distinct keys through
         # the same override path.
-        self.assertEqual(_key("PJM"), "15a723ba3b6dc856")  # = arm A
+        # capx D67-ARM (owner ruling Q52): a FOURTH field is now armed through
+        # the same override path, so the bare key advances again and the two
+        # explicit control legs need the fourth ``--no-`` flag to reach the
+        # postures they name. MEASURED, not assumed: adding
+        # ``capacity_adequacy_requirement_published=False`` to each restores
+        # its pre-D67-ARM literal EXACTLY (c5ec052057905966 / 6ba67a81ed4d2ed6),
+        # so the whole move is this one field's. The three-flag leg is no
+        # longer the D45-R posture -- it now carries the published requirement
+        # armed -- and is pinned at its own key so a later lane cannot mistake
+        # it for one (PRECOMMIT-capx-d67arm-2026-09-06.md §2; the miss against
+        # that PRECOMMIT's own "unmoved" declaration is reported at full
+        # magnitude in FINDING-capx-d67arm-2026-09-06.md).
+        self.assertEqual(_key("PJM"), "a9c66d8ea25acb9d")  # = the D67-ARM posture
+        _off3 = dict(
+            pjm_accreditation_design_vintage=False,
+            pjm_demand_response_supply=False,
+            capacity_market_supply_clearing=False,
+        )
+        self.assertEqual(_key("PJM", **_off3), "61dfbc5c48af076b")  # D57 off, D67 on
         self.assertEqual(
-            _key(
-                "PJM",
-                pjm_accreditation_design_vintage=False,
-                pjm_demand_response_supply=False,
-                capacity_market_supply_clearing=False,
-            ),
+            _key("PJM", **_off3, capacity_adequacy_requirement_published=False),
             "c5ec052057905966",  # = D45-R's bare key, the explicit control
         )
+        _off2 = dict(
+            pjm_accreditation_design_vintage=False,
+            pjm_demand_response_supply=False,
+        )
+        self.assertEqual(_key("PJM", **_off2), "2d5bebd2bceed991")  # arm B, D67 on
         self.assertEqual(
-            _key(
-                "PJM",
-                pjm_accreditation_design_vintage=False,
-                pjm_demand_response_supply=False,
-            ),
+            _key("PJM", **_off2, capacity_adequacy_requirement_published=False),
             "6ba67a81ed4d2ed6",  # = arm B
         )
         # Every other ISO resolves the three fields OFF (their own keys are
