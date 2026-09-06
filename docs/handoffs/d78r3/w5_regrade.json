@@ -1,0 +1,356 @@
+{
+  "instrument": "d78r3_stack_census.py --regrade",
+  "graded_on": {
+    "primary": "docs/handoffs/d78r2/window_compare2.json -> gates.W5prime.per_year[y].offer_diff_by_fuel",
+    "documentary": "FINDING-capx-d78r2-2026-09-06.md \u00a75.1 (rule 29(c))",
+    "arm_re_solved": false,
+    "control_re_solved_for_this_grade": false
+  },
+  "first_divergent_year": 2023,
+  "source_check_S2": {
+    "per_year": [
+      {
+        "year": 2022,
+        "doc_shared_total": 1399,
+        "json_shared_rows": 1399,
+        "shared_total_agrees": true,
+        "doc_zero_eas_shared": 943,
+        "json_zero_eas_shared_rows": 943,
+        "zero_eas_agrees": true,
+        "json_offer_diff_rows": 0,
+        "movers_sum": 0,
+        "movers_sum_agrees": true,
+        "movers_in_unknown_fuel": [],
+        "movers_exceeding_shared": [],
+        "pass": true
+      },
+      {
+        "year": 2023,
+        "doc_shared_total": 849,
+        "json_shared_rows": 849,
+        "shared_total_agrees": true,
+        "doc_zero_eas_shared": 403,
+        "json_zero_eas_shared_rows": 403,
+        "zero_eas_agrees": true,
+        "json_offer_diff_rows": 0,
+        "movers_sum": 0,
+        "movers_sum_agrees": true,
+        "movers_in_unknown_fuel": [],
+        "movers_exceeding_shared": [],
+        "pass": true
+      },
+      {
+        "year": 2024,
+        "doc_shared_total": 835,
+        "json_shared_rows": 835,
+        "shared_total_agrees": true,
+        "doc_zero_eas_shared": 412,
+        "json_zero_eas_shared_rows": 412,
+        "zero_eas_agrees": true,
+        "json_offer_diff_rows": 679,
+        "movers_sum": 679,
+        "movers_sum_agrees": true,
+        "movers_in_unknown_fuel": [],
+        "movers_exceeding_shared": [],
+        "pass": true
+      },
+      {
+        "year": 2025,
+        "doc_shared_total": 821,
+        "json_shared_rows": 821,
+        "shared_total_agrees": true,
+        "doc_zero_eas_shared": 412,
+        "json_zero_eas_shared_rows": 412,
+        "zero_eas_agrees": true,
+        "json_offer_diff_rows": 619,
+        "movers_sum": 619,
+        "movers_sum_agrees": true,
+        "movers_in_unknown_fuel": [],
+        "movers_exceeding_shared": [],
+        "pass": true
+      }
+    ],
+    "pass": true
+  },
+  "per_dy": {
+    "2022/23": {
+      "solve_year": 2022,
+      "declared_set": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2022/23 ($50.00): gas_ct 404 / 24,244 \u00b7 gas_st 115 / 8,802 \u00b7 oil 421 / 3,723 \u00b7 gas_cc 40 / 1,145 \u00b7 coal 2 / 30 \u2014 gas_cc and coal are PARTIAL fleets and are excluded (class-level set)",
+      "form": "exact",
+      "shared_rows_total": 1399,
+      "offer_diff_rows_total": 0,
+      "classes": {
+        "coal": {
+          "in_declared_set": false,
+          "shared_rows": 188,
+          "moved_rows": 0,
+          "unmoved_rows": 188,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_cc": {
+          "in_declared_set": false,
+          "shared_rows": 237,
+          "moved_rows": 0,
+          "unmoved_rows": 237,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_ct": {
+          "in_declared_set": true,
+          "shared_rows": 404,
+          "moved_rows": 0,
+          "unmoved_rows": 404,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "PASS"
+        },
+        "gas_st": {
+          "in_declared_set": true,
+          "shared_rows": 118,
+          "moved_rows": 0,
+          "unmoved_rows": 118,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "PASS"
+        },
+        "nuclear": {
+          "in_declared_set": false,
+          "shared_rows": 31,
+          "moved_rows": 0,
+          "unmoved_rows": 31,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "oil": {
+          "in_declared_set": true,
+          "shared_rows": 421,
+          "moved_rows": 0,
+          "unmoved_rows": 421,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "PASS"
+        }
+      },
+      "gated_classes": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+      ],
+      "vacuous_classes": [],
+      "verdict": "PASS",
+      "reason": "943 gated shared rows across ['gas_ct', 'gas_st', 'oil'], 0 moved"
+    },
+    "2023/24": {
+      "solve_year": 2023,
+      "declared_set": [
+        "gas_ct",
+        "gas_st"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2023/24 ($34.13): gas_ct 403 / 24,243 \u00b7 gas_st 77 / 1,982 \u00b7 gas_cc 1 / 73 \u2014 gas_cc partial and excluded; gas_st is partial (77/115) and INCLUDED per D78-R2 \u00a79 item 1, which can only make the gate stricter",
+      "form": "exact",
+      "shared_rows_total": 849,
+      "offer_diff_rows_total": 0,
+      "classes": {
+        "coal": {
+          "in_declared_set": false,
+          "shared_rows": 184,
+          "moved_rows": 0,
+          "unmoved_rows": 184,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_cc": {
+          "in_declared_set": false,
+          "shared_rows": 231,
+          "moved_rows": 0,
+          "unmoved_rows": 231,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_ct": {
+          "in_declared_set": true,
+          "shared_rows": 403,
+          "moved_rows": 0,
+          "unmoved_rows": 403,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "PASS"
+        },
+        "nuclear": {
+          "in_declared_set": false,
+          "shared_rows": 31,
+          "moved_rows": 0,
+          "unmoved_rows": 31,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_st": {
+          "in_declared_set": true,
+          "shared_rows": 0,
+          "moved_rows": 0,
+          "unmoved_rows": 0,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "VACUOUS (declared, zero shared rows)"
+        }
+      },
+      "gated_classes": [
+        "gas_ct"
+      ],
+      "vacuous_classes": [
+        "gas_st"
+      ],
+      "verdict": "PASS",
+      "reason": "403 gated shared rows across ['gas_ct'], 0 moved"
+    },
+    "2024/25": {
+      "solve_year": 2024,
+      "declared_set": [
+        "oil"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2024/25 ($28.92): oil 8 / 3,723 \"(the CT fleet's 2024 margin is small but non-zero)\"",
+      "form": "post-divergence",
+      "shared_rows_total": 835,
+      "offer_diff_rows_total": 679,
+      "classes": {
+        "coal": {
+          "in_declared_set": false,
+          "shared_rows": 180,
+          "moved_rows": 180,
+          "unmoved_rows": 0,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_cc": {
+          "in_declared_set": false,
+          "shared_rows": 212,
+          "moved_rows": 95,
+          "unmoved_rows": 117,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_ct": {
+          "in_declared_set": false,
+          "shared_rows": 404,
+          "moved_rows": 404,
+          "unmoved_rows": 0,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "nuclear": {
+          "in_declared_set": false,
+          "shared_rows": 31,
+          "moved_rows": 0,
+          "unmoved_rows": 31,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "oil": {
+          "in_declared_set": true,
+          "shared_rows": 8,
+          "moved_rows": 0,
+          "unmoved_rows": 8,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "PASS"
+        }
+      },
+      "gated_classes": [
+        "oil"
+      ],
+      "vacuous_classes": [],
+      "verdict": "PASS",
+      "reason": "8 gated shared rows across ['oil'], 0 moved"
+    },
+    "2025/26": {
+      "solve_year": 2025,
+      "declared_set": null,
+      "declared_set_citation": "NO ROW EXISTS \u2014 D57 \u00a74's arm-A panel stops at 2024/25; \u00a73.1's 2025 row is at the price cap where every offer clears, so no at-bar set was tabulated. NOT EVALUABLE (PRECOMMIT \u00a71 reading 2)",
+      "form": "post-divergence",
+      "shared_rows_total": 821,
+      "offer_diff_rows_total": 619,
+      "classes": {
+        "coal": {
+          "in_declared_set": false,
+          "shared_rows": 166,
+          "moved_rows": 163,
+          "unmoved_rows": 3,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_cc": {
+          "in_declared_set": false,
+          "shared_rows": 212,
+          "moved_rows": 52,
+          "unmoved_rows": 160,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "gas_ct": {
+          "in_declared_set": false,
+          "shared_rows": 404,
+          "moved_rows": 404,
+          "unmoved_rows": 0,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "nuclear": {
+          "in_declared_set": false,
+          "shared_rows": 31,
+          "moved_rows": 0,
+          "unmoved_rows": 31,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        },
+        "oil": {
+          "in_declared_set": false,
+          "shared_rows": 8,
+          "moved_rows": 0,
+          "unmoved_rows": 8,
+          "max_abs_delta": null,
+          "max_abs_delta_reason": "not recoverable: no committed artifact holds offer VALUES for either leg (control-P deleted before merge, rule 29(c); the D78-R2 arm was never registered), and the arm is NOT re-solved. window_compare2.json records mover COUNTS, not offers. Reporting detail only \u2014 the gate is 'delta exactly zero at OFFER_TOL=1e-09', which the mover count answers.",
+          "status": "REPORTED (outside the DY's declared set)"
+        }
+      },
+      "gated_classes": [],
+      "vacuous_classes": [],
+      "verdict": "NOT EVALUABLE",
+      "reason": "no published at-bar set for this DY (PRECOMMIT \u00a71)"
+    }
+  },
+  "evaluable_dys": [
+    "2022/23",
+    "2023/24",
+    "2024/25"
+  ],
+  "window_verdict": "PASS",
+  "d78r2_year_invariant_verdict": {
+    "set": [
+      "gas_ct",
+      "gas_st",
+      "oil"
+    ],
+    "window_pass": false,
+    "note": "D78-R2's own W5' verdict, reproduced from the same committed instrument: the SAME measurement, graded on a year-invariant set. Nothing measured changed between the two grades."
+  }
+}
