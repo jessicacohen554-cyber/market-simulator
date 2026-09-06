@@ -144,3 +144,40 @@ SCN-WS2b emission-rate defect is **not confined to the three state-carbon ISOs**
 whose 45Q economics clear can carry mis-rated `gas_cc_ccs`. The magnitude in PJM is small
 relative to its ~470 Mt (unlike NEISO's 41.9 % or NYISO's 25.3 %), but the *scope* claim in
 those two FINDINGs was too narrow and is corrected here rather than left standing.
+
+---
+
+## URGENT ROUTE — card D-10's re-solve scope is too narrow by ~2×, measured
+
+SCN-DESK r#10 scopes card **D-10** as *"re-pin once, re-solve the five contaminated legs plus
+CAISO, keep ERCOT/PJM/MISO under G-DRIFT"*. That scope rests on this lane's **own earlier,
+too-narrow claim** that only the state-carbon ISOs carry `gas_cc_ccs` — a claim PJM falsified
+and this lane corrected above. The corrected scope is measured, not argued:
+
+| ISO | legs | `gas_cc_ccs` @2030 (REF → HI) | status |
+|---|---|---|---|
+| NEISO | 2 | 8,832.9 → 8,802.6 MW | **contaminated** |
+| NYISO | 3 | 6,474.6 → 6,620.6 MW | **contaminated** |
+| PJM | 2 | **909.8 → 1,512.8 MW** | **contaminated** — not in D-10's list |
+| MISO | 2 of 3 solved | **334.5 → 484.1 MW** | **contaminated** — not in D-10's list |
+| ERCOT | 3 | 0 | **clean — the only exempt ISO** |
+| CAISO | 3 (pending) | expected present (CARB) | expected contaminated |
+
+**So the re-solve set is 13 of 16 legs, not 6.** ERCOT alone is exempt, and "keep ERCOT/PJM/MISO
+under G-DRIFT" is right for ERCOT and wrong for PJM and MISO. The magnitudes differ enormously —
+NEISO's contamination is 41.9 % of its 2030 level, PJM's ~0.42 % — so a judgement that PJM's and
+MISO's levels are *tolerably* stale is entirely reasonable; what is not available is the claim
+that they are *unaffected*. That is the desk's call to make with the right number in front of it.
+
+**A second, practical blocker D-10 must plan for.** r#10 records that D77 *"moves no cache key,
+so every pre-fix bundle reaching 2028 with a retrofit is silently stale at its own key."* A naive
+re-solve of these legs will therefore **hit the existing cache and return the pre-fix numbers**.
+Whoever executes D-10 needs an explicit cache invalidation (or a redirected cache dir) as part of
+the recipe, or the re-solve will silently reproduce exactly what it was meant to replace.
+
+**What this lane is doing about it, and what it is not.** It is **not** re-solving: D-10 is the
+desk's card, the campaign is frozen at `1cc45bb2` by its own PRECOMMIT, and re-pinning mid-campaign
+would put legs at two bases — the defect the freeze exists to prevent. It **is** finishing the
+campaign at the frozen pin and stating, per ISO, exactly which numbers the D77 seam contaminates
+and by how much, so D-10 can be scoped from measurements instead of from this lane's first,
+narrower guess.
