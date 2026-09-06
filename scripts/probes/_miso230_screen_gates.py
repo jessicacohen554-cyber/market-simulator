@@ -59,8 +59,7 @@ def d_rows(bundle: Path, key: str) -> list[dict]:
 def verdict(bundle: Path) -> dict:
     """Run the production scorer on a bundle and return its parsed record."""
     p = subprocess.run(
-        [sys.executable, "scripts/calibration_verdict.py", "--bundle", str(bundle),
-         "--json"],
+        [sys.executable, "scripts/calibration_verdict.py", str(bundle), "--json"],
         cwd=REPO, capture_output=True, text=True,
     )
     try:
