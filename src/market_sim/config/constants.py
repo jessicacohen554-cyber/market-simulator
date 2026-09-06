@@ -5046,3 +5046,166 @@ WIND_PTC_STATUTORY_USD_PER_MWH: dict[int, float] = {
     2024: 29.0,
     2025: 30.0,
 }
+
+# =============================================================================
+# VOLUNTARY CLEAN-ENERGY DEMAND — the SCN-WS3b scenario axis (forecast-only,
+# default-off, publicly anchored; owner ruling S1 2026-09-06 on card D-3).
+# =============================================================================
+# The design is the SCN-WS3a memo, docs/handoffs/voluntary-clean-demand-design-
+# memo-2026-09-05.md ("the memo"), §3 (the volume construction and its per-cell
+# provenance table §3.3), Addendum A.1 (the anchors verified over the proxy) and
+# box 5 (the levels). Consumed ONLY by policy/voluntary_demand.py, and only when
+# ScenarioConfig.voluntary_clean_demand_path != "off" — a backcast/hindcast
+# coerces the axis off at the config seam (rule 13 [R-MEASURED]), so nothing
+# here can reach a scored run. Every number is a DECLARED what-if level with a
+# public citation (rule 5 [R-NO-MAGIC]); nothing is identified against a model
+# residual (rule 20 [R-DOF] — the axis is absent from every scored model) and
+# nothing is proprietary (memo §1.2, ffr-5b sentence 1 honoured). Cells the
+# memo's box 5 leaves OWNER-SET are labelled ILLUSTRATIVE below and are listed
+# for re-presentation in FINDING-scn-ws3b-2026-09-06.md §4 — owner ruling S3
+# (card D-2) committed "the box-5 defaults" and box 5 itself leaves `f_commit`
+# mid and the WTP-ceiling LEVEL owner-set (FINDING-scn-levels-2026-09-06.md §4),
+# so neither may be inferred from a ruling here.
+#
+# The construction (memo §3.1), per ISO-year:
+#   V = s_base(path, y) × E_nonDC(ISO, y) × w_ISO  +  f_commit(path, y) × E_DC(ISO, y)
+# with E_DC the energy of the data-centre block the model already builds
+# (data.datacenter.datacenter_block_energy_mwh over DATACENTER_ADDITIONS_MW
+# × datacenter_load_factor) and E_nonDC the served energy that is not the block,
+# both read from the run's own demand AFTER the load layers fold in — so a
+# high-DC case and a high-voluntary case are coherent by construction, and the
+# growth×DC relocation discipline (memo §3.4) is never double-counted.
+#
+# EVERY {year: value} table below uses the DATACENTER_ADDITIONS_MW grammar:
+# linear between knots, EDGE-HELD outside them (a single knot = held flat).
+
+# The default eligible set — the voluntary RENEWABLE market's set (memo §4.1):
+# wind and solar are the LP's zone columns, offshore_wind and geothermal resolve
+# to generator columns through FUEL_TYPE_MAP. Hydro and biomass are EXCLUDED
+# (the market's dominant certification standard, Green-e Energy, admits only
+# new / low-impact hydro and the LP's hydro classes carry no such attribute).
+# `offshore_wind` is the memo's one addition to the charter's "wind / solar /
+# geothermal" (it is wind the fleet types separately).
+#   *** D-3c IS OPEN (ledger §2): this set is the memo's RECOMMENDATION, not a
+#   ruled default. *** Nuclear and gas_cc_ccs ("carbon-free" programs, memo
+#   §4.2) enter ONLY through the labelled ScenarioConfig.voluntary_eligible_fuels
+#   override for a named arm, never here — and a gas_cc_ccs listing credits at
+#   the indicator 1.0 of the name-tuple form, not the federal row's 0.95.
+VOLUNTARY_ELIGIBLE_FUELS_DEFAULT: tuple[str, ...] = (
+    "wind",
+    "solar",
+    "offshore_wind",
+    "geothermal",
+)
+
+# National voluntary green-power sales as a share of ALL U.S. retail electricity
+# sales, by data year — the NREL series the baseline share is read from. Each
+# row is the report's own headline (abstract text, read over the proxy from
+# OSTI 2026-09-06; the product tables — sales by product and by customer class,
+# memo §3.3 rows 6-7 — stay `needs-citation`: docs.nrel.gov does not resolve
+# through this environment's proxy).
+#   2021: ~244 million MWh, ~8.0 million customers, "about 6% of all U.S. retail
+#         electricity sales" — O'Shaughnessy et al., *Status and Trends in the
+#         U.S. Voluntary Green Power Market (2021 Data)*, NREL, DOI 10.2172/1992505.
+#   2022: ~272 million MWh, ~9.6 million customers, "about 6%" — *(2022 Data)*,
+#         NREL, DOI 10.2172/2341527.
+#   2023: ~319 million MWh, ~9.7 million customers, "+17% over 2022", "about 44%
+#         of non-hydropower renewable energy sales and about 8% of all U.S.
+#         retail electricity sales" — O'Shaughnessy, Jena, Salyer, *Status and
+#         Trends in the U.S. Voluntary Power Market: 2023 Data*, NREL/TP-6A20-
+#         92289, Aug 2025, DOI 10.2172/2584242.
+# Provenance record consumed by the derivation tests (the path table below is
+# READ from it), never by the resolver.
+VOLUNTARY_NATIONAL_SHARE_OF_RETAIL_SALES: dict[int, float] = {
+    2021: 0.06,
+    2022: 0.06,
+    2023: 0.08,
+}
+VOLUNTARY_NATIONAL_SALES_MWH: dict[int, float] = {
+    2021: 244.0e6,
+    2022: 272.0e6,
+    2023: 319.0e6,
+}
+
+# s_base(path, y): the voluntary share of NON-data-centre load (the pre-existing
+# market — utility green pricing, competitive suppliers, unbundled RECs, PPAs
+# outside data centres, CCAs). Memo box 5, committed by S3: `mid` = the latest
+# NREL national share HELD FLAT (2023: 0.08); `low` / `high` = the report
+# series' own historical range, i.e. its floor (2021-2022: 0.06) and its
+# ceiling (2023: 0.08). NOTE, stated rather than smoothed: the series' ceiling
+# IS the latest value, so `high` coincides with `mid` under the box-5
+# construction — a growing high path (e.g. the +17 %/yr 2022→2023 trend
+# continued) would be an OWNER level under D-2 and is listed for
+# re-presentation, never inferred here. Applied uniformly to every ISO's
+# non-DC load; the per-ISO re-weighting is VOLUNTARY_BASELINE_ISO_WEIGHT.
+VOLUNTARY_BASELINE_SHARE: dict[str, dict[int, float]] = {
+    "low": {2023: 0.06},
+    "mid": {2023: 0.08},
+    "high": {2023: 0.08},
+}
+
+# w_ISO: the per-ISO re-weighting of the national share onto that ISO's non-DC
+# load. The memo's allocation basis (§3.2) is each ISO's share of U.S.
+# COMMERCIAL-sector retail sales (EIA Form 861, state × sector, mapped state →
+# ISO on the MISO compliance-region precedent) divided by its share of total
+# sales — the voluntary market's buyers are overwhelmingly commercial.
+#   *** needs-intake (memo §3.3 row 9): EIA-861 is NOT in data/raw at this
+#   commit and `scripts/` is outside every SCN lane's regions, so no curate
+#   script could be written here. *** `None` resolves to 1.0 — the national
+#   share applied to the ISO's own load, i.e. an allocation by total load
+#   share — the disclosed stand-in until the intake lands. A populated cell is
+#   the ratio described above (dimensionless, ~1), with its citation.
+VOLUNTARY_BASELINE_ISO_WEIGHT: dict[str, float | None] = {
+    "ERCOT": None,  # needs-intake (EIA-861 commercial share ÷ total share)
+    "CAISO": None,  # needs-intake
+    "PJM": None,  # needs-intake
+    "MISO": None,  # needs-intake
+    "NYISO": None,  # needs-intake
+    "NEISO": None,  # needs-intake
+}
+
+# f_commit(path, y): the share of the DC block's energy under a PUBLISHED
+# 100 %-clean / carbon-free ANNUAL-matching commitment in year y (memo §3.3 rows
+# 11-12; only annual matching is modelled, D-3b deferred 24/7 to the isolated
+# scope2-lce-portfolio tool). Commitment anchors (memo Addendum A.1 row 11,
+# company sustainability disclosures): Google 24/7 CFE by 2030 (2020 pledge);
+# Microsoft "100/100/0" by 2030 (2021); Amazon 100 % annual matching reached
+# 2023; Meta 100 % annual matching since 2020 but EXITED RE100 in July 2026.
+#   low  = 0.0  — no committed buyer (the box-5 floor S3 committed). A.1 notes
+#                 the fraction is NOT monotone (the Meta exit) and argues for a
+#                 FALLING low path; that is a D-2 shape question, recorded in
+#                 the FINDING, not taken here.
+#   high = 1.0  — the whole block committed (box 5, S3).
+#   mid  = *** ILLUSTRATIVE, OWNER-SET UNDER D-2 (box 5 leaves it owner-set;
+#          S3 did not reach it; the memo calls it "the weakest cell in the
+#          construction") ***. The public anchor is the hyperscale share of
+#          U.S. DC energy in Shehabi et al., LBNL 2024 U.S. Data Center Energy
+#          Usage Report (the split IS published — A.1 row 12 — but the PDF is
+#          unreachable through this environment's proxy, so it stays
+#          `needs-citation`). 0.5 is a placeholder at the range midpoint,
+#          labelled so the VOL-MID case is expressible; it is NOT a ruled level.
+VOLUNTARY_COMMITTED_DC_FRACTION: dict[str, dict[int, float]] = {
+    "low": {2026: 0.0},
+    "mid": {2026: 0.5},  # ILLUSTRATIVE — owner level (D-2), see above
+    "high": {2026: 1.0},
+}
+
+# w: the buyer's willingness-to-pay CEILING for the clean attribute, real
+# 2026$/MWh (REAL_DOLLAR_BASE_YEAR) — the voluntary row's escape price, above
+# which the buyer forgoes the attribute (memo §2.1; the ACP analogue of the
+# compliance rows). Public range (memo §3.3 row 14): national voluntary
+# unbundled RECs $2-7/MWh, cited in-repo at docs/handoffs/ces-ci-crediting-
+# audit-2026-07.md §5.2 (anchored to Green-e / Platts public series; bundled-PPA
+# premia are proprietary and REFUSED). `low` / `high` are the endpoints of that
+# cited range; the range's dollar-year spread is inside its own width, so no
+# deflation is applied.
+#   mid = *** ILLUSTRATIVE, OWNER-SET UNDER D-2 (box 5: "the ceiling itself is
+#         an owner level"; S3 did not reach it) *** — the range midpoint,
+#         labelled so VOL-MID is expressible. ScenarioConfig.voluntary_wtp_
+#         ceiling_usd_per_mwh overrides the path value for a labelled
+#         sensitivity.
+VOLUNTARY_WTP_CEILING_USD_PER_MWH: dict[str, float] = {
+    "low": 2.0,
+    "mid": 4.5,  # ILLUSTRATIVE — owner level (D-2), see above
+    "high": 7.0,
+}
