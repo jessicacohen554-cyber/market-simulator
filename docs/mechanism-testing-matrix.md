@@ -5535,12 +5535,17 @@ loss.
 > condition (b) makes 2023 govern.
 > **THE MEASUREMENT THAT GENERALISES, and the one to carry forward.** At the model's own
 > 2025 annual maximum (`07-28 HE19`, **$187.04** vs actual **$683.21**) the capacity above
-> the clearing price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block** —
-> wind, nuclear, solar, imports, hydro, biomass, oil — carrying **no `offer_curve_by_group`
-> entry at all**. **The offer-curve channel controls 10.2 % of the supply that would have to
-> be re-priced, at the hour where it controls the most.** miso-220's unreachable-block
-> declaration (oil / biomass / ST_CHP) widens to hydro and imports and becomes the BINDING
-> constraint in 2025, where it is 35.7 % of the above-price capacity on the object average.
+> the clearing price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block**
+> carrying **no `offer_curve_by_group` entry at all** — and that block is **NOT a mixed bag:
+> resolved by `fuel_type` it is 90.9 / 91.8 / 98.7 % OIL** (2,898 / 2,898 / 2,856 MW above
+> price at a cap-weighted **$241.11 / $248.65 / $241.30**), essentially the whole ~2.9 GW
+> MISO oil fleet, on the legacy override/CSV path. **The channel controls 10.2 % of the
+> supply that would have to be re-priced, at the hour where it controls the most, and the
+> block it cannot reach is ALREADY PRICED IN THE TAIL.** miso-220's unreachable-block
+> declaration (oil / biomass / ST_CHP) is promoted from a footnote to the finding.
+> **THE MODEL IS NOT MISSING TAIL-PRICED CAPACITY — IT IS MISSING THE TIGHTNESS TO REACH
+> IT**: ~2.9 GW at ~$241 plus ~2.5 GW between $200 and the actual in 2025, and at 2025's
+> three tightest object hours only **329 / 1,044 / 1,719 MW** separates the price from $200.
 > **CONSEQUENCE FOR THE LANE: C3c IS NOT AN OFFER-CURVE PROBLEM IN MISO.** With the
 > reserve/scarcity family closed arithmetically (miso-219: zero shortfall in all 26,280 h)
 > and `maxgen_emergency_tier_pricing` contributing exactly $0 (load slack 0.000 MWh), the

@@ -508,6 +508,41 @@ def analyse_year(year: int, cands: dict[str, dict]) -> dict:
     return out
 
 
+def nontranche_decomposition(year: int) -> dict:
+    """What the NON-TRANCHE block above the clearing price actually is, by fuel.
+
+    The ladder reports every row carrying no ``_p<code>_<band>`` token as one
+    ``|?`` bucket, which is the whole non-thermal-tranche fleet — wind, nuclear,
+    solar, imports, hydro, biomass, oil. That bucket is 12.9 / 16.6 / 35.7 % of
+    the capacity sitting ABOVE the keeper's clearing price at the object's hours
+    and is unreachable by ``offer_curve_by_group``, so what it is MADE OF decides
+    whether "unreachable" is a footnote or the finding. This resolves it by
+    ``fuel_type`` over the same 15 hours.
+
+    Returns ``{fuel: {"mw": mean MW above price, "cap_w_offer_usd": ...}}``.
+    """
+    mc, klass, band, _zone, pmax, avail = _stack(keeper_table(), year)
+    cfg = dataclasses.replace(keeper_config(), offer_curve_by_group=keeper_table())
+    _, fleet, _arrays, _, _, _ = build_year(cfg, year)
+    fuel = np.array([str(getattr(g, "fuel_type", "") or "") for g in fleet])
+    zp, hrs = keeper_zone_price(year), object_hours(year)
+    nont = band == "?"
+    mw: dict[str, float] = {}
+    wsum: dict[str, float] = {}
+    for h in hrs:
+        cap = pmax * avail[:, h]
+        above = (cap > 1.0) & nont & (mc[:, h] > zp[h] + EPS)
+        for f in sorted(set(fuel[above])):
+            sel = above & (fuel == f)
+            mw[f] = mw.get(f, 0.0) + float(cap[sel].sum())
+            wsum[f] = wsum.get(f, 0.0) + float((mc[sel, h] * cap[sel]).sum())
+    n = len(hrs)
+    return {
+        f: {"mw": _r(v / n, 0), "cap_w_offer_usd": _r(wsum[f] / max(v, EPS), 2)}
+        for f, v in sorted(mw.items(), key=lambda kv: -kv[1])
+    }
+
+
 def _keeper_reference() -> dict:
     """The keeper's own C3c baseline and CT_PEAKER C1 cells, from committed artifacts.
 

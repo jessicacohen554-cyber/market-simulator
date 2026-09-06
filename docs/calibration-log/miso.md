@@ -11972,13 +11972,19 @@ against the keeper's committed duals):
 
 **THE MEASUREMENT THAT GENERALISES.** At the model's own 2025 annual maximum
 (`07-28 HE19`, **$187.04** against an actual **$683.21**) the capacity above the clearing
-price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block** — wind,
-nuclear, solar, imports, hydro, biomass, oil — carrying **no `offer_curve_by_group` entry
-at all**. **The offer-curve channel controls 10.2 % of the supply that would have to be
-re-priced, at the hour where it controls the most.** miso-220's unreachable-block
-declaration (oil / biomass / `ST_CHP`) widens to hydro and imports and becomes the
-*binding* constraint in 2025, where it is 35.7 % of the above-price capacity on the
-object average.
+price is **2,849 MW, of which 2,557 MW (89.8 %) is the non-tranche block** carrying **no
+`offer_curve_by_group` entry at all** — and resolving that block by `fuel_type` shows it
+is **not a mixed bag: it is 90.9 / 91.8 / 98.7 % OIL** (2,898 / 2,898 / 2,856 MW above
+price, cap-weighted **$241.11 / $248.65 / $241.30**), essentially the whole ~2.9 GW MISO
+oil fleet, on the legacy override/CSV path. **The offer-curve channel controls 10.2 % of
+the supply that would have to be re-priced, at the hour where it controls the most, and
+the block it cannot reach is already priced in the tail.** miso-220's unreachable-block
+declaration (oil / biomass / `ST_CHP`) is promoted from a footnote to the finding.
+
+**So the model's stack is not missing tail-priced capacity — it is missing the tightness
+to reach it.** It holds ~2.9 GW at ~$241 plus ~2.5 GW between $200 and the measured
+actual in 2025, and at 2025's three tightest object hours only **329 / 1,044 / 1,719 MW**
+separates the clearing price from $200.
 
 **Consequence for the lane: C3c is not an offer-curve problem in MISO.** With the
 reserve/scarcity family closed arithmetically (miso-219 — zero shortfall in all 26,280

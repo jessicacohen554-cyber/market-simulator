@@ -34,9 +34,11 @@ at every admissible value**, and rule 1 condition (b) requires one config across
 three years, so 2023 governs. The structural reason is the last measurement: at 2025
 07-28 HE19 — the model's own annual maximum, $187.04 against an actual $683.21 — the
 capacity above the clearing price is **2,849 MW, of which 2,557 MW (89.8 %) is the
-non-tranche block** (wind, nuclear, solar, imports, hydro, biomass, oil) that carries no
-`offer_curve_by_group` entry. **The offer-curve channel controls 10.2 % of the supply
-that would have to be re-priced, at the single hour where it controls the most.**
+non-tranche block** that carries no `offer_curve_by_group` entry — and that block is
+**not a mixed bag: it is 90.9 / 91.8 / 98.7 % OIL**, essentially the whole ~2.9 GW MISO
+oil fleet, offering at a cap-weighted **$241–$249/MWh**. **The offer-curve channel
+controls 10.2 % of the supply that would have to be re-priced, at the single hour where
+it controls the most, and the block it cannot reach is already priced in the tail.**
 
 ## 1. A GOVERNANCE CORRECTION THE CHARTER NEEDS, stated first because it scoped the work
 
@@ -88,12 +90,22 @@ Mean capacity above the committed clearing price across each year's 15 object ho
 | `ST_GAS\|econ` | 719 MW (2.9 %) | 1,060 MW (5.6 %) | 178 MW (2.2 %) |
 | **TOTAL above price** | **24,624 MW** | **18,964 MW** | **8,104 MW** |
 
-The `|?` block is the fleet's non-tranche rows — wind, nuclear, solar, imports, hydro,
-`OTHER`, biomass, oil — none of which carries an `offer_curve_by_group` entry. miso-220
-declared `oil` (3,278.8 MW), `biomass` (1,865.7 MW) and `ST_CHP` (698.3 MW) unreachable;
-**this measurement widens that declaration to hydro and imports and makes it the
-binding constraint in 2025**, where the unreachable block is the LARGEST single
-component above the price.
+**And the `|?` block is not a mixed bag — it is oil.** Resolving it by `fuel_type` over
+the same hours (`nontranche_decomposition`):
+
+| year | `oil` MW above price | oil cap-w offer | `biomass` MW | oil share of `\|?` |
+|---|---:|---:|---:|---:|
+| 2023 | **2,898** | **$241.11** | 290 | **90.9 %** |
+| 2024 | **2,898** | **$248.65** | 257 | **91.8 %** |
+| 2025 | **2,856** | **$241.30** | 38 | **98.7 %** |
+
+This is essentially the entire MISO oil fleet (miso-220 sized it at 3,278.8 MW), sitting
+above the clearing price in every object hour of all three years, **already priced in the
+tail range** — and carrying no `offer_curve_by_group` entry, because oil resolves on the
+legacy override/CSV path. miso-220 declared oil, `biomass` (1,865.7 MW) and `ST_CHP`
+(698.3 MW) unreachable *by omission*; **this measurement promotes that declaration from a
+footnote to the finding**: oil is not a rounding error at the margin, it is the wall the
+model's price would hit if it ever got there.
 
 **At the model's own 2025 annual maximum (07-28 HE19, $187.04 vs actual $683.21):**
 
@@ -247,7 +259,12 @@ the above-price block); the spread cannot reach ($194.26 ceiling at an indefensi
 **The generalisation, and it is the one that matters.** C3c is not an offer-curve
 problem in MISO. In the object's hours the model carries **8.1–24.6 GW above its own
 clearing price**, of which **12.9 / 16.6 / 35.7 %** — and **89.8 % at the single tightest
-hour** — is fleet the `offer_curve_by_group` channel cannot address at all. Combined with
+hour** — is fleet the `offer_curve_by_group` channel cannot address at all, **and that
+fleet is 91–99 % oil already offering at $241–$249/MWh.** The model's stack is therefore
+*not* missing tail-priced capacity: it holds ~2.9 GW at ~$241 plus a further ~2.5 GW
+between $200 and the measured actual in 2025. **What it is missing is the tightness to
+reach them** — and the gap is small at the sharp end: at 2025's three tightest object
+hours only **329 / 1,044 / 1,719 MW** separates the clearing price from $200. Combined with
 miso-219's arithmetic closure of the reserve/scarcity family (zero shortfall in all
 26,280 hours) and F-7's finding that `maxgen_emergency_tier_pricing` contributes exactly
 $0 because load slack is 0.000 MWh, **the remaining C3c levers must either remove
