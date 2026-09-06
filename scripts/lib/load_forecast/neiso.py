@@ -114,7 +114,9 @@ def _annual_rows(
             out.append(
                 dict(
                     scenario="actual" if year == actual_year else "mid",
-                    published_case="2026 CELT actual" if year == actual_year else "2026 CELT",
+                    published_case="2026 CELT actual"
+                    if year == actual_year
+                    else "2026 CELT",
                     area="NEISO",
                     area_type="iso",
                     component="total",
@@ -148,7 +150,11 @@ def _electrification(rows: list[tuple]) -> list[dict]:
         if start is None:
             continue
         header = next(
-            (i for i in range(start, min(start + 4, len(rows))) if _year_columns(rows, i)),
+            (
+                i
+                for i in range(start, min(start + 4, len(rows)))
+                if _year_columns(rows, i)
+            ),
             None,
         )
         if header is None:
@@ -156,7 +162,9 @@ def _electrification(rows: list[tuple]) -> list[dict]:
         years = _year_columns(rows, header)
         component = None
         for row in rows[header + 1 : header + 20]:
-            labels = [str(c).strip() for c in row[:3] if isinstance(c, str) and c.strip()]
+            labels = [
+                str(c).strip() for c in row[:3] if isinstance(c, str) and c.strip()
+            ]
             if not labels:
                 break
             category = next((l for l in labels if l in CATEGORY_TO_COMPONENT), None)
@@ -198,7 +206,9 @@ def parse(raw_dir: Path, spec: IsoSpec) -> pd.DataFrame:
     energy_rows = sheet_rows(path, "1.5.2 Energy")
     peak_rows = sheet_rows(path, "1.5.1 Peak Loads")
     records = (
-        _annual_rows(energy_rows, "Annual net energy for load", "energy_gwh", "gwh", 2025)
+        _annual_rows(
+            energy_rows, "Annual net energy for load", "energy_gwh", "gwh", 2025
+        )
         + _annual_rows(peak_rows, "Summer peak (MW)", "summer_peak_mw", "mw", 2025)
         + _winter(peak_rows)
         + _electrification(sheet_rows(path, "1.7 Electrification Forecast"))
@@ -219,13 +229,19 @@ def _winter(rows: list[tuple]) -> list[dict]:
     located first and the pair beneath it read against the same header.
     """
     header = next(
-        (i for i, r in enumerate(rows)
-         if "Summer peak (MW)" in " ".join(str(c) for c in r if c is not None)),
+        (
+            i
+            for i, r in enumerate(rows)
+            if "Summer peak (MW)" in " ".join(str(c) for c in r if c is not None)
+        ),
         None,
     )
     label = next(
-        (i for i, r in enumerate(rows)
-         if "Winter peak (MW)" in " ".join(str(c) for c in r if c is not None)),
+        (
+            i
+            for i, r in enumerate(rows)
+            if "Winter peak (MW)" in " ".join(str(c) for c in r if c is not None)
+        ),
         None,
     )
     if header is None or label is None:

@@ -211,7 +211,9 @@ def validate_tidy(df: pd.DataFrame) -> pd.DataFrame:
     if bad_basis:
         problems.append(f"basis(es) not in vocab: {bad_basis}")
     if bool(df["basis"].isna().any()):
-        problems.append(f"{int(df['basis'].isna().sum())} row(s) have a null basis (a key column)")
+        problems.append(
+            f"{int(df['basis'].isna().sum())} row(s) have a null basis (a key column)"
+        )
 
     known = df["metric"].isin(METRIC_UNITS)
     expected = df.loc[known, "metric"].map(METRIC_UNITS)
@@ -230,7 +232,9 @@ def validate_tidy(df: pd.DataFrame) -> pd.DataFrame:
         problems.append(f"{int(dupes.sum())} duplicate key row(s), e.g. {sample}")
 
     if problems:
-        raise ValueError("load-forecast tidy checks failed:\n  - " + "\n  - ".join(problems))
+        raise ValueError(
+            "load-forecast tidy checks failed:\n  - " + "\n  - ".join(problems)
+        )
     return df
 
 
@@ -266,8 +270,10 @@ def parse_unified_csv(raw_dir: Path, spec: IsoSpec) -> pd.DataFrame:
         if "basis" not in raw.columns:
             raw["basis"] = spec.default_basis
         else:
-            raw["basis"] = raw["basis"].fillna(spec.default_basis).replace(
-                {"": spec.default_basis}
+            raw["basis"] = (
+                raw["basis"]
+                .fillna(spec.default_basis)
+                .replace({"": spec.default_basis})
             )
     return finalize(raw)
 
@@ -300,8 +306,11 @@ def parse_iso(iso: str, raw_root: Path) -> pd.DataFrame:
     frames = [parse_unified_csv(raw_dir, spec)]
     if spec.parse is not None:
         frames.append(spec.parse(raw_dir, spec))
-    df = finalize(pd.concat([f for f in frames if not f.empty], ignore_index=True)) \
-        if any(not f.empty for f in frames) else empty_frame()
+    df = (
+        finalize(pd.concat([f for f in frames if not f.empty], ignore_index=True))
+        if any(not f.empty for f in frames)
+        else empty_frame()
+    )
     if not df.empty:
         validate_tidy(df)
     return df

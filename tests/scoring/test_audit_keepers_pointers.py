@@ -54,7 +54,9 @@ class TestDanglingPointerFindings(unittest.TestCase):
     # --- live pointers: a pruned target is a defect ----------------------- #
 
     def test_clean_shard_passes(self):
-        self.assertEqual(self._find({"iso": "NEISO", "keeper": "2026-01-01-live-keeper"}), [])
+        self.assertEqual(
+            self._find({"iso": "NEISO", "keeper": "2026-01-01-live-keeper"}), []
+        )
 
     def test_dangling_holdout_touchpoint_fails(self):
         """The neiso-102 defect itself: a touchpoint panel naming a pruned run."""
@@ -136,7 +138,9 @@ class TestDanglingPointerFindings(unittest.TestCase):
 
     def test_keeper_field_is_e1s_not_e12s(self):
         """``keeper`` is deliberately absent from the scope — E1 already fails it."""
-        self.assertEqual(self._find({"iso": "NEISO", "keeper": "2026-01-01-pruned"}), [])
+        self.assertEqual(
+            self._find({"iso": "NEISO", "keeper": "2026-01-01-pruned"}), []
+        )
 
     # --- shape robustness ------------------------------------------------- #
 

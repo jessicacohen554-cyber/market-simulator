@@ -56,6 +56,13 @@ class _FakeConfig:
     weather_year: int | None = None
     mode: str = "backcast"
     carbon_price: float = 0.0
+    # SCN-WS1c (b1996141) made policy.carbon.resolved_base_trajectory_price
+    # read `config.carbon_price_path` as a bare attribute (the S2 federal
+    # FLOOR's second operand, via rff_path_price), so the stand-in has to
+    # carry it. Same default as the real ScenarioConfig (scenarios.py:2742),
+    # which keeps the oracle on the zero path and the parity comparison
+    # unchanged.
+    carbon_price_path: str = "zero"
     # spec.py prices the WECC border adder through
     # policy.carbon.resolve_carbon_price(config, year) since SCN-WS1a G-C2
     # (1ab91a93), and the resolver reads the ISO off the config the way the

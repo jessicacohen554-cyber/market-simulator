@@ -33,7 +33,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import IsoSpec, empty_frame, finalize, register
-from ._xlsx import header_index, numeric_records, sheet_rows
+from ._xlsx import header_index, sheet_rows
 
 DATA_WORKBOOK = "2026-load-report-data.xlsx"
 ADJUSTMENTS_WORKBOOK = "total-load-adjustments-breakdown.xlsx"

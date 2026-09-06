@@ -247,6 +247,15 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "locality_curve_price_per_firm_mw_yr",  # capx D59, see the note above.
         "resolve_caiso_ra_mpb_anchor",  # FFR-4F, see the note above.
         "resolve_capacity_curve_eligible",
+        # capx D62 (2026-09-06): the third member of the module's per-ISO
+        # capacity-gate family, added alongside its two siblings below without
+        # the paired facade re-export — the same omission as FFR-4F/FFR-1C/
+        # FFR-4D above. Public by construction (imported by
+        # model/capacity_evolution/retirements.py and
+        # scripts/run_capacity_hindcast.py), so it joins the frozen surface
+        # rather than being made private. Registered (and re-exported)
+        # 2026-09-06 by y21.
+        "resolve_capacity_going_forward_bar_published",
         "resolve_capacity_market_clearing",
         # capx D57, see the note above.
         "resolve_capacity_market_supply_clearing",
