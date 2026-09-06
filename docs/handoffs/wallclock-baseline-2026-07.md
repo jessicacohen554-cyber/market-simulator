@@ -743,3 +743,48 @@ stands; the branch is rebased onto `b2bd9fdba`.
 `read_excel` over the same workbook family (per-vintage `PLNT<yy>`, for the CO2 rate
 map) and would take the same helper unchanged. It is outside this item's declared
 file scope, so it is left alone and handed forward.
+
+## WALLCLOCK A-3 — class-band sidecar vectorized, sidecar block put on the clock (2026-09-05)
+
+Wallclock desk item A-3 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-3;
+desk log `docs/handoffs/wallclock-desk-log-2026-09.md`). Branch
+`claude/wc-a3-band-sidecar-clock-hfflwe` off `2886235c`. Conditions as §PERF-B above
+(determinism pin, 4 vCPU / 15 GB, `uv.lock` env pandas 3.0.3 / pyarrow 24.0.0), NEISO
+keeper `2026-08-17-neiso-99-joint-p1` replayed full 8760 × 2023–2025 through
+`scripts/capture_keeper_goldens.py` on the merge-base tree (`wc-a3-before`, a sparse
+worktree at `2886235c`) and the branch tree (`wc-a3-after`); **the two arms solved
+concurrently** (peak 4.3–4.4 GB each), so every solve wall below carries the host-noise
+caveat and only the phase-structure deltas are the signal. `scripts/run_calibration_full.py`
+only; `pipeline/timing.py` untouched.
+
+| Change | Where landed | Measured effect |
+|---|---|---|
+| (g) `_write_class_band_hourly_sidecar`: band once per distinct `unit_id` (`_band_categorical` — `_tranche_band` over the categorical's categories, indexed by codes) instead of per row | branch commit `4d5a59b2` | On the real NEISO 2023 P1 frame (6,718,920 rows, 767 distinct ids): the band `Categorical` **15.63 s → 0.16 s**, categories (`str` dtype), codes and values identical. The whole writer, end-to-end on that frame, **16.8 / 15.6 s → 4.6 / 5.3 s** (two rounds, measured while two solves shared the CPU), same output sha `de9e5a3f…`. Zero LP change by construction. |
+| (h) the `hourly/` sidecar block moved from AFTER `log_year_phase_timing` to before it, as the new `sidecars` entry of `results_write_parts` | same commit | The six frozen fields are unchanged and `results_write == state + frames + parquet + bench + sidecars` exactly. Before, the block sat between one year's `_t_end` and the next year's `_t_year` — booked to no phase and no year's `total`. After (branch arm): `results_write` 12.4 / 10.0 / 10.9 s with `sidecars` **8.0 / 5.9 / 7.2 s** (2023/24/25) versus the control's 4.8 / 4.5 / 4.9 s with no sidecar term; the ~6–8 s/yr now visible is what remains of the block AFTER (g), the control's invisible block being that plus (g)'s ~11–12 s. |
+
+**Byte gate.** Every `hourly/` sidecar (7 kinds × 3 years, 21 files) and every dispatch
+frame sha256-identical between the arms; `class_band_hourly_{2023,2024,2025}`
+`frame.equals` True (429,240 × 7 each). `scripts/regression_gate.py --mode byte`:
+**check [1] golden bundle diff PASS** (NEISO, 9 files, 32 numeric columns, atol=rtol=0),
+zero reshuffle in all three years, smoke PASS (24). Check [4] is **pre-existing by
+control**: `legitimacy(--keepers)` is the standing NYISO `nyiso_li_lcr_tsl` capacity-
+deliverability data gap (§PERF-B RESUME above), and `audit_keepers` reads the same
+S1 stale-`status/NEISO.js` failure with byte-identical output on the merge-base tree.
+Manifests committed under `results/regression-goldens/wc-a3-{before,after}/`.
+
+**Phase lines, both arms (concurrent):**
+
+| arm | year | data_prep | solve_p0 | markup | solve_p1 | results_write | total | results_write parts |
+|---|---|---|---|---|---|---|---|---|
+| before | 2023 | 116.0 | 109.1 | 6.4 | 42.1 | 4.8 | 278.3 | state=0.3 frames=0.9 parquet=1.8 bench=1.8 |
+| before | 2024 | 9.6 | 119.2 | 6.6 | 36.7 | 4.5 | 176.6 | state=0.2 frames=0.7 parquet=1.6 bench=2.0 |
+| before | 2025 | 7.2 | 123.1 | 6.1 | 41.6 | 4.9 | 183.0 | state=0.2 frames=0.9 parquet=2.0 bench=1.8 |
+| after | 2023 | 89.8 | 116.5 | 6.8 | 43.3 | 12.4 | 268.7 | state=0.2 frames=1.0 parquet=1.8 bench=1.4 **sidecars=8.0** |
+| after | 2024 | 8.4 | 120.4 | 6.0 | 35.1 | 10.0 | 179.9 | state=0.2 frames=1.0 parquet=1.5 bench=1.4 **sidecars=5.9** |
+| after | 2025 | 6.3 | 108.6 | 6.5 | 35.9 | 10.9 | 168.1 | state=0.2 frames=0.9 parquet=1.5 bench=1.1 **sidecars=7.2** |
+
+**Fast tier** on the branch: 8,104 passed / 3 failed. Both failures are not this change's:
+`test_golden_manifest_provenance … carveout_bundle` fails identically on the merge-base
+tree (its docstring: "Y-11 STOP (2026-09-05), left RED deliberately"), and
+`TestDispatchPerformance::test_full_year_200_generator_fleet` is a 15 s solve-wall
+threshold that read 20.2 s while the two replays were running and passes alone (5.6 s).

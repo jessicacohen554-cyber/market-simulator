@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-05 — wallclock A-3: class-band sidecar vectorized, sidecar block put on the clock (byte-identical)
+
+`scripts/run_calibration_full.py` only (plus its unit test, the baseline-doc row and two
+golden manifests). **No LP change, no `ScenarioConfig` default, no keeper / marker / matrix
+shard / registry / workflow edit, nothing registered.** Wallclock desk item A-3
+(`docs/handoffs/wallclock-opportunities-2026-09.md` §2):
+
+- **`_write_class_band_hourly_sidecar`** mapped `unit_id → band` per ROW — 6,718,920
+  `_tranche_band` calls plus a ~14 s list comprehension materialising the strings of an
+  already-categorical column, per NEISO year. New `_band_categorical` computes the band once
+  per distinct id (over the categorical's categories) and indexes by the codes; categories,
+  codes and values are identical to the per-row `pd.Categorical([...])`. Measured on the real
+  NEISO 2023 P1 frame: the band column 15.63 s → 0.16 s; the whole writer ~16 s → ~5 s.
+- **The `hourly/` sidecar block ran AFTER `log_year_phase_timing`**, so it was booked to no
+  phase and no year's `total`. It now runs before the timing line as the new `sidecars` entry
+  of `results_write_parts`: the six frozen wire fields are unchanged and
+  `results_write == state + frames + parquet + bench + sidecars` exactly
+  (`pipeline/timing.py` untouched — its parts contract already carries any ordered mapping).
+  NEISO now reports `sidecars` 8.0 / 5.9 / 7.2 s (2023/24/25).
+- **Gates:** `BandCategoricalTest` (every `_TRANCHE_BANDS_EXACT` token, every prefix
+  family, non-tranche ids, an unused category, a missing id, end-to-end sidecar equality);
+  NEISO keeper full-span replay merge-base vs branch — every hourly sidecar and dispatch
+  frame sha256-identical, `class_band_hourly` `frame.equals` all three years,
+  `regression_gate.py --mode byte` check [1] PASS at atol=rtol=0 (check [4] pre-existing
+  by control); fast tier 8,104 passed. Record:
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-3.
 ## 2026-09-05 — wallclock B-0: owner decision memo for seeding the cold-rebuilt P1 from the same year's P0 basis, with the ERCOT bench the assessment doc was missing
 
 Docs only. **No `src/` file, no `ScenarioConfig` default, no keeper shard / marker / matrix shard /
