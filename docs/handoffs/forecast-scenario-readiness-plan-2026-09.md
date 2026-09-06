@@ -841,6 +841,30 @@ S1, S2, … in the ledger, in the refresh commit that receives them.
   prize is **G-D4-4, the wired-but-empty electrification layers**, not the growth rates.
 - **D-5** still held: Stage A has not run.
 
+**RULED 2026-09-06 (SCN-DESK r#5 amendment 1) — four cards, recorded verbatim as S1–S4.**
+- **S1 — D-3: YES.** A voluntary clean-demand scenario axis is admissible as a declared,
+  forecast-only, publicly-anchored, default-off axis; ffr-5b §1.4 is held to be about a *fitted
+  driver*, a different admissibility class, and its null is preserved in REF and every scored
+  lane. **D-3b rides it: in-LP hourly (24/7) matching stays DEFERRED** to the isolated
+  `scope2-lce-portfolio` tool. Releases SCN-WS3b, then WS-3c.
+- **S2 — D-1: FLOOR.** `effective = max(RFF path(year), program trajectory(year))` on a program
+  ISO; the path alone elsewhere; `carbon_price` (scalar) keeps its Q26 replace semantics. Ruled
+  with the measured consequence accepted: the RFF mid path never exceeds a program trajectory in
+  any year, so the floor makes `policy_bundle="tight"` an exact **no-op** on CAISO/NYISO/NEISO
+  rather than an increase (sub-boxes D-1(b)/(c) remain open). Releases the withheld WS-1a item 1
+  as lane SCN-WS1c.
+- **S3 — D-2: the §3.5 table is the COMMITTED default.** Carbon RFF low/mid/high; CES premium
+  {10, 20, 30}; **CES target {2026: current, 2035: 0.80, 2050: 1.00}, ACP $50**; LOAD-HI = growth
+  high + DC high. **No re-solve is owed** — SCN-WS2a built and probed against exactly these and
+  labelled them illustrative, so the ruling changes the label, not the number.
+- **S4 — D-4: FUND THE FULL DATATYPE.** All six published sources (ERCOT LTLF, PJM LTLF Table
+  B-9b, NYISO Gold Book, ISO-NE CELT, CEC IEPR, MISO LTLF) curated through the data-intake skill.
+  **This overrides both the plan's recommendation and SCN-WS4a's to defer** — recorded as such.
+  Releases lane SCN-LOAD; the MISO driver-level 403 host wall is a known blocker flagged at the
+  gate.
+- **Still open:** D-3c (the voluntary eligible set — the WS-3a memo's box 3), D-6 (attribute
+  netting; default "counts toward", report both), and D-5.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1105,3 +1129,15 @@ leg without the grant.
   campaign-YAML ownership transferred to it). WS-1b / WS-2b / WS-4c blocked on WS-0's item 5;
   WS-3b blocked on card D-3 alone, both its code preconditions now met. §2.1b gate unchanged —
   NEISO only; no Stage-B lane issuable, none issued. Zero solves, zero code, zero defaults.
+- 2026-09-06 — **SCN-DESK r#5 + amendment 1.** Wave 2 essentially in: SCN-WS2a landed complete
+  (probe registered, FINDING, matrix row + one cell per shard as its last commit), SCN-WS4b landed
+  both named cases and six pre-declared per-ISO adequacy readings, SCN-MX-R-r2 landed its CI
+  diagnosis and the epoch entry; SCN-WS1b and SCN-WS2b in flight with PRECOMMITs pushed before
+  their solves. **Two desk corrections against its own record:** the r#4 LOST call on SCN-WS4b is
+  withdrawn (launched late, not never launched), and the desk's three-refresh claim that the
+  matrix guard "did not fire" on PR #4870 is withdrawn — it fired, failed, and the PR merged five
+  seconds after creation with seven red checks; the desk had been reading the checker's
+  validate-only mode as a registration verdict. **Amendment 1 records owner rulings S1–S4** (§6)
+  and issues the four lanes they release: SCN-WS1c (floor), SCN-WS3b (voluntary), SCN-LEVELS
+  (commit the levels), SCN-LOAD (the full intake), alongside SCN-WS4c from the base refresh.
+  Zero solves, zero code, zero defaults, zero markers.
