@@ -1,0 +1,36 @@
+# SCN-WS1b leg 2 — the CARBON-ONLY subset of the committed campaign case set.
+#
+# This is NOT a new case set. It is the carbon ladder of
+# configs/scenario_campaign_matrix.yaml (SCN-WS0 deliverable 4), copied
+# verbatim — same case names, same levels — so leg 2's output is directly
+# comparable with every later campaign leg. The committed file also carries the
+# CES, LOAD-HI and combined cases, which this leg does not solve; passing the
+# whole file would spend ~40 extra solve-years on cases outside this lane's
+# charter. SCN-WS4b owns configs/scenario_campaign_matrix.yaml and this lane
+# does not edit it (desk ledger §4), which is the other reason the subset lives
+# here.
+#
+# THE LADDER IS THE DELTA FORM, DELIBERATELY, AND THESE ARE NOT RFF PATHS.
+# Owner card D-1 is OPEN, so carbon_price_path still carries REPLACE semantics
+# and a path-written ladder would be a carbon-price CUT of $16-$102/t on
+# CAISO/NYISO/NEISO (FINDING-scn-ws1a-2026-09-05.md §0.1). carbon_price_delta
+# is additive on the resolved signal, so every rung is a genuine increase in
+# every ISO. Name these "delta rungs", never "RFF low/mid/high".
+# Levels are ILLUSTRATIVE pending owner card D-2, exactly as the committed
+# campaign file says of the same three numbers.
+#
+# Declared in docs/handoffs/PRECOMMIT-scn-ws1b-2026-09-06.md §1.1, before any
+# solve (rule 29 [R-SCREEN]).
+mode: cases
+
+cases:
+  # The reference: the ISO's shipped forecast posture, overriding nothing.
+  REF: {}
+
+  # $/tCO2 ADDED to the ISO's resolved carbon signal.
+  CARB-LO:
+    carbon_price_delta: 15.0
+  CARB-MID:
+    carbon_price_delta: 25.0
+  CARB-HI:
+    carbon_price_delta: 50.0

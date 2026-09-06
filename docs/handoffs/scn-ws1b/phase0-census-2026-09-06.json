@@ -1,0 +1,396 @@
+{
+  "delta": 25.0,
+  "isos": {
+    "CAISO": {
+      "arm_carbon": {
+        "2026": 55.0242,
+        "2027": 57.125894,
+        "2028": 59.37470658,
+        "2029": 61.780936040600004,
+        "2030": 64.35560156344201
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "import_tranches": [
+        {
+          "capacity_mw": 1566.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "WECC_import_PNW_hydro_base",
+          "vom": 28.0,
+          "zone": "WECC_import"
+        },
+        {
+          "capacity_mw": 1800.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "WECC_import_PNW_midC",
+          "vom": 36.0,
+          "zone": "WECC_import"
+        },
+        {
+          "capacity_mw": 1805.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "WECC_import_DSW_solar_PV",
+          "vom": 48.0,
+          "zone": "WECC_import"
+        },
+        {
+          "capacity_mw": 1800.0,
+          "reported_ef_t_per_mwh": 0.37,
+          "unit_id": "WECC_import_DSW_CCGT",
+          "vom": 68.0,
+          "zone": "WECC_import"
+        },
+        {
+          "capacity_mw": 2200.0,
+          "reported_ef_t_per_mwh": 0.55,
+          "unit_id": "WECC_import_DSW_CT",
+          "vom": 110.0,
+          "zone": "WECC_import"
+        },
+        {
+          "capacity_mw": 3000.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "WECC_import_WECC_scarcity",
+          "vom": 180.0,
+          "zone": "WECC_import"
+        }
+      ],
+      "import_zones": [
+        "WECC_import"
+      ],
+      "n_carbon_bearing_import_tranches": 3,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 30.0242,
+        "2027": 32.125894,
+        "2028": 34.37470658,
+        "2029": 36.780936040600004,
+        "2030": 39.35560156344201
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "ERCOT": {
+      "arm_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "import_tranches": [],
+      "import_zones": [],
+      "n_carbon_bearing_import_tranches": 0,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "West",
+        "Panhandle",
+        "North",
+        "Northeast",
+        "Houston",
+        "South_Central",
+        "South"
+      ]
+    },
+    "MISO": {
+      "arm_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "import_tranches": [],
+      "import_zones": [],
+      "n_carbon_bearing_import_tranches": 0,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "NEISO": {
+      "arm_carbon": {
+        "2026": 51.054500000000004,
+        "2027": 52.878315,
+        "2028": 54.82979705,
+        "2029": 56.91788284350001,
+        "2030": 59.152134642545015
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.000000000000004,
+        "2030": 25.0
+      },
+      "import_tranches": [
+        {
+          "capacity_mw": 225.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "HQ_import_Highgate",
+          "vom": 26.53,
+          "zone": "HQ_import"
+        },
+        {
+          "capacity_mw": 1830.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "HQ_import_HQ_PhaseII",
+          "vom": 41.1,
+          "zone": "HQ_import"
+        },
+        {
+          "capacity_mw": 630.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "HQ_import_NB_north",
+          "vom": 59.15,
+          "zone": "HQ_import"
+        },
+        {
+          "capacity_mw": 870.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "HQ_import_NYISO_CT_base",
+          "vom": 34.79,
+          "zone": "HQ_import"
+        },
+        {
+          "capacity_mw": 870.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "HQ_import_NYISO_CT_peak",
+          "vom": 73.04,
+          "zone": "HQ_import"
+        },
+        {
+          "capacity_mw": 95.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "HQ_import_import_scarcity",
+          "vom": 286.12,
+          "zone": "HQ_import"
+        }
+      ],
+      "import_zones": [
+        "HQ_import"
+      ],
+      "n_carbon_bearing_import_tranches": 4,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 26.054500000000004,
+        "2027": 27.878315,
+        "2028": 29.829797050000003,
+        "2029": 31.917882843500006,
+        "2030": 34.152134642545015
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "North",
+        "Central",
+        "Boston",
+        "Connecticut",
+        "HQ_import"
+      ]
+    },
+    "NYISO": {
+      "arm_carbon": {
+        "2026": 48.636300000000006,
+        "2027": 50.290841,
+        "2028": 52.06119987,
+        "2029": 53.9554838609,
+        "2030": 55.98236773116301
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.000000000000004,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 24.999999999999996,
+        "2030": 25.0
+      },
+      "import_tranches": [
+        {
+          "capacity_mw": 900.0,
+          "reported_ef_t_per_mwh": 0.0,
+          "unit_id": "NYISO_external_HQ_hydro",
+          "vom": 20.78,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 690.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_IESO_Ontario",
+          "vom": 26.36,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 690.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_PJM_shoulder",
+          "vom": 32.24,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 690.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_PJM_west",
+          "vom": 40.13,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 690.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_eastern_mid",
+          "vom": 51.03,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 690.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_ISONE_tie",
+          "vom": 71.46,
+          "zone": "NYISO_external"
+        },
+        {
+          "capacity_mw": 2035.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "NYISO_external_import_scarcity",
+          "vom": 152.97,
+          "zone": "NYISO_external"
+        }
+      ],
+      "import_zones": [],
+      "n_carbon_bearing_import_tranches": 6,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 23.636300000000002,
+        "2027": 25.290841,
+        "2028": 27.061199870000003,
+        "2029": 28.955483860900006,
+        "2030": 30.98236773116301
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "Upstate_West",
+        "Capital_Hudson",
+        "Lower_Hudson",
+        "NYC",
+        "Long_Island"
+      ]
+    },
+    "PJM": {
+      "arm_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "carbon_price_path": "zero",
+      "ccs_retrofit_available_year": 2028,
+      "delta_carbon": {
+        "2026": 25.0,
+        "2027": 25.0,
+        "2028": 25.0,
+        "2029": 25.0,
+        "2030": 25.0
+      },
+      "import_tranches": [
+        {
+          "capacity_mw": 1000.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "PJM_external_import_scarcity_1",
+          "vom": 46.0,
+          "zone": "PJM_external"
+        },
+        {
+          "capacity_mw": 3000.0,
+          "reported_ef_t_per_mwh": 0.428,
+          "unit_id": "PJM_external_import_scarcity_2",
+          "vom": 60.0,
+          "zone": "PJM_external"
+        }
+      ],
+      "import_zones": [],
+      "n_carbon_bearing_import_tranches": 2,
+      "policy_bundle": "current",
+      "ref_carbon": {
+        "2026": 0.0,
+        "2027": 0.0,
+        "2028": 0.0,
+        "2029": 0.0,
+        "2030": 0.0
+      },
+      "state_carbon_pricing": true,
+      "zones": [
+        "PJM_ComEd",
+        "PJM_AEP_Ohio",
+        "PJM_ATSI",
+        "PJM_West_APS",
+        "PJM_Central_PA",
+        "PJM_Dominion",
+        "PJM_EMAAC",
+        "PJM_SWMAAC"
+      ]
+    }
+  },
+  "years": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+  ]
+}
