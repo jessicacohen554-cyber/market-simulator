@@ -10,7 +10,7 @@ under the declaration."*
 `976a3e6d` before commit so the pack carries only this lane's objects. Main touched none of the
 three files this lane edits between the two pins (`git diff --stat 144eabe3 976a3e6d` on them is
 empty).
-**Branch / PR:** `claude/g3-rule-21-price-tuning-xref-mfav8w`. *(Dispatch-vs-repo difference,
+**Branch / PR:** `claude/g3-rule-21-price-tuning-xref-mfav8w`, PR #4912. *(Dispatch-vs-repo difference,
 recorded per the standing test: the dispatch named `claude/g3-rdof-price-tuning-xref-h8n4pc`; the
 session's harness assigned `…-rule-21-price-tuning-xref-mfav8w` and forbids pushing elsewhere, so
 that is the branch.)*
