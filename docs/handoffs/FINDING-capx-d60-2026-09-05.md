@@ -1066,6 +1066,35 @@ between the arm and its `-pre-d60` prior, and that is what earns the control.
 golden_posture=True)` resolved at HEAD gives cache key **`09996eca71ee80fd`** — bit-for-bit the
 committed arm's key. The drift did not move the arm's recipe either.
 
+### E.1b The charter's drift window is TOO NARROW, and the extra span audited
+
+**Found while building the control, and recorded before it ran.** The AM.1 charter names the
+window `15631b8c..HEAD`. But `15631b8c` is D60-R3's *finding-close* commit (04:02:45Z), and the
+**arm was solved an hour earlier at `14f860fb`** (03:02:42Z). The falsifier compares the arm's
+committed I12 against a control solved at HEAD, so the window that governs their comparability
+is `14f860fb..HEAD`, not `15631b8c..HEAD`. The charter's window misses **18 files, +810 / −44** —
+including `model/capacity_evolution/retirements.py` (+60), squarely on the forecast
+capacity-evolution path. Auditing only the named window would have declared comparability on a
+span that excludes the most solve-relevant file in it.
+
+`git diff 14f860fb 15631b8c -- src/market_sim scripts/run_calibration.py
+scripts/run_calibration_full.py scripts/run_full_horizon.py scripts/lib`, classified:
+
+| file(s) | hunk | verdict | why |
+|---|---|---|---|
+| `model/capacity_evolution/retirements.py` (+60), `config/capacity_market.py` (+156), `config/scenarios.py` (+118), `config/constants.py` (+2), `scripts/run_full_horizon.py` (+41) | **capx D67** — `resolve_published_reliability_requirement_mw` + the `RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO` table + the CLI flag | **INERT** | one gated mechanism, `capacity_adequacy_requirement_published_by_iso`, dataclass default `None`. First statement of the resolver is `if year is None or not resolve_capacity_adequacy_requirement_published(config, iso): return None`, and `gross_adequacy_requirement_mw` falls straight through to the unchanged ladder on `None`. **Measured on the control's own resolved config: the field is `None`.** |
+| `data/fleet/campd_bins.py` (+33), `data/fleet/assembly.py` (+4), `data/offer_curves.py` (+4) | **nyiso-198** — `cc_duct_peaking_pct(row_scoped)` | **INERT — algebraically, not merely by gate** | with `row_scoped=False`, `src = grp`, so `gap = float(grp["np"].sum()) − float(grp["ns"].sum())`, and `np_sum` two lines above is `float(grp["np"].sum())`: the same two sums, in the same order, i.e. IEEE-identical to the prior `np_sum − ns_sum`, not just equal in exact arithmetic. Both call sites pass `bool(getattr(config, "cc_duct_peaking_row_scoped", False))`; **measured on the control: `False`.** |
+| `data/eia860.py` (+48), `data/disk_memo.py` (+249, new), `data/egrid_sheets.py` (+27) | **wallclock A-4** — a cross-process JSON memo for `_egrid_boundary_hr_repairs` | **INERT** | the memoized function is pure in its two source files' bytes and the memo is content-addressed by sha256 over exactly those bytes, so a hit and a miss return the same mapping. This container holds **no prior memo**, so this leg takes the compute path — the identical `_egrid_boundary_hr_repairs_compute` the pre-hunk tree called — and merely writes one afterwards. (A *stale* memo would be a live channel; that hazard cannot arise on a first run.) |
+| `policy/carbon.py` (+27) | **y21** — restores the `or 0.0` row-path guard on `price_adder` | **INERT, and one-directional** | `float(x or 0.0)` differs from `float(x)` only at `x is None`, where the prior form **raised**. It can convert an exception into a value; it cannot silently move a number on a path that previously worked. Unreachable here regardless: **measured on the control, `mass_cap_enabled=False` and `carbon_price_path='zero'`.** |
+| `pipeline/backcast_config.py` (+11) | D67's kwarg | **INERT** | not on the forecast path |
+| `scripts/run_calibration_full.py` (+15) | D67's backcast CLI flag | **INERT** | not imported by `run_full_horizon` (measured) |
+| `scripts/lib/load_forecast/*` (4 files, +59) | SCN-LOAD curation registry | **INERT** | offline curation for `curate_load_forecast.py`; **measured: no `load_forecast` module is in `run_full_horizon`'s import closure**, and `constants.py` carries the derived numbers as literals |
+
+**Every hunk in the extra span is INERT too**, so the full `14f860fb..HEAD` window is clean and
+the arm's committed I12 is comparable to a control solved at HEAD. The point stands anyway: the
+window a G-DRIFT audit is run over has to be the one that actually separates the two numbers
+being differenced, and a charter-supplied window is a starting point, not the answer.
+
 ### E.2 A defect found while building the control: `--set` could not express it
 
 **`--set FIELD=false` on an ISO-armed flag was silently ignored.**
