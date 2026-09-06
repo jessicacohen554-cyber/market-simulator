@@ -5653,6 +5653,58 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-224 (2026-09-06) — THE BODY IS A FUEL-CONVENTION OBJECT, SCREENED
+> ON 2023 AND KILLED AS A STANDALONE ARM; TWO COMPENSATED MECHANISMS EXPOSED.** Successor to
+> miso-223. Keeper UNCHANGED at `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Records
+> `PREREG`: `PRECOMMIT-miso224-gas-marginal-commodity-2026-09-06.md` (+ Addendum A);
+> `FINDING-miso224-gas-marginal-commodity-2026-09-06.md`; four zero-LP instruments
+> `_miso224_{floor_anatomy,marginal_frequency,offer_decomposition,static_remerit}_phase0.py`;
+> blind scorer `_miso224_screen_gates.py` → `_miso224_screen_gates.json`. ONE LP (2023).
+> Screen bundle `miso224_spotgas_S` DELETED before merge (rule 29c); never registered.
+> **PHASE 0.** (i) The body error is an ENERGY-price gradient: model − MEC (LMP − MCC − MLC)
+> +12.9 / +11.0 / … / +3.7 across MEC deciles d1–d9 (2023), annual +5.31 / +3.69 / +0.29 —
+> hub congestion lives in d10 only. (ii) Object (A), negative pricing via wind's −$26 offer,
+> REFUSED ON THE BOUND: MEC < $0 in **1 / 7 / 0** hours, < $10 in 53 / 157 / 34; reach
+> ≤ $0.27 of a +$6–13 body. The real market cleared **$10–20** in 1,765 / 2,959 / 681 hours —
+> below every thermal SRMC the model carries. (iii) Marginal FREQUENCY (the miso-223 lesson):
+> `econ` bands hold the margin **75–78 %** of body hours, `committed` 12–14 %, `mustrun` 0;
+> reconstruction residual p50 $0.01. (iv) The marginal offer decomposed: band-multiplier layer
+> **$0.1–1.1**; FUEL-CONVENTION layer (EIA-923 average print vs the TRADED Chicago hub)
+> **$4.68 / $3.44 / $3.25 = 74 / 74 / 101 %** of the body wedge. The CC fleet's print sits
+> +$0.5–1.3/MMBtu over the hub in most months, +$2.6 in Feb-2024. miso-156's comparator was
+> the EIA IL utility-citygate SURVEY ($1–2 above the hub), so its "+$0.09 in 2024" understated
+> the layer by an order of magnitude. (v) Static re-merit at spot: body −$6.72 predicted.
+> **THE ARM.** `miso_gas_marginal_commodity_pricing` (minted, default off, MISO-scoped, zero
+> scalars; row `gas_marginal_commodity_pricing`): every gas row at the measured daily hub for
+> its zone (Chicago Citygate daily / Henry Hub daily), superseding the print, the winter shape
+> overlay and the zonal increment (rule 19). The forecast path already prices gas this way.
+> **THE SCREEN (2023, footprint year).** S-2 PASS (mechanism line in the SOLVE log — the first
+> launch was killed with no LP because the calibration chain bypassed the resolver hook,
+> Addendum A). **G-1 PASS: body −$4.11** in [−10.08, −3.36]; annual LW −$4.16, tail −$6.83.
+> **KILLED on G-3** (coal leg −799 MW vs −876 needed, 0.27× vs a 0.30× line; gas +2,716 PASS)
+> **and G-4** (C1 flips: CC_REGULAR −4.17 → **+12.60**, COAL_PRB −1.56 → **−11.88**; CT_PEAKER
+> −7.99 → −4.88 and CC_CHP / ST_CHP move TOWARD actual). S-1 FAIL is a scorer artifact
+> (new field absent from the keeper config; substantive condition met; disclosed, not edited).
+> **WHAT THE GAS TOOK.** +25 TWh gas = **−11.85 TWh imports** (45.75 → 33.90; EIA-930 37.9) +
+> **−13.3 TWh coal** (PRB −10.3, BIT −2.5). In the real sub-$20 hours the arm's gas lands ON
+> EIA-930 (21.2 vs 21.3 GW); coal stays +3.1 GW over; imports fall to 1.45 vs 4.9 GW.
+> **THE FINDING (pre-registered reading 2).** The average-cost print was COMPENSATING (rule 14)
+> for two missing mechanisms: **coal self-commitment** in mid-price hours (real PRB ran
+> 121.7 TWh through spot-gas hours; the model's coal econ offers are undercut once gas is at
+> the hub) and the **seam import ladder** (MISO-hub-quantile bands go out of merit as the
+> model price falls, so imports contract exactly when the real market imported most). Price
+> against interest: C3a-2023 +7.15 % → ≈ −5.7 % (inside ±10 %); body-vs-MEC 5.31 → 1.15;
+> model hours < $20: 0 → 68 (actual 1,765).
+> **QUEUE HEAD FOR miso-225 — an OWNER ruling first, then a JOINT test, never the arm alone:**
+> (1) OWNER: does MISO price gas at marginal commodity (the forecast's own convention) or at
+> the EIA-923 average print? miso-212 §8 filed it; this screen is the evidence. (2) If YES: a
+> **coal self-commitment floor** with a window, a driver and a forward story (rule 17) —
+> measure it from CAMPD conduct (hours online with LMP below the unit's own delivered
+> incremental cost) as miso-111/152 measured PRB — and the **seam ladder's response to the
+> model's own price** (queue item 2, admissibility outstanding), screened JOINTLY with this
+> arm on 2023. (3) `gas_marginal_commodity_pricing` MISO cell **`O`**: dead standalone,
+> DO NOT re-run alone; joint re-test is new evidence.
+
 > **QUEUE STAMP miso-222 (2026-09-06) — THE ELMP / EMERGENCY-SUPPLY OWNER ASK, **MEASURED
 > BEFORE IT IS BUILT**: the emergency-range MW is **ALREADY CURATED IN THIS REPO**
 > (miso-219's premise was half wrong), and at **1.7–2.0 GW against a 5.6–22.0 GW
