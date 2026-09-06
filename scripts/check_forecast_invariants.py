@@ -49,6 +49,14 @@ _REPO = Path(__file__).resolve().parent.parent
 _SRC = _REPO / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+if str(_REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a script
+    sys.path.insert(0, str(_REPO))
+
+# The declared-failure ledger policy lives in ONE module, shared with the
+# registration ratchet in ``scripts/register_forecast_run.py`` (lane Y-24), so
+# the detector below and the gate at the registration seam can never disagree
+# about which FAILs a run carries or which of them the ledger covers.
+from scripts.lib import invariant_ledger as il  # noqa: E402  (after sys.path)
 
 from market_sim.config.constants import (  # noqa: E402
     DEFAULT_MARKET_DESIGN,
@@ -1239,7 +1247,7 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
         return [f"{sidecar_dir}: not a directory"]
 
     ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {}
-    declared: dict[str, list] = ledger.get("declared_failures", {})
+    declared: dict[str, list] = ledger.get(il.DECLARED_KEY, {})
     curated: dict[str, str] = ledger.get("curated_subsets", {})
 
     n_runs = n_records = 0
@@ -1270,7 +1278,6 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
 
         n_runs += 1
         idents: list[str] = []
-        statuses: list[str] = []
         for i, rec in enumerate(records):
             n_records += 1
             if not isinstance(rec, dict) or set(rec) != _RESULT_FIELDS:
@@ -1291,7 +1298,6 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                     "checker have diverged"
                 )
             idents.append(rec["ident"])
-            statuses.append(rec["status"])
 
         dupes = sorted({i for i in idents if idents.count(i) > 1})
         if dupes:
@@ -1307,9 +1313,15 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                 "`curated_subsets` with one line of why."
             )
 
-        failures = sorted({i for i, s in zip(idents, statuses) if s == FAIL})
+        # FAIL extraction and the declared-coverage test both come from the
+        # shared policy module (Y-24), which the registration ratchet also
+        # calls. NOTE the audit deliberately does NOT pass
+        # ``include_baseline``: a row in ``registration_ratchet_baseline`` is
+        # not an adjudication, so it must never make this job green. The
+        # baseline forgives at the REGISTRATION seam only.
+        failures = il.fail_idents(sidecar)
         observed[run_id] = set(failures)
-        undeclared = [i for i in failures if i not in declared.get(run_id, [])]
+        undeclared = il.undeclared_failures(run_id, failures, ledger)
         if undeclared:
             problems.append(
                 f"{run_id}: FAILs {undeclared} are not declared in "
@@ -1332,6 +1344,15 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                 "longer FAIL — the run improved; prune the declaration so the "
                 "ledger keeps meaning what it says"
             )
+
+    for run_id, idents, reason in il.stale_baseline_entries(observed, ledger):
+        problems.append(
+            f"{ledger_path.name}: `{il.BASELINE_KEY}` lists {idents} for "
+            f"{run_id}, which has {reason} — prune the line. The baseline "
+            "records only the (run, ident) pairs that predate the registration "
+            "ratchet and may only SHRINK; a line kept past its cause would "
+            "silently forgive a future regression on the same ident."
+        )
 
     print(
         f"forecast-invariant artifact audit: {n_runs} sidecar(s) with an "
