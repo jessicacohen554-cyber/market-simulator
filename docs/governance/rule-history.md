@@ -840,7 +840,7 @@ side by owner ruling R-AY (2026-09-06) — §13 below.
 
 ## 12. Rule 30 `[R-TOUCHPOINT-FOLD]` — a touchpoint publishes AS the keeper (owner, 2026-09-05)
 
-> **Clause (a) was AMENDED the next day — see §14.** The fold and the stamp stand exactly as
+> **Clause (a) was AMENDED the next day — see §14, and again the same day — see §15.** The fold and the stamp stand exactly as
 > written here; what §14 removes is the *Validation Touchpoints panel* this section mandates as
 > the fold's rendering, replaced by rendering a folded year as an ordinary year column. Read
 > every mention of that panel below as superseded; clauses (b) and (c) are untouched.
@@ -1009,10 +1009,75 @@ may be solved, scored or registered: the rule-22 tier markers, the holdout freez
 
 Executed by session neiso-103, 2026-09-06.
 
-## 15. Changes to this file
+## 15. Rule 30 `[R-TOUCHPOINT-FOLD]`(a) — the Run Explorer's Report is SCORES AND CHARTS ONLY (owner, 2026-09-06)
+
+**Origin.** Hours after §14 landed, the owner opened the Run Explorer and rejected what was still
+there, verbatim:
+
+> *"Delete the stupid per year determination from the run explorer I do not need narrative from you
+> in my results viewing ANYWHERE I just want the scores and charts and make it so every iso with
+> holdout years run has them SHOW up in the report what the actual fuck"*
+
+**What "the per year determination" actually was.** Not a leftover of the panel §14 deleted — that
+was gone. It was the **Run Definition** panel, which renders the registry sidecar's `definition`
+string verbatim, and for two ISOs that string had grown into a per-year determination essay. The
+ERCOT keeper's read, in the results view, above the scores:
+
+> *"2023 = the CARVE-OUT config … C3a -7.3% / C3b 0.102 / C3c 180 of 181, every criterion PASS,
+> zero caveats. 2024/2025 = the FORWARD config … DETERMINATION CALIBRATED."*
+
+A determination, per year, in a viewer whose job is to show numbers. §14 de-designated the held-out
+*years* and left the *prose* untouched; this amendment finishes the job on the prose.
+
+**What was deleted** (all four, render path and all — rule 26 `[R-DELETE]`, since a dead render
+path is a re-armable answer):
+
+| block | why it goes |
+|---|---|
+| **Run Definition** panel (`bc-narration`) | the per-year determination essay the instruction names |
+| **rule 22 held-out-years footnote** | §14 kept it as "the one designation that survives"; it is narrative, and (b)'s surface already carries the reading |
+| **Zero-forcing ablation twin** + market story | rule 20 `[R-DOF]` stopped requiring the twin 2026-07-14; no registered run carries one — the panel rendered "*not yet registered*" plus prose |
+| **Diagnostics** auto-generated findings (`diagFindings`) | sentences about the numbers, beside the numbers |
+
+Kept: **Year Scorecards**, **LMP Alignment**, **LMP Delta Heatmap** — and the Charts and Tables
+views, untouched. The run's identity (id · date · keeper pill) moves from the deleted panel to the
+page sub-header, where it now labels every view rather than only the Report. The two long
+methodology captions on the surviving panels were cut to legends.
+
+**Rule 22's substance is unchanged; only its surface moved.** A validation number must still never
+read as a certified out-of-sample skill number. With the run explorer carrying no designation at
+all, that reading rests entirely on clause (b)'s surface — the Calibration Status page's per-year
+table, which carries a **Tier** column and the line *"Held-out years are reported, not gating — the
+ISO determination is the 2023–2025 verdict (rule 22)."* The guard
+(`tests/scoring/test_holdout_render_parity.py`) was re-pointed accordingly: its
+`test_rule22_tier_caveat_survives_as_a_footnote` — which pinned the footnote to the run explorer —
+is replaced by a pair, one asserting the run explorer renders no narrative prose and one asserting
+the status page keeps the tier reading, each with its negative control.
+
+**The instruction's second half was already true, with one hole.** All three ISOs that have ever
+run a holdout year already rendered it as an ordinary year column at HEAD — verified by headless
+render: ERCOT 2022, NEISO 2020/2021/2022, PJM 2021/2022. CAISO, MISO and NYISO show none because
+**none exists**: no touchpoint run is registered for them, no out-of-training bundle sits in
+`results/calibration/`, and CAISO's and NYISO's `complete` markers are withdrawn, so a spend is
+governance-blocked, not hidden. The hole worth closing was in the fold's link resolution: a
+companion whose `holdout.keeper` names a run that has since been **pruned** (rule 15's keeper-only
+retention prunes a superseded keeper) was read as "linked to a *different* keeper" and skipped
+entirely — its years vanished from the report AND it reappeared as its own run card, the exact
+defect rule 30 names. A dangling stamp now reads as unstamped in both `holdoutCompanions` and
+`foldTargetOf`, so a keeper promotion cannot silently drop an ISO's held-out years.
+
+**Scope.** Presentation only. No scorer path was touched, the browser computes no verdict, grade,
+caveat budget or determination, and every deleted block was display prose over data that still
+lives in the committed sidecar (`definition`, `holdout`) or in `scripts/calibration_verdict.py`.
+Clauses (b) and (c) are untouched, as are every marker, the holdout freeze, every keeper shard and
+every determination. Verified by headless render of all six ISO keeper pages plus the Charts and
+Tables views and a folded deep link.
+
+## 16. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-06 | Added §15: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended AGAIN the same day by owner instruction (verbatim above) — the Run Explorer's Report is **scores and charts only**. The run-definition panel (the per-year determination essay the instruction names), the rule-22 footnote §14 had kept, the zero-forcing ablation twin + market story, and the auto-generated diagnostics are **deleted** (rule 26); run identity moves to the page sub-header. Rule 22's reading now rests entirely on clause (b)'s status-page year table (Tier column + "reported, not gating"), and the guard was re-pointed there with negative controls. Fold fix: a **dangling** `holdout.keeper` stamp (keeper pruned under rule 15) now reads as unstamped, so a promotion cannot drop an ISO's held-out years. Presentation only — no scorer path, marker, freeze, shard or determination touched; verified by headless render across all six ISOs. "Changes to this file" renumbered §15 → §16 (no external reference cited §15). |
 | 2026-09-06 | Added §14: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended by owner instruction (verbatim above) — a folded held-out year renders as an ORDINARY YEAR COLUMN in the Run Explorer's Report, with the mandated *Validation Touchpoints* panel, year-selector optgroup split, tier suffix and held-out banner **deleted** (rule 26), and rule 22's tier caveat kept as a single footnote. Presentation only: no scorer path touched, all three affected keepers re-score identically, clause (b)'s status-page ladder and clause (c) untouched, no holdout marker or freeze moved. Verified by headless render across all six ISOs with a negative control on `main`. "Changes to this file" renumbered §14 → §15 (no external reference cited §14). Executed by session neiso-103. |
 | 2026-09-06 | §4: recorded owner ruling **R-AZ** (audit-program director sitting, card "Marker gate", verbatim option *"Re-check at registration"*) — the rule-22 tier marker is now re-checked at REGISTRATION as well as at solve launch, closing the Z-6 window in which a multi-hour LP outlives the marker it launched under. New `holdout_policy.registration_refusals` + `dashboard_add_run.enforce_registration_marker_gate`; no bypass flag; launch gate, D-6, `audit_keepers`, markers, freeze, shards and every registered run untouched — all five holdout-year sidecars at HEAD replay clean. Executed by audit lane Y-16. |
 | 2026-09-06 | Added §13: rule 21 `[R-DOF]` one-clause cross-reference to the rules 1/13 authorized price-tuning channel (owner ruling **R-AY**, audit-program director sitting 2026-09-06 ~00:15Z, card "DOF / C6", verbatim *"Count them in the DOF ledger, C6 passes under the declaration"*; executed by rule-amendment lane G-3). A price-tuned band multiplier is a ledgered free parameter identified by the ruling, reported at full magnitude, and not by itself an open root-cause issue; every other tuned value still is; no gate moves, no scoring logic changed. §11 gained a forward pointer. Records the live MISO keeper reading (declaration present, C6 PASS, no distinct ruling-identified ledger row — routed, not edited). Took §13 on merge behind main's same-day §12 (rule 30 `[R-TOUCHPOINT-FOLD]`); "Changes to this file" renumbered §13 → §14 (no external reference cited either number). |
