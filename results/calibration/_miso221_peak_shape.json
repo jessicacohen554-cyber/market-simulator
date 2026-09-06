@@ -21143,5 +21143,38 @@
         }
       }
     }
+  },
+  "nontranche_decomposition_by_year": {
+    "2023": {
+      "oil": {
+        "mw": 2898,
+        "cap_w_offer_usd": 241.11
+      },
+      "biomass": {
+        "mw": 290,
+        "cap_w_offer_usd": 50.87
+      }
+    },
+    "2024": {
+      "oil": {
+        "mw": 2898,
+        "cap_w_offer_usd": 248.65
+      },
+      "biomass": {
+        "mw": 257,
+        "cap_w_offer_usd": 51.0
+      }
+    },
+    "2025": {
+      "oil": {
+        "mw": 2856,
+        "cap_w_offer_usd": 241.3
+      },
+      "biomass": {
+        "mw": 38,
+        "cap_w_offer_usd": 55.37
+      }
+    },
+    "note": "mean MW ABOVE the keeper's committed clearing price over each year's 15 object hours, for rows carrying no tranche token (the ladder's '|?' bucket). Oil is 90.9 / 91.8 / 98.7 % of it, at a cap-weighted offer of $241-$249/MWh, and carries NO offer_curve_by_group entry (legacy override/CSV path). Reproduce with _miso221_peak_shape_phase0.nontranche_decomposition(year)."
   }
 }
