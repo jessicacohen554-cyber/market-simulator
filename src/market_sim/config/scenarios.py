@@ -15857,6 +15857,24 @@ class ScenarioConfig:
             if _below_base_msg is not None:
                 warnings.warn(_below_base_msg, RuntimeWarning, stacklevel=2)
 
+        # The same guard on the OTHER exogenous carbon channel, the RFF
+        # carbon_price_path (SCN-WS1c, owner ruling S2 / card D-1). The D34
+        # guard above watches carbon_price only, which is why the G-C1 defect
+        # — a named federal path SUPPRESSING the state program, so
+        # policy_bundle="tight" cut carbon by $16-$102/tCO2 on CAISO/NYISO/
+        # NEISO in all 25 horizon years — was silent. Under the ruled FLOOR
+        # (resolved = max(path, program)) this can never fire; it is an
+        # invariant tripwire for a future edit that recomposes the two
+        # channels, not an expected condition. Gated on a non-default path so
+        # every default construction pays one string comparison, and deferred-
+        # imported for the same reason as the guard above.
+        if self.mode == "forecast" and self.carbon_price_path not in ("zero", None):
+            from market_sim.policy.carbon import carbon_path_below_program_warning
+
+            _path_below_msg = carbon_path_below_program_warning(self)
+            if _path_below_msg is not None:
+                warnings.warn(_path_below_msg, RuntimeWarning, stacklevel=2)
+
         # The national-CES federal EAC premium is a forecast-only policy
         # lever (national-ces-eac-premium-plan §5.1); rule 13 forbids it ever
         # becoming a backcast tuning channel that lifts clean-resource

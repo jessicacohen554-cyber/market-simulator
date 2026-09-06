@@ -783,10 +783,10 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — **D-1 RULED FLOOR (S2, 2026-09-06)**, repair now with lane SCN-WS1c; the campaign runs the interim additive `carbon_price_delta` ladder until it lands; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes, at a COMMITTED level** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; **D-2 RULED — S3, 2026-09-06**: `{2026: 0.55, 2035: 0.80, 2050: 1.00}` / ACP $50, the same values WS-2a probed, so the label moved and the number did not; `CES-T80` LIVE in `configs/scenario_campaign_matrix.yaml` since 2026-09-06, `FINDING-scn-levels-2026-09-06.md`) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
+| 1 expressible in committed config | yes — **G-C1 CLOSED** (SCN-WS1c 2026-09-06, executing owner ruling **S2**/card D-1): `resolved = max(RFF path, program trajectory)` on a program ISO, the path alone elsewhere. The `tight` cut of $16–$102/t on CAISO/NYISO/NEISO is gone — corrected +$15.98 to +$102.29/t in all 25 yrs, and **no cell anywhere falls**. Gates: 450/450 cells match WS-1a's committed `floor` prediction; footprint exactly 3×25 cells; 0 of 90 committed run_configs on the changed branch and 0 keys moved. **`tight` is now an exact NO-OP on the three program ISOs** — the ruled outcome; **D-1(b)** (what `tight` should mean there) and **D-1(c)** (PJM's partial footprint) stay OPEN. `FINDING-scn-ws1c-2026-09-06.md` | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
 | 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | **ERCOT + NEISO at HEAD posture (SCN-WS2b)** — direction holds table by table vs the July surface, invariant pattern identical; ERCOT saturates above ~$20/MWh on the queue budget and its price/deployment levels are not campaign-grade (adequacy collapse, G-S4 stands); NEISO right-signed on share/price/imports but its CO2 read-out is governed by the CCS emission-rate seam (`FINDING-scn-ws2b-2026-09-06.md` §5.3, routed) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3). **Quotable as a CAMPAIGN-LEVEL result since S3** — it was run at exactly the committed level, so it is no longer only a machinery demonstration | **no** | **no** | — |
-| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
+| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) — **re-measured at the S2 floor** (SCN-WS1c): 0 keys moved, default `e5ecd4105ada3e58` stable, **0 of 90** committed `run_config.json` on the changed branch, backcast 2023–25 trajectories identical in all six ISOs; six keeper bundles named, `FINDING-scn-ws1c-2026-09-06.md` §4 | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
 | 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | stamped (`federal_ces_target` row + six cells, SCN-WS2a last commit) | — | stamped | — |
 | 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
 | 7 registered probes on dashboard | NEISO FC-6 pair | **six ladder legs** `{ercot,neiso}-2026-2030-scn-ws2-ladder-{bau,ces-20,ces-40}` (kind `scenario`, campaign `scn-ws2-ladder`) — G-S5 CLOSED, the pruned POC evidence restored at HEAD | NEISO T0 pair `neiso-2026-2026-scn-ws2a-neiso-2026-t0-{ref,target}` (kind `scenario`) | — | none | `scn-ws0-smoke` REF/CARB pair |
@@ -942,6 +942,17 @@ Rules that bite here: 2 (no hour loops in any new accounting — numpy over the 
 ```
 
 ### WS-1a `[FABLE]` — federal carbon-price semantics + the two seam defects
+
+**STATUS: fully executed.** Items 2–4 + Phase 0 + the D-1 evidence memo landed at SCN-WS1a
+(`FINDING-scn-ws1a-2026-09-05.md`), which correctly WITHHELD item 1 on the open card. Owner
+ruling **S2** (2026-09-06, desk ledger §2) then signed D-1 = **FLOOR**, and **item 1 was
+executed by lane SCN-WS1c** (`PRECOMMIT-scn-ws1c-2026-09-06.md`,
+`FINDING-scn-ws1c-2026-09-06.md`): the floor, the D34 guard's path-branch sibling, the
+`test_cap_and_trade.py:135` flip, the cache-epoch entry, and the byte-identity key list —
+0 keys moved, 0 of 90 committed run_configs on the changed branch. **Item 1's "NEISO-tight
+strict-increase test" was written as `tight ≥ current` with equality on the program ISOs**: the
+floor makes `tight` an exact no-op on CAISO/NYISO/NEISO, so a strict assertion is false — the
+ruling moved the predicate (FINDING §3). **D-1(b) and D-1(c) remain OPEN.**
 
 ```
 You are lane SCN-WS1a (plan §3 WS-1 items 1–3). DATA PROFILE: caiso (for the G-C2 reproduction)
