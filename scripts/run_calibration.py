@@ -481,6 +481,32 @@ def _p1_storage_cost_identical(
     return cand.shape == ref.shape and bool(np.array_equal(cand, ref))
 
 
+def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
+    """Is the year's renewable CF bound the raw delivered outcome?
+
+    Screened on 2023 by ercot-251 (docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md)
+    and ADMITTED as a correctness fix by owner ruling 2026-09-06 (ercot-252,
+    docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md); byte-identical wherever an
+    HSL parquet exists (every ERCOT training year), live only on no-HSL years.
+    The curtailment gates below skip their ceiling when the bound already embeds the
+    historical curtailment, because capping an already-curtailed series double-curtails it.
+    They test HSL-parquet existence for that, which is wrong whenever the loader falls
+    through to ``forecast_uncurtailed`` -- the delivered shape GROSSED UP by another year's
+    reference rate, which is real headroom the ceiling is supposed to take back (see
+    renewables.renewable_bound_provenance, and the forecast leg at renewables.py L2496-2513
+    which pairs gross-up + ceiling deliberately). Only ``delivered_pinned`` needs the guard.
+    """
+    from market_sim.data.renewables import (
+        RENEWABLE_BOUND_DELIVERED_PINNED,
+        renewable_bound_provenance,
+    )
+
+    return all(
+        renewable_bound_provenance(iso, year, fuel) == RENEWABLE_BOUND_DELIVERED_PINNED
+        for fuel in ("wind", "solar")
+    )
+
+
 def run_year(
     year: int,
     iso: str,
@@ -2685,20 +2711,21 @@ def run_year(
     # ercot_gtc_limits_measured): the GTC-carrying links' export direction
     # follows the hourly NP6-86 measured limit series so West/Panhandle
     # curtailment emerges endogenously from the binding published limits.
-    # Applied only when the year ALSO has measured HSL renewable potential —
-    # without it the renewable upper bound is the delivered actuals
-    # (EIA-930-as-CF) and any binding export cap would double-curtail wind
-    # below what really flowed. The import direction keeps the static rating
-    # (a GTC is an export stability limit).
+    # Skipped only when the renewable upper bound is the raw delivered actuals
+    # (``delivered_pinned``: EIA-930-as-CF already embeds the curtailment, so a
+    # binding export cap would double-curtail wind below what really flowed);
+    # a measured-potential OR reference-rate grossed-up bound keeps the limits
+    # (ercot-252). The import direction keeps the static rating (a GTC is an
+    # export stability limit).
     ttc_import = None
     if getattr(config, "ercot_gtc_limits_measured", False) and iso == "ERCOT":
         from market_sim.data.gtc import ercot_gtc_ttc_hourly
 
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_gtc_limits_measured: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — measured GTC limits "
-                "skipped for this year to avoid double-curtailment",
+                "ercot_gtc_limits_measured: %d renewable bound is delivered-pinned "
+                "— measured GTC limits skipped for this year to avoid "
+                "double-curtailment",
                 year,
             )
         else:
@@ -2811,17 +2838,18 @@ def run_year(
     # per-(zone, hour) ceiling on West/Panhandle wind & solar reproducing the
     # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot resolve.
     # Reads the derived congestion-share table and the model's OWN net-load, so it
-    # regenerates forward. Applied only when the year carries measured HSL
-    # potential (the uncurtailed CF ceiling) — otherwise the delivered-as-CF
-    # renewables already embed curtailment and the ceiling would double-count.
+    # regenerates forward. Skipped only when the bound is delivered-pinned (the
+    # delivered-as-CF renewables already embed curtailment and the ceiling would
+    # double-count); a measured-potential or reference-rate grossed-up bound
+    # keeps the ceiling, exactly as the forecast leg pairs them (ercot-252).
     wind_curtail_share = None
     solar_curtail_share = None
     if getattr(config, "ercot_wtx_curtailment_driver", False) and iso == "ERCOT":
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_wtx_curtailment_driver: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — curtailment ceiling skipped "
-                "to avoid double-curtailment",
+                "ercot_wtx_curtailment_driver: %d renewable bound is "
+                "delivered-pinned — curtailment ceiling skipped to avoid "
+                "double-curtailment",
                 year,
             )
         else:
