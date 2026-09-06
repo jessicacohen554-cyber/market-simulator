@@ -282,12 +282,60 @@ differencing on the three program ISOs, which this lane cannot supply because th
 there; or a decomposition of Δprice by marginal-fuel hour, which needs the hourly duals rather
 than the annual scalars these T0 bundles export.
 
+### 3.8 The INERT pairs — NEISO and NYISO, exact identity confirmed
+
+The floor makes `carbon_price_path="mid"` a no-op on the state-program ISOs, so ADDENDUM §(f.2)
+re-specified **G4 for these pairs as an exact-identity test** rather than a band: a **non-zero**
+delta would be the failure, because it would mean something other than carbon moved between two
+configs that resolve to the same carbon price in every hour.
+
+| ISO | resolved $/t (both arms) | `emissions_mt` | lw price $/MWh | Δ on **every** metric |
+|---|---|---|---|---|
+| **NEISO** | 27.8783 | 17.1691 | 50.8530 | **0.000000** |
+| **NYISO** | 25.2908 | 24.5911 | 49.1840 | **0.000000** |
+
+**8/8 PASS on both.** Δ CO2 and Δ lw_price are `0.000000` to six decimals; every by-fuel and
+by-zone row is identical; `unserved_mwh` 0.0 in all four arms. **This is §1's arithmetic converted
+into a measurement.** It also exercises the harness: two runs differing in one field that the
+resolver is supposed to neutralise produce byte-equal dispatch, which is a real (if narrow) check
+that the S2 floor is wired where it claims to be.
+
+**These two are also the cleanest runs of the lane** — REF and CARB each score **0 FAIL / 0 WARN**
+across all 14 forecast invariants, against ERCOT's 1 FAIL/2 WARN, PJM's 1/1 and MISO's 2/1.
+
+**What they are NOT evidence of.** They say a *federal RFF `mid`* price is a no-op where a state
+program already charges more (RGGI $27.88 and $25.29 vs the path's $3.75 at 2027). They say
+**nothing** about whether carbon pricing works in New England or New York — those ISOs are already
+carbon-priced, at roughly **7×** the federal path's 2027 level. Quoting "no effect" from these
+rows would invert their meaning.
+
+### 3.9 A LEVEL result the zero deltas would otherwise hide
+
+The leakage duty asks for `import_co2_mt_reported` **beside** `emissions_mt` as a number. On the
+two RGGI ISOs the *delta* is zero — but the *level* is large:
+
+| ISO | in-ISO `emissions_mt` | reported import CO2 | **import as % of scored in-ISO** |
+|---|---|---|---|
+| **NYISO** | 24.5911 | **10.1556** | **41.3 %** |
+| **NEISO** | 17.1691 | **4.3493** | **25.3 %** |
+| PJM | 393.6225 | 0.9141 | 0.2 % |
+| ERCOT / MISO | 255.97 / 370.48 | 0.0000 | 0.0 % (no seam exists) |
+
+**A campaign that reports only `emissions_mt` understates NYISO's carbon footprint by roughly two
+fifths and NEISO's by a quarter**, before any policy is applied. This is a *standing* disclosure
+property of the two import-heavy ISOs, not something a carbon arm creates — and it is exactly why
+SCN-WS0's duty is to print the import line beside every headline rather than only when it moves.
+It is reported here because a reader scanning §3.8's zero deltas would otherwise conclude these
+ISOs have nothing to disclose.
+
 ## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
 <!-- FILL: completed as each ISO lands. ERCOT row below. -->
 
 | ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
 |---|---|---|---|---|
+| **NYISO** | **0.0000** (arm inert) | **0.0000** | n/a — no headline to displace | 6 carbon-bearing tranches exist and carry a **standing 10.1556 Mt**, but the arm does not move them: the RGGI program ($25.29/t at 2027) already exceeds the RFF mid path ($3.75), so `max()` returns the program and nothing in the ISO changes. **Level ≠ delta** (§3.9). |
+| **NEISO** | **0.0000** (arm inert) | **0.0000** | n/a | 4 carbon-bearing tranches, **standing 4.3493 Mt**; inert for the same reason. |
 | **MISO** | **−6.6414** | **0.0000** | **0.0 %** | **none built.** `IMPORT_ZONE` names `MISO_external` but `IMPORT_TRANCHES` has no MISO entry, so no tranche exists. **This zero is a MODEL-BOUNDARY artifact, not a physical claim** — MISO trades heavily with PJM and SPP in reality; the model has no seam for it. MISO's −6.64 Mt therefore carries **no leakage disclosure at all** and must be read as an **upper bound**. Flagged in the PRECOMMIT before the solve precisely so this null is not read as "MISO does not leak". |
 | **PJM** | **−13.4381** | **+0.4336** | **3.2 %** | **the 2-tranche scarcity block** — import generation +2.0495 TWh. Predicted +0.03 to +0.23 Mt; **measured +0.4336, nearly 2× the top of my band** (§5). The tranches pay **no border carbon** while PJM coal's `mc` rises ~$3.98/MWh, so they get relatively cheaper. `emissions_by_fuel_mt["import"]` stays **0.0** in both arms — the import MWh never enters the scored in-ISO total (G6), it is disclosed beside it. |
 | **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
