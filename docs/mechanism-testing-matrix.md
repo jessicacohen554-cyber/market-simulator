@@ -5653,6 +5653,71 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-225 (2026-09-06) — THE OWNER RULED ON BOTH OPEN QUESTIONS; PHASE 0
+> SOURCED WHAT THE RULING REQUIRED AND KILLED ONE OF THE THREE CHARTERED LEGS BEFORE ANY LP;
+> THE JOINT ARM PASSES THE C1 GATE THAT KILLED miso-224 AND DIES ON G-3 BY 37 MW.** Successor
+> to miso-224. Keeper UNCHANGED at `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Records:
+> `PRECOMMIT-miso225-transport-seam-joint-2026-09-06.md` (+ Addendum A);
+> `FINDING-miso225-transport-seam-joint-2026-09-06.md`; instruments
+> `_miso225_{transport_identification,wedge_anatomy,static_remerit,seam_neighbour}_phase0.py`;
+> blind scorer `_miso225_screen_gates.py`. ONE LP scored (2023). Screen bundle
+> `miso225_ruled_S` DELETED before merge (rule 29c); never registered.
+> **THE TWO RULINGS.** (1) The fuel convention: **marginal commodity PLUS VARIABLE TRANSPORT**
+> — not the bare hub miso-224 screened and killed, and not the EIA-923 average print —
+> CONDITIONED on a measured transport component being sourced first, zero fitted scalars, "or
+> the arm does not run". (2) The D-2 5(i) seam object: **ADMISSIBLE in one form only**, imports
+> offered at the EXPORTING market's own measured price; explicitly not the miso-181
+> coincident-peak envelope (R) and not flow-pinning.
+> **PHASE 0 (zero-LP, all committed).** (i) The transport is SOURCED: `v[p]` = the intercept of
+> `print - hub = v + F/burn`, burn-weighted WLS on each plant's own 2023-2025 EIA-923 receipts
+> (frozen derive → `data/raw/reference/miso_gas_variable_transport.csv`). CC_REGULAR, the
+> margin-setting class, carries a $0.452/MMBtu wedge of which **$0.209 is VARIABLE**, so the
+> ruled form drops **54 %** of that class's print premium where the bare hub dropped 100 %;
+> fleet cap-weighted $1.179 → $0.744. IDENTIFIED, not assumed: within-plant burn spread max/min
+> p50 **38.7x**; a REGRESSION-FREE estimator (own top-burn quartile, amortizing 79 % of the
+> fitted fixed leg away) agrees at **r = 0.975** and reconciles exactly. THE PRINT IS MEASURABLY
+> AN AVERAGE: d(wedge)/d(hub) slope **-0.69** fleet-wide, **-0.76** for CC_REGULAR (a lagged
+> average implies -1, a marginal cost 0). (ii) The seam gate PASSED: the neighbour anchor lowers
+> EVERY import band in EVERY year (bands 1-4 mean -$3.81 / -$3.03 / -$2.32), and in the 2023
+> hours MISO cleared under $20 the measured seam carried **6,021 MW against a 4,674 MW
+> all-hours mean** — MISO imports MOST when it is cheapest. (iii) **THE COAL SELF-COMMITMENT
+> FLOOR IS REFUSED at phase 0** on rule 19 from the keeper's OWN committed D-2 (MISO COAL forced
+> energy **0.30 / 0.34 / 0.17 %** of a 182-205 TWh class, one mechanism) plus miso-53's standing
+> adjudication of the per-plant CAMPD must-run band (29.3 % cap-weighted, 44 of 57 plants, 17 at
+> exactly 0) as the self-commitment representation — an offer-side price-taker bid, which is the
+> faithful form. The 2025 MISO SOM, whose publication miso-53 named as the rule-23 re-derive
+> trigger, is intaken as EVIDENCE instead (12 rows, source PDF verified byte-exact against the
+> committed SHA256SUMS): regulated coal must-run share of starts **56 / 53 / 61 %**.
+> **THE SCREEN (2023, footprint year).** S-2 PASS (both liveness lines in the SOLVE log, the
+> fuel line carrying its transport clause, winter-shape absent). **G-1 PASS: body -$1.917** in
+> [-4.464, -1.488] (64 % of the -2.976 static). **G-4 PASS — NO flips, NO inconclusive cells,
+> and BOTH ex-ante numeric predictions HELD**: COAL_PRB -1.557 → **-6.586** (predicted -6 to -7)
+> and CC_REGULAR -4.172 → **+4.018** (predicted +1 to +4), the two cells that flipped to -11.88
+> and +12.60 and killed miso-224; CT_PEAKER, the keeper's fragile edge at 0.015 TWh of headroom,
+> moves TOWARD actual. **KILLED ON G-3 BY 37 MW** (coal -404 vs -441 required, **0.275x** the
+> static against a 0.30x line — the SAME ratio miso-224 measured, 0.27x, at 2.3x the fuel move),
+> **on G-2** (§ below) and **on S-1**, which this time failed on a REAL fourth difference —
+> `ccs_retrofit_vom_adder` 8.0 → 2.95 from capx D65-B on main, G-DRIFT-classified INERT before
+> the solve but a genuine config difference; disclosed, scorer NOT edited.
+> **THE SEAM RESULT, and it is the more instructive half.** Every PJM band $2.3-4.6 cheaper and
+> imports still FELL (-75 MW cheap-hour, -0.693 TWh annual). Attributed against the fuel arm's
+> own price move (miso-224 lost -11.85 TWh at a -4.11 body; scaled to -1.917 that is ~-5.53),
+> **the anchor RECOVERED ~ +4.8 TWh** — real work. It could not reverse the sign because **an
+> anchor changes a fixed ladder's LEVELS, not its RESPONSIVENESS**: the bands still leave merit
+> when MISO's price falls, and here both moved at once with the price fall dominating. Phase 0
+> measured the levels and INFERRED the response; the LP falsified the inference.
+> **QUEUE HEAD FOR miso-226, in priority order:** (1) **THE SEAM ARM ALONE** — no fuel arm, one
+> LP: with MISO's price unmoved, cheaper bands MUST raise imports, so this is a direct,
+> unconfounded read of the anchor's own effect and it is the cheapest open question on the
+> board. (2) **THE COMMITMENT OBJECT G-3 NAMED**: the LP's cheap-hour coal is held at 0.275x
+> the static by something that is NOT forcing (D-2: 0.30 % of the class) and does not scale with
+> the fuel move — the candidate is the P0-detected run pattern plus the take-or-pay committed
+> band, and it is a COMMITMENT question, not a fuel one. (3) Both MISO cells
+> `gas_variable_transport` and `seam_neighbour_anchored_ladder` are **`O`**, not `R`: the first
+> cleared the C1 gate that killed its predecessor and failed a coal-RESPONSE fraction; the
+> second failed inside a JOINT arm whose partner moved the variable it clears against. Neither
+> is refuted; both need the tests above.
+
 > **QUEUE STAMP miso-224 (2026-09-06) — THE BODY IS A FUEL-CONVENTION OBJECT, SCREENED
 > ON 2023 AND KILLED AS A STANDALONE ARM; TWO COMPENSATED MECHANISMS EXPOSED.** Successor to
 > miso-223. Keeper UNCHANGED at `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Records
