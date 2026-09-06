@@ -7,8 +7,34 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #4) ·
-**r#4 (HEAD `21deb4a7`):** **NOTHING NEW IS UNBLOCKED BY CODE — and the one real unblock this
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #5) ·
+**r#5 (HEAD `3dcf1b22`):** **THE WAVE-2 SET IS ESSENTIALLY IN. SCN-WS4c IS UNBLOCKED AND
+ISSUED — the last lane before Stage A.** Landed since r#4: **SCN-WS2a COMPLETE** (the NEISO T0
+target-row pair registered, FINDING, and the matrix row + one cell per shard as its last
+commit — every item of its charter), **SCN-WS4b** (both named cases, the six per-ISO
+pre-declared adequacy readings, the `backstop-built` column + test), **SCN-MX-R-r2** (the CI
+diagnosis, the epoch entry, and a correction to this ledger). **SCN-WS1b and SCN-WS2b are IN
+FLIGHT with PRECOMMITs pushed before their solves**, exactly as rule 29 requires ·
+**TWO CORRECTIONS THE DESK OWES, BOTH AGAINST ITS OWN RECORD.** (1) **r#4 graded SCN-WS4b LOST
+and "never launched". That was wrong in fact** — the lane launched between r#4 and r#5 on
+`claude/scn-ws4b-load-hi-adequacy-jvv96t` and landed complete. The r#4 call followed the
+charter's two-refresh threshold correctly, but the threshold mis-fired, and the honest record
+is *launched late*, not *never launched*. (2) **The desk asserted across r#2, r#3 and r#4 that
+`check_mechanism_matrix.py`'s duty-(c) half "did not fire" because it exited 0. It DID fire and
+it DID fail** — SCN-MX-R-r2 found job `101393800190` printing both `::error … not registered`
+lines and exiting 1 on PR #4870, which was **created and merged five seconds apart with seven
+red checks**, the guard not being a required status. The desk's three exit-0 readings were the
+checker's **validate-only mode**, which returns before the registration leg exists in the
+control flow and was never a registration verdict. The real defect is a merge-protection gap
+plus a blind spot for any shared, forecast-only or keeper-unarmed field · **Stage-B picture
+has widened and is not this desk's to move: THREE ISOs now hold CALIBRATED keepers while absent
+from `complete`** — NYISO (my r#4 routing landed → capx card C-19/Q51 + D70, **Q51 ruled HOLD
+ONE REFRESH**), MISO (C-17/Q49, **declined**) and CAISO (C-18/Q50, **hold until caiso-253**).
+`complete` still reads {ERCOT, NEISO, PJM} · **CLAUDE.md changed under us**: rule 1 now carries
+an **authorized offer-curve price-tuning carve-out**, rule 13 its one exception, rule 29 gains
+clause **(c) DELETE BEFORE MERGE**, and a **new rule 30 `[R-TOUCHPOINT-FOLD]`** exists — all
+four are written into SCN-WS4c's charter.
+*(previous)* **r#4 (HEAD `21deb4a7`):** **NOTHING NEW IS UNBLOCKED BY CODE — and the one real unblock this
 refresh is GOVERNANCE, is not this desk's to take, and nobody has taken it.** NYISO promoted
 `2026-09-06-nyiso-196-extract-basis` — **CALIBRATED, grade 7, zero fails, C3c the lone ledgered
 caveat** — and the withdrawal block's own re-entry clause reads *"re-entry is a NEW explicit
@@ -89,6 +115,105 @@ unchanged and is what matters.
 
 ## 0. Refresh log (newest first)
 
+### r#5 — 2026-09-06, main HEAD `3dcf1b220ed2cf2bbb62e38b4af3906510c83a5f`
+
+*(PR #4921.)* Delta from the r#4 pin `21deb4a7`: **79 commits** — the largest since the desk
+opened. SCN contributed fourteen; the rest is capx r#42 (+2 amendments), the audit program's
+Y-15/Y-16/G-3 lanes, owner-track miso-221 / nyiso-197, and three CLAUDE.md rule changes.
+
+**GRADED BY CONTENT:**
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS2a** | The endogenous national CES **target** row (G-S1, G-S3) + the two new fields + the three state/federal postures | **LANDED r#5 — COMPLETE** | `claude/scn-ws2a-federal-ces-qm512t` (PRs #4870/#4892/#4902) | **Fable** | Every charter item in: the row on the clean-tier family, the coupling relaxation (WS-3b's precondition), two fields, the postures, the docs legs, the **NEISO T0 probe registered** (`c5f9358a`), the FINDING, and the matrix row + one cell per shard as its **last commit** (`d57cf785`). |
+| **SCN-WS4b** | Pre-declared adequacy reading per ISO under LOAD-HI + the LOAD-HI / LOAD-HI-ORGANIC cases + the `backstop-built` column | **LANDED r#5** | `claude/scn-ws4b-load-hi-adequacy-jvv96t` (PR #4916) | **Fable** | **The r#4 LOST call is WITHDRAWN — launched late, not never launched** (§0 r#5 correction 1). Both cases declared, six per-ISO readings pre-declared in `load-hi-adequacy-reading-2026-09-06.md`, the column + its test. No solve by charter. **Unblocks SCN-WS4c.** |
+| **SCN-MX-R-r2** | The rule-28 duty-(c) CI diagnosis; the verified-outstanding cache-epoch entry; the CES row conditionally | **LANDED r#5** | `claude/scn-mxr2-matrix-duty-repair-lk9ndd` (PR #4910) | **Fable** | Diagnosed the gap and **corrected the desk's own reading of it** (§0 r#5 correction 2); wrote the epoch entry; **left the CES row to live SCN-WS2a rather than racing it**, exactly as chartered — and WS-2a then landed it. |
+| **SCN-WS1b** | Six-ISO carbon paired T0 probe + NEISO/ERCOT delta ladder + the per-ISO leakage line | **IN FLIGHT r#5** | merged through `main` (`ed7fd527`, `acf5ed1f`, `e68e1971`) | **Opus** | PRECOMMIT pushed before any solve (rule 29 honoured); T0 scoring instrument, both leg launchers, registration helper and bundle gitignore in. **Owed: the twelve registrations, the ladder legs, the leakage table, the FINDING.** |
+| **SCN-WS2b** | Premium-ladder re-prove at HEAD posture + `scripts/ces_national_clearing.py` | **IN FLIGHT r#5** | `claude/scn-ws2b-ces-clearing-y40sks` (live; PR #4909 merged item 2) | **Opus** | PRECOMMIT pushed before any solve; **item 2 landed — the uniform-price half of the G-S2 bracket**. Owed: item 1's ERCOT+NEISO ladder re-prove, the July table-by-table attribution, the FINDING. |
+
+**CORRECTION 1 — the r#4 LOST call on SCN-WS4b was wrong in fact.** The charter's rule is *no
+branch and no PR two refreshes after issuance ⇒ LOST*, and at the r#4 pin that was literally
+true. The lane then launched on `claude/scn-ws4b-load-hi-adequacy-jvv96t` — a third name,
+neither of the two stems the desk issued — and landed its whole charter. So "never launched"
+is **withdrawn**; the record is **launched late**. What this says about the threshold: a
+two-refresh window measured in hours is too tight when refreshes are hours apart rather than
+days, and branch-name matching is a weak detector because the harness never uses the issued
+stem. Standing change for r#6 onward: **before grading a lane LOST, ask dispatch status
+first** and treat absence as evidence only alongside it. The relaunch cost nothing here (the
+`-r2` charter was never dispatched either), but the grading was wrong and is recorded as such.
+
+**CORRECTION 2 — the desk's CI-gap claim was wrong, and the truth is worse than the claim.**
+Across r#2, r#3 and r#4 this ledger asserted that `check_mechanism_matrix.py` "exited 0", so
+its duty-(c) half "did not fire", confirmed "across three pins". SCN-MX-R-r2 established
+otherwise (`FINDING-scn-mxr-2026-09-06.md` §1.1):
+- On PR #4870 the guard **ran and failed** — job `101393800190` prints both
+  `::error … new ScenarioConfig field … is not registered` lines and exits 1.
+- The PR was **created at 23:28:44Z and merged at 23:28:49Z** — five seconds — so the failure
+  was reported to an already-merged PR. The guard is **not a merge-blocking required status**,
+  and **seven of its eleven checks were red** (fast tests, refactor guards, quarantine gates,
+  forecast parity, invariant audit, shrink-guard, this one).
+- The desk's three exit-0 readings were the checker's **validate-only mode** (no `--base`),
+  which returns at `if not args.base:` *before* the registration diff leg — it asserts store
+  integrity and keeper-stamp parity and **never was a registration verdict**. Reading it as one
+  was the desk's error.
+- The durable hole it *does* have: **any shared (no ISO stem), forecast-only, or
+  keeper-unarmed `ScenarioConfig` field that reaches `main` without its row is invisible to
+  every later run** — `gap_ratchet` only walks ISO-stemmed fields and `shared_gap_ratchet` only
+  sees fields armed on a backcast keeper, which a forecast-only field refused in backcast mode
+  can never be. A `carbon_*`, `storage_*`, `ccs_*` or `entry_*` field would be swallowed the
+  same way.
+Routed by the lane to the capx/audit track, which owns the CI surface. **Not this desk's to
+repair**, and the desk states plainly that its own three-pin "confirmation" was an artifact of
+running the checker in the wrong mode.
+
+**WHAT IS NOW UNBLOCKED — one lane, and it is the last one before Stage A.**
+- **SCN-WS4c — UNBLOCKED, ISSUED.** Its three preconditions (WS-0, WS-4a, WS-4b) are all on
+  main; WS-4b's own FINDING closes with *"This landing is the LAST thing blocking SCN-WS4c."*
+- **SCN-WS3b** — still blocked on **card D-3 alone**, open since r#1. Both code preconditions
+  have been met since r#3.
+- **SCN-WS5A ×6 + SYNTH** — the gate is now: WS-1b and WS-2b landing, WS-4c landing, and
+  **either D-3 ruled YES with WS-3b/c landed, or D-3 ruled NO** (in which case the `VOL-*` and
+  `CES-P20+VOL-HI` cases drop from the campaign with a ledger note). **D-3 is on the critical
+  path to Stage A now**, which it was not at r#1 — worth the owner knowing.
+- **Stage B** — unchanged: needs card D-5 **and** an open §2.1b gate at issuance.
+
+**THE STAGE-B PICTURE WIDENED, AND NONE OF IT IS THIS DESK'S TO MOVE.** Three ISOs now hold
+CALIBRATED keepers while absent from `complete`, so their gate leg (a) reads FAIL:
+| ISO | keeper | card | ruling |
+|---|---|---|---|
+| **NYISO** | `2026-09-06-nyiso-196-extract-basis` | C-19 / **Q51** — served by capx r#42 am.1 after **this desk's r#4 routing** | **HOLD ONE REFRESH** |
+| **MISO** | promoted CALIBRATED (capx r#42) | C-17 / Q49 | **DECLINED** |
+| **CAISO** | promoted CALIBRATED (capx r#42) | C-18 / Q50 | **HOLD until caiso-253** |
+`complete` still reads {ERCOT, NEISO, PJM}. The desk records the state and the consequence — if
+all three were declared, five of six ISOs would clear leg (a) and card D-5 would be a very
+different question — and declares nothing.
+
+**RULE CHANGES SINCE r#4, all four written into SCN-WS4c's charter.**
+- **Rule 1 `[R-STRUCT]` amendment (owner, 2026-09-05):** the registered `offer_curve_by_group`
+  band multipliers are an **authorized price-tuning channel**, under five binding conditions
+  (band multipliers only; one config across every scored year; declared ex ante in the PREREG
+  and **never swept against the gates**; merit-order movement is intended; declared in the
+  attestation's `authorized_price_tuning` block and carried as a DOF free parameter). The first
+  half of rule 1 is untouched.
+- **Rule 13 `[R-MEASURED]`** carries the same exception, for the offer curve and nothing else.
+- **Rule 29 gains clause (c) DELETE BEFORE MERGE** *(owner ruling R-AV)*: a screen bundle, and
+  any control bundle a screen earns, **is deleted from `results/calibration/` before its PR
+  merges** — the doc carries every number, and an unregistered bundle dir is a parity gate RED,
+  not an allowlist candidate. Binds any SCN lane that produces a screen bundle.
+- **New rule 30 `[R-TOUCHPOINT-FOLD]`:** a touchpoint publishes AS the keeper, not beside it.
+  No current SCN lane touches a touchpoint; recorded so none assumes otherwise.
+
+**Capx deconfliction (r#42 + two amendments).** **D60-R2 is DEAD** after four silent sittings →
+**D60-R3 issued** with the D71 drift bisect folded in; **D65 Act A landed** and its own G-DRIFT
+was wrong, surfacing material reproducible HEAD drift → D71; Q47 arm coupled after D60-R3 →
+D65-B. No capx branch is live at this pin. The matrix tree now has SCN-WS2a's landed row plus
+capx D65's — the last-commit one-line protocol held on both, with no conflict.
+
+**Issued:** SCN-WS4c.
+**Cards:** none newly ruled on the SCN side. **D-3 has moved onto Stage A's critical path.**
+
+---
+
 ### r#4 — 2026-09-06, main HEAD `21deb4a75fd2d2c1d1b2c8ed4070968fe818313c`
 
 *(PR #4894.)* Delta from the r#3 pin `ea273339`: **14 commits** — the desk's own r#3 (#4888,
@@ -99,8 +224,8 @@ lane's actual precondition, not its label:
 
 | lane | precondition | state at `21deb4a7` |
 |---|---|---|
-| **SCN-WS4c** | WS-0 ✓, WS-4a ✓, **WS-4b** | still blocked — WS-4b is LOST, relaunched here |
-| **SCN-WS3b** | D-3 ruled + WS-3a boxes + WS-2a ✓ + WS-4a ✓ | blocked on **the card alone**; both code preconditions met since r#3 |
+| **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F, scored against WS-4b's pre-declared readings | **ISSUED r#5** | `claude/scn-ws4c-loadhi-probes-q8vd` | **Opus** | **UNBLOCKED** — WS-0, WS-4a and WS-4b all on main. The last lane before Stage A. |
+| **SCN-WS3b** | Voluntary-demand build | **BLOCKED — on card D-3 alone** | — | Fable | Both code preconditions met since r#3. **D-3 is now on Stage A's critical path** (r#5): Stage A cannot be issued until D-3 is ruled either way. |
 | **SCN-WS5A** ×6 | the whole wave-2 set | blocked — WS-1b/WS-2b in flight, WS-2a owed, WS-4b/c not started |
 | **Stage B** | card D-5 **and** an open §2.1b gate | not issuable; D-5 is held until Stage A's measured cost table exists, which is the correct order |
 
@@ -377,7 +502,7 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-MX-R** | *(the r#2/r#3 stem)* | **LOST r#4 — NEVER LAUNCHED** | `claude/scn-mxr-matrix-duty-repair-j5tv` (burned) | — | No branch, no PR, two refreshes after issuance. Relaunch protocol applied; not re-graded as running. |
 | **SCN-MX-R-r2** | Diagnose why `check_mechanism_matrix.py` exits 0 on a PR adding two `ScenarioConfig` fields with no row (now confirmed across **three** pins); the one verified-outstanding cache-epoch entry; the CES row **only if** SCN-WS2a lands without it | **RELAUNCHED r#4 (verbatim)** | `claude/scn-mxr2-matrix-duty-repair-t7bq` | **Fable** | `scripts/` stays un-edited: diagnose and route. |
 | **SCN-WS4b** | *(the r#2/r#3 stem)* | **LOST r#4 — NEVER LAUNCHED** | `claude/scn-ws4b-loadhi-adequacy-b2np` (burned) | — | No branch, no PR, two refreshes after issuance. Relaunch protocol applied; not re-graded as running. |
-| **SCN-WS4b-r2** | Pre-declared adequacy reading per ISO under LOAD-HI + the LOAD-HI / LOAD-HI-ORGANIC case comments + the "backstop-built" column + the per-ISO import-line expectation | **RELAUNCHED r#4 (verbatim)** | `claude/scn-ws4b2-loadhi-adequacy-x3mc` | **Fable** | Campaign-YAML ownership stands with it (§4). **The last thing blocking SCN-WS4c.** |
+| **SCN-WS4b-r2** | *(the r#4 relaunch)* | **SUPERSEDED r#5, NEVER DISPATCHED** | `claude/scn-ws4b2-loadhi-adequacy-x3mc` (burned) | — | The original lane landed the charter. The relaunch was never needed; recorded so no successor dispatches it. |
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED (wave 3)** | — | Opus | Precondition: WS-3b on main. |
@@ -530,7 +655,14 @@ Stems are recorded so a relaunch (`…-r2`) can never collide with the original.
 | r#4 | SCN-WS4b-r2 | **Fable** `claude-fable-5-1` | `claude/scn-ws4b2-loadhi-adequacy-x3mc` | `all` | the r#3 charter **verbatim** |
 | r#4 | SCN-MX-R-r2 | **Fable** `claude-fable-5-1` | `claude/scn-mxr2-matrix-duty-repair-t7bq` | `code` | the r#3 narrowed charter **verbatim** |
 
+**r#5 issuance.**
+
+| refresh | lane | model (id) | branch stem issued | data profile | body used |
+|---|---|---|---|---|---|
+| r#5 | SCN-WS4c | **Opus** `claude-opus-5` | `claude/scn-ws4c-loadhi-probes-q8vd` | `all` | plan §7 "WS-4" **item 4**, verbatim + WS-4b's pre-declared readings as the scoring target + the four post-r#4 rule changes |
+
 **Burned stems, never to be reused:** `claude/scn-ws4b-loadhi-adequacy-b2np`,
+`claude/scn-ws4b2-loadhi-adequacy-x3mc` (superseded — the original lane landed),
 `claude/scn-mxr-matrix-duty-repair-j5tv` (LOST at r#4), plus the r#3 withdrawals below.
 
 **Withdrawn at r#3, never dispatched:** SCN-WS0-R (`claude/scn-ws0r-registration-t0-m4qk`) and
