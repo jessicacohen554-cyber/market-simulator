@@ -13141,3 +13141,141 @@ read the C4 pass as a C4 lever having worked (excluded from the basis); never
 reach 22-23 by extending either window without a charter.
 
 **Next number: caiso-253.**
+
+## caiso-253 — 2026-09-06
+
+**THE hod 22–23 WINDOW CHARTER. HALF THE QUESTION IS ANSWERED AND CLOSED; THE
+ARM IS REFUSED ON ADMISSIBILITY. ZERO LP, ZERO FLEET REBUILDS, KEEPER
+UNCHANGED** at `2026-09-05-caiso-252-b1-notrim` (CALIBRATED). Branch
+`claude/caiso-backcast-calibration-253-9dgorn` off `main` `82f79693`.
+`PRECOMMIT-caiso253-hod2223-window-charter-2026-09-06.md` (`2bae8600`) pushed
+**before any cell of the object was computed and before any arm was coded**;
+`FINDING-caiso253-hod2223-window-charter-2026-09-06.md`.
+
+**THE OBJECT** (caiso-252 §11 item 1, the handoff's ranked object A): the two
+at-hub WEIM clean-transfer windows do not tile the clock — overnight hod 0–5
+(caiso-93, UNCONDITIONAL, window fixed by caiso-91c/92b) and daytime hod 6–21
+(caiso-94, trigger-OFF scoped) leave **22 hours covered and hours 22–23
+covered by nothing**. Neither boundary was ever *tested* there: each came from
+an independently-chosen analytic block. The model's CC_REGULAR over-runs
+**+1,547 / +1,558 MW** at hod 22 / 23 in 2025 — the two largest CC error hours
+of the day — and caiso-252's arm moved them by −66 MW because its window stops
+at 21.
+
+**G-REPRO — the instrument reproduces THREE published quantities** before any
+new cell was read: the keeper's CC 22/23 error (+1.55/+1.56 GW → +1,547/+1,558
+MW); caiso-93's overnight trigger ON shares (26.4/1.2/3.6 % → 26.37/1.23/3.56);
+caiso-93's unconditional overnight DA delivered medians (−4.7/−4.5/−5.1 →
+−4.66/−4.51/−5.13).
+
+**G-WINDOW — STARVED, DECISIVE. THE WINDOW QUESTION IS CLOSED.** The
+discriminator is the one the two constructions themselves name (overnight is
+unconditional *because* caiso-87 is coverage-starved there; daytime is
+trigger-OFF scoped *because* it is coverage-rich there). caiso-87 trigger ON
+share at hod 22 / 23: **2024 0.3 % / 0.8 %, 2025 1.6 % / 1.9 %** (0–5 control
+1.2 / 3.6 %; belly control 66.7 / 84.7 %). Max over the decision years
+**1.92 %** against a registered ≤ 10 % STARVED threshold. **Hours 22–23 are
+OVERNIGHT-construction hours**; no future session needs to re-measure this.
+
+**G-WEDGE — FAILS, and NOT on the wedge.** Legs 1–2 PASS everywhere: delivered
+median −5.2…−14.2 (gate ≤ +$4) and wedge-consistent share 0.0–4.7 % (gate
+≤ 6 %) against a border wedge of $14.14/$15.08/$12.01 — **there is NO carbon
+wedge at 22–23**, so caiso-93's question answers YES there too. **Leg 3, the
+raw-hub discriminator, is the verdict**: on DA — the basis caiso-93 gated and
+caiso-94 §4A tabulated — **2023 FAILS at both hours** (−3.98 / −2.56 against a
+[−2, +4] band) while 2024 (−0.73 / +0.11) and 2025 (−0.19 / +0.06) pass. **⇒
+NOTHING IS ARMED**, per the PRECOMMIT's registered stop rule. G-DEPTH was
+deliberately NOT run: deriving the depth for a refused window would be
+assembling the arm's inputs after refusing the arm.
+
+**WHY, MEASURED (§3.1) — the DSW hub peaks LATER than CAISO.** Normalised to
+each series' own annual mean, at hod 22/23 PALOVRDE runs 1.244/1.127 (2023),
+1.381/1.282 (2024), 1.388/1.344 (2025) against CAISO DA's 1.119/1.030,
+1.233/1.171, 1.284/1.246 — and by hod 04–05 the ordering **reverses**. The DSW
+is still inside its evening peak at 22–23 while CAISO has rolled off.
+**Arizona keeps no DST**, so this is persistent structure that regenerates
+forward. It is a **solar-season** effect (winter months clear at or above the
+raw hub in all three years) that has **closed monotonically**: DA block median
+**−3.21 → −0.36 → −0.03**. A calendar gate is forbidden (caiso-94 §8), so this
+is reported as structure, never as a scoping proposal.
+
+**THE REFUSED ARM WAS NOT INERT (§3.3).** The model's own P1 dual exceeds the
+raw Palo Verde hub in **54.3 / 59.0 / 57.4 %** of hod 22–23 hours — against
+69.7/77.0/67.4 % at 0–5 and only 14.9/22.6/32.3 % at 18–21, the block
+caiso-252 successfully armed. The row would have cleared in a majority of
+hours and pushed λ down and import up where the measured market says the hub
+is not in merit — the caiso-97 overshoot failure mode one block over. **The
+gate stopped a live arm, on admissibility rather than on a residual.**
+
+**P-5 — the model IS short there, by MORE than registered.** Keeper `import`
+minus EIA-930 net interchange at 22–23: **−984 / −1,405 / −1,662 MW**
+(−0.71/−0.99/−1.20 TWh) against a registered 0.3–1.2 GW for 2025 — FALSIFIED
+HIGH. Hours 22 and 23 are the model's **two worst import-deficit hours of the
+entire day in every year**. The object is real; the arm is refused.
+
+**NEITHER CONSTRUCTION CAN REPRESENT THESE HOURS (§3.4)** — the structural
+result: the overnight leg is unconditional and 22–23 is not unconditionally
+at-hub; the daytime leg's only state variable is the caiso-87 trigger, which
+G-WINDOW measures **inert** there (a trigger-OFF row would arm in ~98 % of
+hours); and a season gate is forbidden. Closing the gap needs a state variable
+neither construction carries, identified from market structure and never from
+the parity hours it would admit.
+
+**PREDICTIONS: 2 hold, 2 falsified, 4 never reached.** P-1 and P-2 hold; P-3
+FALSIFIED **and its registered reason was wrong** (I predicted a failure would
+mean the marginal import there is carbon-paying — legs 1–2 show no wedge at
+all; the failure is caiso-94 §3's *other* branch); P-5 direction holds /
+magnitude falsified high; P-4/P-6/P-7/P-8 never reached (stop rule fired
+before phase 0's rebuilds).
+
+**DISCLOSURES.** (a) **Instrument bug, disclosed and corrected**: legs 1–2
+first ran against the clean row's own `(0.0, 0.0)` delivery basis (raw hub by
+design) instead of the registered scheduled-import basis `DSW_CCGT (0.03,
+4.0)`; the correction makes those legs EASIER and leaves the failing leg
+untouched — it removed failures from a gate whose verdict is FAIL. (b) The
+PRECOMMIT's G-REPRO target mis-cited caiso-252 §2.2's *prior-keeper* numbers;
+the keeper-basis comparator is +1.55/+1.56 GW and is what was matched.
+(c) Gating **RT** was my own tightening beyond the caiso-93 precedent (DA
+gated, RT reported) — the verdict does not rest on it, but on the precedent
+exactly, the refusal rests on **2023 only**. (d) A year-scoped arm was never
+admissible (rule 1 amendment (b): one config across every scored year), which
+is why the clean 2024/2025 DA passes do not become one — stated because the
+temptation was real. (e) The eighth consecutive favourable C3a direction was
+declared in advance and **never spent**: no arm was solved. (f) Malin is not
+the alternative carrier (its 22–23 discriminator is no better than Palo
+Verde's), so caiso-88's north-corridor closure is undisturbed.
+
+**G-DRIFT CLOSED (rule 29(b)).** The keeper sha `fa23c1f7` → HEAD `82f79693`
+audit (23 files, +1,763/−227) classified every hunk INERT for a CAISO
+backcast, verified rather than asserted: the `actual_lmp.json` hunks located
+inside the **PJM** block by enclosing key; ScenarioConfig field defaults
+diffed programmatically (3 added, **0 changed**); `Corridor.carbon_adder`
+grepped as **written and never read**; `tests/unit/data/test_cod_ramp.py` RUN
+at HEAD (46 passed) for the vectorized reducer; and the one claim the
+PRECOMMIT left open, `_band_categorical`, verified identical in values AND
+categories over every branch of `_tranche_band` including the unused-category
+and NaN cases. **G-CTRL form 4 holds and no control solve was spent.**
+
+**QUEUE.** (1) the 22–23 gap is **RE-NAMED and DEMOTED as an import object**
+and re-pointed at **STORAGE** — EIA-930 `NG: OTH` at 22–23 rises
+274 → 2,112 → 3,342 MW against the keeper's ~680 → 1,683 → 2,769 MW of storage
+discharge (a hypothesis with a named check; EIA-930 carries no battery
+category), corroborated by caiso-252's own P-A2 falsification; (2) Panoche
+unchanged; (3) **the `complete` marker — an owner act (rule 22) on a
+CALIBRATED determination, RAISED not granted**, and untouched by this session;
+(4) the DMM 2025 RA-import basis, the C3a weight basis, the per-zone storage
+sidecar ask, and the stale `program-status.json` top-level CAISO keeper stamp,
+all carried.
+
+**DO-NOT-REDO adds (FINDING §7):** never re-charter 22–23 as an at-hub
+clean-transfer window on the overnight construction (G-WINDOW settled,
+G-WEDGE's raw-hub leg fails with a persistent physical reason); never scope a
+CAISO import row by calendar or season; never take the 2024/2025 DA passes as
+a year-scoped arm; never read the 22–23 CC over-run as an import-volume miss;
+never propose Malin as the 22–23 carrier on this evidence; never say this
+closed because the arm was inert (it would have cleared in 54–59 % of hours).
+
+**No run registered (none produced), no keeper change, no `ScenarioConfig`
+field, no new matrix row, no matrix verdict move, no `complete` declaration.**
+
+**Next number: caiso-254.**
