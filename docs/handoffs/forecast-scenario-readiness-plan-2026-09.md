@@ -675,10 +675,28 @@ Staging (rule 29, FF plan §2.4):
    forecast dashboard under one campaign id; the FC-6 paired battery re-run so the
    campaign's own pairs are on the rubric record.
 
-### 3.5 The case set (proposed; owner box D-2 sets levels)
+### 3.5 The case set (levels COMMITTED per S3, 2026-09-06)
+
+**THE LEVELS IN THIS TABLE ARE COMMITTED, NOT ILLUSTRATIVE.** Owner card D-2 was ruled
+**2026-09-06 as S3: this table is the COMMITTED default** (SCN-DESK r#5 amendment 1; §6
+and `docs/handoffs/scenario-desk-ledger-2026-09.md` §2). **No number moved and no re-solve
+was owed** — every level the building lanes carried under an "illustrative" label is the
+level S3 committed, so the ruling changed the label and not the number
+(`docs/handoffs/FINDING-scn-levels-2026-09-06.md`, SCN-LEVELS 2026-09-06).
 
 `configs/scenario_campaign_matrix.yaml`, `cases:` mode, every case one or two field
-overrides on REF. Levels are illustrative until D-2.
+overrides on REF.
+
+**Three levels in this table S3 did NOT reach**, because the table is silent on them, and
+none may be inferred from the ruling: (i) `CAP-STATE-TIGHT`'s declining budget — the row
+writes "declining `mass_cap_tons`" with no number, so the slope stays the OWNER level
+SCN-WS1a labelled it (`FINDING-scn-ws1a-2026-09-05.md` §4.2); (ii) two voluntary sub-cells
+— S3 commits "the WS-3a memo's box-5 defaults", and box 5 itself leaves `f_commit` mid and
+the WTP-ceiling *level* owner-set; (iii) the carbon ladder's **form** — the committed level
+is the RFF **path** ladder, but G-C1 makes a path a carbon *cut* on CAISO/NYISO/NEISO until
+**SCN-WS1c** lands S2's floor, so the campaign runs the reduced additive `carbon_price_delta`
+form in the interim and its knots {15, 25, 50} are a desk stand-in, not ruled levels.
+Cards **D-3c** (voluntary eligible set) and **D-6** (attribute netting) also remain open.
 
 | Case | Overrides | Question it answers |
 |---|---|---|
@@ -686,7 +704,7 @@ overrides on REF. Levels are illustrative until D-2.
 | `CARB-LO` / `CARB-MID` / `CARB-HI` | `carbon_price_path: low/mid/high` (floor semantics after WS-1) | price → dispatch re-ordering, CCS, thermal mix, VRE entry via prices, CO2 |
 | `CAP-STATE-TIGHT` | `mass_cap_enabled: true` + declining `mass_cap_tons` on program ISOs | price vs quantity instrument comparison |
 | `CES-P10` / `CES-P20` / `CES-P30` | `federal_ces_enabled: true`, `federal_ces_premium_usd_per_mwh: 10/20/30` | the uniform-price (tradeable) CES response curve |
-| `CES-T80` | `federal_ces_target_by_year: {2026: <current>, 2035: 0.80, 2050: 1.00}`, ACP `<D-2>` | the uniform-share (no-trade) standard; dual = implied EAC price |
+| `CES-T80` | `federal_ces_target_by_year: {2026: 0.55, 2035: 0.80, 2050: 1.00}`, `federal_ces_acp_usd_per_mwh: 50.0` — **committed, S3**; `<current>` = 0.55 per §3 WS-2 item 5, the value SCN-WS2a probed. **LIVE** in the campaign YAML since 2026-09-06 | the uniform-share (no-trade) standard; dual = implied EAC price |
 | `VOL-MID` / `VOL-HI` | `voluntary_clean_demand_path: mid/high` | voluntary buyers → curtailment, entry, CO2 |
 | `LOAD-HI` / `LOAD-HI-ORGANIC` | `demand_growth_path: high` + `datacenter_load_path: high` / `mid` | load → adequacy, backstop, CO2 per MWh |
 | `CARB-MID+LOAD-HI` | both | does a carbon price hold CO2 flat under DC growth? |
@@ -765,9 +783,9 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
+| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — **D-1 RULED FLOOR (S2, 2026-09-06)**, repair now with lane SCN-WS1c; the campaign runs the interim additive `carbon_price_delta` ladder until it lands; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes, at a COMMITTED level** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; **D-2 RULED — S3, 2026-09-06**: `{2026: 0.55, 2035: 0.80, 2050: 1.00}` / ACP $50, the same values WS-2a probed, so the label moved and the number did not; `CES-T80` LIVE in `configs/scenario_campaign_matrix.yaml` since 2026-09-06, `FINDING-scn-levels-2026-09-06.md`) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
 | 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
-| 3 paired probe right-signed, per ISO | NEISO only | **ERCOT + NEISO at HEAD posture (SCN-WS2b)** — direction holds table by table vs the July surface, invariant pattern identical; ERCOT saturates above ~$20/MWh on the queue budget and its price/deployment levels are not campaign-grade (adequacy collapse, G-S4 stands); NEISO right-signed on share/price/imports but its CO2 read-out is governed by the CCS emission-rate seam (`FINDING-scn-ws2b-2026-09-06.md` §5.3, routed) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3) | **no** | **no** | — |
+| 3 paired probe right-signed, per ISO | NEISO only | **ERCOT + NEISO at HEAD posture (SCN-WS2b)** — direction holds table by table vs the July surface, invariant pattern identical; ERCOT saturates above ~$20/MWh on the queue budget and its price/deployment levels are not campaign-grade (adequacy collapse, G-S4 stands); NEISO right-signed on share/price/imports but its CO2 read-out is governed by the CCS emission-rate seam (`FINDING-scn-ws2b-2026-09-06.md` §5.3, routed) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3). **Quotable as a CAMPAIGN-LEVEL result since S3** — it was run at exactly the committed level, so it is no longer only a machinery demonstration | **no** | **no** | — |
 | 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
 | 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | stamped (`federal_ces_target` row + six cells, SCN-WS2a last commit) | — | stamped | — |
 | 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
@@ -786,6 +804,16 @@ rate) and G-E7 (NOx/SO2 unexported) stay OPEN and out of scope — both are disc
 items the plan already records as such. Criterion 1's harness half is closed with them:
 a case is now one field override, expressible in the campaign YAML or on the command
 line via `--set`.
+
+**The CES-target column's level became COMMITTED without a re-solve** (SCN-LEVELS 2026-09-06,
+`docs/handoffs/FINDING-scn-levels-2026-09-06.md`). Owner card D-2 → S3 committed the §3.5
+table; SCN-WS2a had built and probed the target row against exactly those values under an
+"illustrative" label, so **no cell of this scorecard moved on the evidence** — rows 2, 4, 5
+and 7 are untouched, row 1 changes only its label, and row 3's probe becomes quotable as a
+campaign result rather than as machinery. No cache key moved (91 pre-existing keys measured
+byte-identical) and no `ScenarioConfig` default changed. Two "illustrative" labels remain in
+this plan OUTSIDE SCN-LEVELS' regions — §3 WS-2 item 5 and the §7 "WS-2a" prompt body — both
+historical charter text for a landed lane; routed to SCN-DESK rather than edited.
 
 **Load-HI row 1, closed by SCN-WS4b** (2026-09-06, `docs/handoffs/FINDING-scn-ws4b-2026-09-06.md`).
 The named case is the two live keys SCN-WS0 shipped, now with their disclosure: `electrification_path`

@@ -3212,11 +3212,19 @@ class ScenarioConfig:
     # refuses federal_ces_storage_eligible (no discharge column in the row)
     # and an eligible-fuel list without wind+solar (the row's zone columns).
     # Forecast-only (rule 13 — the premium's own backcast refusal applies).
-    # ILLUSTRATIVE, NOT A CAMPAIGN LEVEL: owner box D-2 (readiness plan §6,
-    # the CES target schedule + ACP) was PRESENTED at SCN-DESK r#1 and is
-    # OPEN as of 2026-09-05; the SCN-WS2a probe used {2026: 0.55, 2035: 0.80,
-    # 2050: 1.00} at ACP $50 as a placeholder and says so. No value here is a
-    # committed level.
+    # THE CAMPAIGN LEVEL IS COMMITTED — and it is NOT a default here. Owner
+    # box D-2 (readiness plan §6, the CES target schedule + ACP) was RULED
+    # 2026-09-06 as S3: the plan's §3.5 table is the COMMITTED default, CES
+    # target {2026: <current>, 2035: 0.80, 2050: 1.00} with ACP $50 (SCN-DESK
+    # r#5 am.1; ledger §2). `<current>` is resolved by the plan's own §3 WS-2
+    # item 5 as 0.55 — the value the SCN-WS2a probe already used, so the
+    # ruling changed the LABEL and not the number and no re-solve was owed
+    # (SCN-LEVELS, FINDING-scn-levels-2026-09-06.md). **The committed level
+    # lives in the campaign as a CASE OVERRIDE, never as a shipped default**
+    # (rule 24 [R-REGISTRY]: the campaign is the YAML): see the `CES-T80` case
+    # in configs/scenario_campaign_matrix.yaml. This field's default stays
+    # None (no row, byte-identical), which is what keeps every pre-existing
+    # cache key stable.
     federal_ces_acp_usd_per_mwh: float | None = None  # The target row's
     # alternative-compliance ceiling in real 2026$/MWh: the escape column's
     # objective price, so the row's dual can never exceed it — a
@@ -3224,7 +3232,10 @@ class ScenarioConfig:
     # (FFR-6B §6.3; the same construction as STATE_RPS_ACP). REQUIRED (> 0)
     # with federal_ces_target_by_year and refused without it (a dangling
     # price with no row is an unregistered knob). None (default) =
-    # byte-identical. Illustrative $50 in the SCN-WS2a probe (D-2 open).
+    # byte-identical. The COMMITTED campaign level is $50 — owner box D-2 →
+    # S3 (2026-09-06), the same $50 the SCN-WS2a probe used under its former
+    # "illustrative" label — carried as the `CES-T80` case override in
+    # configs/scenario_campaign_matrix.yaml, never as a default here.
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
     # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
