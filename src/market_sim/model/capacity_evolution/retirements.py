@@ -80,7 +80,14 @@ from market_sim.config.constants import (
     evaluate_renewable_elcc_curve,
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone, map_area
-from market_sim.config.capacity_market import resolve_capacity_market_supply_clearing
+from market_sim.config.capacity_market import (
+    resolve_capacity_going_forward_bar_published,
+    resolve_capacity_market_supply_clearing,
+)
+from market_sim.data.avoidable_cost_rate import (
+    published_bar_per_kw_yr,
+    reactive_offset_per_mw_yr,
+)
 from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
@@ -2197,6 +2204,69 @@ def resolve_renewable_capacity_credit(
     return _renewable_credit(fuel_type, iso)
 
 
+def resolve_going_forward_bar_per_kw_yr(
+    config: ScenarioConfig, fuel_type: str, year: int | None
+) -> tuple[float, str]:
+    """Return ``(bar $/kW-yr nameplate, basis)`` for one fuel class.
+
+    **THE ONE going-forward-cost operand of the retirement screen** (capx D62,
+    executing ``docs/handoffs/FINDING-capx-d61-2026-09-05.md`` §4). Every site
+    that needs "what does keeping this class online cost per nameplate kW-year"
+    resolves it here, so the exit bar, the D57 sell-offer cap (which reads the
+    SAME ``going_forward_cost``) and the reliability floor's retention order
+    can never disagree — rule 19 [R-ONE-MECH], one mechanism per phenomenon.
+
+    Two constructions, selected by ONE per-ISO gate
+    (:func:`~market_sim.config.capacity_market.
+    resolve_capacity_going_forward_bar_published`):
+
+    * **off (default, every ISO)** — ``config.fixed_om_<fuel> ×
+      retirement_fom_multiplier_<fuel>``, the ATB FOM proxy, returned
+      byte-identically to every committed run. Basis ``"atb_fom"``.
+    * **on** — the ISO's OWN published default gross Avoidable Cost Rate for
+      the delivery year the screen prices (PJM Manual 18 Rev 62 §5.4.8.4(B),
+      via :mod:`market_sim.data.avoidable_cost_rate`), on nameplate. Basis
+      ``"published_acr"`` (or ``"published_acr_first_published"`` on the
+      vintage rule's "n/a" limb).
+
+    **``retirement_fom_multiplier_<fuel>`` does NOT apply to the published
+    bar** — the published number is already the avoidable cost "assuming the
+    unit would otherwise retire" (M18 §5.4.4), so multiplying it by the coal
+    1.3× going-forward uplift the ATB proxy needs would double-count the same
+    adjustment. Stated here, never tuned.
+
+    A fuel class the ISO publishes no row for (``gas_cc_ccs``: a capture
+    retrofit is not one of PJM's eight resource types) keeps the ATB path even
+    under an armed gate, and says so in its basis (``"atb_fom_unpublished"``).
+    That is fixed ex ante because no published number exists to substitute,
+    never because of a result.
+
+    Raises through :class:`~market_sim.data.avoidable_cost_rate.
+    PublishedBarUnavailable` when the gate is ARMED and the published table
+    cannot be read: degrading to the proxy there would silently run a
+    different mechanism than the one the run declares.
+    """
+    multiplier = getattr(config, _FOM_MULTIPLIER.get(fuel_type, ""), 1.0)
+    atb = float(getattr(config, _THERMAL_FOM[fuel_type])) * float(multiplier)
+    if not resolve_capacity_going_forward_bar_published(config, config.iso):
+        return atb, "atb_fom"
+    if year is None:
+        raise ValueError(
+            "capacity_going_forward_bar_published_by_iso requires a simulation "
+            "year: the published bar is resolved for the delivery year the "
+            "screen prices (screen year Y prices DY Y/Y+1)"
+        )
+    published = published_bar_per_kw_yr(config.iso, fuel_type, int(year))
+    if published is None:
+        return atb, "atb_fom_unpublished"
+    value, vintage_basis = published
+    return value, (
+        "published_acr"
+        if vintage_basis == "vintage"
+        else "published_acr_first_published"
+    )
+
+
 def _floor_retention_merit(
     config: ScenarioConfig, g: Generator, year: int | None = None
 ) -> tuple[float, float, float]:
@@ -2230,13 +2300,22 @@ def _floor_retention_merit(
     ≤ 0 or a zero accreditation fraction) still sorts last (``inf``), as
     before.
     """
-    fom_field = _THERMAL_FOM[g.fuel_type]
-    multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
     firm_fraction = thermal_accreditation_fraction(
         g.fuel_type, g.eford, config.iso, config, year
     )
+    # capx D62: key 1 reads the SAME going-forward operand the screen's bar and
+    # the D57 sell-offer cap read (rule 19 [R-ONE-MECH]) — a floor that ranked
+    # "cheapest firm adequacy" on the ATB proxy while the screen tested the
+    # published bar would be two constructions of one quantity. Gate off, this
+    # is byte-identically the former expression (basis ``atb_fom`` returns
+    # ``fixed_om_<fuel> x retirement_fom_multiplier_<fuel>``); the class-
+    # constant form of capx D55 is preserved exactly, so same-fuel units still
+    # tie bit-for-bit on key 1 and keys 2-3 order them.
+    bar_per_kw_yr, _bar_basis = resolve_going_forward_bar_per_kw_yr(
+        config, g.fuel_type, year
+    )
     cost_per_firm_mw = (
-        getattr(config, fom_field) * multiplier * 1000.0 / firm_fraction
+        bar_per_kw_yr * 1000.0 / firm_fraction
         if firm_fraction > 0.0 and g.pmax_mw > 0.0
         else math.inf
     )
@@ -3030,6 +3109,14 @@ def apply_economic_retirements(
         and peak_demand > 0.0
     )
 
+    # capx D62: the published going-forward-bar gate, resolved ONCE per screen
+    # call. It arms BOTH seams of the one object — seam 1's bar (through
+    # ``resolve_going_forward_bar_per_kw_yr``, which re-resolves it per unit so
+    # every bar site shares one predicate) and seam 2's reactive credit below.
+    published_bar_armed = resolve_capacity_going_forward_bar_published(
+        config, config.iso
+    )
+
     # Diagnostic-only revenue-stack accumulator (no decision effect): per-fuel
     # capacity-weighted screen net revenue vs going-forward cost, both in
     # $/kW-yr. Emitted once per screen call for the FOM+scarcity joint protocol
@@ -3273,6 +3360,25 @@ def apply_economic_retirements(
         # capx D59 (locality_capacity_curves): a unit in a priced locality is
         # settled at max(NYCA, locality) — ICAP Manual §5.15.2 — through the
         # ONE price seam; None (gate off / zone in no locality) is byte-identical.
+        # capx D62 SEAM 2 — REACTIVE. The tariff's own reactive component
+        # (PJM Schedule 2, the number PJM's capacity demand curve counts in the
+        # reference resource's E&AS offset), credited ONCE as
+        # ``pmax_mw x rate`` BEFORE the capacity leg, so the D57 sell offer —
+        # built from this unit's pre-capacity ``net_revenue`` — inherits it
+        # exactly as the exit screen does. It is the SOLE out-of-market credit
+        # (rule 19 [R-ONE-MECH]): no uplift, no regulation, no black start, no
+        # AS annual rate, each refused by name under rule 13's forward test
+        # (FINDING-capx-d61-2026-09-05.md §2b — only reactive has a tariff form
+        # that regenerates from the next Net CONE filing). Rides the SAME gate
+        # as the bar: one object, two seams. Zero when the gate is off or the
+        # ISO publishes no such row, so the off path is byte-identical.
+        reactive_credit_usd = 0.0
+        if published_bar_armed:
+            _reactive_rate = reactive_offset_per_mw_yr(config.iso)
+            if _reactive_rate:
+                reactive_credit_usd = float(g.pmax_mw) * float(_reactive_rate)
+                net_revenue += reactive_credit_usd
+
         capacity_revenue_usd = 0.0
         _locality_price = (locality_prices_by_zone or {}).get(g.zone)
         if supply_clearing_armed:
@@ -3321,10 +3427,18 @@ def apply_economic_retirements(
             )
             net_revenue += as_annual_credit_usd
 
-        multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
-        going_forward_cost = (
-            getattr(config, fom_field) * multiplier * g.pmax_mw * 1000.0
+        # capx D62 SEAM 1 — THE BAR. One operand, resolved once (rule 19
+        # [R-ONE-MECH]): gate off it is ``fixed_om_<fuel> x
+        # retirement_fom_multiplier_<fuel>``, byte-identical to every committed
+        # run; gate on it is the ISO's own PUBLISHED default gross ACR for the
+        # delivery year this screen prices, on nameplate. The D57 clearing
+        # builds ``offer_g = max(0, GFC_g - EAS_g) / (A_g x 365)`` from THIS
+        # ``going_forward_cost``, so the exit bar and the sell-offer cap stay
+        # one object (DESIGN-capx-d54 §3.5).
+        bar_per_kw_yr, bar_basis = resolve_going_forward_bar_per_kw_yr(
+            config, g.fuel_type, year
         )
+        going_forward_cost = bar_per_kw_yr * g.pmax_mw * 1000.0
 
         margins.append((g, net_revenue, going_forward_cost))
 
@@ -3339,6 +3453,12 @@ def apply_economic_retirements(
         detail: dict[str, float | str] = {
             "net_revenue_usd": float(net_revenue),
             "going_forward_cost_usd": float(going_forward_cost),
+            # capx D62 (diagnostic, no decision effect): WHICH bar this row was
+            # screened against and its per-kW magnitude, so a ledger diff can
+            # separate a genuine economic move from an operand change.
+            "going_forward_bar_basis": bar_basis,
+            "going_forward_bar_per_kw_yr": float(bar_per_kw_yr),
+            "reactive_credit_usd": float(reactive_credit_usd),
             "energy_margin_usd": float(energy_margin_usd),
             "reserve_uplift_usd": float(reserve_uplift_usd),
             "attribute_revenue_usd": float(attribute_revenue_usd),

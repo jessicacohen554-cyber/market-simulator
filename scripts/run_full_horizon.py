@@ -226,6 +226,7 @@ def reference_config(
     miso_clean_tier_rows: "bool | None" = None,
     ccs_retrofit_capex_co2_scaling: "bool | None" = None,
     ccs_retrofit_fixed_cost_co2_scaling: "bool | None" = None,
+    capacity_going_forward_bar_published: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -340,6 +341,16 @@ def reference_config(
         # explicit False. Requires the D50 gate (ScenarioConfig refuses the
         # pair otherwise). Same None-sentinel discipline as the gates above.
         "ccs_retrofit_fixed_cost_co2_scaling": ccs_retrofit_fixed_cost_co2_scaling,
+        # capx D62: the published going-forward-bar gate. A {iso: bool}
+        # mapping, so the flag arms the INVOKED ISO's row and nothing
+        # else. GATED default None (every ISO off, cache-neutral);
+        # ``None`` = not passed = the shipped posture, ``--no-`` passes an
+        # explicit None. Same None-sentinel discipline as the gates above.
+        "capacity_going_forward_bar_published_by_iso": (
+            {iso.upper(): True}
+            if capacity_going_forward_bar_published
+            else (None if capacity_going_forward_bar_published is False else None)
+        ),
     }
     return ScenarioConfig(
         iso=iso.upper(),
@@ -1215,6 +1226,40 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     ap.add_argument(
+        "--capacity-going-forward-bar-published",
+        dest="capacity_going_forward_bar_published",
+        action="store_true",
+        default=None,
+        help=(
+            "capx D62 arm (GATED default OFF for every ISO; arms the INVOKED "
+            "ISO's row only): the retirement screen's going-forward BAR "
+            "becomes that ISO's OWN PUBLISHED default gross Avoidable Cost "
+            "Rate (PJM Manual 18 Rev 62 §5.4.8.4(B), on nameplate, read from "
+            "data/raw/capacity-market/avoidable-cost-rate/) in place of the "
+            "ATB FOM proxy fixed_om_<fuel> x retirement_fom_multiplier_<fuel>, "
+            "and the tariff's published reactive component becomes the SINGLE "
+            "out-of-market leg of the screen's margin (rule 19: no uplift, no "
+            "regulation, no black start, no AS annual rate). The D57 clearing "
+            "builds its sell offer from the SAME going_forward_cost, so the "
+            "exit bar and the offer cap stay ONE object. Generic in form, "
+            "PJM-scoped by DATA (rule 25): an ISO with no intaken table keeps "
+            "the ATB path for every unit. ZERO free parameters — the values "
+            "are DATA with source page and the vintage rule is fixed in code. "
+            "Solve-affecting, distinct cache key; omitting the flag leaves the "
+            "field UNSET (the shipped posture)."
+        ),
+    )
+    ap.add_argument(
+        "--no-capacity-going-forward-bar-published",
+        dest="capacity_going_forward_bar_published",
+        action="store_false",
+        help=(
+            "Pass the capx D62 published-bar gate an EXPLICIT off (the control "
+            "arm). The field is registered in _CACHE_KEY_OPTIONAL_FIELDS at "
+            "None, so the explicit-off arm still holds the bare recipe key."
+        ),
+    )
+    ap.add_argument(
         "--ccs-retrofit-capex-co2-scaling",
         action="store_true",
         default=None,
@@ -1296,6 +1341,9 @@ def main(argv: list[str] | None = None) -> int:
         miso_clean_tier_rows=args.miso_clean_tier_rows,
         ccs_retrofit_capex_co2_scaling=args.ccs_retrofit_capex_co2_scaling,
         ccs_retrofit_fixed_cost_co2_scaling=args.ccs_retrofit_fixed_cost_co2_scaling,
+        capacity_going_forward_bar_published=(
+            args.capacity_going_forward_bar_published
+        ),
     )
     config = apply_set_overrides(config, set_overrides)
     summary = solve_and_summarize(

@@ -29,7 +29,11 @@ writes the clean partition
   default ACR table vs. the Independent Market Monitor's separately-published
   benchmark. Both are captured so RC-0B can compare them.
 - `cost_component` ∈ {gross_acr, avoidable_capital_recovery, avoidable_fixed_om,
-  avoidable_variable_om, net_acr}.
+  avoidable_variable_om, net_acr, reactive_offset}. `reactive_offset` (capx
+  D62, 2026-09-06) is the OFFSET side of the same going-forward arithmetic —
+  an out-of-market revenue an ISO's own capacity demand curve nets against
+  gross ACR — not a cost component; PJM's Tariff Schedule 2 reactive figure is
+  its only member today.
 - `technology_class` / `capacity_bin` carry the source's own native label —
   no fixed controlled vocabulary (PJM's own breakdown doesn't map 1:1 onto
   `config/plant_taxonomy.py`'s dispatch fuel classes).

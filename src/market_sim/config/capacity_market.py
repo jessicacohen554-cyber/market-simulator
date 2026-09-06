@@ -923,6 +923,57 @@ def resolve_capacity_market_supply_clearing(
     return True
 
 
+def resolve_capacity_going_forward_bar_published(
+    config: "object | None", iso: "str | None" = None
+) -> bool:
+    """Return whether the screen's going-forward bar is the PUBLISHED ACR for ``iso``.
+
+    capx D62 (2026-09-06), executing ``docs/handoffs/
+    FINDING-capx-d61-2026-09-05.md`` §4. The third member of this module's
+    per-ISO capacity-gate family, resolved exactly like its two siblings above.
+    Resolution:
+
+    * ``config.capacity_going_forward_bar_published_by_iso`` (a ``{iso: bool}``
+      mapping, GATED default ``None`` ⇒ every ISO off ⇒ byte-identical) must
+      carry a ``True`` row for ``iso``.
+
+    WHAT IT CHANGES: the going-forward bar the retirement screen tests net
+    revenue against — ``ScenarioConfig.fixed_om_<fuel> ×
+    retirement_fom_multiplier_<fuel>``, an ATB **proxy**, becomes the ISO's own
+    published default gross Avoidable Cost Rate (PJM Manual 18 Rev 62
+    §5.4.8.4(B)), read from ``data/raw/capacity-market/avoidable-cost-rate/``
+    through :mod:`market_sim.data.avoidable_cost_rate`. Because the D57
+    clearing's ``offer_g = max(0, GFC_g − EAS_g) / (A_g × 365)`` reads the SAME
+    ``going_forward_cost``, the exit bar and the sell-offer cap stay ONE object
+    (DESIGN-capx-d54 §3.5; rule 19 [R-ONE-MECH]). It also arms the ONE
+    out-of-market leg of the screen's margin, the published reactive component.
+
+    NO SCALAR FIELD EXISTS and none may be added (rule 24 [R-REGISTRY]): the
+    values are DATA, with source doc and page, and a different bar is a change
+    to the published table.
+
+    INDEPENDENT OF THE CLEARING HALF, deliberately: the bar is the screen's own
+    going-forward cost and is meaningful with or without a cleared sell-offer
+    stack, so this gate does NOT require
+    :func:`resolve_capacity_market_supply_clearing` (unlike that gate, which
+    genuinely cannot clear a stack against a flat anchor). Armed alongside it,
+    the one bar serves both.
+
+    Generic in form, PJM-scoped by data (rule 25 [R-ISO-SCOPE]): PJM is the only
+    registry ISO publishing a generic technology-class going-forward bar that
+    its own market caps sell offers with, and an ISO with no intaken table
+    resolves to the ATB path for every unit. ``iso=None`` or a config without
+    the mapping is ``False`` so every pre-existing call path is byte-identical.
+    Duck-typed via ``getattr`` like its siblings.
+    """
+    if config is None or iso is None:
+        return False
+    by_iso = getattr(config, "capacity_going_forward_bar_published_by_iso", None)
+    if not by_iso:
+        return False
+    return bool(by_iso.get(iso, False))
+
+
 @dataclass(frozen=True)
 class ClearedCapacityPrice:
     """The PRE-PRICED capacity object a cleared market hands its price takers.

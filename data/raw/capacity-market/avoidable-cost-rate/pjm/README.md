@@ -9,11 +9,29 @@ ACR table (no locality split).
   gross ACR table) | `monitoring_analytics_som` (the Independent Market
   Monitor's own benchmark, State of the Market report) — see STATUS for why
   only the first is populated.
-- **cost_component:** `gross_acr` for every row committed so far — PJM's table
+- **cost_component:** `gross_acr` for every Manual 18 row — PJM's table
   publishes only the headline gross rate, no capital/fixed-O&M/variable-O&M
-  sub-component breakdown.
-- **unit:** `usd_per_mw_day` throughout (PJM's table is denominated in
-  $/MW-day, nameplate).
+  sub-component breakdown — plus ONE `reactive_offset` row (capx D62, below).
+- **unit:** `usd_per_mw_day` for every Manual 18 row (PJM's table is
+  denominated in $/MW-day, nameplate); `usd_per_mw_yr` for the
+  `reactive_offset` row, which is how the SOM states it.
+
+**ADDED 2026-09-06 (capx D62) — one `reactive_offset` row.** The SOM's Section
+10 states that PJM counts reactive (Tariff Schedule 2) revenue in the capacity
+demand curve's **E&AS offset** at **$2,199 per MW-year**. It sits in this
+datatype because it is the OFFSET side of the same going-forward arithmetic
+these `gross_acr` rows are the cost side of, published in the same $/MW-yr
+frame, and read by the same consumption seam
+(`src/market_sim/data/avoidable_cost_rate.py`). Two things stated rather than
+buried: (a) the published figure is computed for PJM's **reference resource**
+(a CT), and the consuming lane applies it to every screened thermal class —
+an extrapolation, corroborated (never identified) by the same section's
+reactive TOTAL charges, $380.7 M in 2024 over a ~185 GW installed fleet
+≈ $2,060/MW-yr; (b) it is a **tariff revenue requirement**, which is exactly
+why it passes rule 13's forward test — it regenerates with every Net CONE
+filing and responds to nothing but the tariff — where the SOM's uplift,
+regulation and black-start rows do not and are refused
+(`docs/handoffs/FINDING-capx-d61-2026-09-05.md` §2b).
 
 ## Authoritative sources
 
