@@ -448,7 +448,7 @@ solved it **from no basis at all** — a full cold P1 costing about as much as P
 cross-year machinery applied to the one place in a year it never reached: the
 P0 model's optimal basis is exported once (the same `export_cross_year_basis`
 the cross-year holder already takes on that branch, now taken whenever the seed
-is armed) *before* the model is released and `malloc_trim()` runs (A-6), and the
+is armed) *before* the model is released, and the
 second model installs it through `apply_cross_year_basis` before its first
 solve — same `T`, same `unit_ids`, so `_cross_year_column_map` is the identity on
 every per-hour block; `alien=True`, so HiGHS repairs the few statuses the

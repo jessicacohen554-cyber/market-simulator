@@ -12,8 +12,8 @@ matrix shard / registry / workflow edit, nothing promoted, nothing registered; t
 bundles were deleted.
 
 - **The change.** `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 model's basis
-  is exported (the export the cross-year holder already took there) before `model = None` /
-  `malloc_trim()` (A-6 kept) and installed on the second `DispatchModel` through
+  is exported (the export the cross-year holder already took there) before `model = None`
+  and installed on the second `DispatchModel` through
   `apply_cross_year_basis` (identity column map, `alien=True`) before its first solve. An
   adaptive re-solve pass (C-1b `reuse_p0_from`) is seeded from the previous pass's P1 basis
   when that pass exported one (new `export_p1_basis` kwarg → `EnergySolveResult.p1_basis`; set

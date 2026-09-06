@@ -1160,7 +1160,7 @@ never with an ERCOT arm.
 
 | Change | Where landed | What it does |
 |---|---|---|
-| (i) `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 basis export (already taken there for the cross-year holder) now runs whenever the seed is armed, BEFORE `model = None` / `malloc_trim()` (A-6 kept); the second `DispatchModel` is built exactly as `solve_dispatch` builds it, `apply_cross_year_basis(basis)` installed (identity column map, `alien=True`), then solved at the bid cost. New `export_p1_basis` kwarg + `EnergySolveResult.p1_basis` / `p1_seeded`; a reused-P0 pass (C-1b) seeds from `reuse_p0_from.p1_basis`, else from the P0 basis in the holder | branch commit `aa82b064` | the seed |
+| (i) `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 basis export (already taken there for the cross-year holder) now runs whenever the seed is armed, BEFORE `model = None`; the second `DispatchModel` is built exactly as `solve_dispatch` builds it, `apply_cross_year_basis(basis)` installed (identity column map, `alien=True`), then solved at the bid cost. New `export_p1_basis` kwarg + `EnergySolveResult.p1_basis` / `p1_seeded`; a reused-P0 pass (C-1b) seeds from `reuse_p0_from.p1_basis`, else from the P0 basis in the holder | branch commit `aa82b064` | the seed |
 | (ii) same branch: the export is guarded on `model is not None` | same | **fixes a latent crash on main**: a reused-P0 pass has no model, and under the calibration default `XYEAR=1` every ERCOT adaptive pass 2 raised `AttributeError` at that export (reproduced at the merge base on the trivial LP; the s3 measurements ran under the `XYEAR=0` pin and never saw it) |
 | (iii) `scripts/run_calibration.py`: `--no-p1-basis-seed` + `resolve_p1_basis_seed_default` (the `resolve_xyear_warmstart_default` sibling, same precedence), wired in `main`; pass 1 passes `export_p1_basis` when an ercot-221 pass 2 may follow, pass 2 when an ercot-230 iteration may follow, every iteration `True` | same | the calibration-CLI default ON |
 | (iv) `scripts/run_calibration_full.py`: same flag and resolver on its fresh-solve path | same | |
@@ -1266,7 +1266,7 @@ arms with identical iteration counts — the run-to-run band, in the seed's favo
 **Peak RSS 12.67 → 13.27 GB (+0.6 GB) on both years** — the memo's flagged reading, reproduced:
 HiGHS's alien-basis repair workspace on top of the cold-P1 rebuild, inside the s3 envelope
 (12.1–13.4 GB) and under the 14 GB cgroup with the 6 GiB swapfile untouched (`swapon` showed 0 B
-used throughout). A-6's `malloc_trim` stays in place (`malloc_trim=yes` on every arm).
+used throughout). **A-6 note:** every arm above solved with A-6's `malloc_trim()` call present at the seam (`malloc_trim=yes` on each `MEM_DEBUG` line); A-6 was then measured-negative and **reverted on `main`** (§WALLCLOCK A-6 below) before this branch merged `main`, so the shipped seam is `model = None` → second build with the seed applied — the seed never depended on the trim, and the export runs before either.
 
 † The NYISO arms and the CAISO ON arm ran **concurrently with each other** (and with a
 `regenerate_clean.py` pass), so their seconds and peak-RSS readings carry the §PERF-B host-noise
