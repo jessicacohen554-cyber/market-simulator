@@ -1,0 +1,24 @@
+{
+ "LABEL": "POST-HOC, addendum A -- declared and committed before execution",
+ "A1_clip1p0_avail_basis": 0.049614,
+ "A2_clip1p0_nameplate_basis": 0.04003,
+ "frozen": 0.0246,
+ "A1_hit_within_0.0010": false,
+ "A2_hit_within_0.0010": false,
+ "A1_prediction_lower_than_0.0502_CONFIRMED": true,
+ "n_hot_days": 328,
+ "comparisons_in_census_against_pm0.0010_window": 7,
+ "all_seven_slopes": {
+  "shipped_pooled": 0.050219,
+  "nameplate": 0.04003,
+  "2023": 0.044325,
+  "2024": 0.058615,
+  "2025": 0.047373,
+  "2023_2024": 0.050896,
+  "2024_2025": 0.053464,
+  "A1_clip_avail": 0.049614,
+  "A2_clip_nameplate": 0.04003
+ },
+ "min_over_all_variants": 0.04003,
+ "ratio_min_variant_over_frozen": 1.627
+}
