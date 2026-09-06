@@ -147,3 +147,45 @@ parenthesis is annotated in place; nothing else in caiso-258 depends on it.
 
 **No run registered (none produced), no keeper change, no `ScenarioConfig`
 field, no marker, no 2022 artifact.**
+
+---
+
+## §8 — FOUND BY ACCIDENT, REPORTED AT FULL MAGNITUDE: the keeper's demand input no longer reproduces from its own committed inputs
+
+A `--help` probe on `derive_caiso_supply_consistent_demand.py` (which takes
+no arguments) **ran the derive** and regenerated the committed 2023–2025
+artifacts. The regenerated files were measured against the committed ones
+and then **restored byte-exactly with `git checkout`; nothing was committed.**
+
+| year | max \|Δ demand\| in an hour | annual Δ | column that moved |
+|---|--:|--:|---|
+| 2023 | **1,452 MW** | +69 GWh | `cems_gas_grid_mw` (and therefore `demand_mw`) |
+| 2024 | 863 MW | −33 GWh | same |
+| 2025 | 583 MW | **−753 GWh** | same |
+
+**Cause, from the provenance sidecar:** the committed artifact was derived
+on a bench basis whose `gas_cems_grid` anchors read **60.344 / 53.428 TWh**
+(2023 / 2024), while the bench parts the keeper is scored against today carry
+**62.209 / 54.588 / 44.429** — the coverage that the caiso-196 (El Segundo
+remap) and caiso-199/200 (Desert Star, member-panel) landings added to the
+CEMS plant map after the artifact's 2026-07-13 vintage. So the keeper's
+**demand input rides a pre-caiso-196 CEMS coverage while C1/C4 are scored on
+the post-caiso-200 coverage.** The derive's own guard (anchor drift) did not
+fire because it is windowed on the annual total.
+
+**What this is and is not.** It is a rule-14/23 input-consistency object:
+the source data the derive reads *did* update, and the artifact was not
+re-derived with it. It is **not** an error in any score (every keeper solved
+on the on-disk artifact, replays read the same bytes, and the caiso-257
+identity measurement compares both shas on one data tree, so it cannot see
+this by construction). Re-deriving would move the keeper's demand by up to
+1.45 GW in an hour and −0.75 TWh in 2025 — a re-solve, with an unknown
+direction on the zero-margin C4-2025 cell, so it needs its own PRECOMMIT,
+phase 0 and rule-29 screen. **Not executed here.** It is also a third
+readiness item for 2022 (§1 H-1): the 2022 artifact, when built, must be
+derived on the same bench vintage as 2023–2025 or the ladder compares
+different demand bases.
+
+Owner ask added to §7: **(3)** charter the demand-artifact re-derive as a
+measured-input repair on the caiso-257 recipe (a keeper-moving arm), or
+record the vintage mismatch as a standing caveat on the keeper.
