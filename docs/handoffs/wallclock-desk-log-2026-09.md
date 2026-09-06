@@ -207,6 +207,18 @@ it: **never re-hand a prompt whose first handing may have been launched** — a 
 launch request, and two launches of one item on one seam is the collision the collision map
 cannot express. Wave-3 (3a) is held until the placeholders are filled.
 
+### 2.13 Owner decision on the duplicate B implementation (2026-09-06 ~05:05 UTC)
+
+Decision card offered by the desk, owner's pick: **"Close #5061, keep main."** Main's
+`claude/p1-basis-seed-impl-oby2ka` implementation (#5033 + #5054) is canonical; PR #5061
+(`claude/wc-b-p1-basis-seed-9557mm`) is closed unmerged by the desk on that instruction, with
+a one-line standing-down comment. Its gate evidence stays recorded in §2.12 as an independent
+reproduction of the memo's iteration counts and of the +0.05 GB peak-RSS reading; the H2
+basis-cache confound it found is already controlled in oby2ka's §WALLCLOCK B conditions. The
+branch itself is left on origin for the owner to delete; git history is the record. What main
+still owes for B: oby2ka's evidence PR (the two gate placeholders, `wc-b-after`). 3a is handed
+when that lands.
+
 ## 3. Timeline
 
 | when (UTC) | event |
@@ -226,3 +238,4 @@ cannot express. Wave-3 (3a) is held until the placeholders are filled.
 | 2026-09-06 ~02:20 | sweep #8 (owner "refresh"): no change — zero open PRs, no `wc-*` branch; A-6 evidence still owed; B (2a) prompt re-handed to owner, memo still unsigned. Main `34f3ce35` (nyiso-198 `cbc721ac` touched a solve-path file; B's merge-base control absorbs it) |
 | 2026-09-06 03:58 | sweep #9 (desk continuation `claude/wc-desk-coordination-tw2att`, fresh sweep): no `wc-*` branch, no wallclock PR (the only open PR is #5030 nyiso-198), no lane-file commit since `34f3ce35`; A-6 evidence still owed (no A-6 session visible); memo still unsigned on `1ce47fc0`; **B worker session RUNNING since 03:25 UTC under an unsigned memo — expected to stop per its guard** (§2.11). Solve-path drift since A-6 for B's merge-base control: capx D67 `8bc0feb5`, caiso-254 `bbd01025`, nyiso-198 `cbc721ac` — absorbed by the merge-base capture. Main `1ce47fc0` (13 merges since `34f3ce35`, incl. desk-log #5018) |
 | 2026-09-06 04:56 | sweep #10 (owner "refresh"): **A-6 closed measured-negative and REVERTED** (#5040 evidence, #5041 revert, #5042 pointer; VmHWM 13.28 → 13.27 GB); **memo SIGNED (A) FLIP** (`c9789b9d`); **B code on main** via #5033 + #5054 (`claude/p1-basis-seed-impl-oby2ka`), evidence arm running, placeholders open; **duplicate B implementation #5061** (`claude/wc-b-p1-basis-seed-9557mm`, complete with evidence) conflicts with main in 9 files — desk recommends close, owner decides (§2.12). Open PRs: #5061 (wc), #5065, #5072 (unrelated). 3a held until B's evidence PR lands. Main `2fa2f23a` (40 merges since `1ce47fc0`, incl. desk-log #5031) |
+| 2026-09-06 ~05:05 | owner decision (card): close #5061, keep main's B implementation (§2.13); desk closed #5061 with a standing-down comment. 3a still held on oby2ka's evidence PR |
