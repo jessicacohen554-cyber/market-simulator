@@ -143,3 +143,40 @@ NOT built unless the ruling asks for it.
 ---
 
 *(nyiso-199, 2026-09-06. Pushed before any arm exists. Zero solves at time of push.)*
+
+---
+
+# ADDENDUM A — OWNER RULING, 2026-09-06 (recorded before the arm was built or solved)
+
+**The §0 question was put to the owner in session and RULED: option 1 — "Yes — both bands, screen
+2023 + 2025".** Verbatim option text as presented and selected:
+
+> *"Arm committed AND econ_low/econ_high at their own `phys_*` values. Screen the footprint year
+> (2023) and the exposed year (2025) before any span. The two limbs have independent non-residual
+> grounds: committed 1.35 is a rule-19 double count with `tranche_startup_amortization`, which is
+> armed on this keeper; econ 1.0 is a de-leak placeholder the config's own comment declares an
+> OPEN ROOT CAUSE whose named input now exists. Cost ~8 min of LP. The screen's S-3 gate kills the
+> arm if C3a-2025 fails."*
+
+The ruling authorises exactly what §1 specifies and nothing more. **Every condition in §2–§7 is
+unchanged and binds as written**, in particular:
+
+* the values are the class's OWN registered `phys_*` keys — **nothing is selected, nothing swept**;
+* **one config across every scored year** (rule 1 carve-out condition (b)) — the field is a boolean
+  and cannot take a per-year value;
+* the `peak` band, `pct_peaking`, `econ_low_share`, `nyiso_downstate_ct_gas_basis`, every other
+  class and every other ISO remain **out of scope** (§0);
+* **S-3 is a STOP gate, not a promotion gate.** C3a-2025 is the named risk at ~−9.6 % against a
+  ±10 % band; if it fails, the arm dies at the screen and the span is never spent;
+* the paired `cc_duct_peaking_row_scoped` arm of §6 was OFFERED and **NOT selected** — it is not
+  built.
+
+**Rule 20 `[R-DOF]` cross-reference (owner ruling R-AY, 2026-09-06):** this arm's values are the
+class's own measured `phys_*` and are therefore identified by a MEASURED SOURCE, not by the price
+residual — so it is not the R-AY "authorized channel" case and adds **no** DOF-ledger entry. If the
+screen clears and a span is registered, its attestation carries `G-DOF +0` and the
+`authorized_price_tuning` block reports this ruling as the ADMISSIBILITY authorisation for a band
+substitution, with the identification source recorded as
+`nyiso_campd_marginal_hr_summary.csv` p50s (n = 70), never as "price residual".
+
+*(Addendum A pushed 2026-09-06, before the field was added and before the first solve.)*
