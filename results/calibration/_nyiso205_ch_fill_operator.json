@@ -1,0 +1,374 @@
+{
+  "keeper": "2026-09-06-nyiso-202-startup-aware",
+  "limb": {
+    "distribution_live": "cheapest_first (CSV column EMPTY -> dataclass default)",
+    "driver": "tmax",
+    "floor_pct": 0.0973,
+    "min_event_hours": 48,
+    "plant_class": "ST_GAS",
+    "threshold_c": 31.1,
+    "zone": "Capital_Hudson"
+  },
+  "question": "nyiso-203 \u00a75's operator test, taken on the Capital_Hudson ST_GAS tmax 31.1 limb: do the class's plants share the hot-day commitment in proportion to available capacity (pro_rata), or is it concentrated on the cheapest plant (cheapest_first)?",
+  "session": "nyiso-205",
+  "status": "ZERO LP \u2014 one fleet_only reconstruction per year, no solve, nothing patched",
+  "years": {
+    "2023": {
+      "aggregate_identity": {
+        "cheapest_first_forced_twh": 0.03863584198563106,
+        "pro_rata_forced_twh": 0.03863584198563106,
+        "target_twh": 0.03863584198563107
+      },
+      "class_nameplate_mw": 2878.8999999999996,
+      "cuts": {
+        "binding": {
+          "2480": {
+            "avail_share": 0.15035850533122064,
+            "g_over_a": 0.15480141997974178,
+            "gen_share": 0.023275710131304528
+          },
+          "2625": {
+            "avail_share": 0.3517701185207608,
+            "g_over_a": 2.0089041293382923,
+            "gen_share": 0.7066724436741768
+          },
+          "8006": {
+            "avail_share": 0.4978713761480187,
+            "g_over_a": 0.5424128783700782,
+            "gen_share": 0.2700518461945187
+          }
+        },
+        "binding_h14_21": {
+          "2480": {
+            "avail_share": 0.1503585053312206,
+            "g_over_a": 0.15642890915760324,
+            "gen_share": 0.02352041697153051
+          },
+          "2625": {
+            "avail_share": 0.3517701185207608,
+            "g_over_a": 1.839072274321202,
+            "gen_share": 0.6469306719062143
+          },
+          "8006": {
+            "avail_share": 0.4978713761480185,
+            "g_over_a": 0.6619157616008023,
+            "gen_share": 0.3295489111222552
+          }
+        },
+        "flagged": {
+          "2480": {
+            "avail_share": 0.16214036965126477,
+            "g_over_a": 0.1831929356082975,
+            "gen_share": 0.0297029702970297
+          },
+          "2625": {
+            "avail_share": 0.35172012005069825,
+            "g_over_a": 1.9394858465807339,
+            "gen_share": 0.6821561947960059
+          },
+          "8006": {
+            "avail_share": 0.4861395102980372,
+            "g_over_a": 0.5927122334292765,
+            "gen_share": 0.2881408349069644
+          }
+        }
+      },
+      "hours_binding": 504,
+      "hours_binding_h14_21": 168,
+      "hours_flagged_unbridged": 384,
+      "n_rows": 24,
+      "plants": {
+        "2480": {
+          "binding_h_cheapest_first": 192,
+          "binding_h_pro_rata": 504,
+          "cheapest_first_forced_twh": 0.001800132407834353,
+          "cheapest_first_share": 0.04659229138849452,
+          "heat_rate_max": 47.38583808,
+          "heat_rate_min": 11.84645952,
+          "manufactured_twh_cheapest_first": 0.0018001324078343532,
+          "manufactured_twh_pro_rata": 0.004171966754316707,
+          "metered_mean_mw_on_binding": 12.577380952380953,
+          "metered_p_online_on_binding": 0.125,
+          "n_rows": 8,
+          "name": "Danskammer Generating Station",
+          "nameplate_mw": 497.29999999999995,
+          "pro_rata_forced_twh": 0.005809227453172707,
+          "pro_rata_share": 0.15035850533122067
+        },
+        "2625": {
+          "binding_h_cheapest_first": 288,
+          "binding_h_pro_rata": 288,
+          "cheapest_first_forced_twh": 0.03562072950900799,
+          "cheapest_first_share": 0.9219607410718678,
+          "heat_rate_max": 42.78140869800001,
+          "heat_rate_min": 10.695352174500002,
+          "manufactured_twh_cheapest_first": 0.002209768796523334,
+          "manufactured_twh_pro_rata": 0.0006038218061947058,
+          "metered_mean_mw_on_binding": 381.8611111111111,
+          "metered_p_online_on_binding": 0.7757936507936508,
+          "n_rows": 8,
+          "name": "Bowline Generating Station",
+          "nameplate_mw": 1159.6,
+          "pro_rata_forced_twh": 0.013590934714434824,
+          "pro_rata_share": 0.35177011852076084
+        },
+        "8006": {
+          "binding_h_cheapest_first": 24,
+          "binding_h_pro_rata": 240,
+          "cheapest_first_forced_twh": 0.0012149800687887061,
+          "cheapest_first_share": 0.03144696753963757,
+          "heat_rate_max": 45.99191402820001,
+          "heat_rate_min": 11.497978507050002,
+          "manufactured_twh_cheapest_first": 0.0,
+          "manufactured_twh_pro_rata": 0.0030971672996,
+          "metered_mean_mw_on_binding": 145.9265873015873,
+          "metered_p_online_on_binding": 0.5436507936507936,
+          "n_rows": 8,
+          "name": "Roseton Generating LLC",
+          "nameplate_mw": 1222.0,
+          "pro_rata_forced_twh": 0.019235679818023523,
+          "pro_rata_share": 0.49787137614801846
+        }
+      },
+      "zonal_target_mean_mw_on_binding": 76.65841663815688
+    },
+    "2024": {
+      "aggregate_identity": {
+        "cheapest_first_forced_twh": 0.07583126210745318,
+        "pro_rata_forced_twh": 0.07583126210745317,
+        "target_twh": 0.07583126210745317
+      },
+      "class_nameplate_mw": 2878.8999999999996,
+      "cuts": {
+        "binding": {
+          "2480": {
+            "avail_share": 0.06849412054751829,
+            "g_over_a": 0.3732376541782002,
+            "gen_share": 0.02556458487815459
+          },
+          "2625": {
+            "avail_share": 0.5354251140594455,
+            "g_over_a": 1.2680758574637059,
+            "gen_share": 0.6789596606185339
+          },
+          "8006": {
+            "avail_share": 0.3960807653930363,
+            "g_over_a": 0.7459987465185465,
+            "gen_share": 0.2954757545033116
+          }
+        },
+        "binding_h14_21": {
+          "2480": {
+            "avail_share": 0.06849412054751829,
+            "g_over_a": 0.34918853300190933,
+            "gen_share": 0.023917361473243845
+          },
+          "2625": {
+            "avail_share": 0.5354251140594456,
+            "g_over_a": 1.193271643568507,
+            "gen_share": 0.6389076058615699
+          },
+          "8006": {
+            "avail_share": 0.3960807653930363,
+            "g_over_a": 0.851278481878823,
+            "gen_share": 0.3371750326651862
+          }
+        },
+        "flagged": {
+          "2480": {
+            "avail_share": 0.0661651030824443,
+            "g_over_a": 0.40205060249843216,
+            "gen_share": 0.026601719558667605
+          },
+          "2625": {
+            "avail_share": 0.5367638221335337,
+            "g_over_a": 1.2406486510093655,
+            "gen_share": 0.6659353118405996
+          },
+          "8006": {
+            "avail_share": 0.3970710747840221,
+            "g_over_a": 0.7743272883021518,
+            "gen_share": 0.30746296860073274
+          }
+        }
+      },
+      "hours_binding": 432,
+      "hours_binding_h14_21": 144,
+      "hours_flagged_unbridged": 408,
+      "n_rows": 24,
+      "plants": {
+        "2480": {
+          "binding_h_cheapest_first": 24,
+          "binding_h_pro_rata": 432,
+          "cheapest_first_forced_twh": 0.00018912586628517644,
+          "cheapest_first_share": 0.00249403558676347,
+          "heat_rate_max": 47.38583808,
+          "heat_rate_min": 11.84645952,
+          "manufactured_twh_cheapest_first": 0.00018912586628517644,
+          "manufactured_twh_pro_rata": 0.003404122079890353,
+          "metered_mean_mw_on_binding": 23.462962962962962,
+          "metered_p_online_on_binding": 0.25462962962962965,
+          "n_rows": 8,
+          "name": "Danskammer Generating Station",
+          "nameplate_mw": 497.29999999999995,
+          "pro_rata_forced_twh": 0.0051939956080583535,
+          "pro_rata_share": 0.0684941205475183
+        },
+        "2625": {
+          "binding_h_cheapest_first": 408,
+          "binding_h_pro_rata": 408,
+          "cheapest_first_forced_twh": 0.07564213624116799,
+          "cheapest_first_share": 0.9975059644132366,
+          "heat_rate_max": 42.78140869800001,
+          "heat_rate_min": 10.695352174500002,
+          "manufactured_twh_cheapest_first": 0.015663127737428,
+          "manufactured_twh_pro_rata": 0.006598450188552001,
+          "metered_mean_mw_on_binding": 623.1435185185185,
+          "metered_p_online_on_binding": 0.8587962962962963,
+          "n_rows": 8,
+          "name": "Bowline Generating Station",
+          "nameplate_mw": 1159.6,
+          "pro_rata_forced_twh": 0.040601962163154814,
+          "pro_rata_share": 0.5354251140594455
+        },
+        "8006": {
+          "binding_h_cheapest_first": 0,
+          "binding_h_pro_rata": 288,
+          "cheapest_first_forced_twh": 0.0,
+          "cheapest_first_share": 0.0,
+          "heat_rate_max": 45.99191402820001,
+          "heat_rate_min": 11.497978507050002,
+          "manufactured_twh_cheapest_first": 0.0,
+          "manufactured_twh_pro_rata": 0.005452087208629999,
+          "metered_mean_mw_on_binding": 271.18518518518516,
+          "metered_p_online_on_binding": 0.6689814814814815,
+          "n_rows": 8,
+          "name": "Roseton Generating LLC",
+          "nameplate_mw": 1222.0,
+          "pro_rata_forced_twh": 0.030035304336239986,
+          "pro_rata_share": 0.39608076539303616
+        }
+      },
+      "zonal_target_mean_mw_on_binding": 175.53532895243788
+    },
+    "2025": {
+      "aggregate_identity": {
+        "cheapest_first_forced_twh": 0.09043208148492,
+        "pro_rata_forced_twh": 0.09043208148491998,
+        "target_twh": 0.09043208148492
+      },
+      "class_nameplate_mw": 2878.8999999999996,
+      "cuts": {
+        "binding": {
+          "2480": {
+            "avail_share": 0.044702765985123495,
+            "g_over_a": 0.8859885284264579,
+            "gen_share": 0.039606137851751884
+          },
+          "2625": {
+            "avail_share": 0.349784184572449,
+            "g_over_a": 1.8582901357291928,
+            "gen_share": 0.6500004998250613
+          },
+          "8006": {
+            "avail_share": 0.6055130494424275,
+            "g_over_a": 0.5126121767466537,
+            "gen_share": 0.31039336232318687
+          }
+        },
+        "binding_h14_21": {
+          "2480": {
+            "avail_share": 0.044702765985123495,
+            "g_over_a": 0.991642917656529,
+            "gen_share": 0.044329181288804906
+          },
+          "2625": {
+            "avail_share": 0.349784184572449,
+            "g_over_a": 1.6514560134376237,
+            "gen_share": 0.5776531950175465
+          },
+          "8006": {
+            "avail_share": 0.6055130494424276,
+            "g_over_a": 0.6242931082026014,
+            "gen_share": 0.37801762369364855
+          }
+        },
+        "flagged": {
+          "2480": {
+            "avail_share": 0.0471368346379515,
+            "g_over_a": 0.9449632938868254,
+            "gen_share": 0.044542578522877255
+          },
+          "2625": {
+            "avail_share": 0.3421069019762867,
+            "g_over_a": 1.8612793402786727,
+            "gen_share": 0.6367565088152034
+          },
+          "8006": {
+            "avail_share": 0.6107562633857618,
+            "g_over_a": 0.521813580584803,
+            "gen_share": 0.31870091266191936
+          }
+        }
+      },
+      "hours_binding": 600,
+      "hours_binding_h14_21": 200,
+      "hours_flagged_unbridged": 504,
+      "n_rows": 24,
+      "plants": {
+        "2480": {
+          "binding_h_cheapest_first": 0,
+          "binding_h_pro_rata": 600,
+          "cheapest_first_forced_twh": 0.0,
+          "cheapest_first_share": 0.0,
+          "heat_rate_max": 47.38583808,
+          "heat_rate_min": 11.84645952,
+          "manufactured_twh_cheapest_first": 0.0,
+          "manufactured_twh_pro_rata": 0.0012667762435819986,
+          "metered_mean_mw_on_binding": 33.016666666666666,
+          "metered_p_online_on_binding": 0.37,
+          "n_rows": 8,
+          "name": "Danskammer Generating Station",
+          "nameplate_mw": 497.29999999999995,
+          "pro_rata_forced_twh": 0.004042564176167997,
+          "pro_rata_share": 0.04470276598512349
+        },
+        "2625": {
+          "binding_h_cheapest_first": 576,
+          "binding_h_pro_rata": 576,
+          "cheapest_first_forced_twh": 0.089066879266176,
+          "cheapest_first_share": 0.9849035630240176,
+          "heat_rate_max": 42.78140869800001,
+          "heat_rate_min": 10.695352174500002,
+          "manufactured_twh_cheapest_first": 0.0028778130839780002,
+          "manufactured_twh_pro_rata": 0.000760975262432,
+          "metered_mean_mw_on_binding": 541.8566666666667,
+          "metered_p_online_on_binding": 0.9683333333333334,
+          "n_rows": 8,
+          "name": "Bowline Generating Station",
+          "nameplate_mw": 1159.6,
+          "pro_rata_forced_twh": 0.031631711881392,
+          "pro_rata_share": 0.349784184572449
+        },
+        "8006": {
+          "binding_h_cheapest_first": 24,
+          "binding_h_pro_rata": 576,
+          "cheapest_first_forced_twh": 0.0013652022187440002,
+          "cheapest_first_share": 0.015096436975982407,
+          "heat_rate_max": 45.99191402820001,
+          "heat_rate_min": 11.497978507050002,
+          "manufactured_twh_cheapest_first": 0.0005847176835910001,
+          "manufactured_twh_pro_rata": 0.012865630284149998,
+          "metered_mean_mw_on_binding": 258.75166666666667,
+          "metered_p_online_on_binding": 0.7283333333333334,
+          "n_rows": 8,
+          "name": "Roseton Generating LLC",
+          "nameplate_mw": 1222.0,
+          "pro_rata_forced_twh": 0.05475780542736,
+          "pro_rata_share": 0.6055130494424276
+        }
+      },
+      "zonal_target_mean_mw_on_binding": 150.7201358082
+    }
+  }
+}
