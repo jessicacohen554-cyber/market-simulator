@@ -3,7 +3,13 @@
 > **Update 2026-06-22:** §2 is resolved — EIA-930 hourly parquets now exist for
 > all seven ISOs (`data/eia_hourly/`). §3 is **rewritten below** for the
 > `data/raw/campd-unit-level/` unit-level layout: 34 states × 2023–2025 are
-> present; PJM, MISO and ISO-NE are complete; only SPP's NE/NM/OK/WY remain.
+> present; PJM, MISO and ISO-NE are complete; only **SPP's NE/NM/OK** remain.
+> *(Corrected 2026-09-06 by lane SPP-10, `docs/multi-iso/spp-data-audit.md` §2.4:
+> this read "NE/NM/OK/WY". **WY carries zero EIA-860 plants with
+> `Balancing Authority Code == "SWPP"`** and needs no extract; **CO** IS in the
+> SPP footprint but holds only 19.5 MW of small solar and zero CEMS-eligible
+> units, so it needs none either. Nine files, not twelve — and they hide 44.9 %
+> of SPP's CEMS-eligible fossil capacity.)*
 > MISO's final gap (LA_2023) was filled 2026-06-22 — see
 > `docs/multi-iso/miso-data-audit.md`. §4 gas basis is largely superseded for
 > *backcasts* by
@@ -72,7 +78,7 @@ EIA-930 normalized per-fuel generation distribution + the demand series).
 | NYISO | `NYIS` | `NYIS hourly.parquet` | **present** (2023–Q1 2025; 2025 full year needed for NYISO 2025 backcast) |
 | ISO-NE | `ISNE` | `ISNE hourly.parquet` | **present** |
 | MISO | `MISO` | `MISO hourly.parquet` | **present** |
-| SPP | `SWPP` | `SWPP hourly.parquet` | **present** |
+| SPP | `SWPP` | `SWPP hourly.parquet` | **present** (2015-07 → 2026-05; 8,760/8,784/8,760 rows for 2023/24/25. ⚠ **three defective hours** in the training window and `NG: BAT` 100 % null before 2026 — `spp-data-audit.md` §3.3–§3.4) |
 
 Each file must span all target backcast years and carry, at minimum, hourly
 demand and the per-fuel generation series (coal, gas, nuclear, hydro, wind,
@@ -109,7 +115,7 @@ NC, ND, NH, NJ, NY, OH, PA, RI, SD, TN, TX, VA, VT, WI, WV` (34 states).
 | ISO-NE | CT, MA, ME, NH, RI, VT | CT, MA, ME, NH, RI, VT | — |
 | PJM | DE, IL(ComEd), IN, KY, MD, MI, NC, NJ, OH, PA, TN, VA, WV, DC | all 14 | — |
 | MISO | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI | **all 14** | — (LA_2023 was the last gap, filled 2026-06-22) |
-| SPP | AR, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX, WY | AR, IA, KS, LA, MN, MO, MT, ND, SD, TX | **NE, NM, OK, WY** |
+| SPP | AR, **CO**, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX (**not WY**) | AR, IA, KS, LA, MN, MO, MT, ND, **NE, NM, OK**, SD, TX | **— (closed 2026-09-06, lane SPP-11)**; CO needs none — no CEMS-eligible unit |
 
 Notes:
 - **MISO is complete:** all 14 footprint states now have 2023–2025 unit-level
@@ -119,8 +125,20 @@ Notes:
   added 136 LA-2023 outage windows across 42 units (see the MISO data audit).
 - Shared states (IL, TX, MO, etc.) sit in two ISOs; CEMS is filtered by BA, not
   state, so one extract serves both — no duplication needed.
-- **SPP** is the only remaining gap: `NE, NM, OK, WY` (all years) are not yet in
-  `campd-unit-level/`.
+- **SPP's CEMS gap is CLOSED** (2026-09-06, lane SPP-11 — 16 parquets, OK/NE/NM/WY ×
+  2023–2026, schema identical to `KS_2024`). The gap **was** **`NE, NM, OK`**, nine
+  files for 2023–2025. Measured footprint, from EIA-860
+  `Balancing Authority Code == "SWPP"` (`spp-data-audit.md` §2.4):
+  **`WY` is not in the footprint at all** (zero SWPP plants; Wyoming
+  SPP-adjacent generation files under `WAUW`, a WECC balancing authority), so the
+  four `WY_*` parquets SPP-11 also pulled are **inert for SPP** — harmless, since
+  `load_campd_hourly` filters every loaded state to the ISO's own fleet — and
+  **`CO` IS** in the footprint but holds 19.5 MW across eight small solar sites with
+  no CEMS-eligible unit: list it in `campd.ISO_STATES["SPP"]` for completeness on the
+  PJM-`NC` precedent, but do not fetch it. Materiality of the gap that **was** open:
+  **44.9 % of SPP's CEMS-eligible fossil MW**, including **61.2 % of gas-CC**,
+  **60.1 % of gas-ST**, **37.1 % of coal** and **31.8 % of gas-CT** — which is why it
+  was the SPP program's critical path (`spp-addition-plan-2026-09.md` §4).
 - The **exact** state set per ISO should still be derived programmatically after
   Stage C: assemble the fleet for the BA, list distinct plant states, diff
   against files present in `campd-unit-level/`.
@@ -141,7 +159,7 @@ Northeast, which can spike far above HH in winter.
 | NYISO | Transco Z6 NY, Iroquois | **large winter +** | source monthly basis (critical) |
 | ISO-NE | Algonquin Citygate (AGT) | **large winter +** | source monthly basis (critical) |
 | MISO | Chicago Citygate, MichCon, Henry | small +/– | source monthly basis |
-| SPP | Panhandle, SoCal/Midcontinent | small +/– | source monthly basis |
+| SPP | **Panhandle Eastern** (SPP's own MMU reference hub; Southern Star tracks it) | **HH − Panhandle = $0.38 / $0.26 / $0.55 per MMBtu for 2023 / 2024 / 2025** (SPP MMU State of the Market 2025 §4, report p.119) | **cited**; the backcast source is per-plant EIA-923 monthly delivered gas (present: 765/753/662 rows over 66/65/57 SWPP plants). See `spp-data-audit.md` §5 rows 8–8c |
 
 **Action:** extend `calibration_reference.json` and the gas-price path system
 (`ScenarioConfig.gas_price_path`, `data/fuel.py`) to support a per-ISO regional
@@ -161,7 +179,7 @@ directly. Multi-zone ISOs need demand split to zones via `load_share`
 | ERCOT | NP6-345-CD actual load by weather zone | done (`derive_load_shares.py`) |
 | PJM | PJM Metered Load / State of the Market zonal peaks | source zonal hourly load CSV |
 | MISO | MISO Market Reports — regional (North/Central/South) load | source regional load |
-| SPP | SPP zonal/area load | source area load |
+| SPP | EIA-930 **sub-BA** hourly demand — 17 SWPP sub-BAs (CSWS EDE GRDA INDN KACY KCPL LES MPS NPPD OKGE OPPD SECI SPRM SPS WAUE WFEC WR) | **done 2026-09-06** (lane SPP-11): `data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv`, 447,049 rows, no interior gaps. Grouping candidate and the `EDE` straddle: `spp-data-audit.md` §5 rows 4b–6 |
 | NYISO | NYISO zonal load (11 zones A–K) | source if/when NYISO goes multi-zone |
 | ISO-NE | ISO-NE load-zone metered load (8 zones) | source if/when NEISO goes multi-zone |
 
@@ -204,7 +222,7 @@ energy budget. That is acceptable where hydro is small (ERCOT) but **not** for:
 | NYISO | Very high (Niagara, St. Lawrence ~tens of TWh) | monthly hydro energy budget + min/max MW |
 | CAISO | High, very seasonal (snowpack-driven) | monthly energy budget, pumped-storage params |
 | MISO | Moderate (upper Midwest) | monthly energy budget |
-| SPP | Low–moderate | monthly energy budget |
+| SPP | Low–moderate — 3,103.5 MW conventional hydro + 259.2 MW pumped storage (2.9 % of 2025 net generation) | monthly energy budget from EIA-923 (present) |
 | ISO-NE | Moderate (+ pumped storage, e.g. Northfield) | monthly budget, PSH params |
 
 **Source:** EIA-923 monthly hydro generation (present) gives the energy budget;
@@ -236,3 +254,15 @@ ALREADY NATIONAL / NO UPLOAD:
 Single biggest blockers, in order: (1) the seven EIA-930 hourly files; (2) the
 SPP/MISO CEMS state coverage; (3) Northeast regional gas basis; (4) zonal load
 for PJM/MISO/SPP. Everything else reuses national files or is derivable.
+
+> **SPP status, 2026-09-06 (lanes SPP-10 + SPP-11).** None of the four is still open
+> for SPP: **NE/NM/OK CEMS** and **sub-BA zonal load** both landed on 2026-09-06
+> (lane SPP-11). SPP's EIA-930 file is present and
+> cross-validates against SPP's own published 2025 fuel mix to within 0.14 pp
+> on every fuel; its gas basis is cited. SPP's own distinct blockers are ones
+> this table never anticipated: **no per-hub (N/S) hourly LMP**, **no
+> binding-constraint archive** (both behind a moved `portal.spp.org` API), **no
+> N↔S TTC** (OASIS unreachable), and **no long-term load forecast** — the last
+> of which is a hard precondition for registration. Full inventory, the
+> registry-values table and the manual manifest:
+> `docs/multi-iso/spp-data-audit.md`.
