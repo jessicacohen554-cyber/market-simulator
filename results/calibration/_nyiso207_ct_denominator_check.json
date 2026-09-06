@@ -1,0 +1,45 @@
+{
+  "session": "nyiso-207",
+  "addendum": "PREREG-nyiso207-floor-coeff-basis-census.md \u00a7A (POST-HOC)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "limbs": {
+    "DS_CT_base": {
+      "frozen": 0.132,
+      "nameplate_denominator_as_shipped": {
+        "M1_daily": 0.1316,
+        "M2_hourly": 0.11403,
+        "gap_abs": -0.01757,
+        "gap_rel_pct": -13.35
+      },
+      "availability_derated_denominator": {
+        "M1_daily": 0.13503,
+        "M2_hourly": 0.11654,
+        "gap_abs": -0.01849,
+        "gap_rel_pct": -13.69
+      },
+      "gap_shrinkage_pct_points": -0.34,
+      "addendum_A_verdict": "SURVIVES"
+    },
+    "DS_CT_cap": {
+      "frozen": 0.679,
+      "nameplate_denominator_as_shipped": {
+        "M1_daily": 0.67888,
+        "M2_hourly": 0.70556,
+        "gap_abs": 0.02668,
+        "gap_rel_pct": 3.93
+      },
+      "availability_derated_denominator": {
+        "M1_daily": 0.67888,
+        "M2_hourly": 0.70673,
+        "gap_abs": 0.02784,
+        "gap_rel_pct": 4.1
+      },
+      "gap_shrinkage_pct_points": -0.17,
+      "addendum_A_verdict": "WITHDRAWN_AS_CONFOUNDED"
+    }
+  }
+}
