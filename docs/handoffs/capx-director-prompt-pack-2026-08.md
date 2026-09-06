@@ -7390,3 +7390,132 @@ nothing out-of-training), 24, 25 (a PJM posture; no other ISO's cell), 27, 28, 2
 EXIT: PRECOMMIT first; the override + tests + epoch entry + shard in one PR; the re-solve registered
 after D65-B; the finding closed. Nothing else arms.
 ```
+
+## D65-B-R — the coupled-arming BATCH, re-issued under corrected per-ISO structural gates (r#48; the r#46 charter's G1 was PJM/MISO's `er/phys` band transcribed onto an ERCOT screen and its G3 an Act-A-only invariant applied to a coupled arm — both charter defects, adjudicated §0as.3) — **ISSUED r#48, DISPATCHABLE; sole board writer until its batch registers**
+
+```
+You are the D65-B-R session of the capacity-expansion track — completing D65-B (owner ruling Q47,
+"Arm coupled, after D60-R3"), whose Acts A + B are ON MAIN (#5112/#5131/#5135) and whose ERCOT screen
+RAN and fired two gates the director has since adjudicated as CHARTER DEFECTS (capx ledger §0as.3).
+Binding charter: pack §D65-B-R (this section) + `FINDING-capx-d65b-2026-09-06.md` (§3 the re-key table;
+§4 the unconstructible-control repair; §5 the G-DRIFT; §6 the screen as measured — its numbers STAND
+and are NOT re-run; §7 what the batch needs, all durable) + `PRECOMMIT-capx-d65b-2026-09-06.md` and
+its Addenda A/B + `FINDING-capx-d64-2026-09-05.md` §2.4 (THE PER-ISO CENSUS TABLE every gate below
+is read from). DATA PROFILE: all. MODEL: Opus. BRANCH (suggested): claude/capx-d65br-batch — FRESH
+off origin/main.
+
+THE ADJUDICATION YOU EXECUTE (not re-litigate): G1's 1.27 floor is D64 §2.4's PJM/MISO host band;
+the same table's ERCOT row is 0.95–1.05, and the ERCOT screen measured 0.9458 / 1.0000 — inside that
+row at the table's two-decimal precision, reported at full magnitude as sitting at the floor. G3's
+k = 1 invariance is an Act-A property; a coupled arm moves k = 1 rows by Act B's design; the
+invariance is discharged by the existing unit test `test_ccs_retrofit.py::test_reference_host_is_
+invariant_on_and_off` at zero LP. The ERCOT screen therefore READS AS CLEARED under the corrected
+gates and is not re-solved (rule 29: a screen bundle is spent once). The guard against gaming is that
+every corrected number pre-dates the solve in a committed document.
+
+STEP 0 — MAKE G2 EVALUABLE (zero LP, small code): persist the `retrofit_log` scaling fields
+(`capex_scale`, `fixed_cost_scale`, the uplift and `vom_adder_per_mwh`) alongside `ccs_retrofits` in
+the evolution ledger (`results/evolution` writer), with a test; the same defect class as D65 §3d's
+`floor_retained`. No cache key moves (a ledger field, not a config field — assert it).
+STEP 1 — RE-PIN: re-run D65-B's bare-key declaration at HEAD (PRECOMMIT §3 + Addendum B.1); every
+key must resolve unmoved or the moved ones are re-declared with the moving hunk named. Hunk-by-hunk
+G-DRIFT from D65-B's close (`002cfa8d`) to HEAD, `constants.py` first — D78's `exit_exempt_unit_ids`
+(sector gate default-off everywhere but MISO; MISO's clearing is off → INERT, assert), D74's default-
+off gate, the miso-225 fields, anything else. A matched cache key is NOT a G-DRIFT verdict.
+STEP 2 — THE PER-ISO GATES, written in a PRECOMMIT Addendum C BEFORE any leg solves, read from D64
+§2.4's own rows: for each of ercot-t1f, neiso-t1f, nyiso-t1f, caiso-t1f, pjm-t1f, miso-t1f and the
+neiso-t3 GOLDEN-3 — (G1') the rows that clear are inside THAT ISO's `er/phys` band in D64 §2.4 (PJM
+and MISO 1.27–1.49; ERCOT 0.95–1.05; the others as the table reads — quote each row); (G2') the
+identity `uplift/capex ∝ 1/k` on the persisted fields; (G3') Act-A-only k = 1 invariance = the unit
+test, cited, not re-solved; (G4') no non-target load-bearing FC row flips PASS → FAIL; (G5') the
+window total inside D64 §2.4's per-ISO predicted band and the 3 GW/yr cap binding where the table
+predicts; (G6') wall/RSS inside the D60 envelope per leg. A carbon-0 ISO GAINING rows is the
+pre-registered signature, not a STOP. STOP-only, per leg.
+STEP 3 — THE BATCH, sequential (rule 12): ercot-t1f, neiso-t1f (~8), nyiso-t1f (~12), caiso-t1f (~23),
+pjm-t1f (~36), miso-t1f (~65), neiso-t3 GOLDEN-3 (~33 min); each leg scored → verdict → registered in
+place with its `-pre-d65b` prior; FC-map moves at full magnitude against D64 §2.4 and D65 §4; D77's §8
+blast radius reconciled (every retrofit row now carries the captured rate); the D50 §6.2 radius
+reconciled; the D72-prehunk residue key `neiso-t1f` discharged by this re-solve (say so). HEAD GUARD
+around every leg: H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90.
+Rebase BETWEEN legs only; re-audit each rebase delta hunk by hunk before the next leg.
+STEP 4 — matrix: the `ccs_retrofit_screen` row's def/note carries Act B; the `ccs_retrofit_fixed_
+cost_co2_scaling` row's cells `fc: K` where the arm is now the bare leg; six shards, one line each,
+last commit. FINDING-capx-d65br-<date>.md: Addendum C graded per ISO, the before/after board table,
+the board now in ONE demand vintage (post-`d14a7ed0`) — say so, the D8 curated DOF rows for the
+flipped default, governance with rule-27 blob checks.
+COLLISIONS: you are the SOLE writer of `ff-verdicts.json` / `program-status.json` until the last leg
+registers; D67-ARM, D78-R and D81 register after you. Rules 12, 22 (forecast mode only), 24, 25, 27,
+28, 29. EXIT: every bare key re-solved and registered with its prior, the finding closed. Nothing
+else arms.
+```
+
+## D78-R — the sector-gate seam repair on the FULL 2021–2025 window, with the sign line on the DECIDED COHORT (r#48; D78 §8 item 2) — **CHARTERED r#48, DISPATCHABLE (registers after D65-B-R)**
+
+```
+You are the D78-R session of the capacity-expansion track. Binding charter: pack §D78-R (this section)
++ `FINDING-capx-d78-2026-09-06.md` (§0–§4 the exact screen; §5 the pre-declaration graded; §8 item 2 —
+YOUR spec) + `PRECOMMIT-capx-d78-…` §6 (the full-window leg runner is already committed) + D58 §5 /
+D78 PRECOMMIT §7 (the flip condition (a) purity, (b) fidelity, (c) composition, (d) LOYO). The seam
+repair is ON MAIN (#5144); `retirement_sector_gate` stays default-off. DATA PROFILE: pjm. MODEL: Opus
+(the design and the identities are landed; this is two solves and a grading). BRANCH (suggested):
+claude/capx-d78r-full-window — FRESH off origin/main.
+WHAT WAS WRONG WITH G6: it asked that executed economic exits not rise in either screen year, and the
+admission cap re-filled the budget the 226 sector-1 rows freed (a timing shift inside the window, the
+PRECOMMIT's own §5 item 3 prediction). The sign line a candidate-set gate CAN obey is on the DECIDED
+COHORT and the WINDOW TOTAL (D78 G3 is already that identity); per-year executions are REPORTED, not
+gated. Write that pre-declaration in a PRECOMMIT before any solve, with the window-total band computed
+on D78's same-HEAD control leg (D74 §9 item 3's procedure: brackets on the screen's own control, never
+on the pre-hunk committed stack).
+TWO LEGS at HEAD (~35 min total, PJM solo, sequential): control-P (gate off) and the repaired arm
+(`--retirement-sector-gate`), 2021–2025; then grade (a) purity — every non-sector-1 row byte-identical
+in every year; (b) fidelity — the failing pool = control minus exactly the sector-1 rows each year;
+(c) composition on the full-window `score.json` — FC-3 `retire.total_gw`, recall, precision at full
+magnitude, against the pre-declared cohort identity; (d) LOYO within the window. G-DRIFT hunk by hunk
+from D78's close (`f3fb0988`) to HEAD first. HEAD GUARD around each leg; rebase between, never during.
+EXIT: PRECOMMIT, FINDING with the four-condition grade and the arming recommendation for PJM
+(pre-stated: ARM iff (a)–(d) all MET; HOLD-and-route otherwise), the arm registered SUFFIXED after
+D65-B-R (`pjm-t1h-d78r-sectorgate`), PJM cell letter, both bundles' slim sets only. Rules 1, 12, 13,
+14, 19, 21, 22, 24, 25, 27, 28, 29.
+```
+
+## D81 — the must-offer rule on the OTHER exemption channels: PENDING dated plants and the this-year retrofit (D78 §8 item 3 / design §4; Q53's ruled principle extended by the director, §0as.3(c)) — **CHARTERED r#48, DISPATCHABLE (registers after D65-B-R)**
+
+```
+You are the D81 session of the capacity-expansion track. Binding charter: pack §D81 (this section) +
+`DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md` §4 (the channel table: which exemption channels
+reach the residual price-taker construction and what PJM's rule says for each) and §4.1 + `FINDING-
+capx-d78-2026-09-06.md` §5.1 and §8 item 3 + `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md` §4.2
+(the design reading being replaced: "does not submit a price-forming offer", with its stated bias —
+price DOWN, cleared UP). Owner ruling Q53 (2026-09-06) ruled the must-offer reading for the sector
+gate; the director extends the SAME rule to the channels below because D54 §4.2 was a design choice,
+not a ruling — recorded in ledger §0as.3(c). DATA PROFILE: pjm. MODEL: Opus (one seam, the rule already
+ruled, the fix already named as one line). BRANCH (suggested): claude/capx-d81-dated-must-offer —
+FRESH off origin/main.
+THE RULE (design §4): a resource whose Capacity Resource status removal is EFFECTIVE for the delivery
+year is no longer eligible to offer (step 0/1 exits executed this year: correctly absent); a PENDING
+dated plant — filed date later than the delivery year — MUST OFFER for every DY before the removal is
+effective (§1.2), and today it lands in `Q_0` at $0 through the residual construction; a this-year
+CCS retrofit is an existing resource and must offer (inert below 2028 by construction).
+PHASE 0 (zero LP): size the pending dated block in the 2022–2025 fleets from the same-HEAD control's
+census and the exit registry (count, nameplate, accredited MW) — D78 §5.1 could not separate it from
+the committed ledgers, so build the read from the fleet + registry, not the ledgers; pre-declare the
+sign: offers rise by the block's net-ACR-capped MW, price-takers fall by the same MW, clearing price
+UP (D54 §4.2's stated bias reversed), position DOWN, second-order in the window — with magnitudes per
+DY. PHASE 1: the one-line fix at the `_dated_exempt` site (→ `exit_exempt_unit_ids`, the D78 seam)
+and the retrofit-year channel the same way; tests: a pending dated unit offers at its cap and does
+not face the exit screen; an executed exit is absent from both; below-2028 hindcasts byte-identical
+on the retrofit channel. No new field if the fix is the seam's correct semantics (say so); rule 24/28
+otherwise. PHASE 2 — SCREEN (rule 29): ONE screen year = the DY where phase 0's pending block is
+largest (named in the PRECOMMIT), two legs at HEAD, STOP gates = the phase-0 identities (offers +
+price-takers conserved to the MW; every non-dated row byte-identical; no non-target load-bearing
+flip). PHASE 3: the full window if the screen clears. HEAD GUARD; rebase between legs; a matched key
+is not a G-DRIFT verdict. COLLISIONS: `retirements.py`'s clearing path — D78-R touches no code, so
+compose; rebase onto its PRECOMMIT if both are live; D65-B-R is the sole board writer until its batch
+registers. Bundles deleted before merge. Rules 1, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
+EXIT: PRECOMMIT, FINDING with the phase-0 block table, the screen, the window, §8 recommendation
+(this is a rule already ruled: the recommendation is MERGE AS CODE unless a STOP fires).
+```
+
+## D82 — RESERVED (r#48): the PJM CT plateau — 24.2 GW of CT offering exactly the published bar on zero E&AS, the admission cap's re-fill pool once steam/oil leave the candidate set (D74 §8 item 2 / §9 item 1; D54 §6 item 1; D61 §1.5). A price-formation / E&AS-operand object, not a cap lane's. Needs a design read (the thin hindcast price tail vs a pro-forma that captures the whole price-duration integral; C3c's model-class limitation) before any charter. Do not spend this label on anything else.
+
+## D80 — ID LIST CORRECTED r#48 (the r#47 text otherwise stands): the ratchet at `2617a5d3` names EIGHT capx ids — `caiso-2026-2030-d60-arm` (I12, I7 — D60 §5.3 / the leg-3 record), `neiso-2026-2050-t3-golden3-d60` (I3), `nyiso-2021-2025-realized-t1h-d45r-curveon` (I7), `pjm-2021-2025-realized-t1h-d45` (I7), `-d45r` (I7), `-d57-clearing` (I7), `-d62-pubbar` (I7), `pjm-2026-2030-d60-arm` (I12, I7). The SCN id is gone (SCN-FIX1 landed) and D74 declared its own arm. Reconcile against the live list at HEAD exactly as §D80 says.
