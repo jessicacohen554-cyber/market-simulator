@@ -13426,4 +13426,40 @@ without this branch's changes (verified by stash: `test_ff_readiness_battery`,
 2023 → 2020 (a C3c decision; if taken, whether the LR from_year moves with it under the
 ercot-212 `net_credits` pairing).
 
+**(4) ADDENDUM — THE OWNER RULED, THE TOUCHPOINT WAS RE-SOLVED, AND IT READS CALIBRATED ON 2022
+(same session, 2026-09-06).** Rulings on the clickable decision card, verbatim: R1 *"I can't do
+it now but eventually"* (HSL 2022 stays OPEN); R2 *"Admit as a correctness fix; re-solve 2022"*;
+R4 *"Arm both gates (cap + LR credit) and re-solve 2022"*. Executed as ONE solve under
+`docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md` (committed before launch, `8fbcd0e6`):
+the ercot-251 predicate re-applied as an admitted repair (both curtailment gates skip only on
+`delivered_pinned`), plus `ercot_reserve_supply_cap_from_year` and
+`ercot_load_resource_reserve_from_year` 2023 → 2020 as replay-only overrides (new on
+`run_replay_bundle`; `None` keeps any bundle byte-identical). Run
+**`2026-09-06-run252-2022-touchpoint-repair`**, 974 s, registered, stamped to the keeper, run250
+PRUNED (ONE 2022 run). **C1 and C3a together, as instructed:**
+
+| | run250 | **run252** | band |
+|---|---|---|---|
+| C1 CC_REGULAR | FAIL −10.39 TWh | **PASS −6.87 TWh** | ±8.00 |
+| C3a mean LMP | +0.0 % | **+9.3 %** ($68.08 vs $62.30) | ±10 % (0.7 pt inside) |
+| C3b NRMSE | FAIL 0.220 | **PASS 0.088** | ≤ 0.20 |
+| C3c tail | CAVEAT 64 h (0.33×) | **PASS 101 h (0.52×)** | ≥ 0.5× (4 h inside) |
+| C2 / C4 / C6 / C8 | PASS | PASS | |
+| **determination** | NOT-YET {C1, C3b} | **CALIBRATED, 8/8, 0 caveats** | |
+
+Sidecars: renewable excess +6.42 → **+1.56 TWh** (the ceilings took back 4.86); ORDC shortfall
+199 h / 310 GWh → **811 h / 1,490 GWh** (the cap); LR credit lowers the total-family requirement
+10,700 → 9,658 MW. **The PRECOMMIT's C3a prediction was WRONG**: it predicted −8 to −14 % (the
+repair alone cost 11 pts on the 2023 screen) and the net is +9.3 % because the R4 cap pushed the
+other way — the two effects were NOT separately measured (one-arm rule) and neither ruling was
+chosen on this result. Stated at full magnitude: C3a and C3c both sit within a hair of their
+bands, and rule 22 forbids quoting this CALIBRATED as skill. **Rule 30(c): ERCOT's determination
+is unchanged (train tier, CALIBRATED).** The keeper recipe is unchanged for 2023–2025 (the repair
+is byte-identical there; the gates already read ≥ 2023); whether the keeper's own from_year
+moves to 2020 is a follow-on owner call, recorded in RESULT §4. Marker
+`config_2022_designation` and `keepers/ERCOT.json` `site_retention_note` carry dated addenda;
+matrix shard evidence updated on four cells, no verdict changed. Gates at HEAD: audit_keepers
+PASS, parity OK, status in sync, matrix diff gate OK, scoring suite 11 pre-existing failures.
+Full record: `docs/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`.
+
 **Next shorthand: ercot-253** (ercot-199 remains unclaimed)
