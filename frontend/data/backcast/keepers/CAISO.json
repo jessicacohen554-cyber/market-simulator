@@ -14,5 +14,6 @@
   "2026-08-05": "declared on 2026-08-05-caiso-174-measured-fleet (owner, ffr sitting Addendum S.4/S.5)",
   "2026-08-06": "WITHDRAWN with the complete marker (owner directive: C3a caveat inadmissible under rubric v3.1; keeper NOT-YET)",
   "2026-09-06": "RE-DECLARED on 2026-09-06-caiso-260-b1-demand (owner, caiso-261 decision card) \u2014 keeper CALIBRATED, C3a PASS every year since caiso-252"
- }
+ },
+ "declared_residual_ct_volume": "DECLARED PERMANENT RESIDUAL (owner ruling 2026-09-06, session caiso-261, card 'Close as un-groundable'): the CEMS-basis CT_PEAKER volume miss (actual 4.128 / 4.326 TWh vs model 2.033 / 1.673 in 2023 / 2024 on the caiso-260 keeper bundle; Panoche Energy Center 56803 carries 39 / 68 / 86 pct of it, caiso-252 sec 3.3) is un-groundable from the public record: no RMR, no CPM designation, no resource-named exceptional dispatch; the only public instrument is the 2006 CPUC-approved 20-year PG&E tolling PPA under which PG&E dictates dispatch (to ~2029) - a contractual self-schedule, not a window-keyed obligation, inadmissible under caiso-119 R4 (rules 13, 17, 21). No floor, pin, class re-pricing or window may be built to reach it; DO-NOT-REDO without new public evidence. ASSESSMENT-caiso261-panoche-instrument-search-2026-09-06.md sec 4."
 }
