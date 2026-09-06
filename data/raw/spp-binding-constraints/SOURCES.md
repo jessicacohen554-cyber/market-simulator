@@ -56,3 +56,11 @@ this directory or its README was taken from memory.
 - **Folders:** `ftp://pubftp.spp.org/Markets/RTBM/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/Congestion-Constraint`
 - **Probed 2026-09-06:** `CONNECT pubftp.spp.org:21` through the session egress → tunnel opens, **no FTP banner within 36 s**, relay closes; identical for control hosts `ftp.gnu.org:21` and `ftp.debian.org:21` → **egress policy blocks FTP**, not SPP. Ports 443/990 reset after ClientHello. `WebFetch`: "Unsupported protocol ftp:".
 - **Schema source:** sample files inside <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (82.6 MB, not tracked; sha256 in `data/raw/spp-planning/SHA256SUMS.txt`).
+
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; the RTBM 2023–2025 roll-ups landed
+
+- `https://portal.spp.org/file-browser-api/download/rtbm-binding-constraints?path=%2F2023%2F2023.zip` (58,684,654 B) and `…%2F2024%2F2024.zip` (70,104,073 B): only the `RTBM-BC-YEARLY-<yr>.csv.zip` member landed (18,955,353 / 20,916,813 B).
+- `https://portal.spp.org/file-browser-api/download/rtbm-binding-constraints?path=%2F2025%2F<mm>%2FRTBM-BC-MONTHLY-2025<mm>.csv.zip` ×12 (1.9–2.6 MB each).
+- Schema-change bracket: `…?path=%2F2026%2F01%2FBy_Day%2FRTBM-DAILY-BC-20260127.csv` is 10-column; `…20260128.csv` (SPP-13's sample) is 14-column.
+- The DA binding-constraint product (`da-binding-constraints`, `DA-BC-YEARLY-<yr>.zip`) and `Markets/DA/Congestion-Constraint` were listed but NOT landed (the RT table is what card P1 asks for).
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only binding-constraints`. Checksums: `SHA256SUMS.txt` (new).
