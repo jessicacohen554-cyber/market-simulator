@@ -306,10 +306,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     extra_meta = json.loads(args.extra_meta) if args.extra_meta else None
-    RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
     sidecar = build_sidecar(
         args.summary, args.label, kind=args.kind, extra_meta=extra_meta
     )
+    # Y-24 declaration ratchet — see register_hindcast.main(). This entry point
+    # also writes the canonical sidecar itself, so it enforces the same gate at
+    # the same point (before any write) rather than being a bypass around it.
+    from scripts import register_forecast_run as RF  # noqa: PLC0415
+
+    RF.enforce_invariant_declaration_gate(sidecar)
+    RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
     sidecar_path = RH.SIDECAR_DIR / f"{sidecar['run_id']}.json"
     sidecar_path.write_text(json.dumps(sidecar, indent=2, ensure_ascii=False) + "\n")
     print(f"[register-forecast] wrote sidecar {sidecar_path}")
@@ -318,8 +324,6 @@ def main(argv: list[str] | None = None) -> int:
         # FF-5A: forecast-validation.html is retired (redirect stub). Register the
         # run into the live forecast namespace via the single path instead of
         # regenerating the retired self-contained page.
-        from scripts import register_forecast_run as RF  # noqa: PLC0415
-
         RF.register_one(sidecar)
     return 0
 
