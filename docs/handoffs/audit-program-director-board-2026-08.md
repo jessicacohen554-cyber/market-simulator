@@ -467,9 +467,12 @@
 > ## CODA — **`origin/main` MOVED UNDER THIS LANE, TWICE, AND THE `ruff` RED WAS DISCHARGED BY ANOTHER LANE**
 >
 > **Opened and pinned at `d1aa877f` (07:12:54Z).** Mid-session the API branch list
-> already showed `main` at **`15648731`**; the final re-poll reads
-> **`d1204d7c`** (07:28:42Z, PR #5126). **Three positions in about sixteen minutes,
-> five first-parent merges:**
+> already showed `main` at **`15648731`**; the next poll read **`d1204d7c`**
+> (07:28:42Z, PR #5126); then **`155791dc`** (07:35:41Z, PR #5131); and the poll
+> taken as this lane finally closed reads **`6da73207`** (07:36:34Z, PR #5133) —
+> **eleven first-parent merges past the pin. FIVE positions in under twenty-four
+> minutes**, with `main` moving *between this entry's commit and its push*, and
+> again *between its push and this sentence*. The first five of those merges:
 >
 > ```
 > 6c5773a2 07:23:31Z  #5119  wc-desk-log
@@ -480,7 +483,21 @@
 > ```
 >
 > **Every reading in this entry is taken at `d1aa877f` and none was re-taken after
-> the move. `d1aa877f..d1204d7c` is drift this entry does not cover.**
+> the move. `d1aa877f..6da73207` is drift this entry does not cover** — and the fact
+> that the covered range had to be widened **three times** while the coda was being
+> written is the leg-10 burst observed from inside, not an anecdote about it.
+>
+> 🔵 **RECORDED, and it happened to this entry: v37 reached `main` by a route this
+> lane did not take.** The first push created
+> `claude/audit-records-v37-handoff-f9x90y`; before this lane could amend the coda,
+> the branch had been **opened as a PR, merged, and deleted** — the amend was
+> rejected `stale info` and `git ls-remote` then returned **nothing** for the ref.
+> Verified rather than assumed: `merge-base --is-ancestor 3edec1f9 origin/main` → 0,
+> and `main`'s board hashes **`1608223f…`**, byte-identical to the pushed blob. So
+> the paragraph you are reading is a **follow-up commit onto the already-merged
+> entry**, per the merged-PR discipline (restart the branch from `main`, never stack
+> on merged history). Nothing above this coda was rewritten; the update is confined
+> to this block, and the entry's readings are untouched.
 >
 > 🟢 **One coda reading, clearly labelled as post-pin.** `3f881432` (#5123,
 > `claude/miso-ruff-format-fixes`, 07:24:54Z) touches **exactly the two files this
