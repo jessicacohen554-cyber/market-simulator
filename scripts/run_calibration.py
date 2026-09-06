@@ -3961,9 +3961,7 @@ def run_year(
     if spot_cells is None:
         apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
     else:
-        print_cells = (
-            spot_cells if print_cells is None else (print_cells | spot_cells)
-        )
+        print_cells = spot_cells if print_cells is None else (print_cells | spot_cells)
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
     # PJM. No-op unless miso_zonal_gas_basis is set (MISO only). The
     # print-derived-cell mask is passed always; the applier consumes it only
