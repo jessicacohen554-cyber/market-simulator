@@ -948,6 +948,7 @@ and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **RULED 2026-09-06 (SCN-DESK r#12 amendment 1) — S12: "Commit the 80 % slope and build the field."** SCN-CAP issued (the field, the case, the matrix row); CAP-STATE-TIGHT joins the three program-ISO policy lanes as a thirteenth case gated on the field landing. **Every §3.5 case is now inside Stage A.**
 
 **D-5 PRESENTED 2026-09-06 (SCN-DESK r#13).** Stage A-LOAD's measured cost table exists (synthesis §8: 313.7 min of LP for 16 legs / 80 solve-years, 3.92 min per solve-year, ~4.7 h wall; NEISO 1.09 min per solve-year). Recommendation: **HOLD** the NEISO Stage-B grant until SCN-WS5A-RESOLVE lands the post-D77 re-solve (the pre-D77 NEISO REF carries a 41.9 %-contaminated 2030 CO2 level) and the policy half has run; note SCN-FIX2's finding that `CARB-HI` is live on NYISO/NEISO only at full horizon (2031–2047).
+**RULED 2026-09-06 (SCN-DESK r#13 amendment 1) — S13: "Hold until RESOLVE and the policy half land."** No grant; re-presented when both are on main.
 
 ---
 
