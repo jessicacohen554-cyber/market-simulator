@@ -105,3 +105,24 @@ its own PREREG, rule-29 screen and span, and the D-4 gate is computed per bundle
 consequence must be measured rather than read off the row list. **Option (C)'s NYISO row is
 DONE** (this addendum); the other five ISOs remain unmeasured and this lane may not run them
 (rule 25 `[R-ISO-SCOPE]`). **The card remains UNRULED.**
+
+### 5.1 Correction to §3: option (C) is **2 of 6 ISOs done, and BOTH breach**
+
+§3 option (A) says *"other ISOs' exposure is unmeasured"*. That understates the record — a
+second ISO was already measured by nyiso-192 and its result is committed at
+`results/calibration/_nyiso192_c8_unit_grain_NEISO-head-replay.json`:
+
+| ISO | keeper | `ST_GAS` unit grain 2023 / 2024 / 2025 | over the 0.30 cap |
+|---|---|---|---|
+| NYISO | `2026-09-06-nyiso-202-startup-aware` | 0.351 / **0.343** / 0.268 | **2023, 2024** |
+| NEISO | `2026-08-17-neiso-99-joint-p1` | 0.131 / 0.240 / **0.3156** | **2025** |
+
+NEISO's other classes are clear (`CC_REGULAR` ≤0.016, `CT_PEAKER` ≤0.184, `CC_CHP` 0.000), and
+its keeper is **unchanged since that measurement was taken**, so the number stands as read.
+
+**The exposure is therefore not a NYISO peculiarity** — it is `ST_GAS` in both ISOs measured so
+far, in different years. That raises option (A)'s expected cost and strengthens option (C)'s
+case: four ISOs (ERCOT, CAISO, PJM, MISO) remain unmeasured, each needing one keeper replay.
+**This lane cannot run them** (rule 25 `[R-ISO-SCOPE]`; the instrument is one file scored for six
+ISOs) and this note changes nothing about NEISO — it cites a committed artifact, it does not act
+on another ISO's lane.
