@@ -128,20 +128,89 @@ class TestQ42CcsCapexDefaultFlip(unittest.TestCase):
         self.assertEqual(declared.get(CCS_FIELD), "True")
         self.assertEqual(_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[CCS_FIELD], "False")
 
-    def test_an_explicit_false_keeps_the_pre_flip_keys(self):
-        """(b'-1)'s useful inverse: a control arm keeps its bundle."""
-        self.assertEqual(
-            ScenarioConfig(**{CCS_FIELD: False}).cache_key(), "4c6b03ae098b6e3e"
-        )
-        self.assertEqual(
-            ScenarioConfig(mode="backcast", **{CCS_FIELD: False}).cache_key(),
-            "8211c72bb1960adc",
-        )
+    def test_an_explicit_false_is_still_constructible_and_still_drops(self):
+        """(b'-1)'s useful inverse: a control arm keeps its bundle.
+
+        REWRITTEN 2026-09-06 (capx D65-B). This test used to pin the two
+        explicit-``False`` keys at ``4c6b03ae098b6e3e`` / ``8211c72bb1960adc``.
+        Both moved, and NEITHER movement is Q42's: D65-B Act B re-identifies
+        ``ccs_retrofit_vom_adder`` 8.0 -> 2.95 $/MWh (2026$), and that field is
+        a plain value with no frozen declaration to drop at, so it re-keys
+        EVERY config including this control arm. Re-pinning the two literals
+        would have kept the letter of the test and lost its subject, so what
+        it pins is now the PROPERTY the literals stood for — the D50 field
+        still drops out of the hash at its frozen declaration — expressed as an
+        invariance that survives the next unrelated re-key.
+        """
+        for mode in ("forecast", "backcast"):
+            explicit = ScenarioConfig(mode=mode, **{CCS_FIELD: False})
+            # Constructible AT ALL. D65-B Act A's flip made the pair
+            # (seam 1 explicit False, seam 4 at its now-armed default) raise in
+            # __post_init__, which would have made THIS control arm — and six
+            # committed bundles — unreachable. The pair resolution moved to
+            # _scenario_config_init, where the caller's explicitness is visible.
+            self.assertFalse(getattr(explicit, CCS_FIELD), mode)
+            # The seam-4 shape gate demotes with it: without seam 1 there is no
+            # k to scale by, so it is inert by construction and False is the
+            # truthful record.
+            self.assertFalse(
+                explicit.ccs_retrofit_fixed_cost_co2_scaling,
+                f"{mode}: seam 4 must follow seam 1 down, not raise",
+            )
+            # STILL DROPPED at the frozen declaration: an explicit False hashes
+            # identically to a config that never mentions the field. This is the
+            # property "a control arm keeps its bundle" actually rests on, and
+            # it holds independently of what any other field is worth.
+            same = ScenarioConfig(
+                mode=mode,
+                **{CCS_FIELD: False},
+                ccs_retrofit_fixed_cost_co2_scaling=False,
+            )
+            self.assertEqual(explicit.cache_key(), same.cache_key(), mode)
+
+    def test_an_explicit_incoherent_pair_is_still_refused(self):
+        """Seam 4 asked for EXPLICITLY without seam 1 remains an error.
+
+        The D65-B repair relaxes the DEFAULT pairing, never the declared one:
+        a caller who believes they armed the shape gate while seam 1 is off is
+        still told otherwise (rule 24 — no tunable that cannot change a solve).
+        """
+        with self.assertRaises(ValueError) as ctx:
+            ScenarioConfig(
+                **{CCS_FIELD: False}, ccs_retrofit_fixed_cost_co2_scaling=True
+            )
+        self.assertIn("ccs_retrofit_fixed_cost_co2_scaling", str(ctx.exception))
 
     def test_the_armed_default_advances_both_pins(self):
-        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
+        # ADVANCED 2026-09-06 by capx D65-B / owner ruling Q47, NOT by Q42:
+        # e5ecd4105ada3e58 -> 547053bdfccd4264 and 6a2845e50951394e ->
+        # f61891696e671969. Cause block: tests/regression/test_persisted_identity.py;
+        # pre-declared in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3;
+        # cache-epoch ledger entry 2026-09-06c.
+        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         self.assertEqual(
-            ScenarioConfig(mode="backcast").cache_key(), "6a2845e50951394e"
+            ScenarioConfig(mode="backcast").cache_key(), "f61891696e671969"
+        )
+
+    def test_q42s_own_drop_mechanic_survives_the_d65b_coupling(self):
+        """Q42's (b'-1) mechanic, isolated from D65-B Act B's value change.
+
+        The honest way to show a flip's drop mechanic still works after an
+        unrelated re-key: hold the OTHER act at its pre-change value and check
+        that the explicit-``False`` arm lands on the key it always had. This is
+        the same decomposition PRECOMMIT-capx-d65b-2026-09-06.md §3.1 uses to
+        show D65-B's own STOP does not fire.
+        """
+        pre_act_b = dict(ccs_retrofit_vom_adder=8.0)
+        self.assertEqual(
+            ScenarioConfig(**{CCS_FIELD: False}, **pre_act_b).cache_key(),
+            "4c6b03ae098b6e3e",
+        )
+        self.assertEqual(
+            ScenarioConfig(
+                mode="backcast", **{CCS_FIELD: False}, **pre_act_b
+            ).cache_key(),
+            "8211c72bb1960adc",
         )
 
 

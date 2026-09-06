@@ -199,7 +199,74 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # (`results/hindcast/miso-2021-2025-realized-t1h-d55-keyfix`). D60 renamed the
 # three t1f bare keys onto the D50 arms already solved AT the post-flip key
 # (ERCOT / NEISO / PJM) and re-solved the four the arms could not cover.
-PINNED_DEFAULT_CACHE_KEY = "e5ecd4105ada3e58"
+#
+# ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B
+# executing OWNER RULING Q47 (director sitting r#42 amendment 2, verbatim
+# "Arm coupled, after D60-R3"). TWO acts in ONE PR and ONE re-key event, and
+# the coupling is the point: the THIRD declared (b'-1) flip alone would have
+# been mechanically identical to the two advances above, but it does not ship
+# alone.
+#
+# CAUSE, ACT A. `ScenarioConfig.ccs_retrofit_fixed_cost_co2_scaling` flips
+# default False -> True: the retrofit's two FIXED-COST legs — ΔFOM ($/MW-yr)
+# and the capture VOM adder ($/MWh) — are scaled by the SAME
+# `k = captured / captured_ref` seam 1 (the D60 advance above) applies to the
+# island's capex, because both legs are TPC fractions in their own published
+# sources (ATB 2024's fossil methodology page; NETL Rev 4a B31A->B31B.90 at
+# 95.5 % fixed / 100 % variable). Zero DOF, no new constant, no new reference
+# host. Evidence: `FINDING-capx-d64-2026-09-05.md` §1 (the zero-LP
+# adjudication) and `FINDING-capx-d65-2026-09-05.md` §4 (the NEISO t1f arm:
+# every host lost is k 1.55-1.71, every host gained k 0.95-1.06, MW-weighted
+# er 0.575 -> 0.391 — the inverted ordering D49 §1.4 named, restored).
+#
+# CAUSE, ACT B. `ScenarioConfig.ccs_retrofit_vom_adder` 8.0 -> 2.95 $/MWh,
+# 2026$, dollar-year now STATED. Read off the NREL ATB 2024 v4.0.0 basis the
+# screen's other two cost legs already use (capx D41 §2.3: host and island on
+# ONE basis): (4.8 - 2.1) x 1.090947 = 2.95. The shipped 8.0 was
+# `needs-citation`, carried no dollar-year, and cited NETL Rev 4a — a document
+# that publishes 2.23 for this increment. It could not previously be read off
+# the pinned basis AT ALL, because the committed ATB extract carried no
+# `Variable O&M` for `NaturalGas_FE`; D65-B item 1 widens the extract from the
+# SAME source bytes (OEDI ATBe.csv v4.0.0, sha256 567dde9d…, a verified strict
+# superset: 3,858 pre-existing rows value-identical, so NEW_ENTRY_COSTS and
+# TECH_COST_MULTIPLIERS cannot move) and pins the derivation in
+# `tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py`.
+#
+# WHY THE ACTS ARE COUPLED (D65 §8.1). Act A multiplies Act B's level by k, so
+# arming the shape on an uncited 2.7x level compounds the error on exactly the
+# high-emitting hosts the seam exists to re-price — and would commit the model
+# to "no merchant NGCC retrofit ever clears on §45Q at carbon 0", a stronger
+# claim than the evidence carries. Neither half was admissible alone.
+#
+# WHY THE KEY MOVES — AND WHY THIS ADVANCE IS NOT LIKE THE TWO ABOVE. Act A's
+# half is the familiar one: the field IS a `_CACHE_KEY_OPTIONAL_FIELDS` member,
+# dropped at its FROZEN "False" declaration (left untouched), so the armed
+# default enters the hash; the flip is DECLARED — the third entry in
+# `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` — so check 3 passes on the
+# declaration. Act B's half is NOT: `ccs_retrofit_vom_adder` is a plain value
+# field with no frozen declaration to drop at, so it re-keys UNCONDITIONALLY,
+# including every explicit-control arm the D44 and D60 advances deliberately
+# left on their pre-flip keys. That is a consequence of the coupling, declared
+# in advance (D65 §9 item 3), not a regression.
+#
+# ACT A'S DROP-VALUE MECHANIC IS INTACT, and is measured by decomposition
+# rather than asserted: holding the VOM at its shipped 8.0, an explicit
+# `ccs_retrofit_fixed_cost_co2_scaling=False` hashes to e5ecd4105ada3e58 —
+# exactly the pre-flip default pinned above. The movement is Act B's.
+#
+# WHAT THIS COSTS, EXACTLY. A one-time cache MISS per forecast config whose
+# horizon REACHES 2028; every shorter horizon and every backcast is
+# byte-identical in BEHAVIOUR, because `capacity_evolution/ccs.py::
+# apply_ccs_retrofit` returns at `if year < config.ccs_retrofit_available_year`
+# (2028) before any read of EITHER field, and that call site is the only
+# consumer of both in the source tree. Their keys move; their answers do not.
+# No keeper, sidecar, determination or dashboard row moves.
+#
+# Pre-declared BEFORE the solve — every key in this advance — in
+# `docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md` §3; cache-epoch ledger
+# entry 2026-09-06c in `src/market_sim/results/cache.py`; execution record
+# `FINDING-capx-d65b-2026-09-06.md`.
+PINNED_DEFAULT_CACHE_KEY = "547053bdfccd4264"
 
 # The BACKCAST default key, pinned by FFR-3D (2026-08-03) because the forecast
 # pin above CANNOT see a whole class of re-key: `__post_init__` coerces several
@@ -303,7 +370,24 @@ PINNED_DEFAULT_CACHE_KEY = "e5ecd4105ada3e58"
 # so no keeper, sidecar, determination or dashboard row is affected and nothing
 # needs re-scoring. An explicit `ccs_retrofit_capex_co2_scaling=False` still
 # hashes 8211c72bb1960adc.
-PINNED_BACKCAST_CACHE_KEY = "6a2845e50951394e"
+#
+# ADVANCED 2026-09-06, 6a2845e50951394e -> f61891696e671969 — the SAME capx
+# D65-B coupled arming (owner ruling Q47). See the forward-key block above for
+# the two acts and the coupling. The backcast pin moves for the same reason it
+# moved on 2026-09-03 and 2026-09-05: the cache key is computed over the whole
+# config and is mode-agnostic, so a forecast-only mechanism still re-keys it.
+#
+# BACKCAST BEHAVIOUR IS UNCHANGED, and by a stronger argument than either
+# earlier advance had, because it now covers BOTH fields at once: the sole
+# consumer of `ccs_retrofit_fixed_cost_co2_scaling` AND of
+# `ccs_retrofit_vom_adder` in the source tree is
+# `capacity_evolution/ccs.py::apply_ccs_retrofit`, which returns at
+# `if year < config.ccs_retrofit_available_year` (2028) before reading either.
+# No backcast year reaches 2028 and no measured backcast fleet contains a
+# `gas_cc_ccs` unit. The cost is a one-time cache MISS; no keeper, sidecar,
+# determination or dashboard row moves, because committed artifacts are files,
+# not cache lookups, and no backcast keeper is re-solved by this lane.
+PINNED_BACKCAST_CACHE_KEY = "f61891696e671969"
 
 # Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
 # their default, each having paid for its re-key in the block above. Only these

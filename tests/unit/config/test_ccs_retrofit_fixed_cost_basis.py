@@ -166,5 +166,89 @@ class TestRetrofitCapexBasis(unittest.TestCase):
         self.assertNotEqual(ScenarioConfig().ccs_retrofit_capex_kw, 900.0)
 
 
+class TestRetrofitVomBasis(unittest.TestCase):
+    """``ccs_retrofit_vom_adder`` = the ATB capture-island VOM increment, 2026$.
+
+    capx D65-B Act B. The pin this class puts on the field is the thing that was
+    MISSING before D65-B: the extract carried no ``Variable O&M`` for
+    ``NaturalGas_FE`` at all, so the shipped 8.0 $/MWh could not have been read
+    off the pinned basis and was registered ``needs-citation``. D64 STOP 6 made
+    the widened extract the precondition for changing the value, precisely so
+    the new value arrives with an ASSERTED derivation rather than a better
+    story — a value with no asserted derivation is the defect capx D41 removed
+    from the two fixed-cost legs above (rule 23 ``[R-ACCURATE]``).
+    """
+
+    def test_equals_atb_capture_island_vom_increment(self) -> None:
+        self.assertAlmostEqual(
+            ScenarioConfig().ccs_retrofit_vom_adder,
+            derive.derive_ccs_retrofit_vom_adder(),
+            places=6,
+            msg=(
+                "ccs_retrofit_vom_adder drifted off its cited basis: it is "
+                "(ATB 2024 v4.0.0 Moderate NG 2-on-1 CC (F-Frame) 95% CCS "
+                "Variable O&M @2026 - the same class's unabated NG 2-on-1 CC "
+                "(F-Frame) Variable O&M @2026) x inflation_factor(), i.e. "
+                "(4.8 - 2.1) x 1.090947 = 2.95 $/MWh in 2026$. Re-derive with "
+                "scripts/data/derive_entry_costs_from_atb.py; a change to this "
+                "value must cite the DATA change that moved it (rule 23), "
+                "never a residual and never a solve result."
+            ),
+        )
+
+    def test_is_read_off_the_same_basis_as_the_other_two_legs(self) -> None:
+        # capx D41 §2.3's rule: host and island on ONE basis. All three legs of
+        # the retrofit screen's cost side — capex, ΔFOM, VOM — are ATB 2024
+        # increments of the SAME matched pair of ATB classes. This asserts the
+        # pair itself, so a future edition that renamed a class fails loudly
+        # here instead of silently re-identifying one leg against another's host.
+        df = derive.load_atb()
+        for param in ("CAPEX", "Fixed O&M", "Variable O&M"):
+            for tech_key in ("gas_cc", "gas_cc_ccs"):
+                technology, detail, base_year = derive.ENTRY_TECH_MAP[tech_key]
+                self.assertEqual(technology, "NaturalGas_FE", tech_key)
+                # Raises if the row is absent or not unique.
+                derive._value(df, technology, detail, param, "Moderate", base_year)
+
+    def test_not_the_pre_repair_value(self) -> None:
+        # The shipped 8.0 was needs-citation and 2.7x this basis (3.6x NETL's).
+        # Under ccs_retrofit_fixed_cost_co2_scaling that error would have been
+        # multiplied by k on exactly the high-emitting hosts the seam exists to
+        # re-price, which is why D65 §8.1 refused to arm the shape alone.
+        self.assertNotEqual(ScenarioConfig().ccs_retrofit_vom_adder, 8.0)
+
+    def test_the_island_vom_is_an_added_cost(self) -> None:
+        # Direction, as an invariant rather than a value pin (the convention
+        # this module's other classes use): a capture island ADDS variable O&M
+        # — solvent makeup, reclaimer waste, capture-cooling water, island
+        # maintenance materials. A non-positive increment would mean capturing
+        # CO2 lowers the host's variable cost.
+        self.assertGreater(derive.derive_ccs_retrofit_vom_adder(), 0.0)
+        self.assertGreater(ScenarioConfig().ccs_retrofit_vom_adder, 0.0)
+
+    def test_atb_host_heat_rate_is_the_seam_reference_host(self) -> None:
+        # The widening also lands ATB's Heat Rate for NaturalGas_FE, which
+        # closes a cross-check that was previously a coincidence on paper: the
+        # hr_ref inside ccs_retrofit_captured_ref_t_per_mwh (D50 seam 1) is
+        # min(HEAT_RATE_BINS["gas_cc"]), and ATB's own unabated NG 2-on-1 CC
+        # (F-Frame) heat rate at the same base year is the same number. So the
+        # host the capex increment is charged against and the host the captured
+        # -CO2 reference flow is computed from are ONE host, from the bytes.
+        from market_sim.config.constants import HEAT_RATE_BINS
+
+        self.assertAlmostEqual(
+            derive.derive_gas_cc_heat_rate(),
+            min(HEAT_RATE_BINS["gas_cc"].values()),
+            places=6,
+            msg=(
+                "ATB's unabated gas-CC heat rate no longer equals the model's "
+                "own hr_ref (min(HEAT_RATE_BINS['gas_cc'])), which "
+                "ccs.ccs_retrofit_captured_ref_t_per_mwh uses to size the "
+                "reference captured-CO2 flow. The D50 capex seam and the D65 "
+                "fixed-cost seam both assume these are the same host."
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

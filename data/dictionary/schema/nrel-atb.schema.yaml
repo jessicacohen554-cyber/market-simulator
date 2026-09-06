@@ -35,10 +35,13 @@ description: >-
   nuclear SMR/large, utility battery storage at 5 durations) plus a few
   cross-reference technologies (existing coal, biomass, hydro, geothermal,
   offshore wind), across the Advanced/Moderate/Conservative cost cases.
-  Scoped to exactly the D4 calendar-year capex/FOM trajectories (see the
-  audit-plan citation above) — ATB's Variable O&M/CF/Heat Rate parameters
-  are out of scope (not consumed by this model's cost tables) and excluded
-  from this intake. Sourced from the public OEDI data lake CSV (not the
+  Scoped to the D4 calendar-year capex/FOM trajectories (see the audit-plan
+  citation above) for every technology, PLUS — for NaturalGas_FE only, since
+  2026-09-06 (capx D65-B) — ATB's Variable O&M and Heat Rate series, which
+  carry the CCS capture island's VOM increment
+  (ScenarioConfig.ccs_retrofit_vom_adder) and the reference host's heat rate.
+  ATB's CF parameter remains out of scope (not consumed by this model's cost
+  tables). Sourced from the public OEDI data lake CSV (not the
   atb.nrel.gov site, which is blocked in this environment's network policy —
   see README), technology-filtered from the full ~572k-row electricity ATB
   file down to this model's tech list and these two parameters, with the
@@ -105,8 +108,13 @@ columns:
     unit: none
     nullable: false
     description: >-
-      One of CAPEX | Fixed O&M (ATB's core_metric_parameter, filtered to
-      this subset).
+      One of CAPEX | Fixed O&M | Variable O&M | Heat Rate (ATB's
+      core_metric_parameter, filtered to this subset). The parameter scope is
+      PER TECHNOLOGY: every technology lands CAPEX and Fixed O&M; only
+      NaturalGas_FE additionally lands Variable O&M and Heat Rate (capx
+      D65-B, 2026-09-06 — see scripts/data/fetch_nrel_atb.py's
+      EXTRA_PARAMETERS_BY_TECHNOLOGY for why). So a row set filtered to one
+      parameter is not populated for every technology.
   - name: financial_case
     dtype: string
     unit: none
@@ -162,8 +170,9 @@ columns:
       ships empty for every row -- confirmed during intake, not a fetch bug
       -- so this is an annotation applied during curation from ATB's public
       documentation/glossary convention, not extracted verbatim from the
-      source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr".
-      ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct
+      source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr",
+      Variable O&M = "2022 $/MWh", Heat Rate = "MMBtu/MWh" (a physical
+      quantity, so it carries no dollar year). ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct
       fetch of the ATB site's own 2024 electricity page, which states
       "Monetary values are in 2022$" -- this CLOSES the former "confirmed
       only via indexed/cached content, flagged for verification with browser

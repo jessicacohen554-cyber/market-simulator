@@ -2141,6 +2141,59 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # NEISO GOLDEN-3 t3); the blast-radius reconciliation is
     # FINDING-capx-d60-2026-09-05.md.
     ("2026-09-05", "ccs_retrofit_capex_co2_scaling", "True"),
+    #
+    # capx D65-B ACT A, executing OWNER RULING Q47 (director sitting r#42
+    # amendment 2, 2026-09-05, verbatim "Arm coupled, after D60-R3"): the
+    # FOURTH seam of the same construction — the two fixed-cost legs (ΔFOM
+    # $/MW-yr and the capture VOM adder $/MWh) scale by the SAME
+    # ``k = captured / captured_ref`` seam 1 already applies to the island's
+    # capex, because both are TPC fractions in their own published sources
+    # (ATB 2024's fossil methodology page; NETL Rev 4a B31A→B31B.90 at 95.5 %
+    # fixed / 100 % variable). The THIRD entry in this ledger. Adjudicated
+    # zero-LP by capx D64 (FINDING-capx-d64-2026-09-05.md §1) and armed on the
+    # NEISO t1f A/B in FINDING-capx-d65-2026-09-05.md §4.
+    #
+    # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact), on the same
+    # footing as the D50 entry above: k is D50's own factor unchanged, every
+    # other term is an already-cited constant, and no new constant and no
+    # reference host is introduced. Zero DOF.
+    #
+    # COUPLED WITH A VALUE CHANGE, which is what makes this entry different
+    # from the two above. Act B re-identifies ``ccs_retrofit_vom_adder``
+    # 8.0 -> 2.95 (2026$) off the widened ATB extract in the SAME PR. That
+    # field is NOT a ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it has no drop
+    # value to hide behind and re-keys EVERY forecast key unconditionally —
+    # including the explicit-``False`` path, which this entry's own drop value
+    # would otherwise have held. So the two acts produce ONE re-key event, and
+    # the explicit-``False`` path is byte-identical to a pre-flip run only in
+    # the sense that it takes THIS field's pre-flip branch; its key still moves,
+    # on Act B. D65 §8.1 is why they could not be separated: this field
+    # multiplies that level by k, so the shape on an uncited 2.7× level
+    # compounds the error on exactly the hosts it re-prices.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays ``"False"``, so a post-flip default config no longer equals the drop
+    # value: it ENTERS the hash and takes its own key. Measured and
+    # PRE-DECLARED before the solve in
+    # ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md``; both pins advanced
+    # with dated cause blocks in ``tests/regression/test_persisted_identity.py``
+    # and the cache-epoch ledger entry 2026-09-06 in
+    # ``src/market_sim/results/cache.py``. The cost is a one-time cache MISS per
+    # config, never a wrong answer — nothing can be mis-served at a key that
+    # moved.
+    #
+    # BACKCAST BEHAVIOUR IS BYTE-IDENTICAL, and so is every hindcast/crossover
+    # horizon ending before 2028, by the SAME construction the D50 entry states:
+    # ``ccs.py::apply_ccs_retrofit`` returns at ``if year <
+    # config.ccs_retrofit_available_year`` (2028) before any read of either this
+    # flag or ``ccs_retrofit_vom_adder``, and that call site is the only
+    # consumer of both in the source tree. No backcast year reaches 2028 and no
+    # measured backcast fleet contains a ``gas_cc_ccs`` unit, so no keeper,
+    # sidecar, determination or dashboard row moves. Forecast bundles whose
+    # horizon reaches 2028 and were solved at the pre-flip default/level carry
+    # the SUPERSEDED posture; D65-B re-solves every bare forecast key and the
+    # blast-radius reconciliation is FINDING-capx-d65b-2026-09-06.md.
+    ("2026-09-06", "ccs_retrofit_fixed_cost_co2_scaling", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -3985,10 +4038,58 @@ class ScenarioConfig:
     # two-cost-basis arbitrage D30 §4 measured in the NEISO golden, where a
     # 2031 new-build CC whose OWN CCS variant the entry screen rejected at
     # the 1521.4 increment was retrofitted in 2032 at a learning-adjusted 621.
-    ccs_retrofit_vom_adder: float = (
-        8.0  # $/MWh additional VOM for capture O&M, solvent, compression.
-    )
-    # Source: NETL Cost & Performance Baseline Rev 4.
+    ccs_retrofit_vom_adder: float = 2.95  # $/MWh in constant 2026$ (dollar-year
+    # STATED — the shipped 8.0 carried none). Capture-island VARIABLE O&M
+    # increment: maintenance materials on the island, solvent makeup,
+    # TEG/reclaimer waste, capture-cooling water.
+    #
+    # RE-IDENTIFIED 2026-09-06 (capx D65-B ACT B, executing OWNER RULING Q47)
+    # from 8.0, which was flagged `needs-citation` in
+    # docs/parameter-citations.md, stated no dollar-year, and carried only the
+    # bare words "NETL Cost & Performance Baseline Rev 4" — a source that
+    # publishes 2.23 $/MWh per host MWh (2026$) for this increment, i.e. the
+    # cited document did not support the cited number. It is now read off the
+    # SAME ATB 2024 v4.0.0 basis as the other two cost legs above
+    # (`ccs_retrofit_capex_kw`, `fixed_om_gas_cc_ccs`), which is capx D41
+    # §2.3's rule — host and island on ONE basis:
+    #   ATB Moderate NG 2-on-1 CC (F-Frame) 95 % CCS Variable O&M @2026 (4.8)
+    #   − ATB Moderate NG 2-on-1 CC (F-Frame) Variable O&M @2026 (2.1)
+    #   = 2.7 × 1.090947 (2022$ → 2026$, constants.INFLATION_RATE) = 2.95.
+    # Derived by scripts/data/derive_entry_costs_from_atb.py
+    # ::derive_ccs_retrofit_vom_adder and PINNED by
+    # tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py
+    # ::TestRetrofitVomBasis, so it cannot silently drift back off its source.
+    # NETL Rev 4a's 2.23 (B31A→B31B.90) is the CROSS-CHECK, not the basis;
+    # both published bases bracket well below the shipped 8.0.
+    #
+    # WHY THE WIDENED EXTRACT CAME FIRST (D64 STOP 6, D65 §9 item 1). Until
+    # 2026-09-06 the committed ATB extract carried only CAPEX and Fixed O&M for
+    # `NaturalGas_FE` — this leg could not be read off the pinned basis at all,
+    # which is exactly how it came to ship uncited. `fetch_nrel_atb.py` now
+    # carries `Variable O&M`/`Heat Rate` for that technology from the SAME
+    # source bytes (OEDI ATBe.csv 2024 v4.0.0, sha256 567dde9d…): no new
+    # source, no new vintage, no re-derivation of any other constant (verified:
+    # the 3,858 pre-existing rows are value-identical, so NEW_ENTRY_COSTS and
+    # TECH_COST_MULTIPLIERS are unchanged). A value with no asserted derivation
+    # is the defect D41 removed from the other two legs; this closes the third.
+    #
+    # DIRECTION, STATED BEFORE THE MEASUREMENT (rule 23): re-identification
+    # makes retrofits EASIER. The shipped 8.0 was 24.8 $/t captured at the
+    # reference host against ATB's 9.1 and NETL's 6.9, so it was 2.7–3.6× every
+    # published basis, and D64 §2.4 measured that it — not the screen's
+    # structure — was carrying D50's complete carbon-0 closure. Rule 14
+    # `[R-ACCURATE]` keeps an accurate value whichever way it moves the answer:
+    # a per-tonne-correct model landing 1–6 % short of §45Q at the hour ceiling
+    # is a more faithful market than one held shut by a 2.7× VOM, and the
+    # market it is measured against (no merchant NGCC retrofit cleared on §45Q
+    # alone, every announced project close enough to need something else) is a
+    # knife-edge, not a closed door.
+    #
+    # COUPLED, NOT INDEPENDENT (D65 §8.1 — why this landed WITH the field
+    # `ccs_retrofit_fixed_cost_co2_scaling` below, in one PR and one re-key).
+    # That seam multiplies THIS level by k, so arming it on an uncited 2.7×
+    # level would compound the error precisely on the high-emitting hosts the
+    # seam exists to re-price. Neither half was admissible alone.
     ccs_retrofit_capture_rate: float = 0.90  # Fraction of CO2 captured. 0.90 = 90%.
     # Source: NETL design basis for amine scrubbing.
     ccs_retrofit_available_year: int = 2028  # Earliest year retrofits can occur.
@@ -4107,7 +4208,25 @@ class ScenarioConfig:
     #    successor (option (ii): ``Generator.fom_adder_per_kw_yr``), not this
     #    lane's: it touches the retirement screen and D65 stays one seam.
     # The off path never enters the branch — byte-identical by construction.
-    ccs_retrofit_fixed_cost_co2_scaling: bool = False
+    # DEFAULT FLIPPED False -> True on 2026-09-06 (capx D65-B ACT A, executing
+    # OWNER RULING Q47, director sitting r#42 amendment 2, verbatim "Arm
+    # coupled, after D60-R3"): declared in
+    # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` with the frozen drop value
+    # left at ``"False"`` — option (b'-1), exactly the D44 and D50/Q42 pattern —
+    # so an EXPLICIT ``False`` still collapses onto the pre-flip key and keeps
+    # its bundle. ARMED COUPLED with Act B's re-identification of
+    # ``ccs_retrofit_vom_adder`` (8.0 -> 2.95, above) in ONE PR and ONE re-key
+    # event, because D65 §8.1 refused either half alone: this field multiplies
+    # that level by k, so arming the shape on the uncited 2.7× level would have
+    # compounded the error on exactly the high-emitting hosts the seam
+    # re-prices, and committed the model to "no merchant NGCC retrofit ever
+    # clears on §45Q at carbon 0" — a stronger claim than the evidence carries.
+    # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact): every factor is
+    # an already-cited constant and k is D50's own, so no ISO's fitted number
+    # crosses a boundary. Evidence: FINDING-capx-d64-2026-09-05.md §1-§2 (the
+    # zero-LP adjudication and the level), FINDING-capx-d65-2026-09-05.md §4
+    # (the NEISO t1f arm) and §8 (the recommendation and the owner card).
+    ccs_retrofit_fixed_cost_co2_scaling: bool = True
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
@@ -17284,18 +17403,35 @@ class ScenarioConfig:
         # alone would therefore be a silent no-op that nonetheless keys
         # distinctly — refuse it loudly instead (rule 24: no tunable that
         # cannot change a solve).
-        if self.ccs_retrofit_fixed_cost_co2_scaling and (
-            not self.ccs_retrofit_capex_co2_scaling
-        ):
-            raise ValueError(
-                "ccs_retrofit_fixed_cost_co2_scaling requires "
-                "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
-                "by the SAME captured/captured_ref factor seam 1 applies to the "
-                "capture island's capex, and that factor is 1.0 for every host "
-                "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
-                "\u00a74.2). Enable ccs_retrofit_capex_co2_scaling or clear "
-                "ccs_retrofit_fixed_cost_co2_scaling."
-            )
+        #
+        # THE REFUSAL MOVED OUT OF ``__post_init__`` on 2026-09-06 (capx D65-B),
+        # because Act A's default flip turned this guard into a BREAK. The pair
+        # (seam 1 EXPLICIT False, seam 4 at its default) was coherent while seam
+        # 4 defaulted off, and it is what SIX committed bundles carry -- the
+        # D50/Q42 CONTROL ARM itself (``ScenarioConfig(
+        # ccs_retrofit_capex_co2_scaling=False)``, pinned by
+        # ``tests/unit/config/test_d60_arming_batch.py``'s "a control arm keeps
+        # its bundle"), three hindcast bundles (pjm d57-clearing, miso
+        # d53-sectorgate and -d51ratio) and three calibration bundles
+        # (caiso251_arm_nomargin, nyiso192_astoria_panel, miso217_intermphys_B).
+        # With seam 4 defaulting True this constructor refused every one of
+        # them: the flip would have made the D50 control UNREACHABLE, which is
+        # the one thing rule 29(b) needs a control to be.
+        #
+        # The distinction the guard actually wants is EXPLICITNESS, not value.
+        # An explicit ``seam 4 = True`` alongside seam 1 off is an incoherent
+        # ASK and still raises. Seam 4 merely sitting at its armed default while
+        # the caller turns seam 1 off is a request for the pre-D50 construction,
+        # under which seam 4 is inert by construction (k = 1.0 for every host).
+        # ``__post_init__`` cannot tell those apart -- it runs after binding,
+        # which is precisely the defect ``_scenario_config_init``'s
+        # ``_explicitly_set_fields`` record exists to fix -- so the resolution
+        # lives THERE (``_resolve_ccs_retrofit_fixed_cost_pair``) and this
+        # method no longer refuses the pair itself. The demoting branch writes
+        # ``False``, so the resolved config TRUTHFULLY records that the shape
+        # gate did not apply, and it drops from the hash on the frozen
+        # ``"False"`` drop value -- which keeps those bundles on keys that move
+        # only by Act B, exactly like every other config.
 
     @property
     def real_discount_rate(self) -> float:
@@ -17568,6 +17704,57 @@ ScenarioConfig._explicitly_set_fields = None
 _dataclass_init = ScenarioConfig.__init__
 
 
+_CCS_SHAPE_FIELD = "ccs_retrofit_fixed_cost_co2_scaling"
+_CCS_CAPEX_FIELD = "ccs_retrofit_capex_co2_scaling"
+
+
+def _resolve_ccs_retrofit_fixed_cost_pair(self, passed: frozenset[str] | None) -> None:
+    """Resolve the capx D65 seam-4 / seam-1 pair, using caller EXPLICITNESS.
+
+    Seam 4 (``ccs_retrofit_fixed_cost_co2_scaling``) scales the retrofit's two
+    fixed-cost legs by the SAME ``k = captured / captured_ref`` seam 1
+    (``ccs_retrofit_capex_co2_scaling``) applies to the capture island's capex.
+    Without seam 1 that factor is 1.0 for every host, so seam 4 is inert.
+
+    Two different situations reach this function with the same field values, and
+    they are NOT the same request — which is why the check cannot live in
+    ``__post_init__``, where the caller's kwargs are already gone:
+
+    * **An explicit ``seam 4 = True`` with seam 1 off** is an incoherent ASK: a
+      caller believing they armed the shape gate when the construction cannot
+      apply it. Refused loudly (rule 24 ``[R-REGISTRY]``: no tunable that cannot
+      change a solve).
+    * **Seam 4 at its armed default with seam 1 explicitly off** is a request
+      for the pre-D50 construction — the D50/Q42 control arm, and six committed
+      bundles. DEMOTED to ``False``, which is the truthful record (the shape
+      gate did not apply) and drops the field from the cache key on its frozen
+      ``"False"`` drop value, so those bundles keep keys that move only by
+      Act B's value change.
+
+    ``passed`` is ``None`` when provenance is unknown (``dataclasses.replace``
+    and a ``from_yaml`` over a full dump both re-pass every field). That case
+    DEMOTES rather than raises: an untracked copy degrades to the compatible
+    behaviour instead of failing to reconstruct, the same fallback convention
+    ``_explicitly_set_fields`` already uses.
+
+    capx D65-B (2026-09-06). See ``ScenarioConfig.__post_init__``'s D65 block
+    for why the refusal moved here.
+    """
+    if not getattr(self, _CCS_SHAPE_FIELD) or getattr(self, _CCS_CAPEX_FIELD):
+        return
+    if passed is not None and _CCS_SHAPE_FIELD in passed:
+        raise ValueError(
+            "ccs_retrofit_fixed_cost_co2_scaling requires "
+            "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
+            "by the SAME captured/captured_ref factor seam 1 applies to the "
+            "capture island's capex, and that factor is 1.0 for every host "
+            "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
+            "§4.2). Enable ccs_retrofit_capex_co2_scaling or clear "
+            "ccs_retrofit_fixed_cost_co2_scaling."
+        )
+    object.__setattr__(self, _CCS_SHAPE_FIELD, False)
+
+
 def _scenario_config_init(self, *args, **kwargs) -> None:
     """Dataclass ``__init__`` plus the explicitly-set-field record.
 
@@ -17583,11 +17770,12 @@ def _scenario_config_init(self, *args, **kwargs) -> None:
     # makes the seam fall back to the pre-fix value comparison, so an untracked
     # copy degrades to TODAY's behaviour instead of losing its ISO defaults
     # wholesale. ``with_overrides`` is the tracked copy path.
-    object.__setattr__(
-        self,
-        _EXPLICIT_FIELDS_ATTR,
-        None if len(passed) == len(_INIT_FIELD_NAMES) else passed,
-    )
+    resolved = None if len(passed) == len(_INIT_FIELD_NAMES) else passed
+    object.__setattr__(self, _EXPLICIT_FIELDS_ATTR, resolved)
+    # Runs AFTER the record is set and after __post_init__, because it is the
+    # one validation whose answer depends on which fields the caller actually
+    # passed. capx D65-B.
+    _resolve_ccs_retrofit_fixed_cost_pair(self, resolved)
 
 
 _scenario_config_init.__doc__ = _dataclass_init.__doc__

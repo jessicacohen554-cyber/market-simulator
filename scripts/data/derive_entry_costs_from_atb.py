@@ -104,6 +104,11 @@ ENTRY_TECH_MAP: dict[str, tuple[str, str, int]] = {
 _CAPEX_DP = 1
 _FOM_DP = 1
 _RATIO_DP = 4
+# VOM is a $/MWh quantity ~two orders of magnitude smaller than the $/kW
+# capex/FOM legs, so it carries two decimals for the SAME relative precision
+# the 0.1 $/kW rounding gives those (~1e-4 relative at ATB's own magnitudes),
+# and still far below ATB's own significance. capx D65-B.
+_VOM_DP = 2
 
 
 def inflation_factor() -> float:
@@ -166,6 +171,60 @@ def derive_new_entry_costs(
     return out
 
 
+def derive_ccs_retrofit_vom_adder(df: pd.DataFrame | None = None) -> float:
+    """Return the ATB capture-island VOM increment in 2026 $/MWh.
+
+    ``ScenarioConfig.ccs_retrofit_vom_adder`` is the capture island's added
+    variable O&M (solvent makeup, reclaimer waste, capture-cooling water,
+    maintenance materials on the island). ATB publishes it as a difference of
+    two Variable O&M series on ONE basis, so this reads it the same way
+    :func:`derive_new_entry_costs` reads capex/FOM — the CCS class minus its
+    own unabated host class, at the same base year and cost case, deflated
+    2022$ -> 2026$:
+
+        (NG 2-on-1 CC (F-Frame) 95% CCS  −  NG 2-on-1 CC (F-Frame))
+        = (4.8 − 2.1) × 1.090947 = 2.95 $/MWh (2026$)
+
+    **Why this could not be derived before capx D65-B.** The committed extract
+    carried only CAPEX and Fixed O&M for ``NaturalGas_FE`` — the widening that
+    lands ``Variable O&M`` (from the same pinned OEDI bytes) is D65-B item 1,
+    executing D64 STOP 6. Until then the field shipped at an uncited 8.0 $/MWh,
+    2.7-3.6x every published basis, and ``ccs_retrofit_fixed_cost_co2_scaling``
+    would have multiplied that error by ``k`` on exactly the hosts the seam
+    exists to re-price (``FINDING-capx-d64-2026-09-05.md`` §2.4).
+
+    Cross-check, not the basis: NETL Rev 4a's B31A→B31B.90 capture increment is
+    2.23 $/MWh per host MWh (2026$). ATB is the basis because host and island
+    must be read off ONE basis (capx D41 §2.3) and every other leg of this
+    screen — ``ccs_retrofit_capex_kw``, ``fixed_om_gas_cc_ccs`` — already is.
+    """
+    if df is None:
+        df = load_atb()
+    _, ccs_detail, base_year = ENTRY_TECH_MAP["gas_cc_ccs"]
+    _, host_detail, _ = ENTRY_TECH_MAP["gas_cc"]
+    ccs = _value(df, "NaturalGas_FE", ccs_detail, "Variable O&M", "Moderate", base_year)
+    host = _value(
+        df, "NaturalGas_FE", host_detail, "Variable O&M", "Moderate", base_year
+    )
+    return round((ccs - host) * inflation_factor(), _VOM_DP)
+
+
+def derive_gas_cc_heat_rate(df: pd.DataFrame | None = None) -> float:
+    """Return ATB's unabated gas-CC heat rate (MMBtu/MWh) at the base year.
+
+    A physical quantity, so no dollar-year conversion applies. Not a constant
+    this repo derives — it is landed as the cross-check on the reference host
+    the CCS retrofit seam is sized against: ATB's own NG 2-on-1 CC (F-Frame)
+    heat rate is 6.3, which is exactly ``min(HEAT_RATE_BINS["gas_cc"])``, the
+    ``hr_ref`` inside ``ccs.ccs_retrofit_captured_ref_t_per_mwh``. Landing the
+    series makes that identity assertable from the pinned bytes.
+    """
+    if df is None:
+        df = load_atb()
+    _, host_detail, base_year = ENTRY_TECH_MAP["gas_cc"]
+    return _value(df, "NaturalGas_FE", host_detail, "Heat Rate", "Moderate", base_year)
+
+
 def derive_tech_cost_multipliers(
     df: pd.DataFrame | None = None,
 ) -> dict[str, dict[str, dict[str, float]]]:
@@ -203,6 +262,10 @@ def main(argv: list[str] | None = None) -> int:
             f"  {tech:14} capex_per_kw={vals['capex_per_kw']:>9} "
             f"fom_per_kw_yr={vals['fom_per_kw_yr']:>6}"
         )
+    print(
+        f"\nccs_retrofit_vom_adder (2026$/MWh) = {derive_ccs_retrofit_vom_adder(df)}"
+        f"   [ATB gas_cc heat rate @base = {derive_gas_cc_heat_rate(df)} MMBtu/MWh]"
+    )
     print("\nTECH_COST_MULTIPLIERS capex low/high (Advanced/Mod, Conservative/Mod):")
     for tech, vals in derive_tech_cost_multipliers(df).items():
         print(

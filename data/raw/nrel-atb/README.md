@@ -157,9 +157,46 @@ curl -s "https://oedi-data-lake.s3.amazonaws.com/?list-type=2&prefix=ATB/electri
       tech/techdetail combos x up to 2 parameters (CAPEX, Fixed O&M) x 3 cost
       cases x 27 years, crpyears-deduped as above; not every combination
       populated for every tech). The derivation pin until 2026-08-03.
-- [x] `atb_2024v4_electricity_filtered.csv` (2024 **v4.0.0**) — 3,858 rows,
-      same key set; landed 2026-07-31, byte-reproducible from a fresh fetch.
-      **The derivation pin** since 2026-08-03 (see the FFR-SC note below).
+- [x] `atb_2024v4_electricity_filtered.csv` (2024 **v4.0.0**) — **4,554 rows**
+      (3,858 until 2026-09-06; see the D65-B widening note below), landed
+      2026-07-31, byte-reproducible from a fresh fetch. **The derivation pin**
+      since 2026-08-03 (see the FFR-SC note below).
+
+> **WIDENED 2026-09-06 (capx D65-B, executing D64 STOP 6).** The extract now
+> carries **`Variable O&M` and `Heat Rate` for `NaturalGas_FE`** — and for that
+> technology only. The parameter scope is therefore PER TECHNOLOGY
+> (`fetch_nrel_atb.py::EXTRA_PARAMETERS_BY_TECHNOLOGY`): every technology keeps
+> CAPEX + Fixed O&M; NaturalGas_FE keeps four. **3,858 → 4,554 rows**
+> (+696 = 4 NG techdetails × 2 parameters × 3 cost cases × 29 years).
+>
+> **Why.** `ScenarioConfig.ccs_retrofit_vom_adder` is the CCS capture island's
+> VOM increment, and until this widening it **could not be read off the pinned
+> basis at all** — which is exactly how it came to ship at an uncited 8.0 $/MWh,
+> 2.7–3.6× every published basis. ATB publishes the increment directly:
+> NG 2-on-1 CC (F-Frame) 95 % CCS `4.8` − NG 2-on-1 CC (F-Frame) `2.1` = 2.7
+> 2022$/MWh → 2.95 2026$. `Heat Rate` rides along because ATB's own unabated
+> gas-CC heat rate @2026 (**6.3 MMBtu/MWh**) is the `hr_ref` in
+> `ccs.ccs_retrofit_captured_ref_t_per_mwh`, so that identity becomes assertable
+> from the bytes instead of by coincidence.
+>
+> **Same source bytes — no new source, no new vintage.** Regenerated from the
+> already-pinned OEDI object `ATB/electricity/csv/2024/v4.0.0/ATBe.csv`,
+> 102,696,929 B, sha256
+> `567dde9d85caa759bc3f2e42c9aa14a5f85e471ca4133ccc522e7a92e020297a`.
+>
+> **The regeneration is a verified STRICT SUPERSET**, which is what makes it
+> safe for every existing derivation: all 3,858 previously-committed keys are
+> present, **0 dropped**, and `value` / `display_name` / `default` / `atb_year`
+> differ on **0 of 3,858**. So `NEW_ENTRY_COSTS` and `TECH_COST_MULTIPLIERS`
+> cannot move, and `tests/unit/config/test_atb_entry_cost_consistency.py` passes
+> untouched. The parts were rewritten from a fresh fetch rather than appended
+> (unlike the 2026-07-19 EGS extension below), so **row order again equals a
+> from-scratch `fetch_nrel_atb.py` run** — the property the EGS append gave up.
+> Now 12 parts (`part{00..11}`) at the same 400-rows-per-part convention.
+>
+> Consumers: `derive_entry_costs_from_atb.derive_ccs_retrofit_vom_adder` /
+> `derive_gas_cc_heat_rate`; pinned by
+> `tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py::TestRetrofitVomBasis`.
 
 > **FF-1E completeness fix (2026-07):** the extract was previously committed as
 > only `.part00`/`.part01` (600 rows, the four alphabetically-first techs —

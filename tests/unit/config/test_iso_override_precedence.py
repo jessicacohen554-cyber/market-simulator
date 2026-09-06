@@ -93,8 +93,20 @@ STAGE_B = {
 # "False" declaration, so the armed default enters every digest and this pole
 # moves with the global pin — the D12-A arming and the "pole unmoved by the
 # fix" property are untouched.
-ERCOT_ARMED_KEY = "b5ab30d0fae9f8a3"
-GLOBAL_PINNED_KEY = "e5ecd4105ada3e58"
+# ADVANCED AGAIN 2026-09-06, b5ab30d0fae9f8a3 -> 95d789d6dfb98831, by a FOURTH
+# non-ERCOT cause — and the first of a different CLASS. capx D65-B (owner
+# ruling Q47) arms ccs_retrofit_fixed_cost_co2_scaling as a declared (b'-1)
+# default flip (the THIRD _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS entry, same
+# mechanic as the three causes above) COUPLED with a plain VALUE change,
+# ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$, re-identified off the ATB
+# 2024 v4.0.0 basis. The value change is NOT a registered-optional field, so it
+# has no frozen declaration to drop at and re-keys unconditionally — which is
+# why this advance also moves keys the three earlier flips left alone.
+# The D12-A arming and the 'pole unmoved by the fix' property are untouched.
+# Pre-declared before the solve: docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md
+# §3; cache-epoch ledger entry 2026-09-06c in src/market_sim/results/cache.py.
+ERCOT_ARMED_KEY = "95d789d6dfb98831"
+GLOBAL_PINNED_KEY = "547053bdfccd4264"
 
 FIELD_DEFAULTS = {
     f.name: getattr(ScenarioConfig(), f.name)
