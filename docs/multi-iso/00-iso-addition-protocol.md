@@ -15,11 +15,14 @@
 > winter basis, RGGI in MC, dual-fuel switching, measured interchange
 > schedule. See `docs/sessions/multi-iso/neiso-backcast-2024.md` (archived).
 
-Status: **topology landed; calibration pending.** All seven ISOs are now
-registered in `config/iso_configs.py` with real (cited, Tier-3) zone load
-shares and inter-zone TTCs, and each has a plant-to-zone splitter in
-`data/zone_assignment.py` (Stages A–B done for every ISO). What remains per
-non-ERCOT ISO is the *data and calibration* spine — Stages C–H: EIA-930 demand,
+Status: **topology landed for the six REGISTERED ISOs; calibration pending.**
+**SPP is NOT registered** — see the §0 row and
+`docs/multi-iso/spp-addition-plan-2026-09.md`. The **six** ISOs in
+`config/iso_configs._ISO_BUILDERS` (ERCOT, CAISO, PJM, MISO, NYISO, NEISO) each
+have real (cited, Tier-3) zone load shares and inter-zone TTCs and a
+plant-to-zone splitter in `data/zone_assignment.py` (Stages A–B done for each of
+those six). What remains per non-ERCOT registered ISO is the *data and
+calibration* spine — Stages C–H: EIA-930 demand,
 renewable CF profiles, calibration references, market-design module wiring, and
 a validated backcast. ERCOT stays the reference for **CAISO, PJM, ISO-NE
 (NEISO), MISO, SPP, and NYISO**.
@@ -46,12 +49,18 @@ Companion documents in this directory:
 | CAISO | 3 zones (NP15/ZP26/SP15) + WECC import    | CISO   | Path 15/26 + FIPS   | none       | none           | No       |
 | PJM   | 8 zones (ComEd…SWMAAC), cited zonal-peak shares + TTCs | PJM    | FIPS state→zone     | none       | none           | No       |
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
-| SPP   | 2 zones (N/S)                              | SWPP   | FIPS state→zone     | none       | none           | No       |
+| SPP   | **NOT REGISTERED** — no `_spp_config()`, no `_ISO_BUILDERS` entry, no zone assignment. Target 2 zones (N/S); see `spp-addition-plan-2026-09.md` | SWPP (planned; not yet in `_ISO_TO_BA_CODE`) | none yet | none | `SWPP hourly` **present** | No |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
 | NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
 
-All ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE`. The remaining
-gaps are **data + market-design fidelity** (Stages C–H), not topology.
+**Six** ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` — ERCOT,
+CAISO, PJM, MISO, NYISO, NEISO. **SPP is the seventh and is not registered**: it
+has no config builder, no BA-code entry and no zone splitter, and its Stage A–B
+work is chartered as wave W2 of
+`docs/multi-iso/spp-addition-plan-2026-09.md` (lane SPP-20). For the six
+registered ISOs the remaining gaps are **data + market-design fidelity**
+(Stages C–H), not topology; for SPP, topology is still ahead. SPP's Phase-0 data
+census is `docs/multi-iso/spp-data-audit.md`.
 
 > **NEISO price row — now scored (2026-06-12, P10/U2 landed).** The NEISO P12
 > sign-off was price-*level-only*; with the `actual_lmp.json` NEISO block now
@@ -203,11 +212,19 @@ STAGE H — Docs
 
 ## 3. Suggested sequencing across ISOs
 
-> **Status (now executed):** this section is the *original* build order and
-> describes each ISO's pre-build starting state. All seven are now registered
-> **multi-zone** in `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO
-> 4+import, PJM 8, MISO 3, SPP 2 — so phrases like "single zone today" and
-> "4-zone stub" below are the historical starting point, not current state.
+> **Status (partly executed):** this section is the *original* build order and
+> describes each ISO's pre-build starting state, so phrases like "single zone
+> today" and "4-zone stub" below are the historical starting point, not current
+> state. **Six** ISOs are now registered **multi-zone** in
+> `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO 4+import, PJM 8,
+> MISO (six zones since the zonal refinement; this note's older "3" is stale —
+> not this lane's to restate, see `docs/multi-iso/miso-zonal-refinement-scope.md`).
+> **Item 6, SPP, is NOT built and NOT registered**: it has no `_spp_config()`,
+> no `_ISO_BUILDERS` or `_ISO_TO_BA_CODE` entry and no zone splitter. Its
+> addition is chartered end-to-end by
+> `docs/multi-iso/spp-addition-plan-2026-09.md`, whose wave W2 (lane SPP-20)
+> does the Stage A–B registration; the Phase-0 data census that precedes it is
+> `docs/multi-iso/spp-data-audit.md`.
 
 Order by *incremental difficulty* so each ISO reuses the last one's new
 machinery:
@@ -226,8 +243,12 @@ machinery:
 5. **MISO** — built from scratch; very large, seasonal capacity construct
    (PRA), north/central/south sub-regions + the MISO-South contract-path
    constraint, big wind + coal fleet.
-6. **SPP** — built from scratch; wind-dominated, large geography, RA construct
-   (no centralized capacity market), strong interchange with MISO/ERCOT.
+6. **SPP** — **still to be built** (see the status note above); built from
+   scratch; wind-dominated, large geography, RA construct (no centralized
+   capacity market), strong interchange with MISO/ERCOT. Measured at Phase 0
+   (`spp-data-audit.md`): 103,330.8 MW nameplate over 715 plants in 14 states,
+   36.6 % of 2025 net generation from wind, and 11–13 % of real-time hours at a
+   negative hub price.
 
 Single-zone first proves the data/calibration pipeline per ISO; multi-zone
 later proves topology + congestion. Capacity/hydro/oil modules are introduced
