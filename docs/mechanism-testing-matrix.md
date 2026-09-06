@@ -177,6 +177,32 @@ node CAISO/PJM/MISO/NYISO vs fixed tranches NEISO vs n/a ERCOT); outage
 re-basis (ERCOT measured-DAM keeper; NEISO/MISO tested-and-rejected theirs;
 PJM's is intaken-but-untested); `wefor_multiplier` 0.7 five ISOs vs 1.0 MISO.
 
+**Where SPP sits, before it has a config to count** (added SPP-21, 2026-09-06,
+with the seventh shard). SPP has no keeper, so it contributes no non-default
+count to the three layers above and nothing here is a measurement of SPP —
+it is a statement of which layers its **market design** puts it in, so a lane
+knows which column to read for a transfer candidate and which to leave alone.
+**Structurally SPP is closest to ERCOT, then MISO.** Like ERCOT it is
+**energy-only with a bilateral RA obligation**: no centralized forward capacity
+auction, so the whole capacity-auction family (cleared price, VRR/FCA/RBDC and
+locality demand curves, sell-offer-stack clearing, published default-ACR
+conventions, net-CONE vintages) is `.` in both columns for the same structural
+reason, and its scarcity object is a **VRL / reserve-shortage** construct rather
+than a capacity payment. Like ERCOT it carries **no state or regional carbon
+programme** in its footprint, so `state_carbon_pricing` is `.`. Where it leaves
+ERCOT is layer 2: SPP is a **plant-level, non-CAMPD-bin ISO** with no 60-Day
+disclosure stack, which puts it on the five-ISO standard (`plant_level_fleet`,
+`gas_offer_curve` tranches, the monthly-actuals fuel chain) rather than ERCOT's
+own. **The MISO resemblance is the physical one**: a large multi-state
+Interconnection-spanning footprint, a N↔S wind-export corridor as the
+system-level congestion object, the highest curtailment share in the fleet, an
+M2M seam with MISO itself, and an RBDC-shaped rather than overlay-shaped
+scarcity design — which is why the SPP-55 charter names MISO's RBDC as the
+nearer analogue. **None of this fills a cell.** Rule 25 `[R-ISO-SCOPE]` and rule
+28(d) are unchanged: a resemblance makes a candidate, and every candidate enters
+SPP's column as `U` and is identified on SPP's own market data before any solve.
+§5.7 is the queue.
+
 **Forecast-lane similarity is much higher than backcast** — by design the
 forecast reference config is bare `ScenarioConfig` defaults + `mode`, so the
 six differ only through registries: capacity-curve clearing (PJM/MISO/CAISO/
@@ -238,7 +264,7 @@ closure path, mechanism by mechanism.
    half is **CLOSED as of xiso-2 (2026-08-02)**: 5/6 committed extracts
    re-derive byte-identically at HEAD, MISO's mismatch is 2022-only and
    source-data-attributed, and **no ISO's keeper consumes a stale
-   outage-derived artifact** (§5.7).
+   outage-derived artifact** (§5.8).
 5. **Topology splits are dead at both tested ends** (ERCOT-117, MISO-79):
    missing congestion is sub-zonal; the path forward is data intake (nodal/
    station crosswalks), not invented interfaces.
@@ -16155,7 +16181,158 @@ charter with a new measured identification** before a solve:
    criterion is an owner call. Evidence:
    `results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`.
 
-### 5.7 Cross-cutting audits (not ISO levers)
+### 5.7 SPP — **NO KEEPER YET.** Column seeded at SPP-21 (2026-09-06) as the seventh shard; every cell is `U` or `.` and NO verdict has been minted in this ISO
+
+**Status.** SPP is being added by the SPP ADDITION PROGRAM
+(`docs/multi-iso/spp-addition-plan-2026-09.md`, director lane `SPP-DESK`,
+ledger `docs/handoffs/spp-desk-ledger-2026-09.md`). At the time this section
+was written SPP has **no registered run, no bundle, no solve of any kind and no
+`frontend/data/backcast/keepers/SPP.json`** — so the matrix shard
+`docs/codebase-site/data/mechanism-matrix/SPP.js` carries an empty `keeper:` and
+an empty `gates:` by design, and its 305 cells are **162 `U`** (untested,
+plausibly applicable), **47 forecast-lane-only `U`** (`cell: "."` + `fc: "U"` on
+forecast-only rows) and **96 `.`** (structurally n/a). The shard's own header
+states the classification rule cell by cell; the census and its reasons are
+`docs/handoffs/FINDING-spp-21-2026-09-06.md`.
+
+**Nothing below is a lever until SPP-40 lands.** The first-ever SPP solve
+(W4 / SPP-40) produces the first 2023–2025 bundle, and *that* bundle becomes
+every later SPP lane's rule-29(b) control (owner ruling P1-adjacent card **P7**,
+r#2 2026-09-06: *"Control = none. The first full 2023–2025 bundle IS the
+baseline"*). The W5 charters are **reserved, not dispatchable**; the desk writes
+each in full at issuance. Standing rules that already bind the queue:
+
+- **Rule 25 `[R-ISO-SCOPE]` first.** No other ISO's verdict fills an SPP cell,
+  and no other ISO's fitted value transfers. Every parameter below is derived
+  from SPP's own market data before any solve (rules 23 / 25).
+- **Rule 29 `[R-SCREEN]`**: zero-LP phase 0, then a ONE-YEAR screen on a
+  PRECOMMIT-named year, then the full `--year 2023 2024 2025` span. The screen
+  gate is STRUCTURAL and STOP-only — it may kill an arm, never promote one, and
+  is never read against the target residual. Screen bundles are deleted before
+  merge (29c).
+- **Rule 16 `[R-ALLYEARS]`**: SPP is in `_MULTI_YEAR_ISOS` from W2 — a
+  single-year SPP keeper is refused from day one.
+- **Rule 28(b)**: the lane that tests a mechanism moves that cell in `SPP.js`
+  in the same PR, rejections included. One lever = one lane = one PR.
+
+**The queue (plan §4 W5, in issue order).**
+
+1. **SPP-51 — priced seams (cards P2 / P3).** `[OPUS]`, pre-declared execution
+   of SPP-33's derived numbers. Arms `hr_by_year` on
+   `INTERFACE_NEIGHBORS["SPP"]` MISO and ERCOT, A/B'd against
+   `--priced-interchange`. The first keeper serves the **measured EIA-930
+   `Total interchange` schedule** instead (`_SCALAR_INTERCHANGE_ISOS += SPP`,
+   the PJM/NYISO/NEISO precedent, rule 13-admissible), and P3's
+   `NeighborInterface("ERCOT")` (820 MW, border zone SPP-South) is **inert
+   under that served schedule** — so this lane is what first makes both live.
+   *Gate:* the interchange duration curve's **sign and magnitude** against
+   EIA-930 SWPP by DIBA (a structural STOP gate, not a price test).
+   *Pre-declared promotion condition:* promote only if the priced arm
+   reproduces the measured seam direction on the screen year AND no
+   load-bearing criterion (C1/C2/C3a/C3b) flips PASS → FAIL against the
+   SPP-40 control. Cells: the seam family (`priced_interchange`,
+   `reference_price_interface`, `seam_neighbour_anchored_ladder`,
+   `import_hub_pricing`) — all `U` today.
+2. **SPP-52 — curtailment as a first-class metric.** `[OPUS]`. Playbook §8.3:
+   a published reference curtailment rate defines the uncurtailed fallback
+   set; the run reports modeled vs reported curtailment. Also arms the
+   per-zone wind shape if SPP-32 lands it as an input only. SPP is the
+   highest-curtailment ISO in the fleet, so this is a metric before it is a
+   lever. *Gate:* modeled curtailment share is within the reported band on the
+   screen year and the wind energy total does not move outside C1's band.
+   *Pre-declared promotion condition:* promote on the curtailment metric
+   itself being reproduced structurally — **never** on what it does to price.
+   Cells: `vre_reference_rate_curtailment_grossup`, `ercot_wind_zone_shape`
+   (the generic wind-zone-shape membership, `U` for SPP), `wefor_residual`.
+3. **SPP-53 — N↔S TTC.** `[FABLE]`, because a TTC is a design object. Derives
+   the SPP-North↔SPP-South limit from the **binding-constraint frequency
+   method** (`docs/multi-iso/04-*`) via `derive_ttc_limits.py`. Rule 14
+   `[R-ACCURATE]` binds explicitly: **the measured value stays even if the fit
+   worsens**, and the lane documents the ITP-flowgate-vs-model-link
+   misalignment rather than reconciling it away. *Gate:* the derived limit
+   reproduces the observed N↔S binding frequency; the flow duration curve
+   changes shape in the direction the constraint census implies.
+   *Pre-declared promotion condition:* the measured limit is promoted on
+   provenance, and a worse residual is a **discovered root-cause issue** to be
+   opened, not a reason to revert (rule 14). Cell:
+   `measured_interface_limits`. **Input status (r#3, 2026-09-06):** SPP-12
+   found **no transfer-capability table** in the 2025 ITP Assessment Report,
+   so lane **SPP-13** is chartered (ruling **P11**) to try the FTP public-data
+   route and sweep ITP Manual v3.3; if it has not landed by the pin flip,
+   SPP-20 registers a **Tier-3 reconciled estimate with the misalignment
+   documented** and this lane replaces it with the measured value.
+4. **SPP-54 / SPP-57 — the two pre-declared pocket zones, RANKED.** `[FABLE]`
+   both; **topology changes**, so they enter as a structure question, not a fit
+   one (rule 1 `[R-STRUCT]`). Owner ruling **P1** (r#2, 2026-09-06), verbatim:
+   *"2 zones now; two ranked levers"* — SPP registers **SPP-North /
+   SPP-South** at W2 and BOTH pockets are pre-declared, with **SPP-12's
+   per-flowgate binding-share + shadow-price table ranking them against the
+   N↔S corridor. That table IS the ranking test, and the higher-ranked pocket
+   is issued first.** Neither is promoted or dropped on a residual.
+   - **SPP-54 — the SPS / Texas-Panhandle pocket** as a third zone (its own
+     sub-BA `SPS`, ~12.6 % of load; Lubbock FCA). The pocket is real —
+     persistent negative SPS prices and the largest curtailment share — and
+     what defers it is *data*, not doubt: it needs a second TTC (OASIS-blocked
+     at charter) and an SPS price series whose availability is unverified.
+   - **SPP-57 — an Oklahoma pocket** (an OKC/Tulsa split of SPP-South).
+     Osage–Webber $75/MWh and Russett–S.Brown $61/MWh are the market's two
+     highest-value constraints (SPP data audit §6.1). Needs a `CSWS` sub-
+     allocation for its load share and its own TTC.
+   *Gate (both):* the pocket's own measured price separation and binding share
+   exceed the N↔S corridor's on SPP-12's table, and the zone's load/fleet
+   allocation reconciles to the sub-BA census. *Pre-declared promotion
+   condition (both):* scored **leave-one-year-out within 2023–2025** (rule 22)
+   before promotion — in-sample gain with held-out degradation is overfitting,
+   not skill. Cells: `internal_congestion_split`, `measured_interface_limits`.
+   **⚠ THE RANKING TEST STANDS BUT ITS INPUT DOES NOT EXIST YET (r#3,
+   2026-09-06):** SPP-12 landed with the binding-constraint archive
+   **token-blocked** (`portal.spp.org` now requires an `X-SPP-UI-Token`;
+   plan §2.4, G18), so **the per-flowgate binding-share + shadow-price table
+   P1 names has no measured input**. Neither pocket is issuable until SPP-13
+   unblocks it. **Ranking on anything else — a residual, a hunch, or the other
+   ISO columns — is exactly what ruling P1 refused**; if the archive stays
+   blocked the desk re-serves P1, it is not decided by whoever gets there
+   first.
+5. **SPP-55 — VRL-based scarcity design.** `[FABLE]`, mechanism design. An
+   **in-LP reserve demand curve** built on SPP's published Value of Reserve
+   Loss, closer to MISO's RBDC than to the post-solve ORDC overlay, designed
+   against SPP's own tail counts at `TAIL_THRESHOLD["SPP"] = $200` (card **P6**,
+   ruled r#2). Card **P5** already refused to seed a scarcity override at
+   registration, precisely so this lane
+   designs the object against a committed control rather than inheriting a
+   seed. **The registered `voll` is $2,000** — card **P10** (ruled r#3,
+   correcting P5's citation): SPP's own posted Safety-Net Energy Offer Cap is
+   **$1,000**/MWh, and $2,000 is Order 831's hard ceiling for a cost-verified
+   offer, i.e. the highest price a dispatchable SPP offer can actually reach.
+   A scarcity design that clears above $1,000 must say which of the two it is
+   pricing against. *Gate:* structural only — the curve's own arithmetic (shortfall hours,
+   held MW, the reserve-family dual) behaves as the pre-solve delta implies.
+   *Pre-declared promotion condition:* rule 19 `[R-ONE-MECH]` — if it arms,
+   it is the **sole** scarcity mechanism; it is never stacked on an ORDC
+   overlay. C3c is an accepted ledgered caveat under the standing rule and is
+   **not** this lane's promotion test. Cells: `ordc_scarcity_overlay`,
+   `dynamic_reserve_requirements`, `maxgen_emergency_tier_pricing`.
+6. **SPP-56 — reserve co-optimisation (M2), LAST.** `[FABLE]`. Reg / Spin /
+   Supplemental on SPP's measured `da-mcp` / `rtbm-mcp` prices. Owner ruling
+   **P4** (r#2, 2026-09-06): *deferred; cells `U`; SPP-56 last* — M2 is last by
+   playbook §5, and MISO's co-opt was **inert at its zone count** with its tail
+   question closed negative, so SPP must **prove non-inertness on its own
+   data** before anything is armed. *Gate:* a measured non-inertness proof
+   (SPP's own reserve prices are a non-trivial share of its energy price
+   formation at SPP's zone count) BEFORE any LP is spent.
+   *Pre-declared promotion condition:* it does not arm at all unless that proof
+   clears; an inert result is a `I` cell and a closed question, not a retune.
+   Cells: `energy_reserve_coopt`, `reserve_pergen`,
+   `reserve_deliverability_scoping`, `measured_ramp_capability`.
+
+**Not in this queue, deliberately.** W6 / **SPP-60** (forecast-program entry —
+`program-status.json` row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens) is
+**routed to the capx director** by card **P8** and is never written by this
+desk or this section. And no holdout-year (2019–2022) SPP solve exists in the
+queue at any rung: rule 22's `complete` marker is an explicit owner act and SPP
+holds none.
+
+### 5.8 Cross-cutting audits (not ISO levers)
 
 - **Diurnal price-amplitude audit, all six ISOs — DONE 2026-08-01 (xiso-1), and
   the answer is SYSTEMIC.** One construction, zero LP (keeper

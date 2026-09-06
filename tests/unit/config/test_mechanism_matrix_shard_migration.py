@@ -105,7 +105,12 @@ def test_fixture_matches_known_migration_facts() -> None:
     """Pin the fixture's identity so a swapped fixture can't hollow the proof."""
     orig = mm.parse_assignment(_preshard_text(), "window.MECH_MATRIX").value
     assert len(orig["rows"]) == 211
-    assert orig["isos"] == list(mm.ISO_ORDER)
+    # The fixture is the FROZEN pre-shard monolith, so its ISO list is pinned to
+    # the six that existed on 2026-08-11 — literally, not against mm.ISO_ORDER,
+    # which legitimately grows as ISOs are registered (SPP joined at SPP-21,
+    # 2026-09-06). Comparing to the live tuple would make a new ISO look like a
+    # swapped fixture, which is the opposite of what this test is pinning.
+    assert orig["isos"] == ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
     by_id = {r["id"]: r for r in orig["rows"]}
     assert by_id["use_campd_bins"]["cells"] == "KKKKKK"
     assert by_id["ordc_scarcity_overlay"]["cells"] == "RKGG.K"
@@ -119,7 +124,14 @@ def test_live_store_parses_and_covers_every_mechanism() -> None:
     for row in merged["rows"]:
         assert len(row["cells"]) == len(isos), row["id"]
         assert set(row["cells"]) <= mm.CELL_CHARS, row["id"]
+    # A keeper stamp is required of every ISO that HAS a keeper. An ISO whose
+    # column is seeded before its first keeper exists (SPP, seeded at SPP-21
+    # 2026-09-06; first keeper at SPP-40) carries an empty stamp by design — the
+    # same fail-open scoping check_mechanism_matrix.keeper_drift already applies
+    # when frontend/data/backcast/keepers/<ISO>.json is absent.
     for iso in isos:
+        if not (REPO / f"frontend/data/backcast/keepers/{iso}.json").exists():
+            continue
         assert merged["keepers"][iso], f"{iso} shard has no keeper stamp"
 
 
