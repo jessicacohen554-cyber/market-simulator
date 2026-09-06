@@ -801,7 +801,60 @@ to runs carrying the new declaration, and no committed attestation has one. The 
 to use it is the miso-220 non-steam fossil lift.
 
 
-## 12. Changes to this file
+## 12. Rule 30 `[R-TOUCHPOINT-FOLD]` — a touchpoint publishes AS the keeper (owner, 2026-09-05)
+
+**Origin.** Session `neiso-pjm-validation-touchpoints` re-walked NEISO's and PJM's rule-22
+validation ladders on their current keepers and registered each touchpoint as its own dashboard
+run. The owner rejected the shape, verbatim:
+
+> *"the runs should all be combined with the keeper in html not separate runs… like it's the same
+> config I don't need to click into multiple things to see the results wtf. Refresh and fix this
+> for ERCOT too and make it a rule when touch points are run and also add them to the calibration
+> status assessment. An iso can stay calibrated even if it degrades on holdout years."*
+
+**Why the complaint is structural, not cosmetic.** A rule-22 touchpoint is by construction the
+designated keeper's own frozen recipe replayed on a held-out year — the sanctioned `replay_keeper`
+channel reproduces the keeper's `meta.json` kwargs and `gen_touchpoint_attestation.py` machine-
+checks that zero shared keys differ. One configuration. Listing it as a separate run therefore
+advertises a second configuration that does not exist, and costs the reader a click per year to
+reassemble something that was never apart.
+
+**The three duties (rule 30 a/b/c).** (a) stamp `holdout.keeper` so the Run Explorer folds the run
+into its keeper — hidden from the run list, years offered in the keeper's selector, all folded
+years rendered as columns of ONE combined *Validation Touchpoints* panel; deep links redirect
+rather than break. (b) rebuild and commit the ISO's status part, whose **holdout ladder** is
+DERIVED from the registry (never hand-authored, so it cannot go stale) and scored **per year**,
+because a multi-year bundle's single determination hides a rung that passed alone — NEISO
+2020+2021 is NOT-YET as a bundle and CALIBRATED on 2021. (c) a held-out year is REPORTED and never
+downgrades the ISO, whose determination is the train-tier verdict alone.
+
+**Why (c) is not a weakening.** Rule 22 already forbids quoting a validation-tier score as a
+certified out-of-sample number; a result that cannot certify equally cannot decertify. The
+degradation is not hidden — it is on the keeper's panel, on the status card and in the session's
+assessment — it simply stops being read as a contradiction of a headline it was never scoped to
+govern.
+
+**Companion scorer amendment — rubric v3.6**, owner, same sitting, verbatim: *"c3c should be an
+accepted caveat on all holdout years."* On an out-of-training year the C3c standing rule's
+lone-failure condition is dropped. The guard exists to stop C3c masking a second defect *on the
+years the model is certified on*; a held-out year is not a certification, and the scarcity tail is
+the one criterion this model class is known not to form (already accepted in-sample). Untouched:
+the band, tier and reported magnitude; the governance guard; supporting-tier fail-closed; never a
+PASS; both caveat budgets (caveats aggregate per criterion, so C3c on several holdout years is
+still one ledgered caveat). In-training years keep the lone-failure guard, measured over what is
+still failing after the holdout reclassification. **Measured over all 13 registered runs against a
+pre-change snapshot: ZERO determinations change**; PJM 2021's C3c moves FAIL → CAVEAT, dropping
+that rung from four failing criteria to three.
+
+**Scope note.** Rebuilding every ISO's status part is a deliberate cross-ISO edit, not a lane
+violation: `RUBRIC_VERSION` is embedded in each part and `audit_keepers` check S1 requires them in
+sync, so a rubric amendment necessarily touches all six — the same reasoning the v3.3 amendment
+recorded ("the scorer is ONE instrument and an ISO-scoped verdict rule would be an off-registry
+tuning channel in spirit, rules 24 / 25"). No keeper moved and no marker was re-keyed.
+
+**Record:** `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §6.
+
+## 13. Changes to this file
 
 | date | change |
 |---|---|
