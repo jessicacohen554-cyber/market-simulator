@@ -13915,3 +13915,100 @@ H-2/H-3 the owner's price-source decision); the stale `program-status.json`
 stamp (not touched); the C3a weight basis; S2.
 
 **Next number: caiso-261.**
+
+## caiso-261 — 2026-09-06
+
+**THE hod 22–23 PRICE-TAKING IMPORT VOLUME IS NOT A DATA-INTAKE OBJECT
+(2024–2025) AND IS BOUNDED, NOT OPEN, IN 2023. ZERO LP, NOTHING ARMED,
+KEEPER UNCHANGED** at `2026-09-06-caiso-260-b1-demand` (CALIBRATED). Branch
+`claude/caiso-backcast-calibration-261-2hrovn` off `main` `8dc64272`.
+`PRECOMMIT-caiso261-import-intake-adjudication-2026-09-06.md` pushed before
+the instrument ran (rule-13 admissibility classes A–D fixed ex ante, a
+STOP-only stop rule with no branch that solves, the C4-2025 / C3c-2023
+exposures and the C3a streak declared first);
+`FINDING-caiso261-import-intake-adjudication-2026-09-06.md`; instruments
+`_caiso258_hod2223_closure.py --import-stack --session caiso-261`
+(re-pointed at the caiso-260 bundle, per-month floors added) →
+`_caiso261_closure_on_caiso260.json` and
+`_caiso261_import_intake_adjudication.py` →
+`_caiso261_import_intake_adjudication.json`. G-CTRL form 4, no control
+solve; G-DRIFT not run (no solve at stake).
+
+**THE QUESTION** (caiso-258 §9 #1, caiso-260 §10 #2): a measured,
+forward-regenerating source for contracted / self-scheduled import volume
+beyond the firm block, at hod 22–23, admissibility adjudicated before any
+wiring.
+
+**G-REPRO on the caiso-260 keeper (P-1/P-1b HOLD):** 22–23 import deficit
+−974 / −1,466 / −1,769 MW (caiso-258: −972 / −1,467 / −1,763); CC_REGULAR
+error +1,459 / +1,478 at hod 22 / 23 in 2025 (−77 / −68 vs caiso-258, the
+arm's own −52 MW); committed import 4,417 / 4,131 / 4,432 of 12,278 / 13,182
+/ 13,459 MW capability.
+
+**E-1, the self-scheduled limb (P-2 HOLDS 2024–25, FAILS 2023 as
+registered):** the keeper's summed firm `min_gen` at 22–23 equals the
+caiso-151 measured price-insensitive intertie CEILING to **1 MW mean in
+2025 and 29 MW in 2024** (max month 14 / 269) — the clip binds, so by
+CAISO's own bid record no self-scheduled / ≤ $0 intertie volume remains
+un-carried in the two years that carry the object. 2023 reads 386 MW mean
+(Apr 898, Jun 620, Jul 1,277, Dec 1,482; zero in eight months): the floor
+sits at the shaped DMM-2023 level (2,323 MW) under a POOLED ceiling —
+bounded, not un-carried; the §5.2 alternative-object trigger (≥ 500 on the
+mean) does not fire.
+
+**E-2, the showing limb (P-4 HOLDS; P-3 FAILS as registered, June, by 28
+MW, BELOW):** the DMM 2025 §17 "native load need" (report sha256
+`7c89fdc4…15ea9`, pp. 337–342) is by definition shown import RA plus
+non-RA showings that appear only inside the ISO's historic *estimate*;
+published Jun–Sep 2025 only, on the priority-wheel ties only, as a monthly
+MW transmission set-aside, chart-only. Finals **3,600 / 4,300 / 4,050 /
+4,150 MW** (chart reads reproducing the text's 1,500 / 900 / 1,600 / 2,100
+MW over-estimates) against the keeper's 2025 firm floor at 22–23: **−628 /
++48 / +7 / +395** — **Jul and Aug match to within 50 MW**, two independent
+constructions on one number. The non-RA term reads ≤ 600 MW and is never a
+final. CPUC RA showings not fetched: the same object on a narrower boundary.
+
+**E-3, what the residual IS (class C, diagnostic, never wired; P-5
+HOLDS):** DMM Fig 4.2 dynamic WEIM net transfer into the CAISO BA at 22–24
+≈ 0.8 GW (2025 quarters 800 / 700 / 900 / 800 ± 150), so the 1,769 MW is
+**~0.8 GW WEIM** (the window caiso-253 refused; stays refused) **+ ~1.0 GW
+economic intertie import cleared at hub parity** — sizable only by the
+un-fetched `PUB_DAM_GRP` economic limb, i.e. the G-26 / audit C-6 CAISO
+ladder closure, **an owner decision never selected on this residual**
+(caiso-252 §7 #2).
+
+**Exposures (P-6/P-7 HOLD):** hod 22–23 carry 9.0 % of the 2025 gas MSE
+(C4-2025 0.298; excluded); the sidecar reproduces the scored 23 C3c-2023
+tail hours exactly — one per hod of a single day — and **2** sit at 22–23
+(not a target).
+
+**Stop rule, as written:** 5.1 does NOT fire literally (P-2 fails 2023,
+P-3 fails June) and fires in substance for 2024–2025; 5.2 does not fire;
+5.3's formal trigger fires on P-3 but its substantive condition (a
+beyond-ceiling quantity ≥ 0.5 GW) is not met — no intake exists to name.
+Every branch was STOP-only; the session ends with **no arm**. Reading the
+two literal FAILs by their substance is disclosed as a judgment (FINDING §7
+#1); they stand as `holds: false` in the artifact.
+
+**DO-NOT-REDO adds (FINDING §9):** never re-adjudicate DMM §17 as an intake;
+never read the 2023 ceiling-minus-floor room as un-carried volume; never
+propose the CPUC RA showings as "beyond" the DMM row; never wire Fig
+4.2/1.53 or EIA-930 flows; never select the G-26 surface on this residual.
+
+**QUEUE.** (1) the 22–23 object is **CLOSED as a data-intake object** and
+re-named by attribution; no executable calibration lane remains on it
+without an owner decision; (2) 2022 readiness (H-2/H-3 the owner's
+price-source decision); (3) whole-plant-off days (DO-NOT-REDO), the sidecar
+identity residual (unchanged, max 233 / 487 / 507 MW), Panoche; (4) carried,
+raised not granted — the `complete` marker, the `program-status.json`
+stamp, the C3a weight basis, the DMM 2025 RA-import basis, S2, and now the
+G-26 CAISO closure (fund / defer / refuse).
+
+Housekeeping (caiso-260 §8 #8): the three probes that hard-coded the pruned
+`caiso257_ctonly` path are re-pointed at `caiso260_demand_vintage`; the
+screen probe's keeper C4 baseline is the caiso-260 keeper's. Matrix:
+evidence appended on `import_hub_pricing` and `caiso_firm_selfsched_floor`,
+NO verdict move. **No run registered (none produced), no keeper change, no
+`ScenarioConfig` field, no `complete` declaration.**
+
+**Next number: caiso-262.**
