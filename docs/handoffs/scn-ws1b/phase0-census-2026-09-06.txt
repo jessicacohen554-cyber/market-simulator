@@ -1,0 +1,91 @@
+==============================================================================
+1. RESOLVED CARBON SIGNAL, $/tCO2 — REF vs the reduced arm (delta=+25)
+==============================================================================
+ISO     arm       2026     2027     2028     2029     2030
+ERCOT   REF     0.0000   0.0000   0.0000   0.0000   0.0000
+ERCOT   ARM    25.0000  25.0000  25.0000  25.0000  25.0000
+ERCOT   DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+CAISO   REF    30.0242  32.1259  34.3747  36.7809  39.3556
+CAISO   ARM    55.0242  57.1259  59.3747  61.7809  64.3556
+CAISO   DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+PJM     REF     0.0000   0.0000   0.0000   0.0000   0.0000
+PJM     ARM    25.0000  25.0000  25.0000  25.0000  25.0000
+PJM     DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+MISO    REF     0.0000   0.0000   0.0000   0.0000   0.0000
+MISO    ARM    25.0000  25.0000  25.0000  25.0000  25.0000
+MISO    DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+NYISO   REF    23.6363  25.2908  27.0612  28.9555  30.9824
+NYISO   ARM    48.6363  50.2908  52.0612  53.9555  55.9824
+NYISO   DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+NEISO   REF    26.0545  27.8783  29.8298  31.9179  34.1521
+NEISO   ARM    51.0545  52.8783  54.8298  56.9179  59.1521
+NEISO   DELTA  25.0000  25.0000  25.0000  25.0000  25.0000
+
+==============================================================================
+2. ZONES, IMPORT NODES AND THE LEAKAGE SURFACE (which ISOs CAN leak)
+==============================================================================
+ERCOT   zones= 7 import_zones=[]
+        ['West', 'Panhandle', 'North', 'Northeast', 'Houston', 'South_Central', 'South']
+CAISO   zones= 6 import_zones=['WECC_import']
+        ['NP15', 'ZP26', 'LA_BASIN', 'SDGE', 'SP15_rest', 'WECC_import']
+PJM     zones= 8 import_zones=[]
+        ['PJM_ComEd', 'PJM_AEP_Ohio', 'PJM_ATSI', 'PJM_West_APS', 'PJM_Central_PA', 'PJM_Dominion', 'PJM_EMAAC', 'PJM_SWMAAC']
+MISO    zones= 6 import_zones=[]
+        ['MISO-West', 'MISO-Plains', 'MISO-Illinois', 'MISO-Indiana', 'MISO-East', 'MISO-South']
+NYISO   zones= 5 import_zones=[]
+        ['Upstate_West', 'Capital_Hudson', 'Lower_Hudson', 'NYC', 'Long_Island']
+NEISO   zones= 5 import_zones=['HQ_import']
+        ['North', 'Central', 'Boston', 'Connecticut', 'HQ_import']
+
+==============================================================================
+3. CCS retrofit availability year (decides whether a 2026 T0 can respond)
+==============================================================================
+ERCOT   ccs_retrofit_available_year=2028
+CAISO   ccs_retrofit_available_year=2028
+PJM     ccs_retrofit_available_year=2028
+MISO    ccs_retrofit_available_year=2028
+NYISO   ccs_retrofit_available_year=2028
+NEISO   ccs_retrofit_available_year=2028
+
+==============================================================================
+4. THE LEAKAGE SURFACE — every import pseudo-generator and its REPORTED EF
+==============================================================================
+(EF is the disclosure-line factor results.emissions.import_tranche_ef
+ returns; the LP itself holds every import emission_rate at zero.)
+
+ERCOT: 0 import pseudo-generators, 0 carbon-bearing
+   (none — this ISO has NO import node: its reported import CO2 line is 0.0 by construction)
+
+CAISO: 6 import pseudo-generators, 3 carbon-bearing
+   WECC_import_PNW_hydro_base             zone=WECC_import     cap=  1566.0 vom=   28.00 EF=0.000
+   WECC_import_PNW_midC                   zone=WECC_import     cap=  1800.0 vom=   36.00 EF=0.000
+   WECC_import_DSW_solar_PV               zone=WECC_import     cap=  1805.0 vom=   48.00 EF=0.000
+   WECC_import_DSW_CCGT                   zone=WECC_import     cap=  1800.0 vom=   68.00 EF=0.370
+   WECC_import_DSW_CT                     zone=WECC_import     cap=  2200.0 vom=  110.00 EF=0.550
+   WECC_import_WECC_scarcity              zone=WECC_import     cap=  3000.0 vom=  180.00 EF=0.428
+
+PJM: 2 import pseudo-generators, 2 carbon-bearing
+   PJM_external_import_scarcity_1         zone=PJM_external    cap=  1000.0 vom=   46.00 EF=0.428
+   PJM_external_import_scarcity_2         zone=PJM_external    cap=  3000.0 vom=   60.00 EF=0.428
+
+MISO: 0 import pseudo-generators, 0 carbon-bearing
+   (none — this ISO has NO import node: its reported import CO2 line is 0.0 by construction)
+
+NYISO: 7 import pseudo-generators, 6 carbon-bearing
+   NYISO_external_HQ_hydro                zone=NYISO_external  cap=   900.0 vom=   20.78 EF=0.000
+   NYISO_external_IESO_Ontario            zone=NYISO_external  cap=   690.0 vom=   26.36 EF=0.428
+   NYISO_external_PJM_shoulder            zone=NYISO_external  cap=   690.0 vom=   32.24 EF=0.428
+   NYISO_external_PJM_west                zone=NYISO_external  cap=   690.0 vom=   40.13 EF=0.428
+   NYISO_external_eastern_mid             zone=NYISO_external  cap=   690.0 vom=   51.03 EF=0.428
+   NYISO_external_ISONE_tie               zone=NYISO_external  cap=   690.0 vom=   71.46 EF=0.428
+   NYISO_external_import_scarcity         zone=NYISO_external  cap=  2035.0 vom=  152.97 EF=0.428
+
+NEISO: 6 import pseudo-generators, 4 carbon-bearing
+   HQ_import_Highgate                     zone=HQ_import       cap=   225.0 vom=   26.53 EF=0.000
+   HQ_import_HQ_PhaseII                   zone=HQ_import       cap=  1830.0 vom=   41.10 EF=0.000
+   HQ_import_NB_north                     zone=HQ_import       cap=   630.0 vom=   59.15 EF=0.428
+   HQ_import_NYISO_CT_base                zone=HQ_import       cap=   870.0 vom=   34.79 EF=0.428
+   HQ_import_NYISO_CT_peak                zone=HQ_import       cap=   870.0 vom=   73.04 EF=0.428
+   HQ_import_import_scarcity              zone=HQ_import       cap=    95.0 vom=  286.12 EF=0.428
+
+wrote /home/user/market-simulator/docs/handoffs/scn-ws1b/phase0-census-2026-09-06.json
