@@ -271,6 +271,15 @@ compared to local `git hash-object` as well.
 
 The finding itself is a new file under 300 lines and is outside rule 27's verification duty.
 
+**Re-verified after the merge refresh (push `20b7a1a6`, `git push`, first try):**
+
+| file | lines remote / local | sha256 (16) remote / local | git blob remote / local | |
+|---|---|---|---|---|
+| `CLAUDE.md` | 742 / 742 | `b5a567723707917e` / same | `89c1d3016d15` / same | MATCH |
+| `docs/governance/rule-history.md` | 933 / 933 | `26d5f7c6bf940258` / same | `517ff143218b` / same | MATCH |
+| `scripts/calibration_verdict.py` | 3445 / 3445 | `dab8fc56b46bf6ed` / same | `0e192c21ff5a` / same | MATCH |
+
+
 ## 7. Standing-test log — every dispatch claim, checked
 
 | dispatch claim | checked against | reading |
