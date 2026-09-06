@@ -818,6 +818,198 @@ def test_carbon_pair_premise_holds_on_no_program_iso_absolute_pair():
     assert C.carbon_pair_premise(base, high).status == C.PASS
 
 
+# --------------------------------------------------------------------------- #
+# capx-D73: the premise from COMMITTED run_config.json (zero LP) — one core,
+# two routes, and the committed golden pairs pinned as the phase-0 table.
+# --------------------------------------------------------------------------- #
+def _write_run_config(path, scenario_config, solved_years=None):
+    rc = {"scenario_config": scenario_config}
+    if solved_years is not None:
+        rc["solved_years"] = solved_years
+    path.write_text(json.dumps(rc))
+    return path
+
+
+def test_scenario_config_from_run_config_rebuilds_and_drops_unknown_keys_loudly(
+    tmp_path,
+):
+    """The committed record rebuilds to the same resolved config; a key the
+    codebase has since deleted is dropped with a RuntimeWarning (the
+    ScenarioConfig.from_yaml discipline, rule 26), never a TypeError; and
+    solved_years falls back to start..end when the record carries none."""
+    rc = _write_run_config(
+        tmp_path / "run_config.json",
+        {
+            "iso": "NEISO",
+            "start_year": 2026,
+            "end_year": 2028,
+            "carbon_price_delta": 25.0,
+            "a_knob_deleted_since": 1.0,
+        },
+    )
+    with pytest.warns(RuntimeWarning, match="a_knob_deleted_since"):
+        cfg, years = C.scenario_config_from_run_config(rc)
+    assert cfg.iso == "NEISO" and cfg.carbon_price_delta == 25.0
+    assert years == [2026, 2027, 2028]
+    rc2 = _write_run_config(
+        tmp_path / "rc2.json", {"iso": "NEISO"}, solved_years=[2027, 2026]
+    )
+    assert C.scenario_config_from_run_config(rc2)[1] == [2026, 2027]
+    with pytest.raises(SystemExit):
+        C.scenario_config_from_run_config({"no": "block"})
+
+
+def test_run_paired_run_configs_monotone_pair_premise_pass_p1_unscored(tmp_path):
+    base = _write_run_config(
+        tmp_path / "base.json",
+        {"iso": "NEISO", "start_year": 2026, "end_year": 2027},
+        solved_years=[2026, 2027],
+    )
+    high = _write_run_config(
+        tmp_path / "high.json",
+        {
+            "iso": "NEISO",
+            "start_year": 2026,
+            "end_year": 2027,
+            "carbon_price_delta": 25.0,
+        },
+        solved_years=[2026, 2027],
+    )
+    rows = C.run_paired_run_configs(base, high)
+    by = {r.ident: r for r in rows}
+    assert set(by) == {"P1", "P1.premise"}
+    assert by["P1.premise"].status == C.PASS
+    assert by["P1.premise"].data["years"] == [2026, 2027]
+    assert all(d == pytest.approx(25.0) for d in by["P1.premise"].data["delta"])
+    # P1 is never scored at this grain — emissions live in the caches.
+    assert by["P1"].status == C.SKIP and "not scored at this grain" in by["P1"].detail
+
+
+def test_run_paired_run_configs_inverted_pair_is_misconstructed_never_scored(tmp_path):
+    """The archived D21 construction (carbon_price=25 REPLACING NEISO's
+    projected RGGI base): the route emits a FAIL premise row and a SKIP P1 —
+    never a PASS or FAIL P1 — so the scorer's FC-6.2 reclassification fires."""
+    base = _write_run_config(
+        tmp_path / "base.json",
+        {"iso": "NEISO", "start_year": 2026, "end_year": 2027},
+        solved_years=[2026, 2027],
+    )
+    high = _write_run_config(
+        tmp_path / "high.json",
+        {"iso": "NEISO", "start_year": 2026, "end_year": 2027, "carbon_price": 25.0},
+        solved_years=[2026, 2027],
+    )
+    rows = C.run_paired_run_configs(base, high)
+    by = {r.ident: r for r in rows}
+    assert by["P1.premise"].status == C.FAIL
+    assert "MIS-CONSTRUCTED" in by["P1.premise"].detail
+    assert by["P1.premise"].data["delta"][0] < 0.0
+    assert by["P1"].status == C.SKIP
+    assert by["P1"].status not in (C.PASS, C.FAIL)
+    assert "see P1.premise" in by["P1"].detail
+
+
+def test_cache_route_and_run_config_route_share_one_premise_core():
+    """Rule 19: the cache-directory front (carbon_pair_premise) and the
+    committed-config core emit the identical row for the same pair."""
+    from market_sim.config.scenarios import ScenarioConfig
+
+    years = {y: _mk_yeardata(y) for y in (2026, 2027)}
+    b_cfg = ScenarioConfig(iso="NEISO", start_year=2026, end_year=2027)
+    h_cfg = ScenarioConfig(
+        iso="NEISO", start_year=2026, end_year=2027, carbon_price=25.0
+    )
+    base = _mk_run([], years=dict(years), config=b_cfg, iso="NEISO")
+    high = _mk_run([], years=dict(years), config=h_cfg, iso="NEISO")
+    via_cache = C.carbon_pair_premise(base, high)
+    via_configs = C.carbon_pair_premise_from_configs(b_cfg, h_cfg, [2026, 2027])
+    assert via_cache == via_configs
+    assert C.carbon_pair_premise_from_configs(b_cfg, h_cfg, []).status == C.SKIP
+
+
+def test_paired_run_configs_cli_json_and_pair_kind_guard(tmp_path, capsys):
+    base = _write_run_config(
+        tmp_path / "base.json",
+        {"iso": "ERCOT", "start_year": 2026, "end_year": 2026},
+        solved_years=[2026],
+    )
+    high = _write_run_config(
+        tmp_path / "high.json",
+        {"iso": "ERCOT", "start_year": 2026, "end_year": 2026, "carbon_price": 25.0},
+        solved_years=[2026],
+    )
+    rc = C.main(["--paired-run-configs", str(base), str(high), "--json"])
+    rows = json.loads(capsys.readouterr().out)
+    assert rc == 0
+    assert [(r["ident"], r["status"]) for r in rows] == [
+        ("P1", C.SKIP),
+        ("P1.premise", C.PASS),
+    ]
+    assert rows[1]["data"]["delta"] == [pytest.approx(25.0)]
+    assert "data" not in rows[0]  # rows without evidence keep their exact shape
+    # Table mode prints the year-by-year signal table.
+    C.main(["--paired-run-configs", str(base), str(high)])
+    out = capsys.readouterr().out
+    assert "effective carbon signal" in out and "2026" in out
+    with pytest.raises(SystemExit):
+        C.main(["--paired-run-configs", str(base), str(high), "--pair-kind", "gas_up"])
+
+
+_GOLDEN_FAMILIES = Path(__file__).resolve().parents[2] / "results/ff-t3-neiso-golden"
+_LIVE_CARBON_PAIRS = [
+    (fam, "carbon_plus25") for fam in ("bau", "bau-d46", "bau-prera-2026-08-31")
+]
+_ARCHIVED_CARBON_PAIR = ("bau-prera-2026-08-31", "carbon25")
+
+
+def _arm_rc(family: str, arm: str) -> Path:
+    return _GOLDEN_FAMILIES / family / "fc6" / "arms" / arm / "run_config.json"
+
+
+@pytest.mark.parametrize("family,arm", _LIVE_CARBON_PAIRS)
+def test_committed_live_carbon_pairs_are_monotone_plus25_every_year(family, arm):
+    """capx-D73 phase 0(c): every committed carbon_plus25 pair resolves to
+    +$25.00/t above its base in all 25 solved years — the guard's live effect
+    is nil (FINDING-capx-d73-2026-09-06.md §2.3)."""
+    base, high = _arm_rc(family, "base"), _arm_rc(family, arm)
+    if not (base.exists() and high.exists()):
+        pytest.skip(f"{family}/{arm} run_config.json not checked out")
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)  # deleted-knob drops
+        rows = C.run_paired_run_configs(base, high)
+    premise = next(r for r in rows if r.ident == "P1.premise")
+    assert premise.status == C.PASS
+    assert len(premise.data["years"]) == 25
+    assert all(d == pytest.approx(25.0, abs=1e-6) for d in premise.data["delta"])
+
+
+def test_committed_archived_carbon25_pair_is_inverted_in_every_year():
+    """capx-D73 phase 0(c): the archived D21 `carbon25` arm (the ONLY
+    inverted pair in the repository) is a cut of −$1.05 (2026) → −$107.16
+    (2050) against its base, so the guard emits MIS-CONSTRUCTED for it and
+    never a scored P1 — D23 §2.5 / D72 §6 to the cent."""
+    family, arm = _ARCHIVED_CARBON_PAIR
+    base, high = _arm_rc(family, "base"), _arm_rc(family, arm)
+    if not (base.exists() and high.exists()):
+        pytest.skip(f"{family}/{arm} run_config.json not checked out")
+    import warnings
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        rows = C.run_paired_run_configs(base, high)
+    by = {r.ident: r for r in rows}
+    premise = by["P1.premise"]
+    assert premise.status == C.FAIL and "25/25 years" in premise.detail
+    assert premise.data["years"][0] == 2026 and premise.data["years"][-1] == 2050
+    assert premise.data["delta"][0] == pytest.approx(-1.05, abs=0.005)
+    assert premise.data["delta"][-1] == pytest.approx(-107.16, abs=0.005)
+    assert premise.data["base"][0] == pytest.approx(26.05, abs=0.005)
+    assert all(d < 0.0 for d in premise.data["delta"])
+    assert by["P1"].status == C.SKIP
+
+
 def test_p2_merit_sign():
     base = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
     gas_up = _mk_run([], years={2026: _mk_yeardata(2026, fuels=("gas_cc", "coal"))})
