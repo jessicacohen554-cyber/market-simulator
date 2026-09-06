@@ -765,13 +765,13 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
-| 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **no** | **no** | yes | — |
-| 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
-| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | — | — | yes | — |
-| 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | — | — | stamped | — |
+| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
+| 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
+| 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3) | **no** | **no** | — |
+| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
+| 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | stamped (`federal_ces_target` row + six cells, SCN-WS2a last commit) | — | stamped | — |
 | 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
-| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | `scn-ws0-smoke` REF/CARB pair |
+| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | NEISO T0 pair `neiso-2026-2026-scn-ws2a-neiso-2026-t0-{ref,target}` (kind `scenario`) | — | none | `scn-ws0-smoke` REF/CARB pair |
 
 **Emissions column, closed by SCN-WS0** (2026-09-05,
 `docs/handoffs/FINDING-scn-ws0-2026-09-05.md`). G-E1: `emissions_by_fuel_mt` /
