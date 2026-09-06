@@ -51,8 +51,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = (
-    REPO / "results/calibration/caiso257_ctonly"
-)  # re-pointed caiso-260 (caiso-252 pruned, rule 15)
+    REPO / "results/calibration/caiso260_demand_vintage"
+)  # re-pointed caiso-261 (caiso-257 pruned, rule 15)
 DEFAULT_OUT = REPO / "results/calibration/_caiso255_gdrift_input_identity.json"
 YEARS = (2023, 2024, 2025)
 T = 8760

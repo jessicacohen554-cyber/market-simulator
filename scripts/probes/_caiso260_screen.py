@@ -53,8 +53,10 @@ from scripts.lib import bench_multiclass as bm  # noqa: E402
 from market_sim.data.fleet import apply_other_fossil_scoring  # noqa: E402
 from market_sim.config.plant_taxonomy import fossil_classes  # noqa: E402
 
-KEEPER_ID = "2026-09-06-caiso-257-b1-ctonly"
-KEEPER = REPO / "results/calibration/caiso257_ctonly"
+KEEPER_ID = (
+    "2026-09-06-caiso-260-b1-demand"  # re-pointed caiso-261 (caiso-257 pruned, rule 15)
+)
+KEEPER = REPO / "results/calibration/caiso260_demand_vintage"
 ART_DIR = REPO / "data/raw/reference/caiso-supply-consistent-demand"
 T = 8760
 MD = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -64,7 +66,11 @@ FOOT_CLASSES = ("nuclear", "wind", "solar")
 FOOT_MAX_FRAC = 0.005
 C3B_MAX = 0.20
 S4_R_MIN, S4_NRMSE_MAX = 0.70, 0.30
-KEEPER_C4 = {2023: (0.879, 0.287), 2024: (0.908, 0.263), 2025: (0.875, 0.300)}
+KEEPER_C4 = {
+    2023: (0.881, 0.287),
+    2024: (0.912, 0.260),
+    2025: (0.877, 0.298),
+}  # caiso-260 keeper
 SEAM_CAP = {2023: 16055.0, 2024: 16452.0, 2025: 16148.0}
 
 
