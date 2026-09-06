@@ -19,9 +19,10 @@
 # the ruling changed the label and not the number, and NO RE-SOLVE IS OWED
 # (SCN-LEVELS 2026-09-06, docs/handoffs/FINDING-scn-levels-2026-09-06.md).
 #
-# ── THE THREE PLACES A LEVEL IS STILL NOT COMMITTED (read before quoting) ───
-# S3 commits the §3.5 TABLE, and the table is silent in three places. None is
-# filled in here; each is named at its case:
+# ── WHERE A LEVEL IS STILL NOT COMMITTED — TWO OPEN, ONE CLOSED ────────────
+# S3 commits the §3.5 TABLE, and the table was silent in three places. Item 3
+# is CLOSED (2026-09-06, SCN-FIX2 — see the carbon block); 1 and 2 are open,
+# neither filled in here, each named at its case:
 #   1. `CAP-STATE-TIGHT`'s declining budget — §3.5 writes "declining
 #      mass_cap_tons" with no number, and S3's enumeration names none, so the
 #      slope stays the OWNER level SCN-WS1a labelled it
@@ -30,9 +31,11 @@
 #      box 5 itself leaves `f_commit` mid and the WTP-ceiling LEVEL owner-set
 #      (voluntary-clean-demand-design-memo-2026-09-05.md box 5). Two cells,
 #      still open under D-2.
-#   3. The carbon ladder's FORM — the committed level is the RFF path ladder;
-#      the live delta form below is an interim the ruling did not bless. See
-#      the carbon block.
+#   3. **CLOSED 2026-09-06 (SCN-FIX2).** The carbon ladder's FORM: the
+#      committed level was always the RFF path ladder, and the live form was a
+#      reduced additive stand-in the ruling did not bless. SCN-WS1c landed
+#      S2's floor, so the committed form is now the live one. See the carbon
+#      block.
 # Two OTHER cards remain open and are labelled where they bite: **D-3c** (the
 # voluntary eligible set) and **D-6** (attribute netting).
 #
@@ -60,26 +63,24 @@
 # blockers cleared, not a level moving: the numbers are the ones SCN-WS2a
 # already probed.
 #
-# ── THE CARBON LADDER IS STILL THE DELTA FORM — AND THAT IS THE ONE PLACE ──
-# ── THE COMMITTED LEVEL IS NOT YET THE LIVE ONE ────────────────────────────
+# ── THE CARBON LADDER IS THE COMMITTED RFF PATH FORM (switched 2026-09-06) ──
 # S3 commits the RFF path ladder (`carbon_price_path: low/mid/high`), which is
-# what plan §3.5 writes. It is NOT live here, and the blocker is CODE, not the
-# card. G-C1 (plan §8) is still live at this commit: an explicit RFF path
-# SUPPRESSES the projected state-program price, so on CAISO/NYISO/NEISO every
-# RFF path sits BELOW the program trajectory and a `carbon_price_path` case is
-# a carbon price CUT on exactly the three ISOs that have a carbon program —
-# measured, $16-$102/t in every one of 25 years
-# (FINDING-scn-ws1a-2026-09-05.md §0.1/§6). Shipping the committed form today
-# would ship a ladder whose sign is wrong on half the campaign.
-# **Owner card D-1 IS now ruled — S2 (2026-09-06): FLOOR**,
-# `effective = max(RFF path(year), program trajectory(year))` on a program ISO
-# — and **SCN-WS1c is the lane landing that repair** (ledger §5, r#5 am.1
-# issuance; plan §7 "WS-1a" item 1). Until it merges the live ladder stays the
-# reduced ADDITIVE form `carbon_price_delta`, which policy.carbon applies on
-# the resolved signal after its whole precedence chain, so the sign is right
-# in every ISO with or without a program — the same reduced form the desk
-# assigned to SCN-WS1b. SWAP IS SCN-WS1c'S (or the desk's) TO MAKE, not this
-# file's to pre-empt: see the commented path form at the carbon block.
+# what plan §3.5 writes, and it is now the LIVE form below. The blocker was
+# CODE, never the card, and the code landed: **SCN-WS1c executed owner ruling
+# S2 (D-1) — the federal path is a FLOOR**, `effective = max(RFF path(year),
+# program trajectory(year))` (FINDING-scn-ws1c-2026-09-06.md; 450/450 predicted
+# cells to the cent, 0 cache keys moved).
+# G-C1 (plan §8) is therefore DEAD AT THE RESOLVER. It was the whole reason for
+# the interim: before the floor an explicit path SUPPRESSED the projected
+# state-program price, so on CAISO/NYISO/NEISO a `carbon_price_path` case was a
+# carbon price CUT of $16-$102/t in every one of 25 years
+# (FINDING-scn-ws1a-2026-09-05.md §0.1/§6). Under the floor no path can lower
+# any ISO's carbon signal, so the ladder's sign is right in every ISO with or
+# without a program — which is what the reduced additive `carbon_price_delta`
+# stand-in was bought for. That stand-in is GONE from this file (rule 26
+# [R-DELETE]: a commented-out live form is a re-armable answer); the FIELD
+# `carbon_price_delta` is untouched and still available for a labelled
+# sensitivity, but no campaign case uses it.
 mode: cases
 
 cases:
@@ -89,32 +90,46 @@ cases:
   REF: {}
 
   # ── Carbon price → dispatch re-ordering, CCS, thermal mix, VRE entry ──────
-  # THE INTERIM REDUCED FORM, NOT THE COMMITTED LEVEL. $/tCO2 ADDED to each
-  # ISO's resolved carbon signal (a state program's trajectory where one
-  # exists, zero where none does). **S3 commits the RFF PATH ladder, and these
-  # three delta knots are NOT ruled levels** — they are the desk's reduced-form
-  # stand-in, assigned while D-1 was open, and 25 is the level SCN-WS1b's
-  # reduced-form probe is chartered on. They stay live only until SCN-WS1c
-  # lands S2's floor; see the header's carbon block for why shipping the
-  # committed form today would invert the ladder's sign on CAISO/NYISO/NEISO.
-  # Anything quoted off these three arms is a reduced-form result and says so.
+  # THE COMMITTED FORM (owner card D-2 → **S3**, 2026-09-06): the plan §3.5 RFF
+  # path ladder, resolved from `constants.CARBON_PRICE_PATHS` and applied as a
+  # FLOOR under any state program (ruling S2, landed by SCN-WS1c). Switched
+  # from the interim `carbon_price_delta` knots {15, 25, 50} on 2026-09-06 by
+  # SCN-FIX2 — a FORM change, not a level change: S3 never committed the deltas
+  # (they were the desk's reduced-form stand-in) and the path ladder is the
+  # level it did commit.
+  #
+  # WHAT EACH ARM RESOLVES TO, measured through the live chain
+  # (`resolve_policy_bundle` → `apply_iso_scenario_defaults` →
+  # `resolve_carbon_price`), $/tCO2, 2026-2030 — the T1-F window the policy
+  # lanes solve (full table incl. 2050: FINDING-scn-fix2-2026-09-06.md §1):
+  #   ERCOT / PJM / MISO (no state program — the path applies alone)
+  #     low   0 / 2.00 / 4.00 / 6.00 / 8.00      (knots 0, 8@2030, 18@2040, 25@2050)
+  #     mid   0 / 3.75 / 7.50 / 11.25 / 15.00    (knots 0, 15, 35, 50)
+  #     high  0 / 7.50 / 15.00 / 22.50 / 30.00   (knots 0, 30, 70, 110)
+  #   CAISO / NYISO / NEISO — **EXACTLY EQUAL TO REF in the whole T1-F window,
+  #     every arm**: the program trajectory is above every path there, so the
+  #     floor binds on the program side, the case is byte-identical to REF in
+  #     dispatch and the policy lanes KILL it at phase 0, never solving it
+  #     (SCN-WS1b measured the inertness; SCN-WS1c §2 is the same resolver).
+  # The 2026 knot is $0 in EVERY path, so no arm separates from REF on a
+  # non-program ISO in 2026 either — the axis is live from 2027.
+  #
+  # **THE INERTNESS IS A T1-F FACT, NOT A HORIZON FACT — measured 2026-09-06,
+  # and it is NOT what WS-1b's headline says.** Over the 2026-2050 base the
+  # `high` path CROSSES ABOVE two program trajectories in mid-horizon years:
+  # NYISO 2031-2047 (peak +$9.05/t at 2040) and NEISO 2033-2042 (peak +$3.32/t
+  # at 2038); CAISO stays inert in all 25 years, and `low` / `mid` stay inert
+  # in all 25 years on all three. So a full-horizon CARB-HI is a LIVE arm on
+  # NYISO and NEISO and must not be killed by an inertness argument taken from
+  # the T1-F window. Every crossing delta is POSITIVE — under S2's floor no
+  # path can cut any ISO's carbon signal in any year, which is the property the
+  # interim delta form existed to guarantee.
   CARB-LO:
-    carbon_price_delta: 15.0
+    carbon_price_path: low
   CARB-MID:
-    carbon_price_delta: 25.0
+    carbon_price_path: mid
   CARB-HI:
-    carbon_price_delta: 50.0
-  # THE COMMITTED LEVEL (owner card D-2 → S3, 2026-09-06): the plan's own RFF
-  # path form. Its card is ruled; what it waits on is SCN-WS1c landing S2's
-  # FLOOR semantics (2026-09-06: effective = max(RFF path, program
-  # trajectory)). Swap these in for the three deltas above once the resolver
-  # reads a path as a floor rather than a replacement — and re-point
-  # `tests/scoring/test_scenario_campaign_configs.py
-  # ::test_the_carbon_ladder_is_the_additive_delta_form`, which pins the
-  # interim form on purpose so the swap cannot happen silently:
-  #   CARB-LO:  {carbon_price_path: low}
-  #   CARB-MID: {carbon_price_path: mid}
-  #   CARB-HI:  {carbon_price_path: high}
+    carbon_price_path: high
 
   # ── Price vs quantity: the mass-cap instrument on the program ISOs ────────
   # STILL BLOCKED AFTER S3, on BOTH legs, and this is one of the three places
@@ -314,10 +329,14 @@ cases:
 
   # ── Does a carbon price hold CO2 flat under data-centre growth? ───────────
   # Its load half is committed (S3: growth high + DC high, the LOAD-HI pairing
-  # above). Its carbon half INHERITS the interim reduced delta form, so it
-  # carries the same caveat CARB-MID does until SCN-WS1c lands S2's floor.
+  # above). Its carbon half is CARB-MID's, and it inherits that arm's committed
+  # RFF path form and every reading above it — including the program-ISO
+  # inertness: on CAISO/NYISO/NEISO this case's carbon half is exactly REF, so
+  # the case is LOAD-HI with a carbon label and the delta it measures is the
+  # load delta alone. Read it as the carbon×load interaction only on
+  # ERCOT/PJM/MISO.
   CARB-MID+LOAD-HI:
-    carbon_price_delta: 25.0
+    carbon_price_path: mid
     demand_growth_path: high
     datacenter_load_path: high
 
@@ -341,9 +360,13 @@ cases:
 
   # ── The coherent policy corner under high load ────────────────────────────
   # LIVE as of SCN-WS3b (2026-09-06) — its last missing field landed; HELD
-  # under S5 (it carries every CES case and every VOL-* case at once). Every
-  # level below is committed except the carbon half, which inherits the
-  # interim delta form (see the carbon block). `federal_ces_acp_usd_per_mwh:
+  # under S5 (it carries every CES case and every VOL-* case at once). EVERY
+  # LEVEL BELOW IS COMMITTED, the carbon half included since 2026-09-06: it is
+  # CARB-MID's committed RFF path form (SCN-FIX2 switched it from the interim
+  # `carbon_price_delta: 25.0` in the same commit as the three CARB-* rows), so
+  # on CAISO/NYISO/NEISO the carbon half of this corner is exactly REF and the
+  # corner's carbon content is the CES + voluntary rows alone (see the carbon
+  # block). `federal_ces_acp_usd_per_mwh:
   # 50.0` is written out because the target row REQUIRES it (> 0). The
   # voluntary half is VOL-HI's (no illustrative cell); its DC half rides the
   # `datacenter_load_path: high` block here, so V rises with the load case by
@@ -353,7 +376,7 @@ cases:
   # FFR-6B §6.4 doctrine, zero code); the "additional" reading is reported
   # beside it at the report layer, never asserted (D-6 OPEN).
   ALL-CLEAN:
-    carbon_price_delta: 25.0
+    carbon_price_path: mid
     federal_ces_enabled: true
     federal_ces_target_by_year: {2026: 0.55, 2035: 0.80, 2050: 1.00}
     federal_ces_acp_usd_per_mwh: 50.0
