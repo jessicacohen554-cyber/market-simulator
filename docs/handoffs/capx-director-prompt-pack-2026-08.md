@@ -7153,3 +7153,188 @@ radius's census), its retrofit MW, and therefore which FC-4 / FC-5 co2 rows and 
 arms are mis-stated — as a table for D65-B's batch and the director's re-score card, never as an act.
 Rules 13, 14, 19, 21, 22, 24, 25, 27 (blob-verify `ccs.py` and any ≥300-line file), 28, 29.
 ```
+
+## D72 — LABEL SPENT TWICE (record). §D72 above is the carbon-floor blast radius (LANDED r#45). `claude/capx-d72-prehunk-resolves-e8naqn` (#5067/#5113) is ANOTHER DESK'S lane on D60-R3 §9's seven residue keys — cite by branch. Its result: four keys PROVED INERT against D55 at zero LP (permanent); leg 1 `neiso-t1f` fired STOP 3, bisected to SCN-LOAD `DEMAND_GROWTH_RATES["NEISO"]["low"]["near"]` 0.007 → 0.004009; every forecast row on the board is stale against HEAD on the demand axis; three keys (`neiso-t1f`, `miso-t1h`, `neiso-t1h`) need a re-based charter — QUEUED here behind D65-B's batch (t1f) and D76 phase 0 (t1h). Never paste.
+
+## D80 — declare the 8 capx run ids' KNOWN invariant FAILs in `frontend/data/hindcast/invariant-failures.json` (r#47; the Y-24 ratchet is RED on `main`; SCN-FIX1 covers the SCN ids and leaves these to this desk) — **ISSUED r#47, records-only, DISPATCH FIRST**
+
+```
+You are the D80 session of the capacity-expansion track. Binding charter: pack §D80 (this section) +
+audit lane Y-24's ratchet (`scripts/check_forecast_invariants.py --sidecar-dir`, wired into
+`.github/workflows/ci.yml` — read the ratchet's own docstring and the `--failure-ledger` contract
+before writing a row) + the SCN-FIX1 charter (scenario-desk ledger §5, r#10) which writes the SAME
+file for the 17 SCN ids and names "the 8 capx ids" as this desk's. ZERO LP, records only.
+DATA PROFILE: code
+MODEL: Opus (a declaration is a records act with a citation per row; nothing is re-scored).
+BRANCH (suggested; graded by content): claude/capx-d80-invariant-declarations — FRESH off origin/main.
+
+WHY: `check_forecast_invariants.py --sidecar-dir` reads EXIT 1 on `main` (measured r#47 on a container
+with the stack installed — `pip3 install --ignore-installed PyYAML -r requirements.txt` if `import
+numpy` fails). A registered run that FAILs an invariant must declare it in
+`frontend/data/hindcast/invariant-failures.json` (id → idents → the finding it belongs to) so a NEW
+failure cannot land silently. These capx ids are undeclared and EVERY one is a KNOWN, DOCUMENTED
+reading — the declaration is the missing row, not a new finding:
+  neiso-2026-2050-t3-golden3-d60                 I3        (D60-R3 §5.5: FC-1 FAIL (I3), P16 HIT — the golden's standing I3)
+  pjm-2026-2030-d60-arm                          I12, I7   (D60 §5.4 + Addendum E.4: the STOP that fired and was re-attributed)
+  pjm-2021-2025-realized-t1h-d45                 I7        (D45 finding — the L1 pool)
+  pjm-2021-2025-realized-t1h-d45r                I7        (D45-R re-measure)
+  pjm-2021-2025-realized-t1h-d57-clearing        I7        (D57 §3 / the arm A ledger D66 reproduces)
+  pjm-2021-2025-realized-t1h-d62-pubbar          I7        (D62 §8 DO-NOT-ARM; registered suffixed by D63)
+  nyiso-2021-2025-realized-t1h-d45r-curveon      I7        (D45-R NYISO curve-on leg)
+  pjm-2026-2026-scn-ws4-probe-t0-load-hi         I7        (a SCN campaign id — SCN-FIX1's, NOT yours, unless SCN-FIX1 has
+                                                            landed without it; then declare it with its SCN finding cited and say so)
+STEP 1 — RUN THE RATCHET at HEAD, paste its list into the PRECOMMIT/FINDING, and reconcile it against
+the eight above: an id on the list not named here, or named here and not on the list, is reported,
+never silently added or dropped. STEP 2 — for each id, open the cited finding and QUOTE the sentence
+that states the invariant reading (id → idents → finding path + section). A FAIL you cannot cite from
+a committed finding gets NO row and a report line instead (a declaration is not a place to invent a
+reason). STEP 3 — write the rows in the file's existing shape (read the SCN rows if SCN-FIX1 has
+landed; match their schema exactly; if it has not landed, write yours and expect to rebase onto
+theirs — NEVER resolve a conflict by dropping their rows). STEP 4 — re-run the ratchet: the capx ids
+must be gone from its list; whatever remains is SCN-FIX1's and is reported by id. ruff clean.
+WHAT YOU DO NOT DO: no re-score, no registration, no sidecar edit, no board byte
+(`ff-verdicts.json` / `program-status.json` are D65-B's this window), no verdict text anywhere.
+EXIT: FINDING-capx-d80-<date>.md (one page: the ratchet before/after, the row table with quotes), the
+JSON rows, PR opened. Rules 22 (nothing scored), 24, 27 (blob-verify the JSON if ≥300 lines), 28 (no
+mechanism, no cell).
+```
+
+## D75-R — the PJM VRE ELCC delivery-year vintage, RE-CHARTERED on D75's own §8: four-vintage intake FIRST, the split RULED (option 1), THREE delivery years, per-year SIGN gates (r#47) — **CHARTERED r#47, DISPATCHABLE**
+
+```
+You are the D75-R session of the capacity-expansion track. Binding charter: pack §D75-R (this section)
++ `FINDING-capx-d75-2026-09-06.md` (§1 the superseded ratings; §2 the missing operand; §3 the per-year
+table and bracket; §5 the 2025/26 gap; §6 the routes; §8 the recommendation — YOUR spec) + its
+PRECOMMIT §6 (the pre-declared per-DY signs, recorded before any lane measures against them) + D66 §8
+card B (the origin). DATA PROFILE: pjm. MODEL: Opus. BRANCH (suggested): claude/capx-d75r-pjm-vre-
+elcc-vintage — FRESH off origin/main.
+
+DIRECTOR RULINGS THAT BIND THIS LANE (r#47 §0ar.1): (R1) the fixed/tracking split = D75 §8 option (1):
+carry PJM's OWN published Table-5 mix (12.01 % fixed) as a documented cross-vintage reconciliation
+under rule 14's misalignment exception — a published PJM number on the wrong vintage, stated as such
+in the code comment and the finding — with D75 §3's bracket recorded as its sensitivity; option (2)
+(EIA-860 `Fixed Tilt?` / `Single-Axis Tracking?` derivation) is a SEPARATE data-intake card, not this
+lane's; NEVER any split sized to the position residual or backed out of PJM's cleared solar UCAP
+(rule 13). (R2) scope = THREE delivery years, 2023/24 · 2024/25 · 2025/26; 2022/23 and earlier out of
+scope, stated. (R3) the phase-0 gate is PER YEAR and on the SIGN (DOWN in every in-scope year), never
+on a magnitude band — D75 §3's table replaces the superseded band.
+
+STEP 1 — THE INTAKE FIRST (D75 §6 item 1; `data-intake` skill; additive; no code, no gate): relabel
+the Dec-2021 tranche of `data/raw/capacity-market/elcc/pjm/pjm.csv` PRELIMINARY / SUPERSEDED; add the
+Dec-2023 FINAL 2024/25 set (wind 0.21, solar 0.33 fixed / 0.50 tracking), the 2023/24 set (posted
+2021-12-16), and the 2025/26 3IA set (38 / 10 / 14), source doc + page per row; reconcile by test,
+byte-for-byte, the way D67 reconciled its requirement rows. STOP if any set cannot be cited to a
+primary PJM document. STEP 2 — THE BUILD: the delivery-year vintage axis on
+`RENEWABLE_ELCC_CURVES_BY_ISO["PJM"]` through D48's OWN vintage seam (read how
+`pjm_accreditation_design_vintage` keys the thermal vintage and reuse it — rule 19; if a second key
+is unavoidable, say why), default-off gate in the D48 family, zero scalars beyond the ruled published
+mix, key registered, matrix row + six cells. STEP 3 — PHASE 0 (zero LP): `fleet_only` on the D57
+arm-A recipe emitting accredited VRE MW by class per DY under both vintages; the SIGN gate per year
+(D75 §3: 2023/24 ≈ −755, 2024/25 ≈ −333, 2025/26 ≈ −148 MW at PJM's mix — report the magnitudes,
+gate on the signs). STEP 4 — SCREEN (rule 29): screen year = the DY with the largest phase-0
+footprint (expected 2023/24 → span 2022–2023; year 1 has no `prior_results`); control at HEAD (form 4
+is void on PJM — D67 measured it; the D60-R4 / D74 / D67 solves have all run same-HEAD controls, do
+the same); structural gates: identity (accredited VRE = phase-0 arithmetic to the MW), confinement
+(thermal / storage / requirement byte-identical), no non-target load-bearing flip. STEP 5 — the full
+2021–2025 window if the screen clears; the position at full magnitude on BOTH frames (D66 §1.2).
+Also route, do not fix: D75 §6 item 3 (`evolution_2022.json` lacks the adequacy block that 2021 and
+2023–2025 carry).
+HEAD GUARD around every solve: H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ]
+|| exit 90. Rebase BETWEEN legs, never during; re-audit the rebase delta hunk by hunk before the next
+leg; a matched cache key is NOT a G-DRIFT verdict. COLLISIONS: D74 (bar seam, `retirements.py`) and,
+if Q52 arms it, the D67 arming leg (`iso_configs._pjm_config`) — different regions; D65-B is the sole
+board writer until its batch lands, so registration/re-score waits on it. Nothing arms without a
+ruling. Screen/control bundles DELETED before merge (rule 29(c)).
+EXIT: PRECOMMIT before the first solve (carrying the per-year signs verbatim from D75's PRECOMMIT
+§6), the intake PR (may merge first), FINDING with phase-0 table, screen gate, full-window A/B,
+§8 recommendation. Rules 1, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
+```
+
+## D78 — the sector-gate / capacity-clearing seam: a sector-1 unit must still OFFER (D58 §6 reading 1), so the offer stack is decoupled from the screen candidate set (r#47; CONDITIONAL on owner card C-21 / Q53 = READING 1) — **CHARTERED r#47, DISPATCH ONLY IF Q53 RULES READING 1**
+
+```
+You are the D78 session of the capacity-expansion track. Binding charter: pack §D78 (this section) +
+`FINDING-capx-d58-2026-09-06.md` §3 (the seam at the line: `retirements.py:2856` builds the sell-offer
+stack from the screen's `margins`, `:3199` empties it through `exempt_unit_ids`, `:2872` computes
+`price_takers_mw` as the residual) and §6 (the two readings) + `DESIGN-capx-d53-sector-gate-2026-09-05.md`
+§1.8 (the interaction claim D58 refutes) + `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md` §3.5 (the
+offer identity). PRECONDITION: owner ruling Q53 = READING 1 recorded in the capx ledger §3; otherwise
+STOP and say so. DATA PROFILE: pjm. MODEL: Fable (a market-rule design choice with a clearing-price
+consequence). BRANCH (suggested): claude/capx-d78-sector-gate-offer-seam — FRESH off origin/main.
+
+THE OBJECT. Under D58's arm 34,172.4 MW of sector-1 capacity stopped submitting a net-ACR sell offer
+and became $0 price-taker supply, `n_offers` 1,370 → 1,000, and PJM's 2022 clearing price fell 67.76 →
+61.21 $/MW-day (−9.67 %), pushing 41 merchant rows (2,910.2 MW) under the bar. PJM's RPM must-offer
+requirement says a rate-based existing unit IS in the stack, at its cost-based (net-ACR) price. One
+filter (`exempt_unit_ids`) is doing two jobs — exit candidacy AND capacity offering — a rule-19
+violation D58 discovered and did not patch.
+PHASE 0 — DESIGN, zero LP, committed BEFORE code: (1) state the market rule with the Manual 18 /
+tariff citation (must-offer; who may be excused; what a cost-based offer is); (2) design ONE change:
+the clearing path builds its stack from the FULL accredited fleet's margins, and the sector gate
+removes units from the EXIT decision only — enumerate every consumer of `exempt_unit_ids` and of
+`margins` so the decoupling touches one seam; (3) pre-declare: with the gate armed AND the seam fixed,
+`n_offers` returns to the control's 1,370, `price_takers_mw` to the control's, the 2022 clearing
+price to within the D57 settlement tolerance of the control's 67.76, and the failing pool shrinks by
+EXACTLY the 3,476.5 MW of sector-1 rows (D58's measured partition) — no merchant row changes state.
+(4) State whether the seam is reachable by ANY other exemption channel (step-0 confirmed exits,
+step-1 filed dates, retrofit exemption — does an exogenously-exiting unit still offer in its exit
+year? cite the rule). PHASE 1 — build behind D58's existing gate (no new field if the decoupling is
+the gate's correct semantics — say so; if a second gate is needed, rule 24/28 apply: key registered,
+matrix row + six cells). PHASE 2 — SCREEN (rule 29) on D58's own screen span (2021–2023, the 2022
+screen), three legs at HEAD: control-P (gate off), D58's arm (gate on, seam as built — reproduces
+D58's 566.3 MW to the MW or STOP), the repaired arm; structural STOP gates = the phase-0 identities.
+PHASE 3 — the full 2021–2025 window if the screen clears; PJM's `retirement_sector_gate` cell moves
+from `O` to the measured letter; the arming recommendation pre-stated as D58 §5's flip condition.
+HEAD GUARD around every solve; rebase BETWEEN legs, re-audit the delta; a matched key is not a
+G-DRIFT verdict. COLLISIONS: `retirements.py`'s clearing path is ADJACENT to D74's bar seam — do not
+dispatch until D74's screen has landed (r#47 §0ar.4), rebase onto it, never drop its hunk; D65-B is
+the sole board writer until its batch lands. Bundles deleted before merge. Nothing arms without a
+ruling. Rules 1, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
+EXIT: DESIGN memo, PRECOMMIT, FINDING with the three-leg table, the D53 §1.8 claim corrected by dated
+cross-reference (never rewritten), §8 recommendation.
+```
+
+## D79 — the cache key is not a staleness detector (twice demonstrated: D55's ordering hunk, SCN-LOAD's constants): a SOLVE-SURFACE FINGERPRINT in the key — design phase 0 (r#47; D72-prehunk §6.4, D77's epoch entry "NO KEY MOVES, AND THAT IS THE HAZARD") — **CHARTERED r#47, PHASE 0 (zero LP, design only) DISPATCHABLE**
+
+```
+You are the D79 session of the capacity-expansion track. Binding charter: pack §D79 (this section) +
+`FINDING-capx-d72-prehunk-2026-09-06.md` §6 items 1 and 4 + `src/market_sim/results/cache.py`'s epoch
+ledger (read every entry, especially 2026-08-31 and 2026-09-06b, and the "why a denylist and not an
+epoch bump" note) + capx D24 / D24-R (the last cache-key repair; the (c′) `is_cached` config-equality
+refusal) + `FINDING-capx-d60-2026-09-05.md` §8-blast-radius. PHASE 0 IS A DESIGN MEMO, ZERO LP, NO
+CODE. DATA PROFILE: code. MODEL: Fable (what belongs in the key is an adjudication with program-wide
+consequences). BRANCH (suggested): claude/capx-d79-solve-surface-fingerprint — FRESH off origin/main.
+
+THE DEFECT, measured twice. `cache_key()` hashes the resolved `ScenarioConfig` — not `constants.py`,
+not the solve-path source. capx D55's `_floor_retention_merit` reordering moved every forecast
+bundle's exit set at an unchanged key (found by D65 §3c); SCN-LOAD `d14a7ed0` re-derived
+`DEMAND_GROWTH_RATES` / `DATACENTER_ADDITIONS_MW` / `ELECTRIFICATION_LAYERS` and moved every T1-F peak
+at an unchanged key (found by D67, D60-R4 and the D72-prehunk lane, each by accident of re-solving);
+D77's `Generator` attribute repair moved CO2 −48 % at an unchanged key. Consequence: a stale bundle at
+a valid key is served as current (rule 26 in its cache form — a re-armable wrong answer), and the
+board's 33 forecast rows are all stale against HEAD with nothing on the key saying so.
+
+PHASE 0 — THE DESIGN MEMO, four questions answered with evidence, no code: (1) INVENTORY — every
+`constants.py` table and every `*_BY_ISO` registry the FORECAST solve path reads (demand shape,
+growth, DC/electrification layers, ELCC curves, capacity-market tables, retirement thresholds, CCS
+constants, …) — by grep of the import graph, not from memory; classify each as solve-affecting or
+reporting-only. (2) THE MECHANISM — compare: (a) a `constants_fingerprint` = hash of the canonical
+JSON of the solve-affecting tables, appended to the key (moves the key exactly when a table moves;
+keeps the key stable across pure-code refactors); (b) a solve-path source-tree hash (moves on EVERY
+code change — every refactor invalidates every bundle; measure how often that would have fired over
+the last 30 days from `git log`); (c) the existing human-read epoch ledger + denylist, made
+mechanical (an epoch id in the key bumped by policy); (d) a hybrid — (a) automatically plus (c) for
+code hunks. For each: what it would have caught among the three incidents, what it invalidates
+spuriously, and the cost to every committed bundle and every pinned key in
+`tests/regression/test_persisted_identity.py`. (3) THE BLAST RADIUS of adopting each — which
+committed keys move, what the `-pre-*` prior convention becomes, and whether the D65-B batch (which
+re-solves every bare key at one HEAD) is the natural moment to land it (one re-key event, Q47's
+logic). (4) RECOMMEND ONE, with the phase-1 build spec and its tests, as a director card if it moves
+keys program-wide (it will). Rules 24 (no off-registry knob — the fingerprint is derived, never
+set), 26, 27 (`cache.py` and `scenarios.py` are ≥300 lines — nothing is rewritten in phase 0), 28
+(no mechanism). EXIT: DESIGN-capx-d79-<date>.md; nothing else touched.
+```
+
+## D76 — RE-EMITTED r#47 UNCHANGED (never dispatched at r#46: zero commits, no branch). Paste §D76 above verbatim. Its phase 0 is the precondition for the D72-prehunk residue t1h keys and for D67's FALL-year root cause; dispatch it.
+
+## D67 — ARMING LEG (r#47; CONDITIONAL on owner card C-20 / Q52 = ARM) — **RESERVED; charter written when Q52 rules.** Scope if ARM: `iso_configs._pjm_config` `default_scenario_overrides` gains `capacity_adequacy_requirement_published_by_iso: {"PJM": True}` (the D57/Q44 pattern), the bare `pjm-t1h` re-keys with its prior preserved at `-pre-d67`, one re-solve (~13 min, same-HEAD; the arm's numbers are in D67 §7.1), board row re-scored after D65-B's batch, PJM shard cell `K`, matrix stamped; every other ISO and every backcast byte-identical, asserted by the persisted-identity tests. Opus.
