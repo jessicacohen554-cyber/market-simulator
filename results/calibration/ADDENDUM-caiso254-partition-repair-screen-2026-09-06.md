@@ -250,3 +250,66 @@ entry; the rule-28 CAISO matrix-shard stamp. **Only if G-BIMODAL passes:** the
 derive's class-partition repair, the re-frozen artifact, the phase-0 census,
 the screen, the full three-year bundle and its registration — with the keeper
 promotion decided on structure, and any gate regression put to the owner.
+
+---
+
+## §1.3 — G-DRIFT EXTENSION: `fbef3a91` → `bc77b189`, recorded before any solve
+
+`main` advanced 45 commits while the corpus was being re-fetched (this
+addendum's own commit `672bf473` merged into it), so the audit chain is
+extended rather than re-opened. Same command, same classification duty:
+
+```
+git diff fbef3a91 bc77b189 -- src/market_sim scripts/run_calibration.py \
+  scripts/run_calibration_full.py scripts/lib data/raw/_validation-source \
+  data/raw/reference
+```
+
+7 files, +833 / −28 — all of it the capx D61/D62 going-forward-cost lane.
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `src/market_sim/config/scenarios.py` | +94 | **INERT** | one new field, `capacity_going_forward_bar_published_by_iso: dict[str, bool] \| None = None` (`:15696`), coerced to `None` in `__post_init__` (`:16487`) and registered in the cache-key **drop map** at `"None"` (`:1970`) — the keeper's key is unmoved. The rest of the hunk is comment text on the SCN-WS2a CES placeholder. |
+| `src/market_sim/config/capacity_market.py` | +51 | **INERT** | the resolver for that gate. Measured at the shipped default: `resolve_capacity_going_forward_bar_published` returns **`False` for all six ISOs**, CAISO included. |
+| `src/market_sim/data/avoidable_cost_rate.py` | +291 (new) | **INERT** | published net-ACR intake, read only under the gate above. |
+| `src/market_sim/model/capacity_evolution/retirements.py` | +134 | **INERT — two independent proofs** | §1.3.1. |
+| `scripts/lib/bench_stamp.py` | +201 | **INERT** | dashboard bench-stamp tooling; nothing on the solve path imports it. |
+| `scripts/lib/mech_matrix.py` | +81 | **INERT** | rule-28 matrix tooling; governance only. |
+| `scripts/lib/…/__init__.py` | +9 | **INERT** | package export for the above. |
+
+### §1.3.1 — Why the retirement-screen hunk cannot reach a CAISO backcast
+
+The new `resolve_going_forward_bar_per_kw_yr` is the retirement screen's
+going-forward-cost operand (capacity evolution **step 3**). Two arguments, and
+either alone is sufficient:
+
+1. **The gate is off, measured not assumed.** `retirements.py:2251` returns
+   `(atb, "atb_fom")` — the pre-existing value — on the first line whenever the
+   gate is false, and the gate was executed and reads **False for every ISO**
+   at the shipped default. Nothing downstream of that early return runs.
+2. **The lane never enters capacity evolution at all.** The calibration path
+   rebuilds each year's fleet with `fleet.build_base_fleet` and never calls
+   `evolve_fleet` — stated in the codebase itself at `results/cache.py:337-339`
+   ("builds each year's fleet with `fleet.build_base_fleet` and never calls
+   `evolve_fleet` or `capacity_evolution.new_entry`"), which is why a multi-year
+   backcast has no evolution step to reach.
+
+**⇒ Every hunk in `fbef3a91` → `bc77b189` is INERT for a CAISO backcast. The
+chain `fa23c1f7` (keeper) → `82f79693` (caiso-253) → `fbef3a91` (§1) →
+`bc77b189` (here) is complete, and G-CTRL form 4 still stands with no control
+solve spent.** §1.2's single LIVE hunk and its `co2` restriction are unchanged.
+
+### §1.3.2 — A gate-power disclosure, made BEFORE the screen year is named
+
+Read from the keeper's committed `_verdict.json` while the corpus was still
+downloading, and recorded here so it cannot be mistaken for a post-hoc excuse:
+**the keeper's C1 gas records for 2025 are all SKIPPED** on the preliminary
+EIA-923 vintage (CT_PEAKER at 38 % plant reporting; ST_GAS has no per-class
+actual). If §3.1's footprint census names **2025**, the S-3 C1 stop gate has
+little bite in that year and S-4 (C4, which is scored in all three years)
+carries the protective load alone.
+
+**This changes nothing about how the year is named.** The year is
+`argmax_y F(y)` and F contains no criterion — naming it instead on "which year
+my gate can see" would be gate-shopping, which is precisely what §3.1 exists to
+prevent. The limitation is disclosed, not designed around.
