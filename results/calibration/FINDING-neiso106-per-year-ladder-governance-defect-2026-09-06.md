@@ -1,5 +1,20 @@
 # FINDING neiso-106 (second, incidental) — the Calibration Status per-year ladder reads `NOT-YET` on EVERY year of two ISOs' CALIBRATED keepers, on a spurious governance failure
 
+> **RESOLVED 2026-09-06 by session neiso-107**, run as a **cross-ISO governance session** (not a
+> NEISO calibration lane) for the §4 reason. The fix is §5's, in the caller: `determine_from_artifacts`
+> now scores C6 on the **run's own** scored span, unfiltered by the caller's `years` argument, so the
+> partition-span callers in `build_status` / `audit_keepers` are fixed by the same line. The rule 1 (b)
+> equality is **NOT** relaxed. Measured over every registered run, twice — at `49773428` (16 runs,
+> 15 rows) and again rebased onto `dd78f46b` (14 runs, 12 rows, after the MISO lane's own prunes):
+> **0 run-level determinations move**, and every affected **per-year row** moves off the spurious
+> `governance gate FAIL` onto its true determination (`status/NEISO.js` + `status/MISO.js` rebuilt;
+> the other four ISOs' parts were untouched and `build_status.py --check` passes for all six). `RUBRIC_VERSION` stays **3.6** — the rubric was
+> always right, the caller asked it the wrong question. Guard:
+> `tests/scoring/test_calibration_verdict.py::PerYearGovernanceScopeTests` (5 tests; all five fail
+> against the pre-fix line, and two of them pin that a genuinely per-year `years_held` still FAILs —
+> including on the one year it was held on, the hole a subset test would have opened).
+> Session record: `docs/calibration-log/governance.md` § neiso-107.
+
 **2026-09-06, session neiso-106. ZERO LP minutes. NOTHING WAS FIXED — this is an escalation, not a
 repair**, for the reason in §4. Found while verifying this lane's own rule 30(b) surface.
 

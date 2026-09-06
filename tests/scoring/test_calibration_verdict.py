@@ -1015,6 +1015,97 @@ class AuthorizedPriceTuningTests(unittest.TestCase):
         self.assertEqual(g["status"], cv.FAIL)
 
 
+class PerYearGovernanceScopeTests(unittest.TestCase):
+    """Rule 1 (b) is asked of the RUN, never of a display subset of its years.
+
+    ``build_status.build_years`` (the rule 30 (b) per-year ladder) and the
+    partition-span callers in ``build_status`` / ``audit_keepers`` score one
+    year of a multi-year run at a time. Before the neiso-107 fix that subset
+    reached ``score_governance``, so a legitimate ``years_held``
+    ``[2023, 2024, 2025]`` was compared against ``[2023]`` and FAILED — which
+    rendered NOT-YET on every year of NEISO's and MISO's CALIBRATED keepers
+    (``results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
+
+    These tests pin BOTH halves: the span filter no longer breaks a run-level
+    declaration, AND a genuinely per-year declaration still FAILs — the failure
+    mode rule 1 (b) exists to catch, which a subset test would have let through.
+    """
+
+    YEARS = (2023, 2024, 2025)
+
+    def _art(self, years_held):
+        """A clean 3-year artifact declaring the authorized price-tuning channel."""
+        det = DeterminationTests()
+        art = _artifacts(
+            det._clean_year_payload(),
+            target_years=list(self.YEARS),
+            **det._clean_bench_args(),
+        )
+        # Fan the single clean year/bench fixture across all three years.
+        ypay = art["payload"]["years"]["2024"]
+        ybench = art["bench"][2024]
+        art["payload"]["years"] = {str(y): ypay for y in self.YEARS}
+        art["bench"] = {y: ybench for y in self.YEARS}
+        att = _clean_attestation()
+        att["governance"]["no_fit_to_price_residuals"] = False
+        att["governance"]["levers_trace_to_measured_input"] = False
+        att["governance"]["authorized_price_tuning"] = {
+            "channel": "offer_curve_by_group",
+            "ruling": "owner ruling 2026-09-05",
+            "value": "x1.10 on the non-steam fossil bands",
+            "years_held": list(years_held),
+            "set_ex_ante": True,
+            "not_swept": True,
+        }
+        art["attestation"] = att
+        return art
+
+    def _gov(self, art, years=None):
+        v = cv.determine_from_artifacts("t", art, years=years)
+        return v["criteria"]["governance"]["status"], v
+
+    def test_full_span_passes(self):
+        # Baseline: unrestricted, the declaration covers the run's scored span.
+        status, _ = self._gov(self._art(self.YEARS))
+        self.assertEqual(status, cv.PASS)
+
+    def test_single_year_subset_still_passes(self):
+        # THE DEFECT. Each year rendered on its own must read the run's own
+        # governance verdict, not FAIL on {2023,2024,2025} != {2023}.
+        art = self._art(self.YEARS)
+        for year in self.YEARS:
+            with self.subTest(year=year):
+                status, v = self._gov(art, years=[year])
+                self.assertEqual(status, cv.PASS)
+                self.assertEqual(v["scorable_years"], [year])
+                self.assertNotIn(
+                    "does not cover every scored year", " ".join(v["reasons"] or [])
+                )
+
+    def test_partition_span_subset_still_passes(self):
+        # The same category error reached the two-config partition-span callers
+        # (build_status / audit_keepers, owner two-config ruling 2026-08-26).
+        status, _ = self._gov(self._art(self.YEARS), years=[2024, 2025])
+        self.assertEqual(status, cv.PASS)
+
+    def test_genuinely_per_year_declaration_still_fails_full_span(self):
+        # The equality is NOT relaxed: a config held on ONE of three scored
+        # years is per-year fitting and still FAILs rule 1 (b).
+        status, v = self._gov(self._art([2025]))
+        self.assertEqual(status, cv.FAIL)
+        self.assertIn("does not cover every scored year", " ".join(v["reasons"] or []))
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_genuinely_per_year_declaration_still_fails_on_its_own_year(self):
+        # And the fix must not create a hole: rendering the ONE year the
+        # per-year config was held on must NOT make it pass. This is the
+        # failure mode a subset test would have let through.
+        status, v = self._gov(self._art([2025]), years=[2025])
+        self.assertEqual(status, cv.FAIL)
+        self.assertIn("does not cover every scored year", " ".join(v["reasons"] or []))
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+
 class LedgerTests(unittest.TestCase):
     def test_documented_fail_becomes_caveat(self):
         # v3.1: only C3c (price_tail) is ledgerable at all, so the documented

@@ -388,6 +388,24 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       reclassification — so a holdout-year C1 failure keeps the in-sample
 #       rule silent exactly as any other non-C3c failure would.
 #       NO SOLVE RAN — scorer-side only; every run re-scores in place.
+#
+# NOT A RUBRIC CHANGE — 2026-09-06, session neiso-107 (cross-ISO governance).
+#       RUBRIC_VERSION DELIBERATELY STAYS 3.6. The per-year-ladder repair in
+#       determine_from_artifacts scores the C6 governance gate on the RUN's own
+#       span rather than on the caller's ``years`` display subset. No criterion
+#       band, tier, ledger route, caveat budget or determination rule moved, and
+#       NO RUN-LEVEL DETERMINATION CHANGES — verified over all 16 registered
+#       runs, 0 moves. What changes is only that a legitimate rule 1 (b)
+#       ``years_held`` declaration stops FAILing when one of the run's own years
+#       is rendered alone, which had put NOT-YET on EVERY per-year row of
+#       NEISO's and MISO's CALIBRATED keepers. The rubric was always right here;
+#       the caller was asking it the wrong question, so there is no new rubric
+#       to version. Rule 1 (b)'s equality is NOT relaxed to a subset test —
+#       ``PerYearGovernanceScopeTests`` pins that a genuinely per-year
+#       ``years_held`` still FAILs, including on the single year it was held on.
+#       Finding: results/calibration/
+#       FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md.
+#       NO SOLVE RAN — scorer-side only; every run re-scores in place.
 RUBRIC_VERSION = 3.6
 
 # Statuses (per criterion-year and aggregated).
@@ -2827,6 +2845,17 @@ def score_governance(
     carve-out installed, and the DOF-ledger half of condition (e) is not
     machine-checked here (``audit_keepers`` E8 validates the ledger's shape).
     Genealogy: ``docs/governance/rule-history.md`` §11 and §13.
+
+    Args:
+        config: The run's ``run_config.json``.
+        attestation: The run's attestation, or ``None`` when it has none.
+        years: **The RUN's own scored years** — the span rule 1 (b)'s
+            ``years_held`` must cover exactly. Callers scoring a subset of a
+            run's years for display (the rule 30 (b) per-year ladder, a
+            partitioned keeper's designated span) must still pass the run's
+            FULL scored span here: ``years_held`` describes the run's
+            configuration, not the rows being rendered. See
+            :func:`determine_from_artifacts`.
     """
     sc = (config or {}).get("scenario_config", {})
     meta = (config or {}).get("meta", {})
@@ -2984,6 +3013,10 @@ def determine_from_artifacts(
     the scored span — see :func:`determine`; both the target and scorable sets
     are filtered so ``data_blocked_years`` never reports a year the span
     deliberately excludes.
+
+    **The governance gate (C6) is scored on the RUN's own span, unfiltered.**
+    ``years`` restricts which criterion-YEARS are scored; it never narrows the
+    run-level question rule 1 (b) asks about the price-tuning declaration.
     """
     sidecar, payload, bench = art["sidecar"], art["payload"], art["bench"]
     iso = sidecar.get("iso", "ERCOT")
@@ -2991,6 +3024,10 @@ def determine_from_artifacts(
 
     target_years = [int(y) for y in sidecar.get("years", [])]
     scorable_years = sorted(int(y) for y in (payload or {}).get("years", {}))
+    # The RUN's own scored span, kept UNFILTERED by the caller's ``years``
+    # argument. Governance is a property of the run, never of the subset being
+    # displayed — see the ``score_governance`` call below.
+    run_scorable_years = list(scorable_years)
     if years is not None:
         span = sorted(int(y) for y in years)
         target_years = [y for y in target_years if y in span]
@@ -3023,9 +3060,20 @@ def determine_from_artifacts(
     for r in records:
         _apply_ledger(r, exceptions)
 
-    # scorable_years feeds rule 1 (b): the ONE config must be held across EVERY
-    # scored year, so the check needs to know which years those are.
-    gov = score_governance(art["config"], art["attestation"], scorable_years)
+    # The RUN's OWN scored span feeds rule 1 (b) — never the caller's ``years``
+    # subset. Rule 1 (b) asks whether ONE config was held across every year the
+    # RUN scored; ``years_held`` is a property of the run's configuration, so
+    # answering it against a display subset is a category error. Scoring a
+    # 2023-2025 run one year at a time (``build_status.build_years``, the rule
+    # 30 (b) per-year ladder; ``audit_keepers`` / ``build_status`` partition
+    # spans) compared {2023,2024,2025} against {2023} and returned FAIL, which
+    # rendered NOT-YET on EVERY year of two ISOs' CALIBRATED keepers
+    # (``results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md``).
+    # The equality in :func:`_authorized_tuning_finding` is CORRECT and is
+    # deliberately NOT relaxed to a subset test: a subset test would let a
+    # genuinely per-year ``years_held`` pass rule 1 (b), which is the exact
+    # failure mode the rule exists to catch. The fix is here, in the caller.
+    gov = score_governance(art["config"], art["attestation"], run_scorable_years)
 
     # Owner STANDING RULE (2026-08-06) — auto-ledger a LONE C3c failure on an
     # out-of-training year. Runs AFTER the explicit ledger and AFTER governance,
