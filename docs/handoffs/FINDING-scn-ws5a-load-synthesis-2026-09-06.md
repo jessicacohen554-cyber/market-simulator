@@ -216,3 +216,164 @@ ledger: zero free parameters**. `configs/scenario_campaign_matrix.yaml`,
 forecast namespace under one campaign with `reference_case: REF`; all 16 invariant FAIL sets
 declared. Rule 27: every ≥300-line push fetch-back verified. Rule 29(c): no screen or control
 bundle produced. **Backcast byte-identity: untouched** — this lane is forecast-mode only.
+
+---
+
+# ADDENDUM 2026-09-06 — post-D77 re-solve (lane SCN-WS5A-RESOLVE, ruling S8)
+
+**Appended, never a rewrite.** Everything above this line is the campaign as solved at the frozen
+pre-D77 pin `1cc45bb2` and stays exactly as written — it is the record of what those numbers
+were, and §0 above already says why they are contaminated. This addendum reports what the same
+16 legs say once the seam is repaired.
+
+**The campaign now stands at TWO pins, deliberately.** ERCOT's three legs are **CCS-clean** — its
+retrofit ledger is empty in all three — so G-DRIFT lets them stand at `1cc45bb2` and they were
+not re-solved. The other 13 legs are re-solved at **THE PIN
+`bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`** (a descendant of capx D77 `fc583339` and capx D65-B
+`b1f77621`), into `results/scn-campaign-load-2026-09-06-r2/`, and **re-registered under their
+original run ids** with the pre-fix slim artifacts deleted. Method, gates, per-leg numbers and the
+G-DRIFT classification: `FINDING-scn-ws5a-resolve-2026-09-06.md` and
+`PRECOMMIT-scn-ws5a-resolve-2026-09-06.md`.
+
+## A.1 The correction is larger than the pre-solve estimate, in every ISO measured
+
+The contamination shares stated in §5 above were computed as **accounting** shares — mis-rated
+TWh × rate error, on a frozen fleet. The solved answers are larger, because correctly-rated CCS is
+cheaper per tonne, so the retrofit screen **converts more units** and the corrected fleet displaces
+unabated gas and coal:
+
+| ISO | §5 pre-solve share of the 2030 REF level | **solved** | 2030 REF CO2 pre → post |
+|---|---|---|---|
+| NEISO | 41.9 % | **54.3 %** | 13.368 → **6.106** Mt |
+| NYISO | 25.3 % | **47.8 %** | 20.893 → **10.903** Mt |
+| PJM | 0.42 % | **1.58 %** | 470.455 → **463.039** Mt |
+| CAISO | 16.2 % | *pending sibling lane* | 31.160 → — |
+| MISO | ≈0.27 % | *pending sibling lane* | 412.634 → — |
+| ERCOT | 0 (clean) | 0 (clean) | unchanged at `1cc45bb2` |
+
+**So §5's shares are lower bounds, not estimates**, and the same caution applies to CAISO's and
+MISO's until their lanes land. **2026 and 2027 do not move in any leg** — every fuel row is
+identical to the pre-fix bundle — so the repair is confined to 2028+ as a measurement, not as an
+argument from the code.
+
+## A.2 The six-ISO system table, post-fix, on the common set
+
+**The common set is currently FOUR ISOs — {ERCOT, NEISO, NYISO, PJM}** — because CAISO's and
+MISO's re-solves are with sibling lanes at the time of writing. Per §6.3's own routed defect and
+SCN-FIX1's repair, a partial-coverage sum is never differenced against a fuller one: the table
+below is the four-ISO system throughout, and the §1 six-ISO table above is **not** comparable to
+it. The six-ISO post-fix table is written once both siblings land.
+
+| year | REF Mt | LOAD-HI Mt | **ΔCO2** | import-attributed Mt (REF → HI) | unserved TWh (REF → HI) |
+|---|---|---|---|---|---|
+| 2026 | 627.1 | 708.2 | **+81.1** | 15.75 → 16.98 | 0.38 → 2.70 |
+| 2027 | 691.3 | 804.2 | **+112.8** | 15.44 → 18.63 | 4.62 → 72.61 |
+| 2028 | **730.1** | **844.9** | **+114.8** | 17.48 → 24.47 | 41.43 → 237.79 |
+| 2029 | **753.6** | **897.0** | **+143.4** | 17.48 → 26.62 | 76.40 → 386.47 |
+| 2030 | **808.9** | **971.1** | **+162.2** | 21.71 → 31.43 | 127.30 → 602.56 |
+
+The same four ISOs **before** the repair, so the two are read against each other and nothing is
+differenced across mismatched systems:
+
+| year | REF Mt | LOAD-HI Mt | ΔCO2 | import Mt | unserved TWh |
+|---|---|---|---|---|---|
+| 2026 | 627.1 | 708.2 | +81.1 | 15.75 → 16.98 | 0.38 → 2.70 |
+| 2027 | 691.3 | 804.2 | +112.8 | 15.44 → 18.63 | 4.62 → 72.61 |
+| 2028 | 744.3 | 860.2 | +115.9 | 18.85 → 25.34 | 41.43 → 237.79 |
+| 2029 | 779.4 | 928.5 | +149.2 | 19.96 → 29.40 | 76.40 → 386.47 |
+| 2030 | 833.6 | 1,002.4 | +168.8 | 23.84 → 33.54 | 127.30 → 602.56 |
+
+**Read together:** at 2030 the four-ISO REF level falls **−24.7 Mt (−3.0 %)**, LOAD-HI falls
+**−31.3 Mt (−3.1 %)**, and the load response falls **−6.6 Mt (+168.8 → +162.2)**. The import line
+falls with them (23.84 → 21.71 REF) because cheaper abated gas displaces some of what was being
+imported. **`unserved_mwh` is identical to the MWh in every year and both arms** — the seam is a
+merit-order and emission-rate object and touches nothing on the adequacy path, which is the
+cleanest possible confirmation that the adequacy caveats in §5 are independent of it and survive
+the repair unchanged. The four-ISO totals are dominated by PJM (~76 % of the level), which is why
+they move ~3 % while NEISO and NYISO individually move ~50 %.
+
+**What survives the repair, and it is the campaign's headline.** §1.1's finding — *"doubling the
+data-centre block moves four-ISO CO2 by 0.13 Mt in 2030, 0.1 % of the load response"* — is
+**unaffected, and slightly strengthened**. NYISO is the only ISO in this lane's set with a live
+ORGANIC arm; its DC-shape gap goes **+0.0797 → +0.1479 Mt** at 2030 while its load response
+**falls** +5.340 → +3.117 Mt. The shape axis therefore matters *more* relative to the volume axis
+after the repair, not less. **The volume-vs-shape conclusion does not depend on the seam.**
+
+**What does NOT survive: the load-response deltas themselves.** §0's expectation that *"deltas
+mostly survive"* is **false in NEISO** and only partly true in NYISO:
+
+| ISO | ΔCO2 2030 pre | post | change |
+|---|---|---|---|
+| NEISO | +1.408 | **+0.251** | **−82 %** |
+| NYISO | +5.340 | **+3.117** | −42 % |
+| PJM | +148.623 | **+145.432** | −2.1 % |
+
+The reason is mechanical and is the single most transferable result of the re-solve: **the repair
+moves the two arms' retrofit sets by different amounts.** Pre-fix, NEISO's REF and LOAD-HI carried
+nearly identical CCS output (16.72 vs 16.89 TWh) so the correction was expected to cancel out of
+the delta; post-fix they carry 25.93 vs 29.00 TWh across 28 vs 33 retrofitted units. A correction
+that re-rates a *fixed* fleet cancels out of a delta; one that also *re-screens* the fleet does
+not. **No delta from a CCS-carrying ISO may be quoted from the pre-fix bundle.**
+
+## A.3 Honest-unfit, corrected (replaces §5 for the re-solved ISOs)
+
+- **ERCOT** — **unchanged.** Levels unquotable at every year, deltas only 2026–27; REF sheds
+  127 TWh by 2030 at $4,438/MWh. **CCS-clean, still at `1cc45bb2`.**
+- **PJM** — levels still unquotable for the reason §5 gave that has nothing to do with CCS (REF
+  +18.0 % energy vs its board key; 63.7 TWh shed under LOAD-HI). The **"mis-rated CCS from 2029"
+  clause is now discharged.** Deltas usable with PJM's own adequacy caveat; the CCS caveat is
+  spent.
+- **NEISO** — 14/14 PASS, zero unserved, **CCS repaired**. The §5 line "41.9 % of its 2030 level
+  mis-rated" is discharged and replaced by: the level fell 54.3 % on repair, and **its ΔCO2 fell
+  82 %** — NEISO's delta is the one this campaign got most wrong pre-fix.
+- **NYISO** — 14/14 PASS, zero unserved, **CCS repaired**; 47.8 % of the pre-fix 2030 level was
+  the seam. Its confirmed-exit channel is still inert (empty registry, "DATA NEEDED") — that
+  caveat is untouched by the repair.
+- **CAISO** — **still a HOLD ISO** (REF carries I7 + I12; that is an adequacy caveat, not a CCS
+  one, and the re-solve does not clear it). Its CCS clause stays open until the sibling lane lands.
+- **MISO** — levels still unquotable (+14.7 % vs key; I3 fails in REF); CCS clause open until the
+  sibling lane lands.
+
+**Unchanged for every ISO:** `emissions_mt` is read with `unserved_mwh` and
+`import_co2_mt_reported` beside it, never as a total.
+
+## A.4 CARD D-5 — the cost table, amended with the re-solve row set
+
+§8's table stands as the **first-solve** cost. What it could not carry, and what its own closing
+paragraph said should gate D-5, is the price of the D77 re-pin. Measured:
+
+| ISO | legs re-solved | solve-yrs | wall min | **min/solve-yr** | first-solve min/solve-yr | peak RSS GB |
+|---|---|---|---|---|---|---|
+| NEISO | 2 | 10 | 10.8 | **1.08** | 1.09 | 3.60 |
+| NYISO | 3 | 15 | 58.5 | **3.90** | 4.06 | 3.84 |
+| PJM | 2 | 10 | 73.1 | **7.31** | 7.90 | 8.76 |
+| CAISO | 3 | 15 | *pending* | — | 4.33 | — |
+| MISO | 3 | 15 | *pending* | — | 5.23 | — |
+| ERCOT | **0 — clean** | 0 | 0 | — | 1.30 | — |
+| **re-solve subtotal, measured** | **7** | **35** | **142.4** | **4.07** | — | — |
+
+**A re-pin costs a full re-run, not a discount.** Every ISO measured comes in within a few percent
+of its own first-solve rate per solve-year — the expected result, since the recipe is the identical
+LP at a moved key. Estimating the two pending ISOs at their own first-solve rates, the full
+13-leg / 65-solve-year re-solve is **≈286 min ≈ 4.8 h**, taking Stage
+A-LOAD's **all-in cost to ≈10.0 h of LP**.
+
+**What this changes for D-5, and what it does not.** It does **not** change §8's affordability
+argument: a Stage B of comparable shape is still one session on one box. It **adds a second line
+the Stage-B charter should carry explicitly** — *any mechanism repair landing mid-campaign
+re-runs the campaign*, at roughly 1× its original cost. The mitigation is sequencing, not faster
+LPs: **freeze the capx mechanism set before a campaign opens, or budget a ~1× re-run as its
+contingency.** Stage A paid that contingency once, in full, and §8's recommendation that D-5 be
+gated on the D77 re-solve rather than on cost is now **discharged for four of six ISOs** and open
+only on CAISO and MISO.
+
+## A.5 Two corrections this addendum owes
+
+1. **§0's "deltas mostly survive" is withdrawn** for CCS-carrying ISOs (A.2). It was a reasonable
+   read of the pre-fix arm gaps and it did not survive the solve.
+2. **The desk ledger r#14's reading of capx D67-ARM** — *"a `{iso: bool}` gate no scenario case
+   sets, INERT for every SCN leg"* — is wrong for PJM: it arms through
+   `iso_configs._pjm_config`'s `default_scenario_overrides`, not through a case, so it is live on
+   every PJM leg. Its measured effect on this campaign is nil (every PJM capacity row is identical
+   pre → post, because PJM's backstop is clamped at its rate cap at a −16 % reserve margin), but
+   the stated reason was false. Routed to SCN-DESK, not edited here.

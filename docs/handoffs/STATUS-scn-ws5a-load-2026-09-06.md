@@ -55,13 +55,37 @@ loop** on the three ISOs that *are* authorized — was delivered in-session; its
 
 ## Campaign state
 
-- **Frozen pin** `1cc45bb2`; every leg verified a descendant with **zero** solve-path diff
-  and `git.dirty=False` (PRECOMMIT ADDENDUM §5).
-- **16 legs** planned: ERCOT/CAISO/MISO/NYISO 3 each, PJM/NEISO 2 each (phase 0 measured the
-  DC axis degenerate in PJM and NEISO).
-- **Complete:** ERCOT, NEISO, NYISO — solved, registered, delta-reported, FINDING written.
-- **Running / queued:** PJM, then MISO, then CAISO (each alone, rule 12).
-- Backcast byte-identity untouched; DOF ledger carries **zero** free parameters.
+**All 16 legs are solved; the campaign now stands at TWO DECLARED PINS, and its re-solve is
+7 of 13 complete.** Capx **D77** repaired the `gas_cc_ccs` emission-rate seam *after* every leg of
+the original campaign was solved, so ruling **S8** (card D-10) re-solves the 13 contaminated ones.
+**NEISO 2 + NYISO 3 + PJM 2 are landed and pushed; CAISO 3 and MISO 3 are with sibling lanes and
+are NOT yet re-solved** — until they land, those six legs' committed numbers are the pre-fix ones
+and carry the caveat below.
+
+| | pin | legs | why |
+|---|---|---|---|
+| **ERCOT** | `1cc45bb2` (original) | 3 | **CCS-clean** — its retrofit ledger is empty in all three legs, so no unit ever carries a capture fraction. G-DRIFT (rule 29(b)) classified the intervening window and lets these stand; **not re-solved** |
+| **NEISO, NYISO, PJM, CAISO, MISO** | **`bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`** | 13 | contaminated; re-solved into `results/scn-campaign-load-2026-09-06-r2/`, re-registered under their **original run ids**, pre-fix slim artifacts deleted in the same commit (rule 26 `[R-DELETE]`) |
+
+- **Original solve:** 16 legs / 80 solve-years, all rc=0, at the frozen pin `1cc45bb2`; every leg
+  a verified descendant with zero solve-path diff (PRECOMMIT ADDENDUM §5).
+- **Re-solve:** 13 legs / 65 solve-years at THE PIN, of which **7 legs / 35 solve-years are
+  done**; gates **5/5 PASS on every landed leg**, including
+  the G1 unit-level identity `emission_rate == host CAMPD rate × (1 − 0.90)` with **zero
+  failures**, and G2b — every fuel row in 2026/2027 identical to the pre-fix bundle, which is the
+  measured proof that the repair is confined to 2028+.
+  Lane SCN-WS5A-RESOLVE delivered NEISO 2 + NYISO 3 + PJM 2; CAISO 3 and MISO 3 went to sibling
+  sessions under the owner's rule-12 slot instruction and report through their own FINDINGs.
+- **Reading a number from this campaign:** check the sidecar's `git.sha`. A pre-fix bundle's
+  2028–2030 CO2 is overstated — by **54.3 % (NEISO) / 47.8 % (NYISO) / 1.58 % (PJM)** at 2030 —
+  and, unlike what §0 of the synthesis expected, **the load-response deltas do not survive
+  either** (NEISO's ΔCO2 fell 82 %, NYISO's 42 %). **No level and no delta from a CCS-carrying
+  ISO may be quoted from a pre-fix bundle.** ERCOT's three legs are unaffected and quotable as
+  they always were, subject to their own (adequacy) caveats. **CAISO's and MISO's six legs are
+  still at the pre-fix pin** and their pre-solve contamination shares (16.2 % / ≈0.27 %) are lower
+  bounds, not estimates — NEISO's and NYISO's solved answers came in well above theirs.
+- Backcast byte-identity untouched at both pins; DOF ledger carries **zero** free parameters at
+  both.
 
 ---
 
