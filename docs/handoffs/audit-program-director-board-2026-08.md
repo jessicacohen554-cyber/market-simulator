@@ -1,5 +1,613 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟢 **THE FORECAST-INVARIANT BACKLOG IS ZERO — THE CI JOB IS GREEN AND OWNER CARD 2'S CONDITION IS MET — BUT IT IS A *RE*-GREEN, NOT THE FIRST IN THAT JOB'S HISTORY** — RECORDS-ONLY LANE **v39**, director pin `13ee0c89` (dispatch **16:08Z**) → **THIS LANE'S PIN `ccbf802e`**, `main` at close **`0336ccd8`** (and **`6f41c51f`** by commit time). `check_forecast_invariants --sidecar-dir` exits **0**, **0 undeclared**, `registration_ratchet_baseline` **`{}`**, and the `Forecast-invariant artifact audit` job is **success** — first at run **2677**, capx D80's own PR run, at **15:29:26Z**. 🔴 **One dispatch figure does not reproduce and is corrected here, not adjudicated:** the ledger's own `cleared` note records a **2026-08-19 dashboard clear-out** that emptied `declared_failures`, so this job **has been green before**; the true claim is *first green since the backlog re-opened* (the board's own series 4 → 16 → 17 → 20 → 24 → 30 → 8 → **0**). The flip set is **4 OF 6** on run **2686**, six newer than the director's 2680, and `ruff format` is red on **exactly the one file dispatched**, `scripts/gen_caiso257_attestation.py`. G2 leg 4 reads `protected: false` at a **TWENTY-FOURTH** reading, on **THREE** branches. **`main` MOVED under this lane — dated coda below, and the `ruff` red was discharged inside it.**
+>
+> **Records only.** No solve, no scoring, no registration, no keeper shard, no
+> marker, no freeze file, no matrix shard, no workflow, no `program-status.json`,
+> no `status/*.js`, no `results/calibration/`, no `CLAUDE.md`. It adjudicates
+> nothing and **rewrites nothing in v28 … v38** — the entries below are *dated
+> records*, and the "first green" correction in particular is placed here rather
+> than applied to the dispatch or to v38's text. **v39 is inserted ABOVE v38**, per
+> dispatch, insertion-only. Board rows are cited **by their text**, never by line
+> number.
+>
+> **PIN DISCIPLINE.** Fetched `origin/main`, pinned
+> **`ccbf802e8adde7952e7a12b4c3b4065e018feedd`** (`ccbf802e`), took **every** reading
+> below there, once. The pin is the merge of **PR #5164**
+> (`claude/capx-d81-must-offer-8jzvbj`), committer time **2026-09-06T09:12:14-07:00 =
+> 16:12:14Z** — **two merges and four commits past** the director's `13ee0c89`
+> (#5163 at 16:11:22Z, #5164 at 16:12:14Z), a span of **6 m 54 s**.
+> `git rev-parse --is-shallow-repository` → **`true`** (checked FIRST, per dispatch);
+> **22 grafts** (v38: 18), `rev-list --count` **765** (v38: 776 — the horizon moved
+> again, and this time it moved *down*). Every `$?` was read **on its own line, one
+> gate per invocation, never piped**, with each gate's stdout/stderr redirected to a
+> file so the `$?` belongs to the gate. Every `git log -1 -- <path>` result cited
+> below was tested against `.git/shallow` with `grep -qx … ; echo $?` — **and one of
+> them is a graft**, below.
+>
+> **The director's pin resolves and is clean.** `13ee0c89` is **not** a graft, is a
+> **verified ancestor** of this pin (`merge-base --is-ancestor` → `$?` **0**), and is
+> the merge of **PR #5152** (`claude/audit-records-v38-handoff-4khm0g`) — v38's own
+> landing — at committer time **16:05:20Z**, about **2¾ minutes before** the
+> dispatch's stated "16:08Z". As v37 and v38 both recorded of their own directors, a
+> merge's commit time and the moment a director *reads* `main` are different
+> quantities and only the first is measurable here; the weaker true statement is
+> recorded and the dispatch is **not** called wrong.
+>
+> ---
+>
+> ## NINE-GATE LEDGER — **re-run at `ccbf802e`, `uv run --frozen`, each gate ALONE, `$?` read directly, never piped**
+>
+> | gate | director @ `13ee0c89` (dispatch) | v38 @ `acbb5350` | **this lane @ `ccbf802e`** | moved? |
+> |---|---|---|---|---|
+> | `audit_keepers.py --check` | green | 0 | **0** — `PASS: 0 failure(s), 0 warning(s)` | — |
+> | `check_registry_payload_parity.py` | green | 0 (15 runs / 48 dirs) | **0** — **15 runs**, **48 bundle dirs swept**, 0 known-unsynced | — |
+> | `check_gate_a_provenance.py` | green | 0 (6 rows) | **0** — **6 rows**, keeper identity + marker state match | — |
+> | `check_mechanism_matrix.py` | green | 0, **249** WARNs (200 field + 49 row + 171 path) | **0**, **249** WARNs — **201 field** + 49 row + 171 path, 39 non-field tokens and 4 unresolvable paths skipped | 🔵 field anchors 200 → **201**, total unmoved |
+> | `check_forecast_staleness.py` | green | 0, 3 WARN, Δ unknown, 112 epochs, 210/184 | **0**, **3 WARN**, Δ **still (unknown)**, **112** epochs, **210 stamped / 184 scored** | — |
+> | `check_bench_freshness.py` | green | 0 — 24 parts, 0 STALE, 21 superseded-stamp, 24 engine-drift | **0** — **24 parts, 0 STALE, 21** superseded-stamp-but-reproducing, **24** engine-drift | — |
+> | `check_golden_manifest.py` | green | 0 — 57 / 100 (36+64) / 15 / 9 / 8 | **0** — **57 manifests, 100 entries (36 enforced / 64 legacy)**, 15 pruned-provenance, **9** stale-vs-live-keeper, **8** retired key | — |
+> | `ruff check .` | green | 0 | **0** — `All checks passed!` | — |
+> | `ruff format --check .` | **red, ONE file** | 1 (6 files) | **1** — **exactly 1 file**, **1368** already formatted | 🟢 6 → **1** |
+>
+> **8 OF 9 GREEN — the director's tally confirmed, and the red confirmed to the
+> filename.** The one file is `scripts/gen_caiso257_attestation.py`, and its owning
+> commit is **not** a graft:
+>
+> | file | `git log -1 -- <path>` | committer time | graft? |
+> |---|---|---|---|
+> | `scripts/gen_caiso257_attestation.py` | `48bcd0ec` *"caiso-257 working record: re-apply the df277e89 CT-only pair; R-1/R-2 PASS"* | **15:25:42Z** | `grep -qx … ; echo $?` → **1**, not a graft |
+>
+> 🔵 **The file is BRAND NEW — `git log --diff-filter=A` returns `48bcd0ec` and the
+> path has exactly ONE commit in its history.** This drift is therefore *not* another
+> re-break of the miso `run_calibration.py` / `fuel/basis/miso.py` pair v37 and v38
+> watched cycle; the drift moved to a **different lane and a previously non-existent
+> file**. The dispatch's timing claim reproduces to the second: **#5156** (`ec9b3fe4`,
+> the MISO ruff lane, which cleared the miso six) merged at **16:02:18Z** and
+> **#5162** (`a2f3837c`, caiso-257) merged at **16:04:52Z** — **2 m 34 s** later.
+>
+> ---
+>
+> ## 🟢 LEG 1 — **THE BACKLOG IS ZERO. THE JOB IS GREEN. OWNER CARD 2'S CONDITION IS MET**
+>
+> `uv run --frozen python scripts/check_forecast_invariants.py --sidecar-dir` →
+> `$?` **0**:
+>
+> > `forecast-invariant artifact audit: 102 sidecar(s) with an invariants block, 1428 record(s), 97 FAIL(s) declared`
+> > `forecast-invariant artifact audit OK`
+>
+> **Two lines, no third.** There is **no `undeclared` line at all** — the checker
+> prints undeclared pairs as failures and exits non-zero, and it exited **0**, so the
+> count is **zero**. The ledger read directly at this pin agrees:
+> `frontend/data/hindcast/invariant-failures.json` carries **58 declared runs / 97
+> (run, ident) pairs** and **`registration_ratchet_baseline` is `{}`** — its terminal
+> state, since the baseline may only shrink and a declared pair is stale by the
+> ledger's own rule.
+>
+> **The closing act is `capx D80` / PR #5151 / `634833e8`**, exactly as dispatched:
+> the commit adds the eight rows (10 pairs) the Y-24 ratchet named and empties the
+> baseline. `634833e8` is **not** a graft and is a verified ancestor of this pin; the
+> merge is `b611be9b` at **16:03:28Z**. The `d80_note` appended to the ledger records
+> the citation chain per run and states, in its own words, that *"NOTHING was fixed,
+> relaxed or re-scored"*.
+>
+> ### 🔴 THE ONE DISPATCH FIGURE THAT DOES NOT REPRODUCE — recorded as a dated correction, adjudicating nothing
+>
+> The dispatch asks this lane to *"record it as the first green in that job's
+> history."* **It is not.** Two measurements, taken here:
+>
+> 1. **The job's first green in the current window is run 2677** — `34042437378`,
+>    head `634833e8`, **D80's own PR run** — where `check_forecast_invariants
+>    --sidecar-dir` completed **success** at **15:29:26Z**, i.e. **34 minutes before
+>    D80 merged to `main`**. Every completed `ci.yml` run since that this lane read
+>    is also green on this job (2685 `34044275381`, 2686 `34044299627`). v38 read it
+>    **red** on run 2675.
+> 2. **But the job has been green before.** The ledger's own `cleared` block records
+>    a **2026-08-19 dashboard clear-out** in which *"every registered
+>    forecast/hindcast run (187 sidecars) was removed"* and *"declared_failures /
+>    curated_subsets pruned per how_to_update"* — a state with zero sidecars and zero
+>    declarations is a state in which this checker exits 0. The `post_clear_note`
+>    then dates the **"first post-clear registration"** to that same day. The board's
+>    own recorded series since is **4 → 16 → 17 → 20 → 24 → 30 → 8 → 0**.
+>
+> **The weaker, true claim, which is the one this board should carry:** run 2677 is
+> the **first green since the backlog re-opened after the 2026-08-19 clear-out**, and
+> it is the first green any records lane v33–v38 has been able to record. It is not a
+> first-ever green, and this lane cannot enumerate the job's whole history from a
+> shallow clone in any case. **Recorded; nothing adjudicated.**
+>
+> **Owner Card 2** — *"the audit job's required-set question, deferred by the owner
+> until the backlog reads 0"*, in v38's words — **has its condition MET at this
+> pin**: the backlog reads **0**, the job reads **success**, and the deferral's own
+> stated trigger has fired. The card is therefore **LIVE**. **This lane records that
+> and proposes nothing**: whether the job joins the R-AE required set is an owner
+> act, and no records lane may make it.
+>
+> ---
+>
+> ## 🔴 LEG 2 — **THE FLIP SET, PER JOB. RUN 2686, AND IT READS 4 OF 6**
+>
+> Seven completed `ci.yml` run heads were resolved under `GIT_NO_LAZY_FETCH=1` and
+> tested with `merge-base --is-ancestor` against `ccbf802e`; **all seven are
+> ancestors**, and each was additionally confirmed present in `git log --oneline
+> ccbf802e` by sha. ⚠️ **The "everything is an ancestor" result is the honest one
+> here and not a degenerate test**: unlike v38's pin, there is at this pin **no live
+> feature branch whose head this clone cannot resolve** — the API returns only three
+> branches and every non-`main` head resolves — so the discriminating control v38 used
+> is unavailable, and this lane says so rather than implying a test it did not run.
+>
+> **The newest completed run whose head is an ancestor of `main` is run 2686** — the
+> director read **2680**, the **seventh**-newest at this pin (2686, 2685, 2684, 2683,
+> 2682, 2681, then 2680). Six runs landed in between, all created between **16:01:29Z
+> and 16:04:49Z**.
+>
+> **Run 2686 · `34044299627` · head `c78f6d94` · branch `claude/caiso-257-backcast-calibration-5kj8t9` · created 16:04:49Z · completed 16:13:52Z**
+>
+> | R-AE required check | verdict | failing step |
+> |---|---|---|
+> | `Ruff lint + format` | 🔴 **failure** | step 6 `Ruff format check` — **step 5 `Ruff lint` is GREEN** |
+> | `Pinned default cache key` | 🟢 success | — |
+> | `Structural refactor guards` | 🟢 success | — |
+> | `Cache-key registration guard` | 🟢 success | — |
+> | **`Fast test tier`** | 🔴 **failure** | step 5 `Fast pytest tier` (**7 m 55 s**) |
+> | `Rule-22 quarantine gates` | 🟢 success | — |
+> | **R-AE SET** | 🔴 **4 OF 6** | |
+>
+> **Non-set jobs — reported separately, NEVER counted toward the set:**
+>
+> | non-set job | verdict |
+> |---|---|
+> | `FR-21 forecast-board staleness (WARN only)` | 🟢 success |
+> | `FR-22 backcast->forecast parity` | 🟢 success |
+> | `Rule-28 mechanism-matrix guard` | 🟢 success |
+> | **`Forecast-invariant artifact audit`** | 🟢 **success** — v38 read this **failure** on run 2675 |
+>
+> **All four non-set jobs read green together** — the first such reading in this entry
+> series, since v37 and v38 both recorded the invariant audit red.
+>
+> ### 🔵 A METHOD NOTE THE 5-OF-6 ON RUN 2685 FORCES, AND IT IS NOT A NIT
+>
+> **Run 2685** (`34044275381`, head `ec92a73f`, `claude/capx-d65br-batch-nmrwww`,
+> created 16:04:21Z — **28 seconds before 2686**) reads `Ruff lint + format`
+> **success** and therefore **5 OF 6**. That is *not* evidence that `main` was ever
+> 5 of 6: a `ci.yml` run on a `pull_request` event scores **that branch merged onto
+> its base**, not `main`. Run 2685's branch simply does not carry `48bcd0ec`; run
+> 2686's does. **The board's own per-job rule — newest completed run whose head is an
+> ancestor of `main` — therefore reads a branch state, and the only instrument that
+> reads `main` itself is local reproduction at the pin**, which is red. Recorded so
+> that a future lane does not read a neighbouring run's 5-of-6 as a flip.
+>
+> ### THE TIP BY LOCAL REPRODUCTION — each required job re-run from `ci.yml`'s own steps
+>
+> | R-AE required check | reproduced how | `$?` | verdict |
+> |---|---|---|---|
+> | `Ruff lint + format` | `ruff check .` → 0; `ruff format --check .` → **1** (1 file) | 0 / **1** | 🔴 **failure** |
+> | `Pinned default cache key` | `pytest -q tests/regression/test_persisted_identity.py tests/unit/config/test_cache_key_default_flip_guard.py` — **24 passed** | **0** | 🟢 success |
+> | `Structural refactor guards` | `compileall -q src scripts` → 0; `scripts/ci_refactor_guards.py` → 0; the 10-file facade + persisted-identity pytest → 0 | **0 / 0 / 0** | 🟢 success |
+> | `Cache-key registration guard` | `scripts/check_cache_key_registration.py` (the HEAD-only invariant leg) | **0** | 🟢 success ⚠️ *partial — see note* |
+> | `Fast test tier` | `pytest -n 2 -m "not slow and not integration and not fulldata"` | **1** | 🔴 **failure** — `16 failed, 8725 passed, 45 skipped, 1 xfailed, 27 warnings, 2 errors, 575 subtests passed in 499.08s (0:08:19)` |
+> | `Rule-22 quarantine gates` | `audit_keepers --check` → 0; `legitimacy_diagnostics --keepers --no-d2-recompute` → 0; `check_registry_payload_parity` → 0; `check_golden_manifest` → 0 | **0 × 4** | 🟢 success |
+> | **R-AE SET at the tip** | | | 🔴 **4 OF 6** |
+>
+> ⚠️ **Stated as a limit rather than claimed green, exactly as v38 stated it:**
+> `Cache-key registration guard`'s first step is
+> `check_cache_key_registration.py --base <PR base sha>`, which exists only in a
+> `pull_request` context and **cannot be reproduced on `main`**. Only its second step,
+> the HEAD-only `check_cache_key_declared_defaults` invariant, is reproduced here.
+>
+> **The tip and the director agree: 4 of 6**, on a run six newer than the one the
+> director scored.
+>
+> ### THE FAST TIER'S FAILURE SET AT THIS PIN — **13 of 16 are the re-pin backlog, and the count line agrees with the enumeration**
+>
+> `16 failed, 8725 passed, 45 skipped, 1 xfailed, 27 warnings, 2 errors, 575 subtests
+> passed in 499.08s (0:08:19)`. The short summary enumerates **15 `FAILED` node-ids
+> plus 1 `SUBFAILED`** — sixteen, so 🟢 **the count line and the enumerable set AGREE
+> at this pin**, which is the discrepancy v38 disclosed (17 counted vs 16 enumerated,
+> on both instruments) and did not guess at. It is gone here.
+>
+> | class | n | detail |
+> |---|---|---|
+> | **stale cache-key pins** | **13** | every one asserting `'547053bdfccd4264' != 'e5ecd4105ada3e58'` — live vs the superseded literal, the direction v38 corrected. Ten distinct occurrences of that exact assertion string in the log |
+> | registry-vs-artifact | 1 | `test_caiso_st_gas_peak_measured.py::test_registry_value_matches_the_committed_artifact` — `1.154 != 1.166`, **not** a cache key |
+> | scenario-campaign collate | 1 | `test_collate_scenario_campaign_common_set.py::test_the_repair_holds_over_the_whole_committed_tree` — `101.9669 != 18.83`, the same figure v38 read |
+> | data-dictionary sync | 1 | `SUBFAILED tests/curation/test_data_dictionary_sync.py … (datatype='nrel-atb')` — per-column table vs schema |
+> | **errors** | **2** | both `tests/unit/model/test_d74_no_default_cap_convention.py`, `PublishedBarUnavailable` for PJM |
+>
+> 🔵 **Two movements against v38's local reading, stated rather than smoothed:** v38's
+> `test_capacity.py::TestPjmCapacitySupplyClearing` armed-pair failure
+> (`'15a723ba3b6dc856' != 'aef81c84c4609c76'`) is **not in this set**, and two failures
+> v38 did not carry are (`test_caiso_st_gas_peak_measured`, the `nrel-atb` subtest).
+> The re-pin class fell **15 → 13**. This lane does not attribute either movement.
+>
+> ---
+>
+> ## LEG 3 — **THE RE-PIN BACKLOG: 23, TO THE FILE. THE capx ROUTE DID NOT LAUNCH, FOR A SECOND SITTING**
+>
+> **Both cache-key values confirmed at this pin, in the direction v38 corrected:**
+>
+> | quantity | value | how measured here |
+> |---|---|---|
+> | **LIVE** default | **`547053bdfccd4264`** | `uv run --frozen python -c "…ScenarioConfig().cache_key()"`, computed at this pin |
+> | **STALE** literal | **`e5ecd4105ada3e58`** | `git grep -l` over tracked sources |
+>
+> **`git grep -l "e5ecd4105ada3e58" -- tests` returns exactly 23 files**, the
+> dispatch's figure to the file:
+>
+> `tests/regression/test_persisted_identity.py` · `tests/unit/config/`
+> {`test_caiso_ra_mpb_anchor`, `test_d53_sector_gate_miso_arming`, `test_d60_arming_batch`,
+> `test_ercot_stageb_arming`, `test_fh2_as_of_channels`, `test_miso175_seam_hour_ending_key`,
+> `test_miso_rps_region_arming`} · `tests/unit/data/` {`test_caiso_nqc_class_factors`,
+> `test_cc_committed_offer_margin`, `test_miso_intermediate_gas_offer_margin`,
+> `test_ramp_envelope_basis`} · `tests/unit/model/` {`test_capacity`,
+> `test_capacity_screen_scarcity_restoration`, `test_ccs_retrofit`,
+> `test_entry_vre_zone_selection`, `test_ercot219_option_b`, `test_scarcity`,
+> `test_smr_available_year`, `test_storage_entry_gates`,
+> `test_storage_whole_class_accreditation`, `test_vre_procurement_ffr5e`} ·
+> `tests/unit/pipeline/test_forecast_xyear_warmstart_flag.py`.
+>
+> Tree-wide the literal survives in **57** tracked files (22 in `docs/handoffs`, 4 in
+> the mechanism-matrix shards, 1 in `src/market_sim/config/`, 1 in
+> `src/market_sim/results/`, …). The two v38 flagged as *assertions in the present
+> tense* are **both still false at this pin**: `src/market_sim/config/scenarios.py`
+> still reads **"THE LIVE PIN IS ``e5ecd4105ada3e58``"** (verified by reading the file
+> here), and `docs/handoffs/scenario-desk-ledger-2026-09.md` still carries **4** hits.
+>
+> 🔴 **The capx route did not launch, for a second consecutive sitting — confirmed on
+> two independent instruments, not inferred from one.** The API branch list at this
+> pin returns **three** branches (`main`, `claude/model-audit-director-7an524`,
+> `claude/scenario-readiness-refresh-9-d0pha6`) — **no capx branch of any kind** — and
+> `list_pull_requests state=open` returns **`[]`**, **zero** open PRs. There is
+> therefore no re-pin branch, no single-pin-guard branch, and no D74 branch.
+>
+> **The D74 collection error still reproduces**, run in isolation at this pin:
+>
+> ```
+> uv run --frozen python -m pytest -q tests/unit/model/test_d74_no_default_cap_convention.py   → $? = 2
+> ERROR collecting tests/unit/model/test_d74_no_default_cap_convention.py
+> tests/unit/model/test_d74_no_default_cap_convention.py:60: in <module>
+>     published_bar_per_kw_yr("PJM", "coal", 2022) is None,
+> E   market_sim.data.avoidable_cost_rate.PublishedBarUnavailable: no published
+>     avoidable-cost-rate partition for PJM: run
+>     scripts/data/curate_capacity_market_avoidable_cost_rate.py
+> ```
+>
+> 🔵 **Reported precisely rather than transcribed:** it is a **module-level** failure
+> at import (line 60 is at module scope), so an isolated invocation reports **1
+> collection error** and interrupts. v38 and the CI tier both count **2 ERRORs** for
+> this file; this lane does not reconcile the difference and cites what each
+> instrument actually printed.
+>
+> ---
+>
+> ## LEG 4 — **KEEPER MOTION: NYISO → `2026-09-06-nyiso-202-startup-aware`. RECORDED, NEVER ADJUDICATED**
+>
+> | check dispatched | reading at this pin |
+> |---|---|
+> | keeper identity | `frontend/data/backcast/keepers/NYISO.json` → **`2026-09-06-nyiso-202-startup-aware`**, superseding `2026-09-06-nyiso-196-extract-basis` |
+> | promoting commit | **`878b687b`** *"Promote NYISO keeper to nyiso-202 startup-aware bridge run screen"*, 15:52:33Z — **not a graft**, verified ancestor of the pin; merged as **#5155** (`a457eac8`) |
+> | `audit_keepers.py --check` | **`$?` 0** — `PASS: 0 failure(s), 0 warning(s)` |
+> | `check_gate_a_provenance.py` | **`$?` 0** — **6 rows**, keeper identity + marker state match |
+> | gate-(a) re-key | done **by the promoting lane in its own PR** — `2fbfadf4` *"Re-key the NYISO gate-(a) provenance row to the nyiso-202 keeper"* |
+> | NYISO matrix shard stamp | **present** — `docs/codebase-site/data/mechanism-matrix/NYISO.js` `keeper:` reads `"2026-09-06-nyiso-202-startup-aware"`, the `gates:` stamp is re-written for nyiso-202, and the `gas_commitment_bridge` cell carries the nyiso-202 evidence paragraph. **3** occurrences of the keeper id in the shard |
+> | re-key owed? | **NO.** `calibration-complete.json` reads `complete` **{ERCOT, NEISO, PJM}** and `withdrawn` **{CAISO, NYISO}** — NYISO holds **no `complete` marker**, so rule 22 / D-5(b) obliges no re-key. The keeper shard states the same conclusion in its own words |
+>
+> **This lane makes no statement about whether the promotion was correct.** It records
+> that the promotion happened, that the four artifacts the dispatch names are
+> consistent with it, and that no marker act is outstanding.
+>
+> ---
+>
+> ## LEG 5 — **KEEPERS, MARKERS, FREEZE, STAGE-0 — ONE ROW MOVED, THE REST UNCHANGED**
+>
+> | ISO | designated keeper | vs v38 |
+> |---|---|---|
+> | CAISO | `2026-09-05-caiso-252-b1-notrim` | — |
+> | ERCOT | `2026-09-05-ercot248-two-config-keeper` | — |
+> | MISO | `2026-09-05-miso-220-nonsteam-lift` | — |
+> | NEISO | `2026-08-17-neiso-99-joint-p1` | — |
+> | **NYISO** | **`2026-09-06-nyiso-202-startup-aware`** | 🔵 **moved** (v38: `…-nyiso-196-extract-basis`) |
+> | PJM | `2026-08-15-pjm-162-inputclock` | — |
+>
+> **Markers:** `complete` = **{ERCOT, NEISO, PJM}** · `withdrawn` = **{CAISO, NYISO}**
+> · `final` = **EMPTY** (`_note` only). **Freeze:** `active: true`, `scope.isos`
+> **ALL**, `scope.tiers` **`["locked_test"]`**, `frozen_operations`
+> **`["solve", "score", "dashboard registration"]`**. **All unchanged from v38, as
+> dispatched.**
+>
+> **Stage-0 currency: 2 of 7 CURRENT — confirmed unmoved.** `perfb-stage0/manifest.json`:
+> **CURRENT** NEISO, PJM · **STALE** CAISO, ERCOT, MISO, NYISO · **RETIRED key**
+> `ERCOT__carveout-2023`. Gate-wide `check_golden_manifest` reads **9 stale vs the
+> live keeper**. Both figures match the dispatch.
+>
+> ### 🟠 The stage-0 NYISO distance — **measured, and it is not two**
+>
+> The dispatch says *"Stage-0 NYISO now two promotions past capture."* Measured here:
+> the stage-0 entry pins **`2026-09-04-nyiso-186-astoria-identity`** against a live
+> keeper of **`2026-09-06-nyiso-202-startup-aware`**. Walking the NYISO shard's own
+> `superseded` / `prior_superseded` / `chain` links from 186 forward gives
+> **186 → 187 → 188 → 189 → 192 → 196 → 202** — **six** promotions past capture, not
+> two. Two is the count of NYISO promotions *since v38's own pin* (196, then 202), so
+> the dispatch's figure is coherent against a different origin; **this lane records
+> the distance from the capture, which is the quantity the stage-0 row is about, and
+> adjudicates neither reading.**
+>
+> ### 🔴 The ERCOT R-AI clock — **CARRIED from v34, and the two-container finding now holds across FOUR**
+>
+> `git log -1 -- frontend/data/backcast/keepers/ERCOT.json` returns **`db8b6015`**
+> (2026-09-05T16:50:32-07:00, *"Merge pull request #4885 … `nyiso-cc-regular-overrun-2024`"* —
+> a **NYISO** PR, which is itself the tell). Tested:
+> `grep -qx db8b6015… .git/shallow ; echo $?` → **0**, it **IS** a graft; and
+> `git rev-list --parents -n1 db8b6015` prints it with **no parents**. **That is the
+> horizon, not a shard touch.** The clock is **unavailable at this pin** and is
+> **CARRIED from v34: 2026-09-07 19:02Z**.
+>
+> 🔵 **Four containers, one command, one path, four different wrong shas**: v36
+> `cf5425f7`, v37 `d62ef0c8`, v38 `cc03004e`, **v39 `db8b6015`**. The graft a lane
+> trips over is a property of **its own clone**, not of the repository, and no reading
+> of this path is a fact about `main`.
+>
+> ---
+>
+> ## LEG 6 — **G2 LEG 4: `protected: false` AT A TWENTY-FOURTH READING**
+>
+> `list_branches` (API) at this pin returns **3 branches** — v38 read 4, the director
+> reports 5 — and `main` reads **`protected: false`**:
+>
+> | branch | head per API | resolves here? |
+> |---|---|---|
+> | `main` | `0336ccd8` | resolves — **and it is NOT this lane's pin**; see the coda |
+> | `claude/model-audit-director-7an524` | `13ee0c89` | resolves; **the director's own pin**, a verified ancestor of `main` |
+> | `claude/scenario-readiness-refresh-9-d0pha6` | `649377ae` | unresolvable in this clone — unmerged work at read time |
+>
+> **One sentence, as dispatched:** the flip **is** G2 leg 4 — the queue row
+> **"Branch-protection flip = G2 leg 4 (ONE owner act)"** — and one owner click on
+> `main`'s branch-protection settings still closes it, at a reading that has now been
+> `false` **twenty-four** consecutive times (director: 23).
+>
+> ---
+>
+> ## LEG 7 — **OWNER CARDS — CARD 2'S CONDITION IS MET. RECORDED, NOT ADJUDICATED**
+>
+> **Card 1 — the flip.** The set at this pin is **4 of 6**, unmoved from v38 in value
+> and unmoved in composition (`Ruff lint + format`, `Fast test tier`). What is new for
+> the card since v38 stated it: the `ruff` half shrank from **six files to one**, and
+> the one is a **brand-new file in a different lane** rather than a re-break of the
+> watched pair — so the drift is not converging on a fixable pair, it is **following
+> whichever lane pushes next**. The `Fast test tier` half is unchanged and still
+> mechanical: the re-pin backlog plus the D74 collection errors. **Recorded; this lane
+> adjudicates nothing.**
+>
+> **Card 2 — the audit job's required-set question.** 🟢 **ITS CONDITION IS NOW MET.**
+> The owner deferred the card *until the backlog reads 0*; at this pin the backlog
+> reads **0**, `check_forecast_invariants --sidecar-dir` exits **0**, the ledger's
+> ratchet baseline is `{}`, and the CI job is **success** on every completed run this
+> lane read. The card is **LIVE** and is **the owner's to take**. This lane
+> **proposes nothing** about whether the job joins the R-AE required set — that is an
+> adjudication, and a records lane may not make it. Recorded because the dispatch
+> names it and because the condition changed under this board.
+>
+> **G2 declaration prompt** stays **HELD** until `protected` reads `true`. This is the
+> **tenth** consecutive records lane to withhold it.
+>
+> ---
+>
+> ## LEG 8 — **LANDINGS BY SHA · ROUTED, NO NEW Y ID · Q-4 SWEEP CLEAN**
+>
+> Both dispatched landings resolve, and **neither is a graft**:
+>
+> | PR | sha | subject | committer time | graft? |
+> |---|---|---|---|---|
+> | **#5156** | **`ec9b3fe4`** | *Merge … `claude/miso-ruff-format-drift-dmydhc`* | **16:02:18Z** | not a graft |
+> | **#5152** | **`13ee0c89`** | *Merge … `claude/audit-records-v38-handoff-4khm0g`* (**v38's own landing**) | **16:05:20Z** | not a graft |
+>
+> 🔵 **#5156's content, verified rather than assumed from its title.** Its head commit
+> `767e96fa` says *"Docs only"*, which would not have cleared six files. The merge
+> carries **two** commits: `110e9d99` *"Apply ruff format to the six files left
+> unformatted by miso-225"* (15:25:20Z) **and** `767e96fa` (15:25:29Z). The merge
+> diffstat is **7 files**, and all six of v38's named files are in it. The clear is
+> real.
+>
+> ### Routed this sitting — **no new Y id**
+>
+> | routed to | item | state at this pin |
+> |---|---|---|
+> | **capx** | **D65-B re-pin completion** — **23** tracked `tests/*.py` still assert `e5ecd41…` | 🔴 **open, route did not launch** (no branch, no PR) |
+> | **capx** | **single-pin guard** — the `Pinned default cache key` job watches **two** files; nothing stops a 24th | 🔴 **open, route did not launch** |
+> | **capx** | **D74 collection fix** — `PublishedBarUnavailable` for PJM, reproduced here | 🔴 **open, route did not launch** |
+> | **capx** | `src/market_sim/config/scenarios.py` asserts in the present tense *"THE LIVE PIN IS ``e5ecd4105ada3e58``"* — **still false at this pin** | 🔴 open |
+> | **CAISO desk** | 🆕 **one-file `ruff format`** — `scripts/gen_caiso257_attestation.py`, from `48bcd0ec` / #5162 | 🔴 open at the pin — 🟢 **DISCHARGED in the coda** |
+> | **MISO desk** | six-file `ruff format` | 🟢 **DISCHARGED** by `110e9d99` / #5156 at 16:02:18Z |
+> | **Scenario desk** | `docs/handoffs/scenario-desk-ledger-2026-09.md` instructs a lane to assert the forecast default is `e5ecd4105ada3e58` — false by construction | 🔴 open (**4** hits) |
+>
+> ### 🟠 THE TWO STANDING ITEMS NOBODY OWNS — both re-measured, both unmoved
+>
+> **(1) `demand_growth_path` has no mechanism-matrix row.** Re-measured here: **zero**
+> occurrences in `docs/codebase-site/data/mechanism-matrix.js` and **zero** across all
+> six ISO shards, while `check_mechanism_matrix.py` exits **0** — because the field is
+> an explicit line in the ratchet baseline
+> `docs/codebase-site/data/mechanism-matrix-gaps.json:86`. 🔵 **Unmoved, and still not
+> a gap any CI run can surface: it is a recorded exemption.**
+>
+> **(2) Mechanism-matrix anchor WARNs stand at 249** — unmoved from v37 and v38 in
+> total. Composition at this pin: **201 field + 49 row + 171 path** anchors checked,
+> 39 non-field tokens and 4 unresolvable paths skipped. The movement since v38 is
+> inside the composition — **field anchors 200 → 201** — with the total unchanged,
+> which is what a churning `scenarios.py` looks like against frozen line-number
+> anchors.
+>
+> ### Q-4 — every id this lane carries, swept against the tree
+>
+> Word-boundary `git grep -lw` over tracked `.md/.py/.js/.json/.yml/.yaml`, `data/raw`
+> excluded, **this board excluded as self-confounding** (the trap v34's §Q-4 names):
+>
+> | id | hits | verdict |
+> |---|---|---|
+> | **`v39`** | **0** | 🟢 **NOT a collision** — nothing anywhere in the tree names `v39` |
+> | `R-AZ` | 20 | pre-existing owner ruling |
+> | `R-AV` | 19 | pre-existing owner ruling |
+> | `Y-24` | 18 | pre-existing charter, carried not claimed (v38: 17 — grew under D80) |
+> | `Y-19` | 10 | pre-existing (v38: 9) |
+> | `Z-6` | 10 | pre-existing |
+> | `R-AY` | 9 | pre-existing owner ruling |
+> | `Y-17` | 8 | pre-existing |
+> | `Y-18` | 7 | pre-existing |
+> | `R-AI` | 6 | pre-existing owner ruling |
+> | `Y-20` | 5 | pre-existing |
+>
+> **No new Y id is opened by this lane.**
+>
+> ---
+>
+> ## LEG 9 — **DISPATCH vs LAUNCH: THE WEAKER CLAIM**
+>
+> At this pin the API reads **3 branches and ZERO open pull requests**. The dispatch
+> reports **1 open (#5160)**; measured here, **#5160 is CLOSED — and closed
+> UNMERGED**: `state: "closed"`, `merged: false`, `mergeable_state: "dirty"`,
+> `closed_at: 16:19:37Z`, title *"capx D78-R PRECOMMIT: the sector-gate seam repair on
+> the FULL 2021-2025 window …"*, and its branch
+> `claude/capx-d78r-full-window-csniwn` is **gone from the branch list**. So the
+> director's reading and this one are both right, seven minutes apart, and the
+> movement between them is a **PR abandoned, not merged**.
+>
+> **The weaker claim, stated as such:** a lane dispatched but not yet pushed is
+> **indistinguishable on these instruments** from a lane that never launched, and
+> "zero open PRs" is equally consistent with a quiet trough between bursts as with an
+> idle program. This lane asserts neither. What the instruments **do** establish is
+> narrower and is asserted: **thirteen PRs (#5151–#5164, less #5160) merged between
+> 15:59Z and 16:12:14Z**, six completed `ci.yml` runs (2681–2686) were created inside
+> **3 m 20 s**, and **four more merges (#5165–#5168) landed in the seven minutes after
+> this lane's pin**. The **burst** shape v37 and v38 recorded is intact and, if
+> anything, tighter.
+>
+> ---
+>
+> ## 🔵 LEG 10 — **THE STRUCTURAL OBSERVATION: THE RE-BREAK IS FASTER THAN THE CLEAR, AND IT NOW HAPPENS IN A FILE THAT DID NOT EXIST**
+>
+> Recorded, **not adjudicated**. The dispatch's framing is *"ruff-format drift has now
+> cleared and re-appeared four times in one day, each time from a different lane, each
+> time within minutes of the clear."* Measured here by sha, the chain for 2026-09-06
+> is:
+>
+> | # | event | sha | author time | lane |
+> |---|---|---|---|---|
+> | 1 | **break** (2 files) | `7fa9f096` | 06:35:00Z | miso-224 |
+> | 2 | **clear** (#5123) | `bf1964bf` / merge `3f881432` | 07:23:02Z / **07:24:54Z** | MISO ruff lane |
+> | 3 | **break** (6 files) | `3c17b49a` + `208a714d` | 08:08:46Z / 08:22:05Z | miso-225 |
+> | 4 | **clear** (#5156) | `110e9d99` / merge `ec9b3fe4` | 15:25:20Z / **16:02:18Z** | MISO ruff lane |
+> | 5 | **break** (1 file) | `48bcd0ec` / merge `a2f3837c` | **15:25:42Z** / 16:04:52Z | caiso-257 |
+>
+> **Three things this lane can say from its own measurements, and one it will not:**
+>
+> 1. 🔴 **The re-break was authored TWENTY-TWO SECONDS after the clear it undid** —
+>    `110e9d99` at 15:25:20Z, `48bcd0ec` at 15:25:42Z. On the **merge** clock they are
+>    2 m 34 s apart. The dispatch says "within minutes of the clear"; on the author
+>    clock the true figure is **seconds**, and that is a stronger statement, not a
+>    softer one. Neither lane could have seen the other: they were writing
+>    concurrently, and the ordering was decided at merge.
+> 2. 🔵 **The drift has stopped being a property of a file pair.** Events 1–3 all hit
+>    `scripts/run_calibration.py` and `src/market_sim/data/fuel/basis/miso.py`. Event
+>    5 hits `scripts/gen_caiso257_attestation.py`, whose entire git history is the
+>    one commit that created it. A pre-push checklist scoped to a known pair cannot
+>    reach this; the two clears' own commit messages both describe *standing pre-push
+>    checklists*, and the very next unformatted file arrived from a lane that had
+>    never touched the pair.
+> 3. 🔵 **The rate is set by lane concurrency, not by carelessness.** Thirteen PRs
+>    merged in twelve minutes at this pin. `ruff format --check` is **tree-wide**
+>    (`ci.yml` runs it over `.`), so *any* lane's unformatted byte reddens *every*
+>    other lane's required check — the gate is global while every author's hook
+>    (`ruff-autofix.sh`, `PostToolUse` on the single edited path) is local. That
+>    asymmetry, not any lane's discipline, is what makes the green window measurable
+>    in seconds.
+>
+> **What this lane will NOT say:** it cannot verify a *fourth* clear-and-re-break
+> cycle. Its own sha chain reproduces **three breaks and two clears**; v38's text
+> names the 08:08Z event as the *"third ruff-format drift in nine hours"*, which
+> implies an event before `7fa9f096` that this lane did not re-derive. The dispatch's
+> count of four is **consistent with the record and is not contradicted** — it is
+> simply larger than what this lane measured, and the measured chain is what is
+> written here.
+>
+> ---
+>
+> ## QUEUE — carried forward and RE-DERIVED at `ccbf802e`
+>
+> | item | state at this pin |
+> |---|---|
+> | **Branch-protection flip = G2 leg 4 (ONE owner act)** | 🔴 **ACT PENDING.** Set **4 of 6** at run 2686. `protected: false` at **reading 24**. One click still closes both lines |
+> | **G2 declaration prompt (v30's block)** | 🔴 **HELD** until `protected` reads `true`. **Tenth** consecutive lane to withhold |
+> | **Y-24 — invariant declaration ratchet** | 🟢 **DISCHARGED. 8 → 0.** capx D80 (#5151, `634833e8`) declared the last eight; `registration_ratchet_baseline` is **`{}`**, its terminal state |
+> | **Y-19 — forecast-invariant audit** | 🟢 **CLOSED ON THE COUNT.** `$?` **0**, **0 undeclared**, CI job **success**. 🔵 A declaration is not absolution (rules 1/11): **97 FAIL pairs across 58 runs remain declared and open** as root-cause work, and Y-19's substance lives on in those lanes |
+> | **Y-17 — `check_bench_freshness`** | 🟢 **GREEN.** 24 parts, 0 STALE, 21 superseded-stamp, 24 engine-drift. Every figure unmoved |
+> | **Y-18 — FR-22 parity** | 🟢 **CLOSED.** CI job green on run 2686 |
+> | **Y-20 — rule-28 duty-(c) ratchet** | 🔴 Gate exits 0; anchor WARNs **249, unmoved** (composition 200 → **201** field). `demand_growth_path` still baselined, still unsurfaceable |
+> | **`ruff format`** | 🔴 **RE-BROKEN AT THE PIN, 1 file** (v38: 6, cleared at 16:02:18Z). `scripts/gen_caiso257_attestation.py`, a **brand-new file**, from caiso-257 / #5162 — authored **22 s** after the clear. 🟢 **DISCHARGED in the coda at 16:18:21Z** |
+> | **Default cache key direction** | 🟢 **SETTLED, v38's correction confirmed.** Live **= `547053bdfccd4264`** (computed here); stale **= `e5ecd4105ada3e58`** |
+> | **D65-B re-pin backlog** | 🔴 **OPEN, 23 test files, route DID NOT LAUNCH for a second sitting** — no capx branch on origin, zero open PRs. Plus `scenarios.py` and the scenario-desk ledger, both still asserting the stale literal in the present tense |
+> | **`Pinned default cache key` job vs `Fast test tier`** | 🔵 **UNMOVED.** The named job is correctly green (pin matches live) while the tier is red on **13** of the **23** files carrying the stale literal, none of which the job selects. It is the **too-narrow** place to ask, not the wrong one |
+> | **D74 collection errors** | 🔴 **OPEN, route DID NOT LAUNCH.** Reproduced here at `$?` 2, `PublishedBarUnavailable` for PJM |
+> | **ERCOT stage-0 re-capture ({2024, 2025})** | ⚪ **QUEUED, NOT CHARTERED, NOT RUN** — R-AI clock **CARRIED from v34 (2026-09-07 19:02Z)**; the shard "touch" is a **graft**, at a **fourth** distinct sha across four containers |
+> | **Stage-0 currency** | 🟠 **9 stale** gate-wide; **2 of 7 CURRENT** (NEISO, PJM). Both unmoved. 🆕 NYISO's capture is **six** promotions behind its live keeper, not two |
+> | **Markers / freeze** | `complete` {ERCOT, NEISO, PJM} · `withdrawn` {CAISO, NYISO} · `final` **EMPTY** · freeze `active`, scope **`locked_test`**. Unchanged. NYISO's promotion owes **no** re-key (withdrawn block) |
+> | **Keeper motion** | 🔵 **NYISO → `2026-09-06-nyiso-202-startup-aware`** (`878b687b`, #5155). `audit_keepers` PASS, gate-(a) OK (6 rows), matrix shard re-stamped, gate-(a) row re-keyed by the promoting PR itself |
+> | **Owner Card 2** | 🟢 **CONDITION MET, CARD LIVE.** Backlog 0. Recorded, **not** adjudicated |
+> | **Z-6** (register-time marker re-check) | 🟢 **CLOSED** on Y-16 (v34). Not re-opened here |
+> | **E11 / prune-timing** · **`G-1`/`G-2` namespace collision** | 🟡 **STILL ON THE OWNER QUEUE.** Untouched |
+> | **Board line-number citations decay** | 🔵 **AVOIDED BY CONSTRUCTION.** Every board row above is cited **by text**, per dispatch. v39's insertion pushes every v38 row down by this entry's length |
+> | **Shallow-clone horizon** | 🔵 **RECORDED, 22 grafts / 765 commits** (v38: 18 / 776 — the horizon moved *down*). `daf0ba364064` still unreachable; the ERCOT shard query still returns the horizon, at a **fourth** distinct sha |
+>
+> ---
+>
+> ## CODA — **`origin/main` MOVED UNDER THIS LANE, AND THE `ruff` RED WAS DISCHARGED INSIDE IT**
+>
+> **Dated sub-block. Everything above is at `ccbf802e` and is not restated here.**
+>
+> A second `git fetch origin main` at close returns **`0336ccd8`** — **four merges
+> past this lane's pin**, all inside **7 m 08 s** (16:12:14Z → 16:19:22Z):
+>
+> | PR | merge sha | subject | committer time |
+> |---|---|---|---|
+> | **#5166** | `64b71d39` | *`claude/caiso-attestation-ruff-format-cs2luk`* | **16:18:21Z** |
+> | **#5167** | `131291b5` | *`claude/calibration-director-coordination-i5xhop`* | 16:18:38Z |
+> | **#5168** | `4fce467c` | *`claude/miso-backcast-calibration-m2nkfn`* | 16:19:03Z |
+> | **#5165** | `0336ccd8` | *`claude/scenario-readiness-refresh-9-d0pha6`* | 16:19:22Z |
+>
+> 🟢 **#5166 discharges this lane's own red.** Its diffstat is two files —
+> `docs/calibration-log/caiso.md` and `scripts/gen_caiso257_attestation.py` — and it
+> carries `863da629` *"Apply ruff format to gen_caiso257_attestation.py"* (16:16:43Z)
+> plus `5250bb68` *"CAISO lane: standing pre-push checklist for the two ruff gates"*.
+> The CAISO desk did exactly what leg 8 routed to it, unprompted by this board, **12 m
+> 58 s** after #5162 broke it. That is the **fifth** ruff-format event of the day and
+> the **third** clear.
+>
+> 🔵 **Two other coda facts worth the record, both by sha, neither re-scored:**
+> `897222bc` *"capx-director r#49: D80 turns the Y-24 ratchet green (and corrects my
+> citations); D65-B-R re-pin **hold**"* lands in this window — the capx director's own
+> record of the same backlog-zero event leg 1 measures, **and it explicitly holds the
+> re-pin**, which is the standing answer to leg 3's "route did not launch". And
+> `6148f2c9` *"SCN-DESK r#13: Stage A-LOAD complete at the frozen pin with its cost
+> table; ruling S8 never executed"* lands with #5165.
+>
+> **AND AGAIN, AT COMMIT TIME.** A third `git fetch origin main`, taken as this entry
+> was staged, reads **`6f41c51f`** (16:32:06Z) — **two further merges** past the close
+> reading: **#5169** (`8ff7c976`, `claude/scenario-readiness-refresh-9-d0pha6`,
+> carrying `649377ae` *"SCN-DESK r#13 amendment 1: ruling S13 (D-5) — hold the Stage-B
+> grant …"*) and **#5170** (`6f41c51f`, `claude/nyiso-nyc-persistent-base-limb-…`,
+> carrying `38323d0d` *"nyiso-203: NYC persistent-base limb basis review — sound as
+> built, zero LP"*). 🔵 The nyiso-203 landing answers, from another desk and in the
+> same hour, the object leg 4's keeper shard hands forward — *"the NYC persistent-base
+> reliability limb's BASIS"*. **Recorded by sha only; nothing above is re-derived
+> there, and this lane adjudicates nothing about it.**
+>
+> ⚠️ **No reading above was re-taken at `0336ccd8`, nor at `6f41c51f`.** The nine
+> gates, the flip set, the keeper/marker/freeze/stage-0 block, the Q-4 sweep and the
+> queue table are all readings at **`ccbf802e`**, taken once, and they stand as dated
+> records of that pin. A lane that wants the state at `0336ccd8` or `6f41c51f` must
+> re-derive it there. **In an eleven-merge, twenty-minute window this is not
+> pedantry** — `main` moved three times under one records lane.
+>
+> ---
+
 > # 🔴 **THE CACHE-KEY DIRECTION IS THE OTHER WAY ROUND — v37's NEW RED IS BACKWARDS, ON FOUR INSTRUMENTS, AND IT WAS ALREADY BACKWARDS AT v37's OWN PIN** — RECORDS-ONLY LANE **v38**, director pin `2617a5d3` (dispatch **15:07Z**), main at close of the director's own reading **`47e306d3`** → **THIS LANE'S PIN `acbb5350`**. The live default cache key is **`547053bdfccd4264`** and the *stale* side is **`e5ecd4105ada3e58`** — confirmed by the D65-B ledger line, by `ScenarioConfig().cache_key()` computed here, by CI's own assertion text (**live value first**), and by the `Pinned default cache key` job being **GREEN** both in CI and in local reproduction. **This is a DATED CORRECTION recorded here, NOT an edit of v37.** The flip set at this pin is **4 OF 6** on run **2675** — five runs newer than the director's 2670. `ruff format` is red on **SIX** files, **all six** traced to miso-225 / **#5143**. The forecast-invariant backlog is **8** (v37: 30) — the scenario route **LANDED**. G2 leg 4 reads `protected: false` at a **TWENTY-SECOND** reading.
 >
 > **Records only.** No solve, no scoring, no registration, no keeper shard, no
