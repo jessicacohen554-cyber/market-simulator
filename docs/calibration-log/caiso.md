@@ -13407,3 +13407,156 @@ storage sidecar, the DMM 2025 RA-import basis, Panoche.
 field, no new matrix row, no `complete` declaration.**
 
 **Next number: caiso-256.**
+
+## caiso-256 — 2026-09-06
+
+**OBJECT A — caiso-255b's RANKED-FIRST QUEUE ITEM, "THE MODEL OVER-CYCLES
+STORAGE", IS REFUTED ON BASIS. ZERO LP, NOTHING ARMED, KEEPER UNCHANGED** at
+`2026-09-05-caiso-252-b1-notrim` (CALIBRATED). Branch
+`claude/caiso-storage-over-cycling-ymodu3` off `main` `ba894c9c`.
+`PRECOMMIT-caiso256-storage-cycling-basis-2026-09-06.md` (`885c405e`) pushed
+before the probe ran; `FINDING-caiso256-storage-cycling-basis-2026-09-06.md`;
+probe `scripts/probes/_caiso256_storage_cycling_basis.py`; artifact
+`results/calibration/_caiso256_storage_cycling_basis.json`.
+
+**THE BASIS.** caiso-255b's 35.4 / 42.1 GWh/d (2025) is the keeper's
+`storage_<year>.parquet` summed over BOTH techs — `li_ion` **and**
+`pumped_storage` — against EIA-930 `NG: OTH`, which excludes pumped storage by
+construction (caiso-168 §3). This is the caiso-121 all-tech-vs-PS-excluding
+error that caiso-168 §8 #1 already forbids, recurring on a different
+statistic. G-BASIS reproduces it to the digit (**35.37 / 42.10** =
+li_ion 28.79/33.87 + PS 6.58/8.23).
+
+**BATTERY-ONLY, THE SIGN REVERSES.** Loader clock, `NG: OTH` split into its
+hour-separated positive/negative parts: actual **11.03 / 20.79 / 30.84** GWh/d
+discharged vs model `li_ion` **10.32 / 19.29 / 28.79** — the model
+**UNDER**-cycles by **6.4 / 7.2 / 6.7 %** in every year, at a ratio stable
+across a 2.8× build-out.
+
+**IT IS NOT FLEET, AND IT IS NOT THE CAP** — both pre-registered predictions
+FALSIFIED against my own story: p99 net-discharge ratio **1.122 / 1.006 /
+1.001** (caiso-255b's 1.35/1.21/1.14× was the PS-summed single maximum; the
+battery-only max ratio is 0.94/0.93/0.93 — one spike hour carried the claim);
+and the armed `caiso_storage_shape_anchor` cap, rebuilt from the shipped
+builder on the keeper's own `fleet_only` rebuild, has **28 / 30 / 34 %
+headroom** at hod 19 (cap 2,950 / 6,121 / 8,551 MW vs mean discharge
+2,135 / 4,298 / 5,623) and binds in only **46 / 28 / 15 %** of those hours.
+
+**THE 7 % IS CONDUCT WITH A SHAPE**: short at hod 17–19 (2025 **−499 /
+−551 MW**), long 22–05 (+138 … +490) — `FINDING-caiso127 §2`'s
+evening/overnight storage pin, measured a **fourth** time on a fourth keeper
+with its overnight sign unchanged; the lever is S2 (DA/RT two-settlement,
+caiso-129 §5 / caiso-169 §5), **unfunded under caiso-201**. 2023's belly
+charge excess (+9 %, −513 … −581 MW at hod 11–14) is the caiso-168 cell with
+its lever space closed. Realised margin after RTE **$29.95 / 24.53 / 22.69**
+vs the $5.002 hurdle. Hod 22–23 the model is long storage battery-only too
+(+235/+199, +161/+191, +276/+414) — caiso-255b §6 #2 stands and is
+strengthened.
+
+**CONSEQUENCE.** Every mechanism the handoff named (the spread,
+`battery_dispatch_adder`, a cycling/degradation cost, `storage_daily_cycling`,
+an SOC/duration bound) REDUCES cycling and would move the battery volume the
+WRONG way on the correct basis — none is a lever, additional to caiso-100/101,
+caiso-168 §8 #3, caiso-169 §9 #1–#4 and caiso-176. The handoff's "what spread
+reproduces 28.5 GWh/d" is not answered: wrong basis, and a rule-13 pin.
+
+**DISCLOSURES.** (a) The decisive gate's value was seen BEFORE the PRECOMMIT
+was pushed — the sidecar's `tech` column made the composition visible while
+reading its schema and I ran the per-tech sums; the PRECOMMIT records them as
+seen and pre-registers every other gate, all computed after the push. (b) Four
+of five predictions falsified; P-2 was wrong in the direction that would have
+supported a fleet-size story. (c) caiso-255b's actual-side 28.5 / 33.3 is not
+reproduced and is not on this basis (30.84 / 35.67 hour-separated); both bases
+put the battery-only model BELOW the actual. (d) PS reported beside the
+caiso-141/145 wall, no comparator constructed (caiso-168 §8 #4).
+
+**DO-NOT-REDO adds (FINDING §6):** never sum `storage_<year>.parquet` over
+techs against `NG: OTH` (filter `tech == "li_ion"`); never re-open "the model
+over-cycles storage"; never propose a cycling cost / throughput adder /
+SOC horizon / duration bound for the battery-only residual (it under-cycles);
+never quote 1.35/1.21/1.14× as a battery fleet statement or use the single
+annual max as the fleet proxy (p99 1.12/1.01/1.00); never read the evening
+battery shortfall as cap-bound.
+
+Matrix: evidence appended on `battery_dispatch_adder` and
+`storage_measured_anchors`, NO verdict move. No run registered (none
+produced), no keeper change, no `ScenarioConfig` field, no `complete`
+declaration.
+
+**OBJECT B — THE GRANTED CT-ONLY PARTITION: RESUMED, SCREENED ON 2023, AND
+THE ARM DIES ON S-1 BY THE REGISTERED RULE. ONE LP-YEAR SPENT, NOTHING
+PROMOTED, ARTIFACT REVERTED, KEEPER UNCHANGED.**
+`ADDENDUM-caiso256-partition-screen-2026-09-06.md` (`5ca18bf3`, pushed before
+the screen); `FINDING-caiso256-partition-screen-2026-09-06.md`; probes
+`_caiso256_s1_implied_displacement.py`, `_caiso256_screen2023.py`; artifacts
+`_caiso256_s1_implied_displacement.json`, `_caiso256_screen2023.json`,
+`_caiso256_gdrift_input_identity_artifact_reverted.json`.
+
+**STATE CORRECTION.** The handoff's "only blocker is a ~110 min corpus
+re-fetch" was stale: the first caiso-255 instance had fetched, derived and
+COMMITTED the CT-only pair (`df277e89`, PR #5133, *"ADOPTION IS PENDING THE
+RULE-29 SCREEN … if the screen kills the arm this artifact is reverted"*),
+then lost its container before the screen. So `main` WAS the arm, and the
+keeper's committed bundle was no longer reproducible at HEAD.
+
+**G-DRIFT `d8b64997 → HEAD` BY MEASUREMENT.** The caiso-255 identity probe
+re-run with the artifact pair temporarily reverted to `fa23c1f7` bytes:
+**ALL LP INPUTS BIT-IDENTICAL**, all three years — the pair is the ONLY live
+input hunk on the 26-file / +2,879-line span; construction/solve hunks all
+NYISO-/MISO-gated, forecast-only or diagnostics. The SCORER drifted
+(`calibration_verdict.py` +224), so the form-4 comparator is the keeper
+RE-SCORED at HEAD: **CALIBRATED, rubric v3.6, every digit identical** (C3a
++4.6/+9.0/+8.9, C4 0.880/0.285, 0.909/0.261, 0.877/0.297). **G-CTRL form 4,
+no control solve.** Precondition found and fixed before any solve: the
+`capacity-deliverability` clean partition was absent on the box and the fleet
+rebuild warned it would solve on the baked 7,500 MW seam cap; materialised
+(`mic_partition` 16,055 MW verified in the arm's `run_config.json`).
+
+**S-1 FIXED BEFORE THE SOLVE**: ΔE_implied = Σ pmax × #{t: mc_new ≤ λ_z,t <
+mc_old} over the 784 of 828 CT_PEAKER tranches whose P0 offer fell (0 rose),
+λ = the keeper's committed P1 zonal price = **935.5 GWh**, band **[311.8,
+2,806.4] GWh**, bias disclosed as UPWARD (price held fixed).
+
+**THE SCREEN (2023, throwaway, deleted per rule 29(c)).** Preconditions all
+PASS (mic_partition 16,055; hydro partition present, flag off; outage/tranche
+sha256 identical; "P1 route: COLD REBUILD", P0 471 s / P1 547 s cold).
+**S-1 FAIL**: CT_PEAKER **+219.8 GWh** (1.6447 → 1.8645 TWh, **+13.4 %**, the
+registered direction) against the 311.8 floor — the measured rise is
+**0.235×** the first-order count. S-2 PASS (nuclear/wind 0.0000 %, hydro
+0.0022 %, solar 0.0027 %); S-3 PASS (no C1 flip: CC_REGULAR 48.371, CC_CHP
+8.479, CT_PEAKER 1.864, ST_GAS 0.081 TWh); S-4 PASS (C4 gas **0.879/0.287** vs
+0.880/0.285). C3a (EXCLUDED) +4.49 vs +4.65 %; C3b 0.0879 vs 0.0878. **The arm
+dies at the screen** (PRECOMMIT-caiso255 §7.2); 2024/2025 never spent.
+
+**POST-HOC, REPORTED ONLY, NEVER SCORED**: the same count with at most one
+tranche's MW per (plant, hour) = **261.5 GWh** (79 plants); the measured rise
+is 0.84× that. Computed after the verdict, labelled in the probe, and it
+changes nothing here — re-chartering on it is the OWNER's call (FINDING §5).
+
+**WHERE THE RISE WENT**: entirely hod 16–23 (+32…+89 MW) and Jul–Dec; by
+plant p57482 462 / p57515 375 / p57555 281 GWh — the three LA-basin/SDGE
+peakers caiso-252 §3.3 named — against Panoche 172. The repair de-contaminates
+the offer and still allocates the CT energy to the wrong plants (caiso-252 §7
+#4 forbids reaching Panoche by re-pricing). Reported, not gated.
+
+**DISPOSITION.** The three artifact files are restored byte-exactly to
+`fa23c1f7` on this branch (the stop rule `df277e89` records); the repaired
+pair stays in history for a re-charter. The grant is neither spent nor
+withdrawn. No registration (throwaway probe), no keeper change, no
+`ScenarioConfig` field, no matrix verdict move (evidence append on
+`measured_offer_surface`), no `complete` declaration.
+
+**DO-NOT-REDO adds (FINDING §7):** never register a price-held-fixed tranche
+count as a displacement gate without plant-level deduplication (4.26×
+over-count measured); never read S-1's failure as "the repair does not move
+CT_PEAKER"; never re-apply `df277e89` without a pre-registered screen; never
+quote the arm's C3a move as evidence for it.
+
+**QUEUE.** (1) the owner's re-charter decision on S-1 (FINDING §5 items 1–2);
+(2) the hod 22–23 CC over-run, open with no named carrier; (3) the caiso-127
+evening/overnight storage object (S2), unfunded; (4) carried unchanged, raised
+not granted — the `complete` marker, the stale `program-status.json` CAISO
+keeper stamp, the C3a weight basis, the per-zone storage sidecar, the DMM 2025
+RA-import basis, Panoche.
+
+**Next number: caiso-257.**

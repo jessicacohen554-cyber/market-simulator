@@ -1,0 +1,127 @@
+{
+ "session": "caiso-256",
+ "year": 2023,
+ "target_class": "CT_PEAKER",
+ "definition": "dE_implied = sum_i pmax_i * #{t: mc_new_i <= lambda_z(i),t < mc_old_i} over CT_PEAKER tranches whose P0 offer fell; lambda = keeper committed P1 zonal price; first-order, price held fixed",
+ "n_target_tranches": 828,
+ "n_fell": 784,
+ "n_rose": 0,
+ "dE_implied_gwh": 935.462,
+ "POST_HOC_reported_only_dE_plant_dedup_gwh": 261.461,
+ "POST_HOC_n_plants": 79,
+ "S1_band_gwh": [
+  311.821,
+  2806.386
+ ],
+ "keeper_ct_peaker_twh": 1.6447,
+ "top_rows": [
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc00",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 75.54495010155883,
+   "mc_new": 73.51773220377663,
+   "hours_in_band": 592,
+   "mwh": 68514.13333333333
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc01",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 75.7215956445191,
+   "mc_new": 73.8794349822191,
+   "hours_in_band": 585,
+   "mwh": 67704.0
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc02",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 75.89824118747937,
+   "mc_new": 74.24113776066154,
+   "hours_in_band": 567,
+   "mwh": 65620.8
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc03",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 76.07488673043963,
+   "mc_new": 74.60284053910402,
+   "hours_in_band": 456,
+   "mwh": 52774.4
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc04",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 76.25153227339993,
+   "mc_new": 74.9645433175465,
+   "hours_in_band": 329,
+   "mwh": 38076.26666666667
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc04",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 75.19854312959109,
+   "mc_new": 73.94003579952259,
+   "hours_in_band": 452,
+   "mwh": 31822.457333333332
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc03",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 75.0258068293856,
+   "mc_new": 73.58633766100662,
+   "hours_in_band": 443,
+   "mwh": 31188.824333333334
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc02",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 74.85307052918013,
+   "mc_new": 73.23263952249063,
+   "hours_in_band": 426,
+   "mwh": 29991.962
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc05",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 75.37127942979657,
+   "mc_new": 74.29373393803857,
+   "hours_in_band": 413,
+   "mwh": 29076.714333333333
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57482_econc05",
+   "zone": "SDGE",
+   "pmax": 115.73333333333333,
+   "mc_old": 76.4281778163602,
+   "mc_new": 75.32624609598898,
+   "hours_in_band": 244,
+   "mwh": 28238.933333333334
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc01",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 74.68033422897466,
+   "mc_new": 72.87894138397466,
+   "hours_in_band": 378,
+   "mwh": 26612.586
+  },
+  {
+   "unit": "CT_PEAKER_LA_BASIN_p57515_econc00",
+   "zone": "SDGE",
+   "pmax": 70.40366666666667,
+   "mc_old": 74.50759792876917,
+   "mc_new": 72.52524324545867,
+   "hours_in_band": 324,
+   "mwh": 22810.788
+  }
+ ]
+}
