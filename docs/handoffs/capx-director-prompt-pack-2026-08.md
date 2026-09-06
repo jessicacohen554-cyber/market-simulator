@@ -6062,14 +6062,16 @@ EXIT: the finding with the census, the adjudicated home, the arithmetic of what 
 would do to D57's price ratio and composition, and the D62 build charter draft; pushed.
 ```
 
-## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41** — **NOT LAUNCHED at r#42 (no branch / commit); paste as written when dispatching**
+## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41; NOT LAUNCHED at r#42; RE-EMITTED AND DISPATCHED at r#43** with FOUR marked `[r#43]` changes and nothing else (D60-R2 → D60-R3 in both hold clauses; D65 recorded LANDED with D65-B named as the future writer of the same regions; the two director-verified G-DRIFT facts marked re-verify-don't-assume; **the D65 hunk-level lesson made binding on `retirements.py`**, D62's own seam-1 file) plus rule 29(c) stated explicitly. **This section IS the issued text — paste it as written**
 
 ```
 You are capx lane D62 for the market-simulator repo — the BUILD + A/B of the object D61 relocated
 the PJM clearing-price ratio to. Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md
-§D62 (this section) and docs/handoffs/FINDING-capx-d61-2026-09-05.md §4 (the construction, the
-vintage rule, the pre-declared signs and STOPs — read it whole first, then §2d for the arithmetic
-you must reproduce). Director ledger: docs/handoffs/capx-director-ledger-2026-08.md §0al.
+§D62 and docs/handoffs/FINDING-capx-d61-2026-09-05.md §4 (the construction, the vintage rule, the
+pre-declared signs and STOPs — read it whole first, then §2d for the arithmetic you must reproduce).
+Director ledger: docs/handoffs/capx-director-ledger-2026-08.md §0al and §0an (r#43, this dispatch).
+This charter was issued at r#41 and never launched; it is re-issued UNCHANGED except for the four
+lines marked [r#43] below. You start FRESH from the committed charter (relaunch protocol).
 DATA PROFILE: pjm
 MODEL: Opus (pre-declared execution; rule 27 core scope is permitted for Opus)
 BRANCH (suggested; the director grades by content): claude/capx-d62-pjm-acr-bar
@@ -6124,10 +6126,15 @@ clear_capacity_supply_stack — to 0.000 $/MW-day and 0.000 pt on the committed 
 RULE 29 [R-SCREEN] — NO CONTROL SOLVE (clause b): the control is the committed bare `pjm-t1h`
 (`f0e050e820c1159a`, D57 arm A). FIRST run G-DRIFT: `git diff <its git_sha> HEAD -- src/market_sim
 scripts/run_full_horizon.py scripts/lib` and classify EVERY solve-path hunk INERT-with-reason or
-LIVE in the PRECOMMIT before the arm is solved (D58's and D60-R2's hunks, if landed, must read INERT
-for PJM's hindcast path or the control is re-solved — the only thing that earns one). If D58's
-PJM sector-gate ARMING has landed by then, the bare `pjm-t1h` is the new key: take it as the control
-and say so. SCREEN YEAR = DY 2022/23 (the year the bar's footprint is largest: every CT/ST/oil offer
+LIVE in the PRECOMMIT before the arm is solved — the only thing that earns a control solve.
+[r#43] Two facts the director verified at pin `04e6906d`, to be re-verified by you, not assumed:
+D58's PJM sector-gate arming has NOT landed (bare `pjm-t1h` is unchanged), and `src/market_sim/` has
+ZERO commits since `d66d5e6b`. D65 Act A HAS landed (`ccs.py` + a default-off scenarios.py field) —
+classify its hunks explicitly. And note D65's own G-DRIFT was WRONG because it classified
+`retirements.py` at FILE level: an ungated change to an EXISTING helper (D55's `_floor_retention_merit`)
+was missed and the arm caught it hours later. `retirements.py` is YOUR seam-1 file. Classify it HUNK
+BY HUNK or your control is not valid.
+SCREEN YEAR = DY 2022/23 (the year the bar's footprint is largest: every CT/ST/oil offer
 on the bar plateau, coal's 2.0× gap widest — named here, not chosen by residual); structural STOP
 gate only (direction and order of magnitude per §2d, footprint confined to the bar rows, offer==exit
 identity holds, no non-target load-bearing criterion flips). Then the full T1-H window
@@ -6146,17 +6153,19 @@ any other ISO's key moved · a residual-selected column or convention (rule 21) 
 moving · the price landed through any scalar not in pjm.csv · wall/RSS beyond D57's 14 min / 9.3 GB.
 
 COLLISION CARE: retirements.py beside D57's settlement hunk and D53's sector-gate hunk — rebase
-before every push. D65 (issued alongside) writes ccs.py + the D50 neighbourhood of scenarios.py; put
-your field OUTSIDE that block and outside SCN-WS1a's D34-guard region and SCN-WS2a's federal_ces_*
-block (scenario-desk-ledger-2026-09.md collision register). NOBODY but D60-R2 writes
+before every push. [r#43] D65 has LANDED (ccs.py + the D50 neighbourhood of scenarios.py); D65-B will
+re-write those same two regions AFTER D60-R3 — put your field OUTSIDE the D50 block, outside
+SCN-WS1a's D34-guard region and outside SCN-WS2a/2b's federal_ces_* block (scenario-desk-ledger-
+2026-09.md collision register). [r#43] NOBODY but D60-R3 — dispatched CONCURRENTLY with you — writes
 frontend/data/forecast/program-status.json or ff-verdicts.json this window: build, test, Phase 0,
 screen and full-window solves are yours now; REGISTRATION + the artifact-only re-score wait until
-D60-R2's finding has merged (git log origin/main --grep=D60-R2) — if it has not by the time your
+D60-R3's finding has merged (`git log origin/main --grep=D60-R3`) — if it has not by the time your
 solves are done, push everything else as a CHECKPOINT and say exactly what is owed. Score and
 register AFTER the final rebase; a rebase after scoring re-stamps scored_at_sha by an artifact-only
 re-score before merge. Rule 22: no out-of-training solve (2021–2025 realized hindcast only; forecast
 mode). Rule 27: edit locally, push exact bytes, blob-verify every ≥300-line file after push. Rule 28:
-row + six cells in this PR. Rule 25: PJM's data and PJM's cell only.
+row + six cells in this PR. Rule 25: PJM's data and PJM's cell only. Rule 29(c): any screen or control
+bundle is DELETED from results/calibration before your PR merges — the finding carries every number.
 
 EXIT: FINDING-capx-d62-<date>.md (Phase 0 reproduction, G-DRIFT table, screen gate table, the
 full-window A/B at full magnitude vs the pre-declared signs, FC-3/FC-2 rows, a §8 recommendation
@@ -6313,7 +6322,7 @@ blob-verify calibration-complete.json and program-status.json after push. EXIT: 
 landed, both gates green, finding pushed.
 ```
 
-## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"** — **Q50 RULED HOLD until caiso-253 lands (r#42 am.2); do not paste until the card is re-served and ruled**
+## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (caiso-253 landed, arm refused, keeper unchanged) and RULED HOLD AGAIN: "hold until caiso-253b resolves" (#4923's open PRECOMMIT). Re-serve condition for r#44: caiso-253b lands. Do not paste until then**
 
 ```
 You are the D69 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6360,7 +6369,7 @@ dispatched, D68 lands first and D69 rebases onto it; both edit disjoint ISO bloc
 bytes + blob-verify both JSON files. EXIT: declaration landed, gates green, finding pushed.
 ```
 
-## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"** — **Q51 RULED HOLD one refresh (r#42 am.2); re-served at r#43**
+## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"** — **RE-SERVED at r#43 with its condition MET (the keeper survived a full refresh byte-unmoved) and RULED HOLD AGAIN: "hold, nyiso-197 is live" (#4919's open CHP add-back basis question could move the keeper a fifth time). Re-serve condition for r#44: nyiso-197 lands AND the keeper reads CALIBRATED. Do not paste until then**
 
 ```
 You are the D70 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6411,7 +6420,7 @@ exact bytes; blob-verify calibration-complete.json + program-status.json after p
 declaration landed, both gates green, finding pushed.
 ```
 
-## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2**
+## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2; NEVER DISPATCHED; RE-EMITTED AND DISPATCHED at r#43** with a new STATE AT START block (what main took since the charter was written) and an extended collision note. **This section IS the issued text — paste it as written**
 
 ```
 You are the D60-R3 session of the capacity-expansion track — the THIRD launch of D60's owed half (pack
@@ -6422,7 +6431,7 @@ ruled it DEAD at r#42. You start FRESH from the committed record.
 FIRST, before anything else: `git fetch origin --prune`; check for any `claude/capx-d60r*` branch and
 any commit mentioning "D60-R2" or "D60-R3" on origin/main newer than `342c7593` (D60-R2's last
 commit). If one exists, STOP and report it — two writers on ff-verdicts.json is the one collision
-this program cannot absorb.
+this program cannot absorb. (The director verified NONE exists at pin `04e6906d`, r#43.)
 DATA PROFILE: caiso, pjm, neiso (incremental — hydrate each before its leg; `data/clean` regenerated
 once before the first solve).
 MODEL: Opus (execution of pre-declared legs; every adjudication is already made — Amendment 2's STOP
@@ -6447,10 +6456,20 @@ assertions; an FC-map move where §6.4 said none is a STOP); each leg: score →
 leg, pushed at once; (2) the Q37 rows from Addendum D and the artifact-only re-scores of `nyiso-t1f`,
 `miso-t1f` and your three legs — FC-7 the ONLY row that may move, anything else a STOP; (3) finding §5
 and §8 and the close. STATE AT START first, zero solve: every bare key re-resolved through the harness
-at your HEAD vs Addendum A §A.2 + Addendum C; since D60-R2's pins, main has taken D65 Act A (a
-default-off field registered in the optional-fields table — MUST be key-neutral: assert it), three
-keeper promotions (MISO 220, CAISO 252, NYISO 196 — backcast only) and two gate-(a) re-keys on
-program-status.json; ANY bare-key drift is reported before anything runs.
+at your HEAD vs Addendum A §A.2 + Addendum C; ANY bare-key drift is reported before anything runs.
+
+STATE AT START — WHAT MAIN HAS TAKEN SINCE D60-R2's PINS (director-verified at `04e6906d`):
+ · D65 Act A — a default-off field registered in the cache-key optional-fields table. MUST be
+   key-neutral: assert it explicitly in your state-at-start table.
+ · THREE keeper promotions (MISO 220, CAISO 252, NYISO 196) and FOUR gate-(a) re-keys on
+   program-status.json — BACKCAST only; no forecast verdict moved.
+ · r#43 delta (`d66d5e6b..04e6906d`), all NEW since the charter was written:
+   — rule 30 `[R-TOUCHPOINT-FOLD]` in CLAUDE.md (backcast dashboard; not your surface);
+   — the R-AZ registration-time tier-marker re-check in `scripts/dashboard_add_run.py` +
+     `scripts/lib/holdout_policy.py` — a BACKCAST registration gate. Your registrations go through
+     `register_forecast_run.py`. State in one line whether that path is touched; if it IS, STOP.
+   — three SCN hindcast sidecars under `frontend/data/hindcast/` — NOT the board.
+   — **ZERO commits under `src/market_sim/`**, so any bare-key drift you find is not from this delta.
 
 NEW IN R3 — THE BLAST-RADIUS SECTION (D65 §3b/§3c, capx D71 folded in; zero DOF, code only):
  (a) D65 found that the committed `neiso-t1f` (`18515067bf4d2fbe`, git_sha `9e48ff6`) is NO LONGER
@@ -6484,16 +6503,19 @@ GUARDRAILS: §D60's — rules 1, 5, 12 (sequential legs), 13, 14, 19, 21 (no val
 D65-B's, AFTER you land, never yours), 22 (t1f 2026–2030, t3 2026–2050; nothing against measured
 H1-2026), 24, 25, 27 (exact bytes; blob-verify ff-verdicts.json + program-status.json + the finding
 after every push), 28 (no cell moves — you test no mechanism; the bisect names a hunk, it does not
-adjudicate one). No keeper, shard, marker, freeze or default moves (Q49 DECLINED, Q50/Q51 HELD — gate (a)
-reads FAIL for CAISO/MISO/NYISO by the owner's choice; you re-key nothing there). STOPs: PREDECL §7
+adjudicate one). No keeper, shard, marker, freeze or default moves (Q49 DECLINED; Q50/Q51 were RE-SERVED
+at r#43 with their conditions met and HELD AGAIN — gate (a) reads FAIL for CAISO/MISO/NYISO by the owner's
+choice, and no marker will land under you this window; you re-key nothing there). STOPs: PREDECL §7
 verbatim; Amendment 2's "any non-FC-7 row moves"; a second drift hunk; a bare key moved by D65's field.
 
 COLLISION: you are the ONLY writer on `ff-verdicts.json` / `program-status.json` and on CAISO / PJM /
 NEISO forecast surfaces this window. D65-B, D62's registration, D58 and D63 are HELD until you land.
-SCN-WS1b (a six-ISO carbon T0 ladder) and SCN-WS2b (ERCOT 2026 screen) register into the HINDCAST
-namespace under their own campaign keys and never touch the board — if you see a board edit that is not
-yours, STOP and report. The owner's backcast lanes move keepers and gate-(a) rows — rebase before every
-push and keep their edits verbatim.
+D62 is dispatched CONCURRENTLY with you — it builds, tests and solves PJM but registers nothing until
+your finding merges; if you see a board edit that is not yours, STOP and report. SCN-WS1b / WS-2b /
+WS-4b register into `frontend/data/hindcast/` under their own campaign keys and never touch the board.
+D69 / D70 (records lanes) are HELD at r#43 and will not land marker edits under you; the owner's backcast
+lanes (nyiso-197, caiso-253b, miso-221) move keepers and shards — rebase before every push and keep
+their edits verbatim.
 
 EXIT: three legs registered on their pre-declared keys with priors preserved; the seven rows; every
 affected bare key re-scored artifact-only; the drift hunk named with its table; the finding complete

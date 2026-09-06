@@ -1,0 +1,198 @@
+{
+ "ERCOT": {
+  "REF": {
+   "2026": {
+    "energy_twh": 544.576,
+    "peak_gw": 93.673,
+    "min_gw": 45.97,
+    "load_factor": 0.6636
+   },
+   "2027": {
+    "energy_twh": 590.865,
+    "peak_gw": 98.983,
+    "min_gw": 51.241,
+    "load_factor": 0.6814
+   },
+   "2028": {
+    "energy_twh": 641.089,
+    "peak_gw": 105.016,
+    "min_gw": 56.82,
+    "load_factor": 0.6969
+   },
+   "2029": {
+    "energy_twh": 695.581,
+    "peak_gw": 111.834,
+    "min_gw": 62.734,
+    "load_factor": 0.71
+   },
+   "2030": {
+    "energy_twh": 754.706,
+    "peak_gw": 119.502,
+    "min_gw": 69.011,
+    "load_factor": 0.7209
+   }
+  },
+  "LOAD-HI": {
+   "2026": {
+    "energy_twh": 575.107,
+    "peak_gw": 84.602,
+    "min_gw": 55.91,
+    "load_factor": 0.776
+   },
+   "2027": {
+    "energy_twh": 641.245,
+    "peak_gw": 86.218,
+    "min_gw": 66.51,
+    "load_factor": 0.849
+   },
+   "2028": {
+    "energy_twh": 714.988,
+    "peak_gw": 89.232,
+    "min_gw": 77.707,
+    "load_factor": 0.9147
+   },
+   "2029": {
+    "energy_twh": 797.212,
+    "peak_gw": 93.804,
+    "min_gw": 89.568,
+    "load_factor": 0.9702
+   },
+   "2030": {
+    "energy_twh": 1797.303,
+    "peak_gw": 267.031,
+    "min_gw": 173.373,
+    "load_factor": 0.7683
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "2026": {
+    "energy_twh": 575.107,
+    "peak_gw": 99.283,
+    "min_gw": 48.363,
+    "load_factor": 0.6613
+   },
+   "2027": {
+    "energy_twh": 641.245,
+    "peak_gw": 108.24,
+    "min_gw": 55.19,
+    "load_factor": 0.6763
+   },
+   "2028": {
+    "energy_twh": 714.988,
+    "peak_gw": 118.595,
+    "min_gw": 62.613,
+    "load_factor": 0.6882
+   },
+   "2029": {
+    "energy_twh": 797.212,
+    "peak_gw": 130.508,
+    "min_gw": 70.7,
+    "load_factor": 0.6973
+   },
+   "2030": {
+    "energy_twh": 888.891,
+    "peak_gw": 144.158,
+    "min_gw": 79.529,
+    "load_factor": 0.7039
+   }
+  }
+ },
+ "NEISO": {
+  "REF": {
+   "2026": {
+    "energy_twh": 106.527,
+    "peak_gw": 21.535,
+    "min_gw": 7.197,
+    "load_factor": 0.5647
+   },
+   "2027": {
+    "energy_twh": 107.912,
+    "peak_gw": 21.815,
+    "min_gw": 7.29,
+    "load_factor": 0.5647
+   },
+   "2028": {
+    "energy_twh": 109.314,
+    "peak_gw": 22.099,
+    "min_gw": 7.385,
+    "load_factor": 0.5647
+   },
+   "2029": {
+    "energy_twh": 110.735,
+    "peak_gw": 22.386,
+    "min_gw": 7.481,
+    "load_factor": 0.5647
+   },
+   "2030": {
+    "energy_twh": 112.175,
+    "peak_gw": 22.677,
+    "min_gw": 7.578,
+    "load_factor": 0.5647
+   }
+  },
+  "LOAD-HI": {
+   "2026": {
+    "energy_twh": 108.428,
+    "peak_gw": 21.92,
+    "min_gw": 7.325,
+    "load_factor": 0.5647
+   },
+   "2027": {
+    "energy_twh": 110.813,
+    "peak_gw": 22.402,
+    "min_gw": 7.486,
+    "load_factor": 0.5647
+   },
+   "2028": {
+    "energy_twh": 113.251,
+    "peak_gw": 22.895,
+    "min_gw": 7.651,
+    "load_factor": 0.5647
+   },
+   "2029": {
+    "energy_twh": 115.743,
+    "peak_gw": 23.398,
+    "min_gw": 7.819,
+    "load_factor": 0.5647
+   },
+   "2030": {
+    "energy_twh": 118.289,
+    "peak_gw": 23.913,
+    "min_gw": 7.991,
+    "load_factor": 0.5647
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "2026": {
+    "energy_twh": 108.428,
+    "peak_gw": 21.92,
+    "min_gw": 7.325,
+    "load_factor": 0.5647
+   },
+   "2027": {
+    "energy_twh": 110.813,
+    "peak_gw": 22.402,
+    "min_gw": 7.486,
+    "load_factor": 0.5647
+   },
+   "2028": {
+    "energy_twh": 113.251,
+    "peak_gw": 22.895,
+    "min_gw": 7.651,
+    "load_factor": 0.5647
+   },
+   "2029": {
+    "energy_twh": 115.743,
+    "peak_gw": 23.398,
+    "min_gw": 7.819,
+    "load_factor": 0.5647
+   },
+   "2030": {
+    "energy_twh": 118.289,
+    "peak_gw": 23.913,
+    "min_gw": 7.991,
+    "load_factor": 0.5647
+   }
+  }
+ }
+}

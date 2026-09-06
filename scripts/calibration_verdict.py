@@ -886,9 +886,9 @@ def load_artifacts(run_id: str) -> dict:
             bench[int(y)] = obj.get("bench", {})
     if _stale_parts:
         print(
-            f"[!] STALE BENCHMARK: {iso} part(s) {', '.join(_stale_parts)} were "
-            f"NOT written by the builder at HEAD (fingerprint "
-            f"{_bench_stamp.builder_fingerprint()}). C1's metered actuals below "
+            f"[!] STALE BENCHMARK: {iso} part(s) {', '.join(_stale_parts)} do "
+            f"NOT reproduce under the builder at HEAD (payload fingerprint "
+            f"{_bench_stamp.payload_fingerprint()}). C1's metered actuals below "
             f"may not be reproducible — regenerate the part "
             f"(run_calibration_full.py --rebuild-benchmark <bundle>, then "
             f"dashboard_add_run.py) before relying on this verdict. See "

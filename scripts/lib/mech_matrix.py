@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -403,6 +404,86 @@ def all_matrix_paths(repo: Path | None = None) -> list[Path]:
     except (OSError, ValueError):
         pass
     return [base_path(root)] + [shard_path(i, root) for i in isos]
+
+
+# --------------------------------------------------------------------------
+# Rule-28(c) field census — ONE recogniser, ONE predicate, both halves
+# --------------------------------------------------------------------------
+#
+# Two scripts have to agree, exactly, about which `ScenarioConfig` fields exist
+# and which of them the matrix already names: `mechanism_matrix_gap_sweep.py`
+# WRITES the shrink-only baseline and `check_mechanism_matrix.py` ENFORCES it.
+# When the two disagreed once before — `\b` vs substring matching, seven fields
+# — the checker came out STRICTER than the sweep and the baseline it demanded
+# could never be written (tests/unit/config/test_mechanism_matrix_shared_ratchet
+# pins that lesson). The fix is not a comment asking for sync: it is that the
+# recogniser and the predicate live here, once, and both scripts call them.
+
+# Each ISO's own field stems, incl. the regulator prefixes whose fields are that
+# ISO's exclusively (NYSDEC rules bind only New York units). Matched as
+# `<stem>_`, never as a bare substring, so `carbon_price` is never read as a
+# CARB field. Was duplicated in both scripts under a "keep in sync" comment.
+ISO_FIELD_STEMS: dict[str, tuple[str, ...]] = {
+    "ERCOT": ("ercot",),
+    "CAISO": ("caiso",),
+    "PJM": ("pjm",),
+    "MISO": ("miso",),
+    "NYISO": ("nyiso", "nysdec"),
+    "NEISO": ("neiso",),
+}
+
+
+def iso_field_prefixes() -> tuple[str, ...]:
+    """Every ISO stem as the `<stem>_` prefix the census actually matches."""
+    return tuple(f"{s}_" for stems in ISO_FIELD_STEMS.values() for s in stems)
+
+
+def is_iso_scoped(field: str) -> bool:
+    """True when a field belongs to one ISO's family (`pjm_*`, `nysdec_*`, …).
+
+    The complement is the SHARED family: everything an ISO-scoped census can
+    never see, which is where the rule-28(c) hole this predicate closes lived.
+    """
+    return field.startswith(iso_field_prefixes())
+
+
+def scenarioconfig_field_names(source: str) -> set[str]:
+    """`ScenarioConfig` field names, parsed from `scenarios.py` source text.
+
+    A 4-space-indented ``name:`` inside the class body, `_`-prefixed names
+    dropped. Text, not an import, because the CI guard runs stdlib-only (no
+    ``uv sync``) — and NAMES need no import: registration asks whether the
+    matrix mentions the name, never what the field defaults to. Measured
+    against the live dataclass at 798 = 798 fields, exactly (the sweep
+    re-asserts that every time it writes the baseline).
+    """
+    m = re.search(r"^class ScenarioConfig\b", source, re.M)
+    if not m:
+        return set()
+    body = source[m.end() :]
+    end = re.search(r"^(?:class |def |@dataclass)", body, re.M)
+    if end:
+        body = body[: end.start()]
+    return {
+        name
+        for name in re.findall(r"^    ([a-z][a-z0-9_]*)\s*:", body, re.M)
+        if not name.startswith("_")
+    }
+
+
+def absent_shared_fields(names: Iterable[str], matrix_text: str) -> list[str]:
+    """Shared fields whose name appears NOWHERE in the matrix text.
+
+    `matrix_text` is the base file plus every ISO shard (:func:`all_matrix_paths`
+    — a field named only in one shard's ev/note counts as registered, the same
+    mention-anywhere escape hatch rule 28(c) grants everywhere else).
+
+    Case-insensitive on both sides: the sweep lowercased its mention blob and
+    the checker did not, which is the same asymmetry class as the `\\b` bug.
+    Lowercasing here means neither can drift into being the stricter one.
+    """
+    blob = matrix_text.lower()
+    return sorted(f for f in names if not is_iso_scoped(f) and f.lower() not in blob)
 
 
 # --------------------------------------------------------------------------

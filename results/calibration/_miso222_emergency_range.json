@@ -1,0 +1,712 @@
+{
+  "probe": "miso-222 phase 0 - the declared emergency range, from MISO's own conduct corpus",
+  "source": "data/raw/miso-energy-offers/rt (MISO Market Reports *_rt_co, ~90-day lag)",
+  "solved": false,
+  "premise_correction": "miso-219 section 9 filed the ELMP re-basing on the ground that the emergency-range MW is 'neither already-measured nor already-registered'. The registered half stands; the MEASURED half is wrong - MISO publishes Economic Max and Emergency Max per masked unit-hour, this repo fetches and curates them, and the data contract carries them as energy-offers.emergency_max_mw / emergency_min_mw / emergency_flag (landed miso-145, 2026-08-09, before miso-219 filed).",
+  "limits": [
+    "unit identity is MASKED; no fuel or technology attribute is published, and the offer-side class bridge was REFUTED at miso-138 - no class crosswalk",
+    "location is Region in {North, Central, South}, a MISO market region, NOT a model zone",
+    "so any mechanism built on this input is fleet- or region-aggregate, never per-unit and never per-model-zone",
+    "coverage is Jun-Jul here (the object's months); the landed corpus is JJA"
+  ],
+  "rule_13": "only OFFER columns are read; the award columns (Cleared MW1-12, Target MW Reduction) are dispatch OUTCOMES and are dropped before anything else touches the frame",
+  "clock": "published fixed EST interval-beginning; model is fixed CST; CST = EST - 1 h",
+  "by_year": {
+    "2023": {
+      "year": 2023,
+      "files_read": 61,
+      "months_covered": [
+        6,
+        7
+      ],
+      "masked_units": 1172,
+      "object_hours": [
+        {
+          "stamp": "06-02 HE09",
+          "covered": true,
+          "units": 828,
+          "eco_max_gw": 102.187,
+          "emer_max_gw": 104.811,
+          "emergency_range_mw": 2625.0,
+          "units_offering_range": 136,
+          "by_region_mw": {
+            "Central": 1122.0,
+            "North": 957.0,
+            "South": 545.0
+          }
+        },
+        {
+          "stamp": "06-06 HE14",
+          "covered": true,
+          "units": 774,
+          "eco_max_gw": 95.83,
+          "emer_max_gw": 97.646,
+          "emergency_range_mw": 1816.0,
+          "units_offering_range": 119,
+          "by_region_mw": {
+            "Central": 802.0,
+            "North": 564.0,
+            "South": 450.0
+          }
+        },
+        {
+          "stamp": "06-06 HE15",
+          "covered": true,
+          "units": 771,
+          "eco_max_gw": 95.916,
+          "emer_max_gw": 97.514,
+          "emergency_range_mw": 1598.0,
+          "units_offering_range": 114,
+          "by_region_mw": {
+            "Central": 729.0,
+            "North": 452.0,
+            "South": 417.0
+          }
+        },
+        {
+          "stamp": "06-21 HE09",
+          "covered": true,
+          "units": 771,
+          "eco_max_gw": 101.845,
+          "emer_max_gw": 104.712,
+          "emergency_range_mw": 2867.0,
+          "units_offering_range": 146,
+          "by_region_mw": {
+            "Central": 759.0,
+            "North": 1142.0,
+            "South": 965.0
+          }
+        },
+        {
+          "stamp": "06-24 HE11",
+          "covered": true,
+          "units": 760,
+          "eco_max_gw": 103.148,
+          "emer_max_gw": 105.202,
+          "emergency_range_mw": 2054.0,
+          "units_offering_range": 121,
+          "by_region_mw": {
+            "Central": 1196.0,
+            "North": 650.0,
+            "South": 208.0
+          }
+        },
+        {
+          "stamp": "06-24 HE15",
+          "covered": true,
+          "units": 816,
+          "eco_max_gw": 107.297,
+          "emer_max_gw": 109.566,
+          "emergency_range_mw": 2269.0,
+          "units_offering_range": 139,
+          "by_region_mw": {
+            "Central": 1374.0,
+            "North": 743.0,
+            "South": 152.0
+          }
+        },
+        {
+          "stamp": "06-24 HE17",
+          "covered": true,
+          "units": 826,
+          "eco_max_gw": 106.445,
+          "emer_max_gw": 108.222,
+          "emergency_range_mw": 1776.0,
+          "units_offering_range": 138,
+          "by_region_mw": {
+            "Central": 924.0,
+            "North": 646.0,
+            "South": 207.0
+          }
+        },
+        {
+          "stamp": "07-05 HE09",
+          "covered": true,
+          "units": 785,
+          "eco_max_gw": 109.153,
+          "emer_max_gw": 110.827,
+          "emergency_range_mw": 1674.0,
+          "units_offering_range": 128,
+          "by_region_mw": {
+            "Central": 672.0,
+            "North": 566.0,
+            "South": 436.0
+          }
+        },
+        {
+          "stamp": "07-05 HE10",
+          "covered": true,
+          "units": 814,
+          "eco_max_gw": 110.481,
+          "emer_max_gw": 112.205,
+          "emergency_range_mw": 1724.0,
+          "units_offering_range": 135,
+          "by_region_mw": {
+            "Central": 722.0,
+            "North": 561.0,
+            "South": 441.0
+          }
+        },
+        {
+          "stamp": "07-06 HE12",
+          "covered": true,
+          "units": 790,
+          "eco_max_gw": 107.136,
+          "emer_max_gw": 108.821,
+          "emergency_range_mw": 1685.0,
+          "units_offering_range": 128,
+          "by_region_mw": {
+            "Central": 656.0,
+            "North": 421.0,
+            "South": 608.0
+          }
+        },
+        {
+          "stamp": "07-07 HE13",
+          "covered": true,
+          "units": 786,
+          "eco_max_gw": 102.082,
+          "emer_max_gw": 103.598,
+          "emergency_range_mw": 1516.0,
+          "units_offering_range": 128,
+          "by_region_mw": {
+            "Central": 734.0,
+            "North": 424.0,
+            "South": 357.0
+          }
+        },
+        {
+          "stamp": "07-14 HE11",
+          "covered": true,
+          "units": 816,
+          "eco_max_gw": 107.357,
+          "emer_max_gw": 108.775,
+          "emergency_range_mw": 1418.0,
+          "units_offering_range": 136,
+          "by_region_mw": {
+            "Central": 602.0,
+            "North": 496.0,
+            "South": 320.0
+          }
+        },
+        {
+          "stamp": "07-14 HE13",
+          "covered": true,
+          "units": 856,
+          "eco_max_gw": 111.63,
+          "emer_max_gw": 113.138,
+          "emergency_range_mw": 1508.0,
+          "units_offering_range": 151,
+          "by_region_mw": {
+            "Central": 591.0,
+            "North": 577.0,
+            "South": 339.0
+          }
+        },
+        {
+          "stamp": "07-23 HE20",
+          "covered": true,
+          "units": 775,
+          "eco_max_gw": 100.383,
+          "emer_max_gw": 102.044,
+          "emergency_range_mw": 1661.0,
+          "units_offering_range": 139,
+          "by_region_mw": {
+            "Central": 1002.0,
+            "North": 306.0,
+            "South": 353.0
+          }
+        },
+        {
+          "stamp": "07-24 HE12",
+          "covered": true,
+          "units": 851,
+          "eco_max_gw": 110.538,
+          "emer_max_gw": 112.337,
+          "emergency_range_mw": 1799.0,
+          "units_offering_range": 153,
+          "by_region_mw": {
+            "Central": 866.0,
+            "North": 494.0,
+            "South": 440.0
+          }
+        }
+      ],
+      "object_hours_covered": 15,
+      "emergency_range_mw_at_object_hours": {
+        "mean": 1866.0,
+        "min": 1418.0,
+        "max": 2867.0
+      },
+      "emergency_range_mw_all_jun_jul_hours": {
+        "mean": 2458.0,
+        "p95": 4490.0,
+        "max": 6051.0
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "files_read": 61,
+      "months_covered": [
+        6,
+        7
+      ],
+      "masked_units": 1218,
+      "object_hours": [
+        {
+          "stamp": "06-03 HE18",
+          "covered": true,
+          "units": 813,
+          "eco_max_gw": 97.687,
+          "emer_max_gw": 99.499,
+          "emergency_range_mw": 1813.0,
+          "units_offering_range": 136,
+          "by_region_mw": {
+            "Central": 1031.0,
+            "North": 456.0,
+            "South": 325.0
+          }
+        },
+        {
+          "stamp": "06-03 HE20",
+          "covered": true,
+          "units": 809,
+          "eco_max_gw": 95.667,
+          "emer_max_gw": 97.579,
+          "emergency_range_mw": 1912.0,
+          "units_offering_range": 133,
+          "by_region_mw": {
+            "Central": 1160.0,
+            "North": 416.0,
+            "South": 335.0
+          }
+        },
+        {
+          "stamp": "06-16 HE21",
+          "covered": true,
+          "units": 794,
+          "eco_max_gw": 100.242,
+          "emer_max_gw": 103.394,
+          "emergency_range_mw": 3152.0,
+          "units_offering_range": 136,
+          "by_region_mw": {
+            "Central": 2281.0,
+            "North": 524.0,
+            "South": 347.0
+          }
+        },
+        {
+          "stamp": "06-19 HE11",
+          "covered": true,
+          "units": 888,
+          "eco_max_gw": 110.245,
+          "emer_max_gw": 111.997,
+          "emergency_range_mw": 1752.0,
+          "units_offering_range": 154,
+          "by_region_mw": {
+            "Central": 1031.0,
+            "North": 400.0,
+            "South": 321.0
+          }
+        },
+        {
+          "stamp": "06-19 HE16",
+          "covered": true,
+          "units": 921,
+          "eco_max_gw": 110.731,
+          "emer_max_gw": 112.388,
+          "emergency_range_mw": 1656.0,
+          "units_offering_range": 162,
+          "by_region_mw": {
+            "Central": 1005.0,
+            "North": 393.0,
+            "South": 258.0
+          }
+        },
+        {
+          "stamp": "06-20 HE20",
+          "covered": true,
+          "units": 901,
+          "eco_max_gw": 106.69,
+          "emer_max_gw": 109.216,
+          "emergency_range_mw": 2526.0,
+          "units_offering_range": 153,
+          "by_region_mw": {
+            "Central": 1698.0,
+            "North": 570.0,
+            "South": 257.0
+          }
+        },
+        {
+          "stamp": "06-29 HE17",
+          "covered": true,
+          "units": 795,
+          "eco_max_gw": 109.065,
+          "emer_max_gw": 111.18,
+          "emergency_range_mw": 2115.0,
+          "units_offering_range": 127,
+          "by_region_mw": {
+            "Central": 859.0,
+            "North": 927.0,
+            "South": 328.0
+          }
+        },
+        {
+          "stamp": "07-09 HE16",
+          "covered": true,
+          "units": 893,
+          "eco_max_gw": 102.964,
+          "emer_max_gw": 105.081,
+          "emergency_range_mw": 2117.0,
+          "units_offering_range": 159,
+          "by_region_mw": {
+            "Central": 1208.0,
+            "North": 712.0,
+            "South": 198.0
+          }
+        },
+        {
+          "stamp": "07-22 HE11",
+          "covered": true,
+          "units": 852,
+          "eco_max_gw": 98.701,
+          "emer_max_gw": 100.52,
+          "emergency_range_mw": 1819.0,
+          "units_offering_range": 156,
+          "by_region_mw": {
+            "Central": 983.0,
+            "North": 445.0,
+            "South": 391.0
+          }
+        },
+        {
+          "stamp": "07-28 HE17",
+          "covered": true,
+          "units": 861,
+          "eco_max_gw": 108.452,
+          "emer_max_gw": 110.046,
+          "emergency_range_mw": 1594.0,
+          "units_offering_range": 133,
+          "by_region_mw": {
+            "Central": 724.0,
+            "North": 580.0,
+            "South": 290.0
+          }
+        },
+        {
+          "stamp": "07-28 HE18",
+          "covered": true,
+          "units": 855,
+          "eco_max_gw": 106.583,
+          "emer_max_gw": 108.206,
+          "emergency_range_mw": 1623.0,
+          "units_offering_range": 133,
+          "by_region_mw": {
+            "Central": 818.0,
+            "North": 560.0,
+            "South": 245.0
+          }
+        },
+        {
+          "stamp": "07-29 HE15",
+          "covered": true,
+          "units": 951,
+          "eco_max_gw": 114.578,
+          "emer_max_gw": 116.416,
+          "emergency_range_mw": 1838.0,
+          "units_offering_range": 177,
+          "by_region_mw": {
+            "Central": 925.0,
+            "North": 560.0,
+            "South": 353.0
+          }
+        },
+        {
+          "stamp": "07-29 HE16",
+          "covered": true,
+          "units": 964,
+          "eco_max_gw": 114.551,
+          "emer_max_gw": 116.299,
+          "emergency_range_mw": 1748.0,
+          "units_offering_range": 175,
+          "by_region_mw": {
+            "Central": 863.0,
+            "North": 531.0,
+            "South": 354.0
+          }
+        },
+        {
+          "stamp": "07-29 HE17",
+          "covered": true,
+          "units": 965,
+          "eco_max_gw": 113.564,
+          "emer_max_gw": 115.324,
+          "emergency_range_mw": 1760.0,
+          "units_offering_range": 172,
+          "by_region_mw": {
+            "Central": 940.0,
+            "North": 512.0,
+            "South": 308.0
+          }
+        },
+        {
+          "stamp": "07-30 HE18",
+          "covered": true,
+          "units": 960,
+          "eco_max_gw": 115.171,
+          "emer_max_gw": 117.05,
+          "emergency_range_mw": 1879.0,
+          "units_offering_range": 170,
+          "by_region_mw": {
+            "Central": 1032.0,
+            "North": 519.0,
+            "South": 328.0
+          }
+        }
+      ],
+      "object_hours_covered": 15,
+      "emergency_range_mw_at_object_hours": {
+        "mean": 1954.0,
+        "min": 1594.0,
+        "max": 3152.0
+      },
+      "emergency_range_mw_all_jun_jul_hours": {
+        "mean": 2817.0,
+        "p95": 5243.0,
+        "max": 7074.0
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "files_read": 61,
+      "months_covered": [
+        6,
+        7
+      ],
+      "masked_units": 1294,
+      "object_hours": [
+        {
+          "stamp": "06-17 HE18",
+          "covered": true,
+          "units": 983,
+          "eco_max_gw": 104.088,
+          "emer_max_gw": 105.916,
+          "emergency_range_mw": 1828.0,
+          "units_offering_range": 163,
+          "by_region_mw": {
+            "Central": 850.0,
+            "North": 551.0,
+            "South": 428.0
+          }
+        },
+        {
+          "stamp": "06-23 HE18",
+          "covered": true,
+          "units": 1096,
+          "eco_max_gw": 119.649,
+          "emer_max_gw": 121.328,
+          "emergency_range_mw": 1678.0,
+          "units_offering_range": 151,
+          "by_region_mw": {
+            "Central": 588.0,
+            "North": 670.0,
+            "South": 421.0
+          }
+        },
+        {
+          "stamp": "06-23 HE19",
+          "covered": true,
+          "units": 1095,
+          "eco_max_gw": 113.255,
+          "emer_max_gw": 114.668,
+          "emergency_range_mw": 1413.0,
+          "units_offering_range": 153,
+          "by_region_mw": {
+            "Central": 568.0,
+            "North": 362.0,
+            "South": 483.0
+          }
+        },
+        {
+          "stamp": "06-24 HE11",
+          "covered": true,
+          "units": 997,
+          "eco_max_gw": 115.896,
+          "emer_max_gw": 117.587,
+          "emergency_range_mw": 1691.0,
+          "units_offering_range": 145,
+          "by_region_mw": {
+            "Central": 731.0,
+            "North": 594.0,
+            "South": 366.0
+          }
+        },
+        {
+          "stamp": "06-24 HE12",
+          "covered": true,
+          "units": 1004,
+          "eco_max_gw": 115.835,
+          "emer_max_gw": 117.41,
+          "emergency_range_mw": 1575.0,
+          "units_offering_range": 143,
+          "by_region_mw": {
+            "Central": 742.0,
+            "North": 527.0,
+            "South": 305.0
+          }
+        },
+        {
+          "stamp": "06-24 HE16",
+          "covered": true,
+          "units": 1060,
+          "eco_max_gw": 115.58,
+          "emer_max_gw": 117.194,
+          "emergency_range_mw": 1614.0,
+          "units_offering_range": 163,
+          "by_region_mw": {
+            "Central": 699.0,
+            "North": 637.0,
+            "South": 278.0
+          }
+        },
+        {
+          "stamp": "06-24 HE17",
+          "covered": true,
+          "units": 1063,
+          "eco_max_gw": 114.751,
+          "emer_max_gw": 116.447,
+          "emergency_range_mw": 1696.0,
+          "units_offering_range": 162,
+          "by_region_mw": {
+            "Central": 808.0,
+            "North": 611.0,
+            "South": 278.0
+          }
+        },
+        {
+          "stamp": "06-24 HE18",
+          "covered": true,
+          "units": 1065,
+          "eco_max_gw": 112.595,
+          "emer_max_gw": 114.389,
+          "emergency_range_mw": 1794.0,
+          "units_offering_range": 171,
+          "by_region_mw": {
+            "Central": 860.0,
+            "North": 656.0,
+            "South": 278.0
+          }
+        },
+        {
+          "stamp": "06-24 HE19",
+          "covered": true,
+          "units": 1061,
+          "eco_max_gw": 109.722,
+          "emer_max_gw": 111.544,
+          "emergency_range_mw": 1821.0,
+          "units_offering_range": 173,
+          "by_region_mw": {
+            "Central": 837.0,
+            "North": 646.0,
+            "South": 338.0
+          }
+        },
+        {
+          "stamp": "07-15 HE16",
+          "covered": true,
+          "units": 1014,
+          "eco_max_gw": 119.676,
+          "emer_max_gw": 121.808,
+          "emergency_range_mw": 2132.0,
+          "units_offering_range": 180,
+          "by_region_mw": {
+            "Central": 898.0,
+            "North": 758.0,
+            "South": 476.0
+          }
+        },
+        {
+          "stamp": "07-22 HE18",
+          "covered": true,
+          "units": 951,
+          "eco_max_gw": 115.226,
+          "emer_max_gw": 117.126,
+          "emergency_range_mw": 1901.0,
+          "units_offering_range": 151,
+          "by_region_mw": {
+            "Central": 835.0,
+            "North": 608.0,
+            "South": 457.0
+          }
+        },
+        {
+          "stamp": "07-28 HE18",
+          "covered": true,
+          "units": 1086,
+          "eco_max_gw": 118.389,
+          "emer_max_gw": 119.712,
+          "emergency_range_mw": 1323.0,
+          "units_offering_range": 158,
+          "by_region_mw": {
+            "Central": 524.0,
+            "North": 337.0,
+            "South": 461.0
+          }
+        },
+        {
+          "stamp": "07-28 HE19",
+          "covered": true,
+          "units": 1078,
+          "eco_max_gw": 112.662,
+          "emer_max_gw": 113.934,
+          "emergency_range_mw": 1272.0,
+          "units_offering_range": 158,
+          "by_region_mw": {
+            "Central": 522.0,
+            "North": 345.0,
+            "South": 405.0
+          }
+        },
+        {
+          "stamp": "07-28 HE20",
+          "covered": true,
+          "units": 1073,
+          "eco_max_gw": 111.782,
+          "emer_max_gw": 113.229,
+          "emergency_range_mw": 1447.0,
+          "units_offering_range": 158,
+          "by_region_mw": {
+            "Central": 510.0,
+            "North": 450.0,
+            "South": 487.0
+          }
+        },
+        {
+          "stamp": "07-30 HE14",
+          "covered": true,
+          "units": 996,
+          "eco_max_gw": 116.715,
+          "emer_max_gw": 118.487,
+          "emergency_range_mw": 1772.0,
+          "units_offering_range": 152,
+          "by_region_mw": {
+            "Central": 810.0,
+            "North": 578.0,
+            "South": 384.0
+          }
+        }
+      ],
+      "object_hours_covered": 15,
+      "emergency_range_mw_at_object_hours": {
+        "mean": 1664.0,
+        "min": 1272.0,
+        "max": 2132.0
+      },
+      "emergency_range_mw_all_jun_jul_hours": {
+        "mean": 2581.0,
+        "p95": 4858.0,
+        "max": 6931.0
+      }
+    }
+  }
+}

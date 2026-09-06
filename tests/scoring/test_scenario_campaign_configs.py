@@ -114,10 +114,34 @@ class TestCampaignMatrix(unittest.TestCase):
         )
 
     def test_blocked_cases_are_commented_not_live(self):
+        # CES-T80 LEFT this list at SCN-LEVELS (2026-09-06): SCN-WS2a landed
+        # its two fields and owner card D-2 -> S3 committed its level, so both
+        # of its blockers cleared. The four below are still blocked on the one
+        # missing field `voluntary_clean_demand_path` (SCN-WS3b), except
+        # CAP-STATE-TIGHT, which is blocked on a missing schedule field AND on
+        # a level S3 did not reach.
         text = MATRIX.read_text()
-        for case in ("CES-T80", "VOL-MID", "VOL-HI", "ALL-CLEAN", "CAP-STATE-TIGHT"):
+        for case in ("VOL-MID", "VOL-HI", "ALL-CLEAN", "CAP-STATE-TIGHT"):
             self.assertNotIn(case, self.sweep.cases, f"{case} must not be live yet")
             self.assertIn(case, text, f"{case} must still be named, commented")
+
+    def test_ces_target_case_is_live_at_the_committed_level(self):
+        # Owner card D-2 -> S3 (2026-09-06, SCN-DESK r#5 am.1): the plan's
+        # §3.5 table is the committed default, CES target
+        # {2026: <current>, 2035: 0.80, 2050: 1.00} with ACP $50. `<current>`
+        # is resolved by the plan's own §3 WS-2 item 5 as 0.55, which is what
+        # SCN-WS2a probed. This pins the LABEL ruling to the numbers, so the
+        # committed level cannot drift without a test saying so.
+        overrides = self.sweep.cases["CES-T80"]
+        self.assertTrue(overrides["federal_ces_enabled"])
+        self.assertEqual(
+            overrides["federal_ces_target_by_year"],
+            {2026: 0.55, 2035: 0.80, 2050: 1.00},
+        )
+        self.assertEqual(overrides["federal_ces_acp_usd_per_mwh"], 50.0)
+        # Rule 19 [R-ONE-MECH]: the target row and a non-zero exogenous
+        # premium are mutually exclusive, so the case must not name one.
+        self.assertNotIn("federal_ces_premium_usd_per_mwh", overrides)
 
 
 class TestSetOverride(unittest.TestCase):

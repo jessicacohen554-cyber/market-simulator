@@ -15,7 +15,57 @@
  },
  "curated_subsets": {},
  "declared_failures": {
+  "caiso-2021-2025-realized-t1h-d46": [
+   "I7",
+   "I9"
+  ],
+  "caiso-2026-2030-d46-remeasure": [
+   "I12",
+   "I7"
+  ],
+  "ercot-2021-2025-realized-t1h-d46": [
+   "I3"
+  ],
+  "ercot-2021-2025-realized-t1h-d4m": [
+   "I3"
+  ],
+  "ercot-2026-2030-d46-remeasure": [
+   "I12",
+   "I3"
+  ],
+  "ercot-2026-2030-d50-ccscapex": [
+   "I12",
+   "I3"
+  ],
+  "ercot-2026-2030-scn-ws2-ladder-bau": [
+   "I12",
+   "I3"
+  ],
+  "ercot-2026-2030-scn-ws2-ladder-ces-20": [
+   "I12",
+   "I3",
+   "I9"
+  ],
+  "ercot-2026-2030-scn-ws2-ladder-ces-40": [
+   "I12",
+   "I3",
+   "I9"
+  ],
+  "miso-2021-2025-realized-t1h-d27": [
+   "I3"
+  ],
+  "miso-2021-2025-realized-t1h-d46": [
+   "I7"
+  ],
   "miso-2021-2025-realized-t1h-d53-sectorgate": [
+   "I7"
+  ],
+  "miso-2026-2030-d45r-remeasure": [
+   "I12",
+   "I7"
+  ],
+  "miso-2026-2030-d60-arm": [
+   "I12",
    "I7"
   ],
   "miso-2026-2030-s123-verify": [
@@ -24,12 +74,23 @@
   "neiso-2026-2050-t3-golden-bau": [
    "I3"
   ],
+  "neiso-2026-2050-t3-golden2-bau": [
+   "I3"
+  ],
+  "neiso-2026-2050-t3-golden3-bau": [
+   "I3"
+  ],
+  "pjm-2026-2030-d45r-remeasure": [
+   "I12",
+   "I7"
+  ],
+  "pjm-2026-2030-d50-ccscapex": [
+   "I12",
+   "I7"
+  ],
   "pjm-2026-2030-s6-ledger": [
    "I7",
    "I12"
-  ],
-  "ercot-2021-2025-realized-t1h-d4m": [
-   "I3"
   ]
  },
  "d53_note": "2026-09-05 (PR #4750 merge cleanup): capx D53 declares its ONE failing run, miso-2021-2025-realized-t1h-d53-sectorgate, I7 — the reliability-floor shortfall it inherits BYTE-IDENTICALLY from its comparator miso-2021-2025-realized-t1h-d46 (2023 accredited firm 119,543 < 121,644 MW; 2024 119,763 < 122,429; FINDING-capx-d53-2026-09-05.md §2.1 P1: every retirement row identical). The sector gate is a candidate-set partition and cannot move the floor's arithmetic; the cause is the standing MISO I7 seam the director's records lane tracks (D46 / D42 / D55 rows carry the same undeclared I7 on main and are NOT declared here — not this PR's rows). The d51ratio rider passes I7 (D51's accounting ratio opens the headroom).",
@@ -39,5 +100,6 @@
  "d4m_note": "2026-08-31: the capx D4-M post-arming ERCOT T1-H measurement (docs/handoffs/FINDING-capx-d4m-ercot-t1h-2026-08-31.md) declares its ONE run, I3. ercot-2021-2025-realized-t1h-d4m is the first registered bundle at the composed FOUR-lever ERCOT forecast default — the 2026-08-30 D12-A arming (owner ruling Q15: entry_margin_exhaustion + entry_forward_reserve_leg) AND the 2026-08-31 R-A storage arming (storage_entry_availability_gate + storage_entry_cost_normalized_rank), all four asserted True in its own run_config.json. Its I3 is 2023 slack 0.12 % of load (185 h, 515.7 GWh, peak 8,203 MW) and 2024 slack 0.03 % (35 h, 154.5 GWh, peak 12,632 MW); 2025 is clean (0.0001 %, 2 h). This is the standing FR-6 ERCOT energy-only scarcity-slack cause and is NOT a regression this lane introduced: per the D4-I3 pre-declaration §4 and CLAUDE.md rules 1 [R-STRUCT] / 14 [R-ACCURATE], the armed levers remove build volume by design and a worse I3 is the pre-existing under-build becoming visible — it must NOT be repaired by re-disarming or by any volume parameter fitted to close the breach (rule 13 [R-MEASURED]). The hours/GWh/peak grain is NEW in this run: it comes from R-4 of that finding, landed this session (commit afc79934), and no earlier sidecar carries it — the 1e-4 gate was not touched and no run's verdict moved. SCOPE: this lane declares THIS ROW ONLY. The thirteen pre-existing undeclared rows are lane D18's records sweep (see d18_note), which landed independently on main; this row was added on top of it at rebase, and neither lane's declarations were altered by the other.",
  "cleared": "2026-08-19: dashboard clear-out — every registered forecast/hindcast run (187 sidecars) was removed from frontend/data/hindcast/ because none was built on the current keeper configs (newest registration 2026-08-13; every current keeper promoted 2026-08-15..2026-08-19: PJM 2026-08-15-pjm-162-inputclock, ERCOT 2026-08-17-ercot215-arm-decontam, CAISO 2026-08-17-caiso-200-h1-memberpanel, NEISO 2026-08-17-neiso-99-joint-p1, NYISO 2026-08-18-nyiso-144-layup-exclusion, MISO 2026-08-19-miso-169-online-gated). declared_failures/curated_subsets pruned per how_to_update (a stale declaration fails the checker). The removed sidecars and this ledger's pre-clear state remain recoverable at commit 3fef613. dominant_open_causes retained: the underlying findings are still open lanes, not cleared by this prune.",
  "post_clear_note": "2026-08-19: first post-clear registration. pjm-2021-2025-realized-k162 (T1-H plain hindcast 2021-2025 on the current PJM keeper 2026-08-15-pjm-162-inputclock) carries I7 — 2025 accredited firm 138,785 MW vs a 139,850 MW requirement, a 1,065 MW / 0.76 % shortfall. THIS IS NOT THE FR-3 HYDRO CAUSE listed in dominant_open_causes: PJM hydro IS accredited in this run (firm_clean_accredited_mw 1,254 MW of 3,301 MW LP nameplate). The cause is upstream, in the retirement ledger, and it is the harness working as designed rather than a defect. The 2022 bridge-year evolution retires 4,097 MW of nuclear on reason='announced' — Byron 1+2 (plant 6023) and Dresden 2+3 (plant 869), whose 2020-vintage EIA-860 rows carry Exelon's 2020-08-27 PJM deactivation dates. Illinois CEJA (P.A. 102-0662) reversed both on 2021-09-15, so PJM actually retired 0 GW of nuclear in the window; but the RC-1B information gate in data.confirmed_retirements.load_announced_reversal_plants keys the reversal on superseding_instrument_date (2021-09-15) against this run's 2020-12-31 vintage cutoff, and therefore correctly declines to suppress the announced exit — its own docstring names this exact case. A forecaster standing at end-2020 would have retired both plants. That 4,097 MW of removed firm nuclear is ~3.8x the I7 shortfall and is also 62 % of the run's 6.645 GW false-retire total, so the I7 FAIL, the false-retire FAIL and the +13 % thermal-retire band miss share this one cause. Declared, NOT absolution, and no band or threshold was touched (rules 1/11/14).",
- "prune_note_2026_09_05": "Keeper-only prune (owner instruction, 2026-09-05): the declared-failure lines for the stale hindcast sidecars pruned that day were deleted here per how_to_update — caiso-2021-2025-realized, ercot-2021-2025-realized-t1h-c1joint-control, ercot-2021-2025-realized-t1h-capentry-control, ercot-2021-2025-realized-t1h-capentry-repair, ercot-2021-2025-realized-t1h-d11r-control, ercot-2021-2025-realized-t1h-d11r-exhaustion, ercot-2021-2025-realized-t1h-d12c-armed, ercot-2021-2025-realized-t1h-d12c-control, ercot-2021-2025-realized-t1h-refresh, neiso-2021-2025-realized-k99, neiso-2021-2025-realized-mystic-rescore, pjm-2021-2025-realized-exante-control, pjm-2021-2025-realized-k162, pjm-2021-2025-realized-verified-exits. The narrative notes above that still name those runs are history, not declarations."
+ "prune_note_2026_09_05": "Keeper-only prune (owner instruction, 2026-09-05): the declared-failure lines for the stale hindcast sidecars pruned that day were deleted here per how_to_update — caiso-2021-2025-realized, ercot-2021-2025-realized-t1h-c1joint-control, ercot-2021-2025-realized-t1h-capentry-control, ercot-2021-2025-realized-t1h-capentry-repair, ercot-2021-2025-realized-t1h-d11r-control, ercot-2021-2025-realized-t1h-d11r-exhaustion, ercot-2021-2025-realized-t1h-d12c-armed, ercot-2021-2025-realized-t1h-d12c-control, ercot-2021-2025-realized-t1h-refresh, neiso-2021-2025-realized-k99, neiso-2021-2025-realized-mystic-rescore, pjm-2021-2025-realized-exante-control, pjm-2021-2025-realized-k162, pjm-2021-2025-realized-verified-exits. The narrative notes above that still name those runs are history, not declarations.",
+ "y19_note": "2026-09-06 (lane Y-19, Model Audit & Release-Finalization Program; docs/handoffs/FINDING-y19-forecast-invariant-declarations-2026-09-06.md): the audit named TWENTY undeclared runs / 33 (run, ident) pairs on FOUR idents at origin/main 5fdd4374 (not the seventeen runs on three idents the charter carried -- I9 is the fourth ident, and the three ERCOT CES ladder runs were registered by SCN-WS2b at c2912cc3 after the charter was written). SIXTEEN runs / 29 pairs are declared above; FOUR are DELIBERATELY NOT, and the gate stays RED on them (see the routed set below). This lane ADJUDICATES NOTHING, FIXES NOTHING and RELAXES NOTHING: no invariant definition, threshold or exemption was touched, `curated_subsets` is unchanged, no verdict/board/keeper/marker/freeze file was written, and no run was solved, scored, re-scored or registered. No declaration is absolution -- every root cause below is open (rules 1/11). DECLARED, BY IDENT WITH THE FINDING THAT OWNS IT. (a) ALL NINE I3 rows. ERCOT slack is the standing FR-6 energy-only cause (backstop disabled by market design; FINDING-capx-d4i3-ercot-slack-2026-08-31.md SS2/5.1): `ercot-2021-2025-realized-t1h-d46` carries a full I1-I14 block BYTE-IDENTICAL to the already-declared `-d4m` (the D46 axes moved the cache key f061b264.. -> 67d5dcc1.. without moving one invariant digit), so d4m_note's cause and magnitude transfer exactly; `ercot-2026-2030-d46-remeasure` and `-d50-ccscapex` are FINDING-capx-d50-2026-09-04.md SS7.1's FC-1 `FAIL [I12, I3]`, byte-identical arm to control, with D46 SS4.6 carrying the I12 per-year values. The three `scn-ws2-ladder-*` arms are PRE-REGISTERED before their solve in PRECOMMIT-scn-ws2b-2026-09-06.md SSG5: the July POC's I3/I12 are 'known BAU-side ERCOT adequacy failures (F-2) and are expected in every arm'. MISO's `t1h-d27` I3 is FINDING-capx-d27-miso-t1h-remeasure-2026-09-01.md SS6, which states the hours/GWh/peak verbatim AND pre-states this audit's reading ('it would read FAIL on I3'). The two NEISO T3 goldens are the DUMP leg, not slack: FINDING-capx-t3-golden2-2026-09-01.md (onset 2043 2.17 %, terminal 7.74 %) and FINDING-capx-d47-golden3-attestation-2026-09-04.md (attested byte-identical to GOLDEN-2), cause FINDING-capx-t3-neiso-golden-2026-08-30.md SS6.3(2). (b) ALL TEN I12 rows and SEVEN of eleven I7 rows -- the t1f forecast legs, whose FC-1 each lane READ as a gating row and reported: D46 SS4.6 (CAISO 'FC-1 FAIL set shrinks [I12, I3, I7] -> [I12, I7]'; ERCOT I12 2027 8.9 / 2028 3.0 / 2029 -2.5 / 2030 -7.1 %), FINDING-capx-d45-pjm-nyiso-curves-2026-09-03.md SS7.2 P13 (PJM 2027 joins at a 250 MW miss; 2028/2029/2030 misses 6,226/5,800/5,647; I12 -13.5 % in 2028) and P14 (MISO I7 four years, I12 -8.1/-8.6/-8.9/-3.6 %), PREDECL-capx-d60-2026-09-05.md SS6.1 P2/P3/P4 (the d60 arm derived from the ratio arithmetic BEFORE the solve: upper bounds 123,452/124,117/125,133 MW, realized under every one; 2029 '+86 MW at the ceiling', realized 76 MW short; 'FC-1 therefore stays FAIL [I12, I7]'), and FINDING-capx-d50-2026-09-04.md SS7.1 for the two d50 arms. Each is corroborated by its committed ff-verdicts key (read-only here). (c) The TWO MISO/CAISO T1-H I7 rows and the CAISO I9 row. `miso-2021-2025-realized-t1h-d46` I7 is the DISCLOSED adequacy price of the Q30 fossil-dates arming -- FINDING-capx-d42-fossil-dates-ab-2026-09-02.md SS0 + SS7.4(4), 'reserve margin -1.0 %/-1.5 % in 2023/2024 (I7 FAIL, I12 WARN) ... reported, not hidden, and routed', the object being the additions lane's (D33 SS4.1, D39); its identity is fixed by FINDING-capx-d53-2026-09-05.md SS2.1 P1 and by d53_note, which names this row byte-for-byte and leaves it explicitly to the records lane -- this is that pass. `caiso-2021-2025-realized-t1h-d46` I7 is the 2021 SEED-year row fh-5-phase-b-2026-08-11.md SS8.6 records numerically identically across unrelated arms (44,070 < 50,157 MW; this run 44,069 against the same requirement) and dispositions 'Reported and left standing'; d18_note declared the identical row on the pruned twin AND states the root cause is untracked -- that remains true and is not repaired here. Its I9 is the storage epsilon-tiebreak degeneracy of docs/forecast-development-plan-2026-07.md SS1.2-8, routed to lane FF-3C item 2, which has never been run. The two ERCOT CES-arm I9 rows are the OPPOSITE case -- PRECOMMIT-scn-ws2b SSG5 pre-registered I9 as appearing 'only under the premium', 'a positive machinery signal, not a kill', and the artifacts match: I9 FAILs in ces-20/ces-40 and PASSES in bau. ROUTED, NOT DECLARED -- FOUR T1-H I7 ROWS, ONE UNDIAGNOSED DEFECT. `pjm-2021-2025-realized-t1h-d45` (2025: 138,286 < 144,632), `-t1h-d45r` (138,009 < 144,632), `-t1h-d57-clearing` (147,585 < 150,605) and `nyiso-2021-2025-realized-t1h-d45r-curveon` (2023: 31,493 < 32,612; 2025: 32,712 < 34,395) fail the reliability floor and NO lane has ever adjudicated it, because EVERY t1h verdict key in ff-verdicts.json reads `FC-1: SKIPPED -- \"no committed invariant record (summary.invariants / --invariants)\"` while the registered sidecar DOES carry a full 14-row I1-I14 block -- the one this audit reads. The T1-H scoring convention (canonical --hindcast-score --run-config, no --invariants; FINDING-capx-d27 SS'Board note') is a BLIND SPOT, not an absence. FINDING-capx-d48-2026-09-04.md P6 is the proof it is live: it predicted 'I7 still PASS wherever it passes', recorded 'I7 / I12 ungradable (FC-1 SKIPPED at t1h -- no invariant record)', and was wrong. The FAIL is one-field attributable in two of the four -- `pjm-...-t1h-d45r-fixed` (capacity_clearing_posture shipped -> fixed_net_cone) and `nyiso-...-t1h-d45r` (shipped -> forced_curve is the ONLY delta) both read `I7 PASS: held` -- so the question is answerable from committed artifacts with NO solve. d18_note's PJM declaration does NOT cover these: its 138,286 MW supply row is unchanged, but the REQUIREMENT moved 139,850 -> 144,632 -> 150,605 under D45-R/D48/D57 basis work, widening the shortfall ~4x, and declaring that under a supply-side citation would be the misattribution d18_note itself avoided on dominant_open_causes.I3. The four rows go to the CAPX DIRECTOR DESK (D45/D45-R/D48/D57 registered them); the systemic FC-1-blind-at-T1-H cause goes to the FORECAST-ORCHESTRATOR DESK. The gate stays RED on exactly these four until a desk adjudicates them: declaring an undiagnosed FAIL is the silent landing this gate exists to prevent."
 }

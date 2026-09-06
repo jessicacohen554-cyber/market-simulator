@@ -61,12 +61,19 @@ def baseline():
 
 
 class TestBaselineShape:
-    """The committed baseline carries both censuses and its own exclusions."""
+    """The committed baseline carries all three censuses and its exclusions."""
 
     def test_baseline_has_both_blocks_for_all_six_isos(self, baseline, sweep):
         for block in ("absent", "shared_armed_on_keeper"):
             assert block in baseline, block
             assert set(baseline[block]) == set(sweep.ISO_INDEX)
+
+    def test_absent_shared_is_one_flat_list(self, baseline):
+        # ISO-agnostic by construction: a shared field is shared, so this block
+        # is a list, not a per-ISO map like the two above it.
+        assert isinstance(baseline["absent_shared"], list)
+        assert baseline["absent_shared"] == sorted(baseline["absent_shared"])
+        assert all(isinstance(f, str) for f in baseline["absent_shared"])
 
     def test_exclusions_are_single_sourced_from_the_sweep(self, baseline, sweep):
         # The checker is stdlib-only and cannot import the sweep, so the sweep
@@ -95,6 +102,28 @@ class TestCheckerIsNeverStricterThanTheSweep:
         matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
         source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
         assert checker.gap_ratchet(matrix, source) == []
+
+    def test_absent_shared_ratchet_is_satisfied_by_the_committed_baseline(
+        self, checker
+    ):
+        matrix = checker.matrix_all_text()  # base + every ISO shard (2026-08-11)
+        source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
+        assert checker.absent_shared_ratchet(matrix, source) == []
+
+    def test_the_two_halves_see_the_same_field_set(self, checker):
+        # The checker parses NAMES out of source text; the sweep reads the live
+        # dataclass. For the absent-shared census a name is all either needs, so
+        # the two sets must be equal — a checker that saw a field the sweep
+        # cannot baseline would demand a baseline nobody can write (the `\b`
+        # bug's shape). Measured 798 = 798 at y20.
+        source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
+        assert checker.scenarioconfig_fields(source) == {f.name for f in sweep_fields()}
+
+    def test_iso_stems_are_single_sourced(self, checker, sweep):
+        # Both scripts used to carry their own copy under a "keep in sync"
+        # comment. The shared census is the COMPLEMENT of this table, so a drift
+        # here silently moves fields between the two ratchets.
+        assert checker.ISO_STEMS is sweep.ISO_STEMS
 
     def test_default_parser_is_conservative_not_wrong(self, checker):
         # The checker parses defaults out of source text (no import available in
@@ -145,6 +174,97 @@ class TestRatchetActuallyBites:
         assert not any(
             "`weather_year`" in e for e in checker.shared_gap_ratchet(matrix, source)
         )
+
+
+class TestAbsentSharedRatchetClosesThePostMergeHole:
+    """The y20 leg: a shared field with no row is red AFTER its PR merged.
+
+    The hole (docs/handoffs/FINDING-scn-mxr-2026-09-06.md §1.1): the only check
+    that ever inspected a NEW field's registration was the ``--base`` diff gate,
+    so once a field reached ``main`` no leg could see it again — the diff of
+    every later PR already contains it. PR #4870 merged two such fields five
+    seconds after opening, with that gate red and unread. These tests use the
+    POST-MERGE shape: the field is in the source, the diff is irrelevant, and
+    the gate must still fire.
+    """
+
+    PROBE = "    y20_probe_unregistered_field: bool = False\n"
+
+    def _source_with_probe(self, checker):
+        source = (REPO / checker.SCENARIOS_PATH).read_text("utf-8")
+        head, sep, rest = source.partition("class ScenarioConfig")
+        body_start = rest.index("\n") + 1
+        return head + sep + rest[:body_start] + self.PROBE + rest[body_start:]
+
+    def test_a_shared_field_with_no_row_and_no_baseline_entry_fails(self, checker):
+        matrix = checker.matrix_all_text()
+        errors = checker.absent_shared_ratchet(matrix, self._source_with_probe(checker))
+        assert any("y20_probe_unregistered_field" in e for e in errors), errors
+
+    def test_the_same_field_passes_once_it_is_baselined(self, checker, monkeypatch):
+        # Shrink-only means a legacy gap is FORGIVEN by the committed baseline,
+        # never by the checker's own judgement — so the exact same source is
+        # silent the moment the field is listed.
+        matrix = checker.matrix_all_text()
+        source = self._source_with_probe(checker)
+        real = checker.mm.absent_shared_fields
+        monkeypatch.setattr(
+            checker.mm,
+            "absent_shared_fields",
+            lambda names, text: [
+                f for f in real(names, text) if f != "y20_probe_unregistered_field"
+            ],
+        )
+        assert checker.absent_shared_ratchet(matrix, source) == []
+
+    def test_the_same_field_passes_once_it_is_registered(self, checker):
+        # And the real fix — a row naming the field — silences it too, which is
+        # the mention-anywhere escape hatch rule 28(c) grants everywhere else.
+        source = self._source_with_probe(checker)
+        matrix = checker.matrix_all_text() + '\n  note: "y20_probe_unregistered_field"'
+        assert checker.absent_shared_ratchet(matrix, source) == []
+
+    def test_a_keeper_unarmed_forecast_only_field_is_reachable(self, checker):
+        # The exact shape both older ratchets miss: no ISO stem (so
+        # `gap_ratchet` skips it) and no default a backcast keeper could move
+        # away from (so `shared_gap_ratchet` skips it). Only this leg sees it.
+        source = self._source_with_probe(checker)
+        matrix = checker.matrix_all_text()
+        assert checker.gap_ratchet(matrix, source) == []
+        assert not any(
+            "y20_probe_unregistered_field" in e
+            for e in checker.shared_gap_ratchet(matrix, source)
+        )
+        assert any(
+            "y20_probe_unregistered_field" in e
+            for e in checker.absent_shared_ratchet(matrix, source)
+        )
+
+
+class TestValidateOnlyModeIsHonest:
+    """R3: the mode that produced three false "CI exited 0" desk readings."""
+
+    @staticmethod
+    def _run(checker, monkeypatch, capsys):
+        monkeypatch.setattr("sys.argv", ["check_mechanism_matrix.py"])
+        rc = checker.main()
+        return rc, capsys.readouterr().out
+
+    def test_it_names_the_gate_it_did_not_run(self, checker, monkeypatch, capsys):
+        rc, out = self._run(checker, monkeypatch, capsys)
+        assert rc == 0
+        assert "diff gate NOT RUN" in out
+
+    def test_it_runs_all_three_diff_free_ratchets(self, checker, monkeypatch, capsys):
+        # Before y20 these sat BELOW `if not args.base: return 0`, so this mode
+        # asserted store integrity and nothing about registration at all.
+        _, out = self._run(checker, monkeypatch, capsys)
+        for leg in (
+            "gap ratchet OK (",
+            "shared ratchet OK (",
+            "absent-shared ratchet OK (",
+        ):
+            assert leg in out, leg
 
 
 class TestNyisoColumnStaysClosed:
