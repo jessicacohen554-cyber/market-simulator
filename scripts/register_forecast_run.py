@@ -457,7 +457,11 @@ VERDICT_MAP = {
     # CAISO is NOT re-pointed here: no D50 arm exists for it, so its bare key is
     # re-solved by D60 instead (29f8eb372810195f) and this record is preserved
     # then, in the re-solve commit.
-    "caiso-2026-2030-d46-remeasure": "caiso-t1f",
+    # capx D60-R3 (2026-09-06) — the bare caiso-t1f RE-SOLVED on the post-Q42
+    # posture (29f8eb372810195f); this D46 record is preserved at
+    # `caiso-t1f-pre-d60` and the arm below takes the bare key.
+    "caiso-2026-2030-d46-remeasure": "caiso-t1f-pre-d60",
+    "caiso-2026-2030-d60-arm": "caiso-t1f",
     # capx D50 (2026-09-04): the CCS retrofit capex-scaling A/B arms
     # (ccs_retrofit_capex_co2_scaling=True, --golden-posture, 2026-2030),
     # SUFFIXED BY CHARTER — never the bare keys, whose D46 / D45-R records are

@@ -1,5 +1,5 @@
 {
- "caiso-t1f": {
+ "caiso-t1f-pre-d60": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -134,6 +134,147 @@
       "row": "runtime",
       "status": "PASS",
       "detail": "wall 22.6 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "caiso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "c2b13cc76b02",
+   "scored_at_date": "2026-09-06T02:24:56Z",
+   "cache_epoch": "29f8eb372810195f",
+   "run_id": "caiso-2026-2030-d60-arm",
+   "session": "capx-D60-R3"
+  },
+  "tier": "t1f",
+  "iso": "CAISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx D60-R3 leg 3/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on CAISO; the bare caiso-t1f RE-SOLVED. Run caiso-2026-2030-d60-arm, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2, matched on the realized bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). DETERMINATION HOLD \u2192 HOLD, and EVERY SCORED ROW IS IDENTICAL to the control \u2014 FC-1 FAIL ['I12','I7'] with the same three years and the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both. P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, and it is composition-only exactly as \u00a76.3 pre-declared: the control converts 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 across 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); the arm converts 2,903.1 / 2,932.1 / 2,787.0 MW across 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs \u2014 every year inside the pre-declared 2,850-3,000 MW band and the window total 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW. P11 HIT: seam 1 (the scaled bar) is inert on CAISO \u2014 the cap still binds at ~2.9 GW in every eligible year \u2014 so the entire change is seam 2, the CC_CHP host exclusion, and the cap is refilled by fewer, larger non-CHP hosts (60 rows \u2192 22). NO STOP FIRES: FC-2 row4 did not rise (52.6 % \u2192 52.6 %), no CHP row converted, and every year's conversion count fell rather than rose. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, negative_renewable_offers \u2014 a CAISO registry override outside this batch, which Addendum D.2 pre-declared would NOT be repaired by the Q37 rows and is left untouched and routed rather than absorbed. The D46 record is preserved at caiso-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I7']: I12: requirement-implied floor [15.0%, 30.0%]; out: 2026:10.4% (band [15.0%, 30.0%]), 2027:7.7% (band [15.0%, 30.0%]), 2028:10.2% (band [15.0%, 30.0%]); I7: 2026: accredited firm 55030 < requirement 57306 MW; 2027: accredited firm 54936 < requirement 58671 MW; 2028: accredited firm 57589 < requirement 60082 MW",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): requirement-implied floor [15.0%, 30.0%]; out: 2026:10.4% (band [15.0%, 30.0%]), 2027:7.7% (band [15.0%, 30.0%]), 2028:10.2% (band [15.0%, 30.0%])",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "FAIL",
+      "detail": "backstop share 52.6% > 30% (administrative over-build)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 799 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 1 of 2 entries carry identification='unattested' (negative_renewable_offers). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 22.0 min within budget",
       "gating": true
      }
     ]

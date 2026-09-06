@@ -154,15 +154,15 @@
    "fc": {
     "FC-1": "FAIL",
     "FC-2": "FAIL",
+    "FC-5": "SKIPPED",
+    "FC-6": "SKIPPED",
     "FC-7": "CAVEAT",
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I12 reserve-margin band FAIL: requirement-implied floor [15.0%, 30.0%]; out 2026:1.8%, 2027:-3.1%, 2028:-0.3%, 2029:12.3%",
-    "FC-1 I7 base-year adequacy (A2), four consecutive years: 2026 50,729 < 57,306; 2027 49,428 < 58,671; 2028 52,081 < 60,082; 2029 60,119 < 61,539 MW",
-    "FC-1 I3 (2030 slack 0.02% of load)",
-    "FC-2 backstop share 65.5% > 30% (administrative over-build) FAIL",
-    "[REMOVED 2026-08-24: 'I4 (2027 gas_st off 1333 MW, A1)' and 'I9 (2030 sim chg+dis 0.26%)'. Both were the superseded FF-2D vintage; neither appears in the live FC-1 fail set, which is exactly {I12, I3, I7}]"
+    "FC-1 invariants I1-I14 FAIL: FAIL ['I12', 'I7']: I12: requirement-implied floor [15.0%, 30.0%]; out: 2026:10.4% (band [15.0%, 30.0%]), 2027:7.7% (band [15.0%, 30.0%]), 2028:10.2% (band [15.0%, 30.0%]); I7: 2026: accredited firm 55030 < requirement 57306 MW; 2027: accredited firm 54936 < requirement 58671 MW; 2028: accredited firm 57589 < requirement 60082 MW",
+    "FC-2 row1 FAIL: reserve-margin band (I12 FAIL): requirement-implied floor [15.0%, 30.0%]; out: 2026:10.4% (band [15.0%, 30.0%]), 2027:7.7% (band [15.0%, 30.0%]), 2028:10.2% (band [15.0%, 30.0%])",
+    "FC-2 row4 FAIL: backstop share 52.6% > 30% (administrative over-build)"
    ],
    "gate": {
     "a_keeper_marker": {
@@ -203,7 +203,7 @@
    "keeper": "2026-08-26-caiso-220-c1-crosswalk",
    "marker_complete": false,
    "marker_final": false,
-   "t1f_provenance": "capx-D46 2026-09-03 -- the bare `caiso-t1f` is run `caiso-2026-2030-d46-remeasure` (cache key 772b1e5abc7fc80c, --golden-posture, 2026-2030; FINDING-capx-d46-remeasure-2026-09-03.md). capx-D51 RECORDS RIDER 2026-09-04 (D47 \u00a76 item 2): the preserved prior `caiso-t1f-pre-d46` is a PROVENANCE-ONLY STUB -- its record carries no resolved cache key (a prose cache_epoch, run_id null, scoring sha 8ba592814d92), so no delta may be read against it, in either direction; it is retained only as the historical record of the FFR-3A-2 vintage's verdict (D47 \u00a72: un-diffable, not weakly attributable). Determination HOLD unchanged; no gate leg moved."
+   "t1f_provenance": "capx-D60-R3 2026-09-06 -- OWNER RULING Q42 EXECUTED ON CAISO, the bare `caiso-t1f` RE-SOLVED. Run `caiso-2026-2030-d60-arm`, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2 and matched on the REALIZED bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field BEFORE the solve: `ccs_retrofit_capex_co2_scaling` absent -> True (Addendum A.4's \"one\"). DETERMINATION HOLD -> HOLD AND EVERY SCORED ROW IS IDENTICAL to the control: FC-1 FAIL ['I12','I7'] on the same three years with the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both -- P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, composition-only exactly as \u00a76.3 pre-declared: control 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 over 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); arm 2,903.1 / 2,932.1 / 2,787.0 MW over 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs (every year inside the pre-declared 2,850-3,000 MW band; window 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW). P11 HIT: seam 1 (the scaled bar) is INERT on CAISO -- the 3 GW/yr cap still binds in every eligible year -- so the entire change is seam 2, the CC_CHP host exclusion, with the cap refilled by fewer, larger non-CHP hosts (60 rows -> 22). NO STOP FIRES: FC-2 row4 did not rise, no CHP row converted, and every year's conversion count FELL. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, `negative_renewable_offers` -- a CAISO registry override OUTSIDE this batch, which PREDECL Addendum D.2 pre-declared the Q37 rows would NOT repair; left untouched and ROUTED rather than absorbed. The D46 record is preserved at `caiso-t1f-pre-d60` (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3. PRIOR STAMP (preserved): capx-D46 2026-09-03 -- the bare `caiso-t1f` is run `caiso-2026-2030-d46-remeasure` (cache key 772b1e5abc7fc80c, --golden-posture, 2026-2030; FINDING-capx-d46-remeasure-2026-09-03.md). capx-D51 RECORDS RIDER 2026-09-04 (D47 \u00a76 item 2): the preserved prior `caiso-t1f-pre-d46` is a PROVENANCE-ONLY STUB -- its record carries no resolved cache key (a prose cache_epoch, run_id null, scoring sha 8ba592814d92), so no delta may be read against it, in either direction; it is retained only as the historical record of the FFR-3A-2 vintage's verdict (D47 \u00a72: un-diffable, not weakly attributable). Determination HOLD unchanged; no gate leg moved."
   },
   "PJM": {
    "tier_reached": "T1",

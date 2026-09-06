@@ -1,0 +1,167 @@
+{
+  "adequacy_requirement_mw": 58671.097,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 0.93794,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 2000.0,
+    "gas_ct": 1396.4,
+    "solar": 4000.0,
+    "wind": 702.2
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 702.2,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "ZP26"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 4000.0,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "SP15_rest"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2000.0,
+      "seq": 2,
+      "tech": "gas_cc",
+      "zone": "NP15"
+    }
+  ],
+  "firm_clean_accredited_mw": 4624.808,
+  "firm_clean_mw": 6568.396,
+  "fleet_by_fuel_after": {
+    "biomass": 744.0,
+    "coal": 50.0,
+    "gas_cc": 16383.42,
+    "gas_ct": 10953.201,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 745.5,
+    "coal": 50.0,
+    "gas_cc": 16383.42,
+    "gas_ct": 9556.801,
+    "gas_st": 1525.8,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "CAISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 51018.345,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.076793,
+  "retirements": [
+    {
+      "fuel": "gas_st",
+      "mw": 1.7550000000000001,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p315_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 21.195,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p315_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 4.050000000000001,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p315_peak"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 0.725400000000001,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p335_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 5.904600000000008,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p335_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 1.1700000000000015,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p335_peak"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 93.93299999999999,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p350_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 1173.417,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p350_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 223.65,
+      "reason": "confirmed",
+      "unit_id": "ST_GAS_LA_BASIN_p350_peak"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 1.5,
+      "reason": "announced",
+      "unit_id": "57971_COGEN"
+    }
+  ],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 58671.097,
+  "screen_entering_firm_mw": 55029.976,
+  "screen_peak_demand_mw": 51018.345,
+  "screen_reserve_position": 0.93794,
+  "solar_cap_mw": 24920.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 12554.043,
+  "storage_power_mw": 17527.6,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 1396.4,
+      "source": "reserve_backstop",
+      "unit_id": "gas_ct_adequacy_2027",
+      "zone": "NP15"
+    }
+  ],
+  "wind_cap_mw": 6330.0,
+  "year": 2027
+}
