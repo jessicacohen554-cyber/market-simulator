@@ -14,11 +14,24 @@ common field, and on every requester-only field whose value has moved off the
 one its absence is equivalent to. Refusal is a logged cache miss, never an
 exception.
 
-The last class here is the one that decides (c′) is the right shape rather than
-strict (c): it replays the committed shared-key groups (FOURTEEN at D24,
-fifteen since T3-GOLDEN-2 landed a designed pair on 2026-09-01) and asserts the
-rule refuses the two true positives and permits every designed case —
-strict equality refuses 14 of 14 (D24 §7).
+The last two classes are the ones that decide (c′) is the right shape rather
+than strict (c): they replay real shared-key groups and assert the rule refuses
+the two true positives and permits the designed cases — strict equality refuses
+14 of 14 (D24 §7).
+
+**Where those groups come from, and why that moved.** D24 measured them live,
+off ``git ls-files '*run_config.json'``. Rule 15 [R-DASHBOARD] as amended
+2026-09-05 (keeper-only retention) then deleted the corpus: PR #4808 pruned 193
+tracked configs to 72 and 20 shared-key groups to 7, taking one true positive's
+partner with it. A census over ``results/`` is a **retention hazard** — the rule
+requires that corpus to shrink, so an invariant read out of it survives only by
+accident. The invariant therefore lives in
+:class:`FixtureSharedKeyGroupsTest`, over a committed fixture
+(``tests/fixtures/cache_shared_key_groups/``, recovered verbatim from the tree
+before the prune), and :class:`CommittedSharedKeyGroupsTest` keeps the live
+replay as a second, skip-when-sparse, prune-monotone pass. Cause, census and
+the sweep for other tests of this shape:
+``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
 """
 
 from __future__ import annotations
@@ -146,15 +159,163 @@ class StoredConfigAgreementTest(unittest.TestCase):
         self.assertEqual(self._check(), ["entry_rate_limits", "retirement_rule"])
 
 
-class CommittedSharedKeyGroupsTest(unittest.TestCase):
-    """Replay D24 §4.5: refuse the 2 true positives, permit the designed cases.
+def _refusals(members, live) -> dict[tuple[str, str], list[str]]:
+    """Return every refusing ``(stored, wanted)`` pair in one shared-key group.
 
-    Every committed ``run_config.json`` carrying a ``cache_key`` is grouped by
-    that key; each group is a set of runs that addressed ONE bundle directory.
-    The comparison runs oldest-as-stored, which is the direction a cache hit
-    takes, and restricts the requesting side to fields this codebase still has —
-    a run today cannot ask for a field that no longer exists, and three of the
-    groups span a knob that was added and later deleted between their solves.
+    Runs oldest-as-stored, which is the direction a cache hit takes, and
+    restricts the requesting side to fields this codebase still has — a run
+    today cannot ask for a field that no longer exists, and some groups span a
+    knob that was added and later deleted between their solves.
+
+    Args:
+        members: ``(timestamp, label, scenario_config)`` rows, oldest first.
+        live: The field names ``ScenarioConfig`` currently declares.
+
+    Returns:
+        ``{(stored label, wanted label): differing field names}``, refusals only.
+    """
+    out: dict[tuple[str, str], list[str]] = {}
+    for i, (_, stored_label, stored) in enumerate(members):
+        for _, wanted_label, wanted in members[i + 1 :]:
+            differing = cache.config_disagreements(
+                stored, {k: v for k, v in wanted.items() if k in live}
+            )
+            if differing:
+                out[(stored_label, wanted_label)] = differing
+    return out
+
+
+# The two true positives D24 §4.5 found among the committed configs, and the one
+# pair of fields each refuses on. Both are pinned by the fixture below; the live
+# corpus is checked against them only where retention still carries the group.
+_TRUE_POSITIVES = ("07e416f3f8072e7c", "f061b2646bfaac8b")
+_REFUSED_ON = ["storage_entry_availability_gate", "storage_entry_cost_normalized_rank"]
+_FIXTURE = _ROOT / "tests/fixtures/cache_shared_key_groups"
+# The designed case: 15 fields the stored config predates, every one at the value
+# its absence is equivalent to. Strict (c) refuses it; (c′) serves it.
+_DESIGNED = "5925e67c572a910f"
+
+
+def _fixture_groups() -> dict[str, list[tuple[str, str, dict]]]:
+    """Load the committed shared-key fixture, oldest member first per group.
+
+    Returns:
+        ``{cache_key: [(timestamp, label, scenario_config), ...]}``.
+    """
+    groups: dict[str, list[tuple[str, str, dict]]] = {}
+    for group_dir in sorted(p for p in _FIXTURE.iterdir() if p.is_dir()):
+        members = []
+        for path in sorted(group_dir.glob("*.json")):
+            record = json.loads(path.read_text())
+            members.append(
+                (record["timestamp"], record["source_path"], record["scenario_config"])
+            )
+        groups[group_dir.name] = sorted(members, key=lambda row: row[0])
+    return groups
+
+
+class FixtureSharedKeyGroupsTest(unittest.TestCase):
+    """Replay D24 §4.5 against the COMMITTED fixture, where retention cannot reach.
+
+    Three real shared-key pairs, recovered verbatim from the tree immediately
+    before rule 15's keeper-only prune deleted them
+    (``tests/fixtures/cache_shared_key_groups/README.md`` cites every source
+    blob). They carry the whole D24 discrimination in miniature: strict equality
+    — option (c) — refuses all three, and (c′) refuses exactly the two true
+    positives, on exactly the same pair of fields.
+
+    This is the load-bearing pass. The live-corpus replay below is a second one,
+    and cannot be load-bearing: rule 15 [R-DASHBOARD] requires the committed
+    ``results/`` corpus to shrink, so any invariant read out of it survives only
+    by accident (see
+    ``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``).
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.groups = _fixture_groups()
+        cls.live = set(ScenarioConfig().__dataclass_fields__)
+
+    def test_the_fixture_carries_the_three_groups_as_pairs(self):
+        # An exact assertion is safe HERE and only here: the fixture lives under
+        # tests/, so nothing prunes it. A silently-emptied fixture would
+        # otherwise let every assertion below pass vacuously.
+        self.assertEqual(
+            sorted(self.groups),
+            sorted([*_TRUE_POSITIVES, _DESIGNED]),
+            msg=str(_FIXTURE),
+        )
+        self.assertTrue(all(len(v) == 2 for v in self.groups.values()))
+
+    def test_the_refused_set_is_exactly_the_two_true_positives(self):
+        refused = {k: _refusals(v, self.live) for k, v in self.groups.items()}
+        self.assertEqual(
+            sorted(k for k, v in refused.items() if v),
+            sorted(_TRUE_POSITIVES),
+            msg=str(refused),
+        )
+
+    def test_both_true_positives_are_refused_on_the_R_A_pair(self):
+        for key in _TRUE_POSITIVES:
+            refusals = _refusals(self.groups[key], self.live)
+            self.assertEqual(len(refusals), 1, msg=key)
+            self.assertEqual(next(iter(refusals.values())), _REFUSED_ON, msg=key)
+
+    def test_the_two_true_positives_are_the_two_D24_FORMS(self):
+        # Not redundant with the refusal above: the same field list is reached by
+        # two different branches of the rule, and D24 demonstrated BOTH. If one
+        # form regressed to the other's code path the refusals would still match.
+        forms = {}
+        for key in _TRUE_POSITIVES:
+            (_, _, stored), (_, _, wanted) = self.groups[key]
+            forms[key] = {
+                field: ("absent" if field not in stored else stored[field])
+                for field in _REFUSED_ON
+            }
+            self.assertTrue(all(wanted[field] is True for field in _REFUSED_ON), key)
+        # §4.2 — the stored config predates both fields, and this one carries
+        # them at a default that has since been ARMED.
+        self.assertEqual(
+            forms["07e416f3f8072e7c"], dict.fromkeys(_REFUSED_ON, "absent")
+        )
+        # §4.1 — both configs carry both fields, at different values, and the key
+        # dropped each at whichever value was the default when it was hashed.
+        self.assertEqual(forms["f061b2646bfaac8b"], dict.fromkeys(_REFUSED_ON, False))
+
+    def test_the_designed_group_is_permitted_where_strict_equality_refuses(self):
+        # What decides (c′) over strict (c): 15 fields the stored config predates,
+        # every one of them at the value its absence is equivalent to, so the
+        # bundle is the same dispatch and refusing it would cost a re-solve for
+        # no protection. Strict equality refuses the moment the schema grows at
+        # all — 14 of D24's 14 groups, against 2 true positives.
+        (_, _, stored), (_, _, wanted) = self.groups[_DESIGNED]
+        wanted = {k: v for k, v in wanted.items() if k in self.live}
+        absent = [f for f in wanted if f not in stored]
+        self.assertEqual(len(absent), 15, msg=str(absent))
+        self.assertEqual(
+            [f for f in wanted if stored.get(f, wanted[f]) != wanted[f]], []
+        )
+        self.assertEqual(cache.config_disagreements(stored, wanted), [])
+
+
+class CommittedSharedKeyGroupsTest(unittest.TestCase):
+    """Second pass: replay the LIVE committed corpus, whatever retention left of it.
+
+    Every ``run_config.json`` tracked by git and carrying a ``cache_key`` is
+    grouped by that key; each group is a set of runs that addressed ONE bundle
+    directory. This catches the hazard in the wild — a registration landing two
+    materially different configs at one key — which the frozen fixture cannot.
+
+    It is SKIP-when-sparse, and every assertion is **prune-monotone**: deleting
+    committed runs only removes pairs, so a prune can never turn a pass into a
+    failure. Two assertions were dropped for failing that test, both retention
+    hazards rather than invariants — a ``>= 14`` census floor and an exact
+    refused-key set, which together required a specific pair of bundles to stay
+    on disk. Rule 15 [R-DASHBOARD] keeper-only retention deleted 118 tracked
+    ``run_config.json`` in PR #4808 (193 -> 72 files, 20 -> 7 shared-key groups)
+    and took one true positive's partner with them. The invariant they were
+    reaching for now lives in the fixture above; the census is recorded in
+    ``docs/handoffs/FINDING-y23-cache-agreement-fixture-2026-09-06.md``.
     """
 
     @classmethod
@@ -174,77 +335,44 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
                 keyed.append(
                     (record["cache_key"], record.get("timestamp", ""), rel, payload)
                 )
-        if len(keyed) < 90:
+        if not keyed:
             raise unittest.SkipTest(
-                f"only {len(keyed)} keyed run_config.json present "
-                "(a sparse checkout without results/) — nothing to replay"
+                "no keyed run_config.json checked out (a sparse checkout without "
+                "results/) — nothing to replay"
             )
         grouped = collections.defaultdict(list)
         for row in keyed:
-            grouped[row[0]].append(row)
+            grouped[row[0]].append(row[1:])
         cls.groups = {
-            k: sorted(v, key=lambda r: r[1]) for k, v in grouped.items() if len(v) > 1
+            k: sorted(v, key=lambda r: r[0]) for k, v in grouped.items() if len(v) > 1
         }
+        if not cls.groups:
+            raise unittest.SkipTest(
+                f"{len(keyed)} keyed run_config.json, but retention leaves no key "
+                "with two members — nothing to replay"
+            )
         cls.live = set(ScenarioConfig().__dataclass_fields__)
 
-    def _refusals(self, members) -> dict[tuple[str, str], list[str]]:
-        out = {}
-        for i, (_, _, stored_rel, stored) in enumerate(members):
-            for _, _, wanted_rel, wanted in members[i + 1 :]:
-                differing = cache.config_disagreements(
-                    stored, {k: v for k, v in wanted.items() if k in self.live}
-                )
-                if differing:
-                    out[(stored_rel, wanted_rel)] = differing
-        return out
+    def test_no_committed_group_refuses_outside_the_known_true_positives(self):
+        # The live half of the invariant, and the only one a prune cannot break:
+        # a NEW refusing group is a real D24 hazard in the wild — two materially
+        # different configs registered at one bundle key — and this is what
+        # surfaces it. Pruning only ever removes candidates.
+        refused = {
+            k: r for k, v in self.groups.items() if (r := _refusals(v, self.live))
+        }
+        self.assertLessEqual(set(refused), set(_TRUE_POSITIVES), msg=str(refused))
 
-    def test_fourteen_groups_split_two_and_twelve(self):
-        refused = {k: self._refusals(v) for k, v in self.groups.items()}
-        refused_keys = sorted(k for k, v in refused.items() if v)
-        # 14 -> 15 on 2026-09-01: T3-GOLDEN-2 (`a5523fac`, `bba296ca`)
-        # overwrote results/ff-t3-neiso-golden/bau/run_config.json with the
-        # armed-posture golden, which now shares key 706e7ba8e6582d42 with its
-        # own fc6/arms/base control — a designed (permitted) case, so the
-        # refused pair below is unchanged. The count is a frozen inventory of
-        # committed run_config.json files and moves whenever a registration
-        # lands two configs at one key; the invariant this test guards is the
-        # refused SET, asserted next. Corrected 2026-09-02 by the fast-tier
-        # repair lane (the count had been red on main since 2026-09-01).
-        # 15 -> 16 on 2026-09-02: capx D42 registered the verified fossil-dates
-        # arm twice at key 85000b5179ddff0f — the plant-wide-derate solve
-        # (`-d42-dates-plantwide`, kept as the measurement of the composition
-        # artifact) and the fuel-scoped re-solve (`-d42-dates`); the derate
-        # scope is code, not config, so the two run_config.json files are
-        # identical by construction — a designed (permitted) case. Refused set
-        # unchanged.
-        #
-        # DE-BRITTLED 2026-09-02 (caiso-239): the equality was a CORPUS CENSUS,
-        # not an invariant — it goes red on any registration that lands a
-        # config at a new key OR a second config at an existing one, which is
-        # what every calibration session does, and it had already been repaired
-        # in place three times in two days (14 -> 15 -> 16). The invariant this
-        # test guards is the REFUSED SET, asserted immediately below and left
-        # EXACT; the census is kept only as a floor, so a collapse of the
-        # grouping (the failure mode worth catching) still fails while a
-        # routine registration does not.
-        self.assertGreaterEqual(len(self.groups), 14)
-        self.assertIn("706e7ba8e6582d42", self.groups)
-        self.assertEqual(
-            refused_keys, ["07e416f3f8072e7c", "f061b2646bfaac8b"], msg=refused
-        )
-
-    def test_both_true_positives_are_refused_on_the_R_A_pair(self):
-        for key in ("07e416f3f8072e7c", "f061b2646bfaac8b"):
-            refusals = self._refusals(self.groups[key])
-            self.assertEqual(len(refusals), 1, msg=key)
-            self.assertEqual(
-                next(iter(refusals.values())),
-                [
-                    "storage_entry_availability_gate",
-                    "storage_entry_cost_normalized_rank",
-                ],
-                msg=key,
-            )
+    def test_a_surviving_true_positive_still_refuses_on_the_R_A_pair(self):
+        # Guarded on presence, so it goes vacuous rather than red when retention
+        # takes a member. The non-vacuous form is on the fixture above.
+        for key in _TRUE_POSITIVES:
+            if key not in self.groups:
+                continue
+            refusals = _refusals(self.groups[key], self.live)
+            self.assertTrue(refusals, msg=key)
+            for pair, differing in refusals.items():
+                self.assertEqual(differing, _REFUSED_ON, msg=f"{key} {pair}")
 
 
 if __name__ == "__main__":
