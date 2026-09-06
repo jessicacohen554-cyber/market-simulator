@@ -909,6 +909,20 @@ S1, S2, … in the ledger, in the refresh commit that receives them.
 - **Still open:** D-3c (the voluntary eligible set — the WS-3a memo's box 3), D-6 (attribute
   netting; default "counts toward", report both), and D-5.
 
+**D-7 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#6).** *Does Stage A run before the CCS
+emission-rate seam is repaired?* SCN-WS2b measured that retrofitted `gas_cc_ccs` units are
+credited at 0.95 by the CES while carrying an **uncaptured** `emission_rate` in the dispatch
+fleet (`emission_rate` 0.3745 → 0.3745 across a unit's own retrofit year, while `fuel_type` and
+`heat_rate` both update correctly; three writes in one block of `ccs.py`, one overwritten
+downstream). NEISO's 2030 CO2 answer is **sign-flipped**: +9.99 Mt as scored, −6.01 Mt with the
+intended 90 % capture applied at fixed dispatch. **Scope:** every campaign case that moves
+`gas_cc_ccs` — the CES cases, the carbon cases at or above `ccs_retrofit_available_year` (2028),
+and `ALL-CLEAN` — i.e. most of Stage A's policy half. The repair is the capx D50/D60/D65 lane's
+file, not this desk's, and is routed. Recommendation: **hold Stage A's policy half until the seam
+is repaired**; the load half (`LOAD-HI`, `LOAD-HI-ORGANIC`) and the pure-carbon T0 probes below
+2028 are unaffected and can proceed. The alternative — run Stage A now and re-run the affected
+cases after the repair — spends the campaign's compute twice.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
