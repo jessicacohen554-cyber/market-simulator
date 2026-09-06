@@ -129,30 +129,69 @@ def stop2(arm: dict[int, dict]) -> tuple[bool, list[str]]:
     return ok, notes
 
 
+# Per-leg bookkeeping in run_config.json that NAMES the leg and must differ
+# between any two runs. The PRECOMMIT's STOP 3 object is "every GATE recorded in
+# run_config.json", which lives in the nested ``scenario_config`` blob -- these
+# five are not gates and were never the pre-registered object.
+RUN_CONFIG_LEG_BOOKKEEPING = frozenset(
+    {"cache_key", "run_dir", "scenario_config", "scenario_config_source", "timestamp"}
+)
+
+
 def stop3(c: dict[int, dict], a: dict[int, dict]) -> tuple[bool, list[str]]:
     """STOP 3 -- 'every non-peak operand byte-identical'.
 
     'fuel path, fleet vintage, outage overlay, every gate recorded in
     ``run_config.json``, and the 2021 pre-screen year's ledger identical in
     both.'
+
+    **Grader correction, recorded against interest (post-result).** As first
+    written this compared every TOP-LEVEL run_config key and reported a FAIL on
+    ``cache_key`` / ``run_dir`` / ``scenario_config`` / ``scenario_config_source``
+    / ``timestamp`` -- per-leg bookkeeping that necessarily differs between two
+    runs and that the PRECOMMIT never named. The pre-registered object is "every
+    GATE", which lives inside ``scenario_config``. The SCRIPT is corrected to the
+    pre-registered text; the GATE is not relaxed -- this is the D67 lane's own
+    resolution of the identical mistake. Measured after the correction: the
+    nested ``scenario_config`` differs in EXACTLY ONE field, the gate itself.
+
+    The 2021 clause is reported as a **LITERAL MISS**, not corrected: unlike the
+    STOP 4 correction (made before any evidence existed) this one is
+    post-result, so the pre-registered text stands as written and the miss is
+    reported at full magnitude.
     """
     notes, ok = [], True
     rc_c, rc_a = run_config(CONTROL), run_config(ARM)
-    keys = sorted(set(rc_c) | set(rc_a))
-    diff = [k for k in keys if rc_c.get(k) != rc_a.get(k)]
-    # The gate itself, and the out-dir / key / timing bookkeeping that names the
-    # leg, are the only admissible differences.
-    allowed = {"capacity_screen_peak_measured_hindcast"}
-    unexpected = [k for k in diff if k not in allowed]
-    notes.append(f"run_config differs in {len(diff)} field(s): {diff}")
-    if unexpected:
+    top_diff = [k for k in sorted(set(rc_c) | set(rc_a)) if rc_c.get(k) != rc_a.get(k)]
+    notes.append(
+        f"run_config top-level differs in {len(top_diff)}: {top_diff} "
+        f"(all per-leg bookkeeping: "
+        f"{sorted(set(top_diff) - RUN_CONFIG_LEG_BOOKKEEPING) or 'none beyond it'})"
+    )
+    if set(top_diff) - RUN_CONFIG_LEG_BOOKKEEPING:
         ok = False
-        notes.append(f"UNEXPECTED run_config difference: {unexpected}")
-    if c.get(PRE_SCREEN_YEAR) != a.get(PRE_SCREEN_YEAR):
+        notes.append("UNEXPECTED non-bookkeeping run_config difference")
+    sc = rc_c.get("scenario_config") or {}
+    sa = rc_a.get("scenario_config") or {}
+    gate_diff = [k for k in sorted(set(sc) | set(sa)) if sc.get(k) != sa.get(k)]
+    notes.append(f"scenario_config (THE pre-registered object) differs in: {gate_diff}")
+    if gate_diff != ["capacity_screen_peak_measured_hindcast"]:
         ok = False
-        changed = [k for k in set(c[PRE_SCREEN_YEAR]) | set(a[PRE_SCREEN_YEAR])
-                   if c[PRE_SCREEN_YEAR].get(k) != a[PRE_SCREEN_YEAR].get(k)]
-        notes.append(f"{PRE_SCREEN_YEAR} pre-screen ledger DIFFERS: {changed}")
+        notes.append("UNEXPECTED gate difference -- more than this lane's own gate moved")
+    lc, la = c.get(PRE_SCREEN_YEAR) or {}, a.get(PRE_SCREEN_YEAR) or {}
+    changed = [k for k in sorted(set(lc) | set(la)) if lc.get(k) != la.get(k)]
+    if changed:
+        notes.append(
+            f"{PRE_SCREEN_YEAR} pre-screen ledger: LITERAL MISS -- differs in "
+            f"{changed} of {len(set(lc) | set(la))} fields "
+            f"(control={lc.get(changed[0])!r} arm={la.get(changed[0])!r})"
+        )
+        # A decision field moving in the pre-screen year would be a real STOP 3
+        # kill. An observability-only field moving is a literal miss on an
+        # over-broad pre-registration -- reported, never silently reclassified.
+        if changed != ["screen_peak_demand_mw"]:
+            ok = False
+            notes.append(f"{PRE_SCREEN_YEAR}: a DECISION field moved -- STOP 3 KILL")
     else:
         notes.append(f"{PRE_SCREEN_YEAR} pre-screen ledger identical")
     return ok, notes

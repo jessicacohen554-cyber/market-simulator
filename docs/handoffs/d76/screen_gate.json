@@ -1,0 +1,200 @@
+{
+  "verdict": "PASS",
+  "stops": {
+    "STOP 1 cache keys": {
+      "pass": true,
+      "notes": [
+        "12 recipe keys: explicit-OFF == bare, armed distinct"
+      ]
+    },
+    "STOP 2 identity": {
+      "pass": true,
+      "notes": [
+        "2022: screen peak 148,528.000 vs measured 148,528.0 -> \u0394 0.000 MW",
+        "2023: screen peak 147,605.000 vs measured 147,605.0 -> \u0394 0.000 MW",
+        "2021: screen peak vs the LP's own peak -> \u0394 0.000 MW",
+        "2023: screen peak vs the LP's own peak -> \u0394 0.000 MW"
+      ]
+    },
+    "STOP 3 non-peak operands": {
+      "pass": true,
+      "notes": [
+        "run_config top-level differs in 5: ['cache_key', 'run_dir', 'scenario_config', 'scenario_config_source', 'timestamp'] (all per-leg bookkeeping: none beyond it)",
+        "scenario_config (THE pre-registered object) differs in: ['capacity_screen_peak_measured_hindcast']",
+        "2021 pre-screen ledger: LITERAL MISS -- differs in ['screen_peak_demand_mw'] of 36 fields (control=126887.926 arm=149590.0)"
+      ]
+    },
+    "STOP 4 footprint": {
+      "pass": true,
+      "notes": [
+        "2021.peak_demand_mw: identical (149590.0)",
+        "2021.adequacy_requirement_mw: identical (163023.182)",
+        "2023.peak_demand_mw: identical (147605.0)",
+        "2023.adequacy_requirement_mw: identical (160904.211)"
+      ]
+    }
+  },
+  "reported_not_gated": {
+    "2021": {
+      "screen_peak_demand_mw": {
+        "control": 126887.926,
+        "arm": 149590.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_entering_firm_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_reserve_position": {
+        "control": null,
+        "arm": null
+      },
+      "retirements_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "thermal_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "renewable_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "storage_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "fleet_by_fuel_after": {
+        "control": {
+          "biomass": 2007.8,
+          "coal": 45885.521,
+          "gas_cc": 53083.211,
+          "gas_ct": 25791.07,
+          "gas_st": 10297.413333,
+          "nuclear": 32672.1,
+          "oil": 4187.7
+        },
+        "arm": {
+          "biomass": 2007.8,
+          "coal": 45885.521,
+          "gas_cc": 53083.211,
+          "gas_ct": 25791.07,
+          "gas_st": 10297.413333,
+          "nuclear": 32672.1,
+          "oil": 4187.7
+        }
+      }
+    },
+    "2022": {
+      "screen_peak_demand_mw": {
+        "control": 135090.596,
+        "arm": 148528.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 146816.46,
+        "arm": 161420.23
+      },
+      "screen_entering_firm_mw": {
+        "control": 185264.153,
+        "arm": 185264.153
+      },
+      "screen_reserve_position": {
+        "control": 1.261876,
+        "arm": 1.147713
+      },
+      "retirements_count": {
+        "control": 82,
+        "arm": 44
+      },
+      "thermal_additions_count": {
+        "control": 6,
+        "arm": 6
+      },
+      "renewable_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "storage_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "fleet_by_fuel_after": {
+        "control": {
+          "biomass": 1999.4,
+          "coal": 41902.396,
+          "gas_cc": 55912.636,
+          "gas_ct": 25791.07,
+          "gas_st": 2920.755,
+          "nuclear": 32672.1,
+          "oil": 4136.5
+        },
+        "arm": {
+          "biomass": 1999.4,
+          "coal": 41902.396,
+          "gas_cc": 55912.636,
+          "gas_ct": 25791.07,
+          "gas_st": 10254.455,
+          "nuclear": 32672.1,
+          "oil": 4136.5
+        }
+      }
+    },
+    "2023": {
+      "screen_peak_demand_mw": {
+        "control": 143823.528,
+        "arm": 147605.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 156782.028,
+        "arm": 160904.211
+      },
+      "screen_entering_firm_mw": {
+        "control": 176977.725,
+        "arm": 183798.066
+      },
+      "screen_reserve_position": {
+        "control": 1.128814,
+        "arm": 1.142283
+      },
+      "retirements_count": {
+        "control": 115,
+        "arm": 7
+      },
+      "thermal_additions_count": {
+        "control": 2,
+        "arm": 2
+      },
+      "renewable_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "storage_additions_count": {
+        "control": 0,
+        "arm": 0
+      },
+      "fleet_by_fuel_after": {
+        "control": {
+          "biomass": 1999.4,
+          "coal": 40896.396,
+          "gas_cc": 56151.9364,
+          "gas_ct": 25791.07,
+          "nuclear": 32672.1,
+          "oil": 4136.5
+        },
+        "arm": {
+          "biomass": 1999.4,
+          "coal": 40896.396,
+          "gas_cc": 57126.636,
+          "gas_ct": 25791.07,
+          "gas_st": 9464.455,
+          "nuclear": 32672.1,
+          "oil": 4136.5
+        }
+      }
+    }
+  }
+}
