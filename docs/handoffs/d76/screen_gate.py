@@ -40,10 +40,13 @@ CONTROL_SEAM_PEAK_MW = {2022: 135_090.596, 2023: 143_823.528}
 BINDING_YEARS = (2022, 2023)
 PRE_SCREEN_YEAR = 2021
 
-# PRECOMMIT §4 STOP 4: the LP's own quantities, computed on the measured load in
-# BOTH arms, which must therefore be identical. This is the ENTIRE list the
-# PRECOMMIT names -- do not extend it here.
-LP_BASIS_FIELDS = ("peak_demand_mw", "adequacy_requirement_mw", "reserve_margin")
+# PRECOMMIT §4 STOP 4, as CORRECTED before any result existed: the two LP-basis
+# quantities that are pure functions of the measured load -- identical in both
+# arms -- and so must be identical to the digit. ``reserve_margin`` is NOT here:
+# it is firm/peak-1 computed AFTER evolution, an exiting-side quantity that
+# moves with the fleet the screens leave behind, and the correction moved it to
+# §5 as REPORTED. This is the ENTIRE gated list -- do not extend it here.
+LP_BASIS_FIELDS = ("peak_demand_mw", "adequacy_requirement_mw")
 
 
 def ledgers(bundle: Path) -> dict[int, dict]:
@@ -169,13 +172,6 @@ def stop4(c: dict[int, dict], a: dict[int, dict]) -> tuple[bool, list[str]]:
             if cv is None and av is None:
                 continue
             if cv != av:
-                # reserve_margin is firm/peak-1 on the measured peak, so it CAN
-                # move through the fleet the screens left behind -- that is the
-                # mechanism's own claimed footprint, not a violation. Only the
-                # two INPUT quantities are invariant by construction.
-                if f == "reserve_margin":
-                    notes.append(f"{year}.{f}: {cv} -> {av} (fleet channel, expected)")
-                    continue
                 ok = False
                 notes.append(f"{year}.{f}: {cv} -> {av}  ** NOT INVARIANT **")
             else:
