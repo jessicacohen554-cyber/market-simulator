@@ -97,7 +97,47 @@ bundles it correctly reports **G2' NOT EVALUABLE** — the defect step 0 removes
 
 ## 5. The batch
 
-*(filled per leg)*
+### 5.1 `ercot-t1f` — ALL GATES CLEARED
+
+Solve key **`9b9e5a48e3ca5c8e`** = Addendum C's pre-declaration exactly (the STOP *"a realized key
+≠ its pre-declared value"* does not fire). HEAD guard clean. **5/5 years, 14.7 min, 3.92 GB.**
+
+| year | rows | MW | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|
+| 2026 / 2027 / 2028 | 0 | 0.0 | — | — | — |
+| 2029 | 6 | 2,763.8 | 0.4106 | 7.227 | 1.1433 |
+| 2030 | 1 | 3,000.0 | 0.3600 | 6.300 | 1.0025 |
+
+| gate | verdict |
+|---|---|
+| **G0'** inert below 2028 | **PASS** — no row before 2028 |
+| **G1'** ERCOT's D64 §2.4 band **0.95–1.05** | **PASS** — all 7 rows, measured **0.9672–1.0456** |
+| **G2'** the identity, on step 0's persisted fields | **PASS** — `fixed_cost_scale == capex_scale` on all 7 rows; `capex/k` host-invariant **to the digit** within each year (2029 `1,271,849.014`; 2030 `1,177,983.346` $/MW) |
+| **G3'** Act-A `k = 1` invariance | **PASS** — discharged at zero LP by `test_reference_host_is_invariant_on_and_off` |
+| **G4'** no non-target load-bearing PASS → FAIL | **PASS** — vs the committed `ercot-t1f`: I3 and I12 were **already FAIL** pre-D65-B; **zero PASS → FAIL flips** |
+| **G5'** vs D64 §2.4's ERCOT ceilings 0 / 5.68 / 3.80 GW | **PASS** — 0 / 2.764 / 3.000 GW; 2030 pins the 3 GW/yr cap exactly |
+| **G6'** wall/RSS | **PASS** — 14.7 min, 3.92 GB |
+
+**Three things worth stating at full magnitude.**
+
+1. **G2' is answered for the first time.** D65-B could not evaluate it at all. The identity does not
+   merely hold approximately — `capex/k` is identical **to three decimals across hosts spanning
+   `k` = 1.0025 → 1.3096**, which is the seam's construction shown rather than asserted.
+2. **The cross-year `capex/k` fall is the LEARNING CURVE, not a broken identity.** 2029's 2.76 GW of
+   conversions enter the experience base and `_adjust_retrofit_capex(base_capex_kw, cumulative_gw)`
+   lowers 2030's bar by **7.4 %** (`1,271,849 → 1,177,983`, ratio 0.9262). *This session's first
+   grader pooled years and read that as a G2' STOP.* Addendum C says **host**-invariant, and a year
+   is not a host, so the fix is a grader defect repair — the gate text is unchanged and was not
+   reinterpreted on seeing a number.
+3. **The golden-posture leg reproduces D65-B's shipped-posture screen EXACTLY** — 6 rows /
+   2,763.8 MW in 2029 and 1 row / 3,000.0 MW in 2030, the same counts and the same MW. Given §3.1
+   (the screen ran on a *different* recipe), that agreement is evidence the two acts' effect on this
+   ISO is posture-insensitive, and it retires the concern §3.1 raised rather than leaving it open.
+   The `er/phys` span differs slightly (0.9672–1.0456 here vs 0.9458–1.0000 there) because the host
+   set is reached through a different fleet build; both are inside D64's ERCOT row.
+
+I13 moves PASS → WARN. It is **not** attributed to either act: D65-B measured the same move on
+**both** its legs at one HEAD and attributed it to the SCN-LOAD `DEMAND_GROWTH_RATES` hunk.
 
 ## 6. Governance
 

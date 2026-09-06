@@ -1,0 +1,276 @@
+{
+  "adequacy_requirement_mw": 154061.986,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [
+    {
+      "annual_net_savings_per_mw": 113926.71036247877,
+      "capex_scale": 1.0591960196189076,
+      "fixed_cost_scale": 1.0591960196189076,
+      "from_fuel": "gas_cc",
+      "mw": 493.0200000000001,
+      "old_emission_rate": 0.3803572906451498,
+      "old_hr": 6.72,
+      "retrofit_capex_per_mw": 1347137.412977087,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_North_p55320_econ",
+      "vom_adder_per_mwh": 3.1246282578757776
+    },
+    {
+      "annual_net_savings_per_mw": 129989.09731154285,
+      "capex_scale": 1.2093743508230923,
+      "fixed_cost_scale": 1.2093743508230923,
+      "from_fuel": "gas_cc",
+      "mw": 1044.16,
+      "old_emission_rate": 0.43428632938057243,
+      "old_hr": 7.7,
+      "retrofit_capex_per_mw": 1538141.575413811,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_North_p58001_econ",
+      "vom_adder_per_mwh": 3.5676543349281227
+    },
+    {
+      "annual_net_savings_per_mw": 132866.47994096688,
+      "capex_scale": 1.2231769069330223,
+      "fixed_cost_scale": 1.2231769069330223,
+      "from_fuel": "gas_cc",
+      "mw": 278.56,
+      "old_emission_rate": 0.43924282727964836,
+      "old_hr": 7.37,
+      "retrofit_capex_per_mw": 1555696.3427901955,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_South_Central_p7900_econ",
+      "vom_adder_per_mwh": 3.608371875452416
+    },
+    {
+      "annual_net_savings_per_mw": 140332.9921495387,
+      "capex_scale": 1.3031746031746032,
+      "fixed_cost_scale": 1.3031746031746032,
+      "from_fuel": "gas_cc",
+      "mw": 53.86500000000001,
+      "old_emission_rate": 0.46797000000000005,
+      "old_hr": 8.21,
+      "retrofit_capex_per_mw": 1657441.3338616162,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_West_p56233_econ",
+      "vom_adder_per_mwh": 3.8443650793650797
+    },
+    {
+      "annual_net_savings_per_mw": 139989.79151994002,
+      "capex_scale": 1.3095839601711003,
+      "fixed_cost_scale": 1.3095839601711003,
+      "from_fuel": "gas_cc",
+      "mw": 220.15999999999997,
+      "old_emission_rate": 0.4702716000974422,
+      "old_hr": 8.53,
+      "retrofit_capex_per_mw": 1665593.0682367268,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_West_p56349_econ",
+      "vom_adder_per_mwh": 3.8632726825047463
+    },
+    {
+      "annual_net_savings_per_mw": 108030.42925032566,
+      "capex_scale": 1.0025062656641603,
+      "fixed_cost_scale": 1.0025062656641603,
+      "from_fuel": "gas_cc",
+      "mw": 674.0,
+      "old_emission_rate": 0.36,
+      "old_hr": 6.3,
+      "retrofit_capex_per_mw": 1275036.6053169686,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "gas_cc_h_class_Houston",
+      "vom_adder_per_mwh": 2.9573934837092732
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 3000.0,
+    "solar": 6000.0
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 1,
+      "tech": "gas_ct",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 6000.0,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 500.0,
+      "seq": 1,
+      "tech": "gas_ct",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 4446.9,
+      "seq": 2,
+      "tech": "wind",
+      "zone": "West"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 3400.0,
+      "seq": 3,
+      "tech": "solar",
+      "zone": "West"
+    }
+  ],
+  "firm_clean_accredited_mw": 273.15,
+  "firm_clean_mw": 546.3,
+  "fleet_by_fuel_after": {
+    "coal": 13397.9,
+    "gas_cc": 39496.075,
+    "gas_cc_ccs": 2763.765,
+    "gas_ct": 12226.167,
+    "gas_st": 10404.45,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13397.9,
+    "gas_cc": 37915.04,
+    "gas_ct": 11726.167,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "ERCOT",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 143778.247,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 4446.9,
+      "tech": "wind",
+      "zone": "West"
+    },
+    {
+      "mw": 3400.0,
+      "tech": "solar",
+      "zone": "West"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": -0.205992,
+  "retirements": [
+    {
+      "fuel": "gas_st",
+      "mw": 178.40000000000003,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_committed"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 245.30000000000007,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_econ"
+    },
+    {
+      "fuel": "gas_st",
+      "mw": 22.300000000000004,
+      "reason": "announced",
+      "unit_id": "ST_GAS_South_Central_p3611_peak"
+    }
+  ],
+  "rps_dual": 0.0,
+  "screen_adequacy_requirement_mw": 154061.986,
+  "screen_entering_firm_mw": 108158.827,
+  "screen_peak_demand_mw": 143778.247,
+  "screen_reserve_position": 0.702047,
+  "solar_cap_mw": 41500.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 11687.5,
+  "storage_power_mw": 17000.0,
+  "thermal_additions": [
+    {
+      "eia860_id": "planned_69566_GEN1",
+      "fuel": "gas_cc",
+      "mw": 672.4,
+      "source": "planned",
+      "unit_id": "planned_69566_GEN1",
+      "zone": "West"
+    },
+    {
+      "eia860_id": "planned_69566_GEN2",
+      "fuel": "gas_cc",
+      "mw": 672.4,
+      "source": "planned",
+      "unit_id": "planned_69566_GEN2",
+      "zone": "West"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 3000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2027c2029_0",
+      "zone": "North"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 500.0,
+      "source": "economic",
+      "unit_id": "gas_ct_new_2027c2029_1",
+      "zone": "North"
+    }
+  ],
+  "wind_cap_mw": 47000.0,
+  "year": 2029
+}
