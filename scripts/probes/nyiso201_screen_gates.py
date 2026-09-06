@@ -342,9 +342,7 @@ def main() -> int:
         for c in plants
     }
     tot_k, tot_s = sum(dk.values()), sum(ds.values())
-    worst = max(
-        (v["delta_twh"] for v in per_plant_dark.values()), default=0.0
-    )
+    worst = max((v["delta_twh"] for v in per_plant_dark.values()), default=0.0)
     c8k, c8s = d4_block(KEEPER, Y), d4_block(S, Y)
     gates["A_dark_plant_forced_energy"] = {
         "construction": (
@@ -399,8 +397,16 @@ def main() -> int:
             "floor_with_zero_kept_runs": anchored_on_dropped,
             "new_D4_conviction": len(conv) > len(conv_k),
             "D4_convictions_screen": [
-                {k: r.get(k) for k in ("floor", "floored_twh", "binding_hours",
-                                       "measured_median_mw", "measured_zero_share")}
+                {
+                    k: r.get(k)
+                    for k in (
+                        "floor",
+                        "floored_twh",
+                        "binding_hours",
+                        "measured_median_mw",
+                        "measured_zero_share",
+                    )
+                }
                 for r in conv
             ],
         }
@@ -477,15 +483,22 @@ def main() -> int:
             v["keeper"]["status"] == "SKIPPED" for v in c1.values()
         ),
         "C2_cells": {
-            k: {"keeper": c2_k[k].get("status"), "screen": c2_s.get(k, {}).get("status"),
+            k: {
+                "keeper": c2_k[k].get("status"),
+                "screen": c2_s.get(k, {}).get("status"),
                 "keeper_magnitude": c2_k[k].get("magnitude"),
-                "screen_magnitude": c2_s.get(k, {}).get("magnitude")}
+                "screen_magnitude": c2_s.get(k, {}).get("magnitude"),
+            }
             for k in c2_k
         },
         "C2_pass_to_fail_flips": bad2,
         "C3a_price_mean": {
-            "keeper": {k: pm_k.get(k) for k in ("status", "model", "actual", "magnitude")},
-            "screen": {k: pm_s.get(k) for k in ("status", "model", "actual", "magnitude")},
+            "keeper": {
+                k: pm_k.get(k) for k in ("status", "model", "actual", "magnitude")
+            },
+            "screen": {
+                k: pm_s.get(k) for k in ("status", "model", "actual", "magnitude")
+            },
         },
         "C3b_price_shape": {
             "keeper": {k: ps_k.get(k) for k in ("status", "model", "magnitude")},

@@ -251,3 +251,38 @@ improves but gates regress that may still be a keeper"*), applied as nyiso-198 �
 ---
 
 *(nyiso-201, 2026-09-06. Pushed before the arm was solved. Zero solves at time of push.)*
+
+---
+
+# ADDENDUM A — RESULTS (recorded after the screen; nothing above was edited)
+
+**VERDICT: STOP at gate (c). ONE LP spent. The span was not solved. Keeper UNCHANGED.**
+
+* **Both corrected gates CLEAR, which is this session's first result.**
+  * **(a)** dark-meter forced energy **0.0010 → 0.0000 TWh** — the arm removes the keeper's only
+    dark-meter conviction (plant 8006) and the screen's D-4 failure list is empty; D-2 adds no
+    failure. The retired failure-row COUNT would have read 1 → 0 here too; the point is that the
+    corrected measure is the one that means something, and it is satisfied.
+  * **(b)** 7314 **803 unit-h / 16.14 GWh** (census 333 detected / **120 kept** / 213 dropped) and
+    50978 **231 unit-h / 9.09 GWh** (86 / **47 kept** / 39) — reported at full magnitude, no floor
+    with zero kept runs, no D-4 conviction at either (both `ct_only`-restored by the span guard).
+* **S-1** `CT_PEAKER` **+0.858 TWh**, inside the 2.1417 bound. **S-2** gas family **+0.044**, import
+  −0.075. **G-ENGAGE** all three census legs logged (951/1,528 CC, 68/136 state, 355/455 steam runs
+  dropped). Bridge forced volume **0.5701 → 0.1540 TWh**.
+* **(c) C3a-2025 FAILS: −6.9 % → −11.7 %** (61.84 → 58.69 vs actual 66.43; system mean 58.86 →
+  55.72). The band is ±10 %; the keeper had 3.1 pp of room. **This is the STOP.** C3b unchanged
+  (0.154, PASS).
+* **(d)** zero C1 and zero C2 flips — **vacuous in 2025** as §0.5 declared ex ante.
+* The volume picture on 2025 does **not** reproduce 2023's: only `CT_PEAKER` moves toward its
+  actual (−1.495 → −0.637); `ST_GAS` moves away (−4.106 → −5.666) as do `CC_REGULAR` and `CC_CHP`.
+  Reported, not gated (the 2025 actuals are the preliminary vintage that skips C1), and not judged
+  by rule 1.
+* **Promotion:** refused, and for a stronger reason than nyiso-200's. C3a is load-bearing and its
+  failure is not ledgerable (the C3c standing rule needs a LONE C3c; the v3.0 guard refuses
+  `model-class` on C1/C2/C3a/C3b), so a span carrying it reads **NOT-YET** and promoting would
+  **decertify NYISO**. The owner's formula admits gates regressing; it does not reach a
+  decertification.
+* Screen bundle deleted before merge (29(c)); every number lives in
+  `_nyiso201_screen_gates_a3_2025.json` and `docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`.
+
+*(nyiso-201, 2026-09-06. One screen solve. Nothing registered, nothing promoted, no span spent.)*
