@@ -1,0 +1,1335 @@
+{
+ "gates": {
+  "G1_response": {
+   "keeper_ct_twh": 9.0554,
+   "arm_ct_twh": 13.0034,
+   "realized_lift_twh": 3.948,
+   "conversion_of_presolve": 1.08,
+   "bar": "1.8 <= lift <= 5.5",
+   "verdict": "PASS"
+  },
+  "G2_replacement": {
+   "ct_forcing_mechanisms": [
+    "ct_netload_drag"
+   ],
+   "reliability_floor_forced_twh": 0,
+   "rows": [
+    {
+     "year": 2023,
+     "class": "CT_PEAKER",
+     "mechanism": "ct_netload_drag",
+     "forced_twh": 5.8227,
+     "class_total_twh": 12.1815,
+     "share_of_class": 0.478
+    }
+   ],
+   "verdict": "PASS"
+  },
+  "G3_confinement": {
+   "d4_rows": [
+    {
+     "year": 2023,
+     "check": "window",
+     "floor": "ct_netload_drag",
+     "window": "h10-20",
+     "plant": "",
+     "floored_twh": 5.8227,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    }
+   ],
+   "max_offwindow_share": 0.0,
+   "verdict": "PASS"
+  },
+  "G4_no_collateral_flip": {
+   "c1_2023": {
+    "CC_REGULAR": {
+     "keeper_gap": -4.172,
+     "arm_gap": -4.748,
+     "delta_twh": -0.5759,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "CC_CHP": {
+     "keeper_gap": -1.684,
+     "arm_gap": -1.915,
+     "delta_twh": -0.2315,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "CT_PEAKER": {
+     "keeper_gap": -7.985,
+     "arm_gap": -4.037,
+     "delta_twh": 3.948,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "ST_GAS": {
+     "keeper_gap": 0.543,
+     "arm_gap": -0.208,
+     "delta_twh": -0.7511,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "ST_CHP": {
+     "keeper_gap": -2.673,
+     "arm_gap": -2.713,
+     "delta_twh": -0.04,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "COAL_PRB": {
+     "keeper_gap": -1.557,
+     "arm_gap": -2.581,
+     "delta_twh": -1.0241,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "COAL_LIGNITE": {
+     "keeper_gap": -0.665,
+     "arm_gap": -0.696,
+     "delta_twh": -0.0306,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    },
+    "COAL_BIT": {
+     "keeper_gap": -2.923,
+     "arm_gap": -3.54,
+     "delta_twh": -0.6166,
+     "band": "+-8.00",
+     "keeper": "PASS",
+     "arm": "PASS"
+    }
+   },
+   "c1_flips_pass_to_fail": [],
+   "c3a_keeper_pct": 7.2,
+   "c3a_arm_pct": 5.8,
+   "c3c_tail_hours_keeper": 3,
+   "c3c_tail_hours_arm": 3,
+   "slack_dump_twh": {
+    "keeper": [
+     0.0,
+     0.0
+    ],
+    "arm": [
+     0.0,
+     0.0
+    ]
+   },
+   "verdict": "PASS"
+  },
+  "G5_forced_budget": {
+   "ct_forced_share": 0.478,
+   "cap": 0.15,
+   "route": "rule 18 grounded conditional",
+   "d4_offwindow_share": 0.0,
+   "d1_profile_r": 0.976,
+   "d1_cv_ratio": 1.76,
+   "d1_gates": {
+    "min_profile_r": 0.8,
+    "min_cv_ratio": 0.5
+   },
+   "reported_against_the_arm": {
+    "new_d1_miss_not_in_keeper": "COAL_PRB cv_ratio 0.486 vs 0.50 gate \u2014 does NOT gate (COAL 0.3% forced, far below the 30% merchant cap; rule 18's shape leg binds only above the cap), but is a genuine adverse side-effect of coal displaced by the CT floor and is 0.014 from the line"
+   },
+   "verdict": "PASS"
+  }
+ },
+ "presolve_lift_twh": 3.6544,
+ "_metrics_keys": [],
+ "arm_verdict": {
+  "_stdout": "",
+  "_stderr": "could not resolve a registered run from '/home/user/market-simulator/results/calibration/miso230_ctdrag_S' (no registry sidecar and no bundle match).\n"
+ },
+ "keeper_verdict": {
+  "run_id": "2026-09-05-miso-220-nonsteam-lift",
+  "iso": "MISO",
+  "label": "miso 220 nonsteam lift",
+  "rubric_version": 3.6,
+  "reported": {
+   "co2": {
+    "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+    "records": [
+     {
+      "criterion": "co2",
+      "key": null,
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+      "model": 277.946,
+      "actual": 291.688,
+      "tol": "\u00b17% target / \u00b110% commercial",
+      "magnitude": "-4.7%"
+     },
+     {
+      "criterion": "co2",
+      "key": null,
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+      "model": 270.912,
+      "actual": 285.656,
+      "tol": "\u00b17% target / \u00b110% commercial",
+      "magnitude": "-5.2%"
+     },
+     {
+      "criterion": "co2",
+      "key": null,
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+      "model": 296.331,
+      "actual": 298.96,
+      "tol": "\u00b17% target / \u00b110% commercial",
+      "magnitude": "-0.9%"
+     }
+    ]
+   },
+   "diurnal_amplitude": {
+    "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+    "records": [
+     {
+      "criterion": "diurnal_amplitude",
+      "key": null,
+      "year": 2023,
+      "status": "REPORTED",
+      "classification": null,
+      "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+      "benchmark": "RT",
+      "model": 8.32,
+      "actual": 22.36,
+      "tol": null,
+      "magnitude": "amplitude 37.2% of measured (hod range $8.32 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.883; 365 complete days",
+      "amplitude_pct": 37.2,
+      "phase_ok": true,
+      "hod_r": 0.883,
+      "days": 365
+     },
+     {
+      "criterion": "diurnal_amplitude",
+      "key": null,
+      "year": 2024,
+      "status": "REPORTED",
+      "classification": null,
+      "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+      "benchmark": "RT",
+      "model": 9.91,
+      "actual": 28.59,
+      "tol": null,
+      "magnitude": "amplitude 34.7% of measured (hod range $9.91 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.879; 365 complete days",
+      "amplitude_pct": 34.7,
+      "phase_ok": true,
+      "hod_r": 0.879,
+      "days": 365
+     },
+     {
+      "criterion": "diurnal_amplitude",
+      "key": null,
+      "year": 2025,
+      "status": "REPORTED",
+      "classification": null,
+      "metric": "hour-of-day price amplitude, model as % of measured RT (BAND-FREE: reported, never gated)",
+      "benchmark": "RT",
+      "model": 10.89,
+      "actual": 53.27,
+      "tol": null,
+      "magnitude": "amplitude 20.4% of measured (hod range $10.89 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.853; 364 complete days",
+      "amplitude_pct": 20.4,
+      "phase_ok": true,
+      "hod_r": 0.853,
+      "days": 364
+     }
+    ]
+   }
+  },
+  "target_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "scorable_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "data_blocked_years": [],
+  "determination": "CALIBRATED",
+  "reasons": [
+   "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
+  ],
+  "notes": [
+   "C8 2023 CT_PEAKER: grounded above budget \u2014 26.5% forced (2.2619 of 8.5277 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.935 (\u22650.8) & off-peak CV ratio 1.335 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+   "C8 2024 CT_PEAKER: grounded above budget \u2014 18.3% forced (2.1082 of 11.5002 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.119 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+   "C8 2025 CT_PEAKER: grounded above budget \u2014 15.3% forced (1.8676 of 12.2242 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.982 (\u22650.8) & off-peak CV ratio 1.395 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
+  "criteria": {
+   "fuelmix": {
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "hard": false,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+      "model": 137.645,
+      "actual": 141.817,
+      "share_pp": 0.09,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-4.17 TWh, share +0.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_CHP grid-delivered TWh + share of generation",
+      "model": 19.627,
+      "actual": 21.311,
+      "share_pp": -0.16,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.68 TWh, share -0.2pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+      "model": 9.053,
+      "actual": 17.038,
+      "share_pp": -1.25,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-7.98 TWh, share -1.2pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS grid-delivered TWh + share of generation",
+      "model": 14.483,
+      "actual": 13.94,
+      "share_pp": 0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "+0.54 TWh, share +0.2pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_CHP grid-delivered TWh + share of generation",
+      "model": 2.53,
+      "actual": 5.203,
+      "share_pp": -0.42,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-2.67 TWh, share -0.4pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_PRB",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_PRB grid-delivered TWh + share of generation",
+      "model": 120.114,
+      "actual": 121.671,
+      "share_pp": 0.42,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.56 TWh, share +0.4pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_LIGNITE",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
+      "model": 6.382,
+      "actual": 7.047,
+      "share_pp": -0.07,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.66 TWh, share -0.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_BIT",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_BIT grid-delivered TWh + share of generation",
+      "model": 54.146,
+      "actual": 57.069,
+      "share_pp": -0.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-2.92 TWh, share -0.2pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+      "model": 149.574,
+      "actual": 143.474,
+      "share_pp": 1.6,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "+6.10 TWh, share +1.6pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_CHP",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_CHP grid-delivered TWh + share of generation",
+      "model": 21.113,
+      "actual": 21.339,
+      "share_pp": 0.05,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.23 TWh, share +0.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+      "model": 13.117,
+      "actual": 19.225,
+      "share_pp": -0.91,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-6.11 TWh, share -0.9pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS grid-delivered TWh + share of generation",
+      "model": 12.533,
+      "actual": 17.568,
+      "share_pp": -0.74,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-5.04 TWh, share -0.7pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_CHP",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_CHP grid-delivered TWh + share of generation",
+      "model": 2.779,
+      "actual": 5.494,
+      "share_pp": -0.42,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-2.72 TWh, share -0.4pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_PRB",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_PRB grid-delivered TWh + share of generation",
+      "model": 112.95,
+      "actual": 116.463,
+      "share_pp": -0.08,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-3.51 TWh, share -0.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_LIGNITE",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
+      "model": 5.744,
+      "actual": 6.522,
+      "share_pp": -0.1,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.78 TWh, share -0.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_BIT",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_BIT grid-delivered TWh + share of generation",
+      "model": 49.6,
+      "actual": 53.332,
+      "share_pp": -0.38,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-3.73 TWh, share -0.4pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+      "model": 134.403,
+      "actual": 137.96,
+      "share_pp": 0.03,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (7/41 prior plants missing (83% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -3.556
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_CHP",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "CC_CHP grid-delivered TWh + share of generation",
+      "model": 18.763,
+      "actual": 17.75,
+      "share_pp": 0.23,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (11/23 prior plants missing (52% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": 1.012
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+      "model": 13.888,
+      "actual": 19.291,
+      "share_pp": -0.76,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (71/96 prior plants missing (26% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -5.402
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "ST_GAS grid-delivered TWh + share of generation",
+      "model": 11.741,
+      "actual": 15.567,
+      "share_pp": -0.53,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (9/28 prior plants missing (68% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -3.826
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_CHP",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "ST_CHP grid-delivered TWh + share of generation",
+      "model": 1.9,
+      "actual": 3.894,
+      "share_pp": -0.29,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (35/66 prior plants missing (47% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -1.994
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_PRB",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "COAL_PRB grid-delivered TWh + share of generation",
+      "model": 139.884,
+      "actual": 145.861,
+      "share_pp": -0.31,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (6/39 prior plants missing (85% reporting); plant-months 96% present); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -5.976
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_LIGNITE",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
+      "model": 5.346,
+      "actual": 6.12,
+      "share_pp": -0.09,
+      "tol": null,
+      "completeness": "complete",
+      "magnitude": "preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -0.774
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_BIT",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "COAL_BIT grid-delivered TWh + share of generation",
+      "model": 57.773,
+      "actual": 60.176,
+      "share_pp": -0.12,
+      "tol": null,
+      "completeness": "incomplete",
+      "magnitude": "preliminary EIA-923 vintage: incomplete plant data (plant-months 92% present); not gated \u2014 C2 family grid reconcile covers this class",
+      "vintage_gap_twh": -2.403
+     }
+    ]
+   },
+   "sysvol": {
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "hard": false,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "sysvol",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 183.34,
+      "actual": 199.31,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "coal",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 180.8,
+      "actual": 185.79,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "gas",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 199.11,
+      "actual": 207.1,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "coal",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 168.41,
+      "actual": 176.32,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "gas",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "gas family grid-delivered TWh (preliminary vintage diagnostic \u2014 not gated, rubric v2.5)",
+      "model": 195.57,
+      "actual": 217.94,
+      "tol": "\u00b12.5% target / \u00b15.0% commercial (family, no per-class actual)",
+      "magnitude": "-10.3%",
+      "source": "EIA-930 combined fossil minus coal anchor (G-21b split correction)",
+      "vintage_reconciled": true
+     },
+     {
+      "criterion": "sysvol",
+      "key": "coal",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "coal family grid-delivered TWh (preliminary vintage diagnostic \u2014 not gated, rubric v2.5)",
+      "model": 203.0,
+      "actual": 202.28,
+      "tol": "\u00b12.5% target / \u00b15.0% commercial (family, no per-class actual)",
+      "magnitude": "+0.4%",
+      "source": "CAMPD CEMS coal \u00d7 complete-vintage grid ratio (k=0.949, 2 yr; G-21b split anchor)",
+      "vintage_reconciled": false
+     }
+    ]
+   },
+   "price_mean": {
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "hard": false,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "price_mean",
+      "key": null,
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+      "benchmark": "RT",
+      "model": 35.2,
+      "actual": 32.85,
+      "tol": "\u00b110% target / \u00b110% commercial",
+      "magnitude": "+7.1%"
+     },
+     {
+      "criterion": "price_mean",
+      "key": "da_diagnostic",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+      "benchmark": "DA",
+      "model": 35.2,
+      "actual": 34.23,
+      "tol": "not gated",
+      "magnitude": "+2.8% vs DA (DA\u2212RT premium $+1.38)"
+     },
+     {
+      "criterion": "price_mean",
+      "key": null,
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+      "benchmark": "RT",
+      "model": 33.39,
+      "actual": 32.3,
+      "tol": "\u00b110% target / \u00b110% commercial",
+      "magnitude": "+3.4%"
+     },
+     {
+      "criterion": "price_mean",
+      "key": "da_diagnostic",
+      "year": 2024,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+      "benchmark": "DA",
+      "model": 33.39,
+      "actual": 33.14,
+      "tol": "not gated",
+      "magnitude": "+0.8% vs DA (DA\u2212RT premium $+0.84)"
+     },
+     {
+      "criterion": "price_mean",
+      "key": null,
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+      "benchmark": "RT",
+      "model": 42.28,
+      "actual": 45.46,
+      "tol": "\u00b110% target / \u00b110% commercial",
+      "magnitude": "-7.0%"
+     },
+     {
+      "criterion": "price_mean",
+      "key": "da_diagnostic",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+      "benchmark": "DA",
+      "model": 42.28,
+      "actual": 46.35,
+      "tol": "not gated",
+      "magnitude": "-8.8% vs DA (DA\u2212RT premium $+0.89)"
+     }
+    ]
+   },
+   "price_shape": {
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "hard": false,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "price_shape",
+      "key": null,
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+      "model": 0.108,
+      "actual": null,
+      "tol": "\u22640.20 target / \u22640.20 commercial",
+      "magnitude": "NRMSE 0.108"
+     },
+     {
+      "criterion": "price_shape",
+      "key": null,
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+      "model": 0.108,
+      "actual": null,
+      "tol": "\u22640.20 target / \u22640.20 commercial",
+      "magnitude": "NRMSE 0.108"
+     },
+     {
+      "criterion": "price_shape",
+      "key": null,
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+      "model": 0.152,
+      "actual": null,
+      "tol": "\u22640.20 target / \u22640.20 commercial",
+      "magnitude": "NRMSE 0.152"
+     }
+    ]
+   },
+   "price_tail": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "hard": false,
+    "status": "CAVEAT",
+    "caveat_kind": "ledgered",
+    "records": [
+     {
+      "criterion": "price_tail",
+      "key": null,
+      "year": 2023,
+      "status": "CAVEAT",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION",
+      "metric": "hours RT-expressible LMP > $200/MWh",
+      "model": 3.0,
+      "actual": 30.0,
+      "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+      "magnitude": "model 3h [energy-only LMP] vs RT actual 30h (0.10\u00d7, >$200)",
+      "ledger_reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md."
+     },
+     {
+      "criterion": "price_tail",
+      "key": "da_diagnostic",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+      "model": 3.0,
+      "actual": 1.0,
+      "tol": "not gated",
+      "magnitude": "model 3h vs DA actual 1h (out-of-representation companion)"
+     },
+     {
+      "criterion": "price_tail",
+      "key": null,
+      "year": 2024,
+      "status": "CAVEAT",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION",
+      "metric": "hours RT-expressible LMP > $200/MWh",
+      "model": 7.0,
+      "actual": 37.0,
+      "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+      "magnitude": "model 7h [energy-only LMP] vs RT actual 37h (0.19\u00d7, >$200)",
+      "ledger_reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md."
+     },
+     {
+      "criterion": "price_tail",
+      "key": "da_diagnostic",
+      "year": 2024,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+      "model": 7.0,
+      "actual": 24.0,
+      "tol": "not gated",
+      "magnitude": "model 7h vs DA actual 24h (out-of-representation companion)"
+     },
+     {
+      "criterion": "price_tail",
+      "key": null,
+      "year": 2025,
+      "status": "CAVEAT",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION",
+      "metric": "hours RT-expressible LMP > $200/MWh",
+      "model": 0.0,
+      "actual": 88.0,
+      "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+      "magnitude": "model 0h [energy-only LMP] vs RT actual 88h (0.00\u00d7, >$200)",
+      "ledger_reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md."
+     },
+     {
+      "criterion": "price_tail",
+      "key": "da_diagnostic",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+      "model": 0.0,
+      "actual": 38.0,
+      "tol": "not gated",
+      "magnitude": "model 0h vs DA actual 38h (out-of-representation companion)"
+     }
+    ]
+   },
+   "dispatch_corr": {
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "hard": false,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "dispatch_corr",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas fleet hourly r / NRMSE",
+      "model": "r=0.946 nrmse=0.196",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.946, NRMSE=0.196"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "coal",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "coal fleet hourly r / NRMSE",
+      "model": "r=0.896 nrmse=0.136",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.896, NRMSE=0.136"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "gas",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas fleet hourly r / NRMSE",
+      "model": "r=0.94 nrmse=0.173",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.94, NRMSE=0.173"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "coal",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "coal fleet hourly r / NRMSE",
+      "model": "r=0.883 nrmse=0.149",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.883, NRMSE=0.149"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "gas",
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas fleet hourly r / NRMSE",
+      "model": "r=0.951 nrmse=0.214",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.951, NRMSE=0.214"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "coal",
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "coal fleet hourly r / NRMSE",
+      "model": "r=0.886 nrmse=0.133",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.886, NRMSE=0.133"
+     }
+    ]
+   },
+   "governance": {
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "hard": true,
+    "status": "PASS",
+    "records": [
+     {
+      "criterion": "governance",
+      "key": null,
+      "year": null,
+      "status": "PASS",
+      "classification": null,
+      "metric": "every lever measured; no residual fit / pinning; exogenous outages",
+      "model": null,
+      "actual": null,
+      "tol": "pass/fail",
+      "magnitude": "miso-220 KEEPER CANDIDATE (2026-09-05) under the OWNER RULING of 2026-09-05 (PREREG-miso220 \u00a71: the offer-curve band multipliers are the intended channel for tuning on price and adjusting merit order; one config held across 2023-2025; steam gas held as is): control = the miso-217 keeper bundle miso217_intermphys_B itself (already attested, never re-solved, rule 29(b) form 4) vs arm miso220_nonsteamlift_B, MISO 2023+2024+2025 in ONE invocation, years sequential, solved in-session and never on CI (rules 12/16), from the SAME committed keeper recipe via replay_keeper --set on the existing offer_curve_by_group operator channel. No ScenarioConfig field minted, no matrix row, ledger 41/2 unchanged. This attestation exists so the arm can be SCORED (without it C6 reads UNATTESTED and guard (b) of the C3c standing rule blocks reclassification - PREREG \u00a76 K-4); it certifies the run's provenance, NOT that its gates pass, which _miso220_ab_gates.json adjudicates against kills frozen before the solve.; authorized price tuning declared on offer_curve_by_group = x1.10 on committed/econ_low/econ_high/peak for 11 non-steam fossil classes; ST_GAS and ST_GAS_INTERMEDIATE held byte-identical; phys_* and econ_low_share/pct_peaking untouched in every class",
+      "machine_issues": []
+     }
+    ]
+   },
+   "forced_share": {
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "hard": true,
+    "status": "PASS",
+    "caveat_kind": null,
+    "records": [
+     {
+      "criterion": "forced_share",
+      "key": "CC_REGULAR",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+      "model": 0.0,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "0.0% forced (0.0 of 135.336 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "COAL",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C8 forced-energy share (D-2)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "COAL immaterial (0.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.3% forced"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "CT_PEAKER",
+      "year": 2023,
+      "status": "PASS",
+      "classification": "GROUNDED ABOVE BUDGET (D-4 window + D-1 shape clear)",
+      "metric": "CT_PEAKER energy at binding non-exempt floors (D-2)",
+      "model": 0.2652,
+      "actual": null,
+      "tol": "< 15% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "26.5% forced (2.2619 of 8.5277 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.935 (\u22650.8) & off-peak CV ratio 1.335 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "ST_GAS",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
+      "model": 0.1164,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "11.6% forced (2.9019 of 24.9269 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "hydro",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C8 forced-energy share (D-2)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "hydro immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "CC_REGULAR",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+      "model": 0.0,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "0.0% forced (0.0 of 147.2687 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "COAL",
+      "year": 2024,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C8 forced-energy share (D-2)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "COAL immaterial (0.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.3% forced"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "CT_PEAKER",
+      "year": 2024,
+      "status": "PASS",
+      "classification": "GROUNDED ABOVE BUDGET (D-4 window + D-1 shape clear)",
+      "metric": "CT_PEAKER energy at binding non-exempt floors (D-2)",
+      "model": 0.1833,
+      "actual": null,
+      "tol": "< 15% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "18.3% forced (2.1082 of 11.5002 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.119 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "ST_GAS",
+      "year": 2024,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
+      "model": 0.1289,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "12.9% forced (3.1251 of 24.2458 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "hydro",
+      "year": 2024,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C8 forced-energy share (D-2)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "hydro immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "CC_REGULAR",
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+      "model": 0.0,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "0.0% forced (0.0 of 132.8759 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "COAL",
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL energy at binding non-exempt floors (D-2)",
+      "model": 0.0017,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "0.2% forced (0.3575 of 204.5584 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "CT_PEAKER",
+      "year": 2025,
+      "status": "PASS",
+      "classification": "GROUNDED ABOVE BUDGET (D-4 window + D-1 shape clear)",
+      "metric": "CT_PEAKER energy at binding non-exempt floors (D-2)",
+      "model": 0.1528,
+      "actual": null,
+      "tol": "< 15% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "15.3% forced (1.8676 of 12.2242 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.982 (\u22650.8) & off-peak CV ratio 1.395 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "ST_GAS",
+      "year": 2025,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
+      "model": 0.1698,
+      "actual": null,
+      "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+      "magnitude": "17.0% forced (3.8409 of 22.6156 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+     },
+     {
+      "criterion": "forced_share",
+      "key": "hydro",
+      "year": 2025,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C8 forced-energy share (D-2)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "hydro immaterial (1.5% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+     }
+    ]
+   }
+  },
+  "free_class_score": {
+   "iso": "MISO",
+   "pinned_classes": [
+    "CC_CHP",
+    "CT_CHP",
+    "ST_CHP",
+    "hydro",
+    "imports",
+    "nuclear",
+    "solar",
+    "wind"
+   ],
+   "excluded_from_free": [
+    "CC_CHP",
+    "ST_CHP"
+   ],
+   "all": {
+    "pass": 16,
+    "total": 16
+   },
+   "free": {
+    "pass": 12,
+    "total": 12
+   },
+   "headline": "C1 all 16/16 \u00b7 free 12/12"
+  },
+  "grade_summary": {
+   "scored": 8,
+   "target_grade": 7,
+   "commercial_grade": 0,
+   "ledgered": 1,
+   "fails": 0
+  },
+  "caveats": {
+   "protective": [],
+   "ledgered": [
+    "C3c price tail / scarcity (RT hourly)"
+   ],
+   "commercial_band": [],
+   "budget": {
+    "protective_max": 0,
+    "ledgered_max": 1
+   }
+  },
+  "ledger_entries": [
+   {
+    "criterion": "storage",
+    "year": 2025,
+    "metric": "C5b storage discharge throughput TWh",
+    "magnitude": "+1515.4% (model 2025 BAT+PS discharge 3.95 TWh vs EIA-930 battery-only actual 0.245 TWh; 2023/2024 un-benchmarked - EIA-930 reports no PS breakout)",
+    "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
+    "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+   },
+   {
+    "criterion": "storage_shape",
+    "year": 2025,
+    "metric": "C5c monthly storage dispatch shape (pearson r)",
+    "magnitude": "r=0.461 (2025 monthly BAT+PS pearson vs EIA-930 battery-only; the actual excludes the ~2,417 MW PS fleet the model dispatches - benchmark-basis mismatch, not a model miss)",
+    "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
+    "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane)."
+   },
+   {
+    "criterion": "price_tail",
+    "year": 2023,
+    "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+    "magnitude": "model 0h [energy-only LMP] vs RT actual 30h (0.00\u00d7, >$200)",
+    "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+    "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+    "magnitude_basis": "this run's own scored value (miso-132(b)); the classification and reason are the standing MISO adjudication carried forward"
+   },
+   {
+    "criterion": "price_tail",
+    "year": 2024,
+    "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+    "magnitude": "model 6h [energy-only LMP] vs RT actual 37h (0.16\u00d7, >$200)",
+    "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+    "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+    "magnitude_basis": "this run's own scored value (miso-132(b)); the classification and reason are the standing MISO adjudication carried forward"
+   },
+   {
+    "criterion": "price_tail",
+    "year": 2025,
+    "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+    "magnitude": "model 0h [energy-only LMP] vs RT actual 88h (0.00\u00d7, >$200)",
+    "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+    "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+    "magnitude_basis": "this run's own scored value (miso-132(b)); the classification and reason are the standing MISO adjudication carried forward"
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2025,
+    "metric": "system load-weighted mean LMP $/MWh (vs RT load-weighted; Indiana Hub)",
+    "magnitude": "-11.7%",
+    "classification": "MODEL MISS (downstream of the C3c price_tail item - the unrepresentable administrative scarcity tail)",
+    "reason": "The 2025 annual-mean miss is the arithmetic tail of the C3c residual, NOT an independent level error: 2023 (-2.2%) and 2024 (-8.0%) both PASS; only 2025 fails, and 2025 carries the largest actual RT>$200 count (88 hrs). Those 88 Indiana-Hub spike hours (actual up to $1,783; model ~$50 median) contribute the bulk of the $6.73/MWh gap between the actual load-weighted mean $45.39 and the model $38.66. Closes only DOWNSTREAM of C3c (never via an offer/level adder tuned to the mean) - the same administrative Monte-Carlo-LOLP ORDC/RCPF tail a deterministic perfect-foresight LP cannot form (rules #1/#10). Frontier designation 2026-07-20; see the C3c ledger entries above + docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md. miso-88 note: the widening is the expected cost of a structurally-correct input and is KEPT per rule 1 -- the accurate heat rate stays in even though it worsens this crossing. Per rule 11 the worse fit is a discovered-bug signal to root-cause separately (the 2025 summer-body price formation lane, FINDING-miso87-c3b-summer-2025-body-2026-07.md), never to be offset with a tuned adder.",
+    "magnitude_basis": "this run's own scored value (miso-132(b)); the classification and reason are the standing MISO adjudication carried forward"
+   }
+  ]
+ },
+ "screen_verdict": "ALL FIVE GATES PASS \u2014 arm survives the screen. Rule 29(2): a cleared screen NEVER promotes; full span 2023-2025 with the seam armed is the promotion artifact.",
+ "bundle_retention": "miso230_ctdrag_S DELETED before merge (rule 29c); this file is the record."
+}
