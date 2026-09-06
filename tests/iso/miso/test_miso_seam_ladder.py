@@ -9,6 +9,7 @@ seam envelopes) is untouched. Mirrors the seam-flow-limit test structure.
 """
 
 import unittest
+from pathlib import Path
 
 import numpy as np
 
@@ -230,3 +231,42 @@ class TestNeighbourAnchoredOverlay(unittest.TestCase):
             fleet, b, "MISO", 2024, neighbour_anchored=False
         )
         np.testing.assert_array_equal(a, b)
+
+
+class TestNeighbourOverlayRequiresItsHost(unittest.TestCase):
+    """The overlay is refused without the ladder it overlays (rule 19).
+
+    Enforced at the POINT OF USE in ``run_calibration.run_year``'s seam block,
+    not in ``ScenarioConfig.__post_init__``: ``miso_seam_measured_ladder`` is a
+    ``solve_and_persist`` kwarg applied to the recorded config tens of
+    ``with_overrides`` calls after the ScenarioConfig-channel fields are set, so
+    the pair is legitimately split in intermediate configs and a construction-time
+    check rejected a correct run after its LP had finished (miso-225 Addendum A).
+    """
+
+    def test_construction_does_not_reject_a_split_intermediate_config(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        cfg = ScenarioConfig(
+            iso="MISO", mode="backcast", miso_seam_neighbour_anchored_ladder=True
+        )
+        self.assertTrue(cfg.miso_seam_neighbour_anchored_ladder)
+        self.assertFalse(cfg.miso_seam_measured_ladder)
+        # ...and the host flag can still be layered on afterwards, which is
+        # exactly what _recorded_config does.
+        self.assertTrue(
+            cfg.with_overrides(miso_seam_measured_ladder=True).miso_seam_measured_ladder
+        )
+
+    def test_the_solve_path_refuses_the_overlay_without_its_host(self):
+        source = (
+            Path(__file__).resolve().parents[3] / "scripts/run_calibration.py"
+        ).read_text()
+        # assertIn would dump the whole 7k-line module on failure; assert the
+        # boolean instead.
+        self.assertTrue(
+            '"miso_seam_neighbour_anchored_ladder requires "' in source
+            and '"miso_seam_measured_ladder: the neighbour-anchored PJM entry "'
+            in source,
+            "run_calibration.py's seam block must refuse the overlay without its host",
+        )

@@ -16388,24 +16388,20 @@ class ScenarioConfig:
                 f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
             )
 
-        # miso-225: both halves of the owner-ruled MISO pair are OVERLAYS on a
-        # mechanism that must already be armed, so arming one alone would be a
-        # silent no-op — the fail-open this repo refuses. Fail closed instead.
-        if self.miso_gas_variable_transport and not self.miso_gas_marginal_commodity_pricing:
-            raise ValueError(
-                "ScenarioConfig.miso_gas_variable_transport requires "
-                "miso_gas_marginal_commodity_pricing: variable transport is an "
-                "adder over the TRADED HUB, and adding it to the EIA-923 average "
-                "print would double-count the transport that print already "
-                "amortizes (rule 19 [R-ONE-MECH])"
-            )
-        if self.miso_seam_neighbour_anchored_ladder and not self.miso_seam_measured_ladder:
-            raise ValueError(
-                "ScenarioConfig.miso_seam_neighbour_anchored_ladder requires "
-                "miso_seam_measured_ladder: the neighbour-anchored PJM entry "
-                "OVERLAYS the measured Q-Q ladder, and there is nothing to "
-                "overlay when the ladder itself is off"
-            )
+        # miso-225: the two owner-ruled MISO pairs are each an OVERLAY on a host
+        # mechanism, and arming an overlay alone must never be a silent no-op.
+        # Those invariants are enforced AT THE POINT OF USE, not here — see
+        # data.fuel.basis.miso.apply_miso_gas_marginal_commodity (the fuel pair)
+        # and run_calibration.run_year's seam block (the ladder pair). __post_init__
+        # is the WRONG layer for a cross-field invariant in this codebase: a config
+        # is assembled by long chains of with_overrides (run_calibration_full.
+        # _recorded_config applies solve_and_persist kwargs such as
+        # miso_seam_measured_ladder tens of calls after backcast_config has already
+        # set the ScenarioConfig-channel fields), so the pair is legitimately SPLIT
+        # in intermediate configs even when the as-solved config is well formed.
+        # Validating here rejected a correct run after its LP had finished
+        # (miso-225 Addendum A). The point-of-use guards see the complete config
+        # and are what actually fail closed.
 
         if self.neighbor_hr_forward_skill not in (None, "elastic", "flat"):
             raise ValueError(

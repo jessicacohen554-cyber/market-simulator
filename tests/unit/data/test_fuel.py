@@ -2971,24 +2971,18 @@ def test_miso_gas_variable_transport_off_is_byte_identical():
 def test_miso_gas_variable_transport_requires_the_hub_repricing():
     """Rule 19: a transport adder on top of the AVERAGE print double-counts.
 
-    Refused twice over — at construction, so no run can reach a solve carrying
-    the pair, and again in the applier, so a config mutated after construction
-    still cannot price the print plus its own transport.
+    Enforced AT THE POINT OF USE, which is the layer that actually fails closed:
+    the applier runs on every backcast path, so an armed-alone transport flag can
+    never reach a price. A ``__post_init__`` check was tried and REMOVED (miso-225
+    Addendum A) — a config is assembled by long chains of ``with_overrides`` in
+    which a pair is legitimately split, so validating there rejected a correct run
+    after its LP had already finished.
     """
-    with pytest.raises(ValueError, match="requires miso_gas_marginal_commodity_pricing"):
-        ScenarioConfig(
-            iso="MISO", mode="backcast", hours=48, miso_gas_variable_transport=True
-        )
     fleet = _miso_gas_fleet(48)
     prices = np.full((fleet.n_gen, 48), 3.0)
     config = ScenarioConfig(
-        iso="MISO",
-        mode="backcast",
-        hours=48,
-        miso_gas_marginal_commodity_pricing=True,
-        miso_gas_variable_transport=True,
+        iso="MISO", mode="backcast", hours=48, miso_gas_variable_transport=True
     )
-    config.miso_gas_marginal_commodity_pricing = False  # post-construction drift
     with pytest.raises(ValueError, match="requires miso_gas_marginal_commodity_pricing"):
         fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)
 

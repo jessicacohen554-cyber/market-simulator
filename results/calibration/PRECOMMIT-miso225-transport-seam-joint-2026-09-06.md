@@ -314,3 +314,71 @@ G-DRIFT, bundle deleted before merge. DOF ledger unchanged at **41/2**.
 Memory recipe (`FINDING-miso169` §3): 8 GB swapfile created and confirmed live from a separate
 call (`/proc/swaps`, 8,388,604 kB); `MARKET_SIM_HIGHS_THREADS=4`; pins numpy 2.4.6 / scipy
 1.17.1 / pandas 3.0.3 / pyarrow 24.0.0 / highspy 1.14.0 / openpyxl.
+
+---
+
+## ADDENDUM A (written before ANY gate was scored and before any arm output was read) — the first screen solved BOTH passes and then died in post-solve bookkeeping, on a guard of MY OWN that was at the wrong layer
+
+**No band, kill condition, gate or pre-registered value in §5 changes.** The scorer
+`_miso225_screen_gates.py` is untouched. What follows is a code repair and its disclosure.
+
+### What happened
+
+The first 2023 launch ran to completion — **P0 cold 304.2 s / 383,621 simplex iterations, P1
+warm 189.1 s / 235,082 iterations, results written (sidecars 19.1 s), peak RSS 13.27 GB with
+the swapfile untouched** — and then raised in `run_calibration_full.solve_and_persist` →
+`_recorded_config`, before `run_config.json` existed:
+
+> `ValueError: ScenarioConfig.miso_seam_neighbour_anchored_ladder requires
+> miso_seam_measured_ladder`
+
+**Both liveness lines had already fired correctly in the SOLVE log**, which is what makes the
+diagnosis unambiguous: `MISO gas marginal-commodity pricing (2023): 1487 gas units repriced …
+PLUS the derived per-plant variable transport (−0.718..+12.926, mean +0.716 $/MMBtu)` and
+`seam bands repriced … PJM WESTERN-BORDER DA quantiles on the PJM seam (miso-225
+neighbour-anchored), MISO DA hub quantiles on SPP/South`. The LP solved the intended arm. The
+failure was downstream of it.
+
+### The cause — my own defect, and it is a LAYER error, not a typo
+
+`miso_seam_measured_ladder` is a **`solve_and_persist` kwarg**, applied to the recorded config
+at `run_calibration_full.py:4888`; the `--set` fields land in the base `backcast_config` far
+earlier. `_recorded_config` rebuilds the as-solved config through a long chain of
+`with_overrides`, and `dataclasses.replace` re-runs `__post_init__` on **every intermediate
+config in that chain** — so the pair is legitimately SPLIT part-way through even though the
+final config is well formed. My §4 cross-field validators were in `__post_init__`, so they
+rejected a correct run after its LP had already finished.
+
+`__post_init__` is the wrong layer for a cross-field invariant in this codebase, and the repo's
+own idiom already says so: the rule-25 ISO guard and the fuel-pair guard both live in the
+APPLIER, at the point of use, where the config is complete.
+
+### The repair, all before any result was read
+
+1. **Both `__post_init__` validators are DELETED**, not disabled (rule 26 `[R-DELETE]`), with
+   the reason recorded in place so they are not "restored" as a regression fix.
+2. **The fuel pair keeps its point-of-use guard**, which was always the real one:
+   `apply_miso_gas_marginal_commodity` raises when transport is armed without the hub
+   repricing, and that applier runs on every backcast path, so an armed-alone transport flag
+   can never reach a price.
+3. **The seam pair gains the equivalent guard at its point of use** — `run_calibration.py`'s
+   seam block, checked on the complete as-solved config, immediately before the injection
+   `if` whose condition would otherwise skip the overlay silently. Arming the overlay without
+   its ladder is still a hard error; it is now raised where the config is whole.
+4. Tests updated to the layer that actually holds: the fuel guard is exercised through the
+   applier, and a new `TestNeighbourOverlayRequiresItsHost` asserts BOTH halves — that a split
+   intermediate config constructs fine (and can still take its host via `with_overrides`,
+   which is exactly what `_recorded_config` does), and that the solve path carries the
+   refusal. 279 tests pass.
+
+### What this cost and what it did not
+
+It cost one 582-second LP. It did not cost any gate integrity: **no gate was scored, no
+`_miso225_screen_gates.json` was written, and no price, dispatch or C1 number from the arm was
+read** before this repair was made and committed. The partial bundle is deleted and the screen
+re-run from scratch on the repaired code, so the scored bundle is one code state throughout.
+
+**The disclosed lesson for the record**, the sibling of miso-224's Addendum A: that one found
+that a fuel mechanism's LIVENESS must be asserted on the chain the solve runs. This one finds
+that a mechanism's cross-field INVARIANTS must be asserted where the config is COMPLETE — a
+builder chain will hand `__post_init__` states that no solve ever uses.

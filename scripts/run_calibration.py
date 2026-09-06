@@ -4555,6 +4555,20 @@ def run_year(
         # 2025 import starvation) clears economically. Runs LAST among the
         # seam price overwrites — displaces the border-anchor / PJM-LMP
         # prices on the rows it covers (alternatives, never stacked).
+        # miso-225: the neighbour-anchored overlay is meaningless without the
+        # ladder it overlays, and the block below would silently skip it — the
+        # fail-open this repo refuses. Checked here, at the point of use, on the
+        # complete as-solved config (a __post_init__ check sees intermediate
+        # configs in which the pair is legitimately split; miso-225 Addendum A).
+        if getattr(config, "miso_seam_neighbour_anchored_ladder", False) and not getattr(
+            config, "miso_seam_measured_ladder", False
+        ):
+            raise ValueError(
+                "miso_seam_neighbour_anchored_ladder requires "
+                "miso_seam_measured_ladder: the neighbour-anchored PJM entry "
+                "OVERLAYS the measured Q-Q ladder, and there is nothing to "
+                "overlay when the ladder itself is off (rule 19 [R-ONE-MECH])"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
