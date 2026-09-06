@@ -343,6 +343,10 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     (MECH_FIRM_IMPORT, None): (0, 24),
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
+    # ct_netload_drag: the ERCOT/CAISO/PJM declaration. Their driver is SOLAR
+    # COLLAPSE producing a sharp afternoon-evening net-load ramp, and their
+    # measured CT CF profile peaks there. MISO's does NOT — see
+    # D4_WINDOWS_BY_ISO below, which overrides this row for MISO alone.
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),
     # ST_GAS netload drag: the driver-justified window is ALL 24 hours — the
     # CAMPD evidence base (docs/ercot-st-gas-netload-drag-2026-06.md) shows the
@@ -674,6 +678,75 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # forced-reallocation MWh are reported per-leg in the FINDING from the
     # solved bundle's storage.parquet (charge-side conduct, not gated here).
 }
+
+# PER-ISO overrides of a :data:`D4_WINDOWS` declaration (miso-230, 2026-09-06).
+#
+# The base registry can declare only ONE window per (mechanism, class), which is
+# correct for a mechanism whose driver-justified hours are the same everywhere.
+# It is WRONG for a mechanism whose window is DERIVED from the ISO's own
+# measured conduct, because that derivation has a different answer in each
+# market — and rule 25 [R-ISO-SCOPE] forbids carrying one ISO's answer into
+# another. Declaring a single window then convicts the ISO whose real driver
+# sits elsewhere, which is a defect in the declaration, not in the mechanism.
+#
+# ct_netload_drag is exactly that mechanism. ERCOT's / CAISO's / PJM's [15, 22)
+# is justified by SOLAR COLLAPSE producing a sharp evening net-load ramp. MISO
+# carries far less solar, and its measured CT_PEAKER conduct says the commitment
+# is a broad high-net-load DAYTIME phenomenon: pooled 2023-2025 CAMPD hourly CF
+# over the model's 127 pure-play CT_PEAKER plants rises from 0.0284 at h00 to a
+# 0.1567 peak at h17 and falls back to 0.0340 by h23, with Spearman
+# rho(CF, net load) positive in EVERY hour and >= 0.69 across h10-h20 — while
+# MISO's MIDDAY block (rho 0.743/0.691/0.734) is as strongly driven as its
+# evening (0.706/0.636/0.743). Declaring ERCOT's [15, 22) for MISO would score
+# h10-h14 — carrying 1,744-2,359 MW of mean floor, the largest part of the
+# mechanism's footprint — as OFF-WINDOW binding, i.e. would fail the drag for
+# binding in the hours MISO's own driver evidence says it should.
+#
+# MISO's window [10, 21) is DERIVED, with zero free parameters, by
+# scripts/data/derive_miso_ct_netload_drag.py: the maximal contiguous run of
+# local-standard hours whose pooled mean CF is at or above the fleet's OWN 24-h
+# mean CF (0.0850 — the data's own daily average, not a chosen level) and whose
+# rho(CF, net load) is positive. Re-derived independently per year by the same
+# rule it reads [9, 21) / [10, 21) / [11, 22), i.e. year-stable to +/-1 h. The
+# frozen record is data/raw/reference/miso_ct_netload_drag.json (ISO-stamped)
+# and the derivation is rule 23 [R-FROZEN-DERIVE] frozen against residuals.
+#
+# As with every windowed floor in this registry, the drag is ZERO outside its
+# configured window BY CONSTRUCTION (fleet.apply_netload_reliability_floor's
+# ``ramp_window`` gate), so an off-window bind is structurally impossible and
+# this row is a rule-12/17 DECLARATION rather than an escalation path. What it
+# buys is that the declaration names the window MISO's driver actually
+# justifies, so the rule 18 [R-FORCED-BUDGET] conditional-pass leg (a) scores
+# the mechanism on its own evidence instead of on another market's.
+D4_WINDOWS_BY_ISO: dict[str, dict[tuple[int, str | None], tuple[int, int]]] = {
+    "MISO": {
+        (MECH_CT_NETLOAD_DRAG, None): (10, 21),
+    },
+}
+
+
+def resolve_d4_windows(
+    iso: str | None,
+) -> dict[tuple[int, str | None], tuple[int, int]]:
+    """Return :data:`D4_WINDOWS` with *iso*'s per-ISO overrides applied.
+
+    A mechanism whose driver-justified window is derived from the ISO's own
+    measured conduct gets its window from :data:`D4_WINDOWS_BY_ISO`; every other
+    row is the shared declaration. An ISO with no override entry (and ``None``)
+    gets the base registry unchanged, so every existing bundle scores exactly as
+    before.
+
+    Args:
+        iso: The bundle's ISO, or ``None`` when it is not known.
+
+    Returns:
+        The window registry D-4 should score this bundle against.
+    """
+    over = D4_WINDOWS_BY_ISO.get((iso or "").upper())
+    if not over:
+        return D4_WINDOWS
+    return {**D4_WINDOWS, **over}
+
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
 # (audit §7 D-9; measured-outcome pins, CLAUDE.md #13).
@@ -3215,6 +3288,12 @@ def diagnose_bundle(
                     klass,
                     year=year,
                     npl=npl,
+                    # Per-ISO window declarations (miso-230): a mechanism whose
+                    # driver-justified hours are DERIVED from the ISO's own
+                    # measured conduct is scored against that ISO's derivation,
+                    # never another market's (rule 25 [R-ISO-SCOPE]). An ISO with
+                    # no override gets D4_WINDOWS unchanged.
+                    windows=resolve_d4_windows(iso),
                     pids=all_pids,
                     bench_pl=bench_pl,
                     substituted=mats.substituted,

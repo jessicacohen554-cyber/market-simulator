@@ -1,0 +1,295 @@
+{
+ "iso": "MISO",
+ "derive_script": "scripts/data/derive_miso_ct_netload_drag.py",
+ "mechanism": "ct_netload_drag / data.fleet.apply_ct_netload_drag_floor",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "clock": "local standard CST = UTC-6, no DST",
+ "sources": {
+  "cf_numerator": "EPA CAMPD hourly CEMS, pure-play model CT_PEAKER plants",
+  "cf_denominator": "model fleet pure-play CT_PEAKER nameplate (MW)",
+  "net_load": "EIA-930 MISO Demand - NG:SUN - NG:WND"
+ },
+ "coefficients": {
+  "ct_drag_slope_per_gw": 0.01303,
+  "ct_drag_intercept": -0.8108,
+  "ct_drag_cap": 0.4394,
+  "ct_drag_ramp_start": 10,
+  "ct_drag_ramp_end": 21
+ },
+ "window_derivation": {
+  "rule": "maximal contiguous hours with mean CF >= the fleet's own 24-h mean CF and Spearman rho(CF, net load) > 0; zero free parameters",
+  "threshold_mean_cf": 0.08498,
+  "peak_cf_hour": 17,
+  "hour_of_day_mean_cf": [
+   0.0284,
+   0.0266,
+   0.0266,
+   0.0286,
+   0.0349,
+   0.0453,
+   0.0562,
+   0.0658,
+   0.0718,
+   0.0802,
+   0.0926,
+   0.1061,
+   0.1169,
+   0.1253,
+   0.1337,
+   0.1434,
+   0.1531,
+   0.1567,
+   0.1499,
+   0.1337,
+   0.1082,
+   0.074,
+   0.0475,
+   0.034
+  ],
+  "hour_of_day_rho": [
+   0.443,
+   0.438,
+   0.437,
+   0.425,
+   0.416,
+   0.441,
+   0.556,
+   0.643,
+   0.646,
+   0.666,
+   0.695,
+   0.718,
+   0.738,
+   0.754,
+   0.761,
+   0.757,
+   0.742,
+   0.723,
+   0.706,
+   0.697,
+   0.686,
+   0.636,
+   0.558,
+   0.485
+  ],
+  "hours_selected": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ]
+ },
+ "window_per_year": {
+  "2023": [
+   9,
+   21
+  ],
+  "2024": [
+   10,
+   21
+  ],
+  "2025": [
+   11,
+   22
+  ]
+ },
+ "fit": {
+  "binned_cf_by_netload_gw": [
+   {
+    "netload_gw": 37.0,
+    "median_cf": 0.0122
+   },
+   {
+    "netload_gw": 39.0,
+    "median_cf": 0.0107
+   },
+   {
+    "netload_gw": 41.0,
+    "median_cf": 0.0162
+   },
+   {
+    "netload_gw": 43.0,
+    "median_cf": 0.0195
+   },
+   {
+    "netload_gw": 45.0,
+    "median_cf": 0.021
+   },
+   {
+    "netload_gw": 47.0,
+    "median_cf": 0.027
+   },
+   {
+    "netload_gw": 49.0,
+    "median_cf": 0.0258
+   },
+   {
+    "netload_gw": 51.0,
+    "median_cf": 0.028
+   },
+   {
+    "netload_gw": 53.0,
+    "median_cf": 0.0323
+   },
+   {
+    "netload_gw": 55.0,
+    "median_cf": 0.0388
+   },
+   {
+    "netload_gw": 57.0,
+    "median_cf": 0.0432
+   },
+   {
+    "netload_gw": 59.0,
+    "median_cf": 0.0458
+   },
+   {
+    "netload_gw": 61.0,
+    "median_cf": 0.0514
+   },
+   {
+    "netload_gw": 63.0,
+    "median_cf": 0.0665
+   },
+   {
+    "netload_gw": 65.0,
+    "median_cf": 0.0726
+   },
+   {
+    "netload_gw": 67.0,
+    "median_cf": 0.0829
+   },
+   {
+    "netload_gw": 69.0,
+    "median_cf": 0.0806
+   },
+   {
+    "netload_gw": 71.0,
+    "median_cf": 0.0977
+   },
+   {
+    "netload_gw": 73.0,
+    "median_cf": 0.1113
+   },
+   {
+    "netload_gw": 75.0,
+    "median_cf": 0.1361
+   },
+   {
+    "netload_gw": 77.0,
+    "median_cf": 0.157
+   },
+   {
+    "netload_gw": 79.0,
+    "median_cf": 0.1755
+   },
+   {
+    "netload_gw": 81.0,
+    "median_cf": 0.2171
+   },
+   {
+    "netload_gw": 83.0,
+    "median_cf": 0.2414
+   },
+   {
+    "netload_gw": 85.0,
+    "median_cf": 0.2596
+   },
+   {
+    "netload_gw": 87.0,
+    "median_cf": 0.2938
+   },
+   {
+    "netload_gw": 89.0,
+    "median_cf": 0.3204
+   },
+   {
+    "netload_gw": 91.0,
+    "median_cf": 0.361
+   },
+   {
+    "netload_gw": 93.0,
+    "median_cf": 0.3957
+   },
+   {
+    "netload_gw": 95.0,
+    "median_cf": 0.4441
+   },
+   {
+    "netload_gw": 97.0,
+    "median_cf": 0.4785
+   },
+   {
+    "netload_gw": 99.0,
+    "median_cf": 0.4823
+   },
+   {
+    "netload_gw": 101.0,
+    "median_cf": 0.5228
+   },
+   {
+    "netload_gw": 103.0,
+    "median_cf": 0.5726
+   },
+   {
+    "netload_gw": 105.0,
+    "median_cf": 0.607
+   }
+  ],
+  "sse_hinge": 0.08416,
+  "unclipped_line_for_the_record": {
+   "slope": 0.00847,
+   "intercept": -0.4146,
+   "sse": 0.13738
+  }
+ },
+ "energy_cross_check": {
+  "2023": {
+   "floor_twh_on_pure_play": 8.406,
+   "measured_twh_pure_play": 15.037,
+   "floored_total_twh": 16.845
+  },
+  "2024": {
+   "floor_twh_on_pure_play": 7.311,
+   "measured_twh_pure_play": 13.791,
+   "floored_total_twh": 15.239
+  },
+  "2025": {
+   "floor_twh_on_pure_play": 7.469,
+   "measured_twh_pure_play": 14.804,
+   "floored_total_twh": 15.724
+  }
+ },
+ "fleet_by_year": {
+  "2023": {
+   "pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "measured_twh_pure_play": 15.037
+  },
+  "2024": {
+   "pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "measured_twh_pure_play": 13.791
+  },
+  "2025": {
+   "pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "measured_twh_pure_play": 14.804
+  }
+ },
+ "frozen": "rule 23 [R-FROZEN-DERIVE]: re-derive only when CAMPD or EIA-930 source data updates, never because a residual moved"
+}
