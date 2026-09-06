@@ -310,7 +310,9 @@ def _miso_zone_hub_kind(year: int, path: Path | None = None) -> dict[str, str]:
     out: dict[str, str] = {}
     for r in sub.itertuples():
         hub = str(r.hub).strip().lower()
-        out[str(r.zone)] = "henry" if hub.startswith(_MISO_HENRY_HUB_PREFIXES) else "chicago"
+        out[str(r.zone)] = (
+            "henry" if hub.startswith(_MISO_HENRY_HUB_PREFIXES) else "chicago"
+        )
     return out
 
 
