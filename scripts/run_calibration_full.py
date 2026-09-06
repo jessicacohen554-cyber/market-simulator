@@ -8734,6 +8734,8 @@ def run_replay_bundle(
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
+    ercot_reserve_supply_cap_from_year: int | None = None,
+    ercot_load_resource_reserve_from_year: int | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8793,6 +8795,19 @@ def run_replay_bundle(
             from the SAME committed control recipe rather than re-expressing a
             keeper flag-by-flag (caiso-243 §10.4 / caiso-244 §7.7 — a recipe is
             never rebuilt by parameter name).
+        ercot_reserve_supply_cap_from_year: Override the bundle's recorded
+            ``ercot_reserve_supply_cap_from_year`` (``None`` keeps the recipe's
+            own value). A from_year is a data-availability gate, not a fitted
+            value: the ercot-252 owner ruling (2026-09-06) moves it 2023 -> 2020
+            on the 2022 validation touchpoint because the measured RTOLCAP
+            series exists back to 2020. Composes exactly like the overrides
+            above, so the arm is provably the committed recipe plus this value.
+        ercot_load_resource_reserve_from_year: Override the bundle's recorded
+            ``ercot_load_resource_reserve_from_year`` (``None`` keeps the
+            recipe's own value) — the paired half of the same ercot-252 ruling
+            (the ercot-212 ``net_credits`` construction nets the LR series off
+            the cap rows, so the two gates move together); the back-year
+            series come from ``scripts/data/build_ercot_as_backyear.py``.
         caiso_dsw_daytime_evening_trim: Override the bundle's recorded
             ``caiso_dsw_daytime_evening_trim`` (the caiso-97 hod 6-21 -> 6-17
             trim of the daytime WEIM clean-transfer window; ``None`` keeps
@@ -8842,6 +8857,17 @@ def run_replay_bundle(
         kwargs["nyiso_ct_peaker_bands_measured"] = nyiso_ct_peaker_bands_measured
     if gas_offer_margin is not None:
         kwargs["gas_offer_margin"] = gas_offer_margin
+    # ercot-252: the two reserve from_year gates are data-availability gates
+    # (owner ruling 2026-09-06, 2023 -> 2020 on the 2022 touchpoint); ``None``
+    # keeps the recipe's own value so every existing replay is byte-identical.
+    if ercot_reserve_supply_cap_from_year is not None:
+        kwargs["ercot_reserve_supply_cap_from_year"] = int(
+            ercot_reserve_supply_cap_from_year
+        )
+    if ercot_load_resource_reserve_from_year is not None:
+        kwargs["ercot_load_resource_reserve_from_year"] = int(
+            ercot_load_resource_reserve_from_year
+        )
     # caiso-243: the two F923 fallback guards compose exactly like the
     # overrides above, so the structural arm is provably the committed keeper
     # recipe plus these flags (``None`` keeps the recipe's own value).
@@ -12791,6 +12817,16 @@ def main() -> None:
                 else None
             ),
             caiso_dsw_daytime_evening_trim=args.caiso_dsw_daytime_evening_trim,
+            ercot_reserve_supply_cap_from_year=(
+                args.ercot_reserve_supply_cap_from_year
+                if "--ercot-reserve-supply-cap-from-year" in sys.argv
+                else None
+            ),
+            ercot_load_resource_reserve_from_year=(
+                args.ercot_load_resource_reserve_from_year
+                if "--ercot-load-resource-reserve-from-year" in sys.argv
+                else None
+            ),
             nearby_fuel_price_zone_donor_guard=(
                 args.nearby_fuel_price_zone_donor_guard
                 if "--nearby-fuel-price-zone-donor-guard" in sys.argv
