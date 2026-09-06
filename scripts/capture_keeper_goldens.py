@@ -249,6 +249,15 @@ META_NON_PARAM_KEYS = {
 # can legitimately drift and are excluded here.
 FIDELITY_IGNORE_KEYS = {
     "timestamp",
+    # ``years`` is the REPLAY span, not a solve flag: since R-AW / Y-14 the
+    # bare ``ERCOT`` key replays the forward config on its DESIGNATED span
+    # (2024-2025) while the composed keeper's meta.json records the registered
+    # span (2023-2025), so the two legitimately differ and the oracle refused
+    # every post-Y-14 ERCOT capture on this one key (wallclock B, 2026-09-06).
+    # Rule 22's "never widened" invariant is asserted at the solve site
+    # (``capture_one``: replay span ⊆ recorded span) and recorded per entry as
+    # ``years`` / ``registered_years``; it is not this oracle's question.
+    "years",
     "git_sha",
     "highspy_version",
     "shared_inputs",
