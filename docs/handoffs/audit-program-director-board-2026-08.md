@@ -1,5 +1,413 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟢 **SIX OWNER RULINGS RECORDED — THE BRANCH-PROTECTION FLIP IS DECIDED, THE R-AE SET BECOMES SEVEN, AND THE ERCOT SHARD QUERY RESOLVES TO A REAL COMMIT** — RECORDS-ONLY LANE **v40**, director pin `6f074049` → **THIS LANE'S PIN `4122ecd6`**, `main` at open of this lane's readings **`4122ecd6`** and **`4c57b68a`** by the time leg 4 was read. 🔴 **TWO dispatch figures do not reproduce and are corrected here, not adjudicated:** the nine gates read **8 OF 9**, not 9 of 9 — `check_gate_a_provenance.py` went **RED after the sitting closed**, on the **SIXTH** keeper move of 2026-09-06 (CAISO `caaa3e05` at **22:09:55Z**, a move the dispatch's five does not contain); and the flip set on run **2743** is **4 OF 6**, not 5 of 6 — **both** `Fast test tier` **and** `Structural refactor guards` are `failure` on that run, so "Fast test tier went green there" is not what run 2743 records. 🟢 **The ERCOT shard query resolves for the first time in five containers, and the retirement is by MEASUREMENT: `f1ff2cda`, one parent, not in `.git/shallow`, keeper id unchanged on both sides — ruling 3's clock is confirmed independently at 2026-09-08 18:57Z.** The full fast tier run here has **ELEVEN** failures, not the three root causes' seven: **three more defect classes** exist that the dispatch's three do not name, and all of them are other desks' too. G2 leg 4 reads `protected: false` at a **TWENTY-NINTH** reading.
+>
+> **Records only.** No solve, no scoring, no registration, no keeper shard, no
+> marker, no freeze file, no matrix shard, no workflow, no `program-status.json`,
+> no `status/*.js`, no `results/calibration/`, no `CLAUDE.md`. It adjudicates
+> nothing and **rewrites nothing in v28 … v39** — the two corrections above are
+> *dated records* placed here, not edits to the dispatch or to v39's text. **v40 is
+> inserted ABOVE v39**, per dispatch, insertion-only. Board rows are cited **by their
+> text**, never by line number. **Nothing was dispatched to another desk under any
+> framing**; the three-plus-three defect classes below are recorded in an
+> **owed elsewhere** table and **no lane is chartered by this record**.
+>
+> **PIN DISCIPLINE.** Fetched `origin/main`, pinned
+> **`4122ecd611766373a2a322149d30bcec7d1dd012`** (`4122ecd6`), and took **every**
+> reading below there, once. The pin is the merge of **PR #5280**
+> (`claude/neiso-2020-lmp-miss-gr899x`). Every `$?` was read **on its own line, one
+> gate per invocation, never piped**, with each gate's stdout+stderr redirected to
+> its own file so the `$?` belongs to the gate. Every `git log -1 -- <path>` result
+> cited below was graft-tested with `grep -qx … .git/shallow ; echo $?` on its own
+> line — **and one of them is a graft**, below. Read-side git ran under
+> `GIT_NO_LAZY_FETCH=1` (partial-clone discipline, CLAUDE.md "Cloning & session data").
+> `git rev-parse --is-shallow-repository` → **`true`** (checked FIRST);
+> **20 grafts** (the sitting reports 28), `rev-list --count HEAD` **642** (the sitting
+> reports 653). **The horizon is a property of the container, never of `main`** — and
+> this pin is the sharpest demonstration the series has produced; see the R-AI block.
+>
+> **The director's pin resolves and is clean, and so do both of the sitting's
+> `main` shas.** `6f074049` is **not** a graft, is a **verified ancestor** of this pin
+> (`merge-base --is-ancestor` → `$?` **0**), and is the merge of **PR #5256**
+> (`claude/neiso-2020-lmp-miss-gr899x`) at committer time **21:38:49Z**.
+> `a6e4b6db` (merge of **#5263**, **21:45:22Z**) and `b633ff6c` (merge of **#5266**,
+> **21:52:52Z**) both resolve, are both real merges on `main`, and are both verified
+> ancestors of this pin — the sitting's stated open→close span is **7 m 30 s** and it
+> reproduces to the second. `b633ff6c` is **also** the current head of the branch
+> `claude/model-audit-director-a68igo` per `list_branches`, i.e. the director's branch
+> sitting at a `main` commit rather than diverging from one. **49 commits (24 merges)
+> separate the director's pin from this lane's.**
+>
+> ---
+>
+> ## THE SIX OWNER RULINGS — recorded verbatim in substance, adjudicated in no part
+>
+> | # | ruling | what this lane recorded, and what it measured |
+> |---|---|---|
+> | **1** | **BRANCH-PROTECTION FLIP — flip now, checks required, strict OFF.** Ruled AGAINST holding for a 6-of-6 head. Basis: *"wait for 6 of 6" had failed four times and the FAILURE MODE HAD CHANGED* — the sixth check is no longer one fixable defect but **keeper-churn debris across three desks**. Closes **G2 leg 4 as a DECISION**; whether `main` reads `protected: true` is a **separate measurement**, taken as **reading 29** below. | 🟢 **RECORDED.** The basis is **confirmed by this pin's own measurement and then some**: the flip set is red at run 2743 on **two** jobs owned by **two** desks, and the fast tier at this pin is red on **six** defect classes across **five** desks. The premise "one fixable defect" is not merely stale — it understates the churn by a factor of six. |
+> | **2** | **FORECAST-INVARIANT ARTIFACT AUDIT — ADD to the required set. The R-AE six becomes SEVEN.** Precondition (backlog 0) had held four sittings. **Owner Card 2 is CLOSED.** | 🟢 **RECORDED, and the precondition re-derived here to the digit.** `check_forecast_invariants.py --sidecar-dir` at this pin: `$?` **0**, **104 sidecar(s), 1456 record(s), 97 FAIL(s) declared**, **no `undeclared` line at all**, and `registration_ratchet_baseline` reads **`{}`** in `frontend/data/hindcast/invariant-failures.json` (58 declared runs / 97 pairs). **Every one of the dispatch's precondition figures reproduces exactly.** The job is `success` on **both** runs read below. |
+> | **3** | **R-AI "STILLNESS" — a content-only shard touch DOES reset the 48 h clock; an unchanged keeper id is NOT sufficient for stillness.** Consequence: ERCOT's shard moved **2026-09-06 18:57:07Z** (`f1ff2cda`) with its id unchanged, so **ERCOT's R-AI clock is 2026-09-08 18:57Z**. **SUPERSEDES** the value carried from v34 (2026-09-07 19:02Z), which was a **graft fallback, not a measurement**. | 🟢 **RECORDED — and independently confirmed at this pin, which is the first container in the series able to confirm it.** See the R-AI block: `f1ff2cda` is real, has exactly one parent, is not a graft, and its diff leaves `"keeper"` at `2026-09-05-ercot248-two-config-keeper` on **both** sides. The ruling's factual premise is therefore not taken on trust here; it is measured. |
+> | **4** | **E11 / prune-timing — CLOSED AS DEAD. Struck from the owner queue.** | 🟢 **RECORDED.** The row this closes is the one reading *"**E11 / prune-timing** · **`G-1`/`G-2` namespace collision** — 🟡 **STILL ON THE OWNER QUEUE.** Untouched by this lane"*, carried unchanged through **five** prior records blocks. |
+> | **5** | **`G-1` / `G-2` namespace collision — CLOSED AS DEAD. Struck from the owner queue.** | 🟢 **RECORDED.** Same row as #4 — the two halves of that row are struck **together**, and the row retires with them. Its separate origin row, *"**`G-1`/`G-2` label-namespace collision** — 🟡 **ROUTED TO THE OWNER QUEUE.** Naming hygiene; nothing renamed"*, is closed by the same ruling. |
+> | **6** | **Y-26 chartered (`ci.yml` path-filter gap) as the flip's PRECONDITION.** | 🟢 **RECORDED.** `Y-26` had appeared on this board exactly **once** before this block, in a lane-collision sweep (*"`Y-23` `Y-24` `Y-25` `Y-26` — **0** each — 🟢 free"*), i.e. as a *free name*, never as a charter. This is its first substantive entry. The gap is **inventoried by measurement** below; **this lane does not do Y-26's work and proposes no remedy.** |
+>
+> ---
+>
+> ## NINE-GATE LEDGER — **re-run at `4122ecd6`, `uv run --frozen`, each gate ALONE, `$?` read on its own line, output to a file, never piped**
+>
+> | gate | v39 @ `ccbf802e` | sitting @ `6f074049` (dispatch) | **this lane @ `4122ecd6`** | moved? |
+> |---|---|---|---|---|
+> | `audit_keepers.py --check` | 0 | green | **0** — `PASS: 0 failure(s), 0 warning(s)` | — |
+> | `check_registry_payload_parity.py` | 0 (15 runs / 48 dirs) | green | **0** — **16 runs**, **49 bundle dirs swept**, 0 known-unsynced | 🔵 15 → **16** runs, 48 → **49** dirs |
+> | `check_gate_a_provenance.py` | 0 (6 rows) | green (**discharged since v39**) | 🔴 **1** — **CAISO row cites a SUPERSEDED keeper** | 🔴 **GREEN → RED after the sitting closed** |
+> | `check_mechanism_matrix.py` | 0, 249 WARNs (201 field + 49 row + 171 path) | green | **0**, **254** `::warning`s — **203 field** + 49 row + **172 path** anchors checked, 252 unresolvable beyond the ratchet, 39 non-field tokens and 4 unresolvable paths skipped; **+2 NEISO keeper-stamp-drift warnings** | 🔵 field 201 → **203**, path 171 → **172**; **two NEW warnings of a different kind** |
+> | `check_forecast_staleness.py` | 0, 3 WARN, Δ (unknown), 112 epochs, 210/184 | green | **0**, **3 WARN**, Δ **still (unknown)**, **115** epochs, **212 stamped / 186 scored** | 🔵 112 → **115** epochs, 210/184 → **212/186** |
+> | `check_bench_freshness.py` | 0 — 24 parts, 0 STALE, 21 superseded-stamp, 24 engine-drift | green | **0** — **24 parts, 0 STALE, 9** superseded-stamp-but-reproducing, **21** engine-drift | 🔵 superseded-stamp 21 → **9**, engine-drift 24 → **21** |
+> | `check_golden_manifest.py` | 0 — 57 / 100 (36+64) / 15 / **9** / 8 | green | **0** — **57 manifests, 100 entries (36 enforced / 64 legacy)**, 15 pruned-provenance, 🔴 **25** stale-vs-live-keeper, 8 retired key | 🔴 stale **9 → 25** |
+> | `ruff check .` | 0 | green | **0** — `All checks passed!` | — |
+> | `ruff format --check .` | 🔴 **1** (1 file) | green (**discharged since v39**) | **0** — **1381 files already formatted** | 🟢 **1 → 0**, confirmed |
+>
+> **🔴 8 OF 9 GREEN — the dispatch's 9-of-9 is CORRECTED, and the correction is
+> DATED, not a contradiction.** Both figures can be true of their own moments: the
+> sitting read `6f074049`, and the CAISO promotion that breaks gate-(a) landed at
+> **22:09:55Z**, i.e. **17 minutes after the sitting closed** at `b633ff6c`
+> (21:52:52Z). The dispatch's *"gate-(a) and `ruff format` both discharged since
+> v39"* is confirmed for both; what this lane adds is that **gate-(a) did not stay
+> discharged for twenty minutes.** Verbatim:
+>
+> > `gate-(a) provenance FAILED:`
+> > `  - CAISO: gate.a_keeper_marker cites SUPERSEDED keeper '2026-09-06-caiso-257-b1-ctonly'; the ISO's current designated keeper is '2026-09-06-caiso-260-b1-demand' (frontend/data/backcast/keepers/CAISO.json). Re-key the row against the live keeper (audit board F-5). This guard compares identity only — it asserts nothing about either keeper's determination.`
+>
+> The stale leaf is `frontend/data/forecast/program-status.json` →
+> `isos.CAISO.gate.a_keeper_marker.detail`, located by search at this pin. **That file
+> is in this lane's FORBIDDEN list, so it is recorded and not touched.** This is the
+> **thirteenth** instance of the recurring *"re-keys its run-report header and not the
+> board row"* miss — the twelfth, on NEISO, was repaired **by its own lane** in the
+> same window (PR run 2753, `a9b08783`, *"Re-key NEISO gate-(a) board row to keeper
+> 2026-09-06-neiso-105-fossil-offer"*), which is why NEISO's row is clean here and
+> CAISO's is not.
+>
+> ---
+>
+> ## THE FLIP SET — **run 2743 re-derived, and it is 4 OF 6, not 5**
+>
+> **Run 2743 · `34061830459` · head `99091ff5` · branch `claude/miso-backcast-calibration-a5oogr` · created 21:41:27Z · completed 21:53:00Z · `run_attempt` 1 · conclusion `failure`.** Head **`99091ff5` is present in this clone and is a VERIFIED ANCESTOR of this pin** (`$?` **0**) — the dispatch's "ancestor verified" reproduces.
+>
+> | R-AE required check | **run 2743** (`99091ff5`, 21:41Z) | **run 2751** (`e12dd2f7`, 22:04Z — newest COMPLETED run whose head is an ancestor of this pin) |
+> |---|---|---|
+> | `Ruff lint + format` | 🟢 success | 🟢 success |
+> | `Pinned default cache key` | 🟢 success | 🟢 success |
+> | `Structural refactor guards` | 🔴 **failure** — step 7 `facade re-export + persisted-identity tests` | 🟢 **success — CLEARED** |
+> | `Cache-key registration guard` | 🟢 success | 🟢 success |
+> | `Fast test tier` | 🔴 **failure** — step 5 `Fast pytest tier` (**9 m 55 s**) | 🔴 **failure** — step 5 (**9 m 47 s**) |
+> | `Rule-22 quarantine gates` | 🟢 success | 🔴 **failure — NEW** — step 5 `audit_keepers --check`; steps 6–8 **skipped** |
+> | **R-AE SET (six)** | 🔴 **4 OF 6** | 🔴 **4 OF 6** |
+> | **+ `Forecast-invariant artifact audit`** (ruling 2's seventh) | 🟢 success | 🟢 success |
+> | **R-AE SET (SEVEN, per ruling 2)** | 🔴 **5 OF 7** | 🔴 **5 OF 7** |
+>
+> **Non-set jobs — reported separately, NEVER counted toward the set:**
+>
+> | non-set job | run 2743 | run 2751 |
+> |---|---|---|
+> | `FR-21 forecast-board staleness (WARN only)` | 🟢 success | 🔴 **failure** — step 4 `check_gate_a_provenance` (**the same CAISO defect the local gate reads**) |
+> | `FR-22 backcast→forecast parity` | 🔴 failure | 🔴 failure |
+> | `Rule-28 mechanism-matrix guard` | 🟢 success | 🟢 success |
+>
+> ### 🔴 THE DISPATCH FIGURE THAT DOES NOT REPRODUCE — recorded as a dated correction, adjudicating nothing
+>
+> The dispatch records *"FLIP SET 5 of 6 on run 2743 … Fast test tier went green
+> there."* **On run 2743, `Fast test tier` is `failure`** — its step 5 ran
+> 21:43:02Z → 21:52:57Z and failed — **and so is `Structural refactor guards`.**
+> There is **one attempt** (`run_attempt` 1 on the run and on every job), so this is
+> not a re-run artifact. The set on that run is **4 of 6**.
+>
+> **What the dispatch's narrative gets exactly right is the ORDER, and this lane
+> confirms it in full.** **PR #5257** (*"constants facade: re-export the two D75-R
+> `capacity_market` names"*) has base **`6f074049` — the sitting's own pin** — head
+> `486c115f`, and merged at **21:48:01Z** as **`ed4af8e6`** (not a graft; parents
+> `a6e4b6db` + `486c115f`). Its stated defect is
+> `tests/regression/test_constants_facade.py::test_moved_surface_is_complete`, which
+> is inside the **`facade re-export + persisted-identity tests`** step — precisely the
+> step red on run 2743 at 21:41Z and green on run 2751 at 22:04Z. **So "PR #5257
+> cleared Structural refactor guards" reproduces, and "the red then moved" reproduces
+> — but it moved from `Structural refactor guards` to `Rule-22 quarantine gates`,
+> while `Fast test tier` was red on BOTH sides and never went green at all.** The set
+> did not pass through 5 of 6; it held at 4 of 6 with a **different member** red.
+>
+> ⚠️ **The `Rule-22 quarantine gates` red on run 2751 is a PR-head artifact and is
+> already gone at this pin.** `e12dd2f7` is the neiso-105 touchpoint head *before*
+> its status-part rebuild; the follow-up commit `7dae474d` (*"neiso-105: rebuild NEISO
+> status part and re-stamp the matrix for the keeper change"*) repairs it, and
+> `audit_keepers.py --check` reads **`$?` 0 / `PASS: 0 failure(s), 0 warning(s)`**
+> locally at `4122ecd6`. Recorded so the run-2751 column is not mistaken for the
+> state of `main`.
+>
+> ---
+>
+> ## 🔴 OWED ELSEWHERE — **six defect classes, five desks, ZERO chartered by this record**
+>
+> The dispatch names three root causes and asks for them in an owed-elsewhere table.
+> **All three reproduce here.** The full `Fast pytest tier` command
+> (`-n 2 -m "not slow and not integration and not fulldata"`, the job's own line)
+> was then run at this pin: **`11 failed, 8876 passed, 47 skipped, 1 xfailed, 648
+> subtests passed in 599.12 s`.** The three dispatched causes account for **seven** of
+> the eleven. **Three more classes exist that the dispatch does not name.** Every one
+> of the six is another desk's; **this lane charters none, proposes no fix, and
+> touched no file outside this board.**
+>
+> | # | defect | measured here, at `4122ecd6` | tests | owed to | in the dispatch? |
+> |---|---|---|---|---|---|
+> | 1 | **`miso_seam_neighbour_anchored_ladder` undeclared** | `check_forecast_parity.py` `$?` **1**: `FAIL MISO: miso_seam_neighbour_anchored_ladder is armed in the keeper with no forecast-orchestrator consumer and no registry declaration (scripts/lib/forecast_parity_registry.py)`. Summary: **6 keeper postures; 1 unaccounted, 14 filed gaps, 0 registry failures, 0 errors.** Armed in `2026-09-06-miso-230-ctdrag-seam` (109 armed: wired 100, backcast-only 7, GAP 1, **UNACCOUNTED 1**). | `tests/scoring/test_forecast_parity.py::test_all_six_keepers_resolve` · `::test_check_exits_zero_on_the_current_keepers` — **2** | **MISO desk** (+ the forecast desk owns the registry seam) | 🟢 yes — **"the same defect is the FR-22 non-set red" is CONFIRMED**: the identical `$?`-1 output is what fails the `FR-22` job on both runs |
+> | 2 | **CAISO registry vs committed artifact** | The committed artifact `data/raw/_validation-source/caiso_offer_curve_measured.json` reads `CT_PEAKER.bands.peak = 1.154` (`econ_low` 1.103, `econ_high` 1.146); the test constant `MEASURED_PEAK` reads **1.166**. `AssertionError: 1.154 != 1.166 within 6 places (0.012 difference)`. The artifact's last touch is **`48bcd0ec`** (15:25:42Z, *"caiso-257 working record: re-apply the `df277e89` CT-only pair; R-1/R-2 PASS"*) — **not a graft**, and the same commit v39 named as the owner of its `ruff format` red. ⚠️ **Direction:** the dispatch reads *"CAISO registry 1.154 vs committed artifact 1.166"*; measured here it is the other way round — **the ARTIFACT is 1.154 and the registry/test constant is 1.166**. Recorded, not adjudicated; the magnitude and the pair are identical either way. | `tests/unit/data/test_caiso_st_gas_peak_measured.py::TestCaisoStGasPeakMeasured::test_registry_value_matches_the_committed_artifact` — **1** | **CAISO desk** | 🟢 yes (with the direction corrected) |
+> | 3 | **NEISO scenario-campaign REF level after neiso-105** | **×4, confirmed to the count.** The first is not a moved number but a **missing row**: `frame[iso=="NEISO" & case=="REF" & year==2030].iloc[0]` raises on an **empty** selection. The other three are level moves — `emissions_mt_delta` **96.5471** vs an expected **18.83**; `LOAD-HI-ORGANIC − REF` at 2030 **13.4102** vs **5.462**. | `tests/scoring/test_collate_scenario_campaign_common_set.py::TestScnCampaignLoadRegression::` `test_the_error_the_repair_removes_is_neisos_ref_level` · `test_the_repair_emits_the_status_docs_common_set_number` · `test_the_repair_holds_over_the_whole_committed_tree` · `test_the_status_docs_broken_number_is_reproduced_from_the_levels` — **4** | **NEISO desk** (+ the scenario-campaign lane) | 🟢 yes — **"×4" reproduces exactly** |
+> | **4** | 🔴 **gate-(a) CAISO board row** — the same defect as the nine-gate red and the run-2751 `FR-21` red | `program-status.json` `isos.CAISO.gate.a_keeper_marker.detail` cites `2026-09-06-caiso-257-b1-ctonly`; `keepers/CAISO.json` reads `2026-09-06-caiso-260-b1-demand`. Landed **22:09:55Z**, after the sitting closed. | `tests/scoring/test_gate_a_provenance.py::test_live_board_passes` — **1** | **CAISO desk** (standing Q34 duty) | 🔴 **NO — post-sitting, could not have been in it** |
+> | **5** | 🔴 **capx D67-ARM PJM cache keys** | `_hindcast_key("PJM")` reads **`b518f5fe7d02f961`** against a declared **`a9c66d8ea25acb9d`**; the explicit-off arm reads **`33041553d7541538`** against **`15a723ba3b6dc856`**. Both are **key-identity** assertions of the Q52 arming, i.e. exactly the "keys and declared defaults" contract, not a numeric tolerance. | `tests/unit/config/test_d67arm_pjm_requirement.py::TestQ52ArmingKeys::test_bare_pjm_t1h_advances_to_the_declared_key` · `::test_explicit_off_reaches_the_pre_arm_posture_and_keeps_its_key` — **2** | **capx desk** | 🔴 **NO — not named** |
+> | **6** | 🔴 **data-dictionary sync, `nrel-atb`** | `SUBFAILED(datatype='nrel-atb') tests/curation/test_data_dictionary_sync.py::DataDictionarySyncTest::test_per_column_tables_match_schemas` — a **subtest** failure, which is why it prints above the `FAILED` block and is not one of the eleven `FAILED` lines. | 1 subtest (of 648 passing) | **data-intake desk** | 🔴 **NO — not named** |
+>
+> **Arithmetic, stated so it can be checked: 2 + 1 + 4 = 7 dispatched; + 1 + 2 = 10
+> `FAILED` lines from classes 1–5; the eleventh `FAILED` line is class 4's, giving
+> 11 — and class 6 is the separate `SUBFAILED`.** *(Enumerated: the eleven `FAILED`
+> lines are `test_forecast_parity` ×2, `test_gate_a_provenance` ×1,
+> `test_d67arm_pjm_requirement` ×2, `test_caiso_st_gas_peak_measured` ×1,
+> `test_collate_scenario_campaign_common_set` ×4 — 2+1+2+1+4 = **11**.)*
+>
+> 🔵 **This is the ruling-1 basis, measured.** The ruling's stated reason for flipping
+> now is that *"the sixth check is no longer one fixable defect but keeper-churn
+> debris across three desks."* At this pin it is **six defect classes across five
+> desks** — MISO, CAISO (twice, by two different mechanisms), NEISO, capx and
+> data-intake — and **three of the six postdate or were simply not visible to the
+> sitting**. The ruling's premise is confirmed and, if anything, was conservative.
+>
+> ---
+>
+> ## 🟢 THE ERCOT R-AI CLOCK — **THE CARRY IS RETIRED BY MEASUREMENT, NOT BY RULING**
+>
+> `GIT_NO_LAZY_FETCH=1 git log -1 -- frontend/data/backcast/keepers/ERCOT.json`
+> returns, at this pin:
+>
+> > `f1ff2cdaae5989a9fac1366b526dc4ba0d88a959 2026-09-06T18:57:07+00:00 results: fold ONE 2022 touchpoint into the ERCOT keeper — keep the carve-out arm, prune the forward arm`
+>
+> Three tests, each read on its own line:
+>
+> | test | result |
+> |---|---|
+> | `grep -qx f1ff2cda… .git/shallow ; echo $?` | **1** — **NOT a graft** |
+> | `git rev-list --parents -n 1 f1ff2cda…` | `f1ff2cda… 82a7742d…` — **exactly ONE parent**, so not a horizon commit |
+> | keeper id on both sides of the diff | `"keeper": "2026-09-05-ercot248-two-config-keeper"` **before AND after** — a **content-only** touch |
+>
+> **ERCOT's R-AI clock is therefore 2026-09-06 18:57:07Z + 48 h = 2026-09-08 18:57Z**,
+> derived here from the repository rather than carried. **Ruling 3's factual premise
+> is confirmed independently**, and the v34 value **2026-09-07 19:02Z** — carried
+> through v36, v37, v38 and v39 as a **graft fallback** — is superseded. The row it
+> supersedes reads *"**ERCOT stage-0 re-capture ({2024, 2025})** — ⚪ **QUEUED, NOT
+> CHARTERED, NOT RUN** — R-AI clock **CARRIED from v34 (2026-09-07 19:02Z)**; the shard
+> "touch" is a **graft**, at a **fourth** distinct sha across four containers."*
+>
+> ### 🔵 The five-container finding, now at its sharpest — and it has a NEW casualty
+>
+> v39 recorded *"four containers, one command, one path, four different wrong shas"*
+> (v36 `cf5425f7`, v37 `d62ef0c8`, v38 `cc03004e`, v39 `db8b6015`) and concluded that
+> the graft is a property of the clone. **This container strengthens that from
+> "different" to "absent":**
+>
+> | prior lane's graft sha | `git rev-parse --verify <sha>^{commit}` **here** |
+> |---|---|
+> | v36 `cf5425f7` | `$?` **128** — `fatal: Needed a single revision` |
+> | v37 `d62ef0c8` | `$?` **128** — `fatal: Needed a single revision` |
+> | v38 `cc03004e` | `$?` **128** — `fatal: Needed a single revision` |
+> | v39 `db8b6015` | `$?` **128** — `fatal: Needed a single revision` |
+>
+> **All four are UNRESOLVABLE in this clone — they are not merely different shas, they
+> are not objects here at all.** No reading of a shard path in a shallow clone is a
+> fact about `main`; that principle is now demonstrated four ways in one container.
+>
+> 🔴 **And the trap simply moved to another ISO.** Running the same query across all
+> six shards, **PJM's** last touch resolves to `4e05a698`
+> (`2026-09-05T22:14:12-07:00` = **2026-09-06T05:14:12Z**, *"Merge pull request #5083
+> … `capx-d73-fc6-p1-guard`"*), and:
+> `grep -qx 4e05a698… .git/shallow ; echo $?` → **0**, it **IS** a graft;
+> `git rev-list --parents -n1` prints it with **no parents**; and `git show --stat`
+> against it lists **all six** keeper shards changing at once — the signature of a
+> horizon, not of a shard edit. **PJM's shard query is unavailable at this pin**, and a
+> lane that read it at face value would publish a PJM R-AI clock of
+> **2026-09-08 05:14Z** on no evidence. The other five queries all land on real
+> commits (`grep -qx … ; echo $?` → **1** for each).
+>
+> ---
+>
+> ## KEEPERS — **the dispatch's FIVE moves all reproduce, and there is a SIXTH**
+>
+> `git log --since=2026-09-06T00:00:00Z -- frontend/data/backcast/keepers/`, times in
+> UTC, graft-tested individually:
+>
+> | # | UTC | commit | ISO | what moved | graft? | in the dispatch's five? |
+> |---|---|---|---|---|---|---|
+> | — | **05:14:12Z** | `4e05a698` | (PJM) | 🔴 **THE HORIZON, not an edit** — see above | **0, IS a graft** | n/a |
+> | 1 | **15:52:33Z** | `878b687b` | **NYISO** | → `2026-09-06-nyiso-202-startup-aware` | 1, real | 🟢 yes |
+> | 2 | **17:03:16Z** | `f6c4b410` | **CAISO** | → `2026-09-06-caiso-257-b1-ctonly` | 1, real | 🟢 yes |
+> | 3 | **18:57:07Z** | `f1ff2cda` | **ERCOT** | the 2022 touchpoint fold — **id UNCHANGED** | 1, real | 🟢 yes |
+> | 4 | **19:33:37Z** | `36f012e2` | **MISO** | → `2026-09-06-miso-230-ctdrag-seam` | 1, real | 🟢 yes |
+> | — | 20:51:13Z | `9f5395c9` | (ERCOT) | the **merge** of `f1ff2cda` (#5226) — same edit, not a distinct move | 1, real | n/a |
+> | 5 | **21:41:34Z** | `97c3737d` | **NEISO** | → `2026-09-06-neiso-105-fossil-offer` | 1, real | 🟢 yes |
+> | **6** | 🔴 **22:09:55Z** | `caaa3e05` | **CAISO** | → **`2026-09-06-caiso-260-b1-demand`** (*"CALIBRATED (demand-artifact vintage re-derive)"*; `caiso-257` pruned under rule 15) | 1, real | 🔴 **NO — 17 min AFTER the sitting closed** |
+>
+> **All five dispatched moves reproduce to the second.** The sixth is the one that
+> breaks gate-(a), makes CAISO the only ISO promoted **twice** in one day, and makes
+> the nine gates read 8 of 9 rather than 9 of 9. **CAISO's live keeper at this pin is
+> `2026-09-06-caiso-260-b1-demand`, not `-257-`.**
+>
+> ### 🟢 NEISO's rule-22 D-5(b) re-key — **CHECKED AND CLEAN, confirmed at this pin**
+>
+> The dispatch asks for this to be recorded as checked-and-clean, and it is.
+> `frontend/data/backcast/calibration-complete.json` → `complete.NEISO`:
+>
+> - **`keeper`** = **`2026-09-06-neiso-105-fossil-offer`** — re-keyed to the live keeper.
+> - **`determination`** opens *"CALIBRATED on 2026-09-06-neiso-105-fossil-offer,
+>   **RE-VERIFIED 2026-09-06 WITHOUT A SOLVE** (`scripts/calibration_verdict.py
+>   --run-id`, **COMMITTED ARTIFACTS ONLY**, rule 22 D-5(b)): 0 FAILs; C1 all 12/12,
+>   free 8/8 …"* — the re-verification is present, is dated, and names the
+>   committed-artifacts-only route the rule requires.
+> - **`keeper_at_declaration`** = `2026-07-08-neiso-54-steamgas-ct`, preserved.
+> - **`locked_test`** = *"NEVER GRANTED. NOT SPENT. NOT AUTHORIZED."* — unchanged; the
+>   promotion did not touch the locked tier.
+>
+> **No breach.** For contrast, and as the reason no equivalent check is owed for the
+> two CAISO promotions: **CAISO and NYISO are both in `withdrawn`, not `complete`**, so
+> neither promotion had a `complete` entry to re-key. `complete` holds exactly
+> **ERCOT, NEISO, PJM**; `final` holds only `_note` — **no ISO is in `final`, and no
+> locked-test year has been solved, scored or registered for any ISO.**
+>
+> ---
+>
+> ## GOLDENS — **9 → 25, and the NEISO promotion alone did it**
+>
+> `check_golden_manifest.py` at this pin: `$?` **0**, **57 manifests, 100 entries (36
+> enforced / 64 legacy), 15 pruned-provenance, 🔴 25 stale-vs-live-keeper, 8 under a
+> retired capture key.** v39 read **9** stale at `ccbf802e`. **The dispatch's
+> 9 → 25 reproduces exactly at this pin**, and its attribution is confirmed by
+> counting the stale rows: **16 of the 16 newly-stale entries name NEISO**, every one
+> reading `2026-08-17-neiso-99-joint-p1 — provenance run registered, golden STALE
+> (live keeper: 2026-09-06-neiso-105-fossil-offer)`. The NEISO promotion (`97c3737d`,
+> 21:41:34Z) is the sole cause; the remaining 9 are the pre-existing ERCOT / CAISO /
+> MISO / NYISO rows.
+>
+> **STAGE-0 CURRENCY: `{PJM}` — confirmed by reading the manifest, not by inference.**
+> `results/regression-goldens/perfb-stage0/manifest.json` carries **7** keeper entries
+> (`CAISO`, `ERCOT`, `ERCOT__carveout-2023`, `MISO`, `NEISO`, `NYISO`, `PJM`). Five of
+> the six ISO entries are reported STALE against their live keeper — CAISO
+> (`caiso-231-b1-ungrounded`, pruned), ERCOT (`234-eastex-identity`, pruned), MISO
+> (`miso-198-oomlevel`, pruned), NEISO (`neiso-99-joint-p1`, registered), NYISO
+> (`nyiso-186-astoria-identity`, pruned) — and **PJM (`pjm_debugb_inputclock_A`) is the
+> only entry not flagged.** The dispatch's `{NEISO, PJM} → {PJM}` therefore holds at
+> this pin. **G2 leg 1 is further from declarable than at any prior reading in this
+> series.**
+>
+> ⚠️ **Note for whoever eventually re-captures stage-0:** the gate itself says a
+> pruned provenance run *"is NOT a failure — keeper-only retention is correct policy
+> (rule 15 as amended 2026-09-05)"*, survivable only because each entry carries its
+> own `keeper_snapshot`. **Four of the five stale stage-0 entries are pruned-provenance;
+> NEISO's is the one whose provenance run is still registered.**
+>
+> ---
+>
+> ## G2 LEG 4 — **`protected: false` AT A TWENTY-NINTH READING**
+>
+> `list_branches` (API) at this pin returns **7 branches**, and **every one of them,
+> `main` included, reads `protected: false`:**
+>
+> | branch | head per API | note |
+> |---|---|---|
+> | **`main`** | **`4c57b68a`** | 🔴 **`protected: false`** — reading **29**. And it is **NOT this lane's pin**: `main` moved again while these readings were taken (coda below) |
+> | `claude/model-audit-director-a68igo` | `b633ff6c` | the director's branch, sitting exactly at the sitting's stated close sha — a verified ancestor of this pin |
+> | `claude/caiso-backcast-calibration-261-2hrovn` | `8298d890` | |
+> | `claude/capx-d78r3-perdy-set` | `bb728e43` | |
+> | `claude/miso-backcast-calibration-iz6tpf` | `451e6109` | |
+> | `claude/neiso-106-fossil-scalar-2vb759` | `773411e5` | |
+> | `claude/nyiso-backcast-calibration-6l12xd` | `b9ad2ec5` | |
+>
+> **Ruling 1 decides the flip; it does not perform it.** The ruling's own words make
+> that split explicit — *"whether `main` reads `protected: true` is a separate
+> measurement the next sitting takes as reading 29"* — and **reading 29 is `false`**.
+> Recorded as a measurement of a moment, per the standing rule that a zero/red reading
+> shows a moment and never a state. **G2 leg 4 is now CLOSED AS A DECISION and OPEN AS
+> AN ACT.** *(v39 read 3 branches; the sitting reports 5; this pin reads 7 — the branch
+> count is as container- and moment-dependent as everything else here.)*
+>
+> ---
+>
+> ## Y-26 — **the `ci.yml` path-filter gap, INVENTORIED BY MEASUREMENT (this lane does none of Y-26's work)**
+>
+> Ruling 6 charters Y-26 as the flip's precondition. Recording the charter is this
+> lane's duty; **solving it is not**, and nothing below proposes a remedy — the file's
+> own header already records that widening-vs-passthrough *"is an owner decision, not a
+> lane's."* Read at this pin, `.github/workflows/ci.yml` triggers on
+> **`pull_request` only** (no `push:`), with **20** path patterns:
+>
+> `src/**` · `scripts/**` · `tests/**` · `pyproject.toml` · `uv.lock` ·
+> `.python-version` · `conftest.py` · `frontend/data/backcast/**` ·
+> `frontend/data/hindcast/**` · `frontend/data/forecast/**` · `tests/golden/**` ·
+> `docs/codebase-site/data/mechanism-matrix.js` ·
+> `docs/codebase-site/data/mechanism-matrix/**` · `CLAUDE.md` ·
+> `.github/workflows/ci.yml` · `docs/handoffs/audit-program-director-board-2026-08.md` ·
+> `docs/model-audit-release-plan-2026-08.md` · `docs/FINDING-*.md`
+>
+> The file's own comment states the trap the charter names, verbatim: *"a workflow
+> **SKIPPED BY PATH FILTERING** leaves its checks "Pending", and a PR requiring them is
+> **blocked from merging** — but a JOB skipped by a CONDITIONAL reports "Success". So
+> once the owner makes this file's six jobs required, a PR touching only paths absent
+> from this list shows those checks **pending FOREVER**."*
+>
+> **Paths a records/finding/keeper PR routinely touches that are ABSENT from that
+> list** — measured by reading it, offered as inventory only:
+>
+> | absent path | why it matters | gated by |
+> |---|---|---|
+> | `results/regression-goldens/**` | the stage-0 and `perfb-*` manifests | `check_golden_manifest.py` (a required-set step) |
+> | `results/calibration/**` | keeper bundles; rule 29(c) deletions | `check_registry_payload_parity.py`'s bundle-retention sweep (a required-set step) |
+> | `data/raw/**` | 🔴 **defect class 2 above lives here** — `data/raw/_validation-source/caiso_offer_curve_measured.json` | the fast tier |
+> | `docs/handoffs/**` other than this board | every FINDING under `handoffs/` — the glob `docs/FINDING-*.md` does **not** match a nested path | — |
+> | `docs/governance/**`, `docs/calibration-log/**`, `model-methodology-spec.md` | rule genealogy, per-ISO logs, the spec | — |
+> | `.github/workflows/*.yml` other than `ci.yml` | the Pages deploy, the file-integrity guard | — |
+>
+> 🟢 **This lane's own PR is NOT in the gap**: it changes only
+> `docs/handoffs/audit-program-director-board-2026-08.md`, which **is** enrolled, so
+> CI runs on it. **Y-26 is recorded as chartered and is left entirely to its lane.**
+>
+> ---
+>
+> ## LANES — recorded as ruled, adjudicated in no part
+>
+> | lane | status per the sitting | this lane |
+> |---|---|---|
+> | **`Y-26`** | 🟢 **CHARTERED** — `ci.yml` path-filter gap, the flip's precondition | recorded; inventoried above; **not worked** |
+> | **`Y-17` … `Y-25`** | ⚪ **remain CLOSED** | recorded; **untouched** |
+> | **E11 / prune-timing** | 🔴 **CLOSED AS DEAD**, struck from the owner queue (ruling 4) | recorded |
+> | **`G-1`/`G-2` namespace collision** | 🔴 **CLOSED AS DEAD**, struck from the owner queue (ruling 5) | recorded |
+> | **ERCOT stage-0 re-capture ({2024, 2025})** | ⚪ **QUEUED, NOT CHARTERED, NOT RUN** | R-AI clock **no longer carried** — **2026-09-08 18:57Z**, measured here (ruling 3) |
+>
+> ---
+>
+> ## 🔵 CODA — `main` MOVED UNDER THIS LANE, AS IT DID UNDER v39
+>
+> This lane pinned `4122ecd6` and took every reading there. By the time the branch
+> listing was read, **`main` was at `4c57b68a`**; at least four `ci.yml` runs
+> (**2755–2759**) were `in_progress` on five different branches in the same window, and
+> a sixth keeper move (`caaa3e05`) landed **between the sitting's close and this pin**.
+> **Every figure above is a moment, not a state** — which is the standing rule of this
+> series and is why the two dispatch corrections are recorded as *dated* rather than as
+> contradictions. `main` at this lane's close is stated in the session record; the pin
+> for every measurement above is and remains **`4122ecd6`**.
+>
+> ⚠️ **One forward-looking measurement, recorded and not acted on:** a `capx D65-B-R`
+> PR in flight at this pin (run 2757, `c36a3fe7`) states in its own commit message
+> `check_forecast_invariants --sidecar-dir: 110 sidecars, 1540 records, 106 FAILs all
+> declared, OK` — i.e. **the backlog holds at 0 as the board grows** from this pin's
+> 104/1456/97. Ruling 2's precondition is not merely met at a point; it is being
+> maintained by the registering lanes. That is a reading of a branch, **not of `main`**,
+> and it is recorded as such.
+>
+> ---
+
 > # 🟢 **THE FORECAST-INVARIANT BACKLOG IS ZERO — THE CI JOB IS GREEN AND OWNER CARD 2'S CONDITION IS MET — BUT IT IS A *RE*-GREEN, NOT THE FIRST IN THAT JOB'S HISTORY** — RECORDS-ONLY LANE **v39**, director pin `13ee0c89` (dispatch **16:08Z**) → **THIS LANE'S PIN `ccbf802e`**, `main` at close **`0336ccd8`** (and **`6f41c51f`** by commit time). `check_forecast_invariants --sidecar-dir` exits **0**, **0 undeclared**, `registration_ratchet_baseline` **`{}`**, and the `Forecast-invariant artifact audit` job is **success** — first at run **2677**, capx D80's own PR run, at **15:29:26Z**. 🔴 **One dispatch figure does not reproduce and is corrected here, not adjudicated:** the ledger's own `cleared` note records a **2026-08-19 dashboard clear-out** that emptied `declared_failures`, so this job **has been green before**; the true claim is *first green since the backlog re-opened* (the board's own series 4 → 16 → 17 → 20 → 24 → 30 → 8 → **0**). The flip set is **4 OF 6** on run **2686**, six newer than the director's 2680, and `ruff format` is red on **exactly the one file dispatched**, `scripts/gen_caiso257_attestation.py`. G2 leg 4 reads `protected: false` at a **TWENTY-FOURTH** reading, on **THREE** branches. **`main` MOVED under this lane — dated coda below, and the `ruff` red was discharged inside it.**
 >
 > **Records only.** No solve, no scoring, no registration, no keeper shard, no
