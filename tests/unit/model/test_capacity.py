@@ -5477,7 +5477,9 @@ class TestPjmPublishedReliabilityRequirement(unittest.TestCase):
             capacity_adequacy_requirement_published_by_iso={"PJM": True},
         )
         self.assertIsNone(cfg.capacity_adequacy_requirement_published_by_iso)
-        self.assertEqual(cfg.cache_key(), ScenarioConfig(iso="PJM", mode="backcast").cache_key())
+        self.assertEqual(
+            cfg.cache_key(), ScenarioConfig(iso="PJM", mode="backcast").cache_key()
+        )
 
 
 class TestFossilAnnouncedExits(unittest.TestCase):

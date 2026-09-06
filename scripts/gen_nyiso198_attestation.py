@@ -81,7 +81,15 @@ def _sha(path: Path) -> str:
 def _unit(bundle: Path, year: int) -> pd.DataFrame:
     df = pd.read_parquet(
         bundle / "hourly" / f"unit_hourly_{year}.parquet",
-        columns=["pass", "unit_id", "plant_code", "plant_group", "hour", "mw", "cap_mw"],
+        columns=[
+            "pass",
+            "unit_id",
+            "plant_code",
+            "plant_group",
+            "hour",
+            "mw",
+            "cap_mw",
+        ],
     )
     return df[df["pass"] == "P1"]
 
@@ -165,9 +173,7 @@ def g_inputs() -> dict:
     from market_sim.data.fleet.campd_bins import active_eia860_dir
 
     sheet = active_eia860_dir() / "eia860_generator_operable.parquet"
-    df = pd.read_parquet(
-        sheet, columns=["Technology", "Prime Mover", "Duct Burners"]
-    )
+    df = pd.read_parquet(sheet, columns=["Technology", "Prime Mover", "Duct Burners"])
     cc = df[df["Technology"] == "Natural Gas Fired Combined Cycle"]
     flag = cc["Duct Burners"].astype(str).str.strip()
     ct = cc["Prime Mover"].astype(str) == "CT"
@@ -179,9 +185,9 @@ def g_inputs() -> dict:
         "ct_rows_flagged_Y": int((ct & (flag == "Y")).sum()),
         "rows_by_prime_mover_and_flag": {
             f"{pm}/{fl}": int(n)
-            for (pm, fl), n in cc.groupby(
-                [cc["Prime Mover"].astype(str), flag]
-            ).size().items()
+            for (pm, fl), n in cc.groupby([cc["Prime Mover"].astype(str), flag])
+            .size()
+            .items()
         },
         "basis": (
             "the premise of the repair, computed: the Duct Burners attribute is "
@@ -228,7 +234,9 @@ def g_engage() -> dict:
     for y in YEARS:
         ua = _unit(ARM, y)
         pk = ua[ua.unit_id.astype(str).str.endswith("_peak")]
-        cap = pk.groupby(["plant_code", "hour"]).cap_mw.sum().groupby("plant_code").max()
+        cap = (
+            pk.groupby(["plant_code", "hour"]).cap_mw.sum().groupby("plant_code").max()
+        )
         for code, expected in sorted(moved.items(), key=lambda kv: -abs(kv[1]))[:6]:
             rows[f"{y}:{code}"] = {
                 "arm_peak_band_max_mw": round(float(cap.get(code, 0.0)), 2),

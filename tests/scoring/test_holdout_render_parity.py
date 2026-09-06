@@ -264,7 +264,7 @@ class TestGuardActuallyGuards(unittest.TestCase):
         )
 
     def test_prose_check_fires_on_a_restored_narrative_panel(self):
-        mutated = self.src + '\n      html += `<h2>Run Definition</h2>`;\n'
+        mutated = self.src + "\n      html += `<h2>Run Definition</h2>`;\n"
         self.assertEqual(check_removed_prose_absent(mutated), ["Run Definition"])
 
     def test_status_tier_check_fires_when_the_reading_is_dropped(self):
