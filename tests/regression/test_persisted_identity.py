@@ -36,6 +36,7 @@ from pathlib import Path
 
 import pytest
 
+from market_sim.config import scenarios as scen
 from market_sim.config.scenarios import ScenarioConfig
 from tests.helpers import REPO_ROOT
 
@@ -419,6 +420,103 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
     ),
 }
 
+# --------------------------------------------------------------------------- #
+# The SOLVE SURFACE (capx D79, owner ruling Q54)
+# --------------------------------------------------------------------------- #
+# `surface_stamp(iso, ...)["fingerprint"]` per ISO: the digest over that ISO's
+# WHOLE projected row set of the seven `solve_surface.SURFACE_MODULES`. The two
+# config pins above cannot see this — a re-derived `DEMAND_GROWTH_RATES` or a
+# repaired demand curve changes what every solve produces while `asdict(config)`
+# is byte-identical, which is the SCN-LOAD incident (design memo §1, three
+# tables, every T1-F peak moved, zero keys moved).
+#
+# WHAT A FAILURE HERE MEANS, AND THE ONE WRONG REMEDY. A registry VALUE moved.
+# That is legitimate and routine — it is how a repair lands — and the fix is
+# NEVER to re-declare the row in `config/solve_surface_declared.py` (which would
+# restore the pre-change key and re-serve the pre-repair bundle; guard check 6
+# fails an edit there). The remedy is to ADVANCE the pin below with a dated
+# cause block naming what moved, why, which ISOs it reaches and what it costs —
+# and that block IS the cache-epoch ledger entry the lane owes for a registry
+# change, in the place the change is actually detectable.
+#
+# `python3 scripts/solve_surface_register.py --diff <base>` names the moved rows
+# and the ISOs each reaches, which is what a cause block is written from.
+#
+# The ROW COUNT beside each digest is diagnostic, not load-bearing: it separates
+# "a value moved" (count unchanged) from "a table was added or removed" (count
+# moved) at a glance, and an addition moves no cache key at all.
+#
+# 2026-09-06 SET AT LANDING (capx D79 phase 1). Every name declared at its live
+# hash, so `moved_rows(iso) == {}` for all six ISOs and no key moved; the no-op
+# probe over every committed run config reads 0 moved
+# (`docs/handoffs/capxd79-solve-surface-no-op-record.json`). 296 surface names,
+# 76 of them by-ISO tables.
+PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
+    "ERCOT": ("67e2587c8b78f212", 225),
+    "CAISO": ("22e6fdb4a5a23589", 202),
+    "MISO": ("8ee657ee4c7c49b0", 208),
+    "PJM": ("0f749d17202c32d9", 211),
+    "NYISO": ("48353917f7510af3", 206),
+    "NEISO": ("531e4805c9085734", 195),
+}
+
+
+@pytest.fixture
+def config_identity_only(monkeypatch):
+    """Neutralize the solve surface, so a key pin measures the CONFIG alone.
+
+    The two pinned literals above are statements about ``ScenarioConfig``'s
+    field set and defaults. Since capx D79 ``cache_key()`` also carries any
+    registry row that has moved off its declaration, so without this fixture a
+    registry repair would fail the config pins too — pointing every reader at
+    the wrong ledger. With it, a registry move fails
+    :data:`PINNED_SURFACE_ROWS_BY_ISO` and nothing else, and a config move fails
+    the config pins and nothing else.
+
+    Both surface inputs are pinned to their landing values (no moved rows, no
+    applicable epochs), which is what makes the literals above unchanged by D79.
+    """
+    monkeypatch.setattr(scen, "moved_rows", lambda iso: {})
+    monkeypatch.setattr(scen, "applicable_epochs", lambda config: [])
+
+
+@pytest.mark.parametrize("iso", sorted(PINNED_SURFACE_ROWS_BY_ISO))
+def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
+    """Each ISO's registry surface equals its pinned digest."""
+    from market_sim.config.solve_surface import surface_rows, surface_stamp
+
+    expected_digest, expected_rows = PINNED_SURFACE_ROWS_BY_ISO[iso]
+    stamp = surface_stamp(iso, ScenarioConfig(iso=iso))
+    rows = surface_rows(iso)
+    assert stamp["fingerprint"] == expected_digest and len(rows) == expected_rows, (
+        f"{iso}'s solve surface moved: {stamp['fingerprint']} "
+        f"({len(rows)} rows) != {expected_digest} ({expected_rows} rows). A "
+        "registry VALUE changed, so every future solve of this ISO produces "
+        "different numbers than the bundles already on disk. Do NOT re-declare "
+        "the row in config/solve_surface_declared.py — that restores the "
+        "pre-change key and re-serves the pre-change bundle. Name what moved "
+        "with `python3 scripts/solve_surface_register.py --diff <base>`, then "
+        "advance the pin here with a dated cause block: which rows, which ISOs, "
+        "what it costs. That block is the ledger entry this change owes."
+    )
+
+
+def test_the_landing_moved_no_row_off_its_declaration() -> None:
+    """``moved_rows`` is empty for every ISO — the D79 merge gate, in-suite.
+
+    A non-empty result is not itself a failure of the mechanism (it is the
+    mechanism working), but it means the surface pins above are stale: the row
+    moved and nobody wrote the cause block.
+    """
+    from market_sim.config.solve_surface import moved_rows
+
+    moved = {iso: moved_rows(iso) for iso in PINNED_SURFACE_ROWS_BY_ISO}
+    assert not any(moved.values()), (
+        f"rows have moved off their declaration: "
+        f"{ {k: sorted(v) for k, v in moved.items() if v} }. Advance "
+        "PINNED_SURFACE_ROWS_BY_ISO with a dated cause block naming them."
+    )
+
 
 @pytest.mark.parametrize(
     ("module_path", "class_name"),
@@ -480,8 +578,13 @@ def _fields_explaining_the_key_move() -> list[str]:
     return []
 
 
-def test_default_scenario_config_cache_key_is_pinned() -> None:
-    """``ScenarioConfig().cache_key()`` equals the pinned literal."""
+def test_default_scenario_config_cache_key_is_pinned(config_identity_only) -> None:
+    """``ScenarioConfig().cache_key()`` equals the pinned literal.
+
+    Measured with the solve surface neutralized (see ``config_identity_only``),
+    so this literal keeps meaning exactly what it has always meant: the identity
+    of ``ScenarioConfig``'s field set and defaults.
+    """
     actual = ScenarioConfig().cache_key()
     if actual != PINNED_DEFAULT_CACHE_KEY:
         culprits = _fields_explaining_the_key_move()
@@ -512,7 +615,7 @@ def test_default_scenario_config_cache_key_is_pinned() -> None:
         )
 
 
-def test_backcast_scenario_config_cache_key_is_pinned() -> None:
+def test_backcast_scenario_config_cache_key_is_pinned(config_identity_only) -> None:
     """``ScenarioConfig(mode="backcast").cache_key()`` equals the pinned literal.
 
     Every backcast keeper's bundle is addressed by this key, and the forecast
@@ -588,6 +691,35 @@ def test_declared_backcast_rekeys_are_still_really_coerced_off() -> None:
         "either no longer cache-key-registered or no longer coerced off its "
         "default, so its exemption is dead and must be removed."
     )
+
+
+def test_solve_surface_is_checkout_path_invariant(monkeypatch) -> None:
+    """A relocated checkout hashes the SAME surface (capx D79).
+
+    The surface has no paths in it by construction — it hashes registry VALUES,
+    and the seven modules read no file at import. This pins that property rather
+    than trusting it: a table that ever came to hold a checkout-absolute path
+    would put the checkout directory into every cache key, which is exactly the
+    2026-07-27 defect the block above records, one layer down.
+    """
+    import market_sim.config.paths as paths_mod
+    from market_sim.config.solve_surface import reset_caches, surface_rows
+
+    before = {iso: surface_rows(iso) for iso in PINNED_SURFACE_ROWS_BY_ISO}
+    elsewhere = Path("/home/runner/work/market-simulator/market-simulator")
+    monkeypatch.setattr(paths_mod, "REPO_ROOT", elsewhere)
+    monkeypatch.setattr(paths_mod, "DATA_ROOT", elsewhere)
+    reset_caches()
+    try:
+        for iso, rows in before.items():
+            assert surface_rows(iso) == rows, (
+                f"{iso}'s solve surface is checkout-path-dependent: a registry "
+                "value moved when the path roots did. Some surface table now "
+                "holds an absolute path; make it relative or move it off the "
+                "surface, or every cache key encodes where the checkout lives."
+            )
+    finally:
+        reset_caches()
 
 
 def test_default_cache_key_is_checkout_path_invariant(monkeypatch) -> None:

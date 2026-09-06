@@ -38,6 +38,7 @@ from market_sim.config.scenario_resolvers import (  # noqa: F401
     resolve_new_entry_costs,
     resolve_policy_bundle,
 )
+from market_sim.config.solve_surface import applicable_epochs, moved_rows
 from market_sim.config.sweeps import SweepDefinition  # noqa: F401
 
 # Config fields DELETED from ``ScenarioConfig``, mapped to the default value
@@ -17863,6 +17864,12 @@ class ScenarioConfig:
         ``MARKET_SIM_DATA_ROOT`` data root) are folded to sentinels before
         hashing, so the same config hashes identically whatever directory the
         checkout lives in. See :func:`_normalize_cache_key_paths`.
+
+        Since capx D79 it is also SURFACE-SENSITIVE: a registry table the solve
+        reads but the config cannot express (a demand-growth rate, an adequacy
+        operand, a fuel trajectory) enters the hash once its value moves off the
+        declaration in :mod:`market_sim.config.solve_surface_declared`. See
+        :mod:`market_sim.config.solve_surface`.
         """
         payload_dict = asdict(self)
         # Fields added after the on-disk cache existed are dropped from the
@@ -17889,6 +17896,20 @@ class ScenarioConfig:
         # these, so they cannot be re-armed.
         for name, retired_default in _CACHE_KEY_RETIRED_FIELDS.items():
             payload_dict.setdefault(name, retired_default)
+        # The SOLVE SURFACE (capx D79, owner ruling Q54): the registry tables the
+        # solve reads but the config cannot see. A row enters only when its live
+        # hash differs from its FROZEN declaration, and an epoch id only when its
+        # declared scope covers this config, so BOTH keys are absent from every
+        # config today and the fingerprint's landing moved zero keys. Dunder
+        # names cannot collide with a field, are invisible to
+        # ``config_disagreements`` (which iterates ``asdict``, not this payload),
+        # and carry no path so ``_normalize_cache_key_paths`` leaves them alone.
+        moved_surface = moved_rows(self.iso)
+        if moved_surface:
+            payload_dict["__solve_surface__"] = moved_surface
+        epochs = applicable_epochs(self)
+        if epochs:
+            payload_dict["__solve_epochs__"] = epochs
         # Fold checkout-absolute paths to sentinels LAST, so the drop-at-default
         # comparison above still sees the raw stored values (both sides are
         # computed in this process, so they carry the same absolute prefix).

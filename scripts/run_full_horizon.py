@@ -73,6 +73,7 @@ from market_sim.config.iso_configs import (  # noqa: E402
     apply_iso_scenario_defaults,
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.config.solve_surface import surface_stamp  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
@@ -827,6 +828,10 @@ def solve_and_summarize(
         # A build-time constant, not a config field.
         "weather_posture": WEATHER_POSTURE,
         "cache_key": cache_key,
+        # Beside every recorded key (capx D79): which registry rows this run
+        # solved on, which had moved off their declaration and so entered the
+        # key, and which solve epochs applied.
+        "solve_surface": surface_stamp(iso, config),
         "run_dir": str(run_dir) if run_dir else None,
         "error": error,
         "total_wall_s": round(total_wall, 1),
