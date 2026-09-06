@@ -1,0 +1,732 @@
+{
+  "iso": "PJM",
+  "recipe": {
+    "window": "2021-2025",
+    "vintage": 2020,
+    "variant": "realized",
+    "base_year": 2021,
+    "fossil_announced_exits_enabled": true,
+    "confirmed_exits_enabled": true,
+    "capacity_market_supply_clearing": true,
+    "capacity_going_forward_bar_published": false,
+    "capacity_no_default_cap_convention": false,
+    "ccs_retrofit_available_year": 2028,
+    "internal_supply_accounting_ratio": 1.0
+  },
+  "registries": {
+    "announced_fossil_exit_rows": 33,
+    "announced_fossil_exit_mw": 13168.7,
+    "confirmed_exit_rows": 1,
+    "reversal_plants": 3
+  },
+  "base_fleet_units": 2112,
+  "years": {
+    "2022": {
+      "fleet_units": 2068,
+      "dated_units": 29,
+      "dated_pmax_mw": 7855.0,
+      "offering_units": 29,
+      "offering_pmax_mw": 7855.0,
+      "offering_accredited_mw": 7246.3,
+      "by_fuel": {
+        "coal": {
+          "units": 23,
+          "pmax_mw": 6673.0,
+          "accredited_mw": 6139.2
+        },
+        "gas_cc": {
+          "units": 3,
+          "pmax_mw": 392.0,
+          "accredited_mw": 372.4
+        },
+        "gas_st": {
+          "units": 3,
+          "pmax_mw": 790.0,
+          "accredited_mw": 734.7
+        }
+      },
+      "units": [
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 1055.6,
+          "screenable": true,
+          "accredited_mw": 971.152
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 982.8,
+          "screenable": true,
+          "accredited_mw": 904.176
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_econ",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 859.808,
+          "screenable": true,
+          "accredited_mw": 791.023
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 626.4,
+          "screenable": true,
+          "accredited_mw": 576.288
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 587.25,
+          "screenable": true,
+          "accredited_mw": 540.27
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 509.6,
+          "screenable": true,
+          "accredited_mw": 468.832
+        },
+        {
+          "unit_id": "COAL_PJM_Dominion_p3797_econ",
+          "plant_code": 3797,
+          "fuel": "coal",
+          "pmax_mw": 482.88,
+          "screenable": true,
+          "accredited_mw": 444.25
+        },
+        {
+          "unit_id": "COAL_PJM_Dominion_p3797_mustrun",
+          "plant_code": 3797,
+          "fuel": "coal",
+          "pmax_mw": 452.7,
+          "screenable": true,
+          "accredited_mw": 416.484
+        },
+        {
+          "unit_id": "ST_GAS_PJM_Dominion_p3809_econ",
+          "plant_code": 3809,
+          "fuel": "gas_st",
+          "pmax_mw": 434.5,
+          "screenable": true,
+          "accredited_mw": 404.085
+        },
+        {
+          "unit_id": "ST_GAS_PJM_Dominion_p3809_committed",
+          "plant_code": 3809,
+          "fuel": "gas_st",
+          "pmax_mw": 237.0,
+          "screenable": true,
+          "accredited_mw": 220.41
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_committed",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 226.032,
+          "screenable": true,
+          "accredited_mw": 207.949
+        },
+        {
+          "unit_id": "CC_REGULAR_PJM_Dominion_p3797_committed",
+          "plant_code": 3797,
+          "fuel": "gas_cc",
+          "pmax_mw": 217.952,
+          "screenable": true,
+          "accredited_mw": 207.054
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_econ",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 196.8,
+          "screenable": true,
+          "accredited_mw": 181.056
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 184.5,
+          "screenable": true,
+          "accredited_mw": 169.74
+        },
+        {
+          "unit_id": "ST_GAS_PJM_Dominion_p3809_peak",
+          "plant_code": 3809,
+          "fuel": "gas_st",
+          "pmax_mw": 118.5,
+          "screenable": true,
+          "accredited_mw": 110.205
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_econ",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 117.12,
+          "screenable": true,
+          "accredited_mw": 107.75
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_mustrun",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 109.8,
+          "screenable": true,
+          "accredited_mw": 101.016
+        },
+        {
+          "unit_id": "CC_REGULAR_PJM_Dominion_p3797_peak",
+          "plant_code": 3797,
+          "fuel": "gas_cc",
+          "pmax_mw": 98.0,
+          "screenable": true,
+          "accredited_mw": 93.1
+        },
+        {
+          "unit_id": "CC_REGULAR_PJM_Dominion_p3797_econ",
+          "plant_code": 3797,
+          "fuel": "gas_cc",
+          "pmax_mw": 76.048,
+          "screenable": true,
+          "accredited_mw": 72.246
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 65.25,
+          "screenable": true,
+          "accredited_mw": 60.03
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 52.0,
+          "screenable": true,
+          "accredited_mw": 47.84
+        },
+        {
+          "unit_id": "COAL_PJM_Dominion_p3797_committed",
+          "plant_code": 3797,
+          "fuel": "coal",
+          "pmax_mw": 50.3,
+          "screenable": true,
+          "accredited_mw": 46.276
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 26.1,
+          "screenable": true,
+          "accredited_mw": 24.012
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_peak",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 22.16,
+          "screenable": true,
+          "accredited_mw": 20.387
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_committed",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 20.5,
+          "screenable": true,
+          "accredited_mw": 18.86
+        },
+        {
+          "unit_id": "COAL_PJM_Dominion_p3797_peak",
+          "plant_code": 3797,
+          "fuel": "coal",
+          "pmax_mw": 20.12,
+          "screenable": true,
+          "accredited_mw": 18.51
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_committed",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 12.2,
+          "screenable": true,
+          "accredited_mw": 11.224
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_peak",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 8.2,
+          "screenable": true,
+          "accredited_mw": 7.544
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_peak",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 4.88,
+          "screenable": true,
+          "accredited_mw": 4.49
+        }
+      ]
+    },
+    "2023": {
+      "fleet_units": 2061,
+      "dated_units": 19,
+      "dated_pmax_mw": 5667.0,
+      "offering_units": 19,
+      "offering_pmax_mw": 5667.0,
+      "offering_accredited_mw": 5213.6,
+      "by_fuel": {
+        "coal": {
+          "units": 19,
+          "pmax_mw": 5667.0,
+          "accredited_mw": 5213.6
+        }
+      },
+      "units": [
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 1055.6,
+          "screenable": true,
+          "accredited_mw": 971.152
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 982.8,
+          "screenable": true,
+          "accredited_mw": 904.176
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_econ",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 859.808,
+          "screenable": true,
+          "accredited_mw": 791.023
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 626.4,
+          "screenable": true,
+          "accredited_mw": 576.288
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 587.25,
+          "screenable": true,
+          "accredited_mw": 540.27
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 509.6,
+          "screenable": true,
+          "accredited_mw": 468.832
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_committed",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 226.032,
+          "screenable": true,
+          "accredited_mw": 207.949
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_econ",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 196.8,
+          "screenable": true,
+          "accredited_mw": 181.056
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 184.5,
+          "screenable": true,
+          "accredited_mw": 169.74
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_econ",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 117.12,
+          "screenable": true,
+          "accredited_mw": 107.75
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_mustrun",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 109.8,
+          "screenable": true,
+          "accredited_mw": 101.016
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 65.25,
+          "screenable": true,
+          "accredited_mw": 60.03
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 52.0,
+          "screenable": true,
+          "accredited_mw": 47.84
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 26.1,
+          "screenable": true,
+          "accredited_mw": 24.012
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_peak",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 22.16,
+          "screenable": true,
+          "accredited_mw": 20.387
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_committed",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 20.5,
+          "screenable": true,
+          "accredited_mw": 18.86
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_committed",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 12.2,
+          "screenable": true,
+          "accredited_mw": 11.224
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_peak",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 8.2,
+          "screenable": true,
+          "accredited_mw": 7.544
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p10566_peak",
+          "plant_code": 10566,
+          "fuel": "coal",
+          "pmax_mw": 4.88,
+          "screenable": true,
+          "accredited_mw": 4.49
+        }
+      ]
+    },
+    "2024": {
+      "fleet_units": 2057,
+      "dated_units": 15,
+      "dated_pmax_mw": 5423.0,
+      "offering_units": 15,
+      "offering_pmax_mw": 5423.0,
+      "offering_accredited_mw": 4989.2,
+      "by_fuel": {
+        "coal": {
+          "units": 15,
+          "pmax_mw": 5423.0,
+          "accredited_mw": 4989.2
+        }
+      },
+      "units": [
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 1055.6,
+          "screenable": true,
+          "accredited_mw": 971.152
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 982.8,
+          "screenable": true,
+          "accredited_mw": 904.176
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_econ",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 859.808,
+          "screenable": true,
+          "accredited_mw": 791.023
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 626.4,
+          "screenable": true,
+          "accredited_mw": 576.288
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 587.25,
+          "screenable": true,
+          "accredited_mw": 540.27
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 509.6,
+          "screenable": true,
+          "accredited_mw": 468.832
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_committed",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 226.032,
+          "screenable": true,
+          "accredited_mw": 207.949
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_econ",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 196.8,
+          "screenable": true,
+          "accredited_mw": 181.056
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 184.5,
+          "screenable": true,
+          "accredited_mw": 169.74
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 65.25,
+          "screenable": true,
+          "accredited_mw": 60.03
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 52.0,
+          "screenable": true,
+          "accredited_mw": 47.84
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 26.1,
+          "screenable": true,
+          "accredited_mw": 24.012
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_peak",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 22.16,
+          "screenable": true,
+          "accredited_mw": 20.387
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_committed",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 20.5,
+          "screenable": true,
+          "accredited_mw": 18.86
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_peak",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 8.2,
+          "screenable": true,
+          "accredited_mw": 7.544
+        }
+      ]
+    },
+    "2025": {
+      "fleet_units": 2056,
+      "dated_units": 15,
+      "dated_pmax_mw": 5081.3,
+      "offering_units": 15,
+      "offering_pmax_mw": 5081.3,
+      "offering_accredited_mw": 4217.5,
+      "by_fuel": {
+        "coal": {
+          "units": 15,
+          "pmax_mw": 5081.3,
+          "accredited_mw": 4217.5
+        }
+      },
+      "units": [
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 1055.6,
+          "screenable": true,
+          "accredited_mw": 876.148
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 982.8,
+          "screenable": true,
+          "accredited_mw": 815.724
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_econ",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 859.808,
+          "screenable": true,
+          "accredited_mw": 713.641
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 626.4,
+          "screenable": true,
+          "accredited_mw": 519.912
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 587.25,
+          "screenable": true,
+          "accredited_mw": 487.417
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 509.6,
+          "screenable": true,
+          "accredited_mw": 422.968
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_committed",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 226.032,
+          "screenable": true,
+          "accredited_mw": 187.607
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 65.25,
+          "screenable": true,
+          "accredited_mw": 54.157
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+          "plant_code": 6166,
+          "fuel": "coal",
+          "pmax_mw": 52.0,
+          "screenable": true,
+          "accredited_mw": 43.16
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_econ",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 32.8,
+          "screenable": true,
+          "accredited_mw": 27.224
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 30.75,
+          "screenable": true,
+          "accredited_mw": 25.522
+        },
+        {
+          "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak",
+          "plant_code": 6019,
+          "fuel": "coal",
+          "pmax_mw": 26.1,
+          "screenable": true,
+          "accredited_mw": 21.663
+        },
+        {
+          "unit_id": "COAL_PJM_ComEd_p876_peak",
+          "plant_code": 876,
+          "fuel": "coal",
+          "pmax_mw": 22.16,
+          "screenable": true,
+          "accredited_mw": 18.393
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_committed",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 3.417,
+          "screenable": true,
+          "accredited_mw": 2.836
+        },
+        {
+          "unit_id": "COAL_PJM_EMAAC_p594_peak",
+          "plant_code": 594,
+          "fuel": "coal",
+          "pmax_mw": 1.367,
+          "screenable": true,
+          "accredited_mw": 1.134
+        }
+      ]
+    }
+  },
+  "limits": [
+    "The census walks evolve steps 0/1/1b only: it carries no economic exit (a dated unit is exempt from the screen at HEAD \u2014 the seam this lane repairs) and no new entry (a new plant code carries no pending registry row), so it is exact for the dated block itself.",
+    "A unit reaches the sell-offer stack only if it ALSO has dispatch rows in the screen year; the census cannot see those without a solve, so the offering counts below are an upper bound on the screen-eligible subset.",
+    "Nameplate is the post-derate pmax the walk carries (step 1b derates a plant-binned tranche in place)."
+  ]
+}

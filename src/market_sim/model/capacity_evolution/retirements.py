@@ -802,19 +802,18 @@ def sector_gated_unit_ids(
 
     Rule-19 reconciliation with the fossil-dates channel: neither declaration
     produces an exit (those come from steps 0 / 1 / 1b only), so no unit's
-    exit is decided twice. The two declarations enter the screen on TWO
-    parameters since capx D78 (owner ruling Q53 = reading 1): the dated
-    plants through ``exempt_unit_ids`` (out of the screen entirely, a $0
-    price taker under the D57 clearing — DESIGN-capx-d54 §4.2), and this set
-    through ``exit_exempt_unit_ids`` — a gated unit IS evaluated and OFFERS
-    its accredited MW into the capacity auction at its net-ACR cap (PJM's
-    must-offer requirement, Manual 18 Rev 62 §1.2 / §5.4.1, keys on
+    exit is decided twice. Both declarations enter the screen on ONE
+    parameter, ``exit_exempt_unit_ids`` — this set since capx D78 (owner
+    ruling Q53 = reading 1), the PENDING dated plants since capx D81 (the
+    director's extension of the same rule, replacing DESIGN-capx-d54 §4.2's
+    price-taker reading). Such a unit IS evaluated and OFFERS its accredited
+    MW into the capacity auction at its net-ACR cap (PJM's must-offer
+    requirement, Manual 18 Rev 62 §1.2 / §5.4.1, keys on
     existing-and-in-footprint, never on ownership) and is partitioned out of
     ``margins`` after the clearing, so it is never decided, entry-capped,
-    re-confirmed or pipelined. Before D78 this set rode the same
+    re-confirmed or pipelined. Before D78 this set rode the
     ``exempt_unit_ids`` union and so silently stopped offering on a
-    clearing-armed ISO (FINDING-capx-d58-2026-09-06.md §3). A unit in both
-    sets is a dated plant first.
+    clearing-armed ISO (FINDING-capx-d58-2026-09-06.md §3).
 
     Returns ``(gated_ids, census)`` where ``census`` is the ledger block the
     evolve step records under ``sector_gated``: unit / MW totals, MW by fuel
@@ -2812,12 +2811,14 @@ def _settle_capacity_supply_clearing(
       accredited_firm_capacity_mw` on the same fleet, pools, config and
       delivery year the floor tests — MINUS ``Σ A_g`` over the screened units,
       so VRE / hydro / storage / firm imports / DR and every screen-EXEMPT
-      unit (dated plants, this-year retrofits, the D74 no-default-cap class)
-      enter at $0 on their ledger credit and ``Q_0 + Σ A_g == accredited`` by
-      construction (I1). The sector-gated set (capx D53 / D78) is NOT
-      exempt here: it is in ``margins`` and offers (PJM's must-offer
-      requirement); it leaves ``margins`` only after this settlement, on the
-      exit-decision side (``exit_exempt_unit_ids``);
+      unit (the D74 no-default-cap class — whose $0 offer IS the rule's own
+      text) enter at $0 on their ledger credit and
+      ``Q_0 + Σ A_g == accredited`` by construction (I1). Every
+      EXOGENOUS-EXIT set is NOT exempt here — the sector-gated set (capx D53 /
+      D78) and, since capx D81, the pending dated plants (D42) and the
+      this-year retrofits (W2-C): each is in ``margins`` and offers (PJM's
+      must-offer requirement) and leaves ``margins`` only after this
+      settlement, on the exit-decision side (``exit_exempt_unit_ids``);
     * ``R`` is :func:`resolve_adequacy_requirement_mw` on the screen's peak
       and year — the position's own denominator;
     * the demand side is :func:`~market_sim.model.capacity_evolution.adequacy.
@@ -3118,18 +3119,18 @@ def apply_economic_retirements(
             (no margin evaluation, no counter change — and, under the D57
             supply clearing, no sell offer: the unit's accredited MW lands
             in the $0 price-taking block ``Q_0`` through
-            :func:`_settle_capacity_supply_clearing`'s residual). Carries,
-            under ``config.fossil_announced_exits_enabled`` (capx D42), the
-            units whose plant holds a pending owner-filed exit row
-            (:func:`dated_plant_unit_ids`) — exogenous to the screen by the
-            rule-19 reconciliation (DESIGN-capx-d54 §4.2 states the
-            price-taker reading for them). Used by :func:`evolve_fleet` for
-            units CCS-retrofitted THIS year (W2-C joint choice): the
-            just-converted unit's prior-year ``mc`` rows price its old
-            unabated cost basis, so screening it in the same instant it
-            spent the retrofit capex would be incoherent — it re-enters the
-            screen as ``gas_cc_ccs`` next year on its own post-retrofit
-            dispatch. Default empty ⇒ byte-identical.
+            :func:`_settle_capacity_supply_clearing`'s residual). This is the
+            declaration for a resource that is genuinely NOT ELIGIBLE to
+            offer. **It has no producer at HEAD**: capx D81 moved its two
+            former members — the pending dated plants (capx D42,
+            :func:`dated_plant_unit_ids`) and the units CCS-retrofitted THIS
+            year (W2-C) — onto ``exit_exempt_unit_ids`` below, because PJM's
+            must-offer requirement reaches both (Manual 18 Rev 62 §1.2 /
+            §5.4.1; PRECOMMIT-capx-d81-2026-09-06.md §2). A resource whose
+            removal of Capacity Resource status is EFFECTIVE for the delivery
+            year (§5.4.7, exception [c]) leaves the fleet at evolve step
+            0/1/1b instead and never reaches this function at all. Default
+            empty ⇒ byte-identical.
         exit_exempt_unit_ids: capx D78 (owner ruling Q53 = reading 1;
             DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md §3). Unit
             ids that are IN the screen's evaluation and IN the capacity
@@ -3143,10 +3144,19 @@ def apply_economic_retirements(
             §5.4.7: every Existing Generation Capacity Resource in the
             footprint offers, and the three enumerated exceptions are
             physical CP incapability, a firm external sale, or a filed
-            removal of Capacity Resource status — never ownership) applied
-            to a unit whose EXIT is exogenous: the sector-gated set
+            removal of Capacity Resource status — never ownership, and never
+            a filed plan that has not yet taken effect) applied to every unit
+            whose EXIT is exogenous. Members, all three routed here by
+            :func:`evolve_fleet`: the sector-gated set
             (:func:`sector_gated_unit_ids`, ``config.retirement_sector_gate``,
-            capx D53). Before D78 that set rode ``exempt_unit_ids`` and so
+            capx D53/D78); the PENDING dated plants, whose filed date is later
+            than the delivery year (:func:`dated_plant_unit_ids`, capx D42);
+            and the units CCS-retrofitted this year (W2-C) — the last two
+            moved here by **capx D81**, the director's extension of ruling Q53
+            to the channels DESIGN-capx-d78 §4 enumerates, replacing
+            DESIGN-capx-d54 §4.2's price-taker reading of the dated block
+            (whose own stated bias was price DOWN, cleared UP; this reverses
+            it). Before D78 the sector set rode ``exempt_unit_ids`` and so
             silently stopped offering on a clearing-armed ISO — 34.2 GW of
             PJM utility capacity became $0 price takers and the 2022
             clearing price fell 9.67 % (FINDING-capx-d58 §3), a rule-19
@@ -3266,11 +3276,13 @@ def apply_economic_retirements(
     margin_detail: dict[str, dict[str, float | str]] = {}
     for g in fleet:
         if g.unit_id in exempt_unit_ids:
-            # CCS-retrofitted this year (W2-C) or a pending dated plant
-            # (D42): decision already made elsewhere; no margin, no offer.
-            # NOT the sector-gated set — capx D78: those units ARE evaluated
-            # and offered here and leave ``margins`` only after the D57
-            # clearing (see the partition below the clearing block).
+            # Not eligible to offer at all: no margin, no offer, no decision.
+            # capx D81 left this branch with NO producer — every exogenous-exit
+            # declaration the model has (sector gate D53/D78, pending dated
+            # plant D42, this-year retrofit W2-C) is a resource that MUST
+            # OFFER, so all three arrive on ``exit_exempt_unit_ids`` and are
+            # evaluated and offered here, leaving ``margins`` only after the
+            # D57 clearing (the partition below the clearing block).
             continue
         fom_field = _THERMAL_FOM.get(g.fuel_type)
         if fom_field is None:
