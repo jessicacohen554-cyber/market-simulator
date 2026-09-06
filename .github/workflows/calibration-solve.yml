@@ -1,0 +1,197 @@
+# Run a calibration replay/A-B solve on a large-memory GitHub runner.
+#
+# WHY THIS EXISTS. A per-plant multi-zone LP (MISO, PJM, NYISO, NEISO, CAISO)
+# peaks around 14 GB of anon RSS for a SINGLE year. A Claude Code session's Bash
+# cgroup caps at 13 GB, so those solves are OOM-killed there at ~93 % of the way
+# up the matrix build, every time, whether run alone or concurrently. This
+# workflow is the escape hatch for exactly that case and nothing else.
+#
+# CLAUDE.md "GitHub Actions — never offload work to CI" BANS per-task workflows
+# and requires explicit owner sign-off before any runner minutes are spent, on
+# the ground that this is a PRIVATE repo and every minute is billed. This file
+# is written to be the permitted form of that exception:
+#
+#   * workflow_dispatch ONLY. No cron, no push trigger, no pull_request trigger.
+#     Nothing here ever runs unless a human presses the button.
+#   * PARAMETERIZED and REUSABLE — iso / source bundle / years / overrides are
+#     inputs, so this is the repo's standing "solve on a big box" tool, never a
+#     one-shot keyed to whatever branch happened to need it first.
+#   * The default is a DRY RUN that resolves and prints the command without
+#     solving, so a misfired dispatch costs seconds, not an LP.
+#   * The bundle leaves as a BUILD ARTIFACT and is never committed. Rule 29(c)
+#     [R-SCREEN] deletes screen and control bundles before their PR merges, and
+#     rule 15 [R-DASHBOARD] registers runs through scripts/dashboard_add_run.py
+#     in a session, not from CI. The numbers land in the session's FINDING doc;
+#     the bytes stay in the artifact.
+#
+# COST. ubuntu-latest (4 vCPU / 16 GB) plus an 8 GB swap file, which is what
+# makes a ~14 GB peak safe rather than marginal. Blobless partial clone plus a
+# per-ISO data profile keeps the checkout to the subtrees the solve reads. A
+# single-year MISO solve is roughly 20-40 minutes; a full 2023-2025 span is
+# three times that and years run SEQUENTIALLY inside one job by design
+# (CLAUDE.md rule 12 [R-PARALLEL]: concurrent year solves OOM).
+#
+# HOLDOUT. Rule 22 [R-HOLDOUT] is enforced where it always is — inside
+# replay_keeper / run_calibration_full, which refuse a year outside 2023-2025
+# without --holdout-authorized AND the ISO's tier marker. This workflow passes
+# the flag through but grants nothing; CI is not a way around the marker gate.
+name: Calibration solve (large-memory)
+
+on:
+  workflow_dispatch:
+    inputs:
+      iso:
+        description: "ISO — selects the data profile to hydrate"
+        default: "MISO"
+        type: choice
+        options: [MISO, PJM, NYISO, NEISO, CAISO, ERCOT]
+      source_bundle:
+        description: "Bundle to replay, e.g. results/calibration/miso220_nonsteamlift_B"
+        required: true
+        type: string
+      out_bundle:
+        description: "Output bundle dir, e.g. results/calibration/miso223_debody_B"
+        required: true
+        type: string
+      years:
+        description: "Years, space-separated (e.g. '2024' or '2023 2024 2025')"
+        default: "2024"
+        type: string
+      set_overrides:
+        description: >-
+          ScenarioConfig overrides as a JSON object, e.g.
+          {"offer_curve_by_group": {...}}. Each key becomes one --set KEY=JSON.
+          Empty object = a zero-delta control replay.
+        default: "{}"
+        type: string
+      note:
+        description: "Run note recorded in the bundle's run_config.json"
+        default: ""
+        type: string
+      holdout_authorized:
+        description: "Pass --holdout-authorized (still requires the ISO's tier marker)"
+        default: false
+        type: boolean
+      dry_run:
+        description: "Resolve and print the command WITHOUT solving (default: on)"
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  # One solve per branch+output bundle. Two runs writing the same bundle would
+  # interleave parquet writes; and on a 16 GB runner they would OOM anyway.
+  group: calibration-solve-${{ github.ref }}-${{ inputs.out_bundle }}
+  cancel-in-progress: false
+
+jobs:
+  solve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout (blobless partial clone)
+        uses: actions/checkout@v4
+        with:
+          filter: blob:none
+          ref: ${{ github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Add swap (covers the ~14 GB LP peak on a 16 GB runner)
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -g
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -q -r requirements.txt
+
+      - name: Hydrate the ISO's data profile
+        run: |
+          python3 scripts/hydrate_data.py --profile "$(echo '${{ inputs.iso }}' | tr 'A-Z' 'a-z')" --force
+          du -sh data/raw
+
+      - name: Resolve the solve command
+        id: cmd
+        env:
+          SET_OVERRIDES: ${{ inputs.set_overrides }}
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/args"
+          # Each top-level key of set_overrides becomes one --set KEY=<compact JSON>.
+          python3 - <<'PY'
+          import json, os, pathlib
+          raw = os.environ.get("SET_OVERRIDES") or "{}"
+          try:
+              obj = json.loads(raw)
+          except json.JSONDecodeError as exc:
+              raise SystemExit(f"set_overrides is not valid JSON: {exc}")
+          if not isinstance(obj, dict):
+              raise SystemExit("set_overrides must be a JSON object of key -> value")
+          args = []
+          for key, val in obj.items():
+              args += ["--set", f"{key}={json.dumps(val, separators=(',', ':'), sort_keys=True)}"]
+          # One arg per line, unquoted: `mapfile -t` reads each line verbatim,
+          # so JSON containing spaces or quotes survives without a shell round-trip.
+          out = pathlib.Path(os.environ["RUNNER_TEMP"], "args", "set.txt")
+          out.write_text("\n".join(args) + ("\n" if args else ""))
+          print(f"{len(obj)} override key(s): {sorted(obj)}")
+          PY
+          echo "args_file=${RUNNER_TEMP}/args/set.txt" >> "$GITHUB_OUTPUT"
+
+      - name: Solve
+        if: ${{ !inputs.dry_run }}
+        env:
+          MALLOC_ARENA_MAX: "2"
+          MARKET_SIM_WARMSTART_XYEAR: "0"
+        run: |
+          set -euo pipefail
+          SET_ARGS=()
+          if [ -s "${{ steps.cmd.outputs.args_file }}" ]; then
+            mapfile -t SET_ARGS < "${{ steps.cmd.outputs.args_file }}"
+          fi
+          EXTRA=()
+          if [ -n "${{ inputs.note }}" ]; then EXTRA+=(--note "${{ inputs.note }}"); fi
+          if [ "${{ inputs.holdout_authorized }}" = "true" ]; then EXTRA+=(--holdout-authorized); fi
+          echo "::group::resolved command"
+          set -x
+          python3 scripts/replay_keeper.py "${{ inputs.source_bundle }}" \
+            --out-dir "${{ inputs.out_bundle }}" \
+            --years ${{ inputs.years }} \
+            "${SET_ARGS[@]}" "${EXTRA[@]}"
+          set +x
+          echo "::endgroup::"
+
+      - name: Dry run — print what would be solved
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "DRY RUN — nothing was solved."
+          echo "  source : ${{ inputs.source_bundle }}"
+          echo "  out    : ${{ inputs.out_bundle }}"
+          echo "  years  : ${{ inputs.years }}"
+          echo "  set    : $(cat '${{ steps.cmd.outputs.args_file }}')"
+          echo "Re-dispatch with dry_run=false to spend the runner minutes."
+
+      - name: Peak memory and bundle contents
+        if: ${{ always() && !inputs.dry_run }}
+        run: |
+          free -g || true
+          ls -R "${{ inputs.out_bundle }}" 2>/dev/null | head -40 || echo "no bundle produced"
+
+      - name: Upload the bundle as an artifact (never committed)
+        if: ${{ !inputs.dry_run }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ inputs.iso }}-${{ github.run_id }}
+          path: ${{ inputs.out_bundle }}
+          retention-days: 14
+          if-no-files-found: error
