@@ -233,5 +233,45 @@ backcast-only-by-design declaration in `forecast_parity_registry.py`. Recorded, 
 
 ## 6. CI reading on this PR — the six R-AE checks
 
-*(filled in from the PR's own run, job by job)*
+**Run 2561, id `34002145907`, head `4faf2dea`** (`origin/main` was `76886c2e` at branch point).
+Read job by job from the API, not from the rollup:
 
+| # | R-AE required check | job id | conclusion |
+|---|---|---|---|
+| 1 | **Ruff lint + format** | `101402799301` | **SUCCESS** — both steps ("Ruff lint", "Ruff format check") success |
+| 2 | **Pinned default cache key** | `101402799297` | **SUCCESS** |
+| 3 | **Structural refactor guards** | `101402799405` | **SUCCESS** — compileall, import-walk, facade/persisted-identity all success |
+| 4 | **Cache-key registration guard** | `101402799351` | **SUCCESS** — both the `--base` and HEAD-only steps |
+| 5 | **Fast test tier** | `101402799231` | _PENDING — filled from the completed job_ |
+| 6 | **Rule-22 quarantine gates** | `101402799319` | **SUCCESS** — audit_keepers, legitimacy_diagnostics, registry-payload parity, golden-manifest all success |
+
+_(6-of-6 verdict filled in once job 5 completes.)_  The flip itself is a repo-settings act
+only the owner can make; the click path is
+`docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md` §4.
+
+### 6.1 The two red jobs, both OUTSIDE the flip set, both red on the base branch
+
+Neither is one of R-AE's six, and neither is this PR's. This lane's whole diff is
+`scripts/calibration_verdict.py` (a `ruff format` line-join) plus this finding — it touches **no**
+forecast or hindcast artifact, which `git diff origin/main...HEAD --name-only` confirms.
+
+| job | id | why it is not this PR's |
+|---|---|---|
+| **FR-22 backcast→forecast parity** | `101402799211` | Reproduced at `origin/main` in a clean worktree: **EXIT=1, the same two FAILs.** ERCOT `ercot_storage_as_soc_reserve` and NYISO `nyiso_seam_deliverability_envelope` are each armed in a keeper with no forecast-orchestrator consumer and no declaration in `scripts/lib/forecast_parity_registry.py`. |
+| **Forecast-invariant artifact audit** | `101402799227` | Reproduced at `origin/main` in a clean worktree: **EXIT=1, the same 17 runs.** Registered forecast runs whose invariant FAILs are not declared in `frontend/data/hindcast/invariant-failures.json` — capx D45/D45R/D46/D50/D57/D60 remeasures and T1-H realized hindcasts across all six ISOs (e.g. `caiso-2021-2025-realized-t1h-d46` I7+I9; `ercot-2026-2030-d50-ccscapex` I12+I3; `pjm-2026-2030-d45r-remeasure` I12+I7). |
+
+**No re-run was spent.** The one re-run the drive-to-green rules allow exists to confirm that a
+failure reproduces rather than flakes; reproducing both checks directly at `origin/main` is the
+stronger form of that same test, and it cost seconds rather than a runner.
+
+**Owner of each:** the lanes that armed those two mechanisms (or the forecast-orchestrator desk),
+and the lanes that registered the 17 forecast runs — each owes either a consumer/declaration in
+`forecast_parity_registry.py` or a reviewed line in `invariant-failures.json`. **Not chased here**
+per charter item 5; recorded and routed.
+
+### 6.2 Also green, outside the flip set
+
+`Rule-28 mechanism-matrix guard` (`101402799152`) SUCCESS — this lane adds no mechanism and no
+`ScenarioConfig` field, so rule 28 `[R-MECH-MATRIX]` duties (b)/(c) do not attach.
+`FR-21 forecast-board staleness (WARN only)` (`101402799256`) SUCCESS, **including its
+`check_gate_a_provenance` step** — the independent confirmation of §2.
