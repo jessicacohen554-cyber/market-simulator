@@ -1,0 +1,143 @@
+{
+  "requirement": {
+    "2022": {
+      "arm_head": 163268.9,
+      "d67_arm": 163268.9,
+      "published": 163268.9,
+      "delta_vs_d67": 0.0,
+      "arm_minus_published": 0.0
+    },
+    "2023": {
+      "arm_head": 163166.2,
+      "d67_arm": 163166.2,
+      "published": 163166.2,
+      "delta_vs_d67": 0.0,
+      "arm_minus_published": 0.0
+    },
+    "2024": {
+      "arm_head": 164107.6,
+      "d67_arm": 164107.6,
+      "published": 164107.6,
+      "delta_vs_d67": 0.0,
+      "arm_minus_published": 0.0
+    },
+    "2025": {
+      "arm_head": 144450.0,
+      "d67_arm": 144450.0,
+      "published": 144450.0,
+      "delta_vs_d67": 0.0,
+      "arm_minus_published": 0.0
+    }
+  },
+  "position": {
+    "2022": {
+      "arm_head": 1.111265,
+      "d67_arm": 1.111265,
+      "delta_pt": 0.0,
+      "implied_move_vs_d67_control_pt": -12.453000000000003,
+      "sign_declared": "FALL",
+      "sign_ok": true,
+      "price_per_firm_mw_yr": 33000.034,
+      "n_uncleared": 133,
+      "how": "marginal_offer_sets_price"
+    },
+    "2023": {
+      "arm_head": 1.062327,
+      "d67_arm": 1.055476,
+      "delta_pt": 0.685099999999994,
+      "implied_move_vs_d67_control_pt": -5.5898,
+      "sign_declared": "FALL",
+      "sign_ok": true,
+      "price_per_firm_mw_yr": 31578.947,
+      "n_uncleared": 39,
+      "how": "marginal_offer_sets_price"
+    },
+    "2024": {
+      "arm_head": 1.057309,
+      "d67_arm": 1.051736,
+      "delta_pt": 0.557300000000005,
+      "implied_move_vs_d67_control_pt": 1.7962000000000033,
+      "sign_declared": "RISE",
+      "sign_ok": true,
+      "price_per_firm_mw_yr": 60577.666,
+      "n_uncleared": 20,
+      "how": "marginal_offer_sets_price"
+    },
+    "2025": {
+      "arm_head": 0.998023,
+      "d67_arm": 0.993091,
+      "delta_pt": 0.49320000000000475,
+      "implied_move_vs_d67_control_pt": 5.576300000000001,
+      "sign_declared": "RISE",
+      "sign_ok": true,
+      "price_per_firm_mw_yr": 130767.451,
+      "n_uncleared": 0,
+      "how": "all_offers_clear_curve_sets_price"
+    }
+  },
+  "fleet": {
+    "2021": {
+      "n_retirements": 0,
+      "fleet_by_fuel_after": {
+        "biomass": 2007.8,
+        "coal": 45885.521,
+        "gas_cc": 53083.211,
+        "gas_ct": 25791.07,
+        "gas_st": 10297.413333,
+        "nuclear": 32672.1,
+        "oil": 4187.7
+      }
+    },
+    "2022": {
+      "n_retirements": 159,
+      "fleet_by_fuel_after": {
+        "biomass": 1999.4,
+        "coal": 41902.396,
+        "gas_cc": 55912.636,
+        "gas_ct": 25791.07,
+        "gas_st": 790.0,
+        "nuclear": 32672.1,
+        "oil": 4136.5
+      }
+    },
+    "2023": {
+      "n_retirements": 30,
+      "fleet_by_fuel_after": {
+        "biomass": 1999.4,
+        "coal": 40896.396,
+        "gas_cc": 56298.1694,
+        "gas_ct": 25791.07,
+        "nuclear": 32672.1,
+        "oil": 4136.5
+      }
+    },
+    "2024": {
+      "n_retirements": 18,
+      "fleet_by_fuel_after": {
+        "biomass": 1999.4,
+        "coal": 39430.408,
+        "gas_cc": 56298.1694,
+        "gas_ct": 25791.07,
+        "nuclear": 32672.1,
+        "oil": 4136.5
+      }
+    },
+    "2025": {
+      "n_retirements": 1,
+      "fleet_by_fuel_after": {
+        "biomass": 1998.4,
+        "coal": 39088.741333,
+        "gas_cc": 60298.1694,
+        "gas_ct": 25791.07,
+        "nuclear": 32672.1,
+        "oil": 4136.5
+      }
+    }
+  },
+  "verdicts": {
+    "P-A": "HIT",
+    "P-B": "HIT",
+    "P-C": "HIT",
+    "P-D": "HIT"
+  }
+}

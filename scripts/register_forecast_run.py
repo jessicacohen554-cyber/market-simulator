@@ -345,6 +345,11 @@ VERDICT_MAP = {
     # bundle (results/cache.py, epoch 2026-09-06e, corrected in place).
     # PRECOMMIT-capx-d67arm-2026-09-06.md §2/§3 · FINDING-capx-d67arm-2026-09-06.md.
     "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h-pre-d67",
+    # The D67-ARM re-solve of the bare (now armed) recipe at HEAD, key
+    # a9c66d8ea25acb9d: THIS is the shipped PJM T1-H posture from here on, so
+    # it takes the bare `pjm-t1h`. Solved 2021-2025 in ONE sequential
+    # invocation, PJM solo, HEAD-guarded. FINDING-capx-d67arm-2026-09-06.md.
+    "pjm-2021-2025-realized-t1h-d67arm": "pjm-t1h",
     # capx-D62 (2026-09-06): the PJM PUBLISHED GOING-FORWARD BAR
     # (`capacity_going_forward_bar_published_by_iso[PJM]` ON — the retirement
     # screen's bar, and through the D57 identity the sell-offer cap, becomes
