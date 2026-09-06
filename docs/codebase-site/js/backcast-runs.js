@@ -236,8 +236,6 @@
       return 'locked_test';
     }
 
-    const TIER_LABEL = { train: 'training', validation: 'validation holdout', locked_test: 'locked test' };
-
     /* Holdout-year companions of the SELECTED run — offered ONLY when it is the
        ISO's designated keeper, because a holdout year is by construction the
        keeper's own FROZEN recipe replayed on a year never tuned against, and
@@ -283,18 +281,6 @@
       return (window.BC.manifest || []).some(m => m.id === k) ? k : null;
     }
 
-    /* Every holdout block folded onto the SELECTED run, oldest year first.
-       Each entry is one companion sidecar's `holdout` block, which
-       scripts/stamp_touchpoint_holdout.py wrote from committed artifacts — the
-       browser never recomputes a verdict. */
-    function foldedHoldoutBlocks() {
-      if (!isKeeperRun()) return [];
-      return (window.BC.manifest || [])
-        .filter(r => r.iso === st.iso && foldTargetOf(r) === st.runId && r.holdout)
-        .map(r => ({ runId: r.id, years: (r.years || []).map(Number).sort(), h: r.holdout }))
-        .sort((a, b) => (a.years[0] || 0) - (b.years[0] || 0));
-    }
-
     function holdoutYears() { return Object.keys(st.holdoutRuns).map(Number).sort((a, b) => a - b); }
     function isHoldoutYear(y) { return Object.prototype.hasOwnProperty.call(st.holdoutRuns, String(y)); }
     /* Which run a YEAR's numbers actually came from — the selected run for its
@@ -302,8 +288,14 @@
        names a run must use this, never st.runId, or a held-out year's table
        reads as the keeper's own result. */
     function yearRunId(y) { return st.holdoutRuns[y]?.runId || st.runId; }
-    /* Every year the selector may offer: solved-here first, then held-out. */
-    function selectableYears() { return [...runYears(), ...holdoutYears()]; }
+    /* Every year this page can show — solved-here and folded held-out alike —
+       as ONE ASCENDING set. Globally sorted, not concatenated: since 2026-09-06
+       a held-out year is an ordinary year column in the Report and an ordinary
+       entry in the year dropdown, and both read in calendar order (NEISO must
+       read 2020…2025, not 2023,2024,2025,2020,2021,2022). */
+    function selectableYears() {
+      return [...new Set([...runYears(), ...holdoutYears()])].sort((a, b) => a - b);
+    }
 
     /* Load a holdout year's payload from its companion run. Idempotent. */
     async function ensureHoldoutYear(y) {
@@ -984,7 +976,13 @@
           st.year = own[0] || years[0] || 2024;
         }
         st.year = Number(st.year);
-        if (isHoldoutYear(st.year)) await ensureHoldoutYear(st.year).catch(() => false);
+        // Every folded year's payload is loaded EAGERLY, not on selection. The
+        // Report renders a held-out year as an ordinary year column alongside
+        // the tuned ones (owner instruction 2026-09-06, rule 30 amendment), and
+        // it renders every year at once — a lazily-loaded companion would draw
+        // an empty card for the year the reader came to see. A companion that
+        // fails to load is skipped by the report's own empty-year guard.
+        await Promise.all(holdoutYears().map(y => ensureHoldoutYear(y).catch(() => false)));
 
         // Init zones
         if (!st.zones.size) st.zones = new Set(meta.zones || []);
@@ -1004,26 +1002,17 @@
        YEAR / CLASS / ZONE / VIEW SELECTORS
        ================================================================ */
     /* Year control — a DROPDOWN (2026-08-09; it was a seg-ctrl button row).
-       Two optgroups keep the rule-22 provenance visible in the control itself
-       rather than only in the banner below it: the years this run solved, and
-       the held-out years that were solved on this keeper's frozen recipe by a
-       companion run. A holdout entry names its tier, so no one can pick 2022
-       without seeing that it is not a tuned year. */
+       ONE FLAT ASCENDING LIST. A folded held-out year is the same keeper recipe
+       on another year, so it is offered as a plain year exactly like a tuned
+       one — no optgroup split, no tier suffix (owner instruction 2026-09-06,
+       rule 30 amendment: held-out years "should not be any different than the 3
+       training years" and need "no special designation"). Rule 22's tier
+       reading is carried once, as a footnote in the Report, not repeated on
+       every control that names a year. */
     function buildYearSelector() {
       const sel = $('#yearSel');
-      const own = runYears();
-      const held = holdoutYears();
       const opt = y => `<option value="${y}"${Number(y) === Number(st.year) ? ' selected' : ''}>${y}</option>`;
-      let html = '';
-      if (own.length && held.length) {
-        html += `<optgroup label="Solved in this run">${own.map(opt).join('')}</optgroup>`;
-        html += `<optgroup label="Held out (rule 22)">` + held.map(y =>
-          `<option value="${y}"${Number(y) === Number(st.year) ? ' selected' : ''}>${y} — ${esc(TIER_LABEL[st.holdoutRuns[y].tier] || st.holdoutRuns[y].tier)}</option>`
-        ).join('') + `</optgroup>`;
-      } else {
-        html = (own.length ? own : held).map(opt).join('');
-      }
-      sel.innerHTML = html;
+      sel.innerHTML = selectableYears().map(opt).join('');
       sel.value = String(st.year);
       sel.onchange = async () => {
         const y = Number(sel.value);
@@ -1043,31 +1032,6 @@
         hashState.update('year', st.year);
         clearAggCache(); render();
       };
-    }
-
-    /* Banner shown whenever the selected year is NOT one this run solved. It
-       names the companion run the data came from and carries rule 22's own
-       reading of the tier, because the single most misusable number on this
-       dashboard is a held-out result quoted as a certified skill number. */
-    function holdoutYearBanner() {
-      if (!isHoldoutYear(st.year)) return '';
-      const src = st.holdoutRuns[st.year];
-      const caveat = src.tier === 'validation'
-        ? 'Validation tier: ITERABLE model-SELECTION evidence — a miss may send the lane back to re-tune 2023–2025 and re-solve. This is NOT a certified out-of-sample skill number and must never be quoted as one.'
-        : src.tier === 'locked_test'
-          ? 'Locked-test tier: TOUCH-ONCE. Scored exactly once with the frozen keeper config and recorded whatever it is; no calibration change may respond to it.'
-          : 'Out-of-training year.';
-      const tierCls = src.tier === 'locked_test' ? 'tier-locked_test' : 'tier-validation';
-      return `<div class="bc-panel holdout-year-note ${tierCls}">
-        <h2>${esc(String(st.year))} is a held-out year <span class="keeper-badge tier-badge">${esc(TIER_LABEL[src.tier] || src.tier)}</span></h2>
-        <p class="bc-narration" style="margin-top:0;border-top:0;padding-top:0"><span class="ndef">
-          The keeper <span class="run-id-link">${esc(st.runId)}</span> did not solve ${esc(String(st.year))}.
-          The year-scoped views (Charts, Tables) draw it from <span class="run-id-link">${esc(src.runId)}</span> —
-          the same frozen recipe replayed on a year never tuned against${src.linked ? '' : ' (link inferred from the run registry: that run carries no stamped <code>holdout.keeper</code> block)'}.
-          The Report view above stays on the keeper's own solve years by design, so the two are never mixed.
-          <strong>${esc(caveat)}</strong>
-        </span></p>
-      </div>`;
     }
 
     function buildClassSelector() {
@@ -1141,9 +1105,6 @@
         case 'charts': renderCharts(content); break;
         case 'tables': renderTables(content); break;
       }
-      // Provenance first: a held-out year is labelled above whatever it drew.
-      const banner = holdoutYearBanner();
-      if (banner) content.insertAdjacentHTML('afterbegin', banner);
     }
 
     /* ================================================================
@@ -1188,201 +1149,26 @@
         <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">Positive = the keeper's floors add that class's generation vs the floor-free twin. Each material delta needs a market story above.</p>`;
     }
 
-    /* Validation-touchpoint panel (rule 22). Reads the sidecar's `holdout`
-       block only — it never recomputes a verdict in the browser, so what the
-       page shows is exactly what calibration_verdict.py scored.
-
-       The four per-criterion verdicts carry the reading, so the reader does not
-       have to infer it: `degraded` (passed in-sample, missed out-of-sample) is
-       the signal a touchpoint is run to find; `carried` missed on both sides
-       and is a known limitation travelling, not a new discovery; `held` passed
-       on both; `improved` is the rare inverse. */
-    const HOLDOUT_VERDICT = {
-      degraded: { cls: 'clr-bad', txt: 'degraded out-of-sample',
-                  why: 'Passed on the tuned years, misses on the held-out year — the signal this touchpoint exists to surface.' },
-      carried:  { cls: 'clr-ok',  txt: 'known limitation carried',
-                  why: 'Misses on BOTH the tuned years and the held-out year, so it travelled rather than appeared — already-documented behaviour, not new evidence.' },
-      improved: { cls: 'clr-good', txt: 'improved out-of-sample',
-                  why: 'Misses in-sample but passes on the held-out year.' },
-      held:     { cls: 'clr-good', txt: 'held',
-                  why: 'Passes on both the tuned years and the held-out year.' },
-    };
-
-    function renderHoldoutPanel(h) {
-      const rows = Array.isArray(h.criteria) ? h.criteria : [];
-      // Contiguous spans read as a range ("2023–2025"); anything else lists.
-      const ky = (h.keeperYears || []).map(Number).filter(Number.isFinite).sort();
-      const kYears = !ky.length ? 'in-sample'
-        : (ky.length > 1 && ky[ky.length - 1] - ky[0] === ky.length - 1)
-          ? `${ky[0]}–${ky[ky.length - 1]}`
-          : ky.join(', ');
-      const keeperLink = h.keeper
-        ? `<a class="run-id-link" href="#iso=${encodeURIComponent(st.iso)}&run=${encodeURIComponent(h.keeper)}">${esc(h.keeper)}</a>`
-        : '<em>unknown</em>';
-
-      // Headline: what actually changed when the frozen recipe met a year it
-      // has never seen. Stated as a count, not a determination label, because
-      // the determination alone ("NOT-YET") hides which criteria moved.
-      const headline = h.nDegraded
-        ? `${h.nDegraded} ${h.nDegraded === 1 ? 'criterion' : 'criteria'} degraded out-of-sample`
-        : 'No criterion degraded out-of-sample';
-
-      const body = rows.map(r => {
-        const v = HOLDOUT_VERDICT[r.verdict] || { cls: '', txt: r.verdict, why: '' };
-        return `<tr>
-          <td>${esc(r.label || r.key)}<span style="display:block;font-size:0.68rem;color:var(--text-muted)">${esc(r.tier || '')}</span></td>
-          <td style="text-align:center">${esc(r.inSample)}</td>
-          <td style="text-align:center">${esc(r.holdout)}</td>
-          <td class="${v.cls}" style="font-weight:600" title="${esc(v.why)}">${esc(v.txt)}</td>
-        </tr>`;
-      }).join('');
-
-      return `<div class="bc-panel">
-        <h2>Validation Touchpoint &middot; ${esc(String(h.year))}
-          <span class="keeper-badge" title="Held-out year, solved with the frozen keeper recipe">Holdout &middot; ${esc(h.tier || 'validation')} tier</span>
-        </h2>
-        <p class="panel-sub">The ISO's designated keeper recipe, frozen and replayed on a year it was never tuned on. Same recipe, unseen year — so a criterion that moves here moved because of the year, not because of a parameter change.</p>
-
-        <p class="bc-narration"><strong>${esc(headline)}.</strong>
-          Keeper ${keeperLink} scores <strong>${esc(h.keeperDetermination || '—')}</strong> on ${esc(kYears)};
-          the same recipe scores <strong>${esc(h.holdoutDetermination || '—')}</strong> on ${esc(String(h.year))}.</p>
-
-        <table class="bc-table" style="margin-top:10px;font-size:0.8rem">
-          <thead><tr>
-            <th>Criterion</th>
-            <th style="text-align:center">In-sample<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(kYears)}</span></th>
-            <th style="text-align:center">Holdout<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(String(h.year))}</span></th>
-            <th>Reading</th>
-          </tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-
-        ${h.tierCaveat ? `<p class="bc-narration" style="margin-top:10px"><strong>How to read this number:</strong> <span class="ndef">${esc(h.tierCaveat)}</span></p>` : ''}
-        ${h.envelopeCaveat ? `<p class="bc-narration"><strong>Known input limitation:</strong> <span class="ndef">${esc(h.envelopeCaveat)}</span></p>` : ''}
-      </div>`;
-    }
-
-    /* COMBINED touchpoint panel, rendered on the KEEPER's own page.
-
-       One configuration, one page: every held-out year solved on this keeper's
-       frozen recipe appears here as a column beside the in-sample column, so
-       the whole rule-22 ladder reads at a glance instead of one run-click per
-       year. Each column's cells come from that companion's committed `holdout`
-       block — the browser never scores anything.
-
-       The ISO's calibration determination is NOT affected by these columns:
-       it is set on the training window (rule 22 — 2023-2025 is the only tuned
-       window), and a holdout year that degrades is reported here as evidence,
-       never as a downgrade. The panel says so rather than leaving it implied. */
-    function renderHoldoutPanelCombined(blocks) {
-      if (!blocks.length) return '';
-      if (blocks.length === 1 && (blocks[0].years || []).length <= 1) {
-        return renderHoldoutPanel(blocks[0].h);
-      }
-      const h0 = blocks[0].h;
-      const ky = (h0.keeperYears || []).map(Number).filter(Number.isFinite).sort();
-      const kYears = !ky.length ? 'in-sample'
-        : (ky.length > 1 && ky[ky.length - 1] - ky[0] === ky.length - 1)
-          ? `${ky[0]}–${ky[ky.length - 1]}` : ky.join(', ');
-
-      // Columns: one per held-out YEAR, oldest first, each tagged with the
-      // block it came from so a cell is always attributable to a real run.
-      // A two-config keeper (ERCOT) can carry TWO touchpoints on the SAME year,
-      // one per config. Both are real and both belong here, so the column is
-      // tagged with its companion's label whenever a year is not unique —
-      // otherwise the header would read "2022" twice with no way to tell the
-      // forward config from the carve-out.
-      const cols = [];
-      for (const b of blocks) for (const y of b.years) cols.push({ y, b });
-      cols.sort((a, b) => a.y - b.y || String(a.b.runId).localeCompare(String(b.b.runId)));
-      const dupe = new Set(cols.map(c => c.y).filter((y, i, a) => a.indexOf(y) !== i));
-      for (const c of cols) {
-        const meta = (window.BC.manifest || []).find(r => r.id === c.b.runId) || {};
-        c.tag = dupe.has(c.y) ? (meta.label || meta.shorthand || c.b.runId) : '';
-      }
-
-      // Union of criteria, ordered by the first block that mentions each.
-      const order = [], meta = {};
-      for (const b of blocks) {
-        for (const r of (b.h.criteria || [])) {
-          if (!meta[r.key]) { meta[r.key] = r; order.push(r.key); }
-        }
-      }
-      const cellOf = (b, key) => (b.h.criteria || []).find(r => r.key === key);
-
-      const head = cols.map(c =>
-        `<th style="text-align:center">${c.y}<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(c.tag || TIER_LABEL[c.b.h.tier] || c.b.h.tier || 'holdout')}</span></th>`
-      ).join('');
-
-      const body = order.map(key => {
-        const m = meta[key];
-        const cells = cols.map(c => {
-          const r = cellOf(c.b, key);
-          if (!r) return '<td style="text-align:center;color:var(--text-muted)">—</td>';
-          const v = HOLDOUT_VERDICT[r.verdict] || { cls: '', txt: r.verdict, why: '' };
-          return `<td class="${v.cls}" style="text-align:center;font-weight:600" title="${esc(v.txt)} — ${esc(v.why)}">${esc(r.holdout)}</td>`;
-        }).join('');
-        return `<tr>
-          <td>${esc(m.label || key)}<span style="display:block;font-size:0.68rem;color:var(--text-muted)">${esc(m.tier || '')}</span></td>
-          <td style="text-align:center">${esc(m.inSample)}</td>
-          ${cells}
-        </tr>`;
-      }).join('');
-
-      // Per-year determination line. `perYear` is authored per rung because a
-      // multi-year touchpoint bundle carries ONE run-level determination that
-      // can hide a rung which passed on its own.
-      const perYear = cols.map(c => {
-        const py = c.b.h.perYear || {};
-        const txt = py[String(c.y)] || py[c.y] || c.b.h.holdoutDetermination || '—';
-        const lbl = c.tag ? `${c.y} · ${c.tag}` : String(c.y);
-        return `<li><strong>${esc(lbl)}</strong> — <span class="ndef">${esc(txt)}</span></li>`;
-      }).join('');
-
-      const caveats = blocks.map(b => {
-        const yl = b.years.join(', ');
-        return [
-          b.h.supersedesNote ? `<p class="bc-narration"><strong>${esc(yl)} supersedes ${esc(b.h.supersedes || 'a prior rung')}:</strong> <span class="ndef">${esc(b.h.supersedesNote)}</span></p>` : '',
-          b.h.basisNote ? `<p class="bc-narration"><strong>${esc(yl)} scoring basis:</strong> <span class="ndef">${esc(b.h.basisNote)}</span></p>` : '',
-          b.h.tierCaveat ? `<p class="bc-narration"><strong>${esc(yl)} — how to read this:</strong> <span class="ndef">${esc(b.h.tierCaveat)}</span></p>` : '',
-          b.h.envelopeCaveat ? `<p class="bc-narration"><strong>${esc(yl)} known input limitation:</strong> <span class="ndef">${esc(b.h.envelopeCaveat)}</span></p>` : '',
-        ].join('');
-      }).join('');
-
-      const nDeg = order.filter(k => cols.some(c => cellOf(c.b, k)?.verdict === 'degraded')).length;
-
-      return `<div class="bc-panel">
-        <h2>Validation Touchpoints &middot; ${esc([...new Set(cols.map(c => c.y))].join(', '))}
-          <span class="keeper-badge" title="Held-out years, solved with THIS keeper's frozen recipe">Same recipe &middot; held-out years</span>
-        </h2>
-        <p class="panel-sub">These are not separate runs. Each column is <em>this</em> keeper's recipe, frozen and replayed on a year it was never tuned on — so a criterion that moves across a row moved because of the year, not because of a parameter change.</p>
-
-        <p class="bc-narration"><strong>${nDeg ? `${nDeg} ${nDeg === 1 ? 'criterion' : 'criteria'} degraded on at least one held-out year` : 'No criterion degraded out-of-sample'}.</strong>
-          This keeper scores <strong>${esc(h0.keeperDetermination || '—')}</strong> on its tuned window ${esc(kYears)}.
-          <span class="ndef">The ISO's calibration determination is set on that tuned window: a held-out year that degrades is reported here as model-selection evidence and does <strong>not</strong> downgrade the ISO (CLAUDE.md rule 22).</span></p>
-
-        <table class="bc-table" style="margin-top:10px;font-size:0.8rem">
-          <thead><tr>
-            <th>Criterion</th>
-            <th style="text-align:center">In-sample<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(kYears)}</span></th>
-            ${head}
-          </tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-
-        <p class="bc-narration" style="margin-top:10px"><strong>Per-year determination</strong></p>
-        <ul class="bc-narration" style="margin-top:2px">${perYear}</ul>
-        ${caveats}
-      </div>`;
-    }
-
     function renderReport(el) {
       const meta = META();
-      // The run's OWN years only. The Report is the run's whole-run summary, so
-      // a held-out year is never folded into it silently — it is reachable from
-      // the year dropdown (Charts / Tables) behind its own provenance banner,
-      // and summarised by the Validation Touchpoint panel below.
-      const years = runYears();
+      // EVERY year this page can show — the run's own solve years AND the
+      // rule-30 folded held-out years — in one ascending set, so the Report
+      // covers exactly what the year selector offers.
+      //
+      // A folded touchpoint IS this keeper's frozen recipe on another year
+      // (rule 30 [R-TOUCHPOINT-FOLD]); rendering it anywhere other than as
+      // another year column made a reader read one configuration in two
+      // places. Owner instruction 2026-09-06, verbatim: "the formatting on the
+      // html dashboard for holdout years shouldn't be any different than the 3
+      // training years, it should show the results in the report view on run
+      // explorer and does not need a special designation."
+      //
+      // Rule 30(c) is UNAFFECTED and this is presentation only: the ISO's
+      // determination remains the TRAIN-TIER verdict, scored by
+      // scripts/calibration_verdict.py from committed artifacts. Nothing here
+      // feeds a verdict, a grade or a caveat budget — the browser has never
+      // computed one.
+      const years = selectableYears();
       const reg = st.runMeta || {};
       let html = '';
 
@@ -1400,21 +1186,29 @@
         </div>`;
       }
 
-      // Validation touchpoint (CLAUDE.md rule 22): a held-out year solved with
-      // an ISO's FROZEN keeper recipe. Rendered only when the sidecar carries a
-      // `holdout` block (written by scripts/stamp_touchpoint_holdout.py from
-      // committed artifacts — no re-solve). The panel's whole job is to make
-      // the in-sample vs held-out comparison readable WITHOUT diffing two
-      // verdicts by eye, and to keep the tier caveat attached to the number:
-      // a validation result is iterable selection evidence, never a certified
-      // out-of-sample skill number.
-      // On a KEEPER, every touchpoint folded onto it renders as ONE combined
-      // panel (all held-out years side by side against the in-sample column).
-      // On a standalone touchpoint whose keeper is no longer registered, the
-      // single-year panel still renders from its own block.
-      const folded = foldedHoldoutBlocks();
-      if (folded.length) html += renderHoldoutPanelCombined(folded);
-      else if (reg.holdout) html += renderHoldoutPanel(reg.holdout);
+      // RULE 22's TIER CAVEAT — the one thing that survives the 2026-09-06
+      // de-designation, and the reason it is a footnote rather than a panel.
+      // Held-out years are now ordinary year columns everywhere above and
+      // below, but the single most misusable number on this dashboard is still
+      // a validation result quoted as a certified out-of-sample skill number,
+      // and rule 22 requires that reading to stay attached to it. One line,
+      // named years, no badge and no per-year label. Only rendered when this
+      // run actually carries folded held-out years.
+      const heldYears = holdoutYears();
+      if (heldYears.length) {
+        const tiers = new Set(heldYears.map(y => st.holdoutRuns[y]?.tier || yearTier(y)));
+        const locked = tiers.has('locked_test');
+        html += `<div class="bc-panel">
+          <p style="margin:0;font-size:0.74rem;color:var(--text-muted);line-height:1.6">
+            <strong>Rule 22 — held-out years in this report:</strong> ${esc(heldYears.join(', '))}.
+            Solved on this keeper's frozen recipe, never tuned against.
+            ${locked
+              ? 'Locked-test tier: TOUCH-ONCE — scored exactly once and recorded whatever it is; no calibration change may respond to it.'
+              : 'Validation tier: ITERABLE model-SELECTION evidence — NOT a certified out-of-sample skill number, and never to be quoted as one.'}
+            The ISO’s calibration determination is the training-window (2023–2025) verdict and a held-out year never moves it (rule 30(c)).
+          </p>
+        </div>`;
+      }
 
       // Zero-forcing ablation twin (CLAUDE.md rule 20 / audit D-3): the market
       // story + keeper-vs-twin per-class delta. Rendered when the sidecar links

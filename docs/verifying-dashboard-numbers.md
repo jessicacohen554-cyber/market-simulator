@@ -70,13 +70,17 @@ A touchpoint run — a held-out year solved on an ISO's frozen keeper recipe
   }
 ```
 
-`holdout.keeper` is the **link that lets the keeper's own year dropdown offer
-that year**: the Run Explorer lists it under "Held out (rule 22)", loads it
-from this run, and labels its tier and provenance. `build_manifest.py` passes
-the block through to `manifest.js` (it did not before 2026-08-09, which is why
-the Validation Touchpoint panel never rendered on the deployed site). A
-touchpoint with no stamped block is still offered, but the link is *inferred*
-from the run registry and the banner says so — stamp it to make it explicit.
+`holdout.keeper` is the **link that folds the touchpoint into its keeper**: the
+Run Explorer hides the stamped run from the run list, offers its years in the
+keeper's own year dropdown, and — since the 2026-09-06 owner instruction (rule
+30 amendment) — renders them as **ordinary year columns in the keeper's Report,
+formatted no differently from the training years**. There is no separate
+"Validation Touchpoint" panel and no per-year tier badge any more; rule 22's
+tier caveat is carried once, as a footnote naming the held-out years.
+`build_manifest.py` passes the block through to `manifest.js` (it did not before
+2026-08-09, which is why anything reading it never rendered on the deployed
+site). A touchpoint with no stamped block is still offered, but the link is
+*inferred* from the run registry — stamp it to make it explicit.
 
 The displayed chart/table data itself lives in `runs/<run-id>.js`
 (`frontend/data/backcast/runs/<run-id>.js`) as a gzip+base64 blob the browser

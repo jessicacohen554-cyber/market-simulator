@@ -2572,3 +2572,66 @@ records, the per-ISO logs, the matrix cells and git history. Bundles a
 regression-golden manifest or the parity allowlist names are retained on disk
 (the prune script now honours both). Generalises the 2026-08-15 site-retention
 directive to "keeper only, for now".
+
+## 2026-09-06 — OWNER INSTRUCTION, ALL LANES: a held-out year renders AS A YEAR — rule 30(a)'s Validation Touchpoints panel is DELETED, not hidden (neiso-103)
+
+**Owner instruction, verbatim:** *"the formatting on the html dashboard for holdout years shouldn't
+be any different than the 3 training years, it should show the results in the report view on run
+explorer and does not need a special designation."*
+
+**Presentation only. ZERO LP. No solve, no score, no registration, no prune, no keeper change, no
+marker or freeze change, no mechanism tested, no matrix cell verdict moved.** Genealogy:
+`docs/governance/rule-history.md` §14 (§12 gained a forward pointer).
+
+**The defect.** Rule 30 (2026-09-05) folded a touchpoint into its keeper to stop it publishing as a
+SECOND CARD for a configuration the keeper already publishes — then mandated that the folded years
+render as columns of a separate *Validation Touchpoints* panel. That fixed the two-cards defect and
+introduced a smaller one of the same kind. `renderReport` drew its year set from `runYears()` — the
+run's OWN solve years — so a folded year was **absent from every report table and chart** and
+reachable only through four designations: the panel, a `Held out (rule 22)` optgroup in the year
+dropdown, a ` — validation holdout` suffix on each entry, and a "*<year>* is a held-out year"
+banner. Four labels for a year that is, by rule 30's own reasoning, the same recipe as the three
+beside it.
+
+**The fix.** The Report's year set is now `selectableYears()` — own ∪ folded, globally ascending —
+so a folded year is an ordinary year column everywhere the page names a year. The panel, optgroup
+split, tier suffix and banner are **DELETED, not hidden** (rule 26 `[R-DELETE]`: a dead render path
+is a re-armable answer), with `TIER_LABEL`, `HOLDOUT_VERDICT`, `renderHoldoutPanel`,
+`renderHoldoutPanelCombined`, `holdoutYearBanner` and `foldedHoldoutBlocks`
+(`docs/codebase-site/js/backcast-runs.js` 2,655 → 2,450 lines, +64/−270). Folded payloads now load
+EAGERLY at run load, because a report rendering every year at once cannot wait for a lazy fetch.
+
+**Effect, measured by rendering all six ISO keeper pages in headless Chromium — not by reading the
+diff:**
+
+| ISO | report years before | report years after | dropdown | panel | banner |
+|---|---|---|---|---|---|
+| NEISO | 2023–2025 | **2020–2025** | flat, 0 optgroups | gone | gone |
+| PJM | 2023–2025 | **2021–2025** | flat | gone | gone |
+| ERCOT | 2023–2025 | **2022–2025** | flat | gone | gone |
+| CAISO / MISO / NYISO | 2023–2025 | 2023–2025 (unchanged) | flat | n/a | n/a |
+
+The three ISOs with no folded touchpoints are the negative control and are unchanged, footnote
+included (they render none). The three `file://` console errors are blocked external CDN fetches
+(d3, Google Fonts) that a control on unmodified `main` reproduces identically.
+
+**Three guardrails held.** (a) **Rule 30(c) untouched — no determination moves**: no scorer path was
+modified (`git diff` names no `.py` on the verdict path) and all three affected keepers re-score
+`CALIBRATED` byte-identically. (b) **Rule 22's tier caveat SURVIVES** as a single footnote naming
+the held-out years and restating 30(c) — dropping it entirely would have put the amendment in
+conflict with rule 22 rather than with 30(a) alone. (c) **The amendment is written down**: CLAUDE.md
+rule 30(a) now carries it with an explicit *do not restore the panel*, and
+`tests/scoring/test_holdout_render_parity.py` (10 tests) pins it in CI.
+
+**Unchanged and not re-litigated:** the fold itself, the `holdout.keeper` stamp,
+`stamp_touchpoint_holdout.py`'s output (docstring only), the deep-link redirect, clause (b)'s
+Calibration Status **holdout ladder** (per-year by design, a different surface), and clause (c).
+Grants nothing about which years may be solved: markers, the holdout freeze
+(`scope.tiers=['locked_test']`) and the registration marker gate are untouched.
+
+**Test-quality note (neiso-102 lesson, applied to my own guard).** The new guard ships with negative
+controls that mutate the source back toward the pre-amendment shape. The FIRST draft's control
+**failed**, correctly: it mutated `const years = selectableYears();` with `str.replace(…, 1)`, which
+hits the run loader (line 972), not `renderReport` (line 1171) — a control that would have proven
+nothing. It now splices through `render_report_body`. A guard written the same day as the change it
+protects is exactly where this failure mode lives.

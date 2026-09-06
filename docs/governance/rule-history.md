@@ -840,6 +840,11 @@ side by owner ruling R-AY (2026-09-06) — §13 below.
 
 ## 12. Rule 30 `[R-TOUCHPOINT-FOLD]` — a touchpoint publishes AS the keeper (owner, 2026-09-05)
 
+> **Clause (a) was AMENDED the next day — see §14.** The fold and the stamp stand exactly as
+> written here; what §14 removes is the *Validation Touchpoints panel* this section mandates as
+> the fold's rendering, replaced by rendering a folded year as an ordinary year column. Read
+> every mention of that panel below as superseded; clauses (b) and (c) are untouched.
+
 **Origin.** Session `neiso-pjm-validation-touchpoints` re-walked NEISO's and PJM's rule-22
 validation ladders on their current keepers and registered each touchpoint as its own dashboard
 run. The owner rejected the shape, verbatim:
@@ -948,10 +953,67 @@ unchanged" (its own `attested_by` text): the ×1.10 lift is carried under the pr
 is recorded and routed in the G-3 finding; the attestation is the calibration desk's artifact
 and was not edited.
 
-## 14. Changes to this file
+## 14. Rule 30 `[R-TOUCHPOINT-FOLD]`(a) — a held-out year renders AS a year, not as a designation (owner, 2026-09-06)
+
+**The instruction, verbatim** (owner, 2026-09-06, in session neiso-103 immediately after that
+session's 2020 input-readiness finding):
+
+> *"the formatting on the html dashboard for holdout years shouldn't be any different than the 3
+> training years, it should show the results in the report view on run explorer and does not need
+> a special designation."*
+
+**What clause (a) said before.** Rule 30 landed 2026-09-05 (§12) to stop a touchpoint publishing as
+a SECOND CARD for a configuration the keeper already publishes. It folded the run — hidden from the
+run list, years offered in the keeper's selector — but it then MANDATED that the folded years render
+"as columns of ONE combined **Validation Touchpoints** panel on the keeper's page beside the
+in-sample column." The fold fixed the two-cards defect and introduced a smaller one of the same
+kind: the keeper's own Report (`renderReport`) drew its year set from `runYears()` — the run's OWN
+solve years — so a folded year was **absent from every report table and chart** and reachable only
+through a separate panel, a `Held out (rule 22)` optgroup in the year dropdown, a ` — validation
+holdout` tier suffix on each entry, and a "*<year>* is a held-out year" provenance banner. Four
+designations for a year that is, by rule 30's own reasoning, the same recipe as the three beside it.
+
+**What it says now.** The Report's year set is `selectableYears()` — own solve years UNION folded
+held-out years, globally ascending — so a folded year is an ordinary year column everywhere the page
+names a year. The panel, the optgroup split, the tier suffix and the banner are **DELETED, not
+hidden** (rule 26 `[R-DELETE]`: a dead render path is a re-armable answer), together with the
+`TIER_LABEL` map, `HOLDOUT_VERDICT`, `renderHoldoutPanel`, `renderHoldoutPanelCombined`,
+`holdoutYearBanner` and `foldedHoldoutBlocks` — `docs/codebase-site/js/backcast-runs.js`
+2,655 → 2,450 lines, +64/−270. Folded payloads are now loaded EAGERLY at run load rather than on
+year selection, because a report that renders every year at once cannot wait for a lazy fetch.
+
+**The one designation that survives, and why.** Rule 22 requires that a validation number never read
+as a certified out-of-sample skill number. That reading is kept as a **single footnote** naming the
+held-out years and restating rule 30(c) — not a panel, not a badge, not a per-year label. Dropping it
+entirely would have put the amendment in conflict with rule 22 rather than with rule 30(a) alone.
+
+**What is UNCHANGED, stated so it is not re-litigated.** The fold itself and the `holdout.keeper`
+stamp; `scripts/stamp_touchpoint_holdout.py` (no output change — the block it writes is unchanged,
+only its docstring); the deep-link redirect from a folded id to its keeper; clause (b)'s Calibration
+Status **holdout ladder**, which is per-year by design, is a different surface, and stays; and clause
+(c) entirely. **No determination moves**: no scorer path was touched (`git diff` names no `.py` file
+on the verdict path), and all three affected keepers re-score `CALIBRATED` byte-identically —
+`2026-08-17-neiso-99-joint-p1`, `2026-08-15-pjm-162-inputclock`,
+`2026-09-05-ercot248-two-config-keeper`.
+
+**Verified by rendering, not by reading the diff.** Headless Chromium over the six ISO keeper pages:
+NEISO now reports 2020–2025, PJM 2021–2025, ERCOT 2022–2025 as ordinary year columns with a flat
+ascending dropdown, zero optgroups, no panel and no banner; CAISO / MISO / NYISO (no folded
+touchpoints) are unchanged at 2023–2025 and render no footnote. The three console errors on the
+`file://` preview are blocked external CDN fetches (d3, Google Fonts) that a negative control
+reproduces identically on unmodified `main`.
+
+**Scope limit.** This is a PRESENTATION amendment to clause (a). It grants nothing about which years
+may be solved, scored or registered: the rule-22 tier markers, the holdout freeze
+(`scope.tiers = ['locked_test']`) and the registration marker gate (§4) are untouched.
+
+Executed by session neiso-103, 2026-09-06.
+
+## 15. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-06 | Added §14: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended by owner instruction (verbatim above) — a folded held-out year renders as an ORDINARY YEAR COLUMN in the Run Explorer's Report, with the mandated *Validation Touchpoints* panel, year-selector optgroup split, tier suffix and held-out banner **deleted** (rule 26), and rule 22's tier caveat kept as a single footnote. Presentation only: no scorer path touched, all three affected keepers re-score identically, clause (b)'s status-page ladder and clause (c) untouched, no holdout marker or freeze moved. Verified by headless render across all six ISOs with a negative control on `main`. "Changes to this file" renumbered §14 → §15 (no external reference cited §14). Executed by session neiso-103. |
 | 2026-09-06 | §4: recorded owner ruling **R-AZ** (audit-program director sitting, card "Marker gate", verbatim option *"Re-check at registration"*) — the rule-22 tier marker is now re-checked at REGISTRATION as well as at solve launch, closing the Z-6 window in which a multi-hour LP outlives the marker it launched under. New `holdout_policy.registration_refusals` + `dashboard_add_run.enforce_registration_marker_gate`; no bypass flag; launch gate, D-6, `audit_keepers`, markers, freeze, shards and every registered run untouched — all five holdout-year sidecars at HEAD replay clean. Executed by audit lane Y-16. |
 | 2026-09-06 | Added §13: rule 21 `[R-DOF]` one-clause cross-reference to the rules 1/13 authorized price-tuning channel (owner ruling **R-AY**, audit-program director sitting 2026-09-06 ~00:15Z, card "DOF / C6", verbatim *"Count them in the DOF ledger, C6 passes under the declaration"*; executed by rule-amendment lane G-3). A price-tuned band multiplier is a ledgered free parameter identified by the ruling, reported at full magnitude, and not by itself an open root-cause issue; every other tuned value still is; no gate moves, no scoring logic changed. §11 gained a forward pointer. Records the live MISO keeper reading (declaration present, C6 PASS, no distinct ruling-identified ledger row — routed, not edited). Took §13 on merge behind main's same-day §12 (rule 30 `[R-TOUCHPOINT-FOLD]`); "Changes to this file" renumbered §13 → §14 (no external reference cited either number). |
 | 2026-09-05 | Added §8.2: rule 29 `[R-SCREEN]` clause (c), **delete before merge** (owner ruling **R-AV**, verbatim *"Delete before merge"*, on the rule-29 / Class-E parity collision the v31 second coda `da99f34b` routed; executed by audit lane Y-13). A screen bundle, or a control bundle a screen earns under clause (b), is `git rm`-ed from `results/calibration/` before its PR merges; the PRECOMMIT/FINDING doc carries every number; `check_registry_payload_parity` is the enforcement and an unregistered bundle dir is a gate red, not an allowlist candidate. Records the first execution (two dirs pruned, numbers confirmed in committed records first). No keeper, marker, shard or determination touched. |
