@@ -41468,21 +41468,18 @@
     {
       "param_id": "scenario.ccs_retrofit_vom_adder",
       "display_name": "Ccs Retrofit Vom Adder",
-      "value": 8.0,
-      "unit": "",
+      "value": 2.95,
+      "unit": "$/MWh (2026$)",
       "domain": "Supply Stack",
       "tier": 2,
-      "source": "$/MWh additional VOM for capture O&M, solvent, compression.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NREL ATB 2024 (v4.0.0 pin) capture-island VARIABLE O&M increment, Moderate case @2026, converted 2022$ -> 2026$ by constants.INFLATION_RATE: NG 2-on-1 CC (F-Frame) 95% CCS 4.8 - NG 2-on-1 CC (F-Frame) 2.1 = 2.7 2022$/MWh, x 1.090947 = 2.95 $/MWh 2026$. Read off the SAME ATB basis as the screen's other two cost legs (ccs_retrofit_capex_kw, fixed_om_gas_cc_ccs) — capx D41 §2.3's rule that host and island sit on ONE basis. Derived by scripts/data/derive_entry_costs_from_atb.py::derive_ccs_retrofit_vom_adder and pinned by tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py::TestRetrofitVomBasis.",
+      "source_date": "2024",
+      "page_or_table": "ATB 2024 NaturalGas_FE, Variable O&M @2026 (Moderate)",
+      "url": "https://atb.nrel.gov/electricity/2024/",
+      "notes": "RE-IDENTIFIED 2026-09-06 (capx D65-B Act B, owner ruling Q47) from 8.0, which was flagged needs-citation, stated no dollar-year, and cited only 'NETL Cost & Performance Baseline Rev 4' — a source that publishes 2.23 $/MWh per host MWh (2026$) for this increment, i.e. the cited document did not support the cited number. The shipped 8.0 was 24.8 $/t captured at the reference host against ATB's 9.1 and NETL's 6.9: 2.7-3.6x every published basis. CROSS-CHECK, not the basis: NETL Rev 4a B31A->B31B.90 = 2.23 $/MWh 2026$. WHY THE EXTRACT CAME FIRST (D64 STOP 6): until 2026-09-06 the committed ATB extract carried only CAPEX and Fixed O&M for NaturalGas_FE, so this leg could not be read off the pinned basis at all — which is how it came to ship uncited. scripts/data/fetch_nrel_atb.py now carries Variable O&M / Heat Rate for that technology from the SAME source bytes (OEDI ATBe.csv 2024 v4.0.0, sha256 567dde9d85caa759bc3f2e42c9aa14a5f85e471ca4133ccc522e7a92e020297a); the regeneration is a verified strict superset (3,858 pre-existing rows value-identical), so no other derived constant moves. DIRECTION STATED BEFORE THE MEASUREMENT (rule 23): re-identification makes retrofits EASIER; rule 14 keeps an accurate value whichever way it moves the answer. Measured in docs/handoffs/FINDING-capx-d64-2026-09-05.md §2.4; adjudicated FINDING-capx-d65-2026-09-05.md §8.1 (never Act A alone); executed FINDING-capx-d65b-2026-09-06.md.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
+      "last_verified": "2026-09-06",
+      "flags": []
     },
     {
       "param_id": "scenario.chp_btm_floor_pct",

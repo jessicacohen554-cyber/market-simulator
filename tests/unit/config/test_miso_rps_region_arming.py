@@ -149,7 +149,13 @@ class TestD26Arming:
         base = ScenarioConfig(mode="forecast", iso="MISO")
         armed = dataclasses.replace(base, miso_clean_tier_rows=True)
         assert armed.cache_key() != base.cache_key()
-        assert ScenarioConfig().cache_key() == "e5ecd4105ada3e58"
+        # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264, by capx
+        # D65-B (owner ruling Q47): the coupled arming of
+        # ccs_retrofit_fixed_cost_co2_scaling (a declared (b'-1) flip) with
+        # ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$. Nothing to do with
+        # MISO's RPS arming — the global pin moved, so this pole moves with it.
+        # PRECOMMIT-capx-d65b-2026-09-06.md §3; ledger entry 2026-09-06c.
+        assert ScenarioConfig().cache_key() == "547053bdfccd4264"
 
     def test_arming_does_not_disturb_the_d2prime_entry(self):
         """The pre-existing D-2' override survives alongside the new one."""

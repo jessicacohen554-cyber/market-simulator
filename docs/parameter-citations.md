@@ -1603,7 +1603,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ccs_retrofit_hr_penalty` | 0.12 | 2 | Fractional heat rate increase from capture parasitic load. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_max_gw_per_year` | 3.0 | 2 | GW/yr retrofit throughput cap per ISO. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_min_remaining_life` | 15 | 2 | Only retrofit units with ≥ N years remaining useful life. |  | auto-generated, needs-citation |
-| `scenario.ccs_retrofit_vom_adder` | 8.0 | 2 | $/MWh additional VOM for capture O&M, solvent, compression. |  | auto-generated, needs-citation |
+| `scenario.ccs_retrofit_vom_adder` | 2.95 | 2 | NREL ATB 2024 (v4.0.0 pin) capture-island VARIABLE O&M increment, M… | 2024 |  |
 | `scenario.chp_startup_covered` | False | 2 | Tier 3 (calibration) — CHP startup costs covered by the steam host.… |  | auto-generated, needs-citation |
 | `scenario.class_commitment_overrides` | {} | 2 | Per-limb run-config overrides for the generic floor, keyed "<ZONE>:… |  | auto-generated, needs-citation |
 | `scenario.coal_perplant_offer_curves` | None | 2 | The resolved per-plant curve registry (plant_code -> ((cum_MW, pric… |  | auto-generated, needs-citation |

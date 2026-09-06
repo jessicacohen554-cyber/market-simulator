@@ -250,7 +250,17 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
         # Rule 24 registration: the field is dropped from the hash at its None
         # default (every pre-FH-2 cached run keeps its key) and enters the key
         # when set (a vintage-addressed run is a distinct scenario).
-        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
+        # The GLOBAL default forecast key. ADVANCED e5ecd4105ada3e58 ->
+        # 547053bdfccd4264 on 2026-09-06 by capx D65-B (owner ruling Q47): the
+        # COUPLED arming of ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared
+        # (b'-1) default flip) with ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$
+        # (Act B, re-identified off the widened ATB extract). Act B is NOT a
+        # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
+        # unconditionally. Pre-declared BEFORE the solve in
+        # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
+        # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
+        # field moved — the pin advances because the global default did.
+        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         with _with_vintages(_VINTAGE_2021):
             base = ScenarioConfig(iso="ERCOT")
             vintaged = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)
