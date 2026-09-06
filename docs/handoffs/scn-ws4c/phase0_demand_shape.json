@@ -1,0 +1,28 @@
+{
+ "ERCOT": {
+  "REF": {
+   "2026": {
+    "energy_twh": 544.576,
+    "peak_gw": 93.673,
+    "min_gw": 45.97,
+    "load_factor": 0.6636
+   }
+  },
+  "LOAD-HI": {
+   "2026": {
+    "energy_twh": 575.107,
+    "peak_gw": 84.602,
+    "min_gw": 55.91,
+    "load_factor": 0.776
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "2026": {
+    "energy_twh": 575.107,
+    "peak_gw": 99.283,
+    "min_gw": 48.363,
+    "load_factor": 0.6613
+   }
+  }
+ }
+}
