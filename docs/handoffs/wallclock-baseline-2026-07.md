@@ -1198,7 +1198,8 @@ measurement (desk log §2.8, "evidence owed"). This section is that evidence. **
 desk's recommendation is to remove the call and the helper**: it buys no peak headroom
 and costs a little. That is the owner's call, not this lane's — nothing here reverts
 it, and the change is byte-identical either way, so leaving it carries no correctness
-risk. A one-commit revert is prepared on `wc-a6-backup-with-revert` if wanted.
+risk. The revert is prepared and pushed as
+`claude/wc-a6-revert-measured-negative` (branched off main AFTER item B, so it applies cleanly); merging that branch is the whole action.
 
 **Vintage caveat — item B landed on the same seam after this was measured.** Both arms
 ran on merge base `2886235c`, which predates §WALLCLOCK B (the cold-rebuilt P1 seeded
