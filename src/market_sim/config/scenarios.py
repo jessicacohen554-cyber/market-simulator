@@ -779,6 +779,8 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_min_run",
     "nyiso_gas_bridge_cc_min_run_hours",
     "nyiso_gas_bridge_st_min_run_hours",
+    # nyiso-200: the commitment-real run screen, default off (byte-identical).
+    "nyiso_gas_bridge_startup_aware",
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
     "nyiso_gas_bridge_plant_exclusions",
@@ -1786,6 +1788,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_min_run": "False",
     "nyiso_gas_bridge_cc_min_run_hours": "None",
     "nyiso_gas_bridge_st_min_run_hours": "None",
+    "nyiso_gas_bridge_startup_aware": "False",
     "nyiso_gas_bridge_ct": "False",
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
     "nyiso_gas_bridge_plant_exclusions": "False",
@@ -6863,6 +6866,58 @@ class ScenarioConfig:
     # mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only
     # its turbines instead of being dropped as unattributable.
     nyiso_gas_bridge_ct_min_load_frac: float = 0.238
+    # COMMITMENT-REAL RUN SCREEN for the NYISO bridge (nyiso-200): the shared
+    # detector's ``startup_aware`` leg (gap G-61 path (b), registered for
+    # CAISO as caiso_ra_bridge_startup_aware and never wired for NYISO). The
+    # bridge's three legs -- min-run extension, online-hours state floor and
+    # the gap bridges -- all anchor on the model's OWN P0 run pattern, and P0
+    # is a base-cost LP that pays no startup on a continuous ramp: it
+    # manufactures runs a real unit commitment would never start. With this
+    # on, a detected P0 run anchors any leg only when it is commitment-real
+    # under the unit's own start economics -- its P0 energy margin per MW of
+    # capacity, sum_t (LMP_P0 - MC) x dispatch / pmax over the run, must
+    # cover the SAME published per-MW startup cost the economic bridge
+    # already prices (_ra_bridge_unit_params: the CAMPD-bin startup, NREL
+    # SR-5500-55433; CC_REGULAR $50/MW, ST_GAS $35/MW). Runs failing it are
+    # removed BEFORE the min-run extension, the online-hours floor and the gap
+    # scan, so a phantom fragment can no longer be extended to a 21 h min-load
+    # hold or chop an idle period into sub-min-down gaps.
+    #
+    # WHY (rule 17 [R-FLOOR-WINDOW]): the min-run leg's driver is "a STARTED
+    # unit stays on for its minimum run"; its evidence for "started" is a P0
+    # run. A run whose whole margin cannot repay one start is a run the
+    # driver's own economics say the unit would not have started, so an
+    # extension floored on it binds in hours its own driver says the unit is
+    # off -- a bug by definition. nyiso-199 §8.3 measured the consequence: a
+    # merit change (cheaper CT_PEAKER offers) displaced two cycling CCs in P0,
+    # left them short P0 runs, and nyiso_gas_bridge_min_run extended those
+    # into 3,210 h / 352 h min-load floors at plants the keeper never floors.
+    # The dependence is on P0's shape, which ANY merit change can move.
+    #
+    # WHY NOT the measured-conduct gate the nyiso-199 handoff named: an
+    # hourly meter test inside the solve is a one-sided pin to observed CEMS
+    # generation with no forward analogue (rule 13 [R-MEASURED] fails its own
+    # test), and a plant-level conduct exclusion of the cyclers this defect
+    # lands on was refused ex ante by nyiso-144 ("7314 ... is a cycler the
+    # model's own P0 over-runs, so its forcing is an offer/economics defect
+    # and excluding it would bury that error in a membership list"). The
+    # admissible measured membership channels the bridge already carries
+    # (nyiso_gas_bridge_plant_exclusions, _reserve_duty_exclusions) are
+    # site-level lay-up / duty facts and stay as they are; this leg is the
+    # economics-side repair those rulings pointed to.
+    #
+    # Rule 19 [R-ONE-MECH]: same detector, same D-2 id, same P0 inputs and
+    # the same startup constant -- it narrows the run set every leg reads
+    # rather than adding a floor. Rule 18 [R-PHYSICS]: gates on the unit's
+    # own start cost, never a class name. ZERO free parameters, no DOF entry
+    # (rule 21): the bar is the bridge's own registered startup cost, the
+    # prices and MC are the model's P0 duals and objective. Forward-native:
+    # regenerates from a forecast year's own P0. Default off so every
+    # existing bundle is byte-identical; requires nyiso_gas_commitment_bridge.
+    # Consumer: pipeline.commitment._nyiso_gas_bridge_floor, which runs AFTER
+    # the generic prb_overrides channel applies (replay_keeper --set reaches
+    # it), unlike the backcast_config-resolved fields.
+    nyiso_gas_bridge_startup_aware: bool = False
     # MEMBERSHIP correction for the bridge (nyiso-144): skip plants in economic
     # LAY-UP — idle in their own metered conduct while reading ~100 % available
     # in the outage extract, because lay-up is correctly not booked as a forced
@@ -17999,6 +18054,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_startup": 1,
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
+    "nyiso_gas_bridge_startup_aware": 1,
     "nyiso_gas_bridge_plant_exclusions": 1,
     "nyiso_gas_bridge_reserve_duty_exclusions": 1,
     "nyiso_gas_bridge_plant_min_run": 1,

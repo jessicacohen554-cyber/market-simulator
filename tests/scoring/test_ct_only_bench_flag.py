@@ -149,6 +149,45 @@ class TestCtOnlySpanUnion(unittest.TestCase):
             ld.load_bench = orig
         self.assertEqual(union, {"7314"})
 
+    def test_one_year_bundle_unions_over_the_training_span(self):
+        """nyiso-200: a rule-29 ONE-YEAR screen must not lose the guard.
+
+        nyiso-199's 2025-only screen convicted 7314 / 50978 because its union
+        was {2025} alone — the preliminary vintage that un-flags them. The
+        guard now unions over the ISO's training span whatever the bundle's
+        own years, so the span keeper and its one-year screens agree.
+        """
+        import scripts.legitimacy_diagnostics as ld
+
+        seen: list[int] = []
+
+        def fake_bench(repo, iso, year):
+            seen.append(year)
+            return {
+                "7314": {"npl": 100.0, "mw": [0.0], "ct_only": year != 2025},
+                "50978": {"npl": 100.0, "mw": [0.0], "ct_only": year != 2025},
+            }
+
+        orig = ld.load_bench
+        ld.load_bench = fake_bench
+        try:
+            self.assertEqual(
+                ld.ct_only_guard_years(_REPO, "NYISO", [2025]), [2023, 2024, 2025]
+            )
+            union = ld.ct_only_span_union(_REPO, "NYISO", [2025])
+        finally:
+            ld.load_bench = orig
+        self.assertEqual(union, {"7314", "50978"})
+        self.assertEqual(sorted(set(seen)), [2023, 2024, 2025])
+
+    def test_span_keeper_years_are_unchanged_by_the_widening(self):
+        import scripts.legitimacy_diagnostics as ld
+
+        self.assertEqual(
+            ld.ct_only_guard_years(_REPO, "NYISO", [2023, 2024, 2025]),
+            [2023, 2024, 2025],
+        )
+
     def test_union_empty_when_no_year_flags(self):
         import scripts.legitimacy_diagnostics as ld
 

@@ -719,6 +719,7 @@ def caiso_ra_mustoffer_min_gen(
     min_run_hours: np.ndarray | None = None,
     floor_online_hours: bool = False,
     min_load_frac_by_gen: np.ndarray | None = None,
+    screen_stats: dict | None = None,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -959,6 +960,13 @@ def caiso_ra_mustoffer_min_gen(
             which is how a caller scopes the mechanism to a subset of the
             fleet without a class-name tuple. ``None`` (default) uses the
             scalar for every row and is byte-identical.
+        screen_stats: Optional dict the ``startup_aware`` run screen FILLS
+            with its census (nyiso-200): ``runs_detected`` / ``runs_kept`` /
+            ``runs_dropped`` (counts over every eligible unit),
+            ``dropped_hours`` (P0 online hours inside dropped runs) and
+            ``units_with_drops`` (row indices). Diagnostics only — never
+            read by the floor arithmetic, so ``None`` (default) is
+            byte-identical and a supplied dict changes no floor.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -1062,6 +1070,25 @@ def caiso_ra_mustoffer_min_gen(
                 )
                 if margin_per_mw >= startup_per_mw:
                     kept_runs.append((s, e))
+            if screen_stats is not None:
+                # Census of the screen's own action (diagnostics only; the
+                # floor arithmetic below never reads it).
+                n_drop = len(runs) - len(kept_runs)
+                screen_stats["runs_detected"] = screen_stats.get(
+                    "runs_detected", 0
+                ) + len(runs)
+                screen_stats["runs_kept"] = screen_stats.get("runs_kept", 0) + len(
+                    kept_runs
+                )
+                screen_stats["runs_dropped"] = (
+                    screen_stats.get("runs_dropped", 0) + n_drop
+                )
+                if n_drop:
+                    kept_set = set(kept_runs)
+                    screen_stats["dropped_hours"] = screen_stats.get(
+                        "dropped_hours", 0
+                    ) + sum(e - s for s, e in runs if (s, e) not in kept_set)
+                    screen_stats.setdefault("units_with_drops", []).append(int(g))
             runs = kept_runs
         if not runs:
             continue

@@ -732,6 +732,7 @@ def run_year(
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
+    nyiso_gas_bridge_startup_aware: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
@@ -1683,6 +1684,10 @@ def run_year(
     if nyiso_gas_bridge_state_floor_min_run is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
+        )
+    if nyiso_gas_bridge_startup_aware is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware
         )
     if nyiso_chp_btm_measured is not None:
         config = config.with_overrides(nyiso_chp_btm_measured=nyiso_chp_btm_measured)
