@@ -131,6 +131,7 @@ from .envelopes import (
     pjm_net_interchange_envelope,
     pjm_zonal_interchange,
     pjm_zonal_interchange_envelope,
+    spp_net_interchange,
 )
 from .actuals import (
     _CLEAN_GEN_FUEL_TO_BENCHMARK as _CLEAN_GEN_FUEL_TO_BENCHMARK,
@@ -165,6 +166,7 @@ from .demand import (
     _load_neiso_hourly_demand as _load_neiso_hourly_demand,
     _load_nyiso_hourly_demand as _load_nyiso_hourly_demand,
     _load_pjm_hourly_demand as _load_pjm_hourly_demand,
+    _load_spp_hourly_demand as _load_spp_hourly_demand,
     load_demand,
     load_demand_meta,
 )
@@ -216,6 +218,7 @@ __all__ = [
     "nyiso_net_interchange",
     "nyiso_forward_net_import_monthly",
     "neiso_net_interchange",
+    "spp_net_interchange",
     # actuals
     "load_ercot_renewable_gen",
     "load_eia_hourly_benchmark",

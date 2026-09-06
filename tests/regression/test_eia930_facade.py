@@ -96,6 +96,7 @@ _DEFINED = (
     "_load_neiso_hourly_demand",
     "_load_miso_hourly_demand",
     "_load_pjm_hourly_demand",
+    "_load_spp_hourly_demand",
     "load_ercot_renewable_gen",
     "_EIA930_BENCHMARK_COLUMNS",
     "_STORAGE_BENCHMARK_SERIES",
@@ -124,6 +125,7 @@ _DEFINED = (
     "nyiso_net_interchange",
     "nyiso_forward_net_import_monthly",
     "neiso_net_interchange",
+    "spp_net_interchange",
     "_SCALAR_INTERCHANGE_ISOS",
     "load_demand",
     "load_demand_meta",
@@ -192,10 +194,11 @@ class TestDemandLoaderRegistry(unittest.TestCase):
         from market_sim.data.eia_loader import DEMAND_LOADERS
 
         self.assertTrue(set(DEMAND_LOADERS) <= set(SUPPORTED_ISOS))
-        # The six ISOs with a dedicated per-BA demand source today.
+        # The seven ISOs with a dedicated per-BA demand source today (SPP
+        # registered 2026-09-06, lane SPP-20).
         self.assertEqual(
             set(DEMAND_LOADERS),
-            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"},
+            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"},
         )
 
     def test_entries_are_callable(self):

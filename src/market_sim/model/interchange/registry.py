@@ -33,10 +33,11 @@ _logger = logging.getLogger(__name__)
 # pre-split monolith executed for that ISO (steps 1-3; every config gate and
 # ISO check lives inside the step functions, so behaviour is byte-identical).
 # The shared generic seam step self-gates on INTERFACE_NEIGHBORS membership
-# (CAISO/MISO/PJM today), so entries for ISOs without a seam registry are
-# no-ops by construction. NO generic fallback: an ISO absent here runs no
-# pre-overlay injections at all (rule 25 — per-ISO steps never collapse into
-# a tuned generic default; ERCOT's interchange rides in its demand series).
+# (CAISO/MISO/PJM/SPP today) AND on ``config.reference_price_interface``, so
+# entries for ISOs without a seam registry are no-ops by construction. NO
+# generic fallback: an ISO absent here runs no pre-overlay injections at all
+# (rule 25 — per-ISO steps never collapse into a tuned generic default;
+# ERCOT's interchange rides in its demand series).
 INTERCHANGE_INJECTIONS: dict[str, tuple] = {
     "CAISO": (apply_caiso_seam_injections,),
     "ERCOT": (apply_reference_price_seam_injections,),
@@ -50,6 +51,12 @@ INTERCHANGE_INJECTIONS: dict[str, tuple] = {
         apply_nyiso_firm_import_injections,
     ),
     "PJM": (apply_reference_price_seam_injections,),
+    # SPP (registered 2026-09-06, lane SPP-20; owner rulings P2/P3): the
+    # generic seam step alone. It self-gates on ``reference_price_interface``,
+    # which is DEFAULT-OFF for SPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched),
+    # so the first keeper serves the measured EIA-930 schedule instead and
+    # this entry is a byte-identical no-op until SPP-51 arms the priced seams.
+    "SPP": (apply_reference_price_seam_injections,),
 }
 
 

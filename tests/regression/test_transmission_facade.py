@@ -354,6 +354,9 @@ class TestInjectionRegistry:
                 nyiso.apply_nyiso_firm_import_injections,
             ),
             "PJM": (import_nodes.apply_reference_price_seam_injections,),
+            # SPP (registered 2026-09-06, lane SPP-20): the self-gating generic
+            # seam step alone — default-off for SPP, so a byte-identical no-op.
+            "SPP": (import_nodes.apply_reference_price_seam_injections,),
         }
         assert registry.INTERCHANGE_INJECTIONS == expected
 
@@ -370,5 +373,6 @@ class TestInjectionRegistry:
             "NEISO",
             "NYISO",
             "PJM",
+            "SPP",
         }
         assert INTERCHANGE_INJECTIONS.get("DEFAULT") is None

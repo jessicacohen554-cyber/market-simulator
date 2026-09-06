@@ -69,6 +69,11 @@ DATATYPE = "transmission-expansion"
 #   PJM   2024 — 2024 transfer-limits/flows postings.
 #   NYISO 2025 — measured 2024-25 DAM Central-East mean (post-Segment-A/B).
 #   NEISO 2023 — RSP interface limits + ICR tie-benefit cap (pre-NECEC).
+#   SPP   2025 — the N<->S link is a Tier-3 placeholder read off the EIA-860
+#     2025 Early Release (iso_configs._spp_config), and the committed-project
+#     source scripts/lib/transmission_expansion/spp.py names is the 2025 ITP
+#     Assessment Report — the two vintages coincide. If SPP-13 lands a rated
+#     interface from a different vintage, this row follows its source.
 TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "ERCOT": 2024,
     "CAISO": 2023,
@@ -76,6 +81,7 @@ TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "PJM": 2024,
     "NYISO": 2025,
     "NEISO": 2023,
+    "SPP": 2025,
 }
 
 # The target kinds the forward channel can express at this topology's grain.

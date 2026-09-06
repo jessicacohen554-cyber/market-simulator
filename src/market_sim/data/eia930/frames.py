@@ -60,6 +60,10 @@ _ISO_TO_HOURLY_BA: dict[str, str] = {
     "NYISO": "NYIS",
     "MISO": "MISO",
     "NEISO": "ISNE",
+    # SPP = EIA-930 balancing authority SWPP (``SWPP hourly.parquet``,
+    # 2015-07 -> 2026-05, America/Chicago; docs/multi-iso/spp-data-audit.md
+    # §3.1). Registered 2026-09-06 by lane SPP-20.
+    "SPP": "SWPP",
 }
 
 # ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.

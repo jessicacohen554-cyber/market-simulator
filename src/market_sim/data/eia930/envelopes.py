@@ -1512,13 +1512,44 @@ def neiso_net_interchange(year: int) -> np.ndarray | None:
     return _eia930_net_interchange("ISNE", year)
 
 
+def spp_net_interchange(year: int) -> np.ndarray | None:
+    """Return SPP's hourly net export (MW, export-positive), or ``None``.
+
+    Sources the measured net interchange from the EIA-930 ``SWPP hourly``
+    extract's ``Total interchange`` column (see :func:`_eia930_net_interchange`
+    for the sign convention — EIA's positive = net EXPORT, verified on the
+    SWPP file itself: ``corr(Net generation − Demand, Total interchange)`` =
+    0.836 on 2024, docs/multi-iso/spp-data-audit.md §3.3). SPP is a small net
+    exporter in every training year (annual means +447 / +189 / +270 MW for
+    2023 / 2024 / 2025; largest counterparties AECI export, MISO two-sided,
+    ERCOT DC ties clipping at +835 MW — FINDING-spp-11 §4). Served as the
+    first keeper's seam representation by owner ruling P2 (SPP desk r#2,
+    2026-09-06: "served schedule first, priced seam default-off"); the priced
+    ``NeighborInterface`` blocks are the forward mechanism SPP-51 validates.
+
+    Two known EIA-930 artifacts ride in with the series and are NOT screened
+    here (owner ruling P9 routed the low-side demand screen to the audit
+    track; ``Total interchange ≡ Net generation − Demand`` in this file, so a
+    demand dropout prints as an impossible export): 2025-06-21 05:00 =
+    +33,305 MW and 2024-07-19 00:00 = +11,071 MW against a p99 of ~+2,000 MW
+    (audit §3.4). SPP-40's PRECOMMIT names both hours. Mirrors
+    :func:`neiso_net_interchange`'s shape; ``None`` when the year is
+    unavailable.
+    """
+    return _eia930_net_interchange("SWPP", year)
+
+
 # ISOs whose measured net interchange is served as a system-wide scalar
 # schedule (spread across zones by load share), as opposed to PJM's per-border-
 # zone tie attribution or ERCOT's demand-aligned DC-tie series. CAISO is
 # deliberately excluded — its imports are supply modeled by the WECC_import
 # node, not netted into demand (playbook §8.1); ERCOT is islanded and carries
-# its DC ties through its own EIA-930 extract.
+# its DC ties through its own EIA-930 extract. SPP joined 2026-09-06 (lane
+# SPP-20, owner ruling P2) on the NYISO/NEISO precedent — the one difference
+# being sign: SPP is a net EXPORTER, so the served series RAISES what its
+# internal fleet must generate in most hours.
 _SCALAR_INTERCHANGE_ISOS: dict[str, Callable[[int], np.ndarray | None]] = {
     "NYISO": nyiso_net_interchange,
     "NEISO": neiso_net_interchange,
+    "SPP": spp_net_interchange,
 }

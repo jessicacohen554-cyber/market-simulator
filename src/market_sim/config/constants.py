@@ -654,6 +654,13 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
     "MISO": 3.0492,
     "NYISO": 3.9046,
     "NEISO": 4.0763,
+    # SPP is DELIBERATELY ABSENT at registration (2026-09-06, lane SPP-20):
+    # every value above is the output of scripts/data/derive_gas_offer_margin_
+    # anchor.py run on that ISO's OWN keeper gas series (rule 23 — a frozen
+    # derive, never hand-entered), and SPP has no gas-series recipe or keeper
+    # yet. The flag this anchors is default-off, so the registered hard-fail
+    # ("ISOs absent from this registry hard-fail when the flag is armed") is
+    # exactly the right behaviour until SPP-40 derives it on the first keeper.
 }
 
 # MEASURED min-load block-average burn ratio of the ST_GAS plants that
@@ -2238,6 +2245,13 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     # pattern = the 3-year mean of the EIA-923-derived per-year CF below;
     # spring/fall dips are the staggered refueling cadence across the fleet.
     "MISO": [0.93, 0.92, 0.85, 0.82, 0.78, 0.91, 0.98, 0.98, 0.93, 0.79, 0.84, 0.89],
+    # SPP = the two-unit fleet Wolf Creek 1 (EIA 210, KS, 1,296.3 MW) + Cooper
+    # (EIA 8036, NE, 801.0 MW), 2,097.3 MW nameplate. Forecast-fallback
+    # seasonal pattern = the 3-year mean of the EIA-923-derived per-year CF
+    # below (the MISO construction); the April and October troughs are the two
+    # units' staggered ~18-month refueling cadence (Wolf Creek spring 2024 /
+    # fall 2025, Cooper fall 2024). Registered 2026-09-06 (SPP-20).
+    "SPP": [1.00, 1.00, 0.98, 0.79, 0.93, 1.00, 1.00, 0.96, 0.98, 0.66, 0.89, 1.00],
 }
 
 # Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
@@ -2427,6 +2441,30 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2023: [1.00, 0.94, 0.87, 0.83, 0.76, 0.93, 1.00, 0.96, 0.90, 0.68, 0.75, 0.75],
         2024: [0.78, 0.91, 0.80, 0.81, 0.83, 0.96, 1.00, 0.99, 0.97, 0.85, 0.90, 0.93],
         2025: [1.00, 0.92, 0.89, 0.82, 0.75, 0.84, 0.95, 0.98, 0.91, 0.85, 0.86, 1.00],
+    },
+    # SPP = Wolf Creek 1 (EIA 210, KS) + Cooper (EIA 8036, NE), the only two
+    # reactors in the footprint (docs/multi-iso/spp-data-audit.md §5 row 11;
+    # NRC licence rows in data/raw/nuclear-license-status/spp.csv). Monthly
+    # EIA-923 net generation / (fleet pmax x hours in month), clipped at 1.0
+    # (ERCOT convention). Derived at REGISTRATION (2026-09-06, lane SPP-20) by
+    # the frozen script — the initial derivation from its source, never a
+    # re-derivation on a residual (rule 23). The clip binds harder here than
+    # for the six earlier fleets: the two units' EIA-923 output runs at or
+    # above the model fleet pmax in most months (annual 17.23 / 15.30 / 16.19
+    # TWh for 2023/24/25, row 11), so the flat-1.00 stretches are the cap, and
+    # the cost of the cap vs measured energy is SPP-31's to quantify in
+    # calibration_reference.json. The dips are the two units' staggered
+    # ~18-month refueling cadence: Wolf Creek April-May 2024 and October-
+    # November 2025, Cooper August-October 2024; 2023 carries no full-month
+    # outage of either unit at this grain. The 2025 EIA-923 vintage is PARTIAL
+    # (361 SWPP plant-rows vs 1,031 in 2024, row 11) and is re-derived when
+    # the final file lands.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos SPP.
+    "SPP": {
+        2023: [1.00, 0.99, 1.00, 0.97, 1.00, 1.00, 1.00, 1.00, 1.00, 0.96, 1.00, 1.00],
+        2024: [1.00, 1.00, 0.95, 0.41, 0.80, 1.00, 1.00, 0.88, 0.95, 0.61, 0.98, 1.00],
+        2025: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.42, 0.70, 1.00],
     },
 }
 
@@ -2710,6 +2748,42 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
         "low": {"near": 0.029732, "long": 0.008055},
         "mid": {"near": 0.054816, "long": 0.014850},
         "high": {"near": 0.082546, "long": 0.022363},
+    },
+    # SPP -- 2025 ITP Assessment Report v1.0, Figure 2.1 "Coincident Peak Load
+    # by Model Year" (printed p. 43), curated as data/raw/load-forecast/spp/
+    # spp.csv by SPP-12 (edition "2025 ITP", vintage 2025). Registered
+    # 2026-09-06 by lane SPP-20. THREE DEPARTURES FROM THE TABLE'S CONVENTION,
+    # each a property of what SPP publishes and each disclosed rather than
+    # smoothed (rule 14 [R-ACCURATE]):
+    #   1. PEAK BASIS, not energy. SPP publishes no standalone LTLF and no
+    #      energy series — its forward load view lives inside the ITP cycle
+    #      as four Base Reliability coincident-peak study years (2026 61.7 /
+    #      2029 66.5 / 2034 69.8 / 2044 76.4 GW). The energy-basis rule above
+    #      therefore cannot be honoured for SPP; this row is a PEAK CAGR, and
+    #      the G-L1 divergence it would normally report against is the thing
+    #      that is missing. Label: DERIVATION from four published rows, not a
+    #      published figure (data/raw/load-forecast/spp/SOURCES.md says the
+    #      same of the ~1.2 %/yr 2026->2044 headline).
+    #   2. PIECEWISE-LINEAR INTERPOLATION between the four study years, the
+    #      rule scripts/lib/load_forecast/spp.py DECLARES (interpolated peak
+    #      2031 = 66.5 + (69.8 - 66.5) x 2/5 = 67.82 GW). Then the table's own
+    #      era rule: near = CAGR 2026 -> 2031 = (67.82/61.7)^(1/5) - 1 =
+    #      0.019095; long = CAGR 2031 -> 2044 (the edition horizon, < 2050) =
+    #      (76.4/67.82)^(1/13) - 1 = 0.009206.
+    #   3. low = high = mid. SPP publishes ONE case and no prior curated
+    #      vintage exists to re-centre a ratio band on, so no band is
+    #      invented (rule 25 — no ISO's band is borrowed). The report's
+    #      RESILIENCY peaks (Figs. 2.48/2.49, pp. 82-83; +5.09 % summer /
+    #      +3.7 % winter over the prior five-year ITP average) are a different
+    #      published case and are deliberately not mixed in as a "high".
+    # The four values are a CHART VECTOR READ whose year<->value pairing is
+    # inferred (SOURCES.md, "The chart-read caveat"); replace on tabulated ITP
+    # model data. Vintage offset (base year 2026 vs weather_year 2024) is the
+    # same routed SCN-DESK item as every other row.
+    "SPP": {
+        "low": {"near": 0.019095, "long": 0.009206},
+        "mid": {"near": 0.019095, "long": 0.009206},
+        "high": {"near": 0.019095, "long": 0.009206},
     },
 }
 
@@ -3094,6 +3168,13 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
         "high": {2026: 1154.0, 2030: 27067.0, 2046: 45154.0},
     },
     "NEISO": {},
+    # SPP (registered 2026-09-06, lane SPP-20): {} => 0 MW, the NEISO
+    # precedent and the memo §2.2 rule verbatim — the 2025 ITP publishes no
+    # data-centre / large-load DECOMPOSITION of its peak series (only the
+    # four Base Reliability totals in DEMAND_GROWTH_RATES["SPP"]), so nothing
+    # is isolated and nothing is invented. Lands on intake of an SPP
+    # large-load forecast component (routed to the capx director with card P8).
+    "SPP": {},
 }
 
 # Per-ISO override of the data-center block's zonal allocation, {iso: {zone:
@@ -3449,6 +3530,13 @@ ELECTRIFICATION_LAYERS: dict[str, dict[str, dict[str, dict[int, float]]]] = {
             },
         },
     },
+    # SPP (registered 2026-09-06, lane SPP-20): both layers {} — the honest
+    # no-op. The 2025 ITP publishes no heating-electrification or EV component
+    # (peak totals only, data/raw/load-forecast/spp/SOURCES.md), so there is
+    # no adoption anchor to curate and no citable 8760 to arm; the
+    # flat-scalar status quo persists for SPP until a source lands (the PJM /
+    # CAISO / MISO posture above).
+    "SPP": {"heat_pump": {}, "ev": {}},
 }
 
 # Balance-point (base) temperature for the heat_pump layer's heating-degree
@@ -3999,6 +4087,19 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     "MISO": {"wind": 0.34, "solar": 0.22},
     "NYISO": {"wind": 0.26, "solar": 0.1955},
     "NEISO": {"wind": 0.30, "solar": 0.15},
+    # SPP (registered 2026-09-06, lane SPP-20): Tier 3, DERIVED from two
+    # published measurements rather than hand-approximated — EIA-930 SWPP net
+    # generation by fuel for 2024 (docs/multi-iso/spp-data-audit.md §3.2:
+    # wind 109.758 TWh, solar 1.200 TWh, spike hour excluded) over the mean of
+    # the MMU's YE-2023 and YE-2024 nameplate (SOM 2025 Fig. 2-12: wind
+    # 33,725 / 34,808 MW -> 34,266.5; solar 484 / 986 MW -> 735) x 8,784 h:
+    #   wind  = 109,758,000 / (34,266.5 x 8,784) = 0.3646 -> 0.36
+    #   solar =   1,200,000 / (   735.0 x 8,784) = 0.1859 -> 0.19
+    # Backcasts use measured profiles and never read this; it is the
+    # forecast-mode normalization target. needs-citation in the table's
+    # sense: verify against EIA-923 SWPP totals before quoting a forecast
+    # (SPP-31 builds calibration_reference.json).
+    "SPP": {"wind": 0.36, "solar": 0.19},
 }
 
 # Installed renewable nameplate capacity (MW) by ISO and technology.
@@ -4048,6 +4149,19 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     "MISO": {"wind": 32000.0, "solar": 7000.0},
     "NYISO": {"wind": 2400.0, "solar": 1500.0},
     "NEISO": {"wind": 1400.0, "solar": 2700.0},
+    # SPP (registered 2026-09-06, lane SPP-20): MEASURED by the FFR-4D CAISO
+    # construction — EIA-860 2025 Early Release per-technology schedules
+    # (eia860_wind_operable / eia860_solar_operable, Status OP), BA code
+    # SWPP, the SAME object data.renewables._eia860_monthly_capacity resolves
+    # for a backcast year-end, so the forecast base year continues from where
+    # the last measured year ends:
+    #   wind  = 35,463.4 MW -> 35460 (nearest 10)
+    #   solar =  1,441.8 MW ->  1440
+    # Closure against SPP's OWN ledger: MMU SOM 2025 Fig. 2-12 nameplate
+    # wind 34,808 (YE-2024) / 35,934 (YE-2025), solar 986 / 2,114 — the ER
+    # vintage sits between the two year-ends, as it should
+    # (docs/multi-iso/spp-data-audit.md §2.3).
+    "SPP": {"wind": 35460.0, "solar": 1440.0},
 }
 
 # CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
@@ -4892,6 +5006,17 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # folds into NG: OTH (NaN, not zero, for a true NG: BAT read) -- immaterial
     # to the wind/solar renewables check this pool exists for.
     "MISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # SPP (BA "SWPP"): hourly extract spans 2015-07-01..2026-05-21, 8,760 /
+    # 8,784 / 8,760 rows for 2023 / 2024 / 2025 with no calendar gap
+    # (docs/multi-iso/spp-data-audit.md §3.1). The three training years were
+    # verified END-TO-END at registration (2026-09-06, lane SPP-20): load_demand
+    # ("SPP", y) resolves a clean zonal 8760 (the 2023-06-12 21:00 unit-slip
+    # hour repaired by _screen_demand_spikes, §3.4) and load_renewable_profiles
+    # resolves wind + solar for all three with no fallback. 2019-2021 are
+    # present in the extract but have NOT been run through the coverage
+    # protocol (docs/weather-pool-coverage-2026-07.md) and are not listed;
+    # 2022 and H1-2026 are quarantined for every ISO (rule 22).
+    "SPP": (2023, 2024, 2025),
 }
 
 
@@ -4984,6 +5109,10 @@ STATMODE_PROBE_RUNS: dict[str, str] = {
     "NYISO": "2026-07-03-nyiso-statmode-d-7",
     "NEISO": "2026-07-03-neiso-statmode-d-7",
     "MISO": "2026-07-03-miso-statmode-d-7",
+    # SPP is DELIBERATELY ABSENT (registered 2026-09-06, lane SPP-20): a row
+    # here is a committed D-7 statistical-mode probe run id, and SPP has no
+    # registered run of any kind yet. structural_prior iterates this dict,
+    # so the prior simply has no SPP leg until a probe exists (SPP-40+).
 }
 
 # ISOs where the model prices carbon (CAISO: CA cap-and-trade; NYISO/NEISO:
@@ -5171,6 +5300,7 @@ VOLUNTARY_BASELINE_ISO_WEIGHT: dict[str, float | None] = {
     "MISO": None,  # needs-intake
     "NYISO": None,  # needs-intake
     "NEISO": None,  # needs-intake
+    "SPP": None,  # needs-intake — same EIA-861 gap (registered 2026-09-06, SPP-20)
 }
 
 # f_commit(path, y): the share of the DC block's energy under a PUBLISHED

@@ -537,6 +537,23 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 770.0,
         "high": 1_280.0,
     },
+    # SPP (registered 2026-09-06, lane SPP-20): the SAME documented EIA-860
+    # construction as the PJM/MISO/NYISO/NEISO rows and the FFR-4D CAISO
+    # re-derivation, on the same EIA-860 2025 Early Release, BA code SWPP:
+    #   mid  = operable Status="OP" nameplate               =   450.5 ->   450
+    #   high = mid + proposed Status in {U, V, TS} (+67.0)  =   517.5 ->   520
+    #   low  = mid x 0.75                                   =   337.9 ->   340
+    # Cross-check against SPP's OWN ledger: the MMU counts 14 market-registered
+    # storage resources / 728 MW at YE-2025 INCLUDING six pumped-storage units
+    # (SOM 2025 §2.7, PDF p. 70; batteries alone 422 MW, Fig. 2-12) — EIA-860's
+    # 450.5 MW battery schedule sits between the YE-2024 (142 MW) and YE-2025
+    # (422 MW) market counts plus unregistered sites, as the vintage implies
+    # (docs/multi-iso/spp-data-audit.md §2.3). Zero DOF; rule 13-admissible.
+    "SPP": {
+        "low": 340.0,
+        "mid": 450.0,
+        "high": 520.0,
+    },
 }
 
 # ISOs whose BACKCAST resolves its storage base fleet AS OF THE SOLVE YEAR from
@@ -577,6 +594,11 @@ STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
     "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
     "MISO": 62_000.0,  # ~50% of ~124 GW coincident peak. Source: MISO OMS Survey / Planning Resource Auction 2024
+    # SPP: ~50% of the 56,184 MW all-time coincident peak (2023-08-21; SPP
+    # Fast Facts, updated Sept 2026 — docs/multi-iso/spp-data-audit.md §2.3),
+    # the same half-of-peak convention as every row above. Registered
+    # 2026-09-06 by lane SPP-20.
+    "SPP": 28_000.0,
 }
 
 # Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
@@ -588,6 +610,14 @@ STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
     "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
     "MISO": 4_000.0,  # very large storage queue but slow interconnection (PJM-like). Source: MISO Generator Interconnection Queue 2024
+    # SPP: MEASURED-ANCHORED, not an estimate. Demonstrated peak annual battery
+    # COD 2021-2025 = 0.422 GW (EIA-860 2025 ER, BA SWPP, `Operating Year` by
+    # technology; docs/multi-iso/spp-data-audit.md §5 row 12), so 500 MW is
+    # the smallest 0.5 GW step at or above it — the QUEUE_CAP_GW convention
+    # ("modestly above demonstrated peak annual COD"). Context, not a
+    # ceiling: the battery-storage queue grew +6 GW to 31 GW in 2025 (SOM 2025
+    # §2.5, PDF pp. 54-55, row 12b). Registered 2026-09-06 by lane SPP-20.
+    "SPP": 500.0,
 }
 
 # Cap on the share of one year's storage build budget that any single
@@ -1785,6 +1815,18 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
         # (× days) instead of the single annual demand_curve when the gate is on.
         seasonal_rbdc=MISO_SEASONAL_RBDC,
     ),
+    # SPP is DELIBERATELY ABSENT (registered 2026-09-06, lane SPP-20; plan
+    # docs/multi-iso/spp-addition-plan-2026-09.md §2.3). SPP has no
+    # centralized capacity market: resource adequacy is a bilateral
+    # load-responsible-entity OBLIGATION to hold Accredited Capacity against
+    # the Planning Criteria Base PRM (v5.0A §4, PLANNING_RESERVE_MARGIN_BY_ISO
+    # ["SPP"]), with deficiency payments rather than an auction clearing
+    # price. The energy-only fallback (DEFAULT_MARKET_DESIGN, capacity_market=
+    # False) is therefore SPP's actual market reality, not a placeholder:
+    # storage / VRE entry earn no capacity payment there exactly as in ERCOT.
+    # Every capacity-market-only registry in this module (demand curves,
+    # vintages, ICAP/UCAP translations, locality areas) is likewise absent for
+    # SPP by the same reasoning; the exclusion list is FINDING-spp-20 §4.
 }
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
@@ -2416,6 +2458,26 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # explicit expression so both published MW values stay traceable (rule 5).
     "NEISO": 30_050.0 / 26_648.0
     - 1.0,  # Net ICR / 50-50 peak - 1 = 0.1277 (ARA 3, CCP 2026/27)
+    # SPP (registered 2026-09-06, lane SPP-20; owner ruling r#3 on card P10's
+    # PRM correction): the LIVE SPP East BAA Summer Base PRM, 16 %.
+    # Source: SPP Planning Criteria v5.0A §4 "Planning Reserve Margin",
+    # printed p. 10 (data/raw/spp-planning/SPP_Planning_Criteria_v5.0A.pdf,
+    # transcribed in that directory's README §1): East 16 % Summer 2026-2028,
+    # rising to 17 % from Summer 2029; Winter 36 % (2026/27-2028/29) -> 38 %
+    # (2029/30). SPP sets SEPARATE Base PRMs per BAA — the West BAA (19 %
+    # Summer 2027 / 40 % Winter) is the WEIS/Western area and NOT the RTO
+    # footprint this model represents, so the East value is the one that
+    # applies. This constant is consumed only by the forecast-lane adequacy
+    # floor / build backstop, so the live vintage is the right one; the
+    # PY2023-2025 value was 15 % (Planning Criteria Rev 4.1A §4 p. 9, "The
+    # Planning Reserve Margin shall be fifteen percent (15%)", audit §5 row
+    # 1), recorded here as history. The 2029 step to 17 % and the winter leg
+    # are NOT encoded — this registry carries one summer scalar per ISO and
+    # no winter leg for any ISO; SPP-55 / the capx director own any seasonal
+    # extension. Counting basis: Accredited Capacity of wind/solar/storage
+    # plus demonstrated net capability of conventional resources (the
+    # criteria's own LOLE construction).
+    "SPP": 0.16,
 }
 
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
@@ -3543,6 +3605,19 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     # PY 2025/26 PRA Summer cleared External Resources (ZRC = SAC MW, already
     # the requirement side's UCAP-equivalent basis); see the citation block.
     "MISO": 3_505.9,
+    # SPP (registered 2026-09-06, lane SPP-20): 0.0 — the ``.get(iso, 0.0)``
+    # fallback made EXPLICIT rather than left implicit. No published SPP
+    # resource-adequacy accreditation of firm external ties has been
+    # transcribed into the tree (SPP-12 swept the Planning Criteria, ASOMs
+    # and Protocols and landed none; the MMU's seam figures in SOM 2025 §2.8
+    # are tie RATINGS — ">6,000 MW SPP<->MISO", ">5,000 MW AECI", "720 MW
+    # ERCOT DC" — not RA-counted firm capacity, so entering them here would
+    # count deliverability LIMITS as supply, the CAISO-entry discipline this
+    # block already refuses). The demand-response row the MMU does publish
+    # (793 / 970 / 1,016 MW, Fig. 2-12) is a different operand
+    # (ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO) and is routed to the
+    # forecast lane. A cited value replaces this zero on intake.
+    "SPP": 0.0,
 }
 
 # Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
@@ -4398,6 +4473,14 @@ AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
 # (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
 # artifacts). The runner gate keys
 # off this set so the per-plant path unlocks per ISO as its artifact lands.
+# SPP is DELIBERATELY ABSENT at registration (2026-09-06, lane SPP-20): its
+# ``thermal_tranches_SPP.csv`` / ``bin_assignments_SPP.csv`` artifacts are
+# SPP-30's frozen derives and do not exist yet, and membership here without
+# the artifact would send the runner down the per-plant path to a missing
+# file. SPP-30 adds "SPP" in the PR that lands the artifact (the same
+# per-ISO unlock every other member took); until then SPP takes the legacy
+# equal-width path, which its first solve does not use anyway (plan §4: no
+# solve before SPP-30/31/32 land — gate G4).
 CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
     {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
 )
@@ -4839,6 +4922,24 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         2040: 0.20,
         2045: 0.20,
     },
+    # SPP (registered 2026-09-06, lane SPP-20; owner ruling P1 block, r#2):
+    # ALL-ZERO on the ERCOT precedent, with the REAL row ROUTED to the
+    # forecast lane (docs/multi-iso/spp-data-audit.md §5 row 13). Why zero is
+    # honest for the backcast: pipeline.backcast_config sets rps_enabled=False,
+    # so no backcast builds an RPS row and SPP's first keeper is unaffected.
+    # Why it is ARGUABLE for the forecast, stated rather than buried: the
+    # footprint's statutes are mostly voluntary or repealed — KS mandate
+    # REPEALED to a voluntary 20 %-of-peak goal (House Sub. for SB 91, 2015,
+    # effective 2016-01-01); OK / ND / SD voluntary goals; NE none (public
+    # power); TX 5,880 MW goal long met; AR / LA none; MN / IA / MT shares
+    # immaterial (75 / 539 / 168 MW) — but TWO are real renewable-tier
+    # mandates on IOUs: MO 15 % by 2021 (Prop C, RSMo §393.1030) and NM's
+    # Energy Transition Act 2019 (SB 489: 50 % renewable by 2030, 80 % by
+    # 2040 for IOUs; SPS is an NM IOU). A load-weighted SPP-wide blend of
+    # those two is a cited derivation the capx director charters with card
+    # P8 (SPP-60), never a value W2 invents. No STATE_RPS_ACP row follows,
+    # exactly as ERCOT has none.
+    "SPP": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},
 }
 
 # RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
@@ -5194,6 +5295,19 @@ QUEUE_CAP_GW: dict[str, float] = {
     # forward-ceiling ESTIMATE above demonstrated throughput, driver = MA/RI/CT
     # OSW pipeline bursts. LABELLED ESTIMATE -- see the handoff follow-up.
     "NEISO": 4,
+    # SPP (registered 2026-09-06, lane SPP-20): MEASURED. Demonstrated peak
+    # annual all-technology COD in the EIA-860 2025 ER, BA SWPP, by `Operating
+    # Year`: 4.125 GW (2016) over 2015-2025; 3.907 GW (2025) over 2021-2025
+    # (series 3.533 / 3.237 / 2.091 / 1.150 / 3.907 GW for 2021-2025). 4.5
+    # GW/yr is the smallest 0.5 GW step at or above the eleven-year peak —
+    # this table's own convention, "modestly above demonstrated peak annual
+    # COD"; the five-year window would give 4.0, and the longer window is
+    # taken because SPP's 2016-2017 wind build (4.1 / 3.8 GW) is a
+    # demonstrated throughput, not an outlier. Context, not a ceiling: the
+    # end-2025 GI queue is ~149 GW (SOM 2025 §2.5, PDF pp. 54-55), ~35 GW of
+    # it executed and on schedule (docs/multi-iso/spp-data-audit.md §5 rows
+    # 12/12b). CITED.
+    "SPP": 4.5,
 }
 
 # Per-technology annual interconnection queue caps (GW/yr) by ISO.
@@ -5290,6 +5404,28 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "nuclear": 0.5,
         "geothermal": 0.0,
         "offshore_wind": 2.0,  # MA/RI BOEM lease areas
+    },
+    # SPP (registered 2026-09-06, lane SPP-20): each cap is the smallest
+    # 0.5 GW step at or above the demonstrated peak annual COD of that
+    # technology in the EIA-860 2025 ER, BA SWPP (`Operating Year`), the
+    # ERCOT RC-DERIVE convention, on the PRIMARY 2021-2025 window
+    # (docs/multi-iso/spp-data-audit.md §5 row 12: wind 3.416 / solar 0.563 /
+    # gas_ct 1.019 / gas_cc 0.000 / storage 0.422 GW). Where the five-year
+    # window records ZERO COD the 2015-2025 window is used instead and said so
+    # — a 0.0 cap would assert the technology can NEVER be built, which the
+    # longer record contradicts.
+    "SPP": {
+        "wind": 3.5,  # 2021-2025 peak 3.416 GW (2015-2025: 3.886)
+        "solar": 1.0,  # 2021-2025 peak 0.563 GW
+        "gas_cc": 1.0,  # 2021-2025 = 0.000 -> 2015-2025 window, peak 0.600 GW
+        "gas_ct": 1.5,  # 2021-2025 peak 1.019 GW
+        # Nuclear: no demonstrated COD in either window (true of every ISO in
+        # this table); 0.5 is the smallest non-zero step the table uses for a
+        # technology with no throughput record — a forward-ceiling ESTIMATE,
+        # LABELLED as such, never a measured throughput.
+        "nuclear": 0.5,
+        "geothermal": 0.0,  # no demonstrated COD and no cited EGS resource
+        "offshore_wind": 0.0,  # landlocked footprint
     },
 }
 # Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not

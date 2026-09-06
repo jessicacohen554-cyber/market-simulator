@@ -1642,6 +1642,134 @@ def _neiso_config() -> ISOConfig:
     )
 
 
+def _spp_config() -> ISOConfig:
+    """Build the Southwest Power Pool (SPP) topology configuration.
+
+    **Two zones**, drawn along the North–South seam the SPP MMU itself names
+    as the footprint's structural price divide (owner ruling P1, SPP desk
+    sitting r#2, 2026-09-06 — "2 zones now; two ranked levers";
+    ``docs/handoffs/spp-desk-ledger-2026-09.md`` §2):
+
+    - **SPP-North** — ND, SD, NE, MN, MT, IA, KS, MO plus the 19.5 MW of
+      Colorado solar: the coal / nuclear / wind tier (both nuclear units,
+      Wolf Creek KS and Cooper NE, sit here).
+    - **SPP-South** — OK, TX (Panhandle + east Texas), NM, AR, LA: the
+      gas-heavy tier (the gas-CC fleet concentrates in OK/TX). Wyoming is
+      NOT in the footprint — no EIA-860 plant carries balancing authority
+      ``SWPP`` there (``docs/multi-iso/spp-data-audit.md`` §2.4).
+
+    Fleet partition: the FIPS state map ``zone_assignment._SPP_STATE_ZONES``
+    (the seam runs along the KS/OK and MO/AR state lines, so no state
+    straddles it on the plant side). Load partition: the EIA-930 sub-BA
+    grouping North = {EDE, INDN, KACY, KCPL, LES, MPS, NPPD, OPPD, SECI,
+    SPRM, WAUE, WR}, South = {CSWS, GRDA, OKGE, SPS, WFEC} (audit §5 row 5).
+    ``EDE`` (Liberty / Empire District, 1.9 % of system energy) is the one
+    sub-BA that genuinely straddles — it serves MO, KS, OK and AR — and is
+    placed NORTH because its service territory is centred on Joplin,
+    Missouri (a North state under the plant-side map), so its fleet and its
+    load stay on the same side of the seam; moving it South would shift the
+    split by 1.9 points and put a Missouri-centred sub-BA's load in the zone
+    whose fleet holds no Missouri plant.
+
+    Load shares are the static fallback used only when the per-zone hourly
+    sub-BA demand shapes are absent (SPP-32 curates them); the values are the
+    measured 2023-2025 energy shares of the two sub-BA groups computed from
+    ``data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv``
+    (landed by SPP-11; 17 sub-BAs, 26,297 hours, a complete partition of the
+    BA demand to 0.9995-0.9999): North 447.675 TWh / South 425.770 TWh over
+    the three years = 0.5125 / 0.4875 (per year 0.5149 / 0.5129 / 0.5099).
+    Independent cross-check from a DIFFERENT source: the SPP MMU State of the
+    Market 2025 Fig. 2-8 participant roll-up gives North 50.2 % / South
+    49.6 % of 2025 energy (audit §5 row 6) — within one point, so the two
+    attributions agree.
+
+    Congestion structure. The single N↔S ``TransferLink`` is the only
+    structure beyond copperplate. Its TTC is a **Tier-3 PLACEHOLDER, NOT a
+    rated interface** (rule 14 ``[R-ACCURATE]``; owner ruling P11): no
+    document in the tree carries an SPP North↔South transfer capability —
+    the 2025 ITP Assessment Report is a project portfolio with no rated
+    interface (FINDING-spp-12 §6), SPP OASIS is host-blocked, and the two
+    candidate documents (ITP Manual v3.3, 2022 20-Year Assessment) answered
+    HTTP 503 on 2026-09-06 (FINDING-spp-20). The MMU's ">6,000 MW SPP↔MISO
+    AC interties" is a SEAM rating, not the internal corridor, and is
+    deliberately not borrowed. The placeholder is the North zone's own
+    EIA-860 2025 ER summer capability (48,711.8 MW; audit §2.4 state table:
+    KS 19,970.8 + NE 11,440.1 + MO 7,895.9 + ND 4,548.4 + SD 4,152.4 + IA
+    486.0 + MT 125.0 + MN 73.7 + CO 19.5) — an UPPER BOUND on what the
+    corridor could ever be asked to carry, so it cannot bind: the two zones
+    price identically until SPP-13 lands a rated capability and lever SPP-53
+    reconciles it. This is the MISO precedent for "no posted bilateral TTC"
+    (``_miso_config``'s ``_placeholder_ttc``) and it is never tuned to a
+    price residual. Consequence stated at the gate (rule 1 ``[R-STRUCT]``):
+    the first SPP solve is a two-zone copperplate on price, so SPP-40's P7
+    STOP gate ("link binds in the measured direction/season") cannot be met
+    until the rated capability lands — FINDING-spp-20 opens it as a
+    root-cause item. The link is symmetric by construction, which is right:
+    the MMU records the North−South hub spread REVERSING sign for six (DA)
+    to eight (RT) months of 2025 (FINDING-spp-12 §4).
+
+    What two zones cannot represent, said here rather than found in a
+    residual (audit §6.1): seven of the ten highest-valued 2025 constraints
+    are INSIDE Oklahoma (Osage–Webber Tap, Russett–South Brown), and three
+    of the four 2024 Frequently Constrained Areas (OKC, Tulsa, Lubbock) sit
+    inside SPP-South. The SPS / Texas-Panhandle pocket (lever SPP-54) and an
+    Oklahoma pocket (lever SPP-57) are pre-declared structural levers,
+    ranked by the per-flowgate binding-share evidence when the binding-
+    constraint archive lands (FINDING-spp-12 §5). The published hubs are
+    node clusters (North ≈ Nebraska, South ≈ central Oklahoma), so the hub
+    spread is a two-point spread, not a zonal price — SPP-40's PRECOMMIT
+    states this limitation (audit §6.1).
+
+    No import node (G7): SPP's seams are represented by the served measured
+    EIA-930 ``Total interchange`` schedule (``_SCALAR_INTERCHANGE_ISOS``,
+    owner ruling P2, positive = net export) plus three DEFAULT-OFF
+    ``NeighborInterface`` blocks (MISO / AECI / ERCOT — rulings P2/P3) in
+    ``model/interchange/spec.INTERFACE_NEIGHBORS["SPP"]``; the ERCOT DC ties
+    (~1.5 % of peak) are a neighbour, not an import node.
+
+    Market design: energy-only with a bilateral resource-adequacy obligation
+    (no centralized capacity market), so SPP is deliberately ABSENT from
+    ``capacity_market.MARKET_DESIGN`` and takes ``DEFAULT_MARKET_DESIGN``.
+    Reserve co-optimisation (P4) and any scarcity / VRL overlay (P5) are
+    deferred to SPP-56 and SPP-55, so there are no
+    ``default_scenario_overrides``.
+    """
+    zones = [
+        # Static fallback = measured 2023-2025 sub-BA energy shares (EIA-930
+        # sub-BA demand, SPP-11 intake; sum = 1.0000). See the docstring.
+        Zone(name="SPP-North", iso="SPP", load_share=0.5125),
+        Zone(name="SPP-South", iso="SPP", load_share=0.4875),
+    ]
+    # Tier-3 PLACEHOLDER (see docstring): the North zone's EIA-860 2025 ER
+    # summer capability, 48,711.8 MW -> an upper bound that cannot bind.
+    # Vintage 2025 (EIA-860 2025 Early Release), the same vintage
+    # TRANSMISSION_BASE_STATIC_VINTAGE["SPP"] records. Never tune to a residual.
+    _placeholder_ttc = 48700.0
+    links = [
+        TransferLink(
+            from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_placeholder_ttc
+        ),
+    ]
+    # voll = $2,000/MWh (owner ruling P10, desk sitting r#3, 2026-09-06):
+    # the FERC Order 831 hard ceiling for COST-VERIFIED incremental energy
+    # offers. Both published numbers, so neither is mistaken for the other:
+    # SPP's posted Safety-Net Energy Offer Cap is $1,000/MWh (Integrated
+    # Marketplace Protocols 119 §8.2.5, printed pp. 356-357, transcribed in
+    # data/raw/spp-planning/README.md §2); offers above it must follow the
+    # Mitigated Offer Development Guidelines (p. 344) and are capped at
+    # $2,000/MWh (SPP Tariff Attachment AF §3.2; SPP MMU Order 831
+    # Verification FAQ v4.0 Q25 p. 5 — audit §5 row 2). SPP's own scarcity
+    # ceiling is the VRL stack ($250/MW spinning reserve, $50,000/MW global
+    # power balance; Protocols Exhibit 4-1 pp. 71-72), which SPP-55 designs
+    # against — deliberately not seeded here (P5).
+    return ISOConfig(
+        name="SPP",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+    )
+
+
 _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
@@ -1649,12 +1777,17 @@ _ISO_BUILDERS = {
     "PJM": _pjm_config,
     "NYISO": _nyiso_config,
     "NEISO": _neiso_config,
+    # SPP registered 2026-09-06 by lane SPP-20 (owner rulings P1-P11,
+    # docs/handoffs/spp-desk-ledger-2026-09.md §2). Appended LAST so the
+    # registration order of the six earlier ISOs — and every artifact that
+    # iterates SUPPORTED_ISOS in order — is unchanged.
+    "SPP": _spp_config,
 }
 
 # Canonical tuple of every registered ISO, in builder-registration order
-# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO). Single source of truth for the
-# six-ISO set — scripts should import this instead of hardcoding the tuple so a
-# new ISO registered in ``_ISO_BUILDERS`` propagates everywhere automatically.
+# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP). Single source of truth for the
+# seven-ISO set — scripts should import this instead of hardcoding the tuple so
+# a new ISO registered in ``_ISO_BUILDERS`` propagates everywhere automatically.
 SUPPORTED_ISOS: tuple[str, ...] = tuple(_ISO_BUILDERS)
 
 

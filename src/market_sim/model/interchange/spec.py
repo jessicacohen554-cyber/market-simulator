@@ -1131,6 +1131,106 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hr_by_year={2023: 22.50, 2024: 21.20, 2025: 11.80},
         ),
     ],
+    # ------------------------------------------------------------------
+    # SPP — registered 2026-09-06 by lane SPP-20 under owner rulings P2 (MISO
+    # + AECI seams) and P3 (ERCOT DC ties), SPP desk sitting r#2
+    # (docs/handoffs/spp-desk-ledger-2026-09.md §2). ALL THREE ARE
+    # DEFAULT-OFF: ``reference_price_interface`` is off for SPP
+    # (REFERENCE_PRICE_DEFAULT_ISOS is untouched), so the first keeper serves
+    # the measured EIA-930 ``Total interchange`` schedule
+    # (eia930.envelopes.spp_net_interchange) and these blocks are a
+    # byte-identical no-op until SPP-51 validates them with
+    # ``--priced-interchange``. Rule 25 [R-ISO-SCOPE]: nothing here is
+    # copied from another ISO's fitted values — each ``marginal_heat_rate``
+    # is this registry's own documented construction (the neighbour's
+    # realized annual-mean RT LMP / Henry Hub, pooled over 2023-2025) read
+    # off the COMMITTED anchor files named per block, with
+    # HENRY_HUB_TRAJECTORIES' historical 2.54 / 2.19 / 3.52 $/MMBtu; the
+    # per-year ``hr_by_year`` re-anchor is SPP-33's derive
+    # (scripts/data/derive_neighbor_hr_by_year.py --iso SPP) and is left
+    # ``None`` here so a value is never entered twice by two lanes.
+    # ``hurdle`` = 2.0 $/MWh on every seam: the SPP<->MISO seam is ONE
+    # physical object and MISO's side already registers it at 2.0, so a
+    # different dead-band from this side would make the same seam clear on
+    # two rules (rule 19); AECI and ERCOT take the same Tier-3 dead-band
+    # pending SPP-51 (never fitted). ``load_shape_exponent`` = 1.0, the
+    # parameter-free mean-preserving default. Border zones follow the P1
+    # state map: MISO-West borders the Dakotas/MN/IA (North) and MISO-South
+    # borders AR/LA (South); AECI is the Missouri co-op island (North); the
+    # ERCOT DC ties (Oklaunion 220 + Monticello 600 MW) land in Oklahoma /
+    # east Texas (South).
+    "SPP": [
+        NeighborInterface(
+            # Measured anchors: actual_lmp_hourly_zonal_MISO.parquet rows
+            # MISO-West + MISO-South (the two MISO zones physically adjacent
+            # to SPP), annual-mean RT 27.90 / 26.28 / 37.82 $/MWh for
+            # 2023 / 2024 / 2025 -> implied HR 10.98 / 12.00 / 10.74, pooled
+            # mean 11.24. Interface limit: SPP MMU State of the Market 2025
+            # §2.8 (PDF p. 70), ">6,000 MW of AC interties" — the published
+            # floor of the range; the measured hourly envelope on the EIA-930
+            # SWPP->MISO DIBA series is -5,377 .. +3,469 MW (FINDING-spp-11
+            # §4.1), inside it. gas_basis = MISO's own delivered basis, the
+            # NYISO-seam precedent for referencing a neighbour's registry value.
+            name="MISO",
+            ba_code="MISO",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["MISO"],
+            marginal_heat_rate=11.24,
+            hurdle=2.0,
+            interface_limit_mw=6000.0,
+            border_zones=("SPP-North", "SPP-South"),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # AECI (Associated Electric Cooperative, MO) — the LARGEST net
+            # measured seam (+2.36 / +2.63 / +1.98 TWh/yr SPP export,
+            # 72-81 % export hours; FINDING-spp-11 §4.1) yet it publishes NO
+            # LMP and has no EIA-930 hourly extract in the tree. Its price
+            # anchor is therefore a PROXY, declared as such: the SPP system
+            # hub itself (actual_lmp_hourly_SPP.parquet, annual-mean RT
+            # 23.47 / 23.31 / 27.11 -> implied HR 9.24 / 10.64 / 7.70, pooled
+            # 9.19 — the same numbers MISO's own SPP seam carries as
+            # hr_by_year, which is the check that the construction matches);
+            # load shape off SWPP via ``proxy_ba`` (the CAISO SRP/BPAT
+            # precedent). gas_basis = SPP's own (Panhandle Eastern; AECI sits
+            # in the same Southern Star / Panhandle gas region). Interface
+            # limit: SOM 2025 §2.8 (PDF p. 70) ">5,000 MW of AC" interties —
+            # seven times the ERCOT DC ties; measured hourly max 1,492 MW.
+            # SPP-33 derives the measured seam parameters; SPP-51 arms.
+            name="AECI",
+            ba_code="AECI",
+            proxy_ba="SWPP",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["SPP"],
+            marginal_heat_rate=9.19,
+            hurdle=2.0,
+            interface_limit_mw=5000.0,
+            border_zones=("SPP-North",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # ERCOT DC ties (owner ruling P3: "820 MW, border SPP-South"):
+            # Monticello (DC-East, 600 MW) + Oklaunion (DC-North, 220 MW),
+            # the CDR ratings constants.ERCOT_DC_TIE_ZONE_MAP["SWPP"] already
+            # carries from ERCOT's side. Rule 14 reconciliation, stated not
+            # buried: SPP's own SOM 2025 §2.8 prints "720 MW of DC ties" for
+            # SPP<->ERCOT, while the measured EIA-930 SWPP->ERCO series clips
+            # at exactly +835 MW in all three years (FINDING-spp-11 §4.1);
+            # 820 is the tie-rating sum both the ERCOT registry and the
+            # measured clip support, so the MMU's 720 is recorded as the
+            # discrepancy, not adopted. Measured anchor:
+            # actual_lmp_hourly_ERCOT.parquet system RT 48.36 / 26.82 / 32.49
+            # -> implied HR 19.04 / 12.25 / 9.23, pooled 13.51 (2023 carries
+            # ERCOT's scarcity summer, which is why SPP-33's per-year
+            # re-anchor matters more here than on the other two seams).
+            name="ERCOT",
+            ba_code="ERCO",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["ERCOT"],
+            marginal_heat_rate=13.51,
+            hurdle=2.0,
+            interface_limit_mw=820.0,
+            border_zones=("SPP-South",),
+            load_shape_exponent=1.0,
+        ),
+    ],
 }
 
 # MISO per-seam measured BA-to-BA deliverability envelope.

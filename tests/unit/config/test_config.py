@@ -391,10 +391,11 @@ class TestProbabilityBoundsLevers(unittest.TestCase):
                     )
 
     def test_demand_growth_falls_back_for_iso_without_table(self):
-        # All six modeled ISOs now carry a DEMAND_GROWTH_RATES table (FF-1C wired
-        # MISO), so use an ISO absent from the table to exercise the scalar
-        # fallback; a nonexistent path on a tabled ISO takes the same branch.
-        config = ScenarioConfig(iso="SPP", demand_growth_rate=0.02)
+        # All seven modeled ISOs now carry a DEMAND_GROWTH_RATES table (FF-1C
+        # wired MISO; SPP-20 registered SPP on 2026-09-06), so use an ISO absent
+        # from the table (TVA, unregistered) to exercise the scalar fallback; a
+        # nonexistent path on a tabled ISO takes the same branch.
+        config = ScenarioConfig(iso="TVA", demand_growth_rate=0.02)
         self.assertEqual(resolve_demand_growth_rate(config, 2030), 0.02)
         tabled_bad_path = ScenarioConfig(
             iso="MISO", demand_growth_path="nonexistent", demand_growth_rate=0.02
