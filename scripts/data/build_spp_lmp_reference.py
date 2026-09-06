@@ -18,6 +18,45 @@ Source — SPP Marketplace public file browser (``portal.spp.org``, the host
 
     https://portal.spp.org/file-browser-api/download/<fsName>?path=<path>
 
+API FORM, re-discovered from the portal bundle 2026-09-06 (lane SPP-12).
+``portal.spp.org`` is a React SPA; the authoritative definition of the two calls
+is its own bundle, ``/static/js/main.<hash>.js`` (``e2bac944`` on 2026-09-06).
+Re-read that bundle — never a memory of this docstring — if the calls stop
+working. The grammar it encodes is UNCHANGED from the form above:
+
+  * listing  ``GET /file-browser-api/?fsName=<fs>&path=<p>&type=folder``
+    (``URLSearchParams``, so ``/`` arrives percent-encoded; the trailing slash on
+    ``file-browser-api/`` is part of the route — dropping it 404s, and omitting
+    ``type`` 404s). The SPA's first call is ``path=""``; a folder row's own
+    ``path`` field drives navigation.
+  * download ``GET /file-browser-api/download/<fsName>?path=<p>``
+  * ``fsName`` is the page's ``pcValue``, readable at
+    ``GET /api/pageConfig/by-slug/<page-slug>`` — for these two products it
+    equals the slug (``rtbm-lmp-by-location``, ``da-lmp-by-settlement-location``).
+
+What DID change is authorization: both calls now carry an ``X-SPP-UI-Token``
+header (the SPA's ``userCookie``), and as of 2026-09-06 an anonymous caller —
+which is what this script is — gets **no data** from either. Measured that day
+against ``rtbm-lmp-by-location``, ``da-lmp-by-settlement-location``,
+``hourly-load``, ``generation-mix-historical``, ``{da,rtbm}-binding-constraints``,
+``{da,rtbm}-mcp``, ``capacity-of-generation-on-outage`` and ``ver-curtailments``:
+every listing returns HTTP 200 with a literal ``[]`` at every path/type form, and
+every download returns HTTP 404 — from SPP's own Tomcat (``JSESSIONID`` +
+Spring-Security headers), not from an intermediary. The metadata endpoints stay
+public and confirm the request is well-formed: ``/api/pageConfig/by-slug/<slug>``
+returns ``isPublic: true`` for all of them, and an invented ``fsName`` 404s where
+a real one 200s, so the 200-with-``[]`` is authorization, not a bad key.
+``/api/principal`` reports ``unauthenticatedUser: true, uiTokenPresent: false``.
+SPP's own "SPP Public Data Access" guide (Stakeholder Center > User Guides, APIs
+& Integrations > Technical Reference Documents > Public Data) is the reference
+for the Portal and FTP routes to the same products.
+
+The consequence for this script: it cannot fetch until a Marketplace credential
+supplies ``X-SPP-UI-Token`` (or the FTP route is wired). ``--per-hub`` below is
+implemented and unit-tested against a fixture, but has never been run against
+live SPP data. Blocked-URL table and the manual manifest:
+``docs/handoffs/FINDING-spp-12-2026-09-06.md``.
+
   * System hub = simple mean of ``SPPNORTH_HUB`` and ``SPPSOUTH_HUB`` (the two
     SPP trading hubs), the price the MISO-West border sees from SPP.
   * Day-Ahead  (``da``): ``da-lmp-by-settlement-location`` (hourly).
@@ -53,9 +92,29 @@ The raw SPP exports for 2023-24 are NOT committed — like the ERCOT/NYISO DA
 source zips, only the reduced sidecar parquet is the durable record. Re-run
 this script to refresh it.
 
+Two outputs, from the SAME parsed monthly frames and the SAME 8760 calendar:
+
+  * default (system hub) — ``actual_lmp_hourly_SPP.parquet``,
+    ``year``/``hour``/``rt``/``da``, the simple mean of the two hubs. This is the
+    seam input ``derive_neighbor_hr_by_year.py`` reads and it is BYTE-FROZEN:
+    ``--per-hub`` is purely additive and must never move it. Proof that this
+    change does not (pre-change vs post-change parser over a fixture, and the
+    system series equal to the NaN-skipping mean of the two hub series):
+    ``docs/handoffs/FINDING-spp-12-2026-09-06.md`` §3. A permanent guard test
+    belongs with the lane that owns ``tests/`` — SPP-12 does not.
+  * ``--per-hub`` — ``actual_lmp_hourly_zonal_SPP.parquet``,
+    ``year``/``hour``/``zone``/``rt``/``da`` with one row per hub per hour, the
+    per-zone benchmark SPP-31 curates and the P1 topology card's N↔S hub-spread
+    evidence. ``zone`` carries the SPP settlement-location name
+    (``SPPNORTH_HUB`` / ``SPPSOUTH_HUB``) and NOT a model zone name: SPP has no
+    registered topology yet, and inventing one here would pre-empt card P1. The
+    lane that registers SPP re-keys ``zone`` onto model zones.
+
 Usage:
     python scripts/data/build_spp_lmp_reference.py [--years 2023 2024 2025] \
         [--out data/raw/_validation-source/actual_lmp_hourly_SPP.parquet]
+    python scripts/data/build_spp_lmp_reference.py --per-hub \
+        [--out data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet]
 """
 
 from __future__ import annotations
@@ -251,6 +310,18 @@ def _parse_monthly(bytes_by_month: dict[int, bytes], year: int) -> np.ndarray:
     """
     if not bytes_by_month:
         return np.full(_HOURS_PER_YEAR, np.nan)
+    df = _monthly_frame(bytes_by_month)
+    # Simple-mean the two hubs per day, keeping the 24 HE columns.
+    grp = df.groupby("Date")[HE_COLS].mean()
+    return _dense_from_daily(grp, year)
+
+
+def _monthly_frame(bytes_by_month: dict[int, bytes]) -> pd.DataFrame:
+    """Concatenated hub ``LMP`` rows of a year's monthly wide files.
+
+    Shared by the system-hub and per-hub parsers so both see byte-identical
+    input rows; only the aggregation that follows differs.
+    """
     frames = []
     for data in bytes_by_month.values():
         df = pd.read_csv(io.BytesIO(data), skipinitialspace=True)
@@ -259,9 +330,35 @@ def _parse_monthly(bytes_by_month: dict[int, bytes], year: int) -> np.ndarray:
             (df["Price Type"] == "LMP") & (df["Settlement Location Name"].isin(HUBS))
         ]
         frames.append(df)
-    df = pd.concat(frames, ignore_index=True)
-    # Simple-mean the two hubs per day, keeping the 24 HE columns.
-    grp = df.groupby("Date")[HE_COLS].mean()
+    return pd.concat(frames, ignore_index=True)
+
+
+def _parse_monthly_by_hub(
+    bytes_by_month: dict[int, bytes], year: int
+) -> dict[str, np.ndarray]:
+    """``{hub: dense 8760}`` from a year's monthly wide files.
+
+    Identical to :func:`_parse_monthly` except that the per-day mean is taken
+    within one hub instead of across both, so the system-hub series is exactly
+    the (NaN-skipping) mean of these two — which is what the byte-identity test
+    asserts. A hub absent from the source lands as an all-NaN series rather than
+    a missing key, so the emitted frame is rectangular.
+    """
+    if not bytes_by_month:
+        return {hub: np.full(_HOURS_PER_YEAR, np.nan) for hub in HUBS}
+    df = _monthly_frame(bytes_by_month)
+    out: dict[str, np.ndarray] = {}
+    for hub in HUBS:
+        rows = df[df["Settlement Location Name"] == hub]
+        if rows.empty:
+            out[hub] = np.full(_HOURS_PER_YEAR, np.nan)
+            continue
+        out[hub] = _dense_from_daily(rows.groupby("Date")[HE_COLS].mean(), year)
+    return out
+
+
+def _dense_from_daily(grp: pd.DataFrame, year: int) -> np.ndarray:
+    """Map a ``Date`` x ``HE01..HE24`` frame onto the model's non-leap 8760."""
     # SPP's monthly Date format drifts across years ("YYYY/MM/DD" in 2023/2025,
     # "M/D/YYYY" in 2024), so parse Y/M/D by hand rather than a fixed strptime
     # format, and keep only this build year's rows (drop the next-year spillover).
@@ -286,6 +383,11 @@ def _parse_monthly(bytes_by_month: dict[int, bytes], year: int) -> np.ndarray:
 def _fetch_year(fs_name: str, prefix: str, year: int) -> np.ndarray:
     """Dense 8760 system-hub series for one year/market."""
     return _parse_monthly(_monthly_bytes(fs_name, prefix, year), year)
+
+
+def _fetch_year_by_hub(fs_name: str, prefix: str, year: int) -> dict[str, np.ndarray]:
+    """``{hub: dense 8760}`` for one year/market."""
+    return _parse_monthly_by_hub(_monthly_bytes(fs_name, prefix, year), year)
 
 
 # ── assembly ─────────────────────────────────────────────────────────────────
@@ -313,19 +415,70 @@ def build(years) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def build_per_hub(years) -> pd.DataFrame:
+    """Return the per-hub SPP LMP frame for ``years``.
+
+    One row per (year, hour, hub): ``year``/``hour``/``zone``/``rt``/``da`` on the
+    same fixed non-leap 8760 local calendar the system-hub sidecar uses. ``zone``
+    is the SPP settlement-location name, not a model zone (see module docstring).
+    """
+    frames = []
+    for year in years:
+        da = _fetch_year_by_hub(FS_DA, "DA-LMP", year)
+        rt = _fetch_year_by_hub(FS_RT, "RTBM-LMP", year)
+        for hub in HUBS:
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "year": np.int16(year),
+                        "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+                        "zone": hub,
+                        "rt": rt[hub].astype(np.float32),
+                        "da": da[hub].astype(np.float32),
+                    }
+                )
+            )
+            print(
+                f"  SPP {year} {hub}: da ${np.nanmean(da[hub]):.2f} "
+                f"rt ${np.nanmean(rt[hub]):.2f} "
+                f"(da nan {int(np.isnan(da[hub]).sum())}, "
+                f"rt nan {int(np.isnan(rt[hub]).sum())})",
+                flush=True,
+            )
+    return pd.concat(frames, ignore_index=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
     ap.add_argument(
+        "--per-hub",
+        action="store_true",
+        help=(
+            "emit one row per SPP trading hub (year/hour/zone/rt/da) instead of "
+            "the simple-mean system hub; changes the default --out to "
+            "actual_lmp_hourly_zonal_SPP.parquet"
+        ),
+    )
+    ap.add_argument(
         "--out",
         type=Path,
-        default=paths.CALIBRATION_DIR / "actual_lmp_hourly_SPP.parquet",
+        default=None,
+        help="output parquet (default depends on --per-hub)",
     )
     args = ap.parse_args()
-    frame = build(args.years)
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_parquet(args.out, index=False)
-    print(f"wrote {args.out} ({len(frame)} hours, {frame['year'].nunique()} years)")
+    out = args.out
+    if out is None:
+        name = (
+            "actual_lmp_hourly_zonal_SPP.parquet"
+            if args.per_hub
+            else "actual_lmp_hourly_SPP.parquet"
+        )
+        out = paths.CALIBRATION_DIR / name
+    frame = build_per_hub(args.years) if args.per_hub else build(args.years)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_parquet(out, index=False)
+    print(f"wrote {out} ({len(frame)} rows, {frame['year'].nunique()} years)")
 
 
 if __name__ == "__main__":
