@@ -1,0 +1,189 @@
+{
+ "constants": {
+  "added": [
+   "RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO",
+   "VOLUNTARY_BASELINE_ISO_WEIGHT",
+   "VOLUNTARY_BASELINE_SHARE",
+   "VOLUNTARY_COMMITTED_DC_FRACTION",
+   "VOLUNTARY_ELIGIBLE_FUELS_DEFAULT",
+   "VOLUNTARY_NATIONAL_SALES_MWH",
+   "VOLUNTARY_NATIONAL_SHARE_OF_RETAIL_SALES",
+   "VOLUNTARY_WTP_CEILING_USD_PER_MWH"
+  ],
+  "changed": [
+   "CAMPD_BINNING_ISOS",
+   "DATACENTER_ADDITIONS_MW",
+   "DATACENTER_ZONE_SHARE",
+   "DEMAND_GROWTH_RATES",
+   "EIA930_PS_FOLDED_INTO_WAT",
+   "ELECTRIFICATION_LAYERS",
+   "RGGI_MEMBER_STATES_BY_YEAR"
+  ],
+  "note": "267 -> 275 top-level constants compared by value",
+  "removed": []
+ },
+ "demand": {
+  "head": {
+   "2023": {
+    "sha": "4fef8333385da3083e59195e",
+    "shape": [
+     7,
+     8760
+    ]
+   },
+   "2024": {
+    "sha": "f3ea53c4b95df8103747b1cf",
+    "shape": [
+     7,
+     8760
+    ]
+   },
+   "2025": {
+    "sha": "e84db1bd9c430c2a08e0f7ec",
+    "shape": [
+     7,
+     8760
+    ]
+   }
+  },
+  "keeper": {
+   "2023": {
+    "sha": "4fef8333385da3083e59195e",
+    "shape": [
+     7,
+     8760
+    ]
+   },
+   "2024": {
+    "sha": "f3ea53c4b95df8103747b1cf",
+    "shape": [
+     7,
+     8760
+    ]
+   },
+   "2025": {
+    "sha": "e84db1bd9c430c2a08e0f7ec",
+    "shape": [
+     7,
+     8760
+    ]
+   }
+  }
+ },
+ "fleet_arrays": {
+  "head": {
+   "2023": {
+    "availability_sha": "20b6ef20338df9c8dc20f4b4",
+    "emission_rate_sha": "33a3f6b92818f7812e31329c",
+    "heat_rate_sha": "5f00f035d79714724f1e8d10",
+    "mc_base_sha": "67d8b7fd34c01ca7da026447",
+    "min_gen_sha": "b03033f8a485e11c35034ed8",
+    "n_units": 1662,
+    "pmax_sha": "ccf04176e24cbc7e9d6c2697",
+    "pmin_sha": "a7467ea2a6032da11542e6e5",
+    "unit_ids_sha": "3385ecb3221e936d3244dc9c",
+    "vom_sha": "d02476829077b1065789b979"
+   },
+   "2024": {
+    "availability_sha": "eb03490217d5f06e2faa16b4",
+    "emission_rate_sha": "e4fd73b3bbc3d8f3b8e8170f",
+    "heat_rate_sha": "ce9438c4a62ea40ecfbbe61c",
+    "mc_base_sha": "4d9c0f8a5bae658f00676c01",
+    "min_gen_sha": "24d59bcea0ccbb8b4b28f7dd",
+    "n_units": 1656,
+    "pmax_sha": "91b499c5f782255279ce351d",
+    "pmin_sha": "79061e50fdfd2dd906b16817",
+    "unit_ids_sha": "378d400743e147bc7e854d6c",
+    "vom_sha": "7d2a2b49cbbb55a6737b45ec"
+   },
+   "2025": {
+    "availability_sha": "0a5bc894427eca3d1f5d3cdc",
+    "emission_rate_sha": "716bea33a96170ba8af74a43",
+    "heat_rate_sha": "7b52dafae6d1463b47011b42",
+    "mc_base_sha": "8ebc0e325a25f9360be42e35",
+    "min_gen_sha": "b48e8132c98d42a09c9d0367",
+    "n_units": 1661,
+    "pmax_sha": "8f937ac668f969bd417d8c56",
+    "pmin_sha": "ed52bb290fad1f61630154cf",
+    "unit_ids_sha": "8876a812ad0b1ded3218c84c",
+    "vom_sha": "3f646ac8607033b7e7b8ea67"
+   }
+  },
+  "keeper": {
+   "2023": {
+    "availability_sha": "20b6ef20338df9c8dc20f4b4",
+    "emission_rate_sha": "33a3f6b92818f7812e31329c",
+    "heat_rate_sha": "5f00f035d79714724f1e8d10",
+    "mc_base_sha": "67d8b7fd34c01ca7da026447",
+    "min_gen_sha": "b03033f8a485e11c35034ed8",
+    "n_units": 1662,
+    "pmax_sha": "ccf04176e24cbc7e9d6c2697",
+    "pmin_sha": "a7467ea2a6032da11542e6e5",
+    "unit_ids_sha": "3385ecb3221e936d3244dc9c",
+    "vom_sha": "d02476829077b1065789b979"
+   },
+   "2024": {
+    "availability_sha": "eb03490217d5f06e2faa16b4",
+    "emission_rate_sha": "e4fd73b3bbc3d8f3b8e8170f",
+    "heat_rate_sha": "ce9438c4a62ea40ecfbbe61c",
+    "mc_base_sha": "4d9c0f8a5bae658f00676c01",
+    "min_gen_sha": "24d59bcea0ccbb8b4b28f7dd",
+    "n_units": 1656,
+    "pmax_sha": "91b499c5f782255279ce351d",
+    "pmin_sha": "79061e50fdfd2dd906b16817",
+    "unit_ids_sha": "378d400743e147bc7e854d6c",
+    "vom_sha": "7d2a2b49cbbb55a6737b45ec"
+   },
+   "2025": {
+    "availability_sha": "0a5bc894427eca3d1f5d3cdc",
+    "emission_rate_sha": "716bea33a96170ba8af74a43",
+    "heat_rate_sha": "7b52dafae6d1463b47011b42",
+    "mc_base_sha": "8ebc0e325a25f9360be42e35",
+    "min_gen_sha": "b48e8132c98d42a09c9d0367",
+    "n_units": 1661,
+    "pmax_sha": "8f937ac668f969bd417d8c56",
+    "pmin_sha": "ed52bb290fad1f61630154cf",
+    "unit_ids_sha": "8876a812ad0b1ded3218c84c",
+    "vom_sha": "3f646ac8607033b7e7b8ea67"
+   }
+  }
+ },
+ "head_sha": "2485e611f97de999047f068c1b4707d3328e3589",
+ "keeper_sha": "fa23c1f7",
+ "method": "two fleet_only rebuilds per year on the keeper's OWN recipe (bundle caiso252_b1_notrim meta + derived_run_year_inputs), market_sim imported from a sparse worktree at the keeper sha in one arm and from HEAD in the other, differenced by sha256 over the raw bytes of every LP-visible array. Data dir shared by symlink so both arms read identical bytes on disk.",
+ "mismatches": [],
+ "not_covered": "LP CONSTRUCTION and SOLVE, and anything applied after the fleet_only exit (the P1-only conditional offer markup is the CAISO case). Those are closed on the keeper's own committed flags, not by this probe.",
+ "scenarioconfig_defaults": {
+  "existing_fields_changed": [
+   "campd_bins_path",
+   "ccs_retrofit_vom_adder",
+   "control_retrofit_path",
+   "plant_emission_rates_path",
+   "plant_emission_rates_v2_path",
+   "plant_registry_path"
+  ],
+  "fields_added": [
+   "capacity_adequacy_requirement_published_by_iso",
+   "capacity_going_forward_bar_published_by_iso",
+   "capacity_no_default_cap_convention_by_iso",
+   "cc_duct_peaking_row_scoped",
+   "ccs_retrofit_fixed_cost_co2_scaling",
+   "federal_ces_acp_usd_per_mwh",
+   "federal_ces_target_by_year",
+   "miso_gas_marginal_commodity_pricing",
+   "miso_gas_variable_transport",
+   "miso_seam_neighbour_anchored_ladder",
+   "nyiso_ct_peaker_bands_measured",
+   "nyiso_gas_bridge_startup_aware",
+   "unit_outage_extract_basis_share",
+   "voluntary_clean_demand_path",
+   "voluntary_eligible_fuels",
+   "voluntary_wtp_ceiling_usd_per_mwh"
+  ],
+  "fields_removed": [],
+  "note": "794 -> 810 fields compared by value"
+ },
+ "session": "caiso-255",
+ "verdict": "ALL LP INPUTS BIT-IDENTICAL",
+ "what": "G-DRIFT under rule 29(b): every LP INPUT the keeper's recipe builds, measured at the keeper sha and at HEAD, on one shared data tree"
+}
