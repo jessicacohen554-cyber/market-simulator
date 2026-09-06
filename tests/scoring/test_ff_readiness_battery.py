@@ -282,14 +282,22 @@ def test_marker_state_reflects_committed_markers():
     # `keeper_at_declaration` on the NYISO record is the run the marker was
     # declared on (nyiso-189), not the promoted keeper. Assertion moved in the
     # same commit as the marker (docs/calibration-log/nyiso.md, nyiso-193).
-    for iso in ("ERCOT", "NEISO", "PJM"):
+    #
+    # NYISO RE-DECLARED `complete` 2026-09-06 (owner in-session ruling, session
+    # nyiso-209, verbatim 'Ok declare it and run 22') on the keeper lineage that
+    # returned to CALIBRATED by structural repair (nyiso-196, nyiso-202) -- its
+    # FOURTH grant, per the withdrawn block's own `reentry` clause. The
+    # 2026-09-05 withdrawal record is nested WHOLE beneath the new entry
+    # (`complete.NYISO.prior_withdrawal_2026_09_05`), so `withdrawn` holds
+    # CAISO alone again. Assertion moved in the same commit as the marker
+    # (docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md).
+    for iso in ("ERCOT", "NEISO", "NYISO", "PJM"):
         assert B._marker_state(iso)["marker"] == "complete", iso
     assert B._marker_state("MISO")["marker"] == "none"
     assert B._marker_state("CAISO")["marker"] == "withdrawn"
     nyiso = B._marker_state("NYISO")
-    assert nyiso["marker"] == "withdrawn"
-    assert nyiso["keeper"] == "2026-09-05-nyiso-189-steam-identity"
-    assert nyiso["withdrawn"] == "2026-09-05"
+    assert nyiso["keeper"] == "2026-09-06-nyiso-202-startup-aware"
+    assert nyiso["declared"] == "2026-09-06"
 
 
 def test_t1f_verdict_reads_ff2d_hold():
