@@ -344,9 +344,7 @@ class TestHourlyNeighbourOverlay(unittest.TestCase):
             name, _, k = tag.partition("#")
             if name != "PJM":
                 continue
-            np.testing.assert_allclose(
-                mc[row, :], border + overlay[side][int(k) - 1]
-            )
+            np.testing.assert_allclose(mc[row, :], border + overlay[side][int(k) - 1])
             # The point of the mechanism: the row is a live hourly vector.
             self.assertGreater(float(mc[row, :].std()), 1.0)
             moved += 1

@@ -4590,9 +4590,9 @@ def run_year(
             )
         # miso-231: the same fail-closed guard for the HOURLY overlay, for the
         # same reason and at the same point of use.
-        if getattr(
-            config, "miso_seam_neighbour_hourly_ladder", False
-        ) and not getattr(config, "miso_seam_measured_ladder", False):
+        if getattr(config, "miso_seam_neighbour_hourly_ladder", False) and not getattr(
+            config, "miso_seam_measured_ladder", False
+        ):
             raise ValueError(
                 "miso_seam_neighbour_hourly_ladder requires "
                 "miso_seam_measured_ladder: the hourly neighbour-anchored PJM "

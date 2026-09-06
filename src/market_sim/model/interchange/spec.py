@@ -1487,9 +1487,7 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR: dict[
 #: story (rule 13 [R-MEASURED]): the multi-year revealed spread structure a
 #: forecast year regenerates from, the same two-track design the incumbent and
 #: annual neighbour ladders both use.
-MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[
-    str, dict[str, tuple[float, ...]]
-] = {
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[str, dict[str, tuple[float, ...]]] = {
     "PJM": {
         "import": (-15.84, -6.72, -1.88, 1.16, 3.59, 6.23, 9.66, 16.08),
         "export": (
