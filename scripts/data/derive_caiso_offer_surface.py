@@ -428,6 +428,18 @@ def _band_price(seg: pd.DataFrame, lo: float, hi: float) -> pd.Series:
 
 
 def _wquantile(values: np.ndarray, weights: np.ndarray, q: float) -> float:
+    """Capacity-weighted quantile; NaN for an empty sample.
+
+    An empty sample has no quantile, and saying so is the correct answer — the
+    alternative (``np.interp`` raising) conflates "this cell has no data" with
+    "the derive is broken". A NaN here is NOT tolerated on a CONSUMED band:
+    ``main`` hard-fails on that, and only the reported-but-unarmed per-year
+    detail is allowed to carry one (caiso-254 — the three-way partition gives
+    ST_GAS a narrow 6.6 %-of-capacity committed window, which some
+    resource-years simply do not price).
+    """
+    if values.size == 0 or weights.size == 0 or not np.isfinite(weights.sum()):
+        return float("nan")
     order = np.argsort(values)
     v, w = values[order], weights[order]
     cw = np.cumsum(w) - 0.5 * w
@@ -769,6 +781,36 @@ def main(argv: list[str] | None = None) -> int:
     g2["pass"] = bool(g2_pass)
     gates["G2_cut_robustness"] = g2
     print(f"G2 cut+/-0.25 robustness: {'PASS' if g2_pass else 'FAIL'}", flush=True)
+
+    # A consumed band with no sample is not a number the artifact may carry.
+    # Reported-only cells (the unarmed `committed` band, the per-year detail)
+    # may be null; econ_low / econ_high / peak may not.
+    _nan_consumed = {
+        f"{cls}.{b}": static[cls][b]
+        for cls in buckets
+        for b in ("econ_low", "econ_high", "peak")
+        if not np.isfinite(static[cls][b])
+    }
+    if _nan_consumed:
+        raise SystemExit(
+            "REFUSED: consumed band(s) have no sample on the pooled span: "
+            f"{sorted(_nan_consumed)}. A class whose armed bands cannot be "
+            "estimated must not be split out — re-run with --no-st-split and "
+            "report the partition as inestimable rather than writing a null."
+        )
+    _nan_reported = {
+        f"{cls}.{b}.{y}": v
+        for cls in buckets
+        for b, per in per_year_stats[cls].items()
+        for y, v in per.items()
+        if not np.isfinite(v)
+    }
+    if _nan_reported:
+        print(
+            f"per-year REPORTED cells with no sample (unarmed, null in "
+            f"provenance): {sorted(_nan_reported)}",
+            flush=True,
+        )
 
     g3 = {}
     for cls in buckets:
