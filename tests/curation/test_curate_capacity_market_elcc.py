@@ -227,5 +227,152 @@ class TestPjmThermalElccIntake(unittest.TestCase):
         self.assertEqual(len(key), len(key.drop_duplicates()))
 
 
+class TestPjmDeliveryYearVintageTranches(unittest.TestCase):
+    """The capx D75-R delivery-year vintage tranches, reconciled BYTE-FOR-BYTE.
+
+    Each of PJM's per-delivery-year ELCC Class Rating postings is transcribed
+    into ``data/raw/capacity-market/elcc/pjm/pjm.csv`` verbatim
+    (``FINDING-capx-d75-2026-09-06.md`` §6 item 1). This test pins every
+    transcribed cell against the published table, so a typo or a silent edit
+    fails here rather than reaching an accreditation path — the same discipline
+    D67 applied to its requirement rows (rules 13/14/23).
+
+    Read from the RAW csv, on PJM's OWN class labels: the canonical frame maps
+    ``Solar Fixed Panel`` and ``Solar Tracking Panel`` onto one ``solar``
+    bucket, and these vintages carry no installed-MW axis to tell them apart
+    (PJM publishes no pre-reform MW pairing — FINDING §2), so the native label
+    is the only thing that distinguishes the two published solar classes.
+    """
+
+    # Verbatim from the primary postings. Class label -> ELCC class rating, %.
+    _DY_2023_24 = {
+        "Onshore Wind": 15,
+        "Offshore Wind": 40,
+        "Solar Fixed Panel": 38,
+        "Solar Tracking Panel": 54,
+        "4-hr Storage": 83,
+        "6-hr Storage": 98,
+        "8-hr Storage": 100,
+        "10-hr Storage": 100,
+        "Solar Hybrid Open Loop - Storage Component": 82,
+        "Solar Hybrid Closed Loop - Storage Component": 82,
+        "Hydro Intermittent": 42,
+        "Landfill Gas Intermittent": 59,
+        "Hydro with Non-Pumped Storage": 96,
+    }
+    _DY_2024_25_FINAL = {
+        "Onshore Wind": 21,
+        "Offshore Wind": 47,
+        "Solar Fixed Panel": 33,
+        "Solar Tracking Panel": 50,
+        "4-hr Storage": 92,
+        "6-hr Storage": 100,
+        "8-hr Storage": 100,
+        "10-hr Storage": 100,
+        "Solar Hybrid Open Loop - Storage Component": 75,
+        "Solar Hybrid Closed Loop - Storage Component": 68,
+        "Hydro Intermittent": 36,
+        "Landfill Gas Intermittent": 61,
+        "Hydro with Non-Pumped Storage": 95,
+    }
+    _DY_2025_26_3IA = {
+        "Onshore Wind": 38,
+        "Offshore Wind": 62,
+        "Fixed-Tilt Solar": 10,
+        "Tracking Solar": 14,
+        "Landfill Intermittent": 51,
+        "Hydro Intermittent": 37,
+        "4-hr Storage": 55,
+        "6-hr Storage": 65,
+        "8-hr Storage": 68,
+        "10-hr Storage": 77,
+        "Demand Resource": 77,
+        "Nuclear": 95,
+        "Coal": 83,
+        "Gas Combined Cycle": 78,
+        "Gas Combustion Turbine": 63,
+        "Gas Combustion Turbine Dual Fuel": 79,
+        "Diesel Utility": 92,
+        "Steam": 74,
+    }
+    _VINTAGES = {
+        "2023/2024 BRA (final for DY 2023/2024; posted 2021-12-16)": _DY_2023_24,
+        "2024/2025 (Dec 2023 ELCC Report -- FINAL for DY 2024/2025)": (
+            _DY_2024_25_FINAL
+        ),
+        "2025/2026 3IA (final for DY 2025/2026; posted 2025-03-12)": _DY_2025_26_3IA,
+    }
+
+    def _raw_rows(self) -> list[dict]:
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "elcc" / "pjm" / "pjm.csv"
+        with path.open(newline="") as fh:
+            return list(csv.DictReader(fh))
+
+    def test_each_vintage_matches_its_published_table_exactly(self) -> None:
+        rows = self._raw_rows()
+        for vintage, published in self._VINTAGES.items():
+            got = {
+                r["resource_class"]: float(r["elcc_pct"])
+                for r in rows
+                if r["study_vintage"] == vintage
+            }
+            self.assertEqual(
+                got,
+                {k: float(v) for k, v in published.items()},
+                f"{vintage} does not match its published table",
+            )
+
+    def test_vintage_rows_are_class_average_with_no_penetration_axis(self) -> None:
+        # PJM publishes no installed-MW pairing for these vintages (FINDING §2):
+        # the axis stays NULL rather than guessed (rule 13 / never-guess).
+        rows = self._raw_rows()
+        for vintage in self._VINTAGES:
+            grp = [r for r in rows if r["study_vintage"] == vintage]
+            self.assertTrue(grp)
+            for r in grp:
+                self.assertEqual(r["elcc_type"], "class_average")
+                self.assertEqual(r["penetration_pct"].strip(), "")
+                self.assertEqual(r["penetration_unit"].strip(), "")
+
+    def test_every_vintage_row_cites_a_primary_document_and_sha256(self) -> None:
+        rows = self._raw_rows()
+        for vintage in self._VINTAGES:
+            for r in [r for r in rows if r["study_vintage"] == vintage]:
+                self.assertTrue(r["source_doc"].startswith("https://www.pjm.com/"))
+                self.assertIn("sha256", r["source_page"])
+                self.assertTrue(r["source_page"].startswith("p.1"))
+
+    def test_dec2021_2024_25_tranche_is_labelled_superseded(self) -> None:
+        # The Dec-2021 set was FINAL for the 2024/25 BRA as then scheduled; the
+        # auction was delayed and re-executed (FERC ER23-729) and PJM re-ran the
+        # study. The row stays on disk as a published artifact, but its label
+        # must say it is not the operative set (FINDING-capx-d75 §1.1).
+        rows = self._raw_rows()
+        dec2021 = [r for r in rows if "Dec 2021 ELCC Report" in r["study_vintage"]]
+        self.assertTrue(dec2021)
+        for r in dec2021:
+            self.assertIn("SUPERSEDED", r["study_vintage"])
+        # And the superseded set is genuinely a DIFFERENT set of numbers.
+        superseded = {r["resource_class"]: float(r["elcc_pct"]) for r in dec2021}
+        for cls in ("Onshore Wind", "Solar Fixed Panel", "Solar Tracking Panel"):
+            self.assertNotEqual(
+                superseded[cls], float(self._DY_2024_25_FINAL[cls]), cls
+            )
+
+    def test_new_vintages_do_not_join_the_official_final_rrs_tranche(self) -> None:
+        # The registry curves reconcile against the two RRS-paired vintages by
+        # matching "official/final" (tests/unit/data/test_renewable_elcc_curves
+        # .py). These postings publish no installed MW, so their labels must
+        # stay outside that filter or they would silently join that curve.
+        rows = self._raw_rows()
+        for vintage in self._VINTAGES:
+            self.assertNotIn("official/final", vintage)
+            self.assertTrue(any(r["study_vintage"] == vintage for r in rows))
+
+
 if __name__ == "__main__":
     unittest.main()
