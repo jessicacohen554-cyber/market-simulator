@@ -1,0 +1,106 @@
+{
+ "session": "neiso-106",
+ "date": "2026-09-06",
+ "iso": "NEISO",
+ "lp_minutes_at_writing": 0,
+ "incumbent_keeper": "2026-09-06-neiso-105-fossil-offer",
+ "sources": {
+  "pre_cut": "results/calibration/neiso99_joint_B/hourly/system_<y>.parquet",
+  "post_cut": "results/calibration/neiso105_offerlevel/hourly/system_<y>.parquet",
+  "touchpoints_pre": "results/calibration/neiso_tp2021_2020_k99 + neiso_tp2022_k99",
+  "touchpoints_post": "results/calibration/neiso105_touchpoints/hourly/system_<y>.parquet",
+  "actuals": "frontend/data/backcast/bench/NEISO/<y>.json.gz :: bench.avgLMP.rt_lw"
+ },
+ "target_geometric_mean_bias_FIXED": 0.034678,
+ "target_source": "PREREG-neiso104 \u00a73.1, never moved",
+ "target_recomputed_here": 0.034674,
+ "realized_cut_neiso105": 0.06609,
+ "pass_through_full_span": {
+  "geometric_estimator_consistent": 0.7655,
+  "arithmetic_mean_per_year": 0.76441,
+  "log_elasticity": 0.759289,
+  "DECLARED": "geometric_estimator_consistent"
+ },
+ "scalar_sensitivity_to_estimator": {
+  "geometric": 0.954699,
+  "arithmetic": 0.954634,
+  "log": 0.954328
+ },
+ "per_year_pass_through": {
+  "2020": 1.3055,
+  "2021": 0.7061,
+  "2022": 0.4126,
+  "2023": 0.9525,
+  "2024": 0.8138,
+  "2025": 0.5269
+ },
+ "depth_linearity_2025": {
+  "pt_at_cut_0453": 0.5254,
+  "pt_at_cut_06609": 0.5269,
+  "ratio": 1.0029,
+  "note": "the only year solved at two cut depths; pass-through is depth-invariant to 0.29%"
+ },
+ "declared_scalar": 0.9547,
+ "declared_cut_pct": 4.53,
+ "coincidence_note": "numerically equal to neiso-104 \u00a73.3 (0.9547) but derived from the MEASURED full-span response of this mechanism, not from the across-year gas elasticity neiso-104 used",
+ "prediction": {
+  "2020": {
+   "tier": "validation",
+   "pass_through": 1.3055,
+   "bias_k99": 0.13707,
+   "bias_k105": 0.038966,
+   "predicted_price": 26.8954,
+   "predicted_bias": 0.069826,
+   "predicted_c3a": "PASS"
+  },
+  "2021": {
+   "tier": "validation",
+   "pass_through": 0.7061,
+   "bias_k99": 0.090794,
+   "bias_k105": 0.039893,
+   "predicted_price": 50.4406,
+   "predicted_bias": 0.055905,
+   "predicted_c3a": "PASS"
+  },
+  "2022": {
+   "tier": "validation",
+   "pass_through": 0.4126,
+   "bias_k99": -0.006006,
+   "bias_k105": -0.033112,
+   "predicted_price": 88.9091,
+   "predicted_bias": -0.024585,
+   "predicted_c3a": "PASS"
+  },
+  "2023": {
+   "tier": "train",
+   "pass_through": 0.9525,
+   "bias_k99": 0.031314,
+   "bias_k105": -0.03361,
+   "predicted_price": 37.5976,
+   "predicted_bias": -0.013187,
+   "predicted_c3a": "PASS"
+  },
+  "2024": {
+   "tier": "train",
+   "pass_through": 0.8138,
+   "bias_k99": 0.056638,
+   "bias_k105": -0.000193,
+   "predicted_price": 42.4171,
+   "predicted_bias": 0.017685,
+   "predicted_c3a": "PASS"
+  },
+  "2025": {
+   "tier": "train",
+   "pass_through": 0.5269,
+   "bias_k99": 0.016468,
+   "bias_k105": -0.018927,
+   "predicted_price": 69.6827,
+   "predicted_bias": -0.007793,
+   "predicted_c3a": "PASS"
+  }
+ },
+ "predicted_in_sample_geomean_bias": -0.001189,
+ "predicted_in_sample_mae": 0.012888,
+ "incumbent_in_sample_mae": 0.017577,
+ "g_drift": "ALL INERT \u2014 see PREREG \u00a75"
+}
