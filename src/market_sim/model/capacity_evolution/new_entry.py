@@ -691,6 +691,15 @@ def _make_new_generator(
         kwargs["efficiency_bin"] = "h_class"
         kwargs["heat_rate"] = base_hr * ccs["heat_rate_penalty"]
         kwargs["emission_rate_co2"] = base_co2 * (1.0 - config.ccs_capture_rate)
+        # capx D77: same stamp the retrofit screen applies, for the same reason
+        # -- a unit's capture island is a property of the unit, so any consumer
+        # that re-books a measured host rate over ``emission_rate_co2`` books
+        # the capture with it. Inert on this path today (a newly built unit
+        # carries ``plant_code = 0``, so the plant-keyed measured-rate
+        # restoration never matches it), and set anyway so the invariant
+        # "a captured unit declares its capture" holds for every CCS unit in
+        # the fleet rather than only for retrofits.
+        kwargs["ccs_capture_fraction"] = config.ccs_capture_rate
         # The captured-CO2 transport+storage cost is a constant $/MWh, so it
         # folds into VOM; the residual emissions still pay the carbon price.
         kwargs["vom"] = (
