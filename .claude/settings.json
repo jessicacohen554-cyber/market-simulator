@@ -28,6 +28,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__github__push_files",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/ruff-prepush-gate.sh",
+            "timeout": 60
+          }
+        ]
+      }
     ]
   }
 }
