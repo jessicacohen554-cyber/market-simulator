@@ -1231,7 +1231,7 @@ the built-in control), into a throwaway dir, deleted after the diff. OFF arm = t
 | **ERCOT 2025** (one-pass year) | P0 2,879,242,264.7545 → P1 3,085,008,028.5299, **identical to 4 dp on both arms** | 488.449982 TWh both, **Δ = 0 MWh** | **1.07e-12 $/MWh** (mean 29.358576 both) | **0 / 61,320** | max \|Δ\| = 0 on all four | **16 unit-hours in 12 hours, 11 of 2,335 units**; max 895.3 MW (the SOLAR South↔North curtailment swap at price 0); Σ\|hourly Δ\| 3.434 GWh = **0.0007 %** of gen; LMP identical (max \|Δ\| = 0) on every moved row; `diff_warmstart_bundles`: max annual Δ 0.0610 GWh (plant 58005), 0 plants > 0.1 GWh — the memo's §3.3 block to the digit |
 | **ERCOT 2024** (ercot-221 two-pass year; pass 2 seeded from pass 1's P1 basis) | P0 1,715,250,734.6163; P1 pass 1 1,954,553,178.2861; pass 2 2,001,527,131.5248 — **all three identical on both arms** | 462.847626 TWh both, **Δ = 0 MWh** | **3.66e-13 $/MWh** (mean 26.621364 both); reserve_price max \|Δ\| 4.5e-13 | **0 / 61,320** | slack (mean 0.009787 MW) / dump / demand bit-identical | **4 unit-hours in 2 hours, 4 of 2,346 units**; max 13.8 MW; Σ\|hourly Δ\| 0.054 GWh = **0.00001 %**; LMP identical on every moved row; max annual Δ 0.0270 GWh (plant 64383) |
 | **NYISO 2023** (`nyiso_gas_commitment_bridge` + co-opt + ramp; keeper `2026-09-06-nyiso-196-extract-basis`) | P0 2,297,963,033.2595 → P1 2,336,736,799.3758, **identical on both arms** | 148.304611 TWh both, **Δ = 0 MWh** | **2.20e-13 $/MWh** (mean 32.973702 both); reserve_price max \\|Δ\\| 2.8e-14 | **0 / 52,560** | slack / dump / demand bit-identical | **7,290 unit-hours in 2,942 hours, 135 of 731 units**; max 690.0 MW; Σ\\|hourly Δ\\| 45.3 GWh = **0.031 %** of gen (the P-2 promotion evidence's class: ERCOT 0.038–0.112 %); LMP identical on **every** moved unit-hour (max \\|Δ\\| 1.8e-13); `diff_warmstart_bundles`: max annual Δ 2.13 GWh (plant 2693), 2 plants > 1 GWh — a co-opt fleet has more equally-priced pairs to swap between, and it swaps them at identical prices |
-| **CAISO 2023** (screen) | <!-- WC_B_CAISO_ROW --> |
+| **CAISO 2023** (screen; `caiso_ra_mustoffer` default-on route; keeper `2026-09-05-caiso-252-b1-notrim`) | P0 3,688,856,302.7183 → P1 3,935,699,589.1921, **identical on both arms** | 209.207336 TWh both, **Δ = 0 MWh** by unit sum (`diff_warmstart_bundles`' plant grouping reads +0.0156 GWh, its rows without a plant code) | **all seven CA zones bit-identical (0 rows > 1e-9)**; demand-weighted mean 56.6888 both. On the two ZERO-LOAD external import nodes the reported dual differs: **WECC_PNW 1,312 zone-hours (max 88.25, mean +34.4 $/MWh; annual mean 37.34 → 42.49), WECC_DSW 3** — see the reading below | **1,315 / 61,320, all on WECC_PNW / WECC_DSW** | slack / dump / demand / reserve_price bit-identical | **5,783 unit-hours in 2,464 hours, 154 of 1,690 units**; max 233.6 MW; Σ\\|hourly Δ\\| 85.4 GWh = **0.041 %**; LMP identical on every moved unit-hour (max \\|Δ\\| 4.5e-12); max annual Δ 0.0864 GWh (plant 268), 0 plants > 0.1 GWh |
 
 **Speed — the P1 solve, the iterations, the phase lines (seed OFF = pinned branch arm; seed ON arm):**
 
@@ -1243,8 +1243,8 @@ the built-in control), into a throwaway dir, deleted after the diff. OFF arm = t
 | ERCOT 2024 | ON | 241.1 | 250,832 | **225.1** = 132.2 + 92.8 | **83,748 / 69,667** | 70.0 (57.2) | 605.7 | 13.27 GB |
 | NYISO 2023 | OFF | 108.4 | 269,416 | **96.4** | **268,305** | 11.8 (8.6) | 239.1 | 7.90 GB |
 | NYISO 2023 | ON | 113.3 | 269,416 | **67.6** | **108,037** | 14.6 (10.5) | 220.1 | 5.86 GB† |
-| CAISO 2023 | OFF | <!-- WC_B_CAISO_OFF --> |
-| CAISO 2023 | ON | <!-- WC_B_CAISO_ON --> |
+| CAISO 2023 | OFF (re-run alone) | 288.4 | 300,609 | **354.5** | **290,022** | 30.4 (22.8) | 714.7 | 8.61 GB |
+| CAISO 2023 | ON† | 280.2 | 300,609 | **123.1** | **94,098** | 27.5 (18.2) | 468.3 | 9.84 GB |
 
 Reading it. **ERCOT 2025: P1 349.2 → 142.0 s (2.46×), 273,893 → 78,856 iterations (3.47×)** —
 the iteration count is the memo's ON arm exactly (78,856), so the shipped surface and the B-0
@@ -1267,4 +1267,67 @@ arms with identical iteration counts — the run-to-run band, in the seed's favo
 HiGHS's alien-basis repair workspace on top of the cold-P1 rebuild, inside the s3 envelope
 (12.1–13.4 GB) and under the 14 GB cgroup with the 6 GiB swapfile untouched (`swapon` showed 0 B
 used throughout). A-6's `malloc_trim` stays in place (`malloc_trim=yes` on every arm).
+
+† The NYISO arms and the CAISO ON arm ran **concurrently with each other** (and with a
+`regenerate_clean.py` pass), so their seconds and peak-RSS readings carry the §PERF-B host-noise
+caveat and their RSS is not comparable arm-to-arm (NYISO 7.90 vs 5.86 GB is scheduling, not the
+seed); their iteration counts and every neutrality number are exact. The first CAISO OFF arm was
+**OOM-killed by the cgroup** (`Memory cgroup out of memory: Killed process … anon-rss 5.8 GB`)
+while four jobs overlapped, and was re-run alone — rule 12's "at most two, one if ERCOT" stands,
+and a `regenerate_clean.py` pass counts as a job.
+
+**NYISO 2023: P1 96.4 → 67.6 s (1.43×), 268,305 → 108,037 iterations (2.48×).** The
+iteration ratio is ERCOT's; the wall ratio is smaller because on NYISO the seeded P1's
+per-iteration cost is higher (co-opt + ramp rows keep more of the basis alien) and the arms ran
+concurrently. **CAISO 2023: P1 354.5 → 123.1 s (2.88×), 290,022 → 94,098 iterations (3.08×)**
+— CAISO pays a full cold P1 on every year of every calibration run (the RA must-offer route is
+default-on), so this is the largest per-year reach of the three.
+
+**The CAISO reading, stated in full because it is the one gate cell that is not a row of
+zeros.** 1,315 of 61,320 zone-hours report a different P1 dual, up to 88 $/MWh — but **every one
+of them is on WECC_PNW or WECC_DSW**, the external import nodes, which carry **zero demand** (the
+demand-weighted mean price is 56.6888 on both arms to 4 dp) and are not scored; all seven CA zones
+are bit-identical in every hour. The primal is identical (objective to 4 dp, total generation to
+the MWh, slack/dump zero on both) and the LMP at every moved unit-hour is identical, so this is
+the dual-degeneracy case the memo's §4 criterion (3) names — "an equally-optimal clearing dual,
+never a level shift" — on nodes where the balance row's dual is not unique whenever the import
+link / envelope, not the node's own supply, is what clears it. It is the same class as MISO 2025's
+182 zone-hours in the P-2 promotion evidence, larger in count and magnitude because a zero-load
+node's dual is degenerate far more often than a load zone's. What it does NOT reach: the CAISO
+keeper's scored price (CA zones, pure lambda — caiso-137b), served load, dispatch, or any
+determination input. Recorded here so a later reader of a seeded CAISO bundle knows the
+WECC_PNW price series is basis-dependent in ~2 % of hours, exactly as it already was between a
+cold P1 and any other starting basis.
+
+**Check [4] is a fresh-container artifact, not a data gap.** With `data/clean/capacity-deliverability`
+regenerated (`scripts/regenerate_clean.py capacity-deliverability`, ~1 min) the same
+`legitimacy_diagnostics.py --keepers` on the branch tree exits **0** — D-9 overlay quarantine
+PASS, D-6 holdout quarantine PASS, D-2 forced-energy recompute PASS. The "pre-existing NYISO Long
+Island `transfer_security_limit` gap" every wallclock PR since §PERF-B RESUME has reported by
+control is the derived partition being absent in a fresh container (the raw table is on disk
+and the curated one lists NYISO's areas once built); the NYISO and CAISO keeper recipes refuse
+to solve without it for the same reason (`DegradedInputError` / `available areas: []`). Handed to
+the desk: the regression gate's check [4] wants that partition regenerated first, or the
+container recipe should build it.
+
+### 3. Fast tier and the pinning tests
+
+`uv run pytest -n auto -m "not slow and not integration and not fulldata"` on the branch:
+**8,507 passed, 12 failed, 42 skipped, 1 xfailed, 546 subtests passed** in 275 s. **9 of the 12
+fail identically on the merge-base worktree** (`test_mechanism_matrix_shared_ratchet` ×5,
+`test_entry_pipeline_aware_signal` ×2, `test_cache_config_agreement` ×2 — the
+`cc_duct_peaking_row_scoped` absent-shared-ratchet red `check_mechanism_matrix.py --base
+origin/main` also reports on both trees, and the entry-pipeline pair), and the other 3
+(`test_bench_no_circularity`, `test_the_two_halves_see_the_same_field_set`,
+`test_head_is_an_append_only_descendant_of_the_declared_ledger`) **pass on re-run in isolation**
+on the branch — xdist-order sensitive, none in a file this change touches. The touched files'
+own suites: `test_pipeline_solve.py`, `test_xyear_warmstart_default.py` (10 → 23), `test_p1_floor_inplace.py`,
+`test_runner.py`, `test_golden_manifest_provenance.py` — all green.
+
+### 4. Deleted before merge (rule 29 `[R-SCREEN]` (c))
+
+The four seed arms (`ercot-2025-on`, `ercot-2024-on`, `nyiso-2023-{off,on}`, `caiso-2023-{off,on}`)
+lived in the session scratch dir and were deleted after the diffs; the `wc-b-{before,after}` golden
+**bundles** (gitignored) were deleted after the byte gate; only the two hashes-only manifests are
+committed. Every number this section cites is in this section.
 
