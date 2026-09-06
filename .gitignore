@@ -1230,3 +1230,11 @@ data/raw/miso-regional-balance/_daily/
 # first miss beside the source and rebuilt automatically whenever a workbook's
 # bytes change. Disposable, machine-local, never committed.
 data/raw/fleet-egrid/*.parquet
+
+# eGRID/EIA-860 derived-mapping memos (wall-clock item A-4,
+# src/market_sim/data/disk_memo.py). Content-addressed derivatives of the
+# tracked workbook plus the EIA-860 vintage parquet —
+# <xlsx-stem>.<sha256[:16]>.<namespace>.json — written on first miss beside the
+# anchor source and rebuilt automatically whenever either source's bytes
+# change. Disposable, machine-local, never committed.
+data/raw/fleet-egrid/*.json

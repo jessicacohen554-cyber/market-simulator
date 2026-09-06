@@ -16,7 +16,12 @@ import logging
 import pandas as pd
 import pytest
 
-from market_sim.data.egrid_sheets import _mirror_path, read_egrid_sheet
+from market_sim.data.egrid_sheets import (
+    _SKIPROWS,
+    _mirror_path,
+    _workbook_digest,
+    read_egrid_sheet,
+)
 
 # The three (sheet, usecols) pairs the solve path actually reads, from
 # zone_assignment._plnt23 and fleet.eia860._egrid_boundary_hr_repairs_for.
@@ -196,3 +201,30 @@ def test_unwritable_mirror_directory_still_returns_the_frame(workbook, monkeypat
     assert not _mirror_path(workbook, sheet, usecols).exists()
     # No stray temp files left behind by the failed write.
     assert not list(workbook.parent.glob("*.tmp"))
+
+
+def test_digest_is_byte_compatible_with_the_a2_implementation(workbook):
+    """The shared digest must reproduce A-2's inline one, character for character.
+
+    Wall-clock item A-4 extracted the hashing primitive into
+    :mod:`market_sim.data.disk_memo` so the sheet mirror and the mapping memos
+    hash identically instead of twice. The extraction is only free if it leaves
+    the mirror *file names* untouched — otherwise every machine silently
+    re-parses the 21 MB workbook once more and A-2's measured win is spent
+    again. The frozen A-2 body below is the oracle.
+    """
+    import hashlib
+
+    for sheet, usecols in SOLVE_PATH_READS:
+        # Rebuild A-2's exact parameter tuple: (sheet, str(_SKIPROWS), *usecols).
+        expected = hashlib.sha256()
+        with workbook.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1 << 20), b""):
+                expected.update(chunk)
+        for part in (sheet, str(_SKIPROWS), *usecols):
+            expected.update(f"{len(part)}:{part}".encode())
+        assert _workbook_digest(workbook, sheet, usecols) == (expected.hexdigest()[:16])
+        # ...and the name the mirror is stored under is that digest.
+        assert _mirror_path(workbook, sheet, usecols).name == (
+            f"{workbook.stem}.{expected.hexdigest()[:16]}.{sheet}.parquet"
+        )
