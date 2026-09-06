@@ -50,7 +50,9 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = REPO / "results/calibration/caiso252_b1_notrim"
+BUNDLE = (
+    REPO / "results/calibration/caiso257_ctonly"
+)  # re-pointed caiso-260 (caiso-252 pruned, rule 15)
 DEFAULT_OUT = REPO / "results/calibration/_caiso255_gdrift_input_identity.json"
 YEARS = (2023, 2024, 2025)
 T = 8760
