@@ -1,0 +1,307 @@
+{
+ "prereg": "PREREG-nyiso209-gas-bridge-params-reproduce.md",
+ "lp_spent": 0,
+ "shipped_stdout": "  (dropping 1 mixed-class plant code(s), unattributable at CAMPD facility level: [2500])\nwrote /tmp/claude-0/-home-user-market-simulator/06b262e6-db6c-5bbe-b5d9-8a1692a35a31/scratchpad/nyiso209/campd_gas_commitment_params_NYISO.csv (2 rows)\nplant_class  n_units  capacity_mw  min_load_frac  min_load_frac_p25  min_load_frac_p75  n_runs  run_hours_p25  run_hours_p50  run_hours_p75  run_hours_p25_capwtd  run_hours_p50_capwtd  run_hours_p75_capwtd\n CC_REGULAR       35     7162.485       0.523132           0.513514           0.676630    4808            9.0           17.0           44.0                  11.0                  21.0                 133.0\n     ST_GAS       43     7605.365       0.239362           0.210158           0.290667   10976            2.0            3.0            6.0                   3.0                  13.0                  89.0\nwrote /tmp/claude-0/-home-user-market-simulator/06b262e6-db6c-5bbe-b5d9-8a1692a35a31/scratchpad/nyiso209/campd_gas_commitment_params_NYISO_units.csv (78 unit rows)\n",
+ "M1_live_values": {
+  "CC_REGULAR.min_load_frac": {
+   "committed": 0.5231316725978647,
+   "head": 0.5231316725978647,
+   "delta": 0.0,
+   "exact_1e-9": true,
+   "live_value": 0.523,
+   "head_at_live_seam": 0.523,
+   "live_seam_holds": true
+  },
+  "CC_REGULAR.run_hours_p50_capwtd": {
+   "committed": 21.0,
+   "head": 21.0,
+   "delta": 0.0,
+   "exact_1e-9": true,
+   "live_value": 21.0,
+   "head_at_live_seam": 21.0,
+   "live_seam_holds": true
+  },
+  "ST_GAS.min_load_frac": {
+   "committed": 0.2393617021276596,
+   "head": 0.2393617021276596,
+   "delta": 0.0,
+   "exact_1e-9": true,
+   "live_value": 0.239,
+   "head_at_live_seam": 0.239,
+   "live_seam_holds": true
+  },
+  "ST_GAS.run_hours_p50_capwtd": {
+   "committed": 13.0,
+   "head": 13.0,
+   "delta": 0.0,
+   "exact_1e-9": true,
+   "live_value": 13.0,
+   "head_at_live_seam": 13.0,
+   "live_seam_holds": true
+  }
+ },
+ "M1a_all_exact": true,
+ "M1b_all_live_seam": true,
+ "M2_other_columns": {
+  "CC_REGULAR.n_units": {
+   "committed": 35.0,
+   "head": 35.0,
+   "equal": true
+  },
+  "CC_REGULAR.n_plants": {
+   "committed": 19.0,
+   "head": 19.0,
+   "equal": true
+  },
+  "CC_REGULAR.capacity_mw": {
+   "committed": 7162.485000000001,
+   "head": 7162.485000000001,
+   "equal": true
+  },
+  "CC_REGULAR.min_load_frac": {
+   "committed": 0.5231316725978647,
+   "head": 0.5231316725978647,
+   "equal": true
+  },
+  "CC_REGULAR.min_load_frac_p25": {
+   "committed": 0.5135135135135135,
+   "head": 0.5135135135135135,
+   "equal": true
+  },
+  "CC_REGULAR.min_load_frac_p75": {
+   "committed": 0.6766304347826086,
+   "head": 0.6766304347826086,
+   "equal": true
+  },
+  "CC_REGULAR.online_frac": {
+   "committed": 0.4895626955161626,
+   "head": 0.4895626955161626,
+   "equal": true
+  },
+  "CC_REGULAR.n_runs": {
+   "committed": 4808.0,
+   "head": 4808.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p10": {
+   "committed": 7.0,
+   "head": 7.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p10_capwtd": {
+   "committed": 8.0,
+   "head": 8.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p25": {
+   "committed": 9.0,
+   "head": 9.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p25_capwtd": {
+   "committed": 11.0,
+   "head": 11.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p50": {
+   "committed": 17.0,
+   "head": 17.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p50_capwtd": {
+   "committed": 21.0,
+   "head": 21.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p75": {
+   "committed": 44.0,
+   "head": 44.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p75_capwtd": {
+   "committed": 133.0,
+   "head": 133.0,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p90": {
+   "committed": 208.30000000000015,
+   "head": 208.30000000000015,
+   "equal": true
+  },
+  "CC_REGULAR.run_hours_p90_capwtd": {
+   "committed": 488.0,
+   "head": 488.0,
+   "equal": true
+  },
+  "ST_GAS.n_units": {
+   "committed": 43.0,
+   "head": 43.0,
+   "equal": true
+  },
+  "ST_GAS.n_plants": {
+   "committed": 10.0,
+   "head": 10.0,
+   "equal": true
+  },
+  "ST_GAS.capacity_mw": {
+   "committed": 7605.365000000005,
+   "head": 7605.365000000005,
+   "equal": true
+  },
+  "ST_GAS.min_load_frac": {
+   "committed": 0.2393617021276596,
+   "head": 0.2393617021276596,
+   "equal": true
+  },
+  "ST_GAS.min_load_frac_p25": {
+   "committed": 0.2101576182136602,
+   "head": 0.2101576182136602,
+   "equal": true
+  },
+  "ST_GAS.min_load_frac_p75": {
+   "committed": 0.2906666666666667,
+   "head": 0.2906666666666667,
+   "equal": true
+  },
+  "ST_GAS.online_frac": {
+   "committed": 0.2109759590901375,
+   "head": 0.2109759590901375,
+   "equal": true
+  },
+  "ST_GAS.n_runs": {
+   "committed": 10976.0,
+   "head": 10976.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p10": {
+   "committed": 1.0,
+   "head": 1.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p10_capwtd": {
+   "committed": 2.0,
+   "head": 2.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p25": {
+   "committed": 2.0,
+   "head": 2.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p25_capwtd": {
+   "committed": 3.0,
+   "head": 3.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p50": {
+   "committed": 3.0,
+   "head": 3.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p50_capwtd": {
+   "committed": 13.0,
+   "head": 13.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p75": {
+   "committed": 6.0,
+   "head": 6.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p75_capwtd": {
+   "committed": 89.0,
+   "head": 89.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p90": {
+   "committed": 13.0,
+   "head": 13.0,
+   "equal": true
+  },
+  "ST_GAS.run_hours_p90_capwtd": {
+   "committed": 329.0,
+   "head": 329.0,
+   "equal": true
+  }
+ },
+ "M2_n_unequal": 0,
+ "M2_source_prose_identical": {
+  "CC_REGULAR": true,
+  "ST_GAS": true
+ },
+ "M3_roster": {
+  "head_n_target_plants": 32,
+  "head_by_class": {
+   "CC_REGULAR": 22,
+   "ST_GAS": 10
+  },
+  "head_ambiguous_codes": [
+   2500
+  ],
+  "committed_unit_plants": {
+   "CC_REGULAR": 19,
+   "ST_GAS": 10
+  },
+  "committed_plant_absent_from_head_roster": [],
+  "committed_plant_reclassed_at_head": [],
+  "head_roster_plant_with_no_committed_units": [
+   {
+    "plant_code": 7784,
+    "head_class": "CC_REGULAR",
+    "has_head_unit_rows": false
+   },
+   {
+    "plant_code": 54808,
+    "head_class": "CC_REGULAR",
+    "has_head_unit_rows": false
+   },
+   {
+    "plant_code": 57664,
+    "head_class": "CC_REGULAR",
+    "has_head_unit_rows": false
+   }
+  ]
+ },
+ "M4_units": {
+  "committed_n_units": 78,
+  "head_n_units": 78,
+  "key_set_identical": true,
+  "only_committed": [],
+  "only_head": [],
+  "n_common": 78,
+  "n_common_stat_diffs": 0,
+  "common_stat_diffs": []
+ },
+ "ct_stdout": "wrote /tmp/claude-0/-home-user-market-simulator/06b262e6-db6c-5bbe-b5d9-8a1692a35a31/scratchpad/nyiso209/campd_ct_commitment_params_NYISO.csv (1 rows)\nplant_class  n_units  capacity_mw  min_load_frac  min_load_frac_p25  min_load_frac_p75  n_runs  run_hours_p25  run_hours_p50  run_hours_p75  run_hours_p25_capwtd  run_hours_p50_capwtd  run_hours_p75_capwtd\n  CT_PEAKER       80       2454.0       0.238095           0.203125           0.465116   34024            2.0            4.0            7.0                   2.0                   4.0                   8.0\n",
+ "M5_ct_control": {
+  "min_load_frac": {
+   "committed": 0.238095238095238,
+   "head": 0.238095238095238,
+   "exact_1e-9": true,
+   "live_value": 0.238,
+   "live_seam_holds": true
+  },
+  "run_hours_p25_capwtd": {
+   "committed": 2.0,
+   "head": 2.0,
+   "exact_1e-9": true,
+   "live_value": 2.0
+  },
+  "n_units": {
+   "committed": 80.0,
+   "head": 80.0,
+   "exact_1e-9": true,
+   "live_value": 80
+  },
+  "n_runs": {
+   "committed": 34024.0,
+   "head": 34024.0,
+   "exact_1e-9": true,
+   "live_value": 34024
+  },
+  "n_columns_unequal": 0
+ },
+ "P3_ct_reproduces": true,
+ "P1_full_reproduction": true,
+ "VERDICT": "R \u2014 REPRODUCES"
+}
