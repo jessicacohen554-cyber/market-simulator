@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     zonal_gas_basis: { cell: "K" },
     gas_hub_basis_overlay: { cell: "." },
     nyiso_iroquois_winter_spread: { cell: "." },
+    gas_marginal_commodity_pricing: { cell: "." },
     winter_citygate_daily: { cell: "R", ev: "pjm-153 (results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md §4; probe scripts/probes/pjm153_queue_screens.py; machine record results/calibration/_pjm153_queue_screens.json) — REFUTED ex ante, no solve spent; pjm-139 W1 (the calendar-day scope bound)" },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },

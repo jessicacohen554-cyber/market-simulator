@@ -277,3 +277,157 @@ def apply_miso_winter_citygate_daily(
         float(correction.min()),
         float(correction.max()),
     )
+
+
+# ---------------------------------------------------------------------------
+# miso-224: gas offers at MARGINAL COMMODITY cost (measured daily hub spot), not
+# the EIA-923 AVERAGE delivered cost.
+# ---------------------------------------------------------------------------
+
+#: Hub-table ``hub`` prefixes that select the Henry Hub daily series. Every other
+#: MISO zone (Chicago Citygate zones AND the MidCon zones, see the applier
+#: docstring) takes the Chicago Citygate daily series.
+_MISO_HENRY_HUB_PREFIXES: tuple[str, ...] = ("gulf",)
+
+
+def _miso_zone_hub_kind(year: int, path: Path | None = None) -> dict[str, str]:
+    """Return ``{zone: 'chicago' | 'henry'}`` from the published MISO hub table.
+
+    Reads the SAME ``miso_zonal_gas_hub.csv`` (:data:`MISO_ZONAL_GAS_HUB_PATH`)
+    the zonal basis and the winter overlay use (rule 5 — no new mapping). A
+    ``hub`` string starting with one of :data:`_MISO_HENRY_HUB_PREFIXES` (the
+    Gulf Coast row, MISO-South) maps to Henry Hub; every other row maps to
+    Chicago Citygate. Empty when the table or the year is absent.
+    """
+    frame = _load_zonal_gas_hub(Path(path) if path else MISO_ZONAL_GAS_HUB_PATH)
+    if frame is None or "hub" not in frame.columns:
+        return {}
+    sub = frame[frame["year"] == year]
+    out: dict[str, str] = {}
+    for r in sub.itertuples():
+        hub = str(r.hub).strip().lower()
+        out[str(r.zone)] = "henry" if hub.startswith(_MISO_HENRY_HUB_PREFIXES) else "chicago"
+    return out
+
+
+def apply_miso_gas_marginal_commodity(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+    citygate_path: Path | None = None,
+    henry_hub_path: Path | None = None,
+) -> np.ndarray | None:
+    """Reprice EVERY MISO gas unit at the measured daily hub spot for its zone.
+
+    The miso-224 arm. A dispatch offer is a MARGINAL cost: the commodity the next
+    MMBtu costs at the hub, plus variable transport. The EIA-923 monthly print
+    the backcast otherwise overlays (``gas_plant_monthly_fuel_pricing``) is the
+    plant's AVERAGE delivered cost — commodity plus demand charges and contracted
+    transport amortized over the month's takes — and it sits above the hub by an
+    amount that grows as the commodity gets cheaper (miso-224 phase 0: the CC
+    fleet's cap-weighted print exceeds the Chicago hub by +$0.5–1.3/MMBtu in most
+    months of 2023–2025, +$2.6 in Feb-2024). Rule 14 ``[R-ACCURATE]``'s
+    misalignment clause applies: both are measured, but the print is measured on
+    a different basis (average) than the representation needs (marginal), so the
+    reconciled measured input — the traded hub index — is preferred. Rule 13
+    ``[R-MEASURED]``: a hub spot is a reproducible market input with a forward
+    analogue (the forecast path already prices gas at hub + basis through
+    ``resolve_annual_gas_price``; this makes the backcast use the SAME convention).
+
+    Series, per zone (:func:`_miso_zone_hub_kind`, the published hub table):
+
+    * Chicago Citygate zones (IL / IN / East) — the Chicago daily spot
+      (:func:`~market_sim.data.fuel.hubs._miso_citygate_daily_dated`, the EIA NG
+      Weekly "Chicago" row), a next-day index placed on its gas FLOW day by
+      :func:`~market_sim.data.fuel.hubs._flow_date_staircase`;
+    * the Gulf Coast zone (MISO-South) — Henry Hub daily
+      (:func:`~market_sim.data.fuel.hubs._henry_hub_daily_dated`), a same-day
+      spot placed by :func:`~market_sim.data.fuel.hubs._trade_date_staircase`;
+    * the MidCon zones (West / Plains) — ALSO the Chicago series. No MidCon daily
+      hub series is held under ``data/raw`` (``SOURCES_miso_citygate.md``: the EIA
+      compact table carries no MidCon row); Chicago is the nearest accessible
+      measured Midwest hub and MidCon indices trade at a small discount to it, so
+      this is the conservative (slightly HIGH) reconciliation, documented here per
+      rule 14 rather than guessed.
+
+    Rule 19 ``[R-ONE-MECH]``: the daily hub series carries BOTH level and
+    within-month shape, so the caller (``resolve_fuel_prices``) skips the winter
+    Chicago SHAPE overlay (``apply_miso_winter_citygate_daily``) and returns the
+    written mask so the mean-zero zonal basis increment is skipped on every gas
+    row — the zone's hub already IS its regional level. Dual-fuel oil parity still
+    runs afterwards and caps any winter blowout.
+
+    Gated on ``config.miso_gas_marginal_commodity_pricing`` (off by default,
+    byte-identical off). MISO-scoped: arming it on another ISO is a HARD ERROR
+    (rule 25 — the cross-ISO cost-convention question is owner court, miso-212
+    §8). FAIL CLOSED: an armed run whose year has no daily prints raises rather
+    than silently keeping the prints it exists to replace.
+
+    Returns the ``(n_gen, T)`` boolean mask of the cells written, or ``None``
+    when off. Mutates ``fuel_prices`` in place; idempotent.
+    """
+    if not getattr(config, "miso_gas_marginal_commodity_pricing", False):
+        return None
+    if config.iso.upper() != "MISO":
+        raise ValueError(
+            "miso_gas_marginal_commodity_pricing is MISO-scoped (rule 25 "
+            f"[R-ISO-SCOPE]) and was armed for {config.iso.upper()}; the "
+            "average-vs-marginal delivered-cost convention is an owner-court, "
+            "cross-ISO question (miso-212 §8) and no other ISO is wired here"
+        )
+    T = fuel_prices.shape[1]
+    hubs = _pkg_ns()
+    chicago_daily = _flow_date_staircase(
+        hubs._miso_citygate_daily_dated(citygate_path).get(year, {}), year
+    )
+    henry_daily = hubs._trade_date_staircase(
+        hubs._henry_hub_daily_dated(henry_hub_path).get(year, {}), year
+    )
+    if chicago_daily is None or henry_daily is None:
+        raise ValueError(
+            f"MISO {year}: miso_gas_marginal_commodity_pricing is armed but the "
+            f"daily hub series is missing (chicago={chicago_daily is not None}, "
+            f"henry={henry_daily is not None}); refusing to keep the EIA-923 "
+            "average prints the mechanism exists to replace"
+        )
+    series = {
+        "chicago": np.repeat(chicago_daily, 24)[:T],
+        "henry": np.repeat(henry_daily, 24)[:T],
+    }
+    if series["chicago"].size < T or series["henry"].size < T:
+        raise ValueError(f"MISO {year}: daily hub series shorter than {T} hours")
+
+    from market_sim.config.iso_configs import get_iso_config
+
+    zone_names = get_iso_config(config.iso).zone_names
+    kind_by_zone = _miso_zone_hub_kind(year, path)
+    if not kind_by_zone:
+        raise ValueError(f"MISO {year}: no hub-table rows to map zones to hubs")
+    gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+    written = np.zeros(fuel_prices.shape, dtype=bool)
+    if gas_rows.size == 0:
+        return written
+    zone_kind = np.array(
+        [kind_by_zone.get(zn, "chicago") for zn in zone_names], dtype=object
+    )
+    for kind in ("chicago", "henry"):
+        sel = gas_rows[zone_kind[fleet.zone_idx[gas_rows]] == kind]
+        if sel.size == 0:
+            continue
+        fuel_prices[sel, :] = np.maximum(series[kind][np.newaxis, :], _GAS_PRICE_FLOOR)
+        written[sel, :] = True
+    logger.info(
+        "MISO gas marginal-commodity pricing (%d): %d gas units repriced at the "
+        "measured daily hub spot (Chicago Citygate %.2f..%.2f, Henry Hub %.2f..%.2f "
+        "$/MMBtu); EIA-923 average prints, the winter shape overlay and the zonal "
+        "basis increment superseded on these rows (rule 19)",
+        year,
+        gas_rows.size,
+        float(series["chicago"].min()),
+        float(series["chicago"].max()),
+        float(series["henry"].min()),
+        float(series["henry"].max()),
+    )
+    return written

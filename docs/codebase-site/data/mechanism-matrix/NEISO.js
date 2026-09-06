@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     zonal_gas_basis: { cell: "." },
     gas_hub_basis_overlay: { cell: "K" },
     nyiso_iroquois_winter_spread: { cell: "." },
+    gas_marginal_commodity_pricing: { cell: "." },
     winter_citygate_daily: { cell: "." },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },
