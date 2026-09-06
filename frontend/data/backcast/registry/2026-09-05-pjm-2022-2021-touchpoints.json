@@ -1,103 +1,103 @@
 {
-  "id": "2026-09-05-pjm-2022-2021-touchpoints",
-  "label": "pjm 2022 2021 touchpoints",
-  "date": "2026-09-05",
-  "shorthand": "pjm-2022-2021-touchpoints",
-  "definition": "PJM 2022+2021 VALIDATION TOUCHPOINTS on the CURRENT keeper (rule 22 validation tier; freeze scope = locked_test only since the 2026-08-26 owner ruling). Byte-faithful replay of the 2026-08-15-pjm-162-inputclock keeper recipe (results/calibration/pjm_debugb_inputclock_A/meta.json) through the sanctioned replay_keeper channel. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2021 or 2022. 2022 SUPERSEDES 2026-08-05-pjm-2022-touchpoint, which measured the pjm-152 recipe on the PRE-REPAIR input clock that pjm-162 IS; 2021 is a rung never before solved. PJM 2020 is NOT solved and is NOT data-ready (defective zonal demand feed, no calibration_reference block, no renewable-capacity file - see ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md 3.2). ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
-  "years": [
-    2022,
-    2021
+ "id": "2026-09-05-pjm-2022-2021-touchpoints",
+ "label": "pjm 2022 2021 touchpoints",
+ "date": "2026-09-05",
+ "shorthand": "pjm-2022-2021-touchpoints",
+ "definition": "PJM 2022+2021 VALIDATION TOUCHPOINTS on the CURRENT keeper (rule 22 validation tier; freeze scope = locked_test only since the 2026-08-26 owner ruling). Byte-faithful replay of the 2026-08-15-pjm-162-inputclock keeper recipe (results/calibration/pjm_debugb_inputclock_A/meta.json) through the sanctioned replay_keeper channel. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2021 or 2022. 2022 SUPERSEDES 2026-08-05-pjm-2022-touchpoint, which measured the pjm-152 recipe on the PRE-REPAIR input clock that pjm-162 IS; 2021 is a rung never before solved. PJM 2020 is NOT solved and is NOT data-ready (defective zonal demand feed, no calibration_reference block, no renewable-capacity file - see ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md 3.2). ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
+ "years": [
+  2022,
+  2021
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-09-05-pjm-2022-2021-touchpoints.js",
+ "bundle": "results/calibration/pjm_tp2022_2021_k162",
+ "holdout": {
+  "tier": "validation",
+  "year": 2022,
+  "keeper": "2026-08-15-pjm-162-inputclock",
+  "keeperDetermination": "CALIBRATED",
+  "keeperYears": [
+   2023,
+   2024,
+   2025
   ],
-  "iso": "PJM",
-  "file": "frontend/data/backcast/runs/2026-09-05-pjm-2022-2021-touchpoints.js",
-  "bundle": "results/calibration/pjm_tp2022_2021_k162",
-  "holdout": {
-    "tier": "validation",
-    "year": 2022,
-    "keeper": "2026-08-15-pjm-162-inputclock",
-    "keeperDetermination": "CALIBRATED",
-    "keeperYears": [
-      2023,
-      2024,
-      2025
-    ],
-    "holdoutDetermination": "NOT-YET",
-    "criteria": [
-      {
-        "key": "fuelmix",
-        "label": "C1 fuel-mix by class (grid-delivered)",
-        "tier": "load-bearing",
-        "inSample": "PASS",
-        "holdout": "FAIL",
-        "verdict": "degraded"
-      },
-      {
-        "key": "price_mean",
-        "label": "C3a mean LMP",
-        "tier": "load-bearing",
-        "inSample": "PASS",
-        "holdout": "FAIL",
-        "verdict": "degraded"
-      },
-      {
-        "key": "price_shape",
-        "label": "C3b price duration/shape",
-        "tier": "load-bearing",
-        "inSample": "PASS",
-        "holdout": "FAIL",
-        "verdict": "degraded"
-      },
-      {
-        "key": "price_tail",
-        "label": "C3c price tail / scarcity (RT hourly)",
-        "tier": "supporting",
-        "inSample": "PASS",
-        "holdout": "FAIL",
-        "verdict": "degraded"
-      },
-      {
-        "key": "dispatch_corr",
-        "label": "C4 fleet hourly dispatch correlation",
-        "tier": "supporting",
-        "inSample": "PASS",
-        "holdout": "PASS",
-        "verdict": "held"
-      },
-      {
-        "key": "forced_share",
-        "label": "C8 forced-energy share (D-2)",
-        "tier": "protective",
-        "inSample": "PASS",
-        "holdout": "PASS",
-        "verdict": "held"
-      },
-      {
-        "key": "governance",
-        "label": "C6 governance gate",
-        "tier": "protective",
-        "inSample": "PASS",
-        "holdout": "PASS",
-        "verdict": "held"
-      },
-      {
-        "key": "sysvol",
-        "label": "C2 system volume (gas/coal families)",
-        "tier": "load-bearing",
-        "inSample": "PASS",
-        "holdout": "PASS",
-        "verdict": "held"
-      }
-    ],
-    "nDegraded": 4,
-    "nCarried": 0,
-    "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. NOT a certified out-of-sample skill number and never quotable as one. THE RUN COVERS TWO RUNGS AND THEY DIFFER IN SEVERITY \u2014 read `perYear`: 2022 fails on two criteria, 2021 on four. The criterion table below is stamped on the RUN (both years), so a criterion marked degraded may be failing on only one of them: C3a and C3c pass on 2022 and fail on 2021. Neither rung is spent \u2014 the validation tier is re-runnable by design, which is what makes the rule-22 loop legal. The touch-once locked test (2019 / H1-2026) is NOT spent here and PJM has never been granted it.",
-    "envelopeCaveat": "ONE OPEN LIMIT, NOT CLOSED FOR PJM: the keeper's in-sample column was solved at git 457ae04 and these rungs at 46e08e5b, with 29 solve kwargs added in between (each verified in this bundle's calibration_attestation.json to sit at its ScenarioConfig default) and 2 removed. The rule-30 G-DRIFT hunk audit is not dischargeable at this diff size, and the same-HEAD in-sample control that CLOSED this question for NEISO (drift measured INERT at -0.008% on mean price) was NOT solved for PJM \u2014 the verdict is per-ISO (rule 25 [R-ISO-SCOPE]) and does not transfer: PJM's recipe arms pjm_measured_interface_limits, pjm_da_virtual_bids and measured_ramp_capability that NEISO never touches. Solving PJM's 2023-2025 control at HEAD is the first recommendation in ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md section 5. SEPARATELY, the PJM 2021 REPORT line 'EIA-930 net gen 4939.01 TWh' in the solve log is a printed energy-balance diagnostic contaminated by an int32 sentinel (2,147,480,064 MW in three consecutive hours, 2021-10-18 23:00 to 2021-10-19 01:00, in the PJM hourly extract's Demand and Net generation columns). It does NOT touch any scored criterion: load_demand repairs those hours before the solve, and the C1/C2 benchmark reads the per-fuel e930 block, which is sane (gas 311.7 / coal 183.5 / nuclear 273.0 TWh). See the assessment section 3.3.",
-    "perYear": {
-      "2022": "NOT-YET \u2014 TWO failing criteria: C1 fuel-mix CC_REGULAR +22.26 TWh (share +1.7pp) and C3b price duration/shape NRMSE 0.250. C2, C3a, C3c, C4, C6, C8 all PASS; C5a CO2 +4.8%.",
-      "2021": "NOT-YET \u2014 FOUR failing criteria: C1 fuel-mix (CC_REGULAR +28.72 TWh / +2.9pp, ST_GAS +8.07 TWh / +1.0pp, COAL_BIT -9.45 TWh / -1.4pp), C3a mean LMP +25.7%, C3b NRMSE 0.355, and C3c price tail 145 model hours vs 23 actual (6.30x, >$200). C2, C4, C6, C8 PASS. The C1 signature is the same direction as 2022's \u2014 gas over, coal under \u2014 on a year whose delivered gas was the cheapest in the span."
-    },
-    "supersedes": "2026-08-05-pjm-2022-touchpoint",
-    "supersedesNote": "THE STALE RUNG'S DIAGNOSIS DOES NOT CLOSE. The prior 2022 touchpoint measured the pjm-152 recipe on the PRE-REPAIR input clock and failed on C1 CC_REGULAR +18.28 TWh and C3b NRMSE 0.206. The keeper has since moved to pjm-162, which IS that input-clock repair \u2014 and on the current recipe 2022 still fails the SAME TWO criteria, with CC_REGULAR slightly WORSE (+22.26 TWh) and C3b at 0.250 on the corrected load-weighted basis. The repair did not reach the 2022 out-of-sample miss. The rung stays OPEN and its named object (the DA-virtual layer, +11.12 TWh of net virtual demand cleared in 2022) is not resolved by it.",
-    "basisNote": "C3a/C3b here are scored on the RUBRIC v2.4 LOAD-WEIGHTED basis (`rt_lw`/`da_lw`), like the keeper's in-sample column. That basis did NOT exist for PJM 2021/2022 before this session: actual_lmp.json carried `_lw` for PJM 2019, 2020, 2023, 2024 and 2025 and for every year of every other ISO, but not for these two \u2014 so the prior 2022 touchpoint scored C3a on the legacy equal-hour mean while the keeper scored on load-weighted. Filled here with `derive_actual_lmp.py --lw-retrofit --isos PJM --years 2021 2022`, which re-parses no raws and only ADDS fields: a record-by-record diff confirms 2 iso-year records gained `_lw` fields and ZERO existing values changed, so no committed keeper number moved. Effect on this run: 2022 C3b 0.204 -> 0.250 and 2021 C3a +30.4% -> +25.7% (rt_lw 38.53 vs legacy rt 37.14; 74.07 vs 68.79). The comparison is now like-for-like on both sides."
-  }
+  "holdoutDetermination": "NOT-YET",
+  "criteria": [
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "CAVEAT",
+    "verdict": "degraded"
+   },
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 4,
+  "nCarried": 0,
+  "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. NOT a certified out-of-sample skill number and never quotable as one. THE RUN COVERS TWO RUNGS AND THEY DIFFER IN SEVERITY \u2014 read `perYear`: 2022 fails on two criteria, 2021 on four. The criterion table below is stamped on the RUN (both years), so a criterion marked degraded may be failing on only one of them: C3a and C3c pass on 2022 and fail on 2021. Neither rung is spent \u2014 the validation tier is re-runnable by design, which is what makes the rule-22 loop legal. The touch-once locked test (2019 / H1-2026) is NOT spent here and PJM has never been granted it.",
+  "envelopeCaveat": "ONE OPEN LIMIT, NOT CLOSED FOR PJM: the keeper's in-sample column was solved at git 457ae04 and these rungs at 46e08e5b, with 29 solve kwargs added in between (each verified in this bundle's calibration_attestation.json to sit at its ScenarioConfig default) and 2 removed. The rule-30 G-DRIFT hunk audit is not dischargeable at this diff size, and the same-HEAD in-sample control that CLOSED this question for NEISO (drift measured INERT at -0.008% on mean price) was NOT solved for PJM \u2014 the verdict is per-ISO (rule 25 [R-ISO-SCOPE]) and does not transfer: PJM's recipe arms pjm_measured_interface_limits, pjm_da_virtual_bids and measured_ramp_capability that NEISO never touches. Solving PJM's 2023-2025 control at HEAD is the first recommendation in ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md section 5. SEPARATELY, the PJM 2021 REPORT line 'EIA-930 net gen 4939.01 TWh' in the solve log is a printed energy-balance diagnostic contaminated by an int32 sentinel (2,147,480,064 MW in three consecutive hours, 2021-10-18 23:00 to 2021-10-19 01:00, in the PJM hourly extract's Demand and Net generation columns). It does NOT touch any scored criterion: load_demand repairs those hours before the solve, and the C1/C2 benchmark reads the per-fuel e930 block, which is sane (gas 311.7 / coal 183.5 / nuclear 273.0 TWh). See the assessment section 3.3.",
+  "perYear": {
+   "2022": "NOT-YET \u2014 TWO failing criteria: C1 fuel-mix CC_REGULAR +22.26 TWh (share +1.7pp) and C3b price duration/shape NRMSE 0.250. C2, C3a, C3c, C4, C6, C8 all PASS; C5a CO2 +4.8%.",
+   "2021": "NOT-YET \u2014 THREE failing criteria: C1 fuel-mix (CC_REGULAR +28.72 TWh / +2.9pp, ST_GAS +8.07 TWh / +1.0pp, COAL_BIT -9.45 TWh / -1.4pp), C3a mean LMP +25.7%, and C3b NRMSE 0.355. C2, C4, C6, C8 PASS. C3c (145 model hours vs 23 actual, 6.30x >$200) is an ACCEPTED LEDGERED CAVEAT, not a failure, under rubric v3.6 \u2014 C3c is accepted on every holdout year. The C1 signature is the same direction as 2022's \u2014 gas over, coal under \u2014 on the year with the cheapest delivered gas in the span."
+  },
+  "supersedes": "2026-08-05-pjm-2022-touchpoint",
+  "supersedesNote": "THE STALE RUNG'S DIAGNOSIS DOES NOT CLOSE. The prior 2022 touchpoint measured the pjm-152 recipe on the PRE-REPAIR input clock and failed on C1 CC_REGULAR +18.28 TWh and C3b NRMSE 0.206. The keeper has since moved to pjm-162, which IS that input-clock repair \u2014 and on the current recipe 2022 still fails the SAME TWO criteria, with CC_REGULAR slightly WORSE (+22.26 TWh) and C3b at 0.250 on the corrected load-weighted basis. The repair did not reach the 2022 out-of-sample miss. The rung stays OPEN and its named object (the DA-virtual layer, +11.12 TWh of net virtual demand cleared in 2022) is not resolved by it.",
+  "basisNote": "C3a/C3b here are scored on the RUBRIC v2.4 LOAD-WEIGHTED basis (`rt_lw`/`da_lw`), like the keeper's in-sample column. That basis did NOT exist for PJM 2021/2022 before this session: actual_lmp.json carried `_lw` for PJM 2019, 2020, 2023, 2024 and 2025 and for every year of every other ISO, but not for these two \u2014 so the prior 2022 touchpoint scored C3a on the legacy equal-hour mean while the keeper scored on load-weighted. Filled here with `derive_actual_lmp.py --lw-retrofit --isos PJM --years 2021 2022`, which re-parses no raws and only ADDS fields: a record-by-record diff confirms 2 iso-year records gained `_lw` fields and ZERO existing values changed, so no committed keeper number moved. Effect on this run: 2022 C3b 0.204 -> 0.250 and 2021 C3a +30.4% -> +25.7% (rt_lw 38.53 vs legacy rt 37.14; 74.07 vs 68.79). The comparison is now like-for-like on both sides."
+ }
 }

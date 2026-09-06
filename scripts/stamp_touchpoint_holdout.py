@@ -128,6 +128,12 @@ def main() -> None:
     ap.add_argument("--run-id", required=True, help="the touchpoint run id")
     ap.add_argument("--keeper-id", required=True, help="the ISO's keeper run id")
     ap.add_argument("--holdout-year", type=int, default=2022, help="default 2022")
+    ap.add_argument(
+        "--reset-caveats",
+        action="store_true",
+        help="Overwrite an authored tierCaveat/envelopeCaveat with this "
+        "script's defaults (they are preserved across a re-stamp otherwise).",
+    )
     args = ap.parse_args()
 
     sidecar_path = REGISTRY / f"{args.run_id}.json"
@@ -142,8 +148,9 @@ def main() -> None:
     carried = [r for r in rows if r["verdict"] == "carried"]
 
     sidecar = json.loads(sidecar_path.read_text())
-    sidecar["holdout"] = {
-        "tier": "validation",
+    prior = sidecar.get("holdout") or {}
+    block = {
+        "tier": prior.get("tier", "validation"),
         "year": args.holdout_year,
         "keeper": args.keeper_id,
         "keeperDetermination": keeper_v.get("determination"),
@@ -155,6 +162,27 @@ def main() -> None:
         "tierCaveat": TIER_CAVEAT,
         "envelopeCaveat": ENVELOPE_CAVEAT,
     }
+    # AUTHORED KEYS SURVIVE A RE-STAMP. Everything above is DERIVED from the two
+    # verdicts and is meant to be overwritten every time the scorer moves; the
+    # keys below are written by a human (or a session) about THIS rung and are
+    # not reproducible from a re-score, so clobbering them would silently delete
+    # curation. This is what makes rule 30 [R-TOUCHPOINT-FOLD] (a) safe to
+    # re-run after a rubric amendment — the sole way to keep the folded panel
+    # honest is to re-stamp, and re-stamping must not cost the notes that
+    # explain the rung. An authored `tierCaveat`/`envelopeCaveat` (one that
+    # differs from this script's default) is likewise preserved; pass
+    # --reset-caveats to take the defaults back.
+    for key in ("perYear", "supersedes", "supersedesNote", "basisNote"):
+        if key in prior:
+            block[key] = prior[key]
+    if not args.reset_caveats:
+        for key, default in (
+            ("tierCaveat", TIER_CAVEAT),
+            ("envelopeCaveat", ENVELOPE_CAVEAT),
+        ):
+            if prior.get(key) and prior[key] != default:
+                block[key] = prior[key]
+    sidecar["holdout"] = block
     sidecar_path.write_text(json.dumps(sidecar, indent=1) + "\n")
 
     print(f"stamped holdout block onto {sidecar_path.relative_to(REPO)}")

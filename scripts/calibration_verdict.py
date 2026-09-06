@@ -53,6 +53,7 @@ sys.path.insert(0, str(REPO))  # resolve `scripts.lib` when run as a plain scrip
 
 from scripts.lib import backcast_artifacts as ba  # noqa: E402
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
+from scripts.lib import holdout_policy  # noqa: E402  (stdlib-only tier map)
 from scripts.lib.backcast_artifacts import (  # noqa: E402
     decode_run_js as _decode_run_js,
     resolve_run_id,
@@ -352,7 +353,42 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       CRITERIA, LEDGERABLE_CRITERIA and MAX_LEDGERED_CAVEATS are UNCHANGED,
 #       and no determination moves — verified over every registered run.
 #       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
-RUBRIC_VERSION = 3.5
+# v3.6 — 2026-09-05 owner amendment, session neiso-pjm-validation-touchpoints,
+#       verbatim: "c3c should be an accepted caveat on all holdout years", set
+#       alongside "an ISO can stay calibrated even if it degrades on holdout
+#       years". ON AN OUT-OF-TRAINING YEAR THE LONE-FAILURE CONDITION IS
+#       DROPPED: a C3c FAIL in a validation- or locked-test-tier year is
+#       reclassified to a ledgered CAVEAT whatever else that year does
+#       (`_apply_c3c_standing_rule`, standing_rule token
+#       "c3c-holdout-year-2026-09-05"). Tier comes from
+#       scripts/lib/holdout_policy.tier_for_year, which FAILS CLOSED — a year
+#       it cannot classify is treated as TRAINING here, i.e. the strictest
+#       path, which is the opposite of the fail-closed direction that module
+#       uses for spend gating and is deliberate: an unreadable year must not
+#       buy the relaxation.
+#       WHY THIS IS NOT A WEAKENING OF THE GATE. The scarcity price tail is the
+#       one criterion the model class is known not to form (energy-only LMP, no
+#       administrative scarcity adder), and the rubric already accepts that
+#       in-sample. The lone-failure guard exists to stop C3c masking a SECOND
+#       defect on the years the model is CERTIFIED on. A held-out year is not a
+#       certification: rule 22 makes it iterable model-SELECTION evidence that
+#       can never be quoted as a skill number, and the criteria that DO fail
+#       there still fail, are still reported at full magnitude, and still drive
+#       that year's determination. What changes is only that C3c stops being
+#       counted as one of them.
+#       WHAT IS UNTOUCHED: the C3c band, tier and reported magnitude; the
+#       governance guard (a failing or unattested C6 still blocks the rule in
+#       every year); the supporting-tier fail-closed guard; "never a PASS"
+#       (C3c reads CAVEAT, so grade_summary.target_grade never absorbs it); and
+#       both caveat budgets, which are checked first. The budget is unaffected
+#       in practice because caveats aggregate PER CRITERION, so C3c failing on
+#       several holdout years is still one ledgered caveat.
+#       IN-TRAINING YEARS ARE UNCHANGED: they keep the v3.2 lone-failure guard,
+#       now measured over what is STILL failing after the holdout
+#       reclassification — so a holdout-year C1 failure keeps the in-sample
+#       rule silent exactly as any other non-C3c failure would.
+#       NO SOLVE RAN — scorer-side only; every run re-scores in place.
+RUBRIC_VERSION = 3.6
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -960,6 +996,33 @@ C3C_STANDING_RULE_REASON = (
     "mask a second defect, and the caveat still consumes the single ledgerable slot."
 )
 
+# The OUT-OF-TRAINING path (rubric v3.6). Kept as its own string because the
+# lone-failure sentence in the reason above is FALSE on this path -- a holdout
+# year may carry other failures and still have its C3c accepted -- and a ledger
+# reason that misdescribes why it fired is worse than no reason at all.
+C3C_HOLDOUT_RULE_REASON = (
+    'OWNER AMENDMENT 2026-09-05 (rubric v3.6), verbatim: "c3c should be an accepted '
+    'caveat on all holdout years", set alongside "an ISO can stay calibrated even if it '
+    'degrades on holdout years". Auto-applied: this is an OUT-OF-TRAINING year '
+    "(validation or locked-test tier per scripts/lib/holdout_policy.tier_for_year) and "
+    "the governance gate passes. ON A HOLDOUT YEAR THE LONE-FAILURE CONDITION DOES NOT "
+    "APPLY -- C3c is accepted here whatever else the year does, so unlike the in-sample "
+    "standing rule this caveat may sit beside other failing criteria. Those criteria "
+    "still FAIL, are still reported at full magnitude, and still drive this year's "
+    "determination; what changes is only that C3c is no longer counted as one of them. "
+    "WHY THAT IS NOT AN ESCAPE HATCH: the lone-failure guard exists to stop C3c masking "
+    "a second defect on the years the model is CERTIFIED on, and a held-out year is not "
+    "a certification -- rule 22 makes it ITERABLE model-SELECTION evidence that can "
+    "never be quoted as an out-of-sample skill number. The scarcity price tail is also "
+    "the one criterion this model class is known not to form (energy-only LMP, no "
+    "administrative scarcity adder), which the rubric already accepts in-sample. "
+    "UNCHANGED: the C3c band, tier and reported magnitude; the governance guard; the "
+    "supporting-tier fail-closed guard; never a PASS (C3c reads CAVEAT, so "
+    "grade_summary.target_grade never absorbs it); and both caveat budgets, which are "
+    "checked first -- caveats aggregate PER CRITERION, so C3c failing on several "
+    "holdout years is still one ledgered caveat."
+)
+
 
 def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
     """Reclassify a LONE C3c failure to a ledgered CAVEAT, in ANY year.
@@ -1023,18 +1086,43 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
         records: Scored criterion records, mutated in place.
         gov: The governance-gate record from :func:`score_governance`.
     """
+    if str(gov.get("status", "")).upper() != PASS:
+        return  # governance failing/unattested -- never waved through
+
+    def _reclassify(rec: dict, rule: str, reason: str) -> None:
+        rec["status"] = CAVEAT
+        rec["classification"] = MODEL_LIMIT
+        rec["ledger_reason"] = reason
+        rec["standing_rule"] = rule
+
     fails = [
         r for r in records if r["status"] == FAIL and r.get("criterion") in CRITERIA
     ]
-    if not fails or any(r["criterion"] != "price_tail" for r in fails):
-        return  # nothing failing, or something OTHER than C3c is -- rule silent
-    if str(gov.get("status", "")).upper() != PASS:
-        return  # governance failing/unattested -- never waved through
+    # RUBRIC v3.6 (owner amendment 2026-09-05): on an OUT-OF-TRAINING year the
+    # lone-failure condition is dropped -- C3c is an accepted caveat there
+    # whatever else the year does. See the module header's v3.6 entry for why
+    # this does not weaken the in-sample gate.
     for rec in fails:
-        rec["status"] = CAVEAT
-        rec["classification"] = MODEL_LIMIT
-        rec["ledger_reason"] = C3C_STANDING_RULE_REASON
-        rec["standing_rule"] = "c3c-any-year-2026-08-09"
+        if rec["criterion"] != "price_tail":
+            continue
+        try:
+            tier = holdout_policy.tier_for_year(int(rec["year"]))
+        except Exception:
+            tier = holdout_policy.TIER_TRAIN  # unreadable year -- strictest path
+        if tier != holdout_policy.TIER_TRAIN:
+            _reclassify(
+                rec, "c3c-holdout-year-2026-09-05", C3C_HOLDOUT_RULE_REASON
+            )
+
+    # In-training years keep the lone-failure guard, measured over what is STILL
+    # failing after the holdout reclassification above.
+    remaining = [
+        r for r in records if r["status"] == FAIL and r.get("criterion") in CRITERIA
+    ]
+    if not remaining or any(r["criterion"] != "price_tail" for r in remaining):
+        return  # nothing failing, or something OTHER than C3c is -- rule silent
+    for rec in remaining:
+        _reclassify(rec, "c3c-any-year-2026-08-09", C3C_STANDING_RULE_REASON)
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:

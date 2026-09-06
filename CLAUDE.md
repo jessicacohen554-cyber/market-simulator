@@ -454,6 +454,45 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     *by obeying it*, because the bundle was committed and outlived its PR. The two duties compose
     only when the bundle does not reach `main` at all.
 
+1. `[R-TOUCHPOINT-FOLD]` **A touchpoint is the keeper, on another year — publish it that way, never
+    as a separate run to click into.** *(Owner ruling 2026-09-05, verbatim: "the runs should all be
+    combined with the keeper in html not separate runs… like it's the same config I don't need to
+    click into multiple things to see the results".)* A rule-22 validation touchpoint IS the
+    designated keeper's frozen recipe replayed on a held-out year — same config, different year —
+    so splitting it onto its own dashboard card makes a reader open two pages to read one
+    configuration. Every touchpoint session owes three things, in the session that produces it:
+    - **(a) STAMP IT TO THE KEEPER.** Run `scripts/stamp_touchpoint_holdout.py --run-id <touchpoint>
+      --keeper-id <keeper>` so the sidecar carries `holdout.keeper`. That one field is what folds
+      the run: the Run Explorer hides it from the run list, offers its years in the **keeper's**
+      year selector, and renders every folded year as columns of ONE combined *Validation
+      Touchpoints* panel on the keeper's page beside the in-sample column. A deep link to a folded
+      id still resolves — it opens the keeper on that year — so no URL breaks. An unstamped
+      touchpoint is a second card for the same config, which is the defect this rule names.
+    - **(b) PUT IT ON THE CALIBRATION STATUS PAGE.** `scripts/build_status.py --iso <ISO>` derives
+      the **holdout ladder** (one row per held-out year, scored per year) from the registry
+      automatically — so the duty is to *rebuild and commit the status part*, never to hand-author
+      a block that would go stale the moment a rung is re-spent. Per-year is the load-bearing
+      detail: a multi-year touchpoint bundle carries ONE run-level determination that can hide a
+      rung which passed on its own (NEISO 2020+2021 reads NOT-YET as a bundle; 2021 alone is
+      CALIBRATED). Where the two rungs of a bundle diverge, the sidecar also carries a `perYear`
+      block so the panel and the ladder both say which year did what.
+    - **(c) A HELD-OUT YEAR NEVER DOWNGRADES THE ISO.** *(Owner ruling 2026-09-05, verbatim: "An
+      iso can stay calibrated even if it degrades on holdout years".)* The ISO's calibration
+      determination is the **train-tier (2023–2025) verdict** and nothing else. A validation-tier
+      score is iterable model-SELECTION evidence that rule 22 already forbids quoting as a skill
+      number, so it cannot certify and it cannot decertify. A degraded rung is REPORTED — on the
+      keeper's panel, on the status card, and in the session's assessment doc — and the ISO's
+      headline is untouched. Both surfaces state this in place rather than leaving a reader to
+      infer that a NOT-YET rung beside a CALIBRATED headline is a contradiction.
+
+    The companion scorer change is rubric **v3.6** (owner, same sitting, verbatim: *"c3c should be
+    an accepted caveat on all holdout years"*): on an out-of-training year the C3c standing rule's
+    **lone-failure condition is dropped**, so C3c reads CAVEAT there whatever else that year does.
+    Every other guard is untouched — governance must still pass, supporting-tier only, never a
+    PASS, both caveat budgets checked first — and in-training years keep the lone-failure guard,
+    now measured over what is still failing after the holdout reclassification. Rationale and the
+    measured no-op effect over every registered run: `scripts/calibration_verdict.py` header, v3.6.
+
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
