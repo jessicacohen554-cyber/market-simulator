@@ -167,3 +167,21 @@ The 20-Year Assessment Manual's real filename was recovered from the Transmissio
 page (`https://www.spp.org/engineering/transmission-planning/`), which also lists the 2022
 20-Year Assessment Scope (`/Documents/63932/`) and Report Addendum (`/Documents/69815/`) —
 neither fetched; both are scope/addendum documents of the same project-portfolio kind.
+
+### Appended 2026-09-06 by lane SPP-14 — three measured members of the v35 guide zip, landed raw (SPP-DESK addendum r#4 am.1)
+
+- Source: the same zip as the SPP-13 row above,
+  <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip>
+  (82,643,996 B; re-fetched 2026-09-06 over HTTPS after a 301 to the lower-cased path
+  `/documents/75871/spp%20markets%20public%20data%20guide%20and%20samples%20v35.zip`; sha256
+  `e2e8478bc8b0fd5fba8201b4c1f4197a4983d88a2406d710cba2fe230cdebee7`, byte-identical to SPP-13's).
+- Members extracted unmodified (`zipfile`, no re-encoding): `SL_to_Pnode_to_Zone_with_Area.csv`,
+  `Hub_Definitions.csv`, `TieFlows_Sep2025.csv`. Checksums in `SHA256SUMS.txt`; schema and row
+  counts in `README.md` §"Appended 2026-09-06 by lane SPP-14".
+- Licence: SPP's Terms & Conditions (<https://www.spp.org/terms-conditions/>, read 2026-09-06),
+  verbatim: *"Permission is implicitly granted to copy and distribute (via computer network or
+  printed form) in whole or in part (with appropriate citation) EXCEPT when such materials will be
+  used, in whole or in part, within a commercial publication (printed or otherwise) or when the
+  author(s) or SPP will be quoted in commercial materials, forums or publications. Any commercial
+  use of these materials requires prior, express written authorization from the author(s) or a
+  duly authorized officer of SPP."*
