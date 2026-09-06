@@ -110,8 +110,23 @@ promote it**, it contributes to no determination, and **not one of these is gate
   every gate recorded in `run_config.json`, and the 2021 pre-screen year's ledger identical in both.
 - **STOP 4 — the footprint is confined to the rows the mechanism claims.** Only quantities
   downstream of the seam peak move: `screen_*` ledger fields, retirement/entry/backstop decisions,
-  the CR-1 position. The LP's own `peak_demand_mw`, `adequacy_requirement_mw` and `reserve_margin`
-  are computed on the measured load in BOTH arms and must be identical.
+  the CR-1 position. The LP's own `peak_demand_mw` and `adequacy_requirement_mw` are pure functions
+  of the measured load, which is identical in both arms, so they must be **identical**.
+
+  > **CORRECTION, made before any result existed** (2026-09-06T17:01Z; the two bundles were still
+  > solving and no ledger had been written, let alone read — verified: `find … -name
+  > 'evolution_*.json'` returned 0). As first written this STOP also required the ledger's
+  > `reserve_margin` to be identical. **That was an error in the pre-registration, and it is fixed
+  > here rather than excused later.** `reserve_margin` is `accredited_firm_mw / peak − 1` computed
+  > **after** evolution (`runner.py:4788`) — an EXITING-side quantity that moves with the fleet the
+  > screens leave behind, which is the mechanism's own claimed footprint, not a violation of it.
+  > This is precisely the mistake the D67 lane recorded against interest (its first grading script
+  > carried `reserve_margin` into an entering-side gate and reported a FAIL on it; the SCRIPT was
+  > corrected to the pre-registered text and the gate was not relaxed). Here the pre-registered text
+  > itself is what was wrong, so the text is corrected — in the open, before the evidence — and
+  > `reserve_margin` moves to §5 as REPORTED, not gated. Nothing else in §4 changes, and no STOP is
+  > weakened: the two quantities that are invariant *by construction* are still required to be
+  > identical to the digit.
 - **STOP 5 — no non-target load-bearing criterion flips PASS → FAIL.**
 - **STOP 6 — one measured load per armed year.** Asserted by test; a second read would mean the
   screens and the LP are no longer sharing one array.
@@ -133,7 +148,10 @@ arm**; only §4 can.
    landed), so this screen runs on the peak-dependent `peak × FPR` path. Once D67 arms for PJM the
    requirement leg of this gate goes to zero in every in-table DY and the remaining effect runs
    through accreditation and the CR-1 position — **stated now, not discovered later.**
-4. **What would surprise me.** A 2023 fleet that is SHORTER in the arm, or any movement in a
+4. **`reserve_margin`** (moved here by the §4 correction above): expected to RISE in the arm in
+   both binding years, since a higher bar retains more firm capacity against an unchanged measured
+   peak. Reported at whatever it is.
+5. **What would surprise me.** A 2023 fleet that is SHORTER in the arm, or any movement in a
    renewable/storage/hydro row, would mean the peak is reaching something §4 of the finding did not
    enumerate — which is a STOP 4 failure, not a finding.
 
