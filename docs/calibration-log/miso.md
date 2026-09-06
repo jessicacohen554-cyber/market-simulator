@@ -6,6 +6,41 @@ newest at the BOTTOM. Only this lane's sessions append here, so parallel
 per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
+## Pre-push checklist (STANDING — every session in this lane, before every push)
+
+Run from the repo root and confirm **exit 0** before staging:
+
+```
+uv run ruff format --check .
+uv run ruff check .
+```
+
+**Tree-wide, not just your own files.** `.github/workflows/ci.yml` runs exactly
+these two commands over the whole tree (ci.yml:411/413), so a formatting miss
+anywhere turns the lane's PR red — and turns the *next* lane's PR red too, which
+is how it reaches other desks.
+
+**Why the hook does not cover this.** `.claude/hooks/ruff-autofix.sh` is a
+`PostToolUse` hook on `Edit|Write`, scoped to the single edited path (HOUSE-1,
+2026-08-08 — deliberately, so it can never rule-27 `[R-PUSH]` rewrite a file the
+session did not touch). Bytes that reach the tree by any **other** route —
+`mcp__github__push_files`, a heredoc or redirect in Bash, a generated file, a
+`git merge`/rebase resolution — never fire it and are never formatted. Those are
+precisely the routes a calibration session uses for new derive scripts and
+probe/test files, so the hook's silence is not evidence of a clean tree.
+
+**If it fails, format only the files it names**, then verify the change carries
+no semantic delta before pushing — `git diff -w` is NOT sufficient (ruff reflows
+split and join lines, and adds magic trailing commas plus grouping parens, all of
+which survive `-w`). Compare the parsed tree instead:
+`ast.dump(ast.parse(before)) == ast.dump(ast.parse(after))` per file.
+
+*Standing since 2026-09-06, after THREE drifts from this lane in nine hours:
+miso-224 Addendum A (`7fa9f096`, 06:06) → repaired by PR #5123 (`bf1964bf`,
+07:23) → **re-broken 41 minutes later** by miso-225 (PR #5143, `3c17b49a` +
+`208a714d`, 08:04), which left six files unformatted including two of the same
+files #5123 had just fixed. Repair: PR for `claude/miso-ruff-format-drift-dmydhc`.*
+
 ## miso-151 (2026-08-11) — item 9 chartered, built, solved, REGISTERED and REJECTED; the wall is an ACROSS-UNIT object
 
 **Keeper UNCHANGED: `2026-08-09-miso-148-basis-aware`.** Nothing promoted.
