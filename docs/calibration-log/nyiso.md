@@ -12426,3 +12426,47 @@ Records: `docs/FINDING-nyiso199-ct-peaker-band-basis-2026-09-06.md` (§1–§8),
 `results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md` (+ Addendum A),
 `_nyiso199_{meritorder,zone_offer_census,ct_band_basis}_phase0.json`,
 `_nyiso199_screen_gates_{2023,2025}.json`, `scripts/probes/nyiso199_*.py`.
+
+## nyiso-200 — 2026-09-06 — the bridge's P0-pattern dependence: commitment-real run screen built (zero DOF), the nyiso-199 stop re-attributed to a one-year scorer artifact, both screens STOPPED at their own gates on 2023, keeper UNCHANGED
+
+**Keeper: `2026-09-06-nyiso-196-extract-basis` — UNCHANGED.** Two one-year rule-29 screens, both
+deleted before merge (29(c)); no span spent; nothing registered or promoted.
+
+**Phase 0 (zero LP).** The nyiso-199 §8.3 C8/D-4 STOP fired on two plants (7314, 50978) the span
+scorer SKIPS by construction: both are `ct_only` CEMS reporters in the complete 2023/2024
+vintages, un-flagged only by the preliminary 2025 vintage (the nyiso-145 §3 artifact); the
+nyiso-150 union guard restores the flag over the scored span, and a ONE-YEAR screen bundle's span
+was {2025} alone. 2 of 2 of that screen's failures are on restored plants; 0 survive. **Scorer-only
+repair landed:** `legitimacy_diagnostics.ct_only_guard_years` unions over the ISO's training span
+whatever the bundle's years (protective direction only; keeper byte-identical; test added). The
+object is nonetheless real: every bridge leg anchors on a P0 pattern a base-cost LP manufactures.
+
+**The repair — `nyiso_gas_bridge_startup_aware`** (gated, default off, registered in every sibling
+registry and on the `gas_commitment_bridge` base row): the shared detector's G-61 path (b)
+commitment-real run screen, wired for NYISO for the first time — a P0 run anchors any leg only when
+its P0 margin per MW repays the unit's own published startup cost ($50 CC / $35 ST, the bridge's
+own constant). Zero free parameters. The measured-conduct gate the nyiso-199 handoff named is
+refused on rule 13 (an in-solve hourly meter pin with no forward analogue) and by nyiso-144's own
+7314 ruling. Detector gains an optional census out-param; the wiring logs runs dropped per leg.
+
+**Screen A1-2023 (repair alone): STOP on C8/D-4 count.** Census 1,173 / 1,576 CC and 351 / 422
+steam runs dropped; bridge forced **1.0034 → 0.3439 TWh**; zero C1 flips (`CC_REGULAR` +0.83 →
++0.37 TWh); C3a +4.6 → +5.7 % PASS; C3b unchanged. The one new D-4 row is Astoria 8906's
+conviction migrating from the bridge (1,400 → 34 h) to the reliability floor beneath (4,140 →
+5,400 h, median 81 → 0 MW); the plant's total forcing FELL 0.2501 → 0.2282 TWh. A1-2025 not spent.
+
+**Screen A3-2023 (three-way: + `nyiso_ct_peaker_bands_measured` + `cc_duct_peaking_row_scoped`):
+STOP on the named-plant gate, with every companion gate clear.** `ST_GAS` +1.81 → **+0.46 TWh**,
+`CT_PEAKER` −1.69 → **−0.99**, `CC_REGULAR` +0.83 → +1.43 (PASS), C3a **+4.6 → +0.9 %**, C3b
+unchanged, zero flips, **no new D-4 row at the span guard**; bridge floors at 7314 542 h / 10 GWh
+and 50978 153 h / 5 GWh remain, all on runs that repaid their start — the gate demanded zero.
+A3-2025 (the exposed year) not spent; the pairing's 2025 price exposure is UNMEASURED.
+
+**Handed forward:** re-screen A3 on 2025 under corrected gates (forced energy per dark-meter plant
+like-for-like, not a row count; named-plant STOP on dropped-run anchors, not on any floor); the
+reliability floor's own membership question at Astoria 8906 (the floor under the floor, rule 19);
+the run screen alone as a keeper-change candidate. Records:
+`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
+`results/calibration/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
+`_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
+`scripts/probes/nyiso200_*.py`.
