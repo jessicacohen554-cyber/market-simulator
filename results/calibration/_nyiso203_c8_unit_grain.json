@@ -1,0 +1,94 @@
+{
+ "bundle": "results/calibration/nyiso203_unitgrain_replay",
+ "by_year": {
+  "2023": {
+   "CC_CHP": {
+    "class_twh": 16.0078,
+    "unit_grain_forced_share": 0.2732,
+    "unit_grain_forced_twh": 4.3729,
+    "units": 108
+   },
+   "CC_REGULAR": {
+    "class_twh": 33.4599,
+    "unit_grain_forced_share": 0.0971,
+    "unit_grain_forced_twh": 3.2474,
+    "units": 122
+   },
+   "CT_PEAKER": {
+    "class_twh": 0.4562,
+    "unit_grain_forced_share": 0.0,
+    "unit_grain_forced_twh": 0.0,
+    "units": 128
+   },
+   "ST_GAS": {
+    "class_twh": 10.0784,
+    "unit_grain_forced_share": 0.351,
+    "unit_grain_forced_twh": 3.5374,
+    "units": 88
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "class_twh": 19.7573,
+    "unit_grain_forced_share": 0.2193,
+    "unit_grain_forced_twh": 4.3319,
+    "units": 107
+   },
+   "CC_REGULAR": {
+    "class_twh": 36.7138,
+    "unit_grain_forced_share": 0.099,
+    "unit_grain_forced_twh": 3.6331,
+    "units": 129
+   },
+   "CT_PEAKER": {
+    "class_twh": 0.4481,
+    "unit_grain_forced_share": 0.0,
+    "unit_grain_forced_twh": 0.0,
+    "units": 130
+   },
+   "ST_GAS": {
+    "class_twh": 8.8293,
+    "unit_grain_forced_share": 0.3431,
+    "unit_grain_forced_twh": 3.0294,
+    "units": 88
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "class_twh": 20.7462,
+    "unit_grain_forced_share": 0.2072,
+    "unit_grain_forced_twh": 4.299,
+    "units": 107
+   },
+   "CC_REGULAR": {
+    "class_twh": 35.4358,
+    "unit_grain_forced_share": 0.0981,
+    "unit_grain_forced_twh": 3.4767,
+    "units": 129
+   },
+   "CT_PEAKER": {
+    "class_twh": 1.5407,
+    "unit_grain_forced_share": 0.0,
+    "unit_grain_forced_twh": 0.0,
+    "units": 130
+   },
+   "ST_GAS": {
+    "class_twh": 9.7882,
+    "unit_grain_forced_share": 0.268,
+    "unit_grain_forced_twh": 2.6233,
+    "units": 88
+   }
+  }
+ },
+ "card": "docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md (UNRULED); prior measurement was on 2026-09-05-nyiso-189-steam-identity: ST_GAS 0.393 / 0.414 / 0.305",
+ "committed_plant_grain_c8_ST_GAS": {
+  "2023": 0.155,
+  "2024": 0.199,
+  "2025": 0.172,
+  "cap": 0.3,
+  "note": "the committed scorer verdict, from the keeper attestation; C8 PASSES on this instrument"
+ },
+ "keeper": "2026-09-06-nyiso-202-startup-aware",
+ "provenance": "Measured on an IDENTITY-VERIFIED replay of the keeper recipe (scripts/run_calibration_full.py --replay-bundle results/calibration/nyiso202_startup_aware), run ONLY to recover the gitignored hourly/unit_hourly_<year>.parquet + floors/<year>_P1.npz that the committed bundle does not carry. Identity: 0 of 157,680 zonal prices differ across 2023-2025 and class energy is identical to 0.000000 MWh over 14 classes, so these are the KEEPER's numbers. The replay bundle is NOT registered and is DELETED BEFORE MERGE (rule 29(c) discipline; the registry/payload parity sweep treats an unregistered bundle dir as a gate RED).",
+ "session": "nyiso-203"
+}

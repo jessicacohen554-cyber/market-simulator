@@ -12645,3 +12645,66 @@ re-validated empirically: `_nyiso198_rebuild_checks_2024.json` regenerates byte-
 this HEAD. Records: `docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`,
 `results/calibration/_nyiso203_nyc_base_phase0.json`,
 `scripts/probes/_nyiso203_nyc_persistent_base_basis.py`.
+
+## nyiso-203b — 2026-09-06
+
+**The TWO items standing before a `complete` / `frontier` re-declaration, MEASURED. Keeper
+UNCHANGED at `2026-09-06-nyiso-202-startup-aware`** (CALIBRATED, grade 7/8, fails 0 — re-verified
+this session from committed artifacts, no solve). **ONE LP: an identity-verified replay of the
+keeper's own recipe** (`--replay-bundle`), run solely to recover the gitignored
+`hourly/unit_hourly_<year>.parquet` + `floors/<year>_P1.npz` the committed bundle does not carry
+— **0 of 157,680 zonal prices differ across 2023–2025 and class energy is identical to
+0.000000 MWh over 14 classes**, so the numbers are the keeper's. No arm, no `ScenarioConfig`
+change, no scorer edit, nothing registered; **the replay bundle is DELETED BEFORE MERGE** (the
+parity sweep treats an unregistered bundle dir as a gate RED). 2023–2025 only.
+
+**(1) D-2 UNIT-GRAIN C8 — the UNRULED nyiso-193 card's option (C) NYISO row, re-taken on the live
+keeper.** `ST_GAS` **0.351 / 0.343 / 0.268** against the 0.30 cap, versus the committed
+plant-grain **0.155 / 0.199 / 0.172** (PASS). The defect is unchanged in kind and **reduced in
+extent — 2 of 3 years breach, against 3 of 3** on the `nyiso-189` keeper the card measured
+(0.393 / 0.414 / 0.305). No other class breaches (`CC_REGULAR` 0.097–0.099, `CT_PEAKER` 0.000,
+`CC_CHP` 0.207–0.273 and exempt). Rule 20's escalation is **confirmed on the committed
+diagnostics**: leg (b) shape `D1.passed=True`, leg (a) provenance `D4.passed=False`, so a
+unit-grain re-base fails NYISO `ST_GAS` in 2023/2024 exactly as §2 of the card predicted.
+**NEW, and it narrows the ruling's cost:** 5 of the 6 D-4 FAIL rows carry ≤0.0028 TWh, and **in
+2024 the ONLY `ST_GAS` failure is Danskammer 2480 at 0.0002 TWh — 0.007 % of that class-year's
+3.0294 TWh of unit-grain forced energy.** A CAMPD census against nyiso-140's criterion finds
+**2480 (12/12 zero cells, 2.9 % online)** and **Roseton 8006 (12/12, 14.6 % online)** qualify
+**a fortiori** against the already-excluded Port Jefferson 2517 (38.6 % online), while Astoria
+8906 (0/12, 166 MW median, 70.4 % online) and Saranac 54574 (9/12) do **not** — confirming
+nyiso-201 §5 a third time. Excluding 2480 + 8006 would leave **zero `ST_GAS` D-4 failures in 2024
+and 2025**, with only 2023's 8906 row (0.2271 TWh) left — whose limb basis this session measured
+**sound as built**, so it is not reachable by a basis change. **NOT ARMED:** that entry is a new
+arm owing its own PREREG, rule-29 screen and span, and the D-4 gate is per bundle so the leg-(a)
+consequence must be measured, not read off the row list. The card stays **UNRULED**; the other
+five ISOs stay unmeasured (rule 25).
+
+**(2) THE OWNER-RULED DUCT-TRANCHE LEVER** — the `withdrawn.NYISO.reentry` clause's named route
+back to `complete` — **is measured and does not reach its target.** The premise is **RIGHT at
+plant grain**: `CC_REGULAR` runs hot (model CF >0.80 at 3/2/1 plants vs actual 0/1/0; Astoria
+Energy 55375 0.851/0.845 vs 0.764/0.777; Zeltmann 56196 0.827/0.825 vs 0.694/0.750; Bethlehem
+2539 +0.294/+0.291). But the named tranche is the wrong one: the peak (duct) band is **1,158 MW
+at CF 0.041 / 0.052 / 0.112 carrying 1.23 / 1.44 / 3.19 % of class energy**, while the over-run
+lives in `committed` (3,214–3,219 MW, CF 0.656–0.695) and the six ~507 MW `econ` tranches
+(CF 0.53–0.62). **THE BOUND: C1-2024 `CC_REGULAR` over-runs by +2.39 TWh and the entire peak band
+dispatches 0.529 TWh, so displacing every MWh of it closes at most 22 %** (14 % at the
+withdrawal, when the over-run was +3.68 TWh). Second reason: **80.7 % of the band (934.53 of
+1,158.46 MW, row-scope coverage 100 %) is not duct capability** — CT rows EIA-860 flags `X` — so
+raising it mostly raises the offer on ambient-derated capacity, the misclassification
+`cc_duct_peaking_row_scoped` was **rejected** for trying to repair. Its target is also already met
+by other means (C1-2024 `CC_REGULAR` +3.68 TWh / +3.0 pp at the withdrawal → +2.39 / +2.1 pp now).
+**Stated for the owner court, not decided:** the successor inside the SAME authorized channel is
+the `offer_curve_by_group` multiplier on `committed` / `econ_low` / `econ_high`, which rule 1's
+carve-out condition (c) requires be declared ex ante in a PREREG and never swept — an owner act.
+
+**MARKERS: neither item blocks either on the merits.** The keeper reads CALIBRATED and the
+`reentry` clause asks only for a new explicit owner declaration; the forecast board's gate (a)
+already reads *"an OWNER ACT, not a calibration task"*; the `frontier` mechanism-set limb was
+never retracted. Card **C-19 / Q51** is PARKED at owner direction (capx refresh #46) with its
+re-serve condition (*"nyiso-197 lands AND the keeper is CALIBRATED"*) **met**. No marker was
+edited by this lane. Records:
+`docs/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`,
+`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md` §5 addendum,
+`results/calibration/_nyiso203_c8_unit_grain.json`,
+`_nyiso203_duct_lever_disposition.json`, `_nyiso203_d4_layup_census.json`,
+`scripts/probes/_nyiso203_duct_lever_disposition.py`, `_nyiso203_d4_layup_census.py`.
