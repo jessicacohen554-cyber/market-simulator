@@ -25,3 +25,9 @@ d3de297c2e419ea81cd19dfc35428da9df4957510d956ba865b5863276347b82  2026_ITP_Const
 4c2415fbb67de213af21c25b067b46a1c997c0c0d7f0b585642975848edb37ba  ../spp-genmix/GenMixYTD_SPP.csv                   # tracked (10.4 MB)
 3c21af94f69d12b04a22cb43838b83f1e452606ddc5e8cedf14edf63650c6b36  GenMix365_SPP.csv                                 # NOT landed — its span 2024-12-16..2025-12-16 is covered by the two above
 0c804a73fffc12893aa4d8810d140da489a469e9dc1c85e251581a1a9340a675  ../spp-hourly-load/Peak_Load_by_Month.csv         # tracked (2 KB)
+# --- appended 2026-09-06 by lane SPP-14 (SPP-DESK addendum r#4 am.1): three measured members of the v35 zip,
+# extracted unmodified and tracked here; the zip re-fetched over HTTPS reproduced e2e8478b… byte-for-byte.
+955536dcac6dc2354741270a12d6929b4f35abf4f985fd18760bc61784003e89  SL_to_Pnode_to_Zone_with_Area.csv                # tracked (33.5 MB) — SL -> PNode -> NODE_AREA -> RESZONE map
+62924a5c55496f7e1d4c379cbe905d1791fb8dd959f887a31f7920cce2d203a7  Hub_Definitions.csv                               # tracked (0.20 MB) — SPPNORTH_HUB 449 / SPPSOUTH_HUB 460 nodes
+af89cfaed9507fc6c7c8735c8ef44c4b38984b28a01d6d5c9aba8fbe831870b6  TieFlows_Sep2025.csv                              # tracked (8.9 MB) — 1-min tie flows by neighbour, Sep 2025
+f365cad6f1f31e6ae6c0eaf7d329834676c15802b89665bfac13ce7c96c65ffd  TieFlows.csv                                      # NOT landed — 2-day 2026-01 sample with a "SPP NSI Future" column

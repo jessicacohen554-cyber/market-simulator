@@ -314,3 +314,23 @@ open root-cause item. Two things this sweep adds for that estimate: the interfac
 cite (`SPPSPSTIES`, `SPSNMTIES`), and the fact that the measured substitute — the RTBM
 binding-constraint archive's `Real Time Effective Limit` column per flowgate (schema in
 `../spp-binding-constraints/README.md`) — is public on the FTP route and is the SPP-53 input.
+
+---
+
+## Appended 2026-09-06 by lane SPP-14 — three measured files landed raw from SPP's own v35 guide zip (SPP-DESK addendum r#4 am.1)
+
+`docs/handoffs/FINDING-spp-14-2026-09-06.md`. The zip (`SPP Markets Public Data Guide and Samples
+v35.zip`, sha256 `e2e8478b…`, 82,643,996 B — re-fetched 2026-09-06 over HTTPS and verified against
+the SPP-13 row above) ships **real SPP publications**, not synthetic samples (SPP-13 §5). Three of
+them are measured reference tables SPP-20 / SPP-32 / SPP-33 / SPP-51 consume, and they are landed
+here **byte-for-byte as extracted from the zip** (member name → local name, no rename):
+
+| File | Bytes | Rows (incl. header) | Member date in zip | What it is |
+|---|---:|---:|---|---|
+| `SL_to_Pnode_to_Zone_with_Area.csv` | 33,451,691 | 296,792 | 2026-01-29 | Every settlement location → parent/child PNode → ENODE → **`NODE_AREA`** → **`RESZONE`**, with effective/termination dates. Header: `EFFECTIVEDATE,TERMINATIONDATE,SETLOCNAME,SETLOCTYPE,ASSET_TYPE,PARENTPNODE,CHILDPNODE,ENODE,NODE_AREA,RESZONE`. `SETLOCTYPE` ∈ {`INT` 284,398 rows, `LOAD` 7,797, `HUB` 3,370, `RES` 1,200, `NONBID` 26}; `RESZONE` ∈ {`1`,`2`,`3`,`4`,`5`,`21`,`External`}. **The measured SL→area map** for SPP-20's sub-BA/zone grouping and SPP-32's zonal shares. The per-`NODE_AREA` settlement-location counts and the EIA-930 sub-BA join key are tabulated in the FINDING (§A) — reported, not decided. |
+| `Hub_Definitions.csv` | 197,550 | 3,371 | 2026-01-29 | Hub → PNode membership with weighting factors. Header: `Settlement Location Name,Parent PNode,Child PNode,Weighting Factor,Settlement Location Type,BAA`. **`SPPNORTH_HUB` = 449 nodes, `SPPSOUTH_HUB` = 460 nodes, every weighting factor 1, both `BAA = SPP`** — the exact definition of the two hubs the committed price benchmark `../_validation-source/actual_lmp_hourly_SPP.parquet` is built from (SPP-40's "two-point spread" limitation cites this). |
+| `TieFlows_Sep2025.csv` | 8,902,448 | 45,920 | 2025-09-30 | One month (2025-08-31T05:00Z → 2025-09-30) of **1-minute tie flows by neighbour**, UTC stamps. Header: `GMTTIME,SPP_NSI,SPP_NAI,AECI,AMRN,BLKW,CLEC,EDDY,EES,ERCOTE,ERCOTN,LAMAR,MEC,SCSE,SOUC,SPA,TVA,RCEAST,SPC,MCWEST,SGE,ALTW,DPC,GRE,MDU,NSP,OTP`. SPP-33 / SPP-51 seam evidence. (The zip's other tie-flow member, `TieFlows.csv`, is a 2-day 2026-01 sample with a `SPP NSI Future` column and is NOT landed; sha recorded.) |
+
+Timezones as the files state them: `TieFlows_Sep2025.csv` is UTC (`GMTTIME`, `Z`); the SL map's
+dates are `MM/DD/YYYY HH:MM:SS` local-clock stamps (the `06:00:00` / `05:00:00` boundaries are
+midnight Central in CST / CDT). Raw files land untouched (the `data/raw/` contract).
