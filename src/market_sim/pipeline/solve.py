@@ -25,6 +25,25 @@ Solve semantics (unchanged, statement-for-statement):
   fleet — is a strong warm start for the one remaining cold solve, P0. The LP
   optimum is basis-independent, so this only changes the solve path, never the
   cleared prices or generation.
+- Same-year P1 basis seed (``MARKET_SIM_P1_BASIS_SEED=1``, default off; the
+  calibration CLIs default it ON, ``--no-p1-basis-seed`` opts out — wallclock
+  desk item B, owner memo ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md``,
+  signed (A) FLIP 2026-09-06). On the ISOs whose keeper carries a P1-native
+  floor bridge (ERCOT / NYISO gas commitment bridges, CAISO RA must-offer) the
+  P1 cannot re-cost the live P0 model, so a SECOND ``DispatchModel`` is built
+  on the floored fleet and — before this seed — solved from no basis at all.
+  The seed hands that second model the P0 model's optimal basis through the
+  same ``apply_cross_year_basis`` the cross-year path ships (same ``T``, same
+  ``unit_ids`` → identity column map, ``alien=True`` so HiGHS repairs the few
+  statuses the bridge's raised bounds make inconsistent). An adaptive
+  re-solve pass (C-1b ``reuse_p0_from``) is seeded from the PREVIOUS pass's
+  P1 basis when that pass exported one, else from the P0 basis. Armed only
+  inside the cross-year gate (``_xwarm``) and only on the backcast callers
+  (``xyear_warmstart is None``): under the goldens/replay pin
+  (``MARKET_SIM_WARMSTART_XYEAR=0``) and on the forecast path nothing is
+  exported or applied and the tree is byte-identical. Measured ERCOT forward
+  2025: ``solve_p1`` 287.1 → 139.3 s, simplex iterations 273,893 → 78,856,
+  objective and total generation identical (memo §3).
 
 Cross-year cache policy (plan §8): the backcast front-end threads its
 ``xyear_cache`` through (preserving today's behavior — the basis is exported
@@ -162,6 +181,19 @@ class EnergySolveResult:
         p0_reused: Whether this pass skipped its own P0 build + solve and
             reused ``reuse_p0_from.r0`` (C-1b). ``r0`` is then the SAME object
             the previous pass returned.
+        p1_seeded: Whether this pass's cold-rebuilt P1 model was handed a
+            starting basis (the same-year P1 basis seed, wallclock item B)
+            before its first solve. ``False`` on every warm-P1 route, under
+            the goldens/replay pin, on the forecast path, and whenever the
+            seed was unavailable (no exportable basis / a horizon mismatch
+            declined by ``apply_cross_year_basis``).
+        p1_basis: The cold-rebuilt P1 model's optimal basis (a
+            ``CrossYearBasis`` of ``int8`` status vectors, ~tens of MB on a
+            plant-level ISO), exported ONLY when the caller passed
+            ``export_p1_basis=True`` on a seeded pass — i.e. when it intends
+            to hand this result to a later adaptive pass as ``reuse_p0_from``,
+            whose P1 is the identical floored LP under a different storage
+            discharge cost and is seeded from it. ``None`` otherwise.
     """
 
     r0: "DispatchResult"
@@ -175,6 +207,8 @@ class EnergySolveResult:
     solve_p1_s: float = 0.0
     p1_cold: bool = False
     p0_reused: bool = False
+    p1_seeded: bool = False
+    p1_basis: Optional[object] = None
 
 
 def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
@@ -242,6 +276,7 @@ def run_energy_solve(
     startup_run_ratio_t: Optional[np.ndarray] = None,
     p1_storage_discharge_cost: Optional[np.ndarray] = None,
     reuse_p0_from: Optional[EnergySolveResult] = None,
+    export_p1_basis: bool = False,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -339,6 +374,18 @@ def run_energy_solve(
             such a hand-over is ignored and a full P0 runs. The caller owns the
             "same inputs" premise; this function does not re-verify it.
             ``None`` (every non-adaptive path) is byte-identical.
+        export_p1_basis: When ``True`` AND this pass's P1 was seeded (the
+            same-year P1 basis seed, see the module docstring), export the
+            cold-rebuilt P1 model's optimal basis onto the result's
+            ``p1_basis`` so a later adaptive pass handed this result as
+            ``reuse_p0_from`` seeds its own P1 from it — the identical
+            floored LP under a different storage discharge cost, so the P1
+            basis is the closer seed than the P0 basis. Costs one
+            ``getBasis()`` materialization (~10–17 s on ERCOT), so a caller
+            passes it only when a further pass MAY follow (the ercot-221
+            pass 1 and every ercot-230 fixed-point iteration). ``False``
+            (every other caller) exports nothing; an unseeded pass ignores
+            it.
 
     Returns:
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, the
@@ -410,6 +457,25 @@ def run_energy_solve(
         _xwarm = _warm and os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
     else:
         _xwarm = _warm and bool(xyear_warmstart)
+    # Same-year P1 basis seed gate (wallclock item B; owner memo
+    # docs/handoffs/p1-basis-seed-decision-memo-2026-09.md §6, signed (A)).
+    # Three conditions, all required: (1) ``_xwarm`` — the seed sits INSIDE
+    # the cross-year gate, so the goldens/replay pin MARKET_SIM_WARMSTART_XYEAR=0
+    # (and ``--no-xyear-warmstart``) implies seed OFF with no second knob to
+    # remember; (2) ``xyear_warmstart is None`` — the backcast callers only.
+    # The forecast passes an explicit bool (``ScenarioConfig.
+    # forecast_xyear_warmstart``, D-9/D-10) and is left COLD here by design,
+    # so no forecast bundle's cache key, resume reproducibility (the D-10
+    # defect class) or trajectory is touched by an env var; (3) the env var
+    # itself, global default OFF — ``resolve_p1_basis_seed_default`` in
+    # scripts/run_calibration.py flips it ON for a fresh calibration solve
+    # (``--no-p1-basis-seed`` to opt out), exactly the P-2 shape, so the
+    # direct ``solve_and_persist`` callers (replay, goldens) stay OFF.
+    _p1_seed = (
+        _xwarm
+        and xyear_warmstart is None
+        and os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0"
+    )
     # Persisted year-1 basis cache key (plan §7 H2). backcast_config pins
     # config.iso/weather_year/hours to the solved (ISO, year, T). An
     # explicitly-gated caller (the forecast) opts OUT of the disk cache: its
@@ -627,6 +693,8 @@ def run_energy_solve(
     # pass (changeColsCost), so this is the exact storage analogue of the
     # thermal ``mc=mc_bid`` re-cost, and P0 (already solved) is untouched.
     # Cold path: merged over the P1 kwargs at the call below.
+    _p1_seeded = False
+    _p1_basis = None
     if _warm_p1 or _inplace_floored:
         if model is None:
             # Unreachable by construction: reuse is admitted only when the
@@ -648,10 +716,37 @@ def run_energy_solve(
         # then release the P0 LP + HiGHS workspace before building the second
         # DispatchModel, so peak RSS stays ~one model (the PJM zone-aggregate
         # co-opt alone peaks ~14.5 GB on the 15 GB calibration box).
-        if _xwarm and xyear_cache is not None:
-            basis = model.export_cross_year_basis()
+        # The same export also SEEDS the second model below when the P1
+        # basis seed is armed (wallclock item B): same T, same unit_ids, so
+        # the remap is the identity and the seeded P1 starts on the P0
+        # optimal face of the same LP instead of from nothing. Guarded on
+        # ``model is not None``: a reused-P0 pass (C-1b) has no live model —
+        # before this guard the export dereferenced ``None`` on every
+        # adaptive pass 2 solved with the cross-year gate ON (the
+        # calibration CLI default), which is the seed's own route.
+        # ``getattr``-tolerant on the seed leg for the same reason the
+        # timing reads are: the tests' capturing double implements ``solve``
+        # and nothing else, and a missing export degrades to an unseeded
+        # cold P1, never an error.
+        _seed_basis = None
+        if model is not None and _xwarm and (xyear_cache is not None or _p1_seed):
+            _export = getattr(model, "export_cross_year_basis", None)
+            basis = _export() if _export is not None else None
             if basis is not None:
-                xyear_cache[:] = [basis]
+                if xyear_cache is not None:
+                    xyear_cache[:] = [basis]
+                if _p1_seed:
+                    _seed_basis = basis
+        elif _p1_seed and _reuse_p0:
+            # Adaptive re-solve (C-1b): the previous pass's P1 was the
+            # identical floored LP under a different storage discharge cost,
+            # so its basis is the closer seed when that pass exported one
+            # (``export_p1_basis``); else the P0 basis the previous pass's
+            # cold route left in the holder — this year's, since the holder
+            # was rewritten on that route and no year boundary intervenes.
+            _seed_basis = getattr(reuse_p0_from, "p1_basis", None)
+            if _seed_basis is None and xyear_cache:
+                _seed_basis = xyear_cache[0]
         model = None
         # Hand the just-freed P0 heap back to the kernel BEFORE the second
         # model is built. Dropping the reference above frees the LP + HiGHS
@@ -669,7 +764,37 @@ def run_energy_solve(
                 **p1_dispatch_kwargs,
                 "storage_discharge_cost": p1_storage_discharge_cost,
             }
-        p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)
+        if _seed_basis is not None:
+            # Seeded cold P1: build the second model exactly as
+            # ``solve_dispatch`` does (same constructor, same kwargs — the
+            # two signatures share every parameter and default), install the
+            # seed as an alien basis BEFORE the first solve, then solve at
+            # the bid cost. The LP is untouched — objective, bounds, rows and
+            # coefficients are identical to the unseeded rebuild; only the
+            # simplex starting point differs, and an LP optimum is
+            # basis-independent (warm-start class: marginal-tie reshuffle
+            # only). The apply and the optional P1 export land in
+            # ``p1_post`` of the markup attribution below.
+            _p1_model = DispatchModel(p1_fleet_arrays, demand, **p1_dispatch_kwargs)
+            _apply = getattr(_p1_model, "apply_cross_year_basis", None)
+            _p1_seeded = bool(_apply(_seed_basis)) if _apply is not None else False
+            p1 = _p1_model.solve(mc=mc_bid)
+            if export_p1_basis and _p1_seeded:
+                _export = getattr(_p1_model, "export_cross_year_basis", None)
+                _p1_basis = _export() if _export is not None else None
+            _p1_model = None
+            logger.info(
+                "P1 basis seed: %s (source=%s, export_p1_basis=%s)",
+                "APPLIED" if _p1_seeded else "declined by the model",
+                "previous pass P1"
+                if (_reuse_p0 and getattr(reuse_p0_from, "p1_basis", None) is not None)
+                else "P0",
+                bool(export_p1_basis),
+            )
+        else:
+            p1 = solve_dispatch(
+                p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs
+            )
     _t5 = time.perf_counter()
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
@@ -757,7 +882,8 @@ def run_energy_solve(
         "seam": _t4 - _t3,
         # The P1 pass minus ``h.run()`` and minus its own build: same
         # cost-vector + marshalling work as ``p0_post``, plus (cold path only,
-        # cross-year gate armed) the pre-rebuild P0 basis export.
+        # cross-year gate armed) the pre-rebuild P0 basis export, and (seeded
+        # cold path) the basis apply + the optional P1 basis export.
         "p1_post": (_t5 - _t4) - _solve_p1_s - _build_p1_s,
         # Cross-year basis export (``getBasis``) + the disposable NPZ persist.
         "tail": _t6 - _t5,
@@ -769,6 +895,7 @@ def run_energy_solve(
             "solve_p0_s": _solve_p0_s,
             "solve_p1_s": _solve_p1_s,
             "p0_reused": _reuse_p0,
+            "p1_seeded": _p1_seeded,
             "parts": markup_parts,
         }
     )
@@ -785,6 +912,8 @@ def run_energy_solve(
         solve_p1_s=_solve_p1_s,
         p1_cold=_p1_cold,
         p0_reused=_reuse_p0,
+        p1_seeded=_p1_seeded,
+        p1_basis=_p1_basis,
     )
 
 

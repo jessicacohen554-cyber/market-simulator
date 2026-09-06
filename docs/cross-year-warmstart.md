@@ -427,3 +427,90 @@ keys (which carry an explicit `true`). Measured both ways in
 `src/market_sim/results/cache.py`. Decision record: sitting Addendum K.3
 (`docs/handoffs/ffr-owner-sitting-2026-08-02.md`); adjudication:
 `docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md`.
+
+## Same-year P1 basis seed — the cold-rebuilt P1 seeded from the P0 basis (wallclock item B, 2026-09-06)
+
+**Decision: calibration-CLI default ON, `--no-p1-basis-seed` to opt out, env var
+`MARKET_SIM_P1_BASIS_SEED` honored; inert under the goldens/replay pin and on
+the forecast path.** Owner memo `docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`
+(the B-0 bench that produced the number), signed **(A) FLIP** 2026-09-06 by chat
+instruction; evidence for the shipped surface in
+`docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B.
+
+**What it is.** On the ISOs whose keeper carries a P1-native floor bridge —
+ERCOT (`ercot_gas_commitment_bridge`), NYISO (`nyiso_gas_commitment_bridge`),
+CAISO (`caiso_ra_mustoffer`) — the P1 pass cannot re-cost the live P0 model in
+place: the bridge replaces the fleet, the in-place refloor declines (the raised
+availability feeds reserve-headroom / ramp *rows*), and `run_energy_solve`
+builds a **second `DispatchModel`** on the floored fleet and, until this change,
+solved it **from no basis at all** — a full cold P1 costing about as much as P0
+(the "P1 ≈ P0" signature in the memo's §2 table). The seed is the shipped
+cross-year machinery applied to the one place in a year it never reached: the
+P0 model's optimal basis is exported once (the same `export_cross_year_basis`
+the cross-year holder already takes on that branch, now taken whenever the seed
+is armed) *before* the model is released and `malloc_trim()` runs (A-6), and the
+second model installs it through `apply_cross_year_basis` before its first
+solve — same `T`, same `unit_ids`, so `_cross_year_column_map` is the identity on
+every per-hour block; `alien=True`, so HiGHS repairs the few statuses the
+bridge's raised bounds make bound-inconsistent. The row copy is the shipped
+conservative one (energy-balance + storage-SOC rows; every other row family
+defaults to basic slack) — the form the memo measured; a same-year full-row copy
+is a possible later tightening, gated exactly like the seed, and no number here
+depends on it.
+
+**The adaptive-pass leg.** The ercot-221 pass 2 and every ercot-230 fixed-point
+iteration reach `run_energy_solve` with `reuse_p0_from` (C-1b) and therefore no
+live P0 model. Their P1 is the identical floored LP under a different storage
+discharge cost, so the *previous pass's P1 basis* is the closer seed: a pass
+that may be followed by another passes `export_p1_basis=True`, the cold-rebuilt
+P1 model's basis is exported onto `EnergySolveResult.p1_basis`, and the next
+pass seeds from it (else from the P0 basis the previous cold route left in the
+holder). The final iteration's export is one wasted `getBasis()` (the stop is
+known only after the solve) — accepted.
+
+**Gate.** Three conditions, all required, in `pipeline/solve.py::run_energy_solve`:
+`_xwarm` (the seed sits **inside** the cross-year gate, so
+`MARKET_SIM_WARMSTART_XYEAR=0` / `--no-xyear-warmstart` — the goldens, replay
+and merge-base-control pin — implies seed OFF with no second knob to remember);
+`xyear_warmstart is None` (the backcast callers only — the forecast passes an
+explicit bool and is left cold by design, so no forecast cache key, resume
+reproducibility or trajectory is touched, rule 24 `[R-REGISTRY]`); and the env
+var, global default OFF, which `resolve_p1_basis_seed_default`
+(`scripts/run_calibration.py`, the sibling of `resolve_xyear_warmstart_default`
+with the same precedence) sets ON for a fresh calibration solve only.
+`--report` / `--replay-bundle` / `--rebuild-benchmark` and the direct
+`solve_and_persist` callers (`capture_keeper_goldens.py`, `replay_keeper.py`)
+stay at the global default OFF. Inert wherever the P1 re-solves the live P0
+model (NEISO / PJM / MISO keepers, and any run with no floor hook).
+
+**Class.** WARM-START CLASS, not byte-identical — the memo's §4 standard, the
+one every shipped warm start was promoted on: objective and total generation
+identical, per-unit differences marginal-tie only (`total gen Δ = 0`), price
+differences confined to dual-degenerate hours. It cannot be proved on
+`regression_gate.py --mode byte` between a seeded and an unseeded bundle, and
+must not be; the byte gate's job is to prove the switch is dead when OFF
+(merge-base control vs branch under the pin — see §WALLCLOCK B). Keeper goldens
+do not move (cold-vs-cold under the pin), and a keeper's committed bundle stays
+the G-CTRL form-4 control (rule 29 `[R-SCREEN]` (b)).
+
+**A latent crash fixed on the same branch.** The cold-P1 branch exported the
+cross-year basis from `model` guarded on the gate but not on the model's
+existence, and a reused-P0 pass (C-1b) has none — so under the calibration
+CLI's default `MARKET_SIM_WARMSTART_XYEAR=1` every ERCOT adaptive pass 2 raised
+`AttributeError: 'NoneType' object has no attribute 'export_cross_year_basis'`
+(reproduced on the trivial LP at the merge base; the s3 measurements ran under
+the `XYEAR=0` pin and never saw it). The export is now guarded on the model, and
+`tests/unit/pipeline/test_xyear_warmstart_default.py` pins the case with the
+seed off and on.
+
+**Measured (this wave — the shipped surface, determinism pin except the two gate
+env vars, one ERCOT arm at a time, 6 GiB swapfile):**
+
+<!-- WC_B_TABLES -->
+
+Pinning tests: `tests/unit/pipeline/test_xyear_warmstart_default.py`
+(`TestResolveP1BasisSeedDefault`, `TestP1BasisSeedGate`) — resolver precedence,
+the seed applied inside the gate and neutral on the trivial LP, inert under the
+pin, inert on the forecast gate argument, never reaching a warm P1, the
+adaptive-pass leg (export → reuse), the regression pin for the crash above, and
+the `getattr`-tolerant contract on a solve-only `DispatchModel` double.
