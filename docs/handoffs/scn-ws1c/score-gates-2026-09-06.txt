@@ -1,0 +1,14 @@
+G1 direction+magnitude : 450/450 cells equal the committed `floor` prediction  -> PASS
+G2 footprint           : moved series = [('CAISO', 'tight'), ('NEISO', 'tight'), ('NYISO', 'tight')]; moved cells = 75 (expect 3 series x 25 yr = 75); unmoved cells = 375/450  -> PASS
+   every delta strictly POSITIVE (no cell falls): True  min +15.98 max +102.29 $/tCO2
+   ruled no-op check (tight == current, all 25 yr, after the repair):
+     CAISO  tight == current in all 25 years: True
+     NYISO  tight == current in all 25 years: True
+     NEISO  tight == current in all 25 years: True
+   strict increase where the path alone applies (tight > current, 2027-2050):
+     ERCOT  tight >  current in 2027-2050: True  (2026 equal at 0.00: RFF mid knot)
+     PJM    tight >  current in 2027-2050: True  (2026 equal at 0.00: RFF mid knot)
+     MISO   tight >  current in 2027-2050: True  (2026 equal at 0.00: RFF mid knot)
+G3 byte identity       : cache keys moved = 0/24; default key e5ecd4105ada3e58 stable = True; committed run_configs on the changed branch = 0/90; backcast 2023-25 trajectories identical in all six ISOs = True  -> PASS
+
+VERDICT: ALL GATES PASS
