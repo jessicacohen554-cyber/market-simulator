@@ -1363,6 +1363,59 @@ def _pjm_config() -> ISOConfig:
             # card B's remaining half. Execution:
             # PRECOMMIT-capx-d75r-arm-2026-09-06.md.
             "pjm_vre_accreditation_vintage": True,
+            # capx D78-ARM, OWNER RULING Q56 (served by
+            # FINDING-capx-d78r3-2026-09-06.md §5 "RECOMMEND ARM"; ruled ARM
+            # in this lane's charter) on the measured D78-R2 / D78-R3 full
+            # window. The retirement-screen SECTOR GATE (capx D53 / D78): a
+            # unit whose plant's EIA-860 ``Sector`` is 1 (a regulated
+            # electric utility, read at the run's active vintage) still
+            # OFFERS its accredited MW into the D57 capacity clearing at its
+            # net-ACR cap -- PJM's must-offer requirement (Manual 18 Rev 62
+            # §1.2 / §5.4.1) keys on existing-and-in-footprint, never on
+            # ownership -- but is partitioned out of the step-3 economic
+            # EXIT decision, which models a MERCHANT choice its owner never
+            # faces: a utility exit is an IRP / rate-case filing carried by
+            # step 0's instruments and step 1b's owner-filed dates.
+            #
+            # Armed the D57/Q44 -> D67-ARM -> Q55 way -- through this
+            # ISOConfig override, NOT a flip of the shared `ScenarioConfig`
+            # default, which stays `False` (so no
+            # `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry is needed, no
+            # other ISO's key moves, and every backcast key is byte-identical;
+            # a PJM plain backcast coerces the field back to `False` with its
+            # key unmoved at 3a566deac3a85682). An explicit caller still
+            # wins: `--no-retirement-sector-gate` reaches the pre-arm (Q55)
+            # posture and keeps its key `b518f5fe7d02f961`; the bare recipe
+            # advances to `fb16fda2ddb0a94a`.
+            #
+            # Rule 21 [R-DOF]: ZERO free parameters -- a PARTITION on one
+            # published per-plant boolean; no weight, threshold, share or
+            # fitted value. Rule 19 [R-ONE-MECH]: one seam
+            # (`exit_exempt_unit_ids`, the screen's sole exemption seam since
+            # D78-R2 deleted `exempt_unit_ids`), and no unit's exit is decided
+            # twice. Rule 25 [R-ISO-SCOPE]: a PJM posture on PJM's OWN
+            # evidence -- MISO's D53 arm transferred nothing; PJM's cell moved
+            # U -> O -> K on D58 / D78 / D78-R / D78-R2 / D78-R3, all PJM
+            # legs. Rule 14: the decision rests on the STRUCTURAL limbs, never
+            # on the residual -- the partition is exact in all five years
+            # (W1/W2/W3: every control-only failing row is sector-1, the
+            # arm-only set is EMPTY, zero sector-1 rows in any decision
+            # ledger), the window decided total lands on the pre-registered
+            # exact-partition point value 9,394.156 MW to the milli-MW (W4'),
+            # the whole-ledger diff finds zero unclassified rows in five
+            # years, and purity holds on D57 §4's PER-DELIVERY-YEAR zero-E&AS
+            # set (W5'': 1,354 gated shared rows, 0 moved -- every mover
+            # outside its DY's declared set). Reported at full magnitude and
+            # NOT a criterion in either direction: retire.total_gw 18.058 ->
+            # 15.937 GW (FAIL -> PASS against 15.062 actual), unit_recall_gt300
+            # FALLS 0.650 -> 0.550 (a partition removing matched sector-1
+            # exits must), the 2025/26 clearing price 358.267 -> 236.945
+            # $/MW-day on the steep VRR limb, and limb (d) cannot discriminate
+            # on recall in either leg. Evidence:
+            # FINDING-capx-d78r2-2026-09-06.md §§3-8 and
+            # FINDING-capx-d78r3-2026-09-06.md §§3-5. Execution:
+            # PRECOMMIT-capx-d78arm-2026-09-06.md, FINDING-capx-d78arm-2026-09-06.md.
+            "retirement_sector_gate": True,
         },
     )
 
