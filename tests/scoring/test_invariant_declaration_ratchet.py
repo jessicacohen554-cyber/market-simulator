@@ -345,8 +345,14 @@ def test_committed_ledger_baseline_is_consistent_with_the_committed_sidecars():
     desk has since declared, would be a live forgiveness token.
     """
     ledger = il.load_ledger(REPO)
-    baseline = ledger.get(il.BASELINE_KEY, {})
-    assert baseline, "the ratchet baseline block is missing"
+    assert il.BASELINE_KEY in ledger, "the ratchet baseline block is missing"
+    baseline = ledger[il.BASELINE_KEY]
+    # An EMPTY block is the ratchet's terminal state, not a missing one: the
+    # baseline may only shrink, and it reached ``{}`` when capx D80 declared
+    # the last eight Y-24 rows (FINDING-capx-d80-2026-09-06.md). The loop
+    # below is then vacuous by design; the block stays so a future baseline
+    # entry is caught here rather than silently absent.
+    assert isinstance(baseline, dict)
     for run_id, idents in baseline.items():
         sidecar_path = REPO / "frontend" / "data" / "hindcast" / f"{run_id}.json"
         assert sidecar_path.exists(), f"{run_id} is baselined but has no sidecar"
