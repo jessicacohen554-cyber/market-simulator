@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-06-nyiso-196-extract-basis",
+  "label": "nyiso 196 extract basis",
+  "date": "2026-09-06",
+  "shorthand": "nyiso-196-extract-basis",
+  "definition": "nyiso-196: the keeper recipe plus unit_outage_extract_basis_share=true (combined-cycle unit-outage removed share on the committed extract's own capacity basis; Cricket Valley 57185 id-collision under-derate repaired) \u2014 full 2023-2025 span after the 2024 screen cleared its structural gates",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-06-nyiso-196-extract-basis.js",
+  "bundle": "results/calibration/nyiso196_extract_basis"
+}
