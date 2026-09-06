@@ -2962,3 +2962,81 @@ re-derived here. **Not a NEISO item, reported in passing:**
 (bundle mapping to no retained sidecar) — the ERCOT lane's.
 
 **Audit row O5 is CLOSED**; the neiso-83 Stony Brook root-cause issue is CLOSED.
+
+## 2026-09-06 — neiso-102: the status card was showing 2022 TWICE with different determinations — the stale hand-authored `holdout_touchpoint` is removed and the class is guarded (E12). ZERO LP minutes; no verdict moved
+
+*(The log skips neiso-100/101; both filed ASSESSMENTs under `results/calibration/` — the
+declaration re-assessment and the 2019 input-preparedness audit — and neither promoted or solved.)*
+
+**Two defects, one live and one latent. Nothing solved, scored, registered or promoted; no mechanism
+tested; no matrix cell verdict moved.** Full record:
+`results/calibration/FINDING-neiso102-holdout-records-integrity-2026-09-06.md`.
+
+### A — the contradiction on the live card
+
+`keepers/NEISO.json` carried a hand-authored `holdout_touchpoint` naming
+`2026-08-06-neiso-2022-corrected-basis` — **pruned** on 2026-09-05 under the ercot-248 keeper-only
+retention directive (rule 15) and superseded on the same year by the registered
+`2026-09-05-neiso-2022-touchpoint-k99`, whose sidecar declares `supersedes` on it.
+`build_status.py:574` copies the block through **unvalidated** and `calibration-status.js:406`
+renders it, so the live Calibration Status card printed 2022 twice:
+
+| Panel | 2022 determination | Run link |
+|---|---|---|
+| hand-authored `holdout_touchpoint` (printed FIRST) | `CALIBRATED-WITH-CAVEATS` | **dead — absent from registry** |
+| derived `holdout_ladder` | **`CALIBRATED`** | live |
+
+Worse than a dead link: neiso-100 (`_neiso100_touchpoint_staleness.json`) had already measured that
+run's recipe as diverging from the current keeper on **4 of 7 data axes**, so the block quoted a
+result taken on a *different recipe* than the keeper it sat beneath.
+
+**Removed, not re-authored** (rule 30 `[R-TOUCHPOINT-FOLD]`(b) — "never hand-author a block that
+would go stale the moment a rung is re-spent"), and the status part rebuilt. The derived ladder
+strictly dominates it and now stands alone: **2020 `NOT-YET`** (price_mean), **2021 `CALIBRATED`**,
+**2022 `CALIBRATED`** (C3c ledgered, rubric v3.6) — per-year, each naming a live run.
+**NEISO was the LAST of the six ISOs carrying such a block**; PJM's went one day earlier
+(pjm-166, `3001f913`), and the other four never had one.
+
+**Rule 30(c): the ISO's determination is UNCHANGED at `CALIBRATED`** — the train-tier (2023–2025)
+verdict, which a held-out year never moves. The `NOT-YET` 2020 rung beside it is not a contradiction.
+
+### B — the detection gap, and why the obvious guard was wrong
+
+`audit_keepers.py` was **structurally blind**: `grep -c holdout_touchpoint` at HEAD → **0**. Genuine
+gap, not a re-check of E1/E6/M1.
+
+The chartered guard — "every shard-referenced run id must exist" — **would have redded `main`.** A
+census found **19 dangling structured ids, and 18 are historical citations pruned BY DESIGN**:
+ERCOT's `config_partition.configs[].source_run_id` ×2, and NYISO's `de_designation_history`,
+`frontier_withdrawn_*` and a 10-deep `superseded…chain.former_keeper` genealogy. NEISO's own
+`site_retention_note` states the posture: *"citations … may now point at runs no longer on the site —
+deliberately … NOTHING IS RETRACTED."*
+
+So **E12** is scoped to what the SITE RENDERS AS A LINK, derived from the render sites rather than
+hand-picked: `config_partition.configs[].run_id`, `holdout_touchpoint.run_id`,
+`standing_note.probe_run_id` (`keeper` is E1's already). Genealogy and prose are out of scope
+permanently and on purpose. A regression test pins the scope against `calibration-status.js` so a
+newly-rendered pointer cannot silently re-open the hole. **E12 fires on the pre-fix NEISO shard only
+(1 finding) and is clean on all six post-fix**; it lands AFTER the fix in the same commit because CI
+runs the audit across every ISO.
+
+### Records & verification
+
+`keepers/NEISO.json` (−22), `status/NEISO.js` (rebuilt), `calibration-complete.json`
+`complete.NEISO.site_retention_2026_08_09` (**dated append; 0 keys added, 0 removed, pure**),
+`scripts/audit_keepers.py` (+E12), `tests/scoring/test_audit_keepers_pointers.py` (new, 9 tests).
+The `complete` append closes two now-stale claims: the "same keeper recipe on 2022" run is itself
+pruned, and the "single combined 2022-2025 bundle NOT yet done" is **MOOT** — rule 30(a)'s fold
+delivers that reading with no combined solve, and the freeze has named `scope.tiers=['locked_test']`
+alone since 2026-08-26. Its pointer names `status/NEISO.js` as the ladder's home, **not** the shard
+(pjm-166's auditor pass wrote the latter and needed `e7f990bd` to correct it).
+
+`audit_keepers --check` unscoped **PASS 0/0**; 9 + 53 tests pass; parity OK (14 runs / 47 bundles);
+mechanism-matrix guard exit 0; `scripts/audit_keepers.py` blob re-fetched from GitHub and verified
+byte-identical at 1109 lines (rule 27).
+
+**Next shorthand: `neiso-103`.** No NEISO tuning lever is open — the frontier is declared and the
+training window is done at zero failing criteria; DO-NOT-REDO applies to every `R`/`I`/`G` cell in
+the NEISO matrix shard. The 2020 `NOT-YET` rung is **reported, not chased** (rule 30(c)); whether
+2020's inputs are as prepared as 2021/2022's is a phase-0 question this session did not open.
+`final` remains **NEVER GRANTED** for NEISO and NOT YET on the merits.
