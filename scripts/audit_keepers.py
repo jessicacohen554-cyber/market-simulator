@@ -79,6 +79,19 @@ parsed as a fallback) it verifies:
       — worst config determination over the DESIGNATED spans — recomputed from
       committed artifacts, never read from the shard's own assertion. Costs no
       solve — ``calibration_verdict`` reads committed artifacts only.
+  E12 referential integrity of the shard's LIVE run-id pointers — the fields
+      ``build_status.py`` copies into ``status/<ISO>.js`` and
+      ``calibration-status.js`` renders as a Run Explorer link
+      (``config_partition.configs[].run_id``, ``holdout_touchpoint.run_id``,
+      ``standing_note.probe_run_id``; ``keeper`` is E1's). Each must resolve to
+      a registry sidecar, so a run pruned under rule 15 cannot leave a DEAD
+      LINK — or, the neiso-102 / pjm-166 class, a hand-authored
+      ``holdout_touchpoint`` panel whose determination CONTRADICTS the derived
+      ``holdout_ladder`` beneath it (rule 30 [R-TOUCHPOINT-FOLD](b)). Keeper
+      GENEALOGY (``superseded``/``chain``, ``de_designation_history``,
+      ``frontier_withdrawn_*``, ``source_run_id``) and narrative prose are OUT
+      OF SCOPE on purpose: they cite pruned runs by design and are explicitly
+      not retracted.
   S1  the ``status/`` parts are in sync with the current verdicts
       (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -656,6 +669,81 @@ def _asserted_determination(definition: str) -> str | None:
     return None
 
 
+# Shard fields whose run id the SITE RESOLVES INTO A RUN-EXPLORER LINK. Each is
+# copied out of the shard by ``build_status.py`` into ``status/<ISO>.js`` and
+# rendered by ``calibration-status.js`` as a ``run-id-link`` href of the form
+# ``backcast-runs.html#iso=<ISO>&run=<id>``; the set is derived from those render
+# sites, not hand-picked. ``keeper`` is deliberately ABSENT — E1 already fails a
+# keeper whose sidecar is missing, and duplicating it here would double-report.
+LIVE_RUN_POINTERS: tuple[tuple[str, ...], ...] = (
+    ("config_partition", "configs", "[]", "run_id"),
+    ("holdout_touchpoint", "run_id"),
+    ("standing_note", "probe_run_id"),
+)
+
+
+def _pointer_values(shard: dict, path: tuple[str, ...]) -> list[tuple[str, str]]:
+    """Resolve one dotted ``LIVE_RUN_POINTERS`` path to its ``(label, run_id)`` hits."""
+    nodes: list[tuple[str, object]] = [(path[0], shard.get(path[0]))]
+    for seg in path[1:]:
+        nxt: list[tuple[str, object]] = []
+        for label, node in nodes:
+            if seg == "[]":
+                if isinstance(node, list):
+                    nxt += [(f"{label}[{i}]", v) for i, v in enumerate(node)]
+            elif isinstance(node, dict):
+                nxt.append((f"{label}.{seg}", node.get(seg)))
+        nodes = nxt
+    return [(lbl, v) for lbl, v in nodes if isinstance(v, str) and v.strip()]
+
+
+def dangling_pointer_findings(shard: dict, registry_dir: Path) -> list[str]:
+    """Return E12 findings: LIVE shard run-id pointers with no registry sidecar.
+
+    A keeper shard mixes two kinds of run-id citation and only one is a defect
+    when it dangles:
+
+    * **Live pointers** — the ``LIVE_RUN_POINTERS`` fields above, which the
+      Calibration Status card renders as a clickable run link. A pruned target
+      here is a DEAD LINK on the live site, and — the class this check was
+      written for — a hand-authored ``holdout_touchpoint`` naming a pruned run
+      can render a determination that CONTRADICTS the auto-derived
+      ``holdout_ladder`` printed directly beneath it (NEISO showed 2022 as
+      CALIBRATED-WITH-CAVEATS above a ladder reading CALIBRATED; PJM showed
+      two different 2022 C1/C3b numbers). Rule 30 [R-TOUCHPOINT-FOLD](b) is
+      what such a block breaches — the ladder is derived precisely so it cannot
+      go stale, and hand-authoring beside it re-introduces the staleness.
+
+    * **Historical citations** — keeper genealogy (``superseded.former_keeper``
+      and its ``chain``, ``de_designation_history``, ``frontier_withdrawn_*``,
+      ``config_partition.configs[].source_run_id``) and the narrative prose
+      fields. These name pruned runs BY DESIGN: rule 15's keeper-only retention
+      makes pruning the norm, and the shards say in terms that such citations
+      "now point at runs no longer on the site, deliberately ... NOTHING IS
+      RETRACTED". Checking them would fight the retention discipline and red
+      every lane — so they are OUT OF SCOPE here, permanently and on purpose.
+
+    Args:
+        shard: One ISO's parsed ``keepers/<ISO>.json``.
+        registry_dir: The registry sidecar directory to resolve run ids against.
+
+    Returns:
+        One human-readable finding per dangling live pointer; empty when clean.
+    """
+    out: list[str] = []
+    for path in LIVE_RUN_POINTERS:
+        for label, run_id in _pointer_values(shard, path):
+            if not (registry_dir / f"{run_id}.json").exists():
+                out.append(
+                    f"shard field {label} names {run_id}, which has no registry "
+                    "sidecar — a dead run link on the Calibration Status card. "
+                    "If the run was pruned (rule 15), DELETE the field rather "
+                    "than re-authoring it: the derived holdout_ladder already "
+                    "carries the touchpoint rungs per year (rule 30(b))."
+                )
+    return out
+
+
 class Report:
     """Accumulates FAIL/WARN/OK findings, grouped by keeper, for one audit run."""
 
@@ -897,6 +985,19 @@ def audit(isos: list[str] | None) -> Report:
         {"OK": rep.ok, "WARN": rep.warn, "FAIL": rep.fail}[level](
             run_id, shard_iso, "E11", msg
         )
+        # E12: referential integrity of the shard's LIVE run-id pointers —
+        # the fields the Calibration Status card renders as run links. Keeper
+        # genealogy and prose are out of scope by design (see the function).
+        dangling = dangling_pointer_findings(shard, cv.REGISTRY_DIR)
+        for msg in dangling:
+            rep.fail(run_id, shard_iso, "E12", msg)
+        if not dangling:
+            rep.ok(
+                run_id,
+                shard_iso,
+                "E12",
+                "every live shard run-id pointer resolves to a registry sidecar",
+            )
 
     # H1: holdout quarantine across EVERY registered bundle (keeper or probe).
     for msg in holdout_quarantine_failures():
