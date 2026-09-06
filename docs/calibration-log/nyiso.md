@@ -12166,3 +12166,39 @@ at the pile-up CC plants vs CAMPD's hours above 90 % — a rule-14 data question
 Records: `docs/FINDING-nyiso195-cc-econ-basis-screen-2026-09-05.md`,
 `results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, `_nyiso195_*.json`,
 `scripts/probes/nyiso195_*.py`. Screen bundle `results/calibration/nyiso195_screen_2024` local, never registered.
+
+### 2026-09-05/06 — nyiso-196 (`backcast-calibration`, decomposition + ONE rule-29 2024 screen + ONE 2023–2025 bundle, NO control solve): the C1-2024 `CC_REGULAR` over-run is an AVAILABILITY object at Cricket Valley — an EIA-860 id collision halves its unit-outage derate; repaired with the zero-DOF `unit_outage_extract_basis_share`, screen CLEARED, full span CALIBRATED, PROMOTED
+Owner (in session): *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper.."* — plus the nyiso-194/195
+instructions (2024 screen first, the keeper as the control).
+**Steps 1–3 (zero LP, `scripts/probes/nyiso196_cc_overrun_decomp.py`, `nyiso196_rebuild_checks.py`):**
+buckets (a) model-on/meter-off +1.18 / +1.47 / +2.27 TWh, (b+) +4.05 / +3.62 / +3.99, (b−) −3.77 /
+−3.33 / −3.56, (c) −0.84 / −0.58 / −1.15 (2023 / 2024 / 2025); the class net's growth is bucket (a),
+466 of 1,471 GWh at Cricket Valley 57185 in 2024, flat by hour-of-day, in its outage months, 97.1 % of
+its hours with the zone LMP above the committed offer — plain economics on the availability the LP was
+GIVEN: **99.9 % of it in hours the LP was handed more availability than the committed extract states**
+(671 h in all-blocks-out windows). Bridge binds 40 h; no reliability floor; delivered gas equals the
+measured hub monthly (CH / LI / NYC ratio 1.000 in 11 of 12 months); import capability never binds
+below the measured flow (0 h); the `ST_GAS` deficit is the cell-G object. **The defect:** CAMPD stack
+ids `U001`–`U003` match EIA-860 generator ids `U001`–`U003`, the plant's STEAM turbines (CA, 174.2 MW;
+the CTs are `U004`–`U006`), so the deriver writes each 1×1 block at 174.2 MW (`eia_exact`, plant 522.6)
+and the loader divides by the 1,016.8 MW net-summer bin — 17.1 % per block vs 33.3 %; three blocks out
+leave 48.6 % available. **The repair:** `ScenarioConfig.unit_outage_extract_basis_share` (default off,
+registered, matrix row + 6 shard cells, unit tests) — the removed fraction on the extract's own basis
+for CC bins (steam keeps `unit_outage_st_capacity_basis`); census 17 CC bins move in 2024, 0 steam;
+57185 −1.83, Selkirk −1.58, Linden +0.33, Athens +0.27 TWh available. **PREREG pushed `64cc970b`
+before the screen (G-DRIFT `d5bba63b..5b5af5ab` all INERT).** **Screen 2024 CLEARED:** F-1/F-2 PASS
+(128 CC units move, mc/pmax byte-identical, ratio identity 3.6e-6), S-3 PASS (Cricket Valley dark-window
+energy 257 → 0 GWh, 5,038 → 3,706 GWh vs 4,241 meter, Selkirk 261 → 48), S-4 PASS (no load-bearing
+flip). **Full span `2026-09-06-nyiso-196-extract-basis`: NOT-YET (grade 6, fails 2) → CALIBRATED (grade 7,
+fails 0, C3c ledgered); C1 14/14 free 10/10; C1-2024 `CC_REGULAR` +3.68 → +3.01 TWh / +3.0 → +2.5 pp;
+2023 +1.08 → +0.83; C3a +4.8/+3.2/−7.3 → +4.6/+4.7/−6.9 %; C3b 0.118/0.172/0.167 → 0.119/0.175/0.154;
+C8 `ST_GAS` 17.1/23.8/18.6 → 16.6/22.4/18.2 %.** Attested (`gen_nyiso196_attestation.py`: G-DELTA
+exactly the flag, same extract sha `58799099…`, DOF 13/6 verbatim); `audit_keepers --iso NYISO` PASS
+(the capx D60 `ccs_retrofit_capex_co2_scaling` HEAD-default flip declared as a non-delta). **PROMOTED**
+(keeper shard, `status/NYISO.js`, matrix stamp); the former keeper stays on the dashboard (protected by
+governance citations). Regressions at full magnitude: Linden 50006 `CC_CHP` 6.2 → 5.2 TWh vs a 7.3 meter
+every year (availability up); Cricket Valley now 0.53 TWh UNDER in 2024; C3a-2024 +1.5 pt. `complete`
+NOT re-declared — owner court (withdrawn-block re-entry clause). Records:
+`docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md`, `PREREG-nyiso196-cc-outage-share-basis-screen.md`,
+`_nyiso196_*.json`, `scripts/probes/nyiso196_*.py`.
