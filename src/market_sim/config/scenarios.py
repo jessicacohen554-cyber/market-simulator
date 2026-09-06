@@ -3725,7 +3725,9 @@ class ScenarioConfig:
     # rows derate the plant's tranches, first-half months carry a completion
     # leg). Rule 19 [R-ONE-MECH] reconciliation, designed WITH the gate: (a) a
     # plant carrying a pending admissible date is EXOGENOUS to the economic
-    # screen (``exempt_unit_ids``) — the owner's filed plan IS the exit
+    # screen (``exit_exempt_unit_ids`` since capx D81 — evaluated and OFFERED
+    # into the D57 clearing, out of the exit decision only) — the owner's
+    # filed plan IS the exit
     # decision for that plant, so the screen decides only undated plants and
     # no unit's exit is decided twice; (b) the R-NEW admission-cap
     # counterfactual nets every dated exit due by the cap horizon, so the
@@ -16108,7 +16110,9 @@ class ScenarioConfig:
     # only). Before D78 the ids rode the ``exempt_unit_ids`` union and
     # silently stopped offering on a clearing-armed ISO (FINDING-capx-d58
     # §3); with the clearing off (MISO) the two constructions are
-    # byte-identical.
+    # byte-identical. That second parameter was DELETED by capx D78-R2 once
+    # D81 left it with no producer (rule 26 [R-DELETE]), so
+    # ``exit_exempt_unit_ids`` is now the screen's sole exemption seam.
     # The reliability floor's admission and execution tests, the R-NEW
     # admission cap's counterfactual and the reserve-margin backstop are
     # UNTOUCHED: a gated unit is simply not a candidate, so it stays in the

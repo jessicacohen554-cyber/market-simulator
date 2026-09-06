@@ -607,11 +607,12 @@ def evolve_fleet(
     # (``sector_gated``) so the D-2 attribution can see what left the screen.
     # capx D81 extends the SAME rule to the other two channels that reached
     # the same residual (DESIGN-capx-d78 §4): the pending dated block and the
-    # this-year retrofit. All three now ride ``exit_exempt_unit_ids`` and
-    # ``exempt_unit_ids`` — out of the screen entirely, no margin and no offer
-    # — has no producer here at all. It is retained as the screen's other,
-    # still-meaningful declaration (a resource that is genuinely not eligible
-    # to offer), not as a routing this call site takes.
+    # this-year retrofit. All three now ride ``exit_exempt_unit_ids``, which
+    # left the screen's other parameter — ``exempt_unit_ids``, out of the
+    # screen entirely, no margin and no offer — with no producer anywhere;
+    # capx D78-R2 DELETED it (rule 26 [R-DELETE]; director decision (a) on
+    # FINDING-capx-d81 §8 item 2), so this is the only exemption this call
+    # site can express.
     _sector_exempt: frozenset[str] = frozenset()
     _sector_census: dict | None = None
     if bool(getattr(config, "retirement_sector_gate", False)):
@@ -751,7 +752,6 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
-            exempt_unit_ids=frozenset(),
             exogenous_exits=_exogenous_pending,
             locality_prices_by_zone=locality_prices_by_zone,
             exit_exempt_unit_ids=(_retrofitted_ids | _dated_exempt | _sector_exempt),

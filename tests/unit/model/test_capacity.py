@@ -5662,7 +5662,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
         seen = {}
 
         def spy(fleet_, *a, **kw):
-            seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["kwargs"] = kw
             seen["exit_exempt"] = kw.get("exit_exempt_unit_ids")
             seen["exogenous"] = kw.get("exogenous_exits")
             return fleet_, {}, []
@@ -5678,8 +5678,10 @@ class TestFossilAnnouncedExits(unittest.TestCase):
         # capx D81: the exemption is an EXIT exemption — a plant whose filed
         # date is LATER than the delivery year must still offer its accredited
         # MW into the D57 clearing (Manual 18 Rev 62 §1.2), so it rides
-        # ``exit_exempt_unit_ids``, not the not-eligible-to-offer parameter.
-        self.assertEqual(seen["exempt"], frozenset())
+        # ``exit_exempt_unit_ids``. capx D78-R2 then DELETED the second,
+        # not-eligible-to-offer parameter this call site used to pass empty:
+        # the screen has exactly one exemption seam, so the kwarg is gone.
+        self.assertNotIn("exempt_unit_ids", seen["kwargs"])
         self.assertEqual(seen["exit_exempt"], frozenset({"300_1"}))
         self.assertIs(seen["exogenous"], rows)
         # Off the gate the screen sees neither.
@@ -5693,7 +5695,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
                 {},
                 announced_fossil_exits=rows,
             )
-        self.assertEqual(seen["exempt"], frozenset())
+        self.assertNotIn("exempt_unit_ids", seen["kwargs"])
         self.assertEqual(seen["exit_exempt"], frozenset())
         self.assertIsNone(seen["exogenous"])
 
@@ -7029,7 +7031,9 @@ class TestRetirementSectorGate(unittest.TestCase):
     candidate set is the whole thermal fleet and every ledger is
     byte-identical; armed, every thermal unit whose PLANT's EIA-860 ``Sector``
     is 1 (regulated electric utility) is exogenous to the step-3 screen through
-    the SAME ``exempt_unit_ids`` seam as the fossil-dates exemption (rule 19),
+    the SAME ``exit_exempt_unit_ids`` seam as the fossil-dates exemption
+    (rule 19; capx D78/D81 — and since capx D78-R2 that is the screen's only
+    exemption seam),
     while sectors 2-7 and unknown-sector plants face the screen as before
     (design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md).
     """
@@ -7104,7 +7108,7 @@ class TestRetirementSectorGate(unittest.TestCase):
         seen = {}
 
         def spy(fleet_, *a, **kw):
-            seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["kwargs"] = kw
             seen["exit_exempt"] = kw.get("exit_exempt_unit_ids")
             return fleet_, {}, []
 
@@ -7138,13 +7142,14 @@ class TestRetirementSectorGate(unittest.TestCase):
         # capx D78 (owner ruling Q53 = reading 1) as EXTENDED by capx D81:
         # BOTH exogenous-exit declarations are exempt from the EXIT decision
         # ONLY — evaluated and OFFERED into the D57 clearing — so both ride
-        # ``exit_exempt_unit_ids`` and ``exempt_unit_ids`` (not eligible to
-        # offer at all) has no producer. A PENDING dated plant's filed date is
+        # ``exit_exempt_unit_ids``, which left ``exempt_unit_ids`` (not
+        # eligible to offer at all) with no producer; capx D78-R2 deleted it,
+        # so the kwarg no longer exists. A PENDING dated plant's filed date is
         # LATER than the delivery year, so PJM's must-offer requirement still
         # reaches it (Manual 18 Rev 62 §1.2); a plant whose date is EFFECTIVE
         # this year left the fleet at step 0/1/1b above and reaches neither
         # set. The CHP unit is screened.
-        self.assertEqual(seen["exempt"], frozenset())
+        self.assertNotIn("exempt_unit_ids", seen["kwargs"])
         self.assertEqual(seen["exit_exempt"], frozenset({"300_1", "400_1"}))
         self.assertEqual(events["sector_gated"]["units"], 1)
         self.assertAlmostEqual(events["sector_gated"]["mw"], 500.0)
@@ -7168,13 +7173,14 @@ class TestRetirementSectorGate(unittest.TestCase):
                 announced_fossil_exits=rows,
                 events=events,
             )
-        self.assertEqual(seen["exempt"], frozenset())
+        self.assertNotIn("exempt_unit_ids", seen["kwargs"])
         self.assertEqual(seen["exit_exempt"], frozenset({"400_1"}))
         self.assertNotIn("sector_gated", events)
 
     def test_gated_unit_never_enters_margins_or_the_pipeline(self):
-        """A failing unit passed through ``exempt_unit_ids`` (a dated plant, a
-        this-year retrofit — the out-of-the-screen-entirely declaration) carries
+        """A failing unit passed through ``exit_exempt_unit_ids`` (a dated
+        plant, a sector-1 unit, a this-year retrofit — the screen's sole
+        exemption seam since capx D78-R2 deleted the second one) carries
         no pipeline row, is never decided, and cannot seed the pipeline state —
         while the identical IPP unit fails and is decided (or capped)."""
         from market_sim.model.capacity import apply_economic_retirements
@@ -7201,7 +7207,7 @@ class TestRetirementSectorGate(unittest.TestCase):
             mc=mc,
             year=2028,
             event_sink=sink,
-            exempt_unit_ids=frozenset({"300_1"}),
+            exit_exempt_unit_ids=frozenset({"300_1"}),
         )
         rows = sink.get("pipeline_events", [])
         self.assertTrue(rows, "the screened IPP unit must carry a row")
@@ -7212,8 +7218,8 @@ class TestRetirementSectorGate(unittest.TestCase):
     # --- capx D78: exit-exempt, not offer-exempt --------------------------
     def _screen_off_clearing(self, rule, **exempt_kw):
         """The toy of the test above (clearing OFF), parameterized on the
-        decision rule and on WHICH exemption parameter carries the sector-1
-        unit; returns everything a ledger reader could see."""
+        decision rule and on whether the sector-1 unit is declared
+        ``exit_exempt``; returns everything a ledger reader could see."""
         from market_sim.model.capacity import apply_economic_retirements
 
         cfg = ScenarioConfig(retirement_rule=rule, capacity_market_clearing=False)
@@ -7247,23 +7253,52 @@ class TestRetirementSectorGate(unittest.TestCase):
             "sink": sink,
         }
 
-    def test_exit_exempt_is_byte_identical_to_exempt_when_the_clearing_is_off(self):
-        """capx D78 T2 (design §3.6): with no D57 clearing armed (MISO's armed
-        keeper posture) moving the sector-1 unit from ``exempt_unit_ids`` to
-        ``exit_exempt_unit_ids`` changes NOTHING a decision or a ledger can
-        see — pipeline rows, retired, floor_retained, the pipeline state, the
-        survivors — under both decision rules. (The one difference is that the
-        unit's margin is now evaluated; nothing downstream reads it.)"""
+    def test_exit_exempt_leaves_every_other_row_untouched_when_clearing_is_off(self):
+        """capx D78 T2 (design §3.6), RESTATED by capx D78-R2 against the
+        surviving seam.
+
+        With no D57 clearing armed (MISO's armed keeper posture) an
+        ``exit_exempt`` unit is invisible to every decision structure: the
+        pipeline rows, the pipeline state, the retired / floor_retained log
+        and the survivor set are exactly the un-gated run's MINUS that unit,
+        under both decision rules. (The one difference is that the unit's
+        margin is now evaluated; nothing downstream reads it.)
+
+        This is what made the pre-D78 ``exempt_unit_ids`` routing
+        byte-identical off the clearing, and it is why deleting that
+        parameter (D78-R2) moves no MISO byte. The former form of this test
+        differenced the two parameters directly; the deleted branch cannot be
+        called any more, so the claim is asserted against the un-gated
+        baseline instead — the same equality, one leg re-derived rather than
+        re-run through dead code.
+        """
         for rule in ("pipeline", "legacy"):
-            old = self._screen_off_clearing(rule, exempt_unit_ids=frozenset({"300_1"}))
+            base = self._screen_off_clearing(rule)
             new = self._screen_off_clearing(
                 rule, exit_exempt_unit_ids=frozenset({"300_1"})
             )
-            self.assertEqual(old, new, rule)
+
+            def _rows(res):
+                return {r["unit_id"]: r for r in res["sink"].get("pipeline_events", [])}
+
+            self.assertEqual(
+                _rows(new),
+                {k: v for k, v in _rows(base).items() if k != "300_1"},
+                rule,
+            )
+            self.assertEqual(
+                new["state"],
+                {k: v for k, v in base["state"].items() if k != "300_1"},
+                rule,
+            )
+            self.assertEqual(
+                [e for e in new["log"] if e.get("unit_id") != "300_1"],
+                [e for e in base["log"] if e.get("unit_id") != "300_1"],
+                rule,
+            )
             # And the gated unit is genuinely out of the decision: no row, no
             # state, survives — while the IPP unit is decided / counted.
-            rows = new["sink"].get("pipeline_events", [])
-            self.assertNotIn("300_1", {r["unit_id"] for r in rows})
+            self.assertNotIn("300_1", _rows(new))
             self.assertNotIn("300_1", new["state"])
             self.assertIn("300_1", new["survivors"])
             self.assertIn("400_1", new["state"])
@@ -7276,11 +7311,16 @@ class TestRetirementSectorGate(unittest.TestCase):
                 self._screen_off_clearing(rule, exit_exempt_unit_ids=frozenset()),
             )
 
-    def _pjm_clearing_screen(self, peak, **exempt_kw):
+    def _pjm_clearing_screen(self, peak, extra_fleet=(), **exempt_kw):
         """DESIGN-capx-d54's three-coal-unit toy under the D57 clearing
         (the `_screen` of ``TestPjmCapacitySupplyClearing``): A covers its bar
         on energy (offer $0), B has a small gap, C earns zero margin (offer =
-        its full bar). C is the sector-1 unit the caller gates."""
+        its full bar). C is the sector-1 unit the caller gates.
+
+        ``extra_fleet`` appends units the screen cannot evaluate (a fuel with
+        no ``_THERMAL_FOM`` entry), for the D78-R2 residual test below; each
+        is given an inert marginal-cost row.
+        """
         from market_sim.model.capacity import apply_economic_retirements
 
         cfg = ScenarioConfig(
@@ -7295,6 +7335,7 @@ class TestRetirementSectorGate(unittest.TestCase):
             _gen("A", "coal", pmax=1_000.0, eford=0.08),
             _gen("B", "coal", pmax=1_000.0, eford=0.08),
             _gen("C", "coal", pmax=1_000.0, eford=0.08),
+            *extra_fleet,
         ]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=T)
         prices = np.full((1, T), 50.0)
@@ -7303,9 +7344,10 @@ class TestRetirementSectorGate(unittest.TestCase):
                 np.full(T, 50.0 - 800.0),
                 np.full(T, 50.0 - 500.0),
                 np.full(T, 50.0),
+                *[np.full(T, 50.0) for _ in extra_fleet],
             ]
         )
-        dispatch = SimpleNamespace(dispatch=np.zeros((3, T)))
+        dispatch = SimpleNamespace(dispatch=np.zeros((len(fleet), T)))
         sink: dict = {}
         with no_hydro_accreditation():
             survivors, state, _ = apply_economic_retirements(
@@ -7331,16 +7373,12 @@ class TestRetirementSectorGate(unittest.TestCase):
         the price-taking block and every merchant unit's row are IDENTICAL to
         the un-gated run — while it carries no pipeline row, seeds no state
         and survives whether or not the auction clears it (uncleared and
-        RETAINED). The same unit through ``exempt_unit_ids`` leaves the stack
-        and its accredited MW lands in ``Q_0`` — the seam D58 measured."""
+        RETAINED)."""
         saw_uncleared = saw_cleared = False
         for peak in (1_500.0, 6_000.0, 40_000.0):
             base_surv, base_state, base_rows, base = self._pjm_clearing_screen(peak)
             ex_surv, ex_state, ex_rows, ex = self._pjm_clearing_screen(
                 peak, exit_exempt_unit_ids=frozenset({"C"})
-            )
-            old_surv, old_state, old_rows, old = self._pjm_clearing_screen(
-                peak, exempt_unit_ids=frozenset({"C"})
             )
             # The repaired seam: the auction is the un-gated auction.
             self.assertEqual(ex.n_offers, base.n_offers)
@@ -7371,20 +7409,61 @@ class TestRetirementSectorGate(unittest.TestCase):
                 saw_cleared = True
             else:
                 saw_uncleared = True  # uncleared AND retained (design §2.4)
-            # The D58 seam, on the toy: through exempt_unit_ids the unit is
-            # un-offered and its A_g is a $0 price taker.
-            self.assertEqual(old.n_offers, 2)
-            self.assertNotIn("C", old.offer_usd_per_mw_day)
-            self.assertAlmostEqual(
-                old.price_takers_mw,
-                base.price_takers_mw + base.accredited_mw["C"],
-                places=6,
-            )
-            self.assertNotIn("C", old_rows)
-            self.assertIn("C", old_surv)
         # Both regimes were exercised: C uncleared on the short-of-curve
         # toy and cleared on the short market.
         self.assertTrue(saw_uncleared and saw_cleared)
+
+    def test_unscreened_unit_is_a_zero_dollar_price_taker_in_q0(self):
+        """capx D78-R2 T3, the NEGATIVE form of the D58 seam.
+
+        D78's T3 demonstrated the seam by routing the unit through
+        ``exempt_unit_ids`` and watching its accredited MW fall out of the
+        sell-offer stack into ``Q_0``. That parameter is DELETED (D81 left it
+        with no producer; rule 26 ``[R-DELETE]``), so the claim is asserted
+        against **the only remaining path to $0**: a unit that is absent from
+        ``margins`` — here because its fuel has no ``_THERMAL_FOM`` entry, so
+        the screen cannot evaluate it — and absent from
+        ``exit_exempt_unit_ids`` is never offered, never decided, and its
+        accredited MW lands in the price-taking block through
+        ``_settle_capacity_supply_clearing``'s ``accredited_total − Σ A_g``
+        residual.
+
+        The negative form is the stronger one: it says a unit reaches $0
+        ONLY by being unscreenable, never by a declaration — which is exactly
+        what makes the deleted parameter unreachable rather than merely
+        unused.
+        """
+        for peak in (1_500.0, 6_000.0, 40_000.0):
+            _bs, _bst, base_rows, base = self._pjm_clearing_screen(peak)
+            wind = _gen("W", "wind", pmax=1_000.0)
+            surv, state, rows, cl = self._pjm_clearing_screen(peak, extra_fleet=(wind,))
+            # NOT offered: the stack is the three-coal stack, unit for unit.
+            self.assertEqual(cl.n_offers, base.n_offers)
+            self.assertEqual(cl.n_offers, 3)
+            self.assertNotIn("W", cl.offer_usd_per_mw_day)
+            self.assertNotIn("W", cl.accredited_mw)
+            self.assertNotIn("W", cl.cleared_unit_ids)
+            self.assertEqual(cl.offer_usd_per_mw_day, base.offer_usd_per_mw_day)
+            self.assertAlmostEqual(cl.offered_mw, base.offered_mw, places=6)
+            # Its whole accredited credit is in Q_0, at $0: the census rises
+            # by exactly what the price-taking block rises by, and invariant
+            # I1 (Q_0 + Sum A_g == accredited) holds on both legs.
+            delta = cl.census_mw - base.census_mw
+            self.assertGreater(delta, 0.0)
+            self.assertAlmostEqual(
+                cl.price_takers_mw, base.price_takers_mw + delta, places=6
+            )
+            for c in (base, cl):
+                self.assertAlmostEqual(
+                    c.price_takers_mw + c.offered_mw, c.census_mw, places=6
+                )
+            # NOT decided: no pipeline row, no loss state, and it survives —
+            # the same invisibility the deleted parameter used to declare,
+            # reached structurally instead.
+            self.assertNotIn("W", rows)
+            self.assertNotIn("W", state)
+            self.assertIn("W", surv)
+            self.assertEqual(rows, base_rows, peak)
 
     def test_cache_key_registration_and_backcast_coercion(self):
         from market_sim.config.scenarios import (
@@ -7548,36 +7627,57 @@ class TestDatedBlockMustOffer(unittest.TestCase):
             )
 
     def test_conservation_offered_up_price_takers_down_by_the_same_mw(self):
-        """T3 / the PRECOMMIT §1.2 identity: routing the block from
-        ``exempt_unit_ids`` (D54 §4.2's price-taker reading) to
-        ``exit_exempt_unit_ids`` moves exactly its accredited MW out of ``Q_0``
-        and into the priced stack — and invariant I1
-        (``Q_0 + Σ A_g == accredited``) holds under BOTH routings."""
+        """T3 / the PRECOMMIT §1.2 identity, RESTATED by capx D78-R2.
+
+        The original form differenced ``exempt_unit_ids`` (D54 §4.2's
+        price-taker reading of the dated block) against
+        ``exit_exempt_unit_ids`` and showed the routing moved exactly ``A_g``
+        out of ``Q_0`` and into the priced stack. That parameter is DELETED
+        (rule 26 ``[R-DELETE]``; it had no producer after D81), so D54 §4.2's
+        reading is no longer expressible and the difference cannot be taken.
+
+        What is asserted instead is the surviving half of the same identity:
+        the declared block IS in the priced stack at its net-ACR cap, its
+        ``A_g`` is in ``offered_mw`` and NOT in ``Q_0``, invariant I1
+        (``Q_0 + Σ A_g == accredited``) holds, and the declaration moves
+        neither the census nor the requirement. The complementary half — a
+        unit that IS a $0 price taker in ``Q_0``, and the only remaining way
+        to become one — is
+        ``test_unscreened_unit_is_a_zero_dollar_price_taker_in_q0`` above.
+        """
         for peak in (1_500.0, 6_000.0, 40_000.0):
-            _s, _st, _r, old = self._pjm_screen(peak, exempt_unit_ids=frozenset({"C"}))
+            _s, _st, _r, base = self._pjm_screen(peak)
             _s2, _st2, _r2, new = self._pjm_screen(
                 peak, exit_exempt_unit_ids=frozenset({"C"})
             )
             a_g = new.accredited_mw["C"]
-            self.assertNotIn("C", old.offer_usd_per_mw_day)
-            self.assertEqual(new.n_offers, old.n_offers + 1)
-            self.assertAlmostEqual(new.offered_mw, old.offered_mw + a_g, places=6)
+            self.assertGreater(a_g, 0.0)
+            # The declared block offers: it is in the stack, priced, and its
+            # A_g is inside ``offered_mw`` rather than inside ``Q_0``.
+            self.assertIn("C", new.offer_usd_per_mw_day)
+            self.assertGreater(new.offer_usd_per_mw_day["C"], 0.0)
+            self.assertEqual(new.n_offers, base.n_offers)
+            self.assertEqual(new.n_offers, 3)
+            self.assertAlmostEqual(new.offered_mw, base.offered_mw, places=6)
             self.assertAlmostEqual(
-                new.price_takers_mw, old.price_takers_mw - a_g, places=6
+                new.price_takers_mw, new.census_mw - new.offered_mw, places=6
             )
-            # I1 in both, and the denominators never move.
-            for cl in (old, new):
+            self.assertLessEqual(new.price_takers_mw, new.census_mw - a_g + 1e-9)
+            # I1 on both legs, and the declaration moves neither denominator.
+            for cl in (base, new):
                 self.assertAlmostEqual(
                     cl.price_takers_mw + cl.offered_mw, cl.census_mw, places=6
                 )
-            self.assertAlmostEqual(new.census_mw, old.census_mw, places=6)
-            self.assertAlmostEqual(new.requirement_mw, old.requirement_mw, places=6)
-            # Direction: moving MW out of the $0 block can only raise the
-            # price and lower the cleared position (D54 §4.2's bias reversed).
-            self.assertGreaterEqual(
-                new.price_usd_per_mw_day, old.price_usd_per_mw_day - 1e-9
+            self.assertAlmostEqual(new.census_mw, base.census_mw, places=6)
+            self.assertAlmostEqual(new.requirement_mw, base.requirement_mw, places=6)
+            # And the clearing itself is the un-declared clearing: the
+            # declaration is an EXIT-side statement only.
+            self.assertAlmostEqual(
+                new.price_usd_per_mw_day, base.price_usd_per_mw_day, places=9
             )
-            self.assertLessEqual(new.cleared_position, old.cleared_position + 1e-9)
+            self.assertAlmostEqual(
+                new.cleared_position, base.cleared_position, places=9
+            )
 
     def _spy_evolve(self, year, fleet, rows, **cfg_kw):
         """Run ``evolve_fleet`` with the screen spied on; return the two id
@@ -7588,7 +7688,7 @@ class TestDatedBlockMustOffer(unittest.TestCase):
         seen: dict = {}
 
         def spy(fleet_, *a, **kw):
-            seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["kwargs"] = kw
             seen["exit_exempt"] = kw.get("exit_exempt_unit_ids")
             seen["fleet_ids"] = {g.unit_id for g in fleet_}
             return fleet_, {}, []
@@ -7615,8 +7715,8 @@ class TestDatedBlockMustOffer(unittest.TestCase):
     def test_executed_exit_is_absent_from_the_stack_and_from_every_decision(self):
         """T2: a plant whose filed date is EFFECTIVE for the delivery year is
         removed by step 1b BEFORE the screen — Manual 18 §5.4.7 exception [c],
-        "no longer eligible to offer". It reaches neither exemption set,
-        neither the census nor the stack, and no decision structure; the
+        "no longer eligible to offer". It reaches the exemption seam not at
+        all, nor the census, nor the stack, nor any decision structure; the
         PENDING twin (a later date) reaches ``exit_exempt_unit_ids``."""
         from tests.unit.model.test_capacity import TestFossilAnnouncedExits as _F
 
@@ -7630,10 +7730,9 @@ class TestDatedBlockMustOffer(unittest.TestCase):
         ]
         seen, _events = self._spy_evolve(2028, fleet, rows)
         self.assertNotIn("400_1", seen["fleet_ids"])
-        self.assertNotIn("400_1", seen["exempt"])
+        self.assertNotIn("exempt_unit_ids", seen["kwargs"])
         self.assertNotIn("400_1", seen["exit_exempt"])
         self.assertIn("500_1", seen["fleet_ids"])
-        self.assertEqual(seen["exempt"], frozenset())
         self.assertEqual(seen["exit_exempt"], frozenset({"500_1"}))
 
     def test_retrofit_channel_is_inert_below_the_availability_year(self):
@@ -7647,7 +7746,7 @@ class TestDatedBlockMustOffer(unittest.TestCase):
         for year in (2023, 2025, cfg.ccs_retrofit_available_year - 1):
             seen, events = self._spy_evolve(year, list(fleet), [])
             self.assertEqual(events["ccs_retrofits"], [], year)
-            self.assertEqual(seen["exempt"], frozenset(), year)
+            self.assertNotIn("exempt_unit_ids", seen["kwargs"])
             self.assertEqual(seen["exit_exempt"], frozenset(), year)
 
 
