@@ -6655,27 +6655,77 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # it for one (PRECOMMIT-capx-d67arm-2026-09-06.md §2; the miss against
         # that PRECOMMIT's own "unmoved" declaration is reported at full
         # magnitude in FINDING-capx-d67arm-2026-09-06.md).
-        self.assertEqual(_key("PJM"), "a9c66d8ea25acb9d")  # = the D67-ARM posture
+        # capx D75-R-ARM (owner ruling Q55): a FIFTH field is armed through the
+        # same override path — ``pjm_vre_accreditation_vintage``, the VRE half
+        # of the D48 devintage — so the bare key advances again and EVERY
+        # explicit control leg needs the fifth ``--no-`` flag to reach the
+        # posture it names. That the four control legs move is PRE-DECLARED
+        # this time (PRECOMMIT-capx-d75r-arm-2026-09-06.md §2.1) rather than
+        # discovered after the fact, which is the miss FINDING-capx-d67arm
+        # §2.1 recorded against itself. The cause is structural: the field is a
+        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``, so it
+        # is dropped from the hash while unarmed and enters it once armed, on
+        # every PJM forecast leg whatever the other flags say — even the three
+        # legs where the mechanism is INERT because its predicate also needs
+        # ``pjm_accreditation_design_vintage`` (inertness is a solve property,
+        # not a hash property).
+        #
+        # MEASURED, not assumed: adding ``pjm_vre_accreditation_vintage=False``
+        # to each leg restores its pre-arm literal EXACTLY —
+        #   bare                a9c66d8ea25acb9d   (the D67-ARM posture)
+        #   off3 + no-req-pub   c5ec052057905966   (D45-R's bare key)
+        #   off2 + no-req-pub   6ba67a81ed4d2ed6   (D57 arm B)
+        # — so the whole move is this one field's, and every pre-arm recipe
+        # stays both reachable and identified. The post-arm bare key is
+        # ``b518f5fe7d02f961``, which is D75-R's OWN measured full-window arm
+        # key (its control is the pre-arm bare recipe, to the digit), so the
+        # arm reproduces the recipe the A/B was measured on rather than
+        # naming a new one.
+        _novre = dict(pjm_vre_accreditation_vintage=False)
+        self.assertEqual(_key("PJM"), "b518f5fe7d02f961")  # = the D75-R-ARM posture
+        self.assertEqual(_key("PJM", **_novre), "a9c66d8ea25acb9d")  # = D67-ARM
         _off3 = dict(
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
             capacity_market_supply_clearing=False,
         )
-        self.assertEqual(_key("PJM", **_off3), "61dfbc5c48af076b")  # D57 off, D67 on
+        self.assertEqual(
+            _key("PJM", **_off3), "1785cb6086cd2b15"
+        )  # D57 off, D67+D75R on
+        self.assertEqual(_key("PJM", **_off3, **_novre), "61dfbc5c48af076b")
         self.assertEqual(
             _key("PJM", **_off3, capacity_adequacy_requirement_published=False),
+            "d2fe4e2b32aef073",  # D57 + D67 off, D75-R still on
+        )
+        self.assertEqual(
+            _key(
+                "PJM",
+                **_off3,
+                **_novre,
+                capacity_adequacy_requirement_published=False,
+            ),
             "c5ec052057905966",  # = D45-R's bare key, the explicit control
         )
         _off2 = dict(
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
         )
-        self.assertEqual(_key("PJM", **_off2), "2d5bebd2bceed991")  # arm B, D67 on
+        self.assertEqual(_key("PJM", **_off2), "ab0237198cff24ad")  # arm B, D67+D75R on
+        self.assertEqual(_key("PJM", **_off2, **_novre), "2d5bebd2bceed991")
         self.assertEqual(
             _key("PJM", **_off2, capacity_adequacy_requirement_published=False),
+            "05cdf4af2b9adef8",  # D57 partial + D67 off, D75-R still on
+        )
+        self.assertEqual(
+            _key(
+                "PJM",
+                **_off2,
+                **_novre,
+                capacity_adequacy_requirement_published=False,
+            ),
             "6ba67a81ed4d2ed6",  # = arm B
         )
-        # Every other ISO resolves the three fields OFF (their own keys are
+        # Every other ISO resolves the four fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25).
         for iso in ("MISO", "NYISO", "NEISO", "CAISO", "ERCOT"):
             cfg = build_config(
@@ -6685,11 +6735,16 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             self.assertFalse(res.pjm_accreditation_design_vintage)
             self.assertFalse(res.pjm_demand_response_supply)
             self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
+            self.assertFalse(res.pjm_vre_accreditation_vintage)
         back = ScenarioConfig(iso="PJM", mode="backcast")
         res = apply_iso_scenario_defaults(back, "PJM")
         self.assertFalse(res.pjm_accreditation_design_vintage)
         self.assertFalse(res.pjm_demand_response_supply)
         self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
+        # FORECAST-ONLY, which is the whole intent of this test's name: the
+        # backcast leg coerces the VRE gate back to its dataclass default in
+        # ``__post_init__``, so no backcast keeper of any ISO can be re-keyed.
+        self.assertFalse(res.pjm_vre_accreditation_vintage)
         self.assertEqual(res.cache_key(), back.cache_key())
 
     def test_i6_byte_identity_unarmed_and_backcast_coercion(self):

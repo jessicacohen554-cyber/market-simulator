@@ -1720,9 +1720,12 @@ def main(argv: list[str] | None = None) -> int:
             "which clamps to one value across the whole hindcast window. "
             "REQUIRES --pjm-accreditation-design-vintage (rule 19: the VRE "
             "and thermal halves are never devintaged apart) and is inert on "
-            "every other ISO. OMIT to inherit the shipped default (off, "
-            "unlike the two D48 gates PJM's ISOConfig arms); "
-            "--pjm-vre-accreditation-vintage arms it (distinct cache key)."
+            "every other ISO. ARMED FOR PJM by owner ruling Q55 (capx "
+            "D75-R-ARM) through iso_configs._pjm_config, like the D48 / D57 / "
+            "D67 gates beside it, so OMIT to inherit that shipped posture; "
+            "--no-pjm-vre-accreditation-vintage reaches the pre-arm control "
+            "(distinct cache key). The shared ScenarioConfig default stays "
+            "off, so every other ISO and every backcast key is unmoved."
         ),
     )
     parser.add_argument(

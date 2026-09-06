@@ -1296,6 +1296,73 @@ def _pjm_config() -> ISOConfig:
             # this is a real operand rather than a one-way residual improver).
             # Execution: PRECOMMIT-capx-d67arm-2026-09-06.md.
             "capacity_adequacy_requirement_published_by_iso": {"PJM": True},
+            # capx D75-R-ARM, OWNER RULING Q55 (capx ledger §3, r#51: "ARM for
+            # PJM") on the measured D75-R A/B. The VRE HALF of the D48
+            # devintage: PJM wind and solar are accredited at the delivery
+            # year's OWN published ELCC class ratings (DY 2023/24 15 / 38 /
+            # 54 %, DY 2024/25 21 / 33 / 50 % from the December 2023 FINAL
+            # study, DY 2025/26 38 / 10 / 14 %) instead of
+            # RENEWABLE_ELCC_CURVES_BY_ISO["PJM"], which is digitized from the
+            # 2026/27+ MARGINAL-ELCC ratings and CLAMPS on every PJM pool in
+            # the window -- i.e. applies one post-reform rating to three
+            # delivery years that cleared under a different published
+            # construct. Rule 14 [R-ACCURATE] is the reason and is dispositive
+            # on its own: these are the ISO's own published accreditation
+            # values for the year each auction actually cleared on, and the
+            # rule requires preferring them WHATEVER they do to the fit.
+            #
+            # A SUB-GATE INSIDE THE D48 FAMILY, never a mechanism beside it
+            # (rule 19 [R-ONE-MECH]): the predicate
+            # (retirements.vre_accreditation_vintage_armed) requires this
+            # field AND `pjm_accreditation_design_vintage` above AND a registry
+            # entry for the ISO, so the VRE half can never be vintaged while
+            # the thermal half is not -- a mixed accreditation basis is the
+            # exact failure D45 §2.2 measured and D48 exists to remove. It
+            # needs its own key because D48's is armed for PJM by ruling right
+            # here, so keying off it alone would have armed an untested
+            # mechanism BY DEFAULT the moment D75-R landed.
+            #
+            # Armed the D57/Q44 way -- through this ISOConfig override, NOT a
+            # flip of the shared `ScenarioConfig` default, which stays `False`
+            # (so no `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry is needed,
+            # no other ISO's key moves, and every backcast key is
+            # byte-identical; a PJM plain backcast coerces the field back to
+            # `False` with its key unmoved at 3a566deac3a85682). An explicit
+            # caller still wins: `--no-pjm-vre-accreditation-vintage` reaches
+            # the pre-arm posture and keeps its key `a9c66d8ea25acb9d`.
+            #
+            # Rule 21 [R-DOF]: ZERO scalar fields and ZERO free parameters
+            # beyond the ONE cross-vintage reconciliation ruling R1 authorised
+            # -- PJM's own published Table-5 installed-MW mix
+            # 1189/(1189+8713) = 12.01 % fixed, re-derived from the committed
+            # rows by test, admitted under rule 14's misalignment exception
+            # because PJM publishes no pre-reform fixed/tracking pairing. The
+            # conclusion is mix-INSENSITIVE (DY 2024/25's break-even blend
+            # 0.5527 exceeds PJM's own tracking rating 0.50, so the implied
+            # fixed share is negative -- no mix can flip the sign). Every
+            # rating is reconciled byte-for-byte to
+            # data/raw/capacity-market/elcc/pjm/pjm.csv by test. Rule 25
+            # [R-ISO-SCOPE]: PJM-only by construction and locked by test across
+            # the other five ISOs, whose accreditation constructs are their own
+            # (CAISO NQC/exceedance, NYISO CAFs, MISO class-average, NEISO no
+            # adopted study, ERCOT energy-only).
+            #
+            # Evidence: FINDING-capx-d75r-2026-09-06.md §3 (phase 0, zero LP:
+            # accredited VRE DOWN 754.633 / 332.854 / 148.315 MW, and NOT a
+            # uniform derate -- the two classes move in OPPOSITE directions),
+            # §4 (the DY 2023/24 screen, PASS on all four legs), §5.1 (the
+            # solve reproduces phase 0 to ~0.001 MW in every in-scope year),
+            # §5.2 (ALL 26 SCORED BANDS BYTE-IDENTICAL -- nothing flips in
+            # either direction -- with FC-3 improving inside its still-failing
+            # bands) and §8 (the recommendation and this posture). What it does
+            # NOT close, stated at the gate: the model still over-retires
+            # (17.294 vs 15.062 GW actual), `unit_recall_gt300` is UNCHANGED at
+            # 0.65 -- the repair removes false exits, it does not find missing
+            # true ones -- and the 2024/25 and 2025/26 census move the wrong
+            # way through fleet propagation (§5.4's fired STOP), which is D66
+            # card B's remaining half. Execution:
+            # PRECOMMIT-capx-d75r-arm-2026-09-06.md.
+            "pjm_vre_accreditation_vintage": True,
         },
     )
 
