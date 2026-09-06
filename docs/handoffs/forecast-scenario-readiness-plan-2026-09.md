@@ -1249,6 +1249,10 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#15 (main HEAD `e6a0402f`).** Quiet: RESOLVE undispatched a second refresh — asked,
+  re-emitted verbatim, not graded lost (owner batches launches); policy lanes correctly unlaunched; capx D79
+  (the cache-key fingerprint this desk routed) ruled ADOPT; D65-B-R's batch still holds the per-plant slot.
+  No card.
 - 2026-09-06 — **SCN-DESK r#14 (main HEAD `5375be8b`).** Quiet: RESOLVE not yet dispatched (asked), policy lanes
   correctly unlaunched, audit EXIT 0; the capx queue is saturated with solves, so rule 12 sequences RESOLVE's
   per-plant legs (charter sentence added). CLAUDE.md +1 (D67-ARM), INERT for every SCN leg. No card.
