@@ -1,0 +1,179 @@
+"""The scenario campaign's config surface (SCN-WS0 deliverable 4).
+
+Covers the three things that can silently break a campaign before a single
+LP runs: a base YAML that is not actually the reference posture, a case set
+that does not load or does not separate cases by cache key, and a ``--set``
+override that accepts something it should have refused.
+"""
+
+from __future__ import annotations
+
+import unittest
+
+from market_sim.config.iso_configs import SUPPORTED_ISOS
+from market_sim.config.scenarios import ScenarioConfig, SweepDefinition
+from scripts.run_full_horizon import (
+    apply_set_overrides,
+    parse_set_overrides,
+)
+from tests.helpers import REPO_ROOT
+
+CONFIGS = REPO_ROOT / "configs"
+MATRIX = CONFIGS / "scenario_campaign_matrix.yaml"
+HORIZONS = {"2026_2030": 2030, "2026_2050": 2050}
+
+
+class TestScenarioBaseConfigs(unittest.TestCase):
+    """One REF base per ISO per horizon, varying nothing but ISO and horizon."""
+
+    def test_one_base_per_iso_per_horizon(self):
+        for iso in SUPPORTED_ISOS:
+            for span, end_year in HORIZONS.items():
+                path = (
+                    CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_{span}.yaml"
+                )
+                self.assertTrue(path.exists(), path)
+                config = ScenarioConfig.from_yaml(path)
+                self.assertEqual(config.iso, iso)
+                self.assertEqual(config.mode, "forecast")
+                self.assertEqual(config.start_year, 2026)
+                self.assertEqual(config.end_year, end_year)
+
+    def test_base_varies_nothing_but_iso_and_horizon(self):
+        # REF is the SHIPPED posture (plan §3.0): every other field must equal
+        # the ScenarioConfig default, or the campaign's deltas stop being
+        # comparable across ISOs.
+        import dataclasses
+
+        exempt = {"iso", "start_year", "end_year", "mode"}
+        for iso in SUPPORTED_ISOS:
+            path = CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_2026_2050.yaml"
+            config = ScenarioConfig.from_yaml(path)
+            reference = ScenarioConfig(iso=iso, mode="forecast")
+            for field in dataclasses.fields(ScenarioConfig):
+                if field.name in exempt:
+                    continue
+                self.assertEqual(
+                    getattr(config, field.name),
+                    getattr(reference, field.name),
+                    f"{iso} {field.name} is not the shipped default",
+                )
+
+
+class TestCampaignMatrix(unittest.TestCase):
+    """The case set loads, separates, and only ever names live fields."""
+
+    def setUp(self):
+        self.sweep = SweepDefinition.from_yaml(MATRIX)
+
+    def test_reference_case_is_present_and_empty(self):
+        cases = self.sweep.cases
+        self.assertIn("REF", cases)
+        self.assertEqual(cases["REF"] or {}, {})
+
+    def test_every_live_case_names_only_real_config_fields(self):
+        import dataclasses
+
+        names = {f.name for f in dataclasses.fields(ScenarioConfig)}
+        for case, overrides in self.sweep.cases.items():
+            for field in overrides or {}:
+                self.assertIn(field, names, f"{case} names a missing field {field!r}")
+
+    def test_cases_expand_and_carry_distinct_cache_keys(self):
+        for iso in SUPPORTED_ISOS:
+            base = ScenarioConfig.from_yaml(
+                CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_2026_2030.yaml"
+            )
+            configs = self.sweep.case_configs(base)
+            self.assertIn("REF", configs)
+            keys = {case: c.cache_key() for case, c in configs.items()}
+            self.assertEqual(
+                len(set(keys.values())), len(keys), f"{iso} cases collide: {keys}"
+            )
+
+    def test_the_carbon_ladder_is_the_additive_delta_form(self):
+        # G-C1 is live at this commit: an explicit carbon_price_path SUPPRESSES
+        # the program trajectory, so a path-form ladder is a carbon CUT on
+        # CAISO/NYISO/NEISO. The committed ladder must therefore be additive.
+        for case in ("CARB-LO", "CARB-MID", "CARB-HI"):
+            overrides = self.sweep.cases[case]
+            self.assertIn("carbon_price_delta", overrides)
+            self.assertNotIn("carbon_price_path", overrides)
+            self.assertGreater(overrides["carbon_price_delta"], 0.0)
+
+    def test_load_high_declares_its_datacenter_pairing(self):
+        # G-L3: growth-high and DC-high are independent axes, so each high case
+        # must state both rather than leave the pairing implicit.
+        for case in ("LOAD-HI", "LOAD-HI-ORGANIC"):
+            overrides = self.sweep.cases[case]
+            self.assertEqual(overrides["demand_growth_path"], "high")
+            self.assertIn("datacenter_load_path", overrides)
+        self.assertNotEqual(
+            self.sweep.cases["LOAD-HI"]["datacenter_load_path"],
+            self.sweep.cases["LOAD-HI-ORGANIC"]["datacenter_load_path"],
+        )
+
+    def test_blocked_cases_are_commented_not_live(self):
+        text = MATRIX.read_text()
+        for case in ("CES-T80", "VOL-MID", "VOL-HI", "ALL-CLEAN", "CAP-STATE-TIGHT"):
+            self.assertNotIn(case, self.sweep.cases, f"{case} must not be live yet")
+            self.assertIn(case, text, f"{case} must still be named, commented")
+
+
+class TestSetOverride(unittest.TestCase):
+    """``--set FIELD=VALUE`` validates against ScenarioConfig, never silently."""
+
+    def test_parses_and_coerces_scalar_types(self):
+        parsed = parse_set_overrides(
+            [
+                "carbon_price_delta=25",
+                "federal_ces_enabled=true",
+                "demand_growth_path=high",
+                "end_year=2030",
+            ]
+        )
+        self.assertEqual(parsed["carbon_price_delta"], 25.0)
+        self.assertIsInstance(parsed["carbon_price_delta"], float)
+        self.assertIs(parsed["federal_ces_enabled"], True)
+        self.assertEqual(parsed["demand_growth_path"], "high")
+        self.assertEqual(parsed["end_year"], 2030)
+
+    def test_none_and_empty_are_no_ops(self):
+        self.assertEqual(parse_set_overrides(None), {})
+        self.assertEqual(parse_set_overrides([]), {})
+
+    def test_unknown_field_is_a_hard_error(self):
+        with self.assertRaises(SystemExit) as ctx:
+            parse_set_overrides(["not_a_real_field=1"])
+        self.assertIn("not a ScenarioConfig field", str(ctx.exception))
+
+    def test_malformed_spec_rejected(self):
+        with self.assertRaises(SystemExit):
+            parse_set_overrides(["carbon_price_delta"])
+
+    def test_repeated_field_rejected(self):
+        with self.assertRaises(SystemExit):
+            parse_set_overrides(["carbon_price_delta=1", "carbon_price_delta=2"])
+
+    def test_uncoercible_value_rejected(self):
+        with self.assertRaises(SystemExit):
+            parse_set_overrides(["carbon_price_delta=not-a-number"])
+        with self.assertRaises(SystemExit):
+            parse_set_overrides(["federal_ces_enabled=maybe"])
+
+    def test_apply_returns_an_overridden_config(self):
+        base = ScenarioConfig(iso="NEISO", mode="forecast")
+        out = apply_set_overrides(base, {"carbon_price_delta": 25.0})
+        self.assertEqual(out.carbon_price_delta, 25.0)
+        self.assertEqual(base.carbon_price_delta, 0.0)  # base untouched
+        # A solve-affecting override must move the cache key, or an arm and its
+        # control would collide on disk.
+        self.assertNotEqual(out.cache_key(), base.cache_key())
+
+    def test_apply_with_no_overrides_is_the_same_object(self):
+        base = ScenarioConfig(iso="NEISO", mode="forecast")
+        self.assertIs(apply_set_overrides(base, {}), base)
+
+
+if __name__ == "__main__":
+    unittest.main()

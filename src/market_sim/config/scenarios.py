@@ -370,6 +370,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_per_unit_clip",
+    # nyiso-196 unit-outage removed FRACTION on the extract's own capacity
+    # basis (GATED default-off; every consumer reads it via
+    # ``getattr(config, "unit_outage_extract_basis_share", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_extract_basis_share",
     # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
@@ -1387,6 +1394,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the armed default now enters the hash and advances both pins — the point
     # of (b'-1), not a defect in the registration.
     "ccs_retrofit_capex_co2_scaling",
+    # capx D65 Act A: the CCS retrofit FIXED-COST shape gate (ΔFOM and the
+    # capture VOM adder scaled by the same ``k`` seam 1 already applies to the
+    # island's capex). GATED default off, byte-identical unarmed — the off path
+    # never enters the branch. Dropped from the hash at its ``False`` default so
+    # every pre-existing cache key of all six ISOs is byte-stable (the default
+    # ``e5ecd4105ada3e58`` and the bare backcast ``6a2845e50951394e`` both
+    # re-resolve unmoved with the field absent AND explicitly ``False``); an
+    # armed run keys distinctly. SHARED field — very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ccs_retrofit_fixed_cost_co2_scaling",
     # capx D52: the NYISO adequacy-requirement devintage gates (published
     # forecast peak; per-capability-year adopted IRM × (1 − derate)) — both
     # default-off, byte-identical unarmed (the requirement resolver returns
@@ -1424,6 +1441,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "capacity_market_supply_clearing_by_iso",
+    # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
+    # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
+    # the hash there, so every pre-existing cache key of all six ISOs — every
+    # backcast keeper included — is byte-stable; a configured row keys
+    # distinctly. SHARED fields — very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the fields.
+    "federal_ces_target_by_year",
+    "federal_ces_acp_usd_per_mwh",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1555,6 +1580,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-202 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_per_unit_clip": "False",
+    # Added by nyiso-196 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_extract_basis_share": "False",
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
@@ -1908,6 +1936,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
     # its shipping False default (an armed run keys distinctly).
     "ccs_retrofit_capex_co2_scaling": "False",
+    # capx D65 Act A: CCS retrofit fixed-cost shape gate, registered at its
+    # shipping False default (an armed run keys distinctly).
+    "ccs_retrofit_fixed_cost_co2_scaling": "False",
     # capx D52: NYISO adequacy-requirement devintage gates, registered at
     # their shipping False defaults (armed runs key distinctly).
     "nyiso_requirement_forecast_peak": "False",
@@ -1924,6 +1955,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D57: the capacity-market supply-clearing gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_market_supply_clearing_by_iso": "None",
+    # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
+    # shipping defaults (None = no row / no escape declared; an armed row keys
+    # distinctly). Registered IN THE SAME COMMIT as the fields.
+    "federal_ces_target_by_year": "None",
+    "federal_ces_acp_usd_per_mwh": "None",
 }
 
 
@@ -3155,6 +3191,40 @@ class ScenarioConfig:
     # incl. PJM carries a row since the FF-1E-policy refresh, so the
     # suppression is live there (stale-comment fix, FFR-6B §5.4). Suppresses
     # the K-row per-region grain (miso_rps_compliance_regions) identically.
+    federal_ces_target_by_year: dict[int, float] | None = None  # ENDOGENOUS
+    # national CES TARGET row (SCN-WS2a; forecast-scenario-readiness-plan
+    # 2026-09 §3 WS-2 item 1, closing G-S1/G-S3): sparse {year: credited
+    # share} knots in [0, 1], linearly interpolated and edge-held (the
+    # federal_ces_premium_by_year knot convention; YAML str keys coerced by
+    # policy/federal_ces.py). None (default) = NO ROW, byte-identical. When
+    # set, ONE annual row per ISO rides the clean-tier family
+    # (model/lp/rows.py) as a federal region spanning EVERY load zone:
+    #   Σ_g credit[g]·P[g,t] + Σ W[z,t] + Σ S[z,t] + escape ≥ target(y)·Σ demand
+    # with the SAME crediting rule the premium path pays (policy/federal_ces
+    # .unit_credit_fractions — clean_capture and cesa_ci both unchanged: a
+    # CCS column carries 0.95), escaping at federal_ces_acp_usd_per_mwh. Its
+    # dual is the ENDOGENOUS federal EAC price, delivered through the
+    # existing clean_attribute_price_by_fuel → max(EAC, RPS dual, clean dual)
+    # screen seam (no new consumer). ONE MECHANISM PER PHENOMENON (rule 19
+    # [R-ONE-MECH]): the target row and a NON-ZERO EXOGENOUS premium are
+    # mutually exclusive in one config (__post_init__); the row requires
+    # federal_ces_enabled (the crediting gate) and a positive ACP, and
+    # refuses federal_ces_storage_eligible (no discharge column in the row)
+    # and an eligible-fuel list without wind+solar (the row's zone columns).
+    # Forecast-only (rule 13 — the premium's own backcast refusal applies).
+    # ILLUSTRATIVE, NOT A CAMPAIGN LEVEL: owner box D-2 (readiness plan §6,
+    # the CES target schedule + ACP) was PRESENTED at SCN-DESK r#1 and is
+    # OPEN as of 2026-09-05; the SCN-WS2a probe used {2026: 0.55, 2035: 0.80,
+    # 2050: 1.00} at ACP $50 as a placeholder and says so. No value here is a
+    # committed level.
+    federal_ces_acp_usd_per_mwh: float | None = None  # The target row's
+    # alternative-compliance ceiling in real 2026$/MWh: the escape column's
+    # objective price, so the row's dual can never exceed it — a
+    # certificate-short year pays the ACP instead of turning infeasible
+    # (FFR-6B §6.3; the same construction as STATE_RPS_ACP). REQUIRED (> 0)
+    # with federal_ces_target_by_year and refused without it (a dangling
+    # price with no row is an unregistered knob). None (default) =
+    # byte-identical. Illustrative $50 in the SCN-WS2a probe (D-2 open).
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
     # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
@@ -3817,6 +3887,67 @@ class ScenarioConfig:
     # is a POSTURE, the same admissibility class as Q30, not a transfer
     # (rule 25 untouched). Evidence: FINDING-capx-d50-2026-09-04.md §8.
     ccs_retrofit_capex_co2_scaling: bool = True
+
+    # capx D65 Act A (2026-09-05) — the FOURTH SEAM of the same construction,
+    # adjudicated zero-solve by capx D64 (FINDING-capx-d64-2026-09-05.md §1).
+    # GATED, default OFF; requires the D50 field above (there is no ``k``
+    # without seam 1, so ``__post_init__`` refuses the pair).
+    # THE SEAM. D50 sized the capture ISLAND'S CAPEX to the host's captured
+    # CO2 (``capex_scale = captured / captured_ref``) and left the two
+    # fixed-cost legs at the reference host's per-MW / per-MWh values: ΔFOM
+    # ($/MW-yr, ``fixed_om_gas_cc_ccs`` − ``fixed_om_gas_cc``) and the capture
+    # VOM adder ($/MWh, ``ccs_retrofit_vom_adder``). Both therefore DILUTE per
+    # captured tonne as the host's rate rises — a host capturing 1.8× the
+    # reference flow pays 1.8× the island but only 1.0× the island's O&M — so
+    # the carbon-0 clearing threshold in host emissions MOVED (er ≳ 0.46 →
+    # ≳ 0.58–0.63 t/MWh) instead of vanishing, and the retrofit margin still
+    # rose with host emissions inside that band.
+    # WHAT THE SOURCE SAYS THE LEGS ARE (D64 §1.2 — the basis, not a fit).
+    # ATB 2024's fossil methodology page states it outright: "property taxes
+    # and insurance (FOM component) as well as maintenance labor (FOM
+    # component) and maintenance materials (VOM component) are calculated as a
+    # percentage of TPC", and out-year O&M "are adjusted for the CAPEX
+    # reductions". NETL Rev 4a's B31A→B31B.90 exhibits decompose the capture
+    # increment to 95.5 % TPC-proportional for the FIXED leg (taxes+insurance
+    # 64.7 % at 2 % of TPC, maintenance labor 24.6 %, admin/support 7.1 %; the
+    # residual 3.6 % is a +1.3 operators/shift headcount step) and 100 %
+    # island-proportional for the VARIABLE leg (maintenance material 58.5 % of
+    # TPC, plus per-tonne consumables: solvent makeup 19.4 %, TEG/reclaimer
+    # waste 9.9 %, capture-cooling water 12.1 %). Nothing in either increment
+    # is proportional to the HOST's MW or MWh.
+    # THE CONSTRUCTION (zero DOF, no new constant). Under seam 1 the island's
+    # TPC for host h is ``capex_ref × k_h``, so a leg that is a fraction of TPC
+    # scales by the same k_h: ``ΔFOM_h = ΔFOM_ref × k_h`` and
+    # ``vom_adder_h = vom_adder_ref × k_h``, with k_h the D50 factor unchanged
+    # (``capex_scale``, ``ccs.py::ccs_retrofit_captured_ref_t_per_mwh``,
+    # 0.32319 t/MWh). Every factor is an existing cited constant — rules 5, 21,
+    # 23. The one approximation, stated: folding the 3.6 % operating-labor
+    # headcount step into the TPC-proportional part costs
+    # ``0.036 × 35,000 × (k − 1)`` ≈ $1,300/MW-yr at k = 2 against a ~$200,000
+    # /MW-yr bar (0.6 %), below the cap-packing unit; splitting it out would
+    # add a constant to remove a 0.6 % effect and is NOT recommended.
+    # WHAT THIS FIELD DOES NOT TOUCH, stated at the definition:
+    #  * ``co2_transport_storage_cost`` is ALREADY per tonne and charged on
+    #    ``captured`` — outside this seam, and ATB excludes beyond-the-fence
+    #    CO2 costs from its FOM/VOM, so there is no double count.
+    #  * The HR-penalty leg (per host MWh × hr, physically the reboiler steam
+    #    draw) is D30 §5 row 5's question and is left where it is.
+    #  * The LEVEL of ``ccs_retrofit_vom_adder`` (8.0 $/MWh, registry
+    #    ``needs-citation``, 2.7–3.6× every published basis — ATB 2024
+    #    (4.8 − 2.1) × 1.0909 = 2.95 2026$; NETL Rev 4a 2.23). D64 §2.4 is the
+    #    measurement; re-identifying it is capx D65 ACT B = owner card C-15 /
+    #    Q47, NOT this field. This field scales whatever level is registered.
+    #  * DISCLOSED AND DEFERRED (director ruling r#41 = D64 §4.2 option (i)):
+    #    the CONVERTED unit's LATER retirement FOM. ``retirements.py::
+    #    _THERMAL_FOM`` reads FOM by fuel type (``fixed_om_gas_cc_ccs`` for
+    #    every ``gas_cc_ccs`` unit; ``Generator`` carries no per-unit FOM), so
+    #    a host converted at k = 1.8 is screened for retirement in later years
+    #    at the REFERENCE island's FOM, not its own — second-order (≤ $28,000
+    #    /MW-yr on a unit whose margin is §45Q-dominated) and a ROUTED
+    #    successor (option (ii): ``Generator.fom_adder_per_kw_yr``), not this
+    #    lane's: it touches the retirement screen and D65 stays one seam.
+    # The off path never enters the branch — byte-identical by construction.
+    ccs_retrofit_fixed_cost_co2_scaling: bool = False
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
@@ -12595,6 +12726,80 @@ class ScenarioConfig:
     # byte-inert while off.
     unit_outage_per_unit_clip: bool = False
 
+    # Unit-outage removed FRACTION on the EXTRACT'S OWN capacity basis
+    # (unit_outage_extract_basis_share, off by default; nyiso-196). The sixth
+    # member of the same consistency-repair family, and the one that makes
+    # the SHARE basis-independent instead of aligning one side of it: the
+    # accumulator divides the row's ``unit_capacity_mw`` by the bin's capacity
+    # on the SAME construction that wrote the numerator — the row's own
+    # ``plant_capacity_mw`` (the deriver's ``fac_cap``, every CAMPD unit at the
+    # facility that year) at a single-group facility, i.e. exactly the
+    # published ``unit_pct_of_plant``; the group's distinct-unit sum at a
+    # multi-group facility — instead of by outages._iso_plant_capacity, the
+    # fleet's net-summer pmax sum.
+    #
+    # THE DEFECT (rule 14 [R-ACCURATE]), measured at Cricket Valley 57185 in
+    # the committed NYISO -perunitmerit- extract: CAMPD's three stack ids
+    # U001-U003 match EIA-860 generator ids U001-U003 EXACTLY — but those
+    # generators are the plant's STEAM turbines (prime mover CA, 174.2 MW
+    # each; the CTs are U004-U006, CT, 263.3 MW). The id collision lands the
+    # deriver's exact-match route on a CA row, so build_capacity_index's CT
+    # steam-coupling augmentation never fires and each 1x1 block is written
+    # at 174.2 MW (capacity_source eia_exact, plant_capacity_mw 522.6) where
+    # its CAMPD gross reaches 374-380 MW. The LP accumulator then divides
+    # 174.2 by the 1,016.8 MW net-summer bin: one block out removes 17.1 % of
+    # the plant against the physical 33.3 %, and with all three blocks out
+    # (Jan 13-24, Feb 29-Mar 8 and Dec 20-27 2024) 48.6 % of the plant stays
+    # available at a plant whose meter reads zero. On the extract's own basis
+    # the same rows read 174.2 / 522.6 = 33.3 % and a full stop lands on
+    # EXACTLY 0.0. The 2024 footprint (keeper 2026-09-05-nyiso-192-astoria-
+    # panel, zero LP): LP-applied minus extract-own-basis availability
+    # +1.960 TWh at 57185 (2023 +0.857, 2025 +1.710 — the plant's 190 / 450 /
+    # 398 unit-outage days), of which the model dispatched 0.512 TWh and was
+    # online 671 h in windows the extract says the plant was dark. The same
+    # mismatch runs the OTHER way at every other NYISO CC bin, whose extract
+    # capacity (observed peak or steam-augmented nameplate) EXCEEDS the
+    # net-summer denominator: Athens 55405 -0.294, Bethpage 50292 -0.154,
+    # Saranac 54574 -0.136 TWh of availability the LP never had.
+    #
+    # WHY THE SHARE, NOT ANOTHER SIDE. unit_outage_lp_capacity_basis raises
+    # the CC DENOMINATOR to nameplate (right where the numerator is nameplate;
+    # at Cricket Valley it would make 174.2 / 1,312.5 = 13.3 %, worse);
+    # unit_outage_st_capacity_basis substitutes the fleet's per-unit pmax as
+    # the STEAM numerator (CC bins are out of its scope by construction).
+    # Taking numerator and denominator from ONE construction is what the
+    # deriver's own docstring promises ("the same basis as the model bin
+    # denominator the derate divides into") and what the extract already
+    # publishes as unit_pct_of_plant; it needs no per-unit fleet roster match
+    # and no knowledge of which EIA generator a CAMPD stack is. Mutually
+    # exclusive with unit_outage_lp_capacity_basis, which acts on the same CC
+    # bins' share (rule 19 [R-ONE-MECH]: two constructions of one share never
+    # stack; the loader raises).
+    #
+    # SCOPE. COMBINED-CYCLE bins only (outages._CC_NAMEPLATE_BASIS_GROUPS =
+    # CC_REGULAR, CC_CHP): a CEMS unit at a combined cycle is a 1x1 block or a
+    # steam-coupled CT whose share of the plant the deriver's fac_cap states —
+    # the physics this share encodes. Steam bins keep their own numerator
+    # alignment (unit_outage_st_capacity_basis, disjoint bins), so the two
+    # flags never touch one bin. Measured blast radius (NYISO 2024, zero LP):
+    # 57185 -1.83 TWh available, Selkirk 10725 CC_CHP -1.58 (three blocks
+    # dark ~340 days each; the LP had it 35 % available against a 0.11 TWh
+    # meter), Linden 50006 +0.33, Athens +0.27, Bethpage +0.15, Saranac +0.13,
+    # Sithe +0.09 — every CC bin toward its extract-stated availability, no
+    # steam bin moves. Non-ERCOT only (the ERCOT branch caps on its CAMPD bin
+    # sheet and routes split facilities by asset class, a basis the extract's
+    # facility_id does not address). Threaded, like st_capacity_basis and
+    # per_unit_clip, into the std >= 5-day, short and partial layers AND the
+    # lay-up loader (the additivity contract: a lay-up share and an outage
+    # share for the same plant sit on one basis), and deliberately NOT into
+    # the declared-event maxgen layer. MEASURED (the extract's own columns),
+    # ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]),
+    # rule-13 forward-regenerable (a property of the accumulator, identical
+    # for a forecast year's extract), byte-inert while off. Evidence:
+    # docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
+    # results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md.
+    unit_outage_extract_basis_share: bool = False
+
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
     # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured
     # conduct by a PROXY rather than by the units' own meters, and the two
@@ -15587,6 +15792,89 @@ class ScenarioConfig:
                 "must be False in backcast mode (rule 13): a federal CES "
                 "premium never enters a scored backcast."
             )
+        # The endogenous federal CES TARGET row (SCN-WS2a). The guards below
+        # make the row's preconditions loud: it is one mechanism for the
+        # "what does an X%-by-Y standard imply" phenomenon, and it never
+        # coexists with the exogenous premium answering the same question
+        # (rule 19 [R-ONE-MECH]).
+        _ces_target = self.federal_ces_target_by_year
+        if _ces_target is not None and len(_ces_target) == 0:
+            raise ValueError(
+                "federal_ces_target_by_year must be None (no row) or carry at "
+                "least one {year: share} knot — an empty mapping is ambiguous"
+            )
+        if _ces_target:
+            if self.mode == "backcast":
+                raise ValueError(
+                    "federal_ces_target_by_year is a forecast-only policy "
+                    "lever (rule 13): a federal CES target row never enters a "
+                    "scored backcast."
+                )
+            if not self.federal_ces_enabled:
+                raise ValueError(
+                    "federal_ces_target_by_year requires federal_ces_enabled: "
+                    "the master gate is what credits the row's columns "
+                    "(unit_credit_fractions is all-zero with it off)."
+                )
+            _premium_armed = self.federal_ces_premium_usd_per_mwh != 0.0 or bool(
+                self.federal_ces_premium_by_year
+                and any(
+                    float(v) != 0.0 for v in self.federal_ces_premium_by_year.values()
+                )
+            )
+            if _premium_armed:
+                raise ValueError(
+                    "federal_ces_target_by_year and a non-zero exogenous "
+                    "federal CES premium (federal_ces_premium_usd_per_mwh / "
+                    "federal_ces_premium_by_year) are mutually exclusive in "
+                    "one config (rule 19 [R-ONE-MECH]): the target row's dual "
+                    "IS the federal EAC price; pricing it exogenously as well "
+                    "would pay the same certificate twice."
+                )
+            if (
+                self.federal_ces_acp_usd_per_mwh is None
+                or float(self.federal_ces_acp_usd_per_mwh) <= 0.0
+            ):
+                raise ValueError(
+                    "federal_ces_target_by_year requires a positive "
+                    "federal_ces_acp_usd_per_mwh: every clean row carries its "
+                    "own escape (FFR-6B §6.3) — a target row with no ACP is an "
+                    "infeasibility bomb."
+                )
+            if self.federal_ces_storage_eligible:
+                raise ValueError(
+                    "federal_ces_target_by_year does not support "
+                    "federal_ces_storage_eligible: the target row credits "
+                    "generator and wind/solar columns only (no discharge "
+                    "column) — a storage-crediting row is a separate design."
+                )
+            for _base in ("wind", "solar"):
+                if _base not in self.federal_ces_eligible_fuels:
+                    raise ValueError(
+                        f"federal_ces_target_by_year requires {_base!r} in "
+                        "federal_ces_eligible_fuels: the row's wind/solar zone "
+                        "columns always credit at 1.0 (the clean-tier family's "
+                        "construction), so an ineligible listing would be "
+                        "silently overridden."
+                    )
+            for _k, _v in _ces_target.items():
+                try:
+                    int(_k)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(
+                        f"federal_ces_target_by_year knot key {_k!r} is not a year"
+                    ) from exc
+                if not (0.0 <= float(_v) <= 1.0):
+                    raise ValueError(
+                        f"federal_ces_target_by_year knot {_k!r}: {_v!r} is not "
+                        "a credited share in [0, 1]"
+                    )
+        elif self.federal_ces_acp_usd_per_mwh is not None:
+            raise ValueError(
+                "federal_ces_acp_usd_per_mwh has no row to price without "
+                "federal_ces_target_by_year — set both or neither (rule 24 "
+                "[R-REGISTRY]: no dangling knobs)."
+            )
         # The backcast-only MEASURED-OVERLAY family (audit FR-11). Same
         # construction as the two guards above, generalized: rule 13 lets a
         # measured input in only when it would regenerate for a forward year,
@@ -16476,6 +16764,26 @@ class ScenarioConfig:
                 "from forward load/VRE drivers; the measured-plan fallback "
                 "(ASPLANNP433) is zero for forecast years."
             )
+        # capx D65 Act A: the CCS retrofit fixed-cost shape gate has no meaning
+        # without seam 1. Its whole construction is "scale the two fixed-cost
+        # legs by the SAME k the island's capex is scaled by", and ``k``
+        # (``ccs.py::apply_ccs_retrofit``'s ``capex_scale``) is 1.0 for every
+        # host unless ``ccs_retrofit_capex_co2_scaling`` is on. Arming this
+        # alone would therefore be a silent no-op that nonetheless keys
+        # distinctly — refuse it loudly instead (rule 24: no tunable that
+        # cannot change a solve).
+        if self.ccs_retrofit_fixed_cost_co2_scaling and (
+            not self.ccs_retrofit_capex_co2_scaling
+        ):
+            raise ValueError(
+                "ccs_retrofit_fixed_cost_co2_scaling requires "
+                "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
+                "by the SAME captured/captured_ref factor seam 1 applies to the "
+                "capture island's capex, and that factor is 1.0 for every host "
+                "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
+                "\u00a74.2). Enable ccs_retrofit_capex_co2_scaling or clear "
+                "ccs_retrofit_fixed_cost_co2_scaling."
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -17075,6 +17383,8 @@ TIER_TAGS: dict[str, int] = {
     "federal_ces_eligible_fuels": 1,
     "federal_ces_storage_eligible": 1,
     "federal_ces_replaces_state_rps": 1,
+    "federal_ces_target_by_year": 1,
+    "federal_ces_acp_usd_per_mwh": 1,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,
@@ -17138,6 +17448,7 @@ TIER_TAGS: dict[str, int] = {
     "ccs_retrofit_max_gw_per_year": 2,
     "ccs_retrofit_min_remaining_life": 2,
     "ccs_retrofit_capex_co2_scaling": 2,
+    "ccs_retrofit_fixed_cost_co2_scaling": 2,
     "heat_rate_bin_count": 2,
     "use_campd_bins": 2,
     "campd_bins_path": 2,

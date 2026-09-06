@@ -458,3 +458,73 @@ def per_generator_membership(
             continue
         out[i] = 1.0 if state in member_states else 0.0
     return out
+
+
+def carbon_mc_column(
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+    carbon_price: float,
+    fleet_arrays,
+    zone_names: list[str],
+    plant_state: "dict[int, str] | None" = None,
+) -> "float | np.ndarray":
+    """Return what ``assemble_mc`` should see for carbon: the scalar, or the column.
+
+    The partial-footprint carbon program seam (pjm-146), lifted VERBATIM from the
+    backcast orchestrator (``scripts/run_calibration.py`` "Partial-footprint
+    carbon program" block) so the forecast orchestrator's ``assemble_mc`` call
+    carries the same gate and the same arithmetic (SCN-WS1a, plan §2.1 G-C3 —
+    before this the column existed on the backcast path only, so PJM's partial
+    RGGI footprint would have been priced ISO-wide the day a forecast carbon
+    price on PJM turned non-zero). The gate, in order, exactly as the backcast:
+
+    1. ``carbon_price`` is falsy (``0.0``) → the scalar is returned unchanged.
+    2. The ISO has no registered program, or its program maps membership
+       uniformly (``program.zone_share is None`` — CAISO/NYISO/NEISO, whose
+       membership is 1.0 on every load zone so the scalar IS exact; ERCOT/MISO
+       have no program at all) → the scalar is returned unchanged, THE SAME
+       OBJECT, so ``assemble_mc`` receives byte-for-byte the argument it
+       received before this seam existed (rule 25 lane isolation; the
+       ``TestCarbonMcColumn`` byte-identity test pins it).
+    3. Otherwise (today only PJM's RGGI footprint) and only when the resolved
+       program adder is nonzero: the per-generator column
+       ``m[g] × price_adder`` — ``m[g]`` the exact per-plant EIA-860 state test
+       against the year's member set, with the committed ``PJM_RGGI_ZONE_SHARE``
+       fallback for synthetic rows (:func:`per_generator_membership`).
+
+    Note the column is built from the RESOLUTION's ``price_adder`` (the program
+    adder alone), not from ``carbon_price`` (which may also carry a scalar
+    override or ``carbon_price_delta``): this is the backcast's construction,
+    kept identical here rather than re-decided. Whether a federal component
+    should stack membership-free on top of a partial-footprint state adder is
+    owner card D-1 territory (the additive/floor question) and is deliberately
+    NOT answered by this seam.
+
+    Args:
+        config: Scenario config (``iso``, ``mode``, the carbon toggles).
+        iso: Model ISO name.
+        year: Simulation year.
+        carbon_price: The resolved ISO-wide scalar
+            (:func:`market_sim.policy.carbon.resolve_carbon_price`).
+        fleet_arrays: The year's ``FleetArrays`` (``zone_idx``, ``plant_code``).
+        zone_names: The RUNTIME zone list (interchange-extended), which
+            ``fleet_arrays.zone_idx`` indexes.
+        plant_state: Optional injected ``{plant_code: state}`` map (tests).
+
+    Returns:
+        ``carbon_price`` itself (the identical object) on the scalar path, or
+        the ``(n_gen,)`` membership-weighted column on the partial-footprint
+        path.
+    """
+    if not carbon_price:
+        return carbon_price
+    program = CAP_AND_TRADE_PROGRAMS.get(iso)
+    if program is None or program.zone_share is None:
+        return carbon_price
+    resolution = resolve_carbon_program(config, year, zone_names=zone_names)
+    if resolution is None or not resolution.price_adder:
+        return carbon_price
+    return per_generator_membership(
+        iso, year, resolution.membership, fleet_arrays, plant_state=plant_state
+    ) * float(resolution.price_adder)

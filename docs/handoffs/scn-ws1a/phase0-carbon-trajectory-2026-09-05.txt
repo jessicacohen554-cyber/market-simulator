@@ -1,0 +1,30 @@
+| ISO | bundle | path | state | 2026 | 2027 | 2028 | 2030 | 2035 | 2040 | 2045 | 2050 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| ERCOT | current | zero | True | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| ERCOT | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| ERCOT | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| CAISO | current | zero | True | 30.02 | 32.13 | 34.37 | 39.36 | 55.20 | 77.42 | 108.58 | 152.29 |
+| CAISO | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| CAISO | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| PJM | current | zero | True | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| PJM | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| PJM | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| MISO | current | zero | True | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| MISO | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| MISO | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| NYISO | current | zero | True | 23.64 | 25.29 | 27.06 | 30.98 | 43.45 | 60.95 | 85.48 | 119.89 |
+| NYISO | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| NYISO | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+| NEISO | current | zero | True | 26.05 | 27.88 | 29.83 | 34.15 | 47.90 | 67.18 | 94.23 | 132.16 |
+| NEISO | tight | mid | True | 0.00 | 3.75 | 7.50 | 15.00 | 25.00 | 35.00 | 42.50 | 50.00 |
+| NEISO | rollback | zero | False | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
+G-C1 check: tight - current per program ISO, every year
+CAISO min delta -102.28999999999999 max delta -24.36 cut in all years: True
+NYISO min delta -69.89 max delta -15.98 cut in all years: True
+NEISO min delta -82.16 max delta -19.15 cut in all years: True
+
+floor vs current (tight under FLOOR semantics = max(mid, program)) strict increase?
+CAISO min 0.0 max 0.0 any year where mid > program: []
+NYISO min 0.0 max 0.0 any year where mid > program: []
+NEISO min 0.0 max 0.0 any year where mid > program: []

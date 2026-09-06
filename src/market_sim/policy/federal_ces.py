@@ -48,7 +48,12 @@ import numpy as np
 from market_sim.config.constants import CO2_RATES, REAL_DOLLAR_BASE_YEAR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
+from market_sim.policy.clean_tiers import CleanRegionArrays, append_clean_region
 from market_sim.policy.eac import _EAC_PRICE_FIELDS, get_eac_price_for_new_entry
+
+# Region label of the federal CES target row inside the clean-tier family
+# (diagnostics and the runner's per-region dual log).
+FEDERAL_CES_REGION_LABEL = "FEDERAL_CES"
 
 # Candidate-technology name -> fleet fuel type. New-entry candidate techs
 # whose cost tier differs from their dispatch fuel (capacity.py collapses
@@ -103,24 +108,143 @@ def premium_for_year(config: ScenarioConfig, year: int | None) -> float:
 
     knots_raw = config.federal_ces_premium_by_year
     if knots_raw:
-        # YAML round-trips stringify int keys; coerce back so on-disk and
-        # in-memory configs resolve identically (plan §5.1).
-        knots = {int(k): float(v) for k, v in knots_raw.items()}
-        years = sorted(knots)
-        if year <= years[0]:
-            return knots[years[0]]
-        if year >= years[-1]:
-            return knots[years[-1]]
-        for lo, hi in zip(years, years[1:]):
-            if lo <= year <= hi:
-                frac = (year - lo) / (hi - lo)
-                return knots[lo] + frac * (knots[hi] - knots[lo])
-        return knots[years[-1]]
+        return _interp_knots(knots_raw, year)
 
     n = year - REAL_DOLLAR_BASE_YEAR
     return config.federal_ces_premium_usd_per_mwh * (
         (1.0 + config.federal_ces_premium_escalation_real) ** n
     )
+
+
+def _interp_knots(knots_raw, year: int) -> float:
+    """Linear interpolation between sparse ``{year: value}`` knots, edge-held.
+
+    The shared knot convention of the premium path
+    (:func:`premium_for_year`) and the target row (:func:`target_for_year`)
+    — the ``STATE_RPS_FLOORS`` trajectory pattern. YAML round-trips stringify
+    int keys; they are coerced back so on-disk and in-memory configs resolve
+    identically (plan §5.1).
+    """
+    knots = {int(k): float(v) for k, v in knots_raw.items()}
+    years = sorted(knots)
+    if year <= years[0]:
+        return knots[years[0]]
+    if year >= years[-1]:
+        return knots[years[-1]]
+    for lo, hi in zip(years, years[1:]):
+        if lo <= year <= hi:
+            frac = (year - lo) / (hi - lo)
+            return knots[lo] + frac * (knots[hi] - knots[lo])
+    return knots[years[-1]]
+
+
+def federal_ces_target_row_active(config: ScenarioConfig) -> bool:
+    """Return True when the endogenous federal CES TARGET row is built.
+
+    The row exists iff the CES master gate is on AND
+    ``federal_ces_target_by_year`` carries knots (SCN-WS2a, readiness plan
+    §3 WS-2 item 1). ``__post_init__`` already refuses the row in backcast
+    mode, without the master gate, beside a non-zero exogenous premium
+    (rule 19 [R-ONE-MECH]) and without an ACP, so this predicate is the
+    only gate the consumers need.
+    """
+    return bool(config.federal_ces_enabled and config.federal_ces_target_by_year)
+
+
+def target_for_year(config: ScenarioConfig, year: int) -> float | None:
+    """Return the federal CES credited-share target for ``year``, or ``None``.
+
+    ``None`` when no target row is configured (:func:`federal_ces_target_row_
+    active`); otherwise the sparse knots interpolated linearly and edge-held
+    (:func:`_interp_knots`) — a standard whose first knot is "the current
+    share" holds that share before it and its last knot after it.
+    """
+    if not federal_ces_target_row_active(config):
+        return None
+    return float(_interp_knots(config.federal_ces_target_by_year, year))
+
+
+def federal_ces_row_fuel_credit(config: ScenarioConfig) -> dict[str, float]:
+    """Return the target row's consumer-side ``{fuel: credit fraction}`` map.
+
+    The capacity screens are keyed by fuel/tech, not by generator, so the
+    row's dual reaches them through ``policy.clean_tiers.clean_credit_by_
+    fuel`` as ``dual × fraction`` per eligible fuel — the class-level
+    :func:`tech_credit_fraction` (exact under ``clean_capture`` and for every
+    zero-CI fuel under ``cesa_ci``; ``gas_cc_ccs`` at the policy fraction or
+    the class residual CI). Unit-level ``cesa_ci`` crediting of an unabated
+    ``gas_cc`` under the CI threshold reaches the LP row (its per-generator
+    coefficient) but has no fuel-level analogue here — documented limitation,
+    conservative (the screens credit such a unit 0).
+    """
+    out: dict[str, float] = {}
+    for fuel in config.federal_ces_eligible_fuels:
+        frac = tech_credit_fraction(config, fuel)
+        if frac > 0.0:
+            out[fuel] = float(frac)
+    return out
+
+
+def append_federal_ces_region(
+    config: ScenarioConfig,
+    year: int,
+    zone_names: "list[str]",
+    fleet: FleetArrays,
+    state_arrays: CleanRegionArrays | None,
+) -> CleanRegionArrays | None:
+    """Append the federal CES target row to the clean-tier family for a year.
+
+    The SCN-WS2a row (readiness plan §3 WS-2 item 1): ONE annual region
+    spanning EVERY load zone (mask all-true, obligation ``target(year)`` on
+    each zone's annual demand), whose qualifying spec is the per-generator
+    credit-fraction VECTOR :func:`unit_credit_fractions` — so both crediting
+    modes work unchanged and a CCS unit's column carries 0.95 — escaping at
+    ``federal_ces_acp_usd_per_mwh``. Wind and solar are the family's zone
+    columns (credited 1.0; ``__post_init__`` requires them eligible). Its
+    dual is the endogenous federal EAC price, mapped to the screens by
+    :func:`federal_ces_row_fuel_credit` through the existing
+    ``clean_attribute_price_by_fuel`` seam (no new consumer).
+
+    Args:
+        config: Scenario config supplying the ``federal_ces_*`` fields.
+        year: Simulation year (target-path resolution).
+        zone_names: Model zone names in LP zone-index order.
+        fleet: The fleet arrays the LP solves on (the vector is aligned to
+            them; the row builder re-checks the length).
+        state_arrays: The ISO's state clean-tier family (MISO Arm 3), or
+            ``None``. Returned UNCHANGED — the same object — when no target
+            row is configured, so every existing keeper's family is
+            byte-identical by construction.
+
+    Returns:
+        The family with the federal region appended last, ``state_arrays``
+        itself when the row is off, or ``None`` when neither exists.
+    """
+    if not federal_ces_target_row_active(config):
+        return state_arrays
+    target = target_for_year(config, year)
+    n_zones = len(zone_names)
+    return append_clean_region(
+        state_arrays,
+        label=FEDERAL_CES_REGION_LABEL,
+        eligible_zone_mask=np.ones(n_zones, dtype=bool),
+        obligation_frac=np.full(n_zones, float(target)),
+        acp_price=float(config.federal_ces_acp_usd_per_mwh),
+        qualifying=unit_credit_fractions(config, fleet),
+        fuel_credit=federal_ces_row_fuel_credit(config),
+    )
+
+
+def build_federal_ces_region(
+    config: ScenarioConfig, year: int, zone_names: "list[str]", fleet: FleetArrays
+) -> CleanRegionArrays | None:
+    """Return the federal CES target row standing alone (K=1), or ``None``.
+
+    :func:`append_federal_ces_region` with no state family — the posture of
+    every ISO without a state clean tier, and of
+    ``federal_ces_replaces_state_rps`` in MISO.
+    """
+    return append_federal_ces_region(config, year, zone_names, fleet, None)
 
 
 def _eligible_fuel_codes(config: ScenarioConfig) -> list[int]:

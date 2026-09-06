@@ -332,3 +332,138 @@ def compute_must_run_emissions(
 
     mr["mr_co2_tons"] = mr.apply(lambda r: r["mr_gen_mwh"] * _co2_rate(r), axis=1)
     return mr
+
+
+# --------------------------------------------------------------------------- #
+# Reported-only import-attributed CO2 (scenario-readiness plan §2.5 G-E3)
+# --------------------------------------------------------------------------- #
+# Imports carry ZERO emission_rate in the LP by design: the border-carbon cost
+# rides the tranche VOM so the import MWh never inflates the modeled *in-state*
+# CO2 total that calibration benchmarks against eGRID generation-based
+# emissions (model.interchange.import_nodes.import_tranche_generators). That is
+# the right basis for a scored backcast and the wrong basis for a scenario
+# question: CAISO WECC and NEISO HQ imports are 10-30 % of those ISOs' energy,
+# so a case that shifts imports moves real emissions the scored total cannot
+# see. This block reconstructs that displaced quantity as a REPORTED-ONLY
+# disclosure line — it is never added into ``emissions_mt`` and never enters the
+# LP, so it changes no solve and no scored number (rule 24 [R-REGISTRY] governs
+# tunables that can change a solve; this is neither).
+#
+# EF resolution, in order:
+#   1. the LP's own per-tranche factor where the ISO publishes one — CAISO's
+#      ``IMPORT_TRANCHE_EF`` (the CARB specified/unspecified ladder actually
+#      charged at the border), read live so this line can never drift from it;
+#   2. an explicit zero for the contracted firm-hydro seams below;
+#   3. the CARB unspecified default (0.428 tCO2/MWh) for every remaining
+#      tranche — a DISCLOSED UPPER BOUND, not a measurement (see
+#      :data:`IMPORT_CO2_DISCLOSURE`).
+#
+# Zero-EF firm hydro (rule 5 [R-NO-MAGIC] citations):
+#   * ``HQ_PhaseII``  (NEISO) — the Phase II HVDC tie's contracted Hydro-Quebec
+#     deliveries; HQ's generating fleet is ~99 % hydro (Hydro-Quebec, *Rapport
+#     annuel*), and ISO-NE settles the tie as a specified hydro import.
+#   * ``Highgate``    (NEISO) — the 225 MW Highgate converter, likewise a
+#     contracted HQ hydro delivery (its own IMPORT_TRANCHES entry cites the
+#     converter rating).
+#   * ``HQ_hydro``    (NYISO) — the Cedars/Chateauguay firm HQ import block, the
+#     same specified-hydro class on the NYISO side.
+# Every other seam (NB_north, NYISO_CT_*, IESO_Ontario, PJM_*, the scarcity
+# rungs, the PJM/MISO/NYISO external blocks) has no derived EF in this
+# repository, so it takes the unspecified default and the disclosure string
+# says so. Deriving those seams' measured EFs is a data-intake question, not a
+# reporting one.
+_ZERO_EF_FIRM_HYDRO_TRANCHES: tuple[str, ...] = (
+    "HQ_PhaseII",
+    "Highgate",
+    "HQ_hydro",
+)
+
+IMPORT_CO2_DISCLOSURE: str = (
+    "import_co2_mt_reported is a REPORTED-ONLY disclosure line and is NEVER "
+    "added into emissions_mt: the LP prices border carbon in the tranche VOM "
+    "and holds import emission rates at zero so the scored total stays on the "
+    "eGRID in-ISO generation basis. Tranche emission factors are the ISO's "
+    "published ladder where one exists (CAISO IMPORT_TRANCHE_EF), zero for the "
+    "contracted firm Hydro-Quebec seams (HQ_PhaseII, Highgate, HQ_hydro), and "
+    "otherwise the CARB unspecified default 0.428 tCO2/MWh — a disclosed upper "
+    "bound, not a measured seam rate."
+)
+
+
+def import_tranche_ef(unit_id: str, zone: str) -> float:
+    """Return the reported-only CO2 factor (tCO2/MWh) of one import tranche.
+
+    Args:
+        unit_id: The import pseudo-generator's unit id, which
+            :func:`market_sim.model.interchange.import_nodes.import_tranche_generators`
+            builds as ``f"{zone}_{tranche_name}"``.
+        zone: The generator's zone name (the ISO's import node), used to
+            recover the bare tranche name from ``unit_id``.
+
+    Returns:
+        The tranche's disclosure emission factor, per the resolution order
+        documented above.
+    """
+    # Lazy import: the interchange package pulls the config/fleet layer, and
+    # results.emissions is imported by the thin export path.
+    from market_sim.config.constants import CARB_UNSPECIFIED_IMPORT_EF
+    from market_sim.model.interchange.spec import IMPORT_TRANCHE_EF, IMPORT_ZONE
+
+    prefix = f"{zone}_"
+    name = unit_id[len(prefix) :] if unit_id.startswith(prefix) else unit_id
+    # The import node's zone name identifies the ISO exactly (IMPORT_ZONE is
+    # injective), so the published ladder is selected without needing the run
+    # config — a tranche name shared by two ISOs can never take the wrong map.
+    iso = next((i for i, z in IMPORT_ZONE.items() if z == zone), None)
+    ef_map = IMPORT_TRANCHE_EF.get(iso or "", {})
+    if name in ef_map:
+        return float(ef_map[name])
+    if name in _ZERO_EF_FIRM_HYDRO_TRANCHES:
+        return 0.0
+    return float(CARB_UNSPECIFIED_IMPORT_EF)
+
+
+def import_co2_tons(
+    fuel_types: "list[str]",
+    unit_ids: "list[str]",
+    zones: "list[str]",
+    gen_mwh: np.ndarray,
+) -> float:
+    """Return the reported-only import-attributed CO2 (tCO2) for one year.
+
+    ``Sum over import tranches of (annual tranche MWh x its tranche EF)``. Fully
+    vectorized over the generator axis — no hour loop (rule 2 [R-VECTOR]); the
+    per-generator annual energy is the caller's already-summed
+    ``dispatch.sum(axis=1)``.
+
+    Args:
+        fuel_types: Per-generator fuel type (``FleetContext.fuel_types``).
+        unit_ids: Per-generator unit id (``FleetContext.unit_ids``).
+        zones: Per-generator zone name (``FleetContext.zones``).
+        gen_mwh: Per-generator annual energy, shape ``(n_gen,)``, in MWh.
+
+    Returns:
+        Import-attributed CO2 in metric tons. ``0.0`` for an ISO with no
+        import node (e.g. ERCOT, whose DC-tie interchange rides in demand).
+
+    Note:
+        EXPORT sinks share the ``"import"`` fuel type — they are the same
+        external-zone pseudo-generator with ``pmax_mw=0`` and
+        ``pmin_mw=-capacity``, so they dispatch NEGATIVE
+        (``import_nodes.build_export_sinks``). Their energy is therefore
+        clamped out rather than differenced: an export is energy leaving this
+        ISO, and its combustion emissions belong to whoever burns the fuel on
+        the other side. Netting exports against imports here would CREDIT this
+        ISO for the neighbour's generation at the neighbour's unspecified
+        rate, which is not a disclosure — it is an offset, and an unearned
+        one. Exports are simply outside this line.
+    """
+    gen_mwh = np.asarray(gen_mwh, dtype=float)
+    rates = np.array(
+        [
+            import_tranche_ef(unit_ids[g], zones[g]) if fuel == "import" else 0.0
+            for g, fuel in enumerate(fuel_types)
+        ],
+        dtype=float,
+    )
+    return float((np.maximum(gen_mwh, 0.0) * rates).sum())

@@ -154,4 +154,10 @@ adoption) for a keep-required bundle that legitimately outlives its sidecar
 sidecar-mapped via the prune immunity, so an entry there is the exception,
 never the rule). Root-level loose records are files, and
 `results/hindcast/` / `results/regression-goldens/` live under other
-`results/` roots — all outside the sweep's scope by construction.
+`results/` roots — all outside the sweep's scope by construction. A rule-29
+`[R-SCREEN]` screen bundle, or a control bundle a screen earned, is NEVER a
+keep-required carve-out: CLAUDE.md rule 29 clause (c) (owner ruling R-AV,
+2026-09-05, "Delete before merge") requires it deleted from
+`results/calibration/` before its PR merges with its numbers carried by the
+PRECOMMIT/FINDING doc, so the sweep's red on such a dir is the rule working,
+not a candidate for `KEEP_REQUIRED_UNMAPPED_BUNDLES`.

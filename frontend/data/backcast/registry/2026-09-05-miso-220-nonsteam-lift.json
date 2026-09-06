@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-05-miso-220-nonsteam-lift",
+  "label": "miso 220 nonsteam lift",
+  "date": "2026-09-05",
+  "shorthand": "miso-220-nonsteam-lift",
+  "definition": "miso-220 NON-STEAM OFFER LIFT: applies the owner-authorized offer_curve_by_group price-tuning channel (2026-09-05 ruling amending rules 1/13) as a x1.10 band multiplier (committed/econ_low/econ_high/peak) on eleven non-steam fossil classes, holding ST_GAS and ST_GAS_INTERMEDIATE byte-identical so the relatively-cheaper steam gas gains dispatch instead of losing it, one config held across 2023-2025 and scored against the 2026-09-05-miso-217-intermphys keeper bundle as the control (no re-solve). Closes the standing C3a-2025 FAIL: C3a +1.1/-2.9/-12.3% -> +7.15/+3.37/-7.00%, all inside +/-10%; ST_GAS|2024 -7.155 -> -5.035 TWh, ST_GAS|2023 -2.402 -> +0.543 TWh, CT_PEAKER|2023 -5.934 -> -7.985 TWh (0.015 TWh of headroom against +/-8.00), CC_REGULAR|2024 +7.947 -> +6.100 TWh. DETERMINATION CALIBRATED (from the predecessor's NOT-YET), with C3c the single ledgered caveat (rubric v3.3, non-downgrading) and C6 governance PASS on the run's authorized_price_tuning declaration; every 2025 C1 cell is SKIPPED on a preliminary EIA-923 vintage.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-05-miso-220-nonsteam-lift.js",
+  "bundle": "results/calibration/miso220_nonsteamlift_B"
+}

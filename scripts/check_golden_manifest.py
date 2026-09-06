@@ -29,16 +29,35 @@ entry whose sidecar has been pruned or whose keeper has since moved on.
 **Entry keys, and config partitions (2026-09-02).** A manifest entry is keyed
 either by a bare ISO — resolved against ``keepers/<ISO>.json``'s ``keeper`` —
 or, for an ISO whose shard carries a ``config_partition`` block, by
-``<ISO>__<role>`` (``ERCOT__carveout-2023``), resolved against that block's
-``configs[].run_id``. ERCOT is the first such ISO: a forward config for
-{2024, 2025} plus a 2023 carve-out, owner ruling 2026-08-26. Both key forms go
-through :func:`live_keeper`, so a partition golden reports CURRENT/STALE against
-the config it was actually captured against instead of the perpetual
-``STALE (live keeper: None)`` that a bare-ISO-only lookup would produce
+``<ISO>__<role>``, resolved against that block's ``configs[].run_id``. ERCOT is
+the first such ISO: a forward config for {2024, 2025} plus a 2023 carve-out,
+owner ruling 2026-08-26. Both key forms go through :func:`live_keeper`, so a
+partition golden reports CURRENT/STALE against the config it was actually
+captured against instead of the perpetual ``STALE (live keeper: None)`` that a
+bare-ISO-only lookup would produce
 (``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4). Partition
 entries are ordinary schema-v2 entries in every other respect and are validated
 identically — the representation is additive, so nothing here special-cases
 them beyond the key split.
+
+**The bare key of a partitioned ISO is its FORWARD role (R-AW, 2026-09-05).**
+Owner ruling, audit-program director sitting 2026-09-05 (card "ERCOT key"),
+verbatim: *"The golden config should be the 2024:2025 one not 2023"*. Read as:
+the ERCOT stage-0 golden captures the FORWARD config on its designated span
+{2024, 2025}, and the ``ERCOT__carveout-2023`` capture key is RETIRED
+(:data:`RETIRED_CAPTURE_KEYS`). Consequences enforced here: for a partitioned
+ISO the bare key resolves through the ``forward`` role (:data:`FORWARD_ROLE`)
+rather than the ``keeper`` field alone; a CURRENT golden of a partitioned config
+must replay exactly that role's designated span
+(:func:`designated_years`) — never the composed run's whole registered span,
+which would replay the carve-out year under the forward config; an entry that
+records ``registered_years`` must have ``years`` inside it (rule 22, the
+designated span is never a superset of the registered one); and a RETIRED key is
+still held to every v2 invariant but is reported as a historical capture record
+instead of being compared to the live shard — a manifest ``keeper_id`` records
+which run's outputs were actually captured, so retiring the key never rewrites
+the entries written under it. Record:
+``docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md``.
 
 Exit codes:
     0 — every manifest conforms (pruned sidecars and stale keepers are reported,
@@ -89,6 +108,29 @@ MIN_SCHEMA_VERSION = 2
 # because this gate is deliberately stdlib-only and importable with no solve
 # dependencies (the capture tool pulls in numpy/highspy at import time).
 PARTITION_KEY_SEP = "__"
+
+# The config_partition role a partitioned ISO's BARE capture key resolves to:
+# the config the model uses going forward. Named in the shard verbatim
+# (keepers/ERCOT.json config_partition.configs[].role == "forward"). R-AW.
+FORWARD_ROLE = "forward"
+
+# Capture keys RETIRED by owner ruling, with the citation. A retired key's
+# manifest entries are historical capture records: still validated against
+# every schema-v2 invariant (per-entry provenance, keeper_snapshot), but never
+# compared to the live keeper shard, and refused by capture_keeper_goldens.py
+# for any NEW capture. An explicit constant rather than a shard field because
+# the shard is a calibration-lane surface this gate only reads, and the ruling
+# is about the GOLDEN, not the keeper: keepers/ERCOT.json still designates the
+# carve-out for 2023 — what is retired is the stage-0 capture of it.
+RETIRED_CAPTURE_KEYS: dict[str, str] = {
+    "ERCOT__carveout-2023": (
+        "R-AW (owner, audit-program director sitting 2026-09-05, card "
+        '"ERCOT key"): "The golden config should be the 2024:2025 one not '
+        '2023" — the ERCOT stage-0 golden is the FORWARD config on its '
+        "designated span {2024, 2025} under the bare ERCOT key; "
+        "docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md"
+    ),
+}
 
 # THE RATCHET. Every manifest written since the 2026-09-01 repair is schema v2,
 # because ``capture_keeper_goldens.write_manifest`` can no longer write anything
@@ -145,25 +187,8 @@ LEGACY_V1_MANIFESTS = frozenset(
 )
 
 
-def live_keeper(key: str) -> str | None:
-    """Return the run id the keeper shards currently designate for ``key``.
-
-    Two key forms, both resolved against ``keepers/<ISO>.json``:
-
-    * a bare ISO (``"ERCOT"``) → the shard's ``keeper`` field, i.e. the ISO's
-      single designated keeper;
-    * a config-partition key (``"ERCOT__carveout-2023"``) → the ``run_id`` of
-      the ``config_partition.configs[]`` entry whose ``role`` matches the half
-      after the separator. This is the lookup that makes a partition golden
-      report its true state instead of ``STALE (live keeper: None)`` forever
-      (``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4).
-
-    Returns None when the shard is missing/unreadable, or when the named role is
-    not (or is no longer) designated — which the caller reports as STALE, the
-    correct reading: a golden captured against a retired config is exactly what
-    staleness means.
-    """
-    iso, _, role = key.partition(PARTITION_KEY_SEP)
+def _load_shard(iso: str) -> dict | None:
+    """Return the parsed ``keepers/<ISO>.json``, or None if missing/unreadable."""
     shard = KEEPERS_DIR / f"{iso.upper()}.json"
     if not shard.is_file():
         return None
@@ -171,12 +196,87 @@ def live_keeper(key: str) -> str | None:
         rec = json.loads(shard.read_text())
     except Exception:
         return None
-    if not role:
-        return rec.get("keeper")
+    return rec if isinstance(rec, dict) else None
+
+
+def _partition_config(rec: dict, role: str) -> dict | None:
+    """Return the shard's ``config_partition.configs[]`` entry for ``role``."""
     for cfg in (rec.get("config_partition") or {}).get("configs") or []:
         if isinstance(cfg, dict) and str(cfg.get("role", "")).lower() == role.lower():
-            return cfg.get("run_id")
+            return cfg
     return None
+
+
+def resolve_role(key: str) -> tuple[str, str | None]:
+    """Split a manifest key into ``(ISO, role)``, applying R-AW to bare keys.
+
+    A bare ISO whose shard carries a ``config_partition`` block resolves to the
+    :data:`FORWARD_ROLE` config — the config the model uses going forward is
+    what the bare golden captures (owner ruling R-AW, 2026-09-05). A bare ISO
+    with no partition block, or no readable shard, has no role (``None``); a
+    ``<ISO>__<role>`` key keeps its role verbatim.
+    """
+    iso, _, role = key.partition(PARTITION_KEY_SEP)
+    iso = iso.upper()
+    if role:
+        return iso, role
+    rec = _load_shard(iso)
+    if rec is not None and _partition_config(rec, FORWARD_ROLE) is not None:
+        return iso, FORWARD_ROLE
+    return iso, None
+
+
+def live_keeper(key: str) -> str | None:
+    """Return the run id the keeper shards currently designate for ``key``.
+
+    Two key forms, both resolved against ``keepers/<ISO>.json``:
+
+    * a bare ISO (``"ERCOT"``) → the shard's ``keeper`` field, i.e. the ISO's
+      single designated keeper — EXCEPT that a shard carrying a
+      ``config_partition`` block resolves through its :data:`FORWARD_ROLE`
+      config's ``run_id`` (R-AW: the bare golden IS the forward config; the
+      ercot-248 consolidation keeps the two equal, and when they ever differ
+      the role the ruling names wins);
+    * a config-partition key (``"ERCOT__forward"``) → the ``run_id`` of the
+      ``config_partition.configs[]`` entry whose ``role`` matches the half
+      after the separator. This is the lookup that makes a partition golden
+      report its true state instead of ``STALE (live keeper: None)`` forever
+      (``docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`` §2 blocker 4).
+
+    Returns None when the shard is missing/unreadable, or when the named role is
+    not (or is no longer) designated — which the caller reports as STALE, the
+    correct reading: a golden captured against an un-ruled config is exactly
+    what staleness means. (A key RETIRED by ruling — :data:`RETIRED_CAPTURE_KEYS`
+    — still resolves here; :func:`check_manifest` is what skips the comparison.)
+    """
+    iso, role = resolve_role(key)
+    rec = _load_shard(iso)
+    if rec is None:
+        return None
+    if role is None:
+        return rec.get("keeper")
+    cfg = _partition_config(rec, role)
+    return cfg.get("run_id") if cfg is not None else None
+
+
+def designated_years(key: str) -> list[int] | None:
+    """Return the shard's DESIGNATED year span for the config ``key`` names.
+
+    The span a CURRENT golden under this key must replay (R-AW): for a
+    partitioned ISO's bare key, the forward role's ``years``; for a
+    ``<ISO>__<role>`` key, that role's. None when the key resolves to no
+    partition config (an ordinary one-config ISO, or an undesignated role) —
+    then the entry's ``years`` is the run's registered span and nothing here
+    constrains it.
+    """
+    iso, role = resolve_role(key)
+    if role is None:
+        return None
+    rec = _load_shard(iso)
+    cfg = _partition_config(rec, role) if rec is not None else None
+    if cfg is None or not isinstance(cfg.get("years"), list):
+        return None
+    return sorted(int(y) for y in cfg["years"])
 
 
 def find_manifests() -> list[Path]:
@@ -299,11 +399,56 @@ def check_manifest(path: Path) -> tuple[list[str], list[str]]:
                     f"{entry.get('years')}"
                 )
 
+        # Rule 22, recorded on the entry itself: a capture that sliced the
+        # replayed run to a designated span records the run's registered span
+        # alongside, and the slice can only ever be a subset of it.
+        years = entry.get("years")
+        registered = entry.get("registered_years")
+        if registered is not None:
+            if not isinstance(registered, list) or not isinstance(years, list):
+                fails.append(f"{where}: registered_years / years must both be lists")
+            elif not set(years) <= set(registered):
+                fails.append(
+                    f"{where}: years {years} is not a subset of registered_years "
+                    f"{registered} — a designated span is never a superset of "
+                    f"the run's registered span (rule 22)"
+                )
+
+        # --- A RETIRED capture key (owner ruling): a historical record. Every
+        #     v2 invariant above still applied; the live-shard comparison does
+        #     not, because the ruling retired the CAPTURE, not the record of
+        #     what was captured. Reported, never compared. ---
+        if key in RETIRED_CAPTURE_KEYS:
+            marked = isinstance(entry.get("retired"), dict)
+            notes.append(
+                f"{where}: {keeper_id} — provenance run "
+                f"{'PRUNED from registry' if pruned else 'registered'}, "
+                f"capture key RETIRED ({RETIRED_CAPTURE_KEYS[key].split(' ', 1)[0]}"
+                f"; historical capture record, not compared to the live shard"
+                f"{'' if marked else '; entry carries no retired block'})"
+            )
+            continue
+
         # --- The visible coupling. Reported, never failed. ---
         current = live_keeper(key)
         state = "CURRENT" if current == keeper_id else "STALE"
         if state == "CURRENT":
             detail = ""
+            # R-AW: a CURRENT golden of a partitioned config replays exactly
+            # the span the shard designates to that config — for the bare key,
+            # the forward role's. The composed run's registered span is wider
+            # (it carries the carve-out year under the carve-out config), so a
+            # whole-span replay of the forward config would be a golden of a
+            # config the keeper does not designate for that year. HARD.
+            span = designated_years(key)
+            if span is not None and sorted(int(y) for y in (years or [])) != span:
+                _iso, _role = resolve_role(key)
+                fails.append(
+                    f"{where}: golden is CURRENT but replays years {years}; the "
+                    f"shard designates {span} to keepers/{_iso}.json role "
+                    f"{_role!r} — a partitioned config's golden replays exactly "
+                    f"its designated span (R-AW)"
+                )
         elif current is None and PARTITION_KEY_SEP in key:
             # Distinguish "the shard no longer designates this role" from an
             # ordinary supersession — otherwise a typo'd or retired role reads
@@ -377,11 +522,13 @@ def main() -> int:
 
     pruned = sum(1 for n in live_notes if "PRUNED" in n)
     stale = sum(1 for n in live_notes if "golden STALE" in n)
+    retired = sum(1 for n in live_notes if "capture key RETIRED" in n)
     print(
         f"golden-manifest: {len(paths)} manifest(s), {len(all_notes)} entr(ies) "
         f"({len(live_notes)} enforced / {len(legacy_notes)} legacy); of the "
         f"enforced, {pruned} with a pruned provenance run, {stale} stale vs the "
-        f"live keeper"
+        f"live keeper, {retired} under a retired capture key (historical, not "
+        f"compared)"
     )
     if pruned:
         print(

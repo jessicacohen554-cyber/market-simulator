@@ -1,0 +1,147 @@
+# Scenario campaign case set (SCN-WS0 deliverable 4).
+#
+# The plan's §3.5 case set, in `cases:` mode, every LIVE case one or two field
+# overrides on the REF base
+# (configs/scenarios/<iso>_scenario_base_2026_{2030,2050}.yaml). Charter:
+# docs/handoffs/forecast-scenario-readiness-plan-2026-09.md §3.0 (what REF is),
+# §3.5 (this table), §4 (the caveats a campaign carries).
+#
+# ── READ THIS BEFORE USING THE LEVELS ──────────────────────────────────────
+# EVERY NUMBER BELOW IS ILLUSTRATIVE PENDING OWNER CARD D-2 (plan §6, presented
+# 2026-09-05 by SCN-DESK r#1, unruled at this file's writing). Scenario levels
+# are the owner's what-ifs by definition and are never a modeller's choice
+# (rule 1 [R-STRUCT]); this file exists so the HARNESS is exercisable before
+# D-2, not to pre-empt it. When D-2 is ruled, the levels here are replaced
+# wholesale by the ruled ones and the case names stay.
+#
+# ── WHAT IS COMMENTED OUT, AND WHY ─────────────────────────────────────────
+# A case whose override field does not exist in ScenarioConfig at this commit
+# is listed COMMENTED, never as a live key: a live key naming a missing field
+# would fail at load, and a silently-dropped one would be worse. Each carries
+# the lane that lands its field. Uncomment when that lane merges — the case
+# name and its question are already fixed here so the campaign's shape does
+# not drift while the fields arrive.
+#
+# ── THE CARBON LADDER IS THE DELTA FORM, DELIBERATELY ──────────────────────
+# Plan §3.5 writes the carbon ladder as `carbon_price_path: low/mid/high`, and
+# notes it needs "floor semantics after WS-1". At this commit those semantics
+# are NOT in: G-C1 (plan §8) is live — an explicit RFF path SUPPRESSES the
+# projected state-program price, so on CAISO/NYISO/NEISO every RFF path sits
+# BELOW the program trajectory and a `carbon_price_path` case is a carbon
+# price CUT on exactly the three ISOs that have a carbon program. Shipping it
+# live would ship a ladder whose sign is wrong on half the campaign. The live
+# ladder therefore uses `carbon_price_delta`, which policy.carbon applies
+# ADDITIVELY on the resolved signal after its whole precedence chain, so the
+# sign is right in every ISO with or without a program. This is the same
+# reduced form the desk assigned to SCN-WS1b while D-1 is open. The path form
+# is kept commented directly beneath, to be swapped in by WS-1a's D-1 repair.
+mode: cases
+
+cases:
+  # ── The reference. Every delta in the campaign is measured against this. ──
+  # Deliberately empty: REF IS the ISO's shipped forecast posture at the
+  # campaign's frozen HEAD (plan §3.0), so it overrides nothing at all.
+  REF: {}
+
+  # ── Carbon price → dispatch re-ordering, CCS, thermal mix, VRE entry ──────
+  # $/tCO2 ADDED to each ISO's resolved carbon signal (a state program's
+  # trajectory where one exists, zero where none does). ILLUSTRATIVE knots
+  # pending D-2; 25 is the level SCN-WS1b's reduced-form probe is chartered on.
+  CARB-LO:
+    carbon_price_delta: 15.0
+  CARB-MID:
+    carbon_price_delta: 25.0
+  CARB-HI:
+    carbon_price_delta: 50.0
+  # The plan's own path form, BLOCKED on G-C1 / owner card D-1 (replace vs
+  # floor vs additive). Lands with SCN-WS1a. Swap these in for the three
+  # deltas above once the resolver reads a path as a FLOOR on the program
+  # trajectory rather than a replacement:
+  #   CARB-LO:  {carbon_price_path: low}
+  #   CARB-MID: {carbon_price_path: mid}
+  #   CARB-HI:  {carbon_price_path: high}
+
+  # ── Price vs quantity: the mass-cap instrument on the program ISOs ────────
+  # BLOCKED, and not on a missing field — `mass_cap_enabled` / `mass_cap_tons`
+  # both exist. It is blocked on the LEVEL: the case is a DECLINING budget and
+  # `mass_cap_tons` is a single scalar, so the declining schedule has no
+  # expression here, and its starting budget is a per-ISO D-2 number that no
+  # lane has derived. SCN-WS1a holds the pre-declared CAP-STATE-TIGHT case
+  # (desk ledger §1); it lands the schedule and the cited budgets.
+  #   CAP-STATE-TIGHT:
+  #     mass_cap_enabled: true
+  #     mass_cap_tons: <per-ISO declining budget — SCN-WS1a / owner D-2>
+
+  # ── National CES, uniform-PRICE (tradeable) form: the response curve ──────
+  # Premium in real 2026$/MWh. The {10, 20, 30} ladder stands from owner
+  # decision D8 (national-ces-eac-premium plan), which is why these three are
+  # the least illustrative numbers in this file.
+  CES-P10:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 10.0
+  CES-P20:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 20.0
+  CES-P30:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 30.0
+
+  # ── National CES, uniform-SHARE (no-trade) form: dual = implied EAC price ──
+  # BLOCKED on missing fields — `federal_ces_target_by_year` and the ACP field
+  # do not exist at this commit. Lands with SCN-WS2a (the endogenous national
+  # CES target row, plan §3 WS-2 items 1-2). Target schedule and ACP are two
+  # of the numbers D-2 explicitly reserves to the owner.
+  #   CES-T80:
+  #     federal_ces_enabled: true
+  #     federal_ces_target_by_year: {2026: <current>, 2035: 0.80, 2050: 1.00}
+  #     federal_ces_acp_usd_per_mwh: <owner D-2>
+
+  # ── Voluntary clean demand → curtailment, entry, CO2 ──────────────────────
+  # BLOCKED on a missing field — `voluntary_clean_demand_path` does not exist
+  # at this commit. Lands with SCN-WS3b, and ONLY if owner card D-3 rules the
+  # axis admissible (plan §6 D-3); if D-3 rules NO, these cases and
+  # CES-P20+VOL-HI below are struck from the campaign with a ledger note.
+  #   VOL-MID: {voluntary_clean_demand_path: mid}
+  #   VOL-HI:  {voluntary_clean_demand_path: high}
+
+  # ── Load growth → adequacy, backstop, CO2 per MWh ─────────────────────────
+  # Both axes are live fields. G-L3 (plan §8) is the reason there are TWO high
+  # cases and not one: organic growth and the data-centre block are independent
+  # axes, so "the high case" has to declare its pairing rather than assume it.
+  # LOAD-HI pairs both high; LOAD-HI-ORGANIC holds the DC block at its shipped
+  # "mid" so the organic half is separable. SCN-WS4b pre-declares how each
+  # ISO's high case is READ for adequacy (desk ledger §1).
+  LOAD-HI:
+    demand_growth_path: high
+    datacenter_load_path: high
+  LOAD-HI-ORGANIC:
+    demand_growth_path: high
+    datacenter_load_path: mid
+
+  # ── Does a carbon price hold CO2 flat under data-centre growth? ───────────
+  CARB-MID+LOAD-HI:
+    carbon_price_delta: 25.0
+    demand_growth_path: high
+    datacenter_load_path: high
+
+  # ── Attribute double-claim test (owner card D-6: counts toward, report both) ──
+  # BLOCKED on `voluntary_clean_demand_path`; same gate as VOL-* above.
+  #   CES-P20+VOL-HI:
+  #     federal_ces_enabled: true
+  #     federal_ces_premium_usd_per_mwh: 20.0
+  #     voluntary_clean_demand_path: high
+
+  # ── The coherent policy corner under high load ────────────────────────────
+  # BLOCKED on both missing fields (CES target + voluntary). Lands after
+  # SCN-WS2a and SCN-WS3b.
+  #   ALL-CLEAN:
+  #     carbon_price_delta: 25.0
+  #     federal_ces_enabled: true
+  #     federal_ces_target_by_year: {2026: <current>, 2035: 0.80, 2050: 1.00}
+  #     voluntary_clean_demand_path: high
+  #     demand_growth_path: high
+  #     datacenter_load_path: high
+
+# The two corners of configs/scenario_matrix.yaml (CORNER-HI-EMIT /
+# CORNER-LO-EMIT) remain the envelope reference and are NOT re-solved here
+# (plan §3.5).

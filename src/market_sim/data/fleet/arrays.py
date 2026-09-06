@@ -1104,6 +1104,9 @@ def _apply_outage_overlays(
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
             st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
             per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+            extract_basis_share=getattr(
+                config, "unit_outage_extract_basis_share", False
+            ),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
             # miso-200 (rule 14 [R-ACCURATE]): route each unit's window by its
             # OWN CAMPD unitType at a facility carrying two or more model gas
@@ -1260,6 +1263,9 @@ def _apply_outage_overlays(
                     config, "unit_outage_st_capacity_basis", False
                 ),
                 per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+                extract_basis_share=getattr(
+                    config, "unit_outage_extract_basis_share", False
+                ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -1306,6 +1312,9 @@ def _apply_outage_overlays(
                     config, "unit_outage_st_capacity_basis", False
                 ),
                 per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+                extract_basis_share=getattr(
+                    config, "unit_outage_extract_basis_share", False
+                ),
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
@@ -2502,6 +2511,9 @@ def _compose_min_gen_floors(
             cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
             st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
             per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+            extract_basis_share=getattr(
+                config, "unit_outage_extract_basis_share", False
+            ),
         )
         logger.info(
             "mustrun_layup_window_mask ARMED (%s %s): %d plant-tranche lay-up "

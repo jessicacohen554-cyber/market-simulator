@@ -81,10 +81,11 @@
       't1f': 'T1-F forecast', 't1x': 'T1-X crossover', 't1h': 'T1-H hindcast',
       'adequacy': 'Base-year adequacy', 'ces-poc': 'CES POC', 'readiness': 'Readiness battery',
       't2': 'T2 mid', 't3-golden': 'T3 golden', 'pb-band': 'Probability band',
+      'scenario': 'Scenario campaign',
     };
     const TIER_LABEL = {
       't1f': 'T1-F', 't1x': 'T1-X', 't1h': 'T1-H', 'poc': 'POC', 'battery': 'Battery',
-      't2': 'T2', 't3': 'T3', 'pb': 'PB',
+      't2': 'T2', 't3': 'T3', 'pb': 'PB', 'scenario': 'Scenario',
     };
     const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'ALL'];
 
@@ -159,24 +160,70 @@
       if (filters.tier !== 'ALL_FACET' && e.tier !== filters.tier) return false;
       return true;
     }
+    /* A scenario arm's headline number: the final-year CO2 delta against its
+       campaign reference. Shown as a value rather than only a sparkline so a
+       one-year campaign (a paired T0) still reads, and so the sign — the thing
+       a scenario is actually asked about — is legible without hovering. */
+    function co2DeltaChip(e) {
+      const series = e.co2_delta_mt;
+      if (!series || !series.length) return '';
+      const last = series[series.length - 1][1];
+      if (typeof last !== 'number' || !isFinite(last)) return '';
+      const cls = last < 0 ? 'ff-delta-down' : (last > 0 ? 'ff-delta-up' : 'ff-delta-flat');
+      const txt = (last > 0 ? '+' : '') + last.toFixed(3);
+      const title = series.length > 1
+        ? `CO2 delta vs the campaign reference, ${series[0][0]}–${series[series.length - 1][0]}`
+        : `CO2 delta vs the campaign reference, ${series[0][0]}`;
+      return `<span class="ff-delta ${cls}" title="${esc(title)}">Δ ${esc(txt)} Mt</span>`;
+    }
+
+    function runRow(e) {
+      const sel = selected === e.id ? ' selected' : '';
+      const yr = e.start_year && e.end_year ? `${e.start_year}–${e.end_year}` : '';
+      const det = e.determination ? `<span class="ff-chip ${stCls(e.determination)}">${esc(e.determination)}</span>` : '';
+      const spark = e.kind === 'scenario' && e.co2_delta_mt && e.co2_delta_mt.length > 1
+        ? `<span class="ff-run-spark">${sparkline(e.co2_delta_mt.map(p => p[1]), 'var(--fossil-coal)')}</span>`
+        : '';
+      const caseTag = e.kind === 'scenario' && e.case
+        ? `<span class="ff-tag kind-scenario">${esc(e.case)}</span>` : '';
+      return `<div class="ff-run-row${sel}" role="button" tabindex="0" data-id="${esc(e.id)}" style="--c:${isoColor(e.iso)}">
+        <span class="ff-run-iso"></span>
+        <span class="ff-run-main">
+          <span class="ff-run-id">${esc(e.id)}</span>
+          <span class="ff-run-sub">${esc(e.iso)} · ${esc(KIND_LABEL[e.kind] || e.kind)} · ${yr}${e.mode ? ' · ' + esc(e.mode) : ''}</span>
+        </span>
+        <span class="ff-run-tags">${caseTag}${co2DeltaChip(e)}${spark}${det}</span>
+      </div>`;
+    }
+
     function renderList() {
       const rows = MANIFEST.filter(passesFilters);
       $('#listCount').textContent = `${rows.length} of ${MANIFEST.length} runs`;
       $('#hdrCount').textContent = `${MANIFEST.length} runs · ${(META.isos || []).filter(i => i !== 'ALL').length} ISOs`;
       if (!rows.length) { $('#runList').innerHTML = `<p class="ff-count">No runs match these filters.</p>`; return; }
-      $('#runList').innerHTML = rows.map(e => {
-        const sel = selected === e.id ? ' selected' : '';
-        const yr = e.start_year && e.end_year ? `${e.start_year}–${e.end_year}` : '';
-        const det = e.determination ? `<span class="ff-chip ${stCls(e.determination)}">${esc(e.determination)}</span>` : '';
-        return `<div class="ff-run-row${sel}" role="button" tabindex="0" data-id="${esc(e.id)}" style="--c:${isoColor(e.iso)}">
-          <span class="ff-run-iso"></span>
-          <span class="ff-run-main">
-            <span class="ff-run-id">${esc(e.id)}</span>
-            <span class="ff-run-sub">${esc(e.iso)} · ${esc(KIND_LABEL[e.kind] || e.kind)} · ${yr}${e.mode ? ' · ' + esc(e.mode) : ''}</span>
-          </span>
-          <span class="ff-run-tags">${det}</span>
-        </div>`;
-      }).join('');
+
+      // Scenario-campaign arms are read against each other, not on their own,
+      // so they are grouped under their campaign (REF first, then the cases in
+      // id order) instead of being scattered through the flat list.
+      const plain = rows.filter(e => e.kind !== 'scenario' || !e.campaign);
+      const arms = rows.filter(e => e.kind === 'scenario' && e.campaign);
+      const campaigns = [];
+      arms.forEach(e => { if (!campaigns.includes(e.campaign)) campaigns.push(e.campaign); });
+      campaigns.sort();
+
+      const isRef = e => e.case && e.case === e.reference_case;
+      const html = plain.map(runRow).join('')
+        + campaigns.map(c => {
+            const members = arms.filter(e => e.campaign === c)
+              .sort((a, b) => (isRef(b) - isRef(a)) || String(a.id).localeCompare(String(b.id)));
+            const ref = members.find(isRef);
+            const sub = ref
+              ? `${members.length} arms · deltas vs ${esc(ref.case)}`
+              : `${members.length} arms · reference arm not registered — levels only`;
+            return `<div class="ff-campaign-head"><b>${esc(c)}</b><span>${sub}</span></div>`
+              + members.map(runRow).join('');
+          }).join('');
+      $('#runList').innerHTML = html;
       document.querySelectorAll('.ff-run-row').forEach(r => {
         const go = () => selectRun(r.dataset.id);
         r.addEventListener('click', go);

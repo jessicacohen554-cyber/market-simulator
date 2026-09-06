@@ -345,4 +345,175 @@ the CAISO shard cells `gas_offer_net_revenue_margin` and
 `caiso_firm_selfsched_floor`. **No run registered (none produced), no keeper
 change, no `ScenarioConfig` field, no matrix verdict move.**
 
+
+---
+
+# PART II — THE ARM (owner-directed, same session): DISARM `caiso_dsw_daytime_evening_trim`. Screened on 2025 first, no control. **PROMOTED — DETERMINATION CALIBRATED, the lane's first.**
+
+## §10 — What was solved and what it read
+
+Owner instruction after §1–§8 above: *"tackle the next run in this session that
+you think could address the 2025 miss on C4. Do not run a control and only run
+2025 first to see if it passes then if it does run 2023 and 2024."* The arm and
+its gates were registered in PRECOMMIT **Addendum A** before the override was
+coded (`e03fa2b4`); the rule-29 screen on 2025 (`_caiso252_screen2025.json`)
+cleared every registered gate and the owner criterion; the fresh
+single-invocation 2023–2025 bundle **`caiso252_b1_notrim`** reproduces the
+screen's 2025 to **0.0 MW in every class** and is registered as
+**`2026-09-05-caiso-252-b1-notrim`**.
+
+**The arm.** One recorded override-bag value on the caiso-251 recipe,
+`caiso_dsw_daytime_evening_trim` **True → False**: the caiso-94 daytime WEIM
+clean-transfer row (`WECC_DSW_DSW_daytime_clean`) is restored from hod 6–17 to
+**hod 6–21** at the committed, frozen untrimmed depth (5,441 / 5,762 / 5,998
+MW). Zero new parameters, zero new fields, no derive re-run; the DOF ledger is
+unchanged at 9 entries / 6 residual. The `--caiso-dsw-daytime-evening-trim`
+replay override (absent = byte-identical) is the only code added.
+
+**Why it was the arm (Addendum A §A.1).** §3.1 above put the C4 cell's
+counterpart at the import shape; the zero-LP read of the import stack found
+**no at-hub clean-transfer row for hod 18–23** — caiso-93 covers 0–5, caiso-94
+covered 6–21 until caiso-97 trimmed it to 6–17 because the 2026-07-18 keeper
+OVER-imported the evening (+1.9/+2.1/+2.2 TWh). On the caiso-251 keeper that
+sign had **reversed** (hod 18–21 under-imported by 0.6–1.0 GW with CC
+over-generating +1.4 GW in exactly those hours) — the new evidence rule 28(a)
+requires to re-test an owner-armed trim. The row's measured admissibility
+(FINDING-caiso94 §4A: evening 18–21 raw-hub spread clean, 0 % wedge) was never
+in question. A competing arm — pricing the firm RA-import blocks as
+price-takers in the availability-assessment hours (CPUC D.20-06-028) — was
+**killed at phase 0** (`_caiso252_firm_aah_phase0.json`): the blocks already
+sit at 85 % of capability in those hours and the arm could deliver 0.16 TWh.
+
+### §10.1 — Scores, keeper → arm
+
+| criterion | tier | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| C4 gas r / NRMSE | supporting | 0.877/0.285 → **0.880/0.285** | 0.905/0.264 → **0.909/0.261** | 0.870/**0.305** → **0.877/0.297** (FAIL → PASS) |
+| C3a price_mean (%) | load-bearing | +4.83 → **+4.65** | +9.44 → **+9.04** | +9.35 → **+8.86** |
+| C3b NRMSE | load-bearing | 0.090 → 0.088 | 0.150 → 0.148 | 0.120 → 0.116 |
+| C1 / C2 | load-bearing | 12/12, free 8/8; PASS | unchanged | unchanged |
+| C3c tail (model h vs actual >$200) | supporting | 24 vs 47 **PASS** | 0 vs 35 **CAVEAT** (ledgered) | 0 vs 8 PASS |
+| C6 / C8 | protective | attested PASS / PASS (CC forced 6.6 %) | PASS / 6.7 % | PASS / 8.8 % |
+| **determination** | | **NOT-YET → CALIBRATED** | | |
+
+`calibration_verdict`: **CALIBRATED**, 8 scored, target grade 7, fails 0,
+ledgered 1 (C3c, 2024 only). Under the promotion rule registered in Addendum A
+§A.7 — (a) G-FOOT / G-DIR / G-OVERSHOOT on 2025, (b) no load-bearing criterion
+regresses to a new failure in any year, (c) governance holds — **C3a and C4
+entered none of the conditions**; every one holds, and the run is promoted.
+
+### §10.2 — Dispatch, keeper → arm (TWh)
+
+| | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| daytime-clean row in hod 18–21 (keeper: 0 by construction) | +0.50 | +0.65 | **+0.94** |
+| daytime-clean row in hod 6–17 | 2.26 | 3.67 | 2.08 (keeper ≈ same; −0.04) |
+| `import` klass | +0.45 | +0.59 | +0.80 |
+| CC_REGULAR | −0.39 | −0.48 | −0.69 |
+| CT_PEAKER | −0.06 | −0.09 | −0.11 |
+| hod-18–21 net import vs EIA-930 (keeper → arm) | −0.47 → **−0.05** | −0.44 → **+0.16** | −1.17 → **−0.28** |
+| CC 22–23 error, arm − keeper (MW) | −10 | −51 | −66 |
+
+**G-OVERSHOOT** — the caiso-97 objection re-armed as this arm's own falsifier —
+passes in every year: the evening block lands within [−0.5, +0.8] TWh of the
+measured total, and the trim's original justification (+1.9…+2.2 TWh of
+excess) does not re-appear on this keeper.
+
+### §10.3 — Predictions (Addendum A §A.6), scored against interest
+
+| # | registered | measured | verdict |
+|---|---|---|---|
+| P-A1 | row rises [0.8, 2.0] TWh (2025) | +0.94 in its new window | **HOLDS** |
+| **P-A2** | CC_REGULAR 18–21 falls ≥ 0.5 TWh | **−0.315** | **FALSIFIED** — evening storage discharge absorbed 0.47 TWh of the displacement; CC took less than half |
+| P-A3 | hod-18 overshoots, 19–21 under, block inside band | hod 18 +108 MW; block −0.28 | **HOLDS** |
+| P-A4 | 2025 C4 NRMSE in [0.285, 0.300) | 0.297 | **HOLDS** |
+| P-A5 | 2025 C3a falls 0.3–1.0 pp, stays PASS | −0.49 pp | **HOLDS** |
+| **P-A6** | `import` +1.0…+1.8 TWh | **+0.80** | **FALSIFIED (low)** |
+| P-A7 | C4 does not worsen in 2023/2024; no new load-bearing failure | 0.285 / 0.261; none | **HOLDS** |
+| P-A8 | 22–23 CC error within ±150 MW | −66 | **HOLDS** |
+
+Six hold, two falsified — both against the arm's size (it did less to CC and
+to the import total than registered), neither in its favour.
+
+### §10.4 — Disclosures
+
+1. **Seventh consecutive favourable direction on C3a**, declared in advance
+   (Addendum A §A.4) and excluded from the promotion basis with C4. The
+   promotion rests on the three structural gates, the absence of any new
+   load-bearing failure, and governance — a reader may delete every C3a and
+   C4 number above and still check it.
+2. **The screen year was owner-directed** and coincides with the rule-29
+   footprint criterion (2025 carries the largest phase-0 footprint). The
+   owner's continuation criterion (C4-2025 passing) governed only whether
+   2023/2024 were solved; it promoted nothing.
+3. **No control solve** (owner rule); G-CTRL form 4 on the §4 G-DRIFT audit.
+   The only LIVE hunk at solve time was this session's override, inert when
+   absent.
+4. **The registration re-rendered the three CAISO bench parts** (the stale
+   fingerprint of §5). The prior keeper re-scores **record-for-record
+   identical** on the refreshed parts (0 diffs), so only the stamp moved;
+   `check_bench_freshness` now reads 0 stale / 3 with engine drift
+   (advisory).
+5. **The prior-prior keeper's artifacts were pruned on main mid-session**
+   (`8066f77c`, after caiso-251's promotion); the §2 anatomy was computed
+   before the rebase from its then-committed payload and the committed
+   `_caiso252_c4_gas_nrmse_anatomy.json` is the record. The caiso-251 run
+   stays on the site as the promoted keeper's control, the precedent caiso-251
+   set with caiso-246.
+6. **The screen bundle was deleted** after the 0.0 MW reproduction check;
+   its numbers live in `_caiso252_screen2025.json`.
+7. **The C3c caveat narrowed** (2023 24 h vs 47 now PASSES at 0.51×) without
+   being targeted; the attestation ledgers 2024 only. The two carried
+   `price_mean` exception entries from earlier attestations are inert (C3a
+   passes) and untouched.
+
+## §11 — Queue after the promotion
+
+1. **The hod 22–23 gap** between the daytime (6–21) and overnight (0–5) clean
+   windows: CC +1.55/+1.56 GW over at 22–23 in 2025, untouched by this arm by
+   construction (−66 MW). The caiso-93 overnight window was "fixed by
+   FINDING-caiso91c/92b"; extending it to 22–23 is a window question on a
+   frozen derive and needs its own charter (the no-wedge test at 22–23 is
+   already measured clean, §3.2).
+2. **Panoche** (56803), 39/68/86 % of the CT volume miss — an obligation
+   instrument or closure (§3.3).
+3. **`complete` marker**: CAISO holds none. The determination is now
+   CALIBRATED; declaring `complete` (rule 22, the validation-ladder
+   authorization) is an owner act and is the step that would open the
+   forecast board's gate (a).
+4. The DMM 2025 RA-import basis (§3.4), the C3a weight-basis ask, and items
+   E/G carried.
+
+## §12 — DO-NOT-REDO adds (Part II)
+
+1. **Never re-arm `caiso_dsw_daytime_evening_trim` on CAISO without
+   re-measuring the evening sign.** It was right when the evening
+   over-imported (caiso-97) and wrong once it under-imported (here); the
+   measured admissibility of the row never changed. The falsifier is
+   G-OVERSHOOT, not C4.
+2. **Never read the C4 2025 pass as a C4 lever having worked.** The promotion
+   basis excluded it; the arm is a window repair whose falsifier was the
+   evening import total.
+3. **Never extend the daytime window past 21 or the overnight window below 0
+   to reach 22–23 without a charter** — the two windows were fixed by their
+   own findings, and the 22–23 hours belong to neither by construction.
+4. Part I §7 and everything it carries stand in full.
+
+## §13 — Deliverables (Part II)
+
+PRECOMMIT Addendum A (pushed before the override); the replay override +
+CLI flag in `scripts/run_calibration_full.py`;
+`scripts/probes/_caiso252_firm_aah_phase0.py` + JSON (the killed AAH arm);
+`scripts/probes/_caiso252_evening_trim_phase0.py` + JSON;
+`scripts/probes/_caiso252_screen2025.py` + `_caiso252_screen2025.json` +
+`_caiso252_arm_vs_keeper_{2023,2024,2025}.json`; `scripts/gen_caiso252_attestation.py`;
+the bundle `caiso252_b1_notrim` (slim files + `hourly/` sidecars,
+`legitimacy_diagnostics.json`, attestation with DOF ledger, `metrics.json`,
+`_verdict.json`); run **`2026-09-05-caiso-252-b1-notrim`** (KEEPER,
+CALIBRATED) with its registry sidecar and payload; the refreshed CAISO bench
+parts; `keepers/CAISO.json` + `status/CAISO.js`; the CAISO matrix shard
+re-stamped (keeper, gates, `import_hub_pricing` evidence); the §5.2 prose
+header rewritten in substance; the forecast board's gate-(a) stamp re-keyed;
+this finding; the calibration-log entry.
+
 **Next number: caiso-253.**

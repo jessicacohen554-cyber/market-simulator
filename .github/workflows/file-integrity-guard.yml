@@ -76,11 +76,42 @@ jobs:
             exit 0
           fi
           # On force-push / first-push events the before-SHA may be unknown.
+          # fetch-depth 0 above already brings every refs/heads/* commit, so
+          # the base tip is normally present; the explicit fetch is the
+          # belt-and-braces for an event whose base ref was not in that set.
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags --filter=blob:none origin "${BASE_SHA}" 2>/dev/null || true
+          fi
           if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
             echo "Base SHA ${BASE_SHA} unavailable; falling back to HEAD^."
             BASE_SHA=$(git rev-parse "${HEAD_SHA}^")
           fi
-          echo "Comparing ${BASE_SHA}..${HEAD_SHA}"
+
+          # Diff against the MERGE-BASE, never the base TIP. On a pull_request
+          # event `pull_request.base.sha` is the base branch's tip AT THE TIME
+          # THE JOB RUNS, not the commit the branch forked from. At ~15
+          # merges/hour that tip has usually moved past the PR head's fork
+          # point, and a two-dot `git diff <base-tip> <head>` then reports every
+          # file main gained since the fork as DELETED by this PR — a phantom
+          # deletion, red on a clean PR, and most reliably on the ≥300-line
+          # files this guard exists to protect. Measured at the v31 coda
+          # 8e26a153 (base tip 9e8de3dc, head fe197d6e): two-dot reported 3
+          # deletions, all three files ADDED by #4842 and untouched by the
+          # branch, one of them 547 lines; the merge-base form reported 0.
+          # The merge-base is what `git diff <base>...<head>` (three-dot) uses;
+          # it is computed once here and used for BOTH the diff below and the
+          # blob_lines() base read, so the two never disagree about what "base"
+          # means. A merge-base that IS the base tip (fast-forward push, or a
+          # branch rebased onto the current tip) leaves BASE_SHA unchanged.
+          if MERGE_BASE=$(git merge-base "${BASE_SHA}" "${HEAD_SHA}" 2>/dev/null) && [[ -n "${MERGE_BASE}" ]]; then
+            if [[ "${MERGE_BASE}" != "$(git rev-parse "${BASE_SHA}")" ]]; then
+              echo "Base tip ${BASE_SHA} is past the fork point; diffing from merge-base ${MERGE_BASE} instead."
+            fi
+            BASE_SHA="${MERGE_BASE}"
+          else
+            echo "::warning::no merge-base between ${BASE_SHA} and ${HEAD_SHA}; diffing the base tip directly."
+          fi
+          echo "Comparing merge-base ${BASE_SHA} -> ${HEAD_SHA}"
 
           # Line count of a blob at a rev; prints nothing and returns 1 when the
           # path does not exist there.

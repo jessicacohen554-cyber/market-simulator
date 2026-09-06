@@ -192,7 +192,22 @@ alien basis). Nothing about the floored LP changes; only the simplex starting po
 year C-1a reduces to exactly two HiGHS runs — replayed under the determinism pin with the
 second model seeded from the P0 basis (driver monkeypatch; no repo code changed):
 
-<!-- ERCOT_BENCH_TABLE -->
+*(Table supplied by B-0, 2026-09-05, main @ `2886235c` — the assessment session's bench never
+landed; record and driver conditions in §6.3, decision memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`.)*
+
+| arm | `solve_p0` s | P0 iters | `solve_p1` s | P1 iters | basis export + apply s | year `total` s | maxrss GB |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| seed OFF (shipped) | 327.8 | 273,083 | **287.1** | **273,893** | — | 717.4 | 12.46 |
+| seed ON (P0 basis → second model) | 335.4 | 273,083 | **139.3** | **78,856** | 16.9 + 3.0 | 581.5 | 13.07 |
+
+P1 **2.06× wall, 3.47× iterations**; year −135.9 s (−19 %). P0 identical on both arms
+(same iteration count, same objective to the last digit), so the seed's upstream is unchanged.
+Neutrality (`diff_warmstart_bundles.py` + `hourly/system_2025.parquet`): objective relΔ 8e-16;
+total gen Δ = 0 MWh; served load / slack / dump / reserve price bit-identical; max |Δ zonal
+price| 1.1e-12 $/MWh with **0 / 61,320** dual-degenerate hours; 16 unit-hours of offsetting
+marginal-tie swaps (LMP identical on every moved row), Σ|hourly Δ| 0.0007 % of generation.
+Cleaner than the H2 and P-2 promotion evidence, on the same standard.
 
 **Class and gate.** This is the neutrality class every shipped warm start already lives
 in: objective and total generation identical, per-unit differences confined to marginal
@@ -274,4 +289,66 @@ calls (43.0 s cum); `read_excel` 53.7 s cum over 3 calls (openpyxl `get_sheet_da
 | `_load_cod_map` on `data/raw/eia-860` (14,334 plants) | 16.8 s | 0.41 s | `dict == dict` → True |
 | `_tranche_band` over the NEISO 2023 P1 dispatch frame (6,718,920 rows) | 12.7 s | 2.16 s | categorical values and categories identical |
 
-<!-- ADDENDUM -->
+### 6.3 ERCOT forward 2025 — cold-P1 basis seed, OFF vs ON (B-0, 2026-09-05)
+
+Supplied by the B-0 memo session (`claude/wc-b0-p1-seed-memo-9euk97`, main @ `2886235c`,
+post-C-1a/C-1b/C-2 so 2025 is two HiGHS runs). Driver: `capture_keeper_goldens.resolve_capture_
+targets(["ERCOT__forward"])` → keeper `2026-09-05-ercot248-two-config-keeper` (composite; its
+`meta.json` carries the forward config, 2025 solved upstream by `2026-08-25-234-eastex-identity`),
+`build_solve_kwargs` (261 recorded flags, 25 defaulted, 0 dropped) → `solve_and_persist([2025],
+"ERCOT", 8760, …)` into a throwaway scratch dir under the determinism pin
+(`MARKET_SIM_HIGHS_THREADS=1`, `WARMSTART=1`, `WARMSTART_XYEAR=0`); one ERCOT solve at a time, 6 GiB
+swapfile, 4 vCPU / 15 GB, HiGHS 1.14.0. **Seed ON is a scratch monkeypatch only** (never
+committed, no repo code): a `DispatchModel` subclass rebound in `market_sim.pipeline.solve` (the
+P0 model) and `market_sim.model.lp` (the model `solve_dispatch` builds for the cold P1); after the
+P0 solve it calls `export_cross_year_basis()`; the next model built calls
+`apply_cross_year_basis(basis)` (identity column map, `alien=True`) before its first solve. Both
+arms run the same driver; OFF exports and applies nothing. Both bundles were deleted after the
+diff.
+
+Per-solve records (`HighsInfo` after each `h.run()`; `n_cols` 21,759,840, `n_rows` 326,680 on
+every model):
+
+| arm | model | seeded | iters | objective | `solve_time` s | build s | export s | apply s |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| OFF | P0 | — | 273,083 | 2,879,242,264.754522 | 327.8 | 14.8 | — | — |
+| OFF | P1 (cold rebuild) | no | 273,893 | 3,085,008,028.5298586 | 287.1 | 4.4 | — | — |
+| ON | P0 | — | 273,083 | 2,879,242,264.754522 | 335.4 | 11.8 | 16.9 | — |
+| ON | P1 (cold rebuild) | **yes** (`apply → True`) | **78,856** | 3,085,008,028.529856 | **139.3** | 4.4 | — | 3.0 |
+
+Both arms logged the same route line: `P1 route: COLD REBUILD on a floored fleet —
+MARKET_SIM_P1_FLOOR_INPLACE off (default); would have been DECLINED anyway (availability changed
+and feeds a row) (availability_changed=True, availability_feeds_rows=True)`, and the same C-1a
+line (`pass 2 SKIPPED, pass 1 IS the scored pass`).
+
+Phase lines:
+
+```
+OFF  year 2025 phase timing: data_prep=83.1s solve_p0=327.8s markup=12.2s solve_p1=287.1s results_write=7.2s total=717.4s (markup: setup=0.0s p0_post=5.5s markup=0.1s seam=0.8s p1_post=5.8s tail=0.0s other=0.0s) (results_write: state=0.5s frames=2.8s parquet=2.7s bench=1.2s)   # process wall 757.6 s, maxrss 12.46 GB
+ON   year 2025 phase timing: data_prep=69.3s solve_p0=335.4s markup=31.3s solve_p1=139.3s results_write=6.2s total=581.5s (markup: setup=0.0s p0_post=22.3s markup=0.1s seam=1.0s p1_post=7.9s tail=0.0s other=0.0s) (results_write: state=0.6s frames=2.2s parquet=2.9s bench=0.5s)   # process wall 619.8 s, maxrss 13.07 GB; p0_post carries the 16.9 s export
+```
+
+`scripts/diagnostics/diff_warmstart_bundles.py off on 2025`, fleet-wide block verbatim:
+
+```
+Fleet-wide:
+  total annual gen  cold 488450.0 GWh  warm 488450.0 GWh  Δ +0.0000 GWh
+  max  | annual Δ |  over all plants: 0.0610 GWh (plant 58005)
+  mean | annual Δ |  over all plants: 0.0014 GWh
+  plants with |annual Δ| > 1 GWh : 0
+  plants with |annual Δ| > 0.1 GWh: 0
+  max hourly |Δ| anywhere: 61.1 MW
+  Σ|hourly Δ| (gross reshuffle): 0.5 GWh = 0.000% of total gen
+```
+
+`hourly/system_2025.parquet` (61,320 P1 zone-hours): max |Δ price| 1.07e-12 $/MWh, hours with
+|Δ| > 1e-9: **0**; load-weighted |Δ| 1.4e-15; `slack`, `dump`, `demand`, `reserve_price` max |Δ| = 0;
+served load 487,754,388 MWh both. `dispatch/2025_P1.parquet` (20,454,600 rows, 2,335 units):
+total gen 488.449982 TWh both (Δ 0 MWh); 16 unit-hours in 12 hours / 11 units move, LMP identical
+on every moved row (max |Δlmp| 0.0), each with its offsetting partner at the same price — CC
+55480 ↔ 58005 (North, h1643, 61.1 MW @ 24.02), lignite 6180 ↔ PRB 6179 (h5322/5323, 56.8 MW @
+41.3765 both hours), CC 55123 South (h1284 ↔ h1288 @ 27.34), solar West ↔ Panhandle and
+SOLAR_South ↔ SOLAR_North curtailment placement @ 0, Panhandle wind h2056 ↔ h2057 @ −26;
+Σ|hourly Δ| 3.4 GWh = 0.0007 % of generation. Verdict: neutral under the
+`diff_warmstart_bundles.py` standard; the owner decision is
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`.

@@ -579,6 +579,42 @@ The control solve that had been launched under the old heuristic was **killed mi
 partial bundle deleted**; the keeper is the control.
 
 
+### 8.2 Clause (c) — delete before merge (owner ruling R-AV, 2026-09-05)
+
+**Origin.** Owner ruling **R-AV**, audit-program director sitting 2026-09-05 (~23:00Z), on the
+rule-29 / Class-E collision the v31 second coda routed to the owner. Verbatim: *"Delete before
+merge"*. Executed by audit lane **Y-13** (`docs/handoffs/FINDING-y13-ci-plumbing-2026-09-05.md`).
+
+**The collision it resolves** (recorded on the director board by `da99f34b`, the v31 second coda,
+under "THE TWO STRUCTURAL REDS ARE UNREPAIRED … (1) Rule-22 quarantine gates — a GOVERNANCE
+COLLISION, not a lane error"). Rule 29 calls a screen bundle a *"throwaway diagnostic probe — never
+registered on the dashboard"*; the Class-E retention rule's point 4 (adopted 2026-08-16, enforced by
+`check_registry_payload_parity.check_bundle_retention`) requires every `results/calibration/<bundle>`
+dir to map to a retained sidecar or be keep-required. miso-220 committed its 2025 screen bundle
+(`7ccdc4fd`, 22:22Z) exactly as rule 29 directed and, by doing so, turned the always-on parity gate
+red for every PR on `main` — *"a lane that obeys rule 29 exactly turns the parity gate red BY
+OBEYING IT"*. The gate's message offered three exits — register, prune, or allowlist — and rule 29
+forbade the first while nothing yet said which of the other two applied.
+
+**The ruling picks the second exit and makes it a duty.** A screen bundle, and any control bundle a
+screen earns under clause (b)'s LIVE-hunk case, is `git rm`-ed from `results/calibration/` **before
+the PR merges**; the PRECOMMIT/FINDING doc carries every number the session will ever cite (the
+gate table with its values, the control differencing, the verdict); `check_registry_payload_parity`
+is the enforcement, and an unregistered bundle dir is a **gate red, not an allowlist candidate**.
+This keeps `KEEP_REQUIRED_UNMAPPED_BUNDLES` at the empty set the 2026-09-05 keeper-only prune left it
+(§9) rather than re-opening it one probe at a time, and it is the same delete-not-archive discipline
+rule 15 states for pruned runs and the Architecture tree states for superseded per-run scripts.
+
+**First execution (Y-13, same day).** Two dirs pruned under the ruling, each after confirming its
+numbers survive in a committed record: `miso220_nonsteamlift_screen2025` (8 tracked files — the
+G-1/G-2/G-3 gate values live in the committed `results/calibration/_miso220_screen_gates.json` and
+the gate definitions in `PREREG-miso220-nonsteam-offer-lift-2026-09-05.md` Addendum A; the
+PREREG's own text already declared the bundle a throwaway) and `neiso_headctrl_k99` (17 tracked
+files — the NEISO same-HEAD control whose worst-drift table is
+`results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §4(i)). Parity
+read 2 problems before and OK after; no sidecar, payload, keeper shard or bench part changed.
+
+
 ## 9. Rule 15 `[R-DASHBOARD]` — retention: top-15-per-ISO → KEEPER-ONLY (owner, 2026-09-05)
 
 **Origin.** Owner instruction, **2026-09-05**, given in the session that executed it
@@ -708,10 +744,69 @@ HARD/SOFT tier split and `check_bench_freshness.py` entire; `write_bench_part`'s
 shard, registry sidecar, bench payload or determination was touched**, and no solve was run — the
 re-stamp is a relabelling, which is what the identity checks above are for.
 
-## 11. Changes to this file
+## 11. Rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` — the authorized price-tuning channel (owner ruling, 2026-09-05)
+
+**What changed.** The registered `offer_curve_by_group` band multipliers are now an
+**authorized price-tuning channel**: tuning them on price is no longer the forbidden
+"fitted adder" of rule 1, and rule 13's forbidden-list gains exactly one exception.
+
+**Why.** Rule 1's second half read *"never reach the right number through a mechanism that
+isn't real (a fitted adder, a load proxy, a haircut tuned to the residual)"*, and rule 13
+forbade *"adding an offset/haircut/adder tuned to the price or volume residual"*. Under
+that text, session miso-218's uniform ×1.10 offer lift was rejected on two independent
+grounds — (a) rule 1, a level scalar identified against a price residual is not a keeper
+mechanism, and (b) it broke a load-bearing C1 cell. The owner ruled the (a) ground wrong
+as a matter of design intent:
+
+> *"We should definitely be able to fit the fossil offer curves to the price… as long as
+> it's the same config across the 3 years it is fine to do. And we can keep steam gas as
+> is and do 1.1x for all the rest of fossil. **The offer curve multipliers are meant to
+> allow us to tune on price & adjust merit order.**"* — owner, 2026-09-05
+
+and, on being shown that the arm's attestation could not honestly carry the keeper's
+`no_fit_to_price_residuals` / `levers_trace_to_measured_input` assertions, directed that
+the rule be rewritten to allow it rather than leaving rule text and practice in conflict.
+
+**The carve-out is narrow, and every condition binds** (CLAUDE.md rule 1, (a)–(e)):
+(a) the channel is the `offer_curve_by_group` band multipliers ONLY — never `phys_*`,
+never `econ_low_share`/`pct_peaking`, and never a new adder, offset, haircut or proxy;
+(b) **ONE config across EVERY scored year** — a per-year value is still per-year fitting;
+(c) the value is set **ex ante, declared in the PREREG before the solve, and never swept
+against the gates** — selecting a factor by which a criterion passes remains exactly the
+fitted-mechanism selection rule 1 exists to forbid; (d) cross-class merit-order adjustment
+is an INTENDED effect; (e) the run declares the channel in
+`governance.authorized_price_tuning` and carries the value as a DOF-ledger free parameter
+identified by the ruling.
+
+**Rule 1's first half is UNTOUCHED.** Structure still comes first; a structurally-correct
+mechanism is still never judged by the residual; a level-tuned run missing real structure
+is still not a keeper. `no_pinning_to_actuals` is **never** scoped by this carve-out, and
+neither is the forbidden-flag machine check.
+
+**Enforced, not merely asserted.** `calibration_verdict.score_governance` reads
+`no_fit_to_price_residuals` and `levers_trace_to_measured_input` as *scoped* — "no residual
+fit outside a declared authorized channel" — only when a well-formed
+`governance.authorized_price_tuning` block is present, validated by
+`_authorized_tuning_finding` against conditions (a)–(c) and the scored-year set for (b).
+`audit_keepers.attestation_shape_finding` mirrors it. **It fails closed at every edge**,
+pinned by `tests/scoring/test_calibration_verdict.py::AuthorizedPriceTuningTests`: an
+undeclared price fit still FAILs; a declaration naming another channel, omitting
+`set_ex_ante` or `not_swept`, incomplete, or not covering every scored year FAILs; the
+carve-out does not reach `no_pinning_to_actuals`; the forbidden-flag check is untouched;
+and a clean keeper with no declaration is unaffected (verified against the live MISO
+keeper — governance PASS, determination unchanged).
+
+**Effect at amendment.** No existing keeper's determination moves: the scoping applies only
+to runs carrying the new declaration, and no committed attestation has one. The first run
+to use it is the miso-220 non-steam fossil lift.
+
+
+## 12. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-05 | Added §8.2: rule 29 `[R-SCREEN]` clause (c), **delete before merge** (owner ruling **R-AV**, verbatim *"Delete before merge"*, on the rule-29 / Class-E parity collision the v31 second coda `da99f34b` routed; executed by audit lane Y-13). A screen bundle, or a control bundle a screen earns under clause (b), is `git rm`-ed from `results/calibration/` before its PR merges; the PRECOMMIT/FINDING doc carries every number; `check_registry_payload_parity` is the enforcement and an unregistered bundle dir is a gate red, not an allowlist candidate. Records the first execution (two dirs pruned, numbers confirmed in committed records first). No keeper, marker, shard or determination touched. |
+| 2026-09-05 | Added §11: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. Landed alongside main's same-day §9 (rule 15 retention) and §10 (bench fingerprint); this section took §11 on merge and "Changes to this file" renumbered §11 → §12. The CLAUDE.md rule-1 genealogy pointer was repointed §9 → §11 in the same commit. |
 | 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |
 | 2026-09-05 | Added §9: rule 15 `[R-DASHBOARD]` retention amended from the top-15-per-ISO age cap to **KEEPER-ONLY** (owner instruction of 2026-09-05, quoted verbatim; executed by session ercot-248 and the #4808/#4816 cleanup lane). Records what the cap was, what replaced it, that the registration duty for rejected probes is untouched, and the standing implementation lag (`dashboard_add_run.KEEP_PER_ISO` still sweeps by age — a calibration-desk item). "Changes to this file" renumbered §9 → §10 (no external reference cited §9). |
 | 2026-08-30 | §3: indexed rubric **v3.1**'s C7 retirement (owner directive verbatim) and rubric **v3.5** (owner option-(B) decision of 2026-08-25 — diurnal price amplitude added REPORTED-ONLY and BAND-FREE; no CLAUDE.md rule text changed) alongside the rule-20 genealogy they extend. v3.5 re-verified determination-neutral over the 2026-08-30 six-keeper roster. Canonical narratives stay in the rubric §9; index entries only. |

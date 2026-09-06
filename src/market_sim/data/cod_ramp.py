@@ -141,6 +141,104 @@ def _cod_work_frame(path, columns: dict[str, str]) -> "pd.DataFrame | None":
     return frame.dropna(subset=["pc", "oy"])
 
 
+def _reduce_cod_groups(work: "pd.DataFrame") -> dict[int, CodEntry]:
+    """Reduce the prepared COD work frame to ``{plant_code: CodEntry}``.
+
+    The vectorized equivalent of the former ``for code, grp in
+    work.groupby("pc")`` loop (14,330 groups on the live vintage, each paying a
+    ``DataFrame.dropna`` / ``sort_values`` / ``iloc``): one stable sort on
+    ``pc`` plus flat numpy segment reductions over the resulting contiguous
+    per-plant slices. The per-plant arithmetic is unchanged — same
+    capacity-weighted continuous COD, same ``floor`` / half-to-even ``round``
+    split back into ``(year, month)``, same all-units-retire test, and the same
+    ``sort_values(["ry", "rm"]).iloc[-1]`` winner (reproduced with a stable
+    ``np.lexsort`` that sorts a NaN ``rm`` last, matching pandas'
+    ``na_position="last"``). Wall-clock only, byte-identical by construction and
+    gated on dict equality against the shipped loop in
+    ``tests/unit/data/test_cod_ramp.py`` (wall-clock item A-1,
+    ``docs/handoffs/wallclock-opportunities-2026-09.md`` §2 A-1).
+
+    ``work`` must already carry the reducer's short columns (``pc``/``oy``/
+    ``om``/``cap``/``ry``/``rm``) plus the ``w`` weight column, with ``pc`` and
+    ``oy`` non-null and ``om`` filled/clipped — i.e. the frame
+    :func:`_load_cod_map` hands it.
+    """
+
+    def _col(name: str) -> np.ndarray:
+        return work[name].to_numpy(dtype="float64", na_value=np.nan)
+
+    pc, oy, om = _col("pc"), _col("oy"), _col("om")
+    ry, rm, w = _col("ry"), _col("rm"), _col("w")
+
+    # Stable sort on the plant code, so each plant's rows are one contiguous
+    # slice in their original frame order — the same key-sorted, within-group
+    # stable iteration groupby("pc") produced.
+    order = np.argsort(pc, kind="stable")
+    pc, oy, om, ry, rm, w = (a[order] for a in (pc, oy, om, ry, rm, w))
+
+    starts = np.flatnonzero(np.concatenate(([True], pc[1:] != pc[:-1])))
+    ends = np.concatenate((starts[1:], [pc.size]))
+    counts = ends - starts
+
+    def _segment_sums(*arrays: np.ndarray) -> "list[np.ndarray]":
+        """Per-plant sums, bit-identical to a contiguous per-plant ``.sum()``.
+
+        ``np.average`` summed each plant's slice with numpy's own *pairwise*
+        algorithm, whose block structure depends on the slice length — so
+        ``np.add.reduceat`` (sequential) is NOT a drop-in: it lands on the other
+        side of the ``round`` boundary for the handful of plants whose exact
+        mean is a half-integer (measured: 15 of 14,334 on the live vintage).
+        Reducing a ``(n_plants_of_that_size, size)`` gather along its contiguous
+        axis runs the identical inner loop, so the bits match exactly.
+        """
+        outs = [np.empty(starts.size, dtype="float64") for _ in arrays]
+        for size in np.unique(counts):
+            sel = np.flatnonzero(counts == size)
+            rows = starts[sel][:, None] + np.arange(size)
+            for arr, out in zip(arrays, outs):
+                out[sel] = arr[rows].sum(axis=1)
+        return outs
+
+    # Continuous COD (year + (month-1)/12), capacity-weighted per plant. Every
+    # weight is >= 0 (``cap.where(cap > 0, 0)``), so a segment sums to exactly
+    # 0.0 iff every unit reports no capacity — the equal-weight fallback branch.
+    cont = oy + (om - 1.0) / 12.0
+    wsum, weighted, plain = _segment_sums(w, cont * w, cont)
+    has_w = wsum > 0.0
+    mean = np.where(has_w, weighted / np.where(has_w, wsum, 1.0), plain / counts)
+
+    online_year = np.floor(mean)
+    online_month = np.clip(np.rint((mean - online_year) * 12.0) + 1.0, 1.0, 12.0)
+
+    # Retire the plant only when *every* unit of it carries a planned
+    # retirement year; the latest (ry, rm) then wins.
+    all_retire = np.add.reduceat((~np.isnan(ry)).astype(np.int64), starts) == counts
+    # np.lexsort is stable and takes keys least-significant-first, so this is
+    # sort_values(["ry", "rm"], na_position="last") applied within each plant
+    # (the group index is the primary key, so group spans are unchanged).
+    gidx = np.repeat(np.arange(starts.size), counts)
+    winner = np.lexsort((np.where(np.isnan(rm), np.inf, rm), ry, gidx))[ends - 1]
+    ret_year = np.where(
+        all_retire, np.where(np.isnan(ry[winner]), 0.0, ry[winner]), 0.0
+    )
+    ret_month = np.where(np.isnan(rm[winner]), 12.0, rm[winner])
+
+    # ``int()`` on the scalars truncated toward zero; ``astype(np.int64)`` does
+    # the same. Built in ascending ``pc`` order, so two distinct float plant
+    # codes truncating to one int resolve to the later one, as before.
+    return {
+        code: (o_y, o_m, (r_y if retires else None), (r_m if retires else None))
+        for code, o_y, o_m, r_y, r_m, retires in zip(
+            pc[starts].astype(np.int64).tolist(),
+            online_year.astype(np.int64).tolist(),
+            online_month.astype(np.int64).tolist(),
+            ret_year.astype(np.int64).tolist(),
+            ret_month.astype(np.int64).tolist(),
+            all_retire.tolist(),
+        )
+    }
+
+
 def load_cod_map() -> dict[int, CodEntry]:
     """Public entry point: build the COD map for the active EIA-860 vintage.
 
@@ -291,26 +389,9 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
         # Positive nameplate weights the COD; fall back to equal weight when a
         # plant reports no capacity so it still gets a representative date.
         work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
-        for code, grp in work.groupby("pc"):
-            code = int(code)
-            weights = grp["w"].to_numpy()
-            if weights.sum() <= 0.0:
-                weights = np.ones(len(grp))
-            # Continuous COD (year + (month-1)/12), capacity-weighted, then split
-            # back into an integer (year, month).
-            cont = grp["oy"].to_numpy() + (grp["om"].to_numpy() - 1.0) / 12.0
-            mean = float(np.average(cont, weights=weights))
-            online_year = int(np.floor(mean))
-            online_month = int(round((mean - online_year) * 12.0)) + 1
-            online_month = min(max(online_month, 1), 12)
-            # Retire the plant only when every unit has a planned retirement.
-            ret_year = ret_month = None
-            ret = grp.dropna(subset=["ry"])
-            if len(ret) == len(grp) and len(ret) > 0:
-                last = ret.sort_values(["ry", "rm"]).iloc[-1]
-                ret_year = int(last["ry"])
-                ret_month = int(last["rm"]) if pd.notna(last["rm"]) else 12
-            cod[code] = (online_year, online_month, ret_year, ret_month)
+        # Continuous COD (year + (month-1)/12), capacity-weighted, then split
+        # back into an integer (year, month); plus the whole-plant retirement.
+        cod.update(_reduce_cod_groups(work))
 
     # Registry-only back-fill (year-only -> mid-year default), never overriding
     # the month-precise EIA-860 record.

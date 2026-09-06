@@ -1368,24 +1368,35 @@ class TestCleanTierRegionRows(unittest.TestCase):
             rps_region_acp_price=np.array([30.0]),
         )
 
-    def test_clean_rows_require_rps_region_family(self):
-        # FFR-6B §6.2: the dependency is strict and one-directional — clean
-        # rows without the Arm-2 family are refused, at the assembler and at
-        # the model.
+    def test_clean_rows_stand_alone_without_rps_family(self):
+        # SCN-WS2a (G-S3 coupling relaxation): the clean family no longer
+        # requires the Arm-2 region family — it stands alone, with its ACP
+        # escape at slot 0 of the layout's ACP block. Nuclear (mc 60) above
+        # gas (mc 50) with an 80% clean obligation: the row binds and its
+        # dual is the clean-dirty cost gap, 10 $/MWh, below the $30 escape.
         fleet = self._nuclear_gas_fleet()
         demand = np.full((1, self.T), 80.0)
-        with self.assertRaises(ValueError):
-            solve_dispatch(
-                fleet,
-                demand,
-                mc=np.vstack([np.full(self.T, 10.0), np.full(self.T, 50.0)]),
-                T=self.T,
-                clean_region_zone_mask=np.ones((1, 1), dtype=bool),
-                clean_region_obligation_frac=np.full((1, 1), 0.8),
-                clean_region_acp_price=np.array([30.0]),
-                clean_region_fuels=(("nuclear", "hydro", "wind", "solar"),),
-                **self._no_renewables(1),
-            )
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=np.vstack([np.full(self.T, 60.0), np.full(self.T, 50.0)]),
+            T=self.T,
+            clean_region_zone_mask=np.ones((1, 1), dtype=bool),
+            clean_region_obligation_frac=np.full((1, 1), 0.8),
+            clean_region_acp_price=np.array([30.0]),
+            clean_region_fuels=(("nuclear", "hydro", "wind", "solar"),),
+            **self._no_renewables(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNone(result.rps_region_duals)
+        self.assertIsNone(result.rps_shadow_price)
+        np.testing.assert_allclose(result.clean_region_duals, [10.0], atol=1e-3)
+        # The row is ANNUAL: 80% of the 80 MW x 24 h load is nuclear energy
+        # (the hourly pattern is degenerate — any split summing to it is
+        # optimal), the rest gas.
+        np.testing.assert_allclose(
+            result.dispatch[0].sum(), 0.8 * 80.0 * self.T, atol=1e-3
+        )
 
     def test_nuclear_satisfies_clean_row_and_binds_without_it(self):
         # The E-2 semantics: nuclear IS clean-row eligible (the separate row

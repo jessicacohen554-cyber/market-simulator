@@ -283,8 +283,12 @@ the entry screen as an attribute price exactly the way the RPS dual does today.
 - The **data-center block** (`datacenter_load_path`, default `mid` since FF-1F;
   `data/datacenter.py:239-320`): a flat 0.85-CF block relocated energy-invariantly out of
   the DC-inclusive growth, trajectories in `DATACENTER_ADDITIONS_MW` (`constants.py:2858+`;
-  ERCOT mid 37 GW / high 122 GW by 2030, PJM mid 30 GW), zone shares only for PJM
-  (`DATACENTER_ZONE_SHARE`, Dominion 0.55 anchor), NEISO `{}`.
+  ERCOT mid 37 GW / high 122 GW by 2030, PJM mid 30 GW), zone shares for PJM
+  (`DATACENTER_ZONE_SHARE`, Dominion 0.55 anchor), **ERCOT** (a full published
+  per-weather-zone decomposition since 2026-07-21 — this line previously read "only for PJM",
+  corrected by SCN-WS4a 2026-09-05 after verifying it at this plan's own pin) and **MISO**
+  (the 2026 LTLF regional DC decomposition, SCN-WS4a); NEISO `{}` (re-confirmed against the
+  2026 CELT with the arithmetic written out, `FINDING-scn-ws4a-2026-09-05.md` §3).
 - **Electrification end-use layers** (FF-G4 Option B, `electrification_path`,
   `scenarios.py:2872`): built, default `off`, populated in exactly one cell (NEISO
   heat_pump mid, `constants.py:3078-3139`); `ev` empty in every ISO; the hourly-profile
@@ -761,13 +765,34 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (semantics defect G-C1) | yes | **no** | **no** | partial (no named case) | — |
-| 2 reaches dispatch + deployment | yes | yes | **no** | **no** | yes | — |
+| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it a no-op there — repair gated on D-1; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **no** | **no** | partial — **siting sourced** for ERCOT/PJM/MISO (SCN-WS4a), still **no named case** | — |
+| 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **no** | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | ERCOT only (July posture) | **no** | **no** | **no** | — |
-| 4 backcast byte-identity | yes | yes | — | — | yes | — |
-| 5 matrix duty | stamped | stamped | — | — | stamped | — |
-| 6 emissions grain | scalar only | scalar only | — | — | scalar only | **G-E1..E5 open** |
-| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | — |
+| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | — | — | yes | — |
+| 5 matrix duty | stamped (`carbon_price_path` + `policy_bundle` rows minted at WS-1a) | stamped | — | — | stamped | — |
+| 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0) |
+| 7 registered probes on dashboard | NEISO FC-6 pair | pruned (G-S5) | — | — | none | `scn-ws0-smoke` REF/CARB pair |
+
+**Emissions column, closed by SCN-WS0** (2026-09-05,
+`docs/handoffs/FINDING-scn-ws0-2026-09-05.md`). G-E1: `emissions_by_fuel_mt` /
+`emissions_by_zone_mt` in `_summarize_year`, each partitioning `emissions_mt`. G-E2:
+`scripts/collate_scenario_campaign.py` sums across the ISOs present and labels the sum
+"six-ISO modeled system", never "national". G-E3: `import_co2_mt_reported` +
+`import_co2_basis`, reported beside the total and never inside it. G-E4:
+`build_matrix_frame` carries every per-year scalar, and
+`scripts/report_scenario_deltas.py` emits the case-vs-`--reference-case` delta set.
+G-E5: twelve REF base YAMLs + `configs/scenario_campaign_matrix.yaml`. G-E6 (no marginal
+rate) and G-E7 (NOx/SO2 unexported) stay OPEN and out of scope — both are disclosure
+items the plan already records as such. Criterion 1's harness half is closed with them:
+a case is now one field override, expressible in the campaign YAML or on the command
+line via `--set`.
+
+**The Emissions column's first measured result is a leakage number, not a level.** The
+exercising T0 (NEISO 2026, REF vs `carbon_price_delta=25`) cuts modeled in-ISO CO2 by
+−2.71 Mt and simultaneously raises the reported import-attributed line by +1.85 Mt, all
+of it on one NYISO seam rung — so roughly two thirds of the headline reduction leaves
+the scored basis. Every campaign delta must be read with the import line beside it, and
+§4's caveat block should carry that number per ISO (FINDING §5 item 2).
 
 ---
 

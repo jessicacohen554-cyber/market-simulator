@@ -152,12 +152,18 @@ from market_sim.model.transmission import (
     get_ttc_array,
     wecc_border_carbon_adder,
 )
-from market_sim.policy.cap_and_trade import per_generator_membership
+from market_sim.policy.cap_and_trade import (
+    carbon_mc_column,
+    per_generator_membership,
+)
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
-from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
+from market_sim.policy.federal_ces import (
+    append_federal_ces_region,
+    federal_ces_suppresses_state_rps,
+)
 from market_sim.policy.clean_tiers import (
     build_clean_region_arrays,
     clean_credit_by_fuel,
@@ -1226,6 +1232,57 @@ def _rps_region_grain_active(config: ScenarioConfig, iso: str) -> bool:
         iso == "MISO"
         and config.mode == "forecast"
         and getattr(config, "miso_rps_compliance_regions", False)
+    )
+
+
+def _clean_region_arrays_for_year(
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    fleet_arrays,
+):
+    """Return the clean-tier row family this ISO-year solves with, or ``None``.
+
+    THE single resolver of the family's region list (SCN-WS2a), used by the
+    solve-side arming AND by the ``prior_results`` dual mapping — including
+    the cached-year path, which never assembles the solve-side arrays — so
+    the restored ``clean_region_duals`` always map onto the identical region
+    list the solve was built from. Two legs, in region order:
+
+    * **State clean rows** (FFR-7B Arm 3, MISO only): built iff the state RPS
+      rows are (``rps_enabled`` and not the pure-federal counterfactual), the
+      K-row grain is active (:func:`_rps_region_grain_active`) and
+      ``miso_clean_tier_rows`` is armed — exactly the pre-SCN-WS2a gate, so
+      every MISO keeper's family is unchanged (the tuple-form regions).
+    * **The federal CES target row** (SCN-WS2a), appended last through
+      ``policy.federal_ces.append_federal_ces_region`` when
+      ``federal_ces_target_by_year`` is set; it stands alone in every other
+      ISO. It is NOT suppressed by ``federal_ces_replaces_state_rps`` (that
+      flag removes the STATE rows — the pure-federal posture is exactly the
+      federal row standing alone).
+
+    Args:
+        config: The scenario configuration being run.
+        iso: Resolved ISO identifier, already upper-cased by the caller.
+        year: Simulation year.
+        zone_names: Model zone names in LP zone-index order.
+        fleet_arrays: The fleet the LP solves on (the federal row's
+            per-generator credit vector is aligned to it).
+
+    Returns:
+        The composed ``CleanRegionArrays`` or ``None`` (no clean row at all).
+    """
+    state_arrays = None
+    if (
+        config.rps_enabled
+        and not federal_ces_suppresses_state_rps(config)
+        and _rps_region_grain_active(config, iso)
+        and getattr(config, "miso_clean_tier_rows", False)
+    ):
+        state_arrays = build_clean_region_arrays(iso, year, zone_names)
+    return append_federal_ces_region(
+        config, year, zone_names, fleet_arrays, state_arrays
     )
 
 
@@ -2559,6 +2616,26 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # lignite vs PRB by rail); no-op for the legacy fleet.
         apply_coal_supply_pricing(fuel_prices, dispatch_fleet, config, year)
         carbon_price = resolve_carbon_price(config, year)
+        # Partial-footprint carbon program (pjm-146 seam, SCN-WS1a G-C3): the
+        # same gate and arithmetic as scripts/run_calibration.py's assemble_mc
+        # call -- when the ISO's program maps membership per zone (today only
+        # PJM's RGGI footprint) and the resolved adder is nonzero, the scalar
+        # becomes the per-generator membership-weighted column
+        # emission_rate[g] x m[g] x p_allowance. Whole-ISO programs and
+        # program-less ISOs get the scalar back as the SAME object, so their
+        # solves stay byte-identical (policy.cap_and_trade.carbon_mc_column).
+        carbon_mc = carbon_mc_column(
+            config, iso, year, carbon_price, fleet_arrays, zone_names
+        )
+        if carbon_mc is not carbon_price:
+            logger.info(
+                "%s %d: partial-footprint carbon adder -- %d/%d generators "
+                "carry a nonzero membership-weighted allowance price",
+                iso,
+                year,
+                int((np.asarray(carbon_mc) > 0).sum()),
+                len(carbon_mc),
+            )
         # Full variable cost: fuel + VOM + carbon + NOx + SO2 -- computed
         # even on cached years because next year's economic retirement
         # screen nets it against price (inframarginal margin, not gross
@@ -2569,7 +2646,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         mc_cost = assemble_mc(
             fleet_arrays,
             fuel_prices,
-            carbon_price,
+            carbon_mc,
             config.nox_price,
             so2=(fleet_arrays.so2_rate, config.so2_price),
         )
@@ -2854,14 +2931,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # family is built, or the counterfactual stops being pure.
                 if _rps_region_grain_active(config, iso):
                     rps_region_arrays = build_rps_region_arrays(iso, year, zone_names)
-                    if getattr(config, "miso_clean_tier_rows", False):
-                        clean_region_arrays = build_clean_region_arrays(
-                            iso, year, zone_names
-                        )
                 if rps_region_arrays is None:
                     rps_target = get_rps_target(iso, year)
                     rps_acp_price = get_rps_acp(iso)
                     rps_eligible_fuels = get_rps_eligible_fuels(iso)
+            # Clean-tier family — MISO's state rows (Arm 3, gated exactly as
+            # before) plus the federal CES TARGET row (SCN-WS2a: one region
+            # spanning every load zone, credited by unit_credit_fractions,
+            # escaping at the ACP; its dual is the endogenous federal EAC
+            # price). ONE resolver, shared with the prior_results mapping
+            # below, so a cached year maps its duals onto the identical
+            # region list. None wherever neither exists (byte-identical).
+            clean_region_arrays = _clean_region_arrays_for_year(
+                config, iso, year, zone_names, fleet_arrays
+            )
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
@@ -4507,13 +4590,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 and np.ndim(result.rps_shadow_price) > 0
                 else (result.rps_shadow_price or 0.0)
             ),
-            # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3): the clean
-            # region spec is recomputed from the cited table (cheap, pure)
-            # so the cached-year path — which never assembles the solve-side
-            # arrays — maps its restored duals identically.
+            # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3 state rows +
+            # the SCN-WS2a federal CES target row): the region spec is
+            # recomputed through the ONE resolver the solve side uses
+            # (cheap, pure) so the cached-year path — which never assembles
+            # the solve-side arrays — maps its restored duals identically.
+            # The federal row's dual lands on every eligible fuel at
+            # dual × credit fraction, entering the screens' existing max().
             clean_attribute_price_by_fuel=(
                 clean_credit_by_fuel(
-                    build_clean_region_arrays(iso, year, zone_names),
+                    _clean_region_arrays_for_year(
+                        config, iso, year, zone_names, fleet_arrays
+                    ),
                     result.clean_region_duals,
                 )
                 if result.clean_region_duals is not None
