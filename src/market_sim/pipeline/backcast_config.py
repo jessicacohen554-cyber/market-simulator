@@ -1774,6 +1774,52 @@ def backcast_config(
         #   inside a net-summer-capped range. ERCOT (CAMPD-bin nameplate) and
         #   CAISO/MISO/SPP keep their prior behaviour. Wired for the winter-
         #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
+        pjm_interface_feed_admissibility_gate=(iso.upper() == "PJM"),  # pjm-169
+        #   ARM (owner decision 2026-09-06, this session). The PJM interface-feed
+        #   admissibility gate: each published transfer-limit series the LP
+        #   consumes is judged against its OWN posted limit before it is allowed
+        #   to bound a link, and an inadmissible series falls through to the
+        #   static per-link TTC with a loud WARNING carrying its arithmetic (the
+        #   recorded, non-silent degradation pjm-119 requires). Reads only the
+        #   clean datatype's `transfer_mw` column, which its schema reserves for
+        #   exactly this crosswalk sanity check — never a price, a residual or
+        #   any model output.
+        #
+        #   RULE 14 [R-ACCURATE] NAMED-EXCEPTION CALL, not a licence to drop
+        #   measured data: PJM's pre-2023 "Average Eastern" / "Average Western"
+        #   postings are a different time/area aggregation carried under the same
+        #   series name, so using them literally makes results LESS reflective of
+        #   reality (2021 exceedance 27.9 % / 6.7 %, by up to 5,242 MW). Every
+        #   other consumed series clears in every year.
+        #
+        #   RULE 21 [R-DOF]: zero free parameters. The 5 % bar was declared ex
+        #   ante in PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06 and
+        #   never swept; the partition it produces is identical for any threshold
+        #   in (2.1 %, 17.5 %), an eightfold range, so no result selects it.
+        #
+        #   ARMED HERE, in the BACKCAST recipe, and NOT in
+        #   iso_configs._pjm_config.default_scenario_overrides — the D57/D67/D75-R
+        #   arming site — because the calibration lane never applies
+        #   `default_scenario_overrides` at all (`runner.run_scenario_iso` is the
+        #   forecast front-end; `run_calibration.run_year` builds its config here
+        #   and solves through `pipeline.solve`). Arming there would have recorded
+        #   the flag and changed nothing, which is precisely the caiso-162 defect
+        #   class. The gate's two read sites are both under
+        #   `pjm_measured_interface_limits`, a backcast-only overlay, so this is
+        #   the mechanism's ONE site (rule 19 [R-ONE-MECH]); the forecast lane
+        #   keeps the static seeds and never reads the feed.
+        #
+        #   RULE 25 [R-ISO-SCOPE]: PJM only. The shared ScenarioConfig default
+        #   stays False, so no other ISO and no other lane moves;
+        #   --no-pjm-interface-feed-admissibility-gate reaches the pre-arm posture
+        #   and keeps its key.
+        #
+        #   IN-SAMPLE INERT, PROVED not assumed: no consumed series is
+        #   inadmissible in 2023, 2024 or 2025, and a 2023 arm replaying the
+        #   keeper is bit-identical to its committed sidecars (max|delta| = 0 on
+        #   all four). Evidence: results/calibration/
+        #   FINDING-pjm168-f1-f2-screens-2026-09-06.md ss2 (screen, 6/6) and
+        #   FINDING-pjm169-f2-arm-and-touchpoints-2026-09-06.md (this arm).
         # (The ct_committed/econ/peak_hr_override triple, 1.1/1.2/1.4, was set
         # here and DELETED 2026-08-03 under rule 26 [R-DELETE], nyiso-114. This
         # recipe's own comment already recorded them as INERT — CT_CHP's offer is

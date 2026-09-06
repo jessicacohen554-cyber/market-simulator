@@ -37,3 +37,8 @@ this directory or its README was taken from memory.
 | `marketplace.spp.org` | `302` to `portal.spp.org` | not a separate route |
 | `oasis.oati.com/SWPP` | blocked (per plan §2.4) | login required |
 | `www.spp.org` | **200, fully reachable** | planning PDFs — see `data/raw/spp-planning/` |
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route and the landed sample payloads
+
+- **FTP folder (PRD):** `ftp://pubftp.spp.org/Operational_Data/GEN_MIX/` — from `SPP Markets Public Data Guide v35` (tracked at `data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2 (`data/raw/spp-planning/SPP_Public_Data_Access_20230707.pdf`). Credential: `anonymous` / email. **Probed 2026-09-06: egress-blocked** (see `data/raw/spp-planning/README.md` §6).
+- **`GenMix_2024_SPP.csv`, `GenMixYTD_SPP.csv`:** members of <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (fetched 2026-09-06, HTTP 200, 82,643,996 bytes, sha256 `e2e8478b…debee7`), copied out byte-for-byte (sha256 in `data/raw/spp-planning/SHA256SUMS.txt`). Zip member timestamps: 2025-12-18 / 2025-12-19.

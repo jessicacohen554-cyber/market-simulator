@@ -443,3 +443,124 @@ until then.**
   registered campaign arms, and the control is a committed one.
 - **Backcast byte-identity:** untouched by construction (forecast-mode only, `mode="forecast"`
   on every leg).
+
+---
+
+## ADDENDUM A — 2026-09-06, the v6-RESUME re-verification (zero LP, pushed before the first solve)
+
+**Session** the resumed lane (Fable, `claude-fable-5-1`), branch
+`claude/scn-ws5a-policy-ercot-r2-mmt8w7` (stem `claude/scn-ws5a-policy-21mq1y` BURNED — PR #5252
+merged as `06526c7d`). `origin/main` at write time: `992760ec`, **198 commits** past THE PIN.
+This is a CHECK, not a redo: nothing above is rewritten, no case, level or gate moves, and
+nothing here is gated on a residual. The four desk changes in the v6-RESUME charter (ledger
+§5.3) are recorded where they bind: (1) → A(d), (2) → A(f), (3) → A(c), (4) → A(g).
+
+### A(a) The fourteen keys reproduce at THE PIN — none has moved
+
+Re-resolved in a detached worktree at `bdfb3095` through the runner's own chain
+(`matrix_configs` → `resolve_policy_bundle` → `set_caiso_fsno_partition(False)` →
+`apply_iso_scenario_defaults` → `cache_key()`), asserting each against §2's committed value:
+
+| case | key at THE PIN (re-resolved) | §2 value | resolved posture |
+|---|---|---|---|
+| REF | `de9c68e19316910e` | MATCH | carbon zero · vol off · CES off · growth mid · DC mid |
+| CARB-LO / MID / HI | `c1e09985c3e4fa56` / `ab8d79646b49abbd` / `73dadcb65d74acce` | MATCH ×3 | carbon low / mid / high |
+| CES-P10 / P20 / P30 | `17e0b252e13a484a` / `5a89c34af859160c` / `8588e1b0d055e772` | MATCH ×3 | CES on, premium |
+| CES-T80 | `e6638b058ce4d5fb` | MATCH | CES on, target + ACP |
+| CARB-MID+LOAD-HI | `b99311bb1f3032e0` | MATCH | carbon mid · growth high · DC high |
+| VOL-HI | `76ef5a80df6a9277` | MATCH | vol high |
+| CES-P20+VOL-HI | `5b7774c817ee425b` | MATCH | CES on · vol high |
+| ALL-CLEAN | `619cfffde44422b2` | MATCH | carbon mid · CES on · vol high · growth high · DC high |
+| *VOL-MID (killed)* | `8878ca20b4cf2f0d` | MATCH | vol mid |
+| *CAP-STATE-TIGHT (killed)* | `a5362929b2690f31` | MATCH | carbon zero (no program on ERCOT) |
+
+**14/14 MATCH.** Neither the pin nor the resolve chain has changed under this lane. The eleven
+SOLVE keys are therefore the keys the legs will carry, and no ERCOT bundle has ever occupied any
+of them (rule 29 cache isolation, §8).
+
+### A(b) P3 re-asserted from `configs/scenario_campaign_matrix.yaml` at THE PIN
+
+Read at `bdfb3095`, verbatim: `CARB-LO: carbon_price_path: low` (l.131), `CARB-MID: mid`
+(l.133), `CARB-HI: high` (l.135), `CARB-MID+LOAD-HI: carbon_price_path: mid` (l.362),
+`ALL-CLEAN: carbon_price_path: mid` (l.402); `CAP-STATE-TIGHT: carbon_price_path: zero`
+(l.182, killed). The CES cases carry `federal_ces_enabled: true` with premium 10.0 / 20.0 /
+30.0 (l.193–201) or the target `{2026: 0.55, 2035: 0.80, 2050: 1.00}` + ACP 50.0 (l.226–229,
+l.403–405); the voluntary cases `voluntary_clean_demand_path: mid` / `high` (l.263–266, 382,
+406). **P3 MET at the pin**, exactly as §1 recorded; the resolved $/t table in §4.1 stands.
+
+### A(c) The leg count — the §2 table is right, the prose was off by one
+
+§2's sentence "10 legs to solve, 50 solve-years" and §8's "10 legs × 5 solve-years" are
+counting slips (`CAP-STATE-TIGHT` subtracted from a denominator that never held it). The table
+carries **ELEVEN** `SOLVE` rows with eleven distinct keys, and the table wins: **11 legs, 55
+solve-years.** Budget re-scaled by 11/10: at the measured 0.41–2.84 min/solve-year (load legs)
+and 77–80 s/yr (WS-2b CES legs) ⇒ **~6.5–7 min/leg, ~72–77 min of LP in series**, peak RSS
+~4.2 GB per solve. The wall-clock the campaign actually pays is the longest parallel group
+(A(d)), not the series.
+
+### A(d) The slot — S14, what was observed, and the owner's parallel-session instruction
+
+Ruling S14 (card D-11) retired the one-solve reading of P4; rule 12's own cap governs (≤ 2
+SCN-track solves at once, different ISOs, never while capx is mid-solve). **Observed at
+2026-09-06T22:30Z** from the session list before any solve: **no capx-track session running**
+(the capx r#51 queue is not live); SCN-track: `SCN-WS5A-POLICY-{PJM, NYISO, NEISO}` all RUNNING
+but still orienting/registering (none mid-LP); no `SCN-WS5A-RESOLVE` session in the running
+set; the remaining running sessions are backcast-calibration lanes (NYISO/CAISO/MISO/NEISO/
+ERCOT-2022/BC-touchpoint), outside both tracks. So the SCN slot was free at this lane's launch,
+and the lanes this lane runs beside are the three sibling policy lanes.
+
+**Owner instruction, same sitting (verbatim: "Give me prompts to run multiple scenarios in
+parallel in other sessions so that you don't burn 15 hr compute here I have unlimited compute
+to run lps in other sessions").** Executed as follows, and recorded here because it changes
+WHERE the LP runs, not what is solved: the eleven legs are solved in **owner-launched parallel
+sessions, each its own container, each ≤ 1 ERCOT solve at a time, years sequential inside every
+leg** (rule 12's within-invocation half is untouched), grouped as
+G1 = {CARB-LO, CARB-MID, CARB-HI}, G2 = {CES-P10, CES-P20, CES-P30},
+G3 = {CES-T80, CARB-MID+LOAD-HI, VOL-HI}, G4 = {CES-P20+VOL-HI, ALL-CLEAN}. Every sub-lane
+executes the committed protocol `docs/handoffs/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md`
+at THE PIN with the HEAD GUARD, registers and declares exactly as §8 specifies, and touches no
+file outside this lane's regions. **This session solves nothing itself**; it assembles the
+FINDING from the committed artifacts once the legs are on `main`. The cross-session count
+exceeds S14's "≤ 2" literal by the owner's explicit instruction, which is the owner sequencing
+the slot — the thing S14 says only the owner can do; it is recorded, not assumed.
+
+### A(e) G-DRIFT `bdfb3095 .. 992760ec` — every solve-path hunk INERT for an ERCOT forecast leg
+
+§5.2's four commits stand as classified. The window now holds **11 non-merge solve-path commits**
+(the path set: `src/market_sim`, `scripts/run_full_horizon.py`, `scripts/run_ces_leg.py`,
+`scripts/lib`, `configs/`, `data/raw/_validation-source`, `data/raw/reference`; 22 files,
++28,104 / −26,351, of which 26,292/26,292 are three CAISO demand CSVs). The seven new ones:
+
+| commit | what | INERT for ERCOT because |
+|---|---|---|
+| `caaa3e05` | caiso-260 demand-artifact vintage re-derive | `data/raw/_validation-source/caiso-supply-consistent-demand/*` only — a CAISO backcast input; no ERCOT path reads it |
+| `6164231e` | capx D75-R-ARM: `pjm_vre_accreditation_vintage` armed for PJM | Armed through `_pjm_config.default_scenario_overrides`, shared default stays `False`; its own no-op record: 132 of 153 committed configs byte-identical, every non-PJM config included. `cache.py` hunk is an epoch note (key-only, PJM) |
+| `287723d6` / `cbe15b6f` | ercot-251 screen instrument + its kill/revert | **0 solve-path files** in either commit (docs + probe scripts only); the instrument is reverted |
+| `486c115f` | constants facade re-export of two D75-R capacity_market names | +1 import line; PJM capacity-market names ERCOT (energy-only) never reads |
+| `7ff10b64` | ruff format of the miso-231 files | AST-identical by the commit's own verification |
+| `14ae4d76` | miso-231 hourly neighbour-anchored MISO–PJM seam ladder | New field `miso_seam_neighbour_hourly_ladder: bool = False`, absent from every campaign case; the `import_nodes.py` change adds an optional `hourly_anchor=None` argument on the seam-ladder injector, which ERCOT (no import node, no seam) never reaches |
+
+Together with §5.2 (`cd96fa26`, `beb74f0f`, `16210868`, `bf97317f`: PJM-scoped/backcast-gated
+fields, D79 key-only, D78-R2 needing a clearing-armed ISO) ⇒ **no LIVE hunk on either window.
+Form 4 holds; the committed REF (`6e40769352a572ba` at `1cc45bb2`) and LOAD-HI
+(`31cf71afda5c610d`) remain the control; no control solve is earned.** The legs solve at THE
+PIN regardless, so post-pin drift cannot reach a result.
+
+### A(f) G7 is scored at $7.0/MWh on every leg this lane solves
+
+Per the v6 charter (desk change 2): the ceiling is `VOLUNTARY_WTP_CEILING_USD_PER_MWH["high"]`
+= **$7.0/MWh** on `VOL-HI`, `CES-P20+VOL-HI`, `ALL-CLEAN`; the $4.5 mid cell bounds only the
+killed `VOL-MID`. S9's committed level is untouched. §3.3 and §7's G7 row already say this.
+
+### A(g) §9 items 3 and 4 are the desk's records items, not this lane's
+
+Item 3 (the campaign YAML's stale 122 GW tail-regime prose) is not touched. Item 4 (`VOL-MID`
+inert across the whole T1-F window; D-3c's new-builds-only crediting leg is what would change
+it) is carried to card D-3c by the desk (ledger §0 r#17) and will be stated in the FINDING §7 as
+already routed, not acted on.
+
+### A(h) What this ADDENDUM did not do
+
+No case added or removed; no level, key, gate or prediction changed; no solve; no default moved;
+no `ScenarioConfig` field added; no file outside this lane's regions edited. Rule 29(c): no
+screen or control bundle exists to delete.

@@ -1,0 +1,344 @@
+{
+  "instrument": "d78r3_stack_census.py --census",
+  "rule": "PRECOMMIT \u00a72, verbatim from FINDING-capx-d78r2 \u00a79 item 2: a class sits at its full bar in DY iff every one of its offers in the control's DY stack is the same value.",
+  "tolerance": {
+    "deciding": "exact IEEE-754 float equality (n_distinct_exact == 1)",
+    "reported_lens": "clustering at 1e-06 $/MW-day (n_distinct_1e6) \u2014 never substituted for the deciding test"
+  },
+  "read_from": "results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P",
+  "leg": {
+    "bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P",
+    "recipe": "run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics --no-pjm-vre-accreditation-vintage  (docs/handoffs/d78r3/run_ctl.sh)",
+    "why_the_no_flag": "owner ruling Q55 / capx D75-R-ARM arms pjm_vre_accreditation_vintage for PJM through iso_configs._pjm_config, so the BARE recipe now keys b518f5fe7d02f961 and is NOT the control D78-R2 graded. The flag reaches the pre-arm posture and its key. ADDENDUM-2-rebase-reaudit.md \u00a72.",
+    "key_declared": "a9c66d8ea25acb9d",
+    "key_realized": "a9c66d8ea25acb9d",
+    "head_guard": "bb728e437c4a11e55a0befa9e2c26d65020e6adc (HELD across the leg)",
+    "wall_utc": "22:27:18 -> 22:42:25 = 15.1 min",
+    "solve_years": "{2021, 2023, 2024, 2025}; 2022 bridged",
+    "data_clean": "rebuilt in full before the leg: 56/56 datatypes, 0 failures",
+    "S1_G_CTL_ID": {
+      "key_matches_graded_control": true,
+      "control_band_reproduces": true,
+      "form": "docs/handoffs/d78r2/window_compare2.py --band-only on this leg reproduces D78-R2's committed control_band.json BYTE-FOR-BYTE (sha256 509320eb4d3de316 both sides) \u2014 every per-year decided_mw / sector1 / capped_mw / cap_binds / g_y_mw row and every aggregate (11,514.910 / 2,120.754 / 1,003.400 / point value 9,394.156). The committed instrument was restored after the comparison and is unmodified.",
+      "verdict": "CLEARS on both limbs"
+    },
+    "retention": "DELETED BEFORE MERGE (rule 29(c)); every number it yields is carried in this file and in FINDING-capx-d78r3-2026-09-06.md."
+  },
+  "per_dy": {
+    "2022/23": {
+      "solve_year": 2022,
+      "stack_rows": 1399,
+      "classes": {
+        "coal": {
+          "rows": 188,
+          "n_distinct_exact": 39,
+          "n_distinct_1e6": 39,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 174.2108,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_cc": {
+          "rows": 237,
+          "n_distinct_exact": 18,
+          "n_distinct_1e6": 18,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 86.5177,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_ct": {
+          "rows": 404,
+          "n_distinct_exact": 12,
+          "n_distinct_1e6": 12,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": true,
+          "offer_min": 56.4069,
+          "offer_max": 61.2066,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_st": {
+          "rows": 118,
+          "n_distinct_exact": 3,
+          "n_distinct_1e6": 3,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": true,
+          "offer_min": 103.0421,
+          "offer_max": 103.108,
+          "uniform_at_zero_price_taker": false
+        },
+        "nuclear": {
+          "rows": 31,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 0.0,
+          "uniform_at_zero_price_taker": true
+        },
+        "oil": {
+          "rows": 421,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": true,
+          "offer_min": 76.1035,
+          "offer_max": 76.1035,
+          "uniform_at_zero_price_taker": false
+        }
+      },
+      "derived_set": [
+        "nuclear",
+        "oil"
+      ],
+      "declared_set": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2022/23 ($50.00): gas_ct 404 / 24,244 \u00b7 gas_st 115 / 8,802 \u00b7 oil 421 / 3,723 \u00b7 gas_cc 40 / 1,145 \u00b7 coal 2 / 30 \u2014 gas_cc and coal are PARTIAL fleets and are excluded (class-level set)",
+      "subset_check": {
+        "derived_subset_of_declared": false,
+        "in_derived_not_declared": [
+          "nuclear"
+        ],
+        "in_declared_not_derived": [
+          "gas_ct",
+          "gas_st"
+        ],
+        "note": "PRECOMMIT \u00a72: the rule is ONE-SIDED, so in_declared_not_derived is EXPECTED and is not evidence against a declared class. in_derived_not_declared is NEVER admitted to the gate \u2014 it is reported and the DECLARED set governs W5'' regardless."
+      }
+    },
+    "2023/24": {
+      "solve_year": 2023,
+      "stack_rows": 849,
+      "classes": {
+        "coal": {
+          "rows": 184,
+          "n_distinct_exact": 36,
+          "n_distinct_1e6": 36,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 174.2108,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_cc": {
+          "rows": 231,
+          "n_distinct_exact": 18,
+          "n_distinct_1e6": 18,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 86.5177,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_ct": {
+          "rows": 403,
+          "n_distinct_exact": 12,
+          "n_distinct_1e6": 12,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": true,
+          "offer_min": 56.4069,
+          "offer_max": 61.2066,
+          "uniform_at_zero_price_taker": false
+        },
+        "nuclear": {
+          "rows": 31,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 0.0,
+          "uniform_at_zero_price_taker": true
+        }
+      },
+      "derived_set": [
+        "nuclear"
+      ],
+      "declared_set": [
+        "gas_ct",
+        "gas_st"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2023/24 ($34.13): gas_ct 403 / 24,243 \u00b7 gas_st 77 / 1,982 \u00b7 gas_cc 1 / 73 \u2014 gas_cc partial and excluded; gas_st is partial (77/115) and INCLUDED per D78-R2 \u00a79 item 1, which can only make the gate stricter",
+      "subset_check": {
+        "derived_subset_of_declared": false,
+        "in_derived_not_declared": [
+          "nuclear"
+        ],
+        "in_declared_not_derived": [
+          "gas_ct",
+          "gas_st"
+        ],
+        "note": "PRECOMMIT \u00a72: the rule is ONE-SIDED, so in_declared_not_derived is EXPECTED and is not evidence against a declared class. in_derived_not_declared is NEVER admitted to the gate \u2014 it is reported and the DECLARED set governs W5'' regardless."
+      }
+    },
+    "2024/25": {
+      "solve_year": 2024,
+      "stack_rows": 835,
+      "classes": {
+        "coal": {
+          "rows": 180,
+          "n_distinct_exact": 60,
+          "n_distinct_1e6": 60,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 53.9294,
+          "offer_max": 170.0782,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_cc": {
+          "rows": 212,
+          "n_distinct_exact": 12,
+          "n_distinct_1e6": 12,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 75.4453,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_ct": {
+          "rows": 404,
+          "n_distinct_exact": 72,
+          "n_distinct_1e6": 72,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 28.4045,
+          "offer_max": 53.8697,
+          "uniform_at_zero_price_taker": false
+        },
+        "nuclear": {
+          "rows": 31,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 0.0,
+          "uniform_at_zero_price_taker": true
+        },
+        "oil": {
+          "rows": 8,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": true,
+          "offer_min": 76.1035,
+          "offer_max": 76.1035,
+          "uniform_at_zero_price_taker": false
+        }
+      },
+      "derived_set": [
+        "nuclear",
+        "oil"
+      ],
+      "declared_set": [
+        "oil"
+      ],
+      "declared_set_citation": "D57 \u00a74 arm A, DY2024/25 ($28.92): oil 8 / 3,723 \"(the CT fleet's 2024 margin is small but non-zero)\"",
+      "subset_check": {
+        "derived_subset_of_declared": false,
+        "in_derived_not_declared": [
+          "nuclear"
+        ],
+        "in_declared_not_derived": [],
+        "note": "PRECOMMIT \u00a72: the rule is ONE-SIDED, so in_declared_not_derived is EXPECTED and is not evidence against a declared class. in_derived_not_declared is NEVER admitted to the gate \u2014 it is reported and the DECLARED set governs W5'' regardless."
+      }
+    },
+    "2025/26": {
+      "solve_year": 2025,
+      "stack_rows": 821,
+      "classes": {
+        "coal": {
+          "rows": 166,
+          "n_distinct_exact": 48,
+          "n_distinct_1e6": 48,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 173.7367,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_cc": {
+          "rows": 212,
+          "n_distinct_exact": 9,
+          "n_distinct_1e6": 9,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 79.7588,
+          "uniform_at_zero_price_taker": false
+        },
+        "gas_ct": {
+          "rows": 404,
+          "n_distinct_exact": 72,
+          "n_distinct_1e6": 72,
+          "counts_disagree": false,
+          "derived_at_bar": false,
+          "in_declared_set": false,
+          "offer_min": 8.2165,
+          "offer_max": 66.5935,
+          "uniform_at_zero_price_taker": false
+        },
+        "nuclear": {
+          "rows": 31,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": false,
+          "offer_min": 0.0,
+          "offer_max": 0.0,
+          "uniform_at_zero_price_taker": true
+        },
+        "oil": {
+          "rows": 8,
+          "n_distinct_exact": 1,
+          "n_distinct_1e6": 1,
+          "counts_disagree": false,
+          "derived_at_bar": true,
+          "in_declared_set": false,
+          "offer_min": 75.2672,
+          "offer_max": 75.2672,
+          "uniform_at_zero_price_taker": false
+        }
+      },
+      "derived_set": [
+        "nuclear",
+        "oil"
+      ],
+      "declared_set": null,
+      "declared_set_citation": "NO ROW EXISTS \u2014 D57 \u00a74's arm-A panel stops at 2024/25; \u00a73.1's 2025 row is at the price cap where every offer clears, so no at-bar set was tabulated. NOT EVALUABLE (PRECOMMIT \u00a71 reading 2)",
+      "subset_check": {
+        "derived_subset_of_declared": false,
+        "in_derived_not_declared": [
+          "nuclear",
+          "oil"
+        ],
+        "in_declared_not_derived": [],
+        "note": "PRECOMMIT \u00a72: the rule is ONE-SIDED, so in_declared_not_derived is EXPECTED and is not evidence against a declared class. in_derived_not_declared is NEVER admitted to the gate \u2014 it is reported and the DECLARED set governs W5'' regardless."
+      }
+    }
+  }
+}

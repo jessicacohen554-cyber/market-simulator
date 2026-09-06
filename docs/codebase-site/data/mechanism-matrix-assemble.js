@@ -20,10 +20,22 @@
  * (scripts/check_mechanism_matrix.py) keeps that from ever landing.
  */
 (function () {
-  var B = window.MECH_MATRIX_BASE;
+  // Accept EITHER anchor. The committed base file has assigned
+  // `window.MECH_MATRIX` since before the 2026-08-11 shard migration and has
+  // never carried `_BASE`, so reading `_BASE` alone aborted this assembler on
+  // every page load: it logged "base file failed to load", returned, and the
+  // renderer then read `r.cells` off the un-assembled base (undefined) — i.e.
+  // the rendered matrix page has shown no cells since the migration. CI never
+  // saw it because scripts/check_mechanism_matrix.py and the pytest twins go
+  // through the PYTHON assembler (scripts/lib/mech_matrix.py), which parses
+  // `window.MECH_MATRIX` correctly. Repaired at SPP-21 2026-09-06 (owner
+  // authorization in session; docs/handoffs/FINDING-spp-21-2026-09-06.md §5),
+  // tolerating both spellings so a later lane may rename the base to `_BASE`
+  // without re-breaking the page. NO data, cell or verdict is touched.
+  var B = window.MECH_MATRIX_BASE || window.MECH_MATRIX;
   var S = window.MECH_MATRIX_SHARDS || {};
   if (!B) { console.error('mechanism-matrix: base file failed to load'); return; }
-  var EV_KEY = { ERCOT: 'E', CAISO: 'C', PJM: 'P', MISO: 'M', NYISO: 'N', NEISO: 'Q' };
+  var EV_KEY = { ERCOT: 'E', CAISO: 'C', PJM: 'P', MISO: 'M', NYISO: 'N', NEISO: 'Q', SPP: 'S' };
   var missing = B.isos.filter(function (iso) { return !S[iso]; });
   if (missing.length) {
     console.error('mechanism-matrix: missing shard(s): ' + missing.join(', ') +

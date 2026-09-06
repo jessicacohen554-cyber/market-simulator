@@ -12421,3 +12421,24 @@ removes the reason it fails, and lands CALIBRATED. The **hourly** neighbour anch
 queue head) remains the responsiveness fix and is unaffected by this outcome.
 Records: `PREREG-miso227-seam-fullspan-candidate-2026-09-06.md`,
 `ASSESSMENT-miso227-seam-fullspan-2026-09-06.md`.
+
+## miso-232 (2026-09-06) — the HOURLY neighbour-anchored PJM seam ladder, FULL SPAN under OWNER RE-CHARTER, is PROMOTED. **DETERMINATION CALIBRATED**, C3c the single ledgered caveat. Keeper → `2026-09-06-miso-232-hourly-seam`.
+
+**Provenance first.** The miso-231 2024 screen was **KILLED on G-1 by 0.0183** (corr(imports, own
+hub price) fell 0.2817 against a pre-registered ≥ 0.30) and the bar was not moved. The full span
+was authorized by **owner re-charter** under the 2026-09-06 standing steer, rule 29(2)'s owner
+step; it is a keeper because the span scored CALIBRATED under the miso-227 promotion rule, not
+because the screen passed. PRECOMMIT pushed while the LP ran (`451e6109`); G-DRIFT
+`284722a04..HEAD` all INERT, keeper bundle = control, no control solve.
+
+**Single delta** on miso-230: `miso_seam_neighbour_hourly_ladder=true`, `delta_k` derived and
+frozen, DOF 41/2 unchanged. **Result:** the seam's measured-price decile slope changes SIGN in
+every year (−3,073/−3,322/−3,063 → +139/+111/+681 MW vs measured +1,303/+1,384/+948); corr on the
+measured basis +0.32/+0.32/+0.35 → −0.08/−0.06/−0.09 vs measured −0.14/−0.04/−0.06; cheap-hour
+imports +1,298/+1,192/+1,678 MW while gross imports FALL 3.54/1.54/2.74 TWh (redistribution).
+C1 16/16, **zero flips**, 13 of 16 cells toward actual (CT_PEAKER-2023 −4.39 → −3.29); C3a
++6.2/+3.2/−5.5 % (away in 2023/2024, in band); C3b and C4 improve every year; CT_PEAKER forced
+share 49.2/31.2/34.0 → 42.2/27.2/25.1 % (C8 grounded route). Non-claims carried: sign not
+magnitude; C3c untouched; no volume claim. Rule 15: miso-217/220/230 pruned. Also added
+`scripts/screen_collateral_gate.py` (G-4 on an unregistered screen bundle).
+`ASSESSMENT-miso232-hourly-seam-fullspan-2026-09-06.md`.

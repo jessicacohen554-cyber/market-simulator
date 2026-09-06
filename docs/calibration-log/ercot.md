@@ -13351,4 +13351,79 @@ archive. Open decision for the owner in
 `docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md` §6. No keeper, recipe, matrix cell or
 determination changed; 2022 untouched.
 
-**Next shorthand: ercot-252** (ercot-199 remains unclaimed)
+## ercot-252 — 2026-09-06 — 2022 C1 / CC_REGULAR: the two IN-MODEL routes (LR RRS credit, RTOLCAP cap) are KILLED at zero-LP rule-29 phase 0 — every route that can move the miss is the renewable bound, and both are the owner's (R1 HSL upload / R2 predicate repair); the measured 2020–2022 load-resource RRS series is BUILT as data intake, consumed by nothing while the from_year gate stands. NO SOLVE, NO REGISTRATION, NOTHING IDENTIFIED ON 2022
+
+**Charter:** the ercot-252 handoff — work R1–R5 in priority order on the folded
+touchpoint's C1 miss (CC_REGULAR −10.39 TWh vs ±8.00 band; gap +2.39 TWh; the
++6.42 TWh no-HSL renewable excess at 0.555 capture). ESTABLISHED items #1–#4 were
+not redone.
+
+**(1) R3 and R4, phase 0 on the committed sidecar (rule 29 clause 0; no LP).** The
+instrument is `hourly/reserve_family_2022.parquet` of
+`2026-09-05-run250-2022-touchpoint-carveout`: an LP reserve row with a zero dual has
+zero marginal cost of reserve, so a requirement credit can move class energy only in
+the hours the row binds, and the credited MW over those hours bounds the move. In 2022
+the rows are slack almost all year — `ercot_ordc_total` dual > 0 in **199 h** (> $0.5
+in 73, > $5 in 34; p99 $0.15; shortfall 310.5 GWh over the same 199 h), every product
+family in 8 h. Overlaying the measured 2022 LR series (mean 1,042 MW):
+
+| binding set | hours | Σ LR credit | share of the 2.39 TWh gap |
+|---|---|---|---|
+| dual > 0 | 199 | **0.194 TWh** | 8.1 % at 100 % capture |
+| dual > $0.5 | 73 | 0.071 TWh | 3.0 % |
+
+**R3 KILLED as a C1 route** (order of magnitude short, ~0.11 TWh at the measured
+capture), and its C3c direction is wrong: it removes 148.8 of the 310.5 GWh shortfall
+(77 of 199 hours in full) against a tail already at 64 h vs 196. **R4 KILLED as a C1
+route by construction** — the cap bounds *held* reserve, forces no headroom and is
+relieved by no redispatch; what it is instead is a price-formation change of large
+magnitude: RTOLCAP 2022 (mean 11,432 MW) sits below the 10,700 MW requirement in
+**4,149 of 8,760 h** (2023: 2,862), Σ(req − RTOLCAP)⁺ = 9,779 GWh vs the current 310 —
+the C3c/C3a recipe decision ercot-249 §4 raised, now with its size, still the owner's
+(its only live years are all held out, so it cannot be screened without spending 2022).
+**Consequence:** with R3/R4 gone, every route that can move 2022's C1 is the renewable
+bound — R1 or R2 — and no solve should be spent until one is decided. No PRECOMMIT,
+screen year, G-DRIFT or control was owed (no arm reached a solve); the keeper/touchpoint
+shas do not resolve in this clone (2026-08-16 rewrite), stated rather than faked.
+
+**(2) DATA INTAKE — `ercot_{2020,2021,2022}_as_up_mw.parquet` BUILT** (rule 22: the
+score is held out, never the data). Source: the 60-Day DAM Disclosure **Load Resource
+Data** files (owner drop landed 2026-09-06, `data/raw/ercot-AS/`) carry per-resource
+cleared **awards** — so the back-year load-side RRS is read directly, a *better* source
+than 2023's offers-only hybrid. Builder `scripts/data/build_ercot_as_backyear.py`
+(+ `tests/iso/ercot/test_ercot_as_backyear.py`, 5 tests). Source facts handled: files
+are keyed by POSTING year (deliveries Nov 2 (Y−1) .. Nov 1 (Y)); the RRS split lands
+**2022-10-15** in both Gen and Load files (gen `RRSUFR Awarded` = 0 everywhere, LR PFR
+~4 % post-split — the series carries the LR total, a ~40 MW definitional delta from the
+UFR-only 2023+ files, stated). 2020/2021 fully covered (595 / 562 MW); 2022 covered
+7,319 h (**1,042 MW**, monthly 792–1,266) with the **Nov 2 – Dec 31 tail (1,441 h)
+reconstructed** from `ASPLAN_RRS − gen_RRS_awards − 753.1 MW` (offset = within-year mean
+un-awarded share over the covered hours, corr 0.921, monthly 704–829) — recorded in the
+parquet metadata, the same class of within-year reconciliation as 2023's Oct–Dec gap.
+2018/2019 buildable, deliberately unbuilt (locked-test tier). **No `from_year` moved**:
+the carve-out recipe carries `ercot_load_resource_reserve_from_year = 2023` and
+`ercot_reserve_supply_cap_from_year = 2023`, both untouched — moving either is
+byte-identical in training and live only on holdout years, the R2 governance shape.
+
+**(3) R1 not re-attempted** (README 2026-07-10 record stands; no ERCOT credential in
+this container). **R2 stands as the open owner decision** (`RESULT-ercot251` §6).
+**R5 not opened.**
+
+**Unchanged:** keeper, recipe, DOF ledger, every determination (rule 30(c): ERCOT
+CALIBRATED on 2023–2025), the site's single 2022 run, 2019 (frozen). Matrix: no verdict
+changed; the `ercot_multiproduct_as` cell's evidence in `mechanism-matrix/ERCOT.js` now
+cites this phase-0 (the LR credit and cap are that row's sub-scalars). Gates at HEAD:
+parity OK, `audit_keepers --iso ERCOT` PASS, `build_status --check --iso ERCOT` in sync,
+`check_mechanism_matrix --base origin/main` clean for this PR (NEISO stamp drift and
+two anchor warnings pre-existing); `tests/scoring` 11 failures identical with and
+without this branch's changes (verified by stash: `test_ff_readiness_battery`,
+`test_collate_scenario_campaign_common_set`, `test_forecast_parity`,
+`test_gate_a_provenance`) — none this lane's. Full record:
+`docs/FINDING-ercot252-2022-cc-routes-phase0-2026-09-06.md`.
+
+**Owner asks, in closing order:** (i) the 2022 HSL archive → `data/raw/ercot-hsl/np6/2022/`;
+(ii) admit / refuse the provenance-predicate repair; (iii) `ercot_reserve_supply_cap_from_year`
+2023 → 2020 (a C3c decision; if taken, whether the LR from_year moves with it under the
+ercot-212 `net_credits` pairing).
+
+**Next shorthand: ercot-253** (ercot-199 remains unclaimed)

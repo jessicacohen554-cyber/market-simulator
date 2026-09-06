@@ -43,3 +43,8 @@ The unblocked route not yet tried, for both: the **FTP** access described in SPP
 "SPP Public Data Access" guide — see
 `data/raw/spp-planning/spp-system-interfaces-stakeholder-reference-guide.pdf`,
 Public Data Specifications.
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route, and the wind denominator that did land
+
+- **FTP folder (PRD):** `ftp://pubftp.spp.org/Operational_Data/VER_Curtailment/`, file `VER-Curtailments-YYYYMMDD.csv` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6). Sample schema (v35 `VER-Curtailments-20260128.csv`, 566 rows = 288 intervals × 2 BAAs, not landed), header verbatim: `LocalIntervalEnding,GMTIntervalEnding,WindRedispatchCurtailments,WindManualCurtailments,WindCurtailedForEnergy,SolarRedispatchCurtailments,SolarManualCurtailments,SolarCurtailedForEnergy,BAA` — MW per 5-min interval, one row per BAA (`SPP`, `SWPW`); sample row `01/28/2026 00:05:00.000000,01/28/2026 06:05:00.000000,1110.440,0.000,0.000,0.000,0.000,0.000,SPP`. Curtailment is split redispatch / manual / for-energy, so the ASOM's single "curtailment" figure needs a stated mapping onto these three columns before the two are compared.
+- **Denominator now partly available:** `data/raw/spp-genmix/GenMix_2024_SPP.csv` (2024-02-15 →) and `GenMixYTD_SPP.csv` (2025 to 12-16) carry delivered wind in MW (`WIND_MKT + WIND_SELF`, 5-min). A derived curtailment share for 2025 (and a Feb-15-onward 2024) can now be built from two measured legs; it remains `derived=yes` with its formula, and the ASOM rows in `spp_wind_curtailment_annual.csv` are unchanged.

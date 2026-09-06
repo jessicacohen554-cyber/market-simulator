@@ -1,0 +1,48 @@
+{
+  "year": 2021,
+  "control": {
+    "": 56117.6,
+    "CC_CHP": 1538.8,
+    "CC_REGULAR": 59856.9,
+    "COAL": 38722.3,
+    "CT_CHP": 317.4,
+    "CT_PEAKER": 25988.8,
+    "ST_CHP": 173.2,
+    "ST_GAS": 11111.2,
+    "VIRTUAL_DEC": 0.0,
+    "VIRTUAL_INC": 13676.5,
+    "hydro": 3314.5,
+    "_COAL_TOTAL": 38722.3,
+    "_TOTAL": 210817.1
+  },
+  "arm": {
+    "": 55854.2,
+    "CC_CHP": 1450.0,
+    "CC_REGULAR": 54600.4,
+    "COAL": 48708.3,
+    "CT_CHP": 344.7,
+    "CT_PEAKER": 25223.0,
+    "ST_CHP": 168.8,
+    "ST_GAS": 7410.6,
+    "VIRTUAL_DEC": 0.0,
+    "VIRTUAL_INC": 13676.5,
+    "hydro": 3314.5,
+    "_COAL_TOTAL": 48708.3,
+    "_TOTAL": 210751.1
+  },
+  "delta": {
+    "": -263.4,
+    "CC_CHP": -88.8,
+    "CC_REGULAR": -5256.5,
+    "COAL": 9986.0,
+    "CT_CHP": 27.3,
+    "CT_PEAKER": -765.8,
+    "ST_CHP": -4.4,
+    "ST_GAS": -3700.6,
+    "VIRTUAL_DEC": 0.0,
+    "VIRTUAL_INC": 0.0,
+    "_COAL_TOTAL": 9986.0,
+    "_TOTAL": -66.0,
+    "hydro": 0.0
+  }
+}

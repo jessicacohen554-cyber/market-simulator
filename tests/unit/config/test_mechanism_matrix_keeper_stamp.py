@@ -31,7 +31,15 @@ from check_mechanism_matrix import (  # noqa: E402
 )
 
 MATRIX_PATH = REPO / "docs/codebase-site/data/mechanism-matrix.js"
-ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+# SPP joined at SPP-21 (2026-09-06) as the seventh shard, BEFORE it has a keeper
+# — the SPP addition programme seeds the column at W2 and its first keeper only
+# lands at W4/SPP-40 (docs/multi-iso/spp-addition-plan-2026-09.md §4). So the
+# keeper-stamp assertions below are scoped to the ISOs that HAVE a keeper shard,
+# which is the same fail-open scoping `check_mechanism_matrix.shard_keeper`
+# already applies (it returns None, and `keeper_drift` skips, when the shard is
+# absent). A registered ISO that HAS a keeper and drops its stamp still fails.
+ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+KEEPER_ISOS = tuple(iso for iso in ISOS if shard_keeper(iso))
 
 
 def _stamps() -> dict[str, str]:
@@ -40,21 +48,22 @@ def _stamps() -> dict[str, str]:
     return matrix_keepers(shards)
 
 
-def test_matrix_isos_parses_all_six() -> None:
-    """The base `isos:` list is the display/cell order; all six present."""
+def test_matrix_isos_parses_every_iso() -> None:
+    """The base `isos:` list is the display/cell order; every ISO present."""
     assert matrix_isos(MATRIX_PATH.read_text(encoding="utf-8")) == list(ISOS)
 
 
 def test_matrix_keepers_stamps_every_iso() -> None:
-    """Every ISO's matrix shard stamps a non-empty keeper id."""
+    """Every ISO with a keeper shard stamps a non-empty keeper id."""
     stamps = _stamps()
     assert set(stamps) == set(ISOS)
-    assert all(stamps[iso] for iso in ISOS)
+    assert KEEPER_ISOS, "no ISO has a keeper shard — the guard has no authority"
+    assert all(stamps[iso] for iso in KEEPER_ISOS)
 
 
-def test_every_iso_has_a_readable_keeper_shard() -> None:
+def test_every_keeper_iso_has_a_readable_keeper_shard() -> None:
     """Each ISO's keeper shard exists and names a keeper (the guard's authority)."""
-    for iso in ISOS:
+    for iso in KEEPER_ISOS:
         assert shard_keeper(iso), f"{iso} keeper shard missing or has no `keeper`"
 
 

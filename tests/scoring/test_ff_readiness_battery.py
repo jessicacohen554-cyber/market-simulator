@@ -282,10 +282,21 @@ def test_marker_state_reflects_committed_markers():
     # `keeper_at_declaration` on the NYISO record is the run the marker was
     # declared on (nyiso-189), not the promoted keeper. Assertion moved in the
     # same commit as the marker (docs/calibration-log/nyiso.md, nyiso-193).
-    for iso in ("ERCOT", "NEISO", "PJM"):
+    #
+    # CAISO RE-DECLARED `complete` 2026-09-06 (owner decision card, session
+    # caiso-261) on the first CAISO keeper lineage to read CALIBRATED with C3a
+    # PASS in every year (2026-09-06-caiso-260-b1-demand; CALIBRATED since
+    # caiso-252, C3c the lone ledgered caveat) — the 2026-08-06 withdrawal's
+    # own reason (a NOT-YET keeper under rubric v3.1) is gone. The withdrawn
+    # record is nested WHOLE beneath the new entry
+    # (`complete.CAISO.withdrawal_history_2026_08_06`), so `withdrawn` now
+    # holds NYISO alone. Assertion moved in the same commit as the marker
+    # (results/calibration/ASSESSMENT-caiso261-complete-declaration-2026-09-06.md).
+    for iso in ("ERCOT", "NEISO", "PJM", "CAISO"):
         assert B._marker_state(iso)["marker"] == "complete", iso
     assert B._marker_state("MISO")["marker"] == "none"
-    assert B._marker_state("CAISO")["marker"] == "withdrawn"
+    caiso = B._marker_state("CAISO")
+    assert caiso["keeper"] == "2026-09-06-caiso-260-b1-demand"
     nyiso = B._marker_state("NYISO")
     assert nyiso["marker"] == "withdrawn"
     assert nyiso["keeper"] == "2026-09-05-nyiso-189-steam-identity"
@@ -329,9 +340,14 @@ def test_build_registration_scorecard_no_iso_gate_open():
     # the Q5 uniform rule when the owner-ruled nyiso-192 promotion re-keyed the
     # keeper onto a NOT-YET run — Gate A is GREEN for NEISO only once more;
     # the pinned invariant is unchanged (gate B HOLD, neither gate opens).
+    # [2026-09-06, caiso-261] CAISO RE-DECLARED `complete` (owner decision
+    # card) on 2026-09-06-caiso-260-b1-demand, CALIBRATED — Gate A is GREEN
+    # for NEISO and CAISO; the pinned invariant is unchanged (gate B HOLD on
+    # the FF-2D key for every ISO, so no gate opens).
     assert sc["NEISO"]["gate_a_backcast"]["marker"] == "complete"
+    assert sc["CAISO"]["gate_a_backcast"]["marker"] == "complete"
     assert sc["NYISO"]["gate_a_backcast"]["marker"] == "withdrawn"
-    for iso in ("NEISO", "NYISO"):
+    for iso in ("NEISO", "NYISO", "CAISO"):
         assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
         assert not sc[iso]["gate_open"], iso
 

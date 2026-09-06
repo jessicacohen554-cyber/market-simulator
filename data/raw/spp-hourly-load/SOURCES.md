@@ -37,3 +37,9 @@ this directory or its README was taken from memory.
 | `marketplace.spp.org` | `302` to `portal.spp.org` | not a separate route |
 | `oasis.oati.com/SWPP` | blocked (per plan §2.4) | login required |
 | `www.spp.org` | **200, fully reachable** | planning PDFs — see `data/raw/spp-planning/` |
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP route and the landed peak file
+
+- **FTP folders (PRD):** `ftp://pubftp.spp.org/Operational_Data/HourlyLoad/` · `ftp://pubftp.spp.org/Operational_Data/Peak_Load/` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6).
+- **`Peak_Load_by_Month.csv`:** member of <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (fetched 2026-09-06; zip sha256 `e2e8478b…debee7`), copied byte-for-byte (sha256 in `data/raw/spp-planning/SHA256SUMS.txt`).
+- Schema source for `HOURLY_LOAD-YYYYMM.csv`: the zip's `DAILY_HOURLY_LOAD-20260217.csv` sample (not landed).

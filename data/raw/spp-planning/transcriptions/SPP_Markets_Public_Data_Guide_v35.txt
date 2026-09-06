@@ -1,0 +1,1238 @@
+
+-478790254000
+
+-16002034607502/1/2026
+Southwest Power Pool
+
+
+
+002/1/2026
+Southwest Power Pool
+
+
+
+4951982058670Marketplace Public Data
+
+00Marketplace Public Data
+
+
+Contents
+ TOC \o "1-3" \h \z \u Revision History	 PAGEREF _Toc220601615 \h 5
+Data Locations Summary	 PAGEREF _Toc220601616 \h 8
+FTP Site Access:	 PAGEREF _Toc220601617 \h 11
+Column Header / Data Type / Sample Files	 PAGEREF _Toc220601618 \h 11
+Day Ahead Market (DA)	 PAGEREF _Toc220601619 \h 12
+Binding Constraints	 PAGEREF _Toc220601620 \h 12
+Congestion by Constraint	 PAGEREF _Toc220601621 \h 12
+Day Ahead Fuel on Margin	 PAGEREF _Toc220601622 \h 12
+Headroom and Floorroom	 PAGEREF _Toc220601623 \h 12
+LMP by Bus	 PAGEREF _Toc220601624 \h 12
+LMP by Location	 PAGEREF _Toc220601625 \h 12
+MCP	 PAGEREF _Toc220601626 \h 13
+Market Clearing	 PAGEREF _Toc220601627 \h 13
+Virtual Clearing by MOA	 PAGEREF _Toc220601628 \h 13
+Virtual Reference Prices	 PAGEREF _Toc220601629 \h 13
+Historical Offers	 PAGEREF _Toc220601630 \h 13
+RTBM Energy Offers	 PAGEREF _Toc220601631 \h 13
+RTBM OR Offers	 PAGEREF _Toc220601632 \h 14
+DA Energy Offers	 PAGEREF _Toc220601633 \h 14
+DA OR Offers	 PAGEREF _Toc220601634 \h 14
+Market to Market (M2M)	 PAGEREF _Toc220601635 \h 14
+Allocations on SPP Flowgates	 PAGEREF _Toc220601636 \h 14
+FFE on M2M Flowgates	 PAGEREF _Toc220601637 \h 14
+M2M Flowgate List	 PAGEREF _Toc220601638 \h 14
+Multi-Day Forecast Pricing	 PAGEREF _Toc220601639 \h 14
+(MDFC) LMP by Settlement Location	 PAGEREF _Toc220601640 \h 14
+(MDFC) MCP	 PAGEREF _Toc220601641 \h 14
+Real-Time Balancing Market (RTBM)	 PAGEREF _Toc220601642 \h 14
+Binding Constraints (absorbing Effective Limits file)	 PAGEREF _Toc220601643 \h 15
+Estimated Prices	 PAGEREF _Toc220601645 \h 15
+Fuel On Margin	 PAGEREF _Toc220601646 \h 15
+LMP by Bus	 PAGEREF _Toc220601647 \h 15
+LMP by Location	 PAGEREF _Toc220601648 \h 15
+MCP	 PAGEREF _Toc220601649 \h 16
+Market Clearing	 PAGEREF _Toc220601650 \h 16
+Operating Reserves	 PAGEREF _Toc220601651 \h 16
+Scarcity Demand Curve	 PAGEREF _Toc220601652 \h 16
+Operational Data (Operations)	 PAGEREF _Toc220601653 \h 16
+Capacity Obligation	 PAGEREF _Toc220601654 \h 16
+Permanent Flowgates	 PAGEREF _Toc220601655 \h 17
+Temporary Flowgates	 PAGEREF _Toc220601656 \h 17
+Archive Temporary Flowgates	 PAGEREF _Toc220601657 \h 17
+Ramp Uncertainty	 PAGEREF _Toc220601658 \h 17
+Regulation Performance by MP	 PAGEREF _Toc220601659 \h 17
+Variable Energy Resource (VER) Curtailments	 PAGEREF _Toc220601660 \h 17
+Operator Initiated Commitments	 PAGEREF _Toc220601661 \h 17
+Ramp Sharing	 PAGEREF _Toc220601662 \h 17
+Available Outage Maintenance Margin	 PAGEREF _Toc220601663 \h 18
+Capacity of Generation on Outage	 PAGEREF _Toc220601664 \h 18
+Contingency Reserve Deployment	 PAGEREF _Toc220601665 \h 18
+Generation Mix Historical	 PAGEREF _Toc220601666 \h 18
+Historical Tie Flow	 PAGEREF _Toc220601667 \h 19
+Hourly Generation Capacity by Fuel Type	 PAGEREF _Toc220601668 \h 19
+Hourly Load	 PAGEREF _Toc220601669 \h 19
+Peak Load	 PAGEREF _Toc220601670 \h 19
+Mid-Term Load Forecast (MTLF) vs. Actual	 PAGEREF _Toc220601671 \h 19
+Mid-Term Resource Forecast (MTRF)	 PAGEREF _Toc220601672 \h 19
+Resource Forecast by Reserve Zone	 PAGEREF _Toc220601673 \h 19
+Short-Term Load Forecast (STLF) vs. Actual	 PAGEREF _Toc220601674 \h 20
+Short-Term Resource Forecast (STRF)	 PAGEREF _Toc220601675 \h 20
+TCR Market	 PAGEREF _Toc220601676 \h 20
+Daily Funding By Constraint	 PAGEREF _Toc220601677 \h 20
+Electrically Equivalent Settlement Locations	 PAGEREF _Toc220601678 \h 20
+Monthly Funding By Constraint	 PAGEREF _Toc220601679 \h 20
+FAQ	 PAGEREF _Toc220601680 \h 20
+Reference Prices	 PAGEREF _Toc220601681 \h 20
+TCR Allocation Historical Results	 PAGEREF _Toc220601682 \h 20
+TCR Auction Historical Results	 PAGEREF _Toc220601683 \h 21
+TCR Calendar	 PAGEREF _Toc220601684 \h 21
+TCR Product Period Hours	 PAGEREF _Toc220601685 \h 21
+Real-Time Market Data (IM Charts)	 PAGEREF _Toc220601686 \h 21
+DBDA Commitments vs Load Forecast	 PAGEREF _Toc220601687 \h 21
+ACE Chart	 PAGEREF _Toc220601688 \h 21
+Forecast vs. Actual	 PAGEREF _Toc220601689 \h 21
+Generation Mix	 PAGEREF _Toc220601690 \h 22
+Generation Mix Rolling 365	 PAGEREF _Toc220601691 \h 22
+Generation Mix YTD	 PAGEREF _Toc220601692 \h 22
+Hub and Interface Prices	 PAGEREF _Toc220601693 \h 22
+Interchange Trend	 PAGEREF _Toc220601694 \h 22
+Real-Time Reliability	 PAGEREF _Toc220601695 \h 22
+Capacity Outlook	 PAGEREF _Toc220601696 \h 22
+Forecast Interchange	 PAGEREF _Toc220601697 \h 22
+Net Interchange	 PAGEREF _Toc220601698 \h 22
+Description: Algebraic sum of all scheduled megawatt transfers in and out of Southwest Power Pool on a 5-minute basis.	 PAGEREF _Toc220601699 \h 22
+RT Remaining Reserves Gauge	 PAGEREF _Toc220601700 \h 22
+Remaining Reserves	 PAGEREF _Toc220601701 \h 23
+Operations Reports	 PAGEREF _Toc220601702 \h 23
+Mileage Factor	 PAGEREF _Toc220601703 \h 23
+State Estimator Data	 PAGEREF _Toc220601704 \h 23
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Revision History
+Version No.
+Date
+Author
+Revision Description
+1
+4/22/2013
+Ben Hefner
+Initial Draft
+2
+6/19/2013
+Ben Hefner, Jacob Pannell
+Added STLF, MTLF, DA LMP by Bus
+Modified DA Clearing to include OR, NSI and Total Demand columns
+Modified DA and RTBM MCP to display MCP values by reserve zone and include product types as columns instead of rows.
+3
+8/27/2013
+Ben Hefner, Jacob Pannell
+Added Operational Data Short Term Wind Forecast and DA Wind Forecast
+Modified RTBM and DA Binding Constraints to include Constraint Type and Contingent Facility columns
+4
+3/25/2014
+Ben Hefner, Jacob Pannell
+Added “Data Locations Summary” table
+Modified LMP, MLC, MCC and MEC attributes for RTBM and DA LMP by Settlement Location and LMP by Bus to reflect ten-thousandths precision
+Modified RegUP, RegDN, Spin and Supp attributes for RTBM and DA MCP to reflect ten-thousandths precision
+Modified Shadow Price attribute for RTBM and DA Binding Limits to reflect ten-thousandths precision
+Added “GMTIntervalEnd” column to RTBM LMP by Settlement Location, RTBM LMP by Bus, RTBM MCP, RTBM Binding Constraints, DA LMP by Settlement Location, DA LMP by BUS, DA MCP, DA Binding Constraints, DA Market Clearing, OD Hourly Load Forecast, and OD Day Ahead Wind Forecast
+Added “GMTInterval” column to OD System-Wide Short-term Wind Forecast (STWF) and OD System-Wide Short-term Load Forecast (STLF) vs. Actual
+Added “Description” to all public data files
+5
+6/23/2013
+Jacob Pannell
+Added ITE URLs
+6
+7/23/2014
+Jacob Pannell
+Added cleared RTBM OR
+7
+11/7/2014
+Amber Collins
+Added MTE URLs
+Updated RTBM MCP – Updates effective 3/1/2015
+Added Mileage Factor – Updates effective 3/1/2015
+Added Historical Offers – Updates effective 3/1/2015
+10
+5/13/2015
+Amber Collins,Nikki Eason
+Changing version number to correspond to release number
+Added Ramp Sharing – Updates effective 7/1/2015
+Added Fuel On Margin – Updates effective 7/1/2015
+Added DA Virtual Clearing – Updates effective 7/1/2015
+Update Historical Offer files to include an indicator for Offers and Bids
+Updated DA Market Clearing – Updates effective 7/1/2015
+Updated datatypes to reflect correct precision to ten-thousandths
+Added MP Regulation Performance – Updates effective 7/1/2015
+Removed reference to ITE
+11
+8/6/2015
+Amber Collins
+Added M2M – Updates effective 10/1/2015
+11.1
+8/27/2015
+Amber Collins
+Added DST description and examples
+Updated Fuel on Margin file to include GMTIntervalEnd column
+Add Forecast Graph description and examples to guide
+Updated Forecast Graph file to include GMTIntervalEnd column
+11.2
+8/31/2015
+Amber Collins
+Updated .csv file examples in zip file for Fuel On Margin, Forecast Summary, RTBM MCP, RTBM OR, DA MCP & MP Regulation Performance
+12
+12/11/2015
+Rick Cummins
+Added Historical Tie Flow Data
+Added TCR Funding by Constraint 
+Added RTBM LMP Trend
+Added State Estimator raw data (NDA required for viewing) data only available in PROD environment
+13
+3/22/2016
+Rick Cummins
+Add FTP access information (user / password)
+Add Historical Load Data at the Hourly Level
+Add Copy of TCR Funding by Constraint (by Market Day)
+Add LMP Annual Roll-Up
+14
+6/2/2016
+Rick Cummins
+Add LMP data roll-ups for RTBM & DA
+Add Day Ahead Total Congestion Dollars by Month and Constraint
+Revised file folder structure for RTBM and DA LMP
+Price Contour Map (Graphic Display) to include RTBM / DA delta info
+SLMP and SMCP Repricing folder added
+15
+8/19/2016
+Rick Cummins
+Modified Gen Mix display (Coal Mkt / Coal Self)
+Earlier publish time for Gen Mix data
+Add Report Gen Station Fuel Type by FTR case & PSS/E bus number
+Add Capacity of Generation on Outage
+16
+12/1/2016
+Rick Cummins
+Modified description for Add Capacity of Generation on Outage
+Updated Operating Reserve with SPP Total
+Updated Gen Mix Historical files add GenMixHourly 
+18
+3/15/2017
+Rick Cummins
+Updated DAWF to reflect 7 days of data 
+Added Headroom and Floorroom
+Added Scarcity Demand
+Added Resource Forecast by Reserve Zone
+19
+5/05/2017
+Rick Cummins
+Corrected filename for “Hourly Generation Capacity by Fuel Type”
+Added Summary Files (Monthly / Yearly) for Market Constraint Data
+Added “Fuel Type” to Capacity of Generation on Outage
+Added Solar Forecast Data (MTRF, STRF, Forecast Summary)
+Added “Average Actual Load” to Gen Mix Yearly File 
+
+20
+6/30/2017
+Rick Cummins
+Update for Reliability 
+21
+9/21/2017
+Rick Cummins
+Added “VER_Curtailments” file
+
+22
+5/30/2018
+Rick Cummins
+Generation Mix files now show Self / Market commit for all fuel types
+Interchange Trend data extended 24hrs future data
+23
+9/10/2018
+Rick Cummins
+Adjusted queries for accuracy for Gen Mix and STRF files
+Removed references to “Energy” for Scarcity Demand Curve data
+24
+11/29/2018
+Rick Cummins
+Added “Operator Initiated Commitments” relating to FERC Order 844
+25
+4/11/2019
+Rick Cummins
+Post Frequently Constrained Areas per RR304
+26
+8/15/2019
+Rick Cummins
+Added “daily” files for Hourly Load 02-6422
+Added “latest interval” file Generation Capacity by Fuel Type 02-6455
+Annual Public Data Files Zip 02-5640 
+27
+11/13/2019
+Rick Cummins
+Extend Resource Forecast by Reserve Zone to 7 days
+Gen Mix column name change from “Average Actual Load” to “Load”
+28
+3/5/2020
+Rick Cummins
+Add Fixed Demand bid data to Historical Offers
+Added DA Fuel on Margin
+Added Available Outage Maintenance Margin
+Updated TCR files / descriptions
+29
+12/8/2021
+Rick Cummins
+Add Ramp Uncertainty 
+Add RampUP/RampDn to DA MCP, DA Market Clearing, RTBM MCP, and RTBM Operating Reserve 
+30
+4/15/2022
+Rick Cummins
+Updated Available Outage Maintenance Margin
+Updated for Effective Limits added per RR414
+31
+9/1/2022
+Rick Cummins
+Add Daily report interval to RTBM MCP
+Add Columns to VER Curtailments for Solar
+32
+3/6/2023
+Rick Cummins
+Update Flowgate Files descriptions
+Update TCR Reference file names for split files
+Add sample files for Uncertainty Product
+33
+8/7/2023
+Rick Cummins
+Update DA Energy Offers Portal File Descriptions / sample file
+Add UncUP to Ramp Uncertainty / sample file
+DA Mkt Clearing change per MMU to satisfy SIR354 / sample file
+Add new report for Contingency Reserve Deployment history
+Add new report for RTBM Market Clearing Report 
+34
+2/1/2026
+Caleb Dather
+Updated all reports for RTO Expansion changes (active in PRD at RTOE Go Live date, active in MTE 2/1/2026)
+Reorganized list of reports to better follow public portal layout
+Removed the RTBM Effective Limits file, now included in the RTBM Binding Constraints file
+Added Headroom and Floorroom to DAMKT 
+Added Estimated Prices to RTBM
+Added ACE Chart
+Added Ramp and Uncertainty to Scarcity Demand Curve
+Added Peak Load to Operations Reports
+Added data locations for all reports that did not previously have one Corrected various formatting inconsistencies
+
+
+35
+2/19/2026
+Caleb Dather
+Updated description for Hourly Load. In addition to adding the Balancing Area Name column, a Forecast Area Type column was also added to specify between conforming load (CF) and non-conforming load (NC) amounts.
+
+Data Locations Summary
+The following is a list of Markets Public Data and their locations on the SPP Portal and the FTP:
+NOTE: Public Data files will be zipped (.zip) after 2 years. 
+
+Data
+SPP Portal
+FTP
+RTBM LMP by Settlement Location
+PRD: https://portal.spp.org/pages/rtbm-lmp-by-location 
+
+MTE: https://portal-mte.itespp.org/pages/rtbm-lmp-by-location
+
+PRD: ftp://pubftp.spp.org/Markets/RTBM/LMP_By_SETTLEMENT_LOC/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/LMP_By_SETTLEMENT_LOC/
+RTBM LMP by Bus
+
+
+PRD: https://portal.spp.org/web/guest/lmp-by-bus
+
+MTE: https://portal-mte.itespp.org/pages/rtbm-lmp-by-bus
+
+PRD:  ftp://pubftp.spp.org/Markets/RTBM/LMP_By_BUS/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/LMP_By_BUS/
+RTBM Market Clearing
+
+PRD: https://portal.spp.org/pages/rtbm-mc 
+
+MTE: https://portal-mte.itespp.org/pages/rtbm-mc
+
+PRD: ftp://pubftp.spp.org/Markets/RTBM/MC/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/MC/
+RTBM MCP
+
+
+
+PRD: https://portal.spp.org/pages/rtbm-mcp 
+
+MTE: https://portal-mte.itespp.org/pages/rtbm-mcp
+
+PRD: ftp://pubftp.spp.org/Markets/RTBM/MCP/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/MCP/
+RTBM OR
+
+
+
+PRD: https://portal.spp.org/pages/operating-reserves  
+
+MTE: https://portal-mte.itespp.org/pages/operating-reserves 
+
+PRD: ftp://pubftp.spp.org/Markets/RTBM/OR/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/OR/
+RTBM Binding Constraints
+
+PRD:  https://portal.spp.org/pages/rtbm-binding-constraints
+
+MTE: https://portal-mte.itespp.org/pages/rtbm-binding-constraints
+
+PRD:  ftp://pubftp.spp.org/Markets/RTBM/BINDING_CONSTRAINTS/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/BINDING_CONSTRAINTS/
+
+
+
+DA LMP by Settlement Location
+
+PRD:  https://portal.spp.org/pages/da-lmp-by-location 
+
+MTE: https://portal-mte.itespp.org/pages/da-lmp-by-location
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/LMP_By_SETTLEMENT_LOC/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/LMP_By_SETTLEMENT_LOC/
+DA LMP by BUS
+
+
+PRD:  https://portal.spp.org/pages/da-lmp-by-bus 
+
+MTE: https://portal-mte.itespp.org/pages/da-lmp-by-bus
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/LMP_By_BUS/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/LMP_By_BUS/
+DA MCP
+
+
+
+PRD:  https://portal.spp.org/pages/da-mcp 
+
+MTE: https://portal-mte.itespp.org/pages/da-mcp
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/MCP/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/MCP/
+DA Binding Constraints
+
+
+PRD:  https://portal.spp.org/pages/da-binding-constraints 
+
+MTE: https://portal-mte.itespp.org/pages/da-binding-constraints
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/BINDING_CONSTRAINTS/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/BINDING_CONSTRAINTS/
+DA Market Clearing
+
+
+PRD:  https://portal.spp.org/pages/market-clearing
+
+MTE: https://portal-mte.itespp.org/pages/market-clearing
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/MARKET-CLEARING/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/MARKET-CLEARING/
+DA Total Congestion Dollars by Month and Constraint
+PRD:  https://portal.spp.org/pages/congestion-by-constraint  
+
+MTE: https://portal-mte.itespp.org/pages/congestion-by-constraint-constraint
+
+PRD:  ftp://pubftp.spp.org/Markets/DA/Congestion-Constraint  
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/Congestion-Constraint
+Available Outage Maintenance Margin
+PRD:  https://portal.spp.org/pages/available-outage-maintenance-margin
+
+MTE: https://portal-mte.itespp.org/pages/available-outage-maintenance-margin
+
+PRD:  ftp://pubftp.spp.org/Operational_Data/Available_Outage_Maintenance_Margin/ 
+MTE:
+ftp://pubftp.spp.org/Operational_Data/Available_Outage_Maintenance_Margin/ 
+
+Short-term Load Forecast
+
+PRD:  https://portal.spp.org/pages/stlf-vs-actual
+
+MTE: https://portal-mte.itespp.org/pages/stlf-vs-actual
+
+PRD:  ftp://pubftp.spp.org/Operational_Data/STLF/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/STLF/
+Mid-term Load Forecast
+
+
+PRD:  https://portal.spp.org/pages/mtlf-vs-actual
+
+MTE: https://portal-mte.itespp.org/pages/mtlf-vs-actual
+
+PRD:  ftp://pubftp.spp.org/Operational_Data/MTLF/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/MTLF/
+Mid-Term Resource Forecast
+
+
+
+PRD:  https://portal.spp.org/pages/midterm-resource-forecast
+
+MTE: https://portal-mte.itespp.org/pages/midterm-resource-forecast
+
+PRD:  ftp://pubftp.spp.org/Operational_Data/MTRF/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/MTRF/
+Short-term Resource Forecast
+
+PRD:  https://portal.spp.org/pages/shortterm-resource-forecast 
+
+MTE: https://portal-mte.itespp.org/pages/shortterm-resource-forecast
+
+PRD:  ftp://pubftp.spp.org/Operational_Data/STRF/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/STRF/
+Historical Offers
+PRD: https://portal.spp.org/groups/historical-offers
+
+MTE: https://portal-mte.itespp.org/groups/historical-offers 
+PRD:  ftp://pubftp.spp.org/Markets/HistoricalOffers/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/HistoricalOffers/ 
+
+
+
+Ramp Uncertainty
+PRD: https://portal.spp.org/pages/ramp-uncertainty 
+
+MTE: https://portal-mte.itespp.org/pages/ramp-uncertainty  
+PRD:  ftp://pubftp.spp.org/Operations_Reports/  
+
+MTE: ftp://pubftp-mte.itespp.org/Operations_Reports/
+Mileage Factor
+PRD: https://portal.spp.org/pages/operations-reports 
+
+MTE: https://portal-mte.itespp.org/pages/operations-reports  
+PRD:  ftp://pubftp.spp.org/Operations_Reports/  
+
+MTE: ftp://pubftp-mte.itespp.org/Operations_Reports/
+RTBM Fuel on Margin
+PRD: https://portal.spp.org/pages/fuel-on-margin 
+
+MTE: https://portal-mte.itespp.org/pages/fuel-on-margin
+
+PRD: ftp://pubftp.spp.org/Markets/RTBM/FuelOnMargin/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/FuelOnMargin/
+DAMKT Fuel on Margin
+PRD: https://portal.spp.org/pages/day-ahead-fuel-on-margin 
+
+MTE: https://portal-mte.itespp.org/pages/day-ahead-fuel-on-margin 
+
+PRD: ftp://pubftp.spp.org/Markets/DA/DAFuelOnMargin/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/DAFuelOnMargin/ 
+Regulation Performance by MP
+PRD: https://portal.spp.org/pages/regulation-performance-by-mp 
+
+MTE: N/A
+PRD:  ftp://pubftp.spp.org/Operations_Reports/RegulationPerformanceByMP  
+
+MTE: N/A
+Ramp Sharing
+PRD: https://portal.spp.org/pages/ramp-sharing
+
+MTE: https://portal-mte.itespp.org/pages/ramp-sharing 
+PRD: ftp://pubftp.spp.org/Markets/RampSharing/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RampSharing/ 
+M2M Flowgate List
+PRD: https://portal.spp.org/pages/m2m-flowgate-list
+
+MTE: https://portal-mte.itespp.org/pages/m2m-flowgate-list  
+PRD: ftp://pubftp.spp.org/Markets/MarketToMarket/M2MFlowgateList/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/MarketToMarket/M2MFlowgateList/
+Allocations on SPP Flowgates
+PRD: https://portal.spp.org/pages/allocations-on-spp-flowgates
+
+MTE: https://portal-mte.itespp.org/pages/allocations-on-spp-flowgates 
+PRD: ftp://pubftp.spp.org/Markets/MarketToMarket/AllocationsOnSPPFlowgates/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/MarketToMarket/AllocationsOnSPPFlowgates/ 
+FFE on M2M Flowgates
+PRD: https://portal.spp.org/pages/ffe-on-m2m-flowgates
+
+MTE: https://portal-mte.itespp.org/pages/ffe-on-m2m-flowgates
+PRD: ftp://pubftp.spp.org/Markets/MarketToMarket/FFEOnM2MFlowgates/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/MarketToMarket/FFEOnM2MFlowgates/ 
+Forecast vs. Actual
+PRD: https://portal.spp.org/web/guest/forecast-vs.-actual
+
+MTE: https://portal-mte.itespp.org/load-forecast-vs.-actual 
+PRD: ftp://pubftp.spp.org/Operational_Data/Forecast_Graph/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Forecast_Graph/
+Hourly Load
+PRD: https://portal.spp.org/pages/hourly-load 
+
+MTE: https://portal-mte.itespp.org/web/guest/hourly_load
+PRD: ftp://pubftp.spp.org/Operational_Data/HourlyLoad/ 
+
+MTE:ftp://pubftp-mte.itespp.org/Operational_Data/HourlyLoad/
+Historical Tie Flow
+PRD: https://portal.spp.org/pages/historical-tie-flow
+
+MTE: https://portal-mte.itespp.org/pages/historical-tie-flow 
+PRD: ftp://pubftp.spp.org/Operational_Data/TIE_FLOW_HISTORICAL
+
+MTE:ftp://pubftp-mte.itespp.org/Operational_Data/TIE_FLOW_HISTORICAL
+TCR Funding by Constraint
+PRD: https://portal.spp.org/pages/monthly-funding-by-constraint
+
+MTE: https://portal-mte.itespp.org/pages/monthly-funding-by-constraint
+PRD: ftp://pubftp.spp.org/TCR/MonthlyFundingByConstraint/ 
+
+MTE: ftp://pubftp-mte.itespp.org/TCR/MonthlyFundingByConstraint/
+TCR Funding by Constraint by Market Day
+PRD: https://portal.spp.org/pages/daily-funding-by-constraint
+
+MTE: https://portal-mte.itespp.org/daily-funding-by-constraint
+PRD: ftp://pubftp.spp.org/TCR/DailyFundingByConstraint/ 
+
+MTE: ftp://pubftp-mte.itespp.org/TCR/DailyFundingByConstraint/
+TCR Product Period Hours
+PRD: https://portal.spp.org/pages/tcr-product-period-hours
+
+MTE: https://portal-mte.itespp.org/pages/tcr-product-period-hours
+PRD: ftp://pubftp.spp.org/TCR/TCRProductPeriodHours 
+
+MTE: ftp://pubftp-mte.itespp.org/TCR/TCRProductPeriodHours
+
+
+
+RTBM LMP Trend
+PRD: https://portal.spp.org/pages/hub-and-interface-prices
+
+MTE: https://portal-mte.itespp.org/pages/hub-and-interface-prices
+PROD: ftp://pubftp.spp.org/Operational_Data/RTBM_LMP/
+
+ MTE: ftp://pubftp-mte.itespp.org/Operational_Data/RTBM_LMP/
+VER Curtailment
+PRD: https://portal.spp.org/pages/ver-curtailmentsVER-Curtailment
+
+MTE: https://portal-mte.itespp.org/pages/ver-curtailments
+PROD: ftp://pubftp.spp.org/Operational_Data/VER_Curtailment/
+
+ MTE: ftp://pubftp-mte.itespp.org/Operational_Data/VER_Curtailment/
+Contingency Reserve Deployment
+PRD: https://portal.spp.org/pages/contingency-reserve-deploymentVER-Curtailment
+
+MTE: https://portal-mte.itespp.org/pages/contingency-reserve-deployment
+PROD: ftp://pubftp.spp.org/Operational_Data/Contingency_Reserve_Deployment/
+
+ MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Contingency_Reserve_Deployment/
+Operator Initiated Commitments
+PRD: https://portal.spp.org/pages/operator-initiated-commitments Initiated Commitments
+
+MTE: https://portal-mte.itespp.org/pages/operator-initiated-commitments Initiated Commitments
+PROD: ftp://pubftp.spp.org/Operational_Data/Operator Initiated Commitments
+
+ MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Operator Initiated Commitments/
+Generation Mix 2 Hour
+PRD: https://portal.spp.org/pages/generation-mix-historical 
+
+MTE: https://portal-mte.itespp.org/pages/generation-mix-historical
+PRD: ftp://pubftp.spp.org/Operational_Data/GEN_MIX/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/GEN_MIX/
+Generation Mix YTD 
+PRD: https://portal.spp.org/pages/generation-mix-historical 
+
+MTE: https://portal-mte.itespp.org/pages/generation-mix-historical
+PRD: ftp://pubftp.spp.org/Operational_Data/GEN_MIX/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/GEN_MIX/
+Gen Mix (YYYY) Historical
+PRD: https://portal.spp.org/pages/generation-mix-historical 
+
+MTE: https://portal-mte.itespp.org/pages/generation-mix-historical 
+PRD: ftp://pubftp.spp.org/Operational_Data/GEN_MIX/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/GEN_MIX/
+GenMix365
+PRD: https://portal.spp.org/pages/generation-mix-historical 
+
+MTE: https://portal-mte.itespp.org/pages/generation-mix-historical
+PRD: ftp://pubftp.spp.org/Operational_Data/GEN_MIX/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/GEN_MIX/
+Generation on Outage
+PRD: https://portal.spp.org/pages/capacity-of-generation-on-outage
+	
+MTE: https://portal-mte.itespp.org/pages/capacity-of-generation-on-outage 
+PRD: ftp://pubftp.spp.org/Operational_Data/Capacity_Gen_Outage/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Capacity_Gen_Outage/
+RTBM Headroom and Floorroom 
+PRD: https://portal.spp.org/pages/headroom-and-floorroom
+	
+MTE: https://portal-mte.itespp.org/pages/headroom-and-floorroomheadroom 
+PRD: ftp://pubftp.spp.org/Markets/Headroom_and_Floorroom/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Headroom_and_Floorroom/
+Scarcity Demand Curve
+PRD: https://portal.spp.org/groups/scarcity-demand-curve
+	
+MTE: https://portal-mte.itespp.org/groups/scarcity-demand-curve 
+PRD: ftp://pubftp.spp.org/Markets/Scarcity_Demand_Curve/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/Scarcity_Demand_Curve/
+Resource Forecast by Reserve Zone
+PRD: https://portal.spp.org/pages/resource-forecast-by-reserve-zone 
+	
+MTE: https://portal-mte.itespp.org/pages/resource-forecast-by-reserve-zone
+PRD: ftp://pubftp.spp.org/Operational_Data/RF_By_Reserve_Zone/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/RF_By_Reserve_Zone/
+Hourly Generation Capacity by Fuel Type
+PRD: https://portal.spp.org/pages/hourly-generation-capacity-by-fuel-type 
+	
+MTE: https://portal-mte.itespp.org/pages/hourly-generation-capacity-by-fuel-type
+PRD: ftp://pubftp.spp.org/Operational_Data/Hourly_Gen_Cap_by_Fuel_Type/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Hourly_Gen_Cap_by_Fuel_Type/
+Estimated Prices
+PRD: https://portal.spp.org/pages/estimated-prices 
+
+MTE: https://portal-mte.itespp.org/pages/estimated-prices 
+PRD: ftp://pubftp.spp.org/Markets/RTBM/Estimated_Prices/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/RTBM/Estimated_Prices/ 
+Peak Load
+PRD: https://portal.spp.org/pages/peak-load 
+
+MTE: https://portal-mte.itespp.org/pages/peak-load  
+PRD : ftp://pubftp.spp.org/Operational_Data/Peak_Load/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Peak_Load/
+DA Virtual Clearing by MOA
+PRD: https://portal.spp.org/pages/virtual-clearing-by-moa 
+
+MTE: https://portal-mte.itespp.org/pages/virtual-clearing-by-moa 
+PRD : ftp://pubftp.spp.org/Markets/DA/VirtualClearingByMOA/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/VirtualClearingByMOA/ 
+DA Virtual Reference Prices 
+PRD: https://portal.spp.org/pages/virtual-reference-prices 
+
+MTE: https://portal-mte.itespp.org/pages/virtual-reference-prices 
+PRD : ftp://pubftp.spp.org/Markets/DA/VirtualReferencePrices/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/DA/VirtualReferencePrices/ 
+MDFC LMP by Settlement Location
+PRD: https://portal.spp.org/pages/lmp-by-settlement-location-mdf 
+
+MTE: https://portal-mte.itespp.org/pages/lmp-by-settlement-location-mdf  
+PRD : ftp://pubftp.spp.org/Markets/MDFC/LMP_By_SETTLEMENT_LOC/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/MDFC/LMP_By_SETTLEMENT_LOC/ 
+MDFC MCP
+PRD: https://portal.spp.org/pages/mcp-mdf 
+
+MTE: https://portal-mte.itespp.org/pages/mcp-mdfc 
+PRD : ftp://pubftp.spp.org/Markets/MDFC/MCP/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Markets/MDFC/MCP/ 
+Capacity Obligation
+PRD: https://portal.spp.org/pages/capacity-obligation 
+
+MTE: https://portal-mte.itespp.org/pages/capacity-obligation 
+PRD : ftp://pubftp.spp.org/Operational_Data/Capacity_Obligation_SPPGO/ 
+
+MTE: ftp://pubftp-mte.itespp.org/Operational_Data/Capacity_Obligation_SPPGO/ 
+Permanent Flowgates
+PRD: https://portal.spp.org/pages/permanent-flowgates  
+PRD : ftp://pubftp.spp.org/Operational_Data/Flowgates/Permanent%20Flowgates/ 
+Temporary Flowgates
+PRD: https://portal.spp.org/pages/temporary-flowgates 
+PRD : ftp://pubftp.spp.org/Operational_Data/Flowgates/Temporary%20Flowgates/ 
+Archive Temporary Flowgates
+PRD: https://portal.spp.org/pages/archive-temporary-flowgates 
+PRD : ftp://pubftp.spp.org/Operational_Data/Flowgates/Archived%20Temporary%20Flowgates/  
+TCR Reference Prices
+PRD: https://portal.spp.org/pages/reference-prices 
+PRD : ftp://pubftp.spp.org/TCR/ReferencePrices/ 
+TCR Allocation Historical Results
+PRD: https://portal.spp.org/pages/tcr-allocation-historical-results 
+PRD : ftp://pubftp.spp.org/TCR/HistoricalAllocationResults/ 
+TCR Auction Historical Results
+PRD: https://portal.spp.org/pages/tcr-auction-historical-results 
+PRD : ftp://pubftp.spp.org/TCR/HistoricalAuctionResults/ 
+TCR Calendar
+PRD: https://portal.spp.org/pages/tcr-calendar 
+PRD : ftp://pubftp.spp.org/TCR/TCRCalendar/ 
+
+
+
+
+
+
+
+
+
+
+FTP Site Access:
+Below information should be used to access public data files via ftp URL: 
+User: anonymous 
+Password: ‘Leave blank here’
+When accessing the ftp site programmatically use the following:
+User: anonymous
+Password: <use an email address>
+
+
+Column Header / Data Type / Sample Files
+Sample files are included with current release “SPP Markets Public Data Guide and Samples” zip file on SPP.org for header and data type information.  
+
+
+
+Day Ahead Market (DA)
+All DA files will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.  
+All DA public data will be made available at approximately 16:05 (CPT).
+
+Binding Constraints
+Description: Constraints as calculated by the Day-Ahead market separated by interconnect with Public Data release 1.35.
+Monthly and Yearly rollup files added beginning with Public Data release 1.19.  File folder structure also changed to add a “By Day” folder, putting daily runs in the By_Day folder within each monthly folder. MONTHLY rollup file will be placed at the same level with the By_day folder within the Month.  YEARLY rollup file will be placed at the same level with the Month folder within the Year.
+File Name Daily: DA-BC-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+File Name Monthly: DA-BC-MONTHLY-<YEAR><MONTH>.csv
+File Name Yearly: DA-BC-YEARLY-<YEAR>.zip   *** Yearly file will be zipped ***
+Frequency: Daily, Monthly, Yearly
+Congestion by Constraint
+Description: Total Congestion Dollars by Month, Constraint and Contingency Name separated by interconnect with Public Data release 1.35.
+File Name: CONGESTION-CONSTRAINT-<YEAR><MONTH>.csv
+Frequency: Monthly
+Day Ahead Fuel on Margin
+Description: Report on each fuel type that was marginal, created at end of each day for previous day. 
+File Name: FUEL-ON-MARGIN-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+Headroom and Floorroom
+Description: Day Ahead Market Headroom, Day Ahead Market Floorroom, Day Ahead RUC Headroom, Day Ahead RUC Floorroom. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: Headroom_and_Floorroom-YYYYMMDD.csv
+Frequency: Daily
+LMP by Bus
+Description: Hourly LMP data (MEC, MCC, MLC components) as calculated by the Day-Ahead market, organized by bus. Includes Balancing Authority Area designation with Public Data release 1.35.File Names: 
+DA-LMP-Monthly-B-<YEAR><MONTH>.csv
+DA-LMP-B-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily, Monthly
+LMP by Location
+Description: Hourly LMP data (MEC, MCC, MLC components) as calculated by the Day-Ahead market, organized by settlement location. Includes Balancing Authority Area designation with Public Data release 1.35.File Names: 
+DA-LMP-Monthly-SL-<YEAR><MONTH>.csv
+DA-LMP-SL-<YEAR><MONTH><DAY><HOUR><MINUTE>.csvFrequency: Daily, Monthly
+
+MCP
+Description: Hourly MCP for Reg-UP, Reg-DN, Spin, and Supp organized by Reserve Zone.File Name: DA-MCP-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+Market Clearing
+Description: Contains results of the DA Market clearing for the SPP system organized by interval. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: DA-MC-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+Virtual Clearing by MOA
+Description: Reserve zone level report showing Virtual Clearing, Actual Load and Forecast Load by control area. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: DA-VC-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+Virtual Reference Prices
+Description: Virtual reference prices that are used to calculate an estimated exposure on a virtual transaction for the time period of one quarter, based on pricing data from the previous year in the same quarter. 
+File Name: VIRUTAL_REF_PRICES-<Month>-<Day>-<Year>_<Month>-<Day>-<Year>_<Quarter>.csv
+Frequency: Quarterly
+
+Historical Offers
+DA Energy OffersDescription: Historical DA Energy Offers/Bids by Resources with all price/MW pairs. Published 90 days after OD. 
+Offers (resource offers, virtual offers, and import interchange transactions) will be noted with a 1_ in front of the RCode. 
+Bids (virtual bids, demand bids, and export interchange transactions) will be noted with a 0_ in front of the RCode.
+In the case that the RCode is masking a bid or offer, the RCode would be masking a certain settlement location where the bid or offer was placed.  
+Multiple bids or offers can be placed at the same settlement location, which would cause this file to contain duplicate RCodes on the same hour.
+File Name(s): DA-Energy-Offers-YYYYMMDD0100.csv
+Frequency: Daily
+DA OR Offers
+Description: Historical DA OR Offers including SPIN, SUPP, Capability Reg-Down, Capability Reg-Up, Mileage Factor Reg-Down, Mileage Factor Reg-Up, Mileage Offer Reg-Down and Mileage Offer Reg-Up.  
+File Name: DA-OR-OFFERS-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+RTBM Energy Offers
+Description: Historical RTBM Energy Offers by Resource with all price/MW pairs.  
+File Name: RTBM-ENERGY-OFFERS-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+
+RTBM OR Offers
+Description: Historical RTBM OR Offers including SPIN, SUPP, Capability Reg-Down, Capability Reg-Up, Mileage Factor Reg-Down, Mileage Factor Reg-Up, Mileage Offer Reg-Down and Mileage Offer Reg-Up.  
+File Name: RTBM-OR-OFFERS-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+DA Energy Offers
+Description:   Historical DA Energy Offers by Resource with all price/MW pairs.  
+File Name: DA-ENERGY-OFFERS-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+Market to Market (M2M)
+The file will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.
+Allocations on SPP Flowgates
+Description:  The allocations used for market to market on SPP flowgates.  
+File Name: M2M-Allocations-On-SPP-Flowgates -YYYYMMDD.csv
+Frequency: Daily
+FFE on M2M Flowgates
+Description:  The firm flow entitlements for SPP market-to-market flowgates.  
+File Name: M2M-Allocations-On-SPP-Flowgates -YYYYMMDD.csv
+Frequency: Daily
+M2M Flowgate List
+Description:  Current list of the permanent market-to-market flowgates.  
+File Name: M2M-Current-Flowgate-List-YYYYMMDD.csv
+Frequency: Daily
+
+Multi-Day Forecast Pricing
+LMP and MCP Forecasted pricing produced by Multi-Day Forecast Studies. Include Balancing Authority Area designation with Public Data release 1.35.
+(MDFC) LMP by Settlement Location 
+File Name: MDFC-LMP-SL-<YEAR><MONTH><DAY>.csv
+Frequency: Daily
+(MDFC) MCP
+File Name: MDFC-MCP-<YEAR><MONTH><DAY>.csv
+Frequency: Daily
+
+Real-Time Balancing Market (RTBM)
+All RTBM files will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.
+Binding Constraints (absorbing Effective Limits file)
+Description: Constraints as calculated by the Real-Time Balancing Market distinguishing M2M FGs from all other FGs. Now also provides effective limit information associated with binding constraints, Source Limit, Real Time Effective Limit and Initial Effective Limit, implemented per RR414. Includes Interconnect designation with Public Data release 1.35.
+
+Frequency: Every five minutes, Daily, Monthly and YearlyLatest Interval File Name: RTBM-BC-latestInterval.csv
+Interval file: RTBM-BC-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Daily file: RTBM-BC-<YEAR><MONTH><DAY>.csv
+DST File Name: RTBM-BC-<YEAR><MONTH><DAY><HOUR><MINUTE>d.csv
+File Name Monthly: RTBM-BC-MONTHLY-<YEAR><MONTH>.csv
+File Name Yearly: RTBM-BC-YEARLY-<YEAR>.zip   
+*** Monthly and Yearly file will be zipped ***
+Estimated Prices
+Description: Provides each interval in which estimated pricing was applied during the given month. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: ESTIMATED_PRICES_<YEAR><MONTH>.csv
+Frequency: Monthly
+
+Fuel On Margin
+Description:   Report on each fuel type that was marginal, created at end of each day for previous day. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: FUEL-ON-MARGIN-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Daily
+
+LMP by Bus
+Description: LMP by Bus data (MEC, MCC, MLC components) as calculated by RTBM, organized by bus. Includes Balancing Authority Area designation with Public Data release 1.35.File Names: 
+Latest Interval: RTBM-LMP-B-latestInterval.csv
+Interval: RTBM-LMP-B-YYYYMMDDHH24MM.csv
+Daily: RTBM-LMP-DAILY-BUS-YYYYMMDD.csv
+Monthly: RTBM-LMP-MONTHLY-BUS-YYYYMMDD.csv
+Yearly: YYYY-RTBM-LMP-BUS-ANNUAL-ROLLUP.csv
+Frequency: Monthly, Daily, 5-minute interval, Annual 
+**Yearly File will be zipped**
+
+LMP by Location
+Description: LMP data (MEC, MCC, MLC components) as calculated by RTBM, organized by settlement location. Includes Balancing Authority Area designation with Public Data release 1.35.File Names: 
+Latest Interval: RTBM-LMP-SL-latestInterval.csv
+Interval: RTBM-LMP-SL-YYYYMMDDHH24MM.csv
+Daily: RTBM-LMP-DAILY-SL-YYYYMMDD.csv
+Monthly: RTBM-LMP-MONTHLY-SL-YYYYMM.csv
+Yearly: YYYY-RTBM-LMP-SL-ANNUAL-ROLLUP .csv 
+Frequency: Monthly, Daily, 5-minute interval, Annual 
+**Yearly File will be zipped**
+
+MCP
+Description: 5-minute MCP for RegUPService, RegDNService, RegUP-Mile, Reg-DN-Mile, Spin, and Supp organized by Reserve Zone. Includes Balancing Authority Area designation with Public Data release 1.35.File Names: 
+Latest Interval: RTBM-MCP-latestInterval.csv
+Interval: RTBM-MCP-YYYYMMDDHH24MM.csv
+Daily: RTBM-MCP-DAILY-YYYYMMDD.csv
+Yearly: RTBM_MCP_YYYY .csv 
+Frequency: Monthly, Daily, 5-minute interval, Annual 
+**Yearly File will be zipped**
+
+Market Clearing 
+Description: Provides a summary of market clearing data for each RTBM solution for each operating day. Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name: RTBM-MC-YYYYMMDD.csv
+Frequency: Daily
+Operating Reserves
+Description: 5-minute cleared OR including Regulation-Up, Regulation-DN, Spinning, and Supplemental organized by Reserve Zone.  Total for each Balancing Authority Area will be at end of each report and includes Balancing Authority Area designation for each zone with Public Data release 1.35. Latest Interval File Name: RTBM-OR-latestInterval.csvFile Name: RTBM-OR-<YEAR><MONTH><DAY><HOUR><MINUTE>.csvDST File Name: RTBM-OR-<YEAR><MONTH><DAY><HOUR><MINUTE>d.csvFrequency: Every five minutes
+
+Scarcity Demand Curve 
+Description: Output files by scarcity demand curve types, 5 files (Operating Reserve, Reg Up, Reg Down, Ramp, and Uncertainty). Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name(s):
+SCARCITY-DEMAND-OR-YYYYMMDD.csv
+SCARCITY-DEMAND-RAMPUP-RAMPDN-YYYYMMDD.csv
+SCARCITY-DEMAND -REGDN-YYYYMMDD.csv
+SCARCITY-DEMAND -REGUP-YYYYMMDD.csv
+SCARCITY-DEMAND -UNCUP-YYYYMMDD.csv
+Frequency: Daily
+
+Operational Data (Operations)
+All OP files will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.
+
+Capacity Obligation
+Description: Provides current online obligation and online capacity for the 5-minute interval.  Used for the corresponding chart on the SPP GO app. One file for each Balancing Authority Area with Public Data release 1.35.
+File Names: 
+capacity_obligation_sppgo_SPP.csv
+capacity_obligation_sppgo_SWPW.csv
+Frequency: 5-minute interval
+Permanent Flowgates 
+Description: Permanent SWPP Flowgates
+File Name: Flowgates.csv
+Frequency: As Needed
+Temporary Flowgates 
+Description: Temporary SWPP Flowgates
+File Name: Temp_Flowgate.csv
+Frequency: As Needed
+Archive Temporary Flowgates 
+Description: Archive Temporary SWPP Flowgates
+File Name: Temp_Flowgate_Archive.csv
+Frequency: As Needed
+Ramp Uncertainty
+Description: Provides the Ramp Uncertainty MW amount for RampUP and RampDN. Includes Parent Reserve Zone designation with Public Data release 1.35. 
+File Name: Ramp-Uncertainty-YYYYMMDD.csv
+Frequency: Monthly
+Regulation Performance by MP
+Description: Report showing Regulation Up Score & Regulation Down Score by market participant.  (MP names masked)  
+File Name: Month_YYYY_Regulation_Performance.csv
+Frequency: Monthly
+Variable Energy Resource (VER) Curtailments
+Description: 5 minute interval for SPP total VER curtailment (not per resource). Includes Balancing Authority Area designation with Public Data release 1.35.
+Wind re-dispatch curtailments 
+Follow flag is set by RTBM and the wind resources are dispatched below their forecast 
+Wind manual curtailments 
+There is a manual dispatch for the wind resource that is below the resource's forecast
+File Name(s): 
+VER-Curtailments-YYYYMMDD.csv
+VER-Curtailments-MONTHLY-YYYYMM.csv
+YYYY-VER-Curtailments-ANNUAL-ROLLUP.csvFrequency: Daily, Monthly, Yearly
+Operator Initiated Commitments
+Operator initiated commitments will be compiled and reported each day.  At the end of each month, the commitments will be rolled up into a single monthly file.  At the end of each year, these will be rolled into a single yearly file.
+File Name(s): 	
+OPERATOR_INITATED_COMMITMENTS-<YEAR><MONTH><DAY>.csv
+OPERATOR_INITATED_COMMITMENTS -<YEAR><MONTH>.csv
+OPERATOR_INITATED_COMMITMENTS -<YEAR>.zip  
+Frequency: Daily, Monthly, Yearly	
+Ramp Sharing
+Description:  The file will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.  Per 4.1.6 of Protocols SPP may allow the sharing of ramp information ranging from “no sharing” to “100% sharing”.  Current setting for this report is at 100% Contingency Reserve Ramp Sharing and 50% Regulation Ramp Sharing.  
+File Name: RAMP_SHARING.csv
+Frequency: Daily (previous file will be overwritten)
+
+Available Outage Maintenance Margin
+Description: The remaining amount of MWs available for generation outages to be scheduled for the given day. This number is calculated from a Balancing Authority Area Capacity standpoint. Example: If a given MKTDAY has 500 Additional MWs Available for Maintenance, then an outage submission of a generator across that MKTDAY with a max capability of up to and including 500 MWs would be acceptable. An outage submission of a generator across that MKTDAY with a max capability over 500 MWs would be denied. Please note that this margin is one of many criteria used in determining if a generation outage may be approved. A generation outage may be denied for other reasons even if it falls within the acceptable MW range based on the calculated margin. One file for each Balancing Authority Area added with Public Data release 1.35.
+File Name(s): 
+AvailableOutageMaintenanceMargin_SPP.csv
+AvailableOutageMaintenanceMargin_SWPW.csv
+Frequency: Daily (previous file will be overwritten)
+Capacity of Generation on Outage
+Description:  7 day outlook for MW of generation on outage by fuel type (including submitted CROW outages and offered Commit Status = OUTAGE). Includes Balancing Authority Area designation with Public Data release 1.35.
+File Name(s): Capacity-Gen-Outage-YYYYMMDD.csv
+Frequency: Daily
+Contingency Reserve Deployment
+Description: Monthly summary for previous month Contingency Reserve Deployment. One file for each Balancing Authority Area added with Public Data release 1.35.
+File Name(s): 
+Contingency-Reserve-Deployment-YYYYMM.csv
+Contingency-Reserve-Deployment-YYYYMM-SWPW.csvFrequency: Monthly
+Generation Mix Historical
+Description:  Generation mix files showing MW of generation by fuel type in use. Each fuel type split by market vs. self-commit status.  Column heading “Average Actual Load” is being changed to “Load” as of release 1.27 and source of the data column is STLF (short-term load forecast).  One file for each Balancing Authority Area added with Public Data release 1.35.
+File Name(s): 
+GenMix2Hour_SPP.csv
+GenMix2Hour_SWPW.csv
+File Name(s): 
+GenMix_YYYY_SPP.csv
+GenMix_YYYY_SWPW.csv
+File Name(s): 
+GenMixYTD_SPP.csv
+GenMixYTD_SWPW.csv
+File Name(s): 
+GenMix365_SPP.csv
+GenMix365_SWPW.csv
+Frequency: Hourly/Daily/Annual
+Historical Tie Flow
+Description: Monthly roll up of Interchange Trend / daily tie flow data. One file for each Balancing Authority Area added with Public Data release 1.35.
+File Name(s): 
+TieFlows_<MON><YEAR>-SPP.csv
+TieFlows_<MON><YEAR>-SWPW.csv
+Frequency: Monthly 
+Hourly Generation Capacity by Fuel Type
+Description:  Previous day (24hrs) generation capacity by fuel type, based on EcoMax used in RT. Includes Balancing Authority Area designation with Public Data release 1.35..
+The latest interval file is overwritten each hour.
+File Name(s): HRLY-GEN-CAP-BY-FUEL-TYPE-LATEST-INTERVAL.csv
+Frequency: Hourly
+File Name(s): HRLY-GEN-CAP-BY-FUEL-TYPE-YYYYMMDD.csv
+Frequency: Daily
+Hourly Load
+Historical load data rolled up at an hourly level and grouped by Balancing Area Name and Control Area (legacy BA). Added BA Name and Forecast Area Type with Public Data release 1.35.
+Daily files deleted after the monthly roll up file is created.
+File Name: DAILY_HOURLY_LOAD-YYYYMMDD.csv
+Frequency: Daily
+File Name: HOURLY_LOAD-YYYYMM.csv
+Frequency: Monthly
+
+Peak Load
+Provides peak loads in MWs for every month in each interconnection and includes the interval in which each month's peak load occurred. 
+Files replaced monthly.
+File Name: Peak_Load_by_Month.csv
+Frequency: Monthly
+
+
+Mid-Term Load Forecast (MTLF) vs. Actual
+Description: Hourly load forecast data for the SPP footprint (system-wide, separated by Balancing Authority Area with Public Data release 1.35) for +7 days (actual RT load shown is averaged by hour as well).
+File Name: OP-MTLF-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+DST File Name: OP-MTLF-<YEAR><MONTH><DAY><HOUR><MINUTE>d.csv
+Frequency: Every hour
+Mid-Term Resource Forecast (MTRF)
+Description: System-wide wind and solar forecast data for +144 hours organized by interval.  Added Balancing Authority Area designation with Public Data release 1.35.
+File Name: OP-MTRF->YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Every hour
+Resource Forecast by Reserve Zone
+Description:  Wind and Solar Forecast for the next 7 days and Actual for the previous 24hrs by Reserve Zone. Added Balancing Authority Area designation with Public Data release 1.35.
+File Name: RF_RESERVE_ZONE-YYYYMMDD.csv
+Frequency: Every hour
+
+Short-Term Load Forecast (STLF) vs. Actual
+Description: 5-minute load forecast data for the SPP footprint (system-wide) for +/- 10 minutes. Added Balancing Authority Area designation with Public Data release 1.35.
+File Name: OP-STLF-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+DST File Name: OP-STLF-<YEAR><MONTH><DAY><HOUR><MINUTE>d.csvFrequency: Every five minutes
+
+Short-Term Resource Forecast (STRF)
+Description: System-wide wind and solar forecast data for +4 hours and including actual wind and solar resource totals from previous intervals. Added Balancing Authority Area designation with Public Data release 1.35.
+File Name: OP-STRF-<YEAR><MONTH><DAY><HOUR><MINUTE>.csv
+Frequency: Every five minutes
+TCR Market
+The file will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.
+Daily Funding By Constraint 
+Description: Day-Ahead vs TCR funding on each DA binding constraint aggregated by day.
+File Name: TCR-CONSTRAINT-DAILY-YYYYMMDD.csv
+Frequency: Weekly on a 2 Week delay   
+Electrically Equivalent Settlement Locations 
+Description: Electrically Equivalent Settlement Locations.  Current report moved from TCR Market/ TCR Reports to the Public / TCR Market section on the SPP Portal.
+File Name: 2016-Monthly-TCR-Auction-XX-PROD_EESL-PAIRS.csv
+Frequency: Per TCR Allocation / Auction
+Monthly Funding By Constraint
+Description: Day-Ahead vs TCR funding on each DA binding constraint aggregated by month.
+File Name: TCR-CONSTRAINT-201510.csv
+Frequency: Monthly On a 2 Month delay
+FAQ
+Description: This document contains some of the frequently asked questions.
+File Name: TCR Markets Frequently Asked Questions.PDF
+Frequency: As needed
+Reference Prices 
+Description:  Settlement Location path prices used to calculate credit collateral requirements for both submission into a TCR auction and owned TCRs.
+File Name(s):
+TCR_REF_PRICES_MM-DD-YYYY_MM_DD_YYYY_”month”_ON(or OFF)_PEAK.csv    
+TCR_REF_PRICES_MM-DD-YYYY_MM_DD_YYYY_”season”_ON(or OFF)_PEAK.csv     
+Frequency: Monthly / Ad Hoc
+TCR Allocation Historical Results  
+Description: Shows the amount of ARR MWs awarded and the Binding Constraints for that market. 
+File Name(s): 	2020_Monthly_ARR_Allocation_11_PROD_AGGREGATED_ARRS.csv 2020_Monthly_ARR_Allocation_11_PROD_BINDING_CONSTRAINT.csv
+Frequency: After each ARR Allocation Market is posted. 
+TCR Auction Historical Results 
+Description: Shows the amount of TCR MWs awarded, the Auction Clearing Price, and the Binding Constraints for that market. 
+File Name(s): 	2020_Monthly_TCR_Auction_11_PROD_Round_1_AUCTION_CLEARING_PRICE.csv, 2020_Monthly_TCR_Auction_11_PROD_Round_1_AUCTION_RESULTS.csv, and 2020_Monthly_TCR_Auction_11_PROD_Round_1_BINDING_CONSTRAINT.csv
+Frequency: After each TCR Auction Market is posted.
+TCR Calendar 
+Description: TCR Market Calendar for the year, Outlook files and MP Guide for the TCR Market Calendar 
+File Name(s): 	MP Guide SPP 2020 Congestion Hedging.pdf
+Congestion Hedging 2020 Calendar.pdf
+Congestion Hedging 2020 Market Outlook Files.zip
+Frequency: Once a year
+TCR Product Period Hours 
+Description: Number of Hours for each Defined TCR Product Period.  
+File Name: TCR-PRODUCT-PERIOD-HOURS.csv
+Frequency: Annual
+
+Real-Time Market Data (IM Charts)
+Graphing provided on SPP.org.  On demand file downloads will be in the CSV format. The delimiter will be a comma; column headers will be included in the file. Public Data release 1.35 added details for interactive charts that are supported by Tableau. No downloadable data is available for these charts. Many charts will have separate charts for each BAA by RTO Expansion go live date. More to come on these.
+
+DBDA Commitments vs Load Forecast
+Description: Weekly generation stack by fuel type vs load forecasts from most recent Intra-day Reliability Unit Commitment and Day-Before Day Ahead Reliability Unit Commitment studies.
+ACE Chart
+Description: The Area Control Error within the RTO control area for each minute.
+File Names: 
+ace.csv
+ace_1min.csv
+ace_10min.csv
+ace_prev_year_10min.csv
+Frequency: Continuous Graphing
+
+Forecast vs. Actual
+Description: The actual wind, actual solar and actual load is updated every five minutes and represent an integrated 5minute average. The intent of the display is to show what the latest forecast data SPP has in the system at any given time. Because the data can be updated either hourly or every 5minutes, the Actual vs Forecast comparison will always be the error in the previous hour or previous 5 minutes.  Beginning with Public Data release 1.19 (July 20, 2017) additional columns for solar data were added (STSF, MTSF, Actual Solar). 
+File Name: summaryForecast.csv
+Frequency: Continuous Graphing
+Generation Mix
+Description: Pie chart view of current generation mix percentage by fuel type. 
+File Name: GenMixInclSelf2Hour.csv
+Frequency: Continuous Graphing
+Generation Mix Rolling 365
+Description: Graphic view (mw) of generation mix by fuel type for the past 365 days
+File Name: GenMix365.csv
+Frequency: Continuous Graphing
+Generation Mix YTD
+Description: Graphic view (mw) of generation mix by fuel type for beginning January 1st of current year
+File Name: GenMixYTD.csv
+Frequency: Continuous Graphing
+Hub and Interface Prices
+Description: Graphic view (mw) of generation mix by fuel type for beginning January 1st of current year
+File Name: DailyRTBMLMP.csv
+Frequency: Continuous Graphing
+Interchange Trend
+Description: Graphic view of tie-flow listing SPP Net Scheduled Interchange and SPP Net Actual Interchange.  24hrs future NSI data shown.      
+File Name: TieFlows.csv
+Frequency: Continuous Graphing
+Real-Time Reliability
+Included with Public Data release 1.35, the below are all interactive Tableau charts. There will be no downloadable data for these charts at this time. 
+Capacity Outlook
+Description: Pie chart view of current generation mix percentage by fuel type.
+
+Forecast Interchange
+Description: 5-minute breakdown (up to 48 hours in the future) of Scheduled Interchange broken down by direction and priority (Firm/Non-firm).  
+
+Net Interchange
+Description: Algebraic sum of all scheduled megawatt transfers in and out of Southwest Power Pool on a 5-minute basis.  
+RT Remaining Reserves Gauge
+Description: Gauge of remaining reserves
+
+Remaining Reserves
+Description: Hourly reserves (15-minute ramp able capacity) for current operating day up to present time (CPT). 
+Operations Reports
+The file will be in the CSV format. The delimiter will be a comma; column headers will be included in the file.
+Mileage Factor
+Description: REGUP and REGDN Mileage Factor by Hour Ending. Added Balancing Authority Area designation with Public Data release 1.35.
+File Name: MILEAGE_FACTOR.csv
+Frequency: Daily
+
+State Estimator Data
+Description:  Market Participants and Transmission Operators have requested that SPP make snapshots of the EMS model used in Operations and Real-Time Markets available for download[1]. These snapshots include the items listed below and will be posted after-the-fact.
+The Network Model (modeling of generators, lines, transformers, etc.) for the SPP region and surrounding portions of the interconnect. This includes device ratings, characteristics, connectivity, naming conventions, etc. A separate model will be posted for the Eastern Interconnect and Western Interconnect. The near real-time power flows for that snapshot in time (MW output of generators, MW flow on lines, MW flow on transformers, etc.) 
+The near real-time switching and outage status of generators, lines, transformers, etc. 
+The model has not been solved in an offline power flow
+
+Frequency: State Estimator data will be posted
+4 times daily for Reliability use (Posting at 5:00 a.m. /p.m. & 11:00 a.m. /p.m.)
+4 times daily for Markets use (Data from 0500hrs, 1100hrs, 1700hrs and 2300hrs two weeks prior) will post at 9:00a.m.
+ 
+ File will be in Siemens PSSE Raw File (v31) format per naming convention below:
+StateEstimator_YYYYMMDDHHmm.raw
+YYYY: four digit year
+MM: two digit month
+DD: two digit day
+HH: two digit hour
+mm: two digit minute
+*Access to this data requires a signed NDA, please submit request to SPP Customer Relations via RMS, for NDA verification and access instructions.  
+

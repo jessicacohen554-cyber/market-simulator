@@ -11,8 +11,8 @@
     "capacity_market_clearing": true,
     "datacenter_load_path": "mid",
     "correlated_forced_outage": true,
-    "cache_key": "b08a51a33ab6bb9d",
-    "bundle": "/home/user/market-simulator/results/MISO/b08a51a33ab6bb9d",
+    "cache_key": "f1b3caa22b3f14ff",
+    "bundle": "/home/user/market-simulator/results/MISO/f1b3caa22b3f14ff",
     "solved_years": [
       2026,
       2027,
@@ -22,33 +22,33 @@
     ],
     "n_solved_years": 5,
     "error": null,
-    "total_wall_s": 1577.7,
-    "global_peak_rss_mb": 9884.3,
+    "total_wall_s": 1879.5,
+    "global_peak_rss_mb": 9983.3,
     "per_year_perf": [
       {
         "year": 2026,
-        "wall_s": 387.5,
-        "peak_rss_mb": 9884.3
+        "wall_s": 594.3,
+        "peak_rss_mb": 9983.3
       },
       {
         "year": 2027,
-        "wall_s": 191.0,
-        "peak_rss_mb": 8036.8
+        "wall_s": 225.7,
+        "peak_rss_mb": 8361.5
       },
       {
         "year": 2028,
-        "wall_s": 258.8,
-        "peak_rss_mb": 8186.4
+        "wall_s": 271.9,
+        "peak_rss_mb": 8382.3
       },
       {
         "year": 2029,
-        "wall_s": 323.3,
-        "peak_rss_mb": 8862.2
+        "wall_s": 353.8,
+        "peak_rss_mb": 9054.7
       },
       {
         "year": 2030,
-        "wall_s": 416.5,
-        "peak_rss_mb": 9347.8
+        "wall_s": 433.4,
+        "peak_rss_mb": 9393.3
       }
     ],
     "year_summary": [
@@ -79,9 +79,9 @@
       {
         "year": 2028,
         "reserve_margin": -0.1359,
-        "lw_price": 91.94,
+        "lw_price": 91.97,
         "max_hourly_price": 1562.4,
-        "co2_mt": 382.43,
+        "co2_mt": 381.3,
         "hours_ge_500": 191,
         "retire_mw": 3627.3,
         "builds_thermal_mw": 2764.1,
@@ -91,9 +91,9 @@
       {
         "year": 2029,
         "reserve_margin": -0.1096,
-        "lw_price": 90.71,
+        "lw_price": 90.73,
         "max_hourly_price": 1409.9,
-        "co2_mt": 390.09,
+        "co2_mt": 387.94,
         "hours_ge_500": 157,
         "retire_mw": 2670.9,
         "builds_thermal_mw": 8399.2,
@@ -105,7 +105,7 @@
         "reserve_margin": -0.073,
         "lw_price": 206.36,
         "max_hourly_price": 1415.0,
-        "co2_mt": 412.63,
+        "co2_mt": 410.2,
         "hours_ge_500": 866,
         "retire_mw": 1927.1,
         "builds_thermal_mw": 10650.2,
@@ -113,7 +113,7 @@
         "builds_storage_mw": 4000.0
       }
     ],
-    "started_utc": "2026-09-06T07:32:26Z",
+    "started_utc": "2026-09-06T22:53:41Z",
     "bridged_years": [],
     "campaign": "scn-campaign-load-2026-09-06",
     "case": "REF",
@@ -125,7 +125,7 @@
       "ident": "I1",
       "name": "energy balance",
       "status": "PASS",
-      "detail": "max |supply−demand| = 7.16e-09 MW (year 2028); tol 1.0"
+      "detail": "max |supply−demand| = 6.403e-10 MW (year 2028); tol 1.0"
     },
     {
       "ident": "I2",
@@ -137,7 +137,7 @@
       "ident": "I3",
       "name": "unserved/dump",
       "status": "FAIL",
-      "detail": "2026: slack 0.02% of load (19 h, 111.6 GWh, peak 13,977 MW); 2027: slack 0.03% of load (42 h, 228.9 GWh, peak 18,040 MW); 2028: slack 0.09% of load (153 h, 698.7 GWh, peak 22,575 MW); 2029: slack 0.06% of load (104 h, 506.2 GWh, peak 19,225 MW); 2030: slack 0.32% of load (367 h, 2,824.2 GWh, peak 24,221 MW)"
+      "detail": "2026: slack 0.02% of load (19 h, 111.6 GWh, peak 13,977 MW); 2027: slack 0.03% of load (42 h, 228.9 GWh, peak 18,040 MW); 2028: slack 0.09% of load (147 h, 698.7 GWh, peak 23,856 MW); 2029: slack 0.06% of load (110 h, 506.2 GWh, peak 20,322 MW); 2030: slack 0.32% of load (361 h, 2,824.2 GWh, peak 24,343 MW)"
     },
     {
       "ident": "I4",
@@ -203,14 +203,14 @@
       "ident": "I14",
       "name": "price sanity",
       "status": "WARN",
-      "detail": "2028: LW $91.9 outside [0.5×,3.0×] CC MC $29.3; 2029: LW $90.7 outside [0.5×,3.0×] CC MC $29.3; 2030: LW $206.4 outside [0.5×,3.0×] CC MC $29.3"
+      "detail": "2028: LW $92.0 outside [0.5×,3.0×] CC MC $29.3; 2029: LW $90.7 outside [0.5×,3.0×] CC MC $29.3; 2030: LW $206.4 outside [0.5×,3.0×] CC MC $29.3"
     }
   ],
-  "registered_utc": "2026-09-06T07:32:26Z",
+  "registered_utc": "2026-09-06T22:53:41Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "9170899f8ebc",
-    "scored_at_date": "2026-09-06T07:32:26Z",
-    "cache_epoch": "b08a51a33ab6bb9d"
+    "scored_at_sha": "95ad76d4cd81",
+    "scored_at_date": "2026-09-06T22:53:41Z",
+    "cache_epoch": "f1b3caa22b3f14ff"
   }
 }

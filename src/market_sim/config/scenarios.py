@@ -1569,6 +1569,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "pjm_interface_feed_admissibility_gate",
+    # pjm-169 F4: the solve-year vintage identification point of the gas-offer
+    # net-revenue margin (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §2;
+    # GATED default False => the anchor stays the frozen 2023-2025 window mean
+    # exactly as before, byte-identical). Dropped from the hash at its declared
+    # False so every pre-existing key of all six ISOs is byte-stable; an armed
+    # run resolves a different anchor into gas_offer_margin_anchor and so keys
+    # distinctly through that field too. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "gas_offer_margin_anchor_vintage",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2126,6 +2135,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "capacity_screen_peak_measured_hindcast": "False",
     "eia860_vintage_tracks_solve_year": "False",
     "pjm_interface_feed_admissibility_gate": "False",
+    "gas_offer_margin_anchor_vintage": "False",
 }
 
 
@@ -8824,8 +8834,11 @@ class ScenarioConfig:
     # the reserve balance by lowering its RHS, so the co-opt LP stops pricing a
     # scarcity adder in non-scarce hours from omitting load-side reserve supply
     # (it already counts thermal headroom + storage). Built by
-    # scripts/data/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025 and
-    # scripts/data/build_ercot_as_2023.py for 2023. GATED — alters dispatch volumes,
+    # scripts/data/build_ercot_as_withholding.py (rrsufr_mw) for 2024/2025,
+    # scripts/data/build_ercot_as_2023.py for 2023 and
+    # scripts/data/build_ercot_as_backyear.py for 2018-2022 (measured 60-Day
+    # Load Resource awards; 2020-2022 built 2026-09-06, ercot-252 — consumed
+    # only where the from_year below admits them). GATED — alters dispatch volumes,
     # re-run the volume calibration. Default off; ERCOT co-opt only.
     ercot_load_resource_reserve_from_year: int = 2023  # First weather year the
     # load-resource RRS-UFR credit applies to. Default 2023 = credit every
@@ -13922,6 +13935,52 @@ class ScenarioConfig:
     # run_config.json records the resolved values rather than a lookup
     # indirection (rule 21 [R-REGISTRY]).
     gas_offer_margin_anchor_by_zone: dict[str, float] | None = None
+    # SOLVE-YEAR VINTAGE identification point (pjm-169 F4; default OFF,
+    # byte-identical off). The SAME measurement as ``gas_offer_margin_anchor``
+    # above, evaluated on the year the LP is solving instead of on a frozen
+    # 2023-2025 training window.
+    #
+    # THE DEFECT (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §1).
+    # ``scripts/data/derive_gas_offer_margin_anchor.py`` defines the anchor as
+    # "the mean of the model's own merit-order delivered-gas series
+    # (``_gas_series``) over the training window 2023-2025", and states the
+    # identity that makes it meaningful: **at ``fuel == anchor`` the reformed
+    # offer reduces EXACTLY to the registered band multiplier** -- "the
+    # identification point, not a tunable". The term
+    # ``markup_hr x (anchor - fuel)`` is a LINEAR extrapolation with no
+    # saturation, so the further a year's delivered gas sits from the window
+    # mean the further the offer departs from the band multiplier the ISO was
+    # calibrated with. In-window that is small by construction. Out of window
+    # it is not: on PJM the in-window abs-max gap is $1.158/MMBtu against
+    # $3.102 at 2022's Henry Hub scalar before basis, and the sign flips --
+    # when ``fuel > anchor`` the mechanism marks gas offers DOWN, by the most
+    # in the year gas is dearest, which is exactly where the identification
+    # says nothing.
+    #
+    # RULE 21 [R-DOF]: ZERO free parameters. Nothing is fitted, chosen or
+    # swept; the formula is unchanged and only the year it is evaluated on
+    # moves. RULE 13 [R-MEASURED] admissible on its own test -- a forecast
+    # year's anchor is the mean of that year's own forecast gas trajectory and
+    # responds when the trajectory moves; no price, residual or actual
+    # dispatch is read. It is NOT the rule 1 [R-STRUCT] offer-curve carve-out
+    # and does not touch it: the band multipliers are untouched in every year,
+    # and this restores the condition under which they mean what they were
+    # calibrated to mean. It is not per-year FITTING either -- rule 1(b) binds
+    # the CONFIG, which here is one boolean and one formula identical in every
+    # year, while the quantity that varies is a measured fuel level, the same
+    # class of object as ``gas_prices`` itself.
+    #
+    # Requires ``gas_offer_net_revenue_margin``. Resolved by the backcast
+    # harness AFTER the hub-overlay and monthly-actuals flags are applied (they
+    # are set later in ``run_calibration.run_year`` than the ISO-anchor lookup,
+    # so resolving it at the lookup would measure a series the offer path never
+    # prices against), and written into the recorded config so
+    # run_config.json carries the value the solve used, never a lookup
+    # indirection (rule 24 [R-REGISTRY]). A zone-resolved anchor
+    # (``gas_offer_margin_zonal_anchor``) or a band-scoped rebasis anchor
+    # (ERCOT-118/119 ``margin_anchor_*``) still takes precedence, so the
+    # identification points never stack (rule 19 [R-ONE-MECH]).
+    gas_offer_margin_anchor_vintage: bool = False
 
     # MISO POSITION-conditioned MEASURED offer surface (miso-151) — default OFF.
     # SUBSUMES ``gas_offer_net_revenue_margin`` on MISO gas tranches above the
