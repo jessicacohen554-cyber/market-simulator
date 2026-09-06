@@ -34,11 +34,25 @@ FOSSIL = {
 
 
 def arm_key(root: Path, iso: str, case: str) -> str:
-    """Return the single cache key under one arm's out-dir."""
+    """Return one arm's cache key, linking its bundle into the shared cache root.
+
+    Each arm solves into its own ``--out-dir``, so its bundle sits at
+    ``<out-dir>/<ISO>/<key>/`` while ``cache.CACHE_ROOT`` is the single
+    ``results/`` root. The link makes the bundle readable through the same
+    seam ``report_scenario_deltas.py`` uses, at a gitignored path
+    (.gitignore section 7, ``results/<ISO>/``).
+    """
     base = root / iso.lower() / case / iso.upper()
     keys = [p for p in base.iterdir() if p.is_dir() and (p / "config.yaml").exists()]
     if len(keys) != 1:
         raise SystemExit(f"{base}: expected 1 cache key, found {len(keys)}")
+    link = Path(cache.CACHE_ROOT) / iso.upper() / keys[0].name
+    link.parent.mkdir(parents=True, exist_ok=True)
+    if link.is_symlink():
+        link.unlink()
+    elif link.exists():
+        raise SystemExit(f"{link} exists and is not a symlink -- refusing")
+    link.symlink_to(keys[0].resolve())
     return keys[0].name
 
 
