@@ -244,3 +244,147 @@ gate stops the arm there rather than at the span.
 
 *(nyiso-199, 2026-09-06. ZERO solves. Nothing registered, nothing promoted, no `ScenarioConfig`
 field added. Keeper unchanged: `2026-09-06-nyiso-196-extract-basis`.)*
+
+---
+
+# §8 — THE SCREENS RAN. **2023 CLEARS. 2025 STOPS — and NOT on the pre-named risk.** The arm is killed at the screen, the span was never spent, and the thing that stopped it is a new finding.
+
+**Owner ruling** (PREREG Addendum A, pushed before the field existed): arm both bands, screen
+2023 + 2025. Executed exactly. **Field:** `nyiso_ct_peaker_bands_measured` (gated, default off,
+NYISO-scoped, registered in `_CACHE_KEY_OPTIONAL_FIELDS` with its pinned default in the same
+commit; base matrix row + a cell in all six shards, same commit). **Two solves, both one-year
+throwaway probes** — never registered, deleted before merge (rule 29(c)); every number this
+session will ever cite from them is in this section and in
+`_nyiso199_screen_gates_{2023,2025}.json`.
+
+## 8.1 Pre-solve F-gates: all four PASS on the BUILT field
+
+The field reproduces the phase-0 measurement-only rebuild exactly. Resolved bands in every year:
+`committed 0.843, econ_low 0.661, econ_high 0.658`, with `peak 4.0`, `pct_peaking 7.0` and
+`econ_low_share 0.526` **untouched**.
+
+| gate | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| **F-1** rows moved (predicted) | 101 (101) | 103 (103) | 103 (103) — all `CT_PEAKER` econ+committed, **zero elsewhere** |
+| **F-2** `pmax` / `availability` max‖Δ‖ | 0.0 / 0.0 | 0.0 / 0.0 | 0.0 / 0.0 |
+| **F-3** Δ committed / econ $/MWh | −17.41 / −13.68 | −17.41 / −13.69 | −17.35 / −13.68 |
+| **F-4** Δ peak | 0.00 | 0.00 | 0.00 |
+
+## 8.2 SCREEN A — 2023, the footprint year: **CLEAR on all four gates**
+
+| class | keeper TWh | screen TWh | Δ | C1 keeper | C1 screen | actual |
+|---|---:|---:|---:|---|---|---:|
+| **`CT_PEAKER`** | 0.421 | **1.418** | **+0.997** | −1.69 TWh, −1.3 pp | **−0.70 TWh, −0.5 pp** | 2.114 |
+| `ST_GAS` | 9.952 | 9.322 | −0.630 | +1.81, +1.6 pp | **+1.18, +1.1 pp** | 8.141 |
+| `CC_REGULAR` | 33.840 | 33.571 | −0.269 | +0.83, +1.2 pp | **+0.56, +0.9 pp** | 33.012 |
+| `CC_CHP` | 15.751 | 15.667 | −0.084 | +0.95, +1.0 pp | **+0.86, +0.9 pp** | 14.802 |
+| `CT_CHP` | 1.500 | 1.467 | −0.033 | | | |
+| import | 23.341 | 23.339 | −0.003 | | | |
+
+* **S-1 PASS** — +0.997 TWh, inside the arm's own 2.627 TWh pre-solve reachability bound. **59 % of
+  `CT_PEAKER`'s gap to its meter closes.**
+* **S-2 PASS** — gas-family total **−0.023 TWh**; the largest non-gas move is import at 0.003 TWh.
+  A clean within-family reallocation.
+* **S-3 PASS** — **zero C1 PASS → FAIL flips**; C3a **+4.6 % → +2.9 %** (PASS, closer to zero);
+  C3b NRMSE 0.119 unchanged.
+* **C8 / D-4 PASS** — D-2 passes both sides; the same two pre-existing 2023 `ST_GAS` D-4 rows
+  (plants 2480, 8906) on both, **no new row**; `CT_PEAKER` still carries no forcing at all.
+
+**Every class that moves, moves toward its actual.** The observed price move is **−1.7 %** against
+the crossing indicator's −2.75 % — the indicator over-predicts the fall.
+
+## 8.3 SCREEN B — 2025, the exposed year: **STOP**
+
+**The pre-named C3a-2025 risk did NOT land.** C3a goes **−6.9 % → −9.1 %** against a ±10 % band —
+degraded, still **PASS**, with 0.9 pp of margin, not the ~−9.6 % the indicator implied and nowhere
+near the failure nyiso-198's unscreened year produced.
+
+| class | keeper TWh | screen TWh | Δ | actual (prelim EIA-923) |
+|---|---:|---:|---:|---:|
+| **`CT_PEAKER`** | 1.356 | **2.672** | **+1.316** | 2.851 — **93.7 % of the gap closed** |
+| `ST_GAS` | 9.606 | 8.745 | −0.861 | 13.712 |
+| `CC_REGULAR` | 35.102 | 34.879 | −0.223 | 33.544 |
+| `CC_CHP` | 20.344 | 20.205 | −0.139 | 16.962 |
+| import | 19.335 | 19.293 | −0.042 | |
+
+S-1 **PASS** (+1.316 inside the 2.142 bound). S-2 **PASS** (gas family +0.016 TWh). S-3 **PASS**
+(no C1 flips — 2025's class cells are SKIPPED on the preliminary EIA-923 vintage; C3a PASS as
+above; C3b 0.154 unchanged).
+
+**C8 / D-4 STOPS IT, and the failure is a genuine structural defect the arm introduces.** The
+`nyiso_gas_commitment_bridge × CC_REGULAR` unit-conduct rows, keeper vs screen, 2025:
+
+| plant | keeper: floored TWh / binding h / measured median MW / zero-share | screen | verdict |
+|---|---|---|---|
+| 50292 | 0.1140 / 2,985 / 57.6 MW / 16.1 % | 0.1139 / 2,982 / 59.4 / 14.1 % | pass → pass |
+| 2539 | 0.1023 / 415 / 660.8 / 2.9 % | 0.1036 / 421 / 660.8 / 2.9 % | pass → pass |
+| 55405 | 0.0634 / 279 / 281.0 / 6.5 % | 0.0724 / 319 / 281.0 / 13.2 % | pass → pass |
+| **7314** | **not floored at all** | **0.0669 / 3,210 h / 0.0 MW / 76.2 %** | **— → FAIL** |
+| 57185 | 0.0334 / 174 / 242.8 / 4.6 % | 0.0377 / 195 / 275.6 / 4.1 % | pass → pass |
+| **50978** | **not floored at all** | **0.0141 / 352 h / 0.0 MW / 69.9 %** | **— → FAIL** |
+| 56940 / 56234 / 54574 | pass | pass | unchanged |
+
+The arm brings **two plants the keeper never floors** into the commitment bridge's binding set, and
+both have a **measured median output of 0.0 MW** over the hours the floor asserts they must be
+online — 7314 for **3,210 hours** with the meter dark in 76.2 % of them. Rule 17
+`[R-FLOOR-WINDOW]` names this exactly: *"A floor binding in hours its own driver evidence says the
+class is offline is a bug by definition, whatever it does to the residual."*
+
+**The mechanism is legible.** Cheaper CT capacity displaces `CC_REGULAR` in the **P0** base-cost
+pass; two plants whose P0 pattern previously never produced a committed run now show a short
+detected run, which `nyiso_gas_bridge_min_run` **extends to the class min-run and floors** — at
+plants the meter says are off. This is a **P0-pattern dependence in the bridge**, not a defect in
+the band grounding: the arm changes no floor and touches no bridge parameter. It is nonetheless a
+real defect **caused by** arming the arm, and the pre-registered gate is the gate.
+
+**Under rule 29 the arm is STOPPED at the screen. The 2023–2025 span was never spent, no bundle
+was produced, and nothing is registered.**
+
+## 8.4 The recommendation: **DO NOT PROMOTE on this evidence — and the arm is not dead**
+
+Against the owner's standing formula (*"if structural integrity improves but gates regress that may
+still be a keeper"* — permissive, not automatic), stated honestly on both halves:
+
+* **The structural half is strong and is not in doubt.** Zero free parameters, no DOF entry, values
+  taken from the class's own registered measurement; two independent ex-ante grounds (a rule 19
+  double count that is live on this very keeper, and an OPEN ROOT CAUSE the config declares by
+  name); the offer delta is surgical and fuel-invariant; and where it clears, **every class moves
+  toward its actual** — `CT_PEAKER` closing 59 % of its gap in 2023 and 93.7 % in 2025.
+* **The pre-named risk was screened and survived.** C3a-2025 −9.1 %, PASS. That is precisely what
+  screening the exposed year was for, and it worked.
+* **But a protective gate fires on a defect the arm itself creates.** Two plants floored for
+  3,210 and 352 hours against dark meters is not a residual regression — it is the thing rule 17
+  calls a bug by definition, and C8/D-4 is protective tier. A keeper that introduces it would be
+  buying a real volume gain with a fabricated commitment.
+
+**What the screen bought:** for two one-year solves instead of a full span, it found an interaction
+the span would have buried inside a determination — and it found it in the year that a
+footprint-only screen would never have looked at. That is the nyiso-198 lesson, applied and paying.
+
+## 8.5 Handed forward — the next lever is now specific
+
+1. **THE OBJECT IS THE BRIDGE'S P0-PATTERN DEPENDENCE, NOT THE BAND.** `nyiso_gas_bridge_min_run`
+   extends a short detected P0 run to the class min-run and floors it. When cheaper supply moves CC
+   out of merit, that turns *marginal* plants into *floored* ones at exactly the plants whose meters
+   are dark. The eligibility test should be conditioned on the unit's own measured conduct in the
+   window — the same D-4 statistic the diagnostic already computes — rather than on a P0 pattern
+   that a merit change can manufacture. Fix that, then re-arm this field **paired**, exactly as
+   nyiso-198's `cc_duct_peaking_row_scoped` is waiting to be re-armed paired with a merit repair.
+2. **THE THREE-WAY PAIRING IS NOW THE REAL QUESTION.** `cc_duct_peaking_row_scoped` (cell R) moves
+   energy INTO `CC_REGULAR`; this field moves it OUT. They are opposed, and the bridge sits between
+   them. A session that fixes the bridge can screen all three together on 2023 + 2025 with the
+   gates already written here.
+3. **`ST_GAS` remains closed** (`scuc_load_pocket_commitment`, cell **G**) and should stop being
+   proposed as a merit lever — §2 measured why.
+4. **Plant 7314 context, stated not excused:** it is one of the three plants the fleet builder
+   already reconciles for corrupt EIA-860 summer-capacity rows ("fleet pmax sum 199.5 MW exceeds
+   trusted bound 170.0 MW") and it sits in the bench's `ctOnly` set at ratio 1.43. That does not
+   make the off-window binding acceptable; it makes 7314 the right first plant to look at.
+5. **Repo-wide, outside this lane (rule 25):** the caiso-241 sibling
+   `caiso_ct_peaker_committed_measured` has the same latent silent-no-op exposure through the
+   generic `prb_overrides` channel — its consumer is inside `backcast_config`, which runs *before*
+   `prb_overrides` applies. This field ships a fail-loud guard; the sibling has none.
+
+*(nyiso-199 §8, 2026-09-06. TWO solves, both one-year screens, both deleted before merge. Nothing
+registered, nothing promoted, no span spent. Keeper unchanged:
+`2026-09-06-nyiso-196-extract-basis`.)*

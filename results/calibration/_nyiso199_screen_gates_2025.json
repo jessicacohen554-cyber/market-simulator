@@ -1,0 +1,523 @@
+{
+  "session": "nyiso-199",
+  "year": 2025,
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "screen_bundle": "results/calibration/nyiso199_screen_2025",
+  "prereg": "results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md",
+  "class_energy_twh": {
+    "CC_CHP": {
+      "keeper": 20.344,
+      "screen": 20.205,
+      "delta": -0.139
+    },
+    "CC_REGULAR": {
+      "keeper": 35.102,
+      "screen": 34.879,
+      "delta": -0.223
+    },
+    "CT_CHP": {
+      "keeper": 1.675,
+      "screen": 1.616,
+      "delta": -0.058
+    },
+    "CT_PEAKER": {
+      "keeper": 1.356,
+      "screen": 2.672,
+      "delta": 1.316
+    },
+    "OTHER": {
+      "keeper": 1.948,
+      "screen": 1.948,
+      "delta": 0.0
+    },
+    "ST_CHP": {
+      "keeper": 1.44,
+      "screen": 1.421,
+      "delta": -0.019
+    },
+    "ST_GAS": {
+      "keeper": 9.606,
+      "screen": 8.745,
+      "delta": -0.861
+    },
+    "biomass": {
+      "keeper": 0.672,
+      "screen": 0.672,
+      "delta": 0.0
+    },
+    "hydro": {
+      "keeper": 24.059,
+      "screen": 24.059,
+      "delta": 0.0
+    },
+    "import": {
+      "keeper": 19.335,
+      "screen": 19.293,
+      "delta": -0.042
+    },
+    "nuclear": {
+      "keeper": 28.342,
+      "screen": 28.342,
+      "delta": 0.0
+    },
+    "oil": {
+      "keeper": 1.284,
+      "screen": 1.283,
+      "delta": -0.001
+    },
+    "solar": {
+      "keeper": 0.981,
+      "screen": 0.981,
+      "delta": 0.0
+    },
+    "wind": {
+      "keeper": 7.049,
+      "screen": 7.049,
+      "delta": 0.0
+    }
+  },
+  "gates": {
+    "S1_direction": {
+      "ct_peaker_delta_twh": 1.316,
+      "pre_solve_reachability_bound_twh": 2.1417,
+      "rises": true,
+      "inside_bound": true,
+      "STOP": false,
+      "note": "meter-free: the bound is the arm's own newly-in-the-money MWh (phase 0c D-4)"
+    },
+    "S2_confinement": {
+      "gas_family_total_delta_twh": 0.016,
+      "non_gas_class_deltas_twh": {
+        "import": -0.042
+      },
+      "largest_non_gas_abs_twh": 0.042,
+      "STOP": false,
+      "note": "a within-family reallocation keeps |gas family total| <= |the CT gain|"
+    },
+    "S3_companions": {
+      "C1_cells": {
+        "CC_REGULAR": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 35.102,
+            "actual": 33.544,
+            "share_pp": 1.53,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 34.879,
+            "actual": 33.544,
+            "share_pp": 1.36,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "CC_CHP": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 20.344,
+            "actual": 16.962,
+            "share_pp": 2.71,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 20.205,
+            "actual": 16.962,
+            "share_pp": 2.61,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "CT_PEAKER": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 1.356,
+            "actual": 2.851,
+            "share_pp": -1.09,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 2.672,
+            "actual": 2.851,
+            "share_pp": -0.1,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "ST_GAS": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 9.606,
+            "actual": 13.712,
+            "share_pp": -2.92,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 8.745,
+            "actual": 13.712,
+            "share_pp": -3.56,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "ST_CHP": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 1.44,
+            "actual": 0.8,
+            "share_pp": 0.49,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 1.421,
+            "actual": 0.8,
+            "share_pp": 0.47,
+            "magnitude": "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        },
+        "COAL_BIT": {
+          "keeper": {
+            "status": "SKIPPED",
+            "model": 0.0,
+            "actual": 0.0,
+            "share_pp": 0.0,
+            "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+          },
+          "screen": {
+            "status": "SKIPPED",
+            "model": 0.0,
+            "actual": 0.0,
+            "share_pp": 0.0,
+            "magnitude": "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+          }
+        }
+      },
+      "C1_pass_to_fail_flips": [],
+      "C3a_price_mean": {
+        "keeper": {
+          "status": "PASS",
+          "model": 61.84,
+          "actual": 66.43,
+          "magnitude": "-6.9%"
+        },
+        "screen": {
+          "status": "PASS",
+          "model": 60.42,
+          "actual": 66.43,
+          "magnitude": "-9.1%"
+        }
+      },
+      "C3b_price_shape": {
+        "keeper": {
+          "status": "PASS",
+          "model": 0.154,
+          "magnitude": "NRMSE 0.154"
+        },
+        "screen": {
+          "status": "PASS",
+          "model": 0.154,
+          "magnitude": "NRMSE 0.154"
+        }
+      },
+      "system_price": {
+        "keeper": {
+          "mean": 58.86,
+          "p95": 125.52,
+          "hours_gt_300": 4
+        },
+        "screen": {
+          "mean": 57.446,
+          "p95": 120.7,
+          "hours_gt_300": 4
+        }
+      },
+      "STOP": false
+    },
+    "C8_D4": {
+      "keeper": {
+        "D2_passed": true,
+        "D2_failures": [],
+        "D2_forced_share_of_class": {
+          "|nuclear_mustrun": 0.7822,
+          "|firm_import": 0.2176,
+          "CC_CHP|chp_steam": 0.0027,
+          "CC_REGULAR|nyiso_gas_commitment_bridge": 0.0121,
+          "CT_CHP|chp_steam": 0.001,
+          "ST_CHP|chp_steam": 0.1366,
+          "ST_GAS|reliability_floor": 0.1684,
+          "ST_GAS|nyiso_gas_commitment_bridge": 0.0134,
+          "hydro|hydro_min_flow": 0.2744
+        },
+        "D4_failures_this_year": [
+          "2025 reliability_floor \u00d7 ST_GAS: plant 8006 is floored for 0.0010 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 17 hours the floor actually binds for it (inside h0-23) is 0.000 MW (58.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ],
+        "D4_passed": false,
+        "D4_failures": [
+          "2023 reliability_floor \u00d7 ST_GAS: plant 2480 is floored for 0.0014 TWh (0.1% of the mechanism's forced energy) while its own measured median output over the 153 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2023 nyiso_gas_commitment_bridge \u00d7 ST_GAS: plant 8906 is floored for 0.0463 TWh (37.9% of the mechanism's forced energy) while its own measured median output over the 1400 hours the floor actually binds for it (inside h0-23) is 0.000 MW (74.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2024 reliability_floor \u00d7 ST_GAS: plant 2480 is floored for 0.0002 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 24 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2024 nyiso_gas_commitment_bridge \u00d7 ST_GAS: plant 8906 is floored for 0.0341 TWh (11.6% of the mechanism's forced energy) while its own measured median output over the 1118 hours the floor actually binds for it (inside h0-23) is 0.000 MW (93.4% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2025 reliability_floor \u00d7 ST_GAS: plant 8006 is floored for 0.0010 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 17 hours the floor actually binds for it (inside h0-23) is 0.000 MW (58.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ]
+      },
+      "screen": {
+        "D2_passed": true,
+        "D2_failures": [],
+        "D2_forced_share_of_class": {
+          "|nuclear_mustrun": 0.7822,
+          "|firm_import": 0.2176,
+          "CC_CHP|chp_steam": 0.0036,
+          "CC_REGULAR|nyiso_gas_commitment_bridge": 0.0127,
+          "CT_CHP|chp_steam": 0.001,
+          "ST_CHP|chp_steam": 0.1467,
+          "ST_GAS|reliability_floor": 0.1983,
+          "ST_GAS|nyiso_gas_commitment_bridge": 0.0104,
+          "hydro|hydro_min_flow": 0.2749
+        },
+        "D4_failures_this_year": [
+          "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 7314 is floored for 0.0669 TWh (15.7% of the mechanism's forced energy) while its own measured median output over the 3210 hours the floor actually binds for it (inside h0-23) is 0.000 MW (76.2% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 50978 is floored for 0.0141 TWh (3.3% of the mechanism's forced energy) while its own measured median output over the 352 hours the floor actually binds for it (inside h0-23) is 0.000 MW (69.9% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ],
+        "D4_passed": false,
+        "D4_failures": [
+          "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 7314 is floored for 0.0669 TWh (15.7% of the mechanism's forced energy) while its own measured median output over the 3210 hours the floor actually binds for it (inside h0-23) is 0.000 MW (76.2% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+          "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 50978 is floored for 0.0141 TWh (3.3% of the mechanism's forced energy) while its own measured median output over the 352 hours the floor actually binds for it (inside h0-23) is 0.000 MW (69.9% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+        ]
+      },
+      "STOP": true,
+      "cc_bridge_unit_conduct_rows": {
+        "note": "the full D-4 unit-conduct row set for nyiso_gas_commitment_bridge x CC_REGULAR, keeper vs screen \u2014 retained here because the screen bundle is deleted before merge (rule 29c)",
+        "keeper": [
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "50292",
+            "floored_twh": 0.114,
+            "offwindow_twh": "",
+            "offwindow_share": 0.2793,
+            "binding_hours": 2985,
+            "measured_median_mw": 57.606,
+            "measured_zero_share": 0.1608,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "2539",
+            "floored_twh": 0.1023,
+            "offwindow_twh": "",
+            "offwindow_share": 0.2508,
+            "binding_hours": 415,
+            "measured_median_mw": 660.849,
+            "measured_zero_share": 0.0289,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "55405",
+            "floored_twh": 0.0634,
+            "offwindow_twh": "",
+            "offwindow_share": 0.1554,
+            "binding_hours": 279,
+            "measured_median_mw": 280.983,
+            "measured_zero_share": 0.0645,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "57185",
+            "floored_twh": 0.0334,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0819,
+            "binding_hours": 174,
+            "measured_median_mw": 242.79,
+            "measured_zero_share": 0.046,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "56940",
+            "floored_twh": 0.0079,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0194,
+            "binding_hours": 25,
+            "measured_median_mw": 423.769,
+            "measured_zero_share": 0.0,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "56234",
+            "floored_twh": 0.0057,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0139,
+            "binding_hours": 33,
+            "measured_median_mw": 247.693,
+            "measured_zero_share": 0.0,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "54574",
+            "floored_twh": 0.0026,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0063,
+            "binding_hours": 73,
+            "measured_median_mw": 71.241,
+            "measured_zero_share": 0.1644,
+            "verdict": "pass"
+          }
+        ],
+        "screen": [
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "50292",
+            "floored_twh": 0.1139,
+            "offwindow_twh": "",
+            "offwindow_share": 0.2672,
+            "binding_hours": 2982,
+            "measured_median_mw": 59.407,
+            "measured_zero_share": 0.1405,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "2539",
+            "floored_twh": 0.1036,
+            "offwindow_twh": "",
+            "offwindow_share": 0.2431,
+            "binding_hours": 421,
+            "measured_median_mw": 660.849,
+            "measured_zero_share": 0.0285,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "55405",
+            "floored_twh": 0.0724,
+            "offwindow_twh": "",
+            "offwindow_share": 0.1698,
+            "binding_hours": 319,
+            "measured_median_mw": 280.983,
+            "measured_zero_share": 0.1317,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "7314",
+            "floored_twh": 0.0669,
+            "offwindow_twh": "",
+            "offwindow_share": 0.1569,
+            "binding_hours": 3210,
+            "measured_median_mw": 0.0,
+            "measured_zero_share": 0.7617,
+            "verdict": "FAIL"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "57185",
+            "floored_twh": 0.0377,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0886,
+            "binding_hours": 195,
+            "measured_median_mw": 275.6,
+            "measured_zero_share": 0.041,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "50978",
+            "floored_twh": 0.0141,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0331,
+            "binding_hours": 352,
+            "measured_median_mw": 0.0,
+            "measured_zero_share": 0.6989,
+            "verdict": "FAIL"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "56940",
+            "floored_twh": 0.0082,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0193,
+            "binding_hours": 26,
+            "measured_median_mw": 439.179,
+            "measured_zero_share": 0.0,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "56234",
+            "floored_twh": 0.0065,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0153,
+            "binding_hours": 38,
+            "measured_median_mw": 247.693,
+            "measured_zero_share": 0.0,
+            "verdict": "pass"
+          },
+          {
+            "year": 2025,
+            "check": "unit-conduct",
+            "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
+            "window": "h0-23",
+            "plant": "54574",
+            "floored_twh": 0.0029,
+            "offwindow_twh": "",
+            "offwindow_share": 0.0067,
+            "binding_hours": 74,
+            "measured_median_mw": 71.241,
+            "measured_zero_share": 0.1351,
+            "verdict": "pass"
+          }
+        ]
+      }
+    }
+  },
+  "VERDICT": "STOP"
+}
