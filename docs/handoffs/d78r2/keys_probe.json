@@ -1,0 +1,16 @@
+{
+  "arm_differs_from_control": true,
+  "backcast_2024_by_iso": {
+    "CAISO": "87a64d8134889e22",
+    "ERCOT": "9eb04075498bc557",
+    "MISO": "cc9728b1fcc9687f",
+    "NEISO": "e3750f94f4a2921a",
+    "NYISO": "dcb000a8d42f9a85",
+    "PJM": "b2b669067bf162c8"
+  },
+  "control_matches_registered_pjm_t1h": true,
+  "pjm_t1h_arm_2021_2025": "bb6a60239d69508b",
+  "pjm_t1h_control_2021_2025": "a9c66d8ea25acb9d",
+  "registered_pjm_t1h_key": "a9c66d8ea25acb9d",
+  "scenario_config_default": "547053bdfccd4264"
+}

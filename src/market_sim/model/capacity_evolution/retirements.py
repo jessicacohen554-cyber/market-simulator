@@ -3072,7 +3072,6 @@ def apply_economic_retirements(
     reserve_price_signal: np.ndarray | None = None,
     reserve_price_signal_slow: np.ndarray | None = None,
     reserve_position: float | None = None,
-    exempt_unit_ids: frozenset[str] = frozenset(),
     exit_rate_cap_mw: float | None = None,
     exogenous_exits: list | None = None,
     locality_prices_by_zone: dict[str, float] | None = None,
@@ -3229,22 +3228,6 @@ def apply_economic_retirements(
             net-CONE capacity payment (byte-identical); when supplied and the
             gate is on, the capacity payment slides along the ISO's published
             demand curve.
-        exempt_unit_ids: Unit ids excluded from this year's screen entirely
-            (no margin evaluation, no counter change — and, under the D57
-            supply clearing, no sell offer: the unit's accredited MW lands
-            in the $0 price-taking block ``Q_0`` through
-            :func:`_settle_capacity_supply_clearing`'s residual). This is the
-            declaration for a resource that is genuinely NOT ELIGIBLE to
-            offer. **It has no producer at HEAD**: capx D81 moved its two
-            former members — the pending dated plants (capx D42,
-            :func:`dated_plant_unit_ids`) and the units CCS-retrofitted THIS
-            year (W2-C) — onto ``exit_exempt_unit_ids`` below, because PJM's
-            must-offer requirement reaches both (Manual 18 Rev 62 §1.2 /
-            §5.4.1; PRECOMMIT-capx-d81-2026-09-06.md §2). A resource whose
-            removal of Capacity Resource status is EFFECTIVE for the delivery
-            year (§5.4.7, exception [c]) leaves the fleet at evolve step
-            0/1/1b instead and never reaches this function at all. Default
-            empty ⇒ byte-identical.
         exit_exempt_unit_ids: capx D78 (owner ruling Q53 = reading 1;
             DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md §3). Unit
             ids that are IN the screen's evaluation and IN the capacity
@@ -3270,15 +3253,29 @@ def apply_economic_retirements(
             to the channels DESIGN-capx-d78 §4 enumerates, replacing
             DESIGN-capx-d54 §4.2's price-taker reading of the dated block
             (whose own stated bias was price DOWN, cleared UP; this reverses
-            it). Before D78 the sector set rode ``exempt_unit_ids`` and so
-            silently stopped offering on a clearing-armed ISO — 34.2 GW of
-            PJM utility capacity became $0 price takers and the 2022
-            clearing price fell 9.67 % (FINDING-capx-d58 §3), a rule-19
-            one-filter-two-jobs defect. A unit in both sets is treated as
-            ``exempt_unit_ids`` (the loop's skip fires first). Default
-            empty ⇒ byte-identical; with the D57 clearing off (MISO's armed
-            keeper) every decision and ledger row is identical to the
-            pre-D78 union.
+            it). Before D78 the sector set rode a second parameter,
+            ``exempt_unit_ids`` — out of the screen entirely, hence a $0
+            price taker — and so silently stopped offering on a
+            clearing-armed ISO: 34.2 GW of PJM utility capacity became $0
+            price takers and the 2022 clearing price fell 9.67 %
+            (FINDING-capx-d58 §3), a rule-19 one-filter-two-jobs defect.
+            **That parameter is DELETED as of capx D78-R2** (director
+            decision (a) on FINDING-capx-d81 §8 item 2; rule 26
+            ``[R-DELETE]``): D81 left it with no producer, and a branch no
+            call site can reach is a dead one. This is now the SOLE
+            exogenous-exit declaration the screen accepts. A resource whose
+            removal of Capacity Resource status is EFFECTIVE for the
+            delivery year (§5.4.7, exception [c]) leaves the fleet at evolve
+            step 0/1/1b instead and never reaches this function at all; a
+            resource that is genuinely not eligible to offer is simply
+            absent from ``margins`` (a non-thermal fuel the screen cannot
+            evaluate, no dispatch rows, or the D74 no-default-cap class),
+            and its accredited MW lands in the $0 price-taking block ``Q_0``
+            through :func:`_settle_capacity_supply_clearing`'s
+            ``accredited_total − Σ A_g`` residual — the only remaining path
+            to $0. Default empty ⇒ byte-identical; with the D57 clearing
+            off (MISO's armed keeper) every decision and ledger row is
+            identical to the pre-D78 union.
         exit_rate_cap_mw: The year's deactivation-throughput budget in MW
         exogenous_exits: capx D42 — pending owner-filed fossil exit rows the
             R-NEW admission cap nets from its counterfactual fleet (see
@@ -3389,15 +3386,17 @@ def apply_economic_retirements(
     # Diagnostic row fields, no decision effect (rule 24: not a tunable).
     margin_detail: dict[str, dict[str, float | str]] = {}
     for g in fleet:
-        if g.unit_id in exempt_unit_ids:
-            # Not eligible to offer at all: no margin, no offer, no decision.
-            # capx D81 left this branch with NO producer — every exogenous-exit
-            # declaration the model has (sector gate D53/D78, pending dated
-            # plant D42, this-year retrofit W2-C) is a resource that MUST
-            # OFFER, so all three arrive on ``exit_exempt_unit_ids`` and are
-            # evaluated and offered here, leaving ``margins`` only after the
-            # D57 clearing (the partition below the clearing block).
-            continue
+        # capx D78-R2 deleted the ``exempt_unit_ids`` skip that stood here
+        # (rule 26 [R-DELETE]; director decision (a) on FINDING-capx-d81 §8
+        # item 2). D81 routed every exogenous-exit declaration the model has
+        # — sector gate (D53/D78), pending dated plant (D42), this-year
+        # retrofit (W2-C) — to ``exit_exempt_unit_ids``, because each is a
+        # resource that MUST OFFER; the skip was left with no producer, and
+        # a dead branch carrying the pre-D78 semantics is a re-armable one.
+        # A unit that genuinely may not offer now leaves ``margins`` through
+        # the three structural filters below (fuel the screen cannot
+        # evaluate, no dispatch rows, D74 no-default-cap class) and its
+        # accredited MW lands in ``Q_0`` through the clearing's residual.
         fom_field = _THERMAL_FOM.get(g.fuel_type)
         if fom_field is None:
             continue
