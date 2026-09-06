@@ -1295,3 +1295,21 @@ data/raw/fleet-egrid/*.json
 # peaks and EV energy; ercot_ev_hourly_profile_2030.csv — the normalized 8760
 # EV charging shape), so nothing depends on the payload being present.
 data/raw/load-forecast/ercot/ErcotAdjustedForecast.xlsb
+
+# capx D67-ARM PJM published-adequacy-requirement re-solve (PJM 2021-2025
+# hindcast, isolated run_capacity_hindcast --out-dir cache; owner ruling Q52).
+# Same class as /results/ffr3v/ and /results/ffr4b/ above — only the HEAVY
+# regenerable LP output is ignored; the SLIM per-run record the finding cites
+# IS committed, because those ledgers ARE the evidence: every requirement,
+# census-position, clearing-price and uncleared-count number in
+# docs/handoffs/FINDING-capx-d67arm-2026-09-06.md §4 is read straight off the
+# evolution_<year>.json ledgers (entry_screen_diagnostics rows), and §5's FC
+# table off score.json. The canonical registered record remains the sidecar
+# frontend/data/hindcast/pjm-2021-2025-realized-t1h-d67arm.json (rule 15).
+# NOT a rule 29(c) "delete before merge" bundle: that clause governs SCREEN and
+# earned-control bundles, which are never registered. This is the REGISTERED
+# shipped posture (the bare `pjm-t1h`), so its slim record belongs in the repo.
+# Regenerate the parquets with the command in that finding §4.
+results/capacity-hindcast/**/year_*.parquet
+results/capacity-hindcast/**/config.yaml
+results/capacity-hindcast/**/screen_signal_diag_*.npz
