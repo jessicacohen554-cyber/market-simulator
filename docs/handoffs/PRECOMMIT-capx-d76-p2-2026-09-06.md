@@ -255,3 +255,40 @@ docs and golden manifests only, its code change is on `pipeline/solve.py`; `runn
 preamble carries no hunk from any commit in the `131291b5 → e6a0402f` delta other than this lane's
 own phase-1 seam; and the D67 lane owns `gross_adequacy_requirement_mw`, which this lane does not
 touch — the two compose exactly as phase 0 §2.3 predicted, and §2 above is that composition measured.
+
+---
+
+## ADDENDUM 1 — `main` moved while LEG 1's control was solving; the lane HOLDS every leg at `e6a0402f`
+
+**Recorded 2026-09-06, while LEG 1-C was mid-LP and before any of LEGS 2-4 started** — i.e. before
+the legs it governs, which is the point of writing it here rather than in the FINDING.
+
+`origin/main` advanced `e6a0402f` → **`82a7742d`** (PR #5203, the miso-230 CT net-load-drag backcast
+lane). §3's rule is "rebase BETWEEN legs, never during", and this addendum records the choice made
+under it and the audit behind it.
+
+**The audit, at file granularity and then at hunk granularity.** `git diff --stat e6a0402f
+origin/main` touches **seven files and not one of them is on the hindcast solve path**:
+
+| file | classification |
+|---|---|
+| `src/market_sim/**` | **no file changed at all** — the diff is empty over the whole package |
+| `scripts/run_capacity_hindcast.py`, `scripts/lib/**` | **no file changed** — the diff is empty |
+| `data/raw/reference/miso_ct_netload_drag.json` | new derived artifact; **no `src/` reader exists at this head**, so nothing in a solve can reach it |
+| `scripts/data/derive_miso_ct_netload_drag.py`, `scripts/probes/_miso230_*.py` | derive/probe scripts, not imported by any solve |
+| `scripts/legitimacy_diagnostics.py` | the BACKCAST D1/D2/D4 diagnostic; never on a hindcast solve path |
+| `docs/handoffs/PRECOMMIT-miso230-…md`, `results/calibration/_miso230_…json` | documents and a backcast probe artifact |
+
+**Verdict: the delta is INERT for every one of the eight legs**, MISO's included — it is a backcast
+lane and it changed no model code.
+
+**The choice.** All eight legs are held at **`e6a0402f`**, the base this PRECOMMIT's keys were
+resolved at, and the rebase is taken **after the last leg**, with the then-current delta re-audited
+hunk by hunk before merge. Two reasons, both structural rather than convenient: (a) the eight legs
+then sit at ONE solve-code state, so no cross-ISO comparison in the FINDING can be contaminated by a
+mid-lane code move, and every A/B keeps its own zero-drift-by-construction property; (b) §3's cache
+keys were resolved at `e6a0402f` and pushed before the first LP — solving a later leg at a different
+head would silently void them, which is exactly the failure mode the pre-registration exists to
+prevent. Had the delta contained a LIVE hunk this choice would not have been available and the
+affected legs would have been re-based and re-solved; it does not, and the audit above is what
+establishes that rather than a "files changed, therefore void" heuristic in either direction.
