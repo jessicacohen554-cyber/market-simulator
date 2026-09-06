@@ -7,6 +7,7 @@ emits the per-ISO delta set, every difference measured against a NAMED
 REFERENCE CASE (``--reference-case``, the plan's REF; §3.0):
 
     {iso}_headline_deltas.csv          every per-year scalar metric vs REF
+                                       (+ backstop_built_mw / _mwh, SCN-WS4b)
     {iso}_by_fuel_deltas.csv           capacity / generation / CO2 by fuel vs REF
     {iso}_emissions_by_zone_deltas.csv CO2 by zone vs REF
     {iso}_cumulative_co2_deltas.csv    running and total CO2 delta vs REF
@@ -24,6 +25,21 @@ The reference case is a NAME, not a premium level, so the same report serves a
 carbon-price ladder, a CES ladder, a load case or a policy corner. Deltas on
 one deterministic case set are a scenario range, never a probability statement
 (``matrix.LABEL``).
+
+**The "backstop-built" column (SCN-WS4b, plan §3 WS-4 item 3).** The headline
+frame carries ``backstop_built_mw`` (the reserve-margin adequacy backstop's
+``gas_ct`` on the books in that year — every ledger ``thermal_additions`` row
+tagged ``source == "reserve_backstop"`` in that year or earlier, net of a later
+retirement of the same unit) and ``backstop_built_mwh`` (those units' energy in
+the year's cached dispatch, matched by ``unit_id``). Both are derived from the
+evolution ledger the report already reads and the dispatch it already loads —
+no new persisted field, no solve. The column exists so a curve-ON ISO's CO2
+delta can be read with the administratively-built share beside it: the
+backstop fires in PJM/MISO/NYISO/NEISO/CAISO only
+(``capacity_evolution.adequacy.resolve_reserve_margin_build_enabled``), so for
+energy-only ERCOT the column is 0.0 by market design and ``unserved_mwh`` is
+the adequacy line to read instead (``docs/handoffs/load-hi-adequacy-reading-
+2026-09-06.md``).
 
 Usage:
     python scripts/report_scenario_deltas.py \\
@@ -60,6 +76,89 @@ logger = logging.getLogger("report_scenario_deltas")
 # frame states its unit; it is also the column name ``report_ces_campaign.py``
 # has always used. Every other scalar keeps its ``_summarize_year`` key.
 AVG_PRICE_COL = "avg_price_usd_per_mwh"
+
+# The evolution ledger's channel tag for a reserve-margin backstop build
+# (``results/evolution_ledger.py`` schema: ``thermal_additions[].source`` is
+# ``planned`` | ``economic`` | ``reserve_backstop``; the writer is
+# ``capacity_evolution/evolve.py`` at the ``apply_reserve_margin_build`` seam).
+BACKSTOP_SOURCE = "reserve_backstop"
+# Headline-frame column names for the backstop-built pair (SCN-WS4b).
+BACKSTOP_MW_COL = "backstop_built_mw"
+BACKSTOP_MWH_COL = "backstop_built_mwh"
+
+
+def backstop_units_by_year(ledgers: dict[int, dict]) -> dict[int, dict[str, float]]:
+    """Return the reserve-backstop units on the books through each ledger year.
+
+    Walks the run's ledgers in year order and accumulates every
+    ``thermal_additions`` row whose ``source`` is :data:`BACKSTOP_SOURCE`
+    (``{unit_id: mw}``); a later ``retirements`` row naming one of those units
+    removes it, so the map is "on the books", not "ever built". Within a year
+    retirements are applied before additions, matching the evolution order
+    (retirement steps 0-3 precede the step-6 backstop), so a unit built in a
+    year can never be netted out in that same year.
+
+    Args:
+        ledgers: ``{year: ledger_dict}`` from
+            :func:`market_sim.results.evolution_ledger.load_ledgers_for_run`.
+
+    Returns:
+        ``{year: {unit_id: mw}}`` — the cumulative backstop fleet after that
+        year's evolution, one entry per ledger year (empty dicts where nothing
+        is on the books). Empty in, empty out.
+    """
+    on_books: dict[str, float] = {}
+    out: dict[int, dict[str, float]] = {}
+    for year in sorted(ledgers):
+        led = ledgers[year]
+        for r in led.get("retirements", []) or []:
+            on_books.pop(str(r.get("unit_id")), None)
+        for r in led.get("thermal_additions", []) or []:
+            if str(r.get("source") or "") != BACKSTOP_SOURCE:
+                continue
+            uid = str(r.get("unit_id"))
+            on_books[uid] = on_books.get(uid, 0.0) + float(r.get("mw", 0.0) or 0.0)
+        out[year] = dict(on_books)
+    return out
+
+
+def backstop_units_for_cases(
+    iso: str, cases: dict[str, str]
+) -> dict[str, dict[int, dict[str, float]]]:
+    """Load every case's ledgers and return its per-year backstop fleet map.
+
+    A case with no ledgers on disk (a backcast or fixture cache) maps to an
+    empty dict, which the column reads as 0.0 — the same "no ledger" case
+    :func:`ledger_events_frame` reports in the notes.
+
+    Args:
+        iso: ISO identifier.
+        cases: Map of case name to cache key.
+
+    Returns:
+        ``{case: {year: {unit_id: mw}}}`` (see :func:`backstop_units_by_year`).
+    """
+    out: dict[str, dict[int, dict[str, float]]] = {}
+    for case, key in cases.items():
+        cache_dir = cache.get_cache_path(iso, key, START_YEAR).parent
+        out[case] = backstop_units_by_year(load_ledgers_for_run(cache_dir))
+    return out
+
+
+def _backstop_on_books(
+    by_year: dict[int, dict[str, float]], year: int
+) -> dict[str, float]:
+    """Return the backstop fleet on the books in ``year``.
+
+    The ledger written for ``year`` describes the fleet the year was solved
+    on, so an exact match is used when present; otherwise the latest ledger
+    year at or before ``year`` (a bridge year carries the prior fleet). Years
+    before the first ledger read empty.
+    """
+    if year in by_year:
+        return by_year[year]
+    prior = [y for y in by_year if y <= year]
+    return by_year[max(prior)] if prior else {}
 
 
 def parse_years(spec: str) -> list[int]:
@@ -120,6 +219,8 @@ def collect_case_year_frames(
     cases: dict[str, str],
     configs: dict[str, "ScenarioConfig | None"],
     years_filter: list[int] | None,
+    backstop_units: dict[str, dict[int, dict[str, float]]] | None = None,
+    notes: list[str] | None = None,
 ) -> dict[str, pd.DataFrame]:
     """Build the long per-(case, year) frames from the cached dispatch.
 
@@ -131,6 +232,10 @@ def collect_case_year_frames(
       ``storage_cycles``, ``nox_tonnes``, ``so2_tonnes``, ``peak_price``, and
       ``avg_price`` under :data:`AVG_PRICE_COL`) plus total ``generation_twh``.
       The set widens automatically when ``_summarize_year`` grows a scalar.
+      When ``backstop_units`` is given it also carries the SCN-WS4b
+      backstop-built pair — :data:`BACKSTOP_MW_COL` (the reserve-backstop
+      ``gas_ct`` MW on the books that year) and :data:`BACKSTOP_MWH_COL`
+      (those units' energy in the year's dispatch, matched on ``unit_id``).
     * ``by_fuel`` — capacity (GW), generation (TWh) and CO2 (Mt) per fuel per
       case-year (wind/solar folded in, as in ``_summarize_year``).
     * ``by_zone`` — CO2 (Mt) per zone per case-year.
@@ -143,6 +248,12 @@ def collect_case_year_frames(
         configs: Map of case name to its cached config (or ``None``), passed
             through to ``_summarize_year`` for the crediting rule.
         years_filter: Optional explicit year restriction.
+        backstop_units: Optional ``{case: {year: {unit_id: mw}}}`` from
+            :func:`backstop_units_for_cases`; ``None`` omits the pair (the
+            pre-SCN-WS4b frame, column-for-column).
+        notes: Optional list the function appends report notes to — one per
+            case-year whose ledger names a backstop unit the cached fleet does
+            not carry (a silent 0 MWh would otherwise hide it).
 
     Returns:
         ``{"headline": ..., "by_fuel": ..., "by_zone": ..., "curtailment": ...}``.
@@ -165,6 +276,25 @@ def collect_case_year_frames(
                 if isinstance(v, (int, float)) and not isinstance(v, bool)
             }
             scalars[AVG_PRICE_COL] = scalars.pop("avg_price")
+            if backstop_units is not None:
+                on_books = _backstop_on_books(backstop_units.get(case, {}), year)
+                scalars[BACKSTOP_MW_COL] = round(sum(on_books.values()), 3)
+                ids = set(on_books)
+                # Boolean mask over the generator axis: one row per cached unit
+                # whose id the ledger tagged as a backstop build (vectorized
+                # over hours, rule 2 [R-VECTOR]).
+                mask = np.array([u in ids for u in context.unit_ids], dtype=bool)
+                scalars[BACKSTOP_MWH_COL] = round(
+                    float(np.asarray(result.dispatch, dtype=float)[mask].sum()), 3
+                )
+                unmatched = sorted(ids - set(context.unit_ids))
+                if unmatched and notes is not None:
+                    notes.append(
+                        f"Case `{case}` {year}: ledger names reserve-backstop unit(s) "
+                        + ", ".join(f"`{u}`" for u in unmatched)
+                        + f" absent from the cached fleet — `{BACKSTOP_MWH_COL}` "
+                        "excludes them (MW still counted from the ledger)."
+                    )
             headline_rows.append(
                 {
                     "case": case,
@@ -571,6 +701,8 @@ def write_markdown_report(
                 "emissions_mt_delta",
                 "import_co2_mt_reported",
                 "unserved_mwh",
+                BACKSTOP_MW_COL,
+                BACKSTOP_MWH_COL,
                 AVG_PRICE_COL,
                 f"{AVG_PRICE_COL}_delta",
                 "curtailment_twh",
@@ -660,7 +792,16 @@ def write_markdown_report(
         "- " + IMPORT_CO2_DISCLOSURE,
         "- `unserved_mwh` is the slack column's annual energy. A case whose CO2",
         "  falls while unserved energy rises has not decarbonized — read the two",
-        "  together.",
+        "  together. A CO2 number read under binding slack is understated by",
+        "  the shed energy (plan §2.4 G-L4).",
+        "- `backstop_built_mw` is the reserve-margin adequacy backstop's gas_ct",
+        "  on the books in the year (ledger `thermal_additions` rows tagged",
+        '  `source == "reserve_backstop"`, that year or earlier, net of a later',
+        "  retirement); `backstop_built_mwh` is those units' energy in the",
+        "  year's dispatch. It is the administratively-built share of a curve-ON",
+        "  ISO's response (PJM/MISO/NYISO/NEISO/CAISO); energy-only ERCOT has no",
+        "  backstop by market design, reads 0.0 here, and reports its adequacy",
+        "  through `unserved_mwh` instead (SCN-WS4b adequacy reading).",
         "- `curtailment_twh` / the curtailment CSV are VRE potential minus",
         "  delivered energy; `clean_share` is credit-weighted generation over",
         "  total generation on each case's own crediting rule.",
@@ -724,7 +865,10 @@ def main(argv: list[str] | None = None) -> None:
                 "was assumed."
             )
 
-    frames = collect_case_year_frames(iso, cases, configs, years_filter)
+    backstop_units = backstop_units_for_cases(iso, cases)
+    frames = collect_case_year_frames(
+        iso, cases, configs, years_filter, backstop_units=backstop_units, notes=notes
+    )
 
     # Headline: every per-year scalar metric, differenced vs the reference.
     headline = frames["headline"]

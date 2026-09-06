@@ -111,6 +111,77 @@ cases:
   # LOAD-HI pairs both high; LOAD-HI-ORGANIC holds the DC block at its shipped
   # "mid" so the organic half is separable. SCN-WS4b pre-declares how each
   # ISO's high case is READ for adequacy (desk ledger §1).
+  #
+  # ── SCN-WS4b DECLARATION (2026-09-06, plan §3 WS-4 items 1 + 3) ─────────
+  # Full adjudication: docs/handoffs/load-hi-adequacy-reading-2026-09-06.md;
+  # the one scoring table SCN-WS4c runs against: FINDING-scn-ws4b-2026-09-06.md.
+  # Written BEFORE any LOAD-HI number exists; it is not revised to fit one.
+  #
+  # `electrification_path` is AS-IS = inherited from REF, and REF is the
+  # ScenarioConfig default `off` in ALL SIX ISOs (no iso_configs override arms
+  # it; NEISO's sourced heat_pump layer is off in REF too). Neither case
+  # overrides it: flipping NEISO to `mid` is a REF-posture question for the
+  # desk, never a case override (plan §3.0 — REF is the shipped posture).
+  #
+  # THE ERCOT TAIL-REGIME ARITHMETIC (data/datacenter.py add_datacenter_block).
+  # The block is RELOCATED (energy-invariant, flat) while dc_E < E and ADDED
+  # on top once dc_E >= E. With the constants at this commit (DC high 122 GW
+  # by 2030, x0.85 LF, linear from 0 at 2024; growth high 11.5 %/yr from the
+  # 2024 weather base E0 ~= 464 TWh / P0 ~= 85 GW, both inverted from the
+  # committed REF trajectory results/ff-t1f-d50/ercot):
+  #   year   block GW   dc_E/E   E TWh   peak GW   regime
+  #   2026     34.6     0.525     577      84.7    relocate  (REF 546 / 93.7)
+  #   2027     51.9     0.706     643      86.5    relocate  (REF 593 / 99.0)
+  #   2028     69.1     0.844     717      89.6    relocate  (REF 643 / 105.1)
+  #   2029     86.4     0.947     800      94.2    relocate  (REF 698 / 111.9)
+  #   2030    103.7     1.019    1800     266.9    TAIL      (REF 757 / 119.6)
+  # Two consequences, both construction, neither adequacy: (1) in 2026-2029
+  # the flat block is 52-95 % of energy, so ERCOT's PEAK FALLS BELOW REF while
+  # energy rises 6-15 % — every peak-based adequacy reading (I12, reserve
+  # margin) will READ BETTER than REF, an artefact of the relocate rule, and
+  # is not to be quoted as adequacy; (2) 2030 flips to the tail regime and
+  # energy jumps 800 -> 1,800 TWh, peak 94 -> 267 GW, in ONE year. One-pass
+  # evolution with a 12 GW/yr queue cap cannot meet it: 2030 is an
+  # unserved-energy year by construction and its CO2 delta is not an
+  # emissions response. LOAD-HI-ORGANIC stays in the relocate regime through
+  # 2030 (dc_E/E 0.16-0.31; peak 99 -> 144 GW) — it is the SMOOTH high case.
+  # NYISO also flattens (block 35 % of energy by 2030; LOAD-HI peak 29.0 GW vs
+  # ORGANIC 32.4 GW), MISO partly (24 %); the other three do not.
+  #
+  # THE DC-AXIS COMPANION IS DEGENERATE IN THREE ISOs THROUGH 2030: PJM's high
+  # DC curve equals mid until 2030 (30 GW anchors; diverges only to 2040),
+  # CAISO ships high := mid (documented limitation, WS-4a G-D4-2), NEISO's
+  # block is {} (0 MW). There LOAD-HI == LOAD-HI-ORGANIC byte-for-byte in the
+  # T1 window, so the ORGANIC arm is NOT spent on them (a zero-LP fact from
+  # the constants); the DC share of the delta is readable only in ERCOT, MISO
+  # and NYISO, and in ERCOT/NYISO it is dominated by the block's SHAPE effect.
+  #
+  # ADEQUACY READING PER ISO (mechanism | live FC-1 fails at mid, bare
+  # ff-verdicts keys at pin | the line the delta table MUST carry):
+  #   ERCOT  energy-only, backstop OFF by design; scarcity-priced economic
+  #          entry or NOTHING (residual -> VOLL slack) | I12+I3 2027-2030
+  #          (one phenomenon, D4-I3) | unserved_mwh beside emissions_mt;
+  #          backstop_built = 0.0 by design; import line = 0.0 (no node).
+  #   CAISO  backstop gas_ct (52.6 % share, FAIL) + ladder | I12+I7 2026-28
+  #          (gate_reading prose adds I3) | backstop_built_mw/mwh + unserved;
+  #          import line (WECC) expected UP, same sign as CO2.
+  #   PJM    cap-bound backstop ladder is the ONLY responding channel (43.9 %)
+  #          | I12+I7 2027-30 | backstop_built + unserved (I3 expected to
+  #          APPEAR 2029-30); import line (PJM_external) expected UP, small.
+  #   MISO   backstop (23.0 % CAVEAT) + ladder | I12+I7 2026-29 (prose says
+  #          I3: stale) | backstop_built + unserved; import line 0.0 at REF.
+  #   NYISO  backstop armed, never fired | none | backstop_built (expect 0.0)
+  #          + unserved beside CO2; import line expected UP; the flattened
+  #          peak may push I12 out on the HIGH side — an artefact, not RA.
+  #   NEISO  backstop (1.2 %) + reliability floor | none | backstop_built +
+  #          unserved + the import line PER TRANCHE: the HQ seam is within
+  #          ~1-5 TWh of its 3,850 MW SIL at REF, so the import CO2 line rises
+  #          early (<= ~2 Mt at 0.428) then saturates.
+  # In EVERY ISO a CO2 number read under binding slack is understated by the
+  # shed energy: read emissions_mt with unserved_mwh beside it, and with the
+  # import line beside it, and never as a total. The I7/I12/I3 FAILs already
+  # on the board at `mid` are DISCLOSED here per case, not fixed and not
+  # proposed for fixing — they are the capx director's queue.
   LOAD-HI:
     demand_growth_path: high
     datacenter_load_path: high
