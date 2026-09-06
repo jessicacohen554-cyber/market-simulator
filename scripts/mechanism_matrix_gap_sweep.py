@@ -27,6 +27,15 @@ the defaults are the *shipped* ones and not a parse of the source):
   mentions it. That is exactly the shape of the 227-3 gap, and it is the one
   class that can hide a promotable mechanism.
 
+and once, ISO-agnostically (y20):
+
+* **absent-shared** — every SHARED field the matrix never mentions, armed or
+  not. Both censuses above carry a qualifier a slipped field can simply not
+  satisfy (an ISO stem; a backcast keeper arming it), so a forecast-only shared
+  field with no row had no census at all — the hole
+  ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed after PR #4870
+  merged two such fields five seconds after opening, past a red diff gate.
+
 The output is evidence for adding matrix rows (rule 28(c)); it never adjudicates
 a verdict on its own — a `U` cell is the most a census can mint (rule 25).
 
@@ -69,15 +78,10 @@ ISO_INDEX = {"ERCOT": 0, "CAISO": 1, "PJM": 2, "MISO": 3, "NYISO": 4, "NEISO": 5
 # are the REGULATOR prefixes whose fields are that ISO's exclusively — NYSDEC
 # rules bind only New York units, so `nysdec_*` is a NYISO field just as much as
 # `nyiso_*` is. Stems are matched as `<stem>_`, never as a bare substring, so
-# `carbon_price` is never mistaken for a CARB field.
-ISO_STEMS: dict[str, tuple[str, ...]] = {
-    "ERCOT": ("ercot",),
-    "CAISO": ("caiso",),
-    "PJM": ("pjm",),
-    "MISO": ("miso",),
-    "NYISO": ("nyiso", "nysdec"),
-    "NEISO": ("neiso",),
-}
+# `carbon_price` is never mistaken for a CARB field. SINGLE-SOURCED in
+# scripts/lib/mech_matrix.py since y20: this sweep WRITES the baselines and
+# check_mechanism_matrix.py ENFORCES them, and the two carried separate copies.
+ISO_STEMS: dict[str, tuple[str, ...]] = mech_matrix.ISO_FIELD_STEMS
 
 # Fields the SHARED census must not count, each with the reason it is a false
 # positive rather than a gap. Keep this list SHORT and every entry justified:
@@ -364,6 +368,45 @@ def sweep_iso(iso: str, defaults: dict, rows: list[dict], blob: str) -> dict:
     }
 
 
+def absent_shared_census(
+    defaults: dict[str, object], matrix_text: str
+) -> tuple[list[str], list[str]]:
+    """SHARED fields the matrix never mentions — the whole class, ISO-agnostic.
+
+    The third and widest rule-28(c) census, and the one that closes the hole
+    ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. The two
+    censuses above each carry a qualifier that a slipped field can simply not
+    satisfy: :func:`sweep_iso`'s ``family`` needs an ISO stem, and its
+    ``shared_armed_on_keeper`` needs a designated BACKCAST keeper to arm the
+    field — which a forecast-only field defaulting to ``None`` never can. A
+    shared, keeper-unarmed field with no row therefore had no census at all, on
+    either side of the merge. This one has no qualifier: every field that is not
+    one ISO's own, by NAME.
+
+    Returns ``(absent, disagreement)``. The census is taken over the UNION of
+    the live dataclass's field names and the stdlib parse of the same source,
+    because the CI checker can only run the parse — a union makes this baseline
+    a superset of anything the checker can compute, so the checker can never be
+    stricter than the sweep (the invariant nyiso-114 broke with ``\\b`` vs
+    substring, pinned by tests/unit/config/test_mechanism_matrix_shared_ratchet).
+    ``disagreement`` is the symmetric difference of the two field sets — empty
+    at y20 (798 = 798) and reported loudly if it ever is not, because it would
+    mean the parse has started missing real fields.
+
+    ``SHARED_CENSUS_EXCLUSIONS`` is deliberately NOT applied here. Those are
+    ARMING arguments ("non-default carries no information for this field"),
+    which say nothing about whether a mechanism deserves a row; and an excluded
+    field that is genuinely absent is simply baselined like any other, so
+    honouring them would only make the two halves' predicates differ again.
+    """
+    live = set(defaults)
+    parsed = mech_matrix.scenarioconfig_field_names(
+        (REPO / "src/market_sim/config/scenarios.py").read_text(encoding="utf-8")
+    )
+    disagreement = sorted(live ^ parsed)
+    return mech_matrix.absent_shared_fields(live | parsed, matrix_text), disagreement
+
+
 def _report(res: dict) -> None:
     """Print one ISO's census."""
     iso = res["iso"]
@@ -448,11 +491,24 @@ def main() -> None:
     rows = matrix_rows()
     # Whole-store mention blob: base + every ISO shard (a field named only in
     # a shard's ev/note is still "mentioned in the matrix").
-    blob = "\n".join(
+    matrix_text = "\n".join(
         p.read_text() for p in mech_matrix.all_matrix_paths(REPO) if p.is_file()
-    ).lower()
+    )
+    blob = matrix_text.lower()
+    absent_shared, field_set_disagreement = absent_shared_census(defaults, matrix_text)
     print(f"ScenarioConfig fields : {len(defaults)}")
     print(f"matrix rows           : {len(rows)}")
+    print(
+        f"shared fields ABSENT  : {len(absent_shared)} "
+        f"(no matrix mention anywhere — the absent_shared ratchet)"
+    )
+    if field_set_disagreement:
+        print(
+            "WARNING: the live ScenarioConfig and the stdlib parse disagree on "
+            f"{len(field_set_disagreement)} field name(s): "
+            f"{', '.join(field_set_disagreement[:8])}. The CI checker can only "
+            "run the parse — investigate before trusting either census."
+        )
 
     results = {}
     for iso in args.iso:
@@ -486,11 +542,12 @@ def main() -> None:
         prior = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
         prior_gaps = prior.get("absent", {})
         prior_shared = prior.get("shared_armed_on_keeper", {})
+        prior_absent_shared = set(prior.get("absent_shared", ()))
         doc = {
             "_comment": (
                 "Rule-28(c) ratchet baseline, enforced by "
-                "scripts/check_mechanism_matrix.py. TWO blocks, because a "
-                "mechanism can be invisible in two different ways. `absent` "
+                "scripts/check_mechanism_matrix.py. THREE blocks, because a "
+                "mechanism can be invisible in three different ways. `absent` "
                 "lists each ISO's <iso>_* ScenarioConfig fields with NO "
                 "mention in mechanism-matrix.js. `shared_armed_on_keeper` "
                 "lists the SHARED (non-ISO-prefixed) fields that an ISO's "
@@ -498,26 +555,51 @@ def main() -> None:
                 "the matrix never mentions them — the nyiso-115 blind spot: "
                 "the ISO-scoped ratchet cannot see these at all, so a shared "
                 "mechanism shaping a published keeper had no cell anywhere. "
-                "CI FAILS if a field appears in either census that this file "
-                "does not already allow, so both lists can only SHRINK — a "
-                "new mechanism must land with its matrix registration (rule "
-                "28(c)), and closing a legacy gap is what refreshes this "
-                "file. Declared false positives live in the sweep's own "
-                "SHARED_CENSUS_EXCLUSIONS, not here, so an exemption stays "
-                "visible and arguable. Regenerate with "
+                "`absent_shared` (y20) is the same shared class with the "
+                "keeper qualifier DROPPED — every shared field the matrix "
+                "never mentions, armed or not: a forecast-only field that no "
+                "backcast keeper can arm was invisible to all three of the "
+                "older checks, on both sides of the merge "
+                "(docs/handoffs/FINDING-scn-mxr-2026-09-06.md §1.1). It opens "
+                "large because it is the first check ever to look at that "
+                "class; the backlog is the owning desks' work and the ratchet "
+                "only guarantees it never grows. CI FAILS if a field appears "
+                "in any census that this file does not already allow, so all "
+                "three lists can only SHRINK — a new mechanism must land with "
+                "its matrix registration (rule 28(c)), and closing a legacy "
+                "gap is what refreshes this file. Declared false positives "
+                "live in the sweep's own SHARED_CENSUS_EXCLUSIONS, not here, "
+                "so an exemption stays visible and arguable. Regenerate with "
                 "scripts/mechanism_matrix_gap_sweep.py --write-baseline."
             ),
             "absent": {
                 iso: sorted(results[iso]["family_matrix_gaps_absent"])
                 for iso in sorted(ISO_INDEX)
             },
+            # A RATCHET MUST NOT SHRINK BY ACCIDENT. This block is the only one
+            # that needs a bundle on disk (the keeper's run_config.json), and
+            # `data/` profiles mean a session can legitimately hold none of
+            # them — `keeper_config` then returns {} and this ISO's census comes
+            # out empty, which would silently FORGIVE whatever it had allowed.
+            # The `--iso` guard below refuses a partial sweep for exactly this
+            # reason; an unreadable keeper bundle is the same hazard arriving
+            # through the checkout instead of the CLI, so the prior entry is
+            # carried forward unchanged and the ISO is named in the report.
             "shared_armed_on_keeper": {
-                iso: sorted(
-                    results[iso]["shared_matrix_gaps_absent"]
-                    + results[iso]["shared_prose_only"]
+                iso: (
+                    sorted(prior_shared.get(iso, []))
+                    if not results[iso]["keeper_bundle_fields"]
+                    else sorted(
+                        results[iso]["shared_matrix_gaps_absent"]
+                        + results[iso]["shared_prose_only"]
+                    )
                 )
                 for iso in sorted(ISO_INDEX)
             },
+            # NOT per-ISO: a shared field is shared. One flat list, taken over
+            # the union of the live dataclass and the stdlib parse so the
+            # stdlib-only checker can never be stricter than this writer.
+            "absent_shared": absent_shared,
             # Declared false positives, written here so the CI checker — which
             # is stdlib-only and cannot import this module — reads the SAME
             # exclusions this sweep applied, instead of carrying a second copy
@@ -539,7 +621,20 @@ def main() -> None:
                 set(doc["shared_armed_on_keeper"][iso]) - set(prior_shared.get(iso, []))
             )
         }
+        no_bundle = [
+            i for i in sorted(ISO_INDEX) if not results[i]["keeper_bundle_fields"]
+        ]
         print(f"\nwrote {BASELINE.relative_to(REPO)}")
+        if no_bundle:
+            print(
+                "  NOTE: no keeper run_config.json on disk for "
+                + ", ".join(no_bundle)
+                + " — their shared-on-keeper entries were CARRIED FORWARD, not "
+                "re-measured (hydrate that ISO's data profile to refresh them). "
+                "The per-ISO _matrix_gap_sweep_<ISO>.json dumps are written from "
+                "whatever bundles ARE present, so do not commit them from a "
+                "partial checkout."
+            )
         print(f"  {'ISO':<8}{'iso-scoped':>16}{'shared-on-keeper':>20}")
         for iso in sorted(ISO_INDEX):
             n_new, n_old = len(doc["absent"][iso]), len(prior_gaps.get(iso, []))
@@ -550,8 +645,22 @@ def main() -> None:
                 f"  {iso:<8}{f'{n_old} -> {n_new}':>16}"
                 f"{f'{s_old} -> {s_new}':>20}{mark}"
             )
-        if grew:
-            print("\nWARNING: the ratchet GREW for " + ", ".join(grew))
+        # The shared block is ISO-agnostic, so it gets its own line and its own
+        # growth check — the same shrink-only contract, one list.
+        new_shared = sorted(set(absent_shared) - prior_absent_shared)
+        print(
+            f"  {'shared':<8}"
+            f"{f'{len(prior_absent_shared)} -> {len(absent_shared)}':>36}"
+            + ("  <-- GREW" if new_shared else "")
+        )
+        if grew or new_shared:
+            if grew:
+                print("\nWARNING: the ratchet GREW for " + ", ".join(grew))
+            if new_shared:
+                print(
+                    "\nWARNING: the shared ratchet GREW by "
+                    f"{len(new_shared)}: {', '.join(new_shared[:8])}"
+                )
             print("Rule 28(c) says a new mechanism lands with its row in the SAME PR.")
 
 

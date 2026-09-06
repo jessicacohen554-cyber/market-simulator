@@ -29,7 +29,20 @@ Two layers:
    an ISO's keeper shard without re-stamping that ISO's matrix shard FAILS,
    which is exactly the duty rule 28 states.
 
-3. **Diff gate** (`--base <ref>`): enforces the mechanical half of rule 28(c) —
+3. **Gap ratchets** (always, BOTH modes): three shrink-only censuses that ask,
+   with no diff at all, whether every `ScenarioConfig` field is named in the
+   matrix or forgiven by the committed baseline
+   `mechanism-matrix-gaps.json` — `gap_ratchet` for the ISO-scoped fields,
+   `absent_shared_ratchet` for the shared complement, `shared_gap_ratchet` for
+   the sharper keeper-armed alarm inside it. This is the POST-MERGE half of
+   rule 28(c): the diff gate below can only ever see a field in the PR that
+   adds it, so before these ran diff-free, a field that reached `main`
+   unregistered was invisible to every later run of this script
+   (`docs/handoffs/FINDING-scn-mxr-2026-09-06.md` §1.1 — PR #4870 merged five
+   seconds after opening, with the diff gate red and unread). A slipped field
+   is now red until its row lands, and each baseline may only SHRINK.
+
+4. **Diff gate** (`--base <ref>`): enforces the mechanical half of rule 28(c) —
    a PR that adds a NEW `ScenarioConfig` field must mention that field in the
    matrix (its own row, or an existing row's `def`/`note` that covers it).
    Mention-anywhere is the deliberate escape hatch: not every new field is its
@@ -39,12 +52,23 @@ Two layers:
    sidecar landing without a matrix touch, and new CLI flags in
    `run_calibration_full.py` absent from the matrix.
 
-Usage:
-    python3 scripts/check_mechanism_matrix.py                # validate only
-    python3 scripts/check_mechanism_matrix.py --base <sha>   # validate + diff gate
+Line anchors (`<field> :<line>`) are checked in both modes and reported with
+their blame, but stale DIGITS never fail this script — they are mechanically
+repairable with `--fix-anchors`, they re-stale on every merge that touches
+`scenarios.py`, and a guard whose red usually means "you moved line numbers" is
+a guard people merge through (R4 in the finding above; see :func:`main`). Only
+an anchor no command can repair — a file anchor past end of file — fails, and
+only when the PR at hand created it.
 
-Exit codes: 0 clean, 1 gate failure (new unregistered field, un-restamped keeper
-promotion, or malformed matrix).
+Usage:
+    python3 scripts/check_mechanism_matrix.py                # validate + ratchets
+    python3 scripts/check_mechanism_matrix.py --base <sha>   # + diff gate
+
+Exit codes: 0 clean, 1 gate failure (malformed matrix, an unregistered field —
+new in the diff, or legacy and beyond a ratchet baseline — an un-restamped
+keeper promotion, or an unrepairable anchor this PR created). WITHOUT `--base`
+the diff gate does not run and the script says so on stdout: a 0 from that mode
+is not a registration verdict for a field the PR itself adds.
 """
 
 from __future__ import annotations
@@ -75,16 +99,11 @@ ANCHORS_BASELINE_PATH = "docs/codebase-site/data/mechanism-matrix-anchors.json"
 # Each ISO's own ScenarioConfig field stems, incl. the regulator prefixes whose
 # fields are that ISO's exclusively (NYSDEC rules bind only New York units).
 # Matched as `<stem>_`, never as a bare substring, so `carbon_price` is never
-# mistaken for a CARB field. Kept in sync with
-# scripts/mechanism_matrix_gap_sweep.py::ISO_STEMS.
-ISO_STEMS = {
-    "ERCOT": ("ercot",),
-    "CAISO": ("caiso",),
-    "PJM": ("pjm",),
-    "MISO": ("miso",),
-    "NYISO": ("nyiso", "nysdec"),
-    "NEISO": ("neiso",),
-}
+# mistaken for a CARB field. SINGLE-SOURCED in scripts/lib/mech_matrix.py since
+# y20 — this script and mechanism_matrix_gap_sweep.py carried separate copies
+# under a "keep in sync" comment, and a census whose two halves disagree writes
+# a baseline the other half can never satisfy.
+ISO_STEMS = mm.ISO_FIELD_STEMS
 
 CELL_CHARS = set("KRIGOU.")
 N_ISOS = 6
@@ -379,19 +398,13 @@ def doc_header_drift(doc_text: str) -> list[tuple[str, str, str]]:
 
 
 def scenarioconfig_fields(source: str) -> set[str]:
-    """Extract ScenarioConfig dataclass field names from scenarios.py source."""
-    m = re.search(r"^class ScenarioConfig\b", source, re.M)
-    if not m:
-        return set()
-    body = source[m.end() :]
-    end = re.search(r"^(?:class |def |@dataclass)", body, re.M)
-    if end:
-        body = body[: end.start()]
-    return {
-        name
-        for name in re.findall(r"^    ([a-z][a-z0-9_]*)\s*:", body, re.M)
-        if not name.startswith("_")
-    }
+    """Extract ScenarioConfig dataclass field names from scenarios.py source.
+
+    Delegates to the shared recogniser (y20): the sweep that WRITES the gap
+    baselines calls the same function, so the enforcing half can never see a
+    different field set than the writing half.
+    """
+    return mm.scenarioconfig_field_names(source)
 
 
 def cli_flags(source: str) -> set[str]:
@@ -567,6 +580,63 @@ def shared_gap_ratchet(matrix_text: str, source: str) -> list[str]:
                 f"row, or name it in the owning family row's def/note."
             )
     return out
+
+
+def absent_shared_ratchet(matrix_text: str, source: str) -> list[str]:
+    """Errors for SHARED fields the matrix never mentions, keeper-armed or not.
+
+    THE POST-MERGE HALF of rule 28(c), and the hole
+    ``docs/handoffs/FINDING-scn-mxr-2026-09-06.md`` §1.1 diagnosed. Before this
+    leg, exactly one check inspected a NEW field's registration — the ``--base``
+    diff gate — so a field that reached ``main`` without its row was invisible
+    to every later run of this script, on ``main`` and on every subsequent PR
+    (whose diff no longer contains it). PR #4870 is the worked example: the
+    diff gate ran, FAILED on ``federal_ces_acp_usd_per_mwh`` and
+    ``federal_ces_target_by_year``, and the PR merged five seconds after it
+    opened — after which nothing could see those two fields again. Neither
+    diff-free ratchet could: :func:`gap_ratchet` only looks at ``<iso>_*``
+    fields, and :func:`shared_gap_ratchet` only at fields a designated BACKCAST
+    keeper arms, which a forecast-only field defaulting to ``None`` can never
+    be.
+
+    So this leg drops both qualifiers. Its census is every SHARED (non-ISO
+    stemmed) ``ScenarioConfig`` field, by NAME — no default value is parsed and
+    no bundle is read, because registration asks only whether the matrix names
+    the field. Together with :func:`gap_ratchet`'s ISO-scoped half it covers
+    every field in the class, and both run with no ``--base`` (see :func:`main`),
+    which is what makes a slipped field red until its row lands.
+
+    Same shrink-only contract and the same mention-anywhere escape hatch as its
+    two siblings; the baseline block is ``absent_shared``, written by
+    ``scripts/mechanism_matrix_gap_sweep.py --write-baseline``. It opens LARGE
+    (185 legacy fields at y20) because it is the first check ever to look at
+    this class — that backlog is the owning desks' work, one row at a time, and
+    the ratchet's job is only that it never grows.
+
+    :func:`shared_gap_ratchet` is deliberately NOT subsumed: it stays the
+    sharper alarm on the same class (a field shaping a PUBLISHED keeper) with
+    its own, empty, baseline — so a field forgiven here still fails there the
+    moment a keeper arms it.
+    """
+    path = REPO / GAPS_BASELINE_PATH
+    if not path.exists():
+        return []
+    try:
+        allowed = set(
+            json.loads(path.read_text(encoding="utf-8")).get("absent_shared", ())
+        )
+    except (OSError, ValueError) as exc:
+        return [f"{GAPS_BASELINE_PATH} is unreadable ({exc})"]
+    absent = mm.absent_shared_fields(scenarioconfig_fields(source), matrix_text)
+    return [
+        f"shared field `{f}` is in neither the mechanism matrix (base "
+        f"{MATRIX_PATH} + ISO shards) nor the {GAPS_BASELINE_PATH} "
+        f"`absent_shared` ratchet (rule 28c). Add its row (plus a cell line in "
+        f"each mechanism-matrix/<ISO>.js shard), or name it in the owning "
+        f"family row's def/note."
+        for f in absent
+        if f not in allowed
+    ]
 
 
 def _scenarios_field_lines(source: str) -> dict[str, int]:
@@ -884,6 +954,42 @@ def main() -> int:
     if not doc_drift:
         print("mechanism-matrix: §5.x prose headers match every keepers/<ISO>.json")
 
+    # --- rule 28(c) RATCHETS: diff-free, shrink-only, BOTH modes --------------
+    #
+    # These three run BEFORE the validate-only return, which is the whole
+    # post-merge half of the repair (FINDING-scn-mxr-2026-09-06 §1.4 R2). They
+    # need no diff by construction — each asks "is this field named in the
+    # matrix or forgiven by the committed baseline?", a question about the tree
+    # as it stands — so a field that reached `main` unregistered is red here on
+    # every later run until its row lands, instead of being invisible forever
+    # the moment its own PR merged. Between them they cover EVERY
+    # `ScenarioConfig` field: `gap_ratchet` the ISO-scoped ones,
+    # `absent_shared_ratchet` the shared complement, `shared_gap_ratchet` the
+    # sharper keeper-armed alarm inside that complement.
+    ratchet_failed = False
+    for leg, clean, errs in (
+        (
+            "gap ratchet",
+            "no ISO-scoped field is invisible",
+            gap_ratchet(matrix_text, scen_src),
+        ),
+        (
+            "shared ratchet",
+            "no keeper arms an unregistered shared field",
+            shared_gap_ratchet(matrix_text, scen_src),
+        ),
+        (
+            "absent-shared ratchet",
+            "every shared field is registered or baselined",
+            absent_shared_ratchet(matrix_text, scen_src),
+        ),
+    ):
+        for e in errs:
+            ratchet_failed = True
+            print(f"::error file={SCENARIOS_PATH}::mechanism-matrix {leg}: {e}")
+        if not errs:
+            print(f"mechanism-matrix: {leg} OK ({clean})")
+
     if not args.base:
         for f in anchor_errs:
             print(
@@ -903,23 +1009,50 @@ def main() -> int:
                 f"{reason} (designated keeper `{shard}`, rule 28). The promoting "
                 f"session re-stamps the prose header in the same session."
             )
-        return 0
+        # R3 (FINDING-scn-mxr-2026-09-06 §1.4): SAY WHAT WAS NOT CHECKED. Three
+        # desk readings recorded "CI exited 0" from this mode, which asserts
+        # store integrity and the ratchets above but CANNOT see a field added by
+        # the PR at hand — that is the diff gate's job and it does not run here.
+        print(
+            "mechanism-matrix: diff gate NOT RUN — pass --base <sha> to check "
+            "new-field registration, keeper-promotion stamps and anchor blame. "
+            "A 0 from this mode is not a registration verdict for a NEW field."
+        )
+        return 1 if ratchet_failed else 0
 
     changed = _git("diff", "--name-only", args.base, "HEAD").splitlines()
     matrix_files = set(matrix_paths())
     matrix_touched = any(p in matrix_files for p in changed)
 
     # --- rule 28(c): new ScenarioConfig fields must be registered ------------
-    failed = False
+    failed = ratchet_failed
 
-    # A PR that STALES an anchor owns it: fail. An anchor already stale at the
-    # base only warns — it belongs to whoever last moved scenarios.py, not to
-    # whichever PR happens to run next. Exactly the keeper-drift rule below,
-    # and the reason this gate is survivable: anchors are ABSOLUTE line numbers
-    # into a file nearly every lane edits, so a single inserted field stales
-    # every anchor beneath it. (xiso-3 shipped this check with an empty ratchet
-    # and main re-staled 214 anchors within the day — a hard gate would have
-    # gone red for lanes that touched nothing.)
+    # ANCHOR BLAME, and its severity (R4, y20). An anchor already stale at the
+    # base warns — it belongs to whoever last moved scenarios.py, not to
+    # whichever PR happens to run next. An anchor THIS PR staled warns too when
+    # the repair is mechanical (`fix` is a derived line number: the `field` and
+    # `row` kinds, digits only) and FAILS only when it is not (`fix is None` —
+    # a file anchor past end of file, which no command can compute a correct
+    # value for and which therefore needs a human).
+    #
+    # WHY the derivable class was downgraded from a hard fail. A line anchor is
+    # an ABSOLUTE line number into a file nearly every lane edits, so one
+    # inserted field stales every anchor beneath it: PR #4870 inherited 100+
+    # such errors from its own 132 inserted lines, and the two REAL rule-28(c)
+    # registration errors were the last two lines of a job that was red for
+    # anchors anyway — the PR merged through all of it
+    # (FINDING-scn-mxr-2026-09-06 §1.2). Worse, the class is a treadmill: xiso-3
+    # shipped this check with an empty ratchet and main re-staled 214 anchors
+    # within the day, so a PR that clears them can be stale again before it
+    # merges. A gate whose red usually means "you moved line numbers" trains
+    # everyone to merge through red, which costs exactly the registration
+    # failure it is stacked on top of. The check is NOT removed and nothing
+    # about its measurement changes: every stale anchor is still reported with
+    # its blame and its one-command repair, the shrink-only baseline still
+    # holds, and the field NAME — the durable identifier, per this script's own
+    # `--fix-anchors` message — was never what was at risk. What changes is only
+    # that digit drift no longer decides this job's exit code, so a red guard
+    # now means a mechanism is unregistered.
     base_stale: set[str] = set()
     try:
         base_scen = _git("show", f"{args.base}:{SCENARIOS_PATH}")
@@ -935,16 +1068,22 @@ def main() -> int:
     except (subprocess.CalledProcessError, OSError):
         base_stale = set()  # base blobs unreachable: fail closed, blame nobody
     for f in anchor_errs:
-        if f["key"] in base_stale:
-            print(
-                f"::warning file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
-                f"anchor (pre-existing, not this PR): {_anchor_message(f)}"
-            )
-        else:
+        blame = (
+            "pre-existing, not this PR"
+            if f["key"] in base_stale
+            else "staled by this PR"
+        )
+        if f["key"] not in base_stale and f["fix"] is None:
             failed = True
             print(
                 f"::error file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
-                f"anchor: {_anchor_message(f)}"
+                f"anchor ({blame}, NOT mechanically repairable): "
+                f"{_anchor_message(f)}"
+            )
+        else:
+            print(
+                f"::warning file={f.get('path', MATRIX_PATH)}::mechanism-matrix "
+                f"anchor ({blame}): {_anchor_message(f)}"
             )
 
     # A PR that MOVES a keeper shard owns that ISO's matrix stamp: fail. Drift
@@ -989,9 +1128,11 @@ def main() -> int:
         base_src = _git("show", f"{args.base}:{SCENARIOS_PATH}")
         head_src = (REPO / SCENARIOS_PATH).read_text(encoding="utf-8")
         new_fields = scenarioconfig_fields(head_src) - scenarioconfig_fields(base_src)
+        unregistered = 0
         for field in sorted(new_fields):
             if not re.search(rf"\b{re.escape(field)}\b", matrix_text):
                 failed = True
+                unregistered += 1
                 print(
                     f"::error file={SCENARIOS_PATH}::new ScenarioConfig field "
                     f"`{field}` is not registered in the mechanism matrix (rule "
@@ -999,27 +1140,11 @@ def main() -> int:
                     f"cell line in each mechanism-matrix/<ISO>.js shard), or "
                     f"name the field in the owning row's def/note."
                 )
-        if new_fields and not failed:
+        # Reported on the DIFF GATE's own result, not on `failed` — which now
+        # carries the diff-free ratchets' verdict from above, so an unrelated
+        # legacy gap would otherwise silence this line.
+        if new_fields and not unregistered:
             print(f"mechanism-matrix: {len(new_fields)} new field(s) all registered")
-
-    # --- rule 28(c) RATCHET: ISO-scoped fields absent from matrix AND baseline
-    ratchet = gap_ratchet(matrix_text, (REPO / SCENARIOS_PATH).read_text("utf-8"))
-    for e in ratchet:
-        failed = True
-        print(f"::error file={SCENARIOS_PATH}::mechanism-matrix gap ratchet: {e}")
-    if not ratchet:
-        print("mechanism-matrix: gap ratchet OK (no new ISO-scoped field is invisible)")
-
-    # --- rule 28(c) RATCHET, SHARED leg: a keeper-armed shared field with no row
-    shared = shared_gap_ratchet(matrix_text, (REPO / SCENARIOS_PATH).read_text("utf-8"))
-    for e in shared:
-        failed = True
-        print(f"::error file={SCENARIOS_PATH}::mechanism-matrix shared ratchet: {e}")
-    if not shared:
-        print(
-            "mechanism-matrix: shared ratchet OK "
-            "(no keeper arms an unregistered shared field)"
-        )
 
     # --- rule 28(b) advisories ----------------------------------------------
     added = _git(
