@@ -1,4 +1,4 @@
-# FINDING — capx D76 phase 3: the two deferred ISOs. **Every STOP clean in both; NYISO INERT exactly as pre-declared; NEISO's requirement is LIVE but NON-BINDING. Nothing arms. PJM is NOT re-measured.**
+# FINDING — capx D76 phase 3: the two deferred ISOs, and PJM re-measured post-Q55. **ALL SIX ISOs NOW MEASURED. Every STOP clean in all three; NYISO and PJM INERT exactly as pre-declared; NEISO's requirement is LIVE but NON-BINDING. Nothing arms.**
 
 **Lane:** capx D76 phase 3. Branch `claude/capx-d76-p3-neiso-nyiso-pjm-sraz8b`, base
 `origin/main` **`0f7a4842`**. Pre-registered in `PRECOMMIT-capx-d76-p3-2026-09-06.md`,
@@ -6,7 +6,7 @@
 `FINDING-capx-d76-2026-09-06.md`; phase 2: `FINDING-capx-d76-p2-2026-09-06.md`.
 Instruments (extended, not forked): `docs/handoffs/d76/p2_predeclare.py` (`--isos`),
 `p2_gate.py` (`--predeclare`), `p2_consumer_probe.py`, `p2_accreditation_probe.py`;
-outputs `p3_predeclare.json`, `p3_gate_neiso.json`, `p3_gate_nyiso.json`.
+outputs `p3_predeclare.json`, `p3_predeclare_addendum.json`, `p3_gate_{neiso,nyiso,pjm}.json`.
 
 **NOTHING ARMS.** §7 drafts an arming card **for** the director; drafting is not serving.
 
@@ -14,10 +14,9 @@ outputs `p3_predeclare.json`, `p3_gate_neiso.json`, `p3_gate_nyiso.json`.
 
 ## 0. Result in one paragraph
 
-**Four legs, two ISOs, one solve-code state, all rc=0; every STOP PASSES in both ISOs.**
-STOP 2, the whole structural claim, lands to **0.000 MW in every year of both ISOs**. The
-whole-ledger diff moves **1 to 4 fields of 30-38 per year, zero `UNCLASSIFIED` in either
-ISO**. **NYISO is INERT end-to-end and this was written down before the solve**: its D52
+**Six legs, three ISOs, all rc=0; every STOP PASSES in all three.**
+STOP 2, the whole structural claim, lands to **0.000 MW in every year of every ISO**. The
+whole-ledger diff moves **0 to 4 fields of 30-39 per year, zero `UNCLASSIFIED` anywhere**. **NYISO is INERT end-to-end and this was written down before the solve**: its D52
 gates make the adequacy requirement peak-independent, and its ledger moves
 `screen_peak_demand_mw` and *nothing else* in all three years — the pre-declared
 consequence, confirmed. **NEISO's requirement is LIVE and moves by the pre-declared
@@ -25,32 +24,46 @@ amount to within 0.045 MW — and nothing consumes it**: entering firm identical
 cent, retirements identical, fleet identical, `floor_retained` empty. The reason is
 measured, not inferred: NEISO's fleet sits **4.99-7.56 GW above** its requirement
 (position 1.20-1.31), so a ±345/618 MW bar move crosses no screen threshold. The
-cross-ISO picture is now complete for five of six ISOs and it **narrows further**: the
+cross-ISO picture is now **complete for all six ISOs** and it **narrows further**: the
 adequacy requirement is still the only live consumer, it is peak-**independent** in 2 of 6
 ISOs by two different gates (PJM/D67, NYISO/D52), and **decisions move in only 2 of 6**
 (CAISO's backstop build, MISO's admission cap). The VRE accreditation census is now
 measured **peak-inert in all six ISOs**.
 
-**PJM was NOT re-measured, and the charter's PJM question remains open** — §1.
+**D75-R-ARM MERGED MID-LANE, so PJM WAS re-measured after all and the charter's question is
+ANSWERED** (§1, §5A): with the ELCC vintage armed, PJM's accreditation census is **still
+peak-inert**, its A/B moves the seam field and nothing else in all five years, and phase 2's
+caveat **inverts** — the arming makes the inertness *stronger*, not weaker. **All six ISOs
+are now measured.**
 
 ---
 
-## 1. THE CHARTER'S PJM QUESTION IS NOT ANSWERED, and why
+## 1. THE CHARTER'S PJM QUESTION — blocked at the start, ANSWERED by the end
 
-The charter's dispatch STOP required D75-R-ARM merged to `main`. **It was not, and is
-still not** (PRECOMMIT §0): `origin/main` carries no D75-R-ARM commit, the branch
-`claude/capx-d75r-arm-pjm` does not exist on the remote, and `_pjm_config` does not carry
-`pjm_vre_accreditation_vintage` — the field sits at its dataclass default `False`. The
-ledger sequences D75-R-ARM behind D65-B-R's board write (leg 6 of 7 on `main`). **Owner
-ruling Q55 ruled ARM; the arm has not been executed.**
+**The sequence matters and is recorded exactly.** When this lane opened, the charter's
+dispatch STOP was **unmet**: `origin/main` carried no D75-R-ARM commit, the branch
+`claude/capx-d75r-arm-pjm` did not exist on the remote, and `_pjm_config` did not carry
+`pjm_vre_accreditation_vintage` — Q55 had ruled ARM but the arm was never executed, and the
+ledger sequenced it behind D65-B-R's board write (then at leg 6 of 7). That was reported to
+the director, who authorized a reduced scope in session: run the two ISOs that do not depend
+on the PJM ELCC vintage, defer PJM. **NEISO and NYISO were solved, graded and pushed under
+that reduced scope** (§3-§5).
 
-Reported to the director, who authorized a reduced scope in session: run the two ISOs
-that do not depend on the PJM ELCC vintage, defer PJM. So the charter's PJM question —
-*is the accreditation census still peak-inert now that the ELCC vintage is armed?* —
-**cannot be asked at this HEAD**, because the vintage is not armed at this HEAD. A PJM
-leg solved now would re-measure phase 2's own verdict and stamping it "re-measured
-post-Q55" would be false. **PJM's row in §6 and §7 is phase 2's, carried verbatim and
-marked NOT re-measured.** This is a five-of-six card, and it is labelled as one.
+**Then D75-R-ARM merged, while this lane was still open.** `origin/main` reached
+`57bc34a7` carrying **`6164231e` — "capx D75-R-ARM: `pjm_vre_accreditation_vintage` is ARMED
+for PJM (owner ruling Q55)"**, and `_pjm_config.default_scenario_overrides` now contains
+`"pjm_vre_accreditation_vintage": True`. Both precondition legs flipped to PASS.
+
+**So the lane asked the question rather than closing with it open.** PRECOMMIT **Addendum 1**
+was written and **pushed before the first PJM LP**: it re-audits the `0f7a4842 → 57bc34a7`
+delta hunk by hunk, verifies that NEISO's and NYISO's four keys are **unmoved** by the rebase
+(so §3-§5 describe the new head too), re-declares PJM's two keys at the new head
+(`b518f5fe7d02f961` / `559c05579b47684b` — they *did* move, exactly as the charter predicted
+they would), and records the **zero-LP census answer before the solve**. The PJM legs were
+then solved at the new head with the vintage armed on **both** sides, which is what makes the
+A/B isolate this lane's own gate against an already-repaired accreditation.
+
+**PJM's row in §6 and §7 is therefore MEASURED, post-Q55, not carried.** §5A is the result.
 
 ## 2. The legs, and the one solve-code state
 
@@ -60,15 +73,20 @@ marked NOT re-measured.** This is a five-of-six card, and it is labelled as one.
 | 5-A | NEISO | 2021-2023 | `69688c797d7bac80` | **yes, exact** | 0 |
 | 6-C | NYISO | 2021-2023 | `0641a92f61740d55` | **yes, exact** | 0 |
 | 6-A | NYISO | 2021-2023 | `236b56818bed34e9` | **yes, exact** | 0 |
+| 7-C | PJM | 2021-2025 | `b518f5fe7d02f961` | **yes, exact** (Addendum 1, at `57bc34a7`) | 0 |
+| 7-A | PJM | 2021-2025 | `559c05579b47684b` | **yes, exact** (Addendum 1, at `57bc34a7`) | 0 |
 
-**Every realized key equals the value machine-emitted into `p3_predeclare.json` before the
-first LP**, and every control key equals its bare recipe key. All four legs ran
-SEQUENTIALLY at one base (`0f7a4842`), one LP at a time; rule 12's two-concurrent
-allowance was deliberately not taken (15 GB / 4 cores).
+**Every realized key equals the value machine-emitted before its own leg ran** — NEISO and
+NYISO into `p3_predeclare.json` before the first LP, PJM into
+`p3_predeclare_addendum.json` before the first PJM LP — and every control key equals its
+bare recipe key at its own head. All six legs ran SEQUENTIALLY, one LP at a time; rule 12's
+two-concurrent allowance was deliberately not taken (15 GB / 4 cores). **NEISO and NYISO are
+at base `0f7a4842`; PJM is at `57bc34a7`** (§12) — each A/B is internally at one base, which
+is the only comparison any of them makes.
 
-**No commit of any kind landed between the two legs of either A/B** — the rule the
+**No commit of any kind landed between the two legs of any A/B** — the rule the
 PRECOMMIT §3 added after phase 2 took a literal STOP 3 FAIL from exactly that. It worked:
-**STOP 3 finds the five bookkeeping keys and no `git` difference in either ISO** (§3).
+**STOP 3 finds the five bookkeeping keys and no `git` difference in any of the three ISOs** (§3).
 
 ### 2.1 A fresh-checkout prerequisite, recorded because it cost the first attempt
 
@@ -88,23 +106,24 @@ docstring names NYISO as the example of. Measured: NEISO 16 confirmed exits, NYI
 **Nothing was worked around**: had the registry been missing rather than empty, the guard
 would still have refused.
 
-## 3. The STOP gates — PASS, 6 of 6, in both ISOs
+## 3. The STOP gates — PASS, 6 of 6, in all three ISOs
 
-| STOP | NEISO | NYISO |
-|---|---|---|
-| 1 — no pre-existing key moves (12 recipe keys) | **PASS** | **PASS** |
-| 2 — the identity, to the MW | **PASS** | **PASS** |
-| 3 — every non-peak operand byte-identical | **PASS** | **PASS** |
-| 4 — footprint confined, zero UNCLASSIFIED | **PASS** | **PASS** |
-| 5 — no non-target load-bearing flip | **PASS** | **PASS** |
-| 6 — one measured load per armed year (by test) | **PASS** (9 passed / 14 subtests) | **PASS** (same test) |
+| STOP | NEISO | NYISO | PJM |
+|---|---|---|---|
+| 1 — no pre-existing key moves (12 recipe keys) | **PASS** | **PASS** | **PASS** |
+| 2 — the identity, to the MW | **PASS** | **PASS** | **PASS** |
+| 3 — every non-peak operand byte-identical | **PASS** | **PASS** | **PASS** |
+| 4 — footprint confined, zero UNCLASSIFIED | **PASS** | **PASS** | **PASS** |
+| 5 — no non-target load-bearing flip | **PASS** | **PASS** | **PASS** |
+| 6 — one measured load per armed year (by test) | **PASS** (9 passed / 14 subtests) | **PASS** (same test) | **PASS** (same test) |
 
 **STOP 2 — the whole structural claim — lands to 0.000 MW everywhere:**
 
-| ISO | 2021 | 2022 | 2023 |
-|---|---|---|---|
-| NEISO | 0.000 | 0.000 | 0.000 |
-| NYISO | 0.000 | 0.000 | 0.000 |
+| ISO | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| NEISO | 0.000 | 0.000 | 0.000 | — | — |
+| NYISO | 0.000 | 0.000 | 0.000 | — | — |
+| PJM | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
 
 `|arm screen_peak_demand_mw − pre-declared measured peak|`, MW; and
 `|screen peak − the ledger's own peak_demand_mw|` = 0.000 MW in every SOLVED year. 2022 is
@@ -131,8 +150,13 @@ direction.
 | NYISO | 2021 | 1/36 | `screen_peak_demand_mw` (SEAM) |
 | NYISO | 2022 | **1/30** | `screen_peak_demand_mw` (SEAM) |
 | NYISO | 2023 | **1/38** | `screen_peak_demand_mw` (SEAM) |
+| PJM | 2021 | 1/36 | `screen_peak_demand_mw` (SEAM) |
+| PJM | 2022 | 1/31 | `screen_peak_demand_mw` (SEAM) |
+| PJM | 2023 | 1/39 | `screen_peak_demand_mw` (SEAM) |
+| PJM | 2024 | **0/39** | — (the weather year: both paths are the same object) |
+| PJM | 2025 | 1/39 | `screen_peak_demand_mw` (SEAM) |
 
-**No DECISION, FLEET or ACCOUNTING key moves in either ISO, in any year.** The partition
+**No DECISION, FLEET or ACCOUNTING key moves in any of the three ISOs, in any year.** The partition
 was fixed in the PRECOMMIT before the first LP and was not widened.
 
 ## 4. NYISO — INERT end-to-end, and the pre-declaration hit exactly
@@ -205,25 +229,78 @@ most likely". It did not happen. The prediction was hedged ("plausible", never r
 and the measured reason — slack, not a broken channel — is stated above rather than
 absorbed.
 
-## 6. THE SIX-ISO CONSUMER TABLE — five measured, one carried
+## 5A. PJM, RE-MEASURED POST-Q55 — still inert, and the caveat INVERTS
+
+Legs 7-C `b518f5fe7d02f961` (== the bare recipe key at this head) and 7-A
+`559c05579b47684b`, **2021-2025**, both at `57bc34a7` with `pjm_vre_accreditation_vintage`
+armed, sequential, no commit between them. **STOPs 1-6 all PASS.**
+
+**STOP 2 lands to 0.000 MW in all five years** (149,590.0 / 148,528.0 / 147,605.0 /
+153,121.0 / 160,560.0), and 0.000 MW against the ledger's own `peak_demand_mw` in every
+solved year. **The whole-ledger diff moves `screen_peak_demand_mw` and nothing else**:
+1/36, 1/31, 1/39, **0/39** (2024, the weather year — both paths are the same object), 1/39.
+Zero UNCLASSIFIED, zero SCREEN, zero DECISION, zero FLEET. **STOP 5 PASS**: the two
+`score.json` differ in exactly one path, `generated_utc`, 3 s apart.
+
+**The charter's question, answered on the leg's own committed pools.** The credits at both
+peaks, per delivery year — identical to the zero-LP declaration in Addendum 1 §A1.4, which
+was pushed before the solve:
+
+| DY | wind (seam → measured) | solar (seam → measured) | DR-as-supply |
+|---|---|---|---|
+| 2021 | 0.41 → 0.41 | 0.1064 → 0.1064 | 11,886.8 → 11,886.8 |
+| 2022 | 0.41 → 0.41 | 0.1064 → 0.1064 | 10,513.0 → 10,513.0 |
+| 2023 | 0.15 → 0.15 | 0.520788 → 0.520788 | 10,116.7 → 10,116.7 |
+| 2024 | 0.21 → 0.21 | 0.479587 → 0.479587 | 10,146.4 → 10,146.4 |
+| 2025 | 0.38 → 0.38 | 0.135197 → 0.135197 | 6,084.8 → 6,084.8 |
+
+**PHASE 2's CAVEAT INVERTS, and this is the lane's most substantive PJM finding.** Phase 2
+§4.1 said PJM's inertness "rests on an ELCC curve that CLAMPS … If
+`pjm_vre_accreditation_vintage` arms, PJM's census may become peak-sensitive again."
+**Measured: it does not — and the arming makes the inertness STRONGER rather than weaker.**
+The evidence is in the *shape* of the rows, not just their equality: probing the resolver
+across installed-MW levels (5 / 12 / 25 GW), the 2021-2022 credits still vary with
+penetration (solar 0.1064 → 0.08839 → 0.0789) while **2023-2025 are constant across
+installed MW**. That is the armed vintage replacing the penetration-indexed *curve* with
+PJM's **published per-delivery-year class rating**, whose functional form contains **neither
+a peak term nor a penetration term**. Phase 2's inertness was **accidental** — a curve that
+happened to saturate; this one is **structural** — a rating the peak cannot enter. The
+2021-2022 edge years fall through to the old curve and are peak-independent there too.
+
+**So D76 does not touch PJM at either head, and the reason has changed for the better.**
+Phase 1's headline `gas_st` survival (+7,333.7 / +9,464.5 MW) remains gone.
+
+**FC-3 at full magnitude, identical in both legs** (report, never gate) — and this is the
+**post-D75-R-ARM** board figure, which independently corroborates that the arm is live in
+this control: `retire.total_gw` actual 15.062 / model **17.294** / err_frac **+0.148** FAIL,
+against phase 2's pre-arm 18.058 / +0.199 — D75-R's own measured improvement, reproduced
+here. `false_retire` 7.596 GW = 43.9 % of model FAIL (phase 2: 8.065 / 44.7 %);
+`unit_recall_gt300` 0.650 (13/20), plant 0.700 FAIL — unchanged. Per fuel: `gas_st` 2.702 /
+10.297 / **+2.811** and `coal` 10.299 / 6.797 / −0.340 are **unchanged from phase 2**;
+`gas_cc` moved 0.903 → **0.139** GW (err_frac +1.081 → −0.679), which is the whole of the
+total's improvement. **D75-R-ARM did not touch the steam over-exit**: `gas_st` is still
+10.297 GW modelled against 2.702 GW actual, so D74's object survives the arm intact and
+D76 remains not a contributing cause at either head.
+
+## 6. THE SIX-ISO CONSUMER TABLE — ALL SIX MEASURED
 
 Phase 0 §4.2 enumerated six direct consumers of the seam peak. Phase 2 measured four ISOs;
 this lane adds two.
 
 | consumer (phase 0 §4.2) | measured verdict across the six ISOs |
 |---|---|
-| **3. adequacy requirement** | **LIVE in 4 of 6** — CAISO, ERCOT, MISO, **NEISO** (new). **INERT in 2 of 6 by two different gates**: PJM (D67-ARM, published whole-RTO RR) and **NYISO** (D52, published ICAP forecast peak) — both measured `∂R/∂peak = 0` at both peaks in every year |
+| **3. adequacy requirement** | **LIVE in 4 of 6** — CAISO, ERCOT, MISO, **NEISO** (new). **INERT in 2 of 6 by two different gates**: PJM (D67-ARM, published whole-RTO RR — **re-confirmed post-Q55**) and **NYISO** (D52, published ICAP forecast peak) — both measured `∂R/∂peak = 0` at both peaks in every year |
 | **1. CR-1 reserve position** | LIVE **only as a function of the requirement** — it moves in exactly the ISO-years the requirement moves, never independently. Confirmed again in both new ISOs |
 | **5d. reserve-margin backstop** | **LIVE in CAISO only.** Armed in NEISO and NYISO and never fires in-window: NEISO's fleet is 5.0-7.6 GW long, NYISO's bar never moves |
 | **5a. retirement reliability floor** | **NEVER BINDS in any ISO** — `floor_retained` empty in every year of every leg of all **six** |
-| **4 / 5c. accreditation census** | **PEAK-INERT in all SIX, measured** at both peaks on each control leg's own pools (§6.1) |
+| **4 / 5c. accreditation census** | **PEAK-INERT in all SIX, measured** at both peaks on each control leg's own pools (§6.1) — PJM's now measured **with the ELCC vintage ARMED**, where the inertness is structural rather than accidental (§5A) |
 | **2. D59 locality peaks** | n/a — `locality_capacity_curves` default-off in every leg of all six |
 
 **Per-ISO decision effect, the bottom line for an arming decision:**
 
 | ISO | requirement | decisions in the tested window | source |
 |---|---|---|---|
-| PJM | **no change** (D67-ARM) | **none** — byte-identical 2021-2025 | phase 2, **NOT re-measured post-Q55** |
+| PJM | **no change** (D67-ARM) | **none** — seam field only, all 5 years (2024: 0/39) | **this lane, RE-MEASURED post-Q55 with the vintage ARMED** |
 | CAISO | +7,445 / −2,380 MW | **−2,532.391 MW** backstop gas CT (2023) | phase 2, carried verbatim |
 | ERCOT | +14,362 / +10,410 MW | none in-window (energy-only; position crosses below 1.0) | phase 2, carried verbatim |
 | MISO | +7,189 / +5,578 MW | **343.312 MW** coal saved from a 2024 exit | phase 2, carried verbatim |
@@ -241,7 +318,7 @@ own committed VRE pools:
 
 | ISO | wind credit (seam → measured) | solar credit | source |
 |---|---|---|---|
-| PJM | 0.41 → 0.41 (all 5 yrs) | 0.1064 → 0.1064 | phase 2 |
+| PJM (**post-Q55, vintage armed**) | 0.41 / 0.41 / **0.15 / 0.21 / 0.38** → identical | 0.1064 / 0.1064 / **0.5208 / 0.4796 / 0.1352** → identical | **this lane** |
 | CAISO | 0.16 → 0.16 | 0.18 → 0.18 | phase 2 |
 | ERCOT | 0.20 → 0.20 | 0.21 → 0.21 | phase 2 |
 | MISO | 0.166 / 0.08 → identical | 0.3875 → 0.3875 | phase 2 |
@@ -251,17 +328,18 @@ own committed VRE pools:
 Corroborated in the solve: `screen_entering_firm_mw` is **identical between control and arm
 in every year of both new ISOs**.
 
-**The caveat that still stands, and it is PJM's alone.** Phase 2 §4.1 stated that PJM's
-inertness rests on an ELCC curve that **clamps**, which is the defect capx D75-R is
-chartered to repair, and that if `pjm_vre_accreditation_vintage` arms, PJM's census may
-become peak-sensitive again. **That caveat is untouched by this lane** — Q55 ruled ARM but
-the arm has not merged, so nothing here tests it. NEISO's and NYISO's rows above rest on
-their own ISOs' curves and carry no PJM dependency.
+**The caveat phase 2 raised is now CLOSED, and it closed in the direction it feared least.**
+Phase 2 §4.1 warned that PJM's inertness rested on a **clamping** ELCC curve and that arming
+`pjm_vre_accreditation_vintage` might make the census peak-sensitive again. D75-R-ARM merged
+mid-lane and the census was re-measured with it armed: **still peak-inert, and now
+structurally so** — the published per-DY class rating has no peak term at all, where the old
+curve was inert only because it saturated (§5A). NEISO's and NYISO's rows rest on their own
+ISOs' curves and never carried a PJM dependency.
 
 ## 7. THE ARMING CARD — **redrafted for the director with five ISOs measured, NOT served**
 
 > **Card: arm `capacity_screen_peak_measured_hindcast`?** *(supersedes the phase-2 §9
-> draft; five of six ISOs now measured)*
+> draft; **ALL SIX ISOs now measured**, PJM at the post-Q55 head)*
 >
 > **What it is.** One gate, one seam, **zero scalar fields, zero free parameters**
 > (rules 21/24). Armed, the capacity screens test the solve year's **own measured load** —
@@ -292,16 +370,20 @@ their own ISOs' curves and carry no PJM dependency.
 > the board, and every affected ISO's frontier bundle would need re-solving. (b) The
 > measured benefit is **narrow and got narrower**: phase 2 read 1 of 4 ISOs with a moving
 > scored metric; at 6 ISOs it is **2 of 6 with any decision change**, one of which lands
-> outside its scored window. (c) **PJM is measured at a HEAD that owner ruling Q55 has
-> already superseded** — see below.
+> outside its scored window. (c) At six ISOs the mechanism is measured **inert in four**, so
+> arming buys a *correct operand* rather than a *changed answer* across most of the fleet —
+> which is a real argument for arming on rule 14 grounds and a real argument against
+> spending a repository-wide re-solve on it now.
 >
-> **The dependency the director should weigh, and it is now the card's main open item.**
-> PJM's inertness is **conditional on the ELCC clamp** capx D75-R repairs. Q55 ruled ARM;
-> **D75-R-ARM has not merged**, so PJM's row here is phase 2's verdict at a pre-Q55 HEAD.
-> Arming D76 before D75-R-ARM lands buys nothing in PJM; after, it may. **The cheapest way
-> to close this card is to land D75-R-ARM and then run the PJM leg alone** — two LPs,
-> ~30 min, against a phase-3 protocol that is already written and whose grader is already
-> parameterized.
+> **The dependency phase 2 flagged is RESOLVED, and it resolves against arming buying
+> anything in PJM.** Phase 2 held that PJM's inertness was conditional on the ELCC clamp
+> D75-R repairs, and that arming D76 after D75-R landed "may buy something". D75-R-ARM
+> merged mid-lane and PJM was re-measured with the vintage armed: **it buys nothing** — the
+> census is peak-inert *more* firmly than before, because the published per-DY class rating
+> has no peak term where the old curve merely saturated. **There is no longer an open
+> measurement blocking this card.** The decision now rests entirely on the trade in the two
+> paragraphs above: a correct operand everywhere against a re-solve of every hindcast bundle
+> in the repository, for a measured decision change in two ISOs.
 >
 > **What this lane recommends.** Nothing — a rule-29 screen may kill an arm and may never
 > promote one, and the charter's precondition is a STOP. The measured basis is above; the
@@ -353,14 +435,15 @@ repaired mid-lane. Worth a one-line fix in whichever lane next touches that file
 
 ## 9. Matrix (rule 28) and retention (rule 29(c))
 
-Cell verdicts updated in **NEISO.js and NYISO.js only** — this lane's own two ISOs (rule 25
-`[R-ISO-SCOPE]`). **PJM.js, CAISO.js, ERCOT.js and MISO.js are NOT touched**: this lane did
-not test them, and PJM's phase-2 cell stands as phase 2 left it. The `fc` letter stays
-**`O`** in both: the mechanism is measured but not adjudicated — arming is an owner card.
+Cell verdicts updated in **NEISO.js, NYISO.js and PJM.js** — the three ISOs this lane
+actually tested (rule 25 `[R-ISO-SCOPE]`). **CAISO.js, ERCOT.js and MISO.js are NOT
+touched**: this lane did not re-test them and their phase-2 cells stand. The `fc` letter
+stays **`O`** in all three: the mechanism is measured but not adjudicated — arming is an
+owner card.
 
-**All four bundles are DELETED from `results/hindcast/` before this PR merges** (rule
-29(c)). This FINDING, the PRECOMMIT and `docs/handoffs/d76/p3_gate_{neiso,nyiso}.json` +
-`p3_predeclare.json` carry **every number the lane will ever cite**; git history is the
+**All six bundles are DELETED from `results/hindcast/` before this PR merges** (rule
+29(c)). This FINDING, the PRECOMMIT and `docs/handoffs/d76/p3_gate_{neiso,nyiso,pjm}.json` +
+`p3_predeclare.json` / `p3_predeclare_addendum.json` carry **every number the lane will ever cite**; git history is the
 record for the bytes. Nothing is registered on any dashboard — a screen bundle is never
 registered, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for one.
 
@@ -386,7 +469,47 @@ registered, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for one.
 
 ## 11. What is still open
 
-1. **The charter's PJM question** (§1) — needs D75-R-ARM merged, then two PJM legs.
+1. ~~The charter's PJM question~~ — **CLOSED in this lane** (§1, §5A): D75-R-ARM merged
+   mid-lane, PJM was re-measured with the vintage armed, and the census is still peak-inert.
+   No measurement now blocks the arming card.
 2. **NEISO's FC-3 retirement profile** (§8) — `gas_st` +1.833 against four large
    under-exits, identical in both legs, routed to the NEISO retirement lane.
-3. **The `--help` crash** (§8.2).
+3. **PJM's steam over-exit survives D75-R-ARM untouched** (§5A) — `gas_st` still 10.297 GW
+   modelled against 2.702 GW actual, `err_frac` +2.811, unchanged from phase 2 across the
+   arm. D74's object, restated with post-arm evidence.
+4. **The `--help` crash** (§8.2).
+
+
+---
+
+## 12. ADDENDUM — the order of work, recorded so the record cannot be read as tidier than it was
+
+This lane did **not** run as one clean sweep, and the sequence is material to how its claims
+should be read:
+
+1. The charter's **dispatch STOP was unmet** at session start. Reported; the director
+   authorized a reduced scope in session (NEISO + NYISO, PJM deferred).
+2. `PRECOMMIT-capx-d76-p3-2026-09-06.md` pushed (`5259d519`) **before the first LP**,
+   declaring the STOP failure, the reduced scope, the four keys and the two ISOs' expected
+   verdicts.
+3. A **fresh-checkout prerequisite** cost the first NEISO attempt (§2.1) — `data/clean`
+   absent, the W1-B B3 guard refusing to degrade. Repaired with `regenerate_clean.py`; no
+   config, recipe or key change.
+4. **NEISO and NYISO solved, graded, and pushed** (`fd4fb62a`), with the FINDING stating in
+   its own §1 that the PJM question was open and that the card was a five-of-six card.
+5. **D75-R-ARM merged to `main` while this lane was open.** The branch was rebased onto
+   `57bc34a7`; the rebase dropped the PRECOMMIT commit as already-merged, and the re-audit
+   verified NEISO's and NYISO's keys unmoved.
+6. **PRECOMMIT Addendum 1 pushed BEFORE the first PJM LP**, carrying the hunk-by-hunk
+   re-audit, the re-declared PJM keys, and the **zero-LP census answer** — so the
+   prediction is on the record ahead of the evidence.
+7. **PJM solved, graded, and this FINDING updated** from five-of-six to six-of-six.
+
+**What that ordering does and does not buy.** The NEISO and NYISO numbers were fixed before
+D75-R-ARM existed and are unaffected by it (verified: keys and pre-declared rows unmoved).
+PJM's numbers were predicted at zero LP in a pushed document and then measured — the
+strongest form available here, since the prediction could not be revised after the result.
+What it does **not** buy is a single-base lane: PJM sits at `57bc34a7` and the other two at
+`0f7a4842`. That is stated rather than smoothed over, and it is why **no cross-ISO claim in
+this FINDING rests on differencing PJM against NEISO or NYISO** — each ISO's A/B is
+internally at one base, which is the only comparison any of them makes.
