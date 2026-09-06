@@ -33,6 +33,35 @@ with their exact values and multiplicities). It now holds 721,892 rows —
 8,759 distinct local hours × 11 DIBAs for 2019-2022, identical to the
 in-sample years' grain, plus 4,317 h of H1-2026 through 2026-06-30.
 
+**`SWPP interchange hourly.parquet`** (added 2026-09-06, lane SPP-11 —
+`docs/handoffs/FINDING-spp-11-2026-09-06.md`; plan `docs/multi-iso/spp-addition-plan-2026-09.md`
+§6 row 3). 268,177 rows, 2023-01-01 01:00 .. 2026-01-01 00:00 on
+`America/Chicago`, fetched with the committed producer on its **keyless**
+`--source bulk` route (this environment carries no `EIA_API_KEY`):
+
+    python scripts/data/fetch_eia930_interchange.py --ba SWPP --source bulk \
+        --years 2023 2024 2025
+
+Eleven DIBAs: `AECI`, `EPE`, `ERCO`, `MISO`, `PNM`, `PSCO`, `SIKE`, `SPA`,
+`SPC`, `WACM`, `WAUW`. Every DIBA except `SIKE` carries the full 8,759 /
+8,784 / 8,760 hour grain (the three absent hours are the DST spring-forward
+02:00 local, correctly so); `SIKE` first appears 2025-06-01. Per-hour value
+coverage is EIA's: 97 (2023) / 361 (2024) / 936 (2025) hours are NaN for
+*every* DIBA at once — a submission gap, not a fetch artifact. `PNM` is
+identically 0 through 2025 after 2024.
+
+**Three impossible prints, carried unmodified** (data/raw is immutable; any
+repair is a consumer's decision, and none is applied here): `SPC` (SaskPower,
+a ~150 MW DC tie) reads **+9,967 MW** at 2024-07-19 00:00 and **−57,499 MW**
+at 2025-11-19 15:00; `WACM` reads **+32,974 MW** at 2025-06-21 05:00. The
+`MISO` **−5,377 MW** print at 2024-01-14 08:00 is *not* in this class — it is
+Winter Storm Heather, and the seam really did carry it.
+
+Sum-of-legs vs the BA-level `Total interchange` column of
+`../eia-930-hourly/SWPP hourly.parquet`: 4.59 / 2.01 / 1.89 TWh against
+3.91 / 1.66 / 2.36 TWh for 2023 / 2024 / 2025 — the usual gap between the
+per-seam legs and EIA's imbalance-adjusted BA total, plus the NaN hours.
+
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
 
