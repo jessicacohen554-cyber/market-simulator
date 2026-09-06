@@ -327,3 +327,66 @@ So the committed bundle could not have served as a form-4 control on its config 
 from the SCN-LOAD `DEMAND_GROWTH_RATES` hunk §5 already found LIVE. **The same-HEAD control leg is
 the correct instrument**, and it differs from the arm by exactly the two acts — which A.2's key
 declaration is what makes checkable.
+
+---
+
+## ADDENDUM B (2026-09-06) — main moved mid-session; the batch's G-DRIFT re-audit
+
+**What happened.** This lane's PR **merged to `main` as #5112 (`b1f77621`) while the screen was
+running**, and fourteen other lanes merged with it. `origin/main` moved `6887484f → d1aa877f`.
+Both acts are therefore LIVE on `main`: `ccs_retrofit_vom_adder = 2.95`,
+`ccs_retrofit_fixed_cost_co2_scaling = True`. Items 1–4 are complete and merged.
+
+Per the merged-PR rule a merged PR cannot track follow-up work, so items 5–7 continue from a branch
+restarted off the new `main`. **D60-R4 (`4baf36ff`) and D63 (`ce1f7ec9`) both merged in the same
+window, so the charter's collision constraint — "your batch registers AFTER both" — is satisfied.**
+
+### B.1 The §3 bare-key declaration STILL HOLDS at the new main
+
+Re-measured against an INDEPENDENT extract of `origin/main`'s `src` (`git archive origin/main src`,
+imported with the repo's own tree off `sys.path` — the first attempt silently resolved back to the
+working tree through the editable install's `.pth`, and was discarded):
+
+| ISO | §3 declared POST-D65B | measured at `d1aa877f` |
+|---|---|---|
+| CAISO | `2f3e1df634cae1d8` | `2f3e1df634cae1d8` |
+| ERCOT | `95d789d6dfb98831` | `95d789d6dfb98831` |
+| MISO | `6808780f515fce63` | `6808780f515fce63` |
+| NEISO | `31ca8b9d010f7e7f` | `31ca8b9d010f7e7f` |
+| NYISO | `8e87bfe58f75212a` | `8e87bfe58f75212a` |
+| PJM | `eaa3fbef5ff182c9` | `eaa3fbef5ff182c9` |
+| global forecast | `547053bdfccd4264` | `547053bdfccd4264` |
+| global backcast | `f61891696e671969` | `f61891696e671969` |
+
+**Fifteen lanes merged and not one moved a bare forecast key.** The STOP *"a realized key ≠ its
+pre-declared value"* does not fire, and no re-declaration is owed.
+
+### B.2 The re-audit — every hunk INERT, gate named (r#46 doctrine + D65 §3d's correction)
+
+`a5c30c6a → d1aa877f` over `src/market_sim`, `scripts/run_full_horizon.py`, `scripts/lib`:
+**13 files, +630/−7.** A matched cache key is NOT a G-DRIFT verdict, so this is a CODE audit, and
+per D65 §3d **every hunk that modifies an EXISTING function names its gate or shows its arithmetic
+— a file-level verdict is inadmissible.**
+
+| file | hunk class | verdict | the gate |
+|---|---|---|---|
+| `config/constants.py` | 2 import lines | INERT | no value changed; imports a symbol |
+| `data/fuel/__init__.py`, `data/fuel/basis/__init__.py` | `__all__` / re-export | INERT | no call site |
+| `capacity_evolution/evolve.py` | +1 additive ledger key in an EXISTING fn | INERT | `if _econ_sink.get("no_default_cap_price_takers")` — the sink is empty off the D74 gate |
+| `config/scenarios.py` | 3 NEW fields | INERT | `nyiso_gas_bridge_startup_aware=False`, `miso_gas_marginal_commodity_pricing=False`, `capacity_no_default_cap_convention_by_iso=None`. **No existing field's default moved; no new `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry; `iso_configs.py` is ABSENT from the diff, so none is armed for any ISO** |
+| `config/capacity_market.py` | new resolver | INERT | `resolve_capacity_no_default_cap_convention` **measured `False` for all six ISOs** at their resolved forecast defaults |
+| `data/avoidable_cost_rate.py` | new fn `no_default_cap_class` | INERT | additive; reached only from the gated retirements limb |
+| `capacity_evolution/retirements.py` | **4 hunks in the EXISTING `apply_economic_retirements`** | INERT | every one guarded by `no_default_cap_armed` = `published_bar_armed AND year is not None AND resolve_…(config, iso)`, which is `False`. The `continue` that would skip a unit is inside that guard, so the screen's candidate set is unchanged |
+| `model/commitment.py` | new param on the EXISTING `caiso_ra_mustoffer_min_gen` | INERT | `screen_stats: dict \| None = None`; every write guarded `if screen_stats is not None`; its own docstring states it is never read by the floor arithmetic |
+| `pipeline/commitment.py` | hunks in the EXISTING `_nyiso_gas_bridge_floor` | INERT | `startup_aware=False` ⇒ `need_econ = startup_bridge` (its prior value) ⇒ `p1_prices`/`base_mc` unchanged; `screen_stats=None`; census block skipped |
+| `data/fuel/resolve.py` | **UNCONDITIONAL call added to an EXISTING fn** | INERT | the gate is in the CALLEE, so the call site alone is inadmissible: `apply_miso_gas_marginal_commodity` returns `None` at its first statement (`if not getattr(config, "miso_gas_marginal_commodity_pricing", False): return None`) **before any mutation**, so `if spot_cells is None:` falls through to the pre-existing `apply_miso_winter_citygate_daily` |
+| `data/fuel/basis/miso.py` | new fn + helpers | INERT | same gate |
+| `scripts/run_full_horizon.py` | new CLI flag | INERT | `--capacity-no-default-cap-convention`, `default=None` ⇒ field stays `None` unless passed |
+
+### B.3 THE CONSEQUENCE: the screen does NOT need re-running
+
+The screen's ARM and CONTROL both solved at `a5c30c6a`, and B.2 shows the delta from there to
+`d1aa877f` is **inert for a default forecast run**. So the screen's differencing remains valid at
+the new HEAD and its verdict transfers; re-solving both legs would re-measure an established
+identity at 30 minutes of LP. (§5's finding is untouched: form 4 against the *keepers* stays VOID —
+their shas are pre-SCN-LOAD — which is a different question from this one.)
