@@ -56,3 +56,74 @@ this directory or its README was taken from memory.
 - **Folders:** `ftp://pubftp.spp.org/Markets/RTBM/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/BINDING_CONSTRAINTS/` · `ftp://pubftp.spp.org/Markets/DA/Congestion-Constraint`
 - **Probed 2026-09-06:** `CONNECT pubftp.spp.org:21` through the session egress → tunnel opens, **no FTP banner within 36 s**, relay closes; identical for control hosts `ftp.gnu.org:21` and `ftp.debian.org:21` → **egress policy blocks FTP**, not SPP. Ports 443/990 reset after ClientHello. `WebFetch`: "Unsupported protocol ftp:".
 - **Schema source:** sample files inside <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (82.6 MB, not tracked; sha256 in `data/raw/spp-planning/SHA256SUMS.txt`).
+
+
+## Appended 2026-09-06 by lane SPP-14 — THE PORTAL ROUTE IS OPEN, ANONYMOUS, OVER HTTPS
+
+**This supersedes the "Blocked / alternative hosts" row above for `portal.spp.org`.**
+Lane SPP-14 re-probed the portal while sweeping third-party sources and found both
+file-browser calls answering anonymously over plain HTTPS — no `X-SPP-UI-Token`, no
+cookie, no FTP. The two corrections, each measured 2026-09-06:
+
+| Call | SPP-12 read | SPP-14 measured |
+|---|---|---|
+| `GET /file-browser-api/download/<fs>?path=<FILE path>` | `404`, zero bytes | **HTTP 200, `text/csv`**, the real file. The 404s were path-shaped: the route serves *files*, so a folder path — or a path that does not exist in that product's archive layout — 404s correctly |
+| `GET /file-browser-api/?fsName=<fs>&path=%2F&type=folder` | `200 []` at "every path/type form" | **HTTP 200 with the real JSON directory array.** The literal `[]` reproduces only for `path=` **empty**, which is the SPA's own first call — an empty-path artifact, not authorization |
+| `Range:` requests | not tried | **honoured** (`Accept-Ranges: bytes`, `206`), so an archived `<year>/<year>.zip` is read member-by-member without downloading the body |
+
+Corroborating witness: the open-source `gridstatus` package's SPP client reads these
+same URLs with a bare `pandas.read_csv(url)` and carries no credential at all
+(`gridstatus/spp.py` v0.36.0, sdist read 2026-09-06 from `files.pythonhosted.org`).
+
+**Licence.** SPP states no licence or redistribution restriction on these public
+market files; they are published as SPP's public data (guide: `SPP Public Data
+Access` v3.0, tracked in `data/raw/spp-planning/`). Landed byte-for-byte, unmodified.
+
+**Producer:** `scripts/data/fetch_spp_alt_portal.py` (rows 6-9);
+`scripts/data/build_spp_lmp_reference.py` **runs unmodified** against this route (row 5).
+
+### Route OPEN, archive measured, payload deliberately NOT landed (row 8)
+
+The RTBM binding-constraint archive is reachable anonymously and is **small**:
+
+| Year | Portal path (`fsName=rtbm-binding-constraints`) | Bytes | Yearly rollup inside |
+|---|---|---|---|
+| 2023 | `/2023/2023.zip` | 58,684,654 | `2023/RTBM-BC-YEARLY-2023.csv.zip` -> 484,341,150 B CSV |
+| 2024 | `/2024/2024.zip` | 70,104,073 | `2024/RTBM-BC-YEARLY-2024.csv.zip` -> 539,367,345 B CSV |
+| 2025 | `/2025/RTBM-BC-YEARLY-2025.csv.zip` | 24,985,891 | `RTBM-BC-YEARLY-2025.csv` -> 659,007,717 B CSV |
+
+All three were pulled and parsed in-session by SPP-14. **The payload is not committed**:
+the SPP-14 charter scopes the four-group table to the FINDING, and 154 MB of zips (1.7 GB
+inflated) is not a pack this lane pushes for a table that is already written down. Git
+history is the record (rule 15 `[R-DASHBOARD]`); the pull is one command against the route
+above. The four-group binding-share table, the derived group membership and the flowgate
+registries it rests on are in `docs/handoffs/FINDING-spp-14-2026-09-06.md` sections 4-5.
+
+**SCHEMA CORRECTION — this changes what SPP-53 can measure.** `FINDING-spp-13` section 3
+recorded a **14-column** schema with `Source Limit` / **`Real Time Effective Limit`** /
+`Initial Effective Limit` / `Interconnect`, read from the v35 zip's
+`RTBM-DAILY-BC-20260128.csv` sample. The archive SPP **serves** carries only the first
+**10** columns for every file up to and including 2026-03-24, and the four extra columns
+appear from 2026-04-01 (measured: 2026-03-23 and 2026-03-24 are 10 columns; 2026-04-01,
+-04-08, -04-15, -05-01, -06-01, -07-01, -08-01 and -09-01 are 14 — the same
+2026-03-24 format break the `gridstatus` client records for hourly load). The 2023-2025
+files carry **no effective-limit column at all**, so **the RTBM binding-constraint
+archive cannot supply SPP-53's measured N<->S limit for the calibration span.** It can
+from 2026-04 forward. SPP-53 stays on the rule-14 Tier-3 reconciled estimate that P11
+ruled for SPP-20; the permanent-flowgate registry's seasonal `Normal`/`Emergency` MW
+ratings (below) are the better measured substitute.
+
+### Flowgate registries — landed by SPP-14 (the group-membership basis)
+
+| File | Portal path | Rows | What it carries |
+|---|---|---|---|
+| `Flowgates.csv` | `fsName=permanent-flowgates`, `/Flowgates.csv` | 823 | permanent flowgates: `Flowgate`, `From Area`/`To Area` control-area codes, `Voltage`, seasonal `Normal`/`Emergency` MW ratings, `IROLLimit`, `Interconnect` |
+| `Temp_Flowgate.csv` | `fsName=temporary-flowgates`, `/Temp_Flowgate.csv` | 3,298 | temporary constraints (the `TMP*`/`TEMP*` names that carry most SPP binding): same area codes plus `NormLimit`/`EmerLimit`, `CreatedTime`, `TOP` |
+
+These are what makes the four-group membership **measured rather than asserted**: every
+flowgate carries SPP's own `From Area` / `To Area`. **The four groups themselves are
+unchanged** — they were fixed in this README before any data existed (rule 1
+`[R-STRUCT]`), and SPP-14 changed no group, no definition and no ranking test. What this
+README always reserved to "the session with the data" — *"the actual membership has to be
+derived from the delivered flowgate names, which is a judgement the session with the data
+makes and records"* — is recorded in FINDING-spp-14 section 4.1, area code by area code.

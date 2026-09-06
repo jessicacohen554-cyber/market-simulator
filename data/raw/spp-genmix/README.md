@@ -113,3 +113,34 @@ HSL denominator this directory was opened for — **for 2024-02-15 onward only**
 
 **Timezone confirmed:** the stamp is `GMTTIME` in UTC with a `Z` suffix; the files are
 written newest-first. Convert to Central Prevailing Time before any hour-of-day use.
+
+
+---
+
+## STATUS UPDATE 2026-09-06 (lane SPP-14) — THE PORTAL ROUTE IS OPEN; THIS DIRECTORY IS SERVED
+
+The "portal blocked" status above is **superseded**. `portal.spp.org`'s file-browser
+download and listing calls both answer **anonymously over plain HTTPS** — no
+`X-SPP-UI-Token`, no cookie, no FTP — and honour `Range`. What SPP-12 measured were
+two path-shape artifacts, not an authorization wall: the download route serves
+*files* (a folder path 404s correctly), and the listing returns `[]` only for
+`path=` **empty**, the SPA's own first call, while `path=%2F` returns the real
+directory array. The corroborating witness is the open-source `gridstatus` client,
+which reads these same URLs with a bare `pandas.read_csv(url)` and carries no
+credential at all. Full route table, the licence position and the whole alternative-
+source sweep: `SOURCES.md` beside this file, `data/raw/spp-lmp-alt/SOURCES.md`, and
+`docs/handoffs/FINDING-spp-14-2026-09-06.md`.
+
+**Do not re-derive the access route from the "how to fill this directory" paragraph
+above** — it is kept as the incident record, not as instructions.
+
+**Landed:** `GenMix_2023.csv`, `GenMix_2024.csv`, `GenMix_2025.csv` — SPP's own
+complete 5-minute generation-mix files, 105,120 / 105,408 / 105,120 rows, i.e.
+365x288 / 366x288 / 365x288 intervals with **no missing slot in any year**. Row 7 of
+the manifest is **fully served for 2023-2025**.
+
+They **supersede** the two v35-sample files (`GenMix_2024_SPP.csv` starting 2024-02-15
+with 14.4 % of slots missing; `GenMixYTD_SPP.csv` missing 10.8 % and stopping
+2025-12-16) under rule 14 `[R-ACCURATE]`. The sample files are left in place because
+they are lane SPP-13's payloads and deleting another lane's files is outside SPP-14's
+regions — **routed to SPP-DESK** as a prune. Values are MW, not percentages.
