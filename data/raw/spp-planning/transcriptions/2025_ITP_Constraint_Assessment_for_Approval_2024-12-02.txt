@@ -1,0 +1,93 @@
+
+=====PDFPAGE 1=====
+ 
+ 
+ 
+ 
+12/02/2024  P a g e |  1 
+ 
+SPP Internal Only 
+2025 ITP Constraint Assessment Final Posting for Approval 
+ 
+• Action Required 
+The updated final list of constraints for the 2025 ITP has been posted to GlobalScape for the Transmission 
+Working Group’s (TWG) approval. The constraints in this list include:  
+1) SPP permanent flowgates 
+2) Future and study year specific 100 kV and above constraints identified in the constraint assessment 
+process that utilized the market economic model (MEM) dispatch 
+3) Select 69 kV SPP permanent and temporary flowgates, stakeholder submitted and SPP validated 69 kV 
+constraints that are affected by generation dispatch  
+4) Interfaces and Nomograms 
+ 
+Stakeholder feedback received since the initial posting has been incorporated and changes are highlighted in 
+the workbook. SPP staff plans to recommend the2025 ITP constraint assessment for approval at the upcoming 
+Transmission Working Group (TWG) meeting on December 10, 2024, for use in the 2025 ITP cycle. 
+ 
+SPP is not requesting changes to constraint assessment results. Any new changes submitted will be 
+considered under Section 10.3 of the ITP Manual. 
+ 
+Note: Additional constraints may be added to the event files during the 2025 ITP Needs Assessment milestone 
+if SPP staff finds it necessary for need identification. 
+ 
+• Changes from Last Pass 
+• File updates: 
+o Ratings for the MHEB_SPC_W, MHEX_S, SPPSPSTIES, and SPSNMTIES and select monitored elements 
+have been relaxed to allow for the event files to reasonably simulate congestion, and the relaxed 
+ratings are included in today’s posting of the event files and Constraint Assessment Recommendation 
+file. The relaxed ratings are noted in the “SPP Staff Comments” columns for the Interface and SPP 
+Market Economic Constraint tabs respectively. 
+o Added constraints after performing additional PAT constraint identification runs with relaxed ratings 
+o R-MEM Reliability Hour constraints have been added due to the Peak Hours determined for use in the 
+R-MPMs being made final 
+o Added constraints within 2025 ITP target area (Southeastern SPP footprint) 
+o Incorporated stakeholder submitted feedback 
+o Removed of 69 kV constraints from previous ITP studies that had a congestion score of 0  
+o Corrected ratings on various monitored elements 
+o Removed constraints due to SPP exclusion rationale 
+ 
+• Entities Required to Provide Feedback 
+All interested stakeholders; primarily, TWG members 
+ 
+• Due Date and Method of Submittal 
+SPP will be seeking a motion for TWG approval on Tuesday, December 10, 2024, for approval of: 
+• SPP Permanent Flowgates (including 69 kV Constraints) 
+• SPP Market Economic Constraints 
+• 69 kV Constraints  
+=====PDFPAGE 2=====
+ 
+ 
+ 
+ 
+12/02/2024  P a g e |  2 
+ 
+SPP Internal Only 
+• Interfaces and Nomograms 
+ 
+• Material Disclaimer 
+CONTAINS CONFIDENTIAL AND PROTECTED MATERIAL NOT AVAILABLE TO COMPETITIVE DUTY PERSONNEL – 
+DO NOT RELEASE 
+ 
+• File location on GlobalScape 
+For users who have signed an SPP non-competitive duty NDA: 
+These files can be found on GlobalScape under: ITP → ITP → NCD (CEII, RSD) → NDA→ 2025 ITP → in the 
+“Constraint Assessment Recommendation” folder. 
+File Name Description 
+- 2025 ITP Constraint Assessment Recommendation.xlsx 
+- 2025 ITP Constraint Assessment Event File_Y2.eve 
+- 2025 ITP Constraint Assessment Event File_Y5.eve 
+- 2025 ITP Constraint Assessment Event File_Y10.eve 
+  
+Workbook and event files containing SPP and 
+NERC permanent flowgates, SPP MEM 
+constraints, 69 kV constraints, SPP and NERC 
+Interfaces to be reviewed for the 2025 ITP 
+cycle  
+ 
+• Helpful Links and Access 
+• If you do not already have access to these documents in GlobalScape, see the instructions for 
+confidentiality agreements and submit the appropriate form via the SPP Request Management System 
+(RMS), using the “Initiate a System Access Action” Request Template, “Access" Request Type 
+"Globalscape File Sharing” Subtype 1, "Add User" Subtype 2 and “SPPDocushare / Engineering / TCR 
+Models” Subtype 3. 
+ 
+ 

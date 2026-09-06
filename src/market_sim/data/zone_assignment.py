@@ -73,6 +73,11 @@ _ISO_TO_BA_CODE: dict[str, str] = {
     "PJM": "PJM",
     "NYISO": "NYIS",
     "NEISO": "ISNE",
+    # SPP = balancing authority SWPP (EIA-860 ``Balancing Authority Code`` and
+    # eGRID BACODE alike); 715 plants / 1,646 operable generators / 103,330.8
+    # MW at the EIA-860 2025 Early Release (docs/multi-iso/spp-data-audit.md
+    # §2.2). Registered 2026-09-06 by lane SPP-20.
+    "SPP": "SWPP",
 }
 
 # ISOs modeled as a single zone, with that zone's name. Every current ISO now
@@ -107,6 +112,11 @@ _LARGEST_ZONE: dict[str, str] = {
     # Central (WCMA/SEMA/RI) is ISO-NE's largest-load-share zone (0.30) and
     # holds central/coastal Massachusetts, so unlocated NEISO plants land there.
     "NEISO": "Central",
+    # SPP-North is SPP's largest-load-share zone (0.5125 vs 0.4875 — the
+    # measured 2023-2025 sub-BA energy split, iso_configs._spp_config) and
+    # holds the KS/NE/MO plurality of the footprint's plant count, so an
+    # unlocated SPP plant lands there (SPP-20, 2026-09-06).
+    "SPP": "SPP-North",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -332,6 +342,37 @@ _MISO_STATE_ZONES: dict[int, str] = {
 # zone, see _LARGEST_ZONE). FIPS state is strongly preferred; this only
 # triggers when a caller supplies coordinates without a state code.
 _MISO_SOUTH_LAT: float = 36.0
+
+# SPP model zone by FIPS state code (owner ruling P1, SPP desk r#2, 2026-09-06;
+# docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option A). The two
+# zones are exact unions of whole states: the North/South seam runs along the
+# KS/OK and MO/AR state lines, and the EIA-860 census puts no SWPP plant in a
+# state that crosses it, so the state map is authoritative and needs no
+# county rule. Wyoming is deliberately ABSENT — zero EIA-860 plants carry
+# balancing authority SWPP there (Laramie River files under WAUW, a WECC BA);
+# Colorado IS present (eight small solar sites, 19.5 MW, all North).
+_SPP_STATE_ZONES: dict[int, str] = {
+    38: "SPP-North",  # ND
+    46: "SPP-North",  # SD
+    31: "SPP-North",  # NE
+    27: "SPP-North",  # MN
+    30: "SPP-North",  # MT
+    19: "SPP-North",  # IA
+    20: "SPP-North",  # KS
+    29: "SPP-North",  # MO
+    8: "SPP-North",  # CO (19.5 MW of solar; no CEMS unit)
+    40: "SPP-South",  # OK
+    48: "SPP-South",  # TX (SPS Panhandle + AEP/Golden Spread east Texas)
+    35: "SPP-South",  # NM
+    5: "SPP-South",  # AR
+    22: "SPP-South",  # LA
+}
+
+# Latitude of the SPP North/South seam for the coords-only fallback (no FIPS
+# state): the KS/OK state line is 37.0 N and the MO/AR line 36.5 N, so a plant
+# south of 37.0 N is in the South tier. FIPS state is strongly preferred; this
+# only triggers when a caller supplies coordinates without a state code.
+_SPP_SEAM_LAT: float = 37.0
 
 # FIPS state code for New York. NYISO's eleven load zones (A–K) follow
 # county lines closely enough that county FIPS carries the assignment, with
@@ -912,6 +953,23 @@ def _neiso_zone(
     return _LARGEST_ZONE["NEISO"]
 
 
+def _spp_zone(lat: float | None, fips_state: int | None) -> str:
+    """Return the SPP model zone for a plant location.
+
+    FIPS state carries the assignment — the two model zones are exact unions
+    of whole states (see :data:`_SPP_STATE_ZONES`) and eGRID / EIA-860 carry a
+    state for every SWPP plant. A plant whose state is outside the SPP map (a
+    stray cross-seam attribution) falls back to the seam latitude when
+    coordinates are available (South below 37.0 N, the KS/OK line), and
+    otherwise to the largest-load-share zone (SPP-North).
+    """
+    if fips_state in _SPP_STATE_ZONES:
+        return _SPP_STATE_ZONES[fips_state]
+    if lat is not None:
+        return "SPP-South" if lat < _SPP_SEAM_LAT else "SPP-North"
+    return _LARGEST_ZONE["SPP"]
+
+
 def _zone_from_location(
     iso: str,
     lat: float | None,
@@ -934,6 +992,8 @@ def _zone_from_location(
         return _neiso_zone(lat, lon, fips_state, fips_county)
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
+    if iso == "SPP":
+        return _spp_zone(lat, fips_state)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 
@@ -956,8 +1016,8 @@ def assign_zone_by_fips(
 def assign_zone(oris_code: int, iso: str) -> str:
     """Return the model zone for a plant's ORIS code.
 
-    Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM) has a multi-zone
-    topology, so the plant is located via the eGRID ORIS→location table; an
+    Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM, SPP) has a
+    multi-zone topology, so the plant is located via the eGRID ORIS→location table; an
     ORIS code missing from eGRID falls back to the ISO's largest-load-share
     zone with a warning. For CAISO the measured hub-membership crosswalk is
     the first check, consistent with :func:`build_zone_lookup`: where CAISO's
@@ -1001,9 +1061,14 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # to 346 MW with the 2025 Cranberry Point and Cross Town BESS additions),
 # MISO fifth (post-eGRID-2023 plants — 28 of 1,975 at the six-zone refinement
 # — previously landed in the fallback zone; the EIA-860 lat/lon supplement
-# resolves most of them, see docs/multi-iso/miso-zonal-refinement-scope.md §3).
+# resolves most of them, see docs/multi-iso/miso-zonal-refinement-scope.md §3),
+# SPP sixth at registration (2026-09-06, lane SPP-20: the SPP fleet is read
+# from the EIA-860 2025 Early Release, whose 2024-2025 wind/solar/storage
+# additions post-date eGRID 2023; with a whole-state zone map the lat/lon
+# supplement resolves them exactly, so no SWPP plant is dropped to the
+# fallback — the Stage-B "every plant resolves" check).
 _EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO"}
+    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO", "SPP"}
 )
 
 

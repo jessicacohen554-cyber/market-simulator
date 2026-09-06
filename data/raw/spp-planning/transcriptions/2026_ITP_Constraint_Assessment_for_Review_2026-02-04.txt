@@ -1,0 +1,99 @@
+
+=====PDFPAGE 1=====
+ 
+ 
+ 
+ 
+ 
+ 
+02/04/2026  P a g e |  1 
+ 
+SPP Internal Only 
+2026 ITP Constraint Assessment Posting (East Interconnection) 
+ 
+A revised list of constraints and yearly event files for use in the 2026 ITP Assessment have been posted 
+to GlobalScape for stakeholder review. The constraints in this list include: 
+ 
+1) SPP and NERC permanent and temporary flowgates 100 kV and above; 
+2) Future and study year specific 100 kV and above constraints identified in the constraint 
+assessment process that utilized the market economic model (MEM) dispatch; 
+3) Select 69 kV SPP permanent and temporary flowgates, and SPP stakeholder-provided/SPP-
+validated 69 kV constraints that are affected by generation dispatch; and 
+4) SPP and NERC interfaces 
+ 
+• Action Required 
+SPP requests that stakeholders review the posted list of constraints and be prepared to vote on 
+the 2026 Constraint Assessment at the next TWG meeting. A delay in approval may delay the 
+opening of the DPP window; therefore, it is imperative that feedback be provided in advance of 
+the meeting. 
+ 
+• Entities Required to Provide Feedback:  
+N/A  
+ 
+• Due Date and Method of Submittal 
+Any questions or feedback should be submitted through the SPP Request Management System 
+(RMS) using the “Submission” Type ” “Integrated Transmission Planning (ITP)” Issue Subtype 1 and  
+“Data Submission” Issue Subtype 2. 
+  
+• Changes from Last Pass 
+1) Incorporated stakeholder feedback 
+2) Removed invalid contingency (4 + WRNMEDT4 138 - 81YALTP4 138 [1]) 
+3) Removed unnecessary branches monitored in base case 
+4) Added constraints from B-GEM analysis 
+5) Added 765 kV branches to be monitored in base case 
+6) Rating corrections 
+ 
+• DO NOT RELEASE NOR SHARE THIS MATERIAL with any person or entity who has not 
+executed a Confidentiality Agreement or who is ineligible to receive confidential and 
+protected material (such as a Competitive Duty Personnel). 
+ 
+=====PDFPAGE 2=====
+ 
+ 
+ 
+ 
+ 
+ 
+02/04/2026  P a g e |  2 
+ 
+SPP Internal Only 
+• File location on GlobalScape 
+For users who have signed an SPP non-competitive duty NDA: 
+These files can be found on GlobalScape under: ITP → ITP → NCD (CEII, RSD) → NDA→ 2026 ITP 
+→ “Constraint Assessment Recommendation” folder. 
+ 
+File Name Description 
+2026 ITP Constraint Assessment_02042026.xlsx 
+Workbook containing list of SPP and NERC 
+permanent and temporary flowgates, SPP 
+MEM constraints, 69 kV constraints, and SPP 
+and NERC Interfaces to be utilized in the 2026 
+ITP cycle 
+2026 ITP_E011_Constraint Assessment Event 
+File_Y2_02042026.eve Year 2 event file 
+2026 ITP_E011_Constraint Assessment Event 
+File_Y5_02042026.eve Year 5 event file 
+2026 ITP_E011_Constraint Assessment Event 
+File_Y10_02042026.eve Year 10 event file 
+2026 ITP_E011_Constraint Assessment Event 
+File_Y20_02042026.eve Year 20 event file 
+ 
+ 
+ 
+• Helpful Links and Access 
+• As of 2/2/2026, the SPP Request Management System (RMS) is using a new platform to manage 
+stakeholder questions and requests.  For more details, please see spp.org. 
+• If you do not already have access to these documents on Globalscape, see the instructions 
+for confidentiality agreements and submit the appropriate form via RMS using “Access” Type, "Add 
+User" Issue Subtype, "Globalscape File Sharing” Issue Subtype 2, and “SPPDocushare / Engineering / 
+TCR Models” Issue Subtype 3”. 
+• If you encounter issues with Globalscape, please try the following recommendations:  
+o Clear your cache, close all browser tabs and reopen browser 
+o Try using Microsoft Chrome or Microsoft Edge with the incognito (private browsing) mode 
+o Try typing the URL directly into the address bar and not allow the browser to complete your 
+URL nor use a saved link 
+o If the recommendations above do not resolve your issue, submit a technical support request 
+via RMS using “Technical Support” Type and “File Share (Globalscape, SPP Docushare, xfer)” 
+Issue Subtype 
+• Other helpful links can be found on https://www.spp.org/engineering/. 
+ 

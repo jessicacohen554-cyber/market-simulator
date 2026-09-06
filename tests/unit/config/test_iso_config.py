@@ -458,6 +458,7 @@ class TestISOConfig(unittest.TestCase):
             "PJM",
             "NYISO",
             "NEISO",
+            "SPP",
         ):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
@@ -469,6 +470,59 @@ class TestISOConfig(unittest.TestCase):
         """Requesting an unsupported ISO raises ValueError."""
         with self.assertRaises(ValueError):
             get_iso_config("WECC")
+
+    # --- SPP (registered 2026-09-06, lane SPP-20; owner rulings P1-P11) -----
+
+    def test_spp_has_two_zones(self):
+        """SPP defines the two P1-ruled zones, North and South, and nothing else.
+
+        No import node (plan §7 G7): the served EIA-930 schedule and the
+        default-off neighbour blocks represent the seams.
+        """
+        spp = get_iso_config("SPP")
+        self.assertEqual(spp.n_zones, 2)
+        self.assertEqual(set(spp.zone_names), {"SPP-North", "SPP-South"})
+
+    def test_spp_validates(self):
+        """SPP topology passes the consistency check (Stage A)."""
+        get_iso_config("SPP").validate_topology()
+
+    def test_spp_load_shares_are_the_measured_sub_ba_split(self):
+        """Shares = the measured 2023-2025 EIA-930 sub-BA energy split, sum 1.0."""
+        spp = get_iso_config("SPP")
+        shares = {z.name: z.load_share for z in spp.zones}
+        self.assertEqual(shares, {"SPP-North": 0.5125, "SPP-South": 0.4875})
+        self.assertAlmostEqual(sum(shares.values()), 1.0)
+
+    def test_spp_single_link_is_a_non_binding_placeholder(self):
+        """One symmetric N<->S link whose TTC is the declared Tier-3 placeholder.
+
+        48,700 MW is the North zone's EIA-860 2025 ER summer capability — an
+        upper bound that cannot bind (rule 14; owner ruling P11: no rated
+        interface exists in the tree). A change here is a rated capability
+        landing (SPP-13 / SPP-53), never a residual tune.
+        """
+        spp = get_iso_config("SPP")
+        self.assertEqual(spp.n_links, 1)
+        link = spp.links[0]
+        self.assertEqual((link.from_zone, link.to_zone), ("SPP-North", "SPP-South"))
+        self.assertTrue(link.is_bidirectional)
+        self.assertEqual(link.ttc_mw, 48700.0)
+        self.assertEqual(spp.interface_limits, [])
+
+    def test_spp_voll_is_2000(self):
+        """SPP uses the Order 831 cost-verified ceiling, $2,000/MWh (ruling P10)."""
+        self.assertEqual(get_iso_config("SPP").voll, 2000.0)
+
+    def test_spp_carries_no_default_overrides(self):
+        """Rulings P4/P5: no reserve spec and no scarcity/ORDC seed at registration.
+
+        The scarcity-seed checkpoint above (``["ERCOT", "NEISO"]``) is
+        deliberately untouched; this pins SPP's side of it.
+        """
+        overrides = get_iso_config("SPP").default_scenario_overrides
+        self.assertEqual(overrides, {})
+        self.assertNotIn("scarcity_price_overlay", overrides)
 
     def test_caiso_voll_is_2000(self):
         """CAISO uses a VOLL of $2,000/MWh."""

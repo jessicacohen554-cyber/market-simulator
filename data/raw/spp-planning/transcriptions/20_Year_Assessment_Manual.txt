@@ -1,0 +1,486 @@
+
+=====PDFPAGE 1=====
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+20 - Year Assessment Manual  
+ 
+ 
+ 
+ 
+SPP Staff 
+ 
+=====PDFPAGE 2=====
+ 
+2 
+ 
+Revision History  
+ 
+Date  Author Change Description 
+5/8/17 SPP Staff Initial Draft 
+5/15/17 SPP Staff Edits per 5/12/17 Net Conference Feedback 
+10/12/17 SPP Staff Edits per 10/5/17 Net Conference Feedback 
+3/29/19 SPP Staff Updates to Links and General Clean-Up 
+   
+=====PDFPAGE 3=====
+ 
+3 
+ 
+Table of Contents  
+Revision History .............................................................................................................................................2 
+Table of Contents ...........................................................................................................................................3 
+Introduction ...................................................................................................................................................5 
+Objective ..........................................................................................................................................5 
+Working Group Involvement ...........................................................................................................5 
+Economic Studies Working Group ............................................................................................................ 5 
+Transmission Working Group ................................................................................................................... 6 
+Model Development Working Group ....................................................................................................... 6 
+Seams Steering Committee ...................................................................................................................... 6 
+Markets and Operations Policy Committee ............................................................................................. 6 
+Strategic Planning Committee.................................................................................................................. 6 
+Board of Directors .................................................................................................................................... 6 
+Regional State Committee ....................................................................................................................... 6 
+Stakeholder Reviews ........................................................................................................................6 
+Load Forecast Review ............................................................................................................................... 6 
+Renewable Policy Review ......................................................................................................................... 7 
+Generation Review ................................................................................................................................... 7 
+Economic Model Review .......................................................................................................................... 7 
+Constraint Assessment Review ................................................................................................................ 7 
+Study Process .................................................................................................................................................8 
+Data Inputs .....................................................................................................................................................9 
+Market Structure ..............................................................................................................................9 
+Scenarios ..........................................................................................................................................9 
+Resource Plan ...................................................................................................................................9 
+Renewable Policy Review ....................................................................................................................... 10 
+System Topology ............................................................................................................................10 
+Generation Parameters .......................................................................................................................... 10 
+Renewables ............................................................................................................................................ 10 
+Siting ....................................................................................................................................................... 10 
+=====PDFPAGE 4=====
+ 
+4 
+ 
+DC Ties and Lines .................................................................................................................................... 10 
+Fuel Prices .............................................................................................................................................. 10 
+Emission Prices ....................................................................................................................................... 11 
+Hurdle Rates ........................................................................................................................................... 11 
+Benchmarking ................................................................................................................................11 
+Analysis ..........................................................................................................................................................12 
+Define Constraints .........................................................................................................................12 
+Needs Assessments ........................................................................................................................12 
+Economic Assessment ............................................................................................................................ 12 
+Policy Assessment .................................................................................................................................. 12 
+Solution Development ...................................................................................................................................13 
+Develop 300 kV+ Solutions ............................................................................................................13 
+Economic Project Solutions .................................................................................................................... 13 
+Public Policy Project Solutions ............................................................................................................... 13 
+Cost Estimates ................................................................................................................................13 
+Sensitivities ............................................................................................................................................. 13 
+Benefit Metrics ....................................................................................................................................... 14 
+Timeline..........................................................................................................................................................15 
+Deliverables ....................................................................................................................................................16 
+Final Report ....................................................................................................................................16 
+Changes in Process and Assumptions ............................................................................................................17 
+=====PDFPAGE 5=====
+ 
+5 
+ 
+Introduction 
+The 20-Year Assessment is conducted in accordance with the SPP Open Access Transmission Tariff (OATT) 
+Attachment O and under the guidance of the SPP Strategic Planning Committee (SPC).  
+Objective 
+The objective of the 20-Year Assessment is to develop a long-range extra high voltage (EHV), 300 kV and 
+above, transmission road map for the SPP region. The assessment will result in the identification of projects 
+that economically deliver energy within the SPP region while addressing a reasonable range of future 
+industry uncertainty. The resulting library of projects will provide a source of candidate projects that will 
+inform shorter-term planning assessments for the purpose of injecting longer-term vision into those 
+assessments. 
+Working Group Involvement  
+The Economic Studies Working Group (ESWG) identifies and maintains the economic data, data sources, 
+models, economic planning methodology and processes, and adjusted production cost (APC) to be used in 
+the evaluation of economic expansion needs in the SPP region. 
+The Transmission Working Group (TWG) oversees and maintains the study processes for constraint 
+assessment, topology, and load and generation review to be used in the 20 year model.   
+The Model Development Working Group (MDWG) identifies and maintains the generation review to be used 
+in the 20-year model. 
+The SPC will be responsible for the scenarios and policy decisions. 
+The Seams Steering Committee (SSC) will evaluate the seams impact. 
+The 20-Year Assessment recommended plan will be reviewed and may be endorsed by the ESWG, TWG, 
+Markets and Operations Policy Committee (MOPC), Regional State Committee (RSC), and SPP Board of 
+Directors (board). 
+ 
+Economic Studies Working Group 
+The ESWG will be responsible for the review of the data and results for the following: 
+• Renewable policy review 
+• Scope 
+• Scenarios 
+• Benefit metrics 
+• Sensitivities 
+• Economic model review and assumptions 
+• Resource plan review 
+• Load forecasts 
+• Generation review 
+• Economic analysis 
+• Public Policy analysis 
+• 20-Year Assessment Report 
+=====PDFPAGE 6=====
+ 
+6 
+ 
+Transmission Working Group 
+The TWG will be responsible for review of the data and results for the following: 
+• Scope 
+• Transmission topology inputs to the models 
+• Load forecasts 
+• Generation review 
+• Constraint assessment 
+• 20-Year Assessment Report 
+Model Development Working Group 
+The MDWG will be responsible for the review of the data for the following: 
+• Generation review 
+Seams Steering Committee 
+The SSC will be responsible for the review of the following: 
+• Seams impacts 
+Markets and Operations Policy Committee 
+The MOPC will make a recommendation to the board regarding approval decisions of the following: 
+• 20-Year Assessment Report 
+Strategic Planning Committee 
+The SPC will provide input for the following: 
+• Scenarios development 
+• Policy decisions 
+Board of Directors 
+The board will make approval decisions for the following: 
+• 20-Year Assessment Report 
+Regional State Committee 
+The RSC will review the following: 
+• 20-Year Assessment Report 
+Stakeholder Reviews  
+The following is a list of reviews provided by stakeholders during the 20-Year Assessment. 
+Load Forecast Review 
+Projected peak load per area for year the study will be submitted by the modeling contacts for the 
+development of a peak model. Energy per area will be obtained from publically available sources and 
+reviewed and updated by stakeholders. Stakeholders will review and submit revisions to the projected peak 
+=====PDFPAGE 7=====
+ 
+7 
+ 
+load and energy per area where applicable. Peak load and energy will also be identified for load serving 
+entities within SPP Regional Transmission Organization (RTO) areas.  
+Renewable Policy Review 
+The Renewable Policy Review will follow the process outlined in the Integrated Transmission Planning (ITP) 
+Manual.1 If any significant changes to renewable mandates or goals occur during a 20-Year Assessment, 
+stakeholders can bring them to the ESWG for review and potential approval for use in the assessment. If 
+exemptions to the mandates or goals are allowed (e.g. the applicable technology is cost prohibitive or 
+municipals are exempt), those exemptions will be considered as SPP staff is notified during the renewable 
+policy review. 
+Generation Review 
+The ESWG, TWG, and MDWG will review the data for all generators added to the model as part of the 20-
+Year Assessment. This will include conventional and renewable generation. The ESWG will be responsible for 
+reviewing and approving economic data. 
+Proposed resources and facilities will be included and designated to a utility if it meets the resource 
+inclusion criteria approved by the ESWG. Non-designated resources will be included based on commercial 
+operation statuses and results of a transmission owner and generator interconnection customer survey of 
+interconnection agreements with an on-schedule status. 
+Economic Model Review 
+The ESWG will be provided with model data indicating generators and the parameters used in the economic 
+model. Parameters such as maximum capacity, run status, operations and maintenance (O&M) costs, etc. 
+will be provided for review.  
+Constraint Assessment Review 
+A list of constraints will be developed to be used in the economic dispatch, as detailed in the Constraint 
+Review section below. The constraints will be provided to the TWG for review; they will approve the final list 
+of constraints to use as well as the associated constraint ratings. 
+Scenarios 
+The SPC will begin the process by defining the high-level, strategic characteristics of potential study 
+scenarios. Utilizing these characteristics, the ESWG will develop a maximum of five scenarios to be utilized in 
+the development of potential transmission plans for the SPC’s consideration. The ESWG’s scenario 
+development will include pertinent study details including but not limited to generation fleet trends, load 
+growth assumptions, fuel price trends and assumptions, recommendations regarding environmental 
+policies, and penetration of new technologies. The SPC will be responsible for the final approval of the 
+scenarios for use in the 20-Year Assessment. 
+                                                 
+ 
+1 ITP Manual 
+=====PDFPAGE 8=====
+ 
+8 
+ 
+Study Process  
+1. SPC and ESWG will define and develop study scenarios. 
+2. Input assumptions will be refined through stakeholder groups (ESWG, TWG, MDWG, MOPC, and RSC). 
+3. ESWG will oversee the development of the economic models that incorporate the inputs developed in 
+step 1 above. This will include review of input data. 
+4. List of TWG-approved constraints to be used in the economic model dispatch will be developed. All 
+constraints will be for 100 kV and above facility outages within SPP and first-tier neighbor systems.  
+5. Economic assessment will be performed to analyze congested facilities on the SPP transmission system. 
+This will be done using a security constrained unit commitment (SCUC) and security constrained 
+economic dispatch (SCED) model over 8,760 consecutive hours.  
+a. Economic and policy needs will be identified across scenarios. 
+6. EHV solutions (300 kV+) will be developed and tested to assess their ability to meet the needs of the 
+different scenarios. 
+a. A project list will be developed for each scenario that meets each scenario’s economic and 
+policy needs in a cost-effective way. 
+ 
+ 
+ 
+ 
+=====PDFPAGE 9=====
+ 
+9 
+ 
+Data Inputs  
+The analysis for the 20-Year Assessment will consist of engineering models used to facilitate the 
+development of long-range transmission plans. The models will be economic models based on market based 
+dispatch. These models require input assumptions as to generation resources, parameters, and locations 
+(detailed in the following sections). The output of these models will allow SPP staff to determine the 
+appropriate transmission needs from a regional perspective.  
+The major assumptions needed to construct the models are: market structure, load forecasts, fuel pricing 
+and availability, transmission topology, resource forecasts, and parameters. Additional assumptions 
+necessary to construct appropriate models will be addressed at the discretion of the stakeholders. Once the 
+model(s) is constructed based on these assumptions, a SCUC and SCED analysis will be performed.  
+Market Structure  
+SPP implemented its Integrated Marketplace and Consolidated Balancing Authority (CBA) in March 2014. 
+The Integrated Marketplace and CBA will be baseline assumptions for the analysis. 
+Scenario s 
+The study will be conducted on a set of up to five scenarios. These scenarios will consider evolving changes 
+in technology, load growth patterns, fuel price trends, and public policy, among others, that may influence 
+the transmission system and energy industry as a whole. By accounting for multiple scenarios, SPP can 
+assess transmission needs over various uncertainties.  
+Resource Plan 
+A generation resource plan will be developed for use in the study for each scenario. This resource plan will 
+include both renewable and conventional generation in accordance with the approved study scenarios. 
+Additionally, new renewable and conventional generation resources will be sited as detailed below. 
+Additional renewables will be included in the plans, as needed, to meet the renewable Mandates and Goals 
+projections as supplied by the Renewable Policy Review. In addition to meeting renewable Mandates and 
+Goals, each pricing zone must meet the current resource adequacy requirement based on the SPP reserve 
+margin requirement in effect at the commencement of the resource planning milestone of the study. The 
+siting of new generation in the resource plan will target the current reserve margin requirement for each 
+zone. Capacity needs will be identified for each scenario.  
+Renewable generation, for the purposes of this study, includes but is not limited to hydro, wind, solar, and 
+bio-fuel. Designated renewable resources will be identified through the Generation Review and will feed 
+into the Resource Plan. Additional renewables may also be included which have been identified by the 
+resource planning software or are needed to match approved scenario assumptions.  
+Generator designations will be reviewed by stakeholders and posted on SPP’s secure website, viewable to 
+those with access to the website2 and corresponding ITP assessment folder. Joint ownership of unit 
+additions may be used to avoid excessive additions of new resources to individual pricing zones. 
+SPP first-tier neighbors will be provided the opportunity to provide feedback and input into the generation 
+resource plan for their area.  
+                                                 
+ 
+2 Access to the website can be requested through the SPP Request Management System (RMS). 
+=====PDFPAGE 10=====
+ 
+10 
+ 
+An alternative to using software to develop the resource plan is to use spreadsheets to create CC/CT ratios 
+instead of resource planning software. The spreadsheets will also include tier-1 resources. 
+Renewable Policy Review 
+The Renewable Policy Review will follow the process outlined in the ITP Manual.3 If any significant changes 
+to renewable mandates or goals occur during a 20-Year Assessment, stakeholders can bring them to the 
+ESWG for review and potential approval for use in the assessment. If exemptions to the mandates or goals 
+are allowed (e.g. the applicable technology is cost prohibitive or municipals are exempt), those exemptions 
+will be considered as SPP staff is notified during the renewable policy review. 
+System  Topology  
+The base reliability model set will serve as an input into the economic (production) modeling program to 
+develop a market-based economic dispatch for the system. 
+The topology used to account for the transmission system, excluding generation, will be the current 
+transmission system and the following transmission upgrades: SPP upgrades that have been approved for 
+construction, SPP Transmission Owner's Zonal Reliability Upgrades, Sponsored Upgrades endorsed by the 
+board, and first-tier entities' planned upgrades.  
+Generation Parameters 
+The generation parameters (e.g., startup cost, operating costs, minimum/maximum operating levels, etc.) 
+will be updated by the ESWG as part of the generation review and economic model review.  
+Renewables 
+Renewable generation, primarily wind and solar, operate as energy resources that will require the 
+development of hourly generation profiles for individual plants based on historical data or modeled time-
+series wind speed datasets. The economic dispatch model will attempt to realistically model renewable 
+generation curtailment based on expected market conditions and reliability requirements. A curtailment 
+price consistent with the variable O&M cost will be used to simulate the behavior of the wind and solar 
+generation within the SCED.  
+Siting 
+The development of siting locations will follow the process as set forth in the ITP Resource Siting Manual.4 
+DC Ties and Lines 
+DC ties and lines connect SPP to the Western Electricity Coordinating Council, Electric Reliability Council of 
+Texas, and Eastern Interconnect systems. Methodology to model DC ties and lines will be created during the 
+scope development. 
+Fuel Prices 
+Fuel forecasts will be utilized in resource planning and production cost modeling. The latest vendor data set 
+will be used as a guide along with feedback from participants and staff for setting fuel prices for coal, oil, 
+uranium, and natural gas, including transportation costs at the onset of the study.  
+                                                 
+ 
+3 ITP Manual 
+4 ITP Resource Siting Manual 
+=====PDFPAGE 11=====
+ 
+11 
+ 
+Emission Prices 
+The latest vendor data set will be used as a guide along with feedback from participants and staff for setting 
+base emission price forecasts for SO2, NOX, and CO2 for the study years at the onset of the study.  
+Hurdle Rates 
+Hurdle rates will be utilized in the economic model between SPP and neighboring systems to help keep 
+imports and exports at reasonable exchange levels. The latest vendor data set will be used as a guide along 
+with feedback from participants and staff for setting hurdle rates for imports and exports between SPP and 
+other entities for the base scenario and will be reviewed and approved by the ESWG. 
+Benchmarking  
+After all assumptions and data are included in the economic model, it will be benchmarked against 
+operational system behavior. This benchmarking will be used to assess the reasonability of the simulations. 
+Simulation results from the economic model will be compared with operational statistics and measurements 
+from SPP real-time, NERC, and Energy Information Administration (EIA) data.  
+The ESWG will review the benchmarking data as part of the model review process. Specific benchmarks will 
+include some or all of the following: capacity factor by unit type, generation by unit category, maintenance 
+outages, renewable generation profiles, operating and spinning reserve levels, coal transportation costs, 
+system Locational Marginal Prices (LMPs), flowgate loading, production costs, generation dispatch order, 
+and zonal purchases and sales. 
+=====PDFPAGE 12=====
+ 
+12 
+ 
+Analysis  
+Define Constraints  
+To identify which constraints are applicable in 20XX, SPP staff will review the existing flowgates to determine 
+additions or deletions from the list of constraints (event file) for the economic model. Staff will perform 
+additional analysis using software to identify the top constraints by flowgate congestion costs on the system 
+for 8,760 hours. These additional constraints will be reviewed and approved by TWG. The following items 
+will be considered in the analysis: 
+• The initial constraint list will be the then-current SPP section of the Book of Flowgates 
+• Constraints studies will be run over 8,760 hours (1 year) 
+• This analysis will use the 20XX economic model(s) for each scenario 
+• Contingencies 100 kV and above in SPP and first-tier 
+• Monitored elements 100 kV and above in SPP and first-tier 
+Unless other information is available, each constraint’s rating will be selected based upon the applicable 
+Rating A (normal rating) or Rating B (emergency rating) in the power flow model. 
+Needs  Assessments  
+The policy and economic needs of the system will be identified in each scenario in order to develop a 
+transmission project list for each scenario. Each analysis will be performed in parallel to determine all needs 
+across the system in 20XX.  
+Economic Assessment 
+The economic needs of the system will be identified in each scenario in order to develop a needs list for the 
+development of the project list for each scenario. All of the system needs will be identified through the use 
+of a SCUC and SCED simulation that accounts for 8,760 hours representing each hour of the year 20XX. 
+The SCED will determine nodal LMPs while dispatching the generation economically. The LMPs, among other 
+cost components, reflect the congestion occurring on the power grid’s binding constraints. System 
+congestion will be identified in each of the 8,760 hours. A list of binding constraints will be developed for 
+each scenario and ranked based upon the congestion score associated with each constraint. Up to 25 unique 
+constraints, with greater than $50,000 in annual congestion score based upon this ranking, will be identified 
+as economic needs.  
+Policy Assessment 
+The policy needs of the system will also be identified for each scenario in order to develop a needs list for 
+the development of the project list for each scenario. All of the system needs will be identified through the 
+use of a SCUC and SCED simulation that accounts for 8,760 hours representing each hour of the year 20XX. 
+Renewable generation may experience the effects of congestion and be curtailed by the SCED. Shortfall in 
+the achievement of the renewable requirements of each scenario due to this curtailment will be identified. 
+Renewable resources that experience an annual energy output of less than the statutory/regulatory 
+mandate or goal will be identified as policy needs. The required energy is based on maximum capacity, 
+capacity factor, and generation profile. 
+=====PDFPAGE 13=====
+ 
+13 
+ 
+Solution Development 
+Develop 300 kV+ Solutions  
+The solution set will be limited to 300 kV and higher voltage facilities. Needs that warrant lower voltage 
+solutions will be noted and will be addressed in the ITP process, assuming they continue to show up as 
+problems in that process. 
+In order to create the 20-Year transmission plan, a pool of possible solutions will be tested to mitigate the 
+economic and policy needs identified. This pool of solutions will come from DPPs, transmission service 
+studies, generator interconnection studies, previous ITP studies, and any other solutions proposed by SPP 
+staff and stakeholders. Solutions developed could meet more than one need (i.e., economic and/or policy 
+needs) and will be classified as project types based on the criteria outlined in the sub-sections below. Staff 
+will develop a project list for each scenario. 
+APC will be calculated for the final project list for each scenario. After a final recommended project list has 
+been identified, a one-year financial analysis will be conducted for each scenario and sensitivities will be run 
+to assess how versatile the final project lists are in handling a range of uncertainties.  
+Benefit and impact calculations will be made on a regional, zonal, and state basis. State values will be 
+extrapolated from the zonal costs and benefits. For those zones that are only in one state, their full portion 
+of both costs and benefits will be allocated to the state. For zones crossing state borders, their portion of 
+both costs and benefits will be allocated to each state based on their percentage of load that is in each state.  
+Net benefits and benefit-to-cost (B/C) ratios will be calculated based on net present value (NPV) benefit and 
+NPV cost and will be reported based on present dollars (20XX).  
+Economic Project Solutions 
+Economic projects will be developed and evaluated based upon how well they mitigate congestion. Any 
+economic project with a one-year B/C ratio greater than the approved ESWG threshold of XX will be 
+included for further evaluation.  
+Public Policy Project Solutions 
+Public policy projects will be developed and evaluated based upon how well they mitigate curtailment of 
+renewable energy required by the regulatory/statutory mandates and goals as defined by the 20-Year 
+Assessment renewable policy review. A B/C ratio will be calculated for public policy projects in order to 
+determine the most economical project to mitigate the identified needs. Any public policy project that helps 
+to mitigate curtailment of renewable requirements will be included for further evaluation. The threshold 
+used to select economic projects will not be considered for public policy projects. The public policy projects 
+are eligible if they mitigate the identified curtailments. 
+Cost Estimates  
+The cost estimates used for projects that are tested in the initial project development phase will be 
+conceptual estimates. The conceptual estimates will be developed by SPP staff and will utilize standardized 
+estimates and multipliers that are based on historical data.  
+Sensitivities 
+Sensitivities, if needed, will be conducted on the project lists for each scenario using the Scenario 1 Model to 
+assess how versatile the plan is in handling a range of uncertainties. Economic analysis will be performed for 
+the sensitivities such as:  
+=====PDFPAGE 14=====
+ 
+14 
+ 
+• Natural gas price at a 95% confidence level (2 standard deviations) 
+• Demand levels at a 67% confidence level (1 standard deviation) 
+The sensitivities will be used to measure the viability of the proposed transmission plan that is produced 
+through the 20-Year Assessment. These sensitivities will not be used to develop the transmission projects or 
+filter out projects.  A sensitivity on renewable output will be added at +/- 10 percent sensitivity on capacity 
+factors to demonstrate the robustness of the capacity factors. 
+Benefit Metrics 
+APC will be the only benefit metric to be calculated per project list. 
+=====PDFPAGE 15=====
+ 
+15 
+ 
+Tim eline  
+A detailed schedule for the 20-Year Assessment will be developed by staff in conjunction with appropriate 
+working groups to identify the required milestones and corresponding timeframes.   
+ 
+The assessment schedule will be maintained by SPP staff and shared with study participants through 
+working group meetings and via posting to the Transmission Planning page on SPP.org. 
+ 
+ 
+ 
+ 
+ 
+ 
+=====PDFPAGE 16=====
+ 
+16 
+ 
+Deliverables  
+Final Report  
+The results from the 20-Year Assessment will be compiled into a report detailing the findings and project 
+lists for each scenario. The report will include a project list identifying each upgrade. 
+ 
+ 
+=====PDFPAGE 17=====
+ 
+17 
+ 
+Changes in Process and Assumptio ns  
+Modifications to the 20-Year Assessment Manual will be submitted through the SPP Revision Request (RR) 
+process. The RR process is a key component of SPP’s stakeholder processes and allows stakeholder input 
+into decision making. It will place guidelines around the approval and implementation of study scope 
+changes. The Revision Requests will be made via SPP’s Request Management System (RMS) which will allow 
+for the tracking and reporting of scope revision submissions. Leveraging of the RR process will appropriately 
+address member concerns while reducing the considerable amount of time it has taken in past studies to 
+finalize the study scope due to numerous revisions submitted by stakeholders.  
+Standardized Manual items will retain flexibility by granting the appropriate working group the ability to 
+provide guidance on items recommended for revising. An example of this flexibility may be with the scope 
+item Fuel Prices. Standardized language may include the mechanism for setting fuel prices. Per the scope, 
+the selected index would always be used for pricing information, however, the actual price of natural gas 
+may change year-over-year. As the natural gas fuel prices change, the recommended prices would become a 
+part of the assumptions while the standardized scope item would remain unchanged. If a stakeholder 
+recommends the use of another source for pricing information, that recommendation would be submitted 
+through the RR process for proper stakeholder vetting and approval. 
+ 

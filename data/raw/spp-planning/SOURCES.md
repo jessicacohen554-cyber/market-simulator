@@ -108,3 +108,80 @@ FERC filings — walk the tree instead. Folder ids used:
 | N↔S transfer capability / SPS tie MW ratings (row 11) | **open** — not in the 2025 ITP Report; candidates listed in README §5 |
 | A published SPP wind-curtailment **percentage** (row 10) | **does not exist** in the ASOMs — they publish average hourly MW; see `data/raw/spp-hsl/` |
 | SPP long-term load forecast as a standalone LTLF edition (row 13) | **partial** — the ITP peak series stands in; see `data/raw/load-forecast/spp/SOURCES.md` |
+
+---
+
+## Appended 2026-09-06 by lane SPP-13 — the FTP-route reference and the row-11 sweep
+
+Every URL below was fetched successfully on **2026-09-06** by lane SPP-13 (`www.spp.org`,
+HTTP 200 after one 301 to the lower-cased path). Checksums: `SHA256SUMS.txt`. Nothing here
+came from memory. FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`.
+
+### Where the "SPP Public Data Access" guide actually lives (reproducible)
+
+Folder walk from Technical Reference Documents `?id=20196` → **Technical Specifications
+`?id=20954`** → **Public Data `?id=21005`** (the CUF tree — not the Stakeholder Center
+menu path the System Interfaces guide describes). `?id=21005` holds the access guide plus
+three subfolders: `?id=21074` Current Public Data Tech Specs (v35 guide zip, Settlements
+guide v2.11, Transoutage spec, WEIS guides), `?id=21073` Archived (every Markets guide
+v3…v33 back to 2013), `?id=21075` Future (empty 2026-09-06).
+
+### SPP Public Data Access, v3.0 (July 2023) — THE FTP route reference
+
+- <https://www.spp.org/Documents/28853/SPP%20Public%20Data%20Access%2020230707.pdf>
+- Local: `SPP_Public_Data_Access_20230707.pdf` · text: `transcriptions/SPP_Public_Data_Access_20230707.txt`
+- 5 pages. Printed p. 1: UI access = `https://portal.spp.org` (MTE `https://portal-mte.itespp.org`).
+  Printed p. 2, verbatim: *"Programmatic (API) access to public data is via FTP."*
+  Production **`ftp://pubftp.spp.org`**, Member Test **`ftp://pubftp-mte.itespp.org`**.
+  The document states no credential.
+
+### SPP Markets Public Data Guide and Samples v35 — the FTP path layout + every product's schema
+
+- <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (82.6 MB, **NOT tracked**)
+- The zip's guide, `SPP Markets Public Data Guide--v35.docx`, is tracked here byte-identical as
+  `SPP_Markets_Public_Data_Guide_v35.docx`; plain text (document.xml stripped, paragraph per line):
+  `transcriptions/SPP_Markets_Public_Data_Guide_v35.txt`.
+- **FTP Site Access** (guide p. 11), verbatim: *"User: anonymous · Password: 'Leave blank here' ·
+  When accessing the ftp site programmatically use the following: User: anonymous · Password:
+  <use an email address>"* — i.e. **anonymous FTP; no Marketplace credential is required.**
+- The guide's "Data Locations Summary" (its pp. 8–10) gives every product's Portal page AND FTP
+  folder; the per-product file-name grammar follows (pp. 12–22). The folders this program needs are copied
+  into each `data/raw/spp-*/SOURCES.md`.
+- The 71 sample files are real SPP publications (dated Sep 2025 – Feb 2026). Three are full-span
+  payloads and were landed raw: `GenMix_2024_SPP.csv`, `GenMixYTD_SPP.csv` → `../spp-genmix/`;
+  `Peak_Load_by_Month.csv` → `../spp-hourly-load/`. The rest are one-day/one-interval schema
+  samples and are recorded as schema rows only.
+
+### Row 11 sweep — the four candidate documents, all fetched
+
+| Document | URL | Local | N↔S / SPS-tie MW figure? |
+|---|---|---|---|
+| ITP Manual v3.3 (76 pp.) | <https://www.spp.org/Documents/77209/ITP%20Manual%20Version%203.3.pdf> | `ITP_Manual_v3.3.pdf` + txt | **No** — methodology only; the constraint list it defines (§10) is posted to GlobalScape |
+| 2022 20-Year Assessment Report v1.0 (102 pp.) | <https://www.spp.org/Documents/69814/2022%2020-Year%20Assessment%20Report%20v1.0.pdf> | txt only (5.3 MB, NOT tracked) | **No** — project portfolio; N–S flow is discussed qualitatively (§5.3.9 Potter–Tolk, printed p. 84) with no MW rating |
+| 20-Year Assessment Manual (17 pp.) | <https://www.spp.org/Documents/59716/20_Year_Assessment_Manual.pdf> | `20_Year_Assessment_Manual.pdf` + txt | **No** — states only that constraint ratings come from powerflow Rating A/B (printed p. 12) |
+| ITP Postings folder (781 documents) | <https://www.spp.org/spp-documents-filings/?id=31491> | two transmittals tracked | **No public MW** — see the two constraint-assessment transmittals below |
+| 2025 ITP Constraint Assessment for Approval (12-02-2024) | <https://www.spp.org/Documents/72772/2025%20ITP%20Constraint%20Assessment%20for%20Approval%20(12-02-2024).pdf> | `2025_ITP_Constraint_Assessment_for_Approval_2024-12-02.pdf` + txt | Names the interfaces **`SPPSPSTIES`** and **`SPSNMTIES`** (p. 1) whose ratings were "relaxed"; the ratings workbook is on GlobalScape, NDA/CEII |
+| 2026 ITP Constraint Assessment Posting (02-04-2026) | <https://www.spp.org/Documents/75904/2026%20ITP%20Constraint%20Assessment%20for%20Review%20(02-04-2026).pdf> | `2026_ITP_Constraint_Assessment_for_Review_2026-02-04.pdf` + txt | Same: workbook `2026 ITP Constraint Assessment_02042026.xlsx` under GlobalScape ITP → NCD (CEII, RSD) → NDA |
+
+The 20-Year Assessment Manual's real filename was recovered from the Transmission Planning
+page (`https://www.spp.org/engineering/transmission-planning/`), which also lists the 2022
+20-Year Assessment Scope (`/Documents/63932/`) and Report Addendum (`/Documents/69815/`) —
+neither fetched; both are scope/addendum documents of the same project-portfolio kind.
+
+### Appended 2026-09-06 by lane SPP-14 — three measured members of the v35 guide zip, landed raw (SPP-DESK addendum r#4 am.1)
+
+- Source: the same zip as the SPP-13 row above,
+  <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip>
+  (82,643,996 B; re-fetched 2026-09-06 over HTTPS after a 301 to the lower-cased path
+  `/documents/75871/spp%20markets%20public%20data%20guide%20and%20samples%20v35.zip`; sha256
+  `e2e8478bc8b0fd5fba8201b4c1f4197a4983d88a2406d710cba2fe230cdebee7`, byte-identical to SPP-13's).
+- Members extracted unmodified (`zipfile`, no re-encoding): `SL_to_Pnode_to_Zone_with_Area.csv`,
+  `Hub_Definitions.csv`, `TieFlows_Sep2025.csv`. Checksums in `SHA256SUMS.txt`; schema and row
+  counts in `README.md` §"Appended 2026-09-06 by lane SPP-14".
+- Licence: SPP's Terms & Conditions (<https://www.spp.org/terms-conditions/>, read 2026-09-06),
+  verbatim: *"Permission is implicitly granted to copy and distribute (via computer network or
+  printed form) in whole or in part (with appropriate citation) EXCEPT when such materials will be
+  used, in whole or in part, within a commercial publication (printed or otherwise) or when the
+  author(s) or SPP will be quoted in commercial materials, forums or publications. Any commercial
+  use of these materials requires prior, express written authorization from the author(s) or a
+  duly authorized officer of SPP."*

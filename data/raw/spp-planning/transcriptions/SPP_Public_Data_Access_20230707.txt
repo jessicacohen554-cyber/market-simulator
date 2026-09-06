@@ -1,0 +1,66 @@
+=====PAGE 1=====
+SPP PUBLIC DATA ACCESS 
+INTEGRATED MARKETPLACE, 
+WESTERN RELIABILITY 
+COORDINATION SERVICE,  
+WESTERN ENERGY IMBALANCE 
+SERVICE MARKET 
+By SPP Information Technology Department 
+Published July 2023 
+Version 3.0 
+ 
+=====PAGE 2=====
+Southwest Power Pool, Inc.  
+ 
+REVISION HISTORY 
+DATE OR VERSION 
+NUMBER 
+AUTHOR CHANGE 
+DESCRIPTION 
+COMMENTS 
+V1 May 2015 SPP Initial publication  
+V2 May 2020 SPP Updates to reflect 
+portal changes 
+ 
+V3 July 2023 SPP Updates to reflect 
+portal changes 
+Portal rebranded from 
+Integrated Marketplace 
+Portal to SPP Portal 
+ 
+ 
+=====PAGE 3=====
+Southwest Power Pool, Inc. 
+ 
+CONTENTS 
+REVISION HISTORY .......................................................................................................................................................... I 
+INTRODUCTION ............................................................................................................................................................... 1 
+USER INTERFACE ACCESS ............................................................................................................................................ 1 
+PROGRAMMATIC ACCESS ........................................................................................................................................... 2 
+ 
+ 
+=====PAGE 4=====
+Southwest Power Pool, Inc.  
+SPP Public Data Access July 2023 1 
+INTRODUCTION 
+This document provides information on user interface (UI) and programmatic (API) access to 
+SPP’s public data. 
+USER INTERFACE ACCESS 
+User interface (UI) access to public data is via the SPP Portal (“Portal”). 
+ENVIRONMENT URL 
+Production https://portal.spp.org  
+Member Test Environment https://portal-mte.itespp.org  
+ 
+ 
+
+=====PAGE 5=====
+Southwest Power Pool, Inc.  
+SPP Public Data Access July 2023 2 
+PROGRAMMATIC ACCESS 
+Programmatic (API) access to public data is via FTP. 
+ENVIRONMENT URL 
+Production ftp://pubftp.spp.org  
+Member Test Environment ftp://pubftp-mte.itespp.org   
+ 
+  
+ 

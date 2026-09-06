@@ -481,6 +481,32 @@ def _p1_storage_cost_identical(
     return cand.shape == ref.shape and bool(np.array_equal(cand, ref))
 
 
+def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
+    """Is the year's renewable CF bound the raw delivered outcome?
+
+    Screened on 2023 by ercot-251 (docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md)
+    and ADMITTED as a correctness fix by owner ruling 2026-09-06 (ercot-252,
+    docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md); byte-identical wherever an
+    HSL parquet exists (every ERCOT training year), live only on no-HSL years.
+    The curtailment gates below skip their ceiling when the bound already embeds the
+    historical curtailment, because capping an already-curtailed series double-curtails it.
+    They test HSL-parquet existence for that, which is wrong whenever the loader falls
+    through to ``forecast_uncurtailed`` -- the delivered shape GROSSED UP by another year's
+    reference rate, which is real headroom the ceiling is supposed to take back (see
+    renewables.renewable_bound_provenance, and the forecast leg at renewables.py L2496-2513
+    which pairs gross-up + ceiling deliberately). Only ``delivered_pinned`` needs the guard.
+    """
+    from market_sim.data.renewables import (
+        RENEWABLE_BOUND_DELIVERED_PINNED,
+        renewable_bound_provenance,
+    )
+
+    return all(
+        renewable_bound_provenance(iso, year, fuel) == RENEWABLE_BOUND_DELIVERED_PINNED
+        for fuel in ("wind", "solar")
+    )
+
+
 def run_year(
     year: int,
     iso: str,
@@ -772,6 +798,8 @@ def run_year(
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     ct_netload_drag: bool | None = None,
+    pjm_interface_feed_admissibility_gate: bool | None = None,
+    gas_offer_margin_anchor_vintage: bool = False,
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -1007,6 +1035,17 @@ def run_year(
         config = config.with_overrides(ct_netload_drag=bool(ct_netload_drag))
         if ct_netload_drag and ct_drag_overrides:
             config = config.with_overrides(**ct_drag_overrides)
+    # Tri-state (ct_netload_drag pattern): None keeps the backcast_config
+    # per-ISO default (PJM ARMED default-ON, pjm-169 owner decision 2026-09-06),
+    # True/False force it — so --no-pjm-interface-feed-admissibility-gate
+    # expresses the PRE-ARM posture as an explicit caller value rather than an
+    # absence, which is what keeps a control arm reachable and its key stable.
+    if pjm_interface_feed_admissibility_gate is not None:
+        config = config.with_overrides(
+            pjm_interface_feed_admissibility_gate=bool(
+                pjm_interface_feed_admissibility_gate
+            )
+        )
     if chp_export_floor_measured:
         # Measured steam-following export floor (backcast overlay): CHP bins'
         # grid floor rides at the year's measured EIA-923 class CF x the
@@ -2351,6 +2390,46 @@ def run_year(
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
     if gas_monthly_actuals:
         config = config.with_overrides(gas_monthly_actuals=True)
+    # pjm-169 F4: re-resolve the gas-offer net-revenue margin's identification
+    # point onto the SOLVE YEAR. Deliberately placed HERE, not at the
+    # `--gas-offer-margin` lookup ~1,200 lines above: `_gas_series` is only the
+    # series the offer path prices against once `gas_hub_basis_overlay` and
+    # `gas_monthly_actuals` have been applied, and both are set LATER than that
+    # lookup. Resolving at the lookup would measure a series no unit ever pays
+    # (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §2; gate S1 is exactly
+    # this identity). The resolved value overwrites `gas_offer_margin_anchor`,
+    # so run_config.json records the number the LP solved with rather than a
+    # lookup indirection (rule 24 [R-REGISTRY]) and the cache key moves with it.
+    # A zone-resolved anchor takes precedence and is never stacked on
+    # (rule 19 [R-ONE-MECH]).
+    if gas_offer_margin_anchor_vintage:
+        if not getattr(config, "gas_offer_net_revenue_margin", False):
+            raise SystemExit(
+                "--gas-offer-margin-anchor-vintage requires --gas-offer-margin: "
+                "the vintage flag moves the identification point of the "
+                "net-revenue margin mechanism, so arming it alone is a no-op "
+                "the run record would misreport (rule 24)"
+            )
+        if getattr(config, "gas_offer_margin_zonal_anchor", False):
+            raise SystemExit(
+                "--gas-offer-margin-anchor-vintage and "
+                "--gas-offer-margin-zonal-anchor both re-resolve the SAME "
+                "identification point; they are alternatives, never stacked "
+                "(rule 19 [R-ONE-MECH])"
+            )
+        from market_sim.data.fuel.trajectories import _gas_series as _f4_gas_series
+
+        _f4_anchor = float(
+            np.asarray(_f4_gas_series(config, year, hours), dtype=float).mean()
+        )
+        logger.info(
+            "gas offer margin anchor VINTAGE %d: %.4f $/MMBtu (window anchor "
+            "%s) — the solve year's own mean delivered-gas series",
+            year,
+            _f4_anchor,
+            config.gas_offer_margin_anchor,
+        )
+        config = config.with_overrides(gas_offer_margin_anchor=_f4_anchor)
     # PJM per-zone gas basis (opens the west-cheap / east-dear spread so PJM
     # stops clearing as a single copper-plate). No-op for non-PJM ISOs — the
     # apply gates on iso == "PJM" — so setting it here is safe regardless.
@@ -2685,20 +2764,21 @@ def run_year(
     # ercot_gtc_limits_measured): the GTC-carrying links' export direction
     # follows the hourly NP6-86 measured limit series so West/Panhandle
     # curtailment emerges endogenously from the binding published limits.
-    # Applied only when the year ALSO has measured HSL renewable potential —
-    # without it the renewable upper bound is the delivered actuals
-    # (EIA-930-as-CF) and any binding export cap would double-curtail wind
-    # below what really flowed. The import direction keeps the static rating
-    # (a GTC is an export stability limit).
+    # Skipped only when the renewable upper bound is the raw delivered actuals
+    # (``delivered_pinned``: EIA-930-as-CF already embeds the curtailment, so a
+    # binding export cap would double-curtail wind below what really flowed);
+    # a measured-potential OR reference-rate grossed-up bound keeps the limits
+    # (ercot-252). The import direction keeps the static rating (a GTC is an
+    # export stability limit).
     ttc_import = None
     if getattr(config, "ercot_gtc_limits_measured", False) and iso == "ERCOT":
         from market_sim.data.gtc import ercot_gtc_ttc_hourly
 
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_gtc_limits_measured: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — measured GTC limits "
-                "skipped for this year to avoid double-curtailment",
+                "ercot_gtc_limits_measured: %d renewable bound is delivered-pinned "
+                "— measured GTC limits skipped for this year to avoid "
+                "double-curtailment",
                 year,
             )
         else:
@@ -2811,17 +2891,18 @@ def run_year(
     # per-(zone, hour) ceiling on West/Panhandle wind & solar reproducing the
     # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot resolve.
     # Reads the derived congestion-share table and the model's OWN net-load, so it
-    # regenerates forward. Applied only when the year carries measured HSL
-    # potential (the uncurtailed CF ceiling) — otherwise the delivered-as-CF
-    # renewables already embed curtailment and the ceiling would double-count.
+    # regenerates forward. Skipped only when the bound is delivered-pinned (the
+    # delivered-as-CF renewables already embed curtailment and the ceiling would
+    # double-count); a measured-potential or reference-rate grossed-up bound
+    # keeps the ceiling, exactly as the forecast leg pairs them (ercot-252).
     wind_curtail_share = None
     solar_curtail_share = None
     if getattr(config, "ercot_wtx_curtailment_driver", False) and iso == "ERCOT":
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_wtx_curtailment_driver: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — curtailment ceiling skipped "
-                "to avoid double-curtailment",
+                "ercot_wtx_curtailment_driver: %d renewable bound is "
+                "delivered-pinned — curtailment ceiling skipped to avoid "
+                "double-curtailment",
                 year,
             )
         else:
@@ -2967,6 +3048,17 @@ def run_year(
             east_groups = build_pjm_east_interface_cut_groups(
                 iso_config.links, east_lim
             )
+            # pjm-168: when pjm_interface_feed_admissibility_gate judged the
+            # series inadmissible it returns an all-+inf limit, i.e. the
+            # declared "joint EMAAC import cut is NOT APPLIED this year" posture
+            # (PRECOMMIT-pjm167-interface-feed-admissibility §1). Adding a
+            # degenerate non-binding group would be a no-op row in the LP and
+            # made the summary below reduce over an empty finite subset. The
+            # gate has already emitted its own loud WARNING upstream, so drop
+            # the group and say nothing more here (rule 19 [R-ONE-MECH]).
+            finite_east = east_lim[np.isfinite(east_lim)]
+            if finite_east.size == 0:
+                east_groups = []
             if east_groups:
                 interface_groups = interface_groups + east_groups
                 logger.info(
@@ -2975,9 +3067,9 @@ def run_year(
                     "(hourly %0.0f-%0.0f MW, mean %0.0f)",
                     year,
                     len(east_groups[0][0]),
-                    float(np.min(east_lim[np.isfinite(east_lim)])),
-                    float(np.max(east_lim[np.isfinite(east_lim)])),
-                    float(np.mean(east_lim[np.isfinite(east_lim)])),
+                    float(np.min(finite_east)),
+                    float(np.max(finite_east)),
+                    float(np.mean(finite_east)),
                 )
 
     # Measured PJM AP-SOUTH interface cut (pjm_apsouth_interface_cut, backcast

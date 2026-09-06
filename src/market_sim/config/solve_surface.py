@@ -64,12 +64,23 @@ SURFACE_MODULES: tuple[str, ...] = (
     "market_sim.pipeline.offer_curve_base.generic",
 )
 
-#: The six registered ISOs, mirroring ``iso_configs.SUPPORTED_ISOS``. Repeated
+#: The seven registered ISOs, mirroring ``iso_configs.SUPPORTED_ISOS``. Repeated
 #: here rather than imported because ``iso_configs`` reads
 #: ``data/raw/reference/reliability_floor_coeffs_<ISO>.csv`` at import time and
 #: this module must stay stdlib-only; ``tests/unit/config/test_solve_surface.py``
-#: pins the two tuples equal, so a seventh ISO cannot land in only one place.
-SURFACE_ISOS: tuple[str, ...] = ("ERCOT", "CAISO", "MISO", "PJM", "NYISO", "NEISO")
+#: pins the two tuples equal, so an ISO cannot land in only one place. SPP was
+#: appended 2026-09-06 (lane SPP-20) in the same commit as its ``_ISO_BUILDERS``
+#: entry; appended LAST, and no surface name carries an ``SPP`` token, so the
+#: six earlier ISOs' projections are unchanged by construction.
+SURFACE_ISOS: tuple[str, ...] = (
+    "ERCOT",
+    "CAISO",
+    "MISO",
+    "PJM",
+    "NYISO",
+    "NEISO",
+    "SPP",
+)
 
 #: A module-level *surface name*: SCREAMING_CASE, no leading underscore. Private
 #: composition pieces (``_PJM_VRR_CURVE``…) are covered transitively through the

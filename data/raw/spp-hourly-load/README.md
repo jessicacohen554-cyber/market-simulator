@@ -79,3 +79,35 @@ same products; the FTP route has not been tried and may not need the UI token.
 (the `data/raw/` contract). Record the observed schema, span and timezone in the
 table above this line when the first files land.
 
+
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-13: FTP route documented (anonymous), egress-blocked; schema verified; monthly peak file landed
+
+FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`. Route reference and probe log:
+`data/raw/spp-planning/README.md` §6.
+
+**Route.** `ftp://pubftp.spp.org/Operational_Data/HourlyLoad/`, anonymous (user `anonymous`,
+password = an email address — *Markets Public Data Guide v35*). Guide p. 19, verbatim:
+*"Daily files deleted after the monthly roll up file is created. File Name:
+DAILY_HOURLY_LOAD-YYYYMMDD.csv … File Name: HOURLY_LOAD-YYYYMM.csv"*. **Egress-blocked from
+this session** — the 2023–2025 monthly files remain a manual-manifest row.
+
+**Schema — VERIFIED from SPP's v35 sample `DAILY_HOURLY_LOAD-20260217.csv`** (576 rows,
+one day, NOT landed): header `Market Hour,Balancing Area Name,Control Zone Name,Forecast Area
+Type,Load MW`; sample row `2/17/2026 7:00,SPP,CSWS,CF,4607.037`. `Balancing Area Name` ∈
+{`SPP`, `SWPW`}; `Control Zone Name` is the legacy control area — the same tokens as the
+EIA-930 sub-BAs SPP-11 fetched (`CSWS`, `EDE`, `GRDA`, `KACY`, `KCPL`, `LES`, `MPS`, `NPPD`,
+`OKGE`, `OPPD`, `SECI`, `SPRM`, `SPS`, `WAUE`, `WFEC`, `WR`, …), which is what makes the two
+products cross-checkable at zone level; `Forecast Area Type` ∈ {`CF` conforming, `NC`
+non-conforming}. The sample day runs `2/17/2026 7:00` → `2/18/2026 6:00`, i.e. **the `Market
+Hour` stamp is UTC** (06:00Z = 00:00 CST) despite the column name — confirm on a summer file
+before assuming a fixed 6-hour offset.
+
+**Landed — `Peak_Load_by_Month.csv`** (41 rows), raw from the same v35 zip
+(`ftp://pubftp.spp.org/Operational_Data/Peak_Load/`, guide p. 19: *"peak loads in MWs for
+every month in each interconnection and includes the interval in which each month's peak
+load occurred. Files replaced monthly."*). Header `MKTINTERVAL,LOCALINTERVAL,MONTH,YEAR,INTERCONNECTION,MAX_LOAD`;
+span **2024-02 → 2026-01**, `INTERCONNECTION` ∈ {`EAST`, `WEST`}; both a UTC and a local
+stamp per row (e.g. `2024-02-16 15:40:00,2024-02-16 09:40:00` — a 6 h offset in February).
+Use: a zero-cost check of the model's monthly peak against SPP's own, for 2024–2025 East.

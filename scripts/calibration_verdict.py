@@ -504,6 +504,9 @@ PINNED_CLASSES_BY_ISO: dict[str, frozenset[str]] = {
     "MISO": _PINNED_CLASSES_COMMON | {"imports"},  # L6 Manitoba firm-hydro block
     "NYISO": _PINNED_CLASSES_COMMON | {"imports"},  # L2 net-interchange band
     "NEISO": _PINNED_CLASSES_COMMON,
+    # SPP (registered 2026-09-06, lane SPP-20): no import node (plan §7 G7), so
+    # no "imports" class — the served EIA-930 schedule rides in demand.
+    "SPP": _PINNED_CLASSES_COMMON,
 }
 
 SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered (target band)
@@ -610,6 +613,12 @@ TAIL_THRESHOLD = {
     "CAISO": 200.0,
     "NYISO": 300.0,
     "NEISO": 300.0,
+    # SPP: $200 — owner ruling P6 (SPP desk r#2, 2026-09-06). Summer-heat /
+    # winter-storm regime like ERCOT/MISO, not the NYISO/NEISO city-gate-gas
+    # pair; measured RT hours above $200 on the committed hub-mean series are
+    # 42 / 59 / 68 for 2023/24/25 vs 15 / 16 / 32 above $300
+    # (docs/multi-iso/spp-data-audit.md §4). MUST mirror derive_actual_tail.py.
+    "SPP": 200.0,
 }
 
 # Governance: outage sources that are exogenous availability events (rubric C6.4).

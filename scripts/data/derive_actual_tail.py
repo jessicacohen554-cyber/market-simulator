@@ -61,6 +61,7 @@ TAIL_THRESHOLD = {
     "CAISO": 200.0,
     "NYISO": 300.0,
     "NEISO": 300.0,
+    "SPP": 200.0,  # owner ruling P6 (2026-09-06); mirrors calibration_verdict
 }
 
 # Rule-22 holdout quarantine, TIER-AWARE (owner decision 2026-07-31). An

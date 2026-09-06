@@ -250,6 +250,15 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
         "solar": "Connecticut",
         "offshore_wind": "Boston",
     },
+    # SPP (registered 2026-09-06, lane SPP-20): Tier 3, the zone holding the
+    # bulk of each technology's EIA-860 2025 ER operable fleet under the P1
+    # state map. Wind is nearly EVEN across the seam (North 17,664.3 MW vs
+    # South 17,809.1 MW; Oklahoma alone is 12,945.0 MW, the largest single
+    # state) and solar leans South (840.7 vs 601.1 MW; OK 423.5 / NM 279.5),
+    # so both default to SPP-South. Fallback only — the primary path
+    # distributes by plant coordinates (_eia860_zone_shares). No
+    # ``offshore_wind`` key: the footprint is landlocked.
+    "SPP": {"wind": "SPP-South", "solar": "SPP-South"},
 }
 
 # EIA-860 operable wind/solar generator parquets, used to distribute

@@ -3824,6 +3824,8 @@ def solve_and_persist(
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
     ct_netload_drag: bool | None = None,
+    pjm_interface_feed_admissibility_gate: bool | None = None,
+    gas_offer_margin_anchor_vintage: bool = False,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -4930,6 +4932,22 @@ def solve_and_persist(
                 gas_offer_net_revenue_margin=True,
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if gas_offer_margin_anchor_vintage:
+            # pjm-169 F4 — MIRROR of run_year's resolution, and it must stay a
+            # mirror: the recorded config has to report the anchor the LP
+            # actually solved with, not the frozen window value it started
+            # from (rule 24 [R-REGISTRY]; the FFR-2E defect class). Computed
+            # from the SAME `_gas_series` on the SAME recorded config, which by
+            # this point carries the hub-overlay and monthly-actuals postures.
+            from market_sim.data.fuel.trajectories import _gas_series as _f4_gs
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_margin_anchor=float(
+                    np.asarray(
+                        _f4_gs(recorded_cfg, cfg_year, int(hours)), dtype=float
+                    ).mean()
+                )
+            )
         if gas_offer_margin_zonal_anchor:
             # Zone-resolved identification point for the SAME mechanism
             # (nyiso-109): record the gate AND the resolved per-zone anchors
@@ -5133,6 +5151,17 @@ def solve_and_persist(
         if ct_netload_drag is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 ct_netload_drag=bool(ct_netload_drag)
+            )
+        # pjm-169 F2 arm — tri-state mirror of run_year. None keeps the
+        # backcast_config per-ISO default (PJM ARMED); True/False force. The
+        # recorded config must report the posture the LP actually solved
+        # (rule 24 [R-REGISTRY]) — but ONLY when the caller forced one, so an
+        # unset PJM run still records the armed default resolved downstream.
+        if pjm_interface_feed_admissibility_gate is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_interface_feed_admissibility_gate=bool(
+                    pjm_interface_feed_admissibility_gate
+                )
             )
         if zero_forcing_ablation:
             # Record the ablated config so run_config.json's scenario_config matches
@@ -5623,6 +5652,8 @@ def solve_and_persist(
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
             ct_netload_drag=ct_netload_drag,
+            pjm_interface_feed_admissibility_gate=pjm_interface_feed_admissibility_gate,
+            gas_offer_margin_anchor_vintage=gas_offer_margin_anchor_vintage,
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
@@ -6474,6 +6505,8 @@ def solve_and_persist(
         # to the ScenarioConfig default hinge and forced ~4x the ST_GAS energy
         # the original run did (pjm-94, 2026-07-09).
         "ct_netload_drag": ct_netload_drag,
+        "pjm_interface_feed_admissibility_gate": pjm_interface_feed_admissibility_gate,
+        "gas_offer_margin_anchor_vintage": gas_offer_margin_anchor_vintage,
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
         "gas_st_drag_overrides": gas_st_drag_overrides or {},
@@ -8734,6 +8767,8 @@ def run_replay_bundle(
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
+    ercot_reserve_supply_cap_from_year: int | None = None,
+    ercot_load_resource_reserve_from_year: int | None = None,
     enable_legacy_p2: bool = False,
 ) -> None:
     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
@@ -8793,6 +8828,19 @@ def run_replay_bundle(
             from the SAME committed control recipe rather than re-expressing a
             keeper flag-by-flag (caiso-243 §10.4 / caiso-244 §7.7 — a recipe is
             never rebuilt by parameter name).
+        ercot_reserve_supply_cap_from_year: Override the bundle's recorded
+            ``ercot_reserve_supply_cap_from_year`` (``None`` keeps the recipe's
+            own value). A from_year is a data-availability gate, not a fitted
+            value: the ercot-252 owner ruling (2026-09-06) moves it 2023 -> 2020
+            on the 2022 validation touchpoint because the measured RTOLCAP
+            series exists back to 2020. Composes exactly like the overrides
+            above, so the arm is provably the committed recipe plus this value.
+        ercot_load_resource_reserve_from_year: Override the bundle's recorded
+            ``ercot_load_resource_reserve_from_year`` (``None`` keeps the
+            recipe's own value) — the paired half of the same ercot-252 ruling
+            (the ercot-212 ``net_credits`` construction nets the LR series off
+            the cap rows, so the two gates move together); the back-year
+            series come from ``scripts/data/build_ercot_as_backyear.py``.
         caiso_dsw_daytime_evening_trim: Override the bundle's recorded
             ``caiso_dsw_daytime_evening_trim`` (the caiso-97 hod 6-21 -> 6-17
             trim of the daytime WEIM clean-transfer window; ``None`` keeps
@@ -8842,6 +8890,17 @@ def run_replay_bundle(
         kwargs["nyiso_ct_peaker_bands_measured"] = nyiso_ct_peaker_bands_measured
     if gas_offer_margin is not None:
         kwargs["gas_offer_margin"] = gas_offer_margin
+    # ercot-252: the two reserve from_year gates are data-availability gates
+    # (owner ruling 2026-09-06, 2023 -> 2020 on the 2022 touchpoint); ``None``
+    # keeps the recipe's own value so every existing replay is byte-identical.
+    if ercot_reserve_supply_cap_from_year is not None:
+        kwargs["ercot_reserve_supply_cap_from_year"] = int(
+            ercot_reserve_supply_cap_from_year
+        )
+    if ercot_load_resource_reserve_from_year is not None:
+        kwargs["ercot_load_resource_reserve_from_year"] = int(
+            ercot_load_resource_reserve_from_year
+        )
     # caiso-243: the two F923 fallback guards compose exactly like the
     # overrides above, so the structural arm is provably the committed keeper
     # recipe plus these flags (``None`` keeps the recipe's own value).
@@ -11827,6 +11886,39 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--gas-offer-margin-anchor-vintage",
+        action="store_true",
+        help="Resolve the gas-offer net-revenue margin's identification anchor "
+        "(ScenarioConfig.gas_offer_margin_anchor) on the SOLVE YEAR's own mean "
+        "delivered-gas series instead of the frozen 2023-2025 training-window "
+        "mean — the same measurement, evaluated on the year being solved "
+        "(pjm-169 F4). The mechanism's own identity is that at fuel == anchor "
+        "the reformed offer reduces EXACTLY to the registered band multiplier; "
+        "markup_hr x (anchor - fuel) is a linear unsaturated extrapolation, so "
+        "outside the identification window that identity fails proportionally "
+        "— and when fuel > anchor it marks gas offers DOWN. Zero free "
+        "parameters; requires --gas-offer-margin; refuses to stack with "
+        "--gas-offer-margin-zonal-anchor (rule 19). Default off, "
+        "byte-identical off.",
+    )
+    parser.add_argument(
+        "--pjm-interface-feed-admissibility-gate",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PJM interface-feed admissibility gate "
+        "(ScenarioConfig.pjm_interface_feed_admissibility_gate): judge each "
+        "published transfer-limit series against its OWN posted limit before "
+        "letting it bound a link, and fall through to the static per-link TTC "
+        "— loudly, with the arithmetic logged at WARNING — when it is "
+        "inadmissible. Tri-state: unset keeps the per-ISO backcast default "
+        "(PJM ARMED default-ON since pjm-169, owner decision 2026-09-06; every "
+        "other ISO off); --no-pjm-interface-feed-admissibility-gate forces the "
+        "PRE-ARM posture, enforcing every posted series verbatim. Only read "
+        "under --pjm-measured-interface-limits. Rule 14 [R-ACCURATE] "
+        "named-exception: PJM's pre-2023 Average Eastern / Average Western "
+        "postings are a different time/area aggregation under one series name.",
+    )
+    parser.add_argument(
         "--ct-netload-drag",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12791,6 +12883,16 @@ def main() -> None:
                 else None
             ),
             caiso_dsw_daytime_evening_trim=args.caiso_dsw_daytime_evening_trim,
+            ercot_reserve_supply_cap_from_year=(
+                args.ercot_reserve_supply_cap_from_year
+                if "--ercot-reserve-supply-cap-from-year" in sys.argv
+                else None
+            ),
+            ercot_load_resource_reserve_from_year=(
+                args.ercot_load_resource_reserve_from_year
+                if "--ercot-load-resource-reserve-from-year" in sys.argv
+                else None
+            ),
             nearby_fuel_price_zone_donor_guard=(
                 args.nearby_fuel_price_zone_donor_guard
                 if "--nearby-fuel-price-zone-donor-guard" in sys.argv
@@ -13231,6 +13333,8 @@ def main() -> None:
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
+        pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
+        gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_scr_edrp=args.nyiso_scr_edrp,
         nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,

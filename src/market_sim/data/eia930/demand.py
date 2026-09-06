@@ -420,8 +420,17 @@ def _screen_demand_spikes(demand: np.ndarray, *, ba_code: str, year: int) -> np.
     computed on the raw series without a bootstrap.
 
     A no-op on any year whose peak stays under the threshold -- every 2023-2025
-    training year does, so the screen never perturbs a keeper (rule 22). Returns
-    the array unchanged (same object) when nothing is flagged.
+    training year of the six ISOs registered before SPP does, so the screen
+    never perturbs one of their keepers (rule 22). Returns the array unchanged
+    (same object) when nothing is flagged.
+
+    THE ONE LIVE CASE is SPP 2023 (registered 2026-09-06, lane SPP-20): the
+    ``SWPP hourly`` extract posts ``Demand`` = 3,621,097 MW at 2023-06-12
+    21:00 local, a ~100x unit slip at 117.7x the annual median
+    (docs/multi-iso/spp-data-audit.md §3.4), which this screen repairs by
+    interpolation exactly as designed. That is not a keeper perturbation:
+    SPP's first keeper is solved WITH the repair, and no other ISO-year is
+    touched.
     """
     finite = demand[np.isfinite(demand)]
     if finite.size == 0:
@@ -557,6 +566,46 @@ def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
     return _screen_demand_spikes(
         _screen_demand_dropouts(demand, ba_code="MISO", year=year),
         ba_code="MISO",
+        year=year,
+    )
+
+
+def _load_spp_hourly_demand(year: int) -> np.ndarray | None:
+    """Return SPP hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``SWPP hourly`` extract's ``Demand`` column off the same
+    :func:`_eia_hourly_frame_filled` frame the SPP renewable CF series are
+    drawn from — the MISO construction, so demand and renewables share one
+    local clock (SWPP is ``America/Chicago``; the frame's own ``Local time``
+    column fixes the clock and DST). Isolated missing meter hours are
+    interpolated, then the two EIA-930 artifact screens run.
+
+    SPP is the first ISO on which :func:`_screen_demand_spikes` is LIVE in a
+    training year: 2023-06-12 21:00 posts ``Demand`` = 3,621,097 MW, a ~100x
+    unit slip at 117.7x the annual median (docs/multi-iso/spp-data-audit.md
+    §3.4), which the 2.5x screen repairs by interpolation. The two LOW-side
+    dropouts the audit names (2025-06-21 05:00 = 1,505 MW; 2024-07-19 00:00, a
+    partial dropout) are NOT caught here — :func:`_screen_demand_dropouts`
+    flags only exact ``0.0`` readings by design, and a low-side threshold is a
+    repo-wide screen with cache-key risk that owner ruling P9 (SPP desk r#2,
+    2026-09-06) ROUTED to the audit track rather than letting the registering
+    lane improvise it. Both hours pass through, and the served ``Total
+    interchange`` series (:func:`~market_sim.data.eia930.envelopes.
+    spp_net_interchange`) carries the matching impossible export prints;
+    SPP-40's PRECOMMIT names both hours.
+
+    Returns ``None`` when no usable full-year frame is available, signaling the
+    caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("SWPP", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return _screen_demand_spikes(
+        _screen_demand_dropouts(demand, ba_code="SWPP", year=year),
+        ba_code="SWPP",
         year=year,
     )
 
@@ -779,6 +828,20 @@ def _pjm_demand_source(
     return _pkg_ns()._load_pjm_hourly_demand(year), None
 
 
+def _spp_demand_source(
+    year: int, ctx: dict
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """SPP: system demand off the ``SWPP hourly`` EIA-930 extract.
+
+    Sourced off the same hourly frame as SPP's renewables so ``demand[t]`` and
+    ``renewable_cf[t]`` refer to the same wall-clock hour (the MISO
+    construction; see :func:`_load_spp_hourly_demand`). Interchange is served
+    separately as the measured scalar schedule (``_SCALAR_INTERCHANGE_ISOS``,
+    owner ruling P2), so the loader-side interchange slot is ``None``.
+    """
+    return _pkg_ns()._load_spp_hourly_demand(year), None
+
+
 # Per-ISO system-demand source registry, replacing load_demand's historical
 # if/elif ladder (pure code motion of each branch into its adapter above).
 # Each adapter maps ``(year, ctx)`` to ``(raw_mw | None, interchange | None)``;
@@ -794,6 +857,10 @@ DEMAND_LOADERS: dict[
     "NEISO": _neiso_demand_source,
     "MISO": _miso_demand_source,
     "PJM": _pjm_demand_source,
+    # SPP (registered 2026-09-06, lane SPP-20) — the same commit that added
+    # ``_spp_config`` to ``iso_configs._ISO_BUILDERS`` (the import-time assert
+    # below is why the two must land together; plan §2.3 / gate G1).
+    "SPP": _spp_demand_source,
 }
 
 # Registry keys are model ISO names: every key must be a registered topology

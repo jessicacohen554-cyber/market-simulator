@@ -128,10 +128,107 @@ that is SPP-20's registration decision and SPP-32's curation.
 | `INDN` | Independence Power & Light | 1.03 | 1.02 | 1.02 | 0.35 % |
 | | **SWPP total** | **284.03** | **289.95** | **299.46** | 100 % |
 
-## Back years
+## Back years — 2019–2022 LANDED 2026-09-06 (SPP-15)
 
-2019–2022 and H1-2026 are a rule-22 **intake** batch, not part of this lane
-(plan §6 row 15). The producer serves them from the same extracts
-(`--years 2019 …`, which reach back to 2018-07-01); the *spend* — solving or
-scoring an out-of-training year — stays gated by SPP's tier markers, which do
-not exist.
+`spp_subba_demand_2019.csv` … `_2022.csv` — one file **per year**, mirroring
+`MISO/miso_subba_demand_2019.csv … _2022.csv`. Landed by lane SPP-15
+(`docs/handoffs/FINDING-spp-15-2026-09-06.md`; charter
+`docs/multi-iso/spp-addition-plan-2026-09.md` §8 SPP-15, r#4 am.1; §6 row 15).
+
+    python scripts/data/fetch_eia930_subba_demand.py --iso SPP \
+        --years 2019 2020 2021 2022
+
+No `--combine` — the per-year shape is the committed MISO back-file shape. Same
+source (the `EIA930_SUBREGION_<year>_<half>.csv` six-month extracts, eight of
+them, `Balancing Authority == SWPP`), same producer, unmodified; pulled
+**2026-09-06**. **Naming vintage: all four files carry the current
+(2026-09-06) vintage**, byte-identical `subba-name` values to
+`spp_subba_demand_2023-2025.csv` on all 17 codes — the producer keys SPP's
+names off one `SUBBA_NAMES["SPP"]` table for every year, which is correct here
+because SPP has no era-specific committed file to match (see the vintage
+section above). MISO's era split does not apply.
+
+**Rule 22 `[R-HOLDOUT]`: this is DATA PREP, not a spend.** What is held out is
+the *score*, never the data. Nothing here is solved, scored or registered; SPP
+holds no tier marker and none is claimed.
+
+| Year | rows | sub-BAs | first period (UTC hr-ending) | last period | hours | dup keys | interior gaps |
+|---|---|---|---|---|---|---|---|
+| 2019 | 147,169 | 17 | `2019-01-01T07` | `2019-12-31T23` | 8,657 | 0 | **96 h** (below) |
+| 2020 | 149,209 | 17 | `2020-01-01T07` | `2020-12-31T23` | 8,777 | 0 | 0 |
+| 2021 | 148,801 | 17 | `2021-01-01T07` | `2021-12-31T23` | 8,753 | 0 | 0 |
+| 2022 | 148,801 | 17 | `2022-01-01T07` | `2022-12-31T23` | 8,753 | 0 | 0 |
+
+**Reconciliation against the BA total** (`../../eia-930-hourly/SWPP hourly.parquet`,
+column `Demand`, summed over the *same* UTC hours each file carries):
+
+| Year | BA `Demand` TWh | Σ 17 sub-BAs TWh | ratio |
+|---|---|---|---|
+| 2019 | 266.284 | 266.284 | 1.000000 |
+| 2020 | 261.847 | 261.847 | 1.000000 |
+| 2021 | 267.338 | 267.339 | 1.000002 |
+| 2022 | 282.302 | 282.419 | 1.000416 |
+
+The 17 sub-BAs are a complete partition of SWPP demand in every back year, to
+tighter than the 2023–2025 window's 0.9995–0.9999 (which is measured over the
+whole calendar year, so it also carries that window's own missing hours).
+
+### Two coverage facts a consumer must handle
+
+1. **Every per-year file starts at `T07`, not `T00`** — the same span-boundary
+   property the 2023–2025 file has at its own start, but here it recurs at
+   *every* year boundary because these are per-year partitions. SWPP is UTC−6,
+   so the seven UTC hour-ending stamps `<Y>-01-01T00..06` are the evening of
+   `<Y-1>-12-31` local and are published in the **previous** year's `Jul_Dec`
+   extract; the per-year period filter assigns them to neither file, so they
+   are absent from this directory. (The producer's `--combine` path keeps
+   interior boundaries — that is what it is for — but the committed MISO
+   back-file shape is per-year, and this mirrors it.) 7 hours × 4 years = 28
+   hours, 0.08 % of the span. A consumer stitching 2019→2022 into one series
+   sees a 7-hour hole at each January 1; **do not interpolate it as an
+   outage** — re-pull it with `--combine` if a contiguous series is needed.
+2. **2019 has 96 hours EIA never published at sub-BA level**, in three blocks
+   — `2019-06-12T06 .. 06-13T05`, `2019-06-14T06 .. 06-15T05`,
+   `2019-06-19T06 .. 06-21T05` UTC (i.e. the local calendar days 2019-06-12,
+   06-14 and 06-19/20 Central). The **BA-level** file carries all 96 of those
+   hours (2.997 TWh of SWPP demand), so this is a sub-BA reporting gap in
+   EIA's own product, not a fetch artifact. It is carried as absence, never
+   filled (rule 14 `[R-ACCURATE]`). **Routed to SPP-32**: a zonal-share
+   curation that divides by the sub-BA sum must handle those hours explicitly.
+
+### The 17 SWPP sub-BAs, annual energy 2019–2022
+
+Extends the 2023–2025 table above; **no zone grouping is asserted** (SPP-20's
+registration, SPP-32's curation).
+
+| Sub-BA | Name | 2019 TWh | 2020 TWh | 2021 TWh | 2022 TWh | share of 4-yr |
+|---|---|---|---|---|---|---|
+| `CSWS` | AEPW American Electric Power West | 47.89 | 45.77 | 46.34 | 49.02 | 17.54 % |
+| `OKGE` | Oklahoma Gas and Electric Co. | 33.47 | 32.31 | 33.39 | 35.86 | 12.53 % |
+| `SPS` | Southwestern Public Service Company | 33.49 | 33.34 | 31.99 | 33.89 | 12.31 % |
+| `WR` | Westar Energy | 31.87 | 30.97 | 32.04 | 33.22 | 11.88 % |
+| `WAUE` | Western Area Power Upper Great Plains East | 30.27 | 29.91 | 31.61 | 32.82 | 11.56 % |
+| `NPPD` | Nebraska Public Power District | 16.15 | 16.94 | 17.43 | 18.66 | 6.42 % |
+| `KCPL` | Kansas City Power & Light | 16.36 | 15.85 | 16.00 | 16.72 | 6.02 % |
+| `OPPD` | Omaha Public Power District | 11.77 | 12.15 | 12.66 | 13.21 | 4.62 % |
+| `WFEC` | Western Farmers Electric Cooperative | 9.24 | 9.06 | 9.23 | 10.18 | 3.50 % |
+| `MPS` | KCP&L Greater Missouri Operations | 8.77 | 8.66 | 8.93 | 9.44 | 3.32 % |
+| `GRDA` | Grand River Dam Authority | 5.83 | 6.29 | 6.71 | 7.17 | 2.41 % |
+| `SECI` | Sunflower Electric | 5.72 | 5.55 | 5.65 | 6.00 | 2.13 % |
+| `EDE` | Empire District Electric Company | 5.28 | 5.09 | 5.25 | 5.64 | 1.97 % |
+| `LES` | Lincoln Electric System | 3.41 | 3.38 | 3.41 | 3.53 | 1.27 % |
+| `SPRM` | City of Springfield | 3.29 | 3.19 | 3.27 | 3.45 | 1.22 % |
+| `KACY` | Kansas City Board of Public Utilities | 2.44 | 2.33 | 2.37 | 2.55 | 0.90 % |
+| `INDN` | Independence Power & Light | 1.04 | 1.05 | 1.06 | 1.06 | 0.39 % |
+| | **SWPP total** | **266.28** | **261.85** | **267.34** | **282.42** | 100 % |
+
+The rank order is stable against 2023–2025 with one swap: `WR` (Westar) sits
+above `WAUE` in every back year and below it from 2023. `SPS` is 12.3 % of
+demand across 2019–2022, essentially its 12.6 % share of 2023–2025 — the card
+P1 load-side reading does not move on four more years of data.
+
+### Still out of scope here
+
+H1-2026 sub-BA demand is not landed by this lane (the producer serves it from
+the 2026 extracts). The *spend* — solving or scoring an out-of-training year —
+stays gated by SPP's tier markers, which do not exist.

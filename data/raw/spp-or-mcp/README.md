@@ -80,3 +80,30 @@ same products; the FTP route has not been tried and may not need the UI token.
 (the `data/raw/` contract). Record the observed schema, span and timezone in the
 table above this line when the first files land.
 
+
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-13: FTP route documented (anonymous), egress-blocked; schema verified from SPP's own samples
+
+FINDING: `docs/handoffs/FINDING-spp-13-2026-09-06.md`. Route reference and probe log:
+`data/raw/spp-planning/README.md` §6.
+
+**Route.** `ftp://pubftp.spp.org/Markets/DA/MCP/` and `ftp://pubftp.spp.org/Markets/RTBM/MCP/`,
+anonymous (user `anonymous`, password = an email address — *Markets Public Data Guide v35*).
+Grammar: `DA-MCP-YYYYMMDDHHMM.csv` (daily file, hourly rows); `RTBM-MCP-YYYYMMDDHHMM.csv`
+(5-min), `RTBM-MCP-DAILY-YYYYMMDD.csv`, `RTBM_MCP_YYYY.csv` (annual, zipped). **Egress-blocked
+from this session** — this directory still carries no data.
+
+**Schema — VERIFIED from the v35 samples** (one day / one interval, NOT landed):
+
+| File | Header (verbatim) |
+|---|---|
+| `DA-MCP-202601300100.csv` (192 rows = 24 h × 8 reserve zones) | `Interval,GMTIntervalEnd,Reserve Zone,RegUP,RegDN,Spin,Supp,RampUP,RampDN,UncUP` |
+| `RTBM-MCP-DAILY-20260123.csv` (2,304 rows = 288 × 8) | `Interval,GMTIntervalEnd,Reserve Zone,RegUPService,RegDNService,RegUpMile, RegDNMile,RampUP,RampDN,Spin,Supp,UncUP` |
+| `RTBM-MCP-202601291620.csv` (8 rows) | same + trailing `BAA` column |
+
+`Reserve Zone` is `1`…`7` plus `SWPW` (the Western BAA as its own zone); `Interval` is local
+Central time, `GMTIntervalEnd` UTC. Prices are $/MW at 4-decimal precision; the sample
+interval shows `Spin` = `Supp` = 0 with `RegUPService` 142.65, which is the ordinary SPP
+pattern of contingency-reserve prices sitting at zero outside shortage — the SPP-56 question
+is how often they do not.

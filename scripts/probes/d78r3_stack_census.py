@@ -128,6 +128,41 @@ SHARED_ROWS_BY_FUEL: dict[int, dict[str, int]] = {
 #: D78-R2's own verdict beside the corrected one.
 D78R2_YEAR_INVARIANT_SET = frozenset({"gas_ct", "gas_st", "oil"})
 
+#: The earned control leg, recorded in D78-R2 §1's form. S1 (G-CTL-ID,
+#: PRECOMMIT §6) is the pre-registered STOP that this leg IS the control whose
+#: mover counts the W5'' re-grade reads; both of its limbs are recorded here.
+LEG_RECORD = {
+    "bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P",
+    "recipe": "run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year "
+    "2025 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics "
+    "--no-pjm-vre-accreditation-vintage  (docs/handoffs/d78r3/run_ctl.sh)",
+    "why_the_no_flag": "owner ruling Q55 / capx D75-R-ARM arms "
+    "pjm_vre_accreditation_vintage for PJM through iso_configs._pjm_config, so "
+    "the BARE recipe now keys b518f5fe7d02f961 and is NOT the control D78-R2 "
+    "graded. The flag reaches the pre-arm posture and its key. "
+    "ADDENDUM-2-rebase-reaudit.md §2.",
+    "key_declared": "a9c66d8ea25acb9d",
+    "key_realized": "a9c66d8ea25acb9d",
+    "head_guard": "bb728e437c4a11e55a0befa9e2c26d65020e6adc (HELD across the leg)",
+    "wall_utc": "22:27:18 -> 22:42:25 = 15.1 min",
+    "solve_years": "{2021, 2023, 2024, 2025}; 2022 bridged",
+    "data_clean": "rebuilt in full before the leg: 56/56 datatypes, 0 failures",
+    "S1_G_CTL_ID": {
+        "key_matches_graded_control": True,
+        "control_band_reproduces": True,
+        "form": "docs/handoffs/d78r2/window_compare2.py --band-only on this leg "
+        "reproduces D78-R2's committed control_band.json BYTE-FOR-BYTE "
+        "(sha256 509320eb4d3de316 both sides) — every per-year decided_mw / "
+        "sector1 / capped_mw / cap_binds / g_y_mw row and every aggregate "
+        "(11,514.910 / 2,120.754 / 1,003.400 / point value 9,394.156). The "
+        "committed instrument was restored after the comparison and is "
+        "unmodified.",
+        "verdict": "CLEARS on both limbs",
+    },
+    "retention": "DELETED BEFORE MERGE (rule 29(c)); every number it yields is "
+    "carried in this file and in FINDING-capx-d78r3-2026-09-06.md.",
+}
+
 MAX_ABS_DELTA_REASON = (
     "not recoverable: no committed artifact holds offer VALUES for either leg "
     "(control-P deleted before merge, rule 29(c); the D78-R2 arm was never "
@@ -352,6 +387,12 @@ def census(ctl_dir: Path) -> dict:
                 "in_declared_set": declared is not None and fuel in declared,
                 "offer_min": round(min(vals), 6),
                 "offer_max": round(max(vals), 6),
+                # A class-uniform offer of EXACTLY $0 is uniform by PRICE-TAKING,
+                # not by sitting at a net-ACR bar — the rule's false-positive
+                # class, and the reason the subset guard is load-bearing rather
+                # than ceremonial. Factual, computed; the reading is the
+                # FINDING's.
+                "uniform_at_zero_price_taker": at_bar and max(vals) == 0.0,
             }
 
         excess = sorted(derived - (declared or frozenset()))
@@ -385,7 +426,8 @@ def census(ctl_dir: Path) -> dict:
             "reported_lens": f"clustering at {CLUSTER_TOL} $/MW-day "
             "(n_distinct_1e6) — never substituted for the deciding test",
         },
-        "read_from": str(ctl_dir.relative_to(REPO)),
+        "read_from": str(ctl_dir.resolve().relative_to(REPO)),
+        "leg": LEG_RECORD,
         "per_dy": per_dy,
     }
 

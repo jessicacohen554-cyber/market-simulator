@@ -25,9 +25,8 @@ playbook disagree on *SPP specifics*, this plan wins; on *process*, the playbook
 | 2 | A **2023–2025** backcast keeper (rule 16 `[R-ALLYEARS]`) scored under rubric v3.6 and registered on the backcast dashboard **with whatever determination it earns, reported at full magnitude** | `frontend/data/backcast/keepers/SPP.json`, `backcast-runs.html#iso=SPP`, `calibration-status.html#iso=SPP` |
 | 3 | `docs/codebase-site/data/mechanism-matrix/SPP.js` shard live with a cell for every mechanism id; `docs/mechanism-testing-matrix.md` §5.7 SPP lever queue | matrix (rule 28) |
 | 4 | `docs/calibration-log/spp.md` open; docs/site prose says seven ISOs; `docs/multi-iso/00` §0/§3 corrected | docs |
-| 5 | **The six existing keepers' cache keys never move** at any wave (no new `ScenarioConfig` field, no default flip, no `results/cache.py` edit) | `tests/regression/test_persisted_identity.py`, keeper `run_config.json` |
-| 6 | Forecast-program entry (T1-F hindcast, `program-status.json` row, `GOLDEN_ISOS`) — **W6, gated, ROUTED to the capx director**; not part of this desk's done | `frontend/data/forecast/` |
-
+| 5 | **The six existing keepers' cache keys never move** at any wave (no new `ScenarioConfig` field, no default flip, no `results/cache.py` edit) | `tests/regression/test_persisted_identity.py`, keeper `run_config.json` → **SPP-14 alt-source sweep (P12, r#4)** |
+| 6 | Forecast-program entry (T1-F hindcast, `program-status.json` row, `GOLDEN_ISOS`) — **W6, gated, ROUTED to the capx director**; not part of this desk's done | `frontend/data/forecast/` → **SPP-14 alt-source sweep (P12, r#4)** |
 What this plan does **not** charter: any change to how MISO prices its SPP seam (the MISO lane's), any
 holdout-year (2019–2022) solve for SPP (rule 22 — the `complete` marker is an owner act), any
 reserve co-optimisation before a keeper exists (M2 is last, playbook §5).
@@ -85,6 +84,7 @@ curtailment / HSL · per-zone wind shape · zonal gas hub · PRM / VRL / VOLL / 
 | `api.eia.gov` v2 | 200 | sub-BA demand (`fetch_eia930_subba_demand.py`), interchange (`fetch_eia930_interchange.py --ba SWPP`), state delivered-gas series |
 | `portal.spp.org` | 200 on pages; file-browser API answers `[]` on every listing and the LMP builder's download paths now **404** | **RESOLVED 2026-09-06 by SPP-12 — the API form did NOT move.** The grammar is unchanged and `fsName` is still the page slug; both calls now require an `X-SPP-UI-Token`, and an anonymous caller gets `200 []` / `404` on every product although each is still `isPublic: true` (an invented `fsName` **404s** where a real one **200s**, which is what makes it an authorization outcome and not a bad key). Rows 5–9 **BLOCKED** pending a Marketplace credential. Untried route: SPP's documented **FTP** public-data transport. FINDING §2 |
 | `spp.org` | 200 | ITP / Planning Criteria / Market Protocols / LTLF / MMU PDFs |
+| `pubftp.spp.org` (SPP's documented programmatic route — *SPP Public Data Access* v3.0 p. 2; **anonymous**, user `anonymous` / password = an email address, *Markets Public Data Guide v35* p. 11) | **transport-blocked at the session egress** (SPP-13, 2026-09-06): a `CONNECT :21` tunnel opens but no FTP banner ever arrives and the relay closes it; identical for control hosts `ftp.gnu.org:21` / `ftp.debian.org:21`; :443/:990 reset after ClientHello; `WebFetch` refuses `ftp:` | **Rows 5–9 need a session whose egress relays port 21, or an owner-side pull** — no credential is missing. Full path layout per product: `data/raw/spp-planning/README.md` §6. FINDING-spp-13 §1 |
 | `oasis.oati.com/SWPP` | blocked | TTCs come from ITP report transcription (rule 14 reconciled estimate) until a binding-constraint archive lands |
 
 ### 2.5 Zonal load is session-fetchable
@@ -121,6 +121,7 @@ row verbatim and numbered in the ledger §2.
 | **P8** W6 routing | who charters forecast-program entry | **ROUTE to the capx director** with a card once a keeper exists; this desk never writes `program-status.json` / `ff-verdicts.json` / `GOLDEN_ISOS` | — | **RULED r#2: ROUTE to the capx director after a keeper exists** |
 | **P10** `voll` value (SPP-12 correction to P5's citation) | SPP's posted Safety-Net Energy Offer Cap is **$1,000/MWh** (Market Protocols 119 §8.2.5 pp. 356–357); $2,000 is Order 831's hard ceiling for cost-verified offers | register **$2,000** = the highest price a dispatchable cost-verified SPP offer can reach (the NEISO reading of Order 831); the comment cites BOTH numbers; SPP-55 revisits shortage pricing against the VRLs ($250/MW spinning, $50,000/MW power balance) | FINDING-spp-12 §6 | **RULED r#3: "$2,000 — the cost-verified ceiling"** |
 | **P11** unblocking portal rows 5–9 + the N↔S TTC (row 11) | the portal needs an `X-SPP-UI-Token`; SPP's *System Interfaces Stakeholder Reference Guide* names an untried **FTP public-data route**; the 2025 ITP Assessment Report carries no transfer-capability table (ITP Manual v3.3 is the next candidate) | charter **SPP-13** (Opus probe lane: FTP route for rows 5–9; ITP Manual / 20-Year Assessment sweep for the N↔S capability + SPS tie ratings); W2 proceeds in parallel; SPP-20 registers the N↔S TTC **Tier-3 with the misalignment documented** (doc 04 convention, rule 14) if SPP-13 has not landed a number first; the SPP-54/57 ranking waits for the flowgate archive | FINDING-spp-12 §2, §6, §8 | **RULED r#3: "Charter SPP-13 probe lane; W2 proceeds in parallel"** |
+| **P12** rows 5–9 after SPP-13: the route is anonymous FTP (`pubftp.spp.org`, user `anonymous`) blocked ONLY by the session egress (port 21); row 11 is NDA/CEII, not public | owner-side pull vs defer vs NDA | the desk recommended an owner-side pull of the 36 monthly LMP files + the RTBM daily binding-constraint files | FINDING-spp-13 §1, §4, §6 | **RULED r#4: "Try to find the data somewhere else"** → lane **SPP-14** (HTTPS-reachable third-party / mirror sources, each landed series cross-checked against the ASOM figures in the tree); W3/W4 proceed regardless; row 11 stays Tier-3 in SPP-20 |
 | **P9** EIA-930 SWPP defective hours (raised by the audit §3.4) | a 100× unit slip on 2023-06-12 21:00 inflates `NG: WND` by 3.6 TWh (caught on demand, not on fuel-mix columns); two low-side demand dropouts (2025-06-21 05:00 = 1,505 MW; 2024-07-19 00:00) no screen catches | benchmark-side fix in SPP-31 (existing median-ratio test applied to `NG:` columns when building benchmarks, six ISOs byte-identical); the low-side demand screen is a repo-wide defect with cache-key risk → ROUTED to the audit track; SPP-40's PRECOMMIT names the two hours; no new `ScenarioConfig` parameter in W2–W4 | audit §3.4 | **RULED r#2: "Benchmark-side fix in SPP-31; demand-side routed"** |
 
 Two further defaults that need no card, recorded here so no lane re-litigates them: `_MULTI_YEAR_ISOS`
@@ -146,6 +147,10 @@ W2  Registration — THE PIN FLIP (one PR)         ∥  matrix shard            
     │ registry  [FABLE] shared→spp         │   │ + §5.7 queue [OPUS]    │   │ N↔S TTC / SPS tie ratings │
     └──────────────────┬───────────────────┘   └────────────────────────┘   │ from ITP docs [OPUS] shared│
                        │                                                     └───────────────────────────┘
+    (SPP-14 [OPUS], P12 r#4: alt-source sweep for rows 5–9 over HTTPS — parallel with W2/W3, never a W3/W4 precondition)
+    (SPP-15 [OPUS], r#4 am.1: back-year intake 2019–2022 of the SPP-11 products — LANDED 2026-09-06, all four items; feeds W5's holdout ladder)
+    WHY NOTHING ELSE RUNS BEFORE SPP-20 MERGES: every W3 derive (outages, tranches, benchmarks, zonal shares,
+    wind shape) calls get_iso_config("SPP") — measured r#4 am.1 — so W3 is gated by registration itself, not by the desk.
                            ▼
 W3  Phase 2 derivation (parallel; each lane owns only its outputs)   ∥  site/docs wiring
     ┌───────────┐ ┌───────────┐ ┌────────────────┐ ┌───────────┐   ┌──────────────────────┐
@@ -199,8 +204,10 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-10** audit — **LANDED 2026-09-06** (`docs/multi-iso/spp-data-audit.md`; `FINDING-spp-10-2026-09-06.md`) | OPUS · census against the MISO audit recipe; recommends, never decides | shared | `docs/multi-iso/spp-data-audit.md` (new); `00-iso-addition-protocol.md` §0 row + §3; `01-data-needs-and-upload-manifest.md` SPP rows | — | `FINDING-spp-10-<date>.md` = the audit doc | fleet census by BA `SWPP` off EIA-860 parquet (plants / MW by fuel vs SPP published totals); distinct plant states vs `campd-unit-level/` present → missing `<ST>_<yr>` list; SWPP 930 spans; **registry-values table** with a citation per value |
 | **SPP-11** EPA/EIA fetch — **LANDED 2026-09-06** (all four items GOT, blocked table empty; `docs/handoffs/FINDING-spp-11-2026-09-06.md`) | OPUS · reproducible fetches with existing scripts | shared | `data/raw/campd-unit-level/{OK,NE,NM,WY}_{2023,2024,2025,2026}.parquet`; `data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv` + `SOURCES.md`; `data/raw/eia-930-interchange/SWPP interchange hourly.parquet`; `data/raw/gas-prices/eia_delivered_gas_{OK,KS,TX,NM}_monthly_2023-2025.csv` + SOURCES; edits: `fetch_eia930_subba_demand.py` (`SUBBA_NAMES["SPP"]`), `fetch_eia930_interchange.py` only if not BA-parametrised | arrow schema equal to sibling files (the CAMPD fetcher already asserts this) | `FINDING-spp-11-2026-09-06.md` | DONE: 16 CEMS parquets (OK/NE/NM/WY × 2023-2026), schema == `KS_2024` all 16; SWPP sub-BA 447,049 rows / 17 sub-BAs / 0 interior gaps, reconciling to 0.9995-0.9999 of the BA `Demand`; SWPP interchange 268,177 rows / 11 DIBAs; four state delivered-gas series. READMEs/SOURCES rows added; no existing raw file rewritten. **`SHA256SUMS.txt` deliberately not extended** — its header scopes it to the untracked 2018 files, and these are tracked. Env carries NO `EPA_API_KEY`/`EIA_API_KEY`, so each credentialled route used its key-free EIA equivalent (documented in place). **Open, routed to the desk:** §6 row 14's NRC intake has no owning lane (charter TASK stops at item 4, no NRC path in FILES YOU OWN) — assign it. |
 | **SPP-12** portal/spp.org fetch — **LANDED 2026-09-06** (`docs/handoffs/FINDING-spp-12-2026-09-06.md`; portal BLOCKED, spp.org served, addendum r#2 (A)+(B)+(C) discharged) | OPUS · API re-discovery + transcription against a manifest | shared | `build_spp_lmp_reference.py` (`--per-hub` → `_validation-source/actual_lmp_hourly_zonal_SPP.parquet`); `data/raw/spp-hourly-load/`, `spp-genmix/`, `spp-binding-constraints/`, `spp-or-mcp/`, `spp-hsl/` (each with README + SOURCES); `data/raw/spp-planning/` PDFs or transcriptions (ITP, Planning Criteria PRM, Market Protocols VRL/offer cap, LTLF, MMU SOM) | listings return non-empty; a 2025 monthly file range-fetches | `FINDING-spp-12-<date>.md` with the reachable/blocked table and **the P1/P7 numbers** (hub spread by year; SPS-tie vs N↔S binding share) | anything still blocked becomes a manual-manifest row (§6) with the exact URL; never a guessed value |
-| **SPP-13** portal FTP route + N↔S TTC (chartered r#3, P11) | OPUS · transport probe + document sweep against a fixed list; no design choice | shared | payloads under `data/raw/spp-hourly-load/`, `spp-genmix/`, `spp-binding-constraints/`, `spp-or-mcp/`, `spp-hsl/` (if the FTP route serves them); `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` (via `build_spp_lmp_reference.py --per-hub` — implemented, never run live); `data/raw/spp-planning/` transcriptions (ITP Manual v3.3 / 20-Year Assessment: N↔S transfer capability, SPS tie ratings) | a listing that returns entries, or a documented refusal | `FINDING-spp-13-<date>.md` | every number page-cited; the P1 ranking table (SPP-54 vs SPP-57) if the archive lands; the hourly mean/p90 spread if the LMP lands; otherwise the exact refusal per route |
-| **SPP-20** register | FABLE · topology + market-object choices + the pin flip + rule-27 core scope | shared → spp | see §2.3 list + `_spp_config()`, `zone_assignment.py` (`_ISO_TO_BA_CODE`, `_LARGEST_ZONE`, `_EGRID_VINTAGE`, `_SPP_STATE_ZONES`, `_spp_zone`), `campd.py::ISO_STATES`, `eia930/frames.py::_ISO_TO_HOURLY_BA`, `eia930/demand.py` (`_load_spp_hourly_demand`, `DEMAND_LOADERS`, `_SCALAR_INTERCHANGE_ISOS`), `renewables.py::RENEWABLE_ZONE_ALLOCATION`, `transmission_expansion.py::TRANSMISSION_BASE_STATIC_VINTAGE`, `fleet/models.py::BA_CODE_TO_ISO`, `capacity_market.py` all-six dicts, `constants.py` all-six dicts, `fuel_trajectories.py` three dicts, `interchange/registry.py::INTERCHANGE_INJECTIONS["SPP"]`, `interchange/spec.py::INTERFACE_NEIGHBORS["SPP"]` (no `IMPORT_ZONE`/tranches), `scripts/lib/{load_forecast,confirmed_retirements,nuclear_license_status,transmission_expansion}/spp.py`, `configs/data-profiles.yaml`, `docs/multi-iso/README.md` "seven" | `validate_topology()`; fleet census equals SPP-10's; `hydrate_data.py --list` shows the `spp` profile owning `SWPP*` and NOT `DAMLZHBSPP_*`; `pytest tests/unit/config tests/curation tests/unit/data -q`; `python scripts/ci_refactor_guards.py`; `check_mechanism_matrix.py` (no field added ⇒ nothing owed) | `FINDING-spp-20-<date>.md` = registry entry table (dict → value → citation) + the six-keeper byte-identity proof | **six keepers unmoved**: replay-hash MISO's keeper fleet/offer arrays (the one ISO whose code names SPP) + goldens + `test_persisted_identity` for the rest; `test_iso_config` scarcity checkpoint still `["ERCOT","NEISO"]` unless P5 ruled otherwise; **no new `ScenarioConfig` field** |
+| **SPP-13** portal FTP route + N↔S TTC — **LANDED 2026-09-06** (`docs/handoffs/FINDING-spp-13-2026-09-06.md`; FTP route = `ftp://pubftp.spp.org`, ANONYMOUS, **egress-blocked** from a session; row 11 swept — NOT public, ratings are an NDA/CEII GlobalScape workbook naming `SPPSPSTIES` / `SPSNMTIES`; two real GenMix payloads + monthly peaks landed from SPP's v35 sample zip; spread + binding-share tables NOT obtainable) | OPUS · transport probe + document sweep against a fixed list; no design choice | shared | payloads under `data/raw/spp-hourly-load/`, `spp-genmix/`, `spp-binding-constraints/`, `spp-or-mcp/`, `spp-hsl/` (if the FTP route serves them); `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` (via `build_spp_lmp_reference.py --per-hub` — implemented, never run live); `data/raw/spp-planning/` transcriptions (ITP Manual v3.3 / 20-Year Assessment: N↔S transfer capability, SPS tie ratings) | a listing that returns entries, or a documented refusal | `FINDING-spp-13-<date>.md` | every number page-cited; the P1 ranking table (SPP-54 vs SPP-57) if the archive lands; the hourly mean/p90 spread if the LMP lands; otherwise the exact refusal per route |
+| **SPP-14** alternative sources for rows 5–9 (chartered r#4, P12) | OPUS · source sweep against a fixed candidate list with a fixed cross-check; no design choice | shared | payloads under `data/raw/spp-lmp-alt/` (NEW; hub / settlement-location hourly DA+RT), `spp-binding-constraints/`, `spp-hourly-load/`, `spp-genmix/`, `spp-or-mcp/` (README + SOURCES rows per source); `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` ONLY if a landed series reproduces the committed system-hub parquet within the stated tolerance | each candidate host answers over HTTPS; a landed LMP series reproduces the committed `actual_lmp_hourly_SPP.parquet` annual RT means ($23.47 / $23.31 / $27.11) within 1 % | `FINDING-spp-14-<date>.md` | per-source table (host · product · span · licence · reachable · reproduces SPP's own figures?); the per-hub spread and four-group tables if the archive lands; the residual manifest otherwise |
+| **SPP-15** back-year intake 2019–2022 — **LANDED 2026-09-06** (all four items GOT, blocked table empty; `docs/handoffs/FINDING-spp-15-2026-09-06.md`) | OPUS · the SPP-11 recipe re-run on four earlier years; zero design | shared | `data/raw/campd-unit-level/{OK,NE,NM}_{2019..2022}.parquet`; `data/raw/zone-specific-demand/SPP/spp_subba_demand_<yr>.csv` ×4 (the MISO per-year shape); `data/raw/eia-930-interchange/"SWPP interchange hourly.parquet"` widened to 2019–2025 with the 2023–2025 rows proven byte-identical; `data/raw/gas-prices/eia_delivered_gas_{OK,KS,TX,NM}_monthly_2019-2022.csv` | schema-equal to the 2023–2025 siblings | `FINDING-spp-15-2026-09-06.md` | DONE: 12 CEMS parquets (OK/NE/NM × 2019-2022), schema == `KS_2024` all 12, WY correctly excluded; 4 per-year SWPP sub-BA files (17 sub-BAs each, reconciling to **1.000000–1.000416** of the BA `Demand`, first stamp `<Y>-01-01T07` in every year incl. 2019); interchange widened 268,177 → 618,817 rows with the 2023-2025 slice **proven byte-identical** (same 268,177 rows, same sha256 `243889469b96…` before and after — no separate back-year file needed); 4 delivered-gas CSVs whose cut reproduces all four committed `_2023-2025.csv` files byte-identically. Producers unmodified; nothing solved, scored or registered; `--holdout-intake SPP` records this charter's dispatch for 2022. **Four source defects reported and NOT filled, all routed:** 2019 sub-BA 96-h gap + the early-year interchange null cliff (2,040/2,256 h in 2019/2020, ~50 % Sat ~49 % Fri) + two impossible `AECI` prints at 2020-03-17 that sign-flip SWPP's 2020 system net (−9.77 vs +0.97 TWh) + **`N3045OK3` publishes nothing 2015-2021**, so OK gas exists for only 2022/2023/2024 of 2019-2025. **Open, routed to the desk:** the `campd-unit-level/README.md` "Fetching" section still claims the fetcher requires a `calibration-complete` marker for a holdout intake; the code and rule 22 both say it does not — left untouched as outside this lane's rows. |
+| **SPP-20** register — **LANDED 2026-09-06** (`docs/handoffs/FINDING-spp-20-2026-09-06.md`: six keepers unmoved — 0 moved surface rows, persisted identity 23/23, MISO `fleet_only` rebuild 87/87 arrays identical; the N↔S TTC is a declared NON-BINDING placeholder pending SPP-13; routed: D79 ledger new-ISO-row limb, `spp.csv` `basis=coincident`, parameter-registry regeneration) | FABLE · topology + market-object choices + the pin flip + rule-27 core scope | shared → spp | see §2.3 list + `_spp_config()`, `zone_assignment.py` (`_ISO_TO_BA_CODE`, `_LARGEST_ZONE`, `_EGRID_VINTAGE`, `_SPP_STATE_ZONES`, `_spp_zone`), `campd.py::ISO_STATES`, `eia930/frames.py::_ISO_TO_HOURLY_BA`, `eia930/demand.py` (`_load_spp_hourly_demand`, `DEMAND_LOADERS`, `_SCALAR_INTERCHANGE_ISOS`), `renewables.py::RENEWABLE_ZONE_ALLOCATION`, `transmission_expansion.py::TRANSMISSION_BASE_STATIC_VINTAGE`, `fleet/models.py::BA_CODE_TO_ISO`, `capacity_market.py` all-six dicts, `constants.py` all-six dicts, `fuel_trajectories.py` three dicts, `interchange/registry.py::INTERCHANGE_INJECTIONS["SPP"]`, `interchange/spec.py::INTERFACE_NEIGHBORS["SPP"]` (no `IMPORT_ZONE`/tranches), `scripts/lib/{load_forecast,confirmed_retirements,nuclear_license_status,transmission_expansion}/spp.py`, `configs/data-profiles.yaml`, `docs/multi-iso/README.md` "seven" | `validate_topology()`; fleet census equals SPP-10's; `hydrate_data.py --list` shows the `spp` profile owning `SWPP*` and NOT `DAMLZHBSPP_*`; `pytest tests/unit/config tests/curation tests/unit/data -q`; `python scripts/ci_refactor_guards.py`; `check_mechanism_matrix.py` (no field added ⇒ nothing owed) | `FINDING-spp-20-<date>.md` = registry entry table (dict → value → citation) + the six-keeper byte-identity proof | **six keepers unmoved**: replay-hash MISO's keeper fleet/offer arrays (the one ISO whose code names SPP) + goldens + `test_persisted_identity` for the rest; `test_iso_config` scarcity checkpoint still `["ERCOT","NEISO"]` unless P5 ruled otherwise; **no new `ScenarioConfig` field** |
 | **SPP-21** matrix shard — **LANDED 2026-09-06** (`docs/handoffs/FINDING-spp-21-2026-09-06.md`; seventh shard live, 305 cells 162 `U` / 47 fc-only `U` / 96 `.`, guard exit 0, 33/33 matrix tests, 7 columns rendered. Two owner-authorized out-of-region edits, both disclosed in the FINDING: 4 six-ISO test assertions, and a one-line `mechanism-matrix-assemble.js` repair for a pre-existing anchor mismatch that had left the rendered page blank since 2026-08-11) | OPUS · mechanical shard emission + queue transcription | code | `docs/codebase-site/data/mechanism-matrix.js:1460` `isos:`; new `data/mechanism-matrix/SPP.js` (a cell for EVERY id: `U` where ISO-applicable, `·` where n/a, `keeper: ""`); `data/mechanism-matrix-assemble.js:29` `EV_KEY` `SPP:'S'`; `mechanism-matrix.html:113-118` script tag; `scripts/lib/mech_matrix.py` `ISO_ORDER` / `ISO_EV_KEY` / `ISO_FIELD_STEMS["SPP"]=("spp",)`; `docs/mechanism-testing-matrix.md` §2 similarity note + new **§5.7 SPP lever queue** (cross-cutting 5.7 → 5.8) | `python scripts/check_mechanism_matrix.py` exit 0 (shard covers exactly the base id set) | `FINDING-spp-21-<date>.md` | **ONE commit**; `pytest tests/unit/config/test_mechanism_matrix_*.py`; 7-column `file://` preview; a one-line cross-desk notice appended to the capx and SCN ledgers: "7 shards from now on — every rule-28(c) cell line includes SPP" |
 | **SPP-30** outages + tranches | OPUS · frozen derives (rule 23) | spp | `data/raw/campd-unit-outages-SPP.csv` (+ `-short`, `-layup`, `-e923` siblings as emitted), `campd-partial-outages-SPP.csv`, SPP rows of the committed-pct / thermal-tranche / bin-assignment CSVs | windows > 0 in every CEMS state incl. OK/NE; zero full-year fallbacks | `FINDING-spp-30-<date>.md` (windows per state-year, units covered %) | `derive_campd_unit_outages.py --iso SPP --years 2023 2024 2025` → `derive_cc_committed_pct.py --iso SPP` → `derive_thermal_tranches.py --iso SPP` → `tag_mixed_plants.py` → `build_offer_curve_overrides.py`; every output header cites source + method |
 | **SPP-31** benchmarks | OPUS · execution | spp | `scripts/data/derive_actual_lmp.py` SPP path (system + per-hub zones), `build_calibration_reference.py` (`"SPP":"SWPP"` BA map, eGRID BACODE), `_validation-source/actual_lmp.json` SPP block, `SPP_{2023,2024,2025}_renewable_capacity.csv`, `calibration_reference.json` SPP block, regenerated `frontend/data/backcast/tail/actual_tail.json` + `amplitude/actual_amplitude.json` | SWPP rows present in the shared `eia_demand_profiles.parquet` / `eia_generation_profiles.parquet` (else re-run `convert_eia930.py` and prove non-SWPP rows byte-identical) | `FINDING-spp-31-<date>.md` | other ISOs' blocks **byte-identical** in every shared JSON (json-diff = ∅); SPP `rt`/`rt_mon`/`rt_pct` present 2023–2025; `actual_tail.json` SPP counts at the P6 threshold |
@@ -224,17 +231,17 @@ a **fetch first**; the manual fallback fires only on a documented block.
 | 2 | SWPP sub-BA hourly demand 2023–2025 | `data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv` | **YES** — `fetch_eia930_subba_demand.py --iso SPP --years …` after `SUBBA_NAMES["SPP"]` | SPP-11 | SPP Marketplace hourly load by area (login) |
 | 3 | SWPP BA-to-BA interchange 2023–2025 | `data/raw/eia-930-interchange/SWPP interchange hourly.parquet` | **YES** — `fetch_eia930_interchange.py --ba SWPP` | SPP-11 | EIA Grid Monitor CSV |
 | 4 | EIA delivered-to-electric-power gas, OK KS TX NM monthly | `data/raw/gas-prices/eia_delivered_gas_<ST>_monthly_2023-2025.csv` | **YES** — EIA API v2 (project key) | SPP-11 | EIA dnav |
-| 5 | Per-hub SPPNORTH / SPPSOUTH DA + RT hourly 2023–2025 | `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` | **BLOCKED** (SPP-12) — API re-discovered and correct; needs `X-SPP-UI-Token`. `--per-hub` **is implemented + fixture-proved**, never run live | SPP-12 | Marketplace monthly LMP files |
-| 6 | SPP hourly load by area (portal `hourly-load`) | `data/raw/spp-hourly-load/` | **BLOCKED** — dir + README/SOURCES opened | SPP-12 | Marketplace |
-| 7 | SPP generation mix (portal `generation-mix-historical`; wind delivered) | `data/raw/spp-genmix/` | **BLOCKED** — dir + README/SOURCES opened | SPP-12 | Marketplace |
-| 8 | DA / RTBM binding-constraint archive (flowgates; P1 evidence + SPP-53 TTC input) | `data/raw/spp-binding-constraints/` | **BLOCKED — the SPP-54 vs SPP-57 ranking has NO measured input and no substitute exists.** The ruled 4-group spec is pre-registered in the dir's README | SPP-12 | OASIS (login) — blocked |
-| 9 | DA / RTBM operating-reserve MCPs (`da-mcp`, `rtbm-mcp`) — SPP-56 input only | `data/raw/spp-or-mcp/` | **BLOCKED** — dir + README/SOURCES opened | SPP-12 | Marketplace |
+| 5 | Per-hub SPPNORTH / SPPSOUTH DA + RT hourly 2023–2025 | `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` | **BLOCKED — now by NETWORK POLICY, not credential** (SPP-13). SPP's documented route is anonymous FTP: `ftp://pubftp.spp.org/Markets/{DA,RTBM}/LMP_By_SETTLEMENT_LOC/`, files `DA-LMP-Monthly-SL-YYYYMM.csv` / `RTBM-LMP-MONTHLY-SL-YYYYMM.csv` (>2 yr old inside yearly zips). The session egress relays TLS-on-443 only, so port 21 never answers. `--per-hub` still never run live | SPP-12 → SPP-13 | **Owner-side FTP pull** of the 36 monthly files (2023–2025 × 2 markets), then `build_spp_lmp_reference.py --per-hub` in-session |
+| 6 | SPP hourly load by area (portal `hourly-load`) | `data/raw/spp-hourly-load/` | **BLOCKED (egress)** — FTP `Operational_Data/HourlyLoad/`, `HOURLY_LOAD-YYYYMM.csv`; schema verified from SPP's v35 sample; `Peak_Load_by_Month.csv` (2024-02→2026-01) **landed** | SPP-12 → SPP-13 | Owner-side FTP pull |
+| 7 | SPP generation mix (portal `generation-mix-historical`; wind delivered) | `data/raw/spp-genmix/` | **PARTLY LANDED** (SPP-13): `GenMix_2024_SPP.csv` (2024-02-15 → 2024-12-31, 5-min, MW by fuel × market/self) and `GenMixYTD_SPP.csv` (2025-01-01 → 2025-12-16) raw from SPP's v35 sample zip. **Missing:** 2023 and 2024-01-01..02-14 — FTP `Operational_Data/GEN_MIX/GenMix_YYYY_SPP.csv`, egress-blocked | SPP-12 → SPP-13 | Owner-side FTP pull of `GenMix_2023_SPP.csv` → **SPP-14 alt-source sweep (P12, r#4)** |
+| 8 | DA / RTBM binding-constraint archive (flowgates; P1 evidence + SPP-53 TTC input) | `data/raw/spp-binding-constraints/` | **BLOCKED (egress) — the SPP-54 vs SPP-57 ranking STILL has no measured input.** Route is anonymous FTP `Markets/RTBM/BINDING_CONSTRAINTS/` (`RTBM-DAILY-BC-YYYYMMDD.csv`, 14 columns incl. `Shadow Price`, `Real Time Effective Limit`, `State`) — schema verified from SPP's sample; the 4-group spec is unchanged and the Oklahoma names re-checked against audit §6.1 | SPP-12 → SPP-13 | **Owner-side FTP pull** (≈365 daily files/yr, or the monthly/yearly rollups) → **SPP-14 alt-source sweep (P12, r#4)** |
+| 9 | DA / RTBM operating-reserve MCPs (`da-mcp`, `rtbm-mcp`) — SPP-56 input only | `data/raw/spp-or-mcp/` | **BLOCKED (egress)** — FTP `Markets/DA/MCP/`, `Markets/RTBM/MCP/` (`RTBM_MCP_YYYY.csv` annual zips); schema verified from SPP's sample | SPP-12 → SPP-13 | Owner-side FTP pull → **SPP-14 alt-source sweep (P12, r#4)** |
 | 10 | Wind curtailment (portal or MMU State of the Market annual %) | `data/raw/spp-hsl/spp_wind_curtailment_annual.csv` | **LANDED** from 3 MMU ASOM editions with page cites — avg hourly MW 2019/2022/2023/2024/2025. ⚠️ **SPP publishes no percentage**; the share rows are labelled derived with their formula. Portal `ver-curtailments` (5-min) still blocked | SPP-12 | owner transcribes annual % + page cite |
-| 11 | N↔S transfer capability / SPS tie ratings | cited in `_spp_config` | ❌ **NOT FOUND — and NOT host-blocked.** The 2025 ITP report is a project portfolio and carries no rated interface (all 300+ pages swept). Try `ITP Manual v3.3` `/Documents/77209/`, the 20-Year Assessment `/Documents/69814/`, ITP Postings `?id=31491`. Rule 14 governs until then | SPP-12 → SPP-20 | owner uploads the ITP PDF |
+| 11 | N↔S transfer capability / SPS tie ratings | cited in `_spp_config` | ❌ **SWEPT (SPP-13) — NOT PUBLIC.** ITP Manual v3.3, 2022 20-Year Assessment Report + Manual, and the ITP Postings folder (781 docs) all read: none states an N↔S or SPS-tie MW. The ITP Constraint Assessment transmittals name the interfaces **`SPPSPSTIES` / `SPSNMTIES`** but their ratings are in an NDA/CEII GlobalScape workbook. **Rule 14 governs: SPP-20 registers a Tier-3 reconciled estimate with the misalignment documented** (P11). The measured substitute is the RTBM BC archive's `Real Time Effective Limit` (row 8) | SPP-12 → SPP-13 → SPP-20 | owner with an SPP NDA reads the workbook, or SPP-53 derives it from row 8 |
 | 12 | PRM, VRL table, offer cap | `docs/multi-iso/spp-data-audit.md` values table; transcribed in `data/raw/spp-planning/README.md` | **LANDED.** ⚠️ **Two corrections to this row's own premises:** PRM is **16 %** summer East 2026–28 (17 % 2029) + **36–38 % winter**, not 15 %, and East/West carry **separate** BAA PRMs — there is no system-wide SPP PRM. Offer cap is **$1,000/MWh** (the $2,000s are virtual + import/export). Full Exhibit 4-1 VRL table transcribed | SPP-12 → SPP-10 | owner uploads the two PDFs |
 | 13 | SPP long-term load forecast (needs a real edition + vintage ≥ 2020 for `load_forecast/spp.py`) | `data/raw/load-forecast/spp/spp.csv` | **LANDED — W2 precondition MET.** 4 `annual_peak_mw` rows (61.7/66.5/69.8/76.4 GW for 2026/2029/2034/2044), edition `2025 ITP` vintage 2025. ⚠️ **SPP publishes no standalone LTLF**; peak only, 4 study years, and the year↔value pairing is a documented chart read | SPP-12 | owner uploads the LTLF — **a W2 PRECONDITION** |
 | 14 | Confirmed retirements (SPP-area instruments), NRC licence (Wolf Creek, Cooper), ITP transmission projects | per registry `data/raw/…` | **NRC LANDED** by SPP-12 under the r#2 addendum → `data/raw/nuclear-license-status/spp.csv` (Wolf Creek exp. 2045-03-11 SLR *announced only*; **Cooper exp. 2034-01-18 — inside the horizon — SLR under review, NOT granted**). Confirmed retirements + ITP **NO** | SPP-11 / SPP-12 | owner uploads the ITP project list |
-| 15 | Holdout years 2019–2022 of items 1–5 | same paths | YES, **only as a rule-22 intake batch** after a `complete` marker — W5+ | — | — |
+| 15 | Holdout years 2019–2022 of items 1–5 | same paths | ✅ **SERVED for items 1–4 by SPP-15, 2026-09-06** (`docs/handoffs/FINDING-spp-15-2026-09-06.md`): CEMS OK/NE/NM, per-year sub-BA demand, interchange widened to 2019-2025 under a byte-identity proof, delivered gas OK/KS/TX/NM. Rule-22 DATA PREP — **no marker was needed or claimed**, because what is held out is the score, never the data; the *spend* (solve/score/register) remains gated. Item 5 (LMP) is not in SPP-15's scope and stays open behind SPP-12/13/14. | SPP-15 | — |
 
 ---
 
@@ -512,6 +519,150 @@ status per product); the per-hub spread table (or "not obtainable — <reason>")
 binding-share table (or the same); the row-11 result per document; the residual manual manifest.
 Plan §5 row → LANDED; §6 rows 5–9/11 statuses updated in the same PR. Report to the owner: the route
 verdict first, then the SPP-54/57 ranking if you have it.
+Push by pack size (CLAUDE.md Git & Pushing); fetch-back verify every pushed file ≥300 lines; no CI
+workflows; no default moves; if you must touch a file outside your regions, STOP and route to
+SPP-DESK in your FINDING.
+```
+
+#### SPP-14 `[OPUS]` — alternative HTTPS sources for SPP LMP / binding constraints / load / gen-mix / MCP (chartered r#4 under ruling P12)
+
+```
+You are lane SPP-14. MODEL: Opus claude-opus-5 — a source sweep against a fixed candidate list with a
+fixed cross-check; you choose nothing, you record what each source serves and whether it reproduces
+SPP's own published figures. DATA PROFILE: shared.  Branch stem: claude/spp-14-alt-sources-w6dp.
+Read CLAUDE.md freshly and in full (rules 13, 14, 23, 27); docs/multi-iso/spp-addition-plan-2026-09.md
+§3 P12 (as ruled), §5 row SPP-14, §6 rows 5–9; docs/handoffs/FINDING-spp-13-2026-09-06.md IN FULL (§1
+the FTP folder/file grammar and the verified product SCHEMAS — a third-party copy must match them;
+§3 the four-group binding-share spec; §5 what already landed from the v35 sample zip);
+docs/handoffs/FINDING-spp-12-2026-09-06.md §4 (the ASOM annual hub means — your cross-check);
+data/raw/spp-binding-constraints/README.md (grouping fixed before the data — never change it);
+scripts/data/build_spp_lmp_reference.py (its parse of the monthly-SL wide format; the committed
+system-hub parquet's annual RT means are $23.47 / $23.31 / $27.11 for 2023/24/25).
+
+PRECONDITIONS: SPP-13 LANDED (PR #5314). Parallel with SPP-20 (RUNNING — touch none of its files).
+FILES YOU OWN: NEW data/raw/spp-lmp-alt/ (payloads + README + SOURCES); README/SOURCES rows appended
+under data/raw/spp-binding-constraints/, spp-hourly-load/, spp-genmix/, spp-or-mcp/ (+ payloads there
+if a source serves the SAME product SPP publishes, byte-comparable to the schemas SPP-13 recorded);
+data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet ONLY under the gate below.
+FILES YOU MUST NOT TOUCH: src/; configs/; tests/; scripts/ (except a NEW scripts/data/fetch_spp_alt_*.py
+producer if a source is reproducible — never edit build_spp_lmp_reference.py); actual_lmp_hourly_SPP.parquet;
+any SPP-20 file; docs/multi-iso/spp-data-audit.md.
+
+TASK — sweep, in this order, and STOP at each on a documented refusal:
+(1) gridstatus.io hosted API (https://api.gridstatus.io — HTTPS; check whether a key-free tier exists
+    and what its row limits are; datasets of interest: SPP day-ahead hourly LMP by location, SPP RT
+    LMP (5-min and hourly), SPP binding constraints, SPP load by area, SPP fuel mix, SPP reserve
+    MCPs). Record the licence terms verbatim; a source whose terms forbid redistribution lands as a
+    DERIVED sidecar only (the parquet), never the raw pull.
+(2) The open-source `gridstatus` Python package's SPP client: read its source for the endpoints it
+    hits; if any is an HTTPS host other than portal.spp.org / pubftp.spp.org, probe it.
+(3) LCG Consulting EnergyOnline (https://www.energyonline.com — public SPP LMP pages), and any other
+    HTTPS mirror that republishes SPP's monthly-SL or daily-BC files verbatim (search spp.org's own
+    CDN/S3 hostnames referenced in the portal bundle main.*.js; Kaggle/Zenodo/GitHub mirrors of
+    "SPP LMP" 2023–2025 — cite the uploader and the file hash).
+(4) The SPP MMU: any ASOM appendix, quarterly or monthly report on www.spp.org that tabulates hub
+    prices at monthly or finer grain (a monthly N/S spread series is a partial substitute for P7's
+    mean; it can NOT substitute for the p90 — say so).
+(5) EIA / FERC: confirm and record that neither publishes SPP LMP or flowgate data (one line each).
+CROSS-CHECK GATE (rule 14, before any landed LMP series is used for anything): rebuild the system
+hub as the NaN-skipping mean of SPPNORTH_HUB and SPPSOUTH_HUB on the model's 8760 local calendar and
+compare to the committed actual_lmp_hourly_SPP.parquet: annual RT mean within 1 % AND hourly
+correlation ≥ 0.999 for each of 2023–2025. A series that fails is landed as evidence with the
+mismatch stated and is NEVER promoted to actual_lmp_hourly_zonal_SPP.parquet. A series that passes
+→ write the per-hub parquet (year/hour/zone/rt/da, zone = SPPNORTH_HUB / SPPSOUTH_HUB) and report
+mean and p90 |N − S| per year (P7: the 2024 ruling stands unless this disagrees — say which).
+BINDING CONSTRAINTS: if any source serves SPP's RTBM daily BC files (14-column schema, FINDING-spp-13
+§3), compute per year, in the FINDING only, share of RT binding hours AND mean shadow price while
+binding for the four fixed groups (n_s_corridor · sps_tie · oklahoma_internal · other) — this ranks
+SPP-54 vs SPP-57 under ruling P1 — and note the `Real Time Effective Limit` distribution on the
+N↔S-corridor flowgates for SPP-53.
+Every blocked or licence-refused source → the table with status and the verbatim terms. No value from
+memory; no derived percentage without its formula and `derived=yes`.
+RULES THAT BITE: 1 (the grouping is fixed), 13 [R-MEASURED] (a third-party copy is admissible only as
+SPP's own published series, reproduced — hence the gate), 14, 23, 26, 27 [R-PUSH] (binary payloads by
+git push in pack-sized commits; any new producer script < 300 lines or fetch-back verified), 28 (no
+cell moves).
+EXIT: docs/handoffs/FINDING-spp-14-<date>.md with: the per-source table (host · product · span ·
+licence · reachable · reproduces?); the cross-check table; the per-hub spread table (or "not
+obtainable — <reason>"); the four-group table (or the same); the residual manifest. Plan §5 row →
+LANDED; §6 rows 5–9 statuses updated in the same PR. Report to the owner: which rows now have a
+reachable source, first.
+Push by pack size (CLAUDE.md Git & Pushing); fetch-back verify every pushed file ≥300 lines; no CI
+workflows; no default moves; if you must touch a file outside your regions, STOP and route to
+SPP-DESK in your FINDING.
+```
+
+#### SPP-14 ADDENDUM (issued r#4 am.1 — paste into the SPP-14 session; widens the file set by three measured files)
+
+```
+SPP-14 ADDENDUM from SPP-DESK (r#4 am.1). FINDING-spp-13 §5 found three measured files in SPP's own
+v35 guide zip on www.spp.org (HTTPS, reachable — the zip URL is in data/raw/spp-planning/SOURCES.md)
+that SPP-20 and SPP-32 can consume. Land them raw under data/raw/spp-planning/ with README + SOURCES
++ SHA256SUMS rows, as its own commit BEFORE the sweep in your charter:
+(A) SL_to_Pnode_to_Zone_with_Area.csv (~32 MB) — every settlement location → NODE_AREA → reserve
+    zone: the measured SL→area map for SPP-20's sub-BA/zone grouping and SPP-32's zonal shares.
+    One commit by git push; if the pack exceeds the remote's limit, gzip it and say so in the README.
+(B) Hub_Definitions.csv — the SPPNORTH_HUB / SPPSOUTH_HUB node weightings: the exact definition of
+    the two hubs the committed price benchmark is built from (SPP-40's PRECOMMIT cites it for the
+    "two-point spread" limitation).
+(C) TieFlows_Sep2025.csv — one month of 1-minute tie flows by neighbour: SPP-33/51 seam evidence.
+In your FINDING, add one table: for (A), the count of settlement locations per NODE_AREA and which
+EIA-930 sub-BA token each area maps to (a join key SPP-32 will need — report, do not decide).
+Everything else in your charter is unchanged.
+```
+
+#### SPP-15 `[OPUS]` — back-year intake 2019–2022 of the SPP-11 products (chartered r#4 am.1; rule-22 data prep)
+
+```
+You are lane SPP-15. MODEL: Opus claude-opus-5 — the SPP-11 recipe re-run on four earlier years; you
+make no design choice. DATA PROFILE: shared.  Branch stem: claude/spp-15-backyears-q3nf.
+Read CLAUDE.md freshly and in full — rule 22 [R-HOLDOUT] entire, and especially "WHAT IS HELD OUT IS
+THE SCORE, NEVER THE DATA": data intake needs no per-ISO/per-window marker; only SOLVING, SCORING or
+REGISTERING an out-of-training year is the spend. You do none of those. docs/multi-iso/
+spp-addition-plan-2026-09.md §5 row SPP-15, §6 row 15; docs/handoffs/FINDING-spp-11-2026-09-06.md IN
+FULL (the four producers, their flags, the schema checks, the sub-BA naming and span-boundary
+lessons); data/raw/campd-unit-level/README.md (the holdout-intake row convention SPP-11 added);
+data/raw/zone-specific-demand/MISO/ (the per-year back-file shape: miso_subba_demand_2019.csv …
+_2022.csv — mirror it for SPP); the producers' docstrings.
+
+PRECONDITIONS: SPP-11 LANDED. Parallel with SPP-20 (RUNNING) and SPP-14 — you own no file they own.
+The owner's dispatch of this charter is the explicit authorization the fetcher's --holdout-intake
+flag records; cite this charter (plan §8 SPP-15, r#4 am.1) in every README row you add.
+FILES YOU OWN: data/raw/campd-unit-level/{OK,NE,NM}_{2019,2020,2021,2022}.parquet (12 files) + README
+rows (WY is NOT in the SPP footprint — audit §2.4 — do not fetch it); data/raw/zone-specific-demand/
+SPP/spp_subba_demand_{2019,2020,2021,2022}.csv (per-year files, the MISO shape) + SOURCES rows;
+data/raw/eia-930-interchange/"SWPP interchange hourly.parquet" WIDENED to 2019–2025 (the producer
+rewrites the file: prove the 2023–2025 rows are byte-identical to the committed file before and after
+— row count, sha256 of the 2023–2025 slice — and record both in the FINDING; if the producer cannot
+widen without touching the committed rows, land a SEPARATE "SWPP interchange hourly 2019-2022.parquet"
+and say so); data/raw/gas-prices/eia_delivered_gas_{OK,KS,TX,NM}_monthly_2019-2022.csv + SOURCES rows.
+FILES YOU MUST NOT TOUCH: any existing raw file except the interchange parquet under the proof above;
+src/; configs/; tests/; scripts/ (the producers are used as-is; if one cannot serve a back year
+without a code change, STOP that item and record it — do not edit the producer).
+
+TASK, in this order, each its own small commit, pack-sized (git push; never push_files a parquet):
+(1) CEMS: for Y in 2019 2020 2021 2022: python scripts/data/fetch_campd_unit_level.py --year Y
+    --states OK NE NM --holdout-intake SPP. Verify schema == KS_2024.parquet for each; rows /
+    facilities / units per file in the FINDING; README rows in SPP-11's convention.
+(2) SUB-BA DEMAND: fetch_eia930_subba_demand.py --iso SPP --years 2019 … 2022, one file per year (NO
+    --combine — mirror MISO's back-year files). NOTE the EIA API's own coverage of this product starts
+    2019-01-01 (the producer docstring) — 2019 may be partial; report the first stamp. The 2026 sub-BA
+    renaming does not bite a back year (the producer writes each year in its own era's naming — say
+    which naming each file carries). Cross-check Σ sub-BAs vs the BA Demand column of
+    "SWPP hourly.parquet" per year (SPP-11 §3.3 got 0.9995–0.9999).
+(3) INTERCHANGE: fetch_eia930_interchange.py --ba SWPP --source bulk --years 2019 2020 2021 2022
+    (+ 2023 2024 2025 if the producer only writes a whole file) under the byte-identity proof above.
+    DIBA duration summary per year in the FINDING (same table shape as SPP-11 §4.1).
+(4) GAS: the dnav workbook route SPP-11 used (hist_xls/N3045<ST>3m.xls) for 2019–2022; the same
+    N3045OK3 gap SPP-11 hit may recur — record it, never fill it.
+Anything that returns 403/404 or an empty body: the blocked table with the exact URL and status. No
+value from memory. No solve, no score, no registration, no calibration-complete.json edit, no
+touchpoint stamp — this lane produces INPUTS and nothing that reads them.
+RULES THAT BITE: 13, 14, 22 (data prep is unrestricted; the spend is not yours), 23, 26, 27 [R-PUSH].
+EXIT: docs/handoffs/FINDING-spp-15-<date>.md with the got/blocked table, per-file schema/row checks,
+the sub-BA completeness ratios per year, the interchange byte-identity proof, and the DIBA summaries;
+plan §5 row → LANDED; §6 row 15 → served. Report to the owner: which of {OK, NE, NM} × {2019–2022}
+landed, first.
 Push by pack size (CLAUDE.md Git & Pushing); fetch-back verify every pushed file ≥300 lines; no CI
 workflows; no default moves; if you must touch a file outside your regions, STOP and route to
 SPP-DESK in your FINDING.
@@ -952,7 +1103,9 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-10 | `docs/handoffs/FINDING-spp-10-2026-09-06.md` / `docs/multi-iso/spp-data-audit.md` | 2026-09-06 (PR #5254) |
 | SPP-11 | `docs/handoffs/FINDING-spp-11-2026-09-06.md` | 2026-09-06 (PRs #5239, #5243, #5247) |
 | SPP-12 | `docs/handoffs/FINDING-spp-12-2026-09-06.md` | 2026-09-06 (PR #5285) |
-| SPP-13 | `docs/handoffs/FINDING-spp-13-<date>.md` | — |
+| SPP-13 | `docs/handoffs/FINDING-spp-13-2026-09-06.md` | 2026-09-06 |
+| SPP-14 | `docs/handoffs/FINDING-spp-14-<date>.md` | — |
+| SPP-15 | `docs/handoffs/FINDING-spp-15-2026-09-06.md` | 2026-09-06 |
 | SPP-21 | `docs/handoffs/FINDING-spp-21-2026-09-06.md` | 2026-09-06 |
 
 ## 10. Ledger

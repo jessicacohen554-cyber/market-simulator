@@ -141,7 +141,15 @@ REGISTRY: dict[str, IsoSpec] = {}
 
 # ISO submodules to import so their register() calls run. Missing modules (an
 # ISO not yet implemented) are skipped, so intake waves land independently.
-_ISO_MODULES: tuple[str, ...] = ("ercot", "pjm", "miso", "nyiso", "neiso", "caiso")
+_ISO_MODULES: tuple[str, ...] = (
+    "ercot",
+    "pjm",
+    "miso",
+    "nyiso",
+    "neiso",
+    "caiso",
+    "spp",  # registered 2026-09-06 (lane SPP-20)
+)
 _loaded = False
 
 

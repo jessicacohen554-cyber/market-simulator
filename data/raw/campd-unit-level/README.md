@@ -32,19 +32,42 @@ CA-only list left it unobservable — the FINDING-caiso193 §2 state-scope gap;
 template. NV spans 2018–2026 (2026 = H1 quarters via `--quarters 1 2`).
 
 **39 states since 2026-09-06 (SPP-11): + NE NM OK WY**, the SPP footprint's
-CEMS states, landed for **2023–2026** only (`docs/handoffs/FINDING-spp-11-2026-09-06.md`;
+CEMS states, landed for **2023–2026** (`docs/handoffs/FINDING-spp-11-2026-09-06.md`;
 `docs/multi-iso/spp-addition-plan-2026-09.md` §6 row 1). SPP is not a
 registered ISO yet, so these four states are absent from `campd.ISO_STATES`
 until SPP-20 registers it; the parquets are the critical-path input for
 SPP-30's outage windows and thermal tranches. Their 2026 vintage is Q1,
-matching every other `<ST>_2026.parquet` in the corpus. 2018–2022 for these
-four states is a later rule-22 intake batch, not landed here.
+matching every other `<ST>_2026.parquet` in the corpus.
+
+**Back years 2019–2022 landed 2026-09-06 (SPP-15) for OK, NE and NM only** —
+twelve files (`docs/handoffs/FINDING-spp-15-2026-09-06.md`; charter
+`docs/multi-iso/spp-addition-plan-2026-09.md` §8 SPP-15, r#4 am.1; §6 row 15):
+
+    python scripts/data/fetch_campd_unit_level.py --year <2019|2020|2021|2022> \
+        --states OK NE NM --holdout-intake SPP
+
+**WY is deliberately NOT back-filled**: it is not in the SPP footprint
+(`docs/multi-iso/spp-data-audit.md` §2.4), so its 2023–2026 files stay the
+whole of its coverage here. All twelve back-year files were verified
+schema-equal to `KS_2024.parquet` (the fetcher's own sibling assertion checks
+against the same state's newest file; the KS check was re-run after the fact)
+and confined to their own year. Unit counts move with real fleet turnover —
+`NM` runs 32 units in 2019/2020, 31 in 2021/2022 and 29 from 2023; `OK` 94
+throughout 2019–2022, 92 by 2025. **2018 is not landed for these three
+states** and is not planned: 2018 is outside the program's working span and
+its vintage is untracked at tip (below).
+
+Rule 22 `[R-HOLDOUT]`: **this is DATA PREP, not a spend.** What is held out is
+the score, never the data. 2022 is a quarantined year, so `--holdout-intake
+SPP` records the owner's dispatch of the SPP-15 charter as the authorization
+the fetcher requires; nothing was solved, scored or registered, and SPP holds
+no tier marker (none is claimed). 2019–2021 need no such record.
 
 | Years | Status |
 |---|---|
 | 2023–2025 | complete (35 states each; **39 incl. NE NM OK WY since 2026-09-06**) — the calibration window |
-| 2018–2021 | **complete** (34 states 2026-07-05 + NV 2026-08-16) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
-| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. NE/NM/OK/WY H1-2026 (Q1) intaken 2026-09-06 under `--holdout-intake SPP` (SPP-11 charter); their 2022 is not landed. |
+| 2018–2021 | **complete** (34 states 2026-07-05 + NV 2026-08-16; **+ NE NM OK for 2019–2021 since 2026-09-06**, SPP-15 — 2018 not landed for those three) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
+| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. NE/NM/OK/WY H1-2026 (Q1) intaken 2026-09-06 under `--holdout-intake SPP` (SPP-11 charter). **NE/NM/OK 2022 intaken 2026-09-06 under the same flag (SPP-15 charter, plan §8 SPP-15 / r#4 am.1); WY 2022 is deliberately not landed — WY is outside the SPP footprint.** |
 
 **RESOLVED 2026-07-08 — EIA-923 2018–2021 (parasitic net conversion) source gap
 closed, re-derive still open.** The v2 rate artifact converts CAMPD gross → net

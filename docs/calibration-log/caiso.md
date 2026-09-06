@@ -14012,3 +14012,82 @@ NO verdict move. **No run registered (none produced), no keeper change, no
 `ScenarioConfig` field, no `complete` declaration.**
 
 **Next number: caiso-262.**
+
+### caiso-261 addendum — the owner's four decision cards (same session, 2026-09-06)
+
+Asked as clickable cards after the FINDING landed; every answer executed or
+chartered in the same session, recorded in
+`ASSESSMENT-caiso261-complete-declaration-2026-09-06.md`.
+
+1. **`complete` — "Declare complete now."** EXECUTED on the caiso-259 §3
+   recipe: `calibration_verdict.py --run-id 2026-09-06-caiso-260-b1-demand`
+   re-verified CALIBRATED (rubric v3.6, no solve); CAISO moved from
+   `withdrawn` to `complete` in `calibration-complete.json` (keeper /
+   keeper_at_declaration = caiso-260; tier_authorized = validation only;
+   locked_test NOT AUTHORIZED; frontier_basis = caiso-259 §4 re-stated on
+   caiso-260 with the caiso-261 adjudication; the 2026-08-06 withdrawal
+   preserved verbatim under `withdrawal_history_2026_08_06`); `frontier`
+   stamped in `keepers/CAISO.json` with a `frontier_history`;
+   `build_status.py --iso CAISO` (CALIBRATED); `audit_keepers.py --iso CAISO`
+   PASS 0/0 (M1); `check_gate_a_provenance.py` OK; the keeper-auditor agent
+   run. **Nothing is spendable today**: the 2022 rung waits on (2) and the
+   H-1 artifact; 2019 / H1-2026 stay frozen.
+2. **2022 prices — "Fund an hourly price archive."** CHARTERED, not
+   executed: an intake session sources an hourly 2022 CAISO hub-LMP +
+   intertie-price series outside OASIS retention with a rule-14
+   reconciliation BEFORE any rung; a volume-only rung was NOT chosen.
+3. **G-26 surface — "Fund as G-26 audit item."** CHARTERED, not executed:
+   re-fetch the `PUB_DAM_GRP` corpus (~1,096 daily zips, ≥ 6 s each,
+   0.5–0.9 GB, gitignored) and derive a measured intertie ECONOMIC offer
+   surface under its own PRECOMMIT with C3a / C4 excluded, the C4-2025 /
+   C3c-2023 exposures re-stated, and the caiso-150 §H wall respected
+   (economic curves classifiable by monotonicity; self-schedules never).
+   An audit item, never a lever on the hod 22–23 residual.
+4. **`program-status.json` — "Update it to caiso-260."** EXECUTED:
+   `isos.CAISO.keeper` → caiso-260, `marker_complete` → true, the gate-(a)
+   row re-keyed (`pass`, prior detail preserved), `gate_a_provenance`
+   re-stamped; `register_forecast_run.py --reindex` rebuilt the gitignored
+   preview.
+
+**Next number: caiso-262.**
+
+### caiso-261 addendum 2 — the second card set (same session)
+
+Four more owner decisions, each executed or chartered here:
+
+1. **Next lane — "Start the 2022 price-archive intake."** SOURCE
+   ADJUDICATED, zero LP: the OASIS **`GroupZip` all-node bulk endpoint still
+   serves 2022** (`DAM_LMP_GRP` 2022-06-01 → 12.3 MB zip with the three
+   hubs, MALIN / PALOVRDE and the DLAPs; `RTM_LMP_GRP` → one operating hour
+   per request, 7.5 MB) while the per-node API returns "no data" for the same
+   date. Same publisher, reports, nodes, components and hub weights as
+   2023–2025, folded through the existing `fold_caiso_oasis_grp_zips.py` →
+   `postprocess_oasis_downloads.py` → `derive_actual_lmp.py` chain — **rule-14
+   alignment exact, no reconciliation**; third-party archives rejected. Load
+   sized: DAM 365 requests / ≈ 4.4 GB / ≈ 1 h (buys H-3 + the DA diagnostic);
+   RTM 8,760 requests / ≈ 65 GB / ≈ 24 h (buys the scored RT price). **Not
+   loaded**; charter `docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`;
+   the DAM-only vs DAM+RTM and now-vs-later decision goes back to the owner.
+2. **Panoche — "Run the instrument search."** **NOT FOUND**: no RMR, no CPM
+   designation, no resource-named exceptional dispatch (the FERC ED tables
+   report by reason, not resource); the only public instrument is the
+   2006 CPUC-approved 20-year PG&E tolling PPA under which PG&E dictates
+   dispatch — a contractual self-schedule, not a window-keyed obligation,
+   inadmissible under caiso-119 R4.
+   `ASSESSMENT-caiso261-panoche-instrument-search-2026-09-06.md`; close vs
+   carry is the owner's next card.
+3. **S2 — "Fund S2."** CHARTERED, no code:
+   `docs/handoffs/caiso-s2-two-settlement-charter-2026-09.md` — the
+   caiso-169 §5 specification (a DA LP on CAISO's published DA forecasts +
+   an RT re-dispatch on actuals; the scored λ decision; gated default-off,
+   ISO-agnostic, screened on one year), with G-IDENT / G-STRUCT / the
+   caiso-127 PRIMARY fixed ex ante and C3a / C4 excluded.
+4. **Sidecar — "Charter the sidecar."** CHARTERED, no code:
+   `docs/handoffs/hourly-sidecar-zone-class-charter-2026-09.md` — per-zone ×
+   class, per-storage-unit and per-link hourly sidecars plus a write-time
+   per-zone identity check (≤ 1 MW), at the `_write_class_hourly_sidecar`
+   seam of `run_calibration_full.py`; keepers regenerate `hourly/` on their
+   next promotion; first consumer the CAISO hod 22–23 closure by zone.
+
+**Next number: caiso-262.**
+

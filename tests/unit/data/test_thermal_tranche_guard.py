@@ -29,6 +29,11 @@ KEEPER_DIR = REPO_ROOT / "frontend" / "data" / "backcast" / "keepers"
 REGISTRY = REPO_ROOT / "frontend" / "data" / "backcast" / "registry"
 TRANCHES = REPO_ROOT / "data" / "raw" / "_processed-legacy"
 
+# The six ISOs with a committed thermal-tranche artifact AND a designated keeper.
+# SPP (registered 2026-09-06, SPP-20) is DELIBERATELY EXCLUDED: this guard runs
+# against committed artifacts and keeper gate states, and SPP has neither until
+# SPP-30 lands ``thermal_tranches_SPP.csv`` and SPP-40 promotes a keeper — the
+# lane that lands them extends this tuple.
 ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
 
 # Every ScenarioConfig gate the guard covers (mirrors _TRANCHE_GATE_COLUMNS).
