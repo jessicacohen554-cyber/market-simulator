@@ -1,4 +1,4 @@
-# Scenario matrix -- NYISO -- nyiso_scenario_campaign_matrix_81af4882ee
+# Scenario matrix -- NYISO -- nyiso_scenario_campaign_matrix_84955cc82d
 
 **DETERMINISTIC SCENARIO RANGE -- NOT A PROBABILITY BAND**
 
@@ -8,9 +8,9 @@
 
 | Case | Cache key |
 |---|---|
-| LOAD-HI | `470338150a2f85a0` |
-| LOAD-HI-ORGANIC | `bf50c8305ba3c4ee` |
-| REF | `aed447f88457dff7` |
+| LOAD-HI | `c2ceaefa4afafcda` |
+| LOAD-HI-ORGANIC | `27f19f22105ab6cb` |
+| REF | `f10cc93084b4c0db` |
 
 ## Emissions trajectory (Mt CO2)
 
@@ -18,9 +18,9 @@
 |---|---|---|---|
 | 2026 | 25.38 | 25.37 | 23.69 |
 | 2027 | 27.07 | 27.09 | 24.59 |
-| 2028 | 27.66 | 27.73 | 24.11 |
-| 2029 | 27.65 | 27.75 | 23.75 |
-| 2030 | 26.23 | 26.31 | 20.89 |
+| 2028 | 20.27 | 20.34 | 17.16 |
+| 2029 | 15.99 | 16.09 | 13.71 |
+| 2030 | 14.02 | 14.17 | 10.90 |
 
 ## Envelope (min/max across cases)
 
@@ -28,6 +28,6 @@
 |---|---|---|
 | 2026 | 23.69 (REF) | 25.38 (LOAD-HI) |
 | 2027 | 24.59 (REF) | 27.09 (LOAD-HI-ORGANIC) |
-| 2028 | 24.11 (REF) | 27.73 (LOAD-HI-ORGANIC) |
-| 2029 | 23.75 (REF) | 27.75 (LOAD-HI-ORGANIC) |
-| 2030 | 20.89 (REF) | 26.31 (LOAD-HI-ORGANIC) |
+| 2028 | 17.16 (REF) | 20.34 (LOAD-HI-ORGANIC) |
+| 2029 | 13.71 (REF) | 16.09 (LOAD-HI-ORGANIC) |
+| 2030 | 10.90 (REF) | 14.17 (LOAD-HI-ORGANIC) |

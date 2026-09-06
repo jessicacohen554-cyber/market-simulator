@@ -1,4 +1,4 @@
-# Scenario delta report — NEISO — neiso_scenario_campaign_matrix_f1b2dc5e9f
+# Scenario delta report — NEISO — neiso_scenario_campaign_matrix_5fda408506
 
 **deterministic scenario range -- NOT a probability band** — deltas are
 case-vs-`REF` differences on one deterministic case set,
@@ -8,8 +8,8 @@ not a probability statement. Dollars are real 2026$.
 
 | Case | Cache key | Reference? |
 |---|---|---|
-| LOAD-HI | `8e603f9d81b73da7` |  |
-| REF | `5e2c52ea81694c10` | **REF** |
+| LOAD-HI | `0d5c394b6c4e5cb6` |  |
+| REF | `8878d29743555b45` | **REF** |
 
 ## Headline deltas vs `REF` (final cached year)
 
@@ -17,8 +17,8 @@ Final cached year on disk: **2030**.
 
 | case | emissions_mt | emissions_mt_delta | import_co2_mt_reported | unserved_mwh | backstop_built_mw | backstop_built_mwh | avg_price_usd_per_mwh | avg_price_usd_per_mwh_delta | curtailment_twh | clean_share |
 |---|---|---|---|---|---|---|---|---|---|---|
-| LOAD-HI | 14.776 | 1.408 | 6.376 | 0.000 | 50.200 | 0.000 | 66.760 | 0.500 | 0.000 | 0.500 |
-| REF | 13.368 | 0.000 | 6.315 | 0.000 | 0.000 | 0.000 | 66.260 | 0.000 | 0.000 | 0.514 |
+| LOAD-HI | 6.357 | 0.251 | 4.877 | 0.000 | 50.200 | 0.000 | 53.590 | 0.370 | 0.000 | 0.594 |
+| REF | 6.106 | 0.000 | 4.766 | 0.000 | 0.000 | 0.000 | 53.220 | 0.000 | 0.000 | 0.588 |
 
 ## Cumulative CO2 delta vs `REF` (Mt)
 
@@ -26,28 +26,28 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | year | cumulative_emissions_mt_delta |
 |---|---|---|
-| LOAD-HI | 2030 | 4.796 |
+| LOAD-HI | 2030 | 2.623 |
 | REF | 2030 | 0.000 |
 
 ## By-fuel deltas (final year)
 
 | case | fuel | capacity_gw_delta | generation_twh_delta | emissions_mt_delta |
 |---|---|---|---|---|
-| LOAD-HI | biomass | 0.000 | 0.045 | 0.005 |
-| LOAD-HI | gas_cc | 0.542 | 3.235 | 1.275 |
-| LOAD-HI | gas_cc_ccs | -0.030 | 0.177 | 0.089 |
-| LOAD-HI | gas_ct | 0.051 | 0.070 | 0.036 |
-| LOAD-HI | gas_st | 0.001 | 0.012 | 0.004 |
-| LOAD-HI | import | 0.000 | 0.153 | 0.000 |
+| LOAD-HI | biomass | 0.000 | 0.071 | 0.006 |
+| LOAD-HI | gas_cc | -0.507 | 0.261 | 0.092 |
+| LOAD-HI | gas_cc_ccs | 1.018 | 3.064 | 0.141 |
+| LOAD-HI | gas_ct | 0.051 | 0.019 | 0.008 |
+| LOAD-HI | gas_st | 0.001 | 0.010 | 0.003 |
+| LOAD-HI | import | 0.000 | 0.287 | 0.000 |
 
 ## By-zone CO2 deltas (final year, Mt)
 
 | case | zone | emissions_mt | emissions_mt_delta |
 |---|---|---|---|
-| LOAD-HI | Boston | 2.844 | 0.470 |
-| LOAD-HI | Central | 4.751 | 0.101 |
-| LOAD-HI | Connecticut | 4.252 | 0.779 |
-| LOAD-HI | North | 2.929 | 0.058 |
+| LOAD-HI | Boston | 1.104 | 0.045 |
+| LOAD-HI | Central | 2.829 | 0.134 |
+| LOAD-HI | Connecticut | 0.886 | 0.018 |
+| LOAD-HI | North | 1.539 | 0.054 |
 
 ## Capacity-evolution deltas vs `REF` (ledger totals, MW)
 
@@ -61,7 +61,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI | retirement | gas_cc | 2041.1 | -511.9 |
 | LOAD-HI | retirement | gas_ct | 1.6 | 0.0 |
 | LOAD-HI | retirement | gas_st | 95.8 | -1.6 |
-| LOAD-HI | retrofit | gas_cc_ccs | 8802.6 | -30.3 |
+| LOAD-HI | retrofit | gas_cc_ccs | 8709.3 | 1018.0 |
 | REF | build | gas_cc | 1000.0 | 0.0 |
 | REF | build | solar | 2000.0 | 0.0 |
 | REF | build | wind | 1000.0 | 0.0 |
@@ -69,7 +69,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | REF | retirement | gas_cc | 2552.9 | 0.0 |
 | REF | retirement | gas_ct | 1.6 | 0.0 |
 | REF | retirement | gas_st | 97.4 | 0.0 |
-| REF | retrofit | gas_cc_ccs | 8832.9 | 0.0 |
+| REF | retrofit | gas_cc_ccs | 7691.3 | 0.0 |
 
 ## Notes & definitions
 
