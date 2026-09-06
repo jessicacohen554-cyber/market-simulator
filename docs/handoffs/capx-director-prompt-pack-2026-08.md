@@ -6062,7 +6062,7 @@ EXIT: the finding with the census, the adjudicated home, the arithmetic of what 
 would do to D57's price ratio and composition, and the D62 build charter draft; pushed.
 ```
 
-## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41**
+## D62 — the PJM going-forward BAR: published default gross ACR + the reactive leg, BUILD + A/B (r#41; D61 §4 executed) — **ISSUED r#41** — **NOT LAUNCHED at r#42 (no branch / commit); paste as written when dispatching**
 
 ```
 You are capx lane D62 for the market-simulator repo — the BUILD + A/B of the object D61 relocated
@@ -6164,7 +6164,7 @@ ARM / DO-NOT-ARM with the owner card's text drafted, and what the census D66 and
 convention D67 still own); tests green; matrix green; pushed. Nothing arms in this lane.
 ```
 
-## D65 — the CCS fourth seam, ACT A: the fixed-cost shape field, BUILD + A/B (r#41; D64 §4 Act A executed; Act B awaits card C-15 / Q47) — **ISSUED r#41**
+## D65 — the CCS fourth seam, ACT A: the fixed-cost shape field, BUILD + A/B (r#41; D64 §4 Act A executed; Act B awaits card C-15 / Q47) — **ISSUED r#41** — **CHECKPOINT at r#42 (PRs #4890/#4891): field + seam + tests + matrix landed, Phase 0 reproduced, G-DRIFT all INERT, A1 key `8ebed20ae90ec0e7` pre-declared; the A1 solve + suffixed registration + re-score after D60-R2 are OWED; do not re-paste — the session owes its own tail**
 
 ```
 You are capx lane D65 for the market-simulator repo — the BUILD + A/B of D64's Act A: the gated
@@ -6253,4 +6253,109 @@ EXIT: FINDING-capx-d65-<date>.md (Phase 0 reproduction, G-DRIFT table, A1 at ful
 expectations, every STOP's reading, the k = 1 invariance evidence, the deferred-FOM disclosure, a §8
 ARM / DO-NOT-ARM recommendation with the owner card drafted, and the exact re-cut D65-B would need if
 Q47 rules A); tests green; matrix green; pushed. Nothing arms in this lane.
+```
+
+## D68 — the MISO `complete` DECLARATION on miso-220 (r#42; CONDITIONAL on owner card C-17 / Q49) — **CHARTERED r#42, DISPATCH ONLY IF Q49 RULES "DECLARE"**
+
+```
+You are the D68 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
+executing owner ruling Q49 (capx ledger §3; card C-17, §0am.3) IF AND ONLY IF §3 records Q49 as
+RULED "declare". If §3 shows Q49 unruled or ruled "hold"/"decline": STOP before any edit and say so.
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md §D68 (this section), which
+binds pack §D56 and §D56-R verbatim (every READ FIRST item, step and guardrail) with NYISO → MISO,
+`2026-09-05-nyiso-189-steam-identity` → `2026-09-05-miso-220-nonsteam-lift`, and `declared` = the
+date you land. MISO has NEVER held a `complete` entry — this is a FIRST declaration, not a
+re-entry, so there is no `withdrawn.MISO` block and no re-entry clause to cite; the licence is Q49.
+DATA PROFILE: code
+MODEL: Fable (a marker consequence — the one records act that changes what the program may spend).
+BRANCH (suggested; graded by content): claude/capx-d68-miso-complete — FRESH off origin/main,
+rebase before every push.
+
+READ FIRST (beyond §D56/§D56-R): results/calibration/FINDING-miso220-nonsteam-offer-lift-2026-09-05.md
+(the keeper's own record; it requested no marker; §against-interest: CT_PEAKER-2023 −7.985 against
+a ±8.00 kill — 0.015 TWh of headroom) · docs/calibration-log/miso.md §miso-220 · CLAUDE.md rules 1
+[R-STRUCT] / 13 [R-MEASURED] AS AMENDED by PR #4855 (the band-multiplier carve-out, conditions
+(a)–(e)) and the keeper's `governance.authorized_price_tuning` block in
+results/calibration/miso220_nonsteamlift_B/calibration_attestation.json — C6 reads PASS ONLY through
+that declaration ("without the amendment C6 fails and this reads NOT-YET"); the marker entry's
+`determination_at_declaration` MUST say so in those words · frontend/data/backcast/calibration-
+complete.json (the ERCOT entry of 2026-08-31 is the closest template: a first declaration on a
+CALIBRATED keeper with a lone ledgered C3c) · the audit board's newest entry (any MISO-adjacent
+ruling; never re-litigate one).
+
+THE WORK: §D56 steps 1–5 on miso-220 —
+ 1. Re-verify artifact-only: `python3 scripts/calibration_verdict.py --run-id
+    2026-09-05-miso-220-nonsteam-lift` → must read CALIBRATED (grade 7/8, fails 0, lone ledgered
+    C3c; C3a +7.1 / +3.4 / −7.0 %; 2025 C1/C2 SKIPPED on the preliminary EIA-923 vintage — state
+    that limitation in the entry). Anything else: STOP and route (Q5 uniform rule).
+ 2. Write `complete.MISO` in the file's own conventions (declared / keeper / keeper_at_declaration
+    / determination_at_declaration criterion-by-criterion / frontier_basis = NONE CLAIMED unless §3
+    also records a frontier ruling / one_shot_status: validation tier 2020–2022 AUTHORIZED and
+    UNSPENT; locked_test NEVER AUTHORIZED, stays under the freeze / by: Q49 verbatim / the
+    authorized_price_tuning disclosure).
+ 3. Forecast board: re-key MISO gate (a) FAIL → PASS by TARGETED STRING EDIT of the row's leaves
+    + the gate_a_provenance block (the file is not json.dumps-round-trippable); `read_live_at` =
+    the sha you read at, re-read after the final rebase. Gate (a) PASSERS become {ERCOT, MISO,
+    NEISO, PJM}. Nothing else on the board moves; no ff-verdicts byte.
+ 4. `python3 scripts/audit_keepers.py --check` (M1 must PASS) · `check_gate_a_provenance.py` 0 ·
+    the keeper shard stamp the auditor requires · the calibration-keeper-auditor agent scoped
+    --iso MISO.
+ 5. FINDING-capx-d68-<date>.md + calibration-log/governance.md entry + a one-line CHANGELOG row;
+    the finding's alignment table states the four instruments (frontier · complete · gate-(a) ·
+    determination) and where MISO's frontier leg stands (not claimed here).
+STOP CLAUSE: before EVERY push re-read keepers/MISO.json; if the keeper moved, re-run step 1 on the
+new id — CALIBRATED ⇒ re-key per D-5(b) with a dated note; NOT-YET ⇒ STOP and route. Never declare
+on a NOT-YET keeper.
+COLLISION: the owner's MISO backcast lane (miso-221+) is the other MISO writer — you touch the
+marker, the board's MISO gate-(a) row + provenance block, the finding, the log, the shard stamp;
+nothing else. D60-R2 (if alive) writes ff-verdicts.json — you never do. Rule 27: exact bytes,
+blob-verify calibration-complete.json and program-status.json after push. EXIT: the declaration
+landed, both gates green, finding pushed.
+```
+
+## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"**
+
+```
+You are the D69 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
+executing owner ruling Q50 (capx ledger §3; card C-18, §0am.3) IF AND ONLY IF §3 records Q50 as
+RULED "re-declare". Otherwise STOP before any edit and say so. Binding charter: pack §D69 (this
+section), which binds pack §D56 and §D56-R verbatim with NYISO → CAISO,
+`2026-09-05-nyiso-189-steam-identity` → `2026-09-05-caiso-252-b1-notrim`, `declared` = the date you
+land. CAISO's `complete` was WITHDRAWN 2026-08-06 (owner directive: CALIBRATED-WITH-CAVEATS on a C3a
+LMP caveat beyond ±10 %; "3c3 is only acceptable ledgered caveat") — the withdrawn block's own
+re-entry clause is the licence, and the condition it named is now MET on the record: C3a PASSES all
+three years (+4.65 / +9.04 / +8.86 %) and the single ledgered caveat is C3c (2024 only).
+DATA PROFILE: code
+MODEL: Fable (marker consequence).
+BRANCH (suggested): claude/capx-d69-caiso-redeclaration — FRESH off origin/main.
+
+READ FIRST (beyond §D56/§D56-R): results/calibration/PRECOMMIT-caiso252-c4-gas-nrmse-anatomy-
+2026-09-05.md (Part II — the arm, the promotion, predictions scored: P-A2 and P-A6 FALSIFIED,
+reported) · the caiso-252 calibration-log entry · calibration-complete.json `withdrawn.CAISO`
+WHOLE (reason, frontier_withdrawn, frontier_basis_at_withdrawal, one_shot_status, locked_test) —
+the re-declaration NESTS the withdrawn entry as `prior_withdrawal_2026_08_06` exactly as the NYISO
+D56-R re-entry did, deletes nothing · the board's CAISO row (already re-keyed to caiso-252 by the
+promoting lane; gate (a) FAIL on the marker alone) · the audit board's newest entry.
+
+THE WORK: §D56 steps 1–5 on caiso-252 —
+ 1. Re-verify artifact-only: `calibration_verdict.py --run-id 2026-09-05-caiso-252-b1-notrim` →
+    CALIBRATED (8 scored, grade 7, fails 0, ledgered 1 = C3c 2024; C4 gas 0.285 / 0.261 / 0.297;
+    2025 C1 7 SKIPPED + C2 gas SKIPPED on the preliminary vintage — state it). Else STOP.
+ 2. Write `complete.CAISO` (declared / keeper / keeper_at_declaration / determination_at_
+    declaration criterion-by-criterion / `frontier_basis` = NONE CLAIMED unless §3 records a
+    frontier ruling — the 2026-08-06 withdrawal removed both instruments, so frontier is a SEPARATE
+    owner act, exactly the D56-R → Q39 sequence / one_shot_status: validation tier AUTHORIZED,
+    UNSPENT — note the caiso-252 finding's own C3a weight-basis and DMM RA-import asks as carried,
+    not as conditions / locked_test NEVER AUTHORIZED, under the freeze / by: Q50 verbatim), nesting
+    the withdrawn block whole.
+ 3. Board: CAISO gate (a) FAIL → PASS by targeted string edit + the provenance block; `read_live_at`
+    re-read after the final rebase. PASSERS become {CAISO, ERCOT, NEISO, PJM} (+ MISO if D68 landed
+    first — read the file, never assume).
+ 4. audit_keepers M1 PASS · check_gate_a_provenance 0 · shard stamp · keeper-auditor --iso CAISO.
+ 5. FINDING-capx-d69-<date>.md + governance log + CHANGELOG row; four-instrument alignment table.
+STOP CLAUSE as §D56-R C: re-read keepers/CAISO.json before every push (caiso-253 is OPEN on its
+branch — a promotion may land under you; CALIBRATED ⇒ re-key per D-5(b) with a dated note; NOT-YET
+⇒ STOP and route). COLLISION: caiso-253 (owner's lane) and D68 (the same two files — if both are
+dispatched, D68 lands first and D69 rebases onto it; both edit disjoint ISO blocks). Rule 27 exact
+bytes + blob-verify both JSON files. EXIT: declaration landed, gates green, finding pushed.
 ```
