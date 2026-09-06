@@ -51,13 +51,24 @@ def resolve_carbon_price(config: ScenarioConfig, year: int) -> float:
 
     1. A nonzero ``config.carbon_price`` scenario override is returned directly
        (flat trajectory), unchanged.
-    2. The ISO's cap-and-trade program adder: the **measured** CARB/RGGI
-       auction average in backcast years, or the **projected** program price in
-       forecast years (the EM-6 seam fix — forecast carbon is no longer zero
-       for a program ISO). CAISO/NYISO/NEISO carry a program; ERCOT/MISO do not.
-    3. Fall through to ``config.carbon_price_path`` in
-       :data:`CARBON_PRICE_PATHS` (linear-interpolated across knot years,
-       nearest-endpoint clamp outside the range) when no program adder applies.
+    2. Otherwise the **floor** of the two exogenous carbon channels
+       (:func:`resolved_base_trajectory_price`; owner ruling S2, card D-1):
+       ``max`` of
+
+       * the ISO's cap-and-trade program adder — the **measured** CARB/RGGI
+         auction average in backcast years, or the **projected** program price
+         in forecast years (the EM-6 seam fix). CAISO/NYISO/NEISO carry a
+         program; ERCOT/MISO do not, and a program ISO with
+         ``state_carbon_pricing=False`` contributes ``0.0``; and
+       * ``config.carbon_price_path`` in :data:`CARBON_PRICE_PATHS`
+         (linear-interpolated across knot years, nearest-endpoint clamp outside
+         the range; ``"zero"``, the default, is ``0.0`` in every year).
+
+       So a named federal path is a FLOOR under the state program, never a
+       replacement for it: on a non-program ISO the path applies alone, and on
+       a program ISO the tighter instrument binds. Before S2 an explicit path
+       SUPPRESSED the program, which made ``policy_bundle="tight"`` a
+       carbon-price cut on every program ISO in every horizon year.
 
     **Final additive stage** (capx-D26, outside and after the precedence
     chain): ``config.carbon_price_delta`` is added to whatever the chain
@@ -100,16 +111,48 @@ def _base_carbon_price(config: ScenarioConfig, year: int) -> float:
 def resolved_base_trajectory_price(config: ScenarioConfig, year: int) -> float:
     """The carbon price that would resolve with ``carbon_price`` UNSET.
 
-    Precedence stages (2) and (3) of :func:`resolve_carbon_price` — the
-    cap-and-trade program adder (measured in a backcast, projected in a
-    forecast) and then the :data:`CARBON_PRICE_PATHS` fallback — evaluated
-    without stage (1)'s scenario override and without the additive
+    Stages (2) and (3) of :func:`resolve_carbon_price` — the cap-and-trade
+    program adder (measured in a backcast, projected in a forecast) and the
+    :data:`CARBON_PRICE_PATHS` federal RFF path — **composed as a FLOOR**, and
+    evaluated without stage (1)'s scenario override and without the additive
     ``carbon_price_delta``. This is the *base trajectory* a nonzero
     ``config.carbon_price`` REPLACES, so it is what
     :func:`carbon_price_below_base_warning` compares an override against.
 
-    Pure extraction from :func:`_base_carbon_price` (capx-D34): the resolver's
-    returned values are unchanged on every path, for every config.
+    **The floor (owner ruling S2, 2026-09-06, card D-1; desk ledger
+    ``docs/handoffs/scenario-desk-ledger-2026-09.md`` §2):**
+    ``effective = max(RFF path(year), program trajectory(year))`` on a program
+    ISO, and the path alone elsewhere — which the same ``max`` expresses,
+    because a non-program ISO's adder is ``0.0`` and no registered path is ever
+    negative (:func:`rff_path_price`). This is THE one composition point for the
+    two exogenous carbon channels (rule 19 [R-ONE-MECH]); neither
+    :func:`~market_sim.policy.cap_and_trade.resolve_carbon_program` nor any
+    consumer composes them again.
+
+    *Why a floor.* A unit's marginal compliance cost is set by whichever
+    instrument binds. A state allowance price cannot durably sit below a
+    federal price every emitter in the state also faces — it would fall to its
+    auction reserve and the federal price would bind — and where the state
+    escalator is the higher of the two, the federal price is not the binding
+    constraint. ``max`` is the exogenous-price approximation of that at zero new
+    parameters, and it is **monotone**: a higher federal path can never lower
+    anyone's carbon price. It replaced *replace* semantics, under which a named
+    federal path suppressed the state program and
+    ``policy_bundle="tight"`` was a $16-$102/t CUT on CAISO/NYISO/NEISO in every
+    horizon year (``FINDING-scn-ws1a-2026-09-05.md`` §0.1, §6).
+
+    *Measured consequence, ruled with the ruling and not a defect to engineer
+    around:* the RFF **mid** path never exceeds a program trajectory in any
+    year, so under the floor ``policy_bundle="tight"`` is an exact **no-op** on
+    CAISO, NYISO and NEISO — its carbon leg bites only on ERCOT/PJM/MISO.
+    Whether ``tight`` should mean something else on a program ISO is open card
+    **D-1(b)**; how a federal floor composes with PJM's *partial* RGGI
+    footprint is open card **D-1(c)**. Neither is answered here.
+
+    Byte identity at the change: with ``carbon_price_path="zero"`` (every
+    committed keeper and forecast bundle) the path operand is ``0.0``, so the
+    ``max`` returns the program adder — the value the pre-floor early-return
+    returned. Backcast is untouched in every case.
 
     Args:
         config: Scenario config supplying ``iso``, ``mode`` and the carbon
@@ -125,10 +168,36 @@ def resolved_base_trajectory_price(config: ScenarioConfig, year: int) -> float:
     from market_sim.policy.cap_and_trade import resolve_carbon_program
 
     resolution = resolve_carbon_program(config, year)
-    if resolution is not None and resolution.price_adder:
-        return float(resolution.price_adder)
+    program = float(resolution.price_adder) if resolution is not None else 0.0
+    return max(program, rff_path_price(config.carbon_price_path, year))
 
-    path = CARBON_PRICE_PATHS.get(config.carbon_price_path)
+
+def rff_path_price(path_name: str, year: int) -> float:
+    """The RFF federal carbon path's $/tCO2 at ``year``, alone.
+
+    :data:`CARBON_PRICE_PATHS` linear-interpolated across its knot years with a
+    nearest-endpoint clamp outside the range — stage (3) of
+    :func:`resolve_carbon_price`'s precedence chain, extracted verbatim so the
+    floor in :func:`resolved_base_trajectory_price` and the invariant guard
+    :func:`carbon_path_below_program_warning` read ONE implementation of the
+    path arithmetic (rule 19 [R-ONE-MECH]).
+
+    Every registered path is non-negative at every knot (``zero`` 0/0/0/0 …
+    ``high`` 0/30/70/110), so this never returns a negative price and the
+    ``max`` it feeds is never the operand that lowers a resolved trajectory.
+
+    Args:
+        path_name: A :data:`CARBON_PRICE_PATHS` key (``"zero"``/``"low"``/
+            ``"mid"``/``"high"``). An unregistered name yields ``0.0`` — the
+            pre-extraction fallback, kept so an unvalidated
+            ``carbon_price_path`` string cannot inject a price.
+        year: Simulation year.
+
+    Returns:
+        The path's carbon price in $/tCO2 (0.0 for ``"zero"`` and for any
+        unregistered name).
+    """
+    path = CARBON_PRICE_PATHS.get(path_name)
     if path is None:
         return 0.0
 
@@ -244,4 +313,95 @@ def carbon_price_below_base_warning(config: ScenarioConfig) -> str | None:
         "carbon_price=0.0 and carbon_price_delta to the increment you want "
         "on top of the base trajectory, or keep this replacement if a "
         "below-base carbon signal is the study you intend."
+    )
+
+
+def carbon_path_below_program_warning(config: ScenarioConfig) -> str | None:
+    """Assert the D-1 FLOOR invariant on the ``carbon_price_path`` branch.
+
+    The D34 guard :func:`carbon_price_below_base_warning` watches precedence
+    stage (1), ``carbon_price``, and could never see a cut delivered through
+    stage (3), ``carbon_price_path`` — which is exactly how the G-C1 defect went
+    unobserved: naming the RFF mid path (what ``policy_bundle="tight"`` does)
+    suppressed the state program and cut carbon by $16-$102/tCO2 on
+    CAISO/NYISO/NEISO in all 25 horizon years
+    (``FINDING-scn-ws1a-2026-09-05.md`` §0.1). This is that guard extended to
+    the path branch (SCN-WS1c, plan §7 "WS-1a" item 1).
+
+    **Under the floor it can never fire, and that is the point.**
+    :func:`resolved_base_trajectory_price` returns ``max(program, path)``, which
+    is ``>= program`` by construction, so this function asserts an invariant
+    rather than reporting an expected condition — the form WS-1a §6.4 specified
+    ("the guard becomes an assertion of the invariant rather than a warning").
+    It is a REGRESSION TRIPWIRE: the day an edit reintroduces a replace path, or
+    a consumer recomposes the two channels itself, a named path can once again
+    resolve below the program trajectory and this speaks. It is deliberately not
+    an assertion statement, so a ``python -O`` run cannot silence it and a
+    genuinely-intended below-program study is not made unrunnable — the same
+    observe-only posture ruling Q26 fixed for the scalar guard.
+
+    Note what it does NOT warn about: ``tight`` resolving to the program
+    trajectory rather than the mid path. That is the ruled S2 outcome (the
+    federal price is not the binding instrument there), not a defect, and
+    warning on it would put a message on every program-ISO ``tight`` run.
+
+    Silent (returns ``None``) when: ``mode != "forecast"``; the path is
+    ``"zero"``/unset (nothing federal is named); or the ISO has no active
+    program adder in any horizon year (ERCOT/MISO, or
+    ``state_carbon_pricing=False``). The early exits mean a default-configured
+    ``ScenarioConfig`` pays one string comparison.
+
+    Args:
+        config: The scenario config being validated. Horizon resolution is the
+            same as :func:`carbon_price_below_base_warning`'s —
+            ``start_year``/``end_year`` when set, else :data:`START_YEAR` /
+            :data:`END_YEAR`.
+
+    Returns:
+        The invariant-breach message, or ``None`` (the only outcome reachable
+        while the floor holds).
+    """
+    if config.mode != "forecast":
+        return None
+    path_name = getattr(config, "carbon_price_path", "zero")
+    if path_name in ("zero", None):
+        return None
+
+    # Import here to avoid a circular import at module load (cap_and_trade
+    # imports scenarios); same deferral as resolved_base_trajectory_price.
+    from market_sim.policy.cap_and_trade import resolve_carbon_program
+
+    start = config.start_year if config.start_year is not None else START_YEAR
+    end = config.end_year if config.end_year is not None else END_YEAR
+
+    breaches = []
+    for year in range(int(start), int(end) + 1):
+        resolution = resolve_carbon_program(config, year)
+        program = float(resolution.price_adder) if resolution is not None else 0.0
+        if not program:
+            continue
+        resolved = resolved_base_trajectory_price(config, year)
+        if resolved < program:
+            breaches.append((year, resolved, program))
+    if not breaches:
+        return None
+
+    worst_year, worst_resolved, worst_program = max(
+        breaches, key=lambda row: row[2] - row[1]
+    )
+    gap = worst_program - worst_resolved
+    return (
+        f"INVARIANT BREACH: ScenarioConfig.carbon_price_path={path_name!r} "
+        f"resolves BELOW the {config.iso} carbon-program trajectory in "
+        f"{len(breaches)} horizon year(s): "
+        f"{_format_year_runs([y for y, _, _ in breaches])}. Owner ruling S2 "
+        "(card D-1) makes a named federal RFF path a FLOOR under the state "
+        "program — resolved = max(path, program) — so this is unreachable "
+        f"while the floor holds. Widest gap in {worst_year}: resolved "
+        f"${worst_resolved:,.2f}/tCO2 vs program ${worst_program:,.2f}/tCO2 (a "
+        f"${gap:,.2f}/tCO2 CUT). This is the G-C1 defect recurring: a federal "
+        "path suppressing the state program, which is what made "
+        'policy_bundle="tight" a carbon-price cut on every program ISO. Fix '
+        "the composition in policy.carbon.resolved_base_trajectory_price — do "
+        "not work around it at a consumer."
     )

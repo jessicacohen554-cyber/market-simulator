@@ -222,13 +222,24 @@ def resolve_carbon_program(
       configured for the program/year (:func:`_power_sector_cap`): a
       :class:`MassCapSpec` whose LP dual is the endogenous allowance price.
     * **Adder path** — otherwise: the measured (backcast) or projected
-      (forecast) exogenous allowance price. In forecast the projected program
-      price is used only when the caller has not chosen an explicit exogenous
-      RFF ``carbon_price_path`` (default ``"zero"``), so an explicit RFF path
-      still wins (backward compatible with pre-EM-6 forecast configs). A
-      nonzero explicit ``config.carbon_price`` scenario override is handled by
-      the scalar wrapper :func:`market_sim.policy.carbon.resolve_carbon_price`
-      and is not applied here.
+      (forecast) exogenous allowance price, in BOTH modes unconditionally.
+      This is *what the program charges*, and nothing else: neither an
+      explicit exogenous RFF ``carbon_price_path`` nor a nonzero
+      ``config.carbon_price`` is consulted here. Both are composed with this
+      adder one level up, in
+      :func:`market_sim.policy.carbon.resolved_base_trajectory_price` (the
+      federal FLOOR, owner ruling S2 / card D-1) and
+      :func:`market_sim.policy.carbon.resolve_carbon_price` (the ``carbon_price``
+      replace of precedence (1), owner ruling Q26) respectively — one
+      composition point each, rule 19 [R-ONE-MECH].
+
+      *Changed 2026-09-06 (S2):* the forecast branch previously returned a
+      **zero** adder whenever a non-default ``carbon_price_path`` was set, so a
+      federal path replaced the state program. That made
+      ``policy_bundle="tight"`` a carbon-price CUT on every program ISO in
+      every horizon year (``FINDING-scn-ws1a-2026-09-05.md`` §0.1). Callers
+      that want "the program price" now always get it; callers that want the
+      effective price ask :func:`~market_sim.policy.carbon.resolve_carbon_price`.
 
     Args:
         config: Scenario config supplying ``iso``, ``mode`` and the toggles.
@@ -283,18 +294,34 @@ def resolve_carbon_program(
             year_price = PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE.get(year)
             price = None if year_price is None else float(year_price)
     else:
-        # Forecast: an explicit exogenous RFF path (non-default) wins so
-        # pre-EM-6 forecast configs keep their behaviour; otherwise carry the
-        # projected program price (the EM-6 seam fix — forecast carbon is no
-        # longer zero for a program ISO).
-        if getattr(config, "carbon_price_path", "zero") not in ("zero", None):
-            price = None
+        # Forecast: ALWAYS carry the projected program price (the EM-6 seam fix
+        # — forecast carbon is not zero for a program ISO), exactly as the
+        # backcast branch above always carries the measured one. This function
+        # answers ONE question — what the program itself charges — and never
+        # the composition question.
+        #
+        # It USED TO null the price whenever an explicit non-default
+        # ``carbon_price_path`` was set, so a named federal RFF path REPLACED
+        # the state program. Owner ruling S2 (2026-09-06, card D-1, desk ledger
+        # docs/handoffs/scenario-desk-ledger-2026-09.md §2) rules that
+        # composition to be a FLOOR instead:
+        # ``effective = max(RFF path(year), program trajectory(year))`` on a
+        # program ISO, the path alone elsewhere. The ``max`` lives in exactly
+        # one place, ``policy.carbon.resolved_base_trajectory_price`` (rule 19
+        # [R-ONE-MECH]) — not here and not at any consumer.
+        #
+        # What the old nulling did, measured before the repair
+        # (FINDING-scn-ws1a-2026-09-05.md §0.1): ``policy_bundle="tight"`` —
+        # which resolves to the RFF mid path — was a carbon-price CUT of
+        # $16-$102/t on CAISO, NYISO and NEISO in every one of the 25 horizon
+        # years, because the mid path sits below every program trajectory. The
+        # D34 guard could not see it: that guard watches ``carbon_price``, not
+        # the path.
+        named_path = getattr(config, "carbon_program_price_path", None)
+        if named_path is not None:
+            price = named_program_price(program, config.iso, year, named_path)
         else:
-            named_path = getattr(config, "carbon_program_price_path", None)
-            if named_path is not None:
-                price = named_program_price(program, config.iso, year, named_path)
-            else:
-                price = projected_price(program, config.iso, year)
+            price = projected_price(program, config.iso, year)
     return CarbonProgramResolution(
         membership=membership, price_adder=float(price or 0.0)
     )
