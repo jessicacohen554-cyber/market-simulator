@@ -260,6 +260,74 @@ def _band_stats(
     return out
 
 
+def _metered(year: int, hours: int, codes: list[int]) -> dict[int, np.ndarray]:
+    """Return per-plant hourly metered CAMPD ``grossLoad`` on the run horizon's hour index.
+
+    Carried over unchanged from ``_nyiso205_ch_fill_operator._metered`` so the rule-17 leg
+    of PREREG addendum B is read on exactly the meter nyiso-205's own rule-17 leg used.
+    """
+    import pandas as pd
+
+    from market_sim.config.paths import RAW_DIR
+
+    c = pd.read_parquet(RAW_DIR / "campd-unit-level" / f"NY_{year}.parquet")
+    c = c[c["facilityId"].astype(int).isin(codes)].copy()
+    c["code"] = c["facilityId"].astype(int)
+    c["ts"] = pd.to_datetime(c["date"]) + pd.to_timedelta(c["hour"], unit="h")
+    g = c.groupby(["code", "ts"])["grossLoad"].sum().reset_index()
+    origin = pd.Timestamp(year=year, month=1, day=1)
+    g["h"] = ((g["ts"] - origin) / pd.Timedelta(hours=1)).astype(int)
+    g = g[(g["h"] >= 0) & (g["h"] < hours)]
+    out: dict[int, np.ndarray] = {}
+    for code in codes:
+        p = g[g["code"] == code]
+        series = np.zeros(hours, dtype=float)
+        series[p["h"].to_numpy()] = p["grossLoad"].to_numpy(dtype=float)
+        out[code] = series
+    return out
+
+
+def _rule17_leg(
+    floor: np.ndarray,
+    pmin: np.ndarray,
+    codes: np.ndarray,
+    gen: dict[int, np.ndarray],
+    mask: np.ndarray,
+) -> dict:
+    """PREREG addendum B — nyiso-205's rule-17 leg, per plant, on one fill.
+
+    POST-HOC by declaration: added after the primary measurement precisely because it can
+    only hurt the §A counterfactual. Reports, per plant, the binding hours the fill floors
+    it in, its metered P(on) over exactly those hours, and the manufactured energy
+    ``sum max(0, floor - metered)`` — the statistic that refuted ``pro_rata``.
+    """
+    n_h = int(mask.sum())
+    out: dict = {}
+    for c in sorted(set(int(x) for x in codes)):
+        r = codes == c
+        # A plant is floored in an hour when any of its rows is raised above pmin.
+        raised_h = ((floor[r] - pmin[r, None]) > EPS).any(axis=0) & mask
+        plant_floor = np.where(raised_h, floor[r].sum(axis=0), 0.0)
+        metered = gen[c]
+        on = metered > 0.0
+        nh = int(raised_h.sum())
+        out[str(c)] = {
+            "name": NAMES.get(c, str(c)),
+            "floored_hours": nh,
+            "floored_hour_share_of_window": nh / n_h if n_h else 0.0,
+            "metered_p_on_over_floored_hours": (
+                float(on[raised_h].mean()) if nh else None
+            ),
+            "metered_mean_mw_over_floored_hours": (
+                float(metered[raised_h].mean()) if nh else None
+            ),
+            "manufactured_mwh": float(
+                np.maximum(plant_floor[raised_h] - metered[raised_h], 0.0).sum()
+            ),
+        }
+    return out
+
+
 def main() -> int:
     """Measure the fill-level basis question on 2023-2025 and write the JSON record."""
     from market_sim.config.iso_configs import get_iso_config
@@ -425,6 +493,19 @@ def main() -> int:
                 str(c): float(ms_forced[codes == c][:, m].sum())
                 for c in sorted(set(int(x) for x in codes))
             },
+        }
+
+        # PREREG addendum B (POST-HOC) — nyiso-205's rule-17 leg run on BOTH fills, so the
+        # §A counterfactual faces the same test that refuted pro_rata.
+        gen = _metered(year, hours, sorted(set(int(c) for c in codes)))
+        yr["rule17_leg_addendum_b"] = {
+            "note": (
+                "POST-HOC: added after the primary measurement, precisely because it can only "
+                "hurt the min-stable-capped counterfactual. Same meter and same statistic as "
+                "nyiso-205's decisive leg against pro_rata."
+            ),
+            "cheapest_first_shipped": _rule17_leg(cf, pmin, codes, gen, m),
+            "min_stable_capped_counterfactual": _rule17_leg(ms, pmin, codes, gen, m),
         }
 
         rec["years"][str(year)] = yr
