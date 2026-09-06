@@ -6164,7 +6164,7 @@ ARM / DO-NOT-ARM with the owner card's text drafted, and what the census D66 and
 convention D67 still own); tests green; matrix green; pushed. Nothing arms in this lane.
 ```
 
-## D65 — the CCS fourth seam, ACT A: the fixed-cost shape field, BUILD + A/B (r#41; D64 §4 Act A executed; Act B awaits card C-15 / Q47) — **ISSUED r#41** — **CHECKPOINT at r#42 (PRs #4890/#4891): field + seam + tests + matrix landed, Phase 0 reproduced, G-DRIFT all INERT, A1 key `8ebed20ae90ec0e7` pre-declared; the A1 solve + suffixed registration + re-score after D60-R2 are OWED; do not re-paste — the session owes its own tail**
+## D65 — the CCS fourth seam, ACT A: the fixed-cost shape field, BUILD + A/B (r#41; D64 §4 Act A executed; Act B awaits card C-15 / Q47) — **ISSUED r#41** — **LANDED IN FULL at r#42 am.1 (PRs #4890/#4891/#4895/#4898): the lane's G-DRIFT was wrong and the arm caught a material HEAD drift (→ D71); A1 vs a same-HEAD control: the seam RE-ORDERS, not re-selects (34 rows either way); STOPs 5/5 not fired; §8 ARM ONLY COUPLED WITH ACT B → card C-15/Q47 amended to decide both. OWED: registration + re-score after D60-R2/-R3. Never re-paste**
 
 ```
 You are capx lane D65 for the market-simulator repo — the BUILD + A/B of D64's Act A: the gated
@@ -6358,4 +6358,55 @@ branch — a promotion may land under you; CALIBRATED ⇒ re-key per D-5(b) with
 ⇒ STOP and route). COLLISION: caiso-253 (owner's lane) and D68 (the same two files — if both are
 dispatched, D68 lands first and D69 rebases onto it; both edit disjoint ISO blocks). Rule 27 exact
 bytes + blob-verify both JSON files. EXIT: declaration landed, gates green, finding pushed.
+```
+
+## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"**
+
+```
+You are the D70 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
+executing owner ruling Q51 (capx ledger §3; card C-19, §0am amendment 1) IF AND ONLY IF §3 records
+Q51 as RULED "re-declare". Otherwise STOP before any edit and say so. Binding charter: pack §D70
+(this section), which binds pack §D56 and §D56-R verbatim with `2026-09-05-nyiso-189-steam-identity`
+→ `2026-09-06-nyiso-196-extract-basis` and `declared` = the date you land. This is NYISO's FOURTH
+declaration: the 2026-09-05 withdrawn block (Q46) states its own re-entry condition — "a NEW explicit
+owner declaration on a keeper scoring CALIBRATED" — and that condition is met on the record. The
+re-declaration NESTS the withdrawn entry whole as `prior_withdrawal_2026_09_05` (which itself nests
+08-30 and 07-19); nothing is deleted.
+DATA PROFILE: code
+MODEL: Fable (marker consequence).
+BRANCH (suggested; graded by content): claude/capx-d70-nyiso-redeclaration — FRESH off origin/main.
+
+READ FIRST (beyond §D56/§D56-R): docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md and the
+nyiso-196 entry in docs/calibration-log/nyiso.md (the keeper's own record — it wrote "`complete` NOT
+re-declared — owner court"; its regressions at full magnitude: Linden CC_CHP 6.2 → 5.2 vs 7.3 meter,
+Cricket Valley 0.53 TWh UNDER in 2024, C3a-2024 +1.5 pt — these go into the entry) ·
+calibration-complete.json `withdrawn.NYISO` WHOLE · the board's NYISO row (already re-keyed to
+nyiso-196 by the capx desk at r#42 am.1; gate (a) FAIL on the marker alone) · the audit board's newest
+entry (Z-6, the register-time marker re-check, is live there — cite it, do not re-litigate it).
+
+THE WORK: §D56 steps 1–5 on nyiso-196 —
+ 1. Re-verify artifact-only: `python3 scripts/calibration_verdict.py --run-id
+    2026-09-06-nyiso-196-extract-basis` → CALIBRATED (grade 7/8, fails 0, lone ledgered C3c; C1 14/14
+    free 10/10; C3a +4.6 / +4.7 / −6.9 %). Anything else: STOP and route (Q5 uniform rule).
+ 2. Write `complete.NYISO` in the file's conventions (declared / keeper / keeper_at_declaration /
+    determination_at_declaration criterion-by-criterion incl. the regressions / `frontier_basis` =
+    NONE CLAIMED unless §3 records a separate frontier ruling / one_shot_status: validation tier
+    2020–2022 AUTHORIZED and UNSPENT — the 2022 touchpoint solved on 2026-09-05 was UN-REGISTERED and
+    is diagnostic only (holdout-2022-completeness doc §1a) / locked_test NEVER AUTHORIZED, under the
+    freeze / by: Q51 verbatim), nesting the withdrawn block whole.
+ 3. Board: NYISO gate (a) FAIL → PASS by TARGETED STRING EDIT of the row's leaves + the
+    gate_a_provenance block; `read_live_at` re-read after the final rebase. If D68 / D69 have landed,
+    read the file for the current passer set — never assume. No ff-verdicts byte.
+ 4. audit_keepers M1 PASS · check_gate_a_provenance 0 · shard stamp · keeper-auditor --iso NYISO.
+ 5. FINDING-capx-d70-<date>.md + governance log + CHANGELOG row; the four-instrument alignment table;
+    ONE sentence stating that T3-NYISO-GOLDEN's start precondition (pack §T3-NYISO-GOLDEN Am.1) is
+    now met and that Q45 stands as ruled — dispatch of the campaign is the DIRECTOR's act after
+    D60-R2/-R3's finding merges, not yours.
+STOP CLAUSE (§D56-R C, sharpened again — NYISO promoted six times in a week): before EVERY push
+re-read keepers/NYISO.json; keeper moved and CALIBRATED ⇒ re-key per D-5(b) with a dated note;
+NOT-YET ⇒ STOP and route. Never declare on a NOT-YET keeper.
+COLLISION: the owner's NYISO backcast lane (nyiso-197+) is the other NYISO writer; D68 / D69 edit the
+same two files in other ISO blocks — land AFTER them if all run, rebase before every push. Rule 27:
+exact bytes; blob-verify calibration-complete.json + program-status.json after push. EXIT: the
+declaration landed, both gates green, finding pushed.
 ```
