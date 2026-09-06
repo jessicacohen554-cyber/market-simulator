@@ -2884,3 +2884,62 @@ class TestOilDailyParity:
         # ... and a mild early-January day must price below it (mean-preserving
         # means the lift is paid for, not added).
         assert daily[(6 - 1) * 24] < flat[(6 - 1) * 24]
+
+
+# ---------------------------------------------------------------------------
+# miso-224: gas at marginal commodity (measured daily hub spot per zone)
+# ---------------------------------------------------------------------------
+
+
+def test_miso_gas_marginal_commodity_off_is_byte_identical():
+    """Flag off -> exact no-op and ``None`` (off-state byte identity)."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    prices = base.copy()
+    config = ScenarioConfig(iso="MISO", mode="backcast", hours=_MISO_WINTER_HOURS)
+    assert fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024) is None
+    np.testing.assert_array_equal(prices, base)
+
+
+def test_miso_gas_marginal_commodity_prices_each_zone_at_its_hub():
+    """Chicago-hub and MidCon zones take the Chicago daily; South takes Henry Hub."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    prices = _miso_winter_base(fleet)
+    config = ScenarioConfig(
+        iso="MISO",
+        mode="backcast",  # measured daily hub prints: a backcast-only overlay
+        hours=_MISO_WINTER_HOURS,
+        miso_gas_marginal_commodity_pricing=True,
+    )
+    written = fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)
+    assert written is not None and written.all()
+    chi = np.repeat(
+        fuel._flow_date_staircase(fuel._miso_citygate_daily_dated(None)[2024], 2024), 24
+    )
+    hh = np.repeat(
+        fuel._trade_date_staircase(fuel._henry_hub_daily_dated(None)[2024], 2024), 24
+    )
+    il = list(fleet.unit_ids).index("GAS_ILLINOIS")
+    west = list(fleet.unit_ids).index("GAS_WEST")
+    south = list(fleet.unit_ids).index("GAS_SOUTH")
+    np.testing.assert_allclose(prices[il], np.maximum(chi, fuel._GAS_PRICE_FLOOR))
+    np.testing.assert_allclose(prices[west], np.maximum(chi, fuel._GAS_PRICE_FLOOR))
+    np.testing.assert_allclose(prices[south], np.maximum(hh, fuel._GAS_PRICE_FLOOR))
+    # The level moved to the hub: Feb-2024 Chicago averaged ~$1.56 vs the $4.5 base.
+    feb = slice(31 * 24, 59 * 24)
+    assert prices[il, feb].mean() < 2.0
+    # Idempotent.
+    again = prices.copy()
+    fuel.apply_miso_gas_marginal_commodity(again, fleet, config, 2024)
+    np.testing.assert_array_equal(again, prices)
+
+
+def test_miso_gas_marginal_commodity_is_miso_scoped():
+    """Arming on another ISO is a hard error, never a silent no-op (rule 25)."""
+    fleet = _miso_gas_fleet(48)
+    prices = np.full((fleet.n_gen, 48), 3.0)
+    config = ScenarioConfig(
+        iso="PJM", mode="backcast", hours=48, miso_gas_marginal_commodity_pricing=True
+    )
+    with pytest.raises(ValueError, match="MISO-scoped"):
+        fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)

@@ -40,7 +40,11 @@ from ._shared import (
     _expand_monthly_to_hourly,
     _pkg_ns,
 )
-from .basis import ZONAL_BASIS_ORDER, apply_miso_winter_citygate_daily
+from .basis import (
+    ZONAL_BASIS_ORDER,
+    apply_miso_gas_marginal_commodity,
+    apply_miso_winter_citygate_daily,
+)
 from .dual_fuel import apply_dual_fuel_pricing
 from .hubs import apply_hub_basis_overlay, gas_daily_shape_factors
 from .plant_prices import apply_plant_monthly_fuel_prices
@@ -215,7 +219,19 @@ def resolve_fuel_prices(
         # blowout. (Moved ahead of the registry walk in the W-D3 split: every
         # applier between its old position and the MISO zonal basis is an
         # other-ISO no-op for a MISO run, so the mutation sequence is identical.)
-        apply_miso_winter_citygate_daily(fuel_prices, fleet, config, year)
+        # miso-224: gas at MARGINAL commodity (measured daily hub spot per zone)
+        # instead of the EIA-923 AVERAGE delivered print. Off by default and
+        # byte-identical off. When armed it supersedes (rule 19, never stacks):
+        # the winter Chicago SHAPE overlay below (the daily series already
+        # carries level AND shape) and the mean-zero zonal increment (the
+        # written mask joins the print-derived mask the MISO applier skips).
+        spot_cells = apply_miso_gas_marginal_commodity(fuel_prices, fleet, config, year)
+        if spot_cells is None:
+            apply_miso_winter_citygate_daily(fuel_prices, fleet, config, year)
+        else:
+            print_cells = (
+                spot_cells if print_cells is None else (print_cells | spot_cells)
+            )
         # Per-ISO zonal gas basis: walk the ZONAL_BASIS_APPLIERS registry in
         # ZONAL_BASIS_ORDER. Each applier self-gates on config.iso + its own
         # config flag, so at most one fires per run and the walk reproduces the
@@ -231,7 +247,10 @@ def resolve_fuel_prices(
         skip_for_miso = (
             print_cells
             if config.iso == "MISO"
-            and getattr(config, "miso_zonal_gas_basis_skip_923_priced", False)
+            and (
+                getattr(config, "miso_zonal_gas_basis_skip_923_priced", False)
+                or spot_cells is not None
+            )
             else None
         )
         for iso_name in ZONAL_BASIS_ORDER:

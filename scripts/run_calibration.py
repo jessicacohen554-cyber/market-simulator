@@ -100,6 +100,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
+    apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
@@ -3946,7 +3947,23 @@ def run_year(
     # before dual-fuel (oil parity still caps). Mirrors the resolve_fuel_prices
     # apply_monthly=True order. No-op unless miso_winter_citygate_daily is set
     # (MISO only). See fuel.apply_miso_winter_citygate_daily.
-    apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
+    # miso-224: gas at MARGINAL commodity (measured daily hub spot per zone)
+    # instead of the EIA-923 AVERAGE print. Off by default and byte-identical
+    # off. Armed, it supersedes (rule 19, never stacks) the winter Chicago SHAPE
+    # overlay below (the daily series carries level AND shape) and the mean-zero
+    # zonal increment (its written mask joins the print-derived mask, which the
+    # MISO applier honours under either flag). Mirrors the resolve_fuel_prices
+    # apply_monthly=True branch — this calibration chain is the path a backcast
+    # solve actually takes, so the hook must live here too (miso-224 Addendum A).
+    spot_cells = apply_miso_gas_marginal_commodity(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if spot_cells is None:
+        apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
+    else:
+        print_cells = (
+            spot_cells if print_cells is None else (print_cells | spot_cells)
+        )
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
     # PJM. No-op unless miso_zonal_gas_basis is set (MISO only). The
     # print-derived-cell mask is passed always; the applier consumes it only

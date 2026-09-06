@@ -12131,3 +12131,30 @@ produced below the plant's own delivered cost (unreachable by any offer or price
 mechanism); `ordc_scarcity_overlay` `G` on miso-163's structural grounds, re-affirmed at
 miso-204 and miso-219 and untouched here; and every 2025 C1 cell `SKIPPED` on a
 preliminary EIA-923 vintage.
+
+## miso-224 (2026-09-06) — the body is a FUEL-CONVENTION object (EIA-923 average print vs marginal commodity), screened on 2023 and KILLED as a standalone arm; the print was compensating for coal self-commitment and the seam ladder
+
+Successor to miso-223. Keeper UNCHANGED at `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED,
+C3c the lone ledgered caveat). One LP (2023 screen, rule 29); bundle `miso224_spotgas_S`
+deleted before merge (rule 29c), never registered. Records: `PRECOMMIT-miso224-gas-marginal-
+commodity-2026-09-06.md` (+ Addendum A), `FINDING-miso224-gas-marginal-commodity-2026-09-06.md`,
+four zero-LP instruments `_miso224_*_phase0.py`, blind scorer `_miso224_screen_gates.py`.
+
+* **Phase 0.** Body error is an energy-price gradient (model − MEC +12.9…+3.7 by MEC decile,
+  2023). Object (A) refused on the bound (MEC < $0 in 1/7/0 h). Marginal frequency: `econ`
+  bands 75–78 % of body hours, `committed` 12–14 %, `mustrun` 0. The marginal offer's
+  fuel-convention layer is 74/74/101 % of the body wedge; the band-multiplier layer $0.1–1.1.
+* **Mechanism minted:** `miso_gas_marginal_commodity_pricing` (default off, MISO-scoped, zero
+  scalars; matrix row `gas_marginal_commodity_pricing`, MISO cell `O`).
+* **Screen (2023):** S-2 PASS; **G-1 PASS body −$4.11** (band [−10.08, −3.36]); **KILLED on
+  G-3** (coal −799 MW vs −876, 0.27× vs 0.30×) **and G-4** (C1 flips CC_REGULAR +12.60,
+  COAL_PRB −11.88). S-1 FAIL is a scorer artifact (disclosed). Gas took −11.85 TWh imports and
+  −13.3 TWh coal. C3a-2023 +7.15 % → ≈ −5.7 % (inside band); body-vs-MEC 5.31 → 1.15.
+* **Finding:** the average-cost print was compensating (rule 14) for missing coal
+  self-commitment (mid-price hours) and for the seam import ladder's response to the model's
+  own price. Queue head: owner ruling on the convention, then a JOINT screen (arm + coal
+  self-commitment floor + seam repair) — never the arm alone.
+* **Process:** first launch killed with no LP (calibration chain bypassed the resolver hook —
+  Addendum A); second launch OOM-killed at 13.95 GB because the swapfile had gone inactive
+  (re-`swapon`, then the miso-169 recipe held: exit 0, 2.8 MB swap touched). No control solve
+  (G-DRIFT `b3fb0edc..HEAD` ALL INERT, form 4).

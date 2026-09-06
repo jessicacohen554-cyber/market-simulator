@@ -1208,6 +1208,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered WITH the field, in the same commit, per the
     # nyiso-119 discipline.
     "nyiso_ct_peaker_bands_measured",
+    # miso-224: the off path never touches a fuel price (byte-identical by
+    # construction); an armed run reprices every MISO gas row at the daily hub
+    # spot and hashes distinctly. Registered WITH the field, in the same commit,
+    # per the nyiso-119 discipline.
+    "miso_gas_marginal_commodity_pricing",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -1901,6 +1906,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-199 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_ct_peaker_bands_measured": "False",
+    # Added by miso-224 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_gas_marginal_commodity_pricing": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -2440,6 +2448,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_overlay": "measured constrained-hub month spot basis",
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
+    "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
@@ -14870,6 +14879,31 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_miso_winter_citygate_daily.
     miso_winter_citygate_daily: bool = False
 
+    # miso-224: price EVERY MISO gas unit's dispatch fuel at MARGINAL COMMODITY
+    # cost — the measured daily hub spot for its zone (Chicago Citygate daily for
+    # the Chicago-hub AND MidCon zones, Henry Hub daily for MISO-South; the
+    # published miso_zonal_gas_hub.csv hub table is the zone selector) — instead
+    # of the EIA-923 monthly AVERAGE delivered print (gas_plant_monthly_fuel_
+    # pricing), which carries demand charges and contracted transport amortized
+    # over the month's takes and sits $0.5–1.3/MMBtu (Feb-2024: $2.6) above the
+    # hub. A dispatch offer is a marginal cost; the print is an average cost
+    # measured on a different basis (rule 14 [R-ACCURATE] misalignment clause —
+    # prefer the reconciled measured input, the traded hub). Rule 13: a hub spot
+    # is a reproducible market input, and it is the SAME convention the forecast
+    # path already uses (resolve_annual_gas_price = hub + basis), so arming it
+    # closes a backcast-vs-forecast input gap rather than opening one. Rule 19:
+    # supersedes, never stacks — the daily series carries level AND shape, so
+    # the winter Chicago shape overlay and the mean-zero zonal increment are
+    # skipped on the repriced rows; dual-fuel oil parity still caps winter.
+    # Zero fitted scalars. MISO-scoped: arming on another ISO is a HARD ERROR
+    # (rule 25) — the cross-ISO cost-convention question is owner court
+    # (miso-212 §8, gas_hub_basis_overlay R cell). FAIL CLOSED when the year has
+    # no daily prints. Backcast-only overlay (measured daily series). Off by
+    # default. See market_sim.data.fuel.basis.miso.apply_miso_gas_marginal_
+    # commodity and results/calibration/PRECOMMIT-miso224-gas-marginal-
+    # commodity-2026-09-06.md.
+    miso_gas_marginal_commodity_pricing: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -18631,6 +18665,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "miso_winter_citygate_daily": 3,
+    "miso_gas_marginal_commodity_pricing": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
