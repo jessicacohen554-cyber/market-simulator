@@ -151,6 +151,19 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "NYISO_LOCALITY_UDR_ICAP_MW",
         "NONFOSSIL_ANNOUNCED_HORIZON_YEARS",
         "PJM_RGGI_ZONE_SHARE",
+        # capx D75-R (2026-09-06, #5206/#5229): the PJM VRE ELCC delivery-year
+        # vintage registry and the solar class-mix blend share it is built from
+        # (FINDING-capx-d75r-2026-09-06.md §1, "what was built") were added to
+        # capacity_market.py without the paired inventory entries — the
+        # recurring omission the notes above record, which left the BLOCKING
+        # refactor-guards job red on main (reported by
+        # FINDING-capx-d79p1-2026-09-06.md §6). This SHARE was also the
+        # genuinely missing constants.py re-export and is added there in the
+        # same commit, exactly as the D67 and D62 resolvers were; its
+        # RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO sibling below was already on
+        # the facade, so for that one this is the inventory catching up (cf.
+        # NET_ICR_HOLD_LAST_RATIO_BY_ISO above). No value touched.
+        "PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE",
         "PLANNING_RESERVE_MARGIN_BY_ISO",
         "PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO",
         "QUEUE_CAP_GW",
@@ -158,6 +171,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "RENEWABLE_CAPACITY_CREDIT",
         "RENEWABLE_CAPACITY_CREDIT_BY_ISO",
         "RENEWABLE_ELCC_CURVES_BY_ISO",
+        "RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO",  # capx D75-R, see above.
         "RENEWABLE_NQC_CURVES_BY_ISO",
         "RGGI_MEMBER_STATES_BY_YEAR",
         "RGGI_RESERVE_ESCALATION",
