@@ -1,7 +1,7 @@
 {
   "schema": "dof-ledger/v1",
   "lane": "forecast",
-  "status": "INSTRUMENT — 1 IDENTIFIED / 1 UNIDENTIFIED",
+  "status": "INSTRUMENT — ALL 2 ENTRIES IDENTIFIED",
   "run_id": "caiso",
   "iso": "CAISO",
   "run_git_sha": "b83e96ca",
@@ -11,9 +11,9 @@
   "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
   "defaults_available": true,
   "n_entries": 2,
-  "n_identified": 1,
-  "n_unidentified": 1,
-  "n_unattested": 1,
+  "n_identified": 2,
+  "n_unidentified": 0,
+  "n_unattested": 0,
   "n_by_group": {
     "other": 2
   },
@@ -33,15 +33,25 @@
       "name": "negative_renewable_offers",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_caiso_config)",
       "group": "other",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "The representation of CAISO's ACTUAL renewable offer conduct: California renewables bid BELOW $0 in oversupply to keep producing for their RPS/REC and federal-PTC value, so in the spring-midday solar glut the marginal (curtailed) unit clears negative (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). The model's wind/solar are availability-capped LP slices carrying a $0 (solar) or -PTC (wind) offer that are never marginal, so without the gate the model floors at $0. CAISO's by the ERCOT-65 rule-25 [R-ISO-SCOPE] adjudication recorded in the same registry block. THE GATE CARRIES NO MAGNITUDE: the floor LEVEL lives in the separate registered field renewable_keep_running_value, held at its shipped default and therefore not an entry of this ledger",
+      "evidence": "src/market_sim/config/scenarios.py::negative_renewable_offers and ::renewable_keep_running_value cite blocks (CA RPS PCC1 REC $10-25/MWh; federal section 45 wind PTC ~$28/MWh; the ERCOT-65 rule-25 scope ruling); src/market_sim/config/iso_configs.py::_caiso_config default_scenario_overrides cite block; mechanism policy.eac.apply_negative_renewable_offer_floor, tested tests/test_negative_renewable_offers.py; THE CAISO BACKCAST KEEPER RECORD -- keeper 2026-09-05-caiso-252-b1-notrim carries negative_renewable_offers True at renewable_keep_running_value 20.0 in results/calibration/caiso252_b1_notrim/run_config.json, and the CAISO mechanism-matrix cell reads K on the caiso-216 measurement (results/calibration/FINDING-caiso216-belly-lever-plan-2026-08-23.md, _caiso216_belly_surplus.json B3)",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
+      "value": true
     }
   ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "capacity_adequacy_requirement_published_by_iso",
+      "cc_duct_peaking_row_scoped",
+      "nyiso_ct_peaker_bands_measured",
+      "nyiso_gas_bridge_startup_aware",
+      "voluntary_clean_demand_path",
+      "voluntary_eligible_fuels",
+      "voluntary_wtp_ceiling_usd_per_mwh"
+    ]
+  },
   "registry_identification": {
     "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
     "backcast_keeper_at_build": "2026-09-05-caiso-252-b1-notrim",

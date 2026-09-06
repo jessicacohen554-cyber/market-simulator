@@ -1,0 +1,12 @@
+{
+ "year": 2023,
+ "gas_rows": 1448,
+ "midwest_rows": 1008,
+ "south_rows": 440,
+ "midwest_max_fp_minus_chicago": 0.0,
+ "midwest_share_equal": 1.0,
+ "south_max_fp_minus_hh": 0.0,
+ "south_share_equal": 1.0,
+ "chicago_mean": 2.3170958904109593,
+ "hh_mean": 2.5330958904109586
+}

@@ -683,6 +683,12 @@ def evolve_fleet(
                 {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
             )
             events["floor_retained"].extend(_econ_sink.get("floor_retained", []))
+            # capx D74: the no-default-cap price-taker block (additive; absent
+            # off the gate, so every ledger is byte-identical).
+            if _econ_sink.get("no_default_cap_price_takers"):
+                events["no_default_cap_price_takers"] = _econ_sink[
+                    "no_default_cap_price_takers"
+                ]
             # Kept a SEPARATE ledger key from floor_retained (FFR-3F): a
             # throughput deferral is a queue rate limit, a floor retention is
             # an adequacy backstop. Both also appear in pipeline_events, but

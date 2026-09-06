@@ -3,8 +3,8 @@
   "rubric_version": "1.1",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "2ef4326e4b59",
-    "scored_at_date": "2026-09-05T20:34:52Z",
+    "scored_at_sha": "daf0ba364064",
+    "scored_at_date": "2026-09-06T05:57:20Z",
     "cache_epoch": "b1a73a087064ffd8"
   },
   "tier": "t1f",
@@ -15,7 +15,6 @@
     "FC-2 adequacy & equilibrium behavior FAIL"
   ],
   "caveats": [
-    "FC-7 provenance & DOF",
     "FC-8 runtime feasibility: over runtime budget"
   ],
   "notes": [],
@@ -99,7 +98,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "CAVEAT",
+      "status": "PASS",
       "rows": [
         {
           "row": "run_config",
@@ -115,8 +114,8 @@
         },
         {
           "row": "dof ledger",
-          "status": "CAVEAT",
-          "detail": "DOF ledger present as an UNATTESTED SKELETON: 6 of 7 entries carry identification='unattested' (adequacy_accounting_ratio_dated_net, entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions, retirement_sector_gate). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+          "status": "PASS",
+          "detail": "7 entries well-formed (0 open residual DOF listed)",
           "gating": true
         }
       ]

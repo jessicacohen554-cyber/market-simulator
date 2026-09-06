@@ -12,7 +12,50 @@ first solve). **DATA PROFILE:** `all`.
 
 ## 0. Bottom line
 
-<!-- FILL: headline after solves -->
+**Twelve paired T0 arms, all six ISOs, REF vs `carbon_price_path=mid`, scored at 2027 on the
+repaired S2 floor. Every arm solved clean; the STOP gate killed nothing and promoted nothing.**
+
+1. **The charter's leg 1 was structurally unrunnable, and phase 0 caught it at ZERO LP cost.**
+   `CARBON_PRICE_PATHS` anchors **every** registered RFF path at **$0 in 2026**, so no
+   `carbon_price_path` value of any kind can produce a signal in a 2026-only solve — all twelve
+   chartered arms would have been six pairs of byte-identical configs. The charter expected the
+   three non-programme ISOs to be live; they are not, for a reason unrelated to the floor (§1).
+   Re-scoped to 2027 — still below `ccs_retrofit_available_year`, so still inside S5 — and
+   **ratified by the desk at r#7** as a repair to an error in the charter it had written.
+2. **Three ISOs LIVE (+$3.75/t), and the mechanism is textbook in all three.** Coal→gas
+   re-ordering with every zero-carbon class moving **exactly 0.0000 TWh**. PJM **8/8 PASS**, MISO
+   **8/8 PASS**, ERCOT 7 PASS + 1 reported band miss.
+3. **The substantive result is PJM's elasticity: 17.4 TWh of coal — 7.7 % of its entire coal
+   output — displaced by a $3.75/t price** (§3.4). Not because the price is large but because the
+   coal/gas-CC spread is narrow: the adder is $3.98/MWh on coal against $1.54 on gas-CC, so the
+   *relative* shift is ~$2.44/MWh and a large mass of PJM coal sits inside that window. **2.27×
+   the top of my predicted band.**
+4. **PRICE IS CAMPAIGN-GRADE ON PJM AND MISO ONLY.** ERCOT's REF is adequacy-collapsed at 2027 in
+   *both* arms (reserve margin −6.5 %, 641 scarcity hours, 4.6 TWh unserved — the known G-S4
+   defect). Its CO2 and merit-order results survive that; **its price level does not** (§3.3).
+5. **Three ISOs measured EXACTLY INERT** — CAISO, NYISO, NEISO, Δ = `0.000000` on every metric to
+   six decimals (§3.8). That is the **ruled S2 outcome measured, not a null**: a federal RFF `mid`
+   price is a no-op where a state programme already charges **6.7–8.6×** more. It says nothing
+   about whether carbon pricing works in those ISOs, and must not be quoted as if it did.
+6. **A cross-campaign result neither lane predicted: the price-setting marginal rate exceeds the
+   load-following rate in 3 of 3 ISOs** (1.13–1.33× vs SCN-WS4c's independently measured points).
+   The two are **not interchangeable** — an emissions attribution using one where the other belongs
+   is wrong by 13–33 %. **My own n = 2 claim of a stable "~13–15 %" gap is RETRACTED** by MISO's
+   1.33×, and coal share does **not** order the three points, so the obvious mechanism is
+   unestablished (§3.7).
+7. **A LEVEL result the zero deltas would have hidden: reported import CO2 is 41.3 % of NYISO's
+   scored in-ISO emissions and 25.3 % of NEISO's**, before any policy is applied (§3.9). And
+   **CAISO — the one ISO whose imports also pay carbon — books 0.0000 Mt of import CO2 in both
+   arms**, only zero-EF tranches clearing, against PJM's +0.4336 Mt leakage into unpriced tranches
+   (§4). Border pricing changes the leakage channel qualitatively, not just in degree.
+8. **My prediction skill, measured: direction 9/9, magnitude 6/9, and all three magnitude errors
+   are UNDER-predictions** (§5), each from a different modelling error. SCN-WS4c's points
+   under-predict the same three prices as well.
+9. **LEG 2 IS HELD by ruling S5** and was not run (§7); its scripts stay committed and unrun. The
+   capx lane's `ccs.py` emission-rate seam is the blocker.
+
+**Cost: 24 solve-years, 89.4 min of LP, peak RSS 9.90 GB.** Twelve arms registered, kind
+`scenario`, campaign `scn-ws1-probe`.
 
 ---
 
@@ -169,21 +212,255 @@ broken. A future paired-probe gate should assert a REF-side adequacy preconditio
 no-worsening condition. Flagged, not silently patched — the gate is pre-registered and stays as
 written for this lane.
 
-## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
+### 3.4 PJM — LIVE, campaign-grade, and every gate PASSES
 
-<!-- FILL: completed as each ISO lands. ERCOT row below. -->
+**PJM is the clean measurement ERCOT could not be**: no unserved energy in either arm, load-weighted
+price $42.39 → $44.53, and its one invariant failure (I7, accredited firm capacity below
+requirement) is a **capacity-accreditation** shortfall carried identically by both arms, not a
+dispatch collapse. Nothing here needs the §3.3 caveat.
+
+| metric | REF | CARB | Δ |
+|---|---|---|---|
+| resolved carbon $/t | 0.0000 | 3.7500 | **+3.7500** |
+| **`emissions_mt`** | 393.6225 | 380.1844 | **−13.4381 (−3.41 %)** |
+| **`import_co2_mt_reported`** | 0.9141 | 1.3477 | **+0.4336** |
+| load-weighted price $/MWh | 42.385 | 44.534 | **+2.149** |
+| `unserved_mwh` | **0.0** | **0.0** | 0.0 |
+| `clean_share` | 0.3459 | 0.3459 | 0.0 |
+
+**STOP gate: 8 of 8 PASS. ARM NOT KILLED.** G4 lands *inside* my declared band ([1.5, 2.7] $/MWh)
+at an implied rate of 0.5731 t/MWh.
+
+**The coal→gas re-order is very large — the biggest single effect this lane measured:**
+
+| fuel | Δ CO2 (Mt) | Δ generation (TWh) |
+|---|---|---|
+| **coal** | **−18.9888** | **−17.4134** |
+| **gas_cc** | **+5.3620** | **+14.1015** |
+| gas_ct | +0.1913 | +0.5044 |
+| biomass | 0.0000 | +0.6439 |
+| **import** | 0.0000 *(books no in-ISO CO2)* | **+2.0495** |
+| hydro / nuclear / solar / wind | 0.0000 | **0.0000 (exactly)** |
+
+**17.4 TWh of coal — 7.7 % of PJM's entire coal output — is displaced by a $3.75/t carbon price.**
+That is the substantive PJM result and it is **2.3× larger than the top of my predicted band**
+(§5). The mechanism is a narrow spread, not a big price: the adder is `$3.98/MWh` on coal
+(1.06 t/MWh) against `$1.54/MWh` on gas-CC (0.41 t/MWh), so the *relative* shift is only
+~$2.44/MWh — and PJM's coal and gas-CC marginal costs sit close enough together in 2027 that a
+large mass of coal MWh lies inside that $2.44 window. **PJM's low-carbon-price switching is highly
+elastic, and my band assumed it was not.**
+
+### 3.5 A pattern across BOTH live ISOs: the price-setting unit is dirtier than the load-following unit
+
+ADDENDUM §(g) pre-registered the question of whether WS-4c's marginal rate — measured under a
+**load** increase, i.e. the units that *ramp* — would also describe a **carbon price**'s
+pass-through, i.e. the unit that *sets price*. It stated in advance: *"Where my measurement departs
+from WS-4c's point, that gap is itself the result."* **It departs, in the same direction, on both
+live ISOs measured so far:**
+
+| ISO | WS-4c implied rate (load-following) | **this lane (price-setting)** | ratio |
+|---|---|---|---|
+| ERCOT | 0.447 | **0.5157** | **1.15×** |
+| PJM | 0.508 | **0.5731** | **1.13×** |
+
+Two independent ISOs, two independent campaigns, the same ~13–15 % gap in the same direction.
+**A plausible mechanism, offered as a hypothesis and not a claim:** coal is slow-ramping, so gas
+answers an increment of *load* while coal continues to *set price* in a larger share of hours.
+If that is right, the two rates are measuring genuinely different marginal units and neither is
+"the" marginal rate — the correct one depends on the question asked. **This is n = 2 and one ISO
+away from being a coincidence; MISO is the third live ISO and its result should be read as the
+test of whether the pattern holds.**
+
+### 3.6 MISO — LIVE, 8/8 PASS, and both my bands HIT
+
+| metric | REF | CARB | Δ |
+|---|---|---|---|
+| resolved carbon $/t | 0.0000 | 3.7500 | **+3.7500** |
+| **`emissions_mt`** | 370.4751 | 363.8337 | **−6.6414 (−1.79 %)** |
+| **`import_co2_mt_reported`** | **0.0000** | **0.0000** | **0.0000** |
+| load-weighted price $/MWh | 52.000 | 54.411 | **+2.411** |
+| `unserved_mwh` | 199,592.22 | 199,592.22 | 0.0 |
+
+**STOP gate: 8 of 8 PASS. ARM NOT KILLED.** Both pre-declared bands land: CO2 −1.79 % inside
+[−0.8, −1.8] %, price +$2.411 inside [1.8, 3.3] $/MWh.
+
+Coal → gas again, at MISO's larger scale: **coal −10.60 TWh**, gas_cc **+8.34 TWh**, gas_ct
++1.07, gas_st +0.47, biomass +0.59; hydro / nuclear / solar / wind all **exactly 0.0000**.
+
+**Adequacy caveat, smaller than ERCOT's and stated anyway:** MISO carries I3 (19 h / 41 h of
+slack, 0.02–0.03 % of load) and I7 in **both** arms, and 199,592 MWh of unserved energy unchanged
+between them. Prices stay in a normal range ($52 → $54), so unlike ERCOT this pass-through number
+is usable — but it is not a perfectly clean market either, and the 41 scarcity hours dilute Δp
+slightly toward zero, i.e. the true fossil-marginal rate is a little **above** the 0.6429 measured.
+
+### 3.7 THE n = 3 TEST — the direction holds, my magnitude claim does NOT
+
+§3.5 recorded a ~13–15 % gap on two ISOs and named MISO in advance as the test. **MISO confirms
+the direction and breaks the magnitude:**
+
+| ISO | coal share of generation | WS-4c rate (load-following) | **this lane (price-setting)** | ratio |
+|---|---|---|---|---|
+| ERCOT | 14.1 % | 0.447 | 0.5157 | **1.15×** |
+| PJM | 23.1 % | 0.508 | 0.5731 | **1.13×** |
+| **MISO** | **35.0 %** | 0.484 | **0.6429** | **1.33×** |
+
+**What survives:** the price-setting marginal rate exceeds the load-following rate in **3 of 3**
+ISOs, measured by two independent campaigns on different questions. That is a real and consistent
+result, and it means the two rates are **not interchangeable** — an emissions attribution that
+uses one where the other belongs is wrong by 13–33 %.
+
+**What does NOT survive — my own §3.5 framing, retracted here:** the gap is **not** a stable
+~13–15 % correction. MISO's 1.33× sits well outside the ERCOT/PJM cluster, so at n = 3 the honest
+statement is a **range of 1.13–1.33×**, not a constant.
+
+**And the obvious mechanism does not cleanly explain it.** If the driver were simply "more
+inframarginal coal ⇒ bigger divergence", the ratios would order with coal share. **They do not:**
+PJM has 1.6× ERCOT's coal share and a *smaller* ratio (1.13 vs 1.15). Coal share alone therefore
+fails to order three points, and **I am not going to fit a second variable to three observations
+to rescue it.** The slow-ramping-coal story of §3.5 remains a plausible *direction* mechanism and
+is now explicitly **not** established as a dose-response one.
+
+**What would actually settle it** (named, not run — outside this lane's charter): the same
+differencing on the three program ISOs, which this lane cannot supply because the arm is inert
+there; or a decomposition of Δprice by marginal-fuel hour, which needs the hourly duals rather
+than the annual scalars these T0 bundles export.
+
+### 3.8 The INERT pairs — CAISO, NYISO and NEISO, exact identity confirmed
+
+The floor makes `carbon_price_path="mid"` a no-op on the state-program ISOs, so ADDENDUM §(f.2)
+re-specified **G4 for these pairs as an exact-identity test** rather than a band: a **non-zero**
+delta would be the failure, because it would mean something other than carbon moved between two
+configs that resolve to the same carbon price in every hour.
+
+| ISO | resolved $/t (both arms) | `emissions_mt` | lw price $/MWh | Δ on **every** metric |
+|---|---|---|---|---|
+| **NEISO** | 27.8783 | 17.1691 | 50.8530 | **0.000000** |
+| **NYISO** | 25.2908 | 24.5911 | 49.1840 | **0.000000** |
+| **CAISO** | 32.1259 | 34.5149 | 55.9460 | **0.000000** |
+
+**8/8 PASS on all three.** Δ CO2 and Δ lw_price are `0.000000` to six decimals; every by-fuel and
+by-zone row is identical; `unserved_mwh` 0.0 in all four arms. **This is §1's arithmetic converted
+into a measurement.** It also exercises the harness: two runs differing in one field that the
+resolver is supposed to neutralise produce byte-equal dispatch, which is a real (if narrow) check
+that the S2 floor is wired where it claims to be.
+
+**NEISO and NYISO are the cleanest runs of the lane** — REF and CARB each score **0 FAIL / 0 WARN**
+across all 14 forecast invariants, against ERCOT's 1 FAIL/2 WARN, PJM's 1/1, MISO's 2/1 and
+CAISO's 1/1.
+
+**What they are NOT evidence of.** They say a *federal RFF `mid`* price is a no-op where a state
+program already charges more (CARB $32.13, RGGI $27.88 and $25.29 vs the path's $3.75 at 2027). They say **nothing** about
+whether carbon pricing works in California, New England or New York — those ISOs are already
+carbon-priced, at **6.7× to 8.6×** the federal path's 2027 level. Quoting "no effect" from these
+rows would invert their meaning.
+
+### 3.9 A LEVEL result the zero deltas would otherwise hide
+
+The leakage duty asks for `import_co2_mt_reported` **beside** `emissions_mt` as a number. On the
+two RGGI ISOs the *delta* is zero — but the *level* is large:
+
+| ISO | in-ISO `emissions_mt` | reported import CO2 | **import as % of scored in-ISO** |
+|---|---|---|---|
+| **NYISO** | 24.5911 | **10.1556** | **41.3 %** |
+| **NEISO** | 17.1691 | **4.3493** | **25.3 %** |
+| PJM | 393.6225 | 0.9141 | 0.2 % |
+| ERCOT / MISO | 255.97 / 370.48 | 0.0000 | 0.0 % (no seam exists) |
+
+**A campaign that reports only `emissions_mt` understates NYISO's carbon footprint by roughly two
+fifths and NEISO's by a quarter**, before any policy is applied. This is a *standing* disclosure
+property of the two import-heavy ISOs, not something a carbon arm creates — and it is exactly why
+SCN-WS0's duty is to print the import line beside every headline rather than only when it moves.
+It is reported here because a reader scanning §3.8's zero deltas would otherwise conclude these
+ISOs have nothing to disclose.
+
+## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
 | ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
 |---|---|---|---|---|
+| **CAISO** | **0.0000** (arm inert) | **0.0000** | n/a | **The one ISO whose imports also pay carbon** — the CARB border adjustment charges `0.428 × resolved price` on the import tranche VOM. Its reported import CO2 is **0.0000 in BOTH arms**: only the **zero-EF** tranches (PNW hydro, midC, DSW solar) clear, and the three carbon-bearing ones (DSW_CCGT 0.37, DSW_CT 0.55, WECC_scarcity 0.428) stay out of merit. **This is the structural contrast the PRECOMMIT §3.4 predicted** — border-priced imports do not become the leakage channel that unpriced ones do (cf. PJM's +0.4336 Mt). |
+| **NYISO** | **0.0000** (arm inert) | **0.0000** | n/a — no headline to displace | 6 carbon-bearing tranches exist and carry a **standing 10.1556 Mt**, but the arm does not move them: the RGGI program ($25.29/t at 2027) already exceeds the RFF mid path ($3.75), so `max()` returns the program and nothing in the ISO changes. **Level ≠ delta** (§3.9). |
+| **NEISO** | **0.0000** (arm inert) | **0.0000** | n/a | 4 carbon-bearing tranches, **standing 4.3493 Mt**; inert for the same reason. |
+| **MISO** | **−6.6414** | **0.0000** | **0.0 %** | **none built.** `IMPORT_ZONE` names `MISO_external` but `IMPORT_TRANCHES` has no MISO entry, so no tranche exists. **This zero is a MODEL-BOUNDARY artifact, not a physical claim** — MISO trades heavily with PJM and SPP in reality; the model has no seam for it. MISO's −6.64 Mt therefore carries **no leakage disclosure at all** and must be read as an **upper bound**. Flagged in the PRECOMMIT before the solve precisely so this null is not read as "MISO does not leak". |
+| **PJM** | **−13.4381** | **+0.4336** | **3.2 %** | **the 2-tranche scarcity block** — import generation +2.0495 TWh. Predicted +0.03 to +0.23 Mt; **measured +0.4336, nearly 2× the top of my band** (§5). The tranches pay **no border carbon** while PJM coal's `mc` rises ~$3.98/MWh, so they get relatively cheaper. `emissions_by_fuel_mt["import"]` stays **0.0** in both arms — the import MWh never enters the scored in-ISO total (G6), it is disclosed beside it. |
 | **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
 
 ## 5. My misses, reported at full magnitude
 
-<!-- FILL -->
+Nine pre-declared numbers across the three LIVE ISOs (ADDENDUM §(d.2) for price and CO2,
+PRECOMMIT §3.4 for leakage). **Six hit, three missed.** Every band below is quoted as pushed
+before the solve; **none was revised after a result.**
 
-## 6. Wall / RSS per solve-year
+| ISO | quantity | pre-declared | measured | verdict |
+|---|---|---|---|---|
+| ERCOT | Δ CO2 % | −0.2 to −0.8 % | **−0.36 %** | **HIT** |
+| ERCOT | Δ lw price | $0.9 – 1.5 | **$1.934** | **MISS — 1.29× the top** |
+| ERCOT | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
+| PJM | Δ CO2 % | −0.6 to −1.5 % | **−3.41 %** | **MISS — 2.27× the top** |
+| PJM | Δ lw price | $1.5 – 2.7 | **$2.149** | **HIT** |
+| PJM | Δ import CO2 | +0.03 to +0.23 Mt | **+0.4336** | **MISS — 1.89× the top** |
+| MISO | Δ CO2 % | −0.8 to −1.8 % | **−1.79 %** | **HIT** (just inside) |
+| MISO | Δ lw price | $1.8 – 3.3 | **$2.411** | **HIT** |
+| MISO | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
 
-<!-- FILL -->
+**Every miss is in the same direction: I under-predicted the response.** That is the useful
+pattern in my own errors, and it has three distinct causes rather than one:
+
+1. **PJM's CO2 miss (the largest) — I assumed the wrong elasticity.** My band came from scaling a
+   $25/t prediction down by 0.15, which implicitly assumes the response is roughly linear in the
+   carbon price. It is not, where a fleet has coal and gas-CC near parity: what matters is how much
+   MWh sits inside the **$2.44/MWh relative shift**, and PJM's does. A carbon price acts on the
+   *spread distribution*, not on a fleet-average rate — a mechanism my band's construction had no
+   way to express.
+2. **ERCOT's price miss — I banded the wrong regime.** §3.3: with 641 scarcity hours and a −6.5 %
+   reserve margin, ERCOT 2027 is not the fossil-marginal market my band assumed. The measured
+   0.5157 t/MWh is a *lower bound* on its fossil-marginal rate, not a central estimate.
+3. **PJM's leakage miss — I mis-scaled a threshold effect.** I rescaled WS-0's $25/t leakage
+   linearly to $3.75/t. But import tranches are **priced blocks**: they clear or they do not, and
+   the fraction of hours in which a $3.98/MWh coal adder pushes a $46–60 block into merit is not a
+   linear function of the adder. Rescaling a step response linearly under-predicts it.
+
+**The honest summary of my prediction skill: direction 9/9, magnitude 6/9, and all three magnitude
+errors are under-predictions.** The charter asked that misses be reported with the reasoning that
+produced them; the reasoning above is what I would change, not the numbers I wrote.
+
+**A prediction that was NOT mine and did better in one place, worse in another:** SCN-WS4c's
+measured marginal rates (ADDENDUM §(g)) implied ERCOT $1.68, PJM $1.91, MISO $1.82. Measured:
+$1.934, $2.149, $2.411. **WS-4c's points under-predict all three as well**, by 15 %, 12 % and
+33 % — the same direction as my own error and the reason §3.7 treats the gap as a real result
+rather than as noise.
+
+## 6. Wall clock and peak RSS, per solve-year
+
+Every arm ran **2 solve-years** (2026 as 2027's capacity-evolution prior; 2027 scored). Years
+sequential within an invocation, always (rule 12 `[R-PARALLEL]`).
+
+| ISO | arm | 2026 wall / RSS | 2027 wall / RSS |
+|---|---|---|---|
+| ERCOT | REF | 153.4 s / 3.50 GB | 127.0 s / 3.33 GB |
+| ERCOT | CARB | 154.3 s / 3.50 GB | 128.4 s / 3.72 GB |
+| PJM | REF | 389.3 s / **9.03 GB** | 201.1 s / 6.57 GB |
+| PJM | CARB | 382.0 s / 8.97 GB | 185.6 s / 6.53 GB |
+| MISO | REF | 446.2 s / **9.87 GB** | 211.1 s / 7.92 GB |
+| MISO | CARB | 393.0 s / **9.90 GB** | 197.8 s / 7.95 GB |
+| NEISO | REF | 112.5 s / 3.17 GB | 85.6 s / 3.04 GB |
+| NEISO | CARB | 110.6 s / 3.25 GB | 78.6 s / 3.07 GB |
+| NYISO | REF | 139.8 s / 3.24 GB | 121.1 s / 2.75 GB |
+| NYISO | CARB | 140.1 s / 3.28 GB | 125.3 s / 2.74 GB |
+
+| CAISO | REF | 504.1 s / 4.52 GB | 244.8 s / 4.02 GB |
+| CAISO | CARB | 489.6 s / 4.35 GB | 243.9 s / 4.31 GB |
+
+**Twenty-four solve-years, 5,365 s = 89.4 min of LP across all twelve arms.**
+**Peak RSS 9.90 GB (MISO CARB 2026) on a 15 GB box.**
+
+**That peak is why rule 12 `[R-PARALLEL]`'s one-invocation limit for per-plant multi-zone ISOs is
+load-bearing rather than cautionary**: two concurrent MISO arms would have needed ~19.8 GB and
+OOM-ed. The small ISOs (ERCOT / NEISO / NYISO, ~3.5 GB) ran both arms concurrently with no
+contention, which is exactly the split the rule draws.
+
+**2026 costs roughly 2× 2027 in every ISO** — the first horizon year builds the fleet and
+capacity-evolution state that the second reuses. A lane budgeting T0 work from a per-solve-year
+average will therefore under-budget a 2-year run by ~25 %.
 
 ## 7. LEG 2 IS HELD BY RULING S5
 
@@ -208,8 +485,38 @@ axis (`low`/`mid`/`high`), whose rungs are now meaningful — and which, per §1
 
 ## 8. Scorecard rows and matrix cells landed
 
-<!-- FILL -->
+**Plan §5.1 + desk-ledger §3, Carbon column** — rows **3** and **7**, this lane's assignment:
 
-## 9. What remains for Stage A-LOAD
+* **Row 3 (paired probe right-signed, per ISO)** moves from *"NEISO only"* to **all six ISOs
+  measured at 2027 on the S2 floor**: three LIVE (ERCOT, PJM, MISO) right-signed with the STOP
+  gate passing — 8/8 on PJM and MISO, 7 PASS + 1 reported band miss on ERCOT — and three
+  measured **exactly INERT** (CAISO, NYISO, NEISO), which is the ruled S2 outcome rather than a
+  null result. **Two ISOs are campaign-grade on price (PJM, MISO); ERCOT is NOT** (§3.3: 641
+  scarcity hours, −6.5 % reserve margin — its CO2 and merit-order results stand, its price level
+  does not).
+* **Row 7 (registered probes on dashboard)** moves from *"NEISO FC-6 pair"* to the **twelve arms**
+  `<iso>-2026-2027-scn-ws1-probe-{ref,carb}`, kind `scenario`, campaign `scn-ws1-probe`.
 
-<!-- FILL -->
+**Mechanism matrix** — `carbon_price_path`, one appended cell line per ISO shard. `mass_cap_enabled`
+stays **U** in all six (untested; this lane never armed it), as the charter requires.
+
+## 9. What remains
+
+**This lane completes Stage A-LOAD's carbon half.** Its three load cases were already released and
+**stand alone** — per desk r#7, this lane's carbon legs were never a precondition for them.
+
+**What remains for Stage A-LOAD** is the six per-ISO campaign lanes **`SCN-WS5A-LOAD-<ISO>`** plus
+**`SCN-WS5A-LOAD-SYNTH`** after they register. *(The relaunch charter named SCN-WS4c here; that is
+stale — WS4c landed at `6b6d8cb0` with 19 clean arms, which is what released A-LOAD in the first
+place. ADDENDUM §(h) recorded the correction before this lane's first solve.)*
+
+**What this lane does NOT close, stated at the gate:**
+
+* **Stage A-POLICY stays held by ruling S5**, and this lane's leg 2 with it (§7). The CCS
+  emission-rate seam in `capacity_evolution/ccs.py` is the blocker and is the capx lane's file.
+* **Cards D-1(b)** (what `tight` should mean on a program ISO, given its carbon leg is now an exact
+  no-op there) and **D-1(c)** (PJM's partial footprint) stay **OPEN** and are the owner's. §3.8
+  measures the consequence of D-1(b) being open; it does not answer it.
+* **The §3.7 divergence is unresolved at n = 3** and needs hourly duals these T0 bundles do not
+  export — named in §3.7, not attempted here.
+* **`mass_cap_enabled` is untested** in all six ISOs.

@@ -1,0 +1,202 @@
+[
+ {
+  "unit": "ST_GAS_LA_BASIN_p315_committed",
+  "plant": null,
+  "pmax": 74.23,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p315_econ",
+  "plant": null,
+  "pmax": 896.47,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p315_peak",
+  "plant": null,
+  "pmax": 171.3,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p335_committed",
+  "plant": null,
+  "pmax": 20.9994,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p335_econ",
+  "plant": null,
+  "pmax": 170.9306,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p335_peak",
+  "plant": null,
+  "pmax": 33.87,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p350_committed",
+  "plant": null,
+  "pmax": 93.93299999999999,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p350_econ",
+  "plant": null,
+  "pmax": 1173.417,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p350_peak",
+  "plant": null,
+  "pmax": 223.65,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_committed",
+  "plant": null,
+  "pmax": 249.0,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc00",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 4.447517678756273,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc01",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 4.04152021430549,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc02",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 3.63552274985472,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc03",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 3.229525285403917,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc04",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 2.82352782095315,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_econc05",
+  "plant": null,
+  "pmax": 76.08333333333333,
+  "d_mc": 2.417530356502386,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_LA_BASIN_p356_peak",
+  "plant": null,
+  "pmax": 124.5,
+  "d_mc": 1.3287189745661883,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_committed",
+  "plant": null,
+  "pmax": 26.4,
+  "d_mc": 0.0,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc00",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 2.3564054515981683,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc01",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 2.1412978999999974,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc02",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 1.9261903484018343,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc03",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 1.7110827968036453,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc04",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 1.495975245205484,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_econc05",
+  "plant": null,
+  "pmax": 8.066666666666668,
+  "d_mc": 1.2808676936073022,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ },
+ {
+  "unit": "ST_GAS_ZP26_p10446_peak",
+  "plant": null,
+  "pmax": 13.2,
+  "d_mc": 0.7039883506849298,
+  "d_markup": 0.0,
+  "in_bypass_set": null
+ }
+]

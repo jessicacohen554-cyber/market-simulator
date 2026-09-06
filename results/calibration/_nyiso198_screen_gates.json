@@ -1,0 +1,534 @@
+{
+ "session": "nyiso-198",
+ "flag": "cc_duct_peaking_row_scoped",
+ "year": 2024,
+ "keeper": "2026-09-06-nyiso-196-extract-basis",
+ "screen_bundle": "results/calibration/nyiso198_screen_2024",
+ "note": "rule 29 screen \u2014 THROWAWAY, never registered, deleted before merge",
+ "gates": {
+  "F1_F2_presolve": {
+   "moved_plants_mw": {
+    "2539": 75.91,
+    "10190": -19.79,
+    "50006": 53.58,
+    "50292": 45.44,
+    "50458": 18.96,
+    "52168": 1.21,
+    "54114": -1.85,
+    "54131": 4.93,
+    "54547": 87.99,
+    "54574": 32.95,
+    "55375": 10.38,
+    "56188": 2.95,
+    "56234": 9.04,
+    "56259": 48.37,
+    "56940": 100.24,
+    "57185": 168.47,
+    "57664": 87.75
+   },
+   "total_moved_mw": 726.53,
+   "pmax_drift": {
+    "52168": -1.2122
+   },
+   "g_delta_run_config": {
+    "cc_duct_peaking_row_scoped": [
+     null,
+     true
+    ]
+   },
+   "g_delta_raw": {
+    "cc_duct_peaking_row_scoped": [
+     null,
+     true
+    ],
+    "ccs_retrofit_fixed_cost_co2_scaling": [
+     null,
+     false
+    ],
+    "weather_year": [
+     2023,
+     2024
+    ],
+    "gas_price_override": [
+     2.54,
+     2.19
+    ]
+   },
+   "year_fields_excluded": [
+    "weather_year",
+    "gas_price_override",
+    "year",
+    "start_year"
+   ],
+   "head_defaults_not_recipe": {
+    "ccs_retrofit_fixed_cost_co2_scaling": [
+     null,
+     false
+    ]
+   },
+   "g_delta_is_exactly_the_flag": true,
+   "STOP": false
+  },
+  "S3_direction": {
+   "cricket_valley": {
+    "keeper_gwh": 3706.1,
+    "screen_gwh": 4081.5,
+    "delta_gwh": 375.4,
+    "meter_gwh": 4240.9,
+    "footprint_bound_gwh": 622.1,
+    "rose": true,
+    "within_bound": true
+   },
+   "fleet_cc": {
+    "keeper_gwh": 56398.5,
+    "screen_gwh": 57636.6,
+    "delta_gwh": 1238.1,
+    "footprint_bound_gwh": 3047.0,
+    "within_bound": true
+   },
+   "STOP": false,
+   "moved_plants": [
+    {
+     "plant": 56940,
+     "name": "CPV Valley Energy Center",
+     "rebanded_mw": 100.24,
+     "keeper_gwh": 4354.2,
+     "screen_gwh": 4833.3,
+     "delta_gwh": 479.1,
+     "meter_gwh": 4981.9,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": true
+    },
+    {
+     "plant": 57185,
+     "name": "Cricket Valley Energy",
+     "rebanded_mw": 168.47,
+     "keeper_gwh": 3706.1,
+     "screen_gwh": 4081.5,
+     "delta_gwh": 375.4,
+     "meter_gwh": 4240.9,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": true
+    },
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "rebanded_mw": 53.58,
+     "keeper_gwh": 5190.5,
+     "screen_gwh": 5541.6,
+     "delta_gwh": 351.1,
+     "meter_gwh": 7344.1,
+     "btm_addback_gwh_removed": 1249.4,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": true
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "rebanded_mw": 87.99,
+     "keeper_gwh": 7490.4,
+     "screen_gwh": 7786.2,
+     "delta_gwh": 295.8,
+     "meter_gwh": 6286.1,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 57664,
+     "name": "Astoria Energy II",
+     "rebanded_mw": 87.75,
+     "keeper_gwh": 4314.9,
+     "screen_gwh": 4593.0,
+     "delta_gwh": 278.1,
+     "meter_gwh": 4136.7,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 2539,
+     "name": "Bethlehem Energy Center",
+     "rebanded_mw": 75.91,
+     "keeper_gwh": 5990.4,
+     "screen_gwh": 6222.3,
+     "delta_gwh": 231.9,
+     "meter_gwh": 5539.0,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "rebanded_mw": 48.37,
+     "keeper_gwh": 3011.3,
+     "screen_gwh": 2867.9,
+     "delta_gwh": -143.4,
+     "meter_gwh": 2980.8,
+     "btm_addback_gwh_removed": 5.8,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 54114,
+     "name": "Kennedy International Airport Cogen",
+     "rebanded_mw": -1.85,
+     "keeper_gwh": 608.5,
+     "screen_gwh": 553.5,
+     "delta_gwh": -55.0,
+     "meter_gwh": 458.2,
+     "btm_addback_gwh_removed": 1.4,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": true
+    },
+    {
+     "plant": 50292,
+     "name": null,
+     "rebanded_mw": 45.44,
+     "keeper_gwh": 399.2,
+     "screen_gwh": 442.5,
+     "delta_gwh": 43.3,
+     "meter_gwh": 0.0,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": null
+    },
+    {
+     "plant": 10190,
+     "name": "Castleton Energy Center",
+     "rebanded_mw": -19.79,
+     "keeper_gwh": 86.9,
+     "screen_gwh": 49.3,
+     "delta_gwh": -37.6,
+     "meter_gwh": 89.2,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 50458,
+     "name": "Indeck Corinth Energy Center",
+     "rebanded_mw": 18.96,
+     "keeper_gwh": 367.4,
+     "screen_gwh": 331.3,
+     "delta_gwh": -36.1,
+     "meter_gwh": 420.3,
+     "btm_addback_gwh_removed": 8.4,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 55375,
+     "name": "Astoria Energy",
+     "rebanded_mw": 10.38,
+     "keeper_gwh": 4600.9,
+     "screen_gwh": 4623.8,
+     "delta_gwh": 22.9,
+     "meter_gwh": 4282.3,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 54131,
+     "name": "World Generation X",
+     "rebanded_mw": 4.93,
+     "keeper_gwh": 292.9,
+     "screen_gwh": 314.9,
+     "delta_gwh": 22.0,
+     "meter_gwh": 204.4,
+     "btm_addback_gwh_removed": 101.3,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 54574,
+     "name": "Saranac Facility",
+     "rebanded_mw": 32.95,
+     "keeper_gwh": 572.5,
+     "screen_gwh": 592.8,
+     "delta_gwh": 20.3,
+     "meter_gwh": 372.0,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 56234,
+     "name": "Caithness Long Island Energy Center",
+     "rebanded_mw": 9.04,
+     "keeper_gwh": 1973.7,
+     "screen_gwh": 1993.0,
+     "delta_gwh": 19.3,
+     "meter_gwh": 1913.3,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    },
+    {
+     "plant": 56188,
+     "name": "Pinelawn Power LLC",
+     "rebanded_mw": 2.95,
+     "keeper_gwh": 159.7,
+     "screen_gwh": 144.0,
+     "delta_gwh": -15.7,
+     "meter_gwh": 83.7,
+     "btm_addback_gwh_removed": 0.0,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": true
+    },
+    {
+     "plant": 52168,
+     "name": "Riverbay",
+     "rebanded_mw": 1.21,
+     "keeper_gwh": 23.7,
+     "screen_gwh": 19.1,
+     "delta_gwh": -4.6,
+     "meter_gwh": 41.5,
+     "btm_addback_gwh_removed": 84.6,
+     "meter_basis": "CAMPD gross (bench c_ann); model side is LP grid",
+     "moved_toward_meter": false
+    }
+   ]
+  },
+  "class_energy_twh": {
+   "CC_CHP": {
+    "keeper": 19.331,
+    "screen": 19.448,
+    "delta": 0.117
+   },
+   "CC_REGULAR": {
+    "keeper": 37.067,
+    "screen": 38.188,
+    "delta": 1.121
+   },
+   "CT_CHP": {
+    "keeper": 1.14,
+    "screen": 0.889,
+    "delta": -0.252
+   },
+   "CT_PEAKER": {
+    "keeper": 0.392,
+    "screen": 0.331,
+    "delta": -0.061
+   },
+   "OTHER": {
+    "keeper": 2.201,
+    "screen": 2.201,
+    "delta": 0.0
+   },
+   "ST_CHP": {
+    "keeper": 1.08,
+    "screen": 0.921,
+    "delta": -0.159
+   },
+   "ST_GAS": {
+    "keeper": 8.739,
+    "screen": 8.034,
+    "delta": -0.706
+   },
+   "biomass": {
+    "keeper": 0.76,
+    "screen": 0.76,
+    "delta": 0.0
+   },
+   "hydro": {
+    "keeper": 26.739,
+    "screen": 26.739,
+    "delta": 0.0
+   },
+   "import": {
+    "keeper": 20.72,
+    "screen": 20.667,
+    "delta": -0.053
+   },
+   "nuclear": {
+    "keeper": 26.953,
+    "screen": 26.953,
+    "delta": 0.0
+   },
+   "oil": {
+    "keeper": 0.443,
+    "screen": 0.446,
+    "delta": 0.003
+   },
+   "solar": {
+    "keeper": 0.586,
+    "screen": 0.586,
+    "delta": 0.0
+   },
+   "wind": {
+    "keeper": 6.012,
+    "screen": 6.012,
+    "delta": 0.0
+   }
+  },
+  "C1_cells": {
+   "CC_REGULAR": {
+    "keeper": {
+     "status": "PASS",
+     "model": 37.067,
+     "actual": 34.06,
+     "share_pp": 2.53,
+     "magnitude": "+3.01 TWh, share +2.5pp"
+    },
+    "screen": {
+     "status": "FAIL",
+     "model": 38.188,
+     "actual": 34.06,
+     "share_pp": 3.37,
+     "magnitude": "+4.13 TWh, share +3.4pp (volume/share out of band)"
+    }
+   },
+   "CC_CHP": {
+    "keeper": {
+     "status": "PASS",
+     "model": 19.331,
+     "actual": 17.017,
+     "share_pp": 1.88,
+     "magnitude": "+2.31 TWh, share +1.9pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 19.448,
+     "actual": 17.017,
+     "share_pp": 1.96,
+     "magnitude": "+2.43 TWh, share +2.0pp"
+    }
+   },
+   "CT_PEAKER": {
+    "keeper": {
+     "status": "PASS",
+     "model": 0.392,
+     "actual": 1.911,
+     "share_pp": -1.14,
+     "magnitude": "-1.52 TWh, share -1.1pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.331,
+     "actual": 1.911,
+     "share_pp": -1.19,
+     "magnitude": "-1.58 TWh, share -1.2pp"
+    }
+   },
+   "ST_GAS": {
+    "keeper": {
+     "status": "PASS",
+     "model": 8.739,
+     "actual": 9.913,
+     "share_pp": -0.82,
+     "magnitude": "-1.17 TWh, share -0.8pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 8.033,
+     "actual": 9.913,
+     "share_pp": -1.36,
+     "magnitude": "-1.88 TWh, share -1.4pp"
+    }
+   },
+   "ST_CHP": {
+    "keeper": {
+     "status": "PASS",
+     "model": 1.08,
+     "actual": 0.872,
+     "share_pp": 0.16,
+     "magnitude": "+0.21 TWh, share +0.2pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.921,
+     "actual": 0.872,
+     "share_pp": 0.04,
+     "magnitude": "+0.05 TWh, share +0.0pp"
+    }
+   },
+   "COAL_PRB": {
+    "keeper": {
+     "status": "PASS",
+     "model": 0.0,
+     "actual": 0.0,
+     "share_pp": 0.0,
+     "magnitude": "+0.00 TWh, share +0.0pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.0,
+     "actual": 0.0,
+     "share_pp": 0.0,
+     "magnitude": "+0.00 TWh, share +0.0pp"
+    }
+   },
+   "COAL_BIT": {
+    "keeper": {
+     "status": "PASS",
+     "model": 0.0,
+     "actual": 0.0,
+     "share_pp": 0.0,
+     "magnitude": "+0.00 TWh, share +0.0pp"
+    },
+    "screen": {
+     "status": "PASS",
+     "model": 0.0,
+     "actual": 0.0,
+     "share_pp": 0.0,
+     "magnitude": "+0.00 TWh, share +0.0pp"
+    }
+   },
+   "flips": [
+    "CC_REGULAR"
+   ],
+   "construction": "calibration_verdict.score_fuelmix on the keeper's committed payload gmModel with the screen's P1 class-energy deltas applied (the nyiso-195/196 construction; approximate at the constant per-class grid-delivered-vs-P1 basis offset)"
+  },
+  "S4_companions": {
+   "price": {
+    "keeper": {
+     "mean_price": 38.386,
+     "p95": 60.61,
+     "hours_gt_300": 0,
+     "cv_of_hourly": 0.4503
+    },
+    "screen": {
+     "mean_price": 36.775,
+     "p95": 58.47,
+     "hours_gt_300": 0,
+     "cv_of_hourly": 0.4583
+    },
+    "delta_mean_price_pct": -4.2
+   },
+   "c1_load_bearing_pass_to_fail_flips": [
+    "CC_REGULAR"
+   ],
+   "STOP": true,
+   "note": "CC_REGULAR is NOT exempted here (nyiso-196 exempted its own target cell): this arm is not offered as a fix for any residual, so a PASS -> FAIL there is a real cost and the PREREG gates it."
+  },
+  "C8_D4": {
+   "d4_failures_keeper": [
+    "2023|nyiso_gas_commitment_bridge \u00d7 ST_GAS|8906",
+    "2023|reliability_floor \u00d7 ST_GAS|2480",
+    "2024|nyiso_gas_commitment_bridge \u00d7 ST_GAS|8906",
+    "2024|reliability_floor \u00d7 ST_GAS|2480",
+    "2025|reliability_floor \u00d7 ST_GAS|8006"
+   ],
+   "d4_failures_screen": [
+    "2024|nyiso_gas_commitment_bridge \u00d7 ST_GAS|8906",
+    "2024|reliability_floor \u00d7 ST_GAS|2480"
+   ],
+   "new_d4_failures": [],
+   "c8_keeper": {},
+   "c8_screen": {},
+   "STOP": false
+  }
+ },
+ "STOPS": {
+  "F1_F2_presolve": false,
+  "S3_direction": false,
+  "S4_companions": true,
+  "C8_D4": false
+ },
+ "VERDICT": "STOP"
+}

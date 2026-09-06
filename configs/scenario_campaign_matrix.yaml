@@ -44,10 +44,17 @@
 # name and its question are already fixed here so the campaign's shape does
 # not drift while the fields arrive.
 #
-# STILL COMMENTED AT THIS COMMIT, and on what: `CAP-STATE-TIGHT` (a missing
-# schedule field AND an uncommitted level — see its block), `VOL-MID` /
-# `VOL-HI` / `CES-P20+VOL-HI` / `ALL-CLEAN` (all four on the single missing
-# field `voluntary_clean_demand_path`, SCN-WS3b). **`CES-T80` IS NO LONGER
+# STILL COMMENTED AT THIS COMMIT, and on what: `CAP-STATE-TIGHT` ONLY (a
+# missing schedule field AND an uncommitted level — see its block). **`VOL-MID`
+# / `VOL-HI` / `CES-P20+VOL-HI` / `ALL-CLEAN` ARE LIVE since SCN-WS3b
+# (2026-09-06)** — the one field they waited on, `voluntary_clean_demand_path`,
+# landed with its resolver, its row on the clean-tier family and its
+# forecast-only coercion (docs/handoffs/FINDING-scn-ws3b-2026-09-06.md). LIVE
+# MEANS EXPRESSIBLE, NOT RELEASED: every one of the four is HELD under owner
+# ruling **S5** (Stage A-POLICY, SCN-DESK r#6 am.1) until the capx CCS
+# emission-rate seam is repaired and a paired check confirms `emission_rate`
+# follows the retrofit; nobody solves them until the desk releases A-POLICY,
+# and SCN-WS3c's ERCOT probe is issued separately. **`CES-T80` IS NO LONGER
 # COMMENTED** — SCN-WS2a landed its two fields and S3 committed its level, so
 # SCN-LEVELS made it live 2026-09-06. That is a case going live because its
 # blockers cleared, not a level moving: the numbers are the ones SCN-WS2a
@@ -184,29 +191,41 @@ cases:
     federal_ces_acp_usd_per_mwh: 50.0
 
   # ── Voluntary clean demand → curtailment, entry, CO2 ──────────────────────
-  # BLOCKED on a missing field ONLY — the admissibility question is settled.
+  # LIVE as of SCN-WS3b (2026-09-06) — and HELD under owner ruling S5 (Stage
+  # A-POLICY): expressible here, solved by nobody until the desk releases
+  # A-POLICY after the capx CCS emission-rate seam repair.
   # **Owner card D-3 is RULED YES — S1 (2026-09-06)**: a voluntary clean-demand
   # scenario axis is admissible as a declared, forecast-only, publicly-anchored,
   # default-off axis (ffr-5b §1.4 is held to be about a *fitted driver*, a
-  # different admissibility class). The former "if D-3 rules NO these cases are
-  # struck" clause is spent and is gone. **D-3b rode it: in-LP hourly (24/7)
+  # different admissibility class). **D-3b rode it: in-LP hourly (24/7)
   # matching stays DEFERRED** to the isolated `scope2-lce-portfolio` tool, so
-  # WS-3b builds the annual volumetric row only.
-  # `voluntary_clean_demand_path` still does not exist in ScenarioConfig at
-  # this commit; SCN-WS3b (issued r#5 am.1 on S1) lands it. Uncomment then.
+  # the field builds the annual volumetric row only.
+  #
+  # WHAT THE FIELD DOES (policy/voluntary_demand.py; memo §2.1/§3.1): ONE annual
+  # volumetric clean-attribute row per ISO-year on the clean-tier family with an
+  # ALL-ZONE mask, RHS V = s_base·w_ISO·E_nonDC + f_commit·E_DC read from the
+  # run's own demand after the load layers (the DC half rides the shipped
+  # `datacenter_load_path: mid` block, so VOL-* moves the attribute demand only
+  # and the pairing with REF is clean), and an escape priced at the buyer's
+  # WTP ceiling. Its dual is the voluntary attribute price and reaches the
+  # screens through the existing max() seam. `off` (REF) builds no row.
   #
   # THE SUB-LEVELS ARE ONLY PARTLY COMMITTED (header note 2). S3 commits "the
-  # WS-3a memo box-5 defaults", and box 5's own recommendation is: `s_base`
-  # mid = the latest NREL national share held flat with low/high = that
-  # report's historical range; `f_commit` low 0 / high 1.0; WTP from the
-  # public REC range. But box 5 leaves TWO cells **owner-set** — `f_commit`
-  # mid and the WTP-ceiling LEVEL — so those are NOT committed by S3 and are
-  # not filled in here. SCN-WS3b builds the `constants.py` table against the
-  # box-5 recommendation and must flag both as unset, exactly as it flags
-  # **D-3c** (the eligible set — renewable-only default vs carbon-free
-  # override; memo box 3), which is STILL OPEN.
-  #   VOL-MID: {voluntary_clean_demand_path: mid}
-  #   VOL-HI:  {voluntary_clean_demand_path: high}
+  # WS-3a memo box-5 defaults", built into constants.VOLUNTARY_*: `s_base` mid
+  # = the latest NREL national share (2023: 0.08) held flat, low/high = the
+  # series' own range (0.06 / 0.08 — the ceiling IS the latest value, so `high`
+  # coincides with `mid` on this cell); `f_commit` low 0 / high 1.0; WTP low 2
+  # / high 7 $/MWh, the endpoints of the cited public REC range. TWO cells stay
+  # **owner-set and LABELLED ILLUSTRATIVE** — `f_commit` MID (0.5 placeholder)
+  # and the WTP-ceiling MID level (4.5 placeholder) — so VOL-MID carries two
+  # illustrative cells and VOL-HI none; both are re-presented in
+  # FINDING-scn-ws3b-2026-09-06.md §4. **D-3c** (the eligible set) is STILL
+  # OPEN: both cases run the memo §4.1 RECOMMENDATION (wind, solar, offshore
+  # wind, geothermal — never nuclear/CCS by default).
+  VOL-MID:
+    voluntary_clean_demand_path: mid
+  VOL-HI:
+    voluntary_clean_demand_path: high
 
   # ── Load growth → adequacy, backstop, CO2 per MWh ─────────────────────────
   # Both axes are live fields. G-L3 (plan §8) is the reason there are TWO high
@@ -303,35 +322,44 @@ cases:
     datacenter_load_path: high
 
   # ── Attribute double-claim test (owner card D-6) ──────────────────────────
-  # BLOCKED on `voluntary_clean_demand_path`; same single gate as VOL-* above
-  # (S1 settled admissibility; only the field is missing).
+  # LIVE as of SCN-WS3b (2026-09-06); HELD under S5 with every VOL-* case.
   # **D-6 IS STILL UNRULED** — S3 did not reach it. The standing recommendation
-  # is "counts toward" (one MWh, one claim — how RECs retire today) with BOTH
-  # readings reported; the WS-3a memo §4.3 is its brief and Addendum A.2 is a
-  # dissent the owner should weigh beside it. Until D-6 is ruled this case
-  # reports both nettings and asserts neither as the answer.
-  #   CES-P20+VOL-HI:
-  #     federal_ces_enabled: true
-  #     federal_ces_premium_usd_per_mwh: 20.0
-  #     voluntary_clean_demand_path: high
+  # is "counts toward" with BOTH readings reported; the WS-3a memo §4.3 is its
+  # brief and Addendum A.2 is a dissent the owner should weigh beside it. NO
+  # NETTING LOGIC IS BUILT: under the CES *premium* (this case) there is no
+  # federal row to net against — the premium is a price, and the screens'
+  # max() already answers the price question (memo §4.3) — so this case is
+  # the price composition of two attribute buyers, one certificate sold to the
+  # higher; the dispatch-RHS netting question has content only against the
+  # CES *target* row (ALL-CLEAN below), where both nettings are reported at the
+  # REPORT layer (FINDING-scn-ws3b-2026-09-06.md §5 names the hook). Until D-6
+  # is ruled the campaign asserts neither reading as the answer.
+  CES-P20+VOL-HI:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 20.0
+    voluntary_clean_demand_path: high
 
   # ── The coherent policy corner under high load ────────────────────────────
-  # BLOCKED ON ONE FIELD NOW, not two: SCN-WS2a landed the CES target pair, so
-  # the only missing field left is `voluntary_clean_demand_path` (SCN-WS3b).
-  # Every level below is committed except the carbon half, which inherits the
-  # interim delta form (see the carbon block) and the two box-5 voluntary
-  # cells the ruling left owner-set. Uncomment when SCN-WS3b merges — and add
-  # `federal_ces_acp_usd_per_mwh: 50.0`, which the target row REQUIRES (> 0)
-  # and refuses without; the §3.5 row's ACP was implicit and is written out
-  # here so uncommenting cannot fail at load.
-  #   ALL-CLEAN:
-  #     carbon_price_delta: 25.0
-  #     federal_ces_enabled: true
-  #     federal_ces_target_by_year: {2026: 0.55, 2035: 0.80, 2050: 1.00}
-  #     federal_ces_acp_usd_per_mwh: 50.0
-  #     voluntary_clean_demand_path: high
-  #     demand_growth_path: high
-  #     datacenter_load_path: high
+  # LIVE as of SCN-WS3b (2026-09-06) — its last missing field landed; HELD
+  # under S5 (it carries every CES case and every VOL-* case at once). Every
+  # level below is committed except the carbon half, which inherits the
+  # interim delta form (see the carbon block). `federal_ces_acp_usd_per_mwh:
+  # 50.0` is written out because the target row REQUIRES it (> 0). The
+  # voluntary half is VOL-HI's (no illustrative cell); its DC half rides the
+  # `datacenter_load_path: high` block here, so V rises with the load case by
+  # construction (memo §3.4). This is the ONE case where owner card D-6 has
+  # dispatch content — a federal TARGET row and the voluntary row both count a
+  # clean MWh — and it is built as two INDEPENDENT rows (counts-toward, the
+  # FFR-6B §6.4 doctrine, zero code); the "additional" reading is reported
+  # beside it at the report layer, never asserted (D-6 OPEN).
+  ALL-CLEAN:
+    carbon_price_delta: 25.0
+    federal_ces_enabled: true
+    federal_ces_target_by_year: {2026: 0.55, 2035: 0.80, 2050: 1.00}
+    federal_ces_acp_usd_per_mwh: 50.0
+    voluntary_clean_demand_path: high
+    demand_growth_path: high
+    datacenter_load_path: high
 
 # The two corners of configs/scenario_matrix.yaml (CORNER-HI-EMIT /
 # CORNER-LO-EMIT) remain the envelope reference and are NOT re-solved here

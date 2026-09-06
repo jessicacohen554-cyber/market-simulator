@@ -256,9 +256,16 @@
         .sort((a, b) => String(a.id).localeCompare(String(b.id)));  // oldest first: newest overwrites
       for (const r of runs) {
         const linked = r.holdout?.keeper === st.runId;
+        // A stamp naming a run that is NO LONGER in the manifest is DANGLING,
+        // not a link to someone else: keeper-only retention (rule 15) prunes a
+        // superseded keeper, and its touchpoints keep the pruned id. Treating
+        // that as "linked to a different keeper" is what silently drops an
+        // ISO's held-out years off the report the moment its keeper is
+        // promoted, so a dangling stamp reads exactly like an unstamped run.
+        const dangling = !!r.holdout?.keeper && !stampResolves(r.holdout.keeper);
         for (const y of (r.years || []).map(Number)) {
           if (!Number.isFinite(y) || own.has(y) || yearTier(y) === 'train') continue;
-          if (!linked && r.holdout?.keeper) continue;  // linked to a DIFFERENT keeper
+          if (!linked && r.holdout?.keeper && !dangling) continue;  // a DIFFERENT keeper's touchpoint
           out[y] = { runId: r.id, tier: r.holdout?.tier || yearTier(y), definition: r.definition || '', linked };
         }
       }
@@ -275,10 +282,20 @@
        Touchpoints panel. Deep links still resolve: selectRun redirects a folded
        id to its keeper and preselects the touchpoint's year, so no URL breaks.
        Returns the keeper id to fold into, or null when the run stands alone. */
+    function stampResolves(id) { return (window.BC.manifest || []).some(m => m.id === id); }
+
     function foldTargetOf(r) {
       const k = r?.holdout?.keeper;
       if (!k || k === r.id) return null;
-      return (window.BC.manifest || []).some(m => m.id === k) ? k : null;
+      if (stampResolves(k)) return k;
+      // DANGLING STAMP — the named keeper has been pruned (rule 15 keeper-only
+      // retention). Fold into the ISO's CURRENT designated keeper instead of
+      // falling back to a second card for the same configuration, which is the
+      // defect rule 30 [R-TOUCHPOINT-FOLD] names. Symmetric with
+      // holdoutCompanions' own dangling branch, so the run the list hides is
+      // exactly the run whose years the keeper offers.
+      const cur = keeperFor(r.iso);
+      return cur && cur !== r.id ? cur : null;
     }
 
     function holdoutYears() { return Object.keys(st.holdoutRuns).map(Number).sort((a, b) => a - b); }
@@ -1094,12 +1111,27 @@
       $('#ctlZones').style.display = (charts || st.view === 'tables') ? '' : 'none';
     }
 
+    /* The page sub-header carries the RUN IDENTITY — id, date, keeper pill —
+       and nothing else. It replaces the deleted run-definition panel: which run
+       you are reading is navigation, not narrative, so it belongs in the header
+       above every view rather than in a paragraph on top of the scores. */
+    function setPageSub() {
+      const sub = $('#pageSub');
+      if (!sub) return;
+      const reg = st.runMeta || {};
+      const keeperPill = isKeeperRun()
+        ? ` <span class="keeper-badge" title="Designated keeper for ${esc(st.iso)}">Keeper &middot; ${esc(st.iso)}</span>` : '';
+      sub.innerHTML = `<span class="run-id-link">${esc(st.runId || '')}</span>`
+        + (reg.date ? ` &middot; ${esc(reg.date)}` : '') + keeperPill;
+    }
+
     /* ================================================================
        MAIN RENDER DISPATCHER
        ================================================================ */
     function render() {
       const content = $('#content');
       if (!st.runData) { content.innerHTML = ''; return; }
+      setPageSub();
       switch (st.view) {
         case 'report': renderReport(content); break;
         case 'charts': renderCharts(content); break;
@@ -1110,45 +1142,6 @@
     /* ================================================================
        REPORT VIEW — all years at once
        ================================================================ */
-    /* Fill #ablationDelta with the keeper-vs-twin per-class gmModel delta
-       (TWh, summed over the run's years). Async — loads the twin payload.
-       Degrades quietly if the twin is absent or fails to load. */
-    async function populateAblationDelta(years) {
-      const box = document.getElementById('ablationDelta');
-      if (!box) return;
-      const twinId = box.dataset.twin;
-      if (!twinId) return;
-      box.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted)">Loading ablation twin…</p>';
-      let twin;
-      try {
-        twin = await loadRun(twinId);
-      } catch (e) {
-        box.innerHTML = `<p style="font-size:0.8rem;color:var(--text-muted)">Ablation twin ${esc(twinId)} not loadable.</p>`;
-        return;
-      }
-      const tYears = twin.years || twin;
-      const delta = {};  // class -> TWh (keeper - twin)
-      for (const yr of years) {
-        const km = (st.runData?.years?.[yr] || st.runData?.[yr] || {}).gmModel || {};
-        const tm = (tYears?.[yr] || tYears?.[String(yr)] || {}).gmModel || {};
-        const classes = new Set([...Object.keys(km), ...Object.keys(tm)]);
-        classes.forEach(c => { delta[c] = (delta[c] || 0) + ((km[c] || 0) - (tm[c] || 0)); });
-      }
-      const rows = Object.entries(delta)
-        .filter(([, v]) => Math.abs(v) >= 0.05)
-        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
-      if (!rows.length) {
-        box.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted)">No material class delta — the floors move &lt;0.05 TWh.</p>';
-        return;
-      }
-      box.innerHTML = `<table class="bc-table" style="margin-top:8px;font-size:0.8rem;">
-        <thead><tr><th>Class</th><th style="text-align:right">Keeper − twin (TWh, all years)</th></tr></thead>
-        <tbody>${rows.map(([c, v]) =>
-          `<tr><td>${esc(c)}</td><td style="text-align:right">${v >= 0 ? '+' : ''}${v.toFixed(2)}</td></tr>`
-        ).join('')}</tbody></table>
-        <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">Positive = the keeper's floors add that class's generation vs the floor-free twin. Each material delta needs a market story above.</p>`;
-    }
-
     function renderReport(el) {
       const meta = META();
       // EVERY year this page can show — the run's own solve years AND the
@@ -1172,64 +1165,31 @@
       const reg = st.runMeta || {};
       let html = '';
 
-      // Run definition
-      if (reg.definition) {
-        const keeperPill = isKeeperRun()
-          ? ` <span class="keeper-badge" title="Designated keeper for ${esc(st.iso)}">Keeper &middot; ${esc(st.iso)}</span>` : '';
-        html += `<div class="bc-panel">
-          <h2>Run Definition${keeperPill}</h2>
-          <p class="bc-narration"><span class="ndef">${esc(reg.definition)}</span></p>
-          <p style="margin-top:8px;font-size:0.72rem;color:var(--text-muted)">
-            ID: <span class="run-id-link">${esc(st.runId)}</span>
-            ${reg.date ? ` &middot; ${esc(reg.date)}` : ''}
-          </p>
-        </div>`;
-      }
-
-      // RULE 22's TIER CAVEAT — the one thing that survives the 2026-09-06
-      // de-designation, and the reason it is a footnote rather than a panel.
-      // Held-out years are now ordinary year columns everywhere above and
-      // below, but the single most misusable number on this dashboard is still
-      // a validation result quoted as a certified out-of-sample skill number,
-      // and rule 22 requires that reading to stay attached to it. One line,
-      // named years, no badge and no per-year label. Only rendered when this
-      // run actually carries folded held-out years.
-      const heldYears = holdoutYears();
-      if (heldYears.length) {
-        const tiers = new Set(heldYears.map(y => st.holdoutRuns[y]?.tier || yearTier(y)));
-        const locked = tiers.has('locked_test');
-        html += `<div class="bc-panel">
-          <p style="margin:0;font-size:0.74rem;color:var(--text-muted);line-height:1.6">
-            <strong>Rule 22 — held-out years in this report:</strong> ${esc(heldYears.join(', '))}.
-            Solved on this keeper's frozen recipe, never tuned against.
-            ${locked
-              ? 'Locked-test tier: TOUCH-ONCE — scored exactly once and recorded whatever it is; no calibration change may respond to it.'
-              : 'Validation tier: ITERABLE model-SELECTION evidence — NOT a certified out-of-sample skill number, and never to be quoted as one.'}
-            The ISO’s calibration determination is the training-window (2023–2025) verdict and a held-out year never moves it (rule 30(c)).
-          </p>
-        </div>`;
-      }
-
-      // Zero-forcing ablation twin (CLAUDE.md rule 20 / audit D-3): the market
-      // story + keeper-vs-twin per-class delta. Rendered when the sidecar links
-      // a twin and/or carries a market_story; the per-class delta table is
-      // filled asynchronously by populateAblationDelta() after innerHTML is set.
-      if (reg.ablation_twin || reg.market_story) {
-        const twinLink = reg.ablation_twin
-          ? `<a class="run-id-link" href="#iso=${encodeURIComponent(st.iso)}&run=${encodeURIComponent(reg.ablation_twin)}">${esc(reg.ablation_twin)}</a>`
-          : '<em>not yet registered</em>';
-        html += `<div class="bc-panel">
-          <h2>Zero-forcing ablation twin</h2>
-          <p class="panel-sub">Reference solve with every merchant floor/bridge OFF (keeping only nuclear must-run, CHP steam-following, coal take-or-pay). The per-class delta is what the floors buy — a delta with no market story is an open root-cause item, not a calibrated floor.</p>
-          <p style="font-size:0.8rem;">Twin: ${twinLink}</p>
-          ${reg.market_story ? `<p class="bc-narration"><strong>Market story:</strong> <span class="ndef">${esc(reg.market_story)}</span></p>` : '<p style="font-size:0.8rem;color:var(--text-muted)">No market story recorded yet.</p>'}
-          <div id="ablationDelta" data-twin="${reg.ablation_twin ? esc(reg.ablation_twin) : ''}"></div>
-        </div>`;
-      }
+      // NO NARRATIVE PANELS. The Report is SCORES AND CHARTS ONLY — owner
+      // instruction 2026-09-06, verbatim: "I do not need narrative from you in
+      // my results viewing ANYWHERE I just want the scores and charts."
+      //
+      // DELETED here, not hidden (rule 26 [R-DELETE] — a dead render path is a
+      // re-armable answer): (a) the RUN DEFINITION panel, whose registry prose
+      // had become a per-year determination essay ("2023 = the CARVE-OUT
+      // config ... every criterion PASS ... DETERMINATION CALIBRATED") — the
+      // per-year determination the instruction names; (b) the rule-22 held-out
+      // tier footnote; (c) the ZERO-FORCING ABLATION TWIN panel and its market
+      // story, whose twin rule 20 [R-DOF] stopped requiring on 2026-07-14 and
+      // which no registered run carries; (d) the auto-generated DIAGNOSTICS
+      // findings prose. DO NOT "restore" any of them as a regression fix.
+      //
+      // Nothing scored moves: no verdict, grade, caveat budget or determination
+      // is computed in the browser, and every deleted block was display prose
+      // over data that still lives in the committed sidecar (the definition and
+      // holdout blocks) or in scripts/calibration_verdict.py (the verdicts).
+      // The rule-22 tier reading and the per-year determinations both remain on
+      // the Calibration Status page's year table, which rule 30(b) requires and
+      // this does not touch — the run identity moves to the page header below.
 
       // Year scorecards
       html += `<div class="bc-panel"><h2>Year Scorecards</h2>
-        <p class="panel-sub">Class tolerance (C1 gate: gas+coal classes minus CT_CHP/OTHER, completeness-gated — the same stats the Calibration Status page scores), dispatch correlation, and LMP fidelity per year</p>
+        <p class="panel-sub">C1 class tolerance &middot; fleet hourly r &middot; LMP vs actual, per year</p>
         <div class="year-grid">`;
 
       for (const yr of years) {
@@ -1279,7 +1239,7 @@
       const deltaYears = years.filter(yr => RUN(yr).lmpDeltaHr);
       if (deltaYears.length) {
         html += `<div class="bc-panel"><h2>LMP Delta Heatmap</h2>
-          <p class="panel-sub">Model minus actual LMP for every hour of the year, as a <b>% of that year's mean actual price</b> (the denominator is printed under each map; $/MWh only where no actual price is committed) — <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = model over</span> (runs hot), <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = model under</span> (runs cold), white ≈ on top. Day-of-year across, hour-of-day down; color capped at the 98th percentile of |Δ| per year.</p>
+          <p class="panel-sub">Model &minus; actual LMP per hour, as % of the year's mean actual price &middot; <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = over</span>, <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = under</span> &middot; day across, hour down</p>
           <div class="lmp-grid" id="deltaHeatGrid">`;
         for (const yr of deltaYears) {
           html += `<div class="year-card"><div class="svg-box" data-deltayr="${yr}"></div></div>`;
@@ -1287,32 +1247,7 @@
         html += `</div></div>`;
       }
 
-      // Diagnostic findings
-      const findings = diagFindings(years);
-      if (findings.length) {
-        html += `<div class="bc-panel"><h2>Diagnostics</h2>
-          <p class="panel-sub">Auto-generated findings — pointers for where to look, not verdicts</p>`;
-        let lastCat = '';
-        for (const f of findings) {
-          if (f.cat !== lastCat) {
-            lastCat = f.cat;
-            html += `<div class="finding-cat">${f.cat === 'vol' ? 'Volume' : f.cat === 'shape' ? 'Dispatch Shape' : 'LMP'}</div>`;
-          }
-          html += `<div class="finding">
-            <div class="sev-dot sev-${f.sev}"></div>
-            <div><span style="font-weight:700">${esc(f.title)}</span>
-              <span style="display:inline-block;font-size:0.72rem;font-weight:600;color:var(--text-muted);background:var(--bg-muted);border-radius:4px;padding:1px 7px;margin-left:7px">${esc(f.tag)}</span>
-              <div style="font-size:0.82rem;margin-top:4px;line-height:1.55">${esc(f.txt)}</div>
-            </div>
-          </div>`;
-        }
-        html += `</div>`;
-      }
-
       el.innerHTML = html;
-
-      // Fill the keeper-vs-ablation per-class delta (async: loads the twin run).
-      populateAblationDelta(years);
 
       // Mount LMP line charts
       mountLmpCharts(years);
@@ -1476,76 +1411,6 @@
 
         box.appendChild(svg);
       });
-    }
-
-    /* ================================================================
-       DIAGNOSTIC FINDINGS
-       ================================================================ */
-    function diagFindings(years) {
-      const out = [];
-
-      // Volume findings
-      for (const g of allClasses()) {
-        const errsByY = years.map(yr => ({ yr, e: anyErr(yr, g) })).filter(x => x.e);
-        const failing = errsByY.filter(x => clsTol(x.e) !== 'good');
-        if (!failing.length) continue;
-        const worst = failing.reduce((a, b) => Math.abs(b.e.err) > Math.abs(a.e.err) ? b : a);
-        const sev = clsTol(worst.e);
-        const dir = worst.e.err >= 0 ? 'over' : 'under';
-        const yrs = failing.map(x => x.yr).join(', ');
-        let txt = `${dir === 'over' ? 'Over' : 'Under'}-generates by ${fmtPctSigned(worst.e.err)} (${fmtTWh(worst.e.mFull - worst.e.bench923)}) in ${worst.yr}`;
-        if (failing.length > 1) txt += `; out of tolerance in ${yrs}`;
-        txt += '.';
-        if (!shareInTol(worst.e, 1) && worst.e.sharePP != null)
-          txt += ` Share of total gen off by ${worst.e.sharePP >= 0 ? '+' : ''}${worst.e.sharePP.toFixed(1)}pp.`;
-        if (!failing.some(x => classIsGated(x.yr, g)))
-          txt += ' Report-only: this class does not gate the C1 fuel-mix test (excluded class, advisory non-fossil, or completeness-skipped vintage).';
-        out.push({ cat: 'vol', sev, title: classLabel(g), tag: yrs, txt, score: Math.abs(worst.e.err) });
-      }
-
-      // Shape findings
-      for (const g of (META().groups || [])) {
-        const ms = years.map(yr => ({ yr, m: classMetrics(yr, g) })).filter(x => x.m && x.m.cA > 0);
-        const weak = ms.filter(x => x.m.r < R_GOOD);
-        if (!weak.length) continue;
-        const worst = weak.reduce((a, b) => b.m.r < a.m.r ? b : a);
-        const sev = worst.m.r >= R_OK ? 'ok' : 'bad';
-        let txt = `Hourly r ${worst.m.r.toFixed(2)} vs CAMPD in ${worst.yr}`;
-        if (weak.length > 1) txt += ` (weak in ${weak.map(x => x.yr).join(', ')})`;
-        txt += '.';
-        out.push({ cat: 'shape', sev, title: classLabel(g), tag: weak.map(x => x.yr).join(', '), txt, score: 1 - worst.m.r });
-      }
-
-      // LMP findings
-      for (const yr of years) {
-        const mm = avgLMPMon(yr);
-        if (!mm) continue;
-        const aL = actualLMP(yr) || {};
-        // RT-first monthly actual, matching the annual gating basis below.
-        const am = aL.rt_lw_mon || aL.da_lw_mon || aL.rt_mon || aL.da_mon;
-        if (!am) continue;
-        const lab = (aL.rt_lw_mon || aL.rt_mon) ? 'RT' : 'DA';
-        const ms = avgLMPMonScar(yr);
-        const dvals = ms || mm;
-        const errs = MONTHS.map((_, i) => (dvals[i] != null && am[i]) ? dvals[i] - am[i] : null);
-        const worst = errs.reduce((a, v, i) => (v != null && (a == null || Math.abs(v) > Math.abs(errs[a]))) ? i : a, null);
-        if (worst == null) continue;
-        const ann = avgLMPScar(yr) ?? avgLMP(yr);
-        const aG = actualLMPGated(yr);
-        const aP = aG ? aG.val : null;
-        const annD = (ann != null && aP) ? 100 * (ann - aP) / aP : null;
-        if (annD != null && Math.abs(annD) > 10) {
-          const sev = Math.abs(annD) > 20 ? 'bad' : 'ok';
-          let txt = `Annual ${ms ? 'model+ORDC' : 'model'} LMP ${ann != null ? '$' + ann.toFixed(1) : '?'} vs actual ${aG.basis} $${aP.toFixed(1)} (${fmtPctSigned(annD)}).`;
-          txt += ` Worst month: ${MONTHS[worst]} ($${errs[worst].toFixed(1)} ${ms ? 'overlay' : 'model'} error).`;
-          out.push({ cat: 'lmp', sev, title: `LMP ${yr}`, tag: String(yr), txt, score: Math.abs(annD) });
-        }
-      }
-
-      // Sort: bad first, then by score descending
-      const sevOrd = { bad: 0, ok: 1, good: 2 };
-      out.sort((a, b) => (sevOrd[a.sev] ?? 2) - (sevOrd[b.sev] ?? 2) || b.score - a.score);
-      return out;
     }
 
     /* ================================================================

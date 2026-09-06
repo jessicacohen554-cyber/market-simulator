@@ -1,5 +1,60 @@
 # Changelog
 
+## 2026-09-06 — wallclock B: the cold-rebuilt P1 seeded from the same year's P0 basis (WARM-START CLASS; calibration default ON)
+
+Wallclock desk item B (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3). Owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
+instruction. Wall-clock only: **the LP, its objective, bounds and rows are untouched**; the
+change is **WARM-START CLASS, not byte-identical** — it moves the simplex starting point of the
+cold-rebuilt P1 on the three bridge ISOs (ERCOT / NYISO gas commitment bridges, CAISO RA
+must-offer) and nothing else. No `ScenarioConfig` field or default, no keeper shard / marker /
+matrix shard / registry / workflow edit, nothing promoted, nothing registered; the probe
+bundles were deleted.
+
+- **The change.** `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 model's basis
+  is exported (the export the cross-year holder already took there) before `model = None`
+  and installed on the second `DispatchModel` through
+  `apply_cross_year_basis` (identity column map, `alien=True`) before its first solve. An
+  adaptive re-solve pass (C-1b `reuse_p0_from`) is seeded from the previous pass's P1 basis
+  when that pass exported one (new `export_p1_basis` kwarg → `EnergySolveResult.p1_basis`; set
+  by the ercot-221 pass 1 and every ercot-230 iteration), else from the P0 basis.
+- **Gate — the P-2 shape.** `MARKET_SIM_P1_BASIS_SEED`, global default OFF; the calibration
+  CLIs default it ON through `run_calibration.resolve_p1_basis_seed_default`
+  (`--no-p1-basis-seed` opts out, an explicit env var is honored). Armed only inside the
+  cross-year gate and only on the backcast callers, so `MARKET_SIM_WARMSTART_XYEAR=0` (the
+  goldens / replay / merge-base-control pin) and the forecast path (explicit `xyear_warmstart`
+  bool) stay cold and byte-identical; `--report` / `--replay-bundle` / `--rebuild-benchmark`
+  and the direct `solve_and_persist` callers stay OFF.
+- **A latent crash on main, fixed here.** The cold-P1 branch exported the cross-year basis
+  from `model` guarded on the gate but not on the model's existence; a reused-P0 pass (C-1b)
+  has none, so under the calibration default `XYEAR=1` every ERCOT adaptive pass 2 raised
+  `AttributeError` at that export (reproduced at the merge base on the trivial LP; the s3
+  measurements ran under the `XYEAR=0` pin and never saw it). Pinned by test with the seed off
+  and on.
+- **Tooling.** `capture_keeper_goldens.py`'s fidelity oracle no longer fails on the `years`
+  key: since R-AW / Y-14 the bare `ERCOT` key replays the forward config on its designated
+  2024–2025 span while the composed keeper's `meta.json` records 2023–2025, so every post-Y-14
+  ERCOT capture was refused on that key alone (the subset invariant is asserted at the solve
+  site). The HiGHS solve log line now carries `simplex iterations N, objective X` (reads after
+  `h.run()`; byte-inert).
+- **Gates.** (1) Byte-identity with the seed OFF, merge-base control `34f3ce35` vs branch under
+  the determinism pin: `regression_gate.py --mode byte` check [1] **PASS** — ERCOT 2024–2025
+  (7 files, 28 numeric columns, atol=rtol=0) and NEISO 2023 (5 files, 20 columns); zero
+  reshuffle; smoke PASS; `audit_keepers` PASS; `legitimacy` red by control (and green once
+  `data/clean/capacity-deliverability` is regenerated — a fresh-container artifact, recorded).
+  (2) Seed ON vs OFF through `diff_warmstart_bundles.py` + `hourly/system`: objective and total
+  generation identical on every arm; per-unit differences marginal-tie only with the LMP
+  identical at every moved unit-hour; price differences confined to dual-degenerate hours —
+  none on ERCOT/NYISO, and on CAISO only on the zero-load import nodes (CA zones bit-identical).
+  **P1: ERCOT 2025 349.2 → 142.0 s (273,893 → 78,856 iters); ERCOT 2024 two-pass 628.1 → 225.1 s
+  (pass 2 seeded from pass 1's P1 basis: 332.9 → 92.8 s); NYISO 2023 96.4 → 67.6 s; CAISO 2023
+  354.5 → 123.1 s.** Peak RSS +0.6 GB on ERCOT (13.27 GB, inside the s3 envelope). (3) Fast tier:
+  12 failures, 9 pre-existing by control and 3 order-sensitive passes in isolation, none in a
+  touched file; `test_xyear_warmstart_default.py` 10 → 23. Full record: baseline doc §WALLCLOCK B.
+- Docs: `docs/cross-year-warmstart.md` "Same-year P1 basis seed"; the evidence record
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B; the memo's decision block;
+  `tests/unit/pipeline/test_xyear_warmstart_default.py` +13 tests.
+
 ## 2026-09-06 — wallclock A-4: the year-1 `data_prep` premium re-profiled after A-1/A-2; one site memoized on disk (byte-identical)
 
 Wallclock desk item A-4 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2). Wall-clock
@@ -206,6 +261,45 @@ projection, then UNT23). openpyxl's read-only parser is ~10 µs/cell; the three 
   drift audit since the gated base, and the not-widened follow-up (`data/egrid.py`, a
   fourth read of the same workbook family, deliberately left alone as out of scope):
   `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-2.
+## 2026-09-06 — wallclock A-6: `malloc_trim` at the cold-P1 seam is MEASURED-NEGATIVE; the seam's RSS step is live payload, not allocator retention
+
+Docs + the AFTER golden manifest. **No file under `src/` changes in this entry.**
+Nothing promoted, registered, or dashboard-touched; no `ScenarioConfig` field, keeper
+shard, marker or matrix cell. This is the evidence half of wallclock A-6: the code
+(`pipeline/solve.py` +12, new `utils/heap.py`) merged ahead of it via PR #4893 /
+commit `c2cb9a78`, with only the BEFORE arm's manifest (desk log §2.8, "evidence
+owed"). **The measurement says the trim does not earn its place; removing it is
+recommended, and is the owner's call** — it is byte-identical either way, so leaving
+it carries no correctness risk.
+
+- **The test.** `malloc_trim(0)` immediately after `model = None` on the cold-P1 route
+  in `pipeline/solve.py::run_energy_solve`, on the hypothesis
+  (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6) that the 12.1–13.4 GB ERCOT year
+  peak is the P1-rebuild moment and glibc is holding the freed P0 arena. Both arms are
+  `capture_keeper_goldens.py --iso ERCOT__carveout-2023` (registered 2023–2025) on merge
+  base `2886235c`, `MARKET_SIM_MEM_DEBUG=1`, determinism pin, 6 GiB swap armed.
+- **The result.** Process peak VmHWM **13.28 → 13.27 GB** — the target (get under the
+  14 GB cgroup by trimming) is unmet. Seam recovery 0.05–0.23 GB; `p1_post` +0.3 / +0.5
+  / +0.1 s, inside this box's noise but the same sign in all three years.
+- **Why (the reusable part).** Each cold-P1 model's `after addRows` RSS sits ~1.15 GB
+  above the P0 model's on a byte-identical LP, but that step is **live** payload —
+  `r0` (`dispatch` + `emissions`), `markup`, `mc_bid`, and the floored
+  `p1_fleet_arrays` (`min_gen` + `availability`) — ≈1.0 GB of the 1.15 GB,
+  arithmetically. A trim frees only what is already free. The next lever on the ERCOT
+  peak is narrowing what stays alive across the seam, not allocator tuning; the
+  year-loop `_malloc_trim` in `run_calibration_full.py` is unaffected and still earns
+  its place.
+- **Byte gate.** `regression_gate.py --mode byte` check [1] **PASS** (9 files, 34
+  numeric columns, `atol=rtol=0`), 0.000 % reshuffle in all three years, manifests
+  10/10 identical. Overall `RESULT: FAIL` is checks [4] only — the NYISO Long Island
+  TSL gap and a stale `status/NEISO.js` — both reproduced identically on the merge-base
+  control, i.e. pre-existing on main.
+- **Instrument caveat.** The `ERCOT__carveout-2023` capture key was retired by owner
+  ruling R-AW (Y-14) while this ran; both arms used it on the merge base where it still
+  resolved, with the identical config, so the A/B is internally valid. A re-run at HEAD
+  must use `--iso ERCOT` (forward, {2024, 2025}).
+- Full row, the per-model RSS ladder and the corollary for the next session:
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-6.
 
 ## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
 

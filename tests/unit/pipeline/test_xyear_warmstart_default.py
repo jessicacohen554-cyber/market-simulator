@@ -8,14 +8,29 @@ consume the basis no matter what the env var says — that cold-only invariant i
 asserted here so a future edit can't silently wire the new default into the
 forecast trajectory (docs/cross-year-warmstart.md "Why the forecast path is not
 wired").
+
+The same-year P1 basis seed (``MARKET_SIM_P1_BASIS_SEED``, wallclock desk item
+B; owner memo ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`` §6) is
+the switch family's third member and is pinned here too: the sibling resolver's
+precedence, the seed firing only INSIDE the cross-year gate (so the
+goldens/replay pin ``MARKET_SIM_WARMSTART_XYEAR=0`` keeps it off), never on the
+forecast path (an explicit ``xyear_warmstart`` bool), the adaptive-pass leg
+(``export_p1_basis`` → ``reuse_p0_from.p1_basis``), the CLI flag on both
+calibration parsers, and the ``getattr``-tolerant contract on the capturing
+test double.
 """
 
 from __future__ import annotations
 
 import ast
+import os
 
+import numpy as np
 
-from scripts.run_calibration import resolve_xyear_warmstart_default
+from scripts.run_calibration import (
+    resolve_p1_basis_seed_default,
+    resolve_xyear_warmstart_default,
+)
 from tests.helpers import REPO_ROOT
 
 REPO = REPO_ROOT
@@ -174,4 +189,290 @@ class TestForecastStaysColdOnly:
 
         gens, fa, demand, mc_base, dk = _trivial_inputs()
         got = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), xyear_cache=None)
+        assert got.p1.status == "Optimal"
+
+
+class TestResolveP1BasisSeedDefault:
+    """Precedence: --no-p1-basis-seed > explicit env var > default ON."""
+
+    def test_default_on_when_unset(self, monkeypatch):
+        monkeypatch.delenv("MARKET_SIM_P1_BASIS_SEED", raising=False)
+        assert resolve_p1_basis_seed_default(disable=False) is True
+        assert os.environ["MARKET_SIM_P1_BASIS_SEED"] == "1"
+
+    def test_flag_forces_off_over_default(self, monkeypatch):
+        monkeypatch.delenv("MARKET_SIM_P1_BASIS_SEED", raising=False)
+        assert resolve_p1_basis_seed_default(disable=True) is False
+        assert os.environ["MARKET_SIM_P1_BASIS_SEED"] == "0"
+
+    def test_flag_forces_off_over_explicit_env_on(self, monkeypatch):
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        assert resolve_p1_basis_seed_default(disable=True) is False
+        assert os.environ["MARKET_SIM_P1_BASIS_SEED"] == "0"
+
+    def test_explicit_env_off_honored(self, monkeypatch):
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        assert resolve_p1_basis_seed_default(disable=False) is False
+
+    def test_explicit_env_on_honored(self, monkeypatch):
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        assert resolve_p1_basis_seed_default(disable=False) is True
+
+    def test_flag_present_on_both_calibration_parsers(self):
+        """Static guard: ``--no-p1-basis-seed`` is declared beside
+        ``--no-xyear-warmstart`` in BOTH calibration CLIs, and both resolve it
+        through the shared resolver on the fresh-solve path."""
+        for rel in ("scripts/run_calibration.py", "scripts/run_calibration_full.py"):
+            src = (REPO / rel).read_text()
+            assert '"--no-p1-basis-seed"' in src, rel
+            assert "resolve_p1_basis_seed_default(args.no_p1_basis_seed)" in src, rel
+
+
+def _cold_route_inputs():
+    """The trivial LP routed COLD at P1 (a floor hook replaces the fleet)."""
+    from tests.unit.pipeline.test_pipeline_solve import (
+        _Cfg,
+        _floor_hook,
+        _trivial_inputs,
+    )
+
+    gens, fa, demand, mc_base, dk = _trivial_inputs()
+    prep, _calls = _floor_hook(fa)
+    return gens, fa, demand, mc_base, dk, _Cfg(), prep
+
+
+def _isolate_basis_cache(monkeypatch, tmp_path):
+    """Point the persisted year-1 basis cache at a scratch dir (H2 cache)."""
+    from market_sim.pipeline import basis_cache
+
+    monkeypatch.setattr(basis_cache, "BASIS_CACHE_DIR", tmp_path / "basis-cache")
+
+
+class TestP1BasisSeedGate:
+    """The seed fires only inside the cross-year gate, on the backcast callers."""
+
+    def test_seed_applies_inside_the_gate_and_is_neutral(self, monkeypatch, tmp_path):
+        """XYEAR=1 + SEED=1 on a cold-P1 route: the second model is seeded, and
+        the P1 it clears is the unseeded P1 (unique optimum on the trivial LP)."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        off = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        cache: list = []
+        on = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+        )
+        assert off.p1_cold is True and off.p1_seeded is False
+        assert on.p1_cold is True and on.p1_seeded is True
+        # The holder still carries the P0 basis for the next year (unchanged
+        # cross-year contract); the seed reuses that export.
+        assert len(cache) == 1
+        # No P1 basis export unless asked for.
+        assert on.p1_basis is None
+        assert on.p1.status == "Optimal"
+        assert np.array_equal(on.mc_bid, off.mc_bid)
+        assert np.array_equal(on.p1.dispatch, off.p1.dispatch)
+        assert np.array_equal(on.p1.prices, off.p1.prices)
+        assert on.p1.objective_value == off.p1.objective_value
+
+    def test_seed_inert_under_the_goldens_pin(self, monkeypatch, tmp_path):
+        """MARKET_SIM_WARMSTART_XYEAR=0 (goldens/replay pin) → no seed, even
+        with the seed env var ON — one gate, no second knob."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "0")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        cache: list = []
+        got = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+        )
+        assert got.p1_cold is True
+        assert got.p1_seeded is False
+        assert got.p1_basis is None
+        # Under the pin the holder is never written either.
+        assert cache == []
+
+    def test_seed_inert_on_the_forecast_gate_argument(self, monkeypatch, tmp_path):
+        """An explicit ``xyear_warmstart`` bool (the forecast caller) keeps the
+        P1 cold even with the cross-year gate armed by that argument."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        for gate in (True, False):
+            got = run_energy_solve(
+                gens,
+                fa,
+                demand,
+                mc_base,
+                dk,
+                cfg,
+                xyear_cache=[],
+                xyear_warmstart=gate,
+                p1_fleet_prep=prep,
+            )
+            assert got.p1_cold is True
+            assert got.p1_seeded is False, gate
+
+    def test_seed_never_reaches_a_warm_p1(self, monkeypatch, tmp_path):
+        """No floor hook → P1 re-solves the live P0 model; nothing to seed."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        from market_sim.pipeline.solve import run_energy_solve
+        from tests.unit.pipeline.test_pipeline_solve import _Cfg, _trivial_inputs
+
+        gens, fa, demand, mc_base, dk = _trivial_inputs()
+        got = run_energy_solve(gens, fa, demand, mc_base, dk, _Cfg(), xyear_cache=[])
+        assert got.p1_cold is False and got.p1_seeded is False
+
+    def test_adaptive_pass_seeds_from_the_previous_p1_basis(
+        self, monkeypatch, tmp_path
+    ):
+        """C-1b route: pass 1 exports its P1 basis on request; the reused pass
+        is seeded (from it) and clears the identical P1. Without the export the
+        reused pass falls back to the P0 basis in the holder and is still
+        seeded. Also the regression pin for the shipped crash: a reused pass
+        under XYEAR=1 used to dereference ``None`` at the cross-year export."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        from market_sim.model.lp import CrossYearBasis
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        cache: list = []
+        first = run_energy_solve(
+            gens,
+            fa,
+            demand,
+            mc_base,
+            dk,
+            cfg,
+            xyear_cache=cache,
+            p1_fleet_prep=prep,
+            export_p1_basis=True,
+        )
+        assert first.p1_seeded is True
+        assert isinstance(first.p1_basis, CrossYearBasis)
+        second = run_energy_solve(
+            gens,
+            fa,
+            demand,
+            mc_base,
+            dk,
+            cfg,
+            xyear_cache=cache,
+            p1_fleet_prep=prep,
+            reuse_p0_from=first,
+        )
+        assert second.p0_reused is True and second.r0 is first.r0
+        assert second.p1_seeded is True
+        assert second.p1_basis is None  # not asked to export
+        assert np.array_equal(second.p1.dispatch, first.p1.dispatch)
+        assert np.array_equal(second.p1.prices, first.p1.prices)
+
+        # Fallback: a previous pass that did not export → seeded from the P0
+        # basis the previous cold route left in the holder.
+        plain = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+        )
+        assert plain.p1_basis is None
+        third = run_energy_solve(
+            gens,
+            fa,
+            demand,
+            mc_base,
+            dk,
+            cfg,
+            xyear_cache=cache,
+            p1_fleet_prep=prep,
+            reuse_p0_from=plain,
+        )
+        assert third.p0_reused is True and third.p1_seeded is True
+        assert np.array_equal(third.p1.dispatch, first.p1.dispatch)
+
+    def test_reused_pass_under_xyear_on_no_longer_crashes_with_seed_off(
+        self, monkeypatch, tmp_path
+    ):
+        """The shipped defect, seed OFF: XYEAR=1 + reuse_p0_from → the cold
+        branch guarded the export on the gate but not on the (absent) model."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        cache: list = []
+        first = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+        )
+        second = run_energy_solve(
+            gens,
+            fa,
+            demand,
+            mc_base,
+            dk,
+            cfg,
+            xyear_cache=cache,
+            p1_fleet_prep=prep,
+            reuse_p0_from=first,
+        )
+        assert second.p0_reused is True and second.p1_seeded is False
+        assert np.array_equal(second.p1.dispatch, first.p1.dispatch)
+
+    def test_seed_is_getattr_tolerant_on_a_solve_only_double(
+        self, monkeypatch, tmp_path
+    ):
+        """A ``DispatchModel`` double implementing ``solve`` alone (the
+        ``_CapturingDispatchModel`` contract) must not break the seeded cold
+        route: a missing export/apply degrades to an unseeded cold P1."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        from market_sim.model.dispatch import solve_dispatch
+        from market_sim.pipeline import solve as solve_mod
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+
+        class _SolveOnly:
+            def __init__(self, fleet_arrays, demand, **kwargs):
+                self._args = (fleet_arrays, demand, kwargs)
+
+            def solve(self, mc=None, **_):
+                fleet_arrays, demand, kwargs = self._args
+                return solve_dispatch(fleet_arrays, demand, mc=mc, **kwargs)
+
+        monkeypatch.setattr(solve_mod, "DispatchModel", _SolveOnly)
+        got = solve_mod.run_energy_solve(
+            gens,
+            fa,
+            demand,
+            mc_base,
+            dk,
+            cfg,
+            xyear_cache=[],
+            p1_fleet_prep=prep,
+            export_p1_basis=True,
+        )
+        assert got.p1_cold is True
+        assert got.p1_seeded is False
+        assert got.p1_basis is None
         assert got.p1.status == "Optimal"

@@ -501,12 +501,33 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       **DELETED, not hidden** (rule 26 `[R-DELETE]` — a dead render path is a re-armable answer),
       and the Report's year set is now `selectableYears()` rather than `runYears()`. **DO NOT
       "restore" the panel as a regression fix.** What is UNCHANGED: the fold itself, the stamp, the
-      deep-link redirect, and — the one designation that survives — **rule 22's tier caveat, as a
-      single footnote naming the held-out years**, because a validation number must still never read
-      as a certified out-of-sample skill number. Rule 30(c) is untouched and this changes no
+      deep-link redirect. Rule 30(c) is untouched and this changes no
       determination: it is presentation only, no scorer path was modified, and every keeper
       re-scores byte-identically. Executed by session neiso-103; genealogy:
-      `docs/governance/rule-history.md` §14.)*
+      `docs/governance/rule-history.md` §14.)* *(AMENDED AGAIN the SAME DAY, owner instruction,
+      verbatim: "Delete the stupid per year determination from the run explorer I do not need
+      narrative from you in my results viewing ANYWHERE I just want the scores and charts and make
+      it so every iso with holdout years run has them SHOW up in the report." **THE RUN EXPLORER'S
+      REPORT IS SCORES AND CHARTS ONLY.** The morning's amendment had kept ONE designation here —
+      rule 22's tier caveat as a footnote — and that footnote is now **DELETED too**, along with
+      every other prose panel in the results view: the **run-definition** panel (whose registry text
+      had itself become the per-year determination essay the instruction names — "2023 = the
+      CARVE-OUT config … DETERMINATION CALIBRATED"), the **zero-forcing ablation twin** panel and
+      its market story (a twin rule 20 `[R-DOF]` stopped requiring on 2026-07-14, carried by no
+      registered run), and the **auto-generated diagnostics** findings. Deleted, not hidden
+      (rule 26 `[R-DELETE]`), render path and all — **DO NOT "restore" any of them as a regression
+      fix.** The run's identity (id · date · keeper pill) moves to the page sub-header, where it
+      serves every view. **Rule 22's substance is UNCHANGED and now rests entirely on (b)'s
+      surface**: the Calibration Status page's per-year table carries the Tier column and the
+      "reported, not gating" line, so a validation number still never reads as a certified
+      out-of-sample skill number. Nothing scored moves — the browser computes no verdict, grade,
+      caveat budget or determination, and every deleted block was display prose over data that
+      still lives in the committed sidecar or in `scripts/calibration_verdict.py`. The instruction's
+      second half is a RESTATEMENT of the fold, not a new duty: the fold now also treats a
+      **dangling** `holdout.keeper` stamp — one naming a keeper since pruned under rule 15's
+      keeper-only retention — as unstamped, so a promotion can no longer silently drop an ISO's
+      held-out years off its report. Guard: `tests/scoring/test_holdout_render_parity.py`.
+      Genealogy: `docs/governance/rule-history.md` §15.)*
     - **(b) PUT IT ON THE CALIBRATION STATUS PAGE.** `scripts/build_status.py --iso <ISO>` derives
       the **holdout ladder** (one row per held-out year, scored per year) from the registry
       automatically — so the duty is to *rebuild and commit the status part*, never to hand-author

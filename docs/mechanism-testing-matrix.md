@@ -5653,6 +5653,58 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-224 (2026-09-06) — THE BODY IS A FUEL-CONVENTION OBJECT, SCREENED
+> ON 2023 AND KILLED AS A STANDALONE ARM; TWO COMPENSATED MECHANISMS EXPOSED.** Successor to
+> miso-223. Keeper UNCHANGED at `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Records
+> `PREREG`: `PRECOMMIT-miso224-gas-marginal-commodity-2026-09-06.md` (+ Addendum A);
+> `FINDING-miso224-gas-marginal-commodity-2026-09-06.md`; four zero-LP instruments
+> `_miso224_{floor_anatomy,marginal_frequency,offer_decomposition,static_remerit}_phase0.py`;
+> blind scorer `_miso224_screen_gates.py` → `_miso224_screen_gates.json`. ONE LP (2023).
+> Screen bundle `miso224_spotgas_S` DELETED before merge (rule 29c); never registered.
+> **PHASE 0.** (i) The body error is an ENERGY-price gradient: model − MEC (LMP − MCC − MLC)
+> +12.9 / +11.0 / … / +3.7 across MEC deciles d1–d9 (2023), annual +5.31 / +3.69 / +0.29 —
+> hub congestion lives in d10 only. (ii) Object (A), negative pricing via wind's −$26 offer,
+> REFUSED ON THE BOUND: MEC < $0 in **1 / 7 / 0** hours, < $10 in 53 / 157 / 34; reach
+> ≤ $0.27 of a +$6–13 body. The real market cleared **$10–20** in 1,765 / 2,959 / 681 hours —
+> below every thermal SRMC the model carries. (iii) Marginal FREQUENCY (the miso-223 lesson):
+> `econ` bands hold the margin **75–78 %** of body hours, `committed` 12–14 %, `mustrun` 0;
+> reconstruction residual p50 $0.01. (iv) The marginal offer decomposed: band-multiplier layer
+> **$0.1–1.1**; FUEL-CONVENTION layer (EIA-923 average print vs the TRADED Chicago hub)
+> **$4.68 / $3.44 / $3.25 = 74 / 74 / 101 %** of the body wedge. The CC fleet's print sits
+> +$0.5–1.3/MMBtu over the hub in most months, +$2.6 in Feb-2024. miso-156's comparator was
+> the EIA IL utility-citygate SURVEY ($1–2 above the hub), so its "+$0.09 in 2024" understated
+> the layer by an order of magnitude. (v) Static re-merit at spot: body −$6.72 predicted.
+> **THE ARM.** `miso_gas_marginal_commodity_pricing` (minted, default off, MISO-scoped, zero
+> scalars; row `gas_marginal_commodity_pricing`): every gas row at the measured daily hub for
+> its zone (Chicago Citygate daily / Henry Hub daily), superseding the print, the winter shape
+> overlay and the zonal increment (rule 19). The forecast path already prices gas this way.
+> **THE SCREEN (2023, footprint year).** S-2 PASS (mechanism line in the SOLVE log — the first
+> launch was killed with no LP because the calibration chain bypassed the resolver hook,
+> Addendum A). **G-1 PASS: body −$4.11** in [−10.08, −3.36]; annual LW −$4.16, tail −$6.83.
+> **KILLED on G-3** (coal leg −799 MW vs −876 needed, 0.27× vs a 0.30× line; gas +2,716 PASS)
+> **and G-4** (C1 flips: CC_REGULAR −4.17 → **+12.60**, COAL_PRB −1.56 → **−11.88**; CT_PEAKER
+> −7.99 → −4.88 and CC_CHP / ST_CHP move TOWARD actual). S-1 FAIL is a scorer artifact
+> (new field absent from the keeper config; substantive condition met; disclosed, not edited).
+> **WHAT THE GAS TOOK.** +25 TWh gas = **−11.85 TWh imports** (45.75 → 33.90; EIA-930 37.9) +
+> **−13.3 TWh coal** (PRB −10.3, BIT −2.5). In the real sub-$20 hours the arm's gas lands ON
+> EIA-930 (21.2 vs 21.3 GW); coal stays +3.1 GW over; imports fall to 1.45 vs 4.9 GW.
+> **THE FINDING (pre-registered reading 2).** The average-cost print was COMPENSATING (rule 14)
+> for two missing mechanisms: **coal self-commitment** in mid-price hours (real PRB ran
+> 121.7 TWh through spot-gas hours; the model's coal econ offers are undercut once gas is at
+> the hub) and the **seam import ladder** (MISO-hub-quantile bands go out of merit as the
+> model price falls, so imports contract exactly when the real market imported most). Price
+> against interest: C3a-2023 +7.15 % → ≈ −5.7 % (inside ±10 %); body-vs-MEC 5.31 → 1.15;
+> model hours < $20: 0 → 68 (actual 1,765).
+> **QUEUE HEAD FOR miso-225 — an OWNER ruling first, then a JOINT test, never the arm alone:**
+> (1) OWNER: does MISO price gas at marginal commodity (the forecast's own convention) or at
+> the EIA-923 average print? miso-212 §8 filed it; this screen is the evidence. (2) If YES: a
+> **coal self-commitment floor** with a window, a driver and a forward story (rule 17) —
+> measure it from CAMPD conduct (hours online with LMP below the unit's own delivered
+> incremental cost) as miso-111/152 measured PRB — and the **seam ladder's response to the
+> model's own price** (queue item 2, admissibility outstanding), screened JOINTLY with this
+> arm on 2023. (3) `gas_marginal_commodity_pricing` MISO cell **`O`**: dead standalone,
+> DO NOT re-run alone; joint re-test is new evidence.
+
 > **QUEUE STAMP miso-222 (2026-09-06) — THE ELMP / EMERGENCY-SUPPLY OWNER ASK, **MEASURED
 > BEFORE IT IS BUILT**: the emergency-range MW is **ALREADY CURATED IN THIS REPO**
 > (miso-219's premise was half wrong), and at **1.7–2.0 GW against a 5.6–22.0 GW
@@ -11565,6 +11617,188 @@ is now the live queue head.**)*
 *(Prior header, nyiso-185, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-04 (nyiso-185): `2026-09-04-nyiso-185-family-hr` — the nyiso-177 recipe plus `egrid_family_heat_rates` (eGRID prime-mover-family heat rates at multi-family plants, the measured zero-parameter replacement for the `MIXED_FACILITY_STEAM_HR` hand number where it covers; ZERO new DOF entries, G-DELTA one field, control BIT-IDENTICAL to the superseded keeper). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, at full magnitude — determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c} → **{C1-2024 `CC_REGULAR` share +3.87 TWh / 3.18 pp, C3a-2025 −10.5 %, C3c}**: the 2023 `ST_GAS` cell open since nyiso-177 PASSES (+2.16 TWh) and the class absorbing Ravenswood's released steam volume crosses its 2024 share band. Evidence: `docs/FINDING-nyiso185-stgas-family-hr-ab-2026-09-04.md`, `PREREG-nyiso185-stgas-family-hr-ab.md`, the bundle's computed `calibration_attestation.json`. **PRIOR (nyiso-177) HEADER PRESERVED BELOW.**
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
+
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-200, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
+both STOPPED at their own pre-registered gates on 2023 and deleted before merge (29c) — SPAN NEVER
+SPENT, nothing registered, nothing promoted; keeper `2026-09-06-nyiso-196-extract-basis` UNCHANGED;
+NEW leg `nyiso_gas_bridge_startup_aware` registered on the `gas_commitment_bridge` base row.)** The
+nyiso-199 "NEW TOP OF QUEUE (U) — `nyiso_gas_bridge_min_run`'s P0-PATTERN DEPENDENCE" item was
+executed, and phase 0 re-attributed its trigger first: **the nyiso-199 §8.3 STOP was a one-year
+scorer artifact** — 7314 and 50978 are `ct_only` CEMS reporters the span scorer skips (nyiso-150
+union guard), un-flagged only by the preliminary 2025 vintage, and a one-year screen bundle's
+union was {2025} alone; 2 of 2 of those failures are skipped at the span guard, 0 survive
+(scorer-only repair landed: `legitimacy_diagnostics.ct_only_guard_years` unions over the training
+span for every bundle, protective direction only). **The object is nonetheless REAL and it is the
+detector's:** every bridge leg anchors on a P0 pattern a base-cost LP manufactures, and a run that
+cannot repay one start is one the driver's own economics say never started (rule 17). **The repair
+is the detector's own G-61 path (b) commitment-real run screen** (registered for CAISO, never wired
+for NYISO), zero DOF, bar = the bridge's own registered startup constant; the measured-conduct
+gate the nyiso-199 handoff named is REFUSED on rule 13 and on nyiso-144's own 7314 ruling.
+**SCREEN A1-2023 (the leg alone):** 1,173 of 1,576 CC runs and 351 of 422 steam runs are
+phantom-anchored; bridge forced **1.0034 → 0.3439 TWh**; zero C1 flips (`CC_REGULAR` +0.83 →
++0.37 TWh); C3a +4.6 → +5.7 % PASS; **STOPPED on the D-4 row COUNT** by an attribution shift at
+Astoria 8906 (its bridge conviction migrates to the reliability floor beneath; the plant's total
+forcing FELL 0.2501 → 0.2282 TWh). **SCREEN A3-2023 (the three-way pairing with
+`nyiso_ct_peaker_bands_measured` + `cc_duct_peaking_row_scoped`):** every companion gate CLEAR —
+`ST_GAS` +1.81 → **+0.46 TWh**, `CT_PEAKER` −1.69 → **−0.99**, `CC_REGULAR` +0.83 → +1.43 (PASS),
+C3a **+4.6 → +0.9 %**, C3b unchanged, zero flips, **no new D-4 row at the span guard** — **STOPPED
+on the named-plant gate** that demanded zero bridge floor at 7314 / 50978 (542 h / 153 h remain,
+every hour on a run that repaid its start). A3-2025, the exposed year, was NOT spent: the pairing's
+2025 price exposure is UNMEASURED.
+
+**NEW TOP OF QUEUE (O) — re-screen the THREE-WAY arm on 2025 under CORRECTED gates, pre-registered
+before the solve** (`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md` §7): (a) the C8/D-4
+companion compares forced energy per dark-meter plant like-for-like, never a failure-row count —
+the count rises whenever the higher of two composed floors is removed at a plant the lower one also
+floors; (b) the named-plant STOP is "a floor anchored on a DROPPED run" (zero by construction) or a
+new D-4 conviction at the span guard, not "any floor"; (c) C3a-2025 stays the named risk. Span only
+if it clears, registered, promotion under the owner's formula with `CC_REGULAR` (+0.6 TWh in 2023)
+named as the class that moves away. **SECOND (O): the floor under the floor** — the reliability
+floor's persistent-base limb asserts ~0.23 TWh at Astoria 8906, a plant whose 2023 meter is dark
+74 % of the time and which the lay-up census does not exclude (not 18/18 dark); a source-data
+membership question on `reliability_floor_plant_exclusions` (rule 23), never a residual. **THIRD:**
+the run screen ALONE is a keeper-change candidate in its own right under gate (a). Records:
+`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
+`results/calibration/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
+`_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
+`scripts/probes/nyiso200_*.py`.
+
+
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-199, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
+both deleted before merge (29c) — SPAN NEVER SPENT, nothing registered, nothing promoted; keeper
+`2026-09-06-nyiso-196-extract-basis` UNCHANGED; NEW field `nyiso_ct_peaker_bands_measured`
+registered with its base row and a cell in every shard, NYISO cell **R**).** The nyiso-198 "NEW TOP
+OF QUEUE (U) — the `CC_REGULAR` vs `ST_GAS` / `CT_PEAKER` MERIT ORDER" item was executed as a
+phase-0 decomposition against the LP's **own bounds**, and it splits the queue item in two.
+**`ST_GAS` IS CLOSED AND SHOULD STOP BEING PROPOSED AS A MERIT LEVER:** 73/88/84 % of its deficit is
+interior, but the gap lives **below $40/MWh** where no steam offer clears, and the cell that owns it
+is `scuc_load_pocket_commitment` (**G**) — nyiso-192 already measured that "the market's 3.0 TWh of
+NYC steam in 2024 is out-of-market commitment", and nyiso-97 §5 forbids identifying the pocket
+requirement from unit conduct, the only instrument this lane has. **`CT_PEAKER` IS THE LIVE OBJECT
+AND IT IS UNAMBIGUOUS: 100.0 % INTERIOR in ALL THREE YEARS** — 0.0 % at the availability envelope,
+0.0 % at a floor, forced floor 0.000 TWh, D-2 0.0 % — with the model at **2.04/2.03/7.03 %** of its
+OWN available capacity against a meter of **11.16/10.85/14.29 %**. The object localises to two bands
+the config's own comments already name: `econ` **1.0**, a DE-LEAK placeholder `_NYISO_OFFER_CURVE`
+declares an **OPEN ROOT CAUSE** by name ("a NYISO-grounded CT econ ramp (CAMPD CT heat-rate spread)
+is a later disciplined-calibration item"), and `committed` **1.35**, "the start hurdle … a ~$25/MWh
+fixed commitment margin" charged on a keeper that **already runs `tranche_startup_amortization`**
+($20/MW NREL SR-5500-55433 ÷ the measured P0 run length, same tranche) — a rule 19 `[R-ONE-MECH]`
+double count, live today. Both carry NYISO's own registered measured counterpart, unused:
+**0.843 / 0.661 / 0.658** (n = 70). **OWNER RULING 2026-09-06** authorised arming both bands and
+screening 2023 + 2025 (PREREG Addendum A, pushed before the field existed). **F-gates ALL PASS on
+the built field**: 101/103/103 rows move, all `CT_PEAKER` econ+committed, ZERO elsewhere, `pmax`
+and `availability` max‖Δ‖ exactly 0.0, delta a **fuel-invariant −$17.41 committed / −$13.68 econ,
+identical to the cent across three years** whose CT offers differ by $22–30/MWh, `peak` Δ 0.00.
+**SCREEN A (2023, the FOOTPRINT year) CLEARS ALL FOUR GATES**: `CT_PEAKER` 0.421 → 1.418 TWh
+(C1 −1.69 → −0.70, **59 % of the gap closed**), `ST_GAS` +1.81 → +1.18, `CC_REGULAR` +0.83 → +0.56,
+`CC_CHP` +0.95 → +0.86 — **every moved class toward its actual**; gas family −0.023 TWh;
+C3a **+4.6 % → +2.9 %** PASS; C3b 0.119 unchanged; no C1 flip; no new D-4 row. **SCREEN B (2025,
+the EXPOSED year) STOPS — and NOT on the pre-named risk**: C3a **−6.9 % → −9.1 %, DEGRADED BUT
+STILL PASS** (0.9 pp of margin), and `CT_PEAKER` 1.356 → 2.672 against a 2.851 actual closes
+**93.7 %** of the gap. **C8/D-4 stops it, on a defect the arm itself creates**: two plants the
+keeper never floors enter the `nyiso_gas_commitment_bridge × CC_REGULAR` binding set — **7314
+(3,210 binding hours, measured median 0.0 MW, 76.2 % of them at zero)** and 50978 (352 h, 0.0 MW,
+69.9 %) — floors binding in hours the meter says the units are OFFLINE, which rule 17
+`[R-FLOOR-WINDOW]` calls a bug by definition. **The mechanism is legible and it is not the band:**
+cheaper CT displaces `CC_REGULAR` in the **P0** pass, so a plant with no prior committed run shows a
+short P0 run that `nyiso_gas_bridge_min_run` **extends and floors** — a **P0-pattern dependence in
+the bridge**. **RECOMMENDATION: DO NOT PROMOTE** on this evidence: the structural half is strong and
+undisputed and the pre-named risk survived screening, but a PROTECTIVE-tier gate fires on a
+fabricated commitment, which is not a residual regression.
+
+**NEW TOP OF QUEUE (U) — `nyiso_gas_bridge_min_run`'s P0-PATTERN DEPENDENCE.** Condition the
+bridge's eligibility on the unit's **own measured conduct in the window** (the same D-4 statistic
+the diagnostic already computes) instead of on a P0 run pattern that any merit change can
+manufacture. Fix that, then re-arm `nyiso_ct_peaker_bands_measured` **paired** — and note that
+`cc_duct_peaking_row_scoped` (**R**, nyiso-198) is also waiting on a merit-order partner and pushes
+the **opposite** way, so the three-way pairing is the real question and is screenable on 2023 + 2025
+with the gates already written. Plant 7314 is the right first plant to look at: it is one of the
+three the fleet builder already reconciles for corrupt EIA-860 summer-capacity rows and it sits in
+the bench `ctOnly` set at ratio 1.43. **Outside this lane (rule 25):** the caiso-241 sibling
+`caiso_ct_peaker_committed_measured` carries the same latent silent-no-op exposure through the
+generic `prb_overrides` channel (its consumer runs inside `backcast_config`, before `prb_overrides`
+applies); this field ships a fail-loud guard, the sibling has none. Records:
+`docs/FINDING-nyiso199-ct-peaker-band-basis-2026-09-06.md` (§8),
+`results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md` (+ Addendum A),
+`_nyiso199_meritorder_phase0.json`, `_nyiso199_zone_offer_census.json`,
+`_nyiso199_ct_band_basis_phase0.json`, `_nyiso199_screen_gates_2023.json`,
+`_nyiso199_screen_gates_2025.json`, `scripts/probes/nyiso199_*.py`.
+
+
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-198, ONE rule-29 2024 SCREEN killed by its own
+pre-registered S-4 gate — keeper `2026-09-06-nyiso-196-extract-basis` UNCHANGED, nothing
+registered, nothing promoted; NEW field `cc_duct_peaking_row_scoped` registered with its base row
+and a cell in every shard, NYISO cell **O**).** The nyiso-197 "NEXT (U) — Cricket Valley 57185's
+part-load bucket (b−) 906 GWh in 2024" item was executed as a phase-0 decomposition against the
+LP's **own bounds** (zero LP; `scripts/probes/nyiso198_cricket_partload_phase0.py`): CAP_SCOPE
+**0**, FLOOR **≤ 6.6 GWh** (the bridge's own committed D-4 row, 29 binding hours), CAP_OUTAGE
+100.5, **MERIT 805.6 GWh (88.9 %)** — with the LP dispatching 444.7 MW of a 451.9 MW mean
+in-the-money capacity. The availability and min-load limbs are DEAD; it is an **offer-position**
+object, and **56.6 %** of the deficit is envelope headroom sitting in the **duct/peak band**. The
+band's PRICE is untouchable (`peak` 2.25 = `phys_peak` 2.25, markup 0); its **MEMBERSHIP** is
+`cc_duct_peaking_pct`, which books the CT rows' ambient derate as duct capability — EIA-860 flags
+`Duct Burners` only on CA/CS rows and reads **`X` on every one of the 1,213 CT rows** in the
+operable population (`CT ∧ Y` = **0 of 1,213**). Cricket Valley: 203.7 of 296.4 MW (**69 %**) on X
+rows → 245.64 MW of 1,086.9 at 15.78 MMBtu/MWh against a $35.50 mean LMP; **fleet-wide 726.5 MW,
+68 % of NYISO's CC peak band**; the plant's meter agrees (2024 max 1,116.0 MW = 0.85 × nameplate,
+0.981 × winter, in April). `assembly.py` already names the conflation and its remedy is a CHOSEN
+cap (8.0 for PJM, `None` elsewhere); the arm chooses nothing (**zero DOF**). **The pre-solve
+F-gates STOPPED first and the failure was the PREREG's own census** (the mover classifier ignored
+`peak_cap = grid_cap × pct_peak / (100 − pct_mr)`); Addendum A replaced them with a **strictly
+harder forward prediction** — Set B (the `chp_layup` / `chp_duty_curve` / `reserve_duty` cohorts)
+unchanged exactly, Set A scaling by `peak_off × pct_row / pct_cur` — satisfied with **residual
+0.000 MW at all 31 plants**. **SCREEN 2024** (named by footprint before the solve, re-derived on
+the corrected MW before it): **S-3 PASS** — Cricket Valley 3,706.1 → 4,081.5 GWh (+375.4, bound
+622.1), **70 % of the plant's gap to its 4,240.9 meter closed**, fleet CC +1,238.1 (bound 3,047.0),
+prices **−4.2 %** (same-weights C3a-2024 indicator +4.7 % → +0.3 %); **C8/D-4 PASS**; **S-4 STOP** —
+**C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh, +2.5 → +3.4 pp, PASS → FAIL**, because the cheaper CC
+stack takes **0.71 TWh from `ST_GAS`** and 0.06 from `CT_PEAKER`, both already UNDER. Span not
+spent; screen bundle deleted before merge (rule 29(c)). **THE READING IS RULE 14
+`[R-ACCURATE]`'s OWN**: the mis-classified band was the only thing holding the CC stack back and
+was silently compensating for a different error. **SPAN SOLVED AND REJECTED (same session, under the owner ruling).** The owner ruled *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper.."*, recorded in the PREREG's **Addendum B** and pushed at `a8f42835`
+**before the span**, with the C3a-2025 risk **named in advance** in §B.2. Run
+`2026-09-06-nyiso-198-duct-row` (bundle `nyiso198_duct_rowscope`, `--year 2023 2024 2025` in ONE
+invocation, registered same session, attestation computed and PASSING on every check).
+**DETERMINATION CALIBRATED (grade 7, fails 0) → NOT-YET (grade 5, FAILS 3):** C1 13/14 free 9/10
+with **C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh / +2.5 → +3.4 pp FAIL**; **C3a-2025 −6.9 % → −10.3 %
+FAIL** (the pre-named risk, landed); **C3c FAIL** as collateral (the standing rule reclassifies it
+only when it is the LONE failure — same unchanged magnitude). Realised span, the same signature
+every year: `CC_REGULAR` **+1.147 / +1.121 / +1.383 TWh**, `ST_GAS` **−0.918 / −0.706 / −0.801**,
+`CT_PEAKER` −0.080 / −0.061 / −0.309, prices **−3.10 / −4.20 / −3.68 %** — the arm takes energy from
+two classes already UNDER and gives it to the one already OVER. **RECOMMENDATION: DO NOT PROMOTE**
+(the formula is permissive, not automatic): the structural half is not in doubt — zero DOF, residual
+0.000 MW at all 31 plants — but the determination does not regress, it **collapses**, losing both
+load-bearing families the keeper held, and the precedents differ in kind (nyiso-193 promoted a
+NOT-YET carrying ZERO `ScenarioConfig` deltas over a keeper that could not be reproduced at all;
+nyiso-196 IMPROVED the determination). Rule 14 `[R-ACCURATE]` governs and **both** its clauses bind:
+the error is not buried back in the inaccurate input (the field stays, default off, measured and
+documented) and the half-repair is not shipped either. **Cell → R, with the re-test condition
+stated: re-arm it PAIRED with the merit-order repair, never alone.** Keeper UNCHANGED
+`2026-09-06-nyiso-196-extract-basis`. **What is now known regardless of disposition: the keeper's
+C1-2024 `CC_REGULAR` PASS stands on 726.5 MW of mis-classified capacity** — the cell is an over-run
+currently held in band by a construction defect — and the merit-order object is sized at `ST_GAS`
+−0.7 to −0.9 TWh plus `CT_PEAKER` −0.06 to −0.31 TWh, with ~3–4 % of price headroom riding on this
+one mechanism.
+
+**NEW TOP OF QUEUE (U) — the `CC_REGULAR` vs
+`ST_GAS` / `CT_PEAKER` MERIT ORDER**: `ST_GAS` sits at −1.17 TWh and `CT_PEAKER` at −1.52 in 2024,
+and both got worse the moment a real CC constraint was removed; phase 0 there should start at the
+bound that binds, not at the residual. **For the standing owner-ruled duct-tranche lever** (nyiso-193:
+*"tune the cc regular offer curve up for the duct burner peaking tranche"*), two committed-artifact
+measurements: on this keeper the `CC_REGULAR` peak band runs at **12.8 % CF** and carries **3.5 %**
+of class energy, and **69 % of it is not duct capability** — raising its offer moves little energy
+and raises a mis-classified band. Both are stated for the owner court, not decided. **nyiso-197 §8
+item 4 DISCHARGED**: the screen-gate probe now strips the payload's CHP add-back so both sides of a
+plant-grain comparison are LP grid (it caught a fabricated −898 GWh fall at Linden on this session's
+first pass; the truth is +351). Records:
+`docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md`,
+`results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md` (+ Addendum A),
+`_nyiso198_cricket_partload_phase0.json`, `_nyiso198_duct_peaking_basis_phase0.json`,
+`_nyiso198_rebuild_checks_2024.json`, `_nyiso198_screen_gates.json`,
+`scripts/probes/nyiso198_*.py`.
+
 
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-197, ZERO solves, phase 0 only — keeper
 `2026-09-06-nyiso-196-extract-basis` UNCHANGED, nothing registered, NO cell verdict moves).** The

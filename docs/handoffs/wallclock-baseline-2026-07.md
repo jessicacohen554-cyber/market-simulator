@@ -1134,3 +1134,282 @@ default, no keeper shard / marker / matrix shard / registry / workflow edit; not
 and nothing dashboard-registered. The one observable non-value change is a log line: on a memo
 hit the per-plant derivation WARNING is not re-emitted, so the resolver logs the accepted set
 (plant and reconciled rate) itself, at the same severity, on both paths.
+
+## WALLCLOCK B — the cold-rebuilt P1 seeded from the same year's P0 basis (2026-09-06) — WARM-START CLASS
+
+Wallclock desk item **B** (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3; desk
+log `docs/handoffs/wallclock-desk-log-2026-09.md` row B; owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
+instruction to the implementation session). Session `p1-basis-seed-impl`, branch
+`claude/p1-basis-seed-impl-oby2ka`. **NOT byte-identical — WARM-START CLASS**: the seed changes
+the simplex starting point of the cold-rebuilt P1 on the three bridge ISOs and nothing else;
+the LP, its objective, bounds and rows are untouched. Two gates therefore, with different jobs:
+the byte gate proves the switch is **dead when OFF** (merge-base control vs branch under the
+determinism pin, `atol=rtol=0`); the `diff_warmstart_bundles.py` gate proves the seed is
+**neutral when ON** (objective and total generation identical, per-unit differences
+marginal-tie only, price differences dual-degenerate hours only — the memo's §4 standard, the
+one P-2 and H2 were promoted on). Conditions as §PERF-B: 4 vCPU / 15 GB container, `uv.lock`
+env (HiGHS 1.14.0), `MARKET_SIM_HIGHS_THREADS=1`, `MARKET_SIM_WARMSTART=1`; the byte arms under
+`MARKET_SIM_WARMSTART_XYEAR=0`, the seed arms under `XYEAR=1` (the seed lives inside that gate)
+with the persisted year-1 basis cache pointed at a fresh scratch dir per arm so P0 is cold on
+both arms and its iteration count / objective is the built-in control. **One ERCOT arm at a
+time** (rule 12; 6 GiB swapfile armed); NYISO and CAISO arms ran concurrently with each other,
+never with an ERCOT arm.
+
+### 1. The change
+
+| Change | Where landed | What it does |
+|---|---|---|
+| (i) `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 basis export (already taken there for the cross-year holder) now runs whenever the seed is armed, BEFORE `model = None`; the second `DispatchModel` is built exactly as `solve_dispatch` builds it, `apply_cross_year_basis(basis)` installed (identity column map, `alien=True`), then solved at the bid cost. New `export_p1_basis` kwarg + `EnergySolveResult.p1_basis` / `p1_seeded`; a reused-P0 pass (C-1b) seeds from `reuse_p0_from.p1_basis`, else from the P0 basis in the holder | branch commit `aa82b064` | the seed |
+| (ii) same branch: the export is guarded on `model is not None` | same | **fixes a latent crash on main**: a reused-P0 pass has no model, and under the calibration default `XYEAR=1` every ERCOT adaptive pass 2 raised `AttributeError` at that export (reproduced at the merge base on the trivial LP; the s3 measurements ran under the `XYEAR=0` pin and never saw it) |
+| (iii) `scripts/run_calibration.py`: `--no-p1-basis-seed` + `resolve_p1_basis_seed_default` (the `resolve_xyear_warmstart_default` sibling, same precedence), wired in `main`; pass 1 passes `export_p1_basis` when an ercot-221 pass 2 may follow, pass 2 when an ercot-230 iteration may follow, every iteration `True` | same | the calibration-CLI default ON |
+| (iv) `scripts/run_calibration_full.py`: same flag and resolver on its fresh-solve path | same | |
+| (v) `model/lp/model.py`: the HiGHS solve log line carries `simplex iterations N` (a `HighsInfo` read after `h.run()`) | same | the iteration counts below |
+| (vi) `tests/unit/pipeline/test_xyear_warmstart_default.py` +13 tests | same | §3 gate (3) |
+| (vii) `scripts/capture_keeper_goldens.py`: `years` joins `FIDELITY_IGNORE_KEYS` — the replay span is not a solve flag (the subset invariant is asserted at the solve site and recorded per entry) | branch commit `7dcc1b77` | unblocks the bare-`ERCOT` capture, refused on `main` since Y-14 on that key alone (gate (1) above) |
+
+Gate logic (`_p1_seed = _xwarm and xyear_warmstart is None and env != "0"`): `--no-xyear-warmstart`
+/ the goldens pin turn the seed off with the cross-year gate; the forecast (an explicit
+`xyear_warmstart` bool) never reads the env var; the direct `solve_and_persist` callers stay at
+the global default OFF.
+
+### 2. Gates
+
+**Gate (1) — byte-identity with the seed OFF (merge-base control vs branch, determinism pin).**
+The switch must be dead when it is off. ERCOT keeper `2026-09-05-ercot248-two-config-keeper`
+via the bare `ERCOT` capture key (the forward config on its designated **2024–2025** span, R-AW;
+2024 is the ercot-221 two-pass year, 2025 the one-pass year), replayed on a sparse worktree at
+the merge base **`34f3ce35`** (`wc-b-before`) and on the branch tree (`wc-b-after`, seed code
+present, `MARKET_SIM_P1_BASIS_SEED` unset and `XYEAR=0` so the seed is off by both conditions);
+plus NEISO keeper `2026-08-17-neiso-99-joint-p1` **2023** the same way (the no-bridge control:
+its P1 re-solves the live model, so the seed has nothing to reach even when on). Both manifests
+record `git_dirty: false`. **One thing to know about the ERCOT control**: `capture_keeper_goldens.py`
+on `main` refuses its own bare-`ERCOT` capture — the fidelity oracle compares the replayed
+`years` (2024–2025, the R-AW slice) against the composed keeper's recorded 2023–2025 and fails
+on that key alone, after the solve completes. The control arm therefore solved to completion
+under `main`'s code and its manifest was written by a scratch finalize step that re-ran
+`main`'s own oracle with `years` ignored (269 recorded flags identical, `scenario_config` 746
+matched / 4 drifted, identical on both arms); the branch fixes the oracle (§1 (vii) below) so
+the `wc-b-after` capture wrote its manifest itself. The bundles were byte-compared by the gate,
+not by the manifests.
+
+`scripts/regression_gate.py --mode byte`:
+
+* **check [1] golden bundle diff — PASS**: ERCOT, **7 files, 28 numeric columns, atol=rtol=0**
+  (2024 and 2025 both). NEISO, **5 files, 20 numeric columns, atol=rtol=0**.
+* check [2] reshuffle localization: **zero** — ERCOT 2024 462,847.6 GWh and 2025 488,450.0 GWh
+  on both arms, Σ|hourly Δ| = 0.0 GWh in both years; NEISO 2023 96,984.5 GWh on both arms, Σ|hourly Δ| = 0.0 GWh.
+* check [3] smoke — **PASS** (24 passed).
+* check [4] `audit_keepers` — **PASS**. `legitimacy(--keepers)` — **FAIL, pre-existing by
+  control**: the standing NYISO Long Island `transfer_security_limit` capacity-deliverability
+  gap (`ValueError: nyiso_li_lcr_tsl=True but no published Long Island transfer_security_limit
+  for delivery year 2023/2024`); re-run on the merge-base worktree it exits rc=1 with the
+  identical exception, exactly as §PERF-B RESUME and §WALLCLOCK A-1…A-4 record.
+
+Phase lines of the two pinned ERCOT arms (the branch arm is also gate (2)'s OFF control):
+
+| arm | year | data_prep | solve_p0 | markup | solve_p1 | results_write | total | P0 iters | P1 iters (pass 1 / pass 2) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| before (`34f3ce35`, main's log line — no iteration count) | 2024 | 48.1 | 324.1 | 22.2 | 649.4 (318.3 + 331.0) | 27.8 | 1071.6 | — | — |
+| before | 2025 | 39.7 | 382.0 | 15.5 | 373.0 | 26.9 | 837.2 | — | — |
+| after, seed OFF (pin) | 2024 | 49.6 | 260.0 | 28.0 | 628.1 (295.3 + 332.9) | 25.2 | 990.9 | 250,832 | 252,042 / 250,291 |
+| after, seed OFF (pin) | 2025 | 44.5 | 332.4 | 16.4 | 349.2 | 22.8 | 765.2 | 273,083 | 273,893 |
+
+(The before/after `solve_p0` / `solve_p1` deltas are the §PERF-B ±10–15 % cold-HiGHS
+run-to-run band on this box — the bundles are byte-identical, the objectives below agree to the
+last digit, and the 2025 OFF iteration counts are the memo's §3.2 OFF arm exactly.)
+
+**Gate (2) — neutrality with the seed ON (`diff_warmstart_bundles.py` + `hourly/system_<year>.parquet`,
+the H2 shape).** Seed-ON arms: the same keeper kwargs reconstruction, one year per invocation,
+`XYEAR=1` + `MARKET_SIM_P1_BASIS_SEED=1`, the persisted year-1 basis cache pointed at an empty
+scratch dir (so P0 is cold, exactly as in the OFF arm — its iteration count and objective are
+the built-in control), into a throwaway dir, deleted after the diff. OFF arm = the pinned
+`wc-b-after` bundle above (seed off, P1 cold from nothing: the shipped route byte-for-byte).
+
+| ISO-year | objective (P0 → P1, both arms) | total gen | max \|Δ zonal price\| | dual-degenerate hours | served load / slack / dump / reserve_price | per-unit reshuffle |
+|---|---|---|---|---|---|---|
+| **ERCOT 2025** (one-pass year) | P0 2,879,242,264.7545 → P1 3,085,008,028.5299, **identical to 4 dp on both arms** | 488.449982 TWh both, **Δ = 0 MWh** | **1.07e-12 $/MWh** (mean 29.358576 both) | **0 / 61,320** | max \|Δ\| = 0 on all four | **16 unit-hours in 12 hours, 11 of 2,335 units**; max 895.3 MW (the SOLAR South↔North curtailment swap at price 0); Σ\|hourly Δ\| 3.434 GWh = **0.0007 %** of gen; LMP identical (max \|Δ\| = 0) on every moved row; `diff_warmstart_bundles`: max annual Δ 0.0610 GWh (plant 58005), 0 plants > 0.1 GWh — the memo's §3.3 block to the digit |
+| **ERCOT 2024** (ercot-221 two-pass year; pass 2 seeded from pass 1's P1 basis) | P0 1,715,250,734.6163; P1 pass 1 1,954,553,178.2861; pass 2 2,001,527,131.5248 — **all three identical on both arms** | 462.847626 TWh both, **Δ = 0 MWh** | **3.66e-13 $/MWh** (mean 26.621364 both); reserve_price max \|Δ\| 4.5e-13 | **0 / 61,320** | slack (mean 0.009787 MW) / dump / demand bit-identical | **4 unit-hours in 2 hours, 4 of 2,346 units**; max 13.8 MW; Σ\|hourly Δ\| 0.054 GWh = **0.00001 %**; LMP identical on every moved row; max annual Δ 0.0270 GWh (plant 64383) |
+| **NYISO 2023** (`nyiso_gas_commitment_bridge` + co-opt + ramp; keeper `2026-09-06-nyiso-196-extract-basis`) | P0 2,297,963,033.2595 → P1 2,336,736,799.3758, **identical on both arms** | 148.304611 TWh both, **Δ = 0 MWh** | **2.20e-13 $/MWh** (mean 32.973702 both); reserve_price max \\|Δ\\| 2.8e-14 | **0 / 52,560** | slack / dump / demand bit-identical | **7,290 unit-hours in 2,942 hours, 135 of 731 units**; max 690.0 MW; Σ\\|hourly Δ\\| 45.3 GWh = **0.031 %** of gen (the P-2 promotion evidence's class: ERCOT 0.038–0.112 %); LMP identical on **every** moved unit-hour (max \\|Δ\\| 1.8e-13); `diff_warmstart_bundles`: max annual Δ 2.13 GWh (plant 2693), 2 plants > 1 GWh — a co-opt fleet has more equally-priced pairs to swap between, and it swaps them at identical prices |
+| **CAISO 2023** (screen; `caiso_ra_mustoffer` default-on route; keeper `2026-09-05-caiso-252-b1-notrim`) | P0 3,688,856,302.7183 → P1 3,935,699,589.1921, **identical on both arms** | 209.207336 TWh both, **Δ = 0 MWh** by unit sum (`diff_warmstart_bundles`' plant grouping reads +0.0156 GWh, its rows without a plant code) | **all seven CA zones bit-identical (0 rows > 1e-9)**; demand-weighted mean 56.6888 both. On the two ZERO-LOAD external import nodes the reported dual differs: **WECC_PNW 1,312 zone-hours (max 88.25, mean +34.4 $/MWh; annual mean 37.34 → 42.49), WECC_DSW 3** — see the reading below | **1,315 / 61,320, all on WECC_PNW / WECC_DSW** | slack / dump / demand / reserve_price bit-identical | **5,783 unit-hours in 2,464 hours, 154 of 1,690 units**; max 233.6 MW; Σ\\|hourly Δ\\| 85.4 GWh = **0.041 %**; LMP identical on every moved unit-hour (max \\|Δ\\| 4.5e-12); max annual Δ 0.0864 GWh (plant 268), 0 plants > 0.1 GWh |
+
+**Speed — the P1 solve, the iterations, the phase lines (seed OFF = pinned branch arm; seed ON arm):**
+
+| ISO-year | arm | `solve_p0` s | P0 iters | `solve_p1` s | P1 iters | `markup` s (`p1_post`) | year `total` s | peak RSS |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| ERCOT 2025 | OFF | 332.4 | 273,083 | **349.2** | **273,893** | 16.4 (7.5) | 765.2 | 12.67 GB |
+| ERCOT 2025 | ON | 289.1 | 273,083 | **142.0** | **78,856** | 55.0 (44.9) | 544.8 | 13.27 GB |
+| ERCOT 2024 | OFF | 260.0 | 250,832 | **628.1** = 295.3 + 332.9 | **252,042 / 250,291** | 28.0 (14.7) | 990.9 | 12.67 GB |
+| ERCOT 2024 | ON | 241.1 | 250,832 | **225.1** = 132.2 + 92.8 | **83,748 / 69,667** | 70.0 (57.2) | 605.7 | 13.27 GB |
+| NYISO 2023 | OFF | 108.4 | 269,416 | **96.4** | **268,305** | 11.8 (8.6) | 239.1 | 7.90 GB |
+| NYISO 2023 | ON | 113.3 | 269,416 | **67.6** | **108,037** | 14.6 (10.5) | 220.1 | 5.86 GB† |
+| CAISO 2023 | OFF (re-run alone) | 288.4 | 300,609 | **354.5** | **290,022** | 30.4 (22.8) | 714.7 | 8.61 GB |
+| CAISO 2023 | ON† | 280.2 | 300,609 | **123.1** | **94,098** | 27.5 (18.2) | 468.3 | 9.84 GB |
+
+Reading it. **ERCOT 2025: P1 349.2 → 142.0 s (2.46×), 273,893 → 78,856 iterations (3.47×)** —
+the iteration count is the memo's ON arm exactly (78,856), so the shipped surface and the B-0
+monkeypatch driver seed the same model the same way. **ERCOT 2024, the adaptive leg measured
+for the first time: pass 1 295.3 → 132.2 s (2.23×, 252,042 → 83,748 iters) seeded from the P0
+basis, and pass 2 332.9 → 92.8 s (3.59×, 250,291 → 69,667 iters) seeded from pass 1's P1
+basis** — the closer seed, as the memo's §6.4 predicted: pass 2 starts on the optimal face of
+the identical floored LP and spends its iterations only on the changed storage discharge cost.
+`solve_p1` for the year 628.1 → 225.1 s; year `total` 990.9 → 605.7 s (**−385 s, −39 %**);
+2025 765.2 → 544.8 s (**−220 s, −29 %**). The seed's own cost sits in `p1_post`: on 2025
+44.9 s against 7.5 s OFF = the P0 basis export (~17 s, `getBasis()` enum materialization, PERF-B)
++ the apply (~3 s) + **one P1 basis export that went unused** — pass 1 exports its P1 basis
+because an ercot-221 pass 2 *may* follow, and on 2025 C-1a then skips pass 2 as
+cost-identical, which is only knowable after pass 1 has solved (~17 s, the memo's §6.4 accepted
+cost on the one-pass year; on the calibration CLI the P0 export already runs for the cross-year
+holder, so the marginal cost there is the apply plus that one export). On 2024 `p1_post` 57.2 s
+= two P0/P1 exports + two applies, against a 403 s P1 saving. P0 wall moves −43 / −19 s between
+arms with identical iteration counts — the run-to-run band, in the seed's favour by chance.
+**Peak RSS 12.67 → 13.27 GB (+0.6 GB) on both years** — the memo's flagged reading, reproduced:
+HiGHS's alien-basis repair workspace on top of the cold-P1 rebuild, inside the s3 envelope
+(12.1–13.4 GB) and under the 14 GB cgroup with the 6 GiB swapfile untouched (`swapon` showed 0 B
+used throughout). **A-6 note:** every arm above solved with A-6's `malloc_trim()` call present at the seam (`malloc_trim=yes` on each `MEM_DEBUG` line); A-6 was then measured-negative and **reverted on `main`** (§WALLCLOCK A-6 below) before this branch merged `main`, so the shipped seam is `model = None` → second build with the seed applied — the seed never depended on the trim, and the export runs before either.
+
+† The NYISO arms and the CAISO ON arm ran **concurrently with each other** (and with a
+`regenerate_clean.py` pass), so their seconds and peak-RSS readings carry the §PERF-B host-noise
+caveat and their RSS is not comparable arm-to-arm (NYISO 7.90 vs 5.86 GB is scheduling, not the
+seed); their iteration counts and every neutrality number are exact. The first CAISO OFF arm was
+**OOM-killed by the cgroup** (`Memory cgroup out of memory: Killed process … anon-rss 5.8 GB`)
+while four jobs overlapped, and was re-run alone — rule 12's "at most two, one if ERCOT" stands,
+and a `regenerate_clean.py` pass counts as a job.
+
+**NYISO 2023: P1 96.4 → 67.6 s (1.43×), 268,305 → 108,037 iterations (2.48×).** The
+iteration ratio is ERCOT's; the wall ratio is smaller because on NYISO the seeded P1's
+per-iteration cost is higher (co-opt + ramp rows keep more of the basis alien) and the arms ran
+concurrently. **CAISO 2023: P1 354.5 → 123.1 s (2.88×), 290,022 → 94,098 iterations (3.08×)**
+— CAISO pays a full cold P1 on every year of every calibration run (the RA must-offer route is
+default-on), so this is the largest per-year reach of the three.
+
+**The CAISO reading, stated in full because it is the one gate cell that is not a row of
+zeros.** 1,315 of 61,320 zone-hours report a different P1 dual, up to 88 $/MWh — but **every one
+of them is on WECC_PNW or WECC_DSW**, the external import nodes, which carry **zero demand** (the
+demand-weighted mean price is 56.6888 on both arms to 4 dp) and are not scored; all seven CA zones
+are bit-identical in every hour. The primal is identical (objective to 4 dp, total generation to
+the MWh, slack/dump zero on both) and the LMP at every moved unit-hour is identical, so this is
+the dual-degeneracy case the memo's §4 criterion (3) names — "an equally-optimal clearing dual,
+never a level shift" — on nodes where the balance row's dual is not unique whenever the import
+link / envelope, not the node's own supply, is what clears it. It is the same class as MISO 2025's
+182 zone-hours in the P-2 promotion evidence, larger in count and magnitude because a zero-load
+node's dual is degenerate far more often than a load zone's. What it does NOT reach: the CAISO
+keeper's scored price (CA zones, pure lambda — caiso-137b), served load, dispatch, or any
+determination input. Recorded here so a later reader of a seeded CAISO bundle knows the
+WECC_PNW price series is basis-dependent in ~2 % of hours, exactly as it already was between a
+cold P1 and any other starting basis.
+
+**Check [4] is a fresh-container artifact, not a data gap.** With `data/clean/capacity-deliverability`
+regenerated (`scripts/regenerate_clean.py capacity-deliverability`, ~1 min) the same
+`legitimacy_diagnostics.py --keepers` on the branch tree exits **0** — D-9 overlay quarantine
+PASS, D-6 holdout quarantine PASS, D-2 forced-energy recompute PASS. The "pre-existing NYISO Long
+Island `transfer_security_limit` gap" every wallclock PR since §PERF-B RESUME has reported by
+control is the derived partition being absent in a fresh container (the raw table is on disk
+and the curated one lists NYISO's areas once built); the NYISO and CAISO keeper recipes refuse
+to solve without it for the same reason (`DegradedInputError` / `available areas: []`). Handed to
+the desk: the regression gate's check [4] wants that partition regenerated first, or the
+container recipe should build it.
+
+### 3. Fast tier and the pinning tests
+
+`uv run pytest -n auto -m "not slow and not integration and not fulldata"` on the branch:
+**8,507 passed, 12 failed, 42 skipped, 1 xfailed, 546 subtests passed** in 275 s. **9 of the 12
+fail identically on the merge-base worktree** (`test_mechanism_matrix_shared_ratchet` ×5,
+`test_entry_pipeline_aware_signal` ×2, `test_cache_config_agreement` ×2 — the
+`cc_duct_peaking_row_scoped` absent-shared-ratchet red `check_mechanism_matrix.py --base
+origin/main` also reports on both trees, and the entry-pipeline pair), and the other 3
+(`test_bench_no_circularity`, `test_the_two_halves_see_the_same_field_set`,
+`test_head_is_an_append_only_descendant_of_the_declared_ledger`) **pass on re-run in isolation**
+on the branch — xdist-order sensitive, none in a file this change touches. The touched files'
+own suites: `test_pipeline_solve.py`, `test_xyear_warmstart_default.py` (10 → 23), `test_p1_floor_inplace.py`,
+`test_runner.py`, `test_golden_manifest_provenance.py` — all green.
+
+### 4. Deleted before merge (rule 29 `[R-SCREEN]` (c))
+
+The four seed arms (`ercot-2025-on`, `ercot-2024-on`, `nyiso-2023-{off,on}`, `caiso-2023-{off,on}`)
+lived in the session scratch dir and were deleted after the diffs; the `wc-b-{before,after}` golden
+**bundles** (gitignored) were deleted after the byte gate; only the two hashes-only manifests are
+committed. Every number this section cites is in this section.
+
+
+## WALLCLOCK A-6 — `malloc_trim` at the cold-P1 seam: MEASURED-NEGATIVE, item closed (2026-09-06)
+
+Wallclock desk item **A-6**, branch `claude/wc-a6-malloc-trim-p1-seam-wghw2k`. The
+hypothesis, from `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6: the ERCOT year
+peak (12.1–13.4 GB) is the P1-rebuild moment, so calling `malloc_trim(0)` immediately
+after `model = None` on the cold-P1 route in `pipeline/solve.py::run_energy_solve` —
+before the second `DispatchModel` is built — should hand the freed P0 heap back to the
+kernel and drop the peak under the 14 GB cgroup.
+
+**It does not. The item is MEASURED-NEGATIVE.** Conditions: determinism pin,
+4 vCPU / 15 GB, 6 GiB swapfile armed, `MARKET_SIM_MEM_DEBUG=1`, one ERCOT solve at a
+time. Instrument: merge-base control capture (charter §6), both arms
+`capture_keeper_goldens.py --iso ERCOT__carveout-2023` on merge base `2886235c`,
+differing only in the trim. The bundle is registered 2023–2025, so each arm is three
+years / eight `DispatchModel` builds, ~40 min.
+
+**Status of the code, stated plainly.** The trim is **on main** — PR #4893 (merge
+`b2bd9fdb`, commit `c2cb9a78`) was merged 2026-09-06 00:03 UTC carrying the call, the
+new `utils/heap.py` helper and the BEFORE arm's manifest, i.e. ahead of this
+measurement (desk log §2.8, "evidence owed"). This section is that evidence. **The
+desk's recommendation is to remove the call and the helper**: it buys no peak headroom
+and costs a little. That is the owner's call, not this lane's — nothing here reverts
+it, and the change is byte-identical either way, so leaving it carries no correctness
+risk. The revert is prepared and pushed as
+`claude/wc-a6-revert-measured-negative` (branched off main AFTER item B, so it applies cleanly); merging that branch is the whole action.
+
+**Vintage caveat — item B landed on the same seam after this was measured.** Both arms
+ran on merge base `2886235c`, which predates §WALLCLOCK B (the cold-rebuilt P1 seeded
+from the same year's P0 basis, WARM-START CLASS). B changes exactly the code this item
+trims around: it keeps a basis alive across the `model = None` release. The numbers
+below therefore describe the **pre-B** seam. They do not need re-running to support this
+item's verdict — the reasoning that kills the trim is arithmetic about *live* payload,
+and B adds live payload rather than freeing any, so if anything B makes the trim's share
+smaller still. But a future memory measurement at this seam must be taken at post-B HEAD,
+not compared against these numbers.
+
+**Instrument caveat (Y-14 / R-AW).** The `ERCOT__carveout-2023` capture key used here
+was retired by owner ruling R-AW while this measurement was running (desk log §2.9);
+`capture_keeper_goldens.py` now refuses it, and the ERCOT byte instrument from wave 2
+on is `--iso ERCOT` (forward config, {2024, 2025}). Both arms here ran on merge base
+`2886235c`, where the key still resolved, and they used the identical config, so the
+A/B is internally valid and the span (2023–2025) is a superset of the forward
+designation. A re-run at HEAD must use the forward key.
+
+| Change | Where landed | Measured effect (ERCOT carve-out replay, 2023–2025) |
+|---|---|---|
+| (A-6) `malloc_trim(0)` at the cold-P1 seam | on main, commit `c2cb9a78` (PR #4893); **removal recommended, owner's call** | **Process peak VmHWM 13.28 → 13.27 GB (−0.01) — the gate's own target, unmet.** Per-year peak 12.72 → 12.70 (2023), 13.28 → 13.27 (2024/25). Seam recovery 0.05–0.23 GB at `after addRows`; `p1_post` **+0.3 / +0.5 / +0.1 s** (2023/24/25) — inside this box's noise, but the sign is the same in all three years and the trim is the only difference. Byte gate PASS at `atol=rtol=0`. |
+
+**Why the premise was wrong — this is the reusable part.** The seam does show a real
+RSS step: on the control, each cold-P1 model's `after addRows` RSS sits ~1.15 GB above
+the P0 model's *on a byte-identical LP* (2023: 3.99 → 5.21 → 6.00 GB across the three
+models; 2024: 5.45 → 6.65 → 7.44; 2025: 5.40 → 6.56). That step is **not** glibc
+retention. It is live payload that must be alive at that instant: `r0` (`dispatch` +
+`emissions`, ≈340 MB at ~2,400 gens × 8760 h), `markup` and `mc_bid` (≈168 MB each),
+and the floored `p1_fleet_arrays` (`min_gen` + `availability`, ≈336 MB) — ~1.0 GB of
+the 1.15 GB step, arithmetically. `malloc_trim` frees only what the allocator has
+already reclaimed, so there was never more than ~0.1–0.2 GB for it to take. The
+year-end `mallinfo` reads agree: `free_retained` is only 0.58 / 0.74–1.06 / 0.95–1.02 GB
+*after* the whole year's payload is dropped.
+
+**Corollary for whoever attacks the ERCOT peak next.** The peak is set by the *solve*
+that follows the rebuild, not by the rebuild, and the rebuild's starting floor is live
+Python payload. So the lever is **dropping or narrowing what stays alive across the
+seam** — `r0.emissions` (recomputable, ≈168 MB), the P0 `dispatch` array once
+`compute_monthly_markup` has consumed it, or float32 for the markup/bid intermediates —
+not allocator tuning. `M_ARENA_MAX`/`mallopt` are equally beside the point for the same
+reason. Note also that the year-loop `_malloc_trim` in `run_calibration_full.py` is
+**not** redundant with this and is doing real work: it resets the floor between years
+(2024's first build starts at 5.45 GB against 2023's 3.99 GB — a partial reset, but the
+arena reads show it is reclaiming ~0.6–1.0 GB there, where the payload really is dead).
+
+**Byte gate.** `regression_gate.py --mode byte`, `wc-a6-{before,after}`: **check [1]
+golden bundle diff PASS** (9 files, 34 numeric columns, `atol=rtol=0`), 0.000 %
+reshuffle in 2023/2024/2025, total annual gen identical to 4 dp in each year
+(446064.7 / 462847.6 / 488450.0 GWh), smoke PASS, manifest pre-screen **10/10** content
+hashes identical. Overall `RESULT: FAIL` is checks [4] only, both proven **pre-existing
+by merge-base control**: `legitimacy(--keepers)` on the same NYISO Long Island
+`transfer_security_limit` gap §PERF-B RESUME already records, and `audit_keepers` on
+`S1: stale vs the current verdicts — frontend/data/backcast/status/NEISO.js`. Identical
+failures, same exceptions, exit 1 both times on a merge-base tree with the trim
+removed. Manifests committed under `results/regression-goldens/wc-a6-{before,after}/`.

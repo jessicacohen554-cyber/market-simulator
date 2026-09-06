@@ -41,6 +41,7 @@ from .meanzero import (
     PJM_ZONAL_GAS_HUB_PATH,
 )
 from .miso import (
+    apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
     apply_miso_zonal_gas_basis,
     miso_chicago_daily_shape_factors,
@@ -98,6 +99,7 @@ __all__ = [
     "apply_caiso_zonal_gas_basis",
     "apply_ercot_west_netload_gas_shape",
     "apply_ercot_zonal_gas_basis",
+    "apply_miso_gas_marginal_commodity",
     "apply_miso_winter_citygate_daily",
     "apply_miso_zonal_gas_basis",
     "apply_nyiso_downstate_ct_gas_basis",

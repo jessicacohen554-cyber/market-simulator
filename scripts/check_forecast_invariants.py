@@ -29,6 +29,12 @@ Usage::
         --paired-summaries <base_summary.json> <gas_up_summary.json> \
         --pair-kind gas_up
 
+    # The carbon-pair PREMISE from committed artifacts (no cache dirs, no LP;
+    # capx-D73): each arm's run_config.json, the year-by-year effective-carbon
+    # table printed — the dry run of what a --paired carbon P1 would assert.
+    python scripts/check_forecast_invariants.py \
+        --paired-run-configs <base_run_config.json> <high_run_config.json>
+
 The single-run and paired modes can be combined; ``--json`` emits a machine-
 readable summary to stdout instead of the human table.
 """
@@ -39,7 +45,8 @@ import argparse
 import json
 import math
 import sys
-from dataclasses import dataclass, field
+import warnings
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 
 import numpy as np
@@ -49,6 +56,14 @@ _REPO = Path(__file__).resolve().parent.parent
 _SRC = _REPO / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+if str(_REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a script
+    sys.path.insert(0, str(_REPO))
+
+# The declared-failure ledger policy lives in ONE module, shared with the
+# registration ratchet in ``scripts/register_forecast_run.py`` (lane Y-24), so
+# the detector below and the gate at the registration seam can never disagree
+# about which FAILs a run carries or which of them the ledger covers.
+from scripts.lib import invariant_ledger as il  # noqa: E402  (after sys.path)
 
 from market_sim.config.constants import (  # noqa: E402
     DEFAULT_MARKET_DESIGN,
@@ -828,8 +843,51 @@ def check_i14_price_sanity(run: Run) -> Result:
 # --------------------------------------------------------------------------- #
 # Paired-run invariants P1-P3
 # --------------------------------------------------------------------------- #
-def carbon_pair_premise(base: Run, high: Run) -> Result:
-    """Premise assertion for the carbon pair (capx-D23 R1 / capx-D26).
+def scenario_config_from_run_config(
+    run_config: Path | dict,
+) -> tuple[ScenarioConfig, list[int]]:
+    """Rebuild an arm's :class:`ScenarioConfig` from its committed ``run_config.json``.
+
+    The committed record (``scripts/lib/run_record.write_run_config``) carries
+    the resolved config as its ``scenario_config`` block plus the
+    ``solved_years`` the arm actually solved. Keys that are no longer
+    ``ScenarioConfig`` fields are DROPPED with the same loud ``RuntimeWarning``
+    ``ScenarioConfig.from_yaml`` raises (rule 26 ``[R-DELETE]``: a deleted knob
+    must not strand the bundles written before its deletion, and it cannot
+    change a reconstructed solve because nothing reads it any more).
+
+    Returns ``(config, solved_years)``; ``solved_years`` falls back to the
+    config's ``start_year..end_year`` when the record carries none.
+    """
+    if isinstance(run_config, dict):
+        rc, label = run_config, "<dict>"
+    else:
+        rc = json.loads(Path(run_config).read_text(encoding="utf-8"))
+        label = str(run_config)
+    block = rc.get("scenario_config")
+    if not isinstance(block, dict):
+        raise SystemExit(f"{label}: no `scenario_config` block in run_config")
+    known = {f.name for f in fields(ScenarioConfig)}
+    unknown = sorted(k for k in block if k not in known)
+    if unknown:
+        warnings.warn(
+            f"scenario_config_from_run_config({label}): dropping "
+            f"{len(unknown)} key(s) not present in this codebase's "
+            f"ScenarioConfig: {unknown}",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    config = ScenarioConfig(**{k: v for k, v in block.items() if k in known})
+    years = rc.get("solved_years")
+    if not years:
+        years = list(range(int(config.start_year), int(config.end_year) + 1))
+    return config, sorted(int(y) for y in years)
+
+
+def carbon_pair_premise_from_configs(
+    base: ScenarioConfig, high: ScenarioConfig, years: list[int]
+) -> Result:
+    """The carbon-pair premise over two resolved configs (capx-D23 R1 / D26 / D73).
 
     P1's claim is "cumulative CO2 falls under a HIGHER carbon price", so the
     pair is scoreable only when the high arm's *effective* carbon signal —
@@ -841,6 +899,11 @@ def carbon_pair_premise(base: Run, high: Run) -> Result:
     every year and P1 measured the premise of its own pair
     (``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``).
 
+    This is the ONE premise mechanism (rule 19): the cache-directory route
+    (:func:`carbon_pair_premise`) and the committed-``run_config.json`` route
+    (:func:`run_paired_run_configs`, capx-D73) both resolve their configs and
+    delegate here, so the two can never disagree about a pair.
+
     Emits the year-by-year signal table (``data``: years / base / high /
     delta) so the run record states the delta explicitly. Status FAIL when
     the premise is violated — the scorer then treats the pair's P1 as
@@ -849,13 +912,13 @@ def carbon_pair_premise(base: Run, high: Run) -> Result:
     """
     from market_sim.policy.carbon import resolve_carbon_price
 
-    years = sorted(set(base.years) & set(high.years))
+    years = sorted(years)
     if not years:
         return Result(
             "P1.premise", "carbon pair premise", SKIP, "no common solved years"
         )
-    b_sig = [float(resolve_carbon_price(base.config, y)) for y in years]
-    h_sig = [float(resolve_carbon_price(high.config, y)) for y in years]
+    b_sig = [float(resolve_carbon_price(base, y)) for y in years]
+    h_sig = [float(resolve_carbon_price(high, y)) for y in years]
     delta = [round(h - b, 6) for b, h in zip(b_sig, h_sig)]
     bad = [y for y, d in zip(years, delta) if d <= 0.0]
     table = {
@@ -883,6 +946,18 @@ def carbon_pair_premise(base: Run, high: Run) -> Result:
         f"(min {min(delta):+.2f}, max {max(delta):+.2f} $/t)",
         data=table,
     )
+
+
+def carbon_pair_premise(base: Run, high: Run) -> Result:
+    """Premise assertion for the carbon pair over two loaded caches (capx-D26).
+
+    Thin cache-directory front for :func:`carbon_pair_premise_from_configs`:
+    the common solved years are the years both caches hold, the configs are
+    each cache's own ``config.yaml``. Semantics and the emitted row are the
+    shared core's, unchanged.
+    """
+    years = sorted(set(base.years) & set(high.years))
+    return carbon_pair_premise_from_configs(base.config, high.config, years)
 
 
 def _cumulative_co2(run: Run) -> float | None:
@@ -1179,6 +1254,52 @@ def run_paired_summaries(base_json: Path, other_json: Path, kind: str) -> list[R
     ]
 
 
+def run_paired_run_configs(base_rc: Path, high_rc: Path) -> list[Result]:
+    """The carbon-pair PREMISE from two committed ``run_config.json`` (capx-D73).
+
+    D23 §8 R1 asks the premise of "each arm's COMMITTED config", and the
+    committed config is the ``run_config.json`` every arm writes — so the
+    guard is askable at ZERO LP of any committed pair, without the multi-GB
+    caches ``--paired`` needs. Only the ``P1.premise`` row is emitted: P1
+    itself needs each arm's emissions, which this route does not read, so it
+    is reported as not scored at this grain rather than assumed. The row is
+    the same object the cache route writes (one mechanism, rule 19), so the
+    scorer would reclassify a FAIL here exactly as it does there (rubric §2
+    FC-6.2, ``forecast_verdict.score_fc6``).
+    """
+    base, base_years = scenario_config_from_run_config(base_rc)
+    high, high_years = scenario_config_from_run_config(high_rc)
+    years = sorted(set(base_years) & set(high_years))
+    premise = carbon_pair_premise_from_configs(base, high, years)
+    p1 = Result(
+        "P1",
+        "CO2 monotone vs carbon",
+        SKIP,
+        "not scored at this grain (committed run_config only; emissions need "
+        "the cache dirs, --paired)"
+        + (
+            " — premise mis-constructed, see P1.premise"
+            if premise.status == FAIL
+            else ""
+        ),
+    )
+    return [p1, premise]
+
+
+def _print_premise_table(results: list[Result]) -> None:
+    """Print the year-by-year effective-carbon table behind a premise row."""
+    for r in results:
+        if r.ident != "P1.premise" or not r.data:
+            continue
+        print("\n  effective carbon signal, $/tCO2 (resolve_carbon_price per arm):")
+        print(f"  {'year':>6} {'base':>10} {'high':>10} {'delta':>10}")
+        for y, b, h, d in zip(
+            r.data["years"], r.data["base"], r.data["high"], r.data["delta"]
+        ):
+            flag = "  <-- inverted" if d <= 0.0 else ""
+            print(f"  {y:>6} {b:>10.2f} {h:>10.2f} {d:>+10.2f}{flag}")
+
+
 def _print_table(results: list[Result]) -> None:
     icon = {PASS: "PASS", FAIL: "FAIL", WARN: "WARN", SKIP: "SKIP"}
     for r in results:
@@ -1239,7 +1360,7 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
         return [f"{sidecar_dir}: not a directory"]
 
     ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {}
-    declared: dict[str, list] = ledger.get("declared_failures", {})
+    declared: dict[str, list] = ledger.get(il.DECLARED_KEY, {})
     curated: dict[str, str] = ledger.get("curated_subsets", {})
 
     n_runs = n_records = 0
@@ -1270,7 +1391,6 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
 
         n_runs += 1
         idents: list[str] = []
-        statuses: list[str] = []
         for i, rec in enumerate(records):
             n_records += 1
             if not isinstance(rec, dict) or set(rec) != _RESULT_FIELDS:
@@ -1291,7 +1411,6 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                     "checker have diverged"
                 )
             idents.append(rec["ident"])
-            statuses.append(rec["status"])
 
         dupes = sorted({i for i in idents if idents.count(i) > 1})
         if dupes:
@@ -1307,9 +1426,15 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                 "`curated_subsets` with one line of why."
             )
 
-        failures = sorted({i for i, s in zip(idents, statuses) if s == FAIL})
+        # FAIL extraction and the declared-coverage test both come from the
+        # shared policy module (Y-24), which the registration ratchet also
+        # calls. NOTE the audit deliberately does NOT pass
+        # ``include_baseline``: a row in ``registration_ratchet_baseline`` is
+        # not an adjudication, so it must never make this job green. The
+        # baseline forgives at the REGISTRATION seam only.
+        failures = il.fail_idents(sidecar)
         observed[run_id] = set(failures)
-        undeclared = [i for i in failures if i not in declared.get(run_id, [])]
+        undeclared = il.undeclared_failures(run_id, failures, ledger)
         if undeclared:
             problems.append(
                 f"{run_id}: FAILs {undeclared} are not declared in "
@@ -1332,6 +1457,15 @@ def audit_sidecars(sidecar_dir: Path, ledger_path: Path) -> list[str]:
                 "longer FAIL — the run improved; prune the declaration so the "
                 "ledger keeps meaning what it says"
             )
+
+    for run_id, idents, reason in il.stale_baseline_entries(observed, ledger):
+        problems.append(
+            f"{ledger_path.name}: `{il.BASELINE_KEY}` lists {idents} for "
+            f"{run_id}, which has {reason} — prune the line. The baseline "
+            "records only the (run, ident) pairs that predate the registration "
+            "ratchet and may only SHRINK; a line kept past its cause would "
+            "silently forgive a future regression on the same ident."
+        )
 
     print(
         f"forecast-invariant artifact audit: {n_runs} sidecar(s) with an "
@@ -1358,6 +1492,16 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="ARTIFACT mode for P2 (--pair-kind gas_up): two committed "
         "full_horizon_summary.json files instead of cache directories.",
+    )
+    parser.add_argument(
+        "--paired-run-configs",
+        nargs=2,
+        metavar=("BASE_RUN_CONFIG", "HIGH_RUN_CONFIG"),
+        type=Path,
+        help="ARTIFACT mode for the carbon-pair PREMISE (capx-D73, zero LP): "
+        "two committed run_config.json files; prints the year-by-year "
+        "effective-carbon table and the P1.premise row (P1 itself is not "
+        "scored at this grain).",
     )
     parser.add_argument(
         "--pair-kind",
@@ -1402,9 +1546,16 @@ def main(argv: list[str] | None = None) -> int:
         results += run_paired_summaries(
             args.paired_summaries[0], args.paired_summaries[1], args.pair_kind
         )
+    if args.paired_run_configs:
+        if args.pair_kind != "carbon":
+            parser.error("--paired-run-configs scores the carbon-pair premise only")
+        results += run_paired_run_configs(
+            args.paired_run_configs[0], args.paired_run_configs[1]
+        )
     if not results:
         parser.error(
-            "supply --run-dir, --paired, --paired-summaries and/or --sidecar-dir"
+            "supply --run-dir, --paired, --paired-summaries, "
+            "--paired-run-configs and/or --sidecar-dir"
         )
 
     if args.json:
@@ -1419,6 +1570,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print("Forecast invariants:")
         _print_table(results)
+        if args.paired_run_configs:
+            _print_premise_table(results)
         n_fail = sum(r.status == FAIL for r in results)
         n_warn = sum(r.status == WARN for r in results)
         print(f"\n{n_fail} FAIL, {n_warn} WARN, {len(results)} checks")

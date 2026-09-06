@@ -168,6 +168,7 @@ from market_sim.policy.clean_tiers import (
     build_clean_region_arrays,
     clean_credit_by_fuel,
 )
+from market_sim.policy.voluntary_demand import append_voluntary_region
 from market_sim.policy.rps import (
     build_rps_region_arrays,
     get_rps_acp,
@@ -1241,6 +1242,7 @@ def _clean_region_arrays_for_year(
     year: int,
     zone_names: list[str],
     fleet_arrays,
+    zone_demand=None,
 ):
     """Return the clean-tier row family this ISO-year solves with, or ``None``.
 
@@ -1248,7 +1250,7 @@ def _clean_region_arrays_for_year(
     solve-side arming AND by the ``prior_results`` dual mapping — including
     the cached-year path, which never assembles the solve-side arrays — so
     the restored ``clean_region_duals`` always map onto the identical region
-    list the solve was built from. Two legs, in region order:
+    list the solve was built from. Three legs, in region order:
 
     * **State clean rows** (FFR-7B Arm 3, MISO only): built iff the state RPS
       rows are (``rps_enabled`` and not the pure-federal counterfactual), the
@@ -1261,6 +1263,15 @@ def _clean_region_arrays_for_year(
       ISO. It is NOT suppressed by ``federal_ces_replaces_state_rps`` (that
       flag removes the STATE rows — the pure-federal posture is exactly the
       federal row standing alone).
+    * **The voluntary clean-demand row** (SCN-WS3b, the family's second
+      consumer), appended LAST through
+      ``policy.voluntary_demand.append_voluntary_region`` when
+      ``voluntary_clean_demand_path`` is not ``"off"`` in a forward run: one
+      all-zone region whose RHS is the resolved volume ``V(ISO, y)`` — a
+      share of THIS year's ``zone_demand`` (after the load layers), which
+      is why the demand is an argument here — escaping at the buyer's WTP
+      ceiling. Not suppressed by ``federal_ces_replaces_state_rps`` either
+      (a voluntary buyer is not a state row). Returned unchanged when off.
 
     Args:
         config: The scenario configuration being run.
@@ -1269,6 +1280,10 @@ def _clean_region_arrays_for_year(
         zone_names: Model zone names in LP zone-index order.
         fleet_arrays: The fleet the LP solves on (the federal row's
             per-generator credit vector is aligned to it).
+        zone_demand: The ``(n_zones, T)`` demand the LP is handed this year
+            (the voluntary row's volume is a share of it). ``None`` is legal
+            only while the voluntary row is off — the pre-SCN-WS3b call
+            shape, byte-identical.
 
     Returns:
         The composed ``CleanRegionArrays`` or ``None`` (no clean row at all).
@@ -1281,9 +1296,10 @@ def _clean_region_arrays_for_year(
         and getattr(config, "miso_clean_tier_rows", False)
     ):
         state_arrays = build_clean_region_arrays(iso, year, zone_names)
-    return append_federal_ces_region(
+    arrays = append_federal_ces_region(
         config, year, zone_names, fleet_arrays, state_arrays
     )
+    return append_voluntary_region(config, iso, year, zone_names, arrays, zone_demand)
 
 
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
@@ -2939,11 +2955,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # before) plus the federal CES TARGET row (SCN-WS2a: one region
             # spanning every load zone, credited by unit_credit_fractions,
             # escaping at the ACP; its dual is the endogenous federal EAC
-            # price). ONE resolver, shared with the prior_results mapping
-            # below, so a cached year maps its duals onto the identical
-            # region list. None wherever neither exists (byte-identical).
+            # price) plus the voluntary clean-demand row (SCN-WS3b: one
+            # all-zone region whose RHS is a share of THIS year's demand,
+            # escaping at the buyer's WTP ceiling — hence year_demand is
+            # passed; off = byte-identical). ONE resolver, shared with the
+            # prior_results mapping below, so a cached year maps its duals
+            # onto the identical region list. None wherever none exists
+            # (byte-identical).
             clean_region_arrays = _clean_region_arrays_for_year(
-                config, iso, year, zone_names, fleet_arrays
+                config, iso, year, zone_names, fleet_arrays, zone_demand=year_demand
             )
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
@@ -4596,11 +4616,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # (cheap, pure) so the cached-year path — which never assembles
             # the solve-side arrays — maps its restored duals identically.
             # The federal row's dual lands on every eligible fuel at
-            # dual × credit fraction, entering the screens' existing max().
+            # dual × credit fraction, entering the screens' existing max();
+            # the voluntary row's (SCN-WS3b) lands on its eligible set at
+            # dual × 1.0 the same way — the same year_demand sizes its RHS
+            # here as on the solve side, so the region lists are identical.
             clean_attribute_price_by_fuel=(
                 clean_credit_by_fuel(
                     _clean_region_arrays_for_year(
-                        config, iso, year, zone_names, fleet_arrays
+                        config,
+                        iso,
+                        year,
+                        zone_names,
+                        fleet_arrays,
+                        zone_demand=year_demand,
                     ),
                     result.clean_region_duals,
                 )

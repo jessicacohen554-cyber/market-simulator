@@ -238,6 +238,37 @@ def datacenter_block_mw_by_zone(
     return block_mw * shares
 
 
+def datacenter_block_energy_mwh(
+    config: "ScenarioConfig", iso: str, year: int, zone_names: list[str], n_hours: int
+) -> float:
+    """Return the data-center block's annual energy in MWh for ``year``.
+
+    The DC-linked voluntary-demand volume helper (SCN-WS3b; the voluntary
+    clean-demand design memo §3.1): ``E_DC(ISO, y) = Σ_z block_mw[z] × T``,
+    the closed form the flat block admits (``ΔEnergy = block_mw × 8760``,
+    :func:`datacenter_block_mw_by_zone`). Read-only over the block the model
+    already builds — the same MW vector :func:`add_load_layers` folds into
+    demand — so the voluntary row's DC half and the served demand's DC block
+    are ONE quantity (memo §3.4: never counted twice). ``0.0`` whenever the
+    block is off or unsourced for this ISO (the resolver then sizes the
+    volume on the non-DC baseline alone).
+
+    Args:
+        config: Scenario config supplying the DC levers and
+            ``datacenter_load_factor``.
+        iso: ISO identifier.
+        year: Simulation year.
+        zone_names: Zone names in LP column order.
+        n_hours: Hours in the demand array the block is folded into (8760 in
+            a full-year solve; the caller's ``T`` in a trivial-first test).
+
+    Returns:
+        The block's energy in MWh (``>= 0.0``).
+    """
+    per_zone = datacenter_block_mw_by_zone(config, iso, year, zone_names)
+    return float(per_zone.sum()) * float(n_hours)
+
+
 def add_datacenter_block(
     year_demand: np.ndarray,
     config: "ScenarioConfig",

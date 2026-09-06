@@ -1088,9 +1088,19 @@ class DispatchModel:
         warm = self._n_solves > 0
         self._n_solves += 1
 
+        # Simplex iteration count read back from HighsInfo — a diagnostic
+        # read after ``h.run()``, so it cannot touch the solve; it is what
+        # the warm-start-class evidence tables (cross-year warm start, the
+        # same-year P1 basis seed) report beside the seconds.
+        try:
+            _iters = int(h.getInfo().simplex_iteration_count)
+            _obj = float(h.getObjectiveValue())
+        except Exception:  # pragma: no cover - a log line may never break a solve
+            _iters, _obj = -1, float("nan")
         logger.info(
             f"Matrix build: {self.build_time:.3f}s, "
-            f"Solve: {solve_time:.3f}s ({'warm' if warm else 'cold'})"
+            f"Solve: {solve_time:.3f}s ({'warm' if warm else 'cold'}, "
+            f"simplex iterations {_iters}, objective {_obj:.4f})"
         )
 
         _, primal_status = h.getInfoValue("primal_solution_status")

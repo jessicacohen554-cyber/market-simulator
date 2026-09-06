@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "failures": [],
+  "rows": [
+    {
+      "gate": "G1",
+      "verdict": "PASS",
+      "what": "arm requirement == published 2025/26 RTO Reliability Requirement",
+      "detail": "144450.000 vs 144450.000 (delta +0.0000)"
+    },
+    {
+      "gate": "G2",
+      "verdict": "PASS",
+      "what": "arm requirement is DECLARED_DELTA below the control",
+      "detail": "control 152912.298 - arm 144450.000 = 8462.298 MW; declared 8462.3 (miss -0.0020)"
+    },
+    {
+      "gate": "G3",
+      "verdict": "PASS",
+      "what": "entering side byte-identical to the control",
+      "detail": "all identical"
+    },
+    {
+      "gate": "G4",
+      "verdict": "PASS",
+      "what": "clearing + ledger requirement == screen requirement, both arms",
+      "detail": "arm clearing 144450.0, ledger 144450.0; control clearing 152912.298"
+    },
+    {
+      "gate": "G5",
+      "verdict": "PASS",
+      "what": "the pre-screen year (2024) is identical in both arms",
+      "detail": "identical"
+    }
+  ],
+  "position_delta_pt": 5.816700000000008
+}

@@ -415,6 +415,162 @@ class TestCTBlockCommitment(unittest.TestCase):
         self.assertIsNone(self._floor(self._armed(), gens, fa, p0))
 
 
+class TestCommitmentRealRunScreen(unittest.TestCase):
+    """``nyiso_gas_bridge_startup_aware`` (nyiso-200): the detector's G-61
+    path (b) run screen wired for the NYISO bridge.
+
+    A phantom P0 fragment — a run whose whole energy margin cannot repay one
+    startup — must not be extended to the class min-run and floored (the
+    nyiso-199 §8.3 defect); a commitment-real run must still be.
+    """
+
+    _MR = 8.0  # min-run hours handed to the extension
+
+    def _fleet(self):
+        gen = _gen("CC", "gas_cc", "CC_REGULAR", pmax=200.0, heat_rate=7.0)
+        return [gen], generators_to_fleet_arrays([gen], ["z"], hours=_HOURS)
+
+    def _case(self, margin):
+        """One 2 h P0 run at hours 20-22 with ``margin`` $/MWh over MC."""
+        p0 = np.zeros((1, _HOURS))
+        p0[0, 20:22] = 200.0
+        mc = np.full((1, _HOURS), 30.0)
+        lmp = np.full((1, _HOURS), 25.0)
+        lmp[0, 20:22] = 30.0 + margin
+        return p0, lmp, mc
+
+    def _floor(self, p0, lmp, mc, startup_aware, stats=None):
+        gens, fa = self._fleet()
+        return caiso_ra_mustoffer_min_gen(
+            p0,
+            fa,
+            gens,
+            0.523,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_bridge=True,
+            min_run_hours=np.array([self._MR]),
+            startup_aware=startup_aware,
+            screen_stats=stats,
+        )
+
+    def test_phantom_run_is_extended_without_the_screen(self):
+        # margin/MW = 2 h x $5 x 200 / 200 = $10 < the f-class $48.6 startup.
+        p0, lmp, mc = self._case(margin=5.0)
+        floor = self._floor(p0, lmp, mc, startup_aware=False)
+        self.assertTrue((floor[0, 22:28] > 0).all())
+
+    def test_screen_drops_the_phantom_and_nothing_is_floored(self):
+        p0, lmp, mc = self._case(margin=5.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        np.testing.assert_array_equal(floor, np.zeros_like(floor))
+        self.assertEqual(stats["runs_detected"], 1)
+        self.assertEqual(stats["runs_dropped"], 1)
+        self.assertEqual(stats["dropped_hours"], 2)
+        self.assertEqual(stats["units_with_drops"], [0])
+
+    def test_commitment_real_run_is_still_extended_under_the_screen(self):
+        # margin/MW = 2 h x $30 x 200 / 200 = $60 >= $48.6: commitment-real.
+        p0, lmp, mc = self._case(margin=30.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        self.assertTrue((floor[0, 22:28] > 0).all())
+        self.assertEqual(stats["runs_dropped"], 0)
+
+    def test_per_unit_census_makes_the_identity_falsifiable(self):
+        """nyiso-201 gate (b): the screen CLAIMS no floor anchors on a dropped
+        run. The per-unit census is what lets a screen check that at plant
+        grain instead of asserting it — a unit carrying floor with zero KEPT
+        runs would falsify it. Recorded for every eligible row, dropped or not.
+        """
+        # Dropped: the phantom. Floor is empty, so kept == 0 is consistent.
+        p0, lmp, mc = self._case(margin=5.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        self.assertEqual(
+            stats["per_unit"][0],
+            {"detected": 1, "kept": 0, "dropped": 1, "dropped_hours": 2},
+        )
+        self.assertFalse((floor > 0).any())  # zero kept runs => zero floor
+
+        # Kept: the commitment-real run. Floor is non-empty and kept > 0.
+        p0, lmp, mc = self._case(margin=30.0)
+        stats = {}
+        floor = self._floor(p0, lmp, mc, startup_aware=True, stats=stats)
+        self.assertEqual(
+            stats["per_unit"][0],
+            {"detected": 1, "kept": 1, "dropped": 0, "dropped_hours": 0},
+        )
+        self.assertTrue((floor > 0).any())
+
+    def test_census_is_diagnostics_only(self):
+        """A supplied stats dict changes no floor (rule: the floor arithmetic
+        never reads the census)."""
+        p0, lmp, mc = self._case(margin=30.0)
+        a = self._floor(p0, lmp, mc, startup_aware=True, stats=None)
+        b = self._floor(p0, lmp, mc, startup_aware=True, stats={})
+        np.testing.assert_array_equal(a, b)
+
+    def test_stats_dict_never_changes_the_floor(self):
+        p0, lmp, mc = self._case(margin=5.0)
+        a = self._floor(p0, lmp, mc, startup_aware=False, stats={})
+        b = self._floor(p0, lmp, mc, startup_aware=False)
+        np.testing.assert_array_equal(a, b)
+
+    def test_flag_default_off_is_byte_identical_through_the_wiring(self):
+        gens, fa = self._fleet()
+        p0, lmp, mc = self._case(margin=5.0)
+        base = _nyiso_gas_bridge_floor(
+            _config(nyiso_gas_bridge_min_run=True), gens, fa, p0, lmp, mc
+        )
+        explicit = _nyiso_gas_bridge_floor(
+            _config(
+                nyiso_gas_bridge_min_run=True, nyiso_gas_bridge_startup_aware=False
+            ),
+            gens,
+            fa,
+            p0,
+            lmp,
+            mc,
+        )
+        self.assertIsNotNone(base)
+        np.testing.assert_array_equal(base, explicit)
+        self.assertFalse(ScenarioConfig(iso="NYISO").nyiso_gas_bridge_startup_aware)
+
+    def test_flag_armed_through_the_wiring_removes_the_phantom_extension(self):
+        gens, fa = self._fleet()
+        p0, lmp, mc = self._case(margin=5.0)
+        armed = _nyiso_gas_bridge_floor(
+            _config(nyiso_gas_bridge_min_run=True, nyiso_gas_bridge_startup_aware=True),
+            gens,
+            fa,
+            p0,
+            lmp,
+            mc,
+        )
+        self.assertIsNone(armed)
+
+    def test_screen_needs_no_economic_leg_to_get_its_prices(self):
+        # startup leg OFF + screen ON: the wiring must still hand the
+        # detector P0 prices and MC (need_econ), or the screen would raise.
+        gens, fa = self._fleet()
+        p0, lmp, mc = self._case(margin=5.0)
+        armed = _nyiso_gas_bridge_floor(
+            _config(
+                nyiso_gas_bridge_min_run=True,
+                nyiso_gas_bridge_startup=False,
+                nyiso_gas_bridge_startup_aware=True,
+            ),
+            gens,
+            fa,
+            p0,
+            lmp,
+            mc,
+        )
+        self.assertIsNone(armed)
+
+
 if __name__ == "__main__":
     unittest.main()
 

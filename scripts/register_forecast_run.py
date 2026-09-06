@@ -70,6 +70,7 @@ if str(REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a plain scr
     sys.path.insert(0, str(REPO))
 
 from scripts.lib import forecast_provenance as fp  # noqa: E402  (after sys.path)
+from scripts.lib import invariant_ledger as il  # noqa: E402  (after sys.path)
 
 # --- namespaces -----------------------------------------------------------
 HINDCAST_DIR = REPO / "frontend" / "data" / "hindcast"  # canonical per-run record
@@ -343,6 +344,17 @@ VERDICT_MAP = {
     # failed — against a 2022/23 clearing price that goes 1.52x -> 0.936x the
     # published RCP at zero free parameters. FINDING-capx-d62-2026-09-06.md.
     "pjm-2021-2025-realized-t1h-d62-pubbar": "pjm-t1h-d62-pubbar",
+    # capx-D74 (2026-09-06): the PJM "Steam Oil & Gas" NO-DEFAULT-CAP
+    # price-taker CONVENTION (`capacity_no_default_cap_convention_by_iso[PJM]`
+    # ON, over the D62 published bar): a class the published default-ACR table
+    # prints "NA" for (Manual 18 §5.4.8.4(B), through DY 2025/26) has no
+    # default cap to elect, offers at $0 and is exempt from the merchant screen
+    # (its exit is its owner's filing). ONE arm, SUFFIXED BY CHARTER, never the
+    # bare key; controls solved at HEAD (rule 29(b), form 4 void on the SCN-LOAD
+    # growth-rate hunk) and never registered. NOTHING ARMS — the owner decides
+    # on the PRECOMMIT's pre-stated condition
+    # (PRECOMMIT-capx-d74-pjm-steam-oil-convention-2026-09-06.md §7).
+    "pjm-2021-2025-realized-t1h-d74-nodefaultcap": "pjm-t1h-d74-nodefaultcap",
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the
@@ -1070,6 +1082,72 @@ def _stamp_sidecar(sidecar: dict) -> dict:
     return sidecar
 
 
+def enforce_invariant_declaration_gate(
+    sidecar: dict, ledger_path: Path | None = None, repo: Path | None = None
+) -> None:
+    """Refuse to register a run whose invariant FAILs are not declared.
+
+    The forecast namespace's declaration ratchet (lane Y-24), and the exact
+    counterpart of the rule-22 marker gate at the backcast seam
+    (``dashboard_add_run.enforce_registration_marker_gate``, owner ruling R-AZ).
+    Its object: the CI job ``forecast-invariant-artifacts`` is a DETECTOR — it
+    audits sidecars that are already committed and goes red after the fact —
+    and this script, the SINGLE registration path for the forecast namespace,
+    had no declaration check at all. A lane could land a sidecar carrying FAILs
+    and nothing refused it, which is why the undeclared backlog regressed
+    4 -> 16 -> 17 -> 20 and why lane Y-19 was already behind before it merged.
+
+    The policy is NOT re-implemented here: which rows count as FAILs, and which
+    of them the ledger covers, come from ``scripts.lib.invariant_ledger`` — the
+    same module the CI audit reads — so the detector and this ratchet can never
+    disagree (rule 19 ``[R-ONE-MECH]`` in spirit, mirroring how both rule-22
+    marker gates share ``holdout_policy``). The ledger is read from disk on
+    every call, which is the freshness a ratchet at a seam needs.
+
+    It gates INFLOW ONLY. The ledger's ``registration_ratchet_baseline`` block
+    enumerates the (run, ident) pairs already registered when the ratchet
+    landed, and those are forgiven HERE — never in the CI audit, which stays red
+    on the whole backlog so the routing keeps its teeth. A new run id is never
+    in the baseline, so a new undeclared FAIL is refused; and the baseline may
+    only shrink (``invariant_ledger.stale_baseline_entries`` turns a superseded
+    line into an audit problem).
+
+    There is deliberately NO bypass flag: the remedy is the declaration. It runs
+    BEFORE the canonical sidecar is written and therefore before the registry
+    sidecar, the ``runs/<id>.js`` payload and the manifest are regenerated, so a
+    refused registration leaves nothing behind.
+
+    ``--reindex`` never reaches here. That path IS the Pages deploy assembly
+    step and must keep running over the standing backlog without failing the
+    deploy; auditing it is the CI job's role, not the deploy's.
+
+    Args:
+        sidecar: The canonical sidecar about to be written.
+        ledger_path: Explicit ledger path (tests); defaults to the repo's
+            ``frontend/data/hindcast/invariant-failures.json``.
+        repo: Repo root; defaults to the module ``REPO``.
+
+    Raises:
+        SystemExit: with the run id, the undeclared idents and the remedy, when
+            any FAIL the sidecar carries is neither declared nor baselined.
+    """
+    ledger = il.load_ledger(repo or REPO, ledger_path)
+    refusals = il.registration_refusals(sidecar, ledger)
+    if not refusals:
+        return
+    sys.exit(
+        "error: REGISTRATION REFUSED (forecast-invariant declaration ratchet, "
+        "lane Y-24 — a registered run that fails an invariant must say so in "
+        "the ledger, so the FAIL is a reviewed line rather than a number that "
+        "lands on the forecast dashboard unremarked).\n  "
+        + "\n  ".join(refusals)
+        + "\nThere is no bypass flag. Declaring an undiagnosed FAIL is itself "
+        "the silent landing this gate exists to prevent, so if the cause is not "
+        "understood yet, route it to the owning desk in your findings doc and "
+        "leave the run unregistered — git history is the record (rule 15)."
+    )
+
+
 def register_one(sidecar: dict) -> str:
     """Register a newly-written canonical sidecar by regenerating the namespace.
 
@@ -1167,11 +1245,12 @@ def main(argv: list[str] | None = None) -> int:
         # there), write the canonical record, then register into the namespace.
         from scripts import register_hindcast as RH  # noqa: PLC0415
 
-        RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
         sidecar = RH.build_sidecar(
             args.bundle, preserve_invariants=args.preserve_invariants
         )
+        enforce_invariant_declaration_gate(sidecar)
         _stamp_sidecar(sidecar)
+        RH.SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
         (RH.SIDECAR_DIR / f"{sidecar['run_id']}.json").write_text(
             json.dumps(sidecar, indent=2) + "\n"
         )
@@ -1187,6 +1266,7 @@ def main(argv: list[str] | None = None) -> int:
         sidecar = RB.build_sidecar(
             args.summary, args.label, kind=args.kind, extra_meta=extra
         )
+        enforce_invariant_declaration_gate(sidecar)
         _stamp_sidecar(sidecar)
         HINDCAST_DIR.mkdir(parents=True, exist_ok=True)
         (HINDCAST_DIR / f"{sidecar['run_id']}.json").write_text(

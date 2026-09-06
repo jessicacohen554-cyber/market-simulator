@@ -1,0 +1,1750 @@
+{
+  "session": "nyiso-200",
+  "keeper": "2026-09-06-nyiso-196-extract-basis",
+  "scorer_artifact": {
+    "convicted_plants_by_year": {
+      "2023": {
+        "7314": {
+          "ct_only": true,
+          "npl_mw": 170.0,
+          "measured_cf": 0.1835,
+          "measured_zero_share": 0.5708
+        },
+        "50978": {
+          "ct_only": true,
+          "npl_mw": 123.0,
+          "measured_cf": 0.127,
+          "measured_zero_share": 0.7392
+        }
+      },
+      "2024": {
+        "7314": {
+          "ct_only": true,
+          "npl_mw": 170.0,
+          "measured_cf": 0.2143,
+          "measured_zero_share": 0.5345
+        },
+        "50978": {
+          "ct_only": true,
+          "npl_mw": 123.0,
+          "measured_cf": 0.1247,
+          "measured_zero_share": 0.6858
+        }
+      },
+      "2025": {
+        "7314": {
+          "ct_only": false,
+          "npl_mw": 170.0,
+          "measured_cf": 0.1603,
+          "measured_zero_share": 0.636
+        },
+        "50978": {
+          "ct_only": false,
+          "npl_mw": 123.0,
+          "measured_cf": 0.171,
+          "measured_zero_share": 0.5395
+        }
+      }
+    },
+    "ct_only_union_2025_only": [
+      "2493",
+      "54914"
+    ],
+    "ct_only_union_train_span": [
+      "2493",
+      "2503",
+      "2682",
+      "50744",
+      "50978",
+      "52168",
+      "54041",
+      "54131",
+      "54592",
+      "54593",
+      "54914",
+      "7314"
+    ],
+    "restored_by_span_union": [
+      "2503",
+      "2682",
+      "50744",
+      "50978",
+      "52168",
+      "54041",
+      "54131",
+      "54592",
+      "54593",
+      "7314"
+    ],
+    "nyiso199_2025_screen_D4_failures": [
+      "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 7314 is floored for 0.0669 TWh (15.7% of the mechanism's forced energy) while its own measured median output over the 3210 hours the floor actually binds for it (inside h0-23) is 0.000 MW (76.2% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+      "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 50978 is floored for 0.0141 TWh (3.3% of the mechanism's forced energy) while its own measured median output over the 352 hours the floor actually binds for it (inside h0-23) is 0.000 MW (69.9% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+    ],
+    "nyiso199_2025_keeper_D4_failures": [
+      "2025 reliability_floor \u00d7 ST_GAS: plant 8006 is floored for 0.0010 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 17 hours the floor actually binds for it (inside h0-23) is 0.000 MW (58.8% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+    ],
+    "screen_failures_the_span_guard_skips": [
+      "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 7314 is floored for 0.0669 TWh (15.7% of the mechanism's forced energy) while its own measured median output over the 3210 hours the floor actually binds for it (inside h0-23) is 0.000 MW (76.2% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)",
+      "2025 nyiso_gas_commitment_bridge \u00d7 CC_REGULAR: plant 50978 is floored for 0.0141 TWh (3.3% of the mechanism's forced energy) while its own measured median output over the 352 hours the floor actually binds for it (inside h0-23) is 0.000 MW (69.9% of them at zero) \u2014 the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)"
+    ],
+    "screen_failures_surviving_the_span_guard": [],
+    "stop_would_have_fired_under_span_guard": false,
+    "guard_years_after_nyiso200": [
+      2023,
+      2024,
+      2025
+    ],
+    "note": "the nyiso-199 \u00a78.3 C8/D-4 STOP fired on rows the span scorer skips by construction (nyiso-150 union guard, nyiso-145 \u00a73 artifact); the one-year screen bundle's union was {2025} alone. Scorer-only repair in legitimacy_diagnostics.ct_only_guard_years; keeper re-scores identically."
+  },
+  "keeper_bridge_footprint": {
+    "2023": {
+      "bridge_forced_twh_by_class": {
+        "CC_REGULAR": {
+          "forced_twh": 0.8815,
+          "class_total_twh": 31.9708,
+          "share_of_class": 0.0276
+        },
+        "ST_GAS": {
+          "forced_twh": 0.1219,
+          "class_total_twh": 11.9971,
+          "share_of_class": 0.0102
+        }
+      },
+      "repair_reachability_bound_twh": 1.0034,
+      "cc_regular_forced_share_vs_cap": {
+        "share": 0.0276,
+        "cap": 0.3,
+        "d4_consulted_by_calibration_verdict": false
+      },
+      "unit_conduct_rows": [
+        {
+          "class": "CC_REGULAR",
+          "plant": "2539",
+          "floored_twh": 0.5336,
+          "binding_hours": 2157,
+          "measured_median_mw": 536.038,
+          "measured_zero_share": 0.0176,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "50292",
+          "floored_twh": 0.1156,
+          "binding_hours": 3748,
+          "measured_median_mw": 46.742,
+          "measured_zero_share": 0.1059,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "54574",
+          "floored_twh": 0.0368,
+          "binding_hours": 1276,
+          "measured_median_mw": 68.45,
+          "measured_zero_share": 0.308,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "55405",
+          "floored_twh": 0.0044,
+          "binding_hours": 25,
+          "measured_median_mw": 305.36,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56234",
+          "floored_twh": 0.0029,
+          "binding_hours": 16,
+          "measured_median_mw": 258.154,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56940",
+          "floored_twh": 0.004,
+          "binding_hours": 12,
+          "measured_median_mw": 624.106,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "57185",
+          "floored_twh": 0.0186,
+          "binding_hours": 74,
+          "measured_median_mw": 380.668,
+          "measured_zero_share": 0.0541,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2490",
+          "floored_twh": 0.0089,
+          "binding_hours": 101,
+          "measured_median_mw": 96.634,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2516",
+          "floored_twh": 0.0072,
+          "binding_hours": 56,
+          "measured_median_mw": 156.41,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2517",
+          "floored_twh": 0.0292,
+          "binding_hours": 692,
+          "measured_median_mw": 82.846,
+          "measured_zero_share": 0.159,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2527",
+          "floored_twh": 0.0303,
+          "binding_hours": 1504,
+          "measured_median_mw": 73.951,
+          "measured_zero_share": 0.002,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "8906",
+          "floored_twh": 0.0463,
+          "binding_hours": 1400,
+          "measured_median_mw": 0.0,
+          "measured_zero_share": 0.74,
+          "verdict": "FAIL"
+        }
+      ]
+    },
+    "2024": {
+      "bridge_forced_twh_by_class": {
+        "CC_REGULAR": {
+          "forced_twh": 0.2802,
+          "class_total_twh": 35.3629,
+          "share_of_class": 0.0079
+        },
+        "ST_GAS": {
+          "forced_twh": 0.2926,
+          "class_total_twh": 10.8365,
+          "share_of_class": 0.027
+        }
+      },
+      "repair_reachability_bound_twh": 0.5728,
+      "cc_regular_forced_share_vs_cap": {
+        "share": 0.0079,
+        "cap": 0.3,
+        "d4_consulted_by_calibration_verdict": false
+      },
+      "unit_conduct_rows": [
+        {
+          "class": "CC_REGULAR",
+          "plant": "2539",
+          "floored_twh": 0.0519,
+          "binding_hours": 210,
+          "measured_median_mw": 513.547,
+          "measured_zero_share": 0.0619,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "50292",
+          "floored_twh": 0.0789,
+          "binding_hours": 2767,
+          "measured_median_mw": 30.61,
+          "measured_zero_share": 0.3921,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "54574",
+          "floored_twh": 0.007,
+          "binding_hours": 243,
+          "measured_median_mw": 14.224,
+          "measured_zero_share": 0.4198,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "55405",
+          "floored_twh": 0.0066,
+          "binding_hours": 26,
+          "measured_median_mw": 329.815,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56234",
+          "floored_twh": 0.0007,
+          "binding_hours": 4,
+          "measured_median_mw": 247.685,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56940",
+          "floored_twh": 0.0011,
+          "binding_hours": 3,
+          "measured_median_mw": 446.86,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "57185",
+          "floored_twh": 0.0066,
+          "binding_hours": 29,
+          "measured_median_mw": 367.637,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2490",
+          "floored_twh": 0.128,
+          "binding_hours": 1429,
+          "measured_median_mw": 96.617,
+          "measured_zero_share": 0.0763,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2516",
+          "floored_twh": 0.02,
+          "binding_hours": 162,
+          "measured_median_mw": 203.263,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2517",
+          "floored_twh": 0.0762,
+          "binding_hours": 1765,
+          "measured_median_mw": 45.222,
+          "measured_zero_share": 0.4589,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2527",
+          "floored_twh": 0.0343,
+          "binding_hours": 1753,
+          "measured_median_mw": 75.041,
+          "measured_zero_share": 0.0011,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "8906",
+          "floored_twh": 0.0341,
+          "binding_hours": 1118,
+          "measured_median_mw": 0.0,
+          "measured_zero_share": 0.9338,
+          "verdict": "FAIL"
+        }
+      ]
+    },
+    "2025": {
+      "bridge_forced_twh_by_class": {
+        "CC_REGULAR": {
+          "forced_twh": 0.408,
+          "class_total_twh": 33.8132,
+          "share_of_class": 0.0121
+        },
+        "ST_GAS": {
+          "forced_twh": 0.1621,
+          "class_total_twh": 12.0597,
+          "share_of_class": 0.0134
+        }
+      },
+      "repair_reachability_bound_twh": 0.5701,
+      "cc_regular_forced_share_vs_cap": {
+        "share": 0.0121,
+        "cap": 0.3,
+        "d4_consulted_by_calibration_verdict": false
+      },
+      "unit_conduct_rows": [
+        {
+          "class": "CC_REGULAR",
+          "plant": "2539",
+          "floored_twh": 0.1023,
+          "binding_hours": 415,
+          "measured_median_mw": 660.849,
+          "measured_zero_share": 0.0289,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "50292",
+          "floored_twh": 0.114,
+          "binding_hours": 2985,
+          "measured_median_mw": 57.606,
+          "measured_zero_share": 0.1608,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "54574",
+          "floored_twh": 0.0026,
+          "binding_hours": 73,
+          "measured_median_mw": 71.241,
+          "measured_zero_share": 0.1644,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "55405",
+          "floored_twh": 0.0634,
+          "binding_hours": 279,
+          "measured_median_mw": 280.983,
+          "measured_zero_share": 0.0645,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56234",
+          "floored_twh": 0.0057,
+          "binding_hours": 33,
+          "measured_median_mw": 247.693,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "56940",
+          "floored_twh": 0.0079,
+          "binding_hours": 25,
+          "measured_median_mw": 423.769,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "CC_REGULAR",
+          "plant": "57185",
+          "floored_twh": 0.0334,
+          "binding_hours": 174,
+          "measured_median_mw": 242.79,
+          "measured_zero_share": 0.046,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2490",
+          "floored_twh": 0.1046,
+          "binding_hours": 1164,
+          "measured_median_mw": 105.367,
+          "measured_zero_share": 0.012,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2516",
+          "floored_twh": 0.0035,
+          "binding_hours": 27,
+          "measured_median_mw": 125.121,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2517",
+          "floored_twh": 0.0267,
+          "binding_hours": 684,
+          "measured_median_mw": 45.211,
+          "measured_zero_share": 0.4327,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "2527",
+          "floored_twh": 0.0068,
+          "binding_hours": 370,
+          "measured_median_mw": 73.99,
+          "measured_zero_share": 0.0,
+          "verdict": "pass"
+        },
+        {
+          "class": "ST_GAS",
+          "plant": "8906",
+          "floored_twh": 0.0205,
+          "binding_hours": 686,
+          "measured_median_mw": 80.976,
+          "measured_zero_share": 0.4475,
+          "verdict": "pass"
+        }
+      ]
+    }
+  },
+  "population_census": {
+    "excluded_membership_plant_codes": [
+      2480,
+      2625,
+      2682,
+      7784,
+      8006,
+      10190,
+      10620,
+      10621,
+      50744,
+      54034,
+      54592,
+      54593,
+      56188
+    ],
+    "2023": {
+      "eligible_rows_total": 43,
+      "in_population": {
+        "gas_st": {
+          "rows": 7,
+          "mw": 1298.3,
+          "startup_per_mw_values": [
+            35.0
+          ]
+        },
+        "gas_cc": {
+          "rows": 21,
+          "mw": 3858.7,
+          "startup_per_mw_values": [
+            50.0
+          ]
+        }
+      },
+      "rows": [
+        {
+          "plant_code": 2480,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 153.17,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2490,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 260.35,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 350.13,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 187.95,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2511,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 56.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2516,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 409.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2517,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 50.05,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2527,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 68.03,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 263.46,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 80.38,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2625,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 243.52,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2682,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 13.5,
+          "min_down_h": 8.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 7314,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 22.94,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 7784,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 67.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8006,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 166.19,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8906,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 104.32,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 16.8,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 4.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10620,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10621,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 102.7,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 59.45,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 50.65,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50744,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 43.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50978,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 45.52,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54034,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 78.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 58.1,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54592,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54593,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 427.28,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 37.84,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55405,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 529.16,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.89,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 7.46,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56196,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 197.12,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 253.19,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 32.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 487.27,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 105.11,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 330.42,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 245.64,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 292.5,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 109.85,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        }
+      ]
+    },
+    "2024": {
+      "eligible_rows_total": 44,
+      "in_population": {
+        "gas_st": {
+          "rows": 7,
+          "mw": 1298.3,
+          "startup_per_mw_values": [
+            35.0
+          ]
+        },
+        "gas_cc": {
+          "rows": 22,
+          "mw": 3863.7,
+          "startup_per_mw_values": [
+            50.0
+          ]
+        }
+      },
+      "rows": [
+        {
+          "plant_code": 2480,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 153.17,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2490,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 260.35,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 350.13,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 187.95,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2511,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 56.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2516,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 409.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2517,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 50.05,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2527,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 68.03,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 263.46,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 80.38,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2625,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 243.52,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2682,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 13.5,
+          "min_down_h": 8.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 7314,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 22.94,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 7784,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 67.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8006,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 166.19,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8906,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 104.32,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 16.8,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 4.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10620,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10621,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 102.7,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 59.45,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 50.65,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50744,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 43.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50978,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 45.52,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54034,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 78.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 58.1,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54592,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54593,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54808,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 4.95,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 427.28,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 37.84,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55405,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 529.16,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.89,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 7.46,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56196,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 197.12,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 253.19,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 32.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 487.27,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 105.11,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 330.42,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 245.64,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 292.5,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 109.85,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        }
+      ]
+    },
+    "2025": {
+      "eligible_rows_total": 44,
+      "in_population": {
+        "gas_st": {
+          "rows": 7,
+          "mw": 1298.3,
+          "startup_per_mw_values": [
+            35.0
+          ]
+        },
+        "gas_cc": {
+          "rows": 22,
+          "mw": 3863.7,
+          "startup_per_mw_values": [
+            50.0
+          ]
+        }
+      },
+      "rows": [
+        {
+          "plant_code": 2480,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 153.17,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2490,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 260.35,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 350.13,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2500,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 187.95,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2511,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 56.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2516,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 409.2,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2517,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 50.05,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2527,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 68.03,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 263.46,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2539,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 80.38,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 2625,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 243.52,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 2682,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 13.5,
+          "min_down_h": 8.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 7314,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 22.94,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 7784,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 67.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8006,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 166.19,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 8906,
+          "fuel": "gas_st",
+          "group": "ST_GAS",
+          "pmax_mw": 104.32,
+          "min_down_h": 12.0,
+          "startup_per_mw": 35.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 16.8,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10190,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 4.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10620,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 10621,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 102.7,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 59.45,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50292,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 50.65,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 50744,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 43.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 50978,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 45.52,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54034,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 78.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 58.1,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54574,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.0,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 54592,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 53.6,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54593,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.9,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 54808,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 4.95,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 427.28,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55375,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 37.84,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 55405,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 529.16,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 42.89,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56188,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 7.46,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": false
+        },
+        {
+          "plant_code": 56196,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 197.12,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 253.19,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56234,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 32.91,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 487.27,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 56940,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 105.11,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 330.42,
+          "min_down_h": 8.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57185,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 245.64,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 292.5,
+          "min_down_h": 6.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        },
+        {
+          "plant_code": 57664,
+          "fuel": "gas_cc",
+          "group": "CC_REGULAR",
+          "pmax_mw": 109.85,
+          "min_down_h": 4.0,
+          "startup_per_mw": 50.0,
+          "in_population": true
+        }
+      ]
+    }
+  }
+}

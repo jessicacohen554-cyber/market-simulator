@@ -85,8 +85,10 @@ from market_sim.config.capacity_market import (
     resolve_capacity_adequacy_requirement_published,
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_supply_clearing,
+    resolve_capacity_no_default_cap_convention,
 )
 from market_sim.data.avoidable_cost_rate import (
+    no_default_cap_class,
     published_bar_per_kw_yr,
     reactive_offset_per_mw_yr,
 )
@@ -3177,6 +3179,30 @@ def apply_economic_retirements(
         config, config.iso
     )
 
+    # capx D74: the NO-DEFAULT-CAP price-taker convention, resolved ONCE per
+    # screen call (it requires ``published_bar_armed``; the resolver enforces
+    # that). A screened unit whose published resource class carries NO default
+    # gross ACR for the delivery year this screen prices (PJM Manual 18 Rev 62
+    # §5.4.8.4(B) prints "NA" for Steam Oil & Gas through DY 2025/26) has no
+    # default cap to elect and — absent a unit-specific ACR filing the model
+    # does not carry — offers at $0 (§5.4.1: an offer above $0 needs a filing
+    # "or ... the default gross ACR of the applicable resource type, if
+    # available"). Such a unit is EXEMPT from this merchant screen in that year
+    # (its exit is its owner's filing, steps 0 / 1b) and, because it is never
+    # in ``margins``, its accredited MW lands in the D57 stack's price-taking
+    # block Q_0 through ``_settle_capacity_supply_clearing``'s own
+    # ``accredited_total − Σ A_g(screened)`` — so a price taker clears and
+    # passes by construction (DESIGN-capx-d54 §3.5; rule 19 [R-ONE-MECH]: one
+    # limb of one published table, decided nowhere else). Ledgered below as
+    # ``no_default_cap_price_takers``; off the gate every ledger is
+    # byte-identical.
+    no_default_cap_armed = (
+        published_bar_armed
+        and year is not None
+        and resolve_capacity_no_default_cap_convention(config, config.iso)
+    )
+    _no_default_cap_units: list[Generator] = []
+
     # Diagnostic-only revenue-stack accumulator (no decision effect): per-fuel
     # capacity-weighted screen net revenue vs going-forward cost, both in
     # $/kW-yr. Emitted once per screen call for the FOM+scarcity joint protocol
@@ -3205,6 +3231,13 @@ def apply_economic_retirements(
             continue
         rows = _dispatch_rows(g, idx_of)
         if not rows:
+            continue
+        if no_default_cap_armed and no_default_cap_class(
+            config.iso, g.fuel_type, int(year)
+        ):
+            # capx D74 (see the gate comment above): no published default cap
+            # for this class in this delivery year — a $0 price taker, exempt.
+            _no_default_cap_units.append(g)
             continue
 
         zone = int(fleet_arrays.zone_idx[rows[0]])
@@ -3578,6 +3611,35 @@ def apply_economic_retirements(
         )
         if event_sink is not None:
             event_sink["capacity_clearing"] = capacity_clearing
+    if event_sink is not None and no_default_cap_armed:
+        # capx D74 ledger block (additive; absent off the gate): the units the
+        # convention moved out of the screen and into Q_0 this year, so the
+        # D-2 attribution and the A/B can read the class's footprint without
+        # replaying the solve.
+        _ndc_mw_by_fuel: dict[str, float] = {}
+        _ndc_firm_by_fuel: dict[str, float] = {}
+        for _g in _no_default_cap_units:
+            _ndc_mw_by_fuel[_g.fuel_type] = _ndc_mw_by_fuel.get(
+                _g.fuel_type, 0.0
+            ) + float(_g.pmax_mw)
+            _ndc_firm_by_fuel[_g.fuel_type] = _ndc_firm_by_fuel.get(
+                _g.fuel_type, 0.0
+            ) + float(_thermal_firm_mw(_g, config.iso, config, year))
+        event_sink["no_default_cap_price_takers"] = {
+            "year": int(year),
+            "delivery_year": capdel.resolve_delivery_year(config.iso, int(year)),
+            "units": len(_no_default_cap_units),
+            "mw": float(sum(_ndc_mw_by_fuel.values())),
+            "accredited_mw": float(sum(_ndc_firm_by_fuel.values())),
+            "mw_by_fuel": dict(sorted(_ndc_mw_by_fuel.items())),
+            "accredited_mw_by_fuel": dict(sorted(_ndc_firm_by_fuel.items())),
+            "unit_ids": sorted(_g.unit_id for _g in _no_default_cap_units),
+            "basis": (
+                "published default-ACR table carries no value for the class in "
+                "this delivery year (PJM M18 Rev 62 §5.4.8.4(B) 'NA'); $0 price "
+                "taker in Q_0, exempt from the merchant screen (capx D74)"
+            ),
+        }
 
     # Diagnostic accumulation only — does not affect the retire decision.
     for g, net_revenue, going_forward_cost in margins:

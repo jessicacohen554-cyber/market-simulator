@@ -197,6 +197,10 @@ def apply_ccs_retrofit(
       bin, so an efficient host stays efficient after capture,
     * ``vom += config.ccs_retrofit_vom_adder``,
     * ``emission_rate_co2 *= (1 - config.ccs_retrofit_capture_rate)``,
+    * ``ccs_capture_fraction = config.ccs_retrofit_capture_rate`` -- the stamp
+      that makes the line above survive the per-year measured-rate restoration
+      downstream of evolution (capx D77; see the field's own comment on
+      :class:`~market_sim.data.fleet.Generator`),
     * ``fuel_type`` changes to ``"gas_cc_ccs"``.
 
     **Decision basis (plan §11 resolution, owner 2026-07-17).** The screen
@@ -572,6 +576,18 @@ def apply_ccs_retrofit(
         gen.emission_rate_co2 = gen.emission_rate_co2 * (
             1.0 - config.ccs_retrofit_capture_rate
         )
+        # capx D77: stamp the capture island on the unit so the rate SURVIVES
+        # the measured-rate restoration that runs downstream of evolution every
+        # year (``campd_bins.apply_plant_emission_rates*``, reached from
+        # ``build_dispatch_fleet``). Before this stamp the line above was
+        # overwritten by the host plant's own uncaptured CAMPD rate on the very
+        # first dispatch build after the retrofit -- the unit dispatched, priced
+        # its carbon adder and was accounted at ~10x its intended intensity,
+        # while the two writes bracketing it (``heat_rate``, ``fuel_type``)
+        # persisted. Same value, one composition point (rule 19 [R-ONE-MECH]);
+        # no new free parameter (rule 21 [R-DOF]).
+        # docs/handoffs/FINDING-capx-d77-2026-09-06.md
+        gen.ccs_capture_fraction = config.ccs_retrofit_capture_rate
         gen.fuel_type = "gas_cc_ccs"
         retrofitted_mw += gen.pmax_mw
         retrofit_log.append(log_entry)

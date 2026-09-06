@@ -50,6 +50,22 @@ DISTRESS_PRICES = np.full((1, T), 33.0)  # thin unabated margin, far below FOM
 SPLIT_PRICES = np.concatenate(
     [np.full((1, T // 2), 60.0), np.full((1, T // 2), 5.0)], axis=1
 )
+# 9 h at $60 / 15 h at $5 — the same shape as SPLIT_PRICES but thinner, used
+# ONLY by Test45QWindowInScreen. It exists because the 12 h split stopped
+# discriminating when capx D65-B re-identified ccs_retrofit_vom_adder
+# 8.0 -> 2.95 $/MWh (2026$): a cheaper capture island pays back in 8.3 yr, well
+# inside the 12-year statutory window, so both arms retrofitted and the test
+# could no longer see the window at all. At 9 h the payback is 16.5 yr, back
+# inside the (12, 25) straddle the window test needs. Kept separate from
+# SPLIT_PRICES so the other classes that use the 12 h split are untouched.
+_WINDOW_ON_HOURS = 9
+WINDOW_SPLIT_PRICES = np.concatenate(
+    [
+        np.full((1, _WINDOW_ON_HOURS), 60.0),
+        np.full((1, T - _WINDOW_ON_HOURS), 5.0),
+    ],
+    axis=1,
+)
 
 
 def _gas_cc(
@@ -272,20 +288,29 @@ class Test45QWindowInScreen(unittest.TestCase):
     """The credit window binds the payback: 12-year vs indefinite (None)."""
 
     def test_window_12_blocks_what_indefinite_allows(self):
-        # SPLIT_PRICES: uplift is ~55k $/MW-yr while 45Q pays but NEGATIVE
-        # after the window (the HR penalty + VOM adder + transport exceed the
-        # 12h/day in-merit margin without the credit). Under the statutory
-        # 12-year window the capex cannot be recovered before the credit
-        # dies -> no retrofit; under the indefinite extension (None) the
-        # credit runs the full remaining life and the payback (~20 yr at the
-        # capx-D41 fixture capex pin; ~16 yr before it) clears the 25-year
-        # remaining life.
-        fleet, log = _screen([_gas_cc("G0")], SPLIT_PRICES)
+        # WINDOW_SPLIT_PRICES: 45Q pays but the post-window uplift is NEGATIVE
+        # (the HR penalty + VOM adder + transport exceed the in-merit margin
+        # without the credit). Under the statutory 12-year window the capex
+        # cannot be recovered before the credit dies -> no retrofit; under the
+        # indefinite extension (None) the credit runs the full remaining life
+        # and the payback (~16 yr) clears the 25-year remaining life.
+        #
+        # RE-TUNED 2026-09-06 (capx D65-B) from the shared 12h SPLIT_PRICES to a
+        # local 9h fixture. The cause is Act B — ccs_retrofit_vom_adder
+        # re-identified 8.0 -> 2.95 $/MWh (2026$) off the ATB basis — which made
+        # retrofits EASIER, the direction stated before the measurement, so the
+        # old 12h fixture's payback fell to 8.3 yr and stopped straddling the
+        # 12-year window. What is re-tuned is this UNIT TEST'S FIXTURE, to
+        # restore its discriminating power over the mechanism it names; no
+        # model parameter and no threshold moved, and nothing here was chosen
+        # against a residual (rule 1 [R-STRUCT]). At 9 in-merit hours the
+        # payback is 16.5 yr — the same (12, 25) straddle the original had.
+        fleet, log = _screen([_gas_cc("G0")], WINDOW_SPLIT_PRICES)
         self.assertEqual(log, [])
         self.assertEqual(fleet[0].fuel_type, "gas_cc")
 
         cfg_none = _fixture_config(ira_45q_credit_window_years=None)
-        fleet2, log2 = _screen([_gas_cc("G1")], SPLIT_PRICES, config=cfg_none)
+        fleet2, log2 = _screen([_gas_cc("G1")], WINDOW_SPLIT_PRICES, config=cfg_none)
         self.assertEqual(len(log2), 1)
         self.assertEqual(fleet2[0].fuel_type, "gas_cc_ccs")
         entry = log2[0]
@@ -470,13 +495,21 @@ class TestRetrofitFlowsIntoLP(unittest.TestCase):
         self.assertEqual(arrays.fuel_type_idx[0], FUEL_TYPE_MAP["gas_cc_ccs"])
         self.assertAlmostEqual(arrays.heat_rate[0], 6.9 * 1.12, places=6)
         self.assertAlmostEqual(arrays.emission_rate[0], 0.37 * 0.10, places=6)
-        self.assertAlmostEqual(arrays.vom[0], 2.0 + 8.0, places=6)
+        # The capture VOM adder is read from the config rather than written as
+        # a literal: capx D65-B re-identified it 8.0 -> 2.95 $/MWh (2026$) off
+        # the ATB 2024 v4.0.0 basis, and a literal here would have to be
+        # re-typed on every such re-identification while asserting nothing about
+        # the SEAM this test exists for (that the adder reaches the LP's vom).
+        # The value itself is pinned to its source in
+        # tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py.
+        vom_adder = _fixture_config().ccs_retrofit_vom_adder
+        self.assertAlmostEqual(arrays.vom[0], 2.0 + vom_adder, places=6)
         self.assertAlmostEqual(arrays.pmax[0], 500.0, places=6)
 
         # The marginal cost reflects the penalized heat rate, the VOM adder
         # and the reduced (post-capture) emission rate.
         mc = assemble_mc(arrays, np.array([[4.0]]), 100.0, 0.0)
-        expected = 6.9 * 1.12 * 4.0 + 10.0 + 0.037 * 100.0
+        expected = 6.9 * 1.12 * 4.0 + (2.0 + vom_adder) + 0.037 * 100.0
         self.assertAlmostEqual(mc[0, 0], expected, places=3)
 
 
@@ -871,10 +904,32 @@ class TestCapexCo2Scaling(unittest.TestCase):
             base.cache_key(),
             ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
         )
+        # The literal that used to sit here ("4c6b03ae098b6e3e", the pre-Q42
+        # pin) was RETIRED 2026-09-06 by capx D65-B, not re-typed. Act B
+        # re-identified ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh (2026$), and a
+        # plain value field has no frozen declaration to drop at, so it re-keys
+        # EVERY config — this control arm included. Re-pinning the new literal
+        # would assert only "some hash", so what is pinned instead is the
+        # PROPERTY the literal stood for: an explicit False hashes identically
+        # to a config that never mentions the field, which is what "still drops
+        # from the hash, still keeps its bundle" actually means and what
+        # survives the next unrelated re-key.
         self.assertEqual(
             ScenarioConfig(ccs_retrofit_capex_co2_scaling=False).cache_key(),
-            "4c6b03ae098b6e3e",  # the pre-flip pin, still addressed by an
-        )  # explicit False (measured capx D60, 2026-09-05)
+            ScenarioConfig(
+                ccs_retrofit_capex_co2_scaling=False,
+                ccs_retrofit_fixed_cost_co2_scaling=False,
+            ).cache_key(),
+        )
+        # And the pre-Q42 key is still REACHABLE by holding Act B's value at its
+        # pre-D65-B level — the decomposition PRECOMMIT-capx-d65b-2026-09-06.md
+        # §3.1 uses to show Q42's drop mechanic is intact under the coupling.
+        self.assertEqual(
+            ScenarioConfig(
+                ccs_retrofit_capex_co2_scaling=False, ccs_retrofit_vom_adder=8.0
+            ).cache_key(),
+            "4c6b03ae098b6e3e",
+        )
 
     def test_island_scales_with_captured_co2(self):
         cfg = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
@@ -1034,16 +1089,29 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         self.assertTrue(cfg.ccs_retrofit_fixed_cost_co2_scaling)
 
     def test_off_is_byte_identical_and_cache_neutral(self):
-        # Same fleet, seam 1 armed, seam 4 absent vs explicitly False: the log
-        # must be identical, every host must pay the REFERENCE fixed-cost legs
-        # (scale 1.0), and the converted units must carry the flat adder.
+        # THE OFF PATH, re-expressed for the armed posture (capx D65-B,
+        # 2026-09-06). Until Act A's default flip, "off" could be written as
+        # "seam 4 absent" and this test compared absent-vs-explicit-False. That
+        # comparison is now vacuous in the wrong direction: absent means ARMED.
+        # So the off path is written EXPLICITLY on both sides, which is what the
+        # D65-B charter asks this shape of test to pin — the explicit-False path
+        # is byte-identical to the pre-D65 construction and cache-neutral.
+        #
+        # Note the two configs below reach "off" by DIFFERENT routes: cfg_false
+        # says so directly, while cfg_demoted turns seam 1 off and lets the pair
+        # resolution demote seam 4 (there is no k without seam 1, so it is inert
+        # by construction). Their retrofit ECONOMICS differ — seam 1 also sizes
+        # the island — so they are compared on the seam-4 quantities only.
         def fleet():
             return [
                 _gas_cc("REF", heat_rate=6.3, emission_rate=self.ER_REF),
                 _gas_cc("HOT", heat_rate=7.0, emission_rate=0.60),
             ]
 
-        cfg_absent = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        cfg_absent = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=False,
+        )
         cfg_false = _fixture_config(
             ccs_retrofit_capex_co2_scaling=True,
             ccs_retrofit_fixed_cost_co2_scaling=False,
@@ -1077,22 +1145,46 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
             {g.unit_id: (g.fuel_type, g.vom) for g in f_absent},
             {g.unit_id: (g.fuel_type, g.vom) for g in f_false},
         )
-        # Registered cache-optional at a FROZEN "False" declaration, so BOTH
-        # pinned keys stay byte-stable with the field absent AND explicitly
-        # False, and an armed run keys distinctly (the D50 shape).
+        # CACHE SHAPE AFTER THE FLIP (capx D65-B Act A, the (b'-1) pattern).
+        # The default is ARMED, so it no longer equals the frozen "False"
+        # declaration: it enters the hash. An explicit False still equals that
+        # declaration, so it still DROPS — which is the property that lets a
+        # control arm keep its bundle, and it is asserted as a property rather
+        # than as a literal so it survives the next unrelated re-key.
         base = ScenarioConfig()
-        self.assertFalse(base.ccs_retrofit_fixed_cost_co2_scaling)
+        self.assertTrue(base.ccs_retrofit_fixed_cost_co2_scaling)
         self.assertEqual(
             base.cache_key(),
-            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False).cache_key(),
-        )
-        self.assertEqual(base.cache_key(), "e5ecd4105ada3e58")
-        self.assertEqual(
-            ScenarioConfig(mode="backcast").cache_key(), "6a2845e50951394e"
+            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=True).cache_key(),
         )
         self.assertNotEqual(
             base.cache_key(),
-            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=True).cache_key(),
+            ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False).cache_key(),
+        )
+        # ACT A ALONE LEAVES THE EXPLICIT-FALSE PATH ON ITS PRE-FLIP KEY. This
+        # is the D65-B STOP ("the explicit-False path moving a key") decomposed:
+        # hold Act B's value at its pre-change 8.0 and the explicit-False key is
+        # e5ecd4105ada3e58, exactly the pre-flip forecast default. The movement
+        # at HEAD is Act B's unconditional re-key, declared in advance
+        # (PRECOMMIT-capx-d65b-2026-09-06.md §3.1), not Act A's.
+        self.assertEqual(
+            ScenarioConfig(
+                ccs_retrofit_fixed_cost_co2_scaling=False, ccs_retrofit_vom_adder=8.0
+            ).cache_key(),
+            "e5ecd4105ada3e58",
+        )
+        self.assertEqual(
+            ScenarioConfig(
+                mode="backcast",
+                ccs_retrofit_fixed_cost_co2_scaling=False,
+                ccs_retrofit_vom_adder=8.0,
+            ).cache_key(),
+            "6a2845e50951394e",
+        )
+        # And the ARMED default's own keys, pre-declared before the solve.
+        self.assertEqual(base.cache_key(), "547053bdfccd4264")
+        self.assertEqual(
+            ScenarioConfig(mode="backcast").cache_key(), "f61891696e671969"
         )
 
     def test_reference_host_is_invariant_on_and_off(self):
@@ -1103,7 +1195,12 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
             ccs_retrofit_captured_ref_t_per_mwh,
         )
 
-        cfg_off = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        # Seam 4 written EXPLICITLY off: since capx D65-B (2026-09-06) its
+        # default is ARMED, so omitting it no longer names the off path.
+        cfg_off = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=False,
+        )
         cfg_on = self._armed()
         self.assertAlmostEqual(
             cfg_on.ccs_retrofit_capture_rate * self.ER_REF,
@@ -1232,7 +1329,12 @@ class TestFixedCostCo2Scaling(unittest.TestCase):
         # is now BETTER only by that HR-penalty term, never by the diluted
         # fixed costs -- so the payback ordering no longer rewards emissions
         # through the O&M legs. Off the seam the gap is strictly larger.
-        cfg_off = _fixture_config(ccs_retrofit_capex_co2_scaling=True)
+        # Seam 4 written EXPLICITLY off: since capx D65-B (2026-09-06) its
+        # default is ARMED, so omitting it no longer names the off path.
+        cfg_off = _fixture_config(
+            ccs_retrofit_capex_co2_scaling=True,
+            ccs_retrofit_fixed_cost_co2_scaling=False,
+        )
         _, log_off = _screen(
             [
                 _gas_cc("LO", heat_rate=6.3, emission_rate=lo_er),

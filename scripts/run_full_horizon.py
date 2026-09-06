@@ -228,6 +228,7 @@ def reference_config(
     ccs_retrofit_fixed_cost_co2_scaling: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
     capacity_adequacy_requirement_published: "bool | None" = None,
+    capacity_no_default_cap_convention: "bool | None" = None,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -361,6 +362,16 @@ def reference_config(
             {iso.upper(): True}
             if capacity_adequacy_requirement_published
             else (None if capacity_adequacy_requirement_published is False else None)
+        ),
+        # capx D74: the no-default-cap price-taker convention gate — a
+        # {iso: bool} mapping, so the flag arms the INVOKED ISO's row and
+        # nothing else. GATED default None (every ISO off, cache-neutral);
+        # requires the D62 bar gate. ``None`` = not passed = the shipped
+        # posture, ``--no-`` passes an explicit None.
+        "capacity_no_default_cap_convention_by_iso": (
+            {iso.upper(): True}
+            if capacity_no_default_cap_convention
+            else (None if capacity_no_default_cap_convention is False else None)
         ),
     }
     return ScenarioConfig(
@@ -1006,10 +1017,31 @@ def apply_set_overrides(config: ScenarioConfig, overrides: dict) -> ScenarioConf
 
     Applied AFTER the runner's own posture resolution, so an explicit ``--set``
     is the last word on the field it names and nothing silently re-derives over
-    it. ``dataclasses.replace`` re-runs ``__post_init__``, so every registered
-    guard (the D23/D34 carbon inversion warnings, the mutual-exclusion checks)
-    fires on the overridden config exactly as it would on a YAML that set the
-    same field.
+    it. ``ScenarioConfig.with_overrides`` re-runs ``__post_init__`` (it wraps
+    ``dataclasses.replace``), so every registered guard (the D23/D34 carbon
+    inversion warnings, the mutual-exclusion checks) fires on the overridden
+    config exactly as it would on a YAML that set the same field.
+
+    USE ``with_overrides``, NEVER A BARE ``dataclasses.replace`` (capx D60-R4,
+    2026-09-06). ``replace`` re-invokes ``__init__`` with EVERY field, which
+    :func:`~market_sim.config.scenarios.explicitly_set_fields` cannot tell apart
+    from a caller who set everything, so it returns ``None`` — and the config
+    returned here is still UNRESOLVED: ``iso_configs.apply_iso_scenario_defaults``
+    runs later, inside ``runner.run_scenario_iso``, and on a ``None`` provenance
+    record it falls back to the pre-OVERRIDE-FIX value comparison. An explicit
+    ``--set pjm_demand_response_supply=false`` then equals the ScenarioConfig
+    field default, reads as "unset", and the ISO default SILENTLY RE-ARMS it.
+    Measured at HEAD before the repair: a PJM leg with all three of that ISO's
+    ``default_scenario_overrides`` set OFF via ``--set`` resolved to cache key
+    ``09996eca71ee80fd`` — bit-for-bit the ARM's key — i.e. a control arm for
+    any ISO-armed flag was inexpressible through the registered channel
+    (rule 24 ``[R-REGISTRY]``). ``with_overrides`` unions the named fields into
+    the record, so the same leg resolves to ``167e65187f32056b`` with the three
+    gates OFF. Blast radius of the defect is EMPTY: of the 14 committed
+    ``run_config.json`` files carrying a non-empty ``set_overrides``, none names
+    a field any ISO arms (all set ``demand_growth_path`` /
+    ``datacenter_load_path`` / ``carbon_price_path`` / ``carbon_price_delta``).
+    Guard: ``tests/scoring/test_set_override_beats_iso_default.py``.
 
     Args:
         config: The resolved forecast config.
@@ -1018,15 +1050,13 @@ def apply_set_overrides(config: ScenarioConfig, overrides: dict) -> ScenarioConf
     Returns:
         The overridden config, or ``config`` itself when there is nothing to do.
     """
-    import dataclasses
-
     if not overrides:
         return config
     print(
         "  --set overrides: "
         + ", ".join(f"{k}={v!r}" for k, v in sorted(overrides.items()))
     )
-    return dataclasses.replace(config, **overrides)
+    return config.with_overrides(**overrides)
 
 
 # --------------------------------------------------------------------------- #
@@ -1261,6 +1291,37 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     ap.add_argument(
+        "--capacity-no-default-cap-convention",
+        dest="capacity_no_default_cap_convention",
+        action="store_true",
+        default=None,
+        help=(
+            "capx D74 arm (GATED default OFF for every ISO; arms the INVOKED "
+            "ISO's row only; REQUIRES --capacity-going-forward-bar-published): "
+            "a screened thermal unit whose PUBLISHED resource class carries NO "
+            "default gross Avoidable Cost Rate for the delivery year the screen "
+            "prices (PJM Manual 18 Rev 62 §5.4.8.4(B): 'Steam Oil & Gas' is 'NA' "
+            "through DY 2025/26) is a $0 PRICE TAKER in the D57 stack and EXEMPT "
+            "from the merchant screen in that year — its exit is its owner's "
+            "filing (steps 0/1b). Inert from DY 2026/27, where the class has a "
+            "published default, and for any ISO with no intaken table (rule "
+            "25). ZERO free parameters — one published boolean per class x "
+            "delivery year. Solve-affecting, distinct cache key; omitting the "
+            "flag leaves the field UNSET (the shipped posture)."
+        ),
+    )
+    ap.add_argument(
+        "--no-capacity-no-default-cap-convention",
+        dest="capacity_no_default_cap_convention",
+        action="store_false",
+        help=(
+            "Pass the capx D74 no-default-cap convention gate an EXPLICIT off "
+            "(the control arm). The field is registered in "
+            "_CACHE_KEY_OPTIONAL_FIELDS at None, so the explicit-off arm still "
+            "holds its recipe key."
+        ),
+    )
+    ap.add_argument(
         "--capacity-adequacy-requirement-published",
         dest="capacity_adequacy_requirement_published",
         action="store_true",
@@ -1385,6 +1446,7 @@ def main(argv: list[str] | None = None) -> int:
         capacity_adequacy_requirement_published=(
             args.capacity_adequacy_requirement_published
         ),
+        capacity_no_default_cap_convention=args.capacity_no_default_cap_convention,
     )
     config = apply_set_overrides(config, set_overrides)
     summary = solve_and_summarize(

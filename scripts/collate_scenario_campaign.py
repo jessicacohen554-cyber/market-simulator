@@ -79,6 +79,11 @@ ISO_ORDER = list(SUPPORTED_ISOS)
 #: model covers six ISOs, not the country (plan §3.0).
 SYSTEM_LABEL = "six-ISO modeled system"
 
+#: Value of the delta table's ``delta_coverage`` column when a row's two
+#: operands span exactly the same ISO set — i.e. nothing had to be dropped to
+#: make the difference well-formed.
+COVERAGE_FULL = "full"
+
 #: The (iii) side line: what is outside the number, stated every time it is
 #: printed so no reader can mistake the total for a US figure.
 NOT_MODELED_NOTE = (
@@ -146,6 +151,18 @@ def side_lines_for_run(run_dir: Path | None) -> dict[int, dict[str, float]]:
             "unserved_mwh": summary["unserved_mwh"],
         }
     return out
+
+
+def order_isos(isos) -> list[str]:
+    """Sort ISO names into :data:`ISO_ORDER`, unknown names last.
+
+    Args:
+        isos: Any iterable of ISO names; duplicates are preserved.
+
+    Returns:
+        The names in registry order.
+    """
+    return sorted(isos, key=lambda i: ISO_ORDER.index(i) if i in ISO_ORDER else 99)
 
 
 def build_iso_frame(summaries: list[tuple[str, str, Path]]) -> pd.DataFrame:
@@ -225,10 +242,7 @@ def build_system_frame(iso_frame: pd.DataFrame) -> pd.DataFrame:
         )
     rows: list[dict] = []
     for (case, year), group in iso_frame.groupby(["case", "year"]):
-        isos = sorted(
-            group["iso"].unique(),
-            key=lambda i: ISO_ORDER.index(i) if i in ISO_ORDER else 99,
-        )
+        isos = order_isos(group["iso"].unique())
         rows.append(
             {
                 "case": case,
@@ -253,10 +267,170 @@ def build_system_frame(iso_frame: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["case", "year"]).reset_index(drop=True)
 
 
+def _coverage_note(
+    case: str,
+    reference_case: str,
+    common: list[str],
+    ref_isos: list[str],
+    case_isos: list[str],
+) -> str:
+    """Say, in the row's own words, which ISO set the delta was computed on.
+
+    Args:
+        case: The case the row belongs to.
+        reference_case: The case the delta is measured against.
+        common: The ISOs both cases carry, in registry order.
+        ref_isos: The reference case's ISOs, in registry order.
+        case_isos: This case's ISOs, in registry order.
+
+    Returns:
+        :data:`COVERAGE_FULL` when the two operands span the same system, else
+        a sentence naming every ISO that had to be dropped and from which side.
+    """
+    if not common:
+        return f"NO DELTA - no ISO in common with {reference_case}"
+    ref_only = [i for i in ref_isos if i not in common]
+    case_only = [i for i in case_isos if i not in common]
+    if not ref_only and not case_only:
+        return COVERAGE_FULL
+    parts = []
+    if ref_only:
+        parts.append(f"{'+'.join(ref_only)} in {reference_case} but not in {case}")
+    if case_only:
+        parts.append(f"{'+'.join(case_only)} in {case} but not in {reference_case}")
+    return "COMMON-SET ONLY (" + "; ".join(parts) + ")"
+
+
+def _system_delta_rows(
+    iso_frame: pd.DataFrame, system_frame: pd.DataFrame, reference_case: str
+) -> list[dict]:
+    """The system-scope rows of the delta table, on the COMMON ISO set.
+
+    The defect this exists to prevent (routed by SCN-WS5A-LOAD,
+    ``docs/handoffs/STATUS-scn-ws5a-load-2026-09-06.md`` "Routed defect"): the
+    system-scope delta used to be *(sum over the case's ISOs)* minus *(sum over
+    the reference case's ISOs)* with nothing restricting the two to the same
+    system, so a case with a legitimately degenerate arm differenced against a
+    reference with wider coverage by exactly the missing ISOs' levels. Measured
+    on the ``scn-campaign-load-2026-09-06`` artifacts: ``LOAD-HI-ORGANIC``
+    covered {ERCOT, NYISO} while ``REF`` covered {ERCOT, NEISO, NYISO}, and the
+    2030 system delta read **+5.4620 Mt** where the common-set answer is
+    **+18.8300 Mt** — a 71 % understatement equal to NEISO's REF level. This is
+    structural, not a partial-campaign transient: PJM and NEISO ship
+    ``LOAD-HI == LOAD-HI-ORGANIC`` byte-for-byte, so their ORGANIC arm is
+    correctly never solved and every full campaign hits it.
+
+    So BOTH operands are restricted to ``isos(case) ∩ isos(reference_case)``
+    before summing, the row is labelled with that intersection
+    (``delta_isos`` / ``delta_n_isos``), and ``delta_coverage`` says when the
+    intersection is a strict subset of either side's ISO set. A row with no
+    common ISO at all emits NaN, never a computable-looking number over
+    mismatched systems.
+
+    ``emissions_mt`` and ``emissions_mt_ref`` are therefore restricted the same
+    way, so ``delta = emissions_mt − emissions_mt_ref`` holds *within the row*
+    for a reader who subtracts. The unrestricted level — the campaign total over
+    whatever ISOs a case actually carries — is unchanged and stays in
+    ``campaign_emissions_system.csv`` beside its own ``isos`` / ``isos_missing``
+    columns.
+
+    Args:
+        iso_frame: Per-(case, iso, year) frame.
+        system_frame: Per-(case, year) frame, which enumerates the system-scope
+            (case, year) rows to emit.
+        reference_case: The case every delta is measured against.
+
+    Returns:
+        One row dict per system-scope (case, year).
+    """
+    present: dict[tuple[str, int], list[str]] = {}
+    level: dict[tuple[str, int, str], float] = {}
+    for row in iso_frame.itertuples(index=False):
+        key = (row.case, int(row.year))
+        present.setdefault(key, []).append(row.iso)
+        # First-wins, matching the drop_duplicates this replaced: a campaign
+        # tree holding two summaries for one (case, iso, year) is pathological,
+        # and the pre-repair table resolved it the same way.
+        level.setdefault((row.case, int(row.year), row.iso), row.emissions_mt)
+
+    def _sum(case: str, year: int, isos: list[str]) -> float:
+        # NaN-skipping, exactly as ``build_system_frame``'s group sum is, so a
+        # full-coverage system delta reads off the same arithmetic as the level.
+        vals = [level.get((case, year, iso)) for iso in isos]
+        return round(float(pd.Series(vals, dtype="float64").sum()), 4)
+
+    rows: list[dict] = []
+    for row in system_frame.itertuples(index=False):
+        case, year = row.case, int(row.year)
+        case_isos = order_isos(present.get((case, year), []))
+        ref_isos = order_isos(present.get((reference_case, year), []))
+        common = order_isos(set(case_isos) & set(ref_isos))
+        rows.append(
+            {
+                "scope": SYSTEM_LABEL,
+                "case": case,
+                "year": year,
+                "emissions_mt": _sum(case, year, common) if common else float("nan"),
+                "emissions_mt_ref": (
+                    _sum(reference_case, year, common) if common else float("nan")
+                ),
+                "delta_isos": "+".join(common),
+                "delta_n_isos": len(common),
+                "delta_coverage": _coverage_note(
+                    case, reference_case, common, ref_isos, case_isos
+                ),
+            }
+        )
+    return rows
+
+
+def _iso_delta_rows(iso_frame: pd.DataFrame, reference_case: str) -> list[dict]:
+    """The per-ISO rows of the delta table (one ISO differenced against itself).
+
+    Unchanged in substance from the pre-repair merge — an ISO scope has only
+    ever compared like with like — and given the same three coverage columns so
+    the table has one schema.
+
+    Args:
+        iso_frame: Per-(case, iso, year) frame.
+        reference_case: The case every delta is measured against.
+
+    Returns:
+        One row dict per (case, iso, year).
+    """
+    ref: dict[tuple[int, str], float] = {}
+    for row in iso_frame[iso_frame["case"] == reference_case].itertuples(index=False):
+        ref.setdefault((int(row.year), row.iso), row.emissions_mt)
+    rows: list[dict] = []
+    for row in iso_frame.itertuples(index=False):
+        key = (int(row.year), row.iso)
+        rows.append(
+            {
+                "scope": row.iso,
+                "case": row.case,
+                "year": int(row.year),
+                "emissions_mt": row.emissions_mt,
+                "emissions_mt_ref": ref.get(key, float("nan")),
+                "delta_isos": row.iso,
+                "delta_n_isos": 1,
+                "delta_coverage": (
+                    COVERAGE_FULL
+                    if key in ref
+                    else f"NO DELTA - {row.iso} absent from {reference_case}"
+                ),
+            }
+        )
+    return rows
+
+
 def build_delta_table(
     iso_frame: pd.DataFrame, system_frame: pd.DataFrame, reference_case: str
 ) -> pd.DataFrame:
     """Build the campaign-level delta table vs the reference case.
+
+    The system-scope row differences the two cases on the ISO set they SHARE —
+    see :func:`_system_delta_rows` for the defect that requires it and the
+    measured before/after.
 
     Args:
         iso_frame: Per-(case, iso, year) frame.
@@ -266,32 +440,38 @@ def build_delta_table(
     Returns:
         A long frame with ``scope`` (an ISO name, or :data:`SYSTEM_LABEL`),
         ``case``, ``year``, ``emissions_mt``, ``emissions_mt_ref``,
-        ``emissions_mt_delta`` and ``cumulative_emissions_mt_delta`` (the
-        running sum over years within a scope and case).
+        ``emissions_mt_delta``, ``cumulative_emissions_mt_delta`` (the running
+        sum over years within a scope and case), and the three columns naming
+        the ISO set the row's delta was actually computed on: ``delta_isos``,
+        ``delta_n_isos`` and ``delta_coverage``.
     """
-    parts: list[pd.DataFrame] = []
+    rows: list[dict] = []
     if not iso_frame.empty:
-        parts.append(iso_frame.assign(scope=iso_frame["iso"]))
+        rows += _iso_delta_rows(iso_frame, reference_case)
     if not system_frame.empty:
-        parts.append(system_frame.assign(scope=SYSTEM_LABEL))
-    if not parts:
+        rows += _system_delta_rows(iso_frame, system_frame, reference_case)
+    if not rows:
         return pd.DataFrame()
-    long = pd.concat(
-        [p[["scope", "case", "year", "emissions_mt"]] for p in parts],
-        ignore_index=True,
-    )
-    ref = (
-        long[long["case"] == reference_case][["scope", "year", "emissions_mt"]]
-        .rename(columns={"emissions_mt": "emissions_mt_ref"})
-        .drop_duplicates(subset=["scope", "year"])
-    )
-    out = long.merge(ref, on=["scope", "year"], how="left")
+    out = pd.DataFrame(rows)
     out["emissions_mt_delta"] = out["emissions_mt"] - out["emissions_mt_ref"]
     out = out.sort_values(["scope", "case", "year"])
     out["cumulative_emissions_mt_delta"] = out.groupby(["scope", "case"])[
         "emissions_mt_delta"
     ].cumsum()
-    return out.reset_index(drop=True)
+    return out[
+        [
+            "scope",
+            "case",
+            "year",
+            "emissions_mt",
+            "emissions_mt_ref",
+            "emissions_mt_delta",
+            "cumulative_emissions_mt_delta",
+            "delta_isos",
+            "delta_n_isos",
+            "delta_coverage",
+        ]
+    ].reset_index(drop=True)
 
 
 def _md_table(df: pd.DataFrame, float_fmt: str = "{:.3f}") -> list[str]:
@@ -363,10 +543,27 @@ def write_markdown(
         last_year = int(deltas["year"].max())
         snap = deltas[
             (deltas["year"] == last_year) & (deltas["case"] != reference_case)
-        ][["scope", "case", "emissions_mt_delta", "cumulative_emissions_mt_delta"]]
+        ][
+            [
+                "scope",
+                "case",
+                "emissions_mt_delta",
+                "cumulative_emissions_mt_delta",
+                "delta_isos",
+                "delta_coverage",
+            ]
+        ]
         lines.append(
             f"Final campaign year **{last_year}**; the cumulative column is the "
             "running sum of the per-year delta over every year in the campaign."
+        )
+        lines.append("")
+        lines.append(
+            f"`delta_isos` is the ISO set the row's delta was computed on — the "
+            f"intersection of the case's ISOs with `{reference_case}`'s, so both "
+            "operands span the same system. `delta_coverage` reads "
+            f"`{COVERAGE_FULL}` when nothing had to be dropped, and otherwise "
+            "names every ISO that did and from which side."
         )
         lines.append("")
         lines += _md_table(snap)

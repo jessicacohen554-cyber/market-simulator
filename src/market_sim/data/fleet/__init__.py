@@ -166,6 +166,31 @@ class Generator(BaseModel):
     heat_rate: float = 0.0
     vom: float = 0.0
     emission_rate_co2: float = 0.0
+    # Fraction of this unit's stack CO2 that its capture island removes: 0.0 on
+    # every unabated unit (the default, so nothing that does not set it moves),
+    # ``config.ccs_retrofit_capture_rate`` on a unit converted by the CCS
+    # retrofit screen (``capacity_evolution/ccs.py::apply_ccs_retrofit``), and
+    # ``config.ccs_capture_rate`` on a CCS unit built by the entry screen
+    # (``capacity_evolution/new_entry.py``). It is a PHYSICAL property of the
+    # unit, not a tunable (rule 24 [R-REGISTRY]): its value is always one of
+    # those two already-registered ScenarioConfig fields, no residual can be
+    # closed by it, and it adds no free parameter (rule 21 [R-DOF]).
+    #
+    # WHY IT EXISTS (capx D77). ``emission_rate_co2`` is written twice per
+    # forecast year on a converted unit: ``ccs.py`` applies the capture at the
+    # retrofit, and then ``campd_bins.apply_plant_emission_rates*`` -- which
+    # runs EVERY year, downstream of evolution, from ``build_dispatch_fleet``
+    # -- re-books the host plant's MEASURED CAMPD rate over it. The measured
+    # rate is keyed on ``(plant_code, coarse fuel class)`` and
+    # ``fuel_class("gas_cc_ccs") == "gas"``, so a converted unit still matched
+    # its own uncaptured host rate and was silently restored to it, in the
+    # dispatch fleet AND (the campd path concatenates rather than copies) in
+    # the persistent fleet. This field is what lets the restoration book the
+    # measured host rate and the capture TOGETHER -- one mechanism at one
+    # composition point (rule 19 [R-ONE-MECH]) -- instead of the two writes
+    # racing. Measured defect and repair:
+    # docs/handoffs/FINDING-capx-d77-2026-09-06.md.
+    ccs_capture_fraction: float = 0.0
     nox_rate: float = 0.0
     so2_rate: float = 0.0
     eford: float = 0.05

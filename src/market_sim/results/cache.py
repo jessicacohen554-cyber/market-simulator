@@ -56,6 +56,122 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06c — capx D65-B / owner ruling Q47: the CCS-retrofit
+fixed-cost SHAPE gate arms as the default posture (Act A) COUPLED with the
+capture-island VOM adder's RE-IDENTIFICATION (Act B). A KEY ADVANCE, NOT A
+SAME-KEY INVALIDATION** — and, unlike the two flip entries below, that is true
+for EVERY config including the explicit-``False`` control arms, because half of
+this change is a plain value change.
+
+``ScenarioConfig.ccs_retrofit_fixed_cost_co2_scaling`` flips default ``False``
+-> ``True``: the retrofit's two fixed-cost legs (ΔFOM $/MW-yr and the capture
+VOM adder $/MWh) are scaled by the SAME ``k = captured / captured_ref`` seam 1
+already applies to the island's capex, because both are TPC fractions in their
+own published sources (ATB 2024 fossil methodology; NETL Rev 4a B31A->B31B.90
+at 95.5 % fixed / 100 % variable). Declared — the THIRD entry in
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``, frozen declaration left at
+``False`` — so the registration guard's check 3 passes on the declaration.
+
+``ScenarioConfig.ccs_retrofit_vom_adder`` moves ``8.0`` -> ``2.95`` $/MWh
+(2026$), read off the ATB 2024 v4.0.0 basis the screen's other two cost legs
+already use: (4.8 - 2.1) x 1.090947 = 2.95. The shipped 8.0 was
+``needs-citation``, stated no dollar-year, and cited NETL Rev 4a, which
+publishes 2.23 for this increment. This field is NOT a
+``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it has no drop value and **re-keys
+every config unconditionally** — which is why the two acts produce ONE re-key
+event and why the "NOT invalidated (a)" carve-out of the 2026-09-05 entry below
+does NOT recur here.
+
+**BOTH DEFAULT KEYS MOVE:** forecast default ``e5ecd4105ada3e58`` ->
+``547053bdfccd4264``, bare backcast ``6a2845e50951394e`` ->
+``f61891696e671969``. Every per-ISO bare key moves too; the full pre-declared
+table is ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md`` §3, written before
+the solve.
+
+**Act A's drop-value mechanic is nonetheless INTACT, measured by decomposition**
+(PRECOMMIT §3.1): holding the VOM at its shipped 8.0, an explicit
+``ccs_retrofit_fixed_cost_co2_scaling=False`` hashes to ``e5ecd4105ada3e58`` —
+exactly the pre-flip forecast default. The movement above is Act B's.
+
+**INVALIDATED — re-solve before quoting:** every ``results/<ISO>/<key>/``
+forecast bundle at a pre-2026-09-06c key **whose horizon reaches 2028**. A
+one-time cache MISS, never a wrong answer. **NOT invalidated:** every BACKCAST
+and every hindcast/crossover horizon ending before 2028, whose behaviour is
+byte-identical because ``capacity_evolution/ccs.py::apply_ccs_retrofit`` returns
+at ``if year < config.ccs_retrofit_available_year`` (2028) before any read of
+EITHER field, and that call site is the only consumer of both in the source
+tree. Their keys move; their answers do not. No keeper, sidecar, determination
+or dashboard row moves; committed artifacts are files, not cache lookups.
+
+**A CONSTRUCTOR REPAIR RIDES WITH THIS EPOCH, and it moves no key.** Act A's
+flip made the pair (seam 1 EXPLICIT ``False``, seam 4 at its default)
+unconstructible, which would have made the D50/Q42 CONTROL ARM unreachable and
+broken reconstruction of six committed bundles. The pair resolution moved from
+``__post_init__`` to ``_scenario_config_init``
+(``_resolve_ccs_retrofit_fixed_cost_pair``), where the caller's explicitness is
+visible: an explicit ``seam 4 = True`` without seam 1 still raises, while seam 4
+at its default with seam 1 off DEMOTES to ``False`` — inert by construction
+(``k = 1.0``), truthfully recorded, and dropped from the hash. No armed config
+reaches the demoting branch, so no key moves by it. PRECOMMIT §4.
+
+**Epoch 2026-09-06b — capx D77: the CCS-retrofit emission-rate seam. NO KEY
+MOVES, AND THAT IS THE HAZARD.** No ``ScenarioConfig`` field is added, removed,
+re-defaulted or re-registered — the repair adds one ``Generator`` attribute
+(``ccs_capture_fraction``, a physical property of a unit, not a tunable, rule 24
+[R-REGISTRY]) — so ``cache_key()`` hashes the same bytes before and after.
+Measured on the same tree with only ``src/market_sim`` stashed: default
+``e5ecd4105ada3e58`` and bare backcast ``6a2845e50951394e`` are UNMOVED, as is
+every bare per-ISO 2026-2030 forecast key (ERCOT ``78b01278f2eb64eb``, CAISO
+``41367ccc55859d4c``, PJM ``577a950add853227``, MISO ``a6b9ed663987311b``, NYISO
+``81af4882eeda50f5``, NEISO ``f1b2dc5e9f2a47e3``). A pre-fix bundle whose horizon
+reaches 2028 therefore sits at EXACTLY the key a post-fix run computes and will
+be served to it — the 2026-08-31 entry's predicted recurrence, in its pure form.
+
+What moved: a unit converted by the CCS retrofit screen kept its captured CO2
+rate only until the next dispatch build. ``capacity_evolution/ccs.py`` applies
+``emission_rate_co2 *= (1 - ccs_retrofit_capture_rate)`` at the retrofit, and
+``data/fleet/campd_bins.py::apply_plant_emission_rates{,_v2}`` -- reached from
+``data/fleet/assembly.py::build_dispatch_fleet``, which ``runner.py`` calls AFTER
+``evolve_fleet`` in EVERY forecast year -- re-booked the host plant's measured
+CAMPD rate over it. The match key is ``(plant_code, coarse fuel class)`` and
+``fuel_class("gas_cc_ccs") == "gas"``, so a converted unit still matched its own
+uncaptured host row; and on the CAMPD path ``build_dispatch_fleet`` opens with
+``dispatch_fleet = fleet + inline_imports`` (a concatenation, not a copy), so the
+override mutated the PERSISTENT generators and the loss carried into every later
+year and into the next year's retirement and CCS screens. The override now books
+the measured host rate and the unit's own capture together --
+``co2 * (1 - gen.ccs_capture_fraction)``, one composition point (rule 19
+[R-ONE-MECH]) -- so the measured input still enters every year (rule 13
+[R-MEASURED]) and a captured unit is never restored to its uncaptured rate.
+Zero DOF: the fraction is always one of the two already-registered capture-rate
+fields. Measured defect: one NEISO unit read 0.3745 -> 0.3745 t/MWh across its
+own 2028 retrofit while its heat rate rose 7.5101 -> 8.4113, and the ISO's
+47-unit / 9.0 GW ``gas_cc_ccs`` class dispatched, priced its RGGI carbon adder
+(``emission_rate x carbon_price``) and was accounted at 0.4149 t/MWh against
+unabated gas_cc's 0.4663. It is a DISPATCH defect as well as an accounting one.
+
+**INVALIDATED — purge or re-solve before quoting:** every ``results/<ISO>/<key>/``
+**FORECAST-lane** bundle solved before this epoch whose horizon reaches **2028**
+(``ccs_retrofit_available_year``) AND whose fleet retrofits at least one unit.
+The committed census is 45 bundles across all six ISOs
+(``docs/handoffs/FINDING-capx-d77-2026-09-06.md`` §8), whose CO2 rows, CCS
+generation and -- wherever a carbon price applies -- merit order are mis-stated.
+D77 re-solves none of them: that batch belongs to capx D65-B, at one HEAD,
+carrying this fix.
+
+**NOT invalidated:** every BACKCAST bundle in every ISO, and every hindcast or
+crossover horizon ending before 2028. ``apply_ccs_retrofit`` returns at its first
+statement, ``if year < config.ccs_retrofit_available_year``, so no such fleet
+ever contains a converted unit; ``ccs_capture_fraction`` is 0.0 on every
+generator and ``co2 * (1.0 - 0.0)`` is the pre-fix expression exactly. Asserted
+with the persisted-identity / fleet-golden / backcast-inertness regression tests,
+not by argument. No keeper, sidecar, determination or dashboard row moves.
+
+Recorded 2026-09-06 by capx D77, the lane that made the change
+(``docs/handoffs/PRECOMMIT-capx-d77-2026-09-06.md`` §3, pushed before its screen
+solve; ``FINDING-capx-d77-2026-09-06.md``). This entry changes no key and no
+default.
+
 **Epoch 2026-09-06 — SCN-WS1c / owner ruling S2 (card D-1): the federal carbon
 FLOOR. NO KEY MOVES, BY CONSTRUCTION — and the INVALIDATED SET IS EMPTY at this
 commit.** No ``ScenarioConfig`` field is added, removed, re-defaulted or

@@ -1038,6 +1038,68 @@ def resolve_capacity_adequacy_requirement_published(
     return bool(by_iso.get(iso, False))
 
 
+_NO_DEFAULT_CAP_REFUSED_LOGGED: set[str] = set()
+
+
+def resolve_capacity_no_default_cap_convention(
+    config: "object | None", iso: "str | None" = None
+) -> bool:
+    """Return whether a class with NO published default cap is a $0 price taker.
+
+    capx D74 (2026-09-06), executing ``FINDING-capx-d61-2026-09-05.md`` §4 card
+    (c) as widened by ``FINDING-capx-d62`` §9 item 2 — design
+    ``DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md`` §3. The FIFTH
+    member of this module's per-ISO capacity-gate family, resolved like its
+    four siblings above, with ONE extra precondition. Resolution:
+
+    * ``config.capacity_no_default_cap_convention_by_iso`` (a ``{iso: bool}``
+      mapping, GATED default ``None`` ⇒ every ISO off ⇒ byte-identical) must
+      carry a ``True`` row for ``iso``;
+    * :func:`resolve_capacity_going_forward_bar_published` must ALSO resolve
+      ON for ``iso``. The convention is a LIMB of the published default-ACR
+      table — the row the table prints "NA" — and over the ATB FOM proxy no
+      such cell exists, so a row armed over an unarmed bar returns ``False``
+      and logs once (the :func:`resolve_capacity_market_supply_clearing`
+      requires-the-curve pattern).
+
+    WHAT IT CHANGES: a screened thermal unit whose published resource class
+    carries no default gross ACR for the delivery year the screen prices (PJM
+    Manual 18 Rev 62 §5.4.8.4(B): "Steam Oil & Gas" through DY 2025/26; §5.4.1:
+    a sell offer above $0 needs a unit-specific ACR filing "or ... the default
+    gross Avoidable Cost Rate of the applicable resource type, if available")
+    is EXEMPT from the merchant screen in that year and sits in the D57
+    stack's price-taking block at $0 on its accredited MW — its exit is its
+    owner's filing (steps 0 / 1b), decided nowhere else. ZERO free parameters,
+    NO scalar field (rule 24): one published boolean per class × delivery
+    year, read from the intaken table by
+    :func:`market_sim.data.avoidable_cost_rate.no_default_cap_class`.
+
+    Generic in form, PJM-scoped by data (rule 25 [R-ISO-SCOPE]): an ISO with no
+    intaken default-ACR table has no "NA" cell and the predicate is False for
+    every unit. ``iso=None`` or a config without the mapping is ``False`` so
+    every pre-existing call path is byte-identical. Duck-typed via ``getattr``
+    like its siblings.
+    """
+    if config is None or iso is None:
+        return False
+    by_iso = getattr(config, "capacity_no_default_cap_convention_by_iso", None)
+    if not by_iso or not bool(by_iso.get(iso, False)):
+        return False
+    if not resolve_capacity_going_forward_bar_published(config, iso):
+        if iso not in _NO_DEFAULT_CAP_REFUSED_LOGGED:
+            _NO_DEFAULT_CAP_REFUSED_LOGGED.add(iso)
+            logging.getLogger(__name__).warning(
+                "capacity_no_default_cap_convention_by_iso[%s] is armed but the "
+                "published going-forward-bar gate is off: the convention is a "
+                "limb of the published default-ACR table and has no cell to read "
+                "over the ATB proxy — it resolves OFF for this ISO "
+                "(DESIGN-capx-d74 §3.3)",
+                iso,
+            )
+        return False
+    return True
+
+
 @dataclass(frozen=True)
 class ClearedCapacityPrice:
     """The PRE-PRICED capacity object a cleared market hands its price takers.

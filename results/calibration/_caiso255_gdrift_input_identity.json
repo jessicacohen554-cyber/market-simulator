@@ -1,0 +1,219 @@
+{
+ "cc_duct_peaking_pct": {
+  "keys_identical": true,
+  "n_plants": 544,
+  "note": "HEAD called with the new row_scoped=False against the keeper sha's no-arg form",
+  "value_diffs": 0
+ },
+ "constants": {
+  "added": [
+   "RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO"
+  ],
+  "changed": [
+   "DATACENTER_ADDITIONS_MW",
+   "DATACENTER_ZONE_SHARE",
+   "DEMAND_GROWTH_RATES",
+   "ELECTRIFICATION_LAYERS"
+  ],
+  "note": "265 -> 266 top-level constants compared by value",
+  "removed": []
+ },
+ "demand": {
+  "head": {
+   "2023": {
+    "sha": "4fef8333385da3083e59195e",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 207404006.507
+   },
+   "2024": {
+    "sha": "f3ea53c4b95df8103747b1cf",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 212194516.032
+   },
+   "2025": {
+    "sha": "e84db1bd9c430c2a08e0f7ec",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 205590016.993
+   }
+  },
+  "keeper": {
+   "2023": {
+    "sha": "4fef8333385da3083e59195e",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 207404006.507
+   },
+   "2024": {
+    "sha": "f3ea53c4b95df8103747b1cf",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 212194516.032
+   },
+   "2025": {
+    "sha": "e84db1bd9c430c2a08e0f7ec",
+    "shape": [
+     7,
+     8760
+    ],
+    "sum": 205590016.993
+   }
+  }
+ },
+ "fleet_arrays": {
+  "head": {
+   "2023": {
+    "availability_sha": "20b6ef20338df9c8dc20f4b4",
+    "availability_sum": 11596910.193664,
+    "emission_rate_sha": "33a3f6b92818f7812e31329c",
+    "emission_rate_sum": 796.268388,
+    "heat_rate_sha": "5f00f035d79714724f1e8d10",
+    "heat_rate_sum": 16887.250742,
+    "mc_base_sha": "67d8b7fd34c01ca7da026447",
+    "mc_base_sum": 1151215791.837282,
+    "min_gen_sha": "b03033f8a485e11c35034ed8",
+    "min_gen_sum": -79378357.9162,
+    "n_units": 1662,
+    "pmax_sha": "ccf04176e24cbc7e9d6c2697",
+    "pmax_sum": 69090.306921,
+    "pmin_sha": "a7467ea2a6032da11542e6e5",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "8a8d52c000f69a42b0adf250",
+    "vom_sha": "d02476829077b1065789b979",
+    "vom_sum": 5932.92444
+   },
+   "2024": {
+    "availability_sha": "eb03490217d5f06e2faa16b4",
+    "availability_sum": 11419897.374586,
+    "emission_rate_sha": "e4fd73b3bbc3d8f3b8e8170f",
+    "emission_rate_sum": 795.223343,
+    "heat_rate_sha": "ce9438c4a62ea40ecfbbe61c",
+    "heat_rate_sum": 16942.065996,
+    "mc_base_sha": "4d9c0f8a5bae658f00676c01",
+    "mc_base_sum": 777726971.402723,
+    "min_gen_sha": "24d59bcea0ccbb8b4b28f7dd",
+    "min_gen_sum": -76667840.974727,
+    "n_units": 1656,
+    "pmax_sha": "91b499c5f782255279ce351d",
+    "pmax_sum": 70509.515999,
+    "pmin_sha": "79061e50fdfd2dd906b16817",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "19b06b4d1babb8333a9eb827",
+    "vom_sha": "7d2a2b49cbbb55a6737b45ec",
+    "vom_sum": 5937.99004
+   },
+   "2025": {
+    "availability_sha": "0a5bc894427eca3d1f5d3cdc",
+    "availability_sum": 11029558.664914,
+    "emission_rate_sha": "716bea33a96170ba8af74a43",
+    "emission_rate_sum": 796.501836,
+    "heat_rate_sha": "7b52dafae6d1463b47011b42",
+    "heat_rate_sum": 16980.529942,
+    "mc_base_sha": "8ebc0e325a25f9360be42e35",
+    "mc_base_sum": 794862553.284079,
+    "min_gen_sha": "b48e8132c98d42a09c9d0367",
+    "min_gen_sum": -79410118.795503,
+    "n_units": 1661,
+    "pmax_sha": "8f937ac668f969bd417d8c56",
+    "pmax_sum": 71963.632267,
+    "pmin_sha": "ed52bb290fad1f61630154cf",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "7b28ced89b40e071785b9c2d",
+    "vom_sha": "3f646ac8607033b7e7b8ea67",
+    "vom_sum": 5945.82488
+   }
+  },
+  "keeper": {
+   "2023": {
+    "availability_sha": "20b6ef20338df9c8dc20f4b4",
+    "availability_sum": 11596910.193664,
+    "emission_rate_sha": "33a3f6b92818f7812e31329c",
+    "emission_rate_sum": 796.268388,
+    "heat_rate_sha": "5f00f035d79714724f1e8d10",
+    "heat_rate_sum": 16887.250742,
+    "mc_base_sha": "67d8b7fd34c01ca7da026447",
+    "mc_base_sum": 1151215791.837282,
+    "min_gen_sha": "b03033f8a485e11c35034ed8",
+    "min_gen_sum": -79378357.9162,
+    "n_units": 1662,
+    "pmax_sha": "ccf04176e24cbc7e9d6c2697",
+    "pmax_sum": 69090.306921,
+    "pmin_sha": "a7467ea2a6032da11542e6e5",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "8a8d52c000f69a42b0adf250",
+    "vom_sha": "d02476829077b1065789b979",
+    "vom_sum": 5932.92444
+   },
+   "2024": {
+    "availability_sha": "eb03490217d5f06e2faa16b4",
+    "availability_sum": 11419897.374586,
+    "emission_rate_sha": "e4fd73b3bbc3d8f3b8e8170f",
+    "emission_rate_sum": 795.223343,
+    "heat_rate_sha": "ce9438c4a62ea40ecfbbe61c",
+    "heat_rate_sum": 16942.065996,
+    "mc_base_sha": "4d9c0f8a5bae658f00676c01",
+    "mc_base_sum": 777726971.402723,
+    "min_gen_sha": "24d59bcea0ccbb8b4b28f7dd",
+    "min_gen_sum": -76667840.974727,
+    "n_units": 1656,
+    "pmax_sha": "91b499c5f782255279ce351d",
+    "pmax_sum": 70509.515999,
+    "pmin_sha": "79061e50fdfd2dd906b16817",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "19b06b4d1babb8333a9eb827",
+    "vom_sha": "7d2a2b49cbbb55a6737b45ec",
+    "vom_sum": 5937.99004
+   },
+   "2025": {
+    "availability_sha": "0a5bc894427eca3d1f5d3cdc",
+    "availability_sum": 11029558.664914,
+    "emission_rate_sha": "716bea33a96170ba8af74a43",
+    "emission_rate_sum": 796.501836,
+    "heat_rate_sha": "7b52dafae6d1463b47011b42",
+    "heat_rate_sum": 16980.529942,
+    "mc_base_sha": "8ebc0e325a25f9360be42e35",
+    "mc_base_sum": 794862553.284079,
+    "min_gen_sha": "b48e8132c98d42a09c9d0367",
+    "min_gen_sum": -79410118.795503,
+    "n_units": 1661,
+    "pmax_sha": "8f937ac668f969bd417d8c56",
+    "pmax_sum": 71963.632267,
+    "pmin_sha": "ed52bb290fad1f61630154cf",
+    "pmin_sum": -13407.0,
+    "unit_ids_sha": "7b28ced89b40e071785b9c2d",
+    "vom_sha": "3f646ac8607033b7e7b8ea67",
+    "vom_sum": 5945.82488
+   }
+  }
+ },
+ "method": "two fleet_only rebuilds on the keeper's OWN recipe (bundle caiso252_b1_notrim meta + derived_run_year_inputs), one with market_sim imported from a sparse worktree at fa23c1f7 and one at HEAD, differenced on every LP-visible array. Data dir shared by symlink so both arms read identical bytes on disk.",
+ "scenarioconfig_defaults": {
+  "existing_fields_changed": [],
+  "fields_added": [
+   "capacity_adequacy_requirement_published_by_iso",
+   "capacity_going_forward_bar_published_by_iso",
+   "cc_duct_peaking_row_scoped",
+   "ccs_retrofit_fixed_cost_co2_scaling",
+   "federal_ces_acp_usd_per_mwh",
+   "federal_ces_target_by_year",
+   "unit_outage_extract_basis_share"
+  ],
+  "fields_removed": [],
+  "note": "794 -> 801 fields; every pre-existing default byte-identical"
+ },
+ "session": "caiso-255",
+ "verdict": "ALL LP INPUTS BIT-IDENTICAL",
+ "what": "consolidated G-DRIFT input identity, keeper git_sha fa23c1f7 -> HEAD 173d0a78"
+}

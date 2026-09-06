@@ -378,6 +378,322 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "expected": True,
         "provenance": "runner-posture",
     },
+    # --- capx D60-R3 / owner ruling Q37: the arming batch's identification rows ---
+    # D60 Amendment 2 (director r#39) resolved capx D60 leg 2's P10 STOP under
+    # owner ruling Q37 (r#34, rubric section 5 second limb): a follow-up lane may
+    # author an attestation iff PRE-DECLARED before authoring, attestation row
+    # only, artifact-only re-score. The pre-declaration is
+    # docs/handoffs/PREDECL-capx-d60-2026-09-05.md Addendum D, pushed to main
+    # before a single row below was written and before any of the three
+    # outstanding legs' FC-7 rows had been read.
+    #
+    # WHAT IS BEING REPAIRED. FC-7's DOF-ledger row scores an entry carrying the
+    # literal token `unattested` EXACTLY as it scores a MISSING ledger -- CAVEAT
+    # at t1, FAIL at t3 (forecast_verdict._dof_ledger_row). This builder emits
+    # that token for any non-default solve-affecting field with no curated
+    # identification row, and it REPORTS identification, never supplies it (rule
+    # 21). So arming a field whose identification is already committed to the
+    # repository, without also writing its curated row, mechanically degrades
+    # FC-7 -- a MEASUREMENT gap, not a model gap.
+    #
+    # Every row below is keyed (ISO, field), never ("*", field), so it cannot
+    # identify another ISO's value even if that ISO later arms the same field
+    # (rule 25 [R-ISO-SCOPE]). Every row carries requires="iso-registry", so a
+    # run carrying the field from anywhere other than the live registered
+    # override stays UNIDENTIFIED and the artifact records the refusal.
+    ("NYISO", "nyiso_requirement_forecast_peak"): {
+        "identification": "design-decision",
+        "source": (
+            "Prices the NYCA requirement on the NYSRC ICAP-market FORECAST PEAK "
+            "of the capability year (IRM Study Appendices Table D.2 col. 1) "
+            "instead of the model's own peak. A capability year outside the "
+            "published table returns the model's peak UNCHANGED, so the forward "
+            "horizon keeps a forecast peak and never a held-last MW. A published "
+            "market-design input, not a magnitude"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_nyiso_config "
+            "default_scenario_overrides cite block (owner ruling Q41); "
+            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1); the "
+            "digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled "
+            "to source by test"
+        ),
+        "requires": "iso-registry",
+    },
+    ("NYISO", "nyiso_requirement_vintage_factors"): {
+        "identification": "design-decision",
+        "source": (
+            "Prices the requirement FACTOR at that capability year's EC-adopted "
+            "IRM x (1 - NYCA derate) (Table D.2 cols. 2-3) instead of the single "
+            "mixed vintage 1.244 x (1 - 0.1321); beyond the last published pair "
+            "it HOLDS that pair's ratio, 1.244 x 0.870 = 1.0823. In-table, the "
+            "requirement IS Table D.2's published NYCA UCAP requirement to under "
+            "1 MW. Every factor is a published adopted value"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_nyiso_config "
+            "default_scenario_overrides cite block (owner ruling Q41); "
+            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 "
+            "with an identical fleet; FC-3 byte-identical at the shipped default)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "adequacy_accounting_ratio_dated_net"): {
+        "identification": "design-decision",
+        "source": (
+            "Selects D31's OWN arithmetic with the denominators net of the "
+            "step-1b fossil-dates channel's accredited exits -- 0.854600 -> "
+            "0.893436, derived from three committed inputs and reconciled by "
+            "test. The gate chooses WHICH CONSISTENT ACCOUNTING is used; it "
+            "supplies no number, and the ratio is recomputed by the same "
+            "construction from whatever the dated channel holds in a forward "
+            "year, so it responds to a changed fleet by construction"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (owner ruling Q40); "
+            "docs/handoffs/FINDING-capx-d51-2026-09-04.md section 1.3 (the "
+            "construction, zero free parameters) and section 7 (the four limbs)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "pjm_accreditation_design_vintage"): {
+        "identification": "design-decision",
+        "source": (
+            "Reads the accreditation design OF THE DELIVERY YEAR BEING SCREENED: "
+            "UCAP + the published pre-CIFP FPR before DY 2025/26, ELCC class + "
+            "post-CIFP FPR from it. A published design vintage applied by date; a "
+            "forward delivery year takes the design in force for it and nothing "
+            "is fitted to a residual"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44, in-session "
+            "on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; "
+            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; "
+            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "pjm_demand_response_supply"): {
+        "identification": "design-decision",
+        "source": (
+            "Counts the published OFFERED DR UCAP as SUPPLY with the peak "
+            "un-netted, instead of netting DR off the peak -- the accounting "
+            "PJM's own auction uses. An accounting-side selection; no MW is "
+            "invented, and the offered DR UCAP is a published auction quantity "
+            "available for any forward delivery year"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44); capx D48 "
+            "(docs/handoffs/FINDING-capx-d48-*)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "capacity_market_supply_clearing_by_iso"): {
+        "identification": "design-decision",
+        "source": (
+            "Clears the fleet's NET-ACR SELL-OFFER STACK (offer = max(0, "
+            "going-forward cost - E&AS margin) / accredited MW, every other "
+            "accredited MW a $0 price taker) against the DELIVERY YEAR'S "
+            "PUBLISHED VRR CURVE, so the screen's failing set IS the auction's "
+            "uncleared set. Every operand is the screen's own; the VRR curve is "
+            "published per delivery year and the offer stack is computed from the "
+            "fleet's own costs"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44); "
+            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md "
+            "section 3.7 (DOF ledger: zero); "
+            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+        ),
+        "requires": "iso-registry",
+    },
+    # --- capx D63 / owner ruling Q37: the TWO NEGATIVES D60-R3 ROUTED --------
+    # FINDING-capx-d60-2026-09-05.md section 8 closed six identification gaps
+    # and ROUTED two rather than quietly widening its own scope: MISO's five
+    # remaining registry overrides and CAISO's one. capx D63 closes exactly
+    # those six, under the SAME Q37 limb (r#34, rubric section 5 second limb:
+    # a follow-up lane may author an attestation iff PRE-DECLARED before
+    # authoring, attestation row only, artifact-only re-score). The
+    # pre-declaration is docs/handoffs/PREDECL-capx-d63-2026-09-06.md, pushed
+    # to main before a single row below was written.
+    #
+    # SIX, NOT SEVEN. The charter named six fields and added "any other
+    # `unattested` entry the committed miso-t1f / caiso-t1f dof_ledger.json
+    # carries"; measured before any row was authored, there is no seventh
+    # (miso-t1f 7 entries / 5 unattested, caiso-t1f 2 / 1). The deviation is
+    # recorded in the pre-declaration section 1, never reconciled silently.
+    #
+    # Same construction as the D60-R3 block above, and for the same reasons:
+    # every row is keyed (ISO, field) and never ("*", field), so it cannot
+    # identify another ISO's value (rule 25 [R-ISO-SCOPE]); every row carries
+    # requires="iso-registry", so a run carrying the field from anywhere other
+    # than the live registered override stays UNIDENTIFIED and the artifact
+    # records the refusal (rule 21 [R-DOF] — the ledger REPORTS identification,
+    # it never supplies one). Every one of the six values is a BOOLEAN gate
+    # selecting which representation the model uses, never a magnitude, so the
+    # `design-decision` token is admissible for all six by construction and the
+    # builder's own magnitude guard would refuse any of them that carried a
+    # number.
+    ("MISO", "entry_vre_capacity_revenue"): {
+        "identification": "design-decision",
+        "source": (
+            "Owner decision D-2' (owner sitting Addendum O, signed 2026-08-04; "
+            "lane FFR-4B). MISO's Planning Resource Auction ACCREDITS AND PAYS "
+            "wind and solar like any other Planning Resource, so a MISO "
+            "forecast that denies VRE entry the RA payment is not modelling "
+            "MISO's market. Before this, VRE was the ONLY accredited resource "
+            "class on the system denied that payment while thermal entry, the "
+            "thermal retirement screen and storage entry all took it through "
+            "the SAME seam (MarketDesign.capacity_price_per_firm_mw_yr) -- and "
+            "VRE's accredited MW were ALREADY counted on the supply side of "
+            "the adequacy ledger. Arming REMOVES an exception; it adds no "
+            "second channel (rule 19 [R-ONE-MECH]) and chooses no MW, price or "
+            "share"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (owner decision D-2'); "
+            "docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md section 3.3 "
+            "and section 7 item 1a"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "entry_vre_zone_selection"): {
+        "identification": "design-decision",
+        "source": (
+            "capx D33. MISO is the ISO where the single-bucket VRE siting is "
+            "not merely coarse but WRONG IN KIND: RENEWABLE_ZONE_ALLOCATION "
+            "sent every economically-entered solar MW to MISO-South, the one "
+            "model zone excluded from every state compliance region's "
+            "eligible-zone mask (MISO_RPS_MIDWEST_FOOTPRINT_ZONES -- "
+            "AR/LA/MS/E-TX carry no standard), so the screen priced new solar "
+            "at a $0 REC credit while the run's own zonal REC vector peaked at "
+            "the $30/MWh ACP. A siting-REPRESENTATION repair reading the run's "
+            "own zonal REC vector and the existing masks; no share, weight or "
+            "allocation is chosen"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (capx D33); "
+            "docs/handoffs/FINDING-capx-d33-miso-additions-repair-2026-09-02.md "
+            "section 2"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "miso_rps_compliance_regions"): {
+        "identification": "design-decision",
+        "source": (
+            "Owner decision D-26 (sitting Addendum Y.4, signed 2026-08-06; "
+            "lane ARM-MISO). The single MISO-wide RPS row silently asserts "
+            "FREE INTRA-ISO REC TRADE, which is FALSE in MISO (MCL 460.1029 "
+            "restricts Michigan credits to in-state systems; CEJA's "
+            "centralized IPA procurement; MN's delivered-to-retail "
+            "construction) -- the ISO-wide row let Iowa's surplus pay "
+            "Michigan's bill. Armed, that row is REPLACED (rule 19 "
+            "[R-ONE-MECH], never stacked) by the K=5 per-state "
+            "compliance-region rows, each with its statute's eligibility mask, "
+            "its obligated-load RHS and its own $30 ACP escape. ZERO fitted "
+            "parameters: every obligation is copied from the cited "
+            "STATE_RPS_FLOORS['MISO'] derivation, which regenerates from "
+            "statute and obligated load in any forward year"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (owner decision D-26); "
+            "docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md "
+            "section 3.1; both lane gates proven by "
+            "tests/unit/config/test_miso_rps_region_arming.py"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "miso_clean_tier_rows"): {
+        "identification": "design-decision",
+        "source": (
+            "Owner decision D-29 (sitting Addendum AK.8, signed 2026-08-11; "
+            "lane ARM-3-ARM). Adds a SECOND independent row family riding the "
+            "Arm-2 K-row machinery (the dependency is strict and "
+            "one-directional -- the runner refuses the clean family without "
+            "the compliance-region grain): MN carbon-free (Minn. Stat. "
+            "216B.1691 subd. 2g) and MI clean (2023 PA 235 / MCL 460.1029), "
+            "each with its statute's eligibility mask, its obligated-load RHS "
+            "and its own $30 ACP escape. Both blockers are closed on the "
+            "record -- the section 45U composition by owner D-28 option A, and "
+            "the zone-mask defect by ARM3-FIX. ZERO fitted parameters: every "
+            "obligation is copied from the cited MISO_CLEAN_TIER_REGIONS "
+            "derivation, and MI's RHS is 0 until its statutory 2035 start"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (owner decision D-29); "
+            "docs/handoffs/arm3-fix-zone-mask-2026-08-09.md section 4 (R1-R5 "
+            "on the fixed rows)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "retirement_sector_gate"): {
+        "identification": "design-decision",
+        "source": (
+            "capx D53, armed for MISO ONLY by owner instruction on the "
+            "measured A/B. A PURE CANDIDATE-SET PARTITION of the retirement "
+            "screen: 59 GW of regulated-utility capacity whose owners never "
+            "subject it to a merchant test is removed from a merchant screen, "
+            "so the pool the reliability floor masks is the merchant pool (10 "
+            "pct real-exit density instead of 4 pct) and the floor's release "
+            "lands at plants that actually exit (99.8 pct plant-grain "
+            "precision instead of 1.1 pct). All four pre-stated limbs read "
+            "MET, every retirement row byte-identical on the bare recipe. The "
+            "gate reads the Sector column every ISO's EIA-860 plant table "
+            "already carries -- the same posture class as owner ruling Q30's "
+            "date channel -- and chooses no threshold, share or MW"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides retirement_sector_gate cite block; "
+            "docs/handoffs/FINDING-capx-d53-2026-09-05.md section 6 (the four "
+            "limbs) and section 6.1 (the arming and its records-side "
+            "consequences); docs/handoffs/DESIGN-capx-d53-sector-gate-"
+            "2026-09-05.md"
+        ),
+        "requires": "iso-registry",
+    },
+    ("CAISO", "negative_renewable_offers"): {
+        "identification": "design-decision",
+        "source": (
+            "The representation of CAISO's ACTUAL renewable offer conduct: "
+            "California renewables bid BELOW $0 in oversupply to keep "
+            "producing for their RPS/REC and federal-PTC value, so in the "
+            "spring-midday solar glut the marginal (curtailed) unit clears "
+            "negative (2024 RT da_pct: p5 -$10, p1 -$24, min -$41). The "
+            "model's wind/solar are availability-capped LP slices carrying a "
+            "$0 (solar) or -PTC (wind) offer that are never marginal, so "
+            "without the gate the model floors at $0. CAISO's by the ERCOT-65 "
+            "rule-25 [R-ISO-SCOPE] adjudication recorded in the same registry "
+            "block. THE GATE CARRIES NO MAGNITUDE: the floor LEVEL lives in "
+            "the separate registered field renewable_keep_running_value, held "
+            "at its shipped default and therefore not an entry of this ledger"
+        ),
+        "evidence": (
+            "src/market_sim/config/scenarios.py::negative_renewable_offers and "
+            "::renewable_keep_running_value cite blocks (CA RPS PCC1 REC "
+            "$10-25/MWh; federal section 45 wind PTC ~$28/MWh; the ERCOT-65 "
+            "rule-25 scope ruling); "
+            "src/market_sim/config/iso_configs.py::_caiso_config "
+            "default_scenario_overrides cite block; mechanism "
+            "policy.eac.apply_negative_renewable_offer_floor, tested "
+            "tests/test_negative_renewable_offers.py; THE CAISO BACKCAST "
+            "KEEPER RECORD -- keeper 2026-09-05-caiso-252-b1-notrim carries "
+            "negative_renewable_offers True at renewable_keep_running_value "
+            "20.0 in results/calibration/caiso252_b1_notrim/run_config.json, "
+            "and the CAISO mechanism-matrix cell reads K on the caiso-216 "
+            "measurement (results/calibration/FINDING-caiso216-belly-lever-"
+            "plan-2026-08-23.md, _caiso216_belly_surplus.json B3)"
+        ),
+        "requires": "iso-registry",
+    },
 }
 
 

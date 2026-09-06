@@ -130,6 +130,7 @@ from scripts.run_calibration import (  # noqa: E402
     _commitment_pass,
     _henry_hub_actual,
     _load_reference,
+    resolve_p1_basis_seed_default,
     resolve_xyear_warmstart_default,
     run_year,
 )
@@ -3688,6 +3689,7 @@ def solve_and_persist(
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
+    nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -3785,6 +3787,7 @@ def solve_and_persist(
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
+    nyiso_gas_bridge_startup_aware: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
@@ -4016,6 +4019,7 @@ def solve_and_persist(
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
+            nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
@@ -4782,6 +4786,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
             )
+        if nyiso_gas_bridge_startup_aware is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware
+            )
         if nyiso_chp_btm_measured is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_chp_btm_measured=nyiso_chp_btm_measured
@@ -5465,6 +5473,7 @@ def solve_and_persist(
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
+            nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
@@ -5578,6 +5587,7 @@ def solve_and_persist(
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
+            nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware,
             nyiso_chp_btm_measured=nyiso_chp_btm_measured,
             cc_reserve_duty_split=cc_reserve_duty_split,
             chp_layup_duty_split=chp_layup_duty_split,
@@ -6403,6 +6413,7 @@ def solve_and_persist(
         "caiso_st_gas_committed_measured": caiso_st_gas_committed_measured,
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
+        "nyiso_ct_peaker_bands_measured": nyiso_ct_peaker_bands_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "nearby_fuel_price_zone_donor_guard": nearby_fuel_price_zone_donor_guard,
         "fleet_state_from_eia860": fleet_state_from_eia860,
@@ -6526,6 +6537,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
         "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
+        "nyiso_gas_bridge_startup_aware": nyiso_gas_bridge_startup_aware,
         "nyiso_chp_btm_measured": nyiso_chp_btm_measured,
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "chp_layup_duty_split": chp_layup_duty_split,
@@ -8709,6 +8721,7 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
+    nyiso_ct_peaker_bands_measured: bool | None = None,
     gas_offer_margin: bool | None = None,
     nearby_fuel_price_zone_donor_guard: bool | None = None,
     fleet_state_from_eia860: bool | None = None,
@@ -8825,6 +8838,8 @@ def run_replay_bundle(
         kwargs["caiso_ct_peaker_committed_measured"] = (
             caiso_ct_peaker_committed_measured
         )
+    if nyiso_ct_peaker_bands_measured is not None:
+        kwargs["nyiso_ct_peaker_bands_measured"] = nyiso_ct_peaker_bands_measured
     if gas_offer_margin is not None:
         kwargs["gas_offer_margin"] = gas_offer_margin
     # caiso-243: the two F923 fallback guards compose exactly like the
@@ -8927,6 +8942,24 @@ def main() -> None:
         "default; this flag overrides both. No effect on --report / "
         "--replay-bundle / --rebuild-benchmark (those stay at the global "
         "default OFF for reproducibility).",
+    )
+    parser.add_argument(
+        "--no-p1-basis-seed",
+        action="store_true",
+        help="Disable the same-year P1 basis seed (MARKET_SIM_P1_BASIS_SEED). "
+        "It is ON by default for a fresh calibration solve — on the ISOs "
+        "whose keeper carries a P1-native floor bridge (ERCOT / NYISO gas "
+        "commitment bridges, CAISO RA must-offer) the P1 cold-rebuilds a "
+        "second model on the floored fleet, and the seed hands it the P0 "
+        "model's optimal basis instead of starting from nothing (ERCOT 2025 "
+        "P1 287 -> 139 s; warm-start class, marginal-tie only; see "
+        "docs/cross-year-warmstart.md 'Same-year P1 basis seed'). Inert "
+        "wherever the P1 re-solves the live P0 model, and hard-OFF under "
+        "--no-xyear-warmstart / MARKET_SIM_WARMSTART_XYEAR=0 (the goldens "
+        "pin) — the seed lives inside the cross-year gate. An explicit "
+        "MARKET_SIM_P1_BASIS_SEED env var is honored over the default; this "
+        "flag overrides both. No effect on --report / --replay-bundle / "
+        "--rebuild-benchmark (global default OFF).",
     )
     parser.add_argument(
         "--cf-band-width",
@@ -10674,6 +10707,28 @@ def main() -> None:
         "FAVOURABLE to C3a, which is the session's hazard, not its argument; "
         "this is NEVER a C3a lever. Non-CAISO, or a band with no "
         "phys_committed, is a hard error.",
+    )
+    parser.add_argument(
+        "--nyiso-ct-peaker-bands-measured",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="STRUCTURAL-INTEGRITY REPAIR (rules 14/19/21/25, nyiso-199, owner "
+        "ruling 2026-09-06): ground NYISO CT_PEAKER's `committed` (1.35) and "
+        "`econ_low`/`econ_high` (1.0/1.0, a DE-LEAK placeholder) on the "
+        "measured physical counterparts its OWN band dict already carries -- "
+        "phys_committed 0.843 / phys_econ_low 0.661 / phys_econ_high 0.658 "
+        "(nyiso_campd_marginal_hr_summary.csv p50s, n=70). Zero new numbers, "
+        "zero free parameters, no DOF entry. `peak` is NOT grounded: NYISO's "
+        "4.0 is the $1,000-offer-cap scarcity wall, not a physics claim. Rule "
+        "19: tranche_startup_amortization is ARMED on the NYISO keeper, so P1 "
+        "already amortizes $20/MW (NREL SR-5500-55433) over the measured P0 "
+        "run length onto the very _committed tranche the 1.35 'start hurdle' "
+        "charges a second time. Rule 1: the econ limb closes the OPEN ROOT "
+        "CAUSE _NYISO_OFFER_CURVE's own comment declares by name. DISCLOSED: "
+        "the direction is FAVOURABLE to CT_PEAKER volume and moves C3a DOWN "
+        "(crossing indicator -2.75/-2.40/-2.74 %), which is the hazard, not "
+        "the argument; this is NEVER a C3a lever. Non-NYISO, or a band missing "
+        "any of the three phys_* keys, is a hard error.",
     )
     parser.add_argument(
         "--nearby-fuel-price-zone-donor-guard",
@@ -12515,6 +12570,17 @@ def main() -> None:
         "--nyiso-gas-bridge-online-hours.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-startup-aware",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="COMMITMENT-REAL RUN SCREEN for the NYISO bridge (nyiso-200; the "
+        "detector's G-61 path (b) leg): a detected P0 run anchors the min-run "
+        "extension / online-hours floor / gap bridges only when its P0 energy "
+        "margin per MW repays the unit's own published startup cost "
+        "(_ra_bridge_unit_params). Zero new parameters; removes the "
+        "P0-pattern dependence nyiso-199 measured.",
+    )
+    parser.add_argument(
         "--nyiso-chp-btm-measured",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12711,6 +12777,7 @@ def main() -> None:
                 or "--no-caiso-st-gas-peak-measured" in sys.argv
                 else None
             ),
+            nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
             caiso_ct_peaker_committed_measured=(
                 args.caiso_ct_peaker_committed_measured
                 if "--caiso-ct-peaker-committed-measured" in sys.argv
@@ -12841,6 +12908,11 @@ def main() -> None:
     # Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
+    # Same-year P1 basis seed (wallclock item B): default ON on the same
+    # fresh-solve path, --no-p1-basis-seed to opt out, explicit env var
+    # honored; the solve core arms it only inside the cross-year gate above.
+    _p1_seed = resolve_p1_basis_seed_default(args.no_p1_basis_seed)
+    logger.info("P1 basis seed: %s", "ON" if (_p1_seed and _xwarm) else "OFF")
     # Coal family solve kwargs, generated from the same registry rows that
     # generated the parser above (rows riding the prb_overrides channel are
     # excluded there and keep their hand-written plumbing below). One encoding
@@ -13087,6 +13159,7 @@ def main() -> None:
         caiso_st_gas_committed_measured=args.caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
+        nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=args.nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=args.fleet_state_from_eia860,
@@ -13185,6 +13258,7 @@ def main() -> None:
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
         nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
+        nyiso_gas_bridge_startup_aware=args.nyiso_gas_bridge_startup_aware,
         nyiso_chp_btm_measured=args.nyiso_chp_btm_measured,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         chp_layup_duty_split=args.chp_layup_duty_split,

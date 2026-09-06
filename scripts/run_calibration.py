@@ -100,6 +100,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
+    apply_miso_gas_marginal_commodity,
     apply_miso_winter_citygate_daily,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
@@ -572,6 +573,7 @@ def run_year(
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
+    nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -731,6 +733,7 @@ def run_year(
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
+    nyiso_gas_bridge_startup_aware: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
@@ -894,6 +897,7 @@ def run_year(
         caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
+        nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=fleet_state_from_eia860,
@@ -1682,6 +1686,10 @@ def run_year(
         config = config.with_overrides(
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
         )
+    if nyiso_gas_bridge_startup_aware is not None:
+        config = config.with_overrides(
+            nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware
+        )
     if nyiso_chp_btm_measured is not None:
         config = config.with_overrides(nyiso_chp_btm_measured=nyiso_chp_btm_measured)
     if cc_reserve_duty_split is not None:
@@ -1821,6 +1829,35 @@ def run_year(
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None}
         )
+    # nyiso-199 FAIL-LOUD GUARD (rule 24 [R-REGISTRY]). This flag's consumer
+    # lives inside ``backcast_config`` (line ~861), which has ALREADY RUN by the
+    # time the generic ``prb_overrides`` channel applies here — so a run that
+    # arms it through prb ALONE would carry ``nyiso_ct_peaker_bands_measured =
+    # True`` in its recorded run_config while the LP solved the FITTED bands: a
+    # silent no-op advertising a mechanism that never ran, which is exactly the
+    # caiso-157 defect class this file's own solve-path guard was written for.
+    # ``replay_keeper --set`` routes through both channels, and the CLI flag
+    # threads the named kwarg, so the supported paths are fine; this catches the
+    # unsupported one loudly instead of producing a bundle that lies.
+    if getattr(config, "nyiso_ct_peaker_bands_measured", False):
+        _ny_ct = (config.offer_curve_by_group or {}).get("CT_PEAKER") or {}
+        _unapplied = [
+            b
+            for b in ("committed", "econ_low", "econ_high")
+            if f"phys_{b}" in _ny_ct
+            and abs(float(_ny_ct.get(b, 0.0)) - float(_ny_ct[f"phys_{b}"])) > 1e-9
+        ]
+        if _unapplied:
+            raise ValueError(
+                "nyiso_ct_peaker_bands_measured is True on the resolved config "
+                f"but band(s) {', '.join(_unapplied)} still carry the fitted "
+                "multiplier — the flag reached ScenarioConfig AFTER its "
+                "backcast_config consumer ran (the generic prb_overrides "
+                "channel alone). Pass it as the named run_year kwarg, via "
+                "--nyiso-ct-peaker-bands-measured, or via replay_keeper --set "
+                "(which routes both channels). A silent no-op here would "
+                "advertise a mechanism the LP never solved (rule 24)."
+            )
     # Gas-keyed coal passthrough sigmoids per supply chain. The bit family
     # has its own flag/overrides; the sub/lignite enables and all their
     # tuning params ride the generic prb_overrides ScenarioConfig override
@@ -3910,7 +3947,21 @@ def run_year(
     # before dual-fuel (oil parity still caps). Mirrors the resolve_fuel_prices
     # apply_monthly=True order. No-op unless miso_winter_citygate_daily is set
     # (MISO only). See fuel.apply_miso_winter_citygate_daily.
-    apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
+    # miso-224: gas at MARGINAL commodity (measured daily hub spot per zone)
+    # instead of the EIA-923 AVERAGE print. Off by default and byte-identical
+    # off. Armed, it supersedes (rule 19, never stacks) the winter Chicago SHAPE
+    # overlay below (the daily series carries level AND shape) and the mean-zero
+    # zonal increment (its written mask joins the print-derived mask, which the
+    # MISO applier honours under either flag). Mirrors the resolve_fuel_prices
+    # apply_monthly=True branch — this calibration chain is the path a backcast
+    # solve actually takes, so the hook must live here too (miso-224 Addendum A).
+    spot_cells = apply_miso_gas_marginal_commodity(
+        fuel_prices, fleet_arrays, config, year
+    )
+    if spot_cells is None:
+        apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
+    else:
+        print_cells = spot_cells if print_cells is None else (print_cells | spot_cells)
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
     # PJM. No-op unless miso_zonal_gas_basis is set (MISO only). The
     # print-derived-cell mask is passed always; the applier consumes it only
@@ -5628,6 +5679,17 @@ def run_year(
     # Drain any stale per-pass timings before this year's solves so the
     # markup attribution below covers exactly this year (PERF-B session 2).
     reset_pass_timing_log()
+    # Same-year P1 basis seed, adaptive leg (wallclock item B, memo §6.4): an
+    # ercot-221 pass 2 reaches run_energy_solve with ``reuse_p0_from`` and no
+    # live P0 model, and its P1 is the identical floored LP under a different
+    # storage discharge cost — so pass 1 exports its P1 basis for it, ONLY when
+    # that pass may follow (the same gate the adaptive block below opens on).
+    # Ignored by an unseeded pass; False on every other ISO / gate-off run.
+    _p1_basis_for_adaptive = bool(
+        iso == "ERCOT"
+        and getattr(config, "ercot_storage_adaptive_expectation", False)
+        and storage.n_storage
+    )
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -5655,6 +5717,7 @@ def run_year(
         # ercot-219 stage-3 P1-only storage reservation-price re-cost
         # (None on every flag-off / non-ERCOT path — byte-identical).
         p1_storage_discharge_cost=p1_storage_discharge_cost,
+        export_p1_basis=_p1_basis_for_adaptive,
     )
     _t_solve_end = time.perf_counter()
     # ercot-221 ADAPTIVE-EXPECTATION storage offer (owner card by dispatch;
@@ -5834,6 +5897,12 @@ def run_year(
                 # rebuilding and cold-solving the identical LP (honoured only
                 # when pass 1's P1 was cold; see run_energy_solve).
                 reuse_p0_from=energy_solve,
+                # P1 basis seed (item B): seeded from pass 1's P1 basis; export
+                # this pass's own P1 basis only when an ercot-230 fixed-point
+                # iteration may follow.
+                export_p1_basis=bool(
+                    getattr(config, "ercot_adaptive_fixed_point", False)
+                ),
             )
         # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
         # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
@@ -5937,6 +6006,11 @@ def run_year(
                     # C-1b: same premise as pass 2 — the previous iteration's
                     # P0 is this iteration's P0.
                     reuse_p0_from=energy_solve,
+                    # P1 basis seed (item B): seeded from the previous
+                    # iteration's P1 basis; export for the next one (the
+                    # final iteration's export is one wasted getBasis, accepted
+                    # — the stop is only known after the solve).
+                    export_p1_basis=True,
                 )
                 _fp_floors.append(_fl_k)
                 ercot230_iteration["n_adapt_passes"] += 1
@@ -6648,7 +6722,60 @@ def _build_parser() -> argparse.ArgumentParser:
         "explicit MARKET_SIM_WARMSTART_XYEAR env var is honored over the "
         "default; this flag overrides both.",
     )
+    parser.add_argument(
+        "--no-p1-basis-seed",
+        action="store_true",
+        help="Disable the same-year P1 basis seed (MARKET_SIM_P1_BASIS_SEED). "
+        "It is ON by default on the calibration path — on the ISOs whose "
+        "keeper carries a P1-native floor bridge (ERCOT / NYISO gas "
+        "commitment bridges, CAISO RA must-offer) the P1 cold-rebuilds a "
+        "second model on the floored fleet, and the seed hands it the P0 "
+        "model's optimal basis instead of starting from nothing (ERCOT 2025 "
+        "P1 287 -> 139 s; warm-start class, marginal-tie only; see "
+        "docs/cross-year-warmstart.md 'Same-year P1 basis seed'). Inert "
+        "wherever the P1 re-solves the live P0 model, and hard-OFF under "
+        "--no-xyear-warmstart / MARKET_SIM_WARMSTART_XYEAR=0 (the goldens "
+        "pin) — the seed lives inside the cross-year gate. An explicit "
+        "MARKET_SIM_P1_BASIS_SEED env var is honored over the default; this "
+        "flag overrides both.",
+    )
     return parser
+
+
+def resolve_p1_basis_seed_default(disable: bool) -> bool:
+    """Resolve the same-year P1 basis seed default for the calibration path.
+
+    The sibling of :func:`resolve_xyear_warmstart_default` for
+    ``MARKET_SIM_P1_BASIS_SEED`` (wallclock desk item B; owner memo
+    ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md``, signed (A) FLIP
+    2026-09-06). The seed hands the cold-rebuilt P1 model — the route every
+    P1-native floor bridge takes — the same year's P0 optimal basis before its
+    first solve. Validated warm-start-class neutral (objective and total
+    generation identical, per-unit differences marginal-tie only, price
+    differences dual-degenerate hours only; memo §3), so it defaults **ON**
+    here. Same precedence as the cross-year resolver, highest first:
+
+    1. ``--no-p1-basis-seed`` (``disable=True``) → force OFF.
+    2. An explicitly-set ``MARKET_SIM_P1_BASIS_SEED`` env var → honored as-is.
+    3. Otherwise → default ON.
+
+    Sets ``os.environ["MARKET_SIM_P1_BASIS_SEED"]`` so the shared solve core
+    (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
+    the resolved boolean. **The resolved value is necessary, not sufficient**:
+    the solve core arms the seed only INSIDE the cross-year gate
+    (``MARKET_SIM_WARMSTART_XYEAR != "0"`` and no explicit ``xyear_warmstart``
+    argument), so ``--no-xyear-warmstart`` — and the goldens/replay pin — turn
+    the seed off with it, and the forecast path (an explicit gate argument)
+    never reads this env var at all. Calibration fresh-solve path only:
+    ``--report`` / ``--replay-bundle`` / ``--rebuild-benchmark`` and the direct
+    ``solve_and_persist`` callers keep the global default OFF.
+    """
+    if disable:
+        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "0"
+    elif "MARKET_SIM_P1_BASIS_SEED" not in os.environ:
+        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "1"
+    # else: env var explicitly set by the caller -> honor it verbatim.
+    return os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0"
 
 
 def resolve_xyear_warmstart_default(disable: bool) -> bool:
@@ -6743,6 +6870,10 @@ def main(argv: list[str] | None = None) -> None:
     # solve core. Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
+    # Same-year P1 basis seed (item B): default ON, --no-p1-basis-seed to opt
+    # out, explicit env var honored; effective only inside the gate above.
+    _p1_seed = resolve_p1_basis_seed_default(args.no_p1_basis_seed)
+    logger.info("P1 basis seed: %s", "ON" if (_p1_seed and _xwarm) else "OFF")
 
     # Single-element holder carrying the prior year's optimal basis across
     # run_year calls for cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1).

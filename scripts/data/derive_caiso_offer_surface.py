@@ -108,8 +108,12 @@ Method (measured, NOT fit to any residual — CLAUDE.md rules 1/13/23)
    one-mechanism-per-phenomenon). Arming it without a commitment layer
    would re-flood overnight CC.
 
-Estimation gates (pre-registered; ALL must pass or the derive REFUSES to
-write the consumed JSONs — the caiso-89 estimation-stage CV/LOYO precedent):
+Estimation gates (pre-registered; ALL must pass **on the CONSUMED classes**
+or the derive REFUSES to write the consumed JSONs — the caiso-89
+estimation-stage CV/LOYO precedent). CONSUMED == MEASURED except under
+``--st-split-report-only``, where a measured class is published with its gate
+rows under ``_provenance.reported_not_consumed`` and kept OUT of the artifact;
+the gate itself is never relaxed and the refused class keeps its FAIL:
   G1 capacity reconciliation: classified CC bucket capacity in [50%, 130%]
      of the fleet CC_REGULAR 13.7 GW; CT bucket in [50%, 160%] of the fleet
      CT_PEAKER 7.6 GW (the ST_GAS/CT_CHP contamination allowance, disclosed
@@ -133,9 +137,31 @@ updates; if the A/B probe degrades the backcast the surface does NOT move
 and the probe registers as REJECTED (rule 15). Measured OFFER prices are
 the input — clearing prices stay validation-only (rule 13).
 
+Class partition (caiso-254 / caiso-255). The gas population is split on the
+regression marginal HR at ``--hr-cut`` (CC below) and, above it, at a SECOND
+cut ``st_cut`` located as the CT-side capacity-density antimode inside
+``ST_CUT_WINDOW`` — the aero-CT mode below, the OTC/RMR steam mode above.
+Three modes:
+  default                  three-way; all three buckets gated and consumed.
+  --no-st-split            two-way; reproduces the frozen 2026-08-02
+                           construction, steamers pooled into CT (the
+                           disclosed contamination). NOT a measurement that
+                           the population is unimodal.
+  --st-split-report-only   three-way CLASSIFICATION, two-way CONSUMPTION:
+                           the CT bucket is de-contaminated (that is what the
+                           classification does) but only CC_REGULAR and
+                           CT_PEAKER are written and gated; ST_GAS is measured
+                           and published as refused. caiso-255, owner grant of
+                           FINDING-caiso254 §4 option 1 — the separated ST_GAS
+                           bucket fails G4, and on CAISO its bands are LP-inert
+                           regardless (the ST_GAS_PEAKER_PLANTS bypass in
+                           data/offer_curves.py).
+
 Usage:
     python scripts/data/derive_caiso_offer_surface.py [--years 2023 2024 2025]
         [--edges 0.80 0.90 0.97] [--rungs 5] [--hr-cut 8.5]
+        [--from-reduced-store]    # the clean tree needs ~14.3 GB/year
+        [--no-st-split | --st-split-report-only]
         [--allow-gate-failures]   # inspect-only: never writes consumed JSONs
 """
 
@@ -338,6 +364,45 @@ def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
     populations EXACTLY (46 / 11.935 GW and 100 / 9.950 GW) in
     ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
     """
+    # CORPUS-COVERAGE GUARD (caiso-255). The G-BIMODAL probe refuses an
+    # under-covered corpus (its `gate()`, added by caiso-254 after a mid-fetch
+    # run scored 296 days of 2023 alone and returned the OPPOSITE verdict --
+    # FINDING-caiso254 §5.2). The DERIVE had no such guard, which is the more
+    # dangerous omission of the two: the probe only reports a number, while the
+    # derive WRITES the artifact the LP then consumes. A partial store is a
+    # different bid population, so its cap-weighted medians are different
+    # measurements -- not noisier versions of the same one. Same tolerance and
+    # same reasoning as the probe: exactly one trade date (2023-06-01) is a
+    # genuine OASIS archive hole, so the span admits a handful of absences and
+    # nothing more.
+    MAX_MISSING_DAYS = 6
+    have = {f.stem for f in REDUCED_STORE.glob("*.parquet") if int(f.stem[:4]) in years}
+    want = {
+        d.strftime("%Y%m%d")
+        for d in pd.date_range(f"{min(years)}-01-01", f"{max(years)}-12-31", freq="D")
+    }
+    missing = sorted(want - have)
+    per_year = {y: sum(1 for t in have if int(t[:4]) == y) for y in years}
+    if not have:
+        raise SystemExit(
+            f"no reduced days for {years} under {REDUCED_STORE} — run "
+            "scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1 first"
+        )
+    if len(missing) > MAX_MISSING_DAYS or any(per_year[y] == 0 for y in years):
+        raise SystemExit(
+            f"REFUSED: reduced store is under-covered — {len(have)} day(s), "
+            f"per-year {per_year}, {len(missing)} missing of {len(want)} "
+            f"(tolerance {MAX_MISSING_DAYS}). First missing: {missing[:5]}. "
+            "The measured bands are cap-weighted medians over the POOLED span; "
+            "a partial corpus is a DIFFERENT population, not a noisier sample "
+            "of this one. Finish the fetch and re-run --pass1."
+        )
+    print(
+        f"  reduced-store coverage {len(have)}/{len(want)} days, "
+        f"per-year {per_year}, missing {missing or 'none'}",
+        flush=True,
+    )
+
     frames = []
     for f in sorted(REDUCED_STORE.glob("*.parquet")):
         year = int(f.stem[:4])
@@ -347,11 +412,6 @@ def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
         d = d.rename(columns={"segment_price_usd_per_mwh": "price"})
         d["year"] = np.int16(year)
         frames.append(d)
-    if not frames:
-        raise SystemExit(
-            f"no reduced days for {years} under {REDUCED_STORE} — run "
-            "scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1 first"
-        )
     out = pd.concat(frames, ignore_index=True, copy=False)
     frames.clear()
     return out.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
@@ -428,6 +488,18 @@ def _band_price(seg: pd.DataFrame, lo: float, hi: float) -> pd.Series:
 
 
 def _wquantile(values: np.ndarray, weights: np.ndarray, q: float) -> float:
+    """Capacity-weighted quantile; NaN for an empty sample.
+
+    An empty sample has no quantile, and saying so is the correct answer — the
+    alternative (``np.interp`` raising) conflates "this cell has no data" with
+    "the derive is broken". A NaN here is NOT tolerated on a CONSUMED band:
+    ``main`` hard-fails on that, and only the reported-but-unarmed per-year
+    detail is allowed to carry one (caiso-254 — the three-way partition gives
+    ST_GAS a narrow 6.6 %-of-capacity committed window, which some
+    resource-years simply do not price).
+    """
+    if values.size == 0 or weights.size == 0 or not np.isfinite(weights.sum()):
+        return float("nan")
     order = np.argsort(values)
     v, w = values[order], weights[order]
     cw = np.cumsum(w) - 0.5 * w
@@ -563,6 +635,20 @@ def main(argv: list[str] | None = None) -> int:
         "contamination. Reproduces the frozen 2026-08-02 construction.",
     )
     ap.add_argument(
+        "--st-split-report-only",
+        action="store_true",
+        help="THREE-way classification (so the CT bucket is de-contaminated) "
+        "but consume only CC_REGULAR + CT_PEAKER: the ST_GAS bucket is still "
+        "measured and published under _provenance.reported_not_consumed with "
+        "its gate rows, and is EXCLUDED from the written artifact and from the "
+        "consumed-gate verdict. caiso-255, owner grant of FINDING-caiso254 §4 "
+        "option 1 (2026-09-06): the separated ST_GAS bucket FAILS G4 physical "
+        "sanity (peak inverted below econ_high), and its bands are LP-inert on "
+        "CAISO anyway (data.offer_curves bypasses ST_GAS_PEAKER_PLANTS, which "
+        "is the whole CAISO ST_GAS fleet). NOT a gate relaxation: G4 runs "
+        "unchanged and the refused bucket keeps its FAIL on the record.",
+    )
+    ap.add_argument(
         "--allow-gate-failures",
         action="store_true",
         help="inspect-only mode: report gates but do NOT write consumed JSONs",
@@ -610,14 +696,47 @@ def main(argv: list[str] | None = None) -> int:
     st_cut = None if args.no_st_split else locate_st_cut(res, args.hr_cut)
     if st_cut is not None:
         res["cls"] = _assign_classes(res, args.hr_cut, st_cut)
-    print(
-        f"class partition: hr_cut={args.hr_cut} st_cut="
-        f"{'(unimodal - NOT split)' if st_cut is None else round(st_cut, 3)}",
-        flush=True,
-    )
+    # Distinguish the two reasons st_cut can be None: the operator ASKED for the
+    # pre-repair two-way construction, vs the CT-side density having no antimode
+    # in the window (G-BIMODAL's own FAIL branch). Conflating them would let a
+    # `--no-st-split` run read as evidence that the population is unimodal.
+    if st_cut is not None:
+        _why = round(st_cut, 3)
+    elif args.no_st_split:
+        _why = "(--no-st-split: pre-repair TWO-way construction, not a measurement)"
+    else:
+        _why = "(MEASURED unimodal in the window - NOT split)"
+    print(f"class partition: hr_cut={args.hr_cut} st_cut={_why}", flush=True)
     gaslike = res[res.is_gas]
     active_classes = [c for c in CLASSES if (c != "ST_GAS" or st_cut is not None)]
     buckets = {cls: gaslike[gaslike.cls == cls] for cls in active_classes}
+    # CONSUMED vs MEASURED (caiso-255, owner grant of FINDING-caiso254 §4
+    # option 1). `active_classes` is what the derive MEASURES and REPORTS;
+    # `consumed_classes` is what it WRITES and what the gate verdict is taken
+    # over. They differ only under --st-split-report-only, which drops ST_GAS
+    # from consumption while leaving the three-way CLASSIFICATION intact -- so
+    # the steamers are still removed from the CT bucket (the de-contamination
+    # lives in the classification, not in the consumption) and their own
+    # measured bucket is published as refused rather than hidden.
+    consumed_classes = [
+        c for c in active_classes if not (args.st_split_report_only and c == "ST_GAS")
+    ]
+    if args.st_split_report_only and st_cut is None:
+        raise SystemExit(
+            "--st-split-report-only requires the three-way partition: it is "
+            "the CLASSIFICATION that de-contaminates the CT bucket. It is "
+            "incompatible with --no-st-split (which would simply drop a class "
+            "that was never separated) and with a measured-unimodal CT-side "
+            "population (G-BIMODAL's own FAIL branch, where nothing is "
+            "re-derived at all)."
+        )
+    if consumed_classes != active_classes:
+        print(
+            f"consumed classes {consumed_classes}; measured-but-REFUSED "
+            f"{[c for c in active_classes if c not in consumed_classes]} "
+            "(reported under _provenance.reported_not_consumed)",
+            flush=True,
+        )
     gates: dict[str, dict] = {}
     g1 = {}
     for cls, sub in buckets.items():
@@ -758,11 +877,46 @@ def main(argv: list[str] | None = None) -> int:
                     "tol": round(tol, 3),
                     "pass": bool(dev <= tol),
                 }
-                g2_pass = g2_pass and dev <= tol
+                # Reported for every measured class; only a CONSUMED
+                # class's deviation can fail the gate.
+                if cls in consumed_classes:
+                    g2_pass = g2_pass and dev <= tol
         g2["deltas"][f"{which}{dcut:+.2f}"] = rowset
     g2["pass"] = bool(g2_pass)
     gates["G2_cut_robustness"] = g2
     print(f"G2 cut+/-0.25 robustness: {'PASS' if g2_pass else 'FAIL'}", flush=True)
+
+    # A consumed band with no sample is not a number the artifact may carry.
+    # Reported-only cells (the unarmed `committed` band, the per-year detail)
+    # may be null; econ_low / econ_high / peak may not.
+    _nan_consumed = {
+        f"{cls}.{b}": static[cls][b]
+        for cls in consumed_classes
+        for b in ("econ_low", "econ_high", "peak")
+        if not np.isfinite(static[cls][b])
+    }
+    if _nan_consumed:
+        raise SystemExit(
+            "REFUSED: consumed band(s) have no sample on the pooled span: "
+            f"{sorted(_nan_consumed)}. A class whose armed bands cannot be "
+            "estimated must not be split out — re-run with --no-st-split "
+            "(or --st-split-report-only, which refuses the class consumption "
+            "while still publishing its measurement) and report the partition "
+            "as inestimable rather than writing a null."
+        )
+    _nan_reported = {
+        f"{cls}.{b}.{y}": v
+        for cls in buckets
+        for b, per in per_year_stats[cls].items()
+        for y, v in per.items()
+        if not np.isfinite(v)
+    }
+    if _nan_reported:
+        print(
+            f"per-year REPORTED cells with no sample (unarmed, null in "
+            f"provenance): {sorted(_nan_reported)}",
+            flush=True,
+        )
 
     g3 = {}
     for cls in buckets:
@@ -875,15 +1029,63 @@ def main(argv: list[str] | None = None) -> int:
         }
         print(f"{cls}: ladder body_p50 {body_p50:.3f}", flush=True)
 
+    # The verdict is taken over the CONSUMED classes. A measured-but-refused
+    # class (--st-split-report-only) keeps its gate rows in `gates` and in
+    # `_provenance.reported_not_consumed` at full magnitude -- it is excluded
+    # from the verdict because it is excluded from the ARTIFACT, not because
+    # its failure was forgiven.
     all_pass = all(
         (
-            all(v["pass"] for v in g1.values()),
+            all(g1[c]["pass"] for c in consumed_classes),
             g2["pass"],
-            all(v["pass"] for rows in g3.values() for v in rows.values()),
-            all(v["pass"] for v in g4.values()),
+            all(v["pass"] for c in consumed_classes for v in g3[c].values()),
+            all(g4[c]["pass"] for c in consumed_classes),
         )
     )
     print(f"\nGATES {'ALL PASS' if all_pass else 'FAILED'}", flush=True)
+
+    # Measured, gated, and REFUSED CONSUMPTION -- published rather than
+    # dropped, so a reader of the artifact can see exactly what was left out
+    # and why (caiso-255; rule 26 [R-DELETE] in spirit: a refused measurement
+    # is recorded, never silently zeroed).
+    def _f(v):
+        """JSON-safe: a band with no sample is null, never a bare NaN."""
+        return None if v is None or not np.isfinite(v) else v
+
+    _reported_not_consumed = {
+        cls: {
+            "base_hr": round(geom[cls]["base_hr"], 3),
+            "bands": {b: _f(static[cls][b]) for b in ("econ_low", "econ_high", "peak")},
+            "unarmed": {"committed": _f(static[cls]["committed"])},
+            "gates": {
+                "G1_capacity_reconciliation": g1.get(cls),
+                "G3_estimation_loyo": g3.get(cls),
+                "G4_physical_sanity": g4.get(cls),
+            },
+            "reason": (
+                "MEASURED AND REFUSED. caiso-255, owner grant of "
+                "FINDING-caiso254-partition-repair-2026-09-06.md §4 option 1 "
+                "(2026-09-06), pre-registered in "
+                "PRECOMMIT-caiso255-ct-only-partition-adoption-2026-09-06.md "
+                "BEFORE this artifact was written. The separated ST_GAS "
+                "bucket FAILS G4 physical sanity -- its peak band sits below "
+                "its econ_high, an inverted offer curve -- so it is not "
+                "consumed. G4 is NOT relaxed and its tolerance is NOT retuned: "
+                "the failure stands here at full magnitude. The three-way "
+                "CLASSIFICATION is retained, which is what removes these "
+                "resources from the CT_PEAKER bucket; consumers with no "
+                "ST_GAS entry fall back to the (now de-contaminated) "
+                "CT_PEAKER bucket exactly as a pre-repair artifact does. On "
+                "CAISO this is additionally LP-inert: data.offer_curves "
+                "bypasses offer_curve_by_group for every plant in "
+                "ST_GAS_PEAKER_PLANTS, which is the entire CAISO ST_GAS "
+                "fleet (plants 315 / 335 / 350, 2,858.8 MW), whose bands come "
+                "from the caiso-239/240 per-plant measured registries instead."
+            ),
+        }
+        for cls in active_classes
+        if cls not in consumed_classes
+    }
 
     provenance = {
         "source": (
@@ -917,6 +1119,7 @@ def main(argv: list[str] | None = None) -> int:
             "st_cut_window": list(ST_CUT_WINDOW),
             "st_cut_kde_bw": ST_CUT_KDE_BW,
             "classes": list(active_classes),
+            "consumed_classes": list(consumed_classes),
             "contamination_note": (
                 "CT bucket may include the 2.9 GW OTC/RMR ST_GAS steamers "
                 "and priced CT_CHP; CC bucket may include CC_CHP. Same-fuel "
@@ -936,6 +1139,7 @@ def main(argv: list[str] | None = None) -> int:
         "peak_ladder_qs": list(LADDER_QS[: args.rungs]),
         "per_year_band_mults": per_year_stats,
         "gates": gates,
+        "reported_not_consumed": _reported_not_consumed,
         "committed_band_unarmed_note": (
             "measured committed-band mults reported in per_year_band_mults "
             "but NOT consumed: min-load self-commitment conduct is owned by "
@@ -965,13 +1169,16 @@ def main(argv: list[str] | None = None) -> int:
                 "bands": {b: static[cls][b] for b in ("econ_low", "econ_high", "peak")},
                 "unarmed": {"committed": static[cls]["committed"]},
             }
-            for cls in buckets
+            for cls in consumed_classes
         },
     }
     OUT_STATIC.write_text(json.dumps(static_doc, indent=1) + "\n")
     print(f"wrote {OUT_STATIC}")
 
-    cond_doc = {"_provenance": provenance, **cond}
+    cond_doc = {
+        "_provenance": provenance,
+        **{c: cond[c] for c in consumed_classes},
+    }
     OUT_COND.write_text(json.dumps(cond_doc, indent=1) + "\n")
     print(f"wrote {OUT_COND}")
     return 0

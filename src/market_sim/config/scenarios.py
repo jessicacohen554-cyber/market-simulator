@@ -779,6 +779,8 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_min_run",
     "nyiso_gas_bridge_cc_min_run_hours",
     "nyiso_gas_bridge_st_min_run_hours",
+    # nyiso-200: the commitment-real run screen, default off (byte-identical).
+    "nyiso_gas_bridge_startup_aware",
     "nyiso_gas_bridge_ct",
     "nyiso_gas_bridge_ct_min_load_frac",
     "nyiso_gas_bridge_plant_exclusions",
@@ -1199,6 +1201,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # surface) and hashes distinctly. Registered WITH the field, in the same
     # commit, per the nyiso-119 discipline.
     "caiso_ct_peaker_committed_measured",
+    # nyiso-199: same contract as its caiso-241 sibling above — the off path
+    # never touches `offer_curve_by_group`, so it is byte-identical by
+    # construction; an armed run prices the NYISO CT_PEAKER `_committed` and
+    # `econ*` tranches at a different heat rate (a different offer surface) and
+    # hashes distinctly. Registered WITH the field, in the same commit, per the
+    # nyiso-119 discipline.
+    "nyiso_ct_peaker_bands_measured",
+    # miso-224: the off path never touches a fuel price (byte-identical by
+    # construction); an armed run reprices every MISO gas row at the daily hub
+    # spot and hashes distinctly. Registered WITH the field, in the same commit,
+    # per the nyiso-119 discipline.
+    "miso_gas_marginal_commodity_pricing",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -1467,6 +1481,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "capacity_adequacy_requirement_published_by_iso",
+    # capx D74: the NO-DEFAULT-CAP price-taker CONVENTION gate (the PJM "Steam
+    # Oil & Gas" limb of the published default-ACR table,
+    # DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md §3; GATED default
+    # None ⇒ every ISO off, byte-identical — no class leaves the screen and
+    # no unit moves into the price-taking block). Dropped from the hash at its
+    # None default so every pre-existing cache key of all six ISOs is
+    # byte-stable (the bare pjm-t1h recipe key aef81c84c4609c76 and the D62
+    # arm key b98060898fceb3da at the D74 base 2eb65038 unmoved — PRECOMMIT
+    # §8 STOP 2); an armed row keys distinctly. SHARED field — very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "capacity_no_default_cap_convention_by_iso",
     # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
     # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
     # the hash there, so every pre-existing cache key of all six ISOs — every
@@ -1475,6 +1501,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the fields.
     "federal_ces_target_by_year",
     "federal_ces_acp_usd_per_mwh",
+    # SCN-WS3b: the voluntary clean-demand scenario axis (owner ruling S1 on
+    # card D-3). All three default to their inert values ("off" = no row; None
+    # = the cited constants / default eligible set) and are dropped from the
+    # hash there, so every pre-existing cache key of all six ISOs — every
+    # backcast keeper included — is byte-stable; an armed run keys
+    # distinctly. Coerced to these same defaults in backcast/hindcast, so the
+    # backcast key is byte-stable too. SHARED fields — very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the fields (the nyiso-119 discipline).
+    "voluntary_clean_demand_path",
+    "voluntary_wtp_ceiling_usd_per_mwh",
+    "voluntary_eligible_fuels",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1768,6 +1805,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_min_run": "False",
     "nyiso_gas_bridge_cc_min_run_hours": "None",
     "nyiso_gas_bridge_st_min_run_hours": "None",
+    "nyiso_gas_bridge_startup_aware": "False",
     "nyiso_gas_bridge_ct": "False",
     "nyiso_gas_bridge_ct_min_load_frac": "0.238",
     "nyiso_gas_bridge_plant_exclusions": "False",
@@ -1865,6 +1903,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-241 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_ct_peaker_committed_measured": "False",
+    # Added by nyiso-199 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_ct_peaker_bands_measured": "False",
+    # Added by miso-224 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_gas_marginal_commodity_pricing": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -1990,11 +2034,20 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D67: the published adequacy-requirement gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_adequacy_requirement_published_by_iso": "None",
+    # capx D74: the no-default-cap price-taker convention gate, registered at
+    # its shipping None default (an armed {iso: True} row keys distinctly).
+    "capacity_no_default_cap_convention_by_iso": "None",
     # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
     # shipping defaults (None = no row / no escape declared; an armed row keys
     # distinctly). Registered IN THE SAME COMMIT as the fields.
     "federal_ces_target_by_year": "None",
     "federal_ces_acp_usd_per_mwh": "None",
+    # SCN-WS3b: the voluntary clean-demand axis, registered at its three
+    # shipping defaults ("off" = no row; None = the cited constants). Registered
+    # IN THE SAME COMMIT as the fields.
+    "voluntary_clean_demand_path": "'off'",
+    "voluntary_wtp_ceiling_usd_per_mwh": "None",
+    "voluntary_eligible_fuels": "None",
 }
 
 
@@ -2111,6 +2164,59 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # NEISO GOLDEN-3 t3); the blast-radius reconciliation is
     # FINDING-capx-d60-2026-09-05.md.
     ("2026-09-05", "ccs_retrofit_capex_co2_scaling", "True"),
+    #
+    # capx D65-B ACT A, executing OWNER RULING Q47 (director sitting r#42
+    # amendment 2, 2026-09-05, verbatim "Arm coupled, after D60-R3"): the
+    # FOURTH seam of the same construction — the two fixed-cost legs (ΔFOM
+    # $/MW-yr and the capture VOM adder $/MWh) scale by the SAME
+    # ``k = captured / captured_ref`` seam 1 already applies to the island's
+    # capex, because both are TPC fractions in their own published sources
+    # (ATB 2024's fossil methodology page; NETL Rev 4a B31A→B31B.90 at 95.5 %
+    # fixed / 100 % variable). The THIRD entry in this ledger. Adjudicated
+    # zero-LP by capx D64 (FINDING-capx-d64-2026-09-05.md §1) and armed on the
+    # NEISO t1f A/B in FINDING-capx-d65-2026-09-05.md §4.
+    #
+    # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact), on the same
+    # footing as the D50 entry above: k is D50's own factor unchanged, every
+    # other term is an already-cited constant, and no new constant and no
+    # reference host is introduced. Zero DOF.
+    #
+    # COUPLED WITH A VALUE CHANGE, which is what makes this entry different
+    # from the two above. Act B re-identifies ``ccs_retrofit_vom_adder``
+    # 8.0 -> 2.95 (2026$) off the widened ATB extract in the SAME PR. That
+    # field is NOT a ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it has no drop
+    # value to hide behind and re-keys EVERY forecast key unconditionally —
+    # including the explicit-``False`` path, which this entry's own drop value
+    # would otherwise have held. So the two acts produce ONE re-key event, and
+    # the explicit-``False`` path is byte-identical to a pre-flip run only in
+    # the sense that it takes THIS field's pre-flip branch; its key still moves,
+    # on Act B. D65 §8.1 is why they could not be separated: this field
+    # multiplies that level by k, so the shape on an uncited 2.7× level
+    # compounds the error on exactly the hosts it re-prices.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays ``"False"``, so a post-flip default config no longer equals the drop
+    # value: it ENTERS the hash and takes its own key. Measured and
+    # PRE-DECLARED before the solve in
+    # ``docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md``; both pins advanced
+    # with dated cause blocks in ``tests/regression/test_persisted_identity.py``
+    # and the cache-epoch ledger entry 2026-09-06 in
+    # ``src/market_sim/results/cache.py``. The cost is a one-time cache MISS per
+    # config, never a wrong answer — nothing can be mis-served at a key that
+    # moved.
+    #
+    # BACKCAST BEHAVIOUR IS BYTE-IDENTICAL, and so is every hindcast/crossover
+    # horizon ending before 2028, by the SAME construction the D50 entry states:
+    # ``ccs.py::apply_ccs_retrofit`` returns at ``if year <
+    # config.ccs_retrofit_available_year`` (2028) before any read of either this
+    # flag or ``ccs_retrofit_vom_adder``, and that call site is the only
+    # consumer of both in the source tree. No backcast year reaches 2028 and no
+    # measured backcast fleet contains a ``gas_cc_ccs`` unit, so no keeper,
+    # sidecar, determination or dashboard row moves. Forecast bundles whose
+    # horizon reaches 2028 and were solved at the pre-flip default/level carry
+    # the SUPERSEDED posture; D65-B re-solves every bare forecast key and the
+    # blast-radius reconciliation is FINDING-capx-d65b-2026-09-06.md.
+    ("2026-09-06", "ccs_retrofit_fixed_cost_co2_scaling", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -2342,6 +2448,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_overlay": "measured constrained-hub month spot basis",
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
+    "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
@@ -3271,6 +3378,90 @@ class ScenarioConfig:
     # S3 (2026-09-06), the same $50 the SCN-WS2a probe used under its former
     # "illustrative" label — carried as the `CES-T80` case override in
     # configs/scenario_campaign_matrix.yaml, never as a default here.
+    # --- Voluntary clean-energy demand (SCN-WS3b; owner ruling S1 2026-09-06
+    # on card D-3; the design memo docs/handoffs/voluntary-clean-demand-
+    # design-memo-2026-09-05.md §2.1/§3/§5). A DECLARED, forecast-only,
+    # publicly-anchored, DEFAULT-OFF scenario axis over the ffr-5b null — the
+    # same admissibility class as carbon_price_path / datacenter_load_path
+    # (memo §1). "off" = today, byte-identical: NO ROW. Three fields, one
+    # contiguous block. ---
+    voluntary_clean_demand_path: str = "off"  # "off" | "low" | "mid" | "high" —
+    # selects the (s_base, f_commit, WTP) trajectories from the cited
+    # constants.VOLUNTARY_* tables (the datacenter_load_path grammar, no
+    # sampler lever). When not "off", policy/voluntary_demand.py builds ONE
+    # annual volumetric clean-attribute row per ISO-year as one more region
+    # of the clean-tier row family (model/lp/rows.py — the seam SCN-WS2a
+    # relaxed; this is its second consumer, after the federal CES target row):
+    #   Σ W + Σ S + Σ_{g ∈ eligible} P + escape ≥ V(ISO, y)   [MWh]
+    # with an ALL-ZONE mask (annual REC matching — any zone's certificate
+    # serves any buyer in the ISO), V = s_base·w_ISO·E_nonDC + f_commit·E_DC
+    # read from the run's own demand AFTER the load layers fold in (the DC
+    # half rides the existing datacenter_load_path block, so a high-DC case
+    # and a high-voluntary case are coherent by construction, memo §3.4), and
+    # the escape priced at the buyer's WILLINGNESS-TO-PAY ceiling. The dual is
+    # the voluntary REC/PPA attribute price (0 slack; (0, w] binding; = w when
+    # the escape fires and the shortfall is the un-procured volume), delivered
+    # through the EXISTING clean_attribute_price_by_fuel → max(EAC, RPS dual,
+    # clean dual) screen seam — no new consumer (rule 19 [R-ONE-MECH]). NOT
+    # suppressed by federal_ces_replaces_state_rps (a voluntary buyer is not a
+    # state row and exists under any federal policy). No netting logic against
+    # a federal CES target row is built (owner box D-6 OPEN — the campaign
+    # reports both nettings at the report layer; in dispatch the two rows are
+    # independent constraints, FFR-6B §6.4). No hourly (24/7) row (D-3b:
+    # deferred to the isolated scope2-lce-portfolio tool).
+    # FORECAST-ONLY (rule 13): __post_init__ validates the label, then COERCES
+    # this whole block to its dataclass defaults in mode="backcast" or a
+    # hindcast (the datacenter_load_path construction), so every backcast
+    # keeper, every hindcast and every crossover is BYTE-IDENTICAL and the
+    # ffr-5b null is preserved in every scored run; policy.voluntary_demand.
+    # validate_voluntary_config is the defense in depth. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at "off" (an armed run keys distinctly).
+    # LEVELS: owner ruling S3 (card D-2) committed the memo's box-5 defaults —
+    # s_base mid = the latest NREL national voluntary share (2023: 0.08) held
+    # flat, low/high = the series' own range; f_commit low 0 / high 1.0; WTP
+    # low/high = the endpoints of the cited $2-7/MWh public REC range. TWO
+    # CELLS S3 DID NOT REACH stay LABELLED ILLUSTRATIVE (owner-set under D-2,
+    # re-presented in FINDING-scn-ws3b-2026-09-06.md §4): f_commit MID (0.5
+    # placeholder) and the WTP-ceiling MID level (4.5 placeholder). The
+    # campaign cases VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN
+    # (configs/scenario_campaign_matrix.yaml) are expressible on this field
+    # and are HELD under owner ruling S5 (Stage A-POLICY) until the CCS
+    # emission-rate seam is repaired — nobody solves them until the desk
+    # releases A-POLICY.
+    voluntary_wtp_ceiling_usd_per_mwh: float | None = None  # The buyer's
+    # willingness-to-pay CEILING for the clean attribute, real 2026$/MWh
+    # (REAL_DOLLAR_BASE_YEAR): the voluntary row's escape price, so its dual
+    # can never exceed it — above the ceiling the buyer forgoes the attribute
+    # and the shortfall is the un-procured volume (memo §2.1; the ACP analogue
+    # of the compliance rows, FFR-6B §6.3). None (default) = the cited
+    # constants.VOLUNTARY_WTP_CEILING_USD_PER_MWH at the path (low 2.0 / mid
+    # 4.5 ILLUSTRATIVE / high 7.0); an explicit value is a LABELLED
+    # sensitivity and must be > 0 (a zero ceiling is a row with a free escape
+    # — dual pinned at zero, inert but looks armed — refused). Refused with
+    # the path "off" (a dangling price with no row is an unregistered knob,
+    # rule 24 [R-REGISTRY]). Coerced to None in backcast/hindcast with the
+    # path. Cache-optional at None.
+    voluntary_eligible_fuels: list[str] | None = None  # The voluntary row's
+    # QUALIFYING SET as fleet fuel-type names (FUEL_TYPE_MAP; wind and solar
+    # are the family's zone columns and MUST be listed — an ineligible listing
+    # would be silently overridden — the rest resolve to generator columns at
+    # the indicator coefficient 1.0). None (default) = constants.
+    # VOLUNTARY_ELIGIBLE_FUELS_DEFAULT = (wind, solar, offshore_wind,
+    # geothermal), the voluntary RENEWABLE market's set (Green-e: hydro and
+    # biomass excluded). *** OWNER BOX D-3c IS OPEN: that default is the memo
+    # §4.1 RECOMMENDATION, not a ruled level (S1 ruled the axis, S3 its
+    # levels; neither reached the eligible set). *** Nuclear and gas_cc_ccs
+    # ("carbon-free" programs, memo §4.2 — Google 24/7 CFE, Microsoft
+    # 100/100/0 count carbon-free) enter ONLY through this labelled override
+    # for a named arm, never by default: with nuclear admitted the row in a
+    # nuclear-heavy ISO is slack at the fleet's existing output and the dual
+    # is zero until V exceeds nuclear + VRE (the CX-6a crushing effect). A
+    # gas_cc_ccs listing credits at 1.0 in this name-tuple form, NOT at the
+    # federal target row's 0.95 capture fraction (documented limitation; the
+    # voluntary row never credits CCS by default — the routed capx CCS
+    # emission-rate seam is untouched by this field). Refused with the path
+    # "off"; an unknown name is a hard error at build time. Coerced to None
+    # in backcast/hindcast with the path. Cache-optional at None.
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
     # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
@@ -3871,10 +4062,58 @@ class ScenarioConfig:
     # two-cost-basis arbitrage D30 §4 measured in the NEISO golden, where a
     # 2031 new-build CC whose OWN CCS variant the entry screen rejected at
     # the 1521.4 increment was retrofitted in 2032 at a learning-adjusted 621.
-    ccs_retrofit_vom_adder: float = (
-        8.0  # $/MWh additional VOM for capture O&M, solvent, compression.
-    )
-    # Source: NETL Cost & Performance Baseline Rev 4.
+    ccs_retrofit_vom_adder: float = 2.95  # $/MWh in constant 2026$ (dollar-year
+    # STATED — the shipped 8.0 carried none). Capture-island VARIABLE O&M
+    # increment: maintenance materials on the island, solvent makeup,
+    # TEG/reclaimer waste, capture-cooling water.
+    #
+    # RE-IDENTIFIED 2026-09-06 (capx D65-B ACT B, executing OWNER RULING Q47)
+    # from 8.0, which was flagged `needs-citation` in
+    # docs/parameter-citations.md, stated no dollar-year, and carried only the
+    # bare words "NETL Cost & Performance Baseline Rev 4" — a source that
+    # publishes 2.23 $/MWh per host MWh (2026$) for this increment, i.e. the
+    # cited document did not support the cited number. It is now read off the
+    # SAME ATB 2024 v4.0.0 basis as the other two cost legs above
+    # (`ccs_retrofit_capex_kw`, `fixed_om_gas_cc_ccs`), which is capx D41
+    # §2.3's rule — host and island on ONE basis:
+    #   ATB Moderate NG 2-on-1 CC (F-Frame) 95 % CCS Variable O&M @2026 (4.8)
+    #   − ATB Moderate NG 2-on-1 CC (F-Frame) Variable O&M @2026 (2.1)
+    #   = 2.7 × 1.090947 (2022$ → 2026$, constants.INFLATION_RATE) = 2.95.
+    # Derived by scripts/data/derive_entry_costs_from_atb.py
+    # ::derive_ccs_retrofit_vom_adder and PINNED by
+    # tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py
+    # ::TestRetrofitVomBasis, so it cannot silently drift back off its source.
+    # NETL Rev 4a's 2.23 (B31A→B31B.90) is the CROSS-CHECK, not the basis;
+    # both published bases bracket well below the shipped 8.0.
+    #
+    # WHY THE WIDENED EXTRACT CAME FIRST (D64 STOP 6, D65 §9 item 1). Until
+    # 2026-09-06 the committed ATB extract carried only CAPEX and Fixed O&M for
+    # `NaturalGas_FE` — this leg could not be read off the pinned basis at all,
+    # which is exactly how it came to ship uncited. `fetch_nrel_atb.py` now
+    # carries `Variable O&M`/`Heat Rate` for that technology from the SAME
+    # source bytes (OEDI ATBe.csv 2024 v4.0.0, sha256 567dde9d…): no new
+    # source, no new vintage, no re-derivation of any other constant (verified:
+    # the 3,858 pre-existing rows are value-identical, so NEW_ENTRY_COSTS and
+    # TECH_COST_MULTIPLIERS are unchanged). A value with no asserted derivation
+    # is the defect D41 removed from the other two legs; this closes the third.
+    #
+    # DIRECTION, STATED BEFORE THE MEASUREMENT (rule 23): re-identification
+    # makes retrofits EASIER. The shipped 8.0 was 24.8 $/t captured at the
+    # reference host against ATB's 9.1 and NETL's 6.9, so it was 2.7–3.6× every
+    # published basis, and D64 §2.4 measured that it — not the screen's
+    # structure — was carrying D50's complete carbon-0 closure. Rule 14
+    # `[R-ACCURATE]` keeps an accurate value whichever way it moves the answer:
+    # a per-tonne-correct model landing 1–6 % short of §45Q at the hour ceiling
+    # is a more faithful market than one held shut by a 2.7× VOM, and the
+    # market it is measured against (no merchant NGCC retrofit cleared on §45Q
+    # alone, every announced project close enough to need something else) is a
+    # knife-edge, not a closed door.
+    #
+    # COUPLED, NOT INDEPENDENT (D65 §8.1 — why this landed WITH the field
+    # `ccs_retrofit_fixed_cost_co2_scaling` below, in one PR and one re-key).
+    # That seam multiplies THIS level by k, so arming it on an uncited 2.7×
+    # level would compound the error precisely on the high-emitting hosts the
+    # seam exists to re-price. Neither half was admissible alone.
     ccs_retrofit_capture_rate: float = 0.90  # Fraction of CO2 captured. 0.90 = 90%.
     # Source: NETL design basis for amine scrubbing.
     ccs_retrofit_available_year: int = 2028  # Earliest year retrofits can occur.
@@ -3993,7 +4232,25 @@ class ScenarioConfig:
     #    successor (option (ii): ``Generator.fom_adder_per_kw_yr``), not this
     #    lane's: it touches the retirement screen and D65 stays one seam.
     # The off path never enters the branch — byte-identical by construction.
-    ccs_retrofit_fixed_cost_co2_scaling: bool = False
+    # DEFAULT FLIPPED False -> True on 2026-09-06 (capx D65-B ACT A, executing
+    # OWNER RULING Q47, director sitting r#42 amendment 2, verbatim "Arm
+    # coupled, after D60-R3"): declared in
+    # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` with the frozen drop value
+    # left at ``"False"`` — option (b'-1), exactly the D44 and D50/Q42 pattern —
+    # so an EXPLICIT ``False`` still collapses onto the pre-flip key and keeps
+    # its bundle. ARMED COUPLED with Act B's re-identification of
+    # ``ccs_retrofit_vom_adder`` (8.0 -> 2.95, above) in ONE PR and ONE re-key
+    # event, because D65 §8.1 refused either half alone: this field multiplies
+    # that level by k, so arming the shape on the uncited 2.7× level would have
+    # compounded the error on exactly the high-emitting hosts the seam
+    # re-prices, and committed the model to "no merchant NGCC retrofit ever
+    # clears on §45Q at carbon 0" — a stronger claim than the evidence carries.
+    # A POSTURE, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact): every factor is
+    # an already-cited constant and k is D50's own, so no ISO's fitted number
+    # crosses a boundary. Evidence: FINDING-capx-d64-2026-09-05.md §1-§2 (the
+    # zero-LP adjudication and the level), FINDING-capx-d65-2026-09-05.md §4
+    # (the NEISO t1f arm) and §8 (the recommendation and the owner card).
+    ccs_retrofit_fixed_cost_co2_scaling: bool = True
 
     # Tier 2 (expert/sensitivity) — Fleet aggregation control
     heat_rate_bin_count: int | None = None  # Override default bin count per fuel type.
@@ -6752,6 +7009,58 @@ class ScenarioConfig:
     # mixed steam/turbine facility (Barrett, Gowanus, Narrows) contributes only
     # its turbines instead of being dropped as unattributable.
     nyiso_gas_bridge_ct_min_load_frac: float = 0.238
+    # COMMITMENT-REAL RUN SCREEN for the NYISO bridge (nyiso-200): the shared
+    # detector's ``startup_aware`` leg (gap G-61 path (b), registered for
+    # CAISO as caiso_ra_bridge_startup_aware and never wired for NYISO). The
+    # bridge's three legs -- min-run extension, online-hours state floor and
+    # the gap bridges -- all anchor on the model's OWN P0 run pattern, and P0
+    # is a base-cost LP that pays no startup on a continuous ramp: it
+    # manufactures runs a real unit commitment would never start. With this
+    # on, a detected P0 run anchors any leg only when it is commitment-real
+    # under the unit's own start economics -- its P0 energy margin per MW of
+    # capacity, sum_t (LMP_P0 - MC) x dispatch / pmax over the run, must
+    # cover the SAME published per-MW startup cost the economic bridge
+    # already prices (_ra_bridge_unit_params: the CAMPD-bin startup, NREL
+    # SR-5500-55433; CC_REGULAR $50/MW, ST_GAS $35/MW). Runs failing it are
+    # removed BEFORE the min-run extension, the online-hours floor and the gap
+    # scan, so a phantom fragment can no longer be extended to a 21 h min-load
+    # hold or chop an idle period into sub-min-down gaps.
+    #
+    # WHY (rule 17 [R-FLOOR-WINDOW]): the min-run leg's driver is "a STARTED
+    # unit stays on for its minimum run"; its evidence for "started" is a P0
+    # run. A run whose whole margin cannot repay one start is a run the
+    # driver's own economics say the unit would not have started, so an
+    # extension floored on it binds in hours its own driver says the unit is
+    # off -- a bug by definition. nyiso-199 §8.3 measured the consequence: a
+    # merit change (cheaper CT_PEAKER offers) displaced two cycling CCs in P0,
+    # left them short P0 runs, and nyiso_gas_bridge_min_run extended those
+    # into 3,210 h / 352 h min-load floors at plants the keeper never floors.
+    # The dependence is on P0's shape, which ANY merit change can move.
+    #
+    # WHY NOT the measured-conduct gate the nyiso-199 handoff named: an
+    # hourly meter test inside the solve is a one-sided pin to observed CEMS
+    # generation with no forward analogue (rule 13 [R-MEASURED] fails its own
+    # test), and a plant-level conduct exclusion of the cyclers this defect
+    # lands on was refused ex ante by nyiso-144 ("7314 ... is a cycler the
+    # model's own P0 over-runs, so its forcing is an offer/economics defect
+    # and excluding it would bury that error in a membership list"). The
+    # admissible measured membership channels the bridge already carries
+    # (nyiso_gas_bridge_plant_exclusions, _reserve_duty_exclusions) are
+    # site-level lay-up / duty facts and stay as they are; this leg is the
+    # economics-side repair those rulings pointed to.
+    #
+    # Rule 19 [R-ONE-MECH]: same detector, same D-2 id, same P0 inputs and
+    # the same startup constant -- it narrows the run set every leg reads
+    # rather than adding a floor. Rule 18 [R-PHYSICS]: gates on the unit's
+    # own start cost, never a class name. ZERO free parameters, no DOF entry
+    # (rule 21): the bar is the bridge's own registered startup cost, the
+    # prices and MC are the model's P0 duals and objective. Forward-native:
+    # regenerates from a forecast year's own P0. Default off so every
+    # existing bundle is byte-identical; requires nyiso_gas_commitment_bridge.
+    # Consumer: pipeline.commitment._nyiso_gas_bridge_floor, which runs AFTER
+    # the generic prb_overrides channel applies (replay_keeper --set reaches
+    # it), unlike the backcast_config-resolved fields.
+    nyiso_gas_bridge_startup_aware: bool = False
     # MEMBERSHIP correction for the bridge (nyiso-144): skip plants in economic
     # LAY-UP — idle in their own metered conduct while reading ~100 % available
     # in the outage extract, because lay-up is correctly not booked as a forced
@@ -11939,6 +12248,62 @@ class ScenarioConfig:
     # A CAISO CT_PEAKER band with no `phys_committed` key, or arming on any
     # other ISO, is a HARD ERROR -- never a silent no-op (rule 25).
     caiso_ct_peaker_committed_measured: bool = False
+    # nyiso-199: the NYISO limb of the same defect class, on all THREE
+    # fuel-scaled CT_PEAKER bands rather than one. THE REPAIR:
+    # `committed`/`econ_low`/`econ_high` := the class's OWN registered
+    # `phys_committed`/`phys_econ_low`/`phys_econ_high`
+    # (0.843/0.661/0.658 — `nyiso_campd_marginal_hr_summary.csv` p50s, n = 70,
+    # already on the band dict and unused). ZERO new literals, nothing selected,
+    # ZERO free parameters (rule 21 [R-DOF]). `peak` is deliberately EXCLUDED:
+    # NYISO's 4.0 is the $1,000-offer-cap scarcity wall `_NYISO_OFFER_CURVE`
+    # states it as, not a physics claim, so grounding it would delete a
+    # structural mechanism rather than repair a basis.
+    #
+    # TWO INDEPENDENT GROUNDS, both ex ante and neither the residual:
+    #  (1) `committed` 1.35 — rule 19 [R-ONE-MECH], measured on the NYISO
+    #      keeper's OWN recipe. `tranche_startup_amortization = True` there, so
+    #      P1 already amortizes BIN_STARTUP_COST_PER_MW["CT_PEAKER"] = $20/MW
+    #      (NREL/SR-5500-55433) over the measured P0 run length onto the
+    #      `_committed` tranche, while `_NYISO_OFFER_CURVE` calls the 1.35 over
+    #      0.843 "the start hurdle ... a ~$25/MWh fixed commitment margin" on
+    #      that same tranche. Two mechanisms, one phenomenon. The admissibility
+    #      construction is PRECOMMIT-caiso241-ct-peaker-committed-2026-09-03.md
+    #      §1, whose five-ISO census names NYISO 1.350/0.843 by number; its
+    #      limb 3 binds HARDER here, because CAISO's amortization was OFF.
+    #  (2) `econ_low`/`econ_high` 1.0 — `_NYISO_OFFER_CURVE`'s own comment
+    #      declares these a DE-LEAK placeholder with an OPEN ROOT CAUSE:
+    #      "NYISO carries no independent CT part-load heat-rate spread yet ...
+    #      a NYISO-grounded CT econ ramp (CAMPD CT heat-rate spread) is a later
+    #      disciplined-calibration item". That named input now exists and is
+    #      registered on the same dict. This field is that item, not a re-tune.
+    #
+    # MEASURED PRE-SOLVE, zero LP (nyiso-199 phase 0c): exactly 101/103/103 rows
+    # move in 2023/2024/2025 — every one a NYISO CT_PEAKER `econ*` or
+    # `_committed` row, ZERO in any other class, band or ISO — with `pmax` and
+    # `availability` max|d| exactly 0.0. Under `gas_offer_net_revenue_margin`
+    # the reformed cost is phys*HR*fuel + (mult-phys)*HR*anchor, so grounding
+    # leaves the fuel-scaled physical cost UNTOUCHED and removes only the
+    # fuel-invariant margin: the delta is -$17.41/-$17.41/-$17.35 (committed)
+    # and -$13.68/-$13.69/-$13.68 (econ), identical to the cent across three
+    # years whose CT offers differ by $22-30/MWh.
+    #
+    # DIRECTION IS DISCLOSED AND IS FAVOURABLE — WHICH IS THE HAZARD, NOT THE
+    # ARGUMENT (rule 1 [R-STRUCT]). The class runs at 2.04/2.03/7.03 % of its
+    # own available capacity against a meter of 11.16/10.85/14.29 %, and 100.0 %
+    # of that deficit is INTERIOR in every year (0 % at the envelope, 0 % at a
+    # floor). Lowering the bands raises CT_PEAKER volume and moves C3a DOWN:
+    # the same-weights crossing indicator reads -2.75/-2.40/-2.74 %, which puts
+    # C3a-2025 near -9.6 % against a +/-10 % band. Armed for structural
+    # integrity under rules 14 / 19 / 21 / 25 and MUST NEVER be proposed as a
+    # C3a lever.
+    #
+    # Owner ruling 2026-09-06 authorises the band substitution (a band
+    # multiplier is otherwise the rule 1 carve-out channel); the values remain
+    # MEASURED, so rule 20 [R-DOF] adds no ledger entry (R-AY applies to a band
+    # identified by the PRICE RESIDUAL, which this is not).
+    # A NYISO CT_PEAKER band missing any of the three `phys_*` keys, or arming
+    # on any other ISO, is a HARD ERROR — never a silent no-op (rule 25).
+    nyiso_ct_peaker_bands_measured: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component
@@ -14514,6 +14879,31 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_miso_winter_citygate_daily.
     miso_winter_citygate_daily: bool = False
 
+    # miso-224: price EVERY MISO gas unit's dispatch fuel at MARGINAL COMMODITY
+    # cost — the measured daily hub spot for its zone (Chicago Citygate daily for
+    # the Chicago-hub AND MidCon zones, Henry Hub daily for MISO-South; the
+    # published miso_zonal_gas_hub.csv hub table is the zone selector) — instead
+    # of the EIA-923 monthly AVERAGE delivered print (gas_plant_monthly_fuel_
+    # pricing), which carries demand charges and contracted transport amortized
+    # over the month's takes and sits $0.5–1.3/MMBtu (Feb-2024: $2.6) above the
+    # hub. A dispatch offer is a marginal cost; the print is an average cost
+    # measured on a different basis (rule 14 [R-ACCURATE] misalignment clause —
+    # prefer the reconciled measured input, the traded hub). Rule 13: a hub spot
+    # is a reproducible market input, and it is the SAME convention the forecast
+    # path already uses (resolve_annual_gas_price = hub + basis), so arming it
+    # closes a backcast-vs-forecast input gap rather than opening one. Rule 19:
+    # supersedes, never stacks — the daily series carries level AND shape, so
+    # the winter Chicago shape overlay and the mean-zero zonal increment are
+    # skipped on the repriced rows; dual-fuel oil parity still caps winter.
+    # Zero fitted scalars. MISO-scoped: arming on another ISO is a HARD ERROR
+    # (rule 25) — the cross-ISO cost-convention question is owner court
+    # (miso-212 §8, gas_hub_basis_overlay R cell). FAIL CLOSED when the year has
+    # no daily prints. Backcast-only overlay (measured daily series). Off by
+    # default. See market_sim.data.fuel.basis.miso.apply_miso_gas_marginal_
+    # commodity and results/calibration/PRECOMMIT-miso224-gas-marginal-
+    # commodity-2026-09-06.md.
+    miso_gas_marginal_commodity_pricing: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -15856,6 +16246,63 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]; NEISO's published Net ICR is the same idea already built
     # as its own resolver under its own gate, capx D40, because the two series
     # are different published quantities on different bases).
+    capacity_no_default_cap_convention_by_iso: dict[str, bool] | None = None
+    # GATED default-OFF (capx D74 2026-09-06, executing FINDING-capx-d61-
+    # 2026-09-05.md §4 card (c) as widened by FINDING-capx-d62 §9 item 2;
+    # design DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md). A
+    # {iso: bool} mapping, the FIFTH member of the per-ISO capacity-gate
+    # family, resolved through ONE predicate (config/capacity_market.py::
+    # resolve_capacity_no_default_cap_convention), which REQUIRES the D62
+    # published-bar gate ON for the ISO — the convention is a LIMB of the
+    # published default-gross-ACR table, and over the ATB proxy there is no
+    # such cell. WHAT IT CHANGES: what the retirement screen does with a
+    # resource class whose published default-ACR table carries NO value for
+    # the delivery year the screen prices — PJM Manual 18 Rev 62 §5.4.8.4(B)
+    # prints "NA" for Steam Oil & Gas through DY 2025/26 (data/raw/capacity-
+    # market/avoidable-cost-rate/pjm/pjm.csv), and §5.4.1 lets a seller offer
+    # above $0 only on a unit-specific ACR filing "or ... an offer cap based on
+    # the default gross Avoidable Cost Rate of the applicable resource type,
+    # IF AVAILABLE". So through DY 2025/26 the class had NO default cap: absent
+    # a unit-specific filing — an owner-specific, confidential operand the
+    # model does not carry and may not (rule 24, no per-plant dicts) — the
+    # class's published default offer is $0, a PRICE TAKER. Armed, a screened
+    # unit whose class has no published default for the delivery year
+    # (data/avoidable_cost_rate.py::no_default_cap_class — exactly the limb
+    # the D62 vintage rule reports as basis "first_published") is EXEMPT from
+    # the merchant screen in that year (it joins the exempt seam by class x
+    # delivery year: its exit is its owner's filing, steps 0 / 1b, decided
+    # nowhere else) and its accredited MW sits in the D57 stack's price-taking
+    # block Q_0 at $0, exactly as every screen-exempt unit does (DESIGN-capx-
+    # d54 §3.2) — so the D54 §3.5 identity holds by construction: a price
+    # taker clears, a cleared unit passes. D62's own vintage rule filled the
+    # "NA" cell with the first PUBLISHED value (the 2026/27 column's $64/MW-
+    # day) and D62 §5.3 found that limb is exactly where the published table
+    # "does not repair" the class (gas-steam 8,801.9 MW uncleared and 9.464 GW
+    # exited in BOTH D62 arms, oil 4.137 GW over-exited under the bar). This
+    # gate replaces that ONE limb with what the table says; from DY 2026/27,
+    # where the class has a published default, it takes the ordinary
+    # published-bar path — the mechanism regenerates per delivery year from
+    # the intaken table (rule 13's forward test) and is inert wherever every
+    # class has a default. NOT an ownership partition (PJM's uncleared steam
+    # is 86 % merchant, so the D53 sector gate — D58's lane — reaches ~8 % of
+    # the object) and NOT a level: one published boolean per class x delivery
+    # year, no weight, share, adder or haircut. ZERO free parameters and NO
+    # scalar field exists or may be added (rule 24 [R-REGISTRY]); a different
+    # reach is a change to pjm.csv with a source page. WHY DEFAULT-OFF: arming
+    # is an owner decision on the D74 A/B (suffixed pjm-t1h-d74-nodefaultcap
+    # vs same-HEAD controls; rules 22/24/28/29), graded against the PRECOMMIT's
+    # pre-declared signs — which say the 2022/23 clearing price and position
+    # do NOT move (the CT plateau at the clearing price absorbs the 12.5 GW
+    # that leaves the offer stack) and the uncleared set moves from steam/oil
+    # onto CT. Registered in _CACHE_KEY_OPTIONAL_FIELDS at None (unarmed keys
+    # byte-stable; an armed row keys distinctly); coerced to None in a plain
+    # backcast exactly as the four gates above are (a forecast-lane
+    # mechanism — a backcast runs no capacity evolution). Hindcast harness:
+    # run_capacity_hindcast.py --capacity-no-default-cap-convention (sets the
+    # invoked ISO's row); full horizon: run_full_horizon.py's flag of the same
+    # name. SCOPE: generic in form, PJM-scoped by DATA — an ISO with no intaken
+    # default-ACR table has no "NA" cell, so the gate is inert by construction
+    # (rule 25 [R-ISO-SCOPE]; nothing transfers).
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -16257,6 +16704,80 @@ class ScenarioConfig:
         if self.mode == "backcast" or self.hindcast:
             self.electrification_path = "off"
 
+        # SCN-WS3b voluntary clean-energy demand (owner ruling S1, card D-3):
+        # validate the path label, then COERCE THE WHOLE voluntary_* BLOCK to
+        # its dataclass defaults in any non-forward run — the EXACT
+        # datacenter_load_path / electrification_path construction directly
+        # above, for the same reason: a backcast/hindcast pins measured load
+        # and is scored on actuals (rule 22), so a voluntary attribute row
+        # there would be a fitted driver in a scored run — precisely the
+        # ffr-5b null S1 preserves. Coerced TO THE DATACLASS DEFAULT, never a
+        # literal (FFR-3D: the field is in _CACHE_KEY_OPTIONAL_FIELDS, which
+        # is neutral AT THE DEFAULT ONLY), so every backcast keeper and
+        # hindcast leg stays BYTE-IDENTICAL whatever the default becomes. The
+        # companions (ceiling, eligible set) are coerced with the path so a
+        # forecast config copied into a backcast carries no dangling knob.
+        # policy.voluntary_demand.validate_voluntary_config is the standalone
+        # defense in depth against a post-construction mutation/bypass.
+        if self.voluntary_clean_demand_path not in ("off", "low", "mid", "high"):
+            raise ValueError(
+                "ScenarioConfig.voluntary_clean_demand_path must be one of "
+                "('off', 'low', 'mid', 'high'), got "
+                f"{self.voluntary_clean_demand_path!r}"
+            )
+        if self.mode == "backcast" or self.hindcast:
+            for _vol_field in (
+                "voluntary_clean_demand_path",
+                "voluntary_wtp_ceiling_usd_per_mwh",
+                "voluntary_eligible_fuels",
+            ):
+                setattr(
+                    self,
+                    _vol_field,
+                    type(self).__dataclass_fields__[_vol_field].default,
+                )
+        # The two companions are consumed only while the row exists; set with
+        # the path "off" they are dangling knobs with no row (rule 24
+        # [R-REGISTRY] — the federal target row's "ACP without a target"
+        # refusal, same shape).
+        if self.voluntary_wtp_ceiling_usd_per_mwh is not None:
+            if float(self.voluntary_wtp_ceiling_usd_per_mwh) <= 0.0:
+                raise ValueError(
+                    "voluntary_wtp_ceiling_usd_per_mwh must be > 0 when set "
+                    f"(got {self.voluntary_wtp_ceiling_usd_per_mwh!r}): a zero "
+                    "ceiling is a row with a free escape — its dual is pinned "
+                    "at zero and the row is inert while looking armed."
+                )
+            if self.voluntary_clean_demand_path == "off":
+                raise ValueError(
+                    "voluntary_wtp_ceiling_usd_per_mwh is set but "
+                    "voluntary_clean_demand_path is 'off': there is no row to "
+                    "price (a dangling price with no row is an unregistered "
+                    "knob, rule 24)."
+                )
+        if self.voluntary_eligible_fuels is not None:
+            if self.voluntary_clean_demand_path == "off":
+                raise ValueError(
+                    "voluntary_eligible_fuels is set but "
+                    "voluntary_clean_demand_path is 'off': there is no row to "
+                    "credit (rule 24)."
+                )
+            _vol_fuels = list(self.voluntary_eligible_fuels)
+            if not _vol_fuels or not all(isinstance(f, str) for f in _vol_fuels):
+                raise ValueError(
+                    "voluntary_eligible_fuels must be None (the cited default "
+                    "set) or a non-empty list of fleet fuel-type names; got "
+                    f"{self.voluntary_eligible_fuels!r}"
+                )
+            for _base in ("wind", "solar"):
+                if _base not in _vol_fuels:
+                    raise ValueError(
+                        f"voluntary_eligible_fuels must include {_base!r}: the "
+                        "clean-tier family's wind/solar zone columns always "
+                        "credit at 1.0, so an ineligible listing would be "
+                        "silently overridden."
+                    )
+
         # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
         # the shipped DEFAULT in a plain backcast. Capacity evolution / the
         # capacity-price seam run only in forecast mode, so the escalation axis
@@ -16620,6 +17141,11 @@ class ScenarioConfig:
             # Keeps every backcast keeper's cache_key + run_config.json
             # byte-identical.
             self.capacity_adequacy_requirement_published_by_iso = None
+            # capx D74: the no-default-cap convention gate, coerced for the same
+            # reason — it is a limb of the RETIREMENT SCREEN's published bar,
+            # and a plain backcast runs no capacity evolution at all. Keeps
+            # every backcast keeper's cache_key + run_config.json byte-identical.
+            self.capacity_no_default_cap_convention_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
@@ -16988,18 +17514,35 @@ class ScenarioConfig:
         # alone would therefore be a silent no-op that nonetheless keys
         # distinctly — refuse it loudly instead (rule 24: no tunable that
         # cannot change a solve).
-        if self.ccs_retrofit_fixed_cost_co2_scaling and (
-            not self.ccs_retrofit_capex_co2_scaling
-        ):
-            raise ValueError(
-                "ccs_retrofit_fixed_cost_co2_scaling requires "
-                "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
-                "by the SAME captured/captured_ref factor seam 1 applies to the "
-                "capture island's capex, and that factor is 1.0 for every host "
-                "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
-                "\u00a74.2). Enable ccs_retrofit_capex_co2_scaling or clear "
-                "ccs_retrofit_fixed_cost_co2_scaling."
-            )
+        #
+        # THE REFUSAL MOVED OUT OF ``__post_init__`` on 2026-09-06 (capx D65-B),
+        # because Act A's default flip turned this guard into a BREAK. The pair
+        # (seam 1 EXPLICIT False, seam 4 at its default) was coherent while seam
+        # 4 defaulted off, and it is what SIX committed bundles carry -- the
+        # D50/Q42 CONTROL ARM itself (``ScenarioConfig(
+        # ccs_retrofit_capex_co2_scaling=False)``, pinned by
+        # ``tests/unit/config/test_d60_arming_batch.py``'s "a control arm keeps
+        # its bundle"), three hindcast bundles (pjm d57-clearing, miso
+        # d53-sectorgate and -d51ratio) and three calibration bundles
+        # (caiso251_arm_nomargin, nyiso192_astoria_panel, miso217_intermphys_B).
+        # With seam 4 defaulting True this constructor refused every one of
+        # them: the flip would have made the D50 control UNREACHABLE, which is
+        # the one thing rule 29(b) needs a control to be.
+        #
+        # The distinction the guard actually wants is EXPLICITNESS, not value.
+        # An explicit ``seam 4 = True`` alongside seam 1 off is an incoherent
+        # ASK and still raises. Seam 4 merely sitting at its armed default while
+        # the caller turns seam 1 off is a request for the pre-D50 construction,
+        # under which seam 4 is inert by construction (k = 1.0 for every host).
+        # ``__post_init__`` cannot tell those apart -- it runs after binding,
+        # which is precisely the defect ``_scenario_config_init``'s
+        # ``_explicitly_set_fields`` record exists to fix -- so the resolution
+        # lives THERE (``_resolve_ccs_retrofit_fixed_cost_pair``) and this
+        # method no longer refuses the pair itself. The demoting branch writes
+        # ``False``, so the resolved config TRUTHFULLY records that the shape
+        # gate did not apply, and it drops from the hash on the frozen
+        # ``"False"`` drop value -- which keeps those bundles on keys that move
+        # only by Act B, exactly like every other config.
 
     @property
     def real_discount_rate(self) -> float:
@@ -17272,6 +17815,57 @@ ScenarioConfig._explicitly_set_fields = None
 _dataclass_init = ScenarioConfig.__init__
 
 
+_CCS_SHAPE_FIELD = "ccs_retrofit_fixed_cost_co2_scaling"
+_CCS_CAPEX_FIELD = "ccs_retrofit_capex_co2_scaling"
+
+
+def _resolve_ccs_retrofit_fixed_cost_pair(self, passed: frozenset[str] | None) -> None:
+    """Resolve the capx D65 seam-4 / seam-1 pair, using caller EXPLICITNESS.
+
+    Seam 4 (``ccs_retrofit_fixed_cost_co2_scaling``) scales the retrofit's two
+    fixed-cost legs by the SAME ``k = captured / captured_ref`` seam 1
+    (``ccs_retrofit_capex_co2_scaling``) applies to the capture island's capex.
+    Without seam 1 that factor is 1.0 for every host, so seam 4 is inert.
+
+    Two different situations reach this function with the same field values, and
+    they are NOT the same request — which is why the check cannot live in
+    ``__post_init__``, where the caller's kwargs are already gone:
+
+    * **An explicit ``seam 4 = True`` with seam 1 off** is an incoherent ASK: a
+      caller believing they armed the shape gate when the construction cannot
+      apply it. Refused loudly (rule 24 ``[R-REGISTRY]``: no tunable that cannot
+      change a solve).
+    * **Seam 4 at its armed default with seam 1 explicitly off** is a request
+      for the pre-D50 construction — the D50/Q42 control arm, and six committed
+      bundles. DEMOTED to ``False``, which is the truthful record (the shape
+      gate did not apply) and drops the field from the cache key on its frozen
+      ``"False"`` drop value, so those bundles keep keys that move only by
+      Act B's value change.
+
+    ``passed`` is ``None`` when provenance is unknown (``dataclasses.replace``
+    and a ``from_yaml`` over a full dump both re-pass every field). That case
+    DEMOTES rather than raises: an untracked copy degrades to the compatible
+    behaviour instead of failing to reconstruct, the same fallback convention
+    ``_explicitly_set_fields`` already uses.
+
+    capx D65-B (2026-09-06). See ``ScenarioConfig.__post_init__``'s D65 block
+    for why the refusal moved here.
+    """
+    if not getattr(self, _CCS_SHAPE_FIELD) or getattr(self, _CCS_CAPEX_FIELD):
+        return
+    if passed is not None and _CCS_SHAPE_FIELD in passed:
+        raise ValueError(
+            "ccs_retrofit_fixed_cost_co2_scaling requires "
+            "ccs_retrofit_capex_co2_scaling: the fixed-cost legs are scaled "
+            "by the SAME captured/captured_ref factor seam 1 applies to the "
+            "capture island's capex, and that factor is 1.0 for every host "
+            "when seam 1 is off (capx D65 Act A / FINDING-capx-d64-2026-09-05.md "
+            "§4.2). Enable ccs_retrofit_capex_co2_scaling or clear "
+            "ccs_retrofit_fixed_cost_co2_scaling."
+        )
+    object.__setattr__(self, _CCS_SHAPE_FIELD, False)
+
+
 def _scenario_config_init(self, *args, **kwargs) -> None:
     """Dataclass ``__init__`` plus the explicitly-set-field record.
 
@@ -17287,11 +17881,12 @@ def _scenario_config_init(self, *args, **kwargs) -> None:
     # makes the seam fall back to the pre-fix value comparison, so an untracked
     # copy degrades to TODAY's behaviour instead of losing its ISO defaults
     # wholesale. ``with_overrides`` is the tracked copy path.
-    object.__setattr__(
-        self,
-        _EXPLICIT_FIELDS_ATTR,
-        None if len(passed) == len(_INIT_FIELD_NAMES) else passed,
-    )
+    resolved = None if len(passed) == len(_INIT_FIELD_NAMES) else passed
+    object.__setattr__(self, _EXPLICIT_FIELDS_ATTR, resolved)
+    # Runs AFTER the record is set and after __post_init__, because it is the
+    # one validation whose answer depends on which fields the caller actually
+    # passed. capx D65-B.
+    _resolve_ccs_retrofit_fixed_cost_pair(self, resolved)
 
 
 _scenario_config_init.__doc__ = _dataclass_init.__doc__
@@ -17601,6 +18196,9 @@ TIER_TAGS: dict[str, int] = {
     "federal_ces_replaces_state_rps": 1,
     "federal_ces_target_by_year": 1,
     "federal_ces_acp_usd_per_mwh": 1,
+    "voluntary_clean_demand_path": 2,
+    "voluntary_wtp_ceiling_usd_per_mwh": 2,
+    "voluntary_eligible_fuels": 2,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,
@@ -17736,6 +18334,7 @@ TIER_TAGS: dict[str, int] = {
     "capacity_market_supply_clearing_by_iso": 1,
     "capacity_going_forward_bar_published_by_iso": 1,
     "capacity_adequacy_requirement_published_by_iso": 1,
+    "capacity_no_default_cap_convention_by_iso": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
@@ -17755,6 +18354,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_startup": 1,
     "nyiso_gas_bridge_da_horizon": 1,
     "nyiso_gas_bridge_min_run": 1,
+    "nyiso_gas_bridge_startup_aware": 1,
     "nyiso_gas_bridge_plant_exclusions": 1,
     "nyiso_gas_bridge_reserve_duty_exclusions": 1,
     "nyiso_gas_bridge_plant_min_run": 1,
@@ -18065,6 +18665,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "miso_winter_citygate_daily": 3,
+    "miso_gas_marginal_commodity_pricing": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,

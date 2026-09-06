@@ -902,6 +902,17 @@ def _nyiso_gas_bridge_floor(
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
 
     startup_bridge = bool(getattr(config, "nyiso_gas_bridge_startup", True))
+    # COMMITMENT-REAL RUN SCREEN (nyiso-200, ``nyiso_gas_bridge_startup_aware``):
+    # the detector's G-61 path (b) leg — a detected P0 run anchors ANY leg
+    # (min-run extension, online-hours state floor, gap bridges) only when its
+    # P0 energy margin per MW repays the unit's own published startup cost
+    # (_ra_bridge_unit_params, the same constant the economic bridge prices).
+    # Removes the P0-pattern dependence nyiso-199 §8.3 measured: a phantom
+    # fragment a merit change manufactures can no longer be extended into a
+    # min-load hold. Needs the P0 duals + base MC whether or not the economic
+    # leg is armed. Zero new parameters; default off is byte-identical.
+    startup_aware = bool(getattr(config, "nyiso_gas_bridge_startup_aware", False))
+    need_econ = startup_bridge or startup_aware
     # ONLINE-HOURS LSL leg (nyiso-146 successor; the ercot141 detector leg on
     # NYISO's own evidence): floor the base tranche at min-load in EVERY hour
     # the P0 pattern has the plant online, not only across idle gaps — the
@@ -1035,21 +1046,62 @@ def _nyiso_gas_bridge_floor(
             legs.append((fuel, frac, np.where(in_cohort, 0.0, base), False))
         else:
             legs.append((fuel, frac, frac_by_gen, online_hours and fuel == "gas_cc"))
+    screen_census: dict = {}
+    plant_census: dict = {}
     for fuel, frac, frac_by_gen, leg_online in legs:
+        leg_stats: dict = {}
         part = caiso_ra_mustoffer_min_gen(
             p0_dispatch,
             fleet_arrays,
             fleet,
             frac,
-            p1_prices=p0_prices if startup_bridge else None,
-            base_mc=mc_base if startup_bridge else None,
+            p1_prices=p0_prices if need_econ else None,
+            base_mc=mc_base if need_econ else None,
             startup_bridge=startup_bridge,
             fuel_types=(fuel,),
             max_econ_gap_hours=max_gap,
             min_run_hours=min_run,
             floor_online_hours=leg_online,
             min_load_frac_by_gen=frac_by_gen,
+            startup_aware=startup_aware,
+            screen_stats=leg_stats if startup_aware else None,
         )
+        if startup_aware:
+            # The screen's own census, per leg — the mechanism's arithmetic
+            # stated in the log so a rule-29 screen reads what it DID (runs
+            # dropped, P0 hours de-anchored) and not only what the residual
+            # did. Logged even when zero (nyiso-89 §4a: an inert arm must
+            # read as inert, never as "the mechanism does nothing").
+            k = f"{fuel}{'_state' if leg_online else ''}"
+            screen_census[k] = {
+                "runs_detected": int(leg_stats.get("runs_detected", 0)),
+                "runs_dropped": int(leg_stats.get("runs_dropped", 0)),
+                "dropped_hours": int(leg_stats.get("dropped_hours", 0)),
+                "units_with_drops": len(leg_stats.get("units_with_drops", [])),
+            }
+            # PER-PLANT roll-up of the per-unit census (nyiso-201). The screen
+            # claims by construction that no floor leg anchors on a dropped
+            # run; a plant carrying bridge floor with ZERO kept runs would
+            # falsify it. Logged so a rule-29 screen can check the identity at
+            # the grain its named-plant gate is written in, rather than assert
+            # it from the code path. Diagnostics only.
+            for g_idx, cen in (leg_stats.get("per_unit") or {}).items():
+                code = int(getattr(fleet[int(g_idx)], "plant_code", 0) or 0)
+                acc = plant_census.setdefault(
+                    code, {"detected": 0, "kept": 0, "dropped": 0, "dropped_hours": 0}
+                )
+                for f in acc:
+                    acc[f] += int(cen.get(f, 0))
+            logger.info(
+                "NYISO gas bridge commitment-real run screen, leg %s: %d P0 "
+                "runs detected, %d dropped as phantom (margin < startup) "
+                "covering %d P0 online hours at %d unit(s)",
+                k,
+                screen_census[k]["runs_detected"],
+                screen_census[k]["runs_dropped"],
+                screen_census[k]["dropped_hours"],
+                screen_census[k]["units_with_drops"],
+            )
         # PER-CLASS trace. The composed total cannot show that one leg
         # contributed nothing, and a leg that floors zero unit-hours is exactly
         # the "mechanism is inert" failure nyiso-89 §4a warns reads as a
@@ -1077,6 +1129,23 @@ def _nyiso_gas_bridge_floor(
             float(part.sum()) / 1e6,
         )
         total = part if total is None else np.maximum(total, part)
+    if startup_aware and plant_census:
+        # One line per plant with detected P0 runs, sorted by plant code, so a
+        # rule-29 screen can read the run screen's action at the grain its
+        # named-plant gate is written in (nyiso-201 gate (b) identity leg).
+        logger.info(
+            "NYISO gas bridge run screen per-plant census: %s",
+            ";".join(
+                "{}:{}/{}/{}/{}".format(
+                    c,
+                    plant_census[c]["detected"],
+                    plant_census[c]["kept"],
+                    plant_census[c]["dropped"],
+                    plant_census[c]["dropped_hours"],
+                )
+                for c in sorted(plant_census)
+            ),
+        )
     if total is None or not np.any(total > 0.0):
         return None
     # Diagnostic trace for the D-4 window analysis: every floored segment is

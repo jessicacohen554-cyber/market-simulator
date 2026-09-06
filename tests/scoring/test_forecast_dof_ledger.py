@@ -285,5 +285,122 @@ class CliTests(unittest.TestCase):
                 bl.main([tmp, "--no-git"])
 
 
+#: The six (ISO, field) pairs capx D63 curated — the two negatives
+#: FINDING-capx-d60-2026-09-05.md §8 routed rather than absorbing.
+D63_ROWS = (
+    ("MISO", "entry_vre_capacity_revenue"),
+    ("MISO", "entry_vre_zone_selection"),
+    ("MISO", "miso_rps_compliance_regions"),
+    ("MISO", "miso_clean_tier_rows"),
+    ("MISO", "retirement_sector_gate"),
+    ("CAISO", "negative_renewable_offers"),
+)
+
+
+class D63CuratedRowTests(unittest.TestCase):
+    """capx D63 — the MISO + CAISO rows, under the same properties as D60-R3's.
+
+    These are attestation rows only: each REPORTS an identification already
+    committed to the repository (rule 21 ``[R-DOF]``), keyed ``(ISO, field)``
+    so it can never reach another ISO (rule 25 ``[R-ISO-SCOPE]``), and gated on
+    ``requires="iso-registry"`` so it identifies only the value the registry
+    actually carries.
+    """
+
+    def test_every_row_is_iso_keyed_and_registry_gated(self):
+        # Rule 25 by construction: a ("*", field) row would identify the same
+        # field in every ISO. None of the six may be one.
+        for iso, field in D63_ROWS:
+            with self.subTest(iso=iso, field=field):
+                self.assertIn((iso, field), bl.CURATED_IDENTIFICATIONS)
+                self.assertNotIn(("*", field), bl.CURATED_IDENTIFICATIONS)
+                row = bl.CURATED_IDENTIFICATIONS[(iso, field)]
+                self.assertEqual(row["requires"], "iso-registry")
+                self.assertNotIn("expected", row)
+                self.assertEqual(row["identification"], "design-decision")
+                self.assertTrue(row["source"].strip())
+                self.assertTrue(row["evidence"].strip())
+
+    def test_each_row_identifies_only_at_the_registered_value(self):
+        for iso, field in D63_ROWS:
+            with self.subTest(iso=iso, field=field):
+                overrides = bl._iso_registry_overrides(iso)
+                if not overrides:
+                    self.skipTest("market_sim ISO registry not importable here")
+                self.assertIn(field, overrides, f"{iso} no longer registers {field}")
+                led = _ledger({"iso": iso, field: overrides[field]})
+                (e,) = [x for x in led["entries"] if x["name"] == field]
+                self.assertEqual(e["identification"], "design-decision")
+                self.assertEqual(e["status"], "IDENTIFIED")
+                self.assertEqual(e["provenance"], "iso-registry")
+                self.assertNotIn("curation_refused", e)
+
+    def test_the_requires_gate_refuses_when_the_registry_match_fails(self):
+        # The values are booleans, so the "wrong value" pole is the dataclass
+        # default and is excluded from the ledger entirely. The gate itself is
+        # therefore exercised directly, which is the property that matters: a
+        # run carrying the field from anywhere but the live registered override
+        # stays UNIDENTIFIED and the artifact records why.
+        for iso, field in D63_ROWS:
+            with self.subTest(iso=iso, field=field):
+                entry = {
+                    "name": field,
+                    "identification": bl.UNATTESTED,
+                    "status": "UNIDENTIFIED",
+                    "source": "",
+                    "evidence": "",
+                }
+                bl._apply_curation(entry, True, iso, registry_matched=False)
+                self.assertEqual(entry["identification"], bl.UNATTESTED)
+                self.assertIn("registry", entry["curation_refused"])
+
+    def test_another_isos_run_never_borrows_a_d63_row(self):
+        # Rule 25 [R-ISO-SCOPE]: MISO's five are MISO's and CAISO's is CAISO's.
+        # The same field at the same value in another ISO's run stays
+        # UNIDENTIFIED — a verdict never transfers across an ISO boundary.
+        for iso, field in D63_ROWS:
+            other = "NEISO" if iso != "NEISO" else "PJM"
+            with self.subTest(iso=iso, field=field, other=other):
+                led = _ledger({"iso": other, field: True})
+                rows = [x for x in led["entries"] if x["name"] == field]
+                if not rows:
+                    self.skipTest(f"{field} is not non-default for {other}")
+                (e,) = rows
+                self.assertEqual(e["identification"], bl.UNATTESTED)
+
+    def test_the_miso_and_caiso_registry_override_sets_are_now_fully_identified(
+        self,
+    ):
+        # The lane's own object, asserted end to end: with the six rows in
+        # place, no MISO or CAISO registry override enumerated by the ledger
+        # carries the `unattested` token, so FC-7's DOF-ledger row can read
+        # PASS on those two ISOs. This is the property that would silently rot
+        # if a later lane armed a seventh override without its curated row.
+        for iso in ("MISO", "CAISO"):
+            with self.subTest(iso=iso):
+                overrides = bl._iso_registry_overrides(iso)
+                if not overrides:
+                    self.skipTest("market_sim ISO registry not importable here")
+                led = _ledger({"iso": iso, **overrides})
+                unattested = [
+                    e["name"]
+                    for e in led["entries"]
+                    if e["identification"] == bl.UNATTESTED
+                ]
+                self.assertEqual(unattested, [], f"{iso} overrides unattested")
+
+    def test_a_fully_identified_ledger_retires_the_fc7_caveat(self):
+        # The measurement half of the same property, through the scorer the
+        # board actually reads: a ledger whose every entry is identified no
+        # longer draws the CAVEAT an absent ledger draws.
+        overrides = bl._iso_registry_overrides("CAISO")
+        if not overrides:
+            self.skipTest("market_sim ISO registry not importable here")
+        led = _ledger({"iso": "CAISO", **overrides})
+        self.assertEqual(led["n_unidentified"], 0)
+        row = fv._score_dof_ledger({"dof_ledger": led}, "t1")
+        self.assertEqual(row["status"], fv.PASS)
+
+
 if __name__ == "__main__":
     unittest.main()

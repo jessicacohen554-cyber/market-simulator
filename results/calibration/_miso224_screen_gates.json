@@ -1,0 +1,170 @@
+{
+ "probe": "miso-224 screen gates (2023, blind)",
+ "arm": "results/calibration/miso224_spotgas_S",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift",
+ "control": "form 4 \u2014 the committed keeper (G-DRIFT b3fb0edc..HEAD ALL INERT)",
+ "gates": {
+  "S1": {
+   "pass": false,
+   "arm_field_differs": false,
+   "other_diffs": [],
+   "year_scoped_diffs": [],
+   "fields_absent_from_keeper": [
+    "capacity_adequacy_requirement_published_by_iso",
+    "capacity_going_forward_bar_published_by_iso",
+    "cc_duct_peaking_row_scoped",
+    "ccs_retrofit_fixed_cost_co2_scaling",
+    "federal_ces_acp_usd_per_mwh",
+    "federal_ces_target_by_year",
+    "miso_gas_marginal_commodity_pricing",
+    "nyiso_ct_peaker_bands_measured",
+    "unit_outage_extract_basis_share"
+   ],
+   "arm_value": true,
+   "keeper_value": "<absent>"
+  },
+  "S2": {
+   "pass": true,
+   "solve_log_checked": true,
+   "mechanism_line_in_solve_log": true,
+   "winter_shape_overlay_line_in_solve_log": false,
+   "armed_in_recorded_config": true,
+   "gas_rows": 1448,
+   "midwest_max_over_chicago": 0.0,
+   "south_max_over_hh": 0.0,
+   "share_exactly_at_hub": 1.0
+  },
+  "G1": {
+   "pass": true,
+   "band": [
+    -10.08,
+    -3.36
+   ],
+   "static_prediction": -6.72,
+   "keeper_body_mean": 33.342,
+   "arm_body_mean": 29.231,
+   "delta": -4.111,
+   "lw_body_delta_report_only": -3.898,
+   "tail_delta_report_only": -6.831,
+   "annual_lw_delta_report_only": -4.156
+  },
+  "G3": {
+   "pass": false,
+   "n_hours": 1230,
+   "coal_delta_mw": -799.0,
+   "gas_delta_mw": 2716.0,
+   "static_coal_mw": -2919.0,
+   "static_gas_mw": 2990.0,
+   "min_fraction": 0.3,
+   "keeper_coal_mw": 18349.0,
+   "keeper_gas_mw": 18502.0,
+   "arm_coal_mw": 17550.0,
+   "arm_gas_mw": 21218.0
+  },
+  "G4": {
+   "pass": false,
+   "flips_pass_to_fail": [
+    "CC_REGULAR",
+    "COAL_PRB"
+   ],
+   "inconclusive_within_approximation": [],
+   "vol_band_twh": 8.0,
+   "load_twh": 640.993,
+   "a_gen_twh": 616.259,
+   "c2_scored": false,
+   "note": "C2 (system-volume family) is UNSCORED ex ante: a single-year replay writes no metrics.json.",
+   "cells": {
+    "CC_CHP": {
+     "actual": 21.311,
+     "keeper_model": 19.627,
+     "keeper_err": -1.684,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 24.091,
+     "arm_err": 2.78,
+     "arm_share_pp": 0.51,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 4.464
+    },
+    "CC_REGULAR": {
+     "actual": 141.817,
+     "keeper_model": 137.645,
+     "keeper_err": -4.172,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 154.412,
+     "arm_err": 12.595,
+     "arm_share_pp": 2.39,
+     "arm_pass": false,
+     "class_hourly_delta_twh": 16.766
+    },
+    "CT_PEAKER": {
+     "actual": 17.038,
+     "keeper_model": 9.053,
+     "keeper_err": -7.985,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 12.159,
+     "arm_err": -4.879,
+     "arm_share_pp": -0.76,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 3.106
+    },
+    "ST_CHP": {
+     "actual": 5.203,
+     "keeper_model": 2.53,
+     "keeper_err": -2.672,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 3.47,
+     "arm_err": -1.733,
+     "arm_share_pp": -0.27,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 0.939
+    },
+    "ST_GAS": {
+     "actual": 13.94,
+     "keeper_model": 14.483,
+     "keeper_err": 0.544,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 14.31,
+     "arm_err": 0.371,
+     "arm_share_pp": 0.09,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.173
+    },
+    "COAL_PRB": {
+     "actual": 121.671,
+     "keeper_model": 120.114,
+     "keeper_err": -1.557,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 109.786,
+     "arm_err": -11.885,
+     "arm_share_pp": -1.68,
+     "arm_pass": false,
+     "class_hourly_delta_twh": -10.328
+    },
+    "COAL_LIGNITE": {
+     "actual": 7.047,
+     "keeper_model": 6.382,
+     "keeper_err": -0.665,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 5.918,
+     "arm_err": -1.129,
+     "arm_share_pp": -0.17,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.465
+    },
+    "COAL_BIT": {
+     "actual": 57.069,
+     "keeper_model": 54.146,
+     "keeper_err": -2.923,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 51.653,
+     "arm_err": -5.416,
+     "arm_share_pp": -0.76,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -2.493
+    }
+   }
+  }
+ },
+ "solve_log": "/tmp/claude-0/-home-user-market-simulator/76c56c30-e8e9-547d-a3c7-6a28c60b9c87/scratchpad/solve2023.log",
+ "verdict": "ARM KILLED ON S1, G3, G4"
+}
