@@ -486,9 +486,9 @@ def main() -> None:
         "d58_arm": bundle_dir(a.d58),
         "arm": bundle_dir(a.arm),
     }
-    leds = {k: {y: ledger(b, y) for y in a.years} for k, b in legs.items()}
+    leds = {k: {str(y): ledger(b, y) for y in a.years} for k, b in legs.items()}
     summ = {
-        k: {str(y): year_summary(led, sec) for y, led in yl.items() if led is not None}
+        k: {y: year_summary(led, sec) for y, led in yl.items() if led is not None}
         for k, yl in leds.items()
     }
     out = {

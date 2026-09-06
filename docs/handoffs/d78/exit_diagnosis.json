@@ -1,0 +1,2598 @@
+{
+  "2022": {
+    "economic_exits_mw": {
+      "ctl": 7333.7,
+      "d58": 7790.87,
+      "arm": 8736.687
+    },
+    "economic_exits_by_fuel": {
+      "ctl": {
+        "gas_st": 7333.7
+      },
+      "d58": {
+        "gas_st": 7790.87
+      },
+      "arm": {
+        "gas_cc": 43.432,
+        "gas_st": 8693.255
+      }
+    },
+    "admission": {
+      "ctl": {
+        "decided_rows": 79,
+        "decided_mw": 13177.472,
+        "decided_by_fuel": {
+          "coal": 5843.772,
+          "gas_st": 7333.7
+        },
+        "decided_by_execute_year": {
+          "2022": 7333.7,
+          "2024": 5843.772
+        },
+        "capped_rows": 598,
+        "capped_mw": 16550.426,
+        "capped_by_fuel": {
+          "gas_cc": 10283.171,
+          "gas_st": 2130.755,
+          "oil": 4136.5
+        },
+        "executed_rows": 38,
+        "executed_mw": 7333.7,
+        "executed_by_fuel": {
+          "gas_st": 7333.7
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      },
+      "d58": {
+        "decided_rows": 124,
+        "decided_mw": 12635.478,
+        "decided_by_fuel": {
+          "coal": 4844.608,
+          "gas_st": 7790.87
+        },
+        "decided_by_execute_year": {
+          "2022": 7790.87,
+          "2024": 4844.608
+        },
+        "capped_rows": 368,
+        "capped_mw": 16526.102,
+        "capped_by_fuel": {
+          "gas_cc": 11016.078,
+          "gas_ct": 1277.039,
+          "gas_st": 902.385,
+          "oil": 3330.6
+        },
+        "executed_rows": 99,
+        "executed_mw": 7790.87,
+        "executed_by_fuel": {
+          "gas_st": 7790.87
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      },
+      "arm": {
+        "decided_rows": 128,
+        "decided_mw": 13354.701,
+        "decided_by_fuel": {
+          "coal": 4618.014,
+          "gas_cc": 43.432,
+          "gas_st": 8693.255
+        },
+        "decided_by_execute_year": {
+          "2022": 8736.687,
+          "2024": 4618.014
+        },
+        "capped_rows": 323,
+        "capped_mw": 12896.674,
+        "capped_by_fuel": {
+          "gas_cc": 9566.074,
+          "oil": 3330.6
+        },
+        "executed_rows": 104,
+        "executed_mw": 8736.687,
+        "executed_by_fuel": {
+          "gas_cc": 43.432,
+          "gas_st": 8693.255
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      }
+    },
+    "arm_vs_ctl": {
+      "only_arm": {
+        "rows": 70,
+        "mw": 1871.447,
+        "by_fuel": {
+          "gas_cc": 43.432,
+          "gas_st": 1828.015
+        },
+        "sectors": {
+          "2": 4,
+          "3": 5,
+          "5": 6,
+          "6": 2,
+          "7": 53
+        },
+        "units": [
+          {
+            "unit_id": "CC_REGULAR_PJM_West_APS_p3096_peak",
+            "fuel": "gas_cc",
+            "mw": 43.432,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+            "fuel": "gas_st",
+            "mw": 3.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+            "fuel": "gas_st",
+            "mw": 5.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_peak",
+            "fuel": "gas_st",
+            "mw": 1.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_committed",
+            "fuel": "gas_st",
+            "mw": 0.66,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_econ",
+            "fuel": "gas_st",
+            "mw": 1.21,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+            "fuel": "gas_st",
+            "mw": 6.33,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+            "fuel": "gas_st",
+            "mw": 11.605,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+            "fuel": "gas_st",
+            "mw": 3.165,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_committed",
+            "fuel": "gas_st",
+            "mw": 3.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_econ",
+            "fuel": "gas_st",
+            "mw": 6.435,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_peak",
+            "fuel": "gas_st",
+            "mw": 1.755,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+            "fuel": "gas_st",
+            "mw": 18.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_econ",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_peak",
+            "fuel": "gas_st",
+            "mw": 9.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+            "fuel": "gas_st",
+            "mw": 2.34,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_econ",
+            "fuel": "gas_st",
+            "mw": 4.29,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_peak",
+            "fuel": "gas_st",
+            "mw": 1.17,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+            "fuel": "gas_st",
+            "mw": 1.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_econ",
+            "fuel": "gas_st",
+            "mw": 1.98,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_peak",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_committed",
+            "fuel": "gas_st",
+            "mw": 0.75,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_econ",
+            "fuel": "gas_st",
+            "mw": 1.375,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p61838_econ",
+            "fuel": "gas_st",
+            "mw": 0.55,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_committed",
+            "fuel": "gas_st",
+            "mw": 5.31,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_econ",
+            "fuel": "gas_st",
+            "mw": 9.735,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_peak",
+            "fuel": "gas_st",
+            "mw": 2.655,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_committed",
+            "fuel": "gas_st",
+            "mw": 0.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_econ",
+            "fuel": "gas_st",
+            "mw": 1.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_committed",
+            "fuel": "gas_st",
+            "mw": 3.15,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_econ",
+            "fuel": "gas_st",
+            "mw": 5.775,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_peak",
+            "fuel": "gas_st",
+            "mw": 1.575,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_committed",
+            "fuel": "gas_st",
+            "mw": 8.16,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_econ",
+            "fuel": "gas_st",
+            "mw": 14.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_peak",
+            "fuel": "gas_st",
+            "mw": 4.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_committed",
+            "fuel": "gas_st",
+            "mw": 1.92,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_econ",
+            "fuel": "gas_st",
+            "mw": 3.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_peak",
+            "fuel": "gas_st",
+            "mw": 0.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_committed",
+            "fuel": "gas_st",
+            "mw": 16.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_econ",
+            "fuel": "gas_st",
+            "mw": 30.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_peak",
+            "fuel": "gas_st",
+            "mw": 8.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_committed",
+            "fuel": "gas_st",
+            "mw": 4.77,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_econ",
+            "fuel": "gas_st",
+            "mw": 8.745,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_peak",
+            "fuel": "gas_st",
+            "mw": 2.385,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_committed",
+            "fuel": "gas_st",
+            "mw": 5.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_econ",
+            "fuel": "gas_st",
+            "mw": 9.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_peak",
+            "fuel": "gas_st",
+            "mw": 2.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_committed",
+            "fuel": "gas_st",
+            "mw": 0.6,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_econ",
+            "fuel": "gas_st",
+            "mw": 1.1,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_committed",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_econ",
+            "fuel": "gas_st",
+            "mw": 63.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_peak",
+            "fuel": "gas_st",
+            "mw": 17.325,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_committed",
+            "fuel": "gas_st",
+            "mw": 303.365,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_econ",
+            "fuel": "gas_st",
+            "mw": 895.985,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_peak",
+            "fuel": "gas_st",
+            "mw": 211.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_econ",
+            "fuel": "gas_st",
+            "mw": 9.24,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_peak",
+            "fuel": "gas_st",
+            "mw": 2.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          }
+        ]
+      },
+      "only_ctl": {
+        "rows": 4,
+        "mw": 468.46,
+        "by_fuel": {
+          "gas_st": 468.46
+        },
+        "sectors": {
+          "1": 4
+        },
+        "units": [
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_committed",
+            "fuel": "gas_st",
+            "mw": 8.46,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_committed",
+            "fuel": "gas_st",
+            "mw": 70.38,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_econ",
+            "fuel": "gas_st",
+            "mw": 320.62,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_peak",
+            "fuel": "gas_st",
+            "mw": 69.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          }
+        ]
+      },
+      "shared": {
+        "rows": 34,
+        "mw": 6865.24
+      }
+    },
+    "d58_vs_ctl": {
+      "only_d58": {
+        "rows": 65,
+        "mw": 925.63,
+        "by_fuel": {
+          "gas_st": 925.63
+        },
+        "sectors": {
+          "2": 2,
+          "3": 5,
+          "5": 6,
+          "6": 2,
+          "7": 50
+        },
+        "units": [
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+            "fuel": "gas_st",
+            "mw": 3.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+            "fuel": "gas_st",
+            "mw": 5.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_peak",
+            "fuel": "gas_st",
+            "mw": 1.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_committed",
+            "fuel": "gas_st",
+            "mw": 0.66,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_econ",
+            "fuel": "gas_st",
+            "mw": 1.21,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+            "fuel": "gas_st",
+            "mw": 6.33,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+            "fuel": "gas_st",
+            "mw": 11.605,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+            "fuel": "gas_st",
+            "mw": 3.165,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_committed",
+            "fuel": "gas_st",
+            "mw": 3.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_econ",
+            "fuel": "gas_st",
+            "mw": 6.435,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_peak",
+            "fuel": "gas_st",
+            "mw": 1.755,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+            "fuel": "gas_st",
+            "mw": 18.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_econ",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_peak",
+            "fuel": "gas_st",
+            "mw": 9.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+            "fuel": "gas_st",
+            "mw": 2.34,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_econ",
+            "fuel": "gas_st",
+            "mw": 4.29,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_peak",
+            "fuel": "gas_st",
+            "mw": 1.17,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+            "fuel": "gas_st",
+            "mw": 1.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_econ",
+            "fuel": "gas_st",
+            "mw": 1.98,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_peak",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_committed",
+            "fuel": "gas_st",
+            "mw": 0.75,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_econ",
+            "fuel": "gas_st",
+            "mw": 1.375,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p61838_econ",
+            "fuel": "gas_st",
+            "mw": 0.55,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_committed",
+            "fuel": "gas_st",
+            "mw": 5.31,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_econ",
+            "fuel": "gas_st",
+            "mw": 9.735,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_peak",
+            "fuel": "gas_st",
+            "mw": 2.655,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_committed",
+            "fuel": "gas_st",
+            "mw": 0.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_econ",
+            "fuel": "gas_st",
+            "mw": 1.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_committed",
+            "fuel": "gas_st",
+            "mw": 3.15,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_econ",
+            "fuel": "gas_st",
+            "mw": 5.775,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_peak",
+            "fuel": "gas_st",
+            "mw": 1.575,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_committed",
+            "fuel": "gas_st",
+            "mw": 8.16,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_econ",
+            "fuel": "gas_st",
+            "mw": 14.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_peak",
+            "fuel": "gas_st",
+            "mw": 4.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_committed",
+            "fuel": "gas_st",
+            "mw": 16.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_econ",
+            "fuel": "gas_st",
+            "mw": 30.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_peak",
+            "fuel": "gas_st",
+            "mw": 8.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_committed",
+            "fuel": "gas_st",
+            "mw": 4.77,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_econ",
+            "fuel": "gas_st",
+            "mw": 8.745,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_peak",
+            "fuel": "gas_st",
+            "mw": 2.385,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_committed",
+            "fuel": "gas_st",
+            "mw": 5.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_econ",
+            "fuel": "gas_st",
+            "mw": 9.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_peak",
+            "fuel": "gas_st",
+            "mw": 2.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_committed",
+            "fuel": "gas_st",
+            "mw": 0.6,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_econ",
+            "fuel": "gas_st",
+            "mw": 1.1,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_committed",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_econ",
+            "fuel": "gas_st",
+            "mw": 63.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_peak",
+            "fuel": "gas_st",
+            "mw": 17.325,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_committed",
+            "fuel": "gas_st",
+            "mw": 303.365,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_peak",
+            "fuel": "gas_st",
+            "mw": 211.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_econ",
+            "fuel": "gas_st",
+            "mw": 9.24,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_peak",
+            "fuel": "gas_st",
+            "mw": 2.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          }
+        ]
+      },
+      "only_ctl": {
+        "rows": 4,
+        "mw": 468.46,
+        "by_fuel": {
+          "gas_st": 468.46
+        },
+        "sectors": {
+          "1": 4
+        },
+        "units": [
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_committed",
+            "fuel": "gas_st",
+            "mw": 8.46,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_committed",
+            "fuel": "gas_st",
+            "mw": 70.38,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_econ",
+            "fuel": "gas_st",
+            "mw": 320.62,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p3775_peak",
+            "fuel": "gas_st",
+            "mw": 69.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          }
+        ]
+      },
+      "shared": {
+        "rows": 34,
+        "mw": 6865.24
+      }
+    }
+  },
+  "2023": {
+    "economic_exits_mw": {
+      "ctl": 3105.455,
+      "d58": 3310.852,
+      "arm": 2884.292
+    },
+    "economic_exits_by_fuel": {
+      "ctl": {
+        "gas_cc": 974.7,
+        "gas_st": 2130.755
+      },
+      "d58": {
+        "gas_cc": 2408.467,
+        "gas_st": 902.385
+      },
+      "arm": {
+        "gas_cc": 2884.292
+      }
+    },
+    "admission": {
+      "ctl": {
+        "decided_rows": 108,
+        "decided_mw": 3105.455,
+        "decided_by_fuel": {
+          "gas_cc": 974.7,
+          "gas_st": 2130.755
+        },
+        "decided_by_execute_year": {
+          "2023": 3105.455
+        },
+        "capped_rows": 46,
+        "capped_mw": 2689.728,
+        "capped_by_fuel": {
+          "gas_cc": 2689.728
+        },
+        "executed_rows": 108,
+        "executed_mw": 3105.455,
+        "executed_by_fuel": {
+          "gas_cc": 974.7,
+          "gas_st": 2130.755
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      },
+      "d58": {
+        "decided_rows": 41,
+        "decided_mw": 3310.852,
+        "decided_by_fuel": {
+          "gas_cc": 2408.467,
+          "gas_st": 902.385
+        },
+        "decided_by_execute_year": {
+          "2023": 3310.852
+        },
+        "capped_rows": 39,
+        "capped_mw": 3589.291,
+        "capped_by_fuel": {
+          "gas_cc": 3589.291
+        },
+        "executed_rows": 41,
+        "executed_mw": 3310.852,
+        "executed_by_fuel": {
+          "gas_cc": 2408.467,
+          "gas_st": 902.385
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      },
+      "arm": {
+        "decided_rows": 45,
+        "decided_mw": 2884.292,
+        "decided_by_fuel": {
+          "gas_cc": 2884.292
+        },
+        "decided_by_execute_year": {
+          "2023": 2884.292
+        },
+        "capped_rows": 21,
+        "capped_mw": 416.745,
+        "capped_by_fuel": {
+          "gas_cc": 416.745
+        },
+        "executed_rows": 45,
+        "executed_mw": 2884.292,
+        "executed_by_fuel": {
+          "gas_cc": 2884.292
+        },
+        "floor_retained_mw": 0,
+        "throughput_deferred_mw": 0
+      }
+    },
+    "arm_vs_ctl": {
+      "only_arm": {
+        "rows": 17,
+        "mw": 1982.59,
+        "by_fuel": {
+          "gas_cc": 1982.59
+        },
+        "sectors": {
+          "2": 16,
+          "5": 1
+        },
+        "units": [
+          {
+            "unit_id": "CC_CHP_PJM_SWMAAC_p58207_peak",
+            "fuel": "gas_cc",
+            "mw": 1.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55297_peak",
+            "fuel": "gas_cc",
+            "mw": 43.392,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55397_peak",
+            "fuel": "gas_cc",
+            "mw": 17.186,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55502_peak",
+            "fuel": "gas_cc",
+            "mw": 48.79,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55503_peak",
+            "fuel": "gas_cc",
+            "mw": 24.248,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_committed",
+            "fuel": "gas_cc",
+            "mw": 955.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_peak",
+            "fuel": "gas_cc",
+            "mw": 30.03,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p59773_peak",
+            "fuel": "gas_cc",
+            "mw": 9.29,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Central_PA_p55193_peak",
+            "fuel": "gas_cc",
+            "mw": 9.472,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Central_PA_p55667_peak",
+            "fuel": "gas_cc",
+            "mw": 15.642,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_ComEd_p55183_peak",
+            "fuel": "gas_cc",
+            "mw": 21.682,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p55439_peak",
+            "fuel": "gas_cc",
+            "mw": 38.159,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p2406_peak",
+            "fuel": "gas_cc",
+            "mw": 274.3,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p57349_peak",
+            "fuel": "gas_cc",
+            "mw": 11.742,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_SWMAAC_p60302_peak",
+            "fuel": "gas_cc",
+            "mw": 12.937,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_West_APS_p55516_committed",
+            "fuel": "gas_cc",
+            "mw": 450.87,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_West_APS_p55516_peak",
+            "fuel": "gas_cc",
+            "mw": 17.391,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          }
+        ]
+      },
+      "only_ctl": {
+        "rows": 80,
+        "mw": 2203.753,
+        "by_fuel": {
+          "gas_cc": 72.998,
+          "gas_st": 2130.755
+        },
+        "sectors": {
+          "1": 10,
+          "2": 4,
+          "3": 5,
+          "5": 6,
+          "6": 2,
+          "7": 53
+        },
+        "units": [
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak",
+            "fuel": "gas_cc",
+            "mw": 20.628,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak",
+            "fuel": "gas_cc",
+            "mw": 8.938,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_West_APS_p3096_peak",
+            "fuel": "gas_cc",
+            "mw": 43.432,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+            "fuel": "gas_st",
+            "mw": 3.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+            "fuel": "gas_st",
+            "mw": 5.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_peak",
+            "fuel": "gas_st",
+            "mw": 1.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_committed",
+            "fuel": "gas_st",
+            "mw": 0.66,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_econ",
+            "fuel": "gas_st",
+            "mw": 1.21,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+            "fuel": "gas_st",
+            "mw": 6.33,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+            "fuel": "gas_st",
+            "mw": 11.605,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+            "fuel": "gas_st",
+            "mw": 3.165,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_committed",
+            "fuel": "gas_st",
+            "mw": 3.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_econ",
+            "fuel": "gas_st",
+            "mw": 6.435,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_peak",
+            "fuel": "gas_st",
+            "mw": 1.755,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+            "fuel": "gas_st",
+            "mw": 18.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_econ",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_peak",
+            "fuel": "gas_st",
+            "mw": 9.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+            "fuel": "gas_st",
+            "mw": 2.34,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_econ",
+            "fuel": "gas_st",
+            "mw": 4.29,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_peak",
+            "fuel": "gas_st",
+            "mw": 1.17,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+            "fuel": "gas_st",
+            "mw": 1.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_econ",
+            "fuel": "gas_st",
+            "mw": 1.98,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_peak",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_committed",
+            "fuel": "gas_st",
+            "mw": 0.75,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_econ",
+            "fuel": "gas_st",
+            "mw": 1.375,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p61838_econ",
+            "fuel": "gas_st",
+            "mw": 0.55,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_committed",
+            "fuel": "gas_st",
+            "mw": 5.31,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_econ",
+            "fuel": "gas_st",
+            "mw": 9.735,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_peak",
+            "fuel": "gas_st",
+            "mw": 2.655,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_committed",
+            "fuel": "gas_st",
+            "mw": 0.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_econ",
+            "fuel": "gas_st",
+            "mw": 1.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_committed",
+            "fuel": "gas_st",
+            "mw": 3.15,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_econ",
+            "fuel": "gas_st",
+            "mw": 5.775,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_peak",
+            "fuel": "gas_st",
+            "mw": 1.575,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_committed",
+            "fuel": "gas_st",
+            "mw": 8.16,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_econ",
+            "fuel": "gas_st",
+            "mw": 14.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_peak",
+            "fuel": "gas_st",
+            "mw": 4.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_committed",
+            "fuel": "gas_st",
+            "mw": 1.92,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_econ",
+            "fuel": "gas_st",
+            "mw": 3.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52148_peak",
+            "fuel": "gas_st",
+            "mw": 0.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_committed",
+            "fuel": "gas_st",
+            "mw": 16.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_econ",
+            "fuel": "gas_st",
+            "mw": 30.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_peak",
+            "fuel": "gas_st",
+            "mw": 8.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_committed",
+            "fuel": "gas_st",
+            "mw": 4.77,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_econ",
+            "fuel": "gas_st",
+            "mw": 8.745,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_peak",
+            "fuel": "gas_st",
+            "mw": 2.385,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_committed",
+            "fuel": "gas_st",
+            "mw": 5.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_econ",
+            "fuel": "gas_st",
+            "mw": 9.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_peak",
+            "fuel": "gas_st",
+            "mw": 2.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_committed",
+            "fuel": "gas_st",
+            "mw": 0.6,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_econ",
+            "fuel": "gas_st",
+            "mw": 1.1,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_committed",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_econ",
+            "fuel": "gas_st",
+            "mw": 63.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_peak",
+            "fuel": "gas_st",
+            "mw": 17.325,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+            "fuel": "gas_st",
+            "mw": 63.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+            "fuel": "gas_st",
+            "mw": 157.04,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak",
+            "fuel": "gas_st",
+            "mw": 39.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed",
+            "fuel": "gas_st",
+            "mw": 6.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ",
+            "fuel": "gas_st",
+            "mw": 12.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak",
+            "fuel": "gas_st",
+            "mw": 3.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_committed",
+            "fuel": "gas_st",
+            "mw": 303.365,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_econ",
+            "fuel": "gas_st",
+            "mw": 895.985,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_peak",
+            "fuel": "gas_st",
+            "mw": 211.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_econ",
+            "fuel": "gas_st",
+            "mw": 15.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_peak",
+            "fuel": "gas_st",
+            "mw": 4.23,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_econ",
+            "fuel": "gas_st",
+            "mw": 9.24,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_peak",
+            "fuel": "gas_st",
+            "mw": 2.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          }
+        ]
+      },
+      "shared": {
+        "rows": 28,
+        "mw": 901.702
+      }
+    },
+    "d58_vs_ctl": {
+      "only_d58": {
+        "rows": 8,
+        "mw": 1463.333,
+        "by_fuel": {
+          "gas_cc": 1463.333
+        },
+        "sectors": {
+          "2": 8
+        },
+        "units": [
+          {
+            "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_peak",
+            "fuel": "gas_cc",
+            "mw": 30.03,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p52019_committed",
+            "fuel": "gas_cc",
+            "mw": 291.847,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p10308_committed",
+            "fuel": "gas_cc",
+            "mw": 79.424,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p2393_committed",
+            "fuel": "gas_cc",
+            "mw": 29.106,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p2406_peak",
+            "fuel": "gas_cc",
+            "mw": 274.3,
+            "self_events": "decided+executed",
+            "other_leg_events": "entry_capped"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p55231_committed",
+            "fuel": "gas_cc",
+            "mw": 322.026,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_EMAAC_p7153_committed",
+            "fuel": "gas_cc",
+            "mw": 155.632,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_West_APS_p55710_committed",
+            "fuel": "gas_cc",
+            "mw": 280.968,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          }
+        ]
+      },
+      "only_ctl": {
+        "rows": 75,
+        "mw": 1257.936,
+        "by_fuel": {
+          "gas_cc": 29.566,
+          "gas_st": 1228.37
+        },
+        "sectors": {
+          "1": 10,
+          "2": 2,
+          "3": 5,
+          "5": 6,
+          "6": 2,
+          "7": 50
+        },
+        "units": [
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak",
+            "fuel": "gas_cc",
+            "mw": 20.628,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak",
+            "fuel": "gas_cc",
+            "mw": 8.938,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+            "fuel": "gas_st",
+            "mw": 3.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+            "fuel": "gas_st",
+            "mw": 5.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_peak",
+            "fuel": "gas_st",
+            "mw": 1.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_committed",
+            "fuel": "gas_st",
+            "mw": 0.66,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_econ",
+            "fuel": "gas_st",
+            "mw": 1.21,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+            "fuel": "gas_st",
+            "mw": 6.33,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+            "fuel": "gas_st",
+            "mw": 11.605,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+            "fuel": "gas_st",
+            "mw": 3.165,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_committed",
+            "fuel": "gas_st",
+            "mw": 3.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_econ",
+            "fuel": "gas_st",
+            "mw": 6.435,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_peak",
+            "fuel": "gas_st",
+            "mw": 1.755,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+            "fuel": "gas_st",
+            "mw": 18.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_econ",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_peak",
+            "fuel": "gas_st",
+            "mw": 9.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+            "fuel": "gas_st",
+            "mw": 2.34,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_econ",
+            "fuel": "gas_st",
+            "mw": 4.29,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_peak",
+            "fuel": "gas_st",
+            "mw": 1.17,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+            "fuel": "gas_st",
+            "mw": 1.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_econ",
+            "fuel": "gas_st",
+            "mw": 1.98,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_peak",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_committed",
+            "fuel": "gas_st",
+            "mw": 0.75,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p54335_econ",
+            "fuel": "gas_st",
+            "mw": 1.375,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p61838_econ",
+            "fuel": "gas_st",
+            "mw": 0.55,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63920_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_committed",
+            "fuel": "gas_st",
+            "mw": 1.05,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_econ",
+            "fuel": "gas_st",
+            "mw": 1.925,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ATSI_p63927_peak",
+            "fuel": "gas_st",
+            "mw": 0.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_committed",
+            "fuel": "gas_st",
+            "mw": 5.31,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_econ",
+            "fuel": "gas_st",
+            "mw": 9.735,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p50397_peak",
+            "fuel": "gas_st",
+            "mw": 2.655,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_committed",
+            "fuel": "gas_st",
+            "mw": 0.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Central_PA_p58194_econ",
+            "fuel": "gas_st",
+            "mw": 1.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_ComEd_p58136_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_committed",
+            "fuel": "gas_st",
+            "mw": 3.15,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_econ",
+            "fuel": "gas_st",
+            "mw": 5.775,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p50275_peak",
+            "fuel": "gas_st",
+            "mw": 1.575,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_committed",
+            "fuel": "gas_st",
+            "mw": 8.16,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_econ",
+            "fuel": "gas_st",
+            "mw": 14.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p52089_peak",
+            "fuel": "gas_st",
+            "mw": 4.08,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_committed",
+            "fuel": "gas_st",
+            "mw": 16.5,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_econ",
+            "fuel": "gas_st",
+            "mw": 30.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_Dominion_p54081_peak",
+            "fuel": "gas_st",
+            "mw": 8.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_committed",
+            "fuel": "gas_st",
+            "mw": 4.77,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_econ",
+            "fuel": "gas_st",
+            "mw": 8.745,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p10224_peak",
+            "fuel": "gas_st",
+            "mw": 2.385,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_committed",
+            "fuel": "gas_st",
+            "mw": 0.54,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_EMAAC_p54250_econ",
+            "fuel": "gas_st",
+            "mw": 0.99,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_committed",
+            "fuel": "gas_st",
+            "mw": 5.25,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_econ",
+            "fuel": "gas_st",
+            "mw": 9.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p54795_peak",
+            "fuel": "gas_st",
+            "mw": 2.625,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_committed",
+            "fuel": "gas_st",
+            "mw": 0.6,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_SWMAAC_p56038_econ",
+            "fuel": "gas_st",
+            "mw": 1.1,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_committed",
+            "fuel": "gas_st",
+            "mw": 34.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_econ",
+            "fuel": "gas_st",
+            "mw": 63.525,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_CHP_PJM_West_APS_p50491_peak",
+            "fuel": "gas_st",
+            "mw": 17.325,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+            "fuel": "gas_st",
+            "mw": 63.96,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+            "fuel": "gas_st",
+            "mw": 157.04,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak",
+            "fuel": "gas_st",
+            "mw": 39.0,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed",
+            "fuel": "gas_st",
+            "mw": 6.9,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ",
+            "fuel": "gas_st",
+            "mw": 12.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak",
+            "fuel": "gas_st",
+            "mw": 3.45,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_committed",
+            "fuel": "gas_st",
+            "mw": 303.365,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Central_PA_p3140_peak",
+            "fuel": "gas_st",
+            "mw": 211.65,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_econ",
+            "fuel": "gas_st",
+            "mw": 15.51,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_ComEd_p972_peak",
+            "fuel": "gas_st",
+            "mw": 4.23,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_econ",
+            "fuel": "gas_st",
+            "mw": 9.24,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          },
+          {
+            "unit_id": "ST_GAS_PJM_Dominion_p52072_peak",
+            "fuel": "gas_st",
+            "mw": 2.52,
+            "self_events": "decided+executed",
+            "other_leg_events": "none"
+          }
+        ]
+      },
+      "shared": {
+        "rows": 33,
+        "mw": 1847.519
+      }
+    }
+  }
+}
