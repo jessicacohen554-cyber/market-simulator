@@ -280,6 +280,32 @@ registered. Where the two agree the carry is honest and is disclosed as a carry;
 diverge the disposition is not this lane's to re-author and the registration is a STOP, routed
 per the charter — *report, do not register as bare*.
 
+### 5.0d The second-hunk probe — NO second hunk, measured on a real solve
+
+D65's instrument gives the drift exactly two sides. Between D65's basis (`e5ac39f1b2a6`) and
+this lane's HEAD, **40 files changed under `src/` + `scripts/`** — D65 Act A's own seam-4 field
+among them — so "my HEAD is on D65's side" was an assumption worth **3.6 minutes** to retire.
+The charter's own test: *a probe matches the committed side or the HEAD side; anything else is a
+second hunk and a STOP-and-report.*
+
+The committed `neiso-t1f` recipe was re-solved for **NEISO 2026–2027** at this HEAD (D65 §3c's
+exact instrument, 3.6 min / 3.28 GB, 2/2 years, 14 invariants scored, 0 FAIL / 0 WARN):
+
+| 2027 ledger | `retirements` | total MW | `reserve_margin` | `fleet_by_fuel_after.gas_cc` |
+|---|---|---|---|---|
+| PRE-hunk (committed `9e48ff6`) | 33 rows | 2,369.81 | 0.045867 | 10,713.80312 |
+| POST-hunk (D65's HEAD control) | 40 rows | 2,244.89 | 0.050821 | 10,838.72120 |
+| **D60-R3 probe (this HEAD)** | **40 rows** | **2,244.89** | **0.050821** | **10,838.72120** |
+
+**Identical to the POST-hunk side on every ledger key.** So there is no second hunk: the whole
+divergence between the committed `neiso-t1f` and HEAD remains capx D55's
+`_floor_retention_merit`, and nothing in the 40-file delta since D65 moved this path. **The
+STOP does not fire**, and the three legs below are post-hunk by *measurement* rather than by
+construction alone — which is what makes their gradings comparable to their PRE-hunk controls
+in the first place. The probe bundle is a throwaway diagnostic under rule 29 and was written
+outside `results/`; it never reaches `main` (rule 29(c)), and these four numbers are the whole
+record of it.
+
 
 ---
 
