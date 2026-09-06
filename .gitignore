@@ -877,6 +877,13 @@ results/hindcast/*/*/*/evolution_*.json
 # finding's identity check (failing set == uncleared set), FC-3 attribution and
 # E&AS-operand measurement read -- same one-bundle carve-out.
 !results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing*/*/*/evolution_*.json
+# capx D74 (2026-09-06): the PJM no-default-cap price-taker convention A/B arm
+# (suffixed pjm-t1h-d74-nodefaultcap). Its ledgers carry the `capacity_clearing`
+# block and the additive `no_default_cap_price_takers` block (the class the
+# convention moved into Q_0, per screen year) the D74 finding's gate, identity
+# check and FC-3 attribution read against same-HEAD controls that were deleted
+# before merge (rule 29(c)) -- same one-bundle carve-out.
+!results/hindcast/pjm-2021-2025-realized-t1h-d74-nodefaultcap/*/*/evolution_*.json
 # capx D52 (2026-09-04): the NYISO adequacy-requirement devintage A/B arm
 # (suffixed nyiso-t1h-d52-devintage) and its CONDITIONAL curve-ON probe
 # (nyiso-t1h-d52-curveon). Their ledgers carry the new D52 seam observability

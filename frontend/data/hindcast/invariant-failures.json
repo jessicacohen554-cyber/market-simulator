@@ -15,6 +15,7 @@
  },
  "curated_subsets": {},
  "declared_failures": {
+  "pjm-2021-2025-realized-t1h-d74-nodefaultcap": ["I7"],
   "caiso-2021-2025-realized-t1h-d46": [
    "I7",
    "I9"
