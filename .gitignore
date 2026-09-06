@@ -1149,6 +1149,14 @@ data/raw/NYISO/nyiso load reports *.zip
 # pack, per the corpus's own staged-out design (postprocess_oasis_downloads).
 # The golden-listed CAISO_{dam,rtm}_hourly_*.csv aggregates are untouched.
 data/raw/lmp-data/CAISO/2???????_2???????_*_csv.zip
+# caiso-261 (2026-09-06): the per-day node WINDOW CSVs that
+# fold_caiso_oasis_grp_zips.py / fetch_caiso_oasis.py write are transient too —
+# postprocess_oasis_downloads.py folds them into the tracked hourly aggregates
+# and stages them out (`--stage-dir`). Never commit a window.
+data/raw/lmp-data/CAISO/dam_grp_*.csv
+data/raw/lmp-data/CAISO/rtm_grp_*.csv
+data/raw/lmp-data/CAISO/dam_*_*.csv
+data/raw/lmp-data/CAISO/rtm_*_*.csv
 !data/raw/lmp-data/CAISO/README.md
 !data/raw/lmp-data/CAISO/SHA256SUMS.txt
 
