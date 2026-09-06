@@ -7,7 +7,31 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #7) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #8) ·
+**r#8 (HEAD `34f3ce35`):** **STAGE A-LOAD IS RUNNING** — `SCN-WS5A-LOAD` launched with its
+PRECOMMIT pushed before the first solve, as **one lane covering all six ISOs** rather than the six
+the desk issued; graded acceptable on content and recorded · **THE REFRESH'S FINDING IS A
+CONSEQUENCE OF THE DESK'S OWN RULING CHAIN, AND NOBODY PREDICTED IT.** SCN-LOAD's intake —
+ruling **S4**, which the owner granted **over** the desk's and SCN-WS4a's recommendation to defer
+— landed `d14a7ed0` **after** SCN-WS4b's pin and re-derived the entire load-shape constant family
+(**473 insertions / 263 deletions in `constants.py` alone**, covering `DEMAND_GROWTH_RATES`,
+`DATACENTER_ADDITIONS_MW` and `ELECTRIFICATION_LAYERS`). **So the pre-declaration chain this
+campaign is built on — WS-4b's six readings, and WS-4c's T0 scoring of them — was computed against
+constants that have since moved.** Not invalidated: both were correct at their pins. But the
+horizon HIT/MISS scoring now runs against a **moved target**, and that is said out loud rather
+than absorbed. Measured pre-solve by the campaign lane, at zero LP: **CAISO's ORGANIC arm is no
+longer degenerate** (`high` 4,240 MW vs `mid` 1,622 MW at 2030, from the CEC Form 1.1c the intake
+read) so the campaign is **16 legs, not 15**; **PJM is now degenerate for a NEW reason** (published
+B-9b overtook the retired 30 GW queue estimate); **ERCOT's tail regime is predicted NOT to
+reproduce** (the DC high anchor fell 122 → 88.6 GW, −27 %, while the growth rate rose, so WS-4b's
+1.019 TAIL ratio should land below 1.0 and relocate); and **G-DRIFT reads LIVE on every ISO, twice
+over** — 82 files / +9,529 lines on the solve path *plus* the constant re-derivation — so rule
+29(b) form 4 is invalid for all six and the control is the lane's own same-HEAD REF ·
+**SCN-WS1b-r2 pre-registered SCN-WS4c's measured marginal rate as a second yardstick** — a lane
+picking up another lane's finding across a refresh, which is the coordination actually working ·
+**SCN-WS3b-r2: no evidence of dispatch across two refreshes and two asks.** It feeds only the
+S5-held half, so it blocks nothing today; not re-issued unless wanted.
+*(previous)* **r#7 (HEAD `e80bdd87`):**
 **r#7 (HEAD `e80bdd87`):** **STAGE A-LOAD IS UNBLOCKED AND ISSUED — SCN-WS4c LANDED COMPLETE.**
 19 arms (15 T0 + 4 T1-F), all solve clean, and SCN-WS4b's six pre-declared readings score
 **20 HIT / 3 SPLIT / 3 MISS**. Two results outrank the scores: (1) **the fossil-average heuristic
@@ -190,6 +214,85 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#8 — 2026-09-06, main HEAD `34f3ce357fbdfd245e54a89e734f2c003829de7c`
+
+*(PR #5016.)* Delta from the r#7 pin `e80bdd87`: **31 commits**.
+
+**GRADED BY CONTENT:**
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS5A-LOAD** | **RUNNING — PRECOMMIT pushed before the first solve** | `cf05fbfb`, branch `claude/scn-ws5a-load-campaign-f5znk9`. Pin re-fetched to `821c11c5` with the two intervening commits verified docs-only (zero diff on `src/`, `scripts/`, `configs/`) so the G-DRIFT audit and phase 0 carry unchanged — the right way to handle a moving base. |
+| **SCN-WS1b-r2** | Six-ISO carbon paired probe (leg 1, 2027-scoped); leg 2 held by S5 | **IN FLIGHT r#8** | `claude/scn-ws1b2-carbon-sixiso-r4hm-t5hdbz` | **Opus** | Pre-registered **SCN-WS4c's measured implied-marginal rate as a second yardstick** before solving — one lane folding another's finding into its own gate across a refresh. Solves pending on the desk-ratified 2027 scope. |
+| **SCN-WS3b-r2** | Voluntary-demand build, released by S1 | **NO EVIDENCE OF DISPATCH r#8** | `claude/scn-ws3b2-voluntary-demand-k8zp` | **Fable** | Two refreshes, two asks, no branch or commit. **Blocks nothing today** — it feeds only the S5-held policy half. Not re-issued unless the owner wants it; a third stem is available. |
+
+**ONE DEVIATION FROM THE DESK'S ISSUANCE, GRADED ACCEPTABLE.** The desk issued Stage A-LOAD as
+**six per-ISO lanes** plus a synthesis, on the reasoning that per-ISO disjointness is what keeps
+concurrent lanes from colliding. The lane that launched runs **all six ISOs in one invocation**
+(its §1.1 states the choice). The desk grades this by content rather than by conformance: the
+collision risk the six-lane split existed to manage is **absent when there is one writer**, rule
+12's binding constraint (years sequential within an invocation, ≤ 2 concurrent, 1 when a per-plant
+ISO runs) is *easier* to honour in a single lane, and the campaign's own synthesis no longer needs
+a seventh session. **Accepted as issued.** The desk records that its six-lane form was the more
+cautious construction and was not the necessary one.
+
+**THE FINDING OF THIS REFRESH — ruling S4 moved the target the pre-declaration chain scores
+against, and the desk's own ruling chain caused it.** The sequence, stated plainly:
+1. At r#5 the desk recommended **defer** on card D-4, and SCN-WS4a's own gap list recommended
+   defer. The owner ruled **S4 = FUND THE FULL DATATYPE**, over both recommendations.
+2. SCN-LOAD executed it. `d14a7ed0` re-derived the load-shape constant family — **473 insertions /
+   263 deletions in `constants.py`**, across `DEMAND_GROWTH_RATES`, `DATACENTER_ADDITIONS_MW` and
+   `ELECTRIFICATION_LAYERS` — which is exactly what "curate the six published forecasts" means and
+   exactly what the ruling asked for.
+3. It landed **after** SCN-WS4b's pin `af6269cf`. So **WS-4b's six pre-declared readings, and
+   SCN-WS4c's 20 HIT / 3 SPLIT / 3 MISS scoring of them, were both computed on constants that have
+   since moved.**
+
+**What this does and does not mean.** It does **not** invalidate either lane: each was correct at
+its own pin, each said what pin it stood on, and the pre-declaration discipline is what makes the
+movement *visible* instead of silent. What it means is that **the horizon HIT/MISS scoring runs
+against a moved target**, and three specific readings are now known to be stale before a single
+horizon LP is spent — measured by the campaign lane at zero LP cost:
+
+| ISO | WS-4b / WS-4c said | HEAD says | consequence |
+|---|---|---|---|
+| **CAISO** | `high := mid`, byte-identical, "should not be solved" | `high` **4,240 MW** vs `mid` **1,622 MW** at 2030 (CEC Form 1.1c, read by the intake) | the ORGANIC arm is **live**; the campaign is **16 legs, not 15** |
+| **PJM** | `high := mid` through 2030 | `high := mid` at **every** anchor — published B-9b overtook the retired 30 GW queue estimate | same operational conclusion, **different mechanism**; recorded so the record is right rather than merely unchanged |
+| **ERCOT** | tail-regime ratio **1.019 (TAIL)** at 2030 | DC high anchor fell **122 → 88.6 GW (−27 %)** while the growth rate **rose** | ratio predicted **below 1.0 (relocate)** — the lane's own headline test |
+
+**The desk's position, stated against itself.** Neither the desk nor SCN-WS4a anticipated, when
+recommending defer, that the intake's *value* would arrive as a **re-derivation that supersedes a
+live pre-declaration mid-campaign**. That is an argument the desk did not make and should have:
+"defer" was argued on provenance grounds ("the campaign runs on the cited constants today"), and
+the real cost of funding was never the work — it was the **ordering**. The owner's ruling has been
+vindicated on substance (three constants were wrong or stale, and one of them, CAISO, was
+suppressing a leg the campaign needs) and the desk's sequencing was the weak part. **Standing
+change: from r#9, any lane whose deliverable is a pre-declaration states the constant families it
+depends on, so a later intake's blast radius on it is computable rather than discovered.**
+
+**G-DRIFT reads LIVE on every ISO, twice over** — 82 files / +9,529 lines on the solve path, **and**
+the load-constant re-derivation making every committed REF trajectory unreproducible at HEAD. Rule
+29(b) form 4 is therefore invalid for all six ISOs and the control is the lane's own same-HEAD REF
+leg. This is the second consecutive refresh in which a measured G-DRIFT audit has overturned rule
+29(b)'s stated default (SCN-WS4c measured NEISO stale by 2.821 Mt at r#7). **Two measured cases is
+still not a rule change** and the desk proposes none — but it is now a pattern worth the audit
+track's attention, and it is routed as one.
+
+**Rule changes since r#7.** Rule 30(a) amended again (owner, verbatim: *"the formatting on the html
+dashboard for holdout years shouldn't be any different than the 3 training years"*) — a held-out
+year renders **as a year, not as a designation**. No SCN lane touches a touchpoint; recorded only.
+
+**Capx.** D60-R3 leg 4/5 re-solved `pjm-t1f` and **a pre-declared STOP FIRED on I12** — reported
+rather than absorbed, cause identified as a requirement P23 assumed would not move. D66 reconciled
+the PJM supply census against PJM's own BRA record at zero LP. D67 is in flight with a G-DRIFT
+that "comes back LIVE" — three lanes now reporting the same thing. **The CCS seam holding
+Stage A-POLICY is still unrepaired at this pin.**
+
+**Issued:** nothing — Stage A-LOAD is running and no other precondition moved.
+**Cards:** none newly presented. D-5 becomes answerable when the campaign's synthesis lands.
+
+---
 
 ### r#7 — 2026-09-06, main HEAD `e80bdd87bad0cb0622678b84736bc0cd7fa148f7`
 
@@ -782,7 +885,7 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED — precondition now reachable** | — | Opus | Precondition: SCN-WS3b on main, which S1 has now released. Issued the refresh WS-3b lands. |
-| **SCN-WS5A-LOAD-\<ISO\>** ×6 + **-SYNTH** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **ISSUED r#7** | `claude/scn-ws5a-load-<iso>-<4ch>` ×6, then `-synth` | **Opus** | Every precondition verified on main at the r#7 pin. S5 is the authorization; no further card. SYNTH presents card **D-5** with the measured cost table. |
+| **SCN-WS5A-LOAD** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **RUNNING r#8** | `claude/scn-ws5a-load-campaign-f5znk9` | **Opus** | Launched as **one** lane for all six ISOs rather than the six the desk issued — **graded acceptable on content** (§0 r#8): one writer removes the collision risk the split managed, and rule 12 is easier to honour in a single invocation. PRECOMMIT pushed before the first solve; **16 legs, not 15** (CAISO ORGANIC is live at HEAD). |
 | **SCN-WS5A-POLICY-\<ISO\>** ×6 + **-SYNTH** | **Stage A-POLICY** — the CES cases, the 2028+ carbon legs, `ALL-CLEAN`, `VOL-*` | **HELD by S5 on the CCS seam** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
 | **Stage B** | Full-horizon legs | **NOT ISSUABLE** | — | — | Needs card D-5 **and** an OPEN §2.1b gate for the named ISO at issuance. At the r#1 pin only NEISO is open. Re-check at issuance, never at planning. |
 
