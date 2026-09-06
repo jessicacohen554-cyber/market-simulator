@@ -208,3 +208,42 @@ In any case this session differences nothing against a solve, so no control solv
   git history and the FINDING are the record).
 - Not fix the pre-existing HEAD test failures; they are measured and reported for the capx /
   FF-readiness / SCN-WS5A-LOAD lanes that own them (rule 25).
+
+---
+
+## Addendum §A — one counterfactual ADDED, before any number was read
+
+§4 pre-registered two floors to compare: the shipped `cheapest_first` (the object) and
+`pro_rata` (declared there as *not evidence*, because its intensity is arithmetically forced to
+`0.0973 < 0.12` for every raised row). Writing the probe made clear that neither of them can
+answer the question the card will have to put to the owner, which is not *"is the delivery
+wrong"* but *"what would the coefficient's own construction have delivered instead, and at what
+cost."*
+
+A **third** floor is therefore added: the **min-stable-capped cheapest-first fill** — the same
+merit-ordered fill with each row capped at `min_stable_pct × cap_r` instead of `cap_r`. This is
+the fill the derive script's own words describe: *commit units in merit order, each at its
+physical minimum stable level, until the zonal target is met.*
+
+**It is declared here for three reasons and one of them is against interest.**
+
+1. It is **always feasible** on this limb, and provably so before measuring: the target is
+   `0.0973 × Σ cap`, the per-row caps sum to `0.12 × Σ cap`, and `0.0973 < 0.12`. So the
+   counterfactual cannot fail for an arithmetic reason and cannot be reported as "infeasible"
+   after the fact.
+2. Its committed-capacity share is `floor_pct / min_stable_pct` **by construction** — which is
+   `commit_frac = 0.8105`, the coefficient's own commitment count. That makes it a **closed-form
+   prediction**, not a fitted alternative: the probe measures the realised share and the number
+   it must land on was fixed here, before the run. A miss would be a defect in this reasoning,
+   and would be reported as one.
+3. **Against interest:** because it is a closed-form construction with zero free parameters and a
+   pre-stated answer, it will look attractive, and the temptation to promote it from *sizing* to
+   *proposal* is exactly what this addendum exists to foreclose. **It is NOT proposed, NOT
+   screened, and NOT patched.** `_distribute_group_floor` is the shared kernel behind 37 of 50
+   live limbs across five other ISOs (§2.2), so changing it is owner court under rule 25
+   `[R-ISO-SCOPE]`, and its consequences for those ISOs are **unmeasured and will not be measured
+   from this lane.** The card will say so at the top, not in a footnote.
+
+**Timestamp discipline:** this addendum and the probe that computes the counterfactual are
+committed in the same commit, **before the probe is executed for the first time.** No measurement
+of this session's object existed when it was written.
