@@ -4281,9 +4281,21 @@ class TestStateCarbonProgram(unittest.TestCase):
         self.assertAlmostEqual(
             resolve_carbon_price(config, 2030), 28.06 * 1.07**5, places=3
         )
-        # An explicit RFF exogenous path still wins over the program projection.
+        # An explicit RFF exogenous path is a FLOOR under the program
+        # projection, not a replacement for it — owner ruling S2 (2026-09-06,
+        # card D-1), executed by SCN-WS1c. This assertion previously read
+        # `== 15.0`, i.e. the mid path REPLACING CARB's $39.36/t in 2030: that
+        # is the G-C1 defect (a named federal path SUPPRESSING the state
+        # program, which made policy_bundle="tight" a carbon-price CUT on every
+        # program ISO in every horizon year). The resolver now returns
+        # max(program, path), so CARB binds here and the mid path does not.
+        # See tests/unit/policy/test_cap_and_trade.py::TestFederalCarbonFloor
+        # for the full statement of the ruled semantics.
         config = ScenarioConfig(iso="CAISO", carbon_price_path="mid")
-        self.assertAlmostEqual(resolve_carbon_price(config, 2030), 15.0)
+        self.assertAlmostEqual(
+            resolve_carbon_price(config, 2030), 28.06 * 1.07**5, places=3
+        )
+        self.assertGreater(resolve_carbon_price(config, 2030), 15.0)
 
 
 class TestPolicyConstraints(unittest.TestCase):
