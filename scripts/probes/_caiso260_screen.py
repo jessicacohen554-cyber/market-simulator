@@ -168,6 +168,7 @@ def preconditions(bundle: Path, year: int) -> dict:
 def main() -> None:
     bundle = Path(_argv[1]).resolve()
     year = int(_argv[2])
+    tag = _argv[3] if len(_argv) > 3 else ""
     arts = load_artifacts(KEEPER_ID)
     ybench = arts["bench"][year]
     kpay = arts["payload"]["years"][str(year)]
@@ -307,7 +308,7 @@ def main() -> None:
         },
         "STOP_GATES_ALL_PASS": stop,
     }
-    out = REPO / f"results/calibration/_caiso260_screen{year}.json"
+    out = REPO / f"results/calibration/_caiso260_screen{year}{tag}.json"
     out.write_text(json.dumps(res, indent=1, default=float) + "\n")
     print(
         f"preconditions {pre['pass']} | G-IDENT {g_ident['pass']} (max|arm-art| {g_ident['max_abs_arm_minus_artifact_mw']:.3f} MW; arm-keeper {g_ident['arm_minus_keeper_annual_gwh']:+.1f} GWh) | G-FOOT {foot['pass']} | S-3 C1 flips {s3['flips']} | C3b {c3b['arm']:.4f} vs keeper {c3b['keeper']:.4f} pass {c3b['pass']}"

@@ -13847,3 +13847,71 @@ no marker, program-status stamp untouched. Two owner decisions asked
 (assessment §7).
 
 **Next number: caiso-260.**
+
+## caiso-260 — 2026-09-06
+
+**THE DEMAND-ARTIFACT VINTAGE RE-DERIVE IS PROMOTED — KEEPER
+`2026-09-06-caiso-257-b1-ctonly` → `2026-09-06-caiso-260-b1-demand`
+(bundle `caiso260_demand_vintage`), DETERMINATION CALIBRATED (rubric v3.6),
+ZERO parameters, DOF unchanged at 9 / 6.** Two LP-years-equivalent spent (a
+2023 screen, bundle deleted under rule 29(c); the three-year keeper bundle in
+ONE invocation). `PRECOMMIT-caiso260-demand-vintage-rederive-2026-09-06.md` +
+`ADDENDUM-caiso260-phase0-2026-09-06.md` pushed before any LP;
+`FINDING-caiso260-demand-vintage-promotion-2026-09-06.md`.
+
+**THE OBJECT** (caiso-259 §8): the keeper's demand input (caiso-80 Option A
+supply-consistent series) had been derived on a bench whose CEMS anchors read
+60.344/53.428 TWh with a flat cogen block of 8.399 TWh, while C1/C4 score on
+a bench carrying 62.209/54.588/44.429 and cogen 6.604/6.416/6.416 — the
+caiso-196/199/200 plant-map landings. **THE ARM**: the committed producer
+`derive_caiso_supply_consistent_demand.py` re-run UNCHANGED on the current
+bench — a rule 14/23 measured-input repair licensed by a source-data update,
+no threshold moved, no field added, no `authorized_price_tuning` block.
+
+**G-REPRO PASS** (R-1/R-2/R-3): max |Δd| 1,451.7/862.8/583.3 MW, annual
++69.4/−33.0/−752.7 GWh, only `cems_gas_grid_mw` moved, flat term −204.9/
+−136.2/−136.2 MW; **the hourly delta IS El Segundo 57901 + Desert Star 55077
+to the MW in 2024/25** (R² 0.99998; 6.8 % variance remainder in 2023).
+Pre-solve C4-2025 statistic S < 0 every year (bound ≤ 1.75 % of MSE).
+**Screen year 2023 by the GROSS footprint** (1,976/1,310/1,093 GWh) — the
+handoff's 2025 expectation FALSIFIED, the pre-fixed rule governed. **G-DRIFT
+`c78f6d94 → HEAD` bit-identical** (identity probe re-pointed at
+`caiso257_ctonly`); G-CTRL form 4, no control solve.
+
+**SCREEN (2023):** preconditions PASS ("P1 route: COLD REBUILD",
+`mic_partition` 16,055); G-IDENT 0.000 MW; G-FOOT clean; no C1 flip; C3b
+0.083. **FULL SPAN vs keeper:** G-IDENT exact every hour of every year
+(arm−keeper demand = the artifact delta exactly); C1 12/12 free 8/8; C2
+PASS; C3a 56.54/37.73/37.26 (+4.37/+8.89/+8.25 %; keeper +4.49/+8.89/+8.72 —
+EXCLUDED both ways; 2024 flat); C3b **0.083/0.142/0.111** (0.088/0.147/
+0.115); C4 **0.881/0.287, 0.912/0.260, 0.877/0.298** (keeper 0.875/**0.300**
+in 2025 — off the bound, the predicted direction, excluded from the basis);
+C6 attested PASS; C8 PASS. Dispatch: 2023 CT_PEAKER +0.173 / import −0.119
+TWh; 2025 CC_REGULAR −0.452 / import −0.240 TWh.
+
+**THE ONE GATE MOVEMENT, REPORTED FIRST: C3c-2023 PASS → CAVEAT at 23 h vs
+47 (0.49×; the keeper passed at 24 h / 0.51×)** — one hour across the 0.5×
+line on a supporting-tier criterion, auto-ledgered under the standing rule,
+determination unchanged (one ledgered caveat, the criterion not the year).
+Under the owner's promotion basis (structural integrity improving while gates
+regress MAY still be a keeper; a load-bearing new FAIL goes to the owner
+first) it does not block: (a) G-IDENT holds, (b) governance holds, (c) no
+load-bearing new FAIL — PROMOTED. Predictions 7 hold / P-2 falsified.
+
+**Rule 15 keeper-only retention:** caiso-257 pruned with `--force-uncite`;
+its bundle is OFF DISK; the caiso-258/260 probes and the identity probe
+hard-code `caiso257_ctonly` and must be re-pointed before re-use.
+`audit_keepers.py --iso CAISO` PASS 0/0. **Standing duty created (matrix
+`demand_repairs` evidence):** a CAISO bench-part regeneration must re-derive
+the demand artifact in the same PR — the derive's anchor guard is windowed on
+the annual total and does not catch a plant-map change.
+
+**Rule 22:** 2023–2025 only; the `complete` marker raised again (caiso-259
+§7), not granted; freeze ACTIVE. **Open:** C3c-2023/2024 the accepted
+model-class limitation; the hod 22–23 price-taking import volume (data
+intake); Panoche; the whole-plant-off days (caiso-187/192); the sidecar
+identity residual; 2022 readiness (H-1 buildable on this bench vintage;
+H-2/H-3 the owner's price-source decision); the stale `program-status.json`
+stamp (not touched); the C3a weight basis; S2.
+
+**Next number: caiso-261.**

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-06T16:56:11",
+  "timestamp": "2026-09-06T21:53:12",
   "iso": "CAISO",
   "years": [
     2023,
@@ -354,8 +354,8 @@
     "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
     "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "c78f6d94",
-  "basis_sha": "c78f6d9484bb4bf37e0480581fedb9b08adf0506",
+  "git_sha": "e162147b",
+  "basis_sha": "0544138d7bb7045be34bebff779280049175da7d",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
