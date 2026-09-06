@@ -1249,6 +1249,10 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#16 (main HEAD `00cee150`).** SCN-WS5A-RESOLVE running: PRECOMMIT (THE PIN `bdfb3095`) + 5/13
+  legs, every gate PASS; S5's identity measured on the NEISO/NYISO campaign REFs (NYISO 2030 CO2 −46 %); the cache
+  blocker defeated by D65-B's re-key. Policy charter v5: ERCOT / NEISO / NYISO launchable now, PJM / CAISO / MISO
+  wait for their REF. Desk's r#14 D67-ARM note corrected (live on PJM). capx D79 fingerprint landed after the pin.
 - 2026-09-06 — **SCN-DESK r#15 (main HEAD `e6a0402f`).** Quiet: RESOLVE undispatched a second refresh — asked,
   re-emitted verbatim, not graded lost (owner batches launches); policy lanes correctly unlaunched; capx D79
   (the cache-key fingerprint this desk routed) ruled ADOPT; D65-B-R's batch still holds the per-plant slot.
