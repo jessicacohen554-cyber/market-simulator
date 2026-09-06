@@ -963,8 +963,13 @@ def caiso_ra_mustoffer_min_gen(
         screen_stats: Optional dict the ``startup_aware`` run screen FILLS
             with its census (nyiso-200): ``runs_detected`` / ``runs_kept`` /
             ``runs_dropped`` (counts over every eligible unit),
-            ``dropped_hours`` (P0 online hours inside dropped runs) and
-            ``units_with_drops`` (row indices). Diagnostics only — never
+            ``dropped_hours`` (P0 online hours inside dropped runs),
+            ``units_with_drops`` (row indices) and ``per_unit`` (nyiso-201:
+            per row index, ``detected`` / ``kept`` / ``dropped`` /
+            ``dropped_hours``, so a screen can verify the identity that a
+            unit carrying bridge floor also carries a KEPT run — the run
+            screen's own by-construction claim, made falsifiable rather
+            than asserted). Diagnostics only — never
             read by the floor arithmetic, so ``None`` (default) is
             byte-identical and a supplied dict changes no floor.
 
@@ -1083,12 +1088,29 @@ def caiso_ra_mustoffer_min_gen(
                 screen_stats["runs_dropped"] = (
                     screen_stats.get("runs_dropped", 0) + n_drop
                 )
+                kept_set = set(kept_runs)
+                drop_h = sum(e - s for s, e in runs if (s, e) not in kept_set)
                 if n_drop:
-                    kept_set = set(kept_runs)
-                    screen_stats["dropped_hours"] = screen_stats.get(
-                        "dropped_hours", 0
-                    ) + sum(e - s for s, e in runs if (s, e) not in kept_set)
+                    screen_stats["dropped_hours"] = (
+                        screen_stats.get("dropped_hours", 0) + drop_h
+                    )
                     screen_stats.setdefault("units_with_drops", []).append(int(g))
+                # PER-UNIT census (nyiso-201): the screen's by-construction
+                # claim is that no floor leg anchors on a dropped run, since
+                # ``runs`` is REBOUND to ``kept_runs`` below and every leg
+                # reads it. Recording kept runs per row lets a screen falsify
+                # that claim at plant grain (floor at a unit with zero kept
+                # runs would mean the rebinding did not take) instead of
+                # asserting it from the code path.
+                pu = screen_stats.setdefault("per_unit", {})
+                e_pu = pu.setdefault(
+                    int(g),
+                    {"detected": 0, "kept": 0, "dropped": 0, "dropped_hours": 0},
+                )
+                e_pu["detected"] += len(runs)
+                e_pu["kept"] += len(kept_runs)
+                e_pu["dropped"] += n_drop
+                e_pu["dropped_hours"] += drop_h
             runs = kept_runs
         if not runs:
             continue

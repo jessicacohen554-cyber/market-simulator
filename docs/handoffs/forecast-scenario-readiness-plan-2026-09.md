@@ -940,6 +940,7 @@ and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **S7 EXECUTED (capx D77, `ae8dd2a0`, PR #5089, 2026-09-06):** the repair is on main (a `ccs_capture_fraction` stamp composed at both measured-rate restoration sites; no cache key moves, so pre-fix bundles reaching 2028 with a retrofit are silently stale at their own key); the NEISO screen and FINDING are owed.
 
 **D-10 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#10); desk card, live copy in the ledger §2.** SCN-WS5A-LOAD measured that S5's premise was false: the retrofit screen is armed by the STATE carbon program, so NEISO's reference case carries 8.8 GW of `gas_cc_ccs` (NYISO 6.5 GW), mis-rated pre-D77 — NEISO 2030 CO2 overstated by 5.60 Mt (41.9 %), NYISO by 5.29 Mt (25.3 %). Question: re-pin the campaign once post-D77 and re-solve only the five contaminated legs plus CAISO (recommended), finish at the frozen pin and re-solve afterwards, or finish and disclose. A-POLICY's S5 release condition is unchanged and needs no card: it releases when the model-grain paired check lands (D77's screen or the re-solved NEISO REF).
+**RULED 2026-09-06 (SCN-DESK r#10 amendment 1) — S8: "Re-pin once post-D77 now."** The SCN-WS5A-LOAD amendment is issued: PJM/MISO finish at the frozen pin, NEISO + NYISO re-solve and CAISO solves at a post-D77 pin under a hunk-by-hunk G-DRIFT, ERCOT/PJM/MISO stand on empty retrofit ledgers; the re-solved NEISO REF is S5's model-grain paired check, so Stage A-POLICY releases the refresh it lands with no further card.
 
 ---
 

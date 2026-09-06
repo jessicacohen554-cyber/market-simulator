@@ -1,0 +1,21 @@
+{
+ "F_by_class": {
+  "CT_CHP": 935.219,
+  "CT_PEAKER": 11801.386,
+  "ST_GAS": 1829.687
+ },
+ "moved": {
+  "CT_CHP": 147,
+  "CT_PEAKER": 784,
+  "ST_GAS": 14
+ },
+ "total": {
+  "CC_CHP": 129,
+  "CC_REGULAR": 266,
+  "CT_CHP": 195,
+  "CT_PEAKER": 828,
+  "OTHER": 219,
+  "ST_GAS": 25
+ },
+ "year": 2023
+}
