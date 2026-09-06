@@ -320,3 +320,100 @@ resolves `None` for both ISOs (it is PJM-keyed), so D67-ARM is inert here and
 NEISO's requirement is the peak × FPR path — which is precisely why NEISO, unlike
 PJM, still has a live requirement channel. The D52 gates are NYISO's own and are
 `True` there by ISO default, not by anything this lane sets.
+
+---
+
+## ADDENDUM 1 — D75-R-ARM MERGED MID-LANE; the PJM legs are re-declared at the new head, BEFORE they are solved
+
+**Recorded after the NEISO and NYISO legs were solved, graded and pushed, and BEFORE the
+first PJM LP.** That order is the point: the two ISOs already measured are untouched by
+this addendum, and the PJM legs it declares had not started when it was written.
+
+**The dispatch STOP is now MET.** `origin/main` reached **`57bc34a7`** and carries
+**`6164231e` — "capx D75-R-ARM: `pjm_vre_accreditation_vintage` is ARMED for PJM (owner
+ruling Q55)"**; `_pjm_config.default_scenario_overrides` now contains
+`"pjm_vre_accreditation_vintage": True`. Both legs of §0's precondition table, which read
+FAIL when this document was first pushed, now read PASS. **So the charter's PJM question
+becomes askable, and this lane asks it** rather than closing with it open.
+
+### A1.1 G-DRIFT re-audit, `0f7a4842` → `57bc34a7`, hunk by hunk
+
+Seven non-merge commits touch the solve path:
+
+| commit | change | classification |
+|---|---|---|
+| `6164231e` | **capx D75-R-ARM** — `pjm_vre_accreditation_vintage: True` in `_pjm_config` | **LIVE for PJM, by construction — it is the reason this addendum exists.** INERT for NEISO/NYISO: the override is inside `_pjm_config` and reaches no other ISO |
+| `486c115f` | constants facade re-exports two D75-R `capacity_market` names | **INERT.** `constants` IS a `SURFACE_MODULE`, so this is the one hunk that could have moved keys — measured: `solve_surface.moved_rows` is **0 for all six ISOs** at this head, so every name is still at its declared hash. A re-export adds no surface row |
+| `14ae4d76` | HOURLY neighbour-anchored MISO↔PJM seam ladder | **INERT** — default-off gate, absent from every recipe in this lane |
+| `b8e0c537` | measured 2020-2022 ERCOT load-resource RRS series | **INERT** — ERCOT data artifact |
+| `caaa3e05` | caiso-260 keeper promotion | **INERT** — a CAISO backcast promotion; no hindcast path |
+| `7ff10b64` | ruff format on the miso-231 files (AST-identical) | **INERT** — formatting |
+| `62681e22` | SPP-21 seeds a seventh matrix shard | **INERT** — docs |
+
+### A1.2 The NEISO and NYISO results survive the rebase UNCHANGED — verified, not asserted
+
+`p2_predeclare.py` re-run at `57bc34a7` and diffed against the copy pushed before the first
+LP:
+
+- **NEISO keys UNMOVED**, digit for digit: `ca4b163f62c4f52f` / `69688c797d7bac80`.
+- **NYISO keys UNMOVED**: `0641a92f61740d55` / `236b56818bed34e9`.
+- **Zero** pre-declared seam-peak, measured-peak or requirement-delta rows moved in either
+  ISO (0 of 18).
+- **STOP 1 still PASS** at the rebased head (12 recipe keys).
+
+So every number in the phase-3 FINDING's §3-§5 describes `57bc34a7` as well as the base its
+legs were solved at.
+
+### A1.3 The PJM legs, RE-DECLARED at the new head
+
+**PJM's keys MOVED, exactly as the charter predicted they would.** Phase 2's PJM control
+was `a9c66d8ea25acb9d`; at this head it is:
+
+| leg | ISO | window | flag | cache key |
+|---|---|---|---|---|
+| 7-C | PJM | 2021-2025 | `--no-capacity-screen-peak-measured-hindcast` | **`b518f5fe7d02f961`** |
+| 7-A | PJM | 2021-2025 | `--capacity-screen-peak-measured-hindcast` | **`559c05579b47684b`** |
+
+Control still equals the bare recipe key at this head (`control_equals_bare: true`), and
+the arm is distinct. Machine-emitted into `docs/handoffs/d76/p3_predeclare_addendum.json`
+**before the first PJM solve**, never typed.
+
+**The ELCC vintage is armed on BOTH legs**, which is what makes this the right A/B: it
+isolates *this lane's* gate against a fleet whose accreditation is already on the repaired
+vintage — the configuration the charter's question is about.
+
+### A1.4 THE ZERO-LP PHASE 0 (rule 29(0)) — the charter's PJM question, answered before the solve
+
+The charter's PJM question is one thing: *is the accreditation census still peak-inert now
+that the ELCC vintage is armed?* The shipped resolvers, evaluated at the seam peak and the
+measured peak at this head with `pjm_vre_accreditation_vintage = True`, across three
+installed-MW levels per year to separate a peak term from a penetration term:
+
+| DY | wind (seam → measured) | solar (seam → measured) | DR-as-supply | peak-sensitive? |
+|---|---|---|---|---|
+| 2021 | 0.41 → 0.41 | 0.1064 / 0.08839 / 0.0789 → identical | 11,886.8 → identical | **no** |
+| 2022 | 0.41 → 0.41 | 0.1064 / 0.08839 / 0.0789 → identical | 10,513.0 → identical | **no** |
+| 2023 | 0.15 → 0.15 | 0.52079 → identical | 10,116.7 → identical | **no** |
+| 2024 | 0.21 → 0.21 | 0.47959 → identical | 10,146.4 → identical | **no** |
+| 2025 | 0.38 → 0.38 | 0.13520 → identical | 6,084.8 → identical | **no** |
+
+**Answer: still peak-inert — and the arming makes the inertness STRONGER, not weaker.**
+Note the shape of the 2023-2025 rows: the credit is now **constant across installed MW**,
+where 2021-2022 still vary with it (solar 0.1064 → 0.08839 → 0.0789). That is the armed
+vintage replacing the penetration-indexed *curve* with the **published per-delivery-year
+class rating**, which has neither a peak term nor a penetration term in its functional
+form. Phase 2's inertness was **accidental** — a curve that happened to clamp; this one is
+**structural** — a rating with no peak argument at all. 2021-2022 fall through to the old
+curve at the pre-vintage edge and are peak-independent there too.
+
+**Pre-declared consequence for the solve, fixed here before it runs:** with the requirement
+peak-independent (D67-ARM, `req Δ = 0.0` in all five DYs — unchanged at this head) and the
+census peak-inert (above), **PJM's A/B is expected to move `screen_peak_demand_mw` and
+nothing else, in every one of the five years** — i.e. phase 2's PJM verdict should
+reproduce at the post-Q55 head. **A move in any other field would falsify this addendum**
+and is the outcome worth watching for; it is reported either way, and only §4's STOPs can
+kill the arm.
+
+The legs are solved anyway rather than resting on this arithmetic, because the charter asks
+for the census verdict **and** the ledger evidence, and because a zero-LP prediction that is
+never checked is not a measurement.
