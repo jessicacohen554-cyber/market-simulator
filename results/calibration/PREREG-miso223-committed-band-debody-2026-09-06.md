@@ -208,3 +208,45 @@ and every other value byte-copied from `miso220_nonsteamlift_B/run_config.json`.
 becomes the check that catches any surprise from the wholesale-replacement channel: the arm's
 recorded `offer_curve_by_group` must equal the keeper's table with those 11 substitutions and
 nothing else. S-1 remains "exactly 11 values differ".
+
+---
+
+## ADDENDUM B (written before either screen solve ran) — execution route and a stale ref
+
+Three corrections to this document's own text, recorded rather than silently fixed.
+
+**(1) THE SOLVES RUN IN CI, ON EXPLICIT OWNER AUTHORIZATION.** A MISO per-plant
+single-year LP peaks near **14 GB** of anon RSS; a Claude Code session's Bash cgroup caps at
+**13 GB**. Measured this session, three times: the concurrent pair was OOM-killed (one process
+at anon-rss 13,954,092 kB), and the control and arm were each killed **running alone** at the
+cap (`memory.failcnt` 131,171; `memory.max_usage_in_bytes` = `memory.limit_in_bytes` = 13 GB).
+The gap is ~1 GB and there is no recipe-neutral way to close it — every knob that would
+(fleet binning, zone count, the 2,606-member per-asset reserve columns) changes the recipe,
+and a screen solved on a different recipe than the keeper measures nothing. CLAUDE.md's
+"never offload work to CI" section requires owner sign-off before spending runner minutes on
+this private repo; **the owner gave it.** The route is
+`.github/workflows/calibration-solve.yml` — `workflow_dispatch`-only, parameterized, dry-run
+by default, and the bundle leaves as a **build artifact that is never committed** (rule 29(c)
+deletes screen and control bundles before merge; rule 15 registers runs from a session, not
+from CI). Rule 22 is untouched: the tier-marker gate still lives in `replay_keeper` /
+`run_calibration_full`, and CI is not a route around it.
+
+**(2) THE G-DRIFT REF IN §7 IS STALE, AND THE CONTROL IS WHY THAT IS HARMLESS.** §7 recorded
+HEAD as `d340adf1`. This session's work was merged and `main` has since moved to `42fcc058`.
+**Both the control and the arm are dispatched against `42fcc058`**, so the A/B differencing is
+between two solves of one code state and every gate in §5 stands as written. This is exactly
+the situation §7 spent a control solve to be immune to: a form-4 differencing against the
+keeper's committed numbers would now be reading two code states, and it is not being used.
+The §7 diff (`4545300d..d340adf1`, 66 files) is superseded as a **count**, not as a
+**conclusion** — G-DRIFT was LIVE then and is more so now, and the remedy is unchanged.
+
+**(3) A NUMBER IN §1.** The model's minimum price across all committed zone-hours is
+**$17.18** (2024), not the $17.28 §1 states. The draft figure came from a load-weighted
+system-average series; the instrument
+(`scripts/probes/_miso223_body_tail_phase0.py` → `_miso223_body_tail.json`) takes the true
+zone-hour minimum. The claim is unchanged and marginally stronger. Every other pre-registered
+number reproduces exactly from that instrument: body too high **36/36** months, tail too low
+**33/36**, corr(monthly error, actual hours > $100) = **−0.676**, screen year **2024** derived
+from the committed-band footprint.
+
+**No pre-registered value, gate band, or kill condition is amended by this addendum.**
