@@ -630,3 +630,71 @@ So liveness is decided by one measured predicate, `resolve_capacity_market_suppl
   its committed pre-D65-B bundle key when the two acts are undone. The declaration written before
   the rebase survives the rebase unchanged, so no re-declaration is owed and the STOP *"a realized
   key ≠ its pre-declared value"* is unchanged.
+
+---
+
+## ADDENDUM E (2026-09-06, session **D65-B-R**) — second rebase re-audit; the PJM key is RE-DECLARED
+
+Addendum D merged to `main` (`f4cf9c96`) and `main` moved `13ee0c89 → c3988c73` (32 commits).
+**Still no leg had solved.** Charter Step 1: *"every key must resolve unmoved or the moved ones are
+re-declared with the moving hunk named."* One moved. It is re-declared here, with its hunk named.
+
+### E.1 `constants.py` FIRST: ZERO hunks. Solve-path scope: 2 files
+
+`src/market_sim/config/iso_configs.py` (+36) and `src/market_sim/results/cache.py` (+50).
+**`iso_configs.py` is no longer absent** — and Addenda C and D both leaned on its absence to
+conclude "no ISO arms it". That inference is now retired and replaced by measurement.
+
+### E.2 THE MOVING HUNK: capx **D67-ARM** (owner ruling Q52, *"ARM for PJM"*)
+
+`_pjm_config`'s `default_scenario_overrides` gains
+**`"capacity_adequacy_requirement_published_by_iso": {"PJM": True}"`** — the adequacy
+requirement's OPERAND becomes PJM's own published whole-RTO Reliability Requirement in place of the
+model's `screen peak × FPR` reconstruction, at the one seam
+(`gross_adequacy_requirement_mw`) the reliability floor, the reserve-margin build backstop and the
+CR-1 position all reach through. Armed the D57/Q44 way — through the ISOConfig override, with the
+shared `ScenarioConfig` default left `None` — so no other ISO's key moves.
+
+**Decomposed, single cause, measured:**
+
+| PJM object | value | |
+|---|---|---|
+| t1f SOLVE key at HEAD | `542eeedadab83ee1` | **the RE-DECLARED key** |
+| undo **D67-ARM only** | `43cee1c9558ab859` | **= Addendum C's declared PJM solve key, exactly** |
+| undo D67-ARM **+ the two D65-B acts** | `09996eca71ee80fd` | **= the committed pre-D65-B bundle key, exactly** |
+| bare PJM forecast at HEAD | `748a1cfaecd3acef` | the re-declared bare key |
+| bare PJM forecast, undo D67-ARM | `eaa3fbef5ff182c9` | **= PRECOMMIT §3's declared value, exactly** |
+| bare PJM **backcast** | `3a566deac3a85682` | **unmoved** — the backcast coercion is intact |
+
+So the whole move is D67-ARM's and nothing else's, and Addendum C's declaration is recovered
+exactly by undoing it. **The other 13 bare keys and the other 6 solve keys are UNMOVED**, each
+still reproducing its committed pre-D65-B key with the two acts undone.
+
+**RE-DECLARATION (this supersedes Addendum C's PJM row ONLY):**
+
+> **`pjm-t1f` SOLVE key = `542eeedadab83ee1`; bare PJM forecast = `748a1cfaecd3acef`.**
+> A realized PJM bundle on any other key is a STOP.
+
+### E.3 PJM now carries TWO live hunks, and that is a disclosure, not a difference
+
+| leg | live hunks | form 4 |
+|---|---|---|
+| `ercot-t1f` · `neiso-t1f` · `nyiso-t1f` · `caiso-t1f` · `miso-t1f` · `neiso-t3` | none | **VALID** |
+| **`pjm-t1f`** | **D81** (Addendum D.3) **+ D67-ARM** | **VOID** |
+
+The PJM leg's before/after against `pjm-t1f-pre-d65b` therefore carries **three** distinct causes —
+the two D65-B acts, D81's must-offer re-routing, and D67-ARM's operand swap. It is **reported at
+full magnitude and attributed to all three, never netted**, and PJM's row is the one row on this
+lane's board table that is not a clean two-act reading.
+
+**No control solve is spent, and the gate table is still clean.** Addendum C's gates G0'–G5' read
+**only** the `ccs_retrofits` ledger rows. D81's signature is confined to `offer_stack` rows and
+D67-ARM's to the adequacy requirement (`I7` / `I12` / the floor). Neither writes a `ccs_retrofits`
+row, so **PJM's G0'–G5' verdict remains a clean reading of the two acts**; what the two live hunks
+confound is the FC-map delta, which is disclosed rather than differenced. A retrofit set that moves
+*because* the reliability floor moved is the one coupling to watch, and it is visible on the
+gate table itself (G5' against D64 §2.4's PJM ceiling 0.41 / 2.48 / 2.48 GW).
+
+### E.4 `results/cache.py` (+50)
+
+Epoch notes only — prose, no code hunk. **INERT.**
