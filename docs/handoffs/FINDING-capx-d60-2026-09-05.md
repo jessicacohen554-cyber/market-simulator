@@ -348,6 +348,99 @@ legs, never during one.** This lane now enforces it mechanically — the leg dri
 `HEAD` before the solve and refuses to score or register if `HEAD` moved during it
 (`exit 90`), so the failure mode cannot recur silently even if the discipline lapses again.
 
+### 5.0f The hunk the rebase admitted — dated, and what it voids (D60-R4, 2026-09-06)
+
+**§5.0d above was TRUE when it was written at 01:55 UTC and FALSE by the time leg 3 was
+committed at 02:26.** This section dates that transition. It is written by the successor lane
+D60-R4 and appended in place; §5.0d's own sentences are left exactly as they were, because the
+record has to show what was believed and when.
+
+**A naming caution first, because this file now carries two different "hunks."** §8-blast-radius
+below names the **D55 `_floor_retention_merit` hunk** — a code change in
+`model/capacity_evolution/retirements.py`. §5.0d's probe asked whether a *second* code hunk sat
+between D65's basis and this lane's HEAD, and answered no. The object of THIS section is a
+different thing entirely: the **SCN-LOAD demand-table hunk**, a change to
+`config/constants.py`. It is not a second code hunk on the retirement path, which is why the
+probe could be right and the legs still be affected.
+
+**The commit, verified from the trees rather than asserted.**
+
+| | sha | UTC | what |
+|---|---|---|---|
+| the demand hunk | `d14a7ed0` | **2026-09-06T02:18:26Z** | *SCN-LOAD: curate the six published ISO load forecasts as the load-forecast datatype* |
+| its merge to `main` | `ad45b0e4` (PR #4970) | **2026-09-06T02:19:32Z** | — |
+| §5.0d's probe commit | `19473c82` | **2026-09-06T01:55:00Z** | *"NO second hunk, and the STOP does not fire"* |
+
+The probe therefore pre-dates the hunk's own commit by **23 min 26 s** and its merge by
+**24 min 32 s**. That is not an inference from timestamps: `19473c82`'s
+`src/market_sim/config/constants.py` blob is `cc4d9d49`, **byte-identical to `d14a7ed0^`'s**,
+so the tree the probe solved on carried the PRE-hunk demand table. `14f860fb`'s blob is
+`1437f798` — `d14a7ed0`'s. The lane's own integration of `origin/main` between those two
+commits is what admitted it.
+
+**Which rebase.** The AM.1 charter attributes the admission to the lane's *final* rebase
+(X-6b, onto `05968ab9`, 03:55:23Z). Measured, that is **too late by ninety minutes**:
+`19473c82`'s parent is `09e1092f` (PRE-hunk) and `14f860fb`'s parent is `c2b13cc7` (a `main`
+merge POST-`ad45b0e4`), and `19473c82` is an ancestor of `14f860fb`. The hunk entered at the
+rebase taken **between the probe and leg 3** — before leg 3 was solved, not after leg 5.
+X-6b was POST-hunk too, but it inherited the condition rather than creating it. The
+consequence is the wider one: **all three re-solved legs are POST-hunk**, not only legs 4 and 5.
+
+**Each leg's own `run_config.json` `git.sha`, placed by `git merge-base --is-ancestor`:**
+
+| leg | bundle | `git.sha` | side |
+|---|---|---|---|
+| 4 arm | `results/ff-t1f-d60/pjm` (`09996eca71ee80fd`) | `14f860fb` | **POST-hunk** |
+| 4 control | `results/ff-t1f-d45r/pjm` (`321f04e9060787f0`) | `bf54a4ad` | **PRE-hunk** † |
+| 5 arm | `results/ff-t3-neiso-golden/bau-d60` (`f04fd06348e1623d`) | `e9d8263b` | **POST-hunk** |
+| 5 control | `results/ff-t3-neiso-golden/bau-d46` (`67678e58b2d0526c`) | `012ec403` | **PRE-hunk** |
+| 3 arm | `caiso-t1f` (`29f8eb372810195f`) | `14f860fb` | **POST-hunk** |
+
+† `bf54a4ad` is **not resolvable in this clone** — its branch is deleted and
+`git fetch origin bf54a4ad` returns *"couldn't find remote ref"* — so its side is established
+from its bundle's own `timestamp` (2026-09-04T10:46:10Z, ~40 h before the hunk) and, decisively,
+from the ledger arithmetic in §5.4's correction block: its 2027 peak of 163,626.576 MW is the
+`mid.near = 0.036` world, and the arm's 174,653.562 MW is the `0.064645` one.
+
+**What moved.** `d14a7ed0` re-derived `DEMAND_GROWTH_RATES` for all six ISOs, plus
+`DATACENTER_ADDITIONS_MW` and `ELECTRIFICATION_LAYERS`. The two rows that matter here, read
+off `d14a7ed0^` and HEAD:
+
+| ISO | `mid.near` | `mid.long` |
+|---|---|---|
+| PJM | 0.036 → **0.064645** | 0.024 → 0.023830 |
+| NEISO | 0.013 → **0.007446** | 0.012 → 0.013301 |
+
+**A correction to the AM.1 charter itself, recorded because the numbers are load-bearing.**
+The charter states *"NEISO 0.031 → 0.054816 and long 0.020 → 0.014850."* Measured, that pair is
+**MISO's** row, not NEISO's. NEISO's near rate went **DOWN**, 0.013 → 0.007446 — which is the
+only reading consistent with leg 5's own ledger, where every arm peak is *lower* than its
+control's (§5.5's correction block). The arithmetic closes independently: at a 2024 weather
+year, `(1.007446/1.013)^3 = 0.98365` against a measured 2027 peak ratio of
+24,800.853 / 25,213.296 = **0.983644**, and the same construction at 2030 gives 0.967566
+against a measured 0.967556.
+
+**The demand table is stable from `14f860fb` to HEAD.** `DEMAND_GROWTH_RATES` and
+`DATACENTER_ADDITIONS_MW` compare equal across `14f860fb`, `e9d8263b` and HEAD (the only
+`constants.py` movement in that span is two re-export lines), so there is exactly ONE demand
+move in this window, and today's HEAD still carries it.
+
+**What this voids.** Under rule 29(b) the incumbent keeper's committed bundle is the control
+only when the arm and the control answer the same question. They do not here: the arm carries
+a re-derived demand table and the `-pre-d60` prior does not, so **form-4 differencing against
+`pjm-t1f-pre-d60` and against `bau-d46` is VOID for legs 4 and 5.** It is *not* void because
+the numbers are wrong — every number in §5.4 and §5.5 reproduces exactly — but because their
+**attribution** does. §5.4 and §5.5 carry dated correction blocks re-attributing them; the
+STOP in §5.4 is untouched and still fired as written.
+
+**Leg 3 is unaffected on the merits** and was already known to be: CAISO's 2030 peak reads
+54,820.591 MW on both sides of the hunk, so the CAISO differencing is inert regardless of side.
+
+**Why the pre-declared keys matching proved nothing about this.** `constants.py` is **outside
+the cache key**. A matched key says the *config* was the one declared; it is silent on whether
+the *constants* the config reads moved underneath it. A matched key is a config audit, never a
+G-DRIFT verdict — and this section is the case that shows the difference.
+
 ### 5.3 Leg 3 — `caiso-t1f` on `29f8eb372810195f`: every scored row identical, the flip is composition-only
 
 Run `caiso-2026-2030-d60-arm`, `--golden-posture` 2026–2030, **5/5 years, 22.0 min, 4.81 GB**.
@@ -427,6 +520,64 @@ ledger emits **3 entries, 2 unattested** — `capacity_market_supply_clearing_by
 carries no numeric leaf, so `_is_parameterish` skips it entirely and its Q37 row is dormant, as
 row 7's already is.
 
+**Correction, D60-R4 2026-09-06: the +16,220 / +21,607 / +27,272 / +33,504 MW requirement rise
+is MOSTLY THE DEMAND TABLE, not the gates.** Nothing above is withdrawn and no number above is
+wrong; what is corrected is the sentence *"the entire rise belongs to the D48 + D57 gates."*
+§5.0f dates the cause: the arm was solved POST-`d14a7ed0`, on a re-derived `DEMAND_GROWTH_RATES`
+where PJM's `mid.near` reads **0.064645** against the `-pre-d60` control's **0.036**, so the
+control and the arm are not standing on the same peak. Rule 29(b) form-4 differencing against
+`pjm-t1f-pre-d60` is VOID for this leg (§5.0f), and the attribution below replaces it.
+
+**Read from the two committed `evolution_<year>.json` ledgers, zero LP.** With `P` the ledger's
+`peak_demand_mw`, `R` its `adequacy_requirement_mw` and `r = R/P`:
+
+`ΔR = (P_arm − P_ctl)·r_ctl  +  P_arm·(r_arm − r_ctl)` — the **peak leg** and the **ratio leg**.
+
+| yr | P ctl | P arm | R ctl | R arm | r ctl | r arm | ΔR | peak leg | ratio leg | peak share | r_ctl/r_arm |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026 | 161,027.171 | 167,211.957 | 141,805.164 | 153,333.365 | 0.880629 | 0.917000 | +11,528.2 | +5,446.5 | +6,081.7 | 47.2 % | 0.9603367 |
+| 2027 | 163,626.576 | 174,653.562 | 145,508.504 | 161,729.198 | 0.889272 | 0.926000 | +16,220.7 | **+9,806.0** | **+6,414.7** | **60.5 %** | 0.9603367 |
+| 2028 | 166,438.970 | 182,820.460 | 150,263.195 | 171,869.515 | 0.902813 | 0.940100 | +21,606.3 | **+14,789.4** | **+6,816.9** | **68.4 %** | 0.9603367 |
+| 2029 | 169,472.022 | 191,759.540 | 153,001.472 | 180,273.143 | 0.902813 | 0.940100 | +27,271.7 | **+20,121.5** | **+7,150.2** | **73.8 %** | 0.9603367 |
+| 2030 | 172,733.675 | 201,520.718 | 155,946.134 | 189,449.627 | 0.902813 | 0.940100 | +33,503.5 | **+25,989.3** | **+7,514.2** | **77.6 %** | 0.9603367 |
+
+Residual `ΔR − peak − ratio` is ≤ 6.4e-12 MW in every year — the decomposition is exact, not
+approximate, because `r` is provably peak-INDEPENDENT here: for PJM every branch of
+`resolve_adequacy_requirement_mw` is multiplicative in the peak (`firm_peak × FPR`, or the
+`(1+PRM) × icap_to_ucap` fallback, times `(1 − dr_fraction)`), so `r` is a pure function of
+`(config, iso, year)` and the split cannot leak between legs.
+
+**The peak leg is 60–78 % of the rise in every comparable year and it is the SCN-LOAD hunk.**
+It is nobody's gate. **The ratio leg — +6,415 / +6,817 / +7,150 / +7,514 MW — is the only part
+the Q44 gates own.**
+
+**And within the gates the attribution is sharper than §5.4 assumed.** `r_ctl / r_arm` is
+**0.9603367 in every year, to seven figures**, and
+`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"] = 0.03966325587762226`, i.e. `1 − f =
+0.9603367441`. The arm's requirement is exactly the control's divided by `(1 − f)`. So:
+
+* the **entire** ratio leg is `pjm_demand_response_supply` — D48's DR-as-supply limb declining
+  to net DR out of the peak (`resolve_adequacy_requirement_mw` returns `gross_mw` un-netted when
+  `resolve_demand_response_supply_mw` returns a MW);
+* `pjm_accreditation_design_vintage` moved the requirement by **ZERO** on 2026–2030. `gross_mw`
+  is identical on both sides, so the FPR the devintage selects is the one the control's path
+  already resolved. §5.4's *"and `pjm_accreditation_design_vintage` applies the post-CIFP FPR
+  from DY 2025/26"* is true as a description of the mechanism and **not** a description of
+  anything that moved this requirement;
+* D57's supply clearing does not enter `resolve_adequacy_requirement_mw` at all.
+
+**THE STOP IS NOT SOFTENED. It fired as written and it stands.** Every comparable I12 year is
+more negative than the control's, exactly as Addendum C.4 declared, and P23's premise
+("an unchanged requirement") was still false. What changes is only *why*: most of the
+requirement rise was a demand re-derivation the leg did not control for, so the sentence
+*"D48's accounting is not position-neutral forward"* is **NOT ESTABLISHED by this pair** — it is
+a claim the pair cannot separate from the demand table. Whether it is true is what D60-R4's one
+earned same-HEAD control (Addendum E) is spent to decide. Supply rose +9,092 / +10,276 /
++14,303 / +18,000 MW against a ratio leg of +6,415 / +6,817 / +7,150 / +7,514 — supply exceeds
+the gate-owned rise in every year — so the pre-declared reading is that the same-HEAD control
+will show D48 lengthening the position, not shortening it; the falsifier is any year where it
+does not.
+
 ### 5.5 Leg 5 — `neiso-t3` GOLDEN-3 on `f04fd06348e1623d`: the FC map does not move, and the carried FC-5 table is measured for the first time
 
 Run `neiso-2026-2050-t3-golden3-d60`, `--golden-posture --full-solve-authorized`, **25/25 years,
@@ -468,6 +619,69 @@ the FC-5 table against `results/ff-t3-neiso-golden/bau`, and D46/D47 carried it 
 holds no pre-declaration to re-author 54 verdicts. **Addendum B's own premise was wrong** and is
 corrected in §5.0c: it pre-declared FC-5 / FC-6 "SKIPPED", where the committed record reads
 CAVEAT on both.
+
+**Correction, D60-R4 2026-09-06: "ONE substantive mechanism against the control" is FALSE as a
+description of the difference between these two bundles.** It is true of the *config* — the
+field-by-field verification above stands, `ccs_retrofit_capex_co2_scaling` really is the only
+`ScenarioConfig` field that moved — but `constants.py` is outside the cache key and outside the
+config diff, and the arm was solved POST-`d14a7ed0` while `bau-d46` is PRE (§5.0f). NEISO's
+`mid.near` went **0.013 → 0.007446** and `mid.long` **0.012 → 0.013301**: the arm is a
+**LOWER-demand world**. Rule 29(b) form-4 differencing against `bau-d46` is VOID for this leg.
+
+**The peaks, read from the committed ledgers (zero LP):**
+
+| yr | peak ctl | peak arm | Δ | Δ % | requirement ctl | arm | `r` both sides |
+|---|---|---|---|---|---|---|---|
+| 2027 | 25,213.296 | 24,800.853 | −412.4 | **−1.64 %** | 25,934.571 | 25,510.329 | 1.028607 |
+| 2030 | 26,209.453 | 25,358.989 | −850.5 | **−3.24 %** | 26,959.225 | 26,084.433 | 1.028607 |
+| 2035 | 27,847.707 | 26,934.418 | −913.3 | **−3.28 %** | 28,644.345 | 27,704.930 | 1.028607 |
+| 2040 | 29,559.155 | 28,773.981 | −785.2 | **−2.66 %** | 30,404.752 | 29,597.117 | 1.028607 |
+| 2050 | 33,304.056 | 32,838.603 | −465.5 | **−1.40 %** | 34,256.784 | 33,778.015 | 1.028607 |
+
+`r = R/P` is **identical to six decimals on both sides in every year**, so the §5.4-style
+decomposition gives a ratio leg of ≤ 0.001 MW and a peak leg of 100.0 %: unlike PJM, NEISO has
+**no gate contribution at all** here. The entire requirement difference is the demand table.
+
+**The >5 % movements carry the sign of a lower-demand world, not of fewer retrofits.** Total
+generation moves in lockstep with the peak — **−3.24 / −3.30 / −2.64 %** at 2030 / 2035 / 2040
+against peak **−3.24 / −3.28 / −2.66 %** — and on that base the gas-family and CO2 movements
+this section reported are what a ~3 % demand cut does to the marginal fuel:
+
+| | 2030 | 2035 | 2040 |
+|---|---|---|---|
+| `co2_mt` | 14.710 → 13.368 (**−9.12 %**) | 10.221 → 8.912 (**−12.81 %**) | 9.579 → 8.559 (**−10.65 %**) |
+| gas-family TWh | 36.457 → 32.762 (**−10.14 %**) | 31.891 → 28.118 (**−11.83 %**) | 31.001 → 27.839 (**−10.20 %**) |
+
+These reproduce the −9.1 / −12.8 / −10.7 % and −10.1 / −11.8 / −10.2 % reported above to the
+decimal; what changes is that they are **not** attributable to Q42.
+
+**P16 STANDS, as a STATUS reading.** Determination HOLD → HOLD with zero of 19 scored rows
+moving is a fact about the two bundles and is unaffected: it says the FC map is insensitive to
+*everything* that separates them, which is now known to include a demand re-derivation as well
+as the Q42 flip. As a claim about Q42 alone it is not established by this pair.
+
+**P14 / P15 stand as written** — 11,208.9 → 10,423.6 MW over 2028–2031, inside the pre-declared
+10.4–11.3 GW band, conversion still ending in 2031, and the recorded miss against P15's
+"at most ~0.4 GW" point estimate is kept at full magnitude. **What is added: the retrofit window
+now carries a demand co-movement, and it is where the −785.3 MW actually sits.**
+
+| yr | ctl rows / MW | arm rows / MW | Δ MW | peak Δ |
+|---|---|---|---|---|
+| 2028 | 17 / 2,999.6 | 12 / 2,984.4 | −15.2 | −2.18 % |
+| 2029 | 23 / 2,994.4 | 11 / 2,912.0 | −82.4 | −2.71 % |
+| 2030 | 10 / 2,948.6 | 10 / 2,936.5 | −12.1 | −3.24 % |
+| **2031** | 10 / 2,266.3 | 6 / **1,590.7** | **−675.6** | **−3.78 %** |
+
+**86.0 % of the window's entire loss is 2031**, the one year of the four in which the 3 GW/yr
+cap does not bind on either side — and the year in which the two demand worlds are furthest
+apart. In 2028–2030 the cap binds and the arm tracks the control to within 0.5 %. So the
+window's shortfall reads as the cap ceasing to bind in a lower-demand world, not as the capex
+repair closing a screen. Q42's own signature in this leg remains the **composition** change
+(zero CHP MW), which is a within-cap effect and is unaffected by the peak.
+
+**Nothing here is re-solved and nothing is routed differently.** The re-authoring of the carried
+FC-5 table stays routed as §5.5 left it, and the pre-existing staleness measured above
+(6 of 42 rows past the 15 % threshold, worst `co2@2040` +113.4 %) is untouched.
 
 ---
 
@@ -786,3 +1000,139 @@ overrides and CAISO's one were **routed, not absorbed**.
 min); P15's "at most ~0.4 GW"; Addendum D.2's "4 entries / 3 unattested" for PJM; and Addendum
 B's false premise that GOLDEN-3's FC-5 / FC-6 were SKIPPED (§5.0c). Plus one **process** defect,
 §5.0e: I rebased under a running solve and killed the leg for it.
+
+---
+
+## Addendum E — D60-R4's one earned control: the drift audit, a defect found on the way, and the pre-declaration (2026-09-06)
+
+§5.0f voids form-4 differencing for legs 4 and 5. Rule 29(b) says a **LIVE** hunk is the only
+thing that earns a control solve, and then only for the years the screen needs. This addendum
+is the audit that earns it, the pre-declaration that fixes its reading before it runs, and
+(E.4) its result. **E.1–E.3 were pushed before the solve was launched**, so nothing here can be
+written to fit an outcome.
+
+### E.1 G-DRIFT — the window `15631b8c..HEAD`, hunk by hunk
+
+`git diff 15631b8c HEAD -- src/market_sim scripts/run_calibration.py
+scripts/run_calibration_full.py scripts/lib` → **9 files, +697 / −58**. Every hunk classified,
+for a **PJM `mode="forecast"` solve launched through `scripts/run_full_horizon.py`**:
+
+| # | file | hunk | verdict | why |
+|---|---|---|---|---|
+| 1 | `config/constants.py` | +1 re-export, `resolve_capacity_adequacy_requirement_published` | **INERT** | import surface only; the resolver is reached through the gated `capacity_adequacy_requirement_published`, default-OFF and absent from both recipes |
+| 2 | `config/scenarios.py` | `nyiso_ct_peaker_bands_measured: bool = False` + its two cache-key registry rows | **INERT** | another ISO's branch (arming it on a non-NYISO ISO raises), default-off, absent from the recipe; registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `"False"` so the bare key does not move |
+| 3 | `pipeline/backcast_config.py` | the `if nyiso_ct_peaker_bands_measured:` block | **INERT** | same field, same guard; and `backcast_config` is not on the forecast path |
+| 4 | `model/lp/model.py` | simplex-iteration + objective read-back folded into the log line | **INERT** | a diagnostic read AFTER `h.run()`, inside `try/except`; it consumes the solved model and writes nothing back |
+| 5 | `pipeline/solve.py` | the same-year **P1 basis seed** (#5054) | **INERT — verified from code** | see below |
+| 6 | `pipeline/solve.py` + `utils/heap.py` (deleted) | the **P1-seam `malloc_trim` removal** (`9440f17d`) | **INERT on every solved value** | see below |
+| 7 | `pipeline/solve.py` | `model is not None` guard + `getattr` tolerance on the pre-rebuild basis export | **INERT** | with `_p1_seed` false the condition `(xyear_cache is not None or _p1_seed)` reduces to the original `xyear_cache is not None`, and the guard only converts a `None` dereference into a no-op; the `elif _p1_seed and _reuse_p0` branch is unreachable |
+| 8 | `scripts/lib/invariant_ledger.py` | new module, +268 | **INERT** | reached (via `check_forecast_invariants`) but used only at lines 1250–1350, the `--sidecar-dir` audit and the registration ratchet; it reads a committed JSON ledger and cannot touch the LP or the in-run I1–I14 scoring |
+| 9 | `scripts/run_calibration.py` | +111, incl. `resolve_p1_basis_seed_default` | **INERT** | backcast CLI; **not imported** on this path (measured: `sys.modules` after `import scripts.run_full_horizon` → absent) |
+| 10 | `scripts/run_calibration_full.py` | +55 | **INERT** | same; also not imported |
+
+**Hunk 5, verified from the code rather than its docstring** (the charter's explicit ask). The
+gate is
+
+```
+_p1_seed = (_xwarm and xyear_warmstart is None
+            and os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0")
+```
+
+and `runner.py:3551` passes `xyear_warmstart=config.forecast_xyear_warmstart` on every forecast
+solve. That field is a **`bool` with default `True`** (`dataclasses.fields(ScenarioConfig)`),
+never `None`, so `xyear_warmstart is None` is False and `_p1_seed` is False **unconditionally on
+the forecast path** — no env var can reach it. `_seed_basis` therefore stays `None`, the seeded
+branch is not entered, and control falls to the `else:` that calls the identical
+`solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)` the pre-hunk tree
+called. Independently and redundantly: `run_full_horizon.py` does not import
+`scripts.run_calibration` (measured above), so `resolve_p1_basis_seed_default` never runs and
+`MARKET_SIM_P1_BASIS_SEED` is unset in this process (measured: `None`).
+
+**Hunk 6, stated at full magnitude rather than waved through.** `malloc_trim` frees only heap
+the allocator already considers free, so it cannot touch a live object and **cannot move a
+number** — INERT on every solved value, in both directions. It is *not* inert on memory, and
+this box is 15 GB against an arm that peaked at 8.81 GB, so the honest statement is the measured
+one from the removing commit `9440f17d`: on the ERCOT carve-out replay the trim moved process
+peak **13.28 → 13.27 GB** and cost `p1_post` +0.1–0.5 s, i.e. it was reclaiming essentially
+nothing (the ~1.15 GB seam step is live payload, not glibc retention). Its removal is therefore
+not expected to raise this leg's peak materially. That is an ERCOT-grain measurement carried to
+PJM; it is recorded as a carried measurement, not as a PJM one.
+
+**ALL TEN HUNKS INERT.** Under rule 29(b) that makes form 4 valid *for the code*. It is the
+**demand table** — outside every one of these files, and outside the cache key — that is LIVE
+between the arm and its `-pre-d60` prior, and that is what earns the control.
+
+**A cross-check the audit produced for free:** `reference_config("PJM", 2026, 2030,
+golden_posture=True)` resolved at HEAD gives cache key **`09996eca71ee80fd`** — bit-for-bit the
+committed arm's key. The drift did not move the arm's recipe either.
+
+### E.2 A defect found while building the control: `--set` could not express it
+
+**`--set FIELD=false` on an ISO-armed flag was silently ignored.**
+`run_full_horizon.apply_set_overrides` used a bare `dataclasses.replace`, which re-invokes
+`__init__` with every field and so destroys the explicitly-set-field record;
+`explicitly_set_fields` then returns `None`, and `iso_configs.apply_iso_scenario_defaults` —
+which runs LATER, inside `runner.run_scenario_iso` — falls back to its pre-OVERRIDE-FIX value
+comparison. An explicit `False` equals the ScenarioConfig field default, reads as "unset", and
+the ISO default re-arms it. This is exactly the condition the OVERRIDE-FIX of 2026-08-13 was
+written to end ("a control arm for any ISO-armed flag was inexpressible"), reopened through the
+`--set` seam.
+
+**Measured at HEAD, before the repair:** a PJM leg passing all three of that ISO's
+`default_scenario_overrides` OFF resolved to cache key **`09996eca71ee80fd`** — the ARM's own
+key, with all three gates back ON. **After the repair** (`config.with_overrides(**overrides)`,
+the documented supported copy path, which unions the named fields into the record) the same leg
+resolves to **`167e65187f32056b`** with the three gates OFF.
+
+**Blast radius: EMPTY.** Of the 14 committed `run_config.json` files carrying a non-empty
+`set_overrides`, **none** names a field any ISO arms — every one sets `demand_growth_path`,
+`datacenter_load_path`, `carbon_price_path` or `carbon_price_delta`, and none of those four
+appears in any of the six ISOs' `default_scenario_overrides`. No committed run was silently
+re-armed; the defect was latent and this control is the first thing to ask the question.
+
+Repair + guard: one line in `apply_set_overrides` (plus the docstring recording the trap) and
+`tests/scoring/test_set_override_beats_iso_default.py` — 6 assertions, of which **4 fail on the
+pre-repair tree and all 6 pass on the post-repair tree** (a test that passed both ways would be
+worth nothing). The repair is a strict narrowing: an *unset* field still takes its ISO default,
+and one gate turned off does not disarm the other two, both asserted.
+
+### E.3 The control, pre-declared
+
+**Recipe** — the D45-R posture on today's demand table, isolating the Q44 gates and nothing else:
+
+```
+MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 \
+PYTHONPATH=. uv run python scripts/run_full_horizon.py --iso PJM \
+    --start-year 2026 --end-year 2030 --golden-posture \
+    --set pjm_demand_response_supply=false \
+    --set pjm_accreditation_design_vintage=false \
+    --set capacity_market_supply_clearing_by_iso=null \
+    --out-dir results/ff-t1f-d60r4-control/pjm
+```
+
+`ccs_retrofit_capex_co2_scaling` is left at its **dataclass default (`True`)** — the same value
+the arm carries — so Q42 is common to both sides and cancels. **Field-by-field, the control
+differs from the committed arm's resolved config in exactly the three Q44 gate fields and
+nothing else.**
+
+**CACHE KEY, PRE-DECLARED: `167e65187f32056b`.** Resolved through the harness path
+(`reference_config` → `apply_set_overrides` → `apply_iso_scenario_defaults` → `cache_key()`)
+before the solve, as Addendum A did. The realized bundle directory is the match to check.
+
+**PRE-DECLARED READING (the director's).** The arm's I12 reads **LESS negative** than this
+control's in every year 2027–2030 — because the arm's accredited-firm rise
+(+9,092 / +10,276 / +14,303 / +18,000 MW) exceeds the gate-owned ratio leg
+(+6,415 / +6,817 / +7,150 / +7,514 MW) in every year, and the peak leg is now held common.
+
+**FALSIFIER.** Any year in which the same-HEAD control's I12 is **less negative** than the
+arm's. Then, and only then, does *"D48 is not position-neutral forward"* stand — it goes in the
+PR title and the director serves the owner card on those rows. Reported at full magnitude either
+way.
+
+**STATUS.** Throwaway diagnostic under rule 29: registered NOWHERE, and its bundle is **deleted
+before the PR merges** (rule 29(c)). Every number this session will ever cite from it lives in
+E.4 below. Expected ~36 min / ~8.8 GB, wrapped in the mandatory `exit 90` HEAD guard.
+
+### E.4 The control's result
+
+*(Written after the solve; empty at pre-declaration time.)*
