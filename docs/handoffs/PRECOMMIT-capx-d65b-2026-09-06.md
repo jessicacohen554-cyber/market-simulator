@@ -552,3 +552,81 @@ Registration is the single `scripts/register_forecast_run.py` path, in place, ea
 preserved at **`-pre-d65b`**. Rules 12, 22 (forecast mode only — no held-out year is solved, scored
 or registered), 24, 25, 27, 28, 29. This lane is the **sole writer** of
 `frontend/data/forecast/ff-verdicts.json` and `program-status.json` until its last leg registers.
+
+---
+
+## ADDENDUM D (2026-09-06, session **D65-B-R**) — the REBASE re-audit, BEFORE the first leg
+
+Addendum C's G-DRIFT basis was `2485e611`. **This lane's own PR merged as #5161 (`40adcbba`)
+while the clean tree was rebuilding**, so steps 0–2 are on `main`, the branch was restarted from
+the merged default per the merged-PR rule, and `main` moved `2485e611 → 13ee0c89` (42 commits).
+**No leg had solved**, so the re-audit lands here rather than between legs. Charter duty:
+*"re-audit each rebase delta hunk by hunk before the next leg."*
+
+### D.1 `constants.py` FIRST — it HAS hunks this time, and they are label-only
+
++32 / −23, all inside the SCN voluntary-market region. Not classified by eye — **parsed**: every
+module-level assignment (`Assign` **and** `AnnAssign`) literal-evaluated on both sides.
+
+| | old | new |
+|---|---|---|
+| module-level constants | 145 | 145 |
+| ADDED / REMOVED | none | none |
+| **VALUE-MOVED** | — | **NONE** |
+
+The diff is the SCN-FIX2 label move under **owner ruling S9** (*"Take the placeholders as
+committed"*) and **S10** (card D-3c, *"Ratify the default as built"*): `VOLUNTARY_COMMITTED_DC_
+FRACTION["mid"] = {2026: 0.5}` and the WTP ceiling `"mid": 4.5` lose the word ILLUSTRATIVE and keep
+their values. **INERT** — and this is exactly the check a matched cache key cannot make.
+
+### D.2 The rest of the delta, hunk by hunk
+
+| file | hunk class | verdict | the gate, MEASURED |
+|---|---|---|---|
+| `config/scenarios.py` | 1 NEW field + a backcast coercion | **INERT** | `mass_cap_tons_by_year: dict \| None = None` (SCN-CAP, owner ruling S12). **`iso_configs.py` is ABSENT from the delta**, so no ISO arms it; measured `None` at all six resolved forecast configs |
+| `policy/cap_and_trade.py` | new fn + **2 hunks in the EXISTING `_power_sector_cap` / `_published_power_sector_budget`** — and this is the RGGI/CARB path, which three of my legs enter | **INERT** | the new precedence step is `cap_tons = scheduled_power_sector_budget(config, year)` then `if cap_tons is None: cap_tons = getattr(config, "mass_cap_tons", None)` — the pre-existing line. `scheduled_power_sector_budget` returns at its first statement (`if not schedule: return None`). **Measured, not argued: it returns `None` for all six ISOs at 2026 / 2028 / 2030**, so the scalar → published → inert order is untouched |
+| `data/fuel/basis/miso.py`, `scripts/run_calibration.py` | small follow-ons | **INERT** | same `miso_gas_variable_transport` / `miso_gas_marginal_commodity_pricing` gates as Addendum C, both measured `False`; `run_calibration.py` is the backcast entry point and this lane runs `run_full_horizon.py` only |
+| `data/raw/reference/caiso_offer_*` (3 files) | CAISO backcast offer surfaces | **INERT** | read only under `caiso_offer_surface_*`, all `False` in the forecast recipe; a backcast calibration artifact |
+| `results/cache.py`, `evolution_ledger.py`, part of `evolve.py` | epoch note + this lane's own step 0 | **INERT** | already on `main` as #5161 |
+| **`capacity_evolution/retirements.py` + `evolve.py`'s exemption call site** | **capx D81 — 4 hunks in the EXISTING `apply_economic_retirements` and its caller** | **LIVE — for PJM ALONE** | see D.3 |
+
+### D.3 THE ONE LIVE HUNK: D81, and it is live for exactly one leg
+
+D81 re-routes **every** exemption channel through the D78 seam:
+`exempt_unit_ids=frozenset()` and
+`exit_exempt_unit_ids=(_retrofitted_ids | _dated_exempt | _sector_exempt)`.
+Before it, the retrofit and dated-plant sets rode `exempt_unit_ids` (skipped entirely ⇒ a $0 price
+taker under the D57 clearing) while only the sector-gated set rode `exit_exempt_unit_ids`.
+
+**With the D57 clearing OFF the two are byte-identical** — not asserted, executed, by D78's own
+`test_exit_exempt_is_byte_identical_to_exempt_when_the_clearing_is_off` under both decision rules.
+So liveness is decided by one measured predicate, `resolve_capacity_market_supply_clearing`:
+
+| leg | D57 clearing | D81 |
+|---|---|---|
+| `ercot-t1f` · `neiso-t1f` · `nyiso-t1f` · `caiso-t1f` · `miso-t1f` · `neiso-t3` | **False** | **INERT** (D78 T2) |
+| **`pjm-t1f`** | **True** | **LIVE** |
+
+**Consequences, stated at the gate rather than discovered in the write-up:**
+
+1. **The PJM leg's before/after against `pjm-t1f-pre-d65b` is CONFOUNDED by D81** — it carries the
+   two acts *and* D81's must-offer re-routing of the retrofit and dated-plant sets. It is
+   **reported at full magnitude and attributed, never netted**, exactly as D65-B handled the
+   SCN-LOAD demand vintage.
+2. **G-CTRL form 4 stays valid for the other six legs** and is VOID for PJM alone.
+3. **No control solve is spent.** Rule 29(b) earns one only "for the years the screen needs", and
+   this batch is not a screen: it is the board's re-solve at one HEAD. The PJM confound is
+   *disclosed*, not differenced — and it is separable on the artifact, because D81's signature is
+   confined to the ledger's `offer_stack` rows (a formerly $0 price taker now carrying a net-ACR
+   sell offer) while the two acts' signature is confined to `ccs_retrofits`. **Addendum C's gates
+   G0'–G5' read only `ccs_retrofits`, so the PJM leg's gate table is unaffected by D81.**
+4. D81 is charter-ordered to *register* after this batch; it landed as **code** before it. That is
+   not a collision — it is a G-DRIFT fact, and this is where it is recorded.
+
+### D.4 Every key re-verified at `13ee0c89`
+
+* **14 / 14 bare keys UNMOVED** against PRECOMMIT §3's POST-D65B column.
+* **7 / 7 SOLVE keys** match Addendum C's pre-declaration exactly — **and** each still reproduces
+  its committed pre-D65-B bundle key when the two acts are undone. The declaration written before
+  the rebase survives the rebase unchanged, so no re-declaration is owed and the STOP *"a realized
+  key ≠ its pre-declared value"* is unchanged.
