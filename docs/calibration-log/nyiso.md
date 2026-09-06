@@ -12470,3 +12470,71 @@ the run screen alone as a keeper-change candidate. Records:
 `results/calibration/PREREG-nyiso200-bridge-run-screen.md` (+ Addendum A),
 `_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
 `scripts/probes/nyiso200_*.py`.
+
+## nyiso-201 — the corrected gates CLEAR, the pairing STOPS on 2025's price, and the NYC persistent-base membership question is answered NEGATIVE (2026-09-06)
+
+**Keeper UNCHANGED: `2026-09-06-nyiso-196-extract-basis`. Nothing registered, nothing promoted,
+no span spent.** ONE LP (a one-year rule-29 screen, deleted before merge, 29(c)).
+
+**The two gate constructions nyiso-200 §7 handed forward were both mis-built, and correcting them
+was worth doing — both CLEAR.** (a) The C8/D-4 companion is now forced energy at **dark-meter**
+plants over every mechanism, not a D-4 failure-row COUNT (a count rises whenever the higher of two
+composed floors is removed at a plant the lower one also floors). It reads **0.0010 → 0.0000 TWh**:
+the arm *removes* the keeper's only dark conviction (Roseton 8006) and the screen's failure list is
+empty. The new function reproduces nyiso-200 §5.1's published 2023 number (0.2515 TWh) exactly,
+which is the check that it is that section's construction. (b) The named-plant gate is now "a floor
+**anchored on a DROPPED run**, or a new D-4 conviction", never "zero floor": 7314 carries 803
+unit-hours / 16.14 GWh and 50978 231 / 9.09, every one on a **kept** run (per-plant census 120 of
+333 and 47 of 86 kept), and neither draws a conviction. **Under (a) as corrected, nyiso-200's A1
+stop is retired** — A1-2023's own reading (8906 total forcing 0.2501 → 0.2282 TWh, a FALL) passes.
+
+**The arm dies anyway, on the risk this lane named in writing before the solve.** **C3a-2025:
+−6.9 % → −11.7 %**, outside ±10 % (mean 61.84 → 58.69 vs actual 66.43; system mean 58.86 → 55.72).
+The two price-lowering fields dominate the run screen's price-raising one. S-1 (`CT_PEAKER`
++0.858 TWh inside its 2.1417 bound), S-2, C3b and G-ENGAGE all pass; the run screen is live and
+large in 2025 too (951/1,528 CC, 355/455 steam runs dropped; bridge volume 0.5701 → 0.1540 TWh).
+**2023's structural story does not reproduce on 2025**: only `CT_PEAKER` moves toward its actual;
+`ST_GAS` moves 1.56 TWh further below an already −4.1 TWh actual. Reported, not gated — 2025 SKIPS
+every C1 cell **and** C2 gas on the preliminary EIA-923 vintage, declared in the PREREG §0.5 before
+the solve so the gates' teeth were known ex ante.
+
+**Not promoted, and for a stronger reason than nyiso-200's:** C3a is load-bearing and unledgerable
+(the C3c standing rule needs a LONE C3c; the v3.0 guard refuses `model-class` on C1/C2/C3a/C3b), so
+a span carrying it reads **NOT-YET** and promoting would **decertify NYISO**. The owner's formula
+admits gates regressing; it does not reach a decertification.
+
+**Second object, zero LP — the NYC persistent-base limb's first-ever membership review** (the log's
+own open item: *"the NYC persistent-base limb has never had a membership review"*). **Astoria 8906
+answers NEGATIVE from source data.** On nyiso-140's criterion (median gross load 0.000 in **18 of
+18** (year, 4-hour block) cells) 8906 is **0 of 18** — the maximum distance from qualifying, pooled
+median **166 MW**, online **66.7 %**, in the same bucket as Ravenswood and Northport; the nearest
+non-qualifier is 50978 at 16/18. Widening the test to admit it would dissolve the lay-up/cycler
+distinction and reach the whole 0/18 bucket, and naming it would be the per-plant list rules 1/14
+and the nyiso-144 7314 ruling forbid. **The real object is the limb's BASIS, not its membership:**
+NYC `ST_GAS` `tmax` −50 °C (all 8,760 h), `floor_pct` 0.175, `pro_rata`, `exclude_plant_codes`
+**empty** — and across all 46 NYISO limbs the exclusion channel carries exactly one entry
+(Long_Island excludes 2517), so the keeper's armed `reliability_floor_plant_exclusions` arms
+**nothing on NYC**. Its basis is a fleet-aggregate when-available cool-day CF p25 applied per unit
+to a fleet spanning 0.667–0.956 online — nyiso-140's Long_Island diagnosis, never run for NYC. At
+8906 in 2025 the composition runs the *opposite* way to 2023: total forcing **RISES** 0.2725 →
+0.3061 TWh (reliability row 3,512 → 4,834 h) while the bridge row goes to zero, and the D-4 rider
+convicts in neither case (median 80.976 MW) — so the 2023 conviction was a year-specific tip, not a
+standing property.
+
+**Handed forward:** the three-way pairing is REFUTED — both pre-registered screen years (2023
+nyiso-200, 2025 nyiso-201) are spent, do not re-screen it; **`nyiso_gas_bridge_startup_aware` ALONE
+is the live candidate and its 2025 screen has still never been spent** (it is the only one of the
+three that *raises* price); and the NYC persistent-base **basis** review is the source-data object.
+
+**Rules:** 29 (phase 0 → F-gates → ONE named screen year → span only if clear; bundle deleted
+before merge, 29(c)); 29(b) G-DRIFT empirical at HEAD — the committed keeper-sha rebuild record
+reproduces 0 of 42 differing leaves, no control solve; 1 (no gate read the target residual, in
+either direction); 13 (the refused measured-conduct eligibility gate was not built); 21 **G-DOF
++0**; 22 (2023–2025 only, no marker requested, `complete` stays withdrawn); 26 (three NYISO shard
+cells re-stamped this session: `gas_commitment_bridge`, `nyiso_ct_peaker_bands_measured`,
+`cc_duct_peaking_row_scoped`); 15 (zero registrations because zero span runs — by design). The one
+code change is diagnostics-only (a per-unit/per-plant run census; the floor arithmetic never reads
+it, guarded byte-identical). Records:
+`docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`,
+`results/calibration/PREREG-nyiso201-threeway-2025-screen.md` (+ Addendum A),
+`_nyiso201_screen_gates_a3_2025.json`, `scripts/probes/nyiso201_screen_gates.py`.
