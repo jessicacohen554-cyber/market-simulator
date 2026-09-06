@@ -454,3 +454,36 @@ derive already is.
 CLIs, `scripts/lib`, `_validation-source`, `reference`) shows **no changed
 files at all**. The chain stands through `03bd0671` with nothing new to
 classify.
+
+### §1.6 — G-DRIFT EXTENSION: `03bd0671` → `1aab49a0` (wall-clock A-4). The fleet path again, so re-verified rather than carried forward
+
+3 files, +306 / −18 — and two of them (`egrid_sheets.py`, `fleet/eia860.py`)
+are the SAME fleet-path files §1.1 verified at `fbef3a91`. A prior verification
+does not transfer across a change to the thing verified, so both were measured
+again at HEAD.
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `src/market_sim/data/disk_memo.py` | +249 (new) | **INERT** | the extracted hashing + JSON-memo primitive; no LP-visible value. |
+| `src/market_sim/data/egrid_sheets.py` | ±27 | **INERT — RE-VERIFIED** | the inline sha256 was replaced by `disk_memo.content_digest`, which the module claims is byte-compatible so existing mirrors keep their names. Re-ran §1.1's identity test at HEAD: `PLNT23` (12612, 6), `UNT23` (26186, 3) and `PLNT23` FIPS/BACODE (12612, 6) all **EXACT** against `pd.read_excel` under `assert_frame_equal(check_exact=True)`, on both the mirror-write and mirror-hit paths. |
+| `src/market_sim/data/fleet/eia860.py` | +48 | **INERT — VERIFIED** | §1.6.1. |
+
+### §1.6.1 — The new cross-process memo on the boundary-HR repairs
+
+`_egrid_boundary_hr_repairs` now caches its accepted repair set in a JSON memo
+named by a sha256 over both source files' bytes. That set **sets plant heat
+rates**, so a serialization defect there would move the fleet silently — and
+`dict[int, float]` through JSON is exactly where key types get quietly
+stringified. Measured three ways at HEAD: the pure computation, the memo path,
+and the memo path again after `cache_clear()` to force the on-disk hit.
+
+| check | result |
+|---|---|
+| n repairs (direct / memo / forced disk hit) | 1 / 1 / 1 |
+| keys identical across all three | ✔ |
+| key **types** preserved | `{int}` → `{int}` (not stringified) |
+| values identical at full precision | ✔ — `{55641: 6.880032798350796}` |
+
+**⇒ Chain complete through `1aab49a0`; every hunk INERT for a CAISO backcast,
+with the two fleet-path files re-verified rather than carried forward on §1.1's
+earlier result. G-CTRL form 4 stands; no control solve spent.**
