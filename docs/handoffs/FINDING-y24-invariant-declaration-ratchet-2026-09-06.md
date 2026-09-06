@@ -25,15 +25,20 @@ The consequence is a backlog that has now regressed **four times**:
 | FFR-2B, 2026-08-02 | 4 | |
 | Y-24 charter, 2026-09-06 | 16 → 17 | the charter cites 17 |
 | Y-19 at `origin/main` `5fdd4374` | 20 runs / 33 pairs | Y-19 declared 16; 4 routed deliberately |
-| **Y-24 at HEAD `8e3393b1`** | **20 runs / 29 pairs** | Y-19's 4 + **16 fresh registrations** |
+| Y-24 at `8e3393b1` | 20 runs / 29 pairs | Y-19's 4 + 16 fresh registrations |
+| **Y-24 at HEAD `d24db885`** | **24 runs / 33 pairs** | **+4 more, landed while this lane was open** |
 
 Y-19 declared 29 of 33 pairs and **was behind before it merged**: four more runs registered
-while it worked. A detector cannot win that race. Only a gate at the seam can.
+while it worked. Y-24 watched the same thing happen to itself — a mid-session `git fetch` moved
+`main` 23 commits and brought four more undeclared runs with it (`882b3c3a`, 04:36Z). A detector
+cannot win that race. Only a gate at the seam can.
 
 > **The charter's "17" is now 20.** The charter's routing lists 9 scenario-desk runs; three more
 > — `ercot-2026-2030-scn-campaign-load-2026-09-06-{ref,load-hi,load-hi-organic}` — registered at
-> `29b1c757` (2026-09-06 04:14Z), *after* the charter was written. They are routed to the same
-> desk in §4.1, which is why the scenario block below reads **12**, not 9.
+> `29b1c757` (2026-09-06 04:14Z), *after* the charter was written. Four more —
+> `{ercot,pjm}-2026-2027-scn-ws1-probe-{carb,ref}` — landed at `882b3c3a` (04:36Z) *during this
+> lane's session*. All seven route to the same desk in §4.1, which is why the scenario block below
+> reads **16**, not 9.
 
 ---
 
@@ -83,7 +88,7 @@ The ledger gains a second, independent block:
 | Block | Meaning | Read by |
 |---|---|---|
 | `declared_failures` | An **adjudication**. The desk states the FAIL is understood and names the finding that owns it. | detector **and** ratchet |
-| `registration_ratchet_baseline` | **NOT an adjudication.** The 20 runs / 29 pairs already registered when the gate landed. | **ratchet only** |
+| `registration_ratchet_baseline` | **NOT an adjudication.** The 24 runs / 33 pairs already registered when the gate landed. | **ratchet only** |
 
 This asymmetry is the design's load-bearing property:
 
@@ -114,21 +119,17 @@ nothing refuse it") is not met without it.
 | Check | Result |
 |---|---|
 | `pytest tests/scoring/test_invariant_declaration_ratchet.py` | **22 passed** |
-| `pytest tests/scoring tests/regression -n auto -m "not slow and not integration and not fulldata"` | 1899 passed, 8 skipped, **1 pre-existing failure** † |
+| `pytest tests/scoring tests/regression -n auto -m "not slow and not integration and not fulldata"` | **all pass** † |
 | `ruff check scripts/ tests/` | All checks passed |
-| `ruff format --check` (the 6 files this lane touches) | 6 files already formatted ‡ |
-| `python scripts/check_forecast_invariants.py --sidecar-dir` (the CI job's exact command) | exit 1, **20 problems — byte-identical to pre-change** |
-| `python3 scripts/register_forecast_run.py --reindex` (bare interpreter, deploy path) | exit 0, 79 runs |
+| `ruff format --check scripts/ tests/` | 1110 files already formatted |
+| `python scripts/check_forecast_invariants.py --sidecar-dir` (the CI job's exact command) | exit 1, **24 problems — byte-identical to pre-change** |
+| `python3 scripts/register_forecast_run.py --reindex` (bare interpreter, deploy path) | exit 0, 85 runs |
 
-† `tests/regression/test_constants_facade.py::test_moved_surface_is_complete` —
-`market_sim.config.capacity_market` grew `RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO` /
-`resolve_capacity_adequacy_requirement_published` without a facade re-export. **Pre-existing on
-`main`**: it fails identically with this lane's changes stashed. This lane touches nothing under
-`src/market_sim/`; it belongs to the capx lane that moved those names.
-
-‡ `ruff format --check` over the whole tree reports 3 files needing reformat —
-`scripts/gen_nyiso198_attestation.py`, `tests/scoring/test_holdout_render_parity.py`,
-`tests/unit/model/test_capacity.py`. All three are pre-existing on `main` and untouched here.
+† Two failures observed against the pre-rebase base (`8e3393b1`) —
+`test_constants_facade.py::test_moved_surface_is_complete` and three unformatted files — were
+**both pre-existing and both fixed on `main` by `7ffd808b`** ("capx D67 landing repairs"). They
+are gone after the rebase onto `d24db885`, and neither was ever this lane's: nothing here touches
+`src/market_sim/`.
 
 **The audit's output is unchanged, run for run.** The refactor onto the shared module is
 behaviour-preserving, and the baseline makes nothing green.
@@ -143,18 +144,19 @@ that has not diagnosed the cause is the silent landing the gate exists to stop. 
 
 ---
 
-## 4. Routing — 20 runs / 29 (run, ident) pairs, to three desks
+## 4. Routing — 24 runs / 33 (run, ident) pairs, to three desks
 
-All rows measured at HEAD `8e3393b1` from the committed sidecars. `added` is the commit that
+All rows measured at HEAD `d24db885` from the committed sidecars. `added` is the commit that
 first landed the sidecar. **Remedy in every case:** add `"<run_id>": [idents]` under
 `declared_failures` in `frontend/data/hindcast/invariant-failures.json`, in the same commit as the
 finding that owns the FAIL — **and prune the run's `registration_ratchet_baseline` line in the
 same edit**, or the audit will report it as superseded.
 
-### 4.1 SCENARIO DESK — 12 runs / 19 pairs
+### 4.1 SCENARIO DESK — 16 runs / 23 pairs
 
-The nine `*-scn-ws4-probe-*` runs (charter set) plus the three `scn-campaign-load` runs that
-registered after the charter was written.
+The nine `*-scn-ws4-probe-*` runs (charter set), the three `scn-campaign-load` runs that
+registered after the charter was written, and the four `scn-ws1-probe` arms that registered
+during this lane's session.
 
 | Run | Idents | Added | Measured |
 |---|---|---|---|
@@ -170,6 +172,10 @@ registered after the charter was written.
 | `ercot-2026-2030-scn-campaign-load-2026-09-06-ref` | I12, I3 | `29b1c757` 04:14Z | I3 2030: slack 12.88 %; I12 2030 −25.3 % |
 | `ercot-2026-2030-scn-campaign-load-2026-09-06-load-hi` | I12, I3 | `29b1c757` | I3 2030: slack **37.83 %** (8760 h); I12 2030 **−43.1 %** |
 | `ercot-2026-2030-scn-campaign-load-2026-09-06-load-hi-organic` | I12, I3 | `29b1c757` | I3 2030: slack **37.83 %**; I12 2030 **−49.2 %** |
+| `ercot-2026-2027-scn-ws1-probe-carb` | I3 | `882b3c3a` 04:36Z | 2026: slack 0.06 %; 2027: slack 0.68 % (668 h, 4,621.8 GWh) |
+| `ercot-2026-2027-scn-ws1-probe-ref` | I3 | `882b3c3a` | 2026: slack 0.06 %; 2027: slack 0.68 % (641 h, 4,621.8 GWh) |
+| `pjm-2026-2027-scn-ws1-probe-carb` | I7 | `882b3c3a` | 2026: firm 151,384 < req 153,333; 2027: 152,623 < 161,729 MW |
+| `pjm-2026-2027-scn-ws1-probe-ref` | I7 | `882b3c3a` | 2026: firm 151,384 < req 153,333; 2027: 152,623 < 161,729 MW |
 
 **Flagged for the desk, not adjudicated here.** The three `scn-campaign-load` arms and
 `ws4-probe-t1f-load-hi` are a different magnitude class from every other row in this backlog: slack
@@ -179,7 +185,10 @@ cause (`dominant_open_causes.I3`; the adequacy backstop is disabled for energy-o
 market design, so a one-pass under-build has no corrective and lands as LP slack at VOLL). Whether
 FR-6 *at this magnitude* is the same finding, or a load-scenario premise that has outrun the
 fleet the run is allowed to build, is the desk's call and is **exactly** the question a
-declaration must answer rather than paper over. It should be settled before these are declared.
+declaration must answer rather than paper over. It should be settled before these are declared. The `ercot-...-scn-ws1-probe-{carb,ref}` pair is the
+mild end of the same family — its 2026 row (55 h, 381.6 GWh, peak 19,416 MW) is numerically
+identical to `scn-campaign-load-...-ref`'s 2026 row, which is a useful anchor: the two campaigns
+share a base case, so whatever is decided for one 2026 row settles the other.
 
 ### 4.2 CAPX DESK — 4 runs / 6 pairs
 
@@ -234,14 +243,15 @@ the systemic FC-1-blind-at-T1-H cause is this desk's.
 | `scripts/check_forecast_invariants.py` | `audit_sidecars` delegates FAIL/declared logic to the shared module; adds the baseline-staleness check. Output unchanged. |
 | `scripts/register_hindcast.py` | gate call before its direct sidecar write; the lazy `RF` import hoisted to bind once. |
 | `scripts/register_forecast_baseline.py` | gate call before its direct sidecar write. |
-| `frontend/data/hindcast/invariant-failures.json` | `registration_ratchet_baseline` (20 runs / 29 pairs) + `y24_note`. Additive: 73 insertions, 1 deletion. |
+| `frontend/data/hindcast/invariant-failures.json` | `registration_ratchet_baseline` (24 runs / 33 pairs) + `y24_note`. Additive: 85 insertions, 1 deletion. |
 | `tests/scoring/test_invariant_declaration_ratchet.py` | **new**, 22 tests. |
 
 ## 6. What is still open after this lane
 
-1. **The 20 declarations.** Routed in §4; the CI job stays red until the desks land them. This is
+1. **The 24 declarations.** Routed in §4; the CI job stays red until the desks land them. This is
    the intended state, not a defect.
 2. **The magnitude question in §4.1.** ERCOT slack at 8,760 h / 37–53 % of load may or may not be
    the FR-6 finding; the scenario desk should settle it before declaring.
 3. **The FC-1-blind-at-T1-H cause** (§4.3), open since Y-19 and now with a fifth instance.
-4. **The pre-existing `test_constants_facade` failure** (§2.5 †) — capx lane's, not this one's.
+4. **Nothing else.** The two failures this lane observed against its pre-rebase base were fixed
+   on `main` by `7ffd808b` before the rebase (§2.5 †).
