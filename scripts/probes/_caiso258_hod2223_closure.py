@@ -474,6 +474,16 @@ def import_stack(year: int, m: dict) -> dict:
     fa = st["fleet_arrays"]
     mc = np.asarray(st["mc_base"], dtype=float)
     sel = np.isin(HOD, GAP)
+    # caiso-261: month-of-hour on the model's non-leap calendar, for the
+    # per-month floor / capability at hod 22-23 (PRECOMMIT-caiso261 §4 E-1/E-2).
+    moh = np.repeat(
+        np.arange(1, 13),
+        np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]) * 24,
+    )
+
+    def by_month_2223(x: np.ndarray) -> list[float]:
+        return [float(x[sel & (moh == mm)].mean()) for mm in range(1, 13)]
+
     imp = m["klass"]["import"]
     rows = {}
     cap_tot = np.zeros(T)
@@ -519,6 +529,8 @@ def import_stack(year: int, m: dict) -> dict:
             ),
             "cap_by_hod": [float(cap[HOD == h].mean()) for h in range(24)],
             "floor_by_hod": [float(floor[HOD == h].mean()) for h in range(24)],
+            "cap_2223_by_month": by_month_2223(cap),
+            "floor_2223_by_month": by_month_2223(floor),
         }
     bound_ok = bool(np.all(imp <= cap_tot + 1.0))
     return {
@@ -535,6 +547,9 @@ def import_stack(year: int, m: dict) -> dict:
         "max_import_minus_cap_mw": float(np.nanmax(imp - cap_tot)),
         "import_by_hod": [float(np.nanmean(imp[HOD == h])) for h in range(24)],
         "cap_by_hod": [float(cap_tot[HOD == h].mean()) for h in range(24)],
+        "sum_cap_2223_by_month": by_month_2223(cap_tot),
+        "sum_floor_2223_by_month": by_month_2223(floor_tot),
+        "import_2223_by_month": by_month_2223(np.asarray(imp, float)),
         "rows": rows,
     }
 
@@ -545,11 +560,19 @@ def main() -> None:
     ap.add_argument(
         "--import-stack", action="store_true", help="D-3: the fleet_only rebuild leg"
     )
+    ap.add_argument(
+        "--out",
+        default=str(OUT),
+        help="artifact path (caiso-261 re-runs the closure on the caiso-260 keeper "
+        "without overwriting the caiso-258 record)",
+    )
+    ap.add_argument("--session", default="caiso-258", help="session label in the json")
     a = ap.parse_args(_ARGV[1:])
+    out_path = Path(a.out)
 
     art = load_artifacts(KEEPER)
     res: dict = {
-        "session": "caiso-258",
+        "session": a.session,
         "keeper": KEEPER,
         "gap_hours": list(GAP),
         "years": {},
@@ -774,7 +797,7 @@ def main() -> None:
         res["years"][str(y)]["G_CLOSE_model"]["pass"] for y in YEARS
     )
 
-    OUT.write_text(json.dumps(res, indent=1, default=float) + "\n")
+    out_path.write_text(json.dumps(res, indent=1, default=float) + "\n")
 
     # ---- console ---------------------------------------------------------------
     g = res["gates"]["G_REPRO"]
@@ -852,7 +875,7 @@ def main() -> None:
                 print(
                     f"     {uid:36s} pmax {r['pmax']:7.0f} cap22-23 {r['cap_2223_mean_mw']:7.0f} floor {r['floor_2223_mean_mw']:6.0f} offer {r['offer_2223_mean']:7.1f} dual {r['node_dual_2223_mean']} po-share {r['priced_out_share_2223']:.2f} po-headroom {r['priced_out_headroom_2223_mean_mw']:.0f}"
                 )
-    print(f"\nwrote {OUT}")
+    print(f"\nwrote {out_path}")
 
 
 if __name__ == "__main__":
