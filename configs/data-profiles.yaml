@@ -59,6 +59,22 @@ isos:
     tokens: [nyiso, nyis]
   NEISO:
     tokens: [neiso, isne]
+  # SPP (registered 2026-09-06, lane SPP-20). TOKEN TRAP, plan §7 gate G3: a bare
+  # `spp` token would also match ERCOT's settlement-point LMP zips
+  # (`DAMLZHBSPP_<year>.zip` — "DAM LZ/HB settlement point prices"), so every
+  # SPP token is delimiter-bounded: `swpp` (the EIA-930 / EIA-860 balancing
+  # authority code: `SWPP hourly.parquet`, `SWPP interchange hourly.parquet`,
+  # `SWPP_fueltype.parquet`), `spp-` (the six `spp-*` corpus directories:
+  # spp-planning, spp-hsl, spp-genmix, spp-binding-constraints, spp-or-mcp,
+  # spp-hourly-load), plus `_spp.`, `-spp.`, `/spp/` for suffix / path forms.
+  # `tests/unit/config/test_data_profiles_tokens.py` pins the trap. KNOWN
+  # LIMIT (routed to SPP-DESK, FINDING-spp-20): tokens are substring-matched on
+  # a bare NAME, so a split-directory child named exactly `SPP` / `spp`
+  # (zone-specific-demand/SPP, load-forecast/spp) cannot be claimed without
+  # re-admitting the trap and classifies as `shared` — over-hydrated, never
+  # missing.
+  SPP:
+    tokens: [swpp, "spp-", "_spp.", "-spp.", "/spp/"]
 
 # `approx_gb` is the profile's PACKED size, measured 2026-08-13 at HEAD. It is
 # indicative only — `scripts/hydrate_data.py --list` prefers real sizes when the
@@ -94,6 +110,8 @@ profiles:
   miso:  {description: "Shared sources + all MISO subtrees. MISO calibration/forecast lanes.",   data: iso, iso: MISO,  approx_gb: 1.3}
   nyiso: {description: "Shared sources + all NYISO subtrees. NYISO calibration/forecast lanes.", data: iso, iso: NYISO, approx_gb: 1.4}
   neiso: {description: "Shared sources + all NEISO subtrees. NEISO calibration/forecast lanes.", data: iso, iso: NEISO, approx_gb: 1.3}
+  # approx_gb measured 2026-09-06 at registration (`hydrate_data.py --list`).
+  spp:   {description: "Shared sources + all SPP subtrees. SPP calibration/forecast lanes.",     data: iso, iso: SPP,   approx_gb: 1.2}
 
   # ------------------------------------------------------------------ all ---
   all:

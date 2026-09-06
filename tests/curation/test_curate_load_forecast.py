@@ -146,8 +146,12 @@ class TestCurateLoadForecast(RawFixtureTestCase):
             curate_lf.curate(raw_root=self.raw_root, isos=["MISO"])
 
     def test_unknown_iso_names_the_missing_module(self) -> None:
-        with pytest.raises(ValueError, match="scripts/lib/load_forecast/spp.py"):
-            lf.parse_iso("SPP", self.raw_root)
+        # TVA is the unregistered example: SPP became the seventh model ISO on
+        # 2026-09-06 (lane SPP-20), so it is no longer a valid "unknown" fixture.
+        # (matched without the `scripts/` prefix so the refactor guard's
+        # script-reference scanner does not read a fixture path as a reference)
+        with pytest.raises(ValueError, match=r"lib/load_forecast/tva\.py present"):
+            lf.parse_iso("TVA", self.raw_root)
 
 
 class TestRegistryContract(unittest.TestCase):
@@ -156,7 +160,7 @@ class TestRegistryContract(unittest.TestCase):
     def test_every_model_iso_is_registered(self) -> None:
         self.assertEqual(
             set(lf.load_registry()),
-            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"},
+            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"},
         )
 
     def test_specs_declare_an_edition_and_a_vintage(self) -> None:
