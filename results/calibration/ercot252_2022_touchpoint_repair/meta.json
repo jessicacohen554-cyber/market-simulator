@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T23:17:01",
+  "timestamp": "2026-09-06T23:33:41",
   "iso": "ERCOT",
   "years": [
     2022
@@ -313,7 +313,7 @@
   "gas_hh_monthly_shape": true,
   "ercot_as_aware_commitment": false,
   "ercot_reserve_supply_cap": true,
-  "ercot_reserve_supply_cap_from_year": 2023,
+  "ercot_reserve_supply_cap_from_year": 2020,
   "ercot_reserve_supply_forward": false,
   "pjm_reserve_supply_cap": false,
   "pjm_reserve_online_gated": false,
@@ -326,7 +326,7 @@
   "measured_ramp_capability": false,
   "ercot_as_forward_requirement": false,
   "ercot_load_resource_reserve": true,
-  "ercot_load_resource_reserve_from_year": 2023,
+  "ercot_load_resource_reserve_from_year": 2020,
   "ercot_storage_as_reserve": true,
   "ercot_storage_as_reserve_from_year": 2023,
   "ercot_ecrs_requirement": false,
@@ -431,6 +431,7 @@
   "caiso_st_gas_committed_measured": false,
   "caiso_st_gas_peak_measured": false,
   "caiso_ct_peaker_committed_measured": false,
+  "nyiso_ct_peaker_bands_measured": false,
   "caiso_offer_surface_conditional": false,
   "nearby_fuel_price_zone_donor_guard": false,
   "fleet_state_from_eia860": false,
@@ -533,6 +534,7 @@
   "nyiso_gas_bridge_plant_min_run": null,
   "nyiso_gas_bridge_online_hours": null,
   "nyiso_gas_bridge_state_floor_min_run": null,
+  "nyiso_gas_bridge_startup_aware": null,
   "nyiso_chp_btm_measured": null,
   "cc_reserve_duty_split": null,
   "chp_layup_duty_split": null,
@@ -582,8 +584,8 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "49647dd6",
-  "basis_sha": "49647dd68f88acc3eeaa5ad7d775de0cd7fb1355",
+  "git_sha": "0334c35e",
+  "basis_sha": "dce39a3f8dd9ae6f109447e0ecd91ae734b124cc",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
