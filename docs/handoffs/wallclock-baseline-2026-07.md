@@ -1196,9 +1196,9 @@ not by the manifests.
 `scripts/regression_gate.py --mode byte`:
 
 * **check [1] golden bundle diff — PASS**: ERCOT, **7 files, 28 numeric columns, atol=rtol=0**
-  (2024 and 2025 both). NEISO 2023: <!-- WC_B_NEISO_CHECK1 -->
+  (2024 and 2025 both). NEISO, **5 files, 20 numeric columns, atol=rtol=0**.
 * check [2] reshuffle localization: **zero** — ERCOT 2024 462,847.6 GWh and 2025 488,450.0 GWh
-  on both arms, Σ|hourly Δ| = 0.0 GWh in both years; NEISO 2023: <!-- WC_B_NEISO_CHECK2 -->
+  on both arms, Σ|hourly Δ| = 0.0 GWh in both years; NEISO 2023 96,984.5 GWh on both arms, Σ|hourly Δ| = 0.0 GWh.
 * check [3] smoke — **PASS** (24 passed).
 * check [4] `audit_keepers` — **PASS**. `legitimacy(--keepers)` — **FAIL, pre-existing by
   control**: the standing NYISO Long Island `transfer_security_limit` capacity-deliverability
@@ -1230,7 +1230,7 @@ the built-in control), into a throwaway dir, deleted after the diff. OFF arm = t
 |---|---|---|---|---|---|---|
 | **ERCOT 2025** (one-pass year) | P0 2,879,242,264.7545 → P1 3,085,008,028.5299, **identical to 4 dp on both arms** | 488.449982 TWh both, **Δ = 0 MWh** | **1.07e-12 $/MWh** (mean 29.358576 both) | **0 / 61,320** | max \|Δ\| = 0 on all four | **16 unit-hours in 12 hours, 11 of 2,335 units**; max 895.3 MW (the SOLAR South↔North curtailment swap at price 0); Σ\|hourly Δ\| 3.434 GWh = **0.0007 %** of gen; LMP identical (max \|Δ\| = 0) on every moved row; `diff_warmstart_bundles`: max annual Δ 0.0610 GWh (plant 58005), 0 plants > 0.1 GWh — the memo's §3.3 block to the digit |
 | **ERCOT 2024** (ercot-221 two-pass year; pass 2 seeded from pass 1's P1 basis) | P0 1,715,250,734.6163; P1 pass 1 1,954,553,178.2861; pass 2 2,001,527,131.5248 — **all three identical on both arms** | 462.847626 TWh both, **Δ = 0 MWh** | **3.66e-13 $/MWh** (mean 26.621364 both); reserve_price max \|Δ\| 4.5e-13 | **0 / 61,320** | slack (mean 0.009787 MW) / dump / demand bit-identical | **4 unit-hours in 2 hours, 4 of 2,346 units**; max 13.8 MW; Σ\|hourly Δ\| 0.054 GWh = **0.00001 %**; LMP identical on every moved row; max annual Δ 0.0270 GWh (plant 64383) |
-| **NYISO 2023** | <!-- WC_B_NYISO_ROW --> |
+| **NYISO 2023** (`nyiso_gas_commitment_bridge` + co-opt + ramp; keeper `2026-09-06-nyiso-196-extract-basis`) | P0 2,297,963,033.2595 → P1 2,336,736,799.3758, **identical on both arms** | 148.304611 TWh both, **Δ = 0 MWh** | **2.20e-13 $/MWh** (mean 32.973702 both); reserve_price max \\|Δ\\| 2.8e-14 | **0 / 52,560** | slack / dump / demand bit-identical | **7,290 unit-hours in 2,942 hours, 135 of 731 units**; max 690.0 MW; Σ\\|hourly Δ\\| 45.3 GWh = **0.031 %** of gen (the P-2 promotion evidence's class: ERCOT 0.038–0.112 %); LMP identical on **every** moved unit-hour (max \\|Δ\\| 1.8e-13); `diff_warmstart_bundles`: max annual Δ 2.13 GWh (plant 2693), 2 plants > 1 GWh — a co-opt fleet has more equally-priced pairs to swap between, and it swaps them at identical prices |
 | **CAISO 2023** (screen) | <!-- WC_B_CAISO_ROW --> |
 
 **Speed — the P1 solve, the iterations, the phase lines (seed OFF = pinned branch arm; seed ON arm):**
@@ -1241,8 +1241,8 @@ the built-in control), into a throwaway dir, deleted after the diff. OFF arm = t
 | ERCOT 2025 | ON | 289.1 | 273,083 | **142.0** | **78,856** | 55.0 (44.9) | 544.8 | 13.27 GB |
 | ERCOT 2024 | OFF | 260.0 | 250,832 | **628.1** = 295.3 + 332.9 | **252,042 / 250,291** | 28.0 (14.7) | 990.9 | 12.67 GB |
 | ERCOT 2024 | ON | 241.1 | 250,832 | **225.1** = 132.2 + 92.8 | **83,748 / 69,667** | 70.0 (57.2) | 605.7 | 13.27 GB |
-| NYISO 2023 | OFF | <!-- WC_B_NYISO_OFF --> |
-| NYISO 2023 | ON | <!-- WC_B_NYISO_ON --> |
+| NYISO 2023 | OFF | 108.4 | 269,416 | **96.4** | **268,305** | 11.8 (8.6) | 239.1 | 7.90 GB |
+| NYISO 2023 | ON | 113.3 | 269,416 | **67.6** | **108,037** | 14.6 (10.5) | 220.1 | 5.86 GB† |
 | CAISO 2023 | OFF | <!-- WC_B_CAISO_OFF --> |
 | CAISO 2023 | ON | <!-- WC_B_CAISO_ON --> |
 
