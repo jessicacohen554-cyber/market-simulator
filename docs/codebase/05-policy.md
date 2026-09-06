@@ -21,11 +21,57 @@ Credits reduce dispatch MC or LCOE — no constraint rows.
 ## 5.2 RPS (`rps.py`)
 
 `get_rps_target(iso, year)` looks up `STATE_RPS_FLOORS` and linearly interpolates
-the required clean-energy fraction (0–1), or `None`. RPS is **not** a force-build
-step — it is an annual LP constraint (`_build_rps_row` in `dispatch.py`):
-`Σ(W + S + nuclear P) ≥ rps_target · Σ demand`. **Its dual is the REC/REC shadow
-price** (`DispatchResult.rps_shadow_price`), which competes with exogenous EACs in
-capacity economics (`max(eac_exogenous, rps_shadow_price)` — no stacking).
+the required renewable fraction (0–1), or `None`. RPS is **not** a force-build
+step — it is an annual LP constraint (`_build_rps_row` in `model/lp/rows.py`):
+`Σ(W + S + statute-eligible P) + ACP ≥ rps_target · Σ demand`, nuclear never
+admitted (CX-6a — a clean tier that counts nuclear is the separate clean-tier
+family below). **Its dual is the REC shadow price**
+(`DispatchResult.rps_shadow_price`), capped by the ACP escape, which competes with
+exogenous EACs in capacity economics (`max(eac_exogenous, rps_shadow_price)` — no
+stacking). MISO replaces the ISO-wide row with K per-state compliance-region rows
+(`build_rps_region_arrays`, `miso_rps_compliance_regions`).
+
+### Clean-tier row family (`clean_tiers.py`) and the federal CES target row (`federal_ces.py`)
+
+A **second, independent row family** on the same K-region machinery
+(`_build_rps_region_rows`), each row `Σ credited MWh + escape ≥ share · obligated
+load` with its own ACP-style escape; nuclear is admitted. Two producers compose
+into one `CleanRegionArrays` through `append_clean_region`, in region order:
+
+| Region | Producer | Mask / RHS | Qualifying spec | Escape |
+|---|---|---|---|---|
+| MN carbon-free, MI clean (MISO, `miso_clean_tier_rows`) | `build_clean_region_arrays` | statute zones / obligated-load share × target | fuel-name tuple (indicator coefficients) | `STATE_RPS_ACP` proxy |
+| **Federal CES target** (`federal_ces_target_by_year`, any ISO) | `append_federal_ces_region` | every load zone / `target(year)` on every zone | `(n_gen,)` credit-fraction vector = `unit_credit_fractions` (both crediting modes; a CCS column carries 0.95) | `federal_ces_acp_usd_per_mwh` |
+
+Since SCN-WS2a the family **stands alone or beside either RPS grain** (the former
+"requires the RPS region family" coupling is relaxed; escape slots follow whichever
+RPS escapes exist). `runner._clean_region_arrays_for_year` is the single resolver
+of the region list, used by the solve-side arming and the cached-year dual mapping
+alike. Each row's dual is that region's clean attribute price;
+`clean_credit_by_fuel` maps it to `{fuel: (n_zones,)}` (a vector-form region at
+`dual × fraction` from its `fuel_credit` map) and the screens take it through the
+existing `max(EAC, RPS dual, clean dual)` — no new consumer.
+
+**Federal CES — two mechanisms, one at a time (rule 19).** `federal_ces_enabled`
+is the master crediting gate for both:
+
+- *Exogenous premium* (`federal_ces_premium_usd_per_mwh` / `_by_year`): every
+  credited MWh earns the scenario-set premium (`premium_for_year` ×
+  `unit_credit_fractions`), entering dispatch offers and the screens through
+  `max()`. Answers "what does premium $X do".
+- *Endogenous target row* (`federal_ces_target_by_year` sparse knots, edge-held,
+  `None` = no row; `federal_ces_acp_usd_per_mwh` the ceiling): the row above,
+  whose dual is the federal EAC price. Answers "what does an X %-by-Y standard
+  imply". `__post_init__` refuses the row in backcast, without the master gate,
+  beside a non-zero premium, without a positive ACP, with
+  `federal_ces_storage_eligible`, or with wind/solar missing from the eligible
+  list. The target schedule is a scenario level (owner box D-2); the SCN-WS2a
+  probe's `{2026: 0.55, 2035: 0.80, 2050: 1.0}` / $50 is illustrative.
+
+Postures: state rows + federal row (default when both exist — separate attributes,
+`max()` at the screens); `federal_ces_replaces_state_rps=True` (federal row alone —
+the flag removes the state RPS **and** state clean rows, never the federal row);
+state rows only (REF).
 
 ## 5.3 Carbon pricing (`carbon.py`, `cap_and_trade.py`)
 
@@ -140,11 +186,12 @@ curves where penalties **stack** as reserves fall deeper into shortage.
 ## 5.7 Policy constraint extension point (`constraints.py`)
 
 `get_active_policy_constraints(config, year)` returns the active constraint-type
-policy specs. It now surfaces the emissions **mass-cap** spec (§5.8) from the
-carbon resolver — `[cap_spec]` when `mass_cap_enabled` and a power-sector budget
-is configured, else `[]`. Still the wiring point for future NOx caps and similar
-system-wide constraints. The RPS constraint is wired directly in `dispatch.py`
-rather than here.
+policy specs. It surfaces the emissions **mass-cap** spec (§5.8) from the carbon
+resolver — `[cap_spec]` when `mass_cap_enabled` and a power-sector budget is
+configured, else `[]` — and nothing else (G-S6: the module docstring once named
+RPS; it never assembled it). Still the wiring point for future NOx caps and
+similar system-wide constraints. The RPS, clean-tier and federal CES target rows
+are wired directly by the runner into `model/lp/rows.py` (§5.2), not here.
 
 ## 5.8 Emissions mass-cap / cap-and-trade row (`dispatch.py`)
 
