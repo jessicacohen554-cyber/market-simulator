@@ -1,0 +1,355 @@
+{
+  "label": "screen",
+  "control": "results/hindcast/d75r-screen-ctl/PJM/6eff06b0ec80f182",
+  "arm": "results/hindcast/d75r-screen-arm/PJM/c45c007bed278d2e",
+  "years": {
+    "2021": {
+      "delivery_year": null,
+      "renewable_credit_applied": {
+        "control": {
+          "solar": 0.1064,
+          "wind": 0.41
+        },
+        "arm": {
+          "solar": 0.1064,
+          "wind": 0.41
+        }
+      },
+      "expected_credit_arm": null,
+      "pools_end_of_year": {
+        "control": {
+          "wind": 10153.9,
+          "solar": 4549.8
+        },
+        "arm": {
+          "wind": 10153.9,
+          "solar": 4549.8
+        }
+      },
+      "screen_entering_firm_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_reserve_position": {
+        "control": null,
+        "arm": null
+      },
+      "storage_firm_mw": {
+        "control": 3801.526,
+        "arm": 3801.526
+      },
+      "clearing": {
+        "census_mw": {
+          "control": null,
+          "arm": null
+        },
+        "census_position": {
+          "control": null,
+          "arm": null
+        },
+        "requirement_mw": {
+          "control": null,
+          "arm": null
+        },
+        "cleared_mw": {
+          "control": null,
+          "arm": null
+        },
+        "cleared_position": {
+          "control": null,
+          "arm": null
+        },
+        "price_usd_per_mw_day": {
+          "control": null,
+          "arm": null
+        },
+        "n_offers": {
+          "control": null,
+          "arm": null
+        },
+        "n_uncleared": {
+          "control": null,
+          "arm": null
+        },
+        "price_takers_mw": {
+          "control": null,
+          "arm": null
+        },
+        "how": {
+          "control": null,
+          "arm": null
+        }
+      },
+      "retirements_total_mw": {
+        "control": 0,
+        "arm": 0
+      },
+      "thermal_accredited_by_fuel_identical": true,
+      "gate_inert": {
+        "credits_identical": true,
+        "census_identical": true,
+        "requirement_identical": true,
+        "retirements_identical": true,
+        "holds": true
+      },
+      "gate_confinement": {
+        "requirement_identical": true,
+        "thermal_accredited_identical": true,
+        "storage_firm_identical": true,
+        "holds": true
+      }
+    },
+    "2022": {
+      "delivery_year": "2022/2023",
+      "renewable_credit_applied": {
+        "control": {},
+        "arm": {}
+      },
+      "expected_credit_arm": null,
+      "pools_end_of_year": {
+        "control": {
+          "wind": null,
+          "solar": null
+        },
+        "arm": {
+          "wind": null,
+          "solar": null
+        }
+      },
+      "screen_entering_firm_mw": {
+        "control": 185264.153,
+        "arm": 185264.153
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 163268.9,
+        "arm": 163268.9
+      },
+      "screen_reserve_position": {
+        "control": 1.134718,
+        "arm": 1.134718
+      },
+      "storage_firm_mw": {
+        "control": null,
+        "arm": null
+      },
+      "clearing": {
+        "census_mw": {
+          "control": 181435.072,
+          "arm": 181435.072
+        },
+        "census_position": {
+          "control": 1.111265,
+          "arm": 1.111265
+        },
+        "requirement_mw": {
+          "control": 163268.9,
+          "arm": 163268.9
+        },
+        "cleared_mw": {
+          "control": 170224.366,
+          "arm": 170224.366
+        },
+        "cleared_position": {
+          "control": 1.042601,
+          "arm": 1.042601
+        },
+        "price_usd_per_mw_day": {
+          "control": 90.411052,
+          "arm": 90.411052
+        },
+        "n_offers": {
+          "control": 1399,
+          "arm": 1399
+        },
+        "n_uncleared": {
+          "control": 133,
+          "arm": 133
+        },
+        "price_takers_mw": {
+          "control": 23331.628,
+          "arm": 23331.628
+        },
+        "how": {
+          "control": "marginal_offer_sets_price",
+          "arm": "marginal_offer_sets_price"
+        }
+      },
+      "retirements_total_mw": {
+        "control": 12943.013,
+        "arm": 12943.013
+      },
+      "thermal_accredited_by_fuel_identical": true,
+      "gate_inert": {
+        "credits_identical": true,
+        "census_identical": true,
+        "requirement_identical": true,
+        "retirements_identical": true,
+        "holds": true
+      },
+      "gate_confinement": {
+        "requirement_identical": true,
+        "thermal_accredited_identical": true,
+        "storage_firm_identical": true,
+        "holds": true
+      }
+    },
+    "2023": {
+      "delivery_year": "2023/2024",
+      "renewable_credit_applied": {
+        "control": {
+          "solar": 0.1064,
+          "wind": 0.41
+        },
+        "arm": {
+          "solar": 0.520788,
+          "wind": 0.15
+        }
+      },
+      "expected_credit_arm": {
+        "wind": 0.15,
+        "solar": 0.520788
+      },
+      "pools_end_of_year": {
+        "control": {
+          "wind": 10153.9,
+          "solar": 4549.8
+        },
+        "arm": {
+          "wind": 10153.9,
+          "solar": 4549.8
+        }
+      },
+      "screen_entering_firm_mw": {
+        "control": 174996.123,
+        "arm": 174241.49
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 163166.2,
+        "arm": 163166.2
+      },
+      "screen_reserve_position": {
+        "control": 1.072502,
+        "arm": 1.067877
+      },
+      "storage_firm_mw": {
+        "control": 3801.526,
+        "arm": 3801.526
+      },
+      "clearing": {
+        "census_mw": {
+          "control": 173335.903,
+          "arm": 172581.27
+        },
+        "census_position": {
+          "control": 1.062327,
+          "arm": 1.057702
+        },
+        "requirement_mw": {
+          "control": 163166.2,
+          "arm": 163166.2
+        },
+        "cleared_mw": {
+          "control": 170432.642,
+          "arm": 170432.642
+        },
+        "cleared_position": {
+          "control": 1.044534,
+          "arm": 1.044534
+        },
+        "price_usd_per_mw_day": {
+          "control": 86.517664,
+          "arm": 86.517664
+        },
+        "n_offers": {
+          "control": 849,
+          "arm": 849
+        },
+        "n_uncleared": {
+          "control": 39,
+          "arm": 21
+        },
+        "price_takers_mw": {
+          "control": 31161.471,
+          "arm": 30406.838
+        },
+        "how": {
+          "control": "marginal_offer_sets_price",
+          "arm": "marginal_offer_sets_price"
+        }
+      },
+      "retirements_total_mw": {
+        "control": 2624.467,
+        "arm": 1860.613
+      },
+      "thermal_accredited_by_fuel_identical": true,
+      "gate_identity": {
+        "expected_arm_credit": {
+          "wind": 0.15,
+          "solar": 0.520788
+        },
+        "solved_arm_credit": {
+          "solar": 0.520788,
+          "wind": 0.15
+        },
+        "holds": true,
+        "control_on_incumbent": true,
+        "accredited_vre_delta_mw_solved": -754.631,
+        "accredited_vre_delta_mw_phase0": -754.633
+      },
+      "gate_confinement": {
+        "requirement_identical": true,
+        "thermal_accredited_identical": true,
+        "storage_firm_identical": true,
+        "holds": true
+      },
+      "position": {
+        "published": {
+          "frame_a": 1.0552,
+          "frame_b": 1.05172
+        },
+        "model_control": 1.06233,
+        "model_arm": 1.0577,
+        "gap_pt_control": {
+          "frame_a": -0.712,
+          "frame_b": -1.061
+        },
+        "gap_pt_arm": {
+          "frame_a": -0.25,
+          "frame_b": -0.598
+        },
+        "residual": {
+          "frame_a": "narrows",
+          "frame_b": "narrows"
+        }
+      }
+    }
+  },
+  "gate_summary": {
+    "identity": {
+      "years": {
+        "2023": true
+      },
+      "PASS": true
+    },
+    "confinement": {
+      "years": {
+        "2021": true,
+        "2022": true,
+        "2023": true
+      },
+      "PASS": true
+    },
+    "inert": {
+      "years": {
+        "2021": true,
+        "2022": true
+      },
+      "PASS": true
+    }
+  },
+  "GATE_PASS": true
+}
