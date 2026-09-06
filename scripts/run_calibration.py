@@ -772,6 +772,7 @@ def run_year(
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
     ct_netload_drag: bool | None = None,
+    pjm_interface_feed_admissibility_gate: bool | None = None,
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -1007,6 +1008,17 @@ def run_year(
         config = config.with_overrides(ct_netload_drag=bool(ct_netload_drag))
         if ct_netload_drag and ct_drag_overrides:
             config = config.with_overrides(**ct_drag_overrides)
+    # Tri-state (ct_netload_drag pattern): None keeps the backcast_config
+    # per-ISO default (PJM ARMED default-ON, pjm-169 owner decision 2026-09-06),
+    # True/False force it — so --no-pjm-interface-feed-admissibility-gate
+    # expresses the PRE-ARM posture as an explicit caller value rather than an
+    # absence, which is what keeps a control arm reachable and its key stable.
+    if pjm_interface_feed_admissibility_gate is not None:
+        config = config.with_overrides(
+            pjm_interface_feed_admissibility_gate=bool(
+                pjm_interface_feed_admissibility_gate
+            )
+        )
     if chp_export_floor_measured:
         # Measured steam-following export floor (backcast overlay): CHP bins'
         # grid floor rides at the year's measured EIA-923 class CF x the

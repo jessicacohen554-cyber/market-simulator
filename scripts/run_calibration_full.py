@@ -3824,6 +3824,7 @@ def solve_and_persist(
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
     ct_netload_drag: bool | None = None,
+    pjm_interface_feed_admissibility_gate: bool | None = None,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -5134,6 +5135,17 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 ct_netload_drag=bool(ct_netload_drag)
             )
+        # pjm-169 F2 arm — tri-state mirror of run_year. None keeps the
+        # backcast_config per-ISO default (PJM ARMED); True/False force. The
+        # recorded config must report the posture the LP actually solved
+        # (rule 24 [R-REGISTRY]) — but ONLY when the caller forced one, so an
+        # unset PJM run still records the armed default resolved downstream.
+        if pjm_interface_feed_admissibility_gate is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_interface_feed_admissibility_gate=bool(
+                    pjm_interface_feed_admissibility_gate
+                )
+            )
         if zero_forcing_ablation:
             # Record the ablated config so run_config.json's scenario_config matches
             # what the LP actually solved (run_year applied the same transform). The
@@ -5623,6 +5635,7 @@ def solve_and_persist(
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
             ct_netload_drag=ct_netload_drag,
+            pjm_interface_feed_admissibility_gate=pjm_interface_feed_admissibility_gate,
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
@@ -6474,6 +6487,7 @@ def solve_and_persist(
         # to the ScenarioConfig default hinge and forced ~4x the ST_GAS energy
         # the original run did (pjm-94, 2026-07-09).
         "ct_netload_drag": ct_netload_drag,
+        "pjm_interface_feed_admissibility_gate": pjm_interface_feed_admissibility_gate,
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
         "gas_st_drag_overrides": gas_st_drag_overrides or {},
@@ -11827,6 +11841,23 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--pjm-interface-feed-admissibility-gate",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="PJM interface-feed admissibility gate "
+        "(ScenarioConfig.pjm_interface_feed_admissibility_gate): judge each "
+        "published transfer-limit series against its OWN posted limit before "
+        "letting it bound a link, and fall through to the static per-link TTC "
+        "— loudly, with the arithmetic logged at WARNING — when it is "
+        "inadmissible. Tri-state: unset keeps the per-ISO backcast default "
+        "(PJM ARMED default-ON since pjm-169, owner decision 2026-09-06; every "
+        "other ISO off); --no-pjm-interface-feed-admissibility-gate forces the "
+        "PRE-ARM posture, enforcing every posted series verbatim. Only read "
+        "under --pjm-measured-interface-limits. Rule 14 [R-ACCURATE] "
+        "named-exception: PJM's pre-2023 Average Eastern / Average Western "
+        "postings are a different time/area aggregation under one series name.",
+    )
+    parser.add_argument(
         "--ct-netload-drag",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13231,6 +13262,7 @@ def main() -> None:
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
+        pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_scr_edrp=args.nyiso_scr_edrp,
         nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,
