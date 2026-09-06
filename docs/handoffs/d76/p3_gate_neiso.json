@@ -1,0 +1,291 @@
+{
+  "iso": "NEISO",
+  "verdict": "PASS",
+  "leg_keys": {
+    "span": [
+      2021,
+      2023
+    ],
+    "bare_key": "ca4b163f62c4f52f",
+    "control_key": "ca4b163f62c4f52f",
+    "arm_key": "69688c797d7bac80",
+    "control_equals_bare": true,
+    "arm_distinct": true
+  },
+  "stops": {
+    "STOP 1 cache keys": {
+      "pass": true,
+      "notes": [
+        "12 recipe keys: explicit-OFF == bare, armed distinct"
+      ]
+    },
+    "STOP 2 identity": {
+      "pass": true,
+      "notes": [
+        "2021: screen peak 25,101.000 vs pre-declared measured 25,101.000 -> \u0394 0.000 MW  (pre-screen year)",
+        "2022: screen peak 24,233.000 vs pre-declared measured 24,233.000 -> \u0394 0.000 MW  (binding)",
+        "2023: screen peak 23,475.000 vs pre-declared measured 23,475.000 -> \u0394 0.000 MW  (binding)",
+        "2021: screen peak vs the LP's own peak -> \u0394 0.000 MW",
+        "2023: screen peak vs the LP's own peak -> \u0394 0.000 MW"
+      ]
+    },
+    "STOP 3 non-peak operands": {
+      "pass": true,
+      "notes": [
+        "run_config top-level differs in 5: ['cache_key', 'run_dir', 'scenario_config', 'scenario_config_source', 'timestamp'] (beyond per-leg bookkeeping: none)",
+        "scenario_config (THE pre-registered object) differs in: ['capacity_screen_peak_measured_hindcast']",
+        "2021 pre-screen ledger differs in ['screen_peak_demand_mw'] of 36 fields (allowed: ['screen_peak_demand_mw'])"
+      ]
+    },
+    "STOP 4 footprint": {
+      "pass": true,
+      "notes": [
+        "every Class-A invariant identical in [2021, 2022, 2023]; no unclassified key moved"
+      ]
+    }
+  },
+  "whole_ledger_diff": {
+    "2021": {
+      "n_fields": 36,
+      "n_moved": 1,
+      "moved": {
+        "screen_peak_demand_mw": {
+          "class": "SEAM",
+          "control": 23721.161,
+          "arm": 25101.0
+        }
+      }
+    },
+    "2022": {
+      "n_fields": 30,
+      "n_moved": 3,
+      "moved": {
+        "screen_adequacy_requirement_mw": {
+          "class": "SCREEN",
+          "control": 24581.432,
+          "arm": 24926.232
+        },
+        "screen_peak_demand_mw": {
+          "class": "SEAM",
+          "control": 23897.789,
+          "arm": 24233.0
+        },
+        "screen_reserve_position": {
+          "class": "SCREEN",
+          "control": 1.307568,
+          "arm": 1.289481
+        }
+      }
+    },
+    "2023": {
+      "n_fields": 38,
+      "n_moved": 4,
+      "moved": {
+        "capacity_reserve_position": {
+          "class": "SCREEN",
+          "control": 1.201617,
+          "arm": 1.232367
+        },
+        "screen_adequacy_requirement_mw": {
+          "class": "SCREEN",
+          "control": 24764.465,
+          "arm": 24146.548
+        },
+        "screen_peak_demand_mw": {
+          "class": "SEAM",
+          "control": 24075.732,
+          "arm": 23475.0
+        },
+        "screen_reserve_position": {
+          "class": "SCREEN",
+          "control": 1.201617,
+          "arm": 1.232367
+        }
+      }
+    }
+  },
+  "reported_not_gated": {
+    "2021": {
+      "screen_peak_demand_mw": {
+        "control": 23721.161,
+        "arm": 25101.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_entering_firm_mw": {
+        "control": null,
+        "arm": null
+      },
+      "screen_reserve_position": {
+        "control": null,
+        "arm": null
+      },
+      "reserve_margin": {
+        "control": 0.280256,
+        "arm": 0.280256
+      },
+      "retirements": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "retirements_by_reason": {},
+      "thermal_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "renewable_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "storage_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "floor_retained": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "fleet_by_fuel_after_delta": {}
+    },
+    "2022": {
+      "screen_peak_demand_mw": {
+        "control": 23897.789,
+        "arm": 24233.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 24581.432,
+        "arm": 24926.232
+      },
+      "screen_entering_firm_mw": {
+        "control": 32141.893,
+        "arm": 32141.893
+      },
+      "screen_reserve_position": {
+        "control": 1.307568,
+        "arm": 1.289481
+      },
+      "reserve_margin": {
+        "control": null,
+        "arm": null
+      },
+      "retirements": {
+        "control_rows": 29,
+        "arm_rows": 29,
+        "control_mw": 2032.033,
+        "arm_mw": 2032.033
+      },
+      "retirements_by_reason": {
+        "announced": {
+          "control_rows": 14,
+          "arm_rows": 14,
+          "control_mw": 673.433,
+          "arm_mw": 673.433
+        },
+        "economic": {
+          "control_rows": 15,
+          "arm_rows": 15,
+          "control_mw": 1358.6,
+          "arm_mw": 1358.6
+        }
+      },
+      "thermal_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "renewable_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "storage_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "floor_retained": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "fleet_by_fuel_after_delta": {}
+    },
+    "2023": {
+      "screen_peak_demand_mw": {
+        "control": 24075.732,
+        "arm": 23475.0
+      },
+      "screen_adequacy_requirement_mw": {
+        "control": 24764.465,
+        "arm": 24146.548
+      },
+      "screen_entering_firm_mw": {
+        "control": 29757.413,
+        "arm": 29757.413
+      },
+      "screen_reserve_position": {
+        "control": 1.201617,
+        "arm": 1.232367
+      },
+      "reserve_margin": {
+        "control": 0.253023,
+        "arm": 0.253023
+      },
+      "retirements": {
+        "control_rows": 1,
+        "arm_rows": 1,
+        "control_mw": 26.0,
+        "arm_mw": 26.0
+      },
+      "retirements_by_reason": {
+        "announced": {
+          "control_rows": 1,
+          "arm_rows": 1,
+          "control_mw": 26.0,
+          "arm_mw": 26.0
+        }
+      },
+      "thermal_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "renewable_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "storage_additions": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "floor_retained": {
+        "control_rows": 0,
+        "arm_rows": 0,
+        "control_mw": 0,
+        "arm_mw": 0
+      },
+      "fleet_by_fuel_after_delta": {}
+    }
+  }
+}
