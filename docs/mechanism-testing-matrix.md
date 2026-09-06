@@ -5547,6 +5547,80 @@ loss.
 > evidence that an hour set is correct — only an hour-of-day-matched or
 > stamp-level check is.**
 >
+> **QUEUE STAMP miso-222 (2026-09-06) — THE ELMP / EMERGENCY-SUPPLY OWNER ASK, **MEASURED
+> BEFORE IT IS BUILT**: the emergency-range MW is **ALREADY CURATED IN THIS REPO**
+> (miso-219's premise was half wrong), and at **1.7–2.0 GW against a 5.6–22.0 GW
+> requirement** it reaches **2 of the 45 object hours**. ZERO LP MINUTES. NO SOLVE, NO
+> SCREEN, NO BUNDLE, NO REGISTRATION, NO KEEPER MOVE, NO FIELD ADDED. Keeper UNCHANGED at
+> `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED). Record
+> `FINDING-miso222-elmp-emergency-supply-2026-09-06.md`; instruments
+> `_miso222_removal_sizing_phase0.py` → `_miso222_removal_sizing.json` and
+> `_miso222_emergency_range_phase0.py` → `_miso222_emergency_range.json`.
+> **THE PREMISE CORRECTION.** miso-219 §9 filed this to owner court on the ground that the
+> emergency-range MW is *"neither already-measured nor already-registered"*. The REGISTERED
+> half stands (no `ScenarioConfig` field, no matrix row). The **MEASURED half is wrong**:
+> MISO publishes `Economic Max` / `Emergency Max` per masked unit-hour, this repo fetches it
+> (`fetch_miso_energy_offers.py`), curates it (`curate_miso_energy_offers.py`) and carries it
+> in the data contract as `energy-offers` → `emergency_max_mw` / `emergency_min_mw` /
+> `emergency_flag` — **landed at miso-145 (2026-08-09), BEFORE miso-219 filed**.
+> **SIZING THE REMOVAL OBJECT.** Merit-order displacement at fixed demand. MW that must LEAVE
+> the stack over each year's 15 object hours — to $200: mean **21,991 / 16,119 / 5,577**
+> (min 13,773 / 4,315 / **329**); to the oil floor 19,336 / 13,969 / 3,170; to the actual
+> 21,539 / 17,340 / 8,092. The cohort is **66.1 / 66.8 / 60.1 % `CT_PEAKER`**
+> (`CT_PEAKER|econ` alone 12,060 / 8,684 / 2,210 MW), and 95.1 / 95.1 / 88.9 % of it sits on
+> the authorized offer channel — which miso-221 already measured un-re-priceable.
+> **SIZING THE MECHANISM.** `max(0, Emergency Max − Economic Max)` over available units at
+> the object's own hours, from 183 re-fetched RT files (137.7 MB; 1,172 / 1,218 / 1,294
+> masked units; **all 45 object hours covered**). Rule 13 [R-MEASURED]: only OFFER columns
+> read — the award columns (`Cleared MW1`–`MW12`, `Target MW Reduction`) are OUTCOMES and are
+> dropped before anything else touches the frame. Clock: published fixed EST
+> interval-beginning, model fixed CST, so CST = EST − 1 h. Declared range at the object
+> hours: mean **1,866 / 1,954 / 1,664 MW**; all Jun–Jul mean 2,458 / 2,817 / 2,581, p95
+> 4,490 / 5,243 / 4,858.
+> **THE ANSWER: shortfall factor 11.8× / 8.2× / 3.4×, and per hour 0/15, 0/15, 2/15 — TWO OF
+> FORTY-FIVE**, both on 2025-07-28 (HE18 need 1,044 have 1,323; HE19 need 329 have 1,272).
+> Against the oil floor 0 / 0 / 6. For scale C3c is model 3/7/0 hours >$200 vs actual
+> 30/37/88, so re-basing takes 2025 from 0 to about 2. The "is the range inside our pmax?"
+> question does NOT change this and is named as a build-design question, not a go/no-go one:
+> the numbers already assume the most favourable case (the whole range leaves the economic
+> stack) and that case is insufficient in every year.
+> **THE ASK IS FILED ANYWAY** — rule 1 [R-STRUCT]'s first half is explicit that a
+> structurally-correct mechanism is never judged by the residual, and the mechanism IS a
+> mis-mapping repair: armed, correctly clocked on the miso-210-repaired `Etc/GMT+6`, in a
+> DECLARED capacity-emergency window in 11 of 2025's 15 object hours, contributing exactly $0
+> because it prices unserved energy while the LP serves every MWh. What the owner must rule
+> on BEFORE a build: (a) is a **fleet- or region-aggregate** cohort admissible, given masked
+> identity, NO published fuel/technology attribute, the offer-side class bridge **REFUTED at
+> miso-138**, and location as `Region` ∈ {North, Central, South} rather than a model zone (a
+> genuine rule 14 [R-ACCURATE] misalignment); and (b) what to do about **JJA-only coverage**.
+> Rule 13's forward-regeneration test **PASSES** and is its strongest feature: the emergency
+> range is a unit physical characteristic declared ex ante, regenerating for a forward year as
+> a per-class or fleet-aggregate fraction on the forecast fleet — the same admissibility class
+> as an outage window, never a measured outcome fed back.
+> **THE SUCCESSOR OBJECT, AND IT RELOCATES THE LANE'S ATTENTION.** The requirement is
+> **5.6–22.0 GW of supply depth** and NOTHING in the lever set is that size: offer-curve
+> reshape reaches the right block at 450–516× the `CT_PEAKER`-2023 C1 headroom (miso-221);
+> reserve/ORDC needs 3.26–10.62× the published requirement (miso-219, `G`); this mechanism is
+> 3.4–11.8× short. **AND IT IS 2023/2024 THAT IS EXTREME, NOT 2025** — 22.0 and 16.1 GW
+> against 2025's 5.6 GW, the reverse of where this lane has been looking. The open question,
+> NOT proposed here: is the model's object-hour SUPPLY too deep or its DEMAND too shallow?
+> The sizing arithmetic cannot distinguish them; F-6 constrains the availability half (the
+> model tracks the real fleet's utilisation to 0.4 pp) and miso-205 measured the object hours
+> as genuinely high-load in the model (load p83.4–p99.3).
+> **NO CELL VERDICT MOVED.** `maxgen_emergency_tier_pricing` stays **`K`** — armed in the
+> keeper and unrefuted; this session SIZED its object and LOCATED its input. Evidence appended
+> (the miso-215 / miso-221 "evidence about the container, no verdict" form). No
+> `ScenarioConfig` field added, so no base row and no other shard touched (rule 28c not
+> engaged).
+> **G-DRIFT DELTA**: `b2bd9fdb..3dcf1b22` = 5 files, +286/−12, ALL INERT (eGRID sheet-reader
+> refactor — same frames, pinned by `tests/test_egrid_sheets.py`; `registration_refusals`, a
+> registration-time gate off the solve path; cache-key docs), and `origin/main` has since
+> moved to `5fdd4374` with **zero further solve-path changes**. MEASURED, not merely
+> classified: the keeper fleet rebuilt at `3dcf1b22` reproduces miso-221's rebuild at
+> `b2bd9fdb` with **0 differences** across 45 object hours × {clearing price, MW to $200}.
+> `miso220_nonsteamlift_B` remains a valid form-4 control.
+
+
 > **QUEUE STAMP miso-221 (2026-09-06) — THE PEAK-BAND RESHAPE: **KILLED AT PHASE 0,
 > ZERO LP MINUTES**, and the kill generalises beyond the lever. NO SOLVE, NO SCREEN, NO
 > BUNDLE, NO REGISTRATION, NO KEEPER MOVE, NO FIELD ADDED. Keeper UNCHANGED at
