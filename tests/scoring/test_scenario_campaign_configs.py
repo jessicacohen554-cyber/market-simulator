@@ -113,19 +113,118 @@ class TestCampaignMatrix(unittest.TestCase):
             self.sweep.cases["LOAD-HI-ORGANIC"]["datacenter_load_path"],
         )
 
-    def test_blocked_cases_are_commented_not_live(self):
-        # CES-T80 LEFT this list at SCN-LEVELS (2026-09-06): SCN-WS2a landed
-        # its two fields and owner card D-2 -> S3 committed its level, so both
-        # of its blockers cleared. VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN
-        # LEFT it at SCN-WS3b (2026-09-06): their one missing field
-        # `voluntary_clean_demand_path` landed (they stay HELD under owner
-        # ruling S5, which is a release question, not a config one). Only
-        # CAP-STATE-TIGHT remains: blocked on a missing schedule field AND on
-        # a level S3 did not reach.
-        text = MATRIX.read_text()
-        for case in ("CAP-STATE-TIGHT",):
-            self.assertNotIn(case, self.sweep.cases, f"{case} must not be live yet")
-            self.assertIn(case, text, f"{case} must still be named, commented")
+    def test_no_case_is_left_commented(self):
+        # CES-T80 LEFT the commented list at SCN-LEVELS (2026-09-06); VOL-MID /
+        # VOL-HI / CES-P20+VOL-HI / ALL-CLEAN at SCN-WS3b (2026-09-06); and
+        # CAP-STATE-TIGHT, the last, at SCN-CAP (2026-09-06) under owner
+        # ruling S12 on card D-2(c). Every plan §3.5 case is now live, so the
+        # header's "STILL COMMENTED" note must say NOTHING and the case set
+        # must carry all fourteen names.
+        expected = {
+            "REF",
+            "CARB-LO",
+            "CARB-MID",
+            "CARB-HI",
+            "CAP-STATE-TIGHT",
+            "CES-P10",
+            "CES-P20",
+            "CES-P30",
+            "CES-T80",
+            "VOL-MID",
+            "VOL-HI",
+            "LOAD-HI",
+            "LOAD-HI-ORGANIC",
+            "CARB-MID+LOAD-HI",
+            "CES-P20+VOL-HI",
+            "ALL-CLEAN",
+        }
+        self.assertTrue(expected <= set(self.sweep.cases), set(self.sweep.cases))
+
+    def test_cap_state_tight_is_live_at_the_committed_schedule(self):
+        # Owner ruling S12 (2026-09-06, SCN-DESK r#12 am.1, card D-2(c)):
+        # "Commit the 80 % slope and build the field." The schedule is
+        # FINDING-scn-ws1a-2026-09-05.md §4.2 VERBATIM — a linear decline to
+        # 20 % of the 2025 published per-state budget by 2050, CAISO anchored
+        # to the model's REF-2026 CO2 because CARB publishes no power-sector
+        # budget. This pins the ruled level to the numbers so it cannot drift
+        # without a test saying so (the CES-T80 pin's construction).
+        overrides = self.sweep.cases["CAP-STATE-TIGHT"]
+        self.assertTrue(overrides["mass_cap_enabled"])
+        self.assertEqual(overrides["mass_cap_program"], "co2")
+        self.assertTrue(overrides["state_carbon_pricing"])
+        self.assertEqual(overrides["carbon_price_path"], "zero")
+        self.assertEqual(
+            overrides["mass_cap_tons_by_year"],
+            {
+                "NYISO": {2026: 23.16e6, 2030: 20.2e6, 2040: 12.8e6, 2050: 4.6e6},
+                "NEISO": {2026: 20.67e6, 2030: 18.0e6, 2040: 11.4e6, 2050: 4.1e6},
+                "CAISO": {2026: 30.5e6, 2030: 26.5e6, 2040: 16.5e6, 2050: 6.1e6},
+            },
+        )
+        # Every knot parsed as a NUMBER (PyYAML reads `23.16e6` as a string;
+        # the file writes the signed-exponent form), and the schedule is the
+        # 80 % decline it claims: last knot = 0.2 x first knot, to the
+        # rounding WS-1a §4.2 wrote.
+        for iso, knots in overrides["mass_cap_tons_by_year"].items():
+            for year, tons in knots.items():
+                self.assertIsInstance(year, int, f"{iso} {year!r}")
+                self.assertIsInstance(tons, float, f"{iso} {year} {tons!r}")
+            self.assertAlmostEqual(knots[2050] / knots[2026], 0.2, delta=0.002, msg=iso)
+        # The scalar is NOT set beside the schedule: one budget source per
+        # case (rule 19 [R-ONE-MECH]); the schedule already outranks it.
+        self.assertNotIn("mass_cap_tons", overrides)
+        # A program-ISO case: exactly the three program ISOs are scheduled.
+        self.assertEqual(
+            set(overrides["mass_cap_tons_by_year"]), {"CAISO", "NYISO", "NEISO"}
+        )
+
+    def test_cap_state_tight_resolves_to_nothing_on_the_no_program_isos(self):
+        # ERCOT / MISO carry no cap-and-trade program, so the case resolves
+        # to NO carbon program at all there — no row, no adder — and the LP is
+        # byte-identical to REF's. PJM is deliberately NOT in this list: it
+        # carries a partial RGGI program and falls through to the published
+        # regional budget in 2027-2030 (a slack row), which
+        # tests/unit/policy/test_mass_cap_schedule.py pins and
+        # FINDING-scn-cap-2026-09-06.md §5 routes to the desk.
+        from market_sim.policy.cap_and_trade import resolve_carbon_program
+        from market_sim.policy.constraints import get_active_policy_constraints
+
+        for iso in ("ERCOT", "MISO"):
+            base = ScenarioConfig.from_yaml(
+                CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_2026_2030.yaml"
+            )
+            configs = self.sweep.case_configs(base)
+            ref, cap = configs["REF"], configs["CAP-STATE-TIGHT"]
+            for year in range(2026, 2031):
+                self.assertIsNone(resolve_carbon_program(ref, year), (iso, year))
+                self.assertIsNone(resolve_carbon_program(cap, year), (iso, year))
+                self.assertEqual(get_active_policy_constraints(cap, year), [])
+
+    def test_cap_state_tight_binds_only_through_the_schedule_on_program_isos(self):
+        # On the three program ISOs the case's budget is the SCHEDULE's number
+        # in every horizon year — never the published fallback (which WS-1a
+        # §4.1 measured wildly slack after 2025) and never a scalar.
+        from market_sim.policy.cap_and_trade import (
+            resolve_carbon_program,
+            scheduled_power_sector_budget,
+        )
+
+        for iso in ("CAISO", "NYISO", "NEISO"):
+            base = ScenarioConfig.from_yaml(
+                CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_2026_2030.yaml"
+            )
+            cap = self.sweep.case_configs(base)["CAP-STATE-TIGHT"]
+            self.assertEqual(cap.mode, "forecast")
+            self.assertIsNotNone(cap.mass_cap_tons_by_year)
+            for year in range(2026, 2031):
+                res = resolve_carbon_program(cap, year)
+                self.assertIsNotNone(res.cap_spec, (iso, year))
+                self.assertIsNone(res.price_adder, (iso, year))
+                self.assertAlmostEqual(
+                    res.cap_spec.cap_tons,
+                    scheduled_power_sector_budget(cap, year),
+                    msg=(iso, year),
+                )
 
     def test_voluntary_cases_are_live_on_the_one_field(self):
         # SCN-WS3b (2026-09-06): the four cases the plan §3.5 table lists on the

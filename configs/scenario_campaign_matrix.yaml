@@ -24,8 +24,10 @@
 # filled in here; each is named at its case:
 #   1. `CAP-STATE-TIGHT`'s declining budget — §3.5 writes "declining
 #      mass_cap_tons" with no number, and S3's enumeration names none, so the
-#      slope stays the OWNER level SCN-WS1a labelled it
-#      (FINDING-scn-ws1a-2026-09-05.md §4.2). Still open under D-2.
+#      slope stayed the OWNER level SCN-WS1a labelled it
+#      (FINDING-scn-ws1a-2026-09-05.md §4.2). **RULED 2026-09-06 — S12 on
+#      card D-2(c): "Commit the 80 % slope and build the field."** The case
+#      is LIVE below at WS-1a §4.2's schedule, verbatim (SCN-CAP).
 #   2. The voluntary sub-levels — S3 commits "the memo's box-5 defaults", and
 #      box 5 itself leaves `f_commit` mid and the WTP-ceiling LEVEL owner-set
 #      (voluntary-clean-demand-design-memo-2026-09-05.md box 5). Two cells,
@@ -44,8 +46,9 @@
 # name and its question are already fixed here so the campaign's shape does
 # not drift while the fields arrive.
 #
-# STILL COMMENTED AT THIS COMMIT, and on what: `CAP-STATE-TIGHT` ONLY (a
-# missing schedule field AND an uncommitted level — see its block). **`VOL-MID`
+# STILL COMMENTED AT THIS COMMIT, and on what: NOTHING — `CAP-STATE-TIGHT`,
+# the last commented case, went LIVE at SCN-CAP (2026-09-06) when ruling S12
+# committed its slope and built its schedule field (see its block). **`VOL-MID`
 # / `VOL-HI` / `CES-P20+VOL-HI` / `ALL-CLEAN` ARE LIVE since SCN-WS3b
 # (2026-09-06)** — the one field they waited on, `voluntary_clean_demand_path`,
 # landed with its resolver, its row on the clean-tier family and its
@@ -117,35 +120,55 @@ cases:
   #   CARB-HI:  {carbon_price_path: high}
 
   # ── Price vs quantity: the mass-cap instrument on the program ISOs ────────
-  # STILL BLOCKED AFTER S3, on BOTH legs, and this is one of the three places
-  # the ruling left a level uncommitted (header note 1).
-  #   (a) MISSING FIELD. `mass_cap_enabled` / `mass_cap_tons` exist, but the
-  #       case is a DECLINING budget and `mass_cap_tons` is a scalar
-  #       `float | None` — one number for every year — so a declining schedule
-  #       has no expression at this commit. It needs a `{year: tons}` field
-  #       (natural name `mass_cap_tons_by_year`, read by `_power_sector_cap`
-  #       before the scalar), which is a NEW ScenarioConfig field and carries
-  #       its own matrix row in the same PR (rule 28 duty c). SCN-WS1a scoped
-  #       it and correctly declined to build it: it belongs to the lane that
-  #       RUNS the case (FINDING-scn-ws1a-2026-09-05.md §4.1(a)).
-  #   (b) UNCOMMITTED LEVEL. §3.5 writes only "declining `mass_cap_tons` on
-  #       program ISOs" — no number — and S3's enumeration names no budget, so
-  #       committing the §3.5 table does NOT commit this one. SCN-WS1a's
-  #       pre-declared case (§4.2) says so in terms: the anchor is the 2025
-  #       published per-state budget, but "RGGI's own post-2030 trajectory is
-  #       not landed in the repo, and CARB publishes no power-sector budget at
-  #       all, so the slope is an OWNER level (D-2)". It is not filled in here
-  #       and must not be inferred — re-present it to the owner.
-  #   (c) READ-OUT. `DispatchResult.co2_cap_price` still has no reader under
-  #       `src/market_sim/results/`, so the case has no exported dual to score
-  #       (WS-1a §4.3, routed to WS-0 as the G-E4 rider).
-  # Pre-declared shape, levels NOT committed — SCN-WS1a §4.2 is the source:
-  #   CAP-STATE-TIGHT:
-  #     mass_cap_enabled: true
-  #     mass_cap_program: co2
-  #     state_carbon_pricing: true      # the row REPLACES the adder
-  #     carbon_price_path: zero         # no federal price in the cap case
-  #     mass_cap_tons_by_year: <per-ISO declining budget — STILL OWNER D-2>
+  # LIVE as of SCN-CAP (2026-09-06), under owner ruling **S12 on card D-2(c)**
+  # (SCN-DESK r#12 am.1, verbatim: "Commit the 80 % slope and build the
+  # field"). Both blockers cleared in that one ruling:
+  #   (a) THE FIELD. `mass_cap_tons_by_year` ({ISO: {year: metric tonnes}})
+  #       is read FIRST by `policy/cap_and_trade.py::_power_sector_cap`, ahead
+  #       of the scalar `mass_cap_tons` and the published RGGI/CARB budget;
+  #       linear between knots, edge-held outside them (the last knot holds
+  #       flat after 2050); coerced to None in backcast/hindcast; cache-
+  #       optional at None (docs/handoffs/FINDING-scn-cap-2026-09-06.md §1).
+  #   (b) THE LEVEL. The schedule below IS SCN-WS1a §4.2's pre-declared
+  #       case, verbatim, committed by S12: the anchor is the 2025 published
+  #       per-state budget (NY 23.16 Mt; CT+ME+MA+NH+RI+VT 20.67 Mt), then a
+  #       LINEAR decline to 20 % of that anchor by 2050. The level is the
+  #       owner's what-if (rule 1 [R-STRUCT]); no number here is a modeller's.
+  #   (c) READ-OUT. `DispatchResult.co2_cap_price` (the row dual, $/t) is the
+  #       endogenous power-sector allowance price the policy lanes report
+  #       beside the adder path's exogenous price in the same year — the
+  #       price-vs-quantity comparison the case exists for (WS-1a §4.2).
+  # THE CAISO ANCHOR IS DISCLOSED, NOT PUBLISHED: CARB publishes no
+  # power-sector budget (its 267 Mt whole-economy cap is meaningless as a
+  # power-sector row, WS-1a §4.1), so CAISO's 2026 knot is the model's own
+  # REF-2026 CO2 (30.5 Mt, the committed T1-F REF at WS-1a's pin), declining
+  # on the same 80 % slope. It is the one non-published anchor in the case.
+  # `state_carbon_pricing: true` keeps the program resolver ON so the ROW
+  # REPLACES the adder (one instrument at a time, never both — resolver
+  # invariant); `carbon_price_path: zero` means no federal price in the cap
+  # case (under S2's floor a zero path resolves to the program alone, and on
+  # the row path the program IS the row). Both are the shipped defaults,
+  # written out because the case's meaning depends on them.
+  # SCOPE: CAISO / NYISO / NEISO only — the ISOs the schedule names. ERCOT and
+  # MISO carry no program (`CAP_AND_TRADE_PROGRAMS`), so the case resolves to
+  # NOTHING there and is byte-identical to REF in the LP. PJM is NOT
+  # byte-identical: it carries a partial RGGI program, so an ISO absent from
+  # the schedule falls through to the published REGIONAL RGGI budget in
+  # 2027-2030 — a slack row, not REF (routed to SCN-DESK, FINDING-scn-cap §5).
+  # The ERCOT / PJM / MISO policy lanes do not solve this case (r#12 am.1).
+  # HELD under S5 with every other A-POLICY case; solved by the three
+  # program-ISO policy lanes under their own PRECOMMIT (precondition P5),
+  # killed at phase 0 where the budget is slack in every year (FINDING-scn-cap
+  # §3 tabulates the resolved budget against each ISO's REF CO2).
+  CAP-STATE-TIGHT:
+    mass_cap_enabled: true
+    mass_cap_program: co2
+    state_carbon_pricing: true      # the row REPLACES the adder
+    carbon_price_path: zero         # no federal price in the cap case
+    mass_cap_tons_by_year:          # metric tonnes CO2; linear between knots
+      NYISO: {2026: 23.16e+6, 2030: 20.2e+6, 2040: 12.8e+6, 2050: 4.6e+6}
+      NEISO: {2026: 20.67e+6, 2030: 18.0e+6, 2040: 11.4e+6, 2050: 4.1e+6}
+      CAISO: {2026: 30.5e+6, 2030: 26.5e+6, 2040: 16.5e+6, 2050: 6.1e+6}
 
   # ── National CES, uniform-PRICE (tradeable) form: the response curve ──────
   # Premium in real 2026$/MWh. COMMITTED: the {10, 20, 30} ladder is named
