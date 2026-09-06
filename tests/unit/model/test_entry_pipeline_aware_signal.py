@@ -228,12 +228,45 @@ class TestPipelineLookaheadUnits(unittest.TestCase):
 
 
 class TestPipelineDepressesTheProForma(unittest.TestCase):
-    """E-2 effect: committed capacity lowers the price the screen sees."""
+    """E-2 effect: committed capacity lowers the price the screen sees.
+
+    Both tests pin the entering-year demand through ``demand_next_total``
+    (the sibling idiom of ``test_entry_margin_exhaustion.py`` and
+    ``test_price_signal.py``) instead of letting the signal grow
+    ``base_demand`` through ``_scale_demand``. ``_signal_fixture``'s
+    500/400/500 MW stack at $15/$40/$90 only exhibits the effect inside
+    ``D in (900, 1200] MW``, and MISO's load-forecast path had drifted out of
+    it: the fixture's 900 MW scales to **1307.61 MW** in 2031 -- 7.61 MW past
+    the pipeline arm's own 1300 MW stack top -- so both arms landed on the $90
+    peaker and each ``assertLess`` compared 90.0 with 90.0
+    (``docs/handoffs/FINDING-y21-flipset-repair-2026-09-06.md`` §8.2).
+
+    The three bounds that define the regime:
+
+    * ``D > 900`` -- the base arm sits past the $40 tranche's 900 MW cumulative
+      top, i.e. on the dearest unit, as ``_signal_fixture`` intends;
+    * ``D <= 1300`` -- the thermal arm's 400 MW @ $20 row sorts second and
+      lifts that tranche top to 1300 MW, so the arm falls back to $40;
+    * ``D <= 1200`` -- the VRE arm's 300 MW nets load down to <= 900 MW,
+      likewise back inside the $40 tranche. This is the binding upper bound.
+
+    ``_SIGNAL_DEMAND_MW`` is the midpoint of the two binding bounds, 150 MW
+    clear of each, and makes this **unit** test independent of the load
+    forecast so the same drift cannot break it again. No assertion changes.
+    """
 
     def test_pending_thermal_pushes_the_stack_down(self):
         config, base_demand, fleet_arrays, mc_cost, result = _signal_fixture()
+        demand = np.full(base_demand.shape[1], _SIGNAL_DEMAND_MW)
         base = _lookahead_reprice_signal(
-            config, 2031, base_demand, fleet_arrays, mc_cost, result, 1
+            config,
+            2031,
+            base_demand,
+            fleet_arrays,
+            mc_cost,
+            result,
+            1,
+            demand_next_total=demand,
         )
         # 400 MW of committed $20/MWh capacity ahead of the $90 peaker.
         pipe = _FakeArrays(pmax=np.array([400.0]), availability=np.ones((1, 24)))
@@ -245,6 +278,7 @@ class TestPipelineDepressesTheProForma(unittest.TestCase):
             mc_cost,
             result,
             1,
+            demand_next_total=demand,
             pipeline_mc=np.full((1, 24), 20.0),
             pipeline_arrays=pipe,
         )
@@ -252,8 +286,16 @@ class TestPipelineDepressesTheProForma(unittest.TestCase):
 
     def test_pending_vre_reduces_net_load(self):
         config, base_demand, fleet_arrays, mc_cost, result = _signal_fixture()
+        demand = np.full(base_demand.shape[1], _SIGNAL_DEMAND_MW)
         base = _lookahead_reprice_signal(
-            config, 2031, base_demand, fleet_arrays, mc_cost, result, 1
+            config,
+            2031,
+            base_demand,
+            fleet_arrays,
+            mc_cost,
+            result,
+            1,
+            demand_next_total=demand,
         )
         with_vre = _lookahead_reprice_signal(
             config,
@@ -263,6 +305,7 @@ class TestPipelineDepressesTheProForma(unittest.TestCase):
             mc_cost,
             result,
             1,
+            demand_next_total=demand,
             pipeline_vre=np.full(24, 300.0),
         )
         self.assertLess(float(with_vre.mean()), float(base.mean()))
@@ -370,6 +413,12 @@ class _FakeResult:
     def __init__(self, hours):
         self.wind_dispatched = np.zeros((1, hours))
         self.solar_dispatched = np.zeros((1, hours))
+
+
+# Entering-year demand the pro-forma tests price, in MW. Midpoint of the
+# fixture's designed regime (900, 1200] -- derivation and the drift it repairs:
+# TestPipelineDepressesTheProForma's docstring.
+_SIGNAL_DEMAND_MW = 1050.0
 
 
 def _signal_fixture(hours: int = 24):
