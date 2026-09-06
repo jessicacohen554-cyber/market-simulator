@@ -1529,6 +1529,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "mass_cap_tons_by_year",
+    # capx D76: the MEASURED-hindcast capacity-screen peak gate
+    # (FINDING-capx-d76-2026-09-06.md §4; GATED default False => the screens
+    # keep the de-grown weather-year peak, byte-identical). Dropped from the
+    # hash at its declared False so every pre-existing cache key of all six
+    # ISOs — every backcast keeper and every committed T1-H/T1-X bundle
+    # included — is byte-stable; an armed run keys distinctly. SHARED field —
+    # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "capacity_screen_peak_measured_hindcast",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2074,6 +2083,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SCN-CAP: the mass-cap budget schedule, registered at its shipping
     # default (None = no schedule). Registered IN THE SAME COMMIT as the field.
     "mass_cap_tons_by_year": "None",
+    # capx D76: the measured-hindcast capacity-screen peak gate, registered at
+    # its shipping default (False = the de-grown weather-year peak). Registered
+    # IN THE SAME COMMIT as the field.
+    "capacity_screen_peak_measured_hindcast": "False",
 }
 
 
@@ -16404,6 +16417,48 @@ class ScenarioConfig:
     # name. SCOPE: generic in form, PJM-scoped by DATA — an ISO with no intaken
     # default-ACR table has no "NA" cell, so the gate is inert by construction
     # (rule 25 [R-ISO-SCOPE]; nothing transfers).
+    capacity_screen_peak_measured_hindcast: bool = False
+    # GATED default-OFF (capx D76 2026-09-06, executing FINDING-capx-d67-
+    # 2026-09-06.md §8(a) as measured across all six ISOs by
+    # FINDING-capx-d76-2026-09-06.md). WHAT IT CHANGES: the OPERAND of the
+    # capacity screens' peak. ``runner.py`` builds that peak at the top of its
+    # year loop from ``_scale_demand`` over the once-loaded weather-year base
+    # (the GROWTH path) and only the LP's own ``year_demand``, 500 lines down,
+    # takes the measured hindcast branch — so in every hindcast year that is
+    # NOT the weather year the retirement reliability floor, the reserve-margin
+    # build backstop, the thermal entry screen, the accreditation census and
+    # the CR-1 position all test a SYNTHESIZED peak while the same year's LP
+    # dispatches the MEASURED load. Armed, in HINDCAST mode only, the seam peak
+    # is the year's own measured peak — the SAME array the LP takes, loaded
+    # once and shared through ``_hindcast_measured_demand`` — so the two can no
+    # longer disagree.
+    # WHY. D76's zero-LP census measured the gap on every committed recipe: on
+    # the bare T1-H recipes it runs −22,702 MW (−15.18 %, PJM 2021) to
+    # +12,886 MW (+15.42 %, ERCOT 2025), and on the T1-X crossover recipes
+    # −19,721 MW (−23.31 %) to +2,495 MW (+8.61 %) — every ISO, every
+    # non-weather year, with the requirement error tracking it (−24,741 MW to
+    # +13,808 MW) in the four ISOs whose requirement is peak-dependent. That is
+    # rule 14 [R-ACCURATE] (the measured load is the accurate input; a
+    # synthesized historical peak is an estimate) and rule 19 [R-ONE-MECH] (it
+    # REPLACES the de-grown peak; it never stacks on it). ZERO free parameters:
+    # no scalar field exists and none may be added (rule 24 [R-REGISTRY]).
+    # FORECAST-SAFE BY CONSTRUCTION, which is why it is hindcast-scoped: a
+    # forecast year has no measured load, so the growth path remains THE
+    # forecast methodology and rule 13 [R-MEASURED]'s forward test is met — the
+    # measured peak is a reproducible physical input for a realized year, never
+    # an outcome pinned to a residual. Inert (same predicate as the LP's own
+    # branch) for every forecast run, every crossover FORWARD year, and every
+    # backcast; the field is a plain bool whose False default needs no
+    # backcast coercion, and it is registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # False so an unarmed run's cache key is byte-stable and an armed run keys
+    # distinctly. WHY DEFAULT-OFF: arming changes the screen operand of EVERY
+    # hindcast bundle in the repo and therefore every FC-1 / FC-3 T1-H row on
+    # the forecast board, so it is an owner card, not a lane decision.
+    # Hindcast harness: run_capacity_hindcast.py
+    # --capacity-screen-peak-measured-hindcast. SCOPE: ISO-agnostic by
+    # construction — it carries no per-ISO number and nothing is transferred
+    # (rule 25 [R-ISO-SCOPE]); it is the same repair in every ISO because the
+    # defect is in one shared seam.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -18493,6 +18548,7 @@ TIER_TAGS: dict[str, int] = {
     "capacity_going_forward_bar_published_by_iso": 1,
     "capacity_adequacy_requirement_published_by_iso": 1,
     "capacity_no_default_cap_convention_by_iso": 1,
+    "capacity_screen_peak_measured_hindcast": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,

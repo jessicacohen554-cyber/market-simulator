@@ -536,6 +536,10 @@ META_RECORD_SPEC = RecordSpec(
             "row AND the published-bar gate; the raw mapping is recorded below",
         ),
         "capacity_no_default_cap_convention_by_iso": FromConfig(),
+        # capx D76: the measured-hindcast capacity-screen peak gate. A plain
+        # bool with no per-ISO row and no companion predicate, so FromConfig
+        # records the SOLVED value directly (FFR-3R).
+        "capacity_screen_peak_measured_hindcast": FromConfig(cast=bool),
         # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
@@ -718,6 +722,7 @@ def build_config(
     ptc_window: "int | str | None" = None,
     verified_announced_exits: bool = True,
     fossil_announced_exits: "bool | None" = None,
+    capacity_screen_peak_measured_hindcast: "bool | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -974,6 +979,16 @@ def build_config(
                 # None inherits the shipped default, True arms the D53 A/B
                 # measurement posture (distinct cache key).
                 "retirement_sector_gate": retirement_sector_gate,
+                # capx D76: the measured-hindcast capacity-screen peak gate
+                # — default-off; None inherits the shipped default, True arms
+                # the D76 A/B measurement posture (distinct cache key). An
+                # explicit False is passed through here rather than outside
+                # the dict: the field is registered at its declared False, so
+                # False still drops from the hash and the control arm keeps the
+                # bare recipe key.
+                "capacity_screen_peak_measured_hindcast": (
+                    capacity_screen_peak_measured_hindcast
+                ),
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
                 "exit_rate_limits": exit_rate_limits,
@@ -1780,6 +1795,30 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--capacity-screen-peak-measured-hindcast",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D76 (2026-09-06) arm: in HINDCAST mode the capacity screens' "
+            "peak is the solve year's OWN MEASURED load -- the same array the "
+            "LP dispatches -- instead of the weather year's load de-grown back "
+            "across the span by _scale_demand. Repairs the seam "
+            "FINDING-capx-d67-2026-09-06.md §8(a) routed and "
+            "FINDING-capx-d76-2026-09-06.md §2 measured on all six ISOs "
+            "(-23.3 %% to +15.4 %% of peak; the requirement error -24,741 to "
+            "+13,808 MW). Consumers: the retirement reliability floor, the "
+            "reserve-margin build backstop, the thermal entry screen, the "
+            "accreditation census and the CR-1 position. REPLACES the de-grown "
+            "peak, never stacks on it (rule 19); ZERO free parameters. Inert "
+            "for every forecast run and every crossover FORWARD year, where "
+            "there is no measured load and growth IS the methodology (rule 13). "
+            "OMIT to inherit the shipped default (off, owner-armed only); "
+            "--capacity-screen-peak-measured-hindcast arms it (distinct cache "
+            "key); --no-capacity-screen-peak-measured-hindcast is the explicit "
+            "OFF control, which keeps the bare recipe key."
+        ),
+    )
+    parser.add_argument(
         "--capacity-adequacy-requirement-published",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2314,6 +2353,9 @@ def main(argv: list[str] | None = None) -> int:
             args.capacity_adequacy_requirement_published
         ),
         capacity_no_default_cap_convention=args.capacity_no_default_cap_convention,
+        capacity_screen_peak_measured_hindcast=(
+            args.capacity_screen_peak_measured_hindcast
+        ),
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         locality_capacity_curves=args.locality_capacity_curves,
