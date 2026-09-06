@@ -1,0 +1,1091 @@
+{
+ "session": "nyiso-206",
+ "status": "ZERO LP \u2014 one fleet_only reconstruction per year, no solve, nothing patched",
+ "keeper": "2026-09-06-nyiso-202-startup-aware",
+ "question": "floor_pct = commit_frac x min_stable_pct is identified as a per-unit min-stable physics with a commitment count on top. _distribute_group_floor fills each row to its FULL available capacity. Does the delivery preserve the coefficient's meaning?",
+ "not_this": "NOT the operator question (nyiso-205: cheapest_first CONFIRMED, pro_rata REFUTED, DO-NOT-REDO) and NOT the membership (nyiso-204/204b, refused twice). No level is re-derived or proposed; no shared kernel is edited (rule 25).",
+ "limb": {
+  "zone": "Capital_Hudson",
+  "plant_class": "ST_GAS",
+  "driver": "tmax",
+  "threshold_c": 31.1,
+  "floor_pct": 0.0973,
+  "commit_frac": 0.8105,
+  "min_stable_pct": 0.12,
+  "min_event_hours": 48,
+  "distribution_live": "cheapest_first (CSV column EMPTY -> dataclass default)"
+ },
+ "years": {
+  "2023": {
+   "n_rows": 24,
+   "hours_binding": 504,
+   "hours_flagged_unbridged": 384,
+   "hours_binding_h14_21": 168,
+   "class_nameplate_mw": 2878.8999999999996,
+   "pmin_over_pmax_max": 0.0,
+   "aggregate_identity": {
+    "target_mwh": 38635.841985631065,
+    "cheapest_first_delivered_mwh": 38635.84198563106,
+    "max_abs_hourly_gap_mw": 2.842170943040401e-14
+   },
+   "cuts": {
+    "binding": {
+     "hours": 504,
+     "cheapest_first": {
+      "raised_cells": 840,
+      "forced_mwh": 38635.841985631065,
+      "intensity_mean_cellwt": 0.6131666330204385,
+      "intensity_mean_mwwt": 0.8710189620909218,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 336,
+        "cell_share": 0.4,
+        "forced_mwh": 28690.545518399995,
+        "energy_share": 0.7425888512814139
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 504,
+        "cell_share": 0.6,
+        "forced_mwh": 9945.296467231063,
+        "energy_share": 0.2574111487185859
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 8256,
+      "forced_mwh": 38635.84198563106,
+      "intensity_mean_cellwt": 0.09729999999999997,
+      "intensity_mean_mwwt": 0.0973,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 8256,
+        "cell_share": 1.0,
+        "forced_mwh": 38635.84198563106,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "flagged": {
+     "hours": 384,
+     "cheapest_first": {
+      "raised_cells": 624,
+      "forced_mwh": 28815.656130305884,
+      "intensity_mean_cellwt": 0.6103445103169435,
+      "intensity_mean_mwwt": 0.8725135455555607,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 240,
+        "cell_share": 0.38461538461538464,
+        "forced_mwh": 21192.32867039999,
+        "energy_share": 0.735444946128146
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 384,
+        "cell_share": 0.6153846153846154,
+        "forced_mwh": 7623.327459905886,
+        "energy_share": 0.26455505387185374
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 6336,
+      "forced_mwh": 28815.65613030588,
+      "intensity_mean_cellwt": 0.09729999999999996,
+      "intensity_mean_mwwt": 0.09730000000000001,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 6336,
+        "cell_share": 1.0,
+        "forced_mwh": 28815.65613030588,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "binding_h14_21": {
+     "hours": 168,
+     "cheapest_first": {
+      "raised_cells": 280,
+      "forced_mwh": 12878.613995210353,
+      "intensity_mean_cellwt": 0.6131666330204386,
+      "intensity_mean_mwwt": 0.8710189620909219,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 112,
+        "cell_share": 0.4,
+        "forced_mwh": 9563.515172799998,
+        "energy_share": 0.742588851281414
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 168,
+        "cell_share": 0.6,
+        "forced_mwh": 3315.098822410355,
+        "energy_share": 0.25741114871858595
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 2752,
+      "forced_mwh": 12878.613995210353,
+      "intensity_mean_cellwt": 0.09729999999999998,
+      "intensity_mean_mwwt": 0.09729999999999998,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 2752,
+        "cell_share": 1.0,
+        "forced_mwh": 12878.613995210353,
+        "energy_share": 1.0
+       }
+      }
+     }
+    }
+   },
+   "per_row_binding": [
+    {
+     "plant_code": 2480,
+     "plant": "Danskammer Generating Station",
+     "pmax_mw": 153.1684,
+     "heat_rate": 11.84645952,
+     "raised_hours": 192,
+     "pinned_hours": 0,
+     "forced_mwh": 1800.1324078343532,
+     "intensity_mean": 0.31590909090909086,
+     "intensity_max": 0.31590909090909086
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 243.516,
+     "heat_rate": 10.695352174500002,
+     "raised_hours": 288,
+     "pinned_hours": 216,
+     "forced_mwh": 26262.612409375994,
+     "intensity_mean": 0.8896623963361804,
+     "intensity_max": 1.0
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 123.69066666666667,
+     "heat_rate": 11.043375538908334,
+     "raised_hours": 216,
+     "pinned_hours": 120,
+     "forced_mwh": 7066.754969088002,
+     "intensity_mean": 0.6217605314189052,
+     "intensity_max": 1.0
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 123.69066666666667,
+     "heat_rate": 11.128259286325001,
+     "raised_hours": 120,
+     "pinned_hours": 0,
+     "forced_mwh": 2291.3621305440015,
+     "intensity_mean": 0.36288528128481273,
+     "intensity_max": 0.6061578629780916
+    },
+    {
+     "plant_code": 8006,
+     "plant": "Roseton Generating LLC",
+     "pmax_mw": 166.192,
+     "heat_rate": 11.497978507050002,
+     "raised_hours": 24,
+     "pinned_hours": 0,
+     "forced_mwh": 1214.9800687887061,
+     "intensity_mean": 0.847339483214251,
+     "intensity_max": 0.8473394832142509
+    }
+   ],
+   "per_plant_binding": {
+    "2480": {
+     "name": "Danskammer Generating Station",
+     "nameplate_mw": 497.29999999999995,
+     "n_rows": 8,
+     "raised_cells": 192,
+     "pinned_cells": 0,
+     "forced_mwh": 1800.1324078343532,
+     "forced_mwh_at_pinned": 0.0
+    },
+    "2625": {
+     "name": "Bowline Generating Station",
+     "nameplate_mw": 1159.6,
+     "n_rows": 8,
+     "raised_cells": 624,
+     "pinned_cells": 336,
+     "forced_mwh": 35620.729509008,
+     "forced_mwh_at_pinned": 28690.545518399995
+    },
+    "8006": {
+     "name": "Roseton Generating LLC",
+     "nameplate_mw": 1222.0,
+     "n_rows": 8,
+     "raised_cells": 24,
+     "pinned_cells": 0,
+     "forced_mwh": 1214.9800687887061,
+     "forced_mwh_at_pinned": 0.0
+    }
+   },
+   "min_stable_capped_counterfactual": {
+    "note": "NOT PROPOSED, NOT SCREENED, NOT A PATCH \u2014 a sizing for the owner card. The shipped kernel is shared by 37 of 50 program-wide limbs (rule 25).",
+    "target_met": true,
+    "max_abs_hourly_gap_mw": 5.684341886080802e-14,
+    "forced_mwh": 38635.84198563107,
+    "cheapest_first_forced_mwh": 38635.841985631065,
+    "committed_capacity_share_mean": 0.8322475957648315,
+    "commit_frac_asserted": 0.8105,
+    "bands": {
+     "raised_cells": 6264,
+     "forced_mwh": 38635.841985631065,
+     "intensity_mean_cellwt": 0.11618828578715834,
+     "intensity_mean_mwwt": 0.11876927475548472,
+     "intensity_max": 0.12000000000000001,
+     "bands": {
+      "pinned_ge_0.999": {
+       "cells": 0,
+       "cell_share": 0.0,
+       "forced_mwh": 0.0,
+       "energy_share": 0.0
+      },
+      "above_minstable_0.12_to_0.999": {
+       "cells": 4560,
+       "cell_share": 0.7279693486590039,
+       "forced_mwh": 35551.38989601054,
+       "energy_share": 0.9201660445042805
+      },
+      "at_or_below_minstable_lt_0.12": {
+       "cells": 1704,
+       "cell_share": 0.2720306513409962,
+       "forced_mwh": 3084.4520896205286,
+       "energy_share": 0.07983395549571969
+      }
+     }
+    },
+    "per_plant_forced_mwh": {
+     "2480": 4581.077753301461,
+     "2625": 14247.434130239997,
+     "8006": 19807.330102089614
+    }
+   },
+   "rule17_leg_addendum_b": {
+    "note": "POST-HOC: added after the primary measurement, precisely because it can only hurt the min-stable-capped counterfactual. Same meter and same statistic as nyiso-205's decisive leg against pro_rata.",
+    "cheapest_first_shipped": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 192,
+      "floored_hour_share_of_window": 0.38095238095238093,
+      "metered_p_on_over_floored_hours": 0.0,
+      "metered_mean_mw_over_floored_hours": 0.0,
+      "manufactured_mwh": 1800.1324078343532
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 288,
+      "floored_hour_share_of_window": 0.5714285714285714,
+      "metered_p_on_over_floored_hours": 0.9618055555555556,
+      "metered_mean_mw_over_floored_hours": 459.9479166666667,
+      "manufactured_mwh": 2209.768796523334
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 24,
+      "floored_hour_share_of_window": 0.047619047619047616,
+      "metered_p_on_over_floored_hours": 1.0,
+      "metered_mean_mw_over_floored_hours": 261.5833333333333,
+      "manufactured_mwh": 0.0
+     }
+    },
+    "min_stable_capped_counterfactual": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 504,
+      "floored_hour_share_of_window": 1.0,
+      "metered_p_on_over_floored_hours": 0.125,
+      "metered_mean_mw_over_floored_hours": 12.577380952380953,
+      "manufactured_mwh": 3362.530587202259
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 288,
+      "floored_hour_share_of_window": 0.5714285714285714,
+      "metered_p_on_over_floored_hours": 0.9618055555555556,
+      "metered_mean_mw_over_floored_hours": 459.9479166666667,
+      "manufactured_mwh": 637.26386216
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 240,
+      "floored_hour_share_of_window": 0.47619047619047616,
+      "metered_p_on_over_floored_hours": 0.8208333333333333,
+      "metered_mean_mw_over_floored_hours": 245.79583333333332,
+      "manufactured_mwh": 3175.800329742802
+     }
+    }
+   }
+  },
+  "2024": {
+   "n_rows": 24,
+   "hours_binding": 432,
+   "hours_flagged_unbridged": 408,
+   "hours_binding_h14_21": 144,
+   "class_nameplate_mw": 2878.8999999999996,
+   "pmin_over_pmax_max": 0.0,
+   "aggregate_identity": {
+    "target_mwh": 75831.26210745316,
+    "cheapest_first_delivered_mwh": 75831.26210745316,
+    "max_abs_hourly_gap_mw": 0.0
+   },
+   "cuts": {
+    "binding": {
+     "hours": 432,
+     "cheapest_first": {
+      "raised_cells": 480,
+      "forced_mwh": 75831.26210745316,
+      "intensity_mean_cellwt": 0.7487972375237405,
+      "intensity_mean_mwwt": 0.894749133637279,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 48,
+        "cell_share": 0.1,
+        "forced_mwh": 10705.7426112,
+        "energy_share": 0.14117848382939907
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 432,
+        "cell_share": 0.9,
+        "forced_mwh": 65125.51949625317,
+        "energy_share": 0.858821516170601
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 9024,
+      "forced_mwh": 75831.26210745316,
+      "intensity_mean_cellwt": 0.0973,
+      "intensity_mean_mwwt": 0.09730000000000001,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 9024,
+        "cell_share": 1.0,
+        "forced_mwh": 75831.26210745316,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "flagged": {
+     "hours": 408,
+     "cheapest_first": {
+      "raised_cells": 456,
+      "forced_mwh": 75642.13624116799,
+      "intensity_mean_cellwt": 0.7715808241876693,
+      "intensity_mean_mwwt": 0.896196390813788,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 48,
+        "cell_share": 0.10526315789473684,
+        "forced_mwh": 10705.7426112,
+        "energy_share": 0.14153146834810615
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 408,
+        "cell_share": 0.8947368421052632,
+        "forced_mwh": 64936.39362996799,
+        "energy_share": 0.858468531651894
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 8832,
+      "forced_mwh": 75642.13624116799,
+      "intensity_mean_cellwt": 0.09729999999999998,
+      "intensity_mean_mwwt": 0.0973,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 8832,
+        "cell_share": 1.0,
+        "forced_mwh": 75642.13624116799,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "binding_h14_21": {
+     "hours": 144,
+     "cheapest_first": {
+      "raised_cells": 160,
+      "forced_mwh": 25277.087369151057,
+      "intensity_mean_cellwt": 0.7487972375237404,
+      "intensity_mean_mwwt": 0.8947491336372787,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 16,
+        "cell_share": 0.1,
+        "forced_mwh": 3568.5808703999996,
+        "energy_share": 0.14117848382939907
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 144,
+        "cell_share": 0.9,
+        "forced_mwh": 21708.506498751056,
+        "energy_share": 0.8588215161706009
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 3008,
+      "forced_mwh": 25277.087369151057,
+      "intensity_mean_cellwt": 0.09729999999999998,
+      "intensity_mean_mwwt": 0.09729999999999998,
+      "intensity_max": 0.0973,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 3008,
+        "cell_share": 1.0,
+        "forced_mwh": 25277.087369151057,
+        "energy_share": 1.0
+       }
+      }
+     }
+    }
+   },
+   "per_row_binding": [
+    {
+     "plant_code": 2480,
+     "plant": "Danskammer Generating Station",
+     "pmax_mw": 153.1684,
+     "heat_rate": 11.84645952,
+     "raised_hours": 24,
+     "pinned_hours": 0,
+     "forced_mwh": 189.12586628517644,
+     "intensity_mean": 0.31590909090909086,
+     "intensity_max": 0.31590909090909086
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 243.516,
+     "heat_rate": 10.695352174500002,
+     "raised_hours": 408,
+     "pinned_hours": 48,
+     "forced_mwh": 74662.27828472,
+     "intensity_mean": 0.8411559120707143,
+     "intensity_max": 1.0
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 123.69066666666667,
+     "heat_rate": 11.043375538908334,
+     "raised_hours": 48,
+     "pinned_hours": 0,
+     "forced_mwh": 979.8579564479987,
+     "intensity_mean": 0.1801925771817866,
+     "intensity_max": 0.1801925771817866
+    }
+   ],
+   "per_plant_binding": {
+    "2480": {
+     "name": "Danskammer Generating Station",
+     "nameplate_mw": 497.29999999999995,
+     "n_rows": 8,
+     "raised_cells": 24,
+     "pinned_cells": 0,
+     "forced_mwh": 189.12586628517644,
+     "forced_mwh_at_pinned": 0.0
+    },
+    "2625": {
+     "name": "Bowline Generating Station",
+     "nameplate_mw": 1159.6,
+     "n_rows": 8,
+     "raised_cells": 456,
+     "pinned_cells": 48,
+     "forced_mwh": 75642.13624116799,
+     "forced_mwh_at_pinned": 10705.7426112
+    },
+    "8006": {
+     "name": "Roseton Generating LLC",
+     "nameplate_mw": 1222.0,
+     "n_rows": 8,
+     "raised_cells": 0,
+     "pinned_cells": 0,
+     "forced_mwh": 0.0,
+     "forced_mwh_at_pinned": 0.0
+    }
+   },
+   "min_stable_capped_counterfactual": {
+    "note": "NOT PROPOSED, NOT SCREENED, NOT A PATCH \u2014 a sizing for the owner card. The shipped kernel is shared by 37 of 50 program-wide limbs (rule 25).",
+    "target_met": true,
+    "max_abs_hourly_gap_mw": 8.526512829121202e-14,
+    "forced_mwh": 75831.26210745316,
+    "cheapest_first_forced_mwh": 75831.26210745316,
+    "committed_capacity_share_mean": 0.8282041702636431,
+    "commit_frac_asserted": 0.8105,
+    "bands": {
+     "raised_cells": 6360,
+     "forced_mwh": 75831.26210745318,
+     "intensity_mean_cellwt": 0.11562868723060318,
+     "intensity_mean_mwwt": 0.11853558877257694,
+     "intensity_max": 0.12000000000000001,
+     "bands": {
+      "pinned_ge_0.999": {
+       "cells": 0,
+       "cell_share": 0.0,
+       "forced_mwh": 0.0,
+       "energy_share": 0.0
+      },
+      "above_minstable_0.12_to_0.999": {
+       "cells": 5352,
+       "cell_share": 0.8415094339622642,
+       "forced_mwh": 72883.76542165647,
+       "energy_share": 0.9611308502076611
+      },
+      "at_or_below_minstable_lt_0.12": {
+       "cells": 1008,
+       "cell_share": 0.15849056603773584,
+       "forced_mwh": 2947.4966857966965,
+       "energy_share": 0.038869149792338714
+      }
+     }
+    },
+    "per_plant_forced_mwh": {
+     "2480": 3236.687092365173,
+     "2625": 42563.20802304,
+     "8006": 30031.366992047995
+    }
+   },
+   "rule17_leg_addendum_b": {
+    "note": "POST-HOC: added after the primary measurement, precisely because it can only hurt the min-stable-capped counterfactual. Same meter and same statistic as nyiso-205's decisive leg against pro_rata.",
+    "cheapest_first_shipped": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 24,
+      "floored_hour_share_of_window": 0.05555555555555555,
+      "metered_p_on_over_floored_hours": 0.0,
+      "metered_mean_mw_over_floored_hours": 0.0,
+      "manufactured_mwh": 189.12586628517644
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 408,
+      "floored_hour_share_of_window": 0.9444444444444444,
+      "metered_p_on_over_floored_hours": 0.8504901960784313,
+      "metered_mean_mw_over_floored_hours": 621.9117647058823,
+      "manufactured_mwh": 15663.127737427998
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 0,
+      "floored_hour_share_of_window": 0.0,
+      "metered_p_on_over_floored_hours": null,
+      "metered_mean_mw_over_floored_hours": null,
+      "manufactured_mwh": 0.0
+     }
+    },
+    "min_stable_capped_counterfactual": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 432,
+      "floored_hour_share_of_window": 1.0,
+      "metered_p_on_over_floored_hours": 0.25462962962962965,
+      "metered_mean_mw_over_floored_hours": 23.462962962962962,
+      "manufactured_mwh": 2089.2422866523757
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 408,
+      "floored_hour_share_of_window": 0.9444444444444444,
+      "metered_p_on_over_floored_hours": 0.8504901960784313,
+      "metered_mean_mw_over_floored_hours": 621.9117647058823,
+      "manufactured_mwh": 6927.906672479999
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 288,
+      "floored_hour_share_of_window": 0.6666666666666666,
+      "metered_p_on_over_floored_hours": 0.8368055555555556,
+      "metered_mean_mw_over_floored_hours": 342.5104166666667,
+      "manufactured_mwh": 5446.006548529998
+     }
+    }
+   }
+  },
+  "2025": {
+   "n_rows": 24,
+   "hours_binding": 600,
+   "hours_flagged_unbridged": 504,
+   "hours_binding_h14_21": 200,
+   "class_nameplate_mw": 2878.8999999999996,
+   "pmin_over_pmax_max": 0.0,
+   "aggregate_identity": {
+    "target_mwh": 90432.08148492001,
+    "cheapest_first_delivered_mwh": 90432.08148492,
+    "max_abs_hourly_gap_mw": 0.0
+   },
+   "cuts": {
+    "binding": {
+     "hours": 600,
+     "cheapest_first": {
+      "raised_cells": 1464,
+      "forced_mwh": 90432.08148492,
+      "intensity_mean_cellwt": 0.6851268192854921,
+      "intensity_mean_mwwt": 0.9579278597434658,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 864,
+        "cell_share": 0.5901639344262295,
+        "forced_mwh": 74020.75191359998,
+        "energy_share": 0.8185231468540654
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 192,
+        "cell_share": 0.13114754098360656,
+        "forced_mwh": 15036.325024416006,
+        "energy_share": 0.16627202180371564
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 408,
+        "cell_share": 0.2786885245901639,
+        "forced_mwh": 1375.0045469040065,
+        "energy_share": 0.015204831342218917
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 14016,
+      "forced_mwh": 90432.08148491998,
+      "intensity_mean_cellwt": 0.09729999999999997,
+      "intensity_mean_mwwt": 0.09730000000000003,
+      "intensity_max": 0.09730000000000001,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 14016,
+        "cell_share": 1.0,
+        "forced_mwh": 90432.08148491998,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "flagged": {
+     "hours": 504,
+     "cheapest_first": {
+      "raised_cells": 1248,
+      "forced_mwh": 78992.44403047199,
+      "intensity_mean_cellwt": 0.6946229147855002,
+      "intensity_mean_mwwt": 0.9623361189279931,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 744,
+        "cell_share": 0.5961538461538461,
+        "forced_mwh": 64036.284215999985,
+        "energy_share": 0.8106634122030388
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 168,
+        "cell_share": 0.1346153846153846,
+        "forced_mwh": 13804.584529704005,
+        "energy_share": 0.1747582911142586
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 336,
+        "cell_share": 0.2692307692307692,
+        "forced_mwh": 1151.575284768005,
+        "energy_share": 0.014578296682702656
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 11904,
+      "forced_mwh": 78992.44403047199,
+      "intensity_mean_cellwt": 0.0973,
+      "intensity_mean_mwwt": 0.09730000000000001,
+      "intensity_max": 0.09730000000000001,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 11904,
+        "cell_share": 1.0,
+        "forced_mwh": 78992.44403047199,
+        "energy_share": 1.0
+       }
+      }
+     }
+    },
+    "binding_h14_21": {
+     "hours": 200,
+     "cheapest_first": {
+      "raised_cells": 488,
+      "forced_mwh": 30144.02716163999,
+      "intensity_mean_cellwt": 0.6851268192854921,
+      "intensity_mean_mwwt": 0.9579278597434658,
+      "intensity_max": 1.0,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 288,
+        "cell_share": 0.5901639344262295,
+        "forced_mwh": 24673.583971199994,
+        "energy_share": 0.8185231468540657
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 64,
+        "cell_share": 0.13114754098360656,
+        "forced_mwh": 5012.108341472001,
+        "energy_share": 0.16627202180371561
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 136,
+        "cell_share": 0.2786885245901639,
+        "forced_mwh": 458.3348489680021,
+        "energy_share": 0.015204831342218918
+       }
+      }
+     },
+     "pro_rata_arithmetically_forced": {
+      "raised_cells": 4672,
+      "forced_mwh": 30144.02716164,
+      "intensity_mean_cellwt": 0.0973,
+      "intensity_mean_mwwt": 0.0973,
+      "intensity_max": 0.09730000000000001,
+      "bands": {
+       "pinned_ge_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "above_minstable_0.12_to_0.999": {
+        "cells": 0,
+        "cell_share": 0.0,
+        "forced_mwh": 0.0,
+        "energy_share": 0.0
+       },
+       "at_or_below_minstable_lt_0.12": {
+        "cells": 4672,
+        "cell_share": 1.0,
+        "forced_mwh": 30144.02716164,
+        "energy_share": 1.0
+       }
+      }
+     }
+    }
+   },
+   "per_row_binding": [
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 243.516,
+     "heat_rate": 10.695352174500002,
+     "raised_hours": 576,
+     "pinned_hours": 504,
+     "forced_mwh": 66656.762262216,
+     "intensity_mean": 0.9761844605500616,
+     "intensity_max": 1.0
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 123.69066666666667,
+     "heat_rate": 11.043375538908334,
+     "raised_hours": 504,
+     "pinned_hours": 360,
+     "forced_mwh": 19942.192434096003,
+     "intensity_mean": 0.7452489006158759,
+     "intensity_max": 1.0
+    },
+    {
+     "plant_code": 2625,
+     "plant": "Bowline Generating Station",
+     "pmax_mw": 123.69066666666667,
+     "heat_rate": 11.128259286325001,
+     "raised_hours": 360,
+     "pinned_hours": 0,
+     "forced_mwh": 2467.924569864006,
+     "intensity_mean": 0.13028254966580055,
+     "intensity_max": 0.48167627877831487
+    },
+    {
+     "plant_code": 8006,
+     "plant": "Roseton Generating LLC",
+     "pmax_mw": 166.192,
+     "heat_rate": 11.497978507050002,
+     "raised_hours": 24,
+     "pinned_hours": 0,
+     "forced_mwh": 1365.2022187440002,
+     "intensity_mean": 0.7598437652931388,
+     "intensity_max": 0.7598437652931389
+    }
+   ],
+   "per_plant_binding": {
+    "2480": {
+     "name": "Danskammer Generating Station",
+     "nameplate_mw": 497.29999999999995,
+     "n_rows": 8,
+     "raised_cells": 0,
+     "pinned_cells": 0,
+     "forced_mwh": 0.0,
+     "forced_mwh_at_pinned": 0.0
+    },
+    "2625": {
+     "name": "Bowline Generating Station",
+     "nameplate_mw": 1159.6,
+     "n_rows": 8,
+     "raised_cells": 1440,
+     "pinned_cells": 864,
+     "forced_mwh": 89066.879266176,
+     "forced_mwh_at_pinned": 74020.75191359998
+    },
+    "8006": {
+     "name": "Roseton Generating LLC",
+     "nameplate_mw": 1222.0,
+     "n_rows": 8,
+     "raised_cells": 24,
+     "pinned_cells": 0,
+     "forced_mwh": 1365.2022187440002,
+     "forced_mwh_at_pinned": 0.0
+    }
+   },
+   "min_stable_capped_counterfactual": {
+    "note": "NOT PROPOSED, NOT SCREENED, NOT A PATCH \u2014 a sizing for the owner card. The shipped kernel is shared by 37 of 50 program-wide limbs (rule 25).",
+    "target_met": true,
+    "max_abs_hourly_gap_mw": 5.684341886080802e-14,
+    "forced_mwh": 90432.08148492003,
+    "cheapest_first_forced_mwh": 90432.08148492,
+    "committed_capacity_share_mean": 0.8357142502399171,
+    "commit_frac_asserted": 0.8105,
+    "bands": {
+     "raised_cells": 9912,
+     "forced_mwh": 90432.08148492003,
+     "intensity_mean_cellwt": 0.11737643279051196,
+     "intensity_mean_mwwt": 0.11782759687310768,
+     "intensity_max": 0.12000000000000001,
+     "bands": {
+      "pinned_ge_0.999": {
+       "cells": 0,
+       "cell_share": 0.0,
+       "forced_mwh": 0.0,
+       "energy_share": 0.0
+      },
+      "above_minstable_0.12_to_0.999": {
+       "cells": 9312,
+       "cell_share": 0.9394673123486683,
+       "forced_mwh": 85936.108121136,
+       "energy_share": 0.9502834249753087
+      },
+      "at_or_below_minstable_lt_0.12": {
+       "cells": 600,
+       "cell_share": 0.06053268765133172,
+       "forced_mwh": 4495.973363784025,
+       "energy_share": 0.049716575024691324
+      }
+     }
+    },
+    "per_plant_forced_mwh": {
+     "2480": 2636.2965477888038,
+     "2625": 33159.65685408,
+     "8006": 54636.12808305122
+    }
+   },
+   "rule17_leg_addendum_b": {
+    "note": "POST-HOC: added after the primary measurement, precisely because it can only hurt the min-stable-capped counterfactual. Same meter and same statistic as nyiso-205's decisive leg against pro_rata.",
+    "cheapest_first_shipped": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 0,
+      "floored_hour_share_of_window": 0.0,
+      "metered_p_on_over_floored_hours": null,
+      "metered_mean_mw_over_floored_hours": null,
+      "manufactured_mwh": 0.0
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 576,
+      "floored_hour_share_of_window": 0.96,
+      "metered_p_on_over_floored_hours": 0.9739583333333334,
+      "metered_mean_mw_over_floored_hours": 548.1822916666666,
+      "manufactured_mwh": 2877.813083978
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 24,
+      "floored_hour_share_of_window": 0.04,
+      "metered_p_on_over_floored_hours": 0.625,
+      "metered_mean_mw_over_floored_hours": 123.75,
+      "manufactured_mwh": 584.7176835910001
+     }
+    },
+    "min_stable_capped_counterfactual": {
+     "2480": {
+      "name": "Danskammer Generating Station",
+      "floored_hours": 600,
+      "floored_hour_share_of_window": 1.0,
+      "metered_p_on_over_floored_hours": 0.37,
+      "metered_mean_mw_over_floored_hours": 33.016666666666666,
+      "manufactured_mwh": 735.3256896951988
+     },
+     "2625": {
+      "name": "Bowline Generating Station",
+      "floored_hours": 576,
+      "floored_hour_share_of_window": 0.96,
+      "metered_p_on_over_floored_hours": 0.9739583333333334,
+      "metered_mean_mw_over_floored_hours": 548.1822916666666,
+      "manufactured_mwh": 798.07170368
+     },
+     "8006": {
+      "name": "Roseton Generating LLC",
+      "floored_hours": 576,
+      "floored_hour_share_of_window": 0.96,
+      "metered_p_on_over_floored_hours": 0.7361111111111112,
+      "metered_mean_mw_over_floored_hours": 264.88194444444446,
+      "manufactured_mwh": 12778.450357304404
+     }
+    }
+   }
+  }
+ }
+}

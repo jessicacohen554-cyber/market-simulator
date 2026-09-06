@@ -247,3 +247,35 @@ physical minimum stable level, until the zonal target is met.*
 **Timestamp discipline:** this addendum and the probe that computes the counterfactual are
 committed in the same commit, **before the probe is executed for the first time.** No measurement
 of this session's object existed when it was written.
+
+---
+
+## Addendum §B — a POST-HOC check added AFTER the primary measurement, and it can only hurt
+
+**Declared as post-hoc, because it is.** §4 and addendum §A were fixed before the probe ran. This
+one was not: it was added after reading the primary result, and the record says so rather than
+presenting it as pre-registered.
+
+**Why it is added.** The primary measurement came back showing the shipped fill delivers the
+floor far above the coefficient's min-stable level, which makes the §A counterfactual look good.
+That is exactly the moment to run the test that could destroy it. nyiso-205's **decisive** leg
+against `pro_rata` was rule 17 `[R-FLOOR-WINDOW]`: `pro_rata` would have floored Danskammer 2480
+in **100 % of binding hours** against a metered P(on) of 0.125 / 0.255 / 0.370, multiplying the
+very D-4 off-window exposure the inquiry began from. **The §A counterfactual spreads the same
+aggregate over more rows, so it is exposed to the identical objection**, and a card that sized it
+without running that test would be advocacy, not measurement.
+
+**What is added**, per plant, per year, on the limb's binding window, for **both** the shipped
+`cheapest_first` fill and the §A min-stable-capped fill, from CAMPD unit-level hourly `grossLoad`
+at plant grain — the same meter and the same statistic nyiso-205 used:
+
+1. the count of binding hours in which the plant is floored at all, and its share of the window;
+2. the plant's metered **P(on)** over the hours that fill floors it;
+3. the **manufactured energy** `Σ max(0, floor − metered)` — nyiso-205's do-no-harm statistic.
+
+**The decision rule for it, fixed before it is run.** If the min-stable-capped fill floors 2480
+(or 8006) in a materially larger share of binding hours at a metered P(on) that says the unit is
+off, then it **inherits `pro_rata`'s refutation** on rule 17, and **the card must lead with that**
+— reporting it as a cost that may well be disqualifying, not as a footnote. A counterfactual that
+fixes one construction defect by manufacturing a larger off-window one is not an improvement, and
+this session will say so plainly if that is what the meters return.
