@@ -174,28 +174,36 @@ def main() -> int:
         f = b / "legitimacy_diagnostics.json"
         if f.exists():
             ld = json.loads(f.read_text())
+            diag = ld.get("diagnostics") or {}
+            d2, d4 = diag.get("D2") or {}, diag.get("D4") or {}
             c8[tag] = {
-                "d2_forced_share_pct": {
-                    r.get("klass") or r.get("class"): r.get("forced_share_pct")
-                    for r in (ld.get("D2") or ld.get("d2") or [])
-                    if isinstance(r, dict) and str(r.get("year", Y)) == str(Y)
+                "D2_passed": d2.get("passed"),
+                "D2_failures": d2.get("failures") or [],
+                "D2_forced_share_of_class": {
+                    f"{r.get('class')}|{r.get('mechanism')}": r.get("share_of_class")
+                    for r in (d2.get("rows") or [])
+                    if isinstance(r, dict) and str(r.get("year")) == str(Y)
                 },
-                "d4_failures": [
-                    r
-                    for r in (ld.get("D4") or ld.get("d4") or [])
-                    if isinstance(r, dict) and r.get("status") not in (None, "PASS", "OK")
+                "D4_failures_this_year": [
+                    f for f in (d4.get("failures") or []) if str(f).startswith(str(Y))
                 ],
+                "D4_passed": d4.get("passed"),
+                "D4_failures": d4.get("failures") or [],
             }
+    # like-for-like: the keeper's committed diagnostics span all three years
+    # while a screen bundle covers only its own, so compare THIS YEAR's rows.
     c8["STOP"] = bool(
-        len(c8.get("screen", {}).get("d4_failures", []))
-        > len(c8.get("keeper", {}).get("d4_failures", []))
+        len(c8.get("screen", {}).get("D4_failures_this_year", []))
+        > len(c8.get("keeper", {}).get("D4_failures_this_year", []))
+        or len(c8.get("screen", {}).get("D2_failures", []))
+        > len(c8.get("keeper", {}).get("D2_failures", []))
     )
 
     res = {
         "session": "nyiso-199",
         "year": Y,
         "keeper": KEEPER_ID,
-        "screen_bundle": str(S.relative_to(ROOT)),
+        "screen_bundle": str(S),
         "prereg": "results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md",
         "class_energy_twh": energy,
         "gates": {"S1_direction": s1, "S2_confinement": s2, "S3_companions": s3, "C8_D4": c8},
