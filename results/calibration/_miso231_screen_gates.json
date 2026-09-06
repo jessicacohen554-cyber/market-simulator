@@ -1,0 +1,55 @@
+{
+ "scorer": "miso-231 screen gates (PRECOMMIT \u00a74d as corrected by Addendum A)",
+ "year": 2024,
+ "keeper": "2026-09-06-miso-230-ctdrag-seam",
+ "arm_bundle": "miso231_hourlyseam_S",
+ "gates": {
+  "G1_responsiveness": {
+   "bar": "corr falls >= 0.3 from the keeper's own 2024 +0.4461 (land <= +0.1461); no overshoot below -0.60",
+   "keeper_corr_own_price": 0.4461,
+   "arm_corr_own_price": 0.1644,
+   "fall": 0.2817,
+   "measured_target": -0.101,
+   "verdict": "FAIL"
+  },
+  "G3_confinement": {
+   "bar": "no slack increase beyond the keeper's pre-existing 0.0196 TWh; dump 0.0000 TWh. The band half (SPP / South / Manitoba mc byte-identical) is verified structurally ex ante by tests/iso/miso/test_miso_seam_ladder.py::TestHourlyNeighbourOverlay::test_spp_and_south_keep_their_scalar_ladders",
+   "keeper_slack_twh": 0.0196,
+   "arm_slack_twh": 0.0196,
+   "keeper_dump_twh": 0.0,
+   "arm_dump_twh": 0.0,
+   "verdict": "PASS"
+  },
+  "G5_cheap_hour_direction": {
+   "bar": "solved imports RISE in the frozen miso-225/226 G-2 hour set (real Indiana hub < $20, n = 2111)",
+   "n_hours": 2111,
+   "keeper_import_mw": 2129.3,
+   "arm_import_mw": 3321.6,
+   "delta_mw": 1192.3,
+   "verdict": "PASS"
+  },
+  "G4_no_collateral_flip": {
+   "bar": "no non-target load-bearing criterion flips PASS->FAIL vs the keeper's committed 2024 scores (C1 cells, C2, C3a, C3b, C6); C3c excluded (ledgered caveat, rubric v3.3)",
+   "verdict": "SCORED SEPARATELY \u2014 scripts/calibration_verdict.py on the arm bundle vs the keeper's committed metrics.json"
+  }
+ },
+ "reported_only": {
+  "annual_import_volume": {
+   "note": "Addendum A.2 \u2014 G-2 WITHDRAWN as a gate: the slim keeper bundle carries no unit-level dispatch, so the control's imports cannot be decomposed by seam, and the model's GROSS import class is not comparable to the measured NET seam total. Recorded, not gated.",
+   "keeper_twh": 31.2944,
+   "arm_twh": 29.7506,
+   "delta_twh": -1.5437
+  },
+  "decile_slope": {
+   "keeper_on_own_price_mw": -4362.3,
+   "arm_on_own_price_mw": -1209.3,
+   "keeper_on_measured_price_mw": -3321.6,
+   "arm_on_measured_price_mw": 111.2,
+   "measured_seam_2024_mw": 1384.0,
+   "note": "POSITIVE = imports MORE when MISO is cheap (the measured behaviour). Reported, not gated \u2014 the PRECOMMIT's pre-committed non-claim is that the slope stays negative."
+  },
+  "arm_corr_on_measured_price": -0.0636,
+  "keeper_corr_on_measured_price": 0.3211
+ },
+ "verdict": "KILLED"
+}
