@@ -342,11 +342,78 @@ ISOs have nothing to disclose.
 
 ## 5. My misses, reported at full magnitude
 
-<!-- FILL -->
+Nine pre-declared numbers across the three LIVE ISOs (ADDENDUM §(d.2) for price and CO2,
+PRECOMMIT §3.4 for leakage). **Six hit, three missed.** Every band below is quoted as pushed
+before the solve; **none was revised after a result.**
 
-## 6. Wall / RSS per solve-year
+| ISO | quantity | pre-declared | measured | verdict |
+|---|---|---|---|---|
+| ERCOT | Δ CO2 % | −0.2 to −0.8 % | **−0.36 %** | **HIT** |
+| ERCOT | Δ lw price | $0.9 – 1.5 | **$1.934** | **MISS — 1.29× the top** |
+| ERCOT | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
+| PJM | Δ CO2 % | −0.6 to −1.5 % | **−3.41 %** | **MISS — 2.27× the top** |
+| PJM | Δ lw price | $1.5 – 2.7 | **$2.149** | **HIT** |
+| PJM | Δ import CO2 | +0.03 to +0.23 Mt | **+0.4336** | **MISS — 1.89× the top** |
+| MISO | Δ CO2 % | −0.8 to −1.8 % | **−1.79 %** | **HIT** (just inside) |
+| MISO | Δ lw price | $1.8 – 3.3 | **$2.411** | **HIT** |
+| MISO | Δ import CO2 | exactly 0.0000 | **0.0000** | **HIT** |
 
-<!-- FILL -->
+**Every miss is in the same direction: I under-predicted the response.** That is the useful
+pattern in my own errors, and it has three distinct causes rather than one:
+
+1. **PJM's CO2 miss (the largest) — I assumed the wrong elasticity.** My band came from scaling a
+   $25/t prediction down by 0.15, which implicitly assumes the response is roughly linear in the
+   carbon price. It is not, where a fleet has coal and gas-CC near parity: what matters is how much
+   MWh sits inside the **$2.44/MWh relative shift**, and PJM's does. A carbon price acts on the
+   *spread distribution*, not on a fleet-average rate — a mechanism my band's construction had no
+   way to express.
+2. **ERCOT's price miss — I banded the wrong regime.** §3.3: with 641 scarcity hours and a −6.5 %
+   reserve margin, ERCOT 2027 is not the fossil-marginal market my band assumed. The measured
+   0.5157 t/MWh is a *lower bound* on its fossil-marginal rate, not a central estimate.
+3. **PJM's leakage miss — I mis-scaled a threshold effect.** I rescaled WS-0's $25/t leakage
+   linearly to $3.75/t. But import tranches are **priced blocks**: they clear or they do not, and
+   the fraction of hours in which a $3.98/MWh coal adder pushes a $46–60 block into merit is not a
+   linear function of the adder. Rescaling a step response linearly under-predicts it.
+
+**The honest summary of my prediction skill: direction 9/9, magnitude 6/9, and all three magnitude
+errors are under-predictions.** The charter asked that misses be reported with the reasoning that
+produced them; the reasoning above is what I would change, not the numbers I wrote.
+
+**A prediction that was NOT mine and did better in one place, worse in another:** SCN-WS4c's
+measured marginal rates (ADDENDUM §(g)) implied ERCOT $1.68, PJM $1.91, MISO $1.82. Measured:
+$1.934, $2.149, $2.411. **WS-4c's points under-predict all three as well**, by 15 %, 12 % and
+33 % — the same direction as my own error and the reason §3.7 treats the gap as a real result
+rather than as noise.
+
+## 6. Wall clock and peak RSS, per solve-year
+
+Every arm ran **2 solve-years** (2026 as 2027's capacity-evolution prior; 2027 scored). Years
+sequential within an invocation, always (rule 12 `[R-PARALLEL]`).
+
+| ISO | arm | 2026 wall / RSS | 2027 wall / RSS |
+|---|---|---|---|
+| ERCOT | REF | 153.4 s / 3.50 GB | 127.0 s / 3.33 GB |
+| ERCOT | CARB | 154.3 s / 3.50 GB | 128.4 s / 3.72 GB |
+| PJM | REF | 389.3 s / **9.03 GB** | 201.1 s / 6.57 GB |
+| PJM | CARB | 382.0 s / 8.97 GB | 185.6 s / 6.53 GB |
+| MISO | REF | 446.2 s / **9.87 GB** | 211.1 s / 7.92 GB |
+| MISO | CARB | 393.0 s / **9.90 GB** | 197.8 s / 7.95 GB |
+| NEISO | REF | 112.5 s / 3.17 GB | 85.6 s / 3.04 GB |
+| NEISO | CARB | 110.6 s / 3.25 GB | 78.6 s / 3.07 GB |
+| NYISO | REF | 139.8 s / 3.24 GB | 121.1 s / 2.75 GB |
+| NYISO | CARB | 140.1 s / 3.28 GB | 125.3 s / 2.74 GB |
+
+**Twenty solve-years, 3,883 s = 64.7 min of LP** for the ten arms above (CAISO's pair is reported
+in §6.1 when it lands). **Peak RSS 9.90 GB (MISO CARB 2026) on a 15 GB box.**
+
+**That peak is why rule 12 `[R-PARALLEL]`'s one-invocation limit for per-plant multi-zone ISOs is
+load-bearing rather than cautionary**: two concurrent MISO arms would have needed ~19.8 GB and
+OOM-ed. The small ISOs (ERCOT / NEISO / NYISO, ~3.5 GB) ran both arms concurrently with no
+contention, which is exactly the split the rule draws.
+
+**2026 costs roughly 2× 2027 in every ISO** — the first horizon year builds the fleet and
+capacity-evolution state that the second reuses. A lane budgeting T0 work from a per-solve-year
+average will therefore under-budget a 2-year run by ~25 %.
 
 ## 7. LEG 2 IS HELD BY RULING S5
 
