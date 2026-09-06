@@ -72,11 +72,18 @@ RUNNING — SCN-WS5A-RESOLVE, now THREE PARALLEL LANES (claude/scn-ws5a-resolve-
   charter recipe (PRECOMMIT §4 item 1). §4.1 is about the DRIVER (run_ces_leg.py, because
   run_full_horizon.py's --out-dir redirect is unreachable from a campaign leg), NOT the path — r#16
   read one for the other and the ERCOT lane caught it. ERCOT alone stays at the un-suffixed path.
-RUNNING — SCN-WS5A-POLICY-ERCOT (claude/scn-ws5a-policy-21mq1y, PR #5252): PRECOMMIT pushed pre-LP,
-  phase 0 killed VOL-MID (slack all five years) and CAP-STATE-TIGHT (ERCOT has no carbon program at
-  all) on identities, 10 legs survive, carbon table reproduced to the cent. First solve RELEASED by
-  S14. It already self-corrected both v5 defects, so it needs no re-paste.
-ISSUED r#17 under charter v6 (ledger §5; check for branches): SCN-WS5A-POLICY-NEISO, -NYISO, -PJM.
+SCN-WS5A-POLICY-ERCOT — PHASE 0 COMPLETE ON MAIN, SESSION CLOSED, RE-ISSUED r#17 AS A RESUMPTION.
+  Its PRECOMMIT (docs/handoffs/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md, 06526c7d / PR #5252)
+  was pushed pre-LP and stands: VOL-MID and CAP-STATE-TIGHT killed on identities, carbon table
+  reproduced to the cent, 11 legs with distinct keys to solve. Stem claude/scn-ws5a-policy-21mq1y is
+  BURNED (pushed + merged); the re-issue runs on a new stem and MUST NOT re-run phase 0.
+  ►► THE PRECOMMIT'S OWN LEG COUNT IS WRONG AND THE TABLE WINS: it says "10 legs to solve, 50
+  solve-years" at its line 122 and again in its §7 budget, but its case table carries ELEVEN **SOLVE**
+  rows, each with a distinct key. 11 legs / 55 solve-years is the real budget. r#17 propagated the
+  "10" into this ledger and the plan before catching it; corrected everywhere. A resuming lane that
+  trusts the sentence over the table silently drops a leg.
+ISSUED r#17 under charter v6 (ledger §5; check for branches): SCN-WS5A-POLICY-NEISO, -NYISO, -PJM,
+  and -ERCOT as the v6-RESUME variant (§5.3).
 WAITING: SCN-WS5A-POLICY-CAISO / -MISO — P1 needs their re-solved REF on main with G1 PASS. Paste v6
   for each the refresh its REF lands. SCN-WS5A-POLICY-SYNTH — issues when the six land.
 HELD: Stage B (ruling S13 — re-present D-5 when RESOLVE and the policy half are both on main).
