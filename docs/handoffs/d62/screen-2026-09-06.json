@@ -1,0 +1,182 @@
+{
+ "screen_year": 2022,
+ "delivery_year": "2022/23",
+ "published": {
+  "price_usd_per_mw_day": 50.0,
+  "cleared_position": 1.051
+ },
+ "control": {
+  "price_usd_per_mw_day": 76.103501,
+  "ratio_vs_published": 1.52207002,
+  "cleared_position": 1.046232,
+  "dpos_pt_vs_published": -0.47679999999998834,
+  "census_position": 1.17019,
+  "requirement_mw": 155047.538,
+  "price_takers_mw": 30577.888,
+  "n_offers": 1370,
+  "n_uncleared": 429,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": "7779_5",
+  "uncleared_firm_mw_by_fuel": {
+   "coal": 5367.8,
+   "gas_cc": 2052.1,
+   "gas_st": 8801.9,
+   "oil": 2996.5
+  },
+  "uncleared_units_by_fuel": {
+   "coal": 39,
+   "gas_cc": 74,
+   "gas_st": 115,
+   "oil": 201
+  },
+  "pipeline_events": {
+   "decided": 77,
+   "entry_capped": 352,
+   "executed": 38
+  },
+  "executed_mw_by_fuel": {
+   "gas_st": 7333.7
+  },
+  "fleet_delta_mw": {
+   "biomass": -8.4,
+   "coal": -3983.1,
+   "gas_cc": 2829.4,
+   "gas_st": -7376.7,
+   "oil": -51.2
+  },
+  "entry_decided_mw_by_tech": {
+   "solar": 2440.6,
+   "wind": 1500.0
+  },
+  "floor_retained": 0
+ },
+ "arm": {
+  "price_usd_per_mw_day": 46.782279,
+  "ratio_vs_published": 0.9356455800000001,
+  "cleared_position": 1.053672,
+  "dpos_pt_vs_published": 0.26720000000000077,
+  "census_position": 1.17019,
+  "requirement_mw": 155047.538,
+  "price_takers_mw": 30577.888,
+  "n_offers": 1370,
+  "n_uncleared": 649,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": "CT_PEAKER_PJM_EMAAC_p7318_econ",
+  "uncleared_firm_mw_by_fuel": {
+   "coal": 237.8,
+   "gas_cc": 2052.1,
+   "gas_ct": 3235.7,
+   "gas_st": 8801.9,
+   "oil": 3722.8
+  },
+  "uncleared_units_by_fuel": {
+   "coal": 9,
+   "gas_cc": 74,
+   "gas_ct": 30,
+   "gas_st": 115,
+   "oil": 421
+  },
+  "pipeline_events": {
+   "decided": 535,
+   "entry_capped": 119,
+   "executed": 526
+  },
+  "executed_mw_by_fuel": {
+   "gas_st": 8264.7,
+   "oil": 4136.5
+  },
+  "fleet_delta_mw": {
+   "biomass": -8.4,
+   "coal": -3983.1,
+   "gas_cc": 2829.4,
+   "gas_st": -8307.6,
+   "oil": -4187.7
+  },
+  "entry_decided_mw_by_tech": {
+   "solar": 2440.6,
+   "wind": 1500.0
+  },
+  "floor_retained": 0
+ },
+ "offer_delta_usd_per_mw_day_by_fuel": {
+  "coal": {
+   "n": 165,
+   "moved": 103,
+   "min": -93.8029,
+   "max": 0.0
+  },
+  "gas_cc": {
+   "n": 234,
+   "moved": 168,
+   "min": -33.9121,
+   "max": 0.0
+  },
+  "gas_ct": {
+   "n": 404,
+   "moved": 404,
+   "min": -14.4244,
+   "max": -14.4243
+  },
+  "gas_st": {
+   "n": 115,
+   "moved": 115,
+   "min": -40.7689,
+   "max": -40.7689
+  },
+  "nuclear": {
+   "n": 31,
+   "moved": 0,
+   "min": 0.0,
+   "max": 0.0
+  },
+  "oil": {
+   "n": 421,
+   "moved": 421,
+   "min": -11.6865,
+   "max": -11.6865
+  }
+ },
+ "identity_ulp_boundary_rows": [
+  {
+   "unit_id": "CT_CHP_PJM_EMAAC_p52149_econ",
+   "event": "entry_capped",
+   "net_revenue_minus_gfc_usd": -1.1641532182693481e-10,
+   "relative": -1.8259662350804033e-16,
+   "nameplate_mw": 34.93449999999999
+  },
+  {
+   "unit_id": "CT_PEAKER_PJM_West_APS_p3132_econ",
+   "event": "entry_capped",
+   "net_revenue_minus_gfc_usd": -1.1641532182693481e-10,
+   "relative": -1.651410989678654e-16,
+   "nameplate_mw": 38.627100000000006
+  },
+  {
+   "unit_id": "CT_PEAKER_PJM_ATSI_p2933_peak",
+   "event": "entry_capped",
+   "net_revenue_minus_gfc_usd": -3.637978807091713e-12,
+   "relative": -1.636628115748572e-16,
+   "nameplate_mw": 1.2179999999999997
+  },
+  {
+   "unit_id": "CT_CHP_PJM_EMAAC_p54829_econ",
+   "event": "entry_capped",
+   "net_revenue_minus_gfc_usd": -1.4551915228366852e-11,
+   "relative": -1.4382489502032901e-16,
+   "nameplate_mw": 5.5440000000000005
+  },
+  {
+   "unit_id": "CT_PEAKER_PJM_EMAAC_p7138_econ",
+   "event": "entry_capped",
+   "net_revenue_minus_gfc_usd": -1.1641532182693481e-10,
+   "relative": -1.4202208046179746e-16,
+   "nameplate_mw": 44.915000000000006
+  }
+ ],
+ "wall_rss": {
+  "p0_solve_s": 272.573,
+  "p1_solve_s": 82.455,
+  "matrix_build_s": 14.249,
+  "peak_rss_gb": 7.18
+ }
+}
