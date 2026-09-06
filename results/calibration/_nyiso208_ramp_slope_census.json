@@ -1,0 +1,105 @@
+{
+ "session": "nyiso-208",
+ "object": "CH_ST_ev ramp family (reliability_floor_coeffs_NYISO.csv rows 46-47)",
+ "zone": "Capital_Hudson",
+ "nameplate_mw": 2878.9,
+ "frozen_slope_per_c": 0.0246,
+ "frozen_cap_knot": 0.32,
+ "prereg": "results/calibration/PREREG-nyiso208-ramp-slope-census.md",
+ "M4_availability_sensitivity": {
+  "slope_shipped_avail_basis": 0.050219,
+  "slope_nameplate_basis": 0.04003,
+  "identical_to_4dp": false,
+  "hours_with_any_outage_derate": 26208,
+  "hours_total": 26304,
+  "outage_derate_share_of_hours": 0.9964,
+  "n_hot_days": 328,
+  "note": "If the extract does not reach CH's plants, no extract-drift story can explain a CH gap -- this KILLS the session's own P2 hypothesis."
+ },
+ "M5_span_search": {
+  "spans": {
+   "2023": {
+    "slope": 0.044325,
+    "n_hot_days": 108,
+    "within_tol_of_frozen": false
+   },
+   "2024": {
+    "slope": 0.058615,
+    "n_hot_days": 114,
+    "within_tol_of_frozen": false
+   },
+   "2025": {
+    "slope": 0.047373,
+    "n_hot_days": 106,
+    "within_tol_of_frozen": false
+   },
+   "2023_2024": {
+    "slope": 0.050896,
+    "n_hot_days": 222,
+    "within_tol_of_frozen": false
+   },
+   "2024_2025": {
+    "slope": 0.053464,
+    "n_hot_days": 220,
+    "within_tol_of_frozen": false
+   },
+   "2023_2024_2025": {
+    "slope": 0.050219,
+    "n_hot_days": 328,
+    "within_tol_of_frozen": false
+   }
+  },
+  "any_span_reproduces": false,
+  "binding_caveat": "PREREG \u00a74 M5: five extra comparisons against a +/-0.0010 window. A hit is SUGGESTIVE ONLY and is never reported as identification."
+ },
+ "M6a_conduct": {
+  "n_hot_days": 328,
+  "share_hot_days_cf_ge_frozen_floor": 0.6463,
+  "share_hot_days_cf_ge_measured_slope_floor": 0.6128,
+  "median_hot_tmax_c": 28.3,
+  "max_hot_tmax_c": 35.6,
+  "frozen_frac_at_median_hot_tmax": 0.0812,
+  "frozen_frac_at_max_hot_tmax": 0.2609,
+  "median_hot_day_cf": 0.311,
+  "P5_pass_gt_50pct": true
+ },
+ "M6b_window": {
+  "median_cf_inside_h14_21": 0.298,
+  "median_cf_outside_h14_21": 0.0663,
+  "ratio_inside_over_outside": 4.492,
+  "hot_day_block_median_cf": {
+   "h00-03": 0.0,
+   "h04-07": 0.0217,
+   "h08-11": 0.1369,
+   "h12-15": 0.2825,
+   "h16-19": 0.3206,
+   "h20-23": 0.2059
+  },
+  "P6_pass_ratio_ge_1p5": true
+ },
+ "sizing_twh_2023_2025": {
+  "floor_energy_demanded_frozen": 0.33358,
+  "floor_energy_demanded_measured_slope": 0.60723,
+  "excess_over_metered_frozen": 0.03035,
+  "excess_over_metered_measured_slope": 0.07249,
+  "metered_evening_energy": 2.35832,
+  "note": "Floor energy demanded = sum(frac x avail) over h14-21; excess over metered = sum(max(0, floor - metered)). NOT an LP result: the model's added energy also depends on what the LP would have dispatched anyway."
+ },
+ "POSTHOC_cf_distribution": {
+  "LABEL": "POST-HOC DIAGNOSTIC -- not pre-registered; explains the r, claims nothing",
+  "pearson_r_cf_tmax_all_days": 0.0408,
+  "spearman_r_cf_tmax_all_days": 0.1041,
+  "cf_max": 4.6302,
+  "cf_p99": 3.2113,
+  "share_days_cf_gt_1": 0.0228,
+  "share_days_cf_eq_0": 0.604,
+  "share_hot_days_cf_eq_0": 0.4024,
+  "n_days_total": 1096
+ },
+ "verdict_inputs": {
+  "M1_slope_shipped": 0.050219,
+  "P1_reproduces_within_0.0010": false,
+  "P2_guard_stale_below_0.0200": false,
+  "ratio_measured_over_frozen": 2.041
+ }
+}
