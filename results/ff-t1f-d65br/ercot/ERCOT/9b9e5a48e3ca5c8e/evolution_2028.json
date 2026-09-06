@@ -1,0 +1,161 @@
+{
+  "adequacy_requirement_mw": 137548.187,
+  "announced_derates": [
+    {
+      "derate_mw": 141.49999999999997,
+      "fuel": "coal",
+      "mw_after": 230.62500000000003,
+      "mw_before": 372.125,
+      "unit_id": "COAL_South_Central_p7097_mustrun"
+    },
+    {
+      "derate_mw": 113.19999999999999,
+      "fuel": "coal",
+      "mw_after": 184.5,
+      "mw_before": 297.7,
+      "unit_id": "COAL_South_Central_p7097_committed"
+    },
+    {
+      "derate_mw": 282.99999999999994,
+      "fuel": "coal",
+      "mw_after": 461.25000000000006,
+      "mw_before": 744.25,
+      "unit_id": "COAL_South_Central_p7097_econ"
+    },
+    {
+      "derate_mw": 28.299999999999997,
+      "fuel": "coal",
+      "mw_after": 46.125,
+      "mw_before": 74.425,
+      "unit_id": "COAL_South_Central_p7097_peak"
+    }
+  ],
+  "bridge": false,
+  "capacity_reserve_position": null,
+  "ccs_retrofits": [],
+  "confirmed_derates": [
+    {
+      "derate_mw": 41.7,
+      "fuel": "gas_ct",
+      "mw_after": 97.59999999999998,
+      "mw_before": 139.29999999999998,
+      "unit_id": "CT_PEAKER_South_Central_p3612_committed"
+    },
+    {
+      "derate_mw": 57.337500000000006,
+      "fuel": "gas_ct",
+      "mw_after": 134.19999999999993,
+      "mw_before": 191.53749999999994,
+      "unit_id": "CT_PEAKER_South_Central_p3612_econ"
+    },
+    {
+      "derate_mw": 5.2125,
+      "fuel": "gas_ct",
+      "mw_after": 12.199999999999998,
+      "mw_before": 17.412499999999998,
+      "unit_id": "CT_PEAKER_South_Central_p3612_peak"
+    }
+  ],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 3000.0,
+    "gas_ct": 2345.4,
+    "solar": 6654.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2030,
+      "decision_year": 2028,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 3000.0,
+      "seq": 0,
+      "tech": "gas_cc",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2030,
+      "decision_year": 2028,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2345.4,
+      "seq": 1,
+      "tech": "gas_ct",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2030,
+      "decision_year": 2028,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 6654.6,
+      "seq": 2,
+      "tech": "solar",
+      "zone": "West"
+    }
+  ],
+  "firm_clean_accredited_mw": 273.15,
+  "firm_clean_mw": 546.3,
+  "fleet_by_fuel_after": {
+    "coal": 13397.9,
+    "gas_cc": 37915.04,
+    "gas_ct": 11726.167,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 11419.417,
+    "gas_st": 10850.45,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "ERCOT",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 128366.755,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": -0.157423,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "screen_adequacy_requirement_mw": 137548.187,
+  "screen_entering_firm_mw": 107744.077,
+  "screen_peak_demand_mw": 128366.755,
+  "screen_reserve_position": 0.783319,
+  "solar_cap_mw": 38100.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 11687.5,
+  "storage_power_mw": 17000.0,
+  "thermal_additions": [
+    {
+      "eia860_id": "planned_68606_5",
+      "fuel": "gas_cc",
+      "mw": 674.0,
+      "source": "planned",
+      "unit_id": "planned_68606_5",
+      "zone": "Houston"
+    },
+    {
+      "eia860_id": "planned_69691_06",
+      "fuel": "gas_ct",
+      "mw": 411.0,
+      "source": "planned",
+      "unit_id": "planned_69691_06",
+      "zone": "Houston"
+    }
+  ],
+  "wind_cap_mw": 42553.1,
+  "year": 2028
+}
