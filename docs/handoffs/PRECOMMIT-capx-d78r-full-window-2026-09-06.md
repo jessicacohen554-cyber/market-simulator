@@ -277,3 +277,66 @@ bash docs/handoffs/d78/run_full.sh control-P                           # leg 1
 bash docs/handoffs/d78/run_full.sh arm --retirement-sector-gate        # leg 2 (after the §3.3 addendum)
 uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl> --arm <arm>
 ```
+
+---
+
+# ADDENDUM 1 — the §3.3 W4 band, computed on control-P, BEFORE the arm is solved
+
+**Status:** control-P finished at `16:38:38Z` (22.0 min wall; HEAD guard `41b46142` held; key
+**`15a723ba3b6dc856`** realized as declared; run banner asserts the holdout freeze active, solve
+years **{2021, 2023, 2024, 2025}**, 2022 **bridged**, scoring bounded to the training window).
+**The arm has NOT been solved.** Everything below is a control-only read
+(`docs/handoffs/d78r/control_band.json`).
+
+## A1.1 control-P, per screen year
+
+| year | pool rows / MW | of which sector-1 | decided rows / MW | of which sector-1 | capped rows / MW | executed economic MW | `g_y` (max single pool row) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2021 | 0 / 0 | — | 0 / 0 | — | 0 / 0 | 0 | 0 (cap does not bind) |
+| 2022 | 677 / 29,727.898 | 226 / 3,476.523 | 79 / 13,177.472 | 21 / 1,694.218 | 598 / 16,550.426 | 7,333.700 | **1,254.600** |
+| 2023 | 154 / 5,795.183 | 18 / 622.699 | 108 / 3,105.455 | 10 / 332.306 | 46 / 2,689.728 | 3,105.455 | **955.500** |
+| 2024 | 3 / 976.806 | 3 / 976.806 | 0 / 0 | — | 3 / 976.806 | 1,189.408 | **594.606** |
+| 2025 | 0 / 0 | — | 0 / 0 | — | 0 / 0 | 0 | 0 (cap does not bind) |
+
+## A1.2 THE BAND (W4), fixed here
+
+```
+sum_y decided_mw(control-P)  =  16,282.927 MW
+sum_y g_y                    =   2,804.706 MW
+W4 BAND  =  [ 13,478.221 MW , 19,087.633 MW ]
+```
+
+`g_y` is the largest single-row MW in control-P's year-y failing pool (`decided` ∪ `entry_capped`),
+and 0 in a year where the cap does not bind — the §3.1 definition, applied verbatim, with no
+number chosen by hand. **The arm's window decided total must land inside that interval.**
+
+## A1.3 Two control-only readings, recorded now so they cannot be fitted later
+
+1. **W0's control half already PASSES.** control-P's 2022 screen reproduces D78's measured control
+   **to the digit**: pool **677 rows / 29,727.898 MW**, `n_offers` **1,370**, `offered_mw`
+   **150,857.184**, `price_takers_mw` **30,577.888**, `price_usd_per_mw_day` **67.760162**,
+   `cleared_position` **1.048349**, decided **79 / 13,177.472**, executed **7,333.700**; and 2023
+   decided **108 / 3,105.455**. The §2 G-DRIFT verdict is therefore confirmed by measurement on the
+   control side before the arm is touched, and the full window's 2021→2022 path is identical to
+   D78's screen span as §3.1 W0 assumed.
+2. **The control's sector-1 decided MW in 2022 is 21 rows / 1,694.218 MW** — which is exactly
+   D78 §4's decomposition read forward (468.460 MW executing 2022 + 1,225.758 MW of lag-3 coal
+   executing 2024). The gate has that much budget to free in 2022, 332.306 MW in 2023, and the
+   2024 pool is **entirely** sector-1 (3 rows / 976.806 MW, all capped).
+
+**Reported, not gated** (§3.2): control-P's window executed economic total is
+**11,628.563 MW** (2022 7,333.700 + 2023 3,105.455 + 2024 1,189.408), and its 2024 executed
+economic MW is **entirely sector-1** (13 rows / 1,189.408 MW).
+
+## A1.4 Instrument repair, disclosed (the D58 §5 discipline)
+
+`window_compare.py` as committed at `41b46142` read the clearing price under the key `"price"`;
+the ledger's keys are **`price_usd_per_mw_day`** and **`cleared_position`**. Left alone, W0 would
+have read `None` and FAILED spuriously on both legs. **Fixed before the arm was solved**, with
+`cleared_position` added to W0's row set as a second identity rather than dropped. This is the same
+class of error D58 §5 disclosed against itself (`FOOTPRINT_KEYS` omitting `capacity_clearing`), and
+it is recorded here rather than in the FINDING because it was found and fixed **before** the
+measurement it would have corrupted. No gate, threshold, band or pass condition was changed — only
+the key the instrument reads.
+
+**The arm is solved next, at the same HEAD, with this band already fixed.**
