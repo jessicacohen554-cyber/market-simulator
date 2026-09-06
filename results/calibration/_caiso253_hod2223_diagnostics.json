@@ -1,0 +1,851 @@
+{
+ "note": "POST-REGISTRATION, labelled, scored nowhere",
+ "years": {
+  "2023": {
+   "a_would_it_clear": {
+    "load_weighted|gap_22_23": {
+     "lambda_mean": 55.18,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -1.6,
+     "share_lambda_above_hub": 0.5429
+    },
+    "load_weighted|ovn_0_5": {
+     "lambda_mean": 49.03,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 1.78,
+     "share_lambda_above_hub": 0.697
+    },
+    "load_weighted|eve_18_21": {
+     "lambda_mean": 57.51,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -29.3,
+     "share_lambda_above_hub": 0.1491
+    },
+    "LA_BASIN|gap_22_23": {
+     "lambda_mean": 55.88,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -0.9,
+     "share_lambda_above_hub": 0.5536
+    },
+    "LA_BASIN|ovn_0_5": {
+     "lambda_mean": 49.22,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 1.97,
+     "share_lambda_above_hub": 0.7738
+    },
+    "LA_BASIN|eve_18_21": {
+     "lambda_mean": 58.19,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -28.63,
+     "share_lambda_above_hub": 0.1973
+    },
+    "NP15|gap_22_23": {
+     "lambda_mean": 54.33,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -2.46,
+     "share_lambda_above_hub": 0.5161
+    },
+    "NP15|ovn_0_5": {
+     "lambda_mean": 48.82,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 1.57,
+     "share_lambda_above_hub": 0.678
+    },
+    "NP15|eve_18_21": {
+     "lambda_mean": 56.69,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -30.12,
+     "share_lambda_above_hub": 0.1411
+    },
+    "SDGE|gap_22_23": {
+     "lambda_mean": 55.94,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -0.85,
+     "share_lambda_above_hub": 0.5536
+    },
+    "SDGE|ovn_0_5": {
+     "lambda_mean": 49.53,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 2.28,
+     "share_lambda_above_hub": 0.7738
+    },
+    "SDGE|eve_18_21": {
+     "lambda_mean": 58.18,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -28.63,
+     "share_lambda_above_hub": 0.1964
+    },
+    "SP15_rest|gap_22_23": {
+     "lambda_mean": 55.88,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -0.9,
+     "share_lambda_above_hub": 0.5536
+    },
+    "SP15_rest|ovn_0_5": {
+     "lambda_mean": 49.22,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 1.97,
+     "share_lambda_above_hub": 0.7738
+    },
+    "SP15_rest|eve_18_21": {
+     "lambda_mean": 58.19,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -28.63,
+     "share_lambda_above_hub": 0.1973
+    },
+    "WECC_DSW|gap_22_23": {
+     "lambda_mean": 55.88,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -0.9,
+     "share_lambda_above_hub": 0.5536
+    },
+    "WECC_DSW|ovn_0_5": {
+     "lambda_mean": 47.82,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 0.58,
+     "share_lambda_above_hub": 0.7738
+    },
+    "WECC_DSW|eve_18_21": {
+     "lambda_mean": 57.8,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -29.01,
+     "share_lambda_above_hub": 0.1973
+    },
+    "WECC_PNW|gap_22_23": {
+     "lambda_mean": 49.52,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -7.26,
+     "share_lambda_above_hub": 0.4911
+    },
+    "WECC_PNW|ovn_0_5": {
+     "lambda_mean": 44.82,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": -2.43,
+     "share_lambda_above_hub": 0.6381
+    },
+    "WECC_PNW|eve_18_21": {
+     "lambda_mean": 54.33,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -32.49,
+     "share_lambda_above_hub": 0.133
+    },
+    "ZP26|gap_22_23": {
+     "lambda_mean": 54.09,
+     "hub_mean": 56.78,
+     "lambda_minus_hub_mean": -2.69,
+     "share_lambda_above_hub": 0.5089
+    },
+    "ZP26|ovn_0_5": {
+     "lambda_mean": 48.2,
+     "hub_mean": 47.25,
+     "lambda_minus_hub_mean": 0.95,
+     "share_lambda_above_hub": 0.5744
+    },
+    "ZP26|eve_18_21": {
+     "lambda_mean": 56.33,
+     "hub_mean": 86.81,
+     "lambda_minus_hub_mean": -30.48,
+     "share_lambda_above_hub": 0.1
+    }
+   },
+   "b_who_serves": {
+    "model": {
+     "CC_CHP": 1005.0,
+     "CC_REGULAR": 7920.7,
+     "COAL": 12.3,
+     "CT_CHP": 141.8,
+     "CT_PEAKER": 296.1,
+     "OTHER": 1057.0,
+     "ST_GAS": 3.1,
+     "biomass": 511.1,
+     "hydro": 3549.7,
+     "import": 4421.7,
+     "nuclear": 2012.1,
+     "oil": 0.0,
+     "solar": 11.2,
+     "wind": 2259.2
+    },
+    "model_gas_total": 9366.7,
+    "e930": {
+     "demand": 27019.2,
+     "gas": 11215.2,
+     "solar": -13.8,
+     "wind": 2287.6,
+     "hydro": 3567.2,
+     "nuclear": 2030.0,
+     "oth": 273.8,
+     "geo": NaN
+    },
+    "e930_net_import": 5427.9
+   },
+   "c_seasonality": {
+    "da": {
+     "by_month_median": [
+      null,
+      null,
+      -2.58,
+      -7.94,
+      -5.48,
+      -3.13,
+      -10.18,
+      -6.39,
+      -2.51,
+      -4.01,
+      0.76,
+      1.15
+     ],
+     "gap_median": -3.21,
+     "ovn_median": 0.75
+    },
+    "rt": {
+     "by_month_median": [
+      null,
+      null,
+      -12.59,
+      -11.2,
+      -8.87,
+      -4.59,
+      -13.21,
+      -14.12,
+      -4.55,
+      -6.68,
+      -6.81,
+      -3.47
+     ],
+     "gap_median": -7.32,
+     "ovn_median": -1.94
+    }
+   },
+   "d_storage": {
+    "charge_mw": {
+     "by_hod": [
+      79.5,
+      95.4,
+      126.9,
+      121.8,
+      104.6,
+      97.3,
+      206.9,
+      733.8,
+      1593.6,
+      2374.6,
+      2745.6,
+      2904.3,
+      2690.8,
+      2399.4,
+      1802.4,
+      920.3,
+      345.7,
+      99.2,
+      66.9,
+      66.4,
+      67.1,
+      67.5,
+      67.5,
+      67.5
+     ]
+    },
+    "discharge_mw": {
+     "by_hod": [
+      292.8,
+      217.2,
+      195.9,
+      205.4,
+      294.9,
+      504.4,
+      590.5,
+      313.4,
+      156.6,
+      84.2,
+      61.1,
+      57.2,
+      63.4,
+      72.1,
+      89.8,
+      136.7,
+      463.9,
+      1961.6,
+      3035.0,
+      2748.2,
+      2207.6,
+      1370.4,
+      828.4,
+      532.2
+     ]
+    }
+   },
+   "storage_columns": [
+    "year",
+    "pass",
+    "tech",
+    "hour",
+    "charge_mw",
+    "discharge_mw"
+   ]
+  },
+  "2024": {
+   "a_would_it_clear": {
+    "load_weighted|gap_22_23": {
+     "lambda_mean": 45.34,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 0.94,
+     "share_lambda_above_hub": 0.5904
+    },
+    "load_weighted|ovn_0_5": {
+     "lambda_mean": 40.73,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 1.3,
+     "share_lambda_above_hub": 0.7699
+    },
+    "load_weighted|eve_18_21": {
+     "lambda_mean": 45.42,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -12.76,
+     "share_lambda_above_hub": 0.226
+    },
+    "LA_BASIN|gap_22_23": {
+     "lambda_mean": 45.97,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 1.58,
+     "share_lambda_above_hub": 0.6342
+    },
+    "LA_BASIN|ovn_0_5": {
+     "lambda_mean": 41.09,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 1.66,
+     "share_lambda_above_hub": 0.7991
+    },
+    "LA_BASIN|eve_18_21": {
+     "lambda_mean": 45.87,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -12.31,
+     "share_lambda_above_hub": 0.2445
+    },
+    "NP15|gap_22_23": {
+     "lambda_mean": 44.74,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 0.34,
+     "share_lambda_above_hub": 0.5411
+    },
+    "NP15|ovn_0_5": {
+     "lambda_mean": 40.51,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 1.07,
+     "share_lambda_above_hub": 0.6333
+    },
+    "NP15|eve_18_21": {
+     "lambda_mean": 45.1,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -13.08,
+     "share_lambda_above_hub": 0.2096
+    },
+    "SDGE|gap_22_23": {
+     "lambda_mean": 46.35,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 1.96,
+     "share_lambda_above_hub": 0.6671
+    },
+    "SDGE|ovn_0_5": {
+     "lambda_mean": 41.43,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 2.0,
+     "share_lambda_above_hub": 0.8128
+    },
+    "SDGE|eve_18_21": {
+     "lambda_mean": 46.18,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -11.99,
+     "share_lambda_above_hub": 0.2603
+    },
+    "SP15_rest|gap_22_23": {
+     "lambda_mean": 44.83,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 0.43,
+     "share_lambda_above_hub": 0.5603
+    },
+    "SP15_rest|ovn_0_5": {
+     "lambda_mean": 40.07,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 0.63,
+     "share_lambda_above_hub": 0.7438
+    },
+    "SP15_rest|eve_18_21": {
+     "lambda_mean": 44.72,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -13.45,
+     "share_lambda_above_hub": 0.1932
+    },
+    "WECC_DSW|gap_22_23": {
+     "lambda_mean": 44.83,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": 0.43,
+     "share_lambda_above_hub": 0.5603
+    },
+    "WECC_DSW|ovn_0_5": {
+     "lambda_mean": 39.61,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 0.17,
+     "share_lambda_above_hub": 0.7438
+    },
+    "WECC_DSW|eve_18_21": {
+     "lambda_mean": 44.42,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -13.76,
+     "share_lambda_above_hub": 0.1932
+    },
+    "WECC_PNW|gap_22_23": {
+     "lambda_mean": 39.06,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": -5.33,
+     "share_lambda_above_hub": 0.4959
+    },
+    "WECC_PNW|ovn_0_5": {
+     "lambda_mean": 39.4,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": -0.03,
+     "share_lambda_above_hub": 0.6082
+    },
+    "WECC_PNW|eve_18_21": {
+     "lambda_mean": 42.57,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -15.6,
+     "share_lambda_above_hub": 0.1856
+    },
+    "ZP26|gap_22_23": {
+     "lambda_mean": 44.1,
+     "hub_mean": 44.39,
+     "lambda_minus_hub_mean": -0.29,
+     "share_lambda_above_hub": 0.5014
+    },
+    "ZP26|ovn_0_5": {
+     "lambda_mean": 39.76,
+     "hub_mean": 39.43,
+     "lambda_minus_hub_mean": 0.32,
+     "share_lambda_above_hub": 0.4511
+    },
+    "ZP26|eve_18_21": {
+     "lambda_mean": 44.28,
+     "hub_mean": 58.18,
+     "lambda_minus_hub_mean": -13.9,
+     "share_lambda_above_hub": 0.1384
+    }
+   },
+   "b_who_serves": {
+    "model": {
+     "CC_CHP": 906.5,
+     "CC_REGULAR": 8046.2,
+     "COAL": 7.7,
+     "CT_CHP": 143.7,
+     "CT_PEAKER": 371.9,
+     "OTHER": 922.0,
+     "ST_GAS": 43.7,
+     "biomass": 503.4,
+     "hydro": 3622.2,
+     "import": 4134.7,
+     "nuclear": 2076.8,
+     "oil": 0.0,
+     "solar": 29.6,
+     "wind": 2794.8
+    },
+    "model_gas_total": 9512.0,
+    "e930": {
+     "demand": 27186.5,
+     "gas": 10716.6,
+     "solar": 7.1,
+     "wind": 2812.5,
+     "hydro": 3669.4,
+     "nuclear": 2097.5,
+     "oth": 2112.2,
+     "geo": NaN
+    },
+    "e930_net_import": 5550.7
+   },
+   "c_seasonality": {
+    "da": {
+     "by_month_median": [
+      0.96,
+      0.33,
+      -1.28,
+      -1.54,
+      -1.25,
+      -1.38,
+      -6.06,
+      -4.11,
+      -1.87,
+      -1.05,
+      1.48,
+      1.2
+     ],
+     "gap_median": -0.36,
+     "ovn_median": 0.74
+    },
+    "rt": {
+     "by_month_median": [
+      -5.52,
+      -4.31,
+      -2.7,
+      -3.38,
+      -2.06,
+      -2.99,
+      -5.45,
+      -5.44,
+      -2.63,
+      -2.47,
+      1.97,
+      -1.86
+     ],
+     "gap_median": -3.12,
+     "ovn_median": -0.8
+    }
+   },
+   "d_storage": {
+    "charge_mw": {
+     "by_hod": [
+      32.6,
+      43.9,
+      58.3,
+      69.3,
+      59.4,
+      56.3,
+      101.5,
+      648.8,
+      2228.9,
+      3765.8,
+      4517.7,
+      4611.5,
+      4374.3,
+      3926.6,
+      3140.3,
+      1716.8,
+      656.9,
+      193.9,
+      48.9,
+      30.7,
+      27.6,
+      28.8,
+      24.7,
+      26.3
+     ]
+    },
+    "discharge_mw": {
+     "by_hod": [
+      486.2,
+      331.3,
+      243.8,
+      211.6,
+      250.5,
+      474.6,
+      790.3,
+      420.5,
+      141.2,
+      92.6,
+      76.8,
+      65.0,
+      53.0,
+      67.1,
+      103.8,
+      152.7,
+      311.5,
+      1418.4,
+      3759.1,
+      4899.4,
+      4333.1,
+      3398.0,
+      2319.0,
+      1047.1
+     ]
+    }
+   },
+   "storage_columns": [
+    "year",
+    "pass",
+    "tech",
+    "hour",
+    "charge_mw",
+    "discharge_mw"
+   ]
+  },
+  "2025": {
+   "a_would_it_clear": {
+    "load_weighted|gap_22_23": {
+     "lambda_mean": 45.02,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": 0.66,
+     "share_lambda_above_hub": 0.574
+    },
+    "load_weighted|ovn_0_5": {
+     "lambda_mean": 41.94,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": 0.34,
+     "share_lambda_above_hub": 0.6744
+    },
+    "load_weighted|eve_18_21": {
+     "lambda_mean": 44.54,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -3.35,
+     "share_lambda_above_hub": 0.3226
+    },
+    "LA_BASIN|gap_22_23": {
+     "lambda_mean": 45.69,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": 1.34,
+     "share_lambda_above_hub": 0.6219
+    },
+    "LA_BASIN|ovn_0_5": {
+     "lambda_mean": 42.39,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": 0.78,
+     "share_lambda_above_hub": 0.7251
+    },
+    "LA_BASIN|eve_18_21": {
+     "lambda_mean": 44.94,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -2.95,
+     "share_lambda_above_hub": 0.3438
+    },
+    "NP15|gap_22_23": {
+     "lambda_mean": 44.34,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": -0.01,
+     "share_lambda_above_hub": 0.5274
+    },
+    "NP15|ovn_0_5": {
+     "lambda_mean": 41.57,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": -0.03,
+     "share_lambda_above_hub": 0.4954
+    },
+    "NP15|eve_18_21": {
+     "lambda_mean": 44.27,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -3.62,
+     "share_lambda_above_hub": 0.2986
+    },
+    "SDGE|gap_22_23": {
+     "lambda_mean": 46.14,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": 1.78,
+     "share_lambda_above_hub": 0.6534
+    },
+    "SDGE|ovn_0_5": {
+     "lambda_mean": 42.8,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": 1.19,
+     "share_lambda_above_hub": 0.7534
+    },
+    "SDGE|eve_18_21": {
+     "lambda_mean": 45.32,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -2.57,
+     "share_lambda_above_hub": 0.3685
+    },
+    "SP15_rest|gap_22_23": {
+     "lambda_mean": 44.48,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": 0.13,
+     "share_lambda_above_hub": 0.5192
+    },
+    "SP15_rest|ovn_0_5": {
+     "lambda_mean": 41.27,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": -0.34,
+     "share_lambda_above_hub": 0.6333
+    },
+    "SP15_rest|eve_18_21": {
+     "lambda_mean": 43.75,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -4.14,
+     "share_lambda_above_hub": 0.2726
+    },
+    "WECC_DSW|gap_22_23": {
+     "lambda_mean": 44.48,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": 0.13,
+     "share_lambda_above_hub": 0.5192
+    },
+    "WECC_DSW|ovn_0_5": {
+     "lambda_mean": 40.88,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": -0.72,
+     "share_lambda_above_hub": 0.6333
+    },
+    "WECC_DSW|eve_18_21": {
+     "lambda_mean": 43.5,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -4.39,
+     "share_lambda_above_hub": 0.2726
+    },
+    "WECC_PNW|gap_22_23": {
+     "lambda_mean": 43.9,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": -0.46,
+     "share_lambda_above_hub": 0.5205
+    },
+    "WECC_PNW|ovn_0_5": {
+     "lambda_mean": 41.11,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": -0.49,
+     "share_lambda_above_hub": 0.4918
+    },
+    "WECC_PNW|eve_18_21": {
+     "lambda_mean": 43.83,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -4.06,
+     "share_lambda_above_hub": 0.2966
+    },
+    "ZP26|gap_22_23": {
+     "lambda_mean": 44.06,
+     "hub_mean": 44.36,
+     "lambda_minus_hub_mean": -0.3,
+     "share_lambda_above_hub": 0.4959
+    },
+    "ZP26|ovn_0_5": {
+     "lambda_mean": 41.08,
+     "hub_mean": 41.6,
+     "lambda_minus_hub_mean": -0.53,
+     "share_lambda_above_hub": 0.2772
+    },
+    "ZP26|eve_18_21": {
+     "lambda_mean": 43.52,
+     "hub_mean": 47.89,
+     "lambda_minus_hub_mean": -4.37,
+     "share_lambda_above_hub": 0.1918
+    }
+   },
+   "b_who_serves": {
+    "model": {
+     "CC_CHP": 900.2,
+     "CC_REGULAR": 7212.0,
+     "COAL": 11.9,
+     "CT_CHP": 137.5,
+     "CT_PEAKER": 184.5,
+     "OTHER": 675.9,
+     "ST_GAS": 3.3,
+     "biomass": 369.1,
+     "hydro": 3589.3,
+     "import": 4440.9,
+     "nuclear": 1996.0,
+     "oil": 0.0,
+     "solar": 5.7,
+     "wind": 2750.8
+    },
+    "model_gas_total": 8437.4,
+    "e930": {
+     "demand": 26842.0,
+     "gas": 8910.7,
+     "solar": -33.7,
+     "wind": 2760.9,
+     "hydro": 3526.8,
+     "nuclear": 2010.0,
+     "oth": 3342.3,
+     "geo": 750.0
+    },
+    "e930_net_import": 6098.9
+   },
+   "c_seasonality": {
+    "da": {
+     "by_month_median": [
+      1.0,
+      1.31,
+      -0.07,
+      -1.76,
+      -1.31,
+      -1.35,
+      -1.26,
+      -3.0,
+      -2.11,
+      0.44,
+      0.79,
+      0.57
+     ],
+     "gap_median": -0.03,
+     "ovn_median": 0.1
+    },
+    "rt": {
+     "by_month_median": [
+      0.32,
+      1.94,
+      -1.39,
+      -2.02,
+      -0.93,
+      -2.89,
+      -2.05,
+      -3.29,
+      -4.27,
+      -1.86,
+      -0.19,
+      -5.28
+     ],
+     "gap_median": -2.0,
+     "ovn_median": -1.87
+    }
+   },
+   "d_storage": {
+    "charge_mw": {
+     "by_hod": [
+      47.4,
+      47.4,
+      47.4,
+      47.4,
+      47.4,
+      47.4,
+      60.4,
+      613.7,
+      2597.7,
+      4940.2,
+      6111.9,
+      6542.1,
+      6382.1,
+      5688.1,
+      4602.7,
+      2839.7,
+      955.8,
+      196.0,
+      50.6,
+      43.3,
+      43.9,
+      44.8,
+      50.4,
+      50.4
+     ]
+    },
+    "discharge_mw": {
+     "by_hod": [
+      1057.4,
+      658.9,
+      407.3,
+      318.2,
+      408.5,
+      891.1,
+      1382.0,
+      625.3,
+      107.5,
+      52.3,
+      45.2,
+      42.8,
+      40.6,
+      41.8,
+      57.3,
+      105.3,
+      471.5,
+      1595.5,
+      4267.9,
+      6273.3,
+      5934.4,
+      5049.4,
+      3468.0,
+      2070.5
+     ]
+    }
+   },
+   "storage_columns": [
+    "year",
+    "pass",
+    "tech",
+    "hour",
+    "charge_mw",
+    "discharge_mw"
+   ]
+  }
+ }
+}
