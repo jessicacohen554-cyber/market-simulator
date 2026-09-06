@@ -297,7 +297,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "K", fc: "K", ev: "FFR-1C (runs miso-2026-2026-ffr1c-i7-{before,after})" },
-    datacenter_load_block: { cell: "K", fc: "K" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0 (scn-ws4-probe): relocate regime, DC high block 1,190->22,950 MW; LOAD-HI holds the 2026 peak 0.11 GW UNDER its ORGANIC twin at identical energy. CO2 +8.992 Mt on the fossil stack, implied marginal rate 0.484 vs 0.749 fleet average (coal inframarginal, 292 TWh). I3 crosses on the case at 2026 (REF 0.0070 % PASS -> 0.0109 % FAIL), earlier than SCN-WS4b pre-declared (2029-30)" },
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },

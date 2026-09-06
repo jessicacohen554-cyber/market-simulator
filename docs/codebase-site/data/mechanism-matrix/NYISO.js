@@ -298,7 +298,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "K", fc: "K", ev: "FFR-1C (runs nyiso-2026-2026-ffr1c-i7-{before,after}); origin FF-2B §2.3/§4" },
-    datacenter_load_block: { cell: "K", fc: "K" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0 (scn-ws4-probe): relocate regime, DC high block 1,417->7,083 MW; the flattening holds the 2026 peak essentially flat (-0.04 GW) at +2.8 % energy. All 14 invariants PASS in all three arms, backstop 0.0, unserved 0.0. Import line +0.156 Mt with HQ_hydro (EF 0) FLAT at firm depth and the increment on the 0.428 rungs" },
     electrification_layers: { cell: ".", fc: "U" },
     transmission_expansion: { cell: ".", fc: "U" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },

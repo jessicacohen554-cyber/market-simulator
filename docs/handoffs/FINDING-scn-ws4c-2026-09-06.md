@@ -362,10 +362,24 @@ that share that ISO's live FC-1 defects**, and the defects do not cancel out of 
 
 ## 10. Stage A
 
-**This landing removes the last lane-level blocker on Stage A.** What remains is not this lane's:
-**owner card D-3** (whether the voluntary clean-demand axis is admissible — it gates the `VOL-*`
-and `CES-P20+VOL-HI` cases), and **SCN-WS1b and SCN-WS2b landing** their carbon-ladder and
-CES-clearing legs. Owner card **D-2** still governs every level in the campaign, this lane's
-`LOAD-HI` anchors included — §6's ERCOT shape result makes one D-2 question concrete, since at
-the shipped 122 GW anchor the case doubles ERCOT's energy in a single year and the DC block's
-*shape* turns out to matter more than its volume.
+**This landing removes this lane's blocker on Stage A.** The charter framed what remains as
+"card D-3, plus SCN-WS1b and SCN-WS2b landing"; **that is stale as of SCN-DESK r#5 (2026-09-06)
+and is corrected here rather than repeated.** D-3 was ruled **S1 = YES** — the voluntary
+clean-demand axis is admissible — so it *schedules* Stage A rather than blocking it, and D-2 was
+ruled **S3**, making the §3.5 table the committed default (no number moved, so no re-solve is
+owed, and this lane's `LOAD-HI` = growth high + DC high is now an owner-committed level rather
+than an illustrative one).
+
+**Stage A's critical path at this commit is: SCN-WS1b + SCN-WS2b landing, and SCN-WS3b → SCN-WS3c
+landing.** With WS-4c landed, the Load-HI column of the readiness scorecard is closed on every
+criterion. Still open, and named because they bite on how this lane's numbers may be quoted:
+**D-3c** (the voluntary eligible set), **D-6** (attribute netting), and **D-5** (the Stage-B
+grant, held until Stage A's cost table exists).
+
+**One D-2-adjacent question this lane makes concrete, for the record rather than as a request.**
+S3 committed `LOAD-HI` = growth high + DC high, and at that anchor ERCOT's energy goes 800 →
+1,800 TWh in a single year (2030), which is why 53.40 % of its load is shed in all 8,760 hours.
+That is the committed level behaving exactly as its arithmetic says it will, not a defect — but
+§6's result is that the DC block's **shape** drives the price and adequacy answer far harder than
+its volume does, and the campaign currently has no shape axis. Whether one is wanted is an owner
+question, and it is a cheaper one than re-levelling the volume.

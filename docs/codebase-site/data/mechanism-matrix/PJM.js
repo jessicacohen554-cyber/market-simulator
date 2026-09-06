@@ -297,7 +297,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     elcc_accreditation: { cell: "K", fc: "K" },
     caiso_nqc_accreditation: { cell: ".", fc: "." },
     hydro_accreditation: { cell: "O", fc: "O" },
-    datacenter_load_block: { cell: "K", fc: "K" },
+    datacenter_load_block: { cell: "K", fc: "K", ev: "SCN-WS4c 2026-09-06 T0 (scn-ws4-probe): the high DC curve EQUALS mid through 2030 (30 GW anchors), so LOAD-HI == LOAD-HI-ORGANIC in the T1 window — ORGANIC killed at rule-29 phase 0. CO2 +20.084 Mt; ALL PASS -> I7 FAIL 3,341 MW + I12 WARN at 2026 under the case; import line +0.339 Mt with exports falling and clamped out" },
     electrification_layers: { cell: ".", fc: "O", ev: "FFR-SA-close T0 PJM smoke 2026-08-04 (docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4 + §4.1; results/ffr-sa-smoke/pjm-{off,mid})" },
     transmission_expansion: { cell: ".", fc: "I", ev: "FFR-SC registry+seam measurement, no solve (same doc §1); re-verified at FFR-SC-2 2026-08-04" },
     t1ff_solve_year_weather: { cell: ".", fc: "U" },
