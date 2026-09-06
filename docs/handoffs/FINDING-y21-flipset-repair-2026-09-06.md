@@ -419,12 +419,142 @@ set — §7 reads the answer off the actual CI run.
 
 ---
 
-## 7. Flip-set reading on this PR's CI run, job by job
+## 7. Flip-set reading, job by job
 
-R-AE's six required checks: **Ruff lint + format** · **Pinned default cache key** ·
-**Structural refactor guards** · **Cache-key registration guard** ·
-**Fast test tier** · **Rule-22 quarantine gates**.
+**PR #4994, CI run 2597, id `34007458300`, head `7ce52430`** (base `1aab49a0`).
+Read job by job from the API, not from the rollup.
 
-*(Filled in from the API on this PR's run, read job by job rather than off the
-rollup — the form §6 of `FINDING-y15-flipset-sweep-2026-09-06.md` uses.)*
+| # | R-AE required check | job id | conclusion |
+|---|---|---|---|
+| 1 | **Ruff lint + format** | `101417191612` | **SUCCESS** |
+| 2 | **Pinned default cache key** | `101417191515` | **SUCCESS** |
+| 3 | **Structural refactor guards** | `101417191577` | **SUCCESS** — compileall, `ci_refactor_guards.py`, all ten facade files |
+| 4 | **Cache-key registration guard** | `101417191400` | **SUCCESS** — both the `--base` and HEAD-only steps |
+| 5 | **Rule-22 quarantine gates** | `101417191426` | **SUCCESS** |
+| 6 | **Fast test tier** | `101417191464` | **FAILURE** — 3 failed, **8498 passed**, 47 skipped, 1 xfailed, 8m38s |
+
+**FIVE OF SIX.** Also green and outside the flip set: Rule-28 mechanism-matrix
+guard, FR-21, FR-22, and `file-integrity-guard` run #3395 at the merge commit
+(rule 27 `[R-PUSH]` clean). Red and outside the flip set: Forecast-invariant
+artifact audit — §6.1.
+
+**Every failure the charter named is fixed.** All four charter causes and the
+fifth found here are green, and the Fast test tier's own red is on **three tests
+that are not among the eight**, none of them touched by this lane's diff. They
+are §8.
+
+### 7.1 PR #4994 merged before the tier reported
+
+The PR was merged ~40 s after creation, while `Fast test tier` was still in its
+`uv sync`. That is why this section could not be written into the merged commit,
+and why the follow-up lands as a fresh change on a branch restarted from the
+default branch rather than as a push to a merged PR.
+
+---
+
+## 6.1 The one red outside the flip set (recorded, routed, not chased)
+
+`Forecast-invariant artifact audit` — **not one of R-AE's six.**
+`check_forecast_invariants.py --sidecar-dir` finds six registered forecast runs
+whose invariant FAILs are undeclared in
+`frontend/data/hindcast/invariant-failures.json`:
+`caiso-2026-2030-d60-arm` (I12, I7), `nyiso-2021-2025-realized-t1h-d45r-curveon`,
+`pjm-2021-2025-realized-t1h-d45`, `-d45r`, `-d57-clearing`, `-d62-pubbar` (I7).
+
+Verified on an unmodified `origin/main` worktree, not inferred, and **growing**:
+52 sidecars / 728 records / 42 declared FAILs at this branch's base `1aab49a0`;
+67 / 938 / 51 at `7a42c7c5`; 71 / 994 / 55 at `982ba9aa`. Red on the base branch
+and accumulating as other lanes register forecast runs. This lane's diff touches
+no sidecar, no registry and nothing under `frontend/data/`.
+
+Not repaired here: each undeclared FAIL needs a reviewed ledger entry naming the
+finding it belongs to — an adjudication of another desk's invariant results, and
+writing entries for six runs this lane did not produce would be exactly the
+silent landing the gate exists to prevent. Routed to the capx D60/D45/D45-R/D57/
+D62 lanes on PR #4994 (comment `5556491739`). No re-run spent: it is a
+deterministic audit over committed JSON, reproduced off-CI three times.
+
+---
+
+## 8. The Fast test tier's own three failures — none of them the charter's
+
+All three are **pre-existing at this branch's base `1aab49a0`**, verified in a
+detached worktree at that commit, and all three survive on `e80bdd87`.
+
+### 8.1 The electrification layer — FIXED here (CI plumbing)
+
+```
+FAILED tests/unit/data/test_electrification_layers.py::
+       test_ercot_ev_profile_is_normalized_and_iso_scoped
+ValueError: ev layer is armed for ERCOT but its curated hourly profile is
+missing at data/raw/load-forecast/ercot/ercot_ev_hourly_profile_2030.csv
+```
+
+**Not a data-hydration accident: the file is TRACKED** (`git ls-files` lists it;
+18 files / 4.9 MiB in that corpus) and the test **passes locally** (23 passed).
+It is absent only on the runner, because the fast tier's sparse checkout never
+listed `/data/raw/load-forecast/` — `grep load-forecast .github/workflows/ci.yml`
+returned nothing.
+
+SCN-LOAD (`d14a7ed0`, PR #4970 — the same commit as causes (4) and (5)) armed the
+electrification layers off curated load-forecast inputs and gave a fast-tier test
+a `data/raw` dependency without extending the list. That block's own contract
+names this case exactly: *"a job that grows a data/raw dependency extends this
+list, never silently skips the input — a missing corpus surfaces as
+FileNotFoundError."* It did, as written.
+
+**Fix:** one pattern line. The rationale is a YAML comment **above** the key, not
+inside the block scalar — inside a `|` scalar a `#` line is literal text handed
+to `git sparse-checkout`, not a comment, and the original list deliberately
+carries none. A first attempt did put it inside; caught and corrected before
+commit, and verified after: the parsed list is **82 patterns, zero `#` lines**.
+
+### 8.2 The entry-pipeline signal — DIAGNOSED, patch proposed, NOT edited here
+
+```
+FAILED tests/unit/model/test_entry_pipeline_aware_signal.py::
+       TestPipelineDepressesTheProForma::test_pending_thermal_pushes_the_stack_down
+FAILED ...::test_pending_vre_reduces_net_load
+AssertionError: 90.0 not less than 90.0
+```
+
+**The mechanism is not broken. The fixture is undersized by 7.61 MW.**
+
+`_signal_fixture` builds a 3-unit stack — 500 MW @ \$15, 400 @ \$40, 500 @ \$90 —
+and passes `base_demand = 900 MW`, but `_lookahead_reprice_signal` prices
+`_scale_demand(base_demand, config, 2031)`, not the raw 900. Measured on
+`e80bdd87` (and identically at `1aab49a0`): **1307.61 MW**.
+
+| arm | merit stack, cumulative MW | 1307.61 lands in | price |
+|---|---|---|---|
+| base | 500 / 900 / **1400** | 3rd tranche | \$90 |
+| +400 MW @ \$20 pipeline | 500 / 900 / **1300** / 1800 | 4th tranche — **by 7.61 MW** | \$90 |
+| +300 MW VRE (net 1007.61) | 500 / **900** / 1400 | 3rd tranche | \$90 |
+
+Both arms therefore equal the base, and `assertLess` fails. The pipeline rows
+*are* concatenated into the stack correctly (`runner.py` ~line 755); they simply
+no longer cross a tranche boundary at a demand level that has drifted upward.
+
+**The designed regime is `D ∈ (900, 1200]`** — above 900 so the base sits on the
+\$90 peaker (the fixture docstring's *"demand landing on the dearest unit"*),
+at most 1300 so the pipeline arm falls back to \$40, and at most 1200 so the
+300 MW VRE arm clears 900. 1307.61 overshoots the second and third bounds.
+
+**Proposed patch** (the sibling tests' own idiom — `demand_next_total=` is pinned
+in `test_entry_margin_exhaustion.py:292`, `test_price_signal.py:102` and
+`test_capacity_screen_scarcity_restoration.py:573`): pass an explicit
+`demand_next_total` to all three calls in both tests, at a value inside
+`(900, 1200]`, so this **unit** test stops depending on MISO's load-forecast
+trajectory at all. That strengthens it — the drift that broke it cannot recur —
+and changes no assertion.
+
+**Why this lane did not apply it.** Choosing the constant is a design judgment on
+the FFR-5C lane's fixture with a range of valid answers, and the governing rule
+for a failure in unrelated code where no fix exists is to state it with a
+proposed patch rather than widen the PR. **Routed to the FFR-5C
+`entry_pipeline_aware_signal` lane.**
+
+**Consequence, stated plainly: the flip set cannot read 6 of 6 until §8.2 is
+applied.** §8.1 removes one of the tier's three failures; these two remain, and
+they are not this lane's to close.
 
