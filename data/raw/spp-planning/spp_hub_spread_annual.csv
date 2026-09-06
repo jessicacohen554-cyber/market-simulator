@@ -1,0 +1,45 @@
+# SPP North-South hub spread, as PUBLISHED by the SPP Market Monitoring Unit.
+# Transcribed 2026-09-06 by lane SPP-12 from the ASOM editions in ../transcriptions/.
+# Sign convention: spread = SOUTH hub - NORTH hub. Positive = South dearer (the normal
+# pattern; the MMU attributes it to gas in the south vs coal/nuclear/wind in the north).
+#
+# THIS IS NOT the hourly per-hub series card P1/P7 asked for. It is an ANNUAL MEAN the
+# MMU states in prose plus its on-peak DA table. It CAN rank years by spread; it CANNOT
+# give mean/p90 of |North-South| over 8760 hours -- that needs the blocked portal LMP
+# product and build_spp_lmp_reference.py --per-hub. See FINDING-spp-12-2026-09-06.md.
+year,measure,market,value,unit,source_doc,source_page,note
+2021,annual_avg_spread_all_hours,da,7,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,"2021 EXCLUDING February (Uri). verbatim: ""After a spread in the $7/MWh range for 2021 (without February included) between the North and South hubs in both the day-ahead and real-time markets"""
+2021,annual_avg_spread_all_hours,rt,7,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,same sentence; the MMU gives one ~$7 figure for both markets
+2022,annual_avg_spread_all_hours,da,14,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,"verbatim: ""the spread increased to $14/MWh in the day-ahead and $17/MWh in the real-time in 2022"". RESTATED as ""in the $15/MWh range"" for both markets in the 2024 edition p. 119 — editions disagree by ~$1-3; prefer the same-year edition"
+2022,annual_avg_spread_all_hours,rt,17,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,same sentence; see the DA row on the 2024-edition restatement
+2023,annual_avg_spread_all_hours,da,3,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,"verbatim: ""The spread decreased to $3/MWh in the day-ahead market and $2/MWh in the real-time market in 2023"". RESTATED as ""around $2/MWh"" in the 2024 edition p. 119"
+2023,annual_avg_spread_all_hours,rt,2,usd_per_mwh,SPP MMU State of the Market 2023,p. 139,same sentence
+2024,annual_avg_spread_all_hours,da,9,usd_per_mwh,SPP MMU State of the Market 2024,p. 119,"verbatim: ""then increased to around $9/MWh in 2024"". Restated identically in the 2025 edition p. 121 (""was around the $9/MWh range""). One figure covers both markets"
+2024,annual_avg_spread_all_hours,rt,9,usd_per_mwh,SPP MMU State of the Market 2024,p. 119,same sentence; the MMU gives one ~$9 figure for both markets
+2025,annual_avg_spread_all_hours,da,1,usd_per_mwh,SPP MMU State of the Market 2025,p. 121,"verbatim: ""In 2025, the spread decreased to around $1/MWh"""
+2025,annual_avg_spread_all_hours,rt,1,usd_per_mwh,SPP MMU State of the Market 2025,p. 121,same sentence
+2024,diurnal_spread_offpeak_band,both,5,usd_per_mwh,SPP MMU State of the Market 2024,p. 120,"verbatim: ""prices for the north hub and south hub stay within about a $5/MWh range for the first 11 hours of the day and last three hours of the day"""
+2024,diurnal_spread_peak_max,both,25,usd_per_mwh,SPP MMU State of the Market 2024,p. 120,"verbatim: ""prices begin to diverge starting at hour ending 12, peaking at a divergence of around $25/MWh at hour ending 16, 17, 18"". Driver stated as ""higher priced gas generation in the south part of the SPP footprint"""
+2024,largest_monthly_spread,both,33,usd_per_mwh,SPP MMU State of the Market 2024,p. 119,"October 2024. verbatim: ""the largest monthly spread in prices between the North and South hubs since the start of the Integrated Marketplace at around $33/MWh"""
+2023,months_south_below_north,both,,months,SPP MMU State of the Market 2023,p. 139,"not quantified. verbatim: ""South hub prices typically exceed Norh [sic] hub prices, however, due to localized congestion patterns, North hub prices can exceed South hub prices, as was the case during a few months in 2023"""
+2024,months_south_below_north,both,,months,SPP MMU State of the Market 2024,p. 119,"verbatim: ""February and March 2024 saw South hub prices slightly below North hub prices"" — i.e. 2 months, market not split"
+2025,months_south_below_north,da,6,months,SPP MMU State of the Market 2025,p. 121,"verbatim: ""six months in the day-ahead market ... during 2025 saw South hub prices below North hub prices. This can primarily be attributed to congestion around North hub settlement locations"""
+2025,months_south_below_north,rt,8,months,SPP MMU State of the Market 2025,p. 121,same sentence: eight months in the real-time market
+2021,onpeak_da_north_hub,da,79,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. full year incl. February 2021 (Uri)"
+2021,onpeak_da_north_hub,da,31,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,the table's separate '2021 (no Feb)' column
+2022,onpeak_da_north_hub,da,53,usd_per_mwh,SPP MMU State of the Market 2024,p. 120,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. also in the 2023 edition p. 140, same values"
+2023,onpeak_da_north_hub,da,32,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. the 2024 edition p. 120 gives South $35 (so +$3); editions differ by $1"
+2024,onpeak_da_north_hub,da,28,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. also in the 2024 edition p. 120, same values"
+2025,onpeak_da_north_hub,da,36,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'."
+2021,onpeak_da_south_hub,da,90,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. full year incl. February 2021 (Uri)"
+2021,onpeak_da_south_hub,da,38,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,the table's separate '2021 (no Feb)' column
+2022,onpeak_da_south_hub,da,69,usd_per_mwh,SPP MMU State of the Market 2024,p. 120,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. also in the 2023 edition p. 140, same values"
+2023,onpeak_da_south_hub,da,34,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. the 2024 edition p. 120 gives South $35 (so +$3); editions differ by $1"
+2024,onpeak_da_south_hub,da,40,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'. also in the 2024 edition p. 120, same values"
+2025,onpeak_da_south_hub,da,38,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"Figure 'Comparison of RTO/ISO average on-peak, day-ahead prices'."
+2021,onpeak_da_spread,da,11,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,"DERIVED: south_hub - north_hub = 90 - 79. Subtraction of two published table cells, nothing else"
+2021,onpeak_da_spread,da,7,usd_per_mwh,SPP MMU State of the Market 2023,p. 140,DERIVED from the '2021 (no Feb)' column: 38 - 31
+2022,onpeak_da_spread,da,16,usd_per_mwh,SPP MMU State of the Market 2024,p. 120,"DERIVED: south_hub - north_hub = 69 - 53. Subtraction of two published table cells, nothing else"
+2023,onpeak_da_spread,da,2,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"DERIVED: south_hub - north_hub = 34 - 32. Subtraction of two published table cells, nothing else"
+2024,onpeak_da_spread,da,12,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"DERIVED: south_hub - north_hub = 40 - 28. Subtraction of two published table cells, nothing else"
+2025,onpeak_da_spread,da,2,usd_per_mwh,SPP MMU State of the Market 2025,p. 122,"DERIVED: south_hub - north_hub = 38 - 36. Subtraction of two published table cells, nothing else"

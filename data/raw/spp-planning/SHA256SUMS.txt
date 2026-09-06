@@ -1,0 +1,12 @@
+# SPP planning-document sources, fetched 2026-09-06 by lane SPP-12 from www.spp.org.
+# Checksums are of the ORIGINAL PDF/ZIP as served, including the four whose payload
+# is deliberately NOT tracked here (see README.md "What is and is not tracked").
+# Verify a re-fetch against these before trusting a transcription.
+e9b494a820a2691d2dee41d3d04b4c65148dee25d4215c4afc2c9c40d3446616  2025_ITP_Report_v1.0.pdf                          # NOT tracked (14.3 MB)
+87ca19c5b4e58e0a49dc5e9c4f3f7c43696feb2100c73382bceab29cd834824b  2023_Annual_State_of_the_Market_Report.pdf        # NOT tracked (6.2 MB)
+16fd07233b8dad8d1277c3a490341940a80b9ea4a10ce48a97578eb3aaebe149  2024_Annual_State_of_the_Market_Report.pdf        # NOT tracked (6.4 MB)
+752bd068980c2d39f7772f7333c5f984e161aa1a1e46cb61ed21710fd62b192d  2025_Annual_State_of_the_Market_Report.pdf        # NOT tracked (6.1 MB)
+2bf45bf3c79c0f219bdb930ea7b689e329392b814d0ede8d316935499f4178b3  IM_Protocols_119_Active.zip                       # NOT tracked (8.3 MB)
+95772845caf6b34dcc2d73cdd35b402d33f4ed249882f0f0866e8ddc603486f8  SPP_Planning_Criteria_v5.0A.pdf                   # tracked
+05892a607dd63fa254dfdfef9903841e05f6eeed62ac3291ea9c7f541a97e791  Long_Term_PRM_Policy_Paper.pdf                    # tracked
+e0bc365b0b1b1dfd87912734b699d4bed787eaec77410783b0666cfbc89679c9  spp-system-interfaces-stakeholder-reference-guide.pdf  # tracked
