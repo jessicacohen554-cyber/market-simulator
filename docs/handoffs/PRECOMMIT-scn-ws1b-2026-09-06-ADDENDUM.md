@@ -232,3 +232,68 @@ At +$3.75/t the predicted CO2 response is **~1 %**. That is a **6.67× weaker** 
 retired reduced form, and on the smaller live ISOs it may sit near the LP's own re-solve
 variation. **A null on ERCOT would be weak evidence, not a refutation**, and will be reported
 that way. The gate is STOP-only and cannot promote in either direction.
+
+---
+
+## (g) A SECOND, SHARPER PRE-REGISTERED EXPECTATION — appended 2026-09-06, still before any solve
+
+**Provenance:** SCN-WS4c landed on `main` at `6b6d8cb0` (desk r#7) while this lane was waiting on
+`data/clean`. **No solve of this lane had started when this section was written** — verified:
+`results/scn-ws1-probe/` did not exist. It is recorded here so the result below cannot be reached
+for after the fact.
+
+**What WS-4c measured** (`FINDING-scn-ws4c-2026-09-06.md` §6): the fossil-**average** heuristic —
+the very construction the original PRECOMMIT §3.2 used to build my price bands — has a **signed,
+predictable error**. From nineteen clean arms:
+
+| ISO | implied marginal rate (t/MWh) | fossil-fleet average | ratio | coal inframarginal? |
+|---|---|---|---|---|
+| ERCOT | 0.447 | 0.610 | **0.73** | yes |
+| PJM | 0.508 | 0.663 | **0.77** | yes |
+| MISO | 0.484 | 0.749 | **0.65** | yes |
+| CAISO | 0.405 | 0.387 | 1.05 | no |
+| NYISO | 0.422 | 0.402 | 1.05 | no |
+| NEISO | 0.450 | 0.384 | 1.17 | no |
+
+Coal is **inframarginal**, so its high rate is diluted *out* of the marginal response; in a
+gas-dominated stack the marginal unit is a CT dirtier than the CC-weighted average. **All three of
+my LIVE ISOs (ERCOT, PJM, MISO) are coal-carrying**, i.e. exactly the side of the split where the
+heuristic reads high.
+
+**The second prediction, stated as a number.** If a carbon price's pass-through is set by the same
+marginal unit that answers added load, then `Δ lw_price ≈ measured marginal rate × $3.75/t`:
+
+| ISO | my §(d.2) band ($/MWh) | WS-4c-implied point ($/MWh) | where the two disagree |
+|---|---|---|---|
+| **ERCOT** | 0.9 – 1.5 | **1.68** | **my band reads LOW** — WS-4c's point sits above it |
+| **PJM** | 1.5 – 2.7 | **1.91** | agree (inside my band) |
+| **MISO** | 1.8 – 3.3 | **1.82** | agree (my band's lower edge) |
+
+**Note the direction, because it is not the one the bias headline implies.** WS-4c's *headline* is
+that the fossil-average heuristic overstates by 23–35 % with coal — but my §(d.2) bands were not
+built from the fossil-average alone; they were rescaled from the original PRECOMMIT §3.2 bands,
+which had already been hand-narrowed toward the gas-CC end. The net effect on ERCOT is that my
+band is too **low**, not too high. **I am not revising it.** §(d.2) stands exactly as pushed, and
+§5 of the FINDING will report the miss against **both** references at full magnitude.
+
+**Nothing in the STOP gate moves.** G4's structural bound stays `Δp/Δcarbon ∈ [0, 1.08]`; the
+§(d.2) bands stay the pre-declared bands; a band miss inside the structural bound is still a
+**reported miss, not a kill** (original PRECOMMIT §3.3). This section adds a second yardstick to
+report against — it removes none.
+
+**One honest limit on the analogy, stated now rather than after the result:** WS-4c's rate is
+`Δ CO2 / Δ fossil TWh` under a **load** increase — the average rate of the units that *ramp up*.
+Mine is the pass-through of a **carbon price** into the clearing price — the rate of the
+*price-setting* unit. They coincide only where the marginal and the ramping unit are the same
+class. **Where my measurement departs from WS-4c's point, that gap is itself the result**, and it
+is the more interesting of the two numbers: it says the price-setting unit differs from the
+load-following unit in that ISO.
+
+## (h) What "what remains" now means
+
+The relaunch charter's closing duty names **SCN-WS4c** as what remains after this lane. **That is
+already stale: SCN-WS4c LANDED at `6b6d8cb0` (desk r#7), 19 clean arms, releasing Stage A-LOAD.**
+Per r#7, A-LOAD's three load cases **stand alone** and this lane's carbon legs are **not** a
+precondition for them. So the FINDING's final line names the true remainder — the six
+`SCN-WS5A-LOAD-<ISO>` lanes plus `SCN-WS5A-LOAD-SYNTH` — rather than repeating the charter's
+superseded text.
