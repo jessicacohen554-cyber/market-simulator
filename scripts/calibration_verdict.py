@@ -2722,6 +2722,16 @@ def score_governance(
     those two assertions and nothing else — ``no_pinning_to_actuals`` and
     ``outage_filter_exogenous_net_load`` are never scoped, and the forbidden-flag
     machine check is untouched.
+
+    **Owner ruling R-AY (2026-09-06, rule 21 ``[R-DOF]`` cross-reference).** Each
+    price-tuned band multiplier declared here is a ledgered free parameter whose
+    identification source is the ruling itself ("price residual, authorized
+    channel (rules 1/13 amendment 2026-09-05)"), reported at full magnitude on the
+    determination basis. R-AY confirms condition (e) from the audit rubric's side
+    and moves NO gate: this function's logic is exactly what the 2026-09-05
+    carve-out installed, and the DOF-ledger half of condition (e) is not
+    machine-checked here (``audit_keepers`` E8 validates the ledger's shape).
+    Genealogy: ``docs/governance/rule-history.md`` §11–§12.
     """
     sc = (config or {}).get("scenario_config", {})
     meta = (config or {}).get("meta", {})

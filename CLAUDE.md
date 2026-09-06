@@ -117,7 +117,15 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     Forcing-legitimacy now rests on the DOF ledger plus the D-2 / `legitimacy_diagnostics.json`
     mechanism attribution (the C8 forced-share gate and D-4 off-window-binding check) alone.
     Already-registered twins may remain on the dashboard as historical artifacts; no new twin is
-    produced (probe, candidate, or keeper).*
+    produced (probe, candidate, or keeper).* *Cross-reference (owner ruling R-AY, 2026-09-06,
+    Model Audit & Release-Finalization Program, card "DOF / C6" — "Count them in the DOF ledger,
+    C6 passes under the declaration"): an `offer_curve_by_group` band multiplier tuned on price
+    through the rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` authorized channel IS a ledgered free
+    parameter whose identification source is the ruling itself — "price residual, authorized
+    channel (rules 1/13 amendment 2026-09-05)" — not a measured input; it is reported at full
+    magnitude on the determination basis; and its presence does NOT by itself make the residual
+    it closes an "open root-cause issue" under this rule, while every OTHER tuned value still
+    does and no gate moves. Genealogy: `docs/governance/rule-history.md` §12.*
 1. `[R-HOLDOUT]` **Hold out data across three tiers — train, validation, locked test — and never let a
     locked-test result re-enter tuning.** *(Amendment genealogy:
     `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f), indexed in

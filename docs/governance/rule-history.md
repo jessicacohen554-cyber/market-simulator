@@ -800,11 +800,71 @@ keeper — governance PASS, determination unchanged).
 to runs carrying the new declaration, and no committed attestation has one. The first run
 to use it is the miso-220 non-steam fossil lift.
 
+**Cross-reference.** Condition (e)'s DOF-ledger half is restated from rule 21 `[R-DOF]`'s own
+side by owner ruling R-AY (2026-09-06) — §12 below.
 
-## 12. Changes to this file
+## 12. Rule 21 `[R-DOF]` — the price-tuned band multiplier is a ledgered free parameter (owner ruling R-AY, 2026-09-06)
+
+**What changed.** Rule 21 gained a one-clause cross-reference to the rules 1/13 authorized
+price-tuning channel (§11). Nothing else in rule 21 moved: every keeper still carries a DOF
+ledger, every free parameter still names its identification source, and a residual that can
+only be closed by a tuned value is still an open root-cause issue — with the single, named
+exception the clause states.
+
+**Why.** §11's condition (e) already required a price-tuned `offer_curve_by_group` band
+multiplier to be *"carried as a free parameter in the DOF ledger (rule 21 `[R-DOF]`),
+identified by the ruling rather than by a measured source"*. That requirement lived only in
+rule 1's text; rule 21 itself still read, without qualification, that a residual closed by a
+tuned value is an open root-cause issue — so the two rules could be read apart, and a reader
+of rule 21 alone would count the authorized multiplier as an unresolved defect. The audit
+program's director sitting of 2026-09-06 (~00:15Z, card "DOF / C6") ruled, choosing the
+recommended option verbatim:
+
+> *"Count them in the DOF ledger, C6 passes under the declaration."* — owner ruling **R-AY**
+
+i.e. each price-tuned band multiplier is a ledgered free parameter with identification source
+**"price residual, authorized channel (rules 1/13 amendment 2026-09-05)"**, reported at full
+magnitude on the determination basis; **no gate moves**; and rule 21 gets a one-clause
+cross-reference. R-AY therefore *confirms* what condition (e) already required, from the audit
+rubric's side, and adds the pointer in rule 21 so the two rules cannot be read apart.
+
+**What the clause says, and what it does not.** The clause (CLAUDE.md rule 21, appended
+2026-09-06) states three things and no more: (1) the authorized multiplier IS a ledgered free
+parameter whose identification source is the ruling itself, not a measured input; (2) it is
+reported at full magnitude on the determination basis — the carve-out never hides a number;
+(3) its presence does not, by itself, make the residual it closes an open root-cause issue,
+**while every other tuned value still does**. The amendment's conditions (a)–(e) are NOT
+restated in rule 21; they live in rule 1 and bind unchanged. `no_pinning_to_actuals` and the
+forbidden-flag machine check remain outside the carve-out (§11).
+
+**Enforcement is unchanged.** `calibration_verdict.score_governance` already implements
+condition (e)'s declaration half: with a well-formed `governance.authorized_price_tuning`
+block, `no_fit_to_price_residuals` and `levers_trace_to_measured_input` read as scoped; without
+one, a false assertion still FAILs C6 (§11, "Enforced, not merely asserted"). R-AY changed no
+scoring logic — the scorer's docstring gained the R-AY citation beside the rule 1 citation so a
+reader sees both. The DOF-ledger half of condition (e) is NOT machine-checked: `audit_keepers`
+check E8 validates only that residual-sourced ledger rows carry a `root_cause`, and
+`attestation_shape_finding` mirrors the declaration check. Whether a ruling-identified ledger
+row should be a distinct machine check is a calibration-desk / audit-program item, not a rule
+question (`docs/handoffs/FINDING-g3-rdof-price-tuning-xref-2026-09-06.md` §4).
+
+**The live case at amendment (verified, not adjudicated).** The MISO keeper
+`2026-09-05-miso-220-nonsteam-lift` (promoted `743b3dc0`, bundle
+`results/calibration/miso220_nonsteamlift_B`) carries a well-formed
+`governance.authorized_price_tuning` block, sets `no_fit_to_price_residuals` and
+`levers_trace_to_measured_input` to `false` deliberately (`ed07a641`), and scores C6 PASS with
+determination CALIBRATED on committed artifacts. Its `free_parameters` ledger is "41/2
+unchanged" (its own `attested_by` text): the ×1.10 lift is carried under the pre-existing
+`offer_curve_by_group` row (identification `residual`, 92 scalars) plus the governance block's
+`dof_entry` pointer — there is no distinct ledger row naming the ruling as its source. That gap
+is recorded and routed in the G-3 finding; the attestation is the calibration desk's artifact
+and was not edited.
+
+## 13. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-06 | Added §12: rule 21 `[R-DOF]` one-clause cross-reference to the rules 1/13 authorized price-tuning channel (owner ruling **R-AY**, audit-program director sitting 2026-09-06 ~00:15Z, card "DOF / C6", verbatim *"Count them in the DOF ledger, C6 passes under the declaration"*; executed by rule-amendment lane G-3). A price-tuned band multiplier is a ledgered free parameter identified by the ruling, reported at full magnitude, and not by itself an open root-cause issue; every other tuned value still is; no gate moves, no scoring logic changed. §11 gained a forward pointer. Records the live MISO keeper reading (declaration present, C6 PASS, no distinct ruling-identified ledger row — routed, not edited). "Changes to this file" renumbered §12 → §13 (no external reference cited §12). |
 | 2026-09-05 | Added §8.2: rule 29 `[R-SCREEN]` clause (c), **delete before merge** (owner ruling **R-AV**, verbatim *"Delete before merge"*, on the rule-29 / Class-E parity collision the v31 second coda `da99f34b` routed; executed by audit lane Y-13). A screen bundle, or a control bundle a screen earns under clause (b), is `git rm`-ed from `results/calibration/` before its PR merges; the PRECOMMIT/FINDING doc carries every number; `check_registry_payload_parity` is the enforcement and an unregistered bundle dir is a gate red, not an allowlist candidate. Records the first execution (two dirs pruned, numbers confirmed in committed records first). No keeper, marker, shard or determination touched. |
 | 2026-09-05 | Added §11: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. Landed alongside main's same-day §9 (rule 15 retention) and §10 (bench fingerprint); this section took §11 on merge and "Changes to this file" renumbered §11 → §12. The CLAUDE.md rule-1 genealogy pointer was repointed §9 → §11 in the same commit. |
 | 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |
