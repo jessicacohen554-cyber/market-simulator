@@ -392,3 +392,30 @@ screen than §4d advertised. Stated here rather than discovered in the FINDING.
 
 Everything above is computed by `scripts/probes/_miso231_screen_gates.py`,
 committed and pushed with this addendum and **before the arm's bundle was read**.
+
+## Addendum B — G-DRIFT extended over main's 59 later commits. **Still ALL INERT.**
+
+PR #5253 merged this session's implementation + PRECOMMIT (`14ae4d76`,
+`7ff10b64`) into `main`, which has since advanced to `6f074049`. Re-running
+§4b's audit against the new tip, over the same paths:
+
+```
+git diff HEAD origin/main -- src/market_sim scripts/run_calibration.py \
+    scripts/run_calibration_full.py scripts/lib data/raw/_validation-source \
+    data/raw/reference
+```
+
+**Exactly one solve-path file moved**, `scripts/run_calibration.py` (+31 / −8,
+ercot-251): a new helper `_renewable_bound_is_delivered_pinned` replacing an
+`load_hsl_hourly(...) is None` test at two call sites.
+
+| hunk | class | reason |
+|---|---|---|
+| `_renewable_bound_is_delivered_pinned` + its two call sites | **INERT** | both call sites are guarded `if getattr(config, "ercot_gtc_limits_measured"/"ercot_wtx_curtailment_driver", False) and iso == "ERCOT"` — ERCOT-only flags **and** an explicit ISO gate, so a MISO backcast never evaluates either branch (rule 25 `[R-ISO-SCOPE]`, §4b's "another ISO's branch" class) |
+
+**Every other one of main's later commits touches nothing on the MISO backcast
+solve path** (the diff above is otherwise empty). So the screen — solved on this
+branch's HEAD — is byte-equivalent on the MISO path to `origin/main`, §4b's
+form-4 conclusion stands unchanged, the keeper's committed bundle remains the
+control, and **no control solve is spent**. Recorded before the arm's bundle was
+read.
