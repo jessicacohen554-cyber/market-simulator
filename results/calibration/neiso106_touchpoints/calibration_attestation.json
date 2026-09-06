@@ -10,8 +10,8 @@
     "name": "offer_curve_fossil_level_scalar",
     "where": "run_config.scenario_config.offer_curve_by_group (12 markup bands; applied via offer_curve_overrides)",
     "identification": "price residual, authorized channel (rules 1/13 amendment 2026-09-05)",
-    "value": 0.93391,
-    "note": "Rule 21 [R-DOF] cross-reference, owner ruling R-AY 2026-09-06: a band multiplier tuned on price through the authorized channel IS a ledgered free parameter whose identification source is the RULING, not a measured input; it is reported at full magnitude; and its presence does NOT by itself make the residual it closes an open root-cause issue. Reported at full magnitude: 6.609% cut, sized as in-sample geometric-mean bias 0.034678 / measured pass-through 0.5247."
+    "value": 0.9547,
+    "note": "Rule 21 [R-DOF] cross-reference, owner ruling R-AY 2026-09-06: a band multiplier tuned on price through the authorized channel IS a ledgered free parameter whose identification source is the RULING, not a measured input; it is reported at full magnitude; and its presence does NOT by itself make the residual it closes an open root-cause issue. Reported at full magnitude: 4.530% cut, sized as the UNCHANGED in-sample geometric-mean bias target 0.034678 / the MEASURED FULL-SPAN pass-through 0.76550. This RE-SIZES the incumbent keeper's 0.93391 (6.609%), which was sized on the neiso-104 2025-only screen coefficient 0.5247; the target did not move, only the coefficient, from a one-year measurement of it to a three-year measurement of it. It remains ONE free parameter, not two -- a re-derivation of the same knob, not an additional one."
    },
    {
     "name": "offer_curve_by_group",
@@ -204,13 +204,13 @@
   "no_fit_to_price_residuals": false,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "neiso-105 (2026-09-06) \u2014 VALIDATION TOUCHPOINTS 2020/2021/2022, the promoted keeper 2026-09-06-neiso-105-fossil-offer's frozen recipe replayed on held-out years (rule 22 touchpoint loop step 4). IDENTICAL config to the train-tier keeper \u2014 the same single scalar 0.93391 on the same 12 markup bands. NOTHING was fitted to these years: the scalar was identified on the 2023-2025 in-sample bias alone and declared in PREREG-neiso105 before any of these years was solved. Rule 30(c): a held-out year neither certifies nor decertifies the ISO; these are REPORTED, not chased.",
+  "attested_by": "neiso-106 validation touchpoints (2026-09-06) -- the PROMOTED keeper recipe 2026-09-06-neiso-106-fossil-offer replayed unchanged on the held-out years 2020/2021/2022 (rule 22 touchpoint loop step 4). ZERO recipe deltas from the keeper: the scalar 0.95470 was identified on the 2023-2025 in-sample bias alone, frozen, and PROMOTED before any touchpoint was solved, so nothing here is fitted to a held-out year. Rule 30(c): a validation-tier score is iterable model-SELECTION evidence and can neither certify nor decertify the ISO, whose determination is its train-tier verdict.",
   "authorized_price_tuning": {
    "channel": "offer_curve_by_group",
-   "ruling": "Owner ruling 2026-09-05 (rules 1 [R-STRUCT] / 13 [R-MEASURED] carve-out), applied on owner direction 2026-09-06: 'shift the fossil offer curves down but preserve the ratio'. The direction also answers FINDING-neiso104 section 6, which this lane had left owner-court.",
+   "ruling": "Owner ruling 2026-09-05 (rules 1 [R-STRUCT] / 13 [R-MEASURED] carve-out), applied on owner direction 2026-09-06: re-derive the fossil offer-level scalar on the FULL-SPAN pass-through coefficient. Succeeds the 2026-09-06 direction neiso-105 acted on ('shift the fossil offer curves down, preserving the ratio'), same channel, same 12 bands.",
    "value": {
-    "scalar": 0.93391,
-    "cut_pct": 6.609,
+    "scalar": 0.9547,
+    "cut_pct": 4.53,
     "bands": 12,
     "applied_to": {
      "CC_REGULAR": [
@@ -234,8 +234,9 @@
       "econ_high"
      ]
     },
+    "applied_to_base": "the PRE-CUT neiso-99 band values, not compounded onto the incumbent keeper's already-cut values -- one scalar on one base, so the config is a single multiplication and not an accumulation",
     "excluded": "all four peak bands (three equal their phys_peak; CT_PEAKER 4.0 is the ISO-NE offer cap), every phys_*, econ_low_share, pct_peaking, and the declared-neutral CT_CHP group",
-    "file": "results/calibration/_neiso105_arm_offer_curve.json"
+    "file": "results/calibration/_neiso106_arm_offer_curve.json"
    },
    "years_held": [
     2020,
@@ -244,9 +245,10 @@
    ],
    "set_ex_ante": true,
    "not_swept": true,
-   "identification": "TARGET fixed ex ante and never moved: the in-sample 2023-2025 GEOMETRIC-MEAN price bias, +3.4678% (owner-selected estimator, PREREG-neiso104 section 3.1). COEFFICIENT: the pass-through measured by the neiso-104 screen, 0.5247. cut = 0.034678 / 0.5247 = 6.609%. No gate was consulted to choose either number.",
-   "prereg": "results/calibration/PREREG-neiso105-offer-level-resized-2026-09-06.md (committed 390586a5, BEFORE the solve)",
-   "disclosure": "The coefficient came from a prior SOLVE (the neiso-104 2025 screen), not from a pre-solve derivation. Whether that is legitimate identification or the first step of a condition-(c) sweep was raised by this lane as an open question (FINDING-neiso104 section 6) and DECIDED BY THE OWNER, not by the lane. Recorded so a later reader judges the ruling, not a silence. MEASURED AFTERWARDS AND REPORTED AGAINST INTEREST: the realized full-span pass-through is 0.764, NOT the 0.5247 the cut was sized on -- the screen year 2025 turns out to be the LOWEST pass-through year in the record (0.527 vs 0.953 in 2023 and 0.814 in 2024, tracking delivered gas price inversely). The cut is therefore LARGER than the declared target required and the in-sample bias OVERSHOOTS to -1.767%. It was NOT resized after the fact -- PREREG-neiso105 section 3 pre-committed that the scalar would not be raised a second time, and it is not lowered a second time either. TOUCHPOINT NOTE: these three years were solved AFTER the scalar was fixed and promoted, and no parameter was re-derived against them. 2020 pass-through measures 1.305, the highest in the record, confirming the inverse-gas relationship the train tier surfaced (2020 gas $1.98/MMBtu is the cheapest year in the record)."
+   "identification": "TARGET fixed ex ante and NEVER MOVED across all three sizings: the in-sample 2023-2025 GEOMETRIC-MEAN price bias, +3.4678% (owner-selected estimator, PREREG-neiso104 section 3.1); reproduced from the committed sidecars in this session at 0.034674 and still sized on the declared 0.034678. COEFFICIENT: the pass-through MEASURED ON THE FULL SCORED SPAN by the incumbent keeper's own solve -- the geometric mean of the three in-sample price moves (-5.0592%) divided by the cut that produced them (6.609%) = 0.76550. cut = 0.034678 / 0.76550 = 4.530%. No gate was consulted to choose either number.",
+   "prereg": "results/calibration/PREREG-neiso106-offer-level-rederived-2026-09-06.md (committed 773411e5, BEFORE the solve)",
+   "disclosure": "THREE THINGS A LATER READER WOULD OTHERWISE HAVE TO DISCOVER, recorded here instead. (1) THIS IS THE THIRD SIZING OF THIS SCALAR (4.53% -> 6.609% -> 4.530%), and PREREG-neiso105 section 3 pre-committed that it would not move again in either direction, calling a third iteration 'a sweep by accumulation'. That lane-level stop rule is OVERRIDDEN FROM ABOVE by the owner direction above, not reasoned away from within. The substance differs from the accumulation that clause feared: the target never moved, no gate was consulted, and what changed is a strictly better measurement of the same physical coefficient (three years with the actual mechanism, versus one year). PREREG-neiso106 section 1 states this at full strength. (2) THE ESTIMATOR OF THE COEFFICIENT WAS ONE CHOICE among three computed before choosing (geometric 0.76550, arithmetic-of-per-year 0.76441, log-elasticity 0.75929); the geometric one is declared because the TARGET is a geometric mean and the two halves of a division must share a geometry. The choice is immaterial -- the three span scalars 0.95433-0.95470, about 0.03% of price against a +/-10% band. (3) 0.95470 IS NUMERICALLY THE SCALAR NEISO-104 DECLARED (0.9547) AND REACHED BY A DIFFERENT, LATER-REFUTED ARGUMENT (an across-year delivered-gas elasticity). It is not that derivation reused: nothing here depends on it. The agreement is itself this lane's finding -- neiso-104's coefficient was sound and its rule-29-prescribed 2025 screen year was the problem, because pass-through tracks delivered gas INVERSELY (1.31 at $1.98/MMBtu down to 0.53 at $6.24) and rule 29 selects the largest-footprint, i.e. highest-gas, i.e. lowest-pass-through year. Filed as an owner ask in PREREG-neiso106 section 7; not acted on by this lane.",
+   "years_held_note": "This bundle's OWN scored years, which is what the rule 1 (b) check compares against. THE ONE CONFIG IS HELD ACROSS ALL SIX SCORED YEARS 2020-2025: the identical scalar 0.95470 and the identical 12 bands are declared in the keeper bundle (results/calibration/neiso106_offerlevel, years_held [2023, 2024, 2025]) and in this one, byte-identical in both run_config.json files. Neither bundle carries a per-year value, and the scalar was frozen and PROMOTED on the in-sample years before any year here was solved."
   }
  },
  "disclosures": {
@@ -323,32 +325,98 @@
    "carried_from": "2026-07-31-neiso-72-hy-window (NEISO ledger, neiso-55 onward)"
   }
  ],
- "neiso105": {
-  "prereg": "results/calibration/PREREG-neiso105-offer-level-resized-2026-09-06.md",
+ "neiso106": {
+  "prereg": "results/calibration/PREREG-neiso106-offer-level-rederived-2026-09-06.md",
   "lineage": [
    "PREREG-neiso104-fossil-offer-level-2026-09-06.md",
    "ADDENDUM-neiso104-gdrift-2026-09-06.md",
    "FINDING-neiso104-offer-level-screen-2026-09-06.md",
-   "ADDENDUM-neiso104-env-correction-2026-09-06.md"
+   "ADDENDUM-neiso104-env-correction-2026-09-06.md",
+   "PREREG-neiso105-offer-level-resized-2026-09-06.md"
   ],
-  "incumbent": "2026-08-17-neiso-99-joint-p1",
-  "control": "G-CTRL form 4 \u2014 the incumbent's committed bundle, validated empirically by the neiso-104 control replay (reproduced to 4 dp on load-weighted price and 0.001 TWh on every class).",
-  "delivered": {
-   "2023": -6.3,
-   "2024": -5.38,
-   "2025": -3.48,
-   "mean_pct": -5.05
+  "incumbent": "2026-09-06-neiso-105-fossil-offer",
+  "recipe_base": "2026-08-17-neiso-99-joint-p1 (the pre-cut band values the scalar multiplies)",
+  "control": "G-CTRL form 4 -- the incumbent's committed bundle. No control LP spent. G-DRIFT run before the arm: the keeper sha 8b2c890d resolves and is an ancestor of HEAD (asserted, because the clone is shallow and an unresolvable anchor makes git diff silently report no drift), and all 12 changed solve-path files classify INERT for a NEISO backcast (PJM forecast accreditation, the MISO seam ladder behind a default-off flag absent from this recipe, a docstring-only cache.py hunk, and another ISO's input CSVs). PREREG-neiso106 section 5 carries the per-file table.",
+  "environment_mismatch_read_and_recorded": {
+   "note": "The replay driver's own guard printed this in its first four lines and it is recorded rather than assumed away -- the neiso-104 error corrected by ADDENDUM-neiso104-env-correction-2026-09-06.md is not repeated. Package versions read with importlib.metadata.version, NOT Highs().version() (which returns the bundled SOLVER version 1.14.0 and would read as a false match).",
+   "warning_verbatim": [
+    "WARNING: replay environment differs from the bundle's recorded environment - byte-identity is not guaranteed:",
+    "  highspy: bundle '1.15.1' != now '1.14.0'",
+    "  pandas: bundle '3.0.5' != now '3.0.3'",
+    "  pydantic: bundle '2.13.5' != now '2.13.4'"
+   ],
+   "assessment": "This session installed from the repo's PINNED requirements.txt, so its environment matches the neiso-99 keeper bundle EXACTLY and differs from neiso-105's -- i.e. the same delta pair neiso-104 measured, reversed. neiso-104 measured that pair inert to 4 dp on load-weighted price and 0.001 TWh per class on this ISO."
   },
-  "in_sample_bias": {
-   "before_pct": 3.468,
-   "after_pct": -1.767
+  "sizing": {
+   "target_geometric_mean_bias": 0.034678,
+   "target_source": "PREREG-neiso104 section 3.1, FIXED before any LP ran, never moved",
+   "target_reproduced_here": 0.034674,
+   "coefficient_full_span": 0.7655,
+   "coefficient_source": "measured: geometric mean of the incumbent keeper's three in-sample price moves (-5.0592%) / the cut that produced them (6.609%)",
+   "declared_cut_pct": 4.53,
+   "declared_scalar": 0.9547
   },
-  "pass_through_by_year": {
-   "2023": 0.953,
-   "2024": 0.814,
-   "2025": 0.527,
-   "full_span": 0.764
+  "pass_through_by_year_measured": {
+   "2020": 1.3055,
+   "2021": 0.7061,
+   "2022": 0.4126,
+   "2023": 0.9525,
+   "2024": 0.8138,
+   "2025": 0.5269,
+   "full_span_in_sample": 0.7655
   },
-  "pass_through_lesson": "Pass-through is YEAR-dependent (tracking delivered gas inversely), not depth-dependent. The neiso-104 screen year 2025 was chosen per rule 29 as the year of LARGEST ABSOLUTE FOOTPRINT, which turns out to be the year of SMALLEST pass-through \u2014 so the max-footprint screen year gave the least representative coefficient. Filed as a rule-29 mechanics observation."
+  "depth_invariance_measured": {
+   "note": "2025 is the only year solved at two cut depths, which answers the linearity risk PREREG-neiso105 section 3 named.",
+   "pt_at_cut_4.53pct": 0.5254,
+   "pt_at_cut_6.609pct": 0.5269,
+   "ratio": 1.0029
+  },
+  "prereg_prediction": {
+   "2020": 6.983,
+   "2021": 5.59,
+   "2022": -2.458,
+   "2023": -1.319,
+   "2024": 1.768,
+   "2025": -0.779,
+   "in_sample_geomean_bias_pct": -0.119,
+   "in_sample_mae_pct": 1.289,
+   "basis": "each year's OWN measured pass-through, licensed by the depth-invariance measurement"
+  },
+  "stop_rule": "PRE-COMMITTED in PREREG-neiso106 section 6: this is the THIRD AND LAST sizing. The coefficient has now been measured on the full span with the actual mechanism at two depths; there is no better measurement of it left to make, so there is no legitimate reason for a fourth. If this arm misses its -0.119% prediction the scalar is NOT moved again in either direction -- the residual is reported and the next move is structural.",
+  "touchpoints": {
+   "years": [
+    2020,
+    2021,
+    2022
+   ],
+   "tier": "validation (NEISO holds the `complete` marker; holdout-freeze scope.tiers = ['locked_test'], so the validation tier is unfrozen)",
+   "solved_after_promotion": true,
+   "predicted_before_solve": {
+    "2020": 6.983,
+    "2021": 5.59,
+    "2022": -2.458
+   },
+   "measured": {
+    "2020": 6.964,
+    "2021": 5.588,
+    "2022": -2.466
+   },
+   "prediction_error_pp": {
+    "2020": -0.019,
+    "2021": -0.002,
+    "2022": -0.008
+   },
+   "prior_keeper_bias_pct": {
+    "2020": 3.897,
+    "2021": 3.989,
+    "2022": -3.311
+   },
+   "pre_cut_bias_pct": {
+    "2020": 13.707,
+    "2021": 9.079,
+    "2022": -0.601
+   },
+   "note": "Predicted from each year's OWN measured pass-through before the solve and hit to 0.02 pp, the same accuracy the in-sample years showed -- so the year-dependence in PREREG-neiso106 section 3 is predictive out of the training window as well as inside it. ALL SIX YEARS 2020-2025 PASS C3a. The touch-once locked test (2019 / H1-2026) is UNTOUCHED and remains frozen for every ISO."
+  }
  }
 }

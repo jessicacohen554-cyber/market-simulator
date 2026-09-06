@@ -1,21 +1,21 @@
 {
- "id": "2026-09-06-neiso-105-touchpoints-2020",
- "label": "neiso 105 touchpoints 2020",
+ "id": "2026-09-06-neiso-106-touchpoints-2020",
+ "label": "neiso 106 touchpoints 2020",
  "date": "2026-09-06",
- "shorthand": "neiso-105-touchpoints-2020",
- "definition": "neiso-105 validation touchpoints 2020/2021/2022 on the promoted keeper recipe (rule 22 touchpoint loop step 4; rule 30 fold to keeper)",
+ "shorthand": "neiso-106-touchpoints-2020",
+ "definition": "VALIDATION TOUCHPOINTS 2020/2021/2022 on the promoted keeper recipe 2026-09-06-neiso-106-fossil-offer (rule 22 touchpoint loop step 4; FOLDED to the keeper under rule 30(a), so these years appear in the keeper's own year selector rather than as a separate card). ZERO recipe deltas from the keeper: the same scalar 0.95470 on the same 12 markup bands, byte-identical in both run_config.json files. NOTHING IS FITTED TO A HELD-OUT YEAR -- the scalar was identified on the 2023-2025 in-sample geometric-mean price bias alone, frozen, and PROMOTED before any year here was solved (rule 22 step 3/4). || RESULT: all three rungs PASS C3a, and each lands within 0.02 pp of a value predicted BEFORE the solve from that year's own measured pass-through -- 2020 +6.964% (predicted +6.983%), 2021 +5.588% (+5.590%), 2022 -2.466% (-2.458%). Against the superseded keeper 2026-09-06-neiso-105-fossil-offer: 2020 +3.90% -> +6.96%, 2021 +3.99% -> +5.59%, 2022 -3.31% -> -2.47%; against the pre-cut neiso-99 basis: +13.71% / +9.08% / -0.60%. ALL SIX YEARS 2020-2025 PASS C3a. The bundle scores CALIBRATED with 0 DEGRADED criteria against the in-sample column (7 held, C3c carried). || WHAT THIS ADDS BEYOND THE RUNGS THEMSELVES: the per-year pass-through model that sized this keeper is predictive OUT of the training window as well as inside it, at the same 0.02 pp accuracy -- six years, one config, six hits. That is the strongest available evidence that the coefficient is a measured physical response rather than a fitted one, and it is evidence the in-sample years could not supply. || RULE 30(c) HOLDS AND IS RESTATED HERE BECAUSE IT IS THE MOST MISUSABLE NUMBER ON THIS DASHBOARD: a validation-tier score is ITERABLE model-SELECTION evidence, never a certified out-of-sample skill number, and it can neither certify nor decertify NEISO -- the ISO's determination is its train-tier verdict. THE TOUCH-ONCE LOCKED TEST (2019 / H1-2026) IS UNTOUCHED and remains frozen for every ISO (holdout-freeze.json scope.tiers = ['locked_test']); this spend is the VALIDATION tier, which NEISO's `complete` marker authorizes and the freeze does not cover, re-checked at registration under owner ruling R-AZ. Bundle results/calibration/neiso106_touchpoints. Lineage: PREREG-neiso106-offer-level-rederived-2026-09-06.md; FINDING-neiso106-offer-level-rederived-2026-09-06.md.",
  "years": [
   2020,
   2021,
   2022
  ],
  "iso": "NEISO",
- "file": "frontend/data/backcast/runs/2026-09-06-neiso-105-touchpoints-2020.js",
- "bundle": "results/calibration/neiso105_touchpoints",
+ "file": "frontend/data/backcast/runs/2026-09-06-neiso-106-touchpoints-2020.js",
+ "bundle": "results/calibration/neiso106_touchpoints",
  "holdout": {
   "tier": "validation",
   "year": 2022,
-  "keeper": "2026-09-06-neiso-105-fossil-offer",
+  "keeper": "2026-09-06-neiso-106-fossil-offer",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2023,
