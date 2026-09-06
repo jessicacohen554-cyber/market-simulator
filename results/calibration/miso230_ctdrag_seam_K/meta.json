@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-06T17:00:01",
+  "timestamp": "2026-09-06T19:13:37",
   "iso": "MISO",
   "years": [
     2023,
@@ -217,6 +217,7 @@
     "st_gas_mustrun_oom_level": true,
     "miso_zonal_gas_basis_skip_923_priced": true,
     "miso_intermediate_gas_offer_margin": true,
+    "ct_netload_drag": true,
     "miso_seam_neighbour_anchored_ladder": true
   },
   "coal_bit_passthrough_sigmoid": false,
@@ -369,9 +370,15 @@
   "carry_operating_mothballs": true,
   "reliability_floor": true,
   "reliability_floor_plant_exclusions": true,
-  "ct_netload_drag": null,
+  "ct_netload_drag": true,
   "gas_st_netload_drag": false,
-  "ct_drag_overrides": {},
+  "ct_drag_overrides": {
+    "ct_drag_slope_per_gw": 0.01303,
+    "ct_drag_intercept": -0.8108,
+    "ct_drag_cap": 0.4394,
+    "ct_drag_ramp_start": 10,
+    "ct_drag_ramp_end": 21
+  },
   "gas_st_drag_overrides": {},
   "scarcity_price_overlay": null,
   "caiso_scarcity_pricing": null,
@@ -485,8 +492,8 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "fb3fbad0",
-  "basis_sha": "13ee0c89dc62f10f8eb74ba17f14b5215fba01c3",
+  "git_sha": "284722a04",
+  "basis_sha": "284722a04808f5d7a288e962eccdf6c6ee95a8b6",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
