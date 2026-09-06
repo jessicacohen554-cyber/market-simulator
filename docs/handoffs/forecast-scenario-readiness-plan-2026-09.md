@@ -950,6 +950,9 @@ and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **D-5 PRESENTED 2026-09-06 (SCN-DESK r#13).** Stage A-LOAD's measured cost table exists (synthesis §8: 313.7 min of LP for 16 legs / 80 solve-years, 3.92 min per solve-year, ~4.7 h wall; NEISO 1.09 min per solve-year). Recommendation: **HOLD** the NEISO Stage-B grant until SCN-WS5A-RESOLVE lands the post-D77 re-solve (the pre-D77 NEISO REF carries a 41.9 %-contaminated 2030 CO2 level) and the policy half has run; note SCN-FIX2's finding that `CARB-HI` is live on NYISO/NEISO only at full horizon (2031–2047).
 **RULED 2026-09-06 (SCN-DESK r#13 amendment 1) — S13: "Hold until RESOLVE and the policy half land."** No grant; re-presented when both are on main.
 
+**D-11 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#17); desk card, live copy in the ledger §2.** The solve slot. `SCN-WS5A-POLICY-ERCOT` is fully prepared — phase 0 done, ten of twelve legs surviving (`VOL-MID` and `CAP-STATE-TIGHT` killed on proven identities), PRECOMMIT on main — and is blocked only by the policy charter's own precondition P4, which allows ONE repo-wide solve while `SCN-WS5A-RESOLVE` is on PJM/CAISO/MISO. **CLAUDE.md rule 12's own cap is ~2 concurrent per-plant multi-zone runs**, so P4 was stricter than the rule; it was written that way because this desk cannot observe how many solves the capx track has live. RESOLVE still owes 7 heavy legs. Measured peaks: MISO 9.65 GB, CAISO 4.87 GB, ERCOT 4.2 GB on a 15 GB box. Recommendation: **relax P4 to rule 12's ~2 cap** — ERCOT never shares a fleet with PJM/CAISO/MISO, so the two solves are independent, and the alternative parks ten prepared legs behind seven heavy ones.
+**RULED 2026-09-06 (SCN-DESK r#17) — S14: "Relax P4 to rule 12's ~2 cap (Recommended)."** ERCOT's first solve is released and may run concurrently with RESOLVE's remaining legs, under two conditions carried into policy charter **v6**: at most **2 SCN-track solves at once, on different ISOs**, and **not while the capx track is mid-solve** — the owner sequences that half, being the only party who sees both tracks. The stricter one-solve reading of P4 is retired; rule 12's text governs. No other precondition moves.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1249,6 +1252,18 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#17 (main HEAD `28fb1882`).** **The policy half is live.** SCN-WS5A-POLICY-ERCOT
+  launched, pushed its PRECOMMIT before any LP, and killed 2 of 12 cases at zero cost on proven identities
+  (`VOL-MID` slack in all five years; `CAP-STATE-TIGHT` resolving to no carbon program at all on ERCOT) — and
+  caught **two defects in the charter this desk wrote**: P2 named an in-place REF path when RESOLVE actually
+  renames its legs to `…-2026-09-06-r2/<ISO>/<CASE>/`, and G7's `$4.5/MWh` ceiling is the **mid** cell where every
+  surviving voluntary leg runs `high` (`$7.0`). Both corrected in **charter v6**, which supersedes v5. RESOLVE
+  split into three parallel lanes and stands at 6/13 — the PJM REF landed with all five gates PASS and measured
+  the D67-ARM/D81 confound **INERT** (rate-capped backstop at a −16 % reserve margin), so PJM's P1 is met and
+  **NEISO / NYISO / PJM are issued on v6**. Card **D-11** presented and **ruled the same sitting — S14**: charter
+  P4 relaxed to rule 12's own ~2-concurrent cap, releasing ERCOT's ten prepared legs to solve alongside RESOLVE.
+  Recorded against the desk: r#16's "re-solved in place / accepted deviation" reading of RESOLVE was wrong on
+  both halves. Audit EXIT 0. Zero solves, zero code, zero defaults, zero markers.
 - 2026-09-06 — **SCN-DESK r#16 (main HEAD `00cee150`).** SCN-WS5A-RESOLVE running: PRECOMMIT (THE PIN `bdfb3095`) + 5/13
   legs, every gate PASS; S5's identity measured on the NEISO/NYISO campaign REFs (NYISO 2030 CO2 −46 %); the cache
   blocker defeated by D65-B's re-key. Policy charter v5: ERCOT / NEISO / NYISO launchable now, PJM / CAISO / MISO
