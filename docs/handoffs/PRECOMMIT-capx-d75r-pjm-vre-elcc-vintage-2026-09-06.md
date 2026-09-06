@@ -256,3 +256,65 @@ Measured in §3 above: **every one of them holds**, to 0.046 MW.
   region** (charter collisions).
 * **Screen and control bundles are DELETED before merge** (rule 29(c)): this document and the
   FINDING carry every number the lane will ever cite from them.
+
+---
+
+## ADDENDUM A — the rebase onto `d333d01b`, recorded BEFORE the first solve
+
+The lane rebased between legs (never during — no solve had run, so nothing is invalidated) after
+`origin/main` advanced **41 commits** past this lane's original base `0336ccd8`. New base:
+**`d333d01b`** (D78-R's full window merged). Recorded here rather than in the FINDING because §5's
+keys are superseded by it and a PRECOMMIT's numbers must not be silently restated after the fact.
+
+**STEP 1's intake commit `c6d1441e` was MERGED INTO MAIN** in the interval, so the rebase replayed
+only this lane's two unmerged commits. The intake rows are on `main` and this lane's build sits on
+top of them, which is the ordering §2 called for.
+
+**One conflict, resolved by keeping both sides.** `src/market_sim/config/scenarios.py`: capx **D76**
+(`capacity_screen_peak_measured_hindcast`, `FINDING-capx-d76-2026-09-06.md`) appended its new field
+at the same end-of-field-list position this lane's `pjm_vre_accreditation_vintage` takes — the
+HOUSE-3 convention both lanes obeyed, which is why they collided. Resolution: **both fields kept**,
+D76's first (it is on `main`), this lane's after it. Neither field's text, default or registration
+was altered; both remain registered in `_CACHE_KEY_OPTIONAL_FIELDS`, `TIER_TAGS` and the
+default-value registry, and `check_cache_key_registration.py --base origin/main` reads
+*"1 new field(s), all registered: pjm_vre_accreditation_vintage … 268 declared defaults all match
+HEAD"*. The two mechanisms are independent: D76 changes the screens' PEAK operand, this lane changes
+the VRE ACCREDITATION operand, and neither reads the other's gate.
+
+### A.1 The four keys, RE-RESOLVED at the new base — every one MOVED, and none of it is this lane's
+
+| leg | span | key at `0336ccd8` (§5) | **key at `d333d01b`** |
+|---|---|---|---|
+| screen control | 2021–2023 | ~~`afda79ba04cbfdbf`~~ | **`6eff06b0ec80f182`** |
+| screen arm | 2021–2023 | ~~`a998596db59e5ce7`~~ | **`c45c007bed278d2e`** |
+| full control | 2021–2025 | ~~`15a723ba3b6dc856`~~ | **`a9c66d8ea25acb9d`** |
+| full arm | 2021–2025 | ~~`33041553d7541538`~~ | **`b518f5fe7d02f961`** |
+
+**Attributed by measurement, not by argument.** `origin/main` at `d333d01b` — **without this branch
+at all** — resolves the bare `pjm-t1h` 2021–2023 recipe to **`6eff06b0ec80f182`**, i.e. exactly this
+branch's control key. The whole move is `main`'s; this lane's field moves nothing on the control
+leg. Confirmed field-by-field: a full 813-field dump of the resolved control config on `origin/main`
+and on this branch differs in **exactly one line** — `"pjm_vre_accreditation_vintage": false`, the
+new field at its default. The default `ScenarioConfig().cache_key()` is **`547053bdfccd4264`** on
+both, unchanged from §1.
+
+**Why the key move does not weaken the A/B, and why no G-DRIFT audit is owed for it.** Control and
+arm are both solved at THIS HEAD, in this session, under the charter's HEAD guard. The comparison is
+therefore same-HEAD by construction, which is the posture §4 already established for a different
+reason (form 4 was void because the *committed* arm-A bundle's key had moved). A base that moves
+before any solve costs a key re-declaration — this table — and nothing else. What would owe an audit
+is a base moving BETWEEN the two legs; the HEAD guard exists to make that impossible, and it is
+re-asserted around every solve below.
+
+**§5's key table is superseded by this one. §§0–4 and §§6–10 are UNCHANGED** — the mechanism, the
+phase-0 measurement (zero LP, unaffected by any base change since it reads committed artifacts and
+this branch's own registry), the named screen year, the four structural gate legs, the pre-declared
+signs and the STOPs all stand exactly as pushed.
+
+### A.2 Re-verified at the new base, before the first solve
+
+* `ruff check` / `ruff format --check` — clean.
+* `tests/unit/data/test_renewable_elcc_curves.py` + `tests/curation/test_curate_capacity_market_elcc.py`
+  — **63 passed**, including the byte-for-byte reconciliation of every vintage rating against the
+  committed source rows and the rule-25 inertness lock across the other five ISOs.
+* `check_cache_key_registration.py --base origin/main` — green, as quoted above.
