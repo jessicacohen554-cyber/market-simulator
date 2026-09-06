@@ -3040,3 +3040,94 @@ training window is done at zero failing criteria; DO-NOT-REDO applies to every `
 the NEISO matrix shard. The 2020 `NOT-YET` rung is **reported, not chased** (rule 30(c)); whether
 2020's inputs are as prepared as 2021/2022's is a phase-0 question this session did not open.
 `final` remains **NEVER GRANTED** for NEISO and NOT YET on the merits.
+
+## 2026-09-06 — neiso-103: 2020's inputs ARE at parity — the rung's lone C3a FAIL is a relative-band DENOMINATOR effect, not a readiness shortfall. ZERO LP minutes; no verdict moved
+
+**Phase 0 only. Nothing solved, scored, registered or promoted; no mechanism tested; no matrix cell
+verdict moved; keeper shard untouched.** Full record:
+`docs/handoffs/FINDING-neiso103-2020-input-readiness-2026-09-06.md`.
+
+The lane question (opened, not answered, by neiso-102): is NEISO's 2020 input set as prepared as
+2021's and 2022's? **It is — on all 24 keeper-consumed input families, at parity or better.** The
+audit is a discriminating one by construction: 2020 and 2021 were solved in **one bundle, one
+frozen recipe, one HEAD** (`2026-09-05-neiso-2020-2021-touchpoints`, `6619fb4a`) and diverge in
+verdict, so an input equally degraded in both cannot explain the split. **Nothing was found that is
+short in 2020 and not in 2021.** Three families are *richer* in 2020 than in-sample: F923 delivered
+fuel (50 rows vs 27/27/32), `plant_emission_rates_v2` (189 vs 174/162/156), parasitic-factor
+coverage (100 % vs 99/99/100 %).
+
+### A — the rung's `NOT-YET` is the denominator
+
+C3a is a pure ±10 % *relative* band (`score_price_mean` → `err = _pct(model, actual)`;
+`PRICE_MEAN_TOL = 0.10`), with no absolute-dollar floor. On absolute error the two rungs rank the
+other way round:
+
+| year | tier | model | actual RT (lw) | **abs err** | rel | C3a |
+|---|---|---:|---:|---:|---:|---|
+| **2020** | touchpoint | 28.59 | 25.14 | **+3.45** | **+13.7 %** | **FAIL** |
+| **2021** | touchpoint | 52.11 | 47.77 | **+4.34** | +9.1 % | PASS |
+| 2022 | touchpoint | 90.60 | 91.15 | −0.55 | −0.6 % | PASS |
+| 2023/24/25 | keeper | 39.29/44.04/71.39 | 38.10/41.68/70.23 | +1.19/+2.36/+1.16 | +3.1/+5.7/+1.7 % | PASS |
+
+**The year that FAILS is closer to its actual, in dollars, than the year that PASSES.** 2020's
++$3.45 would PASS at all five other years' price levels; 2021's +$4.34 would FAIL at 2020's
+(+17.3 %). Swap the price levels and the verdicts swap. 2020 misses by **$0.94/MWh** ($3.45 against
+the $2.51 that ±10 % allows on a $25.14 base — the cheapest year in the record).
+
+**The score is not challenged and rule 30(c) is untouched.** `NOT-YET` stands; the band *is* the
+certification claim. What is retired is only the *inference* that 2020 is worse-prepared or
+worse-modelled than the rungs that pass. NEISO's headline remains the train-tier verdict,
+**CALIBRATED**.
+
+### B — the two structural candidates, both cleared by internal controls
+
+**Year-agnostic fleet statics** (`thermal_tranches_NEISO.csv` / `bin_assignments_NEISO.csv`; deriver
+default `--years 2024`, committed vintage recorded UNKNOWN). Share of each year's actual CAMPD
+generation they cover: 2019 90.35 / **2020 91.58** / 2021 93.80 / **2022 91.72** / 2023 94.80 /
+2024 95.51 / 2025 97.08 %. **2020 and 2022 are twins, and 2022 scores `CALIBRATED` with C3a at
+−0.6 %** — so the statics' vintage cannot be what fails 2020. The uncovered mass is dominated by
+plant 1588 in *every* year, in-sample included. NEISO coal points the wrong way too: 0.32 % of CAMPD
+generation in 2020 against 1.14 % in 2021, both far under rule 19's 2 % floor.
+
+**`eia_demand_profiles.parquet` holds zero NEISO rows for 2019–2020** (the register grades this
+MISSING/HIGH, "no dispatch is possible"; the pjm-160 block claims it CLOSED). Neither is operative
+for NEISO: `load_demand` resolves `DEMAND_LOADERS['NEISO']` **first**, so the parquet is never
+reached in any year. `_load_neiso_hourly_demand` returns a clean 8760 for 2019–2025 (2020 mean
+13,161 MW, 1.6 % below 2021 — the COVID depression, present because the demand is measured). Graded
+**INERT**, not missing.
+
+### C — a probe that failed, a control that killed it
+
+Recorded because it nearly became a finding. `load_renewable_profiles('NEISO', 2020, …)` raises
+`ValueError: No EIA-930 data for ISO 'NEISO' in year 2020`, and `eia_generation_profiles.parquet`
+really does hold 0 rows before 2021 for all six ISOs; it reproduced with the keeper's own 794-field
+config, and `git log 6619fb4a..HEAD` shows `renewables.py` / `data/eia930/` unchanged since the
+solve. **The control:** the identical raise occurs for **ERCOT 2020** — an approved
+`WEATHER_YEAR_POOL_BY_ISO` year — and ERCOT 2023 returns the hardcoded `RENEWABLE_INSTALLED_MW`
+constants (42,000/38,000 MW), i.e. `_eia860_monthly_capacity` returns `None` for every ISO/fuel in
+this checkout. The probe measured the environment, not the model. **Settled on output evidence
+instead:** the committed 2020 bundle matches measured EIA-930 ISNE to −0.3 % wind / −0.3 % solar /
+−0.2 % nuclear. (neiso-102's test-quality lesson, inverted: a probe that *fails* also needs its
+negative control before it is written down.)
+
+### D — records
+
+Dated correction block appended to `docs/holdout-data-equivalency-register-2026-07.md` §NEISO
+(existing rows left as the historical record, per that file's own convention): five NEISO rows are
+stale at HEAD, all in the closed direction — driver-demand model profile (still absent, now graded
+INERT), `calibration_reference` (2019–2025 all present), `NEISO_<year>_renewable_capacity.csv`
+(120 rows every year), `actual_tail` (2020–2025 present), Algonquin daily basis (45 prints in 2020,
+in family with in-sample 30–49).
+
+**Noted, not acted on:** this session's own handoff prompt states NEISO 2019 is unsolvable partly
+for "no demand rows before 2021" — contradicted by `ASSESSMENT-neiso101-2019-input-prep-2026-08-18.md`
+(*"`load_demand("NEISO", 2019)` returns a full `(5, 8760)` array"*), by this session's measurement,
+and structurally by 2020 having solved with the same partition absent. **Nothing follows**: NEISO's
+`final` readiness is owner-closed on other grounds, and the locked test is frozen for every ISO
+(`scope.tiers = ['locked_test']`).
+
+**Next shorthand: `neiso-104`.** No NEISO lever is open. The 2020 rung is **closed as an
+input-readiness question** — do not re-audit it. The one object the audit surfaced is a level bias,
+not a 2020 one: the model runs high in **5 of 6 years, mean +$1.99/MWh**, present at
++$1.19/+$2.36/+$1.16 in 2023/2024/2025. If it is ever worked it is an **in-sample** object, which is
+where rule 22 step 3 requires the fitting to happen. This session opens nothing.

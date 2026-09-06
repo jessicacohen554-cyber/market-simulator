@@ -561,6 +561,41 @@ possible without it; (2) the outage-window detector-vintage adjudication
 is the locked-test tier (rule 22 amendment) — touch-once, ever; nothing here
 scores it, so its one-shot eligibility is unaffected by this readiness work.
 
+### CORRECTION 2026-09-06 (neiso-103): five NEISO rows above are STALE at HEAD, all in the CLOSED direction
+
+Measured this session against committed artifacts and committed loaders, zero LP minutes, as part
+of the 2020 validation-rung input-readiness audit
+(`docs/handoffs/FINDING-neiso103-2020-input-readiness-2026-09-06.md`). **The rows above are left
+unedited as the historical record**, per this file's own convention; read them through this block.
+
+| row above | as written (2026-07-13) | measured at HEAD (2026-09-06) |
+|---|---|---|
+| Driver demand — model profile | **MISSING** 2018-2020, materiality **HIGH**, *"without it 2018-2020 cannot be dispatched at all regardless of every other input's status"* | **Still absent for NEISO — and INERT.** `load_demand` resolves `DEMAND_LOADERS['NEISO']` (→ `_load_neiso_hourly_demand` over `eia-930-hourly/ISNE hourly.parquet`) **first**, so `eia_demand_profiles.parquet` is never reached for any NEISO year. The adapter returns a clean 8760 for **2019-2025** (2020 mean 13,161 MW). Re-grade **INERT**, not MISSING. *(The 2026-08-06 pjm-160 block at the top of this file claims the gap CLOSED for 2019-2020 via `curate_demand_profile.py::curate_pre_window`; for NEISO that partition is still absent — and does not need to exist.)* |
+| `calibration_reference.json` `isos.NEISO.<year>` | **MISSING 2018-2020** (blocks the sidecar entirely) | **`isos.NEISO` carries 2019-2025, all seven**, same four keys per block. CLOSED (neiso-89 / PR #3693). |
+| `NEISO_<year>_renewable_capacity.csv` | **MISSING 2018-2020** | **120 rows for every year 2019-2025**, same shape as 2023-2025. CLOSED (same PR). |
+| `actual_tail.json` NEISO | **MISSING 2018-2021** by the deriver's hardcoded `HOLDOUT_YEARS=(2022, 2026)` gate | **`isos.NEISO` carries 2020-2025.** 2019 remains absent — gate-blocked, not data-blocked (neiso-101 §1.3). |
+| Gas hub basis, **daily** (`gas-prices/algonquin_citygate_daily.csv`) | **MISSING 2018-2022**, materiality medium, fix = "point `fetch_algonquin_daily_spot.py` at the 2018-2022 archive pages" | **Backfilled.** Prints per year: 2019 **56** / 2020 **45** / 2021 **94** / 2022 **62**, against in-sample 2023 **44** / 2024 **49** / 2025 **30**. 2020 is *in family with the tuned years*; re-grade **EQUIVALENT**. |
+
+Two rows above are re-graded on evidence rather than coverage, and both are **non-discriminating**
+between 2020 and the rungs that pass:
+
+- **Fleet statics** ("DEGRADED (accepted) — same static vintage for every year"): the acceptance
+  rationale as written (*"identical caveat already applies in-sample"*) understates the case for an
+  early year, since a late-vintage snapshot applied to 2020 is a larger extrapolation than the same
+  snapshot applied to 2023. Measured, it still does not bite: the statics cover **91.58 %** of
+  2020's actual CAMPD generation against **91.72 %** of 2022's — and 2022 scores `CALIBRATED` with
+  C3a at −0.6 %. Coverage at ~91.6 % is demonstrably compatible with the tightest C3a in the record.
+- **`parasitic_load_factors`** ("MISSING 2018-2021 per-year rows"): the raw row counts (79 in 2020
+  against 639 in 2022) are a **cross-ISO** artifact — the later years carry more ISOs. Restricted to
+  the NEISO plants the keeper actually prices, per-year coverage is **100 %** for 2019-2022 against
+  99/99/100 % for 2023-2025. Re-grade **EQUIVALENT**.
+
+**Nothing here is authorization, and nothing here is a spend** (rule 22, and the owner's 2026-08-06
+clarification: what is held out is the *score*, never the data). No out-of-training year was solved,
+scored or registered by this session; the 2020/2021 rungs were already spent and registered on
+2026-09-05; the holdout freeze (`scope.tiers = ['locked_test']`) is untouched and `final` stays
+empty for every ISO.
+
 ---
 
 ## PJM — 2022 validation-holdout + 2018-2021 ladder + H1-2026 (intake 2026-07-31, this session)
