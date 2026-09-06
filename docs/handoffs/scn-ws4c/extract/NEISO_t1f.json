@@ -1,0 +1,1347 @@
+{
+ "iso": "NEISO",
+ "arms": {
+  "REF": {
+   "cache_key": "77b56ef19cb7200e",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0,
+       "nuclear": 26.4822,
+       "biomass": 5.7411,
+       "gas_st": 0.5158,
+       "gas_cc": 40.4186,
+       "gas_ct": 1.5384,
+       "coal": 0.0,
+       "import": 28.5403,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 16.3081,
+      "emissions_by_fuel_mt": {
+       "oil": 0.0,
+       "nuclear": 0.0,
+       "biomass": 0.0,
+       "gas_st": 0.161442,
+       "gas_cc": 15.617054,
+       "gas_ct": 0.529575,
+       "coal": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 6.801791,
+       "North": 3.270724,
+       "Boston": 3.933774,
+       "Central": 2.301781,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 4.571793,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 7444.21,
+      "so2_tonnes": 79.07,
+      "avg_price": 51.42,
+      "peak_price": 69.71,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 5.084,
+       "nuclear": 3.355,
+       "biomass": 1.047,
+       "gas_st": 0.158,
+       "gas_cc": 12.886,
+       "gas_ct": 1.338,
+       "coal": 0.108,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 5.66,
+      "clean_share": 0.3447,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 5.7411,
+      "coal": 0.0,
+      "gas_cc": 40.4186,
+      "gas_ct": 1.5384,
+      "gas_st": 0.5158,
+      "hydro": 6.9735,
+      "import": 28.5403,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 42.4728,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.8875,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 3.0606,
+       "reported_mt": 1.3099
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2027": {
+     "year": 2027,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5158,
+       "gas_cc": 41.1814,
+       "gas_ct": 1.5307,
+       "biomass": 7.4249,
+       "oil": 0.0,
+       "import": 27.6263,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 17.8265,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.161451,
+       "gas_cc": 15.84958,
+       "gas_ct": 0.522748,
+       "biomass": 1.29269,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 6.83772,
+       "North": 4.624296,
+       "Boston": 3.96747,
+       "Central": 2.396984,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 4.440412,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 8584.49,
+      "so2_tonnes": 80.35,
+      "avg_price": 50.46,
+      "peak_price": 69.33,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 12.88,
+       "gas_ct": 1.328,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 6.15,
+      "clean_share": 0.3403,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 7.4249,
+      "gas_cc": 41.1814,
+      "gas_ct": 1.5307,
+      "gas_st": 0.5158,
+      "hydro": 6.9735,
+      "import": 27.6263,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 43.228,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.2805,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 2.7536,
+       "reported_mt": 1.1785
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2028": {
+     "year": 2028,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5169,
+       "gas_cc": 39.9672,
+       "gas_ct": 1.7204,
+       "gas_cc_ccs": 0.523,
+       "biomass": 7.6286,
+       "oil": 0.0,
+       "import": 29.5452,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 17.1063,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.161949,
+       "gas_cc": 14.768728,
+       "gas_ct": 0.614355,
+       "gas_cc_ccs": 0.302117,
+       "biomass": 1.259142,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 6.47376,
+       "North": 3.996522,
+       "Boston": 3.852414,
+       "Central": 2.783596,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 4.944018,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 8984.55,
+      "so2_tonnes": 76.85,
+      "avg_price": 53.75,
+      "peak_price": 74.6,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 9.887,
+       "gas_ct": 1.317,
+       "gas_cc_ccs": 2.993,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 21.49,
+      "clean_share": 0.3398,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 7.6286,
+      "gas_cc": 39.9672,
+      "gas_cc_ccs": 0.523,
+      "gas_ct": 1.7204,
+      "gas_st": 0.5169,
+      "hydro": 6.9735,
+      "import": 29.5452,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 42.2045,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.0228,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 3.9282,
+       "reported_mt": 1.6813
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0021,
+       "reported_mt": 0.0009
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2029": {
+     "year": 2029,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5172,
+       "gas_cc": 32.8677,
+       "gas_cc_ccs": 4.0241,
+       "gas_ct": 1.6344,
+       "biomass": 8.1178,
+       "oil": 0.0,
+       "import": 31.034,
+       "hydro": 6.9735,
+       "wind": 5.5293,
+       "solar": 4.6224
+      },
+      "emissions_mt": 15.5307,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.162022,
+       "gas_cc": 11.995283,
+       "gas_cc_ccs": 1.523178,
+       "gas_ct": 0.576445,
+       "biomass": 1.273813,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 4.37605,
+       "North": 3.155942,
+       "Boston": 3.050403,
+       "Central": 4.948346,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 5.56681,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 8980.31,
+      "so2_tonnes": 53.26,
+      "avg_price": 56.29,
+      "peak_price": 76.11,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 7.898,
+       "gas_cc_ccs": 5.982,
+       "gas_ct": 1.315,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 2.113,
+       "solar": 3.789
+      },
+      "storage_cycles": 15.13,
+      "clean_share": 0.3894,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 8.1178,
+      "gas_cc": 32.8677,
+      "gas_cc_ccs": 4.0241,
+      "gas_ct": 1.6344,
+      "gas_st": 0.5172,
+      "hydro": 6.9735,
+      "import": 31.034,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 35.0192,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.0564,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 5.3831,
+       "reported_mt": 2.304
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0022,
+       "reported_mt": 0.001
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2030": {
+     "year": 2030,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5164,
+       "gas_cc_ccs": 16.505,
+       "gas_cc": 17.9122,
+       "gas_ct": 1.6997,
+       "biomass": 8.3799,
+       "oil": 0.0,
+       "import": 32.9156,
+       "hydro": 6.9735,
+       "wind": 6.2815,
+       "solar": 5.7679
+      },
+      "emissions_mt": 12.1561,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.16183,
+       "gas_cc_ccs": 3.386308,
+       "gas_cc": 6.702547,
+       "gas_ct": 0.61146,
+       "biomass": 1.293928,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 4.045072,
+       "North": 3.644712,
+       "Boston": 2.009876,
+       "Central": 2.456412,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 6.34562,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9268.14,
+      "so2_tonnes": 49.14,
+      "avg_price": 63.95,
+      "peak_price": 84.1,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc_ccs": 8.957,
+       "gas_cc": 4.922,
+       "gas_ct": 1.315,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 2.4,
+       "solar": 4.7
+      },
+      "storage_cycles": 23.34,
+      "clean_share": 0.4957,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 8.3799,
+      "gas_cc": 17.9122,
+      "gas_cc_ccs": 16.505,
+      "gas_ct": 1.6997,
+      "gas_st": 0.5164,
+      "hydro": 6.9735,
+      "import": 32.9156,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 20.1283,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.1184,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.148,
+       "reported_mt": 3.0594
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.057,
+       "reported_mt": 0.0244
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "6e364efaa728fc92",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0,
+       "nuclear": 26.4822,
+       "biomass": 5.7999,
+       "gas_st": 0.5165,
+       "gas_cc": 42.2013,
+       "gas_ct": 1.5611,
+       "coal": 0.0,
+       "import": 28.7694,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 17.1206,
+      "emissions_by_fuel_mt": {
+       "oil": 0.0,
+       "nuclear": 0.0,
+       "biomass": 0.0,
+       "gas_st": 0.161693,
+       "gas_cc": 16.417999,
+       "gas_ct": 0.540936,
+       "coal": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 7.069902,
+       "North": 3.458049,
+       "Boston": 4.098351,
+       "Central": 2.494326,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 4.650545,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 7582.68,
+      "so2_tonnes": 83.17,
+      "avg_price": 51.75,
+      "peak_price": 71.96,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 5.084,
+       "nuclear": 3.355,
+       "biomass": 1.047,
+       "gas_st": 0.158,
+       "gas_cc": 12.886,
+       "gas_ct": 1.338,
+       "coal": 0.108,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 6.43,
+      "clean_share": 0.3386,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 5.7999,
+      "coal": 0.0,
+      "gas_cc": 42.2013,
+      "gas_ct": 1.5611,
+      "gas_st": 0.5165,
+      "hydro": 6.9735,
+      "import": 28.7694,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 44.2789,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.9326,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 3.2446,
+       "reported_mt": 1.3887
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2027": {
+     "year": 2027,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5169,
+       "gas_cc": 43.739,
+       "gas_ct": 1.5727,
+       "biomass": 7.518,
+       "oil": 0.0,
+       "import": 28.1302,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 19.0027,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.161843,
+       "gas_cc": 16.998588,
+       "gas_ct": 0.54451,
+       "biomass": 1.29781,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 7.245208,
+       "North": 4.881567,
+       "Boston": 4.196544,
+       "Central": 2.679431,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 4.551638,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 8790.84,
+      "so2_tonnes": 86.27,
+      "avg_price": 50.92,
+      "peak_price": 78.1,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 12.88,
+       "gas_ct": 1.328,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 7.5,
+      "clean_share": 0.3313,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 7.518,
+      "gas_cc": 43.739,
+      "gas_ct": 1.5727,
+      "gas_st": 0.5169,
+      "hydro": 6.9735,
+      "import": 28.1302,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 45.8286,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 15.5246,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 3.0134,
+       "reported_mt": 1.2897
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0001,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2028": {
+     "year": 2028,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5189,
+       "gas_cc": 43.1237,
+       "gas_ct": 1.8497,
+       "gas_cc_ccs": 0.8244,
+       "biomass": 7.8553,
+       "oil": 0.0,
+       "import": 30.0846,
+       "hydro": 6.9735,
+       "wind": 3.6642,
+       "solar": 3.252
+      },
+      "emissions_mt": 18.6739,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.162852,
+       "gas_cc": 16.080345,
+       "gas_ct": 0.678185,
+       "gas_cc_ccs": 0.476414,
+       "biomass": 1.276054,
+       "oil": 2.6e-05,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 6.970435,
+       "North": 4.231085,
+       "Boston": 4.141532,
+       "Central": 3.330823,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 5.157569,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9449.69,
+      "so2_tonnes": 84.84,
+      "avg_price": 54.9,
+      "peak_price": 283.59,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 9.887,
+       "gas_ct": 1.317,
+       "gas_cc_ccs": 2.993,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 1.4,
+       "solar": 2.7
+      },
+      "storage_cycles": 26.31,
+      "clean_share": 0.3302,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 7.8553,
+      "gas_cc": 43.1237,
+      "gas_cc_ccs": 0.8244,
+      "gas_ct": 1.8497,
+      "gas_st": 0.5189,
+      "hydro": 6.9735,
+      "import": 30.0846,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 45.4923,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.0632,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 4.4249,
+       "reported_mt": 1.8939
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0043,
+       "reported_mt": 0.0018
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2029": {
+     "year": 2029,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5186,
+       "gas_cc": 37.0117,
+       "gas_cc_ccs": 4.8343,
+       "gas_ct": 1.8006,
+       "biomass": 8.1822,
+       "oil": 0.0,
+       "import": 31.3841,
+       "hydro": 6.9735,
+       "wind": 5.5293,
+       "solar": 4.6224
+      },
+      "emissions_mt": 17.5179,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.162655,
+       "gas_cc": 13.481882,
+       "gas_cc_ccs": 1.934874,
+       "gas_ct": 0.657538,
+       "biomass": 1.280954,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 4.993168,
+       "North": 4.00258,
+       "Boston": 3.354188,
+       "Central": 5.167966,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 5.709617,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9325.4,
+      "so2_tonnes": 63.33,
+      "avg_price": 57.56,
+      "peak_price": 78.15,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc": 7.892,
+       "gas_cc_ccs": 5.988,
+       "gas_ct": 1.315,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 2.113,
+       "solar": 3.789
+      },
+      "storage_cycles": 21.03,
+      "clean_share": 0.3785,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 8.1822,
+      "gas_cc": 37.0117,
+      "gas_cc_ccs": 4.8343,
+      "gas_ct": 1.8006,
+      "gas_st": 0.5186,
+      "hydro": 6.9735,
+      "import": 31.3841,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 39.3309,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.0728,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 5.7075,
+       "reported_mt": 2.4428
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0116,
+       "reported_mt": 0.005
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    },
+    "2030": {
+     "year": 2030,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 26.4822,
+       "gas_st": 0.5199,
+       "gas_cc_ccs": 19.9947,
+       "gas_cc": 20.6731,
+       "gas_ct": 1.8692,
+       "biomass": 8.4234,
+       "oil": 0.0,
+       "import": 33.1584,
+       "hydro": 6.9735,
+       "wind": 6.2815,
+       "solar": 5.7679
+      },
+      "emissions_mt": 14.7098,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "gas_st": 0.163161,
+       "gas_cc_ccs": 4.764395,
+       "gas_cc": 7.788738,
+       "gas_ct": 0.694584,
+       "biomass": 1.298946,
+       "oil": 0.0,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "Connecticut": 5.015302,
+       "North": 4.087777,
+       "Boston": 2.56535,
+       "Central": 3.041395,
+       "HQ_import": 0.0
+      },
+      "import_co2_mt_reported": 6.449531,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 9618.71,
+      "so2_tonnes": 61.79,
+      "avg_price": 65.64,
+      "peak_price": 92.35,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 3.355,
+       "gas_st": 0.158,
+       "gas_cc_ccs": 8.957,
+       "gas_cc": 4.922,
+       "gas_ct": 1.315,
+       "biomass": 1.047,
+       "oil": 5.084,
+       "import": 4.41,
+       "hydro": 1.9,
+       "wind": 2.4,
+       "solar": 4.7
+      },
+      "storage_cycles": 21.63,
+      "clean_share": 0.4956,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 8.4234,
+      "gas_cc": 20.6731,
+      "gas_cc_ccs": 19.9947,
+      "gas_ct": 1.8692,
+      "gas_st": 0.5199,
+      "hydro": 6.9735,
+      "import": 33.1584,
+      "nuclear": 26.4822,
+      "oil": 0.0
+     },
+     "fossil_twh": 23.0622,
+     "import_tranches": [
+      {
+       "unit_id": "HQ_import_HQ_PhaseII",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 16.1184,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_base",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.6212,
+       "reported_mt": 3.2619
+      },
+      {
+       "unit_id": "HQ_import_NYISO_CT_peak",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 7.368,
+       "reported_mt": 3.1535
+      },
+      {
+       "unit_id": "HQ_import_Highgate",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.0,
+       "twh": 1.971,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_NB_north",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0798,
+       "reported_mt": 0.0341
+      },
+      {
+       "unit_id": "HQ_import_export_NYISO",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_NB",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "HQ_import_export_HQ",
+       "zone": "HQ_import",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  }
+ }
+}
