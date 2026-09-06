@@ -481,6 +481,29 @@ def _p1_storage_cost_identical(
     return cand.shape == ref.shape and bool(np.array_equal(cand, ref))
 
 
+def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
+    """Is the year's renewable CF bound the raw delivered outcome?
+
+    SCREEN-ONLY (ercot-251, docs/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md).
+    The curtailment gates below skip their ceiling when the bound already embeds the
+    historical curtailment, because capping an already-curtailed series double-curtails it.
+    They test HSL-parquet existence for that, which is wrong whenever the loader falls
+    through to ``forecast_uncurtailed`` -- the delivered shape GROSSED UP by another year's
+    reference rate, which is real headroom the ceiling is supposed to take back (see
+    renewables.renewable_bound_provenance, and the forecast leg at renewables.py L2496-2513
+    which pairs gross-up + ceiling deliberately). Only ``delivered_pinned`` needs the guard.
+    """
+    from market_sim.data.renewables import (
+        RENEWABLE_BOUND_DELIVERED_PINNED,
+        renewable_bound_provenance,
+    )
+
+    return all(
+        renewable_bound_provenance(iso, year, fuel) == RENEWABLE_BOUND_DELIVERED_PINNED
+        for fuel in ("wind", "solar")
+    )
+
+
 def run_year(
     year: int,
     iso: str,
@@ -2694,11 +2717,11 @@ def run_year(
     if getattr(config, "ercot_gtc_limits_measured", False) and iso == "ERCOT":
         from market_sim.data.gtc import ercot_gtc_ttc_hourly
 
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_gtc_limits_measured: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — measured GTC limits "
-                "skipped for this year to avoid double-curtailment",
+                "ercot_gtc_limits_measured: %d renewable bound is delivered-pinned "
+                "— measured GTC limits skipped for this year to avoid "
+                "double-curtailment",
                 year,
             )
         else:
@@ -2817,11 +2840,11 @@ def run_year(
     wind_curtail_share = None
     solar_curtail_share = None
     if getattr(config, "ercot_wtx_curtailment_driver", False) and iso == "ERCOT":
-        if load_hsl_hourly(iso, year) is None:
+        if _renewable_bound_is_delivered_pinned(iso, year):
             logger.warning(
-                "ercot_wtx_curtailment_driver: %d has no measured HSL potential "
-                "(renewables ride delivered-as-CF) — curtailment ceiling skipped "
-                "to avoid double-curtailment",
+                "ercot_wtx_curtailment_driver: %d renewable bound is "
+                "delivered-pinned — curtailment ceiling skipped to avoid "
+                "double-curtailment",
                 year,
             )
         else:
