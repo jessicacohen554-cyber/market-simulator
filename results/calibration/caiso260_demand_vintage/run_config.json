@@ -1,14 +1,19 @@
 {
-  "timestamp": "2026-09-06T16:56:11",
+  "timestamp": "2026-09-06T21:53:12",
   "git": {
-    "sha": "c78f6d94",
-    "basis_sha": "c78f6d9484bb4bf37e0480581fedb9b08adf0506",
-    "branch": "claude/caiso-257-backcast-calibration-5kj8t9",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "e162147b",
+    "basis_sha": "0544138d7bb7045be34bebff779280049175da7d",
+    "branch": "claude/caiso-258-backcast-calibration-b1nal9",
+    "dirty": true,
+    "changed_files": [
+      "ata/raw/reference/caiso-supply-consistent-demand/caiso_supply_consistent_demand_2023.csv",
+      "data/raw/reference/caiso-supply-consistent-demand/caiso_supply_consistent_demand_2024.csv",
+      "data/raw/reference/caiso-supply-consistent-demand/caiso_supply_consistent_demand_2025.csv",
+      "data/raw/reference/caiso-supply-consistent-demand/provenance.json"
+    ],
+    "diffstat": ".../caiso_supply_consistent_demand_2023.csv        | 17520 +++++++++----------\n .../caiso_supply_consistent_demand_2024.csv        | 17520 +++++++++----------\n .../caiso_supply_consistent_demand_2025.csv        | 17520 +++++++++----------\n .../caiso-supply-consistent-demand/provenance.json |    24 +-\n 4 files changed, 26292 insertions(+), 26292 deletions(-)"
   },
-  "model_changes_note": "caiso-257 CT-only OASIS class-partition repair (owner grant FINDING-caiso254 sec 4 OPTION 1; PRECOMMIT-caiso255 + ADDENDUM-caiso257 re-chartered S-1): keeper caiso252_b1_notrim recipe with the df277e89 de-contaminated offer surface as the only delta",
+  "model_changes_note": "caiso-260: the demand-artifact vintage re-derive (rule 14/23 measured-input repair) on the caiso-257 keeper recipe; the re-derived supply-consistent demand is the ONLY delta; one 2023-2025 invocation (rule 16)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -94,7 +99,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "c78f6d94"
+    "git_sha": "e162147b"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -126,6 +131,7 @@
     "mass_cap_enabled": false,
     "mass_cap_program": null,
     "mass_cap_tons": null,
+    "mass_cap_tons_by_year": null,
     "carbon_program_price_path": null,
     "net_cone_forward_escalation": "reindex_gross",
     "demand_growth_rate": 0.01,
@@ -1111,7 +1117,9 @@
     "capacity_market_supply_clearing_by_iso": null,
     "capacity_going_forward_bar_published_by_iso": null,
     "capacity_adequacy_requirement_published_by_iso": null,
-    "capacity_no_default_cap_convention_by_iso": null
+    "capacity_no_default_cap_convention_by_iso": null,
+    "capacity_screen_peak_measured_hindcast": false,
+    "pjm_vre_accreditation_vintage": false
   },
   "environment": {
     "python_version": "3.11.15",

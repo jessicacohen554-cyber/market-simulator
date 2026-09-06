@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-06-caiso-260-b1-demand",
+  "label": "caiso 260 b1 demand",
+  "date": "2026-09-06",
+  "shorthand": "caiso-260-b1-demand",
+  "definition": "caiso-260: the demand-artifact vintage re-derive (rule 14/23 measured-input repair) on the caiso-257 keeper recipe; the re-derived supply-consistent demand is the ONLY delta; one 2023-2025 invocation (rule 16)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-06-caiso-260-b1-demand.js",
+  "bundle": "results/calibration/caiso260_demand_vintage"
+}

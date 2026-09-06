@@ -1,0 +1,257 @@
+{
+ "session": "caiso-260",
+ "bundle": "results/calibration/caiso260_demand_vintage",
+ "year": 2024,
+ "preconditions": {
+  "seam_cap": {
+   "source": "mic_partition",
+   "cap_mw": 16452.0,
+   "pass": true
+  },
+  "hydro_partition_present": {
+   "arm": true,
+   "flag_armed": false,
+   "pass": true
+  },
+  "campd_unit_outages": {
+   "arm_sha": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+   "keeper_sha": "cf156483e08dcd701bd89898ca14670d3c797eb09d9ad30efc7f51cb381390b5",
+   "pass": true
+  },
+  "thermal_tranches": {
+   "arm_sha": "4ed8ae722473634768483b47b5fd58425116905c90baafed2da21e94c91de3c3",
+   "keeper_sha": "4ed8ae722473634768483b47b5fd58425116905c90baafed2da21e94c91de3c3",
+   "pass": true
+  },
+  "pass": true
+ },
+ "G_IDENT": {
+  "max_abs_arm_minus_artifact_mw": 2.1827872842550278e-11,
+  "arm_minus_keeper_annual_gwh": -33.00003699999989,
+  "arm_minus_keeper_max_abs_mw": 862.755000000001,
+  "pass": true
+ },
+ "G_FOOT": {
+  "CC_CHP": {
+   "arm": 7.530116295501709,
+   "keeper": 7.532614662261963,
+   "frac": 0.0003316732465781072
+  },
+  "CC_REGULAR": {
+   "arm": 46.096911228535475,
+   "keeper": 46.10544787629491,
+   "frac": 0.00018515486027463512
+  },
+  "COAL": {
+   "arm": 0.0452996380392313,
+   "keeper": 0.045503983422875406,
+   "frac": 0.00449071418089031
+  },
+  "CT_CHP": {
+   "arm": 1.2330732600097656,
+   "keeper": 1.2305290258026123,
+   "frac": 0.0020675938184341915
+  },
+  "CT_PEAKER": {
+   "arm": 1.6727546188553573,
+   "keeper": 1.5853929619355203,
+   "frac": 0.05510410290530235
+  },
+  "OTHER": {
+   "arm": 8.076322700683594,
+   "keeper": 8.076322702148438,
+   "frac": 1.8137515053878578e-10
+  },
+  "ST_GAS": {
+   "arm": 0.19342027356290817,
+   "keeper": 0.17322356721067428,
+   "frac": 0.11659329430429453
+  },
+  "biomass": {
+   "arm": 4.410060044677734,
+   "keeper": 4.410060087890625,
+   "frac": 9.798707995364985e-09
+  },
+  "hydro": {
+   "arm": 22.534371403869628,
+   "keeper": 22.54069358544922,
+   "frac": 0.0002804785733688552
+  },
+  "import": {
+   "arm": 39.149447338404656,
+   "keeper": 39.1906076196723,
+   "frac": 0.001050258818824296
+  },
+  "nuclear": {
+   "arm": 18.19285959667969,
+   "keeper": 18.19285959667969,
+   "frac": 0.0
+  },
+  "oil": {
+   "arm": 0.0,
+   "keeper": 0.0,
+   "frac": null
+  },
+  "solar": {
+   "arm": 46.751592732332945,
+   "keeper": 46.80243449112201,
+   "frac": 0.0010863058586985717
+  },
+  "wind": {
+   "arm": 20.28963249371338,
+   "keeper": 20.28963249371338,
+   "frac": 0.0
+  },
+  "pass": true,
+  "storage_discharge_twh": {
+   "arm": 9.38586139678955,
+   "keeper": 9.207280158996582
+  }
+ },
+ "S3_c1": {
+  "records": [
+   {
+    "key": "CC_REGULAR",
+    "actual": 45.992,
+    "keeper_model": 46.105,
+    "arm_model": 46.097,
+    "tol_twh": 5.29,
+    "keeper_status": "PASS",
+    "arm_twh_pass": true
+   },
+   {
+    "key": "CC_CHP",
+    "actual": 6.778,
+    "keeper_model": 7.533,
+    "arm_model": 7.53,
+    "tol_twh": 5.29,
+    "keeper_status": "PASS",
+    "arm_twh_pass": true
+   },
+   {
+    "key": "CT_PEAKER",
+    "actual": 4.326,
+    "keeper_model": 1.585,
+    "arm_model": 1.673,
+    "tol_twh": 5.29,
+    "keeper_status": "PASS",
+    "arm_twh_pass": true
+   },
+   {
+    "key": "ST_GAS",
+    "actual": 0.12,
+    "keeper_model": 0.173,
+    "arm_model": 0.193,
+    "tol_twh": 5.29,
+    "keeper_status": "PASS",
+    "arm_twh_pass": true
+   }
+  ],
+  "flips": [],
+  "pass": true
+ },
+ "S3b_c3b": {
+  "arm": 0.1425055068752503,
+  "keeper": 0.14711778058068206,
+  "pass": true
+ },
+ "S4_c4_reported": {
+  "arm_r_nrmse": [
+   0.912,
+   0.26,
+   61.01
+  ],
+  "keeper_recomputed": [
+   0.908,
+   0.263,
+   61.01
+  ],
+  "keeper_head_scored": [
+   0.908,
+   0.263
+  ],
+  "within_band": true,
+  "gating": false
+ },
+ "C3a_reported": {
+  "arm_lw": 37.730839229199276,
+  "keeper_lw": 37.72819641133428,
+  "actual_rt_lw": 34.65,
+  "arm_pct": 8.891310906780014,
+  "keeper_pct": 8.883683726794466,
+  "gating": false
+ },
+ "class_twh": {
+  "CC_CHP": {
+   "arm": 7.530116295501709,
+   "keeper": 7.532614662261963,
+   "delta": -0.002498366760254278
+  },
+  "CC_REGULAR": {
+   "arm": 46.096911228535475,
+   "keeper": 46.10544787629491,
+   "delta": -0.008536647759434857
+  },
+  "COAL": {
+   "arm": 0.0452996380392313,
+   "keeper": 0.045503983422875406,
+   "delta": -0.0002043453836441042
+  },
+  "CT_CHP": {
+   "arm": 1.2330732600097656,
+   "keeper": 1.2305290258026123,
+   "delta": 0.0025442342071533286
+  },
+  "CT_PEAKER": {
+   "arm": 1.6727546188553573,
+   "keeper": 1.5853929619355203,
+   "delta": 0.087361656919837
+  },
+  "OTHER": {
+   "arm": 8.076322700683594,
+   "keeper": 8.076322702148438,
+   "delta": -1.4648442459019861e-09
+  },
+  "ST_GAS": {
+   "arm": 0.19342027356290817,
+   "keeper": 0.17322356721067428,
+   "delta": 0.02019670635223389
+  },
+  "biomass": {
+   "arm": 4.410060044677734,
+   "keeper": 4.410060087890625,
+   "delta": -4.3212891043253876e-08
+  },
+  "hydro": {
+   "arm": 22.534371403869628,
+   "keeper": 22.54069358544922,
+   "delta": -0.006322181579591302
+  },
+  "import": {
+   "arm": 39.149447338404656,
+   "keeper": 39.1906076196723,
+   "delta": -0.041160281267643484
+  },
+  "nuclear": {
+   "arm": 18.19285959667969,
+   "keeper": 18.19285959667969,
+   "delta": 0.0
+  },
+  "oil": {
+   "arm": 0.0,
+   "keeper": 0.0,
+   "delta": 0.0
+  },
+  "solar": {
+   "arm": 46.751592732332945,
+   "keeper": 46.80243449112201,
+   "delta": -0.05084175878906194
+  },
+  "wind": {
+   "arm": 20.28963249371338,
+   "keeper": 20.28963249371338,
+   "delta": 0.0
+  }
+ },
+ "STOP_GATES_ALL_PASS": true
+}
