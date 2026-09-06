@@ -84,6 +84,38 @@ to 2022 unchanged. The GTC half needs the 2022 `gtc-limits` clean partition re-c
 committed raws (`data/clean` is disposable/gitignored; the 2026-09-05 completeness pass built
 it at 13,321 rows).
 
+### 3.1 Zero-LP phase-0 census — the ceiling's footprint, measured (rule 29 clause 0)
+
+The 2022 fleet was rebuilt on the run250 recipe with **no LP**
+(`scripts/lib/bundle_fleet.reconstruct_bundle_fleet`, fidelity-guarded), and the WTX ceiling
+the repaired gate would arm was computed on the model's own net-load with the recipe's own
+coefficients (`ercot_wtx_curtail_unpooled=True`, `panhandle_owner="share"`, depth_wind 0.1354,
+depth_solar 0.1614):
+
+| quantity | value |
+|---|---|
+| reconstructed bound: wind potential | **115.563 TWh** (actual 107.383) |
+| reconstructed bound: solar potential | **25.415 TWh** (actual 23.667) |
+| ceiling removes from the bound — wind | 4.537 TWh |
+| ceiling removes from the bound — solar | 0.927 TWh |
+| **ceiling total** | **5.464 TWh** (West 5.091, Panhandle 0.374; all other zones neutral 1.0) |
+
+The reconstruction independently reproduces §3's gross-up arithmetic (115.563 TWh wind
+potential against the 115.563 predicted from ×1.07618), which is the census's own control.
+
+**Reading — this SIZES the arm, it does not settle it.** The ceiling's 5.46 TWh footprint is
+the right order of magnitude against the 6.42 TWh excess, so the repair passes the "direction
+and order of magnitude the pre-solve delta implies" test and is not killed here. But the
+translation from *bound* reduction to *realized output* reduction depends on hour-by-hour
+overlap with the 3.51 TWh the LP already curtails on its own, and that only the LP resolves:
+
+* pessimistic (ceiling binds only where the LP already curtailed): ≈1.96 TWh less renewable
+  ⇒ ≈1.1 TWh back to CC_REGULAR at the measured 0.555 capture — **short of the 2.39 TWh C1 needs**;
+* optimistic (disjoint): ≈5.46 TWh less renewable ⇒ ≈3.0 TWh to CC_REGULAR — **enough**.
+
+The band straddles the gate, so **no amount of further paper analysis decides it** — this is
+precisely the point at which rule 29 says an arm has earned a solve.
+
 ## 4. Why this cannot be screened the ordinary way — the governance problem, stated up front
 
 The repair is **byte-identical in every training year**. 2023, 2024 and 2025 all carry measured
