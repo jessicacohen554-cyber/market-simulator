@@ -1,0 +1,268 @@
+{
+ "session": "nyiso-198",
+ "status": "PHASE 0 \u2014 NO LP, MEASUREMENT ONLY (rule 29 step 0)",
+ "keeper": "2026-09-06-nyiso-196-extract-basis",
+ "bundle": "results/calibration/nyiso196_extract_basis",
+ "plant": 57185,
+ "class": "CC_REGULAR",
+ "question": "Cricket Valley 57185 bucket (b-) \u2014 which LP bound is binding in the hours the model runs below the meter: the capacity basis (CAP_SCOPE), the committed outage extract (CAP_OUTAGE), the commitment bridge floor (FLOOR), or the offer position (MERIT)?",
+ "years": {
+  "2024": {
+   "year": 2024,
+   "zone": "Capital_Hudson",
+   "lp_units": [
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_committed",
+     "group": "",
+     "pmax_mw": 330.42,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.3117,
+     "mc_base_mean": 27.248,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc00",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.6915,
+     "mc_base_mean": 29.541,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc01",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.75,
+     "mc_base_mean": 29.587,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc02",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.8084,
+     "mc_base_mean": 29.632,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc03",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.8668,
+     "mc_base_mean": 29.678,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc04",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.9253,
+     "mc_base_mean": 29.724,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_econc05",
+     "group": "",
+     "pmax_mw": 85.14,
+     "pmin_mw": 0.0,
+     "heat_rate": 6.9837,
+     "mc_base_mean": 29.769,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    },
+    {
+     "unit_id": "CC_REGULAR_Capital_Hudson_p57185_peak",
+     "group": "",
+     "pmax_mw": 245.64,
+     "pmin_mw": 0.0,
+     "heat_rate": 15.7791,
+     "mc_base_mean": 53.728,
+     "avail_mean": 0.5097,
+     "avail_min": 0.0,
+     "hours_derated": 8760
+    }
+   ],
+   "lp_pmax_total_mw": 1086.9,
+   "bench_npl_mw": 1312.0,
+   "meter_peak_mw": 1116.0,
+   "meter_p999_mw": 1092.9,
+   "btm_addback_gwh": 0.0,
+   "annual": {
+    "model_lp_gwh": 3706.1,
+    "meter_campd_gross_gwh": 4240.9,
+    "eia923_net_gwh": 4161.2,
+    "envelope_gwh": 4853.1,
+    "net_model_minus_meter_gwh": -534.8
+   },
+   "buckets": {
+    "a_model_on_meter_off_gwh": 125.5,
+    "bplus_gwh": 272.3,
+    "bminus_gwh": 906.1,
+    "c_meter_on_model_off_gwh": 26.4,
+    "bminus_hours": 5783
+   },
+   "bminus_by_binding_lp_bound": {
+    "CAP_SCOPE": {
+     "hours": 0,
+     "deficit_gwh": 0.0,
+     "share_of_bminus_gwh": 0.0,
+     "mean_model_mw": 0.0,
+     "mean_meter_mw": 0.0,
+     "mean_envelope_mw": 0.0,
+     "mean_lmp": 0.0
+    },
+    "CAP_OUTAGE": {
+     "hours": 950,
+     "deficit_gwh": 100.5,
+     "share_of_bminus_gwh": 11.1,
+     "mean_model_mw": 477.8,
+     "mean_meter_mw": 583.6,
+     "mean_envelope_mw": 478.2,
+     "mean_lmp": 40.54
+    },
+    "FLOOR": {
+     "hours": 0,
+     "deficit_gwh": 0.0,
+     "share_of_bminus_gwh": 0.0,
+     "mean_model_mw": 0.0,
+     "mean_meter_mw": 0.0,
+     "mean_envelope_mw": 0.0,
+     "mean_lmp": 0.0
+    },
+    "MERIT": {
+     "hours": 4833,
+     "deficit_gwh": 805.6,
+     "share_of_bminus_gwh": 88.9,
+     "mean_model_mw": 444.7,
+     "mean_meter_mw": 611.4,
+     "mean_envelope_mw": 621.7,
+     "mean_lmp": 35.5
+    }
+   },
+   "contradiction_test_rule14": {
+    "cap_outage_hours": 950,
+    "cap_outage_hours_meter_above_envelope": 950,
+    "cap_outage_energy_meter_above_envelope_gwh": 100.2,
+    "all_derated_hours_meter_online": 7711,
+    "all_derated_hours_meter_above_envelope": 3025,
+    "all_derated_energy_meter_above_envelope_gwh": 292.3,
+    "mean_availability_when_derated": 0.5097,
+    "hours_derated": 8760
+   },
+   "capacity_scope_test": {
+    "lp_pmax_total_mw": 1086.9,
+    "meter_hours_above_lp_pmax": 53,
+    "meter_energy_above_lp_pmax_gwh": 0.3
+   },
+   "merit_detail": {
+    "offer_ladder_mc_base_mean": [
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_committed",
+      "mc": 27.248,
+      "pmax_mw": 330.42
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc00",
+      "mc": 29.541,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc01",
+      "mc": 29.587,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc02",
+      "mc": 29.632,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc03",
+      "mc": 29.678,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc04",
+      "mc": 29.724,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_econc05",
+      "mc": 29.769,
+      "pmax_mw": 85.14
+     },
+     {
+      "unit": "CC_REGULAR_Capital_Hudson_p57185_peak",
+      "mc": 53.728,
+      "pmax_mw": 245.64
+     }
+    ],
+    "mean_lmp_in_merit_hours": 35.5,
+    "mean_in_money_capacity_mw": 451.9,
+    "mean_model_mw": 444.7,
+    "mean_meter_mw": 611.4,
+    "hours_model_below_in_money_capacity": 805,
+    "deficit_gwh_where_meter_above_in_money_capacity": 771.7,
+    "deficit_gwh_where_meter_below_in_money_capacity": 1.9,
+    "deficit_gwh_by_hod": {
+     "0": 30.08,
+     "1": 28.9,
+     "2": 27.79,
+     "3": 26.6,
+     "4": 27.15,
+     "5": 30.41,
+     "6": 33.73,
+     "7": 33.7,
+     "8": 32.62,
+     "9": 31.32,
+     "10": 30.12,
+     "11": 29.18,
+     "12": 30.46,
+     "13": 33.08,
+     "14": 34.46,
+     "15": 36.4,
+     "16": 39.31,
+     "17": 42.78,
+     "18": 45.21,
+     "19": 45.13,
+     "20": 40.87,
+     "21": 37.0,
+     "22": 32.75,
+     "23": 26.58
+    },
+    "deficit_gwh_by_month": {
+     "1": 33.98,
+     "2": 38.68,
+     "3": 50.99,
+     "4": 112.57,
+     "5": 90.91,
+     "6": 76.98,
+     "7": 67.15,
+     "8": 56.32,
+     "9": 75.45,
+     "10": 58.27,
+     "11": 110.41,
+     "12": 33.91
+    }
+   }
+  }
+ }
+}
