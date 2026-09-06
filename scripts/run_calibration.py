@@ -2967,6 +2967,17 @@ def run_year(
             east_groups = build_pjm_east_interface_cut_groups(
                 iso_config.links, east_lim
             )
+            # pjm-168: when pjm_interface_feed_admissibility_gate judged the
+            # series inadmissible it returns an all-+inf limit, i.e. the
+            # declared "joint EMAAC import cut is NOT APPLIED this year" posture
+            # (PRECOMMIT-pjm167-interface-feed-admissibility §1). Adding a
+            # degenerate non-binding group would be a no-op row in the LP and
+            # made the summary below reduce over an empty finite subset. The
+            # gate has already emitted its own loud WARNING upstream, so drop
+            # the group and say nothing more here (rule 19 [R-ONE-MECH]).
+            finite_east = east_lim[np.isfinite(east_lim)]
+            if finite_east.size == 0:
+                east_groups = []
             if east_groups:
                 interface_groups = interface_groups + east_groups
                 logger.info(
@@ -2975,9 +2986,9 @@ def run_year(
                     "(hourly %0.0f-%0.0f MW, mean %0.0f)",
                     year,
                     len(east_groups[0][0]),
-                    float(np.min(east_lim[np.isfinite(east_lim)])),
-                    float(np.max(east_lim[np.isfinite(east_lim)])),
-                    float(np.mean(east_lim[np.isfinite(east_lim)])),
+                    float(np.min(finite_east)),
+                    float(np.max(finite_east)),
+                    float(np.mean(finite_east)),
                 )
 
     # Measured PJM AP-SOUTH interface cut (pjm_apsouth_interface_cut, backcast
