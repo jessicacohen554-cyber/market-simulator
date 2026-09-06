@@ -557,5 +557,5 @@
   "2025": 1093.4195809999999
  },
  "G_REPRO_pass": true,
- "artifact_state": "RESTORED to committed bytes"
+ "artifact_state": "REGENERATED files LEFT ON DISK (--keep: the arm)"
 }
