@@ -37,6 +37,20 @@ that finds them (§6).
   bench, goldens, refactor-guards, matrix validate.
 - ISSUED: SPP-14. Nothing else newly issuable — W3 waits on SPP-20.
 
+**r#4 am.1** (owner: *"Is that really all that can run"*). Checked rather than asserted: every W3
+derive — `derive_campd_unit_outages`, `derive_thermal_tranches`, `derive_actual_lmp`,
+`build_calibration_reference`, `curate_zonal_shares`, `build_miso_wind_shape` — calls
+`get_iso_config("SPP")`, so W3 is gated by registration itself (SPP-20), not by this desk; SPP-34's
+`iso-topologies.json` likewise. Two things need NO registration and were not yet issued:
+**SPP-15** (back-year intake 2019–2022 of the SPP-11 products — rule 22 data prep, no marker; the
+owner's dispatch is the `--holdout-intake SPP` authorization) and an **SPP-14 addendum** (the three
+measured files in SPP's v35 zip: `SL_to_Pnode_to_Zone_with_Area.csv`, `Hub_Definitions.csv`,
+`TieFlows_Sep2025.csv`, HTTPS-reachable). Considered and NOT chartered: a NASA-POWER pre-pull for
+the wind shape — the builder keeps no raw cache, so it would mean editing the MISO builder for a
+network pull that is minutes long; and SPP-34's prose half — it would advertise seven ISOs before
+the registration exists. Both issued; recorded against interest that r#4 called W3's gate "SPP-20"
+without having measured which scripts impose it (§6 E-4).
+
 ### 0d. r#3 — sitting #3: SPP-12 landed, G12 met, P10/P11 ruled, SPP-13 chartered, SPP-20 issued (2026-09-06, main HEAD `992760ec`, 22:20 UTC)
 
 - Pin `992760ec` (54 commits since r#2; the r#2 desk commit merged as PR #5273). Branch fast-forwarded.
@@ -140,7 +154,8 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | **LANDED 2026-09-06** — all four §6 items 1–4 GOT, blocked table EMPTY | `claude/spp-11-fetch-epa-eia-xs70mz` (stem issued `…-m3rd`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-11-2026-09-06.md` |
 | SPP-12 portal.spp.org + spp.org fetch | W1 | Opus | shared | **LANDED 2026-09-06** — rows 10–14 + NRC served; rows 5–9 token-blocked; row 11 not found; addendum (A)(B-spec)(C) honoured | `claude/spp-12-fetch-portal-x9cn-6atxy2` | #5285 | `docs/handoffs/FINDING-spp-12-2026-09-06.md` |
 | SPP-13 portal FTP route + N↔S TTC (P11) | W2 | Opus | shared | **LANDED 2026-09-06** — FTP route documented (anonymous; egress-blocked on port 21); row 11 NOT PUBLIC (NDA/CEII); gen-mix + monthly peak landed | `claude/spp-13-portal-ftp-ttc-h2vk-h9c6q8` | #5314 | `docs/handoffs/FINDING-spp-13-2026-09-06.md` |
-| SPP-14 alt HTTPS sources for rows 5–9 (P12) | W2 | Opus | shared | **ISSUED r#4** | — (stem `claude/spp-14-alt-sources-w6dp`) | — | — |
+| SPP-14 alt HTTPS sources for rows 5–9 (P12) | W2 | Opus | shared | **ISSUED r#4**; addendum r#4 am.1 (v35 zip files) | — (stem `claude/spp-14-alt-sources-w6dp`) | — | — |
+| SPP-15 back-year intake 2019–2022 (rule-22 data prep) | W2∥ | Opus | shared | **ISSUED r#4 am.1** | — (stem `claude/spp-15-backyears-q3nf`) | — | — |
 | SPP-20 register (pin flip) | W2 | Fable | shared→spp | **RUNNING** (owner-confirmed r#4, "running on another branch") | unknown (stem was `claude/spp-20-register-p8nz`) | — | — |
 | SPP-21 matrix shard + §5.7 | W2 | Opus | code | **LANDED 2026-09-06** — seventh shard live (305 cells: 162 `U` / 47 fc-only `U` / 96 `.`), `check_mechanism_matrix.py` exit 0 on 7 shards, 33/33 matrix tests pass, page renders 7 columns. **TWO out-of-region edits, both owner-authorized in session:** (1) 4 six-ISO assertions in `tests/unit/config/test_mechanism_matrix_{shard_migration,keeper_stamp}.py` (the charter budgeted one); (2) a one-line repair to `mechanism-matrix-assemble.js` for a PRE-EXISTING anchor mismatch that had left the rendered page blank since the 2026-08-11 sharding | `claude/spp-21-matrix-shard-ti2gy3` (stem issued `…-r4tq`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-21-2026-09-06.md` |
 | SPP-30 outages + tranches | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
@@ -224,6 +239,8 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#3 | SPP-20 | `claude/spp-20-register-p8nz` | unknown — owner confirms RUNNING r#4 | plan §8 W2 · SPP-20 (+ r#2/r#3 RULINGS APPLIED) | issued verbatim |
 | r#3 | SPP-13 | `claude/spp-13-portal-ftp-ttc-h2vk` | `claude/spp-13-portal-ftp-ttc-h2vk-h9c6q8` | plan §8 W2 · SPP-13 | LANDED #5314 |
 | r#4 | SPP-14 | `claude/spp-14-alt-sources-w6dp` | — | plan §8 W2 · SPP-14 | new charter under P12 |
+| r#4 am.1 | SPP-14 addendum | (into the SPP-14 session) | — | plan §8 · SPP-14 ADDENDUM | three v35-zip measured files |
+| r#4 am.1 | SPP-15 | `claude/spp-15-backyears-q3nf` | — | plan §8 · SPP-15 | back-year intake; rule 22 data prep |
 
 ---
 
@@ -232,5 +249,6 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | # | Sitting | Error | Consequence | Correction |
 |---|---|---|---|---|
 | E-1 | r#0 charter (found r#2) | The plan listed **WY** among SPP's missing CEMS states. No EIA-860 plant with BA `SWPP` is in Wyoming (audit §2.4); the plan also omitted **CO** from the footprint. | SPP-11 fetched four inert `WY_*` parquets on the charter's word (harmless: the loader filters to the ISO's fleet). | Plan §2.1 corrected r#2; `ISO_STATES["SPP"]` in the SPP-20 charter now follows audit row 21 (WY out, CO in). |
+| E-4 | r#4 (found r#4 am.1) | The r#4 entry stated "W3 waits on SPP-20" and "nothing else newly issuable" without measuring which scripts impose the gate or listing what needs no registration. The owner asked. | Two issuable lanes (SPP-15, the SPP-14 addendum) were a sitting late. | Measured (`get_iso_config` in every W3 derive) and recorded; from r#5 every sitting's §0 entry carries a "what needs no registration / what does" line until SPP-20 merges. |
 | E-3 | r#0/r#2 (found r#3) | The plan carried **PRM 15 %** (manifest row 12) and card P5 cited "$2,000 — FERC 831 offer cap" as if it were SPP's posted cap. SPP-12's transcriptions: the live East BAA Base PRM is **16 %** (v5.0A; 15 % was PY2023–25), and SPP's posted Safety-Net Energy Offer Cap is **$1,000** ($2,000 is the Order 831 hard ceiling). The r#2 addendum also cited audit §6.1 to a lane that read it before SPP-10 had merged. | P5's value survives on a different justification (card P10); the PRM row now carries the live vintage with the history cited. | Plan §3 and the SPP-20 charter corrected r#3; the desk cites only landed files in addenda from now on. |
 | E-2 | r#2 | The desk ran `git merge --ff-only origin/main` on its branch while the harness was in plan mode (read-only). | None — a fast-forward with no local commits; nothing lost or rewritten. | Recorded because the mode was explicit; the desk does not repeat state changes under plan mode. |
