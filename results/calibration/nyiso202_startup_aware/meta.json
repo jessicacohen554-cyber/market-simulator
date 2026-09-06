@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-06T04:12:18",
+  "timestamp": "2026-09-06T15:39:33",
   "iso": "NYISO",
   "years": [
     2023,
@@ -105,7 +105,7 @@
     "cc_capacity_reconcile": true,
     "egrid_steam_collapse_heat_rates": true,
     "unit_outage_extract_basis_share": true,
-    "cc_duct_peaking_row_scoped": true
+    "nyiso_gas_bridge_startup_aware": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -213,6 +213,7 @@
   "caiso_st_gas_committed_measured": false,
   "caiso_st_gas_peak_measured": false,
   "caiso_ct_peaker_committed_measured": false,
+  "nyiso_ct_peaker_bands_measured": false,
   "caiso_offer_surface_conditional": false,
   "nearby_fuel_price_zone_donor_guard": false,
   "fleet_state_from_eia860": false,
@@ -315,6 +316,7 @@
   "nyiso_gas_bridge_plant_min_run": null,
   "nyiso_gas_bridge_online_hours": true,
   "nyiso_gas_bridge_state_floor_min_run": true,
+  "nyiso_gas_bridge_startup_aware": true,
   "nyiso_chp_btm_measured": true,
   "cc_reserve_duty_split": true,
   "chp_layup_duty_split": null,
@@ -368,8 +370,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet"
   },
-  "git_sha": "a8f42835",
-  "basis_sha": "1ce47fc0624baa479dea0caeba5506adeb55790b",
+  "git_sha": "c7523509",
+  "basis_sha": "2617a5d3c1f402bf2acdededfa466a85c43f2a71",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
