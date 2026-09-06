@@ -11,8 +11,8 @@
     "capacity_market_clearing": true,
     "datacenter_load_path": "mid",
     "correlated_forced_outage": true,
-    "cache_key": "7088c5643b559a84",
-    "bundle": "/home/user/market-simulator/results/PJM/7088c5643b559a84",
+    "cache_key": "67a786980ac38749",
+    "bundle": "/home/user/market-simulator/results/PJM/67a786980ac38749",
     "solved_years": [
       2026,
       2027,
@@ -22,33 +22,33 @@
     ],
     "n_solved_years": 5,
     "error": null,
-    "total_wall_s": 2907.4,
-    "global_peak_rss_mb": 8870.1,
+    "total_wall_s": 2597.5,
+    "global_peak_rss_mb": 8878.7,
     "per_year_perf": [
       {
         "year": 2026,
-        "wall_s": 392.1,
-        "peak_rss_mb": 8870.1
+        "wall_s": 397.0,
+        "peak_rss_mb": 8878.7
       },
       {
         "year": 2027,
-        "wall_s": 135.5,
-        "peak_rss_mb": 6960.5
+        "wall_s": 132.3,
+        "peak_rss_mb": 6759.2
       },
       {
         "year": 2028,
-        "wall_s": 284.1,
-        "peak_rss_mb": 6855.6
+        "wall_s": 246.1,
+        "peak_rss_mb": 7010.7
       },
       {
         "year": 2029,
-        "wall_s": 840.4,
-        "peak_rss_mb": 7462.7
+        "wall_s": 948.2,
+        "peak_rss_mb": 7866.7
       },
       {
         "year": 2030,
-        "wall_s": 1254.9,
-        "peak_rss_mb": 8303.1
+        "wall_s": 873.6,
+        "peak_rss_mb": 8608.2
       }
     ],
     "year_summary": [
@@ -78,10 +78,10 @@
       },
       {
         "year": 2028,
-        "reserve_margin": -0.1559,
-        "lw_price": 55.25,
+        "reserve_margin": -0.1596,
+        "lw_price": 55.28,
         "max_hourly_price": 2000.0,
-        "co2_mt": 418.63,
+        "co2_mt": 417.38,
         "hours_ge_500": 21,
         "retire_mw": 2600.0,
         "builds_thermal_mw": 0.0,
@@ -90,10 +90,10 @@
       },
       {
         "year": 2029,
-        "reserve_margin": -0.1578,
-        "lw_price": 53.2,
+        "reserve_margin": -0.1563,
+        "lw_price": 53.3,
         "max_hourly_price": 2000.0,
-        "co2_mt": 436.39,
+        "co2_mt": 429.95,
         "hours_ge_500": 8,
         "retire_mw": 1232.4,
         "builds_thermal_mw": 7056.8,
@@ -102,10 +102,10 @@
       },
       {
         "year": 2030,
-        "reserve_margin": -0.1649,
-        "lw_price": 80.74,
+        "reserve_margin": -0.1635,
+        "lw_price": 80.79,
         "max_hourly_price": 2000.0,
-        "co2_mt": 470.46,
+        "co2_mt": 463.04,
         "hours_ge_500": 139,
         "retire_mw": 460.0,
         "builds_thermal_mw": 6742.4,
@@ -113,7 +113,7 @@
         "builds_storage_mw": 4000.0
       }
     ],
-    "started_utc": "2026-09-06T06:13:29Z",
+    "started_utc": "2026-09-06T21:06:37Z",
     "bridged_years": [],
     "campaign": "scn-campaign-load-2026-09-06",
     "case": "REF",
@@ -125,7 +125,7 @@
       "ident": "I1",
       "name": "energy balance",
       "status": "PASS",
-      "detail": "max |supply−demand| = 2.794e-09 MW (year 2030); tol 1.0"
+      "detail": "max |supply−demand| = 6.112e-10 MW (year 2030); tol 1.0"
     },
     {
       "ident": "I2",
@@ -161,7 +161,7 @@
       "ident": "I7",
       "name": "reliability floor",
       "status": "FAIL",
-      "detail": "2026: accredited firm 151384 < requirement 153333 MW; 2027: accredited firm 154351 < requirement 161729 MW; 2028: accredited firm 154313 < requirement 171870 MW; 2029: accredited firm 161504 < requirement 180273 MW; 2030: accredited firm 168299 < requirement 189450 MW"
+      "detail": "2026: accredited firm 151384 < requirement 153333 MW; 2027: accredited firm 154351 < requirement 161729 MW; 2028: accredited firm 153640 < requirement 156013 MW; 2029: accredited firm 161785 < requirement 180273 MW; 2030: accredited firm 168580 < requirement 189450 MW"
     },
     {
       "ident": "I8",
@@ -191,7 +191,7 @@
       "ident": "I12",
       "name": "reserve-margin band",
       "status": "FAIL",
-      "detail": "requirement-implied floor [-8.3%, 6.7%]..[-6.0%, 9.0%]; out: 2026:-9.5% (band [-8.3%, 6.7%]), 2027:-11.6% (band [-7.4%, 7.6%]), 2028:-15.6% (band [-6.0%, 9.0%]), 2029:-15.8% (band [-6.0%, 9.0%]), 2030:-16.5% (band [-6.0%, 9.0%])"
+      "detail": "requirement-implied floor [-8.3%, 6.7%]..[-6.0%, 9.0%]; out: 2026:-9.5% (band [-8.3%, 6.7%]), 2027:-11.6% (band [-7.4%, 7.6%]), 2028:-16.0% (band [-14.7%, 0.3%]), 2029:-15.6% (band [-6.0%, 9.0%]), 2030:-16.3% (band [-6.0%, 9.0%])"
     },
     {
       "ident": "I13",
@@ -206,11 +206,11 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-09-06T06:13:29Z",
+  "registered_utc": "2026-09-06T21:06:37Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "62c532aa109f",
-    "scored_at_date": "2026-09-06T06:13:29Z",
-    "cache_epoch": "7088c5643b559a84"
+    "scored_at_sha": "86062a0acb7d",
+    "scored_at_date": "2026-09-06T21:06:37Z",
+    "cache_epoch": "67a786980ac38749"
   }
 }
