@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-05T20:35:26",
+  "timestamp": "2026-09-06T16:56:11",
   "git": {
-    "sha": "f9c1fa0d",
-    "basis_sha": "c284ef664bd2ae526ac5dadda6bbdd4408667d42",
-    "branch": "claude/caiso-251-backcast-calibration-7tci3e",
+    "sha": "c78f6d94",
+    "basis_sha": "c78f6d9484bb4bf37e0480581fedb9b08adf0506",
+    "branch": "claude/caiso-257-backcast-calibration-5kj8t9",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso-251 ARM B1: keeper recipe 2026-09-05-caiso-246-b1-spot + the SINGLE flag --no-gas-offer-margin (ScenarioConfig.gas_offer_net_revenue_margin False) \u2014 the gas offer reverts from the NEISO-identified fuel-INVARIANT $/MWh margin to the multiplicative form CAISO's own OASIS record identifies (caiso-242 \u00a73.5; phase-0 G-COUPLE). Zero new parameters; the $4.7964 anchor is REMOVED. G-SCREEN passed on 2024 (rule 29). C3a excluded from the promotion basis in both directions.",
+  "model_changes_note": "caiso-257 CT-only OASIS class-partition repair (owner grant FINDING-caiso254 sec 4 OPTION 1; PRECOMMIT-caiso255 + ADDENDUM-caiso257 re-chartered S-1): keeper caiso252_b1_notrim recipe with the df277e89 de-contaminated offer surface as the only delta",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -56,7 +56,7 @@
       "caiso_dsw_overnight_clean": true,
       "caiso_dsw_daytime_clean": true,
       "caiso_ra_startup_trajectory": true,
-      "caiso_dsw_daytime_evening_trim": true,
+      "caiso_dsw_daytime_evening_trim": false,
       "caiso_storage_shape_anchor": true,
       "hydro_ror_split": false,
       "hydro_min_flow_floor": true,
@@ -94,7 +94,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "f9c1fa0d"
+    "git_sha": "c78f6d94"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -175,6 +175,11 @@
     ],
     "federal_ces_storage_eligible": false,
     "federal_ces_replaces_state_rps": false,
+    "federal_ces_target_by_year": null,
+    "federal_ces_acp_usd_per_mwh": null,
+    "voluntary_clean_demand_path": "off",
+    "voluntary_wtp_ceiling_usd_per_mwh": null,
+    "voluntary_eligible_fuels": null,
     "rps_enabled": false,
     "miso_rps_compliance_regions": false,
     "miso_clean_tier_rows": false,
@@ -250,12 +255,13 @@
     "offshore_wind_cf_override": null,
     "ccs_retrofit_hr_penalty": 0.12,
     "ccs_retrofit_capex_kw": 1521.4,
-    "ccs_retrofit_vom_adder": 8.0,
+    "ccs_retrofit_vom_adder": 2.95,
     "ccs_retrofit_capture_rate": 0.9,
     "ccs_retrofit_available_year": 2028,
     "ccs_retrofit_max_gw_per_year": 3.0,
     "ccs_retrofit_min_remaining_life": 15,
-    "ccs_retrofit_capex_co2_scaling": false,
+    "ccs_retrofit_capex_co2_scaling": true,
+    "ccs_retrofit_fixed_cost_co2_scaling": true,
     "heat_rate_bin_count": null,
     "use_campd_bins": true,
     "campd_bins_path": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
@@ -412,6 +418,7 @@
     "nyiso_gas_bridge_st_min_run_hours": null,
     "nyiso_gas_bridge_ct": false,
     "nyiso_gas_bridge_ct_min_load_frac": 0.238,
+    "nyiso_gas_bridge_startup_aware": false,
     "nyiso_gas_bridge_plant_exclusions": false,
     "nyiso_gas_bridge_reserve_duty_exclusions": false,
     "nyiso_gas_bridge_ct_min_run_hours": 2.0,
@@ -457,7 +464,7 @@
     "caiso_dsw_surplus_clean": true,
     "caiso_dsw_overnight_clean": true,
     "caiso_dsw_daytime_clean": true,
-    "caiso_dsw_daytime_evening_trim": true,
+    "caiso_dsw_daytime_evening_trim": false,
     "caiso_endogenous_wecc_node": false,
     "caiso_storage_as_reservation": false,
     "caiso_storage_shape_anchor": true,
@@ -582,6 +589,7 @@
     "st_gas_intermediate_cf_threshold": 50.0,
     "cc_intermediate_split": false,
     "cc_intermediate_cf_threshold": 50.0,
+    "miso_intermediate_gas_offer_margin": false,
     "cc_reserve_duty_split": false,
     "chp_layup_duty_split": false,
     "chp_layup_duty_curve": false,
@@ -728,6 +736,7 @@
     "caiso_st_gas_committed_measured": true,
     "caiso_st_gas_peak_measured": true,
     "caiso_ct_peaker_committed_measured": true,
+    "nyiso_ct_peaker_bands_measured": false,
     "caiso_offer_surface_conditional": true,
     "caiso_offer_surface_binned_path": null,
     "caiso_offer_surface_netload_pcts": [
@@ -762,6 +771,7 @@
     "cc_peaking_per_plant": true,
     "cc_duct_peaking": true,
     "cc_duct_peaking_cap_pct": null,
+    "cc_duct_peaking_row_scoped": false,
     "cc_nameplate_summer_derate": true,
     "summer_derate_basis_aware": false,
     "commission_year_cod_fallback": false,
@@ -771,6 +781,7 @@
     "unit_outage_mixed_gas_routing": false,
     "unit_outage_st_capacity_basis": false,
     "unit_outage_per_unit_clip": false,
+    "unit_outage_extract_basis_share": false,
     "campd_per_unit_attribution": false,
     "campd_outage_merit_order_guard": false,
     "retiree_vintage_status_scope": false,
@@ -854,9 +865,9 @@
       },
       "CT_CHP": {
         "committed": 1.1,
-        "econ_low": 1.145,
-        "econ_high": 1.166,
-        "peak": 1.166,
+        "econ_low": 1.103,
+        "econ_high": 1.146,
+        "peak": 1.154,
         "econ_low_share": 0.5,
         "phys_committed": 1.073,
         "phys_econ_low": 0.594,
@@ -865,9 +876,9 @@
       },
       "CT_PEAKER": {
         "committed": 0.991,
-        "econ_low": 1.145,
-        "econ_high": 1.166,
-        "peak": 1.166,
+        "econ_low": 1.103,
+        "econ_high": 1.146,
+        "peak": 1.154,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
         "phys_committed": 0.991,
@@ -877,23 +888,23 @@
         "peak_ladder": [
           [
             0.2,
-            1.166
+            1.154
           ],
           [
             0.2,
-            1.166
+            1.154
           ],
           [
             0.2,
-            1.166
+            1.154
           ],
           [
             0.2,
-            1.166
+            1.154
           ],
           [
             0.2,
-            1.166
+            1.154
           ]
         ]
       },
@@ -907,9 +918,9 @@
       },
       "ST_GAS": {
         "committed": 0.81,
-        "econ_low": 1.145,
-        "econ_high": 1.166,
-        "peak": 1.166,
+        "econ_low": 1.103,
+        "econ_high": 1.146,
+        "peak": 1.154,
         "econ_low_share": 0.5,
         "pct_peaking": 15.0,
         "phys_committed": 1.683,
@@ -1041,6 +1052,9 @@
     "miso_zonal_gas_basis": false,
     "miso_zonal_gas_basis_skip_923_priced": false,
     "miso_winter_citygate_daily": false,
+    "miso_gas_marginal_commodity_pricing": false,
+    "miso_gas_variable_transport": false,
+    "miso_seam_neighbour_anchored_ladder": false,
     "caiso_zonal_gas_basis": false,
     "caiso_asymmetric_path_ratings": true,
     "caiso_per_year_import_caps": true,
@@ -1094,7 +1108,10 @@
     "adequacy_accounting_ratio_dated_net": false,
     "retirement_sector_gate": false,
     "locality_capacity_curves": false,
-    "capacity_market_supply_clearing_by_iso": null
+    "capacity_market_supply_clearing_by_iso": null,
+    "capacity_going_forward_bar_published_by_iso": null,
+    "capacity_adequacy_requirement_published_by_iso": null,
+    "capacity_no_default_cap_convention_by_iso": null
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1148,9 +1165,9 @@
     },
     "hydro_plant_modes": {
       "flag_armed": false,
-      "partition_present": false,
-      "classified_plants": null,
-      "shapeable_plants": null
+      "partition_present": true,
+      "classified_plants": 195,
+      "shapeable_plants": 111
     },
     "campd_unit_outages": {
       "armed": true,
