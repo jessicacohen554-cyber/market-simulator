@@ -169,12 +169,72 @@ broken. A future paired-probe gate should assert a REF-side adequacy preconditio
 no-worsening condition. Flagged, not silently patched — the gate is pre-registered and stays as
 written for this lane.
 
+### 3.4 PJM — LIVE, campaign-grade, and every gate PASSES
+
+**PJM is the clean measurement ERCOT could not be**: no unserved energy in either arm, load-weighted
+price $42.39 → $44.53, and its one invariant failure (I7, accredited firm capacity below
+requirement) is a **capacity-accreditation** shortfall carried identically by both arms, not a
+dispatch collapse. Nothing here needs the §3.3 caveat.
+
+| metric | REF | CARB | Δ |
+|---|---|---|---|
+| resolved carbon $/t | 0.0000 | 3.7500 | **+3.7500** |
+| **`emissions_mt`** | 393.6225 | 380.1844 | **−13.4381 (−3.41 %)** |
+| **`import_co2_mt_reported`** | 0.9141 | 1.3477 | **+0.4336** |
+| load-weighted price $/MWh | 42.385 | 44.534 | **+2.149** |
+| `unserved_mwh` | **0.0** | **0.0** | 0.0 |
+| `clean_share` | 0.3459 | 0.3459 | 0.0 |
+
+**STOP gate: 8 of 8 PASS. ARM NOT KILLED.** G4 lands *inside* my declared band ([1.5, 2.7] $/MWh)
+at an implied rate of 0.5731 t/MWh.
+
+**The coal→gas re-order is very large — the biggest single effect this lane measured:**
+
+| fuel | Δ CO2 (Mt) | Δ generation (TWh) |
+|---|---|---|
+| **coal** | **−18.9888** | **−17.4134** |
+| **gas_cc** | **+5.3620** | **+14.1015** |
+| gas_ct | +0.1913 | +0.5044 |
+| biomass | 0.0000 | +0.6439 |
+| **import** | 0.0000 *(books no in-ISO CO2)* | **+2.0495** |
+| hydro / nuclear / solar / wind | 0.0000 | **0.0000 (exactly)** |
+
+**17.4 TWh of coal — 7.7 % of PJM's entire coal output — is displaced by a $3.75/t carbon price.**
+That is the substantive PJM result and it is **2.3× larger than the top of my predicted band**
+(§5). The mechanism is a narrow spread, not a big price: the adder is `$3.98/MWh` on coal
+(1.06 t/MWh) against `$1.54/MWh` on gas-CC (0.41 t/MWh), so the *relative* shift is only
+~$2.44/MWh — and PJM's coal and gas-CC marginal costs sit close enough together in 2027 that a
+large mass of coal MWh lies inside that $2.44 window. **PJM's low-carbon-price switching is highly
+elastic, and my band assumed it was not.**
+
+### 3.5 A pattern across BOTH live ISOs: the price-setting unit is dirtier than the load-following unit
+
+ADDENDUM §(g) pre-registered the question of whether WS-4c's marginal rate — measured under a
+**load** increase, i.e. the units that *ramp* — would also describe a **carbon price**'s
+pass-through, i.e. the unit that *sets price*. It stated in advance: *"Where my measurement departs
+from WS-4c's point, that gap is itself the result."* **It departs, in the same direction, on both
+live ISOs measured so far:**
+
+| ISO | WS-4c implied rate (load-following) | **this lane (price-setting)** | ratio |
+|---|---|---|---|
+| ERCOT | 0.447 | **0.5157** | **1.15×** |
+| PJM | 0.508 | **0.5731** | **1.13×** |
+
+Two independent ISOs, two independent campaigns, the same ~13–15 % gap in the same direction.
+**A plausible mechanism, offered as a hypothesis and not a claim:** coal is slow-ramping, so gas
+answers an increment of *load* while coal continues to *set price* in a larger share of hours.
+If that is right, the two rates are measuring genuinely different marginal units and neither is
+"the" marginal rate — the correct one depends on the question asked. **This is n = 2 and one ISO
+away from being a coincidence; MISO is the third live ISO and its result should be read as the
+test of whether the pattern holds.**
+
 ## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
 <!-- FILL: completed as each ISO lands. ERCOT row below. -->
 
 | ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
 |---|---|---|---|---|
+| **PJM** | **−13.4381** | **+0.4336** | **3.2 %** | **the 2-tranche scarcity block** — import generation +2.0495 TWh. Predicted +0.03 to +0.23 Mt; **measured +0.4336, nearly 2× the top of my band** (§5). The tranches pay **no border carbon** while PJM coal's `mc` rises ~$3.98/MWh, so they get relatively cheaper. `emissions_by_fuel_mt["import"]` stays **0.0** in both arms — the import MWh never enters the scored in-ISO total (G6), it is disclosed beside it. |
 | **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
 
 ## 5. My misses, reported at full magnitude
