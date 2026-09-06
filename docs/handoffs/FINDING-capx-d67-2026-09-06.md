@@ -230,11 +230,11 @@ clears.
 | control (gate off) | `6d058c186839457b` |
 | arm (`--capacity-adequacy-requirement-published`) | `4bdd3e7cfdc6ceee` |
 
-> **STATUS: the screen has not yet been solved.** `data/clean` is derived and gitignored, and this
-> session's tree had none; the harness refuses to run rather than silently degrade the confirmed-
-> exits registry, so `scripts/regenerate_clean.py` is rebuilding all 55 datatypes first. This
-> section, §7's grades and §8's verdict are completed by the screen; **nothing in §§1–4 depends on
-> it**, and nothing arms either way.
+Both arms solved at HEAD on the recorded keys (`data/clean` was rebuilt first — 56 datatypes; the
+harness hard-fails on the confirmed-exits partition rather than silently degrading to the economic
+screen). **They cannot be run concurrently**: two PJM LPs at ~9 GB each OOM a 15 GB box, so the
+first attempt lost the control to the kernel and it was re-solved alone (rule 12's "cap at ~2
+simultaneous runs" is an upper bound, not a target, on this footprint).
 
 ---
 
@@ -251,6 +251,49 @@ no determination; it is **never** read against the target residual.
 | **G4** | one requirement | `capacity_clearing.requirement_mw` **=** `screen_adequacy_requirement_mw`, as in the control (rule 19) |
 | **G5** | no collateral flip | no non-target load-bearing criterion flips PASS → FAIL |
 | **G6** | the D62 invariant | the 2024/25 price must not move on the census (a full-span observation; carried forward, not dropped) |
+
+### 6.1 Result — **SCREEN PASSES**, G1–G5
+
+| gate | verdict | measured |
+|---|---|---|
+| **G1** | **PASS** | arm requirement **144,450.000 MW** vs the published 144,450.0 — delta **+0.0000** |
+| **G2** | **PASS** | control 152,912.298 − arm 144,450.000 = **8,462.298 MW**; declared 8,462.3, miss **−0.002 MW** |
+| **G3** | **PASS** | every entering-side field byte-identical: `screen_peak_demand_mw`, `screen_entering_firm_mw`, `fleet_by_fuel_before`, `wind_cap_mw`, `solar_cap_mw`, `storage_firm_mw` |
+| **G4** | **PASS** | arm clearing 144,450.0 = ledger 144,450.0 = screen 144,450.0; control clearing 152,912.298 = its screen (rule 19 holds in both arms) |
+| **G5** | **PASS** | the pre-screen year 2024 is identical in both arms |
+
+The screen peak the solve used, **163,019.507 MW**, reproduces the zero-LP G-DRIFT probe's figure
+to the digit — a third independent confirmation that §2.2's measurement is faithful.
+
+**RECORDED AGAINST INTEREST — a correction I made to my own instrument, not to the gate.** The
+first grading script carried four fields beyond the PRECOMMIT §6 G3 enumeration
+(`peak_demand_mw`, `firm_clean_*`, `storage_power_mw`, `reserve_margin`) and reported **G3 FAIL** on
+`reserve_margin`. That field is `firm_mw / peak − 1` computed **after** fleet evolution
+(`runner.py:4760`) — an **exiting**-side quantity, not an entering-side one. G3's trailing sentence
+("the gate changes the requirement operand and nothing else") cannot coherently mean the solve
+produces an identical fleet: **G2 requires** the requirement to change and §7's P1/P2 **pre-declare**
+that the position moves, so a gate reading "nothing downstream moved" would contradict the rest of
+the pre-registration. The **script** was corrected to the pre-registered enumeration; the gate text
+was **not** relaxed to fit the result, and everything the over-specified list caught is reported at
+full magnitude immediately below.
+
+### 6.2 The exiting side — reported at full magnitude, deliberately not gated
+
+| field | identical? |
+|---|---|
+| `retirements` | **yes** — the same 8 rows in both arms; **no exit decision changed** |
+| `floor_retained` | **yes** — empty in both; the reliability floor binds in neither |
+| `fleet_by_fuel_after` | no — **one fuel**, `gas_ct`, **−1,012.8 MW** in the arm |
+| `thermal_additions`, `entry_decided_mw_by_tech` | no — the same 1,012.8 MW of gas-CT |
+| `reserve_margin` | no — **entirely** the arithmetic consequence of that 1,012.8 MW |
+
+The whole downstream effect is **one channel and one fuel**: the arm's 8.46 GW smaller requirement
+lifts the census position 0.9929 → 1.0511, which takes the capacity market from short to long — the
+clearing price falls from **$150,383.65 to $69,389.55** per firm-MW-yr and `how` moves from
+`all_offers_clear_curve_sets_price` (0 uncleared) to `marginal_offer_sets_price` (21 uncleared) — so
+1,012.8 MW less new gas-CT clears the entry screen. **Retirements and floor retention are
+untouched.** That is the mechanism doing exactly what §3 says it does, through the one seam it was
+built at, and nothing else moved.
 
 ---
 
@@ -274,6 +317,12 @@ reported beside them and the divergence is attributed, not hidden.**
   §2.2 alone**: 2024 is the weather year (peak unmoved, so the charter's figure survives) and 2025
   is one growth-year above it. A 2024/25 far from +1.6, or a 2025/26 near +2.9, falsifies this
   reading of the drift.
+- **P1/P2 on the screen year — HIT.** The 2025/26 census position moves **+5.82 pt** (0.992896 →
+  1.051063) against the pre-declared **≈ +5.6**, and against the charter's arm-A-sized **~2.9**. The
+  sign is the charter's; the magnitude is the one this lane predicted **ex ante from §2.2 alone**,
+  and it is roughly double the charter's for exactly the stated reason — 2025 is one growth-year
+  above the weather year, so the drift nearly doubled the operand error. The remaining three
+  delivery years are graded on the full span.
 - **P3** — the requirement becomes independent of the model's peak in every in-table delivery year
   (`∂R/∂peak = 0`). Already **confirmed** by phase 0 check C.
 - **P4** — every year outside the published table is byte-identical. Already **confirmed** by check D.
