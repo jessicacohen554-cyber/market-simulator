@@ -1,0 +1,106 @@
+{
+ "probe": "miso-228 phase 0 \u2014 CT_PEAKER under-production: OFFER problem or PRICE problem? (zero LP, keeper recipe rebuilt)",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift",
+ "question": "would the model's OWN CT offer stack reach the measured energy if it faced the MEASURED price? YES => the defect is price formation; NO => the defect is the CT representation itself",
+ "by_year": {
+  "2023": {
+   "year": 2023,
+   "n_ct_tranches": 733,
+   "nameplate_mw": 22282.0,
+   "mean_deliverable_mw": 18592.0,
+   "actual_twh": 17.038,
+   "model_dispatched_twh": 9.055,
+   "gap_twh": -7.983,
+   "implied_cf_actual": 0.0873,
+   "implied_cf_model": 0.0464,
+   "static_in_merit_twh_at_MODEL_price": 12.789,
+   "static_in_merit_twh_at_ACTUAL_price": 13.824,
+   "n_hours_actual_price_finite": 8760,
+   "offer_cap_weighted_mean": 73.37,
+   "offer_percentiles": {
+    "p5": 36.18,
+    "p25": 44.34,
+    "p50": 54.96,
+    "p75": 92.56,
+    "p95": 214.92
+   },
+   "deliverable_mw_with_offer_reach": {
+    "under_$20": 0.0,
+    "under_$30": 10.0,
+    "under_$40": 2319.0,
+    "under_$50": 8936.0,
+    "under_$75": 14666.0,
+    "under_$100": 16048.0,
+    "under_$150": 17347.0
+   },
+   "price_mean_model": 34.64,
+   "price_mean_actual": 31.79
+  },
+  "2024": {
+   "year": 2024,
+   "n_ct_tranches": 733,
+   "nameplate_mw": 22282.0,
+   "mean_deliverable_mw": 18564.0,
+   "actual_twh": 19.225,
+   "model_dispatched_twh": 13.124,
+   "gap_twh": -6.101,
+   "implied_cf_actual": 0.0985,
+   "implied_cf_model": 0.0672,
+   "static_in_merit_twh_at_MODEL_price": 18.165,
+   "static_in_merit_twh_at_ACTUAL_price": 18.726,
+   "n_hours_actual_price_finite": 8760,
+   "offer_cap_weighted_mean": 61.68,
+   "offer_percentiles": {
+    "p5": 33.22,
+    "p25": 40.59,
+    "p50": 48.63,
+    "p75": 78.52,
+    "p95": 201.01
+   },
+   "deliverable_mw_with_offer_reach": {
+    "under_$20": 0.0,
+    "under_$30": 378.0,
+    "under_$40": 4563.0,
+    "under_$50": 10636.0,
+    "under_$75": 15534.0,
+    "under_$100": 16858.0,
+    "under_$150": 17308.0
+   },
+   "price_mean_model": 32.17,
+   "price_mean_actual": 30.8
+  },
+  "2025": {
+   "year": 2025,
+   "n_ct_tranches": 733,
+   "nameplate_mw": 22282.0,
+   "mean_deliverable_mw": 18487.0,
+   "actual_twh": 19.291,
+   "model_dispatched_twh": 13.888,
+   "gap_twh": -5.403,
+   "implied_cf_actual": 0.0988,
+   "implied_cf_model": 0.0712,
+   "static_in_merit_twh_at_MODEL_price": 19.496,
+   "static_in_merit_twh_at_ACTUAL_price": 24.227,
+   "n_hours_actual_price_finite": 8759,
+   "offer_cap_weighted_mean": 68.97,
+   "offer_percentiles": {
+    "p5": 40.77,
+    "p25": 48.12,
+    "p50": 55.43,
+    "p75": 78.1,
+    "p95": 208.96
+   },
+   "deliverable_mw_with_offer_reach": {
+    "under_$20": 0.0,
+    "under_$30": 10.0,
+    "under_$40": 641.0,
+    "under_$50": 6522.0,
+    "under_$75": 15512.0,
+    "under_$100": 15999.0,
+    "under_$150": 17354.0
+   },
+   "price_mean_model": 40.69,
+   "price_mean_actual": 42.85
+  }
+ }
+}

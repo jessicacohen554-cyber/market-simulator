@@ -1,0 +1,268 @@
+{
+ "probe": "miso-229 phase 0 \u2014 does MISO's CT_PEAKER net-load reliability DRIVER exist? (rule 17 [R-FLOOR-WINDOW] gate, zero LP, fits nothing)",
+ "method": "port of scripts/data/derive_pjm_ct_netload_drag.py to MISO (CST clock)",
+ "ct_mustrun_per_plant": "REFUSED at miso-228: pins each plant to its observed EIA-923 net generation (rule 13's named forbidden case) and is D-9 QUARANTINED",
+ "by_year": {
+  "2023": {
+   "year": 2023,
+   "n_pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "pure_play_share_of_class": 0.877,
+   "measured_ct_twh_pure_play": 15.037,
+   "netload_gw_mean": 61.98,
+   "netload_gw_p95": 88.85,
+   "by_time_block": {
+    "overnight_22_06": {
+     "mean_cf": 0.036,
+     "p95_cf": 0.0909,
+     "spearman_cf_vs_netload": 0.361
+    },
+    "morning_06_11": {
+     "mean_cf": 0.0824,
+     "p95_cf": 0.2319,
+     "spearman_cf_vs_netload": 0.574
+    },
+    "midday_11_15": {
+     "mean_cf": 0.1343,
+     "p95_cf": 0.4532,
+     "spearman_cf_vs_netload": 0.743
+    },
+    "evening_15_22": {
+     "mean_cf": 0.1245,
+     "p95_cf": 0.4216,
+     "spearman_cf_vs_netload": 0.706
+    }
+   },
+   "evening_cf_vs_netload_deciles": [
+    {
+     "netload_gw_mid": 44.86,
+     "n": 256,
+     "median_cf": 0.0262
+    },
+    {
+     "netload_gw_mid": 53.17,
+     "n": 255,
+     "median_cf": 0.0272
+    },
+    {
+     "netload_gw_mid": 56.87,
+     "n": 256,
+     "median_cf": 0.0412
+    },
+    {
+     "netload_gw_mid": 60.07,
+     "n": 255,
+     "median_cf": 0.0496
+    },
+    {
+     "netload_gw_mid": 63.1,
+     "n": 255,
+     "median_cf": 0.0471
+    },
+    {
+     "netload_gw_mid": 66.68,
+     "n": 256,
+     "median_cf": 0.071
+    },
+    {
+     "netload_gw_mid": 71.69,
+     "n": 255,
+     "median_cf": 0.0898
+    },
+    {
+     "netload_gw_mid": 78.3,
+     "n": 256,
+     "median_cf": 0.1018
+    },
+    {
+     "netload_gw_mid": 86.09,
+     "n": 255,
+     "median_cf": 0.2049
+    },
+    {
+     "netload_gw_mid": 101.72,
+     "n": 255,
+     "median_cf": 0.379
+    }
+   ],
+   "evening_spearman": 0.706
+  },
+  "2024": {
+   "year": 2024,
+   "n_pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "pure_play_share_of_class": 0.877,
+   "measured_ct_twh_pure_play": 13.791,
+   "netload_gw_mean": 60.73,
+   "netload_gw_p95": 85.66,
+   "by_time_block": {
+    "overnight_22_06": {
+     "mean_cf": 0.0321,
+     "p95_cf": 0.1074,
+     "spearman_cf_vs_netload": 0.429
+    },
+    "morning_06_11": {
+     "mean_cf": 0.0706,
+     "p95_cf": 0.2227,
+     "spearman_cf_vs_netload": 0.591
+    },
+    "midday_11_15": {
+     "mean_cf": 0.1146,
+     "p95_cf": 0.3972,
+     "spearman_cf_vs_netload": 0.691
+    },
+    "evening_15_22": {
+     "mean_cf": 0.1237,
+     "p95_cf": 0.3923,
+     "spearman_cf_vs_netload": 0.636
+    }
+   },
+   "evening_cf_vs_netload_deciles": [
+    {
+     "netload_gw_mid": 42.15,
+     "n": 256,
+     "median_cf": 0.0246
+    },
+    {
+     "netload_gw_mid": 51.63,
+     "n": 255,
+     "median_cf": 0.0384
+    },
+    {
+     "netload_gw_mid": 55.54,
+     "n": 256,
+     "median_cf": 0.0506
+    },
+    {
+     "netload_gw_mid": 59.2,
+     "n": 255,
+     "median_cf": 0.0448
+    },
+    {
+     "netload_gw_mid": 62.96,
+     "n": 255,
+     "median_cf": 0.0677
+    },
+    {
+     "netload_gw_mid": 66.76,
+     "n": 256,
+     "median_cf": 0.0733
+    },
+    {
+     "netload_gw_mid": 71.03,
+     "n": 255,
+     "median_cf": 0.0868
+    },
+    {
+     "netload_gw_mid": 76.65,
+     "n": 256,
+     "median_cf": 0.1188
+    },
+    {
+     "netload_gw_mid": 83.88,
+     "n": 255,
+     "median_cf": 0.1987
+    },
+    {
+     "netload_gw_mid": 99.74,
+     "n": 255,
+     "median_cf": 0.3871
+    }
+   ],
+   "evening_spearman": 0.636
+  },
+  "2025": {
+   "year": 2025,
+   "n_pure_play_plants": 127,
+   "pure_play_nameplate_mw": 19537.0,
+   "class_nameplate_mw": 22289.0,
+   "pure_play_share_of_class": 0.877,
+   "measured_ct_twh_pure_play": 14.804,
+   "netload_gw_mean": 61.09,
+   "netload_gw_p95": 87.18,
+   "by_time_block": {
+    "overnight_22_06": {
+     "mean_cf": 0.034,
+     "p95_cf": 0.1374,
+     "spearman_cf_vs_netload": 0.56
+    },
+    "morning_06_11": {
+     "mean_cf": 0.0668,
+     "p95_cf": 0.2493,
+     "spearman_cf_vs_netload": 0.721
+    },
+    "midday_11_15": {
+     "mean_cf": 0.1126,
+     "p95_cf": 0.4355,
+     "spearman_cf_vs_netload": 0.734
+    },
+    "evening_15_22": {
+     "mean_cf": 0.1457,
+     "p95_cf": 0.4764,
+     "spearman_cf_vs_netload": 0.743
+    }
+   },
+   "evening_cf_vs_netload_deciles": [
+    {
+     "netload_gw_mid": 40.95,
+     "n": 256,
+     "median_cf": 0.0184
+    },
+    {
+     "netload_gw_mid": 51.31,
+     "n": 255,
+     "median_cf": 0.029
+    },
+    {
+     "netload_gw_mid": 55.68,
+     "n": 256,
+     "median_cf": 0.0352
+    },
+    {
+     "netload_gw_mid": 59.37,
+     "n": 255,
+     "median_cf": 0.049
+    },
+    {
+     "netload_gw_mid": 63.36,
+     "n": 255,
+     "median_cf": 0.0672
+    },
+    {
+     "netload_gw_mid": 67.51,
+     "n": 256,
+     "median_cf": 0.0968
+    },
+    {
+     "netload_gw_mid": 72.27,
+     "n": 255,
+     "median_cf": 0.1113
+    },
+    {
+     "netload_gw_mid": 78.37,
+     "n": 256,
+     "median_cf": 0.2042
+    },
+    {
+     "netload_gw_mid": 85.86,
+     "n": 255,
+     "median_cf": 0.2973
+    },
+    {
+     "netload_gw_mid": 98.63,
+     "n": 255,
+     "median_cf": 0.461
+    }
+   ],
+   "evening_spearman": 0.743
+  }
+ },
+ "evening_spearman_by_year": [
+  0.706,
+  0.636,
+  0.743
+ ],
+ "driver_verdict": "PRESENT and year-stable"
+}
