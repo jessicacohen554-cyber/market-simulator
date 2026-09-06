@@ -11596,7 +11596,34 @@ prices **−4.2 %** (same-weights C3a-2024 indicator +4.7 % → +0.3 %); **C8/D-
 stack takes **0.71 TWh from `ST_GAS`** and 0.06 from `CT_PEAKER`, both already UNDER. Span not
 spent; screen bundle deleted before merge (rule 29(c)). **THE READING IS RULE 14
 `[R-ACCURATE]`'s OWN**: the mis-classified band was the only thing holding the CC stack back and
-was silently compensating for a different error. **NEW TOP OF QUEUE (U) — the `CC_REGULAR` vs
+was silently compensating for a different error. **SPAN SOLVED AND REJECTED (same session, under the owner ruling).** The owner ruled *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper.."*, recorded in the PREREG's **Addendum B** and pushed at `a8f42835`
+**before the span**, with the C3a-2025 risk **named in advance** in §B.2. Run
+`2026-09-06-nyiso-198-duct-row` (bundle `nyiso198_duct_rowscope`, `--year 2023 2024 2025` in ONE
+invocation, registered same session, attestation computed and PASSING on every check).
+**DETERMINATION CALIBRATED (grade 7, fails 0) → NOT-YET (grade 5, FAILS 3):** C1 13/14 free 9/10
+with **C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh / +2.5 → +3.4 pp FAIL**; **C3a-2025 −6.9 % → −10.3 %
+FAIL** (the pre-named risk, landed); **C3c FAIL** as collateral (the standing rule reclassifies it
+only when it is the LONE failure — same unchanged magnitude). Realised span, the same signature
+every year: `CC_REGULAR` **+1.147 / +1.121 / +1.383 TWh**, `ST_GAS` **−0.918 / −0.706 / −0.801**,
+`CT_PEAKER` −0.080 / −0.061 / −0.309, prices **−3.10 / −4.20 / −3.68 %** — the arm takes energy from
+two classes already UNDER and gives it to the one already OVER. **RECOMMENDATION: DO NOT PROMOTE**
+(the formula is permissive, not automatic): the structural half is not in doubt — zero DOF, residual
+0.000 MW at all 31 plants — but the determination does not regress, it **collapses**, losing both
+load-bearing families the keeper held, and the precedents differ in kind (nyiso-193 promoted a
+NOT-YET carrying ZERO `ScenarioConfig` deltas over a keeper that could not be reproduced at all;
+nyiso-196 IMPROVED the determination). Rule 14 `[R-ACCURATE]` governs and **both** its clauses bind:
+the error is not buried back in the inaccurate input (the field stays, default off, measured and
+documented) and the half-repair is not shipped either. **Cell → R, with the re-test condition
+stated: re-arm it PAIRED with the merit-order repair, never alone.** Keeper UNCHANGED
+`2026-09-06-nyiso-196-extract-basis`. **What is now known regardless of disposition: the keeper's
+C1-2024 `CC_REGULAR` PASS stands on 726.5 MW of mis-classified capacity** — the cell is an over-run
+currently held in band by a construction defect — and the merit-order object is sized at `ST_GAS`
+−0.7 to −0.9 TWh plus `CT_PEAKER` −0.06 to −0.31 TWh, with ~3–4 % of price headroom riding on this
+one mechanism.
+
+**NEW TOP OF QUEUE (U) — the `CC_REGULAR` vs
 `ST_GAS` / `CT_PEAKER` MERIT ORDER**: `ST_GAS` sits at −1.17 TWh and `CT_PEAKER` at −1.52 in 2024,
 and both got worse the moment a real CC constraint was removed; phase 0 there should start at the
 bound that binds, not at the residual. **For the standing owner-ruled duct-tranche lever** (nyiso-193:
