@@ -21,6 +21,7 @@ The check's scope is the load-bearing part, and both halves are pinned here:
 
 import importlib.util
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -152,25 +153,62 @@ class TestDanglingPointerFindings(unittest.TestCase):
 
 
 class TestScopeMatchesRenderSites(unittest.TestCase):
-    """Pin the scope against the code that actually renders the links.
+    """Pin E12's scope against the page that actually renders the links.
 
-    E12 is only correct while ``LIVE_RUN_POINTERS`` names the fields the site
-    turns into ``run-id-link`` hrefs. If a new rendered pointer is added to
-    ``calibration-status.js`` without extending the tuple, a pruned run can go
-    back to leaving a dead link — so fail loudly if the two drift.
+    E12 is only correct while ``LIVE_RUN_POINTERS`` covers every shard field the
+    Calibration Status page turns into a run link. The load-bearing direction is
+    RENDERED -> SCOPED: if someone adds a new ``&run=${encodeURIComponent(...)}``
+    href reading a new shard field and does not extend the tuple, a pruned run
+    can silently go back to leaving a dead link — the exact hole neiso-102 and
+    pjm-166 closed. So this walks the render sites out of the JS and requires
+    each to be scoped or DELIBERATELY exempt, and fails loudly otherwise.
     """
 
-    def test_every_scoped_field_is_rendered_as_a_run_link(self):
-        js = (
+    #: Rendered run-id fields that are correctly NOT E12's, with the reason.
+    RENDER_EXEMPT = {
+        # The keeper's own id — E1 already fails a keeper with no sidecar, and
+        # build_status.py skips the ISO outright, so E12 would double-report.
+        "keeper.run_id": "E1 covers the keeper's own sidecar",
+        # The holdout ladder is DERIVED from the registry by build_status.py, so
+        # every rung names a live run by construction and cannot go stale.
+        "h.run_id@holdout_ladder": "derived from the registry, cannot dangle",
+    }
+
+    RUN_LINK = re.compile(r"&run=\$\{encodeURIComponent\((\w+)\.(\w+)\)\}")
+
+    def _js(self) -> str:
+        return (
             REPO_ROOT / "docs" / "codebase-site" / "js" / "calibration-status.js"
         ).read_text()
-        for path in ak.LIVE_RUN_POINTERS:
-            leaf = path[-1]
+
+    def test_every_rendered_run_link_is_scoped_or_exempt(self):
+        scoped_leaves = {path[-1] for path in ak.LIVE_RUN_POINTERS}
+        rendered = {m.group(2) for m in self.RUN_LINK.finditer(self._js())}
+        self.assertTrue(rendered, "found no run links — the regex has drifted")
+        exempt_leaves = {k.split("@")[0].split(".")[-1] for k in self.RENDER_EXEMPT}
+        for leaf in sorted(rendered):
             self.assertIn(
                 leaf,
+                scoped_leaves | exempt_leaves,
+                f"calibration-status.js renders a run link from `.{leaf}` but "
+                "E12 neither scopes nor exempts it — extend LIVE_RUN_POINTERS "
+                "in scripts/audit_keepers.py, or add a documented exemption.",
+            )
+
+    def test_the_defect_field_is_scoped_not_exempt(self):
+        """holdout_touchpoint.run_id is THE neiso-102/pjm-166 field — never exempt."""
+        self.assertIn(("holdout_touchpoint", "run_id"), ak.LIVE_RUN_POINTERS)
+        self.assertNotIn("holdout_touchpoint.run_id", self.RENDER_EXEMPT)
+
+    def test_every_scoped_field_is_actually_rendered(self):
+        """The reverse: scoping a field the page never renders is dead weight."""
+        js = self._js()
+        for path in ak.LIVE_RUN_POINTERS:
+            self.assertIn(
+                path[-1],
                 js,
-                f"{'.'.join(path)} is scoped by E12 but {leaf} appears nowhere in "
-                "calibration-status.js — the scope and the render sites have drifted",
+                f"{'.'.join(path)} is scoped by E12 but appears nowhere in "
+                "calibration-status.js — the scope and render sites have drifted",
             )
 
 
