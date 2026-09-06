@@ -121,7 +121,11 @@ observation, reported only: that mid-day excess has the same hour-of-day shape
 and magnitude as the model-vs-930 **demand** gap — −2.1 / −6.0 GW at hod 11
 in 2023 / 2025 against +2.0 / +6.4 GW of NG excess — i.e. the 930 `Demand`
 cell appears to carry the same mid-day term. That is a lead for the
-caiso-247 §4.5 demand-basis ask, not a claim.)
+caiso-247 §4.5 demand-basis ask, not a claim. **CORRECTION, caiso-259 same
+day: it is not a lead — it is the caiso-80 Option A basis the keeper's demand
+input is already built on** (`derive_caiso_supply_consistent_demand.py`:
+`NetGen − NG_cell + CEMS gas + cogen + fold-in − TI`); this measurement is
+consistent with it and adds nothing to it.)
 
 ---
 
