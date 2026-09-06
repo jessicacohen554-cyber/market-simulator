@@ -1,0 +1,161 @@
+{
+ "probe": "miso-225 phase 0 C - neighbour-anchored PJM seam ladder vs the incumbent MISO-hub anchor",
+ "seam": "PJM",
+ "interface_limit_mw": 7300.0,
+ "band_midpoints_mw": [
+  456.25,
+  1368.75,
+  2281.25,
+  3193.75,
+  4106.25,
+  5018.75,
+  5931.25,
+  6843.75
+ ],
+ "by_year": {
+  "2023": {
+   "n_hours": 8760,
+   "anchor_means": {
+    "miso_hub_da": 32.979534253355574,
+    "pjm_border": 28.864102180365297
+   },
+   "import_ladder_incumbent": [
+    13.4,
+    16.25,
+    19.79,
+    24.09,
+    27.87,
+    32.78,
+    37.99,
+    46.55
+   ],
+   "import_ladder_neighbour": [
+    9.71,
+    12.74,
+    15.71,
+    20.11,
+    24.3,
+    28.8,
+    34.22,
+    41.96
+   ],
+   "delta_band": [
+    -3.69,
+    -3.51,
+    -4.08,
+    -3.98,
+    -3.56,
+    -3.98,
+    -3.77,
+    -4.59
+   ],
+   "cheapest_band_delta": -3.69,
+   "mean_delta_bands_1_4": -3.81,
+   "in_miso_cheap_hours": {
+    "n": 589,
+    "miso_da_mean": 17.51,
+    "pjm_border_mean": 15.22,
+    "neighbour_cheaper_share": 0.854,
+    "measured_import_mean_mw": 6021.0,
+    "measured_import_mean_all_mw": 4674.0
+   },
+   "corr_neighbour_vs_miso": 0.809
+  },
+  "2024": {
+   "n_hours": 8760,
+   "anchor_means": {
+    "miso_hub_da": 31.371515963828728,
+    "pjm_border": 28.5637696803653
+   },
+   "import_ladder_incumbent": [
+    14.01,
+    17.18,
+    20.92,
+    24.58,
+    29.38,
+    37.03,
+    50.15,
+    73.78
+   ],
+   "import_ladder_neighbour": [
+    10.9,
+    13.45,
+    17.68,
+    22.52,
+    28.17,
+    35.63,
+    47.93,
+    67.64
+   ],
+   "delta_band": [
+    -3.11,
+    -3.73,
+    -3.24,
+    -2.06,
+    -1.21,
+    -1.4,
+    -2.23,
+    -6.14
+   ],
+   "cheapest_band_delta": -3.11,
+   "mean_delta_bands_1_4": -3.03,
+   "in_miso_cheap_hours": {
+    "n": 1329,
+    "miso_da_mean": 17.23,
+    "pjm_border_mean": 15.11,
+    "neighbour_cheaper_share": 0.8,
+    "measured_import_mean_mw": 4683.0,
+    "measured_import_mean_all_mw": 3678.0
+   },
+   "corr_neighbour_vs_miso": 0.869
+  },
+  "2025": {
+   "n_hours": 8760,
+   "anchor_means": {
+    "miso_hub_da": 43.73209588495019,
+    "pjm_border": 41.44654488584475
+   },
+   "import_ladder_incumbent": [
+    21.82,
+    25.85,
+    31.31,
+    37.36,
+    46.47,
+    59.25,
+    82.59,
+    121.91
+   ],
+   "import_ladder_neighbour": [
+    18.07,
+    23.32,
+    29.54,
+    36.12,
+    44.43,
+    57.39,
+    78.08,
+    110.74
+   ],
+   "delta_band": [
+    -3.75,
+    -2.53,
+    -1.77,
+    -1.24,
+    -2.04,
+    -1.86,
+    -4.51,
+    -11.17
+   ],
+   "cheapest_band_delta": -3.75,
+   "mean_delta_bands_1_4": -2.32,
+   "in_miso_cheap_hours": {
+    "n": 100,
+    "miso_da_mean": 18.83,
+    "pjm_border_mean": 18.13,
+    "neighbour_cheaper_share": 0.74,
+    "measured_import_mean_mw": 4485.0,
+    "measured_import_mean_all_mw": 3199.0
+   },
+   "corr_neighbour_vs_miso": 0.883
+  }
+ }
+}

@@ -243,6 +243,50 @@ def derive(g: pd.DataFrame) -> tuple[dict, list[str]]:
     return out, notes
 
 
+def derive_pjm_neighbour(g: pd.DataFrame) -> tuple[dict[str, list[float]], list[str]]:
+    """Derive the PJM seam's ladder anchored on the NEIGHBOUR's own border price.
+
+    The miso-225 owner ruling (2026-09-06) on the D-2 5(i) seam object: an
+    import's merit position must depend on the EXPORTING market's supply cost,
+    not on MISO's own price.  The construction is byte-for-byte the incumbent
+    one — the same Q-Q duration coupling, the same midpoint-depth grid, the same
+    measured seam flows, the same no-wash reconciliation — with the price series
+    swapped from the MISO hub DA to the PJM western-border DA
+    (``pjm_border_lmp_hourly_MISO.parquet``, already loaded here as the
+    incumbent derivation's own interpretability anchor).  Nothing is fitted: the
+    only change is WHICH measured price the duration coupling reads.
+
+    PJM ONLY, and that is a DATA boundary rather than a choice (rule 14
+    ``[R-ACCURATE]``): no measured SPP or SOCO/TVA price series is held under
+    ``data/raw``, so those two seams keep the incumbent anchor and the gap is
+    stated here rather than papered over with a proxy.
+
+    Phase-0 evidence that the swap does what it claims
+    (``scripts/probes/_miso225_seam_neighbour_phase0.py``): the neighbour anchor
+    lowers every import band in every year (bands 1-4 mean -$3.81 / -$3.03 /
+    -$2.32 for 2023/2024/2025), and in the MISO sub-$20 hours the PJM border
+    price is the cheaper of the two in 85 / 80 / 74 % of hours while the MEASURED
+    import in exactly those hours is 6,021 MW against a 4,674 MW all-hours mean
+    -- MISO imports MOST when it is cheapest, which a ladder anchored on MISO's
+    own falling price cannot represent.  The two series correlate 0.81-0.88, so
+    the repricing is neither cosmetic nor a second copy of the same signal.
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    spec = {n.name: n for n in INTERFACE_NEIGHBORS["MISO"]}["PJM"]
+    notes: list[str] = []
+    g = g.dropna(subset=["pjm_border", spec.name])
+    return (
+        _derive_one(
+            g["pjm_border"].to_numpy(dtype=float),
+            g[spec.name].to_numpy(dtype=float),
+            spec,
+            notes,
+        ),
+        notes,
+    )
+
+
 def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]:
     """Score each seam's ladder against its measured flow, driven by actual DA.
 
@@ -314,6 +358,12 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
         print("    },")
     for n in notes:
         print(f"  note: {n}")
+    nb, nb_notes = derive_pjm_neighbour(g)
+    print(f'    # miso-225 NEIGHBOUR-ANCHORED "PJM" (PJM western-border DA ${border_mean:.2f}):')
+    print(f'        "import": {tuple(nb["import"])},')
+    print(f'        "export": {tuple(nb["export"])},')
+    for n in nb_notes:
+        print(f"  note (neighbour): {n}")
     for seam, s in offline_score(g, ladders).items():
         print(
             f"  offline P9 {seam}: {s['sim_twh']:+.2f} TWh vs {s['act_twh']:+.2f} "

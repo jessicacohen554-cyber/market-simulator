@@ -12158,3 +12158,98 @@ four zero-LP instruments `_miso224_*_phase0.py`, blind scorer `_miso224_screen_g
   Addendum A); second launch OOM-killed at 13.95 GB because the swapfile had gone inactive
   (re-`swapon`, then the miso-169 recipe held: exit 0, 2.8 MB swap touched). No control solve
   (G-DRIFT `b3fb0edc..HEAD` ALL INERT, form 4).
+
+## miso-225 (2026-09-06) — the OWNER RULED on both open questions; phase 0 sourced what the ruling required and killed one of three chartered legs before any LP; the joint arm **passes the C1 gate that killed miso-224** and dies on G-3 by 37 MW
+
+**Keeper UNCHANGED: `2026-09-05-miso-220-nonsteam-lift`** (CALIBRATED, C3c the single ledgered
+caveat). Nothing promoted, nothing registered. Screen bundle `miso225_ruled_S` deleted before
+merge (rule 29c). Rule 22: 2023 only, one LP scored.
+
+**The two rulings, both put and answered at the top of the session.** (1) The fuel convention
+(miso-212 §8 / miso-224 §5): MISO gas is priced at **marginal commodity plus VARIABLE
+TRANSPORT** — not the bare hub miso-224 screened and killed, and not the EIA-923 average print
+— *conditioned* on a measured transport component being sourced before the arm is armed, zero
+fitted scalars, or the arm does not run. (2) The D-2 5(i) seam object, outstanding since
+miso-178: **admissible in one form only**, imports offered at the exporting market's own
+measured price; explicitly not the miso-181 coincident-peak envelope (`R`), not flow-pinning.
+
+**Phase 0 did the deciding, at zero LP cost.** The transport was sourced from the receipts:
+`v[p]` = the intercept of `print − hub = v + F/burn`, burn-weighted WLS on each plant's own
+2023–2025 EIA-923 months, frozen derive → `data/raw/reference/miso_gas_variable_transport.csv`.
+**CC_REGULAR — the class that sets MISO's price — carries a $0.452/MMBtu wedge over the hub of
+which $0.209 is variable**, so the ruled form drops **54 %** of that class's print premium where
+the bare hub dropped 100 % (fleet cap-weighted $1.179 → $0.744). It is identified rather than
+assumed: within-plant burn spread max/min p50 **38.7×**, and a regression-free estimator (the
+plant's own top-burn quartile, which amortizes 79 % of the fitted fixed leg away) agrees at
+**r = 0.975** and reconciles exactly ($0.386 = v $0.213 + its own measured residual $0.173).
+The sharpest single number is the lag test: **d(wedge)/d(hub) slope −0.69 fleet-wide, −0.76 for
+CC_REGULAR** — a perfectly lagged average implies −1, a hub-tracking marginal cost 0. The print
+is measurably an average. *Reported against the ruling*: MISO's own IMM benchmarks marginal cost
+on the **bare** hub with no adder (2024 SOM Appendix p.14), which is evidence for the miso-224
+form and is recorded rather than omitted.
+
+**The coal self-commitment floor the queue head chartered was REFUSED at phase 0** on rule 19
+`[R-ONE-MECH]`, from the keeper's own committed D-2: MISO COAL forced energy is **0.30 / 0.34 /
+0.17 %** of a 182–205 TWh class, one `reliability_floor` mechanism — coal is held in merit by
+economics, and miso-53 already adjudicated the per-plant CAMPD must-run band (29.3 %
+cap-weighted, 44 of 57 plants sourced from conduct, 17 at exactly 0) as the self-commitment
+representation, in the faithful offer-side price-taker form. A `min_gen` floor would take a
+material class from 0.3 % forced toward the C8 budget and owe a D-4 window it does not have.
+The 2025 MISO SOM — whose publication miso-53 itself named as the rule-23 re-derive trigger —
+was intaken as evidence instead (12 rows; source PDF verified byte-exact against the committed
+`SHA256SUMS.txt`): regulated coal must-run share of starts **56 / 53 / 61 %** for 2023/2024/2025,
+merchant 7 / 25 / 24 %, net revenue $5.75 / $8.01 / $17.43 per MWh, system mark-up +3.0 / −2.5 /
+−1.07 %.
+
+**The screen (2023, the footprint year), scored by a scorer committed blind before the solve.**
+S-2 PASS on the SOLVE log (both liveness lines, the fuel line carrying its transport clause,
+winter-shape absent). **G-1 PASS: body −$1.917** inside the pre-registered [−4.464, −1.488],
+64 % of the −2.976 static; tail −3.473, annual LW −1.913. **G-4 PASS with no flips and no
+inconclusive cells, and both ex-ante numeric predictions held**: COAL_PRB −1.557 → **−6.586**
+(PREREG predicted −6 to −7), CC_REGULAR −4.172 → **+4.018** (predicted +1 to +4) — the two
+cells that flipped to −11.88 and +12.60 and killed miso-224 — and CT_PEAKER, the keeper's
+fragile edge at 0.015 TWh of headroom, moves **toward** actual. The measured transport is what
+did it. **KILLED on G-3 by 37 MW**: coal −404 MW against a required −441, i.e. **0.275×** the
+static against a 0.30× line — the *same* conversion ratio miso-224 measured (0.27×) at 2.3× the
+fuel move, so the LP's cheap-hour coal is held by something the static stack does not carry and
+that scales with neither the fuel move nor the price. Also killed on **G-2** (below) and on
+**S-1**, which this time failed on a *real* fourth difference — `ccs_retrofit_vom_adder`
+8.0 → 2.95 from capx D65-B on `main`, G-DRIFT-classified INERT before the solve (forecast-only,
+inert below 2028) but a genuine config difference; disclosed, scorer not edited.
+
+**The seam result is the more instructive half.** Every PJM import band came out $2.3–4.6
+cheaper and imports still **fell** (−75 MW in the cheap hours, −0.693 TWh annual). Attributed
+against the fuel arm's own price move — miso-224 lost −11.85 TWh at a −4.11 body, so scaled to
+−1.917 the fuel leg alone would have lost ≈ −5.53 — **the neighbour anchor recovered ≈ +4.8 TWh
+of imports**. Real work; it simply could not reverse the sign, which is what G-2 as frozen
+demanded, and the gate is not renegotiated. The structural reason is the finding: **an anchor
+changes a fixed ladder's LEVELS, not its RESPONSIVENESS**. The ladder still clears against
+MISO's own internal price, so its bands still leave merit when that price falls — and here both
+moved at once, with the price fall dominating. Phase 0 measured the level change and *inferred*
+the response; the LP falsified the inference.
+
+**Reported against interest.** ST_GAS moved 3.35 TWh **away** from actual (+0.544 → −2.806) —
+its `v` is $1.288/MMBtu, so the ruled arm makes steam gas relatively dearer — the largest
+adverse cell. The body fall reduces the positive-body/negative-tail cancellation that makes
+C3a-2023 pass. And the first launch of this screen completed both LP passes and then died in
+post-solve bookkeeping on a `__post_init__` cross-field guard of my own that was at the wrong
+layer (a config is assembled by long `with_overrides` chains in which an overlay pair is
+legitimately split); both guards were moved to the point of use, disclosed in PRECOMMIT
+Addendum A and pushed **before** any gate was scored or any arm output read, and the partial
+bundle was deleted so the scored run is one code state throughout. Cost: one 582-second LP.
+
+**Both MISO cells stay `O`, not `R`.** `gas_variable_transport` is the owner-ruled convention,
+did what its arithmetic claimed on price, and cleared the C1 gate that killed its predecessor;
+it failed a coal-*response* fraction, which is a statement about what holds MISO's coal.
+`seam_neighbour_anchored_ladder` failed inside a **joint** arm whose partner moved the variable
+it clears against, and the attribution measures it doing ≈ +4.8 TWh of real work.
+
+**Queue head for miso-226, in priority order.** (1) **The seam arm ALONE**, no fuel arm, one LP:
+with MISO's price unmoved, cheaper bands must raise imports — a direct, unconfounded read of the
+anchor's own effect, and the cheapest open question on the board. (2) **The commitment object
+G-3 named**: cheap-hour coal held at 0.275× the static by something that is not forcing (D-2:
+0.30 % of the class) and does not scale with the fuel move — the candidate is the P0-detected
+run pattern plus the take-or-pay committed band, and it is a commitment question, not a fuel
+one. DOF ledger unchanged at 41/2; zero fitted scalars minted.
+Records: `PRECOMMIT-miso225-transport-seam-joint-2026-09-06.md` (+ Addendum A),
+`FINDING-miso225-transport-seam-joint-2026-09-06.md`, `_miso225_*.json`.

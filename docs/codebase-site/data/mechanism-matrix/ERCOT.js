@@ -171,6 +171,8 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     gas_hub_basis_overlay: { cell: "U" },
     nyiso_iroquois_winter_spread: { cell: "." },
     gas_marginal_commodity_pricing: { cell: "." },
+    gas_variable_transport: { cell: "." },
+    seam_neighbour_anchored_ladder: { cell: "." },
     winter_citygate_daily: { cell: "U" },
     dual_fuel_switching: { cell: "U" },
     gas_price_override: { cell: "K" },

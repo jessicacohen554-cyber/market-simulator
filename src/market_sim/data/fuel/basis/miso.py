@@ -294,6 +294,88 @@ def apply_miso_winter_citygate_daily(
 _MISO_HENRY_HUB_PREFIXES: tuple[str, ...] = ("gulf",)
 
 
+#: The derived per-plant VARIABLE transport table (rule 23 ``[R-FROZEN-DERIVE]``),
+#: written by ``scripts/data/derive_miso_gas_variable_transport.py`` from EIA-923
+#: receipts against the same daily hub staircases this module prices gas rows
+#: from.  Its sibling ``.pool.csv`` carries the declared fallback rungs.
+MISO_GAS_VARIABLE_TRANSPORT_PATH = (
+    Path(__file__).resolve().parents[4].parent
+    / "data/raw/reference/miso_gas_variable_transport.csv"
+)
+
+_TRANSPORT_CACHE: dict[Path, tuple[dict[int, float], dict[str, float], dict[str, float], float]] = {}
+
+
+def _load_miso_gas_variable_transport(
+    path: Path | None = None,
+) -> tuple[dict[int, float], dict[str, float], dict[str, float], float]:
+    """Return ``(by_plant, by_zone_group, by_group, miso_wide)`` transport rungs.
+
+    The four rungs of the declared fallback ladder — own plant, ``zone|group``,
+    ``group``, MISO-wide — in the order a consumer walks them.  Cached per path.
+    An absent table yields empty rungs and a zero ISO-wide value; the caller
+    (:func:`apply_miso_gas_marginal_commodity`) fails closed on that rather than
+    silently pricing at the bare hub.
+    """
+    import csv
+
+    resolved = Path(path) if path else MISO_GAS_VARIABLE_TRANSPORT_PATH
+    if resolved in _TRANSPORT_CACHE:
+        return _TRANSPORT_CACHE[resolved]
+    by_plant: dict[int, float] = {}
+    by_zone_group: dict[str, float] = {}
+    by_group: dict[str, float] = {}
+    miso_wide = 0.0
+    if resolved.exists():
+        with resolved.open() as handle:
+            rows = [ln for ln in handle if not ln.startswith("#")]
+        for row in csv.DictReader(rows):
+            by_plant[int(row["plant_id"])] = float(row["v_usd_mmbtu"])
+        pool = resolved.with_suffix(".pool.csv")
+        if pool.exists():
+            with pool.open() as handle:
+                for row in csv.DictReader(handle):
+                    value = float(row["v_usd_mmbtu"])
+                    if row["rung"] == "zone_group":
+                        by_zone_group[row["key"]] = value
+                    elif row["rung"] == "group":
+                        by_group[row["key"]] = value
+                    else:
+                        miso_wide = value
+    out = (by_plant, by_zone_group, by_group, miso_wide)
+    _TRANSPORT_CACHE[resolved] = out
+    return out
+
+
+def _miso_gas_variable_transport_vector(
+    fleet: FleetArrays,
+    rows: np.ndarray,
+    zone_names: tuple[str, ...] | list[str],
+    path: Path | None = None,
+) -> np.ndarray:
+    """Return the per-row variable transport ($/MMBtu) for ``rows``, ladder applied.
+
+    Walks the declared ladder for each row: the plant's own measured ``v``, else
+    its ``zone|group`` pooled rung, else its ``group`` rung, else the MISO-wide
+    rung.  A row with no ``plant_code`` (an aggregated bin) starts at the
+    ``zone|group`` rung, which is the finest rung it can be attributed to.
+    """
+    by_plant, by_zone_group, by_group, miso_wide = _load_miso_gas_variable_transport(path)
+    groups = getattr(fleet, "plant_group", None)
+    out = np.empty(rows.size, dtype=float)
+    for i, g in enumerate(rows):
+        code = int(fleet.plant_code[g]) if fleet.plant_code is not None else 0
+        if code and code in by_plant:
+            out[i] = by_plant[code]
+            continue
+        group = str(groups[g]) if groups is not None else ""
+        zone = zone_names[int(fleet.zone_idx[g])]
+        out[i] = by_zone_group.get(
+            f"{zone}|{group}", by_group.get(group, miso_wide)
+        )
+    return out
+
+
 def _miso_zone_hub_kind(year: int, path: Path | None = None) -> dict[str, str]:
     """Return ``{zone: 'chicago' | 'henry'}`` from the published MISO hub table.
 
@@ -324,6 +406,7 @@ def apply_miso_gas_marginal_commodity(
     path: Path | None = None,
     citygate_path: Path | None = None,
     henry_hub_path: Path | None = None,
+    transport_path: Path | None = None,
 ) -> np.ndarray | None:
     """Reprice EVERY MISO gas unit at the measured daily hub spot for its zone.
 
@@ -365,6 +448,26 @@ def apply_miso_gas_marginal_commodity(
     row — the zone's hub already IS its regional level. Dual-fuel oil parity still
     runs afterwards and caps any winter blowout.
 
+    ``config.miso_gas_variable_transport`` (miso-225) completes the offer the first
+    sentence names. The owner ruled 2026-09-06, on this module's own miso-212 §8 /
+    miso-224 §5 question, that a MISO gas offer is priced at marginal commodity
+    **plus variable transport** — so the bare hub above is only half of it, and
+    pricing at the bare hub is what killed the miso-224 arm on its dispatch gates
+    (gas took 25 TWh from coal and imports because a real delivery cost had been
+    removed with the demand charges). Armed, each gas row additionally carries its
+    plant's MEASURED volume-invariant wedge over the hub, from the frozen derive
+    ``scripts/data/derive_miso_gas_variable_transport.py`` (rule 23): the intercept
+    of ``print - hub = v + F/burn`` over that plant's own 2023-2025 receipts, which
+    keeps the usage charge, fuel retention and delivery-point basis it pays on the
+    NEXT MMBtu and drops the reservation/demand charges it does not. Measured
+    fleet-wide at ``v`` = $0.744/MMBtu capacity-weighted against a $1.179 total
+    wedge, and for the margin-setting CC_REGULAR class $0.209 against $0.452 — so
+    the ruled form drops 54 % of that class's print premium where the bare hub
+    dropped 100 %. Zero fitted scalars; one value per plant across every scored
+    year (rule 1 condition (b)). The flag is meaningless without the hub repricing
+    and is refused on its own (rule 19: a transport adder ON TOP of the average
+    print would double-count the transport the print already amortizes).
+
     Gated on ``config.miso_gas_marginal_commodity_pricing`` (off by default,
     byte-identical off). MISO-scoped: arming it on another ISO is a HARD ERROR
     (rule 25 — the cross-ISO cost-convention question is owner court, miso-212
@@ -375,6 +478,14 @@ def apply_miso_gas_marginal_commodity(
     when off. Mutates ``fuel_prices`` in place; idempotent.
     """
     if not getattr(config, "miso_gas_marginal_commodity_pricing", False):
+        if getattr(config, "miso_gas_variable_transport", False):
+            raise ValueError(
+                "miso_gas_variable_transport requires "
+                "miso_gas_marginal_commodity_pricing: variable transport is an "
+                "adder over the TRADED HUB, and adding it to the EIA-923 average "
+                "print would double-count the transport that print already "
+                "amortizes (rule 19 [R-ONE-MECH])"
+            )
         return None
     if config.iso.upper() != "MISO":
         raise ValueError(
@@ -418,16 +529,33 @@ def apply_miso_gas_marginal_commodity(
     zone_kind = np.array(
         [kind_by_zone.get(zn, "chicago") for zn in zone_names], dtype=object
     )
+    transport = None
+    if getattr(config, "miso_gas_variable_transport", False):
+        by_plant, _, _, _ = _load_miso_gas_variable_transport(transport_path)
+        if not by_plant:
+            raise ValueError(
+                f"MISO {year}: miso_gas_variable_transport is armed but the derived "
+                "table data/raw/reference/miso_gas_variable_transport.csv is absent "
+                "or empty; refusing to price gas at the BARE hub, which is the "
+                "miso-224 arm the owner ruling superseded"
+            )
+        transport = _miso_gas_variable_transport_vector(
+            fleet, gas_rows, tuple(zone_names), transport_path
+        )
     for kind in ("chicago", "henry"):
-        sel = gas_rows[zone_kind[fleet.zone_idx[gas_rows]] == kind]
+        mask = zone_kind[fleet.zone_idx[gas_rows]] == kind
+        sel = gas_rows[mask]
         if sel.size == 0:
             continue
-        fuel_prices[sel, :] = np.maximum(series[kind][np.newaxis, :], _GAS_PRICE_FLOOR)
+        level = series[kind][np.newaxis, :]
+        if transport is not None:
+            level = level + transport[mask][:, np.newaxis]
+        fuel_prices[sel, :] = np.maximum(level, _GAS_PRICE_FLOOR)
         written[sel, :] = True
     logger.info(
         "MISO gas marginal-commodity pricing (%d): %d gas units repriced at the "
         "measured daily hub spot (Chicago Citygate %.2f..%.2f, Henry Hub %.2f..%.2f "
-        "$/MMBtu); EIA-923 average prints, the winter shape overlay and the zonal "
+        "$/MMBtu) %s; EIA-923 average prints, the winter shape overlay and the zonal "
         "basis increment superseded on these rows (rule 19)",
         year,
         gas_rows.size,
@@ -435,5 +563,12 @@ def apply_miso_gas_marginal_commodity(
         float(series["chicago"].max()),
         float(series["henry"].min()),
         float(series["henry"].max()),
+        (
+            "PLUS the derived per-plant variable transport "
+            f"({float(transport.min()):+.3f}..{float(transport.max()):+.3f}, "
+            f"mean {float(transport.mean()):+.3f} $/MMBtu)"
+            if transport is not None
+            else "with NO transport adder (the bare-hub miso-224 form)"
+        ),
     )
     return written

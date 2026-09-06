@@ -1,0 +1,199 @@
+{
+ "probe": "miso-225 screen gates (2023, blind) \u2014 the OWNER-RULED joint arm",
+ "arm": "results/calibration/miso225_ruled_S",
+ "keeper": "2026-09-05-miso-220-nonsteam-lift",
+ "control": "form 4 \u2014 the committed keeper (G-DRIFT cbcd3d33..d1aa877f ALL INERT)",
+ "solve_log": "/tmp/claude-0/-home-user-market-simulator/57acda7b-c213-5d4e-b7a7-a59a9caf5ccb/scratchpad/logs/miso225_screen2.log",
+ "gates": {
+  "S1": {
+   "pass": false,
+   "armed_fields": {
+    "miso_gas_marginal_commodity_pricing": {
+     "arm_value": true,
+     "keeper_value": "<absent>",
+     "ok": true
+    },
+    "miso_gas_variable_transport": {
+     "arm_value": true,
+     "keeper_value": "<absent>",
+     "ok": true
+    },
+    "miso_seam_neighbour_anchored_ladder": {
+     "arm_value": true,
+     "keeper_value": "<absent>",
+     "ok": true
+    }
+   },
+   "other_diffs": [
+    "ccs_retrofit_vom_adder"
+   ],
+   "year_scoped_diffs": [],
+   "fields_absent_from_keeper": [
+    "capacity_adequacy_requirement_published_by_iso",
+    "capacity_going_forward_bar_published_by_iso",
+    "capacity_no_default_cap_convention_by_iso",
+    "cc_duct_peaking_row_scoped",
+    "ccs_retrofit_fixed_cost_co2_scaling",
+    "federal_ces_acp_usd_per_mwh",
+    "federal_ces_target_by_year",
+    "miso_gas_marginal_commodity_pricing",
+    "miso_gas_variable_transport",
+    "miso_seam_neighbour_anchored_ladder",
+    "nyiso_ct_peaker_bands_measured",
+    "nyiso_gas_bridge_startup_aware",
+    "unit_outage_extract_basis_share",
+    "voluntary_clean_demand_path",
+    "voluntary_eligible_fuels",
+    "voluntary_wtp_ceiling_usd_per_mwh"
+   ]
+  },
+  "S2": {
+   "solve_log_checked": true,
+   "mechanism_line_in_solve_log": true,
+   "transport_clause_in_solve_log": true,
+   "winter_shape_overlay_line_in_solve_log": false,
+   "neighbour_seam_line_in_solve_log": true,
+   "pass": true
+  },
+  "G1": {
+   "pass": true,
+   "band": [
+    -4.464,
+    -1.488
+   ],
+   "static_prediction": -2.976,
+   "keeper_body_mean": 33.342,
+   "arm_body_mean": 31.424,
+   "delta": -1.917,
+   "lw_body_delta_report_only": -1.773,
+   "tail_delta_report_only": -3.473,
+   "annual_lw_delta_report_only": -1.913
+  },
+  "G2": {
+   "pass": false,
+   "min_cheap_hour_delta_mw": 150.0,
+   "n_cheap_hours": 1230,
+   "keeper_cheap_hour_import_mw": 3043.0,
+   "arm_cheap_hour_import_mw": 2968.0,
+   "cheap_hour_delta_mw": -75.0,
+   "annual_delta_twh": -0.693,
+   "keeper_annual_twh": 45.754,
+   "arm_annual_twh": 45.061
+  },
+  "G3": {
+   "pass": false,
+   "n_hours": 1230,
+   "coal_delta_mw": -404.0,
+   "gas_delta_mw": 585.0,
+   "coal_required_mw": -441.0,
+   "gas_required_mw": 445.0,
+   "static_coal_mw": -1470.0,
+   "static_gas_mw": 1483.0,
+   "keeper_coal_mw": 18349.0,
+   "arm_coal_mw": 17945.0,
+   "keeper_gas_mw": 18502.0,
+   "arm_gas_mw": 19087.0
+  },
+  "G4": {
+   "pass": true,
+   "flips_pass_to_fail": [],
+   "inconclusive_within_approximation": [],
+   "vol_band_twh": 8.0,
+   "load_twh": 640.993,
+   "a_gen_twh": 616.259,
+   "c2_scored": false,
+   "note": "C2 (system-volume family) is UNSCORED ex ante: a single-year replay writes no metrics.json.",
+   "cells": {
+    "CC_CHP": {
+     "actual": 21.311,
+     "keeper_model": 19.627,
+     "keeper_err": -1.684,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 20.658,
+     "arm_err": -0.653,
+     "arm_share_pp": 0.0,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 1.031
+    },
+    "CC_REGULAR": {
+     "actual": 141.817,
+     "keeper_model": 137.645,
+     "keeper_err": -4.172,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 145.835,
+     "arm_err": 4.018,
+     "arm_share_pp": 1.43,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 8.189
+    },
+    "CT_PEAKER": {
+     "actual": 17.038,
+     "keeper_model": 9.053,
+     "keeper_err": -7.985,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 9.424,
+     "arm_err": -7.614,
+     "arm_share_pp": -1.19,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 0.37
+    },
+    "ST_CHP": {
+     "actual": 5.203,
+     "keeper_model": 2.53,
+     "keeper_err": -2.672,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 3.042,
+     "arm_err": -2.161,
+     "arm_share_pp": -0.33,
+     "arm_pass": true,
+     "class_hourly_delta_twh": 0.512
+    },
+    "ST_GAS": {
+     "actual": 13.94,
+     "keeper_model": 14.483,
+     "keeper_err": 0.544,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 11.134,
+     "arm_err": -2.806,
+     "arm_share_pp": -0.4,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -3.349
+    },
+    "COAL_PRB": {
+     "actual": 121.671,
+     "keeper_model": 120.114,
+     "keeper_err": -1.557,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 115.085,
+     "arm_err": -6.586,
+     "arm_share_pp": -0.45,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -5.029
+    },
+    "COAL_LIGNITE": {
+     "actual": 7.047,
+     "keeper_model": 6.382,
+     "keeper_err": -0.665,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 6.146,
+     "arm_err": -0.901,
+     "arm_share_pp": -0.11,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -0.236
+    },
+    "COAL_BIT": {
+     "actual": 57.069,
+     "keeper_model": 54.146,
+     "keeper_err": -2.923,
+     "keeper_pass": true,
+     "arm_model_delta_transfer": 52.939,
+     "arm_err": -4.13,
+     "arm_share_pp": -0.39,
+     "arm_pass": true,
+     "class_hourly_delta_twh": -1.207
+    }
+   }
+  }
+ },
+ "verdict": "ARM KILLED ON S1, G2, G3"
+}

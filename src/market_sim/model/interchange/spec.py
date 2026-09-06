@@ -1306,6 +1306,81 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 }
 
 
+# miso-225 — the NEIGHBOUR-ANCHORED PJM seam ladder (the D-2 5(i) repair, armed
+# by ScenarioConfig.miso_seam_neighbour_anchored_ladder, default off).
+#
+# THE DEFECT.  Every band above is priced at a quantile of MISO's OWN DA hub, so
+# an import's merit position moves with the model's own price: when MISO clears
+# cheaply the bands go out of merit and imports contract.  The real market does
+# the OPPOSITE.  Measured on the same EIA-930 record the ladder above is derived
+# from: in the hours MISO's DA cleared below $20 the seam carried **6,021 MW**
+# (2023) against a 4,674 MW all-hours mean — MISO imports MOST when it is
+# cheapest, because the neighbour is cheaper still.  miso-224 §4.2 sized the
+# consequence: an arm that lowers MISO's price cuts imports to 1.45 GW in exactly
+# those hours against a measured 4.89 GW.
+#
+# THE REPAIR (owner ruling 2026-09-06, the ONE admissible form).  An import is
+# offered at the EXPORTING market's own measured price, so its merit position
+# depends on the neighbour's supply cost — the real driver — and not on MISO's.
+# The construction is byte-for-byte the one above (same Q-Q duration coupling,
+# same midpoint-depth grid on the same SEAM_FLOW_TRANCHES, same measured seam
+# flows, same same-seam no-wash reconciliation); the ONLY change is which
+# measured price series the coupling reads: the PJM western-border DA
+# (data/raw/_validation-source/pjm_border_lmp_hourly_MISO.parquet), which the
+# incumbent derivation already loads as its own interpretability anchor.  Zero
+# fitted parameters; identical rule-23 re-derive trigger.
+#
+# WHAT IT MOVES (scripts/probes/_miso225_seam_neighbour_phase0.py, zero-LP): the
+# neighbour anchor lowers EVERY import band in EVERY year — bands 1-4 by a mean
+# of -$3.81 / -$3.03 / -$2.32 in 2023 / 2024 / 2025 — and in the MISO sub-$20
+# hours the PJM border price is the cheaper of the two in 85 / 80 / 74 % of
+# hours.  The two series correlate 0.81-0.88: related, so this is not a second
+# copy of MISO's own signal, and not identical, so the repricing is not cosmetic.
+#
+# PJM ONLY, and that is a DATA boundary, not a choice (rule 14 [R-ACCURATE]'s
+# misalignment clause): no measured SPP or SOCO/TVA price series is held under
+# data/raw, so those two seams keep the incumbent MISO-hub anchor and the gap is
+# stated here rather than papered over with a proxy.  Entries here OVERLAY the
+# table above per year and per seam — an absent year or seam falls through to the
+# incumbent ladder, so the flag is byte-identical off and partial by design.
+#
+# Derived by scripts/data/derive_miso_seam_ladders.py::derive_pjm_neighbour
+# (rule 23 [R-FROZEN-DERIVE] — re-derives ONLY when the EIA-930 or border-LMP
+# record extends; a re-derivation commit cites the data change).
+MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2023: {
+        "PJM": {
+            "import": (9.71, 12.74, 15.71, 20.11, 24.30, 28.80, 34.22, 41.96),
+            "export": (7.73, 7.02, 7.02, 7.02, 7.02, 7.02, 7.02, 7.02),
+        },
+    },
+    2024: {
+        "PJM": {
+            "import": (10.90, 13.45, 17.68, 22.52, 28.17, 35.63, 47.93, 67.64),
+            "export": (8.69, 7.55, 7.48, 7.48, 7.48, 7.48, 7.48, 7.48),
+        },
+    },
+    2025: {
+        "PJM": {
+            "import": (18.07, 23.32, 29.54, 36.12, 44.43, 57.39, 78.08, 110.74),
+            "export": (13.99, 11.17, 11.17, 11.17, 11.17, 11.17, 11.17, 11.17),
+        },
+    },
+}
+
+#: The pooled 2023-2025 neighbour-anchored PJM ladder — the FORWARD story
+#: (rule 13): the multi-year revealed neighbour-priced seam structure a forecast
+#: year regenerates from, the same two-track design the incumbent ladder uses.
+MISO_SEAM_LADDER_NEIGHBOUR_POOLED: dict[str, dict[str, tuple[float, ...]]] = {
+    "PJM": {
+        "import": (12.39, 15.87, 20.44, 25.30, 30.72, 37.50, 47.58, 65.30),
+        "export": (9.47, 7.48, 7.02, 7.02, 7.02, 7.02, 7.02, 7.02),
+    },
+}
+
+
 # PJM per-seam measured band-price ladders (the MISO/NEISO audit-C-6 pattern
 # applied to PJM; pjm-95 C1 root-cause lead "2023 interchange duration miss"):
 # the revealed seam supply curve, derived by scripts/data/derive_pjm_seam_ladders.py

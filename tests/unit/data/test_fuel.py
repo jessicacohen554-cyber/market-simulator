@@ -2943,3 +2943,91 @@ def test_miso_gas_marginal_commodity_is_miso_scoped():
     )
     with pytest.raises(ValueError, match="MISO-scoped"):
         fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)
+
+
+# ---------------------------------------------------------------------------
+# miso-225: the owner-ruled form — marginal commodity PLUS variable transport
+# ---------------------------------------------------------------------------
+
+
+def test_miso_gas_variable_transport_off_is_byte_identical():
+    """Transport off -> the arm is exactly the miso-224 bare-hub form."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    bare = _miso_winter_base(fleet)
+    config = ScenarioConfig(
+        iso="MISO",
+        mode="backcast",
+        hours=_MISO_WINTER_HOURS,
+        miso_gas_marginal_commodity_pricing=True,
+    )
+    fuel.apply_miso_gas_marginal_commodity(bare, fleet, config, 2024)
+    again = _miso_winter_base(fleet)
+    fuel.apply_miso_gas_marginal_commodity(
+        again, fleet, config.with_overrides(miso_gas_variable_transport=False), 2024
+    )
+    np.testing.assert_array_equal(again, bare)
+
+
+def test_miso_gas_variable_transport_requires_the_hub_repricing():
+    """Rule 19: a transport adder on top of the AVERAGE print double-counts.
+
+    Enforced AT THE POINT OF USE, which is the layer that actually fails closed:
+    the applier runs on every backcast path, so an armed-alone transport flag can
+    never reach a price. A ``__post_init__`` check was tried and REMOVED (miso-225
+    Addendum A) — a config is assembled by long chains of ``with_overrides`` in
+    which a pair is legitimately split, so validating there rejected a correct run
+    after its LP had already finished.
+    """
+    fleet = _miso_gas_fleet(48)
+    prices = np.full((fleet.n_gen, 48), 3.0)
+    config = ScenarioConfig(
+        iso="MISO", mode="backcast", hours=48, miso_gas_variable_transport=True
+    )
+    with pytest.raises(ValueError, match="requires miso_gas_marginal_commodity_pricing"):
+        fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)
+
+
+def test_miso_gas_variable_transport_lifts_every_row_above_the_bare_hub():
+    """Armed, each gas row sits at its hub PLUS its own measured, non-zero adder."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    config = ScenarioConfig(
+        iso="MISO",
+        mode="backcast",
+        hours=_MISO_WINTER_HOURS,
+        miso_gas_marginal_commodity_pricing=True,
+    )
+    bare = _miso_winter_base(fleet)
+    fuel.apply_miso_gas_marginal_commodity(bare, fleet, config, 2024)
+    with_transport = _miso_winter_base(fleet)
+    written = fuel.apply_miso_gas_marginal_commodity(
+        with_transport,
+        fleet,
+        config.with_overrides(miso_gas_variable_transport=True),
+        2024,
+    )
+    assert written is not None and written.all()
+    # The fixture's units carry no plant_code, so every row resolves down the
+    # declared ladder to its zone|group (or group) rung -- which is the point of
+    # the ladder: 30 % of MISO gas nameplate has no EIA-923 receipt at all.
+    delta = with_transport - bare
+    # A constant-in-time adder per row (the transport is a $/MMBtu level, the
+    # hub carries all the shape).
+    for row in range(fleet.n_gen):
+        assert np.ptp(delta[row]) == pytest.approx(0.0, abs=1e-9)
+    assert np.abs(delta).max() > 0.0
+
+
+def test_miso_gas_variable_transport_table_is_measured_and_nonempty():
+    """The frozen derive's table exists, and its own-plant rung dominates it."""
+    from market_sim.data.fuel.basis import miso as fuel_basis_miso
+
+    by_plant, _by_zone_group, by_group, miso_wide = (
+        fuel_basis_miso._load_miso_gas_variable_transport()
+    )
+    assert len(by_plant) > 50, "the derived per-plant transport table is missing"
+    assert by_group, "the declared class fallback rung is missing"
+    assert miso_wide != 0.0
+    # Measured, not chosen: the table carries both signs (MidCon plants priced
+    # off the Chicago proxy really do buy under the index) and is never clipped.
+    values = list(by_plant.values())
+    assert min(values) < 0.0 < max(values)

@@ -4553,6 +4553,20 @@ def run_year(
         # 2025 import starvation) clears economically. Runs LAST among the
         # seam price overwrites — displaces the border-anchor / PJM-LMP
         # prices on the rows it covers (alternatives, never stacked).
+        # miso-225: the neighbour-anchored overlay is meaningless without the
+        # ladder it overlays, and the block below would silently skip it — the
+        # fail-open this repo refuses. Checked here, at the point of use, on the
+        # complete as-solved config (a __post_init__ check sees intermediate
+        # configs in which the pair is legitimately split; miso-225 Addendum A).
+        if getattr(config, "miso_seam_neighbour_anchored_ladder", False) and not getattr(
+            config, "miso_seam_measured_ladder", False
+        ):
+            raise ValueError(
+                "miso_seam_neighbour_anchored_ladder requires "
+                "miso_seam_measured_ladder: the neighbour-anchored PJM entry "
+                "OVERLAYS the measured Q-Q ladder, and there is nothing to "
+                "overlay when the ladder itself is off (rule 19 [R-ONE-MECH])"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
@@ -4563,13 +4577,25 @@ def run_year(
                 inject_miso_seam_ladder_prices,
             )
 
-            if inject_miso_seam_ladder_prices(fleet_arrays, mc_base, iso, year):
+            neighbour = bool(
+                getattr(config, "miso_seam_neighbour_anchored_ladder", False)
+            )
+            if inject_miso_seam_ladder_prices(
+                fleet_arrays, mc_base, iso, year, neighbour_anchored=neighbour
+            ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
-                    "ladders (EIA-930 flow durations x MISO DA hub quantiles; "
+                    "ladders (EIA-930 flow durations x %s; "
                     "PJM/SPP/South, import + export; no added hurdle)",
                     iso,
                     year,
+                    (
+                        "PJM WESTERN-BORDER DA quantiles on the PJM seam "
+                        "(miso-225 neighbour-anchored), MISO DA hub quantiles "
+                        "on SPP/South"
+                        if neighbour
+                        else "MISO DA hub quantiles"
+                    ),
                 )
         # [measured: per-seam Q-Q band ladders — PJM settlement-grade tie-line
         #  flow duration curves coupled with the measured PJM DA system LMP

@@ -282,6 +282,7 @@ def inject_miso_seam_ladder_prices(
     mc: np.ndarray,
     iso: str,
     year: int,
+    neighbour_anchored: bool = False,
 ) -> bool:
     """Overwrite MISO's seam band rows of ``mc`` with the measured Q-Q ladders.
 
@@ -300,6 +301,19 @@ def inject_miso_seam_ladder_prices(
     hourly spread (the flow the hurdle-gated spot-spread pricing structurally
     deletes; G-23 2025 import starvation).
 
+    ``neighbour_anchored`` (miso-225,
+    ``ScenarioConfig.miso_seam_neighbour_anchored_ladder``) overlays the
+    NEIGHBOUR-priced PJM ladder
+    (:data:`~market_sim.config.interchange_config.MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR`)
+    on top of the per-year table: the identical Q-Q construction read off the PJM
+    western-border DA instead of MISO's own hub, so an import's merit position
+    depends on the EXPORTING market's supply cost rather than on the model's own
+    price. That is the owner-ruled (2026-09-06) form of the D-2 5(i) seam object,
+    and it is the only one admitted. Per seam and per year: SPP and South carry
+    no measured neighbour price under ``data/raw`` and fall through to the
+    incumbent anchor unchanged, so the argument is byte-identical when ``False``
+    and deliberately partial when ``True``.
+
     No hurdle is added on top: the ladder prices are revealed clearing
     thresholds that already embed delivery/wheeling costs. Band capacities,
     the measured (month × hour-of-day) seam deliverability envelopes
@@ -314,11 +328,22 @@ def inject_miso_seam_ladder_prices(
     to the gas-elastic reference-price formula, the hr_by_year two-track
     design).
     """
-    from market_sim.config.interchange_config import MISO_SEAM_LADDER_BY_YEAR
+    from market_sim.config.interchange_config import (
+        MISO_SEAM_LADDER_BY_YEAR,
+        MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
+    )
 
     if iso != "MISO":
         return False
-    return _inject_seam_ladder(fleet_arrays, mc, MISO_SEAM_LADDER_BY_YEAR.get(year))
+    ladder = MISO_SEAM_LADDER_BY_YEAR.get(year)
+    if neighbour_anchored and ladder is not None:
+        overlay = MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR.get(year)
+        if overlay:
+            # Per-seam overlay: a seam absent from the neighbour table (SPP,
+            # South — no measured neighbour price exists under data/raw) keeps
+            # its incumbent MISO-hub-anchored ladder untouched.
+            ladder = {**ladder, **overlay}
+    return _inject_seam_ladder(fleet_arrays, mc, ladder)
 
 
 def split_miso_south_external_node(iso_config: ISOConfig) -> ISOConfig:

@@ -1,0 +1,93 @@
+{
+  "generated_by": "scripts/probes/_miso225_wedge_anatomy_phase0.py",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "a_fixed_leg": {
+    "n_plants": 98,
+    "mw": 45444.799999999996,
+    "v_cap_wtd": 0.8834466233938435,
+    "fixed_leg_cap_wtd": 0.36917807106467415,
+    "mean_wedge_cap_wtd": 2.026118756767194,
+    "fixed_leg_p50": 0.04846350972579013,
+    "fixed_leg_p90": 0.9802152306010878,
+    "by_class": {
+      "CC_REGULAR": {
+        "n_plants": 37,
+        "mw": 24694.899999999998,
+        "v_cap_wtd": 0.23589411256061596,
+        "fixed_leg_cap_wtd": 0.23388201865176508,
+        "mean_wedge_cap_wtd": 0.8409929072761192,
+        "fixed_share_of_wedge": 0.2781022486970579
+      },
+      "CT_PEAKER": {
+        "n_plants": 49,
+        "mw": 14003.0,
+        "v_cap_wtd": 1.733961655998547,
+        "fixed_leg_cap_wtd": 0.47294020238617135,
+        "mean_wedge_cap_wtd": 2.8251352500061757,
+        "fixed_share_of_wedge": 0.16740444634823679
+      },
+      "ST_CHP": {
+        "n_plants": 3,
+        "mw": 469.69999999999993,
+        "v_cap_wtd": 0.08436840996574367,
+        "fixed_leg_cap_wtd": 1.5387422411467693,
+        "mean_wedge_cap_wtd": 1.8090972014927325,
+        "fixed_share_of_wedge": 0.8505580793984501
+      },
+      "ST_GAS": {
+        "n_plants": 9,
+        "mw": 6277.200000000001,
+        "v_cap_wtd": 1.5934462307122303,
+        "fixed_leg_cap_wtd": 0.5824574104435473,
+        "mean_wedge_cap_wtd": 4.922294027633838,
+        "fixed_share_of_wedge": 0.11833047907614254
+      }
+    }
+  },
+  "b_lag_test": {
+    "all": {
+      "n": 3643,
+      "corr_wedge_level_vs_hub_level": -0.019436887829919522,
+      "corr_dwedge_vs_dhub": -0.05881358961666789,
+      "slope_dwedge_on_dhub": -0.6872611635802965
+    },
+    "CC_REGULAR": {
+      "n": 1251,
+      "corr_wedge_level_vs_hub_level": -0.014221525545034553,
+      "corr_dwedge_vs_dhub": -0.08667704770774966,
+      "slope_dwedge_on_dhub": -0.7639924233541652
+    }
+  },
+  "c_topquartile": {
+    "n_plants": 98,
+    "v_topq_cap_wtd": 0.9491053446860469,
+    "v_regression_cap_wtd": 0.8834466233938435,
+    "corr_two_estimators": 0.9752323727900688,
+    "by_class": {
+      "CC_REGULAR": {
+        "mw": 24694.899999999998,
+        "v_topq": 0.3848590679332578,
+        "v_reg": 0.23589411256061596
+      },
+      "CT_PEAKER": {
+        "mw": 14003.0,
+        "v_topq": 1.7221123533972975,
+        "v_reg": 1.733961655998547
+      },
+      "ST_CHP": {
+        "mw": 469.69999999999993,
+        "v_topq": 1.2208281492841497,
+        "v_reg": 0.08436840996574367
+      },
+      "ST_GAS": {
+        "mw": 6277.200000000001,
+        "v_topq": 1.4241515492803052,
+        "v_reg": 1.5934462307122303
+      }
+    }
+  }
+}
