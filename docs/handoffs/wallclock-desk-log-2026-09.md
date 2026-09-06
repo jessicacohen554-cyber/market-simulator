@@ -17,13 +17,13 @@ collision-map files) · `needs-revert` (strayed into another item's file) · `me
 | item | lever | prompt issued | model | worker session | branch | PR | gate state | merged sha | measured s/yr |
 |---|---|---|---|---|---|---|---|---|---|
 | A-1 | vectorize `cod_ramp._load_cod_map` | 2026-09-05 22:32 UTC (wave 1a) | claude-opus-5 | `session_01XqXmNuy2TJAAigPy7bAYWq` | `claude/wc-a1-cod-map-vectorize` (deleted after merge) | #4875 | **merged** (code + unit test only; baseline-doc row + CHANGELOG entry NOT landed — owed, see §2.5) | `fc05c5c3` (commit `be598ead`) | 16.8 → 0.41 s per process on the COD map (assessment §6.2; PR body empty, no phase line on record) |
-| A-2 | eGRID parquet mirror (both call sites) | 2026-09-05 22:32 UTC (wave 1b) | claude-opus-5 | `session_01B1av3LGXp9gjSBoqg85iFg` | `claude/wc-a2-egrid-mirror` | #4876 | **pr-open, CONFLICT** in `CHANGELOG.md` vs main (`mergeable_state: dirty`); gates present (three `frame.equals` True on the real workbook, 8 fast-tier tests, NEISO byte gate check [1] PASS, check [4] pre-existing by control); class BYTE-IDENTICAL; diff confined to the collision map (.gitignore, CHANGELOG, baseline doc, `egrid_sheets.py`, `fleet/eia860.py`, `zone_assignment.py`, test) | — | three `read_excel` calls 27.80 → 0.219 s; NEISO year-1 `data_prep` 71.3 → 46.1 s (−25 s, once per process) |
-| A-3 | band-sidecar vectorization + sidecars on the clock | 2026-09-05 22:45 UTC (wave 1c, handed to owner) | claude-fable-5-1 | owner-launched (`session_016yZoyAbBuop3K2kd8Bbfxo`) | `claude/wc-a3-band-sidecar-clock-hfflwe` | #4858 (code) + #4874 (evidence) | code **merged** via #4858; evidence PR #4874 **pr-open, CONFLICT** vs main (`dirty`, CHANGELOG); gates present (unit test 14/14, NEISO 3-yr byte gate check [1] PASS, 21 sidecars + dispatch frames sha-identical, check [4] pre-existing by control); class BYTE-IDENTICAL; `timing.py` untouched | `2b9e4219` (commit `4d5a59b2`) | band Categorical 15.63 → 0.16 s; writer 16.8 → 4.6 s on the NEISO 2023 frame; phase line now shows `sidecars` 8.0/5.9/7.2 s (2023/24/25) |
-| A-6 | `malloc_trim` at the cold-P1 seam | 2026-09-05 22:45 UTC (wave 1d, handed to owner) | claude-opus-5 | owner-launched | `claude/wc-a6-malloc-trim-p1-seam` | — | issued — **no branch and no PR on origin as of 2026-09-06 00:05 UTC** (not yet launched?) | — | — |
+| A-2 | eGRID parquet mirror (both call sites) | 2026-09-05 22:32 UTC (wave 1b) | claude-opus-5 | `session_01B1av3LGXp9gjSBoqg85iFg` | `claude/wc-a2-egrid-mirror` | #4876 | **merged** 2026-09-06 00:08 UTC (CHANGELOG conflict resolved by merge); gates present (three `frame.equals` True on the real workbook, 8 fast-tier tests, NEISO byte gate check [1] PASS, check [4] pre-existing by control); class BYTE-IDENTICAL; diff confined to the collision map; baseline row + CHANGELOG on main | `eb8ae4db` (commit `ddc907e1`) | three `read_excel` calls 27.80 → 0.219 s; NEISO year-1 `data_prep` **36.7 → 10.8 s (−25.9 s, −71 %) at post-A-1 base** (re-measured 2026-09-06; at the pre-A-1 base it read 71.3 → 46.1 s — the two wins do not add, A-1+A-2 together take y1 `data_prep` 71.3 → 10.8 s); once per process |
+| A-3 | band-sidecar vectorization + sidecars on the clock | 2026-09-05 22:45 UTC (wave 1c, handed to owner) | claude-fable-5-1 | owner-launched (`session_016yZoyAbBuop3K2kd8Bbfxo`) | `claude/wc-a3-band-sidecar-clock-hfflwe` | #4858 (code) + #4874 (evidence) | code **merged** via #4858; evidence PR #4874 **merged** 2026-09-06 00:14 UTC (`a85076d7`, CHANGELOG conflict resolved by merge); gates present (unit test 14/14, NEISO 3-yr byte gate check [1] PASS, 21 sidecars + dispatch frames sha-identical, check [4] pre-existing by control); class BYTE-IDENTICAL; `timing.py` untouched | `2b9e4219` (commit `4d5a59b2`) | band Categorical 15.63 → 0.16 s; writer 16.8 → 4.6 s on the NEISO 2023 frame; phase line now shows `sidecars` 8.0/5.9/7.2 s (2023/24/25) |
+| A-6 | `malloc_trim` at the cold-P1 seam | 2026-09-05 22:45 UTC (wave 1d, handed to owner) | claude-opus-5 | owner-launched | `claude/wc-a6-malloc-trim-p1-seam` | #4893 | code **merged** 2026-09-06 00:03 UTC (`src/market_sim/pipeline/solve.py` +12, NEW `src/market_sim/utils/heap.py::malloc_trim`; PR title says "merge-base control golden manifest" — it carried the BEFORE arm's manifest with the code). **Evidence OUTSTANDING**: no AFTER arm, no VmHWM before/after, no byte-gate reading, no baseline row, no CHANGELOG entry on main; PR body empty. Worker presumably still running (§2.8) | `b2bd9fdb` (commit `c2cb9a78`) | not yet measured |
 | A-5 | held CAMPD normalization (PERF-B change f) | desk action 2026-09-05 (wave 1e) | — | — | `claude/perf-b-apply-nabnpi` | #4579 | **merged 2026-09-02** (see §2.1) | `60a6d539` | PJM/MISO `bench` −64–71 % per PR #4579 |
 | B-0 | P1 basis-seed owner memo (+ the missing ERCOT bench) | 2026-09-05 22:45 UTC (wave 1f, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-b0-p1-seed-memo-9euk97` | #4862 (draft) + #4880 (bench) | **merged**, memo on main with the ERCOT forward-2025 OFF/ON bench and the §3/§6.3 placeholders filled; **UNSIGNED** — the Owner decision block (memo L366–377) has no box ticked and no signature (§2.6) | `8209201c` (commit `2d0900d0`) | bench: seed ON `solve_p1` 287.1 → 139.3 s, P1 iters 273,893 → 78,856, objective identical, total gen Δ 0 MWh, max Δ price 1.1e-12, 0 dual-degenerate hours, 16 unit-hours marginal-tie reshuffle; year total 717.4 → 581.5 s |
-| B | P1 basis seed on the cold-rebuild route | wave 2a — blocked on A-3 merged (✓ code), A-6 merged (✗ not started), B-0 memo SIGNED (✗ unsigned) | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | blocked (2 of 3 blockers open) | — | — |
-| A-4 | on-disk memo for the remaining year-1 caches | wave 2b — blocked on A-1 merged (✓), A-2 merged (✗ #4876 conflicted) | claude-opus-5 | — | `claude/wc-a4-year1-memo` | — | blocked (1 of 2 blockers open) | — | — |
+| B | P1 basis seed on the cold-rebuild route | wave 2a — A-3 merged ✓, A-6 merged ✓ (code), B-0 memo SIGNED ✗ | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | **blocked on the owner signature only**; prompt handed to owner 2026-09-06 00:20 UTC with a worker-side "stop if unsigned" check | — | — |
+| A-4 | on-disk memo for the remaining year-1 caches | 2026-09-06 00:20 UTC (wave 2b, handed to owner; A-1 ✓ A-2 ✓) | claude-opus-5 | owner-launched | `claude/wc-a4-year1-memo` | — | issued | — | — |
 | 3a | re-baseline anchor table on main | wave 3 — after every wave-1/2 PR merged or closed | claude-opus-5 | — | `claude/wc-3a-rebaseline` | — | blocked | — | n/a (docs) |
 
 ## 2. Decisions and findings
@@ -108,6 +108,32 @@ reshuffle across 11 of 2,335 units; basis export 16.9 s + apply 3.0 s; year `tot
 the owner ticks one and signs at memo L371–377. The desk issues 2a only after that AND
 A-6 is on main.
 
+### 2.8 A-6 merged ahead of its evidence
+
+The owner merged #4893 at 00:03 UTC; it carried the `malloc_trim` call, the new
+`utils/heap.py` helper and the merge-base control manifest (`results/regression-goldens/
+wc-a6-before`), i.e. the BEFORE arm only. The item's result — VmHWM at the second model's
+"after addRows" and the process peak, before vs after, and the byte gate on the AFTER arm —
+is not on main. The change is byte-identical by construction (a trim of already-freed heap),
+so the merge carries no correctness risk; the number is still owed. Expected as a docs +
+manifest follow-up PR from the same worker; the desk records A-6 `measured s/yr` as pending
+until then.
+
+### 2.9 Y-14 (R-AW) retired the `ERCOT__carveout-2023` capture key — wave-2/3 gates re-targeted
+
+Commit `18dadeb1` (merged 2026-09-05 23:2x UTC, `docs/FINDING-y14-ercot-golden-forward-2026-09-05.md`):
+the ERCOT stage-0 golden now captures the FORWARD config on {2024, 2025}; `ERCOT__forward`
+and bare `ERCOT` resolve identically, and `ERCOT__carveout-2023` is in
+`check_golden_manifest.RETIRED_CAPTURE_KEYS` and refused. The charter's 1d/2a/2b prompts
+named the carve-out key; from wave 2 on the ERCOT byte instrument is
+`--iso ERCOT` (forward, 2024 + 2025, ~2 × 12.5 GB-peak years) or one of its years. The
+2a and 2b prompts handed today say so.
+
+### 2.10 Desk-log branch
+
+The owner merged the desk log itself into main (#4886, `8ec83789`); the branch fast-forwards
+onto `origin/main` at each sweep and keeps its name.
+
 ## 3. Timeline
 
 | when (UTC) | event |
@@ -118,3 +144,4 @@ A-6 is on main.
 | 2026-09-05 22:40 | 1c / 1d / 1f launches held for approval |
 | 2026-09-05 22:44 | owner: desk must not launch sessions — prompts handed over as code blocks instead; 1c/1d/1f issued that way; first PR check-in scheduled +60 min |
 | 2026-09-06 00:05 | sweep #1: A-1 merged (#4875, docs owed); A-3 code merged (#4858), evidence #4874 conflicted; A-2 #4876 open + conflicted; B-0 merged (#4880) unsigned; A-6 not started. Follow-up prompts handed to owner |
+| 2026-09-06 00:20 | sweep #2 (owner: "A-2 and A-3 landed"): A-2 #4876 merged, A-3 evidence #4874 merged, A-6 #4893 merged code-only (evidence owed), memo still unsigned. 2b (A-4) handed to owner; 2a (B) handed with a stop-if-unsigned guard |
