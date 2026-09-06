@@ -487,3 +487,32 @@ and the memo path again after `cache_clear()` to force the on-disk hit.
 **⇒ Chain complete through `1aab49a0`; every hunk INERT for a CAISO backcast,
 with the two fleet-path files re-verified rather than carried forward on §1.1's
 earlier result. G-CTRL form 4 stands; no control solve spent.**
+
+### §1.7 — `1aab49a0` → `7a42c7c5`, and a note on how the rest of this audit will be kept
+
+6 files, +69 / −18. Four are `scripts/lib/load_forecast/*` (the intake package;
+no solve path imports it). The two in scope:
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `src/market_sim/config/constants.py` | +1 | **INERT** | one name added to an existing `from market_sim.config.capacity_market import (…)` block (`resolve_capacity_going_forward_bar_published`). A re-export made available, not a value changed — and the constant *values* audited in §1.5 are untouched. |
+| `src/market_sim/policy/carbon.py` | +27 | **INERT — RE-VERIFIED** | `float(resolution.price_adder)` → `float(resolution.price_adder or 0.0)`: a None-guard that can only change behaviour where the old code raised `TypeError`. Because carbon.py moved again, §1.4.1's measurement was re-run rather than carried forward — CAISO backcast carbon still **exactly** 33.03 / 35.23 / 28.06. |
+
+**How the remainder of this audit is kept, stated so it is a method and not a
+drift.** `main` is advancing several times an hour while the corpus downloads,
+and a section per delta is becoming less readable without becoming more
+truthful. The audit that actually binds under rule 29(b) is the one against the
+sha **the arm is solved at**, so:
+
+* the incremental sections above stand as the record of what was checked and
+  when — including the three occasions a delta touched a file a CAISO backcast
+  genuinely reads (§1.4.1 carbon, §1.5.1 demand growth, §1.6 the fleet path),
+  each measured on the number rather than argued;
+* the remaining pre-solve deltas are folded into **one consolidated re-audit
+  from the keeper's `fa23c1f7` to the solve-time HEAD**, recorded in the
+  FINDING before any LP is spent. A consolidated audit over the whole span is
+  strictly stronger than the sum of the increments — it cannot miss a hunk that
+  was added and then revised between two of them.
+
+Nothing about the standard changes: every hunk on the backcast path is
+classified INERT with its reason, or it is LIVE and earns a control solve.
