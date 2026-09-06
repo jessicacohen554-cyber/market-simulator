@@ -1,0 +1,413 @@
+{
+ "iso": "NYISO",
+ "arms": {
+  "REF": {
+   "cache_key": "7c0ad83004421a23",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0,
+       "nuclear": 26.9581,
+       "biomass": 2.4157,
+       "gas_st": 2.2897,
+       "gas_ct": 1.4688,
+       "gas_cc": 55.2573,
+       "import": 32.3257,
+       "hydro": 26.2129,
+       "wind": 5.3055,
+       "solar": 2.009
+      },
+      "emissions_mt": 23.7365,
+      "emissions_by_fuel_mt": {
+       "oil": 0.0,
+       "nuclear": 0.0,
+       "biomass": 0.0,
+       "gas_st": 1.18108,
+       "gas_ct": 0.757216,
+       "gas_cc": 21.79821,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "NYC": 9.464492,
+       "Long_Island": 1.342549,
+       "Upstate_West": 3.66907,
+       "Capital_Hudson": 9.258749,
+       "Lower_Hudson": 0.001647,
+       "NYISO_external": 0.0
+      },
+      "import_co2_mt_reported": 10.461048,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 5791.98,
+      "so2_tonnes": 203.7,
+      "avg_price": 49.26,
+      "peak_price": 68.97,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 2.904,
+       "nuclear": 3.326,
+       "biomass": 0.392,
+       "gas_st": 9.373,
+       "gas_ct": 3.054,
+       "gas_cc": 11.199,
+       "import": 6.47,
+       "hydro": 4.587,
+       "wind": 2.4,
+       "solar": 1.5
+      },
+      "storage_cycles": 10.16,
+      "clean_share": 0.3921,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 2.4157,
+      "gas_cc": 55.2573,
+      "gas_ct": 1.4688,
+      "gas_st": 2.2897,
+      "hydro": 26.2129,
+      "import": 32.3257,
+      "nuclear": 26.9581,
+      "oil": 0.0
+     },
+     "fossil_twh": 59.0158,
+     "import_tranches": [
+      {
+       "unit_id": "NYISO_external_HQ_hydro",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.0,
+       "twh": 7.884,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_IESO_Ontario",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_shoulder",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_west",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_eastern_mid",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 5.2011,
+       "reported_mt": 2.2261
+      },
+      {
+       "unit_id": "NYISO_external_ISONE_tie",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 1.1074,
+       "reported_mt": 0.474
+      },
+      {
+       "unit_id": "NYISO_external_import_scarcity",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_export_surplus",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "3f2d67121a98bcd9",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0,
+       "nuclear": 26.9581,
+       "biomass": 2.4844,
+       "gas_st": 2.5556,
+       "gas_ct": 1.6063,
+       "gas_cc": 58.7364,
+       "import": 32.6906,
+       "hydro": 26.2129,
+       "wind": 5.3055,
+       "solar": 2.009
+      },
+      "emissions_mt": 25.3734,
+      "emissions_by_fuel_mt": {
+       "oil": 0.0,
+       "nuclear": 0.0,
+       "biomass": 0.0,
+       "gas_st": 1.314833,
+       "gas_ct": 0.849308,
+       "gas_cc": 23.209268,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "NYC": 10.046259,
+       "Long_Island": 1.388532,
+       "Upstate_West": 3.787612,
+       "Capital_Hudson": 10.148573,
+       "Lower_Hudson": 0.002432,
+       "NYISO_external": 0.0
+      },
+      "import_co2_mt_reported": 10.617219,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 6201.77,
+      "so2_tonnes": 216.24,
+      "avg_price": 50.32,
+      "peak_price": 68.97,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 2.904,
+       "nuclear": 3.326,
+       "biomass": 0.392,
+       "gas_st": 9.373,
+       "gas_ct": 3.054,
+       "gas_cc": 11.199,
+       "import": 6.47,
+       "hydro": 4.587,
+       "wind": 2.4,
+       "solar": 1.5
+      },
+      "storage_cycles": 6.98,
+      "clean_share": 0.3815,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 2.4844,
+      "gas_cc": 58.7364,
+      "gas_ct": 1.6063,
+      "gas_st": 2.5556,
+      "hydro": 26.2129,
+      "import": 32.6906,
+      "nuclear": 26.9581,
+      "oil": 0.0
+     },
+     "fossil_twh": 62.8982,
+     "import_tranches": [
+      {
+       "unit_id": "NYISO_external_HQ_hydro",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.0,
+       "twh": 7.884,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_IESO_Ontario",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_shoulder",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_west",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_eastern_mid",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 5.3068,
+       "reported_mt": 2.2713
+      },
+      {
+       "unit_id": "NYISO_external_ISONE_tie",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 1.3666,
+       "reported_mt": 0.5849
+      },
+      {
+       "unit_id": "NYISO_external_import_scarcity",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_export_surplus",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "cache_key": "97f765a39320f765",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0,
+       "nuclear": 26.9581,
+       "biomass": 2.5222,
+       "gas_st": 2.8556,
+       "gas_ct": 1.7026,
+       "gas_cc": 58.3711,
+       "import": 32.6252,
+       "hydro": 26.2129,
+       "wind": 5.3055,
+       "solar": 2.009
+      },
+      "emissions_mt": 25.4634,
+      "emissions_by_fuel_mt": {
+       "oil": 0.0,
+       "nuclear": 0.0,
+       "biomass": 0.0,
+       "gas_st": 1.477122,
+       "gas_ct": 0.903833,
+       "gas_cc": 23.082491,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "NYC": 10.162089,
+       "Long_Island": 1.460298,
+       "Upstate_West": 3.801188,
+       "Capital_Hudson": 10.037405,
+       "Lower_Hudson": 0.002467,
+       "NYISO_external": 0.0
+      },
+      "import_co2_mt_reported": 10.589223,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 6346.1,
+      "so2_tonnes": 243.17,
+      "avg_price": 50.55,
+      "peak_price": 70.99,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 2.904,
+       "nuclear": 3.326,
+       "biomass": 0.392,
+       "gas_st": 9.373,
+       "gas_ct": 3.054,
+       "gas_cc": 11.199,
+       "import": 6.47,
+       "hydro": 4.587,
+       "wind": 2.4,
+       "solar": 1.5
+      },
+      "storage_cycles": 8.05,
+      "clean_share": 0.3815,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 2.5222,
+      "gas_cc": 58.3711,
+      "gas_ct": 1.7026,
+      "gas_st": 2.8556,
+      "hydro": 26.2129,
+      "import": 32.6252,
+      "nuclear": 26.9581,
+      "oil": 0.0
+     },
+     "fossil_twh": 62.9294,
+     "import_tranches": [
+      {
+       "unit_id": "NYISO_external_HQ_hydro",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.0,
+       "twh": 7.884,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_IESO_Ontario",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_shoulder",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_PJM_west",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 6.0444,
+       "reported_mt": 2.587
+      },
+      {
+       "unit_id": "NYISO_external_eastern_mid",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 5.2121,
+       "reported_mt": 2.2308
+      },
+      {
+       "unit_id": "NYISO_external_ISONE_tie",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 1.3959,
+       "reported_mt": 0.5974
+      },
+      {
+       "unit_id": "NYISO_external_import_scarcity",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "NYISO_external_export_surplus",
+       "zone": "NYISO_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  }
+ }
+}
