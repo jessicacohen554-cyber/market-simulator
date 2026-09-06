@@ -76,6 +76,38 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06g — capx D75-R-ARM / owner ruling Q55: PJM's wind and solar
+are accredited at each delivery year's OWN published ELCC class ratings. A KEY
+ADVANCE, NOT A SAME-KEY INVALIDATION — for PJM's forecast recipes only, and for
+no backcast and no other ISO at all.**
+
+``pjm_vre_accreditation_vintage`` is armed ``True`` through
+``config/iso_configs.py::_pjm_config`` ``default_scenario_overrides`` — the
+D57/Q44 → D67-ARM pattern — **not** a flip of the shared ``ScenarioConfig``
+default, which stays ``False``. So there is no
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` entry, no other ISO's key moves, and
+a PJM plain backcast coerces the field back to ``False`` with its key unmoved at
+``3a566deac3a85682``. The bare PJM T1-H recipe advances ``a9c66d8ea25acb9d`` ->
+``b518f5fe7d02f961``; an explicit ``--no-pjm-vre-accreditation-vintage`` reaches
+the pre-arm posture and KEEPS ``a9c66d8ea25acb9d``.
+
+Because the key advances, **nothing is silently re-interpreted**: the D67-ARM
+bundle that holds the bare ``pjm-t1h`` id keeps its own key
+(``a9c66d8ea25acb9d``) under its own id. Measured over every committed run
+config at the arm (``scripts/probes/capxd75rarm_iso_override_no_op_check.py``,
+records under ``docs/handoffs/d75rarm/``): of **153** committed configs, the
+**21 PJM forecast** configs move and **all 132 others — every non-PJM config of
+every ISO, and every backcast config including PJM's two — are byte-identical**.
+FOUR explicit control legs change meaning and are re-pinned in
+``tests/unit/model/test_capacity.py`` rather than left ambiguous (the D57
+three-``--no-`` control keys ``1785cb6086cd2b15``, its four-flag form
+``d2fe4e2b32aef073``, arm B's two-``--no-`` leg ``ab0237198cff24ad``, its
+four-flag form ``05cdf4af2b9adef8``); adding ``--no-pjm-vre-accreditation-
+vintage`` to each restores its pre-arm literal exactly, so every pre-arm
+recipe stays both reachable and identified. Evidence:
+``FINDING-capx-d75r-2026-09-06.md`` §3 / §4 / §5 / §8; execution and every
+pre-declared key ``PRECOMMIT-capx-d75r-arm-2026-09-06.md`` §2.
+
 **Epoch 2026-09-06f — capx D67-ARM / owner ruling Q52: the PJM adequacy
 requirement's OPERAND becomes PJM's own published whole-RTO Reliability
 Requirement. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for PJM's forecast
