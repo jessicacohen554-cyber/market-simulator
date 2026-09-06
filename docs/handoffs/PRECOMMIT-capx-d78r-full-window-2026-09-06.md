@@ -422,3 +422,70 @@ both legs and cancels in the differencing.
 
 **Cost, stated:** control-P's first 22.0 min of LP is discarded. That is the price of the rebase
 discipline, and it is cheaper than an arming recommendation against a superseded control.
+
+---
+
+# ADDENDUM 3 — the §3.3 W4 band, RE-computed on control-P at `f7057f4c`, BEFORE the arm is solved
+
+**Status.** control-P re-solved at HEAD **`cbf98979`** (branch tip carrying A2), finished
+`17:02:18Z`, **19.1 min** wall, HEAD guard held, key **`a9c66d8ea25acb9d`** realized exactly as
+A2.2 declared, holdout freeze active, solves {2021, 2023, 2024, 2025} and bridges 2022.
+**The arm has NOT been solved.** A1.2's band is **SUPERSEDED** by A3.2. Source:
+`docs/handoffs/d78r/control_band.json`.
+
+## A3.1 control-P at `f7057f4c`, per screen year
+
+| year | pool rows / MW | of which sector-1 | decided rows / MW | of which sector-1 | capped rows / MW | cap binds? | executed econ MW (of which s1) | `g_y` |
+|---|---:|---:|---:|---:|---:|:--:|---:|---:|
+| 2021 | 0 / 0 | — | 0 / 0 | — | 0 / 0 | no | 0 | 0 |
+| 2022 | 129 / 10,686.443 | 26 / 1,993.188 | 129 / 10,686.443 | 26 / 1,993.188 | 0 / 0 | **no** | 9,464.455 (771.200) | 0 |
+| 2023 | 23 / 828.467 | 3 / 127.566 | 23 / 828.467 | 3 / 127.566 | 0 / 0 | **no** | 828.467 (127.566) | 0 |
+| 2024 | 6 / 3,158.006 | 6 / 3,158.006 | 0 / 0 | — | 6 / 3,158.006 | **yes** | 1,221.988 (1,221.988) | **1,003.400** |
+| 2025 | 0 / 0 | — | 0 / 0 | — | 0 / 0 | no | 0 | 0 |
+
+Auction (control-P): 2022 — 1,399 offers, 158,103.444 MW offered, 23,331.628 price-takers,
+**90.411052 $/MW-day**, position 1.042601, requirement 163,268.9; 2023 — 849 / 142,174.432 /
+31,161.471 / 86.517664 / 1.044534; 2024 — 835 / 150,541.858 / 22,970.538 / 165.966209 / 1.027578;
+2025 — 821 / 124,381.653 / 19,782.698 / 358.266988 / 0.998023.
+
+## A3.2 THE BAND (W4), fixed here — SUPERSEDES A1.2
+
+```
+sum_y decided_mw(control-P)  =  11,514.910 MW
+sum_y g_y                    =   1,003.400 MW   (2024 only — the one year the cap binds)
+W4 BAND  =  [ 10,511.510 MW , 12,518.310 MW ]
+```
+
+The §3.1 definition applied verbatim, no number chosen by hand.
+
+## A3.3 THE REGIME CHANGED, and the consequence is recorded BEFORE the arm exists
+
+**Under D67-ARM's published requirement the admission cap NO LONGER BINDS in 2022 or 2023**
+(`capped_mw` = 0 in both; it binds only in 2024). At `41b46142` the cap bound hard in 2022
+(598 rows / 16,550.4 MW capped) and that budget re-fill **was the entire G6 story** of D78 §4.
+
+This is materially informative and is stated now, not after the fact:
+
+1. **In 2022 and 2023 there is no capped pool to re-fill from.** A candidate-set gate that removes
+   sector-1 candidates there can only make decided MW **FALL**, by exactly the control's sector-1
+   decided MW — **1,993.188 MW in 2022 and 127.566 MW in 2023** — with no offsetting admission.
+   The pre-declared point expectation, on record before the arm: **arm decided 2022 = 8,693.255 MW
+   (129 − 26 = 103 rows), 2023 = 700.901 MW (20 rows)**, and the window decided total
+   **= 9,394.156 MW**, which sits inside A3.2's band near its lower edge. *(REPORTED, and W4's
+   pre-registered interval is what gates — the point value is stated to be graded, not to replace
+   the band.)*
+2. **2024 is the one year where D78's re-fill mechanic can still operate**, and its pool is
+   **entirely sector-1** (6 rows / 3,158.006 MW, all capped, decided 0). So the gate empties 2024's
+   candidate pool outright.
+3. **The executed leg is where the timing story now lives** (still REPORTED, never gated, §3.2):
+   control-P's window executed economic total is **11,514.910 MW** (2022 9,464.455 + 2023 828.467
+   + 2024 1,221.988), of which sector-1 is 771.200 + 127.566 + 1,221.988 = **2,120.754 MW**. If the
+   gate is a clean candidate-set partition with no re-fill, the arm's window executed total should
+   fall by approximately that amount.
+
+**This does not relax any gate.** W4's interval is exactly the §3.1 formula on the new control;
+W1/W2/W3/W5 are unchanged and are what the flip condition reads. What A3.3 adds is a *sharper
+falsifiable expectation* than the band alone, written down before the measurement — the opposite of
+the G6 failure mode, where a sign was asserted on a quantity the mechanism did not control.
+
+**The arm is solved next, at the same HEAD `cbf98979`, with this band already fixed.**

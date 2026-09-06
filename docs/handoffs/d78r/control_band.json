@@ -40,152 +40,133 @@
       }
     },
     "2022": {
-      "pool_rows": 677,
-      "pool_mw": 29727.898,
+      "pool_rows": 129,
+      "pool_mw": 10686.443,
       "pool_by_sector": {
         "1": {
-          "rows": 226,
-          "mw": 3476.523
+          "rows": 26,
+          "mw": 1993.188
         },
         "2": {
-          "rows": 348,
-          "mw": 25369.169
+          "rows": 30,
+          "mw": 8134.6
         },
         "3": {
-          "rows": 16,
-          "mw": 373.065
+          "rows": 8,
+          "mw": 113.3
         },
         "4": {
-          "rows": 6,
-          "mw": 84.2
+          "rows": 3,
+          "mw": 80.0
         },
         "5": {
-          "rows": 18,
-          "mw": 47.48
+          "rows": 6,
+          "mw": 24.2
         },
         "6": {
-          "rows": 4,
-          "mw": 21.1
+          "rows": 3,
+          "mw": 16.8
         },
         "7": {
-          "rows": 59,
-          "mw": 356.362
+          "rows": 53,
+          "mw": 324.355
         }
       },
       "pool_max_row_mw": 1254.6,
-      "decided_rows": 79,
-      "decided_mw": 13177.472,
+      "decided_rows": 129,
+      "decided_mw": 10686.443,
       "decided_by_sector": {
         "1": {
-          "rows": 21,
-          "mw": 1694.218
+          "rows": 26,
+          "mw": 1993.188
         },
         "2": {
-          "rows": 49,
-          "mw": 11332.423
+          "rows": 30,
+          "mw": 8134.6
         },
         "3": {
-          "rows": 3,
-          "mw": 56.6
+          "rows": 8,
+          "mw": 113.3
         },
         "4": {
           "rows": 3,
           "mw": 80.0
-        },
-        "6": {
-          "rows": 1,
-          "mw": 5.04
-        },
-        "7": {
-          "rows": 2,
-          "mw": 9.191
-        }
-      },
-      "capped_rows": 598,
-      "capped_mw": 16550.426,
-      "capped_by_sector": {
-        "1": {
-          "rows": 205,
-          "mw": 1782.305
-        },
-        "2": {
-          "rows": 299,
-          "mw": 14036.746
-        },
-        "3": {
-          "rows": 13,
-          "mw": 316.465
-        },
-        "4": {
-          "rows": 3,
-          "mw": 4.2
         },
         "5": {
-          "rows": 18,
-          "mw": 47.48
+          "rows": 6,
+          "mw": 24.2
         },
         "6": {
           "rows": 3,
-          "mw": 16.06
+          "mw": 16.8
         },
         "7": {
-          "rows": 57,
-          "mw": 347.171
+          "rows": 53,
+          "mw": 324.355
         }
       },
-      "executed_economic_rows": 38,
-      "executed_economic_mw": 7333.7,
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 115,
+      "executed_economic_mw": 9464.455,
       "executed_economic_by_sector": {
         "1": {
-          "rows": 4,
-          "mw": 468.46
+          "rows": 12,
+          "mw": 771.2
         },
         "2": {
-          "rows": 27,
-          "mw": 6723.6
+          "rows": 30,
+          "mw": 8134.6
         },
         "3": {
-          "rows": 3,
-          "mw": 56.6
+          "rows": 8,
+          "mw": 113.3
         },
         "4": {
           "rows": 3,
           "mw": 80.0
         },
+        "5": {
+          "rows": 6,
+          "mw": 24.2
+        },
         "6": {
-          "rows": 1,
-          "mw": 5.04
+          "rows": 3,
+          "mw": 16.8
+        },
+        "7": {
+          "rows": 53,
+          "mw": 324.355
         }
       },
-      "retirements_all_mw": 10812.258,
+      "retirements_all_mw": 12943.013,
       "floor_retained_mw": 0,
       "throughput_deferred_mw": 0,
-      "sector1_pipeline_rows": 230,
+      "sector1_pipeline_rows": 38,
       "unknown_pipeline_rows": 0,
       "clearing": {
         "census_mw": 181435.072,
-        "census_position": 1.235795,
-        "cleared_mw": 153914.867,
-        "cleared_position": 1.048349,
+        "census_position": 1.111265,
+        "cleared_mw": 170224.366,
+        "cleared_position": 1.042601,
         "how": "marginal_offer_sets_price",
-        "marginal_unit": "CC_REGULAR_PJM_Central_PA_p55193_committed",
-        "n_offers": 1370,
-        "n_uncleared": 676,
-        "offered_mw": 150857.184,
-        "price_per_firm_mw_yr": 24732.459,
-        "price_takers_mw": 30577.888,
-        "price_usd_per_mw_day": 67.760162,
-        "requirement_mw": 146816.46
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+        "n_offers": 1399,
+        "n_uncleared": 133,
+        "offered_mw": 158103.444,
+        "price_per_firm_mw_yr": 33000.034,
+        "price_takers_mw": 23331.628,
+        "price_usd_per_mw_day": 90.411052,
+        "requirement_mw": 163268.9
       },
       "uncleared_mw_by_fuel": {
-        "coal": 5376.27,
-        "gas_cc": 9340.686,
-        "gas_st": 8801.943,
-        "oil": 3722.85
+        "coal": 1172.069,
+        "gas_st": 9536.643
       },
       "sector1_in_stack": {
-        "units": 370,
-        "accredited_mw": 34172.356
+        "units": 384,
+        "accredited_mw": 38596.976
       },
       "sector_gated": null,
       "footprint": {
@@ -279,147 +260,101 @@
         },
         "peak_demand_mw": null,
         "screen_peak_demand_mw": 135090.596,
-        "screen_adequacy_requirement_mw": 146816.46
+        "screen_adequacy_requirement_mw": 163268.9
       }
     },
     "2023": {
-      "pool_rows": 154,
-      "pool_mw": 5795.183,
+      "pool_rows": 23,
+      "pool_mw": 828.467,
       "pool_by_sector": {
         "1": {
-          "rows": 18,
-          "mw": 622.699
+          "rows": 3,
+          "mw": 127.566
         },
         "2": {
-          "rows": 60,
-          "mw": 4636.809
+          "rows": 17,
+          "mw": 691.238
         },
         "3": {
-          "rows": 11,
-          "mw": 164.465
+          "rows": 2,
+          "mw": 5.943
         },
         "5": {
-          "rows": 8,
-          "mw": 29.88
-        },
-        "6": {
-          "rows": 2,
-          "mw": 11.76
-        },
-        "7": {
-          "rows": 55,
-          "mw": 329.571
+          "rows": 1,
+          "mw": 3.72
         }
       },
-      "pool_max_row_mw": 955.5,
-      "decided_rows": 108,
-      "decided_mw": 3105.455,
+      "pool_max_row_mw": 176.79,
+      "decided_rows": 23,
+      "decided_mw": 828.467,
       "decided_by_sector": {
         "1": {
-          "rows": 10,
-          "mw": 332.306
+          "rows": 3,
+          "mw": 127.566
         },
         "2": {
-          "rows": 25,
-          "mw": 2261.621
+          "rows": 17,
+          "mw": 691.238
         },
         "3": {
-          "rows": 10,
-          "mw": 146.789
-        },
-        "5": {
-          "rows": 7,
-          "mw": 27.92
-        },
-        "6": {
           "rows": 2,
-          "mw": 11.76
-        },
-        "7": {
-          "rows": 54,
-          "mw": 325.059
-        }
-      },
-      "capped_rows": 46,
-      "capped_mw": 2689.728,
-      "capped_by_sector": {
-        "1": {
-          "rows": 8,
-          "mw": 290.393
-        },
-        "2": {
-          "rows": 35,
-          "mw": 2375.188
-        },
-        "3": {
-          "rows": 1,
-          "mw": 17.676
+          "mw": 5.943
         },
         "5": {
           "rows": 1,
-          "mw": 1.96
-        },
-        "7": {
-          "rows": 1,
-          "mw": 4.512
+          "mw": 3.72
         }
       },
-      "executed_economic_rows": 108,
-      "executed_economic_mw": 3105.455,
+      "capped_rows": 0,
+      "capped_mw": 0,
+      "capped_by_sector": {},
+      "executed_economic_rows": 23,
+      "executed_economic_mw": 828.467,
       "executed_economic_by_sector": {
         "1": {
-          "rows": 10,
-          "mw": 332.306
+          "rows": 3,
+          "mw": 127.566
         },
         "2": {
-          "rows": 25,
-          "mw": 2261.621
+          "rows": 17,
+          "mw": 691.238
         },
         "3": {
-          "rows": 10,
-          "mw": 146.789
+          "rows": 2,
+          "mw": 5.943
         },
         "5": {
-          "rows": 7,
-          "mw": 27.92
-        },
-        "6": {
-          "rows": 2,
-          "mw": 11.76
-        },
-        "7": {
-          "rows": 54,
-          "mw": 325.059
+          "rows": 1,
+          "mw": 3.72
         }
       },
-      "retirements_all_mw": 4901.455,
+      "retirements_all_mw": 2624.467,
       "floor_retained_mw": 0,
       "throughput_deferred_mw": 0,
-      "sector1_pipeline_rows": 45,
+      "sector1_pipeline_rows": 20,
       "unknown_pipeline_rows": 0,
       "clearing": {
-        "census_mw": 175317.505,
-        "census_position": 1.118225,
-        "cleared_mw": 164467.856,
-        "cleared_position": 1.049022,
+        "census_mw": 173335.903,
+        "census_position": 1.062327,
+        "cleared_mw": 170432.642,
+        "cleared_position": 1.044534,
         "how": "marginal_offer_sets_price",
-        "marginal_unit": "CC_REGULAR_PJM_AEP_Ohio_p55397_committed",
-        "n_offers": 907,
-        "n_uncleared": 194,
-        "offered_mw": 138942.394,
-        "price_per_firm_mw_yr": 24732.459,
-        "price_takers_mw": 36375.111,
-        "price_usd_per_mw_day": 67.760162,
-        "requirement_mw": 156782.028
+        "marginal_unit": "CC_REGULAR_PJM_ComEd_p55131_peak",
+        "n_offers": 849,
+        "n_uncleared": 39,
+        "offered_mw": 142174.432,
+        "price_per_firm_mw_yr": 31578.947,
+        "price_takers_mw": 31161.471,
+        "price_usd_per_mw_day": 86.517664,
+        "requirement_mw": 163166.2
       },
       "uncleared_mw_by_fuel": {
-        "coal": 5376.27,
-        "gas_cc": 3052.88,
-        "gas_st": 1981.602
+        "coal": 2076.245,
+        "gas_cc": 787.043
       },
       "sector1_in_stack": {
-        "units": 183,
-        "accredited_mw": 33383.778
+        "units": 179,
+        "accredited_mw": 35494.23
       },
       "sector_gated": null,
       "footprint": {
@@ -452,64 +387,64 @@
         },
         "peak_demand_mw": 147605.0,
         "screen_peak_demand_mw": 143823.528,
-        "screen_adequacy_requirement_mw": 156782.028
+        "screen_adequacy_requirement_mw": 163166.2
       }
     },
     "2024": {
-      "pool_rows": 3,
-      "pool_mw": 976.806,
+      "pool_rows": 6,
+      "pool_mw": 3158.006,
       "pool_by_sector": {
         "1": {
-          "rows": 3,
-          "mw": 976.806
+          "rows": 6,
+          "mw": 3158.006
         }
       },
-      "pool_max_row_mw": 594.606,
+      "pool_max_row_mw": 1003.4,
       "decided_rows": 0,
       "decided_mw": 0,
       "decided_by_sector": {},
-      "capped_rows": 3,
-      "capped_mw": 976.806,
+      "capped_rows": 6,
+      "capped_mw": 3158.006,
       "capped_by_sector": {
         "1": {
-          "rows": 3,
-          "mw": 976.806
+          "rows": 6,
+          "mw": 3158.006
         }
       },
-      "executed_economic_rows": 13,
-      "executed_economic_mw": 1189.408,
+      "executed_economic_rows": 14,
+      "executed_economic_mw": 1221.988,
       "executed_economic_by_sector": {
         "1": {
-          "rows": 13,
-          "mw": 1189.408
+          "rows": 14,
+          "mw": 1221.988
         }
       },
-      "retirements_all_mw": 1433.408,
+      "retirements_all_mw": 1465.988,
       "floor_retained_mw": 0,
       "throughput_deferred_mw": 0,
-      "sector1_pipeline_rows": 33,
+      "sector1_pipeline_rows": 34,
       "unknown_pipeline_rows": 0,
       "clearing": {
-        "census_mw": 173373.474,
-        "census_position": 1.039347,
-        "cleared_mw": 171391.366,
-        "cleared_position": 1.027464,
+        "census_mw": 173512.396,
+        "census_position": 1.057309,
+        "cleared_mw": 168633.36,
+        "cleared_position": 1.027578,
         "how": "marginal_offer_sets_price",
-        "marginal_unit": "COAL_PJM_West_APS_p3954_committed",
-        "n_offers": 812,
-        "n_uncleared": 15,
-        "offered_mw": 145413.777,
-        "price_per_firm_mw_yr": 60765.11,
-        "price_takers_mw": 27959.698,
-        "price_usd_per_mw_day": 166.479752,
-        "requirement_mw": 166810.017
+        "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+        "n_offers": 835,
+        "n_uncleared": 20,
+        "offered_mw": 150541.858,
+        "price_per_firm_mw_yr": 60577.666,
+        "price_takers_mw": 22970.538,
+        "price_usd_per_mw_day": 165.966209,
+        "requirement_mw": 164107.6
       },
       "uncleared_mw_by_fuel": {
-        "coal": 1594.268
+        "coal": 4029.594
       },
       "sector1_in_stack": {
-        "units": 173,
-        "accredited_mw": 33074.142
+        "units": 176,
+        "accredited_mw": 35373.042
       },
       "sector_gated": null,
       "footprint": {
@@ -536,7 +471,7 @@
         },
         "peak_demand_mw": 153121.0,
         "screen_peak_demand_mw": 153121.0,
-        "screen_adequacy_requirement_mw": 166810.017
+        "screen_adequacy_requirement_mw": 164107.6
       }
     },
     "2025": {
@@ -559,24 +494,24 @@
       "sector1_pipeline_rows": 0,
       "unknown_pipeline_rows": 0,
       "clearing": {
-        "census_mw": 144083.179,
-        "census_position": 0.94226,
-        "cleared_mw": 144083.179,
-        "cleared_position": 0.94226,
+        "census_mw": 144164.35,
+        "census_position": 0.998023,
+        "cleared_mw": 144164.35,
+        "cleared_position": 0.998023,
         "how": "all_offers_clear_curve_sets_price",
         "marginal_unit": null,
-        "n_offers": 799,
+        "n_offers": 821,
         "n_uncleared": 0,
-        "offered_mw": 120082.975,
-        "price_per_firm_mw_yr": 164837.65,
-        "price_takers_mw": 24000.204,
-        "price_usd_per_mw_day": 451.61,
-        "requirement_mw": 152912.298
+        "offered_mw": 124381.653,
+        "price_per_firm_mw_yr": 130767.451,
+        "price_takers_mw": 19782.698,
+        "price_usd_per_mw_day": 358.266988,
+        "requirement_mw": 144450.0
       },
       "uncleared_mw_by_fuel": {},
       "sector1_in_stack": {
-        "units": 160,
-        "accredited_mw": 26644.793
+        "units": 162,
+        "accredited_mw": 28703.232
       },
       "sector_gated": null,
       "footprint": {
@@ -587,14 +522,6 @@
             "mw": 4000.0,
             "source": "economic",
             "unit_id": "gas_cc_new_2023c2025_2",
-            "zone": "PJM_AEP_Ohio"
-          },
-          {
-            "eia860_id": null,
-            "fuel": "gas_ct",
-            "mw": 1012.8,
-            "source": "reserve_backstop",
-            "unit_id": "gas_ct_adequacy_2025",
             "zone": "PJM_AEP_Ohio"
           }
         ],
@@ -639,12 +566,11 @@
         "confirmed_derates": [],
         "ccs_retrofits": [],
         "entry_decided_mw_by_tech": {
-          "gas_ct": 1012.8,
           "solar": 2440.6
         },
         "peak_demand_mw": 160560.0,
         "screen_peak_demand_mw": 163019.507,
-        "screen_adequacy_requirement_mw": 152912.298
+        "screen_adequacy_requirement_mw": 144450.0
       }
     }
   },
@@ -657,22 +583,22 @@
         "g_y_mw": 0.0
       },
       "2022": {
-        "decided_mw": 13177.472,
-        "capped_mw": 16550.426,
-        "cap_binds": true,
-        "g_y_mw": 1254.6
+        "decided_mw": 10686.443,
+        "capped_mw": 0,
+        "cap_binds": false,
+        "g_y_mw": 0.0
       },
       "2023": {
-        "decided_mw": 3105.455,
-        "capped_mw": 2689.728,
-        "cap_binds": true,
-        "g_y_mw": 955.5
+        "decided_mw": 828.467,
+        "capped_mw": 0,
+        "cap_binds": false,
+        "g_y_mw": 0.0
       },
       "2024": {
         "decided_mw": 0,
-        "capped_mw": 976.806,
+        "capped_mw": 3158.006,
         "cap_binds": true,
-        "g_y_mw": 594.606
+        "g_y_mw": 1003.4
       },
       "2025": {
         "decided_mw": 0,
@@ -681,10 +607,10 @@
         "g_y_mw": 0.0
       }
     },
-    "sum_decided_mw_control": 16282.927,
-    "sum_g_mw": 2804.706,
-    "band_lo_mw": 13478.221,
-    "band_hi_mw": 19087.633,
+    "sum_decided_mw_control": 11514.91,
+    "sum_g_mw": 1003.4,
+    "band_lo_mw": 10511.51,
+    "band_hi_mw": 12518.31,
     "definition": "sum_y decided_mw(control-P) +/- sum_y g_y; g_y = max single-row MW in control-P's year-y failing pool (decided u entry_capped), 0 where the cap does not bind"
   }
 }
