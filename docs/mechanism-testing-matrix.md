@@ -11566,6 +11566,54 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-06 (nyiso-198, ONE rule-29 2024 SCREEN killed by its own
+pre-registered S-4 gate — keeper `2026-09-06-nyiso-196-extract-basis` UNCHANGED, nothing
+registered, nothing promoted; NEW field `cc_duct_peaking_row_scoped` registered with its base row
+and a cell in every shard, NYISO cell **O**).** The nyiso-197 "NEXT (U) — Cricket Valley 57185's
+part-load bucket (b−) 906 GWh in 2024" item was executed as a phase-0 decomposition against the
+LP's **own bounds** (zero LP; `scripts/probes/nyiso198_cricket_partload_phase0.py`): CAP_SCOPE
+**0**, FLOOR **≤ 6.6 GWh** (the bridge's own committed D-4 row, 29 binding hours), CAP_OUTAGE
+100.5, **MERIT 805.6 GWh (88.9 %)** — with the LP dispatching 444.7 MW of a 451.9 MW mean
+in-the-money capacity. The availability and min-load limbs are DEAD; it is an **offer-position**
+object, and **56.6 %** of the deficit is envelope headroom sitting in the **duct/peak band**. The
+band's PRICE is untouchable (`peak` 2.25 = `phys_peak` 2.25, markup 0); its **MEMBERSHIP** is
+`cc_duct_peaking_pct`, which books the CT rows' ambient derate as duct capability — EIA-860 flags
+`Duct Burners` only on CA/CS rows and reads **`X` on every one of the 1,213 CT rows** in the
+operable population (`CT ∧ Y` = **0 of 1,213**). Cricket Valley: 203.7 of 296.4 MW (**69 %**) on X
+rows → 245.64 MW of 1,086.9 at 15.78 MMBtu/MWh against a $35.50 mean LMP; **fleet-wide 726.5 MW,
+68 % of NYISO's CC peak band**; the plant's meter agrees (2024 max 1,116.0 MW = 0.85 × nameplate,
+0.981 × winter, in April). `assembly.py` already names the conflation and its remedy is a CHOSEN
+cap (8.0 for PJM, `None` elsewhere); the arm chooses nothing (**zero DOF**). **The pre-solve
+F-gates STOPPED first and the failure was the PREREG's own census** (the mover classifier ignored
+`peak_cap = grid_cap × pct_peak / (100 − pct_mr)`); Addendum A replaced them with a **strictly
+harder forward prediction** — Set B (the `chp_layup` / `chp_duty_curve` / `reserve_duty` cohorts)
+unchanged exactly, Set A scaling by `peak_off × pct_row / pct_cur` — satisfied with **residual
+0.000 MW at all 31 plants**. **SCREEN 2024** (named by footprint before the solve, re-derived on
+the corrected MW before it): **S-3 PASS** — Cricket Valley 3,706.1 → 4,081.5 GWh (+375.4, bound
+622.1), **70 % of the plant's gap to its 4,240.9 meter closed**, fleet CC +1,238.1 (bound 3,047.0),
+prices **−4.2 %** (same-weights C3a-2024 indicator +4.7 % → +0.3 %); **C8/D-4 PASS**; **S-4 STOP** —
+**C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh, +2.5 → +3.4 pp, PASS → FAIL**, because the cheaper CC
+stack takes **0.71 TWh from `ST_GAS`** and 0.06 from `CT_PEAKER`, both already UNDER. Span not
+spent; screen bundle deleted before merge (rule 29(c)). **THE READING IS RULE 14
+`[R-ACCURATE]`'s OWN**: the mis-classified band was the only thing holding the CC stack back and
+was silently compensating for a different error. **NEW TOP OF QUEUE (U) — the `CC_REGULAR` vs
+`ST_GAS` / `CT_PEAKER` MERIT ORDER**: `ST_GAS` sits at −1.17 TWh and `CT_PEAKER` at −1.52 in 2024,
+and both got worse the moment a real CC constraint was removed; phase 0 there should start at the
+bound that binds, not at the residual. **For the standing owner-ruled duct-tranche lever** (nyiso-193:
+*"tune the cc regular offer curve up for the duct burner peaking tranche"*), two committed-artifact
+measurements: on this keeper the `CC_REGULAR` peak band runs at **12.8 % CF** and carries **3.5 %**
+of class energy, and **69 % of it is not duct capability** — raising its offer moves little energy
+and raises a mis-classified band. Both are stated for the owner court, not decided. **nyiso-197 §8
+item 4 DISCHARGED**: the screen-gate probe now strips the payload's CHP add-back so both sides of a
+plant-grain comparison are LP grid (it caught a fabricated −898 GWh fall at Linden on this session's
+first pass; the truth is +351). Records:
+`docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md`,
+`results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md` (+ Addendum A),
+`_nyiso198_cricket_partload_phase0.json`, `_nyiso198_duct_peaking_basis_phase0.json`,
+`_nyiso198_rebuild_checks_2024.json`, `_nyiso198_screen_gates.json`,
+`scripts/probes/nyiso198_*.py`.
+
+
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-197, ZERO solves, phase 0 only — keeper
 `2026-09-06-nyiso-196-extract-basis` UNCHANGED, nothing registered, NO cell verdict moves).** The
 nyiso-196 "NEW TOP OF QUEUE (U) — Linden 50006 `CC_CHP` placement" item below is **VOID: the

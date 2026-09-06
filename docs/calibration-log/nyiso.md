@@ -12262,3 +12262,60 @@ struck); `docs/codebase-site/data/mechanism-matrix/NYISO.js` (the `gates` stamp 
 Records: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
 `results/calibration/_nyiso197_linden_phase0.json`, `_nyiso197_linden_rebuild_{2023,2024}.json`,
 `scripts/probes/nyiso197_linden_phase0.py`, `scripts/probes/nyiso197_linden_rebuild.py`.
+
+## 2026-09-06 — nyiso-198: Cricket Valley's (b−) is a duct-BAND-MEMBERSHIP object; the 2024 screen's own S-4 gate STOPPED the arm; keeper unchanged
+
+**Keeper UNCHANGED: `2026-09-06-nyiso-196-extract-basis`** (CALIBRATED, grade 7 of 8, fails 0,
+C3c the lone ledgered caveat). **Nothing registered, nothing promoted.** ONE solve — the rule-29
+2024 screen, deleted before merge (29(c)). No control solve (form 4; G-DRIFT `5b5af5ab..982ba9aa`
+all INERT, re-checked after rebasing onto `821c11c5`: the 31 new commits touch zero solve-path
+files). Full record: `docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md`; PREREG
+`results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md` (+ Addendum A), both pushed
+before the work they govern.
+
+**Phase 0 closed the queue item.** Cricket Valley 57185's part-load bucket (b−), 906.1 GWh in 2024,
+resolves against the LP's own bounds with no solve: CAP_SCOPE **0**, FLOOR **≤ 6.6 GWh** (the
+bridge's own committed D-4 row — 29 binding hours), CAP_OUTAGE 100.5, **MERIT 805.6 (88.9 %)**,
+with the LP dispatching 444.7 MW of a 451.9 MW mean in-the-money capacity. So the brief's
+availability and min-load limbs are dead and it is an **offer-position** object — 56.6 % of the
+deficit is envelope headroom sitting in the duct/peak band.
+
+**The object is the band's MEMBERSHIP, not its price.** `peak` 2.25 = `phys_peak` 2.25 (markup 0,
+untouchable under rule 1). `cc_duct_peaking_pct` sets the share as the whole plant's
+nameplate-minus-net-summer gap whenever any row is flagged `Duct Burners = Y` — but EIA-860 reports
+that attribute only on CA/CS rows and reads **`X` on every one of the 1,213 CT rows in the operable
+population (`CT ∧ Y` = 0 of 1,213)**, so the CT rows' ambient derate is booked as duct capability.
+Cricket Valley: 203.7 of 296.4 MW (**69 %**) on X rows → 245.64 MW of 1,086.9 at 15.78 MMBtu/MWh
+against a $35.50 mean LMP. Fleet-wide **726.5 MW, 68 % of NYISO's CC peak band**. `assembly.py`
+already names the conflation; its remedy is `cc_duct_peaking_cap_pct`, a **chosen** 8.0 for PJM and
+`None` elsewhere. The arm (`cc_duct_peaking_row_scoped`, default off, **zero DOF**) chooses nothing.
+
+**The pre-solve F-gates STOPPED first, and the failure was the PREREG's census.** The mover
+classifier ignored `peak_cap = grid_cap × pct_peak / (100 − pct_mr)` and misfiled four CHP plants.
+Addendum A replaced F-1/F-2 with a **strictly harder forward prediction** — Set B (the
+`chp_layup` / `chp_duty_curve` / `reserve_duty` cohorts, 14 plants) unchanged exactly, Set A scaling
+by `peak_off × pct_row / pct_cur` — which the rebuild satisfies with **residual 0.000 MW at all 31
+plants**. One identity exception reported at full magnitude: Riverbay 52168 loses 1.2122 MW
+(0.011 % of the CC fleet) to the builder's small-band filter.
+
+**Screen (2024, named by footprint before the solve and re-derived on the corrected MW before it):
+S-3 PASS, C8/D-4 PASS, S-4 STOP.** Cricket Valley **3,706.1 → 4,081.5 GWh** (+375.4 against a
+622.1 bound, **70 % of the plant's gap to its 4,240.9 meter closed**); fleet CC +1,238.1 (bound
+3,047.0); prices **−4.2 %** (same-weights C3a-2024 indicator +4.7 % → +0.3 %). And
+**C1-2024 `CC_REGULAR` +3.01 → +4.13 TWh, +2.5 → +3.4 pp, PASS → FAIL**, because the cheaper CC
+stack takes **0.71 TWh from `ST_GAS`** and 0.06 from `CT_PEAKER` — both already *under*. Span not
+spent.
+
+**The reading is rule 14 `[R-ACCURATE]`'s own:** the mis-classified band was the only thing holding
+the CC stack back and was silently compensating for a different error. **The next lever is the
+`CC_REGULAR` vs `ST_GAS` / `CT_PEAKER` merit order**, not the duct band. Two measurements for the
+standing owner-ruled duct-tranche lever, from committed artifacts: on this keeper the `CC_REGULAR`
+peak band runs at **12.8 % CF** and carries **3.5 %** of class energy, and 69 % of it is not duct
+capability — so raising its offer moves little energy and raises a mis-classified band.
+
+**Matrix:** `cc_duct_peaking_row_scoped` base row + a cell in every shard (rule 26c); NYISO **O**
+(filed to the owner court, so DO-NOT-REDO does not close it), the other five **U** with their own
+zero-LP census named as the transfer question (rule 25). **nyiso-197 §8 item 4 DISCHARGED** — the
+screen-gate probe now removes the payload's CHP add-back so both sides of a plant-grain comparison
+are LP grid; it caught a fabricated −898 GWh fall at Linden on this session's first pass (truth
++351). `complete` remains withdrawn; no marker requested.
