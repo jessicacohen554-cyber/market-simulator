@@ -407,3 +407,50 @@ reason §1.3.1 already established: the calibration lane never calls
 **⇒ Chain complete through `d520b891`; every hunk INERT for a CAISO backcast.
 G-CTRL form 4 stands, no control solve spent, and §1.2's `import_co2_tons`
 hunk with its `co2` restriction remains the only LIVE exception on the chain.**
+
+---
+
+## §7 — RULE-21 `[R-DOF]` INVENTORY: the repair is implementable with ZERO new free parameters (verified ahead of the gate)
+
+The parent PRECOMMIT §2.3 asserts "**zero new free parameters**". That is an
+admissibility claim, so it was checked against the code **before** G-BIMODAL was
+scored — it holds or fails on its own terms whichever way the gate goes, and if
+it had failed the repair would have been inadmissible no matter how clean the
+antimode.
+
+A separated ST_GAS bucket needs six operands. Every one already exists in a
+source the model reads today:
+
+| operand | source | value | new DOF? |
+|---|---|--:|:--:|
+| `base_hr` | `bin_assignments_CAISO.csv`, cap-weighted `Plant_Avg_HR` — the same statistic CC 7.442 / CT 10.862 come from | **11.847** | no |
+| `fleet_mw` (the G1 denominator) | same file | **2,858.8 MW** | no |
+| `pct_committed` | same file | **6.617** | no |
+| `pct_peaking` | same file | **15.0** | no |
+| `econ_low_share` | the model's OWN `_CAISO_OFFER_CURVE["ST_GAS"]` geometry | **0.50** | no |
+| `VOM` | `constants.VOM["gas_st"]` — the same table the derive's `VOM_BY_CLASS` already reads for CC (`gas_cc` 2.0) and CT (`gas_ct` 3.5) | **4.0** | no |
+
+The seventh quantity, the second cut itself, is the measured antimode — located
+the same way `hr_cut = 8.5` was (the derive's own G2 capacity-density-valley
+criterion), not swept and not chosen against any criterion.
+
+**The consumer-side plumbing is one line.** `backcast_config.py:2204` currently
+reads `"ST_GAS": "CT_PEAKER"` in `_ungrounded_source` — i.e. the steamers are
+explicitly pointed at the bucket their own presence biased, which is §1 of the
+parent PRECOMMIT stated in code. Re-pointing it is the whole consumer change;
+`CT_CHP → CT_PEAKER` needs no edit at all, since under the repair CT_PEAKER's
+bucket is the de-contaminated one.
+
+**Rule 21 therefore holds as claimed, verified rather than asserted.** Noted
+with it, because it is a boundary the session must not cross quietly: the
+2.9 GW ST_GAS fleet is **three plants** (Alamitos / Huntington Beach / Ormond
+Beach). A per-plant statistic would be inadmissible on the masked OASIS ids in
+any case, and remains out of scope — the repair is per-CLASS, exactly as the
+derive already is.
+
+### §7.1 — G-DRIFT: `d520b891` → `03bd0671` is EMPTY in scope
+
+`main` advanced again; the audited path (`src/market_sim`, the two calibration
+CLIs, `scripts/lib`, `_validation-source`, `reference`) shows **no changed
+files at all**. The chain stands through `03bd0671` with nothing new to
+classify.
