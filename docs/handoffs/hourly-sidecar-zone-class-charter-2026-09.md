@@ -68,3 +68,7 @@ hod 22–23 closure by zone).
 The CAISO hod 22–23 closure (caiso-258 / caiso-261) re-run per zone from
 the new sidecars, attributing the +261 MW 2025 residual — the acceptance
 demonstration for the lane.
+
+## §5 — Lane order (owner card, 2026-09-06)
+
+**RUN IN PARALLEL with the S2 two-settlement lane.** This lane owns the `hourly/` writers in `run_calibration_full.py` and `replay_keeper.py`; S2 owns `pipeline/` and the LP. S2's per-unit storage state is written on THIS lane's `storage_unit_hourly` schema — one schema, two producers, coordinated through the charter rather than a second table.

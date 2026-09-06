@@ -44,3 +44,16 @@ of observed conduct (rule 13) with a fitted window (rule 17).
 * Owner decision: **close as un-groundable** (declared residual; DO-NOT-REDO
   without new evidence such as a public RMR/CPM designation after 2029 or a
   published PPA term) — or **carry**.
+
+## §4 — OWNER RULING (card, 2026-09-06): "Close as un-groundable"
+
+**Ruled.** The CT volume miss — Panoche 39 / 68 / 86 % of it — is recorded
+as a **permanent declared residual** on the CAISO keeper
+(`keepers/CAISO.json` `declared_residual_ct_volume`): no floor, no pin, no
+class re-pricing, no window may be built to reach it. **DO-NOT-REDO** without
+new *public* evidence — a post-2029 RMR / CPM designation naming the plant,
+a published PPA term with dispatch hours, or a resource-named exceptional
+dispatch record. Genealogy: caiso-119 R4 (guardrail) → caiso-252 §3.3 (one
+plant) → caiso-257 §10 #4 (deepened, not closed) → **caiso-261 (search run,
+NOT FOUND, closed)**.
+

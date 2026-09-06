@@ -47,6 +47,30 @@ GitHub's `refs/pull/*` retention (e.g. `git fetch origin refs/pull/3978/head`)
 salvage them from there BEFORE GitHub compacts, because no other copy exists
 anywhere.
 
+**CORRECTION 2026-09-06 (session caiso-261) — "Re-fetchability: NONE" above is
+FALSE for the GroupZip endpoint, and the pinned bytes ARE reproducible.** The
+~39-month retention is a property of the per-node `SingleZip` reports
+(`PRC_LMP` / `PRC_INTVL_LMP`), not of the all-node *GroupZip* bulk archives:
+measured 2026-09-06 through the session proxy,
+`GroupZip?groupid=DAM_LMP_GRP&startdatetime=20230101T08:00-0000&version=12&resultformat=6`
+returned HTTP 200 / 11,938,424 bytes whose **sha256 equals the manifest line
+for `20230101_20230101_DAM_LMP_GRP_N_N_v12_csv.zip` above (`6523fedd…`)**, and
+the same request for 2022-06-01 (and every 2022 trade date crawled since)
+returns the full four-component archive, while the per-node `SingleZip` for the
+same date returns "no data". So every zip in `SHA256SUMS.txt` can be
+re-downloaded and verified against it, the 2022 (and, if wanted, 2019–2021)
+history is fetchable, and the refs/pull salvage paragraph above is moot for
+these bytes. Fetcher: `scripts/data/fetch_caiso_oasis_grp.py` (GroupZip per
+trade date → `fold_caiso_oasis_grp_zips.fold` → zip deleted, extract-and-
+discard). `RTM_LMP_GRP` is served as **hour groups** (one operating hour per
+request at `version=1`; the tracked Jan-2023 `v3` zips were 7 groups/day) —
+size a real-time year before crawling it (charter:
+`docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`).
+`CAISO_dam_hourly_2022.csv` (added by that crawl) carries the 10-node set the
+GRP fold keeps (3 hubs + 4 DLAPs + MALIN_5_N101 / CAPTJACK_5_N003 /
+PALOVRDE_ASR-APND), exactly as the GRP-folded Jan–Mar 2023 rows of
+`CAISO_dam_hourly_2023.csv` already do.
+
 **Consumers of the zips** (all tolerate their absence at tip):
 `scripts/data/fold_caiso_oasis_grp_zips.py` — the standing folder that turns
 restored GRP zips into the hourly aggregates above (the aggregates already

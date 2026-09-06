@@ -80,6 +80,8 @@ all); any per-ISO tuned value; arming S2 on any keeper before its own
 PRECOMMIT and screen; touching the caiso-201 resting-state objects (PS
 water state, the 8,800 MW residual).
 
+**Lane order (owner card, 2026-09-06): RUN IN PARALLEL with the hourly-sidecar lane** — the sidecar lane owns `run_calibration_full.py`'s writers, S2 owns the pipeline / LP; the merge seam is the P1 dispatch frame both read, and S2's per-unit storage state lands on the sidecar lane's schema, not a second one.
+
 **Genealogy:** caiso-127 §6 (filed), caiso-129 §5 (named), caiso-169 §5
 (specified), caiso-201 Q2 (unfunded), caiso-256 (measured a fourth time),
 caiso-258 §3 (fifth), **caiso-261 (FUNDED)**.
