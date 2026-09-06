@@ -1,4 +1,14 @@
-"""SCN-WS1b — score one ISO's paired 2026 T0 against the PRECOMMIT's STOP gate.
+"""SCN-WS1b-r2 — score one ISO's paired T0 against the PRECOMMIT's STOP gate.
+
+RETARGETED 2026-09-06 (relaunch) from the retired reduced form
+``carbon_price_delta=25`` at 2026 to the charter's full form
+``carbon_price_path="mid"`` scored at **2027**. The reason is the phase-0
+re-census (``phase0-recensus-path-2026-09-06.py``): ``CARBON_PRICE_PATHS``
+anchors EVERY registered RFF path at $0 in 2026, so no ``carbon_price_path``
+value of any kind can produce a signal in a 2026-only solve. 2027 is the
+first year the axis is live, and it stays below ``ccs_retrofit_available_year``
+= 2028, so ruling S5's ``gas_cc_ccs`` hold still does not reach it.
+Recorded in PRECOMMIT-scn-ws1b-2026-09-06-ADDENDUM.md §(d) BEFORE any solve.
 
 Reads the two arms' ``full_horizon_summary.json`` + their redirected caches,
 rebuilds the per-year annual summary through the SHIPPED
@@ -18,7 +28,7 @@ reads a residual, a benchmark or an actual (rule 29 ``[R-SCREEN]``).
 Run:
   PYTHONPATH=src python docs/handoffs/scn-ws1b/score_t0_pair.py \
       --iso NEISO --ref-dir results/scn-ws1-probe/neiso/REF \
-      --arm-dir results/scn-ws1-probe/neiso/CARB [--year 2026]
+      --arm-dir results/scn-ws1-probe/neiso/CARB [--year 2027]
 """
 
 from __future__ import annotations
@@ -41,26 +51,40 @@ from scripts.run_full_horizon import reference_config  # noqa: E402
 # PRECOMMIT §3.2: the repo's own fossil CO2 rate span. G4's structural bound is
 # that Δprice / Δcarbon cannot exceed the dirtiest marginal unit's rate.
 MAX_FOSSIL_RATE = 1.08  # constants.CO2_RATES["coal"]["older"]
-DELTA_CARBON = 25.0
 
-# PRECOMMIT §3.2, the per-ISO predicted Δ load-weighted price band ($/MWh).
+# The arm. ADDENDUM §(a): the charter's full form, released by SCN-WS1c's S2
+# floor repair (b1996141).
+ARM_FIELD, ARM_VALUE = "carbon_price_path", "mid"
+
+# ADDENDUM §(d): the resolved Δ carbon this arm produces at 2027, PER ISO,
+# measured by the phase-0 re-census through the solves' own builder BEFORE any
+# solve. It is NOT one number: the floor makes the arm an exact no-op on the
+# three state-program ISOs, and +$3.75/t on the three without a program.
+EXPECTED_DELTA_CARBON: dict[str, float] = {
+    "ERCOT": 3.75, "PJM": 3.75, "MISO": 3.75,   # RFF mid path applies alone
+    "CAISO": 0.0, "NYISO": 0.0, "NEISO": 0.0,   # floor: program > path, every year
+}
+
+# ADDENDUM §(d.2), the per-ISO predicted Δ load-weighted price band ($/MWh) at
+# +$3.75/t — the original PRECOMMIT §3.2 bands rescaled by 3.75/25 = 0.15, and
+# exactly $0 where the arm is inert.
 PREDICTED_PRICE_BAND: dict[str, tuple[float, float]] = {
-    "ERCOT": (6.0, 10.0),
-    "CAISO": (9.0, 11.0),
-    "PJM": (10.0, 18.0),
-    "MISO": (12.0, 22.0),
-    "NYISO": (9.0, 14.0),
-    "NEISO": (9.0, 11.0),
+    "ERCOT": (0.9, 1.5),
+    "PJM": (1.5, 2.7),
+    "MISO": (1.8, 3.3),
+    "CAISO": (0.0, 0.0),
+    "NYISO": (0.0, 0.0),
+    "NEISO": (0.0, 0.0),
 }
 
 # PRECOMMIT §3.4, the per-ISO predicted Δ import_co2_mt_reported (Mt).
 PREDICTED_LEAKAGE: dict[str, str] = {
     "ERCOT": "exactly 0.0000 (no import node)",
     "MISO": "exactly 0.0000 (no import tranche built; MODEL-BOUNDARY artifact)",
-    "CAISO": "~0, smallest of the seam ISOs (imports also pay CARB border carbon)",
-    "PJM": "UP, +0.2 to +1.5 Mt",
-    "NYISO": "UP, +0.5 to +2.5 Mt",
-    "NEISO": "UP, ~+1.7 to +2.0 Mt (reproduction of WS-0's +1.8548)",
+    "CAISO": "exactly 0.0000 — arm INERT (floor: CARB program > RFF mid, every year)",
+    "PJM": "UP, +0.03 to +0.23 Mt (PRECOMMIT §3.4 rescaled 3.75/25)",
+    "NYISO": "exactly 0.0000 — arm INERT (floor: RGGI program > RFF mid, every year)",
+    "NEISO": "exactly 0.0000 — arm INERT (floor: RGGI program > RFF mid, every year)",
 }
 
 ZERO_CARBON_FUELS = {
@@ -108,7 +132,7 @@ def main() -> int:
     ap.add_argument("--iso", required=True)
     ap.add_argument("--ref-dir", type=Path, required=True)
     ap.add_argument("--arm-dir", type=Path, required=True)
-    ap.add_argument("--year", type=int, default=2026)
+    ap.add_argument("--year", type=int, default=2027)
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
 
@@ -116,10 +140,16 @@ def main() -> int:
     ref_fhs, ref = summary_for(args.ref_dir, iso, year)
     arm_fhs, arm = summary_for(args.arm_dir, iso, year)
 
-    rc = reference_config(iso, year, year, False)
-    ac = replace(rc, carbon_price_delta=DELTA_CARBON)
+    # The pair's configs, built by the solves' OWN builder over the run's real
+    # horizon (2026->year), so the resolved signal read here is the one the arms
+    # actually received — not a reconstruction at a collapsed horizon.
+    rc = reference_config(iso, 2026, year, False)
+    ac = replace(rc, **{ARM_FIELD: ARM_VALUE})
     carbon_ref = resolve_carbon_price(rc, year)
     carbon_arm = resolve_carbon_price(ac, year)
+    delta_carbon = carbon_arm - carbon_ref
+    expected_delta = EXPECTED_DELTA_CARBON[iso]
+    arm_is_live = abs(expected_delta) > 1e-9
 
     co2_ref, co2_arm = float(ref["emissions_mt"]), float(arm["emissions_mt"])
 
@@ -139,10 +169,13 @@ def main() -> int:
     uns_ref = float(ref.get("unserved_mwh", 0.0))
     uns_arm = float(arm.get("unserved_mwh", 0.0))
     d_price = p_arm - p_ref
-    implied_rate = d_price / DELTA_CARBON
+    # Undefined where the arm is inert: there is no carbon delta to divide by.
+    implied_rate = (d_price / delta_carbon) if abs(delta_carbon) > 1e-9 else float("nan")
 
     print("=" * 78)
-    print(f"{iso} 2026 T0 — REF vs CARB (+${DELTA_CARBON:.0f}/t on the resolved signal)")
+    print(f"{iso} {year} T0 — REF vs CARB ({ARM_FIELD}={ARM_VALUE!r}); "
+          f"resolved delta {delta_carbon:+.4f} $/t "
+          f"[{'LIVE' if arm_is_live else 'INERT — pre-declared'}]")
     print("=" * 78)
     print(f"{'metric':38s} {'REF':>14s} {'CARB':>14s} {'delta':>12s}")
     rows = [
@@ -187,21 +220,40 @@ def main() -> int:
     def add(tag: str, ok: bool | None, detail: str) -> None:
         gate.append((tag, "PASS" if ok else ("REPORTED" if ok is None else "FAIL"), detail))
 
+    # G1 asks whether the pair is the pair the ADDENDUM pre-declared -- which,
+    # under the S2 floor, is a DIFFERENT number per ISO and is legitimately ZERO
+    # on the three state-program ISOs. A zero there is the pre-declared result,
+    # not a failure; a zero where +3.75 was declared IS a failure.
     add("G1 premise",
-        abs((carbon_arm - carbon_ref) - DELTA_CARBON) < 1e-9,
-        f"delta resolved carbon = {carbon_arm - carbon_ref:+.4f} $/t (need +25.0000)")
+        abs(delta_carbon - expected_delta) < 1e-9,
+        f"delta resolved carbon = {delta_carbon:+.4f} $/t "
+        f"(pre-declared {expected_delta:+.4f}; arm is "
+        f"{'LIVE' if arm_is_live else 'INERT by construction'})")
     add("G2 CO2 does not rise", co2_arm <= co2_ref + 1e-9,
         f"{co2_ref:.4f} -> {co2_arm:.4f} Mt ({(co2_arm - co2_ref) / co2_ref * 100:+.2f} %)")
     add("G3 price does not fall", p_arm >= p_ref - 1e-9,
         f"{p_ref:.3f} -> {p_arm:.3f} $/MWh ({d_price:+.3f})")
     lo, hi = PREDICTED_PRICE_BAND[iso]
-    in_bound = 0.0 <= implied_rate <= MAX_FOSSIL_RATE
-    in_band = lo <= d_price <= hi
-    add("G4 magnitude",
-        True if (in_bound and in_band) else (None if in_bound else False),
-        f"delta p / delta carbon = {implied_rate:.4f} t/MWh "
-        f"(structural bound [0, {MAX_FOSSIL_RATE}]: {'ok' if in_bound else 'BREACHED'}; "
-        f"precommit band [{lo}, {hi}] $/MWh: {'in' if in_band else 'MISS'})")
+    if arm_is_live:
+        # Structural bound: no marginal unit can pass through more than the
+        # dirtiest fossil rate in the repo's own CO2_RATES table.
+        in_bound = 0.0 <= implied_rate <= MAX_FOSSIL_RATE
+        in_band = lo <= d_price <= hi
+        add("G4 magnitude",
+            True if (in_bound and in_band) else (None if in_bound else False),
+            f"delta p / delta carbon = {implied_rate:.4f} t/MWh "
+            f"(structural bound [0, {MAX_FOSSIL_RATE}]: "
+            f"{'ok' if in_bound else 'BREACHED'}; "
+            f"addendum band [{lo}, {hi}] $/MWh: {'in' if in_band else 'MISS'})")
+    else:
+        # Inert arm: the two configs resolve to the SAME carbon in every hour,
+        # so the claim is exact identity, not a band. A non-zero delta here is a
+        # real failure -- it would mean something other than carbon moved.
+        add("G4 magnitude (inert: exact identity)",
+            abs(d_price) < 1e-6 and abs(co2_arm - co2_ref) < 1e-6,
+            f"delta lw_price = {d_price:+.6f} $/MWh, delta CO2 = "
+            f"{co2_arm - co2_ref:+.6f} Mt (both must be 0 -- identical resolved "
+            f"carbon in every hour)")
     partition_ok = abs(sum(r[2] for r in fuel_rows) - co2_arm) < 5e-4 and \
         abs(sum(r[1] for r in fuel_rows) - co2_ref) < 5e-4
     nonfossil_decrease = [n for n, a, b, d in fuel_rows
@@ -269,6 +321,8 @@ def main() -> int:
         "per_year_perf_ref": ref_fhs.get("per_year_perf"),
         "per_year_perf_arm": arm_fhs.get("per_year_perf"),
         "carbon_ref": carbon_ref, "carbon_arm": carbon_arm,
+        "delta_carbon": delta_carbon, "expected_delta_carbon": expected_delta,
+        "arm_is_live": arm_is_live, "arm": {ARM_FIELD: ARM_VALUE},
         "emissions_mt": {"ref": co2_ref, "arm": co2_arm, "delta": d_co2},
         "import_co2_mt_reported": {"ref": imp_ref, "arm": imp_arm, "delta": d_imp,
                                    "displaced_pct_of_headline": frac},
