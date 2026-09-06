@@ -260,9 +260,82 @@ def main() -> None:
         "pass": not g6_diffs,
     }
 
+    # --- DIAGNOSIS (PRECOMMIT Addendum A) ---------------------------------
+    # The literal G1 / G4 gates above are reported verbatim and are NEVER
+    # rewritten to fit a result. This block is the SEPARATE, per-year
+    # re-measurement that says whether a literal miss is the MECHANISM or the
+    # INSTRUMENT, and it is declared in Addendum A before the full window runs.
+    #
+    #  * G1's tolerance (±0.001 MW) was specified for one rounded quantity, but
+    #    the comparand is a SUM of n rows each rounded to 3 dp by
+    #    ``CapacityClearing.as_ledger``, so the achievable bound is n × 0.0005
+    #    MW, not 0.001. The identity the gate exists to test —
+    #    ``Δoffered == Δprice_takers`` — is checked here with no tolerance at
+    #    all, on the ledger's own digits.
+    #  * G4 asked whether the SCREEN YEAR's block appears in ANY year's
+    #    decision rows. A plant whose last pending row COMPLETES re-enters the
+    #    screen as an undated residual plant in the following year (the
+    #    documented behaviour of ``dated_plant_unit_ids``), where facing the
+    #    decision is correct. The per-year question — year Y's block against
+    #    year Y's decision rows — is the one that tests the mechanism.
+    diagnosis: dict[str, dict] = {}
+    for yy in sorted(set(ctl) & set(arm)):
+        blk_rows = (p0["years"].get(str(yy)) or {}).get("units")
+        if blk_rows is None:
+            continue
+        blk = {u["unit_id"] for u in blk_rows}
+        cc = ctl[yy].get("capacity_clearing") or {}
+        ac = arm[yy].get("capacity_clearing") or {}
+        if not cc or not ac:
+            continue
+        cs, as_ = stack_rows(ctl[yy]), stack_rows(arm[yy])
+        add = sorted(set(as_) - set(cs))
+        drop = sorted(set(cs) - set(as_))
+        sh = sorted(set(as_) & set(cs))
+        mism = [
+            u
+            for u in sh
+            if cs[u][0] != as_[u][0]
+            or abs(cs[u][1] - as_[u][1]) > OFFER_TOL
+            or abs(cs[u][2] - as_[u][2]) > MW_TOL
+        ]
+        d_off = round(float(ac["offered_mw"]) - float(cc["offered_mw"]), 3)
+        d_pt = round(float(cc["price_takers_mw"]) - float(ac["price_takers_mw"]), 3)
+        sum_a = round(sum(as_[u][2] for u in add), 3)
+        diagnosis[str(yy)] = {
+            "phase0_block_units": len(blk),
+            "phase0_block_accredited_mw": (p0["years"][str(yy)])[
+                "offering_accredited_mw"
+            ],
+            "stack_rows_added": len(add),
+            "stack_rows_dropped": len(drop),
+            "added_all_in_block": not [u for u in add if u not in blk],
+            "shared_rows": len(sh),
+            "shared_rows_not_identical": len(mism),
+            "d_offered_mw": d_off,
+            "d_price_takers_mw": d_pt,
+            "conservation_exact_on_ledger_digits": d_off == d_pt,
+            "sum_added_accredited_mw": sum_a,
+            "sum_vs_total_residual_mw": round(abs(d_off - sum_a), 6),
+            "rounding_bound_mw": round(len(add) * 0.0005, 4),
+            "within_rounding_bound": abs(d_off - sum_a) <= len(add) * 0.0005,
+            "block_units_in_SAME_year_decision_rows": {
+                "ctl": len(decision_unit_ids(ctl[yy]) & blk),
+                "arm": len(decision_unit_ids(arm[yy]) & blk),
+            },
+            "price_usd_per_mw_day": [
+                cc["price_usd_per_mw_day"],
+                ac["price_usd_per_mw_day"],
+            ],
+            "cleared_position": [cc["cleared_position"], ac["cleared_position"]],
+            "census_mw": [cc["census_mw"], ac["census_mw"]],
+            "economic_retirement_mw": [economic_mw(ctl[yy]), economic_mw(arm[yy])],
+        }
+
     out = {
         "screen_year": SCREEN_YEAR,
         "legs": {"ctl": str(args.ctl), "arm": str(args.arm)},
+        "diagnosis_by_year": diagnosis,
         "years": {"ctl": sorted(ctl), "arm": sorted(arm)},
         "clearing": {
             "ctl": {

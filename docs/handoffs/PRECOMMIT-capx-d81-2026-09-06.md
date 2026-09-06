@@ -278,3 +278,69 @@ FINDING, `d81/` instruments, dated cross-references appended to D54 §4.2 and D7
 rewrite), the capx ledger row. **D78-R touches no code, so this lane composes with it**; if both are
 live the branch rebases onto D78-R's PRECOMMIT. **D65-B-R is the sole board writer** until its batch
 registers — this lane writes no board file.
+
+---
+
+## ADDENDUM A — the screen's literal result, its two instrument defects, and the phase-3 declaration
+
+**Written and committed AFTER the screen and BEFORE the full window.** The §3 gate table is not
+edited: both literal misses stand in the record and in
+`docs/handoffs/d81/screen_compare.json`'s `gates` block exactly as the comparator graded them. What
+this addendum adds is the separate per-year re-measurement (`diagnosis_by_year`, in the same JSON)
+that says whether each miss is the MECHANISM or the INSTRUMENT, plus the phase-3 signs.
+
+### A.1 The screen, graded
+
+| gate | literal | reading |
+|---|---|---|
+| G1 conservation | **FAIL** | **INSTRUMENT.** `Δoffered = Δprice_takers = 7,246.260 MW` — the identity the gate exists to test holds **exactly, on the ledger's own digits, with no tolerance**. What failed is the third comparand: `Σ` of the 29 added rows' accredited MW reads 7,246.259, i.e. **0.001 MW** low, because `CapacityClearing.as_ledger` rounds *each row* to 3 dp as well as the total. The §3 tolerance (±0.001 MW) was specified for one rounded quantity; for a sum of *n* independently-rounded rows the achievable bound is *n* × 0.0005 = **0.0145 MW**. Relative magnitude of the miss: **1.4 × 10⁻⁷**. |
+| G2 identity I1 | PASS | `Q_0 + Σ A_g == census` in both legs; requirement, census and census position identical |
+| G3 footprint | PASS | **+29 rows, 0 dropped, every added row in the phase-0 block, all 1,370 shared rows byte-identical** |
+| G4 decision purity | **FAIL** | **INSTRUMENT.** The gate asked whether the **2022** block appears in **any** year's decision rows, and 8 units (Dominion p3797 / p3809 tranches) appear in **2023's** — **identically in both legs**, so no mechanism effect is possible. Cause: their plant's last pending row COMPLETES, and `dated_plant_unit_ids` documents that its survivors then "re-enter the screen as an undated residual plant". Facing the 2023 decision is correct for them. The per-year question — year Y's block against year Y's decision rows — reads **0 in both legs in both years**. |
+| G5 direction | PASS | price and cleared position **identical**, not merely weakly ordered (A.2) |
+| G6 no non-target flip | PASS | every non-target ledger block identical in both years, base year identical, **economic exits identical** (7,333.7 / 3,105.455 MW) |
+
+**Neither miss is the mechanism.** Both are defects in gates this session wrote, each diagnosed
+from the committed ledgers with the arithmetic shown, and each corrected reading is a PASS. Phase 3
+proceeds on that basis and the FINDING says so in those words — not on a literal all-pass.
+
+### A.2 What the screen measured, and the one substantive surprise
+
+The mechanism is **exactly conservative and, in this window, price-neutral**:
+
+| DY | +offers | +offered MW | −price-taker MW | phase-0 predicted | price | position | census |
+|---|---|---|---|---|---|---|---|
+| 2022 | +29 | +7,246.26 | −7,246.26 | 7,246.3 | 67.760162 → **67.760162** | 1.048349 → **1.048349** | unchanged |
+| 2023 | +19 | +5,213.64 | −5,213.64 | 5,213.6 | 67.760162 → **67.760162** | 1.049022 → **1.049022** | unchanged |
+
+Phase 0 predicted the moved MW to the tenth in both years, from a zero-LP read.
+
+**The price does not move at all — and that is a structural result, not a null.** §1.2 item 3 stated
+the direction as *weak, not strict*: supply at price `p` falls by `A_g` only for `p < offer_g`. The
+block is coal-dominated and deep in the money (D54 §4.2's own coal median, ~$9/MW-day, against a
+$67.76 clearing price), so every dated unit's offer sits **below** the crossing, `supply(p)` is
+unchanged at the crossing for both legs, and the clearing is identical. So **D54 §4.2's stated bias
+— price DOWN, cleared UP — is measured at exactly ZERO in this window**, which is stronger than
+§1.2 item 4's "second-order": the reading it chose cost nothing *here*, and the repair costs nothing
+either. The repair is not thereby cosmetic: the bias returns the moment a dated unit's net-ACR cap
+sits above the clearing price (a low-E&AS steam or oil unit under the D62 published bar, or any
+year whose crossing falls below the block's offers), and the model would then have been crediting
+un-offered MW with clearing. What the window shows is that the *misstatement of the supply curve*
+was real (7.2 GW mis-placed in 2022) and its *price consequence* was nil at this crossing.
+
+### A.3 Phase 3 — declared before it runs
+
+Span `--start-year 2021 --end-year 2025`, both legs, same recipe, sequential, HEAD-guarded.
+**Reported, not gated** — nothing below is a criterion and nothing below can promote the arm:
+
+1. **2024 and 2025 conservation**, against phase 0's block table: +15 offers / +4,989.2 MW and
+   +15 / +4,217.5 MW, less whatever each year's own exits removed, with the difference attributed.
+2. **The price path.** The pre-declared expectation is **unchanged in every year**, on A.2's
+   reasoning (the block clears in every year the crossing sits above ~$9/MW-day). A year in which
+   the price *does* move is the interesting case and is reported with the marginal unit and the
+   block offers that bracket it.
+3. **`retire.total_gw`, unit recall, `false_retire`** at full magnitude. The rule-14 line, stated
+   before the solve: with the price unchanged in the screen span, the expectation is that these are
+   **identical to the control**, and any movement is the exit-cohort consequence of a price that did
+   move in a later year — reported, never evidence for the mechanism, and a worse band never
+   evidence against it.
