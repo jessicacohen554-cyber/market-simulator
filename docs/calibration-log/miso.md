@@ -12022,3 +12022,112 @@ mechanism — nothing here is presented as closing the class gap); and every 202
 `SKIPPED` on a preliminary EIA-923 vintage (71/96 prior plants missing, 26 % reporting),
 so 2025 fuelmix becomes gated against a configuration never scored there once the vintage
 completes.
+
+## miso-222 (2026-09-06) — the ELMP / emergency-supply ask, MEASURED before it is built: the emergency-range MW is **already curated in this repo**, and at **1.7–2.0 GW against a 5.6–22.0 GW requirement** it reaches **2 of 45 object hours**
+
+**Keeper UNCHANGED: `2026-09-05-miso-220-nonsteam-lift`** (bundle
+`miso220_nonsteamlift_B`), CALIBRATED, C3c the single ledgered caveat. **No solve, no
+screen, no bundle, no dashboard registration, zero LP minutes.** Rule 22: 2023–2025 only.
+Record `results/calibration/FINDING-miso222-elmp-emergency-supply-2026-09-06.md`;
+instruments `scripts/probes/_miso222_removal_sizing_phase0.py` →
+`_miso222_removal_sizing.json` and `scripts/probes/_miso222_emergency_range_phase0.py` →
+`_miso222_emergency_range.json`.
+
+**THE PREMISE CORRECTION.** miso-219 §9 filed the ELMP re-basing to owner court on the
+ground that *"the emergency-range MW is neither already-measured nor already-registered in
+this repo"*. The **registered** half stands — no `ScenarioConfig` field, no matrix row.
+The **measured** half is wrong. MISO publishes `Economic Max` and `Emergency Max` per
+masked unit per operating hour in its Market Reports conduct corpus; this repo already
+fetches it (`fetch_miso_energy_offers.py`), already curates it
+(`curate_miso_energy_offers.py`), and already carries it in the data contract as
+`energy-offers` → `emergency_max_mw` / `emergency_min_mw` / `emergency_flag`. **It landed
+at miso-145 (2026-08-09), before miso-219 filed.** So the ask was never "may we acquire a
+new measurement"; it is "may we use one we already have, given its limits".
+
+**SIZING THE REMOVAL OBJECT (charter item 1).** Merit-order displacement at fixed demand,
+first-order and conservative for the ask. MW that must leave the stack over each year's 15
+object hours — to **$200**: mean **21,991 / 16,119 / 5,577** (min 13,773 / 4,315 / **329**;
+max 28,916 / 32,236 / 12,618); to the **oil floor**: 19,336 / 13,969 / 3,170; to the
+measured actual: 21,539 / 17,340 / 8,092. The cohort is **66.1 / 66.8 / 60.1 %
+`CT_PEAKER`** (`CT_PEAKER|econ` alone 12,060 / 8,684 / 2,210 MW), and **95.1 / 95.1 /
+88.9 %** of it sits on the authorized offer channel — which miso-221 already measured
+un-re-priceable.
+
+**SIZING THE MECHANISM.** `max(0, Emergency Max − Economic Max)` over available units at
+the object's own hours, from 183 re-fetched RT files (137.7 MB, 61 per year, 1,172 / 1,218
+/ 1,294 masked units; all 45 object hours covered). Rule 13 `[R-MEASURED]`: only OFFER
+columns read — the award columns (`Cleared MW1`–`MW12`, `Target MW Reduction`) are
+dispatch OUTCOMES and are dropped before anything else touches the frame. Clock: published
+fixed EST interval-beginning, model fixed CST, so CST = EST − 1 h.
+
+| declared emergency range, MW | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| at the object hours — mean | 1,866 | 1,954 | 1,664 |
+| min / max | 1,418 / 2,867 | 1,594 / 3,152 | 1,272 / 2,132 |
+| all Jun–Jul — mean / p95 / max | 2,458 / 4,490 / 6,051 | 2,817 / 5,243 / 7,074 | 2,581 / 4,858 / 6,931 |
+
+**THE ANSWER.** Shortfall factor **11.8× / 8.2× / 3.4×**. Per hour, the emergency range
+would cover the MW that must leave in **0 / 15, 0 / 15 and 2 / 15** hours — **2 of 45**,
+both on 2025-07-28 (HE18: need 1,044, have 1,323; HE19: need 329, have 1,272). Against the
+oil floor: 0 / 0 / 6. For scale, C3c is model 3 / 7 / 0 hours >$200 against actual 30 / 37
+/ 88; re-basing would take 2025 from 0 to about 2.
+
+**The "is it inside our pmax?" question does not change this**, and is named as a
+build-design question rather than a go/no-go one: the numbers above already assume the
+most favourable case (the whole range leaves the economic stack), and that case is
+insufficient in every year. It is not settled here because the corpus is masked, so a
+per-unit comparison against our EIA-860 net-summer basis is not constructible and an
+aggregate one is population-confounded.
+
+**THE ASK IS FILED ANYWAY**, because rule 1 `[R-STRUCT]`'s first half is explicit that a
+structurally-correct mechanism is never judged by the residual. The mechanism is armed,
+correctly clocked on the miso-210-repaired `Etc/GMT+6`, in a **declared** MISO
+capacity-emergency window in 11 of 2025's 15 object hours, and contributes exactly $0
+because it prices unserved energy while the LP serves every MWh. That is a mis-mapping of
+a real mechanism. What the owner is asked to rule on, before paying for a build: **(a)** is
+a **fleet- or region-aggregate** cohort admissible, given that unit identity is masked, no
+fuel/technology attribute is published, the offer-side class bridge was **REFUTED at
+miso-138**, and location is `Region` ∈ {North, Central, South} rather than a model zone
+(a genuine rule 14 `[R-ACCURATE]` misalignment); and **(b)** what to do about **JJA-only
+coverage**, since holding a summer statistic constant year-round is a different input than
+the measured one. Rule 13's forward-regeneration test **PASSES** and is the strongest thing
+about it: the emergency range is a unit physical characteristic declared ex ante, it
+regenerates for a forward year as a per-class or fleet-aggregate fraction on the forecast
+fleet, and it responds to changed conditions — the same admissibility class as an outage
+window, not a measured outcome fed back.
+
+**THE SUCCESSOR OBJECT, and it relocates the lane's attention.** The requirement is
+**5.6–22.0 GW of supply depth** at the object's hours, and nothing in the lever set is of
+that magnitude: the offer-curve reshape reaches the right block but costs 450–516× the
+`CT_PEAKER`-2023 C1 headroom (miso-221); the reserve/ORDC family needs 3.26–10.62× the
+published requirement (miso-219, closed, `G`); this mechanism is 3.4–11.8× short. **And it
+is 2023/2024 that is extreme, not 2025** — 22.0 and 16.1 GW against 2025's 5.6 GW, the
+reverse of where this lane has been looking. The model's 2023 object-hour prices are
+**$34–$46** against actuals of **$122–$355**, with 13.8–28.9 GW of near-flat supply in
+between, half of it one `CT_PEAKER|econ` block. The open question — not proposed here — is
+whether the model's object-hour **supply is too deep or its demand too shallow**; the
+sizing arithmetic cannot distinguish them, F-6 constrains the availability half (the model
+tracks the real fleet's utilisation to 0.4 pp) and miso-205 measured the object hours as
+genuinely high-load in the model (load p83.4–p99.3).
+
+**G-DRIFT delta.** miso-221 pre-cleared `4545300d..b2bd9fdb`; `b2bd9fdb..3dcf1b22` adds
+**5 files, +286 / −12**, all INERT — the eGRID sheet-reader refactor (`egrid_sheets.py` +
+`fleet/eia860.py` + `zone_assignment.py`, wall-clock item A-2, same frames, pinned by
+`tests/test_egrid_sheets.py`), `holdout_policy.registration_refusals` (registration-time
+gate, not the solve path) and cache-key documentation. `origin/main` has since moved to
+`5fdd4374` with **zero further solve-path changes**. **Measured, not merely classified:**
+the keeper's fleet rebuilt at `3dcf1b22` reproduces miso-221's rebuild at `b2bd9fdb` with
+**0 differences** across 45 object hours × {committed clearing price, MW to $200}.
+`miso220_nonsteamlift_B` remains a valid form-4 control; no control solve is owed.
+
+**Matrix (rule 28b): no cell verdict moved.** `maxgen_emergency_tier_pricing` stays `K` —
+armed in the keeper and unrefuted; this session **sized its object** and **located its
+input**. Evidence appended to the MISO shard (the miso-215 / miso-221 "evidence about the
+container" form). No `ScenarioConfig` field added, so no base row and no other shard
+touched.
+
+**Standing items unchanged:** miso-214's result that 62–70 % of the missing CT energy was
+produced below the plant's own delivered cost (unreachable by any offer or price
+mechanism); `ordc_scarcity_overlay` `G` on miso-163's structural grounds, re-affirmed at
+miso-204 and miso-219 and untouched here; and every 2025 C1 cell `SKIPPED` on a
+preliminary EIA-923 vintage.
