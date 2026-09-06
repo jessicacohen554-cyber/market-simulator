@@ -407,7 +407,11 @@ VERDICT_MAP = {
     # 09996eca71ee80fd. D60 STOP 1 fired; the D45-R record keeps the bare key,
     # the D50 arm keeps its suffixed key, and the PJM t1f re-solve at
     # 09996eca71ee80fd is ROUTED (FINDING-capx-d60-2026-09-05.md).
-    "pjm-2026-2030-d45r-remeasure": "pjm-t1f",
+    # capx D60-R3 (2026-09-06) — the bare pjm-t1f RE-SOLVED on the JOINT posture
+    # (Q42 + D57's Q44-armed D48 pair + supply clearing), 09996eca71ee80fd. This
+    # D45-R record is preserved at `pjm-t1f-pre-d60`; the arm takes the bare key.
+    "pjm-2026-2030-d45r-remeasure": "pjm-t1f-pre-d60",
+    "pjm-2026-2030-d60-arm": "pjm-t1f",
     "miso-2026-2030-d45r-remeasure": "miso-t1f-pre-d60",
     # capx-D46 (2026-09-03), the BATCHED RE-MEASURE (director r#30/r#31, owner
     # ruling Q32 STAGED): a BASELINE REFRESH, not an A/B. Every registered
