@@ -376,3 +376,46 @@ ERCOT/2022 is green on the payload measure, on the evidence in §2, without bein
 
 The gate remains **desk-only** — it appears in no workflow under `.github/workflows/`, unchanged
 by this lane and not this lane's to change.
+
+### 9.1 Verified ON `main`, after the lane's work landed
+
+This section post-dates the merge and is recorded separately from it (see the coda below).
+
+**The work is on `main`.** PR **#4943** merged as **`16b9bf44`**. All five changed source files
+are byte-identical between `main` and this lane's branch, compared by git object id:
+`bench_stamp.py`, `check_bench_freshness.py`, `test_bench_stamp_payload.py`,
+`test_backcast_artifacts.py`, `calibration_verdict.py` — **5 of 5 MATCH**.
+
+**The ninth gate is green on `main`'s own bytes**, not merely on this branch. Run from a checkout
+of `origin/main` at **`81022b2d`**:
+
+```
+builder fingerprint at HEAD: bee29e135d42 (aggregate, recorded stamp)
+payload fingerprint at HEAD: 643eac24b565 (decides STALE)
+bench freshness: 24 part(s) checked, 0 STALE, 24 on a superseded stamp with a
+  reproducing payload, 24 with engine drift
+EXIT=0
+```
+
+| measure | lane pin `5fdd4374` | merged state `5a0b4566` | **on `main` `81022b2d`** |
+|---|---|---|---|
+| aggregate at HEAD | `bee29e135d42` | `bee29e135d42` | **`bee29e135d42`** |
+| payload at HEAD | `643eac24b565` | `643eac24b565` | **`643eac24b565`** |
+| `check_bench_freshness.py` | EXIT **0**, 24 parts, 0 STALE | EXIT **0**, same | **EXIT 0, 24 parts, 0 STALE** |
+| bench-stamp suites (3 files) | 38 passed | 38 passed | **38 passed** |
+| `ruff format --check .` / `ruff check .` | 0 / 0 | 0 / 0 | **0 / 0** |
+
+`main` advanced twice during and after this lane — `5fdd4374` → `5a0b4566` (21 commits, merged
+into the branch with no conflicts) and on to `81022b2d`. **Neither range touches a payload
+source, a bench part, or any file this lane owns**, and both fingerprints hold identical across
+all three states — which independently confirms both advances were payload-inert for the bench
+builder. The four `test_ff_readiness_battery` failures of §5.3 persist unchanged and remain the
+forecast desk's.
+
+**Coda — why this section landed after the code.** #4943 was merged from a snapshot taken before
+this addendum's commit, so `main` carried the finding at 378 lines while the branch had 398. The
+gap was found by comparing the doc's blob on `main` against the local copy during a post-merge
+sweep; the five source files were unaffected. Per the merged-PR rule the follow-up is a **fresh
+change off the latest `main`**, not a commit stacked on merged history. Worth recording as a
+process note: a blob-level comparison of *every* deliverable against `main` after a merge catches
+this, whereas checking only the code files would have reported a clean landing.
