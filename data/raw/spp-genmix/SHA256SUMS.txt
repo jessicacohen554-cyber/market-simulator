@@ -1,0 +1,4 @@
+# SPP generation mix, root-level yearly files — fetched 2026-09-06 by lane SPP-14 from portal.spp.org (file-browser API, anonymous). sha256 AS SERVED.
+5dbc21a073141726ec876c63164ca79a7fce3de6dc9433d1f7acdcd929d6434f  GenMix_2023.csv
+39e52ba5d3b974f99790af2505769207b64e31fe713291d26f2c470945c0a4b0  GenMix_2024.csv
+120bf355b38833110a4cb67fd02f06f212207b9ec9f70d1be71a2402b2defa64  GenMix_2025.csv

@@ -42,3 +42,8 @@ this directory or its README was taken from memory.
 
 - **FTP folder (PRD):** `ftp://pubftp.spp.org/Operational_Data/GEN_MIX/` — from `SPP Markets Public Data Guide v35` (tracked at `data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2 (`data/raw/spp-planning/SPP_Public_Data_Access_20230707.pdf`). Credential: `anonymous` / email. **Probed 2026-09-06: egress-blocked** (see `data/raw/spp-planning/README.md` §6).
 - **`GenMix_2024_SPP.csv`, `GenMixYTD_SPP.csv`:** members of <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (fetched 2026-09-06, HTTP 200, 82,643,996 bytes, sha256 `e2e8478b…debee7`), copied out byte-for-byte (sha256 in `data/raw/spp-planning/SHA256SUMS.txt`). Zip member timestamps: 2025-12-18 / 2025-12-19.
+
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; the root-level yearly files landed
+
+- `https://portal.spp.org/file-browser-api/download/generation-mix-historical?path=%2FGenMix_2023.csv` (16,257,034 B), `…GenMix_2024.csv` (16,432,226 B), `…GenMix_2025.csv` (16,412,421 B), fetched 2026-09-06; the portal root also lists `GenMix_2011.csv` … `GenMix_2022.csv` (not landed — rule-22 data prep for SPP-15 if wanted).
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only genmix`. Checksums: `SHA256SUMS.txt` (new; the SPP-13 files stay recorded in `../spp-planning/SHA256SUMS.txt`).
