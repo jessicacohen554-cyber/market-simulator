@@ -1,0 +1,1150 @@
+{
+ "instrument_check": {
+  "census_position": {
+   "expected": 1.17019,
+   "measured": 1.17019
+  },
+  "passes": true,
+  "price_takers_mw": {
+   "expected": 30578,
+   "measured": 30577.888
+  },
+  "requirement_mw": {
+   "expected": 155048,
+   "measured": 155047.538
+  }
+ },
+ "restatements": {
+  "2024/2025 Battery/Hybrid offered": [
+   "2024/25 report Table 9 (Battery 36 + Hybrid 10)",
+   46,
+   "2027/28 report Table 6",
+   36
+  ],
+  "2024/2025 DR cleared": [
+   "2024/25 report Table 6/9",
+   7985.2,
+   "2027/28 report Table 5",
+   7992.7
+  ],
+  "2024/2025 Gas cleared": [
+   "2024/25 report Table 9",
+   83243,
+   "2027/28 report Table 6",
+   83258
+  ],
+  "2024/2025 TOTAL_NO_EE cleared": [
+   "2024/25 report Table 9",
+   172961,
+   "2027/28 report Table 6",
+   172951
+  ]
+ },
+ "years": {
+  "2022/2023": {
+   "buckets": {
+    "gap_position_pts": -12.122717342084988,
+    "gap_total_mw": -18795.974777601838,
+    "model_census_vs_published_OFFERED_mw": -12115.928000000014,
+    "published_offered_mw": 193551,
+    "requirement_exact_mw": -8623.902777601852,
+    "requirement_rows": [
+     {
+      "bucket": "Peak-forecast difference x FPR",
+      "gap_mw": -8623.902339974573,
+      "model_mw": 142664.279,
+      "note": "model screen peak 142,664.3 vs PJM implied peak 150,229.0; x FPR 1.0868 x C_p/R_p 1.04896",
+      "published_mw": 150229.02097902098
+     }
+    ],
+    "requirement_total_mw": -8623.902339974573,
+    "requirement_unattributed_mw": -0.0004376272790977964,
+    "supply_exact_mw": -10172.071999999986,
+    "supply_rows": [
+     {
+      "bucket": "Coal",
+      "gap_mw": 6818.9559999999765,
+      "model_mw": 32411.044000000024,
+      "note": "offer stack vs Table 9/6 Coal",
+      "published_mw": 39230.0
+     },
+     {
+      "bucket": "Gas (CC+CT+ST)",
+      "gap_mw": -3702.338000000018,
+      "model_mw": 83031.33800000002,
+      "note": "offer stack vs Table 9/6 Gas",
+      "published_mw": 79329.0
+     },
+     {
+      "bucket": "Nuclear",
+      "gap_mw": -5551.936999999998,
+      "model_mw": 31691.936999999998,
+      "note": "offer stack vs Table 9/6 Nuclear",
+      "published_mw": 26140.0
+     },
+     {
+      "bucket": "Oil (distillate + residual)",
+      "gap_mw": 1701.1499999999974,
+      "model_mw": 3722.8500000000026,
+      "note": "offer stack vs Table 9/6 two oil rows",
+      "published_mw": 5424.0
+     },
+     {
+      "bucket": "Wind",
+      "gap_mw": -2324.0989999999993,
+      "model_mw": 4163.098999999999,
+      "note": "pool x ELCC credit vs Table 9/6 Wind",
+      "published_mw": 1839.0
+     },
+     {
+      "bucket": "Solar",
+      "gap_mw": 1611.90128,
+      "model_mw": 484.09872,
+      "note": "pool x ELCC credit vs Table 9/6 Solar",
+      "published_mw": 2096.0
+     },
+     {
+      "bucket": "Demand response",
+      "gap_mw": -1610.0,
+      "model_mw": 10513.0,
+      "note": "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO['PJM'] vs Table 9/6 DR",
+      "published_mw": 8903.0
+     },
+     {
+      "bucket": "Storage + hydro + biomass + screen-exempt thermal",
+      "gap_mw": -6218.990279999996,
+      "model_mw": 14135.990279999996,
+      "note": "model side NOT decomposable from committed artifacts (residual row)",
+      "published_mw": 7917.0
+     },
+     {
+      "bucket": "Firm imports (double-count adjustment)",
+      "gap_mw": -1281.7,
+      "model_mw": 1281.7,
+      "note": "model credits imports separately; PJM books them INSIDE its type rows",
+      "published_mw": 0.0
+     },
+     {
+      "bucket": "Aggregate Resource",
+      "gap_mw": 386.0,
+      "model_mw": 0.0,
+      "note": "PJM's mixed-type aggregation; the model has no analogue",
+      "published_mw": 386.0
+     }
+    ],
+    "supply_total_mw": -10171.057000000039,
+    "supply_unattributed_mw": -1.0149999999466672
+   },
+   "frame_A_rpm_only": {
+    "gap_mw_at_model_R": -18474.291230043866,
+    "gap_position_pts": -11.91524320111672,
+    "identity_residual_mw": 2.1827872842550278e-11,
+    "leg_requirement_mw": 18483.48076995611,
+    "leg_supply_mw": -36957.772,
+    "model_census_position": 1.1701899581275517,
+    "model_requirement_mw": 155047.538,
+    "model_supply_mw": 181435.072,
+    "published_position": 1.0510375261163845,
+    "published_requirement_mw": 137461.6,
+    "published_supply_mw": 144477.3
+   },
+   "frame_B_rto_wide": {
+    "gap_mw_at_model_R": -18795.974777601812,
+    "gap_position_pts": -12.122717342084988,
+    "identity_residual_mw": 2.546585164964199e-11,
+    "leg_requirement_mw": -8623.902777601852,
+    "leg_supply_mw": -10172.071999999986,
+    "model_census_position": 1.1701899581275517,
+    "model_requirement_mw": 155047.538,
+    "model_supply_mw": 181435.072,
+    "published_position": 1.0489627847067018,
+    "published_requirement_mw": 163268.9,
+    "published_supply_mw": 171263
+   },
+   "model": {
+    "by_fuel": {
+     "coal": {
+      "accredited_mw": 32411.044000000024,
+      "cleared_mw": 27043.230000000014,
+      "n": 165
+     },
+     "gas_cc": {
+      "accredited_mw": 49985.80400000002,
+      "cleared_mw": 47933.749,
+      "n": 234
+     },
+     "gas_ct": {
+      "accredited_mw": 24243.596999999998,
+      "cleared_mw": 24243.596999999998,
+      "n": 404
+     },
+     "gas_st": {
+      "accredited_mw": 8801.937,
+      "cleared_mw": 0.0,
+      "n": 115
+     },
+     "nuclear": {
+      "accredited_mw": 31691.936999999998,
+      "cleared_mw": 31691.936999999998,
+      "n": 31
+     },
+     "oil": {
+      "accredited_mw": 3722.8500000000026,
+      "cleared_mw": 726.389999999999,
+      "n": 421
+     }
+    },
+    "census_mw": 181435.072,
+    "census_position": 1.17019,
+    "cleared_mw": 162215.659,
+    "cleared_position": 1.046232,
+    "how": "marginal_offer_sets_price",
+    "n_offers": 1370,
+    "n_uncleared": 429,
+    "offered_mw": 150857.184,
+    "price_taker_pinned": {
+     "demand_response": 10513.0,
+     "firm_imports": 1281.7,
+     "solar": 484.09872,
+     "storage": 3801.526,
+     "wind": 4163.098999999999
+    },
+    "price_taker_unpinned": 10334.464279999997,
+    "price_takers_mw": 30577.888,
+    "price_usd_per_mw_day": 76.103501,
+    "requirement_mw": 155047.538,
+    "screen_peak_demand_mw": 142664.279,
+    "screen_year": 2022,
+    "vre_pools": {
+     "solar": 4549.8,
+     "wind": 10153.9
+    }
+   },
+   "nonthermal": {
+    "delta": 6139.887999999999,
+    "model_price_takers_mw": 30577.888,
+    "published_nonthermal_offered_mw": 24438
+   },
+   "published": {
+    "by_type": {
+     "Aggregate Resource": [
+      484,
+      386
+     ],
+     "Battery/Hybrid": [
+      0,
+      0
+     ],
+     "Coal": [
+      45754,
+      39230
+     ],
+     "Demand Response": [
+      10604,
+      8903
+     ],
+     "Distillate Oil (No.2)": [
+      3178,
+      2897
+     ],
+     "Energy Efficiency": [
+      5057,
+      4811
+     ],
+     "Gas": [
+      85562,
+      79329
+     ],
+     "Nuclear": [
+      31944,
+      26140
+     ],
+     "Oil": [
+      2674,
+      2527
+     ],
+     "Other": [
+      1205,
+      1168
+     ],
+     "Solar": [
+      2633,
+      2096
+     ],
+     "TOTAL_NO_EE": [
+      193551,
+      171263
+     ],
+     "Water": [
+      6917,
+      6749
+     ],
+     "Wind": [
+      2595,
+      1839
+     ]
+    },
+    "ee_addback_mw": 5205.0,
+    "forecast_pool_requirement": 1.0868,
+    "frr_carveout_mw": 31012.29999999999,
+    "implied_pjm_peak_mw": 150229.02097902098,
+    "irm_pct": 14.5,
+    "rpm_only_cleared_mw": 144477.3,
+    "rpm_only_position": 1.0510375261163845,
+    "rpm_only_price": 50.0,
+    "rpm_only_requirement_mw": 137461.6,
+    "rto_cleared_no_ee_mw": 171263,
+    "rto_offered_no_ee_mw": 193551,
+    "rto_position": 1.0489627847067018,
+    "rto_requirement_mw": 163268.9
+   },
+   "thermal_rows": {
+    "Coal": {
+     "delta": -13342.955999999976,
+     "model": 32411.044000000024,
+     "published_offered": 45754
+    },
+    "Distillate Oil (No.2)+Oil": {
+     "delta": -2129.1499999999974,
+     "model": 3722.8500000000026,
+     "published_offered": 5852
+    },
+    "Gas": {
+     "delta": -2530.661999999982,
+     "model": 83031.33800000002,
+     "published_offered": 85562
+    },
+    "Nuclear": {
+     "delta": -252.06300000000192,
+     "model": 31691.936999999998,
+     "published_offered": 31944
+    }
+   }
+  },
+  "2023/2024": {
+   "buckets": {
+    "gap_position_pts": -3.6418866711068754,
+    "gap_total_mw": -5867.698183698611,
+    "model_census_vs_published_OFFERED_mw": -7557.494999999995,
+    "published_offered_mw": 182875,
+    "requirement_exact_mw": -2155.1931836986064,
+    "requirement_rows": [
+     {
+      "bucket": "Peak-forecast difference x FPR",
+      "gap_mw": -2155.192774264368,
+      "model_mw": 147800.193,
+      "note": "model screen peak 147,800.2 vs PJM implied peak 149,680.0; x FPR 1.0901 x C_p/R_p 1.05172",
+      "published_mw": 149680.02935510504
+     }
+    ],
+    "requirement_total_mw": -2155.192774264368,
+    "requirement_unattributed_mw": -0.00040943423846329097,
+    "supply_exact_mw": -3712.5050000000047,
+    "supply_rows": [
+     {
+      "bucket": "Coal",
+      "gap_mw": -600.0440000000235,
+      "model_mw": 32411.044000000024,
+      "note": "offer stack vs Table 9/6 Coal",
+      "published_mw": 31811.0
+     },
+     {
+      "bucket": "Gas (CC+CT+ST)",
+      "gap_mw": 6803.602999999988,
+      "model_mw": 74839.39700000001,
+      "note": "offer stack vs Table 9/6 Gas",
+      "published_mw": 81643.0
+     },
+     {
+      "bucket": "Nuclear",
+      "gap_mw": 268.0630000000019,
+      "model_mw": 31691.936999999998,
+      "note": "offer stack vs Table 9/6 Nuclear",
+      "published_mw": 31960.0
+     },
+     {
+      "bucket": "Oil (distillate + residual)",
+      "gap_mw": 5124.0,
+      "model_mw": 0.0,
+      "note": "offer stack vs Table 9/6 two oil rows",
+      "published_mw": 5124.0
+     },
+     {
+      "bucket": "Wind",
+      "gap_mw": -2747.0989999999993,
+      "model_mw": 4163.098999999999,
+      "note": "pool x ELCC credit vs Table 9/6 Wind",
+      "published_mw": 1416.0
+     },
+     {
+      "bucket": "Solar",
+      "gap_mw": 2450.90128,
+      "model_mw": 484.09872,
+      "note": "pool x ELCC credit vs Table 9/6 Solar",
+      "published_mw": 2935.0
+     },
+     {
+      "bucket": "Demand response",
+      "gap_mw": -1485.7000000000007,
+      "model_mw": 10116.7,
+      "note": "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO['PJM'] vs Table 9/6 DR",
+      "published_mw": 8631.0
+     },
+     {
+      "bucket": "Storage + hydro + biomass + screen-exempt thermal",
+      "gap_mw": -12753.513279999992,
+      "model_mw": 20329.513279999992,
+      "note": "model side NOT decomposable from committed artifacts (residual row)",
+      "published_mw": 7576.0
+     },
+     {
+      "bucket": "Firm imports (double-count adjustment)",
+      "gap_mw": -1281.7,
+      "model_mw": 1281.7,
+      "note": "model credits imports separately; PJM books them INSIDE its type rows",
+      "published_mw": 0.0
+     },
+     {
+      "bucket": "Aggregate Resource",
+      "gap_mw": 511.0,
+      "model_mw": 0.0,
+      "note": "PJM's mixed-type aggregation; the model has no analogue",
+      "published_mw": 511.0
+     }
+    ],
+    "supply_total_mw": -3710.489000000024,
+    "supply_unattributed_mw": -2.0159999999805223
+   },
+   "frame_A_rpm_only": {
+    "gap_mw_at_model_R": -5306.142231773272,
+    "gap_position_pts": -3.2933474190234513,
+    "identity_residual_mw": 3.637978807091713e-12,
+    "leg_requirement_mw": 25140.762768226723,
+    "leg_supply_mw": -30446.905,
+    "model_census_position": 1.08813791146421,
+    "model_requirement_mw": 161116.99,
+    "model_supply_mw": 175317.505,
+    "published_position": 1.0552044372739755,
+    "published_requirement_mw": 137291.5,
+    "published_supply_mw": 144870.6
+   },
+   "frame_B_rto_wide": {
+    "gap_mw_at_model_R": -5867.698183698597,
+    "gap_position_pts": -3.6418866711068754,
+    "identity_residual_mw": 1.4097167877480388e-11,
+    "leg_requirement_mw": -2155.1931836986064,
+    "leg_supply_mw": -3712.5050000000047,
+    "model_census_position": 1.08813791146421,
+    "model_requirement_mw": 161116.99,
+    "model_supply_mw": 175317.505,
+    "published_position": 1.0517190447531413,
+    "published_requirement_mw": 163166.2,
+    "published_supply_mw": 171605
+   },
+   "model": {
+    "by_fuel": {
+     "coal": {
+      "accredited_mw": 32411.044000000024,
+      "cleared_mw": 29946.37600000002,
+      "n": 165
+     },
+     "gas_cc": {
+      "accredited_mw": 48615.23900000001,
+      "cleared_mw": 46474.369999999995,
+      "n": 231
+     },
+     "gas_ct": {
+      "accredited_mw": 24242.563,
+      "cleared_mw": 24242.563,
+      "n": 403
+     },
+     "gas_st": {
+      "accredited_mw": 1981.5950000000007,
+      "cleared_mw": 0.0,
+      "n": 77
+     },
+     "nuclear": {
+      "accredited_mw": 31691.936999999998,
+      "cleared_mw": 31691.936999999998,
+      "n": 31
+     }
+    },
+    "census_mw": 175317.505,
+    "census_position": 1.088138,
+    "cleared_mw": 168435.067,
+    "cleared_position": 1.045421,
+    "how": "marginal_offer_sets_price",
+    "n_offers": 907,
+    "n_uncleared": 168,
+    "offered_mw": 138942.394,
+    "price_taker_pinned": {
+     "demand_response": 10116.7,
+     "firm_imports": 1281.7,
+     "solar": 484.09872,
+     "storage": 3801.526,
+     "wind": 4163.098999999999
+    },
+    "price_taker_unpinned": 16527.987279999994,
+    "price_takers_mw": 36375.111,
+    "price_usd_per_mw_day": 82.811222,
+    "requirement_mw": 161116.99,
+    "screen_peak_demand_mw": 147800.193,
+    "screen_year": 2023,
+    "vre_pools": {
+     "solar": 4549.8,
+     "wind": 10153.9
+    }
+   },
+   "nonthermal": {
+    "delta": 13083.110999999997,
+    "model_price_takers_mw": 36375.111,
+    "published_nonthermal_offered_mw": 23292
+   },
+   "published": {
+    "by_type": {
+     "Aggregate Resource": [
+      511,
+      511
+     ],
+     "Battery/Hybrid": [
+      16,
+      16
+     ],
+     "Coal": [
+      37164,
+      31811
+     ],
+     "Demand Response": [
+      10652,
+      8631
+     ],
+     "Distillate Oil (No.2)": [
+      2894,
+      2855
+     ],
+     "Energy Efficiency": [
+      5471,
+      5471
+     ],
+     "Gas": [
+      85217,
+      81643
+     ],
+     "Nuclear": [
+      31960,
+      31960
+     ],
+     "Oil": [
+      2350,
+      2269
+     ],
+     "Other": [
+      1185,
+      1185
+     ],
+     "Solar": [
+      2945,
+      2935
+     ],
+     "TOTAL_NO_EE": [
+      182875,
+      171605
+     ],
+     "Water": [
+      6375,
+      6375
+     ],
+     "Wind": [
+      1608,
+      1416
+     ]
+    },
+    "ee_addback_mw": 5471.1,
+    "forecast_pool_requirement": 1.0901,
+    "frr_carveout_mw": 31345.800000000017,
+    "implied_pjm_peak_mw": 149680.02935510504,
+    "irm_pct": 14.8,
+    "rpm_only_cleared_mw": 144870.6,
+    "rpm_only_position": 1.0552044372739755,
+    "rpm_only_price": 34.13,
+    "rpm_only_requirement_mw": 137291.5,
+    "rto_cleared_no_ee_mw": 171605,
+    "rto_offered_no_ee_mw": 182875,
+    "rto_position": 1.0517190447531413,
+    "rto_requirement_mw": 163166.2
+   },
+   "thermal_rows": {
+    "Coal": {
+     "delta": -4752.9559999999765,
+     "model": 32411.044000000024,
+     "published_offered": 37164
+    },
+    "Distillate Oil (No.2)+Oil": {
+     "delta": -5244.0,
+     "model": 0.0,
+     "published_offered": 5244
+    },
+    "Gas": {
+     "delta": -10377.602999999988,
+     "model": 74839.39700000001,
+     "published_offered": 85217
+    },
+    "Nuclear": {
+     "delta": -268.0630000000019,
+     "model": 31691.936999999998,
+     "published_offered": 31960
+    }
+   }
+  },
+  "2024/2025": {
+   "buckets": {
+    "gap_position_pts": 2.1885004789695905,
+    "gap_total_mw": 3650.638021014251,
+    "model_census_vs_published_OFFERED_mw": -9332.429000000004,
+    "published_offered_mw": 181491,
+    "requirement_exact_mw": 2848.2090210142474,
+    "requirement_rows": [
+     {
+      "bucket": "Peak-forecast difference x FPR",
+      "gap_mw": 2848.20944259376,
+      "model_mw": 153121.0,
+      "note": "model screen peak 153,121.0 vs PJM implied peak 150,640.4; x FPR 1.0894 x C_p/R_p 1.05395",
+      "published_mw": 150640.35248760786
+     }
+    ],
+    "requirement_total_mw": 2848.20944259376,
+    "requirement_unattributed_mw": -0.0004215795124764554,
+    "supply_exact_mw": 802.4290000000037,
+    "supply_rows": [
+     {
+      "bucket": "Coal",
+      "gap_mw": -879.0440000000126,
+      "model_mw": 32411.044000000013,
+      "note": "offer stack vs Table 9/6 Coal",
+      "published_mw": 31532.0
+     },
+     {
+      "bucket": "Gas (CC+CT+ST)",
+      "gap_mw": 6869.967999999964,
+      "model_mw": 76373.03200000004,
+      "note": "offer stack vs Table 9/6 Gas",
+      "published_mw": 83243.0
+     },
+     {
+      "bucket": "Nuclear",
+      "gap_mw": -62.93699999999808,
+      "model_mw": 31691.936999999998,
+      "note": "offer stack vs Table 9/6 Nuclear",
+      "published_mw": 31629.0
+     },
+     {
+      "bucket": "Oil (distillate + residual)",
+      "gap_mw": 1193.1500000000005,
+      "model_mw": 3722.8499999999995,
+      "note": "offer stack vs Table 9/6 two oil rows",
+      "published_mw": 4916.0
+     },
+     {
+      "bucket": "Wind",
+      "gap_mw": -2767.0989999999993,
+      "model_mw": 4163.098999999999,
+      "note": "pool x ELCC credit vs Table 9/6 Wind",
+      "published_mw": 1396.0
+     },
+     {
+      "bucket": "Solar",
+      "gap_mw": 3747.90128,
+      "model_mw": 484.09872,
+      "note": "pool x ELCC credit vs Table 9/6 Solar",
+      "published_mw": 4232.0
+     },
+     {
+      "bucket": "Demand response",
+      "gap_mw": -1973.3999999999996,
+      "model_mw": 10146.4,
+      "note": "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO['PJM'] vs Table 9/6 DR",
+      "published_mw": 8173.0
+     },
+     {
+      "bucket": "Storage + hydro + biomass + screen-exempt thermal",
+      "gap_mw": -4548.40028,
+      "model_mw": 11884.40028,
+      "note": "model side NOT decomposable from committed artifacts (residual row)",
+      "published_mw": 7336.0
+     },
+     {
+      "bucket": "Firm imports (double-count adjustment)",
+      "gap_mw": -1281.7,
+      "model_mw": 1281.7,
+      "note": "model credits imports separately; PJM books them INSIDE its type rows",
+      "published_mw": 0.0
+     },
+     {
+      "bucket": "Aggregate Resource",
+      "gap_mw": 503.0,
+      "model_mw": 0.0,
+      "note": "PJM's mixed-type aggregation; the model has no analogue",
+      "published_mw": 503.0
+     }
+    ],
+    "supply_total_mw": 801.4389999999555,
+    "supply_unattributed_mw": 0.9900000000482123
+   },
+   "frame_A_rpm_only": {
+    "gap_mw_at_model_R": 3911.048340432343,
+    "gap_position_pts": 2.3446123984462774,
+    "identity_residual_mw": -3.637978807091713e-12,
+    "leg_requirement_mw": 28590.719340432348,
+    "leg_supply_mw": -24679.671000000002,
+    "model_census_position": 1.032063745908017,
+    "model_requirement_mw": 166810.017,
+    "model_supply_mw": 172158.571,
+    "published_position": 1.0555098698924799,
+    "published_requirement_mw": 139722.90000000002,
+    "published_supply_mw": 147478.9
+   },
+   "frame_B_rto_wide": {
+    "gap_mw_at_model_R": 3650.638021014255,
+    "gap_position_pts": 2.1885004789695905,
+    "identity_residual_mw": 4.092726157978177e-12,
+    "leg_requirement_mw": 2848.2090210142474,
+    "leg_supply_mw": 802.4290000000037,
+    "model_census_position": 1.032063745908017,
+    "model_requirement_mw": 166810.017,
+    "model_supply_mw": 172158.571,
+    "published_position": 1.053948750697713,
+    "published_requirement_mw": 164107.6,
+    "published_supply_mw": 172961
+   },
+   "model": {
+    "by_fuel": {
+     "coal": {
+      "accredited_mw": 32411.044000000013,
+      "cleared_mw": 32005.11900000001,
+      "n": 165
+     },
+     "gas_cc": {
+      "accredited_mw": 52129.435,
+      "cleared_mw": 52129.435,
+      "n": 161
+     },
+     "gas_ct": {
+      "accredited_mw": 24243.59700000003,
+      "cleared_mw": 24243.59700000003,
+      "n": 404
+     },
+     "nuclear": {
+      "accredited_mw": 31691.936999999998,
+      "cleared_mw": 31691.936999999998,
+      "n": 31
+     },
+     "oil": {
+      "accredited_mw": 3722.8499999999995,
+      "cleared_mw": 3722.8499999999995,
+      "n": 8
+     }
+    },
+    "census_mw": 172158.571,
+    "census_position": 1.032064,
+    "cleared_mw": 171415.088,
+    "cleared_position": 1.027607,
+    "how": "marginal_offer_sets_price",
+    "n_offers": 769,
+    "n_uncleared": 8,
+    "offered_mw": 144198.873,
+    "price_taker_pinned": {
+     "demand_response": 10146.4,
+     "firm_imports": 1281.7,
+     "solar": 484.09872,
+     "storage": 3801.526,
+     "wind": 4163.098999999999
+    },
+    "price_taker_unpinned": 8082.87428,
+    "price_takers_mw": 27959.698,
+    "price_usd_per_mw_day": 165.83651,
+    "requirement_mw": 166810.017,
+    "screen_peak_demand_mw": 153121.0,
+    "screen_year": 2024,
+    "vre_pools": {
+     "solar": 4549.8,
+     "wind": 10153.9
+    }
+   },
+   "nonthermal": {
+    "delta": 4156.698,
+    "model_price_takers_mw": 27959.698,
+    "published_nonthermal_offered_mw": 23803
+   },
+   "published": {
+    "by_type": {
+     "Aggregate Resource": [
+      503,
+      503
+     ],
+     "Battery/Hybrid": [
+      46,
+      46
+     ],
+     "Coal": [
+      35114,
+      31532
+     ],
+     "Demand Response": [
+      10334,
+      8173
+     ],
+     "Distillate Oil (No.2)": [
+      2776,
+      2674
+     ],
+     "Energy Efficiency": [
+      8417,
+      7667
+     ],
+     "Gas": [
+      85469,
+      83243
+     ],
+     "Nuclear": [
+      31835,
+      31629
+     ],
+     "Oil": [
+      2493,
+      2242
+     ],
+     "Other": [
+      1153,
+      1153
+     ],
+     "Solar": [
+      4234,
+      4232
+     ],
+     "TOTAL_NO_EE": [
+      181491,
+      172961
+     ],
+     "Water": [
+      6137,
+      6137
+     ],
+     "Wind": [
+      1396,
+      1396
+     ]
+    },
+    "ee_addback_mw": 7667.2,
+    "forecast_pool_requirement": 1.0894,
+    "frr_carveout_mw": 32051.899999999994,
+    "implied_pjm_peak_mw": 150640.35248760786,
+    "irm_pct": 14.7,
+    "rpm_only_cleared_mw": 147478.9,
+    "rpm_only_position": 1.0555098698924799,
+    "rpm_only_price": 28.92,
+    "rpm_only_requirement_mw": 139722.90000000002,
+    "rto_cleared_no_ee_mw": 172961,
+    "rto_offered_no_ee_mw": 181491,
+    "rto_position": 1.053948750697713,
+    "rto_requirement_mw": 164107.6
+   },
+   "thermal_rows": {
+    "Coal": {
+     "delta": -2702.9559999999874,
+     "model": 32411.044000000013,
+     "published_offered": 35114
+    },
+    "Distillate Oil (No.2)+Oil": {
+     "delta": -1546.1500000000005,
+     "model": 3722.8499999999995,
+     "published_offered": 5269
+    },
+    "Gas": {
+     "delta": -9095.967999999964,
+     "model": 76373.03200000004,
+     "published_offered": 85469
+    },
+    "Nuclear": {
+     "delta": -143.06300000000192,
+     "model": 31691.936999999998,
+     "published_offered": 31835
+    }
+   }
+  },
+  "2025/2026": {
+   "buckets": {
+    "gap_position_pts": 4.3793544703446985,
+    "gap_total_mw": 6516.395718615436,
+    "model_census_vs_published_OFFERED_mw": -3147.17300000001,
+    "published_offered_mw": 146905,
+    "requirement_exact_mw": 4391.222718615426,
+    "requirement_rows": [
+     {
+      "bucket": "Peak-forecast difference x FPR",
+      "gap_mw": 4391.2226459011645,
+      "model_mw": 158633.356,
+      "note": "model screen peak 158,633.4 vs PJM implied peak 153,997.9; x FPR 0.938 x C_p/R_p 1.00992",
+      "published_mw": 153997.86780383796
+     }
+    ],
+    "requirement_total_mw": 4391.2226459011645,
+    "requirement_unattributed_mw": 7.271426147781312e-05,
+    "supply_exact_mw": 2125.17300000001,
+    "supply_rows": [
+     {
+      "bucket": "Coal",
+      "gap_mw": 1206.8170000000027,
+      "model_mw": 28874.182999999997,
+      "note": "offer stack vs Table 9/6 Coal",
+      "published_mw": 30081.0
+     },
+     {
+      "bucket": "Gas (CC+CT+ST)",
+      "gap_mw": 10273.263999999996,
+      "model_mw": 56080.736000000004,
+      "note": "offer stack vs Table 9/6 Gas",
+      "published_mw": 66354.0
+     },
+     {
+      "bucket": "Nuclear",
+      "gap_mw": -489.4950000000026,
+      "model_mw": 31038.495000000003,
+      "note": "offer stack vs Table 9/6 Nuclear",
+      "published_mw": 30549.0
+     },
+     {
+      "bucket": "Oil (distillate + residual)",
+      "gap_mw": -778.2150000000001,
+      "model_mw": 3764.215,
+      "note": "offer stack vs Table 9/6 two oil rows",
+      "published_mw": 2986.0
+     },
+     {
+      "bucket": "Wind",
+      "gap_mw": -3102.0989999999993,
+      "model_mw": 4778.098999999999,
+      "note": "pool x ELCC credit vs Table 9/6 Wind",
+      "published_mw": 1676.0
+     },
+     {
+      "bucket": "Solar",
+      "gap_mw": 593.22144,
+      "model_mw": 743.77856,
+      "note": "pool x ELCC credit vs Table 9/6 Solar",
+      "published_mw": 1337.0
+     },
+     {
+      "bucket": "Demand response",
+      "gap_mw": 257.1999999999998,
+      "model_mw": 6084.8,
+      "note": "DEMAND_RESPONSE_SUPPLY_UCAP_MW_BY_ISO['PJM'] vs Table 9/6 DR",
+      "published_mw": 6342.0
+     },
+     {
+      "bucket": "Storage + hydro + biomass + screen-exempt thermal",
+      "gap_mw": -4825.826440000003,
+      "model_mw": 11111.826440000003,
+      "note": "model side NOT decomposable from committed artifacts (residual row)",
+      "published_mw": 6286.0
+     },
+     {
+      "bucket": "Firm imports (double-count adjustment)",
+      "gap_mw": -1281.7,
+      "model_mw": 1281.7,
+      "note": "model credits imports separately; PJM books them INSIDE its type rows",
+      "published_mw": 0.0
+     },
+     {
+      "bucket": "Aggregate Resource",
+      "gap_mw": 273.0,
+      "model_mw": 0.0,
+      "note": "PJM's mixed-type aggregation; the model has no analogue",
+      "published_mw": 273.0
+     }
+    ],
+    "supply_total_mw": 2126.166999999994,
+    "supply_unattributed_mw": -0.9939999999842257
+   },
+   "frame_A_rpm_only": {
+    "gap_mw_at_model_R": 5768.253458587187,
+    "gap_position_pts": 3.8765642328597583,
+    "identity_residual_mw": 3.637978807091713e-12,
+    "leg_requirement_mw": 13842.080458587174,
+    "leg_supply_mw": -8073.82699999999,
+    "model_census_position": 0.96612684297395,
+    "model_requirement_mw": 148798.088,
+    "model_supply_mw": 143757.827,
+    "published_position": 1.0048924853025476,
+    "published_requirement_mw": 135023.4,
+    "published_supply_mw": 135684.0
+   },
+   "frame_B_rto_wide": {
+    "gap_mw_at_model_R": 6516.3957186154375,
+    "gap_position_pts": 4.3793544703446985,
+    "identity_residual_mw": 1.8189894035458565e-12,
+    "leg_requirement_mw": 4391.222718615426,
+    "leg_supply_mw": 2125.17300000001,
+    "model_census_position": 0.96612684297395,
+    "model_requirement_mw": 148798.088,
+    "model_supply_mw": 143757.827,
+    "published_position": 1.009920387677397,
+    "published_requirement_mw": 144450.0,
+    "published_supply_mw": 145883
+   },
+   "model": {
+    "by_fuel": {
+     "coal": {
+      "accredited_mw": 28874.182999999997,
+      "cleared_mw": 28874.182999999997,
+      "n": 157
+     },
+     "gas_cc": {
+      "accredited_mw": 40606.085,
+      "cleared_mw": 40606.085,
+      "n": 161
+     },
+     "gas_ct": {
+      "accredited_mw": 15474.651000000002,
+      "cleared_mw": 15474.651000000002,
+      "n": 404
+     },
+     "nuclear": {
+      "accredited_mw": 31038.495000000003,
+      "cleared_mw": 31038.495000000003,
+      "n": 31
+     },
+     "oil": {
+      "accredited_mw": 3764.215,
+      "cleared_mw": 3764.215,
+      "n": 8
+     }
+    },
+    "census_mw": 143757.827,
+    "census_position": 0.966127,
+    "cleared_mw": 143757.827,
+    "cleared_position": 0.966127,
+    "how": "all_offers_clear_curve_sets_price",
+    "n_offers": 761,
+    "n_uncleared": 0,
+    "offered_mw": 119757.622,
+    "price_taker_pinned": {
+     "demand_response": 6084.8,
+     "firm_imports": 1281.7,
+     "solar": 743.77856,
+     "storage": 3801.526,
+     "wind": 4778.098999999999
+    },
+    "price_taker_unpinned": 7310.300440000003,
+    "price_takers_mw": 24000.204,
+    "price_usd_per_mw_day": 451.61,
+    "requirement_mw": 148798.088,
+    "screen_peak_demand_mw": 158633.356,
+    "screen_year": 2025,
+    "vre_pools": {
+     "solar": 6990.4,
+     "wind": 11653.9
+    }
+   },
+   "nonthermal": {
+    "delta": 7065.2040000000015,
+    "model_price_takers_mw": 24000.204,
+    "published_nonthermal_offered_mw": 16935
+   },
+   "published": {
+    "by_type": {
+     "Aggregate Resource": [
+      327,
+      273
+     ],
+     "Battery/Hybrid": [
+      14,
+      14
+     ],
+     "Coal": [
+      30081,
+      30081
+     ],
+     "Demand Response": [
+      6363,
+      6342
+     ],
+     "Distillate Oil (No.2)": [
+      2408,
+      2408
+     ],
+     "Energy Efficiency": [
+      1460,
+      1460
+     ],
+     "Gas": [
+      66354,
+      66354
+     ],
+     "Nuclear": [
+      30549,
+      30549
+     ],
+     "Oil": [
+      578,
+      578
+     ],
+     "Other": [
+      911,
+      911
+     ],
+     "Solar": [
+      1337,
+      1337
+     ],
+     "TOTAL_NO_EE": [
+      146905,
+      145883
+     ],
+     "Water": [
+      5365,
+      5361
+     ],
+     "Wind": [
+      2618,
+      1676
+     ]
+    },
+    "ee_addback_mw": 1459.8,
+    "forecast_pool_requirement": 0.938,
+    "frr_carveout_mw": 10886.399999999994,
+    "implied_pjm_peak_mw": 153997.86780383796,
+    "irm_pct": 17.8,
+    "rpm_only_cleared_mw": 135684.0,
+    "rpm_only_position": 1.0048924853025476,
+    "rpm_only_price": 269.92,
+    "rpm_only_requirement_mw": 135023.4,
+    "rto_cleared_no_ee_mw": 145883,
+    "rto_offered_no_ee_mw": 146905,
+    "rto_position": 1.009920387677397,
+    "rto_requirement_mw": 144450.0
+   },
+   "thermal_rows": {
+    "Coal": {
+     "delta": -1206.8170000000027,
+     "model": 28874.182999999997,
+     "published_offered": 30081
+    },
+    "Distillate Oil (No.2)+Oil": {
+     "delta": 778.2150000000001,
+     "model": 3764.215,
+     "published_offered": 2986
+    },
+    "Gas": {
+     "delta": -10273.263999999996,
+     "model": 56080.736000000004,
+     "published_offered": 66354
+    },
+    "Nuclear": {
+     "delta": 489.4950000000026,
+     "model": 31038.495000000003,
+     "published_offered": 30549
+    }
+   }
+  }
+ }
+}
