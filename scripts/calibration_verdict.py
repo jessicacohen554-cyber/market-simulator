@@ -1110,9 +1110,7 @@ def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
         except Exception:
             tier = holdout_policy.TIER_TRAIN  # unreadable year -- strictest path
         if tier != holdout_policy.TIER_TRAIN:
-            _reclassify(
-                rec, "c3c-holdout-year-2026-09-05", C3C_HOLDOUT_RULE_REASON
-            )
+            _reclassify(rec, "c3c-holdout-year-2026-09-05", C3C_HOLDOUT_RULE_REASON)
 
     # In-training years keep the lone-failure guard, measured over what is STILL
     # failing after the holdout reclassification above.

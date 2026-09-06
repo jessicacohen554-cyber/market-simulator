@@ -239,6 +239,22 @@ exit 0" is therefore NOT met on the seventh, and could not be met by this lane w
 regenerating an ERCOT bench part (a dashboard artifact) — stated here rather than worked
 around.** `AuthorizedPriceTuningTests` and every other `test_calibration_verdict.py` test pass.
 
+### 5.1 After merging main `76886c2e` (merge commit `f8c90cac`; conflict-resolution refresh)
+
+Main gained rule 30 `[R-TOUCHPOINT-FOLD]` (`17b9294f`), which took rule-history **§12**; the
+rule 21 section moved to **§13** and "Changes to this file" to **§14**, with every pointer in this
+lane repointed (CLAUDE.md rule 21, the §11 forward pointer, the changelog row, the scorer
+docstring, this finding). Re-run on the merged tree: `audit_keepers`, `check_registry_payload_parity`,
+`check_gate_a_provenance`, `check_mechanism_matrix`, `check_forecast_staleness`,
+`check_golden_manifest` and `ruff check` all exit 0; `check_bench_freshness` is still red on the
+same pre-existing `bench/ERCOT/2022.json.gz` part; `tests/scoring` still shows only the same four
+environmental `test_ff_readiness_battery.py` failures (1349 passed). One new red surfaced from
+main, not from this lane: `ruff format --check` flagged `scripts/calibration_verdict.py` on a
+three-line `_reclassify(...)` call at ≈1113 that `17b9294f` committed unformatted — identical on
+`origin/main` itself. Because CI's format job would fail this PR on it and the file is already in
+the lane's diff, `ruff format` was applied to that file here; `ast.dump` of the module is identical
+before and after, so it is whitespace only. `ruff format --check .` then exits 0.
+
 ## 6. Rule 27 blob verification after push
 
 Push transport: `git push -u origin claude/g3-rule-21-price-tuning-xref-mfav8w` (small text-only pack;
