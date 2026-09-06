@@ -326,3 +326,59 @@ the pushed bytes are the on-disk bytes.
 ---
 
 **Ruling executed. Nothing else arms.**
+
+---
+
+## Addendum A — the rebase re-audit, after registration (owed by the PRECOMMIT, delivered here)
+
+`PRECOMMIT-capx-d67arm-2026-09-06.md` §6 committed to re-auditing the rebase delta **before
+registering**. The registration landed at base `9911ff21`; `main` then moved to `f5e1ce12` while
+PR #5190 was in CI, so the audit is delivered here as an addendum rather than pre-registration.
+Labelled as such rather than presented as if it had been done in order.
+
+**Delta audited: `9911ff21 → f5e1ce12`** — the merges of #5186 (capx **D75-R**, the PJM VRE ELCC
+lane), #5188/#5191 (CAISO 257/258), #5189/#5193 (MISO 228/229) and #5192 (capx D78-R). On the solve
+path: 579 added lines across `capacity_market.py`, `scenarios.py`, `retirements.py`, `runner.py`,
+`adequacy.py`, `new_entry.py` and `run_capacity_hindcast.py`, essentially all D75-R's.
+
+**Verdict: INERT on this recipe. The registered run stays HEAD-current, and it is NOT re-solved.**
+
+| axis | finding |
+|---|---|
+| **Config** | D75-R adds two `ScenarioConfig` fields, `pjm_vre_accreditation_vintage` and `capacity_screen_peak_measured_hindcast`, **both `bool = False`**, both registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `"False"`. Measured on this recipe: **both resolve `False`**, and **neither appears in `_pjm_config` `default_scenario_overrides`** — so D75-R ships default-off for PJM as for everyone. |
+| **Gated code** | The `retirements.py` (+116) and `runner.py` (+95) hunks are behind those two gates. |
+| **Ungated code** | `adequacy.py` (+17) and `new_entry.py` (+7) mention no gate — audited line by line rather than waved through. Both are **pure argument threading**: they pass `config` / `accreditation_year` into the accreditation resolver, whose *behaviour* is gated. D75-R's own docstrings state the invariant (*"Unarmed, or either left `None`, byte-identical"*), and the call sites add no branch. |
+| **Corroborating, not decisive** | The bare PJM T1-H key is **unmoved at `a9c66d8ea25acb9d`** — the registered run's own key — and all five other ISOs' bare keys are unmoved. Per this lane's own standard (PRECOMMIT §3), *a matched cache key is not a G-DRIFT verdict*; it is reported as agreement with the structural audit, not as the audit. |
+
+**Consequence:** §4's numbers are the shipped posture's at `f5e1ce12` as well as at `9911ff21`, and
+no re-solve is owed. Had any hunk been LIVE, the honest course would have been a re-solve, not a
+re-labelling — this addendum exists so that judgement is on the record either way.
+
+### A.1 Two CI checks are RED on PR #5190, and **both are red on `main` itself**
+
+Established the way rule 29(b)'s successor discipline asks — by identity, not by assertion. **Every
+input to both checks is byte-identical to `origin/main`** (`git hash-object` vs
+`git rev-parse origin/main:<path>`), and this PR's diff against `origin/main` is *entirely* docs, the
+registered sidecar, the bundle's slim evidence, `.gitignore` and five lines of `VERDICT_MAP` — **zero
+solve-path Python, zero `capacity_market.py`, zero CAISO keeper file.**
+
+| check | failure | owner |
+|---|---|---|
+| **Structural refactor guards** | `test_constants_facade.py::test_moved_surface_is_complete` — *"`market_sim.config.capacity_market` grew names the facade does not re-export: `['PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE', 'RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO']`"* | **capx D75-R (#5186)** — it added both constants to `capacity_market.py` without adding them to the frozen `MOVED_SURFACE` inventory. |
+| **FR-21 forecast-board staleness (WARN only)** | `check_gate_a_provenance.py` — *"CAISO: `gate.a_keeper_marker` cites SUPERSEDED keeper `2026-09-05-caiso-252-b1-notrim`; the ISO's current designated keeper is `2026-09-06-caiso-257-b1-ctonly`"* | **the CAISO lane** — caiso-257 promoted a new keeper (#5188) without re-keying `frontend/data/forecast/program-status.json`'s `isos.CAISO.gate.a_keeper_marker`. |
+
+**No fix exists to port** — at the time of writing PR #5190 is the only open PR in the repository, so
+there is no other branch carrying either repair. Under rule 29(b)'s standing-down discipline the
+correct action is therefore **one comment naming both, with a proposed patch each, and no widening of
+this PR**: neither repair belongs to the D67-ARM lane, and pushing another lane's fix into a
+registration PR is exactly the scope creep the rule forbids. The proposed patches are:
+
+1. add `"PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE"` and `"RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO"` to the
+   `"market_sim.config.capacity_market"` tuple in `tests/regression/test_constants_facade.py`
+   (alphabetical position, beside the other capx-lane entries);
+2. re-key `isos.CAISO.gate.a_keeper_marker` in `frontend/data/forecast/program-status.json` to
+   `2026-09-06-caiso-257-b1-ctonly`, per audit board F-5.
+
+**Noted, not acted on:** the second check is *named* "(WARN only)" yet exits 1 and reports
+`conclusion: failure`. Whether the name or the exit code is wrong is the forecast-board lane's call,
+not this one's.
