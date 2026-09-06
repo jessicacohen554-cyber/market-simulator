@@ -3131,3 +3131,104 @@ input-readiness question** — do not re-audit it. The one object the audit surf
 not a 2020 one: the model runs high in **5 of 6 years, mean +$1.99/MWh**, present at
 +$1.19/+$2.36/+$1.16 in 2023/2024/2025. If it is ever worked it is an **in-sample** object, which is
 where rule 22 step 3 requires the fitting to happen. This session opens nothing.
+
+## 2026-09-06 — neiso-106: the fossil offer-level scalar RE-DERIVED on the measured full-span pass-through — keeper → `2026-09-06-neiso-106-fossil-offer`, CALIBRATED, and the rule-29 screen-year defect is PROVEN with a receipt
+
+**One full-span LP invocation (2023 · 2024 · 2025) plus the 2020/2021/2022 touchpoints. No screen,
+no control solve.** Full record:
+`results/calibration/FINDING-neiso106-offer-level-rederived-2026-09-06.md`; pre-registration
+`PREREG-neiso106-offer-level-rederived-2026-09-06.md` (committed `773411e5`, **before the solve**);
+governance addendum `ADDENDUM-neiso106-prereg-collision-2026-09-06.md`.
+
+### A — what moved
+
+The scalar on the 12 fossil markup bands, **0.93391 → 0.95470** (a 6.609 % cut → **4.530 %**), and
+nothing else: same channel, same bands, same target, same recipe. **Only the coefficient in the
+sizing division changed** — from the pass-through the neiso-104 screen measured on **one year**
+(0.5247, 2025) to the **full-span 0.76550** measured directly off the superseded keeper's own three
+in-sample price moves. The target is the same **+3.4678 %** in-sample geometric-mean price bias
+fixed in `PREREG-neiso104` §3.1 before any LP ran (reproduced here at 0.034674, and still divided at
+the declared value). `0.034678 / 0.76550 = 4.530 %`.
+
+### B — the landing, pre-registered before the solve and hit to 0.02 pp
+
+| year | pre-cut | superseded keeper | **this keeper** | pre-registered |
+|---|---:|---:|---:|---:|
+| 2023 | +3.131 % | −3.361 % | **−1.338 %** | −1.319 % |
+| 2024 | +5.664 % | −0.019 % | **+1.764 %** | +1.768 % |
+| 2025 | +1.647 % | −1.893 % | **−0.769 %** | −0.779 % |
+
+In-sample geometric-mean bias **−1.767 % → −0.124 %** (pre-registered −0.119 %); MAE
+**1.758 % → 1.290 %**. Against the pre-cut neiso-99 basis: **+3.467 % → −0.124 %** and
+3.481 % → 1.290 %.
+
+**Determination `CALIBRATED`, criterion for criterion identical to the superseded keeper** (0 FAILs;
+C1 all 12/12 · free 8/8; C2/C3a/C3b/C4/C6/C8 PASS; C3c the same lone ledgered caveat), D-5(b)
+re-verified on committed artifacts before the re-key. **The PREREG's named live risk did not fire**:
+C3b price duration/shape PASSES, as the bracketing argument expected — 0.95470 lies strictly between
+two configurations that both scored C3b PASS on these same three years.
+
+### C — the finding, which outlives the scalar
+
+**Pass-through is YEAR-dependent, tracking delivered gas inversely and monotonically** — 1.3055 at
+$1.98/MMBtu (2020), 0.9525 at $2.93, 0.8138 at $3.07, 0.7061 at $4.50, 0.5269 at $6.24 (2025),
+0.4126 in 2022: a **3.2× spread**. **It is NOT depth-dependent**: 2025, the only year solved at two
+cut depths, reads 0.5254 at 4.53 % against 0.5269 at 6.609 %, ratio **1.0029** over a 46 % change in
+depth — which refutes the depth-linearity hazard `PREREG-neiso105` §3 named.
+
+**Rule 29 `[R-SCREEN]` selects the screen year by largest absolute footprint**, which for a
+multiplier on `HR × fuel` is the highest-gas year, which is the **lowest** pass-through year. **The
+receipt**: neiso-104 declared 0.765 from an across-year gas elasticity and recorded that
+identification **REFUTED** when its 2025 screen measured 0.525; the full-span figure is **0.7655** —
+right to within 0.07 %. What was wrong was reading a one-year screen as a measurement of the span.
+**Filed as an owner ask (`PREREG-neiso106` §7); no rule was amended by this lane.**
+
+**Bit-level cross-check, found in the solve log rather than looked for:** this arm's 2025 solve is
+**bit-identical** to the neiso-104 screen arm that rule 29(c) required deleted — P0 objective
+3,554,608,783.6457 to 13 significant figures, 188,740 / 59,473 simplex iterations on both passes —
+despite four package-version deltas. It reconstructs a deleted result inside a registrable bundle
+and upgrades `ADDENDUM-neiso104-env-correction`'s "4 dp on load-weighted price" to bit-identity on
+the LP itself.
+
+### D — governance, stated rather than assumed
+
+This is the **third** sizing of this scalar (4.53 % → 6.609 % → 4.530 %), and `PREREG-neiso105` §3
+pre-committed it would not move again in either direction. That lane-level stop rule is **overridden
+by owner direction, not reasoned away** — though neiso-105's own matrix stamp had already drawn the
+line, calling a full-span re-derivation *"legitimate (the target never moved)"* and only a resize
+against the gates illegitimate, which is the side this lane is on. `PREREG-neiso106` §6
+**pre-commits this as the third and LAST sizing**: the coefficient has now been measured on the full
+span at two depths, so no fourth is legitimate in either direction; a further miss is reported and
+the next move is structural.
+
+G-CTRL form 4 with **no control LP spent**, validated by a G-DRIFT audit run before the arm (keeper
+sha `8b2c890d` **asserted** to resolve — the clone is shallow and an unresolvable anchor makes
+`git diff` silently report no drift — and all 12 changed solve-path files classified INERT).
+Ledgered as **one** DOF free parameter under rule 21 `[R-DOF]` / owner ruling R-AY, identification
+source the **ruling**. No `ScenarioConfig` default moved; no other ISO touched.
+
+### E — holdout
+
+The 2020/2021/2022 validation touchpoints were re-run on the **frozen, already-promoted** recipe and
+re-stamped to the keeper (rule 30(a)/(b)) — **nothing is fitted to a held-out year**: the scalar was
+identified on the 2023–2025 in-sample bias alone and promoted before any touchpoint was solved
+(rule 22 step 3/4). Rule 30(c) untouched: NEISO's determination is its train-tier verdict, and a
+held-out year can neither certify nor decertify it. **The touch-once locked test (2019 / H1-2026) is
+UNTOUCHED and remains frozen for every ISO.**
+
+### F — what this does NOT close
+
+C3c is untouched and remains the lone ledgered caveat at the same magnitude (model 0 h > $300/MWh
+vs RT actuals 15 / 8 / 20 h); the 2026-07-11 frontier designation stands, and nothing in a markup
+scalar can reach a scarcity tail. The diurnal price amplitude gap is unchanged and large
+(26.4 / 22.4 / 32.7 % of measured hod range, band-free/reported-only under v3.5) — a level scalar
+cannot move a shape. Two diagnostic rows got **worse** and are disclosed in the FINDING §3 rather
+than left in a JSON file: a D-4 off-window row at 26 MW plant 54605 worth **0.0001 TWh**, and three
+D-2 forced shares that all moved *toward* their caps; C8 still PASSES because every class involved
+is immaterial under rule 20's own 2 %-of-load floor, and the D-4 row is not worked because working
+it would be chasing four parts in a billion.
+
+**Next shorthand: `neiso-107`.** No NEISO lever is open, and **the offer-level lane is CLOSED by its
+own pre-committed stop rule** — do not re-size this scalar. The live objects are unchanged: C3c
+(frontier declared, needs a new measured identification and its own charter) and the diurnal
+amplitude gap (needs its own charter; see the neiso-76 adjudication before proposing anything).
