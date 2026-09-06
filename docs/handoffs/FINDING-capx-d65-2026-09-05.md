@@ -19,7 +19,7 @@ was solved. §9 states the exact re-cut D65-B would need if Q47 rules (A).
 |---|---|---|
 | 1 | Does the seam build clean? | **Yes.** One field, one validator, one `ccs.py` change, one CLI pair, six pre-solve tests. Zero DOF — no new constant, no new reference host, no ISO's fitted number. Both pinned keys unmoved with the field absent AND explicitly `False`. |
 | 2 | Phase 0 (zero LP) | **REPRODUCED, to the MW and to 5e-12 on the per-unit clearing ratio**, on all six ISOs × 2028–2030 through the CODE path (§2). |
-| 3 | G-DRIFT | **WRONG, and the arm caught it (§3b).** The audit read all 58 files' hunks as INERT; A1's ledger then differed from the committed control in **2027**, a year the seam cannot reach. A HEAD control was solved under rule 29(b)'s LIVE clause and is **byte-identical to A1 before 2028**, so the seam is inert as designed and the difference is HEAD drift. Bisected to code: the pre-drift source reproduces the committed 2027 with **zero** differing ledger keys (§3c). |
+| 3 | G-DRIFT | **WRONG, and the arm caught it (§3b).** The audit read all 58 files' hunks as INERT; A1's ledger then differed from the committed control in **2027**, a year the seam cannot reach. A HEAD control was solved under rule 29(b)'s LIVE clause and is **byte-identical to A1 before 2028**, so the seam is inert as designed and the difference is HEAD drift. **Root-caused, not just detected:** a one-hunk revert of capx D55's `_floor_retention_merit` reproduces the pre-drift 2027 exactly (§3c–§3d) — and the reason its own diagnostic showed nothing is a second finding: the reliability floor has **three call sites and only two are logged**. |
 | 4 | A1 (NEISO t1f, seam 4 alone) | **The seam RE-ORDERS; it does not re-select.** 2028: every host lost is `k` 1.55–1.71, every host gained is `k` 0.95–1.06 — no exceptions — with MW-weighted `er` **0.5752 → 0.3912** and `hr` 7.305 → 7.029. But the 3 GW/yr cap binds in every year on both arms, so the **cumulative** 2028–30 set is 34 rows either way and differs by **one swap** (`er` 0.4385 → 0.4353, −0.7 %). Quoting 2028 alone overstates the mechanism by an order of magnitude (§4.2). |
 | 5 | The STOPs | **None fired**, each read against evidence rather than asserted — including a 2,590-row census check that every `k = 1` row is invariant and every `k > 1` row strictly harder (§5). |
 | 6 | ARM / DO-NOT-ARM | **ARM, but ONLY COUPLED WITH ACT B — do not arm Act A alone**: seam 4 multiplies an uncited 2.7× VOM level by `k`, compounding the error on exactly the hosts it re-prices. Card C-17 / Q49 drafted (§8). |
@@ -392,14 +392,8 @@ high-`er` hosts the pre-drift run instead kept alive to convert in 2028, and vic
 material change to a forecast leg, and it is silent: the committed `neiso-t1f` ledger no longer
 describes what HEAD produces from its own recipe.
 
-**Named open item, routed not inferred.** The suspect hunk is capx D55's `_floor_retention_merit`
-(the only ungated existing-code change in `retirements.py`, and an intentional ordering change),
-but NEISO's 2027 `floor_retained` is `[]` on both sides, so it is a **candidate, not a
-demonstrated cause**. §3d records the surgical test this lane ran on it. Whatever the hunk turns
-out to be, the consequence is the director's, not this lane's: **every committed forecast bundle
-solved before it is now stale against HEAD**, which is a blast-radius question of exactly the kind
-D60-R2 is already handling — this finding hands it a reproducible instrument and a measured
-magnitude rather than a suspicion.
+**The hunk is PINNED, not merely suspected** — a one-hunk revert reproduces the pre-drift result
+exactly, and the reason its own diagnostic showed nothing is itself a finding. See §3d.
 
 ---
 
@@ -536,3 +530,64 @@ said; the level decides *how much* the shape closes.
 Nothing is armed. No default moved. No constant changed. No keeper, sidecar, determination or
 dashboard row moved. NYISO and GOLDEN-3 were not solved (their triggers did not fire, §4.4), PJM
 was never this lane's arm, and Act B was not touched in any form.
+
+---
+
+## 3d. The LIVE hunk, pinned by a one-hunk revert — and the diagnostics gap that hid it
+
+**The hunk.** `retirements.py::_floor_retention_merit`, changed by **capx D55 (2026-09-05)**. It
+replaces key 1 of the reliability-floor retention sort — the per-unit quotient
+`(FOM × multiplier × pmax × 1000) / (pmax × accreditation_fraction)` — with the class-constant
+`(FOM × multiplier × 1000) / accreditation_fraction`. The two are equal in exact arithmetic and
+**not** in IEEE-754: the quotient form put same-fuel units on 4–5 distinct floats at the 1e-11
+level, so the tuple sort consulted the CO2 and heat-rate keys only inside a rounding bucket. D55 is
+a deliberate, correct repair of that; what it also does, necessarily, is **change the sort order**.
+
+**The proof.** A copy of the exact tree the HEAD control ran on, with **only** that hunk reverted
+(verified: `diff -r` over `src/` reports exactly one differing file, and within it exactly this
+hunk), re-solved NEISO 2026–2027:
+
+| 2027 | `retirements` | `reserve_margin` | gas_cc after |
+|---|---|---|---|
+| old source `9e48ff6` | 33 rows / 2,369.81 MW | 0.045867 | 10,713.803 |
+| committed control | 33 rows / 2,369.81 MW | 0.045867 | 10,713.803 |
+| **HEAD minus D55** | **33 rows / 2,369.81 MW** | **0.045867** | **10,713.803** |
+| HEAD control | 40 rows / 2,244.89 MW | 0.050821 | 10,838.721 |
+
+Reverting one hunk restores the pre-drift result exactly. 2026 is identical across **all** of them
+— ledger *and* the full dispatch parquet, all 12 columns — so the hunk first bites in 2027's
+`evolve_fleet`, and nothing else in the 58-file diff contributes.
+
+**Why `floor_retained` shows nothing — a second finding, independent of this lane.**
+`floor_retained` (and its `year_YYYY_floor_retentions.json` sidecar) is `[]` in **every** year on
+**both** sides, which is what made the sort key look inert and is a large part of why the audit
+missed it. The reason is that `_apply_reliability_floor` has **three call sites and only two are
+logged**: the returns at `retirements.py:2565` and `:3486` become `floor_retention_log`, but the
+call at **`:2517` discards its return**. That third call is the pipeline **admission-cap** screen —
+it is invoked for its side effect (it mutates the `scheduled` set in place) against a look-ahead
+`cap_fleet` at `cap_year`. So the floor *does* un-retire units there, D55's ordering decides
+**which**, and none of it appears in the ledger or the sidecar.
+
+That is the causal chain, end to end: D55 re-orders the retention sort → the un-logged
+admission-cap floor pass un-retires a different set → a different set of 2027 retirements is
+admitted (7 rows, −124.92 MW of gas_cc) → the 2028 retrofit screen sees a different fleet.
+
+**Two items routed to the director, neither of them this lane's to fix:**
+1. **Every forecast bundle solved before D55 is stale against HEAD.** The committed `neiso-t1f`
+   ledger no longer describes what HEAD produces from its own recipe, and the change is material
+   (an almost disjoint gas-CC economic-exit set in 2027). This is a blast-radius question of
+   exactly the kind D60-R2 is already handling; this finding hands it a **reproducible instrument**
+   (the `git archive <sha> src scripts configs` + `MARKET_SIM_DATA_ROOT` probe used here) and a
+   measured magnitude rather than a suspicion.
+2. **The reliability floor under-reports itself.** One of its three call sites — the one that
+   decides admission-cap retentions — writes nothing to `floor_retained`, so the diagnostic that
+   exists to make floor behaviour visible is blind to it (rules 17 `[R-FLOOR-WINDOW]` and 19
+   `[R-ONE-MECH]` both depend on that visibility). Capturing that return would have made this drift
+   self-evident.
+
+**And one correction to the G-DRIFT protocol itself, earned here.** Rule 29(b) already says
+*classify every changed **hunk***. The failure mode this lane demonstrates is the tempting
+shortcut: on a large file whose *new* functions are all gated, concluding the *file* is inert. The
+audit checklist needs one more explicit line — **"for every changed hunk that modifies an EXISTING
+function, name the gate or show the arithmetic; a file-level verdict is not admissible"** — because
+that is precisely the hunk class that produced a LIVE change here.
