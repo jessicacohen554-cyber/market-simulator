@@ -1,0 +1,184 @@
+{
+  "arm": {
+    "carbon_price_path": "mid"
+  },
+  "arm_is_live": true,
+  "cache_key_arm": "a31305098f97c7ef",
+  "cache_key_ref": "1b9e15c5a85f6302",
+  "carbon_arm": 3.75,
+  "carbon_ref": 0.0,
+  "delta_carbon": 3.75,
+  "emissions_by_fuel_mt": {
+    "arm": {
+      "biomass": 0.581897,
+      "coal": 241.75374,
+      "gas_cc": 91.522258,
+      "gas_ct": 22.839308,
+      "gas_st": 7.007814,
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.128654,
+      "solar": 0.0,
+      "wind": 0.0
+    },
+    "ref": {
+      "biomass": 0.563109,
+      "coal": 252.316009,
+      "gas_cc": 88.330225,
+      "gas_ct": 22.345359,
+      "gas_st": 6.791719,
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.128654,
+      "solar": 0.0,
+      "wind": 0.0
+    }
+  },
+  "emissions_by_zone_mt": {
+    "arm": {
+      "MISO-East": 91.134215,
+      "MISO-Illinois": 22.529808,
+      "MISO-Indiana": 68.953189,
+      "MISO-Plains": 57.638602,
+      "MISO-South": 81.62018,
+      "MISO-West": 41.957675
+    },
+    "ref": {
+      "MISO-East": 93.122647,
+      "MISO-Illinois": 22.396158,
+      "MISO-Indiana": 70.21567,
+      "MISO-Plains": 59.110428,
+      "MISO-South": 83.219388,
+      "MISO-West": 42.410784
+    }
+  },
+  "emissions_mt": {
+    "arm": 363.8337,
+    "delta": -6.641399999999976,
+    "ref": 370.4751
+  },
+  "expected_delta_carbon": 3.75,
+  "gate": [
+    {
+      "check": "G1 premise",
+      "detail": "delta resolved carbon = +3.7500 $/t (pre-declared +3.7500; arm is LIVE)",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G2 CO2 does not rise",
+      "detail": "370.4751 -> 363.8337 Mt (-1.79 %)",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G3 price does not fall",
+      "detail": "52.000 -> 54.411 $/MWh (+2.411)",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G4 magnitude",
+      "detail": "delta p / delta carbon = 0.6429 t/MWh (structural bound [0, 1.08]: ok; addendum band [1.8, 3.3] $/MWh: in)",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G5 fossil confinement",
+      "detail": "by-fuel partition reproduces emissions_mt: True; zero-carbon classes booking a CO2 decrease: none",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G6 import books no in-ISO CO2",
+      "detail": "emissions_by_fuel_mt['import'] = 0.0 / 0.0",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G7 no non-target flip",
+      "detail": "invariant FAIL/WARN REF=2/1 ARM=2/1 (of 14 scored)",
+      "verdict": "PASS"
+    },
+    {
+      "check": "G8 unserved energy",
+      "detail": "unserved_mwh 199592.22 -> 199592.22",
+      "verdict": "PASS"
+    }
+  ],
+  "generation_twh": {
+    "arm": {
+      "biomass": 14.3247,
+      "coal": 254.2685,
+      "gas_cc": 223.6977,
+      "gas_ct": 45.8537,
+      "gas_st": 16.1737,
+      "hydro": 9.2925,
+      "nuclear": 90.1989,
+      "oil": 0.1299,
+      "solar": 9.2008,
+      "wind": 94.3683
+    },
+    "ref": {
+      "biomass": 13.7381,
+      "coal": 264.8697,
+      "gas_cc": 215.3625,
+      "gas_ct": 44.7793,
+      "gas_st": 15.7073,
+      "hydro": 9.2925,
+      "nuclear": 90.1989,
+      "oil": 0.1299,
+      "solar": 9.2008,
+      "wind": 94.3683
+    }
+  },
+  "import_co2_basis": "import_co2_mt_reported is a REPORTED-ONLY disclosure line and is NEVER added into emissions_mt: the LP prices border carbon in the tranche VOM and holds import emission rates at zero so the scored total stays on the eGRID in-ISO generation basis. Tranche emission factors are the ISO's published ladder where one exists (CAISO IMPORT_TRANCHE_EF), zero for the contracted firm Hydro-Quebec seams (HQ_PhaseII, Highgate, HQ_hydro), and otherwise the CARB unspecified default 0.428 tCO2/MWh \u2014 a disclosed upper bound, not a measured seam rate.",
+  "import_co2_mt_reported": {
+    "arm": 0.0,
+    "delta": 0.0,
+    "displaced_pct_of_headline": 0.0,
+    "ref": 0.0
+  },
+  "invariants": {
+    "arm_fail": 2,
+    "arm_warn": 1,
+    "n_scored": 14,
+    "ref_fail": 2,
+    "ref_warn": 1
+  },
+  "iso": "MISO",
+  "killed": [],
+  "lw_price": {
+    "arm": 54.411,
+    "delta": 2.4110000000000014,
+    "implied_marginal_rate_t_per_mwh": 0.6429333333333337,
+    "ref": 52.0
+  },
+  "per_year_perf_arm": [
+    {
+      "peak_rss_mb": 9895.2,
+      "wall_s": 393.0,
+      "year": 2026
+    },
+    {
+      "peak_rss_mb": 7949.7,
+      "wall_s": 197.8,
+      "year": 2027
+    }
+  ],
+  "per_year_perf_ref": [
+    {
+      "peak_rss_mb": 9873.0,
+      "wall_s": 446.2,
+      "year": 2026
+    },
+    {
+      "peak_rss_mb": 7915.1,
+      "wall_s": 211.1,
+      "year": 2027
+    }
+  ],
+  "rss_mb_arm": 9895.2,
+  "rss_mb_ref": 9873.0,
+  "unserved_mwh": {
+    "arm": 199592.22,
+    "ref": 199592.22
+  },
+  "wall_s_arm": 591.0,
+  "wall_s_ref": 657.4,
+  "year": 2027
+}

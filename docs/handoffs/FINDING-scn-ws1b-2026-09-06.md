@@ -228,12 +228,67 @@ If that is right, the two rates are measuring genuinely different marginal units
 away from being a coincidence; MISO is the third live ISO and its result should be read as the
 test of whether the pattern holds.**
 
+### 3.6 MISO — LIVE, 8/8 PASS, and both my bands HIT
+
+| metric | REF | CARB | Δ |
+|---|---|---|---|
+| resolved carbon $/t | 0.0000 | 3.7500 | **+3.7500** |
+| **`emissions_mt`** | 370.4751 | 363.8337 | **−6.6414 (−1.79 %)** |
+| **`import_co2_mt_reported`** | **0.0000** | **0.0000** | **0.0000** |
+| load-weighted price $/MWh | 52.000 | 54.411 | **+2.411** |
+| `unserved_mwh` | 199,592.22 | 199,592.22 | 0.0 |
+
+**STOP gate: 8 of 8 PASS. ARM NOT KILLED.** Both pre-declared bands land: CO2 −1.79 % inside
+[−0.8, −1.8] %, price +$2.411 inside [1.8, 3.3] $/MWh.
+
+Coal → gas again, at MISO's larger scale: **coal −10.60 TWh**, gas_cc **+8.34 TWh**, gas_ct
++1.07, gas_st +0.47, biomass +0.59; hydro / nuclear / solar / wind all **exactly 0.0000**.
+
+**Adequacy caveat, smaller than ERCOT's and stated anyway:** MISO carries I3 (19 h / 41 h of
+slack, 0.02–0.03 % of load) and I7 in **both** arms, and 199,592 MWh of unserved energy unchanged
+between them. Prices stay in a normal range ($52 → $54), so unlike ERCOT this pass-through number
+is usable — but it is not a perfectly clean market either, and the 41 scarcity hours dilute Δp
+slightly toward zero, i.e. the true fossil-marginal rate is a little **above** the 0.6429 measured.
+
+### 3.7 THE n = 3 TEST — the direction holds, my magnitude claim does NOT
+
+§3.5 recorded a ~13–15 % gap on two ISOs and named MISO in advance as the test. **MISO confirms
+the direction and breaks the magnitude:**
+
+| ISO | coal share of generation | WS-4c rate (load-following) | **this lane (price-setting)** | ratio |
+|---|---|---|---|---|
+| ERCOT | 14.1 % | 0.447 | 0.5157 | **1.15×** |
+| PJM | 23.1 % | 0.508 | 0.5731 | **1.13×** |
+| **MISO** | **35.0 %** | 0.484 | **0.6429** | **1.33×** |
+
+**What survives:** the price-setting marginal rate exceeds the load-following rate in **3 of 3**
+ISOs, measured by two independent campaigns on different questions. That is a real and consistent
+result, and it means the two rates are **not interchangeable** — an emissions attribution that
+uses one where the other belongs is wrong by 13–33 %.
+
+**What does NOT survive — my own §3.5 framing, retracted here:** the gap is **not** a stable
+~13–15 % correction. MISO's 1.33× sits well outside the ERCOT/PJM cluster, so at n = 3 the honest
+statement is a **range of 1.13–1.33×**, not a constant.
+
+**And the obvious mechanism does not cleanly explain it.** If the driver were simply "more
+inframarginal coal ⇒ bigger divergence", the ratios would order with coal share. **They do not:**
+PJM has 1.6× ERCOT's coal share and a *smaller* ratio (1.13 vs 1.15). Coal share alone therefore
+fails to order three points, and **I am not going to fit a second variable to three observations
+to rescue it.** The slow-ramping-coal story of §3.5 remains a plausible *direction* mechanism and
+is now explicitly **not** established as a dose-response one.
+
+**What would actually settle it** (named, not run — outside this lane's charter): the same
+differencing on the three program ISOs, which this lane cannot supply because the arm is inert
+there; or a decomposition of Δprice by marginal-fuel hour, which needs the hourly duals rather
+than the annual scalars these T0 bundles export.
+
 ## 4. LEAKAGE — `import_co2_mt_reported` beside `emissions_mt`, per ISO, as a number
 
 <!-- FILL: completed as each ISO lands. ERCOT row below. -->
 
 | ISO | Δ `emissions_mt` (Mt) | Δ `import_co2_mt_reported` (Mt) | % of headline displaced | tranche that moves |
 |---|---|---|---|---|
+| **MISO** | **−6.6414** | **0.0000** | **0.0 %** | **none built.** `IMPORT_ZONE` names `MISO_external` but `IMPORT_TRANCHES` has no MISO entry, so no tranche exists. **This zero is a MODEL-BOUNDARY artifact, not a physical claim** — MISO trades heavily with PJM and SPP in reality; the model has no seam for it. MISO's −6.64 Mt therefore carries **no leakage disclosure at all** and must be read as an **upper bound**. Flagged in the PRECOMMIT before the solve precisely so this null is not read as "MISO does not leak". |
 | **PJM** | **−13.4381** | **+0.4336** | **3.2 %** | **the 2-tranche scarcity block** — import generation +2.0495 TWh. Predicted +0.03 to +0.23 Mt; **measured +0.4336, nearly 2× the top of my band** (§5). The tranches pay **no border carbon** while PJM coal's `mc` rises ~$3.98/MWh, so they get relatively cheaper. `emissions_by_fuel_mt["import"]` stays **0.0** in both arms — the import MWh never enters the scored in-ISO total (G6), it is disclosed beside it. |
 | **ERCOT** | **−0.9280** | **0.0000** | **0.0 %** | **none — ERCOT has no import node at all** (0 import pseudo-generators; PRECOMMIT §2.2). The zero is a **construction fact, not a measurement**: there is no seam across which leakage could be observed, so ERCOT's headline cut carries **no leakage disclosure** and must be read as an **upper bound** on the real reduction. |
 
