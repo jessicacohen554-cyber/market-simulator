@@ -910,9 +910,34 @@ says so rather than guessing.
 | `neiso-t1f` | `neiso-2026-2030-d50-ccscapex` | PRE | **PRE — residue** (the D65 case, magnitude measured) |
 | `ercot-t1h` | `ercot-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
 | `caiso-t1h` | `caiso-2021-2025-realized-t1h-d46` | PRE | **PRE — residue** |
-| `miso-t1h` | `miso-…-t1h-d53-sectorgate-d51ratio` | PRE | **PRE — residue** (measured INERT by D55) |
+| `miso-t1h` | `miso-…-t1h-d53-sectorgate-d51ratio` | PRE | **PRE — residue** (~~measured INERT by D55~~ — **MIS-CITATION, corrected by capx D72-prehunk §2.1**) |
 | `nyiso-t1h` | `nyiso-…-t1h-d52-devintage` | PRE | **PRE — residue** |
 | `neiso-t1h` | `neiso-2021-2025-realized-t1h-d45r` | PRE | **PRE — residue** |
+
+> **ANNOTATED 2026-09-06 by capx D72 (prehunk lane) —
+> `FINDING-capx-d72-prehunk-2026-09-06.md`. The residue is no longer seven, and one row above
+> was wrong.**
+>
+> - **FOUR keys are DISCHARGED by proof, at zero LP: `ercot-t1f`, `ercot-t1h`, `caiso-t1h`,
+>   `nyiso-t1h`.** In every year of each committed bundle the reliability floor either
+>   un-retires nothing (`entry_capped == 0`) or exhausts its eligible set (`decided == 0`);
+>   both outcomes are invariant under the retention order D55 changes, and the argument
+>   composes across the horizon by induction. Validated on D55's own known-inert control and on
+>   the known-moving `neiso-t1f`, which the same census flags at 2027 and only 2027 (D72 §2).
+> - **`miso-t1h`'s "(measured INERT by D55)" note is a MIS-CITATION.** D55 measured the
+>   `…-t1h-d46` bundle inert (`eff2c890746ec966`); the bare key points at
+>   `…-t1h-d53-sectorgate-d51ratio` (`6ea92547eaa62559`), the lineage D55 §2.3 measured as one
+>   where the floor DOES release a suffix. It is one of the three keys still owed (D72 §2.1).
+> - **The remaining three (`neiso-t1f`, `miso-t1h`, `neiso-t1h`) can no longer be closed by
+>   re-solving at HEAD.** D72's leg 1 fired its pre-declared STOP: `neiso-t1f` at HEAD
+>   `a663cf6f` reads 44 rows / 2,758.32 MW / rm 0.047594 / gas_cc 10,326.846 — neither side of
+>   this table. Bisected (three probes, data held constant) to **`ad45b0e4`, PR #4970
+>   SCN-LOAD**, which re-derives `DEMAND_GROWTH_RATES` from the curated `load-forecast`
+>   datatype — NEISO `low.near` 0.007 → 0.004009, and **all six ISOs move**. A re-solve now
+>   confounds D55's ordering hunk with SCN-LOAD's demand change, and the second is larger.
+>   **Every committed forecast bundle is stale on that axis, so this section's 28 PRE-hunk
+>   bundles are now all 33 stale, on a different one** (SCN-LOAD's own §6 item 2 declares it).
+>   A re-based charter is routed; the D55 half of the question is closed for four of seven.
 
 **Seven bare keys remain PRE-hunk after this lane lands.** They are D60-R3's *routed residue*,
 not its scope — the charter's owed list is three legs, and re-solving seven more keys is a
