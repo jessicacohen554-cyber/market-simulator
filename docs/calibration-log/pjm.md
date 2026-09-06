@@ -4665,6 +4665,21 @@ missing `calibration_reference` block, missing renewable-capacity file), and the
 sentinel (2,147,480,064 MW, three hours) is located but unfixed — fixing it re-renders PJM's
 committed benchmark and needs its own decision.
 
+**Re-scored from committed artifacts (no solve), and one new observation.**
+`calibration_verdict.py --run-id 2026-09-05-pjm-2022-2021-touchpoints` at HEAD reproduces every
+figure above exactly and confirms the basis as **three** failing criteria, not four —
+`fuelmix, price_mean, price_shape` — with C3c reading **CAVEAT / ACCEPTED MODEL-CLASS LIMITATION**
+under the rubric v3.6 holdout clause. Benign vintage note: the bundle's committed `metrics.json`
+still carries the solve-time stamp (rubric 3.5, fails 4, C3c counted); the sidecar, the derived
+ladder and the re-score all carry v3.6, and the sidecar is the scored surface. **NEW, for the
+successor:** the scorer's band-free REPORTED-ONLY `D-A` row shows the two rungs diverging sharply
+on diurnal amplitude — 2021 **112.7 %** of measured ($28.65 vs $25.42), 2022 **60.7 %** ($28.18 vs
+$46.40). The model's own hod range is flat across the two years while the market's nearly doubles,
+so amplitude is not tracking the C1 miss. That is the **flat-offer-stack signature** of the
+keeper's own note item (15a), now visible out-of-sample and the natural companion to 2022's C3b
+0.250. Recorded as evidence only — item (15a)'s lever queue is empty with no open successor, D-A
+is band-free and never a tuning target, and rule 22 step 3 sends any work to 2023-2025.
+
 **RENUMBERED, and TWO OF THIS ENTRY'S CLAIMS ARE SUPERSEDED BY pjm-166 (the entry directly
 above), which landed on `main` while this session was open.** This session began as pjm-166 and is
 renumbered pjm-167. (a) **The successor named below is REFUTED — do not take the C1 signature to
@@ -4679,6 +4694,7 @@ finding below is INDEPENDENTLY REPLICATED and its owner-court item is DISCHARGED
 the same conclusion by a stronger route (deepened to 11,640 commits without resolving `457ae04`, so
 there is *no diff to classify*) and spent the control (`pjm_headctrl_k162`, training-tier only,
 deleted before merge per rule 29 c). Do not re-raise or re-spend it. Everything else here stands.
+
 
 **Log-gap note:** the 2026-09-05 touchpoint session registered its run and wrote
 `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`, but left **no

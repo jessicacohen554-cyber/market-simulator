@@ -228,6 +228,7 @@ fixing it re-renders PJM's committed benchmark, so it needs its own re-render de
 
 ---
 
+<<<<<<< HEAD:docs/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md
 ## 10. Superseding note — `pjm-166` landed on `main` while this session was open
 
 This session was numbered `pjm-166` when it began. A different session took that number on `main`
@@ -266,3 +267,45 @@ and the re-score plus the out-of-sample diurnal-amplitude divergence (§9). The 
 observation in §9.1 is **complementary** to `pjm-166`'s additive-fossil-surplus reading rather than
 in tension with it: a surplus of fossil energy and a compressed price amplitude are the two faces
 of a flat offer stack, which is keeper note (15a)'s in-sample diagnosis seen from out of sample.
+=======
+## 9. Addendum — re-scored from committed artifacts, and one new observation for the successor
+
+`scripts/calibration_verdict.py --run-id 2026-09-05-pjm-2022-2021-touchpoints` was run at HEAD
+(committed artifacts only, **no solve**) to check the quoted numbers against the scorer rather
+than against sidecar prose. **Every figure in §2.1 reproduces exactly**, and the determination
+basis is confirmed as **three** failing criteria, not four:
+
+> `determination basis: undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape`
+
+C3c reads **CAVEAT — ACCEPTED MODEL-CLASS LIMITATION** (2021: model 145 h vs RT actual 23 h,
+6.30×), auto-applied under the rubric v3.6 holdout clause with the governance gate passing.
+
+**A vintage note, benign but worth stating:** the bundle's committed
+`results/calibration/pjm_tp2022_2021_k162/metrics.json` still carries the **solve-time** stamp
+(`rubric_version: 3.5`, `fails: 4`, C3c counted as a failure). The registered sidecar, the derived
+ladder and this re-score all carry **v3.6**. The sidecar is the scored surface and it is correct;
+the bundle metric is simply the older stamp. Nothing is mis-stated on the dashboard.
+
+### 9.1 NEW, and directly relevant to the successor — the two rungs diverge sharply on diurnal amplitude
+
+The scorer's `D-A` row (REPORTED-ONLY and **band-free**, so this is a diagnostic and **not** a
+gate, and nothing here is or may become a tuning target):
+
+| rung | model hod range | measured hod range | **amplitude vs measured** | hod r | phase |
+|---|---|---|---|---|---|
+| 2021 | $28.65 | $25.42 | **112.7 %** | +0.881 | peak h16 vs h17, trough h02 vs h02 — OK |
+| 2022 | $28.18 | $46.40 | **60.7 %** | +0.960 | peak h16 vs h17, trough h02 vs h01 — OK |
+
+**The model's own diurnal range is essentially flat across the two years ($28.65 vs $28.18) while
+the market's nearly doubles ($25.42 → $46.40).** The rungs fail C1 in the *same* direction
+(gas over, coal under) but sit on opposite sides of the amplitude comparison, so amplitude is not
+simply tracking the C1 miss.
+
+This is the **flat-offer-stack signature** the keeper's own note item (15a) already diagnoses
+in-sample — *"nothing in the model's offer varies by hour … the entire intra-day amplitude comes
+from merit-order traversal"* — now visible out-of-sample, and it is the natural companion to
+2022's C3b NRMSE 0.250. Recorded as evidence for the §8 successor, **not** as a new lever: item
+(15a) states the lever queue for that defect is empty with no open successor, and rule 22 step 3
+sends any work on it to **2023–2025**, never to a touchpoint year. It moves **no** matrix cell
+verdict (rule 28 d — no mechanism was tested).
+>>>>>>> 1305a48e (pjm-166: re-score the touchpoint from committed artifacts; record the out-of-sample diurnal-amplitude divergence):docs/FINDING-pjm166-touchpoint-rerun-already-spent-2026-09-06.md
