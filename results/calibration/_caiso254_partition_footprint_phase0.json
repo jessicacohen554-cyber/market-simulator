@@ -1,34 +1,51 @@
 {
- "null_control": true,
- "arm_b": "/home/user/market-simulator/data/raw/_validation-source/caiso_offer_curve_measured.json",
+ "null_control": false,
+ "arm_b": "/tmp/claude-0/-home-user-market-simulator/0817fc6c-d8e3-5ac8-a9c8-deeca6579dde/scratchpad/REPAIRED_measured.json",
+ "arm_b_cond": "/tmp/claude-0/-home-user-market-simulator/0817fc6c-d8e3-5ac8-a9c8-deeca6579dde/scratchpad/REPAIRED_condbinned.json",
+ "channels": {
+  "F_mw_usd_per_mwh": "REGISTERED statistic (ADDENDUM-caiso254 \u00a73.1): the P0 offer array mc_base, which is the channel the STATIC bands reach",
+  "F_p1_mw_usd_per_mwh": "INSTRUMENT EXTENSION (caiso-255, by code inspection before any repaired statistic existed): mc_base + the P1-only conditional ladder markup \u2014 the offer P1 actually clears on, and P1 is the pass every run is scored on",
+  "screen_year_rule": "argmax_y F (the REGISTERED statistic) governs. F_p1 is reported beside it; if the two argmaxes DISAGREE that is reported as a power caveat and the registered statistic still names the year \u2014 picking the other one after seeing both is selection"
+ },
  "years": {
   "2023": {
-   "F_mw_usd_per_mwh": 0.0,
-   "X_merit_crossings": 0,
+   "F_mw_usd_per_mwh": 14207.689,
+   "F_p1_mw_usd_per_mwh": 13849.085,
+   "max_abs_cond_markup_delta": 7.4907,
+   "n_tranches_moved_p1": 635,
+   "X_merit_crossings": 17393,
    "n_gas_tranches": 1443,
-   "n_tranches_moved": 0,
+   "n_tranches_moved": 945,
    "n_nongas_tranches_moved": 0,
-   "max_abs_dmc_usd_per_mwh": 0.0,
+   "max_abs_dmc_usd_per_mwh": 5.77,
    "gas_cap_gw": 29.271
   },
   "2024": {
-   "F_mw_usd_per_mwh": 0.0,
-   "X_merit_crossings": 0,
+   "F_mw_usd_per_mwh": 7514.373,
+   "F_p1_mw_usd_per_mwh": 7324.854,
+   "max_abs_cond_markup_delta": 5.3872,
+   "n_tranches_moved_p1": 641,
+   "X_merit_crossings": 15374,
    "n_gas_tranches": 1448,
-   "n_tranches_moved": 0,
+   "n_tranches_moved": 951,
    "n_nongas_tranches_moved": 0,
-   "max_abs_dmc_usd_per_mwh": 0.0,
+   "max_abs_dmc_usd_per_mwh": 3.0494,
    "gas_cap_gw": 29.275
   },
   "2025": {
-   "F_mw_usd_per_mwh": 0.0,
-   "X_merit_crossings": 0,
+   "F_mw_usd_per_mwh": 8643.58,
+   "F_p1_mw_usd_per_mwh": 8425.647,
+   "max_abs_cond_markup_delta": 1.8371,
+   "n_tranches_moved_p1": 647,
+   "X_merit_crossings": 17071,
    "n_gas_tranches": 1453,
-   "n_tranches_moved": 0,
+   "n_tranches_moved": 957,
    "n_nongas_tranches_moved": 0,
-   "max_abs_dmc_usd_per_mwh": 0.0,
+   "max_abs_dmc_usd_per_mwh": 3.5066,
    "gas_cap_gw": 29.278
   }
  },
- "null_control_verdict": "PASS"
+ "screen_year": 2023,
+ "screen_year_p1_channel": 2023,
+ "channels_agree": true
 }
