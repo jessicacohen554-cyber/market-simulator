@@ -41,9 +41,7 @@ from market_sim.model.capacity_evolution.retirements import (
     thermal_accreditation_fraction,
 )
 
-BUNDLE = glob.glob(
-    "results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/*/"
-)[0]
+BUNDLE = glob.glob("results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/*/")[0]
 SCREEN_YEARS = (2022, 2023, 2024, 2025)
 
 # The published record, VALIDATION OBSERVABLES only (rule 13): nothing below
@@ -216,7 +214,10 @@ def main() -> int:
     for year in SCREEN_YEARS:
         with open(f"{BUNDLE}/evolution_{year}.json") as fh:
             cc = json.load(fh)["capacity_clearing"]
-        ledger[year] = (float(cc["price_usd_per_mw_day"]), float(cc["cleared_position"]))
+        ledger[year] = (
+            float(cc["price_usd_per_mw_day"]),
+            float(cc["cleared_position"]),
+        )
     result["ledger"] = {y: {"price": p, "pos": q} for y, (p, q) in ledger.items()}
     # --- The inversion's own identity check, unit by unit ------------------
     # Before any re-clearing: with the recovered nameplate and the ATB bar,
@@ -243,7 +244,9 @@ def main() -> int:
     print("   ", {y: round(v, 6) for y, v in plateau.items()})
     result["inversion_plateau_max_abs_err"] = plateau
 
-    result["S0"] = reclear(off, off, "S0 -- committed arm-A clearing, re-cleared on the SAME (ATB) bars")
+    result["S0"] = reclear(
+        off, off, "S0 -- committed arm-A clearing, re-cleared on the SAME (ATB) bars"
+    )
     result["S6"] = reclear(
         off, on, "S6 -- every class bar at PJM's PUBLISHED default gross ACR"
     )
@@ -308,8 +311,10 @@ def main() -> int:
         )
 
     result["gate"] = {"failures": fails, "verdict": "PASS" if not fails else "STOP"}
-    print(f"\nPHASE 0 VERDICT: {result['gate']['verdict']}"
-          + (f"  ({', '.join(fails)})" if fails else ""))
+    print(
+        f"\nPHASE 0 VERDICT: {result['gate']['verdict']}"
+        + (f"  ({', '.join(fails)})" if fails else "")
+    )
     if len(sys.argv) > 1:
         with open(sys.argv[1], "w") as fh:
             json.dump(result, fh, indent=1)
