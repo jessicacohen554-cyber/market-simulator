@@ -12360,3 +12360,69 @@ construction defect, not by physics. The merit-order object is sized: `ST_GAS` �
 `CT_PEAKER` −0.06 to −0.31 TWh. And ~3–4 % of price level rides on this one mechanism, which is the
 scale of the C3a budget in both directions (2024 +4.7 %, 2025 −6.9 %) — so C3a-2025's headroom is
 not independent slack.
+
+## 2026-09-06 — nyiso-199: the merit-order object is `CT_PEAKER`'s own band basis, and the pre-registered screen KILLED the arm on a bridge interaction, not on the pre-named price risk
+
+**Keeper UNCHANGED: `2026-09-06-nyiso-196-extract-basis`.** Nothing registered, nothing promoted,
+the 2023–2025 span **never spent**. Two solves, both one-year rule-29 screens, both deleted before
+merge (29(c)). `complete` remains withdrawn; no marker requested; 2023–2025 only.
+
+**Phase 0 (zero LP) split nyiso-198's handed-forward queue item in two.** Decomposed against the
+LP's own bounds on the keeper's committed artifacts:
+
+* **`ST_GAS` is CLOSED to this lane.** 73/88/84 % of its deficit is interior, but the gap lives
+  **below $40/MWh** where no steam offer clears — the out-of-market-commitment signature the
+  `scuc_load_pocket_commitment` cell (**G**) already owns, and nyiso-97 §5 forbids identifying the
+  pocket requirement from the only instrument available (unit conduct). Stop proposing it as a
+  merit lever.
+* **`CT_PEAKER` is the live object and it is unambiguous: 100.0 % INTERIOR in all three years** —
+  0.0 % at the availability envelope, 0.0 % at a floor, forced floor 0.000 TWh, D-2 0.0 %. Model at
+  **2.04 / 2.03 / 7.03 %** of its OWN available capacity against a meter of **11.16 / 10.85 /
+  14.29 %**.
+
+**The object, localised.** `_NYISO_OFFER_CURVE`'s `CT_PEAKER` `econ` = 1.0 is a DE-LEAK placeholder
+the config declares an **OPEN ROOT CAUSE** by name; `committed` = 1.35 is "the start hurdle …
+~$25/MWh fixed commitment margin" charged on a keeper that **already runs
+`tranche_startup_amortization`** ($20/MW NREL SR-5500-55433 ÷ the measured P0 run length, same
+tranche) — a rule 19 `[R-ONE-MECH]` double count live today. Both carry NYISO's own registered
+measured counterpart, unused: **0.843 / 0.661 / 0.658** (n = 70).
+
+**Owner ruling 2026-09-06** (PREREG Addendum A, pushed before the field existed): arm both bands,
+screen 2023 + 2025. New field **`nyiso_ct_peaker_bands_measured`** (gated, default off,
+NYISO-scoped, `_CACHE_KEY_OPTIONAL_FIELDS` + pinned default + base matrix row + a cell in all six
+shards, all in the same commit). Zero literals, zero free parameters, no DOF entry.
+
+**F-gates all PASS on the built field:** 101/103/103 rows move, every one `CT_PEAKER`
+econ+committed, ZERO elsewhere; `pmax`/`availability` max‖Δ‖ exactly 0.0; the delta is a
+**fuel-invariant −$17.41 committed / −$13.68 econ, identical to the cent** across three years whose
+CT offers differ by $22–30/MWh; `peak` Δ 0.00.
+
+**SCREEN A (2023, footprint year) CLEARS all four gates**: `CT_PEAKER` 0.421 → 1.418 TWh
+(C1 −1.69 → −0.70, **59 % of the gap closed**), `ST_GAS` +1.81 → +1.18, `CC_REGULAR` +0.83 → +0.56,
+`CC_CHP` +0.95 → +0.86 — **every moved class toward its actual**; gas family −0.023 TWh;
+C3a **+4.6 % → +2.9 %** PASS; C3b 0.119 unchanged; no C1 flip; no new D-4 row.
+
+**SCREEN B (2025, exposed year) STOPS — and not on the pre-named risk.** C3a **−6.9 % → −9.1 %,
+degraded but still PASS** (0.9 pp of margin inside ±10 %); `CT_PEAKER` 1.356 → 2.672 against a
+2.851 actual, **93.7 % of the gap closed**. **C8/D-4 stops it**: two plants the keeper never floors
+enter the `nyiso_gas_commitment_bridge × CC_REGULAR` binding set — **7314 (0.0669 TWh over 3,210
+binding hours, measured median 0.0 MW, 76.2 % of those hours at zero)** and 50978 (352 h, 0.0 MW,
+69.9 %). Floors binding where the meter says the units are offline is what rule 17
+`[R-FLOOR-WINDOW]` calls a bug by definition. **Mechanism, and it is not the band:** cheaper CT
+displaces `CC_REGULAR` in the **P0** pass, so a plant with no prior committed run shows a short P0
+run that `nyiso_gas_bridge_min_run` extends to the class min-run and floors — a **P0-pattern
+dependence in the bridge**; the arm changes no floor and touches no bridge parameter.
+
+**RECOMMENDATION: DO NOT PROMOTE** on this evidence. The structural half is strong and undisputed;
+the pre-named price risk was screened and survived; but a protective-tier gate fires on a fabricated
+commitment, which is not a residual regression. **Matrix cell → R** with the re-test condition
+stated: re-arm **only paired** with a bridge repair. **New top of queue:**
+`nyiso_gas_bridge_min_run`'s P0-pattern dependence — condition eligibility on the unit's own
+measured conduct in the window (the D-4 statistic the diagnostic already computes), then screen the
+three-way pairing with `cc_duct_peaking_row_scoped` (also **R**, also awaiting a merit partner, and
+pushing the opposite way) on 2023 + 2025 with the gates already written.
+
+Records: `docs/FINDING-nyiso199-ct-peaker-band-basis-2026-09-06.md` (§1–§8),
+`results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md` (+ Addendum A),
+`_nyiso199_{meritorder,zone_offer_census,ct_band_basis}_phase0.json`,
+`_nyiso199_screen_gates_{2023,2025}.json`, `scripts/probes/nyiso199_*.py`.
