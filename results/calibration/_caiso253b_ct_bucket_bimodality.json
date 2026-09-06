@@ -1,0 +1,59 @@
+{
+ "store_days": 1095,
+ "days_per_year": {
+  "2023": 364,
+  "2024": 366,
+  "2025": 365
+ },
+ "missing_trade_dates": [
+  "20230601"
+ ],
+ "years_covered": [
+  2023,
+  2024,
+  2025
+ ],
+ "n_resources_regressed": 634,
+ "buckets": {
+  "CC_REGULAR": {
+   "n_units": 46,
+   "cap_gw": 11.935,
+   "slope_p50": 6.774
+  },
+  "CT_PEAKER": {
+   "n_units": 100,
+   "cap_gw": 9.95,
+   "slope_p50": 10.93
+  }
+ },
+ "frozen_artifact_populations": {
+  "CC_REGULAR": 46,
+  "CT_PEAKER": 100
+ },
+ "G_BIMODAL": {
+  "antimode_window": [
+   10.9,
+   12.5
+  ],
+  "cap_above_bracket_gw": [
+   1.5,
+   4.5
+  ],
+  "antimode_mmbtu_per_mwh": 11.738,
+  "cap_above_antimode_gw": 2.559,
+  "ct_slope_deciles": [
+   8.81,
+   9.49,
+   10.07,
+   10.35,
+   10.93,
+   11.2,
+   11.7,
+   12.36,
+   13.81
+  ],
+  "ct_cap_gw": 9.95,
+  "density_grid_step": 0.0238,
+  "verdict": "PASS"
+ }
+}
