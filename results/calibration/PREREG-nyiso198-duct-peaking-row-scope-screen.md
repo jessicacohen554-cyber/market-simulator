@@ -384,3 +384,82 @@ any residual.
 *(nyiso-198 Addendum A, 2026-09-06. Written after the zero-LP F-gates and BEFORE the screen solve.
 Gates §6 S-3 / S-4 / C8-D4 are UNCHANGED; only F-1 and F-2 are replaced, by strictly harder
 predictive forms, and the reason is recorded above at full magnitude.)*
+
+---
+
+# ADDENDUM B — OWNER RULING: the span is authorized, and this is the disposition question it settles
+
+**Written and pushed BEFORE the full-span solve. Nothing has been solved beyond the 2024 screen.**
+
+## B.1 The ruling
+
+Delivered in session 2026-09-06, verbatim:
+
+> *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves
+> but gates regress that may still be a keeper.."*
+
+This is the owner's standing disposition formula, applied to the question §7 of the FINDING filed
+to the owner court: whether a construction repair whose **structural integrity improves** and whose
+**pre-registered S-4 gate stopped it on one load-bearing cell** should be carried to the full span.
+It settles two things and only two:
+
+1. **The span is authorized.** Rule 29's screen may kill an arm and may never promote one; the
+   owner's ruling is the authority that carries this arm past its own screen STOP. The full
+   `--year 2023 2024 2025` span is solved in ONE invocation and ONE bundle (rule 16
+   `[R-ALLYEARS]`) and registered the same session, keeper or not (rule 15 `[R-DASHBOARD]`).
+2. **The rule-1 boundary named in §3 is resolved in favour of admitting the arm.** The owner ruled
+   on a document that states the boundary explicitly — that `cc_duct_peaking_row_scoped` changes
+   what `pct_peaking` resolves to, by correcting a derivation rather than selecting a value — and
+   authorized it as a keeper candidate. It remains a **zero-DOF measured-input repair** under rules
+   14 `[R-ACCURATE]` and 13 `[R-MEASURED]`; **no band multiplier and no `phys_*` value moves**, so
+   the rule-1 carve-out is not invoked and the DOF ledger takes no new entry.
+
+## B.2 What the ruling does NOT settle, and what still has to be earned
+
+The ruling is conditional — *"**If** this is a recommended keeper candidate"* — so the
+recommendation is still this session's to make, honestly, on the full span's measured result:
+
+* **The screen's S-4 finding is not erased.** C1-2024 `CC_REGULAR` went +3.01 → +4.13 TWh
+  (+2.5 → +3.4 pp against a 3.0 pp band) on the screen year, and `ST_GAS` −0.71 TWh /
+  `CT_PEAKER` −0.06 moved away from actual. Those are reported at full magnitude on the span, and
+  a determination that reads NOT-YET is reported as NOT-YET.
+* **The unmeasured risk is 2025.** The keeper's C3a-2025 is **−6.9 %** (model *below* actual) and
+  the screen moved 2024 prices **−4.2 %**. If 2025 takes a similar move it lands near −11 % and
+  C3a-2025 fails. **This is the arm's most likely second failure and it was never screened** — the
+  screen year was chosen by footprint, not by risk. It is named here, before the solve, so it
+  cannot be discovered and quietly re-framed afterwards.
+* **The recommendation therefore turns on the whole span**, not on 2024: whether the structural
+  gain (726.5 MW of a 1,069 MW combined-cycle peak band that EIA-860 says has no duct burner,
+  removed with zero free parameters) is worth the gate cost the span actually shows, and whether
+  what regresses is one cell or several.
+
+## B.3 Gates for the span
+
+The screen's structural gates are spent; the span is scored the normal way — `calibration_verdict`
+on the registered bundle, from committed artifacts only. Two things are pre-committed here:
+
+* **The determination is reported as computed**, and every regression at full magnitude, whatever
+  it is. If the span reads NOT-YET, the recommendation states that and the owner's formula is
+  applied to *that* fact rather than to a hoped-for one.
+* **G-DELTA must be exactly `{cc_duct_peaking_row_scoped: False → True}`** against the keeper's
+  `scenario_config`, excluding year-indexed fields and HEAD-default fields added since the keeper
+  solved (the nyiso-196 `head_defaults_not_recipe` class). Computed, not assumed.
+
+## B.4 G-DRIFT, re-checked on the rebased base
+
+The arm solves at `1ce47fc0` (rebased; the branch's own commits are the only ones ahead).
+`821c11c5..1ce47fc0` adds **42 commits, of which three touch the solve path**, and all three are
+INERT for a NYISO backcast:
+
+| commit | verdict | reason |
+|---|---|---|
+| `8bc0feb5` capx D67 (`capacity_market.py`, `capacity_evolution/retirements.py`, `scenarios.py` +80, `constants.py` +1) | INERT | forecast-path capacity market / capacity evolution, gated default-off; a `mode="backcast"` run never enters it. The `constants.py` line is an export addition (`RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO`), not a default change |
+| `bbd01025` caiso-254 (`pipeline/backcast_config.py`) | INERT | the CAISO measured-offer-surface `ST_GAS` class partition, reached only under `caiso_offer_surface_measured` — another ISO's branch (rule 25) |
+| `cbc721ac` | n/a | this session's own Addendum A commit |
+
+The `5b5af5ab..982ba9aa` audit of §5 is unchanged and still carries the two empirical checks
+(the keeper's `unit_outage_extract_basis_share` reproducing to the digit at HEAD, and the committed
+nyiso-197 Linden rebuild re-running with an empty `git diff`). **Form 4 stands: the keeper's
+committed bundle is the control, and no control solve is spent.**
+
+*(nyiso-198 Addendum B, 2026-09-06. Written after the owner ruling and BEFORE the span solve.)*
