@@ -1,0 +1,262 @@
+{
+  "run_id": "neiso-2026-2030-d65br-arm",
+  "meta": {
+    "kind": "t1f",
+    "label": "d65br-arm",
+    "variant": "forecast-baseline",
+    "iso": "NEISO",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "c3519b861f920bbe",
+    "bundle": "results/ff-t1f-d65br/neiso/NEISO/c3519b861f920bbe",
+    "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 634.4,
+    "global_peak_rss_mb": 3380.7,
+    "per_year_perf": [
+      {
+        "year": 2026,
+        "wall_s": 151.1,
+        "peak_rss_mb": 3380.7
+      },
+      {
+        "year": 2027,
+        "wall_s": 121.4,
+        "peak_rss_mb": 2914.0
+      },
+      {
+        "year": 2028,
+        "wall_s": 120.7,
+        "peak_rss_mb": 2501.5
+      },
+      {
+        "year": 2029,
+        "wall_s": 121.3,
+        "peak_rss_mb": 2774.3
+      },
+      {
+        "year": 2030,
+        "wall_s": 119.9,
+        "peak_rss_mb": 3041.7
+      }
+    ],
+    "year_summary": [
+      {
+        "year": 2026,
+        "reserve_margin": 0.1681,
+        "lw_price": 51.89,
+        "max_hourly_price": 67.4,
+        "co2_mt": 15.83,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2027,
+        "reserve_margin": 0.0476,
+        "lw_price": 51.4,
+        "max_hourly_price": 280.4,
+        "co2_mt": 17.1,
+        "hours_ge_500": 0,
+        "retire_mw": 2758.3,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2028,
+        "reserve_margin": 0.0394,
+        "lw_price": 52.63,
+        "max_hourly_price": 283.6,
+        "co2_mt": 9.87,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2029,
+        "reserve_margin": 0.044,
+        "lw_price": 51.59,
+        "max_hourly_price": 284.9,
+        "co2_mt": 4.76,
+        "hours_ge_500": 0,
+        "retire_mw": 1.6,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 1802.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2030,
+        "reserve_margin": 0.084,
+        "lw_price": 54.02,
+        "max_hourly_price": 84.9,
+        "co2_mt": 6.11,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 1198.0,
+        "builds_storage_mw": 0.0
+      }
+    ],
+    "started_utc": "2026-09-06T22:12:16Z",
+    "bridged_years": [],
+    "d65br": {
+      "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
+      "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
+      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "solve_key_matches_predeclaration": true,
+      "gates": "G5′ FIRED (2030 converts 1,786.1 MW = 59.5 % of the 3 GW/yr cap) and was VOIDED as a STOP by the ruling below; every other gate PASS, 0 FAIL / 0 WARN on all 14 invariants — the cleanest leg on the board. G1′ NOT GATED (D64 §2.4 publishes no NEISO band); reported er/phys 0.8074–1.4964 over 28 rows.",
+      "retrofits": [
+        {
+          "year": 2028,
+          "rows": 12,
+          "mw": 2965.4,
+          "pct_of_cap": 98.8,
+          "mw_wtd_er": 0.3574,
+          "mw_wtd_hr": 7.103,
+          "mw_wtd_k": 0.9952,
+          "capex_over_k": 1323595.554,
+          "er_phys_min": 0.8074,
+          "er_phys_max": 0.9243
+        },
+        {
+          "year": 2029,
+          "rows": 9,
+          "mw": 2939.8,
+          "pct_of_cap": 98.0,
+          "mw_wtd_er": 0.4793,
+          "mw_wtd_hr": 7.259,
+          "mw_wtd_k": 1.3347,
+          "capex_over_k": 1201226.45,
+          "er_phys_min": 0.8457,
+          "er_phys_max": 1.4964
+        },
+        {
+          "year": 2030,
+          "rows": 7,
+          "mw": 1786.1,
+          "pct_of_cap": 59.5,
+          "mw_wtd_er": 0.468,
+          "mw_wtd_hr": 7.617,
+          "mw_wtd_k": 1.3032,
+          "capex_over_k": 1133012.155,
+          "er_phys_min": 0.823,
+          "er_phys_max": 1.3534
+        }
+      ],
+      "g5prime_ruling": "Director adjudication r#51 §3(b) (capx-director-ledger-2026-08.md §0av): the CAP-BOUND form of G5′ ('STOP if the cap does NOT bind in a year') is VOID as a STOP and RECLASSIFIED to REPORTED, on the documents — D64 §2.3 says verbatim 'a year converting materially below the cap would be the informative surprise, not a STOP', so the source had already decided this outcome was reported, and Addendum C promoted §2.4's hour-ceiling census cell into a floor on a solved quantity. The CEILING form on ercot/pjm/miso is untouched — a published ceiling is a legitimate upper bound.",
+      "mechanism_reading": "Host exhaustion, predicted by k and by nothing else. Both RGGI ISOs start cap-bound at MW-weighted k ≈ 1.0 and unbind exactly as the surviving host pool moves past k > 1.2 (NEISO 0.9952 → 1.3032; NYISO 1.0544 → 1.2235), while CAISO — the third carbon-priced ISO, armed identically — never leaves k 1.03–1.08 and stays cap-bound (96.4 % in 2030). CAISO is the CONTROL CASE: the efficient hosts are consumed first and the expensive tail cannot carry the accurate per-tonne cost, so the unbinding is a fleet-composition effect, not a level effect and not an ISO quirk."
+    }
+  },
+  "score": null,
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 1.819e-11 MW (year 2030); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "PASS",
+      "detail": "held"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "PASS",
+      "detail": "requirement-implied floor [2.9%, 17.9%]; all in-band"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "registered_utc": "2026-09-06T22:12:16Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "solve_surface": null,
+    "scored_at_sha": "cd8b4411f85f",
+    "scored_at_date": "2026-09-06T22:12:16Z",
+    "cache_epoch": "c3519b861f920bbe"
+  }
+}
