@@ -12596,3 +12596,52 @@ superseded `nyiso-198` run pruned under keeper-only retention. Records:
 `results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md` (pushed with zero solves,
 + Addendum A), `_nyiso202_screen_gates_a1_2025.json`, `scripts/probes/nyiso202_screen_gates.py`,
 `scripts/gen_nyiso202_attestation.py`.
+
+## nyiso-203 — 2026-09-06
+
+**NYC persistent-base limb basis review — CLEAN NEGATIVE: the basis is SOUND AS BUILT.
+ZERO LP spent. Keeper UNCHANGED at `2026-09-06-nyiso-202-startup-aware`** (CALIBRATED,
+grade 7/8, fails 0, C3c the lone ledgered caveat). No arm built, no `ScenarioConfig` field
+added, no coefficient edited, no solve-affecting file touched, nothing registered (rule 15
+registers runs; there is no run). 2023–2025 only; no held-out year touched (rule 22).
+
+nyiso-202 §8 handed forward one object: repeat nyiso-140's Long_Island analysis for the NYC
+`ST_GAS` persistent-base limb (`tmax` −50 °C so it binds all 8,760 h, `floor_pct` 0.175,
+`pro_rata`, `exclude_plant_codes` EMPTY), which with the bridge floor gone at Astoria 8906 is
+that plant's sole remaining forcer and draws the keeper's 2023 D-4 conviction at 0.2271 TWh.
+Rule 29 phase 0 is entirely zero-LP and it returned a negative, so no arm reached a solve and
+none was pre-registered. Step 0 reproduces the frozen coefficient (0.17485 vs 0.17500), so
+every gap is a basis difference. **Three things could have been wrong and each is measurably
+right.** WINDOW: all three plants positive in every cool-day hour block (Ravenswood 2500
+0.283/0.287/0.288/0.290, Astoria 8906 0.323/0.326/0.326/0.325, Arthur Kill 2490
+0.111/0.119/0.184/0.112 — minimum cell 0.111, against Port Jefferson's 18-of-18 exact zeros).
+MEMBERSHIP: no laid-up member, confirming nyiso-201 §5 on an independent statistic; no
+per-plant list typed. OPERATOR: in the fleet's lowest-quartile cool hours the gen/avail ratios
+are 1.22 / 1.25 / 0.57 (robust 0.57–1.43 over {cool, all} × {q10, q25}), so all three share the
+base — and the same numbers **refute** `cheapest_first`, which would put 100 % of the 616.8 MW
+zonal target on Ravenswood alone at 0.358 of its own capacity (above its own measured p50
+0.288) and zero the other two. The 586.1 MW fleet-p25 vs 347.1 MW sum-of-unit-p25 gap is
+Jensen on a percentile, not a defect.
+
+**ONE real gap, REPORTED AND NOT TAKEN:** the coefficient is a daily-mean statistic applied
+hourly, 0.1750 → **0.1663** basis-matched (−5.0 %, −0.133 TWh of forced energy over three
+years, 1.510 → 1.377). Refused on three independent grounds: rule 23 has **no source-data
+trigger** (nyiso-140's did — the 6a8f285 guard fix); it would **move** the coefficient where
+nyiso-140's did not (that correction was zero-DOF precisely because `floor_pct` was unchanged
+at 0.262), so rule 21 admissibility is an **owner call**; and it **provably cannot reach the
+object** — the measured band between the two coefficients covers **0.13 %** of 8906's hours
+against its 5,400 binding hours. NYISO reads fails 0 and no residual was consulted (rule 1).
+
+**Object handed forward, correctly re-specified:** 8906's D-4 conviction is a fact about
+**which hours** an always-on floor selects, not about level, membership or operator. The rider
+scores conduct *conditional on binding*: unconditionally 8906 is a cycler online 70 % of the
+year with median CF 0.330, but over its 5,400 binding hours its median is **0.0 MW**
+(zero-share 0.521) — because the floor binds where the LP puts it out of merit, and it is the
+dearest of the three (HR 11.949). **The level is not the instrument.** Also corrected: the
+NYISO matrix shard's stale *"the adopted D-4 per-unit rider is NOT yet implemented"* clause —
+the rider has since landed (`legitimacy_diagnostics.py` `check="unit-conduct"`, scored over
+each plant's own binding hours) and is the very check that convicts 8906. G-DRIFT
+re-validated empirically: `_nyiso198_rebuild_checks_2024.json` regenerates byte-identically at
+this HEAD. Records: `docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`,
+`results/calibration/_nyiso203_nyc_base_phase0.json`,
+`scripts/probes/_nyiso203_nyc_persistent_base_basis.py`.
