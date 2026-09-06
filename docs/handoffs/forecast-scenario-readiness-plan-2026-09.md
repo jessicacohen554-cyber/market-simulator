@@ -814,6 +814,26 @@ constant-vs-published gap list; D-5 is held until Stage A's measured cost table 
 forecast dashboard. Rulings are appended to the row above as `RULED <date>: …` and numbered
 S1, S2, … in the ledger, in the refresh commit that receives them.
 
+**UPDATED at SCN-DESK r#2 (2026-09-05, HEAD `db8b6015`) — no card ruled yet; all still open.**
+- **D-1 RE-PRESENTED on new evidence.** SCN-WS1a's Phase-0 table (`FINDING-scn-ws1a-2026-09-05.md`
+  §0.1/§6, machine-readable in `docs/handoffs/scn-ws1a/`) proves G-C1 numerically —
+  `policy_bundle="tight"` is a carbon-price **cut of $16–$102/t in every one of 25 years** on
+  CAISO/NYISO/NEISO — and adds the fact the plan did not have: **under the recommended floor the
+  RFF mid path never once exceeds a program trajectory**, so a floor makes `tight` an exact
+  **no-op** on those three ISOs rather than a fix. That raises two sub-boxes, now presented:
+  **D-1(b)** what `tight` should mean on a program ISO once the floor is in, and **D-1(c)** how a
+  federal floor composes with PJM's **partial** RGGI footprint.
+- **D-3 RE-PRESENTED**, with `docs/handoffs/voluntary-clean-demand-design-memo-2026-09-05.md` §1
+  as its brief; the memo raises **D-3b** (in-LP 24/7 matching stays deferred — recommended yes)
+  and **D-3c** (the eligible set: renewable-only default, carbon-free as a labelled override,
+  credit all eligible units or new builds only), both presented at r#2.
+- **D-2** gains a named part from the same memo (box 5): the voluntary sub-levels `s_base`,
+  `f_commit` and the WTP ceiling.
+- **D-4 PRESENTED** — `FINDING-scn-ws4a-2026-09-05.md` §4 is the gap list, written to be presented
+  unedited. Recommendation stands at **defer**, with the lane's own refinement: the intake's real
+  prize is **G-D4-4, the wired-but-empty electrification layers**, not the growth rates.
+- **D-5** still held: Stage A has not run.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1062,3 +1082,19 @@ leg without the grant.
   protocol. §2.1b gate at the pin: **NEISO only** (NYISO's `complete` withdrawn again
   2026-09-05, so Q45's premise has lapsed) — no Stage-B lane is issuable and none is issued.
   Zero solves, zero code, zero defaults, zero markers.
+- 2026-09-05 — **SCN-DESK r#2 (main HEAD `db8b6015`).** All five wave-1 lanes launched and landed
+  work in one day. **Complete:** WS-1a (items 2–4 + Phase 0 + the D-1 memo; item 1 correctly
+  withheld on the open card), WS-3a (the memo, launched twice, no divergence), WS-4a (ERCOT
+  already populated — this plan's §2.4 "only for PJM" line was **stale** and is corrected; MISO
+  populated and validated on published totals; NEISO `{}` re-confirmed; the D-4 list delivered).
+  **Checkpoints:** WS-0 (items 1–4 + PRECOMMIT; the `scenario` registration kind and the paired
+  T0 owed) and WS-2a (the target row + two fields; postures, probe, matrix and docs owed).
+  **Graded against claim:** no matrix row or cell exists for `carbon_price_path`, `policy_bundle`
+  or `federal_ces_target_by_year` — WS-1a's own scorecard edit claimed the first two were
+  stamped and the lane made zero commits to `docs/codebase-site/data/`; WS-2a added two
+  solve-affecting fields with no row **and CI exited 0**, so `check_mechanism_matrix.py`'s duty-(c)
+  half did not fire. Both routed, neither fixed here. **Issued:** SCN-WS0-R, SCN-WS2a-R, SCN-MX-R
+  (a rule-28 repair charter and the sole matrix-tree writer until it merges), SCN-WS4b (unblocked;
+  campaign-YAML ownership transferred to it). WS-1b / WS-2b / WS-4c blocked on WS-0's item 5;
+  WS-3b blocked on card D-3 alone, both its code preconditions now met. §2.1b gate unchanged —
+  NEISO only; no Stage-B lane issuable, none issued. Zero solves, zero code, zero defaults.
