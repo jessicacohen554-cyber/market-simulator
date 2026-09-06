@@ -12361,3 +12361,63 @@ slots for a new floor**. (3) A successor writing its own seam gate should score 
 **duration shape**, not its total. Both MISO cells stay **`O`**.
 Records: `PRECOMMIT-miso226-seam-alone-2026-09-06.md`,
 `FINDING-miso226-seam-alone-2026-09-06.md`, `_miso226_*.json`.
+
+## miso-227 (2026-09-06) — the full-span seam candidate scores **NOT-YET on ONE cell**: CT_PEAKER-2023 at −8.29 TWh against a ±8.00 band, from 0.015 TWh of keeper headroom. Every other criterion passes and C3a/C3b improve. **NOT PROMOTED** — the pre-registered rule sends a load-bearing NOT-YET to the owner
+
+**KEEPER UNCHANGED → `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED)**, pending the owner's
+call. Candidate **registered** as `2026-09-06-miso-227-seam-neighbour` (bundle
+`miso227_seamneighbour_K`) per rule 15 `[R-DASHBOARD]`. Rule 16 `[R-ALLYEARS]`: 2023+2024+2025,
+ONE invocation, years sequential, ONE bundle. DOF ledger unchanged at 41/2; no `ScenarioConfig`
+field minted.
+
+**Why it was run.** The owner overruled miso-226's recommendation against the full span —
+*"if structural integrity improves but gates regress that may still be a keeper"* — which is
+rule 1 `[R-STRUCT]` restated by its author and the rule-29(2) owner step miso-226's PRECOMMIT
+pre-registered. The arm is ONE field on the keeper recipe:
+`miso_seam_neighbour_anchored_ladder=true`, the one form the owner ruled admissible for the
+D-2 5(i) object.
+
+**The determination turns on one number.** `NOT-YET`, basis *"undocumented out-of-tolerance
+(FAIL) criteria: fuelmix"* — and inside C1, **one cell of sixteen**: CT_PEAKER-2023, model
+9.053 → **8.750** TWh against an actual 17.038, i.e. **−8.29 against ±8.00**, where the keeper
+sat at −7.985 with **0.015 TWh** of headroom. **The PREREG named that cell before the solve**
+and its delta transfer predicted −8.289; the scored bundle reproduces it to **0.001 TWh**.
+Every other C1 cell passes (15/16); 2025's C1 is SKIPPED on this EIA-923 vintage.
+
+**Everything else passes, and two criteria improve.** C2 / C3a / C3b / C4 / C6 / C8 PASS; C3c
+stays a **ledgered CAVEAT** with its model values **byte-identical** to the keeper's (3 / 7 / 0
+hours against actuals 30 / 37 / 88) — its first read of FAIL was purely the missing-attestation
+artifact (guard (b), the miso-200 vacuous-pass trap), closed by
+`scripts/gen_miso227_attestation.py`, which carries the keeper's `authorized_price_tuning` block
+and its two FALSE governance assertions **verbatim** because the inherited x1.10 lift is still in
+this recipe. **C3a moved TOWARD actual in the two years the model over-prices** (2023 +2.35 →
++2.09, 2024 +1.09 → +1.00 $/MWh; 2025 −3.18 → −3.27) and **C3b improved in 2023** (0.108 →
+0.102). 2023 reproduced the deleted miso-226 screen **bit-for-bit** — identical simplex
+iteration counts and objectives — independently validating rule 29(c)'s delete-the-bundle
+discipline.
+
+**Stated at full magnitude against the arm.** The responsiveness defect is essentially
+untouched: corr(imports, own price) **+0.750 → +0.725** against a measured **−0.101** (3 % of
+the distance), the price-decile slope closes 10 % of its sign error, the annual import total
+moves further from every measured comparator, and seven of eight thermal C1 classes move away
+from actual.
+
+**The reading that matters.** The arm did **not** create the failing cell. MISO under-produces
+CT_PEAKER by **5.4–8.0 TWh in every year** (2023 −7.99, 2024 −6.11, 2025 −5.40), and C8
+independently reports it at **27.6 / 18.6 / 15.6 %** forced — the fleet's largest share. A cell
+at −7.985 against ±8.00 is failing in substance and passing on 0.19 % of the band; the arm added
+0.30 TWh to a 7.99 TWh pre-existing miss. **MISO's CALIBRATED status hinged on 0.015 TWh.**
+
+**Not promoted, by a rule written before the solve.** PREREG §4 (`316b592a`): a load-bearing
+NOT-YET is escalated, never promoted unilaterally — the owner authorized accepting a gate
+regression, and decertifying the ISO is a different act. All six ISO keepers currently read
+CALIBRATED (verified this session), so a NOT-YET keeper would make MISO the only decertified
+market in the model.
+
+**Recommendation — rule 1's own prescription.** Rule 1 says a real market behaviour stays in
+even if it worsens the fit, *"then fix the actual root cause"*. The root cause is named and is
+not the seam: fix **CT_PEAKER**, then re-score the pair — that keeps the structural mechanism,
+removes the reason it fails, and lands CALIBRATED. The **hourly** neighbour anchor (miso-226
+queue head) remains the responsiveness fix and is unaffected by this outcome.
+Records: `PREREG-miso227-seam-fullspan-candidate-2026-09-06.md`,
+`ASSESSMENT-miso227-seam-fullspan-2026-09-06.md`.
