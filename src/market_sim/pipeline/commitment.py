@@ -1047,6 +1047,7 @@ def _nyiso_gas_bridge_floor(
         else:
             legs.append((fuel, frac, frac_by_gen, online_hours and fuel == "gas_cc"))
     screen_census: dict = {}
+    plant_census: dict = {}
     for fuel, frac, frac_by_gen, leg_online in legs:
         leg_stats: dict = {}
         part = caiso_ra_mustoffer_min_gen(
@@ -1078,6 +1079,19 @@ def _nyiso_gas_bridge_floor(
                 "dropped_hours": int(leg_stats.get("dropped_hours", 0)),
                 "units_with_drops": len(leg_stats.get("units_with_drops", [])),
             }
+            # PER-PLANT roll-up of the per-unit census (nyiso-201). The screen
+            # claims by construction that no floor leg anchors on a dropped
+            # run; a plant carrying bridge floor with ZERO kept runs would
+            # falsify it. Logged so a rule-29 screen can check the identity at
+            # the grain its named-plant gate is written in, rather than assert
+            # it from the code path. Diagnostics only.
+            for g_idx, cen in (leg_stats.get("per_unit") or {}).items():
+                code = int(getattr(fleet[int(g_idx)], "plant_code", 0) or 0)
+                acc = plant_census.setdefault(
+                    code, {"detected": 0, "kept": 0, "dropped": 0, "dropped_hours": 0}
+                )
+                for f in acc:
+                    acc[f] += int(cen.get(f, 0))
             logger.info(
                 "NYISO gas bridge commitment-real run screen, leg %s: %d P0 "
                 "runs detected, %d dropped as phantom (margin < startup) "
@@ -1115,6 +1129,23 @@ def _nyiso_gas_bridge_floor(
             float(part.sum()) / 1e6,
         )
         total = part if total is None else np.maximum(total, part)
+    if startup_aware and plant_census:
+        # One line per plant with detected P0 runs, sorted by plant code, so a
+        # rule-29 screen can read the run screen's action at the grain its
+        # named-plant gate is written in (nyiso-201 gate (b) identity leg).
+        logger.info(
+            "NYISO gas bridge run screen per-plant census: %s",
+            ";".join(
+                "{}:{}/{}/{}/{}".format(
+                    c,
+                    plant_census[c]["detected"],
+                    plant_census[c]["kept"],
+                    plant_census[c]["dropped"],
+                    plant_census[c]["dropped_hours"],
+                )
+                for c in sorted(plant_census)
+            ),
+        )
     if total is None or not np.any(total > 0.0):
         return None
     # Diagnostic trace for the D-4 window analysis: every floored segment is
