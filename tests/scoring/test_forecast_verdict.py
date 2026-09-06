@@ -1208,5 +1208,68 @@ class DeterminationTests(unittest.TestCase):
         self.assertIn("FC-1", side["categories"])
 
 
+class ArchivedCarbon25ReclassificationTests(unittest.TestCase):
+    """capx-D73 §2.4: what the guard WOULD write for the archived carbon25 P1.
+
+    The two suffixed board keys `neiso-t3-pre-fc5` / `neiso-t3-pre-fc6repair`
+    carry `paired P1 FAIL (210.52 → 320.84 Mt)` scored on the
+    `bau-prera-2026-08-31` `base ↔ carbon25` pair with no premise row. Fed the
+    premise the committed run_config.json files resolve to, the scorer writes
+    that row as a MIS-CONSTRUCTED CAVEAT — never PASS, never a scored FAIL —
+    and the FC-6 category reads CAVEAT. Pinned here as executable evidence;
+    the board itself is not written by this lane.
+    """
+
+    _ARMS = REPO_ROOT / "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms"
+    _ARCHIVED_P1 = {
+        "ident": "P1",
+        "name": "CO2 monotone vs carbon",
+        "status": "FAIL",
+        "detail": "cumulative CO2 base 210.52 Mt vs high 320.84 Mt",
+    }
+
+    def _premise(self, arm):
+        import warnings
+
+        from scripts import check_forecast_invariants as chk
+
+        base = self._ARMS / "base" / "run_config.json"
+        high = self._ARMS / arm / "run_config.json"
+        if not (base.exists() and high.exists()):
+            self.skipTest(f"{arm} run_config.json not checked out")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            rows = chk.run_paired_run_configs(base, high)
+        premise = next(r for r in rows if r.ident == "P1.premise")
+        return {k: v for k, v in premise.__dict__.items() if v is not None}
+
+    def test_archived_carbon25_p1_fail_would_reclassify_to_misconstructed_caveat(self):
+        premise = self._premise("carbon25")
+        self.assertEqual(premise["status"], "FAIL")
+        rows = fv.score_fc6(
+            _art(paired_invariants=[dict(self._ARCHIVED_P1), premise]), "t3", "NEISO"
+        )
+        p1 = [r for r in rows if r["row"] == "paired P1"][0]
+        self.assertEqual(p1["status"], fv.CAVEAT)
+        self.assertIn("MIS-CONSTRUCTED", p1["detail"])
+        self.assertIn("25/25 years", p1["detail"])
+        self.assertEqual(_status(rows), fv.CAVEAT)
+
+    def test_repaired_carbon_plus25_pair_scores_p1_normally(self):
+        premise = self._premise("carbon_plus25")
+        self.assertEqual(premise["status"], "PASS")
+        repaired_p1 = dict(
+            self._ARCHIVED_P1,
+            status="PASS",
+            detail="cumulative CO2 base 210.52 Mt vs high 174.96 Mt",
+        )
+        rows = fv.score_fc6(
+            _art(paired_invariants=[repaired_p1, premise]), "t3", "NEISO"
+        )
+        p1 = [r for r in rows if r["row"] == "paired P1"][0]
+        self.assertEqual(p1["status"], fv.PASS)
+        self.assertIn("[premise: strictly positive delta in all 25 years", p1["detail"])
+
+
 if __name__ == "__main__":
     unittest.main()
