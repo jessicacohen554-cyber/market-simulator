@@ -56,6 +56,26 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06d — capx D78 / owner ruling Q53 (reading 1): the
+retirement-screen sector gate no longer removes a unit from the D57
+capacity sell-offer stack — a SAME-KEY semantic change for
+``retirement_sector_gate=True`` on a clearing-armed ISO, with ZERO committed
+bundles in its blast radius.** The gated set moved from the screen's
+``exempt_unit_ids`` (out of the screen entirely, hence a $0 price taker in
+``Q_0``) to ``exit_exempt_unit_ids`` (evaluated, OFFERED at its net-ACR cap,
+then partitioned out of ``margins`` before the exit decision — PJM's
+must-offer requirement, Manual 18 Rev 62 §1.2 / §5.4.1). No ``ScenarioConfig``
+field is added or changed, so no key moves. What is invalidated: any bundle
+solved with ``retirement_sector_gate=True`` on an ISO whose
+``capacity_market_supply_clearing_by_iso`` row is on — at this date PJM
+alone, and the only such bundles (capx D58's two screen probes) were deleted
+before merge under rule 29(c) and never registered. What is NOT invalidated:
+every MISO bundle with the gate on (the ``miso-t1h`` keeper family — the
+clearing is off there, and the D78 construction is byte-identical with the
+clearing off, asserted by test), every gate-off bundle of every ISO, and every
+backcast (the gate is coerced to its default in a backcast). Record:
+``docs/handoffs/DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`` §3.4.
+
 **Epoch 2026-09-06c — capx D65-B / owner ruling Q47: the CCS-retrofit
 fixed-cost SHAPE gate arms as the default posture (Act A) COUPLED with the
 capture-island VOM adder's RE-IDENTIFICATION (Act B). A KEY ADVANCE, NOT A

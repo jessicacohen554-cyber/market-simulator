@@ -229,10 +229,12 @@ def evolve_fleet(
             (:func:`dated_plant_unit_ids`) and the pending rows are handed to
             the screen as ``exogenous_exits`` so the R-NEW admission cap's
             counterfactual nets them. Under ``config.retirement_sector_gate``
-            (capx D53, default off) the step-3 exemption set is additionally
-            the UNION with :func:`sector_gated_unit_ids` — every thermal unit
-            whose plant's EIA-860 ``Sector`` is 1 (regulated utility) — the
-            same seam, neither declaration producing an exit (rule 19).
+            (capx D53, default off) :func:`sector_gated_unit_ids` — every
+            thermal unit whose plant's EIA-860 ``Sector`` is 1 (regulated
+            utility) — is handed to the screen as ``exit_exempt_unit_ids``
+            (capx D78): exempt from the exit DECISION, still evaluated and
+            still OFFERING into the D57 capacity clearing; neither
+            declaration produces an exit (rule 19).
         announced_reversal_plants: Plant codes whose announced retirement
             was reversed by a public counter-instrument (registry rows all
             superseded) — step 1 ignores their stale EIA-860 dates
@@ -545,11 +547,19 @@ def evolve_fleet(
     # and step 1 / 1b's owner-filed dates, never a merchant net-revenue test
     # (D32 §4.3; design docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md
     # §1.2). Sectors 2–7 face the screen as before; a plant absent from the
-    # vintage table fails OPEN to the screen. Rule 19 [R-ONE-MECH]: the gated
-    # ids join the SAME ``exempt_unit_ids`` seam as the dated-plant exemption
-    # (a set union — neither declaration produces an exit), so no unit's exit
+    # vintage table fails OPEN to the screen. Rule 19 [R-ONE-MECH]: neither
+    # declaration (dated plant, sector 1) produces an exit, so no unit's exit
     # is decided twice and the floor / admission cap / backstop see a gated
-    # unit as ordinary surviving fleet. The gated set is ledgered per year
+    # unit as ordinary surviving fleet. capx D78 (owner ruling Q53 = reading
+    # 1; DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md): the gated ids
+    # are passed on their OWN parameter, ``exit_exempt_unit_ids`` — exempt
+    # from the EXIT decision only — NOT unioned into ``exempt_unit_ids``:
+    # a sector-1 unit is an Existing Generation Capacity Resource under PJM's
+    # must-offer requirement (Manual 18 Rev 62 §1.2 / §5.4.1) and still
+    # OFFERS its accredited MW into the D57 capacity clearing at its net-ACR
+    # cap. The pre-D78 union silently emptied the sell-offer stack on a
+    # clearing-armed ISO (FINDING-capx-d58 §3: 34.2 GW to $0 price takers,
+    # the 2022 price −9.67 %). The gated set is ledgered per year
     # (``sector_gated``) so the D-2 attribution can see what left the screen.
     _sector_exempt: frozenset[str] = frozenset()
     _sector_census: dict | None = None
@@ -667,9 +677,10 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
-            exempt_unit_ids=_retrofitted_ids | _dated_exempt | _sector_exempt,
+            exempt_unit_ids=_retrofitted_ids | _dated_exempt,
             exogenous_exits=_exogenous_pending,
             locality_prices_by_zone=locality_prices_by_zone,
+            exit_exempt_unit_ids=_sector_exempt,
         )
         _clearing = (_econ_sink or {}).get("capacity_clearing")
         if _clearing is not None:

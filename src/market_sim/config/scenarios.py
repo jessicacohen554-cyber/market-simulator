@@ -15978,14 +15978,21 @@ class ScenarioConfig:
     # non-CHP, 5/7 commercial / industrial CHP) faces the screen exactly as
     # before, and a unit whose plant is absent from the vintage plant table
     # (a planned addition's new plant code, a synthesized unit) FAILS OPEN to
-    # the screen. MECHANISM: the sector-1 ids join the screen's existing
-    # ``exempt_unit_ids`` seam (``model.capacity_evolution.retirements.
-    # sector_gated_unit_ids``, the twin of ``dated_plant_unit_ids``) — the
-    # SAME rule-19 [R-ONE-MECH] reconciliation the fossil-dates channel uses:
-    # an exempt unit is never in ``margins``, so it is never decided,
-    # entry-capped, re-confirmed or pipelined, and no unit's exit is decided
-    # twice (a dated sector-1 plant is exempt by both declarations, which
-    # union; neither produces an exit — the exits come from steps 0/1 only).
+    # the screen. MECHANISM: the sector-1 ids (``model.capacity_evolution.
+    # retirements.sector_gated_unit_ids``, the twin of
+    # ``dated_plant_unit_ids``) enter the screen as ``exit_exempt_unit_ids``
+    # (capx D78, owner ruling Q53 = reading 1, 2026-09-06): a gated unit IS
+    # evaluated and OFFERS its accredited MW into the D57 capacity clearing
+    # at its net-ACR cap — PJM's must-offer requirement (Manual 18 Rev 62
+    # §1.2 / §5.4.1) keys on existing-and-in-footprint, never on ownership —
+    # and is partitioned out of ``margins`` after the clearing, so it is
+    # never decided, entry-capped, re-confirmed or pipelined, and no unit's
+    # exit is decided twice (a dated sector-1 plant is a dated plant first;
+    # neither declaration produces an exit — the exits come from steps 0/1
+    # only). Before D78 the ids rode the ``exempt_unit_ids`` union and
+    # silently stopped offering on a clearing-armed ISO (FINDING-capx-d58
+    # §3); with the clearing off (MISO) the two constructions are
+    # byte-identical.
     # The reliability floor's admission and execution tests, the R-NEW
     # admission cap's counterfactual and the reserve-margin backstop are
     # UNTOUCHED: a gated unit is simply not a candidate, so it stays in the
