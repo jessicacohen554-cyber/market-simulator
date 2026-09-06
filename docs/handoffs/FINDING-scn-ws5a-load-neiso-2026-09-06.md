@@ -53,9 +53,19 @@ NEISO 2030, from the committed by-fuel table:
 | REF | **`gas_cc_ccs`** | **8.833** | **16.717** | **6.217** | **0.3719** |
 | LOAD-HI | `gas_cc_ccs` | 8.803 | 16.894 | 6.306 | 0.3732 |
 
-The "captured" units emit at a **higher** rate than the unabated units they were retrofitted
-from — the signature SCN-WS2b measured on a single unit (`fuel_type` flips ✓, `heat_rate`
-rises ×1.12 ✓, `emission_rate` never reduced ✗), here reproduced at fleet scale.
+**The decisive test is absolute, not comparative.** `ccs_capture_rate = 0.90` on any gas-CC
+fleet implies a post-retrofit rate of **≤ ~0.05 t/MWh**. NEISO's retrofitted class measures
+**0.3719** — about **10× too high** — which no unit mix can explain. That is the
+selection-robust statement, and it matches SCN-WS2b's per-unit measurement (`fuel_type` flips
+✓, `heat_rate` rises ×1.12 ✓, `emission_rate` never reduced ✗).
+
+*A comparative framing I initially used and now withdraw as unsound:* that the retrofitted
+class emits **more** than the unabated residual (0.3719 vs 0.3666). It is true here, and
+striking, but it is **confounded by unit selection** — the retrofit screen picks units
+economically, so the retrofitted and residual classes are not comparable populations. NYISO
+makes the confound concrete: there the retrofitted class measures **0.2578** against an
+unabated residual of **0.4135**, i.e. *lower*, while still being ~6× above what 90 % capture
+implies. The absolute test holds in both ISOs; the comparative one does not travel.
 
 **Size of the error, NEISO 2030 REF:** intended 16.717 TWh × (0.3666 × 0.10) = **0.61 Mt**;
 measured **6.22 Mt**; overstatement **≈5.60 Mt**, against a reported ISO total of
