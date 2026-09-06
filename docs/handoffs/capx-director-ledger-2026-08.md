@@ -217,6 +217,13 @@ sitting carries the line. (ii) **A candidate-set gate's downside edge is the MW 
 held on "the director's release" carries a STOP behind it or it is a suggestion; D76 phase 2 states
 it as a precondition.
 
+**§0au AMENDMENT 1 (same sitting) — Q54 RULED: ADOPT, FROZEN-HASH NOW** (the recommended option). D79
+phase 1 is ISSUED (pack §D79 phase 1, Opus or Fable under rule 27): the hybrid (d) per-name ISO-projected
+value fingerprint at frozen registration hashes + scoped mechanical epochs, landing at ZERO key moves
+with the D24-R-style no-op record over every committed run config as the merge gate; backcast keys
+carry it; `SOLVE_EPOCHS` starts empty; the §6.4 attestation guard and the phase-2 registries go to a
+later card. Dispatch order now: **D79-P1 · D78-R2 · D76-P2** (D65-B-R and D75-R running).
+
 ---
 
 ## 0at. Refresh #49 (2026-09-06, main HEAD `13ee0c89`) — D80 turns the Y-24 ratchet GREEN on main and corrects my charter's premise on the way; D65-B-R's re-pin holds, its drift audit is all-INERT, and it finds that D65-B's screen ran on the WRONG POSTURE; D81 measures D54 §4.2's stated bias at exactly ZERO and proceeds on two diagnosed instrument defects; D78-R was dispatched TWICE; the owner's lane promotes NYISO to nyiso-202 (CALIBRATED) and re-keys gate (a) itself; four r#47 charters STILL undispatched
@@ -5874,6 +5881,7 @@ the gap.
 | **CACHE-KEY RE-PIN (another desk's dispatch; this desk's debt)** | Complete D65-B's re-key: 13 stale literals in 13 files; AST guard (25 sites, one value); D74 collection un-errored | **LANDED (#5177)** | `claude/capx-cache-key-repin-fe28qq` | Opus | code | Fast tier 8,819 clean |
 | **D78-R2 SECTOR GATE — RE-SOLVE WITH W4/W5 CORRECTED + `exempt_unit_ids` DELETED** | W4′ lower edge = Σdecided − Σsector-1 decided; W5′ = E&AS propagation tested (zero offer delta where E&AS is zero); whole-ledger diff; two legs at a HEAD carrying D81 + D67-ARM | **CHARTERED + DISPATCHABLE r#50 (registers after D65-B-R)** | `claude/capx-d78r2-full-window` | Opus | pjm | ARM iff (a)–(d) MET |
 | **D76 PHASE 2** | PJM full span (control at HEAD; requirement peak-independent under D67-ARM; FC-3 at full magnitude) then 2021–2023 on CAISO/ERCOT/MISO; NEISO/NYISO deferred; arming card drafted, never served by the lane | **CHARTERED + DISPATCHABLE r#50 (registers after D65-B-R)** | `claude/capx-d76-p2-full-span` | Opus | pjm, caiso, ercot, miso | Release stated as a STOP precondition this time |
+| **D79 PHASE 1 — SOLVE-SURFACE FINGERPRINT (Q54)** | `config/solve_surface.py` + `solve_surface_declared.py`; ~10 lines in `cache_key`; `solve_surface.json` sidecar; provenance field; checks 5–7; register script; six surface pins; no-op record over every committed run config = the merge gate; `SOLVE_EPOCHS` empty | **ISSUED r#50 am.1 — DISPATCHABLE** | `claude/capx-d79-p1-solve-surface` | Opus/Fable | code | Zero key moves at landing; not a mechanism (no field, no matrix row) |
 | **D37 NEISO T1-H AT ARMED POSTURE** | The armed re-measure + paired control (Q28) | **LANDED** PR #4619 — **post-wave years SCORE; armed positions +0.37/−3.26/+0.14 pts of the real FCAs** (control +21.13/−1.44/−5.34); FC-3 blind to the lever; retirements flip to −27 % under; storage 0.000 GW refutes its own headline by its own falsifier; **P9 flip condition FAILS → default stays OFF, self-executing** | `claude/capx-d37-neiso-t1h-armed-o98iy1` | **Opus** | §0ab.1. The position defect is closed at NEISO; the margin-side error is now the exposed object. |
 | **T16-A T1.6 RE-POINT EXECUTION** | Owner ruling Q27: re-point T1.6 to `entry_rate_limits`, 2 rungs, artifact-only FC-6 re-score | **LANDED** PRs #4555/#4558 — **outcome B, the honesty clause FIRED**: REC dual at the $50 ACP ceiling in all 50 arm-years (VRE 4.1→37.1 GW), series constant, battery row **CAVEAT-measured**; the lever IS live (8/18 metrics move); no third lever tried; one leaf moves, no preserved key needed | `claude/capx-t16a-ladder-repoint-kk4vqy` | **Opus** | §0y.1. The RPS/ACP finding feeds D39. Q27 executed. |
 | **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: replace semantics + the below-base forecast warning pointing at `carbon_price_delta` | **LANDED** PRs #4534/#4537 — guard in with A/B regression evidence recorded; R4 closed | `claude/capx-d34-carbonprice-guard-lfpeld` | **Opus** | §0x.1. Q26 executed. |
@@ -6034,7 +6042,16 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — Q52/Q53 r#47 (2026-09-06) added below; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50 (2026-09-06) added below; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+
+### Q54 (refresh #50) — adopt D79's solve-surface fingerprint in the cache key
+**Card C-22.** Three incidents (D55, SCN-LOAD, D77) moved every forecast bundle at an unchanged key. D79
+phase 0 measured four mechanisms over 30 days and recommends the hybrid (d): per-name, per-ISO-projected
+value fingerprint of the registry modules at frozen registration hashes + scoped mechanical epochs —
+zero key moves at landing; catches SCN-LOAD and D77, not D55; 2–7 real re-keys per ISO per 30 days.
+Options: ADOPT frozen-hash now (recommended) / ADOPT explicit at the next batch / DO NOT ADOPT.
+**RULED 2026-09-06: ADOPT, FROZEN-HASH NOW.** Executed by §D79 phase 1 (r#50 am.1).
+
 
 ### Q52 (refresh #47) — Arm D67 for PJM: the published RTO Reliability Requirement as the adequacy operand
 **Card C-20.** Evidence: D67 full span — operand exact to 0.000 MW in four DYs, zero free parameters,
@@ -6335,6 +6352,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-06 | **D78-R2 SECTOR GATE RE-SOLVE (corrected gates)** | `claude/capx-d78r2-full-window` | **Opus** | pjm | r#50 — D78-R §6 items 1–3 + D81 rec 2 (delete `exempt_unit_ids`); whole-ledger diff; ARM iff (a)–(d) |
 | 2026-09-06 | **D76 PHASE 2** | `claude/capx-d76-p2-full-span` | **Opus** | pjm → caiso/ercot/miso | r#50 — PJM full span then the 2021–2023 window on three ISOs; NEISO/NYISO deferred; arming = owner card |
 | 2026-09-06 | **CAISO gate-(a) RE-KEY (desk act)** | this branch | — | code | r#50 — Q34 standing duty; caiso-252 → caiso-257; verdict unchanged; `f4406179` |
+| 2026-09-06 | **D79 PHASE 1 SOLVE-SURFACE FINGERPRINT** | `claude/capx-d79-p1-solve-surface` | **Opus/Fable** | code | r#50 am.1 — owner ruling Q54; §6 build spec verbatim; frozen-hash landing, no-op record as the merge gate |
 
 ## 5. History (compacted)
 
