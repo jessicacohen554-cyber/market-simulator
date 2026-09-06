@@ -1,5 +1,69 @@
 # Changelog
 
+## 2026-09-06 — wallclock B: the cold-rebuilt P1 is seeded from the same year's P0 basis (WARM-START CLASS, not byte-identical)
+
+Wave 2a item B. **Owner memo `docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, signed
+2026-09-06, option (A) FLIP** — the memo's decision line, verbatim: *"(A) FLIP — wave 2a proceeds
+on `claude/wc-b-p1-basis-seed` under the §6 surface and the §4/§5 gates; the desk unblocks item B."*
+No `ScenarioConfig` field or default, no keeper / marker / matrix shard / registry / workflow edit,
+nothing promoted, nothing dashboard-registered; probe bundles deleted.
+
+- **The change.** Where a P1-native floor bridge replaces the fleet (the ERCOT/NYISO gas commitment
+  bridges, the CAISO RA must-offer), P1 cannot re-cost the live P0 model — the in-place refloor
+  declines because the bridge's availability raise feeds reserve/ramp **row** bounds — so
+  `run_energy_solve` cold-rebuilds a second `DispatchModel` and solved it **from no basis at all**,
+  though the same year's P0 model has the identical column/row layout and an optimal basis in hand.
+  It is now handed over: export the P0 basis before `model = None` (before A-6's `malloc_trim`),
+  then `apply_cross_year_basis` on the second model before its first solve (identity column map,
+  `alien=True`, so HiGHS repairs the statuses the raised bounds make inconsistent). The seam is a
+  new `solve_dispatch(..., basis_seed=…, basis_out=…)`, passed **only when armed**, so the unseeded
+  call is the keyword set it has always been. An adaptive pass (`reuse_p0_from`, C-1b) has no P0
+  model of its own and seeds from the previous pass's **P1** basis when the caller retained one
+  (`retain_p1_basis`, opt-in because the export costs 10-16 s), else the same year's P0 basis.
+- **Gating.** `MARKET_SIM_P1_BASIS_SEED` / `--no-p1-basis-seed`, resolved by
+  `resolve_p1_basis_seed_default` — a sibling of the P-2 cross-year resolver with identical
+  precedence (flag > explicit env var > ON), on the fresh-solve path of both calibration CLIs only.
+  Inside `run_energy_solve` it is gated twice more: it **rides the cross-year gate**, so
+  `MARKET_SIM_WARMSTART_XYEAR=0` (the goldens/replay pin) forces it OFF; and it fires only when the
+  caller left `xyear_warmstart` at `None`, so the forecast lane — which always passes an explicit
+  bool — is cold **by construction**, not by the current value of `forecast_xyear_warmstart`
+  (D-10 is not re-openable through this door). No cache-key movement.
+- **Gate (1) — byte-identity under the determinism pin, merge-base control at `dbf8796b`:**
+  `regression_gate.py --mode byte` **check [1] PASS** — ERCOT 7 files / 28 numeric columns and
+  NEISO 9 files / 32 numeric columns at atol=rtol=0 — with **Σ|hourly Δ| = 0.000 %** in all five
+  ISO-years; smoke PASS, `audit_keepers` PASS. Check [4] `legitimacy(--keepers)` FAIL is
+  **pre-existing by control** (the standing NYISO Long Island `transfer_security_limit` gap;
+  reproduced rc≠0 on the merge-base worktree itself).
+- **Gate (2) — seed ON vs OFF, ERCOT 2025 (forward config):** `solve_p1` **396.2 → 180.6 s
+  (2.19×)**, simplex iterations **273,893 → 78,856 (3.47×)** — *the same two integers the decision
+  memo reports*, on a box whose walls run ~1.4× the memo's. Year total 891.9 → 685.5 s (−23 %).
+  P0 is the built-in control: **identical** 273,083 iterations and objective on both arms.
+  Neutrality (`diff_warmstart_bundles.py` + `system_2025.parquet`): objective relΔ 8e-16, total
+  generation Δ **0.0000 MWh**, demand/slack/dump/`reserve_price` max |Δ| = 0, max |Δ zonal price|
+  **1.07e-12 $/MWh over ZERO dual-degenerate hours**, and 10 unit-hours of offsetting marginal-tie
+  swaps (Σ|hourly Δ| = 0.0001 % of gen). Peak RSS 13.04 → 13.09 GB, which **answers the memo's one
+  open question**: the +0.6 GB it flagged was run-to-run variance, not alien-basis workspace.
+- **A latent crash fixed on the way, reproduced on clean `origin/main` at `solve.py:652`.** The
+  cold branch's P0 export had no `model is not None` guard while the post-P1 export always had one.
+  A reused pass (C-1b) never builds a P0 model and takes the same cold branch, so "reused pass +
+  real `xyear_cache` + cross-year gate on" — exactly what the calibration CLI hands the ERCOT
+  adaptive pass 2 — died with `AttributeError`. Reached by no test (the C-1b reuse tests pass no
+  holder) and no bench (the memo's ran a one-pass year under the `XYEAR=0` pin).
+- **Two environment/tooling defects found, neither introduced nor fixed here** (both outside this
+  lane's file ownership): `capture_keeper_goldens.py --iso ERCOT` raises its fidelity oracle at HEAD
+  (`META FLAG MISMATCH years: keeper=[2023, 2024, 2025] golden=[2024, 2025]` — R-AW slices the bare
+  key to the forward span, the oracle compares against the registered span), which costs the ERCOT
+  *manifest entry* but not the byte comparison, since the bundle is written before the raise and
+  `regression_gate` enumerates directories; and NYISO/CAISO keeper replays are blocked in a fresh
+  container until `data/clean` is regenerated (`DegradedInputError` / `FileNotFoundError` naming
+  `scripts/regenerate_clean.py`).
+- Tests: `tests/unit/pipeline/test_xyear_warmstart_default.py` extended to 22 (precedence, both
+  CLIs carry the flag, seed inert under the pin, seed inert on the forecast even with a permissive
+  explicit bool, seed fires on the calibration cold-P1 route, the answer does not move, the
+  `retain_p1_basis` chain, and the P0-basis fallback). Fast tier: 8370 passed, 43 skipped.
+  Record: `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B;
+  `docs/cross-year-warmstart.md` "The same-year P1 seed".
+
 ## 2026-09-06 — wallclock A-1: the COD map's per-plant reduction vectorized — RETRO EVIDENCE for merged commit `be598ead` (byte-identical)
 
 Docs + two golden manifests only. **No source file, no LP change, no `ScenarioConfig` default,

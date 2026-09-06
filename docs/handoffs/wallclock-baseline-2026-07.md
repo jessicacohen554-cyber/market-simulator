@@ -910,3 +910,109 @@ Manifests committed under `results/regression-goldens/wc-a3-{before,after}/`.
 tree (its docstring: "Y-11 STOP (2026-09-05), left RED deliberately"), and
 `TestDispatchPerformance::test_full_year_200_generator_fleet` is a 15 s solve-wall
 threshold that read 20.2 s while the two replays were running and passes alone (5.6 s).
+
+## WALLCLOCK B — same-year P1 basis seed, measured (2026-09-06)
+
+Wave 2a item B (`docs/handoffs/wallclock-opportunities-2026-09.md` §3/§6.3). Owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed 2026-09-06, option (A) FLIP**.
+**WARM-START CLASS, not byte-identical** — the gate is
+`scripts/diagnostics/diff_warmstart_bundles.py` (marginal-tie only), not
+`regression_gate --mode byte`, which the change is nonetheless *also* required to pass under the
+determinism pin (below).
+
+**The change.** Where a P1-native floor bridge replaces the fleet, `run_energy_solve` cold-rebuilds
+a second `DispatchModel` and solved it with **no starting basis** — though the same year's P0 model
+has the identical column/row layout and an optimal basis in hand. The P0 basis is now exported
+before `model = None` (before A-6's `malloc_trim`) and applied to the second model via
+`apply_cross_year_basis` (identity column map, `alien=True`) before its first solve. An adaptive
+pass reached with `reuse_p0_from` (C-1b) has no P0 model of its own and seeds from the previous
+pass's **P1** basis when the caller retained one (`retain_p1_basis`), else the same year's P0 basis
+from `xyear_cache`. Switch: `MARKET_SIM_P1_BASIS_SEED` / `--no-p1-basis-seed`, calibration-CLI
+default ON, gated inside `run_energy_solve` on the cross-year gate AND on `xyear_warmstart is None`
+(so the goldens pin and the forecast lane are cold by construction). Detail:
+`docs/cross-year-warmstart.md` "The same-year P1 seed".
+
+### Gate 1 — byte-identity under the determinism pin (merge-base control)
+
+The seed rides the cross-year gate, so under `MARKET_SIM_WARMSTART_XYEAR=0` the new code is dead
+and the tree must be byte-identical. Merge-base control captures at `dbf8796b` (a worktree, its
+`data/` symlinked to the main checkout so both arms read the same bytes) vs the branch tree, both
+via `capture_keeper_goldens.py --stage-tag wc-b-{before,after}` under
+`MARKET_SIM_HIGHS_THREADS=1 MARKET_SIM_WARMSTART=1 MARKET_SIM_WARMSTART_XYEAR=0`:
+
+```
+[1] Golden bundle diff
+    PASS  ERCOT: 7 files, 28 numeric columns within tolerance (atol=0.0, rtol=0.0)
+    PASS  NEISO: 9 files, 32 numeric columns within tolerance (atol=0.0, rtol=0.0)
+[2] Reshuffle localization — Σ|hourly Δ| = 0.0 GWh = 0.000% of total gen in ALL FIVE ISO-years
+    (ERCOT 2024/2025, NEISO 2023/2024/2025); total annual gen Δ +0.0000 GWh in every year
+[3] smoke: PASS (24 passed)      [4] audit_keepers: PASS
+```
+
+**Check [4] `legitimacy(--keepers)` FAILs, and it is PRE-EXISTING BY CONTROL** — the standing NYISO
+Long Island `transfer_security_limit` gap (`nyiso_li_lcr_tsl=True` with no published limit for
+delivery year 2023/2024). Reproduced rc≠0 on the merge-base worktree itself, i.e. it fails on
+`origin/main` with none of this branch's code loaded; same posture as WALLCLOCK A-1 above.
+
+Wall under the pin (both arms cold — the seed is off, so these are a noise reading, not a result):
+
+| ISO-year | control `solve_p0` / `solve_p1` / total | branch `solve_p0` / `solve_p1` / total |
+|---|---|---|
+| ERCOT 2024 (two P1 passes) | 342.6 / 697.3 / 1151.7 s | 342.1 / 678.2 / 1133.1 s |
+| ERCOT 2025 (one P1 pass) | 384.8 / 395.0 / 867.1 s | 397.3 / 414.0 / 897.2 s |
+
+**Capture-tooling defect found, NOT introduced here and NOT fixed here** (the file is outside this
+lane's ownership): `capture_keeper_goldens.py --iso ERCOT` raises its fidelity oracle at HEAD —
+`META FLAG MISMATCH years: keeper=[2023, 2024, 2025] golden=[2024, 2025]`. R-AW slices the bare
+`ERCOT` key to the forward role's designated span, but the oracle compares `years` against the
+run's REGISTERED span, so the two can never agree for a partitioned ISO. Reproduced on the
+merge-base tree. The **bundle is written before the raise**, and `regression_gate` enumerates
+golden directories rather than the manifest, so the ERCOT byte comparison above is valid and
+apples-to-apples (both arms sliced identically); what is missing is only the ERCOT *manifest
+entry*, in both stage tags. Worth its own desk item.
+
+### Gate 2 — seed ON vs OFF, the neutrality standard
+
+Both arms through the keeper's own recipe (`capture_keeper_goldens.resolve_capture_targets` +
+`build_solve_kwargs(meta, solve_and_persist)`), under `MARKET_SIM_HIGHS_THREADS=1
+MARKET_SIM_WARMSTART=1 MARKET_SIM_WARMSTART_XYEAR=1`, with `MARKET_SIM_P1_BASIS_SEED` the only
+thing that differs. Throwaway `--out-dir`, deleted after the diff (rule 29 `[R-SCREEN]` (c)).
+
+**A control that is load-bearing, and is NOT in the decision memo's §3.1 conditions.** Arming the
+cross-year gate also arms the **H2 persisted year-1 basis cache**, whose key
+`(iso, weather_year, hours)` carries no arm — so the *second* arm of a pair seeds its P0 from the
+basis the *first* arm persisted. Measured, before the control was added: the ERCOT 2025 ON arm's
+P0 fell **273,083 → 64,881 iterations**, and a disk-warm P0 lands on a different degenerate vertex,
+feeding `compute_monthly_markup` a different run pattern and therefore a different P1 LP — which
+would have confounded the seed's effect with H2's and inflated the apparent win. `results/basis-cache`
+is now cleared before **every** arm, so each P0 solves cold. The check that it worked is in the
+table: both arms' P0 report the **identical** iteration count and objective.
+
+| ERCOT 2025 (forward config, one-pass year) | seed OFF | seed ON |
+|---|---:|---:|
+| P0 wall / iterations / objective | 401.3 s / 273,083 / 2,879,242,264.754522 | 390.7 s / **273,083** / **2,879,242,264.754522** |
+| **P1 wall** | 396.2 s | **180.6 s (2.19×)** |
+| **P1 simplex iterations** | 273,893 | **78,856 (3.47×)** |
+| P1 objective | 3,085,008,028.5298586 | 3,085,008,028.529856 (relΔ 8e-16) |
+| `solve_p1` phase / year `total` | 389.1 s / 891.9 s | 174.5 s / **685.5 s (−23 %)** |
+| peak RSS | 13.04 GB | 13.09 GB (**+0.05 GB**) |
+
+The **iteration counts reproduce the decision memo exactly** — 273,893 → 78,856, the same two
+integers — on a box whose walls run ~1.4× the memo's, which is the cleanest possible confirmation
+that this is the same effect and not a timing artifact. The P0 rows are the built-in control:
+identical iterations and an identical objective to the last digit, so nothing upstream of the seed
+moved. **The memo's one open question is answered and it is a non-issue:** peak RSS moves +0.05 GB,
+not the +0.6 GB the memo measured and flagged for wave 2a — that reading was run-to-run variance
+inside the recorded 12.1–13.4 GB envelope, not alien-basis repair workspace.
+
+Neutrality, ERCOT 2025 (`diff_warmstart_bundles.py` + `hourly/system_2025.parquet`):
+
+| ISO-year | objective / total gen | max \|Δ zonal price\| | dual-degenerate hours | per-unit dispatch reshuffle |
+|---|---|---|---|---|
+| ERCOT 2025 | P1 objective relΔ **8e-16**; total generation Δ **0.0000 MWh** (488.449982 TWh both); demand, slack, dump and `reserve_price` max \|Δ\| = **0** | **1.07e-12 $/MWh** (mean price 29.358576 both) | **0 / 61,320** | 10 unit-hours across 6 units; max 0.0611 GWh/unit; Σ\|hourly Δ\| 0.5 GWh = **0.0001 %** of gen; 0 units > 0.1 GWh |
+
+All three neutrality conditions hold: objective and total generation identical, every per-unit
+difference an offsetting marginal-tie swap (`total gen Δ = 0`), and **no** price difference outside
+floating-point noise — zero dual-degenerate hours, cleaner than the shipped cross-year flip
+(MISO 2025: 0.1495 $/MWh over 182 zone-hours) and than H2 (ERCOT 2023: 6.8e-2 $/MWh over 30 hours),
+for the reason the memo gives: a same-year seed starts from the optimal face of the *same* LP.
