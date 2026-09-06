@@ -206,3 +206,45 @@ lives one level up, in the FC-6 arm construction and pre-registered rung semanti
 an instrument premise written before the EM-6 seam fix and silently inverted by it.
 P1, "the model's economic core" gate, FAILed on the instrument's own premise; the
 economic core it set out to test passes the very experiment that was actually run.
+
+---
+
+## Cross-reference added 2026-09-06 by capx D72 — this finding's attribution RE-EXAMINED and UPHELD
+
+*Appended by session D72 (`docs/handoffs/FINDING-capx-d72-2026-09-06.md`). Nothing above is
+edited: no conclusion, verdict, number, or section of this finding is altered — same
+discipline this finding's §8 R3 applied to D21's file.*
+
+SCN-WS1c (`b1996141`, owner ruling S2, 2026-09-06) repaired a defect it names **G-C1**:
+`policy/cap_and_trade.py::resolve_carbon_program`'s forecast branch nulled the state
+cap-and-trade adder whenever a **non-default** `carbon_price_path` was set. Because §2.2
+above derives the NEISO base's $26.05→$132.16/t trajectory through exactly that function,
+the director asked whether this finding's premise — *"rung 0 IS the RGGI world for a program
+ISO"* — rested on behaviour since identified as a defect.
+
+**It does not. D72's verdict is (a): this finding stands unchanged, mechanism included.**
+
+- The nulling predicate was `config.carbon_price_path not in ("zero", None)` — it exempted
+  `"zero"` by literal enumeration, in that single form, from its introduction (`b33bf7750`,
+  EM-6, 2026-07-04) to its removal (`b1996141`, 2026-09-06). It **never fired** on any
+  committed run: all 110 tracked `run_config.json` files carry `carbon_price_path="zero"`.
+- Recomputed at HEAD, the FC-6 `base` arm's effective carbon price is 2026 `$26.05` · 2028
+  `$29.83` · 2032 `$39.10` · 2035 `$47.90` · 2040 `$67.18` · 2045 `$94.23` · 2050 `$132.16`
+  — **§2.2's published list to the cent**, and identical under the pre-repair composition
+  (PRE-vs-POST gap `$0.00` in all 25 years).
+- `carbon25 − base` recomputes to **−$1.05 (2026) → −$107.16 (2050)**, matching §2.5.
+- §2.1 and §2.2 above already record `carbon_price_path="zero"` and condition the
+  trajectory on that default, so this finding stated the condition its conclusion depends
+  on. There is no mechanism sentence to amend.
+
+The FC-6 P1 defect attributed here is the `carbon_price` **REPLACE** semantics (owner ruling
+Q26), which S2 explicitly left untouched — a different field from `carbon_price_path` and a
+different defect from G-C1.
+
+**One update of fact for whoever picks up §8 R1:** the live golden families
+`ff-t3-neiso-golden/{bau,bau-d46}` have since **dropped the `carbon25` arm**, running
+`carbon_plus25` (`carbon_price=0.0`, `carbon_price_delta=25.0` — R2(iii)/capx-D26) instead,
+whose effective signal is **+$25.00 above base in every one of the 25 years**. Only the
+snapshot family `bau-prera-2026-08-31` still carries `carbon25`. An R1 premise guard would
+therefore PASS the live pair and fire only on the archived arm. Details and the director
+recommendation: D72 §6.1 and §8(3).
