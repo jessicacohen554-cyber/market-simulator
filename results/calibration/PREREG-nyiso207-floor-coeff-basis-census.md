@@ -193,3 +193,35 @@ ruling."* These are declared **now** so the numbers can refuse it.
 ---
 
 *(nyiso-207, 2026-09-06. Pre-registered before measurement. Zero LP budgeted.)*
+
+---
+
+## ADDENDUM §A — a robustness check on the CT rows, declared POST-HOC, before it is run
+
+**This addendum is POST-HOC and is labelled so.** It was written **after** the §4 census was
+read, for the reason `PREREG-nyiso206` addendum §B exists: the check can only **hurt** this
+session's most striking number, and the honest moment to run it is exactly when that number looks
+good.
+
+**The confound.** `derive_nyiso_ct_reliability_floor.py` normalises by **nameplate**
+(`ev.groupby("date")["grossLoad"].sum() / (nameplate * len(EVENING_HOURS))`) and applies **no
+outage derate** — unlike `derive_nyiso_st_reliability_floor.py`, whose CF denominator is
+`zone_available_capacity` (nameplate net of CAMPD unit outages). An un-derated denominator leaves
+outage hours in the population as near-zero CF readings. Those inflate **hourly** dispersion far
+more than they move a **daily mean**, so they could mechanically manufacture a large
+daily-vs-hourly gap **for a reason that has nothing to do with the time basis under audit.**
+
+**The check.** Recompute the `DS_CT_base` and `DS_CT_cap` M1/M2/M3 with the denominator derated by
+the same `campd-unit-outages-NYISO.csv` extract and the same
+`unit_capacity_mw / plant_capacity_mw` share basis the ST script uses — one change, the
+denominator, nothing else. **This is a diagnostic on the census statistic only. It is NOT a
+proposal to change the CT derive script**, and no coefficient is re-derived into the CSV.
+
+**Declared prediction, before running.** If the CT rows' gap is an artifact of the un-derated
+denominator, derating will **shrink it materially** — toward the −1.6 % … −7.0 % range the
+availability-normalised evening knots occupy. **If it shrinks below 5 %, the census's largest
+evening-window number is withdrawn as a confounded measurement and reported as such**, and the
+class reading rests on the availability-normalised limbs alone. If it survives at ≥ 10 %, the gap
+is a genuine intra-evening dispersion effect on the CT fleet.
+
+**Either way the §6 decision rule is unchanged and nothing is taken.**
