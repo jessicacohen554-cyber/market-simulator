@@ -5712,7 +5712,7 @@ closed; all blob-verified. Then the director releases D58 and (marker permitting
 golden.
 ```
 
-## D60-R2 — the D60 relaunch, re-issued (r#39 amendment 2; D60-R never launched — audit ruling R-AK's launch-failure class, re-issued on failure) — **LAUNCHED + RUNNING at r#40 (PR #4824: state-at-start clean, Addendum D pushed; legs 3–5 pending)**
+## D60-R2 — the D60 relaunch, re-issued (r#39 amendment 2; D60-R never launched — audit ruling R-AK's launch-failure class, re-issued on failure) — **LAUNCHED at r#40 (PR #4824: state-at-start + Addendum D), then SILENT; OWNER RULED DEAD at r#42 am.2 → §D60-R3 below; never paste this one**
 
 ```
 You are the D60-R2 session of the capacity-expansion track — the RELAUNCH of D60 (pack §D60 +
@@ -6255,7 +6255,7 @@ ARM / DO-NOT-ARM recommendation with the owner card drafted, and the exact re-cu
 Q47 rules A); tests green; matrix green; pushed. Nothing arms in this lane.
 ```
 
-## D68 — the MISO `complete` DECLARATION on miso-220 (r#42; CONDITIONAL on owner card C-17 / Q49) — **CHARTERED r#42, DISPATCH ONLY IF Q49 RULES "DECLARE"**
+## D68 — the MISO `complete` DECLARATION on miso-220 (r#42; CONDITIONAL on owner card C-17 / Q49) — **CHARTERED r#42, DISPATCH ONLY IF Q49 RULES "DECLARE"** — **Q49 RULED DECLINE (r#42 am.2): CLOSED UNDISPATCHED; never paste**
 
 ```
 You are the D68 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6313,7 +6313,7 @@ blob-verify calibration-complete.json and program-status.json after push. EXIT: 
 landed, both gates green, finding pushed.
 ```
 
-## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"**
+## D69 — the CAISO `complete` RE-DECLARATION on caiso-252 (r#42; CONDITIONAL on owner card C-18 / Q50) — **CHARTERED r#42, DISPATCH ONLY IF Q50 RULES "RE-DECLARE"** — **Q50 RULED HOLD until caiso-253 lands (r#42 am.2); do not paste until the card is re-served and ruled**
 
 ```
 You are the D69 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6360,7 +6360,7 @@ dispatched, D68 lands first and D69 rebases onto it; both edit disjoint ISO bloc
 bytes + blob-verify both JSON files. EXIT: declaration landed, gates green, finding pushed.
 ```
 
-## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"**
+## D70 — the NYISO `complete` RE-DECLARATION on nyiso-196, the FOURTH (r#42 amendment 1; CONDITIONAL on owner card C-19 / Q51) — **CHARTERED r#42 am.1, DISPATCH ONLY IF Q51 RULES "RE-DECLARE"** — **Q51 RULED HOLD one refresh (r#42 am.2); re-served at r#43**
 
 ```
 You are the D70 session of the capacity-expansion track — a GOVERNANCE RECORDS lane, zero solves,
@@ -6409,4 +6409,155 @@ COLLISION: the owner's NYISO backcast lane (nyiso-197+) is the other NYISO write
 same two files in other ISO blocks — land AFTER them if all run, rebase before every push. Rule 27:
 exact bytes; blob-verify calibration-complete.json + program-status.json after push. EXIT: the
 declaration landed, both gates green, finding pushed.
+```
+
+## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2**
+
+```
+You are the D60-R3 session of the capacity-expansion track — the THIRD launch of D60's owed half (pack
+§D60 + Amendments 1 and 2; §D60-R2 is the charter you inherit verbatim except where this section says
+otherwise). D60 died after its flip, four renames and two of five re-solves; D60-R never launched;
+D60-R2 (PR #4824) landed ONLY its state-at-start commit and Addendum D, then went silent and the owner
+ruled it DEAD at r#42. You start FRESH from the committed record.
+FIRST, before anything else: `git fetch origin --prune`; check for any `claude/capx-d60r*` branch and
+any commit mentioning "D60-R2" or "D60-R3" on origin/main newer than `342c7593` (D60-R2's last
+commit). If one exists, STOP and report it — two writers on ff-verdicts.json is the one collision
+this program cannot absorb.
+DATA PROFILE: caiso, pjm, neiso (incremental — hydrate each before its leg; `data/clean` regenerated
+once before the first solve).
+MODEL: Opus (execution of pre-declared legs; every adjudication is already made — Amendment 2's STOP
+resolution, Addendum D's two pre-declared negatives, the owner's Q47/Q48/Q49/Q50/Q51 rulings of r#42
+am.2; a NEW surprise is a STOP, not a decision).
+BRANCH (suggested; the director grades by content): claude/capx-d60r3-completion — FRESH off
+origin/main, rebase before every push, PUSH EACH LEG AS IT LANDS.
+
+WHAT IS ALREADY ON MAIN (never re-done): the flip (Q40/Q41/Q42); four renames with `-pre-d60` priors;
+`miso-t1f` (`b1a73a087064ffd8`, HOLD) and `nyiso-t1f` (`19a9690bb12c8459`, PROMOTE-WITH-CAVEATS on
+FC-7 alone) registered; the D60 finding §§0–4, 6–7; **Addendum D** (docs/handoffs/PREDECL-capx-d60-
+2026-09-05.md — the mechanism, the six NEW (ISO, field) rows with `requires="iso-registry"`, the
+dormant seventh, and the TWO PRE-DECLARED NEGATIVES: miso-t1f's FC-7 will NOT clear (five pre-batch
+MISO overrides without curated rows → D63, not yours), CAISO keeps its `negative_renewable_offers`
+caveat). Read §D60-R2 "READ FIRST" in full — it binds.
+
+WHAT YOU OWE (the §D60-R2 list, unchanged): (1) the three re-solves — `caiso-t1f` (key `29f8eb372810195f`,
+~23 min, prior `caiso-t1f-pre-d60`), `pjm-t1f` (`09996eca71ee80fd`, ~28 min, prior `pjm-t1f-pre-d60`;
+Addendum C P21–P25), `neiso-t3` GOLDEN-3 (~33 min / 3.7 GB, prior `neiso-t3-pre-d60`; Addendum B's six
+assertions; an FC-map move where §6.4 said none is a STOP); each leg: score → `forecast_verdict --tier`
+→ `register_forecast_run --bundle` AFTER that leg's final rebase (X-6b), one blob-verified commit per
+leg, pushed at once; (2) the Q37 rows from Addendum D and the artifact-only re-scores of `nyiso-t1f`,
+`miso-t1f` and your three legs — FC-7 the ONLY row that may move, anything else a STOP; (3) finding §5
+and §8 and the close. STATE AT START first, zero solve: every bare key re-resolved through the harness
+at your HEAD vs Addendum A §A.2 + Addendum C; since D60-R2's pins, main has taken D65 Act A (a
+default-off field registered in the optional-fields table — MUST be key-neutral: assert it), three
+keeper promotions (MISO 220, CAISO 252, NYISO 196 — backcast only) and two gate-(a) re-keys on
+program-status.json; ANY bare-key drift is reported before anything runs.
+
+NEW IN R3 — THE BLAST-RADIUS SECTION (D65 §3b/§3c, capx D71 folded in; zero DOF, code only):
+ (a) D65 found that the committed `neiso-t1f` (`18515067bf4d2fbe`, git_sha `9e48ff6`) is NO LONGER
+     what HEAD produces from its own recipe: NEISO 2027 economic retirements 33 rows / 2,369.81 MW
+     (committed = `git archive 9e48ff6` solved fresh, 0 differing ledger keys) vs 40 rows / 2,244.89 MW
+     at HEAD — deterministic, not solver noise, not environment, no clock reads. Its named candidate is
+     capx D55's `_floor_retention_merit` in retirements.py (an ungated ordering change; `floor_retained`
+     is `[]` on both sides, so a candidate, not a cause).
+ (b) BISECT it, before your three re-solves so the finding can say which side of the hunk each leg
+     sits on: `git bisect` over `9e48ff6..HEAD` restricted to `src/ scripts/ configs/`, each probe =
+     `git archive <sha> src scripts configs` run against the same `data/` via MARKET_SIM_DATA_ROOT on
+     NEISO 2026–2027 with the committed `neiso-t1f` recipe (D65 §3c's exact instrument; ~2 solve-years
+     ≈ 5 min per probe; ≤ 8 probes). The bisect is over LEDGER KEYS of `evolution_2027.json`
+     (`retirements` rows/MW, `reserve_margin`, `fleet_by_fuel_after.gas_cc`) — a probe matches the
+     committed side or the HEAD side; anything else is a second hunk and a STOP-and-report.
+ (c) Report the hunk (commit, file, function, the lines) and WHAT IT DOES in words — never "fix" it:
+     if it is an intentional repair (D55's is), the committed bundles are stale and the re-solves you
+     run ARE the remedy; if it is an unintended behaviour change, that is a STOP routed to the director
+     with the hunk named. Then classify EVERY committed forecast bundle (`results/ff-*/**/run_config.json`
+     `git.sha`) as pre-hunk (stale vs HEAD) or post-hunk, in a table in the finding's §8-blast-radius.
+     Your three legs are post-hunk by construction; say which bare keys remain pre-hunk after you land
+     (those are D60-R3's routed residue, not its scope).
+ (d) D65's A1 arm (`results/ff-t1f-d65-a1/neiso`, key `8ebed20ae90ec0e7`) and its same-HEAD control
+     (`results/ff-t1f-d65-ctl/neiso`) are committed as SLIM files only. If `register_forecast_run.py
+     --bundle` can register A1 from what is there, register it under its suffixed key with the incumbent
+     preserved at `neiso-t1f-pre-d65` and re-score artifact-only; if it cannot, write ONE line in §8
+     saying so and leave it to D65-B (released on your landing). Do NOT arm anything: bare `neiso-t1f`
+     stays the designated leg.
+
+GUARDRAILS: §D60's — rules 1, 5, 12 (sequential legs), 13, 14, 19, 21 (no value changes — Q47's Act B is
+D65-B's, AFTER you land, never yours), 22 (t1f 2026–2030, t3 2026–2050; nothing against measured
+H1-2026), 24, 25, 27 (exact bytes; blob-verify ff-verdicts.json + program-status.json + the finding
+after every push), 28 (no cell moves — you test no mechanism; the bisect names a hunk, it does not
+adjudicate one). No keeper, shard, marker, freeze or default moves (Q49 DECLINED, Q50/Q51 HELD — gate (a)
+reads FAIL for CAISO/MISO/NYISO by the owner's choice; you re-key nothing there). STOPs: PREDECL §7
+verbatim; Amendment 2's "any non-FC-7 row moves"; a second drift hunk; a bare key moved by D65's field.
+
+COLLISION: you are the ONLY writer on `ff-verdicts.json` / `program-status.json` and on CAISO / PJM /
+NEISO forecast surfaces this window. D65-B, D62's registration, D58 and D63 are HELD until you land.
+SCN-WS1b (a six-ISO carbon T0 ladder) and SCN-WS2b (ERCOT 2026 screen) register into the HINDCAST
+namespace under their own campaign keys and never touch the board — if you see a board edit that is not
+yours, STOP and report. The owner's backcast lanes move keepers and gate-(a) rows — rebase before every
+push and keep their edits verbatim.
+
+EXIT: three legs registered on their pre-declared keys with priors preserved; the seven rows; every
+affected bare key re-scored artifact-only; the drift hunk named with its table; the finding complete
+and closed; all blob-verified. Then the director releases D65-B, D62's registration, D58 and D63.
+```
+
+## D65-B — Act A ARMING + Act B RE-IDENTIFICATION, coupled (r#42 amendment 2; owner ruling Q47 = "Arm coupled, after D60-R3") — **CHARTERED r#42 am.2, RELEASED-CONDITIONAL: dispatch AFTER D60-R3's finding merges**
+
+```
+You are the D65-B session of the capacity-expansion track — executing owner ruling Q47 (capx ledger §3,
+r#42 amendment 2, verbatim option "Arm coupled, after D60-R3"): flip `ccs_retrofit_fixed_cost_co2_scaling`
+default ON (Act A) AND re-identify `ccs_retrofit_vom_adder` 8.0 → 2.95 $/MWh (2026$) (Act B) in ONE PR
+and ONE re-key event. Binding charter: pack §D65-B (this section) + docs/handoffs/FINDING-capx-d65-
+2026-09-05.md §8.1 (why never Act A alone) and §9 (the six items, verbatim your spec) + FINDING-capx-
+d64-2026-09-05.md §2.4 (the level) and §4.5 closing clause. PRECONDITION: `git log origin/main
+--grep=D60-R3` shows its finding MERGED; otherwise STOP — two re-key events a day apart is the thing Q47
+was worded to prevent.
+DATA PROFILE: all (the re-key batch touches every ISO's bare key).
+MODEL: Opus (pre-declared execution; rule 27 core scope permitted).
+BRANCH (suggested): claude/capx-d65b-coupled-arming — FRESH off origin/main.
+
+THE WORK, in D65 §9's order:
+ 1. THE WIDENED EXTRACT FIRST (STOP 6 of D64): `fetch_nrel_atb.py`'s filter carries `Variable O&M` and
+    `Heat Rate` for `NaturalGas_FE` from the SAME source bytes (OEDI ATBe.csv v4.0.0, sha256 567dde9d…);
+    the pinned `data/raw/nrel-atb/atb_2024v4_electricity_filtered.*` regenerated; a test in the shape of
+    `tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py` asserts
+    `ccs_retrofit_vom_adder == (ATB gas_cc_ccs VOM − ATB gas_cc VOM) × inflation_factor()` (2.7 $/MWh
+    2022$ × 1.0909 = 2.95 2026$). No derivation asserted ⇒ no value change (rule 23).
+ 2. ACT B: `ccs_retrofit_vom_adder` 8.0 → 2.95 in scenarios.py with the dollar-year stated;
+    `docs/parameter-citations.md` `needs-citation` cleared, NETL Rev 4a 2.23 recorded as the cross-check,
+    ATB the basis (host and island on one basis — D41 §2.3). Direction stated BEFORE any solve:
+    re-identification makes retrofits EASIER; rule 14 keeps the accurate value whichever way it moves.
+ 3. ACT A: the (b′-1) declared default flip — dataclass default `True`, the frozen cache-key drop value
+    stays `"False"` so an explicit `False` keeps its pre-flip key (the D50/Q42 pattern); the validator's
+    seam-1 requirement is satisfied because Q42 armed seam 1.
+ 4. THE RE-KEY, DECLARED BEFORE THE SOLVE: every bare forecast key re-resolved and pre-declared in a
+    PRECOMMIT; priors preserved at `-pre-d65b`; the cache-epoch ledger in `src/market_sim/results/
+    cache.py` given its entry; the pinned-key cause blocks in `tests/regression/test_persisted_identity.py`
+    updated; `test_off_is_byte_identical_and_cache_neutral`-shape test for the explicit-False path.
+ 5. RULE 29 SCREEN (one leg): the informative arm is a CARBON-0 ISO — RGGI ISOs are cap-bound on both
+    constructions and cannot discriminate (D65 §8.1). Screen = ERCOT t1f (~12 min; D64 §2.4: 10.2 GW at
+    the ceiling under Act B on the shipped shape, 5.7 GW under Act A + B, every row within 0.1–4 % of
+    the bar). Structural STOP gate ONLY: rows that clear must be `er/phys` ≥ 1.27 hosts (D49 §1.3), the
+    identity uplift/capex ∝ 1/k must hold, k = 1 rows byte-identical, no non-target FC row flips. A
+    carbon-0 ISO GAINING rows is NOT a STOP — it is the accurate level's pre-registered signature.
+ 6. THE BATCH (screen cleared): re-solve every bare key sequentially (rule 12) — ercot-t1f, neiso-t1f
+    (~8), nyiso-t1f (~12), caiso-t1f (~23), pjm-t1f (~28), miso-t1f (~65), neiso-t3 GOLDEN-3 (~33 min);
+    score → verdict → register in place with `-pre-d65b` priors; FC-map moves reported at full
+    magnitude against D64 §2.4's census and D65 §4's NEISO reading; the D50 §6.2 blast-radius
+    reconciled; matrix: the `ccs_retrofit_screen` row's def/note carries Act B (no cell verdict moves),
+    the `ccs_retrofit_fixed_cost_co2_scaling` row's cells re-stamped `fc: K` where the arm is now the
+    bare leg; six shards, one appended line each, last commit.
+ 7. FINDING-capx-d65b-<date>.md: PRECOMMIT keys vs realized, the screen gate table, per-ISO before/after,
+    the composition the coupled construction produces (the "no merchant NGCC ever clears at carbon 0"
+    claim retired or confirmed on the record), the board rows, governance attestation with rule-27 blob
+    checks; the D8 curated DOF-ledger rows for the flipped default (Q37's limb — a value identified to a
+    published source is NOT unattested).
+STOPs: extract/test absent (STOP 6); a realized key ≠ its pre-declared value; any k = 1 row moving; a
+screen row clearing on any `er/phys` < 1.27 host; the explicit-False path moving a key; wall/RSS beyond
+each leg's D60 envelope. COLLISION: you are the only writer on ff-verdicts.json / program-status.json
+this window (D62's registration and D58 follow you); SCN lanes write the hindcast namespace only;
+scenarios.py — your two lines sit in the D50 block; SCN-WS2a/2b's `federal_ces_*` block and WS-1a's
+D34-guard region are not yours. Rules 22 (forecast mode only), 25 (a posture, no ISO's number), 27
+(exact bytes, blob-verify every ≥300-line file), 28. Score and register AFTER the final rebase.
+EXIT: both acts landed in one PR, every bare key re-solved and registered with its prior, the finding
+closed and pushed. Nothing else arms.
 ```
