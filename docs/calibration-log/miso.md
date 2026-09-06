@@ -12253,3 +12253,67 @@ run pattern plus the take-or-pay committed band, and it is a commitment question
 one. DOF ledger unchanged at 41/2; zero fitted scalars minted.
 Records: `PRECOMMIT-miso225-transport-seam-joint-2026-09-06.md` (+ Addendum A),
 `FINDING-miso225-transport-seam-joint-2026-09-06.md`, `_miso225_*.json`.
+
+## miso-226 (2026-09-06) — the seam arm **ALONE** SURVIVES its screen, all five gates pass, and the joint arm's −75 MW was the confound; but the anchor repairs the seam's **level** and only **3 %** of its **responsiveness**, and seven of eight thermal C1 cells move away from actual
+
+**KEEPER UNCHANGED → `2026-09-05-miso-220-nonsteam-lift` (CALIBRATED).** No promotion is
+proposed and a survived screen cannot make one (rule 29 `[R-SCREEN]` (2)); the PRECOMMIT
+narrowed the path ex ante to screen → **owner** → full span. ONE LP scored (2023). Screen bundle
+`miso226_seamalone_S` never registered and **deleted before merge** (rule 29(c)). DOF ledger
+unchanged at 41/2 — zero fitted scalars minted, and **no `ScenarioConfig` field added**.
+
+**The result.** G-2, the miso-225 bar re-used **verbatim**: cheap-hour imports **3,043 → 3,624
+MW, +581** against a required ≥ +150; annual 45.754 → 48.934 TWh. The joint arm read **−75 MW**
+on the same mechanism, the same year and the same measurement, so **the confound was the whole
+story** and miso-225's refusal to score a joint failure as a refutation is vindicated. The arm
+converts **0.829×** its phase-0 static (+700.7 MW, computed at the keeper's own `MISO_external`
+bus price; its annual +4.69 TWh landed within 2 % of the ≈ +4.8 TWh miso-225 attributed by an
+independent route, and the overlay's export leg measured structurally **inert** — 0 hours in
+merit under either ladder) — three times either predecessor's 0.27–0.39×. **G-5 footprint
+confinement**, new to this screen: import Δ **+527.2 MW** in the 6,022 hours a band crosses merit
+against **+1.9 MW** in the 2,738 hours none does, a **277×** ratio, with slack and dump at
+0.0000 TWh in both bundles. **S-1** passes on the **re-scoped reachability leg declared ex ante**
+— the successor obligation miso-225 §2 set, discharged with a closed one-name exempt list
+(`ccs_retrofit_vom_adder`) — while the **identity leg still reads FAIL** on that same real
+difference and is reported, not hidden.
+
+**And the half that argues against it, which is larger.** miso-225 *inferred* that an anchor
+moves a fixed ladder's levels and not its responsiveness; this arm **measures** it.
+corr(imports, own price) **+0.750 → +0.725 against a measured −0.101** — 0.025 of the 0.851 it
+must travel, **3 %** — and the price-decile slope (measured **+1,322 MW**, i.e. MISO imports
+*most* when it is cheapest; keeper **−3,573**, arm **−3,217**) closes **10 %** of its **sign**
+error. **Seven of eight thermal C1 cells move away from actual**, the class sum **−3.12 TWh**
+against the import **+3.18** (the energy-balance identity closing): the mechanism displaces
+generation the model does not have to spare. **ST_GAS** is the one favourable cell
+(+0.544 → +0.178) and the only class the model over-produces. **CT_PEAKER** is pushed 0.289 TWh
+past its ±8.00 edge to −8.289 — **INCONCLUSIVE** by the pre-registered rule, not a pass. The
+**annual** import total moves further from both measured comparators on record, so **G-2 as
+frozen rewarded a change that also worsens the annual total**: disclosed, with the scorer left
+byte-identical to the one pushed before the solve. **The reading is a level fix applied to a
+slope problem** — 31.5 % of the cheap-hour deficit bought for 3 % of the responsiveness defect
+that is the seam's actual disease.
+
+**Queue item 2 is answered at zero LP cost, and it reframes miso-225's G-3 kill rather than
+explaining it away.** **92.1 % of the keeper's cheap-hour coal — 16,900 of 18,349 MW — sits in
+the fuel-free price-taker `mustrun` band (8,000) and the take-or-pay `committed` band (8,900)**,
+leaving only 1,449 MW a gas move can outbid at all. The static's −1,473 MW decomposes as
+`mustrun` **−5 of 7,536 in merit** (the price-taker band is untouched by the fuel move, exactly
+as miso-53's adjudication of it implies — **it is not the object and must not be re-opened**),
+`committed` **−371**, `econ*` **−1,094 of a band the LP dispatches at 1,415 MW**. **The static
+demanded the evacuation of 77 % of the entire price-responsive coal position**, plus 371 MW out
+of a take-or-pay band the LP has committed; the LP surrendered 404 MW = **28.6 % of its whole
+econ position**. **The 0.275× was a denominator artifact, not a mysterious hold.**
+
+**Queue head for miso-227.** (1) **The hourly neighbour anchor** — price the seam's import rows
+off the **hourly** PJM western-border DA (`pjm_border_lmp_hourly_MISO.parquet`, which the
+incumbent derive already loads) instead of a frozen annual quantile of it. That is what the
+owner's ruling says on its face, carries zero fitted parameters, has an exact forward analogue,
+and is the only construction on the board that can move the **+0.725 correlation** rather than
+its level; a new mechanism, so its own field, matrix row (rule 28c) and screen — **named, not
+built**. (2) The **`committed` take-or-pay band** (8,900 MW, 48.5 % of cheap-hour coal) and
+whatever holds the econ band's remaining ~1,011 MW through hours its own offer loses, leading
+candidate the reserve co-optimization — rule 19 `[R-ONE-MECH]` **reconciliation targets, never
+slots for a new floor**. (3) A successor writing its own seam gate should score the seam's
+**duration shape**, not its total. Both MISO cells stay **`O`**.
+Records: `PRECOMMIT-miso226-seam-alone-2026-09-06.md`,
+`FINDING-miso226-seam-alone-2026-09-06.md`, `_miso226_*.json`.
