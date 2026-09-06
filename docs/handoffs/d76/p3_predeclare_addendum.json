@@ -1,0 +1,200 @@
+{
+  "stop1_pass": true,
+  "stop1_notes": [
+    "12 recipe keys: explicit-OFF == bare, armed distinct"
+  ],
+  "leg_keys": {
+    "PJM": {
+      "span": [
+        2021,
+        2025
+      ],
+      "bare_key": "b518f5fe7d02f961",
+      "control_key": "b518f5fe7d02f961",
+      "arm_key": "559c05579b47684b",
+      "control_equals_bare": true,
+      "arm_distinct": true
+    },
+    "NEISO": {
+      "span": [
+        2021,
+        2023
+      ],
+      "bare_key": "ca4b163f62c4f52f",
+      "control_key": "ca4b163f62c4f52f",
+      "arm_key": "69688c797d7bac80",
+      "control_equals_bare": true,
+      "arm_distinct": true
+    },
+    "NYISO": {
+      "span": [
+        2021,
+        2023
+      ],
+      "bare_key": "0641a92f61740d55",
+      "control_key": "0641a92f61740d55",
+      "arm_key": "236b56818bed34e9",
+      "control_equals_bare": true,
+      "arm_distinct": true
+    }
+  },
+  "predeclare": [
+    {
+      "iso": "PJM",
+      "span": [
+        2021,
+        2025
+      ],
+      "weather_year": 2024,
+      "demand_growth_vintage": null,
+      "hindcast": true,
+      "years": {
+        "2021": {
+          "seam_peak_mw": 126887.926,
+          "measured_peak_mw": 149590.0,
+          "delta_mw": -22702.074,
+          "delta_pct": -15.1762,
+          "req_on_seam_peak_mw": 166355.1,
+          "req_on_measured_peak_mw": 166355.1,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": false
+        },
+        "2022": {
+          "seam_peak_mw": 135090.596,
+          "measured_peak_mw": 148528.0,
+          "delta_mw": -13437.404,
+          "delta_pct": -9.0471,
+          "req_on_seam_peak_mw": 163268.9,
+          "req_on_measured_peak_mw": 163268.9,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        },
+        "2023": {
+          "seam_peak_mw": 143823.528,
+          "measured_peak_mw": 147605.0,
+          "delta_mw": -3781.472,
+          "delta_pct": -2.5619,
+          "req_on_seam_peak_mw": 163166.2,
+          "req_on_measured_peak_mw": 163166.2,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        },
+        "2024": {
+          "seam_peak_mw": 153121.0,
+          "measured_peak_mw": 153121.0,
+          "delta_mw": 0.0,
+          "delta_pct": 0.0,
+          "req_on_seam_peak_mw": 164107.6,
+          "req_on_measured_peak_mw": 164107.6,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        },
+        "2025": {
+          "seam_peak_mw": 163019.507,
+          "measured_peak_mw": 160560.0,
+          "delta_mw": 2459.507,
+          "delta_pct": 1.5318,
+          "req_on_seam_peak_mw": 144450.0,
+          "req_on_measured_peak_mw": 144450.0,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        }
+      }
+    },
+    {
+      "iso": "NEISO",
+      "span": [
+        2021,
+        2023
+      ],
+      "weather_year": 2024,
+      "demand_growth_vintage": null,
+      "hindcast": true,
+      "years": {
+        "2021": {
+          "seam_peak_mw": 23721.161,
+          "measured_peak_mw": 25101.0,
+          "delta_mw": -1379.839,
+          "delta_pct": -5.4971,
+          "req_on_seam_peak_mw": 24399.751,
+          "req_on_measured_peak_mw": 25819.063,
+          "req_delta_mw": -1419.312,
+          "req_peak_independent": false,
+          "screen_binds": false
+        },
+        "2022": {
+          "seam_peak_mw": 23897.789,
+          "measured_peak_mw": 24233.0,
+          "delta_mw": -335.211,
+          "delta_pct": -1.3833,
+          "req_on_seam_peak_mw": 24581.432,
+          "req_on_measured_peak_mw": 24926.232,
+          "req_delta_mw": -344.8,
+          "req_peak_independent": false,
+          "screen_binds": true
+        },
+        "2023": {
+          "seam_peak_mw": 24075.732,
+          "measured_peak_mw": 23475.0,
+          "delta_mw": 600.732,
+          "delta_pct": 2.559,
+          "req_on_seam_peak_mw": 24764.465,
+          "req_on_measured_peak_mw": 24146.548,
+          "req_delta_mw": 617.917,
+          "req_peak_independent": false,
+          "screen_binds": true
+        }
+      }
+    },
+    {
+      "iso": "NYISO",
+      "span": [
+        2021,
+        2023
+      ],
+      "weather_year": 2024,
+      "demand_growth_vintage": null,
+      "hindcast": true,
+      "years": {
+        "2021": {
+          "seam_peak_mw": 27986.261,
+          "measured_peak_mw": 30919.0,
+          "delta_mw": -2932.739,
+          "delta_pct": -9.4852,
+          "req_on_seam_peak_mw": 35603.357,
+          "req_on_measured_peak_mw": 35603.357,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": false
+        },
+        "2022": {
+          "seam_peak_mw": 28316.918,
+          "measured_peak_mw": 30505.0,
+          "delta_mw": -2188.082,
+          "delta_pct": -7.1729,
+          "req_on_seam_peak_mw": 34277.584,
+          "req_on_measured_peak_mw": 34277.584,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        },
+        "2023": {
+          "seam_peak_mw": 28651.483,
+          "measured_peak_mw": 30206.0,
+          "delta_mw": -1554.517,
+          "delta_pct": -5.1464,
+          "req_on_seam_peak_mw": 34559.078,
+          "req_on_measured_peak_mw": 34559.078,
+          "req_delta_mw": 0.0,
+          "req_peak_independent": true,
+          "screen_binds": true
+        }
+      }
+    }
+  ]
+}
