@@ -283,3 +283,47 @@ writers until they merge — **this batch registers AFTER both**. SCN lanes writ
 namespace only. In `scenarios.py` this lane's lines sit in the D50 block; SCN-WS2a/2b's
 `federal_ces_*` block and WS-1a's D34-guard region are not this lane's. Score and register **after
 the final rebase**.
+
+---
+
+## ADDENDUM A (2026-09-06, written BEFORE the control leg solves)
+
+### A.1 Bare keys vs t1f SOLVE keys — the two are different objects
+
+§3's table pre-declares the **bare** keys, `ScenarioConfig(iso=…, mode=…)` at its defaults, which is
+what the charter asks the batch to re-solve and re-register. A **t1f solve key is not a bare key**:
+`run_full_horizon.py` pins `start_year`/`end_year` (2026/2030) and `capacity_market_clearing=False`
+onto the resolved config, and those fields are in the hash. The committed pre-D65-B ERCOT t1f
+demonstrates the same thing — it sits at `0c3e9cd5b5993bdf`, not at its own bare key
+`b5ab30d0fae9f8a3`.
+
+Stated here so the STOP *"a realized key ≠ its pre-declared value"* is read against the right
+object. It is checked two ways, both of which hold:
+
+* the ARM's realized bundle key **recomputes to `d0fb7534671b4c91`** from its own written
+  `config.yaml`; and
+* the §3 bare-key table is re-verified independently at the batch (each leg's bare key is resolved
+  before its solve).
+
+### A.2 The CONTROL leg's key, DECLARED BEFORE IT RUNS
+
+Taking the ARM's own resolved config and undoing exactly the two acts
+(`ccs_retrofit_fixed_cost_co2_scaling=False`, `ccs_retrofit_vom_adder=8.0`):
+
+> **CONTROL key MUST be `6cfa33538294713c`** — ARM is `d0fb7534671b4c91`.
+
+If the control leg lands on any other key, the two legs differ by something besides the two acts and
+the screen's differencing is void. That is a STOP.
+
+### A.3 Independent confirmation that G-DRIFT form 4 was correctly VOIDED
+
+Diffing the committed pre-D65-B ERCOT t1f config against this arm's: **23 fields differ.** Only
+**2** are this lane's acts. **20** are `absent → default` schema growth (fields registered since
+that bundle was solved). One is a genuine HEAD drift of a solve-path field:
+`capacity_market_clearing_by_iso: {CAISO,MISO,NEISO,PJM: True} → None` (inert for ERCOT, which
+carries no capacity market and is absent from the dict either way — but it is drift, not identity).
+
+So the committed bundle could not have served as a form-4 control on its config either, quite apart
+from the SCN-LOAD `DEMAND_GROWTH_RATES` hunk §5 already found LIVE. **The same-HEAD control leg is
+the correct instrument**, and it differs from the arm by exactly the two acts — which A.2's key
+declaration is what makes checkable.
