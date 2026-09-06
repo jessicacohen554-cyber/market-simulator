@@ -175,3 +175,161 @@ CAVEAT), `reasons` drops `"FC-6 driver response FAIL"`, `caveats` gains
 `"FC-6 driver response"`, and the **determination stays HOLD** on FC-1/2/3/4/7 (plus FC-5
 SKIPPED on `-pre-fc5`). Both are pinned as tests in §3.3 so the claim is executable rather
 than narrated.
+
+## 3. Phase 1 — the build: one core, a second route, no second guard
+
+Commit `06121d4e` (branch `claude/capx-d73-fc6-p1-guard-iqepvu`), 3 files, +394/−7, blob-verified
+on the remote after push (rule 27: sha + line count match on all three ≥300-line files).
+
+### 3.1 `scripts/check_forecast_invariants.py` (1,451 → 1,583 lines)
+
+| object | what it is |
+|---|---|
+| `carbon_pair_premise_from_configs(base, high, years) -> Result` | **The one premise mechanism** (rule 19). D26's assertion body, moved verbatim: `resolve_carbon_price` per arm per year, strictly-above-base in every year or the `MIS-CONSTRUCTED` FAIL row, year table in `data`. Byte-identical detail strings, so every committed `P1.premise` row reproduces. |
+| `carbon_pair_premise(base: Run, high: Run)` | Now a thin cache-directory front: common years = both caches' years, configs = each cache's `config.yaml`, delegates to the core. Semantics unchanged; the D26 tests pass untouched. |
+| `scenario_config_from_run_config(path_or_dict) -> (ScenarioConfig, solved_years)` | Rebuilds an arm's resolved config from its committed `run_config.json` `scenario_config` block. Keys that are no longer dataclass fields are dropped with the same loud `RuntimeWarning` as `ScenarioConfig.from_yaml` (rule 26: a deleted knob must not strand the bundles written before its deletion, and cannot change a reconstructed solve). `solved_years` from the record, else `start_year..end_year`. |
+| `run_paired_run_configs(base_rc, high_rc) -> [P1, P1.premise]` | The zero-LP artifact route D23 R1 names. Emits the premise row and a **`P1 SKIP` "not scored at this grain"** — P1 needs each arm's emissions, which this route does not read, so it is reported as unscored rather than assumed; on an inverted pair the P1 detail points at the premise. |
+| `--paired-run-configs BASE_RC HIGH_RC` | CLI flag (carbon only; `--pair-kind gas_up` is a `parser.error`). Table mode prints the year-by-year `base / high / delta` with `<-- inverted` flags — the charter's dry run of phase 0; `--json` emits the two rows with the `data` table. |
+
+Nothing else changed: no `ScenarioConfig` field, no default, no threshold, no scorer edit
+(`forecast_verdict.score_fc6` consumes the identical row it consumed before), no matrix cell
+(`scripts/check_mechanism_matrix.py --base origin/main`: every gate OK; the flag is a checker
+flag, not a calibration CLI flag).
+
+### 3.2 What the dry run prints (the phase-0 table, from the tool itself)
+
+```
+$ python scripts/check_forecast_invariants.py --paired-run-configs \
+    results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/base/run_config.json \
+    results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon25/run_config.json
+Forecast invariants:
+  [SKIP] P1   CO2 monotone vs carbon     not scored at this grain (committed run_config only; emissions need the cache dirs, --paired) — premise mis-constructed, see P1.premise
+  [FAIL] P1.premise carbon pair premise  MIS-CONSTRUCTED: high-arm effective carbon ≤ base in 25/25 years (first 2026: Δ-1.05 $/t) — the pair does not construct a carbon-price increase, P1 not scored
+  effective carbon signal, $/tCO2 (resolve_carbon_price per arm):
+    year       base       high      delta
+    2026      26.05      25.00      -1.05  <-- inverted
+    2030      34.15      25.00      -9.15  <-- inverted
+    2040      67.18      25.00     -42.18  <-- inverted
+    2050     132.16      25.00    -107.16  <-- inverted     (all 25 rows inverted)
+1 FAIL, 0 WARN, 2 checks
+```
+
+The same command on `bau-d46` `base`/`carbon_plus25`: `[PASS] P1.premise … strictly positive
+delta in all 25 years (min +25.00, max +25.00 $/t)`, table `+25.00` in every row.
+
+### 3.3 Tests (both branches, both routes, the committed pairs pinned)
+
+`tests/regression/test_forecast_invariants.py` (+192):
+- `test_scenario_config_from_run_config_rebuilds_and_drops_unknown_keys_loudly` — rebuild;
+  deleted key → `RuntimeWarning`, never `TypeError`; `solved_years` fallback; no block → exit.
+- `test_run_paired_run_configs_monotone_pair_premise_pass_p1_unscored` — PASS premise, +25 table,
+  P1 SKIP "not scored at this grain".
+- `test_run_paired_run_configs_inverted_pair_is_misconstructed_never_scored` — FAIL premise with
+  `MIS-CONSTRUCTED`, negative first delta, P1 SKIP and **never PASS/FAIL**.
+- `test_cache_route_and_run_config_route_share_one_premise_core` — `carbon_pair_premise` (cache
+  front) and `carbon_pair_premise_from_configs` return the **identical** `Result` for the same pair
+  (the rule-19 pin); empty years → SKIP.
+- `test_paired_run_configs_cli_json_and_pair_kind_guard` — `--json` shape (rows without evidence keep
+  their exact historical shape), table mode prints the signal table, `--pair-kind gas_up` refused.
+- `test_committed_live_carbon_pairs_are_monotone_plus25_every_year[bau|bau-d46|bau-prera]` — the
+  three committed `carbon_plus25` pairs: 25 years, every delta +25.00 (skip if not checked out).
+- `test_committed_archived_carbon25_pair_is_inverted_in_every_year` — the archived pair: FAIL,
+  `25/25 years`, 2026 Δ −1.05, 2050 Δ −107.16, base 2026 $26.05, P1 SKIP.
+
+`tests/scoring/test_forecast_verdict.py` (+63), `ArchivedCarbon25ReclassificationTests`:
+- `test_archived_carbon25_p1_fail_would_reclassify_to_misconstructed_caveat` — §2.4 made executable:
+  the archived `P1 FAIL (210.52 → 320.84 Mt)` row + the premise the committed configs resolve to →
+  `paired P1 = CAVEAT "P1 MIS-CONSTRUCTED pair (vacuous evidence, FC-6.2) … 25/25 years"`, FC-6
+  rows aggregate CAVEAT.
+- `test_repaired_carbon_plus25_pair_scores_p1_normally` — the same family's repaired pair scores
+  P1 PASS with the `[premise: strictly positive delta in all 25 years …]` annotation.
+
+### 3.4 Green
+
+`pytest tests/regression/test_forecast_invariants.py tests/scoring/test_forecast_verdict.py
+tests/scoring/test_driver_battery.py`: **200 passed, 1 skipped** (the pre-existing
+`RUN_SLOW_FORECAST` ERCOT solve). The six other suites importing the checker
+(`test_driver_directionality`, `test_forecast_verdict_t2`, `test_full_horizon_instruments`,
+`test_invariant_declaration_ratchet`, `test_register_hindcast_collision`,
+`test_ff_readiness_battery`): 89 passed, 1 skipped, **4 failed in `test_ff_readiness_battery` —
+identical 4 failures at `origin/main` in a scratch worktree**, all `confirmed_retirements
+[MISSING] clean partition unbuilt (data/clean is gitignored)`: the `code` data profile, not this
+diff. `ruff check` + `ruff format --check` clean on every touched file.
+
+## 4. Phase 2 — the recommendation (to the director, three-way, argued)
+
+**Q: should the guard retroactively reclassify the archived `carbon25`-based P1 FAIL to
+MIS-CONSTRUCTED, given the live golden no longer rests on that pair?**
+
+First, the object made precise (§2): "the archived P1 FAIL" is **two suffixed board keys**,
+`neiso-t3-pre-fc5` (D21's original reading, `89dacc4c0343`, 2026-08-31) and
+`neiso-t3-pre-fc6repair` (D25's FC-5 re-score of the same rows, `7b085947b0ee`, 2026-09-01).
+Nothing under `results/` scores the `carbon25` pair any more; no registered sidecar resolves to
+either key; the reclassification itself was **already exercised and published** by D26 on the
+successor key `neiso-t3-prera-2026-08-31` and, by construction, on every bare-key scoring since.
+
+| option | LP | records touched | what changes, for whom |
+|---|---|---|---|
+| **(i) reclassify the two archived rows** | 0 | `ff-verdicts.json` (2 keys: FC-6 `paired P1` row status+detail, FC-6 category FAIL→CAVEAT, `reasons` −1, `caveats` +1, a new provenance stamp each) + a `program-status.json` note = **2 files, 2 records** | **Nobody who renders.** The dashboard bakes the bare `neiso-t3` verdict into every golden page (§2.2). What DOES change: the two keys stop being what their name says. D26 asserted `neiso-t3-pre-fc6repair` *"byte-equal to the prior live entry"* — the preserve-then-overwrite chain the whole `VERDICT_MAP` convention rests on (`-pre-d5r`, `-pre-rcrepair`, `-pre-d31/-d33/-d46/-d47/-d60`, …) is that a suffixed key IS the verdict as scored at its stamp. Rewriting one under a newer scorer with a new stamp turns a baseline into a re-score, deletes the D21 reading from the board's own audit trail (git keeps it — rule 15 — but the live file no longer states it), and moves the `check_forecast_staleness` gate-evidence class's newest stamp as a side effect. It also cannot be done by any existing tool: `rescore_forecast_verdicts.py` reaches only `VERDICT_MAP` keys, and the inputs the two keys were scored on no longer exist on disk (§2.2) — so (i) is a hand edit of a preserved baseline, by D60-R4 as sole writer. |
+| **(ii) leave it; dated cross-reference to D23 and D72 — RECOMMENDED** | 0 | D23's file (dated block appended, §5), this finding, the tests of §3.3 = **0 board bytes** | The archived rows stay exactly what they are — the pre-repair reading, correctly attributed by D23 and upheld by D72 — and the record now carries, executably, what the guard would write for them (§2.4 / §3.3). A reader of `-pre-fc5` / `-pre-fc6repair` reaches the reclassification through D26's successor key and this finding, which is the D23 §8-R3 / D72 precedent: never rewrite another lane's record; append the cross-reference. |
+| **(iii) reclassify on the next re-score event touching the family** | 0 | none now | **Not a real option — it collapses into (i) or into never.** A re-score event can only reach the bare `neiso-t3` (and it already scores a monotone pair with a PASSing premise); no tool re-scores a suffixed key, and the `carbon25` `paired_invariants.json` those keys rest on was replaced in place by D26, so there is no future event that regenerates them from artifacts. Choosing (iii) is choosing (i) later, by hand, with less context. |
+
+**Recommendation: (ii).** The guard's value on the archive is as a **tripwire, not a rewriter**:
+it now executes at zero LP against any committed pair (`--paired-run-configs`), the archived pair
+is pinned INVERTED by test so the phase-0 table can never silently drift, and the would-write for
+the two archived rows is pinned by test so the reclassification is stated in the record without
+editing a preserved baseline. The one thing that would change my recommendation is a reader who
+depends on the *live file* reading CAVEAT on those keys — §2.2 finds none. If the director
+nevertheless chooses (i), the minimal faithful act is D60-R4 writing the §2.4 rows with a fresh
+provenance stamp naming this finding, and NOT touching `neiso-t3-prera-2026-08-31` or the bare key
+— both already carry the repaired pair.
+
+Regression-tripwire yield going forward, stated so it is not oversold: the live route is armed
+on every `--paired carbon` scoring (D26) and the artifact route on every committed pair
+(this lane); an FC-6 arm built by `run_driver_battery.py --paired-arm` cannot construct an
+inverted pair at all (`PAIRED_ARM_OVERRIDES` is additive by construction). The guard fires only
+on a hand-built or historical absolute-override pair on a program ISO — exactly the archived
+case, and no other in the repository today.
+
+## 5. D23's file — amended by dated cross-reference only
+
+Appended to `FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` after D72's block: R1 exists
+(D26), what D73 added (the committed-config route), the phase-0 table's verdict on every pair,
+and that the §8 "FF program consequence" is answered by recommendation (ii), not by act.
+Nothing above D72's block is edited. D72's file is not edited (its §6.1 fact is confirmed, to
+the cent, by §2.3 above).
+
+## 6. Pricing
+
+| item | LP | wall | records |
+|---|---|---|---|
+| phase 0 (census + table) | 0 | ~2 min of `resolve_carbon_price` over 4 pairs × 25 yrs | 0 |
+| phase 1 (build + tests) | 0 | — | 3 source/test files (`06121d4e`) |
+| phase 2 (recommendation) | 0 | — | 2 docs (this finding, D23 cross-reference) |
+| option (i), if chosen | 0 | — | 2 board records, by D60-R4 |
+| option (iii), if chosen | 0 now | — | unreachable by any existing tool (§4) |
+
+## 7. Reproduction
+
+Zero LP; every number regenerates from committed artifacts:
+
+```
+# §2.3 / §3.2 — any committed pair, the year-by-year table:
+python scripts/check_forecast_invariants.py --paired-run-configs \
+    results/ff-t3-neiso-golden/<family>/fc6/arms/base/run_config.json \
+    results/ff-t3-neiso-golden/<family>/fc6/arms/<carbon25|carbon_plus25>/run_config.json
+# §2.1 — the board rows: frontend/data/forecast/ff-verdicts.json, key → categories["FC-6"].rows
+# §2.2 — the render map: scripts/register_forecast_run.py::_verdict_key + VERDICT_MAP;
+#         frontend/data/hindcast/neiso-2026-2050-t3-golden*.json → meta.verdict_key
+# §3.3 — pytest tests/regression/test_forecast_invariants.py tests/scoring/test_forecast_verdict.py
+```
+
+## 8. Nothing on the board moved
+
+`frontend/data/forecast/ff-verdicts.json` and `program-status.json`: **0 bytes changed** (D60-R4
+sole writer; `git diff origin/main -- frontend/` is empty on this branch). No keeper, marker,
+shard, freeze, `ScenarioConfig` field, default, threshold, or matrix cell. No solve, no re-solve,
+no registration. Every committed `P1.premise` row reproduces byte-identically through the
+refactored core (§3.1), and every existing premise test passes unchanged. Gates run on this
+branch: `ruff check` / `ruff format --check` clean; `scripts/check_mechanism_matrix.py --base
+origin/main` all OK; rule 27 blob verification MATCH on every pushed ≥300-line file.
