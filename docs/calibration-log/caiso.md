@@ -6,6 +6,53 @@ newest at the BOTTOM. Only this lane's sessions append here, so parallel
 per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
+## Pre-push checklist (STANDING — every session in this lane, before every push)
+
+Run from the repo root and confirm **exit 0** before staging:
+
+```
+uv run ruff format --check .
+uv run ruff check .
+```
+
+**Tree-wide, not just your own files.** `.github/workflows/ci.yml` runs exactly
+these two commands over the whole tree (ci.yml:411 lint, ci.yml:413 format), so a
+formatting miss anywhere turns this lane's PR red. `Ruff lint`/`Ruff format check`
+is one of the **six R-AE required checks**, so a format-only drift is not cosmetic
+— it holds the flip set below 6 of 6 and blocks every lane behind it, not just
+this desk's own PR.
+
+**Why the hook does not cover this.** `.claude/hooks/ruff-autofix.sh` is a
+`PostToolUse` hook on `Edit|Write`, scoped to the single edited path (HOUSE-1,
+2026-08-08 — deliberately, so it can never rule-27 `[R-PUSH]` rewrite a file the
+session did not touch). Bytes that reach the tree by any **other** route —
+`mcp__github__push_files`, a heredoc or redirect in Bash, a generated file, a
+`git merge`/rebase resolution — never fire it and are never formatted. Those are
+precisely the routes a calibration session uses for new derive, attestation and
+probe/test scripts, so the hook's silence is not evidence of a clean tree.
+
+**If it fails, format only the files it names**, then verify the change carries no
+semantic delta before pushing. **`git diff -w` is NOT sufficient** — `-w` ignores
+whitespace *within* a line, but ruff also splits and joins lines, and adds magic
+trailing commas and grouping parens, and every one of those survives `-w` as a
+real diff. (Measured on the caiso-257 repair below: the change was purely a
+one-line dict reflowed onto four, and `git diff -w` still reported 653 bytes and
+"4 insertions, 1 deletion".) Compare the parsed source instead — per file, either
+`ast.dump(ast.parse(before)) == ast.dump(ast.parse(after))`, or a `tokenize`
+stream comparison with `NL`/`NEWLINE`/`INDENT`/`DEDENT` dropped, which also
+catches a stray literal edit.
+
+*Standing since 2026-09-06, after TWO drifts from this lane in one day:
+`scripts/data/derive_caiso_offer_surface.py` (caiso-255, unformatted on
+`origin/main`, cleared for this desk by another lane in `824f9567` — two
+comprehensions rejoined), then `scripts/gen_caiso257_attestation.py` (caiso-257,
+added at `48bcd0ec` / PR #5162, one dict line over ruff's width). Repair:
+`claude/caiso-attestation-ruff-format-cs2luk`. Both arrived as NEW files, i.e.
+by exactly the non-`Edit|Write` route named above. Adopted from the MISO lane's
+identical duty (`767e96fa`, `docs/calibration-log/miso.md`), which landed 13
+seconds before `48bcd0ec` and so could not have caught it — the drift is a
+cross-lane pattern, not one desk's habit.*
+
 ## 2026-07-19 — gas_daily_shape §3.7 fix A/B on the caiso-97 recipe: 2025-only, small; probes registered, no keeper action
 
 Cross-ISO session (full entry: `docs/calibration-log/governance.md` 2026-07-19

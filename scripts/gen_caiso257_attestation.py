@@ -115,7 +115,10 @@ _SHARED = (
     "closure of the CT volume miss."
 )
 
-_ATTEST = {"b1": "THIS BUNDLE IS THE ARM (the df277e89 artifact pair on the caiso-252 keeper recipe; the offer surface is the ONLY delta). " + _SHARED}
+_ATTEST = {
+    "b1": "THIS BUNDLE IS THE ARM (the df277e89 artifact pair on the caiso-252 keeper recipe; the offer surface is the ONLY delta). "
+    + _SHARED
+}
 
 
 def _tail_counts(bundle: Path) -> dict[int, int]:
