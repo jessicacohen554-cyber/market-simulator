@@ -4552,6 +4552,25 @@ hunk is the one thing that earns a control solve under rule 29 (b). NEISO's INER
 recipe replayed on **2023-2025 only**, one invocation, **no `--holdout-authorized`** — against
 thresholds fixed in the PRECOMMIT **before** it ran.
 
+**THE CONTROL CAME BACK BIT-IDENTICAL.** Every pre-registered threshold held at **exactly
+zero**: system mean zonal price +0.0000 % (30.7538 / 29.8080 / 40.3556 unchanged to 4 dp),
+demand / slack / dump **bit-identical**, reserve_price +0.0000 %, total generation +0.0000 %
+(787.9243 / 816.7908 / 847.9144 TWh, Δ = +0.00000), worst per-class annual energy
+**0.0000 %**. At hourly grain, `max|Δ| = 0` on every numeric column of `class_hourly`
+(166,440 rows/yr), `reserve_family` (dual, requirement, held MW, shortfall) and `storage`
+(charge, discharge), in all three years — 499,320 class-hours, not one megawatt-hour moved.
+**HEAD drift is INERT for PJM's backcast path**, and *stronger* than NEISO's, which carried a
+−0.008 % price residual from degenerate-LP tie-breaking; PJM has no residual at all. This
+CLOSES the §4(i) open limit the touchpoint assessment carried for PJM: the in-sample and
+held-out columns are like-for-like, so the DA-virtual sign flip above is a property of the
+years, not of the code. Stated against interest: the audit could not be performed and the
+thing it was meant to establish held anyway — which is exactly why rule 29 (b) treats an
+unclassifiable diff as LIVE rather than presuming inertness; bit-identity was the hypothesis,
+not the prior. **Filed for the audit desk, not acted on here:** an unresolvable `git_sha` is a
+GENERAL hazard for every artifact whose sha predates 2026-08-16 and is absent from the commit
+map — G-CTRL form 4's code-audit route is unavailable for all of them until their bundles are
+re-stamped.
+
 **Governance.** PJM holds `complete`; the holdout freeze is scoped to `locked_test` alone.
 **No held-out year was solved this session** (the control is training-tier), so no marker is
 spent and the rule-22 registration gate is not engaged; `final` is not granted and 2019 /

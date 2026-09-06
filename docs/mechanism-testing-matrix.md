@@ -4730,9 +4730,14 @@ Zero mechanisms armed, swept or tuned; zero cell verdicts moved; no
   "too large to classify". An unclassifiable diff is LIVE, and a LIVE hunk is what
   earns a control solve under rule 29 (b) — so PJM's same-HEAD in-sample control
   (`pjm_headctrl_k162`, 2023-2025, no holdout year) was solved on
-  pre-registered thresholds. Its bundle is **deleted before merge** per rule 29 (c),
-  following the `neiso_headctrl_k99` precedent; every number cited from it lives in
-  the FINDING.
+  pre-registered thresholds. **IT CAME BACK BIT-IDENTICAL** — every threshold at exactly
+  zero (price +0.0000 %, demand/slack/dump bit-identical, total gen +0.0000 %, worst
+  per-class 0.0000 %), and `max|Δ| = 0` at hourly grain on `class_hourly` (166,440 rows/yr),
+  `reserve_family` and `storage` in all three years. **HEAD drift is INERT for PJM's backcast
+  path**, stronger than NEISO's −0.008 % price residual, so the touchpoint assessment's
+  §4(i) open limit for PJM is **CLOSED** and its in-sample vs held-out columns are
+  like-for-like. Its bundle is **deleted before merge** per rule 29 (c), following the
+  `neiso_headctrl_k99` precedent; every number cited from it lives in the FINDING.
 
 **pjm-155 (2026-08-04): THE PJM LANE IS PARKED PENDING OWNER. No LP built, no
 solve launched, no bundle, no run registered, no mechanism armed, NO CELL VERDICT

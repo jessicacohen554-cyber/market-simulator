@@ -235,18 +235,68 @@ Stated against interest, so the next session does not over-read it:
 - **The HEAD-drift confound is open at the time of writing** — the control solve in
   `PRECOMMIT` §3 is the instrument, and §6 below carries its result.
 
-## 6. The same-HEAD in-sample control
+## 6. The same-HEAD in-sample control — RESULT: BIT-IDENTICAL
 
-*(Result section — filled from `results/calibration/pjm_headctrl_k162` after the solve;
-pre-registered thresholds are fixed in `PRECOMMIT` §3 and were written before it ran.)*
+`results/calibration/pjm_headctrl_k162`, solved this session at HEAD `4373b348c`
+(3 years, one invocation, ~14 min/year), differenced against the keeper's committed
+`hourly/` sidecars. **Bundle deleted before merge** under rule 29 `[R-SCREEN]` clause (c),
+following the `neiso_headctrl_k99` precedent — every number cited from it is here, and
+git history is the record for the bytes.
 
-**G-DRIFT was attempted first and is structurally undischargeable**: the keeper's recorded
-`git_sha` `457ae04` (2026-08-15) does not exist at HEAD and is not in
-`docs/governance/citation-commit-map.txt` — it predates the **2026-08-16 history rewrite** by
-one day. The clone was deepened to 11,640 commits and the object still does not resolve.
-There is **no diff to classify**, which is stronger than NEISO's "too large to classify"; an
-unclassifiable diff is treated as LIVE, and a LIVE hunk is what earns a control solve under
-rule 29(b). NEISO's INERT verdict does not transfer (rule 25 `[R-ISO-SCOPE]`).
+### 6.1 Why a control was solved at all
+
+**G-DRIFT was attempted first and is structurally undischargeable.** The keeper's recorded
+`git_sha` **`457ae04`** (2026-08-15) does not exist at HEAD and is **not** in
+`docs/governance/citation-commit-map.txt`: it predates the **2026-08-16 history rewrite** by
+one day. The clone was deepened to **11,640 commits** and the object still does not resolve,
+so this is not a shallow-clone artifact. **There is no diff to classify** — stronger than
+NEISO's "too large to classify" (assessment §4 i). An unclassifiable diff is treated as LIVE,
+and a LIVE hunk is the one thing that earns a control solve under rule 29 (b). NEISO's INERT
+verdict does not transfer (rule 25 `[R-ISO-SCOPE]`).
+
+### 6.2 Result, against the thresholds fixed in the PRECOMMIT before it ran
+
+| series | pre-registered INERT gate | measured | verdict |
+|---|---|---|---|
+| system mean zonal **price** | \|Δ\| < 0.05 % | **+0.0000 %** (30.7538 / 29.8080 / 40.3556, unchanged to 4 dp) | **inert** |
+| **demand** | bit-identical | **bit-identical** (784,822,852.5 / 812,741,556.0 / 843,188,327.0 MWh) | **inert** |
+| **slack** | bit-identical | **bit-identical** (0.0 all years) | **inert** |
+| **dump** | bit-identical | **bit-identical** (0.0 all years) | **inert** |
+| **reserve_price** | \|Δ\| < 0.05 % | **+0.0000 %** (0.0000 / 0.0022 / 0.2479) | **inert** |
+| **total generation** | \|Δ\| < 0.01 % | **+0.0000 %** (787.9243 / 816.7908 / 847.9144 TWh, Δ = +0.00000) | **inert** |
+| worst **per-class annual energy** | \|Δ\| < 0.5 % | **0.0000 %** | **inert** |
+
+At hourly grain, on every numeric column of every committed sidecar the two bundles share:
+
+| year | `class_hourly` | `reserve_family` | `storage` |
+|---|---|---|---|
+| 2023 | **max\|Δ\| = 0** (166,440 rows) | **0** (17,520 rows; dual, requirement, held MW, shortfall) | **0** (charge, discharge) |
+| 2024 | **max\|Δ\| = 0** | **0** | **0** |
+| 2025 | **max\|Δ\| = 0** | **0** | **0** |
+
+> **HEAD drift is INERT for PJM's backcast path — and not merely inert, BIT-IDENTICAL.**
+> Three weeks and a full history rewrite moved *nothing*: not one megawatt-hour in 499,320
+> class-hours, not one reserve dual, not one cent of price.
+
+### 6.3 What this closes, and what it does not
+
+**Closes:** the §4(i) open limit the touchpoint assessment carried for PJM. The in-sample
+column (the keeper's committed determination, solved at its own HEAD) and the held-out column
+(solved 2026-09-05) are **like-for-like**, so §§2–3 above compare years, not code. In
+particular the DA-virtual sign flip is a property of 2021/2022 versus 2023–2025, **not** an
+artifact of drift. PJM's result is *stronger* than NEISO's, which carried a −0.008 % price
+residual from degenerate-LP tie-breaking; PJM has no residual at all.
+
+**Does not close, and worth stating plainly:** the audit could not be performed and the thing
+it was meant to establish held anyway. That is not a reason to skip the next one — it is
+precisely why rule 29 (b) treats an unclassifiable diff as LIVE rather than presuming
+inertness. A bit-identical outcome was the *hypothesis*, not the prior.
+
+**Also worth recording:** the keeper's `git_sha` being unresolvable is a **general** hazard
+for every artifact whose sha predates 2026-08-16 and is absent from the commit map — G-CTRL
+form 4's code-audit route is unavailable for all of them, so each will earn a control solve
+until its bundle is re-stamped. That is a governance observation for the audit desk, not a
+PJM finding, and nothing here acts on it.
 
 ## 7. Recommendation
 
