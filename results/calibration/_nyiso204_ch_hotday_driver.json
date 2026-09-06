@@ -1,0 +1,273 @@
+{
+  "probe": "nyiso-204 phase 0 (d) \u2014 hot-step driver test",
+  "zero_lp": true,
+  "zone": "Capital_Hudson",
+  "threshold_c": 31.1,
+  "gate": "zone TMAX > threshold (the limb's own day gate)",
+  "candidates": {
+    "2480": "Danskammer",
+    "8006": "Roseton"
+  },
+  "control": {
+    "2625": "Bethlehem Energy Center"
+  },
+  "years": {
+    "2023": {
+      "flagged_hours": 384,
+      "plants": {
+        "2480": {
+          "name": "Danskammer",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 384,
+            "n_reported": 384,
+            "p_online": 0.1640625,
+            "mean_mw": 16.5078125,
+            "median_mw": 0.0,
+            "max_mw": 158.0
+          },
+          "on_binding_hours": {
+            "n": 192,
+            "n_reported": 192,
+            "p_online": 0.0,
+            "mean_mw": 0.0,
+            "median_mw": 0.0,
+            "max_mw": 0.0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.028082191780821917,
+            "mean_mw": 2.297260273972603,
+            "median_mw": 0.0,
+            "max_mw": 231.0
+          }
+        },
+        "8006": {
+          "name": "Roseton",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 384,
+            "n_reported": 384,
+            "p_online": 0.5598958333333334,
+            "mean_mw": 160.13802083333334,
+            "median_mw": 138.5,
+            "max_mw": 924.0
+          },
+          "on_binding_hours": {
+            "n": 24,
+            "n_reported": 24,
+            "p_online": 1.0,
+            "mean_mw": 261.5833333333333,
+            "median_mw": 305.0,
+            "max_mw": 350.0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.08618721461187215,
+            "mean_mw": 23.83082191780822,
+            "median_mw": 0.0,
+            "max_mw": 1226.0
+          }
+        },
+        "2625": {
+          "name": "Bethlehem Energy Center",
+          "is_candidate": false,
+          "on_flagged_hours": {
+            "n": 384,
+            "n_reported": 384,
+            "p_online": 0.7682291666666666,
+            "mean_mw": 379.1171875,
+            "median_mw": 543.0,
+            "max_mw": 1161.0
+          },
+          "on_binding_hours": {
+            "n": 288,
+            "n_reported": 288,
+            "p_online": 0.9618055555555556,
+            "mean_mw": 459.9479166666667,
+            "median_mw": 556.5,
+            "max_mw": 588.0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.22557077625570776,
+            "mean_mw": 111.43276255707762,
+            "median_mw": 0.0,
+            "max_mw": 1161.0
+          }
+        }
+      }
+    },
+    "2024": {
+      "flagged_hours": 408,
+      "plants": {
+        "2480": {
+          "name": "Danskammer",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 408,
+            "n_reported": 408,
+            "p_online": 0.2696078431372549,
+            "mean_mw": 24.84313725490196,
+            "median_mw": 0.0,
+            "max_mw": 179.0
+          },
+          "on_binding_hours": {
+            "n": 24,
+            "n_reported": 24,
+            "p_online": 0.0,
+            "mean_mw": 0.0,
+            "median_mw": 0.0,
+            "max_mw": 0.0
+          },
+          "all_hours": {
+            "n": 8784,
+            "n_reported": 8784,
+            "p_online": 0.026297814207650275,
+            "mean_mw": 2.269922586520947,
+            "median_mw": 0.0,
+            "max_mw": 233.0
+          }
+        },
+        "8006": {
+          "name": "Roseton",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 408,
+            "n_reported": 408,
+            "p_online": 0.7083333333333334,
+            "mean_mw": 287.1372549019608,
+            "median_mw": 333.0,
+            "max_mw": 684.0
+          },
+          "on_binding_hours": {
+            "n": 0
+          },
+          "all_hours": {
+            "n": 8784,
+            "n_reported": 8784,
+            "p_online": 0.08321948998178506,
+            "mean_mw": 29.16564207650273,
+            "median_mw": 0.0,
+            "max_mw": 999.0
+          }
+        },
+        "2625": {
+          "name": "Bethlehem Energy Center",
+          "is_candidate": false,
+          "on_flagged_hours": {
+            "n": 408,
+            "n_reported": 408,
+            "p_online": 0.8504901960784313,
+            "mean_mw": 621.9117647058823,
+            "median_mw": 553.0,
+            "max_mw": 1169.0
+          },
+          "on_binding_hours": {
+            "n": 408,
+            "n_reported": 408,
+            "p_online": 0.8504901960784313,
+            "mean_mw": 621.9117647058823,
+            "median_mw": 553.0,
+            "max_mw": 1169.0
+          },
+          "all_hours": {
+            "n": 8784,
+            "n_reported": 8784,
+            "p_online": 0.26821493624772313,
+            "mean_mw": 154.8094262295082,
+            "median_mw": 0.0,
+            "max_mw": 1169.0
+          }
+        }
+      }
+    },
+    "2025": {
+      "flagged_hours": 504,
+      "plants": {
+        "2480": {
+          "name": "Danskammer",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 504,
+            "n_reported": 504,
+            "p_online": 0.44047619047619047,
+            "mean_mw": 39.30555555555556,
+            "median_mw": 0.0,
+            "max_mw": 322.0
+          },
+          "on_binding_hours": {
+            "n": 0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.033904109589041095,
+            "mean_mw": 3.188698630136986,
+            "median_mw": 0.0,
+            "max_mw": 322.0
+          }
+        },
+        "8006": {
+          "name": "Roseton",
+          "is_candidate": true,
+          "on_flagged_hours": {
+            "n": 504,
+            "n_reported": 504,
+            "p_online": 0.7936507936507936,
+            "mean_mw": 281.23015873015873,
+            "median_mw": 323.0,
+            "max_mw": 759.0
+          },
+          "on_binding_hours": {
+            "n": 24,
+            "n_reported": 24,
+            "p_online": 0.625,
+            "mean_mw": 123.75,
+            "median_mw": 104.5,
+            "max_mw": 300.0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.26952054794520547,
+            "mean_mw": 82.7304794520548,
+            "median_mw": 0.0,
+            "max_mw": 885.0
+          }
+        },
+        "2625": {
+          "name": "Bethlehem Energy Center",
+          "is_candidate": false,
+          "on_flagged_hours": {
+            "n": 504,
+            "n_reported": 504,
+            "p_online": 0.9623015873015873,
+            "mean_mw": 561.890873015873,
+            "median_mw": 561.0,
+            "max_mw": 1047.0
+          },
+          "on_binding_hours": {
+            "n": 576,
+            "n_reported": 576,
+            "p_online": 0.9739583333333334,
+            "mean_mw": 548.1822916666666,
+            "median_mw": 560.0,
+            "max_mw": 1047.0
+          },
+          "all_hours": {
+            "n": 8760,
+            "n_reported": 8760,
+            "p_online": 0.40399543378995434,
+            "mean_mw": 235.3175799086758,
+            "median_mw": 0.0,
+            "max_mw": 1152.0
+          }
+        }
+      }
+    }
+  }
+}
