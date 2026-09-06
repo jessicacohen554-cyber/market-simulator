@@ -125,6 +125,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "gas-ofo-events",
     "ps-water-state",
     "ra-import-allocations",
+    "load-forecast",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -440,6 +441,36 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "energy flow. INTAKE-ONLY \u2014 the pre-registered firm-block "
             "re-split arm was stopped by its own rule (held north share within "
             "5 points of the MIC share), so no mechanism consumes it."
+        ),
+    },
+    "load-forecast": {
+        "summary": (
+            "Each ISO's PUBLISHED long-term load forecast \u2014 annual energy "
+            "and seasonal peak by scenario, plus the published data-centre / "
+            "large-load, EV and building-electrification decompositions "
+            "(SCN-LOAD, owner ruling S4 / card D-4)."
+        ),
+        "reconciles": (
+            "Six publishers that agree on almost nothing onto one tidy frame: "
+            "ERCOT's LTLF (an hourly per-weather-zone component workbook plus "
+            "two published cases, ERCOT Adjusted and TSP Provided), the CEC's "
+            "California Energy Demand forms (per planning area, with Form 1.1c's "
+            "two data-centre scenarios), PJM's per-zone monthly workbook and "
+            "Table B-9b, the NYISO Gold Book's zone tables (I-1a, I-11b, I-13a, "
+            "I-14), the ISO-NE CELT (sheets 1.5.1/1.5.2/1.7) and MISO's "
+            "chart-only LTLF deck. `scenario` is the model's canonical "
+            "low/mid/high axis and `published_case` keeps the publisher's own "
+            "label, so the mapping is auditable; `basis` is in the key because "
+            "ISO-NE publishes a Gross and a Net row for every series. "
+            "Rule-13 line: a forward-looking published INPUT that regenerates "
+            "from the next vintage and responds to changed conditions, never a "
+            "measured outcome and never a fit target \u2014 the historical rows "
+            "a publication prints beside its forecast are carried only to anchor "
+            "a CAGR on the publisher's own base year and are labelled "
+            "`scenario=\"actual\"`. CONSUMED by "
+            "`constants.DEMAND_GROWTH_RATES`, `DATACENTER_ADDITIONS_MW`, "
+            "`DATACENTER_ZONE_SHARE` and `ELECTRIFICATION_LAYERS`, which are "
+            "derived from these rows rather than hand-transcribed."
         ),
     },
     "miso-m2m-flowgates": {

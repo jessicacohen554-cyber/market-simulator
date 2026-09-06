@@ -1247,3 +1247,15 @@ data/raw/miso-regional-balance/_daily/
 # first miss beside the source and rebuilt automatically whenever a workbook's
 # bytes change. Disposable, machine-local, never committed.
 data/raw/fleet-egrid/*.parquet
+
+# --- SCN-LOAD: the load-forecast datatype's one oversized payload -----------
+# ERCOT's 2025 Adjusted Long-Term Load Forecast workbook is a 48.4 MB hourly
+# 8760 x 2025-2044 x 8-weather-zone x 21-component file. Same corpus idiom as
+# the BLOAT-S2 conversions above (payload untracked at tip, recovery is
+# RE-FETCH ONLY): data/raw/load-forecast/ercot/README.md carries the verified
+# source URL and SHA256SUMS.txt is the committed provenance record. The two
+# quantities the model actually consumes are curated OUT of it into small
+# tracked CSVs in the same directory (ercot.csv — annual per-zone large-load
+# peaks and EV energy; ercot_ev_hourly_profile_2030.csv — the normalized 8760
+# EV charging shape), so nothing depends on the payload being present.
+data/raw/load-forecast/ercot/ErcotAdjustedForecast.xlsb

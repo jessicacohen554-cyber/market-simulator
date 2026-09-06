@@ -76,9 +76,9 @@ def test_on_path_relocation_energy_invariant_closed_form():
     demand = rng.random((len(zones), t)) * 6e4 + 2e4
     out = add_datacenter_block(demand, cfg, "ERCOT", 2030, zones)
 
-    dc_mw = resolve_datacenter_mw(cfg, "ERCOT", 2030)  # 37,000 MW mid @2030
-    block_mw = dc_mw * cfg.datacenter_load_factor  # 37000 * 0.85
-    assert block_mw == pytest.approx(37000.0 * 0.85)
+    dc_mw = resolve_datacenter_mw(cfg, "ERCOT", 2030)  # 38,182 MW mid @2030
+    block_mw = dc_mw * cfg.datacenter_load_factor  # 38182 * 0.85
+    assert block_mw == pytest.approx(38182.0 * 0.85)
 
     dc_energy = block_mw * t
     total_energy = float(demand.sum())
@@ -287,23 +287,24 @@ def test_nonpjm_zone_share_is_load_share_default():
 # --------------------------------------------------------------------------
 def test_resolve_at_anchor_years():
     cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="high")
-    # high ERCOT: {2024:0, 2030:122000, 2035:158000}
-    assert resolve_datacenter_mw(cfg, "ERCOT", 2024) == pytest.approx(0.0)
-    assert resolve_datacenter_mw(cfg, "ERCOT", 2030) == pytest.approx(122000.0)
-    assert resolve_datacenter_mw(cfg, "ERCOT", 2035) == pytest.approx(158000.0)
+    # high ERCOT (2025 LTLF TSP Provided x 0.73 DC share, SCN-LOAD 2026-09-06):
+    # {2025:9281, 2030:88603, 2035:95151, 2040:97920}
+    assert resolve_datacenter_mw(cfg, "ERCOT", 2025) == pytest.approx(9281.0)
+    assert resolve_datacenter_mw(cfg, "ERCOT", 2030) == pytest.approx(88603.0)
+    assert resolve_datacenter_mw(cfg, "ERCOT", 2035) == pytest.approx(95151.0)
 
 
 def test_resolve_between_anchors_linear():
     cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="high")
-    # 2033 sits 3/5 of the way from 2030(122000) to 2035(158000).
-    expected = 122000.0 + (158000.0 - 122000.0) * (3.0 / 5.0)
+    # 2033 sits 3/5 of the way from 2030(88603) to 2035(95151).
+    expected = 88603.0 + (95151.0 - 88603.0) * (3.0 / 5.0)
     assert resolve_datacenter_mw(cfg, "ERCOT", 2033) == pytest.approx(expected)
 
 
 def test_resolve_flat_extrapolation_after_last_anchor():
     cfg = ScenarioConfig(iso="ERCOT", datacenter_load_path="mid")
-    # mid ERCOT {2024:0, 2030:37000} -> flat 37000 past 2030.
-    assert resolve_datacenter_mw(cfg, "ERCOT", 2045) == pytest.approx(37000.0)
+    # mid ERCOT {2025:3516, 2030:38182, 2035:41675} -> flat 41675 past 2035.
+    assert resolve_datacenter_mw(cfg, "ERCOT", 2045) == pytest.approx(41675.0)
 
 
 def test_percentile_reproduces_low_mid_high():
@@ -318,18 +319,18 @@ def test_percentile_reproduces_low_mid_high():
         iso="ERCOT", datacenter_load_path="mid", datacenter_percentile=1.0
     )
     assert resolve_datacenter_mw(low_cfg, "ERCOT", zones_year) == pytest.approx(0.0)
-    assert resolve_datacenter_mw(mid_cfg, "ERCOT", zones_year) == pytest.approx(37000.0)
+    assert resolve_datacenter_mw(mid_cfg, "ERCOT", zones_year) == pytest.approx(38182.0)
     assert resolve_datacenter_mw(high_cfg, "ERCOT", zones_year) == pytest.approx(
-        122000.0
+        88603.0
     )
 
 
 def test_percentile_midpoint_interpolation():
-    """percentile 0.25 sits halfway between low(0) and mid(37000)."""
+    """percentile 0.25 sits halfway between low(0) and mid(38182)."""
     cfg = ScenarioConfig(
         iso="ERCOT", datacenter_load_path="mid", datacenter_percentile=0.25
     )
-    assert resolve_datacenter_mw(cfg, "ERCOT", 2030) == pytest.approx(18500.0)
+    assert resolve_datacenter_mw(cfg, "ERCOT", 2030) == pytest.approx(19091.0)
 
 
 def test_path_label_selects_case():
@@ -340,51 +341,75 @@ def test_path_label_selects_case():
     ) == pytest.approx(0.0)
     assert resolve_datacenter_mw(
         ScenarioConfig(iso="ERCOT", datacenter_load_path="high"), "ERCOT", y
-    ) == pytest.approx(122000.0)
+    ) == pytest.approx(88603.0)
 
 
 # --------------------------------------------------------------------------
 # 5. Per-ISO parameterization — sourced ISOs vs the "no source => 0" rule.
 # --------------------------------------------------------------------------
 def test_caiso_iepr_anchors():
+    """CEC CED 2025 Form 1.1c, the PGE+SCE+SDGE (CAISO-footprint) data-centre
+    deliveries converted at the block's own load factor. The 2025 IEPR PUBLISHES
+    A SECOND, HIGHER data-centre scenario (Local Reliability), which is what
+    closed the former ``high := mid`` limitation (SCN-LOAD 2026-09-06)."""
     cfg = ScenarioConfig(iso="CAISO", datacenter_load_path="mid")
-    assert resolve_datacenter_mw(cfg, "CAISO", 2030) == pytest.approx(1800.0)
-    assert resolve_datacenter_mw(cfg, "CAISO", 2040) == pytest.approx(4900.0)
+    assert resolve_datacenter_mw(cfg, "CAISO", 2030) == pytest.approx(1622.0)
+    assert resolve_datacenter_mw(cfg, "CAISO", 2040) == pytest.approx(4382.0)
+    high = ScenarioConfig(iso="CAISO", datacenter_load_path="high")
+    assert resolve_datacenter_mw(high, "CAISO", 2030) == pytest.approx(4240.0)
+    # The published fact the gate exists for: high is a DISTINCT, higher case.
+    for year in (2028, 2030, 2035, 2040, 2045):
+        assert resolve_datacenter_mw(high, "CAISO", year) > resolve_datacenter_mw(
+            cfg, "CAISO", year
+        )
 
 
 def test_pjm_and_nyiso_have_sourced_blocks():
+    """PJM from Table B-9b (read for the first time by SCN-LOAD 2026-09-06) and
+    NYISO from the 2026 Gold Book Table I-14, whose own footer publishes the
+    Lower/Baseline/Higher band that closed the former ``low := 0`` floor."""
     assert resolve_datacenter_mw(
         ScenarioConfig(iso="PJM", datacenter_load_path="mid"), "PJM", 2030
-    ) == pytest.approx(30000.0)
-    assert resolve_datacenter_mw(
-        ScenarioConfig(iso="NYISO", datacenter_load_path="high"), "NYISO", 2031
-    ) == pytest.approx(10000.0)
+    ) == pytest.approx(38815.0)
+    nyiso_low = ScenarioConfig(iso="NYISO", datacenter_load_path="low")
+    nyiso_high = ScenarioConfig(iso="NYISO", datacenter_load_path="high")
+    assert resolve_datacenter_mw(nyiso_high, "NYISO", 2030) == pytest.approx(2567.0)
+    # The published fact: NYISO's low case is a POSITIVE published forecast, not
+    # the "no signed subset published -> 0" floor it used to be.
+    assert resolve_datacenter_mw(nyiso_low, "NYISO", 2030) > 0.0
+    for year in (2026, 2030, 2035, 2040):
+        assert resolve_datacenter_mw(nyiso_low, "NYISO", year) < resolve_datacenter_mw(
+            nyiso_high, "NYISO", year
+        )
 
 
 def test_miso_block_sourced_from_ltlf():
-    """MISO's DC block comes from the MISO LTLF (was {}), refined 2026-07-21 to
-    the forecast's granular DC peak-demand trajectory: mid 1.2 GW (2026) ->
-    20.5 GW (2030) -> 33.5 GW (2046); high 27 GW by 2030 extended to 2046;
-    low signed-subset -> 0."""
+    """MISO's DC block, re-derived by SCN-LOAD 2026-09-06 from the 2026 LTLF
+    (an edition bump from Sept-2025). The gated PUBLISHED facts: the deck prints
+    the 2030 data-centre demand (20 GW, slide 18) and the driver's 2046 low-high
+    range (22 - 44 GW, slide 16), which is what closed the former ratio-
+    extrapolated ``high`` and the ``low := 0`` floor."""
     mid = ScenarioConfig(iso="MISO", datacenter_load_path="mid")
-    assert resolve_datacenter_mw(mid, "MISO", 2026) == pytest.approx(1200.0)
-    assert resolve_datacenter_mw(mid, "MISO", 2030) == pytest.approx(20500.0)
-    assert resolve_datacenter_mw(mid, "MISO", 2046) == pytest.approx(33500.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2030) == pytest.approx(20000.0)
+    assert resolve_datacenter_mw(mid, "MISO", 2046) == pytest.approx(33154.0)
     # Anchors interpolate piecewise-linearly and flat-hold past the last anchor.
     assert resolve_datacenter_mw(mid, "MISO", 2028) == pytest.approx(
-        1200.0 + (20500.0 - 1200.0) * (2028 - 2026) / (2030 - 2026)
+        1154.0 + (20000.0 - 1154.0) * (2028 - 2026) / (2030 - 2026)
     )
-    assert resolve_datacenter_mw(mid, "MISO", 2050) == pytest.approx(33500.0)
-    high = ScenarioConfig(iso="MISO", datacenter_load_path="high")
-    assert resolve_datacenter_mw(high, "MISO", 2030) == pytest.approx(27000.0)
-    assert resolve_datacenter_mw(high, "MISO", 2046) == pytest.approx(44100.0)
-    # High never dips below mid across the horizon (the ratio-preserved tail).
-    for year in (2030, 2035, 2040, 2046, 2050):
-        assert resolve_datacenter_mw(high, "MISO", year) >= resolve_datacenter_mw(
-            mid, "MISO", year
-        )
+    assert resolve_datacenter_mw(mid, "MISO", 2050) == pytest.approx(33154.0)
     low = ScenarioConfig(iso="MISO", datacenter_load_path="low")
-    assert resolve_datacenter_mw(low, "MISO", 2030) == 0.0
+    high = ScenarioConfig(iso="MISO", datacenter_load_path="high")
+    # The published 2046 band, carried as the deck prints it (1,154 MW of 2026
+    # data centres plus the driver's own 22 / 32 / 44 GW growth range).
+    assert resolve_datacenter_mw(low, "MISO", 2046) == pytest.approx(23154.0)
+    assert resolve_datacenter_mw(high, "MISO", 2046) == pytest.approx(45154.0)
+    # low is a POSITIVE published case now, not the "no signed subset" floor.
+    assert resolve_datacenter_mw(low, "MISO", 2030) > 0.0
+    # The band never crosses across the horizon.
+    for year in (2030, 2035, 2040, 2046, 2050):
+        assert resolve_datacenter_mw(low, "MISO", year) <= resolve_datacenter_mw(
+            mid, "MISO", year
+        ) <= resolve_datacenter_mw(high, "MISO", year)
 
 
 def test_unsourced_isos_ship_zero():
