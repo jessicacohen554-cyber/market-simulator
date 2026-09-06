@@ -130,6 +130,7 @@ from scripts.run_calibration import (  # noqa: E402
     _commitment_pass,
     _henry_hub_actual,
     _load_reference,
+    resolve_p1_basis_seed_default,
     resolve_xyear_warmstart_default,
     run_year,
 )
@@ -8929,6 +8930,21 @@ def main() -> None:
         "default OFF for reproducibility).",
     )
     parser.add_argument(
+        "--no-p1-basis-seed",
+        action="store_true",
+        help="Disable the same-year P1 basis seed (MARKET_SIM_P1_BASIS_SEED). "
+        "It is ON by default for a fresh calibration solve — where P1 must "
+        "cold-rebuild a second LP on a floored fleet (the ERCOT/NYISO gas "
+        "commitment bridges, the CAISO RA must-offer), that model is seeded "
+        "with the same year's P0 basis instead of starting cold (~2x faster "
+        "P1, basis-neutral; see docs/cross-year-warmstart.md). Rides the "
+        "cross-year gate, so --no-xyear-warmstart already implies OFF. An "
+        "explicit MARKET_SIM_P1_BASIS_SEED env var is honored over the "
+        "default; this flag overrides both. No effect on --report / "
+        "--replay-bundle / --rebuild-benchmark (those stay at the global "
+        "default OFF for reproducibility).",
+    )
+    parser.add_argument(
         "--cf-band-width",
         type=float,
         default=_CF_BAND_WIDTH,
@@ -12829,6 +12845,13 @@ def main() -> None:
     # Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
+    # Same-year P1 basis seed — same fresh-solve-only placement and the same
+    # precedence (--no-p1-basis-seed > explicit env var > ON). Gated again on
+    # the cross-year gate inside run_energy_solve, so the goldens/replay pin
+    # (MARKET_SIM_WARMSTART_XYEAR=0) forces it OFF and the tree stays
+    # byte-identical there.
+    _p1seed = resolve_p1_basis_seed_default(args.no_p1_basis_seed)
+    logger.info("same-year P1 basis seed: %s", "ON" if (_p1seed and _xwarm) else "OFF")
     # Coal family solve kwargs, generated from the same registry rows that
     # generated the parser above (rows riding the prb_overrides channel are
     # excluded there and keep their hand-written plumbing below). One encoding

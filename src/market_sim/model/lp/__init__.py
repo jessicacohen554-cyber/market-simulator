@@ -415,6 +415,8 @@ def solve_dispatch(
     dis_tranche_width: np.ndarray | None = None,
     dis_tranche_price: np.ndarray | None = None,
     T: int | None = None,
+    basis_seed: "CrossYearBasis | None" = None,
+    basis_out: list | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
 
@@ -531,6 +533,24 @@ def solve_dispatch(
             storage cannot arbitrage across days. ``None`` leaves the annual
             cyclic boundary as the only SOC anchor (full perfect foresight).
         T: Number of hours. Inferred from ``demand`` when ``None``.
+        basis_seed: Optional starting basis installed on the freshly built
+            model via :meth:`DispatchModel.apply_cross_year_basis` BEFORE its
+            first solve. This facade builds and solves in one call, so it is
+            the only seam at which a caller can reach the model in between —
+            which is what the same-year P1 basis seed needs (wave 2a item B,
+            ``docs/cross-year-warmstart.md`` "same-year P1 seed"). ``None``
+            (every other caller) is byte-identical: no basis is installed and
+            HiGHS starts cold exactly as before. A wrong or partial seed costs
+            simplex iterations, never correctness — an LP's optimum is
+            basis-independent — and ``apply_cross_year_basis`` itself declines
+            (returns ``False``) on a horizon mismatch.
+        basis_out: Optional single-element list holder. When given, this
+            model's optimal basis is exported into it after the solve
+            (``holder[:] = [basis]``), so a later pass solving the same LP can
+            seed from it. The same holder idiom the cross-year cache uses. The
+            export is a ``getBasis()`` enum materialization measured at
+            10-16 s/yr on ERCOT, so callers pass a holder only when a later
+            pass will actually read it; ``None`` skips it entirely.
 
     Returns:
         A populated ``DispatchResult``.
@@ -644,13 +664,26 @@ def solve_dispatch(
         dis_tranche_price=dis_tranche_price,
         T=T,
     )
-    return model.solve(
+    # Same-year P1 basis seed (wave 2a item B): install the caller's basis on
+    # the fresh model before its first solve. ``apply_cross_year_basis`` loads
+    # it as an ALIEN basis, so HiGHS repairs whatever the seed gets wrong
+    # (a bridge's raised availability makes a handful of statuses
+    # bound-inconsistent) rather than rejecting it. Nothing about the LP moves:
+    # the matrix, bounds and objective were fixed by the constructor above.
+    if basis_seed is not None:
+        model.apply_cross_year_basis(basis_seed)
+    result = model.solve(
         mc=mc,
         fuel_prices=fuel_prices,
         carbon_price=carbon_price,
         nox_price=nox_price,
         so2_price=so2_price,
     )
+    if basis_out is not None:
+        _exported = model.export_cross_year_basis()
+        if _exported is not None:
+            basis_out[:] = [_exported]
+    return result
 
 
 solve_dispatch.__module__ = "market_sim.model.dispatch"

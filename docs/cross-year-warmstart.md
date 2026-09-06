@@ -427,3 +427,140 @@ keys (which carry an explicit `true`). Measured both ways in
 `src/market_sim/results/cache.py`. Decision record: sitting Addendum K.3
 (`docs/handoffs/ffr-owner-sitting-2026-08-02.md`); adjudication:
 `docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md`.
+
+## The same-year P1 seed
+
+*(Wave 2a item B. Owner memo `docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`,
+signed 2026-09-06, option (A) FLIP.)*
+
+Everything above is about carrying a basis **between years**. There is a second
+place a basis was being thrown away, **inside** a single year, and it is the more
+expensive one on three of the six ISOs.
+
+### What was cold, and why
+
+`pipeline/solve.py::run_energy_solve` normally solves P1 by re-costing the live
+P0 model (`model.solve(mc=mc_bid)`) — the intra-year warm start, which keeps the
+basis by construction. But where a **P1-native floor bridge** replaces the fleet
+(`p1_fleet_prep`), the P1 LP is not the P0 LP any more and the model cannot be
+re-costed in place. The in-place refloor (`lp.inplace_floor.refloor_thermal_inplace`)
+is tried and **declines**, because the bridge's availability raise also feeds
+reserve-headroom / pool-cap / ramp **row** bounds, not just column bounds. So the
+branch builds a **second `DispatchModel`** on the floored fleet and solved it
+**from no basis at all** — even though the P0 model of the same year had the
+identical column and row layout and an optimal basis in hand.
+
+Three ISOs pay this on every keeper year:
+
+| ISO | the bridge | P1 route |
+|---|---|---|
+| ERCOT | `ercot_gas_commitment_bridge` | cold rebuild |
+| NYISO | `nyiso_gas_commitment_bridge` | cold rebuild |
+| CAISO | `caiso_ra_mustoffer` (default-on) | cold rebuild |
+| NEISO / PJM / MISO | none | warm — P1 re-costs the live model, 0.3–0.4× P0 |
+
+The signature of a cold P1 is that it costs about as much as P0. On ERCOT and
+NYISO it did.
+
+### The change
+
+In that same branch: export the P0 model's basis **before** `model = None`
+(the export already ran there for the cross-year holder; the seed reuses the
+same object), build the second model exactly as today, then
+`apply_cross_year_basis(basis)` on it before its first solve. Same `T`, same
+`unit_ids`, same zones/storage/links, so `_cross_year_column_map` is the
+**identity** on every per-hour block; HiGHS loads it as an *alien* basis and
+repairs the handful of statuses the raised availability makes bound-inconsistent.
+
+The seam is `solve_dispatch(..., basis_seed=…)` — that facade builds and solves
+in one call, so it is the only point at which a caller can reach the model in
+between. It is passed **only when the seed is armed**, so the unseeded call is
+the exact keyword set it has always been.
+
+This is **not** the refuted in-place refloor (C-4): no live model is edited, and
+the cold rebuild stays byte-for-byte what it is. The seed is added *after* the
+rebuild. It is not an LP change either — objective, bounds and rows of the second
+model are identical on both arms.
+
+### The adaptive pass gets a second seed
+
+On the ERCOT adaptive-expectation routes (ercot-221 pass 2, and each ercot-230
+fixed-point iteration) a later pass reaches `run_energy_solve` with
+`reuse_p0_from` (C-1b) and therefore has **no P0 model of its own** to export
+from. But the previous pass's **P1** solved the identical floored LP under a
+different storage discharge cost, so its basis is the closest seed available.
+`run_energy_solve(retain_p1_basis=True)` exports it onto
+`EnergySolveResult.p1_basis`, and a reusing pass seeds from it; the fallback,
+when no P1 basis was retained, is the same year's P0 basis, which the previous
+pass left in `xyear_cache`.
+
+`retain_p1_basis` is **opt-in** rather than unconditional because the export is
+10–16 s of `getBasis()` materialization on ERCOT, and a year with no second pass
+would pay it for nothing. `run_calibration.py` sets it from the same expression
+that gates the adaptive block, hoisted into `_adaptive_route_armed` so the two
+cannot drift.
+
+### The switch, and what it is gated on
+
+`MARKET_SIM_P1_BASIS_SEED`, resolved by
+`run_calibration.resolve_p1_basis_seed_default` with the same precedence as the
+cross-year switch: `--no-p1-basis-seed` forces OFF; an explicitly-set env var is
+honored as-is; otherwise **ON**. Set on the fresh-solve path of both calibration
+CLIs only, so `--report` / `--replay-bundle` / `--rebuild-benchmark` and direct
+`solve_and_persist` callers stay at the global default OFF.
+
+Inside `run_energy_solve` it is gated **twice more**, and both matter:
+
+* **It rides the cross-year gate.** `MARKET_SIM_WARMSTART_XYEAR=0` — the
+  goldens/replay determinism pin and `--no-xyear-warmstart` — forces the seed
+  OFF, with no second knob to remember. Under the pin the seeding code is dead,
+  which is why the seeded tree is **byte-identical** on every golden, replay and
+  merge-base control capture.
+* **It fires only when the caller left `xyear_warmstart` at `None`**, which is
+  the calibration path and only it. `runner.py` always passes an explicit bool,
+  so the forecast lane is cold **by construction** rather than by the current
+  value of `ScenarioConfig.forecast_xyear_warmstart` — D-10's cold-forecast
+  posture cannot be re-opened through this side door, and there is no new
+  `ScenarioConfig` field and no cache-key movement.
+
+A starting basis cannot move an LP's optimum, only the iterations spent reaching
+it, so this is a WARM-START-CLASS switch, not a tunable under rule 24
+`[R-REGISTRY]` — the same reasoning, and the same shape, as the P-2 cross-year
+switch.
+
+### A latent crash fixed on the way
+
+The cold branch's P0 export had **no `model is not None` guard**, while the
+post-P1 export a few lines below has always carried one. A **reused** pass
+(C-1b) never builds a P0 model and takes this same cold branch, so the
+combination "reused pass + a real `xyear_cache` + the cross-year gate on" —
+which is exactly what the calibration CLI hands the ERCOT adaptive pass 2 —
+died with `AttributeError: 'NoneType' object has no attribute
+'export_cross_year_basis'`. It was reached by no test (the C-1b reuse tests pass
+no holder) and by no bench (the decision memo's ran ERCOT 2025, a one-pass year,
+under the `XYEAR=0` pin), so it had never fired. Reproduced on clean
+`origin/main` at `solve.py:652` and fixed here; pinned by
+`tests/unit/pipeline/test_xyear_warmstart_default.py`.
+
+### Measured
+
+The screen behind the owner memo — ERCOT forward keeper config, 2025 (the
+one-pass year), determinism pin, seed OFF vs ON:
+
+| quantity | OFF | ON |
+|---|---:|---:|
+| `solve_p1` | 287.1 s | **139.3 s** (2.06×) |
+| P1 simplex iterations | 273,893 | **78,856** (3.47×) |
+| P0 iterations / objective (the control) | 273,083 / 2,879,242,264.7545 | identical |
+| year `total` | 717.4 s | 581.5 s (−19 %) |
+
+Neutrality on that arm: objective relΔ 8e-16, total generation Δ **0 MWh**,
+max |Δ zonal price| 1.1e-12 $/MWh over **zero** dual-degenerate hours, 16
+unit-hours of offsetting marginal-tie swaps (0.0007 % gross reshuffle). Cleaner
+than both the shipped cross-year flip and the persisted year-1 basis, because a
+same-year seed starts from the optimal face of the *same* LP — there is no
+cross-year vertex drift to land on a different dual.
+
+The wave-2a gate — byte-identity under the pin, and the seed ON vs OFF bundle
+pairs scored through `scripts/diagnostics/diff_warmstart_bundles.py` — is
+recorded in `docs/handoffs/wallclock-baseline-2026-07.md`.

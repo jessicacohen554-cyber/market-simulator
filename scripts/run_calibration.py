@@ -5625,6 +5625,20 @@ def run_year(
             "expectation (stage 3 prices stage 2's P_exhaust; armed alone "
             "there is nothing to price)."
         )
+    # Whether an ADAPTATION pass may follow this one (the ercot-221 adaptive-
+    # expectation storage offer and its ercot-230 fixed-point iteration are the
+    # only routes that hand a result back as ``reuse_p0_from``). Evaluated ONCE
+    # here and re-read at the block below, so the two can never drift: a pass-1
+    # call that retained the basis for a block it does not enter would pay a
+    # 10-16 s export for nothing, and the reverse would silently drop the
+    # better seed. Whether pass 2 actually RUNS is not knowable yet — it turns
+    # on pass 1's own P1 (``_pass2_identical``, C-1a) — so this is the
+    # route-armed test, deliberately the looser one.
+    _adaptive_route_armed = bool(
+        iso == "ERCOT"
+        and getattr(config, "ercot_storage_adaptive_expectation", False)
+        and storage.n_storage
+    )
     # Drain any stale per-pass timings before this year's solves so the
     # markup attribution below covers exactly this year (PERF-B session 2).
     reset_pass_timing_log()
@@ -5655,6 +5669,10 @@ def run_year(
         # ercot-219 stage-3 P1-only storage reservation-price re-cost
         # (None on every flag-off / non-ERCOT path — byte-identical).
         p1_storage_discharge_cost=p1_storage_discharge_cost,
+        # Retain this pass's P1 basis only where an adaptation pass may reuse
+        # it: that pass solves this identical floored LP under a different
+        # storage discharge cost, so this basis is the closest seed it can get.
+        retain_p1_basis=_adaptive_route_armed,
     )
     _t_solve_end = time.perf_counter()
     # ercot-221 ADAPTIVE-EXPECTATION storage offer (owner card by dispatch;
@@ -5674,11 +5692,7 @@ def run_year(
     # ercot-230 fixed-point iteration trajectory (None on every flag-off /
     # non-ERCOT run) — persisted as hourly/adaptive_iteration_<year>.json.
     ercot230_iteration = None
-    if (
-        iso == "ERCOT"
-        and getattr(config, "ercot_storage_adaptive_expectation", False)
-        and storage.n_storage
-    ):
+    if _adaptive_route_armed:
         if getattr(config, "ercot_storage_reservation_offer", False):
             raise ValueError(
                 "ercot_storage_adaptive_expectation and "
@@ -5834,6 +5848,12 @@ def run_year(
                 # rebuilding and cold-solving the identical LP (honoured only
                 # when pass 1's P1 was cold; see run_energy_solve).
                 reuse_p0_from=energy_solve,
+                # Keep the basis chain going only if the fixed-point loop below
+                # may add a pass 3; otherwise this is the last pass and the
+                # export would buy nothing.
+                retain_p1_basis=bool(
+                    getattr(config, "ercot_adaptive_fixed_point", False)
+                ),
             )
         # ercot-230 FIXED-POINT ITERATION (PRECOMMIT-ercot230-adaptive-fixed-
         # point-2026-08-23.md §1; the FINDING-ercot221 §4 first named
@@ -5937,6 +5957,9 @@ def run_year(
                     # C-1b: same premise as pass 2 — the previous iteration's
                     # P0 is this iteration's P0.
                     reuse_p0_from=energy_solve,
+                    # The loop may run again; each iteration's P1 basis is the
+                    # next iteration's seed.
+                    retain_p1_basis=True,
                 )
                 _fp_floors.append(_fl_k)
                 ercot230_iteration["n_adapt_passes"] += 1
@@ -6648,6 +6671,19 @@ def _build_parser() -> argparse.ArgumentParser:
         "explicit MARKET_SIM_WARMSTART_XYEAR env var is honored over the "
         "default; this flag overrides both.",
     )
+    parser.add_argument(
+        "--no-p1-basis-seed",
+        action="store_true",
+        help="Disable the same-year P1 basis seed (MARKET_SIM_P1_BASIS_SEED). "
+        "It is ON by default on the calibration path — where the P1 pass must "
+        "cold-rebuild a second LP on a floored fleet (the ERCOT/NYISO gas "
+        "commitment bridges, the CAISO RA must-offer), that model is seeded "
+        "with the same year's P0 basis instead of starting cold (~2x faster "
+        "P1, basis-neutral; see docs/cross-year-warmstart.md). Rides the "
+        "cross-year gate, so --no-xyear-warmstart already implies OFF. An "
+        "explicit MARKET_SIM_P1_BASIS_SEED env var is honored over the "
+        "default; this flag overrides both.",
+    )
     return parser
 
 
@@ -6688,6 +6724,59 @@ def resolve_xyear_warmstart_default(disable: bool) -> bool:
         os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "1"
     # else: env var explicitly set by the caller -> honor it verbatim.
     return os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
+
+
+def resolve_p1_basis_seed_default(disable: bool) -> bool:
+    """Resolve the same-year P1 basis-seed default for the calibration path.
+
+    The P1 basis seed (``MARKET_SIM_P1_BASIS_SEED``) hands the same year's P0
+    optimal basis to the second ``DispatchModel`` that ``run_energy_solve``
+    cold-rebuilds whenever P1 cannot re-cost the live P0 model — the ERCOT and
+    NYISO gas commitment bridges and the CAISO RA must-offer, whose floors
+    raise availability into reserve/ramp ROW bounds so the in-place refloor
+    declines. That second model has the identical column/row layout as the P0
+    model of the same year, so the map is the identity and HiGHS repairs the
+    handful of statuses the raised bounds make inconsistent (alien basis).
+
+    Measured on the ERCOT forward keeper config, 2025, under the determinism
+    pin: ``solve_p1`` 287.1 s → 139.3 s (2.06x), simplex iterations 273,893 →
+    78,856, objective and total generation identical, max |Δ zonal price|
+    1.1e-12 $/MWh over **zero** dual-degenerate hours — the same
+    basis-neutrality standard the cross-year warm start was promoted under
+    (``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`` §3; owner
+    signature 2026-09-06, option (A) FLIP). So it defaults **ON** here.
+    Precedence, highest first:
+
+    1. ``--no-p1-basis-seed`` (``disable=True``) → force OFF.
+    2. An explicitly-set ``MARKET_SIM_P1_BASIS_SEED`` env var → honored as-is.
+    3. Otherwise → default ON.
+
+    Sets ``os.environ["MARKET_SIM_P1_BASIS_SEED"]`` so the shared solve core
+    (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
+    the resolved boolean. **Calibration path only**, and it is gated twice more
+    inside ``run_energy_solve`` so this resolver cannot over-reach:
+
+    * the seed rides the cross-year gate (``_xwarm``), so
+      ``MARKET_SIM_WARMSTART_XYEAR=0`` — the goldens/replay determinism pin and
+      ``--no-xyear-warmstart`` — forces it OFF regardless of this value, and
+      the seeded tree stays byte-identical on every golden and control capture;
+    * it fires only when the caller left ``xyear_warmstart`` at ``None``, which
+      the forecast never does (``runner.py`` passes an explicit bool), so the
+      forecast lane is cold by construction rather than by the current value of
+      ``ScenarioConfig.forecast_xyear_warmstart`` — D-10's cold-forecast
+      posture cannot be re-opened through this side door.
+
+    A starting basis cannot move an LP's optimum, only the iterations spent
+    reaching it, so this is a WARM-START-CLASS switch and not a tunable under
+    rule 24 ``[R-REGISTRY]`` — the same reasoning, and the same shape, as the
+    P-2 cross-year switch above.
+    """
+    if disable:
+        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "0"
+    elif "MARKET_SIM_P1_BASIS_SEED" not in os.environ:
+        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "1"
+    # else: env var explicitly set by the caller -> honor it verbatim.
+    return os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -6743,6 +6832,15 @@ def main(argv: list[str] | None = None) -> None:
     # solve core. Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
+    # Same-year P1 basis seed: ON by default here, --no-p1-basis-seed to opt
+    # out, explicit env var honored. Rides the cross-year gate inside
+    # run_energy_solve, so the line below reads OFF-in-effect whenever the
+    # cross-year gate is off (the goldens/replay pin).
+    _p1seed = resolve_p1_basis_seed_default(args.no_p1_basis_seed)
+    logger.info(
+        "same-year P1 basis seed: %s",
+        "ON" if (_p1seed and _xwarm) else "OFF",
+    )
 
     # Single-element holder carrying the prior year's optimal basis across
     # run_year calls for cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1).
