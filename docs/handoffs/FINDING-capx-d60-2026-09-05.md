@@ -1162,6 +1162,58 @@ way.
 before the PR merges** (rule 29(c)). Every number this session will ever cite from it lives in
 E.4 below. Expected ~36 min / ~8.8 GB, wrapped in the mandatory `exit 90` HEAD guard.
 
+### E.3b The control has a PRE-HUNK TWIN already on disk — found before the solve, and it turns one measurement into three
+
+**`results/ff-t1f-d50/pjm/PJM/167e65187f32056b` is the committed D50 arm, and its bundle
+directory is the key this control was pre-declared at in E.3.** The two configs are the same
+config: compared field-by-field against the D50 arm's own `config.yaml`, **0 real differences
+across all 790 shared fields** (the only apparent ones are YAML list-vs-tuple round-trip), and
+the 12 fields added to `ScenarioConfig` since are all at their dataclass defaults.
+
+**And it is PRE-hunk.** Its `run_config.json` stamps `2026-09-05T05:17:09Z` on `c9f1d26e`
+(~21 h before `d14a7ed0`; the sha is not resolvable in this clone, the same deleted-branch case
+as `bf54a4ad`). The decisive check is the ledger, not the timestamp: **the D50 arm's
+`peak_demand_mw` is byte-identical to the D45-R control's in all five years**
+(161,027.171 / 163,626.576 / 166,438.970 / 169,472.022 / 172,733.675) and the D60 arm's is the
+re-derived table.
+
+**This is §5.0f's lesson stated as an artifact rather than an argument.** Two bundles at
+**the same cache key**, `167e65187f32056b`, that are **not the same run** — because
+`constants.py` is outside the key. A matched key is a config audit, never a G-DRIFT verdict.
+
+**What it buys: the control turns one differencing into a clean three-way separation**, with
+each arrow moving exactly one thing.
+
+| | config | demand table | key |
+|---|---|---|---|
+| D45-R control | Q42 off · Q44 off | **PRE** | `321f04e9060787f0` |
+| **D50 arm** (committed) | Q42 **on** · Q44 off | **PRE** | `167e65187f32056b` |
+| **this control** (to solve) | Q42 on · Q44 off | **POST** | `167e65187f32056b` |
+| D60 arm (committed) | Q42 on · Q44 **on** | **POST** | `09996eca71ee80fd` |
+
+* **D45-R → D50** = Q42 alone. Already measured by D60-R3: the requirement is byte-identical.
+* **D50 → this control** = **the SCN-LOAD demand hunk alone**, at a config identical to the
+  field. Never before measurable, and it is what §5.4's peak leg predicts arithmetically.
+* **this control → D60 arm** = **the Q44 gates alone**, at one HEAD and one demand table. This
+  is the pair the falsifier reads, and it is now genuinely clean.
+
+**The pre-hunk gates-off I12 baseline, for the record** (D50 arm, committed):
+2027 **−11.2 %**, 2028 **−13.8 %**, 2029 **−13.5 %**, 2030 **−12.6 %**
+(`reserve_margin` −0.112254 / −0.138168 / −0.134731 / −0.126183), against the D60 arm's
+−11.6 / −15.6 / −15.8 / −16.5 %.
+
+**A series this lane could NOT reproduce, flagged rather than quietly replaced.** §5.4 reports
+accredited firm rising **+9,092 / +10,276 / +14,303 / +18,000 MW** in 2027–2030. The quantity
+I12 is actually computed on is `firm = R × (1 + reserve_margin)`, an identity that holds exactly
+in every committed ledger; differenced that way the arm's rise over the D45-R control is
+**+13,754.1 / +15,031.4 / +18,935.2 / +22,525.9 MW**, and over the D50 arm
+**+13,754.1 / +15,568.4 / +19,442.2 / +21,949.7 MW**. Neither reproduces §5.4's series, and
+neither the finding nor `PREDECL-capx-d60` §P23 names which quantity it is. E.4 therefore
+reports the I12 decomposition on the identity above, computed **identically for all four runs**,
+and records §5.4's series as **unreconciled** rather than substituting one for the other. It
+does not weaken the pre-declared reading — every consistently-computed supply rise is *larger*
+than the +9,092 series and so exceeds the gate-owned ratio leg by more, not less.
+
 ### E.4 The control's result
 
 *(Written after the solve; empty at pre-declaration time.)*
