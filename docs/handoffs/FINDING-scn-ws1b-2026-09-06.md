@@ -438,8 +438,38 @@ axis (`low`/`mid`/`high`), whose rungs are now meaningful — and which, per §1
 
 ## 8. Scorecard rows and matrix cells landed
 
-<!-- FILL -->
+**Plan §5.1 + desk-ledger §3, Carbon column** — rows **3** and **7**, this lane's assignment:
 
-## 9. What remains for Stage A-LOAD
+* **Row 3 (paired probe right-signed, per ISO)** moves from *"NEISO only"* to **all six ISOs
+  measured at 2027 on the S2 floor**: three LIVE (ERCOT, PJM, MISO) right-signed with the STOP
+  gate passing — 8/8 on PJM and MISO, 7 PASS + 1 reported band miss on ERCOT — and three
+  measured **exactly INERT** (CAISO, NYISO, NEISO), which is the ruled S2 outcome rather than a
+  null result. **Two ISOs are campaign-grade on price (PJM, MISO); ERCOT is NOT** (§3.3: 641
+  scarcity hours, −6.5 % reserve margin — its CO2 and merit-order results stand, its price level
+  does not).
+* **Row 7 (registered probes on dashboard)** moves from *"NEISO FC-6 pair"* to the **twelve arms**
+  `<iso>-2026-2027-scn-ws1-probe-{ref,carb}`, kind `scenario`, campaign `scn-ws1-probe`.
 
-<!-- FILL -->
+**Mechanism matrix** — `carbon_price_path`, one appended cell line per ISO shard. `mass_cap_enabled`
+stays **U** in all six (untested; this lane never armed it), as the charter requires.
+
+## 9. What remains
+
+**This lane completes Stage A-LOAD's carbon half.** Its three load cases were already released and
+**stand alone** — per desk r#7, this lane's carbon legs were never a precondition for them.
+
+**What remains for Stage A-LOAD** is the six per-ISO campaign lanes **`SCN-WS5A-LOAD-<ISO>`** plus
+**`SCN-WS5A-LOAD-SYNTH`** after they register. *(The relaunch charter named SCN-WS4c here; that is
+stale — WS4c landed at `6b6d8cb0` with 19 clean arms, which is what released A-LOAD in the first
+place. ADDENDUM §(h) recorded the correction before this lane's first solve.)*
+
+**What this lane does NOT close, stated at the gate:**
+
+* **Stage A-POLICY stays held by ruling S5**, and this lane's leg 2 with it (§7). The CCS
+  emission-rate seam in `capacity_evolution/ccs.py` is the blocker and is the capx lane's file.
+* **Cards D-1(b)** (what `tight` should mean on a program ISO, given its carbon leg is now an exact
+  no-op there) and **D-1(c)** (PJM's partial footprint) stay **OPEN** and are the owner's. §3.8
+  measures the consequence of D-1(b) being open; it does not answer it.
+* **The §3.7 divergence is unresolved at n = 3** and needs hourly duals these T0 bundles do not
+  export — named in §3.7, not attempted here.
+* **`mass_cap_enabled` is untested** in all six ISOs.
