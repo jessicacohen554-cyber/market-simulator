@@ -242,12 +242,35 @@ Read job by job from the API, not from the rollup:
 | 2 | **Pinned default cache key** | `101402799297` | **SUCCESS** |
 | 3 | **Structural refactor guards** | `101402799405` | **SUCCESS** — compileall, import-walk, facade/persisted-identity all success |
 | 4 | **Cache-key registration guard** | `101402799351` | **SUCCESS** — both the `--base` and HEAD-only steps |
-| 5 | **Fast test tier** | `101402799231` | _PENDING — filled from the completed job_ |
+| 5 | **Fast test tier** | `101402799231` | **SUCCESS** — "Fast pytest tier" step 00:47:19Z → 00:54:28Z, job completed 00:54:30Z |
 | 6 | **Rule-22 quarantine gates** | `101402799319` | **SUCCESS** — audit_keepers, legitimacy_diagnostics, registry-payload parity, golden-manifest all success |
 
-_(6-of-6 verdict filled in once job 5 completes.)_  The flip itself is a repo-settings act
-only the owner can make; the click path is
+**THIS HEAD READS 6 OF 6.** `4faf2dea` is the head R-AU names. The flip itself is a
+repo-settings act only the owner can make; the click path is
 `docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md` §4.
+
+### 6.0 THE 6-OF-6 HEAD WAS MERGED BEFORE ITS OWN SIXTH CHECK FINISHED
+
+Recorded because it is live evidence for the thing R-AU's flip exists to close, observed on this
+lane's own PR rather than argued from the 2026-07 precedent:
+
+| event | time |
+|---|---|
+| PR #4917 opened | 00:46:00Z |
+| five of six checks green | by 00:46:45Z |
+| **PR #4917 MERGED** | **00:50:17Z** |
+| **Fast test tier completed (SUCCESS)** | **00:54:30Z** |
+
+The PR merged **4 min 13 s before its sixth required check finished**. It happened to pass — but
+nothing waited for it, and nothing would have stopped the merge had it failed. This is exactly the
+condition `ci.yml`'s `cache-key-pin` comment names (*"PR #3624 was merged 86 s after creation —
+before ANY check completed … A GitHub check, 'blocking' or not, only gates a merge when the branch
+is protected by required status checks and the merge waits for them"*). **The six checks are
+advisory in effect until the flip lands.** A second consequence, same cause: the §6 commit that
+followed was itself auto-merged as PR #4921, so this finding reached `main` in two pieces.
+
+**A 6-of-6 head is therefore necessary but not sufficient for R-AU** — it satisfies the ruling's
+trigger, and the protection has to be applied before the reading means anything for the *next* PR.
 
 ### 6.1 The two red jobs, both OUTSIDE the flip set, both red on the base branch
 
@@ -275,3 +298,18 @@ per charter item 5; recorded and routed.
 `ScenarioConfig` field, so rule 28 `[R-MECH-MATRIX]` duties (b)/(c) do not attach.
 `FR-21 forecast-board staleness (WARN only)` (`101402799256`) SUCCESS, **including its
 `check_gate_a_provenance` step** — the independent confirmation of §2.
+
+---
+
+## 7. Post-merge state of this lane's own repair
+
+`scripts/calibration_verdict.py` was ruff-formatted **twice, independently**: by this lane
+(`4faf2dea`, merged as #4917) and by the G-3 lane (`20b7a1a6`, *"post-merge refresh — ruff-format
+main's unformatted hunk in calibration_verdict.py"*). Two lanes converging on one red inside an
+hour is the same coordination cost the §0 table records — the charter's named file had already
+been fixed by a third lane (`a802936c`) before this one pinned. **`main` is ruff-clean at
+`3dcf1b22`**: its copy of the file (which also carries G-3's rule-21 cross-reference, so it is not
+byte-identical to this lane's) passes `ruff format --check` with EXIT=0.
+
+Nothing in §3 changed: ERCOT/2022 is still stale on `main`, still not re-stamped, and the
+payload-only-fingerprint recommendation is still open and still the director's call.
