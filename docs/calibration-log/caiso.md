@@ -8,6 +8,15 @@ per-ISO calibration sessions never conflict (the per-ISO lane convention,
 
 ## Pre-push checklist (STANDING — every session in this lane, before every push)
 
+**A hook now enforces this mechanically — the checklist is the fallback, not the
+primary defence.** `.claude/hooks/ruff-prepush-gate.sh` (`PreToolUse` on
+`Bash|mcp__github__push_files`) refuses a push whose *own* changed `.py` files
+fail either gate, and names them plus the fix. It is scoped to
+`origin/main...HEAD` + staged/unstaged, so another lane's ambient red on `main`
+never blocks you, and it is check-only — it never edits your tree (rule 27
+`[R-PUSH]`). Keep running the two commands yourself: a hook can be disabled, a
+session can run without it, and it deliberately does not gate the whole tree.
+
 Run from the repo root and confirm **exit 0** before staging:
 
 ```
