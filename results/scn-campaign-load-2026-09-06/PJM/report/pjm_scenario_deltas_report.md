@@ -1,4 +1,4 @@
-# Scenario delta report — PJM — pjm_scenario_campaign_matrix_577a950add
+# Scenario delta report — PJM — pjm_scenario_campaign_matrix_3eee8f1195
 
 **deterministic scenario range -- NOT a probability band** — deltas are
 case-vs-`REF` differences on one deterministic case set,
@@ -8,8 +8,8 @@ not a probability statement. Dollars are real 2026$.
 
 | Case | Cache key | Reference? |
 |---|---|---|
-| LOAD-HI | `94061c158317a8a5` |  |
-| REF | `7088c5643b559a84` | **REF** |
+| LOAD-HI | `d1da885b4fdc4e6b` |  |
+| REF | `67a786980ac38749` | **REF** |
 
 ## Headline deltas vs `REF` (final cached year)
 
@@ -17,8 +17,8 @@ Final cached year on disk: **2030**.
 
 | case | emissions_mt | emissions_mt_delta | import_co2_mt_reported | unserved_mwh | backstop_built_mw | backstop_built_mwh | avg_price_usd_per_mwh | avg_price_usd_per_mwh_delta | curtailment_twh | clean_share |
 |---|---|---|---|---|---|---|---|---|---|---|
-| LOAD-HI | 619.078 | 148.623 | 14.948 | 63687856.088 | 8956.400 | 0.000 | 891.740 | 824.770 | 0.000 | 0.257 |
-| REF | 470.455 | 0.000 | 5.847 | 77827.937 | 8956.400 | 0.000 | 66.970 | 0.000 | 0.000 | 0.301 |
+| LOAD-HI | 608.471 | 145.431 | 14.948 | 63687856.088 | 8956.400 | 0.000 | 891.740 | 824.710 | 0.000 | 0.263 |
+| REF | 463.039 | 0.000 | 5.866 | 77827.937 | 8956.400 | 0.000 | 67.030 | 0.000 | 0.000 | 0.310 |
 
 ## Cumulative CO2 delta vs `REF` (Mt)
 
@@ -26,20 +26,20 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | year | cumulative_emissions_mt_delta |
 |---|---|---|
-| LOAD-HI | 2030 | 475.704 |
+| LOAD-HI | 2030 | 468.681 |
 | REF | 2030 | 0.000 |
 
 ## By-fuel deltas (final year)
 
 | case | fuel | capacity_gw_delta | generation_twh_delta | emissions_mt_delta |
 |---|---|---|---|---|
-| LOAD-HI | biomass | 0.000 | 1.018 | 0.000 |
-| LOAD-HI | coal | 0.000 | 0.256 | 0.449 |
-| LOAD-HI | gas_cc | -0.603 | 15.640 | 6.971 |
-| LOAD-HI | gas_cc_ccs | 0.603 | 8.123 | 4.926 |
-| LOAD-HI | gas_ct | 0.000 | 151.374 | 94.699 |
-| LOAD-HI | gas_st | 0.000 | 40.984 | 25.594 |
-| LOAD-HI | import | 0.000 | 21.264 | 0.000 |
+| LOAD-HI | biomass | 0.000 | 1.012 | 0.000 |
+| LOAD-HI | coal | 0.000 | 0.255 | 0.447 |
+| LOAD-HI | gas_cc | -0.459 | 16.594 | 7.750 |
+| LOAD-HI | gas_cc_ccs | 0.459 | 5.996 | 0.345 |
+| LOAD-HI | gas_ct | 0.000 | 152.601 | 95.313 |
+| LOAD-HI | gas_st | 0.000 | 40.981 | 25.593 |
+| LOAD-HI | import | 0.000 | 21.218 | 0.000 |
 | LOAD-HI | nuclear | 1.000 | 8.278 | 0.000 |
 | LOAD-HI | oil | 0.000 | 16.359 | 15.984 |
 
@@ -47,14 +47,14 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | zone | emissions_mt | emissions_mt_delta |
 |---|---|---|---|
-| LOAD-HI | PJM_AEP_Ohio | 225.356 | 41.745 |
-| LOAD-HI | PJM_ATSI | 21.069 | 9.344 |
-| LOAD-HI | PJM_Central_PA | 65.366 | 21.516 |
-| LOAD-HI | PJM_ComEd | 54.841 | 21.237 |
-| LOAD-HI | PJM_Dominion | 62.938 | 14.226 |
-| LOAD-HI | PJM_EMAAC | 54.284 | 19.163 |
-| LOAD-HI | PJM_SWMAAC | 23.746 | 13.213 |
-| LOAD-HI | PJM_West_APS | 111.478 | 8.178 |
+| LOAD-HI | PJM_AEP_Ohio | 225.356 | 42.474 |
+| LOAD-HI | PJM_ATSI | 18.784 | 8.535 |
+| LOAD-HI | PJM_Central_PA | 59.024 | 18.566 |
+| LOAD-HI | PJM_ComEd | 54.841 | 21.170 |
+| LOAD-HI | PJM_Dominion | 62.938 | 14.215 |
+| LOAD-HI | PJM_EMAAC | 54.284 | 19.126 |
+| LOAD-HI | PJM_SWMAAC | 23.746 | 13.198 |
+| LOAD-HI | PJM_West_APS | 109.499 | 8.146 |
 
 ## Capacity-evolution deltas vs `REF` (ledger totals, MW)
 
@@ -71,7 +71,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI | retirement | gas_ct | 86.9 | 0.0 |
 | LOAD-HI | retirement | gas_st | 460.0 | 0.0 |
 | LOAD-HI | retirement | oil | 702.0 | 0.0 |
-| LOAD-HI | retrofit | gas_cc_ccs | 1512.8 | 603.0 |
+| LOAD-HI | retrofit | gas_cc_ccs | 2707.7 | 459.0 |
 | REF | build | gas_cc | 4000.0 | 0.0 |
 | REF | build | gas_ct | 10642.0 | 0.0 |
 | REF | build | iron_air | 9600.0 | 0.0 |
@@ -82,7 +82,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | REF | retirement | gas_ct | 86.9 | 0.0 |
 | REF | retirement | gas_st | 460.0 | 0.0 |
 | REF | retirement | oil | 702.0 | 0.0 |
-| REF | retrofit | gas_cc_ccs | 909.8 | 0.0 |
+| REF | retrofit | gas_cc_ccs | 2248.7 | 0.0 |
 
 ## Notes & definitions
 

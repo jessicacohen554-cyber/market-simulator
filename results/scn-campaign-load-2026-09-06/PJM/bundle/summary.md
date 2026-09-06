@@ -1,4 +1,4 @@
-# Scenario matrix -- PJM -- pjm_scenario_campaign_matrix_577a950add
+# Scenario matrix -- PJM -- pjm_scenario_campaign_matrix_3eee8f1195
 
 **DETERMINISTIC SCENARIO RANGE -- NOT A PROBABILITY BAND**
 
@@ -8,8 +8,8 @@
 
 | Case | Cache key |
 |---|---|
-| LOAD-HI | `94061c158317a8a5` |
-| REF | `7088c5643b559a84` |
+| LOAD-HI | `d1da885b4fdc4e6b` |
+| REF | `67a786980ac38749` |
 
 ## Emissions trajectory (Mt CO2)
 
@@ -17,9 +17,9 @@
 |---|---|---|
 | 2026 | 410.55 | 373.19 |
 | 2027 | 460.59 | 393.68 |
-| 2028 | 514.12 | 418.63 |
-| 2029 | 563.70 | 436.39 |
-| 2030 | 619.08 | 470.46 |
+| 2028 | 512.40 | 417.38 |
+| 2029 | 553.90 | 429.95 |
+| 2030 | 608.47 | 463.04 |
 
 ## Envelope (min/max across cases)
 
@@ -27,6 +27,6 @@
 |---|---|---|
 | 2026 | 373.19 (REF) | 410.55 (LOAD-HI) |
 | 2027 | 393.68 (REF) | 460.59 (LOAD-HI) |
-| 2028 | 418.63 (REF) | 514.12 (LOAD-HI) |
-| 2029 | 436.39 (REF) | 563.70 (LOAD-HI) |
-| 2030 | 470.46 (REF) | 619.08 (LOAD-HI) |
+| 2028 | 417.38 (REF) | 512.40 (LOAD-HI) |
+| 2029 | 429.95 (REF) | 553.90 (LOAD-HI) |
+| 2030 | 463.04 (REF) | 608.47 (LOAD-HI) |
