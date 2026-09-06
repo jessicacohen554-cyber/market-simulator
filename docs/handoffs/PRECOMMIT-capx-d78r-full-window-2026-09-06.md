@@ -340,3 +340,85 @@ measurement it would have corrupted. No gate, threshold, band or pass condition 
 the key the instrument reads.
 
 **The arm is solved next, at the same HEAD, with this band already fixed.**
+
+---
+
+# ADDENDUM 2 — main moved with LIVE hunks between the legs: both legs are re-solved, and W0 is RESTATED before the re-solve
+
+**Trigger.** The §1 rebase discipline requires `git fetch origin main` between the legs. Main moved
+`acbb5350` → **`c3988c73`** (21 commits) while control-P was solving. The delta is audited here,
+hunk by hunk, **before** anything is re-solved. Branch rebased onto `c3988c73`; new HEAD
+**`f7057f4c`**. Control-P's first solve (at `41b46142`) is **discarded, not graded** — its numbers
+appear nowhere in this lane's findings.
+
+## A2.1 G-DRIFT `acbb5350..c3988c73` on the solve path — **THREE LIVE HUNKS**
+
+`git diff --stat acbb5350 c3988c73 -- src/market_sim scripts/run_capacity_hindcast.py scripts/lib
+data/raw/_validation-source data/raw/reference` → 12 files, +1,169 / −216.
+
+| file | hunk | class |
+|---|---|---|
+| `config/iso_configs.py` (+36) | **capx D67-ARM, owner ruling Q52**: `"capacity_adequacy_requirement_published_by_iso": {"PJM": True}` added to `_pjm_config` `default_scenario_overrides`. The adequacy requirement's OPERAND becomes PJM's published whole-RTO Reliability Requirement, at the one `gross_adequacy_requirement_mw` seam **the reliability floor and the reserve-margin backstop both reach through** | **LIVE** |
+| `model/capacity_evolution/retirements.py` (+84/−) | **capx D81**: the PENDING dated plants and the this-year retrofits move from `exempt_unit_ids` onto **`exit_exempt_unit_ids`** — the very seam this lane measures. Such a unit now OFFERS its accredited MW at its net-ACR cap instead of landing in `Q_0` at $0 | **LIVE** |
+| `model/capacity_evolution/evolve.py` (+96) | **capx D81**'s call-site re-routing of the dated exemption (same seam); plus D65-B-R's `_CCS_RETROFIT_LEDGER_SCALING_FIELDS` record | **LIVE** (D81 half); the CCS half INERT below `ccs_retrofit_available_year` 2028 |
+| `results/evolution_ledger.py` (+11) | D65-B-R: the retrofit log's per-host scaling record | **INERT** — ledger-only, and CCS is inert below 2028 |
+| `config/scenarios.py` (+101) | D67's `capacity_adequacy_requirement_published_by_iso` field (default `None`, reached here only through the PJM override above) and SCN-CAP's `mass_cap_tons_by_year` | **INERT in itself** — the LIVE path is the `_pjm_config` override, counted once above; `mass_cap_enabled` is `False` on this recipe |
+| `policy/cap_and_trade.py` (+56) | SCN-CAP `scheduled_power_sector_budget`, read only under `mass_cap_tons_by_year` | **INERT** — `mass_cap_enabled: False`, `mass_cap_tons: None` |
+| `config/constants.py` (55 lines) | owner ruling S9: **comment-only** re-labelling of two carbon-price `mid` knots (`ILLUSTRATIVE` → `committed`); the values are unchanged | **INERT** — and this recipe runs `carbon_price 0.0`, path `zero` |
+| `results/cache.py` (+68) | the D65-B-R / capx cache-key re-pin epoch prose | **INERT** in itself; the key move it records is attributed in A2.2 |
+| `data/fuel/basis/miso.py` (12 lines) | miso-225 follow-up | **INERT** — MISO |
+| `data/raw/_validation-source/caiso_offer_*` (3 files) | CAISO offer-surface measurements | **INERT** — another ISO |
+
+**VERDICT: LIVE.** Under §1's rebase discipline and STOP 9, a LIVE hunk means **control-P is
+re-solved on the rebased HEAD before the arm runs**. Both legs are therefore solved at
+**`f7057f4c`**, and the A1 band is superseded by A3's.
+
+**Why this is the right call on the merits, not merely on the letter.** D67-ARM changes the
+adequacy-requirement operand, which *is* the R-NEW admission-cap budget — the exact quantity W4
+bands and the exact mechanism D78 §4 identified as the whole re-fill story. D81 puts a second
+exogenous-exit class on **`exit_exempt_unit_ids`**, this lane's own seam. Grading the sector gate
+against a control that predates both would recommend arming a mechanism whose interaction with
+PJM's shipped posture had never been measured.
+
+## A2.2 The keys MOVED — declared here, before the re-solve
+
+| config | at `acbb5350` (A0 / §5) | **at `c3988c73`** |
+|---|---|---|
+| control-P, 2021–2025 | `15a723ba3b6dc856` | **`a9c66d8ea25acb9d`** |
+| repaired arm, 2021–2025 | `bc387828f931e0ac` | **`bb6a60239d69508b`** |
+| control-P, screen span | `afda79ba04cbfdbf` | `6eff06b0ec80f182` |
+| arm, screen span | `d527c3299b8c00b5` | `a66b329cf8470dc5` |
+
+Attribution: the D67-ARM override (whose own comment records that the pre-arm posture *"keeps its
+key `15a723ba3b6dc856`"*, i.e. the armed PJM default is a different key by design) plus the
+D65-B-R / capx cache-key re-pins. **§5's K-a now reads against this row**: the realized keys must
+be `a9c66d8ea25acb9d` and `bb6a60239d69508b`.
+
+## A2.3 W0 is RESTATED — its known-answer form is VOID at this HEAD, and that is said BEFORE the re-solve
+
+§3.1's **W0** pinned D78's measured 2022 screen to the digit. Its stated purpose was *"a miss is a
+LIVE hunk §2 missed"* — a known-answer test whose validity rested on the §2 all-INERT verdict.
+**A2.1 finds LIVE hunks by construction**, and two of them (D67-ARM's requirement operand, D81's
+dated must-offer) necessarily move the 2022 screen: the requirement changes the cap's budget, and
+the dated block moves from `Q_0` into the offer stack, changing `n_offers`, `offered_mw` and
+`price_takers_mw`. **W0 in its original form therefore cannot pass and must not be scored as a
+failure.** It is replaced, here and before the re-solve, by:
+
+> **W0′ (REPORTED, not a gate).** Both legs' 2022 screens are reported beside D78's measured
+> control, and every difference is **attributed to a named A2.1 LIVE hunk**. A difference that
+> **cannot** be attributed to D67-ARM or D81 is a STOP — that is the residual known-answer content
+> W0 was carrying, and it survives. The **arm-versus-control** identities W1, W2, W3 and W5 are
+> unaffected by this restatement: both legs run the same code, so a candidate-set gate's partition
+> is exactly as falsifiable at `f7057f4c` as it was at `41b46142`, and **the flip condition reads
+> only those.**
+
+Nothing else in §3, §6 or §7 changes. W1/W2/W3/W5 keep their pass conditions verbatim; W4 keeps its
+definition verbatim and takes its numbers from the new control leg in **ADDENDUM 3**; the §6 limbs
+(a)–(d) and the §7 STOPs are untouched. **One consequence is recorded now rather than discovered
+later:** D81 means the arm's `exit_exempt_unit_ids` set is the sector-1 units **plus** the pending
+dated plants and this-year retrofits, in *both* legs — so W2's "zero sector-1 rows in the arm's
+decision ledgers" is still exactly the sector gate's own claim, while the dated block is common to
+both legs and cancels in the differencing.
+
+**Cost, stated:** control-P's first 22.0 min of LP is discarded. That is the price of the rebase
+discipline, and it is cheaper than an arming recommendation against a superseded control.
