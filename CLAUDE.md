@@ -691,6 +691,14 @@ recovery rules: `docs/FINDING-history-rewrite-2026-08-16.md`. Any FUTURE
 rewrite remains owner-gated and must archive its commit-map artifacts first
 (finding §7 open item 2).
 
+A session's `results/<ISO>/<key>/` reuse is no longer decided by the config
+alone: since capx D79 (owner ruling Q54) `cache_key()` also carries a **solve-surface
+fingerprint** — a per-name, per-ISO value hash of the seven
+`config/solve_surface.py` `SURFACE_MODULES`, dropped at each name's frozen
+declaration in `config/solve_surface_declared.py`, so a re-derived registry table
+re-keys the ISOs whose rows moved (it landed at zero key moves, and every bundle
+records what it solved on in `solve_surface.json`).
+
 ## Git & Pushing (transport by PACK size — `git push` permitted for small packs)
 
 **Rule: choose the push transport by the size of the PACK the push would send —
