@@ -445,6 +445,31 @@ frontend/data/forecast/program-status.js
 /results/ff-t1f-d60/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d60/*.log
 
+# capx D65 Act A (2026-09-05): the CCS fourth-seam A/B — arm A1
+# (ff-t1f-d65-a1, NEISO t1f with ccs_retrofit_fixed_cost_co2_scaling armed,
+# key 8ebed20ae90ec0e7) and the SAME-HEAD one-field control (ff-t1f-d65-ctl,
+# the explicit --no- form, which resolves to the bare key 18515067bf4d2fbe).
+# The control was solved under rule 29(b)'s LIVE clause after the arm caught
+# HEAD drift that voided G-CTRL form 4, so BOTH bundles are evidence and both
+# are committed slim. Same class and same slim-vs-heavy split as
+# /results/ff-t1f-d50/ and /results/ff-t1f-d60/ above: the committed record is
+# full_horizon_summary.json + run_config.json + the resolved config.yaml + the
+# evolution_<year>.json ledgers (which carry the ccs_retrofits rows every table
+# in docs/handoffs/FINDING-capx-d65-2026-09-05.md is read off, so the finding is
+# auditable without a re-solve); the per-year dispatch parquet, npz, hourly
+# sidecars and floor-retention dumps are heavy (~16 MB) and regenerable from the
+# config, per the pack-size rule in CLAUDE.md's Git & Pushing.
+/results/ff-t1f-d65-a1/*/*/*/*.parquet
+/results/ff-t1f-d65-a1/*/*/*/*.npz
+/results/ff-t1f-d65-a1/*/*/*/hourly/
+/results/ff-t1f-d65-a1/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d65-a1/*.log
+/results/ff-t1f-d65-ctl/*/*/*/*.parquet
+/results/ff-t1f-d65-ctl/*/*/*/*.npz
+/results/ff-t1f-d65-ctl/*/*/*/hourly/
+/results/ff-t1f-d65-ctl/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d65-ctl/*.log
+
 # ARM3-MEASURE clean-tier ramp-year legs (run_full_horizon --out-dir; the
 # MISO 2031-2035 armed/control pair for the Arm-3 arming card, owner decision
 # D-28 option A step 3). Same class as /results/ffr7b2/ above, of which this is
