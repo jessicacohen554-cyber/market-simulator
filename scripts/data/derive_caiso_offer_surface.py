@@ -364,6 +364,45 @@ def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
     populations EXACTLY (46 / 11.935 GW and 100 / 9.950 GW) in
     ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
     """
+    # CORPUS-COVERAGE GUARD (caiso-255). The G-BIMODAL probe refuses an
+    # under-covered corpus (its `gate()`, added by caiso-254 after a mid-fetch
+    # run scored 296 days of 2023 alone and returned the OPPOSITE verdict --
+    # FINDING-caiso254 §5.2). The DERIVE had no such guard, which is the more
+    # dangerous omission of the two: the probe only reports a number, while the
+    # derive WRITES the artifact the LP then consumes. A partial store is a
+    # different bid population, so its cap-weighted medians are different
+    # measurements -- not noisier versions of the same one. Same tolerance and
+    # same reasoning as the probe: exactly one trade date (2023-06-01) is a
+    # genuine OASIS archive hole, so the span admits a handful of absences and
+    # nothing more.
+    MAX_MISSING_DAYS = 6
+    have = {f.stem for f in REDUCED_STORE.glob("*.parquet") if int(f.stem[:4]) in years}
+    want = {
+        d.strftime("%Y%m%d")
+        for d in pd.date_range(f"{min(years)}-01-01", f"{max(years)}-12-31", freq="D")
+    }
+    missing = sorted(want - have)
+    per_year = {y: sum(1 for t in have if int(t[:4]) == y) for y in years}
+    if not have:
+        raise SystemExit(
+            f"no reduced days for {years} under {REDUCED_STORE} — run "
+            "scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1 first"
+        )
+    if len(missing) > MAX_MISSING_DAYS or any(per_year[y] == 0 for y in years):
+        raise SystemExit(
+            f"REFUSED: reduced store is under-covered — {len(have)} day(s), "
+            f"per-year {per_year}, {len(missing)} missing of {len(want)} "
+            f"(tolerance {MAX_MISSING_DAYS}). First missing: {missing[:5]}. "
+            "The measured bands are cap-weighted medians over the POOLED span; "
+            "a partial corpus is a DIFFERENT population, not a noisier sample "
+            "of this one. Finish the fetch and re-run --pass1."
+        )
+    print(
+        f"  reduced-store coverage {len(have)}/{len(want)} days, "
+        f"per-year {per_year}, missing {missing or 'none'}",
+        flush=True,
+    )
+
     frames = []
     for f in sorted(REDUCED_STORE.glob("*.parquet")):
         year = int(f.stem[:4])
@@ -373,11 +412,6 @@ def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
         d = d.rename(columns={"segment_price_usd_per_mwh": "price"})
         d["year"] = np.int16(year)
         frames.append(d)
-    if not frames:
-        raise SystemExit(
-            f"no reduced days for {years} under {REDUCED_STORE} — run "
-            "scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1 first"
-        )
     out = pd.concat(frames, ignore_index=True, copy=False)
     frames.clear()
     return out.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
