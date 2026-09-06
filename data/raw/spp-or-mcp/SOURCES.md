@@ -52,3 +52,9 @@ this directory or its README was taken from memory.
 
 - **FTP folders (PRD):** `ftp://pubftp.spp.org/Markets/DA/MCP/` · `ftp://pubftp.spp.org/Markets/RTBM/MCP/` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6).
 - Schema source: the v35 zip's `DA-MCP-202601300100.csv`, `RTBM-MCP-DAILY-20260123.csv`, `RTBM-MCP-202601291620.csv` samples (not landed).
+
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; 2023–2025 MCPs landed
+
+- `https://portal.spp.org/file-browser-api/download/rtbm-mcp?path=%2F2023%2F2023.zip` (47,156,480 B), `…%2F2024%2F2024.zip` (47,605,298 B): only the `RTBM_MCP_<yr>.csv.zip` annual-roll-up member landed. `…?path=%2F2025%2F2025AnnualRollup%2FRTBM_MCP_2025.csv.zip` (3,255,073 B).
+- `https://portal.spp.org/file-browser-api/download/da-mcp?path=%2F2023%2F2023.zip` (418,589 B), `…%2F2024%2F2024.zip` (417,669 B) landed whole; `…?path=%2F2025%2F<mm>%2FDA-MCP-2025MMDD0100.csv` ×365 landed under `da-mcp-2025/`.
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only or-mcp`. Checksums: `SHA256SUMS.txt` (new).

@@ -43,3 +43,10 @@ this directory or its README was taken from memory.
 - **FTP folders (PRD):** `ftp://pubftp.spp.org/Operational_Data/HourlyLoad/` · `ftp://pubftp.spp.org/Operational_Data/Peak_Load/` — from `SPP Markets Public Data Guide v35` (`data/raw/spp-planning/SPP_Markets_Public_Data_Guide_v35.docx`); host from `SPP Public Data Access` v3.0 p. 2. Credential `anonymous` / email. **Probed 2026-09-06: egress-blocked** (`data/raw/spp-planning/README.md` §6).
 - **`Peak_Load_by_Month.csv`:** member of <https://www.spp.org/Documents/75871/SPP%20Markets%20Public%20Data%20Guide%20and%20Samples%20v35.zip> (fetched 2026-09-06; zip sha256 `e2e8478b…debee7`), copied byte-for-byte (sha256 in `data/raw/spp-planning/SHA256SUMS.txt`).
 - Schema source for `HOURLY_LOAD-YYYYMM.csv`: the zip's `DAILY_HOURLY_LOAD-20260217.csv` sample (not landed).
+
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; 2023–2025 monthly files landed
+
+- `https://portal.spp.org/file-browser-api/download/hourly-load?path=%2F2023%2F2023.zip` (1,443,643 B) and `…%2F2024%2F2024.zip` (1,448,045 B): the 12 `HOURLY_LOAD-YYYYMM.csv` members of each landed; daily members not landed.
+- `https://portal.spp.org/file-browser-api/download/hourly-load?path=%2F2025%2FHOURLY_LOAD-2025MM.csv` ×12 (111–124 KB each), fetched 2026-09-06.
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only hourly-load`. Checksums: `SHA256SUMS.txt` (new).
+- Licence: SPP Terms & Conditions, quoted verbatim in `README.md` (this update) and in `../spp-planning/SOURCES.md`.
