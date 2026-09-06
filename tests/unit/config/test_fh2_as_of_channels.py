@@ -139,7 +139,13 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
         # build cleanly and return that edition's rate, not the live table's.
         config = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)
         self.assertAlmostEqual(resolve_demand_growth_rate(config, 2023), 0.0200)
-        self.assertAlmostEqual(DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"], 0.085)
+        # The point of the assertion is that the VINTAGE table and the LIVE
+        # table are distinct, not the live table's level (SCN-LOAD re-derived it
+        # from the 2025 LTLF on 2026-09-06; the 2021 vintage is frozen).
+        self.assertNotAlmostEqual(
+            DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"],
+            resolve_demand_growth_rate(config, 2023),
+        )
 
     def test_missing_case_in_a_landed_vintage_raises(self):
         # FH-3: the missing-ISO refusal, one level down. Most vintage cells

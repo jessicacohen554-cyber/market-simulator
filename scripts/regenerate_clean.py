@@ -95,6 +95,12 @@ DATATYPES: tuple[str, ...] = (
     # group (the published annual allocation results). Intake-only -- the
     # pre-registered firm-block re-split arm's stop rule fired.
     "ra-import-allocations",
+    # SCN-LOAD (owner ruling S4, card D-4): each ISO's PUBLISHED long-term load
+    # forecast -- annual energy and seasonal peak by scenario, plus the
+    # published data-centre / large-load, EV and building-electrification
+    # decompositions. Consumed by constants.DEMAND_GROWTH_RATES,
+    # DATACENTER_ADDITIONS_MW, DATACENTER_ZONE_SHARE and ELECTRIFICATION_LAYERS.
+    "load-forecast",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

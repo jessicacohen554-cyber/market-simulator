@@ -2510,124 +2510,213 @@ CORRELATED_OUTAGE_CURVE: dict[str, dict[str, dict[str, dict[str, float]]]] = {
 # Annual demand growth rates by ISO, scenario path, and era. These are TOTAL
 # (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at
 # the default datacenter_load_path="off" they reproduce each ISO's published
-# total-load forecast directly (byte-identical mechanism to before this refresh).
-# When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC
-# energy out of this rate into the explicit flat block under a 2030
-# energy-continuity constraint (energy invariant, only the peak shape flattens),
-# so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The
-# implied organic-ex-DC near rate each ISO leaves after the mid DC block
-# relocates is noted per block below (transparency only — it is not a live
-# constant; the relocation is computed from the block MW, decoupling-safe).
+# total-load forecast directly. When the DC block is ON,
+# data.datacenter.add_datacenter_block RELOCATES the DC energy out of this rate
+# into the explicit flat block under an energy-continuity constraint (energy
+# invariant, only the peak shape flattens), so there is NO growth x DC
+# double-count (CX-4 section 3.5 / FF-0D audit section 1.6).
 #
-# Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term
-# (2031-2050) decelerates as the pipeline matures. The model applies a flat
-# hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces
-# base_peak x (1+r)^(year-weather_year). mid = each ISO's published central
-# forecast; low/high bracket it on the prior-vintage band ratios re-centred on
-# the new mid (the exact published low/high scenario MW-by-year tables are the
-# FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed).
-# RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO
-# forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/
-# NEISO literal "TODO: verify"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md
-# §1.1-1.2 and docs/parameter-citations.md.
+# DERIVED, NOT TRANSCRIBED (SCN-LOAD 2026-09-06, owner ruling S4 / card D-4).
+# Every rate below is now COMPUTED from the `load-forecast` curated datatype
+# (data/dictionary/schema/load-forecast.schema.yaml; each ISO's published series
+# under data/raw/load-forecast/<iso>/), replacing hand-read CAGRs. Rule 23
+# [R-FROZEN-DERIVE]: the re-derivation is on the SOURCE — six published
+# forecasts brought on disk for the first time, plus a MISO edition bump from
+# the Sept-2025 to the 2026 LTLF — never on a residual. This lane ran no solve.
+#
+# THE DERIVATION, applied identically to all six ISOs:
+#
+#   near = CAGR of the published series over [edition's first forecast year ->
+#          2031];  long = CAGR over [2031 -> min(2050, edition horizon)].
+#
+# The two eras TILE the span with no gap and no overlap under the model's own
+# rule (scenario_resolvers.resolve_demand_growth_rate: era = "near" if
+# year <= DEMAND_GROWTH_TRANSITION_YEAR else "long", applied by
+# runner._scale_demand to the step y -> y+1 over range(weather_year, year)), so
+# the near rate governs the transition from level(base) to level(2031) and the
+# compounded level reproduces the publication at 2031 and at the horizon EXACTLY
+# (verified to 1e-15 on all six). The former construction measured near over
+# [base -> 2030] and long over [2031 -> horizon], leaving the 2030->2031 step
+# covered by neither and overshooting the era boundary by one year of near
+# growth -- material where near growth is large (ERCOT).
+#
+# BASIS = the ISO's published ANNUAL ENERGY series, uniformly. The model applies
+# ONE flat multiplicative scalar to the whole 8760 (runner._scale_demand:
+# base_demand * factor), so peak CAGR == energy CAGR by construction and only
+# one can be honoured. Energy is the one the scalar can actually control: the DC
+# block and the electrification layers are ENERGY-INVARIANT relocations, so they
+# reshape the peak but can never repair a level error, and energy is what the LP
+# integrates and what a CO2 answer needs. Rule 1 [R-STRUCT] -- the scalar owns
+# the level, the block and the layers own the shape. The peak-basis CAGR each
+# ISO publishes is recorded per row below as the disclosed G-L1 divergence; it
+# is REPORTED, never used. (The former table mixed bases -- ERCOT/CAISO/PJM/MISO
+# peak, NYISO energy, NEISO a blend of the two -- which is why several rows move
+# materially; the movement is reported at full magnitude in
+# docs/handoffs/FINDING-scn-load-2026-09-06.md section 4, never reconciled away,
+# rule 14 [R-ACCURATE].)
+#
+# KNOWN, DISCLOSED, AND ROUTED: every edition's base year is 1-2 years AHEAD of
+# the model's weather_year (default 2024), and _scale_demand compounds from the
+# weather year -- so the model reaches 2030 having applied 1-2 extra years of
+# growth relative to the publication's own base. That offset is NOT absorbed
+# into these rates (burying it inside an input is exactly what rule 14 forbids);
+# it is quantified per ISO in the FINDING section 5 and routed to SCN-DESK,
+# because the fix is a base-year alignment or a level-index mechanism, not a
+# constant.
+#
+# LOW / HIGH. Where the publisher issues a genuine low/high SERIES it is used;
+# where it does not, the prior vintage's low/high-to-mid RATIOS are re-centred
+# on the new mid (the construction this table has always declared), and the row
+# says so. No band is invented, and no ISO's band crosses into another's
+# (rule 25 [R-ISO-SCOPE]).
 DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
-    # ERCOT — 2025 LTLF3 adjusted 2030 peak ~139 GW from the 85.0 GW model 2024
-    # base => (139/85)^(1/6)-1 = 8.5%/yr near. A 2026 preliminary LTLF (released
-    # 2026-04-15) is the next vintage (FF-0D §7.3 M5). Long 2.5%/yr (decel; no
-    # newer long-era figure cited). Implied organic-ex-DC near (mid, after the
-    # 37 GW DC block relocates) ~0.6%/yr — ERCOT growth is DC-dominated.
-    # Source: ERCOT 2025 Long-Term Load Forecast (LTLF3); FF-0D audit §1.1.
+    # ERCOT -- 2025 Long-Term Load Forecast (posted 2025-04-08; ERCOT's LTLF page
+    # still lists 2025 as the current long-term vintage). ALL THREE PATHS ARE
+    # PUBLISHED SERIES, which is unique to ERCOT and comes from the components of
+    # its own hourly forecast workbook:
+    #   low  = base_economic_ercot -- ERCOT's organic forecast BEFORE any large-
+    #          load additions (453.1 -> 499.6 TWh 2030 -> 600.6 TWh 2044), i.e.
+    #          the published "large loads do not materialize" case;
+    #   mid  = the ERCOT Adjusted forecast, ERCOT's own vetted/derated central
+    #          case (485.9 -> 983.8 -> 1,279.8 TWh);
+    #   high = the TSP Provided forecast, the transmission service providers'
+    #          un-derated submissions (538.2 -> 1,555.9 -> 1,757.5 TWh).
+    # The three pair 1:1 with the DATACENTER_ADDITIONS_MW paths below (no large
+    # load / vetted / un-derated), so a LOAD-HI case is coherent across the two
+    # axes rather than mixing bases -- the plan's G-L3 coherence question.
+    # Peak-basis comparison (DISCLOSED, NOT USED): the same three cases on
+    # annual peak MW give near 9.09% (mid) and 17.30% (high) vs the energy 13.48%
+    # and 20.62%; ERCOT's own forecast has the system load factor rising from
+    # ~65% to ~81% by 2030 as high-load-factor data centres arrive, which is what
+    # the gap measures. Source: data/raw/load-forecast/ercot/ (2025 LTLF).
     "ERCOT": {
-        "low": {"near": 0.05, "long": 0.015},
-        "mid": {"near": 0.085, "long": 0.025},
-        "high": {"near": 0.115, "long": 0.04},
+        "low": {"near": 0.019388, "long": 0.012900},
+        "mid": {"near": 0.134813, "long": 0.016258},
+        "high": {"near": 0.206157, "long": 0.004561},
     },
-    # CAISO — CEC California Energy Demand 2025-2045 (2025 IEPR): 1-in-2 peak
-    # 46.1 (2025) -> 52.9 GW (2030) = +2.8%/yr near; 52.9 -> ~68 GW (2040) =
-    # +2.5%/yr long. Implied organic-ex-DC near ~1.9%/yr (CAISO growth is mostly
-    # electrification; the +1.8 GW DC adder is small). Source: CEC CED 2025-2045
-    # / 2025 IEPR; FF-0D audit §1.1.
+    # CAISO -- CEC California Energy Demand 2025-2045 (2025 IEPR, adopted
+    # 2026-01-21), Form 1.2 Total Energy to Serve Load, summed over the three CEC
+    # planning areas that make up the CAISO balancing authority (PGE + SCE +
+    # SDGE; LADWP/IID/SMUD/BUG/NCNC are outside it): 215.3 -> 318.5 TWh (2045).
+    # Rule 14's named exception applies -- the published boundary is the CEC
+    # planning area, not the CAISO BAA -- and it is documented in
+    # data/raw/load-forecast/README.md rather than silently reconciled.
+    # low/high: the CED publishes NO demand-growth band (its scenario axis is
+    # over load MODIFIERS -- AAEE/AAFS/AATE, BTM PV and storage, known loads --
+    # not over economic growth), so the prior vintage's ratios are re-centred on
+    # the new mid. The Form 1.1c data-centre scenarios were tested as a band and
+    # REJECTED: the CEC's DC allocation is only ~1.8% of CAISO load, so it gives
+    # a +/-0.12pt band that would collapse the growth axis rather than represent
+    # it -- the basis mismatch rule 14 warns about.
+    # Peak-basis comparison (DISCLOSED, NOT USED): Form 1.5 1-in-2 non-coincident
+    # peak gives near 2.05% / long 1.09% vs energy 3.24% / 1.67%.
     "CAISO": {
-        "low": {"near": 0.015, "long": 0.015},
-        "mid": {"near": 0.028, "long": 0.025},
-        "high": {"near": 0.042, "long": 0.035},
+        "low": {"near": 0.017371, "long": 0.010026},
+        "mid": {"near": 0.032425, "long": 0.016710},
+        "high": {"near": 0.048638, "long": 0.023394},
     },
-    # PJM — 2026 Long-Term Load Forecast Report (posted 2026-01-14): 10-yr summer
-    # peak +3.6%/yr (160 -> 222 GW by 2036) near; 20-yr +2.4%/yr (253 GW by 2046)
-    # long. Near-term was trimmed on stricter DC vetting. Implied organic-ex-DC
-    # near ~-0.5%/yr (PJM's non-DC load is flat-to-declining; essentially all
-    # growth is the ~30 GW DC block). Source: PJM 2026 Load Forecast Report;
-    # FF-0D audit §1.1.
+    # PJM -- 2026 Load Forecast Report (posted 2026-01-14), the per-zone monthly
+    # data workbook annualized to the RTO series: 856.1 -> 1,667.1 TWh (2046).
+    # The former 0.036 near rate was the report's own headline TEN-YEAR summer-
+    # peak CAGR (2026->2036) used for a near era that ends in 2030, which is the
+    # window error the derivation above fixes independently of the basis change.
+    # low/high: PJM issues ONE forecast, so the prior vintage's ratios are
+    # re-centred on the new mid. This is the weakest cell in the table and it is
+    # disclosed as such: re-centring a ratio on a much larger mid widens the band
+    # in absolute terms (the high near rate is a mechanical consequence, not a
+    # published number).
+    # Peak-basis comparison (DISCLOSED, NOT USED): near 4.08% / long 1.89%.
     "PJM": {
-        "low": {"near": 0.020, "long": 0.014},
-        "mid": {"near": 0.036, "long": 0.024},
-        "high": {"near": 0.060, "long": 0.040},
+        "low": {"near": 0.035914, "long": 0.013901},
+        "mid": {"near": 0.064645, "long": 0.023830},
+        "high": {"near": 0.107742, "long": 0.039717},
     },
-    # NYISO — 2026 Load & Capacity Data Report ("Gold Book", released April 2026),
-    # Table I-1a "NYCA Baseline Energy and Demand Forecasts", Energy-GWh
-    # Lower/Baseline/Higher columns. RE-DERIVED 2026-08-03 (FFR-SC) on the
-    # EDITION BUMP alone (rule 23 [R-FROZEN-DERIVE]) — the 2025 edition this row
-    # previously cited was superseded, and FF-G4 §8-D4 item 3 flagged it stale;
-    # no residual was consulted and none moved. The document landed at
-    # data/raw/NYISO/2026-Gold-Book-Public.pdf.
-    #
-    # Basis, now formulaic instead of the FF-1C "~1.8 %/yr" reading (rule 5
-    # [R-NO-MAGIC]): each case is the compound annual growth of that column's
-    # own published GWh series — near = 2026 -> 2030, long = 2031 -> 2050,
-    # matching DEMAND_GROWTH_TRANSITION_YEAR and the identical construction the
-    # as-of-vintage registry below already uses for every NYISO row.
-    #   low   150,720 -> 149,300 ; 149,510 -> 157,740  => -0.24 % / +0.28 %
-    #   mid   152,600 -> 160,160 ; 161,830 -> 205,760  => +1.22 % / +1.27 %
-    #   high  153,420 -> 170,180 ; 174,220 -> 251,930  => +2.63 % / +1.96 %
-    # Cross-check against the edition's own published CAGR block: baseline
-    # energy 2026-31 = 1.18 % and 2026-46 = 1.30 %, bracketing the 1.22/1.27
-    # computed here.
-    #
-    # Two substantive changes beyond the level, both rule 14 [R-ACCURATE]:
-    # (1) low/high are now the edition's OWN Lower/Higher Demand series rather
-    # than prior-vintage band ratios re-centred on the mid — the "exact
-    # published low/high tables" the header comment records as unavailable at
-    # FF-1C are in this edition; (2) the low case's near rate is NEGATIVE
-    # because the 2026 Gold Book's Lower Demand forecast really does have NY
-    # energy declining to 2030 on efficiency/codes (the same sign the 2021
-    # vintage carries below — supported, not a defect).
-    # Long now slightly EXCEEDS near for the baseline: NY growth accelerates
-    # post-2030 on electrification, which the near/long split represents fine.
-    # Figures are TOTAL (large-load- and electrification-inclusive), the
-    # convention every layer relocates out of exactly once (see
-    # data.datacenter.add_load_layers).
-    # Source: NYISO 2026 Gold Book, Table I-1a; supersedes FF-0D audit §1.1.
+    # NYISO -- 2026 Gold Book, Table I-1a "NYCA Baseline Energy and Demand
+    # Forecasts", Energy-GWh Lower/Baseline/Higher columns. ALL THREE PATHS ARE
+    # PUBLISHED SERIES (152.6 -> 205.8 TWh baseline at 2050; the Lower forecast
+    # really does decline to 2030 on efficiency and codes, which is why the low
+    # near rate is negative -- supported, not a defect).
+    # This row was ALREADY derived rather than transcribed (FFR-SC 2026-08-03
+    # spelled the six CAGRs out by hand in this comment block), and the curated
+    # datatype REPRODUCES it: the intake's only change here is the era-window
+    # correction (near now measured to 2031 rather than 2030), which moves the
+    # three near rates by 3-5 basis points. The transcription is confirmed
+    # correct -- and the extraction is validated against the edition's own
+    # printed CAGR block (2026-31 energy -0.16% / 1.18% / 2.58%).
+    # Peak-basis comparison (DISCLOSED, NOT USED): summer coincident peak gives
+    # near 0.53% / long 0.59% vs energy 1.18% / 1.27%.
     "NYISO": {
-        "low": {"near": -0.0024, "long": 0.0028},
-        "mid": {"near": 0.0122, "long": 0.0127},
-        "high": {"near": 0.0263, "long": 0.0196},
+        "low": {"near": -0.001611, "long": 0.002824},
+        "mid": {"near": 0.011815, "long": 0.012720},
+        "high": {"near": 0.025754, "long": 0.019602},
     },
-    # NEISO — ISO-NE 2026 CELT (May 2026): net energy 116,679 (2025) -> 127,660
-    # GWh (2035) ~1.0%/yr, winter net peak 20,483 (2026/27) -> 26,411 MW (2035/36)
-    # ~2.6%/yr. The single flat scalar cannot carry both (energy vs peak diverge
-    # under electrification — a documented limitation, CX-4 §4); mid 1.3%/yr near
-    # blends them, long 1.2%/yr. NEISO ships no material DC block (~110 MW, memo
-    # deferred), so organic == total. Source: ISO-NE 2026 CELT; FF-0D audit §1.1.
+    # NEISO -- ISO-NE 2026 CELT Report (2026-05-01), sheet 1.5.2 annual NET
+    # energy for load: 116,679 GWh (2026) -> 127,660 GWh (2035), reproducing the
+    # sheet's own printed 2026-2035 CAGR of 1.0%.
+    # THE BLEND IS GONE. The former mid (0.013) averaged the published energy
+    # CAGR (1.0%) and the published WINTER peak CAGR (2.9%) because "the single
+    # flat scalar cannot carry both". A blend is not a published quantity and
+    # cannot regenerate, so it is replaced by the energy CAGR alone -- and the
+    # winter-peak divergence is now produced ENDOGENOUSLY by the heat_pump
+    # electrification layer, whose anchors this same intake completed from the
+    # CELT's own sheet 1.7 (see ELECTRIFICATION_LAYERS below). That is rule 19
+    # [R-ONE-MECH] working: one mechanism per phenomenon, the scalar for the
+    # level and the layer for the winter shape.
+    # A ONE-YEAR LABEL SLIP IS ALSO FIXED: the former comment called 116,679 GWh
+    # the 2025 figure; the CELT puts 117,755 GWh at 2025 (Actual) and 116,679 at
+    # 2026 (SCN-WS4a section 5 item 4).
+    # The long era rests on a 2031-2035 window only, because CELT is a ten-year
+    # forecast; the rate flat-holds past 2035, a documented understatement rather
+    # than an invented extension.
+    # low/high: the CELT publishes NO growth band -- its sheet 1.6 P90...P10 band
+    # is a WEATHER distribution around one forecast -- so the prior vintage's
+    # ratios are re-centred on the new mid.
+    # Peak-basis comparison (DISCLOSED, NOT USED): summer 0.53% / 0.90%, winter
+    # 2.9% (2026-2035, ISO-NE's own printed figure) vs energy 0.74% / 1.33%.
     "NEISO": {
-        "low": {"near": 0.007, "long": 0.007},
-        "mid": {"near": 0.013, "long": 0.012},
-        "high": {"near": 0.022, "long": 0.020},
+        "low": {"near": 0.004009, "long": 0.007759},
+        "mid": {"near": 0.007446, "long": 0.013301},
+        "high": {"near": 0.012601, "long": 0.022168},
     },
-    # MISO — Sept-2025 Long-Term Load Forecast: peak 121 (2025) -> ~163 GW (2035)
-    # = +3.0%/yr; ~3.1%/yr to the 2030 near boundary from the 121.6 GW model 2024
-    # base. Long 2.0%/yr (decel post-2035). Replaces the FF-0D-flagged 1%/yr
-    # scalar fallback (the single largest demand gap). Implied organic-ex-DC near
-    # ~-0.5%/yr (MISO growth is DC-driven; DC ~20% of energy by 2030). Source:
-    # MISO 2025 Long-Term Load Forecast; FF-0D audit §1.2.
+    # MISO -- 2026 Long-Term Load Forecast Results Summary (LTLF Workshop
+    # 2026-04-13). AN EDITION BUMP: this row cited the Sept-2025 vintage until
+    # this intake (rule 23 -- the re-derivation is on the source update).
+    # MISO publishes the LTLF as a slide deck whose series are CHARTS, so the
+    # net-energy trajectory is read from the PDF's own vector path coordinates,
+    # calibrated on the axis tick text and validated against the deck's printed
+    # labels: the read gives 677.7 TWh at 2026 vs the printed "~678", 1,104.0 at
+    # 2046 vs "~1,104", and 1,404.5 for the High 2046 bar vs "~1,404" (the
+    # SCN-WS4a slide-21 protocol).
+    # low/high: MISO draws Low and High only as a 2046 ENDPOINT bar and prints
+    # the pair as "~885 - 1,404 TWh", so there is no low/high series. The
+    # endpoints are honoured exactly, with the mid path's near:long era ratio
+    # locked, so nothing is invented -- documented limitation: MISO's band is
+    # driven mostly by front-loaded data-centre uncertainty, which a
+    # proportional era shape understates in the near era.
+    # The vector read of the LOW 2046 bar is 903 TWh against the slide's printed
+    # "~885"; the PRINTED number is used (rule 14 prefers the publication's own),
+    # and the 2% disagreement is recorded in data/raw/load-forecast/README.md.
+    # Peak basis: NOT AVAILABLE on the model's eras -- the 2026 LTLF publishes
+    # peak only as 2026 and 2046 endpoints (124 GW -> 184 GW), which is a further
+    # reason the energy basis is the one this table can actually be derived on.
     "MISO": {
-        "low": {"near": 0.018, "long": 0.012},
-        "mid": {"near": 0.031, "long": 0.020},
-        "high": {"near": 0.045, "long": 0.030},
+        "low": {"near": 0.029732, "long": 0.008055},
+        "mid": {"near": 0.054816, "long": 0.014850},
+        "high": {"near": 0.082546, "long": 0.022363},
     },
 }
 
 # Year at which demand growth transitions from near-term to long-term rate.
-# Source: engineering judgment — data center pipeline matures ~2030.
+# Source: engineering judgment -- data center pipeline matures ~2030.
+# THE FAMILY'S ONE UNSOURCED CONSTANT (gap G-D4-5, SCN-LOAD 2026-09-06): the
+# six-source load-forecast intake found NO published basis for a transition year
+# and did not invent one, so this stays a DISCLOSED NULL. It is now the only
+# member of the load-shape constant family without a primary source; every other
+# value in DEMAND_GROWTH_RATES, DATACENTER_ADDITIONS_MW, DATACENTER_ZONE_SHARE
+# and ELECTRIFICATION_LAYERS traces to a published series on disk. Note that it
+# is not a free parameter in the usual sense: it only says WHERE the two eras
+# meet, and each era's rate is then derived against that boundary, so moving it
+# re-derives both rates rather than re-tuning the level.
 DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
 # --- As-of-vintage demand-growth tables (FH-2 mechanism; FH-3 values) --------
@@ -2856,127 +2945,147 @@ DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] 
 # trajectory (1.2 / 20.5 / 33.5 GW at 2026 / 2030 / 2046, replacing the 2027/2030
 # band) and enriched the NEISO + DATACENTER_ZONE_SHARE deferral notes.
 DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
-    # ERCOT — large-load queue ~226 GW (Nov 2025) vs 63 GW (end-2024); ~70% is
-    # data center; ~77% of large load targets in-service by 2030; 2030 adjusted
-    # peak ~138 GW. Source: ERCOT 2025 Report on Existing & Potential Electric
-    # System Constraints and Needs; ERCOT Large Load Integration / LFL officer
-    # updates. low = no published signed-IA MW subset -> 0 (honest floor);
-    # mid = (138 GW 2030 adj. peak - 85.5 GW 2024 record peak) ~= 52.5 GW large
-    # load x 0.70 DC ~= 37 GW; high = total credible LFL: 0.70 x 226 GW = 158 GW
-    # DC ultimate, 0.77 in-service by 2030 ~= 122 GW.
+    # ---------------------------------------------------------------------
+    # DERIVED FROM THE CURATED `load-forecast` DATATYPE (SCN-LOAD 2026-09-06,
+    # owner ruling S4 / card D-4). Every anchor below is now computed from a
+    # published series on disk under data/raw/load-forecast/<iso>/ rather than
+    # hand-read from a headline. Rule 23 [R-FROZEN-DERIVE]: the re-derivation is
+    # on the SOURCE (six published forecasts brought on disk; MISO and NYISO
+    # additionally an edition bump), never on a residual -- this lane ran no
+    # solve. The three limitations the D-4 gap list named (gap G-D4-2) are
+    # addressed row by row below: CAISO's `high := mid`, MISO's ratio-
+    # extrapolated `high`, and the PJM/NYISO `low := 0` floor.
+    #
+    # UNITS. These are NAMEPLATE/PEAK MW: data.datacenter multiplies by
+    # ScenarioConfig.datacenter_load_factor (0.85) to get the flat block MW.
+    # Where a publisher issues the component as ENERGY the conversion is
+    # MW = GWh x 1000 / 8760 / 0.85, so the block reproduces the published
+    # ANNUAL ENERGY exactly (the round trip is closed by construction, and
+    # energy is what the LP integrates); where it issues PEAK MW that value is
+    # used directly and the block then carries an implied 85% load factor. Each
+    # row says which. MISO is the one ISO publishing both, and they agree to
+    # ~7%, which bounds the convention error.
+    # ---------------------------------------------------------------------
+    #
+    # ERCOT -- 2025 LTLF. PEAK-MW basis, from ERCOT's own hourly forecast
+    # workbook: the annual maximum of `<zone>_contracts + <zone>_officer_letters`
+    # summed over the eight weather zones (the TSP-attested Large Load
+    # additions), times the published ~73% data-centre share (Dec-2025 ERCOT
+    # Board System Planning update, Item 16.2) -- the same basis
+    # DATACENTER_ZONE_SHARE["ERCOT"] already uses, so the block's level and its
+    # zonal split are now derived from ONE series.
+    #   low  = 0, and it is now a MEASURED zero rather than an "honest floor"
+    #          convention: ERCOT publishes `base_economic_ercot`, its organic
+    #          forecast before any large-load additions, and this is that case.
+    #          It pairs exactly with DEMAND_GROWTH_RATES["ERCOT"]["low"].
+    #   mid  = ERCOT Adjusted large loads x 0.73 (4,817 -> 52,304 -> 57,089 MW
+    #          of large load at 2025 / 2030 / 2035).
+    #   high = the TSP Provided (un-derated) case: the Adjusted large load plus
+    #          the published TSP-minus-Adjusted system peak gap, x 0.73. This
+    #          REPLACES the former 122 GW/2030 figure, which was a raw
+    #          interconnection-queue estimate (0.70 x 226 GW queue x 0.77
+    #          in-service); the new value is ERCOT's own published upper
+    #          FORECAST, and it pairs with DEMAND_GROWTH_RATES["ERCOT"]["high"].
     "ERCOT": {
-        "low": {2024: 0.0, 2030: 0.0},
-        "mid": {2024: 0.0, 2030: 37000.0},
-        "high": {2024: 0.0, 2030: 122000.0, 2035: 158000.0},
-    },
-    # PJM — DC-driven peak growth ~30 GW of ~32 GW total 2025->2030; 15-yr summer
-    # peak +70 GW to ~220 GW (DC-dominant). Source: PJM 2025 Long-Term Load
-    # Forecast Report (published DC decomposition). low = signed-ISA subset MW
-    # not separately published -> 0; mid = 30 GW DC by 2030; high = DC-dominant
-    # share of the +70 GW 15-yr peak -> ~60 GW DC by 2040.
-    "PJM": {
         "low": {2025: 0.0, 2030: 0.0},
-        "mid": {2025: 0.0, 2030: 30000.0},
-        "high": {2025: 0.0, 2030: 30000.0, 2040: 60000.0},
+        "mid": {2025: 3516.0, 2030: 38182.0, 2035: 41675.0},
+        "high": {2025: 9281.0, 2030: 88603.0, 2035: 95151.0, 2040: 97920.0},
     },
-    # CAISO — CEC 2024 IEPR Data Center Forecast (24-IEPR-03), adopted into
-    # California Energy Demand 2024-2040: DC load +1.8 GW by 2030, +4.9 GW by
-    # 2040. low = IEPR low/no-DC case = 0; mid = the adopted DC adder; high = IEPR
-    # high-DC MW table not yet read -> high := mid (documented limitation, memo
-    # §3.1/§10.2; conservative — never overstates the upside).
-    "CAISO": {
-        "low": {2024: 0.0, 2030: 0.0, 2040: 0.0},
-        "mid": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
-        "high": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
-    },
-    # NYISO — 2025 Load & Capacity Data Report ("Gold Book") large-load
-    # adjustments: 19 large-load projects > 3 GW combined seeking interconnection;
-    # > 10 GW targeted in-service by 2031. low = signed subset MW not separately
-    # published -> 0; mid = > 3 GW near-firm large-load adjustment; high = > 10 GW
-    # total large-load queue by 2031.
-    "NYISO": {
-        "low": {2025: 0.0, 2031: 0.0},
-        "mid": {2025: 0.0, 2031: 3000.0},
-        "high": {2025: 0.0, 2031: 10000.0},
-    },
-    # MISO — Sept-2025 Long-Term Load Forecast publishes an explicit DC
-    # decomposition (FF-0D audit §1.4, closing the memo §2.2 "no source" gap),
-    # refined 2026-07-21 to the forecast's granular DC PEAK-DEMAND trajectory
-    # (replaces the earlier 2027/2030 band approximation and its flat-hold after
-    # 2030 — the 8-14 GW band was NAMEPLATE additions, a different, larger metric
-    # than the peak-demand basis the block represents): DC peak demand
-    # 1.2 GW (2026) -> 20.5 GW (2030) -> 33.5 GW (2046); DC = 20% of MISO energy
-    # by 2030 and 25% by 2040. The 20.5 GW 2030 anchor cross-checks the energy
-    # share (20.5 GW x 8760 h x 0.85 LF / 0.20 ~= 763 TWh total 2030, ~ the
-    # ~774 TWh forecast). low = signed-subset MW not separately published -> 0
-    # (floor convention, as PJM/NYISO); mid = the published current-trajectory
-    # curve; high = the upper-DC scenario (27 GW by 2030, FF-0D §1.4), extended to
-    # 2046 preserving the published 2030 high/mid ratio (33.5 x 27/20.5 ~= 44.1 GW;
-    # MISO publishes no granular high beyond 2030). Growth concentrates in the
-    # central region (IL/IN/MI) — a DATACENTER_ZONE_SHARE[MISO] siting candidate
-    # once a per-zone MW split is published (deferred, see that table's comment).
-    # Source: MISO 2025 Long-Term Load Forecast (Dec-2024 whitepaper + Sept-2025
-    # update); FF-0D audit §1.2/§1.4.
-    "MISO": {
+    # PJM -- 2026 Load Forecast Report, TABLE B-9b, read for the first time
+    # (the D-4 gap list records it as never read). PEAK-MW basis: "Total
+    # Adjustments to Summer Peak Load (MW) for Each PJM Zone and RTO
+    # (2026-2046)", RTO row. Per the report's own "Load Adjustments" section
+    # every adjusted zone is adjusted for growth in data center load, with DOM
+    # additionally carrying a voltage-optimization program and PS port
+    # electrification -- so the series is very slightly wider than data centres
+    # alone, which is stated rather than netted out.
+    #   low  = 0 -- RE-STATED AS A MEASURED NULL with a better citation than the
+    #          former "signed-ISA subset not separately published": Table B-9b
+    #          IS the vetted set (the 2026 report trimmed the near term on
+    #          stricter data-centre vetting), and no lower subset is published.
+    #   mid  = the published B-9b RTO series.
+    #   high := mid -- PJM issues no upper case. This is the SAME documented
+    #          limitation CAISO used to carry, and it moves here rather than
+    #          disappearing: conservative, never overstates the upside. The
+    #          former high (30 GW/2030, 60 GW/2040) is retired because it now
+    #          sits BELOW the published mid, which would be incoherent.
+    "PJM": {
         "low": {2026: 0.0, 2030: 0.0},
-        "mid": {2026: 1200.0, 2030: 20500.0, 2046: 33500.0},
-        "high": {2026: 1400.0, 2030: 27000.0, 2046: 44100.0},
+        "mid": {2026: 11479.0, 2030: 38815.0, 2035: 68977.0, 2046: 87194.0},
+        "high": {2026: 11479.0, 2030: 38815.0, 2035: 68977.0, 2046: 87194.0},
     },
-    # NEISO — ISO-NE 2026 CELT (May 2026) added a large-load (DC/crypto/large-
-    # industrial) forecast framework, but its DC quantum is immaterial, and a
-    # 2026-07-21 recheck of the CELT large-load deck confirmed it: only two
-    # proposed large-load projects are in the formal study phase (<=285 MW total
-    # nameplate; the lone NEMA data center is 200 MW nameplate -> 85 MW effective
-    # after ISO-NE's milestone derating), contributing ~110 MW to summer/winter
-    # peak in the 2030s rising to ~130 MW in the 2040s — <0.6% of the ~26 GW
-    # winter peak, and ISO-NE states New England "has not witnessed the scale of
-    # data center proposals" seen in other ISOs. Per the "no MATERIAL source =>
-    # ship {}" rule this stays {} (=> 0 MW; DC stays implicit in the
-    # DEMAND_GROWTH_RATES near era) until a material decomposition lands — a
-    # documented deferral, not an omission (FF-0D audit §1.4, P2 low-materiality).
-    # 2026-07-21 RE-VERIFICATION (this branch): re-checked the latest published
-    # ISO-NE vintages — the 2026 CELT Report (published 2026-05-01) and the
-    # fx2026_large_loads Large Load Forecast deck (dated 2026-03-27) are STILL the
-    # current vintages; no newer ISO-NE large-load decomposition has been
-    # published. The deck's energy leg corroborates the immateriality: large loads
-    # consume ~800 GWh/yr over 2030-2035 rising to ~1,000 GWh in the 2040s, i.e.
-    # ~0.68% of the ~117 TWh 2025 net energy — like the ~0.5%-of-peak figure, an
-    # order of magnitude under the ~1% materiality bar. Deferral CONFIRMED; {}
-    # holds (no forward-sourceable MW-by-year DC trajectory to populate; forcing
-    # one would violate rule 5/11).
-    # 2026-09-05 RE-VERIFICATION (SCN-WS4a, plan §7 WS-4 item 2) — the deferral is
-    # RE-CONFIRMED against the 2026 CELT with the immateriality arithmetic written
-    # out from primary numbers rather than carried as a ratio:
-    #   (a) The CELT-2026 large-load forecast contains exactly TWO projects (Final
-    #       Draft 2026 Large Load Forecast, LFC 2026-03-27, slide 14): a NEMA DATA
-    #       CENTER at 200 MW reported nameplate (thru 2027) and a CT general-
-    #       electrification project at 85 MW (thru 2040). Only the first is a data
-    #       center, so only it could populate this table.
-    #   (b) ISO-NE's own derates (same deck, slide 9): milestone factor 60% for a
-    #       project that has entered a study agreement (none of the listed projects
-    #       is under construction, slide 14) x a 70% data-center capacity-
-    #       utilization factor => effective nameplate 200 x 0.60 x 0.70 = 84 MW.
-    #   (c) Its published hourly profile (slide 11) peaks at 85% of nameplate mid-
-    #       day and holds 80% in all other hours, weekends 10% lower => peak
-    #       contribution 84 x 0.85 = 71.4 MW and annual energy ~584 GWh
-    #       (8 h x 0.85 + 16 h x 0.80 weekdays, x0.9 weekends => 0.793 x 84 MW x
-    #       8760 h).
-    #   (d) Against the 2026 CELT's own denominators — summer 50/50 peak 25,228 MW
-    #       (2026) -> 26,849 MW (2035), winter 50/50 20,483 MW (2026/27) ->
-    #       26,411 MW (2035/36), net annual energy 116,679 GWh (2026) ->
-    #       127,660 GWh (2035) — the DC project is 0.27% of the 2035 summer peak,
-    #       0.27% of the 2035/36 winter peak and 0.46% of 2035 net energy. The
-    #       WHOLE large-load forecast (both projects) is ~110 MW of peak in the
-    #       2030s rising to ~130 MW in the 2040s = 0.41% / 0.49% of that winter
-    #       peak.
-    # Every figure is an order of magnitude under the ~1% materiality bar, and
-    # ISO-NE still states New England "has not witnessed the scale of data center
-    # proposals" seen elsewhere (slide 3). {} HOLDS; DC stays implicit in the
-    # NEISO DEMAND_GROWTH_RATES near era. Because the block is 0 MW, NEISO's
-    # absence from DATACENTER_ZONE_SHARE is moot, not a second gap.
-    # Source: ISO-NE 2026 CELT Report (2026-05-01) + Large Load Forecast deck
-    # (fx2026_large_loads.pdf, 2026-03-27); CELT peak/energy figures via the
-    # ISO-NE 2026-05-01 forecast release.
+    # CAISO -- CEC CED 2025-2045, FORM 1.1c "Electricity Deliveries to End Users
+    # by Agency (GWh) - Data Centers Only", summed over the CAISO planning areas
+    # (PGE + SCE + SDGE). ENERGY basis, converted as above.
+    #   THE `high := mid` GAP IS CLOSED. Form 1.1c publishes TWO data-centre
+    #   scenarios and the second is the high-DC table the former comment records
+    #   as "not yet read": the *Planning Forecast* allocation (the adopted
+    #   central case -> mid) and the *Local Reliability Scenario* allocation
+    #   (materially higher -- the case CPUC resource adequacy and CAISO local
+    #   studies use -> high). At 2030 they are 12,078 vs 31,574 GWh.
+    #   low = 0 is the published "no additional data centres" case: the CED
+    #   applies the DC allocation as an additive load modifier on the baseline.
+    #   The mid track lands within ~10% of the former 2024-IEPR-based anchors
+    #   (1,622 vs 1,800 MW at 2030; 4,382 vs 4,900 at 2040), which is the
+    #   vintage difference, not a correction.
+    "CAISO": {
+        "low": {2025: 0.0, 2030: 0.0, 2040: 0.0},
+        "mid": {2025: 98.0, 2030: 1622.0, 2035: 4123.0, 2040: 4382.0},
+        "high": {2025: 125.0, 2030: 4240.0, 2035: 6531.0, 2040: 6658.0},
+    },
+    # NYISO -- 2026 Gold Book, TABLE I-14 "Large Load Forecast" (an EDITION BUMP
+    # from the 2025 Gold Book the former anchors cited). ENERGY basis, converted
+    # as above, from the published NYCA annual-energy series; the zone columns
+    # were validated against the publication's own NYCA total in all 16 years.
+    #   THE `low := 0` FLOOR IS CLOSED. Table I-14's own footer publishes a
+    #   Lower / Baseline / Higher / All-Loads breakdown at the horizon
+    #   (1,221 / 2,937 / 4,393 / 12,663 MW of winter peak), so NYISO does
+    #   publish a large-load band. low and high are the Baseline trajectory
+    #   scaled to the published Lower and Higher endpoints (ratios 0.41573 and
+    #   1.49574); the Baseline row of that footer reproduces Table I-14's own
+    #   2041 winter column exactly, which is how the block was identified.
+    #   The former high (10 GW by 2031) was the raw interconnection QUEUE, which
+    #   this edition publishes separately as "All Loads" 12,663 MW / Table IV-7
+    #   12,330 MW summer -- a different quantity from the forecast, and not the
+    #   one the block represents.
+    #   DOCUMENTED LIMITATION, unchanged in kind from the former row: Table I-14
+    #   is a LARGE-LOAD forecast, not a data-centre-only one (Zone C's ramp is
+    #   the Micron semiconductor fab), so this block is slightly wider than data
+    #   centres. NYISO publishes no DC-only split. The Gold Book also states
+    #   these values are already embedded in the baseline energy and peak
+    #   forecasts -- the same convention the block's relocate regime assumes.
+    "NYISO": {
+        "low": {2026: 203.0, 2030: 713.0, 2035: 1083.0, 2040: 1195.0},
+        "mid": {2026: 489.0, 2030: 1716.0, 2035: 2605.0, 2040: 2874.0},
+        "high": {2026: 731.0, 2030: 2567.0, 2035: 3896.0, 2040: 4299.0},
+    },
+    # MISO -- 2026 LTLF (an EDITION BUMP from the Sept-2025 vintage). PEAK-MW
+    # basis, from the deck's own printed numbers wherever it prints one:
+    #   2026 = 1,154 MW -- slide 21's data-centre net energy at 2026 (9.4 TWh,
+    #          chart read, validated against the printed 9.6) converted at
+    #          MISO's OWN published ~93% data-centre load factor (slide 21 key
+    #          insights: 90% hyperscale at ~95% + 10% enterprise at ~75%), not
+    #          at the model's 0.85 -- the publisher's own factor is the right
+    #          one for reading the publisher's own energy;
+    #   2030 = 20,000 MW -- printed verbatim on slide 18 ("2030 MISO data
+    #          center demand 20 GW");
+    #   2046 = 1,154 + 32,000 MW -- slide 16's printed data-centre contribution
+    #          to the 2026->2046 peak growth.
+    #   THE `high` EXTRAPOLATION IS CLOSED. Slide 16 prints the driver's own
+    #   low-high range (22 - 44 GW by 2046), so `high` is published rather than
+    #   the former "2030 high/mid ratio carried forward"; the 2030 low and high
+    #   anchors apply that same published range to the mid increment.
+    #   THE `low := 0` FLOOR IS ALSO CLOSED for the same reason.
+    #   The new mid track lands within ~2% of the former anchors
+    #   (20,000 vs 20,500 at 2030; 33,154 vs 33,500 at 2046) and the new high
+    #   within ~2% of the former ratio-extrapolated 44,100 -- the earlier work
+    #   is confirmed, and what changes is that the numbers are now published
+    #   rather than derived.
+    "MISO": {
+        "low": {2026: 1154.0, 2030: 14111.0, 2046: 23154.0},
+        "mid": {2026: 1154.0, 2030: 20000.0, 2046: 33154.0},
+        "high": {2026: 1154.0, 2030: 27067.0, 2046: 45154.0},
+    },
     "NEISO": {},
 }
 
@@ -3172,67 +3281,167 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
 # layer with no profile source registered in data.datacenter refuses to arm
 # (fail-closed), which is why the ev anchors below ship {} — see each note.
 ELECTRIFICATION_LAYERS: dict[str, dict[str, dict[str, dict[int, float]]]] = {
-    # NEISO — ISO-NE 2026 CELT (May 2026), the memo §2.2 grounding row: heating
-    # electrification (HEF) 7,165 GWh/yr and 5,533 MW of the 2035/36 50/50
-    # winter peak; transportation electrification (TEF) 7,074 GWh/yr, 594 MW
-    # summer / 1,509 MW winter peak. Named standing source documents: CELT 2026
-    # forecast-data workbook; Final 2026 Heat Pump Forecast
-    # (heatfx2026final.pdf); Final 2026 Electric Vehicle Forecast
-    # (transfx2026final.pdf) — bot-walled manual downloads (memo §8-D4 item 1),
-    # so the anchors carry the memo's fetched [F] headline figures; the
-    # MW-by-year workbook refines them when the D4-1 intake lands (rule 23
-    # [R-FROZEN-DERIVE]: re-derive on source update only, never on a residual).
+    # ---------------------------------------------------------------------
+    # POPULATED FROM THE CURATED `load-forecast` DATATYPE (SCN-LOAD 2026-09-06,
+    # owner ruling S4 / card D-4, gap G-D4-4 -- the row the gap list named as
+    # the intake's biggest prize, because the layers were wired and EMPTY).
+    # Before this intake exactly ONE cell carried numbers (NEISO heat_pump, two
+    # hand anchors) and `ev` was empty in every ISO. Rule 23 [R-FROZEN-DERIVE]:
+    # every value below moves because its SOURCE landed on disk, never because
+    # a residual moved -- this lane ran no solve.
     #
-    # heat_pump: mid-only ({2026: 0, 2035: 7165 GWh}); low/high collapse onto
-    # mid until the CELT scenario band is read (the resolver's documented
-    # fallback — never an invented band). THIS is the layer that produces the
-    # published ISO-NE winter-peaking flip (winter 2035/36) endogenously: its
-    # winter-concentrated heating-degree shape grows with the trajectory and
-    # the flip emerges from the driver instead of being painted on (memo §4.2).
-    # The CELT 5,533 MW winter-peak contribution is RECONCILIATION CONTEXT for
-    # the modeled contribution, never a fit target (rule 13 posture, memo §4.4).
+    # WHAT BLOCKS A CELL IS NOW THE SHAPE, NOT THE NUMBERS. The layer registry
+    # in data.datacenter is FAIL-CLOSED: a layer with anchors but no citable
+    # hourly profile REFUSES to arm rather than inventing one (rule 5
+    # [R-NO-MAGIC]). `heat_pump` has an ISO-agnostic physics profile (NOAA GHCN
+    # heating-degree hours, and all six ISOs have a weather archive), so it arms
+    # wherever a published energy component exists. `ev` has a profile for
+    # ERCOT ONLY, because ERCOT is the only publisher issuing a machine-readable
+    # hourly EV series. The other ISOs' EV ADOPTION anchors are published and
+    # are curated in the datatype -- they are recorded per row below so the
+    # cell arms the day a citable 8760 lands -- but the layers stay {}.
+    # Rule 25 [R-ISO-SCOPE]: no ISO's profile or anchor is another's fallback.
+    # ---------------------------------------------------------------------
+    # NEISO -- ISO-NE 2026 CELT, sheet 1.7 "Electrification Forecast".
     #
-    # ev: {} — the TEF ADOPTION anchors are published (7,074 GWh / 594 MW
-    # summer / 1,509 MW winter at 2035, recorded here for the intake session),
-    # but NO NEISO-specific hourly CHARGING profile has been read from a
-    # fetched source (the TEF PDF is bot-walled; NREL EFS profiles are the D4-7
-    # intake). A shape we cannot cite is an open blocker, not a parameter
-    # (rule 5 [R-NO-MAGIC]) — the layer arms only when its profile source
-    # lands, so it ships {} rather than half-armed anchors.
+    # heat_pump: the TWO-ANCHOR approximation ({2026: 0.0, 2035: 7165.0}) is
+    # REPLACED BY THE PUBLISHED TEN-YEAR SERIES. This is a real correction, not
+    # a refinement: the published trajectory is strongly convex (198 GWh in
+    # 2026, 2,464 by 2030), while a straight line from a 0.0 anchor implied
+    # ~796 GWh in 2027 and ~3,184 by 2030 -- overstating the near era by ~30%
+    # and understating the 2030s ramp. The former comment named exactly this
+    # ("the source's own starting-year component value is the D4-1 intake's
+    # refinement"), and it is what landed. Values are ISO-NE's Heating category,
+    # New England total, annual energy GWh; they are already INCREMENTAL to the
+    # base year, which is the convention add_load_layers needs.
+    # low/high collapse onto mid: the CELT publishes one forecast (its 1.6 band
+    # is a WEATHER distribution), so no band is invented.
+    #
+    # ev: STILL {}, and the reason has changed. The adoption anchors are now
+    # published and curated -- ISO-NE's Transportation category, NE total:
+    # 195 / 588 / 1,036 / 1,557 / 2,167 / 2,881 / 3,715 / 4,682 / 5,798 / 7,074
+    # GWh for 2026-2035 -- but the TEF deck publishes the hourly charging
+    # allocation only as CHARTS (Final 2026 EV Forecast, slides 19-20), so there
+    # is no citable 8760. Anchors without a shape are an open blocker, not a
+    # parameter; the cell arms the day ISO-NE publishes the allocation as data.
     "NEISO": {
         "heat_pump": {
-            "mid": {2026: 0.0, 2035: 7165.0},
+            "mid": {
+                2026: 198.0,
+                2027: 671.0,
+                2028: 1200.0,
+                2029: 1793.0,
+                2030: 2464.0,
+                2031: 3235.0,
+                2032: 4113.0,
+                2033: 5059.0,
+                2034: 6082.0,
+                2035: 7165.0,
+            },
         },
         "ev": {},
     },
-    # PJM — the 2026 Load Forecast Report publishes EV/electrification
-    # component attributions, but the component MW-by-year tables are in the
-    # bot-walled report PDF/XLSX (memo §2.2 / §8-D4 item 2, audit row M11) —
-    # nothing transcribed from memory (rule 5). Ships {} => honest no-op; the
-    # PJM shape story (energy growing FASTER than peak, load factor RISING) is
-    # carried by the flat DC block already armed via DATACENTER_ADDITIONS_MW —
-    # exactly the published direction (memo §2.1), so the absent layers are the
-    # smaller residual there.
+    # PJM -- STILL {} in both layers. The 2026 Load Forecast Report's data
+    # workbook publishes zone x month peak and energy TOTALS only; the EV and
+    # behind-the-meter components are consultant (S&P Global) inputs the report
+    # describes but does not tabulate, and no end-use component series is in
+    # either published workbook. Honest no-op: PJM's shape story is carried by
+    # the flat data-centre block above, which is now on the published Table
+    # B-9b series and is by far the larger effect (38.8 GW at 2030).
     "PJM": {"heat_pump": {}, "ev": {}},
-    # NYISO — 2026 Gold Book publishes PEAK-MW components (heat pumps +19 GW
-    # winter / +2 GW summer by 2050; EV winter ~1.4x summer, charging
-    # concentrated 22:00-03:00 peaking ~01:00) but the memo records no annual
-    # ENERGY component series [F], and converting peak MW to layer energy needs
-    # a load-factor assumption we refuse to invent. {} until the Gold Book
-    # energy tables land (memo §8-D4 item 3).
-    "NYISO": {"heat_pump": {}, "ev": {}},
-    # CAISO — the CEC CED 2025 publishes downloadable 8760 hourly demand
-    # forecast files (the planner's own future shape; memo §2.2) — the right
-    # CAISO treatment is that intake (D4 item 4), not hand anchors here.
+    # NYISO -- 2026 Gold Book. THE FORMER COMMENT WAS STALE: it recorded that
+    # "the memo records no annual ENERGY component series [F], and converting
+    # peak MW to layer energy needs a load-factor assumption we refuse to
+    # invent". The Gold Book publishes exactly that series, twice, by zone A-K
+    # and out to 2056 -- Table I-13a (Building Electrification Annual Energy
+    # Usage) and Table I-11b (Electric Vehicle Annual Energy Usage). No
+    # load-factor assumption is involved.
+    #
+    # heat_pump: NOW ARMED on Table I-13a, NYCA total, which the table itself
+    # labels "Cumulative FUTURE Impacts" -- i.e. already incremental to the
+    # base, the convention add_load_layers needs. DOCUMENTED APPROXIMATION:
+    # I-13a is NYISO's BUILDING ELECTRIFICATION component (space heating, water
+    # heating, cooking and other end uses), slightly wider than heat pumps
+    # alone, and NYISO publishes no heat-pump-only energy split; it is shaped
+    # here on heating-degree hours, which fits the heating-dominated bulk of it
+    # and overstates the heating share of the non-heating remainder. The
+    # Gold Book itself notes the SUMMER peak impact is the part driven by
+    # non-heating end uses (p.15), so the winter/energy majority is the right
+    # one for this shape. Stated rather than hidden; the refinement is a
+    # published heat-pump-only split, never a residual fit.
+    # low/high collapse onto mid: the Lower/Higher demand forecasts differ in
+    # their electrification assumptions but the Gold Book publishes I-13a for
+    # the Baseline only.
+    #
+    # ev: STILL {}. Table I-11b's anchors ARE published and curated (NYCA total
+    # 1,309 GWh at 2026 rising to 31,894 by 2050, "Total Cumulative Impacts",
+    # so the layer would take the increment over 2026), and the Gold Book
+    # DESCRIBES the shape -- winter ~1.4x summer, charging concentrated
+    # 22:00-03:00 peaking ~01:00 -- but a described shape is not a citable 8760.
+    # The blocker is the profile, not the numbers.
+    "NYISO": {
+        "heat_pump": {
+            "mid": {
+                2026: 449.0,
+                2030: 2455.0,
+                2035: 6877.0,
+                2040: 12048.0,
+                2045: 17169.0,
+                2050: 21117.0,
+            },
+        },
+        "ev": {},
+    },
+    # CAISO -- STILL {} in both layers, unchanged in kind. The CED 2025 forms
+    # curated here (1.2 energy, 1.5 peak, 1.1c data centres) carry no end-use
+    # electrification split; the CEC's downloadable 8760 hourly demand forecast
+    # files are the right CAISO treatment and are a SEPARATE intake (FF-G4 memo
+    # section 8-D4 item 4), not hand anchors here.
     "CAISO": {"heat_pump": {}, "ev": {}},
-    # MISO — 2026 LTLF publishes EV energy (62 TWh of the 426 TWh 20-yr growth)
-    # but no heat-pump split and no profile; DC dominates MISO's shape story
-    # (its own block above). {} until the D4 item 5 intake.
+    # MISO -- STILL {} in both layers, and as with NEISO/NYISO the blocker is
+    # now the shape. The 2026 LTLF's EV energy trajectory is published (slide
+    # 24, read from the chart's vector coordinates and validated: the 2026->2046
+    # growth reads 61.8 TWh against the deck's own printed 47-78 TWh low-high
+    # range and the ~62 TWh figure) and is curated: 5.4 TWh at 2026 rising to
+    # 67.2 by 2046. But MISO states it "uses NREL/DOE charging profiles" rather
+    # than publishing one of its own (slide 24), so there is no MISO-specific
+    # citable 8760 -- and borrowing another ISO's or a generic one would be the
+    # rule 25 [R-ISO-SCOPE] violation this table refuses. MISO publishes no
+    # heat-pump split at all.
     "MISO": {"heat_pump": {}, "ev": {}},
-    # ERCOT — no published end-use decomposition (large loads are embedded in
-    # the hourly LTLF files); growth is DC-dominated and the DC block carries
-    # most of the shape story (memo §5.5 — ERCOT is last in the rollout order).
-    "ERCOT": {"heat_pump": {}, "ev": {}},
+    # ERCOT -- THE FORMER COMMENT WAS STALE HERE TOO: it recorded "no published
+    # end-use decomposition (large loads are embedded in the hourly LTLF
+    # files)". ERCOT's 2025 Adjusted LTLF workbook carries an explicit hourly
+    # per-weather-zone `<zone>_ev` component alongside `base_economic_<zone>`
+    # and `<zone>_pv`.
+    #
+    # ev: NOW ARMED, and it is the only `ev` cell in the table that can be,
+    # because ERCOT is the only publisher issuing the charging shape AS DATA:
+    # the curated normalized 8,760-hour profile is
+    # data/raw/load-forecast/ercot/ercot_ev_hourly_profile_2030.csv, registered
+    # in data.datacenter._LAYER_PROFILE_BUILDERS for ERCOT alone.
+    # Anchors are the published ERCOT-total EV energy INCREMENTAL to the
+    # edition's own base year (the workbook publishes a total EV load, 1,495 GWh
+    # in 2025, of which the base year's part is already inside the model's
+    # measured weather-year 8760 -- so the increment is what the layer adds).
+    # low/high collapse onto mid: ERCOT publishes the EV component only in the
+    # Adjusted case.
+    #
+    # heat_pump: {} -- ERCOT publishes no heating-electrification component
+    # (Texas heating is a small and largely non-electric end use), so there is
+    # nothing to arm and nothing is invented.
+    "ERCOT": {
+        "heat_pump": {},
+        "ev": {
+            "mid": {
+                2025: 0.0,
+                2030: 5419.0,
+                2035: 22837.0,
+                2040: 61465.0,
+                2044: 104798.0,
+            },
+        },
+    },
 }
 
 # Balance-point (base) temperature for the heat_pump layer's heating-degree
