@@ -87,7 +87,7 @@ parsed as a fallback) it verifies:
       a registry sidecar, so a run pruned under rule 15 cannot leave a DEAD
       LINK — or, the neiso-102 / pjm-166 class, a hand-authored
       ``holdout_touchpoint`` panel whose determination CONTRADICTS the derived
-      ``holdout_ladder`` beneath it (rule 30 [R-TOUCHPOINT-FOLD](b)). Keeper
+      per-year table beneath it (rule 30 [R-TOUCHPOINT-FOLD](b)). Keeper
       GENEALOGY (``superseded``/``chain``, ``de_designation_history``,
       ``frontier_withdrawn_*``, ``source_run_id``) and narrative prose are OUT
       OF SCOPE on purpose: they cite pruned runs by design and are explicitly
@@ -708,7 +708,7 @@ def dangling_pointer_findings(shard: dict, registry_dir: Path) -> list[str]:
       here is a DEAD LINK on the live site, and — the class this check was
       written for — a hand-authored ``holdout_touchpoint`` naming a pruned run
       can render a determination that CONTRADICTS the auto-derived
-      ``holdout_ladder`` printed directly beneath it (NEISO showed 2022 as
+      per-year table printed directly beneath it (NEISO showed 2022 as
       CALIBRATED-WITH-CAVEATS above a ladder reading CALIBRATED; PJM showed
       two different 2022 C1/C3b numbers). Rule 30 [R-TOUCHPOINT-FOLD](b) is
       what such a block breaches — the ladder is derived precisely so it cannot
@@ -738,7 +738,7 @@ def dangling_pointer_findings(shard: dict, registry_dir: Path) -> list[str]:
                     f"shard field {label} names {run_id}, which has no registry "
                     "sidecar — a dead run link on the Calibration Status card. "
                     "If the run was pruned (rule 15), DELETE the field rather "
-                    "than re-authoring it: the derived holdout_ladder already "
+                    "than re-authoring it: the derived per-year table already "
                     "carries the touchpoint rungs per year (rule 30(b))."
                 )
     return out

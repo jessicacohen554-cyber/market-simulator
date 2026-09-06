@@ -11,7 +11,7 @@ concurrent keeper promotions in different ISOs never touch the same file):
   ``scripts/calibration_verdict.py`` — and embeds the full verdict, so the
   page can never disagree with the gate.
 * ``frontend/data/backcast/status/shared.js`` — the rubric reference,
-  benchmark table and methodology notes (``window.BC.statusShared``).
+  benchmark anchor table and scoring notes (``window.BC.statusShared``).
   Deterministic (no timestamp): its bytes change only when the rubric/scorer
   constants change, so rewriting it from any session is conflict-free.
 
@@ -468,36 +468,24 @@ def build_shared() -> dict:
     }
 
 
-def build_holdout_ladder(iso: str, keeper_run_id: str) -> list[dict]:
-    """Score every held-out year folded onto one keeper, oldest year first.
+def _src_tag(run_id: str) -> str:
+    """Short per-run label for the year table and the record ``src`` column.
 
-    A rule-22 validation touchpoint is the designated keeper's OWN frozen
-    recipe replayed on a year that was never tuned on, so its result is part of
-    that keeper's story rather than a separate run. This finds them the same
-    way the run explorer does — a registry sidecar whose ``holdout.keeper``
-    names ``keeper_run_id`` — and scores each of its years INDIVIDUALLY with
-    the same scorer the gate uses.
-
-    Per-year is the load-bearing detail: a multi-year touchpoint bundle carries
-    ONE run-level determination, which can hide a rung that passed on its own
-    (NEISO 2020+2021 reads NOT-YET as a bundle, but 2021 alone is CALIBRATED).
-
-    The ladder NEVER gates and never rewrites the ISO's determination, which is
-    the train-tier (2023-2025) verdict — rule 22 as amended 2026-09-05: an ISO
-    can stay CALIBRATED even when a held-out year degrades, because a
-    validation-tier score is iterable model-SELECTION evidence and not a
-    certification.
-
-    Args:
-        iso: ISO id, used to scope the registry scan.
-        keeper_run_id: The ISO's current designated keeper run id.
-
-    Returns:
-        One entry per held-out year: its tier, determination, the criteria that
-        degraded against the keeper's in-sample column, and the companion run
-        id it came from. Empty when the ISO has spent no held-out year.
+    Just the run id with its leading ``YYYY-MM-DD-`` date stripped — mechanical,
+    so it stays stable and needs no hand-maintained nickname table.
     """
-    out: list[dict] = []
+    parts = run_id.split("-", 3)
+    return parts[3] if len(parts) == 4 and parts[0].isdigit() else run_id
+
+
+def _holdout_companions(iso: str, keeper_run_id: str) -> list[dict]:
+    """Registry sidecars whose ``holdout.keeper`` folds them onto this keeper.
+
+    A rule-22 validation touchpoint is the designated keeper's OWN frozen recipe
+    replayed on a year it was never tuned on (rule 30 [R-TOUCHPOINT-FOLD]), so
+    it is found the same way the Run Explorer folds it — never hand-authored.
+    """
+    out = []
     for sidecar in sorted(cv.REGISTRY_DIR.glob("*.json")):
         try:
             reg = json.loads(sidecar.read_text())
@@ -505,38 +493,110 @@ def build_holdout_ladder(iso: str, keeper_run_id: str) -> list[dict]:
             continue
         if reg.get("iso") != iso or reg.get("id") == keeper_run_id:
             continue
-        block = reg.get("holdout") or {}
-        if block.get("keeper") != keeper_run_id:
+        if (reg.get("holdout") or {}).get("keeper") != keeper_run_id:
             continue
-        # `criteria` carries the per-criterion in-sample-vs-holdout reading that
-        # stamp_touchpoint_holdout.py wrote; it is a RUN-level table, so it is
-        # reported once per companion rather than per year.
-        degraded = [
-            c.get("label") or c.get("key")
-            for c in (block.get("criteria") or [])
-            if c.get("verdict") == "degraded"
-        ]
-        per_year = block.get("perYear") or {}
-        for year in sorted(int(y) for y in (reg.get("years") or [])):
-            try:
-                v = cv.determine(reg["id"], years=[year])
-            except Exception as exc:  # a companion must never abort the lane
-                print(f"  {iso}: holdout {year} unscorable ({exc})", file=sys.stderr)
-                continue
-            out.append(
-                {
-                    "year": year,
-                    "tier": block.get("tier") or "validation",
-                    "determination": v.get("determination"),
-                    "reasons": v.get("reasons") or [],
-                    "degraded": degraded,
-                    "run_id": reg["id"],
-                    "note": per_year.get(str(year)) or per_year.get(year) or "",
-                    "caveat": block.get("tierCaveat") or "",
-                }
-            )
-    out.sort(key=lambda r: r["year"])
+        out.append(reg)
     return out
+
+
+def build_years(iso: str, keeper_run_id: str, configs: list[dict]) -> list[dict]:
+    """Score EVERY year of this keeper — training and held-out — one row each.
+
+    One uniform table replaces the former three bespoke blocks (config
+    partition, holdout touchpoint, holdout ladder): a year is a year, scored
+    individually with the same scorer the gate uses, whichever tier it sits in.
+    Per-year scoring is the load-bearing detail on both sides — a multi-year
+    bundle carries ONE run-level determination that can hide a year which passed
+    on its own (NEISO 2020+2021 reads NOT-YET as a bundle; 2021 alone is
+    CALIBRATED), and a partitioned keeper's designated config differs per year.
+
+    Held-out rows NEVER gate: the ISO determination is the train-tier
+    (2023-2025) verdict — rule 22 as amended 2026-09-05, an ISO stays CALIBRATED
+    even when a held-out year degrades, because a validation-tier score is
+    iterable model-SELECTION evidence and not a certification.
+
+    Args:
+        iso: ISO id, used to scope the registry scan for folded companions.
+        keeper_run_id: The ISO's current designated keeper run id.
+        configs: Designated partition configs (``role``/``run_id``/``years``),
+            empty for a single-config keeper.
+
+    Returns:
+        One row per (year, source run), oldest year first: tier, determination,
+        the run it was scored from and that run's short ``src`` tag.
+    """
+    rows: list[dict] = []
+
+    def add(run_id: str, year: int, tier: str, role: str | None) -> None:
+        try:
+            v = cv.determine(run_id, years=[year])
+        except Exception as exc:  # a companion must never abort the lane
+            print(f"  {iso}: {year} unscorable from {run_id} ({exc})", file=sys.stderr)
+            return
+        rows.append(
+            {
+                "year": year,
+                "tier": tier,
+                "role": role,
+                "determination": v.get("determination"),
+                "reasons": v.get("reasons") or [],
+                "run_id": run_id,
+                "src": _src_tag(run_id),
+            }
+        )
+
+    if configs:
+        for cfg in configs:
+            for year in sorted(int(y) for y in cfg.get("years", [])):
+                add(cfg["run_id"], year, "training", cfg.get("role"))
+    else:
+        sidecar = json.loads((cv.REGISTRY_DIR / f"{keeper_run_id}.json").read_text())
+        for year in sorted(int(y) for y in (sidecar.get("years") or [])):
+            add(keeper_run_id, year, "training", None)
+
+    for reg in _holdout_companions(iso, keeper_run_id):
+        tier = (reg.get("holdout") or {}).get("tier") or "validation"
+        for year in sorted(int(y) for y in (reg.get("years") or [])):
+            add(reg["id"], year, tier, None)
+
+    rows.sort(key=lambda r: (r["year"], r["src"]))
+    return rows
+
+
+def merge_holdout_records(iso: str, keeper_run_id: str, verdict: dict) -> None:
+    """Fold every held-out year's criterion records into the keeper's own tables.
+
+    Rule 30 [R-TOUCHPOINT-FOLD]: a touchpoint IS the keeper on another year, so
+    its numbers belong in the SAME per-criterion table as the training years,
+    in the same columns, rather than in a parallel block with its own layout.
+
+    Records only — the criterion-level ``status`` badges and ``grade_summary``
+    are the train-tier verdict and are left untouched, so folding a held-out
+    year in can never move the ISO's determination (rule 22).
+    """
+    for reg in _holdout_companions(iso, keeper_run_id):
+        try:
+            v = cv.determine(reg["id"])
+        except Exception as exc:
+            print(f"  {iso}: holdout {reg['id']} unscorable ({exc})", file=sys.stderr)
+            continue
+        src = _src_tag(reg["id"])
+        for block in ("criteria", "reported"):
+            for key, crit in (v.get(block) or {}).items():
+                dest = (verdict.get(block) or {}).get(key)
+                if dest is None:
+                    continue
+                for rec in crit.get("records") or []:
+                    dest.setdefault("records", []).append({**rec, "src": src})
+    keeper_src = _src_tag(keeper_run_id)
+    for block in ("criteria", "reported"):
+        for crit in (verdict.get(block) or {}).values():
+            for rec in crit.get("records") or []:
+                rec.setdefault("src", keeper_src)
+            crit["records"] = sorted(
+                crit.get("records") or [],
+                key=lambda r: (r.get("year") or 0, r.get("src") or ""),
+            )
 
 
 def build_part(iso: str) -> dict | None:
@@ -565,24 +625,6 @@ def build_part(iso: str) -> dict | None:
     # purely declarative — never gating, never touching the verdict.
     if rec.get("frontier"):
         verdict["frontier"] = rec["frontier"]
-    # Validation touchpoint (rule 22): the ISO's frozen keeper recipe scored on
-    # a HELD-OUT year. Carried onto the status page beside the in-sample
-    # determination so the two are read together — an in-sample CALIBRATED
-    # means something different once the held-out score is visible next to it.
-    # Declarative, never gating: the determination above is the train-tier
-    # (2023-2025) verdict and a holdout result never silently rewrites it.
-    if rec.get("holdout_touchpoint"):
-        verdict["holdout_touchpoint"] = rec["holdout_touchpoint"]
-    # Rule-22 TOUCHPOINT LADDER — AUTO-DERIVED, never hand-authored. Every
-    # registered run whose sidecar names this keeper in ``holdout.keeper`` is
-    # this keeper's own frozen recipe replayed on a held-out year, so its result
-    # belongs on the ISO's status card rather than behind a separate run click.
-    # Derived rather than transcribed into the shard because a hand-written
-    # block goes stale the moment a rung is re-spent, and the whole point of the
-    # ladder is that it tracks what has actually been scored.
-    ladder = build_holdout_ladder(iso, run_id)
-    if ladder:
-        verdict["holdout_ladder"] = ladder
     # Owner-signed STANDING NOTE (the shard's "standing_note" block): a durable
     # statement about what the ISO's remaining misses ARE — e.g. several scored
     # criteria that are one adjudicated object rather than independent defects.
@@ -676,6 +718,15 @@ def build_part(iso: str) -> dict | None:
             "source": statmode.get("source"),
             "stale": d7.get("measured_against") != run_id,
         }
+    # ONE uniform per-year table — training years (per designated config) and
+    # rule-22 held-out years in the same rows, scored the same way, and every
+    # held-out year's criterion records folded into the SAME per-criterion
+    # tables (rule 30 [R-TOUCHPOINT-FOLD]). Held-out rows report; they never
+    # gate — the ISO determination above is the train-tier verdict (rule 22).
+    verdict["years"] = build_years(
+        iso, run_id, (verdict.get("config_partition") or {}).get("configs") or []
+    )
+    merge_holdout_records(iso, run_id, verdict)
     return {
         "generated": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "keeper": verdict,
