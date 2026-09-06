@@ -698,3 +698,35 @@ gate table itself (G5' against D64 §2.4's PJM ceiling 0.41 / 2.48 / 2.48 GW).
 ### E.4 `results/cache.py` (+50)
 
 Epoch notes only — prose, no code hunk. **INERT.**
+
+---
+
+## ADDENDUM F (2026-09-06) — third rebase re-audit; the clean tree is rebuilt; the batch starts
+
+Addendum E merged; `main` moved `c3988c73 → 5375be8b`. Still no leg solved.
+
+**`constants.py` FIRST: ONE line, and it is an import/export name
+(`RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO,`), not a value.** INERT.
+
+**Two new `ScenarioConfig` fields**, `capacity_screen_peak_measured_hindcast` and
+`pjm_vre_accreditation_vintage`, both `bool = False`; **no `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`
+entry**; `iso_configs.py` absent from this delta. Per Addendum E that absence is no longer taken as
+an argument — **both are MEASURED `False` at all six resolved forecast configs.** The
+existing-function hunks in `retirements.py` (+116), `runner.py` (+106), `adequacy.py` and
+`new_entry.py` are the gated limbs behind them. **INERT.**
+
+**Keys re-verified at `5375be8b`: 14/14 bare and 7/7 solve**, PJM on Addendum E's re-declaration,
+every other leg still reproducing its committed pre-D65-B key with the two acts undone.
+
+**Live-hunk ledger, final before the batch:** PJM alone (D81 + D67-ARM); the other six legs clean,
+form 4 valid.
+
+### F.1 The clean tree — a fresh-checkout precondition, not a finding
+
+`data/clean` is derived and gitignored, so this checkout had none and the first ERCOT attempt
+**refused to start** rather than silently degrade (`confirmed_exits_enabled` is on in forecast mode
+and the ERCOT partition was absent — the W1-B B3 guard). Rebuilt with
+`scripts/regenerate_clean.py`: **56 datatypes OK, 0 failures**, 3 benign skips whose raw sources are
+empty (`NYISO` confirmed-retirements, `NEISO-AS/requirements`, CAISO storage-AS awards), 1.5 GB.
+No model input was substituted or degraded; the guard did its job and the batch starts from a
+complete tree.
