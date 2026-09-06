@@ -287,6 +287,17 @@ already tells the lane to verify pins; nothing else changes. (iv) The forecast b
 demand axis at every row (D72-prehunk §6.1) until D65-B's batch lands — every determination quoted
 from it this window is quoted with that caveat.
 
+**§0ar AMENDMENT 1 (same sitting) — BOTH CARDS RULED.** **Q52 = ARM for PJM** (recommended option): the
+published RTO Reliability Requirement becomes PJM's adequacy operand through `_pjm_config`
+`default_scenario_overrides`; **D67-ARM chartered (pack §D67-ARM, Opus) and dispatchable** — override +
+re-key (`pjm-t1h` → `-pre-d67` prior) + one ~13-min same-HEAD re-solve + PJM cell `K`; board registration
+held behind D65-B's batch (sole writer). **Q53 = READING 1** (recommended): a sector-1 unit MUST STILL
+OFFER at its cost-based price; only its exit decision is exempt — **D78's condition is MET; it is
+RELEASED, dispatch after D74's screen lands** (adjacent `retirements.py` region). Both rulings recorded
+in §3 as Q52/Q53. Main moved to `3f881432` during the sitting (ruff-format fixes for the two owner-lane
+files — the format red is CLEARED; wc-desk sweep #11; SCN r#10 am.1 ruling S8 = re-pin the campaign
+post-D77 — SCN's, noted). Dispatch order now: **D80 · D76 · D67-ARM · D75-R · D79 · D78 (after D74)**.
+
 ---
 
 ## 0aq. Refresh #46 (2026-09-06, main HEAD `fb0868eb`) — D60-R3 finishes leg 5 on a branch nobody has merged, and this desk's own zero-LP re-read finds that legs 4 and 5 STRADDLE THE SCN-LOAD GROWTH HUNK: the "D48 is not position-neutral forward" indictment I carried at r#45 as the highest-value open item is MAJORITY-MISATTRIBUTED (60–78 % of the requirement rise is the demand refresh); the second-hunk probe pre-dated the rebase that admitted it; a cache key cannot see `constants.py`
@@ -5428,6 +5439,7 @@ the gap.
 | **D75-R PJM VRE ELCC VINTAGE, RE-CHARTERED** | Four-vintage intake first; split = option (1) (Table-5 mix as a documented cross-vintage reconciliation, bracket as sensitivity); three DYs; per-year SIGN gates; screen on the largest-footprint DY (expected 2023/24) with a same-HEAD control | **CHARTERED + DISPATCHABLE r#47** | `claude/capx-d75r-pjm-vre-elcc-vintage` | Opus | pjm | Sign pre-declared DOWN every year |
 | **D78 SECTOR-GATE / CLEARING SEAM — OFFER DECOUPLED FROM EXIT (D58 §6 reading 1)** | Design-first: the clearing stack from the full fleet's margins, the gate removes exit candidacy only; pre-declared identities (n_offers 1,370, price 67.76, pool −3,476.5 MW exactly); three-leg screen on D58's span | **CHARTERED r#47, CONDITIONAL on Q53 = READING 1; dispatch after D74's screen lands (adjacent `retirements.py` region)** | `claude/capx-d78-sector-gate-offer-seam` | Fable | pjm | Clearing-specific: reaches every ISO that arms D57 |
 | **D79 SOLVE-SURFACE FINGERPRINT IN THE CACHE KEY — DESIGN PHASE 0** | The key cannot see `constants.py` or the source tree (three incidents: D55, SCN-LOAD, D77); inventory the solve-affecting tables, compare fingerprint / tree-hash / mechanical epoch / hybrid, blast radius, recommend one as a director card | **CHARTERED r#47, PHASE 0 DISPATCHABLE (zero LP, design only)** | `claude/capx-d79-solve-surface-fingerprint` | Fable | code | Natural landing moment = D65-B's one re-key event |
+| **D67-ARM PJM PUBLISHED REQUIREMENT — ARMING (Q52)** | `_pjm_config` override `capacity_adequacy_requirement_published_by_iso: {"PJM": True}`; bare `pjm-t1h` re-keys with `-pre-d67` prior; hunk-by-hunk G-DRIFT from `b1155995`; one same-HEAD re-solve (~13 min) registered after D65-B; PJM cell `K`; CLAUDE.md bullet | **ISSUED r#47 am.1 — DISPATCHABLE** | `claude/capx-d67-arm-pjm-requirement` | Opus | pjm | Every other ISO and every backcast byte-identical, asserted by test |
 | **D37 NEISO T1-H AT ARMED POSTURE** | The armed re-measure + paired control (Q28) | **LANDED** PR #4619 — **post-wave years SCORE; armed positions +0.37/−3.26/+0.14 pts of the real FCAs** (control +21.13/−1.44/−5.34); FC-3 blind to the lever; retirements flip to −27 % under; storage 0.000 GW refutes its own headline by its own falsifier; **P9 flip condition FAILS → default stays OFF, self-executing** | `claude/capx-d37-neiso-t1h-armed-o98iy1` | **Opus** | §0ab.1. The position defect is closed at NEISO; the margin-side error is now the exposed object. |
 | **T16-A T1.6 RE-POINT EXECUTION** | Owner ruling Q27: re-point T1.6 to `entry_rate_limits`, 2 rungs, artifact-only FC-6 re-score | **LANDED** PRs #4555/#4558 — **outcome B, the honesty clause FIRED**: REC dual at the $50 ACP ceiling in all 50 arm-years (VRE 4.1→37.1 GW), series constant, battery row **CAVEAT-measured**; the lever IS live (8/18 metrics move); no third lever tried; one leaf moves, no preserved key needed | `claude/capx-t16a-ladder-repoint-kk4vqy` | **Opus** | §0y.1. The RPS/ACP finding feeds D39. Q27 executed. |
 | **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: replace semantics + the below-base forecast warning pointing at `carbon_price_delta` | **LANDED** PRs #4534/#4537 — guard in with A/B regression evidence recorded; R4 closed | `claude/capx-d34-carbonprice-guard-lfpeld` | **Opus** | §0x.1. Q26 executed. |
@@ -5588,7 +5600,21 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47 (2026-09-06) added below; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+
+### Q52 (refresh #47) — Arm D67 for PJM: the published RTO Reliability Requirement as the adequacy operand
+**Card C-20.** Evidence: D67 full span — operand exact to 0.000 MW in four DYs, zero free parameters,
+vintage + hold-last fixed pre-solve, screen G1–G5 PASS, 4/4 pre-declared signs, two DYs toward and two
+away from the published position, G6 untestable. Options: ARM (recommended) / HOLD until D74 / DO NOT
+ARM. **RULED 2026-09-06: ARM for PJM.** Executed by §D67-ARM (r#47 am.1).
+
+### Q53 (refresh #47) — the sector-gate / clearing seam: must a sector-1 unit still offer?
+**Card C-21.** D58 §6: with the gate armed, `exempt_unit_ids` empties the D57 sell-offer stack — 34,172 MW
+becomes $0 price-taker supply, the 2022 clearing price falls 9.67 %, 41 merchant rows fail. Reading 1
+(must-offer: the unit offers at its cost-based net-ACR price; only its exit is exempt; recommended) /
+reading 2 ($0 price-taker correct as built) / defer. **RULED 2026-09-06: READING 1.** D78 released
+(design-first decoupling of the offer stack from the screen candidate set; after D74's screen).
+
 
 **r#42 AMENDMENT 2 (owner LIVE): SIX RULINGS — D60-R2 DEAD (→ D60-R3) · Q47 ARM COUPLED after D60-R3 · Q48 DEFER until D62 · Q49 DECLINE · Q50 HOLD until caiso-253 · Q51 HOLD one refresh. OWNER-TIER OPEN: NONE. Next cards: Q50 re-serve on caiso-253's landing; Q51 re-serve at r#43; D58 arming; D62 arming.**
 
@@ -5866,6 +5892,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-06 | **D78 SECTOR-GATE / CLEARING SEAM** | `claude/capx-d78-sector-gate-offer-seam` | **Fable** | pjm | r#47 — CONDITIONAL on Q53 = reading 1; design-first decoupling of the offer stack from the exit candidate set; after D74's screen lands |
 | 2026-09-06 | **D79 SOLVE-SURFACE FINGERPRINT — PHASE 0** | `claude/capx-d79-solve-surface-fingerprint` | **Fable** | code | r#47 — design memo only: inventory, four mechanisms compared, blast radius, one recommendation as a director card |
 | 2026-09-06 | **D76 (re-emitted)** | `claude/capx-d76-t1h-screen-peak` | **Opus** | code | r#47 — never dispatched at r#46; §D76 verbatim |
+| 2026-09-06 | **D67-ARM PJM REQUIREMENT ARMING** | `claude/capx-d67-arm-pjm-requirement` | **Opus** | pjm | r#47 am.1 — owner ruling Q52; override + re-key + one re-solve + cell K; board write after D65-B |
 
 ## 5. History (compacted)
 

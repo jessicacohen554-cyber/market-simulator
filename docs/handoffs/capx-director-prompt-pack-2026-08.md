@@ -7250,7 +7250,7 @@ EXIT: PRECOMMIT before the first solve (carrying the per-year signs verbatim fro
 §8 recommendation. Rules 1, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
 ```
 
-## D78 — the sector-gate / capacity-clearing seam: a sector-1 unit must still OFFER (D58 §6 reading 1), so the offer stack is decoupled from the screen candidate set (r#47; CONDITIONAL on owner card C-21 / Q53 = READING 1) — **CHARTERED r#47, DISPATCH ONLY IF Q53 RULES READING 1**
+## D78 — the sector-gate / capacity-clearing seam: a sector-1 unit must still OFFER (D58 §6 reading 1), so the offer stack is decoupled from the screen candidate set (r#47; CONDITIONAL on owner card C-21 / Q53 = READING 1) — **CHARTERED r#47, DISPATCH ONLY IF Q53 RULES READING 1** — **Q53 RULED READING 1 (2026-09-06, r#47 am.1): CONDITION MET, RELEASED — dispatch AFTER D74's screen lands (adjacent `retirements.py` region); the PRECONDITION line inside the prompt is satisfied.**
 
 ```
 You are the D78 session of the capacity-expansion track. Binding charter: pack §D78 (this section) +
@@ -7337,4 +7337,56 @@ set), 26, 27 (`cache.py` and `scenarios.py` are ≥300 lines — nothing is rewr
 
 ## D76 — RE-EMITTED r#47 UNCHANGED (never dispatched at r#46: zero commits, no branch). Paste §D76 above verbatim. Its phase 0 is the precondition for the D72-prehunk residue t1h keys and for D67's FALL-year root cause; dispatch it.
 
-## D67 — ARMING LEG (r#47; CONDITIONAL on owner card C-20 / Q52 = ARM) — **RESERVED; charter written when Q52 rules.** Scope if ARM: `iso_configs._pjm_config` `default_scenario_overrides` gains `capacity_adequacy_requirement_published_by_iso: {"PJM": True}` (the D57/Q44 pattern), the bare `pjm-t1h` re-keys with its prior preserved at `-pre-d67`, one re-solve (~13 min, same-HEAD; the arm's numbers are in D67 §7.1), board row re-scored after D65-B's batch, PJM shard cell `K`, matrix stamped; every other ISO and every backcast byte-identical, asserted by the persisted-identity tests. Opus.
+## D67 — ARMING LEG (r#47; owner card C-20 / Q52 RULED **ARM for PJM** 2026-09-06) — **SUPERSEDED by §D67-ARM below (the issued charter).** Original reservation: Scope if ARM: `iso_configs._pjm_config` `default_scenario_overrides` gains `capacity_adequacy_requirement_published_by_iso: {"PJM": True}` (the D57/Q44 pattern), the bare `pjm-t1h` re-keys with its prior preserved at `-pre-d67`, one re-solve (~13 min, same-HEAD; the arm's numbers are in D67 §7.1), board row re-scored after D65-B's batch, PJM shard cell `K`, matrix stamped; every other ISO and every backcast byte-identical, asserted by the persisted-identity tests. Opus.
+
+## D67-ARM — arm the published PJM RTO Reliability Requirement as the adequacy operand (r#47 amendment 1; owner ruling Q52 = ARM for PJM) — **ISSUED r#47 am.1, DISPATCHABLE**
+
+```
+You are the D67-ARM session of the capacity-expansion track — executing owner ruling Q52 (capx ledger
+§3, r#47 amendment 1: "ARM for PJM"). Binding charter: pack §D67-ARM (this section) +
+`FINDING-capx-d67-2026-09-06.md` (§3 the build; §3.1/§3.2 the vintage + hold-last rules; §7.1 the full-
+span arm you are re-solving as the bare posture; §8.1 what the owner was asked) + the D57/Q44 arming
+precedent (`FINDING-capx-d57-2026-09-05.md` §8.1; `iso_configs.py::_pjm_config` `default_scenario_
+overrides`). DATA PROFILE: pjm. MODEL: Opus (pre-declared execution of a ruled arming; the arm's
+numbers already exist). BRANCH (suggested; graded by content): claude/capx-d67-arm-pjm-requirement —
+FRESH off origin/main. NOT the D67 lane's branch (`claude/capx-d67-pjm-requirement-operand-18wzjf` is
+another desk's, closed).
+
+THE ACT, pre-declared before any solve in a PRECOMMIT-capx-d67arm-<date>.md:
+ 1. `iso_configs.py::_pjm_config` `default_scenario_overrides` gains
+    `capacity_adequacy_requirement_published_by_iso: {"PJM": True}` — the D57/Q44 pattern. The shared
+    dataclass default stays `None`; every other ISO's bare key and EVERY backcast key are byte-
+    identical (assert with `tests/regression/test_persisted_identity.py`; `check_cache_key_
+    registration.py --base origin/main` green). The explicit `--no-capacity-adequacy-requirement-
+    published` CLI path reaches the pre-arm posture and keeps its key (the (b′-1) inverse test, in the
+    shape `test_d60_arming_batch.py` uses).
+ 2. THE RE-KEY, declared before the solve: the bare `pjm-t1h` moves from `aef81c84c4609c76` to the
+    D67 arm's key `3f4070767f29472a` (verify by resolving through the harness path at HEAD — if HEAD
+    has moved it, say so and pre-declare the realized value); the prior is preserved at
+    `pjm-t1h-pre-d67`; the cache-epoch ledger in `src/market_sim/results/cache.py` gets its entry.
+ 3. G-DRIFT hunk by hunk from D67's full-span commit (`b1155995`) to HEAD, `constants.py` first;
+    classify D77 (`campd_bins.py` composition — inert below 2028, so inert on a 2021–2025 hindcast:
+    ASSERT, don't assume), #5033 (P1 basis seed, backcast callers only), D65-B (Act A/B — forecast-
+    only CCS seams, inert below 2028), D74's default-off gate. A matched cache key is NOT a G-DRIFT
+    verdict. If every hunk is INERT, the D67 §7.1 arm bundle's numbers ARE the bare posture's and the
+    re-solve is a reproduction (pre-declare byte-identity of the four DYs' requirement rows and the
+    census/position table); if any is LIVE, say which and pre-declare the direction.
+ 4. ONE re-solve: the bare `pjm-t1h` recipe at HEAD (2021–2025, ~13 min, PJM solo, sequential), scored
+    and registered in place with its prior; FC rows at full magnitude against `pjm-t1h-pre-d67` and
+    against D67 §7.1. HEAD GUARD: H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ]
+    || exit 90. Rebase BETWEEN legs, never during; re-audit the rebase delta before registering.
+ 5. Matrix: PJM's `capacity_adequacy_requirement_published_by_iso` cell → `K` with this finding cited,
+    keeper/gates stamp refreshed, PJM shard ONLY (rule 28d). CLAUDE.md's Capacity Evolution bullet
+    list gains one line under "PJM capacity-market clearing" naming the armed operand and Q52 (the
+    D57 bullet is the template; `/sync-docs` discipline, docs follow code).
+ 6. FINDING-capx-d67arm-<date>.md: the PRECOMMIT graded, the re-key table, the board row, the
+    governance attestation with rule-27 blob checks (`iso_configs.py`, `cache.py`, the shard).
+COLLISIONS: D65-B is the SOLE writer of `ff-verdicts.json` / `program-status.json` until its batch
+lands — do steps 1–5 now, hold the board registration (step 4's last act) until D65-B merges, and
+rebase between (never during). D74 (bar seam) and D75-R (ELCC registry) share PJM surfaces on
+different regions; `_pjm_config` is yours this window — say so in the PRECOMMIT. Rules 13, 19, 21
+(zero free parameters — the ruling is the identification), 22 (2021–2025 hindcast, forecast mode,
+nothing out-of-training), 24, 25 (a PJM posture; no other ISO's cell), 27, 28, 29(b).
+EXIT: PRECOMMIT first; the override + tests + epoch entry + shard in one PR; the re-solve registered
+after D65-B; the finding closed. Nothing else arms.
+```
