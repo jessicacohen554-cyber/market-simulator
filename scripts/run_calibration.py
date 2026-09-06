@@ -773,6 +773,7 @@ def run_year(
     st_gas_intermediate_cf_threshold: float | None = None,
     ct_netload_drag: bool | None = None,
     pjm_interface_feed_admissibility_gate: bool | None = None,
+    gas_offer_margin_anchor_vintage: bool = False,
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -2363,6 +2364,46 @@ def run_year(
     # Measured ISO-month delivered gas (EIA-923) instead of annual + shape.
     if gas_monthly_actuals:
         config = config.with_overrides(gas_monthly_actuals=True)
+    # pjm-169 F4: re-resolve the gas-offer net-revenue margin's identification
+    # point onto the SOLVE YEAR. Deliberately placed HERE, not at the
+    # `--gas-offer-margin` lookup ~1,200 lines above: `_gas_series` is only the
+    # series the offer path prices against once `gas_hub_basis_overlay` and
+    # `gas_monthly_actuals` have been applied, and both are set LATER than that
+    # lookup. Resolving at the lookup would measure a series no unit ever pays
+    # (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §2; gate S1 is exactly
+    # this identity). The resolved value overwrites `gas_offer_margin_anchor`,
+    # so run_config.json records the number the LP solved with rather than a
+    # lookup indirection (rule 24 [R-REGISTRY]) and the cache key moves with it.
+    # A zone-resolved anchor takes precedence and is never stacked on
+    # (rule 19 [R-ONE-MECH]).
+    if gas_offer_margin_anchor_vintage:
+        if not getattr(config, "gas_offer_net_revenue_margin", False):
+            raise SystemExit(
+                "--gas-offer-margin-anchor-vintage requires --gas-offer-margin: "
+                "the vintage flag moves the identification point of the "
+                "net-revenue margin mechanism, so arming it alone is a no-op "
+                "the run record would misreport (rule 24)"
+            )
+        if getattr(config, "gas_offer_margin_zonal_anchor", False):
+            raise SystemExit(
+                "--gas-offer-margin-anchor-vintage and "
+                "--gas-offer-margin-zonal-anchor both re-resolve the SAME "
+                "identification point; they are alternatives, never stacked "
+                "(rule 19 [R-ONE-MECH])"
+            )
+        from market_sim.data.fuel.trajectories import _gas_series as _f4_gas_series
+
+        _f4_anchor = float(
+            np.asarray(_f4_gas_series(config, year, hours), dtype=float).mean()
+        )
+        logger.info(
+            "gas offer margin anchor VINTAGE %d: %.4f $/MMBtu (window anchor "
+            "%s) — the solve year's own mean delivered-gas series",
+            year,
+            _f4_anchor,
+            config.gas_offer_margin_anchor,
+        )
+        config = config.with_overrides(gas_offer_margin_anchor=_f4_anchor)
     # PJM per-zone gas basis (opens the west-cheap / east-dear spread so PJM
     # stops clearing as a single copper-plate). No-op for non-PJM ISOs — the
     # apply gates on iso == "PJM" — so setting it here is safe regardless.

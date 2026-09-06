@@ -3825,6 +3825,7 @@ def solve_and_persist(
     gas_st_drag_overrides: dict | None = None,
     ct_netload_drag: bool | None = None,
     pjm_interface_feed_admissibility_gate: bool | None = None,
+    gas_offer_margin_anchor_vintage: bool = False,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -4931,6 +4932,22 @@ def solve_and_persist(
                 gas_offer_net_revenue_margin=True,
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if gas_offer_margin_anchor_vintage:
+            # pjm-169 F4 — MIRROR of run_year's resolution, and it must stay a
+            # mirror: the recorded config has to report the anchor the LP
+            # actually solved with, not the frozen window value it started
+            # from (rule 24 [R-REGISTRY]; the FFR-2E defect class). Computed
+            # from the SAME `_gas_series` on the SAME recorded config, which by
+            # this point carries the hub-overlay and monthly-actuals postures.
+            from market_sim.data.fuel.trajectories import _gas_series as _f4_gs
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_margin_anchor=float(
+                    np.asarray(
+                        _f4_gs(recorded_cfg, cfg_year, int(hours)), dtype=float
+                    ).mean()
+                )
+            )
         if gas_offer_margin_zonal_anchor:
             # Zone-resolved identification point for the SAME mechanism
             # (nyiso-109): record the gate AND the resolved per-zone anchors
@@ -5636,6 +5653,7 @@ def solve_and_persist(
             gas_st_drag_overrides=gas_st_drag_overrides,
             ct_netload_drag=ct_netload_drag,
             pjm_interface_feed_admissibility_gate=pjm_interface_feed_admissibility_gate,
+            gas_offer_margin_anchor_vintage=gas_offer_margin_anchor_vintage,
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
@@ -6488,6 +6506,7 @@ def solve_and_persist(
         # the original run did (pjm-94, 2026-07-09).
         "ct_netload_drag": ct_netload_drag,
         "pjm_interface_feed_admissibility_gate": pjm_interface_feed_admissibility_gate,
+        "gas_offer_margin_anchor_vintage": gas_offer_margin_anchor_vintage,
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
         "gas_st_drag_overrides": gas_st_drag_overrides or {},
@@ -11841,6 +11860,22 @@ def main() -> None:
         "config value (off).",
     )
     parser.add_argument(
+        "--gas-offer-margin-anchor-vintage",
+        action="store_true",
+        help="Resolve the gas-offer net-revenue margin's identification anchor "
+        "(ScenarioConfig.gas_offer_margin_anchor) on the SOLVE YEAR's own mean "
+        "delivered-gas series instead of the frozen 2023-2025 training-window "
+        "mean — the same measurement, evaluated on the year being solved "
+        "(pjm-169 F4). The mechanism's own identity is that at fuel == anchor "
+        "the reformed offer reduces EXACTLY to the registered band multiplier; "
+        "markup_hr x (anchor - fuel) is a linear unsaturated extrapolation, so "
+        "outside the identification window that identity fails proportionally "
+        "— and when fuel > anchor it marks gas offers DOWN. Zero free "
+        "parameters; requires --gas-offer-margin; refuses to stack with "
+        "--gas-offer-margin-zonal-anchor (rule 19). Default off, "
+        "byte-identical off.",
+    )
+    parser.add_argument(
         "--pjm-interface-feed-admissibility-gate",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13263,6 +13298,7 @@ def main() -> None:
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
+        gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_scr_edrp=args.nyiso_scr_edrp,
         nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,
