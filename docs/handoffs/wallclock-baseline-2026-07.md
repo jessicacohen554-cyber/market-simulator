@@ -1134,3 +1134,44 @@ default, no keeper shard / marker / matrix shard / registry / workflow edit; not
 and nothing dashboard-registered. The one observable non-value change is a log line: on a memo
 hit the per-plant derivation WARNING is not re-emitted, so the resolver logs the accepted set
 (plant and reconciled rate) itself, at the same severity, on both paths.
+
+## WALLCLOCK B — the cold-rebuilt P1 seeded from the same year's P0 basis (2026-09-06) — WARM-START CLASS
+
+Wallclock desk item **B** (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3; desk
+log `docs/handoffs/wallclock-desk-log-2026-09.md` row B; owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
+instruction to the implementation session). Session `p1-basis-seed-impl`, branch
+`claude/p1-basis-seed-impl-oby2ka`. **NOT byte-identical — WARM-START CLASS**: the seed changes
+the simplex starting point of the cold-rebuilt P1 on the three bridge ISOs and nothing else;
+the LP, its objective, bounds and rows are untouched. Two gates therefore, with different jobs:
+the byte gate proves the switch is **dead when OFF** (merge-base control vs branch under the
+determinism pin, `atol=rtol=0`); the `diff_warmstart_bundles.py` gate proves the seed is
+**neutral when ON** (objective and total generation identical, per-unit differences
+marginal-tie only, price differences dual-degenerate hours only — the memo's §4 standard, the
+one P-2 and H2 were promoted on). Conditions as §PERF-B: 4 vCPU / 15 GB container, `uv.lock`
+env (HiGHS 1.14.0), `MARKET_SIM_HIGHS_THREADS=1`, `MARKET_SIM_WARMSTART=1`; the byte arms under
+`MARKET_SIM_WARMSTART_XYEAR=0`, the seed arms under `XYEAR=1` (the seed lives inside that gate)
+with the persisted year-1 basis cache pointed at a fresh scratch dir per arm so P0 is cold on
+both arms and its iteration count / objective is the built-in control. **One ERCOT arm at a
+time** (rule 12; 6 GiB swapfile armed); NYISO and CAISO arms ran concurrently with each other,
+never with an ERCOT arm.
+
+### 1. The change
+
+| Change | Where landed | What it does |
+|---|---|---|
+| (i) `pipeline/solve.py::run_energy_solve`, cold-P1 branch: the P0 basis export (already taken there for the cross-year holder) now runs whenever the seed is armed, BEFORE `model = None` / `malloc_trim()` (A-6 kept); the second `DispatchModel` is built exactly as `solve_dispatch` builds it, `apply_cross_year_basis(basis)` installed (identity column map, `alien=True`), then solved at the bid cost. New `export_p1_basis` kwarg + `EnergySolveResult.p1_basis` / `p1_seeded`; a reused-P0 pass (C-1b) seeds from `reuse_p0_from.p1_basis`, else from the P0 basis in the holder | branch commit `aa82b064` | the seed |
+| (ii) same branch: the export is guarded on `model is not None` | same | **fixes a latent crash on main**: a reused-P0 pass has no model, and under the calibration default `XYEAR=1` every ERCOT adaptive pass 2 raised `AttributeError` at that export (reproduced at the merge base on the trivial LP; the s3 measurements ran under the `XYEAR=0` pin and never saw it) |
+| (iii) `scripts/run_calibration.py`: `--no-p1-basis-seed` + `resolve_p1_basis_seed_default` (the `resolve_xyear_warmstart_default` sibling, same precedence), wired in `main`; pass 1 passes `export_p1_basis` when an ercot-221 pass 2 may follow, pass 2 when an ercot-230 iteration may follow, every iteration `True` | same | the calibration-CLI default ON |
+| (iv) `scripts/run_calibration_full.py`: same flag and resolver on its fresh-solve path | same | |
+| (v) `model/lp/model.py`: the HiGHS solve log line carries `simplex iterations N` (a `HighsInfo` read after `h.run()`) | same | the iteration counts below |
+| (vi) `tests/unit/pipeline/test_xyear_warmstart_default.py` +13 tests | same | §3 gate (3) |
+
+Gate logic (`_p1_seed = _xwarm and xyear_warmstart is None and env != "0"`): `--no-xyear-warmstart`
+/ the goldens pin turn the seed off with the cross-year gate; the forecast (an explicit
+`xyear_warmstart` bool) never reads the env var; the direct `solve_and_persist` callers stay at
+the global default OFF.
+
+### 2. Gates
+
+<!-- WC_B_GATES -->

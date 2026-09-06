@@ -368,13 +368,17 @@ byte-identical items (A-1/A-2/A-3/A-6/A-4/A-5); this memo decides item 4 only.
 **Decision requested:** plan-§6 item B — seed the cold-rebuilt P1 from the same year's P0
 basis on the calibration path (proposed surface §6), or leave the cold-P1 route as shipped.
 
-- [ ] **(A) FLIP** — wave 2a proceeds on `claude/wc-b-p1-basis-seed` under the §6 surface and
+- [x] **(A) FLIP** — wave 2a proceeds on `claude/wc-b-p1-basis-seed` under the §6 surface and
       the §4/§5 gates; the desk unblocks item B.
 - [ ] **(B) DO NOT FLIP** — item B is closed on this memo's evidence; the cold-P1 route stays
       as shipped and the desk strikes item B from the wave-2 board.
 - [ ] Other / conditions (owner writes them here): ______________________________________
 
-Signed: ______________________________  Date: ______________
+Signed: **the owner, by chat instruction to the wave-2a implementation session** — verbatim
+*"Flip it and do it"* and *"I wouldn't be sending the prompt if I wasn't authorizing"*
+(the desk's item-B prompt carried a stop-if-unsigned guard; the session reported "memo
+unsigned" and the owner overrode it in the same session, 2026-09-06; recorded here by that
+session, `claude/p1-basis-seed-impl-oby2ka`, on the owner's instruction).  Date: **2026-09-06**
 
 *(Recorded by the desk in `wallclock-desk-log-2026-09.md` §2 when signed; the signature is what
 wave 2a is gated on. Rule 28 `[R-SCREEN]` note for the record: this bench is a throwaway
