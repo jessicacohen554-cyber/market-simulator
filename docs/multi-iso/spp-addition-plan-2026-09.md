@@ -1104,7 +1104,7 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-11 | `docs/handoffs/FINDING-spp-11-2026-09-06.md` | 2026-09-06 (PRs #5239, #5243, #5247) |
 | SPP-12 | `docs/handoffs/FINDING-spp-12-2026-09-06.md` | 2026-09-06 (PR #5285) |
 | SPP-13 | `docs/handoffs/FINDING-spp-13-2026-09-06.md` | 2026-09-06 |
-| SPP-14 | `docs/handoffs/FINDING-spp-14-2026-09-06.md` | **LANDED** — the portal route is anonymous HTTPS; rows 5/6/7/9 served, row 8's four-group table computed (SPP-57 > SPP-54, both legs, all years), gate PASS 0.0000 %; row-8 schema correction removes SPP-53's effective-limit input for 2023–2025 |
+| SPP-14 | `docs/handoffs/FINDING-spp-14-2026-09-06.md` | **LANDED** (incl. the r#4 am.1 addendum: items A/B/C were already landed by the parallel SPP-14 session, PR #5335, and are verified at HEAD rather than duplicated; the NODE_AREA↔EIA-930 sub-BA join table is FINDING §8.2 — all 17 tokens match 1:1, but reserve zone 21's `WACM`/`PRPA`/`WAUW` (232 SLs) have no sub-BA token at all) — the portal route is anonymous HTTPS; rows 5/6/7/9 served, row 8's four-group table computed (SPP-57 > SPP-54, both legs, all years), gate PASS 0.0000 %; row-8 schema correction removes SPP-53's effective-limit input for 2023–2025 |
 | SPP-15 | `docs/handoffs/FINDING-spp-15-2026-09-06.md` | 2026-09-06 |
 | SPP-21 | `docs/handoffs/FINDING-spp-21-2026-09-06.md` | 2026-09-06 |
 
