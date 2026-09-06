@@ -62,8 +62,10 @@ sys.argv = [sys.argv[0]]  # calibration_verdict parses argv at import
 
 from scripts.calibration_verdict import GAS_CLASSES, load_artifacts  # noqa: E402
 
-KEEPER = "2026-09-06-caiso-257-b1-ctonly"
-BUNDLE = REPO / "results/calibration/caiso257_ctonly"
+KEEPER = "2026-09-06-caiso-260-b1-demand"
+BUNDLE = (
+    REPO / "results/calibration/caiso260_demand_vintage"
+)  # re-pointed caiso-261 (caiso-257 pruned, rule 15)
 OUT = REPO / "results/calibration/_caiso258_hod2223_closure.json"
 YEARS = (2023, 2024, 2025)
 T = 8760
