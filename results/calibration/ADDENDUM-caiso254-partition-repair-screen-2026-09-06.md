@@ -1,0 +1,252 @@
+# ADDENDUM to PRECOMMIT-caiso253b — caiso-254: the G-DRIFT delta audit, and the rule-29 SCREEN the partition repair must earn before it reaches a solve
+
+**Session caiso-254, 2026-09-06.** Branch
+`claude/caiso-253b-backcast-calibration-3i1wj1` off `main` `fbef3a91`.
+Keeper **`2026-09-05-caiso-252-b1-notrim`** (`caiso252_b1_notrim`,
+`git_sha` `fa23c1f7`) UNCHANGED, DETERMINATION **CALIBRATED**. Rule 22
+`[R-HOLDOUT]`: 2023–2025 only; no `complete`/`final` marker; freeze ACTIVE.
+
+**Pushed BEFORE G-BIMODAL is scored** — before `--gate` is run and before any
+statistic of the bid population exists in this session. The parent
+`PRECOMMIT-caiso253b-offer-surface-contamination-2026-09-06.md` (merged, PR
+#4927) registered G-BIMODAL and is UNAMENDED: its antimode window
+[10.9, 12.5], its capacity bracket [1.5, 4.5] GW, its stop rule and its
+predictions P-1…P-7 stand exactly as written and **nothing here relaxes any of
+them**. This document adds only the two things that PRECOMMIT expressly
+declined to authorize — its §4 stop rule 6, "**No solve is earned by this
+document**" — namely the drift audit and the screen.
+
+---
+
+## §1 — G-DRIFT: `82f79693` → `fbef3a91`. Every hunk INERT for a CAISO backcast, three of them VERIFIED rather than asserted
+
+Rule 29 `[R-SCREEN]` clause (b): the incumbent keeper's COMMITTED bundle is the
+control (G-CTRL **form 4**), and the code-level drift audit — not a control
+solve — is what establishes that form 4 is valid. The chain is complete in two
+links: the keeper's own `meta.json` records `git_sha` **`fa23c1f7`**;
+caiso-253 audited **`fa23c1f7` → `82f79693`** and found every hunk INERT, its
+one open item (`_band_categorical`) closed by exhaustive branch verification
+(FINDING-caiso253 §5.10). This session audits only the delta
+**`82f79693` → `fbef3a91`**.
+
+Command (rule 29(b)'s own form):
+
+```
+git diff 82f79693 fbef3a91 -- src/market_sim scripts/run_calibration.py \
+  scripts/run_calibration_full.py scripts/lib data/raw/_validation-source \
+  data/raw/reference
+```
+
+14 files, +672 / −22.
+
+| file | Δ | verdict | reason |
+|---|--:|---|---|
+| `scripts/lib/forecast_parity_registry.py` | +83 | **INERT** | two `ParityDeclaration` rows in the FR-22 governance ledger. A registry read by the parity reporter; nothing on any solve path imports it. |
+| `scripts/lib/holdout_policy.py` | +73 | **INERT** | `registration_refusals()` — owner ruling R-AZ's registration-time marker gate. Governance at the registration seam, not the LP. This run is train-tier 2023–2025, so it is additionally never reached. |
+| `src/market_sim/config/scenarios.py` | +95 | **INERT** | one new field, `ccs_retrofit_fixed_cost_co2_scaling: bool = False`. Default-off, absent from the keeper recipe, and registered in the cache-key **drop map** at `"False"` (`scenarios.py:1941`), so the keeper's key is unmoved. Its only consumer is the forecast-only CCS retrofit step. |
+| `src/market_sim/data/egrid_sheets.py` | +151 (new) | **INERT — VERIFIED** | §1.1. |
+| `src/market_sim/data/fleet/eia860.py` | ±20 | **INERT — VERIFIED** | §1.1: `pd.read_excel` → `read_egrid_sheet` on the two boundary-HR-repair projections. |
+| `src/market_sim/data/zone_assignment.py` | ±13 | **INERT — VERIFIED** | §1.1: same swap on `_plnt23()`'s raw-parse fallback. |
+| `src/market_sim/model/capacity_evolution/ccs.py` | +94 | **INERT** | capacity-evolution **step 2**. A `mode="backcast"` run never enters capacity evolution at all; the branch is additionally behind the default-off gate above, which `__post_init__` refuses without `ccs_retrofit_capex_co2_scaling`. |
+| `src/market_sim/pipeline/solve.py` | +12 | **INERT** | one `malloc_trim()` call at the P0→P1 seam. Returns heap the allocator **already considers free** to the kernel; it cannot reach a live object, so the LP's rows, bounds and objective are unchanged. |
+| `src/market_sim/policy/constraints.py` | ±11 | **INERT** | module docstring only (G-S6 prose). |
+| `src/market_sim/results/cache.py` | +41 | **INERT** | module docstring only — the SCN-MX-R-r2 cache-epoch ledger entry. No code line changed. |
+| `src/market_sim/results/emissions.py` | ±14 | **LIVE — and confined to a stream no gate reads** | §1.2. |
+| `src/market_sim/results/export.py` | +31 | **INERT** | additive `co2_cap_price_usd_per_t` / `_by_cap` / `n_co2_caps_binding` reporting fields, `0.0` / `[]` / `0` with no mass cap — which is every CAISO backcast. |
+| `src/market_sim/results/outputs.py` | +16 | **INERT** | additive parquet metadata key `co2_cap_price`, read back with `.get` so an older cached year restores `None`, which is what it already meant. |
+| `src/market_sim/utils/heap.py` | +40 (new) | **INERT** | the `ctypes` `malloc_trim(0)` helper above. |
+
+### §1.1 — The eGRID mirror swap, VERIFIED not asserted
+
+`egrid_sheets.read_egrid_sheet` replaces `pd.read_excel` on three solve-path
+projections and claims to be "equivalent in every observable way … including
+the resulting column order and dtypes". That claim is load-bearing for a CAISO
+fleet build (`zone_assignment` sites every plant; `eia860`'s boundary-HR
+repairs set heat rates), so it was **measured, not taken**: each projection was
+read both ways and compared with `pd.testing.assert_frame_equal(check_exact=True)`
+after a mirror write and a mirror hit.
+
+| sheet | projection | shape | column order | dtypes | frame |
+|---|---|---|---|---|---|
+| `PLNT23` | `ORISPL, LAT, LON, PLHTIAN, PLNGENAN, PLHTRT` | (12612, 6) | identical | identical | **EXACT** |
+| `UNT23` | `ORISPL, HTIAN, UNTYRONL` | (26186, 3) | identical | identical | **EXACT** |
+| `PLNT23` | `ORISPL, LAT, LON, FIPSST, FIPSCNTY, BACODE` | (12612, 6) | identical | identical | **EXACT** |
+
+The parquet round-trip is the only drift channel the design leaves open, and on
+all three it is exact.
+
+### §1.2 — The one LIVE hunk, disclosed at full magnitude
+
+`results/emissions.py::import_co2_tons` now clamps negative energy out
+(`np.maximum(gen_mwh, 0.0)`) so an EXPORT sink — which shares the `"import"`
+fuel type and dispatches negative by construction — no longer credits the ISO
+for the neighbour's generation. **CAISO has export sinks**
+(`WECC_import_export_solar` −2,500 MW @ $8, `WECC_import_export_curtail`
+−4,000 MW @ $0, all three years), so this is genuinely LIVE for CAISO: the
+keeper's committed import-attributed CO2 was computed on the **pre-clamp**
+construction and a new run's will not be.
+
+Its scope, stated so it cannot be quietly widened later:
+
+* it is **post-solve accounting** — the sole caller is
+  `results/export.py:219`, after the LP has been solved and its duals read.
+  It cannot change dispatch, prices, or any parquet the LP writes.
+* the stream it touches is **`co2`, which is not in `CRITERIA`** — demoted to
+  REPORTED-ONLY at rubric v2.9, so it contributes no status, no caveat budget
+  and no reason line to any determination.
+
+**Consequence, and the discipline it imposes on this session:** G-CTRL form 4
+is valid for **every gated criterion** and for every number in §3's screen
+gate. It is **NOT** valid for `co2`, so this session will not difference a new
+run's import-CO2 against the keeper's committed number, and will not read a
+`co2` movement as an effect of the partition repair. Because no screen gate and
+no determination reads that stream, the LIVE hunk earns **no control solve**
+under rule 29(b) — a control would buy nothing the gate table asks for. Had the
+screen gated `co2`, it would have.
+
+**⇒ G-CTRL form 4 STANDS. The keeper's committed bundle is the control. No
+control solve is spent.**
+
+---
+
+## §2 — WHAT THIS SESSION MAY DO, AND IN WHAT ORDER
+
+Unchanged from the parent PRECOMMIT's stop rule, restated because §3 hangs off
+step 3:
+
+1. Re-fetch the corpus. **P-1** scores coverage (1,095 / 1,096; 2023-06-01 the
+   one genuine OASIS hole).
+2. `--pass1` then `--gate`. **P-2** scores whether the classifier reproduces
+   the frozen buckets (46 CC / 100 CT, ±3 resources and ±5 % capacity).
+   **P-2 failing stops the session before any re-derive.**
+3. **G-BIMODAL.** FAIL ⇒ nothing is re-derived, the bands stay, the disclosed
+   note stands as a known bound, and that is the session's result. Only a PASS
+   opens step 4.
+4. The class-partition repair + the re-frozen artifact.
+5. **Phase 0** (§3.1) → the screen year is NAMED → **the screen solve** (§3.2).
+6. The full `--year 2023 2024 2025` bundle, ONE invocation, ONE bundle
+   (rule 16 `[R-ALLYEARS]`), registered (rule 15 `[R-DASHBOARD]`).
+
+---
+
+## §3 — THE RULE-29 SCREEN, REGISTERED HERE BEFORE IT IS RUN
+
+Rule 29 `[R-SCREEN]`: a 3-year CAISO replay is ~36 min of LP per arm. The
+repair does not reach that until a one-year screen clears a **structural**,
+**STOP-ONLY** gate.
+
+### §3.1 — Phase 0, zero-LP, and it is what NAMES the screen year
+
+Rule 29 clause (0): an arm with a computable pre-solve gate does not reach a
+solve until that gate passes, and clause (1): the screen year is **the year the
+mechanism's own measured footprint is largest** — **never** the year with the
+biggest residual.
+
+The estimator, fixed here:
+
+> For each year *y* ∈ {2023, 2024, 2025}, build the CAISO gas offer arrays on
+> the keeper recipe twice — once with the frozen `caiso_offer_curve_measured.json`
+> and once with the repaired artifact — and report
+> **F(y) = Σ_tranches |Δmc| × pmax** (MW·$/MWh) over every gas tranche, together
+> with **X(y)**, the count of tranche pairs whose merit-order rank crosses.
+> `Δmc` is evaluated at each year's own gas and CARB carbon price, which is what
+> makes F differ across years.
+
+**The screen year is `argmax_y F(y)`**, with X reported beside it. F and X
+contain no price actual, no residual and no criterion — they are the
+mechanism's own arithmetic. The value of `argmax_y F(y)` will be **written into
+this document and pushed before the screen solve is launched**, so the naming
+cannot be back-fitted.
+
+If phase 0 measures **F ≈ 0 in every year** the repair is INERT and rule 29's
+own exclusion applies: there is nothing to screen, and the session reports an
+inert repair rather than spending an LP to confirm it.
+
+### §3.2 — The screen gate: STRUCTURAL, STOP-ONLY, and the target residual is EXCLUDED
+
+**S-1 — the dispatch response matches the pre-solve arithmetic.** The repair
+moves two multipliers in *opposite* directions by construction (parent
+PRECOMMIT §2.2): CT_PEAKER's median loses its high-HR tail so its multiplier
+FALLS, and ST_GAS stops borrowing a base HR 9 % below its own so its multiplier
+RISES. S-1 asks only that the screen year's class energy moves the way that
+arithmetic says — **CT_PEAKER up, ST_GAS down** — and within a factor of 3 of
+the displacement F(y) implies. FAIL ⇒ the mechanism is not doing what it
+claims and the arm dies here.
+
+**S-2 — footprint confinement.** Classes the repair does not reprice —
+nuclear, hydro, wind, solar — move by **< 0.5 %** of their keeper annual
+energy. (Storage and imports are price-responsive and are reported, not gated;
+so are CC_REGULAR / CC_CHP, which the repair leaves on the CC bucket but which
+re-dispatch against moved CT/ST offers.) FAIL ⇒ the change is reaching rows it
+does not claim.
+
+**S-3 / S-4 — C1 and C4 are STOP gates, and a flip ESCALATES rather than kills.**
+A PASS→FAIL flip in C1 (class energy) or C4 (gas r / NRMSE — 2025 holds 0.003
+of margin) **stops the screen**: the remaining two years are not spent. But it
+does **not** by itself retire the repair, because the owner ruled this session
+that *"if structural integrity improves but gates regress that may still be a
+keeper"* — rule 1 `[R-STRUCT]`'s first half restated, and the caiso-230/231
+precedent. A flip is therefore reported with its measured magnitude and **put
+to the owner**, whose call it is. What the session may never do is spend the
+full span on a flipped screen without saying so first.
+
+**EXCLUDED FROM THE GATE IN BOTH DIRECTIONS:**
+
+* **C3a is the target residual and is excluded entirely** — it can neither kill
+  the arm nor promote it. Rule 29: "a screen that reads 'did C3a improve' is
+  exactly the fitted-mechanism selection rule 1 forbids, done one year at a
+  time."
+* **Neither C3a nor C4 may PROMOTE.** Rule 29: the screen "may kill an arm; it
+  may never promote one." An improvement in either is reported and does no
+  work. The repair is adopted on **G-BIMODAL alone**, whatever the bands turn
+  out to be and whichever way C3a moves — **including WORSE** (parent PRECOMMIT
+  §2.2; caiso-230/231 armed the measured surface knowing it cost C3a
+  +0.235 / +0.344 / +0.421 $/MWh).
+* **`co2` is excluded**, per §1.2 — the one stream the control cannot carry.
+
+**The screen bundle is a throwaway diagnostic probe**: never registered, never
+a keeper, never quoted as a keeper number, its year re-solved inside the full
+bundle (rule 29 clause (2)), and **DELETED from `results/calibration/` before
+the PR merges** (rule 29 clause (c), owner ruling R-AV). Every number this
+session will ever cite from it lives in the FINDING.
+
+---
+
+## §4 — PREDICTIONS ADDED HERE (the parent's P-1…P-7 stand unchanged)
+
+| # | prediction | uncomfortable reading if it fails |
+|---|---|---|
+| **P-8** | phase 0 measures **F(2025) largest**, so 2025 is the screen year — CAISO's ST_GAS/CT fleet is most exposed there and 2025 carries the highest gas+carbon basis of the three | a different argmax is fine and is simply used; but F within ±10 % across all three years would mean the "largest footprint" criterion cannot discriminate, and the screen year would then have to be named on a stated tie-break rather than on a measurement |
+| **P-9** | **S-1 holds**: CT_PEAKER energy RISES and ST_GAS energy FALLS in the screen year | if the signs come out the other way, §1 of the parent PRECOMMIT has the bias backwards and the repair is not the repair I described |
+| **P-10** | **S-2 holds**: nuclear / hydro / wind / solar each move < 0.5 % | a non-gas class moving means the offer-array edit is not confined to the gas path — a plumbing defect, not a mechanism result |
+| **P-11** | neither C1 nor C4 flips PASS→FAIL in the screen year | a flip is an owner escalation (§3.2), not a silent kill and not a silent proceed |
+
+---
+
+## §5 — STOP RULE (adds to the parent's §4; nothing there is relaxed)
+
+1. Every clause of the parent PRECOMMIT §4 stands verbatim — G-BIMODAL FAIL ⇒
+   nothing re-derived; P-2 FAIL ⇒ stop before any re-derive; no threshold in
+   the derive retuned; no gate re-run to a pass or redefined after its result;
+   per-year multipliers never armed; the frozen artifact never hand-edited.
+2. **The screen gate as written in §3.2 is fixed.** It is not re-specified
+   after F(y) is measured, and not after the screen is solved.
+3. **The screen year is named by §3.1's estimator and by nothing else** — and
+   is pushed before the screen solve launches.
+4. **No `complete` marker is declared.** CAISO holds none; declaring one is an
+   owner act (rule 22). Raised in the FINDING, not granted.
+5. `frontend/data/forecast/program-status.json`'s stale top-level
+   `isos.CAISO.keeper` is **not touched** — the owner ask is open (handoff item
+   B) and this session asks before editing.
+
+---
+
+## §6 — DELIVERABLES
+
+This addendum (pushed before `--gate` runs); the re-fetched corpus
+(gitignored); `results/calibration/_caiso253b_ct_bucket_bimodality.json`; a
+FINDING scoring P-1, P-2 and G-BIMODAL; the `docs/calibration-log/caiso.md`
+entry; the rule-28 CAISO matrix-shard stamp. **Only if G-BIMODAL passes:** the
+derive's class-partition repair, the re-frozen artifact, the phase-0 census,
+the screen, the full three-year bundle and its registration — with the keeper
+promotion decided on structure, and any gate regression put to the owner.
