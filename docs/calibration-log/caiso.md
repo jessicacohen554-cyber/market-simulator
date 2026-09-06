@@ -13810,3 +13810,40 @@ produced), no keeper change, no `ScenarioConfig` field, no `complete`
 declaration.**
 
 **Next number: caiso-259.**
+
+## caiso-259 — 2026-09-06
+
+**`complete` / FRONTIER READINESS, MEASURED. ZERO LP, KEEPER UNCHANGED** at
+`2026-09-06-caiso-257-b1-ctonly` (CALIBRATED). Same branch as caiso-258
+(continuation, owner instruction "proceed here").
+`ASSESSMENT-caiso259-complete-readiness-2026-09-06.md`.
+
+**On the merits nothing blocks the marker**: the 2026-08-06 withdrawal rested
+on a NOT-YET keeper and that reason is gone. It remains an owner act, declined
+at caiso-257, **raised again, not granted**. A draft frontier basis is in the
+assessment §4.
+
+**Spending the marker on 2022 is NOT possible today.** No-LP rebuild of the
+keeper recipe on 2022 raises at its first input: **H-1** the supply-consistent
+demand artifact for 2022 is missing and its derive needs a 2022 CEMS-anchored
+bench part that does not exist (chain executable: EIA-923 2022, CAMPD 2022,
+EIA-930 2022 all present). **H-2/H-3 are a SOURCE GAP**: OASIS retention aged
+out 2022 hub LMPs and intertie prices, so C3a/C3b/C3c cannot be scored and the
+caiso-87/93/94 import rows lose their measured hub — an owner decision
+(volume-only rung, fund an alternative price archive, or leave the ladder
+unspent). **Silent fallbacks** that would run a different recipe in 2022
+without warning: CARB allowance price ZERO (no 2022 key — the NYISO-134 D-1
+defect, CAISO edition), the static import ladder in place of the DMM RA rows,
+the static DSW clean depths (not derivable without H-3), the static nuclear
+seasonal pattern with no NRC 2022 windows (derivable: NRC 2022 file present).
+Verified present for 2022: TAC load, CAMPD units + outage extract, HSL,
+weather, curtailment, F923, citygate daily/weekly, EIA-860 vintage_2022, MIC
+partition, EIA-930 wide with the battery column.
+
+**Correction to caiso-258 §2.3**: the "demand-basis lead" is the caiso-80
+Option A basis the keeper's demand input already uses; annotated in the
+FINDING. **Not done**: no 2022 artifact written, no Panoche instrument search,
+no marker, program-status stamp untouched. Two owner decisions asked
+(assessment §7).
+
+**Next number: caiso-260.**
