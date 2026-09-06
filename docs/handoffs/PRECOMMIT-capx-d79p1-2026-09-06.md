@@ -122,7 +122,7 @@ floor-coefficient CSVs.
 * **Rule 22 `[R-HOLDOUT]`** — nothing solved, scored or registered; no year touched.
 
 **One declared deviation from the build spec.** Design §6.1 sizes `solve_surface.py` at "< 300
-lines"; it lands at **376** (125 code, 172 docstring, 62 blank, 17 comment). The excess is rule-11
+lines"; it lands at **406** (139 code, 183 docstring, 65 blank, 19 comment). The excess is rule-11
 docstrings plus the rule-24/26 governance record, which are load-bearing here — the file is the
 only place a reader learns why re-declaring a repaired table is the one wrong remedy. The
 consequence is stated rather than avoided: it is a rule-27 ≥300-line file from its first commit and

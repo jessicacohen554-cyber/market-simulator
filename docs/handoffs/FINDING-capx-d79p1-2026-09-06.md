@@ -126,16 +126,19 @@ Four ≥300-line files were edited with the Edit tool on exact on-disk bytes; no
 regenerated content. Line counts and SHA-256 of the pushed blob vs local, fetched back after the
 push:
 
-| file | lines | local sha256 | remote sha256 | |
+| file | lines | local sha256[:16] | remote sha256[:16] | |
 |---|---|---|---|---|
-| `src/market_sim/config/scenarios.py` | 19,021 | see §5a | see §5a | ✓ |
-| `src/market_sim/results/cache.py` | 1,367 | see §5a | see §5a | ✓ |
-| `scripts/check_cache_key_registration.py` | 713 | see §5a | see §5a | ✓ |
-| `tests/regression/test_persisted_identity.py` | 1,116 | see §5a | see §5a | ✓ |
-| `src/market_sim/config/solve_surface.py` (new) | 376 | see §5a | see §5a | ✓ |
-| `src/market_sim/config/solve_surface_declared.py` (new) | 577 | see §5a | see §5a | ✓ |
+| `src/market_sim/config/scenarios.py` | 19,021 | `65aa887fdae3c9a3` | `65aa887fdae3c9a3` | ✓ |
+| `src/market_sim/results/cache.py` | 1,367 | `005d519f0c5ed617` | `005d519f0c5ed617` | ✓ |
+| `scripts/check_cache_key_registration.py` | 713 | `31784a9a0830782f` | `31784a9a0830782f` | ✓ |
+| `tests/regression/test_persisted_identity.py` | 1,116 | `60bf321b3fe12ebd` | `60bf321b3fe12ebd` | ✓ |
+| `src/market_sim/config/solve_surface.py` (new) | 406 | `7b382371ca38a5d3` | `7b382371ca38a5d3` | ✓ |
+| `src/market_sim/config/solve_surface_declared.py` (new) | 577 | `938118be9fcd190f` | `938118be9fcd190f` | ✓ |
+| `scripts/solve_surface_register.py` (new) | 269 | `8e977494f68b8b55` | `8e977494f68b8b55` | ✓ |
 
-*(§5a is filled below with the measured digests once the push completes.)*
+Every blob byte-identical to local. The remote side is read back with
+`git fetch origin <branch>` + `git cat-file -p` on the tree the remote ref points at, so the
+comparison is against what the server stores, not against the local push buffer.
 
 ## 6. TEST SWEEP, and the 12 failures that are NOT this PR's
 
@@ -154,8 +157,8 @@ tracked edit and re-running them (`12 failed, 34 passed`), an identical set:
 
 ## 7. DECLARED DEVIATION FROM THE BUILD SPEC
 
-Design §6.1 sizes `config/solve_surface.py` at "< 300 lines". It lands at **376** — 125 code, 172
-docstring, 62 blank, 17 comment. The excess is rule-11 docstrings plus the rule-24/26 governance
+Design §6.1 sizes `config/solve_surface.py` at "< 300 lines". It lands at **406** — 139 code, 183
+docstring, 65 blank, 19 comment. The excess is rule-11 docstrings plus the rule-24/26 governance
 record, and the file is the only place a reader learns why re-declaring a repaired table is the one
 wrong remedy. The consequence is taken rather than dodged: it is a rule-27 ≥300-line file from its
 first commit and carries that discipline (edit-only, blob-verified), which this session applied to
