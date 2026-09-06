@@ -241,7 +241,19 @@ around.** `AuthorizedPriceTuningTests` and every other `test_calibration_verdict
 
 ## 6. Rule 27 blob verification after push
 
-BLOB_TABLE_PLACEHOLDER
+Push transport: `git push -u origin claude/g3-rule-21-price-tuning-xref-mfav8w` (small text-only pack;
+first try, no HTTP/1.1 fallback needed). Remote `refs/heads/…` = local HEAD = `2286675d`. Each file
+was then fetched back from GitHub at that commit (`get_file_contents` by sha) and compared to the
+on-disk bytes after stripping the MCP envelope prefix; the envelope's reported git blob SHA was
+compared to local `git hash-object` as well.
+
+| file | lines remote / local | sha256 (16) remote / local | git blob remote / local | |
+|---|---|---|---|---|
+| `CLAUDE.md` | 703 / 703 | `d6d055d0fe4c53c8` / same | `cd1375a365c7` / same | MATCH |
+| `docs/governance/rule-history.md` | 880 / 880 | `ea8e97ecf603da06` / same | `4fc9589a87c9` / same | MATCH |
+| `scripts/calibration_verdict.py` | 3359 / 3359 | `56e973f819ce0208` / same | `a7239531472b` / same | MATCH |
+
+The finding itself is a new file under 300 lines and is outside rule 27's verification duty.
 
 ## 7. Standing-test log — every dispatch claim, checked
 
