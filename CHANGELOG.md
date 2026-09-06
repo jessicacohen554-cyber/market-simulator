@@ -44,6 +44,55 @@ per `docs/handoffs/FINDING-y14-ercot-golden-forward-2026-09-05.md`:
   new semantics (retired-record provenance chain; forward config on its designated span) plus
   eleven new tests; 57 passed. Fast tier 8114 passed, exit 0.
 - The R-AI re-capture (ERCOT clock 2026-09-07 19:02Z) is NOT run; its command is in the finding §7.
+## 2026-09-06 — wallclock A-2: the eGRID xlsx comes off the solve path (27.80 s → 0.219 s per process; `data_prep` y1 36.7 → 10.8 s on top of A-1), byte-identical on a NEISO merge-base control
+
+Wall-clock only. **No `ScenarioConfig` field, no default, no constant, no keeper shard,
+marker, matrix shard, registry or workflow is touched; the LP, its objective, bounds and
+rows are untouched, and the values read are the same values.** Classed BYTE-IDENTICAL and
+gated as such.
+
+Three `pd.read_excel` calls against the 21 MB `egrid2023_data_rev2.xlsx` sat on the solve
+path and were paid afresh in every process — `zone_assignment._plnt23` (PLNT23), and
+`fleet/eia860._egrid_boundary_hr_repairs_for` (PLNT23 again under a *different*
+projection, then UNT23). openpyxl's read-only parser is ~10 µs/cell; the three cost
+**27.80 s** on this container.
+
+- **The helper (`src/market_sim/data/egrid_sheets.py::read_egrid_sheet`).** One function
+  both call sites use. It mirrors the frame `read_excel` returns to a parquet file beside
+  the workbook — `<xlsx-stem>.<sha256[:16]>.<sheet>.parquet`, gitignored, written on first
+  miss — and serves every later call from there. **27.80 s → 0.219 s (127×).**
+- **The digest covers the read parameters, not just the workbook.** The two PLNT23 call
+  sites ask for different column sets, and `read_excel` returns columns in **sheet** order
+  rather than the caller's `usecols` order. Mirroring the exact frame each site receives,
+  instead of one wide per-sheet mirror that callers subset, is what makes the mirror read
+  equal to the xlsx read *by construction* — column order and dtypes included. Changed
+  workbook bytes still hash differently, so self-invalidation is unaffected.
+- **Advisory, never authoritative.** Parquet, never pickle (no `allow_pickle` path
+  anywhere). An unhashable workbook, an unwritable directory or a corrupt/truncated mirror
+  logs a warning and falls back to `pd.read_excel`; mirrors are written to a pid-unique
+  temp name and `os.replace`d, so the two concurrent invocations rule 12 permits can never
+  read a partial file. The `MARKET_SIM_USE_CLEAN` branch in `_plnt23` is untouched and
+  still takes precedence when armed — the mirror backs only the raw fallback beneath it.
+- **Gates**, all at merge base `fc05c5c34`. (1) `frame.equals` xlsx-vs-mirror **True** for
+  all three `(sheet, usecols)` pairs on the real workbook, with column order and dtypes
+  compared explicitly, plus 8 fast-tier tests on a synthetic workbook
+  (`tests/test_egrid_sheets.py`). (2) Fast tier 8270 passed / 6 failed, all six confirmed
+  failing identically on the merge-base tree. (3) **NEISO 2023–2025 merge-base control**,
+  keeper `2026-08-17-neiso-99-joint-p1`: `regression_gate.py --mode byte` **check [1]
+  PASS** (9 files, 32 numeric columns, atol=rtol=0), zero reshuffle in all three years,
+  smoke PASS, `audit_keepers` PASS. Its overall `RESULT: FAIL` is check [4]
+  `legitimacy(--keepers)` alone, pre-existing by control (NYISO Long Island
+  `transfer_security_limit` gap).
+- **Reach, and how it stacks with A-1.** The win is **once per process, not once per
+  year** — both readers were already process-cached — so a 3-year NEISO replay gains
+  ~26 s in year 1 and nothing after. Measured **on top of A-1**, which landed first and
+  had already taken y1 `data_prep` 71.3 → 36.7 s: A-2 takes it to **10.8 s** (−25.9 s,
+  −71 % of the phase; combined y1 −85 %). ~6 % of the 3-year wall. An earlier
+  measurement of this change at base `5b5af5a` (−25.2 s off 71.3 s) is superseded and
+  must not be added to A-1's number — it is largely the same seconds. Record, the
+  drift audit since the gated base, and the not-widened follow-up (`data/egrid.py`, a
+  fourth read of the same workbook family, deliberately left alone as out of scope):
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-2.
 
 ## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
 
