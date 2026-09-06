@@ -1249,6 +1249,9 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#14 (main HEAD `5375be8b`).** Quiet: RESOLVE not yet dispatched (asked), policy lanes
+  correctly unlaunched, audit EXIT 0; the capx queue is saturated with solves, so rule 12 sequences RESOLVE's
+  per-plant legs (charter sentence added). CLAUDE.md +1 (D67-ARM), INERT for every SCN leg. No card.
 - 2026-09-06 — **SCN-DESK r#13 (main HEAD `13ee0c89`).** Stage A-LOAD COMPLETE at the frozen pin (16/16, synthesis,
   cost table); ruling S8 never executed (the amendment had no session) → SCN-WS5A-RESOLVE issued with the cache
   blocker defeated. SCN-FIX2 + SCN-CAP landed complete (carbon form committed; CARB-HI live at full horizon on
