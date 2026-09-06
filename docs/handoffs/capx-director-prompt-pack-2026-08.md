@@ -6717,3 +6717,307 @@ D34-guard region are not yours. Rules 22 (forecast mode only), 25 (a posture, no
 EXIT: both acts landed in one PR, every bare key re-solved and registered with its prior, the finding
 closed and pushed. Nothing else arms.
 ```
+
+## D60-R3 — AMENDMENT 1 (r#46): legs 4 and 5 were solved ACROSS the SCN-LOAD growth hunk `d14a7ed0`; date it, re-attribute from the committed ledgers, correct the two provenance strings, solve the ONE earned control, and close — **DISPATCHABLE NOW, to the live D60-R3 session if it is alive, else fresh as D60-R4 from this text (branch `claude/capx-d60r3-completion` at `cdb83016` is the checkpoint either way)**
+
+```
+You are the D60-R3 session (or its fresh successor D60-R4) of the capacity-expansion track. Binding
+charter: pack §D60-R3 + this Amendment 1 (pack §D60-R3 AM.1). Everything the charter owed is landed on
+`claude/capx-d60r3-completion` at `cdb83016` EXCEPT the finding's §5 leg-5 text, §8 and the close — and
+this amendment ADDS one re-attribution and one control solve before that close. Nothing here re-opens
+a registered key, a determination, a marker or a shard.
+DATA PROFILE: pjm (widen to neiso ONLY if you elect the optional NEISO control in step 4b).
+MODEL: Opus (the decomposition is pre-declared below to the MW; the control's reading is measured).
+BRANCH: `claude/capx-d60r3-completion` — continue it; a fresh session checks it out, does NOT start
+from main. Rebase onto origin/main BEFORE step 1 and NOT AGAIN until step 4's solve has exited; the
+`exit 90` HEAD guard below is mandatory around the solve.
+
+THE FACT (director r#46 §0aq.1 — verify from the trees, never trust): SCN-LOAD `d14a7ed0` (merged as
+#4970 = `ad45b0e4`, 02:19 UTC 2026-09-06) re-derived `DEMAND_GROWTH_RATES` for all six ISOs (PJM
+mid.near 0.036 → 0.064645; NEISO 0.031 → 0.054816 and long 0.020 → 0.014850; CAISO 0.028 → 0.032425),
+`DATACENTER_ADDITIONS_MW` and `ELECTRIFICATION_LAYERS`. Your §5.0d second-hunk probe (`19473c82`,
+01:55 UTC) pre-dates that merge; your final rebase (X-6b, `05968ab9`) admitted it. Leg 4's arm was
+solved on `14f860fb` (contains the hunk: `git merge-base --is-ancestor d14a7ed0 14f860fb`); its
+control `pjm-t1f-pre-d60` and the D50 arm are both PRE-hunk. Leg 5's `bau-d60` likewise; `bau-d46`
+is PRE-hunk. Leg 3 is INERT by measurement (CAISO 2030 peak 54,820.591 MW on both sides). The
+pre-declared keys matched because `constants.py` is OUTSIDE the cache key — a matched key is a config
+audit, not a G-DRIFT verdict.
+
+STEP 1 — DATE IT IN §5 (zero LP). Add §5.0f "The hunk the rebase admitted": the commit, the merge, the
+UTC times of the probe vs the merge, and `git merge-base --is-ancestor` for each of the three legs'
+`run_config.json` git.sha. State plainly that §5.0d's "no second hunk" was true at 01:55 and false
+after X-6b, and that form-4 differencing against `-pre-d60` is VOID for legs 4 and 5 (rule 29(b)).
+
+STEP 2 — RE-ATTRIBUTE LEG 4 FROM THE COMMITTED LEDGERS (zero LP). From `results/ff-t1f-d45r/pjm`
+(control) and `results/ff-t1f-d60/pjm` (arm) `evolution_<year>.json`, read `peak_demand_mw` (P) and
+`screen_adequacy_requirement_mw` (R) for 2027–2030; r = R/P. Decompose ΔR = (P_arm − P_ctl)·r_ctl +
+P_arm·(r_arm − r_ctl). THE DIRECTOR'S PRE-DECLARED TABLE, which your numbers must reproduce to the MW
+or the discrepancy is reported: peak leg +9,806 / +14,789 / +20,121 / +25,990; ratio leg +6,414 /
++6,818 / +7,151 / +7,515 (2027–2030); peak share 60 / 68 / 74 / 78 %. The ratio leg is the ONLY part
+the Q44 gates own. Write this into §5's leg-4 text and REPLACE the sentence "the entire rise belongs
+to the D48 + D57 gates" with the decomposition. Do not soften the STOP: it fired as written; what
+changes is its attribution.
+
+STEP 3 — RE-ATTRIBUTE LEG 5 (zero LP). Same read on `results/ff-t3-neiso-golden/bau-d46` vs
+`bau-d60` for 2027/2030/2035/2040/2050: peaks 25,213 / 26,209 / 27,848 / 29,559 / 33,304 vs 24,801 /
+25,359 / 26,934 / 28,774 / 32,839 MW. Amend the leg-5 text: "one substantive mechanism" is false as a
+description of the difference; the >5 % co2 / gas-generation movements carry the sign of a LOWER
+demand world, not of fewer retrofits. P16 stands as a STATUS reading. Keep P14/P15 as written and add
+that the retrofit window now carries a demand co-movement.
+
+STEP 3b — CORRECT THE TWO PROVENANCE STRINGS on the board (`program-status.json` `t1f_provenance` for
+PJM, and the NEISO golden entry on your branch; `ff-verdicts.json` narrative fields likewise): add
+one sentence each — "solved POST-`d14a7ed0` (PJM mid.near 0.064645 / NEISO 0.054816); the `-pre-d60`
+prior is PRE-hunk; form-4 differencing is VOID for this row until D65-B re-solves every bare key at
+one HEAD". You remain the SOLE writer of both files this window. Bytes only; no determination moves.
+
+STEP 4 — THE ONE EARNED CONTROL (rule 29(b): a LIVE hunk earns a control solve for the years the
+screen needs). Solve `pjm-t1f` at HEAD, 2026–2030, with the Q44 gates OFF (`--no-pjm-demand-response-
+supply --no-pjm-accreditation-design-vintage`, and the D57 clearing gate off) and `ccs_retrofit_capex_
+co2_scaling` at its default — i.e. the D45-R recipe on today's demand table. Pre-declare its cache key
+in an Addendum E BEFORE the solve, the way Addendum A did. ~36 min, ~8.8 GB. PRE-DECLARED READING
+(director): the arm's I12 reads LESS negative than this control's in every year 2027–2030 (supply rise
++9,092 / +10,276 / +14,303 / +18,000 exceeds the ratio leg in every year). FALSIFIER: any year in which
+the same-HEAD control's I12 is LESS negative than the arm's — then and only then does "D48 is not
+position-neutral forward" stand, and the director serves the owner card on those rows. Report at full
+magnitude either way. This control is a THROWAWAY DIAGNOSTIC under rule 29: registered NOWHERE, and
+its bundle DELETED before the PR merges (rule 29(c)); the Addendum E table carries every number.
+  HEAD GUARD — wrap the solve:  H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ]
+  || { echo "HEAD moved under the solve"; exit 90; }
+STEP 4b (OPTIONAL, your call on cost, director recommends SKIP unless D65-B asks): a `bau` golden
+control at HEAD (25 yr, ~33 min) for leg 5. Not required: the FC map did not move on status.
+
+STEP 5 — RE-AUDIT AFTER EVERY REBASE (new doctrine, r#46 §0aq.5): before step 4's solve, and again
+before the close, `git diff <pre-rebase> <post-rebase> -- src/market_sim scripts/run_*.py` and
+classify EVERY hunk INERT/LIVE with reason, `constants.py` first; push the classification before the
+solve. The wallclock branch `claude/p1-basis-seed-impl-oby2ka` edits `pipeline/solve.py` and
+`lp/model.py` — if it has merged, it is a hunk you classify (backcast callers only, forecast path
+byte-identical per its own docstring — VERIFY, do not copy).
+
+STEP 6 — CLOSE: finding §5 (legs 3–5 + §5.0f), §8, the close; open the PR; blob-verify every ≥300-line
+file (`FINDING-capx-d60`, both board JSONs, the new `build_forecast_dof_ledger.py`). Rules 13, 19, 21,
+22 (no out-of-training year), 24, 25, 27, 28 (no cell moves — you armed nothing new), 29(b)/(c).
+EXIT: PR open with §5.0f, the two re-attributions, the corrected provenance strings, Addendum E's
+control reading, the control bundle deleted, ruff clean. Its merge releases D65-B, D62's
+registration, D58 and D63.
+```
+
+## D67 — NOT THIS DESK'S CHARTER: label-collision record (r#45/r#46). `claude/capx-d67-pjm-requirement-operand-18wzjf` / #5012 #5019 #5022 is the PJM published-Reliability-Requirement operand lane (D66 §8 card A), dispatched by another desk. Cite it by branch + PR. Its state at r#46: build + phase 0 complete, matrix discharged, G-DRIFT LIVE, control at HEAD earned, screen (2024–2025, screen year 2025) NOT yet solved. The object this pack had queued under "D67" since r#41 — the steam/oil below-cap offer convention — is **D74** below. Never paste this section.
+
+## D73 — D23's R1 instrument guard + the FC-6 P1 verdict-basis call, narrowed by D72 §6.1 to the ARCHIVED `carbon25` arm (r#46; D23 §8 R1, D72 §5/§6.1) — **ISSUED r#46, zero LP**
+
+```
+You are the D73 session of the capacity-expansion track. Binding charter: pack §D73 (this section) +
+`FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` §8 R1 (the repair you build) + `FINDING-capx-d72-2026-09-06.md`
+§5–§6.1 (the fact that narrows the call). ZERO LP. No solve, no re-solve, no registration.
+DATA PROFILE: code
+MODEL: Fable (this moves a golden's VERDICT BASIS — a determination consequence, not execution).
+BRANCH (suggested; graded by content): claude/capx-d73-fc6-p1-guard — FRESH off origin/main.
+
+THE OBJECT. D23 adjudicated GOLDEN-2's FC-6 P1 "carbon-sign defect" as the INSTRUMENT'S premise being
+inverted (rung 0 is the RGGI world for a program ISO and sits ABOVE rung 25) and routed R1: a premise
+assertion in the paired checker and the battery scorer — compute `resolve_carbon_price(cfg, y)` for
+every solve year from each arm's COMMITTED config, and unless the "high" arm's effective signal ≥
+base's in every year, emit a MIS-CONSTRUCTED / vacuous row instead of a scored PASS/FAIL (the FC-6.2
+vacuous-evidence lane). ~40–80 lines + tests in `scripts/check_forecast_invariants.py` (the string
+"MIS-CONSTRUCTED: high-arm effective carbon ≤ base" already exists at ~L872 — READ what it guards
+today before adding a second guard; rule 19 forbids two mechanisms for one phenomenon) and the
+battery scorer (`scripts/ff_readiness_battery.py` / `scripts/forecast_verdict.py` — find the one
+consumer that writes the P1 row). Strictly evidence-tightening; rules 13/21 admissible (no measured
+data, no tunable). D72 §6.1 established that the LIVE golden families are already re-armed off the
+mis-constructed pair and ONLY the archived snapshot family `bau-prera-2026-08-31` still carries
+`carbon25`. So the call is NARROW, and it is the director's to make on your evidence:
+
+  Q: should the guard RETROACTIVELY reclassify the archived `carbon25`-based P1 FAIL to
+     MIS-CONSTRUCTED, given the live golden no longer rests on that pair?
+
+PHASE 0 — READ FIRST, AND STOP IF ANY OF THESE FALSIFIES THE PREMISE: (a) quote the current L872 guard
+and state exactly which arms/rows it fires on today (it may ALREADY be R1 in substance — if so, this
+lane's build is a test + a cross-reference, and you say so); (b) enumerate every committed FC-6 row on
+the board (`ff-verdicts.json`, bare keys only — suffixed keys are preserved baselines, never quote one
+as current) and which arm pair each was scored on; (c) for each pair, compute the effective carbon
+signal per year from the committed `run_config.json`s (D23's method) and tabulate MONOTONE /
+INVERTED. A table with zero INVERTED live rows means the guard's live effect is nil and the whole
+question is the archived row — say so.
+
+PHASE 1 — BUILD R1 (if phase 0 leaves a gap): the assertion, the vacuous-row emission, tests for
+both branches (monotone pair scores; inverted pair emits MIS-CONSTRUCTED and never PASS/FAIL), a
+`--dry-run` that prints the table from phase 0. NO `ScenarioConfig` field, no default, no matrix
+cell (rule 28: you test no mechanism). Do NOT touch `ff-verdicts.json` or `program-status.json` —
+D60-R3 is their sole writer this window; you REPORT what the guard WOULD write and the director
+serves it.
+
+PHASE 2 — THE RECOMMENDATION, three-way and argued, to the director not the board: (i) reclassify
+the archived P1 row (a verdict-basis change on a snapshot — state who reads that snapshot and what
+changes for them); (ii) leave it, add a dated cross-reference to D23 and D72 (the D23 §8-R3 / D72
+precedent: never rewrite another lane's finding); (iii) reclassify only on the next re-score event
+that touches the family. Price each in LP (should be zero for all three) and in records touched.
+Amend D23's file ONLY by dated cross-reference.
+
+EXIT: FINDING-capx-d73-<date>.md with the phase-0 table, the guard's diff (or the finding that L872
+already is R1), tests green, ruff clean, the three-way recommendation, and a §8 stating that nothing
+on the board moved. Rules 13, 19, 21, 22, 24, 25, 27 (blob-verify any ≥300-line file you touch —
+`check_forecast_invariants.py` is one), 28. Push each phase as it lands.
+```
+
+## D74 — the PJM regulated / self-supplied STEAM + OIL below-cap offer convention: the object D61 §4 card (c) named and D62 §9 item 2 widened to oil — the NEW label for what this pack mis-queued as "D67" (r#46) — **CHARTERED r#46, design-first, DISPATCHABLE**
+
+```
+You are the D74 session of the capacity-expansion track. Binding charter: pack §D74 (this section) +
+`FINDING-capx-d61-2026-09-05.md` §4 card (c) + `FINDING-capx-d62-2026-09-06.md` §5.3 and §9 item 2 +
+`DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md` §3.5 (the offer identity you must not break).
+DATA PROFILE: pjm
+MODEL: Fable (phase 0 is a DESIGN choice of a market object; the build follows the committed design).
+BRANCH (suggested; graded by content): claude/capx-d74-pjm-steam-oil-convention — FRESH off origin/main.
+DO NOT cite this as D67: `claude/capx-d67-pjm-requirement-operand-18wzjf` is a different object.
+
+THE OBJECT, as measured. In BOTH D62 arms, to the MW, gas-steam is 8,801.9 MW UNCLEARED and 9.464 GW
+economically EXITED — so no offer-side operand of any size (D62 moved the bar for every other class)
+touches it. D62 §5.3: PJM's single published "Steam Oil & Gas" class is the one whose bar-to-clearing-
+price relationship the published ACR table does not repair; D62 adds OIL to the scope on that ground.
+D61 §4 card (c) named the convention itself: regulated / self-supplied steam units in PJM offer BELOW
+their going-forward cost (self-supply, FRR, bilateral, must-run designations) — a real market
+behaviour under rule 1, not a level. FC-3 grades composition, and D62's own §8 lists 4.137 GW of oil
+over-exit at 6.7× actual as a reason it refused its own arm.
+
+PHASE 0 — DESIGN, ZERO LP, committed BEFORE any code: (1) from PJM's own published record already in
+`data/raw/capacity-market/` (BRA reports by resource type, FRR/self-supply tables, Manual 18) state
+what fraction of the steam and oil UCAP is self-supplied / FRR / must-offer-at-zero in DY 2022/23–
+2025/26, by source doc + page; if the published record cannot separate it, STOP and say so (rule 14 —
+no proxy). (2) Design ONE mechanism (rule 19) that represents it: the candidates are (a) a sector /
+supply-type partition (the D53 sector gate's Sector 1 + self-supply flag, per unit, from EIA-860 +
+the FRR list — a published per-unit partition, NO weight) under which such units are price-takers
+at $0 and EXEMPT from the merchant exit screen; or (b) D62's own narrower partition alternative —
+arm the published bar ONLY for the classes PJM publishes a technology-class default for, holding
+steam/oil on their own convention. State which is the market's mechanism and which is a level, and
+choose on structure (rule 1), never on FC-3. (3) Pre-declare the sign on FC-3 `retire.total_gw`
+(D62 arm 20.144 vs actual 15.062; control 18.702), on unit recall, and on the 2024/25 census
+(D62's G6 invariant: the 2024/25 price must not move on the census — carried).
+PHASE 1 — BUILD, default-off, one `{iso: bool}` gate in the D57 family, ZERO scalar fields, cache key
+registered in the same commit, matrix row + a cell in every ISO shard (rule 28c). PHASE 2 — SCREEN
+(rule 29): ONE year, named in the PRECOMMIT as the year the steam/oil UNCLEARED MW is largest in the
+D62 arm ledgers (measured, not the biggest residual); minimum span 2024–2025 because year 1 has no
+`prior_results`; control = the committed `pjm-2021-2025-realized-t1h-d57-clearing` arm A ONLY after a
+hunk-by-hunk G-DRIFT from `5bb70047` (its git anchor — `f0e050e820c1159a` is a CACHE KEY) — and NOTE:
+the D67 lane already found that window LIVE (`DEMAND_GROWTH_RATES["PJM"]` moved) so expect to solve a
+same-HEAD control for the screen span; classify the wallclock `pipeline/solve.py` seed if merged.
+Structural STOP gates only. PHASE 3 — the full 2021–2025 window only if the screen clears.
+HEAD GUARD around every solve: H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ]
+|| exit 90. Rebase BETWEEN legs, never during; RE-AUDIT the rebase delta before the next leg (r#46
+doctrine); a matched cache key is not a G-DRIFT verdict (`constants.py` is outside it).
+COLLISIONS: the D67 lane's build is on main (`8bc0feb5`) — `retirements.py`'s requirement seam is
+settled; you touch the BAR / offer seam (`resolve_going_forward_bar`, the D57 offer stack), not the
+requirement. D75 (VRE ELCC vintage) may run concurrently on `capacity_market.py`'s ELCC registry —
+different region; rebase carefully, never resolve a conflict by dropping the other lane's hunk.
+Registration / re-score after D60-R3 merges (sole board writer). Nothing arms without a ruling.
+EXIT: DESIGN memo, PRECOMMIT (before the first solve), FINDING with phase-0 table, screen gate,
+full-window A/B, FC-3 at full magnitude, §8 recommendation. Screen/control bundles DELETED before
+merge (rule 29(c)). Rules 1, 13, 14, 19, 21, 22, 24, 25, 27, 28, 29.
+```
+
+## D75 — the PJM VRE ELCC delivery-year VINTAGE: D66 §8 card B, the VRE half of the vintage D48 gave the thermal classes (r#46) — **CHARTERED r#46, sign PRE-DECLARED to WIDEN the residual, DISPATCHABLE**
+
+```
+You are the D75 session of the capacity-expansion track. Binding charter: pack §D75 (this section) +
+`FINDING-capx-d66-2026-09-06.md` §8 card B (+ its §1.2 position definition, matched to four decimals).
+DATA PROFILE: pjm
+MODEL: Opus (values on disk, zero free parameters, the sign pre-declared; arming returns to the director).
+BRANCH (suggested; graded by content): claude/capx-d75-pjm-vre-elcc-vintage — FRESH off origin/main.
+
+THE OBJECT. The model applies PJM's 2026/27-vintage marginal VRE ELCC ratings to EVERY delivery year
+(`RENEWABLE_ELCC_CURVES_BY_ISO["PJM"]`, `capacity_market.py` ~L2541–2560: wind 0.41, solar 0.1064),
+while PJM's published 2024/25 class-average ratings were wind 0.16 and solar 0.36 fixed / 0.54
+tracking. Give the PJM VRE curves the delivery-year vintage axis D48 gave the thermal classes
+(`THERMAL_ELCC_CLASS_RATING_BY_ISO`, the `pjm_accreditation_design_vintage` gate — READ how D48 keys
+its vintage and use the SAME seam, rule 19), so DY 2024/25 reads the Dec-2021 class-average ratings
+and DY ≥ 2025/26 reads the marginal-ELCC ratings already wired. Values from `elcc/pjm/pjm.csv`
+(reconcile by test, byte-for-byte, the way D67 reconciled its requirement rows). THE ONE NEW OPERAND
+— the fixed/tracking MW split for the pre-reform blend — comes from PJM's own Table 5 mix, source doc
++ page, NEVER chosen; if the table is not in-repo, intake it additively (data-intake skill) and STOP
+rather than estimate (rule 14). SCOPE LIMIT, stated not papered over: PJM's ELCC regime BEGAN with the
+2024/25 BRA; 2022/23 and 2023/24 sit in a pre-ELCC regime this repo has not intaken — this card covers
+2024/25 and later, and the earlier two years are reported as OUT OF SCOPE with the published break
+quoted (wind offered 2,595 → 1,608 → 1,396 UCAP on a growing fleet).
+
+PRE-DECLARED SIGN (D66, and this desk): the 2024/25 census moves DOWN 0.6–1.4 GW and the position
+residual WIDENS. Under rule 14 that is the point — the accurate input is kept and the wider residual
+is the discovered root cause, not a reason to revert. A lane that finds the census moving UP has a
+bug, not a result.
+
+PHASE 0 (zero LP): a `fleet_only` rebuild on the D57 arm-A recipe emitting accredited VRE MW by class
+for DY 2024/25 and 2025/26 under both vintages — the delta must land inside the pre-declared band
+before any solve. PHASE 1: build default-off (gate in the D48 family, zero scalar fields, key
+registered, matrix row + six cells). PHASE 2 — SCREEN (rule 29): screen year = the DY where the
+VRE accredited delta is largest in phase 0 (expected 2024/25 → solve span 2023–2024, year 1 has no
+`prior_results`); control at HEAD (the D67 lane found the arm-A window LIVE on `DEMAND_GROWTH_RATES`
+— form 4 is void, do not re-litigate it); structural gates: identity (accredited VRE MW = phase-0
+arithmetic to the MW), confinement (thermal / storage / requirement byte-identical), no non-target
+load-bearing flip. PHASE 3: full 2021–2025 window if the screen clears. HEAD GUARD around every
+solve (H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90). Rebase
+BETWEEN legs, never during; RE-AUDIT the rebase delta before the next leg; a matched cache key is not
+a G-DRIFT verdict. COLLISIONS: the D67 lane (requirement seam) and D74 (bar/offer seam) may be live on
+PJM — different regions of `capacity_market.py` / `retirements.py`; never drop another lane's hunk.
+Registration after D60-R3 merges. Nothing arms without a ruling.
+EXIT: PRECOMMIT before the first solve; FINDING with phase-0 table, screen gate, full-window A/B, the
+position at full magnitude (both the like-for-like whole-RTO frame and the RPM comparator, per D66
+§1.2), §8 recommendation. Screen/control bundles deleted before merge. Rules 1, 13, 14, 19, 21, 22,
+24, 25, 27, 28, 29.
+```
+
+## D76 — the T1-H capacity-screen PEAK is de-grown from the growth path instead of read from the measured hindcast load — program-wide, all six ISOs (r#46; D67 FINDING §2.2 + §8(a)) — **CHARTERED r#46; PHASE 0 (zero LP, six-ISO census) DISPATCHABLE NOW; build + A/B only after phase 0 lands**
+
+```
+You are the D76 session of the capacity-expansion track. Binding charter: pack §D76 (this section) +
+`FINDING-capx-d67-2026-09-06.md` §2.2 (the mechanism, quoted from `runner.py`) and §8(a) (the route).
+PHASE 0 IS ZERO LP AND IS THE WHOLE LANE UNTIL THE DIRECTOR RELEASES PHASE 1.
+DATA PROFILE: code for phase 0 (the census reads committed bundles + code); the ISO phase 1 names.
+MODEL: Opus (the predicate is already read and quoted; phase 0 is a census; arming is the director's).
+BRANCH (suggested; graded by content): claude/capx-d76-t1h-screen-peak — FRESH off origin/main.
+
+THE PREDICATE, READ BY THE D67 LANE (r#45 doctrine: stated as a precondition of issuing, not as your
+first step — you VERIFY it, you do not discover it): `runner.py` builds the capacity screen's seam
+peak at the top of the year loop as `_scale_demand(base_demand, wx_config, year)` + `add_load_layers`
+— the GROWTH path — and only the LP's own `year_demand`, further down, takes the measured hindcast
+branch. With `weather_year=2024`, `crossover_solve_year_weather=False`, `demand_growth_vintage=None`,
+`_scale_demand` compounds and DE-GROWS 2024's measured load across 2024↔Y. Measured by D67 on PJM at
+zero LP: screen peak −10,819 / −7,574 / −3,977 / 0 / +4,386 MW vs the committed arm A across 2021–
+2025 at HEAD's 6.46 % rate — i.e. the 2021–2023 screen peaks sit 10.8 / 7.6 / 4.0 GW BELOW the load
+PJM actually served, while the LP dispatches the measured load in the same year. The director's own
+census (r#46): ALL 24 committed hindcast bundles, all six ISOs, run `weather_year=2024`, solve years
+2021–2025, `demand_growth_vintage=None` — so the defect reaches every T1-H recipe in the repo. Under
+rule 14 the measured load is the accurate input; a synthesized historical peak is an estimate that
+was silently compensating for nothing and mis-stating everything downstream of the seam (the
+reliability floor, the reserve-margin build backstop, the CR-1 position, FC-1 I7/I12, FC-3).
+
+PHASE 0 — THE CENSUS (zero LP), one table: for each of the six bare T1-H recipes (and the crossover
+recipes, `weather_year=2025`), per solve year: the screen peak the seam produces at HEAD (reuse
+`docs/handoffs/d67/gdrift_peak_probe.py` generalized to six ISOs — it reproduces the runner's preamble
+and seam exactly; extend, do not fork), the MEASURED hindcast peak from the same bundle's demand
+input, the delta in MW and %, and — from the committed evolution ledgers — the screen requirement
+that peak fed. Then, per ISO, the year of LARGEST footprint (that is the screen year for phase 1,
+fixed here before any solve) and whether the sign of the position error the delta implies matches
+the FC-1 I7/I12 residual on the board (a HIT/MISS per ISO, reported either way — this is NOT a gate,
+it is the reading that tells the director whether the defect explains a board row). State which
+ISOs D67 (if armed) makes in-table-moot for the REQUIREMENT (PJM only, in-table DYs) and note the
+floor/backstop still read the peak everywhere.
+
+WHAT PHASE 1 WILL BE (do NOT build it in phase 0): one gate, default-off, `capacity_screen_peak_
+measured_hindcast: bool` (or the name the code's own idiom prefers), under which — in hindcast mode
+ONLY (forecast years have no measured load; the growth path stays THE forecast methodology, rule 13's
+forward test) — the seam peak is the measured year's peak. Rule 19: it replaces the de-grown peak, it
+does not stack on it; enumerate every consumer of the seam peak first. Zero scalar fields, key
+registered, matrix row + six cells. Screen (rule 29) on the ISO + year phase 0 names, control at HEAD
+(every committed T1-H control is PRE-hunk on `DEMAND_GROWTH_RATES`; form 4 is void everywhere), STOP
+gates structural: the arm's screen peak = the measured peak to the MW; every non-peak operand
+byte-identical; no non-target load-bearing flip. Registration after D60-R3 merges. Arming is an owner
+card — this changes every hindcast bundle's screen operand and therefore every FC-1/FC-3 T1-H row.
+
+COLLISIONS: read-only in phase 0 (nothing to collide with). Phase 1 touches `runner.py`'s preamble —
+the wallclock branch `claude/p1-basis-seed-impl-oby2ka` is on `pipeline/solve.py` / `lp/model.py`,
+not the preamble, but classify it if merged. The D67 lane owns the requirement resolver; you own the
+peak — do not edit `gross_adequacy_requirement_mw`.
+EXIT (phase 0): FINDING-capx-d76-<date>.md §§1–3 with the six-ISO census table, the per-ISO screen
+year fixed, the HIT/MISS reading, and a §4 that names the phase-1 seam and every consumer of it. Push
+it; the director releases phase 1 or serves the card. Rules 13, 14, 19, 21, 22 (2021–2025 hindcast
+only; no out-of-training scoring), 24, 25, 27, 28, 29.
+```
