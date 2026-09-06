@@ -4558,9 +4558,9 @@ def run_year(
         # fail-open this repo refuses. Checked here, at the point of use, on the
         # complete as-solved config (a __post_init__ check sees intermediate
         # configs in which the pair is legitimately split; miso-225 Addendum A).
-        if getattr(config, "miso_seam_neighbour_anchored_ladder", False) and not getattr(
-            config, "miso_seam_measured_ladder", False
-        ):
+        if getattr(
+            config, "miso_seam_neighbour_anchored_ladder", False
+        ) and not getattr(config, "miso_seam_measured_ladder", False):
             raise ValueError(
                 "miso_seam_neighbour_anchored_ladder requires "
                 "miso_seam_measured_ladder: the neighbour-anchored PJM entry "

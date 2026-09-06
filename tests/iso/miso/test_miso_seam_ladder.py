@@ -227,9 +227,7 @@ class TestNeighbourAnchoredOverlay(unittest.TestCase):
         fleet, a = self._fleet_and_mc()
         _fleet2, b = self._fleet_and_mc()
         inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024)
-        inject_miso_seam_ladder_prices(
-            fleet, b, "MISO", 2024, neighbour_anchored=False
-        )
+        inject_miso_seam_ladder_prices(fleet, b, "MISO", 2024, neighbour_anchored=False)
         np.testing.assert_array_equal(a, b)
 
 
