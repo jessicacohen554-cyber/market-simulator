@@ -30,13 +30,24 @@ API's convention nor Central time.
 
 Output matches the committed files byte-convention for byte-convention: CRLF
 line endings, period-DESCENDING with sub-BA ascending inside each hour,
-zero-padded 4-character sub-BA codes, and ``value-units = megawatthours``.
-Existing rows are never rewritten — a target file that already exists is only
-extended with periods it does not carry (MERGE, never replace; rule 22).
+zero-padded 4-character sub-BA codes (MISO's codes are numeric; SWPP's are
+alphabetic utility mnemonics and are NOT padded — see ``SUBBA_NAMES``), and
+``value-units = megawatthours``. Existing rows are never rewritten — a target
+file that already exists is only extended with periods it does not carry
+(MERGE, never replace; rule 22).
+
+``--combine`` writes ONE ``<iso>_subba_demand_<first>-<last>.csv`` spanning the
+requested years instead of one file per year, which is the shape the committed
+``miso_subba_demand_2023-2025.csv`` uses for the calibration window. The byte
+convention is the one above in both cases (the combined MISO file predates this
+script and is period-ASCENDING/LF, an API-era artifact; nothing downstream reads
+these files in order — ``curate_zonal_shares.py`` pivots on ``period``).
 
 Usage:
     python scripts/data/fetch_eia930_subba_demand.py --iso MISO --years 2018
     python scripts/data/fetch_eia930_subba_demand.py --iso MISO --years 2018 --dry-run
+    python scripts/data/fetch_eia930_subba_demand.py --iso SPP \
+        --years 2023 2024 2025 --combine
 """
 
 from __future__ import annotations
@@ -60,9 +71,24 @@ SIX_MONTH_URL = (
 )
 _HALVES = ("Jan_Jun", "Jul_Dec")
 
+# The Grid Monitor's own BA code for each model ISO. The six-month extract keys
+# its rows on this code, and it is what the API writes into the ``parent``
+# column, so it is used for both. MISO's ISO name and BA code coincide; SPP's
+# do not (BA code ``SWPP``).
+PARENT_BA: dict[str, str] = {"MISO": "MISO", "SPP": "SWPP"}
+
 # Sub-BA display names, per ISO, in the vintage the committed pre-2023 files use
 # (EIA renamed these in 2026 — the 2026 file drops the " - MISO" suffix; a back
 # year is written in the naming of its own era, i.e. the 2019-2022 form).
+#
+# SPP: the 17 SWPP sub-BAs, names taken verbatim from EIA's own key-free
+# EIA-930 reference table ``https://www.eia.gov/electricity/930-api/sub_bas/data``
+# (``DESCRIPTION`` of every row whose ``PARENT_BA_ID`` is ``SWPP``), pulled
+# 2026-09-06. The six-month extract carries only the code, so the names cannot
+# be read off it; this is the table the Grid Monitor itself renders them from.
+# There is no committed SPP file whose naming vintage a back year would have to
+# match, so this current vintage is used for every year and recorded in
+# ``data/raw/zone-specific-demand/SPP/SOURCES.md``.
 SUBBA_NAMES: dict[str, dict[str, str]] = {
     "MISO": {
         "0001": "Zone 1 - MISO",
@@ -71,6 +97,25 @@ SUBBA_NAMES: dict[str, dict[str, str]] = {
         "0027": "Zones 2 and 7 - MISO",
         "0035": "Zones 3 and 5 - MISO",
         "8910": "Zones 8, 9 and 10 - MISO",
+    },
+    "SPP": {
+        "CSWS": "AEPW American Electric Power West",
+        "EDE": "Empire District Electric Company",
+        "GRDA": "Grand River Dam Authority",
+        "INDN": "Independence Power & Light",
+        "KACY": "Kansas City Board of Public Utilities",
+        "KCPL": "Kansas City Power & Light",
+        "LES": "Lincoln Electric System",
+        "MPS": "KCP&L Greater Missouri Operations",
+        "NPPD": "Nebraska Public Power District",
+        "OKGE": "Oklahoma Gas and Electric Co.",
+        "OPPD": "Omaha Public Power District",
+        "SECI": "Sunflower Electric",
+        "SPRM": "City of Springfield",
+        "SPS": "Southwestern Public Service Company",
+        "WAUE": "Western Area Power Upper Great Plains East",
+        "WFEC": "Western Farmers Electric Cooperative",
+        "WR": "Westar Energy",
     },
 }
 
@@ -94,9 +139,34 @@ def _fetch(url: str) -> str | None:
     return body
 
 
-def rows_for_year(iso: str, year: int) -> list[dict[str, str]]:
-    """Every published sub-BA hour of ``year`` for ``iso``, newest period first."""
+def _code(raw: str) -> str:
+    """Normalise a ``Sub-Region`` cell to the committed ``subba`` convention.
+
+    MISO's sub-BA ids are numeric and the committed files zero-pad them to four
+    characters ("1" -> "0001"). SWPP's are alphabetic utility mnemonics of two
+    to four characters (``WR``, ``EDE``, ``CSWS``) which must pass through
+    unpadded — padding them would invent codes ("00WR") that EIA never
+    publishes.
+    """
+    code = raw.strip()
+    return code.zfill(4) if code.isdigit() else code
+
+
+def rows_for_year(
+    iso: str, year: int, keep_years: frozenset[int] | None = None
+) -> list[dict[str, str]]:
+    """Every published sub-BA hour of ``year`` for ``iso``, newest period first.
+
+    ``keep_years`` widens the period-year filter below from ``{year}`` to the
+    whole span a ``--combine`` run is landing in one file. A half-year extract
+    spills the first few UTC hours of January into the *previous* year's
+    ``Jul_Dec`` file (SWPP is UTC-6, so 7 hour-ending stamps), and those hours
+    are inside a multi-year file's own span — dropping them would leave a
+    self-inflicted hole at every interior year boundary.
+    """
     names = SUBBA_NAMES[iso]
+    parent = PARENT_BA[iso]
+    wanted = keep_years if keep_years is not None else frozenset({year})
     out: list[dict[str, str]] = []
     for half in _HALVES:
         url = SIX_MONTH_URL.format(year=year, half=half)
@@ -106,9 +176,9 @@ def rows_for_year(iso: str, year: int) -> list[dict[str, str]]:
             continue
         n = 0
         for rec in csv.DictReader(io.StringIO(body)):
-            if (rec.get("Balancing Authority") or "").strip() != iso:
+            if (rec.get("Balancing Authority") or "").strip() != parent:
                 continue
-            code = (rec.get("Sub-Region") or "").strip().zfill(4)
+            code = _code(rec.get("Sub-Region") or "")
             if code not in names:
                 continue
             demand = (rec.get("Demand (MW)") or "").strip()
@@ -120,19 +190,21 @@ def rows_for_year(iso: str, year: int) -> list[dict[str, str]]:
             date_s, time_s, ampm = stamp.split(" ")
             mo, dy, yr = date_s.split("/")
             hour = int(time_s.split(":")[0]) % 12 + (12 if ampm.upper() == "PM" else 0)
-            if int(yr) != year:
+            if int(yr) not in wanted:
                 # A half-year extract spills a few hours into the neighbouring
                 # UTC year (Dec-31 local evening stamps as Jan-1 UTC). The
                 # committed files are partitioned by PERIOD year — those hours
                 # belong to, and already sit in, the neighbour's file; keeping
-                # them here would duplicate them across two partitions.
+                # them here would duplicate them across two partitions. (Under
+                # --combine ``wanted`` is the whole span, so an INTERIOR
+                # boundary's hours are kept — they are that file's own.)
                 continue
             out.append(
                 {
                     "period": f"{yr}-{mo}-{dy}T{hour:02d}",
                     "subba": code,
                     "subba-name": names[code],
-                    "parent": iso,
+                    "parent": parent,
                     "value": str(int(round(float(demand)))),
                     "value-units": "megawatthours",
                 }
@@ -151,9 +223,21 @@ def rows_for_year(iso: str, year: int) -> list[dict[str, str]]:
     return ordered
 
 
-def write_year(iso: str, year: int, rows: list[dict[str, str]], dry_run: bool) -> int:
-    """Write/extend ``<iso>_subba_demand_<year>.csv``; return the rows added."""
-    path = ZONE_DEMAND_DIR / iso / f"{iso.lower()}_subba_demand_{year}.csv"
+def write_year(
+    iso: str,
+    year: int,
+    rows: list[dict[str, str]],
+    dry_run: bool,
+    path: Path | None = None,
+) -> int:
+    """Write/extend ``<iso>_subba_demand_<year>.csv``; return the rows added.
+
+    ``path`` overrides the per-year target (used by ``--combine``, which lands
+    every requested year in one ``<iso>_subba_demand_<first>-<last>.csv``); the
+    MERGE-never-replace semantics and the byte convention are the same either
+    way.
+    """
+    path = path or ZONE_DEMAND_DIR / iso / f"{iso.lower()}_subba_demand_{year}.csv"
     have: set[tuple[str, str]] = set()
     existing: list[dict[str, str]] = []
     if path.exists():
@@ -192,13 +276,32 @@ def main() -> None:
     ap.add_argument("--iso", default="MISO", choices=sorted(SUBBA_NAMES))
     ap.add_argument("--years", nargs="+", type=int, required=True)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument(
+        "--combine",
+        action="store_true",
+        help="write ONE <iso>_subba_demand_<first>-<last>.csv spanning the "
+        "requested years instead of one file per year (the shape the committed "
+        "miso_subba_demand_2023-2025.csv uses for the calibration window)",
+    )
     args = ap.parse_args()
-    for year in args.years:
-        rows = rows_for_year(args.iso, year)
+    years = sorted(args.years)
+    combined: list[dict[str, str]] = []
+    span_years = frozenset(years) if args.combine else None
+    for year in years:
+        rows = rows_for_year(args.iso, year, span_years)
         if not rows:
             print(f"  {year}: no published sub-BA rows — nothing written")
             continue
-        write_year(args.iso, year, rows, args.dry_run)
+        if args.combine:
+            combined.extend(rows)
+        else:
+            write_year(args.iso, year, rows, args.dry_run)
+    if args.combine and combined:
+        span = f"{years[0]}-{years[-1]}" if len(years) > 1 else str(years[0])
+        path = (
+            ZONE_DEMAND_DIR / args.iso / f"{args.iso.lower()}_subba_demand_{span}.csv"
+        )
+        write_year(args.iso, years[-1], combined, args.dry_run, path=path)
 
 
 if __name__ == "__main__":
