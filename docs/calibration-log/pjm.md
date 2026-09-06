@@ -4478,4 +4478,102 @@ No keeper/shard/marker/determination change; nothing armed; no `ScenarioConfig` 
 adjudicated; `energy_reserve_coopt` PJM stays **K**), duty (c) not triggered. Rule 25: this
 PJM finding enters no other ISO's shard.
 
-Next shorthand: **pjm-166.**
+## pjm-166 — 2026-09-06 — the held-out C1 object is NOT a merit-order-position object (phase 0 refutation + the same-HEAD control)
+
+**Dispatch:** take PJM's gas-over / coal-under C1 signature on the 2021/2022 touchpoints back
+to 2023-2025 as an object (rule 22 step 3), starting zero-LP (rule 29 `[R-SCREEN]` clause 0),
+and close the open HEAD-drift limit the touchpoint assessment named
+(`ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05` §4 i / §5 item 2).
+**Keeper UNCHANGED** at `2026-08-15-pjm-162-inputclock`; no mechanism armed, swept or tuned;
+no `ScenarioConfig` field touched; no cell verdict moved; no held-out year solved, scored or
+registered. Record: `results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md` +
+`PRECOMMIT-pjm166-c1-object-2026-09-06.md`.
+*(Session renumbered off the SPENT `pjm-164` and `pjm-165` labels — both consumed by the
+C3c-program Q1 sessions of 2026-08-31/09-01; the log's own "Next shorthand" was already
+**pjm-166**. nyiso-121 precedent.)*
+
+**THE DISPATCH HYPOTHESIS DOES NOT SURVIVE PHASE 0, and its premise is factually inverted.**
+On measured EIA-923 delivered receipts, 2021 and 2022 are the two **DEAREST-gas** and two
+**CHEAPEST-coal** years of 2021-2025 — gas $4.12/$7.12 (ranks 4 and 5), coal $2.07/$2.62
+(ranks 1 and 2), against gas $3.26/$2.85 (ranks 2 and 1) in 2023/2024 — not "the cheapest
+delivered-gas year in the span". Three independent kills, all zero-LP on committed artifacts:
+**(1) the sign test fails** — `CC_REGULAR` over-runs **+28.7 / +22.3 TWh in the two
+dearest-gas years** and only **−3.4 / +0.5 TWh in the two cheapest**, the opposite of what a
+too-cheap gas offer would produce; **(2) the in-sample elasticity is already right** — coal
+share of (coal + `CC_REGULAR`) on `ln(delivered gas/coal)` over 36 in-sample months gives
+actual `0.2637 + 0.0772·x` vs model `0.2631 + 0.0686·x`, **slope ratio 0.888, intercept gap
+−0.0007**, worth 0.7 pp extrapolated against a 3.6 pp gap; **(3) coal is not saturated** —
+model coal runs **0.25-0.68 of its own annual peak** in 2021's high-`ln(g/c)` months on a
+*larger* 2021 fleet (36.9 vs 31.3 GW), so `COAL_BIT` −9.45 TWh is no capacity ceiling.
+
+**IT IS NOT A REORDERING AT ALL — it is an additive fossil surplus.** Total fossil is
+**+19.6 / +26.7 TWh** over measured in the held-out years against **−3.7 / −7.9** in
+2023/2024, while model demand matches EIA-930 **within ±2.2 TWh in every year**. **Correction
+to the standing narrative:** coal-under is **2021 only** — 2022 coal is **+2.0 TWh, slightly
+over**. The touchpoint assessment's own criterion table says this; its §3.1/§5 prose
+generalised past it. The hydro (−6 to −7 TWh) and oil (−1 to −2 TWh) deficits are real but
+**tier-neutral** — present in every year, in-sample included — so they cannot explain a
+boundary they do not cross.
+
+**EXACTLY ONE MODEL QUANTITY CROSSES THE TIER BOUNDARY: the DA-virtual layer's net cleared
+position** — `VIRTUAL_INC + VIRTUAL_DEC` = **+7.40 / +6.48 / −0.89 TWh in-sample vs −6.14 /
+−9.91 held-out**, i.e. 6 to 10 TWh of net phantom **DEMAND** that physical gas must serve,
+against the mechanism's own rule-13 anchor of ≈0 at actual DA prices. **This is pjm-158's own
+STANDING WARNING realized out of sample** ("improving C3b toward RT GROWS this layer's phantom
+energy … toward the condemned pjm-102 clamp"): pjm-158 measured 2023-2025 only, and the
+held-out rungs put the layer on the **other side of its crossing price**, ~2× larger, on
+exactly the two years C1 fails. Sign agreement is **5 of 5 years**. **RE-MEASURED, NOT
+RE-OPENED** — cell `da_virtual_bids` **stays `K`**, and its root cause (the LP carries one
+price series gated as RT while the curve needs a DA price) remains the architecture question
+**escalated to the owner** inside PJM's owner-declared-closed price-formation frontier
+(pjm-142). At pjm-158's **own measured channel gain** the held-out positions bound
+**~21 % of 2021's and ~44 % of 2022's** `CC_REGULAR` miss; **55-79 % stays unexplained and
+this session does not claim otherwise.**
+
+**Two candidates tested and NOT confirmed** (recorded so they are not re-tried): (a) `ST_GAS`
+— the second-largest 2021 C1 failure (+8.07 TWh) — is **not floor-forced**: 76 % of its 2021
+energy is `econlo`/`econhi` economic and `mustrun` is **0.00**, so rule 17
+`[R-FLOOR-WINDOW]` does not fire; (b) the `ST_GAS`↔`CT_PEAKER` substitution hypothesis
+**FAILS its own test** — monthly delta correlation **+0.077 / −0.165 / +0.497 / +0.178 /
++0.076**, positive in four of five years, so the annual near-offset is coincidence. **Filed,
+not pursued:** the model's `ST_GAS` holds a near-constant CF of its own peak
+(0.156/0.184/0.157/0.156/0.242) while the measured class swings 3.8 → 14.8 TWh — an
+**in-sample** question for 2023-2025, since chasing it from a held-out year is the fitting
+rule 22 step 3 forbids.
+
+**G-DRIFT IS STRUCTURALLY UNDISCHARGEABLE FOR THIS KEEPER, which is what earned the control.**
+`pjm_debugb_inputclock_A/meta.json` records `git_sha` **`457ae04`** (2026-08-15); it **does
+not exist at HEAD** and is **not** in `docs/governance/citation-commit-map.txt` — it predates
+the **2026-08-16 history rewrite** by one day, and the clone was deepened to **11,640 commits**
+without resolving it. There is **no diff to classify**, which is stronger than NEISO's "too
+large to classify" (assessment §4 i); an unclassifiable diff is treated as LIVE, and a LIVE
+hunk is the one thing that earns a control solve under rule 29 (b). NEISO's INERT verdict does
+**not** transfer (rule 25 `[R-ISO-SCOPE]`). So `pjm_headctrl_k162` was solved — the keeper
+recipe replayed on **2023-2025 only**, one invocation, **no `--holdout-authorized`** — against
+thresholds fixed in the PRECOMMIT **before** it ran.
+
+**Governance.** PJM holds `complete`; the holdout freeze is scoped to `locked_test` alone.
+**No held-out year was solved this session** (the control is training-tier), so no marker is
+spent and the rule-22 registration gate is not engaged; `final` is not granted and 2019 /
+H1-2026 are untouched. Rule 28: duty (b) not triggered (nothing tested or adjudicated —
+`da_virtual_bids` stays `K` with an **evidence append only**), duty (c) not triggered. Rule
+25: this finding enters no other ISO's shard. The control bundle is **deleted before merge**
+per rule 29 (c), following the `neiso_headctrl_k99` precedent (that bundle is likewise absent
+from `results/calibration/` and from the registry, and
+`check_registry_payload_parity.KEEP_REQUIRED_UNMAPPED_BUNDLES` has been **empty** since the
+2026-09-05 keeper-only prune); every number cited from it lives in the FINDING.
+
+**Dispatch item corrected, against interest:** the "ALSO OPEN, unrelated but red" claim —
+`tests/scoring/test_ff_readiness_battery.py` (4) and `test_gate_a_provenance.py` (1) failing
+on main over a superseded MISO keeper — **does not reproduce and is a false alarm on both
+halves.** The 4 failures are an **environment artifact**: `data/clean` is gitignored and
+starts empty, and the `confirmed-retirements` partition was missing
+(`InputResolution(iso='ERCOT', name='confirmed_retirements', status='MISSING', detail='clean
+partition …')`). After `python scripts/regenerate_clean.py confirmed-retirements`, **37/37
+pass**, `test_gate_a_provenance.py` included (it had **zero** failures either way). And the
+forecast board was **already re-keyed** on 2026-09-05 (r#42):
+`frontend/data/forecast/program-status.json` cites `2026-09-05-miso-220-nonsteam-lift`,
+matching `keepers/MISO.json`. **No board edit was made** — there was nothing to fix, and a
+cross-lane MISO edit from a PJM session would be unjustified.
+
+Next shorthand: **pjm-167.**
