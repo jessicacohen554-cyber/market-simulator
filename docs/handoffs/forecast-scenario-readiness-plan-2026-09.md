@@ -937,6 +937,9 @@ voluntary axis from Stage A? Two stems produced nothing across three refreshes; 
 CCS emission-rate seam repair as a named lane? At capx r#45 the seam is named but no lane carries it,
 and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **RULED 2026-09-06 (SCN-DESK r#9 amendment 1) — S6 (D-8): "Relaunch now, third stem"** → SCN-WS3b-r3 issued (`claude/scn-ws3b3-voluntary-demand-q7mv`; the VOL-* cases stay S5-held). **S7 (D-9): "Yes, name it the capx director's next lane"** — routed to the capx ledger as an owner direction; the S5 paired check (`emission_rate` follows the retrofit) is that lane's gate; the desk charters nothing on the seam.
+**S7 EXECUTED (capx D77, `ae8dd2a0`, PR #5089, 2026-09-06):** the repair is on main (a `ccs_capture_fraction` stamp composed at both measured-rate restoration sites; no cache key moves, so pre-fix bundles reaching 2028 with a retrofit are silently stale at their own key); the NEISO screen and FINDING are owed.
+
+**D-10 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#10); desk card, live copy in the ledger §2.** SCN-WS5A-LOAD measured that S5's premise was false: the retrofit screen is armed by the STATE carbon program, so NEISO's reference case carries 8.8 GW of `gas_cc_ccs` (NYISO 6.5 GW), mis-rated pre-D77 — NEISO 2030 CO2 overstated by 5.60 Mt (41.9 %), NYISO by 5.29 Mt (25.3 %). Question: re-pin the campaign once post-D77 and re-solve only the five contaminated legs plus CAISO (recommended), finish at the frozen pin and re-solve afterwards, or finish and disclose. A-POLICY's S5 release condition is unchanged and needs no card: it releases when the model-grain paired check lands (D77's screen or the re-solved NEISO REF).
 
 ---
 
@@ -1237,3 +1240,10 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#10 (main HEAD `6887484f`).** S7 executed by capx D77 within the hour (repair on
+  main, screen owed). SCN-WS3b landed complete (VOL-* cases live and S5-held; ERCOT 2026 T0 slack → WS-3c held
+  on a criterion). SCN-WS5A-LOAD 3 of 6 ISOs: falsified S5's premise (state programs arm the retrofit screen;
+  NEISO REF 8.8 GW `gas_cc_ccs`), ERCOT REF in deep shortage → card **D-10** (re-pin once post-D77).
+  SCN-WS1b-r2 5 of 6 pairs. Main red on the Y-24 forecast-invariant audit (18 of 26 SCN) → SCN-FIX1 issued
+  with the collate common-set repair. §5.1 untouched here (WS-1b-r2's open PR #5101 holds the Carbon rows).
+  Zero solves, zero code, zero defaults, zero markers.
