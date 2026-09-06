@@ -4595,4 +4595,94 @@ forecast board was **already re-keyed** on 2026-09-05 (r#42):
 matching `keepers/MISO.json`. **No board edit was made** — there was nothing to fix, and a
 cross-lane MISO edit from a PJM session would be unjustified.
 
-Next shorthand: **pjm-167.**
+
+---
+
+## pjm-167 — 2026-09-06 — the chartered 2022 touchpoint re-run was ALREADY SPENT (zero LP); the stale keeper-shard `holdout_touchpoint` REPAIRED; PJM's G-DRIFT baseline is UNRECOVERABLE
+
+**Branch:** `claude/pjm-2022-touchpoint-rerun-0j2ng2` · **Base:** `origin/main` @ `dbf8796b`
+**Finding:** `docs/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md`
+**Keeper UNCHANGED** (`2026-08-15-pjm-162-inputclock`) · **no solve, no score, no registration,
+no marker change, no matrix verdict moved** · **ZERO LP minutes.**
+
+**The chartered task was already done.** The session opened to re-measure PJM's 2022 validation
+touchpoint against the corrected input clock, on the premise that the registered rung was the
+2026-08-05 pre-repair one. Phase 0 found it executed on **2026-09-05** and registered:
+`2026-09-05-pjm-2022-2021-touchpoints` (bundle `pjm_tp2022_2021_k162`, solved at `46e08e5b`, well
+after the 2026-08-16 ≤2022 clock extension) — **and it walked 2021 as well**. Preconditions were
+checked in the chartered order first and all passed (PJM holds `complete`; `frozen_tiers` =
+`{locked_test}` only; `tier_for_year(2022)` = `validation`; `final` empty), so the lane was
+legitimately open and is closed on **evidence**, not on a gate.
+
+**The answer, reported at full magnitude: the input-clock repair does NOT close 2022 — it moves
+the rung backwards.** C1 `CC_REGULAR` **+18.28 → +22.26 TWh**; C3b NRMSE **0.206 → 0.250**. pjm-162
+*is* the stale rung's named repair and the rung fails the same two criteria, ~4 TWh larger. 2021 is
+NOT-YET on three (C1 `CC_REGULAR` +28.72 / `ST_GAS` +8.07 / `COAL_BIT` −9.45 TWh; C3a +25.7 %;
+C3b 0.355), C3c ledgered under rubric v3.6. Re-solving would have spent ~40–70 min of LP to
+reproduce a committed number, so it was not spent.
+
+**What was actually outstanding was a records defect, and it is repaired.**
+`keepers/PJM.json` carried a hand-authored `holdout_touchpoint` block naming
+`2026-08-05-pjm-2022-touchpoint` — **pruned** under the 2026-09-05 keeper-only retention directive.
+`build_status.py:574` copies that block through **without validating it against the registry** and
+`calibration-status.js:406` renders it, so the live PJM status card showed **two different 2022
+numbers stacked**: a `HOLDOUT 2022` panel reading +18.28 TWh / 0.206 with a **dead link** to the
+pruned run, directly above the derived ladder reading +22.26 TWh / 0.250. The block is **removed**
+(not re-authored) and the status part rebuilt — rule 30 `[R-TOUCHPOINT-FOLD]` (b) names a
+hand-authored holdout block as the wrong shape, the derived ladder strictly dominates it (per-year,
+auto-derived), and **ERCOT is the precedent**: it has spent 2022 touchpoints and carries a ladder
+with no such block. Four of six ISOs already had none. Gates after: `audit_keepers --iso PJM
+--check` **PASS 0/0**; parity **OK** (14 runs, 47 bundle dirs); matrix guard **exit 0** (its 244
+anchor warnings measured identical on a clean stash of main — pre-existing).
+
+**NEISO carries the identical defect — ROUTED, not fixed** (`2026-08-06-neiso-2022-corrected-basis`,
+also pruned). Already routed once at capx r#41 and still open; left untouched on lane discipline
+(rule 25 `[R-ISO-SCOPE]`, `keepers/README.md`). **A guard is warranted and deliberately NOT landed
+here**: no `audit_keepers` check asserts that shard-referenced run ids exist in the registry, but
+CI runs `audit_keepers --check` across every ISO, so the guard would red `main` on NEISO's still-open
+block. Correct order is NEISO's repair first, guard second, in that lane's PR.
+
+**PJM's G-DRIFT baseline is UNRECOVERABLE — the one open limit is harder than the assessment
+assumed.** The 2026-09-05 assessment left PJM's HEAD-drift limit open and recommended a same-HEAD
+control solve; rule 29 `[R-SCREEN]` (b) directs the zero-LP G-DRIFT audit first. It is **not
+dischargeable as recorded**: the keeper's `git_sha` `457ae04` is a 7-char **pre-rewrite** prefix
+(not a valid object; CLAUDE.md warns such prefixes may now resolve WRONG), its full
+`basis_sha c447199c…35454` does not resolve and a targeted `git fetch` of it did not return in
+~3 min, and **neither is in `citation-commit-map.txt`**. The keeper solved 2026-08-15, one day
+before the 2026-08-16 history rewrite. *Stated against interest:* this does not prove the object is
+gone from the remote — only that it is unobtainable by the two routes available here; a
+`--unshallow` (5.46 GiB) was judged out of proportion. **Consequence:** under rule 29(b) an
+unclassifiable drift audit is treated as **LIVE**, so PJM's control solve *is* authorized — the
+same place NEISO landed by a different route. It is an owner call, not a session's to spend: its
+only product is closing a stated limit on a number rule 22 forbids quoting as skill and rule 30(c)
+forbids from downgrading the ISO.
+
+**Successor, unchanged and now doubly supported (rule 22 step 3):** PJM's **gas-over / coal-under
+C1 signature**, running the same direction on *both* held-out rungs against a tuned window where C1
+passes clean. It goes to **2023–2025**, never to the touchpoint year. Prep items, unrestricted and
+marker-free: PJM 2020 is not data-ready on three measured blockers (inflated zonal demand feed,
+missing `calibration_reference` block, missing renewable-capacity file), and the PJM 2021 int32
+sentinel (2,147,480,064 MW, three hours) is located but unfixed — fixing it re-renders PJM's
+committed benchmark and needs its own decision.
+
+**RENUMBERED, and TWO OF THIS ENTRY'S CLAIMS ARE SUPERSEDED BY pjm-166 (the entry directly
+above), which landed on `main` while this session was open.** This session began as pjm-166 and is
+renumbered pjm-167. (a) **The successor named below is REFUTED — do not take the C1 signature to
+2023-2025 as a merit-order-position object.** pjm-166 did exactly that, zero-LP, and killed it on
+three independent tests; and the clause "on the year with the cheapest delivered gas in the span",
+inherited from the registered sidecar's note rather than measured here, is **inverted** — 2021 and
+2022 are the two DEAREST-gas and CHEAPEST-coal years of 2021-2025. Coal-under is **2021 only**
+(2022 coal is +2.0 TWh, over). The defect is an **additive fossil surplus**, not a reordering, and
+the live object is the **DA-virtual layer's net cleared position** (the only quantity crossing the
+tier boundary; `da_virtual_bids` stays `K`, root cause escalated to the owner). (b) **The G-DRIFT
+finding below is INDEPENDENTLY REPLICATED and its owner-court item is DISCHARGED**: pjm-166 reached
+the same conclusion by a stronger route (deepened to 11,640 commits without resolving `457ae04`, so
+there is *no diff to classify*) and spent the control (`pjm_headctrl_k162`, training-tier only,
+deleted before merge per rule 29 c). Do not re-raise or re-spend it. Everything else here stands.
+
+**Log-gap note:** the 2026-09-05 touchpoint session registered its run and wrote
+`results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`, but left **no
+entry in this log**. This entry records its result so the log is not silent on it; the assessment
+remains that session's own record.
+
+Next shorthand: **pjm-168.**
