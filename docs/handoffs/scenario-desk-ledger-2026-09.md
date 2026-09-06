@@ -7,7 +7,29 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #6, amendment 1) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #7) ·
+**r#7 (HEAD `e80bdd87`):** **STAGE A-LOAD IS UNBLOCKED AND ISSUED — SCN-WS4c LANDED COMPLETE.**
+19 arms (15 T0 + 4 T1-F), all solve clean, and SCN-WS4b's six pre-declared readings score
+**20 HIT / 3 SPLIT / 3 MISS**. Two results outrank the scores: (1) **the fossil-average heuristic
+this campaign's own charter used is systematically biased** — the implied marginal CO2 rate sits
+**below** fossil-average wherever coal is inframarginal (ERCOT 0.73×, PJM 0.77×, MISO 0.65×) and
+**above** it in every gas-dominated ISO (CAISO 1.05×, NYISO 1.05×, NEISO 1.17×), so the charter's
+"CO2 rises ≈ fossil-average × added fossil-served MWh" is high by 23–35 % with coal and low by
+5–17 % without — predictable in advance from one fact about the fleet; (2) **G-DRIFT was
+vindicated by measurement, and it is evidence about rule 29(b) itself** — NEISO's REF T1-F does
+**not** reproduce the committed `ff-t1f-d50` bundle, differing by up to **2.821 Mt (−18.8 % in
+2030)**, so differencing against the committed bundle — **rule 29(b)'s stated DEFAULT** — would
+have measured NEISO's entire deployment response against a stale reference. Routed ·
+**SCN-WS1b-r2's phase 0 KILLED ITS OWN LEG 1 at zero LP cost — and the charter it killed was
+MINE.** `CARBON_PRICE_PATHS` anchors every registered RFF path at **$0 in 2026**, so no
+`carbon_price_path` value of any kind can produce a signal in a 2026-only solve; the arm is inert
+in all six ISOs, not the three I predicted. **The desk RATIFIES the lane's 2027 scope call**
+(`--end-year 2027`, still below `ccs_retrofit_available_year` and so still S5-safe) and records
+the error against itself: r#6 am.1 retired the `carbon_price_delta` form as "no longer needed"
+after ruling S2, when in fact it was **the only form that yields a 2026 signal at all** ·
+**capx D72 measured the blast radius of ruling S2 and it is EMPTY** — D23 stands, re-examined and
+upheld · SCN-WS3b-r2 still shows no branch — asked again, not graded lost.
+*(previous)* **r#6, amendment 1:**
 **r#6 am.1 — RULING S5 SPLITS STAGE A IN TWO.** D-7 is ruled: **hold the policy half, run the
 load half now.** Stage A is no longer one campaign. **STAGE A-LOAD** — `REF` /
 `LOAD-HI` / `LOAD-HI-ORGANIC` across six ISOs, plus the pure-carbon T0 probes **below 2028** —
@@ -169,6 +191,81 @@ unchanged and is what matters.
 
 ## 0. Refresh log (newest first)
 
+### r#7 — 2026-09-06, main HEAD `e80bdd87bad0cb0622678b84736bc0cd7fa148f7`
+
+*(PR #5001.)* Delta from the r#6 am.1 pin `0027a6c9`: **42 commits**.
+
+**GRADED BY CONTENT:**
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F, scored against WS-4b's pre-declared readings | **LANDED r#7 — COMPLETE** | `claude/scn-ws4c-load-hi-probes-o85iyi` (PRs #4986/#4990/#4993/#4996/#4997) | **Opus** | 19 arms all clean; **20 HIT / 3 SPLIT / 3 MISS** against WS-4b; phase 0 killed three arms at zero LP; three of its own predictions missed and reported at full magnitude. **Its two headline results — the biased fossil-average heuristic and the measured G-DRIFT vindication — outrank its scorecard** (§0 r#7). **Releases Stage A-LOAD.** |
+| **SCN-WS1b-r2** | **IN FLIGHT — re-scoped by its own phase 0** | `a13d298b` the PRECOMMIT addendum (pushed before any solve, original never edited), `9c8f67a6` the 2027 scope call + retargeted instruments, `e5bfe1d4` the FINDING skeleton. **No solve spent yet** — the phase-0 gate refused the arms, which is rule 29 clause (0) working exactly as written. |
+| **SCN-WS3b-r2** | **NOT SEEN — asked again** | No branch, no commit. One refresh after the relaunch. Feeds only the S5-held half, so it is not on Stage A-LOAD's path. |
+| **SCN-LOAD** | LANDED r#6; branch still open | `claude/scn-load-forecast-intake-t17qxj` remains unmerged-but-landed (its content is on main via PR #4970). No action. |
+
+**THE DESK'S OWN CHARTER WAS WRONG, AND THE LANE CAUGHT IT BEFORE SPENDING AN LP.**
+At r#6 amendment 1 this desk re-scoped SCN-WS1b with a change it stated confidently:
+> *"the reduced form is RETIRED; run the real thing … D-1 is now ruled S2 = FLOOR, and SCN-WS1c
+> has LANDED the repair. So leg 1 runs `--set carbon_price_path=mid`, the charter's original full
+> form."*
+That was wrong on a fact the desk did not check. `CARBON_PRICE_PATHS`
+(`config/fuel_trajectories.py:1132-1137`) anchors **every** registered RFF path at **$0 in 2026** —
+2026 is the paths' common origin knot — so **no `carbon_price_path` value of any kind can produce
+a signal in a 2026-only solve**. The lane's re-census through the solves' own builder measured
+Δ2026 = 0.0000 in **all six** ISOs, for two different reasons: the floor on CAISO / NYISO / NEISO
+(as predicted), and the path's own $0 origin knot on ERCOT / PJM / MISO (not predicted at all).
+The desk's error was to treat `carbon_price_delta` as a *workaround for an open card* when it was
+in fact **the only form that yields a 2026 signal**; ruling S2 changed which form is right for a
+horizon leg, and changed nothing about the 2026 leg.
+**RATIFIED: the lane's minimal repair, `--end-year 2027`.** It is the smallest change that makes
+the arm live (the mid path's 2027 knot is +\$3.75/t on the three non-program ISOs), and it stays
+**below `ccs_retrofit_available_year` (2028)**, so it remains inside Stage A-LOAD under ruling S5.
+The lane may proceed on it without a further card.
+
+**SCN-WS4c'S TWO RESULTS THAT OUTRANK ITS OWN SCORECARD.**
+
+1. **The fossil-average heuristic is biased, and the bias has a sign you can predict.** The
+   implied marginal CO2 rate against the fossil-fleet average:
+   | with inframarginal coal | | gas-dominated | |
+   |---|---|---|---|
+   | ERCOT | 0.73× | CAISO | 1.05× |
+   | PJM | 0.77× | NYISO | 1.05× |
+   | MISO | 0.65× | NEISO | 1.17× |
+   The charter's own expectation — *"CO2 rises ≈ fossil-average rate × added fossil-served MWh"* —
+   is therefore **high by 23–35 % where coal is in the stack and low by 5–17 % where it is not**.
+   This is not noise and it is not a defect: it is the merit order doing its job, and it means
+   **every future LOAD-shaped expectation in this campaign should be written against the implied
+   marginal rate, not the fleet average.** Folded into the Stage A-LOAD charter.
+2. **G-DRIFT was vindicated by measurement — and that is evidence about rule 29(b), not just
+   about this lane.** ERCOT's REF T1-F reproduces the committed `ff-t1f-d50` bundle *exactly*.
+   NEISO's does **not**: up to **2.821 Mt, −18.8 % in 2030**, with d50's 50 MW backstop firing
+   gone. Rule 29(b) states that *"the incumbent keeper's COMMITTED bundle IS the control"* and
+   makes form 4 the **default**; on this ISO that default would have measured the entire
+   deployment response against a stale reference, and only the code-level G-DRIFT audit the same
+   rule prescribes caught it. **Routed to the capx director and the audit track** as a measured
+   case where 29(b)'s default failed and its own escape hatch saved it — the desk takes no view on
+   whether the rule should change, and states plainly that one measured case is not a rule change.
+
+**STAGE A-LOAD IS UNBLOCKED. ISSUED THIS REFRESH.** Every precondition verified on main at this
+pin: SCN-WS0 (all six items), SCN-WS4a, SCN-WS4b, SCN-WS4c (FINDING landed), SCN-LEVELS, SCN-LOAD.
+Ruling S5 is the authorization and **no further card is needed**. Six per-ISO lanes
+(`SCN-WS5A-LOAD-<ISO>`) plus `SCN-WS5A-LOAD-SYNTH` after they register. The carbon half of A-LOAD
+rides SCN-WS1b-r2's ratified 2027 legs and is **not** a precondition — A-LOAD's three load cases
+stand alone, and the synthesis says so if WS-1b-r2 has not landed.
+
+**Capx deconfliction.** **D72 measured the blast radius of this desk's own ruling S2** — the G-C1
+carbon-nulling radius is **EMPTY** and D23 is re-examined and **upheld** (`6e5d7b88`, `5a4761dd`).
+That is the right outcome to record for a ruling the desk pushed: it changed no committed result.
+D60-R3 and D66 have live branches; neither touches an SCN region. The CCS seam that holds
+Stage A-POLICY is still unrepaired at this pin.
+
+**Issued:** `SCN-WS5A-LOAD-<ISO>` ×6 + `SCN-WS5A-LOAD-SYNTH`.
+**Cards:** none newly presented. **D-5 becomes answerable the moment SYNTH lands** — it will carry
+the measured Stage-A-LOAD cost table its charter has always required.
+
+---
+
 ### r#6 amendment 1 — 2026-09-06: ruling S5 on card D-7
 
 **S5 (2026-09-06), verbatim in effect: HOLD THE POLICY HALF; RUN THE LOAD HALF NOW.** Stage A
@@ -215,8 +312,8 @@ rulings S1–S4 were issued and, for three of the four, launched and landed insi
 | **SCN-LEVELS** | Commit the §3.5 campaign levels, released by S3 | **LANDED r#6** | `claude/scn-levels-*` | **Fable** | S3 executed: levels committed, `CES-T80` made live, docstrings de-illustrated. Its FINDING **measures** rather than asserts that the committed levels are the levels the lanes ran. |
 | **SCN-LOAD** | The full six-source `load-forecast` curated datatype, released by S4 | **LANDED r#6** | `claude/scn-load-forecast-intake-t17qxj` (PR #4970) | **Opus** | S4 executed. Scope note pushed first with **obtainability measured per source**, so the closure is scored against a prediction; the six published forecasts curated as the datatype. |
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F, scored against WS-4b's pre-declared readings | **IN FLIGHT r#6** | `claude/scn-ws4c-load-hi-probes-o85iyi` | **Opus** | PRECOMMIT + a **zero-LP phase 0** confirming WS-4b's arithmetic is HEAD's (rule 29 step 0 working) + harness + the first T0 slim artifacts. Owed: the rest of the battery, the two T1-F legs, the HIT/MISS scoring, the FINDING. |
-| **SCN-WS1b** | Six-ISO carbon paired T0 probe + NEISO/ERCOT delta ladder + the per-ISO leakage line | **STALLED r#6 — status ASKED** | merged through `main` at r#5 | **Opus** | PRECOMMIT + instruments landed r#5; **nothing since, across two refreshes**. Holds merged PRs, so the relaunch protocol does not apply on its face. **Asked, not graded lost** — the r#5 correction exists because this desk got exactly that call wrong on SCN-WS4b. |
-| **SCN-WS3b** | Voluntary-demand build, released by S1 | **NOT SEEN r#6 — status ASKED** | `claude/scn-ws3b-voluntary-demand-n5wq` | **Fable** | No branch, no commit, one refresh after issuance — inside the threshold. Asked. **It and SCN-WS3c are two of the three lanes between here and Stage A.** |
+| **SCN-WS1b-r2** | Six-ISO carbon paired probe (leg 1); leg 2 held by S5 | **IN FLIGHT r#7 — re-scoped by its own phase 0** | `claude/scn-ws1b2-carbon-sixiso-r4hm-t5hdbz` | **Opus** | Its phase-0 gate **killed the desk's charter at zero LP**: every RFF path anchors at \$0 in 2026, so no `carbon_price_path` produces a 2026 signal. **Desk RATIFIES `--end-year 2027`** — still below 2028, still S5-safe. Solves pending. |
+| **SCN-WS3b-r2** | Voluntary-demand build, released by S1 | **NOT SEEN r#7 — asked again** | `claude/scn-ws3b2-voluntary-demand-k8zp` | **Fable** | One refresh after relaunch. Feeds only the S5-held half, so it is **not** on Stage A-LOAD's path. |
 
 **THE HEADLINE FINDING, AND IT IS NOT A CES FINDING.** SCN-WS2b's re-prove existed to catch
 exactly this class of thing, and it did. In NEISO the CES premium's **entire** response is
@@ -685,7 +782,7 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED — precondition now reachable** | — | Opus | Precondition: SCN-WS3b on main, which S1 has now released. Issued the refresh WS-3b lands. |
-| **SCN-WS5A-LOAD-\<ISO\>** ×6 + **-SYNTH** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **RELEASED by S5 — issues when SCN-WS4c lands** | — | Opus | No CCS exposure (the retrofit screen is inert below 2028). **Needs no further card**: S5 authorizes this half. |
+| **SCN-WS5A-LOAD-\<ISO\>** ×6 + **-SYNTH** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **ISSUED r#7** | `claude/scn-ws5a-load-<iso>-<4ch>` ×6, then `-synth` | **Opus** | Every precondition verified on main at the r#7 pin. S5 is the authorization; no further card. SYNTH presents card **D-5** with the measured cost table. |
 | **SCN-WS5A-POLICY-\<ISO\>** ×6 + **-SYNTH** | **Stage A-POLICY** — the CES cases, the 2028+ carbon legs, `ALL-CLEAN`, `VOL-*` | **HELD by S5 on the CCS seam** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
 | **Stage B** | Full-horizon legs | **NOT ISSUABLE** | — | — | Needs card D-5 **and** an OPEN §2.1b gate for the named ISO at issuance. At the r#1 pin only NEISO is open. Re-check at issuance, never at planning. |
 
@@ -844,6 +941,19 @@ Stems are recorded so a relaunch (`…-r2`) can never collide with the original.
 |---|---|---|---|---|---|
 | r#4 | SCN-WS4b-r2 | **Fable** `claude-fable-5-1` | `claude/scn-ws4b2-loadhi-adequacy-x3mc` | `all` | the r#3 charter **verbatim** |
 | r#4 | SCN-MX-R-r2 | **Fable** `claude-fable-5-1` | `claude/scn-mxr2-matrix-duty-repair-t7bq` | `code` | the r#3 narrowed charter **verbatim** |
+
+**r#7 issuance.**
+
+| refresh | lane | model (id) | branch stem issued | data profile | released by | body used |
+|---|---|---|---|---|---|---|
+| r#7 | SCN-WS5A-LOAD-\<ISO\> ×6 | **Opus** `claude-opus-5` | `claude/scn-ws5a-load-<iso>-<4ch>` | \<iso\> | **S5** + SCN-WS4c landing | plan §7 "WS-5" Stage A, **load half only** |
+| r#7 | SCN-WS5A-LOAD-SYNTH | **Opus** `claude-opus-5` | `claude/scn-ws5a-load-synth-<4ch>` | `code` | same | plan §3 WS-5 Stage C outline, load half; presents D-5 |
+
+**r#6 am.1 issuance — two relaunches, one re-scope.** SCN-WS1b-r2
+(`claude/scn-ws1b2-carbon-sixiso-r4hm`, Opus) and SCN-WS3b-r2
+(`claude/scn-ws3b2-voluntary-demand-k8zp`, Fable). **The WS-1b-r2 charter carried a desk error**
+(the retired `carbon_price_delta` form) which its phase 0 caught before any LP was spent; the
+2027 repair is ratified at r#7.
 
 **r#5 amendment 1 issuance — the four ruling-released lanes.**
 
