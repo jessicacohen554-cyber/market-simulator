@@ -398,3 +398,34 @@ bytes. Nothing is registered on any dashboard — a screen bundle is never regis
 .venv/bin/python docs/handoffs/d76/p2_accreditation_probe.py   # §4.1, zero LP
 .venv/bin/python docs/handoffs/d76/p2_consumer_probe.py        # §4, zero LP
 ```
+
+---
+
+## 12. ADDENDUM — the end-of-lane rebase, re-audited (PRECOMMIT §3 / Addendum 1)
+
+Addendum 1 committed this lane to holding all eight legs at `e6a0402f` and re-auditing the delta
+before merge. `origin/main` reached **`b22b91c3`**; the branch is rebased onto it and the delta is
+audited here.
+
+**Solve-path delta `e6a0402f → b22b91c3`, two non-merge commits:**
+
+| commit | change | classification |
+|---|---|---|
+| `16210868` | **capx D79 phase 1** — the solve-surface fingerprint enters the cache key (owner ruling Q54) | **INERT for this lane's keys**: it landed declaring every name at its live hash, so no row differs from its declaration and nothing enters the key |
+| `bf97317f` | **capx D78-R2 STEP 0** — delete the producer-less `exempt_unit_ids`, restate D78's T3 as a negative test | **INERT**: a dead branch no call site could reach (D81 rec 2's own finding), so no solve path changes |
+| `82a7742d` (Addendum 1) | miso-230 CT net-load drag, a BACKCAST lane | **INERT**: `src/market_sim` untouched |
+
+**Verified, not asserted.** `p2_predeclare.py` was re-run at the rebased HEAD and diffed against the
+copy committed before the first LP:
+
+- **All eight leg cache keys UNMOVED**, digit for digit — `a9c66d8ea25acb9d` / `fd07e2dba50cd32b`,
+  `2184fc9c85fafd06` / `8a7ef53c812be4e1`, `e465ee243716c86d` / `681b733594f4cd6b`,
+  `ad3af46ecefd8941` / `ff8ef4fcb278a76d`.
+- **Zero** pre-declared seam-peak, measured-peak or requirement-delta rows moved (0 of 42).
+- **STOP 1 still PASS** at the rebased HEAD (12 recipe keys: explicit-OFF == bare, armed distinct).
+
+So every number in this FINDING describes `b22b91c3` as well as the base the legs were solved at,
+and the lane's claims survive the rebase unchanged. This is a code-level audit plus a re-derivation,
+not a "files changed, therefore void" heuristic in either direction — and per rule 29(b) a matched
+cache key is not by itself a drift verdict, which is why the hunk classification above is given
+first and the key check is corroboration rather than the argument.
