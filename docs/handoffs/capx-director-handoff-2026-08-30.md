@@ -92,14 +92,15 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#42, main HEAD b2bd9fdb, 2026-09-05 — VERIFY, DON'T TRUST):
+STATE AT HANDOFF (r#42 + am.1, main HEAD 546279a5, 2026-09-05 — VERIFY, DON'T TRUST):
 - KEEPERS: ERCOT ercot248-two-config-keeper CALIBRATED (2022 touchpoints both NOT-YET; C1 an input
   gap) · NEISO neiso-99-joint-p1 CALIBRATED (ladder walked: 2022 CAL · 2021 CAL · 2020 NOT-YET) · PJM
   pjm-162-inputclock CALIBRATED (2022 + 2021 touchpoints both NOT-YET; input-clock does not close
   2022) · **MISO 2026-09-05-miso-220-nonsteam-lift CALIBRATED — first ever; C6 only via the #4855
   channel; NO marker (card C-17/Q49)** · **CAISO 2026-09-05-caiso-252-b1-notrim CALIBRATED — marker
   withdrawn 08-06 on a caveat that no longer exists (card C-18/Q50)** · NYISO nyiso-192-astoria-panel
-  NOT-YET (nyiso-196 full span SOLVING after a cleared screen — Cricket Valley unit-id collision).
+  → **2026-09-06-nyiso-196-extract-basis CALIBRATED (#4894; the Cricket Valley id-collision repair);
+  withdrawn-block re-entry condition MET, undeclared → card C-19/Q51; D70 chartered conditional**.
   Markers: complete = {ERCOT, NEISO, PJM}; withdrawn = {CAISO, NYISO}; MISO never held one; final
   EMPTY. Gates: gate (a) 0 (MISO re-keyed by the desk, twelfth firing) · parity 0 (rule 29(c) live) ·
   matrix 0 · goldens 0 · bench STALE ×1 (ERCOT/2022, touchpoint lane's) · ruff green after the desk
@@ -108,15 +109,20 @@ STATE AT HANDOFF (r#42, main HEAD b2bd9fdb, 2026-09-05 — VERIFY, DON'T TRUST):
   gate-(a) re-keys (caiso-252's, this desk's MISO). ff-verdicts.json untouched since D60's legs 1–2.
   **D60-R2: SILENT since PR #4824 (~21:30Z) through r#41 AND r#42 — asked twice; D60-R3 is the
   next-sitting default unless the owner confirms it alive.** Pre-declared negatives unchanged.
-- LANDED r#42: D65 Act A as a CHECKPOINT (#4890/#4891) — build, Phase 0 (5e-12), G-DRIFT 58 files all
-  INERT, A1 key 8ebed20ae90ec0e7; the A1 solve + registration (neiso-t1f-pre-d65 prior) + re-score
-  and finding §4/§5/§8 OWED by that session; do not re-issue.
+- LANDED r#42 (+am.1): D65 IN FULL (#4890/#4891/#4895/#4898) — its own G-DRIFT was WRONG (file-level on
+  retirements.py); a same-HEAD control under 29(b)'s LIVE clause; HEAD DRIFT is MATERIAL and reproducible
+  (NEISO 2027 exits 33 → 40 rows from 9e48ff6; D55 `_floor_retention_merit` the candidate) → every
+  pre-hunk forecast bundle stale → D71 (bisect) queued-named; A1 `8ebed20ae90ec0e7`: the seam RE-ORDERS
+  not re-selects (34 rows either way, one swap); §8 ARM ONLY COUPLED WITH ACT B → Q47 amended to decide
+  both. OWED: registration + re-score after D60-R2/-R3. Its drafted card label "C-17/Q49" COLLIDES
+  with the MISO card — cite by content.
 - ISSUED / CHARTERED: D62 (r#41; NOT LAUNCHED — paste pack §D62) · D68 (MISO complete declaration)
   and D69 (CAISO complete re-declaration), CONDITIONAL — each STOPs unless §3 records its ruling
   (pack §D68 / §D69, Fable). HELD: D58 + D63 on D60-R2; T3-NYISO-GOLDEN on the marker. QUEUED-NAMED:
   D66 (PJM 2024/25 census), D67 (steam below-cap convention), D60-R3 (if D60-R2 dead), a
   carbon-response root-cause lane (D21's P1 defect + SCN-WS0's leakage finding, same object).
-- OWNER-TIER OPEN: **Q47** (D65 Act B, VOM 8.0 → 2.95 + re-key; rec. A authorize after D60-R2) ·
+- OWNER-TIER OPEN: **Q47 (AMENDED: Act A arming + Act B together; rec. A ARM COUPLED after D60-R2/-R3)** ·
+  **Q51** (re-declare NYISO complete, fourth; rec. A complete only, Q45 restored) ·
   **Q48** (PJM co-opt arming; rec. A defer until D62) · **Q49** (declare MISO complete; rec. A
   declare with the three facts in the entry) · **Q50** (re-declare CAISO complete only; rec. A) ·
   D60-R2 alive? NEXT cards: D58 arming; D62 arming; NYISO re-authorization when CALIBRATED again.
