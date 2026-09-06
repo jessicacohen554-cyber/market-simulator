@@ -572,6 +572,7 @@ def run_year(
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
+    nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -894,6 +895,7 @@ def run_year(
         caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
+        nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=fleet_state_from_eia860,
@@ -1821,6 +1823,35 @@ def run_year(
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None}
         )
+    # nyiso-199 FAIL-LOUD GUARD (rule 24 [R-REGISTRY]). This flag's consumer
+    # lives inside ``backcast_config`` (line ~861), which has ALREADY RUN by the
+    # time the generic ``prb_overrides`` channel applies here — so a run that
+    # arms it through prb ALONE would carry ``nyiso_ct_peaker_bands_measured =
+    # True`` in its recorded run_config while the LP solved the FITTED bands: a
+    # silent no-op advertising a mechanism that never ran, which is exactly the
+    # caiso-157 defect class this file's own solve-path guard was written for.
+    # ``replay_keeper --set`` routes through both channels, and the CLI flag
+    # threads the named kwarg, so the supported paths are fine; this catches the
+    # unsupported one loudly instead of producing a bundle that lies.
+    if getattr(config, "nyiso_ct_peaker_bands_measured", False):
+        _ny_ct = (config.offer_curve_by_group or {}).get("CT_PEAKER") or {}
+        _unapplied = [
+            b
+            for b in ("committed", "econ_low", "econ_high")
+            if f"phys_{b}" in _ny_ct
+            and abs(float(_ny_ct.get(b, 0.0)) - float(_ny_ct[f"phys_{b}"])) > 1e-9
+        ]
+        if _unapplied:
+            raise ValueError(
+                "nyiso_ct_peaker_bands_measured is True on the resolved config "
+                f"but band(s) {', '.join(_unapplied)} still carry the fitted "
+                "multiplier — the flag reached ScenarioConfig AFTER its "
+                "backcast_config consumer ran (the generic prb_overrides "
+                "channel alone). Pass it as the named run_year kwarg, via "
+                "--nyiso-ct-peaker-bands-measured, or via replay_keeper --set "
+                "(which routes both channels). A silent no-op here would "
+                "advertise a mechanism the LP never solved (rule 24)."
+            )
     # Gas-keyed coal passthrough sigmoids per supply chain. The bit family
     # has its own flag/overrides; the sub/lignite enables and all their
     # tuning params ride the generic prb_overrides ScenarioConfig override
