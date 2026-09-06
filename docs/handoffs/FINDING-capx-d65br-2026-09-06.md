@@ -280,3 +280,39 @@ predicted by `k` and by nothing else.** That is the D50/D64 seam behaving as con
 the strongest structural evidence this lane produces. Stated here because it also means the two
 fired G5' STOPs are measuring *host exhaustion*, which is a real market fact, not a defect in the
 arm.
+
+### 5.5 `pjm-t1f` — ALL GATES CLEARED, and G1' EMPIRICALLY VINDICATES THE ADJUDICATION
+
+Solve key **`542eeedadab83ee1`** = **Addendum E's re-declaration** exactly (the D67-ARM move was
+correctly anticipated). Solve-path guard clean. **5/5 years, 55.6 min, 8.69 GB.**
+
+| year | rows | MW | D64 §2.4 ceiling | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 1 | **408.2** | **0.41 GW** | 0.6071 | 7.155 | 1.6907 |
+| 2029 | 5 | 1,840.5 | 2.48 GW | 0.5603 | 7.121 | 1.5602 |
+| 2030 | 0 | 0.0 | 2.48 GW | — | — | — |
+
+| gate | verdict |
+|---|---|
+| **G0' / G2' / G3' / G6'** | **PASS** — G2' on all 6 rows; 55.6 min is inside 2× the ~36 min estimate, 8.69 GB < 14 GB |
+| **G1'** | **PASS** — all 6 rows inside **PJM's** D64 band **1.27–1.49**, measured **1.2668–1.4886** |
+| **G4'** | **PASS** — invariants **identical** to the committed `pjm-t1f`: `changed: none`; I7/I12 already FAIL; **zero flips** |
+| **G5'** | **PASS** — 0.408 / 1.840 / 0.000 GW, every year under its ceiling |
+
+**G1' IS THE EMPIRICAL VINDICATION OF THE DIRECTOR'S ADJUDICATION.** D65-B's charter applied
+`er/phys ≥ 1.27` to an **ERCOT** screen and it fired; the director ruled at r#48 §3(a) that 1.27 is
+**PJM/MISO's** host band, transcribed onto the wrong ISO. That ruling was made on documentary
+grounds. It is now **measured**: PJM's clearing rows land at **1.2668–1.4886**, inside the band to
+the digit, while ERCOT's land at 0.9672–1.0456 inside *its* row's 0.95–1.05. Two ISOs, two bands,
+each ISO in its own — which is what "a gate names its ISO" means, demonstrated rather than argued.
+
+**And G5' 2028 is the batch's sharpest number.** The solved value is **408.2 MW against D64 §2.4's
+0.41 GW hour-ceiling census — 99.6 % of a prediction computed with ZERO LP**, months earlier, from
+the ceiling arithmetic alone. A zero-solve census and a full 8760 dispatch agreeing to four parts in
+a thousand is a strong statement that the seam's cost side is right.
+
+**The two live hunks are disclosed, not netted (Addendum D.3 / E.3).** This leg carries D81 and
+D67-ARM as well as the two acts, so its FC-map delta has three causes. **The gate table is
+unaffected**, exactly as Addendum E predicted: G0'–G5' read only `ccs_retrofits`, and G4' comes back
+`changed: none` — so neither live hunk moved a single invariant here, and the retrofit set is a
+clean two-act reading. The disclosure stands for the *board row*, not for the gates.
