@@ -13279,3 +13279,131 @@ closed because the arm was inert (it would have cleared in 54–59 % of hours).
 field, no new matrix row, no matrix verdict move, no `complete` declaration.**
 
 **Next number: caiso-254.**
+
+## caiso-255 — 2026-09-06
+
+**TWO OBJECTS. THE GRANTED ONE IS PARKED ON AN OWNER STOP; THE SECOND REFUTES
+caiso-253's RANKED-FIRST QUEUE ITEM ON A ONE-HOUR CLOCK MISMATCH. ZERO LP,
+NOTHING ARMED, KEEPER UNCHANGED** at `2026-09-05-caiso-252-b1-notrim`
+(CALIBRATED). Branch `claude/caiso-backcast-calibration-x5v8uq`.
+
+### Object A — the CT-only partition adoption: GRANTED, PREPARED, PARKED
+
+The owner granted `FINDING-caiso254 §4` **OPTION 1** and re-confirmed it at the
+start of this continuation. Pre-registered in
+`PRECOMMIT-caiso255-ct-only-partition-adoption-2026-09-06.md` (merged).
+`--st-split-report-only` is implemented and merged (`f721b582`): three-way
+classification, two-way consumption, ST_GAS published under
+`_provenance.reported_not_consumed` with its G4 FAIL verbatim — G4 is **not**
+relaxed and the class keeps its FAIL; the decision is one of SCOPE.
+
+Two instrument repairs landed before any measurement:
+
+* **The phase-0 footprint probe was blind to half the repair** (`d2f914d2`). It
+  swapped ONE artifact; the derive writes two and the keeper consumes both
+  (`caiso_offer_surface_conditional = True`, and the CAISO spec reads
+  `caiso_offer_surface_condbinned.json` for CC_REGULAR + CT_PEAKER). So arm B
+  was a **hybrid** — repaired bands over the frozen ladder, a configuration no
+  solve would run — and the footprint saw only the P0 channel, because
+  `mc_base` is the P0 objective while the ladder is a **P1-only** markup built
+  after the `fleet_only` exit. Both artifacts now swap together. **The
+  screen-year rule is unchanged**: `argmax_y F` on the REGISTERED statistic
+  still names the year, `F_p1` is reported beside it, and a divergence is a
+  recorded power caveat — written before either number existed.
+* **The consolidated G-DRIFT audit is now a probe** rather than an ad-hoc run
+  (`scripts/probes/_caiso255_gdrift_identity.py`): ScenarioConfig defaults and
+  every top-level constant by value, plus two `fleet_only` rebuilds per year
+  with `market_sim` imported from a sparse worktree at the keeper sha against
+  HEAD on one shared data tree, differenced by sha256 over every LP-visible
+  array. Exits non-zero on divergence. G-DRIFT extended `173d0a78 → d8b64997`
+  (4 files, every hunk INERT; the `malloc_trim` removal is inert for values and
+  its peak-RSS consequence on a 15 GB box is named).
+
+**PARKED**: the owner stopped the OASIS re-fetch at **336 / 1,096** trade dates.
+That corpus is unusable by construction (`FINDING-caiso254 §6` DO-NOT-REDO #1: a
+partial corpus returns the OPPOSITE G-BIMODAL verdict). **ZERO LP was spent on
+this object in either caiso-255 instance.** What a resuming session inherits is
+recorded in `PRECOMMIT-caiso255b §7`.
+
+### Object B — caiso-253 queue item 1 (the STORAGE re-pointing): **REFUTED**
+
+`PRECOMMIT-caiso255b-hod2223-storage-repoint-2026-09-06.md` (`78d76cf2`) pushed
+before any cell was computed;
+`FINDING-caiso255b-hod2223-storage-repoint-2026-09-06.md`; probe
+`scripts/probes/_caiso255b_hod2223_storage.py`.
+
+**G-ID PASSES on all three legs — `NG: OTH` IS CAISO's battery fleet**, and this
+never needs re-establishing. It goes negative in the solar belly (**84.7 / 97.0 /
+97.4 %** of hours, mean −999 / −2,778 / −4,312 MW); gross throughput grows
+**8,093 → 16,314 → 24,276 GWh**; and |net|/gross is **0.005 / 0.070 / 0.073**,
+the 2025 pair implying a round-trip efficiency of **≈ 86.5 %**.
+
+**THE OBJECT REVERSES.** On the model's own clock, at hod 22–23: actual
+**80.6 / 1,108.1 / 2,011.5** MW against model net **612.8 / 1,657.5 / 2,718.8** —
+**the model OVER-discharges by +532 / +549 / +707 MW in every year**, not under.
+Discharge peaks at hod 19 in **both** series, so there is no phase error; the
+model simply **over-cycles** (35.4 vs 28.5 GWh/d discharged, 42.1 vs 33.3
+charged, 2025). G-FLEET: model max discharge / actual max = **1.35 / 1.21 /
+1.14**, so the fleet is not short — the object was never fleet-side.
+
+**WHY caiso-253 SAW THE OPPOSITE — a one-hour clock mismatch.** Its MODEL side
+reproduces to the digit (+0.0 % all years); its ACTUAL side is off by
+**−70.6 / −47.5 / −39.8 %**. `data/raw/eia-930-hourly/CISO hourly.parquet`
+carries EIA's **hour-ENDING** stamps (`Hour` runs 1→24; `Hour == 24` carries
+local 00:00 of the next day), and caiso-253's actuals reproduce exactly on those
+raw stamps at hours `{23, 0}`. **The repo already owns the fix** —
+`eia930.frames._eia_hourly_frame_filled` returns row k = local hour k on the
+model's clock, and its docstring names the bug it was written for: *"the
+CISO-2025 solar-profile +1h shift (FINDING-caiso102, 2026-07-19; also hit
+PJM-2023/MISO-2025)"*. **Third ISO-year, second time in CAISO.**
+
+Alignment anchored three ways, not asserted: June-2025 **astronomy** (sunrise
+05:45 / sunset 20:15 PDT — loader and model BOTH first exceed 200 MW at hod 6,
+last at hod 19); **solar correlation 0.9999** at zero shift vs 0.9407/0.9415 at
+∓1 h; and an **independent series**, demand, ranking the loader clock first in
+both 2023 (0.906/0.779/0.525) and 2025 (0.715/0.700/0.620).
+
+**BLAST RADIUS: NONE.** `data/eia930/actuals.py` — the path C1/C4 score through
+— already reads the correct loader. **No keeper, determination, rubric score or
+registered run moves**; what is retracted is one queue item's premise.
+
+**G-ENERGY: storage is on the WRONG SIDE of the object.** The model is long CC at
+22–23 (+1,547/+1,558 MW, caiso-253) **and** long storage (+707 MW) — same sign,
+so "the market used batteries where the model used CC" is false. Import was
+already refused on admissibility (caiso-253) while measuring that it would have
+cleared in 54–59 % of those hours. **Both candidates are now excluded and the
+22–23 CC over-run is OPEN with no named carrier.**
+
+**PREDICTIONS: P-2 half-falsified** (model side +0.0 %, actual side −40 to −71 %
+— which is how the clock mismatch surfaced), **P-4 FALSIFIED** (no sign flip:
+the model is long in all three years — my registered "hostile to the simple
+story" warning was aimed at an artifact of caiso-253's clock), **P-5 HOLDS**
+(fleet not short), **P-6 FALSIFIED and worse than the registered "partly"**
+(same sign, not opposite), **P-1/P-3 HOLD** (G-ID).
+
+**DISCLOSURE.** I got the alignment wrong **twice** before finding the loader,
+and both intermediate conclusions looked publishable: first *"caiso-253 has a
+one-hour bug"* (wrong about who was misaligned), then *"EIA-930's stamps are
++2 h"* (a false assertion about a published federal dataset). What stopped both
+was checking the **pipeline** rather than the shape. The probe therefore reads
+through the loader and ships an `--anchor` mode so the alignment is re-runnable
+rather than a paragraph. An earlier intermediate read of mine —
+901/3,243/4,860 MW at 22–23 — is **WRONG and must never be quoted**.
+
+**DO-NOT-REDO adds (FINDING §6):** never compare a model hourly series to the
+raw EIA-930 parquet stamps (use `_eia_hourly_frame_filled`); never re-open
+hod 22–23 as a storage object; never re-establish that `NG: OTH` is the battery
+fleet; never quote caiso-253's 274/2,112/3,342 as model-clock actuals.
+
+**QUEUE.** (1) the hod 22–23 CC over-run, **open with no named carrier** —
+import and storage both excluded; (2) **NEW: the model OVER-CYCLES storage**
+(35.4 vs 28.5 GWh/d discharged, correct phase) — a separately testable object
+worth its own charter; (3) the parked partition object; (4) carried unchanged —
+the `complete` marker (owner act, raised not granted), the stale
+`program-status.json` CAISO keeper stamp, the C3a weight basis, the per-zone
+storage sidecar, the DMM 2025 RA-import basis, Panoche.
+
+**No run registered (none produced), no keeper change, no `ScenarioConfig`
+field, no new matrix row, no `complete` declaration.**
+
+**Next number: caiso-256.**
