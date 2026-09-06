@@ -213,7 +213,7 @@ skill, and rule 30(c) already forbids from downgrading the ISO.
 * **No tuning of any kind.** Rule 30(c) governs the reading of the rungs: a held-out year never
   downgrades the ISO, and PJM's determination remains the train-tier verdict — **CALIBRATED**.
 
-## 8. Successor, unchanged from the assessment and now doubly supported
+## 8. Successor — SUPERSEDED, see §10 (kept for the record, do not act on it)
 
 The object is **PJM's gas-over / coal-under C1 signature**, visible in the *same direction* on
 both held-out rungs (`CC_REGULAR` +22.26 TWh in 2022, +28.72 TWh in 2021, with `COAL_BIT`
@@ -226,48 +226,6 @@ inflated zonal demand feed, a missing `calibration_reference` block, a missing r
 file), and the PJM 2021 int32 sentinel (2,147,480,064 MW in three hours) is located but unfixed —
 fixing it re-renders PJM's committed benchmark, so it needs its own re-render decision.
 
----
-
-<<<<<<< HEAD:docs/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md
-## 10. Superseding note — `pjm-166` landed on `main` while this session was open
-
-This session was numbered `pjm-166` when it began. A different session took that number on `main`
-first (`## pjm-166 — 2026-09-06 — the held-out C1 object is NOT a merit-order-position object`),
-so this one is renumbered **pjm-167** and its finding file renamed to match. Nothing in §§1–5
-changes; §§6 and 8 do.
-
-**§8's successor is SUPERSEDED — do not take the C1 signature to 2023–2025 as a merit-order
-object.** `pjm-166` did exactly that, zero-LP, and refuted it on three independent tests (see the
-against-interest correction in §2.1). The live object it names instead is the **DA-virtual layer's
-net cleared position** — the only model quantity that crosses the tier boundary, +7.40 / +6.48 /
-−0.89 TWh in-sample against −6.14 / −9.91 TWh held-out, i.e. 6–10 TWh of net phantom **demand**
-that physical gas must serve, against the mechanism's own rule-13 anchor of ≈0 at actual DA
-prices. That is **pjm-158's own standing warning realized out of sample**. Its cell
-`da_virtual_bids` **stays `K`** (evidence append only, rule 28 d), and its root cause — the LP
-carries one price series gated as RT while the curve needs a DA price — is an **architecture
-question escalated to the owner** inside PJM's owner-declared-closed price-formation frontier.
-At pjm-158's own measured channel gain it bounds ~21 % of 2021's and ~44 % of 2022's `CC_REGULAR`
-miss; **55–79 % stays unexplained**, and that session explicitly does not claim otherwise.
-
-**§6 is INDEPENDENTLY REPLICATED and can be closed as a question.** `pjm-166` reached this
-session's G-DRIFT conclusion separately and by a stronger route: `457ae04` does not exist at HEAD,
-is absent from `citation-commit-map.txt`, and **the clone was deepened to 11,640 commits without
-resolving it** — a step this session judged out of proportion and therefore left as an honest
-"unobtainable here" rather than "gone". Their deepening settles it. Their framing is also sharper
-than §6's and is adopted: there is **no diff to classify**, which is a stronger condition than
-NEISO's "too large to classify". They then spent the control this session flagged as owner-court
-(`pjm_headctrl_k162`, keeper recipe on 2023–2025 only, no `--holdout-authorized`, thresholds fixed
-in a PRECOMMIT beforehand, bundle deleted before merge per rule 29 c). **So §6's owner-court item
-is DISCHARGED — do not re-raise it, and do not re-spend that control.**
-
-**What stands from this session, unaffected:** the phase-0 result that the chartered re-run was
-already spent (§2); the measured verdict that the input-clock repair does not close 2022 (§2.1);
-the records repair and its gates (§3); the NEISO routing and the deliberately-unlanded guard (§§4–5);
-and the re-score plus the out-of-sample diurnal-amplitude divergence (§9). The amplitude
-observation in §9.1 is **complementary** to `pjm-166`'s additive-fossil-surplus reading rather than
-in tension with it: a surplus of fossil energy and a compressed price amplitude are the two faces
-of a flat offer stack, which is keeper note (15a)'s in-sample diagnosis seen from out of sample.
-=======
 ## 9. Addendum — re-scored from committed artifacts, and one new observation for the successor
 
 `scripts/calibration_verdict.py --run-id 2026-09-05-pjm-2022-2021-touchpoints` was run at HEAD
@@ -308,4 +266,44 @@ from merit-order traversal"* — now visible out-of-sample, and it is the natura
 (15a) states the lever queue for that defect is empty with no open successor, and rule 22 step 3
 sends any work on it to **2023–2025**, never to a touchpoint year. It moves **no** matrix cell
 verdict (rule 28 d — no mechanism was tested).
->>>>>>> 1305a48e (pjm-166: re-score the touchpoint from committed artifacts; record the out-of-sample diurnal-amplitude divergence):docs/FINDING-pjm166-touchpoint-rerun-already-spent-2026-09-06.md
+
+---
+
+## 10. Superseding note — `pjm-166` landed on `main` while this session was open
+
+This session was numbered `pjm-166` when it began. A different session took that number on `main`
+first (`## pjm-166 — 2026-09-06 — the held-out C1 object is NOT a merit-order-position object`),
+so this one is renumbered **pjm-167** and its finding file renamed to match. Nothing in §§1–5
+changes; §§6 and 8 do.
+
+**§8's successor is SUPERSEDED — do not take the C1 signature to 2023–2025 as a merit-order
+object.** `pjm-166` did exactly that, zero-LP, and refuted it on three independent tests (see the
+against-interest correction in §2.1). The live object it names instead is the **DA-virtual layer's
+net cleared position** — the only model quantity that crosses the tier boundary, +7.40 / +6.48 /
+−0.89 TWh in-sample against −6.14 / −9.91 TWh held-out, i.e. 6–10 TWh of net phantom **demand**
+that physical gas must serve, against the mechanism's own rule-13 anchor of ≈0 at actual DA
+prices. That is **pjm-158's own standing warning realized out of sample**. Its cell
+`da_virtual_bids` **stays `K`** (evidence append only, rule 28 d), and its root cause — the LP
+carries one price series gated as RT while the curve needs a DA price — is an **architecture
+question escalated to the owner** inside PJM's owner-declared-closed price-formation frontier.
+At pjm-158's own measured channel gain it bounds ~21 % of 2021's and ~44 % of 2022's `CC_REGULAR`
+miss; **55–79 % stays unexplained**, and that session explicitly does not claim otherwise.
+
+**§6 is INDEPENDENTLY REPLICATED and can be closed as a question.** `pjm-166` reached this
+session's G-DRIFT conclusion separately and by a stronger route: `457ae04` does not exist at HEAD,
+is absent from `citation-commit-map.txt`, and **the clone was deepened to 11,640 commits without
+resolving it** — a step this session judged out of proportion and therefore left as an honest
+"unobtainable here" rather than "gone". Their deepening settles it. Their framing is also sharper
+than §6's and is adopted: there is **no diff to classify**, which is a stronger condition than
+NEISO's "too large to classify". They then spent the control this session flagged as owner-court
+(`pjm_headctrl_k162`, keeper recipe on 2023–2025 only, no `--holdout-authorized`, thresholds fixed
+in a PRECOMMIT beforehand, bundle deleted before merge per rule 29 c). **So §6's owner-court item
+is DISCHARGED — do not re-raise it, and do not re-spend that control.**
+
+**What stands from this session, unaffected:** the phase-0 result that the chartered re-run was
+already spent (§2); the measured verdict that the input-clock repair does not close 2022 (§2.1);
+the records repair and its gates (§3); the NEISO routing and the deliberately-unlanded guard (§§4–5);
+and the re-score plus the out-of-sample diurnal-amplitude divergence (§9). The amplitude
+observation in §9.1 is **complementary** to `pjm-166`'s additive-fossil-surplus reading rather than
+in tension with it: a surplus of fossil energy and a compressed price amplitude are the two faces
+of a flat offer stack, which is keeper note (15a)'s in-sample diagnosis seen from out of sample.
