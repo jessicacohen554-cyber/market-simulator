@@ -8018,3 +8018,275 @@ FINDING §0 and §6 filled with §6 correctly ordered and the basis disclosure i
 stamped; rule-27 blob verification recorded for any file >=300 lines you push. Nothing else arms. Report
 the batch verdict and the seven-row before/after board table in your close.
 ```
+
+## r#53 NOTE (2026-09-06): the whole r#52 queue landed. FOUR charters below, ALL DISPATCHABLE NOW — and note the STOP form has changed: a STOP now names an ACT, never a session (§0ax.2(b)), so D78-ARM and D76-P3B start immediately and hold only their solve/register step. ORDERING CONSTRAINT: D75-R-ARM steps 3–4 must register the bare `pjm-t1h` before D78-ARM moves that key again, or the two PJM arms become inseparable on the board.
+
+## D65-B-R COMPLETION-2 — leg 7 and the finding's §0/§6 (r#53; the board write landed #5283, this is the last third)
+
+```
+You are the D65-B-R COMPLETION-2 session of the capacity-expansion track. The batch (owner ruling
+Q47) has SIX legs registered on main and its board write merged as #5283. You are finishing it.
+MODEL: Opus. DATA PROFILE: all. BRANCH: claude/capx-d65br-completion2 — FRESH off origin/main.
+
+BINDING: pack §D65-B-R (the original) + this section + docs/handoffs/FINDING-capx-d65br-2026-09-06.md
++ PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (the pre-declared per-ISO gates) and Addendum G (the
+fourth rebase re-audit) + FINDING-capx-d64-2026-09-05.md §2.3/§2.4. Capx ledger §0ax is the grading
+record.
+
+ALREADY DONE — DO NOT REDO, RE-GRADE, RE-SOLVE OR RE-REGISTER ANY OF IT. Legs 1-6 are solved,
+graded and REGISTERED: ercot 9b9e5a48e3ca5c8e, neiso c3519b861f920bbe, nyiso f62431376dd9df03,
+caiso 17770cdad3230938, pjm 542eeedadab83ee1, miso 74359fedbf2eadd6 — every key equal to the
+Addendum C pre-declaration to the digit (PJM on Addendum E's re-declaration). Their sidecars are on
+main under frontend/data/hindcast/. Step 0 and steps 1-2 are on main. The ERCOT screen is NOT re-run.
+
+STEP A — LEG 7, your only solve: neiso-t3 GOLDEN-3 (~33 min), sequential, scored, verdict, registered
+in place with its -pre-d65b prior through the SINGLE scripts/register_forecast_run.py path, graded
+against Addendum C's G0'-G6' exactly as legs 1-6 were. D64 §2.3 POSITIVELY INDICATES this leg — an
+expectation to test, never a target to hit; report the measurement whichever way it falls. HEAD GUARD:
+H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. Rebase BETWEEN legs
+only, never during one; re-audit any rebase delta hunk by hunk with constants.py read first.
+
+STEP B — ANSWER A QUESTION THE DIRECTOR GOT WRONG, and treat it as open. At r#52 I asserted the batch
+had "written no board byte" and proved it by citing frontend/data/forecast/ff-verdicts.json. That was
+the WRONG INSTRUMENT: the registration artifact is the per-run hindcast sidecar under
+frontend/data/hindcast/ (7 files in c36a3fe7, zero under frontend/data/forecast/), while
+ff-verdicts.json is the FF-2D VERDICT SNAPSHOT, a different object that moves only when a verdict
+moves. So the genuinely open question, which I am NOT asserting either way: DO any of the seven legs
+require an ff-verdicts.json update? Determine it from the code path (register_forecast_run.py, what
+writes ff-verdicts.json, and what --reindex consumes) and from rule 15's list of committed inputs.
+Report the answer with its evidence. If yes, make the update and say which verdicts moved and why. If
+no, say so and say what WOULD have moved it. Either answer is a good outcome; an unexamined one is not.
+
+STEP C — FINDING §0 AND §6, plus the ordering repair. Fill §0 "The verdicts" (still the placeholder
+"*(filled at the close of the batch)*") with the per-ISO Addendum C grade and the batch verdict. Fill
+§6 Governance and MOVE it: §6 currently sits at line ~142 BETWEEN §5.1 and §5.2, so §5.2-§5.6 read as
+if they were inside governance. Put §6 after your new §5.7. Governance carries the rule-27 blob
+checks, the D8 curated DOF rows for the flipped default, the D77 §8 blast-radius reconciliation, the
+D50 §6.2 radius, and an explicit statement that the D72-prehunk neiso-t1f residue key is DISCHARGED.
+
+STEP C-2 — THE BASIS DISCLOSURE, and it is the director's defect, not yours. Your leg 6 established
+the general form: "All three fired gates share one root: Addendum C compares a HEAD solve against a
+prior that predates HEAD, and two of the three are measuring that gap, not the arm." That is true and
+§0 must say so in those terms. Concretely: G5' fired on neiso-t1f and nyiso-t1f (VOIDED as a STOP by
+director adjudication r#51 §0av.3(b) and reclassified to REPORTED — those legs registered), and G4'
+fired on miso-t1f and is provably not the acts' (I3 fails from 2026; apply_ccs_retrofit returns at
+year < ccs_retrofit_available_year before reading either field; G0' measured 0 rows in 2026 and 2027).
+Record all three as ONE root with its arithmetic. BASIS DISCLOSURE, not a re-grade: no leg's numbers
+change, no gate is retro-declared passed, no prior is re-solved, every fired gate stays reported at
+full magnitude. Grade leg 7's gates the same way if one fires on the same vintage gap.
+
+STEP D — MATRIX (rule 28): the ccs_retrofit_screen row's def/note carries Act B; the
+ccs_retrofit_fixed_cost_co2_scaling row's cells read fc: K where the arm is now the bare leg. Six
+shards, ONE line each, last commit. Edit only cells your own evidence covers.
+
+STOP GATES. (1) Leg 7 exceeding the D60 wall/RSS envelope (G6') — stop and report, do not retry blind.
+(2) HEAD guard trip (exit 90) — rebase, re-audit, re-solve. (3) A board row you cannot reconcile to a
+committed leg artifact — stop, do not hand-author it. (4) A gate you cannot grade from a committed
+document — stop and route to the director rather than inventing a band.
+
+DO NOT: re-solve legs 1-6 or the ERCOT screen; arm anything; touch the backcast registry, another
+desk's ledger, or any ISO shard your evidence does not cover; widen to D82/D83/D84.
+
+COLLISIONS: you are NEISO and you collide with nobody this window. Three PJM lanes are live
+(D75-R-ARM steps 3-4, D78-ARM, D76-P3B); stay out of PJM's shard and PJM's sidecars. Rules 12, 15,
+22 (forecast mode only), 24, 25, 27, 28, 29.
+
+EXIT: leg 7 solved, scored, registered with its prior; the ff-verdicts question answered with
+evidence; FINDING §0 and §6 filled with §6 correctly ordered and the basis disclosure in §0; six
+matrix shards stamped; rule-27 blob verification for any file >=300 lines pushed. Nothing else arms.
+Report the batch verdict and the seven-row board table.
+```
+
+## D75-R-ARM STEPS 3–4 — the held re-solve and board registration, STOP now MET (r#53)
+
+```
+You are the D75-R-ARM STEPS 3-4 session of the capacity-expansion track. Steps 1-2 LANDED
+(#5267/#5272, 6164231e): pjm_vre_accreditation_vintage is ARMED for PJM under owner ruling Q55. You
+held steps 3-4 behind D65-B-R's board write. THAT BOARD WRITE MERGED (#5283, c36a3fe7). THE STOP IS
+MET. MODEL: Opus. DATA PROFILE: pjm. BRANCH: claude/capx-d75r-arm-steps34 — FRESH off origin/main.
+
+BINDING: PRECOMMIT-capx-d75r-arm-2026-09-06.md + FINDING-capx-d75r-2026-09-06.md + the D67-ARM
+precedent (FINDING-capx-d67arm-2026-09-06.md, whose §2.1 recorded the moving-control-legs miss
+against itself). Capx ledger §0ax.1 is the grading record for steps 1-2.
+
+WHAT IS ALREADY TRUE, MEASURED, DO NOT RE-ARGUE IT. The arm is an ISO override in
+_pjm_config.default_scenario_overrides, not a shared default flip. Of 153 committed run configs the
+21 PJM FORECAST configs move and all 132 others are byte-identical. Bare pjm-t1h goes
+a9c66d8ea25acb9d -> b518f5fe7d02f961, which IS D75-R's own measured full-window arm key;
+--no-pjm-vre-accreditation-vintage reaches the pre-arm control and keeps a9c66d8ea25acb9d.
+
+STEP 3 — RE-SOLVE the bare pjm-t1h at the armed key b518f5fe7d02f961, preserving its prior as
+-pre-d75rarm. DECLARE the realized key against b518f5fe7d02f961 BEFORE the solve, in a short addendum
+pushed first, and report realized-vs-declared. HEAD GUARD mandatory: H0=$(git rev-parse HEAD);
+<solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. If the realized key is not
+b518f5fe7d02f961, STOP and report — that would mean the arm does not reproduce D75-R's measured
+recipe and the whole Q55 basis needs re-reading.
+
+STEP 4 — REGISTER through the SINGLE scripts/register_forecast_run.py path over the
+frontend/data/forecast namespace (rule 15; the committed artifacts are the per-run hindcast sidecar
+under frontend/data/hindcast/ plus ff-verdicts.json and program-status.json — see the note below).
+Score the row, report every invariant at full magnitude, and DECLARE any FAIL against the leg's own
+committed prior in the same commit (the Y-24 ratchet). A declaration is not a fix: nothing is
+relaxed, re-scored or exempted.
+
+NOTE ON THE COMMITTED ARTIFACT SET, because the director got this wrong at r#52 and corrected it at
+r#53: register_forecast_run.py writes the per-run hindcast sidecar; ff-verdicts.json is the FF-2D
+verdict snapshot and moves only when a verdict moves. Determine from the code path which of the two
+your registration must touch, and say which and why in your close.
+
+THE FOUR D57/D67 CONTROL LEGS MOVE, and that was PRE-DECLARED in PRECOMMIT §2.1 rather than
+discovered afterwards — the exact miss FINDING-capx-d67arm §2.1 recorded against itself. Handle them
+as that precedent did: name each, say why it moved, and do not treat the movement as a defect.
+
+DO NOT: arm anything further; touch retirement_sector_gate (D78-ARM owns it and must register AFTER
+you); re-open D75-R's A/B; touch another ISO's shard (rule 25 — PJM only, locked by test across the
+other five).
+
+COLLISIONS AND WHY YOU GO FIRST. You must register the bare pjm-t1h BEFORE D78-ARM moves that key
+again, or the VRE-devintage arm and the sector-gate arm become inseparable on the board. D78-ARM and
+D76-P3B both carry an explicit STOP naming your board row as what they wait on, and both are doing
+zero-LP work until it lands. Push promptly and say in your close that the row is on main. Rules 12,
+15, 24, 25, 27, 28, 29.
+
+EXIT: bare pjm-t1h re-solved at the declared key with the HEAD guard held; registered with its prior
+preserved; every invariant reported and every FAIL declared against its own prior; the PJM matrix
+shard stamped; the ff-verdicts question answered for your own registration; rule-27 blob verification
+for any file >=300 lines. Report the key realized-vs-declared and the before/after row.
+```
+
+## D78-ARM — arm `retirement_sector_gate` for PJM under owner ruling Q56, WITH REGISTRATION REQUIRED (r#53)
+
+```
+You are the D78-ARM session of the capacity-expansion track, executing OWNER RULING Q56 (capx ledger
+§0ax.3(a), r#53): "ARM, registration required." MODEL: Opus. DATA PROFILE: pjm. BRANCH:
+claude/capx-d78-arm-sector-gate — FRESH off origin/main.
+
+BINDING: FINDING-capx-d78r3-2026-09-06.md (§0 the verdict, §5 the flip condition, §5.2 the six things
+the card had to state) + FINDING-capx-d78r2 + FINDING-capx-d78r + FINDING-capx-d57 §4 (the per-DY
+rows the whole recommendation rests on) + owner ruling Q53 (must-offer reading 1: a sector-1 unit
+still offers). Capx ledger §0ax.1/§0ax.3(a).
+
+THE RULING, IN FULL. Arm retirement_sector_gate for PJM through iso_configs.py::_pjm_config
+default_scenario_overrides — the D57/Q44 -> D67-ARM -> Q55 way. NEVER a shared ScenarioConfig default
+flip: no _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS entry, every other ISO and every backcast keeper
+byte-identical, and an explicit --no-retirement-sector-gate must reach the pre-arm posture and keep
+the pre-arm key. Assert all of that by test and by a --simulate-arm no-op probe run BEFORE
+iso_configs.py is touched and again after with the flag omitted, exactly as D75-R-ARM did.
+
+THE REGISTRATION CONDITION IS PART OF THE RULING, NOT A NOTE ON IT. D78-R3 §5.2 item 1: the evidence
+for limbs (b), (c) and (d) rests on an arm bundle committed NOWHERE, because the D78-R2 arm was never
+registered (merge 80c88b76 landed docs and JSON only). Arming means solving AND REGISTERING PJM T1-H
+on the new default, which closes that gap by construction. The owner ruled that this is REQUIRED, not
+waivable. A run that arms without registering does not discharge Q56.
+
+*** STOP — AN ACT, NOT A DISPATCH. *** Begin immediately: the config act, the G-DRIFT audit, the key
+declaration, the no-op probe and the PRECOMMIT are all zero-LP and are yours to do now. But DO NOT
+SOLVE AND DO NOT REGISTER the armed PJM T1-H until D75-R-ARM's board row for the bare pjm-t1h is on
+main. Reason, stated so you can verify it rather than trust it: D75-R-ARM moved that key
+a9c66d8ea25acb9d -> b518f5fe7d02f961 and its row is not yet registered; if you move the key again
+first, the VRE-devintage arm and the sector-gate arm become inseparable on the board. Check with:
+git log origin/main --oneline --grep="D75-R-ARM" and confirm a registered bare pjm-t1h row exists.
+If it has not landed when your zero-LP work is done, say so and hold.
+
+PRE-REGISTER, BEFORE ANY VALUE IS OPENED: the declared key for the armed leg; the expected direction
+of every metric you will report; and the six items D78-R3 §5.2 requires the record to carry, which you
+must report at full magnitude whichever way they fall —
+ 1. limbs (b)/(c)/(d) were CARRIED from D78-R2, not re-measured, and their control bundle is not
+    committed; your registration is what fixes that going forward.
+ 2. retire.total_gw moved FAIL -> PASS (18.058 -> 15.937 vs 15.062 actual). It is EXPLICITLY NOT a
+    criterion in either direction (rule 14) and is NOT an argument for arming; a worse number would
+    not have been an argument against. Do not cite it as support.
+ 3. unit_recall_gt300 FALLS 0.650 (13/20) -> 0.550 (11/20). A partition that removes matched sector-1
+    exits must lose recall. Report it; it is not a criterion.
+ 4. the 2025 clearing price moves 358.267 -> 236.945 $/MW-day, because the control's cleared position
+    (0.998023) sits short of the requirement on the steep VRR limb and the arm's extra 1,671.625 MW
+    carries it to 1.009595. Report it; it is not a criterion.
+ 5. limb (d) CANNOT discriminate on recall in either leg (the control holds no recall-PASS fold); do
+    not read it as positive evidence.
+ 6. W5''s PASS came from a corrected DECLARATION, not a new measurement, and the structural derivation
+    is one-sided and SILENT on gas_ct and gas_st — the two classes that decide 2022/23 and 2023/24 —
+    and has a proven false-positive class (nuclear derives at bar in all four DYs and belongs at none;
+    the subset guard caught it). The derivation CORROBORATES the declaration; it does not replace it.
+    Say this in the finding's head, not a footnote.
+
+ZERO DOF. No new ScenarioConfig field, no parameter value, no retirements.py decision logic, no
+keeper, no marker. The act is one override entry plus the solve and the registration.
+
+MATRIX (rule 28): PJM's shard only — retirement_sector_gate's PJM cell to K with the Q56 citation.
+Rule 25: the verdict is PJM's and transfers to no other ISO.
+
+STOP GATES. (1) The armed key not equal to your pre-declaration — stop and report. (2) HEAD guard
+trip (exit 90) — rebase, re-audit, re-solve. (3) Any non-target load-bearing invariant flipping
+PASS -> FAIL — report it, declare it against the leg's own prior (Y-24), and do not relax or exempt
+it. (4) --no-retirement-sector-gate failing to reproduce the pre-arm key — stop; the override is not
+clean.
+
+EXIT: retirement_sector_gate armed for PJM via _pjm_config; the no-op probe recorded both sides; PJM
+T1-H solved AND REGISTERED on the new default with its prior preserved; all six §5.2 items reported at
+full magnitude in the finding's head; PJM matrix shard stamped; rule-27 blob verification for any file
+>=300 lines. Report the key realized-vs-declared, the before/after row, and Q56 discharged.
+```
+
+## D76 PHASE 3B — the PJM leg phase 3 could not ask, now that the vintage is armed (r#53)
+
+```
+You are the D76 PHASE 3B session of the capacity-expansion track. Phase 3 LANDED (#5268/#5315,
+be871bec) and measured NEISO and NYISO with every STOP clean. It could NOT answer the charter's PJM
+question, and its FINDING says so in those words: D75-R-ARM had not merged at that HEAD, so PJM's row
+is phase 2's, carried verbatim and stamped NOT re-measured. It is now armed. You ask the question.
+MODEL: Opus. DATA PROFILE: pjm. BRANCH: claude/capx-d76-p3b-pjm — FRESH off origin/main.
+
+BINDING: FINDING-capx-d76 phases 2 and 3 + PRECOMMIT-capx-d76-p3 (whose no-commit-between-A/B-legs
+rule you INHERIT — phase 2 took a literal STOP-3 FAIL from exactly that, and phase 3's fix worked) +
+FINDING-capx-d67 / D67-ARM (PJM's requirement gate) + FINDING-capx-d75r + the D75-R-ARM record. Capx
+ledger §0ax.1.
+
+THE QUESTION, precisely: is PJM's accreditation census still PEAK-INERT now that
+pjm_vre_accreditation_vintage is armed? Phase 2 measured PJM INERT under D67-ARM. Phase 3 established
+the mechanism twice over — PJM's inertness comes from D67, NYISO's from D52, and mooting the
+requirement moots the mechanism. Phase 3B tests whether arming the VRE devintage changes that, on PJM
+alone.
+
+*** STOP — AN ACT, NOT A DISPATCH. *** Begin immediately: phase 0, the zero-LP declaration, the
+p3b_predeclare.json key emission and the PRECOMMIT are yours to do now. But DO NOT SOLVE the PJM A/B
+until D75-R-ARM's board row for the bare pjm-t1h is on main. Reason you can verify: your control must
+be unambiguous, and until that row registers the PJM board carries a key (b518f5fe7d02f961) that no
+registered row corresponds to. Check with git log origin/main --oneline --grep="D75-R-ARM".
+
+CARRY PHASE 3's DISCIPLINE, all of it: every realized cache key must EQUAL the value machine-emitted
+into p3b_predeclare.json before the first LP; NO COMMIT BETWEEN THE LEGS OF THE A/B; one solve-code
+state for both legs, named; STOPs 1-6 in the phase-3 form, pre-registered; the whole-ledger diff with
+EVERY moved field classified and ZERO UNCLASSIFIED (D81 rec 4). HEAD GUARD around each leg:
+H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90.
+
+REPAIR PHASE 3's TWO DISCLOSED WEAKNESSES rather than inheriting them: (i) phase 3's control seam peak
+reproduced its zero-LP declaration only to 0.005-0.065 MW, an order of magnitude looser than phase 2,
+with a system-load fallback offered as hypothesis not finding — tighten the declaration or say
+explicitly why it cannot be tightened; (ii) run_capacity_hindcast.py --help crashes on an unescaped %
+in a help string, reported by phase 3 and not repaired. Repair it if it is a one-line fix in your path
+(rule 27: targeted edit, push on-disk bytes, blob-verify if the file is >=300 lines); otherwise route
+it with the line number.
+
+THE CARD. D76's arming card is a FIVE-OF-SIX card today and phase 3 labelled it one and recommended
+NOTHING, because a rule-29 screen may kill an arm and may never promote one. That is correct and you
+inherit it: YOU DO NOT RECOMMEND ARMING. Your output is PJM's measured row, which completes the card
+so the DIRECTOR can serve it. If PJM measures live where phase 2 measured it inert, that is the
+finding — report it and stop; do not propose the arm.
+
+DELETE BEFORE MERGE (rule 29(c)): every bundle you solve is deleted before your PR merges, and the
+PRECOMMIT/FINDING carries every number you will ever cite from it — including, named before deletion,
+which committed instrument carries every structure a successor could need. Phase 3 deleted all four
+of its bundles; D78-R3 paid for an earlier lane that deleted a control without naming its derivation
+base. Do not repeat that.
+
+MATRIX (rule 28): PJM's shard only, and only the cells your own evidence covers (rule 25 — phase 3
+correctly left four shards untouched because it did not test them).
+
+DO NOT: arm anything; register anything; touch retirement_sector_gate (D78-ARM owns it); touch
+NEISO/NYISO's rows (phase 3 owns them); widen beyond PJM.
+
+EXIT: PJM's peak-inertness question ANSWERED with a measured A/B, every key equal to its
+pre-declaration, every STOP graded, the whole-ledger diff at zero unclassified, the two phase-3
+weaknesses repaired or explicitly routed, bundles deleted before merge, PJM matrix shard stamped.
+Report the six-ISO synthesis row for PJM and state plainly whether the D76 card is now six-of-six.
+```
