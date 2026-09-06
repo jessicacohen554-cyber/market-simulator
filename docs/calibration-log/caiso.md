@@ -13615,4 +13615,88 @@ not granted — the `complete` marker, the stale `program-status.json` CAISO
 keeper stamp, the C3a weight basis, the per-zone storage sidecar, the DMM 2025
 RA-import basis, Panoche.
 
-**Next number: caiso-257.**
+## caiso-257 — 2026-09-06
+
+**THE CT-ONLY OASIS CLASS-PARTITION REPAIR IS PROMOTED — KEEPER
+`2026-09-05-caiso-252-b1-notrim` → `2026-09-06-caiso-257-b1-ctonly`,
+DETERMINATION CALIBRATED (rubric v3.6), NOT ONE CRITERION FLIPS, ZERO new
+fields / parameters / DOF rows.** Two LP-years spent (a 2023 screen, bundle
+deleted under rule 29(c); the three-year keeper bundle in ONE invocation).
+
+**The two owner rulings (both 2026-09-06, on `FINDING-caiso256-partition-screen`
+§5).** (i) The arm IS wanted despite landing on the wrong plants — it is right
+about the measured **offer**, and the **plant** allocation is a separate open
+object. (ii) S-1 is **re-chartered** onto a plant-deduplicated estimator.
+Neither ruling re-scored caiso-256, whose verdict stands.
+
+**The estimator, and the honesty problem it carries.** caiso-256 killed this
+same arm on S-1 against a 311.8 GWh floor built from a price-held-fixed
+tranche count that **over-counted 4.26×** — sibling tranches of one plant
+(`p57482_econc00…04`, five tranches, 115.73 MW each, one zone) were each
+charged their full pmax in the same hour. The replacement charges at most one
+tranche's worth of MW per (plant, hour), band **[87.2, 784.5]** GWh around
+ΔE_dedup 261.5 / 79 plants. It is adopted on its **construction** — a plant
+cannot displace its capacity twice in one hour — and explicitly **not**
+because it passes; its own bias runs **LOW**, so the two estimators bracket
+the truth; the factor of 3 was carried unchanged; and a **third estimator is
+forbidden in advance**. **caiso-256 had already PUBLISHED this arm's 2023
+answer (+219.8 GWh), so the re-screen could not surprise anyone** — stated at
+the top of `ADDENDUM-caiso257-s1-recharter-2026-09-06.md`, which was pushed
+before the artifact pair was re-applied and before any LP, and repeated here.
+**No out-of-sample claim is made anywhere in the record.**
+
+**The evidence the promotion actually rests on contains no price**, exactly as
+`PRECOMMIT-caiso255 §3.1` registered before the artifact existed: G-BIMODAL
+(antimode 11.738 MMBtu/MWh inside a window fixed from published fleet heat
+rates, never swept; 2.559 GW above it) **plus the G1 capacity reconciliation**
+— the pooled CT bucket's **9,950 MW against its own published 7,616 MW fleet,
+a 30 % excess, collapsing to 7,391 MW / 3 %**.
+
+**Reproduction gates, the ones that could fail.** R-1 the pair restores to
+`df277e89` byte-exactly; R-2 the S-1 probe reproduces ΔE_dedup 261.461 /
+ΔE_implied 935.462 / 784-of-828 fallen with the artifact json **byte-identical
+in git**; **R-3 the screen reproduces caiso-256's +219.8 GWh to 0.038 GWh**,
+with P0's objective 3,681,906,464.8422 digit-for-digit — the end-to-end
+confirmation of a G-DRIFT that was a **measurement**, not a reading (LP inputs
+BIT-IDENTICAL at `fa23c1f7` vs the solve sha, all three years). G-CTRL form 4,
+**no control solve**; `co2` never differenced; `MARKET_SIM_P1_BASIS_SEED=0`.
+
+**Screen (2023):** preconditions PASS (`mic_partition` 16,055 MW, COLD
+REBUILD), S-1 +219.762 GWh PASS, S-2 ≤0.0027 % PASS, S-3 no C1 flip PASS, S-4
+0.879/0.287 PASS; C3a excluded.
+
+**Full span, keeper → arm:** C1 12/12 free 8/8 (CT_PEAKER 1.643 → 1.862 and
+1.386 → 1.585 TWh toward actuals 4.128 / 4.326; **CC_REGULAR and ST_GAS-2023
+move AWAY**); C2 PASS; C3a PASS and lower every year (56.69/37.78/37.47 →
+56.60/37.73/37.42 — the **eighth** consecutive favourable direction, excluded
+both ways); C3b 0.088/0.147/0.115; C3c the single ledgered CAVEAT on 2024
+(24/0/0 h vs 47/35/8); C6 attested PASS; C8 PASS. Promoted on
+`PRECOMMIT-caiso255 §5(8)`, all three legs holding.
+
+**TWO COSTS, AT FULL MAGNITUDE.** (1) **C4-2025 gas NRMSE 0.297 → 0.300
+against a ≤ 0.30 tolerance — it PASSES with ZERO margin left.** Supporting
+tier and excluded from the basis, so it does not block, but the next arm in
+this lane has no C4-2025 headroom and should treat it as a binding pre-solve
+check. (2) The +220 GWh landed on p57482/p57515/p57555 (462/375/281 GWh), not
+Panoche (172), **deepening** the caiso-252 §3.3 mis-allocation — **no closure
+of the CT volume miss is claimed** (still 2.27/2.74 TWh short).
+
+**Rule 15 keeper-only retention:** `2026-09-05-caiso-251-b1-nomargin` and
+`2026-09-05-caiso-252-b1-notrim` pruned with `--force-uncite`; CAISO lane =
+the keeper alone; dangling citations deliberate. **Consequence a later session
+will hit:** `caiso252_b1_notrim` is off disk, so the form-4 control is now
+this bundle and the three probes hard-coding the caiso-252 path must be
+re-pointed before re-use. `audit_keepers.py --iso CAISO` exits 0 (E1–E12, H1,
+M1, S1) and every keeper-note number re-verifies against the bundle's own
+artifacts.
+
+**Rule 22:** 2023–2025 only; the **`complete` marker was re-raised and the
+owner AGAIN DECLINED**; freeze ACTIVE; no out-of-training year touched; D-5(b)
+does not fire. **Open:** C4-2025's zero margin; the hod 22–23 CC over-run
+(still no named carrier); Panoche / the CT volume miss; the borrowed ST_GAS
+multiplier (not repaired by OPTION 1, moot in the LP per caiso-254 §3); the
+caiso-127 evening/overnight storage pin (S2, unfunded); the C3a weight basis;
+the DMM 2025 RA-import basis; the stale `program-status.json` stamp (not
+touched). `FINDING-caiso257-ctonly-promotion-2026-09-06.md`.
+
+**Next number: caiso-258.**
