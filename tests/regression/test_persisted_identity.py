@@ -1,7 +1,7 @@
 """Regression tripwires for the persisted-artifact surfaces every later
 refactor depends on.
 
-Three independent guards:
+Four independent guards:
 
 * **Pickle-borne class identity.** The committed ``p2_state`` pickles bind a
   fixed set of classes to their exact module paths. Unpickling resolves a class
@@ -14,6 +14,12 @@ Three independent guards:
   ``asdict(self)``; any change to field names/defaults that reaches the hash
   orphans every on-disk cache and breaks keeper reproducibility. Pinned to a
   literal so a drift is caught here, not in a stale-cache mystery months later.
+* **Repo-wide pin consistency.** The pin above is re-asserted in two dozen
+  per-mechanism suites, so a re-key that advances only some of them leaves the
+  rest stale — twice now that partial re-key reached ``main`` with this job
+  green, because nothing here could see a literal in ``tests/unit/**``. An AST
+  scan asserts every default-config cache key asserted anywhere under
+  ``tests/`` is this one literal.
 * **No module-level import cycles.** The package breaks would-be cycles with
   lazy (in-function) imports; a cycle introduced at module scope is an import-
   time crash waiting for the wrong import order. An AST walk asserts the
@@ -25,6 +31,7 @@ from __future__ import annotations
 import ast
 import dataclasses
 import importlib
+import re
 from pathlib import Path
 
 import pytest
@@ -763,3 +770,215 @@ def test_no_module_level_import_cycles() -> None:
         "Module-level import cycle(s) introduced — break them with a lazy "
         "(in-function) import:\n" + "\n".join("  " + " <-> ".join(c) for c in cycles)
     )
+
+
+# ---------------------------------------------------------------------------
+# The repo-wide pin-consistency guard (capx D65-B-R).
+#
+# WHY THIS EXISTS. The pinned default cache key is asserted in ~two dozen test
+# files, not just the one above: every registered-field suite re-asserts it so
+# that suite fails loudly if its own field ever enters the default hash. A
+# re-key therefore has to touch all of them, and TWICE now a re-key touched
+# only some:
+#
+#   * Y-11 (d2e8dc7a) — the capx D44 fossil_announced_exits_enabled flip, which
+#     advanced the pin here and left the per-mechanism suites on the old value;
+#   * capx D65-B (fb93b76e, PR #5112) — advanced e5ecd4105ada3e58 ->
+#     547053bdfccd4264 and re-pinned 11 files, leaving 13 live assertions on
+#     the stale value (15 fast-tier failures) that reached main anyway.
+#
+# Both times the "Pinned default cache key" job was GREEN, because that job
+# runs only this file and the flip guard — neither of which can see a stale
+# literal in tests/unit/**. This guard closes that: it makes a PARTIAL re-key
+# visible to the one job whose verdict is unambiguous, at zero solve cost.
+#
+# WHAT IT ASSERTS. Every 16-hex literal that any test asserts EQUAL to a
+# default ``ScenarioConfig()``'s ``cache_key()`` is the same literal, and that
+# literal is ``PINNED_DEFAULT_CACHE_KEY``. It is deliberately narrow:
+#
+#   * only a DEFAULT config counts — ``ScenarioConfig()`` with no arguments, or
+#     a local name every one of whose assignments is exactly that. A key
+#     asserted for an ARMED or ``mode="backcast"`` config, or for one built by
+#     ``with_overrides`` / ``dataclasses.replace``, is a different object with
+#     its own pin and is not scanned. That is what keeps the deliberate
+#     explicit-False decomposition in tests/unit/model/test_ccs_retrofit.py
+#     (``ScenarioConfig(ccs_retrofit_fixed_cost_co2_scaling=False,
+#     ccs_retrofit_vom_adder=8.0).cache_key() == "e5ecd4105ada3e58"``) out of
+#     scope: it is measuring Act A's drop-value mechanic, not the default;
+#   * only EQUALITY counts (``assertEqual`` / ``==``); the ``assertNotEqual`` /
+#     ``!=`` armed-run assertions beside almost every pin are ignored;
+#   * comments and docstrings are invisible to an AST walk, so the ledger
+#     narratives that legitimately name superseded keys are never flagged.
+# ---------------------------------------------------------------------------
+
+_HEX16 = re.compile(r"\A[0-9a-f]{16}\Z")
+
+# Scanner-liveness floor. The scan finds 25 sites across 24 files today; if a
+# refactor breaks the matcher the count collapses and the guard would pass
+# vacuously. Raise this only alongside a measurement, never to clear a red.
+_MIN_EXPECTED_PIN_SITES = 10
+
+
+_SCOPE_NODES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)
+
+
+def _scope_assignments(scope: ast.AST) -> dict[str, ast.expr]:
+    """Map each plain ``name = <expr>`` belonging to ``scope`` to its value.
+
+    Nested function/class/lambda bodies are their own scopes and are skipped,
+    so an inner name never leaks outward. A name assigned more than once is
+    dropped: it is not safely resolvable, and the guard treats what it cannot
+    resolve as unknown rather than guessing.
+    """
+    values: dict[str, ast.expr | None] = {}
+
+    def descend(node: ast.AST) -> None:
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, ast.Assign):
+                for target in child.targets:
+                    if isinstance(target, ast.Name):
+                        values[target.id] = None if target.id in values else child.value
+            if not isinstance(child, _SCOPE_NODES):
+                descend(child)
+
+    descend(scope)
+    return {name: value for name, value in values.items() if value is not None}
+
+
+def _is_bare_scenario_config(node: ast.expr) -> bool:
+    """``ScenarioConfig()`` — the constructor, called with no arguments."""
+    return (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "ScenarioConfig"
+        and not node.args
+        and not node.keywords
+    )
+
+
+def _default_config_names(scope: ast.AST) -> set[str]:
+    """Names in ``scope`` bound, only ever, to a bare ``ScenarioConfig()``."""
+    return {
+        name
+        for name, value in _scope_assignments(scope).items()
+        if _is_bare_scenario_config(value)
+    }
+
+
+def _is_default_cache_key_expr(node: ast.expr, defaults: set[str]) -> bool:
+    """``<default>.cache_key()``, optionally sliced (the ``[:16]`` idiom)."""
+    if isinstance(node, ast.Subscript):
+        node = node.value
+    if not (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "cache_key"
+        and not node.args
+        and not node.keywords
+    ):
+        return False
+    receiver = node.func.value
+    if _is_bare_scenario_config(receiver):
+        return True
+    return isinstance(receiver, ast.Name) and receiver.id in defaults
+
+
+def _hex16_literal(node: ast.expr, constants: dict[str, str]) -> "str | None":
+    """The 16-hex value ``node`` denotes — directly, or via a constant."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value if _HEX16.match(node.value) else None
+    if isinstance(node, ast.Name):
+        return constants.get(node.id)
+    return None
+
+
+def _equality_operands(node: ast.AST) -> "tuple[ast.expr, ast.expr] | None":
+    """The two sides of an ``==`` compare or an ``assertEqual`` call."""
+    if (
+        isinstance(node, ast.Compare)
+        and len(node.ops) == 1
+        and isinstance(node.ops[0], ast.Eq)
+    ):
+        return node.left, node.comparators[0]
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "assertEqual"
+        and len(node.args) == 2
+    ):
+        return node.args[0], node.args[1]
+    return None
+
+
+def _pinned_default_key_assertions(tree: ast.Module) -> "list[tuple[int, str]]":
+    """Every ``(lineno, literal)`` this module asserts as THE default key."""
+    constants = {
+        name: value.value
+        for name, value in _scope_assignments(tree).items()
+        if isinstance(value, ast.Constant)
+        and isinstance(value.value, str)
+        and _HEX16.match(value.value)
+    }
+    found: list[tuple[int, str]] = []
+
+    def collect(node: ast.AST, defaults: set[str]) -> None:
+        """Walk ``node``'s children, each under its INNERMOST function scope."""
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                collect(child, defaults | _default_config_names(child))
+                continue
+            operands = _equality_operands(child)
+            if operands is not None:
+                for key_side, value_side in (operands, operands[::-1]):
+                    if not _is_default_cache_key_expr(key_side, defaults):
+                        continue
+                    literal = _hex16_literal(value_side, constants)
+                    if literal is not None:
+                        found.append((child.lineno, literal))
+                    break
+            collect(child, defaults)
+
+    collect(tree, _default_config_names(tree))
+    return found
+
+
+def test_the_pinned_default_key_is_pinned_to_ONE_value_repo_wide() -> None:
+    """No test anywhere asserts a default cache key other than the pin."""
+    sites: dict[str, list[tuple[int, str]]] = {}
+    for path in sorted((REPO_ROOT / "tests").rglob("*.py")):
+        hits = _pinned_default_key_assertions(ast.parse(path.read_text()))
+        if hits:
+            sites[str(path.relative_to(REPO_ROOT))] = hits
+
+    total = sum(len(hits) for hits in sites.values())
+    assert total >= _MIN_EXPECTED_PIN_SITES, (
+        f"Only {total} default-cache-key assertion(s) found across tests/, "
+        f"below the liveness floor of {_MIN_EXPECTED_PIN_SITES}. The scanner "
+        "above has almost certainly stopped matching the idiom it targets — "
+        "repair the matcher; do NOT lower the floor to make this pass."
+    )
+
+    by_value: dict[str, list[str]] = {}
+    for path, hits in sites.items():
+        for lineno, literal in hits:
+            by_value.setdefault(literal, []).append(f"{path}:{lineno}")
+
+    if set(by_value) != {PINNED_DEFAULT_CACHE_KEY}:
+        report = "\n".join(
+            f"  {literal}  ({len(where)} site(s))\n"
+            + "\n".join(f"    {w}" for w in sorted(where))
+            for literal, where in sorted(by_value.items())
+        )
+        raise AssertionError(
+            "The default ScenarioConfig cache key is asserted with more than "
+            f"one value across tests/ (pin here: {PINNED_DEFAULT_CACHE_KEY}):\n"
+            f"{report}\n\n"
+            "This is a PARTIAL RE-KEY — the failure mode Y-11 (d2e8dc7a) and "
+            "capx D65-B (fb93b76e) both shipped to main with this job green. "
+            "The live key is whatever ScenarioConfig().cache_key() returns and "
+            "the test literals are what go stale, so the repair is to advance "
+            "EVERY live assertion to the pin above (ledger comments and "
+            "non-default configs' own pins are out of scope and untouched) — "
+            "never to change ScenarioConfig or results/cache.py to match a "
+            "stale literal."
+        )

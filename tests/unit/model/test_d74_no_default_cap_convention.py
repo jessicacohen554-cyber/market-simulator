@@ -56,12 +56,6 @@ def _fc(**kw) -> ScenarioConfig:
     return ScenarioConfig(iso=kw.pop("iso", "PJM"), mode="forecast", **kw)
 
 
-pytestmark = pytest.mark.skipif(
-    published_bar_per_kw_yr("PJM", "coal", 2022) is None,
-    reason="PJM avoidable-cost-rate clean partition not curated in this checkout",
-)
-
-
 class TestOffPathByteIdentityAndCacheNeutrality:
     def test_default_is_none_for_every_iso(self):
         for iso in ("PJM", "ERCOT", "CAISO", "MISO", "NYISO", "NEISO"):
@@ -131,6 +125,25 @@ class TestResolutionScope:
                     assert no_default_cap_class(iso, fuel, year) is False
 
 
+# DATA TIER, exactly like its D62 sibling. The three tests below are the only
+# ones in this file that READ the published table, which lives in the DERIVED,
+# gitignored clean tree (``data/clean/capacity-market-avoidable-cost-rate``) a
+# ``code``-profile checkout does not build. They belong on the same marker
+# ``test_d62_published_going_forward_bar.py`` already puts its own two
+# table-reading classes on, and for the same reason.
+#
+# THIS REPLACES A MODULE-LEVEL ``pytestmark`` SKIPIF that read
+# ``published_bar_per_kw_yr("PJM", "coal", 2022) is None``. That predicate can
+# never be None on an unbuilt checkout: every value-returning entry point in
+# the seam raises ``PublishedBarUnavailable`` instead — deliberately, so an
+# armed gate can never degrade silently (``avoidable_cost_rate`` module
+# docstring). So the guard raised the very error it meant to detect, at IMPORT
+# time, erroring the whole file out of collection in the fast tier. Nothing is
+# loosened: every assertion is unchanged, and the file's four data-free classes
+# now actually run in the fast tier instead of being collected away with it.
+# (``partition_available`` is the seam's non-raising predicate if a future lane
+# wants a skip rather than a tier move.)
+@pytest.mark.fulldata
 class TestThePredicateIsTheData:
     @pytest.mark.parametrize("year", [2022, 2023, 2024, 2025])
     def test_steam_oil_and_gas_has_no_default_through_2025_26(self, year):

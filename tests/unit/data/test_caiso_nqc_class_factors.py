@@ -65,7 +65,16 @@ class TestCaisoNqcGateOffPath(unittest.TestCase):
     def test_unarmed_default_cache_key_is_unmoved(self) -> None:
         # The field is registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so the
         # pinned default key must not have moved when it was added.
-        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
+        # ADVANCED 2026-09-06, e5ecd4105ada3e58 -> 547053bdfccd4264 — capx D65-B's
+        # COUPLED ccs_retrofit_fixed_cost_co2_scaling (Act A, a declared (b'-1)
+        # default flip) + ccs_retrofit_vom_adder 8.0 -> 2.95 $/MWh 2026$ (Act B, a
+        # plain value field with no drop value, so it re-keys unconditionally).
+        # Nothing about THIS file's mechanism moved — the pin advances because the
+        # global default did. Rationale and provenance live on the pin in
+        # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
+        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+        # capx D65-B-R, completing the partial re-key fb93b76e left behind.
+        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 
     def test_armed_run_keys_distinctly(self) -> None:
         self.assertNotEqual(
