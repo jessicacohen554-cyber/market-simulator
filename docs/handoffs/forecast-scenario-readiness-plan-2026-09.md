@@ -942,6 +942,10 @@ and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **D-10 — NEW, PRESENTED 2026-09-06 (SCN-DESK r#10); desk card, live copy in the ledger §2.** SCN-WS5A-LOAD measured that S5's premise was false: the retrofit screen is armed by the STATE carbon program, so NEISO's reference case carries 8.8 GW of `gas_cc_ccs` (NYISO 6.5 GW), mis-rated pre-D77 — NEISO 2030 CO2 overstated by 5.60 Mt (41.9 %), NYISO by 5.29 Mt (25.3 %). Question: re-pin the campaign once post-D77 and re-solve only the five contaminated legs plus CAISO (recommended), finish at the frozen pin and re-solve afterwards, or finish and disclose. A-POLICY's S5 release condition is unchanged and needs no card: it releases when the model-grain paired check lands (D77's screen or the re-solved NEISO REF).
 **RULED 2026-09-06 (SCN-DESK r#10 amendment 1) — S8: "Re-pin once post-D77 now."** The SCN-WS5A-LOAD amendment is issued: PJM/MISO finish at the frozen pin, NEISO + NYISO re-solve and CAISO solves at a post-D77 pin under a hunk-by-hunk G-DRIFT, ERCOT/PJM/MISO stand on empty retrofit ledgers; the re-solved NEISO REF is S5's model-grain paired check, so Stage A-POLICY releases the refresh it lands with no further card.
 
+**STAGE A-POLICY RELEASED 2026-09-06 (SCN-DESK r#11) under ruling S5, no new card:** capx D77's FINDING (`3d748d02`) carries the paired check S5 named — the identity `emission_rate = measured × (1 − 0.90)` PASS to 1e-9 on every converted NEISO unit in every year of a real t1f solve. The six `SCN-WS5A-POLICY-<ISO>` charters are issued (CARB-LO/MID/HI, CES-P10/P20/P30, CES-T80, CARB-MID+LOAD-HI), solves gated on the load campaign's post-D77 pin and the carbon-form switch (SCN-FIX1). **D-2(b), D-3c and D-6 PRESENTED** so VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN can be added by addendum; CAP-STATE-TIGHT stays out on its unruled level.
+**RULED 2026-09-06 (SCN-DESK r#11 amendment 1) — S9 (D-2(b)): "Take the placeholders as committed"** (`f_commit` mid 0.5; WTP ceiling $4.5/MWh); **S10 (D-3c): "Ratify the default as built"** (renewable-only eligible set; nuclear/CCS only via the labelled override); **S11 (D-6): "Counts toward; report both."** The four voluntary legs join the six policy lanes by addendum; CAP-STATE-TIGHT is the only §3.5 case still out of Stage A.
+**D-2(c) — PRESENTED 2026-09-06 (SCN-DESK r#12):** `CAP-STATE-TIGHT`'s budget slope (WS-1a §4.2: linear decline to 20 % of the 2025 published per-state budget by 2050; CAISO REF-anchored) and the schedule field `mass_cap_tons_by_year` it needs, absent at HEAD. Recommendation: commit the slope and charter the field.
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1241,6 +1245,18 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#12 (main HEAD `ba894c9c`).** SCN-FIX1 landed items 1–2 (audit 30 → 8; collate
+  sign-flip repaired); capx D80 cross-checked the declarations byte-identically; SCN-WS5A-LOAD 12/16 with MISO
+  complete and its D-10 scope correction matching r#11; the carbon-form switch never reached FIX1 (issued on an
+  unmerged PR) → SCN-FIX2 issued; capx D79 charters the cache-key fingerprint this desk routed. Card D-2(c)
+  (CAP-STATE-TIGHT slope + field) presented. Zero solves, zero code, zero defaults, zero markers.
+- 2026-09-06 — **SCN-DESK r#11 (main HEAD `d1aa877f`).** Stage A-POLICY RELEASED under S5 (D77's identity gate
+  is the paired check); six per-ISO policy charters issued, solves gated on the campaign's post-D77 pin.
+  SCN-WS1b-r2 landed complete (12/12). SCN-WS5A-LOAD 11/16: PJM (909.8 MW) and MISO (334.5 MW) carry CCS
+  via §45Q with no program, so S8's re-solve set widens to every ISO but ERCOT. capx D65-B re-keyed the
+  CCS economics. The carbon FORM still the delta stand-in → SCN-FIX1 re-issued with the YAML switch.
+  Cards D-2(b)/D-3c/D-6 presented — **ruled the same sitting (am.1): S9, S10, S11**; the voluntary legs join
+  the policy lanes by addendum; SCN-WS3c withdrawn as absorbed. Zero solves, zero code, zero defaults, zero markers.
 - 2026-09-06 — **SCN-DESK r#10 (main HEAD `6887484f`).** S7 executed by capx D77 within the hour (repair on
   main, screen owed). SCN-WS3b landed complete (VOL-* cases live and S5-held; ERCOT 2026 T0 slack → WS-3c held
   on a criterion). SCN-WS5A-LOAD 3 of 6 ISOs: falsified S5's premise (state programs arm the retrofit screen;
