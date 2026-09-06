@@ -104,7 +104,8 @@ def main() -> int:
           if r.get("year") == YEAR and "ct_netload_drag" in str(r.get("floor", ""))
           and r.get("check") == "window"]
     off = max((float(r["offwindow_share"]) for r in d4), default=0.0)
-    metrics = json.loads((ARM / "metrics.json").read_text())
+    mpath = ARM / "metrics.json"
+    metrics = json.loads(mpath.read_text()) if mpath.exists() else {}
     res["gates"]["G3_confinement"] = {
         "d4_rows": d4,
         "max_offwindow_share": off,
