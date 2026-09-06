@@ -578,6 +578,16 @@ the gate-owned rise in every year — so the pre-declared reading is that the sa
 will show D48 lengthening the position, not shortening it; the falsifier is any year where it
 does not.
 
+**ANSWERED (Addendum E.4, same day).** The control was solved and the falsifier does NOT
+fire: held at one HEAD and one demand table, the arm's I12 is LESS negative than the
+control's in every year, by **+4.179 / +4.502 / +4.502 / +4.502 pts** — the gates raise
+counted supply 1.90–1.93× as fast as they raise the requirement. So *“D48 is not
+position-neutral forward”* is **REFUTED**, and the card §5.4 routed to the director is
+withdrawn on the evidence. The three legs sum to the observed movement exactly: Q42
+0.000 / −0.357 / −0.331 / +0.370, **demand hunk −4.578 / −6.278 / −6.807 / −8.369**, gates
++4.179 / +4.502 / +4.502 / +4.502, total −0.399 / −2.134 / −2.636 / −3.498. **The STOP fired
+on the demand table; the gates were pushing the other way throughout.**
+
 ### 5.5 Leg 5 — `neiso-t3` GOLDEN-3 on `f04fd06348e1623d`: the FC map does not move, and the carried FC-5 table is measured for the first time
 
 Run `neiso-2026-2050-t3-golden3-d60`, `--golden-posture --full-solve-authorized`, **25/25 years,
@@ -1216,4 +1226,137 @@ than the +9,092 series and so exceeds the gate-owned ratio leg by more, not less
 
 ### E.4 The control's result
 
-*(Written after the solve; empty at pre-declaration time.)*
+**Run**: PJM 2026–2030, `--golden-posture`, Q44 gates OFF via `--set`, Q42 at its default.
+**5/5 years, 35.5 min, 8.71 GB peak RSS.** Realized bundle directory
+`167e65187f32056b` — **the pre-declared key, matched.** `HEAD` guard passed:
+`f4ebc611` at launch and at exit, so no tree moved under the solve.
+
+#### The falsifier: it does NOT fire
+
+Addendum E.3's falsifier was *"any year in which the same-HEAD control's I12 is LESS negative
+than the arm's."* Measured, the **arm is less negative in every year**, by a nearly constant
+margin:
+
+| I12 (`reserve_margin`, %) | 2027 | 2028 | 2029 | 2030 |
+|---|---|---|---|---|
+| **control** (Q44 off, HEAD) | **−15.804** | **−20.095** | **−20.280** | **−20.988** |
+| **arm** (Q44 on, same demand table) | **−11.625** | **−15.593** | **−15.778** | **−16.485** |
+| arm − control | **+4.179** | **+4.502** | **+4.502** | **+4.502** |
+
+So the pre-declared reading holds in all four years, and **§5.4's routed conclusion —
+*"D48's accounting is not position-neutral forward — it lengthens the requirement faster than it
+lengthens counted supply"* — is REFUTED, not merely unestablished.** Held at one HEAD and one
+demand table, D48 lengthens the POSITION by ~4.5 points in every year. Nothing is escalated to
+the owner on those rows; the card §5.4 routed to the director is withdrawn on the evidence.
+
+#### The mechanism, measured
+
+The gates raise counted supply **~1.9× faster** than they raise the requirement — which is
+precisely the D48 construction (DR UCAP counted as supply *and* the peak un-netted), now
+measured with the peak held common:
+
+| Q44 gates alone (control → arm) | 2027 | 2028 | 2029 | 2030 |
+|---|---|---|---|---|
+| Δ requirement | +6,414.7 | +6,816.9 | +7,150.2 | +7,514.2 |
+| Δ accredited firm | +12,159.5 | +13,185.0 | +13,816.4 | +14,466.7 |
+| ratio | **1.90×** | **1.93×** | **1.93×** | **1.93×** |
+
+#### The three-way decomposition — and what actually fired the STOP
+
+With the pre-hunk twin (E.3b), each arrow moves exactly one thing, and the three legs sum to the
+observed movement **to 0.00e+00 in every year**:
+
+| I12 movement (pts) | Q42<br>`D45R → D50` | **SCN-LOAD demand hunk**<br>`D50 → control` | Q44 gates<br>`control → arm` | total<br>`D45R → arm` |
+|---|---|---|---|---|
+| 2027 | 0.000 | **−4.578** | +4.179 | −0.399 |
+| 2028 | −0.357 | **−6.278** | +4.502 | −2.134 |
+| 2029 | −0.331 | **−6.807** | +4.502 | −2.636 |
+| 2030 | +0.370 | **−8.369** | +4.502 | −3.498 |
+
+**The STOP fired on the demand table, and the gates were pushing the other way the whole time.**
+The demand hunk costs 4.6–8.4 points of reserve margin; the gates return a steady +4.2–4.5; Q42
+is worth a few tenths and changes sign. Every year's net is the small negative §5.4 reported —
+which is why the STOP was real, correctly declared, and correctly fired, and why its
+*attribution* was wrong.
+
+**The demand hunk alone, for the record** (`D50 → control`, config identical to the field):
+
+| | 2026 | 2027 | 2028 | 2029 | 2030 |
+|---|---|---|---|---|---|
+| Δ peak | +6,184.8 | +11,027.0 | +16,381.5 | +22,287.5 | +28,787.0 MW |
+| Δ peak % | +3.84 % | +6.74 % | +9.84 % | +13.15 % | **+16.67 %** |
+| Δ requirement | +5,446.5 | +9,806.0 | +14,789.4 | +20,121.5 | +25,989.3 MW |
+| Δ accredited firm | +0.0 | +1,594.6 | +2,383.5 | +5,625.8 | +7,483.0 MW |
+| Δ I12 | −3.350 | −4.578 | −6.278 | −6.807 | **−8.369 pts** |
+
+The Δ-requirement row **reproduces §5.4's peak leg to the 0.1 MW** (+9,806.0 / +14,789.4 /
++20,121.5 / +25,989.3), which is the closing check on the whole re-attribution: the leg computed
+at zero LP from two committed ledgers is exactly what a solve on the same config across the two
+demand tables produces.
+
+#### P23 is vindicated on the mechanism
+
+§5.4 graded P23 *"direction held; premise did not."* With the confounder removed, **P23's
+direction AND its conclusion hold on the gates alone** — I12 improves and does not clear, exactly
+as pre-declared. Its premise ("an unchanged requirement") failed only because a demand
+re-derivation landed between the arm and its control, not because D48 moved the requirement
+faster than supply. Its I7 sub-claim ("2027 I7 is the single row that can clear, 250 MW short")
+is dead on the current demand table for the same reason: the control is **8,262 MW** short in
+2027, not 250. **I7 and I12 both FAIL on all four runs** (control, D50, arm, D45-R) — no
+determination anywhere is disturbed by this control.
+
+#### The unreconciled series, still unreconciled
+
+§5.4's *"+9,092 / +10,276 / +14,303 / +18,000 MW"* accredited-firm rise matches **none** of the
+candidate quantities, tested exhaustively as pairwise differences across all four runs:
+`firm = R × (1 + reserve_margin)` (arm − D45R = +13,754 / +15,031 / +18,935 / +22,526;
+arm − D50 = +13,754 / +15,568 / +19,442 / +21,950) and `screen_entering_firm_mw`
+(arm − control = +7,299 / +8,231 / +8,633 / +9,073; the D45-R bundle predates D52 and carries
+the field not at all). Neither the finding nor `PREDECL-capx-d60` §P23 names the quantity.
+**Left as an open item for the director to name** rather than silently replaced — the numbers
+above are all computed on the `R × (1 + rm)` identity, which holds exactly in every committed
+ledger, applied identically to all four runs. It does not affect any conclusion here: every
+consistently-computed supply rise is LARGER than the +9,092 series, so the margin over the
+gate-owned ratio leg is wider, not narrower.
+
+#### Disposition
+
+**Bundle DELETED** (`results/ff-t1f-d60r4-control/`) before this PR merges, rule 29(c).
+Registered nowhere: no dashboard sidecar, no `ff-verdicts.json` entry, no `program-status.json`
+row, no mechanism-matrix cell — this lane armed nothing (rule 28). Every number the session will
+ever cite from it is in this addendum. Git history is the record.
+
+### E.5 Step-5 re-audit: the post-solve rebase delta, classified
+
+The charter's r#46 doctrine — *any rebase between steps is complete only when the rebase DELTA is
+classified hunk by hunk.* The control was solved at `f4ebc611`; the branch was then rebased onto
+`origin/main` (`2eb65038`), a delta of **14 files, +1,154 / −13** on the solve path.
+
+| hunk family | files | verdict |
+|---|---|---|
+| **SCN-WS3b voluntary clean demand** | `policy/voluntary_demand.py` (+454, new), `runner.py` (+44), `data/datacenter.py` (+31), `config/scenarios.py`, `config/constants.py` | **INERT** — one gate, `voluntary_clean_demand_path: str = "off"`; the region is appended only when the path is not `"off"` in a forward run |
+| **nyiso-200 startup-aware bridge screen** | `pipeline/commitment.py` (+42), `model/commitment.py` (+27) | **INERT** — `nyiso_gas_bridge_startup_aware: bool = False`, NYISO-only; the added `screen_stats` dict is diagnostics the floor arithmetic never reads, `None` by default |
+| **backcast CLI** | `scripts/run_calibration.py` (+5), `scripts/run_calibration_full.py` (+19) | **INERT** — not on the forecast path (measured: absent from `run_full_horizon`'s import closure) |
+| **capx D77 — the CCS retrofit emission-rate seam** | `model/capacity_evolution/ccs.py` (+16), `new_entry.py` (+9), `data/fleet/campd_bins.py` (+40), `results/cache.py` (docs) | **LIVE in principle** — see below |
+
+**D77 is the one hunk that is not inert, and it is named rather than waved through.** It adds a
+`Generator.ccs_capture_fraction` attribute and books a retrofitted unit's measured CO2 rate as
+`measured × (1 − capture_fraction)`. **It moves no cache key** — no `ScenarioConfig` field is
+added or re-defaulted — which is exactly the hazard class §5.0f is about, and D77's own
+`results/cache.py` epoch note says so in those words. It is a no-op only outside a CCS cohort,
+and **this ISO/horizon has one**: the committed arm converts **2 rows / 909.8 MW in 2029**.
+
+**It does not contaminate anything in E.4.** D77 landed after BOTH sides of every differencing
+this addendum performs — the arm at `14f860fb`, the control at `f4ebc611`, D77 later still — so
+the falsifier's pair and the three-way decomposition are internally consistent, measured on one
+side of it. What the reader must not do is treat E.4's numbers as statements about **today's**
+HEAD: they are measured at `f4ebc611` / `14f860fb`, and both bundles are now stale against
+`main` in the D77 sense.
+
+**Expected footprint, stated as an expectation and not as a measurement:** this recipe resolves
+`carbon_price_path = "zero"` and `resolved_base_trajectory_price = 0.0 $/t` in 2028, 2029 and
+2030, so the emission rate does not enter marginal cost at all here and D77's I12 footprint
+should be nil. **No solve was spent to confirm that**, and it is not needed for any claim above.
+It is flagged for **D65-B**, whose brief is exactly to re-solve every bare key at one HEAD.
+
+
