@@ -1,0 +1,88 @@
+{
+ "session": "neiso-104",
+ "date": "2026-09-06",
+ "iso": "NEISO",
+ "lp_minutes": 0,
+ "keeper": "2026-08-17-neiso-99-joint-p1",
+ "sources": {
+  "in_sample": "results/calibration/neiso99_joint_B/hourly/system_<y>.parquet",
+  "touchpoints": "results/calibration/neiso_tp2021_2020_k99/hourly/system_<y>.parquet",
+  "gas": [
+   "data/raw/gas-prices/henry_hub_daily.csv",
+   "data/raw/gas_basis_by_iso_month.csv"
+  ]
+ },
+ "model_lw_price": {
+  "2020": 28.586,
+  "2021": 52.107,
+  "2022": 90.6,
+  "2023": 39.293,
+  "2024": 44.041,
+  "2025": 71.387
+ },
+ "actual_rt_lw": {
+  "2020": 25.14,
+  "2021": 47.77,
+  "2022": 91.15,
+  "2023": 38.1,
+  "2024": 41.68,
+  "2025": 70.23
+ },
+ "delivered_gas_mean_usd_mmbtu": {
+  "2020": 1.9848,
+  "2021": 4.5006,
+  "2023": 2.9313,
+  "2024": 3.0676,
+  "2025": 6.2404
+ },
+ "in_sample_bias": {
+  "geometric_mean": 0.034678,
+  "arithmetic_mean_of_relatives": 0.034811,
+  "pooled_mean_ratio": 0.031405,
+  "DECLARED": "geometric_mean"
+ },
+ "pass_through_elasticity": {
+  "across_year_all5": 0.7658,
+  "across_year_in_sample": 0.742,
+  "within_year_in_sample": 0.5926,
+  "DECLARED": "across_year_all5"
+ },
+ "declared_scalar": 0.9547,
+ "declared_cut_pct": 4.53,
+ "scope_bands": 12,
+ "scope_rule": "exclude any band equal to its phys_* counterpart, any market-design cap, and the declared-neutral CT_CHP group",
+ "excluded_bands": [
+  "CC_REGULAR.peak==phys_peak 2.25",
+  "CC_CHP.peak==phys_peak 2.25",
+  "ST_GAS.peak==phys_peak 1.0",
+  "CT_PEAKER.peak 4.0 ISO-NE offer cap",
+  "CT_CHP.* declared-neutral (n=1, not identifiable)"
+ ],
+ "prereg_prediction": {
+  "2020": {
+   "now_pct": 13.71,
+   "predicted_pct": 9.76
+  },
+  "2021": {
+   "now_pct": 9.08,
+   "predicted_pct": 5.3
+  },
+  "2022": {
+   "now_pct": -0.6,
+   "predicted_pct": -4.05
+  },
+  "2023": {
+   "now_pct": 3.13,
+   "predicted_pct": -0.45
+  },
+  "2024": {
+   "now_pct": 5.66,
+   "predicted_pct": 2.0
+  },
+  "2025": {
+   "now_pct": 1.65,
+   "predicted_pct": -1.88
+  }
+ },
+ "note": "2020 predicted margin (0.24 pp) is smaller than the pass-through uncertainty; its verdict is pre-registered as UNDETERMINED and will be reported as it lands. Rule 30(c): it cannot certify or decertify NEISO."
+}
