@@ -22,7 +22,7 @@ was solved. §9 states the exact re-cut D65-B would need if Q47 rules (A).
 | 3 | G-DRIFT | **WRONG, and the arm caught it (§3b).** The audit read all 58 files' hunks as INERT; A1's ledger then differed from the committed control in **2027**, a year the seam cannot reach. A HEAD control was solved under rule 29(b)'s LIVE clause and is **byte-identical to A1 before 2028**, so the seam is inert as designed and the difference is HEAD drift. **Root-caused, not just detected:** a one-hunk revert of capx D55's `_floor_retention_merit` reproduces the pre-drift 2027 exactly (§3c–§3d) — and the reason its own diagnostic showed nothing is a second finding: the reliability floor has **three call sites and only two are logged**. |
 | 4 | A1 (NEISO t1f, seam 4 alone) | **The seam RE-ORDERS; it does not re-select.** 2028: every host lost is `k` 1.55–1.71, every host gained is `k` 0.95–1.06 — no exceptions — with MW-weighted `er` **0.5752 → 0.3912** and `hr` 7.305 → 7.029. But the 3 GW/yr cap binds in every year on both arms, so the **cumulative** 2028–30 set is 34 rows either way and differs by **one swap** (`er` 0.4385 → 0.4353, −0.7 %). Quoting 2028 alone overstates the mechanism by an order of magnitude (§4.2). |
 | 5 | The STOPs | **None fired**, each read against evidence rather than asserted — including a 2,590-row census check that every `k = 1` row is invariant and every `k > 1` row strictly harder (§5). |
-| 6 | ARM / DO-NOT-ARM | **ARM, but ONLY COUPLED WITH ACT B — do not arm Act A alone**: seam 4 multiplies an uncited 2.7× VOM level by `k`, compounding the error on exactly the hosts it re-prices. Card C-17 / Q49 drafted (§8). |
+| 6 | ARM / DO-NOT-ARM | **ARM, but ONLY COUPLED WITH ACT B — do not arm Act A alone**: seam 4 multiplies an uncited 2.7× VOM level by `k`, compounding the error on exactly the hosts it re-prices. Card C-19 / Q51 drafted (§8). |
 
 ---
 
@@ -489,7 +489,11 @@ said; the level decides *how much* the shape closes.
 
 ### 8.2 Owner card — drafted for the director
 
-> **Card C-17 / Q49 — capx D65 Act A: arm the CCS retrofit fixed-cost shape gate?**
+> **Card C-19 / Q51 — capx D65 Act A: arm the CCS retrofit fixed-cost shape gate?**
+>
+> *(Numbered C-19 / Q51 because the director's r#42 sitting, which landed while this arm was
+> solving, allocated C-17 / Q49 and C-18 / Q50 to the MISO and CAISO promotions. The director
+> renumbers as they see fit — what matters is that this card is NOT one of those.)*
 >
 > **What it is.** `ccs_retrofit_fixed_cost_co2_scaling` (built, GATED default off, requires the D50
 > gate): scale `ΔFOM` and the capture VOM adder by the same `k = captured / captured_ref` seam 1
