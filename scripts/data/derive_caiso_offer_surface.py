@@ -610,11 +610,17 @@ def main(argv: list[str] | None = None) -> int:
     st_cut = None if args.no_st_split else locate_st_cut(res, args.hr_cut)
     if st_cut is not None:
         res["cls"] = _assign_classes(res, args.hr_cut, st_cut)
-    print(
-        f"class partition: hr_cut={args.hr_cut} st_cut="
-        f"{'(unimodal - NOT split)' if st_cut is None else round(st_cut, 3)}",
-        flush=True,
-    )
+    # Distinguish the two reasons st_cut can be None: the operator ASKED for the
+    # pre-repair two-way construction, vs the CT-side density having no antimode
+    # in the window (G-BIMODAL's own FAIL branch). Conflating them would let a
+    # `--no-st-split` run read as evidence that the population is unimodal.
+    if st_cut is not None:
+        _why = round(st_cut, 3)
+    elif args.no_st_split:
+        _why = "(--no-st-split: pre-repair TWO-way construction, not a measurement)"
+    else:
+        _why = "(MEASURED unimodal in the window - NOT split)"
+    print(f"class partition: hr_cut={args.hr_cut} st_cut={_why}", flush=True)
     gaslike = res[res.is_gas]
     active_classes = [c for c in CLASSES if (c != "ST_GAS" or st_cut is not None)]
     buckets = {cls: gaslike[gaslike.cls == cls] for cls in active_classes}
