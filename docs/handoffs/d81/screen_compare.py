@@ -24,7 +24,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 
-SCREEN_YEAR = 2022
+DEFAULT_SCREEN_YEAR = 2022
 MW_TOL = 1e-3
 OFFER_TOL = 1e-4
 PRICE_TOL = 1e-6
@@ -105,7 +105,14 @@ def main() -> None:
     ap.add_argument("--arm", type=Path, required=True)
     ap.add_argument("--phase0", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument(
+        "--screen-year",
+        type=int,
+        default=DEFAULT_SCREEN_YEAR,
+        help="The DY the G1-G6 gate table is graded on (PRECOMMIT §3).",
+    )
     args = ap.parse_args()
+    SCREEN_YEAR = args.screen_year
 
     ctl = find_ledgers(args.ctl)
     arm = find_ledgers(args.arm)
