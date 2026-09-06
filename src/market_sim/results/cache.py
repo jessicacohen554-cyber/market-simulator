@@ -56,6 +56,30 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06e — capx D81: the PENDING owner-filed dated block and the
+this-year CCS retrofit no longer sit in the D57 stack's $0 price-taking block
+either — the same SAME-KEY semantic change as epoch 2026-09-06d, extended to
+the two remaining channels that reached the same residual, again with ZERO
+committed bundles in its blast radius.** Owner ruling Q53 ruled the must-offer
+reading for the sector gate; the director extended it to the channels
+``DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`` §4 enumerates, because
+PJM's must-offer requirement keys on *existing and in the footprint* and its
+three exceptions (Manual 18 Rev 62 §5.4.1) do not include a filed plan that has
+not yet taken effect. ``evolve_fleet`` now routes ``_dated_exempt`` and
+``_retrofitted_ids`` to ``exit_exempt_unit_ids``, so ``exempt_unit_ids`` has no
+producer. No ``ScenarioConfig`` field is added or changed, so no key moves.
+What is invalidated: any bundle solved in **forecast mode** on an ISO whose
+``capacity_market_supply_clearing_by_iso`` row is on (PJM alone at this date)
+with ``fossil_announced_exits_enabled`` on — and no such bundle is committed or
+registered anywhere (capx D57/D58/D78's probes were all deleted before merge
+under rule 29(c)). What is NOT invalidated: every backcast of every ISO (a
+backcast reaches neither step 1b nor the clearing), every clearing-off ISO
+(with the clearing off the routing is byte-identical, asserted by test), and
+every year below ``ccs_retrofit_available_year`` = 2028 on the retrofit limb,
+where the set is empty by construction. Record:
+``docs/handoffs/PRECOMMIT-capx-d81-2026-09-06.md`` §2 and
+``FINDING-capx-d81-2026-09-06.md``.
+
 **Epoch 2026-09-06d — capx D78 / owner ruling Q53 (reading 1): the
 retirement-screen sector gate no longer removes a unit from the D57
 capacity sell-offer stack — a SAME-KEY semantic change for

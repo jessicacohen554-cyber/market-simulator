@@ -228,13 +228,17 @@ def evolve_fleet(
             plants with a pending row are EXEMPT from the step-3 screen
             (:func:`dated_plant_unit_ids`) and the pending rows are handed to
             the screen as ``exogenous_exits`` so the R-NEW admission cap's
-            counterfactual nets them. Under ``config.retirement_sector_gate``
-            (capx D53, default off) :func:`sector_gated_unit_ids` — every
-            thermal unit whose plant's EIA-860 ``Sector`` is 1 (regulated
-            utility) — is handed to the screen as ``exit_exempt_unit_ids``
-            (capx D78): exempt from the exit DECISION, still evaluated and
-            still OFFERING into the D57 capacity clearing; neither
-            declaration produces an exit (rule 19).
+            counterfactual nets them — and, since capx D81, that exemption is
+            an ``exit_exempt_unit_ids`` one: a plant whose filed date is LATER
+            than the delivery year must still offer (Manual 18 Rev 62 §1.2),
+            so it is evaluated and OFFERED into the D57 clearing at its
+            net-ACR cap and only its exit decision is exogenous. Under
+            ``config.retirement_sector_gate`` (capx D53, default off)
+            :func:`sector_gated_unit_ids` — every thermal unit whose plant's
+            EIA-860 ``Sector`` is 1 (regulated utility) — joins it on the same
+            parameter (capx D78), as does a unit CCS-retrofitted this year
+            (capx D81; empty below ``ccs_retrofit_available_year``). None of
+            the three declarations produces an exit (rule 19).
         announced_reversal_plants: Plant codes whose announced retirement
             was reversed by a public counter-instrument (registry rows all
             superseded) — step 1 ignores their stale EIA-860 dates
@@ -531,8 +535,22 @@ def evolve_fleet(
                 if uid in _post_announced and _post_announced[uid].pmax_mw != g.pmax_mw
             )
     # Rule-19 reconciliation inputs for step 3 (both empty/None off the gate):
-    # the units whose plant still carries a pending dated row are exogenous to
+    # the units whose plant still carries a PENDING dated row are exogenous to
     # the screen, and the pending rows are what the admission cap nets.
+    # capx D81 (director extension of owner ruling Q53 to the channels
+    # DESIGN-capx-d78 §4 enumerates; PRECOMMIT-capx-d81-2026-09-06.md): a
+    # PENDING dated plant — filed date LATER than this delivery year — is
+    # still an Existing Generation Capacity Resource in the footprint, so
+    # PJM's must-offer requirement reaches it exactly as it reaches a
+    # sector-gated unit (Manual 18 Rev 62 §1.2 / §5.4.1; the three enumerated
+    # exceptions are physical CP incapability, a firm external sale and a
+    # filed removal of Capacity Resource status — never a filed plan that has
+    # not yet taken effect). It therefore rides ``exit_exempt_unit_ids``
+    # below: evaluated, OFFERED at its net-ACR cap, and out of the exit
+    # decision, whose owner is the filed date at step 1b. A unit whose date IS
+    # effective for this year has already left the fleet at step 0/1/1b above
+    # — exception [c], §5.4.7, "no longer eligible to offer" — so it is
+    # correctly absent from the census and the stack alike.
     _dated_exempt: frozenset[str] = frozenset()
     _exogenous_pending: list | None = None
     if _fossil_channel_on:
@@ -561,6 +579,13 @@ def evolve_fleet(
     # clearing-armed ISO (FINDING-capx-d58 §3: 34.2 GW to $0 price takers,
     # the 2022 price −9.67 %). The gated set is ledgered per year
     # (``sector_gated``) so the D-2 attribution can see what left the screen.
+    # capx D81 extends the SAME rule to the other two channels that reached
+    # the same residual (DESIGN-capx-d78 §4): the pending dated block and the
+    # this-year retrofit. All three now ride ``exit_exempt_unit_ids`` and
+    # ``exempt_unit_ids`` — out of the screen entirely, no margin and no offer
+    # — has no producer here at all. It is retained as the screen's other,
+    # still-meaningful declaration (a resource that is genuinely not eligible
+    # to offer), not as a routing this call site takes.
     _sector_exempt: frozenset[str] = frozenset()
     _sector_census: dict | None = None
     if bool(getattr(config, "retirement_sector_gate", False)):
@@ -623,7 +648,13 @@ def evolve_fleet(
     # A retrofit is this year's capital decision for the unit: clear its
     # unabated loss history (it re-enters the retirement screen as
     # gas_cc_ccs next year on its own post-retrofit dispatch) and exempt it
-    # from this year's screen below.
+    # from this year's EXIT DECISION below. capx D81: a just-retrofitted unit
+    # is an EXISTING resource that must offer (DESIGN-capx-d78 §4 row 3), so
+    # it too rides ``exit_exempt_unit_ids`` rather than leaving the sell-offer
+    # stack — its accredited MW belongs in the auction even in the year it
+    # spends the capex. Inert on every backcast, hindcast and crossover year
+    # by construction: this set is empty below ``ccs_retrofit_available_year``
+    # (2028), so no such year's ledger, decision or cache key moves.
     _retrofitted_ids = frozenset(entry["unit_id"] for entry in retrofit_log)
     for _uid in _retrofitted_ids:
         loss_tracker.pop(_uid, None)
@@ -677,10 +708,10 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
-            exempt_unit_ids=_retrofitted_ids | _dated_exempt,
+            exempt_unit_ids=frozenset(),
             exogenous_exits=_exogenous_pending,
             locality_prices_by_zone=locality_prices_by_zone,
-            exit_exempt_unit_ids=_sector_exempt,
+            exit_exempt_unit_ids=(_retrofitted_ids | _dated_exempt | _sector_exempt),
         )
         _clearing = (_econ_sink or {}).get("capacity_clearing")
         if _clearing is not None:

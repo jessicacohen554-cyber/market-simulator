@@ -55,7 +55,10 @@ def find_ledgers(root: Path) -> dict[int, dict]:
 def stack_rows(ledger: dict) -> dict[str, tuple]:
     """``{unit_id: (fuel, offer, accredited_mw, cleared)}`` from ``offer_stack``."""
     clearing = ledger.get("capacity_clearing") or {}
-    return {r[0]: (r[1], float(r[2]), float(r[3]), bool(r[4])) for r in clearing.get("offer_stack", [])}
+    return {
+        r[0]: (r[1], float(r[2]), float(r[3]), bool(r[4]))
+        for r in clearing.get("offer_stack", [])
+    }
 
 
 def decision_unit_ids(ledger: dict) -> set[str]:
@@ -107,18 +110,20 @@ def main() -> None:
     ctl = find_ledgers(args.ctl)
     arm = find_ledgers(args.arm)
     p0 = json.loads(args.phase0.read_text())
-    dated = {
-        u["unit_id"]: u for u in p0["years"][str(SCREEN_YEAR)]["units"]
-    }
+    dated = {u["unit_id"]: u for u in p0["years"][str(SCREEN_YEAR)]["units"]}
 
     y = SCREEN_YEAR
     if y not in ctl or y not in arm:
-        raise SystemExit(f"screen year {y} missing: ctl {sorted(ctl)} arm {sorted(arm)}")
+        raise SystemExit(
+            f"screen year {y} missing: ctl {sorted(ctl)} arm {sorted(arm)}"
+        )
     c_led, a_led = ctl[y], arm[y]
     c_cl = c_led.get("capacity_clearing") or {}
     a_cl = a_led.get("capacity_clearing") or {}
     if not c_cl or not a_cl:
-        raise SystemExit("capacity_clearing block absent — the D57 clearing did not arm")
+        raise SystemExit(
+            "capacity_clearing block absent — the D57 clearing did not arm"
+        )
 
     c_stack, a_stack = stack_rows(c_led), stack_rows(a_led)
     added = sorted(set(a_stack) - set(c_stack))
@@ -149,7 +154,9 @@ def main() -> None:
 
     def _i1(cl):
         return round(
-            float(cl["price_takers_mw"]) + float(cl["offered_mw"]) - float(cl["census_mw"]),
+            float(cl["price_takers_mw"])
+            + float(cl["offered_mw"])
+            - float(cl["census_mw"]),
             6,
         )
 
@@ -163,9 +170,11 @@ def main() -> None:
         "pass": (
             abs(_i1(c_cl)) <= MW_TOL
             and abs(_i1(a_cl)) <= MW_TOL
-            and abs(float(c_cl["requirement_mw"]) - float(a_cl["requirement_mw"])) <= MW_TOL
+            and abs(float(c_cl["requirement_mw"]) - float(a_cl["requirement_mw"]))
+            <= MW_TOL
             and abs(float(c_cl["census_mw"]) - float(a_cl["census_mw"])) <= MW_TOL
-            and abs(float(c_cl["census_position"]) - float(a_cl["census_position"])) <= PRICE_TOL
+            and abs(float(c_cl["census_position"]) - float(a_cl["census_position"]))
+            <= PRICE_TOL
         ),
     }
 
@@ -210,14 +219,19 @@ def main() -> None:
 
     gates["G5"] = {
         "question": "direction (D54 §4.2's stated bias, reversed)",
-        "price_usd_per_mw_day": [c_cl["price_usd_per_mw_day"], a_cl["price_usd_per_mw_day"]],
+        "price_usd_per_mw_day": [
+            c_cl["price_usd_per_mw_day"],
+            a_cl["price_usd_per_mw_day"],
+        ],
         "cleared_position": [c_cl["cleared_position"], a_cl["cleared_position"]],
         "cleared_mw": [c_cl["cleared_mw"], a_cl["cleared_mw"]],
         "how": [c_cl.get("how"), a_cl.get("how")],
         "marginal_unit": [c_cl.get("marginal_unit"), a_cl.get("marginal_unit")],
         "pass": (
-            float(a_cl["price_usd_per_mw_day"]) >= float(c_cl["price_usd_per_mw_day"]) - PRICE_TOL
-            and float(a_cl["cleared_position"]) <= float(c_cl["cleared_position"]) + PRICE_TOL
+            float(a_cl["price_usd_per_mw_day"])
+            >= float(c_cl["price_usd_per_mw_day"]) - PRICE_TOL
+            and float(a_cl["cleared_position"])
+            <= float(c_cl["cleared_position"]) + PRICE_TOL
         ),
     }
 
@@ -251,10 +265,42 @@ def main() -> None:
         "legs": {"ctl": str(args.ctl), "arm": str(args.arm)},
         "years": {"ctl": sorted(ctl), "arm": sorted(arm)},
         "clearing": {
-            "ctl": {k: c_cl.get(k) for k in ("n_offers", "offered_mw", "price_takers_mw", "census_mw", "requirement_mw", "price_usd_per_mw_day", "cleared_mw", "cleared_position", "census_position", "n_uncleared", "how")},
-            "arm": {k: a_cl.get(k) for k in ("n_offers", "offered_mw", "price_takers_mw", "census_mw", "requirement_mw", "price_usd_per_mw_day", "cleared_mw", "cleared_position", "census_position", "n_uncleared", "how")},
+            "ctl": {
+                k: c_cl.get(k)
+                for k in (
+                    "n_offers",
+                    "offered_mw",
+                    "price_takers_mw",
+                    "census_mw",
+                    "requirement_mw",
+                    "price_usd_per_mw_day",
+                    "cleared_mw",
+                    "cleared_position",
+                    "census_position",
+                    "n_uncleared",
+                    "how",
+                )
+            },
+            "arm": {
+                k: a_cl.get(k)
+                for k in (
+                    "n_offers",
+                    "offered_mw",
+                    "price_takers_mw",
+                    "census_mw",
+                    "requirement_mw",
+                    "price_usd_per_mw_day",
+                    "cleared_mw",
+                    "cleared_position",
+                    "census_position",
+                    "n_uncleared",
+                    "how",
+                )
+            },
         },
-        "phase0_block_accredited_mw": p0["years"][str(SCREEN_YEAR)]["offering_accredited_mw"],
+        "phase0_block_accredited_mw": p0["years"][str(SCREEN_YEAR)][
+            "offering_accredited_mw"
+        ],
         "gates": gates,
         "verdict": "PASS" if all(g["pass"] for g in gates.values()) else "STOP",
     }

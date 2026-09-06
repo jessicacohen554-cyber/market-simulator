@@ -5663,6 +5663,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
 
         def spy(fleet_, *a, **kw):
             seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["exit_exempt"] = kw.get("exit_exempt_unit_ids")
             seen["exogenous"] = kw.get("exogenous_exits")
             return fleet_, {}, []
 
@@ -5674,7 +5675,12 @@ class TestFossilAnnouncedExits(unittest.TestCase):
         }
         with mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy):
             evolve_fleet(fleet, prior, 2028, cfg, {}, announced_fossil_exits=rows)
-        self.assertEqual(seen["exempt"], frozenset({"300_1"}))
+        # capx D81: the exemption is an EXIT exemption — a plant whose filed
+        # date is LATER than the delivery year must still offer its accredited
+        # MW into the D57 clearing (Manual 18 Rev 62 §1.2), so it rides
+        # ``exit_exempt_unit_ids``, not the not-eligible-to-offer parameter.
+        self.assertEqual(seen["exempt"], frozenset())
+        self.assertEqual(seen["exit_exempt"], frozenset({"300_1"}))
         self.assertIs(seen["exogenous"], rows)
         # Off the gate the screen sees neither.
         seen.clear()
@@ -5688,6 +5694,7 @@ class TestFossilAnnouncedExits(unittest.TestCase):
                 announced_fossil_exits=rows,
             )
         self.assertEqual(seen["exempt"], frozenset())
+        self.assertEqual(seen["exit_exempt"], frozenset())
         self.assertIsNone(seen["exogenous"])
 
     # -- reconciliation (b): the admission cap nets the dated exits ---------
@@ -7055,7 +7062,7 @@ class TestRetirementSectorGate(unittest.TestCase):
         self.assertEqual(gated, frozenset())
         self.assertEqual(census["unknown_sector_units"], 7)
 
-    def test_evolve_unions_the_gate_with_the_dated_exemption_only_when_armed(self):
+    def test_evolve_routes_every_exogenous_exit_set_to_the_exit_exempt_param(self):
         from market_sim.model import capacity_evolution as pkg
         from tests.unit.model.test_capacity import TestFossilAnnouncedExits as _F
 
@@ -7099,14 +7106,17 @@ class TestRetirementSectorGate(unittest.TestCase):
                 announced_fossil_exits=rows,
                 events=events,
             )
-        # capx D78 (owner ruling Q53 = reading 1): TWO declarations on TWO
-        # parameters. The dated IPP unit (D42) is out of the screen entirely
-        # (a $0 price taker under the D57 clearing); the undated utility unit
-        # (D53) is exempt from the EXIT decision only — evaluated and OFFERED
-        # into the clearing — so it is NOT unioned into exempt_unit_ids; the
-        # CHP unit is screened.
-        self.assertEqual(seen["exempt"], frozenset({"400_1"}))
-        self.assertEqual(seen["exit_exempt"], frozenset({"300_1"}))
+        # capx D78 (owner ruling Q53 = reading 1) as EXTENDED by capx D81:
+        # BOTH exogenous-exit declarations are exempt from the EXIT decision
+        # ONLY — evaluated and OFFERED into the D57 clearing — so both ride
+        # ``exit_exempt_unit_ids`` and ``exempt_unit_ids`` (not eligible to
+        # offer at all) has no producer. A PENDING dated plant's filed date is
+        # LATER than the delivery year, so PJM's must-offer requirement still
+        # reaches it (Manual 18 Rev 62 §1.2); a plant whose date is EFFECTIVE
+        # this year left the fleet at step 0/1/1b above and reaches neither
+        # set. The CHP unit is screened.
+        self.assertEqual(seen["exempt"], frozenset())
+        self.assertEqual(seen["exit_exempt"], frozenset({"300_1", "400_1"}))
         self.assertEqual(events["sector_gated"]["units"], 1)
         self.assertAlmostEqual(events["sector_gated"]["mw"], 500.0)
         self.assertEqual(events["sector_gated"]["year"], 2028)
@@ -7129,8 +7139,8 @@ class TestRetirementSectorGate(unittest.TestCase):
                 announced_fossil_exits=rows,
                 events=events,
             )
-        self.assertEqual(seen["exempt"], frozenset({"400_1"}))
-        self.assertEqual(seen["exit_exempt"], frozenset())
+        self.assertEqual(seen["exempt"], frozenset())
+        self.assertEqual(seen["exit_exempt"], frozenset({"400_1"}))
         self.assertNotIn("sector_gated", events)
 
     def test_gated_unit_never_enters_margins_or_the_pipeline(self):
@@ -7401,6 +7411,203 @@ class TestRetirementSectorGate(unittest.TestCase):
             self.assertEqual(eia860_plant_sectors(b), {1: 2})
             # A directory with no plant table reads empty (fail-open upstream).
             self.assertEqual(eia860_plant_sectors(Path(td)), {})
+
+
+class TestDatedBlockMustOffer(unittest.TestCase):
+    """capx D81: the PENDING owner-filed dated block and the this-year CCS
+    retrofit MUST OFFER — the director's extension of owner ruling Q53 to the
+    channels ``DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`` §4
+    enumerates, replacing ``DESIGN-capx-d54`` §4.2's price-taker reading.
+
+    PJM's must-offer requirement keys on *existing and located in the
+    footprint* (Manual 18 Rev 62 §1.2 / §5.4.1) and its three enumerated
+    exceptions — physical CP incapability, a firm external sale, a filed
+    removal of Capacity Resource status — do not include a filed plan that has
+    not yet taken effect. So a plant whose filed date is LATER than the
+    delivery year offers for every year before the removal is effective, and a
+    plant whose removal IS effective has already left the fleet at evolve step
+    0/1/1b and is correctly absent from the census and the stack alike
+    (§5.4.7, "no longer eligible to offer").
+    """
+
+    def _pjm_screen(self, peak, **exempt_kw):
+        """DESIGN-capx-d54's three-coal-unit toy under the D57 clearing.
+
+        A covers its bar on energy (offer $0), B has a small gap, C earns zero
+        margin (offer = its full bar). C is the unit the caller declares.
+        """
+        from market_sim.model.capacity import apply_economic_retirements
+
+        cfg = ScenarioConfig(
+            iso="PJM",
+            mode="forecast",
+            hindcast=True,
+            capacity_market_supply_clearing_by_iso={"PJM": True},
+            retirement_rule="pipeline",
+        )
+        T = 100
+        fleet = [
+            _gen("A", "coal", pmax=1_000.0, eford=0.08),
+            _gen("B", "coal", pmax=1_000.0, eford=0.08),
+            _gen("C", "coal", pmax=1_000.0, eford=0.08),
+        ]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=T)
+        prices = np.full((1, T), 50.0)
+        mc = np.vstack(
+            [
+                np.full(T, 50.0 - 800.0),
+                np.full(T, 50.0 - 500.0),
+                np.full(T, 50.0),
+            ]
+        )
+        dispatch = SimpleNamespace(dispatch=np.zeros((3, T)))
+        sink: dict = {}
+        with no_hydro_accreditation():
+            survivors, state, _ = apply_economic_retirements(
+                fleet,
+                arrays,
+                dispatch,
+                prices,
+                cfg,
+                {},
+                peak_demand=peak,
+                mc=mc,
+                year=2023,
+                event_sink=sink,
+                **exempt_kw,
+            )
+        rows = {e["unit_id"]: e for e in sink.get("pipeline_events", [])}
+        return {g.unit_id for g in survivors}, state, rows, sink["capacity_clearing"]
+
+    def test_pending_dated_unit_offers_at_its_cap_and_faces_no_exit(self):
+        """T1: a pending dated plant is IN the sell-offer stack at its net-ACR
+        cap and OUT of the exit decision — the stack, the price and the
+        price-taking block are the un-declared run's, and it carries no
+        pipeline row, seeds no state and survives whether or not it clears."""
+        for peak in (1_500.0, 6_000.0, 40_000.0):
+            base_surv, base_state, base_rows, base = self._pjm_screen(peak)
+            dated_surv, dated_state, dated_rows, dated = self._pjm_screen(
+                peak, exit_exempt_unit_ids=frozenset({"C"})
+            )
+            self.assertEqual(dated.n_offers, base.n_offers, peak)
+            self.assertEqual(dated.offer_usd_per_mw_day, base.offer_usd_per_mw_day)
+            self.assertEqual(dated.accredited_mw, base.accredited_mw)
+            self.assertEqual(dated.offered_mw, base.offered_mw)
+            self.assertEqual(dated.price_takers_mw, base.price_takers_mw)
+            self.assertEqual(dated.price_usd_per_mw_day, base.price_usd_per_mw_day)
+            self.assertEqual(dated.cleared_unit_ids, base.cleared_unit_ids)
+            self.assertIn("C", dated.offer_usd_per_mw_day)
+            # Its offer is the net-ACR cap the D54 formula defines, not $0.
+            self.assertGreater(dated.offer_usd_per_mw_day["C"], 0.0)
+            self.assertNotIn("C", dated_rows)
+            self.assertNotIn("C", dated_state)
+            self.assertIn("C", dated_surv)
+            self.assertEqual(
+                dated_rows, {k: v for k, v in base_rows.items() if k != "C"}, peak
+            )
+
+    def test_conservation_offered_up_price_takers_down_by_the_same_mw(self):
+        """T3 / the PRECOMMIT §1.2 identity: routing the block from
+        ``exempt_unit_ids`` (D54 §4.2's price-taker reading) to
+        ``exit_exempt_unit_ids`` moves exactly its accredited MW out of ``Q_0``
+        and into the priced stack — and invariant I1
+        (``Q_0 + Σ A_g == accredited``) holds under BOTH routings."""
+        for peak in (1_500.0, 6_000.0, 40_000.0):
+            _s, _st, _r, old = self._pjm_screen(peak, exempt_unit_ids=frozenset({"C"}))
+            _s2, _st2, _r2, new = self._pjm_screen(
+                peak, exit_exempt_unit_ids=frozenset({"C"})
+            )
+            a_g = new.accredited_mw["C"]
+            self.assertNotIn("C", old.offer_usd_per_mw_day)
+            self.assertEqual(new.n_offers, old.n_offers + 1)
+            self.assertAlmostEqual(new.offered_mw, old.offered_mw + a_g, places=6)
+            self.assertAlmostEqual(
+                new.price_takers_mw, old.price_takers_mw - a_g, places=6
+            )
+            # I1 in both, and the denominators never move.
+            for cl in (old, new):
+                self.assertAlmostEqual(
+                    cl.price_takers_mw + cl.offered_mw, cl.census_mw, places=6
+                )
+            self.assertAlmostEqual(new.census_mw, old.census_mw, places=6)
+            self.assertAlmostEqual(new.requirement_mw, old.requirement_mw, places=6)
+            # Direction: moving MW out of the $0 block can only raise the
+            # price and lower the cleared position (D54 §4.2's bias reversed).
+            self.assertGreaterEqual(
+                new.price_usd_per_mw_day, old.price_usd_per_mw_day - 1e-9
+            )
+            self.assertLessEqual(new.cleared_position, old.cleared_position + 1e-9)
+
+    def _spy_evolve(self, year, fleet, rows, **cfg_kw):
+        """Run ``evolve_fleet`` with the screen spied on; return the two id
+        sets it was handed plus the recorded events."""
+        from market_sim.model import capacity_evolution as pkg
+        from market_sim.results.evolution_ledger import new_events
+
+        seen: dict = {}
+
+        def spy(fleet_, *a, **kw):
+            seen["exempt"] = kw.get("exempt_unit_ids")
+            seen["exit_exempt"] = kw.get("exit_exempt_unit_ids")
+            seen["fleet_ids"] = {g.unit_id for g in fleet_}
+            return fleet_, {}, []
+
+        prior = {
+            "fleet_arrays": object(),
+            "dispatch_result": object(),
+            "prices": np.zeros((1, 24)),
+            "peak_demand": 1000.0,
+        }
+        events = new_events()
+        with mock.patch.object(pkg, "apply_economic_retirements", side_effect=spy):
+            evolve_fleet(
+                fleet,
+                prior,
+                year,
+                ScenarioConfig(fossil_announced_exits_enabled=True, **cfg_kw),
+                {},
+                announced_fossil_exits=rows,
+                events=events,
+            )
+        return seen, events
+
+    def test_executed_exit_is_absent_from_the_stack_and_from_every_decision(self):
+        """T2: a plant whose filed date is EFFECTIVE for the delivery year is
+        removed by step 1b BEFORE the screen — Manual 18 §5.4.7 exception [c],
+        "no longer eligible to offer". It reaches neither exemption set,
+        neither the census nor the stack, and no decision structure; the
+        PENDING twin (a later date) reaches ``exit_exempt_unit_ids``."""
+        from tests.unit.model.test_capacity import TestFossilAnnouncedExits as _F
+
+        fleet = [
+            _unit(400, "1", 100.0, fuel="coal"),  # date effective this year
+            _unit(500, "1", 200.0, fuel="coal"),  # date still pending
+        ]
+        rows = [
+            _F._row(_F(), 400, "1", 2028, mw=100.0),
+            _F._row(_F(), 500, "1", 2032, mw=200.0),
+        ]
+        seen, _events = self._spy_evolve(2028, fleet, rows)
+        self.assertNotIn("400_1", seen["fleet_ids"])
+        self.assertNotIn("400_1", seen["exempt"])
+        self.assertNotIn("400_1", seen["exit_exempt"])
+        self.assertIn("500_1", seen["fleet_ids"])
+        self.assertEqual(seen["exempt"], frozenset())
+        self.assertEqual(seen["exit_exempt"], frozenset({"500_1"}))
+
+    def test_retrofit_channel_is_inert_below_the_availability_year(self):
+        """T4: below ``ccs_retrofit_available_year`` (2028) the retrofit set is
+        empty by construction, so this lane's routing of ``_retrofitted_ids``
+        is a no-op on every backcast, hindcast and crossover year — nothing in
+        such a year's ledger, decision or cache key can move."""
+        fleet = [_unit(600, "1", 400.0, fuel="gas_cc")]
+        cfg = ScenarioConfig()
+        self.assertEqual(cfg.ccs_retrofit_available_year, 2028)
+        for year in (2023, 2025, cfg.ccs_retrofit_available_year - 1):
+            seen, events = self._spy_evolve(year, list(fleet), [])
+            self.assertEqual(events["ccs_retrofits"], [], year)
+            self.assertEqual(seen["exempt"], frozenset(), year)
+            self.assertEqual(seen["exit_exempt"], frozenset(), year)
 
 
 class TestNyisoLocalityCapacityCurves(unittest.TestCase):
