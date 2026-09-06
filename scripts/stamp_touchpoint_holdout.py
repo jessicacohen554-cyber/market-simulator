@@ -1,10 +1,17 @@
 """Stamp the holdout comparison block onto a 2022 touchpoint's registry sidecar.
 
-The run explorer renders a dedicated **Validation Touchpoint** panel for any
-run whose sidecar carries a ``holdout`` block. This writes that block by
-scoring BOTH runs with ``scripts/calibration_verdict.py`` from committed
-artifacts only — no LP is constructed, no bundle is re-solved — so the panel
-shows the one comparison a touchpoint exists to make:
+The ``holdout`` block is what FOLDS a touchpoint into its keeper: the run
+explorer hides the stamped run from the run list, offers its years in the
+keeper's own year selector, and renders them as ORDINARY YEAR COLUMNS in the
+keeper's report — no separate panel, no tier badge (owner instruction
+2026-09-06, rule 30 amendment; the dedicated "Validation Touchpoint" panel this
+docstring used to describe was removed then, since a folded touchpoint IS the
+keeper's recipe on another year and reading one configuration should not take
+two panels). Rule 22's tier caveat survives as a single footnote naming the
+held-out years. This writes that block by scoring BOTH runs with
+``scripts/calibration_verdict.py`` from committed artifacts only — no LP is
+constructed, no bundle is re-solved — so the stamped block records the one
+comparison a touchpoint exists to make:
 
     the keeper's IN-SAMPLE determination (2023-2025, the tuned window)
     vs
@@ -12,12 +19,15 @@ shows the one comparison a touchpoint exists to make:
 
 criterion by criterion, with each criterion's status on both sides. A criterion
 that passes in-sample and fails on the holdout is the signal; one that fails on
-both is a known limitation travelling, not a new discovery. The panel labels
-which is which rather than leaving the reader to diff two verdicts by eye.
+both is a known limitation travelling, not a new discovery. The block records
+which is which so a later reader need not diff two verdicts by eye, and the
+per-year determinations it carries are what the Calibration Status page's
+holdout ladder renders (rule 30(b)).
 
 The block also carries the rule-22 tier semantics verbatim, because the single
 most misusable number on this dashboard is a validation-tier result quoted as a
-certified out-of-sample skill number. The panel states it is not one.
+certified out-of-sample skill number. The run explorer's rule-22 footnote and
+the status ladder both state that it is not one.
 
 Usage:
     python scripts/stamp_touchpoint_holdout.py \
@@ -36,8 +46,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 REGISTRY = REPO / "frontend" / "data" / "backcast" / "registry"
 
-# Rule 22's own words, carried onto the page so the panel cannot be read as a
-# skill claim. Kept here (not in the JS) so every touchpoint says it identically.
+# Rule 22's own words, carried onto the page so a folded held-out year cannot
+# be read as a skill claim. Kept here (not in the JS) so every touchpoint says
+# it identically.
 TIER_CAVEAT = (
     "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a "
     "certified out-of-sample skill number and must never be quoted as one — "

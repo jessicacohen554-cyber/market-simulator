@@ -488,10 +488,25 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     - **(a) STAMP IT TO THE KEEPER.** Run `scripts/stamp_touchpoint_holdout.py --run-id <touchpoint>
       --keeper-id <keeper>` so the sidecar carries `holdout.keeper`. That one field is what folds
       the run: the Run Explorer hides it from the run list, offers its years in the **keeper's**
-      year selector, and renders every folded year as columns of ONE combined *Validation
-      Touchpoints* panel on the keeper's page beside the in-sample column. A deep link to a folded
-      id still resolves — it opens the keeper on that year — so no URL breaks. An unstamped
-      touchpoint is a second card for the same config, which is the defect this rule names.
+      year selector, and renders every folded year **exactly as it renders a training year — an
+      ordinary year column in the keeper's Report, with no separate panel, no optgroup split, no
+      tier suffix and no per-year badge.** A deep link to a folded id still resolves — it opens the
+      keeper on that year — so no URL breaks. An unstamped touchpoint is a second card for the same
+      config, which is the defect this rule names. *(AMENDED 2026-09-06, owner instruction, verbatim:
+      "the formatting on the html dashboard for holdout years shouldn't be any different than the 3
+      training years, it should show the results in the report view on run explorer and does not
+      need a special designation." This clause previously MANDATED "columns of ONE combined
+      **Validation Touchpoints** panel … beside the in-sample column"; that panel, the year-selector
+      optgroup split and tier suffix, and the "<year> is a held-out year" provenance banner are all
+      **DELETED, not hidden** (rule 26 `[R-DELETE]` — a dead render path is a re-armable answer),
+      and the Report's year set is now `selectableYears()` rather than `runYears()`. **DO NOT
+      "restore" the panel as a regression fix.** What is UNCHANGED: the fold itself, the stamp, the
+      deep-link redirect, and — the one designation that survives — **rule 22's tier caveat, as a
+      single footnote naming the held-out years**, because a validation number must still never read
+      as a certified out-of-sample skill number. Rule 30(c) is untouched and this changes no
+      determination: it is presentation only, no scorer path was modified, and every keeper
+      re-scores byte-identically. Executed by session neiso-103; genealogy:
+      `docs/governance/rule-history.md` §14.)*
     - **(b) PUT IT ON THE CALIBRATION STATUS PAGE.** `scripts/build_status.py --iso <ISO>` derives
       the **holdout ladder** (one row per held-out year, scored per year) from the registry
       automatically — so the duty is to *rebuild and commit the status part*, never to hand-author
@@ -499,7 +514,9 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       detail: a multi-year touchpoint bundle carries ONE run-level determination that can hide a
       rung which passed on its own (NEISO 2020+2021 reads NOT-YET as a bundle; 2021 alone is
       CALIBRATED). Where the two rungs of a bundle diverge, the sidecar also carries a `perYear`
-      block so the panel and the ladder both say which year did what.
+      block so the ladder says which year did what. **This clause is UNAFFECTED by the (a)
+      amendment**: the de-designation is the Run Explorer's Report view only — the status page's
+      holdout ladder is per-year by design, is a different surface, and stays.
     - **(c) A HELD-OUT YEAR NEVER DOWNGRADES THE ISO.** *(Owner ruling 2026-09-05, verbatim: "An
       iso can stay calibrated even if it degrades on holdout years".)* The ISO's calibration
       determination is the **train-tier (2023–2025) verdict** and nothing else. A validation-tier

@@ -69,12 +69,14 @@ ENTRY_FIELDS = (
 #
 # ``holdout`` is the rule-22 validation-touchpoint block written by
 # scripts/stamp_touchpoint_holdout.py. It was MISSING from this tuple until
-# 2026-08-09, so the Run Explorer's Validation Touchpoint panel — which reads
-# ``st.runMeta.holdout`` — could never render on the deployed dashboard: the
-# block was committed on the sidecar and then dropped here on the way to the
-# manifest. The same block is what links a holdout run back to the keeper whose
-# frozen recipe produced it (``holdout.keeper``), which is how the year selector
-# offers a keeper its own held-out years.
+# 2026-08-09, so nothing that reads ``st.runMeta.holdout`` could render on the
+# deployed dashboard: the block was committed on the sidecar and then dropped
+# here on the way to the manifest. The block is what links a holdout run back to
+# the keeper whose frozen recipe produced it (``holdout.keeper``) — which is how
+# the keeper's year selector offers its own held-out years, and since 2026-09-06
+# how the Report renders them as ordinary year columns (rule 30 amendment). It
+# also carries the per-year determinations the Calibration Status page's holdout
+# ladder renders (rule 30(b)).
 OPTIONAL_ENTRY_FIELDS = ("ablation_twin", "market_story", "ablation_of", "holdout")
 
 
