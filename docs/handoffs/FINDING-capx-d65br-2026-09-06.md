@@ -142,3 +142,59 @@ I13 moves PASS → WARN. It is **not** attributed to either act: D65-B measured 
 ## 6. Governance
 
 *(filled at the close)*
+
+### 5.2 `neiso-t1f` — **G5' FIRES**, and the gate contradicts its own source. ROUTED, not resolved.
+
+Solve key **`c3519b861f920bbe`** = Addendum C's pre-declaration exactly. **5/5 years, 10.6 min,
+3.30 GB, 0 FAIL / 0 WARN on all 14 invariants** (the cleanest leg on the board).
+
+| year | rows | MW | % of the 3 GW/yr cap | MW-wtd `er` | MW-wtd `hr` | MW-wtd `k` |
+|---|---:|---:|---:|---:|---:|---:|
+| 2028 | 12 | 2,965.4 | 98.8 % | 0.3574 | 7.103 | 0.9952 |
+| 2029 | 9 | 2,939.8 | 98.0 % | 0.4793 | 7.259 | 1.3347 |
+| **2030** | 7 | **1,786.1** | **59.5 %** | 0.4680 | 7.617 | 1.3032 |
+
+| gate | verdict |
+|---|---|
+| **G0'** | **PASS** |
+| **G1'** | **NOT GATED** — D64 §2.4 publishes no band for NEISO. Reported: `er/phys` 0.8074–1.4964 over 28 rows |
+| **G2'** | **PASS** — all 28 rows; `capex/k` host-invariant within every year (2028 `1,323,595.6`; 2029 `1,201,226.4`; 2030 `1,133,012.2`) |
+| **G3'** | **PASS** (zero LP) |
+| **G4'** | **PASS** — 0 FAIL / 0 WARN, so no row can have flipped |
+| **G5'** | **FIRES** — 2030 converts 1.786 GW; Addendum C wrote "STOP if the cap does NOT bind in a year" |
+| **G6'** | **PASS** — 10.6 min, 3.30 GB |
+
+**THE STOP IS REPORTED AS FIRED. This session does not reinterpret it to pass** — a STOP a session
+may edit on seeing the number is not a STOP (D65-B §6.6; rules 1 `[R-STRUCT]` / 29).
+
+**But the gate as I transcribed it contradicts the document it cites, verbatim.** D64 §2.3, the
+same section Addendum C reads NEISO's "cap-bound" expectation out of, says in terms:
+
+> *"Expectation for the A/B (§4): the cap stays bound in NEISO and NYISO and the composition
+> re-ranks toward efficient hosts; **a year converting materially below the cap would be the
+> informative surprise, not a STOP.**"*
+
+So D64 pre-registered **this exact outcome** and pre-registered it as **not a STOP**. Addendum C
+turned an expectation into a gate — which is the **same defect class the director adjudicated
+against his own charter at r#48 §3(a)**, and it is mine: I quoted §2.4's "cap-bound" cell without
+reading §2.3's sentence governing what a below-cap year means.
+
+**Routed to the director, not resolved here.** This session may not repair a STOP it wrote by
+declaring it void after seeing the number, even when the source says the gate should never have
+existed. What is needed is an adjudication on the gate, not more solving.
+
+**And the mechanism reading is favourable and is reported at full magnitude.** The unbinding is the
+seam doing exactly what it was built to do, visible in the `k` column: 2028 clears at MW-wtd
+`k` = 0.9952 (sub-reference hosts, cap bound), and by 2030 the remaining pool is `k` = 1.3032 —
+hosts charged **1.30× per captured tonne** — and only 1.79 GW of them still clear. The efficient
+hosts are consumed first (D64 §2.3's "composition re-ranks toward efficient hosts") and the
+expensive tail cannot carry the accurate per-tonne cost. That is the D50/D64 seam's whole thesis.
+
+**D64 §2.3's own conditional is now triggered.** *"The GOLDEN-3 horizon … is not expected to move
+in kind; **it is only re-solved if the NEISO t1f arm shows the cap unbinding.**"* It does. So the
+`neiso-t3` GOLDEN-3 leg is now **positively indicated by the source document** rather than merely
+scheduled — and it is the leg that says whether the unbinding persists once RGGI reaches $67/t by
+2040 with §45Q eligibility ending 2032.
+
+**Per Addendum C's "STOP-only, per leg", the NEISO leg is stopped; the remaining legs proceed.**
+NEISO is **not registered** pending adjudication.
