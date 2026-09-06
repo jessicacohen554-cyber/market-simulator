@@ -556,3 +556,70 @@ The bands the repair would move, also pinned here so the FINDING quotes them
 from one place: `CC_REGULAR` econ_low/econ_high/peak = 1.066 / 1.072 / 1.386
 (base HR 7.442); `CT_PEAKER` = 1.145 / 1.166 / 1.166 (base HR 10.862);
 `committed` unarmed at 1.030 and 1.166 respectively.
+
+---
+
+## §9 — G-BIMODAL PASSES, and then a STRUCTURAL FINDING that halves the repair's reach
+
+### §9.1 — The gates, scored
+
+| # | registered | measured | verdict |
+|---|---|---|---|
+| **P-1** | 1,095 / 1,096 trade dates, `2023-06-01` the one genuine OASIS hole | 1,095 / 1,096, missing exactly `20230601` | **HOLDS** |
+| **P-2** | frozen buckets to ±3 resources and ±5 % capacity | `CC_REGULAR` **46 / 11.935 GW**, `CT_PEAKER` **100 / 9.950 GW** vs frozen 46 / 11,935 MW and 100 / 9,950 MW — **EXACT on all four legs** | **HOLDS** |
+| **P-3** | antimode ∈ [10.9, 12.5] with 1.5–4.5 GW above | antimode **11.738**, **2.559 GW** above | **PASS** |
+
+P-2's exactness is also the verdict on this session's instrument correction: the
+three divergences fixed by code inspection were the entire gap, and 634
+resources regressed on the pooled span reproduce the frozen classifier to the
+unit and the megawatt.
+
+### §9.2 — THE FINDING: the ST_GAS half of the repair is PROVABLY INERT in the LP
+
+Before wiring the repaired artifact into a solve, the consumer path was traced
+— and it does not go where §1 of the parent PRECOMMIT assumes.
+
+`data/offer_curves._offer_curve_for_group` opens with an unconditional bypass:
+
+```python
+if group == "ST_GAS" and plant_code in ST_GAS_PEAKER_PLANTS:
+    return None
+```
+
+and **CAISO's entire ST_GAS fleet is that set**: plants 315 (AES Alamitos,
+1,142.0 MW), 335 (AES Huntington Beach, 225.8 MW) and 350 (Ormond Beach,
+1,491.0 MW) — 2,858.8 MW, which is the whole class in
+`bin_assignments_CAISO.csv`. Measured, not read: with the `ST_GAS` band set to
+an unmissable **99.0**, all three plants return `None`, while a control class on
+the same config returns its curve normally.
+
+**So an `ST_GAS` entry in `caiso_offer_curve_measured.json` reaches ZERO CAISO
+plants.** The `_ungrounded_source` re-point is a provable no-op on this fleet.
+
+What that does and does not change:
+
+* **The ST_GAS leg is a correctness fix in the ARTIFACT, inert in the MODEL.**
+  It stops `_ungrounded` asserting that ST_GAS is priced off the CT bucket —
+  which was false as a *statement*, and is what parent §1 objected to — but
+  those three plants' committed and peak bands already come from the caiso-239 /
+  caiso-240 **per-plant measured registries**, reached through this same bypass.
+  That is rule 19 `[R-ONE-MECH]` working exactly as designed, and it means the
+  repair must not be sold as changing how the steamers are priced. It doesn't.
+* **The CT_PEAKER leg is LIVE and is the whole model-visible effect.**
+  CT_PEAKER and CT_CHP plants do read `offer_curve_by_group`, so removing the
+  high-HR tail from the pooled CT median reaches them. The phase-0 footprint
+  F(y) will therefore be entirely CT-side.
+* **Parent PRECOMMIT P-5 is downgraded, and says so.** "A separated ST_GAS
+  bucket's `econ_low` RISES above 1.145" remains *measurable in the artifact*
+  and is still scored there, but it **cannot reach the LP** and must never be
+  quoted as a dispatch effect.
+* **S-1 is re-read against this, not relaxed.** The addendum §3.2 gate predicted
+  "CT_PEAKER up, ST_GAS down". The ST_GAS half of that prediction is now known
+  to be structurally impossible, so **S-1 is scored on the CT_PEAKER leg alone**
+  and the ST_GAS leg is reported as INERT-BY-CONSTRUCTION with this proof
+  attached. This is a narrowing of the gate forced by the code, recorded
+  *before* the screen runs — not a criterion dropped after seeing a result.
+
+**Had this been found after a solve** it would have looked like the repair
+"didn't move ST_GAS", and the honest reading — that it *cannot* — would have
+been available only in hindsight.

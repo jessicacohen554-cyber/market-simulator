@@ -2201,7 +2201,16 @@ def backcast_config(
         _ungrounded_source = {
             "CC_CHP": "CC_REGULAR",  # derive: 'CC_CHP (HR 6.90) lands in the CC bucket'
             "CT_CHP": "CT_PEAKER",  # derive: 'priced CT_CHP curves land in the CT bucket'
-            "ST_GAS": "CT_PEAKER",  # derive: the three OTC/RMR steamers land in the CT bucket
+            # caiso-254 CLASS-PARTITION REPAIR: ST_GAS reads its OWN measured
+            # bucket when the artifact carries one. The pooled CT bucket mixed
+            # CT_PEAKER (fleet base HR 10.862) with the 2.9 GW of OTC/RMR
+            # steamers (11.847), so a steamer bidding pure SRMC landed a
+            # multiplier inflated ~1.09x purely by being divided by another
+            # class's base heat rate -- and this map then handed that biased
+            # median straight back to ST_GAS. Falls back to the pooled CT
+            # bucket for a pre-repair artifact that has no ST_GAS entry, so an
+            # older frozen surface still resolves exactly as it did.
+            "ST_GAS": "ST_GAS" if "ST_GAS" in _measured_bands else "CT_PEAKER",
         }
         _extra = {
             cls: dict(_measured_bands[src])

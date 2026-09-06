@@ -156,6 +156,7 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import (  # noqa: E402
+    CAISO_PUBLIC_BIDS_DIR,
     CALIBRATION_DIR,
     GAS_PRICES_DIR,
     PROCESSED_DIR,
@@ -179,13 +180,38 @@ GAS_MIN_DAYS = 120
 #: Body point for the classification regression: 35% of capacity sits inside
 #: every class's committed+econ_low window (below any duct/peak band).
 BODY_FRAC = 0.35
-#: Class VOM ($/MWh) — constants.VOM (NREL ATB 2024).
-VOM_BY_CLASS = {"CC_REGULAR": 2.0, "CT_PEAKER": 3.5}
+#: Class VOM ($/MWh) — constants.VOM (NREL ATB 2024). ST_GAS reads the SAME
+#: table's ``gas_st`` entry the CC/CT values come from (``gas_cc`` / ``gas_ct``),
+#: so the third bucket introduces no new constant (rule 21 [R-DOF]).
+VOM_BY_CLASS = {"CC_REGULAR": 2.0, "CT_PEAKER": 3.5, "ST_GAS": 4.0}
 #: Gas CO2 factor (tCO2/MMBtu) — constants.FUEL_CO2_FACTOR_PER_MMBTU.
 CO2_FACTOR = 0.057
 #: econ_low share of the econ window — the model's class geometry
 #: (_CAISO_OFFER_CURVE econ_low_share; kept, not re-derived).
-ECON_LOW_SHARE = {"CC_REGULAR": 0.50, "CT_PEAKER": 0.526}
+ECON_LOW_SHARE = {"CC_REGULAR": 0.50, "CT_PEAKER": 0.526, "ST_GAS": 0.50}
+#: The three measured buckets, in rising marginal-heat-rate order.
+CLASSES = ("CC_REGULAR", "CT_PEAKER", "ST_GAS")
+#: G1 bucket-vs-fleet capacity reconciliation bounds, per class. CC is tight;
+#: the two CT-side buckets keep the WIDER band the pooled CT bucket already
+#: carried, because the antimode separates two same-fuel near-SRMC populations
+#: that published fleet boundaries do not cut in exactly the same place. NOT
+#: retuned by this repair — CT_PEAKER's band is unchanged and ST_GAS inherits it.
+G1_BOUNDS = {
+    "CC_REGULAR": (0.5, 1.3),
+    "CT_PEAKER": (0.5, 1.6),
+    "ST_GAS": (0.5, 1.6),
+}
+#: Search window for the SECOND cut, between the CT_PEAKER fleet base HR
+#: (10.862) and above the OTC/RMR steamers' fleet HR (11.847) — published fleet
+#: heat rates, fixed before the density was built (caiso-253b PRECOMMIT §2.1,
+#: G-BIMODAL) and never moved to admit a mode. The cut itself is LOCATED as the
+#: capacity-density antimode inside it, exactly the way ``hr_cut`` = 8.5 was
+#: located in its own valley — it is not swept and not chosen against any
+#: criterion, so it adds no free parameter.
+ST_CUT_WINDOW = (10.9, 12.5)
+#: Capacity-weighted KDE bandwidth (MMBtu/MWh) for locating that antimode. A
+#: density smoother, not a gate threshold.
+ST_CUT_KDE_BW = 0.35
 #: Ladder quantiles (5 equal-cap rungs) — the ERCOT/PJM/NEISO convention.
 LADDER_QS = (0.1, 0.3, 0.5, 0.7, 0.9)
 #: LOYO tolerance on consumed stats: max(0.08 mult units, 10%).
@@ -225,7 +251,7 @@ def _fleet_geometry() -> dict[str, dict[str, float]]:
     """
     b = pd.read_csv(BIN_ASSIGNMENTS)
     out: dict[str, dict[str, float]] = {}
-    for cls in ("CC_REGULAR", "CT_PEAKER"):
+    for cls in CLASSES:
         sub = b[b.Plant_Group == cls]
         w = sub.Nameplate_MW.to_numpy(float)
         out[cls] = {
@@ -285,6 +311,50 @@ _BID_COLS = [
     "segment_mw",
     "segment_price_usd_per_mwh",
 ]
+
+
+#: Slim per-day reduced store written by
+#: ``scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1``: the SAME four
+#: columns and the SAME three row filters this module's clean-tree loader
+#: applies, streamed straight from the OASIS zips.
+REDUCED_STORE = CAISO_PUBLIC_BIDS_DIR / "_caiso253b_reduced"
+
+
+def _load_bids_reduced(years: list[int]) -> pd.DataFrame:
+    """GENERATOR EN curve segments from the slim reduced store.
+
+    An INTAKE path, not a method change — it returns the identical frame
+    :func:`_load_bids` builds, and the two are interchangeable by construction
+    (same columns, same filters, same rename, same sort key).
+
+    It exists because ``curate_dam_public_bids.py`` needs ~14.3 GB for ONE
+    CAISO year against a 15 GB box (the corpus README's measured limit), so the
+    clean tree cannot be built here at all, while the whole reduced corpus is
+    ~57 M rows (~1.2 GB at these dtypes) and loads whole.
+
+    EQUIVALENCE IS VERIFIED, NOT ASSUMED: running this module with
+    ``--no-st-split`` over this store reproduces the frozen 2026-08-02
+    artifact's consumed bands, and the same store reproduced the frozen bucket
+    populations EXACTLY (46 / 11.935 GW and 100 / 9.950 GW) in
+    ``results/calibration/_caiso253b_ct_bucket_bimodality.json``.
+    """
+    frames = []
+    for f in sorted(REDUCED_STORE.glob("*.parquet")):
+        year = int(f.stem[:4])
+        if year not in years:
+            continue
+        d = pd.read_parquet(f)
+        d = d.rename(columns={"segment_price_usd_per_mwh": "price"})
+        d["year"] = np.int16(year)
+        frames.append(d)
+    if not frames:
+        raise SystemExit(
+            f"no reduced days for {years} under {REDUCED_STORE} — run "
+            "scripts/probes/_caiso253b_ct_bucket_bimodality.py --pass1 first"
+        )
+    out = pd.concat(frames, ignore_index=True, copy=False)
+    frames.clear()
+    return out.sort_values(["resource_seq", "interval_start_utc", "segment_mw"])
 
 
 def _load_bids(years: list[int]) -> pd.DataFrame:
@@ -364,6 +434,60 @@ def _wquantile(values: np.ndarray, weights: np.ndarray, q: float) -> float:
     return float(np.interp(q * w.sum(), cw, v))
 
 
+def _kde(x: np.ndarray, w: np.ndarray, grid: np.ndarray, bw: float) -> np.ndarray:
+    """Capacity-weighted Gaussian KDE — the antimode smoother."""
+    z = (grid[:, None] - x[None, :]) / bw
+    return (np.exp(-0.5 * z**2) * w[None, :]).sum(axis=1) / (bw * np.sqrt(2 * np.pi))
+
+
+def locate_st_cut(res: pd.DataFrame, hr_cut: float) -> float | None:
+    """Locate the CT/ST cut as the CT-side capacity-density antimode.
+
+    The second cut is found the same way ``hr_cut`` = 8.5 was — as an interior
+    local minimum of the capacity-weighted slope density, inside a window fixed
+    from PUBLISHED fleet heat rates (:data:`ST_CUT_WINDOW`) rather than from
+    where a mode happens to land. It is not swept, and nothing about it is
+    chosen against a criterion, so it introduces no free parameter (rule 21
+    [R-DOF]).
+
+    Returns ``None`` when the CT-side density is unimodal inside the window, in
+    which case the caller must NOT split: a unimodal population means the
+    contamination is not separable from measured conduct (caiso-253b PRECOMMIT
+    §2.1's FAIL branch) and the pooled bucket stands with its disclosed bound.
+    """
+    ct = res[res.is_gas & (res.slope >= hr_cut)]
+    if len(ct) < 5:
+        return None
+    x = ct.slope.to_numpy(float)
+    w = ct.cap.to_numpy(float)
+    grid = np.linspace(hr_cut, GAS_SLOPE_RANGE[1], 400)
+    dens = _kde(x, w, grid, ST_CUT_KDE_BW)
+    lo, hi = ST_CUT_WINDOW
+    win = (grid >= lo) & (grid <= hi)
+    interior = np.r_[False, (dens[1:-1] < dens[:-2]) & (dens[1:-1] < dens[2:]), False]
+    cands = grid[interior & win]
+    if not cands.size:
+        return None
+    return float(cands[np.argmin(dens[interior & win])])
+
+
+def _assign_classes(
+    res: pd.DataFrame, hr_cut: float, st_cut: float | None
+) -> pd.Series:
+    """Three-way class assignment on the measured marginal-HR slope.
+
+    ``CC_REGULAR`` below ``hr_cut``; ``CT_PEAKER`` between the cuts; ``ST_GAS``
+    at/above ``st_cut``. With ``st_cut=None`` this is exactly the pre-repair
+    two-way split, so the frozen construction remains reachable.
+    """
+    cls = np.where(res.slope < hr_cut, "CC_REGULAR", "CT_PEAKER")
+    if st_cut is not None:
+        cls = np.where(res.slope >= st_cut, "ST_GAS", cls)
+    out = pd.Series(cls, index=res.index)
+    out[~res.is_gas] = ""
+    return out
+
+
 def _classify(
     seg: pd.DataFrame, gas: pd.Series, hr_cut: float
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -407,8 +531,9 @@ def _classify(
         & (res.r >= GAS_MIN_R)
         & (res.min_mw >= -1.0)
     )
-    res["cls"] = np.where(res.slope < hr_cut, "CC_REGULAR", "CT_PEAKER")
-    res.loc[~res.is_gas, "cls"] = ""
+    # Two-way here; the caller re-assigns three-way once the CT-side antimode
+    # has been located off this same population (:func:`locate_st_cut`).
+    res["cls"] = _assign_classes(res, hr_cut, None)
     return res, daily
 
 
@@ -425,6 +550,19 @@ def main(argv: list[str] | None = None) -> int:
         "(MMBtu/MWh); must sit in a capacity-density valley (gate G2)",
     )
     ap.add_argument(
+        "--from-reduced-store",
+        action="store_true",
+        help="read bids from the slim reduced store instead of the clean tree "
+        "(the clean tree needs ~14.3 GB/year and cannot be built on a 15 GB box)",
+    )
+    ap.add_argument(
+        "--no-st-split",
+        action="store_true",
+        help="keep the pre-caiso-254 TWO-way partition (CC/CT only), i.e. leave "
+        "the OTC/RMR steamers pooled in the CT bucket with the disclosed "
+        "contamination. Reproduces the frozen 2026-08-02 construction.",
+    )
+    ap.add_argument(
         "--allow-gate-failures",
         action="store_true",
         help="inspect-only mode: report gates but do NOT write consumed JSONs",
@@ -434,8 +572,12 @@ def main(argv: list[str] | None = None) -> int:
 
     geom = _fleet_geometry()
     gas = _gas_staircase()
-    print("loading clean dam-public-bids ...", flush=True)
-    bids = _load_bids(years)
+    if args.from_reduced_store:
+        print(f"loading dam-public-bids from {REDUCED_STORE} ...", flush=True)
+        bids = _load_bids_reduced(years)
+    else:
+        print("loading clean dam-public-bids ...", flush=True)
+        bids = _load_bids(years)
     ncurve = len(bids)
 
     # Per-resource-year capacity; the analysis frame carries cap on each row.
@@ -452,13 +594,35 @@ def main(argv: list[str] | None = None) -> int:
     # Classification (pooled span)                                        #
     # ------------------------------------------------------------------ #
     res, _daily = _classify(bids, gas, args.hr_cut)
+    # The CLASS-PARTITION REPAIR (caiso-254). The pooled CT bucket mixed two
+    # populations 9 % apart in fleet heat rate — CT_PEAKER's 10.862 and the
+    # 2.9 GW of OTC/RMR ST_GAS steamers at 11.847 — so its cap-weighted median
+    # was a statistic of the mixture, and `caiso_offer_surface_measured_
+    # ungrounded` then priced ST_GAS off a bucket its own presence had biased.
+    # A multiplier is defined against ITS OWN class base HR, so that is a
+    # construction defect whichever way repairing it moves the price
+    # (rule 23 [R-FROZEN-DERIVE]: this re-derives the PARTITION, not the same
+    # construction hoping for a different number — the estimator, body probe,
+    # gas gates, statistic, VOM, carbon netting and band geometry are all
+    # untouched). Admitted by G-BIMODAL on the pooled 2023-25 population:
+    # antimode 11.738 inside [10.9, 12.5] with 2.559 GW above it, inside
+    # [1.5, 4.5] GW (results/calibration/_caiso253b_ct_bucket_bimodality.json).
+    st_cut = None if args.no_st_split else locate_st_cut(res, args.hr_cut)
+    if st_cut is not None:
+        res["cls"] = _assign_classes(res, args.hr_cut, st_cut)
+    print(
+        f"class partition: hr_cut={args.hr_cut} st_cut="
+        f"{'(unimodal - NOT split)' if st_cut is None else round(st_cut, 3)}",
+        flush=True,
+    )
     gaslike = res[res.is_gas]
-    buckets = {cls: gaslike[gaslike.cls == cls] for cls in ("CC_REGULAR", "CT_PEAKER")}
+    active_classes = [c for c in CLASSES if (c != "ST_GAS" or st_cut is not None)]
+    buckets = {cls: gaslike[gaslike.cls == cls] for cls in active_classes}
     gates: dict[str, dict] = {}
     g1 = {}
     for cls, sub in buckets.items():
         ratio = sub.cap.sum() / geom[cls]["fleet_mw"]
-        lo, hi = (0.5, 1.3) if cls == "CC_REGULAR" else (0.5, 1.6)
+        lo, hi = G1_BOUNDS[cls]
         g1[cls] = {
             "bucket_mw": round(float(sub.cap.sum()), 0),
             "fleet_mw": round(geom[cls]["fleet_mw"], 0),
@@ -566,15 +730,25 @@ def main(argv: list[str] | None = None) -> int:
     # narrow density valley between the old-CC and aero-CT shoulders; the
     # revision is estimation-stage, driven by the measured slope density
     # only — no residual entered).
-    g2 = {"cut": args.hr_cut, "deltas": {}}
+    # Both cuts are perturbed, each independently at the SAME +/-0.25 the
+    # single-cut form used (the magnitude is not retuned by this repair; the
+    # gate is generalized to the partition it now has to defend).
+    g2 = {"cut": args.hr_cut, "st_cut": st_cut, "deltas": {}}
     g2_pass = True
-    for dcut in (-0.25, +0.25):
+    perturbations = [("hr_cut", d) for d in (-0.25, +0.25)]
+    if st_cut is not None:
+        perturbations += [("st_cut", d) for d in (-0.25, +0.25)]
+    for which, dcut in perturbations:
         alt = gaslike.copy()
-        alt["cls"] = np.where(alt.slope < args.hr_cut + dcut, "CC_REGULAR", "CT_PEAKER")
-        alt_buckets = {cls: alt[alt.cls == cls] for cls in ("CC_REGULAR", "CT_PEAKER")}
+        alt["cls"] = _assign_classes(
+            alt,
+            args.hr_cut + (dcut if which == "hr_cut" else 0.0),
+            None if st_cut is None else st_cut + (dcut if which == "st_cut" else 0.0),
+        )
+        alt_buckets = {cls: alt[alt.cls == cls] for cls in active_classes}
         alt_static, _, _ = static_bands(alt_buckets, with_detail=False)
         rowset = {}
-        for cls in ("CC_REGULAR", "CT_PEAKER"):
+        for cls in active_classes:
             for b in ("econ_low", "econ_high", "peak"):
                 dev = abs(alt_static[cls][b] - static[cls][b])
                 tol = max(LOYO_ABS, LOYO_REL * abs(static[cls][b]))
@@ -585,7 +759,7 @@ def main(argv: list[str] | None = None) -> int:
                     "pass": bool(dev <= tol),
                 }
                 g2_pass = g2_pass and dev <= tol
-        g2["deltas"][f"{dcut:+.2f}"] = rowset
+        g2["deltas"][f"{which}{dcut:+.2f}"] = rowset
     g2["pass"] = bool(g2_pass)
     gates["G2_cut_robustness"] = g2
     print(f"G2 cut+/-0.25 robustness: {'PASS' if g2_pass else 'FAIL'}", flush=True)
@@ -739,6 +913,10 @@ def main(argv: list[str] | None = None) -> int:
             "min_days": GAS_MIN_DAYS,
             "min_cap_mw": MIN_CAP_MW,
             "hr_cut": args.hr_cut,
+            "st_cut": st_cut,
+            "st_cut_window": list(ST_CUT_WINDOW),
+            "st_cut_kde_bw": ST_CUT_KDE_BW,
+            "classes": list(active_classes),
             "contamination_note": (
                 "CT bucket may include the 2.9 GW OTC/RMR ST_GAS steamers "
                 "and priced CT_CHP; CC bucket may include CC_CHP. Same-fuel "
