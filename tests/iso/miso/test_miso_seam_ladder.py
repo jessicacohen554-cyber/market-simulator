@@ -140,3 +140,93 @@ class TestLadderInjection(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestNeighbourAnchoredOverlay(unittest.TestCase):
+    """miso-225: the owner-ruled neighbour-anchored PJM overlay.
+
+    The incumbent ladder prices every band at a quantile of MISO's OWN DA hub,
+    so an import's merit position moves with the model's own price and imports
+    contract when MISO clears cheaply -- the opposite of the measured market,
+    which imported 6,021 MW in the 2023 hours MISO cleared under $20 against a
+    4,674 MW all-hours mean. The overlay reprices the PJM seam on the exporting
+    market's own border DA instead. PJM only: SPP and South hold no measured
+    neighbour price under ``data/raw``.
+    """
+
+    def _fleet_and_mc(self):
+        node = build_reference_price_node("MISO")
+        zone_names = sorted({g.zone for g in node})
+        fleet = generators_to_fleet_arrays(node, zone_names, hours=T)
+        return fleet, np.full((len(node), T), -123.0)
+
+    def test_registry_covers_pjm_only_and_keeps_the_supply_curve_shape(self):
+        from market_sim.config.interchange_config import (
+            MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
+        )
+
+        for year in (2023, 2024, 2025):
+            overlay = MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR[year]
+            self.assertEqual(set(overlay), {"PJM"})
+            imp = overlay["PJM"]["import"]
+            exp = overlay["PJM"]["export"]
+            self.assertEqual(len(imp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(len(exp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(list(imp), sorted(imp), msg=f"{year} import not rising")
+            self.assertEqual(
+                list(exp), sorted(exp, reverse=True), msg=f"{year} export not falling"
+            )
+            self.assertLess(max(exp), min(imp), msg=f"{year} wash ordering violated")
+
+    def test_every_import_band_is_cheaper_than_the_incumbent(self):
+        """The whole point: the neighbour is the cheaper anchor, in every band."""
+        from market_sim.config.interchange_config import (
+            MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
+        )
+
+        for year in (2023, 2024, 2025):
+            inc = MISO_SEAM_LADDER_BY_YEAR[year]["PJM"]["import"]
+            nb = MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR[year]["PJM"]["import"]
+            for k, (a, b) in enumerate(zip(nb, inc), start=1):
+                self.assertLess(a, b, msg=f"{year} band {k}: {a} !< {b}")
+
+    def test_overlay_reprices_pjm_and_leaves_spp_and_south_alone(self):
+        from market_sim.config.interchange_config import (
+            MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
+        )
+
+        fleet, mc = self._fleet_and_mc()
+        base = mc.copy()
+        inject_miso_seam_ladder_prices(fleet, base, "MISO", 2023)
+        arm = mc.copy()
+        self.assertTrue(
+            inject_miso_seam_ladder_prices(
+                fleet, arm, "MISO", 2023, neighbour_anchored=True
+            )
+        )
+        overlay = MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR[2023]["PJM"]
+        moved = 0
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_IMPORT_MARK, 1)[1], "import"
+            elif _REF_EXPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_EXPORT_MARK, 1)[1], "export"
+            else:
+                np.testing.assert_array_equal(arm[row, :], base[row, :])
+                continue
+            name, _, k = tag.partition("#")
+            if name == "PJM":
+                np.testing.assert_allclose(arm[row, :], overlay[side][int(k) - 1])
+                moved += 1
+            else:
+                np.testing.assert_array_equal(arm[row, :], base[row, :])
+        self.assertEqual(moved, 2 * SEAM_FLOW_TRANCHES)
+
+    def test_off_is_byte_identical(self):
+        fleet, a = self._fleet_and_mc()
+        _fleet2, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024)
+        inject_miso_seam_ladder_prices(
+            fleet, b, "MISO", 2024, neighbour_anchored=False
+        )
+        np.testing.assert_array_equal(a, b)

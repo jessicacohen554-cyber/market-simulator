@@ -171,6 +171,8 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     gas_hub_basis_overlay: { cell: "K" },
     nyiso_iroquois_winter_spread: { cell: "." },
     gas_marginal_commodity_pricing: { cell: "." },
+    gas_variable_transport: { cell: "." },
+    seam_neighbour_anchored_ladder: { cell: "U", ev: "Untested for NEISO (rule 25: miso-225's MISO verdict never fills this cell). The seam row applies in kind -- the NEISO ladders are anchored on NEISO's own hub -- but a transfer enters as U and needs its own measured neighbour series." },
     winter_citygate_daily: { cell: "." },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },

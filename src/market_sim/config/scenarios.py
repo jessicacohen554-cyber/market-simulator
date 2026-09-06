@@ -1213,6 +1213,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # spot and hashes distinctly. Registered WITH the field, in the same commit,
     # per the nyiso-119 discipline.
     "miso_gas_marginal_commodity_pricing",
+    # miso-225: byte-identical OFF (the transport vector is built only inside the
+    # armed hub-repricing branch, and the flag is REFUSED without it); an armed
+    # run adds a per-plant $/MMBtu adder to every MISO gas row and hashes
+    # distinctly. Registered WITH the field, per the nyiso-119 discipline.
+    "miso_gas_variable_transport",
+    # miso-225: byte-identical OFF (the overlay is read only inside the armed
+    # branch, and the flag is REFUSED without miso_seam_measured_ladder); an
+    # armed run reprices the PJM seam's 16 band rows and hashes distinctly.
+    "miso_seam_neighbour_anchored_ladder",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -1909,6 +1918,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_gas_marginal_commodity_pricing": "False",
+    # Added by miso-225 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_gas_variable_transport": "False",
+    # Added by miso-225 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_neighbour_anchored_ladder": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -2449,6 +2464,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
     "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
     "miso_gas_marginal_commodity_pricing": "measured Chicago Citygate + Henry Hub daily spot (marginal-commodity gas offers)",
+    "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
@@ -14904,6 +14920,45 @@ class ScenarioConfig:
     # commodity-2026-09-06.md.
     miso_gas_marginal_commodity_pricing: bool = False
 
+    # MISO gas VARIABLE TRANSPORT over the traded hub (miso-225). Completes the
+    # offer the flag above only half builds: the owner ruled 2026-09-06, on the
+    # miso-212 §8 / miso-224 §5 question, that a MISO gas offer is marginal
+    # commodity PLUS variable transport. Armed, each gas row carries its plant's
+    # MEASURED volume-invariant wedge over the hub — the intercept of
+    # "print - hub = v + F/burn" on that plant's own 2023-2025 EIA-923 receipts,
+    # which keeps the usage charge, fuel retention and delivery-point basis paid
+    # on the next MMBtu and drops the reservation/demand charges that a dispatch
+    # offer must not carry. Frozen derive (rule 23): scripts/data/derive_miso_gas_
+    # variable_transport.py -> data/raw/reference/miso_gas_variable_transport.csv;
+    # zero fitted scalars, one value per plant across every scored year (rule 1
+    # condition (b)). REFUSED without miso_gas_marginal_commodity_pricing (rule 19
+    # [R-ONE-MECH]: the EIA-923 average print already amortizes this transport, so
+    # adding it there would double-count). MISO-scoped through that flag's own
+    # rule-25 guard. Off by default; byte-identical off. See market_sim.data.fuel.
+    # basis.miso.apply_miso_gas_marginal_commodity and results/calibration/
+    # PRECOMMIT-miso225-transport-joint-2026-09-06.md.
+    miso_gas_variable_transport: bool = False
+
+    # MISO seam import ladder anchored on the NEIGHBOUR's own price (miso-225,
+    # the D-2 5(i) repair the owner ruled admissible 2026-09-06 in this ONE
+    # form). The incumbent miso_seam_measured_ladder prices every band at a
+    # quantile of MISO's OWN DA hub, so an import's merit position moves with the
+    # model's own price and imports CONTRACT when MISO clears cheaply. The real
+    # market does the opposite: in the hours MISO's DA cleared under $20 in 2023
+    # the seam carried 6,021 MW against a 4,674 MW all-hours mean, because the
+    # neighbour is cheaper still. Armed, the PJM seam's bands take the identical
+    # Q-Q duration coupling read off the PJM WESTERN-BORDER DA instead
+    # (interchange spec MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR, derived by
+    # scripts/data/derive_miso_seam_ladders.py::derive_pjm_neighbour, rule 23),
+    # so merit depends on the exporting market's supply cost. Zero fitted
+    # parameters. PJM ONLY — SPP and South hold no measured neighbour price under
+    # data/raw and fall through to the incumbent anchor (rule 14's misalignment
+    # clause, a data boundary rather than a choice). REFUSED without
+    # miso_seam_measured_ladder (there is no ladder to overlay). Off by default;
+    # byte-identical off. See results/calibration/
+    # PRECOMMIT-miso225-transport-seam-joint-2026-09-06.md.
+    miso_seam_neighbour_anchored_ladder: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -16331,6 +16386,25 @@ class ScenarioConfig:
             raise ValueError(
                 f"ScenarioConfig.hydro_year must be one of "
                 f"{sorted(HYDRO_YEAR_MULTIPLIER)}, got {self.hydro_year!r}"
+            )
+
+        # miso-225: both halves of the owner-ruled MISO pair are OVERLAYS on a
+        # mechanism that must already be armed, so arming one alone would be a
+        # silent no-op — the fail-open this repo refuses. Fail closed instead.
+        if self.miso_gas_variable_transport and not self.miso_gas_marginal_commodity_pricing:
+            raise ValueError(
+                "ScenarioConfig.miso_gas_variable_transport requires "
+                "miso_gas_marginal_commodity_pricing: variable transport is an "
+                "adder over the TRADED HUB, and adding it to the EIA-923 average "
+                "print would double-count the transport that print already "
+                "amortizes (rule 19 [R-ONE-MECH])"
+            )
+        if self.miso_seam_neighbour_anchored_ladder and not self.miso_seam_measured_ladder:
+            raise ValueError(
+                "ScenarioConfig.miso_seam_neighbour_anchored_ladder requires "
+                "miso_seam_measured_ladder: the neighbour-anchored PJM entry "
+                "OVERLAYS the measured Q-Q ladder, and there is nothing to "
+                "overlay when the ladder itself is off"
             )
 
         if self.neighbor_hr_forward_skill not in (None, "elastic", "flat"):
@@ -18666,6 +18740,8 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_gas_basis_skip_923_priced": 3,
     "miso_winter_citygate_daily": 3,
     "miso_gas_marginal_commodity_pricing": 3,
+    "miso_gas_variable_transport": 3,
+    "miso_seam_neighbour_anchored_ladder": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,

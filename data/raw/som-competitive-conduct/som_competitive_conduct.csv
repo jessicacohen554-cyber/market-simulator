@@ -78,3 +78,15 @@ ERCOT,2022,annual,new_gas_cc,net_revenue_usd_per_kw_yr_min,173,usd_per_kw_yr,202
 ERCOT,2022,annual,new_gas_cc,net_revenue_usd_per_kw_yr_max,234,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,see min row
 ERCOT,2022,annual,new_gas_ct,cone_usd_per_kw_yr_min,80,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,"""CONE values for natural gas combustion turbines ranging from $80 to $117 per kW-year"""
 ERCOT,2022,annual,new_gas_ct,cone_usd_per_kw_yr_max,117,usd_per_kw_yr,2022-State-of-the-Market-Report_Final_060623.pdf,108,see min row
+MISO,2025,annual,coal_regulated,starts,1304,count,2025-MISO-SOM_Report.pdf,72,"Table 6 (printed p.46); the 2025 SOM renumbers the coal table from Table 7 to Table 6"
+MISO,2025,annual,coal_regulated,starts_econ_offered_share,0.39,fraction,2025-MISO-SOM_Report.pdf,72,"offered economically and scheduled day-ahead; the LOWEST of 2023-2025"
+MISO,2025,annual,coal_regulated,starts_mustrun_profitable_share,0.55,fraction,2025-MISO-SOM_Report.pdf,72,"must-run (self-commit) status; profitable by first full day"
+MISO,2025,annual,coal_regulated,starts_mustrun_unprofitable_share,0.06,fraction,2025-MISO-SOM_Report.pdf,72,"'MISO's regulated utilities often continue to operate their units as must-run resources regardless of price; in 2025, only 6 percent of must-run starts were unprofitable'"
+MISO,2025,annual,coal_regulated,net_revenue_usd_per_mwh,17.43,usd_per_mwh,2025-MISO-SOM_Report.pdf,72,"higher gas and energy prices in 2025"
+MISO,2025,annual,coal_merchant,starts,38,count,2025-MISO-SOM_Report.pdf,72,
+MISO,2025,annual,coal_merchant,starts_econ_offered_share,0.76,fraction,2025-MISO-SOM_Report.pdf,72,"the SOM text attributes the 76 percent to 2024; the table column is 2025 and is taken as canonical"
+MISO,2025,annual,coal_merchant,starts_mustrun_profitable_share,0.24,fraction,2025-MISO-SOM_Report.pdf,72,
+MISO,2025,annual,coal_merchant,starts_mustrun_unprofitable_share,0.00,fraction,2025-MISO-SOM_Report.pdf,72,
+MISO,2025,annual,coal_merchant,net_revenue_usd_per_mwh,18.37,usd_per_mwh,2025-MISO-SOM_Report.pdf,72,
+MISO,2025,annual,system,price_cost_markup,-0.0107,fraction,2025-MISO-SOM_Report.pdf,118,"average system marginal price-cost mark-up -1.07 percent; 'very small, negative ... highly competitive overall'"
+MISO,2025,annual,system,output_gap_share_of_load,0.0008,fraction,2025-MISO-SOM_Report.pdf,118,"average monthly output gap 0.08 percent of load, 'effectively de minimis'"

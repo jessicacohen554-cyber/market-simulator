@@ -171,6 +171,8 @@ window.MECH_MATRIX_SHARDS.PJM = {
     gas_hub_basis_overlay: { cell: "." },
     nyiso_iroquois_winter_spread: { cell: "." },
     gas_marginal_commodity_pricing: { cell: "." },
+    gas_variable_transport: { cell: "." },
+    seam_neighbour_anchored_ladder: { cell: "U", ev: "Untested for PJM (rule 25). PJM_SEAM_LADDER_BY_YEAR carries the same own-hub anchoring the miso-225 row names as the defect, so the cell is genuinely open -- but the verdict must be derived from PJM's own market data, never transferred." },
     winter_citygate_daily: { cell: "R", ev: "pjm-153 (results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md §4; probe scripts/probes/pjm153_queue_screens.py; machine record results/calibration/_pjm153_queue_screens.json) — REFUTED ex ante, no solve spent; pjm-139 W1 (the calendar-day scope bound)" },
     dual_fuel_switching: { cell: "K" },
     gas_price_override: { cell: "K" },

@@ -4565,13 +4565,25 @@ def run_year(
                 inject_miso_seam_ladder_prices,
             )
 
-            if inject_miso_seam_ladder_prices(fleet_arrays, mc_base, iso, year):
+            neighbour = bool(
+                getattr(config, "miso_seam_neighbour_anchored_ladder", False)
+            )
+            if inject_miso_seam_ladder_prices(
+                fleet_arrays, mc_base, iso, year, neighbour_anchored=neighbour
+            ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
-                    "ladders (EIA-930 flow durations x MISO DA hub quantiles; "
+                    "ladders (EIA-930 flow durations x %s; "
                     "PJM/SPP/South, import + export; no added hurdle)",
                     iso,
                     year,
+                    (
+                        "PJM WESTERN-BORDER DA quantiles on the PJM seam "
+                        "(miso-225 neighbour-anchored), MISO DA hub quantiles "
+                        "on SPP/South"
+                        if neighbour
+                        else "MISO DA hub quantiles"
+                    ),
                 )
         # [measured: per-seam Q-Q band ladders — PJM settlement-grade tie-line
         #  flow duration curves coupled with the measured PJM DA system LMP
