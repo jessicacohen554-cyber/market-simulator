@@ -138,9 +138,24 @@ Unchanged, and this measurement does not decide it: options (A) re-base D-2/C8 t
 (B) keep plant grain by explicit ruling with the unit-grain number reported alongside, or
 (C) measure every ISO first. What is new is that **NYISO's own exposure is now a number on the
 current keeper** (2 of 3 years, not 3 of 3), and that its leg-(a) blocker is 200 MWh in the worse
-year. Option (C)'s NYISO row is done; the other five ISOs are untouched and remain unmeasured —
-this lane may not run them (rule 25 `[R-ISO-SCOPE]`; the instrument is one file scored for six
-ISOs).
+year.
+
+**Option (C)'s NYISO row is done — and a second ISO was already measured, correcting the card's
+§3.** nyiso-192's committed `_nyiso192_c8_unit_grain_NEISO-head-replay.json` reads NEISO
+`ST_GAS` **0.131 / 0.240 / 0.3156** — over the cap in **2025** — on a keeper
+(`2026-08-17-neiso-99-joint-p1`) that has **not changed since**, so the number stands as read;
+its other classes are clear (`CC_REGULAR` ≤0.016, `CT_PEAKER` ≤0.184, `CC_CHP` 0.000).
+
+| ISO | `ST_GAS` unit grain 2023 / 2024 / 2025 | over the 0.30 cap |
+|---|---|---|
+| NYISO `2026-09-06-nyiso-202-startup-aware` | 0.351 / **0.343** / 0.268 | 2023, 2024 |
+| NEISO `2026-08-17-neiso-99-joint-p1` | 0.131 / 0.240 / **0.3156** | 2025 |
+
+**So the exposure is `ST_GAS` in both ISOs measured so far, in different years — not a NYISO
+peculiarity.** That raises option (A)'s expected cost and strengthens option (C)'s case. Four
+ISOs (ERCOT, CAISO, PJM, MISO) remain unmeasured, one keeper replay each; **this lane may not
+run them** (rule 25 `[R-ISO-SCOPE]`; the instrument is one file scored for six ISOs), and citing
+NEISO's committed artifact is not acting on its lane.
 
 ---
 
