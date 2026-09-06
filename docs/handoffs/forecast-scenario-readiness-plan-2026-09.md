@@ -947,6 +947,8 @@ and it is the sole release condition for Stage A-POLICY; recommendation **yes**.
 **D-2(c) — PRESENTED 2026-09-06 (SCN-DESK r#12):** `CAP-STATE-TIGHT`'s budget slope (WS-1a §4.2: linear decline to 20 % of the 2025 published per-state budget by 2050; CAISO REF-anchored) and the schedule field `mass_cap_tons_by_year` it needs, absent at HEAD. Recommendation: commit the slope and charter the field.
 **RULED 2026-09-06 (SCN-DESK r#12 amendment 1) — S12: "Commit the 80 % slope and build the field."** SCN-CAP issued (the field, the case, the matrix row); CAP-STATE-TIGHT joins the three program-ISO policy lanes as a thirteenth case gated on the field landing. **Every §3.5 case is now inside Stage A.**
 
+**D-5 PRESENTED 2026-09-06 (SCN-DESK r#13).** Stage A-LOAD's measured cost table exists (synthesis §8: 313.7 min of LP for 16 legs / 80 solve-years, 3.92 min per solve-year, ~4.7 h wall; NEISO 1.09 min per solve-year). Recommendation: **HOLD** the NEISO Stage-B grant until SCN-WS5A-RESOLVE lands the post-D77 re-solve (the pre-D77 NEISO REF carries a 41.9 %-contaminated 2030 CO2 level) and the policy half has run; note SCN-FIX2's finding that `CARB-HI` is live on NYISO/NEISO only at full horizon (2031–2047).
+
 ---
 
 ## 7. Session prompts (paste whole; house style per FF plan §6)
@@ -1246,6 +1248,12 @@ leg without the grant.
   capx queue** (card D-9); SCN-WS3b undispatched three refreshes (card D-8, third stem held). **r#9 am.1: S6 (D-8) relaunch
   now → SCN-WS3b-r3 issued; S7 (D-9) the seam repair named the capx director's next lane, routed.** Zero
   solves, zero code, zero defaults, zero markers, at every refresh.
+- 2026-09-06 — **SCN-DESK r#13 (main HEAD `13ee0c89`).** Stage A-LOAD COMPLETE at the frozen pin (16/16, synthesis,
+  cost table); ruling S8 never executed (the amendment had no session) → SCN-WS5A-RESOLVE issued with the cache
+  blocker defeated. SCN-FIX2 + SCN-CAP landed complete (carbon form committed; CARB-HI live at full horizon on
+  NYISO/NEISO; the cap field and case; PJM falls through to the regional budget → policy charter v4). capx D80:
+  the audit is EXIT 0 on main. Card D-5 presented with a HOLD recommendation. Zero solves, zero code, zero
+  defaults, zero markers.
 - 2026-09-06 — **SCN-DESK r#12 (main HEAD `ba894c9c`).** SCN-FIX1 landed items 1–2 (audit 30 → 8; collate
   sign-flip repaired); capx D80 cross-checked the declarations byte-identically; SCN-WS5A-LOAD 12/16 with MISO
   complete and its D-10 scope correction matching r#11; the carbon-form switch never reached FIX1 (issued on an
