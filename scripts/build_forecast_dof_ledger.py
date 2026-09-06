@@ -378,6 +378,139 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         "expected": True,
         "provenance": "runner-posture",
     },
+    # --- capx D60-R3 / owner ruling Q37: the arming batch's identification rows ---
+    # D60 Amendment 2 (director r#39) resolved capx D60 leg 2's P10 STOP under
+    # owner ruling Q37 (r#34, rubric section 5 second limb): a follow-up lane may
+    # author an attestation iff PRE-DECLARED before authoring, attestation row
+    # only, artifact-only re-score. The pre-declaration is
+    # docs/handoffs/PREDECL-capx-d60-2026-09-05.md Addendum D, pushed to main
+    # before a single row below was written and before any of the three
+    # outstanding legs' FC-7 rows had been read.
+    #
+    # WHAT IS BEING REPAIRED. FC-7's DOF-ledger row scores an entry carrying the
+    # literal token `unattested` EXACTLY as it scores a MISSING ledger -- CAVEAT
+    # at t1, FAIL at t3 (forecast_verdict._dof_ledger_row). This builder emits
+    # that token for any non-default solve-affecting field with no curated
+    # identification row, and it REPORTS identification, never supplies it (rule
+    # 21). So arming a field whose identification is already committed to the
+    # repository, without also writing its curated row, mechanically degrades
+    # FC-7 -- a MEASUREMENT gap, not a model gap.
+    #
+    # Every row below is keyed (ISO, field), never ("*", field), so it cannot
+    # identify another ISO's value even if that ISO later arms the same field
+    # (rule 25 [R-ISO-SCOPE]). Every row carries requires="iso-registry", so a
+    # run carrying the field from anywhere other than the live registered
+    # override stays UNIDENTIFIED and the artifact records the refusal.
+    ("NYISO", "nyiso_requirement_forecast_peak"): {
+        "identification": "design-decision",
+        "source": (
+            "Prices the NYCA requirement on the NYSRC ICAP-market FORECAST PEAK "
+            "of the capability year (IRM Study Appendices Table D.2 col. 1) "
+            "instead of the model's own peak. A capability year outside the "
+            "published table returns the model's peak UNCHANGED, so the forward "
+            "horizon keeps a forecast peak and never a held-last MW. A published "
+            "market-design input, not a magnitude"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_nyiso_config "
+            "default_scenario_overrides cite block (owner ruling Q41); "
+            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1); the "
+            "digitized rows in data/raw/demand-curve/nyiso/nyiso.csv, reconciled "
+            "to source by test"
+        ),
+        "requires": "iso-registry",
+    },
+    ("NYISO", "nyiso_requirement_vintage_factors"): {
+        "identification": "design-decision",
+        "source": (
+            "Prices the requirement FACTOR at that capability year's EC-adopted "
+            "IRM x (1 - NYCA derate) (Table D.2 cols. 2-3) instead of the single "
+            "mixed vintage 1.244 x (1 - 0.1321); beyond the last published pair "
+            "it HOLDS that pair's ratio, 1.244 x 0.870 = 1.0823. In-table, the "
+            "requirement IS Table D.2's published NYCA UCAP requirement to under "
+            "1 MW. Every factor is a published adopted value"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_nyiso_config "
+            "default_scenario_overrides cite block (owner ruling Q41); "
+            "docs/handoffs/FINDING-capx-d52-2026-09-04.md section 8(1) (LOYO 3/3 "
+            "with an identical fleet; FC-3 byte-identical at the shipped default)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("MISO", "adequacy_accounting_ratio_dated_net"): {
+        "identification": "design-decision",
+        "source": (
+            "Selects D31's OWN arithmetic with the denominators net of the "
+            "step-1b fossil-dates channel's accredited exits -- 0.854600 -> "
+            "0.893436, derived from three committed inputs and reconciled by "
+            "test. The gate chooses WHICH CONSISTENT ACCOUNTING is used; it "
+            "supplies no number, and the ratio is recomputed by the same "
+            "construction from whatever the dated channel holds in a forward "
+            "year, so it responds to a changed fleet by construction"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_miso_config "
+            "default_scenario_overrides cite block (owner ruling Q40); "
+            "docs/handoffs/FINDING-capx-d51-2026-09-04.md section 1.3 (the "
+            "construction, zero free parameters) and section 7 (the four limbs)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "pjm_accreditation_design_vintage"): {
+        "identification": "design-decision",
+        "source": (
+            "Reads the accreditation design OF THE DELIVERY YEAR BEING SCREENED: "
+            "UCAP + the published pre-CIFP FPR before DY 2025/26, ELCC class + "
+            "post-CIFP FPR from it. A published design vintage applied by date; a "
+            "forward delivery year takes the design in force for it and nothing "
+            "is fitted to a residual"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44, in-session "
+            "on the capx D57 A/B); docs/handoffs/FINDING-capx-d48-*; "
+            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md; "
+            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "pjm_demand_response_supply"): {
+        "identification": "design-decision",
+        "source": (
+            "Counts the published OFFERED DR UCAP as SUPPLY with the peak "
+            "un-netted, instead of netting DR off the peak -- the accounting "
+            "PJM's own auction uses. An accounting-side selection; no MW is "
+            "invented, and the offered DR UCAP is a published auction quantity "
+            "available for any forward delivery year"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44); capx D48 "
+            "(docs/handoffs/FINDING-capx-d48-*)"
+        ),
+        "requires": "iso-registry",
+    },
+    ("PJM", "capacity_market_supply_clearing_by_iso"): {
+        "identification": "design-decision",
+        "source": (
+            "Clears the fleet's NET-ACR SELL-OFFER STACK (offer = max(0, "
+            "going-forward cost - E&AS margin) / accredited MW, every other "
+            "accredited MW a $0 price taker) against the DELIVERY YEAR'S "
+            "PUBLISHED VRR CURVE, so the screen's failing set IS the auction's "
+            "uncleared set. Every operand is the screen's own; the VRR curve is "
+            "published per delivery year and the offer stack is computed from the "
+            "fleet's own costs"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides cite block (owner ruling Q44); "
+            "docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md "
+            "section 3.7 (DOF ledger: zero); "
+            "docs/handoffs/FINDING-capx-d57-2026-09-05.md section 8.1"
+        ),
+        "requires": "iso-registry",
+    },
 }
 
 

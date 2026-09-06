@@ -73,6 +73,54 @@ Postures: state rows + federal row (default when both exist — separate attribu
 the flag removes the state RPS **and** state clean rows, never the federal row);
 state rows only (REF).
 
+### Voluntary clean-energy demand row (`voluntary_demand.py`) — the family's second consumer
+
+The scenario axis owner ruling **S1** (2026-09-06, card D-3) admitted: a declared,
+forecast-only, publicly-anchored, **default-off** what-if over the ffr-5b null (design
+memo `docs/handoffs/voluntary-clean-demand-design-memo-2026-09-05.md`; build
+`docs/handoffs/FINDING-scn-ws3b-2026-09-06.md`). ONE annual volumetric
+clean-attribute row per ISO-year, appended **last** to the family (region order
+state → federal → voluntary) through `append_voluntary_region` from the runner's one
+resolver `_clean_region_arrays_for_year`, which now takes the year's `zone_demand`:
+
+| Region | Producer | Mask / RHS | Qualifying spec | Escape |
+|---|---|---|---|---|
+| **Voluntary** (`voluntary_clean_demand_path` ≠ `off`, any ISO) | `append_voluntary_region` | every zone / the uniform share `V / E_total` of every zone's annual demand, so `Σ_z frac·D_z = V` exactly | fuel-name tuple = `voluntary_eligible_fuels` or `VOLUNTARY_ELIGIBLE_FUELS_DEFAULT` (wind, solar, offshore wind, geothermal — the memo §4.1 **recommendation**; owner box D-3c OPEN) | the buyer's willingness-to-pay ceiling: `voluntary_wtp_ceiling_usd_per_mwh` or `VOLUNTARY_WTP_CEILING_USD_PER_MWH[path]` |
+
+**Volume (memo §3.1), DC-linked and read from the run's own demand:**
+`V = s_base(path, y) · w_ISO · E_nonDC + f_commit(path, y) · E_DC`, with `E_DC` the
+data-centre block's energy (`data.datacenter.datacenter_block_energy_mwh`) and
+`E_nonDC = E_total − E_DC`, both taken from the `(n_zones, T)` demand the LP is handed
+after `add_load_layers` — a high-DC case raises `V` without a second knob and the
+growth×DC relocation is never double-counted. Levels are the cited
+`constants.VOLUNTARY_*` tables (NREL national voluntary share 2023 ≈ 0.08 held flat;
+`f_commit` low 0 / high 1.0; WTP low 2 / high 7 $/MWh from the cited public REC range);
+`f_commit` **mid** and the WTP-ceiling **mid** level are labelled ILLUSTRATIVE
+(owner-set under D-2, unreached by S3), and the per-ISO weight `w_ISO` is
+`needs-intake` (EIA-861 commercial share; resolves to 1.0). The dual is the voluntary
+REC/PPA attribute price — `0` slack, `(0, w]` binding, `= w` when the escape fires and
+the shortfall `V − Σ eligible` is the un-procured volume — delivered through the same
+`clean_credit_by_fuel → max()` seam as every other region (each eligible fuel at
+`dual × 1.0` over the all-zone mask). Trivial-first tests
+(`tests/unit/policy/test_voluntary_demand.py`): binding dual = the clean-minus-dirty
+cost gap; ceiling dual = WTP with the objective rising by exactly `w × escape`;
+curtailed wind is recovered before thermal is displaced.
+
+Guards: `__post_init__` validates the path label and **coerces the whole
+`voluntary_*` block to its dataclass defaults in `mode="backcast"` or a hindcast**
+(the `datacenter_load_path` construction; `validate_voluntary_config` is the
+standalone defense in depth), refuses a non-positive ceiling, a ceiling or eligible
+list with the path `off` (a dangling knob, rule 24), and an eligible list without
+wind and solar (the family's zone columns credit at 1.0 regardless). Not suppressed by
+`federal_ces_replaces_state_rps`. All three fields are cache-optional at their inert
+defaults: every keeper key and every committed forecast key is byte-identical at
+`off`. Deliberately NOT built: an additionality mask in dispatch, any netting logic
+against the federal target row (owner box D-6 OPEN — the campaign reports both
+nettings at the report layer; in dispatch the two rows are independent constraints,
+FFR-6B §6.4), and an hourly (24/7) row (D-3b: the isolated `scope2-lce-portfolio`
+tool). The campaign cases `VOL-MID` / `VOL-HI` / `CES-P20+VOL-HI` / `ALL-CLEAN` are
+expressible and **held under owner ruling S5** (Stage A-POLICY).
+
 ## 5.3 Carbon pricing (`carbon.py`, `cap_and_trade.py`)
 
 All carbon paths route through one `emission_rate · membership` channel, resolved

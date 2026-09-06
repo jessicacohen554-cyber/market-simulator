@@ -1,0 +1,39 @@
+{
+  "position": {
+    "2022": {
+      "control": 1.235795,
+      "arm": 1.111265,
+      "move_pt": -12.453000000000003,
+      "declared_pt": -9.7,
+      "grade": "SIGN OK"
+    },
+    "2023": {
+      "control": 1.118225,
+      "arm": 1.055476,
+      "move_pt": -6.274899999999994,
+      "declared_pt": -3.8,
+      "grade": "SIGN OK"
+    },
+    "2024": {
+      "control": 1.039347,
+      "arm": 1.051736,
+      "move_pt": 1.2388999999999983,
+      "declared_pt": 1.6,
+      "grade": "HIT"
+    },
+    "2025": {
+      "control": 0.94226,
+      "arm": 0.993091,
+      "move_pt": 5.083099999999996,
+      "declared_pt": 5.6,
+      "grade": "HIT"
+    }
+  },
+  "g6_price_delta": -1252.599000000002,
+  "grades": {
+    "2022": "SIGN OK",
+    "2023": "SIGN OK",
+    "2024": "HIT",
+    "2025": "HIT"
+  }
+}

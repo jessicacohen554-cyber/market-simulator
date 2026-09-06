@@ -145,8 +145,8 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "c2b13cc76b02",
-   "scored_at_date": "2026-09-06T02:24:56Z",
+   "scored_at_sha": "7ed062ba9a68",
+   "scored_at_date": "2026-09-06T03:59:42Z",
    "cache_epoch": "29f8eb372810195f",
    "run_id": "caiso-2026-2030-d60-arm",
    "session": "capx-D60-R3"
@@ -162,7 +162,7 @@
    "FC-7 provenance & DOF"
   ],
   "notes": [
-   "capx D60-R3 leg 3/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on CAISO; the bare caiso-t1f RE-SOLVED. Run caiso-2026-2030-d60-arm, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2, matched on the realized bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). DETERMINATION HOLD \u2192 HOLD, and EVERY SCORED ROW IS IDENTICAL to the control \u2014 FC-1 FAIL ['I12','I7'] with the same three years and the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both. P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, and it is composition-only exactly as \u00a76.3 pre-declared: the control converts 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 across 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); the arm converts 2,903.1 / 2,932.1 / 2,787.0 MW across 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs \u2014 every year inside the pre-declared 2,850-3,000 MW band and the window total 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW. P11 HIT: seam 1 (the scaled bar) is inert on CAISO \u2014 the cap still binds at ~2.9 GW in every eligible year \u2014 so the entire change is seam 2, the CC_CHP host exclusion, and the cap is refilled by fewer, larger non-CHP hosts (60 rows \u2192 22). NO STOP FIRES: FC-2 row4 did not rise (52.6 % \u2192 52.6 %), no CHP row converted, and every year's conversion count fell rather than rose. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, negative_renewable_offers \u2014 a CAISO registry override outside this batch, which Addendum D.2 pre-declared would NOT be repaired by the Q37 rows and is left untouched and routed rather than absorbed. The D46 record is preserved at caiso-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3."
+   "capx D60-R3 leg 3/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on CAISO; the bare caiso-t1f RE-SOLVED. Run caiso-2026-2030-d60-arm, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2, matched on the realized bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). DETERMINATION HOLD \u2192 HOLD, and EVERY SCORED ROW IS IDENTICAL to the control \u2014 FC-1 FAIL ['I12','I7'] with the same three years and the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both. P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, and it is composition-only exactly as \u00a76.3 pre-declared: the control converts 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 across 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); the arm converts 2,903.1 / 2,932.1 / 2,787.0 MW across 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs \u2014 every year inside the pre-declared 2,850-3,000 MW band and the window total 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW. P11 HIT: seam 1 (the scaled bar) is inert on CAISO \u2014 the cap still binds at ~2.9 GW in every eligible year \u2014 so the entire change is seam 2, the CC_CHP host exclusion, and the cap is refilled by fewer, larger non-CHP hosts (60 rows \u2192 22). NO STOP FIRES: FC-2 row4 did not rise (52.6 % \u2192 52.6 %), no CHP row converted, and every year's conversion count fell rather than rose. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, negative_renewable_offers \u2014 a CAISO registry override outside this batch, which Addendum D.2 pre-declared would NOT be repaired by the Q37 rows and is left untouched and routed rather than absorbed. The D46 record is preserved at caiso-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required."
   ],
   "categories": {
    "FC-1": {
@@ -1611,11 +1611,11 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "2ef4326e4b59",
-   "scored_at_date": "2026-09-05T20:34:52Z",
+   "scored_at_sha": "7ed062ba9a68",
+   "scored_at_date": "2026-09-06T03:59:42Z",
    "cache_epoch": "b1a73a087064ffd8",
    "run_id": "miso-2026-2030-d60-arm",
-   "session": "capx-D60"
+   "session": "capx-D60-R3"
   },
   "tier": "t1f",
   "iso": "MISO",
@@ -1629,7 +1629,7 @@
    "FC-8 runtime feasibility: over runtime budget"
   ],
   "notes": [
-   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q40 + Q42 executed. The bare miso-t1f re-solved on the post-arming recipe, cache key b1a73a087064ffd8 (pre-declared in PREDECL-capx-d60-2026-09-05.md Addendum A \u00a7A.1 and matched; 5/5 years, 49.6 min, 9.68 GB). THREE mechanisms act together here for the first time on 2026-2030 and each moved row is attributed to ONE of them from a committed single-mechanism record, never by inference: (i) retirement_sector_gate (capx D53, armed for MISO earlier the same day) \u2014 a pure candidate-set partition that gates 87.8-103.1 GW of regulated-utility capacity out of the merchant screen and moves NOTHING on exits, every retirement row byte-identical to the control in all five years (announced + confirmed only, zero economic in either arm); (ii) adequacy_accounting_ratio_dated_net (Q40, D51's 0.854600 -> 0.893436, zero DOF) \u2014 the position lengthens in every year (2027 0.90278 -> 0.94254, 2030 0.944977 -> 0.986696), accredited firm rises 118,091 -> 123,292 MW in 2026, and the 2030 adequacy backstop stops buying 6,584.5 MW of gas_ct (entry gas_ct 10,650.2 -> 4,065.7), which is what takes FC-2 row4 from 33.6 % FAIL to 23.0 % CAVEAT; (iii) ccs_retrofit_capex_co2_scaling (Q42) \u2014 a measured NULL on this ISO, 0 MW converted in every year against the control's 4,631.1 MW, reproducing the D50 \u00a74b arm exactly. Determination HOLD -> HOLD; FC-1 stays FAIL ['I12','I7'] with every year improving by ~4 points and 2029 I7 landing 76 MW short of clearing (133,795 vs 133,871). The D45-R record is preserved at miso-t1f-pre-d60."
+   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q40 + Q42 executed. The bare miso-t1f re-solved on the post-arming recipe, cache key b1a73a087064ffd8 (pre-declared in PREDECL-capx-d60-2026-09-05.md Addendum A \u00a7A.1 and matched; 5/5 years, 49.6 min, 9.68 GB). THREE mechanisms act together here for the first time on 2026-2030 and each moved row is attributed to ONE of them from a committed single-mechanism record, never by inference: (i) retirement_sector_gate (capx D53, armed for MISO earlier the same day) \u2014 a pure candidate-set partition that gates 87.8-103.1 GW of regulated-utility capacity out of the merchant screen and moves NOTHING on exits, every retirement row byte-identical to the control in all five years (announced + confirmed only, zero economic in either arm); (ii) adequacy_accounting_ratio_dated_net (Q40, D51's 0.854600 -> 0.893436, zero DOF) \u2014 the position lengthens in every year (2027 0.90278 -> 0.94254, 2030 0.944977 -> 0.986696), accredited firm rises 118,091 -> 123,292 MW in 2026, and the 2030 adequacy backstop stops buying 6,584.5 MW of gas_ct (entry gas_ct 10,650.2 -> 4,065.7), which is what takes FC-2 row4 from 33.6 % FAIL to 23.0 % CAVEAT; (iii) ccs_retrofit_capex_co2_scaling (Q42) \u2014 a measured NULL on this ISO, 0 MW converted in every year against the control's 4,631.1 MW, reproducing the D50 \u00a74b arm exactly. Determination HOLD -> HOLD; FC-1 stays FAIL ['I12','I7'] with every year improving by ~4 points and 2029 I7 landing 76 MW short of clearing (133,795 vs 133,871). The D45-R record is preserved at miso-t1f-pre-d60. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required."
   ],
   "categories": {
    "FC-1": {
@@ -1728,7 +1728,7 @@
      {
       "row": "dof ledger",
       "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 6 of 7 entries carry identification='unattested' (adequacy_accounting_ratio_dated_net, entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions, retirement_sector_gate). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "detail": "DOF ledger present as an UNATTESTED SKELETON: 5 of 7 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions, retirement_sector_gate). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
       "gating": true
      }
     ]
@@ -4632,7 +4632,7 @@
   "schema": "forecast-verdict/v1",
   "tier": "t1x"
  },
- "neiso-t3": {
+ "neiso-t3-pre-d60": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -4827,6 +4827,206 @@
       "row": "runtime",
       "status": "PASS",
       "detail": "wall 33.0 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "neiso-t3": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "7ed062ba9a68",
+   "scored_at_date": "2026-09-06T03:59:42Z",
+   "cache_epoch": "f04fd06348e1623d",
+   "run_id": "neiso-2026-2050-t3-golden3-d60",
+   "session": "capx-D60-R3"
+  },
+  "tier": "t3",
+  "iso": "NEISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL",
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "caveats": [
+   "FC-5 external corridor",
+   "FC-6 driver response"
+  ],
+  "notes": [
+   "capx D60-R3 leg 5/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on the GOLDEN; the bare neiso-t3 RE-SOLVED. Run neiso-2026-2050-t3-golden3-d60, cache key f04fd06348e1623d (pre-declared Addendum A \u00a7A.2, matched on the realized bundle directory; --golden-posture --full-solve-authorized, 2026-2050, 25/25 years, 3.37 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). P16 HIT EXACTLY \u2014 THE FC MAP DOES NOT MOVE: determination HOLD \u2192 HOLD, identical reasons and caveats, and ZERO of the 19 scored rows changes status (FC-1 FAIL I3, FC-2 row1/row2/row4 PASS + row3 FAIL, FC-3 FAIL, FC-4 FAIL, FC-5 CAVEAT, FC-6 CAVEAT, FC-7 PASS \u00d74, FC-8 PASS). One within-row improvement worth naming inside a still-failing row: the FC-2 row3 cobweb goes gas_ct(7); gas_cc(11) \u2192 gas_cc(13) \u2014 the gas_ct cobweb disappears entirely. P14/P15 on the 25-year retrofit ledger: the control converts 11,208.9 MW over 2028-2031 (17/23/10/10 rows, 377.1 MW of it CHP); the arm converts 10,423.6 MW over the same four years (12/11/10/6 rows) with ZERO CHP MW. The P15 FALSIFIER DOES NOT FIRE on either limb \u2014 total 10.42 GW is inside the pre-declared 10.4-11.3 GW band, and conversion still ends in 2031, before the pre-declared 2032 bound. A PRE-DECLARATION MISS RECORDED AGAINST MYSELF: P15 said the window would lose \"at most ~0.4 GW\" and it loses 785.3 MW (0.79 GW) \u2014 the band held, the point estimate did not, exactly the class of miss D60's leg 1 recorded against its own \u00a76.1 upper bound. FC-7 PASS on all four rows including the \u00a75 attestation: P20 HIT EXACTLY \u2014 the ledger reads 7 entries, 7 IDENTIFIED, 0 UNIDENTIFIED, 0 unattested, and carries NO CCS entry, because Q42 made ccs_retrofit_capex_co2_scaling the dataclass default and the ledger enumerates non-default fields. The attestation is authored by the PRODUCING session (rubric \u00a75's default author, unlike D47's disclosed deviation) on six assertions FIXED IN ADVANCE in Addendum B, pushed before this bundle existed; every one reads TRUE from committed bytes. WHAT THE ATTESTATION DOES NOT CLAIM, stated rather than buried: FC-5's dispositions and FC-6's battery are CARRIED, not re-measured. Carrying is the committed practice \u2014 D25 authored the FC-5 table against `bau` and D46/D47 carried it unre-authored onto `bau-d46` \u2014 and this lane adds the MEASUREMENT of the carry that no prior lane took. Measured: the carried table is ALREADY stale against the bundle it is attached to, on 6 of 42 computable rows past the corridor memo's own 15 % explanation threshold (worst: co2@2040 table 4.4883 vs bau-d46 9.5792, +113.4 %; capacity:pumped_storage +41.3 % in all three anchor years). This lane's own marginal movement bau-d46 \u2192 bau-d60 is SMALLER than that pre-existing gap and clears the memo's threshold on every real quantity: 10 rows move > 5 %, the largest being co2 \u22129.1 / \u221212.8 / \u221210.7 % and generation:gas \u221210.1 / \u221211.8 / \u221210.2 % across 2030/2035/2040, and the co2@2040 movement REDUCES the pre-existing table gap rather than widening it. RE-AUTHORING THE TABLE IS ROUTED, NOT ABSORBED: D25 was a dedicated lane for it and this one holds no pre-declaration to re-author 54 verdicts. The D46 record is preserved at neiso-t3-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.5. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required. PROVENANCE CORRECTION (capx D60-R4, 2026-09-06): solved POST-`d14a7ed0` (SCN-LOAD, merged as PR #4970 at 02:19 UTC 2026-09-06, which re-derived DEMAND_GROWTH_RATES -- NEISO mid.near 0.013 -> 0.007446, mid.long 0.012 -> 0.013301, i.e. a LOWER-demand world); the `bau-d46` prior is PRE-hunk, so form-4 differencing is VOID for this row until D65-B re-solves every bare key at one HEAD. Re-attributed at zero LP (FINDING-capx-d60-2026-09-05.md \u00a75.0f + the \u00a75.5 correction block): \u201cONE substantive mechanism\u201d is FALSE as a description of the difference between the bundles (it remains true of the config). Arm peaks are LOWER in every year (-1.64/-3.24/-3.28/-2.66/-1.40 % at 2027/2030/2035/2040/2050), r = R/P is identical on both sides so there is NO gate contribution at all, and total generation moves in lockstep with the peak (-3.24/-3.30/-2.64 % at 2030/2035/2040) -- so the >5 % co2 (-9.12/-12.81/-10.65 %) and gas-family (-10.14/-11.83/-10.20 %) movements carry the sign of a lower-demand world, not of fewer retrofits. P16 STANDS as a STATUS reading (HOLD \u2192 HOLD, 0/19 rows moved) but is not established as a claim about Q42 alone. P14/P15 stand as written; added: 86.0 % of the -785.3 MW retrofit-window loss is 2031, the one year of the four in which the 3 GW/yr cap binds on neither side and the two demand worlds are furthest apart."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I3']: I3: 2043: dump 2.36% of renewable pot.; 2044: dump 2.79% of renewable pot.; 2045: dump 3.96% of renewable pot.; 2046: dump 4.54% of renewable pot.; 2047: dump 5.89% of renewable pot.; 2048: dump 6.57% of renewable pot.; 2049: dump 7.27% of renewable pot.; 2050: dump 7.97% of renewable pot.",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row2",
+      "status": "PASS",
+      "detail": "final RM 5.3% in [3.8%, 38.8%]",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "FAIL",
+      "detail": "cobweb (I13 WARN \u21d2 row FAIL): gas_cc(13)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 0.5% \u2264 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "quarantine",
+      "status": "PASS",
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true
+     },
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=1.5; price 2023 |13.3%| in (10%, 15.0%] CAVEAT; price 2025 |21.3%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |12.8%| in (10%, 15.0%] CAVEAT; co2 2024 |11.3%| in (10%, 15.0%] CAVEAT; gas_twh 2023 |14.8%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |13.2%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |99.8%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |84.0%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true
+     },
+     {
+      "row": "input-gap ratio",
+      "status": "PASS",
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false
+     }
+    ]
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "CAVEAT",
+      "detail": "explained divergences: ['capacity:total@2030', 'capacity:solar@2030', 'capacity:wind_total@2030', 'capacity:storage@2030', 'capacity:biomass_waste@2030', 'co2@2030', 'generation:gas@2030', 'generation:oil@2030', 'generation:renewables@2030', 'capacity:solar@2035', 'capacity:wind_total@2035', 'capacity:storage@2035', 'capacity:biomass_waste@2035', 'co2@2035', 'generation:gas@2035', 'generation:oil@2035', 'generation:renewables@2035', 'capacity:fossil_peaker_steam@2040', 'capacity:solar@2040', 'capacity:wind_total@2040', 'capacity:storage@2040', 'capacity:biomass_waste@2040', 'co2@2040', 'generation:gas@2040', 'generation:oil@2040', 'generation:renewables@2040']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "battery gate rows",
+      "status": "CAVEAT",
+      "detail": "no gate FAIL but 2 vacuous row(s) (SKIP, or PASS on an empty/all-constant series): ['T1.6/T1.6a (all-constant series [1.0, 1.0])', 'T1.6/T1.6b (all-constant series [1.0, 1.0])']",
+      "gating": true
+     },
+     {
+      "row": "paired P1",
+      "status": "PASS",
+      "detail": "P1 CO2 monotone vs carbon: cumulative CO2 base 284.42 Mt vs high 273.92 Mt [premise: strictly positive delta in all 25 years (min +25.00, max +25.00 $/t)]",
+      "gating": true
+     },
+     {
+      "row": "paired P2",
+      "status": "PASS",
+      "detail": "P2 merit-order sign: year 2050: all signs correct; gas-fired 35.01\u219234.77 TWh, LW price 82.50\u219291.55 $/MWh",
+      "gating": true
+     },
+     {
+      "row": "paired P3",
+      "status": "PASS",
+      "detail": "P3 cumulative builds moved 0.0% (base 42337 MW, pert 42319 MW)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 799 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "PASS",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
+      "gating": true
+     },
+     {
+      "row": "attestation",
+      "status": "PASS",
+      "detail": "all \u00a75 checklist assertions present and true",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 6.7 min within budget",
       "gating": true
      }
     ]
@@ -5572,21 +5772,19 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "e7412237e4e1",
-   "scored_at_date": "2026-09-05T20:47:38Z",
+   "scored_at_sha": "7ed062ba9a68",
+   "scored_at_date": "2026-09-06T03:59:42Z",
    "cache_epoch": "19a9690bb12c8459",
    "run_id": "nyiso-2026-2030-d60-arm",
-   "session": "capx-D60"
+   "session": "capx-D60-R3"
   },
   "tier": "t1f",
   "iso": "NYISO",
-  "determination": "PROMOTE-WITH-CAVEATS",
+  "determination": "PROMOTE",
   "reasons": [],
-  "caveats": [
-   "FC-7 provenance & DOF"
-  ],
+  "caveats": [],
   "notes": [
-   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q41 + Q42 executed. Bare nyiso-t1f re-solved at 19a9690bb12c8459 (pre-declared PREDECL-capx-d60 \u00a72, matched; 5/5 years, 10.9 min, 3.37 GB). THE DETERMINATION MOVED OFF PROMOTE AND THE CAUSE IS AN INSTRUMENT, NOT THE MODEL \u2014 reported under the pre-declaration's own P10 STOP, not softened. EVERY MODEL ROW IS UNCHANGED OR BETTER: FC-1 all 14 invariants PASS (as in the control), FC-2 every row PASS including backstop share 0.0 %, FC-8 PASS at 10.9 min against the control's 15.9. The single moved row is FC-7's DOF ledger: the control's ledger holds ONE entry (forecast_xyear_warmstart, IDENTIFIED) and reads PASS; arming the two gates adds them as ledger entries, and because no curated identification row exists for either they enter as identification='unattested', so FC-7 reads CAVEAT and the determination becomes PROMOTE-WITH-CAVEATS. This is the mirror of the instrument difference D50 \u00a75 declared in the other direction ('never a model gain'); here it is never a model regression. THE FIX WAS DELIBERATELY NOT APPLIED IN THIS SESSION: both fields carry ZERO free parameters and their identification is already committed (D52 \u00a78(1) \u2014 published NYSRC Table D.2 forecast peak and adopted IRM x (1 - derate), vintage-gated, reconciled to demand-curve/nyiso/nyiso.csv by test), so the rows are writable \u2014 but authoring an instrument AFTER reading that it fails a row is the sequence D46 refused and PREDECL-capx-d60 Addendum B pre-declared against. ROUTED to the director as a records item. DISCLOSED SEPARATELY: NYISO's confirmed-exit channel is EMPTY AT SOURCE (data/raw/confirmed-retirements/nyiso.csv is a documented 'DATA NEEDED (zero qualifying rows)' stub), so step 0 contributes nothing for this ISO \u2014 identically in control and arm, whose retirement ledgers are byte-identical (12 rows / 27.8 MW announced in 2027, nothing else). Not introduced by this leg; routed. The D45-R record is preserved at nyiso-t1f-pre-d60."
+   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q41 + Q42 executed. Bare nyiso-t1f re-solved at 19a9690bb12c8459 (pre-declared PREDECL-capx-d60 \u00a72, matched; 5/5 years, 10.9 min, 3.37 GB). THE DETERMINATION MOVED OFF PROMOTE AND THE CAUSE IS AN INSTRUMENT, NOT THE MODEL \u2014 reported under the pre-declaration's own P10 STOP, not softened. EVERY MODEL ROW IS UNCHANGED OR BETTER: FC-1 all 14 invariants PASS (as in the control), FC-2 every row PASS including backstop share 0.0 %, FC-8 PASS at 10.9 min against the control's 15.9. The single moved row is FC-7's DOF ledger: the control's ledger holds ONE entry (forecast_xyear_warmstart, IDENTIFIED) and reads PASS; arming the two gates adds them as ledger entries, and because no curated identification row exists for either they enter as identification='unattested', so FC-7 reads CAVEAT and the determination becomes PROMOTE-WITH-CAVEATS. This is the mirror of the instrument difference D50 \u00a75 declared in the other direction ('never a model gain'); here it is never a model regression. THE FIX WAS DELIBERATELY NOT APPLIED IN THIS SESSION: both fields carry ZERO free parameters and their identification is already committed (D52 \u00a78(1) \u2014 published NYSRC Table D.2 forecast peak and adopted IRM x (1 - derate), vintage-gated, reconciled to demand-curve/nyiso/nyiso.csv by test), so the rows are writable \u2014 but authoring an instrument AFTER reading that it fails a row is the sequence D46 refused and PREDECL-capx-d60 Addendum B pre-declared against. ROUTED to the director as a records item. DISCLOSED SEPARATELY: NYISO's confirmed-exit channel is EMPTY AT SOURCE (data/raw/confirmed-retirements/nyiso.csv is a documented 'DATA NEEDED (zero qualifying rows)' stub), so step 0 contributes nothing for this ISO \u2014 identically in control and arm, whose retirement ledgers are byte-identical (12 rows / 27.8 MW announced in 2027, nothing else). Not introduced by this leg; routed. The D45-R record is preserved at nyiso-t1f-pre-d60. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required."
   ],
   "categories": {
    "FC-1": {
@@ -5668,7 +5866,7 @@
    "FC-7": {
     "label": "FC-7 provenance & DOF",
     "applicability": "required",
-    "status": "CAVEAT",
+    "status": "PASS",
     "rows": [
      {
       "row": "run_config",
@@ -5684,8 +5882,8 @@
      },
      {
       "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 2 of 3 entries carry identification='unattested' (nyiso_requirement_forecast_peak, nyiso_requirement_vintage_factors). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "status": "PASS",
+      "detail": "3 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -6794,8 +6992,8 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "e80bdd87bad0",
-   "scored_at_date": "2026-09-06T03:05:41Z",
+   "scored_at_sha": "7ed062ba9a68",
+   "scored_at_date": "2026-09-06T03:59:42Z",
    "cache_epoch": "09996eca71ee80fd",
    "run_id": "pjm-2026-2030-d60-arm",
    "session": "capx-D60-R3"
@@ -6808,11 +7006,10 @@
    "FC-2 adequacy & equilibrium behavior FAIL"
   ],
   "caveats": [
-   "FC-7 provenance & DOF",
    "FC-8 runtime feasibility: over runtime budget"
   ],
   "notes": [
-   "capx D60-R3 leg 4/5 (2026-09-06) \u2014 the bare pjm-t1f RE-SOLVED under the JOINT posture (Q42 + D57's Q44-armed D48 pair + supply clearing). Run pjm-2026-2030-d60-arm, cache key 09996eca71ee80fd (pre-declared Addendum C.1, matched on the realized bundle directory; --golden-posture, 2026-2030, 5/5 years, 36.2 min, 8.81 GB). FOUR mechanisms against the control, verified field-by-field before the solve (Addendum C.2's \"four\"). DETERMINATION HOLD \u2192 HOLD (P24 HIT). A PRE-DECLARED STOP FIRED AND IS REPORTED, NOT SOFTENED: Addendum C.4 declared \"any I12 year more negative than the control's\" a STOP, and every comparable year is \u2014 2027 \u221211.2\u2192\u221211.6, 2028 \u221213.5\u2192\u221215.6, 2029 \u221213.1\u2192\u221215.8, 2030 \u221213.0\u2192\u221216.5 pts. THE DIRECTION P23 PREDICTED HELD AND ITS PREMISE DID NOT. Accredited firm rose exactly as pre-declared (+9,092 / +10,276 / +14,303 / +18,000 MW in 2027-2030), but P23 assumed \"an UNCHANGED requirement\" and the requirement is NOT unchanged: it rose by MORE (+16,220 / +21,607 / +27,272 / +33,504 MW), so the position worsens despite supply lengthening. ATTRIBUTED, NOT INFERRED (Amendment 1 item 3): the requirement is BYTE-IDENTICAL between the control and the committed D50 arm (145,509 / 150,263 / 153,001 / 155,946 in both), so Q42 moves it not at all and the entire rise is the D48 + D57 gates'. The mechanism is D48's own construction \u2014 pjm_demand_response_supply counts offered DR UCAP as supply WITH THE PEAK UN-NETTED, so both sides rise, and pjm_accreditation_design_vintage applies the post-CIFP FPR from DY 2025/26. 2026-2030 is the FIRST horizon on which the post-CIFP FPR is in force for every delivery year, and this is the first measurement of it: D48's accounting is NOT position-neutral forward \u2014 it lengthens the requirement faster than it lengthens counted supply. ROUTED to the director; nothing is reverted and no gate is moved. P21 HIT to the digit: the CCS window falls 3,584.7 \u2192 909.8 MW, reproducing the committed D50 arm exactly (2029: 2 rows / 909.8 MW; 2028 to zero). P22 HIT DECISIVELY and its mechanism confirmed at ledger grain: FC-2 row4 goes control 43.9 % FAIL \u2192 D50-arm-alone 48.9 % FAIL (the CCS half pushes UP, as pre-declared) \u2192 this arm 25.6 % CAVEAT \u2014 the two halves oppose and the clearing half dominates, because economic gas_ct entry rises 11,014 \u2192 12,642 MW (+1,628) and displaces administrative backstop build. P25 is VACUOUS rather than confirmed and is graded that way: every PJM exit on this horizon is EXOGENOUS (16 announced + 2 confirmed, ZERO economic, pipeline_events empty in all five years) and the exit set is byte-identical across the control, the D50 arm and this arm, so no mechanism could move the composition \u2014 the falsifier's condition is met but its premise is void. A pre-declaration miss on WALL: 36.2 min against Addendum C's ~28. FC-7 CAVEAT on 2 of 3 unattested (pjm_accreditation_design_vintage, pjm_demand_response_supply); Addendum D.2 pre-declared 4 entries / 3 unattested and the third gate is ABSENT from the ledger entirely, because capacity_market_supply_clearing_by_iso = {\"PJM\": True} carries no numeric leaf and the builder's _is_parameterish guard skips it \u2014 recorded as a miss against my own pre-declaration. FC-8 CAVEAT at 9.0 GB (P24 HIT). The D45-R record is preserved at pjm-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.4."
+   "capx D60-R3 leg 4/5 (2026-09-06) \u2014 the bare pjm-t1f RE-SOLVED under the JOINT posture (Q42 + D57's Q44-armed D48 pair + supply clearing). Run pjm-2026-2030-d60-arm, cache key 09996eca71ee80fd (pre-declared Addendum C.1, matched on the realized bundle directory; --golden-posture, 2026-2030, 5/5 years, 36.2 min, 8.81 GB). FOUR mechanisms against the control, verified field-by-field before the solve (Addendum C.2's \"four\"). DETERMINATION HOLD \u2192 HOLD (P24 HIT). A PRE-DECLARED STOP FIRED AND IS REPORTED, NOT SOFTENED: Addendum C.4 declared \"any I12 year more negative than the control's\" a STOP, and every comparable year is \u2014 2027 \u221211.2\u2192\u221211.6, 2028 \u221213.5\u2192\u221215.6, 2029 \u221213.1\u2192\u221215.8, 2030 \u221213.0\u2192\u221216.5 pts. THE DIRECTION P23 PREDICTED HELD AND ITS PREMISE DID NOT. Accredited firm rose exactly as pre-declared (+9,092 / +10,276 / +14,303 / +18,000 MW in 2027-2030), but P23 assumed \"an UNCHANGED requirement\" and the requirement is NOT unchanged: it rose by MORE (+16,220 / +21,607 / +27,272 / +33,504 MW), so the position worsens despite supply lengthening. ATTRIBUTED, NOT INFERRED (Amendment 1 item 3): the requirement is BYTE-IDENTICAL between the control and the committed D50 arm (145,509 / 150,263 / 153,001 / 155,946 in both), so Q42 moves it not at all and the entire rise is the D48 + D57 gates'. The mechanism is D48's own construction \u2014 pjm_demand_response_supply counts offered DR UCAP as supply WITH THE PEAK UN-NETTED, so both sides rise, and pjm_accreditation_design_vintage applies the post-CIFP FPR from DY 2025/26. 2026-2030 is the FIRST horizon on which the post-CIFP FPR is in force for every delivery year, and this is the first measurement of it: D48's accounting is NOT position-neutral forward \u2014 it lengthens the requirement faster than it lengthens counted supply. ROUTED to the director; nothing is reverted and no gate is moved. P21 HIT to the digit: the CCS window falls 3,584.7 \u2192 909.8 MW, reproducing the committed D50 arm exactly (2029: 2 rows / 909.8 MW; 2028 to zero). P22 HIT DECISIVELY and its mechanism confirmed at ledger grain: FC-2 row4 goes control 43.9 % FAIL \u2192 D50-arm-alone 48.9 % FAIL (the CCS half pushes UP, as pre-declared) \u2192 this arm 25.6 % CAVEAT \u2014 the two halves oppose and the clearing half dominates, because economic gas_ct entry rises 11,014 \u2192 12,642 MW (+1,628) and displaces administrative backstop build. P25 is VACUOUS rather than confirmed and is graded that way: every PJM exit on this horizon is EXOGENOUS (16 announced + 2 confirmed, ZERO economic, pipeline_events empty in all five years) and the exit set is byte-identical across the control, the D50 arm and this arm, so no mechanism could move the composition \u2014 the falsifier's condition is met but its premise is void. A pre-declaration miss on WALL: 36.2 min against Addendum C's ~28. FC-7 CAVEAT on 2 of 3 unattested (pjm_accreditation_design_vintage, pjm_demand_response_supply); Addendum D.2 pre-declared 4 entries / 3 unattested and the third gate is ABSENT from the ledger entirely, because capacity_market_supply_clearing_by_iso = {\"PJM\": True} carries no numeric leaf and the builder's _is_parameterish guard skips it \u2014 recorded as a miss against my own pre-declaration. FC-8 CAVEAT at 9.0 GB (P24 HIT). The D45-R record is preserved at pjm-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.4. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required. PROVENANCE CORRECTION (capx D60-R4, 2026-09-06): solved POST-`d14a7ed0` (SCN-LOAD, merged as PR #4970 at 02:19 UTC 2026-09-06, which re-derived DEMAND_GROWTH_RATES -- PJM mid.near 0.036 -> 0.064645); the `-pre-d60` prior is PRE-hunk, so form-4 differencing is VOID for this row until D65-B re-solves every bare key at one HEAD. Re-attributed from the committed evolution ledgers at zero LP (FINDING-capx-d60-2026-09-05.md \u00a75.0f + the \u00a75.4 correction block): 60/68/74/78 % of the +16,220/+21,607/+27,272/+33,504 MW requirement rise in 2027-2030 is the PEAK leg (the demand table), not the gates; the gate-owned RATIO leg is +6,415/+6,817/+7,150/+7,514 MW and is ENTIRELY `pjm_demand_response_supply` (r_ctl/r_arm = 0.9603367 in every year = 1 - the PJM DR fraction), with `pjm_accreditation_design_vintage` moving the requirement by ZERO on this horizon. THE STOP IS UNCHANGED AND STILL FIRED; what is withdrawn is only the sentence \u201cthe entire rise belongs to the D48 + D57 gates\u201d, and with it the claim that \u201cD48 is not position-neutral forward\u201d is NOT ESTABLISHED by this pair."
   ],
   "categories": {
    "FC-1": {
@@ -6894,7 +7091,7 @@
    "FC-7": {
     "label": "FC-7 provenance & DOF",
     "applicability": "required",
-    "status": "CAVEAT",
+    "status": "PASS",
     "rows": [
      {
       "row": "run_config",
@@ -6910,8 +7107,8 @@
      },
      {
       "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 2 of 3 entries carry identification='unattested' (pjm_accreditation_design_vintage, pjm_demand_response_supply). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "status": "PASS",
+      "detail": "3 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]

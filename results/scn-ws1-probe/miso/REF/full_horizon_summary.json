@@ -1,0 +1,237 @@
+{
+  "iso": "MISO",
+  "start_year": 2026,
+  "end_year": 2027,
+  "capacity_market_clearing": false,
+  "capacity_market_clearing_by_iso": null,
+  "weather_year": 2024,
+  "miso_rps_compliance_regions": true,
+  "miso_clean_tier_rows": true,
+  "weather_posture": {
+    "posture": "single_draw",
+    "label": "Unless produced by the weather ensemble, results are conditional on a single pinned weather year (stated in the run config).",
+    "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
+    "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md \u00a74"
+  },
+  "cache_key": "1b9e15c5a85f6302",
+  "run_dir": "results/scn-ws1-probe/miso/REF/MISO/1b9e15c5a85f6302",
+  "error": null,
+  "total_wall_s": 657.4,
+  "global_peak_rss_mb": 9873.0,
+  "n_solved_years": 2,
+  "solved_years": [
+    2026,
+    2027
+  ],
+  "per_year_perf": [
+    {
+      "year": 2026,
+      "wall_s": 446.2,
+      "peak_rss_mb": 9873.0
+    },
+    {
+      "year": 2027,
+      "wall_s": 211.1,
+      "peak_rss_mb": 7915.1
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply\u2212demand| = 4.802e-10 MW (year 2027); tol 1.0"
+    },
+    {
+      "id": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "id": "I3",
+      "name": "unserved/dump",
+      "status": "FAIL",
+      "detail": "2026: slack 0.02% of load (19 h, 111.6 GWh, peak 13,977 MW); 2027: slack 0.03% of load (41 h, 199.6 GWh, peak 17,070 MW)"
+    },
+    {
+      "id": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "id": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2026: accredited firm 123292 < requirement 135575 MW; 2027: accredited firm 124244 < requirement 140412 MW"
+    },
+    {
+      "id": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "\u22650, stable"
+    },
+    {
+      "id": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "id": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "requirement-implied floor [0.7%, 15.7%]; out: 2026:-8.4% (band [0.7%, 15.7%]), 2027:-10.9% (band [0.7%, 15.7%])"
+    },
+    {
+      "id": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "id": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "trajectory": [
+    {
+      "year": 2026,
+      "lw_price": 44.599,
+      "max_hourly_price": 1557.9,
+      "neg_price_hour_frac": 0.0,
+      "hours_ge_100": 33,
+      "hours_ge_500": 22,
+      "hours_ge_1000": 22,
+      "hours_ge_2000": 0,
+      "co2_mt": 368.5353,
+      "peak_demand_mw": 134612.686,
+      "reserve_margin": -0.084095,
+      "rps_dual": 30.0,
+      "thermal_mw": 128122.1,
+      "firm_clean_mw": 2371.5,
+      "vre_mw": 39000.0,
+      "total_cap_mw": 171359.3,
+      "storage_mw": 0.0,
+      "storage_power_mw": 3216.8,
+      "builds_thermal_mw": 0.0,
+      "builds_thermal_backstop_mw": 0.0,
+      "builds_by_source": {},
+      "builds_renew_mw": 0.0,
+      "builds_storage_mw": 0.0,
+      "retire_mw": 0.0,
+      "capacity_by_fuel_mw": {
+        "biomass": 1865.7,
+        "coal": 41206.7,
+        "gas_cc": 35605.0,
+        "gas_ct": 24901.9,
+        "gas_st": 11614.0,
+        "hydro": 2371.5,
+        "nuclear": 11519.3,
+        "oil": 3275.2,
+        "solar": 7000.0,
+        "wind": 32000.0
+      },
+      "generation_by_fuel_mwh": {
+        "biomass": 12006495.6,
+        "coal": 293833179.6,
+        "gas_cc": 168580846.0,
+        "gas_ct": 28284312.9,
+        "gas_st": 12145009.9,
+        "hydro": 9292515.6,
+        "nuclear": 90198883.6,
+        "oil": 59044.7,
+        "solar": 9200799.1,
+        "wind": 94368275.8
+      },
+      "total_gen_mwh": 717969363.0,
+      "storage_discharge_mwh": 3482521.7,
+      "storage_charge_mwh": 4321041.4
+    },
+    {
+      "year": 2027,
+      "lw_price": 52.0,
+      "max_hourly_price": 1560.2,
+      "neg_price_hour_frac": 0.0,
+      "hours_ge_100": 90,
+      "hours_ge_500": 43,
+      "hours_ge_1000": 43,
+      "hours_ge_2000": 0,
+      "co2_mt": 370.4751,
+      "peak_demand_mw": 139415.976,
+      "reserve_margin": -0.108822,
+      "rps_dual": 30.0,
+      "thermal_mw": 126632.8,
+      "firm_clean_mw": 2371.5,
+      "vre_mw": 39000.0,
+      "total_cap_mw": 169870.0,
+      "storage_mw": 0.0,
+      "storage_power_mw": 5616.8,
+      "builds_thermal_mw": 1404.8999999999999,
+      "builds_thermal_backstop_mw": 1349.8,
+      "builds_by_source": {
+        "planned": 55.1,
+        "reserve_backstop": 1349.8
+      },
+      "builds_renew_mw": 0.0,
+      "builds_storage_mw": 2400.0,
+      "retire_mw": 2894.185,
+      "capacity_by_fuel_mw": {
+        "biomass": 1865.7,
+        "coal": 38838.7,
+        "gas_cc": 35612.3,
+        "gas_ct": 26278.3,
+        "gas_st": 11092.0,
+        "hydro": 2371.5,
+        "nuclear": 11519.3,
+        "oil": 3292.2,
+        "solar": 7000.0,
+        "wind": 32000.0
+      },
+      "generation_by_fuel_mwh": {
+        "biomass": 13738095.8,
+        "coal": 264869701.7,
+        "gas_cc": 215362489.4,
+        "gas_ct": 44779275.8,
+        "gas_st": 15707282.0,
+        "hydro": 9292515.6,
+        "nuclear": 90198883.6,
+        "oil": 129902.5,
+        "solar": 9200799.1,
+        "wind": 94368275.8
+      },
+      "total_gen_mwh": 757647221.5,
+      "storage_discharge_mwh": 4109531.0,
+      "storage_charge_mwh": 5397588.9
+    }
+  ],
+  "run_config_path": "results/scn-ws1-probe/miso/REF/run_config.json",
+  "set_overrides": {}
+}

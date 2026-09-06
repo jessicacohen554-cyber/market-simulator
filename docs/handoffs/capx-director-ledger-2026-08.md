@@ -6,7 +6,10 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #44) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #46) ·
+**r#46 (HEAD `fb0868eb`):** **D60-R3 FINISHES LEG 5 ON AN UNMERGED BRANCH (no PR) — and this desk's zero-LP re-read finds LEGS 4 AND 5 STRADDLE THE SCN-LOAD GROWTH HUNK `d14a7ed0` (merged 02:19 UTC; the §5.0d second-hunk probe ran at 01:55, the between-legs rebase admitted it, and the matched cache key cannot see `constants.py`)**: leg 4's requirement rise decomposes 60–78 % PEAK (the demand refresh) / the rest D48's FPR ratio, and supply's rise exceeds the ratio leg in every year — so THE r#45 "D48 IS NOT POSITION-NEUTRAL FORWARD" INDICTMENT IS WITHDRAWN as an open item (recorded against interest; NO card; a same-HEAD `pjm-t1f` control is the one earned solve); leg 5's GOLDEN-3 peaks moved 0.4–0.9 GW DOWN with the NEISO long rate, so its >5 % co2/gas deltas are the demand world, not the D50 flip; leg 3 inert by measurement (CAISO peak identical) · **D60-R3 AM.1 ISSUED** (date it, re-attribute, fix the two provenance strings, ONE control, close — to the live session or fresh as D60-R4) · **the D67 lane** (cite by branch+PR): build + phase 0 to 0.000 MW, screen owed, control earned; its §8(a) routes a PROGRAM-WIDE defect — every T1-H recipe in all six ISOs de-grows its 2021–2023 screen peak from the growth path → **D76 chartered** · **D73 / D74 / D75 chartered and committed** · two doctrine lines: REBASE-THEN-RE-AUDIT; A MATCHED KEY IS NOT A G-DRIFT VERDICT · gates 6/7 (the same nyiso-198 matrix red, routed) · **ruff INSTALLED and RUN: check green, format red on ONE file** (`tests/unit/model/test_capacity.py`, routed to audit) · no keeper or marker moved · no owner card (§0aq) · **AM.1 (HEAD `b0f262ff`, same sitting): D60-R3 MERGED with its finding CLOSED and the hunk unrecorded → the amendment re-issued FRESH as D60-R4; D67-lane finding, the wallclock P1 basis seed (a solve-path hunk on main) and an owner-authorized `workflow_dispatch`-only large-memory workflow landed; SCN r#9 routes the CCS emission-rate seam (`ccs.py:572`'s capture write never reaches dispatch; Stage A-POLICY holds on it) → D77 chartered as a DEPENDENCY of D65-B's batch; D65-B released for items 1–5 (batch held on D77), D58 released, D63 (+ D62's suffixed registration) chartered; open PRs NONE; no card ·**
+**r#45 (HEAD `d4113182`):** **THREE OF THE FOUR LANES I ISSUED LAND AND EVERY ONE RETURNS A NEGATIVE; THE FOURTH FIRES A STOP** (105 commits / 49 merges) · **D62 LANDS IN FULL AND REFUSES ITS OWN ARM — DO-NOT-ARM on its own fired STOP 5, FC-3 worse (retire 18.70 → 20.14 vs 15.06 actual, recall 0.60 → 0.55) and 4.137 GW of oil over-exit at 6.7× actual — while ESTABLISHING that the published ACR is the right operand: price within 6.4 % of market, position inside a quarter-point, zero free parameters, FC-2 `gas_cc` FAIL → PASS. Self-executing; NO card served** · **D72: THE PREMISE I CHARTERED IT ON IS FALSE — the old predicate exempted `"zero"` BY LITERAL ENUMERATION, the blast radius is EMPTY, D23 UPHELD (verdict a); recorded against interest, a five-line code read would have killed it first. It did buy §6.1: the live golden is already re-armed off the mis-constructed pair, so D73 is UNBLOCKED with its scope narrowed to the ARCHIVED `carbon25` arm** · **D66 REFUTES THE SHARED FRAMING: the 2024/25–2025/26 residual is NOT one-sided missing supply — 78 %/22 % and 67 %/33 % requirement/supply, the requirement leg reproducing to the MW with zero residual; the model is 9,332 / 3,147 MW short against OFFERED supply; the largest closable item (VRE ELCC vintage, wind 0.41 vs 0.16 published) WIDENS the residual and rule 14 says do it anyway** · **D60-R3 leg 4/5 FIRES ITS I12 STOP AND INDICTS AN ARMED POSTURE: supply lengthened +9.1–18.0 GW but the requirement rose MORE (+16.2–33.5 GW); the requirement is byte-identical to the D50 arm so Q42 owns none of it — D48's accounting is NOT position-neutral forward. ROUTED TO THIS DESK, held until the finding closes; the highest-value open item here** · **a D67 I NEVER CHARTERED is in flight on a DIFFERENT object (the requirement operand, not the steam/oil convention) — LABEL COLLISION, cite by branch+PR; it corrected two errors in MY pack (a cache key labelled a git sha, a stale STOP value) and returned the FIRST LIVE G-DRIFT verdict this desk has graded (`DEMAND_GROWTH_RATES["PJM"]` 0.036 → 0.064645 in the SCN-LOAD refresh, landing on the operand it repairs)** · **OWNER RULED on the cards themselves: "Keep label conditions; I'll say when" — Q50/Q51 PARKED AT OWNER DIRECTION, this desk stops re-serving them** · gates 6/7, matrix RED on nyiso-198's `cc_duct_peaking_row_scoped` (rule 28c is the adding lane's, routed not re-keyed); gate (a) green a third sitting · rule 30(a) amended (a held-out year renders AS a year; the panel DELETED not hidden) · ruff UNREAD a third sitting (§0ap) ·
+*(previous)* **Last refresh #44:**
 **r#44 (HEAD `ad45b0e4`):** **BOTH RE-ISSUED LANES DISPATCHED WITHIN THE HOUR AND BOTH ARE LIVE CHECKPOINTS WITH THEIR SCREENS PASSED** (109 commits / 47 merges, the largest delta this desk has graded) · **D62: Phase 0 PASS to 0.0000, SCREEN GATE PASS on all five legs on the pre-named DY 2022/23 — ratio 1.522 → 0.936× and position −0.477 → +0.267 pt, both inside the declared bands, and the solve lands on its own pre-solve arithmetic TO THE CENT; the footprint IS the arithmetic class by class; two disclosures against interest (a nameplate/cleared-flag instrument error, and D61's censored-unit convention as nuclear's alone)** · **D60-R3: 17/17 keys unmoved, all three charter assertions MEASURED (the R-AZ gate answered by import graph), TWO ENVIRONMENT DEFECTS REPAIRED BEFORE THE FIRST SOLVE (an off-pin highspy/pandas/pydantic stack, a shallow clone), CONTROL-FIRST on all three legs with 0 non-provenance diffs and the rubric advance measured INERT, the GOLDEN-3 FC-4 input pinned not guessed, NO second drift hunk, and §8-blast-radius landed with 28 of 33 bundles PRE-hunk** · **§5.0e: the lane rebased under its own running solve, KILLED the leg, disclosed both reasons and made it mechanical (`exit 90`) — 'rebase BETWEEN legs, never DURING one' ADOPTED INTO DOCTRINE** · **ALL SEVEN GATES GREEN, A FIRST** — and **the bench part I routed for two sittings was the GATE MIS-MEASURING** (Y-17: `bench_stamp.py` is a member of its own BUILDER_SOURCES; ERCOT/2022's payload hashes identically to HEAD's), my framing corrected against interest · **Q50 re-served third time with its condition MET and HELD AGAIN ('hold until caiso-254 resolves') after this desk named the unbounded-wait problem and offered a terminating option; Q51 NOT served — nyiso-197 has no commit** · no keeper or marker moved · **nothing issued: both live lanes own every surface the queue needs** · owner track: pjm-166/167 (the touchpoint was already spent; same-HEAD control BIT-IDENTICAL; the coal-vs-CC framing REFUTED), caiso-253b landed + caiso-254 open, miso-222 measured before built (2 of 45 object hours), audit v34 (**R-AU's trigger HAS FIRED, 6 of 6 held across four runs; the flip and G2 leg 4 are ONE owner act**), SCN S1–S4 + a CCS emission-rate seam that INVERTS NEISO's headline CO2 · ruff UNREAD again · **AM.1 (owner challenge "Nothing is unblocked?" — the challenge was RIGHT and my "nothing issued" close was WRONG): the S2 carbon-floor repair (SCN `b1996141`) NULLED the state program adder for any non-default `carbon_price_path`, and every committed NEISO/CAISO forecast bundle — GOLDEN-3's FC-6 arms included — carries `path='zero'` on a program ISO; it also re-opens D23's attribution and ANSWERS its R4 (FLOOR). D72 (Fable) and D66 (Opus) ISSUED, both zero-LP and collision-free; D73 named and held on D72. Recorded: I have been miscalling D23 "D21" for sittings, and I let a COLLISION claim stand in for a DEPENDENCY claim** (§0ao am.1) ·
 *(previous)* **Last refresh #43:**
 **r#43 (HEAD `04e6906d`):** **THE ENTIRE r#42 am.2 WAVE WAS NEVER DISPATCHED** — D60-R3 (issued am.2), D62 (issued r#41) and D65-B (chartered) have no branch and no commit; not one capx branch exists at the pin. Under the relaunch protocol nothing is graded lost and **D60-R3 + D62 were RE-EMITTED IN FULL** (§4) — D60-R3 with a new STATE-AT-START block (D65 Act A's key-neutrality to assert, rule 30, the R-AZ backcast registration gate to check against `register_forecast_run.py`, the SCN hindcast sidecars), D62 with four marked `[r#43]` changes (D60-R2 → D60-R3, D65 landed, the two verified G-DRIFT facts, and **the D65 hunk-level lesson made binding on `retirements.py`, D62's own seam-1 file**) · **BOTH RE-SERVED CARDS HELD AGAIN by the owner although both stated conditions were MET: Q51 (NYISO, keeper unmoved) → "hold, nyiso-197 is live"; Q50 (CAISO, caiso-253 landed) → "hold until caiso-253b resolves"** — all three gate-(a) failing ISOs now carry CALIBRATED keepers and all three are unmarked BY EXPLICIT OWNER CHOICE (Q49 DECLINE, Q50/Q51 HOLD); do not re-serve before their stated conditions · **`src/market_sim/` has ZERO commits since `d66d5e6b`**, which is what makes both lanes' G-DRIFT audits cheap · gate (a) opens **GREEN for the first time since r#34** (no re-key needed); bench STALE ×1 unchanged (ERCOT/2022, routed); **ruff UNREAD — not installed in this container, recorded against interest** · owner track: **miso-221 KILLED AT RULE-29 PHASE 0, ZERO LP MINUTES** (the unreachable block is OIL), nyiso-197 phase 0 (Linden 50006 = a CHP add-back basis mismatch), caiso-253b PRECOMMIT open, **audit v33 R-AY (rule 21 xref) + R-AZ (registration-time tier-marker re-check, executed by Y-16)**, **rule 30 `[R-TOUCHPOINT-FOLD]`** · SCN WS-2b/WS-4b wrote `frontend/data/hindcast/` only, board untouched (§0an) ·
@@ -45,6 +48,395 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0aq. Refresh #46 (2026-09-06, main HEAD `fb0868eb`) — D60-R3 finishes leg 5 on a branch nobody has merged, and this desk's own zero-LP re-read finds that legs 4 and 5 STRADDLE THE SCN-LOAD GROWTH HUNK: the "D48 is not position-neutral forward" indictment I carried at r#45 as the highest-value open item is MAJORITY-MISATTRIBUTED (60–78 % of the requirement rise is the demand refresh); the second-hunk probe pre-dated the rebase that admitted it; a cache key cannot see `constants.py`
+
+**0. FIRST ACT.** Handoff claim (§0ap = r#45) matched the ledger's top entry; this is **r#46**.
+Delta `d4113182..fb0868eb`: **33 commits / 15 merges** (#5016–#5031). Lane greps for every id:
+**D60-R3 — leg 5 LANDED ON BRANCH, UNMERGED, NO PR** (`claude/capx-d60r3-completion` at
+`cdb83016`: `7ed062ba` neiso-t3 GOLDEN-3 re-solved on `f04fd06348e1623d`, P16 HIT 0 of 19 rows;
+`cdb83016` the Q37 repair — six curated rows, five artifact-only re-scores, FC-7 the only row that
+moved, `nyiso-t1f` PROMOTE-WITH-CAVEATS → PROMOTE; §5 / §8 close and the finding's own leg-5 text
+still OWED — `FINDING-capx-d60` is byte-unchanged on the branch) · **the D67 lane** (`claude/
+capx-d67-pjm-requirement-operand-18wzjf`, #5019 + #5022 merged; FINDING at `db761cec` on-branch,
+unmerged): build complete, phase 0 PASS to 0.000 MW on all four checks, matrix row + six cells
+(rule 28c discharged in-lane), **screen NOT yet solved** (a `data/clean` rebuild first) · D73 / D65-B
+/ D58 / D63 / D69 / D70 / D74 / D75 — no commit, as held or unchartered. Open PRs: #5030 (nyiso-198)
+and #5034 (SCN-WS5A). New branches: `claude/p1-basis-seed-impl-oby2ka` (wallclock item B, **launched
+under an UNSIGNED memo** per wc-desk sweep #9 — it edits `pipeline/solve.py` + `lp/model.py`, a
+solve-path change every future G-DRIFT must classify) and `scn-ws1b2-carbon-sixiso`. **Gates: 6 of
+7** — `check_mechanism_matrix` EXIT 1 on `cc_duct_peaking_row_scoped`, the SAME nyiso-198 field as
+r#45, still routed to the owner's NYISO lane (rule 28(c) is the adding PR's duty). `audit_keepers` 0 ·
+parity 0 (14 runs, 47 dirs) · gate (a) 0 (fourth consecutive sitting) · forecast-staleness 0 ·
+bench 0 · goldens 0. **`ruff` IS INSTALLED this container (0.15.8): `ruff check` ALL PASS; `ruff
+format --check` reads ONE file unformatted, `tests/unit/model/test_capacity.py`** — the R-AE flip
+set's lint leg is red by one file on `main`; routed to the audit desk (its sitting is running now).
+
+**1. THE SITTING'S FINDING — a zero-LP re-read of D60-R3's two re-solves, recorded FIRST because it
+reverses my own r#45 headline.** At r#45 I wrote that leg 4's I12 STOP "indicts an ARMED posture …
+the entire rise belongs to the D48 + D57 gates … D48's accounting is NOT position-neutral forward",
+and named it the highest-value open item on this desk. **That attribution does not survive dating
+the tree the arm was solved on.**
+
+- **The hunk.** SCN-LOAD `d14a7ed0` (ruling S4, merged as #4970 = `ad45b0e4` at **02:19 UTC
+  2026-09-06** — r#44's own pin) re-derived `DEMAND_GROWTH_RATES` for **all six ISOs**, PJM `mid.near`
+  0.036 → **0.064645**, NEISO 0.031 → 0.054816 / `long` 0.020 → 0.014850, CAISO 0.028 → 0.032425, plus
+  `DATACENTER_ADDITIONS_MW` and `ELECTRIFICATION_LAYERS`. The D67 lane's G-DRIFT read it LIVE on the
+  hindcast seam (§0ap.1); nobody, me included, asked what it did to the FORECAST legs solved after it.
+- **Leg 4 (`pjm-t1f`, arm `09996eca71ee80fd`) was solved on `14f860fb`, which CONTAINS the hunk**
+  (`git merge-base --is-ancestor d14a7ed0 14f860fb` → yes; the file at that tree reads 0.064645). Its
+  control (`pjm-t1f-pre-d60`, the D45-R bundle) and the D50 arm it was called "byte-identical" to were
+  both solved on 2026-09-04/05, PRE-hunk. The evolution ledgers say it outright — control peak
+  161,027 / 163,627 / 166,439 / 169,472 / 172,734 MW (2026–2030, the 3.6 % path to the digit) versus arm
+  **167,212 / 174,654 / 182,820 / 191,760 / 201,521** (the 6.46 % path). **The requirement rise the lane
+  attributed whole to D48 + D57 decomposes, additively and to the MW, into a PEAK leg and a RATIO leg:**
+
+  | DY | ΔR reported | peak leg `(P_arm − P_ctl) × r_ctl` | ratio leg `P_arm × (r_arm − r_ctl)` | peak share | supply rise (as pre-declared) |
+  |---|---:|---:|---:|---:|---:|
+  | 2027 | +16,220 | **+9,806** | +6,414 | 60 % | +9,092 |
+  | 2028 | +21,607 | **+14,789** | +6,818 | 68 % | +10,276 |
+  | 2029 | +27,272 | **+20,121** | +7,151 | 74 % | +14,303 |
+  | 2030 | +33,505 | **+25,990** | +7,515 | 78 % | +18,000 |
+
+  (`r` = requirement/peak: control 0.8893 / 0.9028 / 0.9028 / 0.9028, arm 0.9260 / 0.9401 / 0.9401 /
+  0.9401 — the ratio leg IS D48's post-CIFP FPR and is the only part of the rise the Q44 gates own.)
+  **The supply rise exceeds the ratio leg in every year.** So on a same-peak basis P23's direction
+  would have HELD, and the STOP fired on the demand refresh, not on the accreditation design. I state
+  that as the pre-declared expectation of a same-HEAD control, not as a finding: supply's own rise
+  partly rides the peak (DR UCAP, entry response), so the honest test is the one rule 29(b) prescribes
+  for a LIVE hunk — **a `pjm-t1f` control at HEAD with the D48/D57 gates OFF** (~36 min), which the
+  lane's own §5.0d text says it did not solve because "there is no second hunk".
+- **Why the second-hunk probe missed it.** §5.0d's probe (`19473c82`, **01:55 UTC**) re-solved NEISO
+  2026–27 at the lane's then-HEAD and matched D65's POST-hunk side "on every ledger key". It was run
+  **24 minutes BEFORE `d14a7ed0` merged**, and the lane then rebased between legs (X-6b, final rebase
+  at `05968ab9`) exactly as r#44 doctrine requires — and the rebase admitted a hunk the probe never
+  saw. **The doctrine had a hole and this is it: REBASE BETWEEN LEGS must be followed by RE-AUDITING
+  THE REBASE DELTA before the next leg** (`git diff <pre> <post> -- src/market_sim scripts/run_*.py`,
+  hunk by hunk, `constants.py` first). And the second thing that let it through: **the pre-declared
+  cache key `09996eca71ee80fd` MATCHED** — because `DEMAND_GROWTH_RATES` is a `constants.py` table,
+  outside the key. "Key matched, one field moved, verified field-by-field" is a CONFIG audit; it is
+  not, and can never be, a G-DRIFT audit. Doctrine, from this sitting.
+- **Leg 5 (`neiso-t3` GOLDEN-3, `f04fd06348e1623d`) straddles it too.** Control `bau-d46` peak
+  25,213 / 26,209 / 27,848 / 29,559 / 33,304 MW (2027/2030/2035/2040/2050); arm `bau-d60` **24,801 /
+  25,359 / 26,934 / 28,774 / 32,839** — 412 to 913 MW lower, the NEISO `long` rate having FALLEN. The
+  commit body's "ONE substantive mechanism against the control … ccs_retrofit_capex_co2_scaling
+  absent → True" is therefore false as a description of the difference, and its ">5 %" quantity
+  movements (co2 −9.1 / −12.8 / −10.7 %, gas generation −10.1 / −11.8 / −10.2 % in 2030/35/40) are
+  the SIGN a lower-demand world produces and the OPPOSITE sign fewer CCS retrofits would. P16 (0 of 19
+  status rows moved) still stands as a status reading; the attribution of the quantity deltas to the
+  D50 flip does not. The retrofit-window numbers (P14/P15, 11,208.9 → 10,423.6 MW) are the one place
+  the flip is plausibly the driver, and even those now carry a demand co-movement.
+- **Leg 3 (`caiso-t1f`) is CLEAN by measurement:** control and arm peaks identical (54,820.591 MW in
+  2030 both sides), so the hunk is INERT on CAISO's T1-F recipe and the lane's "every scored row
+  identical" reads as it should.
+- **Consequences, stated as facts not acts.** (i) The bare `pjm-t1f` row already on `main` carries the
+  6.46 % demand world under a provenance string that says "one substantive mechanism". (ii) The bare
+  T1-F rows now sit in TWO demand vintages — PJM (and NEISO's golden, on merge) post-hunk; ERCOT / MISO
+  / NYISO pre-hunk; CAISO inert — until **D65-B's every-bare-key re-solve batch**, which lands the
+  whole board post-hunk in one event and is the right remedy (no separate re-solve is issued for it).
+  (iii) **No D48 card.** The r#45 "highest-value open item" is DOWNGRADED to *unattributed pending a
+  same-HEAD control*; I serve nothing on it, and the card, if one is ever earned, is served on the
+  control's I12 rows. (iv) The demand refresh itself is owner-ruled (S4) and `demand_growth_vintage
+  = None` means "the current table" by design — nothing here contests the intake; what it contests is
+  an ATTRIBUTION made across it.
+- **Recorded against interest.** I graded leg 4 at r#45 by the lane's own text, repeated its
+  inference ("byte-identical to the D50 arm, therefore D48 + D57") without dating the trees, and
+  promoted it to the desk's headline. The D67 lane had put the hunk in front of me in the same
+  sitting, on the hindcast side, and I did not carry it across to the forecast legs. Cost: one sitting
+  of a false open item, and — had the card been served — an owner ruling on a misattribution.
+
+**2. GRADED BY CONTENT — the rest.**
+- **The D67 lane (cite by branch + PR, never bare):** the finding on its branch is a model of the
+  form — two charter corrections against MY pack (§0ap.1) made in the open; the G-DRIFT verdict LIVE
+  with the mechanism named (`_scale_demand` on the growth path builds the seam peak; only the LP's
+  `year_demand` takes the measured hindcast branch), measured at zero LP as **−10,819 / −7,574 / −3,977
+  / 0 / +4,386 MW** on the 2021–2025 PJM screen peaks; the operand error this card repairs **roughly
+  doubled at HEAD** (2025/26 excess peak 4,635.5 → 9,021.6 MW) with the asymmetry predicted ex ante
+  (2024 is the weather year, so its figure survives); build with ZERO scalar fields, vintage and
+  hold-last rules fixed before any solve; phase 0 PASS to 0.000 MW on all four checks. Its §8(a)
+  ROUTES a program-wide construction defect rather than absorbing it: **every T1-H recipe in the repo
+  (all six ISOs — `weather_year=2024`, solve years 2021–2025, `demand_growth_vintage=None`, checked
+  across all 24 committed hindcast bundles) synthesizes its 2021–2023 screen peaks by DE-GROWING 2024's
+  measured load along the growth path while the LP dispatches the measured load in the same year.**
+  Under rule 14 the measured load is the accurate input. → **D76**, chartered this sitting; the
+  predicate read is the lane's own quoted probe, so the r#45 precondition is met before issuing.
+- **D60-R3's Q37 repair** is exactly what Amendment 2 chartered: rows keyed (ISO, field) with
+  `requires="iso-registry"`, FC-7 the only row that moved on all five re-scores, the two pre-declared
+  negatives (MISO five overrides unattested → D63's object; CAISO's `negative_renewable_offers`)
+  honoured, not widened. **Clean.** Its merge is what releases D65-B / D62's registration / D58 / D63 —
+  and it is not merged. **RELAUNCH PROTOCOL:** the session's last push was 04:00 UTC and nothing says
+  it is dead; I do not grade it lost. Amendment 1 below is written so that EITHER the live session or a
+  fresh D60-R4 picks it up from the committed text.
+- **Owner track / other desks.** No keeper moved, no marker moved (`complete` = {ERCOT, NEISO, PJM};
+  `final` empty; freeze tier-scoped to locked_test). nyiso-198 (#5030 open): the 2024 screen's own S-4
+  gate STOPPED the duct row-scope arm, span not spent, keeper unchanged. caiso-254: the class-partition
+  repair implemented with its ST_GAS half provably inert in the LP; C8 measured at unit grain.
+  miso-223: PREREG + a blind screen-gate scorer committed before either solve finished (the July-2025
+  miss and the August overshoot read as ONE flat-body defect; screening the committed-band de-lift on
+  2024). SCN-DESK r#8: Stage A-LOAD running; the desk records that **S4's intake moved the target its
+  own pre-declaration chain scores against** and that G-DRIFT reads LIVE on every ISO twice over — the
+  same hunk, seen from the third desk. Wallclock: sweep #9, A-6 evidence owed, item B running under an
+  unsigned memo. Audit: the R-AE flip set's lint leg is red by one file (above). **Duty-7 sweep of the
+  audit board's newest entry (v23): records-only, nothing card-adjacent to D48, D60 or the markers.**
+
+**3. RULINGS / DECISIONS.** **No owner card served.** Q1–Q51 spent; **no owner-tier question is open.**
+Q50 / Q51 stay PARKED at owner direction — not re-served, not re-derived. Director decisions: (a) the
+D48 indictment is WITHDRAWN as an open item (§1) — no card now, and none until a same-HEAD control
+exists; (b) D60-R3 is AMENDED, not re-issued (Amendment 1: date the hunk in §5, re-attribute legs 4 and
+5 from the committed ledgers with the table above as the pre-declared decomposition, correct the
+`t1f_provenance` strings, solve the ONE earned control — `pjm-t1f` gates-off at HEAD — and close);
+(c) four charters COMMITTED to the pack this sitting: **D73** (D23's R1 guard + the archived-`carbon25`
+verdict-basis call, Fable, zero-LP), **D74** (the steam/oil below-cap offer convention — the NEW label
+for the object D62 §9 widened, Fable, design-first), **D75** (the PJM VRE ELCC delivery-year vintage,
+D66 card B, Opus, sign pre-declared to widen the residual), **D76** (the T1-H screen peak from
+measured hindcast load, D67 §8(a), Opus, phase 0 zero-LP census across six ISOs first); (d) two
+doctrine lines adopted (§5). **Model economy:** D73 and D74 Fable (a verdict basis; a design object),
+D75 and D76 Opus (values on disk, signs pre-declared, arming returns here).
+
+**4. THE QUEUE.** **DISPATCHABLE NOW: D60-R3 AM.1** (to the live session if alive, else fresh as
+D60-R4 from the committed text) · **D73** · **D75** · **D76 phase 0** · **D74 phase 0**. **LIVE:** the
+D67 lane (screen owed; control at HEAD earned) · `scn-ws5a-load-campaign` (#5034) · nyiso-198 (#5030).
+**HELD on D60-R3's MERGE:** D65-B (whose batch also lands the board post-hunk), D62's registration,
+D58, D63. **PARKED at owner direction:** D69 / D70; T3-NYISO on the NYISO marker. **Collision map:**
+D60-R3 alone on `ff-verdicts.json` / `program-status.json` (D73 must not touch either; it reports and
+this desk serves); the D67 lane and D75 both on PJM hindcast surfaces but DIFFERENT seams
+(`gross_adequacy_requirement_mw` vs `RENEWABLE_ELCC_CURVES_BY_ISO["PJM"]` / `resolve_renewable_
+capacity_credit`) — a merge-order care line, not a dependency; D74 touches `retirements.py`'s bar
+seam AFTER the D67 lane's build merged (`8bc0feb5` on main already, so the file is settled); D76
+phase 0 is read-only; the wallclock B branch is on `pipeline/solve.py` and every solving lane's
+G-DRIFT must classify it when it lands. Disjoint on every writable surface.
+
+**5. DOCTRINE / RECORDED AGAINST INTEREST / HOUSEKEEPING.** (i) **REBASE-THEN-RE-AUDIT:** a rebase
+between legs is complete only when the rebase DELTA has been classified hunk by hunk (`constants.py`
+first) and the classification pushed before the next solve; the `exit 90` guard protects a running
+solve, not the leg after it. (ii) **A MATCHED CACHE KEY IS NOT A G-DRIFT VERDICT:** `constants.py`
+tables (`DEMAND_GROWTH_RATES`, `DATACENTER_ADDITIONS_MW`, the ELCC curves, every `*_BY_ISO` registry)
+are outside the key; "verified field-by-field" audits `ScenarioConfig` only. Every solve charter from
+this sitting says so. (iii) §1's misattribution is mine — the lane inferred it, but I graded it,
+promoted it and carried it for a sitting. (iv) The `ruff` "UNREAD" line ends: it is installed and was
+run. (v) D67 label collision persists by construction; the pack's queue entry is renamed D74 so the
+next reader cannot repeat it. (vi) The D60-R3 session may be alive: nothing in this entry grades it
+lost, and Amendment 1 is written to be picked up either way.
+
+**§0aq AMENDMENT 1 (same sitting, main HEAD `b0f262ff` — a 30-merge wave landed while §0aq was
+being written; appended, not rewritten).** **D60-R3 MERGED (#5038, `83f77bea`) with its finding
+CLOSED (`15631b8c`: §5.3–5.5, §8, §9) — and the closed text carries the misattribution §1 names,
+unchanged:** §5.4 still reads *"the entire rise belongs to the D48 + D57 gates … D48's accounting is
+not position-neutral forward"*, §5.5 still reads *"ONE substantive mechanism against the control"*, and
+`d14a7ed0` / `DEMAND_GROWTH_RATES` appear nowhere in the 788 lines. So Amendment 1 cannot go to a live
+session: **it is re-issued FRESH as D60-R4** from the committed text (pack §D60-R4), with one added
+rule — the successor amends its own lane's §5.4 / §5.5 by DATED CORRECTION BLOCKS appended in place,
+never by rewriting the original sentences, so the record shows what was believed and when. **§9's own
+close routes "seven residue keys" to this desk** (`ercot-t1f`, `neiso-t1f` and the five `t1h` keys,
+never re-solved past the D55 hunk): the two `t1f` keys are inside D65-B's every-bare-key batch; the
+five `t1h` keys are a separate re-measure and are QUEUED-NAMED here (no charter yet — they wait on
+D76 phase 0, which decides whether the de-grown peak is repaired before any `t1h` is re-solved).
+**Also landed:** the D67 lane's FINDING (#5037, `db761cec`) — screen still owed, control still
+earned; **the wallclock P1 basis seed (#5033, `bf37a0dc`) — a `pipeline/solve.py` + `lp/model.py`
+solve-path hunk now ON MAIN**, armed on backcast callers only per its own docstring (forecast path
+byte-identical — every solving charter below says VERIFY, not copy; the wc-desk's "launched under an
+unsigned memo" note is that desk's to reconcile with `c9789b9d` "Record the (A) FLIP decision");
+**an OWNER-AUTHORIZED `workflow_dispatch`-only large-memory calibration-solve workflow** (`b8dba801`:
+per-plant multi-zone backcast LPs peak ~14 GB against the session cgroup's 13 GB — the permitted
+durable form, no cron, no push trigger; it does not touch this desk's forecast solves, which run
+in-session); nyiso-198 (#5030) merged; SCN-DESK r#9 (#5043). **Open PRs: NONE.**
+**A ROUTED PRIORITY SIGNAL this desk had not chartered:** SCN r#9 records that ruling S5 holds
+STAGE A-POLICY (every CES / ≥2028 carbon / ALL-CLEAN / VOL case) *"until the capx CCS emission-rate
+seam is repaired"*, and that the seam has no owner on this queue. The object is
+`FINDING-scn-ws2b-2026-09-06.md` §5.3 / §8 item 1: `ccs.py:572`'s `gen.emission_rate_co2 *= (1 −
+capture_rate)` does NOT reach the dispatch fleet while the `heat_rate` and `fuel_type` writes
+bracketing it DO (one NEISO unit tracked across its own 2028 retrofit: heat rate 7.5101 → 8.4113 ✓,
+fuel `gas_cc_ccs` ✓, emission rate **0.3745 → 0.3745** ✗; fleet-wide NEISO 2030 `gas_cc_ccs`
+0.4149 t/MWh vs unabated 0.4663 on a 47-unit / 9.0 GW class nominally 90 %-captured); leading
+candidate a plant-keyed downstream restoration of the measured CEMS rate. **It is a DISPATCH defect
+as well as an accounting one** (the carbon adder is `emission_rate × carbon_price`), it reaches every
+committed forecast bundle that retrofits (D50's list), and it inverts NEISO's headline CO2 answer.
+→ **D77 CHARTERED AND DISPATCHABLE (Opus)**, and it is a DEPENDENCY for D65-B's batch, not a
+collision: Q47's "one re-key event" cannot survive a solve-affecting fix landing a day after the
+batch, so **D65-B is RELEASED now for items 1–5 and its item-6 batch is held until D77's fix
+merges** — one batch, at one HEAD, carrying the growth hunk, the P1 seed and the CCS-rate repair
+together. **D58 RELEASED** (its stated control, the committed bare `pjm-t1h`, is PRE-hunk: form 4 is
+void on PJM by the D67 lane's own measurement, so D58 solves a same-HEAD control for its screen
+span). **D63 CHARTERED** (the five MISO + one CAISO curated rows under Q37's limb, artifact-only
+re-scores; folded with **D62's suffixed registration**, the same sole-writer window, one records PR).
+**No card.** Q1–Q51 spent; nothing owner-tier opened by the wave.
+
+---
+
+## 0ap. Refresh #45 (2026-09-06, main HEAD `d4113182`) — three of the four lanes I issued land and every one of them lands a NEGATIVE: D62 refuses its own arm, D72's blast radius is EMPTY, D66 splits the residual the wrong way for its own repair; D60-R3 fires a pre-declared STOP that indicts an ARMED posture; a D67 appears that I never chartered, on a different object than the label I queued
+
+**0. FIRST ACT.** Handoff claim (§0ao = r#44 + am.1) matched the ledger's top entry; this is **r#45**.
+Delta `ad45b0e4..d4113182`: **105 commits / 49 merges** (#4971–#5015). Lane greps for every id:
+**D72 LANDED** (#5000) · **D66 LANDED** (#5003) · **D62 LANDED IN FULL** · **D60-R3 LIVE at leg 4 of 5**
+(#5002; legs 3 and 4 registered, leg 5 GOLDEN-3 owed) · **D67 DISPATCHED BY SOMEONE ELSE** (#5012,
+PRECOMMIT only) · D65-B / D58 / D63 / D69 / D70 — no commit, as held. Live branch at the pin:
+`scn-ws5a-load-campaign` only. **Gates: 6 of 7 — `check_mechanism_matrix` EXIT 1**, on
+`cc_duct_peaking_row_scoped`, a field **nyiso-198 added** (`cbc721ac`) with no matrix row and no
+`absent_shared` ratchet entry. Rule 28(c) is the ADDING PR's duty, so this is **routed to the owner's
+NYISO backcast lane, not re-keyed here** — my standing duty (Q34) is gate (a), which reads 0. The
+other six: `audit_keepers` 0 · parity 0 · gate (a) 0 (third consecutive sitting, no re-key owed) ·
+forecast-staleness 0 · bench 0 · goldens 0.
+
+**1. GRADED BY CONTENT — every lane I issued returned a negative, and that is the sitting's headline.**
+
+- **D62 — LANDED IN FULL, and it REFUSES ITS OWN ARM.** §8 reads **DO-NOT-ARM, as it stands**, on
+  three grounds in the lane's own order: (i) **STOP 5 fired** — "a STOP written before the solve fired
+  on its own text, and this lane does not promote past its own pre-registration", with the cause
+  (the chartered mechanism's multi-year propagation, not an unchartered channel) recorded but
+  explicitly **not** read as a licence to re-read the STOP as passing; (ii) **FC-3 gets worse where it
+  was already failing** — `retire.total_gw` 18.702 → 20.144 against an actual 15.062, unit recall
+  0.60 → 0.55, so the arm "trades a large price-formation gain for a composition loss, and the
+  composition is what FC-3 grades"; (iii) **4.137 GW of oil over-exits** because its published bar
+  falls less than the clearing price does — arithmetically correct given the mechanism and still
+  **6.7× the actual oil retirement**. What the measurement nevertheless establishes, and which §8
+  says is undone by none of the above: the published gross ACR **is** the operand the ATB FOM proxy
+  stood in for (rule 14 `[R-ACCURATE]` in its plainest form), 2022/23 lands **within 6.4 % of the
+  market's price** (0.936× vs 1.522×) and **inside a quarter-point of the published position**
+  (+0.27 pt vs −0.48 pt) at **zero free parameters**, and it fixes a real FC-2 defect — the spurious
+  +4.0 GW of 2023 gas-CC entry disappears and `additions.gas_cc` goes **FAIL → PASS**. The lane
+  drafted an owner card and, correctly, left serving it to me. **PRE-DECLARATIONS GOVERN: a
+  pre-stated STOP that fires executes itself — DO-NOT-ARM is SELF-EXECUTING and I serve NO card on
+  it.** What is genuinely open is the lane's own narrower alternative — *arm the published bar only
+  for the classes PJM publishes a technology-class default for, holding steam/oil on their own
+  convention* — which is **a partition, not a level**, and would need its own A/B. **I am NOT serving
+  that either, this sitting: D62 itself routes D66 and D67 first, D66 has now landed and D67 is in
+  flight, so serving ahead of them would be serving ahead of the lane's own sequencing.**
+- **D72 — LANDED. THE PREMISE I CHARTERED IT ON IS FALSE, and the null is clean.** The pre-repair
+  predicate was `if getattr(config, "carbon_price_path", "zero") not in ("zero", None): price = None`
+  — it **exempted `"zero"` by literal enumeration**, so a config on `carbon_price_path="zero"` fell
+  through to `projected_price()` and received the full program trajectory. `'zero'` is therefore not
+  "a non-default path" and the charter's first question resolves on its first branch. **The blast
+  radius is EMPTY; every bundle I listed is OUT.** Dated between two shas with the predicate shown to
+  have existed in exactly one form for its whole life. **D23's attribution is UPHELD (verdict a)** and
+  amended only by a dated cross-reference, exactly as chartered. **Recorded against interest: I
+  chartered this on a premise that a five-line read of the code would have falsified, and the lane
+  spent a session proving my hypothesis wrong.** That is the charter working as written — it required
+  the premise be verified first and named a clean null as a complete result — but the cheaper order
+  was mine to take and I did not take it. **What it bought that was not free:** §6.1 hands this desk a
+  fact it did not have — **the live golden has already been re-armed off the mis-constructed pair**,
+  so the FC-6 P1 failure now fires only on the **archived `carbon25` arm**. That materially narrows
+  **D73**, which §5 declares **UNBLOCKED with its scope sharpened**: the question is no longer "should
+  the guard reclassify P1" but "should it reclassify the **archived** `carbon25`-based P1 FAIL to
+  MIS-CONSTRUCTED, given the pair has already been replaced."
+- **D66 — LANDED, and it refutes the framing everyone including me had been carrying.** The
+  2024/25–2025/26 residual is **NOT a one-sided missing-supply object**. On one recovered position
+  definition (cleared UCAP / RR adjusted for FRR + EE add-back, matched to four decimals in four
+  years) the gap **splits additively into a supply leg and a requirement leg**: on the like-for-like
+  whole-RTO frame — the right one, since the model runs the entire RTO while RPM is net of ~32 GW of
+  FRR — **2024/25's +2.19 pt is 78 % requirement / 22 % supply, and 2025/26's +4.38 pt is 67 % / 33 %**.
+  **The requirement leg is entirely the peak**: FPR × (model screen peak − PJM's implied peak)
+  reproduces `R_model − R_published` **to the MW, zero residual**. And the supply comparison had been
+  flattering the model — against PJM's **OFFERED** RTO-wide supply rather than its cleared, the
+  model's census is **9,332 / 3,147 MW short**, and the cleared comparison only looked better because
+  PJM left 8,530 MW uncleared where the model left 406. **Largest clean closable item, with its sign
+  PRE-DECLARED so it cannot be written to fit:** the model applies PJM's 2026/27-vintage VRE ELCC
+  ratings to every delivery year (wind 0.41 vs the published 2024/25 rating of **0.16**; solar 0.1064
+  vs the published **0.36 fixed / 0.54 tracking**) — the VRE half of the vintage repair D48 made for
+  thermal. **Correcting it moves the census DOWN 0.6–1.4 GW and WIDENS the residual**, and under rule
+  14 that is the discovered root cause anyway.
+- **D60-R3 — LIVE at leg 4 of 5, and leg 4 FIRED A PRE-DECLARED STOP THAT INDICTS AN ARMED POSTURE.**
+  Leg 3 `caiso-t1f` re-solved and registered on the bare key `29f8eb372810195f`. Leg 4 `pjm-t1f`
+  re-solved on `09996eca71ee80fd` (5/5 years, 36.2 min, 8.81 GB), determination **HOLD → HOLD** so no
+  board determination moves, `pjm-t1f-pre-d60` preserved — **and Addendum C.4's "any I12 year more
+  negative than the control's" STOP fired on every comparable year: control −11.2 / −13.5 / −13.1 /
+  −13.0, arm −11.6 / −15.6 / −15.8 / −16.5.** The lane reports it unsoftened and attributes rather
+  than infers: **P23's DIRECTION held and its PREMISE did not.** Accredited firm rose exactly as
+  pre-declared (+9,092 / +10,276 / +14,303 / +18,000 MW) but P23 assumed an **unchanged requirement**,
+  and the requirement rose **by more** (+16,220 / +21,607 / +27,272 / +33,504 MW). **Supply lengthened
+  and the position still worsened.** The requirement is **byte-identical between the control and the
+  committed D50 arm**, so Q42 moves it not at all and **the entire rise belongs to the D48 + D57
+  gates** — `pjm_demand_response_supply` counts offered DR UCAP as supply **with the peak un-netted**
+  so both sides rise, and `pjm_accreditation_design_vintage` applies the post-CIFP FPR from DY
+  2025/26. **2026–2030 is the FIRST horizon on which that FPR is in force for every delivery year, and
+  this is its first measurement: D48's accounting is NOT position-neutral forward — it lengthens the
+  requirement faster than it lengthens counted supply.** Nothing reverted, no gate moved, **ROUTED TO
+  THIS DIRECTOR**. **This is an owner-tier question about a posture ARMED by Q44, and I am holding it
+  until D60-R3's finding closes** — it is one leg from done and the finding is where the magnitude,
+  the LOYO and the recommendation will be stated. **Named here so it cannot be lost: it is the
+  highest-value open item on this desk.**
+- **D67 — DISPATCHED, NOT BY ME, AND ON A DIFFERENT OBJECT THAN THE LABEL I QUEUED. LABEL COLLISION,
+  recorded under the D33-M rule; cite it as `claude/capx-d67-pjm-requirement-operand-18wzjf` / #5012,
+  never as bare "D67".** My queue has carried **D67 = the steam/oil below-cap offer convention** since
+  r#41 (and D62 §9 just widened that scope to add OIL). The dispatched lane's object is **the
+  requirement operand's vintage / hold-last rules** — which is D66's requirement leg, not D62's
+  convention. Two charter corrections it made in the open, both of which correct MY pack: **`f0e050e820c1159a`
+  is a CACHE KEY, not a git sha** (the git anchor for the committed D57 arm A is `5bb70047`), and the
+  STOP value `c6091bd5b62bbc3f` had already moved on main before the lane opened (to `7297dcb3b92be3fb`,
+  by D60's declared `ccs_retrofit_capex_co2_scaling` flip), so the STOP is re-based to the values live
+  at its base. **Both corrections are against my pack's text and both are right.** And its **G-DRIFT
+  verdict is LIVE — the FIRST LIVE verdict this desk has graded**: the CONFIG axis is INERT (one
+  field moved, `apply_ccs_retrofit` returns at its first line below `ccs_retrofit_available_year=2028`
+  so the whole 2021–2025 window is unreachable), but the **CODE axis is not** —
+  `DEMAND_GROWTH_RATES["PJM"]["mid"]["near"]` moved **0.036 → 0.064645** in the SCN-LOAD refresh and
+  **lands directly on the operand this lane repairs**, because the capacity screen's seam peak is
+  built by `_scale_demand` on the growth rate rather than from the hindcast's measured load. **Form 4
+  is VOID and a control solve at HEAD is earned** — rule 29(b) working exactly as written, and the
+  cross-desk hazard it catches (a load-data refresh silently re-basing a capacity operand) is the
+  kind of thing a "files changed, therefore void" heuristic would never have named.
+
+**2. GRADED — owner track and other desks.** **No keeper moved and no marker moved.** **Rule 30(a)
+AMENDED** (`41bf7b5b`, owner instruction verbatim: *"the formatting on the html dashboard for holdout
+years shouldn't be any different than the 3 training years… does not need a special designation"*) —
+the Validation Touchpoints panel, the year-selector optgroup split, the tier suffix and the
+provenance banner are **DELETED, not hidden** (rule 26 `[R-DELETE]`); the fold, the stamp, the
+deep-link redirect and **rule 22's tier caveat as a single footnote** survive; presentation only, no
+scorer path, every keeper re-scores byte-identically; executed by neiso-103. The **Calibration Status
+page** is simplified to one uniform per-year table. **neiso-103: 2020's inputs are at PARITY — the
+rung's C3a FAIL is a denominator effect**, not an input defect. **caiso-254: G-BIMODAL PASSES on the
+re-fetched corpus and P-2 reproduces the frozen buckets EXACTLY**; its G-DRIFT chain was extended
+twice rather than carried forward. **nyiso-198** (Cricket Valley part-load / duct-band basis): the
+**pre-solve F-gates STOPPED, the census was wrong, and the replacement gates are declared as a forward
+prediction** — the arm `cc_duct_peaking_row_scoped` implemented default-off (and it is the matrix
+red). **Audit: y21** returned the R-AE flip set to 6 of 6 (five defects, four root causes) and its
+finding records the tier's own three failures; **y22** diagnosed the T1-H FC-1 invariant blind spot as
+a **dead lookup branch**. **SCN-DESK r#7:** WS-4c landed complete (six pre-declared readings scored
+**20 HIT / 3 SPLIT / 3 MISS**, 15/15 T0 arms registered on the forecast namespace under campaign
+`scn-ws4-probe`), WS-1b-r2's phase-0 gate **killed its own leg 1 as chartered**, Stage A-LOAD released
+and its PRECOMMIT pushed before the first solve. **Wall-clock** A-4 landed with evidence; wave 2b
+complete.
+
+**3. RULINGS / DECISIONS.** **One card served, and it was about the CARDS THEMSELVES.** Both marker
+cards had become unservable: Q50's condition ("hold until caiso-253b resolves") was met while
+caiso-254 opened, and Q51's ("hold until nyiso-197 lands") **can never be met — nyiso-197 never landed
+as such; the lane rolled straight to nyiso-198.** I put the structural problem — *conditions written
+against lane LABELS cannot terminate on a continuously-renaming lane* — and offered a keeper-state
+condition that would. **OWNER RULED: "Keep label conditions; I'll say when."** So **both cards are
+PARKED AT OWNER DIRECTION, and this desk STOPS re-serving them on its own reading.** D69 and D70 stay
+chartered and undispatched; gate (a) stays FAIL for CAISO and NYISO by standing choice; T3-NYISO stays
+held. **The next successor desk must not re-derive a condition and serve these — the owner brings them
+back.** Q1–Q51 spent; **no owner-tier question is open at the close of r#45.** Duty-7 sweep: audit v34
+is records-only and declares "no marker"; nothing card-adjacent. Director decisions: no card served on
+D62 (its STOP is self-executing) and none on its partition alternative (the lane's own sequencing puts
+D66/D67 first); the D48 forward-position indictment **held until D60-R3's finding closes**; the matrix
+red **routed to the NYISO lane**, not re-keyed here.
+
+**4. THE QUEUE.** **D60-R3 LIVE** — leg 5 (`neiso-t3` GOLDEN-3, ~33 min) plus the Q37 rows, §5 and the
+close; its landing releases D65-B, D62's registration, D58 and D63. **D73 IS NOW DISPATCHABLE** with
+D72's sharpened scope (the archived `carbon25` arm alone) — **not issued this sitting; it is the
+next thing to issue and the handoff says so.** `claude/capx-d67-pjm-requirement-operand-18wzjf` in
+flight and has EARNED a control solve. HELD: D65-B / D58 / D63 on D60-R3; D69 / D70 parked at owner
+direction; T3-NYISO on the NYISO marker. QUEUED-NAMED: **the steam/oil below-cap convention — which
+needs a NEW label, because D67 is taken** (proposed **D74**; D62 §9 widened it from steam to steam+oil,
+and 8,801.9 MW of gas-steam is uncleared and 9.464 GW economically exited in BOTH D62 arms to the MW,
+so no offer-side operand touches it); **the VRE ELCC vintage repair D66 named** (proposed **D75**;
+sign pre-declared, widens the residual, rule 14 says do it anyway). **Collision map:** D60-R3 alone on
+`ff-verdicts.json` / `program-status.json`; the D67 lane on the PJM requirement operand;
+`scn-ws5a-load-campaign` on the hindcast namespace; the owner's nyiso-198 / caiso-254 lanes on their
+keeper shards. Disjoint.
+
+**5. RECORDED AGAINST INTEREST / HOUSEKEEPING.** (i) **D72's premise was mine and it was false** — a
+five-line code read would have killed the hypothesis before it cost a session. The charter's structure
+saved the outcome (verify first, a null is complete) but not the cost; **from here, a blast-radius
+charter states the predicate read as a precondition of issuing, not as the lane's first step.**
+(ii) **My pack carried a cache key labelled as a git sha and a STOP value that had gone stale** — both
+caught and corrected by a lane I did not charter. (iii) The D67 label collision is mine: I left a
+queued-name unchartered for four sittings and it got claimed for a different object. (iv) `ruff` is
+still not installed in this container — UNREAD for a third sitting. (v) Three of my four issued lanes
+returned negatives and the fourth fired a STOP. **That is a good sitting, not a bad one** — each
+negative was pre-registered, each was reported at full magnitude by the lane that took the loss, and
+D62's refusal of its own arm on its own STOP is the single most trustworthy thing in this entry.
 
 ---
 
@@ -4772,6 +5164,17 @@ the gap.
 | **D71 THE HEAD-DRIFT BISECT (D65 §3c)** | Zero-DOF, code-only: bisect `9e48ff6..HEAD` on the D65 instrument (NEISO t1f 2026–2027, `git archive` per candidate sha, ledger-key diff) to the hunk that moves NEISO's 2027 economic-exit set 33 → 40 rows; D55's `_floor_retention_merit` the named candidate; then classify every committed forecast bundle by whether it predates the hunk | **FOLDED INTO D60-R3 (r#42 am.2)** as its blast-radius section; not a separate lane | `claude/capx-d71-head-drift-bisect` | Opus | The instrument exists and reproduces; each probe ≈ 2 solve-years. |
 | **D60-R3 THE D60 RELAUNCH, THIRD ISSUE** | §D60-R2's owed half verbatim (caiso-t1f / pjm-t1f / GOLDEN-3 re-solves; the seven Q37 rows; the re-scores; finding §5/§8) PLUS the D71 blast-radius section: bisect `9e48ff6..HEAD` on D65 §3c's NEISO 2026–27 instrument to the hunk that moves the 2027 exit set 33 → 40 rows, classify every committed forecast bundle pre/post-hunk, register D65's A1 from its slim bundle if possible | **ISSUED (r#42 am.2)** — owner ruled D60-R2 dead | `claude/capx-d60r3-completion` | Opus | Sole board writer this window; on landing releases D65-B, D62's registration, D58, D63. |
 | **D65-B COUPLED ARMING (Q47)** | Act A default flip (b′-1) + Act B `ccs_retrofit_vom_adder` 8.0 → 2.95 (widened ATB extract + source-consistency test first); one re-key event, `-pre-d65b` priors; rule-29 screen on a CARBON-0 ISO (ERCOT t1f) then the full bare-key batch; the `ccs_retrofit_screen` row's def/note carries Act B | **CHARTERED, RELEASED-CONDITIONAL on D60-R3's finding merging (r#42 am.2)** | `claude/capx-d65b-coupled-arming` | Opus | Pack §D65-B. ≈ 3 h of LP across seven bare keys. |
+| **D60-R3 AM.1 (r#46)** | Date `d14a7ed0` in §5 (§5.0f); re-attribute legs 4 and 5 from the committed ledgers (pre-declared decomposition: peak leg +9,806 / +14,789 / +20,121 / +25,990, ratio leg +6,414 / +6,818 / +7,151 / +7,515 MW, 2027–2030); correct the two `t1f_provenance` strings; the ONE earned control (`pjm-t1f`, Q44 gates OFF at HEAD, ~36 min, deleted before merge); close + PR | **ISSUED r#46 — to the live session if alive, else fresh as D60-R4 from the committed text** | `claude/capx-d60r3-completion` (checkpoint `cdb83016`) | Opus | pjm | Pre-declared reading: the arm's I12 reads LESS negative than the same-HEAD control's in every year; falsifier = the D48 card is served on the control's rows |
+| **D67 — ANOTHER DESK'S LANE (cite by branch + PR, never bare)** | PJM's published RTO Reliability Requirement as the adequacy operand (D66 §8 card A): one `{iso: bool}` gate, vintage + hold-last fixed pre-solve | **LIVE: build + phase 0 PASS to 0.000 MW (#5019 / #5022); FINDING on-branch `db761cec`; screen (2024–2025, year 2025) NOT solved; control at HEAD EARNED (G-DRIFT LIVE on `DEMAND_GROWTH_RATES["PJM"]`)** | `claude/capx-d67-pjm-requirement-operand-18wzjf` #5012 / #5019 / #5022 | Fable | pjm | Not this pack's queued D67 (that object is D74). Corrected two errors in this pack. Its §8(a) routes the de-grown screen peak → D76 |
+| **D73 D23 R1 GUARD + THE ARCHIVED-`carbon25` P1 VERDICT-BASIS CALL** | R1 premise assertion in the paired checker + battery scorer (read the existing L872 guard first — rule 19); phase-0 MONOTONE/INVERTED census of every bare FC-6 row; three-way recommendation on the archived `bau-prera-2026-08-31` P1 row | **CHARTERED + DISPATCHABLE r#46** | `claude/capx-d73-fc6-p1-guard` | Fable | code | Zero LP; touches no board byte (D60-R3 is the sole writer) |
+| **D74 PJM STEAM + OIL BELOW-CAP OFFER CONVENTION (the object mis-queued as "D67" since r#41)** | D61 §4 card (c) + D62 §9 item 2: design-first (a published self-supply / FRR / Sector-1 partition vs D62's class partition, chosen on structure), build default-off with zero scalars, screen on the largest-uncleared year, then the full window | **CHARTERED + DISPATCHABLE r#46** | `claude/capx-d74-pjm-steam-oil-convention` | Fable | pjm | 8,801.9 MW gas-steam uncleared / 9.464 GW exited identically in BOTH D62 arms; sign pre-declared on FC-3 `retire.total_gw`; D62's G6 carried |
+| **D75 PJM VRE ELCC DELIVERY-YEAR VINTAGE (D66 §8 card B)** | The vintage axis on `RENEWABLE_ELCC_CURVES_BY_ISO["PJM"]` through D48's own seam: DY 2024/25 reads wind 0.16 / solar 0.36–0.54 (Table 5 mix, never chosen), DY ≥ 2025/26 the marginal ratings; 2022/23–2023/24 OUT OF SCOPE (pre-ELCC regime, not intaken) | **CHARTERED + DISPATCHABLE r#46** | `claude/capx-d75-pjm-vre-elcc-vintage` | Opus | pjm | **Sign PRE-DECLARED: census DOWN 0.6–1.4 GW, residual WIDENS** — rule 14 says do it anyway |
+| **D76 T1-H SCREEN PEAK FROM MEASURED HINDCAST LOAD (D67 §8(a))** | Phase 0 (zero LP): six-ISO census of the de-grown seam peak vs the measured hindcast peak per solve year — all 24 committed T1-H bundles run `weather_year=2024` / 2021–2025 / `demand_growth_vintage=None`; per-ISO screen year fixed; HIT/MISS against the board's I7/I12 sign. Phase 1 (held): hindcast-only measured-peak gate, default-off, one seam | **CHARTERED r#46 — PHASE 0 DISPATCHABLE; phase 1 on the director's release; ARMING = owner card** | `claude/capx-d76-t1h-screen-peak` | Opus | code → the ISO phase 1 names | Predicate read by the D67 lane (§2.2, quoted) — the r#45 precondition is met before issuing |
+| **D60-R4 THE GROWTH-HUNK RE-ATTRIBUTION (AM.1 re-issued fresh)** | §5.0f dating; dated correction blocks under D60's closed §5.4/§5.5 (never rewriting); the two provenance strings; the ONE earned `pjm-t1f` gates-off control at HEAD; drift window `15631b8c..HEAD` classified hunk by hunk (incl. #5033) before the solve | **ISSUED r#46 am.1 — D60-R3 merged (#5038) with the hunk unrecorded** | `claude/capx-d60r4-growth-hunk-attribution` | Opus | pjm | Sole board writer until it merges; falsifier in the PR title serves the D48 card |
+| **D63 MISO + CAISO CURATED DOF ROWS (Q37 limb) + D62's SUFFIXED REGISTRATION** | Seven fields' committed identification sources pre-declared, rows written keyed (ISO, field), artifact-only re-scores of bare `miso-t1f` / `caiso-t1f` (FC-7 the only row that may move); `pjm-t1h-d62-pubbar` registered SUFFIXED, DO-NOT-ARM | **CHARTERED + DISPATCHABLE r#46 am.1 (board write after D60-R4 merges)** | `claude/capx-d63-miso-caiso-dof-rows` | Opus | code | Records-only; a field with no citable source gets NO row |
+| **D77 CCS RETROFIT EMISSION-RATE SEAM (SCN-WS2b §5.3 / §8.1)** | `ccs.py:572`'s `emission_rate_co2 × (1 − capture)` never reaches dispatch (0.3745 → 0.3745 across a unit's own retrofit year; NEISO 2030 `gas_cc_ccs` 0.4149 vs 0.4663 unabated on 9.0 GW); phase 0 traces the downstream overwrite; one-mechanism fix with zero DOF + test; cache-epoch entry; NEISO t1f screen; §8 blast radius of every retrofit-carrying bundle | **CHARTERED + DISPATCHABLE r#46 am.1 — a DEPENDENCY of D65-B's batch; Stage A-POLICY (SCN S5) holds on it** | `claude/capx-d77-ccs-emission-rate-seam` | Opus | neiso | Dispatch defect as well as accounting (carbon adder = rate × price); inverts NEISO's headline CO2 |
+| **D65-B (RELEASE NOTE r#46 am.1)** | — | **RELEASED for items 1–5 (extract, Act B, Act A flip, re-key declaration, ERCOT screen); item 6 (the every-bare-key batch) HELD until D77's fix merges — one batch at one HEAD carrying `d14a7ed0`, #5033 and the CCS-rate repair; classify all three hunk by hunk first** | `claude/capx-d65b-coupled-arming` | Opus | all | Its batch also lands the whole T1-F board post-hunk (§0aq.1 (ii)) |
+| **D58 (RELEASE NOTE r#46 am.1)** | — | **RELEASED: D60-R3 merged; its stated control (committed bare `pjm-t1h`) is PRE-hunk on `DEMAND_GROWTH_RATES["PJM"]` by the D67 lane's measurement, so form 4 is VOID and D58 solves a same-HEAD control for its screen span (rule 29(b)); classify #5033 too** | `claude/capx-d58-pjm-sectorgate` | Opus | pjm | The D67 lane and D74/D75 share PJM hindcast surfaces on different seams — merge-order care, not a dependency |
 | **D37 NEISO T1-H AT ARMED POSTURE** | The armed re-measure + paired control (Q28) | **LANDED** PR #4619 — **post-wave years SCORE; armed positions +0.37/−3.26/+0.14 pts of the real FCAs** (control +21.13/−1.44/−5.34); FC-3 blind to the lever; retirements flip to −27 % under; storage 0.000 GW refutes its own headline by its own falsifier; **P9 flip condition FAILS → default stays OFF, self-executing** | `claude/capx-d37-neiso-t1h-armed-o98iy1` | **Opus** | §0ab.1. The position defect is closed at NEISO; the margin-side error is now the exposed object. |
 | **T16-A T1.6 RE-POINT EXECUTION** | Owner ruling Q27: re-point T1.6 to `entry_rate_limits`, 2 rungs, artifact-only FC-6 re-score | **LANDED** PRs #4555/#4558 — **outcome B, the honesty clause FIRED**: REC dual at the $50 ACP ceiling in all 50 arm-years (VRE 4.1→37.1 GW), series constant, battery row **CAVEAT-measured**; the lever IS live (8/18 metrics move); no third lever tried; one leaf moves, no preserved key needed | `claude/capx-t16a-ladder-repoint-kk4vqy` | **Opus** | §0y.1. The RPS/ACP finding feeds D39. Q27 executed. |
 | **D34 CARBON_PRICE BELOW-BASE GUARD** | Owner ruling Q26: replace semantics + the below-base forecast warning pointing at `carbon_price_delta` | **LANDED** PRs #4534/#4537 — guard in with A/B regression evidence recorded; R4 closed | `claude/capx-d34-carbonprice-guard-lfpeld` | **Opus** | §0x.1. Q26 executed. |
@@ -5195,6 +5598,16 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-05 | **D70 NYISO `complete` RE-DECLARATION (fourth)** | `claude/capx-d70-nyiso-redeclaration` | **Fable** | code | r#42 am.1 — CONDITIONAL on card C-19 / Q51 = RE-DECLARE (STOPs otherwise); D56-R template on nyiso-196; nests the 09-05 withdrawn block whole; frontier not claimed; if landed, T3-NYISO-GOLDEN's precondition is met and Q45 stands (after D60-R2/-R3) |
 | 2026-09-05 | **D60-R3 THE D60 RELAUNCH, THIRD ISSUE** | `claude/capx-d60r3-completion` | **Opus** | caiso, pjm, neiso | r#42 am.2 — owner ruled D60-R2 DEAD; §D60-R2 verbatim + the D71 blast-radius section (bisect the HEAD drift on D65 §3c's instrument; classify every committed bundle pre/post-hunk); twin check re-armed; push each leg |
 | 2026-09-05 | **D65-B COUPLED ARMING** | `claude/capx-d65b-coupled-arming` | **Opus** | all | r#42 am.2 — owner ruling Q47; D65 §9's six items; ERCOT t1f screen (carbon-0 witness) then the full bare-key batch; RELEASED-CONDITIONAL on D60-R3's finding merging |
+| 2026-09-06 | **D60-R3 AMENDMENT 1** | `claude/capx-d60r3-completion` (continue; else D60-R4 fresh from the same text) | **Opus** | pjm | r#46 — legs 4/5 straddle SCN-LOAD `d14a7ed0`: §5.0f dating, the pre-declared peak/ratio decomposition, two provenance corrections, the ONE earned `pjm-t1f` gates-off control at HEAD (deleted before merge), close + PR |
+| 2026-09-06 | **D73 D23 R1 GUARD + ARCHIVED-carbon25 P1 CALL** | `claude/capx-d73-fc6-p1-guard` | **Fable** | code | r#46 — zero LP; existing L872 guard read first (rule 19); bare-row FC-6 monotone census; three-way recommendation; no board byte |
+| 2026-09-06 | **D74 PJM STEAM + OIL BELOW-CAP CONVENTION** | `claude/capx-d74-pjm-steam-oil-convention` | **Fable** | pjm | r#46 — the NEW label for the object mis-queued as "D67"; design-first from published self-supply/FRR data (STOP if the published record cannot separate it), default-off build, rule-29 screen, full window; sign pre-declared on FC-3 |
+| 2026-09-06 | **D75 PJM VRE ELCC VINTAGE (D66 card B)** | `claude/capx-d75-pjm-vre-elcc-vintage` | **Opus** | pjm | r#46 — DY-vintage axis via D48's seam, values from `elcc/pjm/pjm.csv` reconciled by test, Table 5 mix for the one new operand; sign PRE-DECLARED to widen the residual; 2022/23–2023/24 out of scope |
+| 2026-09-06 | **D76 T1-H SCREEN PEAK — PHASE 0** | `claude/capx-d76-t1h-screen-peak` | **Opus** | code | r#46 — D67 §8(a) routed: six-ISO zero-LP census of the de-grown seam peak (generalize `d67/gdrift_peak_probe.py`), per-ISO screen year fixed, HIT/MISS vs the board; phase 1 held on the director's release; arming = owner card |
+| 2026-09-06 | **D60-R4 GROWTH-HUNK RE-ATTRIBUTION (AM.1 fresh)** | `claude/capx-d60r4-growth-hunk-attribution` | **Opus** | pjm | r#46 am.1 — D60-R3 merged/closed without the hunk; §D60-R3 AM.1 verbatim + dated correction blocks (never rewrites) + the `15631b8c..HEAD` drift audit before the one control |
+| 2026-09-06 | **D63 MISO + CAISO DOF ROWS + D62 REGISTRATION** | `claude/capx-d63-miso-caiso-dof-rows` | **Opus** | code | r#46 am.1 — Q37 limb: PREDECL first, seven fields' committed sources, rows keyed (ISO, field), artifact-only re-scores, D62's suffixed registration; board write after D60-R4 |
+| 2026-09-06 | **D77 CCS EMISSION-RATE SEAM** | `claude/capx-d77-ccs-emission-rate-seam` | **Opus** | neiso | r#46 am.1 — SCN-WS2b §8.1 routed via SCN r#9 (S5 holds Stage A-POLICY on it); phase 0 trace, zero-DOF fix + test, cache epoch, PRECOMMIT'd keys, NEISO t1f screen with same-HEAD control, §8 blast radius; lands BEFORE D65-B's batch |
+| 2026-09-06 | **D65-B RELEASE** | `claude/capx-d65b-coupled-arming` | **Opus** | all | r#46 am.1 — items 1–5 released; item 6 batch held on D77's merge; three hunks (`d14a7ed0`, #5033, D77) classified before the batch |
+| 2026-09-06 | **D58 RELEASE** | `claude/capx-d58-pjm-sectorgate` | **Opus** | pjm | r#46 am.1 — released on D60-R3's merge; same-HEAD control for the screen span (form 4 void on PJM) |
 
 ## 5. History (compacted)
 

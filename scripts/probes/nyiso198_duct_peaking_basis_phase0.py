@@ -45,6 +45,27 @@ Measurements, all from committed artifacts:
   **A-1**  the (b-) deficit re-attributed three ways -- availability short
            (meter above the LP's envelope), peak-band short, econ-band short.
 
+**CORRECTION (nyiso-198 Addendum A, same session).**  Two numbers this probe
+writes are WRONG and are superseded by
+``_nyiso198_rebuild_checks_2024.json``, which measures the same quantities on
+the actual rebuilt fleet:
+
+* ``mw_rebanded_peak_to_econ`` is computed as ``lp_pmax * pct_row_scoped``, but
+  the fleet builder sets ``peak_cap = grid_cap * pct_peak / (100 - pct_mr)``.
+  At any plant with a must-run share the two differ.  The correct per-plant
+  move is ``peak_off * pct_row / pct_cur``, which reproduces the rebuild to
+  0.000 MW.  The fleet total is **726.53 MW across 17 plants**, not the 647.9
+  across 11 this probe reports.
+* the "override plant" split inferred here from
+  ``|pct_current - lp_peak_band_share_pct| < 0.15`` misfiles four CHP plants
+  (50006, 50458, 52168, 54131) for the same reason.  The override set is
+  enumerable directly and exactly: ``_chp_layup_cohort`` u ``_chp_duty_curve``
+  u ``_reserve_duty_cohort``.
+
+Everything else here — the F-0 population census, the per-plant EIA-860 gap
+decomposition, the (b-) three-way attribution and the meter-vs-capability
+comparison — is unaffected.
+
 Nothing here is gated on any residual.  Writes
 ``results/calibration/_nyiso198_duct_peaking_basis_phase0.json``.
 

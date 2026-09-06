@@ -370,13 +370,24 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    # Sibling module, imported lazily to avoid the cycle (it imports this one
+    # inside its own main()). Bound once here for both uses below: the Y-24
+    # declaration ratchet and the namespace rebuild.
+    from scripts import register_forecast_run as RF  # noqa: PLC0415
+
     if not args.page_only:
         if args.bundle is None:
             parser.error("--bundle is required unless --page-only")
-        SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
         sidecar = build_sidecar(
             args.bundle, preserve_invariants=args.preserve_invariants
         )
+        # Y-24 declaration ratchet. This legacy entry point writes the canonical
+        # sidecar itself, so without this call it is a bypass around the gate at
+        # the single registration seam (register_forecast_run). Same gate, same
+        # ledger, same seam semantics: it runs before any write, so a refused
+        # registration leaves nothing behind.
+        RF.enforce_invariant_declaration_gate(sidecar)
+        SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
         sidecar_path = SIDECAR_DIR / f"{sidecar['run_id']}.json"
         sidecar_path.write_text(json.dumps(sidecar, indent=2))
         print(f"[register] wrote sidecar {sidecar_path}")
@@ -388,8 +399,6 @@ def main(argv: list[str] | None = None) -> int:
     # manifest rebuild there rather than regenerating the retired page. The
     # render_page helper above is kept for any external caller but is no longer
     # wired to forecast-validation.html.
-    from scripts import register_forecast_run as RF  # noqa: PLC0415 (sibling; avoids cycle)
-
     RF.reindex(args.site_dir if args.site_dir is not None else RF.REPO)
     return 0
 

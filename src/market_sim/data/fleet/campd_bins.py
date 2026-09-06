@@ -683,6 +683,21 @@ def apply_plant_emission_rates_v2(
     is a legitimate SO2 value for gas units. NOx/SO2 are secondary: this changes
     no CO2 rate and no merit order.
 
+    **The measured rate is the HOST STACK's, so a unit with a capture island
+    books it net of that unit's own capture** (capx D77): CO2 is set to
+    ``measured × (1 - gen.ccs_capture_fraction)``. The fraction is 0.0 on every
+    unabated unit, so this is an exact no-op outside a CCS cohort. It exists
+    because this function runs EVERY forecast year, downstream of capacity
+    evolution (``build_dispatch_fleet``), and matches on ``(plant_code, coarse
+    fuel class)`` — and ``fuel_class("gas_cc_ccs") == "gas"``, so a retrofitted
+    unit still matches its own host row. Without the factor the retrofit's
+    capture was overwritten on the first dispatch build after conversion, in the
+    dispatch fleet and (the CAMPD path concatenates rather than copies) in the
+    persistent fleet, leaving the unit dispatching, pricing its carbon adder and
+    accounting at its uncaptured intensity. NOx/SO2 are NOT scaled — the model
+    carries no capture co-benefit parameter for them.
+    docs/handoffs/FINDING-capx-d77-2026-09-06.md
+
     When ``config.control_retrofit_forward`` is set and this is a **forecast**
     year, each pollutant's measured map is stepped by any announced EIA-860
     control online by ``year`` (SCR/SNCR → NOx, FGD/DSI → SO2, from the
@@ -725,7 +740,19 @@ def apply_plant_emission_rates_v2(
         co2, nox, so2 = triple
         touched = False
         if co2 > 0.0:
-            gen.emission_rate_co2 = co2
+            # capx D77: the measured rate is the HOST STACK's intensity, so a
+            # unit carrying a capture island emits that rate net of its own
+            # capture. Booking the two together here is what keeps the measured
+            # input entering every year (rule 13 [R-MEASURED]) while a CCS unit
+            # is never silently restored to its uncaptured rate -- one
+            # composition point, not a second capture mechanism (rule 19
+            # [R-ONE-MECH]). ``ccs_capture_fraction`` is 0.0 on every unabated
+            # unit, so this is an exact no-op for the whole fleet outside the
+            # retrofit cohort and for every backcast (no measured backcast fleet
+            # contains a converted unit). NOx/SO2 are deliberately NOT scaled:
+            # the model carries no capture co-benefit parameter for them and
+            # inventing one would be a new free parameter (rule 21 [R-DOF]).
+            gen.emission_rate_co2 = co2 * (1.0 - float(gen.ccs_capture_fraction))
             touched = True
         if nox > 0.0:
             gen.nox_rate = nox
@@ -750,7 +777,10 @@ def apply_plant_emission_rates(
     artifact (multi-plant peaker bins, the legacy aggregated fleet), keep
     their fuel-default rates. CO2 and NOx are overridden only when the
     measured rate is positive; SO2 is always set (zero is a valid value for
-    gas units, and the default is zero anyway).
+    gas units, and the default is zero anyway). As in
+    :func:`apply_plant_emission_rates_v2`, CO2 is booked net of the unit's own
+    ``ccs_capture_fraction`` (capx D77) — 0.0, and so an exact no-op, on every
+    unabated unit.
 
     Args:
         generators: The fleet to mutate in place.
@@ -771,7 +801,11 @@ def apply_plant_emission_rates(
             continue
         co2, nox, so2 = plant_rate
         if co2 > 0.0:
-            gen.emission_rate_co2 = co2
+            # capx D77, identical to the v2 branch above: the measured rate is
+            # the host stack's, so a unit with a capture island books it net of
+            # its own capture. 0.0 on every unabated unit, so this branch is
+            # byte-identical for every fleet that contains no converted unit.
+            gen.emission_rate_co2 = co2 * (1.0 - float(gen.ccs_capture_fraction))
         if nox > 0.0:
             gen.nox_rate = nox
         gen.so2_rate = so2

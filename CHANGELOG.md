@@ -261,6 +261,45 @@ projection, then UNT23). openpyxl's read-only parser is ~10 µs/cell; the three 
   drift audit since the gated base, and the not-widened follow-up (`data/egrid.py`, a
   fourth read of the same workbook family, deliberately left alone as out of scope):
   `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-2.
+## 2026-09-06 — wallclock A-6: `malloc_trim` at the cold-P1 seam is MEASURED-NEGATIVE; the seam's RSS step is live payload, not allocator retention
+
+Docs + the AFTER golden manifest. **No file under `src/` changes in this entry.**
+Nothing promoted, registered, or dashboard-touched; no `ScenarioConfig` field, keeper
+shard, marker or matrix cell. This is the evidence half of wallclock A-6: the code
+(`pipeline/solve.py` +12, new `utils/heap.py`) merged ahead of it via PR #4893 /
+commit `c2cb9a78`, with only the BEFORE arm's manifest (desk log §2.8, "evidence
+owed"). **The measurement says the trim does not earn its place; removing it is
+recommended, and is the owner's call** — it is byte-identical either way, so leaving
+it carries no correctness risk.
+
+- **The test.** `malloc_trim(0)` immediately after `model = None` on the cold-P1 route
+  in `pipeline/solve.py::run_energy_solve`, on the hypothesis
+  (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6) that the 12.1–13.4 GB ERCOT year
+  peak is the P1-rebuild moment and glibc is holding the freed P0 arena. Both arms are
+  `capture_keeper_goldens.py --iso ERCOT__carveout-2023` (registered 2023–2025) on merge
+  base `2886235c`, `MARKET_SIM_MEM_DEBUG=1`, determinism pin, 6 GiB swap armed.
+- **The result.** Process peak VmHWM **13.28 → 13.27 GB** — the target (get under the
+  14 GB cgroup by trimming) is unmet. Seam recovery 0.05–0.23 GB; `p1_post` +0.3 / +0.5
+  / +0.1 s, inside this box's noise but the same sign in all three years.
+- **Why (the reusable part).** Each cold-P1 model's `after addRows` RSS sits ~1.15 GB
+  above the P0 model's on a byte-identical LP, but that step is **live** payload —
+  `r0` (`dispatch` + `emissions`), `markup`, `mc_bid`, and the floored
+  `p1_fleet_arrays` (`min_gen` + `availability`) — ≈1.0 GB of the 1.15 GB,
+  arithmetically. A trim frees only what is already free. The next lever on the ERCOT
+  peak is narrowing what stays alive across the seam, not allocator tuning; the
+  year-loop `_malloc_trim` in `run_calibration_full.py` is unaffected and still earns
+  its place.
+- **Byte gate.** `regression_gate.py --mode byte` check [1] **PASS** (9 files, 34
+  numeric columns, `atol=rtol=0`), 0.000 % reshuffle in all three years, manifests
+  10/10 identical. Overall `RESULT: FAIL` is checks [4] only — the NYISO Long Island
+  TSL gap and a stale `status/NEISO.js` — both reproduced identically on the merge-base
+  control, i.e. pre-existing on main.
+- **Instrument caveat.** The `ERCOT__carveout-2023` capture key was retired by owner
+  ruling R-AW (Y-14) while this ran; both arms used it on the merge base where it still
+  resolved, with the identical config, so the A/B is internally valid. A re-run at HEAD
+  must use `--iso ERCOT` (forward, {2024, 2025}).
+- Full row, the per-model RSS ladder and the corollary for the next session:
+  `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK A-6.
 
 ## 2026-09-05 — capx D64: the CCS retrofit's FOURTH seam adjudicated (Phase 0, zero solves) — both fixed-cost legs are TPC-fractions in their source and scale with the island; PJM's 2029 residual closes on the arithmetic; the capture VOM adder is found uncited and 2.7–3.6× every published basis
 

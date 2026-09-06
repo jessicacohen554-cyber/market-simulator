@@ -248,3 +248,33 @@ whose effective signal is **+$25.00 above base in every one of the 25 years**. O
 snapshot family `bau-prera-2026-08-31` still carries `carbon25`. An R1 premise guard would
 therefore PASS the live pair and fire only on the archived arm. Details and the director
 recommendation: D72 §6.1 and §8(3).
+
+---
+
+## Cross-reference added 2026-09-06 by capx D73 — §8 R1 is BUILT (capx-D26) and now askable of committed configs; the archived `carbon25` P1 FAIL is NOT reclassified
+
+*Appended by session D73 (`docs/handoffs/FINDING-capx-d73-2026-09-06.md`). Nothing above is
+edited — the same discipline §8 R3 applied to D21's file and D72 applied here.*
+
+- **R1 exists.** `scripts/check_forecast_invariants.py::carbon_pair_premise` (capx-D26,
+  2026-09-01) is the premise assertion §8 R1 routes, and `forecast_verdict.score_fc6`
+  reclassifies a premise-FAIL P1 to the FC-6.2 MIS-CONSTRUCTED CAVEAT; the battery twin is
+  `run_driver_battery.carbon_ladder_premise`. D73 built no second guard (rule 19). What D73
+  added is the route R1 literally names — *"from each arm's COMMITTED config"*:
+  `carbon_pair_premise_from_configs` (the one shared core), `scenario_config_from_run_config`,
+  `run_paired_run_configs`, and `--paired-run-configs <base_rc> <high_rc>`, which prints the
+  year-by-year effective-carbon table of any committed pair at zero LP.
+- **The table, over every committed FC-6 carbon pair** (D73 §2.3): the live `bau` / `bau-d46`
+  pairs and the `bau-prera-2026-08-31` `carbon_plus25` pair are all **+$25.00/t in every one of
+  25 years** (MONOTONE); the archived `bau-prera-2026-08-31` `carbon25` arm is **−$1.05 (2026) →
+  −$107.16 (2050), 25/25 inverted** — §2.5 above to the cent — and is the ONLY inverted pair in
+  the repository. No committed `paired_invariants.json` scores it any more (D26 replaced that
+  family's record in place); it survives on the board solely under the two suffixed
+  preserved-baseline keys `neiso-t3-pre-fc5` and `neiso-t3-pre-fc6repair`, which no registered
+  sidecar resolves to.
+- **The "FF program consequence" question in §8 is answered by recommendation, not by act:** D73
+  §4 recommends option (ii) — leave the archived rows as scored, cross-reference — and pins what
+  the guard WOULD write for them as a test (`tests/scoring/test_forecast_verdict.py::
+  ArchivedCarbon25ReclassificationTests`: `paired P1 → CAVEAT "P1 MIS-CONSTRUCTED pair (vacuous
+  evidence, FC-6.2)"`, FC-6 FAIL → CAVEAT, determination HOLD unchanged). The board was not
+  written; the director serves it.

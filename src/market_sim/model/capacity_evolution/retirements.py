@@ -68,6 +68,7 @@ from market_sim.config.constants import (
     PLANNING_RESERVE_MARGIN_BY_ISO,
     PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT,
+    RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
     RENEWABLE_ELCC_CURVES_BY_ISO,
     RENEWABLE_NQC_CURVES_BY_ISO,
@@ -81,6 +82,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone, map_area
 from market_sim.config.capacity_market import (
+    resolve_capacity_adequacy_requirement_published,
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_supply_clearing,
 )
@@ -1684,6 +1686,55 @@ def resolve_demand_response_supply_mw(
     return None
 
 
+def resolve_published_reliability_requirement_mw(
+    config: ScenarioConfig | None, iso: str | None, year: int | None
+) -> float | None:
+    """Published RTO Reliability Requirement (UCAP MW, gross of DR), or None.
+
+    The PJM analogue of :func:`resolve_published_net_icr_mw` (capx D67,
+    2026-09-06 — see :data:`~market_sim.config.capacity_market.
+    RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO`'s citation block for the
+    identification and the D66 measurement it repairs). Resolution, in order:
+
+    1. Gate: :func:`~market_sim.config.capacity_market.
+       resolve_capacity_adequacy_requirement_published` must hold (the
+       default-OFF ``capacity_adequacy_requirement_published_by_iso`` mapping
+       carrying a ``True`` row for ``iso``); otherwise ``None`` — the caller
+       keeps its ``peak × FPR`` product, byte-identically.
+    2. ``year`` maps to the delivery year the screen prices through
+       :func:`capdel.resolve_delivery_year` — the SAME helper the FPR path
+       uses, so the two constructions can never key differently (PJM's
+       June-start delivery year: model calendar ``Y`` -> ``"Y/Y+1"``).
+    3. An in-table delivery year returns its ABSOLUTE published MW — the
+       auction's own denominator, and the model's peak drops out entirely
+       (``∂R/∂peak = 0``, the mechanism's defining property).
+    4. Everything else — pre-table, an in-table gap (PJM's 2026/27 and 2027/28
+       publish an FPR but no Reliability Requirement row), and every year
+       strictly BEYOND the last published row — returns ``None`` and falls
+       through to the FPR path, which itself holds-last the published FPR.
+
+    **That fall-through IS this series' hold-last rule, declared ex ante**
+    (``PRECOMMIT-capx-d67-pjm-requirement-operand-2026-09-06.md`` §4), and it
+    is why no hold ratio is registered here: for PJM the last published
+    RR-to-forecast-peak ratio *is* the published FPR, since PJM constructs
+    ``RR = forecast peak × FPR`` by definition. So the held bar still scales
+    with load (an absolute MW held over a 2029-2050 horizon would fail the
+    rule-13 forward test), no new constant is introduced, and the mechanism's
+    footprint is exactly the delivery years the published table covers.
+
+    The returned quantity is GROSS of demand response — the same basis
+    ``peak × FPR`` returns at this seam — so the caller's D48 DR-as-supply
+    branch decides netting unchanged. ``year=None`` returns ``None``.
+    """
+    if year is None or not resolve_capacity_adequacy_requirement_published(config, iso):
+        return None
+    table = RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    published = table.get(capdel.resolve_delivery_year(iso, year))
+    return None if published is None else float(published)
+
+
 def gross_adequacy_requirement_mw(
     config: ScenarioConfig, iso: str, peak_demand_mw: float, year: int | None = None
 ) -> float:
@@ -1700,6 +1751,15 @@ def gross_adequacy_requirement_mw(
     published MW, and :func:`resolve_adequacy_requirement_mw` consults it
     first, unchanged.
     """
+    # capx D67 (GATED default-off): the ISO's OWN published Reliability
+    # Requirement in MW replaces the ``peak × FPR`` RECONSTRUCTION below, so
+    # the bar the floor, the backstop and the CR-1 position test stops moving
+    # with the model's peak forecast in every in-table delivery year. None
+    # whenever unarmed, off-registry, pre-table, in-gap, past the forward edge
+    # or year-less -> the ladder below runs byte-identically.
+    published_mw = resolve_published_reliability_requirement_mw(config, iso, year)
+    if published_mw is not None:
+        return published_mw
     fpr = resolve_pre_reform_pool_requirement(config, iso, year)
     if fpr is None:
         fpr = resolve_forecast_pool_requirement(iso, year)

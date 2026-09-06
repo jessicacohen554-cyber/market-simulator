@@ -1,5 +1,504 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟠 **THE FLIP SET IS 3 OF 6 AGAIN — AND ONE OF ITS THREE REDS IS NOT A CODE DEFECT** — RECORDS-ONLY LANE **v36**, director pin `b618ed4b` (04:06:54Z; dispatch says 04:10Z) → **THIS LANE'S PIN `8e3393b1`** (04:23:21Z), main at close **`d24db885`** (04:37:18Z). **THERE IS NO v35 ENTRY ON THIS BOARD.** G2 LEG 4 READS `protected: false` AT A **SEVENTEENTH** READING, this lane's own API call. The director's 8-green/1-red gate tally is CONFIRMED — but the red has changed gates since v34 and its object has GROWN. And two of the board's own citation instruments — line numbers, and shas below this container's clone horizon — are shown here to be self-invalidating.
+>
+> **Records only.** No solve, no scoring, no registration, no keeper shard, no
+> marker, no freeze file, no matrix shard, no workflow, no `program-status.json`,
+> no `status/*.js`, no `results/calibration/`, no `CLAUDE.md`. It adjudicates
+> nothing and **rewrites nothing in v28 … v35** — the entries below are *dated
+> records*. **v36 is appended ABOVE v34**, per dispatch, insertion-only.
+>
+> ## ⚠️ **THERE IS NO v35. THE BOARD SKIPS FROM v34 TO v36.**
+>
+> **Verified structurally, not assumed:** the board's version headers run
+> **v34 (line 3) → v33 (line 427) → v32 → v31 → v30 → v29 → v28b → v28 → v27 …**
+> *(line numbers as read AT THE PIN, before this entry was inserted; v36's own 499
+> lines move them to 502 / 926 / 1353 …, which is the decay described below)*
+> with **no v35 header anywhere in the file**. The director's handoff at pin
+> **`34f3ce35`** (verified `2026-09-05T20:40:52-07:00` = **2026-09-06T03:40:52Z**,
+> matching the dispatch's "~03:4xZ") **was never recorded on this board.**
+>
+> **Everything this entry carries from that handoff is therefore labelled
+> "dispatch-reported at `34f3ce35`, re-derived at v36's pin" — NEVER "as v35
+> read".** There is no v35 reading to differ from. Where the director's figures
+> and this lane's disagree, the disagreement is between a *dispatch* and a
+> *measurement*, not between two board entries.
+>
+> **PIN DISCIPLINE.** Fetched `origin/main`, pinned **`8e3393b1`**, took **every**
+> reading below there, once. `b618ed4b..8e3393b1` = **22 commits**, and
+> `b618ed4b` is a **verified ancestor** of this pin (`merge-base --is-ancestor`
+> → 0). ⚠️ **`b618ed4b` is the head of `claude/model-audit-director-7an524`** —
+> the director's own lane branch, not a `main` commit; it is an ancestor
+> regardless, so the pin is sound, but it is a lane head and this lane records it
+> as one. **MAIN MOVED UNDER THIS LANE:** re-polled at close →
+> **`d24db885`** (04:37:18Z, PR #5058), so `8e3393b1..d24db885` is drift this
+> entry does not cover. Dated coda at the foot. Every `$?` below was read on its
+> own line, one gate per invocation, never piped and never inside a substitution;
+> the working tree was swept directly (never `git grep` repo-wide — partial clone,
+> per `CLAUDE.md` "Cloning & session data").
+>
+> ---
+>
+> ## 🔴🔴 **THE FINDING THAT OUTRANKS THE NUMBERS: THIS CONTAINER'S CLONE IS *SHALLOW*, AND TWO OF THE BOARD'S CITATION INSTRUMENTS FAIL SILENTLY BECAUSE OF IT**
+>
+> This is recorded first because it **conditions four of the nine legs below**, and
+> because a records lane that reported those legs without it would have published
+> confident numbers that are horizon artifacts.
+>
+> ```
+> git rev-parse --is-shallow-repository   →  true
+> git rev-list --count HEAD               →  611
+> .git/shallow                            →  17 graft boundaries
+> ```
+>
+> **Consequence 1 — director-cited and v34-cited shas are UNRESOLVABLE here, and
+> the failure mode is `fatal: ambiguous argument`, which reads like "wrong sha"
+> rather than "below the horizon".** Four of the shas this dispatch asked me to
+> difference against cannot be resolved in this container at all:
+>
+> | sha | cited by | as | resolves here? |
+> |---|---|---|---|
+> | `4b7a515e` | v34 | ERCOT shard touch, 19:02:03Z | 🔴 **no** |
+> | `8d6ccda3` | director | ERCOT promoting merge, 19:04Z | 🔴 **no** |
+> | `9fd5e5b3` | director | cache-agreement pair owner | 🔴 **no** |
+> | `e090fc1f` | director | cache-agreement pair owner | 🔴 **no** |
+>
+> **This lane does NOT claim those commits do not exist.** It claims the weaker and
+> true thing: **they are below this clone's horizon and cannot be read here.** The
+> distinction matters — v34 read `4b7a515e` successfully in *its* container, so the
+> object is real and the instrument, not the record, is what changed.
+>
+> **Consequence 2 — `git log -1 -- <path>` silently returns the GRAFT BOUNDARY when
+> the true touching commit is below it.** For `frontend/data/backcast/keepers/ERCOT.json`
+> it returns **`cf5425f7`** (#4816 merge, 21:05:56Z), which `.git/shallow` lists as
+> a graft point and which `git rev-list --parents` shows with **no parents** — so
+> `git show --stat` reports the whole file as "+61 insertions", as a parentless
+> commit must. **That is not a shard touch. It is the horizon.** A lane that took
+> it at face value would publish an ERCOT R-AI clock of 2026-09-07 **21:05Z** —
+> two hours late, sourced from a merge that touched nothing. The clock table below
+> reports ERCOT as **unavailable at this pin** instead.
+>
+> **Consequence 3 (independent of the clone) — LINE-NUMBER CITATIONS INTO THIS
+> BOARD ARE SELF-INVALIDATING.** The dispatch asks me to cite **board line 912**
+> for the one-act point. **Line 912 no longer holds that row.** The v32 queue row
+> `| **Branch-protection flip (G2 leg 4)** | …` now sits at **line 1336**. The
+> arithmetic is exact and is the whole explanation: **v34 inserted 424 lines above
+> it** (v34 at line 3, v33 at line 427), and **912 + 424 = 1336**. Every records
+> lane appends above, so *every* line citation on this board decays by exactly the
+> next entry's length — **including every line number in this entry — and not merely
+> when v37 lands: v36's own 499-line insertion moves that row from 1336 to 1835
+> the instant this entry is committed.** The durable citation is the row's *text* or its §-version
+> anchor. Recorded, not adjudicated; v34's citation was correct when written.
+>
+> ---
+>
+> ## NINE-GATE LEDGER — **re-run at `8e3393b1`, `uv run --frozen`, each gate ALONE, `$?` read directly**
+>
+> | gate | director @ `b618ed4b` (dispatch) | v34 @ `5fdd4374` | **this lane @ `8e3393b1`** | moved? |
+> |---|---|---|---|---|
+> | `audit_keepers.py --check` | 0 | 0 | **0** — `PASS: 0 failure(s), 0 warning(s)`; 6 ISO rows + holdout/marker/status | — |
+> | `check_registry_payload_parity.py` | 0 | 0 | **0** — **15 runs**, **48 bundle dirs swept**, 0 known-unsynced | 🔵 14→15, 47→48 |
+> | `check_gate_a_provenance.py` | 0 | 0 | **0** — 6 rows, keeper identity + marker state match | — |
+> | `check_mechanism_matrix.py` | 0 | 0 (+6 anchor WARN) | **0**, **ZERO anchor WARNs** — 197 field + 49 row + 169 path anchors, 0 unresolvable beyond the ratchet | 🟢 **6 → 0** |
+> | `check_forecast_staleness.py` | 0 | 0 (3 WARN, 29 commits) | **0**, **2 WARN**; solve-affecting Δ **4** commits (threshold 10); **88** epochs; 184 stamped / 158 scored | 🔵 29 → **4** |
+> | `check_bench_freshness.py` | 0 (dispatch) | **1** — 24 parts, 1 STALE | **0** — 24 parts, **0 STALE**, 21 superseded-stamp-but-reproducing, 21 engine-drift | 🟢 **CLEARED vs v34** |
+> | `check_golden_manifest.py` | 0 | 0 — 52 / 93 (29+64) / 15 / 9 / 7 | **0** — **55 manifests, 96 entries (32 enforced / 64 legacy)**, 15 pruned-provenance, **9** stale-vs-live-keeper, **8** retired key | 🔵 counts grew |
+> | `ruff check .` | 0 | 0 | **0** — all checks passed | — |
+> | `ruff format --check .` | **1** (2 test files) | 0 | **1** — **3 files**, 1354 already formatted | 🔴 **RED, AND THE OBJECT GREW** |
+>
+> **8 OF 9 GREEN — the director's tally, confirmed to the digit. But it is not the
+> same 8 and 1 that v34 published, and the dispatch's own framing needs one
+> correction.**
+>
+> - **`check_bench_freshness` — v34's SOLE RED — IS GREEN HERE.** v34 read
+>   `1`, 24 parts, **1 STALE** (ERCOT/2022, `b2f21b9a00d3` vs `4254168edcfe`), and
+>   recorded it "🔴 UNMOVED, byte-for-byte" across two lanes. At this pin the same
+>   part reads **not stale**: 24 parts checked, **0 STALE**, ERCOT/2022 still on the
+>   superseded aggregate stamp `b2f21b9a00d3` but with its **payload sources hashing
+>   to `643eac24b565`, identical to HEAD's** — i.e. *"their numbers ARE
+>   reproducible. Provenance note only; not gated."* **The remedy v33 identified
+>   (regenerate, don't re-stamp) has been overtaken by a builder change that
+>   distinguishes the aggregate stamp from the payload fingerprint.** The Y-17
+>   charter's object is closed by fingerprint semantics rather than by a rebuild.
+>   The ERCOT `--rebuild-benchmark` queued behind the R-AI clock is, on this
+>   reading, **no longer gate-blocking**.
+> - **`ruff format` is the red, and it is a THIRD file worse than the dispatch
+>   states.** The director reports two *test* files. At this pin there are **three,
+>   and the newest is not a test**:
+>
+> | file | owning commit | committed | vs director pin |
+> |---|---|---|---|
+> | `tests/unit/model/test_capacity.py` | `8bc0feb5` capx **D67** | 2026-09-06 03:45:31Z | before |
+> | `tests/scoring/test_holdout_render_parity.py` | `0f33c08d` **rule 30(a)** | 2026-09-06 04:03:35Z | before |
+> | **`scripts/gen_nyiso198_attestation.py`** | `b74f8812` **nyiso-198** | 2026-09-06 **04:18:01Z** | 🔴 **AFTER — inside the 22-commit drift window** |
+>
+>   **The red did not merely persist across the 16 minutes between the two pins; it
+>   grew by one file, and the new file is under `scripts/`, not `tests/`.** The
+>   dispatch's characterisation ("2 test files") was accurate when taken and is
+>   already stale — which is the same ambient-merge-rate effect v33 measured, now
+>   observed acting on a gate's *object* rather than on a sha.
+> - **`check_mechanism_matrix`'s six anchor WARNs are gone** (v34: 6, all
+>   `scenarios.py` line-digit drift, each +10 lines). capx D67 ran `--fix-anchors`
+>   after inserting its field (`8bc0feb5`, commit body: *"inserting the field into
+>   scenarios.py shifted 11 unrelated rows' line anchors"*). **The same class of
+>   defect as Consequence 3 above — a line-number reference decaying under an
+>   insertion — and here it has a tool that repairs it.**
+>
+> ---
+>
+> ## 🟠 **THE FLIP SET — 3 OF 6, RE-READ PER JOB, ON A RUN SEVEN NEWER THAN THE DISPATCH'S**
+>
+> **Method, applied as stated: the newest COMPLETED `ci.yml` run whose head is a
+> verified ancestor of `main` at this pin.** The dispatch reads run **2613**
+> (`34010284718`, head `01eec173`). **That is not the newest qualifying run at this
+> pin — seven newer runs qualify**, and every candidate head was ancestry-checked
+> individually (`merge-base --is-ancestor` → 0 for all of
+> `b74f8812`, `29b1c757`, `9440f17d`, `15631b8c`, `0f33c08d`, `c9789b9d`,
+> `a8f42835`, `01eec173`). **This lane reads run 2620.**
+>
+> **Run 2620 · `34011199712` · head `b74f8812` · created 04:19:16Z · completed 04:28:33Z**
+>
+> | R-AE required check | verdict | failing step |
+> |---|---|---|
+> | `Ruff lint + format` | 🔴 **failure** | step 6 `Ruff format check` — **step 5 `Ruff lint` is GREEN** |
+> | `Pinned default cache key` | 🟢 success | — |
+> | `Structural refactor guards` | 🔴 **failure** | step 7 `facade re-export + persisted-identity tests` |
+> | `Cache-key registration guard` | 🟢 success | — |
+> | **`Fast test tier`** | 🔴 **failure** | step 5 `Fast pytest tier` (7m56s) |
+> | `Rule-22 quarantine gates` | 🟢 success | — |
+> | **R-AE SET** | **🟠 3 OF 6** | |
+>
+> **Non-set jobs — reported separately, NEVER counted toward the set:**
+>
+> | non-set job | verdict | vs v34 |
+> |---|---|---|
+> | `Forecast-invariant artifact audit` | 🔴 failure | unchanged |
+> | **`FR-22 backcast→forecast parity`** | 🟢 **success** | 🟢 **MOVED — v34 read this RED** |
+> | `FR-21 forecast-board staleness (WARN only)` | 🟢 success | unchanged |
+> | `Rule-28 mechanism-matrix guard` | 🟢 success | unchanged |
+> | **run-level `conclusion`** | **`failure`** | unchanged |
+>
+> **The director's count and the director's three named jobs are CONFIRMED — on
+> newer evidence than the dispatch used, which is the stronger form of the same
+> claim.** Two riders:
+>
+> 1. **`Ruff lint + format` is one JOB carrying two steps, and only the format step
+>    is red.** A reader differencing this against the local ledger (where
+>    `ruff check` and `ruff format --check` are two of the nine gates) will
+>    otherwise mis-map one red job onto two red gates. Lint is green in both places.
+> 2. **Y-18's object is CLOSED, and this lane verified it locally, not from the job
+>    badge.** `check_forecast_parity.py` → **exit 0**, `SUMMARY: 6 keeper
+>    posture(s); 0 unaccounted, 14 filed gap(s), 0 registry failure(s), 0
+>    error(s)`. v34 recorded **2 unaccounted** — `ercot_storage_as_soc_reserve` and
+>    `nyiso_seam_deliverability_envelope`. **Both declarations have landed.** Filed
+>    gaps 13 → 14. This is a non-set job, so it does not move the set; recorded
+>    because v34 chartered Y-18 on exactly this object.
+>
+> ---
+>
+> ## 🔴 **LEG 3 — THE FIVE FAST-TIER FAILURES, REPRODUCED LOCALLY AT THIS PIN**
+>
+> `uv run --frozen python -m pytest -n 2 -m "not slow and not integration and not fulldata"`
+> — the CI step verbatim (`ci.yml:551`).
+>
+> ```
+> 5 failed, 8534 passed, 43 skipped, 1 xfailed, 25 warnings,
+> 548 subtests passed in 506.78s (0:08:26)
+> ```
+> **`$?` = 1.**
+>
+> | # | test | assertion, verbatim | attribution |
+> |---|---|---|---|
+> | 1 | `tests/regression/test_constants_facade.py::test_moved_surface_is_complete` | `market_sim.config.capacity_market grew names the facade does not re-export: ['RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO', 'resolve_capacity_adequacy_requirement_published']` | 🟢 **capx D67 `8bc0feb5`, confirmed BY THE ERROR TEXT** — both names are D67's own, verbatim from its commit body |
+> | 2 | `…test_entry_pipeline_aware_signal.py::TestPipelineDepressesTheProForma::test_pending_thermal_pushes_the_stack_down` | `AssertionError: 90.0 not less than 90.0` | FFR-5C pair |
+> | 3 | `…::test_pending_vre_reduces_net_load` | `AssertionError: 90.0 not less than 90.0` | FFR-5C pair |
+> | 4 | `…test_cache_config_agreement.py::CommittedSharedKeyGroupsTest::test_both_true_positives_are_refused_on_the_R_A_pair` | `KeyError: 'f061b2646bfaac8b'` | cache-agreement pair |
+> | 5 | `…::test_fourteen_groups_split_two_and_twelve` | `AssertionError: 7 not greater than or equal to 14` | cache-agreement pair |
+>
+> **Count and composition are IDENTICAL to the director's five** — one facade, the
+> FFR-5C pair, the cache-agreement pair. **Failure #1's owner is confirmed
+> independently of any sha**, because the assertion names D67's two new symbols.
+>
+> ⚠️ **Failures #2–#5 CANNOT be attributed by sha in this container.** Both fixture
+> files' newest visible touch is `cf5425f7` — **a graft boundary**, per the finding
+> above — and the director's `9fd5e5b3` / `e090fc1f` do not resolve here. **This
+> lane declines to publish a sha attribution it cannot read**, and records the
+> director's as un-checked rather than as confirmed or refuted.
+>
+> ### 🔵 **BUT #4 AND #5 ARE ATTRIBUTABLE *IN CODE*, AND THE ANSWER IS THAT THEY ARE NOT A CODE DEFECT AT ALL**
+>
+> Read at `tests/unit/results/test_cache_config_agreement.py`:
+>
+> - **line 163:** the fixture is built by shelling `git ls-files "*run_config.json"`
+> - **line 152:** *"Every committed `run_config.json` carrying a `cache_key` is grouped by …"*
+> - **line 209, the test's own comment:** *"committed `run_config.json` files and
+>   **moves whenever a registration** …"*
+>
+> **The test freezes an inventory of the committed corpus.** `7 not greater than or
+> equal to 14` is not a regression in the cache-key logic — it is **the corpus
+> having been halved by pruning**, which rule 15 `[R-DASHBOARD]`'s keeper-only
+> retention mandates on every promotion. **One of the three flip-set reds is a
+> records-desk bookkeeping duty that re-opens by design every time a keeper is
+> promoted**, exactly as v33 characterised it. Recorded as measurement; the
+> disposition is Y-23's and the director's, not this lane's.
+>
+> ---
+>
+> ## 🔴 **LEG 4 — THE UNDECLARED INVARIANT COUNT IS 20, NOT 17 — AND THE NEWEST ID HAS CHANGED**
+>
+> `check_forecast_invariants.py --sidecar-dir` → **`$?` = 1**.
+> `76 sidecar(s) with an invariants block, 1064 record(s), 64 FAIL(s) declared`.
+> **Undeclared: 20** (`grep -c` on the gate's own refusal line).
+>
+> | # | id | undeclared FAILs |
+> |---|---|---|
+> | 1 | `caiso-2026-2026-scn-ws4-probe-t0-load-hi` | I7 |
+> | 2 | `caiso-2026-2026-scn-ws4-probe-t0-ref` | I7 |
+> | 3 | `caiso-2026-2030-d60-arm` | I12, I7 |
+> | 4 | `ercot-2026-2026-scn-ws4-probe-t0-load-hi-organic` | I3 |
+> | **5** | **`ercot-2026-2030-scn-campaign-load-2026-09-06-load-hi-organic`** | **I12, I3** |
+> | **6** | **`ercot-2026-2030-scn-campaign-load-2026-09-06-load-hi`** | **I12, I3** |
+> | **7** | **`ercot-2026-2030-scn-campaign-load-2026-09-06-ref`** | **I12, I3** |
+> | 8 | `ercot-2026-2030-scn-ws4-probe-t1f-load-hi` | I3, I7 |
+> | 9 | `ercot-2026-2030-scn-ws4-probe-t1f-ref` | I12, I3 |
+> | 10 | `miso-2026-2026-scn-ws4-probe-t0-load-hi-organic` | I3, I7 |
+> | 11 | `miso-2026-2026-scn-ws4-probe-t0-load-hi` | I3, I7 |
+> | 12 | `miso-2026-2026-scn-ws4-probe-t0-ref` | I7 |
+> | 13 | `neiso-2026-2050-t3-golden3-d60` | I3 |
+> | 14 | `nyiso-2021-2025-realized-t1h-d45r-curveon` | I7 |
+> | 15 | `pjm-2021-2025-realized-t1h-d45` | I7 |
+> | 16 | `pjm-2021-2025-realized-t1h-d45r` | I7 |
+> | 17 | `pjm-2021-2025-realized-t1h-d57-clearing` | I7 |
+> | 18 | `pjm-2021-2025-realized-t1h-d62-pubbar` | I7 |
+> | 19 | `pjm-2026-2026-scn-ws4-probe-t0-load-hi` | I7 |
+> | 20 | `pjm-2026-2030-d60-arm` | I12, I7 |
+>
+> **The dispatch's 17 is under by three, and this lane can say exactly which
+> three.** Rows **5, 6, 7** are the `scn-campaign-load-2026-09-06` trio, registered
+> by the SCN-WS5A-LOAD ERCOT campaign at **`29b1c757` (04:15:43Z)** — **inside the
+> 22-commit drift window between the director's pin and this one.** So the newest
+> undeclared id is **no longer `neiso-2026-2050-t3-golden3-d60`** as the dispatch
+> states; it is that trio.
+>
+> **v34 read 20 and routed the 17-vs-20 scoping question to the director. This lane
+> re-derives 20 independently and adds the mechanism: the count is not stable
+> because the population grows with every forecast registration.** Y-24's ratchet
+> is chartered against a moving denominator — recorded, not adjudicated.
+>
+> ---
+>
+> ## KEEPERS · MARKERS · FREEZE · STAGE-0 · R-AI CLOCKS — re-derived at this pin
+>
+> **Keepers, read from the six shards — NONE MOVED since v34**, a second
+> consecutive stationary cycle:
+>
+> | ISO | keeper |
+> |---|---|
+> | ERCOT | `2026-09-05-ercot248-two-config-keeper` |
+> | CAISO | `2026-09-05-caiso-252-b1-notrim` |
+> | MISO | `2026-09-05-miso-220-nonsteam-lift` |
+> | NYISO | `2026-09-06-nyiso-196-extract-basis` |
+> | NEISO | `2026-08-17-neiso-99-joint-p1` |
+> | PJM | `2026-08-15-pjm-162-inputclock` |
+>
+> **Markers** (`calibration-complete.json`, read directly): **`complete` =
+> {ERCOT, NEISO, PJM}** · **`final` = EMPTY** (`_note` key only — no ISO has ever
+> been granted a locked test) · `withdrawn` = {CAISO, NYISO}. **MISO is in
+> neither block.** **Freeze** (`holdout-freeze.json`): `active: true`,
+> **`scope.tiers = ["locked_test"]`**, `scope.isos = "ALL"`, frozen operations
+> `[solve, score, dashboard registration]`. **All exactly as the dispatch states
+> and as v34 recorded.**
+>
+> **Stage-0 — the dispatch's "9" is confirmed, and it is worth naming which of two
+> quantities it is.** `check_golden_manifest` reports **9 stale vs the live
+> keeper** across all 55 manifests — **unmoved from the director's 9**. The
+> `perfb-stage0` manifest *alone* reads **2 of 7 CURRENT** (NEISO, PJM; CAISO /
+> ERCOT / MISO / NYISO STALE; `ERCOT__carveout-2023` on the RETIRED key, R-AW) —
+> **unmoved from v34**. Both are stable; they are different numbers and the board
+> has used both.
+>
+> **R-AI clocks. Convention used: v34's — `git log -1 --format=%cI -- frontend/data/backcast/keepers/<ISO>.json`,
+> COMMITTER date, +2 days.** Stated explicitly because the dispatch reports the
+> director using a *different* one (the promoting **merge** `8d6ccda3`, 19:04Z) and
+> the two disagree by ~2 minutes on ERCOT.
+>
+> | ISO | shard-touching commit | committed | R-AI clock | vs v34 |
+> |---|---|---|---|---|
+> | **ERCOT** | `cf5425f7` ⚠️ **GRAFT BOUNDARY** | (21:05:56Z — artifact) | 🔴 **UNAVAILABLE AT THIS PIN** | ⚠️ **cannot confirm or refute** |
+> | MISO | `743b3dc0` | 2026-09-05 23:35:14Z | 2026-09-07 23:35Z | 🟢 identical |
+> | CAISO | `e2412b82` | 2026-09-05 23:44:54Z | 2026-09-07 23:44Z | 🟢 identical |
+> | NYISO | `7f63a4b9` | 2026-09-06 00:11:25Z | 2026-09-08 00:11Z | 🟢 identical |
+> | **NEISO** | `daa55828` | 2026-09-06 02:28:45Z | **2026-09-08 02:28Z** | 🔵 **NEW — v34 said NEISO carried no independent clock** |
+> | **PJM** | `3001f913` | 2026-09-06 02:08:20Z | **2026-09-08 02:08Z** | 🔵 **NEW — same** |
+>
+> **Three clocks reproduce v34 to the second, which is the control that says the
+> method is sound where the horizon permits it.** Two are newly independent: NEISO
+> and PJM no longer inherit ERCOT's consolidation commit. **ERCOT's is the one this
+> lane refuses to publish** — both candidate source shas (`4b7a515e`, `8d6ccda3`)
+> are below the horizon, and the value `git log` *does* return is the graft. The
+> ERCOT stage-0 re-capture stays queued behind a clock **whose value no lane can
+> currently re-derive from `main` alone**; that is a records defect worth the
+> director's attention, and it is the second item in this entry (after the bench
+> gate) that would quietly change the ERCOT queue line.
+>
+> ---
+>
+> ## 🔴 **LEG 4 (G2) — `protected: false`, READING SEVENTEEN**, this lane's own API call
+>
+> `list_branches(jessicacohen554-cyber/market-simulator)` at this pin returns
+> **six branches**:
+>
+> ```json
+> [{"name":"claude/miso-backcast-calibration-bki6k7","protected":false},
+>  {"name":"claude/model-audit-director-7an524","sha":"b618ed4b…","protected":false},
+>  {"name":"claude/p1-basis-seed-impl-oby2ka","protected":false},
+>  {"name":"claude/scenario-readiness-refresh-9-d0pha6","protected":false},
+>  {"name":"claude/scn-ws5a-load-campaign-f5znk9","protected":false},
+>  {"name":"main","sha":"8e3393b128b1d1c26a858afb5a5c1a403ec1fdbd","protected":false}]
+> ```
+>
+> **`protected: false`. READING 17**, following the director's sixteenth and v34's
+> fourteenth. **G2 is NOT declared — the seventh consecutive records lane to
+> withhold it.** R-AM's stated condition is unmet; the declaration and everything
+> gated behind it stay withheld. **Branch COUNT: 6, down from the director's 7.**
+>
+> **THE ONE-ACT POINT, restated in one sentence as dispatched:** *the
+> branch-protection flip and G2 leg 4 are **one owner act, not two queue items** —
+> a single Settings action marking the six R-AE checks required on `main` satisfies
+> R-AH/R-AU's flip and supplies leg 4 simultaneously.*
+>
+> **Citation — and the citation itself is the finding.** The dispatch says board
+> line **912**. **That row read line 1336 AT THIS PIN** — measured before this entry existed;
+> v36's own insertion moves it to **1835** (v32's queue row,
+> `| **Branch-protection flip (G2 leg 4)** | 🟡 "AT THE FIRST 6-OF-6 AFTER Y-13 + Y-14 (R-AU)." …`),
+> displaced by exactly v34's own 424-line insertion (and by 499 more once this
+> entry lands). Cite the row's text, not its
+> line — see the clone/citation finding above.
+>
+> ---
+>
+> ## CHARTERED THIS SITTING — recorded, Q-4-swept, NOT adjudicated
+>
+> | id / item | scope, as dispatched | Q-4 sweep at this pin | note |
+> |---|---|---|---|
+> | **Y-23** | cache-agreement fixture | 🟢 **0 files** | Object reproduced here (#4/#5). **In code it is an inventory that moves on every prune, not a logic defect** — see leg 3 |
+> | **Y-24** | invariant declare-or-fail ratchet + routing of the 17 | 🟢 **0 files** | 🔴 **the number is 20, and three of them landed inside this session's drift window** |
+> | *(no id)* | capx **D67** facade + ruff | — | Owner **confirmed by assertion text**, `8bc0feb5`. Accounts for 2 of the 3 red jobs |
+> | *(no id)* | **FFR-5C** fixture | — | Pair reproduced (`90.0 not less than 90.0` ×2); sha attribution **not readable here** |
+> | *(closed)* | **nyiso-198 matrix row** | — | 🟢 **CLOSED — VERIFIED, not transcribed:** `check_mechanism_matrix` reads *"absent-shared ratchet OK (every shared field is registered or baselined)"* at this pin. `cc_duct_peaking_row_scoped` was unregistered on `main` at D67's reading and is registered now |
+>
+> **Q-4 sweep of every id this lane carries** — word-boundary (`grep -rlw`) over every tracked `.md/.py/.js/.json/.yml/.yaml` in the working tree, `data/raw/` excluded, **never `git grep` repo-wide** (partial clone). Counts EXCLUDE this board's own v36 text, which quotes every id and is self-confounding — the trap v34's §Q-4 names. A first pass without `-w` returned inflated counts (Y-24 → 1, G-4 → 284) by matching inside longer ids; those are substring artifacts, not collisions:
+>
+> | id | files | verdict |
+> |---|---|---|
+> | `Y-23` `Y-24` `Y-25` `Y-26` | **0** each | 🟢 free — **confirms the dispatch** |
+> | `Y-49` | **1** — `docs/multi-iso/nyiso-zonal-adequacy.md` | 🟠 **taken (NYISO cable)** — confirms |
+> | `Y-50` | **1** — same file | 🟠 **taken (NYISO cable)** — confirms |
+> | `G-4` / `G-5` / `G-6` | **37 / 17 / 58** | 🔴 **taken** — confirms |
+> | `v36` | **0** in `docs/` | 🟢 no collision |
+>
+> ---
+>
+> ## 🔵 **DISPATCH-vs-LAUNCH — THE WEAKER CLAIM, AND WHY IT IS THE ONLY HONEST ONE**
+>
+> **Instrument limits, stated first.** `git ls-remote` in this container shows
+> **`main` only** — it is blind to lane branches, exactly as the dispatch says. So
+> the question was put to the **API branch list** (6 branches, above) and the
+> **open-PR list**, which returns **exactly one open PR**:
+>
+> > **#5061** · `claude/wc-b-p1-basis-seed-9557mm` · *"wallclock B: gate evidence —
+> > byte gate PASS, ERCOT 2025 P1 2.19x, neutrality clean"* · created **04:42:59Z**
+> > (after this pin)
+>
+> **None of the five — Y-23, Y-24, capx D67 facade+ruff, FFR-5C fixture, nyiso-198
+> matrix row — appears as a branch or as an open PR.**
+>
+> **The claim this lane writes is therefore: NOT OBSERVABLE AS LAUNCHED. It is
+> NOT "not launched."** The instruments cannot distinguish the two, and this
+> session contains its own counter-example: **`claude/nyiso-backcast-calibration-jnciv2`
+> and `claude/capx-d67-pjm-requirement-operand-18wzjf` were both running CI minutes
+> before this pin** (runs 2620 at 04:19Z and 2610 at 03:50Z) **and are already
+> absent from the branch list** — merged and deleted. **A lane that launches,
+> merges and deletes inside the observation window is invisible to both
+> instruments**, and at this cycle's merge rate that window is minutes wide. Any
+> stronger statement would be an inference dressed as a reading.
+>
+> ---
+>
+> ## 🔵 **THE STRUCTURAL OBSERVATION — RECORDED, NOT ADJUDICATED**
+>
+> The dispatch asks that this be recorded rather than ruled on, and this lane can
+> add two verified specifics to it.
+>
+> **The dispatch's statement:** 6 of 6 was reached at run 2562, lost to unrelated
+> merges, and now reads 3 of 6 — *the trigger is a window between merges.*
+>
+> **What the record supports at this pin:**
+> - v34 measured 6 of 6 **held across four consecutive runs** (2562–2565, heads
+>   `f9edb478` / `01ddbd23` / `2f5952fd` / `c2912cc3`, 00:49:08Z → 01:08:48Z) and
+>   argued from that span that the green was *"a property of `main` and not of one
+>   lucky diff."*
+> - **The set was then restored a SECOND time**, deliberately, by **`18f0ea25`
+>   (02:43:47Z)** — *"y21: return the R-AE flip set to 6 of 6 — five defects, four
+>   root causes."*
+> - **It was lost again ~62 minutes later by a single commit**: capx D67
+>   **`8bc0feb5` (03:45:31Z)**, which broke **two of the three legs at once** —
+>   the facade assertion (→ `Structural refactor guards` **and** `Fast test tier`)
+>   and `test_capacity.py` formatting (→ `Ruff lint + format`).
+> - **The third leg is the one that is not a defect**: the cache-agreement pair,
+>   which by its own construction (`git ls-files "*run_config.json"`, frozen count)
+>   **re-opens on every prune** — i.e. on every keeper promotion rule 15 mandates.
+>
+> **So the observation is confirmed and can be stated more precisely: the 6-of-6
+> state is not merely a window between merges — it is a window between merges on a
+> set that contains at least one member which the program's own retention rule
+> re-breaks on a schedule.** Whether that makes the R-AH/R-AU trigger condition
+> practically reachable, and whether Y-23's disposition should change it, are the
+> director's and the owner's questions. **This lane records the measurement and
+> stops.**
+>
+> ---
+>
+> ## QUEUE — carried forward and RE-DERIVED at `8e3393b1`
+>
+> | item | state at this pin |
+> |---|---|
+> | **Branch-protection flip = G2 leg 4 (ONE owner act)** | 🟠 **ACT PENDING; TRIGGER NO LONGER STANDING.** Set is **3 of 6** at run 2620. Leg 4 `protected: false` at **reading 17**. One click still closes both lines |
+> | **G2 declaration prompt (v30's block)** | 🔴 **HELD** until `protected` reads **true**. R-AM unchanged. **Seventh** consecutive lane to withhold |
+> | **Y-23 / Y-24** | 🟡 **CHARTERED this sitting.** Q-4 clean, 0 collisions each. **Y-23's object is a prune-driven inventory, not a logic defect; Y-24's count is 20 and rising** |
+> | **Y-17 — `check_bench_freshness` / ERCOT 2022** | 🟢 **GATE IS GREEN AT THIS PIN** — 0 STALE; ERCOT/2022's payload hashes identical to HEAD's. v34's sole red is cleared **by fingerprint semantics, not by a rebuild** |
+> | **Y-18 — FR-22 parity** | 🟢 **CLOSED.** `check_forecast_parity` exit 0, **0 unaccounted** (v34: 2). CI job green on run 2620 |
+> | **Y-19 — forecast-invariant audit** | 🔴 **OPEN, 20 undeclared**, +3 inside this session's window. Job red on run 2620 |
+> | **Y-20 — rule-28 duty-(c) ratchet** | 🟡 Untouched by this lane; matrix gate green, **anchor WARNs 6 → 0** |
+> | **`ruff format`** | 🔴 **RED, 3 files** (D67, rule-30(a), **nyiso-198 — the third landed inside the drift window**) |
+> | **ERCOT stage-0 re-capture ({2024, 2025})** | ⚪ **QUEUED, NOT CHARTERED, NOT RUN** — ⚠️ **its R-AI clock is NOT re-derivable from `main` in a shallow clone**; both cited source shas are below the horizon |
+> | **Z-6** (register-time marker re-check) | 🟢 **CLOSED** on Y-16 `ee0c1676` (v34, by sha and by code). Not re-opened here |
+> | **Stage-0 currency** | 🟠 **9 stale** vs live keeper (gate-wide); **2 of 7 CURRENT** in `perfb-stage0`. Both unmoved |
+> | **Markers / freeze** | `complete` {ERCOT, NEISO, PJM} · `final` **EMPTY** · `withdrawn` {CAISO, NYISO} · freeze `active`, scope **`locked_test`**. Unchanged |
+> | **E11 / prune-timing** · **`G-1`/`G-2` namespace collision** | 🟡 **STILL ON THE OWNER QUEUE.** Untouched by this lane |
+> | 🆕 **Board line-number citations decay** | 🔵 **RECORDED.** Line 912 → 1336, displaced by exactly v34's 424-line insertion. Cite row text, not line numbers |
+> | 🆕 **Shallow-clone horizon** | 🔵 **RECORDED.** 17 grafts, 611 commits. `git log -1 -- <path>` returns the graft, not the touch. Four board-cited shas unreadable here |
+>
+> ---
+>
+> ## CODA — **`origin/main` MOVED UNDER THIS LANE**
+>
+> **Opened at `8e3393b1` (04:23:21Z); re-polled TWICE and it moved BOTH times →
+> `d24db885` (04:37:18Z, PR #5058, `claude/scn-ws1b2-carbon-sixiso-r4hm-t5hdbz`),
+> then `506c8eb3` (04:49:37Z, PR #5067) at the final poll — and this entry was
+> ultimately rebased onto **`8f7a755f`**, which is where `main` sat when v36
+> actually landed. **Four positions in roughly thirty minutes:
+> `8e3393b1` → `d24db885` → `506c8eb3` → `8f7a755f`.** Every
+> reading in this entry is taken at **`8e3393b1`** and none was re-taken after the
+> move. **`8e3393b1..8f7a755f` is drift this entry does not cover**, and the
+> ambient rate over this session (22 commits in the 16 minutes before the pin;
+> two further merges within 26 minutes after) is the same order v33 measured and v34
+> recorded as having gone briefly to zero. **It has not gone to zero here.** Two of
+> this entry's own numbers — the `ruff format` file count and the undeclared
+> invariant count — moved *during* the director's own dispatch window, which is the
+> practical case for reading every figure at a stated pin and saying where main sat
+> when the lane closed.
+
 > # 🟢 **THE FLIP SET IS 6 OF 6 — AND IT HAS *HELD* ACROSS FOUR CONSECUTIVE RUNS, NOT ONE** — RECORDS-ONLY LANE **v34**, director pin `2021e91d` (main observed at `ca1bcc70`) → **THIS LANE'S PIN `5fdd4374`**. **R-AU's trigger HAS FIRED. G2 LEG 4 IS STILL NOT LIVE: `protected: false` at a FOURTEENTH reading, this lane's own API call. Every remaining obstacle to the declaration is now on ONE side of the line — the owner's — and the board has said so since v32 without a records lane writing it plainly: THE FLIP AND G2 LEG 4 ARE THE SAME OWNER ACT.**
 >
 > **Records only.** No solve, no scoring, no registration, no keeper shard, no

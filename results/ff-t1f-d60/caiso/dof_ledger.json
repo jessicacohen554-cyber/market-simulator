@@ -42,6 +42,12 @@
       "attestation_question": "Ungrouped solve-affecting parameter. Attest individually, or extend GROUPS in scripts/build_forecast_dof_ledger.py if a family emerges."
     }
   ],
+  "epoch_field_gaps": {
+    "fields_added_since_epoch": [
+      "capacity_adequacy_requirement_published_by_iso",
+      "cc_duct_peaking_row_scoped"
+    ]
+  },
   "registry_identification": {
     "note": "Registry defaults inherited by this run (offer surfaces, floors, passthrough sigmoids, ...) carry their identification in the registry's rule-5 citations and in the designated backcast keeper's rule-21 DOF ledger (calibration_attestation.json `free_parameters`); they are not re-enumerated per forecast bundle. Whether each identification survives extrapolation forward is the standing question the dispatch_mechanism group's guidance records.",
     "backcast_keeper_at_build": "2026-09-05-caiso-252-b1-notrim",

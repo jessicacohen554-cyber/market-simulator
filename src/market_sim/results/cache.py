@@ -56,6 +56,64 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06b — capx D77: the CCS-retrofit emission-rate seam. NO KEY
+MOVES, AND THAT IS THE HAZARD.** No ``ScenarioConfig`` field is added, removed,
+re-defaulted or re-registered — the repair adds one ``Generator`` attribute
+(``ccs_capture_fraction``, a physical property of a unit, not a tunable, rule 24
+[R-REGISTRY]) — so ``cache_key()`` hashes the same bytes before and after.
+Measured on the same tree with only ``src/market_sim`` stashed: default
+``e5ecd4105ada3e58`` and bare backcast ``6a2845e50951394e`` are UNMOVED, as is
+every bare per-ISO 2026-2030 forecast key (ERCOT ``78b01278f2eb64eb``, CAISO
+``41367ccc55859d4c``, PJM ``577a950add853227``, MISO ``a6b9ed663987311b``, NYISO
+``81af4882eeda50f5``, NEISO ``f1b2dc5e9f2a47e3``). A pre-fix bundle whose horizon
+reaches 2028 therefore sits at EXACTLY the key a post-fix run computes and will
+be served to it — the 2026-08-31 entry's predicted recurrence, in its pure form.
+
+What moved: a unit converted by the CCS retrofit screen kept its captured CO2
+rate only until the next dispatch build. ``capacity_evolution/ccs.py`` applies
+``emission_rate_co2 *= (1 - ccs_retrofit_capture_rate)`` at the retrofit, and
+``data/fleet/campd_bins.py::apply_plant_emission_rates{,_v2}`` -- reached from
+``data/fleet/assembly.py::build_dispatch_fleet``, which ``runner.py`` calls AFTER
+``evolve_fleet`` in EVERY forecast year -- re-booked the host plant's measured
+CAMPD rate over it. The match key is ``(plant_code, coarse fuel class)`` and
+``fuel_class("gas_cc_ccs") == "gas"``, so a converted unit still matched its own
+uncaptured host row; and on the CAMPD path ``build_dispatch_fleet`` opens with
+``dispatch_fleet = fleet + inline_imports`` (a concatenation, not a copy), so the
+override mutated the PERSISTENT generators and the loss carried into every later
+year and into the next year's retirement and CCS screens. The override now books
+the measured host rate and the unit's own capture together --
+``co2 * (1 - gen.ccs_capture_fraction)``, one composition point (rule 19
+[R-ONE-MECH]) -- so the measured input still enters every year (rule 13
+[R-MEASURED]) and a captured unit is never restored to its uncaptured rate.
+Zero DOF: the fraction is always one of the two already-registered capture-rate
+fields. Measured defect: one NEISO unit read 0.3745 -> 0.3745 t/MWh across its
+own 2028 retrofit while its heat rate rose 7.5101 -> 8.4113, and the ISO's
+47-unit / 9.0 GW ``gas_cc_ccs`` class dispatched, priced its RGGI carbon adder
+(``emission_rate x carbon_price``) and was accounted at 0.4149 t/MWh against
+unabated gas_cc's 0.4663. It is a DISPATCH defect as well as an accounting one.
+
+**INVALIDATED — purge or re-solve before quoting:** every ``results/<ISO>/<key>/``
+**FORECAST-lane** bundle solved before this epoch whose horizon reaches **2028**
+(``ccs_retrofit_available_year``) AND whose fleet retrofits at least one unit.
+The committed census is 45 bundles across all six ISOs
+(``docs/handoffs/FINDING-capx-d77-2026-09-06.md`` §8), whose CO2 rows, CCS
+generation and -- wherever a carbon price applies -- merit order are mis-stated.
+D77 re-solves none of them: that batch belongs to capx D65-B, at one HEAD,
+carrying this fix.
+
+**NOT invalidated:** every BACKCAST bundle in every ISO, and every hindcast or
+crossover horizon ending before 2028. ``apply_ccs_retrofit`` returns at its first
+statement, ``if year < config.ccs_retrofit_available_year``, so no such fleet
+ever contains a converted unit; ``ccs_capture_fraction`` is 0.0 on every
+generator and ``co2 * (1.0 - 0.0)`` is the pre-fix expression exactly. Asserted
+with the persisted-identity / fleet-golden / backcast-inertness regression tests,
+not by argument. No keeper, sidecar, determination or dashboard row moves.
+
+Recorded 2026-09-06 by capx D77, the lane that made the change
+(``docs/handoffs/PRECOMMIT-capx-d77-2026-09-06.md`` §3, pushed before its screen
+solve; ``FINDING-capx-d77-2026-09-06.md``). This entry changes no key and no
+default.
+
 **Epoch 2026-09-06 — SCN-WS1c / owner ruling S2 (card D-1): the federal carbon
 FLOOR. NO KEY MOVES, BY CONSTRUCTION — and the INVALIDATED SET IS EMPTY at this
 commit.** No ``ScenarioConfig`` field is added, removed, re-defaulted or
