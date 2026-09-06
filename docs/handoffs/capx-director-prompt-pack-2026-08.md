@@ -6420,6 +6420,140 @@ exact bytes; blob-verify calibration-complete.json + program-status.json after p
 declaration landed, both gates green, finding pushed.
 ```
 
+## D72 — the S2 carbon-floor blast radius on the forecast board, and the D23 re-examination it forces (r#44 amendment 1; zero-LP phase 0) — **ISSUED r#44 am.1**
+
+```
+You are the D72 session of the capacity-expansion track. Binding charter: pack §D72 (this section).
+Zero LP in phase 0. Your object is a CODE REPAIR ANOTHER DESK LANDED and what it does to bundles and
+verdicts THIS program already committed.
+DATA PROFILE: code (widen to neiso only if phase 2 earns a solve).
+MODEL: Fable (this can re-open a landed finding's attribution and move a golden's verdict BASIS —
+determination consequences, not execution).
+BRANCH (suggested; graded by content): claude/capx-d72-carbon-floor-blast-radius — FRESH off origin/main.
+
+THE TRIGGER, stated as fact and to be VERIFIED BY YOU, never assumed. SCN-WS1c commit `b1996141`
+("federal carbon price is a FLOOR under the state program", owner ruling S2) repaired a defect its own
+message names G-C1: `resolve_carbon_program`'s FORECAST branch "nulled the program adder whenever a
+non-default `carbon_price_path` was set, so a named federal RFF path SUPPRESSED the state
+cap-and-trade program." Its measured consequence on ITS campaign: `policy_bundle="tight"` was a carbon
+price CUT of $16–$102/tCO2 on CAISO, NYISO and NEISO in every one of 25 horizon years. The new
+semantic is `effective = max(RFF path(year), program trajectory(year))` on a program ISO; the scalar
+`carbon_price` keeps its Q26 replace semantics and `carbon_price_delta` its additive stage.
+
+WHY THIS DESK OWNS A CONSEQUENCE OF ANOTHER DESK'S REPAIR. A director census of the committed
+forecast bundles finds `carbon_price_path='zero'` together with `state_carbon_pricing=True` on
+program ISOs across `results/ff-t1f-d46/{caiso,neiso}`, `ff-t1f-d50/neiso`, `ff-t1f-d65-{a1,ctl}/neiso`,
+`ff-t1f-s4hydro/neiso*`, `hindcast/caiso-2021-2025-realized-t1h-d46`, and EVERY arm of
+`ff-t3-neiso-golden/**` including the FC-6 arms `base`, `carbon25`, `carbon_plus25`, `gaspm5`,
+`gasup150`. IF `'zero'` counts as "a non-default path" at those bundles' vintages, RGGI was nulled in
+runs this program scored — and GOLDEN-3 is the golden. **Do not assume it does.** `'zero'` may resolve
+as default-equivalent, or the defect may post-date those solves. THE FIRST QUESTION IS WHETHER THE
+PREMISE IS TRUE AT ALL, and a clean null is a complete and welcome result.
+
+PHASE 0 — ZERO LP, and it is the whole lane until it says otherwise:
+ 1. Read `b1996141` whole (diff + message) and state, from the CODE, the exact predicate the old
+    branch used to null the adder and whether `carbon_price_path='zero'` satisfies it. Quote the
+    lines. If it does not, STOP HERE, write the finding saying so, and close — that is the result.
+ 2. If it does: date the defect. `git log -L` the nulling predicate to find the commit that
+    introduced it and the commit (`b1996141`) that removed it. Every bundle solved between those two
+    shas with a program ISO + non-default path is IN the radius; everything else is out.
+ 3. CENSUS, in a table, every committed forecast bundle by `run_config.json` `git.sha` and its
+    resolved carbon inputs: IN-RADIUS / OUT / INDETERMINATE, with the reason. This is exactly the
+    method D60-R3 used for the retirements hunk (`FINDING-capx-d60-2026-09-05.md` §8-blast-radius,
+    28 of 33 PRE-hunk) — reuse its shape so the two tables read as one instrument.
+ 4. PRICE IT WITHOUT SOLVING: for one in-radius NEISO year, compute `resolve_carbon_program` both
+    ways from the bundle's own committed config and report the $/tCO2 gap per horizon year. A gap of
+    zero means the radius is nominal; SCN measured $16–$102 on their arms, so state yours at full
+    magnitude either way.
+
+THE D23 RE-EXAMINATION (this is why the lane is Fable). `FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`
+adjudicated GOLDEN-2's FC-6 P1 "carbon-sign defect" as **the instrument's premise being inverted, not a
+model defect**, on the reading that "rung 0 IS the RGGI world for a program ISO, sitting ABOVE rung 25
+in every NEISO year". **That conclusion presupposes the base arm actually carried the RGGI adder.** If
+phase 0 puts those arms in the radius, the adder may have been nulled and D23's attribution rests on a
+behaviour now identified as a defect. State plainly which of three the evidence supports: (a) D23
+stands unchanged (the arms are out of radius, or in it but the adder resolved anyway); (b) D23's
+CONCLUSION stands but its stated MECHANISM needs amending; (c) D23's attribution is unsafe and the P1
+verdict basis must be re-opened. **Amend D23's file only with a dated cross-reference — never rewrite
+another lane's finding** (rule 27 discipline and the D23 §8 R3 precedent, which explicitly did not
+edit D21's file).
+
+WHAT YOU DO NOT DO. No re-solve, no re-score, no registration, no board byte — `ff-verdicts.json` and
+`program-status.json` belong to D60-R3 this window and you must not touch them even if you conclude a
+verdict is wrong; you REPORT that and the director serves the card. No keeper, marker, shard or freeze.
+No `ScenarioConfig` field, no default flip, no semantic change — S2 is ruled and executed, and rules
+19/24 require ONE documented semantic, so proposing a second is out of scope. Do not build D23's R1
+guard: it is the routed successor (D73) and it is held on your answer, because whether the guard should
+reclassify P1 as MIS-CONSTRUCTED depends on what you find.
+
+EXIT: FINDING-capx-d72-<date>.md with the predicate quoted, the defect dated between two shas, the
+full IN/OUT/INDETERMINATE census table, the unsolved $/tCO2 pricing, the (a)/(b)/(c) verdict on D23
+with a dated cross-reference added to D23's file, and a §8 that states — as a recommendation to the
+director, never an act — whether any committed verdict must be re-scored or re-run, at what LP cost,
+and in what order relative to D60-R3's legs. Rules 13, 19, 21, 22 (no out-of-training anything), 24,
+25, 27 (blob-verify any ≥300-line file), 28 (you test no mechanism; no cell moves). Push each stage as
+it lands; rebase BETWEEN stages, never during one (r#44 doctrine, D60-R3 §5.0e).
+```
+
+## D66 — the PJM 2024/25 + 2025/26 supply census: the residual D61 named and D57 could not reach (r#44 amendment 1; zero-LP) — **ISSUED r#44 am.1**
+
+```
+You are the D66 session of the capacity-expansion track. Binding charter: pack §D66 (this section) +
+`FINDING-capx-d61-2026-09-05.md` (which named this residual) + `DESIGN-capx-d54-pjm-clearing-half-
+2026-09-05.md` and `FINDING-capx-d57-2026-09-05.md` (the clearing half you are auditing the INPUTS of).
+ZERO LP. No solve is authorized in this lane at all.
+DATA PROFILE: pjm
+MODEL: Opus (a measurement lane with a pre-declared method; no arming, no determination consequence).
+BRANCH (suggested; graded by content): claude/capx-d66-pjm-supply-census — FRESH off origin/main.
+
+THE OBJECT, and why it is NOT D62's. D57 landed PJM's cleared position within −0.5 / −1.0 / −2.8 pts
+of the published BRA and the §3.5 identity 8/8. D61 then established that in **DY 2024/25 and 2025/26
+every offer already clears**, so in those two years the price is set by where the demand curve meets a
+stack whose composition is a CENSUS question — how much and what kind of capacity the model brings to
+the auction — and NOT by the going-forward bar. D62 is repairing the BAR; it explicitly routes the
+census here and cannot answer it, because in those two years the bar changes nothing (D62's own
+pre-declared sign: "2024/25 5.73 → 5.04 then FROZEN — all offers clear"). **You are therefore not
+blocked on D62 and must not wait for it.**
+
+THE WORK — a reconciliation, not a model change:
+ 1. Reconstruct the model's offered supply for DY 2024/25 and 2025/26 from the COMMITTED D57 arm-A
+    ledgers (`results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/f0e050e820c1159a/`):
+    accredited MW by fuel class, the price-taker block, `requirement_mw`, and the census position.
+    D62's screen recorded the 2022/23 row as requirement 155,048 · price takers 30,578 · census
+    position 1.17019 — reproduce that row first as your instrument check, then extend to the two
+    target years. A mismatch on 2022/23 is a STOP: your reconstruction is wrong, not the model.
+ 2. Against it, place PJM's OWN published BRA supply for the same delivery years — cleared UCAP by
+    resource type, total offered, the reliability requirement and the clearing price — from the
+    published Base Residual Auction reports already under `data/raw/capacity-market/`. If a needed
+    report is absent, say so and STOP on that year rather than substituting a proxy (rule 14).
+ 3. DECOMPOSE the gap into named, additive buckets, each traced to a source: DR and EE (PJM clears
+    large volumes the model may not represent), energy-efficiency, imports/external units, storage
+    and hybrid accreditation, nuclear/uprates, and the accreditation basis itself (EFORd-derated
+    nameplate vs PJM's accredited UCAP under the D48 vintage). The deliverable is a table whose rows
+    SUM to the measured gap — an unexplained residual is reported as its own row, at full magnitude,
+    never distributed across the others.
+ 4. For each bucket, state whether it is (i) a representation gap this model could close and how, at
+    what cost, (ii) a deliberate scope exclusion, or (iii) already handled and mis-attributed by you.
+    Name which bucket, if any, is large enough to explain D57's remaining position error.
+
+DISCIPLINE. This lane changes NOTHING: no `ScenarioConfig` field, no default, no arming, no matrix
+cell (you test no mechanism — if you conclude one is needed, that is a routed successor and a director
+card, per rule 28), no board byte, no keeper. Do not re-solve to "check" a number: the committed
+ledgers and the published reports are the two sides, and where they cannot answer a question you write
+that down. Rules 14 (prefer the accurate published number and never bury a discrepancy in an estimate),
+21, 22, 24, 25 (PJM's data only), 27. Any new raw file goes in through the data-intake skill with its
+source doc and page.
+
+COLLISION: D62 owns `retirements.py`, `capacity_market.py`, `avoidable_cost_rate.py` and a
+`scenarios.py` field this window — you write NO source file at all, so you are disjoint by
+construction. Read the same committed ledgers freely; they are immutable. D60-R3 owns the forecast
+board; you write no board byte.
+
+EXIT: FINDING-capx-d66-<date>.md — the 2022/23 instrument check, the two-year model-vs-published
+table, the additive decomposition with its residual row, the per-bucket disposition, and a §8 naming
+what (if anything) should become a chartered repair and what it would cost. Push it; nothing arms.
+```
+
 ## D60-R3 — the D60 relaunch, THIRD issue (r#42 amendment 2; owner ruling: D60-R2 is DEAD — "issue D60-R3"), with D65's HEAD-drift instrument folded in as the blast-radius section — **ISSUED r#42 am.2; NEVER DISPATCHED; RE-EMITTED AND DISPATCHED at r#43** with a new STATE AT START block (what main took since the charter was written) and an extended collision note. **This section IS the issued text.** — **DISPATCHED AND LIVE at r#44 (PRs #4946/#4955/#4959/#4963):** state at start 17/17 keys unmoved with all three charter assertions MEASURED; two environment defects (off-pin highspy/pandas/pydantic, a shallow clone) repaired before the first solve; control-first on all three legs, 0 non-provenance diffs, the rubric 1.0→1.1 advance INERT; the GOLDEN-3 FC-4 input pinned not guessed; NO second drift hunk; §8-blast-radius landed, 28 of 33 bundles PRE-hunk; **§5.0e — the lane rebased under its own running solve, killed the leg, and made the failure mode mechanical (`exit 90`); 'rebase BETWEEN legs, never DURING one' is now doctrine**. OWED: the three legs, the Q37 rows, §5 and the close. **Do NOT re-paste while live**
 
 ```
