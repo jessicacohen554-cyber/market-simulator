@@ -319,3 +319,76 @@ shards land in this PR; duty (b) on the `seam_neighbour_anchored_ladder` cell.
 Rule 29: zero-LP phase 0 ran first (§3), the screen year is named on the
 mechanism's own footprint under a measure declared before it was applied (§4a),
 G-DRIFT is audited (§4b), and the bundle is deleted before merge.
+
+---
+
+# Addendum A — two gate corrections, made BEFORE any arm number was read
+
+Written and pushed while the screen LP was still running, from the **keeper's
+own committed 2024 artifacts only**. No output of the arm existed when these
+were fixed, and the arm's bundle was not opened. Both are corrections to
+comparators I got wrong in §4d, not renegotiations of a bar I had seen missed.
+
+## A.1 G-1's comparator was a 2023 number quoted for a 2024 screen
+
+§4d wrote the bar as *"falls by ≥ 0.30 from the keeper's **+0.750**, i.e. lands
+≤ +0.45"*. **+0.750 is miso-226's 2023 measurement on the miso-220 predecessor**,
+not the miso-230 keeper's 2024 value. Measured from the keeper's own committed
+`hourly/` sidecars for the screen year:
+
+| keeper 2024, from `miso230_ctdrag_seam_K` | value |
+|---|---:|
+| corr(imports, **own model** MISO-Indiana hub price) | **+0.4461** |
+| corr(imports, **measured** MISO-Indiana hub price) | +0.3211 |
+| decile slope d1−d10 on the own-model price | −4,362.3 MW |
+| decile slope d1−d10 on measured-price deciles (miso-226's basis) | −3,321.6 MW |
+
+So the absolute leg as written (**≤ +0.45**) is satisfied by the keeper itself
+and would pass vacuously — the miso-200 vacuous-pass trap, in my own gate.
+
+**The substantive leg is the relative one, and it is re-anchored to the correct
+comparator at the SAME magnitude the PRECOMMIT wrote:**
+
+> **G-1 (corrected).** Solved `corr(imports, own model hub price)` falls by
+> **≥ 0.30** from the keeper's own 2024 value of **+0.4461**, i.e. lands
+> **≤ +0.146**. FAILS on no material fall, or on an overshoot below **−0.60**
+> (further from the measured −0.101 than the keeper is, on the other side ⇒
+> wiring error). The measured-price basis is reported beside it, not gated.
+
+## A.2 G-2 is UNSCORABLE against this control, and is withdrawn to REPORTED-ONLY
+
+§4d's G-2 asks for *"solved annual **PJM-seam** import energy"* against a
+measured comparator. **The keeper's committed bundle cannot answer it.** Under
+rule 15's keeper-only retention the bundle is SLIM — `hourly/` sidecars,
+`metrics.json`, `legitimacy_diagnostics.json`, `run_config.json` and
+`meta.json`, with **no unit-level dispatch parquet** — so the control's imports
+exist only as the aggregate `import` class and cannot be decomposed by seam.
+Substituting the aggregate does not rescue the gate either: the model's `import`
+class is **gross** reference-node imports (31.2944 TWh in 2024) while the
+measured record's comparable total is a **net** across four seams
+(+23.038 TWh: PJM +32.223, Manitoba +3.014, SPP −0.373, South −11.825). Those
+are different quantities, and a gate that compares them measures the
+gross/net convention, not the mechanism.
+
+**G-2 is therefore withdrawn as a gate and the arm's annual import move is
+recorded REPORTED-ONLY.** It is not silently dropped, and the question it asked
+is not left unanswered: **phase-0 readout A already settles it on measured data
+alone**, pre-registered in §3 and needing no control bundle — the hourly ladder
+reproduces the measured annual seam volume within **0.5 %** in all three years
+(4,649/3,673/3,199 MW against 4,674/3,678/3,198), which is the annual form's own
+reported cost undone. What is lost is the *solved* confirmation of that, in this
+screen year only.
+
+**The screen therefore rests on four gates, not five**, and that is a weaker
+screen than §4d advertised. Stated here rather than discovered in the FINDING.
+
+## A.3 The other three gates, with their comparators fixed
+
+| gate | comparator, from the keeper's own committed 2024 artifacts |
+|---|---|
+| **G-3 confinement** | SPP/South/Manitoba band `mc` byte-identical — verified STRUCTURALLY and ex ante by `tests/iso/miso/test_miso_seam_ladder.py::TestHourlyNeighbourOverlay::test_spp_and_south_keep_their_scalar_ladders`, so the solved leg is the feasibility half: slack and dump both **0.0000 TWh** (the keeper's 2024 slack is **0.0196 TWh**, pre-existing per the miso-230 assessment §8(f) — so the bar is "no INCREASE beyond the keeper's own") |
+| **G-4 no collateral flip** | no non-target load-bearing criterion flips PASS→FAIL vs the keeper's committed 2024 scores. C3c excluded (ledgered caveat, rubric v3.3) |
+| **G-5 cheap-hour direction** | frozen G-2 hour set, real Indiana hub < $20, **n = 2,111** in 2024; keeper imports **2,129.3 MW**. PASSES if solved imports RISE |
+
+Everything above is computed by `scripts/probes/_miso231_screen_gates.py`,
+committed and pushed with this addendum and **before the arm's bundle was read**.
