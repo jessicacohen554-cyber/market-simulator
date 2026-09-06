@@ -22,7 +22,7 @@ collision-map files) · `needs-revert` (strayed into another item's file) · `me
 | A-6 | `malloc_trim` at the cold-P1 seam | 2026-09-05 22:45 UTC (wave 1d, handed to owner) | claude-opus-5 | owner-launched | `claude/wc-a6-malloc-trim-p1-seam` | #4893 | code **merged** 2026-09-06 00:03 UTC (`src/market_sim/pipeline/solve.py` +12, NEW `src/market_sim/utils/heap.py::malloc_trim`; PR title says "merge-base control golden manifest" — it carried the BEFORE arm's manifest with the code). **Evidence OUTSTANDING**: no AFTER arm, no VmHWM before/after, no byte-gate reading, no baseline row, no CHANGELOG entry on main; PR body empty. Worker presumably still running (§2.8) | `b2bd9fdb` (commit `c2cb9a78`) | not yet measured |
 | A-5 | held CAMPD normalization (PERF-B change f) | desk action 2026-09-05 (wave 1e) | — | — | `claude/perf-b-apply-nabnpi` | #4579 | **merged 2026-09-02** (see §2.1) | `60a6d539` | PJM/MISO `bench` −64–71 % per PR #4579 |
 | B-0 | P1 basis-seed owner memo (+ the missing ERCOT bench) | 2026-09-05 22:45 UTC (wave 1f, handed to owner) | claude-fable-5-1 | owner-launched | `claude/wc-b0-p1-seed-memo-9euk97` | #4862 (draft) + #4880 (bench) | **merged**, memo on main with the ERCOT forward-2025 OFF/ON bench and the §3/§6.3 placeholders filled; **UNSIGNED** — the Owner decision block (memo L366–377) has no box ticked and no signature (§2.6) | `8209201c` (commit `2d0900d0`) | bench: seed ON `solve_p1` 287.1 → 139.3 s, P1 iters 273,893 → 78,856, objective identical, total gen Δ 0 MWh, max Δ price 1.1e-12, 0 dual-degenerate hours, 16 unit-hours marginal-tie reshuffle; year total 717.4 → 581.5 s |
-| B | P1 basis seed on the cold-rebuild route | wave 2a — A-3 merged ✓, A-6 merged ✓ (code), B-0 memo SIGNED ✗ | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | **blocked on the owner signature only**; prompt handed to owner 2026-09-06 00:20 UTC with a worker-side "stop if unsigned" check | — | — |
+| B | P1 basis seed on the cold-rebuild route | wave 2a — A-3 merged ✓, A-6 merged ✓ (code), B-0 memo SIGNED ✗ | claude-fable-5-1 | — | `claude/wc-b-p1-basis-seed` | — | **blocked on the owner signature only**; prompt handed to owner 2026-09-06 00:20 UTC with a worker-side "stop if unsigned" check; **a worker session titled "P1 basis seed implementation" (`session_01NwQRGYeMchhFewGgmrfVhD`) has been RUNNING since 03:25 UTC while the memo is still unsigned on main** — per the prompt's guard it should stop and report "memo unsigned" (§2.11) | — | — |
 | A-4 | on-disk memo for the remaining year-1 caches | 2026-09-06 00:20 UTC (wave 2b, handed to owner; A-1 ✓ A-2 ✓) | claude-opus-5 | owner-launched | `claude/wc-a4-year1-memo-bwtyyn` | #4988 | **merged, complete** (`7201e699`; code `e0d55a5b`, evidence `9cb50a72`): NEW `data/disk_memo.py` (content-addressed JSON mapping memo, never pickle), `egrid_sheets.py` digest shared (A-2 mirror names byte-compatible), `fleet/eia860._egrid_boundary_hr_repairs_for` memoized across processes; profile found it the ONLY ≥3 s once-per-process pure-input site left (`build_zone_lookup` 0.13 s, `_rows_to_generators` own <0.1 s); NEISO 3-yr byte gate check [1] PASS (9 files, 32 cols, atol=rtol=0), smoke PASS, audit_keepers PASS, legitimacy pre-existing by control; §WALLCLOCK A-4 + CHANGELOG + `wc-a4-{before,after}` manifests on main; diff confined to the collision map | `7201e699` | boundary repair 2.166 → 0.058 s (37×), 12.69 → 0.46 s over all 8 vintages; NEISO year-1 `data_prep` 16.3 → 12.1 s (−26 %), residual 4.4 s = disk scan + genuine parse — **item stops here per charter (<10 s gap)** |
 | 3a | re-baseline anchor table on main | wave 3 — after every wave-1/2 PR merged or closed | claude-opus-5 | — | `claude/wc-3a-rebaseline` | — | blocked on A-6 evidence + B (signed and merged, or struck) | — | n/a (docs) |
 
@@ -134,6 +134,23 @@ named the carve-out key; from wave 2 on the ERCOT byte instrument is
 The owner merged the desk log itself into main (#4886, `8ec83789`); the branch fast-forwards
 onto `origin/main` at each sweep and keeps its name.
 
+### 2.11 Sweep #9 (03:58 UTC): the B worker was launched before the memo was signed
+
+The session list shows a session titled "P1 basis seed implementation" (`session_01NwQRGYeMchhFewGgmrfVhD`)
+created 03:25 UTC and still RUNNING at 03:58; no `wc-` branch and no PR exist for it yet.
+The memo's Owner decision block on `origin/main` (`1ce47fc0`, L366–377) is still unticked
+and unsigned, so the 2a prompt's first step ("STOP and report 'memo unsigned'") applies and
+the worker is expected to have stopped without implementing. Nothing for the desk to do until
+the owner ticks (A) FLIP with a Signed/Date line on main (a small docs commit to the memo) —
+then 2a is re-handed as a fresh-session prompt (old sessions are never re-messaged). No A-6
+worker session is visible in this account's session list (the last 30 sessions, back to
+2026-09-05 18:11 UTC): the A-6 evidence is still owed and nothing has been pushed since
+`c2cb9a78` (00:03 UTC). The desk-coordination session itself was archived by the owner
+(`session_…YwmtWFGD`, 03:51 UTC) and continues as `claude/wc-desk-coordination-tw2att`.
+Container note: this session's cached `origin/main` (`b1964e71`, a foreign object with no
+merge-base to main) was replaced on the first fetch; the desk chain `34f3ce35 → 1ce47fc0` is
+intact and unrewritten.
+
 ## 3. Timeline
 
 | when (UTC) | event |
@@ -151,3 +168,4 @@ onto `origin/main` at each sweep and keeps its name.
 | 2026-09-06 ~01:40 | sweep #6 (owner "refresh"): no change — zero open PRs, no `wc-*` branch; A-6 evidence still owed; A-4 (2b) and B (2a) not launched; memo unsigned. Main `ad45b0e4` |
 | 2026-09-06 ~02:00 | sweep #7 (owner "refresh"): A-4 #4988 merged with evidence — wave 2b complete; the year-1 premium is closed at a 4.4 s residual. Still owed: A-6 evidence (session running), memo signature → 2a. Main `e80bdd87` |
 | 2026-09-06 ~02:20 | sweep #8 (owner "refresh"): no change — zero open PRs, no `wc-*` branch; A-6 evidence still owed; B (2a) prompt re-handed to owner, memo still unsigned. Main `34f3ce35` (nyiso-198 `cbc721ac` touched a solve-path file; B's merge-base control absorbs it) |
+| 2026-09-06 03:58 | sweep #9 (desk continuation `claude/wc-desk-coordination-tw2att`, fresh sweep): no `wc-*` branch, no wallclock PR (the only open PR is #5030 nyiso-198), no lane-file commit since `34f3ce35`; A-6 evidence still owed (no A-6 session visible); memo still unsigned on `1ce47fc0`; **B worker session RUNNING since 03:25 UTC under an unsigned memo — expected to stop per its guard** (§2.11). Solve-path drift since A-6 for B's merge-base control: capx D67 `8bc0feb5`, caiso-254 `bbd01025`, nyiso-198 `cbc721ac` — absorbed by the merge-base capture. Main `1ce47fc0` (13 merges since `34f3ce35`, incl. desk-log #5018) |
