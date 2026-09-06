@@ -935,7 +935,11 @@ def ercot_load_resource_reserve_mw(year: int, hours: int) -> np.ndarray:
     (NP3-911 Dec-2023 = 896 MW; 2024/2025 = 904 / 787 MW), with the Dec tail
     taken directly from the NP3-911 2-Day feed. The 60-Day Load_Resource file is
     *offers* (~1.5 GW, ~2x cleared), so the cleared level is cross-source
-    calibrated rather than read directly — see that script's docstring.
+    calibrated rather than read directly — see that script's docstring. Back
+    years 2018-2022 are read DIRECTLY off the 60-Day Load Resource Data
+    **awards** by ``scripts/data/build_ercot_as_backyear.py`` (2020-2022 built
+    2026-09-06, ercot-252); whether a solve consumes a back-year file is the
+    ``ercot_load_resource_reserve_from_year`` recipe gate, not this reader.
     """
     path = _ERCOT_AS_DIR / f"ercot_{year}_as_up_mw.parquet"
     if not path.exists():
