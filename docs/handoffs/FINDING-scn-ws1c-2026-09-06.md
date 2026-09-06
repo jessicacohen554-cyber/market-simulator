@@ -27,9 +27,14 @@ the STOP gate.
 | **G2** footprint | **PASS** — exactly 75 cells move (3 series × 25 yr: CAISO/NYISO/NEISO × `tight`); 375/450 bit-unchanged; **every delta strictly positive**, +$15.98 to +$102.29/tCO2 — no cell anywhere falls |
 | **G3** byte identity | **PASS** — 0 cache keys moved, default `e5ecd4105ada3e58` stable, **0 of 90** committed `run_config.json` files on the changed branch, backcast 2023–25 trajectories identical in all six ISOs |
 
-Tests: `tests/unit/policy/` **311 passed**. Before the repair, exactly **one** test in the whole
-suite failed — `test_cap_and_trade.py:135`, the one the charter names for the flip. That is the
-blast radius, measured rather than asserted.
+Tests: `tests/unit/policy/` **311 passed**, and the **full `tests/unit` suite is at exact parity
+with clean `HEAD`** — 244 failed / 4319 passed against a 244 failed / 4276 passed baseline, the
+same 244 failures test-for-test (all pre-existing, from the unhydrated `data/raw` tree), +43
+passing from this lane's new tests. Blast radius, measured rather than asserted: **exactly two
+assertions in the repository asserted the old REPLACE semantics**, and both are flipped — the
+one the charter names (`test_cap_and_trade.py:135`) and a **second copy the charter did not
+know about**, `tests/unit/model/test_capacity.py::TestStateCarbonProgram::
+test_caiso_forward_years_use_projected_program_price` (§3.1).
 
 **`policy_bundle="tight"` is now an exact NO-OP on CAISO, NYISO and NEISO.** It stops being a
 cut; it does not become an increase. That is the ruled outcome (§2), stated here plainly because
@@ -210,6 +215,33 @@ defect message verbatim — *"resolved $50.00/tCO2 vs program $132.16/tCO2 (a $8
 matching WS-1a's independently-measured NEISO 2050 cut of −$82.16. Without it, "silent
 everywhere" would also pass on a guard that is simply broken.
 
+### 3.1 A second copy of the old assertion, found by the full-suite parity check
+
+The charter names one test to flip. A full `tests/unit` run against a clean-`HEAD` baseline
+surfaced a **second** assertion of the same REPLACE predicate, in a file the charter does not
+list: `tests/unit/model/test_capacity.py::TestStateCarbonProgram::
+test_caiso_forward_years_use_projected_program_price`, whose second half read
+
+```python
+# An explicit RFF exogenous path still wins over the program projection.
+config = ScenarioConfig(iso="CAISO", carbon_price_path="mid")
+self.assertAlmostEqual(resolve_carbon_price(config, 2030), 15.0)   # CARB is $39.36/t
+```
+
+That is the G-C1 defect asserted as intended behaviour, and it is the same charter item ("update
+the test to the floor") applied to a copy the charter did not know existed. It is flipped to
+`max(program, path)` = the CARB projection, with the same rationale comment and a cross-reference
+to `TestFederalCarbonFloor`; the test's **first** half (the EM-6 zero-path assertion) is
+untouched and still passes.
+
+**Disclosed because the file is outside the charter's FILES-YOU-OWN list.** The edit is two
+assertion lines inside a test class whose subject *is* this lane's resolver, and leaving it
+would have left the branch red on a test that asserts a deleted branch. Flagged here for
+SCN-DESK; nothing else in the diff depends on it.
+
+**This is also why the full-suite parity check was worth running.** The policy-suite result
+alone (311 passed) would have looked complete and shipped a red branch.
+
 ---
 
 ## 4. Byte identity — measured, by name
@@ -333,8 +365,10 @@ only), `src/market_sim/config/scenario_resolvers.py` (bundle comments; no value 
 
 **Tests:** `tests/unit/policy/test_cap_and_trade.py` (`:135` flipped +
 `TestFederalCarbonFloor`, 10 cases), `tests/unit/policy/test_carbon_price_below_base_guard.py`
-(`TestPathBranchInvariantGuard` + `TestFloorResolverOutputIsByteUnchanged`). `tests/unit/policy/`
-**311 passed**.
+(`TestPathBranchInvariantGuard` + `TestFloorResolverOutputIsByteUnchanged`),
+`tests/unit/model/test_capacity.py` (the second copy of the old assertion, §3.1).
+`tests/unit/policy/` **311 passed**; full `tests/unit` at exact parity with clean `HEAD`
+(244 failures, the same ones test-for-test; +43 passing).
 
 **Instruments (zero LP, committed):** `docs/handoffs/scn-ws1c/verify-floor-2026-09-06.py` (runs
 identically before and after; `--tag before|after` → the two JSON snapshots),
