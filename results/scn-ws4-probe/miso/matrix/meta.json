@@ -1,0 +1,11 @@
+{
+ "iso": "MISO",
+ "cases": {
+  "REF": "8e72c2256983f981",
+  "LOAD-HI": "759ccceb7923b1fe",
+  "LOAD-HI-ORGANIC": "abe5759c41a76e7b"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-miso",
+ "matrix_path": "results/scn-ws4-probe/miso/matrix"
+}

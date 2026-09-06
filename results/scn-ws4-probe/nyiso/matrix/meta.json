@@ -1,0 +1,11 @@
+{
+ "iso": "NYISO",
+ "cases": {
+  "REF": "7c0ad83004421a23",
+  "LOAD-HI": "3f2d67121a98bcd9",
+  "LOAD-HI-ORGANIC": "97f765a39320f765"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-nyiso",
+ "matrix_path": "results/scn-ws4-probe/nyiso/matrix"
+}

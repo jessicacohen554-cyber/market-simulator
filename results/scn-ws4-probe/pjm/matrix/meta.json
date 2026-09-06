@@ -1,0 +1,10 @@
+{
+ "iso": "PJM",
+ "cases": {
+  "REF": "058444cfe884b79b",
+  "LOAD-HI": "7370b703046ef374"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-pjm",
+ "matrix_path": "results/scn-ws4-probe/pjm/matrix"
+}

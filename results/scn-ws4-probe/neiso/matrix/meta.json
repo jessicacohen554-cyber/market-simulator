@@ -1,0 +1,10 @@
+{
+ "iso": "NEISO",
+ "cases": {
+  "REF": "c3592c1adbc8ac17",
+  "LOAD-HI": "ec78d9814e295e37"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-neiso",
+ "matrix_path": "results/scn-ws4-probe/neiso/matrix"
+}

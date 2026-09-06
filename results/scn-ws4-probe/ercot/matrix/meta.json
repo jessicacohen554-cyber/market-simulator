@@ -1,0 +1,11 @@
+{
+ "iso": "ERCOT",
+ "cases": {
+  "REF": "8e01cd28ea757f1a",
+  "LOAD-HI": "7172ac611ebbf67c",
+  "LOAD-HI-ORGANIC": "e4a9e2dbb5ee5528"
+ },
+ "label": "SCN-WS4c LOAD-HI probe (campaign scn-ws4-probe)",
+ "matrix_id": "scn-ws4-probe-ercot",
+ "matrix_path": "results/scn-ws4-probe/ercot/matrix"
+}

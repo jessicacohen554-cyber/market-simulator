@@ -1,0 +1,5 @@
+case,year,tech,captured_price_usd_per_mwh,source,captured_price_usd_per_mwh_bau,captured_price_usd_per_mwh_delta
+REF,2026,wind,51.457834753547736,dispatch_cache,51.457834753547736,0.0
+REF,2026,solar,50.23871768436643,dispatch_cache,50.23871768436643,0.0
+LOAD-HI,2026,wind,51.779997577063746,dispatch_cache,51.457834753547736,0.32216282351600967
+LOAD-HI,2026,solar,50.5818551223689,dispatch_cache,50.23871768436643,0.3431374380024721
