@@ -606,3 +606,82 @@ def test_pjm_fleet_loads():
     zones_seen = {g.zone for g in fleet}
     for z in config.zone_names:
         assert z in zones_seen, f"Zone {z} has no generators"
+
+
+# --- SPP (registered 2026-09-06, lane SPP-20; owner ruling P1) ---------------
+
+
+def test_spp_state_mapping():
+    """SPP zones are exact unions of whole states along the KS/OK and MO/AR lines.
+
+    North = ND SD NE MN MT IA KS MO CO; South = OK TX NM AR LA
+    (docs/multi-iso/spp-data-audit.md §5 rows 4/5; WY deliberately absent).
+    """
+    north = {
+        "38": "ND",
+        "46": "SD",
+        "31": "NE",
+        "27": "MN",
+        "30": "MT",
+        "19": "IA",
+        "20": "KS",
+        "29": "MO",
+        "8": "CO",
+    }
+    south = {"40": "OK", "48": "TX", "35": "NM", "5": "AR", "22": "LA"}
+    for fips in north:
+        assert assign_zone_by_fips(fips, None, "SPP") == "SPP-North", north[fips]
+    for fips in south:
+        assert assign_zone_by_fips(fips, None, "SPP") == "SPP-South", south[fips]
+
+
+def test_spp_wyoming_is_not_in_the_footprint():
+    """No SWPP plant is in WY (audit §2.4): WY is NOT a mapped SPP state, so a
+    stray WY-FIPS attribution takes the fallback path, never a silent zone."""
+    from market_sim.data.zone_assignment import _SPP_STATE_ZONES
+
+    assert 56 not in _SPP_STATE_ZONES  # WY
+    assert assign_zone_by_fips("56", None, "SPP") == "SPP-North"  # fallback
+
+
+def test_spp_unmapped_state_falls_back_to_north():
+    """A plant outside the SPP state map falls back to the largest-load-share
+    zone, SPP-North (0.5125)."""
+    assert assign_zone_by_fips(None, None, "SPP") == "SPP-North"
+
+
+def test_spp_coords_fallback_splits_at_the_kansas_oklahoma_line():
+    """Coords-only callers split at 37.0 N (the KS/OK state line)."""
+    assert assign_zone_by_coords(35.5, -97.5, "SPP") == "SPP-South"  # Oklahoma City
+    assert assign_zone_by_coords(36.9, -99.0, "SPP") == "SPP-South"  # OK Panhandle
+    assert assign_zone_by_coords(37.1, -97.3, "SPP") == "SPP-North"  # south Kansas
+    assert assign_zone_by_coords(41.3, -96.0, "SPP") == "SPP-North"  # Omaha
+
+
+def test_spp_known_plants_resolve_to_expected_zones():
+    """Named SPP plants land on their side of the seam (EIA-860 plant codes)."""
+    cases = {
+        210: "SPP-North",  # Wolf Creek nuclear (Kansas)
+        8036: "SPP-North",  # Cooper nuclear (Nebraska)
+        6077: "SPP-North",  # Gerald Gentleman (Nebraska)
+        6068: "SPP-North",  # Jeffrey Energy Center (Kansas)
+        6065: "SPP-North",  # Iatan (Missouri)
+        6469: "SPP-North",  # Antelope Valley (North Dakota)
+        6095: "SPP-South",  # Sooner (Oklahoma)
+        2952: "SPP-South",  # Muskogee (Oklahoma)
+        6194: "SPP-South",  # Tolk (Texas Panhandle, SPS)
+        6138: "SPP-South",  # Flint Creek (Arkansas)
+        2454: "SPP-South",  # Cunningham (New Mexico)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "SPP") == expected, f"ORIS {oris}"
+
+
+def test_spp_every_plant_resolves():
+    """Every SWPP plant resolves to a real zone; none are dropped (Stage B)."""
+    lookup = build_zone_lookup("SPP")
+    # 828 EIA-860 SWPP plants (715 with operable generators) + eGRID 2023 rows.
+    assert len(lookup) > 700
+    valid = {"SPP-North", "SPP-South"}
+    assert set(lookup.values()) <= valid
+    assert valid <= set(lookup.values())

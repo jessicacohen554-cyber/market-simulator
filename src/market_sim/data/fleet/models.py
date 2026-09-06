@@ -212,6 +212,9 @@ BA_CODE_TO_ISO: dict[str, str] = {
     "MISO": "MISO",
     "NYIS": "NYISO",
     "ISNE": "NEISO",
+    # SPP = balancing authority SWPP (registered 2026-09-06, lane SPP-20;
+    # docs/multi-iso/00-iso-addition-protocol.md Stage B).
+    "SWPP": "SPP",
 }
 
 # Inverse of BA_CODE_TO_ISO: EIA balancing-authority code keyed by ISO name.

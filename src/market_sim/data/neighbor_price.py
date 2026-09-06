@@ -108,10 +108,15 @@ _FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 #     structural net-import direction holds across the gas cycle. Derived/checked
 #     by scripts/data/derive_southeast_inelastic_hr.py.
 #
-# The keys are neighbor names, unique across the registries today (only MISO has a
-# ``PJM``/``SPP`` seam; only PJM has ``Carolinas``/``TVA``/``LGEE``), so this never
-# touches another ISO's seam; the map lives here rather than as a NeighborInterface
-# field to keep the change localized to the seam-pricing layer.
+# The keys are neighbor names, and a key is well-defined only while exactly ONE
+# ISO registers a neighbour of that name (only MISO has a ``PJM``/``SPP`` seam;
+# only PJM has ``Carolinas``/``TVA``/``LGEE``), so this never touches another
+# ISO's seam; the map lives here rather than as a NeighborInterface field to
+# keep the change localized to the seam-pricing layer. SPP's neighbours (``MISO``
+# / ``AECI`` / ``ERCOT``, registered 2026-09-06) carry NO key here — PJM and SPP
+# both name a ``MISO`` seam, so a ``"MISO"`` key would price two different
+# physical seams off one fit (rule 25 [R-ISO-SCOPE]); the uniqueness check below
+# (SPP plan §7 gate G10) fails the import the moment such a key is added.
 _HR_GAS_ELASTIC: dict[str, tuple[float, float]] = {
     "PJM": (11.06, 3.21),  # MISO's PJM seam: gas-set (large slope, small adder)
     "SPP": (3.04, 16.27),  # MISO's SPP seam: wind-set (small slope, large adder)
@@ -121,6 +126,31 @@ _HR_GAS_ELASTIC: dict[str, tuple[float, float]] = {
     "TVA": (5.6, 14.2),
     "LGEE": (5.6, 14.2),
 }
+
+
+def _assert_hr_gas_elastic_keys_unique() -> None:
+    """Fail the import if an ``_HR_GAS_ELASTIC`` key names a neighbour of two ISOs.
+
+    The elasticity is looked up by ``NeighborInterface.name`` alone, so a name
+    shared by two ISOs' registries (PJM's and SPP's ``MISO`` seams) must never
+    acquire a key: it would price two physical seams, fit on one ISO's measured
+    record, off a single curve (rule 25 [R-ISO-SCOPE]). Every current key is
+    owned by exactly one ISO; this guard keeps it so (SPP plan §7, gate G10).
+    """
+    owners: dict[str, set[str]] = {}
+    for iso, neighbors in INTERFACE_NEIGHBORS.items():
+        for neighbor in neighbors:
+            owners.setdefault(neighbor.name, set()).add(iso)
+    shared = sorted(k for k in _HR_GAS_ELASTIC if len(owners.get(k, ())) > 1)
+    if shared:
+        raise AssertionError(
+            "_HR_GAS_ELASTIC key(s) name a neighbour registered by more than one "
+            f"ISO: {', '.join(f'{k} -> {sorted(owners[k])}' for k in shared)}; "
+            "a per-seam fit never crosses ISO boundaries (rule 25)"
+        )
+
+
+_assert_hr_gas_elastic_keys_unique()
 
 
 def _hr_gas_elastic(neighbor: NeighborInterface) -> tuple[float, float] | None:

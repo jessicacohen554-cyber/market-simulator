@@ -174,7 +174,7 @@ class TestBuildDefaultStorage(unittest.TestCase):
         # ISO, or build_default_storage raises before the first solve (it used
         # to be called unconditionally in runner.run_scenario_iso, and MISO was
         # the one ISO missing from the pace dict).
-        for iso_name in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+        for iso_name in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"):
             self.assertIn(iso_name, STORAGE_BASE_FLEET_MW)
             iso = get_iso_config(iso_name)
             for pace in ("low", "mid", "high"):
@@ -1794,7 +1794,7 @@ class TestHindcastStorageVintageSeed(unittest.TestCase):
         # rule-25 keeper-byte-identity rationale behind the backcast frozenset
         # does not reach it (the FFR-3V precedent — the renewable vintage seed
         # is likewise all-ISO).
-        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"):
             self.assertTrue(
                 measured_storage_base_fleet_active(self._hindcast_cfg(iso=iso), iso),
                 f"{iso}: hindcast with a vintage must seed measured storage",

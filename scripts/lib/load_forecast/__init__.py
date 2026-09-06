@@ -145,7 +145,7 @@ _R = make_registry(
         ("parse", "Callable[[Path, 'IsoSpec'], pd.DataFrame] | None", None),
     ],
     package=__name__,
-    iso_modules=("ercot", "caiso", "pjm", "miso", "nyiso", "neiso"),
+    iso_modules=("ercot", "caiso", "pjm", "miso", "nyiso", "neiso", "spp"),
     raw_subpath=(DATATYPE,),
     string_cols=_STRING_COLS,
     float_cols=_FLOAT_COLS,

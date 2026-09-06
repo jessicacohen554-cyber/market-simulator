@@ -68,7 +68,7 @@ from scripts.lib import holdout_policy  # noqa: E402
 SRC_DIR = CALIBRATION_DIR
 OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.json"
 
-ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM")
+ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
 DAYS, HOURS_PER_DAY = 365, 24
 
 _MARKER_PATH = (

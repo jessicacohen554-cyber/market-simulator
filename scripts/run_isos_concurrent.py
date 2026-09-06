@@ -123,6 +123,13 @@ _ISO_MEMORY_CLASSES: dict[str, IsoMemoryClass] = {
     "CAISO": IsoMemoryClass("CAISO", peak_gb=4.5, per_plant=False, co_opt=False),
     "NYISO": IsoMemoryClass("NYISO", peak_gb=4.0, per_plant=False, co_opt=False),
     "NEISO": IsoMemoryClass("NEISO", peak_gb=4.0, per_plant=False, co_opt=False),
+    # SPP (registered 2026-09-06, lane SPP-20): per-plant class by design (the
+    # CAMPD binning path unlocks when SPP-30 lands its tranche artifact), no
+    # reserve co-optimisation (owner ruling P4 defers it to SPP-56). peak_gb is
+    # an ESTIMATE, MEASURED IN SPP-40: ERCOT's measured 6.0 GB is the nearest
+    # per-plant / no-co-opt analogue (SPP: 715 plants / 1,646 generators at 2
+    # zones vs ERCOT's 7 zones), so SPP should sit at or below it.
+    "SPP": IsoMemoryClass("SPP", peak_gb=6.0, per_plant=True, co_opt=False),
 }
 
 # Env pins every child inherits — the single-thread / arena-pinned profile the

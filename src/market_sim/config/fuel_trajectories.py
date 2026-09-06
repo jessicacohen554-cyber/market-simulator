@@ -360,6 +360,21 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "NYISO": 0.55,  # EIA-923 delivered-gas basis (see below)
     "NEISO": 1.10,  # EIA-923 delivered-gas basis, normal-year (see below)
     "MISO": 0.30,  # Chicago Citygate footprint blend, reconciled (see above)
+    # SPP (registered 2026-09-06, lane SPP-20): Panhandle Eastern is SPP's
+    # own reference hub (the MMU's gas benchmark), and it trades at a DISCOUNT
+    # to Henry Hub: HH - Panhandle = $0.38 (2023) / $0.26 (2024) / $0.55
+    # (2025) per MMBtu. -0.26 is the 2024 annual average, the same "2024 avg"
+    # basis the ERCOT/CAISO rows carry. Source: SPP MMU State of the Market
+    # 2025 §4, report p. 119 (PDF p. 131), Fig. 4-4 discussion; 2023 from SOM
+    # 2024 §4 (PDF p. 127) — docs/multi-iso/spp-data-audit.md §5 row 8. Rule
+    # 14 restatement recorded, not buried: SOM 2024 printed Panhandle 2024 at
+    # $1.81 (a $0.38 discount); SOM 2025 restates it $1.98 ($0.26) and the
+    # later vintage is used. Forward-year / fallback value only — the SPP
+    # backcast prices gas per plant off EIA-923 monthly delivered cost (765 /
+    # 753 / 662 SWPP plant-rows, row 8b) like PJM/NYISO, and the zonal hub
+    # wiring (Panhandle vs NGPL-MidCon; EIA delivered-to-EP OK/KS/TX/NM state
+    # series landed by SPP-11) is SPP-32's.
+    "SPP": -0.26,
 }
 
 # CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
@@ -428,6 +443,16 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   low-cost; ILB is local to the footprint). EIA AEO 2024 delivered coal
     #   price, PRB+ILB blend; refined per-plant by the EIA-923 monthly
     #   fuel-cost overlay where reported (MISO has full CEMS/EIA-923 coverage).
+    "SPP": 1.8,  # SPP's coal fleet (20.3 GW nameplate, 29 plants — KS/NE/OK/
+    #   MO/TX/ND) burns rail-delivered Powder River Basin sub-bituminous:
+    #   MEASURED, not AEO — the EIA-923 SWPP plant-weighted delivered mean is
+    #   $1.919 (2023) / $1.810 (2024) / $1.786 (2025) per MMBtu over 30 / 29 /
+    #   27 reporting plants (data/raw/_processed-legacy/eia923_monthly_fuel_
+    #   costs.parquet; docs/multi-iso/spp-data-audit.md §5 row 9), and 1.8 is
+    #   the 2024 value, the same year the peer rows' "AEO 2024" anchors. Mine-
+    #   mouth PRB 8,800 Btu/lb was $0.78 (2024) -> $0.81 (2025) per the SPP
+    #   MMU (SOM 2025 §4, PDF p. 131). Refined per-plant by the EIA-923
+    #   monthly fuel-cost overlay where reported. Registered 2026-09-06 (SPP-20).
 }
 
 # Annual real escalation rate for coal prices — retained as the DEFAULT
@@ -641,6 +666,14 @@ COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU: dict[str, float] = {
     "CAISO": 3.40,
     "NYISO": 2.74,
     "NEISO": 3.29,
+    # SPP: the Panhandle Eastern 2024 annual average, $1.98/MMBtu — the
+    # cheapest delivered-gas year of 2023-2025 at SPP's own reference hub
+    # (2023 $2.16, 2025 $2.97-2.98; SPP MMU SOM 2025 §4, report p. 119 /
+    # PDF p. 131; the SOM 2025 restatement of SOM 2024's $1.81 is used —
+    # docs/multi-iso/spp-data-audit.md §5 row 8). Equivalent to the table's
+    # construction HH 2024 + basis (2.19 - 0.26 = 1.93) within the two
+    # publications' HH rounding. Registered 2026-09-06 (SPP-20).
+    "SPP": 1.98,
 }
 
 # Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants

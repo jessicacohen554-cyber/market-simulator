@@ -158,6 +158,32 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
         "TX",
         "WI",
     ),
+    # Full SPP footprint — the 14 states carrying an EIA-860 plant with
+    # balancing authority SWPP (docs/multi-iso/spp-data-audit.md §2.4 / §5
+    # row 21; owner ruling P1, 2026-09-06). WY is deliberately EXCLUDED (no
+    # SWPP plant — Wyoming SPP-adjacent generation files under WAUW, a WECC
+    # BA); CO is retained on the PJM-``NC`` / NYISO-``NJ`` "for completeness"
+    # precedent although its eight SWPP sites are 19.5 MW of solar with no
+    # CEMS unit. States overlap MISO (AR, IA, LA, MN, MO, MT, ND, SD, TX) and
+    # ERCOT (TX); the per-ISO fleet filter keeps each ISO's windows to its own
+    # plants. Unit-level CAMPD extracts exist for every state with a CEMS
+    # unit (OK/NE/NM landed by SPP-11, 2023-2026).
+    "SPP": (
+        "AR",
+        "CO",
+        "IA",
+        "KS",
+        "LA",
+        "MN",
+        "MO",
+        "MT",
+        "ND",
+        "NE",
+        "NM",
+        "OK",
+        "SD",
+        "TX",
+    ),
 }
 
 # States feeding an ISO's MERIT-ORDER PANEL — the identification scope of the
