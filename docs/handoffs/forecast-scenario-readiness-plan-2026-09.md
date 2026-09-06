@@ -307,12 +307,28 @@ the entry screen as an attribute price exactly the way the RPS dual does today.
   (DC-dominated growth) and a disclosed simplification for CAISO/NYISO/NEISO
   (electrification-dominated). `model-methodology-spec.md:728,801,822` still documents only
   the scalar.
-- **G-L2.** No forecast-load loader; every rate is a hand-transcribed cited constant.
-  No LTLF / CELT / PJM load forecast / IEPR file is under `data/raw/`; the 2026 Gold Book
-  the NYISO row cites is absent (only 2018–2022 on disk). The scenario can run on the
-  constants today; a curated `load-forecast` datatype is a provenance upgrade (§3.4,
-  owner-gated — Q23's "I'm not getting more data" was an FC-5 ruling, but it signals the
-  posture).
+- **G-L2. CLOSED 2026-09-06 by SCN-LOAD**, executing owner ruling **S4** (card D-4: *fund
+  the full datatype*). All six published forecasts are now under
+  `data/raw/load-forecast/<iso>/` behind the curated `load-forecast` datatype
+  (`data/dictionary/schema/load-forecast.schema.yaml`,
+  `scripts/data/curate_load_forecast.py`), and `DEMAND_GROWTH_RATES`,
+  `DATACENTER_ADDITIONS_MW` and `ELECTRIFICATION_LAYERS` are **derived from it rather than
+  hand-transcribed**. Four of six ISOs are a native workbook parse (a vintage refresh is
+  drop-in-and-re-run); NYISO and MISO are transcriptions validated against numbers their
+  own publications print. The 2026 Gold Book was not absent but a gitignored corpus
+  payload — re-fetched and sha256-verified byte-exact.
+  **It was NOT only a provenance upgrade.** The intake found two defects a transcription
+  could not see: every rate's near era was measured to 2030 when the model's resolver
+  applies it to 2031, and the table was silently mixing peak- and energy-derived bases.
+  Correcting both moves forecast demand by up to **+31 % at 2030** (ERCOT mid), while
+  NYISO — the one row already properly derived — reproduces to four decimal places.
+  Four "no published source" comments were also found stale (PJM Table B-9b, NYISO's
+  end-use energy series, ERCOT's EV component, NYISO's and MISO's low cases).
+  Full closure table, movement at full magnitude and six routed items:
+  `docs/handoffs/FINDING-scn-load-2026-09-06.md`. **Still open:** MISO's driver-level
+  per-LRZ data behind the 403-walled `www.misoenergy.org` host, and
+  `DEMAND_GROWTH_TRANSITION_YEAR` (G-D4-5), which has no published source and stays a
+  disclosed null.
 - **G-L3 (coherence of the high case).** `demand_growth_path=high` and
   `datacenter_load_path=high` are independent axes; ERCOT `high` DC (122 GW by 2030)
   exceeds the grown energy and drops into the additive tail regime
@@ -783,7 +799,7 @@ WS-4 load: [OPUS] coherence ──┤  [FABLE] adequacy reading ───┤
 
 | Criterion (§1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes — **G-C1 CLOSED** (SCN-WS1c 2026-09-06, executing owner ruling **S2**/card D-1): `resolved = max(RFF path, program trajectory)` on a program ISO, the path alone elsewhere. The `tight` cut of $16–$102/t on CAISO/NYISO/NEISO is gone — corrected +$15.98 to +$102.29/t in all 25 yrs, and **no cell anywhere falls**. Gates: 450/450 cells match WS-1a's committed `floor` prediction; footprint exactly 3×25 cells; 0 of 90 committed run_configs on the changed branch and 0 keys moved. **`tight` is now an exact NO-OP on the three program ISOs** — the ruled outcome; **D-1(b)** (what `tight` should mean there) and **D-1(c)** (PJM's partial footprint) stay OPEN. `FINDING-scn-ws1c-2026-09-06.md` | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | — |
+| 1 expressible in committed config | yes — **G-C1 CLOSED** (SCN-WS1c 2026-09-06, executing owner ruling **S2**/card D-1): `resolved = max(RFF path, program trajectory)` on a program ISO, the path alone elsewhere. The `tight` cut of $16–$102/t on CAISO/NYISO/NEISO is gone — corrected +$15.98 to +$102.29/t in all 25 yrs, and **no cell anywhere falls**. Gates: 450/450 cells match WS-1a's committed `floor` prediction; footprint exactly 3×25 cells; 0 of 90 committed run_configs on the changed branch and 0 keys moved. **`tight` is now an exact NO-OP on the three program ISOs** — the ruled outcome; **D-1(b)** (what `tight` should mean there) and **D-1(c)** (PJM's partial footprint) stay OPEN. `FINDING-scn-ws1c-2026-09-06.md` | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes** — named cases `LOAD-HI` / `LOAD-HI-ORGANIC` live in `configs/scenario_campaign_matrix.yaml` with the ERCOT tail-regime arithmetic and the six-ISO adequacy reading pre-declared in the case comment (SCN-WS4b 2026-09-06, `FINDING-scn-ws4b-2026-09-06.md` §2, `load-hi-adequacy-reading-2026-09-06.md`); siting sourced for ERCOT/PJM/MISO (SCN-WS4a). **Inputs re-derived 2026-09-06 (SCN-LOAD, ruling S4)**: the growth, DC and electrification constants now come from the curated `load-forecast` datatype rather than hand transcription — ERCOT's low/mid/high are its own published `base_economic` / Adjusted / TSP-Provided cases, so the growth and DC axes are coherent by construction; CAISO's `high := mid`, MISO's extrapolated `high` and MISO/NYISO's `low := 0` all close on published tables; the electrification row goes 1 armed cell → 3. **Two consequences for this case**: demand at 2030 moves +30.9 % (ERCOT mid) to +17.8 % (PJM mid), and the ERCOT tail-regime arithmetic in the `LOAD-HI` case comment is **stale** — the block's 2030 share of grown energy on the high path falls 97.3 % → 44.1 % (`FINDING-scn-load-2026-09-06.md` §4.1, routed) | — |
 | 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider to WS-0) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | **ERCOT + NEISO at HEAD posture (SCN-WS2b)** — direction holds table by table vs the July surface, invariant pattern identical; ERCOT saturates above ~$20/MWh on the queue budget and its price/deployment levels are not campaign-grade (adequacy collapse, G-S4 stands); NEISO right-signed on share/price/imports but its CO2 read-out is governed by the CCS emission-rate seam (`FINDING-scn-ws2b-2026-09-06.md` §5.3, routed) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3). **Quotable as a CAMPAIGN-LEVEL result since S3** — it was run at exactly the committed level, so it is no longer only a machinery demonstration | **no** | **no** | — |
 | 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) — **re-measured at the S2 floor** (SCN-WS1c): 0 keys moved, default `e5ecd4105ada3e58` stable, **0 of 90** committed `run_config.json` on the changed branch, backcast 2023–25 trajectories identical in all six ISOs; six keeper bundles named, `FINDING-scn-ws1c-2026-09-06.md` §4 | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
