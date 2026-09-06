@@ -328,6 +328,21 @@ VERDICT_MAP = {
     # the bare `pjm-t1h` key; the D45-R census leg moves to `pjm-t1h-pre-d57`
     # (above). Arm B keeps its suffix as the isolating control.
     "pjm-2021-2025-realized-t1h-d57-clearing": "pjm-t1h",
+    # capx-D62 (2026-09-06): the PJM PUBLISHED GOING-FORWARD BAR
+    # (`capacity_going_forward_bar_published_by_iso[PJM]` ON — the retirement
+    # screen's bar, and through the D57 identity the sell-offer cap, becomes
+    # PJM's own Manual 18 §5.4.8.4(B) default gross ACR on nameplate in place
+    # of the ATB FOM proxy; plus the tariff's reactive component as the single
+    # out-of-market leg). ONE arm, SUFFIXED BY CHARTER, never the bare key:
+    # the bare `pjm-t1h` stays arm A of D57 (f0e050e820c1159a), which is this
+    # arm's own control — differenced, never re-solved (rule 29(b) form 4, the
+    # G-DRIFT audit standing in for a control solve). NOTHING ARMS: the lane's
+    # own §8 is DO-NOT-ARM as it stands, because its pre-registered STOP 5
+    # FIRED (the 2024/25 price moved 165.84 -> 188.57 $/MW-day, through the
+    # census rather than the offer side) and FC-3 worsens where it already
+    # failed — against a 2022/23 clearing price that goes 1.52x -> 0.936x the
+    # published RCP at zero free parameters. FINDING-capx-d62-2026-09-06.md.
+    "pjm-2021-2025-realized-t1h-d62-pubbar": "pjm-t1h-d62-pubbar",
     # capx-D51 (2026-09-04): the MISO internal-supply accounting ratio
     # RE-IDENTIFIED on the dates-ON fleet (`adequacy_accounting_ratio_dated_net`
     # ON; D49 §2.6, rule 23) against D46's bare `miso-t1h` (the gate OFF, the
