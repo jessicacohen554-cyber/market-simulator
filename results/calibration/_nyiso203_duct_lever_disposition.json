@@ -1,0 +1,71 @@
+{
+  "bound": {
+    "by_year": {
+      "2023": {
+        "c1_cc_regular_overrun_twh": 0.37,
+        "max_possible_closure_pct": 111.4,
+        "peak_band_energy_twh": 0.4122
+      },
+      "2024": {
+        "c1_cc_regular_overrun_twh": 2.39,
+        "max_possible_closure_pct": 22.1,
+        "peak_band_energy_twh": 0.5293
+      },
+      "2024_at_withdrawal": {
+        "c1_cc_regular_overrun_twh": 3.68,
+        "max_possible_closure_pct": 14.4,
+        "peak_band_energy_twh": 0.5293
+      }
+    },
+    "note": "Raising an offer can displace at most the band's OWN dispatched energy, so this bounds the lever from above. The lever REDUCES CC_REGULAR, so it can only help while the C1 error is positive, which it is in both scored years. 2025 is SKIPPED by C1 (preliminary EIA-923 vintage) and is excluded."
+  },
+  "bundle": "results/calibration/nyiso202_startup_aware",
+  "keeper": "2026-09-06-nyiso-202-startup-aware",
+  "lever": "owner ruling 2026-09-05 (nyiso-193 promotion sentence), named in calibration-complete.json withdrawn.NYISO.reentry as THE route back to `complete`: tune the CC_REGULAR duct-burner PEAKING tranche offer UPWARD from measured duct-firing conduct",
+  "session": "nyiso-203",
+  "status": "ZERO LP \u2014 committed keeper artifacts + fleet_only reconstruction",
+  "years": {
+    "2023": {
+      "class_energy_twh": 33.4599,
+      "class_lp_mw": 7405.6,
+      "hours": 8760,
+      "not_duct_share_pct": 80.7,
+      "peak_band_cf": 0.0406,
+      "peak_band_energy_twh": 0.4122,
+      "peak_band_lp_mw": 1158.46,
+      "peak_band_lp_mw_row_scoped": 223.93,
+      "peak_band_mw_not_duct": 934.53,
+      "peak_band_share_of_class_capacity_pct": 15.64,
+      "peak_band_share_of_class_energy_pct": 1.23,
+      "row_scope_coverage_mw": 1158.46
+    },
+    "2024": {
+      "class_energy_twh": 36.7138,
+      "class_lp_mw": 7416.6,
+      "hours": 8760,
+      "not_duct_share_pct": 80.7,
+      "peak_band_cf": 0.0522,
+      "peak_band_energy_twh": 0.5293,
+      "peak_band_lp_mw": 1158.46,
+      "peak_band_lp_mw_row_scoped": 223.93,
+      "peak_band_mw_not_duct": 934.53,
+      "peak_band_share_of_class_capacity_pct": 15.62,
+      "peak_band_share_of_class_energy_pct": 1.44,
+      "row_scope_coverage_mw": 1158.46
+    },
+    "2025": {
+      "class_energy_twh": 35.4358,
+      "class_lp_mw": 7416.6,
+      "hours": 8760,
+      "not_duct_share_pct": 80.7,
+      "peak_band_cf": 0.1115,
+      "peak_band_energy_twh": 1.1316,
+      "peak_band_lp_mw": 1158.46,
+      "peak_band_lp_mw_row_scoped": 223.93,
+      "peak_band_mw_not_duct": 934.53,
+      "peak_band_share_of_class_capacity_pct": 15.62,
+      "peak_band_share_of_class_energy_pct": 3.19,
+      "row_scope_coverage_mw": 1158.46
+    }
+  }
+}

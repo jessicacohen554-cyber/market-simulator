@@ -57,3 +57,51 @@ visible: eight steam tranches at floor beside seven free-running CC units.
 (A): re-verify the NYISO keeper and, if C8 fails, ground the `ST_GAS` floors' D-4 window
 (the `D4_WINDOWS` entry rule 20 names) before any promotion talk; (B): add the reported
 number to the keeper's determination note; (C): supply the NYISO number (done) and stand by.
+
+---
+
+## 5. ADDENDUM — nyiso-203, 2026-09-06: option (C)'s NYISO row RE-TAKEN on the CURRENT keeper
+
+**The card's §1 table stands on `2026-09-05-nyiso-189-steam-identity`, which has since been
+superseded twice.** Session nyiso-203 re-took the measurement on the live keeper
+`2026-09-06-nyiso-202-startup-aware`, from an **identity-verified replay** of its own recipe
+(`--replay-bundle`; 0 of 157,680 zonal prices differ across 2023–2025 and class energy is
+identical to 0.000000 MWh over 14 classes, so these are the keeper's numbers). The replay bundle
+was **deleted before merge**; the record is
+`results/calibration/_nyiso203_c8_unit_grain.json` and
+`docs/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`.
+
+| `ST_GAS` unit-grain forced share | 2023 | 2024 | 2025 | cap |
+|---|---:|---:|---:|---:|
+| card's keeper (`nyiso-189`) | 0.393 | 0.414 | 0.305 | 0.30 |
+| `nyiso-192` arm | 0.369 | 0.403 | 0.287 | 0.30 |
+| **CURRENT keeper (`nyiso-202`)** | **0.351** | **0.343** | **0.268** | 0.30 |
+| committed plant-grain C8 (PASS) | 0.155 | 0.199 | 0.172 | 0.30 |
+
+**The defect is unchanged in kind and reduced in extent: 2 of 3 years breach, not 3 of 3.** No
+other class breaches at unit grain (`CC_REGULAR` 0.097 / 0.099 / 0.098, `CT_PEAKER` 0.000,
+`CC_CHP` 0.273 / 0.219 / 0.207 and exempt).
+
+**§2's prediction is CONFIRMED, not merely inferred.** On the keeper's committed
+`legitimacy_diagnostics.json`: rule 20 leg **(b) shape `D1.passed` = True**, leg **(a) provenance
+`D4.passed` = False**. A unit-grain re-base would fail NYISO `ST_GAS` in 2023 and 2024.
+
+**What is NEW, and it narrows the ruling's cost: leg (a) is failing on almost no energy, and 3 of
+its 6 rows are removable through an already-armed, already-adjudicated channel.** Five of the six
+D-4 unit-conduct FAIL rows carry ≤ 0.0028 TWh. **In 2024 the ONLY `ST_GAS` failure is Danskammer
+2480 at 0.0002 TWh — 0.007 % of that class-year's 3.0294 TWh of unit-grain forced energy.** A
+CAMPD census of every failing plant against nyiso-140's criterion
+(`scripts/probes/_nyiso203_d4_layup_census.py`) finds **2480 (12/12 zero cells, 2.9 % online)**
+and **Roseton 8006 (12/12, 14.6 % online)** qualify **a fortiori** against Port Jefferson 2517
+(38.6 % online), the one entry `reliability_floor_plant_exclusions` currently carries — while
+Astoria 8906 (0/12, 166 MW median, 70.4 % online) and Saranac 54574 (9/12) do **not**, confirming
+nyiso-201 §5. Excluding 2480 + 8006 would leave **zero `ST_GAS` D-4 failures in 2024 and 2025**
+and only 2023's 8906 row (0.2271 TWh) — whose limb basis nyiso-203 separately measured **sound as
+built** (`docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`), so it is not reachable
+by a basis change.
+
+**This addendum arms nothing and recommends no option.** The exclusion entry is a NEW arm owing
+its own PREREG, rule-29 screen and span, and the D-4 gate is computed per bundle, so the leg-(a)
+consequence must be measured rather than read off the row list. **Option (C)'s NYISO row is
+DONE** (this addendum); the other five ISOs remain unmeasured and this lane may not run them
+(rule 25 `[R-ISO-SCOPE]`). **The card remains UNRULED.**
