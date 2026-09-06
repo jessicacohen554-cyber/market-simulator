@@ -58,9 +58,10 @@ ASSEMBLE_PATH = "docs/codebase-site/data/mechanism-matrix-assemble.js"
 
 # Cell order of the legacy `cells:`/`fc:` strings — must match the base file's
 # `isos:` list (asserted by the CI guard, not assumed).
-ISO_ORDER = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+ISO_ORDER = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
 
-# Per-ISO `ev` keys, as declared in the matrix header since day one.
+# Per-ISO `ev` keys, as declared in the matrix header since day one (SPP added
+# at SPP-21, 2026-09-06, with the seventh shard).
 ISO_EV_KEY = {
     "ERCOT": "E",
     "CAISO": "C",
@@ -68,6 +69,7 @@ ISO_EV_KEY = {
     "MISO": "M",
     "NYISO": "N",
     "NEISO": "Q",
+    "SPP": "S",
 }
 EV_KEY_ISO = {v: k for k, v in ISO_EV_KEY.items()}
 # Legacy spellings found in the pre-shard file; normalized to the canonical
@@ -430,6 +432,7 @@ ISO_FIELD_STEMS: dict[str, tuple[str, ...]] = {
     "MISO": ("miso",),
     "NYISO": ("nyiso", "nysdec"),
     "NEISO": ("neiso",),
+    "SPP": ("spp",),
 }
 
 
