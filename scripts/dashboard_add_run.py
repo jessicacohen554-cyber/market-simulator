@@ -24,6 +24,12 @@ results surface is the codebase site: ``docs/codebase-site/backcast-runs.html``
 Commit: the bundle dir, the sidecar, ``runs/<id>.js``, and anything changed
 under ``bench/``. Prints ``RUN_ID=<id>`` on stdout so callers can stage by id.
 
+REGISTRATION-TIME HOLDOUT GATE (owner ruling R-AZ, 2026-09-06): this script is
+the single seam where a run's solve years become a committed sidecar, so it
+re-checks the rule-22 tier marker HERE — a marker held when the solve launched
+does not authorize a registration after it was withdrawn. See
+``enforce_registration_marker_gate``. There is no bypass flag.
+
 Usage:
     python scripts/dashboard_add_run.py --label "ct sweep 1.5" \
         --bundle results/calibration/ct_sweep_15
@@ -42,7 +48,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from scripts import render_backcast as rb  # noqa: E402  (after sys.path insert)
-from scripts.lib import keeper_store  # noqa: E402
+from scripts.lib import holdout_policy, keeper_store  # noqa: E402
 
 from market_sim.config.constants import STATMODE_PROBE_RUNS  # noqa: E402
 
@@ -137,6 +143,74 @@ def resolve_bundle(raw: str | Path) -> Path:
     """
     p = Path(raw)
     return p if p.is_absolute() else REPO / p
+
+
+def _load_json_doc(path: Path) -> dict:
+    """Return a parsed JSON document, or ``{}`` when it is absent.
+
+    Fail-closed by construction for the holdout gate: an absent or empty
+    marker file authorizes nothing (``holdout_policy.authorized`` reads a
+    missing block as empty), and an absent freeze file freezes nothing while
+    an ACTIVE one with no parseable scope freezes every tier
+    (``holdout_policy.frozen_tiers``). A malformed document is a hard error,
+    never a silent pass.
+    """
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text())
+
+
+def enforce_registration_marker_gate(iso: str, years, repo: Path | None = None) -> None:
+    """Refuse to register a run whose solve years are not authorized NOW.
+
+    The registration-time half of the rule-22 spend gate, minted by owner
+    ruling **R-AZ** (audit-program director sitting 2026-09-06, card "Marker
+    gate": *"Re-check at registration"*). The launch-time gate
+    (``run_calibration_full.enforce_holdout_year_gate``) reads the marker once,
+    when the LP starts; a multi-hour solve can outlive the authorization it
+    launched under. Z-6 is the case
+    (``docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md``
+    §1a): a NYISO 2022 solve launched under the D56-R ``complete`` marker,
+    ``main`` withdrew that marker (nyiso-193) mid-solve, and only the lane's
+    own discipline kept the run un-registered at merge. This closes that at
+    the seam where solve years become a committed artifact.
+
+    The policy itself is NOT re-implemented here — the tier map, the freeze
+    precedence and the marker lookup all come from
+    ``scripts.lib.holdout_policy`` (rule 19 ``[R-ONE-MECH]`` in spirit: one
+    policy module), so this gate and the launch gate can never disagree about
+    which year needs which block. Both marker documents are read from disk on
+    every call, which is the freshness the ruling is about.
+
+    There is deliberately NO bypass flag: a registration that fails this check
+    is not a registration. It runs before the sidecar, the ``runs/<id>.js``
+    payload and the bench parts are written, so a refused run leaves nothing
+    behind.
+
+    Args:
+        iso: Model ISO id of the run being registered.
+        years: The run's solve years (the bundle ``meta.json`` ``years``).
+        repo: Repo root; defaults to the module ``REPO`` read at call time.
+
+    Raises:
+        SystemExit: with the ISO, years, tier, marker/freeze state and the
+            ruling, when any out-of-training year is unauthorized.
+    """
+    root = repo or REPO
+    marker_doc = _load_json_doc(root / holdout_policy.MARKER_FILE)
+    freeze_doc = _load_json_doc(root / holdout_policy.FREEZE_FILE)
+    refusals = holdout_policy.registration_refusals(years, iso, marker_doc, freeze_doc)
+    if not refusals:
+        return
+    sys.exit(
+        "error: REGISTRATION REFUSED (CLAUDE.md rule 22 [R-HOLDOUT]; owner "
+        "ruling R-AZ, 2026-09-06 — the tier marker is re-checked at "
+        "registration, not only at solve launch).\n  "
+        + "\n  ".join(refusals)
+        + "\nThere is no bypass flag. Either the ISO's marker is restored by "
+        "an explicit owner act and the run is re-registered, or the run is "
+        "not registered — git history is the record (rule 15)."
+    )
 
 
 def prune_iso(
@@ -241,6 +315,11 @@ def main() -> None:
     # can list the run without ever opening the bundle.
     entry = rb.manifest_entry(args.label, bundle)
     rid, iso = entry["id"], entry["iso"]
+
+    # Rule 22 / R-AZ: re-check the tier marker HERE, at the seam where the
+    # run's solve years become a committed sidecar — before anything is
+    # written, so a refused registration leaves no artifact behind.
+    enforce_registration_marker_gate(iso, entry.get("years") or [])
 
     # Store the bundle path relative to the repo root so the sidecar is portable
     # across checkouts (CI clones to a different absolute path).

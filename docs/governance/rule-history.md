@@ -294,6 +294,41 @@ genealogy is owned by** `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(
   carries only its `_note`, and the 2026-08-26 ruling changes no marker. Recorded in
   CLAUDE.md rule 22's locked-test bullet, audit row O6, and
   `docs/FINDING-holdout-governance-2026-08-26.md`.
+- **2026-09-06 — R-AZ: the tier marker is re-checked AT REGISTRATION** (owner ruling,
+  audit-program director sitting ~00:15Z, card "Marker gate"; verbatim option taken:
+  *"Re-check at registration"*). The enforcement leg carried over unchanged since
+  2026-07-06 reads the marker exactly **once, at solve LAUNCH**
+  (`run_calibration_full.enforce_holdout_year_gate`), so a multi-hour LP can outlive the
+  authorization it started under. **The case is Z-6**
+  (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a): a NYISO 2022
+  validation-tier solve launched legally under the D56-R `complete` marker, `main`
+  withdrew that marker (nyiso-193) while the LP ran, and the run went un-registered at
+  merge only because the lane applied its own discipline — nothing in the tooling would
+  have stopped the sidecar. R-AZ closes that by re-asking the SAME question at the seam
+  where solve years become a committed artifact: `scripts/dashboard_add_run.py`
+  (`enforce_registration_marker_gate`), delegating to the new
+  `holdout_policy.registration_refusals` so the tier map, the fail-closed freeze
+  precedence and the marker lookup stay defined exactly once (rule 19 `[R-ONE-MECH]` in
+  spirit) and the two gates can never disagree about which year needs which block.
+  **Scope of the change, stated narrowly:** the launch gate's semantics are untouched;
+  D-6 and `audit_keepers` are untouched; no marker, freeze, keeper shard or registered
+  run is touched. **No bypass flag exists** — unlike the launch gate there is no
+  `--holdout-authorized` counterpart, because a registration that fails the check is not
+  a registration; the remedy is an explicit owner act restoring the marker, or the run
+  stays unregistered with git history as the record (rule 15). The gate runs before the
+  sidecar, the `runs/<id>.js` payload and the bench parts are written, so a refused run
+  leaves nothing behind. **Measured effect on the existing record: none.** All five
+  holdout-year sidecars at HEAD (`2026-09-05-neiso-2020-2021-touchpoints`,
+  `-neiso-2022-touchpoint-k99`, `-pjm-2022-2021-touchpoints`,
+  `-run249-2022-touchpoint-forward`, `-run250-2022-touchpoint-carveout`) are
+  validation-tier runs of `complete` ISOs (NEISO / PJM / ERCOT) and replay clean through
+  the new check, pinned as a test; `audit_keepers --check` and
+  `check_registry_payload_parity.py` both stay at 0 failures. One asymmetry is recorded
+  rather than repaired: the registration gate consults the **freeze** as well as the
+  marker (fail-closed), while `legitimacy_diagnostics.run_d6_quarantine` reads the marker
+  alone. It is inert today — the freeze covers the locked test, and no locked-test year
+  has ever been registered — so closing it was left out of scope. Execution record:
+  `docs/handoffs/FINDING-y16-register-marker-recheck-2026-09-06.md`.
 
 ## 5. Rule 27 `[R-PUSH]` — the 2026-07-15 `constants.py` truncation incident
 
@@ -858,6 +893,7 @@ tuning channel in spirit, rules 24 / 25"). No keeper moved and no marker was re-
 
 | date | change |
 |---|---|
+| 2026-09-06 | §4: recorded owner ruling **R-AZ** (audit-program director sitting, card "Marker gate", verbatim option *"Re-check at registration"*) — the rule-22 tier marker is now re-checked at REGISTRATION as well as at solve launch, closing the Z-6 window in which a multi-hour LP outlives the marker it launched under. New `holdout_policy.registration_refusals` + `dashboard_add_run.enforce_registration_marker_gate`; no bypass flag; launch gate, D-6, `audit_keepers`, markers, freeze, shards and every registered run untouched — all five holdout-year sidecars at HEAD replay clean. Executed by audit lane Y-16. |
 | 2026-09-05 | Added §8.2: rule 29 `[R-SCREEN]` clause (c), **delete before merge** (owner ruling **R-AV**, verbatim *"Delete before merge"*, on the rule-29 / Class-E parity collision the v31 second coda `da99f34b` routed; executed by audit lane Y-13). A screen bundle, or a control bundle a screen earns under clause (b), is `git rm`-ed from `results/calibration/` before its PR merges; the PRECOMMIT/FINDING doc carries every number; `check_registry_payload_parity` is the enforcement and an unregistered bundle dir is a gate red, not an allowlist candidate. Records the first execution (two dirs pruned, numbers confirmed in committed records first). No keeper, marker, shard or determination touched. |
 | 2026-09-05 | Added §11: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. Landed alongside main's same-day §9 (rule 15 retention) and §10 (bench fingerprint); this section took §11 on merge and "Changes to this file" renumbered §11 → §12. The CLAUDE.md rule-1 genealogy pointer was repointed §9 → §11 in the same commit. |
 | 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |
