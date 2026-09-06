@@ -7665,3 +7665,269 @@ FINDING-capx-d79p1-<date>.md with the no-op record, the pin table, blob checks; 
 "Cloning & session data" or Git section gains ONE sentence naming the fingerprint and Q54 (docs
 follow code). Nothing else arms.
 ```
+
+## r#51 NOTE (2026-09-06): D79 phase 1 / D78-R2 / D76 phase 2 / D75-R ALL LANDED; D65-B-R at 5/7 legs with G5′ adjudicated (§0av.3(b)); Q55 RULED ARM; five charters below — two DISPATCHABLE NOW (D78-R3, D75-R FACADE FIX), one NOTE for the running batch, two SEQUENCED/HELD (D75-R-ARM after D65-B-R's board write; D76 PHASE 3 after D75-R-ARM)
+
+## D78-R3 — the per-delivery-year zero-E&AS set, pre-registered and derived STRUCTURALLY, then W5′ re-graded (r#51)
+
+```
+You are the capx D78-R3 lane for jessicacohen554-cyber/market-simulator. MODEL: Opus.
+DATA PROFILE: pjm (hydrate with `python3 scripts/hydrate_data.py --profile pjm`; the
+committed D78-R2 instruments and the arm's slim registered files need only `code`, so start
+there and widen ONLY if step 3 earns the control re-solve).
+Branch: claude/capx-d78r3-perdy-set, fresh off origin/main. Rebase before every push;
+blob-verify every push touching a >=300-line file (rule 27).
+
+WHAT YOU ARE. D78-R2 (FINDING-capx-d78r2-2026-09-06.md, merged #5227) proved the sector-gate
+seam an EXACT candidate-set partition over 2021-2025 (W1/W2/W3 PASS, W4' HIT at 9,394.156 MW,
+whole-ledger diff zero unclassified rows) and HELD on ONE limb: W5' fired because the lane
+declared {gas_ct, gas_st, oil} a YEAR-INVARIANT zero-E&AS set on D57's headline, while
+FINDING-capx-d57-2026-09-05.md section 4's table is PER DELIVERY YEAR and puts only `oil` at the
+full bar in 2024/25 ("the CT fleet's 2024 margin is small but non-zero"). Measured exactly so:
+all 404 shared gas_ct rows moved in 2024-25 and the 8 oil rows moved by exactly zero. Your job
+is D78-R2 section 9, items 1-3, as a rule-29 SUCCESSOR pre-registration: declare the set per DY,
+derive it structurally, re-grade W5', and recommend. You do NOT arm anything. You do NOT touch
+retirement_sector_gate's default, _pjm_config, or any ScenarioConfig field.
+
+READ FIRST: CLAUDE.md rules 1, 13, 14, 19, 21, 24-29; FINDING-capx-d78r2 (all of it, sections
+5, 8, 9, 10 twice); its ADDENDUM 1 (docs/handoffs/d78r2/ADDENDUM-1-w4prime-band.md — the
+derive-on-the-control-before-the-arm pattern you are copying); FINDING-capx-d57 section 4 (the
+per-DY table) and section 8.1; FINDING-capx-d78r-2026-09-06.md section 4; the capx ledger
+docs/handoffs/capx-director-ledger-2026-08.md section 0av.3(d) and 0av.5(ii) (why the control
+may be gone); docs/handoffs/d78r2/{control_band,window_compare2}.json and .py.
+
+STEP 0 (zero LP) - PRECOMMIT-capx-d78r3-<date>.md, pushed BEFORE reading any per-class number.
+ (a) THE DECLARED SET, per delivery year, quoted from D57 section 4's rows, not its headline:
+     DY2022/23 {gas_ct, gas_st, oil}; DY2023/24 {gas_ct, gas_st}; DY2024/25 {oil}. Cite the row.
+     If D57 section 4 carries a DY2025/26 row, quote it too; if not, say the window's last DY has
+     no published set and W5' is NOT evaluable there (report, do not gate).
+ (b) THE STRUCTURAL DERIVATION RULE, stated before any count is read: "a class sits at its full
+     bar in DY iff every one of its offers in the control's DY stack is the same value" (D78-R2
+     section 9 item 2: oil 1 distinct value, nuclear 1, gas_st 3 while barred, gas_ct 12 while
+     barred and 72 once live). State the exact tolerance (byte-equal, or <= 1e-6 $/MW-day) NOW.
+     THE SUBSET GUARD: the derived set for a DY must be a subset of (a)'s declared set for that
+     DY; a class the record does not put at its bar may NOT be admitted by arithmetic alone.
+     If derived and declared differ, the DECLARED set governs W5' and the difference is REPORTED.
+ (c) W5'' restated on the per-DY set: for each DY, every shared row of a class in the DY's set
+     has a zero offer delta between control and arm; every class outside the set is REPORTED
+     (moved / unmoved, count and MW), never gated. Pass/fail is per DY and the window verdict is
+     the conjunction over the DYs where the set is non-empty and evaluable.
+ (d) THE GRADE RULE, pre-stated: W5'' PASS on every evaluable DY => limbs (a)-(d) of D78-R2
+     section 8 are ALL MET => you RECOMMEND ARM (owner card, served by the director as Q56); any
+     DY FAIL => HOLD, and name the class and count. No other outcome exists; write both sentences
+     now.
+ (e) WHERE THE STRUCTURE LIVES. Enumerate, before reading, which committed artifact carries a
+     per-DY per-class OFFER STACK: the arm's slim registered files under results/hindcast/
+     pjm-2021-2025-realized-t1h-d78r2-sectorgate (list the files), the D78-R registered arm
+     (FINDING-capx-d78r2 CORRECTION 1 says it carries its ledgers), docs/handoffs/d78r2/*.json.
+     control_band.json and window_compare2.json carry SECTOR aggregates only (director r#51
+     section 0av.5(ii)) - say so. If NO committed artifact carries the control's per-DY stack,
+     say in the PRECOMMIT that the control-P re-solve (bare pjm-t1h, ~21 min, key
+     a9c66d8ea25acb9d, HEAD guard on) is EARNED as the derivation base under rule 29(b)'s
+     LIVE-hunk analogue (a deleted derivation base), and that it will be DELETED BEFORE MERGE
+     again under 29(c). Deriving on the ARM's stack instead is FORBIDDEN (it is the object being
+     graded).
+
+STEP 1 (zero LP where (e) allows) - the derivation. Run the rule from (b) on the control's stack
+per DY. Emit docs/handoffs/d78r3/zero_eas_set.json: per DY the distinct-offer count per class,
+the derived set, the declared set, the subset check, and which artifact it was read from. If the
+control stack had to be re-solved, record key/HEAD/wall exactly as D78-R2 section 1 does.
+
+STEP 2 (zero LP) - re-grade W5'' on the committed arm and control ledgers/stacks. The arm is
+pjm-t1h-d78r2-sectorgate (registered, suffixed). Emit docs/handoffs/d78r3/w5_regrade.json with
+the per-DY per-class row counts, moved counts, max |delta|, and the verdict. Do NOT re-solve the
+arm. If the arm's committed files cannot support the re-grade, STOP and route - do not re-solve
+the arm to make a grade possible.
+
+STEP 3 - FINDING-capx-d78r3-<date>.md: the per-DY table (declared vs derived vs measured), the
+W5'' verdict per DY, the D78-R2 section 8 limb table re-stated with (a) updated, the
+recommendation from (d) verbatim, everything at full magnitude. PJM's matrix shard: update the
+retirement_sector_gate cell's evidence citation (rule 28(b); PJM shard only). If a control
+re-solve was spent: delete the bundle before merge and cite every number in the FINDING.
+
+GATES THAT STOP YOU: any per-class number read before the PRECOMMIT is pushed; the derived set
+exceeding the declared set (report, do not admit); any arm re-solve; any change to a default,
+an override, or retirements.py's decision logic. A stack-export helper (read-only, for the
+derivation) is allowed if the committed files lack the structure - declare it in the PRECOMMIT
+and keep it under scripts/probes/.
+EXIT: PRECOMMIT, the two JSON instruments, FINDING with the recommendation sentence, PJM shard
+cell, one PR (or two: PRECOMMIT first). Nothing arms.
+```
+
+## D75-R FACADE FIX — the red `test_moved_surface_is_complete` on main (r#51)
+
+```
+You are the capx D75-R FACADE FIX lane for jessicacohen554-cyber/market-simulator. MODEL: Opus
+(rule 27 core scope: constants.py is a >=300-line file). DATA PROFILE: code.
+Branch: claude/capx-d75r-facade-fix, fresh off origin/main.
+
+THE DEFECT. tests/regression/test_constants_facade.py::test_moved_surface_is_complete is RED on
+main at 00cee150: D75-R (merged #5206/#5229) added PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE and
+RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO to src/market_sim/config/capacity_market.py without the
+constants.py facade re-export (FINDING-capx-d79p1 section 6 reported it; the director measured
+it red this sitting: `assert not {'PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE',
+'RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO'}`).
+
+DO. (1) Read how the facade re-exports the other capacity_market names (grep constants.py for
+RENEWABLE_ELCC or CAPACITY_MARKET) and add the two names the SAME way, in the same block, with
+the same one-line citation comment pointing at FINDING-capx-d75r-2026-09-06.md section 1.
+(2) Edit with the Edit tool - never regenerate the file. (3) Run the test, then the whole
+tests/regression/test_constants_facade.py, then `python3 scripts/check_cache_key_registration.py
+--base origin/main` and `python3 scripts/solve_surface_register.py --diff origin/main HEAD` (or
+its equivalent) and PASTE both outputs in the PR body: the fingerprint already sees both names
+through the registry module, so the expected result is ZERO moved names and ZERO key moves -
+if either moves, STOP and route, do not push. (4) ruff check + format. (5) Push; blob-verify
+constants.py (line count + sha256 local vs origin) before anything else; put the verification
+in the PR body.
+DO NOT: touch capacity_market.py's values, any ScenarioConfig field, any test other than
+observing it go green, or any other file. One commit, one PR, title "constants facade: re-export
+the two D75-R capacity_market names". No FINDING needed; the PR body is the record.
+```
+
+## D65-B-R ADJUDICATION NOTE — paste into the RUNNING batch session (r#51 §0av.3(b))
+
+```
+DIRECTOR ADJUDICATION for capx D65-B-R (capx-director-ledger-2026-08.md section 0av.3(b),
+2026-09-06). You routed G5' on neiso-t1f (fired: 2030 at 59.5 % of cap) and nyiso-t1f (fired
+twice: 2029 75.7 %, 2030 33.3 %) because the gate contradicts its own source. RULING:
+
+1. G5' AS TRANSCRIBED FOR THE CAP-BOUND LEGS (neiso-t1f, nyiso-t1f, caiso-t1f: "STOP if the cap
+   does NOT bind in a year") IS VOID AS A STOP and is RECLASSIFIED to REPORTED. Ground: D64
+   section 2.3, verbatim - "a year converting materially below the cap would be the informative
+   surprise, not a STOP" - pre-registered this exact outcome as not a STOP, and Addendum C
+   promoted section 2.4's hour-ceiling census cell (computed on the SHIPPED shape) into a floor
+   on a solved quantity, the "a band is a window, never a floor" error Addendum C itself names
+   for G1'. Same defect class as r#48 section 3(a); the ruling is made on the documents and
+   would be identical had the below-cap years read against the seam.
+2. The ceiling form of G5' on ercot / pjm / miso ("any year above its ceiling") is UNTOUCHED - a
+   published ceiling is a legitimate upper bound.
+3. neiso-t1f and nyiso-t1f are NOT STOPPED. They REGISTER on the board exactly as the three
+   cleared legs do (you are the sole board writer), with the unbinding reported at full
+   magnitude and the MW-weighted k column beside it (0.9952 -> 1.3032; 1.0544 -> 1.2235), and
+   the CAISO control case (k 1.03-1.08, stays bound) cited as the mechanism reading. Fill
+   FINDING sections 0 and 6 accordingly; state in section 6 that G5' fired, was routed, and was
+   voided by this ruling - do not rewrite Addendum C.
+4. LEG 7 (neiso-t3 GOLDEN-3) IS NOW POSITIVELY INDICATED by D64 section 2.3's own conditional
+   ("only re-solved if the NEISO t1f arm shows the cap unbinding"). Run leg 6 (miso-t1f) then
+   leg 7 as chartered; leg 7's Addendum C gate ("the converted set moves IN KIND - a class the
+   RGGI ladder does not price") stands as written.
+5. Recreate the branch claude/capx-d65br-batch-nmrwww off origin/main (it was merged and
+   deleted at #5230); re-audit the delta since 81c8aa6c before the next LP (REBASE-THEN-RE-AUDIT,
+   constants.py first); note that main now carries D79's fingerprint (zero key moves, verified
+   0/148) and D75-R (a default-OFF field, absent from your recipes) - classify both.
+6. The two test_capacity.py pins are GREEN at 00cee150 - record that section 3.2's debt is
+   discharged. Then the board write, the FINDING close, and the PR.
+```
+
+## D75-R-ARM — arm `pjm_vre_accreditation_vintage` for PJM under owner ruling Q55 (r#51; SEQUENCED)
+
+```
+You are the capx D75-R-ARM lane for jessicacohen554-cyber/market-simulator. MODEL: Opus.
+DATA PROFILE: pjm. Branch: claude/capx-d75r-arm-pjm, fresh off origin/main.
+DISPATCH PRECONDITION (STOP): do NOT start until D65-B-R's board-write PR (the one that
+registers pjm-t1f / neiso-t1f / nyiso-t1f / miso-t1f / neiso-t3 on
+frontend/data/forecast/program-status.json) has MERGED to main. You move every bare PJM key;
+the batch is the sole board writer and was re-declared once already for D67-ARM. Check with
+`git log origin/main --grep="D65-B-R"` and the board's pjm-t1f row before your first commit;
+if it has not merged, stop and say so.
+
+AUTHORITY. Owner ruling Q55 (capx ledger section 3, r#51): ARM for PJM. Evidence:
+FINDING-capx-d75r-2026-09-06.md (sections 0, 1, 5, 6, 8). Posture: the D57 / D67-ARM
+precedent - FINDING-capx-d67arm-2026-09-06.md is your template, follow its structure.
+
+DO, in this order.
+ (0) PRECOMMIT-capx-d75r-arm-<date>.md pushed before any solve: the bare pjm-t1h key at HEAD
+     (control) and the declared post-arm key; the no-op probe expectation (every non-PJM run
+     config and every backcast config: ZERO key moves - run
+     scripts/probes/capxd79_solve_surface_no_op_check.py or the D67-ARM probe and paste the
+     count); G-DRIFT from D75-R's FINDING sha to HEAD, constants.py first; the invariants you
+     expect to hold (D67-ARM had all 14 PASS on the bare row - state that as the bar); FC-3 rows
+     reported at full magnitude, never gated.
+ (1) The arm: in src/market_sim/config/iso_configs.py::_pjm_config default_scenario_overrides,
+     add pjm_vre_accreditation_vintage=True beside the D48 / D57 / D67 entries, with a citation
+     comment (Q55, FINDING-capx-d75r section 8). Shared ScenarioConfig default stays OFF. Confirm
+     --no-pjm-vre-accreditation-vintage reaches the control (existing harness flag) and that an
+     explicit False keeps the pre-arm key. Update the D67-ARM-style test that asserts the PJM
+     override set (tests/unit/model/test_capacity.py::test_pjm_iso_override_arms_forecast_only)
+     to include the new field - the intent is unchanged: forecast-only, PJM-only.
+ (2) Byte-identity: run the no-op probe; every non-PJM config and every backcast config must
+     show zero key moves; every PJM forecast config moves (report the list). Any other pattern:
+     STOP.
+ (3) Re-solve the BARE pjm-t1h (2021-2025, HEAD guard on, years sequential) and score it; run
+     check_forecast_invariants on the sidecar; register the row (you are now the board writer
+     for pjm-t1h). Report all 14 invariants and every FC-3 metric vs the committed row at full
+     magnitude. Do not re-solve pjm-t1f (D65-B-R's row records its own sha; a later batch
+     refresh owns it).
+ (4) FINDING-capx-d75r-arm-<date>.md: keys before/after, the no-op table, the invariants table,
+     FC-3 at full magnitude, and one paragraph stating what the arm does NOT close (over-
+     retirement, unit recall, the 2024/25-2025/26 census direction). CLAUDE.md's Capacity
+     Evolution list gains ONE bullet or one sentence under the D48 family naming the arm and
+     Q55 (docs follow code). PJM's matrix shard cell: K-armed with the citation. Update
+     docs/handoffs/d75r/full-gates.json only if it carries an "armed" field.
+GATES THAT STOP YOU: any non-PJM or backcast key move; any change to the registry values, the
+R1 reconciliation, or any ScenarioConfig default; the precondition above.
+EXIT: PRECOMMIT, iso_configs.py + test edit, the pjm-t1h sidecar + board row, FINDING, CLAUDE.md
+sentence, shard cell. Two PRs (PRECOMMIT + code; then the row + FINDING) or one - your call, but
+the PRECOMMIT is pushed before the solve starts.
+```
+
+## D76 — PHASE 3 (HELD): NEISO + NYISO on the 2021–2023 window and a PJM re-A/B at a HEAD carrying D75-R-ARM (r#51)
+
+```
+You are the capx D76 phase 3 lane for jessicacohen554-cyber/market-simulator. MODEL: Opus.
+DATA PROFILE: neiso, nyiso, pjm (hydrate one at a time, in that order).
+Branch: claude/capx-d76-p3-neiso-nyiso-pjm, fresh off origin/main.
+DISPATCH STOP: do NOT start until D75-R-ARM has MERGED to main (`git log origin/main
+--grep="D75-R-ARM"` shows the FINDING commit and iso_configs.py::_pjm_config carries
+pjm_vre_accreditation_vintage=True). Phase 1 ran without a release at r#50; this phase does
+not. If the precondition is not met, stop and say so.
+
+WHY. FINDING-capx-d76-p2-2026-09-06.md (merged #5228) measured the screen peak's ONE live
+consumer (the adequacy requirement) across PJM / CAISO / ERCOT / MISO and found PJM INERT
+end-to-end under D67-ARM - but section 4.1 states that PJM's accreditation inertness rests on
+an ELCC curve that CLAMPS, "which is itself the defect capx D75-R is chartered to repair. If
+pjm_vre_accreditation_vintage arms, PJM's census may become peak-sensitive again." Q55 armed it.
+NEISO and NYISO were deferred at the director's call. The arming card (section 9) is served
+by the director on THIS phase's table, never by you.
+
+DO. Exactly the phase 2 protocol (PRECOMMIT-capx-d76-p2-2026-09-06.md + Addendum 1,
+docs/handoffs/d76/p2_predeclare.py, p2_gate.py, p2_consumer_probe.py,
+p2_accreditation_probe.py - reuse them, extend rather than fork):
+ (0) PRECOMMIT-capx-d76-p3-<date>.md pushed BEFORE the first LP: the pre-declared measured peak
+     per ISO-year (p2_predeclare), the control and arm keys for all six legs, G-DRIFT from
+     e6a0402f (phase 2's base) to HEAD with every hunk classified (D75-R-ARM and D79 are LIVE
+     for PJM keys by construction - say so and pre-declare the new PJM control key), the
+     partition of expected-moved ledger fields per ISO, the six STOPs verbatim from phase 2,
+     and the consumer table's expected verdicts per ISO (NYISO requirement-moot via D52 => the
+     expectation is INERT like PJM-at-phase-2; write it down before solving).
+ (1) Legs, sequential, one LP at a time, NO commits during a solve (D75-R and D76-P2 both
+     tripped their own HEAD guards by committing mid-solve): NEISO 2021-2023 control + arm;
+     NYISO 2021-2023 control + arm; PJM 2021-2025 control + arm at the post-D75-R-ARM HEAD.
+ (2) Grade each ISO with p2_gate.py (STOP 1-6), the whole-ledger diff, the consumer probe and
+     the accreditation probe at both peaks. For PJM the question is ONE thing: is the
+     accreditation census still peak-inert now that the ELCC vintage is armed? Report the
+     credits at both peaks per DY.
+ (3) FINDING-capx-d76-p3-<date>.md: the six-ISO consumer table completed (phase 2's four rows
+     carried verbatim, two new rows, PJM row re-measured and marked "re-measured post-Q55");
+     every STOP; FC-3 at full magnitude never gated; and section 9 of phase 2 REDRAFTED with
+     all six ISOs measured - drafted for the director, NOT served. Each ISO's matrix shard cell
+     updated (rule 28(b), own-ISO shards only). Every control/arm bundle deleted before merge
+     (rule 29(c)); every number lives in the FINDING and docs/handoffs/d76/p3_gate_<iso>.json.
+GATES THAT STOP YOU: the dispatch STOP above; any commit during an LP; a realized key not
+equal to its pre-declared value (re-declare in an addendum BEFORE the leg, never after); any
+STOP firing (report it fired, do not reinterpret); arming anything.
+EXIT: PRECOMMIT, three gate JSONs, FINDING with the redrafted card, three shard cells, bundles
+deleted, one PR.
+```
+
+## D82 / D83 / D84 — RESERVED (r#51)
+
+D82 unchanged in scope; D78-R2 §5 sharpens its object: the zero-E&AS operand is
+per-delivery-year (D57 §4) and the CT plateau is LIVE by 2024/25 — a design read before any
+charter, and D78-R3's per-DY set is an input to it. **D83 RESERVED** — `evolution_2022.json`
+carries no adequacy block while 2021 / 2023–2025 do (D75-R §6 item 1, reproduced on a fresh
+solve at HEAD; forced pool reconstruction in D75 and D75-R); a ledger-owning lane's defect,
+charter after a zero-LP read of `capacity_evolution`'s 2022-bridge path. **D84 RESERVED** —
+PJM's 2025/26 3IA THERMAL class ratings differ from the wired 2026/27 set (gas CC 78 vs 74,
+CT 63 vs 60, steam 74 vs 73, diesel 92 vs 91; D75-R §6 item 4): D48's own half, the
+"other half" of D66 card B; a follow-on card after D75-R-ARM lands, never a blocker on it.
