@@ -7,7 +7,19 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #6) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #6, amendment 1) ·
+**r#6 am.1 — RULING S5 SPLITS STAGE A IN TWO.** D-7 is ruled: **hold the policy half, run the
+load half now.** Stage A is no longer one campaign. **STAGE A-LOAD** — `REF` /
+`LOAD-HI` / `LOAD-HI-ORGANIC` across six ISOs, plus the pure-carbon T0 probes **below 2028** —
+has **no `gas_cc_ccs` exposure at all** and proceeds as soon as SCN-WS4c lands. **STAGE A-POLICY**
+— every CES case, every carbon case at or above `ccs_retrofit_available_year` (2028), `ALL-CLEAN`,
+and the `VOL-*` cases when they exist — **HOLDS until the capx CCS emission-rate seam is
+repaired**. The ruling buys the campaign's uncontaminated half now and spends no LP twice.
+**Routed to the capx director as a priority signal**: their CCS repair now gates half of a
+chartered campaign, which it did not before. **The desk issues nothing on this ruling** — A-LOAD's
+own precondition (SCN-WS4c) is still in flight, so the sequencing is recorded and the lane is
+issued the refresh WS-4c lands.
+*(previous)* **r#6 (HEAD `ad45b0e4`):**
 **r#6 (HEAD `ad45b0e4`):** **ALL FOUR RULING-RELEASED LANES LANDED IN ONE DAY — and SCN-WS2b
 found a defect that SIGN-FLIPS the campaign's headline answer.** Landed: **SCN-WS1c** (ruling S2
 executed — the federal price is now a floor under the state program, matrix re-stamped, full-suite
@@ -156,6 +168,38 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#6 amendment 1 — 2026-09-06: ruling S5 on card D-7
+
+**S5 (2026-09-06), verbatim in effect: HOLD THE POLICY HALF; RUN THE LOAD HALF NOW.** Stage A
+splits along the one line the defect actually draws — whether a case moves `gas_cc_ccs`.
+
+| | cases | CCS exposure | status |
+|---|---|---|---|
+| **STAGE A-LOAD** | `REF`, `LOAD-HI`, `LOAD-HI-ORGANIC` across six ISOs at T1-F 2026–2030; plus the pure-carbon **T0 2026** probes | **none** — the retrofit screen is inert below `ccs_retrofit_available_year` (2028) by construction, and a 2026-only T0 never reaches it | **RELEASED.** Issued the refresh SCN-WS4c lands (its probes are this half's T0 leg). |
+| **STAGE A-POLICY** | every `CES-*` case, every carbon case at or above 2028 (`CARB-*` T1-F legs), `ALL-CLEAN`, and `VOL-*` / `CES-P20+VOL-HI` when they exist | **yes** — these are the cases whose CO2 number may be sign-wrong | **HELD** until the capx CCS emission-rate seam is repaired and a paired check confirms `emission_rate` follows the retrofit. |
+
+**Why this is the cheap answer, stated so a successor does not re-litigate it.** The alternative
+the desk offered — run everything now, re-solve the affected cases after the repair — spends the
+LP twice on most of the policy half (six ISOs × the CES ladder + the 2028+ carbon legs), and the
+alternative of holding *everything* would park the load half behind a defect it has no exposure
+to. S5 takes the only split that costs neither.
+
+**What the desk does with it, and what it does not.** Recorded here and in plan §6; **routed to
+the capx director as a priority signal** — the CCS repair (D50/D60/D65 lane) now gates half of a
+chartered campaign, which it did not before this refresh. The desk **issues nothing on this
+ruling today**: Stage A-LOAD's precondition is SCN-WS4c, still in flight. When WS-4c lands, the
+six `SCN-WS5A-LOAD-<ISO>` lanes and their synthesis are issuable **without a further card** —
+S5 is the authorization for that half.
+
+**One scope note recorded against interest.** The `VOL-*` cases are placed in A-POLICY, not
+A-LOAD, even though the voluntary row's default eligible set is renewable-only and does not credit
+CCS. The reason is that a voluntary attribute row still *displaces thermal*, and in a 2026–2030
+window NEISO's CCS fleet exists from 2028 — so a `VOL-*` leg can move `gas_cc_ccs` indirectly. It
+is moot for sequencing today (SCN-WS3b has not started), but the placement is deliberate rather
+than inherited.
+
+---
 
 ### r#6 — 2026-09-06, main HEAD `ad45b0e454022e55ac76d1e03e0e6c207ae86be2`
 
@@ -641,7 +685,8 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED — precondition now reachable** | — | Opus | Precondition: SCN-WS3b on main, which S1 has now released. Issued the refresh WS-3b lands. |
-| **SCN-WS5A-\<ISO\>** ×6 + **-SYNTH** | Stage A campaign, T1-F 2026–2030, all six ISOs | **QUEUED (wave 3)** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
+| **SCN-WS5A-LOAD-\<ISO\>** ×6 + **-SYNTH** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **RELEASED by S5 — issues when SCN-WS4c lands** | — | Opus | No CCS exposure (the retrofit screen is inert below 2028). **Needs no further card**: S5 authorizes this half. |
+| **SCN-WS5A-POLICY-\<ISO\>** ×6 + **-SYNTH** | **Stage A-POLICY** — the CES cases, the 2028+ carbon legs, `ALL-CLEAN`, `VOL-*` | **HELD by S5 on the CCS seam** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
 | **Stage B** | Full-horizon legs | **NOT ISSUABLE** | — | — | Needs card D-5 **and** an OPEN §2.1b gate for the named ISO at issuance. At the r#1 pin only NEISO is open. Re-check at issuance, never at planning. |
 
 ---
@@ -658,6 +703,7 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **D-3b** | *(memo box 2)* Does in-LP hourly (24/7) matching stay deferred to the isolated `scope2-lce-portfolio` tool? | **RULED r#5 am.1 — with S1** | **DEFERRED.** The owner took S1's recommended form rather than the hourly-in-LP variant, so 24/7 stays in the isolated tool, fed the campaign's LMPs. WS-3b builds the annual volumetric row only. |
 | **D-3c** | *(memo box 3, NEW)* The eligible set — renewable-only by default (incl. offshore wind), carbon-free (nuclear/CCS) only as a labelled override; credit all eligible units or new builds only? | **PRESENTED r#2 — STILL OPEN after S1/S3** | — · S1 ruled the AXIS admissible and S3 ruled its LEVELS; neither reaches the eligible SET. SCN-WS3b therefore builds against the memo's **recommendation**, which stays labelled a recommendation and is the one place SCN-LEVELS deliberately left the illustrative-class wording standing (`FINDING-scn-levels-2026-09-06.md` §4). |
 | **D-4** | Fund the `load-forecast` curated intake? | **RULED r#5 am.1 — S4** | **S4 (2026-09-06): FUND THE FULL DATATYPE.** All six published sources curated through the data-intake skill. **This OVERRIDES the desk's and SCN-WS4a's recommendation to defer**, and is the largest of the three options offered — recorded as the owner's call on a question the desk had answered the other way. → **SCN-LOAD issued**, with the known 403 host wall on MISO's driver-level data flagged at the gate rather than discovered mid-lane. **LANDED 2026-09-06 — the ruling is vindicated on evidence neither recommendation had.** All six sources obtainable and on disk; G-D4-1/-2/-4 CLOSED, G-D4-3 partial (ERCOT verified, PJM's Table B-9b read but the shares deliberately not rewritten — routed), G-D4-5 a disclosed null; the MISO 403 wall re-confirmed BLOCKED. The return was NOT the provenance upgrade the card was argued on: the intake found an era-window error in every rate and a table silently mixing peak- and energy-derived bases, worth up to **+31 % of the 2030 demand scalar**, while NYISO — the one row already properly derived — reproduced to four decimals. `FINDING-scn-load-2026-09-06.md`; six items routed to this desk. |
+| **D-7** | Does Stage A run before the CCS emission-rate seam is repaired? | **RULED r#6 am.1 — S5** | **S5 (2026-09-06): HOLD THE POLICY HALF, RUN THE LOAD HALF NOW.** Stage A splits at the `gas_cc_ccs` line: **A-LOAD** (`REF`/`LOAD-HI`/`LOAD-HI-ORGANIC` six-ISO T1-F + the sub-2028 carbon T0 probes) is released and issues when SCN-WS4c lands, needing no further card; **A-POLICY** (every CES case, every 2028+ carbon case, `ALL-CLEAN`, `VOL-*`) holds until the capx CCS seam is repaired and a paired check confirms `emission_rate` follows the retrofit. Routed to the capx director as a priority signal. |
 | **D-5** | Per-campaign §2.1b grant for the NEISO scenario campaign (Stage B). | **HELD** — presented only with Stage A's measured cost table on the dashboard. | — |
 | **D-6** | Attribute netting between a federal CES row and a voluntary-demand row. Recommendation: **counts toward**, report both. | **PRESENTED r#1 — STILL OPEN after S3** | — · S3 did not reach it. `CES-P20+VOL-HI` therefore reports BOTH nettings and asserts neither; the memo §4.3 is the brief and Addendum A.2 the dissent to weigh beside it. |
 
