@@ -730,3 +730,88 @@ and the ERCOT partition was absent — the W1-B B3 guard). Rebuilt with
 empty (`NYISO` confirmed-retirements, `NEISO-AS/requirements`, CAISO storage-AS awards), 1.5 GB.
 No model input was substituted or degraded; the guard did its job and the batch starts from a
 complete tree.
+
+---
+
+## ADDENDUM G (2026-09-06, session **D65-B-R**) — the FOURTH rebase re-audit, BEFORE leg 7
+
+**Why it exists.** The batch branch merged and was deleted twice (#5230 legs 3–5, #5250 leg 6) and
+is **recreated off `origin/main` `29a76482`** under director adjudication **r#51 §3(b)** (ledger
+`capx-director-ledger-2026-08.md` §0av). The director named `81c8aa6c` (leg 5's HEAD) as the
+re-audit basis; leg 6 has since landed at `46cb32c3`, so **this audit's window `81c8aa6c →
+29a76482` is a SUPERSET of leg 6's own `46cb32c3 → 29a76482`** and covers leg 7 and re-covers
+leg 6 at once. Written BEFORE any leg-7 LP, per Addendum C §C.3.
+
+### G.1 `constants.py` FIRST: **ZERO hunks**
+
+The check a matched cache key cannot make, because `constants.py` is outside the key. Solve-path
+scope `src/market_sim scripts/run_calibration.py scripts/run_calibration_full.py
+scripts/run_full_horizon.py scripts/lib data/raw/_validation-source data/raw/reference` =
+**8 files, +658 / −29**. Per D65 §3d, every hunk in an EXISTING function names its gate or shows
+its arithmetic; a file-level verdict is inadmissible.
+
+### G.2 The delta, hunk by hunk, each gate MEASURED
+
+| file | hunk class | verdict | the gate, MEASURED |
+|---|---|---|---|
+| `config/constants.py` | — | **INERT** | no hunk exists |
+| `config/scenarios.py` (+147) | **3 NEW fields** | **INERT** | `miso_seam_neighbour_hourly_ladder` (miso-231), `eia860_vintage_tracks_solve_year` and `pjm_interface_feed_admissibility_gate` (pjm-167). All three `bool = False`; all three registered `_CACHE_KEY_OPTIONAL_FIELDS` at drop `"False"`; **no `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry**; `iso_configs.py` ABSENT from the delta — and per Addendum E that absence is **not** the argument: all three are **MEASURED `False` at all six resolved forecast configs AND on leg 7's own resolved recipe** |
+| `config/paths.py` (+40) | 1 NEW function | **INERT** | `resolve_backcast_eia860_vintage` is additive and reached only from the two new call sites below; an explicit `eia860_vintage_year` still wins, and with `tracks_solve_year=False` it returns exactly the pre-hunk expression |
+| `runner.py` (+18) | 1 hunk in the EXISTING `run_scenario_iso` | **INERT — algebraically, not merely by gate** | the call sits inside `… if (config.mode == "backcast" or config.hindcast) else None`. Leg 7 is **measured** `mode="forecast"`, `hindcast=False`, so the `else None` arm is taken, bit-for-bit as before. Even on the other arm the tracking argument is `config.mode == "backcast" and …`, so a hindcast leg passes `False`/`None` and the function returns `config.eia860_vintage_year` — the pre-hunk value |
+| `data/transfer_interface_limits.py` (+168) | 1 new function + `admissibility_gate: bool = False` on 2 EXISTING ones | **INERT** | every new branch is under `if admissibility_gate:`, measured `False` at all six; and the judged series are PJM's |
+| `model/interchange/import_nodes.py` (+19) | `_inject_seam_ladder` gains `hourly_anchor=None` | **INERT — algebraically** | `anchors = hourly_anchor or {}` ⇒ `anchors.get(name)` is `None` ⇒ the applied statement is `mc[row, :] = prices[k]`, the pre-hunk line unchanged |
+| `model/interchange/miso.py` (+55) | 4 hunks in the EXISTING `inject_miso_seam_ladder_prices` | **INERT — twice over** | its first statement is `if iso != "MISO": return False`, and leg 7 is **NEISO**. Independently, with `neighbour_hourly=False`: `hourly` is `None`, `anchors` is `{}`, the new `seam not in anchors` filter on the annual overlay is vacuous, and the hoisted `if ladder is None: return False` reproduces the pre-hunk `_inject_seam_ladder(…, None) → False` |
+| `model/interchange/spec.py` (+134) | 2 new tables | **INERT** | `MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_{BY_YEAR,POOLED}`, read only under the gate measured `False`. `spec.py` is also OUT of D79's phase-1 surface **by design** (`solve_surface` docstring §2.3 — it imports `data.fleet`), so it is not a fingerprint input either |
+| `scripts/run_calibration.py` (+106) | ercot-251's `_renewable_bound_is_delivered_pinned` + pjm-167's two wirings | **INERT** | backcast entry point. This lane runs `run_full_horizon.py`, which **has no hunk in this window** |
+
+**VERDICT: every hunk INERT. Zero LIVE.** No control solve is earned (rule 29(b)) and G-CTRL
+**form 4** — differencing leg 7 against the incumbent GOLDEN-3's committed numbers — stays VALID.
+
+### G.3 The two the director named, classified
+
+**D79 — the solve-surface fingerprint (owner ruling Q54).** It landed **before** this window:
+leg 4 (`caiso-t1f`, `95a2972b`) is the first bundle in this batch carrying `solve_surface.json`, so
+legs 4/5/6 already solved under it and each reproduced its pre-declaration. In-window there are
+**zero hunks on all seven `SURFACE_MODULES`, on `solve_surface.py` and on
+`solve_surface_declared.py`**. Measured at HEAD: `moved_rows` = **0 for every one of the six ISOs
+and 0 globally**, and `SOLVE_EPOCHS` is empty — so **the fingerprint contributes nothing to any key
+at `29a76482`**, which is what "zero key moves, verified 0/148" reads as going forward rather than
+backward. **INERT** — and load-bearing in the honest direction: it is precisely the instrument that
+would have caught a registry-table move inside this window, and it reports none.
+
+**D75-R — `pjm_vre_accreditation_vintage`.** Also before this window (Addendum F's basis
+`5375be8b`); **no hunk in it**. Measured `False` at all six resolved forecast configs at HEAD and
+on leg 7's own recipe; the ARM (owner ruling Q55, execution charter D75-R-ARM) is **SEQUENCED
+behind this lane's board write** and has not landed. **INERT, and absent from every recipe in this
+batch** — exactly as the director's note says.
+
+### G.4 Keys re-verified at `29a76482` — and **the window moves NONE**
+
+**7 / 7 armed solve keys** reproduce Addendum C §C.1c's pre-declaration to the digit (PJM on
+Addendum E's re-declaration):
+
+| leg | pre-declared | measured at `29a76482` | acts undone → committed pre-D65-B |
+|---|---|---|---|
+| `ercot-t1f` | `9b9e5a48e3ca5c8e` | `9b9e5a48e3ca5c8e` ✓ | `0c3e9cd5b5993bdf` ✓ |
+| `neiso-t1f` | `c3519b861f920bbe` | `c3519b861f920bbe` ✓ | `18515067bf4d2fbe` ✓ |
+| `nyiso-t1f` | `f62431376dd9df03` | `f62431376dd9df03` ✓ | `19a9690bb12c8459` ✓ |
+| `caiso-t1f` | `17770cdad3230938` | `17770cdad3230938` ✓ | `29f8eb372810195f` ✓ |
+| `pjm-t1f` | `542eeedadab83ee1` (Add. E) | `542eeedadab83ee1` ✓ | `9210df56a2a33eae` — **moved, and it is D67-ARM's**, see below |
+| `miso-t1f` | `74359fedbf2eadd6` | `74359fedbf2eadd6` ✓ | `b1a73a087064ffd8` ✓ |
+| **`neiso-t3` GOLDEN-3** | **`0fc42cb56c24d544`** | **`0fc42cb56c24d544`** ✓ | **`f04fd06348e1623d`** ✓ |
+
+So the STOP *"a realized key ≠ its pre-declared value"* does **not** fire for leg 7, and leg 7's
+own recipe still reconstructs the incumbent GOLDEN-3's committed key `f04fd06348e1623d` when the
+two acts are undone — the batch's step-1c confirmation, holding at the leg that has not yet solved.
+
+**Bare keys: 13 / 14 unmoved.** The one exception is **PJM forecast `eaa3fbef5ff182c9 →
+748a1cfaecd3acef`**, and it is **D67-ARM's, predating this window** — measured **identical at
+`81c8aa6c` and at `29a76482`**. It is the same cause Addendum E already declared when it re-keyed
+PJM's *solve* key, PJM's leg has already solved and landed under it, and the PJM `acts-undone` cell
+above moves for that one reason and no other.
+
+**And the window itself moves ZERO keys.** Every one of the 14 bare and 7 solve keys above,
+armed *and* acts-undone, is **byte-identical when computed at `81c8aa6c` and at `29a76482`** —
+measured by re-running the same script against a code-only `git archive` of each tree, never by
+reading the diff and concluding. That is the strongest form of this check available at zero LP: the
+delta is inert on the key surface by measurement, not by classification.
