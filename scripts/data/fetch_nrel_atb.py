@@ -128,17 +128,48 @@ TECH_TECHDETAIL: list[tuple[str, str]] = [
     ("Geothermal", "DeepEGSBinary"),
 ]
 
-# core_metric_parameter values to keep. Scoped to exactly what the D4
-# calendar-year cost trajectories need -- capex/FOM by tech x year x case
-# (forecast-driver-capacity-revenue-audit-plan-2026-07.md Sec.4 N8). Excludes
-# ATB's finance-internals parameters (WACC, CRF, FCR, debt fraction,
-# interest/tax rates) as well as Variable O&M/CF/Heat Rate: those aren't
-# consumed by this model's cost tables (VOM/CF/heat-rate inputs come from
-# the fleet/offer-curve pipeline, not ATB), and excluding them keeps the
-# filter's intent legible and the committed extract small. A future session
-# needing ATB's VOM/CF/Heat Rate series can re-add them here and re-run
-# against a fresh OEDI download.
+# core_metric_parameter values to keep for EVERY technology. Scoped to
+# exactly what the D4 calendar-year cost trajectories need -- capex/FOM by
+# tech x year x case (forecast-driver-capacity-revenue-audit-plan-2026-07.md
+# Sec.4 N8). Excludes ATB's finance-internals parameters (WACC, CRF, FCR,
+# debt fraction, interest/tax rates), which no consumer in this repo reads.
 PARAMETERS: list[str] = ["CAPEX", "Fixed O&M"]
+
+# Additional core_metric_parameter values kept for ONE technology only, so
+# widening the extract for a named consumer does not balloon it for every
+# tech. Applied as a union with :data:`PARAMETERS`.
+#
+# WIDENED 2026-09-06 (capx D65-B item 1, executing D64 STOP 6 / D65 §9 item 1).
+# ``ScenarioConfig.ccs_retrofit_vom_adder`` is the capture island's VOM
+# increment, and until this widening it could not be read off the pinned
+# basis at all: the extract carried only CAPEX and Fixed O&M for
+# ``NaturalGas_FE``, which is precisely why that field shipped at an
+# uncited 8.0 $/MWh (2.7-3.6x every published basis; D64 Sec.2.4). ATB
+# publishes the increment directly -- NG 2-on-1 CC (F-Frame) 95% CCS 4.8
+# minus NG 2-on-1 CC (F-Frame) 2.1 = 2.7 2022$/MWh -- from the SAME source
+# bytes this filter already reads (OEDI ATBe.csv 2024 v4.0.0, sha256
+# 567dde9d85caa759bc3f2e42c9aa14a5f85e471ca4133ccc522e7a92e020297a), so no
+# new source, no new download and no new vintage is involved.
+#
+# ``Heat Rate`` rides along for the same technology because it is the
+# physical companion of that VOM increment and the cross-check on the
+# reference host the retrofit seam is sized against: ATB's own NG 2-on-1 CC
+# (F-Frame) heat rate @2026 is 6.3 MMBtu/MWh, which is exactly
+# ``min(HEAT_RATE_BINS["gas_cc"])`` -- the ``hr_ref`` in
+# ``ccs.ccs_retrofit_captured_ref_t_per_mwh``. Landing it makes that
+# identity assertable from the pinned bytes rather than by coincidence.
+# Consumers: scripts/data/derive_entry_costs_from_atb.py
+# (``derive_ccs_retrofit_vom_adder`` / ``derive_gas_cc_heat_rate``) and
+# tests/unit/config/test_ccs_retrofit_fixed_cost_basis.py.
+EXTRA_PARAMETERS_BY_TECHNOLOGY: dict[str, list[str]] = {
+    "NaturalGas_FE": ["Variable O&M", "Heat Rate"],
+}
+
+
+def parameters_for(technology: str) -> list[str]:
+    """Return the core_metric_parameter values kept for one ATB technology."""
+    return PARAMETERS + EXTRA_PARAMETERS_BY_TECHNOLOGY.get(technology, [])
+
 
 KEEP_COLUMNS = [
     "atb_year",
@@ -182,15 +213,19 @@ def filter_atb(source_csv: Path) -> pd.DataFrame:
     """
     df = pd.read_csv(source_csv, low_memory=False)
 
+    # The parameter scope is PER TECHNOLOGY (see EXTRA_PARAMETERS_BY_TECHNOLOGY):
+    # every tech keeps CAPEX/Fixed O&M, and NaturalGas_FE additionally keeps
+    # Variable O&M/Heat Rate. Building the mask per (tech, detail) pair rather
+    # than as one global `isin` is what keeps the widening scoped.
     mask = pd.Series(False, index=df.index)
     for tech, detail in TECH_TECHDETAIL:
-        mask |= (df["technology"] == tech) & (df["techdetail"] == detail)
+        mask |= (
+            (df["technology"] == tech)
+            & (df["techdetail"] == detail)
+            & df["core_metric_parameter"].isin(parameters_for(tech))
+        )
 
-    out = df[
-        mask
-        & df["core_metric_parameter"].isin(PARAMETERS)
-        & (df["core_metric_case"] == "Market")
-    ][KEEP_COLUMNS].copy()
+    out = df[mask & (df["core_metric_case"] == "Market")][KEEP_COLUMNS].copy()
 
     out = out.sort_values(
         [
@@ -240,9 +275,15 @@ def main(argv: list[str] | None = None) -> int:
         source = tmp_dir / "ATBe.csv"
         download_source(args.atb_year, args.atb_version, source)
 
+    all_params = sorted(
+        set(PARAMETERS).union(*EXTRA_PARAMETERS_BY_TECHNOLOGY.values())
+        if EXTRA_PARAMETERS_BY_TECHNOLOGY
+        else PARAMETERS
+    )
     print(
         f"filtering to {len(TECH_TECHDETAIL)} technology/techdetail combos, "
-        f"{len(PARAMETERS)} parameters, Market financial case ..."
+        f"parameters {all_params} (per-technology scope), "
+        "Market financial case ..."
     )
     filtered = filter_atb(source)
     OUT_DIR.mkdir(parents=True, exist_ok=True)

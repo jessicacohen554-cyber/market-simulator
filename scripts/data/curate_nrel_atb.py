@@ -71,9 +71,16 @@ _RAW_COLUMNS = [
 # this mapping is applied here, not read from the source. ATB 2024's dollar
 # year is 2022 (atb.nrel.gov/electricity/2024/index -- domain proxy-blocked
 # in this environment; see README for the verification caveat).
+# "Variable O&M" and "Heat Rate" added 2026-09-06 (capx D65-B item 1) with the
+# NaturalGas_FE widening of scripts/data/fetch_nrel_atb.py -- ATB's own units
+# for those two parameters (2022$/MWh and MMBtu/MWh; Heat Rate is a physical
+# quantity and carries no dollar year). Only NaturalGas_FE rows land them, so
+# every other technology's row set is unchanged.
 _UNIT_BY_PARAMETER = {
     "CAPEX": "2022 $/kW",
     "Fixed O&M": "2022 $/kW-yr",
+    "Variable O&M": "2022 $/MWh",
+    "Heat Rate": "MMBtu/MWh",
 }
 
 # The ATB versions committed under data/raw/nrel-atb, newest last. An ATB
