@@ -297,6 +297,11 @@ def whole_ledger_diff(c: dict[int, dict], a: dict[int, dict]) -> dict:
     return out
 
 
+def _mw(rows) -> float:
+    """Total MW of a ledger row list (rows carry ``mw``; ``capacity_mw`` on some)."""
+    return sum(float(r.get("capacity_mw") or r.get("mw") or 0) for r in rows)
+
+
 def report(c: dict[int, dict], a: dict[int, dict]) -> dict:
     """PRECOMMIT §5 — pre-declared expectations. REPORTED, never a gate."""
     out = {}
@@ -311,11 +316,23 @@ def report(c: dict[int, dict], a: dict[int, dict]) -> dict:
             cl, al = c[year].get(f) or [], a[year].get(f) or []
             out[year][f] = {
                 "control_rows": len(cl), "arm_rows": len(al),
-                "control_mw": round(sum(float(r.get("capacity_mw") or r.get("mw") or 0)
-                                        for r in cl), 3),
-                "arm_mw": round(sum(float(r.get("capacity_mw") or r.get("mw") or 0)
-                                    for r in al), 3),
+                "control_mw": round(_mw(cl), 3), "arm_mw": round(_mw(al), 3),
             }
+            # Retirement rows carry a ``reason`` (announced / confirmed /
+            # economic). The gate's channel is the ECONOMIC screen, so an
+            # aggregate row count hides whether an exogenous exit moved -- it
+            # must not. Split by reason so the FINDING can say which did.
+            if f == "retirements":
+                reasons = sorted({r.get("reason") for r in cl} | {r.get("reason") for r in al})
+                out[year]["retirements_by_reason"] = {
+                    str(rs): {
+                        "control_rows": sum(1 for r in cl if r.get("reason") == rs),
+                        "arm_rows": sum(1 for r in al if r.get("reason") == rs),
+                        "control_mw": round(_mw([r for r in cl if r.get("reason") == rs]), 3),
+                        "arm_mw": round(_mw([r for r in al if r.get("reason") == rs]), 3),
+                    }
+                    for rs in reasons
+                }
         fc = c[year].get("fleet_by_fuel_after") or {}
         fa = a[year].get("fleet_by_fuel_after") or {}
         out[year]["fleet_by_fuel_after_delta"] = {
