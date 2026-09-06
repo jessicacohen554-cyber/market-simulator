@@ -24,6 +24,7 @@ path.)
 | `07-nyiso-prompt-pack.md` | **Moved → `docs/sessions/multi-iso/07-nyiso-prompt-pack.md`** (archived, 2026-07 triage). NYISO instantiation — hydro (Niagara/St-Lawrence), downstate congestion, dual-fuel winter, HQ/PJM imports, RGGI, ICAP; P0–P13 merged + P14 doc-sync done. |
 | `08-neiso-prompt-pack.md` | **Moved → `docs/sessions/multi-iso/08-neiso-prompt-pack.md`** (archived, 2026-07 triage). NEISO (ISO-NE) instantiation — Algonquin winter basis + dual-fuel, HQ Phase II imports, Northfield PS, FCM, RGGI; P0–P13 + P14 Stage G/H sign-off done. |
 | `09-ercot-propagation-prompt-pack.md` | **Reverse direction.** Audit of ERCOT's accumulated changes + a sequenced pack to perpetuate the *generic* engine improvements across all ISOs while leaving the *energy-only-specific* ones (ORDC, AS revenue, RTC+B) in ERCOT. |
+| `spp-addition-plan-2026-09.md` | **SPP addition program (chartered 2026-09-06).** Definition of done, the eight owner cards (P1–P8), wave graph W1–W6, lane table with `[FABLE]`/`[OPUS]` labels, fetch/upload manifest, hard gates, and the prompt pack. Director: the SPP addition desk (`docs/handoffs/spp-desk-handoff-2026-09-06.md`, ledger `spp-desk-ledger-2026-09.md`). SPP stays unregistered until its W2 lane lands. |
 
 > **Archived session notes → `docs/sessions/multi-iso/`.** The 2026-07 triage
 > (`docs/handoffs/multi-iso-triage-2026-07.md`) moved **27** dated, point-in-time

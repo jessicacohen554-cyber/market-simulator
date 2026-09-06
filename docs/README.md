@@ -93,6 +93,7 @@ produced is L3.)
 | [`adding-new-data-types.md`](adding-new-data-types.md) | ACTIVE | Data — how to intake a new datatype | — |
 | [`us-gen-ownership.md`](us-gen-ownership.md) | ACTIVE | Data/ownership — US generation ownership (moved from repo root, PR #2551) | — |
 | [`multi-iso/README.md`](multi-iso/README.md) | ACTIVE | Multi-ISO — protocol & reference index (six ISOs) | — |
+| [`multi-iso/spp-addition-plan-2026-09.md`](multi-iso/spp-addition-plan-2026-09.md) | ACTIVE | Multi-ISO — the SPP addition program: cards, waves, lane table, manifest, gates, prompt pack; desk handoff [`handoffs/spp-desk-handoff-2026-09-06.md`](handoffs/spp-desk-handoff-2026-09-06.md), ledger [`handoffs/spp-desk-ledger-2026-09.md`](handoffs/spp-desk-ledger-2026-09.md) | — |
 | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) | ACTIVE | Forecast — THE forecast program (tiers, lanes, waves, §9 doc ledger) | — |
 | [`handoffs/forecast-scenario-readiness-plan-2026-09.md`](handoffs/forecast-scenario-readiness-plan-2026-09.md) | ACTIVE | Forecast — scenario-readiness lane plan (carbon price, national CES, voluntary clean demand, load growth, system-wide emissions); subordinate to the FF plan | — |
 | [`refactor-consolidation-plan-2026-07.md`](refactor-consolidation-plan-2026-07.md) | ACTIVE | Governance/refactor — consolidation program charter | — |
