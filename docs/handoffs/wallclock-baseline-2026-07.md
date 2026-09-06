@@ -1413,3 +1413,218 @@ by merge-base control**: `legitimacy(--keepers)` on the same NYISO Long Island
 `S1: stale vs the current verdicts — frontend/data/backcast/status/NEISO.js`. Identical
 failures, same exceptions, exit 1 both times on a merge-base tree with the trim
 removed. Manifests committed under `results/regression-goldens/wc-a6-{before,after}/`.
+
+## WALLCLOCK 3a — re-baseline anchor on main `d1aa877f` (2026-09-06)
+
+Wave-3 item **3a** of the wall-clock desk (`docs/handoffs/wallclock-desk-log-2026-09.md` §1
+row 3a), executing `docs/handoffs/wallclock-opportunities-2026-09.md` §5 now that every
+wave-1/2 item is merged or closed. **DOCS ONLY** — no code, no `ScenarioConfig` default, no
+keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted, nothing
+dashboard-registered; every bundle captured for this section was deleted before the PR
+(rule 29 `[R-SCREEN]` (c)), and **every number this section will ever cite is in this
+section**.
+
+This re-captures the anchor table §PERF-B has carried since 2026-08-17, because five of the
+seven rows of that table's world have changed underneath it: A-1, A-2 and A-4 removed most of
+the year-1 `data_prep` premium; **A-3 changed what the phase line's `total` means** (the
+`hourly/` sidecar block is now inside `results_write`, where before it ran after the timing
+line and was booked to no phase at all); and **B** — the same-year P1 basis seed, WARM-START
+CLASS — is calibration-CLI default ON, so on the three bridge ISOs a calibration run's
+`solve_p1` no longer resembles a pinned replay's.
+
+**That last point forces two arm families, and confusing them is the one way to misread this
+section.**
+
+| arm family | env | what it is | what it is for |
+|---|---|---|---|
+| **(1) pinned anchor** | `MARKET_SIM_HIGHS_THREADS=1` `MARKET_SIM_WARMSTART=1` `MARKET_SIM_WARMSTART_XYEAR=0` | `scripts/capture_keeper_goldens.py --all --max-concurrency 1 --stage-tag wc-rebaseline` — each ISO's designated keeper replayed at HEAD through its own frozen recipe. The **P1 basis seed is OFF by construction** here: its gate is `_xwarm and xyear_warmstart is None and MARKET_SIM_P1_BASIS_SEED != "0"`, and the capture script hard-pins `WARMSTART_XYEAR=0` in `DETERMINISM_ENV` for both its parent and its subprocess env. | the **byte instrument's** wall — the tree every merge-base control capture is taken on, comparable back to §PERF-B, §WALLCLOCK A-1…A-4 and gate (1) of §WALLCLOCK B |
+| **(2) calibration-CLI default** | `HIGHS_THREADS=1` `WARMSTART=1` **`WARMSTART_XYEAR=1`** **`MARKET_SIM_P1_BASIS_SEED=1`** | the same keeper-kwargs reconstruction (`capture_keeper_goldens.resolve_capture_targets` + `build_solve_kwargs`) driven from a scratch script — **never committed, no repo code** — because `capture_keeper_goldens.py` cannot express this arm: its `DETERMINISM_ENV` overwrites `WARMSTART_XYEAR` in both processes. The persisted year-1 basis cache (`pipeline.basis_cache.BASIS_CACHE_DIR`, normally `results/basis-cache`) is pointed at an **empty scratch dir per arm** so P0 is cold on both families and its iteration count and objective are the built-in control. Throwaway `run_dir`, deleted afterwards. | **what a calibration run actually costs today.** These are NOT goldens, NOT a byte instrument, and must never be quoted as one; run to run they are also not bit-reproducible by design (that is what WARM-START CLASS means). |
+
+**Conditions**, as §PERF-B: 4 vCPU / 15 GB container, 6 GiB swapfile armed, `uv.lock` env,
+HiGHS 1.14.0, main at `d1aa877f` (clean tree, `git status` empty at capture). One ERCOT solve
+at a time (rule 12 `[R-PARALLEL]`); years sequential within every invocation. **The §PERF-B
+host-noise caveat governs every wall number below** — identical-recipe cross-run solve walls on
+this container class vary up to ±35 %, so *phase structure* is the signal and a solve-wall
+delta between sessions is not. Iteration counts, which B added to the HiGHS solve log line
+(`simplex iterations N, objective X`), are exact and are the reliable cross-arm instrument
+wherever they appear.
+
+**One environmental prerequisite, recorded because it cost this session its first capture.**
+`data/clean` is derived and gitignored, so a fresh container starts with the whole tree absent
+and the CAISO capture aborts before its first solve — `DegradedInputError: capacity_deliverability_limits
+needs data/clean/capacity-deliverability/CAISO`, the strict `check_clean_partitions` guard
+(caiso-157 / caiso-188). This is the same "check [4] is a fresh-container artifact, not a data
+gap" finding §WALLCLOCK B §2 hands to the desk, met on the *solve* path rather than the
+scoring path. `scripts/regenerate_clean.py` fixes it and every capture below ran after it.
+
+### (a) The anchor table — every ISO's designated keeper replayed at HEAD
+
+**Arm family 1 — pinned anchor** (`WARMSTART_XYEAR=0`; the P1 basis seed is OFF by construction).
+Fidelity oracle clean on all six: recorded flags replayed identically — NEISO 257, NYISO 283,
+CAISO 283, ERCOT 269, MISO 283, PJM 254. `sidecars` is A-3's new `results_write` component;
+`P0 iters` / `P1 iters` are the HiGHS `simplex iterations` counts item B added to the solve log
+line (a two-pass year shows `pass 1 / pass 2`); `peak` is the year's `VmHWM`.
+
+| ISO | year | data_prep | solve_p0 | markup | solve_p1 | results_write | *of which* sidecars | total | P0 iters | P1 iters | peak GB |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| NEISO | 2023 | 14.0 | 80.4 | 4.7 | 27.4 | 8.4 | 5.5 | **134.8** | 189108 | 62954 | 4.27 |
+| NEISO | 2024 | 5.9 | 70.4 | 4.6 | 24.0 | 7.7 | 4.8 | **112.5** | 189107 | 59502 | 4.40 |
+| NEISO | 2025 | 6.1 | 76.5 | 5.0 | 26.2 | 8.2 | 5.4 | **121.9** | 188840 | 58822 | 4.43 |
+| NYISO | 2023 | 14.5 | 94.0 | 3.9 | 93.2 | 8.5 | 4.0 | **214.2** | 269416 | 268305 | 5.43 |
+| NYISO | 2024 | 12.2 | 111.3 | 4.8 | 112.2 | 8.1 | 3.8 | **248.6** | 278818 | 274189 | 5.53 |
+| NYISO | 2025 | 9.9 | 98.0 | 4.7 | 105.8 | 7.9 | 3.6 | **226.3** | 279735 | 278975 | 5.63 |
+| CAISO | 2023 | 18.2 | 351.7 | 11.7 | 435.3 | 24.5 | 14.2 | **841.5** | 300609 | 290022 | 7.93 |
+| CAISO | 2024 | 13.9 | 637.8 | 15.7 | 737.8 | 23.0 | 13.5 | **1428.4** | 314057 | 298430 | 8.05 |
+| CAISO | 2025 | 14.3 | 474.6 | 16.1 | 563.7 | 22.8 | 13.7 | **1091.6** | 312484 | 291660 | 8.17 |
+| ERCOT | 2024 | 45.1 | 297.6 | 26.7 | 575.4 | 33.7 | 21.8 | **978.5** | 250529 | 252593 / 250796 | 12.83 |
+| ERCOT | 2025 | 39.6 | 334.7 | 19.2 | 363.7 | 28.7 | 19.5 | **785.9** | 273522 | 273933 | 12.83 |
+| MISO | 2023 | 35.1 | 319.6 | 20.4 | 253.6 | 46.0 | 25.6 | **674.7** | 388949 | 237997 | 13.28 |
+| MISO | 2024 | 28.6 | 349.5 | 19.4 | 216.0 | 49.5 | 25.0 | **663.0** | 394311 | 236905 | 13.28 |
+| MISO | 2025 | 27.0 | 382.6 | 19.6 | 215.4 | 46.0 | 24.0 | **690.6** | 424052 | 246796 | 13.28 |
+| PJM | 2023 | 42.7 | 409.9 | 21.3 | 143.7 | 54.1 | 26.0 | **671.7** | 415948 | 100123 | 13.29 |
+| PJM | 2024 | 39.4 | 354.3 | 20.6 | 137.7 | 53.5 | 22.8 | **605.5** | 427107 | 104481 | 13.29 |
+| PJM | 2025 | 38.3 | 368.9 | 21.8 | 159.0 | 52.9 | 25.2 | **640.9** | 429434 | 99765 | 13.29 |
+
+ERCOT is the **forward config on its designated {2024, 2025}** (R-AW / Y-14): the bare `ERCOT`
+key resolves to `ERCOT__forward`, and `ERCOT__carveout-2023` is retired and refused. **The bare
+key now works on `main`** — its fidelity oracle passed here with no intervention, confirming
+#5054's fix of the `years` mismatch that forced §WALLCLOCK B's own gate to write its control
+manifest through a scratch finalize step. That workaround is no longer needed.
+
+Per-invocation walls (sweep-timed, ISOs strictly sequential): NEISO 413 s, NYISO 735 s,
+CAISO 3,474 s, ERCOT 1,859 s, MISO 2,201 s. PJM's capture was a separate retry (see the
+environmental note) and was not timed by the sweep.
+
+**Arm family 2 — what a calibration run actually costs today** (`WARMSTART_XYEAR=1` +
+`MARKET_SIM_P1_BASIS_SEED=1`, i.e. the calibration-CLI defaults; empty basis cache per arm so
+P0 is cold and its iteration count is the built-in control). NEISO and ERCOT only, per the
+charter. **These are not goldens and are not a byte instrument** — the seed is WARM-START
+CLASS, so this arm is deliberately not bit-reproducible and must never be quoted as one.
+
+| ISO | year | data_prep | solve_p0 | markup | solve_p1 | results_write | *of which* sidecars | total | P0 iters | P1 iters | peak GB |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| NEISO | 2023 | 9.0 | 71.9 | 11.5 | 28.3 | 6.8 | 3.9 | **127.4** | 189108 | 62954 | 4.26 |
+| NEISO | 2024 | 8.1 | 37.1 | 11.6 | 25.5 | 6.5 | 3.8 | **88.7** | 69333 | 62745 | 4.56 |
+| NEISO | 2025 | 6.5 | 37.3 | 12.3 | 26.9 | 6.6 | 3.9 | **89.5** | 68631 | 62410 | 4.86 |
+| ERCOT | 2024 | 49.8 | 268.4 | 79.2 | 236.0 | 31.4 | 21.7 | **664.8** | 250529 | 83577 / 70413 | 13.09 |
+| ERCOT | 2025 | 40.1 | 169.0 | 58.6 | 156.2 | 25.3 | 13.8 | **449.2** | 139058 | 78731 | 13.27 |
+
+**Read this table against the anchor by ISO, because the two mechanisms it arms reach different
+phases and only one of them is item B.**
+
+| | NEISO (no P1 bridge) | ERCOT (gas commitment bridge) |
+|---|---|---|
+| **cross-year P0 warm start** (`XYEAR=1`; H3/D-9-era machinery, NOT item B) | year 1 unchanged by construction (2023 P0 **189,108 iters in both arms** — identical); years 2–3 P0 **189,107 / 188,840 → 69,333 / 68,631 iters** (2.7×), `solve_p0` **70.4 / 76.5 → 37.1 / 37.3 s** | year 1 unchanged (2024 P0 **250,529 iters in both arms** — identical); year 2 P0 **273,522 → 139,058 iters** (2.0×), `solve_p0` **334.7 → 169.0 s** |
+| **same-year P1 basis seed** (item B) | **INERT, and measured so.** NEISO's P1 re-solves the live model, so the seed has nothing to reach: 2023 P1 **62,954 iters in both arms — identical to the digit**. `solve_p1` 27.4 → 28.3 s. (2024/25 P1 iters move 59,502 / 58,822 → 62,745 / 62,410 — *up* — because P1 now warm-starts from a different, cross-year-seeded P0 basis. Not the seed.) | **the whole point.** 2024 P1 **252,593 / 250,796 → 83,577 / 70,413 iters** (3.0× / 3.6×), `solve_p1` **575.4 → 236.0 s**; 2025 P1 **273,933 → 78,731 iters** (3.5×), `solve_p1` **363.7 → 156.2 s**. §WALLCLOCK B's ON arm read 83,748 / 69,667 and 78,856 — this session lands within 0.2 % on a tree whose ERCOT config has drifted 5 `scenario_config` fields since, which is as close as an independent reproduction of a warm-start-class number gets. |
+| **its cost, where it shows** | `markup` 4.6–5.0 → 11.5–12.3 s, carried by `tail` 5.1–6.6 s (the cross-year basis persisted to the year-1 cache) and `setup` 1.8–2.0 s (the apply) | `p1_post` 7.5→**63.3** s (2024, two P0/P1 exports + two applies) and **43.5** s (2025) — the export/apply overhead §WALLCLOCK B priced at 57.2 / 44.9 s |
+| **net, per invocation** | 3-year `total` **369.2 → 305.6 s (−17 %)**; peak 4.43 → 4.86 GB | 2-year `total` **1,764.4 → 1,114.0 s (−37 %)**; peak 12.83 → 13.27 GB (**+0.44 GB**, §WALLCLOCK B's flagged +0.6 GB reproduced in direction and rough size) |
+
+**The honest summary of arm 2: on a bridge ISO a calibration run is now ~37 % cheaper than the
+pinned byte instrument suggests, and on a no-bridge ISO ~17 % — and in both cases part of that
+is machinery that predates this desk.** Attributing the whole gap to item B would be wrong. The
+ERCOT two-year ledger, phase by phase, sums exactly:
+
+| phase | anchor | CLI-default | Δ | what it is |
+|---|---:|---:|---:|---|
+| `solve_p0` | 632.3 | 437.4 | **−194.9** | of which **−165.7 s is 2025 alone** (P0 iters 273,522 → 139,058) — the cross-year warm start, which can only act on year 2. 2024's −29.2 s is **host noise, not a mechanism**: its P0 iteration count is 250,529 on *both* arms. |
+| `solve_p1` | 939.1 | 392.2 | **−546.9** | item B, on both years |
+| `markup` | 45.9 | 137.8 | **+91.9** | B's own export/apply cost (`p1_post`) plus the cross-year persist (`tail`) |
+| `data_prep` | 84.7 | 89.9 | +5.2 | noise |
+| `results_write` | 62.4 | 56.7 | −5.7 | noise |
+| **total** | **1,764.4** | **1,114.0** | **−650.4 (−36.9 %)** | |
+
+So on ERCOT, **B is worth −546.9 s and the pre-existing cross-year leg −165.7 s**, against
++91.9 s of overhead the two of them add back. On NEISO **none** of the −63.6 s is B.
+
+**Environmental negatives and prerequisites, recorded as §PERF-B records them.**
+
+* **`data/clean` is absent in a fresh container and the CAISO/NYISO recipes refuse to solve
+  without it.** This session's first capture died before its first solve:
+  `DegradedInputError: CAISO: capacity_deliverability_limits needs data/clean/capacity-deliverability/CAISO`
+  (the strict `check_clean_partitions` guard, caiso-157/caiso-188 — "the mechanism never
+  silently no-ops"). `scripts/regenerate_clean.py` rebuilds all 56 datatypes and every capture
+  here ran after it. This is the **solve-path face of the same fresh-container artifact**
+  §WALLCLOCK B §2 hands to the desk on the *scoring* path (`regression_gate` check [4]); the two
+  are one issue, and the container recipe — not the lane — is where it should be fixed.
+* **PJM cannot be replayed in a fresh container without a network fetch, and the cause is
+  LICENSING, not memory.** The PJM capture failed in 10 s with
+  `FileNotFoundError: pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no
+  hrl_da_incs_decs_2023_* parquets`. That corpus is gitignored under PJM DataMiner2's
+  non-member redistribution restriction (`docs/data-licensing.md` §4; only the README is
+  tracked), so it is absent by design in every clone. `scripts/data/fetch_pjm_da_virtuals.py`
+  restored it (72 parquets, 22 MB, both feeds × 2023–2025, a few minutes) and the capture then
+  completed. **Recorded because a future byte-instrument lane will hit exactly this and should
+  not mistake it for the §PERF-B OOM.**
+* **The §PERF-B memory negative no longer reproduces: PJM and MISO both COMPLETED all three
+  years here.** §PERF-B recorded the PJM keeper replay (~14.5 GB) and the miso-160 replay
+  (≥13.9 GB) as unable to fit the ~14 GB cgroup, with a 4368 h pair method as the in-container
+  fallback. At HEAD, on the full 8760 h, **MISO peaks 13.28 GB in all three years and PJM 13.29 GB**,
+  with the 6 GiB swapfile **untouched (0 B used) throughout every arm of this session**. Two
+  cautions before anyone calls that a win: the keeper configs have moved since (`miso-220`,
+  `pjm-162` are not `miso-160` and the July PJM recipe), and no lane changed a memory mechanism —
+  A-6, the one item that tried, was measured-negative and reverted. The honest statement is
+  **the current keeper recipes fit this box; the §PERF-B pair-method fallback is not needed for
+  them**, not that anything was fixed.
+* **`malloc_trim=yes` on every memory line is NOT A-6.** A-6's cold-P1-seam trim was reverted
+  (`d9ad2ae3`); that flag reports the **year-loop** `_malloc_trim` in
+  `run_calibration_full.py`, which A-6's own section explicitly found is *not* redundant and is
+  doing real work between years.
+
+### (c) Process wall vs the phase line's `total` — the gap A-3 closed
+
+The assessment's §1 profile of NEISO 2023 measured a **28.4 s** gap (10 % of a 271.7 s process
+wall) between the phase line's `total=243.3s` and the wall the driver actually saw. That gap was
+the `hourly/` sidecar block, which ran *after* `log_year_phase_timing` and was therefore booked to
+no phase and no year — invisible to every wall-clock table on record, this one's ancestors
+included. A-3 moved the block before the timing line as the `sidecars` entry of
+`results_write_parts`.
+
+**Re-measured here, on the instrument that answers the question.** The arm-2 driver calls
+`solve_and_persist` and nothing else, so its wall is the orchestrator's wall with no harness
+around it:
+
+| instrument | Σ per-year `total` | measured wall | gap | gap per year |
+|---|---:|---:|---:|---:|
+| assessment §1, NEISO 2023, one year (pre-A-3) | 243.3 | 271.7 | **28.4** | **28.4** |
+| this session, NEISO 2023–2025 CLI-default arm (post-A-3) | 305.6 | **308.8** | **3.2** | **1.1** |
+
+**The gap is closed: 28.4 s/yr → 1.1 s/yr.** What remains is per-invocation, not per-year — the
+reference load and the post-loop bundle finalize — and it no longer hides a phase-sized cost.
+The sidecar work itself did not vanish; it is now *reported*, as `sidecars` inside
+`results_write`, and it is not small: **3.8–5.5 s on NEISO, 3.6–4.0 s on NYISO, 13.5–14.2 s on
+CAISO, 19.5–21.8 s on ERCOT, 24.0–25.6 s on MISO, 22.8–26.0 s on PJM** per year. On MISO that single sub-phase is
+over half of `results_write`.
+
+**Do not use the capture script's own wall for this reconciliation.** `capture_keeper_goldens.py`
+additionally runs the fidelity oracle and content-hashes every file of the bundle it just wrote —
+work no calibration run does — so its per-ISO wall sits further above Σ `total` (NEISO 413 s vs
+369.2; NYISO 735 vs 689.1; CAISO 3,474 vs 3,361.5; ERCOT 1,859 vs 1,764.4; MISO 2,201 vs 2,028.3).
+That difference is the harness, not the orchestrator, and reading it as a residual sidecar cost
+would re-introduce exactly the error A-3 fixed.
+
+### (b) What landed — the desk's own before/after, cited, not re-measured
+
+| item | class | landed | before → after, from its own section | this section's role |
+|---|---|---|---|---|
+| **A-1** `_load_cod_map` vectorized | BYTE-IDENTICAL | commit `be598ead`, PR #4875 (merge `fc05c5c3`); evidence PR #4926 | §WALLCLOCK A-1: `_load_cod_map` **16.20 → 0.07 s** on the canonical `data/raw/eia-860` vintage (231×), **91.60 → 0.38 s** across all eight committed vintage dirs; in-solve NEISO year-1 `data_prep` **72.9 → 35.9 s** (−37.0 s, −51 %), warm years −1.1 / −0.6 s (noise). Once per process. | anchor only |
+| **A-2** eGRID parquet mirror | BYTE-IDENTICAL | branch `claude/wc-a2-egrid-mirror`, PR #4876 (merge `eb8ae4db`) | §WALLCLOCK A-2: the three `pd.read_excel` calls **27.80 → 0.219 s** (127×); in-solve at the post-A-1 base `fc05c5c34`, NEISO year-1 `data_prep` **36.7 → 10.8 s** (−25.9 s, −71 %), 2024/25 unchanged. Once per process. | anchor only |
+| **A-3** band sidecar vectorized **+ `sidecars` put on the clock** | BYTE-IDENTICAL | commit `4d5a59b2`, PR #4858 (code, merge `2b9e4219`) + #4874 (evidence) | §WALLCLOCK A-3: the band `Categorical` **15.63 → 0.16 s** on the 6,718,920-row NEISO 2023 P1 frame; the whole writer **16.8 / 15.6 → 4.6 / 5.3 s**; and the `hourly/` block moved from *after* `log_year_phase_timing` to before it as the new `sidecars` entry of `results_write_parts` — `results_write` 4.8/4.5/4.9 → 12.4/10.0/10.9 s with `sidecars` **8.0 / 5.9 / 7.2 s** (2023/24/25). | anchor **and** the reconciliation in (c) — this is the item that changed what `total` means |
+| **A-4** on-disk memo for the residual year-1 caches | BYTE-IDENTICAL | PR #4988 (merge `7201e699`; code `e0d55a5b`) | §WALLCLOCK A-4: `_egrid_boundary_hr_repairs_for` **2.166 → 0.058 s** (37×), **12.69 → 0.46 s** over all eight vintages; NEISO year-1 `data_prep` **16.3 → 12.1 s** (−26 %). The item stops there on its own measurement: the year-1-vs-warm-year gap is **4.40 s**, one `results/` disk scan plus genuine parse. | anchor only |
+| **A-5** held CAMPD normalization | BYTE-IDENTICAL | **already on main since 2026-09-02**, PR #4579 (merge `60a6d539`) | §PERF-B RESUME change (f): `load_campd_hourly` PJM **−63.7 to −71.0 %**; in-solve `bench` on NEISO 2.1/1.6/1.9 → **0.9/0.7/0.9 s**. Reach is ISO-dependent (14 CAMPD states for PJM/MISO, 6 for NEISO, **1 for ERCOT — inert there**). | **correction:** `wallclock-opportunities-2026-09.md` §2 A-5 / §5 rank 5 say this "is not on main" and that `git branch -r --contains 27b3a92c` is empty. That reading is **stale**: `27b3a92c` is a pre-rebase sha of the same branch, the owner merged PR #4579 on 2026-09-02, and `src/market_sim/data/campd.py` on `main` carries its `_to_numeric_by_uniques` helper. Recorded here per the desk's own instruction (desk log §2.1); the assessment doc is left unedited. Every arm below is post-(f). |
+| **A-6** `malloc_trim` at the cold-P1 seam | BYTE-IDENTICAL (and inert) | **NOT A LANDED CHANGE — MEASURED-NEGATIVE and REVERTED**: merged `c2cb9a78` (PR #4893) ahead of its evidence, evidence PR #5040 (`173d0a78`), **removed** by PR #5041 (`d9ad2ae3`, commit `9440f17d`, −52 lines incl. `utils/heap.py`), doc pointer PR #5042 | §WALLCLOCK A-6: process peak VmHWM **13.28 → 13.27 GB (−0.01)** — its own gate's target, unmet; per-year 12.72 → 12.70 and 13.28 → 13.27; `p1_post` **+0.3 / +0.5 / +0.1 s**. The seam's ~1.15 GB RSS step is live payload (~1.0 GB of it arithmetically), not allocator retention. | **nothing to re-baseline** — the trim is not in the tree this section measures. Listed so the ledger is complete and so a later reader does not look for its effect in the numbers below. |
+| **B** same-year P1 basis seed | **WARM-START CLASS** (never byte-identical) | commit `aa82b064`, PRs #5033 (code, merge `37f994fd`) + #5054 (`6a718f1c`) + #5075 + #5091; owner memo signed (A) FLIP 2026-09-06 | §WALLCLOCK B: **ERCOT 2025 `solve_p1` 349.2 → 142.0 s** (273,893 → 78,856 iters); **ERCOT 2024 two-pass 628.1 → 225.1 s** (pass 1 295.3 → 132.2, pass 2 seeded from pass 1's P1 basis 332.9 → 92.8; 252,042/250,291 → 83,748/69,667 iters); **NYISO 2023 96.4 → 67.6 s** (268,305 → 108,037); **CAISO 2023 354.5 → 123.1 s** (290,022 → 94,098). Year `total` ERCOT 2024 990.9 → 605.7 s (−39 %), 2025 765.2 → 544.8 s (−29 %). Peak RSS +0.6 GB on ERCOT. | **the reason this section needs two arm families.** The seed is calibration-CLI default ON (`MARKET_SIM_P1_BASIS_SEED`, `--no-p1-basis-seed`) and hard-OFF under `MARKET_SIM_WARMSTART_XYEAR=0` and on the forecast path — i.e. **off by construction in every pinned anchor arm below**. A pinned anchor number is therefore *not* what a calibration run costs today; arm family 2 is. |
+
+### (d) Cumulative ledger — the desk's total, in one line per claim
+
+* **NEISO year-1 `data_prep` 71.3 → 12.1 s** across A-1 + A-2 + A-4, each measured on top of the last: `5b5af5a` 71.3 → A-1 36.7 → A-2 10.8 (re-measured at `fc05c5c34`) → A-4's own base 16.3 → **12.1 s**. The two intermediate endpoints are different trees on different days, so the chain is not an arithmetic sum of three independent deltas and must not be quoted as one — §WALLCLOCK A-2's "do not add the superseded first-pass −25.2 s" warning is the same caution. What is safe to say: **the year-1 premium the program chartered A-1…A-4 against is gone** — A-4 measures the residual year-1-vs-warm-year gap at **4.40 s**, under its charter's own 10 s stop line, and identifies it as one `results/` disk scan plus genuine parse.
+* **B's P1 seconds, per ISO, seed OFF → ON** (§WALLCLOCK B gate (2)): ERCOT 2025 **349.2 → 142.0 s**; ERCOT 2024 (two passes) **628.1 → 225.1 s**; NYISO 2023 **96.4 → 67.6 s**; CAISO 2023 **354.5 → 123.1 s**. These are the three bridge ISOs — the ones whose keepers cold-rebuild a second `DispatchModel` for P1 (ERCOT/NYISO gas commitment bridges, CAISO RA must-offer). PJM, MISO and NEISO have no P1-native bridge, so their P1 re-solves the live model and the seed has nothing to reach; the arm-2 NEISO rows below are the measured statement of that.
+* **A-6's peak is unchanged: 13.28 → 13.27 GB.** The item bought no headroom, was reverted, and the ERCOT peak in the anchor table below is set by the solve that follows the P1 rebuild, not by the rebuild.
+
+**Class: DOCS ONLY.** No code, no LP, objective, bound or row; no `ScenarioConfig` field or
+default; no keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted and
+nothing dashboard-registered. Arm family 1's bundles (`results/regression-goldens/wc-rebaseline/`)
+and arm family 2's throwaway `run_dir`s and basis caches were **deleted before this PR** per rule
+29 `[R-SCREEN]` (c) — every number this section cites is in this section, and git history is the
+record for the bytes (rule 15 `[R-DASHBOARD]`). `regression_gate.py` was **not** run: this change
+touches no solve path, so there is nothing for a byte gate to compare, and its check [4]
+`legitimacy` is red by control on a fresh container anyway (the `data/clean` note above).
