@@ -65,6 +65,7 @@ from market_sim.model.lp.inplace_floor import (
     refloor_thermal_inplace,
 )
 from market_sim.pipeline.basis_cache import persist_year_basis, seed_year1_basis
+from market_sim.utils.heap import malloc_trim
 
 logger = logging.getLogger(__name__)
 
@@ -652,6 +653,17 @@ def run_energy_solve(
             if basis is not None:
                 xyear_cache[:] = [basis]
         model = None
+        # Hand the just-freed P0 heap back to the kernel BEFORE the second
+        # model is built. Dropping the reference above frees the LP + HiGHS
+        # workspace to glibc (the model is refcount-freed — no cycle, no
+        # gc.collect() needed), but glibc retains large fragmented arenas
+        # rather than unmapping them, so without this the P1 build starts on
+        # top of the P0 model's high-water RSS. That seam is the measured
+        # ERCOT year peak (12.1-13.4 GB against a 14 GB cgroup;
+        # docs/FINDING-perfb-s3-adaptive-pass-2026-09.md §6). Frees only heap
+        # the allocator already considers free — it cannot touch a live object,
+        # so the LP, its rows, bounds and objective are byte-identical.
+        malloc_trim()
         if p1_storage_discharge_cost is not None:
             p1_dispatch_kwargs = {
                 **p1_dispatch_kwargs,
