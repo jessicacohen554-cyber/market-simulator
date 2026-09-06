@@ -173,3 +173,62 @@ same posture G-DRIFT takes toward control solves.
 `data/clean` (FF plan §2.4 HARD prerequisite, ~55 min) is **not** regenerated on this container,
 because no solve is authorized to run yet. It is the first step if the scope call releases the
 2027 leg.
+
+---
+
+## (f) SCOPE CALL RECEIVED — appended 2026-09-06, still BEFORE any solve
+
+The §(d.1) routing was answered by the desk: **extend to `--end-year 2027`.** Recorded here as
+a dated append (rule 29 `[R-SCREEN]`: a precommit is appended to, never rewritten), and **before
+this lane's first LP**, so the screen year and every expectation below were fixed ahead of any
+result — which is the property rule 29 exists to protect.
+
+**What is authorized:** `--start-year 2026 --end-year 2027`, scored at **2027**, arm
+`--set carbon_price_path=mid`. Two solve-years per arm (capacity evolution is one-pass per year
+and needs its prior, so 2026 is solved as 2027's prior and 2027 is the scored year). **Still
+S5-safe:** neither year reaches `ccs_retrofit_available_year = 2028`, so the pairs carry **zero
+`gas_cc_ccs` exposure**, exactly as the 2026-only leg did.
+
+**Nothing else moves.** The arm, the STOP gate G1–G8, the footprint claim and the leakage duty are
+as declared in §(d.2) and the original PRECOMMIT §3.2–§3.4. The §(d.2) price bands
+(ERCOT $0.9–1.5, PJM $1.5–2.7, MISO $1.8–3.3 /MWh; exactly $0.00 on CAISO / NYISO / NEISO) were
+written in this document **before** the scope call and are not revised now.
+
+### (f.1) Solve order, and why the live ISOs go first
+
+Rule 12 `[R-PARALLEL]`: years always sequential within an invocation; ≤2 concurrent invocations,
+and **1** whenever a per-plant multi-zone ISO (PJM / MISO / CAISO) is solving.
+
+| order | ISO | arm concurrency | why this position |
+|---|---|---|---|
+| 1 | **ERCOT** | `par` (2 small arms) | **LIVE**, and the cheapest live ISO — the first real carbon evidence lands soonest |
+| 2 | **PJM** | `seq` (per-plant) | **LIVE**, largest coal fleet ⇒ the strongest coal→gas re-order claim |
+| 3 | **MISO** | `seq` (per-plant) | **LIVE**, most coal-marginal ⇒ the largest predicted response |
+| 4 | **NEISO** | `par` | INERT — cheapest of the three, confirms the floor prediction first |
+| 5 | **NYISO** | `par` | INERT |
+| 6 | **CAISO** | `seq` (per-plant) | INERT, and the most expensive — last |
+
+**The three LIVE ISOs are solved first deliberately.** They carry the entire carbon result; the
+three inert pairs can only confirm an identity that §(d) already proved arithmetically. If the
+container is lost mid-lane, the evidence that matters is already committed.
+
+### (f.2) What the inert pairs are actually for, stated in advance
+
+On CAISO / NYISO / NEISO the two arms are configs that resolve to the **same carbon price in every
+hour**, so their solves must agree exactly. Running them converts §(d)'s *arithmetic* claim into a
+*measured* one, and gate **G4 is re-specified for them as an exact-identity test** (`|Δ lw_price| <
+1e-6` and `|Δ CO2| < 1e-6`) rather than a band — a **non-zero** delta on an inert pair is a real
+FAIL, because it would mean something other than carbon moved between two arms that differ in one
+inert field. That is the only way these three pairs can fail, and it is a genuine check on the
+harness, not a carbon result.
+
+**They are not evidence about carbon policy in those ISOs, and will not be quoted as any.** The
+honest statement they support is narrow: *a federal RFF `mid` price is a no-op where a state
+program already charges more* — not *carbon pricing does nothing in California or New England*.
+
+### (f.3) Honest flag on the signal size, restated before the result
+
+At +$3.75/t the predicted CO2 response is **~1 %**. That is a **6.67× weaker** arm than the
+retired reduced form, and on the smaller live ISOs it may sit near the LP's own re-solve
+variation. **A null on ERCOT would be weak evidence, not a refutation**, and will be reported
+that way. The gate is STOP-only and cannot promote in either direction.
