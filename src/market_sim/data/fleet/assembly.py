@@ -590,7 +590,9 @@ def bins_to_fleet(
             # get their capability gap, non-duct CCs get 0 (no phantom
             # scarcity band). Supersedes the class-wide pct_peaking and the
             # tranche artifact above.
-            _dpk = cc_duct_peaking_pct().get(plant_code)
+            _dpk = cc_duct_peaking_pct(
+                bool(getattr(config, "cc_duct_peaking_row_scoped", False))
+            ).get(plant_code)
             if _dpk is not None:
                 # Cap the band at the F-class supplementary-firing physical
                 # maximum: the raw nameplate-vs-net-summer gap folds the ambient

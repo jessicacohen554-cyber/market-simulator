@@ -1029,7 +1029,9 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
     if offer is not None and "pct_peaking" in offer:
         pct_peak = float(offer["pct_peaking"])
     if group in ("CC_REGULAR", "CC_CHP") and getattr(config, "cc_duct_peaking", False):
-        _dpk = cc_duct_peaking_pct().get(plant_code)
+        _dpk = cc_duct_peaking_pct(
+            bool(getattr(config, "cc_duct_peaking_row_scoped", False))
+        ).get(plant_code)
         if _dpk is not None:
             pct_peak = _dpk
     # RESERVE-DUTY split (cc_reserve_duty_split, nyiso-146): mirror of the

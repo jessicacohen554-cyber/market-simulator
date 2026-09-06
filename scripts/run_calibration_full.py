@@ -10841,6 +10841,18 @@ def main() -> None:
         "cc_peaking_per_plant off). fleet.cc_duct_peaking_pct.",
     )
     parser.add_argument(
+        "--cc-duct-peaking-row-scoped",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Take the --cc-duct-peaking capability gap over the EIA-860 "
+        "generator rows the filing FLAGS as duct-fired, instead of over "
+        "every combined-cycle row of the plant. The column reads Y/N only "
+        "on CA/CS (steam) rows and X on every CT row, so the plant-level "
+        "sum books the CT rows' ambient derate as duct capability. Zero "
+        "free parameters — the numerator's row set changes, nothing else. "
+        "ScenarioConfig.cc_duct_peaking_row_scoped (nyiso-198).",
+    )
+    parser.add_argument(
         "--curve-n",
         type=int,
         default=None,
@@ -12881,6 +12893,9 @@ def main() -> None:
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
             "cc_duct_peaking": True if args.cc_duct_peaking else None,
+            "cc_duct_peaking_row_scoped": (
+                True if args.cc_duct_peaking_row_scoped else None
+            ),
             # Per-plant EIA-860 duct-burner shares supersede the 4-plant
             # hardcoded ERCOT peaking override, so turn it off when on.
             "cc_peaking_per_plant": False if args.cc_duct_peaking else None,
