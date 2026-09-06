@@ -12708,3 +12708,53 @@ edited by this lane. Records:
 `results/calibration/_nyiso203_c8_unit_grain.json`,
 `_nyiso203_duct_lever_disposition.json`, `_nyiso203_d4_layup_census.json`,
 `scripts/probes/_nyiso203_duct_lever_disposition.py`, `_nyiso203_d4_layup_census.py`.
+
+---
+
+## nyiso-209 — 2026-09-06
+
+**Two halves, one session. Keeper `2026-09-06-nyiso-202-startup-aware` UNCHANGED throughout.**
+
+**Half 1 (zero LP, clean negative).** Reproduce-from-source test of the gas-commitment-bridge
+parameter artifact `campd_gas_commitment_params_NYISO.csv` (four keeper-live values: CC 0.523 /
+ST_GAS 0.239 min-load fractions, 21 h / 13 h capacity-weighted p50 min-run). The shipped
+`derive_campd_gas_commitment_params.py`, run with its own defaults against the committed CAMPD
+NY+NJ 2023–2025 extracts, regenerates the class summary, the 78-row per-unit table AND the CT
+sibling artifact **byte-identically** at HEAD. Pre-registered **VERDICT R — REPRODUCES**; the
+session's own counter-prediction (CC-side roster drift from the nyiso-187/188/189/192/196 fleet
+repairs) REFUTED — the HEAD roster carries three CC codes with no CEMS hours under their own id
+(7784, 54808, 57664) and drops Ravenswood 2500 as mixed-class exactly as the 2026-07-27 derivation
+did. Reported, not acted on: (O1) no DOF-ledger entry for this artifact while
+`campd_ct_run_lengths_NYISO.csv` is ledgered; (O2) Ravenswood, the largest ST_GAS plant, is
+excluded from the ST_GAS statistic by the script's declared ambiguity rule (bears on pending rulings
+(i)/(ii); not ruled). Records: `docs/FINDING-nyiso209-gas-bridge-params-reproduce-2026-09-06.md`,
+`results/calibration/PREREG-nyiso209-gas-bridge-params-reproduce.md`,
+`_nyiso209_gas_bridge_params_reproduce.json`, `scripts/probes/_nyiso209_gas_bridge_params_reproduce.py`;
+NYISO matrix shard `gas_commitment_bridge` cell evidence appended (K unchanged).
+
+**Half 2 (owner ruling, one LP).** The owner asked whether NYISO was at `complete` / `frontier` and
+whether 2022 could run; the lane answered "not yet on the record, yes on the merits, one owner
+declaration away". **OWNER RULING, verbatim: "Ok declare it and run 22."** Executed in one records
+commit: `complete.NYISO` RE-DECLARED (FOURTH grant) on nyiso-202 per the withdrawn block's own
+`reentry` clause, determination re-verified artifact-only at `2a243bf9` (CALIBRATED, grade 7 of 8,
+fails 0, C3c the lone ledgered caveat — not worse, D-5(b) stop did not fire); the 2026-09-05
+withdrawal nested WHOLE as `prior_withdrawal_2026_09_05`, `withdrawn` = CAISO alone; `frontier`
+re-declared with it (both instruments, Q39 precedent; `keepers/NYISO.json` `frontier`, the
+2026-09-05 withdrawn block retained with a `superseded` field); forecast gate (a) fail → pass in
+the same commit (rule R-T); `test_ff_readiness_battery` marker pin moved with the marker; NYISO
+shard `gates` stamp (rule 28(d)). Card C-19 / Q51 DISCHARGED by the ruling. `audit_keepers --iso
+NYISO` PASS 0/0; D-9 / D-6 quarantine PASS over every registered bundle. **Validation tier
+re-authorized; the 2022 touchpoint SPENT on the frozen keeper recipe** (`--replay-bundle`,
+`--holdout-authorized`; recipe identity computed PASS, +0/−0 solve-surface drift), registered as
+`2026-09-06-nyiso-209-2022-touchpoint` and STAMPED to the keeper (rule 30 fold). **2022 reads
+NOT-YET**: C1 CC_REGULAR +4.35 TWh / +3.3 pp, C3a −11.2 %, C3b NRMSE 0.227; C3c 15 vs 101 h
+(caveat, rubric v3.6); C2 / C4 / C6 / C8 PASS — **every degraded number smaller than the
+un-registered nyiso-189 diagnostic** (+5.19 / +3.9 pp, −12.2 %, 0.240, 17 h). Under rule 30(c)
+**NYISO stays CALIBRATED**; the rung is reported on the keeper's card and the status ladder.
+Reading (loop step 2): a gas-year level miss — CC_REGULAR over-dispatched while the system price
+sits 11 % low in a $6.45 HH year — the same cell-G CC_REGULAR sign the keeper carries in-sample,
+scaled by the 2022 fuel regime; the named objects are nyiso-201 §5.3 / `DECISION-CARD-nyiso193`
+§5/§5.1 and `INTAKE-SPEC-nyiso156` Leg 2. 2020 / 2021 NOT spent; `final` untouched; freeze
+untouched; nothing identified against 2022. Reported, not fixed: CAISO's gate-(a) stamp is stale
+(cites `caiso-257` while the shard names `caiso-260`), another lane's. Record:
+`docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md`.
