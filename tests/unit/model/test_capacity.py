@@ -6619,7 +6619,22 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             )
             return apply_iso_scenario_defaults(cfg, iso).cache_key()
 
-        self.assertEqual(_key("PJM"), "aef81c84c4609c76")  # = arm A
+        # capx D65-B-R: all three literals refreshed for D65-B's Act B, which
+        # merged 2026-09-06, the day after these were written.
+        # ``ccs_retrofit_vom_adder`` 8.0 -> 2.95 is not a
+        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it re-keys every config
+        # unconditionally. MEASURED, not assumed: undoing exactly the two D65-B
+        # acts on each resolved config (``ccs_retrofit_vom_adder=8.0``,
+        # ``ccs_retrofit_fixed_cost_co2_scaling=False``) restores all three of
+        # the previous literals EXACTLY --
+        #   arm A  15a723ba3b6dc856 -> aef81c84c4609c76
+        #   ctrl   c5ec052057905966 -> 7297dcb3b92be3fb
+        #   arm B  6ba67a81ed4d2ed6 -> 6cf8ee2c9f31e528
+        # -- so the whole move is the two acts' and nothing else's, the same
+        # decomposition PRECOMMIT-capx-d65b-2026-09-06.md §3.1 uses. The Q44
+        # posture this test asserts is untouched: three distinct keys through
+        # the same override path.
+        self.assertEqual(_key("PJM"), "15a723ba3b6dc856")  # = arm A
         self.assertEqual(
             _key(
                 "PJM",
@@ -6627,7 +6642,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 pjm_demand_response_supply=False,
                 capacity_market_supply_clearing=False,
             ),
-            "7297dcb3b92be3fb",  # = D45-R's bare key, the explicit control
+            "c5ec052057905966",  # = D45-R's bare key, the explicit control
         )
         self.assertEqual(
             _key(
@@ -6635,7 +6650,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 pjm_accreditation_design_vintage=False,
                 pjm_demand_response_supply=False,
             ),
-            "6cf8ee2c9f31e528",  # = arm B
+            "6ba67a81ed4d2ed6",  # = arm B
         )
         # Every other ISO resolves the three fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25).
@@ -7360,7 +7375,19 @@ class TestRetirementSectorGate(unittest.TestCase):
         self.assertFalse(ScenarioConfig().retirement_sector_gate)
         # The pinned default key is unmoved by the registration (D24-R option
         # b'-1: dropped at its declared False default); the armed key differs.
-        self.assertEqual(ScenarioConfig().cache_key(), "e5ecd4105ada3e58")
+        #
+        # capx D65-B-R: refreshed e5ecd4105ada3e58 -> 547053bdfccd4264. This pin
+        # was written 2026-09-05 and D65-B's Act B merged the next day:
+        # ``ccs_retrofit_vom_adder`` 8.0 -> 2.95 is not a
+        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so it has no drop value and
+        # re-keys EVERY config unconditionally (D65 §9 item 3; D41 §6.2's
+        # mechanic). The new literal is exactly the global forecast key
+        # PRECOMMIT-capx-d65b-2026-09-06.md §3 pre-declared before that solve,
+        # and e5ecd4105ada3e58 is the pre-flip value the same table records --
+        # so this is a re-key refresh with a named cause, not a drift.
+        # WHAT THIS TEST ASSERTS IS UNCHANGED: the sector gate is still dropped
+        # at its declared False default, which is the next assertion's job.
+        self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         self.assertNotEqual(
             ScenarioConfig(retirement_sector_gate=True).cache_key(),
             ScenarioConfig().cache_key(),

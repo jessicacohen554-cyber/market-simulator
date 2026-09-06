@@ -390,3 +390,165 @@ The screen's ARM and CONTROL both solved at `a5c30c6a`, and B.2 shows the delta 
 the new HEAD and its verdict transfers; re-solving both legs would re-measure an established
 identity at 30 minutes of LP. (§5's finding is untouched: form 4 against the *keepers* stays VOID —
 their shas are pre-SCN-LOAD — which is a different question from this one.)
+
+---
+
+## ADDENDUM C (2026-09-06, session **D65-B-R**) — the batch's PER-ISO structural gates, written BEFORE any leg solves
+
+**Authority.** Director adjudication r#48 §3(a) (`capx-director-ledger-2026-08.md` §0as.3):
+D65-B's G1 and G3 were **charter defects** — G1's `er/phys ≥ 1.27` floor is D64 §2.4's **PJM/MISO**
+host band transcribed onto an ERCOT screen, and G3's `k = 1` invariance is an **Act-A** property
+applied to a coupled arm. The ERCOT screen is **NOT re-run**; its numbers stand as measured
+(FINDING-capx-d65b §6). The batch proceeds under gates **re-derived per ISO from D64 §2.4's own
+rows**, which were written 2026-09-05 — before any of this lane's solves. *That committed-in-advance
+provenance is the entire guard against gaming: every threshold below is a quotation, not a choice.*
+
+**Nothing in this addendum is gated on a residual.** Every gate is STRUCTURAL and **STOP-only**: it
+may kill a leg; it may never promote one, and it contributes to no determination (rule 29).
+
+### C.0 What Step 0 and Step 1 established, before the gates
+
+**Step 0 — G2 is now evaluable.** The `retrofit_log` scaling record (`capex_scale`,
+`fixed_cost_scale`, `retrofit_capex_per_mw`, `annual_net_savings_per_mw`, `vom_adder_per_mwh`,
+`old_hr`, `old_emission_rate`) is persisted onto every `ccs_retrofits` ledger row. D65-B's G2 was
+*not evaluable at all* from committed artifacts; it is now read straight off the bundle, and the
+`er`/`k` columns no longer need offline CAMPD reconstruction. Asserted cache-neutral: no
+`ScenarioConfig` field bears any of these names and none is a `cache_key_drop_defaults()` member.
+
+**Step 1a — THE RE-PIN HOLDS. All 14 bare keys UNMOVED at HEAD** (`2485e611` + step 0), measured
+against PRECOMMIT §3's POST-D65B column through `apply_iso_scenario_defaults(ScenarioConfig(iso,
+mode))`:
+
+| CAISO | ERCOT | MISO | NEISO | NYISO | PJM | global |
+|---|---|---|---|---|---|---|
+| fc `2f3e1df634cae1d8` bc `efebcc735768c122` | `95d789d6dfb98831` / `406cb30ad62bc27b` | `6808780f515fce63` / `b10d58628ba3a057` | `31ca8b9d010f7e7f` / `27e80d27acd995de` | `8e87bfe58f75212a` / `cadaba3d344e84b9` | `eaa3fbef5ff182c9` / `3a566deac3a85682` | `547053bdfccd4264` / `f61891696e671969` |
+
+**14 / 14 UNMOVED.** No re-declaration is owed and no moving hunk has to be named.
+
+**Step 1b — G-DRIFT `002cfa8d → 2485e611`, hunk by hunk, `constants.py` FIRST.**
+`constants.py`: **ZERO hunks** — the check that a matched cache key cannot make (it is outside the
+key). Scope `src/market_sim scripts/run_calibration*.py scripts/run_full_horizon.py scripts/lib
+data/raw/_validation-source data/raw/reference` = 13 files, +733/−54. Per D65 §3d, every hunk in an
+EXISTING function names its gate or shows its arithmetic; a file-level verdict is inadmissible.
+
+| file | hunk class | verdict | the gate, MEASURED |
+|---|---|---|---|
+| `config/constants.py` | — | **INERT** | no hunk exists |
+| `config/scenarios.py` | 2 NEW fields | **INERT** | `miso_gas_variable_transport=False`, `miso_seam_neighbour_anchored_ladder=False`; both registered `_CACHE_KEY_OPTIONAL_FIELDS` at drop `"False"`; **no `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry**, and `iso_configs.py` is ABSENT from the diff, so neither is armed for any ISO |
+| `capacity_evolution/retirements.py` | **6 hunks, 4 in the EXISTING `apply_economic_retirements`** | **INERT** | D78's `exit_exempt_unit_ids`. The filter is `if exit_exempt_unit_ids: margins = [...]`; the set is fed from `sector_gated_unit_ids` under `retirement_sector_gate`. **Measured at all six ISOs' resolved forecast configs: the gate is `False` everywhere except MISO, and MISO's `resolve_capacity_market_supply_clearing` is `False`** (PJM is the converse: clearing `True`, gate `False`). **The arming intersection is EMPTY.** With the clearing off the D78 construction is byte-identical to the pre-D78 `exempt_unit_ids` union — not asserted, *executed*: `test_capacity.py::test_exit_exempt_is_byte_identical_to_exempt_when_the_clearing_is_off` passes under both decision rules |
+| `results/cache.py` | epoch note only | **INERT** | prose; no code hunk. Its own blast radius states MISO's gate-on bundles are NOT invalidated, for the reason measured above |
+| `model/commitment.py` | 2 hunks in the EXISTING `caiso_ra_mustoffer_min_gen` | **INERT** | `screen_stats["per_unit"]` writes, all under `if screen_stats is not None`. The `kept_set`/`drop_h` extraction is the **same sum** hoisted out of the guard — arithmetic-identical, a wasted add, not a behaviour change |
+| `pipeline/commitment.py` | 3 hunks in the EXISTING `_nyiso_gas_bridge_floor` | **INERT** | the per-plant census is guarded `if startup_aware and plant_census`; `nyiso_gas_bridge_startup_aware` measured `False` at all six ISOs |
+| `model/interchange/spec.py`, `interchange/miso.py` | new param on an EXISTING fn + a new table | **INERT** | `neighbour_anchored: bool = False`, fed only from `miso_seam_neighbour_anchored_ladder` (measured `False` at all six). Off ⇒ `ladder` is the incumbent object unchanged |
+| `data/fuel/basis/miso.py` | new fns + 3 call sites in an EXISTING fn | **INERT** | double-gated: each site is `if getattr(config, "miso_gas_variable_transport", False)`, inside `apply_miso_gas_marginal_commodity`, which returns at its own first statement unless `miso_gas_marginal_commodity_pricing` (measured `False` at all six) |
+| `scripts/run_calibration.py` | CLI + a validator | **INERT** | backcast entry point; this lane runs `run_full_horizon.py` only. `run_full_horizon.py` has **no hunk in this window** |
+| `data/raw/reference/miso_gas_variable_transport{,.pool}.csv` | new data | **INERT** | read only under the gate measured `False` above |
+| `capacity_evolution/evolve.py`, `results/evolution_ledger.py` | this lane's own step 0 | **INERT** | additive ledger keys; C.0 above |
+
+**VERDICT: every hunk INERT. Zero LIVE.** No control solve is earned (rule 29(b)) and G-CTRL
+**form 4** — differencing against the incumbent's committed numbers — is VALID for this batch.
+
+**Step 1c — an INDEPENDENT confirmation, stronger than the bare-key match.** For all seven legs,
+undoing *exactly the two D65-B acts* on the leg's own HEAD-resolved config reproduces its
+**committed pre-D65-B bundle key to the digit**:
+
+| leg | committed pre-D65-B | **D65-B-R SOLVE key (pre-declared)** | acts undone at HEAD |
+|---|---|---|---|
+| `ercot-t1f` | `0c3e9cd5b5993bdf` | **`9b9e5a48e3ca5c8e`** | `0c3e9cd5b5993bdf` ✓ |
+| `neiso-t1f` | `18515067bf4d2fbe` | **`c3519b861f920bbe`** | `18515067bf4d2fbe` ✓ |
+| `nyiso-t1f` | `19a9690bb12c8459` | **`f62431376dd9df03`** | `19a9690bb12c8459` ✓ |
+| `caiso-t1f` | `29f8eb372810195f` | **`17770cdad3230938`** | `29f8eb372810195f` ✓ |
+| `pjm-t1f` | `09996eca71ee80fd` | **`43cee1c9558ab859`** | `09996eca71ee80fd` ✓ |
+| `miso-t1f` | `b1a73a087064ffd8` | **`74359fedbf2eadd6`** | `b1a73a087064ffd8` ✓ |
+| `neiso-t3` GOLDEN-3 | `f04fd06348e1623d` | **`0fc42cb56c24d544`** | `f04fd06348e1623d` ✓ |
+
+7/7. So the recipe reconstructed here **is** the incumbents' recipe, and the *only* thing moving
+each solve key is the two acts. **A realized bundle key ≠ its pre-declared value above is a STOP.**
+
+### C.1 A DISCREPANCY THIS SESSION FOUND, recorded before it can matter
+
+**D65-B's screen ran WITHOUT `--golden-posture`, so it screened a different config from the one the
+batch's ERCOT board row carries.** Measured by rebuilding the screen's own HEAD (`a5c30c6a`) out of
+`git archive` and enumerating the recipe grid:
+
+| recipe at `a5c30c6a` | armed key | acts-undone key | |
+|---|---|---|---|
+| `golden_posture=True,  cmc=False` | `9b9e5a48e3ca5c8e` | `0c3e9cd5b5993bdf` | = **the batch's ERCOT leg** |
+| `golden_posture=False, cmc=False` | **`d0fb7534671b4c91`** | **`6cfa33538294713c`** | = **D65-B's ARM and CONTROL exactly** |
+
+Both of the screen's declared keys reproduce on the **shipped**-posture row, neither on the golden
+one. Consequences, stated at the gate rather than discovered later:
+
+1. The screen's arm-vs-same-HEAD-control differencing is **valid, for the shipped posture**. Its
+   mechanism evidence is untouched: a control of 0 rows in every year reproducing D64 §2.4's ERCOT
+   census, an arm of 7 rows at `er/phys` 0.9458–1.0000, the 2030 cap binding exactly.
+2. **The ERCOT leg below is therefore the FIRST golden-posture measurement of the coupled arm.** It
+   is gated on its own rows through C.2, not on the screen's, and its numbers are reported at full
+   magnitude against D64 §2.4 — never netted against the screen's.
+3. The ERCOT golden-posture key is **identical at `a5c30c6a` and at HEAD** (`9b9e5a48e3ca5c8e`),
+   which independently re-confirms Step 1b across the whole window rather than only from `002cfa8d`.
+
+This changes no adjudication and re-opens no gate. It is recorded because a screen that screened a
+neighbouring config is a fact about the evidence, and the place for it is before the batch, not in
+the write-up.
+
+### C.2 THE PER-ISO GATES — each threshold QUOTED from D64 §2.4's own row
+
+D64 §2.4's census is evaluated **at the hour ceiling** (every hour in merit), so its GW figures are
+an **upper bound** on what a solve converts, never a target. G5' is written accordingly, and the
+one direction that is *not* bounded — a ceiling of 0 — is a hard structural STOP, because nothing
+can clear a bar the ceiling arithmetic says nothing clears.
+
+**Common to every leg (structural, ISO-independent):**
+
+| # | gate | STOP if |
+|---|---|---|
+| **G0'** | retrofits are inert below `ccs_retrofit_available_year` = 2028 | any `ccs_retrofits` row in 2026 or 2027 |
+| **G2'** | the identity holds on the **persisted** fields: `fixed_cost_scale == capex_scale` on every row, and `retrofit_capex_per_mw / capex_scale` is host-invariant (⇒ uplift per unit of capex falls as `1/k`) | either fails on any row |
+| **G3'** | `k = 1` invariance is an **Act-A-only** property, **discharged at ZERO LP** by the existing `test_ccs_retrofit.py::test_reference_host_is_invariant_on_and_off` | that test fails at HEAD |
+| **G4'** | no non-target **load-bearing** FC row flips PASS → FAIL against the leg's `-pre-d65b` prior | one does |
+| **G6'** | wall ≤ 2× the leg estimate AND peak RSS < 14 GB (this box is 15 GB; D60's recorded worst case is 13.27 GB) | beyond either |
+
+**G3' is not re-measured by a solve.** Per the adjudication it is an Act-A property, a coupled arm
+moves `k = 1` rows by Act B's design, and spending an LP to re-measure arithmetic that is already
+proven and tested would be the defect, not the discipline.
+
+**Per ISO — G1' (host band) and G5' (window total), quoted:**
+
+| leg | D64 §2.4 `er/phys` band | **G1' STOP if** | D64 §2.4 predicted 2028/29/30 @ ceiling | **G5' STOP if** |
+|---|---|---|---|---|
+| `ercot-t1f` | **0.95–1.05** (D64's own ERCOT row) | a clearing row sits outside 0.95–1.05, at the table's two-decimal precision | **0 / 5.68 / 3.80 GW** | any 2028 row; or 2029/2030 above their ceilings |
+| `pjm-t1f` | **1.27–1.49** | a clearing row outside 1.27–1.49 | **0.41 / 2.48 / 2.48 GW** | any year above its ceiling |
+| `miso-t1f` | **1.26–1.39** | a clearing row outside 1.26–1.39 | **0.48 / 0.72 / 0.72 GW** | any year above its ceiling |
+| `neiso-t1f` | none published (§2.4 reads **cap-bound**); §2.3 `k` 0.95–1.87 | — (no band to quote ⇒ **not gated**, reported only) | **cap-bound** | the 3 GW/yr cap does NOT bind in a year |
+| `nyiso-t1f` | none published (**cap-bound**); §2.3 `k` 0.97–2.04 | — | **cap-bound** | the cap does NOT bind in a year |
+| `caiso-t1f` | none published (**cap-bound**) | — | **cap-bound** | the cap does NOT bind in a year |
+| `neiso-t3` GOLDEN-3 | none published | — | §2.3: *"per-tonne-dominant on both sides and NOT expected to move in kind"* | the converted set moves **in kind** (a class the RGGI ladder does not price) |
+
+Two readings recorded so neither can be improvised afterwards:
+
+* **A carbon-0 ISO GAINING rows is NOT a STOP** — it is the accurate level's pre-registered
+  signature (D64 §4.5's closing clause; D65 §9 item 4), restated here because G1 as originally
+  transcribed pointed the other way on the very same page.
+* **`er/phys` > 1 flags a CAMPD-rate-above-physical tranche** (D49 §1.3's artifact). ERCOT's hosts
+  sit *below* physical, so the artifact is absent there; that is why 0.95–1.05 is ERCOT's band and
+  1.27–1.49 is PJM/MISO's. A band is a **window**, never a floor — the D65-B defect exactly.
+* **A cap-bound ISO is expected to RE-RANK, not re-select** (D64 §2.3, D65 §4.2): MW-weighted `er`
+  and `hr` fall as efficient hosts win. Reported; not gated, because the cap sets the volume.
+
+### C.3 Execution discipline
+
+Sequential per rule 12, one leg at a time, in charter order: `ercot-t1f` → `neiso-t1f` →
+`nyiso-t1f` → `caiso-t1f` → `pjm-t1f` → `miso-t1f` → `neiso-t3` GOLDEN-3.
+
+**HEAD guard around every leg**, so no leg can silently straddle a rebase:
+
+```
+H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90
+```
+
+Rebase **between** legs only, and re-audit each rebase delta hunk by hunk before the next leg.
+Registration is the single `scripts/register_forecast_run.py` path, in place, each incumbent
+preserved at **`-pre-d65b`**. Rules 12, 22 (forecast mode only — no held-out year is solved, scored
+or registered), 24, 25, 27, 28, 29. This lane is the **sole writer** of
+`frontend/data/forecast/ff-verdicts.json` and `program-status.json` until its last leg registers.
