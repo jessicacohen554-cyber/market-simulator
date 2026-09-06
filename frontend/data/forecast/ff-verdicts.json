@@ -145,11 +145,11 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "7ed062ba9a68",
-   "scored_at_date": "2026-09-06T03:59:42Z",
+   "scored_at_sha": "daf0ba364064",
+   "scored_at_date": "2026-09-06T05:57:20Z",
    "cache_epoch": "29f8eb372810195f",
    "run_id": "caiso-2026-2030-d60-arm",
-   "session": "capx-D60-R3"
+   "session": "capx-D63"
   },
   "tier": "t1f",
   "iso": "CAISO",
@@ -158,11 +158,10 @@
    "FC-1 structural integrity (I1-I14) FAIL",
    "FC-2 adequacy & equilibrium behavior FAIL"
   ],
-  "caveats": [
-   "FC-7 provenance & DOF"
-  ],
+  "caveats": [],
   "notes": [
-   "capx D60-R3 leg 3/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on CAISO; the bare caiso-t1f RE-SOLVED. Run caiso-2026-2030-d60-arm, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2, matched on the realized bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). DETERMINATION HOLD \u2192 HOLD, and EVERY SCORED ROW IS IDENTICAL to the control \u2014 FC-1 FAIL ['I12','I7'] with the same three years and the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both. P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, and it is composition-only exactly as \u00a76.3 pre-declared: the control converts 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 across 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); the arm converts 2,903.1 / 2,932.1 / 2,787.0 MW across 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs \u2014 every year inside the pre-declared 2,850-3,000 MW band and the window total 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW. P11 HIT: seam 1 (the scaled bar) is inert on CAISO \u2014 the cap still binds at ~2.9 GW in every eligible year \u2014 so the entire change is seam 2, the CC_CHP host exclusion, and the cap is refilled by fewer, larger non-CHP hosts (60 rows \u2192 22). NO STOP FIRES: FC-2 row4 did not rise (52.6 % \u2192 52.6 %), no CHP row converted, and every year's conversion count fell rather than rose. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, negative_renewable_offers \u2014 a CAISO registry override outside this batch, which Addendum D.2 pre-declared would NOT be repaired by the Q37 rows and is left untouched and routed rather than absorbed. The D46 record is preserved at caiso-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required."
+   "capx D60-R3 leg 3/5 (2026-09-06) \u2014 OWNER RULING Q42 executed on CAISO; the bare caiso-t1f RE-SOLVED. Run caiso-2026-2030-d60-arm, cache key 29f8eb372810195f (pre-declared PREDECL-capx-d60 \u00a7A.2, matched on the realized bundle directory as well as the resolved config; --golden-posture, 2026-2030, 5/5 years, 22.0 min, 4.81 GB). ONE substantive mechanism against the control, verified field-by-field before the solve: ccs_retrofit_capex_co2_scaling absent \u2192 True (Addendum A.4's \"one\"). DETERMINATION HOLD \u2192 HOLD, and EVERY SCORED ROW IS IDENTICAL to the control \u2014 FC-1 FAIL ['I12','I7'] with the same three years and the same MW, FC-2 row1 FAIL / row3 PASS / row4 FAIL at 52.6 % in BOTH arms, FC-5 / FC-6 SKIPPED both, FC-7 CAVEAT both, FC-8 PASS both. P13 HIT. WHERE THE FLIP DOES SHOW is the retrofit ledger, and it is composition-only exactly as \u00a76.3 pre-declared: the control converts 2,997.1 / 2,997.9 / 2,857.3 MW in 2028/29/30 across 37 / 12 / 11 rows of which 26 / 5 / 8 are CHP (2,043.2 MW of CHP in the window); the arm converts 2,903.1 / 2,932.1 / 2,787.0 MW across 10 / 9 / 3 rows with ZERO CHP rows in any year. P12 HIT on both limbs \u2014 every year inside the pre-declared 2,850-3,000 MW band and the window total 8,622.2 MW inside the pre-declared 8.6-9.0 GW, against the control's 8,852.4 MW. P11 HIT: seam 1 (the scaled bar) is inert on CAISO \u2014 the cap still binds at ~2.9 GW in every eligible year \u2014 so the entire change is seam 2, the CC_CHP host exclusion, and the cap is refilled by fewer, larger non-CHP hosts (60 rows \u2192 22). NO STOP FIRES: FC-2 row4 did not rise (52.6 % \u2192 52.6 %), no CHP row converted, and every year's conversion count fell rather than rose. FC-7 stays CAVEAT on ONE pre-existing UNIDENTIFIED ledger entry, negative_renewable_offers \u2014 a CAISO registry override outside this batch, which Addendum D.2 pre-declared would NOT be repaired by the Q37 rows and is left untouched and routed rather than absorbed. The D46 record is preserved at caiso-t1f-pre-d60 (HOLD). FINDING-capx-d60-2026-09-05.md \u00a75.3. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required.",
+   "capx D63 Q37 INSTRUMENT REPAIR (2026-09-06, ARTIFACT-ONLY RE-SCORE): the six curated identification rows pre-declared in PREDECL-capx-d63-2026-09-06.md section 2 were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, the SAME cache key and the SAME run -- only the ledger's LABELS changed. These six are the TWO BLUNT NEGATIVES capx D60-R3 ROUTED rather than absorbing (FINDING-capx-d60-2026-09-05.md section 8): MISO's five still-unattested registry overrides (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_rps_compliance_regions, miso_clean_tier_rows, retirement_sector_gate) and CAISO's one (negative_renewable_offers). Each row is keyed (ISO, field), never (\"*\", field), so it cannot identify another ISO's value (rule 25 [R-ISO-SCOPE]); each carries requires=\"iso-registry\", so a run carrying the field from anywhere but the live registered override stays UNIDENTIFIED; and each REPORTS an identification already committed to the repository (rule 21 [R-DOF] -- no value is chosen here, and all six values are booleans, so no row identifies a magnitude). CAISO: 2 entries, 1 unattested -> 2 identified / 0 unattested; FC-7 CAVEAT -> PASS; DETERMINATION HOLD -> HOLD (FC-1 FAIL ['I12','I7'] and FC-2 FAIL are unmoved), caveats now EMPTY. The CAISO row's identification is the scenarios.py / iso_configs.py cite blocks PLUS THE CAISO BACKCAST KEEPER RECORD: keeper 2026-09-05-caiso-252-b1-notrim carries negative_renewable_offers True at the shipped renewable_keep_running_value 20.0. The $20 LEVEL is a separate registered field at its default and is not an entry of this ledger; the gate identifies no number. FC-7 WAS THE ONLY ROW THAT MOVED, measured row-by-row across all eight categories: the determination, the reasons, the cache epoch and every FC-1 / FC-2 / FC-3 / FC-4 / FC-5 / FC-6 / FC-8 row are byte-identical to the record this replaces. A control reproduction was run FIRST -- the committed verdict reproduces byte-for-byte at HEAD from the committed artifacts on every scorer-derived field -- so the ledger input is provably the only delta. REPORTED AGAINST INTEREST: the regenerated ledger's REPORTED-ONLY epoch_field_gaps block grew by five ScenarioConfig fields added to HEAD since the run solved (nyiso_ct_peaker_bands_measured, nyiso_gas_bridge_startup_aware, voluntary_clean_demand_path, voluntary_eligible_fuels, voluntary_wtp_ceiling_usd_per_mwh). That is HEAD drift, not this lane's: rebuilding the same ledger at this HEAD with the six rows REMOVED produces the identical epoch block (and the identical 5 / 1 unattested counts), so the rows own the identification change and nothing else. Epoch drift is reported, never scored."
   ],
   "categories": {
    "FC-1": {
@@ -244,7 +243,7 @@
    "FC-7": {
     "label": "FC-7 provenance & DOF",
     "applicability": "required",
-    "status": "CAVEAT",
+    "status": "PASS",
     "rows": [
      {
       "row": "run_config",
@@ -260,8 +259,8 @@
      },
      {
       "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 1 of 2 entries carry identification='unattested' (negative_renewable_offers). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "status": "PASS",
+      "detail": "2 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -1611,11 +1610,11 @@
   "rubric_version": "1.1",
   "provenance": {
    "schema": "forecast-provenance/v1",
-   "scored_at_sha": "7ed062ba9a68",
-   "scored_at_date": "2026-09-06T03:59:42Z",
+   "scored_at_sha": "daf0ba364064",
+   "scored_at_date": "2026-09-06T05:57:20Z",
    "cache_epoch": "b1a73a087064ffd8",
    "run_id": "miso-2026-2030-d60-arm",
-   "session": "capx-D60-R3"
+   "session": "capx-D63"
   },
   "tier": "t1f",
   "iso": "MISO",
@@ -1625,11 +1624,11 @@
    "FC-2 adequacy & equilibrium behavior FAIL"
   ],
   "caveats": [
-   "FC-7 provenance & DOF",
    "FC-8 runtime feasibility: over runtime budget"
   ],
   "notes": [
-   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q40 + Q42 executed. The bare miso-t1f re-solved on the post-arming recipe, cache key b1a73a087064ffd8 (pre-declared in PREDECL-capx-d60-2026-09-05.md Addendum A \u00a7A.1 and matched; 5/5 years, 49.6 min, 9.68 GB). THREE mechanisms act together here for the first time on 2026-2030 and each moved row is attributed to ONE of them from a committed single-mechanism record, never by inference: (i) retirement_sector_gate (capx D53, armed for MISO earlier the same day) \u2014 a pure candidate-set partition that gates 87.8-103.1 GW of regulated-utility capacity out of the merchant screen and moves NOTHING on exits, every retirement row byte-identical to the control in all five years (announced + confirmed only, zero economic in either arm); (ii) adequacy_accounting_ratio_dated_net (Q40, D51's 0.854600 -> 0.893436, zero DOF) \u2014 the position lengthens in every year (2027 0.90278 -> 0.94254, 2030 0.944977 -> 0.986696), accredited firm rises 118,091 -> 123,292 MW in 2026, and the 2030 adequacy backstop stops buying 6,584.5 MW of gas_ct (entry gas_ct 10,650.2 -> 4,065.7), which is what takes FC-2 row4 from 33.6 % FAIL to 23.0 % CAVEAT; (iii) ccs_retrofit_capex_co2_scaling (Q42) \u2014 a measured NULL on this ISO, 0 MW converted in every year against the control's 4,631.1 MW, reproducing the D50 \u00a74b arm exactly. Determination HOLD -> HOLD; FC-1 stays FAIL ['I12','I7'] with every year improving by ~4 points and 2029 I7 landing 76 MW short of clearing (133,795 vs 133,871). The D45-R record is preserved at miso-t1f-pre-d60. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required."
+   "capx D60 (2026-09-05) \u2014 OWNER RULINGS Q40 + Q42 executed. The bare miso-t1f re-solved on the post-arming recipe, cache key b1a73a087064ffd8 (pre-declared in PREDECL-capx-d60-2026-09-05.md Addendum A \u00a7A.1 and matched; 5/5 years, 49.6 min, 9.68 GB). THREE mechanisms act together here for the first time on 2026-2030 and each moved row is attributed to ONE of them from a committed single-mechanism record, never by inference: (i) retirement_sector_gate (capx D53, armed for MISO earlier the same day) \u2014 a pure candidate-set partition that gates 87.8-103.1 GW of regulated-utility capacity out of the merchant screen and moves NOTHING on exits, every retirement row byte-identical to the control in all five years (announced + confirmed only, zero economic in either arm); (ii) adequacy_accounting_ratio_dated_net (Q40, D51's 0.854600 -> 0.893436, zero DOF) \u2014 the position lengthens in every year (2027 0.90278 -> 0.94254, 2030 0.944977 -> 0.986696), accredited firm rises 118,091 -> 123,292 MW in 2026, and the 2030 adequacy backstop stops buying 6,584.5 MW of gas_ct (entry gas_ct 10,650.2 -> 4,065.7), which is what takes FC-2 row4 from 33.6 % FAIL to 23.0 % CAVEAT; (iii) ccs_retrofit_capex_co2_scaling (Q42) \u2014 a measured NULL on this ISO, 0 MW converted in every year against the control's 4,631.1 MW, reproducing the D50 \u00a74b arm exactly. Determination HOLD -> HOLD; FC-1 stays FAIL ['I12','I7'] with every year improving by ~4 points and 2029 I7 landing 76 MW short of clearing (133,795 vs 133,871). The D45-R record is preserved at miso-t1f-pre-d60. | capx D60-R3 Q37 INSTRUMENT REPAIR (2026-09-06, artifact-only re-score): the six curated identification rows pre-declared in PREDECL-capx-d60 Addendum D were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, SAME key, SAME run -- only the ledger's LABELS changed. FC-7 was the ONLY row that moved on any of the five re-scored bundles (0 non-FC-7 movements), exactly as Addendum D.3 required.",
+   "capx D63 Q37 INSTRUMENT REPAIR (2026-09-06, ARTIFACT-ONLY RE-SCORE): the six curated identification rows pre-declared in PREDECL-capx-d63-2026-09-06.md section 2 were written to CURATED_IDENTIFICATIONS and this bundle was re-scored on the SAME bytes, the SAME cache key and the SAME run -- only the ledger's LABELS changed. These six are the TWO BLUNT NEGATIVES capx D60-R3 ROUTED rather than absorbing (FINDING-capx-d60-2026-09-05.md section 8): MISO's five still-unattested registry overrides (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_rps_compliance_regions, miso_clean_tier_rows, retirement_sector_gate) and CAISO's one (negative_renewable_offers). Each row is keyed (ISO, field), never (\"*\", field), so it cannot identify another ISO's value (rule 25 [R-ISO-SCOPE]); each carries requires=\"iso-registry\", so a run carrying the field from anywhere but the live registered override stays UNIDENTIFIED; and each REPORTS an identification already committed to the repository (rule 21 [R-DOF] -- no value is chosen here, and all six values are booleans, so no row identifies a magnitude). MISO: 7 entries, 5 unattested -> 7 identified / 0 unattested; FC-7 CAVEAT -> PASS; DETERMINATION HOLD -> HOLD (FC-1 FAIL ['I12','I7'] and FC-2 FAIL are unmoved -- a retiring caveat cannot clear a reason), caveats now FC-8 alone. FC-7 WAS THE ONLY ROW THAT MOVED, measured row-by-row across all eight categories: the determination, the reasons, the cache epoch and every FC-1 / FC-2 / FC-3 / FC-4 / FC-5 / FC-6 / FC-8 row are byte-identical to the record this replaces. A control reproduction was run FIRST -- the committed verdict reproduces byte-for-byte at HEAD from the committed artifacts on every scorer-derived field -- so the ledger input is provably the only delta. REPORTED AGAINST INTEREST: the regenerated ledger's REPORTED-ONLY epoch_field_gaps block grew by five ScenarioConfig fields added to HEAD since the run solved (nyiso_ct_peaker_bands_measured, nyiso_gas_bridge_startup_aware, voluntary_clean_demand_path, voluntary_eligible_fuels, voluntary_wtp_ceiling_usd_per_mwh). That is HEAD drift, not this lane's: rebuilding the same ledger at this HEAD with the six rows REMOVED produces the identical epoch block (and the identical 5 / 1 unattested counts), so the rows own the identification change and nothing else. Epoch drift is reported, never scored."
   ],
   "categories": {
    "FC-1": {
@@ -1711,7 +1710,7 @@
    "FC-7": {
     "label": "FC-7 provenance & DOF",
     "applicability": "required",
-    "status": "CAVEAT",
+    "status": "PASS",
     "rows": [
      {
       "row": "run_config",
@@ -1727,8 +1726,8 @@
      },
      {
       "row": "dof ledger",
-      "status": "CAVEAT",
-      "detail": "DOF ledger present as an UNATTESTED SKELETON: 5 of 7 entries carry identification='unattested' (entry_vre_capacity_revenue, entry_vre_zone_selection, miso_clean_tier_rows, miso_rps_compliance_regions, retirement_sector_gate). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+      "status": "PASS",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
       "gating": true
      }
     ]
@@ -13140,6 +13139,120 @@
       "row": "run_config",
       "status": "PASS",
       "detail": "mode=forecast; 791 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "pjm-t1h-d62-pubbar": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "scored_at_sha": "daf0ba364064",
+   "scored_at_date": "2026-09-06T05:57:28Z",
+   "cache_epoch": "b98060898fceb3da",
+   "run_id": "pjm-2021-2025-realized-t1h-d62-pubbar",
+   "session": "capx-D62 (registered by capx-D63)"
+  },
+  "tier": "t1h",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
+  "caveats": [
+   "FC-7 provenance & DOF"
+  ],
+  "notes": [
+   "capx D62 (2026-09-06) -- THE PJM PUBLISHED GOING-FORWARD BAR (capacity_going_forward_bar_published_by_iso[PJM] ON: the retirement screen's bar, and through the D57 identity the sell-offer cap, becomes PJM's own Manual 18 section 5.4.8.4(B) default gross ACR on nameplate in place of the ATB FOM proxy, plus the tariff's reactive component as the single out-of-market leg). ONE arm, SUFFIXED BY CHARTER, never the bare key: the bare pjm-t1h stays D57 arm A (f0e050e820c1159a), which is THIS ARM'S OWN CONTROL -- differenced, never re-solved (rule 29(b) form 4, the G-DRIFT audit standing in for a control solve; 54 solve-path files classified HUNK BY HUNK, no LIVE hunk). Run pjm-2021-2025-realized-t1h-d62-pubbar, cache key b98060898fceb3da; 2021-2025 realized hindcast, forecast mode, no out-of-training year touched. *** SECTION 8 = DO NOT ARM AS IT STANDS *** -- the mechanism is right and the arm is not ready, and NOTHING ARMS: there is no _pjm_config override and no default flip. FOR: the 2022/23 clearing price goes 76.10 -> 46.78 $/MW-day = 1.522x -> 0.936x the published RCP with the cleared position -0.477 -> +0.267 pt of the published 1.0510, on PJM's own published operand replacing an ATB proxy 1.15-2.0x it, at ZERO FREE PARAMETERS (no adder, haircut, shading factor or per-class cap, no scalar field, and a vintage rule fixed in code and in the pushed PRECOMMIT before any solve); the spurious +4.0 GW of 2023 gas-CC entry disappears and additions gas_cc goes FAIL -> PASS, visible in this record's own FC-3 band list, which drops add.by_tech.gas_cc and add.shares.gas_cc against the control's. AGAINST: the lane's OWN PRE-REGISTERED STOP 5 FIRED -- the 2024/25 price moved 165.84 -> 188.57 $/MW-day, through the CENSUS (172,158.6 -> 170,576.6 MW, the arm's own 2022-2023 exits leaving 1,582 MW fewer standing) rather than the offer side, and a lane does not promote past its own pre-registration however right the diagnosis; FC-3 GETS WORSE WHERE IT ALREADY FAILED, retire.total_gw 18.702 -> 20.144 against an actual 15.062 with unit recall 0.60 -> 0.55; and 4.137 GW of OIL OVER-EXITS because its published bar falls only $1.64/kW-yr while the clearing price falls $29.32 -- arithmetically correct given the mechanism, and still 6.7x the actual oil retirement. The wind SHARE band also flips PASS -> FAIL as arithmetic on the smaller denominator (wind's absolute build is identical), reported because the flip is real. ROUTED AHEAD OF ANY ARMING: D67 (the below-cap offer convention for regulated / self-supplied steam, whose scope this lane WIDENS to include oil -- the two share PJM's single 'Steam Oil & Gas' published class) and D66 (the 2024/25-2025/26 census, confirmed unreachable by any offer-side operand of any size). Every other ISO stays U (rule 25 [R-ISO-SCOPE]): ERCOT is n/a by market design, and CAISO / MISO / NYISO / NEISO each cap offers against a going-forward-cost concept but publish no generic technology-class default an owner may elect, so each would need its own intake and its own identification in its own lane. DETERMINATION HOLD on FC-3 FAIL. FC-7 CAVEAT (the bundle carries no DOF ledger); FC-1 and FC-8 SKIPPED (no committed invariant record, no perf ledger) exactly as on the D57 control. Full record: FINDING-capx-d62-2026-09-06.md + docs/handoffs/d62/. REGISTERED BY capx D63 (2026-09-06) on committed artifacts only -- the registration D62 withheld while capx D60-R3 owned ff-verdicts.json. ZERO LP: scored with forecast_verdict.py --tier t1h over the committed score.json + run_config.json, the same invocation verified FIRST to reproduce D57's committed forecast_verdict.json byte-for-byte on every scorer-derived field. The bare pjm-t1h and PJM's board rows are UNTOUCHED, and D63 adjudicates nothing about D62."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "SKIPPED",
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "required",
+    "status": "FAIL",
+    "rows": [
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar']",
+      "gating": true
+     }
+    ]
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "CAVEAT",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 799 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {

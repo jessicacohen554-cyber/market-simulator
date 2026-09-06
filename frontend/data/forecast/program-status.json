@@ -156,7 +156,7 @@
     "FC-2": "FAIL",
     "FC-5": "SKIPPED",
     "FC-6": "SKIPPED",
-    "FC-7": "CAVEAT",
+    "FC-7": "PASS",
     "FC-8": "PASS"
    },
    "blocking_rows": [
@@ -275,7 +275,7 @@
     "FC-2": "FAIL",
     "FC-5": "SKIPPED",
     "FC-6": "SKIPPED",
-    "FC-7": "CAVEAT",
+    "FC-7": "PASS",
     "FC-8": "CAVEAT"
    },
    "blocking_rows": [
@@ -1192,5 +1192,8 @@
   "what_changed": "NYISO ONLY, gate leg (a) ONLY, plus the cross-ISO prose that named its marker: gate (a) pass -> FAIL on the withdrawn marker (detail rewritten in the fail form with the ruling citation; the prior pass-form text preserved in git with its hash in the new detail; read_live_at/corrected_by re-stamped); closed_on [] -> ['a']; gate note: a dated paragraph prepended, the prior note preserved verbatim inside it; marker_complete true -> false; top-level keeper display field re-keyed 2026-09-05-nyiso-189-steam-identity -> 2026-09-05-nyiso-192-astoria-panel (rule R-T, the promoting lane's duty); headline: a dated lead paragraph prepended, the prior preserved verbatim; gate_reading: one appended sentence; one source appended; this block added.",
   "what_did_NOT_change": "LEG (b): NYISO's t1f_determination stays PROMOTE and gate (b) stays pass \u2014 the bare `nyiso-t1f` verdict; no marker moves a bare verdict. LEGS (c)/(d): untouched. fc map, blocking_rows, golden, candidate, t1h fields: untouched. EVERY OTHER ISO'S BLOCK: byte-unchanged. gate_a_provenance: NOT re-stamped by this lane (its `derived_by` narrates the D56-R six-row re-read; the live NYISO row is this gate cell, checked by scripts/check_gate_a_provenance.py against the shard + marker file). `generated`: unchanged (2026-09-05).",
   "flagged_not_edited": "The Q45 (C-14) NYISO \u00a72.1b campaign authorization and the T3-NYISO-GOLDEN charter were granted on leg (a) PASS (r#38); leg (a) now reads FAIL. Whether the campaign proceeds on a NOT-YET keeper is the capx director's / owner's to re-read \u2014 outside this lane's write scope. || PRE-EXISTING, NOT THIS LANE'S: scripts/check_gate_a_provenance.py FAILS on the MISO row at origin/main 2a59d269 (gate (a) cites the superseded 2026-09-05-miso-213-layering; keepers/MISO.json names 2026-09-05-miso-217-intermphys) \u2014 the miso-217 promotion did not perform its rule R-T stamp re-key. The NYISO row passes the same guard after this edit. Left to the MISO lane / audit desk; this lane edits no other ISO's gate row."
+ },
+ "d63_dof_rows": {
+  "note": "capx D63 (2026-09-06; owner ruling Q37 limb, r#34 \u2014 a follow-up lane may author an attestation iff PRE-DECLARED before authoring, attestation row only, artifact-only re-score). ZERO LP. Closes the TWO BLUNT NEGATIVES capx D60-R3 ROUTED rather than absorbing (FINDING-capx-d60-2026-09-05.md \u00a78): SIX curated identification rows written to CURATED_IDENTIFICATIONS in scripts/build_forecast_dof_ledger.py \u2014 MISO's five (entry_vre_capacity_revenue \u2192 owner decision D-2', entry_vre_zone_selection \u2192 capx D33, miso_rps_compliance_regions \u2192 owner decision D-26, miso_clean_tier_rows \u2192 owner decision D-29, retirement_sector_gate \u2192 capx D53) and CAISO's one (negative_renewable_offers \u2192 the scenarios.py / iso_configs.py cite blocks plus the CAISO backcast keeper record, keeper 2026-09-05-caiso-252-b1-notrim carrying the field True at the shipped $20 renewable_keep_running_value). SIX, NOT the charter's SEVEN: measured before any row was authored, miso-t1f carried 7 entries / 5 unattested and caiso-t1f 2 / 1, so there is no seventh field to identify; the deviation is recorded in PREDECL-capx-d63-2026-09-06.md \u00a71 rather than reconciled silently. Every row is keyed (ISO, field), never (\"*\", field) (rule 25 [R-ISO-SCOPE]), carries requires=\"iso-registry\", and REPORTS an identification already committed to the repository \u2014 no value is chosen here, and all six values are booleans, so no row identifies a magnitude (rule 21 [R-DOF]). THE TWO ARTIFACT-ONLY RE-SCORES, same bundle / same bytes / same cache key: miso-t1f FC-7 CAVEAT \u2192 PASS on a 7/7 ledger and caiso-t1f CAVEAT \u2192 PASS on 2/2 \u2014 the two fc rows above \u2014 with BOTH DETERMINATIONS UNMOVED at HOLD, because both read HOLD on FC-1 + FC-2 FAIL and a retiring caveat cannot clear a reason. FC-7 WAS THE ONLY ROW THAT MOVED on either, measured row-by-row across all eight categories, against a control reproduction run first. Nothing is armed, no ScenarioConfig field or value changes, no solve, no marker, no freeze, no mechanism-matrix cell. ALSO IN THIS WINDOW: capx D62's arm registered SUFFIXED as pjm-t1h-d62-pubbar (HOLD on FC-3 FAIL) \u2014 the registration D62 withheld while D60-R3 owned ff-verdicts.json \u2014 carrying D62's own \u00a78 DO-NOT-ARM verdict as its provenance string. The bare pjm-t1h stays D57 arm A and PJM's board rows are UNTOUCHED. FINDING-capx-d63-2026-09-06.md."
  }
 }

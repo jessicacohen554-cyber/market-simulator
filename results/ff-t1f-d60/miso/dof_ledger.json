@@ -1,7 +1,7 @@
 {
   "schema": "dof-ledger/v1",
   "lane": "forecast",
-  "status": "INSTRUMENT — 2 IDENTIFIED / 5 UNIDENTIFIED",
+  "status": "INSTRUMENT — ALL 7 ENTRIES IDENTIFIED",
   "run_id": "miso",
   "iso": "MISO",
   "run_git_sha": "2ef4326e",
@@ -11,9 +11,9 @@
   "scope": "NON-DEFAULT solve-affecting ScenarioConfig fields — the parameters THIS run chose relative to the shipped registry (tuple/list representation normalized). Registry defaults inherited by the run keep their identification burden in the registry citations and the backcast keeper DOF ledger (see registry_identification). Epoch drift is reported separately, never scored.",
   "defaults_available": true,
   "n_entries": 7,
-  "n_identified": 2,
-  "n_unidentified": 5,
-  "n_unattested": 5,
+  "n_identified": 7,
+  "n_unidentified": 0,
+  "n_unattested": 0,
   "n_by_group": {
     "dispatch_mechanism": 2,
     "entry": 2,
@@ -36,25 +36,23 @@
       "name": "entry_vre_capacity_revenue",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "entry",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-2' (owner sitting Addendum O, signed 2026-08-04; lane FFR-4B). MISO's Planning Resource Auction ACCREDITS AND PAYS wind and solar like any other Planning Resource, so a MISO forecast that denies VRE entry the RA payment is not modelling MISO's market. Before this, VRE was the ONLY accredited resource class on the system denied that payment while thermal entry, the thermal retirement screen and storage entry all took it through the SAME seam (MarketDesign.capacity_price_per_firm_mw_yr) -- and VRE's accredited MW were ALREADY counted on the supply side of the adequacy ledger. Arming REMOVES an exception; it adds no second channel (rule 19 [R-ONE-MECH]) and chooses no MW, price or share",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides cite block (owner decision D-2'); docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md section 3.3 and section 7 item 1a",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Economic-entry economics and dynamics (rate limits, commissioning lag, capacity-revenue terms, storage value stack). Attest: published source (ReEDS growth bound, LBNL queue medians, ATB) vs residual."
+      "value": true
     },
     {
       "name": "entry_vre_zone_selection",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "entry",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "capx D33. MISO is the ISO where the single-bucket VRE siting is not merely coarse but WRONG IN KIND: RENEWABLE_ZONE_ALLOCATION sent every economically-entered solar MW to MISO-South, the one model zone excluded from every state compliance region's eligible-zone mask (MISO_RPS_MIDWEST_FOOTPRINT_ZONES -- AR/LA/MS/E-TX carry no standard), so the screen priced new solar at a $0 REC credit while the run's own zonal REC vector peaked at the $30/MWh ACP. A siting-REPRESENTATION repair reading the run's own zonal REC vector and the existing masks; no share, weight or allocation is chosen",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides cite block (capx D33); docs/handoffs/FINDING-capx-d33-miso-additions-repair-2026-09-02.md section 2",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Economic-entry economics and dynamics (rate limits, commissioning lag, capacity-revenue terms, storage value stack). Attest: published source (ReEDS growth bound, LBNL queue medians, ATB) vs residual."
+      "value": true
     },
     {
       "name": "forecast_xyear_warmstart",
@@ -71,37 +69,34 @@
       "name": "miso_clean_tier_rows",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-29 (sitting Addendum AK.8, signed 2026-08-11; lane ARM-3-ARM). Adds a SECOND independent row family riding the Arm-2 K-row machinery (the dependency is strict and one-directional -- the runner refuses the clean family without the compliance-region grain): MN carbon-free (Minn. Stat. 216B.1691 subd. 2g) and MI clean (2023 PA 235 / MCL 460.1029), each with its statute's eligibility mask, its obligated-load RHS and its own $30 ACP escape. Both blockers are closed on the record -- the section 45U composition by owner D-28 option A, and the zone-mask defect by ARM3-FIX. ZERO fitted parameters: every obligation is copied from the cited MISO_CLEAN_TIER_REGIONS derivation, and MI's RHS is 0 until its statutory 2035 start",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides cite block (owner decision D-29); docs/handoffs/arm3-fix-zone-mask-2026-08-09.md section 4 (R1-R5 on the fixed rows)",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     },
     {
       "name": "miso_rps_compliance_regions",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "dispatch_mechanism",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "Owner decision D-26 (sitting Addendum Y.4, signed 2026-08-06; lane ARM-MISO). The single MISO-wide RPS row silently asserts FREE INTRA-ISO REC TRADE, which is FALSE in MISO (MCL 460.1029 restricts Michigan credits to in-state systems; CEJA's centralized IPA procurement; MN's delivered-to-retail construction) -- the ISO-wide row let Iowa's surplus pay Michigan's bill. Armed, that row is REPLACED (rule 19 [R-ONE-MECH], never stacked) by the K=5 per-state compliance-region rows, each with its statute's eligibility mask, its obligated-load RHS and its own $30 ACP escape. ZERO fitted parameters: every obligation is copied from the cited STATE_RPS_FLOORS['MISO'] derivation, which regenerates from statute and obligated load in any forward year",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides cite block (owner decision D-26); docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md section 3.1; both lane gates proven by tests/unit/config/test_miso_rps_region_arming.py",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Dispatch/commitment mechanisms inherited from the backcast calibration. MOST WILL ALREADY BE ATTESTED in the ISO's backcast ledger — the forecast attestation should CITE that entry rather than re-derive it, and must state whether the identification survives extrapolation forward (a curve fitted on 2023-2025 conduct is not automatically identified for 2040)."
+      "value": true
     },
     {
       "name": "retirement_sector_gate",
       "where": "ISOConfig.default_scenario_overrides (src/market_sim/config/iso_configs.py::_miso_config)",
       "group": "retirement",
-      "identification": "unattested",
-      "status": "UNIDENTIFIED",
-      "source": "",
-      "evidence": "",
+      "identification": "design-decision",
+      "status": "IDENTIFIED",
+      "source": "capx D53, armed for MISO ONLY by owner instruction on the measured A/B. A PURE CANDIDATE-SET PARTITION of the retirement screen: 59 GW of regulated-utility capacity whose owners never subject it to a merchant test is removed from a merchant screen, so the pool the reliability floor masks is the merchant pool (10 pct real-exit density instead of 4 pct) and the floor's release lands at plants that actually exit (99.8 pct plant-grain precision instead of 1.1 pct). All four pre-stated limbs read MET, every retirement row byte-identical on the bare recipe. The gate reads the Sector column every ISO's EIA-860 plant table already carries -- the same posture class as owner ruling Q30's date channel -- and chooses no threshold, share or MW",
+      "evidence": "src/market_sim/config/iso_configs.py::_miso_config default_scenario_overrides retirement_sector_gate cite block; docs/handoffs/FINDING-capx-d53-2026-09-05.md section 6 (the four limbs) and section 6.1 (the arming and its records-side consequences); docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md",
       "provenance": "iso-registry",
-      "value": true,
-      "attestation_question": "Economic-retirement screen thresholds and exogenous exit channels. Attest: which are published instrument rules, which are measured execution lags (EIA-860 announced-to-deactivation), which were chosen against a hindcast recall residual."
+      "value": true
     }
   ],
   "epoch_field_gaps": {
@@ -112,7 +107,12 @@
       "ccs_retrofit_fixed_cost_co2_scaling",
       "federal_ces_acp_usd_per_mwh",
       "federal_ces_target_by_year",
-      "unit_outage_extract_basis_share"
+      "nyiso_ct_peaker_bands_measured",
+      "nyiso_gas_bridge_startup_aware",
+      "unit_outage_extract_basis_share",
+      "voluntary_clean_demand_path",
+      "voluntary_eligible_fuels",
+      "voluntary_wtp_ceiling_usd_per_mwh"
     ]
   },
   "registry_identification": {
