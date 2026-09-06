@@ -5062,12 +5062,14 @@ WIND_PTC_STATUTORY_USD_PER_MWH: dict[int, float] = {
 # here can reach a scored run. Every number is a DECLARED what-if level with a
 # public citation (rule 5 [R-NO-MAGIC]); nothing is identified against a model
 # residual (rule 20 [R-DOF] — the axis is absent from every scored model) and
-# nothing is proprietary (memo §1.2, ffr-5b sentence 1 honoured). Cells the
-# memo's box 5 leaves OWNER-SET are labelled ILLUSTRATIVE below and are listed
-# for re-presentation in FINDING-scn-ws3b-2026-09-06.md §4 — owner ruling S3
-# (card D-2) committed "the box-5 defaults" and box 5 itself leaves `f_commit`
-# mid and the WTP-ceiling LEVEL owner-set (FINDING-scn-levels-2026-09-06.md §4),
-# so neither may be inferred from a ruling here.
+# nothing is proprietary (memo §1.2, ffr-5b sentence 1 honoured). EVERY LEVEL
+# IN THIS REGION IS NOW COMMITTED. The two cells box 5 left owner-set —
+# `f_commit` mid and the WTP-ceiling mid level — were carried here labelled
+# ILLUSTRATIVE and re-presented as card D-2(b) (FINDING-scn-ws3b-2026-09-06.md
+# §4); owner ruling **S9 (2026-09-06), verbatim "Take the placeholders as
+# committed"**, committed them at the values already shipped, so the label
+# moved and NO NUMBER MOVED (SCN-FIX2). Ruling S3 (card D-2) had already
+# committed the rest of the box-5 defaults.
 #
 # The construction (memo §3.1), per ISO-year:
 #   V = s_base(path, y) × E_nonDC(ISO, y) × w_ISO  +  f_commit(path, y) × E_DC(ISO, y)
@@ -5088,8 +5090,11 @@ WIND_PTC_STATUTORY_USD_PER_MWH: dict[int, float] = {
 # new / low-impact hydro and the LP's hydro classes carry no such attribute).
 # `offshore_wind` is the memo's one addition to the charter's "wind / solar /
 # geothermal" (it is wind the fleet types separately).
-#   *** D-3c IS OPEN (ledger §2): this set is the memo's RECOMMENDATION, not a
-#   ruled default. *** Nuclear and gas_cc_ccs ("carbon-free" programs, memo
+#   *** COMMITTED — owner ruling S10 (2026-09-06), card D-3c, verbatim
+#   "Ratify the default as built": this set is the ruled default, no longer the
+#   memo's recommendation. Every eligible unit is credited; there is no
+#   additionality or vintage mask. *** Nuclear and gas_cc_ccs ("carbon-free"
+#   programs, memo
 #   §4.2) enter ONLY through the labelled ScenarioConfig.voluntary_eligible_fuels
 #   override for a named arm, never here — and a gas_cc_ccs listing credits at
 #   the indicator 1.0 of the name-tuple form, not the federal row's 0.95.
@@ -5178,17 +5183,20 @@ VOLUNTARY_BASELINE_ISO_WEIGHT: dict[str, float | None] = {
 #                 FALLING low path; that is a D-2 shape question, recorded in
 #                 the FINDING, not taken here.
 #   high = 1.0  — the whole block committed (box 5, S3).
-#   mid  = *** ILLUSTRATIVE, OWNER-SET UNDER D-2 (box 5 leaves it owner-set;
-#          S3 did not reach it; the memo calls it "the weakest cell in the
-#          construction") ***. The public anchor is the hyperscale share of
-#          U.S. DC energy in Shehabi et al., LBNL 2024 U.S. Data Center Energy
-#          Usage Report (the split IS published — A.1 row 12 — but the PDF is
-#          unreachable through this environment's proxy, so it stays
-#          `needs-citation`). 0.5 is a placeholder at the range midpoint,
-#          labelled so the VOL-MID case is expressible; it is NOT a ruled level.
+#   mid  = *** COMMITTED (owner ruling S9, 2026-09-06) *** at the range
+#          midpoint, the value shipped under the former ILLUSTRATIVE label —
+#          card D-2(b), which box 5 left owner-set and S3 did not reach, was
+#          ruled "Take the placeholders as committed", so this is a ruled
+#          what-if level (rule 1 [R-STRUCT]) and not an inference. The public
+#          anchor the memo names is the hyperscale share of U.S. DC energy in
+#          Shehabi et al., LBNL 2024 U.S. Data Center Energy Usage Report (the
+#          split IS published — A.1 row 12 — but the PDF is unreachable through
+#          this environment's proxy, so it stays `needs-citation`); the memo
+#          calls this the weakest-anchored cell in the construction, which the
+#          ruling does not change and a reader quoting VOL-MID should carry.
 VOLUNTARY_COMMITTED_DC_FRACTION: dict[str, dict[int, float]] = {
     "low": {2026: 0.0},
-    "mid": {2026: 0.5},  # ILLUSTRATIVE — owner level (D-2), see above
+    "mid": {2026: 0.5},  # committed (owner ruling S9, 2026-09-06), see above
     "high": {2026: 1.0},
 }
 
@@ -5201,13 +5209,14 @@ VOLUNTARY_COMMITTED_DC_FRACTION: dict[str, dict[int, float]] = {
 # premia are proprietary and REFUSED). `low` / `high` are the endpoints of that
 # cited range; the range's dollar-year spread is inside its own width, so no
 # deflation is applied.
-#   mid = *** ILLUSTRATIVE, OWNER-SET UNDER D-2 (box 5: "the ceiling itself is
-#         an owner level"; S3 did not reach it) *** — the range midpoint,
-#         labelled so VOL-MID is expressible. ScenarioConfig.voluntary_wtp_
-#         ceiling_usd_per_mwh overrides the path value for a labelled
-#         sensitivity.
+#   mid = *** COMMITTED (owner ruling S9, 2026-09-06) *** — the range midpoint,
+#         the value shipped under the former ILLUSTRATIVE label. Box 5 left the
+#         ceiling an owner level and S3 did not reach it; card D-2(b) was ruled
+#         "Take the placeholders as committed", so the label moved and the
+#         number did not. ScenarioConfig.voluntary_wtp_ceiling_usd_per_mwh
+#         overrides the path value for a labelled sensitivity.
 VOLUNTARY_WTP_CEILING_USD_PER_MWH: dict[str, float] = {
     "low": 2.0,
-    "mid": 4.5,  # ILLUSTRATIVE — owner level (D-2), see above
+    "mid": 4.5,  # committed (owner ruling S9, 2026-09-06), see above
     "high": 7.0,
 }
