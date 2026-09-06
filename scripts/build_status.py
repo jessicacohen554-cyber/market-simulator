@@ -468,6 +468,77 @@ def build_shared() -> dict:
     }
 
 
+def build_holdout_ladder(iso: str, keeper_run_id: str) -> list[dict]:
+    """Score every held-out year folded onto one keeper, oldest year first.
+
+    A rule-22 validation touchpoint is the designated keeper's OWN frozen
+    recipe replayed on a year that was never tuned on, so its result is part of
+    that keeper's story rather than a separate run. This finds them the same
+    way the run explorer does — a registry sidecar whose ``holdout.keeper``
+    names ``keeper_run_id`` — and scores each of its years INDIVIDUALLY with
+    the same scorer the gate uses.
+
+    Per-year is the load-bearing detail: a multi-year touchpoint bundle carries
+    ONE run-level determination, which can hide a rung that passed on its own
+    (NEISO 2020+2021 reads NOT-YET as a bundle, but 2021 alone is CALIBRATED).
+
+    The ladder NEVER gates and never rewrites the ISO's determination, which is
+    the train-tier (2023-2025) verdict — rule 22 as amended 2026-09-05: an ISO
+    can stay CALIBRATED even when a held-out year degrades, because a
+    validation-tier score is iterable model-SELECTION evidence and not a
+    certification.
+
+    Args:
+        iso: ISO id, used to scope the registry scan.
+        keeper_run_id: The ISO's current designated keeper run id.
+
+    Returns:
+        One entry per held-out year: its tier, determination, the criteria that
+        degraded against the keeper's in-sample column, and the companion run
+        id it came from. Empty when the ISO has spent no held-out year.
+    """
+    out: list[dict] = []
+    for sidecar in sorted(cv.REGISTRY_DIR.glob("*.json")):
+        try:
+            reg = json.loads(sidecar.read_text())
+        except (OSError, ValueError):
+            continue
+        if reg.get("iso") != iso or reg.get("id") == keeper_run_id:
+            continue
+        block = reg.get("holdout") or {}
+        if block.get("keeper") != keeper_run_id:
+            continue
+        # `criteria` carries the per-criterion in-sample-vs-holdout reading that
+        # stamp_touchpoint_holdout.py wrote; it is a RUN-level table, so it is
+        # reported once per companion rather than per year.
+        degraded = [
+            c.get("label") or c.get("key")
+            for c in (block.get("criteria") or [])
+            if c.get("verdict") == "degraded"
+        ]
+        per_year = block.get("perYear") or {}
+        for year in sorted(int(y) for y in (reg.get("years") or [])):
+            try:
+                v = cv.determine(reg["id"], years=[year])
+            except Exception as exc:  # a companion must never abort the lane
+                print(f"  {iso}: holdout {year} unscorable ({exc})", file=sys.stderr)
+                continue
+            out.append(
+                {
+                    "year": year,
+                    "tier": block.get("tier") or "validation",
+                    "determination": v.get("determination"),
+                    "reasons": v.get("reasons") or [],
+                    "degraded": degraded,
+                    "run_id": reg["id"],
+                    "note": per_year.get(str(year)) or per_year.get(year) or "",
+                    "caveat": block.get("tierCaveat") or "",
+                }
+            )
+    out.sort(key=lambda r: r["year"])
+    return out
+
+
 def build_part(iso: str) -> dict | None:
     """Score one ISO's current keeper into its status part payload.
 
@@ -502,6 +573,16 @@ def build_part(iso: str) -> dict | None:
     # (2023-2025) verdict and a holdout result never silently rewrites it.
     if rec.get("holdout_touchpoint"):
         verdict["holdout_touchpoint"] = rec["holdout_touchpoint"]
+    # Rule-22 TOUCHPOINT LADDER — AUTO-DERIVED, never hand-authored. Every
+    # registered run whose sidecar names this keeper in ``holdout.keeper`` is
+    # this keeper's own frozen recipe replayed on a held-out year, so its result
+    # belongs on the ISO's status card rather than behind a separate run click.
+    # Derived rather than transcribed into the shard because a hand-written
+    # block goes stale the moment a rung is re-spent, and the whole point of the
+    # ladder is that it tracks what has actually been scored.
+    ladder = build_holdout_ladder(iso, run_id)
+    if ladder:
+        verdict["holdout_ladder"] = ladder
     # Owner-signed STANDING NOTE (the shard's "standing_note" block): a durable
     # statement about what the ISO's remaining misses ARE — e.g. several scored
     # criteria that are one adjudicated object rather than independent defects.

@@ -43,7 +43,7 @@
     "label": "C3c price tail / scarcity (RT hourly)",
     "tier": "supporting",
     "inSample": "CAVEAT",
-    "holdout": "FAIL",
+    "holdout": "CAVEAT",
     "verdict": "carried"
    },
    {

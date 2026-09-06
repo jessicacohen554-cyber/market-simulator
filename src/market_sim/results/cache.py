@@ -56,6 +56,47 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-05b — SCN-WS4a populates ``DATACENTER_ZONE_SHARE["MISO"]``
+from MISO's published 2026 LTLF regional data-center decomposition
+(``0fc2cc58``, ``config/constants.py``). NO KEY MOVES, BY CONSTRUCTION — and
+the stored ``config.yaml`` cannot see it either.** The table is a
+``constants.py`` siting input, not a ``ScenarioConfig`` field, so
+``cache_key()`` hashes the same bytes before and after the change and
+:func:`cache_config_disagreements` compares two identical configs: this is
+the pure same-key invalidation class this ledger exists for. What moved:
+``data/datacenter.py::datacenter_zone_shares`` served MISO the ``load_share``
+default (``_load_share_zone_shares``) before this commit and serves the
+published override after it. The ISO-total block MW is unchanged; its zonal
+allocation is not (MISO-South falls from its 0.271 ``load_share`` to the
+published 0.183, the difference landing on the North/Central-region zones).
+
+**INVALIDATED — re-solve before quoting:** MISO **forecast-mode** bundles
+solved before ``0fc2cc58`` (2026-09-05 23:15Z) with
+``datacenter_load_path != "off"`` (the default is ``"mid"`` since FF-1F) are
+STALE at their unchanged key: zonal load, and with it zonal dispatch, flows
+and prices, change while the ISO total block does not. Committed PRE-EPOCH
+evidence, retained as the record of what the harness did on the
+``load_share`` split and never re-quoted as a current number: the
+``frontend/data/hindcast/`` sidecars ``miso-2026-2030-d45r-remeasure`` and
+``miso-2026-2030-s123-verify`` (both ``b1964e71``, 2026-09-04) and
+``miso-2026-2030-d60-arm`` (``e7412237``, 2026-09-05 20:38Z), each recording
+``datacenter_load_path: "mid"``; the capx track decides when they re-run.
+**NOT invalidated:** every BACKCAST bundle in every ISO — the block is
+forecast-only, ``validate_datacenter_config`` refuses a non-``"off"`` path in
+backcast mode and ``ScenarioConfig.__post_init__`` coerces it off in
+backcast/hindcast; every OTHER ISO — ERCOT and PJM already carried published
+overrides and are byte-identical, CAISO, NYISO and NEISO are untouched (and
+NEISO's block is 0 MW regardless); and MISO's system-level energy, which is
+unchanged. No keeper, determination or dashboard row moves.
+
+Recorded 2026-09-06 by SCN-MX-R-r2 on the scenario desk's explicit grant of
+this one entry, not by the lane that made the change: ``results/cache.py``
+was outside SCN-WS4a's file region and the lane routed the entry rather than
+write it (``docs/handoffs/FINDING-scn-ws4a-2026-09-05.md`` §6, whose scope
+paragraph the INVALIDATED / NOT-invalidated block above reproduces; desk
+ledger ``docs/handoffs/scenario-desk-ledger-2026-09.md`` §4). Derivation of
+the shares: that FINDING §2. This entry changes no key and no default.
+
 **Epoch 2026-09-05 — capx D60 / owner ruling Q42: the CCS-retrofit capex
 construction repair ARMS AS THE DEFAULT POSTURE for all six ISOs. A KEY
 ADVANCE, NOT A SAME-KEY INVALIDATION**, by construction, exactly as the

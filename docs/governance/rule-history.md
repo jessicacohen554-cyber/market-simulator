@@ -801,9 +801,62 @@ to runs carrying the new declaration, and no committed attestation has one. The 
 to use it is the miso-220 non-steam fossil lift.
 
 **Cross-reference.** Condition (e)'s DOF-ledger half is restated from rule 21 `[R-DOF]`'s own
-side by owner ruling R-AY (2026-09-06) — §12 below.
+side by owner ruling R-AY (2026-09-06) — §13 below.
 
-## 12. Rule 21 `[R-DOF]` — the price-tuned band multiplier is a ledgered free parameter (owner ruling R-AY, 2026-09-06)
+## 12. Rule 30 `[R-TOUCHPOINT-FOLD]` — a touchpoint publishes AS the keeper (owner, 2026-09-05)
+
+**Origin.** Session `neiso-pjm-validation-touchpoints` re-walked NEISO's and PJM's rule-22
+validation ladders on their current keepers and registered each touchpoint as its own dashboard
+run. The owner rejected the shape, verbatim:
+
+> *"the runs should all be combined with the keeper in html not separate runs… like it's the same
+> config I don't need to click into multiple things to see the results wtf. Refresh and fix this
+> for ERCOT too and make it a rule when touch points are run and also add them to the calibration
+> status assessment. An iso can stay calibrated even if it degrades on holdout years."*
+
+**Why the complaint is structural, not cosmetic.** A rule-22 touchpoint is by construction the
+designated keeper's own frozen recipe replayed on a held-out year — the sanctioned `replay_keeper`
+channel reproduces the keeper's `meta.json` kwargs and `gen_touchpoint_attestation.py` machine-
+checks that zero shared keys differ. One configuration. Listing it as a separate run therefore
+advertises a second configuration that does not exist, and costs the reader a click per year to
+reassemble something that was never apart.
+
+**The three duties (rule 30 a/b/c).** (a) stamp `holdout.keeper` so the Run Explorer folds the run
+into its keeper — hidden from the run list, years offered in the keeper's selector, all folded
+years rendered as columns of ONE combined *Validation Touchpoints* panel; deep links redirect
+rather than break. (b) rebuild and commit the ISO's status part, whose **holdout ladder** is
+DERIVED from the registry (never hand-authored, so it cannot go stale) and scored **per year**,
+because a multi-year bundle's single determination hides a rung that passed alone — NEISO
+2020+2021 is NOT-YET as a bundle and CALIBRATED on 2021. (c) a held-out year is REPORTED and never
+downgrades the ISO, whose determination is the train-tier verdict alone.
+
+**Why (c) is not a weakening.** Rule 22 already forbids quoting a validation-tier score as a
+certified out-of-sample number; a result that cannot certify equally cannot decertify. The
+degradation is not hidden — it is on the keeper's panel, on the status card and in the session's
+assessment — it simply stops being read as a contradiction of a headline it was never scoped to
+govern.
+
+**Companion scorer amendment — rubric v3.6**, owner, same sitting, verbatim: *"c3c should be an
+accepted caveat on all holdout years."* On an out-of-training year the C3c standing rule's
+lone-failure condition is dropped. The guard exists to stop C3c masking a second defect *on the
+years the model is certified on*; a held-out year is not a certification, and the scarcity tail is
+the one criterion this model class is known not to form (already accepted in-sample). Untouched:
+the band, tier and reported magnitude; the governance guard; supporting-tier fail-closed; never a
+PASS; both caveat budgets (caveats aggregate per criterion, so C3c on several holdout years is
+still one ledgered caveat). In-training years keep the lone-failure guard, measured over what is
+still failing after the holdout reclassification. **Measured over all 13 registered runs against a
+pre-change snapshot: ZERO determinations change**; PJM 2021's C3c moves FAIL → CAVEAT, dropping
+that rung from four failing criteria to three.
+
+**Scope note.** Rebuilding every ISO's status part is a deliberate cross-ISO edit, not a lane
+violation: `RUBRIC_VERSION` is embedded in each part and `audit_keepers` check S1 requires them in
+sync, so a rubric amendment necessarily touches all six — the same reasoning the v3.3 amendment
+recorded ("the scorer is ONE instrument and an ISO-scoped verdict rule would be an off-registry
+tuning channel in spirit, rules 24 / 25"). No keeper moved and no marker was re-keyed.
+
+**Record:** `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §6.
+
+## 13. Rule 21 `[R-DOF]` — the price-tuned band multiplier is a ledgered free parameter (owner ruling R-AY, 2026-09-06)
 
 **What changed.** Rule 21 gained a one-clause cross-reference to the rules 1/13 authorized
 price-tuning channel (§11). Nothing else in rule 21 moved: every keeper still carries a DOF
@@ -860,11 +913,11 @@ unchanged" (its own `attested_by` text): the ×1.10 lift is carried under the pr
 is recorded and routed in the G-3 finding; the attestation is the calibration desk's artifact
 and was not edited.
 
-## 13. Changes to this file
+## 14. Changes to this file
 
 | date | change |
 |---|---|
-| 2026-09-06 | Added §12: rule 21 `[R-DOF]` one-clause cross-reference to the rules 1/13 authorized price-tuning channel (owner ruling **R-AY**, audit-program director sitting 2026-09-06 ~00:15Z, card "DOF / C6", verbatim *"Count them in the DOF ledger, C6 passes under the declaration"*; executed by rule-amendment lane G-3). A price-tuned band multiplier is a ledgered free parameter identified by the ruling, reported at full magnitude, and not by itself an open root-cause issue; every other tuned value still is; no gate moves, no scoring logic changed. §11 gained a forward pointer. Records the live MISO keeper reading (declaration present, C6 PASS, no distinct ruling-identified ledger row — routed, not edited). "Changes to this file" renumbered §12 → §13 (no external reference cited §12). |
+| 2026-09-06 | Added §13: rule 21 `[R-DOF]` one-clause cross-reference to the rules 1/13 authorized price-tuning channel (owner ruling **R-AY**, audit-program director sitting 2026-09-06 ~00:15Z, card "DOF / C6", verbatim *"Count them in the DOF ledger, C6 passes under the declaration"*; executed by rule-amendment lane G-3). A price-tuned band multiplier is a ledgered free parameter identified by the ruling, reported at full magnitude, and not by itself an open root-cause issue; every other tuned value still is; no gate moves, no scoring logic changed. §11 gained a forward pointer. Records the live MISO keeper reading (declaration present, C6 PASS, no distinct ruling-identified ledger row — routed, not edited). Took §13 on merge behind main's same-day §12 (rule 30 `[R-TOUCHPOINT-FOLD]`); "Changes to this file" renumbered §13 → §14 (no external reference cited either number). |
 | 2026-09-05 | Added §8.2: rule 29 `[R-SCREEN]` clause (c), **delete before merge** (owner ruling **R-AV**, verbatim *"Delete before merge"*, on the rule-29 / Class-E parity collision the v31 second coda `da99f34b` routed; executed by audit lane Y-13). A screen bundle, or a control bundle a screen earns under clause (b), is `git rm`-ed from `results/calibration/` before its PR merges; the PRECOMMIT/FINDING doc carries every number; `check_registry_payload_parity` is the enforcement and an unregistered bundle dir is a gate red, not an allowlist candidate. Records the first execution (two dirs pruned, numbers confirmed in committed records first). No keeper, marker, shard or determination touched. |
 | 2026-09-05 | Added §11: the owner's authorized price-tuning carve-out amending rules 1 `[R-STRUCT]` and 13 `[R-MEASURED]`, its five binding conditions, and the machine checks + fail-closed tests that enforce it. Landed alongside main's same-day §9 (rule 15 retention) and §10 (bench fingerprint); this section took §11 on merge and "Changes to this file" renumbered §11 → §12. The CLAUDE.md rule-1 genealogy pointer was repointed §9 → §11 in the same commit. |
 | 2026-09-05 | Added §10: the bench builder fingerprint's hash narrowed from the RAW BYTES of `BUILDER_SOURCES` to `ast.dump(ast.parse(source))` (owner ruling **R-AS**, card M *"Adopt Proposal A"*, on the Y-10 finding; executed by audit lane Y-12). Records the mis-tuned trigger (53 % of the hashed surface is prose; three false alarms, zero true positives), the computed counterfactual over `dee6472c`/`677b605a`, the stated limit that docstring edits still fire, and the one-time re-stamp of all 20 bench parts `b2f21b9a00d3` → `4254168edcfe` with payload sha256 unchanged on every one. The nyiso-148 guarantee is unchanged; no keeper, marker, shard or determination touched. "Changes to this file" renumbered §10 → §11 (no external reference cited §10). |

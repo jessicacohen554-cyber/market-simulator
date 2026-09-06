@@ -284,7 +284,64 @@ depend on the bench vintage either way.
    model-SELECTION evidence by construction. The locked test (2019 / H1-2026) remains
    never-granted for both ISOs and is untouched by this session.
 
-## 6. Governance
+## 6. Publication and two owner amendments (2026-09-05, second sitting)
+
+The first pass registered each touchpoint as its own dashboard run. The owner rejected that
+shape, verbatim: *"the runs should all be combined with the keeper in html not separate runs…
+like it's the same config I don't need to click into multiple things to see the results"*. That
+is right and the defect is structural, not cosmetic: a touchpoint **is** the keeper's frozen
+recipe on another year, so a second card asks a reader to open two pages to read one
+configuration. Three changes land, and they are now **rule 30 `[R-TOUCHPOINT-FOLD]`**, not a
+one-off cleanup:
+
+**(a) Touchpoints fold into the keeper.** A sidecar carrying `holdout.keeper` is now hidden from
+the Run Explorer's run list; its years appear in the **keeper's** year selector; and every folded
+year renders as a column of ONE combined *Validation Touchpoints* panel on the keeper's page,
+beside the in-sample column. Deep links still resolve — `selectRun` redirects a folded id to its
+keeper and opens it on that year, so no existing URL breaks. Where a two-config keeper carries two
+touchpoints on the SAME year (ERCOT's forward vs carve-out), the columns are tagged with the
+companion's label rather than reading "2022" twice.
+
+**(b) The Calibration Status page carries a holdout ladder.** `build_status.py` now DERIVES it
+from the registry — every run whose `holdout.keeper` names the ISO's keeper, scored **per year** —
+rather than reading a hand-authored shard block that would go stale the moment a rung is re-spent.
+Per-year is the load-bearing detail: NEISO's 2020+2021 bundle reads NOT-YET as a bundle while 2021
+alone is CALIBRATED, and a single run-level determination hides exactly that.
+
+| ISO | in-sample | 2020 | 2021 | 2022 |
+|---|---|---|---|---|
+| **NEISO** | CALIBRATED | NOT-YET | CALIBRATED | CALIBRATED |
+| **PJM** | CALIBRATED | — (not data-ready) | NOT-YET | NOT-YET |
+| **ERCOT** | CALIBRATED | — | — | NOT-YET ×2 (forward + carve-out) |
+
+ERCOT was already stamped and simply had nowhere to render; it now folds and laddered with the
+other two, which is the "fix this for ERCOT too" half of the instruction.
+
+**(c) A held-out year never downgrades the ISO** *(owner, verbatim: "An iso can stay calibrated
+even if it degrades on holdout years")*. The ISO determination is the train-tier verdict and
+nothing else. Rule 22 already forbids quoting a validation score as a skill number, so it cannot
+certify and equally cannot decertify. Both surfaces now **say** this in place, rather than leaving
+a reader to read a NOT-YET rung beside a CALIBRATED headline as a contradiction.
+
+### 6.1 Rubric v3.6 — C3c is an accepted caveat on every holdout year
+
+Owner, same sitting, verbatim: *"c3c should be an accepted caveat on all holdout years."* On an
+out-of-training year the C3c standing rule's **lone-failure condition is dropped**: C3c reads
+CAVEAT there whatever else the year does. The scarcity price tail is the one criterion this model
+class is known not to form, the rubric already accepts that in-sample, and a held-out year is not
+a certification — so the guard that exists to stop C3c masking a second defect *on the years the
+model is certified on* has nothing to protect there. Everything else is untouched: governance must
+still pass, supporting-tier only and fail-closed, never a PASS, both caveat budgets checked first
+(and caveats aggregate per criterion, so C3c failing on several holdout years is still one
+ledgered caveat). In-training years keep the lone-failure guard, now measured over what is still
+failing *after* the holdout reclassification.
+
+**Measured effect, not asserted:** re-scored across all 13 registered runs against a pre-change
+snapshot, **zero determinations change**. What changes is the reading of one criterion on one
+rung — PJM 2021's C3c moves FAIL → CAVEAT, so that rung's failure count drops from four to three
+(C1, C3a, C3b) and the tail miss is reported rather than counted against it.
+
+## 7. Governance
 
 No mechanism was tested, so no matrix cell moves (rule 28 b) and no `ScenarioConfig` field is
 added (rule 28 c). **Both keepers are UNCHANGED and no marker was re-keyed** — a touchpoint is

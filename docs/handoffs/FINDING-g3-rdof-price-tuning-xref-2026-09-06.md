@@ -20,7 +20,7 @@ that is the branch.)*
 ## 0. Result in one paragraph
 
 Rule 21 `[R-DOF]` gained the one clause R-AY asked for; `docs/governance/rule-history.md` gained
-§12 (rule 21's first section) cross-linked both ways with §11; `score_governance`'s docstring
+§13 (rule 21's first section; §12 on merge went to main's same-day rule 30 entry) cross-linked both ways with §11; `score_governance`'s docstring
 carries the R-AY citation beside the rule 1 citation with **no scoring logic changed**. The live
 case verifies as the ruling assumes on two of three readings and shows one gap on the third: the
 MISO keeper's attestation carries a well-formed `authorized_price_tuning` block, sets
@@ -42,11 +42,11 @@ matrix shard, board or plan.
    full magnitude on the determination basis; (iii) its presence does NOT by itself make the
    residual it closes an "open root-cause issue" under rule 21, while every OTHER tuned value
    still does and no gate moves. Conditions (a)–(e) are not restated; they live in rule 1.
-2. **`docs/governance/rule-history.md`** — new **§12** (rule 21 had no section; this is its
-   first), with the ruling verbatim, what the clause does and does not say, the enforcement
-   status, and the live-case reading. §11 (rules 1/13) gained a forward pointer to §12; §12
-   points back to §11 throughout. "Changes to this file" renumbered §12 → §13 (no external
-   reference cited §12 — checked by grep over `*.md,py,js,json,yaml,yml`). Changelog row added.
+2. **`docs/governance/rule-history.md`** — new **§13** (rule 21 had no section; this is its
+   first — it took §13 on merge behind main's same-day §12, rule 30 `[R-TOUCHPOINT-FOLD]`), with the ruling verbatim, what the clause does and does not say, the enforcement
+   status, and the live-case reading. §11 (rules 1/13) gained a forward pointer to §13; §13
+   points back to §11 throughout. "Changes to this file" renumbered to §14 (no external
+   reference cited §12 or §13 — checked by grep over `*.md,py,js,json,yaml,yml`). Changelog row added.
 3. **`scripts/calibration_verdict.py::score_governance`** — a docstring paragraph adding the
    R-AY citation beside the existing rule 1 `[R-STRUCT]` carve-out citation. The function body
    is byte-identical. `calibration_verdict.py` is not in `bench_stamp.BUILDER_SOURCES`
