@@ -7,7 +7,8 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #14) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #15) ·
+**r#15 (HEAD `e6a0402f`):** quiet again — 13 commits, all capx (r#50 + am.1: D67-ARM armed PJM, D78-R exact, D81, D76 phases 0–1, **D79 → Q54 ADOPT (frozen-hash fingerprint) — the cache-key hazard this desk routed at r#10/r#11 is now a program mechanism**; D65-B-R's batch STILL running, so the per-plant slot is still taken). **SCN-WS5A-RESOLVE undispatched for a SECOND refresh** — under the charter's two-refresh threshold this reads LOST, but the r#5 standing rule (ask before grading lost) and the capx director's own r#50 lesson ("a timing artefact of the owner's batching, not a lost prompt — the third emission was wasted") both say otherwise: **status ASKED, the charter re-emitted verbatim, not relaunched under a new stem** (the stem is unburned because nothing was ever pushed to it). Policy lanes correctly unlaunched. Audit EXIT 0. Marker unchanged. No card.
 **r#14 (HEAD `5375be8b`):** quiet on the SCN side — r#13 + am.1 merged (#5165); **SCN-WS5A-RESOLVE not yet dispatched** (one refresh; asked, not graded); the policy lanes correctly unlaunched (P1 absent); the audit stays EXIT 0. The delta is the capx track's (79 commits): **D65-B-R's batch, D78-R's two legs and D81's full window are all SOLVING now** — the queue is saturated, so **rule 12 makes RESOLVE's PJM/CAISO/MISO legs wait for a slot**: one sentence added to its charter (confirm no other per-plant solve before each heavy leg; NEISO/NYISO may start any time). CLAUDE.md gained one line (capx D67-ARM: the PJM published adequacy requirement) — INERT for every SCN leg (a `{iso: bool}` gate no campaign case sets); D75-R and D76 added default-off fields — RESOLVE's G-DRIFT classifies them. NYISO promoted to nyiso-202 (CALIBRATED), marker unchanged, §2.1b NEISO only. No card; nothing new issued.
 **r#13 am.1 — RULING S13 (D-5) = HOLD until SCN-WS5A-RESOLVE and the policy half land.** No Stage-B grant; nothing full-horizon is chartered; D-5 is re-presented the refresh both are on main, with the amended cost table and the post-fix NEISO REF. The only lane to launch now is SCN-WS5A-RESOLVE.
 **r#13 (HEAD `13ee0c89`):** **STAGE A-LOAD IS COMPLETE AT THE FROZEN PIN — 16/16 legs, the synthesis, the D-5 cost table (313.7 min of LP, 3.92 min per solve-year, ~4.7 h wall) — and RULING S8 WAS NEVER EXECUTED**, because its amendment had no session to land in (the desk's third addendum-to-nobody in a day) and the lane finished at its own freeze, correctly; it scoped the re-solve for the desk (13 of 16 legs) and named the blocker the desk missed: **D77 moves no key, so a naive re-solve hits the pre-fix cache** → **SCN-WS5A-RESOLVE issued** as a standalone lane (new out-dir per ISO redirecting `CACHE_ROOT`, a per-leg cache-hit proof, the S5 identity reproduced on the campaign REFs, same-id re-registration). **SCN-FIX2 and SCN-CAP both LANDED complete**: the carbon form is the committed path ladder (and CARB-HI is LIVE on NYISO/NEISO at full horizon, 2031–2047 — a Stage B fact), the voluntary levels are relabelled committed, `mass_cap_tons_by_year` ships inert and `CAP-STATE-TIGHT` binds on NYISO and CAISO in every year and is slack on NEISO; PJM is NOT byte-identical under the case (partial RGGI fallthrough) — the policy charter is re-cut as **v4** with that fixed and P1 pointing at the RESOLVE PRECOMMIT. capx D80 landed: the audit is **EXIT 0 on main**. **Card D-5 PRESENTED** with the cost table and a HOLD recommendation (gate Stage B on the re-solve and the policy half).
@@ -227,6 +228,31 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#15 — 2026-09-06, main HEAD `e6a0402f`
+
+*(This refresh's PR.)* Delta from the r#14 pin `5375be8b`: **13 commits**, all the capx track's; r#14
+merged (#5196). `CLAUDE.md` unchanged.
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS5A-RESOLVE** | **NOT DISPATCHED — second refresh. ASKED, not LOST; charter re-emitted verbatim** | No branch, no PR, no `…-r2/` dir. The charter's two-refresh threshold is not applied: (a) the r#5 standing rule — absence is evidence only beside an ask, and the r#4 LOST call it came from was wrong; (b) the capx director recorded at r#50 that its own third emission of five undispatched charters "was wasted — a timing artefact of the owner's batching, not a lost prompt". The stem `claude/scn-ws5a-resolve-post-d77-k6ty` is unburned (nothing was ever pushed to it) and stays. The text re-emitted is the r#13 charter plus the r#14 rule-12 sentence, unchanged. |
+| **SCN-WS5A-POLICY-<ISO> ×6** | **NOT LAUNCHED — correct** | P1 absent. |
+| audit | `forecast-invariant-artifacts` **EXIT 0** at HEAD. | — |
+
+**Capx (deconfliction), r#50 + am.1.** D67-ARM armed PJM's published requirement with every
+pre-declaration hit (the CLAUDE.md line r#14 recorded); D78-R proved the sector gate an exact partition
+and holds on its own band → D78-R2; D81 returned 2.1 GW to the merchant fleet; D76 phases 0–1 landed;
+**D79 earned card C-22/Q54 and the owner ruled ADOPT — a frozen-hash solve-surface fingerprint at zero
+key moves.** That is the "same key, different solve" hazard this desk routed at r#10 (D77 §4c) and
+r#11, now a program mechanism; once it lands, the RESOLVE lane's cache-hit proof becomes redundant with
+the fingerprint, but the charter keeps it (belt and braces at zero cost). CAISO gate (a) re-keyed by the
+owner's lane; `complete` still {ERCOT, NEISO, PJM}. **D65-B-R's batch is still running** — the per-plant
+slot is still taken; RESOLVE's NEISO/NYISO legs need no slot. No SCN file held. No HOLD.
+
+**Issued:** nothing new (RESOLVE re-emitted). **Cards:** none.
+
+---
 
 ### r#14 — 2026-09-06, main HEAD `5375be8b`
 
