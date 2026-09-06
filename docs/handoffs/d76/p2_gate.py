@@ -144,9 +144,15 @@ def run_config(bundle: Path) -> dict:
     return json.loads((bundle / "run_config.json").read_text())
 
 
-def predeclared(iso: str) -> dict:
-    """The pre-solve numbers for this ISO, from ``p2_predeclare.json``."""
-    blob = json.loads(PREDECLARE.read_text())
+def predeclared(iso: str, path: Path | None = None) -> dict:
+    """The pre-solve numbers for this ISO, from the pre-declaration JSON.
+
+    ``path`` defaults to phase 2's ``p2_predeclare.json``; phase 3 passes its
+    own ``p3_predeclare.json`` (same schema, the two deferred ISOs), so the
+    identity test still reads numbers fixed at HEAD before any LP and never
+    recomputes them here.
+    """
+    blob = json.loads((path or PREDECLARE).read_text())
     for blk in blob["predeclare"]:
         if blk["iso"] == iso:
             return {"years": {int(y): r for y, r in blk["years"].items()},
@@ -349,9 +355,11 @@ def main() -> int:
     ap.add_argument("--control", type=Path, required=True)
     ap.add_argument("--arm", type=Path, required=True)
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--predeclare", type=Path, default=None,
+                    help="Pre-declaration JSON (default: p2_predeclare.json).")
     args = ap.parse_args()
 
-    pre = predeclared(args.iso)
+    pre = predeclared(args.iso, args.predeclare)
     ctrl, arm = ledgers(args.control, args.iso), ledgers(args.arm, args.iso)
     results = {}
     for name, fn, fnargs in (

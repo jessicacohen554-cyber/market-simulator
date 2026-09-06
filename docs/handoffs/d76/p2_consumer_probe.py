@@ -1,12 +1,21 @@
-"""Why is PJM INERT? Probe accredited_firm_capacity_mw's peak-sensitivity. Zero LP."""
-import json, sys
+"""Why is an ISO INERT? Probe accredited_firm_capacity_mw's peak-sensitivity. Zero LP.
+
+Phase 3 (2026-09-06) added ``--predeclare`` so the same probe serves the two
+deferred ISOs off their own pre-declaration; the default is phase 2's file, so
+a bare invocation reproduces the phase-2 run unchanged.
+"""
+import argparse, json, sys
 sys.path[:0] = ["src", "."]
 from market_sim.config.iso_configs import apply_iso_scenario_defaults
 from market_sim.model.capacity_evolution.retirements import (
     resolve_adequacy_requirement_mw, gross_adequacy_requirement_mw)
 from scripts.run_capacity_hindcast import build_config
 
-PRE = json.load(open("docs/handoffs/d76/p2_predeclare.json"))
+ap = argparse.ArgumentParser(description=__doc__)
+ap.add_argument("--predeclare", default="docs/handoffs/d76/p2_predeclare.json")
+args = ap.parse_args()
+
+PRE = json.load(open(args.predeclare))
 for blk in PRE["predeclare"]:
     iso = blk["iso"]
     cfg = apply_iso_scenario_defaults(
