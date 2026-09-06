@@ -102,6 +102,9 @@ ALL_DATATYPES = [
     "miso-m2m-flowgates",
     "gas-ofo-events",
     "ps-water-state",
+    # SCN-LOAD intake (2026-09-06, owner ruling S4 / card D-4): each ISO's
+    # published long-term load forecast.
+    "load-forecast",
 ]
 
 

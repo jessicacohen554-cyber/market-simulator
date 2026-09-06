@@ -134,13 +134,25 @@ def test_cache_key_stable_at_default_and_distinct_armed():
 # 3. Adoption-anchor resolver arithmetic (NEISO heat_pump, CELT-cited).
 # --------------------------------------------------------------------------
 def test_neiso_heat_pump_anchor_interpolation():
+    """The CELT 2026 sheet-1.7 series, not the former two-anchor line.
+
+    SCN-LOAD 2026-09-06 replaced ``{2026: 0.0, 2035: 7165.0}`` with ISO-NE's own
+    published ten-year Heating series. The gated published facts are the
+    endpoints and the CONVEXITY the two-anchor line could not carry: a straight
+    line would put 2030 at 4/9 of 7,165 GWh (~3,184), and ISO-NE publishes
+    2,464 -- a ~29% overstatement the intake removed.
+    """
     cfg = ScenarioConfig(iso="NEISO", mode="forecast", electrification_path="mid")
-    assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2026) == 0.0
-    v2030 = resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030)
-    # piecewise-linear between {2026: 0, 2035: 7165}: 4/9 of the span
-    assert v2030 == pytest.approx(7165.0 * 4.0 / 9.0)
+    assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2026) == 198.0
+    assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030) == 2464.0
     assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2035) == 7165.0
-    # flat-hold after the last anchor (the DC convention; documented understatement)
+    # Convex, i.e. materially below the straight line the former anchors implied.
+    assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2030) < 7165.0 * 4.0 / 9.0
+    # Published years interpolate piecewise-linearly between the anchors...
+    assert resolve_electrification_gwh(
+        cfg, "NEISO", "heat_pump", 2032
+    ) == pytest.approx(4113.0)
+    # ...and flat-hold after the last one (documented understatement).
     assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2050) == 7165.0
 
 
@@ -151,10 +163,37 @@ def test_low_high_collapse_onto_mid_when_unpublished():
         assert resolve_electrification_gwh(cfg, "NEISO", "heat_pump", 2035) == 7165.0
 
 
-def test_ev_ships_empty_everywhere_until_profile_lands():
-    """A shape we cannot cite is a blocker: ev anchors are {} in every ISO."""
+def test_ev_arms_only_where_a_published_hourly_profile_exists():
+    """A shape we cannot cite is a blocker -- and ERCOT is the one that can.
+
+    SCN-LOAD 2026-09-06: ERCOT's 2025 Adjusted LTLF workbook publishes an hourly
+    per-weather-zone ``<zone>_ev`` component, curated to a normalized 8,760-hour
+    profile, so the ERCOT ``ev`` layer arms. ISO-NE, NYISO and MISO all publish
+    EV ADOPTION anchors (curated in the ``load-forecast`` datatype) but describe
+    the charging SHAPE in charts or defer to third-party profiles, so their
+    layers stay ``{}`` -- the blocker is the shape, not the numbers, and rule 25
+    [R-ISO-SCOPE] forbids borrowing ERCOT's.
+    """
+    from market_sim.data.datacenter import _EV_PROFILE_SOURCES
+
     for iso, layers in ELECTRIFICATION_LAYERS.items():
-        assert layers.get("ev", {}) == {}, iso
+        has_anchors = bool(layers.get("ev", {}))
+        has_profile = iso in _EV_PROFILE_SOURCES
+        assert has_anchors == has_profile, iso
+    assert set(_EV_PROFILE_SOURCES) == {"ERCOT"}
+
+
+def test_ercot_ev_profile_is_normalized_and_iso_scoped():
+    """The published profile sums to 1 and is never another ISO's fallback."""
+    from market_sim.data.datacenter import ev_layer_profile
+
+    profile = ev_layer_profile("ERCOT", 2024, 8760)
+    assert profile.shape == (8760,)
+    assert profile.sum() == pytest.approx(1.0)
+    assert (profile > 0.0).all()
+    for iso in ("PJM", "NEISO", "NYISO", "MISO", "CAISO"):
+        with pytest.raises(ValueError, match="no published hourly charging"):
+            ev_layer_profile(iso, 2024, 8760)
 
 
 def test_layer_with_anchors_but_no_profile_builder_fails_closed():

@@ -44,16 +44,16 @@ for the market split.
 
 | datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
 |---|---|---|---|---|---|---|
-| lmp | — | 2023–2026 | 2018–2025 | — | 2022–2025 | 2018–2025 |
-| lmp-components | — | — | — | 2023–2025 | — | — |
-| load | 2015–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2018–2026 | 2015–2026 |
-| demand-profile | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 | 2019–2025 |
-| ancillary-services | 2025–2026 | — | 2018–2026 | — | 2018–2026 | — |
+| lmp | — | — | — | — | — | — |
+| lmp-components | — | — | — | — | — | — |
+| load | — | — | — | — | — | — |
+| demand-profile | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — |
 | energy-offers | — | — | — | — | — | — |
 | dam-public-bids | — | — | — | — | — | — |
-| generation | 2018–2026 | 2018–2026 | 2020–2026 | 2018–2026 | 2018–2026 | 2018–2026 |
-| renewables | 2023–2025 | 2019–2025 | — | — | — | — |
-| validation | 2018–2026 | 2021–2026 | 2018–2025 | 2021–2026 | 2018–2026 | 2018–2026 |
+| generation | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — |
 | fuel-basis | — | — | — | — | — | — |
 | fuel-zonal-hub | — | — | — | — | — | — |
 | unit-outage-events | — | — | — | — | — | — |
@@ -61,19 +61,19 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
 | nuclear-license-status | — | — | — | — | — | — |
-| gtc-limits | 2019–2025 | — | — | — | — | — |
-| transfer-interface-limits | — | — | 2019–2025 | — | — | — |
+| gtc-limits | — | — | — | — | — | — |
+| transfer-interface-limits | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
-| nyiso-downstate-gas | — | — | — | — | 2022–2025 | — |
-| ercot-wtx-congestion | 2019–2025 | — | — | — | — | — |
+| nyiso-downstate-gas | — | — | — | — | — | — |
+| ercot-wtx-congestion | — | — | — | — | — | — |
 | nyiso-renewable-curtailment | — | — | — | — | — | — |
 | nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
 | nyiso-reserve-requirements | — | — | — | — | — | — |
 | nyiso-operating-events | — | — | — | — | — | — |
-| nyiso-interface-flows | — | — | — | — | 2018–2026 | — |
+| nyiso-interface-flows | — | — | — | — | — | — |
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
 | reserve-requirements | — | — | — | — | — | — |
 | som-competitive-conduct | — | — | — | — | — | — |
@@ -81,7 +81,7 @@ for the market split.
 | capacity-market-auction-price | — | — | — | — | — | — |
 | capacity-market-auction-supply | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
-| transfer-constraint-binding | — | — | — | 2023–2025 | — | — |
+| transfer-constraint-binding | — | — | — | — | — | — |
 | maxgen-events | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
@@ -90,7 +90,8 @@ for the market split.
 | miso-m2m-flowgates | — | — | — | — | — | — |
 | gas-ofo-events | — | — | — | — | — | — |
 | ps-water-state | — | — | — | — | — | — |
-| ra-import-allocations | — | 2023–2025 | — | — | — | — |
+| ra-import-allocations | — | — | — | — | — | — |
+| load-forecast | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -101,9 +102,9 @@ snapshot).
 | datatype | scope | years |
 |---|---|---|
 | emissions | CAMPD/CEMS, by plant and unit | n/a |
-| emissions-unit-annual | — | 2019–2021, 2023–2025 |
-| outages | derived (CAMPD downtime + curated ERCOT lists) | 2018–2026 |
-| fleet | EIA-860 / eGRID / master registry | 2018–2025 |
+| emissions-unit-annual | — | n/a |
+| outages | derived (CAMPD downtime + curated ERCOT lists) | n/a |
+| fleet | EIA-860 / eGRID / master registry | n/a |
 | fuel-prices | national hubs (Henry Hub) | n/a |
 | fuel-hub-monthly | national (Henry Hub monthly) | n/a |
 | fuel-ercot-ep-gas | ERCOT / TX electric-power consumers | n/a |
@@ -113,7 +114,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | 2018–2024 |
+| egrid | national (EPA eGRID, by vintage year) | 2023 |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
@@ -2053,3 +2054,49 @@ caiso-245). Schema:
 | `start_date` | `datetime64[ns]` | `local_timestamp` | no | Start of the holding's effective window (Pacific, tz-naive as published). |
 | `end_date` | `datetime64[ns]` | `local_timestamp` | no | End of the holding's effective window (Pacific, tz-naive as published). |
 | `source_doc` | `string` | `none` | no | The published workbook the row was read from (caiso.com document URL). |
+
+## load-forecast
+
+Each ISO's PUBLISHED long-term load forecast — annual energy and seasonal peak
+by scenario, plus the published data-centre / large-load, EV and
+building-electrification decompositions (SCN-LOAD, owner ruling S4 / card D-4).
+Schema: [`schema/load-forecast.schema.yaml`](schema/load-forecast.schema.yaml).
+
+- **Keys:** `iso`, `edition`, `scenario`, `area`, `component`, `metric`,
+  `basis`, `year`
+- **Reconciles:** Six publishers that agree on almost nothing onto one tidy
+  frame: ERCOT's LTLF (an hourly per-weather-zone component workbook plus two
+  published cases, ERCOT Adjusted and TSP Provided), the CEC's California
+  Energy Demand forms (per planning area, with Form 1.1c's two data-centre
+  scenarios), PJM's per-zone monthly workbook and Table B-9b, the NYISO Gold
+  Book's zone tables (I-1a, I-11b, I-13a, I-14), the ISO-NE CELT (sheets
+  1.5.1/1.5.2/1.7) and MISO's chart-only LTLF deck. `scenario` is the model's
+  canonical low/mid/high axis and `published_case` keeps the publisher's own
+  label, so the mapping is auditable; `basis` is in the key because ISO-NE
+  publishes a Gross and a Net row for every series. Rule-13 line: a
+  forward-looking published INPUT that regenerates from the next vintage and
+  responds to changed conditions, never a measured outcome and never a fit
+  target — the historical rows a publication prints beside its forecast are
+  carried only to anchor a CAGR on the publisher's own base year and are
+  labelled `scenario="actual"`. CONSUMED by `constants.DEMAND_GROWTH_RATES`,
+  `DATACENTER_ADDITIONS_MW`, `DATACENTER_ZONE_SHARE` and
+  `ELECTRIFICATION_LAYERS`, which are derived from these rows rather than
+  hand-transcribed.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO label the forecast belongs to (ERCOT, CAISO, PJM, MISO, NYISO, NEISO). This is the PUBLISHER's footprint, which is not always the model's footprint -- CAISO rows are CEC planning areas, three of which (PGE, SCE, SDGE) sum to approximately the CAISO balancing authority while the statewide row does not; see data/raw/load-forecast/README.md. |
+| `edition` | `string` | `none` | no | The publication edition the row was read from, as a short human label -- "2025 LTLF", "2026 LTLF", "CED 2025-2045", "Gold Book 2026", "CELT 2026". Part of the key so several vintages coexist. |
+| `vintage` | `int64` | `year` | no | Calendar year the edition was published; the information cutoff for an as-of-vintage (hindcast) read, the same gate confirmed_retirements applies to instrument_date. |
+| `scenario` | `string` | `none` | no | Canonical scenario axis: low \| mid \| high, matching ScenarioConfig.demand_growth_path / datacenter_load_path / electrification_path; plus "actual" for the historical rows a publication prints beside its forecast. An ISO that publishes only one forecast has only "mid" rows -- never a fabricated band. |
+| `published_case` | `string` | `none` | no | The publisher's OWN case label, verbatim, so the mapping onto `scenario` is auditable: "ERCOT Adjusted", "TSP Provided", "Baseline", "Lower Demand", "Higher Demand", "Current Trajectory", "Planning Forecast", "Local Reliability Scenario", "Forecast Change Drivers", ... |
+| `area` | `string` | `none` | no | Area the value applies to, in the PUBLISHER's own vocabulary: the ISO label for footprint rows, else a weather zone (ERCOT), transmission zone (PJM), NYCA zone (NYISO "Zone A".."Zone K"), state (ISO-NE), CEC planning area or agency (CAISO), or MISO region. Crosswalking onto model zones is the consumer's job (config/iso_configs.py owns those maps); this datatype never guesses one. |
+| `area_type` | `string` | `none` | no | Kind of area: iso \| source_zone \| state \| agency \| region \| planning_area. `source_zone` means a zone in the publisher's own zonal vocabulary, which is NOT necessarily a model zone. |
+| `component` | `string` | `none` | no | Which part of the forecast: total (the whole footprint/area forecast) \| base_economic \| data_center \| large_load \| ev \| heat_pump \| building_electrification \| solar_pv. `data_center` is used only where the publisher itself isolates data centres (the CEC's Form 1.1c); a publisher that reports the wider large-load category (ERCOT contracts + officer letters, PJM Table B-9b, NYISO Table I-14) uses `large_load`, and the DC share of it is the consumer's declared assumption, never folded in here. `building_electrification` is the wider end-use category NYISO publishes (space + water heating, cooking, other), of which `heat_pump` is ISO-NE's narrower published cut. |
+| `metric` | `string` | `none` | no | energy_gwh \| summer_peak_mw \| winter_peak_mw \| annual_peak_mw \| stock_count. Peak metrics carry the publisher's own peak definition (coincident vs non-coincident, 50/50 vs 1-in-2); the per-ISO raw README states which, because they are NOT interchangeable across publishers. |
+| `year` | `int64` | `year` | no | Forecast year the value applies to. For a winter-peak row spanning a season boundary ("2030/31") this is the FIRST year of the pair, so a winter row and the summer row it is published beside share one key. |
+| `value` | `float64` | `mixed` | no | The value, in the units named by `unit`. |
+| `unit` | `string` | `none` | no | gwh \| mw \| count. Consistent with `metric` by construction and validated. |
+| `basis` | `string` | `none` | no | net \| gross \| unspecified -- whether the value is net of behind-the-meter DER (the convention the model's demand arrays use) or gross. Part of the KEY, because a publisher that reports both (ISO-NE's CELT prints a Gross and a Net row for every energy and peak series) would otherwise collide on it. "unspecified" is the honest label for a publication that does not draw the distinction at all -- never a silent default onto "net". |
+| `source_doc` | `string` | `none` | no | The source document, as a repo path where the file is held under data/raw/ (including a gitignored corpus payload, which is still the provenance record) or a URL where it is not. |
+| `source_page` | `string` | `none` | no | Locator within source_doc -- sheet name, table number and page, or slide number. For a value read from a chart's vector coordinates this says so explicitly, and the raw README records the printed number the read was validated against. |
