@@ -3787,6 +3787,7 @@ def solve_and_persist(
     nyiso_gas_bridge_plant_min_run: bool | None = None,
     nyiso_gas_bridge_online_hours: bool | None = None,
     nyiso_gas_bridge_state_floor_min_run: bool | None = None,
+    nyiso_gas_bridge_startup_aware: bool | None = None,
     nyiso_chp_btm_measured: bool | None = None,
     cc_reserve_duty_split: bool | None = None,
     chp_layup_duty_split: bool | None = None,
@@ -4785,6 +4786,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run
             )
+        if nyiso_gas_bridge_startup_aware is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware
+            )
         if nyiso_chp_btm_measured is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_chp_btm_measured=nyiso_chp_btm_measured
@@ -5582,6 +5587,7 @@ def solve_and_persist(
             nyiso_gas_bridge_plant_min_run=nyiso_gas_bridge_plant_min_run,
             nyiso_gas_bridge_online_hours=nyiso_gas_bridge_online_hours,
             nyiso_gas_bridge_state_floor_min_run=nyiso_gas_bridge_state_floor_min_run,
+            nyiso_gas_bridge_startup_aware=nyiso_gas_bridge_startup_aware,
             nyiso_chp_btm_measured=nyiso_chp_btm_measured,
             cc_reserve_duty_split=cc_reserve_duty_split,
             chp_layup_duty_split=chp_layup_duty_split,
@@ -6531,6 +6537,7 @@ def solve_and_persist(
         "nyiso_gas_bridge_plant_min_run": nyiso_gas_bridge_plant_min_run,
         "nyiso_gas_bridge_online_hours": nyiso_gas_bridge_online_hours,
         "nyiso_gas_bridge_state_floor_min_run": nyiso_gas_bridge_state_floor_min_run,
+        "nyiso_gas_bridge_startup_aware": nyiso_gas_bridge_startup_aware,
         "nyiso_chp_btm_measured": nyiso_chp_btm_measured,
         "cc_reserve_duty_split": cc_reserve_duty_split,
         "chp_layup_duty_split": chp_layup_duty_split,
@@ -12563,6 +12570,17 @@ def main() -> None:
         "--nyiso-gas-bridge-online-hours.",
     )
     parser.add_argument(
+        "--nyiso-gas-bridge-startup-aware",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="COMMITMENT-REAL RUN SCREEN for the NYISO bridge (nyiso-200; the "
+        "detector's G-61 path (b) leg): a detected P0 run anchors the min-run "
+        "extension / online-hours floor / gap bridges only when its P0 energy "
+        "margin per MW repays the unit's own published startup cost "
+        "(_ra_bridge_unit_params). Zero new parameters; removes the "
+        "P0-pattern dependence nyiso-199 measured.",
+    )
+    parser.add_argument(
         "--nyiso-chp-btm-measured",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13240,6 +13258,7 @@ def main() -> None:
         nyiso_gas_bridge_plant_min_run=args.nyiso_gas_bridge_plant_min_run,
         nyiso_gas_bridge_online_hours=args.nyiso_gas_bridge_online_hours,
         nyiso_gas_bridge_state_floor_min_run=args.nyiso_gas_bridge_state_floor_min_run,
+        nyiso_gas_bridge_startup_aware=args.nyiso_gas_bridge_startup_aware,
         nyiso_chp_btm_measured=args.nyiso_chp_btm_measured,
         cc_reserve_duty_split=args.cc_reserve_duty_split,
         chp_layup_duty_split=args.chp_layup_duty_split,

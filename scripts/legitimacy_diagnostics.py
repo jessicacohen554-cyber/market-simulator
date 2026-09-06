@@ -2307,7 +2307,47 @@ def ct_only_span_union(
     complete-vintage years decline to trust (protective direction only — it
     can only ever SKIP a conviction). Measured on NYISO 2023–2025 at
     introduction (nyiso-150): ten plants lose the flag in 2025, zero gain it.
+
+    **The union is taken over the ISO's whole TRAINING SPAN, not only the
+    bundle's own scored years** (nyiso-200). A rule-29 one-year screen bundle
+    scores a single year, and until nyiso-200 its union was that year alone —
+    so a 2025-only screen had NO sibling vintage to restore the flag from and
+    the rider convicted exactly the plants the span scorer skips: nyiso-199's
+    2025 screen stopped on NYISO 7314 / 50978, both ``ct_only`` in the
+    complete 2023 and 2024 vintages and un-flagged only by the preliminary
+    2025 one (the nyiso-145 §3 artifact, re-fired through a different door).
+    The guard's own premise is that the flag is a character of the plant, so
+    the set it unions over is every training-span year with a bench, plus the
+    bundle's own years; a span keeper (years == the training span) re-scores
+    byte-identically. Still protective-direction only.
     """
+    return _ct_only_union_over(
+        repo_root, iso, ct_only_guard_years(repo_root, iso, years)
+    )
+
+
+def ct_only_guard_years(
+    repo_root: Path, iso: str, years: "list[int] | tuple[int, ...]"
+) -> list[int]:
+    """Years the D-4 vintage guard unions ``ct_only`` over for ``iso``.
+
+    The bundle's own scored ``years`` plus every training-span year
+    (``holdout_policy.CALIBRATION_YEARS``) whose bench part exists on disk.
+    Training years are a fixed, published set (rule 22), so adding them
+    never reads a held-out year's answer; a year with no bench is skipped
+    rather than raised on, so an ISO whose span is partial still scores.
+    """
+    out = {int(y) for y in years}
+    for y in sorted(holdout_policy.CALIBRATION_YEARS):
+        if y in out:
+            continue
+        if (repo_root / "frontend/data/backcast/bench" / iso / f"{y}.json.gz").exists():
+            out.add(int(y))
+    return sorted(out)
+
+
+def _ct_only_union_over(repo_root: Path, iso: str, years: "list[int]") -> set[str]:
+    """Union of ``ct_only`` plant codes over exactly ``years`` (no widening)."""
     union: set[str] = set()
     for y in years:
         for pid, b in bench_plant_view(load_bench(repo_root, iso, y)).items():
