@@ -3,8 +3,8 @@
   "rubric_version": "1.1",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "7ed062ba9a68",
-    "scored_at_date": "2026-09-06T03:59:16Z",
+    "scored_at_sha": "daf0ba364064",
+    "scored_at_date": "2026-09-06T05:57:20Z",
     "cache_epoch": "29f8eb372810195f"
   },
   "tier": "t1f",
@@ -14,9 +14,7 @@
     "FC-1 structural integrity (I1-I14) FAIL",
     "FC-2 adequacy & equilibrium behavior FAIL"
   ],
-  "caveats": [
-    "FC-7 provenance & DOF"
-  ],
+  "caveats": [],
   "notes": [],
   "categories": {
     "FC-1": {
@@ -98,7 +96,7 @@
     "FC-7": {
       "label": "FC-7 provenance & DOF",
       "applicability": "required",
-      "status": "CAVEAT",
+      "status": "PASS",
       "rows": [
         {
           "row": "run_config",
@@ -114,8 +112,8 @@
         },
         {
           "row": "dof ledger",
-          "status": "CAVEAT",
-          "detail": "DOF ledger present as an UNATTESTED SKELETON: 1 of 2 entries carry identification='unattested' (negative_renewable_offers). Identification is unproven exactly as with no ledger \u2014 but the artifact now names what must be attested (audit FR-27; fill via the ledger's how_to_fill).",
+          "status": "PASS",
+          "detail": "2 entries well-formed (0 open residual DOF listed)",
           "gating": true
         }
       ]
