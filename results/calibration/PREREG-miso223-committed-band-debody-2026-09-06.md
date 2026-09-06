@@ -185,3 +185,26 @@ owner ruling R-AV). Every number this session will ever cite lands in the FINDIN
 keeper promotion from a single-year screen (rule 16 `[R-ALLYEARS]`). No matrix cell verdict
 moves on a screen result alone; the `offer_curve_by_group` MISO cell keeps `K` and gains
 evidence.
+
+---
+
+## ADDENDUM A (written before the arm solve; the control was already running) — CHANNEL, not values
+
+`--offer-curve-json` **refuses** the three duty-split classes: its validator allowlists only
+the eleven base router classes and rejects `CC_INTERMEDIATE` / `CT_INTERMEDIATE` /
+`ST_GAS_INTERMEDIATE`. That is a CLI validator limitation, not a modelling one — the
+`*_INTERMEDIATE` curves ARE consumed (`data/offer_curves.py` routes an intermediate-duty unit
+to them, and miso-217's `miso_intermediate_gas_offer_margin` grafts the parent's `phys_*`
+onto them at read time). Dropping them would leave `CC_INTERMEDIATE`/`CT_INTERMEDIATE`
+`committed` at 1.1055/1.1 while their parents sat at 1.005/1.025 — a scope inconsistency, and
+a partial arm.
+
+The arm therefore rides `replay_keeper --set offer_curve_by_group=<full table>` (the generic
+`prb_overrides` → `ScenarioConfig.with_overrides` channel, applied last), supplying the
+keeper's own recorded 13-class table with **exactly the 11 `committed` values of §3 changed**
+and every other value byte-copied from `miso220_nonsteamlift_B/run_config.json`.
+
+**No value in §3 changes, and no gate changes.** S-2 (liveness) is unaffected in form and
+becomes the check that catches any surprise from the wholesale-replacement channel: the arm's
+recorded `offer_curve_by_group` must equal the keeper's table with those 11 substitutions and
+nothing else. S-1 remains "exactly 11 values differ".
