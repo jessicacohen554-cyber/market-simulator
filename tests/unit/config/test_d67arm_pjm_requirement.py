@@ -189,8 +189,14 @@ class TestD67ArmGdriftPosture(unittest.TestCase):
         # first line for ``year < ccs_retrofit_available_year``.
         self.assertGreater(self._recipe().ccs_retrofit_available_year, 2025)
 
-    def test_d78_sector_routing_moves_an_empty_set(self):
-        self.assertFalse(self._recipe().retirement_sector_gate)
+    def test_d78_sector_routing_is_armed_by_q56(self):
+        # Pinned FALSE at D67-ARM (the G-DRIFT posture: D78's routing moved an
+        # empty set on the shipped recipe). ARMED by owner ruling Q56 (capx
+        # D78-ARM, 2026-09-06) through the same _pjm_config override path, so
+        # the shipped recipe now carries the gate; the D67-ARM posture is
+        # reachable as --no-retirement-sector-gate --no-pjm-vre-accreditation-
+        # vintage (key a9c66d8ea25acb9d, pinned in test_capacity.py).
+        self.assertTrue(self._recipe().retirement_sector_gate)
 
     def test_the_default_off_scenario_axes_resolve_off(self):
         cfg = self._recipe()

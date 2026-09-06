@@ -240,12 +240,15 @@ class TestNothingElseArmed(unittest.TestCase):
             for field in self.PJM_ONLY:
                 self.assertEqual(getattr(cfg, field), iso == "PJM", (iso, field))
 
-    def test_the_sector_gate_stays_miso_only(self):
+    def test_the_sector_gate_arms_per_iso(self):
         """D53's arming is untouched by D60 (it is the reason miso-t1f's
-        post-D60 key is b1a73a087064ffd8 rather than 3f85ecc45d90c248)."""
+        post-D60 key is b1a73a087064ffd8 rather than 3f85ecc45d90c248).
+        PJM arms it on its OWN evidence (owner ruling Q56, capx D78-ARM,
+        2026-09-06); every other ISO still resolves the gate OFF (rule 25)."""
         self.assertTrue(_forecast("MISO").retirement_sector_gate)
+        self.assertTrue(_forecast("PJM").retirement_sector_gate)
         for iso in SUPPORTED_ISOS:
-            if iso == "MISO":
+            if iso in ("MISO", "PJM"):
                 continue
             self.assertFalse(_forecast(iso).retirement_sector_gate, iso)
 
