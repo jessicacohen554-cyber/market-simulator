@@ -164,6 +164,20 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "RGGI_STATE_CO2_BUDGET",
         # FFR-7B Arm 1: the statute-defined RPS eligible-fuel sets.
         "RPS_ELIGIBLE_FUELS_BY_ISO",
+        # capx D67 (2026-09-06, 8bc0feb5): PJM's published Reliability
+        # Requirement table and its per-ISO gate resolver, added to
+        # capacity_market.py by the D67 build without the paired inventory
+        # entries — the recurring omission the notes above record, which left
+        # the BLOCKING refactor-guards job red on main. The CONSTANT was
+        # already re-exported from the constants facade, so for it this is the
+        # inventory catching up (cf. NET_ICR_HOLD_LAST_RATIO_BY_ISO above);
+        # the RESOLVER below was the genuinely missing re-export and is added
+        # to constants.py in the same commit, exactly as its D62 sibling
+        # resolve_capacity_going_forward_bar_published was. Public by
+        # construction (imported by model/capacity_evolution/retirements.py
+        # and scripts/run_capacity_hindcast.py), so both join the frozen
+        # surface rather than being made private. No value touched.
+        "RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO",
         "RenewableElccCurve",
         "SHORT_TON_TO_METRIC_TONNE",
         "STATE_RPS_ACP",
@@ -246,6 +260,8 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "forward_net_cone_anchor",
         "locality_curve_price_per_firm_mw_yr",  # capx D59, see the note above.
         "resolve_caiso_ra_mpb_anchor",  # FFR-4F, see the note above.
+        # capx D67, see the note above.
+        "resolve_capacity_adequacy_requirement_published",
         "resolve_capacity_curve_eligible",
         # capx D62 (2026-09-06): the third member of the module's per-ISO
         # capacity-gate family, added alongside its two siblings below without

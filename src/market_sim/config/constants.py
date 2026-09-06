@@ -128,6 +128,7 @@ from market_sim.config.capacity_market import (
     evaluate_renewable_elcc_curve,
     forward_net_cone_anchor,
     resolve_caiso_ra_mpb_anchor,
+    resolve_capacity_adequacy_requirement_published,
     resolve_capacity_curve_eligible,
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_clearing,
