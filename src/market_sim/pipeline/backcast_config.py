@@ -1208,6 +1208,7 @@ def backcast_config(
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
+    nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -2302,6 +2303,56 @@ def backcast_config(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group,
                 {"CT_PEAKER": {"committed": float(_ct["phys_committed"])}},
+            ),
+        )
+    # nyiso-199: the NYISO limb of the same repair, on all THREE fuel-scaled
+    # CT_PEAKER bands. `committed`/`econ_low`/`econ_high` are replaced by the
+    # class's OWN registered `phys_*` measurements (0.843/0.661/0.658,
+    # `nyiso_campd_marginal_hr_summary.csv` p50s, n = 70), so nothing is chosen
+    # and rule 21 [R-DOF] is satisfied by construction. `peak` is deliberately
+    # NOT grounded: NYISO's 4.0 is the $1,000-offer-cap scarcity wall, not a
+    # physics claim (rule 19 — grounding it would delete a mechanism, not repair
+    # a basis). Two ex-ante grounds, neither the residual: the `committed` limb
+    # is a rule 19 [R-ONE-MECH] double count with `tranche_startup_amortization`
+    # (armed on the NYISO keeper), and the `econ*` limb closes the OPEN ROOT
+    # CAUSE `_NYISO_OFFER_CURVE`'s own CT_PEAKER comment declares by name.
+    # Owner ruling 2026-09-06; pre-registration
+    # results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md
+    # (Addendum A carries the ruling verbatim, pushed before this field existed).
+    if nyiso_ct_peaker_bands_measured:
+        if iso.upper() != "NYISO":
+            raise ValueError(
+                "nyiso_ct_peaker_bands_measured is NYISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; "
+                "CAISO (0.991, n=75) and NEISO (0.985, n=18) carry the same "
+                "uncited 1.35 committed band and the same defect, but each lane "
+                "grounds its OWN bands on its OWN measured CAMPD marginal-HR "
+                "p50s -- no value crosses an ISO boundary"
+            )
+        _nyct = dict(config.offer_curve_by_group.get("CT_PEAKER") or {})
+        _missing = [
+            k
+            for k in ("phys_committed", "phys_econ_low", "phys_econ_high")
+            if k not in _nyct
+        ]
+        if _missing:
+            raise ValueError(
+                "nyiso_ct_peaker_bands_measured is armed but the resolved NYISO "
+                f"CT_PEAKER band carries no {', '.join(_missing)} measurement to "
+                "ground on; it must never fall back to the fitted value "
+                "(rule 25 [R-ISO-SCOPE])"
+            )
+        config = config.with_overrides(
+            nyiso_ct_peaker_bands_measured=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group,
+                {
+                    "CT_PEAKER": {
+                        "committed": float(_nyct["phys_committed"]),
+                        "econ_low": float(_nyct["phys_econ_low"]),
+                        "econ_high": float(_nyct["phys_econ_high"]),
+                    }
+                },
             ),
         )
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
