@@ -51,10 +51,12 @@ in.
 
 from __future__ import annotations
 
+import csv
 from typing import TYPE_CHECKING, Callable
 
 import numpy as np
 
+from market_sim.config import paths
 from market_sim.config.constants import (
     DATACENTER_ADDITIONS_MW,
     DATACENTER_ZONE_SHARE,
@@ -546,6 +548,86 @@ def heat_pump_layer_profile(iso: str, weather_year: int, hours: int) -> np.ndarr
 
 
 _LAYER_PROFILE_BUILDERS["heat_pump"] = heat_pump_layer_profile
+
+
+# ISO -> the published hourly EV charging series curated under
+# ``data/raw/load-forecast/<iso>/``. RULE 25 [R-ISO-SCOPE]: this is a per-ISO
+# registry, not a shared default — an ISO absent from it has no citable shape
+# and its ``ev`` layer refuses to arm rather than borrowing another market's
+# charging behaviour. ERCOT is the only entry because it is the only publisher
+# that issues the shape as DATA (the 2025 Adjusted LTLF workbook's hourly
+# ``<zone>_ev`` component); ISO-NE, NYISO and MISO publish adoption anchors but
+# describe the shape in charts or defer to third-party (NREL/DOE) profiles, so
+# their anchors sit in the curated datatype and their layers ship ``{}``
+# (``constants.ELECTRIFICATION_LAYERS``).
+_EV_PROFILE_SOURCES: dict[str, tuple[str, ...]] = {
+    "ERCOT": ("load-forecast", "ercot", "ercot_ev_hourly_profile_2030.csv"),
+}
+
+
+def ev_layer_profile(iso: str, weather_year: int, hours: int) -> np.ndarray:
+    """Return the EV layer's normalized hourly profile for ``iso``.
+
+    Published-behaviour construction (memo §4.2's "published hourly component"
+    profile class, rule 13 [R-MEASURED] admissible): the ISO's own hourly EV
+    charging series, normalized to sum to 1 over the run horizon so
+    ``energy × profile`` conserves the layer energy exactly. It regenerates for
+    a forward year by re-reading the next forecast vintage's component and
+    responds to changed conditions (managed-charging adoption, fleet mix)
+    because the publisher re-forecasts it — it is never a realized outcome fed
+    back.
+
+    Unlike :func:`heat_pump_layer_profile`, this shape is **not** weather-year
+    aligned: EV charging is behaviourally driven (time-of-day and day-of-week),
+    which is why the publisher issues one seasonal-diurnal shape rather than a
+    weather reconstruction. ``weather_year`` is therefore accepted for interface
+    parity and deliberately unused; the profile is tiled/truncated to ``hours``.
+
+    Args:
+        iso: ISO identifier.
+        weather_year: The run's weather (shape base) year — unused, see above.
+        hours: Number of run hours (typically 8760).
+
+    Returns:
+        ``(hours,)`` non-negative float array summing to 1.0.
+
+    Raises:
+        ValueError: when the ISO has no registered published profile, or its
+            curated file is missing or degenerate — an ARMED layer with no shape
+            source is a hard misconfiguration, never a silent no-op.
+    """
+    parts = _EV_PROFILE_SOURCES.get(iso.upper())
+    if parts is None:
+        raise ValueError(
+            f"ev layer is armed for {iso} but no published hourly charging "
+            f"profile is registered for it (have: {sorted(_EV_PROFILE_SOURCES)}). "
+            "A shape that cannot be cited is not a parameter (rule 5 "
+            "[R-NO-MAGIC]), and another ISO's profile is never a fallback "
+            "(rule 25 [R-ISO-SCOPE])."
+        )
+    path = paths.RAW_DIR.joinpath(*parts)
+    if not path.is_file():
+        raise ValueError(
+            f"ev layer is armed for {iso} but its curated hourly profile is "
+            f"missing at {path} — hydrate the load-forecast raw subtree "
+            "(scripts/hydrate_data.py) or re-run "
+            "scripts/data/curate_load_forecast.py."
+        )
+    with path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        shares = np.array([float(row["share"]) for row in reader], dtype=float)
+    if shares.size == 0 or not np.isfinite(shares).all() or shares.sum() <= 0.0:
+        raise ValueError(
+            f"ev layer: {iso} profile at {path} is empty or degenerate "
+            f"({shares.size} rows) — the layer cannot be shaped."
+        )
+    if shares.size < hours:
+        shares = np.tile(shares, int(np.ceil(hours / shares.size)))
+    shares = shares[:hours]
+    return shares / float(shares.sum())
+
+
+_LAYER_PROFILE_BUILDERS["ev"] = ev_layer_profile
 
 
 def electrification_layer_contributions(

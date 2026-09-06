@@ -1,0 +1,186 @@
+# Canonical schema: load-forecast (each ISO's PUBLISHED long-term load forecast).
+#
+# One tidy (long) frame for six publishers that agree on almost nothing: ERCOT's
+# hourly component workbook, the CEC's per-planning-area IEPR forms, PJM's
+# per-zone monthly workbook + Table B-9b, NYISO's Gold Book zone tables, ISO-NE's
+# CELT sheets and MISO's chart-only slide deck. A wide frame would need a column
+# per (case x component x metric) and would break on the next vintage; the long
+# frame absorbs the heterogeneity and lets a consumer select exactly the series
+# it needs.
+#
+# What this datatype is FOR (rule 13 [R-MEASURED] admissibility): it is a
+# forward-looking published INPUT, not a measured outcome. Every row is a
+# forecast the ISO issued for a future year; it regenerates for the next vintage
+# by dropping in the next edition, and it responds to changed conditions because
+# the ISO re-forecasts. Nothing here is an actual against which a model output is
+# scored, and nothing here may be used to pin one -- the historical rows a
+# publication prints beside its forecast (an ISO's own "2025 Actual" column) are
+# carried ONLY so a CAGR can be anchored on the publication's own base year, and
+# they are labelled `scenario = "actual"`.
+#
+# WHAT IT FEEDS. `constants.DEMAND_GROWTH_RATES` (per-ISO near/long CAGRs),
+# `constants.DATACENTER_ADDITIONS_MW` (the DC block trajectory),
+# `constants.DATACENTER_ZONE_SHARE` (the block's zonal allocation) and
+# `constants.ELECTRIFICATION_LAYERS` (per-ISO end-use adoption anchors) are all
+# DERIVED from these rows rather than hand-transcribed, which is the whole point
+# of the datatype (owner card D-4 / ruling S4).
+#
+# GRAIN. One row per (iso, edition, scenario, area, component, metric, basis,
+# year). `basis` is in the key because ISO-NE publishes a Gross and a Net row for
+# every energy and peak series and the two are different quantities.
+# `edition` + `vintage` key the publication, so several vintages of the same ISO
+# coexist in one partition and an as-of-vintage read is a filter, never a
+# separate file. `scenario` is the model's canonical low/mid/high axis;
+# `published_case` preserves the publisher's own case label so the mapping onto
+# that axis is auditable and never silent.
+#
+# UNITS. `value` + `unit` rather than one column per unit: the frame carries
+# GWh, MW and counts, and a per-unit column set would be mostly null. `metric`
+# and `unit` are consistent by construction and both are validated.
+datatype: load-forecast
+schema_version: 1
+title: Published ISO long-term load forecasts
+description: >-
+  Each ISO/RTO's published long-term load forecast as a tidy series: annual
+  energy and seasonal peak by scenario, plus the published component
+  decompositions (data centre / large load, electric vehicles, building
+  electrification) by publisher area, keyed by publication edition.
+
+key_columns: [iso, edition, scenario, area, component, metric, basis, year]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Model ISO label the forecast belongs to (ERCOT, CAISO, PJM, MISO, NYISO,
+      NEISO). This is the PUBLISHER's footprint, which is not always the model's
+      footprint -- CAISO rows are CEC planning areas, three of which (PGE, SCE,
+      SDGE) sum to approximately the CAISO balancing authority while the
+      statewide row does not; see data/raw/load-forecast/README.md.
+  - name: edition
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The publication edition the row was read from, as a short human label --
+      "2025 LTLF", "2026 LTLF", "CED 2025-2045", "Gold Book 2026", "CELT 2026".
+      Part of the key so several vintages coexist.
+  - name: vintage
+    dtype: int64
+    unit: year
+    nullable: false
+    description: >-
+      Calendar year the edition was published; the information cutoff for an
+      as-of-vintage (hindcast) read, the same gate confirmed_retirements applies
+      to instrument_date.
+  - name: scenario
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical scenario axis: low | mid | high, matching
+      ScenarioConfig.demand_growth_path / datacenter_load_path /
+      electrification_path; plus "actual" for the historical rows a publication
+      prints beside its forecast. An ISO that publishes only one forecast has
+      only "mid" rows -- never a fabricated band.
+  - name: published_case
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The publisher's OWN case label, verbatim, so the mapping onto `scenario`
+      is auditable: "ERCOT Adjusted", "TSP Provided", "Baseline", "Lower
+      Demand", "Higher Demand", "Current Trajectory", "Planning Forecast",
+      "Local Reliability Scenario", "Forecast Change Drivers", ...
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Area the value applies to, in the PUBLISHER's own vocabulary: the ISO
+      label for footprint rows, else a weather zone (ERCOT), transmission zone
+      (PJM), NYCA zone (NYISO "Zone A".."Zone K"), state (ISO-NE), CEC planning
+      area or agency (CAISO), or MISO region. Crosswalking onto model zones is
+      the consumer's job (config/iso_configs.py owns those maps); this datatype
+      never guesses one.
+  - name: area_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Kind of area: iso | source_zone | state | agency | region | planning_area.
+      `source_zone` means a zone in the publisher's own zonal vocabulary, which
+      is NOT necessarily a model zone.
+  - name: component
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Which part of the forecast: total (the whole footprint/area forecast) |
+      base_economic | data_center | large_load | ev | heat_pump |
+      building_electrification | solar_pv. `data_center` is used only where the
+      publisher itself isolates data centres (the CEC's Form 1.1c); a publisher
+      that reports the wider large-load category (ERCOT contracts + officer
+      letters, PJM Table B-9b, NYISO Table I-14) uses `large_load`, and the
+      DC share of it is the consumer's declared assumption, never folded in
+      here. `building_electrification` is the wider end-use category NYISO
+      publishes (space + water heating, cooking, other), of which `heat_pump`
+      is ISO-NE's narrower published cut.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      energy_gwh | summer_peak_mw | winter_peak_mw | annual_peak_mw |
+      stock_count. Peak metrics carry the publisher's own peak definition
+      (coincident vs non-coincident, 50/50 vs 1-in-2); the per-ISO raw README
+      states which, because they are NOT interchangeable across publishers.
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: >-
+      Forecast year the value applies to. For a winter-peak row spanning a
+      season boundary ("2030/31") this is the FIRST year of the pair, so a
+      winter row and the summer row it is published beside share one key.
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: The value, in the units named by `unit`.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: gwh | mw | count. Consistent with `metric` by construction and validated.
+  - name: basis
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      net | gross | unspecified -- whether the value is net of behind-the-meter
+      DER (the convention the model's demand arrays use) or gross. Part of the
+      KEY, because a publisher that reports both (ISO-NE's CELT prints a Gross
+      and a Net row for every energy and peak series) would otherwise collide
+      on it. "unspecified" is the honest label for a publication that does not
+      draw the distinction at all -- never a silent default onto "net".
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The source document, as a repo path where the file is held under
+      data/raw/ (including a gitignored corpus payload, which is still the
+      provenance record) or a URL where it is not.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Locator within source_doc -- sheet name, table number and page, or slide
+      number. For a value read from a chart's vector coordinates this says so
+      explicitly, and the raw README records the printed number the read was
+      validated against.

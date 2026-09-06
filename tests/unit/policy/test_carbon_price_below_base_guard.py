@@ -25,6 +25,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.policy import carbon as carbon_policy
 from market_sim.policy.carbon import (
     CARBON_PRICE_BELOW_BASE_REMEDY,
+    carbon_path_below_program_warning,
     carbon_price_below_base_warning,
     resolve_carbon_price,
     resolved_base_trajectory_price,
@@ -219,3 +220,139 @@ class TestYearRunRendering:
     )
     def test_rendering(self, years, expected):
         assert carbon_policy._format_year_runs(years) == expected
+
+
+# --- (vi) the SAME guard on the other channel: the RFF carbon_price_path ----
+
+
+def _path_below_warnings(
+    caught: list[warnings.WarningMessage],
+) -> list[warnings.WarningMessage]:
+    return [w for w in caught if "INVARIANT BREACH" in str(w.message)]
+
+
+class TestPathBranchInvariantGuard:
+    """``carbon_path_below_program_warning`` — the D34 guard extended to the
+    ``carbon_price_path`` branch (SCN-WS1c, plan §7 "WS-1a" item 1).
+
+    The Q26 guard above watches ``carbon_price`` only, which is precisely why
+    the G-C1 defect was silent: a named federal RFF path SUPPRESSED the state
+    program, so ``policy_bundle="tight"`` cut carbon by $16-$102/tCO2 on
+    CAISO/NYISO/NEISO in all 25 horizon years and nothing said so
+    (``FINDING-scn-ws1a-2026-09-05.md`` §0.1).
+
+    **Under owner ruling S2's FLOOR this guard can never fire, and that is its
+    design.** ``resolved_base_trajectory_price`` returns ``max(program, path)``,
+    which is ``>= program`` by construction, so the guard asserts an invariant
+    rather than reporting an expected condition — a regression tripwire for a
+    future edit that recomposes the two channels. These tests therefore pin
+    BOTH halves: that it is silent on every real configuration, and that it
+    still speaks when the invariant is actually broken.
+    """
+
+    PROGRAM_ISOS = ("CAISO", "NYISO", "NEISO")
+
+    @pytest.mark.parametrize("iso", PROGRAM_ISOS)
+    @pytest.mark.parametrize("path", ("low", "mid", "high"))
+    def test_silent_on_every_program_iso_and_every_path_under_the_floor(
+        self, iso, path
+    ):
+        config, caught = _build(iso=iso, carbon_price_path=path, hours=24)
+        assert carbon_path_below_program_warning(config) is None
+        assert _path_below_warnings(caught) == []
+
+    @pytest.mark.parametrize("iso", ("ERCOT", "PJM", "MISO"))
+    def test_silent_where_the_path_applies_alone(self, iso):
+        # No program adder to sit below (PJM has a program but no price
+        # series), so the guard's per-year loop skips every year.
+        config, caught = _build(iso=iso, carbon_price_path="mid", hours=24)
+        assert carbon_path_below_program_warning(config) is None
+        assert _path_below_warnings(caught) == []
+
+    def test_silent_at_the_default_zero_path(self):
+        # The cheap exit every default construction takes.
+        config, caught = _build(iso="NEISO", hours=24)
+        assert carbon_path_below_program_warning(config) is None
+        assert _path_below_warnings(caught) == []
+
+    def test_silent_in_backcast_mode(self):
+        config = ScenarioConfig(
+            iso="NEISO", mode="backcast", weather_year=2024, hours=24
+        )
+        assert carbon_path_below_program_warning(config) is None
+
+    def test_silent_when_the_bundle_switched_the_program_off(self):
+        # rollback's posture: no program term, so nothing to floor.
+        config, caught = _build(
+            iso="NEISO", carbon_price_path="mid", state_carbon_pricing=False, hours=24
+        )
+        assert carbon_path_below_program_warning(config) is None
+        assert _path_below_warnings(caught) == []
+
+    def test_it_speaks_when_the_invariant_is_actually_broken(self, monkeypatch):
+        # Reinstate the PRE-S2 replace semantics inside the resolver and the
+        # tripwire must trip — this is the G-C1 defect, reconstructed. Without
+        # this the "silent everywhere" tests above would also pass on a guard
+        # that is simply broken.
+        real = carbon_policy.resolved_base_trajectory_price
+        monkeypatch.setattr(
+            carbon_policy,
+            "resolved_base_trajectory_price",
+            lambda config, year: carbon_policy.rff_path_price(
+                config.carbon_price_path, year
+            ),
+        )
+        config = ScenarioConfig(iso="NEISO", carbon_price_path="mid", hours=24)
+        message = carbon_policy.carbon_path_below_program_warning(config)
+        assert message is not None
+        assert "INVARIANT BREACH" in message
+        assert "NEISO" in message and "'mid'" in message
+        assert "2026-2050" in message  # every horizon year, as WS-1a measured
+        assert "CUT" in message
+        # ...and the real resolver does NOT break it.
+        monkeypatch.setattr(carbon_policy, "resolved_base_trajectory_price", real)
+        assert carbon_policy.carbon_path_below_program_warning(config) is None
+
+    def test_it_is_a_warning_not_an_error(self, monkeypatch):
+        # Same observe-only posture Q26 fixed for the scalar guard: a
+        # deliberate below-program study stays runnable, it just cannot be
+        # silent. Nothing here raises.
+        monkeypatch.setattr(
+            carbon_policy,
+            "resolved_base_trajectory_price",
+            lambda config, year: 0.0,
+        )
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            ScenarioConfig(iso="NEISO", carbon_price_path="mid", hours=24)
+        assert len(_path_below_warnings(list(caught))) == 1
+
+
+class TestFloorResolverOutputIsByteUnchanged:
+    """The path-branch guard observes and never alters, same as the Q26 one."""
+
+    CASES = {
+        "program_iso_mid": dict(iso="NEISO", carbon_price_path="mid", hours=24),
+        "program_iso_high": dict(iso="NYISO", carbon_price_path="high", hours=24),
+        "path_only_iso": dict(iso="ERCOT", carbon_price_path="mid", hours=24),
+        "zero_path": dict(iso="CAISO", hours=24),
+    }
+
+    @pytest.mark.parametrize("case", sorted(CASES))
+    def test_resolved_prices_are_bit_identical(self, case, monkeypatch):
+        kwargs = self.CASES[case]
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            guarded = [
+                resolve_carbon_price(ScenarioConfig(**kwargs), y) for y in HORIZON
+            ]
+        monkeypatch.setattr(
+            carbon_policy, "carbon_path_below_program_warning", lambda config: None
+        )
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            unguarded = [
+                resolve_carbon_price(ScenarioConfig(**kwargs), y) for y in HORIZON
+            ]
+        assert _path_below_warnings(list(caught)) == []
+        assert unguarded == guarded  # bit-equal, not approx

@@ -1,0 +1,84 @@
+{
+  "session": "nyiso-192",
+  "bundle": "scratch/c8grain/NEISO_replay",
+  "by_year": {
+    "2023": {
+      "ST_GAS": {
+        "units": 32,
+        "class_twh": 0.1525,
+        "unit_grain_forced_twh": 0.02,
+        "unit_grain_forced_share": 0.131
+      },
+      "CC_REGULAR": {
+        "units": 230,
+        "class_twh": 52.7358,
+        "unit_grain_forced_twh": 0.3704,
+        "unit_grain_forced_share": 0.007
+      },
+      "CT_PEAKER": {
+        "units": 95,
+        "class_twh": 0.3434,
+        "unit_grain_forced_twh": 0.0633,
+        "unit_grain_forced_share": 0.1843
+      },
+      "CC_CHP": {
+        "units": 19,
+        "class_twh": 0.8055,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      }
+    },
+    "2024": {
+      "ST_GAS": {
+        "units": 25,
+        "class_twh": 0.0737,
+        "unit_grain_forced_twh": 0.0177,
+        "unit_grain_forced_share": 0.24
+      },
+      "CC_REGULAR": {
+        "units": 230,
+        "class_twh": 56.9913,
+        "unit_grain_forced_twh": 0.8201,
+        "unit_grain_forced_share": 0.0144
+      },
+      "CT_PEAKER": {
+        "units": 92,
+        "class_twh": 0.8088,
+        "unit_grain_forced_twh": 0.0629,
+        "unit_grain_forced_share": 0.0778
+      },
+      "CC_CHP": {
+        "units": 19,
+        "class_twh": 1.0224,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      }
+    },
+    "2025": {
+      "ST_GAS": {
+        "units": 25,
+        "class_twh": 0.0695,
+        "unit_grain_forced_twh": 0.0219,
+        "unit_grain_forced_share": 0.3156
+      },
+      "CC_REGULAR": {
+        "units": 230,
+        "class_twh": 59.9579,
+        "unit_grain_forced_twh": 0.9539,
+        "unit_grain_forced_share": 0.0159
+      },
+      "CT_PEAKER": {
+        "units": 92,
+        "class_twh": 1.769,
+        "unit_grain_forced_twh": 0.0561,
+        "unit_grain_forced_share": 0.0317
+      },
+      "CC_CHP": {
+        "units": 19,
+        "class_twh": 0.6036,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_forced_share": 0.0
+      }
+    }
+  }
+}

@@ -251,6 +251,29 @@ _POLICY_BUNDLES: dict[str, dict] = {
     "current": {},
     "tight": {
         # RFF mid carbon path; IRA horizons extended +5yr (plan §1.2).
+        #
+        # SEMANTICS OF THE CARBON LEG, since owner ruling S2 (2026-09-06, card
+        # D-1; desk ledger docs/handoffs/scenario-desk-ledger-2026-09.md §2):
+        # a named path is a FLOOR under the ISO's state carbon program, not a
+        # replacement for it -- policy.carbon.resolved_base_trajectory_price
+        # resolves max(program trajectory, RFF path). NO FIELD VALUE CHANGES
+        # HERE; what changed is what "mid" MEANS downstream.
+        #
+        # The measured consequence, on the record with the ruling and NOT a
+        # defect to engineer around: the RFF mid path never exceeds a program
+        # trajectory in any horizon year, so "tight" is an exact NO-OP on
+        # CAISO, NYISO and NEISO -- its carbon leg bites only on ERCOT / PJM /
+        # MISO, where the path applies alone. That is the honest reading of a
+        # federal price a state program already exceeds. Before S2 it was
+        # worse than a no-op: the path SUPPRESSED the program, making "tight"
+        # a carbon-price CUT of $16-$102/tCO2 on those three ISOs in all 25
+        # horizon years (FINDING-scn-ws1a-2026-09-05.md §0.1; repaired by
+        # SCN-WS1c, FINDING-scn-ws1c-2026-09-06.md).
+        #
+        # Whether "tight" SHOULD mean something else on a program ISO -- e.g.
+        # an increment via carbon_price_delta so it bites everywhere -- is
+        # OPEN OWNER CARD D-1(b). Do not redefine this leg to answer it; the
+        # IRA leg (+5yr) is unaffected and still bites in every ISO.
         "carbon_price_path": "mid",
         "ira_year_offset": 5,
     },
@@ -260,6 +283,11 @@ _POLICY_BUNDLES: dict[str, dict] = {
         # expression of "no further state-program pricing," since a genuine
         # flat-forward-freeze trajectory mechanism doesn't exist yet (a
         # disclosed simplification, PB-1 §1.2). IRA sunset pulled -2yr.
+        #
+        # Unaffected by S2's floor, and deliberately so: both operands of the
+        # max are 0.0 here (path "zero" and, with state_carbon_pricing off, no
+        # program adder), so this stays a genuine no-carbon bundle in every
+        # ISO. A floor cannot resurrect a program the bundle switched off.
         "carbon_price_path": "zero",
         "state_carbon_pricing": False,
         "ira_year_offset": -2,

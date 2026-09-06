@@ -56,6 +56,57 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06 — SCN-WS1c / owner ruling S2 (card D-1): the federal carbon
+FLOOR. NO KEY MOVES, BY CONSTRUCTION — and the INVALIDATED SET IS EMPTY at this
+commit.** No ``ScenarioConfig`` field is added, removed, re-defaulted or
+re-registered, so ``cache_key()`` hashes the same bytes before and after
+(measured: the pinned default ``e5ecd4105ada3e58`` is unmoved, as is every
+per-ISO/per-bundle key). This is the pure same-key class the ledger exists for.
+
+What moved: ``policy.cap_and_trade.resolve_carbon_program``'s FORECAST branch
+used to return a **zero** program adder whenever a non-default
+``carbon_price_path`` was set — a named federal RFF path REPLACED the state
+cap-and-trade program. Ruling S2 makes it a floor instead:
+``policy.carbon.resolved_base_trajectory_price`` now returns
+``max(program trajectory, RFF path)`` on a program ISO, the path alone
+elsewhere. ``carbon_price`` (scalar) keeps its Q26 replace semantics and
+``carbon_price_delta`` its additive stage; both are untouched.
+
+**INVALIDATED — re-solve before quoting: cached FORECAST-mode bundles on
+CAISO, NYISO or NEISO carrying a non-"zero" ``carbon_price_path`` (equivalently
+``policy_bundle="tight"``) and ``state_carbon_pricing=True``, solved before this
+commit.** Their carbon signal was the RFF path where it is now the program
+trajectory — on ``mid``, an increase of $15.98/tCO2 (2030) to $102.29/tCO2
+(2050) depending on ISO and year, in all 25 horizon years.
+
+**THAT SET IS EMPTY.** Measured over every tracked ``run_config.json`` in the
+repository (90 files, ``git ls-files '*run_config.json'``): 73 forecast + 17
+backcast, **all 90 carrying ``carbon_price_path="zero"``,
+``policy_bundle="current"``, ``state_carbon_pricing=True``**, and **zero**
+carrying a non-``"zero"`` path. No committed bundle reaches the changed branch,
+so this epoch creates no stale evidence, retires no citation, and moves no
+determination or dashboard row. It is recorded because the ledger's job is to
+make a same-key semantic change visible even when — especially when — nothing
+is currently stale: the next non-``"zero"``-path bundle solved on either side of
+this commit is not comparable to one solved on the other.
+
+**NOT invalidated:** every BACKCAST bundle in every ISO, including all six
+keepers (``caiso251_arm_nomargin``, ``ercot248_two_config_keeper``,
+``miso217_intermphys_B``, ``neiso99_joint_B``, ``nyiso192_astoria_panel``,
+``pjm_debugb_inputclock_A``) — the changed branch is the ``else`` arm of
+``if config.mode == "backcast"`` and was never reachable from a backcast, at any
+path; every ERCOT / MISO / PJM bundle — no program adder applies (ERCOT and MISO
+carry no program; PJM's has no price series, so its forecast adder is $0.0
+before and after), leaving the path to apply alone exactly as it did; and every
+``policy_bundle="rollback"`` construction — both operands of the ``max`` are
+0.0 there, so the floor cannot resurrect a program the bundle switched off.
+
+Recorded 2026-09-06 by SCN-WS1c, the lane that made the change
+(``docs/handoffs/PRECOMMIT-scn-ws1c-2026-09-06.md`` §3,
+``FINDING-scn-ws1c-2026-09-06.md`` §4; desk ledger
+``docs/handoffs/scenario-desk-ledger-2026-09.md`` §2 ruling S2). This entry
+changes no key and no default.
+
 **Epoch 2026-09-05b — SCN-WS4a populates ``DATACENTER_ZONE_SHARE["MISO"]``
 from MISO's published 2026 LTLF regional data-center decomposition
 (``0fc2cc58``, ``config/constants.py``). NO KEY MOVES, BY CONSTRUCTION — and

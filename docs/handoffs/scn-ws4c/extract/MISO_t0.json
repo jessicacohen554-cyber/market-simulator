@@ -1,0 +1,242 @@
+{
+ "iso": "MISO",
+ "arms": {
+  "REF": {
+   "cache_key": "8e72c2256983f981",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0249,
+       "nuclear": 90.1989,
+       "biomass": 11.7114,
+       "gas_st": 10.1329,
+       "coal": 291.7362,
+       "gas_ct": 23.2558,
+       "gas_cc": 146.0012,
+       "hydro": 9.2925,
+       "wind": 94.3683,
+       "solar": 9.2008
+      },
+      "emissions_mt": 353.0369,
+      "emissions_by_fuel_mt": {
+       "oil": 0.024519,
+       "nuclear": 0.0,
+       "biomass": 0.048307,
+       "gas_st": 3.925151,
+       "coal": 279.092836,
+       "gas_ct": 10.323177,
+       "gas_cc": 59.622952,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "MISO-West": 39.633673,
+       "MISO-Illinois": 29.252554,
+       "MISO-Indiana": 62.370412,
+       "MISO-Plains": 57.513056,
+       "MISO-South": 75.849135,
+       "MISO-East": 88.418114
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 48093.807,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 203117.26,
+      "so2_tonnes": 248809.54,
+      "avg_price": 37.87,
+      "peak_price": 2000.0,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 3.275,
+       "nuclear": 11.519,
+       "biomass": 1.866,
+       "gas_st": 11.614,
+       "coal": 41.207,
+       "gas_ct": 24.902,
+       "gas_cc": 35.605,
+       "hydro": 2.372,
+       "wind": 32.0,
+       "solar": 7.0
+      },
+      "storage_cycles": 97.52,
+      "clean_share": 0.296,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 11.7114,
+      "coal": 291.7362,
+      "gas_cc": 146.0012,
+      "gas_ct": 23.2558,
+      "gas_st": 10.1329,
+      "hydro": 9.2925,
+      "nuclear": 90.1989,
+      "oil": 0.0249
+     },
+     "fossil_twh": 471.151,
+     "import_tranches": []
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "759ccceb7923b1fe",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.0426,
+       "nuclear": 90.1989,
+       "biomass": 11.8819,
+       "gas_st": 11.2358,
+       "coal": 292.9372,
+       "gas_ct": 25.9719,
+       "gas_cc": 159.5476,
+       "hydro": 9.2925,
+       "wind": 94.3683,
+       "solar": 9.2008
+      },
+      "emissions_mt": 362.0286,
+      "emissions_by_fuel_mt": {
+       "oil": 0.042066,
+       "nuclear": 0.0,
+       "biomass": 0.068958,
+       "gas_st": 4.483133,
+       "coal": 280.35752,
+       "gas_ct": 11.855466,
+       "gas_cc": 65.221422,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "MISO-West": 40.408676,
+       "MISO-Illinois": 29.821238,
+       "MISO-Indiana": 64.286359,
+       "MISO-Plains": 58.078955,
+       "MISO-South": 78.834051,
+       "MISO-East": 90.599287
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 77034.471,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 206535.71,
+      "so2_tonnes": 249766.17,
+      "avg_price": 39.97,
+      "peak_price": 2000.0,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 3.275,
+       "nuclear": 11.519,
+       "biomass": 1.866,
+       "gas_st": 11.614,
+       "coal": 41.207,
+       "gas_ct": 24.902,
+       "gas_cc": 35.605,
+       "hydro": 2.372,
+       "wind": 32.0,
+       "solar": 7.0
+      },
+      "storage_cycles": 103.68,
+      "clean_share": 0.2882,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 11.8819,
+      "coal": 292.9372,
+      "gas_cc": 159.5476,
+      "gas_ct": 25.9719,
+      "gas_st": 11.2358,
+      "hydro": 9.2925,
+      "nuclear": 90.1989,
+      "oil": 0.0426
+     },
+     "fossil_twh": 489.7351,
+     "import_tranches": []
+    }
+   }
+  },
+  "LOAD-HI-ORGANIC": {
+   "cache_key": "abe5759c41a76e7b",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "oil": 0.043,
+       "nuclear": 90.1989,
+       "biomass": 11.8821,
+       "gas_st": 11.2504,
+       "coal": 292.9371,
+       "gas_ct": 25.9913,
+       "gas_cc": 159.5123,
+       "hydro": 9.2925,
+       "wind": 94.3683,
+       "solar": 9.2008
+      },
+      "emissions_mt": 362.0379,
+      "emissions_by_fuel_mt": {
+       "oil": 0.042393,
+       "nuclear": 0.0,
+       "biomass": 0.069097,
+       "gas_st": 4.491787,
+       "coal": 280.356455,
+       "gas_ct": 11.867518,
+       "gas_cc": 65.210634,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "MISO-West": 40.404668,
+       "MISO-Illinois": 29.822683,
+       "MISO-Indiana": 64.283167,
+       "MISO-Plains": 58.074755,
+       "MISO-South": 78.85558,
+       "MISO-East": 90.597031
+      },
+      "import_co2_mt_reported": 0.0,
+      "unserved_mwh": 77976.319,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 206561.99,
+      "so2_tonnes": 249766.82,
+      "avg_price": 40.13,
+      "peak_price": 2000.0,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "oil": 3.275,
+       "nuclear": 11.519,
+       "biomass": 1.866,
+       "gas_st": 11.614,
+       "coal": 41.207,
+       "gas_ct": 24.902,
+       "gas_cc": 35.605,
+       "hydro": 2.372,
+       "wind": 32.0,
+       "solar": 7.0
+      },
+      "storage_cycles": 103.7,
+      "clean_share": 0.2882,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 11.8821,
+      "coal": 292.9371,
+      "gas_cc": 159.5123,
+      "gas_ct": 25.9913,
+      "gas_st": 11.2504,
+      "hydro": 9.2925,
+      "nuclear": 90.1989,
+      "oil": 0.043
+     },
+     "fossil_twh": 489.7342,
+     "import_tranches": []
+    }
+   }
+  }
+ }
+}

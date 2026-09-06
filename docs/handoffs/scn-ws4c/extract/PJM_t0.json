@@ -1,0 +1,291 @@
+{
+ "iso": "PJM",
+ "arms": {
+  "REF": {
+   "cache_key": "058444cfe884b79b",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 277.2398,
+       "oil": 0.0,
+       "biomass": 7.9064,
+       "gas_ct": 8.5878,
+       "gas_st": 3.9953,
+       "coal": 227.0265,
+       "gas_cc": 286.8884,
+       "import": -0.9461,
+       "hydro": 9.2524,
+       "wind": 29.764,
+       "solar": 23.2963
+      },
+      "emissions_mt": 349.0918,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "oil": 0.0,
+       "biomass": 0.0,
+       "gas_ct": 4.891433,
+       "gas_st": 1.639053,
+       "coal": 231.721676,
+       "gas_cc": 110.839589,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "PJM_ComEd": 28.049387,
+       "PJM_SWMAAC": 14.479565,
+       "PJM_EMAAC": 20.557385,
+       "PJM_Dominion": 26.197989,
+       "PJM_AEP_Ohio": 129.754807,
+       "PJM_ATSI": 8.336045,
+       "PJM_West_APS": 93.395552,
+       "PJM_Central_PA": 28.32102,
+       "PJM_external": 0.0
+      },
+      "import_co2_mt_reported": 0.416848,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 151257.22,
+      "so2_tonnes": 197887.3,
+      "avg_price": 39.41,
+      "peak_price": 60.0,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 33.492,
+       "oil": 4.408,
+       "biomass": 1.745,
+       "gas_ct": 26.392,
+       "gas_st": 9.49,
+       "coal": 35.433,
+       "gas_cc": 59.719,
+       "import": 4.0,
+       "hydro": 3.301,
+       "wind": 11.0,
+       "solar": 14.0
+      },
+      "storage_cycles": 51.81,
+      "clean_share": 0.3889,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 7.9064,
+      "coal": 227.0265,
+      "gas_cc": 286.8884,
+      "gas_ct": 8.5878,
+      "gas_st": 3.9953,
+      "hydro": 9.2524,
+      "import": -0.9461,
+      "nuclear": 277.2398,
+      "oil": 0.0
+     },
+     "fossil_twh": 526.498,
+     "import_tranches": [
+      {
+       "unit_id": "PJM_external_export_firm",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": -1.92,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_import_scarcity_1",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.9633,
+       "reported_mt": 0.4123
+      },
+      {
+       "unit_id": "PJM_external_import_scarcity_2",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0107,
+       "reported_mt": 0.0046
+      },
+      {
+       "unit_id": "PJM_external_export_peak",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_mid",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_shoulder",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_offpeak",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_trough",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  },
+  "LOAD-HI": {
+   "cache_key": "7370b703046ef374",
+   "years": {
+    "2026": {
+     "year": 2026,
+     "summary": {
+      "generation_twh": {
+       "nuclear": 277.2398,
+       "oil": 0.0,
+       "biomass": 8.275,
+       "gas_ct": 12.4429,
+       "gas_st": 4.5887,
+       "coal": 232.4822,
+       "gas_cc": 316.5226,
+       "import": 0.2167,
+       "hydro": 9.2524,
+       "wind": 29.764,
+       "solar": 23.2963
+      },
+      "emissions_mt": 369.1754,
+      "emissions_by_fuel_mt": {
+       "nuclear": 0.0,
+       "oil": 0.0,
+       "biomass": 0.0,
+       "gas_ct": 7.065704,
+       "gas_st": 1.972177,
+       "coal": 237.585594,
+       "gas_cc": 122.551965,
+       "import": 0.0,
+       "hydro": 0.0,
+       "wind": 0.0,
+       "solar": 0.0
+      },
+      "emissions_by_zone_mt": {
+       "PJM_ComEd": 30.30129,
+       "PJM_SWMAAC": 15.450783,
+       "PJM_EMAAC": 23.212827,
+       "PJM_Dominion": 28.599446,
+       "PJM_AEP_Ohio": 135.206299,
+       "PJM_ATSI": 9.156475,
+       "PJM_West_APS": 96.177585,
+       "PJM_Central_PA": 31.070735,
+       "PJM_external": 0.0
+      },
+      "import_co2_mt_reported": 0.755868,
+      "unserved_mwh": 0.0,
+      "co2_cap_price_usd_per_t": 0.0,
+      "n_co2_caps_binding": 0,
+      "nox_tonnes": 157380.14,
+      "so2_tonnes": 204314.33,
+      "avg_price": 40.77,
+      "peak_price": 68.37,
+      "curtailment_twh": 0.0,
+      "capacity_gw": {
+       "nuclear": 33.492,
+       "oil": 4.408,
+       "biomass": 1.745,
+       "gas_ct": 26.392,
+       "gas_st": 9.49,
+       "coal": 35.433,
+       "gas_cc": 59.719,
+       "import": 4.0,
+       "hydro": 3.301,
+       "wind": 11.0,
+       "solar": 14.0
+      },
+      "storage_cycles": 65.4,
+      "clean_share": 0.3715,
+      "negative_price_hours": 0.0
+     },
+     "gen_by_fuel_twh": {
+      "biomass": 8.275,
+      "coal": 232.4822,
+      "gas_cc": 316.5226,
+      "gas_ct": 12.4429,
+      "gas_st": 4.5887,
+      "hydro": 9.2524,
+      "import": 0.2167,
+      "nuclear": 277.2398,
+      "oil": 0.0
+     },
+     "fossil_twh": 566.0363,
+     "import_tranches": [
+      {
+       "unit_id": "PJM_external_import_scarcity_1",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 1.5556,
+       "reported_mt": 0.6658
+      },
+      {
+       "unit_id": "PJM_external_export_firm",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": -1.5493,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_import_scarcity_2",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.2105,
+       "reported_mt": 0.0901
+      },
+      {
+       "unit_id": "PJM_external_export_peak",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_mid",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_shoulder",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_offpeak",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      },
+      {
+       "unit_id": "PJM_external_export_trough",
+       "zone": "PJM_external",
+       "ef_t_per_mwh": 0.428,
+       "twh": 0.0,
+       "reported_mt": 0.0
+      }
+     ]
+    }
+   }
+  }
+ }
+}

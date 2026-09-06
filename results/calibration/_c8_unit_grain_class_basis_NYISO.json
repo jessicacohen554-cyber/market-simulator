@@ -1,0 +1,231 @@
+{
+  "iso": "NYISO",
+  "replay_bundle": "/home/user/market-simulator/scratch/c8grain/NYISO_replay",
+  "committed_bundle": "results/calibration/nyiso196_extract_basis",
+  "cap": 0.3,
+  "note": "unit-grain numerator over the committed D-2 class denominator; plant-grain column is the committed C8 as scored",
+  "by_year": {
+    "2023": {
+      "ST_GAS": {
+        "units_in_class": 88,
+        "units_with_floor_rows": 88,
+        "replay_class_twh": 9.9696,
+        "d2_class_total_twh": 11.9971,
+        "plant_grain_forced_twh": 1.9859,
+        "plant_grain_share": 0.1655,
+        "unit_grain_forced_twh": 3.6553,
+        "unit_grain_share_floored_basis": 0.3666,
+        "unit_grain_share_class_basis": 0.3047,
+        "breaches_cap_class_basis": true
+      },
+      "CC_REGULAR": {
+        "units_in_class": 122,
+        "units_with_floor_rows": 122,
+        "replay_class_twh": 33.9223,
+        "d2_class_total_twh": 31.9708,
+        "plant_grain_forced_twh": 0.8815,
+        "plant_grain_share": 0.0276,
+        "unit_grain_forced_twh": 4.2154,
+        "unit_grain_share_floored_basis": 0.1243,
+        "unit_grain_share_class_basis": 0.1319,
+        "breaches_cap_class_basis": false
+      },
+      "CT_PEAKER": {
+        "units_in_class": 128,
+        "units_with_floor_rows": 128,
+        "replay_class_twh": 0.4364,
+        "d2_class_total_twh": null,
+        "plant_grain_forced_twh": 0.0,
+        "plant_grain_share": 0.0,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_share_floored_basis": 0.0,
+        "unit_grain_share_class_basis": null,
+        "breaches_cap_class_basis": false
+      },
+      "CC_CHP": {
+        "units_in_class": 108,
+        "units_with_floor_rows": 108,
+        "replay_class_twh": 15.7777,
+        "d2_class_total_twh": 15.7778,
+        "plant_grain_forced_twh": 0.0146,
+        "plant_grain_share": 0.0009,
+        "unit_grain_forced_twh": 4.3729,
+        "unit_grain_share_floored_basis": 0.2772,
+        "unit_grain_share_class_basis": 0.2772,
+        "breaches_cap_class_basis": false
+      },
+      "CT_CHP": {
+        "units_in_class": 25,
+        "units_with_floor_rows": 25,
+        "replay_class_twh": 1.5047,
+        "d2_class_total_twh": 2.7813,
+        "plant_grain_forced_twh": 0.0003,
+        "plant_grain_share": 0.0001,
+        "unit_grain_forced_twh": 0.0211,
+        "unit_grain_share_floored_basis": 0.014,
+        "unit_grain_share_class_basis": 0.0076,
+        "breaches_cap_class_basis": false
+      },
+      "ST_CHP": {
+        "units_in_class": 5,
+        "units_with_floor_rows": 5,
+        "replay_class_twh": 1.342,
+        "d2_class_total_twh": 0.0653,
+        "plant_grain_forced_twh": 0.0098,
+        "plant_grain_share": 0.1501,
+        "unit_grain_forced_twh": 0.005,
+        "unit_grain_share_floored_basis": 0.0038,
+        "unit_grain_share_class_basis": 0.0771,
+        "breaches_cap_class_basis": false
+      }
+    },
+    "2024": {
+      "ST_GAS": {
+        "units_in_class": 88,
+        "units_with_floor_rows": 88,
+        "replay_class_twh": 8.7755,
+        "d2_class_total_twh": 10.8365,
+        "plant_grain_forced_twh": 2.4311,
+        "plant_grain_share": 0.2243,
+        "unit_grain_forced_twh": 3.3807,
+        "unit_grain_share_floored_basis": 0.3852,
+        "unit_grain_share_class_basis": 0.312,
+        "breaches_cap_class_basis": true
+      },
+      "CC_REGULAR": {
+        "units_in_class": 129,
+        "units_with_floor_rows": 129,
+        "replay_class_twh": 37.3266,
+        "d2_class_total_twh": 35.3629,
+        "plant_grain_forced_twh": 0.2802,
+        "plant_grain_share": 0.0079,
+        "unit_grain_forced_twh": 4.5975,
+        "unit_grain_share_floored_basis": 0.1232,
+        "unit_grain_share_class_basis": 0.13,
+        "breaches_cap_class_basis": false
+      },
+      "CT_PEAKER": {
+        "units_in_class": 130,
+        "units_with_floor_rows": 130,
+        "replay_class_twh": 0.4297,
+        "d2_class_total_twh": null,
+        "plant_grain_forced_twh": 0.0,
+        "plant_grain_share": 0.0,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_share_floored_basis": 0.0,
+        "unit_grain_share_class_basis": null,
+        "breaches_cap_class_basis": false
+      },
+      "CC_CHP": {
+        "units_in_class": 107,
+        "units_with_floor_rows": 107,
+        "replay_class_twh": 19.4172,
+        "d2_class_total_twh": 19.4174,
+        "plant_grain_forced_twh": 0.0638,
+        "plant_grain_share": 0.0033,
+        "unit_grain_forced_twh": 4.3319,
+        "unit_grain_share_floored_basis": 0.2231,
+        "unit_grain_share_class_basis": 0.2231,
+        "breaches_cap_class_basis": false
+      },
+      "CT_CHP": {
+        "units_in_class": 22,
+        "units_with_floor_rows": 22,
+        "replay_class_twh": 1.1524,
+        "d2_class_total_twh": 2.1546,
+        "plant_grain_forced_twh": 0.0025,
+        "plant_grain_share": 0.0012,
+        "unit_grain_forced_twh": 0.0258,
+        "unit_grain_share_floored_basis": 0.0224,
+        "unit_grain_share_class_basis": 0.012,
+        "breaches_cap_class_basis": false
+      },
+      "ST_CHP": {
+        "units_in_class": 5,
+        "units_with_floor_rows": 5,
+        "replay_class_twh": 1.0908,
+        "d2_class_total_twh": 0.0886,
+        "plant_grain_forced_twh": 0.0276,
+        "plant_grain_share": 0.3115,
+        "unit_grain_forced_twh": 0.0136,
+        "unit_grain_share_floored_basis": 0.0125,
+        "unit_grain_share_class_basis": 0.1541,
+        "breaches_cap_class_basis": false
+      }
+    },
+    "2025": {
+      "ST_GAS": {
+        "units_in_class": 88,
+        "units_with_floor_rows": 88,
+        "replay_class_twh": 9.7495,
+        "d2_class_total_twh": 12.0597,
+        "plant_grain_forced_twh": 2.1935,
+        "plant_grain_share": 0.1819,
+        "unit_grain_forced_twh": 2.7709,
+        "unit_grain_share_floored_basis": 0.2842,
+        "unit_grain_share_class_basis": 0.2298,
+        "breaches_cap_class_basis": false
+      },
+      "CC_REGULAR": {
+        "units_in_class": 129,
+        "units_with_floor_rows": 129,
+        "replay_class_twh": 35.7782,
+        "d2_class_total_twh": 33.8132,
+        "plant_grain_forced_twh": 0.408,
+        "plant_grain_share": 0.0121,
+        "unit_grain_forced_twh": 4.0903,
+        "unit_grain_share_floored_basis": 0.1143,
+        "unit_grain_share_class_basis": 0.121,
+        "breaches_cap_class_basis": false
+      },
+      "CT_PEAKER": {
+        "units_in_class": 130,
+        "units_with_floor_rows": 130,
+        "replay_class_twh": 1.5003,
+        "d2_class_total_twh": null,
+        "plant_grain_forced_twh": 0.0,
+        "plant_grain_share": 0.0,
+        "unit_grain_forced_twh": 0.0,
+        "unit_grain_share_floored_basis": 0.0,
+        "unit_grain_share_class_basis": null,
+        "breaches_cap_class_basis": false
+      },
+      "CC_CHP": {
+        "units_in_class": 107,
+        "units_with_floor_rows": 107,
+        "replay_class_twh": 20.5877,
+        "d2_class_total_twh": 20.5888,
+        "plant_grain_forced_twh": 0.0553,
+        "plant_grain_share": 0.0027,
+        "unit_grain_forced_twh": 4.299,
+        "unit_grain_share_floored_basis": 0.2088,
+        "unit_grain_share_class_basis": 0.2088,
+        "breaches_cap_class_basis": false
+      },
+      "CT_CHP": {
+        "units_in_class": 22,
+        "units_with_floor_rows": 22,
+        "replay_class_twh": 1.7113,
+        "d2_class_total_twh": 3.0932,
+        "plant_grain_forced_twh": 0.0032,
+        "plant_grain_share": 0.001,
+        "unit_grain_forced_twh": 0.0158,
+        "unit_grain_share_floored_basis": 0.0092,
+        "unit_grain_share_class_basis": 0.0051,
+        "breaches_cap_class_basis": false
+      },
+      "ST_CHP": {
+        "units_in_class": 5,
+        "units_with_floor_rows": 5,
+        "replay_class_twh": 1.4721,
+        "d2_class_total_twh": 0.0902,
+        "plant_grain_forced_twh": 0.0123,
+        "plant_grain_share": 0.1364,
+        "unit_grain_forced_twh": 0.006,
+        "unit_grain_share_floored_basis": 0.0041,
+        "unit_grain_share_class_basis": 0.0667,
+        "breaches_cap_class_basis": false
+      }
+    }
+  }
+}

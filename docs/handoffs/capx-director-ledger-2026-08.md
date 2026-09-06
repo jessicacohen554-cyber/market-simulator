@@ -6,7 +6,9 @@ commit when anything changes. The director charters sessions and tracks state �
 solves, never edits `src/market_sim/`, and never charters backcast-calibration work (that track
 is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction only).
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #43) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #44) ·
+**r#44 (HEAD `ad45b0e4`):** **BOTH RE-ISSUED LANES DISPATCHED WITHIN THE HOUR AND BOTH ARE LIVE CHECKPOINTS WITH THEIR SCREENS PASSED** (109 commits / 47 merges, the largest delta this desk has graded) · **D62: Phase 0 PASS to 0.0000, SCREEN GATE PASS on all five legs on the pre-named DY 2022/23 — ratio 1.522 → 0.936× and position −0.477 → +0.267 pt, both inside the declared bands, and the solve lands on its own pre-solve arithmetic TO THE CENT; the footprint IS the arithmetic class by class; two disclosures against interest (a nameplate/cleared-flag instrument error, and D61's censored-unit convention as nuclear's alone)** · **D60-R3: 17/17 keys unmoved, all three charter assertions MEASURED (the R-AZ gate answered by import graph), TWO ENVIRONMENT DEFECTS REPAIRED BEFORE THE FIRST SOLVE (an off-pin highspy/pandas/pydantic stack, a shallow clone), CONTROL-FIRST on all three legs with 0 non-provenance diffs and the rubric advance measured INERT, the GOLDEN-3 FC-4 input pinned not guessed, NO second drift hunk, and §8-blast-radius landed with 28 of 33 bundles PRE-hunk** · **§5.0e: the lane rebased under its own running solve, KILLED the leg, disclosed both reasons and made it mechanical (`exit 90`) — 'rebase BETWEEN legs, never DURING one' ADOPTED INTO DOCTRINE** · **ALL SEVEN GATES GREEN, A FIRST** — and **the bench part I routed for two sittings was the GATE MIS-MEASURING** (Y-17: `bench_stamp.py` is a member of its own BUILDER_SOURCES; ERCOT/2022's payload hashes identically to HEAD's), my framing corrected against interest · **Q50 re-served third time with its condition MET and HELD AGAIN ('hold until caiso-254 resolves') after this desk named the unbounded-wait problem and offered a terminating option; Q51 NOT served — nyiso-197 has no commit** · no keeper or marker moved · **nothing issued: both live lanes own every surface the queue needs** · owner track: pjm-166/167 (the touchpoint was already spent; same-HEAD control BIT-IDENTICAL; the coal-vs-CC framing REFUTED), caiso-253b landed + caiso-254 open, miso-222 measured before built (2 of 45 object hours), audit v34 (**R-AU's trigger HAS FIRED, 6 of 6 held across four runs; the flip and G2 leg 4 are ONE owner act**), SCN S1–S4 + a CCS emission-rate seam that INVERTS NEISO's headline CO2 · ruff UNREAD again (§0ao) ·
+*(previous)* **Last refresh #43:**
 **r#43 (HEAD `04e6906d`):** **THE ENTIRE r#42 am.2 WAVE WAS NEVER DISPATCHED** — D60-R3 (issued am.2), D62 (issued r#41) and D65-B (chartered) have no branch and no commit; not one capx branch exists at the pin. Under the relaunch protocol nothing is graded lost and **D60-R3 + D62 were RE-EMITTED IN FULL** (§4) — D60-R3 with a new STATE-AT-START block (D65 Act A's key-neutrality to assert, rule 30, the R-AZ backcast registration gate to check against `register_forecast_run.py`, the SCN hindcast sidecars), D62 with four marked `[r#43]` changes (D60-R2 → D60-R3, D65 landed, the two verified G-DRIFT facts, and **the D65 hunk-level lesson made binding on `retirements.py`, D62's own seam-1 file**) · **BOTH RE-SERVED CARDS HELD AGAIN by the owner although both stated conditions were MET: Q51 (NYISO, keeper unmoved) → "hold, nyiso-197 is live"; Q50 (CAISO, caiso-253 landed) → "hold until caiso-253b resolves"** — all three gate-(a) failing ISOs now carry CALIBRATED keepers and all three are unmarked BY EXPLICIT OWNER CHOICE (Q49 DECLINE, Q50/Q51 HOLD); do not re-serve before their stated conditions · **`src/market_sim/` has ZERO commits since `d66d5e6b`**, which is what makes both lanes' G-DRIFT audits cheap · gate (a) opens **GREEN for the first time since r#34** (no re-key needed); bench STALE ×1 unchanged (ERCOT/2022, routed); **ruff UNREAD — not installed in this container, recorded against interest** · owner track: **miso-221 KILLED AT RULE-29 PHASE 0, ZERO LP MINUTES** (the unreachable block is OIL), nyiso-197 phase 0 (Linden 50006 = a CHP add-back basis mismatch), caiso-253b PRECOMMIT open, **audit v33 R-AY (rule 21 xref) + R-AZ (registration-time tier-marker re-check, executed by Y-16)**, **rule 30 `[R-TOUCHPOINT-FOLD]`** · SCN WS-2b/WS-4b wrote `frontend/data/hindcast/` only, board untouched (§0an) ·
 *(previous)* **Last refresh #42:**
 **r#42 (HEAD `b2bd9fdb`):** **MISO → `2026-09-05-miso-220-nonsteam-lift` CALIBRATED (the first MISO keeper ever; C6 PASS only through the #4855 `authorized_price_tuning` channel; CT_PEAKER-2023 0.015 TWh from a kill) and CAISO → `2026-09-05-caiso-252-b1-notrim` CALIBRATED (C4 2025 0.305 → 0.297; lone C3c 2024) — NEITHER lane asked for its marker → cards C-17/Q49 (declare MISO `complete`, a first) and C-18/Q50 (re-declare CAISO `complete`); D68/D69 records lanes chartered CONDITIONAL** · MISO gate (a) re-keyed by this desk (Q34; twelfth firing) · **D65 Act A = CHECKPOINT** (build + Phase 0 reproduced to 5e-12 + G-DRIFT 58 files all INERT + A1 key `8ebed20ae90ec0e7` pre-declared; the A1 arm OWED; two ahead-of-evidence sentences graded down) · **D60-R2 silent a FOURTH sitting — D60-R3 named as next-sitting default unless confirmed alive** · D62 unlaunched · Q47/Q48 still presented · owner track: nyiso-196 clears its screen (Cricket Valley unit-id collision; full span solving), PJM 2022/2021 and ERCOT 2022 touchpoints all NOT-YET (registered; ERCOT C1 an input gap), **rule 29 clause (c) delete-before-merge (R-AV) → parity GREEN**, R-AW retires the ERCOT carve-out golden key, R-AX voids card N · **SCN-WS0's first solve: two thirds of a $25/t carbon cut LEAKS across the NYISO border** (cross-referenced to D21's P1 carbon-response defect) · bench STALE ×1 (ERCOT/2022, touchpoint lane's) · ruff red ×1 (D65's test, fixed here) · **AM.1: D65 LANDS IN FULL — its own G-DRIFT was wrong, the arm caught a MATERIAL HEAD drift (NEISO 2027 economic exits 33 → 40 rows, reproducible from `9e48ff6`; every pre-hunk forecast bundle stale → D71 named), A1 vs a same-HEAD control: the seam RE-ORDERS not re-selects (34 rows either way, one swap), ARM ONLY COUPLED WITH ACT B → Q47 amended to decide both; NYISO → `2026-09-06-nyiso-196-extract-basis` CALIBRATED, re-entry condition met → card C-19/Q51 + D70 chartered; NYISO gate (a) re-keyed (thirteenth firing)** (§0am am.1) · **AM.2 (owner LIVE, six cards clicked): D60-R2 DEAD → D60-R3 ISSUED (D71 drift bisect folded in) · Q47 ARM COUPLED after D60-R3 → D65-B chartered, released-conditional · Q48 DEFER until D62 · Q49 DECLINE (MISO unmarked; D68 closed undispatched) · Q50 HOLD until caiso-253 lands · Q51 HOLD one refresh** (§0am am.2) ·
@@ -43,6 +45,152 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0ao. Refresh #44 (2026-09-06, main HEAD `ad45b0e4`) — both re-issued lanes dispatched within the hour and both are LIVE CHECKPOINTS with their screens already passed; D62's arm lands on its own pre-solve arithmetic to the cent; D60-R3 kills a leg for a defect it found in itself; ALL SEVEN GATES READ GREEN FOR THE FIRST TIME, and the one I had been routing for two sittings was the gate mis-measuring, not the data
+
+**0. FIRST ACT.** Handoff claim (§0an = r#43, main `04e6906d`) matched the ledger's top entry; this
+is **r#44**. Delta `04e6906d..ad45b0e4`: **109 commits / 47 merges** (#4925–#4970), the largest
+delta this desk has graded. My r#43 entry merged as #4930. Lane greps for EVERY id in flight:
+**D60-R3 LIVE** (#4946/#4955/#4959/#4963, last push 02:01Z — 22 min before this pin) · **D62 LIVE**
+(#4949/#4958/#4962, last push 01:59Z) · D65-B / D58 / D63 / D66 / D67 / D71 / T3-NYISO — no commit,
+as held. Both capx branches are DELETED at the pin because the owner merges and deletes mid-cycle;
+**neither lane is graded lost — both pushed inside the last half hour and both have a long leg
+running** (D60-R3's re-launched CAISO leg, D62's full T1-H window). **GATES: 7 OF 7 GREEN — the
+first all-green reading in this desk's history.** `audit_keepers` 0 · parity 0 · gate (a) **0, no
+re-key owed for a second consecutive sitting** · matrix 0 · forecast-staleness 0 · **bench 0** ·
+goldens 0.
+
+**1. GRADED BY CONTENT — capx lanes. Both CHECKPOINTS, both clean, neither finished.**
+
+- **D62 — CHECKPOINT, and the strongest pre-solve discipline this desk has graded.** PRECOMMIT
+  pushed before the first line of build (`1f4a548f`); the mechanism built exactly to charter (one
+  `{iso: bool}` gate, default-off, cache-key registered, no scalar — the published values stay
+  DATA in `pjm.csv`); the vintage rule fixed before any solve. **Phase 0 PASS to 0.0000 $/MW-day
+  and 0.0000 pt on all four delivery years.** **SCREEN on DY 2022/23 — the year named in the
+  PRECOMMIT before it ran, chosen on footprint (330 CT / 115 gas_st / 421 oil units at exactly zero
+  E&AS; coal's ATB gap widest) and NOT on residual — GATE PASS on all five legs:** ratio
+  **1.522 → 0.936×** (declared band 0.87–1.06), position **−0.477 → +0.267 pt** (declared +0.1…+0.3),
+  and **the solve lands on its own pre-solve arithmetic to the cent** ($46.7823 vs $46.78; position
+  1.053672 vs 1.0537). G2's footprint is the arithmetic class by class — every offer delta is exactly
+  `(ATB bar − published bar + 2.199) × 1000 / (af × 365)`, uniform within class, and **nuclear moves
+  zero on both sides**; G4's reactive leg enters once with a max relative error of **3.6e-16**; G5's
+  seven non-target quantities are byte-identical. **Two disclosures against interest, both the lane's
+  own and both unprompted:** a first-pass instrument read the ledger's 5th `offer_stack` element as
+  nameplate when it is a `cleared` flag and produced a plainly wrong S6 (1.52×) — written into the
+  finding rather than silently corrected, with the nameplate now recovered through the code's own
+  `thermal_accreditation_fraction`; and D61's censored-unit convention is disclosed as an
+  approximation that is **nuclear's alone**, with the solve settling it (all 31 nuclear units still
+  offer exactly 0). **OWED: §§5–9 — the full T1-H window, the pre-declared-signs grading, the §8
+  recommendation.** Registration was correctly withheld behind D60-R3.
+- **D60-R3 — CHECKPOINT, and it spent its whole first phase making the LP trustworthy before
+  spending one.** **17 of 17 keys unmoved** through the real harness path, so STOP 1 stands for all
+  three legs. All three charter assertions **measured, not argued**: D65 Act A is key-neutral at its
+  default (default and explicit `False` collide on `e5ecd4105ada3e58`); **the R-AZ gate touches
+  `dashboard_add_run.py` and `lib/holdout_policy.py`, neither of which `register_forecast_run.py`
+  imports** — the exact question r#43's charter told it to answer in one line, answered by import
+  graph; the SCN sidecars are in `frontend/data/hindcast/`. **Two environment defects found and
+  repaired BEFORE the first solve, both invisible in a bundle afterwards:** the container had
+  **highspy 1.15.1 / pandas 3.0.5 / pydantic 2.13.5 against pins of 1.14.0 / 3.0.3 / 2.13.4** — a
+  different HiGHS build is a different solver, and D65 §3b's entire drift argument rests on the stack
+  matching; and the clone was shallow so `9e48ff6` was unresolvable (deepened 183 → 1,049). **CONTROL
+  FIRST on all three legs at zero LP** (D47 §1's discipline): every control re-scored by the HEAD
+  scorer, **0 non-provenance diffs**, and **the rubric's 1.0 → 1.1 advance measured INERT on all
+  three** — so any FC row that moves on a leg is attributable to the run, not the scorer. One input
+  **pinned rather than assumed**: GOLDEN-3's FC-4 has two NEISO crossover candidates on disk and the
+  obvious guess (`capxd14`) misses three metrics while `rcrepair` matches every one — the D47 §1 trap,
+  caught before it manufactured a false FC-4 movement. **§5.0d: the second-hunk probe reads POST-hunk
+  on every ledger key — NO second hunk, the STOP does not fire.** **§8-blast-radius landed: the drift
+  hunk named and 28 of 33 committed forecast bundles placed PRE-hunk.** **§5.0c corrects Addendum B's
+  own FC-5/FC-6 premise before leg 5 runs, and refuses to take either branch on assertion.**
+  **§5.0e — A PROCESS DEFECT DISCLOSED AGAINST ITSELF, and this desk records it as the model of the
+  behaviour it wants:** a routine `git fetch && git rebase` four minutes into the CAISO leg rewrote
+  four solve-path files on disk under the running LP (`scenarios.py`, `capacity_market.py`,
+  `retirements.py`, `avoidable_cost_rate.py` — measured by mtime against the solve's start). The lane
+  killed the leg, deleted the partial bundle and re-ran from zero, for two reasons either of which is
+  alone disqualifying: `write_run_config` stamps `git.sha` at the END of a run, so the bundle would
+  have carried a FALSE stamp — and this is the lane that spent the session classifying every bundle by
+  exactly that field; and `data/avoidable_cost_rate.py` is a lazy import inside the capacity-evolution
+  path that D62 had just changed, so the run could have been an undetectable mixture of two source
+  trees. **Cost 5 minutes; nothing partial reached `results/` or `main`.** The lane then re-read STOP 1
+  at the new HEAD rather than assuming it carried (17/17 again, D62's field key-neutral) and made the
+  failure mode mechanical: **the leg driver records HEAD before the solve and refuses to score or
+  register if HEAD moved during it (`exit 90`).** **The general rule it names — "rebase BETWEEN legs,
+  never DURING one" — resolves a real conflict between two standing disciplines and this desk adopts
+  it into the doctrine.** **OWED: the three legs, the Q37 rows, §5 and the close.**
+
+**2. GRADED — owner track and other desks.** **NO KEEPER MOVED and no marker moved this delta**
+(the three `keepers/`+`calibration-complete.json` commits are pjm-166's repair of a STALE PJM
+keeper-shard `holdout_touchpoint` — the status card was showing two different 2022 numbers — plus a
+dangling cross-reference closed by the keeper-auditor). **pjm-166/167:** the chartered 2022 touchpoint
+re-run was **already spent**, so it re-scored from committed artifacts instead of re-solving; the
+same-HEAD in-sample control came back **BIT-IDENTICAL**; the coal-vs-CC merit-order framing for PJM's
+held-out C1 miss is **REFUTED**; an out-of-sample diurnal-amplitude divergence recorded. **caiso-253b**
+landed (G-BIMODAL audit probe, streams the bid corpus and refuses partial coverage) and **caiso-254**
+opened with its G-DRIFT chain extended to `bc77b189` and a **gate-power limit disclosed BEFORE the
+screen year is named** — the rule-29 discipline used exactly as written. **miso-222:** the
+ELMP/emergency-supply ask **measured before it is built** — 1.7–2.0 GW against a 5.6–22.0 GW
+requirement, reaching **2 of 45 object hours**. **NYISO/NEISO C8 measured at unit grain** on the
+current keepers (nyiso-193 card, option C). **AUDIT v34:** the **flip set is 6 of 6 and has HELD
+across four consecutive runs — R-AU's trigger HAS FIRED**; G2 leg 4 still reads `protected: false` at
+a fourteenth reading; the board states plainly that the flip and leg 4 are **the same owner act**.
+**Y-17, Y-18, Y-19, Y-20 landed.** **SCN-DESK:** owner rulings S1–S4 recorded and four lanes released;
+WS-1c executed the **federal carbon price as a FLOOR under the state program** (ruling S2) with
+full-suite parity accounting (264 − 20 = 244 = baseline); WS-4c's LOAD-HI T0 battery; SCN-LEVELS
+committed the campaign levels per S3 and stopped the two CES docstrings saying "illustrative";
+**SCN-LOAD curated the six published ISO load forecasts as a new datatype**; **WS-2b found a CCS
+emission-rate seam that INVERTS NEISO's headline CO2 answer** — routed there, named here.
+
+**THE BENCH GATE, AND A CORRECTION TO MY OWN TWO SITTINGS OF ROUTING.** `check_bench_freshness`
+now reads **EXIT 0, 0 STALE**. It is not the data that changed and it is not a lowered bar:
+**Y-17 found that `bench_stamp.py` is a member of its own `BUILDER_SOURCES`**, so Y-12's edit to
+it moved the aggregate fingerprint for **every bench part in existence** — correct as provenance,
+but degenerate as the *payload reproducibility* test, which is the question a re-stamp actually
+turns on, because it can never read "equal" for a part built before such an edit. Y-17 splits the
+two: ERCOT/2022's builder payload sources hash to `643eac24b565`, **identical to HEAD's**, so its
+numbers ARE reproducible and it is a provenance note, not a gate failure. **I routed this part to
+the owner's ERCOT track at r#42 and again at r#43 as "regenerate before trusting it". The routing
+was right; my framing was wrong** — I described a stale artifact needing a rebuild when the gate
+was mis-measuring, and I never asked why a single part would go stale in isolation. Recorded
+against interest.
+
+**3. RULINGS / DECISIONS.** **Q50 RE-SERVED (third serve) and HELD AGAIN — "Hold until caiso-254
+resolves".** Its r#43 condition was MET (caiso-253b resolved at #4964; the keeper unmoved), and this
+desk served it with the structural observation it owed: CAISO's backcast lane has been continuously
+active for four sittings (252 → 253 → 253b → 254), so **"hold until the successor resolves" has no
+terminating state** — each hold buys a new successor — and an option was offered that terminates
+("declare at r#45 unless the keeper moves"). The owner chose the open-ended hold anyway; that is the
+owner's call and it is recorded without further argument. **D69 stays chartered, undispatched;
+re-serve condition for r#45: caiso-254 lands.** **Q51 NOT SERVED — its condition is NOT met:
+nyiso-197 has no commit in this delta** (the NYISO lane that landed is the C8 unit-grain measurement
+on the nyiso-193 card, a different object). D70 stays held; re-serve when nyiso-197 lands AND the
+keeper reads CALIBRATED. Q1–Q51 remain spent; **no new owner-tier question is open.** Duty-7 sweep
+before serving: audit v34's newest entry is **records-only and declares "no marker"** — nothing
+card-adjacent, no duplication risk. Director decisions: neither live lane graded lost (both pushed
+within 25 min of the pin); no gate-(a) re-key owed; **D60-R3's "rebase BETWEEN legs, never DURING
+one" adopted into the standing doctrine** and written into the handoff.
+
+**4. THE QUEUE.** D60-R3 LIVE (three legs owed; releases D65-B, D62's registration, D58, D63) ·
+D62 LIVE (full window + §§5–9 owed; registration behind D60-R3) · D65-B released-conditional on
+D60-R3's finding · D58 + D63 held on D60-R3 · D69 held on caiso-254 · D70 held on nyiso-197 ·
+T3-NYISO held on the NYISO marker · D66 / D67 / D71 and the carbon-response root-cause lane
+queued-named and unchartered. **Nothing new issued this sitting — the two live lanes own every
+surface the queue's next items need, and issuing into them would collide.** Collision map at the
+pin: D60-R3 alone on `ff-verdicts.json` / `program-status.json`; D62 on `retirements.py` +
+`capacity_market.py` + `avoidable_cost_rate.py` + a scenarios.py field outside the D50 block; SCN on
+`frontend/data/hindcast/` and its own field regions; three owner backcast lanes on the keeper shards.
+Disjoint — and the one place it wasn't (D62's build landing under D60-R3's running solve) is now
+mechanically guarded by `exit 90`.
+
+**5. RECORDED AGAINST INTEREST / HOUSEKEEPING.** (i) The bench-routing correction above — two
+sittings of a wrong framing, corrected by another desk's diagnosis rather than mine. (ii) `ruff` is
+again not installed in this container; the reading is UNREAD, not green, for a second sitting.
+(iii) This desk issued nothing at r#44 and that is the right call, not an idle one: both live lanes
+hold the surfaces the queue needs, and r#43's lesson was that issuance without dispatch costs a
+sitting — issuance into a collision would cost more. (iv) The r#43 handoff's closing line ("dispatch
+is unconfirmed until a branch exists") worked: both lanes were dispatched within the hour and both
+had branches before their first push.
 
 ---
 

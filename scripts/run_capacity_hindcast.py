@@ -143,6 +143,7 @@ if str(_ROOT) not in sys.path:
 
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
+    resolve_capacity_going_forward_bar_published,
     resolve_capacity_market_supply_clearing,
 )
 from market_sim.config.iso_configs import (  # noqa: E402
@@ -499,6 +500,17 @@ META_RECORD_SPEC = RecordSpec(
             "row AND the curve gate; the raw mapping is recorded below",
         ),
         "capacity_market_supply_clearing_by_iso": FromConfig(),
+        # capx D62: the published going-forward-bar gate. Derived through the
+        # ONE predicate so the record reads the RESOLVED gate (FFR-3R), with
+        # the raw mapping recorded beside it.
+        "capacity_going_forward_bar_published": Derived(
+            lambda cfg, ctx: bool(
+                resolve_capacity_going_forward_bar_published(cfg, ctx["iso"])
+            ),
+            "resolve_capacity_going_forward_bar_published(cfg, iso): the "
+            "armed row; the raw mapping is recorded below",
+        ),
+        "capacity_going_forward_bar_published_by_iso": FromConfig(),
         # capx D52 NYISO adequacy-requirement devintage gates. FromConfig so
         # the record reads the SOLVED gates (FFR-3R).
         "nyiso_requirement_forecast_peak": FromConfig(cast=bool),
@@ -656,6 +668,7 @@ def build_config(
     pjm_accreditation_design_vintage: "bool | None" = None,
     pjm_demand_response_supply: "bool | None" = None,
     capacity_market_supply_clearing: "bool | None" = None,
+    capacity_going_forward_bar_published: "bool | None" = None,
     nyiso_requirement_forecast_peak: "bool | None" = None,
     nyiso_requirement_vintage_factors: "bool | None" = None,
     locality_capacity_curves: "bool | None" = None,
@@ -891,6 +904,15 @@ def build_config(
                 "capacity_market_supply_clearing_by_iso": (
                     {iso: True} if capacity_market_supply_clearing else None
                 ),
+                # capx D62: the published going-forward-bar gate — GATED
+                # default-off for every ISO; None inherits the shipped
+                # default, True arms the D62 A/B posture for the INVOKED ISO
+                # (distinct cache key). Same shape as the clearing sibling
+                # above; an explicit --no-... is passed outside this
+                # None-drop dict (below).
+                "capacity_going_forward_bar_published_by_iso": (
+                    {iso: True} if capacity_going_forward_bar_published else None
+                ),
                 # capx D52: NYISO adequacy-requirement devintage gates —
                 # default-off; None inherits the shipped default, True arms
                 # the D52 A/B measurement posture (distinct cache key).
@@ -1058,6 +1080,16 @@ def build_config(
         **(
             {"capacity_market_supply_clearing_by_iso": None}
             if capacity_market_supply_clearing is False
+            else {}
+        ),
+        # capx D62: the same explicit-OFF path for the published-bar gate. No
+        # ISOConfig arms it today, so this is belt-and-braces — but it must
+        # exist BEFORE any arming card, and passing None explicitly keeps the
+        # off arm on the bare recipe key (the field is registered in
+        # _CACHE_KEY_OPTIONAL_FIELDS at None, so an explicit None still drops).
+        **(
+            {"capacity_going_forward_bar_published_by_iso": None}
+            if capacity_going_forward_bar_published is False
             else {}
         ),
     )
@@ -1641,6 +1673,28 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--capacity-going-forward-bar-published",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D62 (2026-09-06) arm: the retirement screen's going-forward "
+            "BAR becomes the ISO's OWN PUBLISHED default gross Avoidable Cost "
+            "Rate (PJM Manual 18 Rev 62 §5.4.8.4(B), on nameplate, from "
+            "data/raw/capacity-market/avoidable-cost-rate/) in place of the "
+            "ATB FOM proxy fixed_om_<fuel> x retirement_fom_multiplier_<fuel>, "
+            "and the tariff's published reactive component becomes the SINGLE "
+            "out-of-market leg of the screen's margin. Because the D57 "
+            "clearing's sell offer reads the SAME going_forward_cost, the exit "
+            "bar and the offer cap stay one object. Generic in form, PJM-"
+            "scoped by DATA (rule 25): an ISO with no intaken table keeps the "
+            "ATB path for every unit. OMIT to inherit the shipped default "
+            "(off, owner-armed only); --capacity-going-forward-bar-published "
+            "arms it for the invoked ISO (distinct cache key); "
+            "--no-capacity-going-forward-bar-published is the explicit OFF "
+            "control."
+        ),
+    )
+    parser.add_argument(
         "--locality-capacity-curves",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2142,6 +2196,9 @@ def main(argv: list[str] | None = None) -> int:
         pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
         pjm_demand_response_supply=args.pjm_demand_response_supply,
         capacity_market_supply_clearing=args.capacity_market_supply_clearing,
+        capacity_going_forward_bar_published=(
+            args.capacity_going_forward_bar_published
+        ),
         nyiso_requirement_forecast_peak=args.nyiso_requirement_forecast_peak,
         nyiso_requirement_vintage_factors=args.nyiso_requirement_vintage_factors,
         locality_capacity_curves=args.locality_capacity_curves,

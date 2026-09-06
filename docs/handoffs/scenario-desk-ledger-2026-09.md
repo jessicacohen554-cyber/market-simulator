@@ -7,7 +7,42 @@ state — it never solves, never edits `src/market_sim/` or `scripts/`, and neve
 backcast-calibration work or anything on the capacity-expansion director's queue
 (`docs/handoffs/capx-director-ledger-2026-08.md`), which it deconflicts with at every refresh.
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #5, amendment 1) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-06 (refresh #6, amendment 1) ·
+**r#6 am.1 — RULING S5 SPLITS STAGE A IN TWO.** D-7 is ruled: **hold the policy half, run the
+load half now.** Stage A is no longer one campaign. **STAGE A-LOAD** — `REF` /
+`LOAD-HI` / `LOAD-HI-ORGANIC` across six ISOs, plus the pure-carbon T0 probes **below 2028** —
+has **no `gas_cc_ccs` exposure at all** and proceeds as soon as SCN-WS4c lands. **STAGE A-POLICY**
+— every CES case, every carbon case at or above `ccs_retrofit_available_year` (2028), `ALL-CLEAN`,
+and the `VOL-*` cases when they exist — **HOLDS until the capx CCS emission-rate seam is
+repaired**. The ruling buys the campaign's uncontaminated half now and spends no LP twice.
+**Routed to the capx director as a priority signal**: their CCS repair now gates half of a
+chartered campaign, which it did not before. **The desk issues nothing on this ruling** — A-LOAD's
+own precondition (SCN-WS4c) is still in flight, so the sequencing is recorded and the lane is
+issued the refresh WS-4c lands.
+*(previous)* **r#6 (HEAD `ad45b0e4`):**
+**r#6 (HEAD `ad45b0e4`):** **ALL FOUR RULING-RELEASED LANES LANDED IN ONE DAY — and SCN-WS2b
+found a defect that SIGN-FLIPS the campaign's headline answer.** Landed: **SCN-WS1c** (ruling S2
+executed — the federal price is now a floor under the state program, matrix re-stamped, full-suite
+parity accounted, and a second copy of the replace assertion found by parity), **SCN-WS2b** (the
+ERCOT + NEISO ladders re-proved at HEAD, the national clearing script, the ERCOT/NEISO cells
+re-stamped), **SCN-LEVELS** (S3 executed, `CES-T80` made live, levels measured to be the levels
+the lanes actually ran), **SCN-LOAD** (S4 executed — six published ISO load forecasts curated as
+the `load-forecast` datatype, with an obtainability-measured scope note pushed first) ·
+**THE FINDING THAT MATTERS MORE THAN ANY OF THEM: a CCS emission-rate seam defect that INVERTS
+NEISO's headline CO2 answer.** Retrofitted `gas_cc_ccs` units are credited at 0.95 by the CES
+while carrying an **uncaptured** `emission_rate` in the dispatch fleet — measured on one unit
+across its own retrofit year, `fuel_type` flips ✓, `heat_rate` rises ×1.12 ✓, and `emission_rate`
+stays **0.3745 → 0.3745** ✗; three writes in one block of `ccs.py`, two persist, one is
+overwritten downstream. As scored, the CES premium **raises** NEISO 2030 CO2 by **+9.99 Mt**; with
+the intended 90 % capture applied at fixed dispatch it **cuts** it by **−6.01 Mt**. **This is a
+capx-track file and not the desk's to fix — routed** — but it bears directly on the owner's actual
+question, so **card D-7 is presented**: does Stage A run before it is repaired? · **SCN-WS4c is IN
+FLIGHT** (PRECOMMIT, a zero-LP phase 0, harness and the first T0 slim artifacts) · **SCN-WS1b has
+produced nothing for two refreshes and SCN-WS3b has never appeared — status ASKED, neither graded
+lost**, per the standing change this desk made at r#5 after getting exactly that call wrong ·
+**the CI-red SCN-WS1c routed is already GREEN** — the capx track discharged it; verified, not
+assumed.
+*(previous)* **r#5, amendment 1:**
 **r#5 am.1 — FOUR OWNER RULINGS, RECORDED VERBATIM AS S1–S4, AND EVERY ONE OF THEM UNBLOCKS A
 LANE.** **S1 (D-3) = YES**, a voluntary clean-demand scenario axis is admissible as a declared,
 forecast-only, publicly-anchored axis — the ffr-5b ruling is held to be about a *fitted driver*,
@@ -133,6 +168,127 @@ unchanged and is what matters.
 ---
 
 ## 0. Refresh log (newest first)
+
+### r#6 amendment 1 — 2026-09-06: ruling S5 on card D-7
+
+**S5 (2026-09-06), verbatim in effect: HOLD THE POLICY HALF; RUN THE LOAD HALF NOW.** Stage A
+splits along the one line the defect actually draws — whether a case moves `gas_cc_ccs`.
+
+| | cases | CCS exposure | status |
+|---|---|---|---|
+| **STAGE A-LOAD** | `REF`, `LOAD-HI`, `LOAD-HI-ORGANIC` across six ISOs at T1-F 2026–2030; plus the pure-carbon **T0 2026** probes | **none** — the retrofit screen is inert below `ccs_retrofit_available_year` (2028) by construction, and a 2026-only T0 never reaches it | **RELEASED.** Issued the refresh SCN-WS4c lands (its probes are this half's T0 leg). |
+| **STAGE A-POLICY** | every `CES-*` case, every carbon case at or above 2028 (`CARB-*` T1-F legs), `ALL-CLEAN`, and `VOL-*` / `CES-P20+VOL-HI` when they exist | **yes** — these are the cases whose CO2 number may be sign-wrong | **HELD** until the capx CCS emission-rate seam is repaired and a paired check confirms `emission_rate` follows the retrofit. |
+
+**Why this is the cheap answer, stated so a successor does not re-litigate it.** The alternative
+the desk offered — run everything now, re-solve the affected cases after the repair — spends the
+LP twice on most of the policy half (six ISOs × the CES ladder + the 2028+ carbon legs), and the
+alternative of holding *everything* would park the load half behind a defect it has no exposure
+to. S5 takes the only split that costs neither.
+
+**What the desk does with it, and what it does not.** Recorded here and in plan §6; **routed to
+the capx director as a priority signal** — the CCS repair (D50/D60/D65 lane) now gates half of a
+chartered campaign, which it did not before this refresh. The desk **issues nothing on this
+ruling today**: Stage A-LOAD's precondition is SCN-WS4c, still in flight. When WS-4c lands, the
+six `SCN-WS5A-LOAD-<ISO>` lanes and their synthesis are issuable **without a further card** —
+S5 is the authorization for that half.
+
+**One scope note recorded against interest.** The `VOL-*` cases are placed in A-POLICY, not
+A-LOAD, even though the voluntary row's default eligible set is renewable-only and does not credit
+CCS. The reason is that a voluntary attribute row still *displaces thermal*, and in a 2026–2030
+window NEISO's CCS fleet exists from 2028 — so a `VOL-*` leg can move `gas_cc_ccs` indirectly. It
+is moot for sequencing today (SCN-WS3b has not started), but the placement is deliberate rather
+than inherited.
+
+---
+
+### r#6 — 2026-09-06, main HEAD `ad45b0e454022e55ac76d1e03e0e6c207ae86be2`
+
+*(PR #4970.)* Delta from the r#5 pin `3dcf1b22`: **113 commits**. The four lanes released by
+rulings S1–S4 were issued and, for three of the four, launched and landed inside a single day.
+
+**GRADED BY CONTENT:**
+
+| lane | verdict | evidence |
+|---|---|---|
+| **SCN-WS1c** | The floor repair — plan §7 "WS-1a" item 1, released by S2 | **LANDED r#6** | `claude/scn-ws1c-carbon-floor-tmlmjl` (PRs #4956/#4961/#4967) | **Fable** | Ruling S2 executed. PRECOMMIT predicted the repair before the code; a **second copy of the replace assertion** was found by the parity sweep; full suite accounted to baseline (264−20=244); matrix re-stamped. Routed a CI-red it had not caused rather than reaching into another track's file — **now green** (§0 r#6). |
+| **SCN-WS2b** | Premium-ladder re-prove at HEAD posture + `scripts/ces_national_clearing.py` | **LANDED r#6 — the session's most consequential lane** | `claude/scn-ws2b-ces-clearing-y40sks` (PRs #4909/#4963-adj) | **Opus** | All six ladder legs solve and register; the clearing script closes the G-S2 bracket for one cell (NEISO 2026, 0.00 pp, and honest about *why*); ERCOT saturates \$20–\$40 on `iso_budget_exhausted`. **Found the CCS emission-rate seam that sign-flips NEISO's headline CO2 (+9.99 → −6.01 Mt)** and routed it rather than fixing another track's file. |
+| **SCN-LEVELS** | Commit the §3.5 campaign levels, released by S3 | **LANDED r#6** | `claude/scn-levels-*` | **Fable** | S3 executed: levels committed, `CES-T80` made live, docstrings de-illustrated. Its FINDING **measures** rather than asserts that the committed levels are the levels the lanes ran. |
+| **SCN-LOAD** | The full six-source `load-forecast` curated datatype, released by S4 | **LANDED r#6** | `claude/scn-load-forecast-intake-t17qxj` (PR #4970) | **Opus** | S4 executed. Scope note pushed first with **obtainability measured per source**, so the closure is scored against a prediction; the six published forecasts curated as the datatype. |
+| **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F, scored against WS-4b's pre-declared readings | **IN FLIGHT r#6** | `claude/scn-ws4c-load-hi-probes-o85iyi` | **Opus** | PRECOMMIT + a **zero-LP phase 0** confirming WS-4b's arithmetic is HEAD's (rule 29 step 0 working) + harness + the first T0 slim artifacts. Owed: the rest of the battery, the two T1-F legs, the HIT/MISS scoring, the FINDING. |
+| **SCN-WS1b** | Six-ISO carbon paired T0 probe + NEISO/ERCOT delta ladder + the per-ISO leakage line | **STALLED r#6 — status ASKED** | merged through `main` at r#5 | **Opus** | PRECOMMIT + instruments landed r#5; **nothing since, across two refreshes**. Holds merged PRs, so the relaunch protocol does not apply on its face. **Asked, not graded lost** — the r#5 correction exists because this desk got exactly that call wrong on SCN-WS4b. |
+| **SCN-WS3b** | Voluntary-demand build, released by S1 | **NOT SEEN r#6 — status ASKED** | `claude/scn-ws3b-voluntary-demand-n5wq` | **Fable** | No branch, no commit, one refresh after issuance — inside the threshold. Asked. **It and SCN-WS3c are two of the three lanes between here and Stage A.** |
+
+**THE HEADLINE FINDING, AND IT IS NOT A CES FINDING.** SCN-WS2b's re-prove existed to catch
+exactly this class of thing, and it did. In NEISO the CES premium's **entire** response is
+`gas_cc_ccs` (17.1 → 59.7 TWh at 2030), and **those retrofitted units are credited at 0.95 by the
+CES while carrying an UNCAPTURED emission rate in the dispatch fleet.** Measured on a single unit
+across its own retrofit year:
+
+| field | before | after | verdict |
+|---|---|---|---|
+| `fuel_type` | `gas_cc` | `gas_cc_ccs` | ✓ |
+| `heat_rate` | 7.5101 | 8.4113 (×1.12, the parasitic penalty) | ✓ |
+| `emission_rate` | 0.3745 | **0.3745** | ✗ **unchanged to four decimals** |
+
+Three writes in the same block of `ccs.py`; two persist, one is overwritten downstream. **The
+consequence is a sign flip on the campaign's own headline metric:** as scored the premium *raises*
+NEISO 2030 CO2 by **+9.99 Mt**; with the intended 90 % capture applied as an accounting
+recomputation at fixed dispatch it *cuts* it by **−6.01 Mt**.
+**Not this desk's to fix and not SCN-WS2b's** — `ccs.py`, `data/fleet/` and `runner.py` are all
+outside that lane's regions and the CCS seam belongs to the capx D50 / D60 / D65 lane. **Routed
+to the capx director** with the arithmetic attached (WS-2b FINDING §8). What the desk adds is the
+scope statement the routing needs: **every campaign case that moves `gas_cc_ccs` has a CO2 number
+that may be sign-wrong until this is repaired** — which is the CES cases, the carbon cases above
+`ccs_retrofit_available_year` (2028), and `ALL-CLEAN`. That is most of Stage A's policy half, and
+it is why **card D-7 is presented** rather than the desk quietly sequencing around it.
+
+**A SECOND, OPPOSITE LEAKAGE RESULT — the campaign is now measuring something real.** WS-0
+measured a $25/t carbon adder exporting two thirds of its NEISO CO2 reduction across the NYISO
+seam. WS-2b measures the CES premium doing **the reverse**: `import_co2_mt_reported` **falls**
+6.38 → 3.36 Mt at 2030 (−3.02 Mt) as 17.5 TWh of imports are repatriated. Two instruments, two
+opposite signs, both measured — the import line WS-0 built is earning its place.
+
+**OTHER SUBSTANTIVE RESULTS WORTH THE OWNER'S ATTENTION.**
+- **The ERCOT ladder now SATURATES between \$20 and \$40**, because the binding constraint in
+  every premium year is `iso_budget_exhausted`, **not economics**. Direction holds table by table
+  against July; levels do not, and every level change is charged to a named flip or reported as
+  unattributed — which is what item 1 was for. ERCOT's BAU commissioned VRE collapses
+  **14 GW → 0.65 GW** and its CES-40 build falls **37 GW → 24 GW** since July.
+- **The G-S2 bracket CLOSES for one cell, and closes for an honest reason.** SCN-WS2a's target-row
+  probe landed mid-session, so the uniform-share half existed after all: at NEISO 2026 both
+  representations read **0.3447**, gap **0.00 pp** — and they agree **because neither moves
+  anything** (the premium is dispatch-inert there; the 0.55 target row escapes at its ACP). The
+  cross-ISO spread under a uniform price grows **8.7 pp (2026) → 35.2 pp (2030)**.
+
+**THE ROUTED CI-RED IS ALREADY GREEN — verified, not assumed.** SCN-WS1c routed a rule-28(c)
+breach on pristine `main`: `capacity_going_forward_bar_published_by_iso`, a shared field landed
+with the capx D60-R3 merge, had no matrix row and no ratchet entry, turning `mechanism-matrix-guard`
+red on every open PR. The lane correctly refused to fix another track's cell (rule 28(d)) and
+routed it. At this pin the desk re-ran `scripts/check_mechanism_matrix.py` on a clean checkout:
+**exit 0, "absent-shared ratchet OK".** The capx track discharged it. Closed, with the lane's
+handling recorded as correct: it reported a red gate it had not caused and did not reach into
+another lane's file to clear its own PR.
+
+**RULE CHANGES SINCE r#5 — three, and two bind SCN lanes directly.**
+- **Rule 21 `[R-DOF]`** gains the R-AY cross-reference: an authorized `offer_curve_by_group`
+  multiplier IS a ledgered free parameter, identified by the ruling rather than a measured source,
+  and its presence does not by itself make the residual it closes an open root-cause issue.
+- **Rule 22 `[R-HOLDOUT]` gains the R-AZ registration-time marker re-check** — the launch gate
+  read the marker once, so a multi-hour solve could outlive its authorization;
+  `dashboard_add_run.py` now re-asks at registration, **with no bypass flag**. Binds any SCN lane
+  registering a run: a refused registration is not a registration.
+- **Rule 30 `[R-TOUCHPOINT-FOLD]`** is now written out in full (stamp to the keeper, rebuild the
+  status ladder, a held-out year never downgrades the ISO) plus rubric **v3.6** (on an
+  out-of-training year C3c's lone-failure condition is dropped). No SCN lane touches a touchpoint.
+
+**WHAT IS UNBLOCKED: nothing new, and the reason is worth stating.** SCN-WS3c still needs
+SCN-WS3b, which has not started. Stage A still needs SCN-WS1b, SCN-WS4c and the WS-3b→WS-3c pair.
+**The gate on Stage A is no longer a ruling — it is three lanes and one defect.**
+
+**Issued:** nothing. **Cards:** **D-7 PRESENTED** (Stage A vs the CCS seam). D-3c and D-6 remain
+open; D-5 remains correctly held.
+
+---
 
 ### r#5 — 2026-09-06, main HEAD `3dcf1b220ed2cf2bbb62e38b4af3906510c83a5f`
 
@@ -529,7 +685,8 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-WS4c** | Six T0 LOAD-HI probes + NEISO/ERCOT T1-F | **BLOCKED (wave 2)** | — | Opus | WS-0 ✓, WS-4a ✓. **Blocked on SCN-WS4b-r2 alone.** |
 | **SCN-WS3b** | Voluntary-demand build | **BLOCKED (wave 2) — on the CARD only** | — | Fable | Both code preconditions now MET (WS-2a's `rows.py` coupling relaxation landed and documents the second-consumer seam; WS-4a's DC module landed). Blocked solely on **D-3 + the memo's boxes D-3b/D-3c/D-2-voluntary**, all open. |
 | **SCN-WS3c** | Voluntary-demand probe (ERCOT T0 → T1-F) | **QUEUED — precondition now reachable** | — | Opus | Precondition: SCN-WS3b on main, which S1 has now released. Issued the refresh WS-3b lands. |
-| **SCN-WS5A-\<ISO\>** ×6 + **-SYNTH** | Stage A campaign, T1-F 2026–2030, all six ISOs | **QUEUED (wave 3)** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
+| **SCN-WS5A-LOAD-\<ISO\>** ×6 + **-SYNTH** | **Stage A-LOAD** — `REF`/`LOAD-HI`/`LOAD-HI-ORGANIC`, T1-F 2026–2030, six ISOs | **RELEASED by S5 — issues when SCN-WS4c lands** | — | Opus | No CCS exposure (the retrofit screen is inert below 2028). **Needs no further card**: S5 authorizes this half. |
+| **SCN-WS5A-POLICY-\<ISO\>** ×6 + **-SYNTH** | **Stage A-POLICY** — the CES cases, the 2028+ carbon legs, `ALL-CLEAN`, `VOL-*` | **HELD by S5 on the CCS seam** | — | Opus | Precondition: WS-0, WS-1a/b, WS-2a/b, WS-4a/b/c on main; WS-3b/c on main **or** D-3 ruled NO (then VOL-\* and CES-P20+VOL-HI drop, with a ledger note). |
 | **Stage B** | Full-horizon legs | **NOT ISSUABLE** | — | — | Needs card D-5 **and** an OPEN §2.1b gate for the named ISO at issuance. At the r#1 pin only NEISO is open. Re-check at issuance, never at planning. |
 
 ---
@@ -545,7 +702,8 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **D-3** | Is a voluntary clean-demand **scenario axis** admissible given ffr-5b's inadmissibility ruling on corporate PPA demand as a *driver*? | **RULED r#5 am.1 — S1** | **S1 (2026-09-06): YES — a declared, forecast-only, publicly-anchored, default-off scenario axis.** The ffr-5b ruling is held to be about a *fitted driver*, a different admissibility class; its null is preserved in REF and every scored lane. → **SCN-WS3b issued**, WS-3c follows it. |
 | **D-3b** | *(memo box 2)* Does in-LP hourly (24/7) matching stay deferred to the isolated `scope2-lce-portfolio` tool? | **RULED r#5 am.1 — with S1** | **DEFERRED.** The owner took S1's recommended form rather than the hourly-in-LP variant, so 24/7 stays in the isolated tool, fed the campaign's LMPs. WS-3b builds the annual volumetric row only. |
 | **D-3c** | *(memo box 3, NEW)* The eligible set — renewable-only by default (incl. offshore wind), carbon-free (nuclear/CCS) only as a labelled override; credit all eligible units or new builds only? | **PRESENTED r#2 — STILL OPEN after S1/S3** | — · S1 ruled the AXIS admissible and S3 ruled its LEVELS; neither reaches the eligible SET. SCN-WS3b therefore builds against the memo's **recommendation**, which stays labelled a recommendation and is the one place SCN-LEVELS deliberately left the illustrative-class wording standing (`FINDING-scn-levels-2026-09-06.md` §4). |
-| **D-4** | Fund the `load-forecast` curated intake? | **RULED r#5 am.1 — S4** | **S4 (2026-09-06): FUND THE FULL DATATYPE.** All six published sources curated through the data-intake skill. **This OVERRIDES the desk's and SCN-WS4a's recommendation to defer**, and is the largest of the three options offered — recorded as the owner's call on a question the desk had answered the other way. → **SCN-LOAD issued**, with the known 403 host wall on MISO's driver-level data flagged at the gate rather than discovered mid-lane. |
+| **D-4** | Fund the `load-forecast` curated intake? | **RULED r#5 am.1 — S4** | **S4 (2026-09-06): FUND THE FULL DATATYPE.** All six published sources curated through the data-intake skill. **This OVERRIDES the desk's and SCN-WS4a's recommendation to defer**, and is the largest of the three options offered — recorded as the owner's call on a question the desk had answered the other way. → **SCN-LOAD issued**, with the known 403 host wall on MISO's driver-level data flagged at the gate rather than discovered mid-lane. **LANDED 2026-09-06 — the ruling is vindicated on evidence neither recommendation had.** All six sources obtainable and on disk; G-D4-1/-2/-4 CLOSED, G-D4-3 partial (ERCOT verified, PJM's Table B-9b read but the shares deliberately not rewritten — routed), G-D4-5 a disclosed null; the MISO 403 wall re-confirmed BLOCKED. The return was NOT the provenance upgrade the card was argued on: the intake found an era-window error in every rate and a table silently mixing peak- and energy-derived bases, worth up to **+31 % of the 2030 demand scalar**, while NYISO — the one row already properly derived — reproduced to four decimals. `FINDING-scn-load-2026-09-06.md`; six items routed to this desk. |
+| **D-7** | Does Stage A run before the CCS emission-rate seam is repaired? | **RULED r#6 am.1 — S5** | **S5 (2026-09-06): HOLD THE POLICY HALF, RUN THE LOAD HALF NOW.** Stage A splits at the `gas_cc_ccs` line: **A-LOAD** (`REF`/`LOAD-HI`/`LOAD-HI-ORGANIC` six-ISO T1-F + the sub-2028 carbon T0 probes) is released and issues when SCN-WS4c lands, needing no further card; **A-POLICY** (every CES case, every 2028+ carbon case, `ALL-CLEAN`, `VOL-*`) holds until the capx CCS seam is repaired and a paired check confirms `emission_rate` follows the retrofit. Routed to the capx director as a priority signal. |
 | **D-5** | Per-campaign §2.1b grant for the NEISO scenario campaign (Stage B). | **HELD** — presented only with Stage A's measured cost table on the dashboard. | — |
 | **D-6** | Attribute netting between a federal CES row and a voluntary-demand row. Recommendation: **counts toward**, report both. | **PRESENTED r#1 — STILL OPEN after S3** | — · S3 did not reach it. `CES-P20+VOL-HI` therefore reports BOTH nettings and asserts neither; the memo §4.3 is the brief and Addendum A.2 the dissent to weigh beside it. |
 
@@ -560,10 +718,10 @@ State at r#1 = plan v1, unmoved. Each landing lane updates BOTH this table and t
 
 | Criterion (plan §1) | Carbon | CES premium | CES target | Voluntary | Load-HI | Emissions |
 |---|---|---|---|---|---|---|
-| 1 expressible in committed config | yes (G-C1 PROVEN at WS-1a Phase 0: `tight` is a cut of $16–$102/t on CAISO/NYISO/NEISO in all 25 yrs, and a floor makes it an exact **no-op** there — **D-1 RULED FLOOR (S2, 2026-09-06)**, repair now with SCN-WS1c; the campaign runs the interim additive `carbon_price_delta` ladder until it lands; `FINDING-scn-ws1a-2026-09-05.md` §0.1/§6) | yes | **yes, at a COMMITTED level** (SCN-WS2a landed `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; **D-2 RULED — S3, 2026-09-06** at `{2026: 0.55, 2035: 0.80, 2050: 1.00}` / ACP $50, exactly the values WS-2a probed, so the label moved and the number did not; `CES-T80` LIVE in the campaign YAML since 2026-09-06 — SCN-LEVELS, `FINDING-scn-levels-2026-09-06.md`) | **no** | **yes (SCN-WS4b 2026-09-06)** — `LOAD-HI` / `LOAD-HI-ORGANIC` disclosed in the campaign YAML (ERCOT tail regime in 2030 only; ORGANIC byte-identical on PJM/CAISO/NEISO through 2030) + the six-ISO adequacy reading pre-declared (`FINDING-scn-ws4b-2026-09-06.md` §2) + the `backstop_built_mw`/`_mwh` column; siting sourced for ERCOT/PJM/MISO (SCN-WS4a) | **yes r#2** — six-ISO REF bases + `scenario_campaign_matrix.yaml` + the `--set` override (WS-0 item 4) |
+| 1 expressible in committed config | yes — **G-C1 CLOSED** (SCN-WS1c 2026-09-06, executing owner ruling **S2**/card D-1): `resolved = max(RFF path, program trajectory)` on a program ISO, the path alone elsewhere. The `tight` cut of $16–$102/t on CAISO/NYISO/NEISO is gone — corrected +$15.98 to +$102.29/t in all 25 yrs, and **no cell anywhere falls**. Gates: 450/450 cells match WS-1a's committed `floor` prediction; footprint exactly 3×25 cells; 0 of 90 committed run_configs on the changed branch and 0 keys moved. **`tight` is now an exact NO-OP on the three program ISOs** — the ruled outcome; **D-1(b)** (what `tight` should mean there) and **D-1(c)** (PJM's partial footprint) stay OPEN. `FINDING-scn-ws1c-2026-09-06.md` | yes | **yes** (SCN-WS2a: `federal_ces_target_by_year` + `federal_ces_acp_usd_per_mwh`; illustrative level, D-2 open) | **no** | **yes (SCN-WS4b 2026-09-06)** — `LOAD-HI` / `LOAD-HI-ORGANIC` disclosed in the campaign YAML (ERCOT tail regime in 2030 only; ORGANIC byte-identical on PJM/CAISO/NEISO through 2030) + the six-ISO adequacy reading pre-declared (`FINDING-scn-ws4b-2026-09-06.md` §2) + the `backstop_built_mw`/`_mwh` column; siting sourced for ERCOT/PJM/MISO (SCN-WS4a). **Inputs re-derived 2026-09-06 (SCN-LOAD, ruling S4)** — the growth/DC/electrification constants now derive from the curated `load-forecast` datatype; demand at 2030 moves +30.9 % (ERCOT mid) / +17.8 % (PJM mid), and the `LOAD-HI` case comment's ERCOT tail-regime arithmetic is stale (block share 97.3 % → 44.1 %, routed). `FINDING-scn-load-2026-09-06.md` | **yes r#2** — six-ISO REF bases + `scenario_campaign_matrix.yaml` + the `--set` override (WS-0 item 4) |
 | 2 reaches dispatch + deployment | yes (G-C2 + G-C3 closed at WS-1a; cap-row dual NOT exported — G-E4 rider now assigned to **SCN-WS0-R**) | yes | **yes** (SCN-WS2a: the row → dispatch; dual → the existing `max()` screen seam; deployment leg not exercised by the 1-yr T0) | **no** | yes | — |
 | 3 paired probe right-signed, per ISO | NEISO only | **ERCOT + NEISO at HEAD posture (SCN-WS2b)** — direction holds table by table vs the July surface, invariant pattern identical; ERCOT saturates above ~$20/MWh on the queue budget and its price/deployment levels are not campaign-grade (adequacy collapse, G-S4 stands); NEISO right-signed on share/price/imports but its CO2 read-out is governed by the CCS emission-rate seam (`FINDING-scn-ws2b-2026-09-06.md` §5.3, routed) | NEISO only, escape regime (dual = ACP $50 exactly; CO2 +2e-4 reported not smoothed — `FINDING-scn-ws2a-2026-09-05.md` §4.3). **Quotable as a CAMPAIGN-LEVEL result since S3**, having been run at exactly the committed level | **no** | **no** | — |
-| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
+| 4 backcast byte-identity | yes (WS-1a: no key moves; keeper + forecast key list, FINDING §5) — **re-measured at the S2 floor** (SCN-WS1c): 0 keys moved, default `e5ecd4105ada3e58` stable, **0 of 90** committed `run_config.json` on the changed branch, backcast 2023–25 trajectories identical in all six ISOs; six keeper bundles named, `FINDING-scn-ws1c-2026-09-06.md` §4 | yes | yes (SCN-WS2a: six keeper keys byte-identical, FINDING §5) | — | yes | — |
 | 5 matrix duty | stamped — `carbon_price_path` + `policy_bundle` base rows and a cell in every shard at `717de664` (on main). The r#2 "NOT stamped" reading was true at `db8b6015`; the lane's claim ran one PR ahead of its commit and the lane closed it itself. Verified on disk by SCN-MX-R-r2 (r#4, `FINDING-scn-mxr-2026-09-06.md` §5). | stamped | stamped (`federal_ces_target` row + six cells, SCN-WS2a last commit) | — | stamped | — |
 | 6 emissions grain | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | by fuel / by zone | **G-E1..E5 CLOSED** (SCN-WS0, all six items landed 2026-09-05); G-E6 / G-E7 stay OPEN as declared disclosure items |
 | 7 registered probes on dashboard | NEISO FC-6 pair | **six ladder legs** `{ercot,neiso}-2026-2030-scn-ws2-ladder-{bau,ces-20,ces-40}` (kind `scenario`, campaign `scn-ws2-ladder`) — G-S5 CLOSED, the pruned POC evidence restored at HEAD | NEISO T0 pair `neiso-2026-2026-scn-ws2a-neiso-2026-t0-{ref,target}` (kind `scenario`) | — | none | `scn-ws0-smoke` REF/CARB pair |

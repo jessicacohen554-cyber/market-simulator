@@ -4674,6 +4674,112 @@ sign argument to every basis and bound.
 
 ### 5.3 PJM — **NO failing criterion** (keeper `2026-08-15-pjm-162-inputclock`, CALIBRATED — **PROMOTED at pjm-163 (2026-08-16)** from `2026-08-04-pjm-152-collapse`: the DEBUG-B measured-input repair replay (`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`; owner promotion card, audit row O1) — the incumbent recipe re-solved fresh at the corrected PJM EIA-930 fueltype input clock (NG:* was +1 h early in local-2023/2024; value-preserving re-placement, byte-verified cell-for-cell) with the four DataMiner read sites moved onto absolute UTC stamps. **Zero value diffs** on every shared recipe field, ZERO free parameters (DOF ledger carried VERBATIM 19/6, asserted by `gen_pjm163_inputclock_attestation.py`), every criterion **PASS → PASS** vs the incumbent (finding §9, zero fails), determination re-verified not re-asserted (`calibration_verdict.py --run-id` → CALIBRATED, identical criterion-for-criterion, D-5(b)); bench/PJM 2023+2024 recomputed, 2025 byte-identical; ≤2022 extract years stay on the early clock, chartered separately (finding §6 / audit O3, owner-signed same sitting). Rule-28 re-stamps: `diurnal_price_amplitude` + `seam_flow_envelopes` evidence annotated pre-repair-basis, verdicts NOT re-adjudicated. PRIOR PROMOTION, kept as history: **PROMOTED at pjm-153 (2026-08-04)** from `2026-08-03-pjm-151-seam-envelope`: a rule 26 `[R-DELETE]` debt discharge with **BIT-IDENTICAL dispatch** (E1 `max |dMW| = 0.0` over all 166,440 class-hours in each of 2023/2024/2025, zero breaches) and **zero value diffs** on every shared recipe field. The keeper moves because the superseded recipe named a `ScenarioConfig` field HEAD no longer has and so was not replayable as recorded; structural integrity improves and **nothing regresses**. determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs, identical criterion-for-criterion to the superseded run. pjm-153 also generated the governance attestation pjm-152 shipped without, which is what made the run scoreable at all); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**; **THE LEVER QUEUE IS CLEARED AT pjm-153 (2026-08-04) — see the block immediately below**
 
+**pjm-167 (2026-09-06): THE CHARTERED 2022 TOUCHPOINT RE-RUN WAS ALREADY SPENT.
+ZERO LP. No solve, no score, no registration, no keeper change, no marker change,
+NO CELL VERDICT MOVED, no mechanism tested, no `ScenarioConfig` field added.**
+Phase 0 found the lane's chartered task executed on **2026-09-05** and registered —
+`2026-09-05-pjm-2022-2021-touchpoints` (bundle `pjm_tp2022_2021_k162`, solved at
+`46e08e5b`, after the 2026-08-16 ≤2022 clock extension), and it walked **2021** too.
+Preconditions passed in the chartered order first (PJM holds `complete`;
+`frozen_tiers` = `{locked_test}`; `tier_for_year(2022)` = `validation`; `final`
+empty), so the lane closed on **evidence**, not a gate. **The measured answer: the
+input-clock repair does NOT close 2022 — it moves the rung backwards.** C1
+`CC_REGULAR` **+18.28 → +22.26 TWh**, C3b NRMSE **0.206 → 0.250**; pjm-162 *is* that
+rung's named repair and fails the same two criteria ~4 TWh larger. 2021 NOT-YET on
+C1 (`CC_REGULAR` +28.72 / `ST_GAS` +8.07 / `COAL_BIT` −9.45 TWh), C3a +25.7 %,
+C3b 0.355. **REPAIRED, a live dashboard defect:** `keepers/PJM.json` carried a
+hand-authored `holdout_touchpoint` naming the **pruned** `2026-08-05-pjm-2022-touchpoint`;
+`build_status.py:574` copies it through unvalidated and `calibration-status.js:406`
+renders it, so the PJM status card showed **two different 2022 numbers stacked**, the
+stale one first with a **dead run link**. Block **removed** (not re-authored) and the
+status part rebuilt — rule 30 `[R-TOUCHPOINT-FOLD]` (b) names hand-authored holdout
+blocks as the wrong shape, the derived ladder dominates it per-year, and **ERCOT is
+the precedent** (2022 touchpoints spent, ladder only, no such block; 4 of 6 ISOs had
+none). `audit_keepers --iso PJM --check` **PASS 0/0**; parity **OK**; matrix guard
+**exit 0** (244 anchor warnings pre-existing, measured identical on a clean stash of
+main). **NEISO carries the identical defect and is ROUTED, not fixed** (pruned
+`2026-08-06-neiso-2022-corrected-basis`; already routed at capx r#41, still open) —
+lane discipline, rule 25 `[R-ISO-SCOPE]`. **A referential-integrity guard is warranted
+and deliberately NOT landed**: CI runs `audit_keepers --check` across every ISO, so it
+would red `main` on NEISO's open block — NEISO's repair first, guard second, same PR.
+**PJM's G-DRIFT baseline is UNRECOVERABLE**: keeper `git_sha` `457ae04` is a 7-char
+pre-rewrite prefix (invalid object), full `basis_sha c447199c…35454` does not resolve
+and a targeted fetch did not return in ~3 min, and **neither is in
+`citation-commit-map.txt`** — the keeper solved 2026-08-15, one day before the
+2026-08-16 rewrite. *Against interest:* not proof the object is gone from the remote,
+only unobtainable here; `--unshallow` (5.46 GiB) judged out of proportion. Under rule
+29(b) an unclassifiable drift audit is **LIVE**, so PJM's control solve *is* authorized
+— an owner call, not a session's to spend. **Successor unchanged (rule 22 step 3):**
+the **gas-over / coal-under C1 signature**, now visible in the same direction on
+*both* held-out rungs, taken to **2023–2025** and never to the touchpoint year.
+Evidence: `docs/FINDING-pjm167-touchpoint-rerun-already-spent-2026-09-06.md`. SUPERSEDED IN PART by pjm-166 (stamp below, landed on `main` during this session): its successor is REFUTED (the C1 object is an ADDITIVE FOSSIL SURPLUS, not a merit-order reordering; the "cheapest delivered gas" clause is INVERTED) and its G-DRIFT owner-court control is DISCHARGED (`pjm_headctrl_k162`).
+
+**pjm-166 (2026-09-06): THE HELD-OUT C1 OBJECT IS NOT A MERIT-ORDER-POSITION
+OBJECT — the coal↔CC framing is REFUTED AT PHASE 0 and is now DO-NOT-REDO.**
+Zero mechanisms armed, swept or tuned; zero cell verdicts moved; no
+`ScenarioConfig` field touched (rule 28 c silent); keeper **UNCHANGED** at
+`2026-08-15-pjm-162-inputclock`. One LP ran and it was a **control**, not an arm.
+`results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md` +
+`PRECOMMIT-pjm166-c1-object-2026-09-06.md`.
+
+* **The dispatch premise is factually inverted.** On measured EIA-923 delivered
+  receipts, **2021 and 2022 are the two DEAREST-gas and two CHEAPEST-coal years**
+  of 2021-2025 (gas $4.12/$7.12, ranks 4 and 5; coal $2.07/$2.62, ranks 1 and 2 —
+  against gas $3.26/$2.85, ranks 2 and 1, in 2023/2024). Not "the cheapest
+  delivered-gas year in the span".
+* **The sign test fails.** `CC_REGULAR` over-runs **+28.7 / +22.3 TWh in the two
+  dearest-gas years** and only **−3.4 / +0.5 TWh in the two cheapest**. An offer
+  position that made gas too cheap would over-dispatch gas *most* where gas is
+  *cheapest*. Wrong shape for this residual.
+* **The elasticity is already right** — coal share of (coal + `CC_REGULAR`) on
+  `ln(delivered gas/coal)`, 36 in-sample months: actual `0.2637 + 0.0772·x`,
+  model `0.2631 + 0.0686·x`; **slope ratio 0.888, intercept gap −0.0007**. Worth
+  0.7 pp extrapolated to the held-out years against a 3.6 pp gap.
+* **Coal is not saturated** — model coal runs **0.25-0.68 of its own annual peak**
+  in 2021's high-ratio months, on a *larger* 2021 fleet (36.9 vs 31.3 GW). The
+  `COAL_BIT` −9.45 TWh is not a capacity or availability ceiling.
+* **It is not a swap at all.** Total fossil is **+19.6 / +26.7 TWh over** in the
+  held-out years against **−3.7 / −7.9** in 2023/2024, while model demand matches
+  measured EIA-930 **within ±2.2 TWh in every year**. An additive over-generation,
+  not a reordering. **Correction to the standing narrative:** coal-under is
+  **2021 only** — 2022 coal is **+2.0 TWh, slightly over** (the touchpoint
+  assessment's own criterion table says so; its §3.1/§5 prose generalised past it).
+* **The one quantity that crosses the tier boundary** is the DA-virtual layer's
+  net cleared position: **+7.40 / +6.48 / −0.89 in-sample vs −6.14 / −9.91
+  held-out** — 6 to 10 TWh of net phantom DEMAND, which physical gas must serve.
+  This is **pjm-158's own standing warning realized out of sample**, on a cell
+  already `K` and owner-escalated inside the closed price-formation frontier
+  (pjm-142). **RE-MEASURED, NOT RE-OPENED — not a lever.** At pjm-158's measured
+  channel gain it bounds ~21 % of 2021's and ~44 % of 2022's `CC_REGULAR` miss;
+  **55-79 % stays unexplained** and this session does not claim otherwise.
+* **Two candidates tested and NOT confirmed, so they are not re-tried:**
+  (a) `ST_GAS` is **not floor-forced** — 76 % of its 2021 energy is `econlo`/`econhi`
+  economic, `mustrun` **0.00**, so rule 17 `[R-FLOOR-WINDOW]` does not fire;
+  (b) the `ST_GAS`↔`CT_PEAKER` substitution hypothesis **FAILS its own test** —
+  monthly delta correlation is **+0.077 / −0.165 / +0.497 / +0.178 / +0.076**,
+  positive in four of five years, so the annual near-offset is coincidence.
+* **FILED, NOT PURSUED:** the model's `ST_GAS` runs a near-constant CF of its own
+  peak (0.156/0.184/0.157/0.156/0.242) while the measured class swings 3.8 → 14.8
+  TWh. An **in-sample** question for 2023-2025; chasing it from a held-out year is
+  the fitting rule 22 step 3 forbids.
+* **G-DRIFT is STRUCTURALLY UNDISCHARGEABLE for this keeper** — its recorded
+  `git_sha` `457ae04` (2026-08-15) does not exist at HEAD and is not in
+  `docs/governance/citation-commit-map.txt`: it predates the **2026-08-16 history
+  rewrite** by one day, and the clone was deepened to 11,640 commits without
+  resolving it. There is **no diff to classify**, which is stronger than NEISO's
+  "too large to classify". An unclassifiable diff is LIVE, and a LIVE hunk is what
+  earns a control solve under rule 29 (b) — so PJM's same-HEAD in-sample control
+  (`pjm_headctrl_k162`, 2023-2025, no holdout year) was solved on
+  pre-registered thresholds. **IT CAME BACK BIT-IDENTICAL** — every threshold at exactly
+  zero (price +0.0000 %, demand/slack/dump bit-identical, total gen +0.0000 %, worst
+  per-class 0.0000 %), and `max|Δ| = 0` at hourly grain on `class_hourly` (166,440 rows/yr),
+  `reserve_family` and `storage` in all three years. **HEAD drift is INERT for PJM's backcast
+  path**, stronger than NEISO's −0.008 % price residual, so the touchpoint assessment's
+  §4(i) open limit for PJM is **CLOSED** and its in-sample vs held-out columns are
+  like-for-like. Its bundle is **deleted before merge** per rule 29 (c), following the
+  `neiso_headctrl_k99` precedent; every number cited from it lives in the FINDING.
+
+
 **pjm-155 (2026-08-04): THE PJM LANE IS PARKED PENDING OWNER. No LP built, no
 solve launched, no bundle, no run registered, no mechanism armed, NO CELL VERDICT
 MOVED, no year touched outside 2023–2025.** Ran as Lane B of the
@@ -14568,6 +14674,50 @@ capability envelope/floor pair is now the keeper — cells K above):
     `2026-08-25-nyiso-155-hydro-{control,repair}`.
 
 ### 5.6 NEISO — keeper `2026-08-17-neiso-99-joint-p1` (**PROMOTED at neiso-99, 2026-08-17 — audit row O5 CLOSED and the neiso-83 Stony Brook outage-routing root-cause issue CLOSED, both in ONE re-solve so they are not confounded.** **NO C3c LEVER WAS OPENED and NO CELL VERDICT MOVES ON A MECHANISM BASIS (rule 28d)**: the promoted run's `ScenarioConfig` is BYTE-IDENTICAL to the superseded keeper's — zero shared-value diffs, *computed* by `scripts/gen_neiso99_attestation.py`, which aborts on any failed premise — so every armed mechanism stays armed and unchanged and **the open-gate set is UNCHANGED**. The two deltas sit outside the mechanism surface: a **solve kwarg** (`commitment` True → False, moving the recipe off the **archived P2 commitment pass** onto the production **P1** basis every other ISO's keeper already uses) and a **measured input** (the CAMPD unit-outage extract's liquid-fuel combustion-turbine routing guard — a predicate over a *closed* CAMPD fuel vocabulary with **zero free parameters**). The routing defect: `_resolve_unit_group`'s `fac_group` short-circuit handed plant 6081 Stony Brook's two **Diesel Oil** combustion turbines (83 MW each, 74 windows each) to the `CC_REGULAR` bin, derating a **305.1 MW combined cycle they are not in** for **48.7 % of the 2024 and 56.0 % of the 2025 capacity-year** — years in which the CC units 001/002/003 have *no windows of their own at all*; 1595 Kendall S6, 568 Bridgeport BHB4 and 1588 Mystic MJ-1 the same way, 236 rows removed. **The discriminator is the unit's own `primaryFuelInfo`, not `unitType`, and that is measured**: across all six ISOs 35 CAMPD units filed "Combustion turbine" sit in a non-CT bin and **27 are gas-fired members of a genuine block that must keep inheriting it** (Sand Hill SH1–SH7, Colorado Bend, Glenarm, Zeeland, Ravenswood, Bethpage) — a `unitType`-only rule would have evicted all 27. **The movement is decomposed** against a same-HEAD basis-only control (`2026-08-17-neiso-99-basis-p1`, registered, solved on the pre-fix extract via a `MARKET_SIM_DATA_ROOT` shadow root), which is **BIT-IDENTICAL to the superseded keeper's own persisted P1** in all three years (0 differing cells of 192,720 rows/year) — so the basis leg is a pure **re-render**: P2 never fed back into P1, it was only ever what got *published*. Basis leg mean λ −0.0575 / −0.0110 / −0.0378 $/MWh and the **2024 annual maximum $256.93 → $218.24** (P2 stood 17.7 % above P1 on that statistic), reported at full magnitude and not tuned around; routing leg a further −0.0162 / −0.0133 / −0.1112 $/MWh with the annual maxima **unmoved**. **The prereg's own P3 expectation is REFUTED and recorded as such**: the routing effect is dominated by **Kendall**, not Stony Brook, because 6081's heat rate 10.6062 sits above 97.5 % of NEISO's CC_REGULAR capacity — deep out of merit whether available or not, the same fact neiso-83 measured at the same plant. Determination **UNCHANGED at CALIBRATED-WITH-CAVEATS**, criterion for criterion identical (0 FAILs, C3c the sole ledgered caveat, C1 all 12/12 · free 8/8); **no gate was traded**; D-5(b) re-verified on committed artifacts before the re-key. Frontier **re-established on this keeper's own sidecars** — mandatory, since unlike every NEISO keeper change since neiso-93 this one is *not* a dispatch no-op: C3c model tail 0 h > $300/MWh in all three years on the now-sole P1 pass, closest approach $280.85 (short by $19.15, bit-unchanged from the superseded keeper's own P1); RCPF dormant in all 78,840 family-hours at the published statics with |dual| max **exactly 0.0**. The replay seam that propagated P2 is closed in the same change (`enforce_legacy_p2_kwargs` gates the *reconstructed* recipe at both replay entry points and hard-fails). Filed for other lanes, not acted on (rule 25): PJM 593 Edge Moor 10, MISO 2001 New Ulm 7 and 8056 Waterford 4, NYISO 2516 Northport UGT001. Evidence: `results/calibration/ASSESSMENT-neiso99-p2basis-routing-2026-08-17.md`; prereg `PREREG-neiso99-p2basis-routing-2026-08-17.md`.) **PRIOR HEADER, preserved:** keeper `2026-08-17-neiso-97-dstrepair` (**PROMOTED at neiso-97, 2026-08-17, audit row O8** — the incumbent's OWN recipe replayed with **ZERO scenario deltas** at the **DST-REPAIRED SMD actual-LMP instrument**: the 2018–2023 workbook vintage is DST-naive and the committed scoring series was displaced one hour around every DST transition (562 hub cells, max $40.17/MWh; repaired value-preservingly, byte-verified per the PJM input-clock §2a protocol; `docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`). Dispatch **BIT-IDENTICAL** to the incumbent in every hourly sidecar of every year on both passes — the instrument moved, the model did not — so **no mechanism was tested, no lever opened, no cell verdict moved (rule 28d) and the open-gate set is UNCHANGED**. Determination **UNCHANGED at CALIBRATED-WITH-CAVEATS**, criterion for criterion identical (0 FAILs, C3c the sole ledgered caveat, C1 all 12/12 · free 8/8); D-5(b) re-verified before the re-key; promotion pre-signed on not-worse by the in-session owner card. The 2022 touchpoint stands as scored on the pre-repair instrument; the NYISO keeper's `nyiso_import_hub_prices` consumption of the repaired series is filed for the NYISO lane, rule 25.) **PRIOR HEADER, preserved:** keeper `2026-08-14-neiso-93-envelope` (**PROMOTED at neiso-93, 2026-08-14** — the incumbent's OWN recipe replayed with **ZERO scenario deltas** on a CORRECTED MEASURED INPUT ENVELOPE, so **no mechanism was tested, no lever opened, no cell verdict moved (rule 28d) and the open-gate set is UNCHANGED**. The four corrected inputs — nuclear availability (anchor + NRC per-reactor overlay) 2019–2025, NEISO seam tranches 2019–2025, EIA-860 CHP by vintage, and NEISO parasitic-load factors (the shared file previously held **ZERO** NEISO plants in **any** year, so this one moves the tuned years) — were prepared in the same session and applied consistently across 2019–2025 per rule 22 as amended 2026-08-06. Determination **UNCHANGED at CALIBRATED-WITH-CAVEATS**, criterion for criterion identical (C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the sole ledgered caveat, C1 all 12/12 · free 8/8, **0 FAILs**), re-verified per rule 22 D-5(b). It CLOSES the superseded keeper's **disclosed defect (i)** — the stale `NEISO,2025,8` gas-basis interpolation — executing that keeper's own standing recommendation: 2025 mean λ 69.7337 → **69.4178**, 2024 essentially bit-identical, 2023 −0.011. **A NEW 2019-ONLY BLOCKER WAS FOUND AND IS NOT FIXED:** Pilgrim (EIA 1590) ran Jan–May 2019 for **2.177 TWh** before retiring 31 May 2019 and is absent from the EIA-860 operable snapshot, so a 2019 solve is short ~2.18 TWh of nuclear regardless of the extended overlay — material to the `final` question. **NO out-of-training year was solved, scored or registered; the holdout spend freeze is ACTIVE and untouched.** Evidence: `results/calibration/FINDING-neiso93-envelope-repair-2026-08-14.md`. Prior header state: keeper `2026-08-06-neiso-87-control` (**RE-KEYED at neiso-keeper-87-control, 2026-08-09** — a REPRODUCIBILITY re-key, **NOT a mechanism test**: the promoted run is a same-HEAD re-solve of the `2026-08-05-neiso-83-ca1-reclass` recipe with **ZERO scenario deltas**, so no lever was opened, no cell verdict moved (rule 28d), the open-gate set is unchanged, and no solve was run in the promotion session. Determination CALIBRATED-WITH-CAVEATS, criterion for criterion identical to the superseded keeper (0 FAILs, C3c the sole ledgered caveat, C1 all 12/12 · free 8/8), re-verified on committed artifacts per rule 22 D-5(b). Promoted on OWNER INSTRUCTION after its stated rationale — "fleet r significantly better" — was **checked and found NOT to hold**: C4 fleet hourly r is bit-identical in 2023 and 2024 and moves gas 0.880 → 0.882 in 2025 alone, inside the 0.918–0.931 band every NEISO run ever registered spans. The reason that DOES hold is the neiso-91 bisect (owner decision D-88.3): the superseded bundle is a **non-reproducible outlier** that four independent HEAD solves all differ from by the same 731-hour January-2025 pattern, and this keeper is on the reproducible side. TWO DEFECTS DISCLOSED, NOT BURIED: it carries the **superseded** `NEISO,2025,8` gas-basis interpolation (+0.04 vs the measured −0.38 now at HEAD) because it was arm A of the neiso-87 A/B — worth 2025 mean λ 69.7149 against 69.3990 — so the standing recommendation is to re-solve this recipe at HEAD across 2023–2025 and re-key to it; and its `legitimacy_diagnostics.json` was generated **at promotion** from the bundle's own committed artifacts (no LP solve), which is what turned C8 from SKIPPED to PASS. Prior header state: **PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
+
+**neiso-102 (2026-09-06): THE STATUS CARD WAS SHOWING 2022 TWICE WITH DIFFERENT
+DETERMINATIONS. ZERO LP. No solve, no score, no registration, no prune, no keeper
+change, no marker tier change, NO CELL VERDICT MOVED, no mechanism tested, no
+`ScenarioConfig` field added.** This is the defect pjm-167 ROUTED to this lane
+(its own stamp: *"NEISO carries the identical defect and is ROUTED, not fixed"*),
+and it is now closed — NEISO was the **LAST of the six ISOs** carrying such a block.
+`keepers/NEISO.json` held a hand-authored `holdout_touchpoint` naming the **pruned**
+`2026-08-06-neiso-2022-corrected-basis` (retention-pruned 2026-09-05 under the
+ercot-248 keeper-only directive, rule 15; superseded on the same year by the
+registered `2026-09-05-neiso-2022-touchpoint-k99`, whose sidecar declares
+`supersedes` on it). `build_status.py:574` copies it through **unvalidated** and
+`calibration-status.js:406` renders it, so the card printed **`CALIBRATED-WITH-CAVEATS`
+with a DEAD run link, first, directly above the derived ladder reading `CALIBRATED`
+for the same year**. Worse than a dead link: neiso-100
+(`_neiso100_touchpoint_staleness.json`) had already measured that run's recipe as
+diverging from the current keeper on **4 of 7 data axes**, so the panel quoted a
+result taken on a *different recipe* than the keeper it sat beneath. Block
+**REMOVED, not re-authored** (rule 30 `[R-TOUCHPOINT-FOLD]`(b)) and the status part
+rebuilt; the derived ladder now stands alone and per-year — **2020 `NOT-YET`**
+(price_mean), **2021 `CALIBRATED`**, **2022 `CALIBRATED`** (C3c ledgered, rubric
+v3.6). **Rule 30(c): the ISO's determination is UNCHANGED at `CALIBRATED`** — that
+is the train-tier verdict and a held-out year never moves it, so the `NOT-YET` 2020
+rung beside it is not a contradiction.
+**THE CLASS IS NOW GUARDED, and the chartered form of the guard was WRONG.**
+`audit_keepers.py` was structurally blind (`grep -c holdout_touchpoint` at HEAD →
+**0**) — a genuine gap, not a re-check of E1/E6/M1. But the chartered "every
+shard-referenced run id must exist" **would have redded `main`**: a census found
+**19 dangling structured ids and 18 are historical citations pruned BY DESIGN**
+(ERCOT `config_partition.configs[].source_run_id` ×2; NYISO `de_designation_history`,
+`frontier_withdrawn_*`, and a 10-deep `superseded…chain.former_keeper` genealogy),
+which rule 15 makes the norm and the shards state are *"NOT retracted"*. New check
+**E12** is therefore scoped to **what the SITE RENDERS AS A LINK**, derived from the
+render sites rather than hand-picked: `config_partition.configs[].run_id`,
+`holdout_touchpoint.run_id`, `standing_note.probe_run_id` (`keeper` is E1's).
+Genealogy and prose are out of scope permanently and on purpose; a regression test
+pins the scope against `calibration-status.js` so a newly-rendered pointer cannot
+silently re-open the hole. E12 fires on the pre-fix NEISO shard **only** (1 finding)
+and is clean on all six post-fix; it lands AFTER the fix in the same commit because
+CI runs the audit across every ISO. `audit_keepers --check` unscoped **PASS 0/0**;
+9 new + 53 sibling tests pass; parity **OK** (14 runs / 47 bundles); matrix guard
+**exit 0**. **The lever queue is UNCHANGED and stays CLEARED** — no lever was opened,
+none is proposed, and DO-NOT-REDO still applies to every `R`/`I`/`G` cell below.
+Evidence: `results/calibration/FINDING-neiso102-holdout-records-integrity-2026-09-06.md`.
 
 **neiso-90 (2026-08-07) — A `final`-READINESS RE-ASSESSMENT. NO LP, NO SOLVE, NOTHING
 SCORED OR REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL VERDICT

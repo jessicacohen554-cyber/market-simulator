@@ -132,14 +132,27 @@ class TestAdderSource:
             anchor * (1 + prog.escalation_rate) ** 2
         )
 
-    def test_explicit_rff_path_wins_in_forecast(self):
-        # A non-default carbon_price_path keeps its exogenous meaning.
+    def test_explicit_rff_path_no_longer_suppresses_the_program_adder(self):
+        # Owner ruling S2 (card D-1, 2026-09-06) — FLOOR, not replace. This
+        # test previously asserted the opposite (``price_adder == 0.0``): an
+        # explicit non-default carbon_price_path nulled the program adder, so a
+        # named federal RFF path REPLACED the state program. That made
+        # policy_bundle="tight" a carbon-price CUT of $16-$102/tCO2 on
+        # CAISO/NYISO/NEISO in all 25 horizon years
+        # (FINDING-scn-ws1a-2026-09-05.md §0.1). The resolver now answers ONE
+        # question — what the program itself charges — in every mode, and the
+        # composition with the path happens in policy.carbon (rule 19).
         res = resolve_carbon_program(
             ScenarioConfig(iso="CAISO", carbon_price_path="mid"), 2030
         )
-        # No program adder → falls through to the RFF path (handled by the
-        # scalar wrapper); the resolver returns a zero program adder here.
-        assert res.price_adder == 0.0
+        assert res.price_adder == pytest.approx(
+            projected_price(CAP_AND_TRADE_PROGRAMS["CAISO"], "CAISO", 2030)
+        )
+        # ...and it is the SAME adder the default path resolves, i.e. the path
+        # no longer reaches this function at all.
+        assert res.price_adder == pytest.approx(
+            resolve_carbon_program(ScenarioConfig(iso="CAISO"), 2030).price_adder
+        )
 
 
 class TestPjmGatedAllowance:
@@ -737,3 +750,188 @@ class TestBorderSeamResolvesCarbon:
         runner_border = wecc_border_carbon_adder(resolve_carbon_price(cfg, 2026))
         for corridor in spec.corridors:
             assert corridor.carbon_adder == pytest.approx(runner_border)
+
+
+class TestFederalCarbonFloor:
+    """Owner ruling S2 (card D-1, 2026-09-06): a named federal RFF path is a
+    FLOOR under the state carbon program, never a replacement for it.
+
+    ``effective = max(RFF path(year), program trajectory(year))`` on a program
+    ISO, the path alone elsewhere; ``carbon_price`` (scalar) keeps its Q26
+    replace semantics untouched. Executed by SCN-WS1c
+    (``PRECOMMIT-scn-ws1c-2026-09-06.md``,
+    ``FINDING-scn-ws1c-2026-09-06.md``); the defect it repairs is G-C1
+    (``FINDING-scn-ws1a-2026-09-05.md`` §0.1, §6).
+
+    **On the charter's "strict increase" wording.** The lane charter asked for
+    a NEISO-tight *strict*-increase test over 2026-2050. Under the floor that
+    assertion is FALSE and would rightly fail: the RFF mid path never exceeds a
+    program trajectory in any year, so ``tight`` equals ``current`` on every
+    program ISO and the increase is weak. The ruling moved the predicate before
+    any code ran — S2 was recorded WITH that consequence — so these tests assert
+    what the repaired semantics actually claim: ``tight >= current`` everywhere,
+    with EQUALITY on CAISO/NYISO/NEISO and a STRICT increase on ERCOT/PJM/MISO
+    where the path applies alone. Whether ``tight`` should mean something else
+    on a program ISO is open card D-1(b) and is not asserted here either way.
+    """
+
+    HORIZON = list(range(2026, 2051))
+    PROGRAM_ISOS = ("CAISO", "NYISO", "NEISO")
+    PATH_ONLY_ISOS = ("ERCOT", "PJM", "MISO")
+
+    @staticmethod
+    def _resolved(iso: str, bundle: str, year: int) -> float:
+        """The resolved $/tCO2 exactly as a solve sees it (bundle → ISO defaults)."""
+        from market_sim.config.iso_configs import apply_iso_scenario_defaults
+        from market_sim.config.scenario_resolvers import resolve_policy_bundle
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg = ScenarioConfig(iso=iso, mode="forecast", policy_bundle=bundle)
+        cfg = apply_iso_scenario_defaults(resolve_policy_bundle(cfg), iso)
+        return resolve_carbon_price(cfg, year)
+
+    @pytest.mark.parametrize("iso", PROGRAM_ISOS + PATH_ONLY_ISOS)
+    def test_tight_is_never_below_current_in_any_horizon_year(self, iso):
+        # The monotonicity law of max, over the whole 25-year horizon and every
+        # ISO: naming a federal path can no longer LOWER anyone's carbon price.
+        # This is the assertion the charter's "strict increase" was reaching for
+        # and the one the ruling actually supports.
+        for year in self.HORIZON:
+            assert self._resolved(iso, "tight", year) >= self._resolved(
+                iso, "current", year
+            ), f"{iso} {year}: tight fell below current"
+
+    @pytest.mark.parametrize("iso", PROGRAM_ISOS)
+    def test_tight_is_an_exact_no_op_on_a_program_iso(self, iso):
+        # THE RULED CONSEQUENCE, pinned so it cannot drift silently: the RFF
+        # mid path never exceeds a program trajectory, so on CAISO/NYISO/NEISO
+        # the program is the binding instrument in every year and "tight"
+        # resolves to exactly what "current" resolves to. This is the outcome
+        # S2 was ruled with, not a defect to engineer around.
+        for year in self.HORIZON:
+            assert self._resolved(iso, "tight", year) == pytest.approx(
+                self._resolved(iso, "current", year)
+            ), f"{iso} {year}: tight is not the ruled no-op"
+
+    @pytest.mark.parametrize("iso", PROGRAM_ISOS)
+    def test_program_iso_tight_equals_the_program_trajectory_not_the_path(self, iso):
+        # The floor's operand, named: it is the projected program price, and it
+        # is strictly ABOVE the mid path it floors, in every horizon year.
+        from market_sim.policy.carbon import rff_path_price
+
+        program = CAP_AND_TRADE_PROGRAMS[iso]
+        for year in self.HORIZON:
+            resolved = self._resolved(iso, "tight", year)
+            assert resolved == pytest.approx(projected_price(program, iso, year))
+            assert resolved >= rff_path_price("mid", year)
+
+    @pytest.mark.parametrize("iso", PATH_ONLY_ISOS)
+    def test_path_only_iso_gets_a_strict_increase_from_2027(self, iso):
+        # Where no program applies (ERCOT/MISO have none; PJM has one with no
+        # price series) the path applies alone and "tight" IS a carbon-price
+        # increase. 2026 is excluded because the RFF mid knot at 2026 is $0 —
+        # both bundles are 0.00 there, which is the path's own shape, not the
+        # floor's doing.
+        from market_sim.policy.carbon import rff_path_price
+
+        for year in self.HORIZON[1:]:
+            resolved = self._resolved(iso, "tight", year)
+            assert resolved > self._resolved(iso, "current", year)
+            assert resolved == pytest.approx(rff_path_price("mid", year))
+
+    @pytest.mark.parametrize("iso", PROGRAM_ISOS)
+    def test_high_path_crosses_the_program_and_the_floor_takes_it(self, iso):
+        # The floor is a max, not a "program always wins": where the federal
+        # path DOES exceed the program trajectory the path binds. RFF high
+        # crosses on the two RGGI ISOs mid-horizon and never on CAISO
+        # (FINDING-scn-ws1a-2026-09-05.md §0.1), so this asserts the identity
+        # rather than a hard-coded crossing window.
+        from market_sim.policy.carbon import (
+            resolved_base_trajectory_price,
+            rff_path_price,
+        )
+
+        program = CAP_AND_TRADE_PROGRAMS[iso]
+        crossings = 0
+        for year in self.HORIZON:
+            cfg = ScenarioConfig(iso=iso, mode="forecast", carbon_price_path="high")
+            path, prog = (
+                rff_path_price("high", year),
+                projected_price(program, iso, year),
+            )
+            assert resolved_base_trajectory_price(cfg, year) == pytest.approx(
+                max(path, prog)
+            )
+            crossings += path > prog
+        if iso in ("NYISO", "NEISO"):
+            assert crossings > 0, "RFF high is documented to cross on the RGGI ISOs"
+        else:
+            assert crossings == 0, "RFF high never crosses CARB's trajectory"
+
+    def test_rollback_is_unchanged_by_the_floor(self):
+        # rollback = zero path + state_carbon_pricing=False. Both operands of
+        # the max are 0.0, so it stays a genuine no-carbon bundle: the floor
+        # cannot resurrect a program the bundle switched off.
+        for iso in self.PROGRAM_ISOS + self.PATH_ONLY_ISOS:
+            for year in (2026, 2035, 2050):
+                assert self._resolved(iso, "rollback", year) == 0.0
+
+    def test_backcast_is_untouched_by_the_floor(self):
+        # The changed branch is the `else` arm of `mode == "backcast"`. A
+        # backcast resolves its MEASURED adder whatever the path says — the
+        # keeper lane (every keeper carries path "zero") is identical either
+        # way, and a non-zero path cannot reach into a backcast year.
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        for iso in self.PROGRAM_ISOS:
+            for year in (2023, 2024, 2025):
+                measured = measured_price(iso, year)
+                assert resolve_carbon_price(
+                    ScenarioConfig(iso=iso, mode="backcast"), year
+                ) == pytest.approx(measured)
+                assert resolve_carbon_price(
+                    ScenarioConfig(iso=iso, mode="backcast", carbon_price_path="mid"),
+                    year,
+                ) == pytest.approx(measured)
+
+    def test_carbon_price_scalar_keeps_its_q26_replace_semantics(self):
+        # Explicitly pinned because S2 changes the OTHER channel: a nonzero
+        # carbon_price still REPLACES the resolved trajectory (precedence (1)),
+        # including below it — that is Q26's ruling, guarded not changed.
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        cfg = ScenarioConfig(iso="NEISO", mode="forecast", carbon_price=25.0)
+        assert resolve_carbon_price(cfg, 2050) == 25.0  # not max(25, 132.16)
+
+    def test_carbon_price_delta_still_rides_on_top_of_the_floor(self):
+        # The D26 additive stage is applied AFTER the precedence chain, so it
+        # is an increment on the floored base — unchanged, and still the
+        # instrument for "more carbon everywhere" (the D-1(b) question the
+        # floor deliberately does not answer).
+        from market_sim.policy.carbon import resolve_carbon_price
+
+        base = ScenarioConfig(iso="NEISO", mode="forecast", carbon_price_path="mid")
+        armed = ScenarioConfig(
+            iso="NEISO",
+            mode="forecast",
+            carbon_price_path="mid",
+            carbon_price_delta=25.0,
+        )
+        for year in (2026, 2035, 2050):
+            assert resolve_carbon_price(armed, year) == pytest.approx(
+                resolve_carbon_price(base, year) + 25.0
+            )
+
+    def test_pjm_partial_footprint_seam_is_inert_so_d1c_stays_open(self):
+        # Card D-1(c) — how a federal floor composes with PJM's PARTIAL RGGI
+        # footprint — is open and is NOT answered by this repair. The only
+        # per-generator membership seam (carbon_mc_column) reads the program
+        # adder, and PJM's forecast adder is 0.0 (no PJM series in
+        # STATE_CARBON_PRICE_BY_ISO), before and after. So the seam returns the
+        # scalar, the IDENTICAL object, exactly as it did pre-floor.
+        from market_sim.policy.cap_and_trade import carbon_mc_column
+
+        cfg = ScenarioConfig(iso="PJM", mode="forecast", carbon_price_path="mid")
+        assert resolve_carbon_program(cfg, 2030).price_adder == 0.0
+        price = 15.0
+        assert carbon_mc_column(cfg, "PJM", 2030, price, object(), ["A", "B"]) is price

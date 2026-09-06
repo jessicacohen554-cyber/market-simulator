@@ -92,7 +92,13 @@ columns:
       where published separately) | avoidable_variable_om (avoidable variable
       O&M subcomponent, where published separately) | net_acr (gross ACR net
       of an assumed energy/AS margin offset, where a source publishes this
-      distinct net figure rather than leaving the netting to the screen).
+      distinct net figure rather than leaving the netting to the screen) |
+      reactive_offset (a published OUT-OF-MARKET revenue component the ISO's
+      own capacity demand curve nets against gross ACR when it computes the
+      reference resource's E&AS offset — PJM's Tariff Schedule 2 reactive
+      component is the only member today; it belongs to this datatype because
+      it is published in the same $/MW-yr going-forward frame and is netted
+      against these same gross-ACR rows, not because it is itself a cost).
   - name: value
     dtype: float64
     unit: none
