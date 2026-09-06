@@ -55,6 +55,15 @@ COST_COMPONENT_VOCAB: frozenset[str] = frozenset(
         "avoidable_fixed_om",
         "avoidable_variable_om",
         "net_acr",
+        # capx D62: the OFFSET side of the same going-forward arithmetic — the
+        # out-of-market revenue an ISO's own capacity demand curve nets against
+        # gross ACR when it sets the reference resource's E&AS offset. Today
+        # the only member is PJM's reactive (Tariff Schedule 2) component; it
+        # lands in this datatype rather than a new one because it is published
+        # in the same $/MW-yr going-forward frame and is consumed by the same
+        # seam (the retirement screen's bar and the sell-offer cap are ONE
+        # object, rule 19 [R-ONE-MECH]).
+        "reactive_offset",
     }
 )
 UNIT_VOCAB: frozenset[str] = frozenset(

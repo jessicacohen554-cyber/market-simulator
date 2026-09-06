@@ -1441,6 +1441,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "capacity_market_supply_clearing_by_iso",
+    # capx D62: the PUBLISHED going-forward-bar gate (the PJM published-ACR
+    # bar + its reactive leg, FINDING-capx-d61-2026-09-05.md §4; GATED default
+    # None ⇒ every ISO off, byte-identical — the retirement screen keeps the
+    # ATB FOM proxy and no published table is read). Dropped from the hash at
+    # its None default so every pre-existing cache key of all six ISOs is
+    # byte-stable (the bare pjm-t1h recipe key aef81c84c4609c76 at the D62
+    # base fca3b656 unmoved — PRECOMMIT §6 STOP 2); an armed row keys
+    # distinctly. SHARED field — very end, per HOUSE-3. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "capacity_going_forward_bar_published_by_iso",
     # SCN-WS2a: the endogenous federal CES TARGET row (readiness plan 2026-09
     # §3 WS-2 item 2). Both default None (no row, no escape) and dropped from
     # the hash there, so every pre-existing cache key of all six ISOs — every
@@ -1955,6 +1965,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D57: the capacity-market supply-clearing gate, registered at its
     # shipping None default (an armed {iso: True} row keys distinctly).
     "capacity_market_supply_clearing_by_iso": "None",
+    # capx D62: the published going-forward-bar gate, registered at its
+    # shipping None default (an armed {iso: True} row keys distinctly).
+    "capacity_going_forward_bar_published_by_iso": "None",
     # SCN-WS2a: the endogenous federal CES TARGET row, registered at its two
     # shipping defaults (None = no row / no escape declared; an armed row keys
     # distinctly). Registered IN THE SAME COMMIT as the fields.
@@ -15669,6 +15682,58 @@ class ScenarioConfig:
     # cleared against a VRR curve (design §4.9: NYISO's spot market literally
     # evaluates its curve at a census quantity; ISO-NE / MISO would be their
     # own lanes with their own identification) — rule 25; nothing transfers.
+    capacity_going_forward_bar_published_by_iso: dict[str, bool] | None = None
+    # GATED default-OFF (capx D62 2026-09-06, executing FINDING-capx-d61-
+    # 2026-09-05.md §4). A {iso: bool} mapping, the third member of the
+    # per-ISO capacity-gate family, resolved through ONE predicate
+    # (config/capacity_market.py::
+    # resolve_capacity_going_forward_bar_published). WHAT IT CHANGES: the
+    # going-forward BAR the retirement screen tests net revenue against.
+    # Today that bar is fixed_om_<fuel> x retirement_fom_multiplier_<fuel> —
+    # an ATB FOM **proxy** for the number the market actually caps sell offers
+    # with. Armed, it is the ISO's OWN PUBLISHED default gross Avoidable Cost
+    # Rate (PJM Manual 18 Rev 62 §5.4.8.4(B)), on nameplate, read from
+    # data/raw/capacity-market/avoidable-cost-rate/ through
+    # data/avoidable_cost_rate.py — and, as the SINGLE out-of-market leg of
+    # the screen's margin (rule 19 [R-ONE-MECH]: no uplift, no regulation, no
+    # black start, no AS annual rate), the published reactive component
+    # ($/MW-yr, PJM's own capacity demand-curve E&AS-offset input) credited
+    # once as pmax_mw x rate before the capacity leg. Because the D57
+    # clearing's offer_g = max(0, GFC_g − EAS_g) / (A_g x 365) reads the SAME
+    # going_forward_cost, the exit bar and the sell-offer cap stay ONE object
+    # (DESIGN-capx-d54 §3.5). Under the published bar
+    # retirement_fom_multiplier_<fuel> does NOT apply: the published number is
+    # already the avoidable cost "assuming the unit would otherwise retire"
+    # (M18 §5.4.4) — stated, never tuned. WHY: D61 §2d measured that the ATB
+    # bars are 1.15x (CT), 1.5x (CC), 1.5x (steam) and 2.0x (coal) the
+    # published numbers, that 61–74 % of resources elected exactly that
+    # published default in the 2022/23–2025/26 BRAs (SOM Table 5-14/5-16), and
+    # that substituting them alone moves the D57 clearing-price ratio 1.52 ->
+    # 1.06x and 2.43 -> 1.56x with the position inside +0.10 / −0.27 pt. That
+    # is rule 14 [R-ACCURATE] (measured over estimate) and rule 21 [R-DOF]
+    # (ZERO free parameters — the values are DATA with source page, and the
+    # vintage rule is fixed in code, not chosen per run: DY <= 2025/26 reads
+    # the through-2025/26 column, DY >= 2026/27 the second, a class printed
+    # "n/a" in the first reads the first published value with the fact
+    # ledgered). NOT a fitted adder: no scalar field exists for these numbers
+    # and none may be added (rule 24 [R-REGISTRY]); a different bar is a
+    # change to the published table. INDEPENDENT of the clearing gate above —
+    # the bar is the screen's own going-forward cost with or without a cleared
+    # stack — so it does not require it; armed together, one bar serves both.
+    # WHY DEFAULT-OFF: arming is an owner decision on the D62 A/B (suffixed
+    # pjm-t1h-d62-pubbar vs the committed bare pjm-t1h; rules 22/24/28/29),
+    # graded against the PRECOMMIT's pre-declared signs. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at None (unarmed keys byte-stable; an armed
+    # row keys distinctly); coerced to None in a plain backcast exactly as the
+    # two gates above are (a forecast-lane mechanism — a backcast runs no
+    # capacity evolution). Hindcast harness:
+    # run_capacity_hindcast.py --capacity-going-forward-bar-published (sets
+    # the invoked ISO's row); full horizon: run_full_horizon.py's flag of the
+    # same name. SCOPE: generic in form, PJM-scoped by DATA — PJM is the only
+    # registry ISO publishing a generic technology-class going-forward bar its
+    # own market caps sell offers with, and an ISO with no intaken table keeps
+    # the ATB path for every unit (rule 25 [R-ISO-SCOPE]; nothing transfers —
+    # another ISO's analogue is that ISO's lane, on its own filings).
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -16404,6 +16469,11 @@ class ScenarioConfig:
             # a stack cannot clear against the None'd curve gate anyway. Keeps
             # every backcast keeper's cache_key + run_config.json byte-identical.
             self.capacity_market_supply_clearing_by_iso = None
+            # capx D62: the published going-forward-bar gate, coerced for the
+            # same reason — the bar it replaces is the RETIREMENT SCREEN's, and
+            # a plain backcast runs no capacity evolution at all. Keeps every
+            # backcast keeper's cache_key + run_config.json byte-identical.
+            self.capacity_going_forward_bar_published_by_iso = None
 
         # T1-X crossover boundary (FF-0E, plan §2.2): only meaningful on the
         # vintage-seeded capacity-hindcast harness (forecast machinery). A
@@ -17518,6 +17588,7 @@ TIER_TAGS: dict[str, int] = {
     "retirement_sector_gate": 1,
     "locality_capacity_curves": 1,
     "capacity_market_supply_clearing_by_iso": 1,
+    "capacity_going_forward_bar_published_by_iso": 1,
     "nyiso_local_selfsupply": 1,
     "nyiso_firm_imports": 1,
     "nyiso_import_reconciliation": 1,
