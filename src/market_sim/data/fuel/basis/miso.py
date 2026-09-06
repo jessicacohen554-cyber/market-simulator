@@ -303,7 +303,9 @@ MISO_GAS_VARIABLE_TRANSPORT_PATH = (
     / "data/raw/reference/miso_gas_variable_transport.csv"
 )
 
-_TRANSPORT_CACHE: dict[Path, tuple[dict[int, float], dict[str, float], dict[str, float], float]] = {}
+_TRANSPORT_CACHE: dict[
+    Path, tuple[dict[int, float], dict[str, float], dict[str, float], float]
+] = {}
 
 
 def _load_miso_gas_variable_transport(
@@ -360,7 +362,9 @@ def _miso_gas_variable_transport_vector(
     rung.  A row with no ``plant_code`` (an aggregated bin) starts at the
     ``zone|group`` rung, which is the finest rung it can be attributed to.
     """
-    by_plant, by_zone_group, by_group, miso_wide = _load_miso_gas_variable_transport(path)
+    by_plant, by_zone_group, by_group, miso_wide = _load_miso_gas_variable_transport(
+        path
+    )
     groups = getattr(fleet, "plant_group", None)
     out = np.empty(rows.size, dtype=float)
     for i, g in enumerate(rows):
@@ -370,9 +374,7 @@ def _miso_gas_variable_transport_vector(
             continue
         group = str(groups[g]) if groups is not None else ""
         zone = zone_names[int(fleet.zone_idx[g])]
-        out[i] = by_zone_group.get(
-            f"{zone}|{group}", by_group.get(group, miso_wide)
-        )
+        out[i] = by_zone_group.get(f"{zone}|{group}", by_group.get(group, miso_wide))
     return out
 
 

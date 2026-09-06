@@ -2983,7 +2983,9 @@ def test_miso_gas_variable_transport_requires_the_hub_repricing():
     config = ScenarioConfig(
         iso="MISO", mode="backcast", hours=48, miso_gas_variable_transport=True
     )
-    with pytest.raises(ValueError, match="requires miso_gas_marginal_commodity_pricing"):
+    with pytest.raises(
+        ValueError, match="requires miso_gas_marginal_commodity_pricing"
+    ):
         fuel.apply_miso_gas_marginal_commodity(prices, fleet, config, 2024)
 
 

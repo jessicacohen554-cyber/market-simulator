@@ -167,7 +167,11 @@ def _fit(
     mean = float((wedge * w**2).sum() / (w**2).sum())
     ss_res = float((resid**2).sum())
     ss_tot = float((((wedge - mean) * w) ** 2).sum())
-    return float(coef[0]), float(coef[1]), (1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan"))
+    return (
+        float(coef[0]),
+        float(coef[1]),
+        (1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan")),
+    )
 
 
 def _top_quartile(wedge: np.ndarray, burn: np.ndarray) -> float:
@@ -221,20 +225,24 @@ def derive(years: tuple[int, ...] = YEARS) -> pd.DataFrame:
     """Return the per-plant variable-transport table, fallback ladder applied."""
     panel = build_panel(years)
     if panel.empty:
-        raise ValueError("MISO gas wedge panel is empty — check the F923 and hub inputs")
+        raise ValueError(
+            "MISO gas wedge panel is empty — check the F923 and hub inputs"
+        )
 
     # Pooled rungs first, so a plant that misses its own bars can take one.
     pooled_zone_group: dict[tuple[str, str], float] = {}
     for key, grp in panel.groupby(["zone", "group"]):
         if len(grp) >= MIN_MONTHS:
             pooled_zone_group[key] = _fit(
-                grp["wedge_usd_mmbtu"].to_numpy(float), grp["burn_mmbtu"].to_numpy(float)
+                grp["wedge_usd_mmbtu"].to_numpy(float),
+                grp["burn_mmbtu"].to_numpy(float),
             )[0]
     pooled_group: dict[str, float] = {}
     for key, grp in panel.groupby("group"):
         if len(grp) >= MIN_MONTHS:
             pooled_group[str(key)] = _fit(
-                grp["wedge_usd_mmbtu"].to_numpy(float), grp["burn_mmbtu"].to_numpy(float)
+                grp["wedge_usd_mmbtu"].to_numpy(float),
+                grp["burn_mmbtu"].to_numpy(float),
             )[0]
     pooled_iso = _fit(
         panel["wedge_usd_mmbtu"].to_numpy(float), panel["burn_mmbtu"].to_numpy(float)
@@ -272,11 +280,15 @@ def derive(years: tuple[int, ...] = YEARS) -> pd.DataFrame:
                 "r2": round(r2, 4),
                 "v_ols_usd_mmbtu": round(v_ols, 6),
                 "v_topquartile_usd_mmbtu": round(_top_quartile(wedge, burn), 6),
-                "wedge_burn_weighted": round(float((wedge * burn).sum() / burn.sum()), 6),
+                "wedge_burn_weighted": round(
+                    float((wedge * burn).sum() / burn.sum()), 6
+                ),
             }
         )
     frame = pd.DataFrame(out).sort_values("plant_id").reset_index(drop=True)
-    frame.attrs["pooled_zone_group"] = {f"{k[0]}|{k[1]}": v for k, v in pooled_zone_group.items()}
+    frame.attrs["pooled_zone_group"] = {
+        f"{k[0]}|{k[1]}": v for k, v in pooled_zone_group.items()
+    }
     frame.attrs["pooled_group"] = dict(pooled_group)
     frame.attrs["pooled_iso"] = pooled_iso
     return frame
@@ -312,7 +324,13 @@ def main() -> None:
             {"rung": "group", "key": k, "v_usd_mmbtu": round(v, 6)}
             for k, v in sorted(frame.attrs["pooled_group"].items())
         ]
-        + [{"rung": "miso", "key": "__MISO__", "v_usd_mmbtu": round(frame.attrs["pooled_iso"], 6)}]
+        + [
+            {
+                "rung": "miso",
+                "key": "__MISO__",
+                "v_usd_mmbtu": round(frame.attrs["pooled_iso"], 6),
+            }
+        ]
     )
     pool.to_csv(args.out.with_suffix(".pool.csv"), index=False)
 

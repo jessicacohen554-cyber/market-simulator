@@ -359,7 +359,9 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
     for n in notes:
         print(f"  note: {n}")
     nb, nb_notes = derive_pjm_neighbour(g)
-    print(f'    # miso-225 NEIGHBOUR-ANCHORED "PJM" (PJM western-border DA ${border_mean:.2f}):')
+    print(
+        f'    # miso-225 NEIGHBOUR-ANCHORED "PJM" (PJM western-border DA ${border_mean:.2f}):'
+    )
     print(f'        "import": {tuple(nb["import"])},')
     print(f'        "export": {tuple(nb["export"])},')
     for n in nb_notes:
