@@ -1,4 +1,4 @@
-# Scenario delta report — NYISO — nyiso_scenario_campaign_matrix_81af4882ee
+# Scenario delta report — NYISO — nyiso_scenario_campaign_matrix_84955cc82d
 
 **deterministic scenario range -- NOT a probability band** — deltas are
 case-vs-`REF` differences on one deterministic case set,
@@ -8,9 +8,9 @@ not a probability statement. Dollars are real 2026$.
 
 | Case | Cache key | Reference? |
 |---|---|---|
-| LOAD-HI | `470338150a2f85a0` |  |
-| LOAD-HI-ORGANIC | `bf50c8305ba3c4ee` |  |
-| REF | `aed447f88457dff7` | **REF** |
+| LOAD-HI | `c2ceaefa4afafcda` |  |
+| LOAD-HI-ORGANIC | `27f19f22105ab6cb` |  |
+| REF | `f10cc93084b4c0db` | **REF** |
 
 ## Headline deltas vs `REF` (final cached year)
 
@@ -18,9 +18,9 @@ Final cached year on disk: **2030**.
 
 | case | emissions_mt | emissions_mt_delta | import_co2_mt_reported | unserved_mwh | backstop_built_mw | backstop_built_mwh | avg_price_usd_per_mwh | avg_price_usd_per_mwh_delta | curtailment_twh | clean_share |
 |---|---|---|---|---|---|---|---|---|---|---|
-| LOAD-HI | 26.234 | 5.340 | 12.218 | 0.000 | 0 | 0.000 | 63.830 | 3.320 | 0.000 | 0.535 |
-| LOAD-HI-ORGANIC | 26.313 | 5.420 | 12.216 | 0.000 | 0 | 0.000 | 64.020 | 3.510 | 0.000 | 0.534 |
-| REF | 20.893 | 0.000 | 11.682 | 0.000 | 0 | 0.000 | 60.510 | 0.000 | 0.000 | 0.546 |
+| LOAD-HI | 14.020 | 3.117 | 11.608 | 0.000 | 0 | 0.000 | 57.020 | 3.240 | 0.000 | 0.608 |
+| LOAD-HI-ORGANIC | 14.168 | 3.265 | 11.615 | 0.000 | 0 | 0.000 | 57.140 | 3.360 | 0.000 | 0.607 |
+| REF | 10.903 | 0.000 | 11.075 | 0.000 | 0 | 0.000 | 53.780 | 0.000 | 0.000 | 0.623 |
 
 ## Cumulative CO2 delta vs `REF` (Mt)
 
@@ -28,42 +28,42 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | year | cumulative_emissions_mt_delta |
 |---|---|---|
-| LOAD-HI | 2030 | 16.953 |
-| LOAD-HI-ORGANIC | 2030 | 17.211 |
+| LOAD-HI | 2030 | 12.669 |
+| LOAD-HI-ORGANIC | 2030 | 13.005 |
 | REF | 2030 | 0.000 |
 
 ## By-fuel deltas (final year)
 
 | case | fuel | capacity_gw_delta | generation_twh_delta | emissions_mt_delta |
 |---|---|---|---|---|
-| LOAD-HI | biomass | 0.000 | 0.006 | 0.000 |
-| LOAD-HI | gas_cc | -0.146 | 3.657 | 1.494 |
-| LOAD-HI | gas_cc_ccs | 0.146 | 5.753 | 2.113 |
-| LOAD-HI | gas_ct | 0.000 | 0.922 | 0.550 |
-| LOAD-HI | gas_st | 0.000 | 2.227 | 1.183 |
-| LOAD-HI | import | 0.000 | 1.251 | 0.000 |
-| LOAD-HI-ORGANIC | biomass | 0.000 | 0.006 | 0.000 |
-| LOAD-HI-ORGANIC | gas_cc | -0.146 | 3.445 | 1.420 |
-| LOAD-HI-ORGANIC | gas_cc_ccs | 0.146 | 5.566 | 2.041 |
-| LOAD-HI-ORGANIC | gas_ct | 0.000 | 1.030 | 0.612 |
-| LOAD-HI-ORGANIC | gas_st | 0.000 | 2.522 | 1.346 |
-| LOAD-HI-ORGANIC | import | 0.000 | 1.248 | 0.000 |
+| LOAD-HI | biomass | 0.000 | 0.118 | 0.000 |
+| LOAD-HI | gas_cc | -0.723 | 4.178 | 1.773 |
+| LOAD-HI | gas_cc_ccs | 0.723 | 6.293 | 0.257 |
+| LOAD-HI | gas_ct | 0.000 | 0.596 | 0.350 |
+| LOAD-HI | gas_st | 0.000 | 1.385 | 0.737 |
+| LOAD-HI | import | 0.000 | 1.245 | 0.000 |
+| LOAD-HI-ORGANIC | biomass | 0.000 | 0.122 | 0.000 |
+| LOAD-HI-ORGANIC | gas_cc | -0.723 | 4.025 | 1.720 |
+| LOAD-HI-ORGANIC | gas_cc_ccs | 0.723 | 6.061 | 0.249 |
+| LOAD-HI-ORGANIC | gas_ct | 0.000 | 0.702 | 0.415 |
+| LOAD-HI-ORGANIC | gas_st | 0.000 | 1.648 | 0.881 |
+| LOAD-HI-ORGANIC | import | 0.000 | 1.262 | 0.000 |
 | LOAD-HI-ORGANIC | oil | 0.000 | 0.000 | 0.000 |
 
 ## By-zone CO2 deltas (final year, Mt)
 
 | case | zone | emissions_mt | emissions_mt_delta |
 |---|---|---|---|
-| LOAD-HI | Capital_Hudson | 9.789 | 1.806 |
-| LOAD-HI | Long_Island | 1.436 | 0.495 |
-| LOAD-HI | Lower_Hudson | 0.005 | 0.002 |
-| LOAD-HI | NYC | 11.152 | 2.215 |
-| LOAD-HI | Upstate_West | 3.852 | 0.822 |
-| LOAD-HI-ORGANIC | Capital_Hudson | 9.722 | 1.739 |
-| LOAD-HI-ORGANIC | Long_Island | 1.489 | 0.549 |
-| LOAD-HI-ORGANIC | Lower_Hudson | 0.004 | 0.002 |
-| LOAD-HI-ORGANIC | NYC | 11.298 | 2.360 |
-| LOAD-HI-ORGANIC | Upstate_West | 3.800 | 0.770 |
+| LOAD-HI | Capital_Hudson | 3.222 | 0.836 |
+| LOAD-HI | Long_Island | 0.733 | 0.231 |
+| LOAD-HI | Lower_Hudson | 0.002 | 0.001 |
+| LOAD-HI | NYC | 6.537 | 1.228 |
+| LOAD-HI | Upstate_West | 3.527 | 0.820 |
+| LOAD-HI-ORGANIC | Capital_Hudson | 3.164 | 0.778 |
+| LOAD-HI-ORGANIC | Long_Island | 0.795 | 0.293 |
+| LOAD-HI-ORGANIC | Lower_Hudson | 0.002 | 0.001 |
+| LOAD-HI-ORGANIC | NYC | 6.691 | 1.383 |
+| LOAD-HI-ORGANIC | Upstate_West | 3.516 | 0.810 |
 
 ## Capacity-evolution deltas vs `REF` (ledger totals, MW)
 
@@ -74,19 +74,19 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI | build | wind | 1000.0 | 0.0 |
 | LOAD-HI | retirement | biomass | 8.0 | 0.0 |
 | LOAD-HI | retirement | gas_ct | 19.8 | 0.0 |
-| LOAD-HI | retrofit | gas_cc_ccs | 6620.6 | 146.0 |
+| LOAD-HI | retrofit | gas_cc_ccs | 6979.0 | 723.0 |
 | LOAD-HI-ORGANIC | build | gas_cc | 1000.0 | 0.0 |
 | LOAD-HI-ORGANIC | build | solar | 1843.4 | 0.0 |
 | LOAD-HI-ORGANIC | build | wind | 1000.0 | 0.0 |
 | LOAD-HI-ORGANIC | retirement | biomass | 8.0 | 0.0 |
 | LOAD-HI-ORGANIC | retirement | gas_ct | 19.8 | 0.0 |
-| LOAD-HI-ORGANIC | retrofit | gas_cc_ccs | 6620.6 | 146.0 |
+| LOAD-HI-ORGANIC | retrofit | gas_cc_ccs | 6979.0 | 723.0 |
 | REF | build | gas_cc | 1000.0 | 0.0 |
 | REF | build | solar | 1843.4 | 0.0 |
 | REF | build | wind | 1000.0 | 0.0 |
 | REF | retirement | biomass | 8.0 | 0.0 |
 | REF | retirement | gas_ct | 19.8 | 0.0 |
-| REF | retrofit | gas_cc_ccs | 6474.6 | 0.0 |
+| REF | retrofit | gas_cc_ccs | 6255.9 | 0.0 |
 
 ## Notes & definitions
 
