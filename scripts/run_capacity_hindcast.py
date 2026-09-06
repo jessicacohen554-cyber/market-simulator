@@ -1920,9 +1920,14 @@ def main(argv: list[str] | None = None) -> int:
             "industrial, CHP and non-CHP) face the screen as before, an unknown "
             "sector fails open to it (D32 C5/R3; design "
             "docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md). ISO-"
-            "agnostic by construction. OMIT to inherit the shipped default "
-            "(off, owner-armed only); --retirement-sector-gate arms it "
-            "(distinct cache key)."
+            "agnostic by construction; ARMED per ISO by owner ruling through "
+            "iso_configs (MISO: D53, 2026-09-05; PJM: Q56 / capx D78-ARM, "
+            "2026-09-06, beside the D48 / D57 / D67 / Q55 gates), so OMIT to "
+            "inherit that ISO's shipped posture; --no-retirement-sector-gate "
+            "reaches the pre-arm control and --retirement-sector-gate arms it "
+            "elsewhere (distinct cache key either way). The shared "
+            "ScenarioConfig default stays off, so every other ISO and every "
+            "backcast key is unmoved."
         ),
     )
     parser.add_argument(

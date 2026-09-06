@@ -6681,20 +6681,54 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # key (its control is the pre-arm bare recipe, to the digit), so the
         # arm reproduces the recipe the A/B was measured on rather than
         # naming a new one.
+        # capx D78-ARM (owner ruling Q56, served by FINDING-capx-d78r3 §5): a
+        # SIXTH field is armed through the same override path —
+        # ``retirement_sector_gate``, the retirement-screen sector gate (capx
+        # D53 / D78) — so the bare key advances again and EVERY explicit
+        # control leg needs the sixth ``--no-`` flag to reach the posture it
+        # names. Pre-declared with measured literals
+        # (PRECOMMIT-capx-d78arm-2026-09-06.md §2 / §2.1), the D75-R-ARM
+        # discipline. Same structural cause: the field is a
+        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``.
+        #
+        # MEASURED, not assumed: adding ``retirement_sector_gate=False`` to
+        # each leg restores its pre-arm literal EXACTLY —
+        #   bare                b518f5fe7d02f961   (the D75-R-ARM / Q55 posture)
+        #   off3                1785cb6086cd2b15
+        #   off2                ab0237198cff24ad
+        # — so the whole move is this one field's. Two post-arm legs land on
+        # keys that ALREADY carry a measurement: ``--no-pjm-vre-accreditation-
+        # vintage`` resolves ``bb6a60239d69508b``, which IS D78-R2's own
+        # measured arm (the gate without Q55; d78r2/keys_probe.json), and both
+        # ``--no-`` flags reach ``a9c66d8ea25acb9d``, the D67-ARM / D78-R2
+        # graded control. The post-arm bare key is ``fb16fda2ddb0a94a``.
         _novre = dict(pjm_vre_accreditation_vintage=False)
-        self.assertEqual(_key("PJM"), "b518f5fe7d02f961")  # = the D75-R-ARM posture
-        self.assertEqual(_key("PJM", **_novre), "a9c66d8ea25acb9d")  # = D67-ARM
+        _nogate = dict(retirement_sector_gate=False)
+        self.assertEqual(_key("PJM"), "fb16fda2ddb0a94a")  # = the D78-ARM posture
+        self.assertEqual(_key("PJM", **_nogate), "b518f5fe7d02f961")  # = D75-R-ARM
+        self.assertEqual(_key("PJM", **_novre), "bb6a60239d69508b")  # = D78-R2's arm
+        self.assertEqual(
+            _key("PJM", **_novre, **_nogate), "a9c66d8ea25acb9d"
+        )  # = D67-ARM
         _off3 = dict(
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
             capacity_market_supply_clearing=False,
         )
         self.assertEqual(
-            _key("PJM", **_off3), "1785cb6086cd2b15"
-        )  # D57 off, D67+D75R on
-        self.assertEqual(_key("PJM", **_off3, **_novre), "61dfbc5c48af076b")
+            _key("PJM", **_off3), "f1a9881ed29df6cb"
+        )  # D57 off, D67+Q55+Q56 on
         self.assertEqual(
-            _key("PJM", **_off3, capacity_adequacy_requirement_published=False),
+            _key("PJM", **_off3, **_nogate), "1785cb6086cd2b15"
+        )  # D57 off, D67+D75R on
+        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "61dfbc5c48af076b")
+        self.assertEqual(
+            _key(
+                "PJM",
+                **_off3,
+                **_nogate,
+                capacity_adequacy_requirement_published=False,
+            ),
             "d2fe4e2b32aef073",  # D57 + D67 off, D75-R still on
         )
         self.assertEqual(
@@ -6702,6 +6736,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 "PJM",
                 **_off3,
                 **_novre,
+                **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
             "c5ec052057905966",  # = D45-R's bare key, the explicit control
@@ -6710,10 +6745,20 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
         )
-        self.assertEqual(_key("PJM", **_off2), "ab0237198cff24ad")  # arm B, D67+D75R on
-        self.assertEqual(_key("PJM", **_off2, **_novre), "2d5bebd2bceed991")
         self.assertEqual(
-            _key("PJM", **_off2, capacity_adequacy_requirement_published=False),
+            _key("PJM", **_off2), "944c89de0a74ca63"
+        )  # arm B, D67+Q55+Q56 on
+        self.assertEqual(
+            _key("PJM", **_off2, **_nogate), "ab0237198cff24ad"
+        )  # arm B, D67+D75R on
+        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "2d5bebd2bceed991")
+        self.assertEqual(
+            _key(
+                "PJM",
+                **_off2,
+                **_nogate,
+                capacity_adequacy_requirement_published=False,
+            ),
             "05cdf4af2b9adef8",  # D57 partial + D67 off, D75-R still on
         )
         self.assertEqual(
@@ -6721,12 +6766,15 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 "PJM",
                 **_off2,
                 **_novre,
+                **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
             "6ba67a81ed4d2ed6",  # = arm B
         )
-        # Every other ISO resolves the four fields OFF (their own keys are
-        # their own lanes' — never pinned here, rule 25).
+        # Every other ISO resolves the PJM fields OFF (their own keys are
+        # their own lanes' — never pinned here, rule 25). The sector gate is
+        # ISO-agnostic in form and armed PER ISO on that ISO's own ISOConfig:
+        # MISO carries its D53 arm, nobody else's moves with PJM's.
         for iso in ("MISO", "NYISO", "NEISO", "CAISO", "ERCOT"):
             cfg = build_config(
                 iso, 2021, 2025, "realized", vintage=2020, entry_screen_diagnostics=True
@@ -6736,15 +6784,18 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             self.assertFalse(res.pjm_demand_response_supply)
             self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
             self.assertFalse(res.pjm_vre_accreditation_vintage)
+            self.assertIs(res.retirement_sector_gate, iso == "MISO")
         back = ScenarioConfig(iso="PJM", mode="backcast")
         res = apply_iso_scenario_defaults(back, "PJM")
         self.assertFalse(res.pjm_accreditation_design_vintage)
         self.assertFalse(res.pjm_demand_response_supply)
         self.assertIsNone(res.capacity_market_supply_clearing_by_iso)
         # FORECAST-ONLY, which is the whole intent of this test's name: the
-        # backcast leg coerces the VRE gate back to its dataclass default in
-        # ``__post_init__``, so no backcast keeper of any ISO can be re-keyed.
+        # backcast leg coerces the VRE gate AND the sector gate back to their
+        # dataclass defaults in ``__post_init__``, so no backcast keeper of
+        # any ISO can be re-keyed.
         self.assertFalse(res.pjm_vre_accreditation_vintage)
+        self.assertFalse(res.retirement_sector_gate)
         self.assertEqual(res.cache_key(), back.cache_key())
 
     def test_i6_byte_identity_unarmed_and_backcast_coercion(self):
