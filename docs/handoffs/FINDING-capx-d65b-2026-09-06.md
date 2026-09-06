@@ -18,8 +18,9 @@ document was declared there **before** the corresponding solve.
 | V4 | **A cross-check closed as a by-product.** ATB's own unabated NG 2-on-1 CC (F-Frame) heat rate @2026 is **6.3 MMBtu/MWh** = `min(HEAT_RATE_BINS["gas_cc"].values())`, the `hr_ref` inside `ccs_retrofit_captured_ref_t_per_mwh`. The D50 capex seam's host and the captured-flow reference host are provably ONE host, from the pinned bytes. |
 | V5 | **The STOP "the explicit-`False` path moving a key" DOES NOT FIRE.** Decomposed: Act A alone leaves that path on `e5ecd4105ada3e58`, exactly the pre-flip forecast default. The movement at HEAD is Act B's unconditional re-key, which D65 §9 item 3 predicts and licenses. |
 | V6 | **A DEFECT THE CHARTER DID NOT ANTICIPATE was found and repaired before the screen** — Act A's flip made the D50/Q42 CONTROL ARM, and six committed bundles, unconstructible. §4 below. This is the finding of this lane that was not on its list. |
-| V7 | *(pending — the screen)* |
-| V8 | *(pending — the batch)* |
+| V7 | **THE SCREEN FIRES TWO PRE-REGISTERED STOPs — G1 and G3 — so per rule 29 THE BATCH DOES NOT RUN and the remaining years are not spent.** The mechanism evidence is nonetheless favourable and is reported at full magnitude (§6): the same-HEAD control produces **0 retrofit rows in every year**, reproducing D64 §2.4's shipped-level ERCOT census exactly, so the arm's 7 rows are attributable to the two acts and nothing else; G4/G5/G6 pass. |
+| V8 | **Both fired gates appear UNSATISFIABLE by the arm the charter itself specifies**, and this session does NOT reinterpret them to pass (§6.5). G1's `er/phys ≥ 1.27` is, in both source documents, **PJM/MISO's** host band — D64 §2.4's own ERCOT row reads **0.95–1.05**, and the measurement is 0.9458/1.0000, i.e. the arm did exactly what D64 predicted for this ISO. G3's `k = 1` invariance is an **Act-A** property, while Act B moves every host's VOM by design. Routed to the director for adjudication, not resolved here. |
+| V9 | **G2 could not be evaluated at all**, because the evolution ledger persists `ccs_retrofits` as `{unit_id, mw, from_fuel, to_fuel}` and drops the `retrofit_log` that carries `capex_scale` / `fixed_cost_scale` / uplift. A charter gate is unreadable from the artifacts the runner writes — the same defect class D65 §3d found in `floor_retained` (§6.4). |
 
 ---
 
@@ -192,13 +193,153 @@ not a G-DRIFT verdict — `constants.py` is outside the key.**
 
 ---
 
-## 6. The screen
+## 6. The screen — RUN, and it FIRES TWO PRE-REGISTERED STOPs
 
-*(pending)*
+**Both legs solved, same HEAD (`a5c30c6a`), 5/5 years each.** ARM `d0fb7534671b4c91`
+(14.8 min, 4.04 GB peak RSS); CONTROL `6cfa33538294713c` (15.0 min, 3.77 GB) — and the control
+landed on **exactly** the key Addendum A.2 declared for it before it ran. `CTL EXIT=0` with the HEAD
+guard clean.
 
-## 7. The batch
+### 6.1 What the screen measured
 
-*(pending)*
+| year | CONTROL (same HEAD, both acts off) | ARM (both acts) |
+|---|---|---|
+| 2026 / 2027 / 2028 | 0 rows | 0 rows |
+| 2029 | **0 rows** | **6 rows / 2,763.8 MW** |
+| 2030 | **0 rows** | **1 row / 3,000.0 MW** (the 3 GW/yr cap, binding exactly) |
+
+The control reproduces D64 §2.4's shipped-level ERCOT census (**0 / 0 / 0**) exactly, so **the entire
+retrofit set is attributable to the two acts** and to nothing else on the HEAD.
+
+Per-host, from CAMPD 2024 (`er` = ΣCO2/Σgross MWh, `phys` = `hr` × 0.057, `k` = 0.9·`er`/0.32319):
+
+| host | hr | er | phys | **er/phys** | k |
+|---|---:|---:|---:|---:|---:|
+| `CC_REGULAR_South_Central_p7900` | 7.579 | 0.4086 | 0.4320 | **0.9458** | 1.138 |
+| `CC_REGULAR_North_p55320` | 6.767 | 0.3648 | 0.3857 | **0.9458** | 1.016 |
+| `CC_REGULAR_West_p56349` | 8.515 | 0.4591 | 0.4854 | **0.9458** | 1.278 |
+| `CC_REGULAR_North_p58001` | 7.797 | 0.4204 | 0.4444 | **0.9458** | 1.171 |
+| `CC_REGULAR_West_p56233` | — | — | — | absent from CAMPD 2022–24 (planned unit) | — |
+| `gas_cc_h_class_Houston` / `_North` | 6.300 | 0.3591 | 0.3591 | **1.0000** | **1.0000** |
+
+### 6.2 The gate table
+
+| gate | verdict |
+|---|---|
+| **G1** — every clearing row is an `er/phys` ≥ 1.27 host | **FIRES.** Every row is 0.9458–1.0000 |
+| **G2** — the identity `uplift/capex ∝ 1/k` holds | **NOT EVALUABLE** from committed artifacts (§6.4) |
+| **G3** — `k = 1` rows byte-identical | **FIRES.** Both `gas_cc_h_class` rows are `k` = 1.0000 exactly and appear in the ARM only |
+| **G4** — no non-target load-bearing row flips PASS → FAIL | **PASS** (§6.3) |
+| **G5** — direction and order of magnitude match the pre-solve delta | **PASS.** 0 → 7 rows, and 2030 pins the 3 GW cap |
+| **G6** — wall/RSS inside the D60 envelope | **PASS.** 14.8 / 15.0 min, 4.04 / 3.77 GB |
+
+**Per rule 29, a fired STOP is the session's result and the remaining years are not spent. THE BATCH
+DOES NOT RUN.** What follows is why both fired gates are, in this lane's reading, **unsatisfiable by
+the arm the charter itself specifies** — which is a question for the director, not one this session
+may resolve by reinterpreting its own STOP.
+
+### 6.3 G4, measured — and why the same-HEAD control earned its 15 minutes
+
+The 14 forecast invariants are **identical between ARM and CONTROL**, detail strings included:
+2 FAIL (I3 unserved/dump, I12 reserve-margin band), 2 WARN (I13 cobweb `wind(3)`, I14 price sanity).
+Both FAILs are **pre-existing** — the committed pre-D65-B ERCOT t1f carries I3 and I12 FAIL too.
+
+I13 reads PASS on the committed bundle and WARN on both of this lane's legs. Because it moves on
+**both** legs at one HEAD, it is attributable to the HEAD delta (the SCN-LOAD `DEMAND_GROWTH_RATES`
+hunk §5 found LIVE) and **not to either act**. A form-4 comparison against the committed bundle
+would have charged that WARN to this seam.
+
+### 6.4 G2 is not evaluable, and that is a defect in the artifacts, not in the arm
+
+`results/evolution_ledger.py` persists `ccs_retrofits` as `{unit_id, mw, from_fuel, to_fuel}` only.
+The rich `retrofit_log` — carrying `capex_scale`, `fixed_cost_scale`, `vom_adder_per_mwh`,
+`delta_fom_per_mw_yr`, `annual_net_savings_per_mw`, `payback_years`, `old_emission_rate` — is
+computed by `apply_ccs_retrofit`, handed forward to the next year's screen, and then **dropped**.
+So the `uplift/capex ∝ 1/k` identity, which D65's own charter names as a screen gate, **cannot be
+read from the bundle the runner writes**; §6.1's `er`/`k` column had to be reconstructed offline
+from CAMPD.
+
+This is the same class of defect D65 §3d found in `floor_retained`: *a diagnostic that exists to make
+a mechanism visible is blind to the mechanism.* **Routed:** persist the retrofit log (or its
+per-row `capex_scale` / `fixed_cost_scale` / `vom_adder_per_mwh` / uplift columns) in the evolution
+ledger, so a retrofit-seam gate is checkable from committed artifacts rather than by replay.
+
+### 6.5 Why G1 and G3 appear unsatisfiable by a COUPLED arm on a CARBON-0 ISO
+
+Stated as an escalation, not as a reinterpretation. **This session does not treat either gate as
+passed.**
+
+**G1 — the 1.27 threshold is another ISO's host population.** Both source documents attribute that
+band to PJM and MISO, never to ERCOT:
+
+* D64 §2.4: *"The PJM and MISO rows that survive are the `er/phys` 1.27–1.49 hosts … which are D49
+  §1.3's business"* — and the SAME table's ERCOT row reads **`er/phys` 0.95–1.05**.
+* D65 §9 item 4 repeats it verbatim: *"the surviving PJM/MISO rows are the `er/phys` 1.27–1.49
+  hosts"*.
+
+The measurement — 0.9458 on all four CAMPD hosts, 1.0000 on the two synthetic h-class builds — is
+**inside D64's own pre-registered ERCOT band of 0.95–1.05**, to two decimal places. So the arm did
+exactly what D64 predicted for this ISO, and the gate as transcribed demands the opposite.
+
+It also inverts the gate's evident purpose. `er/phys` > 1 flags a **CAMPD-rate-above-physical**
+tranche — a measured rate exceeding what the heat rate implies, i.e. the artifact D49 §1.3 is about.
+ERCOT's hosts sit at 0.9458, *below* physical, so that artifact is absent. Read as a floor, G1 does
+not screen the artifact out; it **requires** it.
+
+**G3 — `k = 1` invariance is an ACT-A property, and this arm is coupled.** At `k` = 1,
+`fixed_cost_scale` = `capex_scale` = 1.0, so Act A multiplies both fixed-cost legs by exactly 1.0 —
+identity by construction, already asserted by
+`test_ccs_retrofit.py::test_reference_host_is_invariant_on_and_off`. But **Act B changes the VOM
+level for every host, `k` = 1 included, by design**; that is the same mechanic §3.1 uses to show the
+explicit-`False` path moves on Act B and not Act A. So a coupled arm necessarily moves `k` = 1 rows,
+and G3 can only be evaluated against an Act-A-only leg — which the charter did not commission and
+which would spend an LP to re-measure arithmetic that is already proven and tested.
+
+**The common root.** The gate set reads as written for an **Act-A-only** screen, while §8.1 of D65
+then required the arm to be **coupled**, and §9 item 4 required the screen ISO to be **carbon-0**.
+Under those two constraints together, G1 and G3 are not merely unmet — they are unmeetable: any row
+a carbon-0 ISO gains will be `er/phys` ≈ 0.95–1.05, and any coupled arm moves `k` = 1 rows. The
+charter's own clause *"a carbon-0 ISO GAINING rows is NOT a STOP — it is the accurate level's
+pre-registered signature"* points the other way from G1 on the very same page.
+
+### 6.6 What this session did NOT do
+
+It did not reinterpret, relax, re-scope or re-baseline either fired gate to reach a pass — selecting
+a criterion because it lets a result through is the fitted-mechanism selection rules 1 `[R-STRUCT]`
+and 29 forbid, and a STOP the session wrote for itself is not a STOP if the session may edit it on
+seeing the number. It did not run the batch. It did not register anything.
+
+**For the director.** The mechanism evidence is favourable and is reported at full magnitude: the
+control's 0/0/0 reproduces D64's census exactly, the arm's rows match D64's ERCOT prediction on
+`er/phys` to two decimals, G4/G5/G6 pass, and the 2030 row pins the 3 GW cap. What is needed is an
+adjudication on the gate set, not more solving:
+
+1. **Is G1 ISO-parameterized?** If the ERCOT band is D64 §2.4's own 0.95–1.05, the arm passes it as
+   measured. If 1.27 is meant literally for every ISO, the screen ISO was mis-chosen and the screen
+   belongs on PJM or MISO — where D64 predicts 1.27–1.49 hosts, and where the cap-bound RGGI
+   objection does not apply.
+2. **Is G3 to be evaluated Act-A-only?** If so it is already discharged by construction plus a
+   passing test, at zero LP. If it is meant to bind the coupled arm, it cannot be satisfied and
+   should be withdrawn or restated.
+3. **G2 needs the artifact fix in §6.4 before any future screen can evaluate it at all.**
+
+
+## 7. The batch — NOT RUN
+
+Rule 29: *"A screen that kills an arm is reported as the session's result and the remaining years are
+never spent."* Two pre-registered STOPs fired, so the seven batch legs (ercot / neiso / nyiso /
+caiso / pjm / miso t1f + the neiso-t3 GOLDEN-3) were **not solved, not scored, not registered**, and
+no matrix cell verdict was stamped. Nothing this lane produced reached the dashboard.
+
+**Everything the batch needs is nonetheless prepared and durable**, so an adjudication is the only
+blocker — not re-work:
+
+* the §3 bare-key declaration **still holds at the post-merge `main`** (PRECOMMIT Addendum B.1:
+  fifteen lanes merged, not one moved a bare forecast key);
+* the batch's G-DRIFT re-audit is **complete and all-INERT**, hunk by hunk with each gate named and
+  two of them measured (Addendum B.2);
+* the screen therefore **does not need re-running** after a rebase (Addendum B.3);
+* D60-R4 and D63 have both merged, so the collision constraint is discharged.
 
 ---
 
