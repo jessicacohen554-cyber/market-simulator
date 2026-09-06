@@ -2730,7 +2730,13 @@ def run_year(
         )
 
         tif_out = pjm_interface_ttc_hourly(
-            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+            np.asarray(ttc, dtype=float),
+            iso_config,
+            year,
+            demand.shape[1],
+            admissibility_gate=getattr(
+                config, "pjm_interface_feed_admissibility_gate", False
+            ),
         )
         if tif_out is None:
             logger.warning(
@@ -2942,7 +2948,13 @@ def run_year(
             build_pjm_east_interface_cut_groups,
         )
 
-        east_lim = pjm_eastern_interface_hourly(year, demand.shape[1])
+        east_lim = pjm_eastern_interface_hourly(
+            year,
+            demand.shape[1],
+            admissibility_gate=getattr(
+                config, "pjm_interface_feed_admissibility_gate", False
+            ),
+        )
         if east_lim is None:
             logger.warning(
                 "pjm_east_interface_cut: no transfer-interface-limits clean "

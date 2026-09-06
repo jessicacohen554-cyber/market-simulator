@@ -1554,6 +1554,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # very end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "eia860_vintage_tracks_solve_year",
+    # pjm-167: the PJM interface-feed admissibility gate
+    # (FINDING-pjm167-input-clock-2021-2022-2026-09-06.md §2; GATED default
+    # False => every published series is enforced verbatim exactly as before,
+    # byte-identical). Dropped from the hash at its declared False so every
+    # pre-existing key of all six ISOs is byte-stable; an armed run can drop a
+    # series from the LP's bounds and so keys distinctly. SHARED field — very
+    # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "pjm_interface_feed_admissibility_gate",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2107,6 +2116,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # IN THE SAME COMMIT as the field.
     "capacity_screen_peak_measured_hindcast": "False",
     "eia860_vintage_tracks_solve_year": "False",
+    "pjm_interface_feed_admissibility_gate": "False",
 }
 
 
@@ -14419,6 +14429,54 @@ class ScenarioConfig:
     # as pjm_measured_interface_limits (forecast years keep the static
     # seeds). Off by default; byte-identical off.
     pjm_east_interface_cut: bool = False
+
+    # PJM interface-feed ADMISSIBILITY gate (backcast overlay, pjm-167 --
+    # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
+    # sec 2; PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md).
+    # Judges each published limit series against its OWN measured flows before
+    # the LP enforces it, and where the posting is not an enforceable security
+    # limit, that series is not applied for that year -- the joint EMAAC cut
+    # goes non-binding and the per-link overlay drops the series, so the links
+    # keep their static per-link TTCs, which is the posture a FORECAST year
+    # already takes.
+    #
+    # THE DEFECT. PJM's "Average Eastern" posting changes basis across the
+    # 2023 boundary: pre-2023 it is a near-static seasonal LIMIT-SET value (one
+    # distinct value across all of 2020; 85 across 2021) and from 2024 it is
+    # the hourly-averaged TLC this mechanism's docstring describes (8,767
+    # distinct values). Enforced verbatim, the early vintage is a hard LP bound
+    # BELOW flows PJM actually carried -- the measured flow exceeds the posted
+    # limit in 27.9 % of 2021 hours by up to 5,242 MW, against 0.0 % in 2024
+    # and 2025 -- and it produced 74 hours of unserved energy at VOLL in
+    # PJM_EMAAC alone (51 % of the 2021 C3a error), inverting PJM's real
+    # east-west price gradient (model EMAAC +$34.50 against the rest of PJM;
+    # actual NJ Hub -$5.43 against AEP-Dayton).
+    #
+    # Rule 14 [R-ACCURATE]'s NAMED EXCEPTION, not a licence to drop measured
+    # data: the two vintages are "a different time/area aggregation" under one
+    # series name, so using the early one literally makes results LESS
+    # reflective of reality. The test is one criterion on one feed
+    # (data.transfer_interface_limits.interface_series_admissibility), reading
+    # the clean datatype's own transfer_mw column -- which its schema reserves
+    # for exactly this ("carried ONLY for crosswalk sanity checks (binding
+    # frequency / flow direction), never as a dispatch target"). Nothing reads
+    # a price, a residual or any model output.
+    #
+    # DISCRIMINATING, measured on all six consumed series 2019-2025: AEP/DOM,
+    # both AP-South and both Bedington postings clear at 0.0-1.0 % in EVERY
+    # year, and "Average Central" at <=2.5 %. Only "Average Eastern" (18.7 /
+    # 27.9 / 17.5 % in 2020/21/22) and "Average Western" (6.2 / 6.7 / 9.7 %)
+    # fail, and only in those three years. So the gate is INERT for 2019 and
+    # for 2023-2025 on every link, and every committed backcast keeper is
+    # byte-identical under it.
+    #
+    # Zero fitted scalars. The 5 % bar is declared ex ante in the PRECOMMIT and
+    # never swept (rule 29 [R-SCREEN] clause (c)); the partition it produces is
+    # identical for any threshold in (2.1 %, 17.5 %), an eightfold range, so no
+    # result selects it. The fall-through is LOGGED AT WARNING with its full
+    # arithmetic -- a loud, recorded degradation, never the silent one pjm-119
+    # forbids. Off by default; byte-identical off.
+    pjm_interface_feed_admissibility_gate: bool = False
 
     # PJM measured AP-SOUTH interface cut (backcast/calibration overlay,
     # pjm-134 — results/calibration/FINDING-pjm134-dominion-zonal-inversion-

@@ -211,13 +211,32 @@ parameters**. Two harder confirmations:
   a vintage-2021 `ST_GAS` fleet of **7,411 MW** = **117.3 %**. The same ratio is 96.0 % in 2023.
   The +8.1 TWh `ST_GAS` overshoot is phantom capacity, not conduct.
 
-### 3.5 A separate, tier-neutral hole: BA mis-attribution in EMAAC
+### 3.5 WITHDRAWN — the "missing EMAAC plants" were an instrument error, not a model gap
 
-`Linden Cogeneration` (974 MW) and `Bayonne Energy Center` (644 MW) are physically in New Jersey
-inside EMAAC but carry `balancing_authority_code = NYIS` in EIA-860, so the model's `BA == 'PJM'`
-filter drops them in **every** year — **1,618 MW / 8.2 TWh of 2021 CEMS output**. Present in-sample
-too, so it cannot explain a tier boundary; it raises the EMAAC pocket's exposure everywhere and
-only bites when defect 2 makes the import cut spuriously tight. In-sample-diagnosable.
+**Retracted 2026-09-06, same session, before any action was taken on it.** An earlier draft of
+this finding claimed `Linden Cogeneration` (974 MW) and `Bayonne Energy Center` (644 MW) were
+**absent from the model in every year** — 1,618 MW / 8.2 TWh of EMAAC generation. **That is
+false.** Both carry `balancing_authority_code = NYIS` in EIA-860 and both **are** in the model's
+NYISO BA-filtered fleet (verified: 50006 and 56964 both present, NYISO 1,088 plants / 46.0 GW).
+They are attributed, not missing.
+
+The error was in **my instrument, not the model**: the "absent from the PJM fleet" census was
+filtered by **state** (NJ/DE/MD/DC/PA) rather than by balancing authority, so two New Jersey
+plants that belong to NYISO were counted as PJM units the model had dropped.
+
+For Bayonne the EIA attribution is substantively right — it injects into Con Edison over a
+dedicated cable and is a NYISO resource, not a PJM one. Linden is the harder case and is left
+**open, not asserted**: whether any PJM-side share of it belongs in PJM's fleet is a real
+attribution question, but adding it on this evidence would risk **double-counting a unit the
+NYISO fleet already dispatches**, which is worse than the gap it would close. No action.
+`Cove Point LNG` (59073, 1.49 TWh) is likewise not a gap: it is behind-the-meter liquefaction
+cogeneration and is in no operable snapshot at all.
+
+**What this changes:** recommendation **F3 is withdrawn**. Nothing in §§3.1–3.4 depends on it —
+the coal registry gap is measured against **EIA-930 PJM-metered generation** and the model's own
+committed `class_hourly`, neither of which touches the BA question — and nothing in §2 does
+either. The EMAAC pocket's exposure is therefore explained by defect 2 (§2) and the MAAC-area
+share of defect 1 alone, with no third contributor.
 
 ---
 
@@ -306,16 +325,29 @@ fleet short and still pass C2. Flagged for the audit desk; no gate is changed he
    *Note the field's own docstring calls its effect "small (~0.4 % of ERCOT installed capacity)"
    — an assessment made on ERCOT inside 2023–2025, where it is small. For PJM 2021 it is 39 % of
    the coal fleet. The docstring should be corrected in the same PR.*
-2. **F1b — extend `RETIREMENT_WINDOW_START` to 2019 and arm `partial_plant_exit_carry` for PJM.**
-   The complement of F1 for any year with no committed vintage, and the only route to *unit*-grain
-   exits at surviving plants (Morgantown, Chalk Point, Waukegan). Rebuilding the retiree parquet
-   needs the raw EIA-860 release zips, which are not on disk — re-fetch required.
-3. **F2 — repair the EMAAC interface-limit intake** with a per-year admissibility test on the
-   feed itself (e.g. `P(flow > limit) < 5 %`), falling through to the static seed where the
-   posted series fails it. Screen **after** F1 lands: both act on the same pocket and would
-   otherwise be confounded.
-4. **F3 — fix the Linden/Bayonne BA attribution** (§3.5). In-sample-diagnosable; screen on
-   2023–2025 first, where it costs no holdout.
+2. **F1b — WITHDRAWN as unnecessary: F1 subsumes it.** F1b was scoped as the complement of F1
+   for years with no committed vintage, and as the only route to *unit*-grain exits at surviving
+   plants. Neither holds: `vintage_2018`…`vintage_2024` are **all committed** and the canonical
+   snapshot **is** the 2025 release, so every year of the 2019–2025 program span already has a
+   year-matched registry (a `set_eia860_vintage(2025)` call finds no `vintage_2025/` and falls
+   through to the canonical snapshot — correct by construction). And the vintage's operable sheet
+   carries retired units at **unit grain**, which is how Morgantown's 1,252 MW of coal steam and
+   Chalk Point's 728 MW appear in `vintage_2021` — the exact hole `partial_plant_exit_carry` was
+   built for. Extending `RETIREMENT_WINDOW_START` would add a second mechanism onto a phenomenon
+   F1 already covers, which rule 19 `[R-ONE-MECH]` forbids. **No action.** *(The window constant
+   is still misleading and its comment still says "Bump only if the supported window moves"; it is
+   the right thing to fix only if F1's screen kills the arm.)*
+3. **F2 — BUILT** (`pjm_interface_feed_admissibility_gate`, default OFF): each published series
+   is judged against its own measured flows and one that fails is not enforced that year, the
+   links keeping their static per-link TTCs — the posture a forecast year already takes. Measured
+   across all ten series × seven years before any solve: every **named flowgate** clears in every
+   year, 2019–2022 included; only the three **"Average" regional envelopes** fail, and only
+   "Average Eastern" and "Average Western", only in 2020–2022. So the gate is **inert on the whole
+   keeper span** and every committed backcast keeper is byte-identical under it. Screen
+   pre-registered in `docs/handoffs/PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md`,
+   to run **after** F1: both act on the same pocket and would otherwise confound.
+4. **F3 — WITHDRAWN** (§3.5). The plants are in the model, in NYISO; the apparent gap was a
+   state-filtered census of mine, not a model defect. No action, and no screen.
 5. **F4 — screen the offer-anchor extrapolation** (§4). Screen year **2022**, chosen because the
    mechanism's own footprint is largest there ($7.12 gas against a $3.35 anchor), *not* because
    the residual is largest. Structural gate only.
@@ -329,3 +361,26 @@ No mechanism cell moves: nothing was tested (rule 32 duty (b) binds on a test, n
 Open item for the F1 session: `eia860_vintage_year` has **no row** in
 `docs/codebase-site/data/mechanism-matrix.js` — it predates the duty-(c) CI guard and is named
 only inside other rows' `def` text. The session that screens it adds the row and its per-ISO cells.
+
+---
+
+## 9. BLOCKER — both screens are unrun, and why
+
+F1 and F2 are **built, gated, tested and default-OFF**. Neither is armed, because neither has
+passed the screen its own PRECOMMIT pre-registers, and **the screens could not be run in this
+session**: no PJM per-plant LP fits this container. Three attempts, all OOM-killed —
+concurrent arm+control (7.7 and 13.9 GB), control alone (~14 GB), and control alone with
+`MALLOC_ARENA_MAX=2` + single-threaded BLAS/OMP + dropped caches (**13.96 GB**) — against
+16.0 GB total / ~15.4 GB available.
+
+This is an **environment limit, not a model defect**, and CLAUDE.md's GitHub-Actions rule is
+explicit that the response is to say so and ask the owner rather than move the solve onto a
+billed runner. It also corrects a standing assumption: **rule 12's "cap at ~2 simultaneous for
+per-plant multi-zone LPs" does not hold on a 16 GB box — the cap there is zero.**
+
+Nothing in §§1–8 depends on a solve: every number is from committed sidecars, `data/raw`
+extracts, or two `fleet_only` reconstructions. What is blocked is exactly the arm/control
+evidence that would let either mechanism be armed. **To resume:** a box with ≥24 GB, then F1's
+screen → F1's in-sample protective re-solve of 2023–2025 (it *does* move 2023) → F2's screen on
+top. The 2021 DA-virtuals corpus this session re-fetched is gitignored and must be re-fetched
+there (`scripts/data/fetch_pjm_da_virtuals.py --years 2021`, ~4 min).
