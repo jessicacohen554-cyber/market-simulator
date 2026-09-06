@@ -1,0 +1,262 @@
+{
+  "run_id": "caiso-2026-2030-d65br-arm",
+  "meta": {
+    "kind": "t1f",
+    "label": "d65br-arm",
+    "variant": "forecast-baseline",
+    "iso": "CAISO",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "17770cdad3230938",
+    "bundle": "results/ff-t1f-d65br/caiso/CAISO/17770cdad3230938",
+    "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 2131.5,
+    "global_peak_rss_mb": 4638.3,
+    "per_year_perf": [
+      {
+        "year": 2026,
+        "wall_s": 885.6,
+        "peak_rss_mb": 4638.3
+      },
+      {
+        "year": 2027,
+        "wall_s": 350.4,
+        "peak_rss_mb": 4235.1
+      },
+      {
+        "year": 2028,
+        "wall_s": 318.2,
+        "peak_rss_mb": 4355.3
+      },
+      {
+        "year": 2029,
+        "wall_s": 278.1,
+        "peak_rss_mb": 4327.8
+      },
+      {
+        "year": 2030,
+        "wall_s": 299.0,
+        "peak_rss_mb": 4172.4
+      }
+    ],
+    "year_summary": [
+      {
+        "year": 2026,
+        "reserve_margin": 0.0916,
+        "lw_price": 55.71,
+        "max_hourly_price": 71.8,
+        "co2_mt": 31.31,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2027,
+        "reserve_margin": 0.0599,
+        "lw_price": 55.95,
+        "max_hourly_price": 71.7,
+        "co2_mt": 34.51,
+        "hours_ge_500": 0,
+        "retire_mw": 1527.3,
+        "builds_thermal_mw": 1396.4,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2028,
+        "reserve_margin": 0.0804,
+        "lw_price": 58.2,
+        "max_hourly_price": 74.4,
+        "co2_mt": 30.12,
+        "hours_ge_500": 0,
+        "retire_mw": 0.8,
+        "builds_thermal_mw": 2792.8,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2029,
+        "reserve_margin": 0.1659,
+        "lw_price": 58.85,
+        "max_hourly_price": 967.4,
+        "co2_mt": 21.97,
+        "hours_ge_500": 11,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 5795.8,
+        "builds_renew_mw": 4702.2,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2030,
+        "reserve_margin": 0.1524,
+        "lw_price": 71.55,
+        "max_hourly_price": 973.9,
+        "co2_mt": 19.96,
+        "hours_ge_500": 37,
+        "retire_mw": 1127.2,
+        "builds_thermal_mw": 2176.6,
+        "builds_renew_mw": 702.2,
+        "builds_storage_mw": 0.0
+      }
+    ],
+    "started_utc": "2026-09-06T22:13:02Z",
+    "bridged_years": [],
+    "d65br": {
+      "lane": "capx D65-B-R — the coupled arming (Act A + Act B) batch",
+      "authority": "owner ruling Q47; r#48 §3(a) gates; r#51 §3(b) adjudication",
+      "precommit": "docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (+D/E/F/G)",
+      "finding": "docs/handoffs/FINDING-capx-d65br-2026-09-06.md",
+      "solve_key_matches_predeclaration": true,
+      "gates": "ALL CLEAR, and this leg is the CONTROL CASE that turns the two RGGI unbindings from a correlation into a mechanism. G5′ PASS — cap-bound in all three years (99.9 / 99.9 / 96.4 %), as D64 §2.4 predicts. G4′ invariants IDENTICAL to the committed caiso-t1f: changed none; I7 and I12 were already FAIL pre-D65-B, zero flips.",
+      "retrofits": [
+        {
+          "year": 2028,
+          "rows": 10,
+          "mw": 2996.6,
+          "pct_of_cap": 99.9,
+          "mw_wtd_er": 0.3707,
+          "mw_wtd_hr": 6.822,
+          "mw_wtd_k": 1.0324,
+          "capex_over_k": 1323595.554,
+          "er_phys_min": 0.9088,
+          "er_phys_max": 1.0
+        },
+        {
+          "year": 2029,
+          "rows": 8,
+          "mw": 2996.9,
+          "pct_of_cap": 99.9,
+          "mw_wtd_er": 0.3868,
+          "mw_wtd_hr": 7.287,
+          "mw_wtd_k": 1.0772,
+          "capex_over_k": 1200625.751,
+          "er_phys_min": 0.8633,
+          "er_phys_max": 1.4151
+        },
+        {
+          "year": 2030,
+          "rows": 4,
+          "mw": 2892.2,
+          "pct_of_cap": 96.4,
+          "mw_wtd_er": 0.3742,
+          "mw_wtd_hr": 6.65,
+          "mw_wtd_k": 1.0422,
+          "capex_over_k": 1131922.004,
+          "er_phys_min": 0.9073,
+          "er_phys_max": 1.3103
+        }
+      ],
+      "g5prime_ruling": "Director adjudication r#51 §3(b) (capx-director-ledger-2026-08.md §0av): the CAP-BOUND form of G5′ ('STOP if the cap does NOT bind in a year') is VOID as a STOP and RECLASSIFIED to REPORTED, on the documents — D64 §2.3 says verbatim 'a year converting materially below the cap would be the informative surprise, not a STOP', so the source had already decided this outcome was reported, and Addendum C promoted §2.4's hour-ceiling census cell into a floor on a solved quantity. The CEILING form on ercot/pjm/miso is untouched — a published ceiling is a legitimate upper bound.",
+      "mechanism_reading": "Host exhaustion, predicted by k and by nothing else. Both RGGI ISOs start cap-bound at MW-weighted k ≈ 1.0 and unbind exactly as the surviving host pool moves past k > 1.2 (NEISO 0.9952 → 1.3032; NYISO 1.0544 → 1.2235), while CAISO — the third carbon-priced ISO, armed identically — never leaves k 1.03–1.08 and stays cap-bound (96.4 % in 2030). CAISO is the CONTROL CASE: the efficient hosts are consumed first and the expensive tail cannot carry the accurate per-tonne cost, so the unbinding is a fleet-composition effect, not a level effect and not an ISO quirk."
+    }
+  },
+  "score": null,
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 1.019e-10 MW (year 2028); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2026: accredited firm 55030 < requirement 57971 MW; 2027: accredited firm 54936 < requirement 59605 MW; 2028: accredited firm 57589 < requirement 61299 MW"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "FAIL",
+      "detail": "requirement-implied floor [15.0%, 30.0%]; out: 2026:9.2% (band [15.0%, 30.0%]), 2027:6.0% (band [15.0%, 30.0%]), 2028:8.0% (band [15.0%, 30.0%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "registered_utc": "2026-09-06T22:13:02Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "solve_surface": null,
+    "scored_at_sha": "cd8b4411f85f",
+    "scored_at_date": "2026-09-06T22:13:02Z",
+    "cache_epoch": "17770cdad3230938"
+  }
+}
