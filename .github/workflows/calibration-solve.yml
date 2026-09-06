@@ -24,9 +24,19 @@
 #     in a session, not from CI. The numbers land in the session's FINDING doc;
 #     the bytes stay in the artifact.
 #
-# COST. ubuntu-latest (4 vCPU / 16 GB) plus an 8 GB swap file, which is what
-# makes a ~14 GB peak safe rather than marginal. Blobless partial clone plus a
-# per-ISO data profile keeps the checkout to the subtrees the solve reads. A
+# RUNNER SIZE — READ THIS BEFORE DISPATCHING A REAL SOLVE. The default
+# ubuntu-latest is 2-core / 7 GB (MEASURED, run 34011516596: "Mem: 7"), which is
+# SMALLER than the 13 GB Claude-session cgroup this workflow exists to escape. It
+# cannot hold a ~14 GB per-plant LP; it will thrash to swap on 2 cores or be
+# OOM-killed. Set `runner_label` to a GitHub larger runner the account has
+# provisioned (e.g. ubuntu-latest-8-cores = 32 GB). Those bill at a multiple of
+# the base per-minute rate, which is a live cost decision for the owner, so the
+# default is deliberately left at the small runner and a warning step fires when
+# the chosen runner has under 15 GB.
+#
+# COST. Blobless partial clone plus a per-ISO data profile keeps the checkout to
+# the subtrees the solve reads; the runner starts ~100 % full so unused
+# toolchains are dropped before anything is written. A
 # single-year MISO solve is roughly 20-40 minutes; a full 2023-2025 span is
 # three times that and years run SEQUENTIALLY inside one job by design
 # (CLAUDE.md rule 12 [R-PARALLEL]: concurrent year solves OOM).
@@ -72,6 +82,15 @@ on:
         description: "Pass --holdout-authorized (still requires the ISO's tier marker)"
         default: false
         type: boolean
+      runner_label:
+        description: >-
+          Runner to solve on. ubuntu-latest is 2-core/7 GB and is TOO SMALL for a
+          per-plant multi-zone LP (~14 GB peak) — it is smaller than the 13 GB
+          Claude session cgroup this workflow exists to escape. Use a GitHub
+          larger runner label (e.g. ubuntu-latest-8-cores, 32 GB) that the
+          account has provisioned. Billed at a higher per-minute rate.
+        default: "ubuntu-latest"
+        type: string
       dry_run:
         description: "Resolve and print the command WITHOUT solving (default: on)"
         default: true
@@ -88,7 +107,7 @@ concurrency:
 
 jobs:
   solve:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner_label }}
     timeout-minutes: 350
     steps:
       - name: Checkout (blobless partial clone)
@@ -102,7 +121,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Add swap (covers the ~14 GB LP peak on a 16 GB runner)
+      - name: Free disk space
+        # Measured in run 34011516596: the runner reported /dev/root 72G 100%
+        # used with 364K free, and allocating a swap file on top pushed pip into
+        # OSError(28, No space left on device). Drop the toolchains this repo
+        # never uses before anything else writes.
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android \
+                      /opt/ghc /usr/local/.ghcup \
+                      /opt/hostedtoolcache/CodeQL || true
+          sudo docker image prune -af >/dev/null 2>&1 || true
+          echo "--- after cleanup ---"
+          df -h / | tail -1
+
+      - name: Add swap (sized from ACTUAL free disk, never a fixed 8G)
         # GitHub runners already ship an ACTIVE /swapfile, so `fallocate -l 8G
         # /swapfile` dies with "Text file busy" (measured: run 34011281527).
         # Add a SECOND swap file on the large ephemeral /mnt disk instead —
@@ -113,9 +146,17 @@ jobs:
           set -x
           SWAP=/mnt/swapfile-calibration
           sudo rm -f "$SWAP"
-          sudo fallocate -l 8G "$SWAP" \
-            || sudo dd if=/dev/zero of="$SWAP" bs=1M count=8192 status=none \
-            || echo "::warning::could not allocate swap; solve may OOM"
+          # Take at most half the free space, capped at 16G, floored at 0 (skip).
+          FREE_G=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
+          SIZE_G=$(( FREE_G / 2 )); [ "$SIZE_G" -gt 16 ] && SIZE_G=16
+          echo "free=${FREE_G}G -> swap=${SIZE_G}G"
+          if [ "$SIZE_G" -ge 2 ]; then
+            sudo fallocate -l "${SIZE_G}G" "$SWAP" \
+              || sudo dd if=/dev/zero of="$SWAP" bs=1M count=$(( SIZE_G * 1024 )) status=none \
+              || echo "::warning::could not allocate swap; solve may OOM"
+          else
+            echo "::warning::not enough free disk for swap; solve may OOM"
+          fi
           if [ -f "$SWAP" ]; then
             sudo chmod 600 "$SWAP"
             sudo mkswap "$SWAP" >/dev/null
@@ -126,6 +167,14 @@ jobs:
           free -g
           swapon --show || true
           df -h /mnt / | tail -3
+
+      - name: Check the runner can actually hold the LP
+        run: |
+          TOTAL_G=$(free -g | awk '/^Mem:/{print $2}')
+          echo "runner RAM: ${TOTAL_G} GB on '${{ inputs.runner_label }}'"
+          if [ "$TOTAL_G" -lt 15 ]; then
+            echo "::warning::This runner has ${TOTAL_G} GB of RAM. A per-plant multi-zone LP peaks near 14 GB, so it will thrash to swap or be OOM-killed. Re-dispatch with a larger runner_label."
+          fi
 
       - name: Install dependencies
         run: |
