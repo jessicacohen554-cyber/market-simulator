@@ -76,8 +76,12 @@ def apply_miso_zonal_gas_basis(
     ``[R-ONE-MECH]``: the EIA-923 print already carries the regional
     delivered premium); unmasked (trajectory) cells still receive it.
     """
-    use_skip = skip_cells is not None and bool(
-        getattr(config, "miso_zonal_gas_basis_skip_923_priced", False)
+    # miso-224: a hub-priced row (apply_miso_gas_marginal_commodity) is ALSO
+    # skipped — its zone's hub already IS its regional level (rule 19) — whatever
+    # the miso-213 flag says. Off-state byte-identical: neither flag, no skip.
+    use_skip = skip_cells is not None and (
+        bool(getattr(config, "miso_zonal_gas_basis_skip_923_priced", False))
+        or bool(getattr(config, "miso_gas_marginal_commodity_pricing", False))
     )
     _apply_meanzero_zonal_gas_basis(
         fuel_prices,

@@ -228,3 +228,28 @@ scored, then stamped in this session. Rule 29: one year, footprint-named, struct
 gates, scorer blind, keeper as control, bundle deleted before merge. Rule 22: 2023 only.
 Memory: `FINDING-miso169` §3 recipe — 8 GB swapfile (live), `MARKET_SIM_HIGHS_THREADS=4`,
 pandas 3.0.3 / pyarrow 24.0.0 / highspy 1.14.0, openpyxl.
+
+---
+
+## ADDENDUM A (written before ANY result existed) — the first launch did not fire the arm; killed, repaired, scorer amended
+
+The first 2023 launch was killed ~90 s in, at the reserve-column build, with **no LP solved
+and no output written**, because its log carried the winter-shape overlay line ("MISO winter
+citygate daily (2023): 661 Chicago-hub gas units repriced …") and **no** marginal-commodity
+line. Cause: a backcast solve takes `scripts/run_calibration.py::run_year`, which resolves
+fuel with `apply_monthly=False` and then runs its OWN overlay chain (plant prints → hub
+overlay → zonal bases → winter shape → zonal increment → dual fuel); the resolver hook that
+§4 relied on is the `apply_monthly=True` branch, which the probes' `build_year` uses and the
+solve does not. **The mechanism was therefore INERT in the solve, and the pre-solve liveness
+in §5 S-2 (`_miso224_liveness_prebuild.json`) was evidence about the probe path, not the
+solve path.**
+
+Repairs, all before any result: (1) the same hook in `run_calibration.py::run_year`,
+mirroring the resolver branch (winter shape skipped, mask unioned); (2)
+`apply_miso_zonal_gas_basis` honours the skip mask under the arm flag as well as the
+miso-213 flag, so hub-priced rows take no increment whatever the recipe says; (3) **S-2 now
+also requires the SOLVE LOG to carry the mechanism's INFO line for 2023 and NO winter-shape
+line** — the scorer takes the log path as its second argument. No band, kill condition or
+pre-registered value changes; this makes S-2 stricter and about the right object. The
+disclosed lesson for the record: a fuel mechanism's liveness must be asserted on the chain
+the solve runs, not on the resolver.

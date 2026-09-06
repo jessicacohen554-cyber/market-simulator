@@ -13,7 +13,7 @@ can promote the arm.
 
 Usage::
 
-    python3 scripts/probes/_miso224_screen_gates.py results/calibration/miso224_spotgas_S
+    python3 scripts/probes/_miso224_screen_gates.py results/calibration/miso224_spotgas_S <solve.log>
 """
 
 from __future__ import annotations
@@ -95,8 +95,20 @@ def gate_s1(arm: Path) -> dict:
             "arm_value": a.get(ARM_FIELD), "keeper_value": k.get(ARM_FIELD, "<absent>")}
 
 
-def gate_s2(arm: Path) -> dict:
-    """Liveness: rebuilt from the ARM's recorded config, every gas row is at its hub."""
+def gate_s2(arm: Path, solve_log: Path | None = None) -> dict:
+    """Liveness: rebuilt from the ARM's recorded config, every gas row is at its hub.
+
+    ADDENDUM A (before any result existed): the first launch showed the
+    calibration chain (``scripts/run_calibration.py::run_year``) bypasses the
+    ``resolve_fuel_prices`` hook, so a config-rebuild alone is NOT evidence about
+    the SOLVE. The gate now ALSO requires the solve log to carry the mechanism's
+    own INFO line for the year and NO winter-shape-overlay line (rule 19).
+    """
+    log = {"solve_log_checked": solve_log is not None}
+    if solve_log is not None:
+        txt = Path(solve_log).read_text(errors="replace")
+        log["mechanism_line_in_solve_log"] = f"MISO gas marginal-commodity pricing ({YEAR})" in txt
+        log["winter_shape_overlay_line_in_solve_log"] = f"MISO winter citygate daily ({YEAR})" in txt
     import _miso134_ct_night_order_screen as m134
     m134.BUNDLE = arm
     from _miso134_ct_night_order_screen import build_year, keeper_config
@@ -113,8 +125,10 @@ def gate_s2(arm: Path) -> dict:
     d1 = fp[mw] - chi[None, :]; d2 = fp[so] - hh[None, :]
     # dual-fuel parity can only LOWER a gas price (min with oil), never raise it
     eq = float(((np.abs(d1) < 1e-9).mean() * mw.sum() + (np.abs(d2) < 1e-9).mean() * so.sum()) / gas.sum())
-    return {"pass": bool(getattr(cfg, ARM_FIELD, False)) and d1.max() <= 1e-9 and d2.max() <= 1e-9 and eq >= 0.99,
-            "armed_in_recorded_config": bool(getattr(cfg, ARM_FIELD, False)),
+    solve_ok = (log.get("mechanism_line_in_solve_log", False)
+                and not log.get("winter_shape_overlay_line_in_solve_log", True)) if solve_log is not None else False
+    return {"pass": bool(getattr(cfg, ARM_FIELD, False)) and d1.max() <= 1e-9 and d2.max() <= 1e-9 and eq >= 0.99 and solve_ok,
+            **log, "armed_in_recorded_config": bool(getattr(cfg, ARM_FIELD, False)),
             "gas_rows": int(gas.sum()), "midwest_max_over_chicago": _r(d1.max(), 6),
             "south_max_over_hh": _r(d2.max(), 6), "share_exactly_at_hub": _r(eq, 4)}
 
@@ -187,7 +201,9 @@ def main() -> int:
     rec = {"probe": "miso-224 screen gates (2023, blind)", "arm": str(arm.relative_to(REPO)), "keeper": KEEPER_ID,
            "control": "form 4 — the committed keeper (G-DRIFT b3fb0edc..HEAD ALL INERT)", "gates": {}}
     rec["gates"]["S1"] = gate_s1(arm)
-    rec["gates"]["S2"] = gate_s2(arm)
+    solve_log = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else None
+    rec["solve_log"] = str(solve_log) if solve_log else None
+    rec["gates"]["S2"] = gate_s2(arm, solve_log)
     rec["gates"]["G1"] = gate_g1(arm)
     rec["gates"]["G3"] = gate_g3(arm)
     rec["gates"]["G4"] = gate_g4(arm)
