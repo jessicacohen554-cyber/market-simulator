@@ -470,6 +470,54 @@ def _scale_demand(
     return base_demand / factor
 
 
+def _hindcast_measured_demand(
+    config: ScenarioConfig,
+    iso: str,
+    iso_config,
+    year: int,
+    import_generators: list,
+) -> np.ndarray:
+    """Load ``year``'s MEASURED hourly zonal demand -- the hindcast LP's basis.
+
+    THE single construction of a hindcast year's measured load (rule 19
+    [R-ONE-MECH]). The LP's ``year_base_demand`` reads it here, and under
+    ``capacity_screen_peak_measured_hindcast`` (capx D76) the capacity-screen
+    seam peak reads **the same array**, loaded once per year and shared -- so
+    the screens and the LP can never be handed two different measured loads for
+    one year, which is the whole defect the gate repairs.
+
+    No growth scaling and no additive load layers: this is the realized year's
+    metered profile (plan §1.3), and the forecast-only DC / electrification
+    layers are never added on top of measured actuals.
+
+    Args:
+        config: The run config (supplies the loader's T&D and profile options
+            and the hour count).
+        iso: ISO code.
+        iso_config: The topology-resolved ``ISOConfig`` (zone set and shares).
+        year: The realized year to load.
+        import_generators: The interchange import fleet. Non-empty means the
+            ISO carries an import NODE, so the loader must not fold
+            interchange into zonal demand.
+
+    Returns:
+        The ``(n_zones, hours)`` measured demand array, truncated to
+        ``config.hours``.
+    """
+    demand = load_demand(
+        iso,
+        year,
+        iso_config,
+        td_loss_factor=config.td_loss_factor,
+        include_interchange=not import_generators,
+        strict_demand_profile=config.strict_demand_profile,
+        ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
+    )
+    if config.hours < demand.shape[1]:
+        demand = demand[:, : config.hours]
+    return demand
+
+
 def _storage_additions_since(
     storage_units, prior_ids: set[str], zone_names: list[str]
 ) -> list[dict]:
@@ -2026,8 +2074,36 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # the layer's own shape rather than double-counting it. Forecast-mode-
         # only; with every layer off/unsourced => same array object,
         # byte-identical.
-        year_demand = _scale_demand(base_demand, wx_config, year)
-        year_demand = add_load_layers(year_demand, config, iso, year, zone_names)
+        #
+        # capx D76 (GATED ``capacity_screen_peak_measured_hindcast``, default
+        # OFF). The growth path above is the RIGHT construction for a forecast
+        # year and the WRONG one for a hindcast year: with ``weather_year``
+        # 2024 (2025 on a crossover) and no per-solve-year weather rebind,
+        # ``_scale_demand`` DE-GROWS the weather year's measured load back
+        # across the span, so every non-weather hindcast year hands the screens
+        # a synthesized peak while the LP below dispatches the measured one
+        # (FINDING-capx-d76-2026-09-06.md §2: −23.3 % to +15.4 % across the six
+        # ISOs). Armed, the seam peak is the year's OWN measured peak, from the
+        # same ``_hindcast_measured_demand`` array the LP takes below -- it
+        # REPLACES the de-grown peak, it does not stack on it (rule 19
+        # [R-ONE-MECH]), and one load is performed per year exactly as before.
+        # The predicate is the LP's own, so a FORECAST year -- which has no
+        # measured load and for which growth IS the methodology (rule 13
+        # [R-MEASURED]) -- and a crossover FORWARD year both keep the growth
+        # path, and every unarmed run is byte-identical.
+        screen_measured_demand: np.ndarray | None = None
+        if (
+            config.capacity_screen_peak_measured_hindcast
+            and config.hindcast
+            and not config.is_crossover_forward_year(year)
+        ):
+            screen_measured_demand = _hindcast_measured_demand(
+                config, iso, iso_config, year, import_generators
+            )
+            year_demand = screen_measured_demand
+        else:
+            year_demand = _scale_demand(base_demand, wx_config, year)
+            year_demand = add_load_layers(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
         # CR-1 sloped capacity demand-curve reserve position (default-off gate).
@@ -2470,17 +2546,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # harness pins weather_year to the last realized year), never the
         # measured per-year load loader.
         if config.hindcast and not config.is_crossover_forward_year(year):
-            year_base_demand = load_demand(
-                iso,
-                year,
-                iso_config,
-                td_loss_factor=config.td_loss_factor,
-                include_interchange=not import_generators,
-                strict_demand_profile=config.strict_demand_profile,
-                ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
+            # capx D76: when the gate is armed the seam above already loaded
+            # THIS array under the identical predicate, so reuse it -- an armed
+            # hindcast year performs exactly ONE measured load, as it always
+            # has, and the screens and the LP are guaranteed the same object
+            # rather than two equal-by-inspection reads (rule 19).
+            year_base_demand = (
+                screen_measured_demand
+                if screen_measured_demand is not None
+                else _hindcast_measured_demand(
+                    config, iso, iso_config, year, import_generators
+                )
             )
-            if config.hours < year_base_demand.shape[1]:
-                year_base_demand = year_base_demand[:, : config.hours]
         else:
             year_base_demand = base_demand
 
