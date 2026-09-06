@@ -44,6 +44,7 @@ from market_sim.config.plant_taxonomy import (
     classify_plant,
 )
 from market_sim.data.coal import _coal_class_for
+from market_sim.data.disk_memo import memoized_mapping
 from market_sim.data.egrid_sheets import read_egrid_sheet
 from pathlib import Path
 from market_sim.data.fleet.models import (
@@ -611,12 +612,51 @@ def _egrid_boundary_hr_repairs() -> dict[int, float]:
 def _egrid_boundary_hr_repairs_for(
     egrid_path: Path, eia_path: Path
 ) -> dict[int, float]:
+    """Return the accepted repair set for one (eGRID, EIA-860) source pair.
+
+    Cache-bearing resolver for :func:`_egrid_boundary_hr_repairs`; see that
+    function for the four acceptance conditions and the rule posture. Keyed on
+    the resolved paths so each EIA-860 vintage gets its own entry.
+
+    Two caches, at two lifetimes. The ``lru_cache`` here holds the set for the
+    life of the process; :func:`market_sim.data.disk_memo.memoized_mapping`
+    holds it *across* processes, in a JSON memo named by a sha256 over both
+    source files' bytes. The derivation below is a pure function of exactly
+    those bytes and costs seconds of CPU (the per-plant ``operating_year``
+    reduction and the co-location scan), paid afresh by every invocation in
+    whichever year first loads a fleet — which is the year-1 ``data_prep``
+    premium wall-clock item A-4 measures. A re-released eGRID workbook or a
+    different EIA-860 vintage hashes differently, so the memo is
+    self-invalidating and no flag arms it.
+
+    The accepted set is logged here rather than only inside the derivation, so
+    a boundary-reconciled plant is named on the memo-hit path too — the
+    detailed per-plant justification is emitted by
+    :func:`_egrid_boundary_hr_repairs_compute` on the miss that built the memo.
+    """
+    repairs = memoized_mapping(
+        "egrid_boundary_hr_repairs",
+        [egrid_path, eia_path],
+        lambda: _egrid_boundary_hr_repairs_compute(egrid_path, eia_path),
+        float,
+    )
+    if repairs:
+        logger.warning(
+            "eGRID boundary heat-rate reconciliation active for %d plant(s): %s",
+            len(repairs),
+            ", ".join(f"{code}->{hr:.3f}" for code, hr in sorted(repairs.items())),
+        )
+    return repairs
+
+
+def _egrid_boundary_hr_repairs_compute(
+    egrid_path: Path, eia_path: Path
+) -> dict[int, float]:
     """Compute the accepted repair set for one (eGRID, EIA-860) source pair.
 
-    Cache-bearing core of :func:`_egrid_boundary_hr_repairs`; see that function
-    for the four acceptance conditions and the rule posture. Keyed on the
-    resolved paths so each EIA-860 vintage gets its own entry. Returns ``{}``
-    when either workbook/parquet does not carry the expected columns.
+    The derivation itself, with no cache of its own — both caches live on
+    :func:`_egrid_boundary_hr_repairs_for`, which is the only caller. Returns
+    ``{}`` when either workbook/parquet does not carry the expected columns.
 
     The two eGRID sheets come through
     :func:`market_sim.data.egrid_sheets.read_egrid_sheet`, which serves them from

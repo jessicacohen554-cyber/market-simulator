@@ -36,13 +36,14 @@ Wall-clock only: this module changes no value the LP ever sees.
 
 from __future__ import annotations
 
-import hashlib
 import logging
 import os
 from pathlib import Path
 from typing import Sequence
 
 import pandas as pd
+
+from market_sim.data.disk_memo import content_digest
 
 logger = logging.getLogger(__name__)
 
@@ -52,13 +53,10 @@ logger = logging.getLogger(__name__)
 # so a future caller reading a sheet differently cannot collide with these.
 _SKIPROWS: int = 1
 
-# Bytes per chunk when digesting the workbook. 1 MiB keeps the 21 MB hash off
-# the peak-RSS ledger entirely (rule 12's concurrency cap is memory-bound).
-_HASH_CHUNK_BYTES: int = 1 << 20
-
 # Characters of the hex digest kept in the mirror file name. 16 hex chars is
 # 64 bits — collision-free for the handful of (workbook, sheet, usecols)
-# combinations that exist, and short enough to keep the name readable.
+# combinations that exist, and short enough to keep the name readable. Shared
+# with :mod:`market_sim.data.disk_memo`, which owns the hashing primitive.
 _DIGEST_CHARS: int = 16
 
 
@@ -67,15 +65,16 @@ def _workbook_digest(path: Path, sheet: str, usecols: Sequence[str]) -> str:
 
     Hashes the workbook's bytes followed by the read parameters, so the digest
     changes when *either* the source data or the requested projection changes.
+
+    Delegates to :func:`market_sim.data.disk_memo.content_digest` (wall-clock
+    item A-4), which is the same construction this function shipped inline —
+    sha256 over the file bytes, then each parameter length-prefixed — extracted
+    so the mirror and the mapping memos hash identically rather than twice.
+    The digest is **byte-compatible with A-2's**, so mirrors already on disk
+    keep their names and are still served (asserted in
+    ``tests/test_egrid_sheets.py``).
     """
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(_HASH_CHUNK_BYTES), b""):
-            digest.update(chunk)
-    # Length-prefixed so no two parameter tuples can serialize identically.
-    for part in (sheet, str(_SKIPROWS), *usecols):
-        digest.update(f"{len(part)}:{part}".encode())
-    return digest.hexdigest()[:_DIGEST_CHARS]
+    return content_digest([path], (sheet, str(_SKIPROWS), *usecols), _DIGEST_CHARS)
 
 
 def _mirror_path(path: Path, sheet: str, usecols: Sequence[str]) -> Path:
