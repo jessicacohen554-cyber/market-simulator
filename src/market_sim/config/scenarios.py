@@ -377,6 +377,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_extract_basis_share",
+    # nyiso-198 duct-burner peaking share taken over the EIA-860 rows the
+    # filing flags Duct Burners = Y (GATED default-off; every consumer reads it
+    # via ``getattr(config, "cc_duct_peaking_row_scoped", False)``, so the off
+    # path is byte-inert). Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 / caiso-186 discipline), so the pinned default key never moves.
+    "cc_duct_peaking_row_scoped",
     # data/fleet/arrays.py and it selects a SEPARATE companion extract, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
@@ -1593,6 +1599,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-196 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_extract_basis_share": "False",
+    # Added by nyiso-198 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "cc_duct_peaking_row_scoped": "False",
     # Added by nyiso-176 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_per_unit_attribution": "False",
@@ -12441,6 +12450,35 @@ class ScenarioConfig:
     # positioning the wall at the physical ~92% duct-firing point. None leaves
     # the raw gap uncapped (prior behaviour). A physical bound, not a fit.
     cc_duct_peaking_cap_pct: float | None = None
+
+    # Take the ``cc_duct_peaking`` gap over the EIA-860 generator rows the
+    # filing FLAGS as duct-fired, instead of over every combined-cycle row of
+    # the plant (cc_duct_peaking_row_scoped, off by default; nyiso-198).
+    # A duct burner fires into the HRSG and raises the STEAM turbine's output,
+    # and EIA-860 reports the attribute at that grain: across the whole
+    # Generator_Y operable CC population the "Duct Burners" column reads Y/N
+    # only on CA and CS rows and X (not applicable) on EVERY one of the 1,213
+    # CT rows. The plant-level sum therefore books the CT rows'
+    # nameplate-vs-net-summer gap — ambient/site derate by construction — as
+    # duct capability, which is the conflation ``cc_duct_peaking_cap_pct``
+    # above was added to blunt with a CHOSEN cap (8.0 for PJM, None
+    # elsewhere). This gate instead takes the numerator over the flagged rows
+    # alone, keeping the plant-nameplate denominator, the clip, the plant
+    # selection rule and every consumer identical:
+    #
+    #     pct = 100 * max(0, SUM_{Duct Burners == Y} (nameplate - net_summer))
+    #               / SUM_{all CC rows} nameplate
+    #
+    # MEASURED (the filing's own columns, at the grain it reports the flag),
+    # ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]) — nothing
+    # is selected, swept or tuned and no residual enters the construction;
+    # rule-13 forward-regenerable (it regenerates identically from a forecast
+    # year's EIA-860 and moves when a plant adds or retires duct firing);
+    # byte-inert while off. Independent of ``cc_duct_peaking_cap_pct``, which
+    # still caps whatever this produces. Evidence:
+    # results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md,
+    # docs/FINDING-nyiso198-duct-peaking-row-scope-2026-09-06.md.
+    cc_duct_peaking_row_scoped: bool = False
 
     # When True, combined-cycle (CC_REGULAR / CC_CHP) plants in the per-plant
     # fleet carry their full EIA-860 NAMEPLATE capacity in the LP and are derated

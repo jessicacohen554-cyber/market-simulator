@@ -1,0 +1,69 @@
+{
+ "session": "nyiso-198",
+ "status": "F-1 / F-2 PRE-SOLVE GATES \u2014 NO LP",
+ "year": 2024,
+ "flag": "cc_duct_peaking_row_scoped",
+ "bundle": "results/calibration/nyiso196_extract_basis",
+ "moved_plants_mw": {
+  "2539": 75.91,
+  "10190": -19.79,
+  "50006": 53.58,
+  "50292": 45.44,
+  "50458": 18.96,
+  "52168": 1.21,
+  "54114": -1.85,
+  "54131": 4.93,
+  "54547": 87.99,
+  "54574": 32.95,
+  "55375": 10.38,
+  "56188": 2.95,
+  "56234": 9.04,
+  "56259": 48.37,
+  "56940": 100.24,
+  "57185": 168.47,
+  "57664": 87.75
+ },
+ "F1_footprint": {
+  "total_peak_band_moved_mw": 726.53,
+  "expected_total_mw": 647.95,
+  "total_within_tol": false,
+  "n_plants_moved": 17,
+  "unexpected_movers": [
+   {
+    "plant": 50006,
+    "delta_mw": 53.58
+   },
+   {
+    "plant": 50458,
+    "delta_mw": 18.96
+   },
+   {
+    "plant": 52168,
+    "delta_mw": 1.21
+   },
+   {
+    "plant": 54131,
+    "delta_mw": 4.93
+   }
+  ],
+  "mismatched_movers": [],
+  "expected_movers_missing": [],
+  "noncc_rows_changed": [],
+  "PASS": false
+ },
+ "F2_identity": {
+  "plants_with_total_pmax_drift": {
+   "52168": -1.2122
+  },
+  "sum_abs_pmax_drift_mw": 1.2122,
+  "g_delta": {
+   "cc_duct_peaking_row_scoped": [
+    false,
+    true
+   ]
+  },
+  "PASS": false,
+  "g_delta_is_exactly_the_flag": true
+ },
+ "VERDICT": "STOP"
+}

@@ -1779,8 +1779,8 @@ def thermal_tranche_chp_steam_level(
     return out
 
 
-@lru_cache(maxsize=1)
-def cc_duct_peaking_pct() -> dict[int, float]:
+@lru_cache(maxsize=2)
+def cc_duct_peaking_pct(row_scoped: bool = False) -> dict[int, float]:
     """Return ``{plant_code: peaking_pct}`` for every EIA-860 CC plant.
 
     Built from the raw EIA-860 Generator_Y Operable sheet parquet
@@ -1798,6 +1798,25 @@ def cc_duct_peaking_pct() -> dict[int, float]:
     ``config.cc_duct_peaking``, superseding the offer curve's class-wide
     ``pct_peaking``. Plants absent from the sheet are absent from the map
     (callers keep their class default).
+
+    ``row_scoped`` (``ScenarioConfig.cc_duct_peaking_row_scoped``, nyiso-198)
+    takes the numerator over the rows the filing FLAGS instead of over every
+    combined-cycle row of the plant. A duct burner fires into the HRSG and
+    raises the STEAM turbine's output, and EIA-860 reports the attribute at
+    that grain: in the whole operable CC population the column reads Y/N only
+    on CA and CS rows and ``X`` (not applicable) on **every** CT row, so a CT
+    row's gap is site/ambient derate by construction and the plant-level sum
+    books it as duct capability. The denominator (plant nameplate), the clip,
+    the duct-fired plant selection rule and every consumer are unchanged, so
+    the two forms differ only in which rows enter the numerator. Off by
+    default and byte-inert while off.
+
+    Args:
+        row_scoped: Take the capability gap over the ``Duct Burners == Y``
+            rows alone rather than over all of the plant's CC rows.
+
+    Returns:
+        ``{plant_code: peaking_pct}`` for every EIA-860 combined-cycle plant.
     """
     path = active_eia860_dir() / "eia860_generator_operable.parquet"
     if not path.exists():
@@ -1824,9 +1843,13 @@ def cc_duct_peaking_pct() -> dict[int, float]:
         np_sum = float(grp["np"].sum())
         if np_sum <= 0.0:
             continue
-        if (grp["Duct Burners"].astype(str).str.strip() == "Y").any():
-            ns_sum = float(grp["ns"].sum())
-            out[int(code)] = round(100.0 * max(0.0, np_sum - ns_sum) / np_sum, 1)
+        flagged = grp["Duct Burners"].astype(str).str.strip() == "Y"
+        if flagged.any():
+            # The gap is taken over the rows that can carry a duct burner
+            # (row_scoped) or over every CC row of the plant (the prior form).
+            src = grp[flagged] if row_scoped else grp
+            gap = float(src["np"].sum()) - float(src["ns"].sum())
+            out[int(code)] = round(100.0 * max(0.0, gap) / np_sum, 1)
         else:
             out[int(code)] = 0.0
     return out

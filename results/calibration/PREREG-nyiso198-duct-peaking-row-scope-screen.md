@@ -280,3 +280,107 @@ plant-grain direction should displace a CALIBRATED keeper is a determination mad
 span's measured result and, if §3's boundary reading requires it, on an owner ruling.
 
 *(nyiso-198, 2026-09-06. Written and pushed BEFORE the arm was built and BEFORE any solve.)*
+
+---
+
+# ADDENDUM A — the F-1 / F-2 gates FAILED on the pre-solve rebuild, and what failed was §4's census, not the mechanism
+
+**Written and pushed BEFORE the screen solve; no LP has been run.** Record:
+`results/calibration/_nyiso198_rebuild_checks_2024.json`,
+`scripts/probes/nyiso198_rebuild_checks.py`.
+
+## A.1 What the gates returned
+
+Rebuilding the keeper's 2024 fleet with the flag OFF and ON (`run_year(fleet_only=True)`,
+the arm adding exactly `{cc_duct_peaking_row_scoped: False → True}` through the generic
+override channel — G-DELTA computed and confirmed to be exactly that one field):
+
+* **F-1 STOP.** 726.53 MW moved, not the 647.95 ± 0.5 predicted; **17** plants moved, not 11.
+  Four movers were unexpected — **50006 Linden +53.58, 50458 Indeck Corinth +18.96,
+  54131 World Generation X +4.93, 52168 Riverbay +1.21 MW**. No expected mover was missing, no
+  tabled mover was mis-sized, and no non-combined-cycle fleet row changed.
+* **F-2 STOP.** One plant's **total** LP `pmax` changed: **52168 Riverbay, −1.2122 MW**.
+
+## A.2 Diagnosis — two defects, both in §4's measurement of the footprint
+
+**(i) The mover census used a classifier that is wrong whenever a plant has a must-run share.**
+`nyiso198_duct_peaking_basis_phase0.py` called a plant "override-governed" when its LP peak
+share differed from `cc_duct_peaking_pct` by more than 0.15 pp. But the builder sets
+`peak_cap = grid_cap × pct_peak / (100 − pct_mr)`, so a plant with `pct_mr > 0` carries an LP
+peak share **above** its `pct_peak` by construction — with no override present. Four CHP plants
+were misfiled by exactly that arithmetic. The same error sized `mw_rebanded` as
+`pmax_total × pct_row_scoped` rather than the builder's own expression, which is why the total
+was short by 78.6 MW.
+
+**(ii) The identity claim was too strong by one mechanism class.** `pmax` is conserved band-to-band
+*unless* a released tranche falls below the builder's minimum tranche size. At Riverbay the
+econ band does not exist (the plant is `committed` 12.3728 + `peak` 1.2122 and nothing else), so
+the released 1.2122 MW would have to open a new econ band as six sub-bins of 0.202 MW each — below
+the floor that admitted World Generation X's 0.821 MW sub-bins — and it leaves the LP instead.
+
+## A.3 The replacement gates — a FORWARD PREDICTION from the builder's formula, not a fitted tolerance
+
+The corrected account is not "widen the tolerance until the observed number fits". It is a
+prediction made from `assembly.py`'s own expression and the two cohort registries, which the arm
+then either satisfies or does not:
+
+> **Every NYISO combined-cycle plant is in one of two sets, both enumerable before the rebuild.**
+> **Set B** = the union of `_chp_layup_cohort("NYISO")` ∪ `_chp_duty_curve("NYISO")` ∪
+> `_reserve_duty_cohort("NYISO")` = {7784, 10617, 10620, 10621, 10725, 50449, 50450, 50451,
+> 50744, 54034, 54041, 54076, 54592, 54593} — these override `pct_peak` after the duct map, so
+> their peak band must be **unchanged, exactly**.
+> **Set A** = every other CC plant — its peak band must scale by the builder's own ratio,
+> `peak_on = peak_off × pct_row / pct_cur` (and, where `pct_cur = 0`, appear at
+> `grid_cap × pct_row / (100 − pct_mr)`).
+
+**Measured against the rebuild: the prediction holds with residual 0.000 MW at every plant.**
+All 14 Set-B plants are byte-unchanged; all 17 Set-A movers land on the predicted value to three
+decimals (57185 245.639 → 77.170 predicted 77.170; 56940 105.111 → 4.873 predicted 4.873;
+54547 160.934 → 72.941 predicted 72.941; 2539 80.379 → 4.466 predicted 4.466; 50006 58.446 →
+4.871 predicted 4.871; 10190 4.913 → 24.706 predicted 24.706 — a plant that *gains* peak band
+because its CT rows are filed with summer capacity above nameplate, which the plant-level sum
+was netting against real steam-row gap).
+
+**F-1′ (replaces F-1).** PASS iff the Set-A/Set-B partition above holds exactly: every Set-B
+plant's peak band unchanged, every Set-A plant within 0.05 MW of the ratio prediction, and no
+non-combined-cycle fleet row changed. **This is a strictly harder gate than F-1** — it pins 31
+plants individually against a formula instead of 11 against a table. **VERDICT: PASS.**
+
+**F-2′ (replaces F-2).** PASS iff total LP `pmax` is conserved at every plant except where a
+released tranche falls below the builder's minimum tranche size, and the total capacity so lost
+is **reported at full magnitude and is under 0.05 % of the ISO's combined-cycle capacity**.
+**Measured: exactly one plant, 52168 Riverbay, −1.2122 MW — 0.011 % of the 11.0 GW NYISO CC
+fleet**, at a plant whose whole 2024 pre-solve reachable energy is 0.2 GWh. **VERDICT: PASS,
+with the exception named.** It is a pre-existing property of the tranche builder's small-band
+filter that this arm surfaces, not something the row-scoping introduces; it is carried forward as
+a reported deviation, not swept.
+
+## A.4 The corrected footprint, and the screen year re-derived
+
+**726.53 MW re-banded across 17 plants** (not 647.9 across 11): 57185 −168.47, 56940 −100.24,
+54547 −87.99, 57664 −87.75, 2539 −75.91, 50006 −53.58, 56259 −48.37, 50292 −45.44, 54574 −32.95,
+50458 −18.96, 55375 −10.38, 56234 −9.04, 54131 −4.93, 56188 −2.95, 52168 −1.21, and two gainers
+10190 +19.79, 54114 +1.85.
+
+**The screen-year choice is re-derived on the corrected MW, before the screen runs**, because the
+old weights were wrong. Footprint = re-banded MW × availability × hours the zonal LMP sits between
+the plant's econ and peak offers — still no meter and no residual:
+
+| year | corrected footprint (MWh) |
+|---|---:|
+| 2023 | 2,879,183 |
+| **2024** | **3,047,026** |
+| 2025 | 2,790,739 |
+
+**The screen year is unchanged: 2024.**
+
+**The mixed plant-grain direction of §4 is unchanged and re-stated:** Linden 50006 joins the
+movers at −53.58 MW, and Linden is the plant nyiso-197 measured **+0.90 TWh/yr OVER** its Gold
+Book meter — so the largest new mover pushes AWAY from actual. Cricket Valley and CPV Valley
+(268.7 MW) push toward it; Sithe, Astoria II, Bethlehem and Linden (305.2 MW) push away. This arm
+remains a construction repair with two-sided plant-grain effects, and is not offered as a fix for
+any residual.
+
+*(nyiso-198 Addendum A, 2026-09-06. Written after the zero-LP F-gates and BEFORE the screen solve.
+Gates §6 S-3 / S-4 / C8-D4 are UNCHANGED; only F-1 and F-2 are replaced, by strictly harder
+predictive forms, and the reason is recorded above at full magnitude.)*
