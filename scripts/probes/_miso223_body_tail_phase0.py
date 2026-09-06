@@ -26,6 +26,35 @@ SHAPE of the price distribution, not about whether the model puts the right
 price in the right hour (that is C4's question, and it passes). Hour-matching
 would fold a timing error into a level statement.
 
+ALSO REPORTED (the ``renewables`` block) — WHY THE MODEL HAS A HARD PRICE FLOOR.
+The model's wind carries a -$26/MWh PTC dispatch offer, so in any hour wind were
+marginal the price would clear deeply negative; the committed record has no
+zone-hour below $0 in three years. The reason is NOT that the wind potential is
+wrong — it is that the LP never curtails it.
+
+``data/renewables.py`` deliberately hands MISO an **uncurtailed** wind potential:
+MISO is in ``_UNCURTAILED_FALLBACK_ISOS``, so the EIA-930 delivered shape is
+grossed up by the Potomac Economics (MISO IMM) measured annual wind-curtailment
+rate — ``delivered / (1 - rate)`` — expressly so the dispatch "still curtails
+endogenously and responds to changed build" rather than inheriting the
+curtailment already baked into delivered output. That gross-up is working: the
++5.15 % model-over-EIA-930 wind figure this block reports is the intended
+potential, not an error.
+
+**The finding is what the LP then does with it: essentially nothing.** Model wind
+DISPATCH lands on the grossed-up potential to within 0.02 TWh in all three years,
+so endogenous curtailment is 0.02 / 0.00 / 0.01 % against the ~4.9 % the gross-up
+assumed. Wind therefore never sits below its bound, is never the marginal unit,
+and its -$26 offer never reaches the price — which is exactly the hard floor
+section 1 measures ($17.18 minimum across 210,240 zone-hours, against an actual
+MISO that cleared below $20 in 1,781 / 3,097 / 510 hours and went negative).
+
+``renewables.py`` already names this quantity a standing diagnostic — "the
+modeled-vs-reported curtailment gap is a diagnostic, never a fit target
+(CLAUDE.md #11)". This probe measures it and reports it reading ~100 %
+unexplained. It is a SUCCESSOR OBJECT, independent of this session's offer-band
+arm, and nothing here proposes a lever for it.
+
 Rule 22 ``[R-HOLDOUT]`` — 2023/2024/2025 only.
 
 Usage::
@@ -35,6 +64,7 @@ Usage::
 
 from __future__ import annotations
 
+import gzip
 import json
 from pathlib import Path
 
@@ -99,7 +129,7 @@ def split(model: np.ndarray, actual: np.ndarray) -> dict:
 def main() -> None:
     out: dict = {"probe": "miso-223 phase 0 — body/tail decomposition", "solved": False,
                  "keeper": str(KEEPER), "prior": str(PRIOR), "by_year": {},
-                 "by_month": {}, "floor": {}, "footprint": {}}
+                 "by_month": {}, "floor": {}, "footprint": {}, "renewables": {}}
     errs, scarce = [], []
     for year in YEARS:
         a_h, m_h = actual_hourly(year), model_hourly(KEEPER, year)
@@ -136,6 +166,36 @@ def main() -> None:
         band = band[band["pass"] == "P1"]
         lifted = band[band["klass"].isin(LIFTED)]
         committed = lifted[lifted["band"] == "committed"]["mw"].sum() / 1e6
+        # Model vs EIA-930 renewable energy: the "is the model ever long?" question.
+        e930 = json.loads(gzip.decompress(
+            (REPO / "frontend" / "data" / "backcast" / "bench" / "MISO"
+             / f"{year}.json.gz").read_bytes()))["bench"]["e930"]
+        cls = pd.read_parquet(KEEPER / "hourly" / f"class_hourly_{year}.parquet")
+        cls = cls[cls["pass"] == "P1"]
+        # The IMM reference rate the gross-up used, recovered from the module that
+        # applies it, so the curtailment arithmetic cites the code rather than a
+        # number retyped here.
+        from market_sim.data.renewables import _miso_wind_reference_curtailment_rate
+        ref = _miso_wind_reference_curtailment_rate()
+        ref_rate = float(ref[0]) if isinstance(ref, tuple) else float(ref)
+        ren = {"imm_reference_curtailment_rate": round(ref_rate, 5)}
+        for fuel in ("wind", "solar"):
+            model_twh = float(cls[cls["klass"] == fuel]["mw"].sum() / 1e6)
+            actual_twh = float(e930[fuel])
+            ren[fuel] = {
+                "model_twh": round(model_twh, 2), "eia930_twh": round(actual_twh, 2),
+                "pct_over_actual": round(100 * (model_twh - actual_twh) / actual_twh, 2),
+            }
+            if fuel == "wind":
+                potential = actual_twh / (1.0 - ref_rate)
+                ren[fuel].update({
+                    "uncurtailed_potential_twh": round(potential, 2),
+                    "lp_curtailed_twh": round(potential - model_twh, 3),
+                    "lp_curtailment_pct": round(
+                        100 * (potential - model_twh) / potential, 3),
+                })
+        out["renewables"][str(year)] = ren
+
         out["footprint"][str(year)] = {
             "committed_band_twh": round(float(committed), 2),
             "lifted_class_twh": round(float(lifted["mw"].sum() / 1e6), 2),
@@ -156,6 +216,10 @@ def main() -> None:
           f'tail too low in {s["months_tail_too_low"]}/{s["months_scored"]}')
     print(f'corr(monthly err, actual hours >$100) = {s["corr_monthly_err_vs_scarcity_hours"]}')
     print(f'screen year (largest committed-band footprint) = {s["screen_year"]}')
+    cur = {y: v["wind"]["lp_curtailment_pct"] for y, v in out["renewables"].items()}
+    ref = next(iter(out["renewables"].values()))["imm_reference_curtailment_rate"]
+    print(f"LP wind curtailment (% of the uncurtailed potential): {cur}")
+    print(f"  ...against the IMM reference rate the gross-up assumed: {100 * ref:.2f}%")
     print(f"-> {dest}")
 
 

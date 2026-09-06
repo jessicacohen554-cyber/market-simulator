@@ -602,6 +602,56 @@
    "system_twh": 663.81
   }
  },
+ "renewables": {
+  "2023": {
+   "imm_reference_curtailment_rate": 0.04895,
+   "wind": {
+    "model_twh": 96.43,
+    "eia930_twh": 91.72,
+    "pct_over_actual": 5.15,
+    "uncurtailed_potential_twh": 96.44,
+    "lp_curtailed_twh": 0.001,
+    "lp_curtailment_pct": 0.001
+   },
+   "solar": {
+    "model_twh": 6.35,
+    "eia930_twh": 6.35,
+    "pct_over_actual": -0.0
+   }
+  },
+  "2024": {
+   "imm_reference_curtailment_rate": 0.04895,
+   "wind": {
+    "model_twh": 103.31,
+    "eia930_twh": 98.25,
+    "pct_over_actual": 5.15,
+    "uncurtailed_potential_twh": 103.31,
+    "lp_curtailed_twh": 0.0,
+    "lp_curtailment_pct": 0.0
+   },
+   "solar": {
+    "model_twh": 14.38,
+    "eia930_twh": 14.38,
+    "pct_over_actual": -0.0
+   }
+  },
+  "2025": {
+   "imm_reference_curtailment_rate": 0.04895,
+   "wind": {
+    "model_twh": 104.03,
+    "eia930_twh": 98.94,
+    "pct_over_actual": 5.15,
+    "uncurtailed_potential_twh": 104.03,
+    "lp_curtailed_twh": -0.004,
+    "lp_curtailment_pct": -0.003
+   },
+   "solar": {
+    "model_twh": 29.75,
+    "eia930_twh": 29.75,
+    "pct_over_actual": -0.01
+   }
+  }
+ },
  "summary": {
   "months_body_too_high": 36,
   "months_tail_too_low": 33,

@@ -103,12 +103,29 @@ jobs:
           python-version: "3.11"
 
       - name: Add swap (covers the ~14 GB LP peak on a 16 GB runner)
+        # GitHub runners already ship an ACTIVE /swapfile, so `fallocate -l 8G
+        # /swapfile` dies with "Text file busy" (measured: run 34011281527).
+        # Add a SECOND swap file on the large ephemeral /mnt disk instead —
+        # additive, no swapoff of the runner's own swap, no path collision.
+        # Best-effort: if the runner refuses swap the solve may still fit, and
+        # failing here would burn the job before we learn anything.
         run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          set -x
+          SWAP=/mnt/swapfile-calibration
+          sudo rm -f "$SWAP"
+          sudo fallocate -l 8G "$SWAP" \
+            || sudo dd if=/dev/zero of="$SWAP" bs=1M count=8192 status=none \
+            || echo "::warning::could not allocate swap; solve may OOM"
+          if [ -f "$SWAP" ]; then
+            sudo chmod 600 "$SWAP"
+            sudo mkswap "$SWAP" >/dev/null
+            sudo swapon "$SWAP" || echo "::warning::swapon failed; solve may OOM"
+          fi
+          set +x
+          echo "--- memory after swap setup ---"
           free -g
+          swapon --show || true
+          df -h /mnt / | tail -3
 
       - name: Install dependencies
         run: |
