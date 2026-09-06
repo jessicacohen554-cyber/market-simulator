@@ -1,0 +1,242 @@
+{
+  "iso": "PJM",
+  "start_year": 2026,
+  "end_year": 2027,
+  "capacity_market_clearing": false,
+  "capacity_market_clearing_by_iso": null,
+  "weather_year": 2024,
+  "miso_rps_compliance_regions": false,
+  "miso_clean_tier_rows": false,
+  "weather_posture": {
+    "posture": "single_draw",
+    "label": "Unless produced by the weather ensemble, results are conditional on a single pinned weather year (stated in the run config).",
+    "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
+    "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md \u00a74"
+  },
+  "cache_key": "bd1839f1478eb801",
+  "run_dir": "results/scn-ws1-probe/pjm/CARB/PJM/bd1839f1478eb801",
+  "error": null,
+  "total_wall_s": 567.7,
+  "global_peak_rss_mb": 8973.4,
+  "n_solved_years": 2,
+  "solved_years": [
+    2026,
+    2027
+  ],
+  "per_year_perf": [
+    {
+      "year": 2026,
+      "wall_s": 382.0,
+      "peak_rss_mb": 8973.4
+    },
+    {
+      "year": 2027,
+      "wall_s": 185.6,
+      "peak_rss_mb": 6531.6
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply\u2212demand| = 1.455e-10 MW (year 2026); tol 1.0"
+    },
+    {
+      "id": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "id": "I3",
+      "name": "unserved/dump",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "id": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2026: accredited firm 151384 < requirement 153333 MW; 2027: accredited firm 152623 < requirement 161729 MW"
+    },
+    {
+      "id": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "id": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "\u22650, stable"
+    },
+    {
+      "id": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "id": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "requirement-implied floor [-8.3%, 6.7%]..[-7.4%, 7.6%]; out: 2026:-9.5% (band [-8.3%, 6.7%]), 2027:-12.6% (band [-7.4%, 7.6%])"
+    },
+    {
+      "id": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "id": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "trajectory": [
+    {
+      "year": 2026,
+      "lw_price": 41.711,
+      "max_hourly_price": 64.9,
+      "neg_price_hour_frac": 0.0,
+      "hours_ge_100": 0,
+      "hours_ge_500": 0,
+      "hours_ge_1000": 0,
+      "hours_ge_2000": 0,
+      "co2_mt": 373.1949,
+      "peak_demand_mw": 167211.957,
+      "reserve_margin": -0.09466,
+      "rps_dual": 45.0,
+      "thermal_mw": 168934.2,
+      "firm_clean_mw": 3300.7,
+      "vre_mw": 25000.0,
+      "total_cap_mw": 202980.0,
+      "storage_mw": 0.0,
+      "storage_power_mw": 5546.1,
+      "builds_thermal_mw": 0.0,
+      "builds_thermal_backstop_mw": 0.0,
+      "builds_by_source": {},
+      "builds_renew_mw": 0.0,
+      "builds_storage_mw": 0.0,
+      "retire_mw": 0.0,
+      "capacity_by_fuel_mw": {
+        "biomass": 1745.1,
+        "coal": 35433.4,
+        "gas_cc": 59718.5,
+        "gas_ct": 26391.9,
+        "gas_st": 9490.3,
+        "hydro": 3300.7,
+        "import": 4000.0,
+        "nuclear": 33491.8,
+        "oil": 4408.3,
+        "solar": 14000.0,
+        "wind": 11000.0
+      },
+      "generation_by_fuel_mwh": {
+        "biomass": 8314436.5,
+        "coal": 233876012.9,
+        "gas_cc": 323062938.8,
+        "gas_ct": 12451651.5,
+        "gas_st": 4544724.5,
+        "hydro": 9252362.8,
+        "import": 278740.1,
+        "nuclear": 277239761.7,
+        "oil": 0.0,
+        "solar": 23296327.3,
+        "wind": 29764002.5
+      },
+      "total_gen_mwh": 922080958.7,
+      "storage_discharge_mwh": 3538294.2,
+      "storage_charge_mwh": 4401913.7
+    },
+    {
+      "year": 2027,
+      "lw_price": 44.534,
+      "max_hourly_price": 313.4,
+      "neg_price_hour_frac": 0.0,
+      "hours_ge_100": 8,
+      "hours_ge_500": 0,
+      "hours_ge_1000": 0,
+      "hours_ge_2000": 0,
+      "co2_mt": 380.1844,
+      "peak_demand_mw": 174653.562,
+      "reserve_margin": -0.126141,
+      "rps_dual": 45.0,
+      "thermal_mw": 168478.7,
+      "firm_clean_mw": 3300.7,
+      "vre_mw": 25000.0,
+      "total_cap_mw": 202524.5,
+      "storage_mw": 0.0,
+      "storage_power_mw": 5546.1,
+      "builds_thermal_mw": 842.8,
+      "builds_thermal_backstop_mw": 842.8,
+      "builds_by_source": {
+        "reserve_backstop": 842.8
+      },
+      "builds_renew_mw": 0.0,
+      "builds_storage_mw": 0.0,
+      "retire_mw": 1198.9,
+      "capacity_by_fuel_mw": {
+        "biomass": 1745.1,
+        "coal": 34321.4,
+        "gas_cc": 59718.5,
+        "gas_ct": 27048.4,
+        "gas_st": 9490.3,
+        "hydro": 3300.7,
+        "import": 4000.0,
+        "nuclear": 33491.8,
+        "oil": 4408.3,
+        "solar": 14000.0,
+        "wind": 11000.0
+      },
+      "generation_by_fuel_mwh": {
+        "biomass": 11288063.9,
+        "coal": 209414463.9,
+        "gas_cc": 389883759.7,
+        "gas_ct": 22957892.8,
+        "gas_st": 5977571.9,
+        "hydro": 9252362.8,
+        "import": 2590124.0,
+        "nuclear": 277239761.7,
+        "oil": 11927.4,
+        "solar": 23296327.3,
+        "wind": 29764002.5
+      },
+      "total_gen_mwh": 981676258.0,
+      "storage_discharge_mwh": 3720094.8,
+      "storage_charge_mwh": 4626918.6
+    }
+  ],
+  "run_config_path": "results/scn-ws1-probe/pjm/CARB/run_config.json",
+  "set_overrides": {
+    "carbon_price_path": "mid"
+  }
+}
