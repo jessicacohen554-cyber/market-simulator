@@ -1,6 +1,6 @@
-# Capacity-Expansion Director — successor handoff (2026-09-06, refresh #44; r#31 REWRITE base)
+# Capacity-Expansion Director — successor handoff (2026-09-06, refresh #45; r#31 REWRITE base)
 
-Supersedes the r#43 revision as the live successor prompt. Paste the block below verbatim
+Supersedes the r#44 revision as the live successor prompt. Paste the block below verbatim
 to open the next director session. The ledger (`capx-director-ledger-2026-08.md`) remains
 the canonical state record — this handoff is a snapshot and the ledger wins where they
 diverge.
@@ -30,7 +30,7 @@ THEN run `git log origin/main --grep=<LANE-ID>` for EVERY lane the ledger marks 
 the r#35 desk graded D48 Phase 1 "running" when it had merged 13 hours before the pin (§0ag.0).
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ao = r#44 is the
+1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ap = r#45 is the
    newest at this writing), §1 scoreboard, §3 the rulings Q1–Q51 (ALL SPENT; Q45's premise LAPSED
    when NYISO's marker withdrew), §4 issuance record, §2 backcast watch.
 2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
@@ -92,51 +92,78 @@ STANDING DOCTRINE (owner-ruled; cite before deviating):
   408/500 failures only. Never push a ≥300-line file through push_files (rule 27); blob-verify
   (hash local vs origin) after every push that touches the ledger/pack.
 
-STATE AT HANDOFF (r#44, main HEAD `ad45b0e4`, 2026-09-06 — VERIFY, DON'T TRUST):
-- **ALL SEVEN GATES GREEN — a program first, and it held at this pin.** No gate-(a) re-key owed for
-  two consecutive sittings. The bench gate went green by DIAGNOSIS, not a lowered bar: Y-17 found
-  `bench_stamp.py` is a member of its own BUILDER_SOURCES, so the aggregate could never read equal
-  for a part built before a stamping edit; ERCOT/2022's payload sources hash identically to HEAD's.
-- KEEPERS (none moved at r#43 or r#44): ERCOT ercot248-two-config-keeper · NEISO neiso-99-joint-p1 ·
+STATE AT HANDOFF (r#45, main HEAD `d4113182`, 2026-09-06 — VERIFY, DON'T TRUST):
+- **THE CARDS ARE PARKED BY THE OWNER. DO NOT RE-SERVE THEM ON YOUR OWN READING.** Q50 (CAISO
+  `complete`) and Q51 (NYISO `complete`) were both held on conditions written against LANE LABELS,
+  and r#45 established those cannot terminate on a continuously-renaming lane (Q51's condition can
+  never be met — nyiso-197 never landed; the lane rolled to nyiso-198). This desk put that structural
+  problem and offered a keeper-state condition; **the owner ruled "Keep label conditions; I'll say
+  when."** D69 / D70 stay chartered and undispatched; gate (a) stays FAIL for CAISO and NYISO by
+  standing choice; T3-NYISO-GOLDEN stays held. The owner brings these back — you do not.
+- **OWNER-TIER OPEN: NONE.** Q1–Q51 all spent.
+- KEEPERS (unmoved for three sittings): ERCOT ercot248-two-config-keeper · NEISO neiso-99-joint-p1 ·
   PJM pjm-162-inputclock · MISO miso-220-nonsteam-lift · CAISO caiso-252-b1-notrim · NYISO
-  nyiso-196-extract-basis — all CALIBRATED. Markers: complete = {ERCOT, NEISO, PJM}; withdrawn =
-  {CAISO, NYISO}; MISO never held one; final EMPTY. **All three gate-(a) failing ISOs are unmarked
-  BY EXPLICIT OWNER CHOICE — Q49 DECLINE; Q50 HOLD (re-serve when caiso-254 lands, THIRD serve
-  already spent); Q51 HOLD (re-serve when nyiso-197 lands AND its keeper reads CALIBRATED). DO NOT
-  RE-SERVE BEFORE THOSE CONDITIONS.** On Q50 the desk has named the unbounded-wait problem on record
-  (CAISO's lane ran 252 → 253 → 253b → 254 across four sittings) and offered a terminating option,
-  which the owner declined — do not re-argue it, just serve on the stated condition.
-- IN FLIGHT (both LIVE at the pin, both pushed within 25 min of it — do NOT grade lost, do NOT
-  re-paste their charters): **D60-R3** (state at start, control-first, blast-radius and the
-  no-second-hunk probe all landed; OWED: three legs, the Q37 rows, §5 and the close; sole writer on
-  ff-verdicts.json / program-status.json) · **D62** (PRECOMMIT, build, Phase 0 PASS, screen GATE PASS
-  all landed; OWED: §§5–9 and the full T1-H window; registration held behind D60-R3).
-- HELD: D65-B (on D60-R3's finding) · D58 + D63 (on D60-R3) · D69 (on caiso-254) · D70 (on nyiso-197)
-  · T3-NYISO-GOLDEN (on the NYISO marker). QUEUED-NAMED and unchartered: D66 (PJM 2024/25 census),
-  D67 (steam below-cap convention), D71 (folded into D60-R3), a carbon-response root-cause lane
-  (D21's P1 defect + SCN-WS0's leakage finding, one object). CLOSED UNDISPATCHED: D68 (Q49 declined).
-- **NOTHING WAS ISSUED AT r#44 AND THAT WAS THE RIGHT CALL** — both live lanes own every surface the
-  queue's next items need. Issue when D60-R3's finding merges; that one landing releases four lanes.
-- OWNER-TIER OPEN: **NONE — Q1–Q51 all spent.**
-- OTHER DESKS: audit v34 — **R-AU's flip trigger HAS FIRED (6 of 6 held across four consecutive
-  runs); G2 leg 4 reads `protected: false` at a fourteenth reading; the board states the flip and
-  leg 4 are ONE OWNER ACT.** Y-17/18/19/20 landed. SCN-DESK: rulings S1–S4, the carbon FLOOR (S2),
-  SCN-LOAD's six-source load-forecast datatype, and **a CCS emission-rate seam that INVERTS NEISO's
-  headline CO2 answer** (theirs to route, named here). Owner backcast: pjm-166/167 (the touchpoint
-  was already spent, re-scored from artifacts; same-HEAD control BIT-IDENTICAL; the coal-vs-CC
-  framing REFUTED), caiso-253b landed / caiso-254 open, miso-222 measured before built (1.7–2.0 GW
-  against a 5.6–22.0 GW requirement, 2 of 45 object hours), NYISO/NEISO C8 at unit grain.
-- **NEW DOCTRINE, adopted r#44 from D60-R3 §5.0e: REBASE BETWEEN LEGS, NEVER DURING ONE.** "Rebase
-  before every push" and "never mutate the tree under a running solve" conflict whenever a solve
-  outlives a fetch; the resolution is ordering. D60-R3 rebased four minutes into a leg, four
-  solve-path files were rewritten under the running LP, and it killed the leg — because
-  `write_run_config` stamps `git.sha` at the END (a false stamp) and a lazy import could have mixed
-  two source trees. Its driver now records HEAD before the solve and refuses to score or register if
-  HEAD moved (`exit 90`). Put that guard in every solve charter you write.
-- STANDING: `ruff` is not installed in this container — say UNREAD, never carry a prior reading
-  forward as green. A sitting that issues lanes states in its closing message that **dispatch is
-  unconfirmed until a branch exists** (adopted r#43; it worked — both r#43 lanes dispatched inside
-  the hour).
+  nyiso-196-extract-basis — all CALIBRATED. complete = {ERCOT, NEISO, PJM}; withdrawn = {CAISO,
+  NYISO}; MISO never held one; final EMPTY.
+- GATES 6 of 7. `check_mechanism_matrix` **EXIT 1** on `cc_duct_peaking_row_scoped`, a field
+  **nyiso-198 added** with no matrix row — rule 28(c) is the ADDING PR's duty, so it is **ROUTED to
+  the owner's NYISO lane, not re-keyed by this desk**. Gate (a) 0 for a third sitting (no re-key
+  owed); parity, audit_keepers, forecast-staleness, bench, goldens all 0. `ruff` is NOT INSTALLED in
+  this container — say UNREAD, never carry a prior green forward.
+- IN FLIGHT: **D60-R3, leg 4 of 5** — legs 3 (`caiso-t1f`) and 4 (`pjm-t1f`) registered, HOLD → HOLD;
+  OWED leg 5 (`neiso-t3` GOLDEN-3, ~33 min), the Q37 rows, §5 and the close. Sole writer on
+  `ff-verdicts.json` / `program-status.json`. Its landing releases D65-B, D62's registration, D58,
+  D63. Also live: `claude/capx-d67-pjm-requirement-operand-18wzjf` (NOT chartered by this desk — see
+  the label collision below) and `scn-ws5a-load-campaign`.
+- **THE HIGHEST-VALUE OPEN ITEM: D60-R3 leg 4 fired its I12 STOP and it indicts an ARMED posture.**
+  Accredited firm rose +9,092 / +10,276 / +14,303 / +18,000 MW exactly as pre-declared, but the
+  requirement rose by MORE (+16,220 / +21,607 / +27,272 / +33,504 MW), so the position worsened on
+  every comparable year. The requirement is **byte-identical between the control and the committed
+  D50 arm**, so Q42 owns none of it — the whole rise belongs to the **D48 + D57** gates armed under
+  Q44: `pjm_demand_response_supply` counts offered DR UCAP as supply **with the peak un-netted**, and
+  `pjm_accreditation_design_vintage` applies the post-CIFP FPR from DY 2025/26. **2026–2030 is the
+  first horizon on which that FPR is in force for every year, and D48's accounting is NOT
+  position-neutral forward.** Routed to this desk, **held until D60-R3's finding closes** — that is
+  where the magnitude, the LOYO and the recommendation belong. Serve the owner card then, not before.
+- **NEXT TO ISSUE: D73** — dispatchable now, with D72 §6.1's sharpened scope. D23's R1 instrument
+  guard (~40–80 lines + tests in `check_forecast_invariants.py` and the battery scorer, NO solve,
+  strictly evidence-tightening), plus the FC-6 P1 verdict-basis call D23 §8 left explicitly to the
+  director and which has been unmade since 2026-09-01. **The question is now narrow: should the guard
+  retroactively reclassify the ARCHIVED `carbon25`-based P1 FAIL to MIS-CONSTRUCTED, given the live
+  golden has already been re-armed off that mis-constructed pair?** Check y22's dead-lookup-branch
+  diagnosis for collision in the same file family before dispatching.
+- QUEUED-NAMED, both needing charters: **D74** — the steam/oil below-cap offer convention (D62 §9
+  widened it from steam to steam+oil; 8,801.9 MW of gas-steam uncleared and 9.464 GW economically
+  exited in BOTH D62 arms to the MW, so no offer-side operand touches it). **It needs the NEW label
+  because D67 is taken.** **D75** — the VRE ELCC vintage repair D66 named (wind 0.41 vs published
+  0.16; solar 0.1064 vs 0.36/0.54), sign PRE-DECLARED to widen the residual, rule 14 says do it.
+- **LABEL COLLISION, live: `claude/capx-d67-pjm-requirement-operand-18wzjf` / #5012 is NOT the D67
+  this pack queued.** The pack's D67 is the steam/oil convention; the dispatched lane's object is the
+  requirement operand. **Cite it by branch+PR, never as bare "D67" (the D33-M rule).** That lane also
+  corrected two errors in this pack — `f0e050e820c1159a` is a CACHE KEY, not a git sha (the git
+  anchor is `5bb70047`), and a STOP value had gone stale on main — and returned **the first LIVE
+  G-DRIFT verdict this desk has graded** (`DEMAND_GROWTH_RATES["PJM"]["mid"]["near"]` 0.036 →
+  0.064645 in the SCN-LOAD refresh, landing directly on the operand it repairs). It has EARNED a
+  control solve; rule 29(b) working as written.
+- LANDED AND CLOSED at r#45, all three returning NEGATIVES: **D62** (DO-NOT-ARM on its own fired
+  STOP — self-executing, no card), **D72** (blast radius EMPTY, D23 upheld — the premise was this
+  desk's and it was false), **D66** (the residual is NOT one-sided missing supply: 78/22 and 67/33
+  requirement/supply). Read all three §8s before proposing anything in PJM capacity.
+- OTHER DESKS: rule 30(a) AMENDED — a held-out year renders AS a year; the Validation Touchpoints
+  panel, optgroup split, tier suffix and banner are **DELETED, not hidden** (rule 26) — do NOT
+  "restore" them as a regression fix; rule 22's tier caveat survives as a single footnote.
+  neiso-103: 2020's inputs are at PARITY, its C3a FAIL is a denominator effect. caiso-254: G-BIMODAL
+  PASSES. nyiso-198 in flight (its F-gates STOPPED and its census was wrong; the replacement gates
+  are a declared forward prediction). Audit y21 (flip set back to 6 of 6) and y22 (T1-H FC-1 blind
+  spot = a dead lookup branch). SCN r#7: WS-4c complete (20 HIT / 3 SPLIT / 3 MISS), WS-1b-r2's
+  phase 0 killed its own leg 1, Stage A-LOAD released.
+- **DOCTRINE ADDED AT r#45, from this desk's own error:** a blast-radius charter states **the
+  predicate read as a PRECONDITION OF ISSUING**, not as the lane's first step — D72 cost a session
+  proving a hypothesis a five-line code read would have killed. Standing from r#44: **rebase BETWEEN
+  legs, never DURING one** (D60-R3 §5.0e; put the `exit 90` HEAD guard in every solve charter).
+  Standing from r#43: a sitting that issues lanes states in its closing message that **dispatch is
+  unconfirmed until a branch exists**. And: **a COLLISION claim is not a DEPENDENCY claim** — test
+  the queue item by item every sitting rather than asserting it is blocked as a block.
 
 DUTIES ON EVERY DISPATCH: every prompt carries its DATA PROFILE line, model, branch stem
 (suggested — grade by content), binding charter citation (pack section), collision-care lines,
