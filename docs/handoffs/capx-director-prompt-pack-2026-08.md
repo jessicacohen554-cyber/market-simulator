@@ -5134,7 +5134,7 @@ suffixed arms registered; the pre-declaration graded; the E&AS operand measured 
 the joint arming recommendation on the pre-stated condition. Nothing armed.
 ```
 
-## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED at r#38 (D53 merged ✓, D57 landed ✓) — dispatch AFTER D60's finding lands (D60 writes the PJM board t1f row); the control is the NEW bare `pjm-t1h` (the Q44 joint posture, `f0e050e820c1159a`); Opus per audit ruling R-AK**
+## D58 — the PJM sector-gate leg (r#36; D53 routed item 1) — **RELEASED at r#38 (D53 merged ✓, D57 landed ✓) — dispatch AFTER D60's finding lands (D60 writes the PJM board t1f row); the control is the NEW bare `pjm-t1h` (the Q44 joint posture, `f0e050e820c1159a`); Opus per audit ruling R-AK** — **RELEASED r#46 am.1 (D60-R3 merged #5038). TWO CORRECTIONS TO THIS SECTION'S TEXT: `f0e050e820c1159a` is a CACHE KEY, not a git sha (the committed D57 arm A's git anchor is `5bb70047`); and that committed control is PRE-hunk on SCN-LOAD `d14a7ed0` (`DEMAND_GROWTH_RATES["PJM"].mid.near` 0.036 → 0.064645 moves the T1-H screen peak −10,819 / −7,574 / −3,977 / 0 / +4,386 MW, measured by the D67 lane) — form 4 is VOID, so solve a SAME-HEAD control for the screen span (rule 29(b)), delete it before merge (29(c)), and classify #5033 (P1 basis seed) in the drift audit. The D67 lane (`claude/capx-d67-pjm-requirement-operand-18wzjf`), D74 and D75 share PJM hindcast surfaces on different seams: merge-order care, not a dependency.**
 
 ```
 You are the D58 session of the capacity-expansion track — the PJM leg of the sector gate D53
@@ -6656,7 +6656,7 @@ affected bare key re-scored artifact-only; the drift hunk named with its table; 
 and closed; all blob-verified. Then the director releases D65-B, D62's registration, D58 and D63.
 ```
 
-## D65-B — Act A ARMING + Act B RE-IDENTIFICATION, coupled (r#42 amendment 2; owner ruling Q47 = "Arm coupled, after D60-R3") — **CHARTERED r#42 am.2, RELEASED-CONDITIONAL: dispatch AFTER D60-R3's finding merges**
+## D65-B — Act A ARMING + Act B RE-IDENTIFICATION, coupled (r#42 amendment 2; owner ruling Q47 = "Arm coupled, after D60-R3") — **CHARTERED r#42 am.2, RELEASED-CONDITIONAL: dispatch AFTER D60-R3's finding merges** — **RELEASED r#46 am.1 (D60-R3 merged #5038) FOR ITEMS 1–5; ITEM 6 (the every-bare-key batch) IS HELD UNTIL D77's FIX MERGES** (pack §D77: the CCS emission-rate seam is solve-affecting from 2028 and Q47's "one re-key event" cannot survive a second solve-affecting fix a day later). Before the batch, classify HUNK BY HUNK: SCN-LOAD `d14a7ed0` (`DEMAND_GROWTH_RATES` all six ISOs — LIVE on every T1-F key except CAISO, measured inert there), the wallclock P1 basis seed #5033 (`pipeline/solve.py` / `lp/model.py` — VERIFY forecast-path byte-identity from the code), and D77's repair. The batch lands the whole T1-F board in ONE demand vintage — that is now one of its purposes. A matched cache key is NOT a G-DRIFT verdict: `constants.py` is outside it. Board files: D60-R4 then D63 are the sole writers until they merge; rebase between legs, re-audit the delta, never rebase during a solve.
 
 ```
 You are the D65-B session of the capacity-expansion track — executing owner ruling Q47 (capx ledger §3,
@@ -7020,4 +7020,136 @@ EXIT (phase 0): FINDING-capx-d76-<date>.md §§1–3 with the six-ISO census tab
 year fixed, the HIT/MISS reading, and a §4 that names the phase-1 seam and every consumer of it. Push
 it; the director releases phase 1 or serves the card. Rules 13, 14, 19, 21, 22 (2021–2025 hindcast
 only; no out-of-training scoring), 24, 25, 27, 28, 29.
+```
+
+## D60-R4 — the D60-R3 AMENDMENT 1, re-issued FRESH because D60-R3 merged with its finding CLOSED and the growth hunk unrecorded (r#46 am.1) — **ISSUED r#46 am.1, DISPATCHABLE NOW**
+
+```
+You are the D60-R4 session of the capacity-expansion track. Binding charter: pack §D60-R3 AM.1 (the
+amendment text, VERBATIM — every step, the pre-declared decomposition table, the HEAD guard, the
+control's pre-declared reading and falsifier) with these changes and no others:
+ (1) START FRESH off origin/main on branch claude/capx-d60r4-growth-hunk-attribution. D60-R3 is
+     MERGED (#5038) and its finding `FINDING-capx-d60-2026-09-05.md` is CLOSED at `15631b8c`. You are
+     the same lane's successor, so you MAY amend §5.4 and §5.5 — by DATED CORRECTION BLOCKS appended
+     in place under each ("**Correction, D60-R4 <date>:** …"), NEVER by rewriting the original
+     sentences; the record must show what was believed and when. §5.0f is new text.
+ (2) The two provenance strings (STEP 3b) are on main now, in `program-status.json` (PJM
+     `t1f_provenance`; the NEISO golden entry) and `ff-verdicts.json` narratives. You are the SOLE
+     writer of both files for this window (D60-R3's lock passes to you); D63 and D65-B are told so.
+ (3) Before the control solve (STEP 4), classify the FULL rebase-free drift window `15631b8c..HEAD`
+     hunk by hunk — it includes #5033 (`pipeline/solve.py` / `lp/model.py`, the P1 basis seed:
+     VERIFY its forecast-path byte-identity from the code, do not copy its docstring) — and push the
+     classification before the solve. A matched cache key is NOT a G-DRIFT verdict.
+ (4) EXIT: one PR — §5.0f, the two dated corrections, the provenance strings, Addendum E with the
+     control's I12 rows at full magnitude, the control bundle DELETED (rule 29(c)), ruff clean, every
+     ≥300-line file blob-verified. If the falsifier fires (the same-HEAD control's I12 LESS negative
+     than the arm's in any year), say so in the PR title: the director serves the D48 card on it.
+DATA PROFILE: pjm. MODEL: Opus. Rules 13, 19, 21, 22, 24, 25, 27, 28 (no cell moves), 29(b)/(c).
+```
+
+## D63 — the MISO + CAISO curated DOF-identification rows under Q37's limb, plus D62's suffixed registration (r#46 am.1; queued-named since r#40; released by D60-R3's merge) — **CHARTERED r#46 am.1, DISPATCHABLE, records-only**
+
+```
+You are the D63 session of the capacity-expansion track. Binding charter: pack §D63 (this section) +
+owner ruling Q37 (capx ledger §3, r#34: a follow-up lane may author an attestation iff PRE-DECLARED
+before authoring, attestation row only, artifact-only re-score) + `FINDING-capx-d60-2026-09-05.md`
+§8 (the six rows D60-R3 wrote and the two negatives it routed here) + `PREDECL-capx-d60-2026-09-05.md`
+Addendum D (the shape of a pre-declaration for this work). ZERO LP. No solve, no re-solve.
+DATA PROFILE: code
+MODEL: Opus (pre-declared, artifact-only; FC-7 is the only row that may move).
+BRANCH (suggested; graded by content): claude/capx-d63-miso-caiso-dof-rows — FRESH off origin/main.
+COLLISION: D60-R4 (if live) is the sole writer of `ff-verdicts.json` / `program-status.json` until
+its PR merges — check `git log origin/main --grep=D60-R4` and open branches; if it is live, do steps
+1–2 now and hold step 3's board write until it merges, rebasing between (never during) steps.
+
+STEP 1 — PRE-DECLARE (an Addendum in a new PREDECL-capx-d63-<date>.md, pushed BEFORE any row is
+written): for each of the SEVEN fields — MISO `entry_vre_capacity_revenue`, `entry_vre_zone_selection`,
+`miso_rps_compliance_regions`, `miso_clean_tier_rows`, `retirement_sector_gate`; CAISO
+`negative_renewable_offers`; and any other `unattested` entry the committed `miso-t1f` / `caiso-t1f`
+`dof_ledger.json` carries — name the COMMITTED identification source (the FINDING / design doc that
+landed the field and its value or its posture; the D53 finding for `retirement_sector_gate`, the
+CAISO backcast keeper record for `negative_renewable_offers`, and so on), the expected FC-7 reading
+after the row exists, and the expected determination (which must NOT move except through FC-7).
+A field whose identification you cannot cite from a committed document gets NO row — it stays
+UNIDENTIFIED and you say why (rule 21: the ledger REPORTS identification, it never supplies it).
+STEP 2 — WRITE THE ROWS in `scripts/build_forecast_dof_ledger.py::CURATED_IDENTIFICATIONS`, keyed
+(ISO, field), `requires: "iso-registry"`, source quoted per row, in the shape of D60-R3's six.
+Test: the existing test module for that file, extended. ruff clean.
+STEP 3 — ARTIFACT-ONLY RE-SCORE of the bare `miso-t1f` and `caiso-t1f` (same bundle, same bytes, same
+key; only ledger labels change) → register in place; FC-7 must be the ONLY row that moves, and any
+other movement is a STOP-and-report. THEN, in the same PR and window, register D62's arm on the board
+SUFFIXED (`pjm-t1h-d62-pubbar`, DO-NOT-ARM per D62 §8; the bare `pjm-t1h` is untouched) — the
+registration D62 withheld behind D60-R3, with D62's own verdict text as the provenance string.
+EXIT: PREDECL pushed first; FINDING-capx-d63-<date>.md with the per-field source table, the two
+re-scores' before/after, D62's registration line; ruff clean; blob-verify `ff-verdicts.json`,
+`program-status.json`, `build_forecast_dof_ledger.py`. Rules 21, 22, 24, 25 (rows keyed (ISO, field),
+never ("*", field)), 27, 28 (no cell moves — you test no mechanism).
+```
+
+## D77 — the CCS retrofit EMISSION-RATE SEAM: `ccs.py:572`'s capture write does not reach the dispatch fleet (r#46 am.1; SCN-WS2b §5.3 / §8 item 1, routed as a priority signal by SCN-DESK r#9 — Stage A-POLICY holds on it) — **CHARTERED r#46 am.1, DISPATCHABLE NOW; a DEPENDENCY of D65-B's batch**
+
+```
+You are the D77 session of the capacity-expansion track. Binding charter: pack §D77 (this section) +
+`FINDING-scn-ws2b-2026-09-06.md` §5.3 (the measurement) and §8 item 1 (the route) + `FINDING-capx-d50-
+2026-09-04.md` / `FINDING-capx-d65-2026-09-05.md` (the retrofit ledgers whose CO2 this mis-states).
+DATA PROFILE: neiso (the reproduction and the screen are NEISO; the fix is ISO-agnostic code).
+MODEL: Opus (the defect is measured and the fix is a construction repair with zero DOF; the
+re-scores and every determination consequence route back to the director).
+BRANCH (suggested; graded by content): claude/capx-d77-ccs-emission-rate-seam — FRESH off origin/main.
+
+THE DEFECT, MEASURED BY SCN-WS2b (verify, never assume): `model/capacity_evolution/ccs.py` ~L565–575
+executes three in-place writes on a retrofitted generator — `heat_rate × (1 + hr_penalty)`, `vom +=
+adder`, `emission_rate_co2 × (1 − ccs_retrofit_capture_rate)`, `fuel_type = "gas_cc_ccs"`. Tracked
+through the cached `FleetContext` for one NEISO unit across its own 2028 retrofit (BAU, key
+`5e2c52ea81694c10`): heat rate 7.5101 → 8.4113 ✓, fuel `gas_cc_ccs` ✓, emission rate 0.3745 → 0.3745 ✗;
+all six units of the 2028 cohort; NEISO 2030 `gas_cc_ccs` fleet-wide 0.4149 t/MWh vs unabated gas_cc
+0.4663 on a 47-unit / 9.0 GW class. Leading candidate: a plant-keyed restoration of the measured CEMS
+rate DOWNSTREAM of evolution (`plant_emission_rates_v2` or its successor) that overwrites the converted
+unit's rate — which also explains why the rate did not follow the 12 % heat-rate rise. It is a DISPATCH
+defect (carbon adder = `emission_rate × carbon_price`) and an accounting one, and it inverts NEISO's
+headline CO2 under CES.
+
+PHASE 0 — ZERO LP, and STOP if the premise fails: (1) reproduce the WS2b table from the committed
+NEISO BAU bundle's cached fleet (no solve); (2) trace, in code, EVERY assignment to `emission_rate_co2`
+downstream of `apply_ccs_retrofit` (grep `emission_rate_co2` across `src/market_sim/`; read the
+CAMPD-history rate derivation the CLAUDE.md "Forecast vs backcast" paragraph describes) and name the
+one that overwrites the converted unit — quote the lines; (3) state the semantics the repair must
+preserve under rule 13: the forward-year rate for an EXISTING unit is the multi-year CAMPD-derived
+measured rate (admissible), and a RETROFITTED unit's rate is THAT rate × (1 − capture) — the measured
+input still enters, the capture applies on top; a converted unit is never silently returned to its
+uncaptured rate. If the overwrite is instead in the FleetContext cache (a stale rate carried across
+years), say so — the fix is then a cache-invalidation seam, not a rate seam.
+PHASE 1 — THE FIX, one mechanism (rule 19): apply the capture at the point the measured rate is
+restored (or exempt converted units from restoration and apply it once) — enumerate both, choose on
+structure, write it, and add the test WS2b's table implies (a unit's rate across its retrofit year:
+captured, and following the heat-rate rise if the derivation is heat-rate-linked). This is a BUG FIX
+with zero DOF and no new `ScenarioConfig` field: no gate, no default, no matrix row — but it is
+SOLVE-AFFECTING for every forecast year ≥ `ccs_retrofit_available_year` (2028), so the cache epoch
+ledger in `src/market_sim/results/cache.py` gets its entry and every affected bare key's re-resolution
+is pre-declared in a PRECOMMIT BEFORE any solve. Every backcast, hindcast and crossover horizon is
+byte-identical by construction (nothing retrofits before 2028) — assert it with the persisted-identity
+tests, not by argument.
+PHASE 2 — THE SCREEN (rule 29): ONE leg, `neiso-t1f` 2026–2030 (~8 min; the largest measured
+footprint — 8.8 GW retrofits by 2030), control = the committed bare `neiso-t1f` ONLY after a hunk-by-
+hunk G-DRIFT of its window (it is PRE-hunk on D55, on `d14a7ed0` and on #5033 — expect form 4 VOID and
+a same-HEAD control, which is the honest comparison anyway). Structural STOP gates only: converted
+units' `emission_rate_co2` = uncaptured × (1 − capture) to the digit; heat rate, VOM, fuel_type
+byte-identical to the control; NO unit outside the retrofit cohort moves its rate; total retrofit MW
+within the D50/D65 band (the fix moves dispatch and CO2, not the screen's capex arithmetic — if the
+retrofit SET moves, say by how much and why: the carbon adder now differs for converted units, which
+CAN re-order the merit order, and that is a real effect, not a STOP). Report the NEISO 2030 CO2 and
+`gas_cc_ccs` generation deltas at full magnitude. HEAD GUARD around the solve: H0=$(git rev-parse
+HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. Rebase BETWEEN legs, never during;
+re-audit the rebase delta before the next leg.
+WHAT YOU DO NOT DO: no re-solve of any other bare key (D65-B's batch does that, at one HEAD, carrying
+your fix — that is WHY you land first), no board byte (`ff-verdicts.json` / `program-status.json`
+belong to D60-R4 / D63 this window; you REPORT what the re-scores would move), no GOLDEN-3 re-solve
+(D65-B's batch), no keeper, marker, shard or freeze. The screen bundle and any control are DELETED
+before merge (rule 29(c)); the FINDING carries every number.
+EXIT: FINDING-capx-d77-<date>.md with the phase-0 reproduction and the quoted overwrite, the fix's
+diff and tests, the cache-epoch entry, the PRECOMMIT'd key list, the screen table, and a §8 BLAST
+RADIUS: every committed forecast bundle with a non-empty retrofit ledger (from D50 §6.2 / D60 §8-blast-
+radius's census), its retrofit MW, and therefore which FC-4 / FC-5 co2 rows and which FC-6 battery
+arms are mis-stated — as a table for D65-B's batch and the director's re-score card, never as an act.
+Rules 13, 14, 19, 21, 22, 24, 25, 27 (blob-verify `ccs.py` and any ≥300-line file), 28, 29.
 ```
