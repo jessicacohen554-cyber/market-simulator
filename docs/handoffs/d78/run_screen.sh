@@ -15,8 +15,12 @@ set -euo pipefail
 name="$1"; shift
 H0=$(git rev-parse HEAD)
 out="results/hindcast/pjm-2021-2023-realized-t1h-d78-${name}"
-echo "=== [$(date -u +%H:%M:%S)] SCREEN LEG ${name} -> ${out}  HEAD GUARD ${H0}"
-uv run python scripts/run_capacity_hindcast.py \
+# PY overrides the interpreter so legs 1-2 can run from a worktree pinned at
+# the phase-0 commit with the main tree's venv (PYTHONPATH=<worktree>/src),
+# while the fix is built on the branch — see PRECOMMIT §3.
+PY=${PY:-uv run python}
+echo "=== [$(date -u +%H:%M:%S)] SCREEN LEG ${name} -> ${out}  HEAD GUARD ${H0}  cwd $(pwd)"
+$PY scripts/run_capacity_hindcast.py \
     --iso PJM --start-year 2021 --end-year 2023 --vintage 2020 \
     --fuel-variant realized --entry-screen-diagnostics "$@" --out-dir "$out"
 [ "$(git rev-parse HEAD)" = "$H0" ] || { echo "HEAD MOVED during ${name}"; exit 90; }

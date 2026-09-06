@@ -160,7 +160,7 @@ every other MW enters as a price taker at $0"*:
 |---|---|---|
 | screened thermal (coal, gas_cc, gas_ct, gas_st, oil, nuclear, biomass, gas_cc_ccs) | `offer_g` on `A_g` | the must-offer + MSOC (§2 items 1–2, 4) |
 | a screened unit whose `EAS_g ≥ GFC_g` | `offer_g = 0` | the cap formula — a unit covering its avoidable cost offers as a price taker (Manual 18: a seller needs ACR data only "to submit a sell offer greater than zero") |
-| screen-EXEMPT units: plants with a pending owner-filed date (`dated_plant_unit_ids`, rule 19 D42/D44), this-year CCS retrofits, and — if D53 lands — sector-gated units | price taker at $0 on `A_g` | their exit is decided elsewhere, so no offer can change their decision; the screen computes no `EAS_g` for them, and inventing one would be a second operand. Scope: a dated unit still in the fleet for the delivery year DOES sit in the stack (it must offer for delivery years before its filed exit — §2 item 1); a unit dated out by step 0/1 is not in the fleet and is absent. (§4.2) |
+| screen-EXEMPT units: plants with a pending owner-filed date (`dated_plant_unit_ids`, rule 19 D42/D44), this-year CCS retrofits, and — if D53 lands — sector-gated units *(sector-gated units WITHDRAWN from this row 2026-09-06 by owner ruling Q53 / capx D78 — they offer; see the §4.7 cross-reference)* | price taker at $0 on `A_g` | their exit is decided elsewhere, so no offer can change their decision; the screen computes no `EAS_g` for them, and inventing one would be a second operand. Scope: a dated unit still in the fleet for the delivery year DOES sit in the stack (it must offer for delivery years before its filed exit — §2 item 1); a unit dated out by step 0/1 is not in the fleet and is absent. (§4.2) |
 | wind / solar pools, hydro, storage, firm imports (`ADEQUACY_EXTERNAL_TIE_FIRM_MW`), Demand Resources (offered DR under D48, else absent because netted) | price taker at $0 on their ledger credit | no cap applies to DR (§2 item 1); VRE/hydro/storage carry no going-forward bar in the model; imports are the cleared external quantity by construction |
 | economic new entry, planned additions | **not in the stack** (§4.4) | the entry screen is already a price-taking margin test at the clearing price |
 
@@ -391,6 +391,23 @@ whose exit is IRP-driven; in RPM most of it is also FRR or self-supplied). The d
 no change; the composition of `Q_0` grows and the offer stack shrinks to the merchant fleet,
 which is the reading D32 §4.4 asked for. The build lane states which of D53 / D54 lands
 first and pre-declares on the landed posture.
+
+> **CROSS-REFERENCE, 2026-09-06 (capx D58 → owner ruling Q53 → capx D78) — this paragraph's
+> reading was measured and REJECTED by the owner.** D58 measured it on PJM: 34,172.4 MW of
+> sector-1 capacity left the stack for `Q_0`, the 2022 price fell 9.67 % and 41 merchant rows
+> / 2,910.2 MW failed that the control passed (`FINDING-capx-d58-2026-09-06.md` §3). The owner
+> ruled Q53 = reading 1: a sector-1 unit is an Existing Generation Capacity Resource under §2
+> item 1's must-offer requirement, whose three exceptions (physical CP incapability, a firm
+> external sale, a filed removal of Capacity Resource status — §5.4.1 / §5.4.7) are never
+> ownership; it therefore submits its net-ACR offer exactly as §3.2's first row says, and only
+> its EXIT is exempt. Since capx D78 the sector-gated set is NOT in the §3.2 "screen-EXEMPT"
+> row: it is a screened thermal unit for offering purposes (`exit_exempt_unit_ids` in
+> `apply_economic_retirements`, partitioned out of `margins` after the clearing). The §3.5
+> identity reads, under the gate, "the screen's failing set = the uncleared set restricted to
+> the decision partition"; a gated uncleared unit is *uncleared and retained*
+> (`DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md` §2.4). The dated-plant reading of
+> §4.2 is unchanged by D78 and routed as its own D57-family card (D78 design §4). The "offer
+> stack shrinks to the merchant fleet" sentence above is preserved as the pre-ruling record.
 
 ### 4.8 The E&AS offset horizon — one year, not three (named alternative)
 
