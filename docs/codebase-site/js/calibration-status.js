@@ -131,9 +131,11 @@
 
     /* Owner-declared CONFIG PARTITION (two-config keeper structure, owner
        ruling 2026-08-26): the ISO's training window is covered by more than
-       one designated config, each scored on its own span. The page must show
-       EVERY config's span and determination — a single badge would launder
-       the partition into whichever half reads better. */
+       one designated config, each scored on its own span. Every config's span
+       and determination is on the page — the year table's Config column shows
+       which config covers which year, and the Notes disclosure carries the
+       ruling and each config's registered full-span determination, so no half
+       of a partition is ever laundered out of view. */
     function partitionConfigs(keeper) {
       const cp = keeper.config_partition;
       return (cp && cp.configs && cp.configs.length) ? cp.configs : null;
@@ -145,28 +147,6 @@
       if (years.length === 1) return String(years[0]);
       const a = years[0], b = years[years.length - 1];
       return `${a}–${String(b).slice(-2)}`;
-    }
-
-    /** The card's accent class under a partition: the WORST config span
-        determination wins (conservative — a NOT-YET half always colors the
-        card, never the flattering half). */
-    function partitionWorstDet(configs) {
-      const rank = det => {
-        const d = (det || '').toUpperCase();
-        if (d.includes('NOT')) return 0;
-        if (d.includes('CAVEAT')) return 1;
-        return 2;
-      };
-      let worst = configs[0].determination;
-      for (const c of configs) if (rank(c.determination) < rank(worst)) worst = c.determination;
-      return worst;
-    }
-
-    /** One badge per partition config, span-labelled. */
-    function partitionBadges(configs) {
-      return configs.map(c =>
-        `<span class="cs-badge ${detClass(c.determination)}" title="${esc(c.label || c.role || '')} — registered full-span determination: ${esc(c.registered_determination || c.determination)}">${esc(spanLabel(c.years))} ${detLabel(c.determination)}</span>`
-      ).join('\n              ');
     }
 
     /** Format model/actual values for display. */
@@ -185,46 +165,31 @@
       grid.innerHTML = '';
 
       keepers.forEach(keeper => {
-        const configs = partitionConfigs(keeper);
-        const dc = detClass(configs ? partitionWorstDet(configs) : effectiveDet(keeper));
+        const dc = detClass(effectiveDet(keeper));
         const card = document.createElement('div');
         card.className = `cs-card ${dc}`;
         card.tabIndex = 0;
         card.setAttribute('role', 'button');
-        card.setAttribute(
-          'aria-label',
-          configs
-            ? `${keeper.iso} — ${configs.map(c => `${spanLabel(c.years)}: ${detLabel(c.determination)}`).join(', ')}`
-            : `${keeper.iso} — ${detLabel(effectiveDet(keeper))}`
-        );
+        card.setAttribute('aria-label', `${keeper.iso} — ${detLabel(effectiveDet(keeper))}`);
         card.dataset.iso = keeper.iso;
 
         // Color accent from ISO palette
         const colorVar = isoColorVar(keeper.iso);
 
-        // Header (frontier = owner-declared "frontier achieved": every named
-        // admissible mechanism tried on record; declarative, never gating).
-        // Under a config partition: one span-labelled badge PER config —
-        // never a single badge for a partitioned ISO.
+        // Header. ONE determination badge, always — the ISO's train-tier
+        // verdict (already the worst designated-config read for a partitioned
+        // keeper). Per-year and per-config detail belongs in the one year table
+        // in the detail pane, not in a second badge dialect up here.
         let html = `
           <div class="cs-card-header">
             <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
             <span class="cs-badges">
-              ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}: ${esc(keeper.frontier.note || '')}">FRONTIER</span>` : ''}
-              ${configs ? partitionBadges(configs) : `<span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>`}
+              ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}">FRONTIER</span>` : ''}
+              <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
             </span>
           </div>`;
 
-        // Keeper info
-        if (configs) {
-          for (const c of configs) {
-            const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(c.run_id)}`;
-            html += `
-          <div class="cs-keeper-info">
-            ${esc(spanLabel(c.years))} ${esc((c.role || '').toUpperCase())}: <a class="run-id-link" href="${runLink}" title="View in Run Explorer">${esc(c.run_id)}</a>
-          </div>`;
-          }
-        } else if (keeper.run_id) {
+        if (keeper.run_id) {
           const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
           html += `
           <div class="cs-keeper-info">
@@ -232,19 +197,19 @@
           </div>`;
         }
 
-        // Years
-        if (keeper.scorable_years && keeper.scorable_years.length) {
-          html += `<div class="cs-keeper-info">Years: ${keeper.scorable_years.join(', ')}</div>`;
+        // Years — training years, then held-out years in the same line and the
+        // same format; the tier is the only thing that differs.
+        const yrs = keeper.years || [];
+        const tr = [...new Set(yrs.filter(r => r.tier === 'training').map(r => r.year))];
+        const ho = [...new Set(yrs.filter(r => r.tier !== 'training').map(r => r.year))];
+        if (tr.length || (keeper.scorable_years || []).length) {
+          html += `<div class="cs-keeper-info">Years: ${(tr.length ? tr : keeper.scorable_years).join(', ')}${
+            ho.length ? ` &middot; held out ${ho.join(', ')}` : ''}</div>`;
         }
 
         if (keeper.grade_summary) {
           const g = keeper.grade_summary;
           html += `<div class="cs-keeper-info">Grade: ${g.target_grade}/${g.scored} target &middot; ${g.commercial_grade} commercial-band &middot; ${g.ledgered} ledgered${g.fails ? ` &middot; ${g.fails} fail` : ''}</div>`;
-        }
-
-        if (keeper.statmode_d7) {
-          const s = keeper.statmode_d7;
-          html += `<div class="cs-keeper-info">D-7 stat-mode gap: ${esc(String(s.keeper_fails))} &rarr; ${esc(String(s.statmode_fails))} fails <span style="opacity:.7">(reported)</span></div>`;
         }
 
         // Mini criteria marks
@@ -315,214 +280,63 @@
     function renderDetail(keeper) {
       const pane = document.getElementById('detailPane');
       const configs = partitionConfigs(keeper);
-      const dc = detClass(configs ? partitionWorstDet(configs) : effectiveDet(keeper));
+      const dc = detClass(effectiveDet(keeper));
       const colorVar = isoColorVar(keeper.iso);
 
       let html = `<div class="bc-panel">`;
 
-      // Header — under a config partition, one span-labelled badge per config.
+      // Header — one determination badge (see renderCards).
       html += `
         <div class="cs-results-header">
           <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
           <span class="cs-badges">
-            ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">FRONTIER ACHIEVED${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
-            ${configs ? partitionBadges(configs) : `<span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>`}
+            ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">FRONTIER${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
+            <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
           </span>
         </div>`;
 
-      // Config partition — owner-declared two-config keeper structure
-      // (keepers/<ISO>.json "config_partition"). Every designated config is
-      // shown with its year span, its span determination AND its registered
-      // full-span determination, so no half of the partition is ever hidden.
-      if (configs) {
-        const cp = keeper.config_partition;
-        html += `<div class="cs-reason" style="margin-top: 8px;">`;
-        if (cp.ruling) {
-          html += `
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">CONFIG PARTITION${cp.declared ? ' ' + esc(cp.declared) : ''}</span>
-            Owner ruling, verbatim: &ldquo;${esc(cp.ruling)}&rdquo;
-          </p>`;
-        }
-        if (cp.coverage_invariant) {
-          html += `<p style="margin: 4px 0; opacity: .85;">${esc(cp.coverage_invariant)}</p>`;
-        }
-        for (const c of configs) {
-          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(c.run_id)}`;
-          const regDiffers = c.registered_determination && c.registered_determination !== c.determination;
-          html += `
-          <p style="margin: 6px 0;">
-            <span class="cs-badge ${detClass(c.determination)}">${esc(spanLabel(c.years))} ${detLabel(c.determination)}</span>
-            <strong>${esc(c.label || c.role || '')}</strong> &mdash;
-            <a class="run-id-link" href="${runLink}">${esc(c.run_id)}</a>
-            (scored on its designated span ${esc((c.years || []).join(', '))})${
-              regDiffers
-                ? `. Registered full-span (${esc((c.registered_years || []).join(', '))}) determination: <strong>${esc(c.registered_determination)}</strong>${c.registered_reasons && c.registered_reasons.length ? ` &mdash; ${esc(c.registered_reasons[0])}` : ''}`
-                : ''
-            }
-          </p>`;
-        }
-        html += `</div>`;
-      }
-
-      // Frontier note — owner-declared designation (keepers.json "frontier"):
-      // the admissible-mechanism inventory is exhausted on record; remaining
-      // residuals are inadmissible to close (residual-fitting) or blocked on
-      // non-public data. Declarative only, never gating.
-      if (frontierActive(keeper) && keeper.frontier.note) {
-        html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">FRONTIER</span>
-            ${esc(keeper.frontier.note)}
-          </p>
-        </div>`;
-      }
-
-      // Standing note — owner-signed statement of WHAT the remaining misses are
-      // (keepers/<ISO>.json "standing_note"): several separately-scored criteria
-      // may be one adjudicated object rather than independent defects. Same
-      // contract as the frontier note: declarative only, never gating. It does
-      // NOT restate or soften any magnitude — the criteria table below keeps
-      // reporting each miss at full magnitude from the scorer, unchanged.
-      if (keeper.standing_note && keeper.standing_note.note) {
-        const sn = keeper.standing_note;
-        html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim"${sn.signature ? ` title="${esc(sn.signature)}"` : ''}>STANDING NOTE${sn.declared ? ' ' + esc(sn.declared) : ''}</span>
-            ${esc(sn.note)}
-          </p>
-        </div>`;
-      }
-
-      // Validation touchpoint (CLAUDE.md rule 22). Present only for an ISO that
-      // has actually SPENT a held-out year with this keeper's frozen recipe.
-      // Deliberately shown next to the in-sample determination, because the
-      // pair is the point: "CALIBRATED on the years we tuned on" means
-      // something different once you can see how the same recipe scored on a
-      // year it had never seen. The tier caveat rides along so the number
-      // cannot be lifted off this page as a certified skill claim.
-      if (keeper.holdout_touchpoint) {
-        const h = keeper.holdout_touchpoint;
-        const runLink = h.run_id
-          ? `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(h.run_id)}`
-          : null;
-        const degraded = h.degraded || [];
-        html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">HOLDOUT ${esc(String(h.year || ''))}</span>
-            Frozen keeper recipe on a year it was never tuned on &mdash;
-            scored <strong>${esc(h.determination || '—')}</strong>
-            against <strong>${esc(effectiveDet(keeper))}</strong> in-sample.
-            ${degraded.length
-              ? `Degraded out-of-sample: <strong>${degraded.map(esc).join(', ')}</strong>.`
-              : 'No criterion degraded out-of-sample.'}
-            ${runLink ? ` <a class="run-id-link" href="${runLink}">${esc(h.run_id)}</a>` : ''}
-          </p>
-          ${h.caveat ? `<p style="margin: 4px 0; font-size: 0.78rem;">${esc(h.caveat)}</p>` : ''}
-        </div>`;
-      }
-
-      // Rule-22 TOUCHPOINT LADDER — every held-out year this keeper's frozen
-      // recipe has been replayed on, scored per YEAR (a multi-year touchpoint
-      // bundle carries one run-level determination that can hide a rung which
-      // passed on its own). Auto-derived by scripts/build_status.py from the
-      // registry, so it cannot go stale against what was actually scored.
+      // ONE uniform year table — every year this keeper has been scored on,
+      // training and held out, in the same rows and the same columns. It
+      // replaces the three bespoke blocks that used to sit here (config
+      // partition, holdout touchpoint, holdout ladder): a partitioned keeper's
+      // designated config per year is just the Config column, and a rule-22
+      // touchpoint is just a row with a different tier.
       //
-      // It is REPORTED, never gating. The ISO's determination above is the
-      // train-tier (2023-2025) verdict, and rule 22 as amended 2026-09-05 is
-      // explicit that a held-out year which degrades does NOT downgrade the
-      // ISO: a validation-tier score is iterable model-selection evidence, not
-      // a certification. The card says so rather than leaving a reader to
-      // infer that a NOT-YET rung beside a CALIBRATED headline is a conflict.
-      if (keeper.holdout_ladder && keeper.holdout_ladder.length) {
-        const L = keeper.holdout_ladder;
-        const TIER_TXT = { validation: 'validation holdout', locked_test: 'locked test' };
-        const rows = L.map(h => {
-          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(h.run_id)}`;
-          const det = String(h.determination || '—');
-          const cls = det === 'CALIBRATED' ? 'clr-good' : (det === 'NOT-YET' ? 'clr-bad' : '');
-          return `<tr>
-            <td><strong>${esc(String(h.year))}</strong><span style="display:block;font-size:0.68rem;color:var(--text-muted)">${esc(TIER_TXT[h.tier] || h.tier || 'holdout')}</span></td>
+      // Held-out rows are REPORTED, never gating (rule 22, as amended
+      // 2026-09-05): the determination above is the train-tier verdict and a
+      // held-out year that degrades does NOT downgrade the ISO. The line under
+      // the table says so, rather than leaving a reader to infer that a NOT-YET
+      // row beside a CALIBRATED headline is a contradiction.
+      const years = keeper.years || [];
+      if (years.length) {
+        const TIER_TXT = { training: 'training', validation: 'validation holdout', locked_test: 'locked test' };
+        const anyRole = years.some(r => r.role);
+        const rows = years.map(r => {
+          const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(r.run_id)}`;
+          const det = String(r.determination || '—');
+          const cls = det === 'CALIBRATED' ? 'clr-good' : (det.includes('NOT') ? 'clr-bad' : 'clr-ok');
+          return `<tr${(r.reasons || []).length ? ` title="${esc(r.reasons.join('; '))}"` : ''}>
+            <td class="num">${esc(String(r.year))}</td>
+            <td>${esc(TIER_TXT[r.tier] || r.tier || '—')}</td>
+            ${anyRole ? `<td>${esc(r.role || '—')}</td>` : ''}
             <td class="${cls}" style="font-weight:600">${esc(det)}</td>
-            <td style="font-size:0.78rem">${esc(h.note || (h.reasons || []).join('; ') || '—')}</td>
-            <td style="font-size:0.72rem"><a class="run-id-link" href="${runLink}">${esc(h.run_id)}</a></td>
+            <td style="font-size:0.72rem"><a class="run-id-link" href="${runLink}">${esc(r.src || r.run_id)}</a></td>
           </tr>`;
         }).join('');
-        const anyDeg = L.some(h => h.determination && h.determination !== 'CALIBRATED');
         html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">HOLDOUT LADDER</span>
-            This keeper's frozen recipe replayed on ${L.length === 1 ? 'a year' : `${L.length} years`} it was never tuned on,
-            beside <strong>${esc(effectiveDet(keeper))}</strong> in-sample.
-            ${anyDeg
-              ? 'A rung below does not downgrade the ISO &mdash; a validation-tier score is iterable model-selection evidence, never a certification (rule 22).'
-              : 'Every rung holds.'}
-          </p>
-          <div class="bc-table-wrap" style="margin-top:6px">
-            <table style="font-size:0.8rem;width:100%">
-              <thead><tr><th>Year</th><th>Determination</th><th>Reading</th><th>Run</th></tr></thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>
-        </div>`;
+        <div class="bc-table-wrap" style="margin-top:10px">
+          <table style="font-size:0.82rem;width:100%">
+            <thead><tr><th>Year</th><th>Tier</th>${anyRole ? '<th>Config</th>' : ''}<th>Determination</th><th>Run</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p class="bc-mute" style="font-size:0.75rem;margin:6px 0 0">Held-out years are reported, not gating &mdash; the ISO determination is the 2023&ndash;2025 verdict (rule&nbsp;22).</p>`;
       }
 
-      // Keeper run info
-      if (keeper.run_id) {
-        const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
-        html += `
-        <p class="cs-keeper-info">
-          Keeper run: <a class="run-id-link" href="${runLink}">${esc(keeper.run_id)}</a>
-          ${keeper.label ? ` &mdash; ${esc(keeper.label)}` : ''}
-        </p>`;
-      }
-
-      // D-10 free-class C1 rescore — REPORTED, never gating (audit §7 D-10).
-      // The all-class vs free-class C1 pass rate: "free" excludes the classes
-      // pinned to a measured realization (wind/solar/nuclear/hydro/CHP/imports),
-      // exposing pinned-class gate inflation.
-      if (keeper.free_class_score) {
-        const f = keeper.free_class_score;
-        const excl = (f.excluded_from_free && f.excluded_from_free.length)
-          ? ` <span style="font-size:0.8rem;">(pinned excluded: ${f.excluded_from_free.map(esc).join(', ')})</span>`
-          : '';
-        html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">D-10 REPORTED</span>
-            Free-class C1: <strong>${esc(f.headline)}</strong>${excl}
-            — non-gating; "free" drops classes pinned to a measured realization.
-          </p>
-        </div>`;
-      }
-
-      // D-7 statistical-mode fail-count gap — REPORTED, never gating
-      // (audit §7 D-7; data: frontend/data/backcast/statmode_d7.json).
-      if (keeper.statmode_d7) {
-        const s = keeper.statmode_d7;
-        const probeLink = s.probe_run_id
-          ? `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(s.probe_run_id)}`
-          : null;
-        html += `
-        <div class="cs-reason" style="margin-top: 8px;">
-          <p style="margin: 4px 0;">
-            <span class="cs-tag tag-lim">D-7 REPORTED</span>
-            Statistical-mode gap: <strong>${esc(String(s.keeper_fails))} fails (overlays on)
-            &rarr; ${esc(String(s.statmode_fails))} fails (overlays off)</strong>
-            — non-gating; measures overlay-carried in-sample skill.
-            ${probeLink ? `<a class="run-id-link" href="${probeLink}">probe</a>` : ''}
-            ${s.stale ? ' <em>(measured against a prior keeper — re-measure)</em>' : ''}
-          </p>
-          ${s.note ? `<p style="margin: 4px 0; font-size: 0.8rem;">${esc(s.note)}</p>` : ''}
-        </div>`;
-      }
-
-      // Reasons
-      if (keeper.reasons && keeper.reasons.length) {
+      // Reasons — only when something FAILED. On a clean or caveated run they
+      // merely restate the caveat line below, which is the same sentence twice.
+      const fails = (keeper.grade_summary || {}).fails || 0;
+      if (fails && keeper.reasons && keeper.reasons.length) {
         html += `<div class="cs-reason" style="margin-top: 8px;">`;
         keeper.reasons.forEach(r => {
           html += `<p style="margin: 4px 0;">${esc(r)}</p>`;
@@ -554,6 +368,60 @@
           }
           html += `</div>`;
         }
+      }
+
+      // ONE collapsed disclosure for every declarative note attached to this
+      // keeper — the owner-signed frontier/standing-note/config-partition text
+      // and the two REPORTED-only diagnostics (D-10 free-class C1, D-7
+      // statistical-mode gap). None of it gates, and none of it restates a
+      // magnitude: the criteria tables below carry every number at full
+      // magnitude from the scorer. It used to be six always-open prose blocks
+      // above the results; it is one line until a reader asks for it.
+      const notes = [];
+      if (configs) {
+        const cp = keeper.config_partition;
+        const list = configs.map(c =>
+          `<li>${esc(spanLabel(c.years))} <strong>${esc(c.role || '')}</strong> &mdash; ${esc(c.label || '')}
+           (${esc(c.determination)}; registered full-span ${esc((c.registered_years || []).join(', '))}: ${esc(c.registered_determination || c.determination)})</li>`
+        ).join('');
+        notes.push(`<p><strong>Config partition${cp.declared ? ' ' + esc(cp.declared) : ''}.</strong>
+          Owner ruling, verbatim: &ldquo;${esc(cp.ruling || '')}&rdquo;</p>
+          <ul style="margin:4px 0 0 18px">${list}</ul>
+          ${cp.coverage_invariant ? `<p style="opacity:.85">${esc(cp.coverage_invariant)}</p>` : ''}`);
+      }
+      if (keeper.determination_basis) {
+        notes.push(`<p><strong>Determination basis.</strong> ${esc(keeper.determination_basis)}</p>`);
+      }
+      if (frontierActive(keeper) && keeper.frontier.note) {
+        notes.push(`<p><strong>Frontier ${esc(keeper.frontier.declared || '')}.</strong> ${esc(keeper.frontier.note)}</p>`);
+      }
+      if (keeper.standing_note && keeper.standing_note.note) {
+        const sn = keeper.standing_note;
+        const probeLink = sn.probe_run_id
+          ? ` <a class="run-id-link" href="backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(sn.probe_run_id)}">${esc(sn.probe_run_id)}</a>`
+          : '';
+        notes.push(`<p><strong>Standing note${sn.declared ? ' ' + esc(sn.declared) : ''}.</strong> ${esc(sn.note)}${probeLink}</p>`);
+      }
+      if (keeper.free_class_score) {
+        const f = keeper.free_class_score;
+        notes.push(`<p><strong>D-10 free-class C1 (reported).</strong> ${esc(f.headline)}${
+          (f.excluded_from_free || []).length ? ` &mdash; pinned classes excluded: ${f.excluded_from_free.map(esc).join(', ')}` : ''}</p>`);
+      }
+      if (keeper.statmode_d7) {
+        const s = keeper.statmode_d7;
+        const probeLink = s.probe_run_id
+          ? ` <a class="run-id-link" href="backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(s.probe_run_id)}">probe</a>`
+          : '';
+        notes.push(`<p><strong>D-7 statistical-mode gap (reported).</strong>
+          ${esc(String(s.keeper_fails))} fails with overlays on &rarr; ${esc(String(s.statmode_fails))} with them off.${probeLink}${
+          s.stale ? ' <em>(measured against a prior keeper — re-measure)</em>' : ''}</p>`);
+      }
+      if (notes.length) {
+        html += `
+        <details class="cs-detail" style="margin-top: 4px;">
+          <summary><span>Notes</span><span class="cs-gate">${notes.length} &middot; declarative, non-gating</span></summary>
+          <div style="padding: 14px; font-size: 0.82rem;">${notes.join('')}</div>
+        </details>`;
       }
 
       // Expandable criterion sections
@@ -638,16 +506,23 @@
        ----------------------------------------------------------------------- */
 
     function renderRecordsTable(records) {
-      // Determine which columns have data
+      // Determine which columns have data. Held-out years are folded into this
+      // same table by build_status.py (rule 30 [R-TOUCHPOINT-FOLD]) and get NO
+      // special treatment here — a year is a row. The only extra column is
+      // `src`, and only when more than one run contributed rows (a partitioned
+      // keeper, or a touchpoint bundle beside the keeper), so the reader can
+      // tell which config produced which number.
       const hasKey = records.some(r => r.key);
       const hasModel = records.some(r => r.model !== null && r.model !== undefined);
       const hasActual = records.some(r => r.actual !== null && r.actual !== undefined);
+      const hasSrc = new Set(records.map(r => r.src).filter(Boolean)).size > 1;
 
       let html = `<div class="bc-table-wrap"><table>`;
 
       // Header
       html += `<thead><tr>`;
       html += `<th>Year</th>`;
+      if (hasSrc) html += `<th>Run</th>`;
       if (hasKey) html += `<th>Key</th>`;
       html += `<th>Metric</th>`;
       if (hasModel) html += `<th style="text-align:right">Model</th>`;
@@ -665,6 +540,7 @@
                          r.status === 'CAVEAT' ? ' style="background: #fef6e7;"' : '';
         html += `<tr${rowClass}>`;
         html += `<td class="num">${r.year || '—'}</td>`;
+        if (hasSrc) html += `<td style="font-size:0.72rem">${esc(r.src) || ''}</td>`;
         if (hasKey) html += `<td>${esc(r.key) || ''}</td>`;
         html += `<td>${esc(r.metric)}</td>`;
         if (hasModel) html += `<td class="num">${fmtVal(r.model)}</td>`;
@@ -680,64 +556,27 @@
     }
 
     /* -----------------------------------------------------------------------
-       Render: Commercial-grade benchmark comparison (rubric v2 §8)
-       ----------------------------------------------------------------------- */
+       Render: Reference (rubric table + commercial-grade benchmark anchors)
+       -----------------------------------------------------------------------
+       Both are REFERENCE, not this page's subject: they are the same for every
+       ISO and change only when the scorer's constants do. They render collapsed
+       under one panel, and the prose that used to introduce them lives on
+       calibration-rubric.html, which is the page for it. */
 
-    function renderBenchmark(status) {
-      const section = document.getElementById('benchmarkSection');
-      if (!section || !status.benchmark || !status.benchmark.rows) return;
-      const b = status.benchmark;
-      let html = `<div class="bc-panel">`;
-      html += `<h2>Scores vs Commercial-Grade Benchmark</h2>`;
-      html += `<p class="panel-sub">Every graded tolerance is anchored to the best published external comparable
-        (regulator-commissioned PLEXOS backcasts, ISO planning-model benchmarks, market-monitor re-simulations,
-        AEO retrospectives, academic hindcasts). Rows marked "no published comparable" are scored STRICTER than
-        any external practice — deliberately. Full survey with citations: docs/rubric-v2-benchmark-memo-2026-07.md.</p>`;
-      if (b.note) {
-        html += `<p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: var(--space-md);">${esc(b.note)}</p>`;
-      }
-      html += `<div class="bc-table-wrap"><table>
-        <thead><tr>
-          <th>Criterion</th>
-          <th>Target band (PASS)</th>
-          <th>Commercial band (auto caveat)</th>
-          <th>Best published comparable</th>
-        </tr></thead><tbody>`;
-      for (const r of b.rows) {
-        html += `<tr>
-          <td style="white-space:nowrap; font-weight:700;">${esc(r.criterion)}</td>
-          <td style="white-space:normal;">${esc(r.target)}</td>
-          <td style="white-space:normal;">${esc(r.commercial)}</td>
-          <td style="white-space:normal; max-width:420px; font-size:0.78rem;">${esc(r.published)}</td>
-        </tr>`;
-      }
-      html += `</tbody></table></div></div>`;
-      section.innerHTML = html;
-    }
-
-    /* -----------------------------------------------------------------------
-       Render: Methodology Section
-       ----------------------------------------------------------------------- */
-
-    function renderMethodology(status) {
+    function renderReference(status) {
       const section = document.getElementById('methodologySection');
-      let html = `<div class="bc-panel">`;
-      html += `<h2>Calibration Rubric</h2>`;
-      html += `<p class="panel-sub">How each ISO's keeper run is scored against actuals.</p>`;
+      if (!section) return;
+      let html = `<div class="bc-panel">
+        <h2>Reference</h2>
+        <p class="panel-sub">Derived live from the scorer's constants.
+          Full rubric write-up: <a href="calibration-rubric.html">Calibration Rubric</a>.</p>`;
 
-      // Rubric table
       if (status.rubric && status.rubric.length) {
-        html += `<div class="bc-table-wrap" style="margin-bottom: var(--space-lg);">
-          <table>
-            <thead><tr>
-              <th>Criterion</th>
-              <th>Tier</th>
-              <th>Measures</th>
-              <th>Tolerance (target / commercial)</th>
-              <th>Source</th>
-            </tr></thead>
+        html += `<details class="cs-detail">
+          <summary><span>Criteria &amp; tolerances</span><span class="cs-gate">${status.rubric.length} criteria</span></summary>
+          <div style="padding: 14px;"><div class="bc-table-wrap"><table>
+            <thead><tr><th>Criterion</th><th>Tier</th><th>Measures</th><th>Tolerance (target / commercial)</th><th>Source</th></tr></thead>
             <tbody>`;
-
         for (const r of status.rubric) {
           html += `<tr>
             <td style="white-space:nowrap; font-weight:700;">${esc(r.label || r.id)}</td>
@@ -747,49 +586,36 @@
             <td style="white-space:normal; max-width:220px; font-size:0.72rem; color:var(--text-muted);">${esc(r.source)}</td>
           </tr>`;
         }
-
-        html += `</tbody></table></div>`;
+        html += `</tbody></table></div></div></details>`;
       }
 
-      // Methodology cards
-      if (status.methodology && status.methodology.length) {
-        html += `<h3 style="font-size: 0.95rem; margin-bottom: var(--space-md);">Methodology Notes</h3>`;
-        html += `<div class="cs-method-grid">`;
-
-        for (const m of status.methodology) {
-          html += `
-          <div class="cs-method-card">
-            <h4>${esc(m.head)}</h4>
-            <p>${esc(m.body)}</p>
-          </div>`;
+      const b = status.benchmark;
+      if (b && b.rows && b.rows.length) {
+        html += `<details class="cs-detail">
+          <summary><span>Commercial-grade band anchors</span><span class="cs-gate">${b.rows.length} rows</span></summary>
+          <div style="padding: 14px;"><div class="bc-table-wrap"><table>
+            <thead><tr><th>Criterion</th><th>Target band (PASS)</th><th>Commercial band (auto caveat)</th><th>Best published comparable</th></tr></thead>
+            <tbody>`;
+        for (const r of b.rows) {
+          html += `<tr>
+            <td style="white-space:nowrap; font-weight:700;">${esc(r.criterion)}</td>
+            <td style="white-space:normal;">${esc(r.target)}</td>
+            <td style="white-space:normal;">${esc(r.commercial)}</td>
+            <td style="white-space:normal; max-width:420px; font-size:0.78rem;">${esc(r.published)}</td>
+          </tr>`;
         }
-
-        html += `</div>`;
+        html += `</tbody></table></div></div></details>`;
       }
 
-      // Determination logic summary (always shown)
-      html += `
-        <div style="margin-top: var(--space-lg); border-top: 1px solid var(--border-light); padding-top: var(--space-md);">
-          <h3 style="font-size: 0.95rem; margin-bottom: var(--space-sm);">Determination Logic</h3>
-          <div class="cs-method-grid">
-            <div class="cs-method-card">
-              <h4><span class="cs-legend-dot cal" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated</h4>
-              <p>Every criterion passes at TARGET grade — nothing caveated, nothing unscored. The model reproduces the real market's structure and level at the strict internal standard.</p>
-            </div>
-            <div class="cs-method-card">
-              <h4><span class="cs-legend-dot cav" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Calibrated with Caveats</h4>
-              <p>No criterion fails: every load-bearing criterion is at or above the published COMMERCIAL grade. Misses between target and commercial band are listed with magnitudes (unbudgeted); anything beyond commercial grade needs an explicit measured-input ledger entry (protective ≤1, others ≤3). Certifies: delivers on intended use, comparable to commercial-grade models.</p>
-            </div>
-            <div class="cs-method-card">
-              <h4><span class="cs-legend-dot not" style="display:inline-block; vertical-align:-1px; margin-right:6px;"></span>Not Calibrated</h4>
-              <p>Governance unattested, any criterion beyond the commercial band without a documented measured-input reason, or a ledgered-caveat budget exceeded. The ISO has not yet completed its calibration cycle.</p>
-            </div>
-            <div class="cs-method-card">
-              <h4><span class="cs-badge det-frontier" style="vertical-align:-1px; margin-right:6px;">FRONTIER</span>Frontier achieved</h4>
-              <p>An owner-declared designation: every named admissible mechanism for the remaining misses has been tried on record and adopted (rule&nbsp;#1), and each residual is a documented, research-backed <em>representation-frontier</em> caveat — a structure a deterministic perfect-foresight LP cannot form without manufacturing inputs the rules forbid (rules&nbsp;#1/#10), not a fit failure. A frontier ISO whose only misses are these documented caveats shows the clean <span class="cs-badge det-cal" style="vertical-align:-1px;">CALIBRATED</span> headline; the caveats remain listed in the frontier note and the criteria table below. This is the train-tier (2023–2025) determination plus the frontier designation — <strong>not</strong> a locked-test / calibration-complete claim. A withdrawn frontier (kept for lineage) does not display.</p>
-            </div>
-          </div>
-        </div>`;
+      if (status.methodology && status.methodology.length) {
+        html += `<details class="cs-detail">
+          <summary><span>Scoring notes</span><span class="cs-gate">${status.methodology.length} notes</span></summary>
+          <div style="padding: 14px;"><div class="cs-method-grid">`;
+        for (const m of status.methodology) {
+          html += `<div class="cs-method-card"><h4>${esc(m.head)}</h4><p>${esc(m.body)}</p></div>`;
+        }
+        html += `</div></div></details>`;
+      }
 
       html += `</div>`;
       section.innerHTML = html;
@@ -812,8 +638,7 @@
         renderCards(keepers);
 
         // Render benchmark comparison + methodology
-        renderBenchmark(status);
-        renderMethodology(status);
+        renderReference(status);
 
         // Auto-select from hash or first ISO
         const hash = hashState.get();
