@@ -13323,4 +13323,32 @@ spending a holdout. A rule-clean test that touches no held-out year is proposed:
 Full record: `docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`. No code changed, no
 LP solved, no mechanism tested, no matrix cell touched, no keeper changed.
 
+**(7) THE SCREEN WAS RUN, AND IT KILLED THE ARM (2026-09-06, same session).** The (6) repair
+was screened on **2023** — a TRAINING year, so no held-out year was spent — by withholding the
+2023 HSL parquet so the bound falls to `forecast_uncurtailed`, arming the ceilings via the
+repaired predicate, and differencing against the keeper's committed 2023.
+`--no-p1-basis-seed` neutralized the one LIVE G-DRIFT hunk (`bf37a0dc`, the P1 basis seed,
+default-ON in the calibration CLIs and on ERCOT's P1-native-bridge route). Gates were
+pre-registered and committed BEFORE the solve
+(`docs/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md`).
+
+| gate | threshold | measured | verdict |
+|---|---|---|---|
+| G-3 ceiling recovers ≥ half the injection | renewable ≤ 144.836 TWh | **141.797** (80.5 % of +9.960 recovered) | PASS |
+| G-4 dispatch response | CC_REGULAR ≥ 136.761 TWh | **144.238** (0.52 from keeper's 144.761) | PASS |
+| G-5 no collateral flip | C2/C3a/C3b hold vs keeper | **C3a −17.85 %** vs keeper −6.56 %, band ±10 % | **FAIL** |
+
+**Killed as configured.** The mechanism does what its arithmetic says — the ceiling takes back
+8.02 of the 9.96 TWh injected and CC_REGULAR lands half a TWh from the measured-HSL result —
+but mean LMP falls $45.19 → $39.73. The loss is attributable to the construction, not drift:
+in the 291 hours where the two runs' renewables agree the price gap is only −$1.90, against
+−$8.78 in the top decile of renewable excess. Reading: arming this on a no-HSL year likely
+**trades the C1 failure for a C3a failure** (2022's carve-out sits at C3a +0.0 %). Depths stayed
+FROZEN and were never re-run to make G-5 pass (rule 23 / PRECOMMIT §5). Screen state reverted:
+parquet restored byte-identical, predicate change REVERTED, bundle deleted (rule 29(c)).
+The gate's premise is still false and the first-order fix is still the measured 2022 HSL
+archive. Open decision for the owner in
+`docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md` §6. No keeper, recipe, matrix cell or
+determination changed; 2022 untouched.
+
 **Next shorthand: ercot-252** (ercot-199 remains unclaimed)
