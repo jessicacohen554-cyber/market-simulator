@@ -71,6 +71,7 @@ from market_sim.config.constants import (
     RTO_RELIABILITY_REQUIREMENT_MW_BY_ISO,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
     RENEWABLE_ELCC_CURVES_BY_ISO,
+    RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO,
     RENEWABLE_NQC_CURVES_BY_ISO,
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
@@ -1560,6 +1561,58 @@ def accreditation_design_vintage_armed(
     return iso in THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO
 
 
+def vre_accreditation_vintage_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` accredits VRE on each delivery year's OWN published ratings.
+
+    The gate predicate behind the capx D75-R delivery-year vintage axis
+    (``FINDING-capx-d75-2026-09-06.md`` §8, executing
+    ``FINDING-capx-d66-2026-09-06.md`` §8 card B): armed,
+    :func:`resolve_renewable_capacity_credit` reads
+    :data:`RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` for the delivery year the
+    screen prices, instead of the penetration curve digitized from the 2026/27+
+    marginal-ELCC ratings which clamps to one value across the whole hindcast
+    window.
+
+    **THREE conditions, all binding.** Two follow the D48 pattern exactly: the
+    default-OFF ``ScenarioConfig.pjm_vre_accreditation_vintage`` gate, and an
+    entry for ``iso`` in :data:`RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` (PJM
+    alone — rule 25 ``[R-ISO-SCOPE]``: the flag armed on any other ISO's run is
+    inert by construction, and no ISO inherits PJM's verdict). The third is
+    that :func:`accreditation_design_vintage_armed` must ALSO hold — this is a
+    sub-gate INSIDE the D48 family, never a mechanism beside it.
+
+    **Why the D48 predicate is a precondition (rule 19 ``[R-ONE-MECH]``).** D48
+    exists because a mixed accreditation basis — one half on the delivery
+    year's own auction design, the other on 2025/26+ — is the failure mode D45
+    §2.2 measured. Accrediting VRE per delivery year while thermal stays on the
+    reform-vintage basis would rebuild exactly that mismatch on a different
+    pair of halves. Requiring D48's gate makes the two states reachable be the
+    only two coherent ones: D48 alone is HEAD's posture (thermal + requirement
+    devintaged, VRE not — the defect card B names), and D48 + this gate is the
+    fully-vintaged basis. This gate alone resolves False.
+
+    **Why a SECOND key rather than reusing D48's** (the charter asks this to be
+    said explicitly). ``pjm_accreditation_design_vintage`` is ARMED for PJM by
+    owner ruling, through ``iso_configs.py::_pjm_config``'s
+    ``default_scenario_overrides`` (2026-09-05, on the D57 A/B). Keying the VRE
+    axis off it alone would therefore arm this untested mechanism by DEFAULT in
+    every PJM forecast run the moment it landed — a default flip nobody ruled
+    on, and one that would move the shipped ``pjm-t1h`` recipe key. A separate
+    default-OFF key is what keeps arming an owner decision (rules 5/24/28)
+    while the composition above keeps the two halves inseparable in the only
+    direction that matters. ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "pjm_vre_accreditation_vintage", False):
+        return False
+    if iso not in RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO:
+        return False
+    return accreditation_design_vintage_armed(config, iso)
+
+
 def _delivery_year_before(label: str, reform_label: str) -> bool:
     """True when delivery-year ``label`` starts strictly before ``reform_label``.
 
@@ -2214,6 +2267,45 @@ def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
     return RENEWABLE_CAPACITY_CREDIT.get(fuel_type)
 
 
+def resolve_renewable_vintage_credit(
+    config: ScenarioConfig | None,
+    iso: str | None,
+    fuel_type: str,
+    year: int | None,
+) -> float | None:
+    """Published VRE class rating for ``iso``'s delivery year under the D75-R arm.
+
+    The VRE half of the accreditation-design devintage (capx D75-R): when
+    :func:`vre_accreditation_vintage_armed` holds and ``year`` resolves to a
+    delivery year carried in :data:`RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO`,
+    returns that delivery year's OWN published class rating for ``fuel_type``;
+    the caller accredits the class at it exactly as it does the curve's value.
+
+    Every other case — unarmed, off-registry ISO, ``year=None``, a delivery
+    year outside the table (every pre-ELCC year, and every year from the last
+    tabulated delivery year onward), or a fuel class the ISO does not publish —
+    returns ``None`` and the caller's existing ladder (NQC curve → ELCC curve →
+    point override → generic fallback) runs BYTE-IDENTICALLY.
+
+    **NO hold-last**, deliberately, and this is not the ``resolve_forecast_pool_
+    requirement`` case: past the last tabulated delivery year the incumbent
+    curve IS the right basis (it is digitized from precisely those later
+    ratings), so carrying a pre-reform class rating forward would re-introduce
+    the mixed-vintage error the arm removes. The table has a hard end at both
+    edges and nothing is extrapolated from it.
+    """
+    if year is None or not vre_accreditation_vintage_armed(config, iso):
+        return None
+    table = RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    ratings = table.get(capdel.resolve_delivery_year(iso or "", year))
+    if not ratings:
+        return None
+    rating = ratings.get(fuel_type)
+    return None if rating is None else float(rating)
+
+
 def resolve_renewable_capacity_credit(
     fuel_type: str,
     iso: str | None,
@@ -2221,6 +2313,8 @@ def resolve_renewable_capacity_credit(
     peak_demand_mw: float | None = None,
     curves_enabled: bool = False,
     nqc_curves_enabled: bool = False,
+    config: ScenarioConfig | None = None,
+    year: int | None = None,
 ) -> float | None:
     """Resolve one VRE class's adequacy capacity credit (CR-3.1 ladder).
 
@@ -2229,7 +2323,19 @@ def resolve_renewable_capacity_credit(
     the retirement reliability floor, the reserve-margin backstop and the
     CR-1 reserve position all move together. Resolution ladder:
 
-    0. **Published class-average accreditation held behind its own gate**
+    0. **The delivery year's OWN published class rating** (capx D75-R;
+       :data:`RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO`, gate
+       ``ScenarioConfig.pjm_vre_accreditation_vintage`` INSIDE the D48 family
+       — see :func:`vre_accreditation_vintage_armed`), resolved through
+       :func:`resolve_renewable_vintage_credit` from ``config``/``year``.
+       Sits at the TOP of the ladder because it is the strictly more specific
+       fact: rungs 0.5-3 answer "what does this ISO accredit this class at",
+       and this rung answers "what did the auction of THIS delivery year
+       accredit it at" — the same relation the D48 thermal half has to
+       :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`. Unarmed, ``year=None``, or
+       a delivery year outside the table returns ``None`` and every rung below
+       runs byte-identically.
+    0.5. **Published class-average accreditation held behind its own gate**
        (:data:`RENEWABLE_NQC_CURVES_BY_ISO`, gate
        ``ScenarioConfig.caiso_nqc_accreditation`` — CAISO's CPUC/CAISO NQC
        technology factors, FFR-3P). Same registry shape and same evaluator as
@@ -2256,7 +2362,15 @@ def resolve_renewable_capacity_credit(
     reproducing the pre-CR-3.1 behaviour byte-identically. Returns ``None``
     for fuels that are not credit-accredited (thermal), mirroring
     ``RENEWABLE_CAPACITY_CREDIT.get``.
+
+    ``config`` and ``year`` (both optional, default ``None``) thread the capx
+    D75-R delivery-year vintage axis at rung 0 and NOTHING else. Unarmed, or
+    with either left ``None``, the rung is inert and the ladder is
+    byte-identical to the pre-D75-R resolver.
     """
+    vintage_credit = resolve_renewable_vintage_credit(config, iso, fuel_type, year)
+    if vintage_credit is not None:
+        return vintage_credit
     if nqc_curves_enabled and iso is not None:
         nqc_curve = RENEWABLE_NQC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
         if nqc_curve is not None:

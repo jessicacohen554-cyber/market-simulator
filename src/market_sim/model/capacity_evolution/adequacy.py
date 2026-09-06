@@ -96,6 +96,8 @@ def renewable_credits_applied(
     peak_demand_mw: float | None = None,
     elcc_curves_enabled: bool = False,
     nqc_curves_enabled: bool = False,
+    config: ScenarioConfig | None = None,
+    accreditation_year: int | None = None,
 ) -> dict[str, float]:
     """Resolved wind/solar credits on the ledger's exact basis (diagnostic).
 
@@ -104,6 +106,12 @@ def renewable_credits_applied(
     ledger can record the credit each class actually earned this year
     (the CR-3.1 penetration response made observable per run, e.g. for the
     capacity-hindcast before/after diagnostic).
+
+    ``config`` / ``accreditation_year`` carry the capx D75-R delivery-year
+    vintage axis, and are threaded for the reason this function exists: it is
+    the ledger's record of the credit the ledger APPLIED, so a rung the ledger
+    resolves and this diagnostic does not would make the two disagree by
+    construction (rule 19). Unarmed, or either left ``None``, byte-identical.
     """
     nameplate_by_fuel = _renewable_nameplate_by_fuel(
         fleet, wind_pool_mw, solar_pool_mw, iso
@@ -117,6 +125,8 @@ def renewable_credits_applied(
             peak_demand_mw=peak_demand_mw,
             curves_enabled=elcc_curves_enabled,
             nqc_curves_enabled=nqc_curves_enabled,
+            config=config,
+            year=accreditation_year,
         )
         if credit is not None:
             out[fuel_type] = float(credit)
@@ -354,6 +364,12 @@ def accredited_firm_capacity_mw(
             peak_demand_mw=peak_demand_mw,
             curves_enabled=elcc_curves_enabled,
             nqc_curves_enabled=nqc_curves_enabled,
+            # capx D75-R: the delivery-year vintage axis rides the SAME
+            # ``config`` / ``accreditation_year`` pair the D48 thermal half
+            # already threads (rule 19), so supply's two halves can never be
+            # devintaged apart. Unarmed, inert and byte-identical.
+            config=config,
+            year=accreditation_year,
         )
 
     internal = float(storage_firm_mw)

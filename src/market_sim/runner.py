@@ -4821,6 +4821,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             peak_demand_mw=peak_demand,
             elcc_curves_enabled=config.renewable_elcc_curves,
             nqc_curves_enabled=config.caiso_nqc_accreditation,
+            # Same pair `firm_mw` above threads (capx D48 + D75-R): this row
+            # records the credit the ledger APPLIED, so it must resolve through
+            # the identical ladder or the trail would misreport it (rule 19).
+            config=config,
+            accreditation_year=year,
         )
         ledger = dict(evo_events)
         ledger.update(
