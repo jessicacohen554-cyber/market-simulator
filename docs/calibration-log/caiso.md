@@ -14051,3 +14051,43 @@ chartered in the same session, recorded in
 
 **Next number: caiso-262.**
 
+### caiso-261 addendum 2 — the second card set (same session)
+
+Four more owner decisions, each executed or chartered here:
+
+1. **Next lane — "Start the 2022 price-archive intake."** SOURCE
+   ADJUDICATED, zero LP: the OASIS **`GroupZip` all-node bulk endpoint still
+   serves 2022** (`DAM_LMP_GRP` 2022-06-01 → 12.3 MB zip with the three
+   hubs, MALIN / PALOVRDE and the DLAPs; `RTM_LMP_GRP` → one operating hour
+   per request, 7.5 MB) while the per-node API returns "no data" for the same
+   date. Same publisher, reports, nodes, components and hub weights as
+   2023–2025, folded through the existing `fold_caiso_oasis_grp_zips.py` →
+   `postprocess_oasis_downloads.py` → `derive_actual_lmp.py` chain — **rule-14
+   alignment exact, no reconciliation**; third-party archives rejected. Load
+   sized: DAM 365 requests / ≈ 4.4 GB / ≈ 1 h (buys H-3 + the DA diagnostic);
+   RTM 8,760 requests / ≈ 65 GB / ≈ 24 h (buys the scored RT price). **Not
+   loaded**; charter `docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`;
+   the DAM-only vs DAM+RTM and now-vs-later decision goes back to the owner.
+2. **Panoche — "Run the instrument search."** **NOT FOUND**: no RMR, no CPM
+   designation, no resource-named exceptional dispatch (the FERC ED tables
+   report by reason, not resource); the only public instrument is the
+   2006 CPUC-approved 20-year PG&E tolling PPA under which PG&E dictates
+   dispatch — a contractual self-schedule, not a window-keyed obligation,
+   inadmissible under caiso-119 R4.
+   `ASSESSMENT-caiso261-panoche-instrument-search-2026-09-06.md`; close vs
+   carry is the owner's next card.
+3. **S2 — "Fund S2."** CHARTERED, no code:
+   `docs/handoffs/caiso-s2-two-settlement-charter-2026-09.md` — the
+   caiso-169 §5 specification (a DA LP on CAISO's published DA forecasts +
+   an RT re-dispatch on actuals; the scored λ decision; gated default-off,
+   ISO-agnostic, screened on one year), with G-IDENT / G-STRUCT / the
+   caiso-127 PRIMARY fixed ex ante and C3a / C4 excluded.
+4. **Sidecar — "Charter the sidecar."** CHARTERED, no code:
+   `docs/handoffs/hourly-sidecar-zone-class-charter-2026-09.md` — per-zone ×
+   class, per-storage-unit and per-link hourly sidecars plus a write-time
+   per-zone identity check (≤ 1 MW), at the `_write_class_hourly_sidecar`
+   seam of `run_calibration_full.py`; keepers regenerate `hourly/` on their
+   next promotion; first consumer the CAISO hod 22–23 closure by zone.
+
+**Next number: caiso-262.**
+
