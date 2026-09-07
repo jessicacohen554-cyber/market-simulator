@@ -366,6 +366,17 @@ are fast because the LP is degenerate on slack.
    REF in §2 is a number with a code seam inside it. The synthesis and cost table (RESOLVE's owed addendum) gain three
    legs. **The G-DRIFT lesson for the record:** an input change to a screen is never inert because the screen's
    pre-change output was zero — it is inert only if the changed input cannot cross the screen's threshold.
+   **DISCHARGED 2026-09-07 — `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`.** The three legs
+   were re-solved at THE PIN (`FINDING-scn-ws5a-resolve-ercot-2026-09-07.md`) and the eleven policy legs are
+   re-differenced against that REF there. **The embargo above is lifted, and §2 / §4 at 2029–2030 are superseded by
+   the addendum's §5 Table A** — 2026–2028 are unchanged to the digit. Headlines: ~60 % of the 2030 abatement was the
+   control's own retrofit screen (CARB-HI −26.7447 → **−10.7360 Mt**); **VOL-HI's whole CO2 effect was the control**
+   (−16.0087 → **+0.0000 Mt**, so §5's P-15 re-scores MISS → **HIT**); §2.5's ALL-CLEAN **sign flip is WITHDRAWN**
+   (2029/2030 vs REF −0.4245 / −11.7753 → **+7.5276 / +4.2334 Mt**); §4 reading (iv)'s *"the CCS retrofit row is a
+   NULL for the policy reading"* is **FALSE** — the policy converts 2.93–3.00 GW at 2028 where REF converts none, and
+   carries a durable +3.17 to +3.23 GW at 2029–2030; and §2.1's attribution of the +2.28 / +2.89 TWh of extra unserved
+   to the capture derate is **replaced** — the derate moves unserved by exactly zero, the driver is the 500 MW gas-CT
+   the arms do not build in 2029 (addendum §4.2).
 2. **The clean rows credit dumped energy** (§0 item 4). `Σ_g credit·P + Σ W + Σ S + ESC ≥ target·D` reads the
    generator columns; the energy balance lets the LP raise `W`/`S` to their CF bound and absorb the surplus in
    `Dump[z,t]` at ε. Fix belongs to `model/lp/rows.py` (WS-2a / WS-3b regions): credit **delivered** eligible energy
