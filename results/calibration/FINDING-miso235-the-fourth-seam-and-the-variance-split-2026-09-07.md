@@ -89,6 +89,20 @@ net export** — the exact behaviour `miso-74`'s design record said the import-o
 block could not represent. Its price response is not missing; it is roughly **twice** the measured
 one, with the correct sign.
 
+### 3a. An EMPIRICAL corroboration, independent of the code reading
+
+§2's decision rests on measured reconstruction statistics; the identification of *which object*
+they belong to rests on §0a's code reading. One arithmetic check closes the loop without either.
+
+`MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR` is **726 / 531 / 224 MW** — a flat block with **zero**
+variance and, in 2025, the wrong sign for a seam the measured record shows net-exporting. Had the
+firm block been what the keeper dispatched, adding it to the three-seam reconstruction would have
+moved the level by exactly those constants and left σ untouched. What actually closes the
+three-seam reconstruction's **607.9 / 389.9 / 112.6 MW** level error down to **49.4 / 41.6 /
+55.3 MW** is a reconstructed **Manitoba seam** of mean **+657.3 / +431.5 / −57.3 MW** carrying
+σ **515.7 / 486.7 / 302.9 MW**. The block cannot produce that fit in any year, and in 2025 it has
+the opposite sign. The keeper dispatched the seam.
+
 **Handoff item 2 is CLOSED as already-armed, on this session's own pre-registered rule.** The
 question it should have asked survives and is handed forward in §6: not the seam's price response,
 which exists and is if anything too strong, but its **residual**, which is 55 / 54 / 37 % of the
