@@ -79,16 +79,28 @@ _GRP_NAME = re.compile(
 _DUP_NAME = re.compile(r" \d+\.zip$")
 
 # Columns kept from the raw component CSVs — the schema
-# postprocess_oasis_downloads._lmp_frames pivots on.
-_KEEP = ["INTERVALSTARTTIME_GMT", "NODE", "LMP_TYPE", "MW"]
+# postprocess_oasis_downloads._lmp_frames pivots on. The price column is named
+# MW in some OASIS report versions and VALUE in others: the DAM v12 archives
+# (and the RTM **v1** archives) carry ONE member with every LMP_TYPE and name
+# the column ``MW``, while the RTM **v3** archives split the report into five
+# per-LMP_TYPE members (LMP/MCC/MCE/MCL/MGHG) and name it ``VALUE`` — measured
+# 2026-09-07 on 2022-06-01 (caiso-262 §2.2 sizing). Both are the same published
+# quantity, so the value column is resolved per member and NORMALISED to ``MW``
+# here; downstream (``postprocess_oasis_downloads._lmp_frames``) already
+# accepts either name, and the window CSVs stay one schema.
+_KEEP_KEYS = ["INTERVALSTARTTIME_GMT", "NODE", "LMP_TYPE"]
+_VALUE_COLS = ("MW", "VALUE")
 
 
 def _window_frames(zip_path: Path) -> pd.DataFrame | None:
     """Kept-node rows from every component CSV inside one GRP zip.
 
-    Each member file carries one LMP_TYPE (LMP/MCE/MCC/MCL/MGHG) for every
-    node; the concatenated hub subset pivots back to the wide component
-    columns downstream. Returns ``None`` when the zip holds no CSV members.
+    A member file carries either one LMP_TYPE (RTM v3: five members) or every
+    LMP_TYPE (DAM v12 / RTM v1: one member) for every node; the concatenated
+    hub subset pivots back to the wide component columns downstream. The price
+    column is resolved per member from :data:`_VALUE_COLS` and renamed to
+    ``MW`` so every window CSV carries one schema. Returns ``None`` when the
+    zip holds no CSV members.
     """
     frames: list[pd.DataFrame] = []
     with zipfile.ZipFile(zip_path) as zf:
@@ -96,7 +108,16 @@ def _window_frames(zip_path: Path) -> pd.DataFrame | None:
             if not member.lower().endswith(".csv"):
                 continue
             with zf.open(member) as fh:
-                df = pd.read_csv(fh, usecols=_KEEP)
+                head = pd.read_csv(fh, nrows=0)
+            value_col = next((c for c in _VALUE_COLS if c in head.columns), None)
+            if value_col is None:
+                raise SystemExit(
+                    f"{zip_path.name}/{member}: no price column "
+                    f"(expected one of {_VALUE_COLS}); got {list(head.columns)}"
+                )
+            with zf.open(member) as fh:
+                df = pd.read_csv(fh, usecols=[*_KEEP_KEYS, value_col])
+            df = df.rename(columns={value_col: "MW"})
             frames.append(df[df["NODE"].isin(NODES)])
     if not frames:
         return None
