@@ -1,0 +1,38 @@
+{
+ "2023": {
+  "ceiling_within_month_day_energy_cv": 1.0976910354591438e-16,
+  "ceiling_day_energy_within_month_stdev_gwh": 9.251670256372111e-15,
+  "model_day_energy_within_month_stdev_gwh": 9.206083923214475,
+  "actual_day_energy_within_month_stdev_gwh": 4.955084939565605,
+  "model_over_actual_within_month_daily_variation": 1.8579063801117284,
+  "share_model_annual_energy_on_the_ceiling": 0.3814556988688146,
+  "within_month_day_energy_r_model_vs_actual": 0.3915855132274101
+ },
+ "2024": {
+  "ceiling_within_month_day_energy_cv": 1.5954014825477102e-16,
+  "ceiling_day_energy_within_month_stdev_gwh": 1.3258459754235627e-14,
+  "model_day_energy_within_month_stdev_gwh": 8.122633359577126,
+  "actual_day_energy_within_month_stdev_gwh": 4.185096377267833,
+  "model_over_actual_within_month_daily_variation": 1.9408473849483596,
+  "share_model_annual_energy_on_the_ceiling": 0.4942035522272538,
+  "within_month_day_energy_r_model_vs_actual": 0.247580128370508
+ },
+ "2025": {
+  "ceiling_within_month_day_energy_cv": 1.4123526155481735e-16,
+  "ceiling_day_energy_within_month_stdev_gwh": 1.0941931181592394e-14,
+  "model_day_energy_within_month_stdev_gwh": 11.580077903827549,
+  "actual_day_energy_within_month_stdev_gwh": 5.153939258477239,
+  "model_over_actual_within_month_daily_variation": 2.2468401979671273,
+  "share_model_annual_energy_on_the_ceiling": 0.483783211402547,
+  "within_month_day_energy_r_model_vs_actual": 0.20657046873099383
+ },
+ "2022": {
+  "ceiling_within_month_day_energy_cv": 1.1087185752311169e-16,
+  "ceiling_day_energy_within_month_stdev_gwh": 9.25167025637211e-15,
+  "model_day_energy_within_month_stdev_gwh": 10.721684804135723,
+  "actual_day_energy_within_month_stdev_gwh": 5.70742605979133,
+  "model_over_actual_within_month_daily_variation": 1.8785499263266356,
+  "share_model_annual_energy_on_the_ceiling": 0.3242934179567248,
+  "within_month_day_energy_r_model_vs_actual": 0.35814426934486343
+ }
+}
