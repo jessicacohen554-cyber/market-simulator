@@ -385,3 +385,44 @@ keeper's ledger unchanged.
 
 Any comparison of a modelled price or flow with the measured one except the sign test in (ii).
 No band moves, no TTC is re-cut after a solve, and no gate reads a criterion of the rubric.
+
+---
+
+## ADDENDUM A (before the screen) — the keeper moved: control re-pinned to keeper-2, G-DRIFT re-run
+
+Between this document's push (`910fd5b1`, base `40b54ce7`) and the screen, **SPP-42 landed**
+(PR #5471, `origin/main` `91b5d6fb`) and promoted `2026-09-07-spp-2-crosswalk-hydro`
+(`results/calibration/spp42_crosswalk_B`, `git.sha = 33034499`) over spp-1. §0's clause fires:
+
+- **Control = keeper-2** (rule 29(b) form 4), its committed `hourly/` sidecars and FINDING-spp-42
+  §2.2 / §3.2 numbers. Its recipe = the spp-1 recipe + `--hydro-backfill-year 2024
+  --hydro-eia930-monthly` + the coal supply-class crosswalk CSV (LP-inert, scoring-side only).
+  **The screen and the full span run on exactly that recipe plus the topology.**
+- **G-DRIFT, keeper-2 `33034499` → `91b5d6fb`** (the rebased base of this branch):
+
+| # | file | hunk | verdict for SPP | reason |
+|---|---|---|---|---|
+| 1 | `data/raw/_validation-source/caiso-supply-consistent-demand/*` | CAISO 2022 demand csv | **INERT** | CAISO-only |
+| 2 | `config/constants.py` | `NUCLEAR_MONTHLY_CF_BY_YEAR["CAISO"][2022]` | **INERT** | CAISO key |
+| 3 | `config/fuel_trajectories.py` | `STATE_CARBON_PRICE_BY_ISO["CAISO"][2022]` | **INERT** | CAISO key; SPP has no carbon program |
+| 4 | `model/interchange/spec.py` | CAISO DSW depths + `IMPORT_TRANCHES_BY_YEAR["CAISO"][2022]` | **INERT** | CAISO keys; SPP's block byte-identical |
+| 5 | `pipeline/backcast_config.py` | `_SPP_OFFER_CURVE` extended to the five coal keys (identity bands, `econ_low_share` 0.55) | **INERT as drift** | this IS keeper-2's own recorded dirty change (`run_config.json` `changed_files` / `diffstat` +29/−5): the keeper solved WITH it, so the base carries the keeper's recipe, not a drift from it |
+
+  All hunks INERT ⇒ form 4 stays valid; no control solve.
+- **Gate (iv) set, restated for keeper-2:** the control's 2025 unserved energy is **89.3 MWh in ONE
+  hour, h8507 = 2025-12-21 11:00, SPP-South** (FINDING-spp-42 §2.2 / §3.2; the six spp-1 hours are
+  gone with the hydro repair). The arm's unserved hours must lie inside {h8507} — in the three-zone
+  topology the zone may be `SPP-Oklahoma` or `SPP-South` (the former South split) — or the leg STOPs.
+- **Control numbers for the other legs (2025, keeper-2):** link 3,400 at bound 1,573 N→S / 228 S→N h;
+  mean |S−N| zonal spread $1.35; negative-price hours 6; wind re-curtailment 0.0 % (wind 122.25 TWh
+  delivered); fuel TWh coal 83.20 / CC_REGULAR 32.57 / CT_PEAKER 22.35 / ST_GAS 9.83 / hydro 8.82 /
+  nuclear 15.78 / wind 122.25; load-weighted price $29.97; hours > $200 1.
+- **Owner direction received in-session (2026-09-07), verbatim:** *"Is this a recommended keeper
+  candidate? If so plz promote. If structural integrity improves but gates regress that may still be a
+  keeper."* Read as P14's standing rule applied to this lane; the charter's "solve after SPP-42" is
+  now satisfied on its own terms (SPP-42 landed), so the screen proceeds. Promotion itself is handled
+  per the charter's P15 line and this direction — reported at the end, not assumed.
+
+Nothing in §2–§6 is changed by this addendum: the constructions, sets, thresholds and the screen year
+stand as written. The design's identification (§3–§4) was completed BEFORE this addendum and is
+unchanged by the keeper move (it reads no keeper output).
