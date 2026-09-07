@@ -251,3 +251,64 @@ anchor's vintage — and F2 and F4 are never confounded.
 *(The `46e08e5b` sha the superseded touchpoint bundle recorded is not resolvable on `main` — that
 branch was squash-merged — which is a further reason the re-run control is the right instrument
 here rather than the pruned bundle.)*
+
+---
+
+## 9. RESULT — the screen was run, and **S4 KILLS the arm**
+
+Screen solved 2022 on the F2-armed keeper recipe with one declared delta
+(`--set gas_offer_margin_anchor_vintage=true`). Control: this session's
+`pjm169_tp2022_2021_f2arm` 2022, same HEAD (§8). Both bundles deleted per clause (c);
+this table is the record.
+
+| # | gate | pass condition | measured | verdict |
+|---|---|---|---|---|
+| **S1** | identity of the resolution | resolved anchor = that year's own mean `_gas_series`, ±1e-6 | **7.1208** vs census **7.120797** | **PASS** |
+| **S2** | the identity it asserts | `mc` delta = 0 exactly at `fuel == anchor` | analytic + `test_gas_offer_margin_anchor_vintage` (8 tests) | **PASS** |
+| **S3** | direction & order of magnitude | sign positive, magnitude in [0.5×, 2.0×] of the §7.3 prediction $10.58 | **+$10.57/MWh** (981 tranches both sides; median fixed margin 9.39 → 19.96) — **ratio 0.999** | **PASS** |
+| **S4** | footprint confined | every non-gas class < 1.0 % annual energy | **COAL_BIT +3.28 %** (+4.55 TWh), COAL_PRB +7.09 %, COAL_WC +3.31 %, oil +26.57 % | **FAIL** |
+| **S5** | no non-target load-bearing flip | C1, C2, C4 not PASS → FAIL | C1 FAIL→FAIL, C2 PASS→PASS, C4 PASS→PASS | **PASS** |
+
+P0 objective 17.668e9 → 18.375e9, P1 19.433e9 → 20.137e9 (+3.6 %) — the sign a
+raised offer stack must have.
+
+**KILL RULE APPLIED (§5). S4 fails ⇒ the arm is dead, the remaining years are NEVER
+spent, and nothing is promoted.** The full-span step is not taken.
+
+### 9.1 Reported only — NOT gated, and explicitly NOT a rescue
+
+Rule 1 `[R-STRUCT]`: an arm killed on structure is not revived by a target improving.
+Recorded because §5 requires the magnitudes be reported, never as a pass condition.
+
+| quantity (2022) | control | F4 arm |
+|---|---|---|
+| C1 `CC_REGULAR` | +22.02 TWh | **+10.77 TWh** |
+| C3b NRMSE | 0.257 | 0.243 |
+| C3a mean LMP | PASS | PASS |
+| determination | NOT-YET | NOT-YET |
+
+### 9.2 S4 may have been MIS-SPECIFIED — and that does not change the verdict
+
+The honest reading of the S4 failure is that **the gate cannot distinguish the two
+things it was meant to separate**. It was written (§3.1) to detect *the coal-sigmoid
+confound leaking into the measurement*. But raising every gas tranche's offer by
+$10.57/MWh **must** re-allocate dispatch through the merit order, and in PJM the
+next unit up is coal — so `CC_REGULAR −11.25 TWh` against `COAL_BIT +4.55 TWh` is
+ordinary merit-order displacement, arguably the mechanism working, not a confound.
+
+**The verdict stands anyway.** Rule 29 clause (c) and §5 of this document fix the
+gates before the solve precisely so they cannot be re-read once a number is on the
+table; re-specifying S4 now, having seen that it is what kills the arm, is the
+fitted-mechanism selection this whole protocol exists to forbid. **F4 is REJECTED on
+its own pre-registered gate.** A future charter may re-specify a displacement-aware
+footprint gate — one that bounds *direct* class effects while allowing merit-order
+re-allocation — but it must do so **in its own PRECOMMIT, before its own solve**,
+and re-run the screen from scratch.
+
+### 9.3 What the session recommends instead
+
+§7.2's measurement stands as the stronger lead and is untouched by this rejection:
+**PJM bituminous coal sits on its `ceil` asymptote in 91.5 % of 2022 hours, against
+0.0 % in 2023 and 2024.** That is a larger, better-evidenced window extrapolation than
+the gas anchor's 1.80×, it points the opposite way, and it is a separate card
+(rule 19 `[R-ONE-MECH]`) with its own PRECOMMIT still to be written.
