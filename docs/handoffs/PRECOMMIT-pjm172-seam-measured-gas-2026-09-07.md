@@ -153,3 +153,82 @@ Code + tests (the inertness assertion of §3.4, the look-ahead refusal of §2.1,
 this document plus its G-DRIFT appendix, a FINDING carrying the full gate table, the PJM matrix
 shard cell, and a calibration-log entry. **No registration, no promotion, screen bundle deleted
 before merge.**
+
+---
+
+## APPENDIX A — G-DRIFT hunk audit (appended 2026-09-07 by pjm-172, BEFORE any implementation or solve)
+
+**Question (rule 29 `[R-SCREEN]` (b)):** is G-CTRL **form 4** valid — i.e. is the committed
+`pjm169_tp2022_2021_f2arm` 2022 column still the arm's control at this HEAD, or does a changed
+solve-path hunk earn a control solve?
+
+**Revisions.** Control bundle `git_sha` **`f36cee6e`** (recorded in its `meta.json` / `run_config.json`;
+`basis_sha a269fb77`, clean tree) → **HEAD `172af213`** (this branch, rebased onto `origin/main`
+`6212108f`).
+
+**Diff scope, verbatim as §6 specifies:**
+`git diff f36cee6e HEAD -- src/market_sim scripts/run_calibration.py scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference`
+→ **69 files, +15,065 / −76**. Every one is classified below; nothing is sampled.
+
+### A.1 The two instrument-level checks
+
+1. **PJM solve-surface fingerprint (capx D79, the designed instrument for exactly this question).**
+   The control bundle records `solve_surface = {fingerprint: 0f749d17202c32d9, rows: 211, moved: {},
+   epochs: []}`. Recomputed at HEAD: **`0f749d17202c32d9`, 211 rows, `moved_rows("PJM") == {}`** —
+   **identical**. Independently, the seven `SURFACE_MODULES` were extracted at `f36cee6e` into a
+   stdlib-only tree and their PJM projection compared row-by-row against HEAD's:
+   **0 rows added, 0 removed, 0 value-changed, 211 identical.** So every `constants.py` /
+   `capacity_market.py` / `fuel_trajectories.py` table edit in this diff is provably outside PJM's
+   projection.
+2. **The control's own config, rebuilt at HEAD.** `ScenarioConfig(**run_config["scenario_config"])`
+   at HEAD: no field was removed or renamed (`bundle − HEAD = ∅`); the five added fields all resolve
+   **False**; `hindcast` resolves **False**, so `__post_init__` coerces
+   `capacity_screen_peak_measured_hindcast` back to its frozen declaration **False**, matching the
+   record; and **all six drop out of `cache_key()`** (each equals its registered drop value), so the
+   control recipe's key is unmoved. Every other recorded field round-trips exactly — the only
+   differences are JSON `list` → dataclass `tuple` on seven sequence fields.
+
+### A.2 Hunk classification — all 69 files INERT for the PJM backcast path
+
+| file(s) | verdict | reason |
+|---|---|---|
+| `data/neighbor_price.py` | INERT | comment rewrite + a new **import-time** uniqueness assertion `_assert_hr_gas_elastic_keys_unique`. `_HR_GAS_ELASTIC` is unchanged; the guard raises or does nothing and moves no returned value. |
+| `model/interchange/spec.py` | INERT | **zero deletions in the whole file.** Purely additive: CAISO 2022 depth/tranche rows, the SPP `INTERFACE_NEIGHBORS` block, a MISO-SPP ladder table. PJM's `INTERFACE_NEIGHBORS` entry is byte-identical. |
+| `model/interchange/registry.py` | INERT | comment + an added `"SPP"` entry; PJM's `(apply_reference_price_seam_injections,)` unchanged. |
+| `model/interchange/miso.py` | INERT | MISO-only; guarded `if iso != "MISO": return False`. |
+| `model/reserves/spec.py` | INERT | SPP constants + `if iso == "SPP"` design branch; the AS-requirement swap is inside `_ercot_multiproduct_design`. |
+| `results/scarcity.py` | INERT | adds a module logger and `ercot_as_measured_requirement_mw`, called **only** from the ERCOT multiproduct design. |
+| `results/cache.py` | INERT | module **docstring** only (cache-epoch ledger prose); no `def` / `class` / assignment added. |
+| `pipeline/persist.py` | INERT | additive `environment_block()` provenance keys; not an input to `cache_key`, ignored by `--reuse-solved`. |
+| `runner.py`, `pipeline/__init__.py`, `pipeline/year.py` | INERT | the SPP gas-bridge hook. `build_spp_gas_bridge_p1_prep` returns `None` unless `config.spp_gas_commitment_bridge` **and** `iso == "SPP"`. |
+| `pipeline/kwargs.py` | INERT | an `elif iso == "SPP"` logging branch. |
+| `pipeline/commitment.py` | INERT | new SPP-only helpers reached only through that hook. |
+| `pipeline/backcast_config.py` | INERT | SPP offer curve behind `iso.upper() == "SPP"`; ERCOT ORDC order params behind `iso.upper() == "ERCOT"`. |
+| `config/scenarios.py` | INERT | five new fields (`spp_gas_commitment_bridge`, `miso_seam_neighbour_hourly_spp`, `ercot_ep_gas_basis_monthly`, `ercot_zonal_spread_ep_referenced`, `cc_summer_derate_reconciled_basis`), all **default-off and absent from the keeper's recipe**, all registered at drop value `"False"`. The `capacity_screen_peak_measured_hindcast` **default flip** `False → True` is neutralized here by half 2 of its own arm: `if not self.hindcast: … = _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION`. Measured in A.1(2). |
+| `config/iso_configs.py` | INERT | PJM's `default_scenario_overrides` gains `"retirement_sector_gate": True` (capx D78 / Q56). **The one hunk that names PJM.** `__post_init__` carries `if self.mode == "backcast": self.retirement_sector_gate = <dataclass default>`. Verified empirically at HEAD through the real ISO path: backcast → **False**, forecast → True. A backcast runs no capacity evolution, so the gate has no seam to reach either way. |
+| `config/constants.py`, `config/capacity_market.py`, `config/fuel_trajectories.py` | INERT | value tables (three new names: `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR`, `SPP_GAS_BRIDGE_MIN_LOAD_FRAC`, `SPP_GAS_BRIDGE_MIN_RUN_HOURS`; no `def`/`class`). PJM's projected rows identical per A.1(1). |
+| `config/solve_surface.py`, `config/solve_surface_declared.py` | INERT | `SURFACE_ISOS` gains `"SPP"` (appended last, no surface name carries an SPP token); three `DECLARED` appends at their frozen registration hashes, which move no key by construction. |
+| `config/paths.py` | INERT | new `SPP_HSL_DIR` / `SPP_WIND_SHAPE_DIR` and an `"SPP"` entry in `WIND_SHAPE_DIRS`; PJM is in neither map before or after. |
+| `data/eia930/actuals.py` | **INERT — by measurement, not by argument** | `_screen_fuel_spike_columns` is a **new general screen on every BA's frame**, not SPP-gated, so it was measured rather than reasoned about. Applying its exact test (`> 2.5 × median` **and** `> 2.5 × p99.9`, `NG:` columns) to PJM's frames: **0 hours flagged in 2021, 2022, 2023, 2024 and 2025** — on the raw frame and on the filled frame alike. PJM's benchmark and delivered profiles are byte-identical. |
+| `data/eia930/demand.py`, `envelopes.py`, `frames.py`, `__init__.py` | INERT | SPP demand loader, the MISO↔SPP hub reader, an `"SPP": "SWPP"` map entry, re-exports. |
+| `data/fleet/arrays.py`, `data/fleet/models.py` | INERT | `_reconciled_summer_ratios` supports `cc_summer_derate_reconciled_basis` (new, default-off, absent from the recipe); `BA_CODE_TO_ISO` gains `"SWPP": "SPP"`. |
+| `data/renewables.py`, `data/campd.py`, `data/zone_assignment.py`, `data/transmission_expansion.py`, `data/floor_mechanisms.py` | INERT | SPP entries added to per-ISO maps/frozensets and a new mechanism id 24; PJM's membership is unchanged in every one. |
+| `data/fuel/**` (`__init__`, `basis/__init__`, `basis/ercot.py`, `basis/meanzero.py`) | INERT | ERCOT-only module; the changed logic sits behind the two new default-off flags, and `apply_ercot_zonal_gas_basis` is on the ERCOT fuel path alone. |
+| `scripts/run_calibration.py` | INERT | an SPP bridge parameter (default `None`); `_renewable_bound_is_delivered_pinned` replaces an HSL-existence test at **two** call sites, both inside `… and iso == "ERCOT"` blocks. |
+| `scripts/run_calibration_full.py` | INERT | additive override parameters, every one defaulting to `None` (keeps the recipe's own value). |
+| `scripts/lib/{confirmed_retirements,load_forecast,nuclear_license_status,transmission_expansion}/` | INERT | `"spp"` appended to each `_ISO_MODULES` + four new SPP modules; all four registries are forecast-lane. |
+| `scripts/lib/key_provenance.py` | INERT | new standalone tooling (capx D85); imported nowhere under `src/market_sim`, `run_calibration*.py` or `scripts/lib`. |
+| `data/raw/reference/*` | INERT | new SPP seam CSVs + a CAISO 2022 demand file. **`calibration_reference.json` gains an `"SPP"` block and nothing else** — its only "deletion" is a closing brace, and no PJM line appears on either side of the diff, so PJM's C1/C4 scoring reference is untouched. |
+
+### A.3 Verdict
+
+**ZERO LIVE hunks. All 69 files INERT for the PJM backcast path.**
+
+⇒ **G-CTRL form 4 is VALID.** The committed `pjm169_tp2022_2021_f2arm` **2022 column is the control**,
+and **no control LP is spent**. The arm solves 2022 alone.
+
+Two hunks were adjudicated on evidence rather than on a category, and are recorded that way because
+each could have gone the other way: the `iso_configs.py` PJM `retirement_sector_gate` override
+(neutralized by a backcast coercion, verified by running it) and the `eia930/actuals.py` fuel-spike
+screen (ungated by ISO, and INERT for PJM only because its test flags nothing there — measured
+across all five years).
