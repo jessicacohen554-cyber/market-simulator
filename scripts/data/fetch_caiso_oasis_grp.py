@@ -143,6 +143,24 @@ def _local_hours(day: dt.date) -> list[dt.datetime]:
     return hours
 
 
+def _window_hours(window: Path) -> int:
+    """Distinct interval-hours present in a folded day window (0 if unreadable).
+
+    The coverage test for an hourly-served group: the window must carry one
+    distinct clock hour per operating hour the day has. Reads only the
+    timestamp column, so it costs nothing next to the download it guards.
+    """
+    try:
+        import pandas as pd
+
+        ts = pd.read_csv(window, usecols=["INTERVALSTARTTIME_GMT"])[
+            "INTERVALSTARTTIME_GMT"
+        ]
+        return int(pd.to_datetime(ts, utc=True, format="mixed").dt.floor("h").nunique())
+    except Exception:  # noqa: BLE001 — a coverage probe never fails the crawl
+        return 0
+
+
 def _is_error_zip(payload: bytes) -> bool:
     """True when the zip is an OASIS error envelope (an XML member, no CSV)."""
     try:
@@ -271,12 +289,26 @@ def main() -> None:
         lost: list[str] = []
         day_bytes = 0
         for idx, start in enumerate(starts, start=1):
-            probe = LMP_DIR / (
-                f"{ymd}_{ymd}_{spec['groupid']}_{idx:02d}_N_v{spec['version']}_csv.zip"
-            )
-            if probe.exists():  # resumed day — this group is already on disk
-                zpaths.append(probe)
-                continue
+            # NO INTRA-DAY RESUME PROBE. There used to be one, keyed on the
+            # REQUEST INDEX (`..._{idx:02d}_...`), and it silently destroyed the
+            # DST days (caiso-262, measured 2026-09-07):
+            #
+            #   OASIS maps startdatetime -> OPR_HR by the LOCAL WALL CLOCK, so on
+            #   the spring-forward date it correctly SKIPS OPR_HR 3 (local 02:00
+            #   does not exist) and the day's groups run 1,2,4,5,...,24. The
+            #   requests were right — the probe was not: request 3 saved the
+            #   server's `_04_`, then request 4 probed `_04_`, FOUND IT, and
+            #   skipped its own fetch; request 5 then landed on `_06_`, request 6
+            #   skipped, and so on. 2022-03-13 folded 13 of its 23 hours with
+            #   alternating 2-hour gaps, and 2022-11-06 lost one of its 25.
+            #
+            # The index and the server's group index are simply not the same
+            # quantity, and nothing on the request side knows the OPR_HR before
+            # the response arrives. Day-level resume (the `window.exists()` skip
+            # above) is kept because it is keyed on the real artifact; within a
+            # day every hour is now re-fetched. The cost is bounded by one day's
+            # requests on an interrupted day; the bug it removes cost real hours
+            # silently, which is not a trade.
             url = (
                 f"{BASE}?groupid={spec['groupid']}&startdatetime={start}"
                 f"&version={spec['version']}&resultformat=6"
@@ -310,8 +342,23 @@ def main() -> None:
         ok = window.exists()
         if lost:
             partial[ymd] = lost
+        # COVERAGE CHECK (caiso-262). The day is only complete when the folded
+        # window carries one distinct interval-hour per requested operating
+        # hour. Counting successful REQUESTS is not the same test and is exactly
+        # what let the DST loss through: 23 requests "succeeded" on 2022-03-13
+        # while the window held 13 hours, because several requests resolved to
+        # the same server group. Read the artifact, not the intent.
+        covered = _window_hours(window) if ok else 0
+        if ok and covered != len(starts):
+            short = f"{covered}/{len(starts)}h"
+            partial.setdefault(ymd, []).append(short)
+            print(
+                f"{ymd}: *** SHORT COVERAGE {short} — the window has fewer "
+                f"distinct hours than groups requested",
+                flush=True,
+            )
         print(
-            f"{ymd}: {len(zpaths)}/{len(starts)} group(s), "
+            f"{ymd}: {len(zpaths)}/{len(starts)} group(s), {covered}h, "
             f"{day_bytes / 1e6:.1f} MB -> "
             f"{'window ' + window.name if ok else 'NO WINDOW'} "
             f"({len(written)} written; {time.monotonic() - t0:.0f}s elapsed)",
