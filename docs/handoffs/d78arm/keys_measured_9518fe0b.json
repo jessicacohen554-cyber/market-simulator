@@ -1,0 +1,223 @@
+{
+  "simulated": false,
+  "override_present_on_disk": true,
+  "scenario_config_default_key": "9ca2c6052b4850ea",
+  "legs": {
+    "pjm bare": {
+      "cache_key": "fb16fda2ddb0a94a",
+      "posture": {
+        "retirement_sector_gate": true,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": true,
+        "pjm_demand_response_supply": true,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm --no-retirement-sector-gate": {
+      "cache_key": "b518f5fe7d02f961",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": true,
+        "pjm_demand_response_supply": true,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm --no-pjm-vre-accreditation-vintage": {
+      "cache_key": "bb6a60239d69508b",
+      "posture": {
+        "retirement_sector_gate": true,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": true,
+        "pjm_demand_response_supply": true,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm --no-vre --no-gate": {
+      "cache_key": "a9c66d8ea25acb9d",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": true,
+        "pjm_demand_response_supply": true,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off3 (D57 control legs)": {
+      "cache_key": "f1a9881ed29df6cb",
+      "posture": {
+        "retirement_sector_gate": true,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off3 --no-gate": {
+      "cache_key": "1785cb6086cd2b15",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off3 --no-vre --no-gate": {
+      "cache_key": "61dfbc5c48af076b",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off3 --no-req-pub --no-vre --no-gate (D45-R bare)": {
+      "cache_key": "c5ec052057905966",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "pjm off2 (arm B legs)": {
+      "cache_key": "944c89de0a74ca63",
+      "posture": {
+        "retirement_sector_gate": true,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off2 --no-gate": {
+      "cache_key": "ab0237198cff24ad",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": true,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": {
+          "PJM": true
+        }
+      }
+    },
+    "pjm off2 --no-req-pub --no-vre --no-gate (arm B)": {
+      "cache_key": "6ba67a81ed4d2ed6",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": {
+          "PJM": true
+        },
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "miso bare": {
+      "cache_key": "1f92943f84f42fd0",
+      "posture": {
+        "retirement_sector_gate": true,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "nyiso bare": {
+      "cache_key": "ee6a3e764324f28f",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "neiso bare": {
+      "cache_key": "5b292e24dd752ea4",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "caiso bare": {
+      "cache_key": "8f1c3766703a90c4",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "ercot bare": {
+      "cache_key": "f18431f2447bad01",
+      "posture": {
+        "retirement_sector_gate": false,
+        "pjm_vre_accreditation_vintage": false,
+        "pjm_accreditation_design_vintage": false,
+        "pjm_demand_response_supply": false,
+        "capacity_market_supply_clearing_by_iso": null,
+        "capacity_adequacy_requirement_published_by_iso": null
+      }
+    },
+    "pjm plain backcast": {
+      "cache_key": "3a566deac3a85682",
+      "posture": {
+        "retirement_sector_gate": false,
+        "unresolved_key": "3a566deac3a85682",
+        "unmoved": true
+      }
+    }
+  }
+}
