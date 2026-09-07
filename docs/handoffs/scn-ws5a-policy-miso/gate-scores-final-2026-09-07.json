@@ -1,0 +1,6880 @@
+{
+ "cases": {
+  "ALL-CLEAN": {
+   "baseline": "LOAD-HI",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "00edacf5f50c88fc",
+   "global_peak_rss_mb": 9996.0,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2686,
+     "co2_mt": 387.042,
+     "co2_mt_base": 387.0428,
+     "credited_energy_share": 0.268558,
+     "credited_energy_share_base": 0.268559,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0008,
+     "d_lw_price": -0.001,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 59.631,
+     "lw_price_base": 59.632,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 299.1,
+     "unserved_gwh_base": 299.1,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.248,
+     "co2_mt": 403.174,
+     "co2_mt_base": 406.8978,
+     "credited_energy_share": 0.248028,
+     "credited_energy_share_base": 0.248009,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -3.7238,
+     "d_lw_price": 2.31,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 108.644,
+     "lw_price_base": 106.334,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 1269.7,
+     "unserved_gwh_base": 1269.7,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2552,
+     "co2_mt": 421.1814,
+     "co2_mt_base": 432.7259,
+     "credited_energy_share": 0.25653,
+     "credited_energy_share_base": 0.232537,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2663.9,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -11.5445,
+     "d_lw_price": 4.457,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.779474,
+     "gas_cc_ccs_twh_base": 2.56782,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 305.534,
+     "lw_price_base": 301.077,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2998.367,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 5668.3,
+     "unserved_gwh_base": 5668.3,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2717,
+     "co2_mt": 437.0923,
+     "co2_mt_base": 455.1277,
+     "credited_energy_share": 0.274175,
+     "credited_energy_share_base": 0.230354,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5276.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -18.0354,
+     "d_lw_price": 6.867,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 5.7,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.280103,
+     "gas_cc_ccs_twh_base": 5.545529,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 480.486,
+     "lw_price_base": 473.619,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2999.6223,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 12940.0,
+     "unserved_gwh_base": 12934.3,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 1000.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2977,
+     "co2_mt": 455.8582,
+     "co2_mt_base": 482.6176,
+     "credited_energy_share": 0.301319,
+     "credited_energy_share_base": 0.227009,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 1000.0,
+     "d_cap_gas_cc_ccs_mw": 8276.1,
+     "d_cap_nuclear_mw": 1000.0,
+     "d_co2_mt": -26.7594,
+     "d_lw_price": 5.012,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": -11.6,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 7.83024,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.246103,
+     "gas_cc_ccs_twh_base": 5.545529,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 1078.922,
+     "lw_price_base": 1073.91,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 42379.5,
+     "unserved_gwh_base": 42391.1,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9996.0,
+     "wall_s": 721.0,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8410.6,
+     "wall_s": 866.7,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8313.8,
+     "wall_s": 1650.9,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8999.2,
+     "wall_s": 2435.9,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9421.4,
+     "wall_s": 1038.9,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 6713.7
+  },
+  "CARB-HI": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "40bc61fac2b5271d",
+   "global_peak_rss_mb": 9937.7,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5353,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.268,
+     "co2_mt": 358.9829,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.268023,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.1898,
+     "d_lw_price": 4.979,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 58.766,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2817,
+     "co2_mt": 362.1905,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.283129,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2659.6,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -19.1092,
+     "d_lw_price": 9.416,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.395988,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 101.383,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2994.1108000000004,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3061,
+     "co2_mt": 359.0713,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.308864,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5373.2,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -28.8706,
+     "d_lw_price": 14.329,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 46.88608,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 105.056,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2997.2087,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3265,
+     "co2_mt": 375.9099,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.330505,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8373.2,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -34.2914,
+     "d_lw_price": 18.845,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.097188,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 225.208,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9937.7,
+     "wall_s": 546.9,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8388.6,
+     "wall_s": 178.8,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8336.0,
+     "wall_s": 217.4,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8942.3,
+     "wall_s": 288.2,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9416.5,
+     "wall_s": 349.2,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1580.8
+  },
+  "CARB-LO": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "1c815555d55e5db2",
+   "global_peak_rss_mb": 9990.2,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5353,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 367.6839,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267948,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -3.4888,
+     "d_lw_price": 1.293,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 55.08,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2798,
+     "co2_mt": 371.3789,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.281181,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2629.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -9.9208,
+     "d_lw_price": 2.422,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 21.893804,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 94.389,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2963.4944,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3026,
+     "co2_mt": 371.094,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.305191,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5326.8,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -16.8479,
+     "d_lw_price": 3.639,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 43.839097,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 94.366,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2981.4417,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3241,
+     "co2_mt": 386.9767,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.327979,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8326.8,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -23.2246,
+     "d_lw_price": 4.765,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 69.887115,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 211.128,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9990.2,
+     "wall_s": 485.2,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8379.6,
+     "wall_s": 160.6,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8218.3,
+     "wall_s": 201.3,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9042.9,
+     "wall_s": 260.0,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9366.7,
+     "wall_s": 354.4,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1461.9
+  },
+  "CARB-MID": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "27fb6e72c0ad31ae",
+   "global_peak_rss_mb": 9904.4,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5353,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.268,
+     "co2_mt": 364.8158,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267975,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -6.3569,
+     "d_lw_price": 2.445,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 56.232,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2811,
+     "co2_mt": 368.0646,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282541,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2638.3,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -13.2351,
+     "d_lw_price": 4.552,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 22.967855,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 96.519,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2972.8366,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3053,
+     "co2_mt": 366.4499,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.30808,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5324.3,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -21.492,
+     "d_lw_price": 6.88,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 46.272839,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 97.607,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2969.6086999999998,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3259,
+     "co2_mt": 382.9604,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.329963,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8324.3,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -27.2409,
+     "d_lw_price": 9.135,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 71.646656,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 215.498,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9904.4,
+     "wall_s": 471.7,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8014.0,
+     "wall_s": 163.0,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8171.2,
+     "wall_s": 215.5,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9000.5,
+     "wall_s": 265.9,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9356.7,
+     "wall_s": 306.4,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1422.9
+  },
+  "CARB-MID+LOAD-HI": {
+   "baseline": "LOAD-HI",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "e644893331d7708f",
+   "global_peak_rss_mb": 9848.1,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2686,
+     "co2_mt": 387.0428,
+     "co2_mt_base": 387.0428,
+     "credited_energy_share": 0.268559,
+     "credited_energy_share_base": 0.268559,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 59.632,
+     "lw_price_base": 59.632,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 299.1,
+     "unserved_gwh_base": 299.1,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.248,
+     "co2_mt": 403.1686,
+     "co2_mt_base": 406.8978,
+     "credited_energy_share": 0.248028,
+     "credited_energy_share_base": 0.248009,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -3.7292,
+     "d_lw_price": 2.31,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 108.644,
+     "lw_price_base": 106.334,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 1269.7,
+     "unserved_gwh_base": 1269.7,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2549,
+     "co2_mt": 421.3331,
+     "co2_mt_base": 432.7259,
+     "credited_energy_share": 0.256184,
+     "credited_energy_share_base": 0.232537,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2663.9,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -11.3928,
+     "d_lw_price": 4.468,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.473691,
+     "gas_cc_ccs_twh_base": 2.56782,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 305.545,
+     "lw_price_base": 301.077,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2998.367,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 5668.3,
+     "unserved_gwh_base": 5668.3,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2713,
+     "co2_mt": 437.3123,
+     "co2_mt_base": 455.1277,
+     "credited_energy_share": 0.273752,
+     "credited_energy_share_base": 0.230354,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5276.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -17.8154,
+     "d_lw_price": 6.594,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 46.877784,
+     "gas_cc_ccs_twh_base": 5.545529,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 480.213,
+     "lw_price_base": 473.619,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2999.6223,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 12934.3,
+     "unserved_gwh_base": 12934.3,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2898,
+     "co2_mt": 459.9058,
+     "co2_mt_base": 482.6176,
+     "credited_energy_share": 0.293394,
+     "credited_energy_share_base": 0.227009,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8276.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -22.7118,
+     "d_lw_price": 5.233,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.133414,
+     "gas_cc_ccs_twh_base": 5.545529,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 1079.143,
+     "lw_price_base": 1073.91,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 42391.1,
+     "unserved_gwh_base": 42391.1,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9848.1,
+     "wall_s": 475.9,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8374.9,
+     "wall_s": 174.6,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8218.2,
+     "wall_s": 228.2,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8953.5,
+     "wall_s": 308.0,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9282.6,
+     "wall_s": 401.7,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1588.8
+  },
+  "CES-P10": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "e4ba286178e0d499",
+   "global_peak_rss_mb": 9946.7,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5465,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0112,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1835,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0108,
+     "d_lw_price": -0.004,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.783,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.281,
+     "co2_mt": 375.4266,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282449,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2662.7,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -5.8731,
+     "d_lw_price": -0.028,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 22.936867,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.939,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2997.1632,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3062,
+     "co2_mt": 375.3705,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.308933,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5378.4,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.5714,
+     "d_lw_price": -0.068,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.020362,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.659,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2999.3264,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3263,
+     "co2_mt": 389.7711,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.330308,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8378.4,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -20.4302,
+     "d_lw_price": -0.014,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 71.981142,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.349,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9946.7,
+     "wall_s": 630.8,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8405.1,
+     "wall_s": 200.5,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8378.2,
+     "wall_s": 277.7,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9061.8,
+     "wall_s": 387.8,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9404.8,
+     "wall_s": 409.1,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1906.3
+  },
+  "CES-P20": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "472af7fd5ba90f99",
+   "global_peak_rss_mb": 9895.0,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5267,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0086,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1754,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0027,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2811,
+     "co2_mt": 375.3514,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282571,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2663.7,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -5.9483,
+     "d_lw_price": -0.035,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.035373,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.932,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2998.2362,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3064,
+     "co2_mt": 375.3461,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.309227,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5378.5,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.5958,
+     "d_lw_price": -0.067,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.268616,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.66,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2998.3544,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3265,
+     "co2_mt": 389.7506,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.330593,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8378.5,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -20.4507,
+     "d_lw_price": -0.008,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.235188,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.355,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9895.0,
+     "wall_s": 587.6,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8388.8,
+     "wall_s": 201.8,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8289.3,
+     "wall_s": 262.7,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8930.4,
+     "wall_s": 360.8,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9335.2,
+     "wall_s": 420.3,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1833.6
+  },
+  "CES-P20+VOL-HI": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "ed42e5d7d1d95d3e",
+   "global_peak_rss_mb": 10009.1,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5458,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0105,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.597,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1672,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0055,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2811,
+     "co2_mt": 375.3369,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282572,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2663.7,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -5.9628,
+     "d_lw_price": -0.038,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.035358,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.929,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2998.2362,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.3064,
+     "co2_mt": 375.3149,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.309227,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5378.5,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.627,
+     "d_lw_price": -0.068,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.268616,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.659,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2998.3544,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.3265,
+     "co2_mt": 389.7496,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.330593,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8378.5,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -20.4517,
+     "d_lw_price": -0.008,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.235188,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.355,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 10009.1,
+     "wall_s": 787.1,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8470.0,
+     "wall_s": 254.7,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8334.0,
+     "wall_s": 334.1,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9074.8,
+     "wall_s": 446.4,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9432.3,
+     "wall_s": 520.6,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 2343.3
+  },
+  "CES-P30": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "3a4b528c75d7fd6d",
+   "global_peak_rss_mb": 9958.4,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5267,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0086,
+     "d_lw_price": 0.0,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.599,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1735,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0008,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.2811,
+     "co2_mt": 375.3586,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282568,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2663.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -5.9411,
+     "d_lw_price": -0.034,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.03231,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.933,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 2997.5888,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3064,
+     "co2_mt": 375.3276,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.309207,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5376.3,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.6143,
+     "d_lw_price": -0.039,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.252801,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.688,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 2996.8465,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": 0.3265,
+     "co2_mt": 389.7357,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.330579,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 8376.3,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -20.4656,
+     "d_lw_price": 0.102,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": -1.1,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.218801,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.465,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 3000.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2823.1,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9958.4,
+     "wall_s": 535.0,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8389.7,
+     "wall_s": 185.8,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8396.4,
+     "wall_s": 227.5,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9003.6,
+     "wall_s": 309.7,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9355.4,
+     "wall_s": 386.3,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1644.6
+  },
+  "CES-P60": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "e5fb002f78c0c681",
+   "global_peak_rss_mb": 9984.3,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": null,
+     "co2_mt": 368.5263,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": null,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.009,
+     "d_lw_price": 0.001,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": null,
+     "lw_price": 44.6,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": null,
+     "co2_mt": 371.1849,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": null,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0122,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": null,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": null,
+     "co2_mt": 375.3284,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.282586,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": null,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 2665.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -5.9713,
+     "d_lw_price": -0.047,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 23.047436,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": null,
+     "lw_price": 91.92,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": null,
+     "co2_mt": 375.2973,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.309229,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": null,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 5378.7,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -12.6446,
+     "d_lw_price": -0.055,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 47.271192,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": null,
+     "lw_price": 90.672,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI"
+     ],
+     "clean_share": null,
+     "co2_mt": 385.7361,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.33939,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": null,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 1000.0,
+     "d_cap_gas_cc_ccs_mw": 8378.7,
+     "d_cap_nuclear_mw": 1000.0,
+     "d_co2_mt": -24.4652,
+     "d_lw_price": 0.068,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": -1.1,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 7.83024,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 72.237192,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": null,
+     "lw_price": 206.431,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2823.1,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9984.3,
+     "wall_s": 761.9,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8321.6,
+     "wall_s": 253.0,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8433.3,
+     "wall_s": 380.3,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8963.3,
+     "wall_s": 433.6,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9414.5,
+     "wall_s": 559.6,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 2388.9
+  },
+  "CES-T80": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "82c916d847270ebf",
+   "global_peak_rss_mb": 9991.9,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5458,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0105,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.597,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1686,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0041,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES"
+     ],
+     "clean_share": 0.2568,
+     "co2_mt": 381.0865,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.256994,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.2132,
+     "d_lw_price": -0.031,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 2.569315,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.936,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 334.4568,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES"
+     ],
+     "clean_share": 0.2586,
+     "co2_mt": 387.671,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.258891,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.2709,
+     "d_lw_price": -0.035,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.7485,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.692,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 283.6722,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 1000.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      50.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "FEDERAL_CES"
+     ],
+     "clean_share": 0.2633,
+     "co2_mt": 406.1763,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.263606,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 1000.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 1000.0,
+     "d_co2_mt": -4.025,
+     "d_lw_price": 0.093,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": -1.1,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 7.83024,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.7485,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.456,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2823.1,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9991.9,
+     "wall_s": 481.1,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8007.9,
+     "wall_s": 543.1,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 7969.8,
+     "wall_s": 978.5,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8820.9,
+     "wall_s": 1367.7,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9328.8,
+     "wall_s": 767.1,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 4137.9
+  },
+  "VOL-HI": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "7e1a2a2145711bab",
+   "global_peak_rss_mb": 9887.7,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5458,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0105,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.597,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1684,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0043,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2563,
+     "co2_mt": 381.284,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.256475,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0157,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 2.147603,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.964,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 334.4568,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2579,
+     "co2_mt": 387.9368,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.258157,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0051,
+     "d_lw_price": 0.001,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.122427,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.728,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 283.6722,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      7.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2545,
+     "co2_mt": 410.199,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.254751,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0023,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.694272,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.361,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9887.7,
+     "wall_s": 497.2,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8341.0,
+     "wall_s": 204.3,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8342.1,
+     "wall_s": 261.5,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 8973.0,
+     "wall_s": 332.6,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9372.8,
+     "wall_s": 420.5,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1716.6
+  },
+  "VOL-MID": {
+   "baseline": "REF",
+   "baseline_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "cache_key": "dc8ca3580e277d72",
+   "global_peak_rss_mb": 9971.8,
+   "invariant_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "invariant_warns": [
+    "I14"
+   ],
+   "key_match": true,
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2828,
+     "co2_mt": 368.5458,
+     "co2_mt_base": 368.5353,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": 0.0105,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 44.597,
+     "lw_price_base": 44.599,
+     "retire_mw": 0.0,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "unserved_gwh": 111.6,
+     "unserved_gwh_base": 111.6,
+     "vre_mw": 39000.0
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2679,
+     "co2_mt": 371.1684,
+     "co2_mt_base": 371.1727,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0043,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 0.0,
+     "gas_cc_ccs_twh_base": 0.0,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 53.784,
+     "lw_price_base": 53.787,
+     "retire_mw": 2894.185,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 228.9,
+     "unserved_gwh_base": 228.9,
+     "vre_mw": 39000.0
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 0.0,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      -0.0
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2563,
+     "co2_mt": 381.2841,
+     "co2_mt_base": 381.2997,
+     "credited_energy_share": 0.256475,
+     "credited_energy_share_base": 0.256475,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0156,
+     "d_lw_price": -0.003,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 2.147603,
+     "gas_cc_ccs_twh_base": 2.147603,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 91.964,
+     "lw_price_base": 91.967,
+     "retire_mw": 3627.3,
+     "retrofit_mw": 334.4568,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 698.7,
+     "unserved_gwh_base": 698.7,
+     "vre_mw": 39000.0
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 5650.2,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      4.5
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2579,
+     "co2_mt": 387.9368,
+     "co2_mt_base": 387.9419,
+     "credited_energy_share": 0.258157,
+     "credited_energy_share_base": 0.258157,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0051,
+     "d_lw_price": 0.001,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.122427,
+     "gas_cc_ccs_twh_base": 4.122725,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 90.728,
+     "lw_price_base": 90.727,
+     "retire_mw": 2670.899999999999,
+     "retrofit_mw": 283.6722,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 506.2,
+     "unserved_gwh_base": 506.2,
+     "vre_mw": 44650.2
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "builds_renew_mw": 4349.8,
+     "clean_region_duals": [
+      -0.0,
+      -0.0,
+      4.5
+     ],
+     "clean_region_labels": [
+      "MN",
+      "MI",
+      "VOLUNTARY"
+     ],
+     "clean_share": 0.2545,
+     "co2_mt": 410.1991,
+     "co2_mt_base": 410.2013,
+     "credited_energy_share": 0.254751,
+     "credited_energy_share_base": 0.254747,
+     "curtailment_twh": 0.0,
+     "d_builds_renew_mw": 0.0,
+     "d_builds_thermal_mw": 0.0,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_co2_mt": -0.0022,
+     "d_lw_price": -0.002,
+     "d_retire_mw": 0.0,
+     "d_unserved_gwh": 0.0,
+     "d_vre_mw": 0.0,
+     "d_zero_carbon_twh": {
+      "hydro": 0.0,
+      "nuclear": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     },
+     "gas_cc_ccs_twh": 4.694272,
+     "gas_cc_ccs_twh_base": 4.690751,
+     "import_co2_mt_reported": 0.0,
+     "lw_price": 206.361,
+     "lw_price_base": 206.363,
+     "retire_mw": 1927.1,
+     "retrofit_mw": 0.0,
+     "rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "rps_region_duals": [
+      -0.0,
+      30.0,
+      -0.0,
+      30.0,
+      -0.0
+     ],
+     "unserved_gwh": 2824.2,
+     "unserved_gwh_base": 2824.2,
+     "vre_mw": 49000.0
+    }
+   },
+   "per_year_perf": [
+    {
+     "peak_rss_mb": 9971.8,
+     "wall_s": 626.9,
+     "year": 2026
+    },
+    {
+     "peak_rss_mb": 8460.6,
+     "wall_s": 198.7,
+     "year": 2027
+    },
+    {
+     "peak_rss_mb": 8378.2,
+     "wall_s": 264.6,
+     "year": 2028
+    },
+    {
+     "peak_rss_mb": 9039.4,
+     "wall_s": 327.4,
+     "year": 2029
+    },
+    {
+     "peak_rss_mb": 9453.9,
+     "wall_s": 435.8,
+     "year": 2030
+    }
+   ],
+   "total_wall_s": 1853.8
+  }
+ },
+ "cost": {
+  "legs": 13,
+  "max_global_peak_rss_mb": 10009.1,
+  "mean_min_per_solve_year": 7.844,
+  "per_case": {
+   "ALL-CLEAN": {
+    "global_peak_rss_mb": 9996.0,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9996.0,
+      "wall_s": 721.0,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8410.6,
+      "wall_s": 866.7,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8313.8,
+      "wall_s": 1650.9,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8999.2,
+      "wall_s": 2435.9,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9421.4,
+      "wall_s": 1038.9,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 6713.7
+   },
+   "CARB-HI": {
+    "global_peak_rss_mb": 9937.7,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9937.7,
+      "wall_s": 546.9,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8388.6,
+      "wall_s": 178.8,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8336.0,
+      "wall_s": 217.4,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8942.3,
+      "wall_s": 288.2,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9416.5,
+      "wall_s": 349.2,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1580.8
+   },
+   "CARB-LO": {
+    "global_peak_rss_mb": 9990.2,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9990.2,
+      "wall_s": 485.2,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8379.6,
+      "wall_s": 160.6,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8218.3,
+      "wall_s": 201.3,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9042.9,
+      "wall_s": 260.0,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9366.7,
+      "wall_s": 354.4,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1461.9
+   },
+   "CARB-MID": {
+    "global_peak_rss_mb": 9904.4,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9904.4,
+      "wall_s": 471.7,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8014.0,
+      "wall_s": 163.0,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8171.2,
+      "wall_s": 215.5,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9000.5,
+      "wall_s": 265.9,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9356.7,
+      "wall_s": 306.4,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1422.9
+   },
+   "CARB-MID+LOAD-HI": {
+    "global_peak_rss_mb": 9848.1,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9848.1,
+      "wall_s": 475.9,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8374.9,
+      "wall_s": 174.6,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8218.2,
+      "wall_s": 228.2,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8953.5,
+      "wall_s": 308.0,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9282.6,
+      "wall_s": 401.7,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1588.8
+   },
+   "CES-P10": {
+    "global_peak_rss_mb": 9946.7,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9946.7,
+      "wall_s": 630.8,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8405.1,
+      "wall_s": 200.5,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8378.2,
+      "wall_s": 277.7,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9061.8,
+      "wall_s": 387.8,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9404.8,
+      "wall_s": 409.1,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1906.3
+   },
+   "CES-P20": {
+    "global_peak_rss_mb": 9895.0,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9895.0,
+      "wall_s": 587.6,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8388.8,
+      "wall_s": 201.8,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8289.3,
+      "wall_s": 262.7,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8930.4,
+      "wall_s": 360.8,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9335.2,
+      "wall_s": 420.3,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1833.6
+   },
+   "CES-P20+VOL-HI": {
+    "global_peak_rss_mb": 10009.1,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 10009.1,
+      "wall_s": 787.1,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8470.0,
+      "wall_s": 254.7,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8334.0,
+      "wall_s": 334.1,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9074.8,
+      "wall_s": 446.4,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9432.3,
+      "wall_s": 520.6,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 2343.3
+   },
+   "CES-P30": {
+    "global_peak_rss_mb": 9958.4,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9958.4,
+      "wall_s": 535.0,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8389.7,
+      "wall_s": 185.8,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8396.4,
+      "wall_s": 227.5,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9003.6,
+      "wall_s": 309.7,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9355.4,
+      "wall_s": 386.3,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1644.6
+   },
+   "CES-P60": {
+    "global_peak_rss_mb": 9984.3,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9984.3,
+      "wall_s": 761.9,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8321.6,
+      "wall_s": 253.0,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8433.3,
+      "wall_s": 380.3,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8963.3,
+      "wall_s": 433.6,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9414.5,
+      "wall_s": 559.6,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 2388.9
+   },
+   "CES-T80": {
+    "global_peak_rss_mb": 9991.9,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9991.9,
+      "wall_s": 481.1,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8007.9,
+      "wall_s": 543.1,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 7969.8,
+      "wall_s": 978.5,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8820.9,
+      "wall_s": 1367.7,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9328.8,
+      "wall_s": 767.1,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 4137.9
+   },
+   "VOL-HI": {
+    "global_peak_rss_mb": 9887.7,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9887.7,
+      "wall_s": 497.2,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8341.0,
+      "wall_s": 204.3,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8342.1,
+      "wall_s": 261.5,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 8973.0,
+      "wall_s": 332.6,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9372.8,
+      "wall_s": 420.5,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1716.6
+   },
+   "VOL-MID": {
+    "global_peak_rss_mb": 9971.8,
+    "per_year_perf": [
+     {
+      "peak_rss_mb": 9971.8,
+      "wall_s": 626.9,
+      "year": 2026
+     },
+     {
+      "peak_rss_mb": 8460.6,
+      "wall_s": 198.7,
+      "year": 2027
+     },
+     {
+      "peak_rss_mb": 8378.2,
+      "wall_s": 264.6,
+      "year": 2028
+     },
+     {
+      "peak_rss_mb": 9039.4,
+      "wall_s": 327.4,
+      "year": 2029
+     },
+     {
+      "peak_rss_mb": 9453.9,
+      "wall_s": 435.8,
+      "year": 2030
+     }
+    ],
+    "total_wall_s": 1853.8
+   }
+  },
+  "solve_years": 65,
+  "total_wall_h": 8.498,
+  "total_wall_s": 30593.1
+ },
+ "gates": {
+  "G-B1": {
+   "detail": "60.00 (57.00 for gas_cc_ccs) strictly exceeds an exact <= 30.00 upper bound on REF's attribute in every eligible tech-zone-year; measured per-zone RPS credit shows four of six zones at 0.0, where the margin is the full 60.00",
+   "per_year": {
+    "2026": {
+     "measured_rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": -0.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "premium_attr_gas_cc_ccs": 57.0,
+     "premium_attr_usd_per_mwh": 60.0,
+     "ref_attr_upper_bound": 30.0,
+     "strictly_exceeds": true,
+     "zones_with_zero_ref_attr": [
+      "MISO-Illinois",
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West"
+     ]
+    },
+    "2027": {
+     "measured_rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "premium_attr_gas_cc_ccs": 57.0,
+     "premium_attr_usd_per_mwh": 60.0,
+     "ref_attr_upper_bound": 30.0,
+     "strictly_exceeds": true,
+     "zones_with_zero_ref_attr": [
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West"
+     ]
+    },
+    "2028": {
+     "measured_rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "premium_attr_gas_cc_ccs": 57.0,
+     "premium_attr_usd_per_mwh": 60.0,
+     "ref_attr_upper_bound": 30.0,
+     "strictly_exceeds": true,
+     "zones_with_zero_ref_attr": [
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West"
+     ]
+    },
+    "2029": {
+     "measured_rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "premium_attr_gas_cc_ccs": 57.0,
+     "premium_attr_usd_per_mwh": 60.0,
+     "ref_attr_upper_bound": 30.0,
+     "strictly_exceeds": true,
+     "zones_with_zero_ref_attr": [
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West"
+     ]
+    },
+    "2030": {
+     "measured_rps_credit_by_zone": {
+      "MISO-East": 30.0,
+      "MISO-Illinois": 30.0,
+      "MISO-Indiana": -0.0,
+      "MISO-Plains": -0.0,
+      "MISO-South": 0.0,
+      "MISO-West": -0.0
+     },
+     "premium_attr_gas_cc_ccs": 57.0,
+     "premium_attr_usd_per_mwh": 60.0,
+     "ref_attr_upper_bound": 30.0,
+     "strictly_exceeds": true,
+     "zones_with_zero_ref_attr": [
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West"
+     ]
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G-B2": {
+   "per_year": {
+    "2026": {
+     "build_nuclear_mw": 0.0,
+     "clean_share": null,
+     "credited_energy_share": 0.282826,
+     "credited_energy_share_base": 0.282826,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_nuclear_twh": 0.0,
+     "max_abs_wind_solar_hydro_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "2027": {
+     "build_nuclear_mw": 0.0,
+     "clean_share": null,
+     "credited_energy_share": 0.267933,
+     "credited_energy_share_base": 0.267933,
+     "d_cap_gas_cc_ccs_mw": 0.0,
+     "d_cap_nuclear_mw": 0.0,
+     "d_nuclear_twh": 0.0,
+     "max_abs_wind_solar_hydro_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "2028": {
+     "build_nuclear_mw": 0.0,
+     "clean_share": null,
+     "credited_energy_share": 0.282586,
+     "credited_energy_share_base": 0.256475,
+     "d_cap_gas_cc_ccs_mw": 2665.1,
+     "d_cap_nuclear_mw": 0.0,
+     "d_nuclear_twh": 0.0,
+     "max_abs_wind_solar_hydro_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "2029": {
+     "build_nuclear_mw": 0.0,
+     "clean_share": null,
+     "credited_energy_share": 0.309229,
+     "credited_energy_share_base": 0.258157,
+     "d_cap_gas_cc_ccs_mw": 5378.7,
+     "d_cap_nuclear_mw": 0.0,
+     "d_nuclear_twh": 0.0,
+     "max_abs_wind_solar_hydro_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "2030": {
+     "build_nuclear_mw": 0.0,
+     "clean_share": null,
+     "credited_energy_share": 0.33939,
+     "credited_energy_share_base": 0.254747,
+     "d_cap_gas_cc_ccs_mw": 8378.7,
+     "d_cap_nuclear_mw": 1000.0,
+     "d_nuclear_twh": 7.83024,
+     "max_abs_wind_solar_hydro_twh": 0.0,
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G-B3": {
+   "arm_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "base_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "new_fails": [],
+   "verdict": "PASS"
+  },
+  "G1": {
+   "carbon_pin_table": {
+    "ALL-CLEAN": [
+     0.0,
+     3.75,
+     7.5,
+     11.25,
+     15.0
+    ],
+    "CARB-HI": [
+     0.0,
+     7.5,
+     15.0,
+     22.5,
+     30.0
+    ],
+    "CARB-LO": [
+     0.0,
+     2.0,
+     4.0,
+     6.0,
+     8.0
+    ],
+    "CARB-MID": [
+     0.0,
+     3.75,
+     7.5,
+     11.25,
+     15.0
+    ],
+    "CARB-MID+LOAD-HI": [
+     0.0,
+     3.75,
+     7.5,
+     11.25,
+     15.0
+    ]
+   },
+   "per_case": {
+    "ALL-CLEAN": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "00edacf5f50c88fc",
+     "cache_key_expected": "00edacf5f50c88fc",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CARB-HI": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "40bc61fac2b5271d",
+     "cache_key_expected": "40bc61fac2b5271d",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CARB-LO": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "1c815555d55e5db2",
+     "cache_key_expected": "1c815555d55e5db2",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CARB-MID": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "27fb6e72c0ad31ae",
+     "cache_key_expected": "27fb6e72c0ad31ae",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CARB-MID+LOAD-HI": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "e644893331d7708f",
+     "cache_key_expected": "e644893331d7708f",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-P10": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "e4ba286178e0d499",
+     "cache_key_expected": "e4ba286178e0d499",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 10.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-P20": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "472af7fd5ba90f99",
+     "cache_key_expected": "472af7fd5ba90f99",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 20.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-P20+VOL-HI": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "ed42e5d7d1d95d3e",
+     "cache_key_expected": "ed42e5d7d1d95d3e",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 20.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-P30": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "3a4b528c75d7fd6d",
+     "cache_key_expected": "3a4b528c75d7fd6d",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 30.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-P60": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "e5fb002f78c0c681",
+     "cache_key_expected": "e5fb002f78c0c681",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 60.0,
+     "set_overrides": {
+      "federal_ces_premium_usd_per_mwh": 60.0
+     },
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "CES-T80": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "82c916d847270ebf",
+     "cache_key_expected": "82c916d847270ebf",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": true,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "VOL-HI": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "7e1a2a2145711bab",
+     "cache_key_expected": "7e1a2a2145711bab",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    },
+    "VOL-MID": {
+     "basis_sha": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+     "cache_key": "dc8ca3580e277d72",
+     "cache_key_expected": "dc8ca3580e277d72",
+     "changed_files": 0,
+     "dirty": false,
+     "federal_ces_enabled": false,
+     "premium_usd_per_mwh": 0.0,
+     "set_overrides": {},
+     "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+     ],
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G10_G12": {
+   "reason": "CAP_AND_TRADE_PROGRAMS.get('MISO') is None -- MISO runs no cap-and-trade program, resolve_carbon_program returns None in all five years for BOTH REF and CAP-STATE-TIGHT, the case was never in this lane's chartered set, and it is out of Stage A entirely under owner ruling S17",
+   "verdict": "N/A"
+  },
+  "G1a": {
+   "degeneracy_floor_co2_mt": 0.0105,
+   "degeneracy_floor_lw_price": 0.002,
+   "per_case": {
+    "ALL-CLEAN": {
+     "baseline": "LOAD-HI",
+     "d_co2_mt": -0.0008,
+     "d_lw_price": -0.001,
+     "tol": 0.0005,
+     "verdict": "FAIL"
+    },
+    "CARB-HI": {
+     "baseline": "REF",
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "tol": 0.0005,
+     "verdict": "PASS"
+    },
+    "CARB-LO": {
+     "baseline": "REF",
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "tol": 0.0005,
+     "verdict": "PASS"
+    },
+    "CARB-MID": {
+     "baseline": "REF",
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "tol": 0.0005,
+     "verdict": "PASS"
+    },
+    "CARB-MID+LOAD-HI": {
+     "baseline": "LOAD-HI",
+     "d_co2_mt": 0.0,
+     "d_lw_price": 0.0,
+     "tol": 0.0005,
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "FAIL"
+  },
+  "G2": {
+   "expected_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "expected_warns": [
+    "I14"
+   ],
+   "ref_fails": [
+    "I12",
+    "I3",
+    "I7"
+   ],
+   "ref_lw_price": {
+    "2026": 44.599,
+    "2027": 53.787,
+    "2028": 91.967,
+    "2029": 90.727,
+    "2030": 206.363
+   },
+   "ref_unserved_gwh": {
+    "2026": 111.6,
+    "2027": 228.9,
+    "2028": 698.7,
+    "2029": 506.2,
+    "2030": 2824.2
+   },
+   "ref_warns": [
+    "I14"
+   ],
+   "verdict": "PASS"
+  },
+  "G3": {
+   "per_case": {
+    "ALL-CLEAN": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 1000.0,
+       "d_cap_nuclear_mw": 1000.0,
+       "d_nuclear_twh": 7.83024,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CARB-HI": {
+     "family": "carbon",
+     "max_abs_zero_carbon_delta_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "CARB-LO": {
+     "family": "carbon",
+     "max_abs_zero_carbon_delta_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "CARB-MID": {
+     "family": "carbon",
+     "max_abs_zero_carbon_delta_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "CARB-MID+LOAD-HI": {
+     "family": "carbon",
+     "max_abs_zero_carbon_delta_twh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P10": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-P20": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-P20+VOL-HI": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-P30": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-P60": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 1000.0,
+       "d_nuclear_twh": 7.83024,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-T80": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 1000.0,
+       "d_cap_nuclear_mw": 1000.0,
+       "d_nuclear_twh": 7.83024,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "VOL-HI": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "VOL-MID": {
+     "family": "ces/voluntary",
+     "per_year": {
+      "2026": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "build_nuclear_mw": 0.0,
+       "d_cap_nuclear_mw": 0.0,
+       "d_nuclear_twh": 0.0,
+       "max_abs_wind_solar_hydro_twh": 0.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G4": {
+   "per_case": {
+    "ALL-CLEAN": {
+     "per_year": {
+      "2026": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-T80": {
+     "per_year": {
+      "2026": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "federal_dual": 50.0,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G5": {
+   "per_case": {
+    "ALL-CLEAN": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CARB-HI": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CARB-LO": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CARB-MID": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CARB-MID+LOAD-HI": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-P10": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-P20": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-P20+VOL-HI": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-P30": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-P60": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "CES-T80": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "VOL-HI": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    },
+    "VOL-MID": {
+     "arm_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "base_fails": [
+      "I12",
+      "I3",
+      "I7"
+     ],
+     "new_fails": [],
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G6": {
+   "not_binding_on": [
+    "CARB-MID+LOAD-HI",
+    "ALL-CLEAN"
+   ],
+   "per_case": {
+    "CARB-HI": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CARB-LO": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CARB-MID": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P10": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P20": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P20+VOL-HI": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P30": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": -1.1
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-P60": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": -1.1
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "CES-T80": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": -1.1
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "VOL-HI": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    },
+    "VOL-MID": {
+     "d_unserved_gwh": {
+      "2026": 0.0,
+      "2027": 0.0,
+      "2028": 0.0,
+      "2029": 0.0,
+      "2030": 0.0
+     },
+     "max_rise_gwh": 0.0,
+     "verdict": "PASS"
+    }
+   },
+   "reported_only": {
+    "ALL-CLEAN": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 5.7,
+     "2030": -11.6
+    },
+    "CARB-MID+LOAD-HI": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    }
+   },
+   "resolution_gwh": 0.1,
+   "verdict": "PASS"
+  },
+  "G7": {
+   "per_case": {
+    "ALL-CLEAN": {
+     "per_year": {
+      "2026": {
+       "ceiling": 7.0,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 35.22787113483399,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -14.138959053178525,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -63.91759015690589,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -103.25513579473667,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -140.91210063148242,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "CES-P20+VOL-HI": {
+     "per_year": {
+      "2026": {
+       "ceiling": 7.0,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 38.28441389527612,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "ceiling": 7.0,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 2.8638224784936455,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -32.729182182004266,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -57.61717219058514,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -80.53382281787195,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "VOL-HI": {
+     "per_year": {
+      "2026": {
+       "ceiling": 7.0,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 38.28441389527612,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "ceiling": 7.0,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 2.8638224784936455,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -32.729182182004266,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -57.61717219058514,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "ceiling": 7.0,
+       "dual": 7.0,
+       "phase0_binds": true,
+       "phase0_slack_twh": -80.53382281787195,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    },
+    "VOL-MID": {
+     "per_year": {
+      "2026": {
+       "ceiling": 4.5,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 42.58075589527611,
+       "verdict": "PASS"
+      },
+      "2027": {
+       "ceiling": 4.5,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 24.70107897849364,
+       "verdict": "PASS"
+      },
+      "2028": {
+       "ceiling": 4.5,
+       "dual": -0.0,
+       "phase0_binds": false,
+       "phase0_slack_twh": 6.648988817995729,
+       "verdict": "PASS"
+      },
+      "2029": {
+       "ceiling": 4.5,
+       "dual": 4.5,
+       "phase0_binds": true,
+       "phase0_slack_twh": -0.698086690585157,
+       "verdict": "PASS"
+      },
+      "2030": {
+       "ceiling": 4.5,
+       "dual": 4.5,
+       "phase0_binds": true,
+       "phase0_slack_twh": -6.073822817871971,
+       "verdict": "PASS"
+      }
+     },
+     "verdict": "PASS"
+    }
+   },
+   "verdict": "PASS"
+  },
+  "G8": {
+   "all_legs_zero_curtailment": true,
+   "measured_curtailment_twh": {
+    "ALL-CLEAN": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CARB-HI": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CARB-LO": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CARB-MID": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CARB-MID+LOAD-HI": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CES-P10": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CES-P20": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CES-P20+VOL-HI": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CES-P30": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "CES-P60": {
+     "2026": null,
+     "2027": null,
+     "2028": null,
+     "2029": null,
+     "2030": null
+    },
+    "CES-T80": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "VOL-HI": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    },
+    "VOL-MID": {
+     "2026": 0.0,
+     "2027": 0.0,
+     "2028": 0.0,
+     "2029": 0.0,
+     "2030": 0.0
+    }
+   },
+   "reason": "REF curtailment_twh = 0.0000 in every year, so there is no curtailed eligible MWh to recover; declared vacuous in the PRECOMMIT before the solve and confirmed here across every leg-year with a report row. Never scored as a PASS.",
+   "verdict": "N/A - VACUOUS"
+  },
+  "G9": {
+   "per_case": {
+    "ALL-CLEAN": {
+     "2026": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": 50.0,
+       "implied_extra_escape_twh_at_acp": 68.341203765166,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 68.341203765166
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2686,
+       "co2_mt": 387.042,
+       "d_co2_mt": -0.0008,
+       "federal_ces_dual": 50.0,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": -0.0
+      }
+     },
+     "2027": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": 50.0,
+       "implied_extra_escape_twh_at_acp": 117.70803395317851,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 117.70803395317851
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.248,
+       "co2_mt": 403.174,
+       "d_co2_mt": -3.7238,
+       "federal_ces_dual": 50.0,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     },
+     "2028": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": 50.0,
+       "implied_extra_escape_twh_at_acp": 167.48666505690588,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 167.48666505690588
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2552,
+       "co2_mt": 421.1814,
+       "d_co2_mt": -11.5445,
+       "federal_ces_dual": 50.0,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     },
+     "2029": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": 50.0,
+       "implied_extra_escape_twh_at_acp": 217.71108959473668,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 217.71108959473668
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2717,
+       "co2_mt": 437.0923,
+       "d_co2_mt": -18.0354,
+       "federal_ces_dual": 50.0,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     },
+     "2030": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": 50.0,
+       "implied_extra_escape_twh_at_acp": 268.4181060314824,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 268.4181060314824
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2977,
+       "co2_mt": 455.8582,
+       "d_co2_mt": -26.7594,
+       "federal_ces_dual": 50.0,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     }
+    },
+    "CES-P20+VOL-HI": {
+     "2026": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": null,
+       "implied_extra_escape_twh_at_acp": 65.28466100472387,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 65.28466100472387
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2828,
+       "co2_mt": 368.5458,
+       "d_co2_mt": 0.0105,
+       "federal_ces_dual": null,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": -0.0
+      }
+     },
+     "2027": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": null,
+       "implied_extra_escape_twh_at_acp": 100.70525242150634,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 100.70525242150634
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2679,
+       "co2_mt": 371.1672,
+       "d_co2_mt": -0.0055,
+       "federal_ces_dual": null,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": -0.0
+      }
+     },
+     "2028": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": null,
+       "implied_extra_escape_twh_at_acp": 136.29825708200426,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 136.29825708200426
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.2811,
+       "co2_mt": 375.3369,
+       "d_co2_mt": -5.9628,
+       "federal_ces_dual": null,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     },
+     "2029": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": null,
+       "implied_extra_escape_twh_at_acp": 172.07312599058514,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 172.07312599058514
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.3064,
+       "co2_mt": 375.3149,
+       "d_co2_mt": -12.627,
+       "federal_ces_dual": null,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     },
+     "2030": {
+      "additional_beside_it": {
+       "acp_usd_per_mwh": null,
+       "implied_extra_escape_twh_at_acp": 208.03982821787196,
+       "note": "federal_credited - V >= target(y)*D; implied extra escape priced at the ACP",
+       "voluntary_volume_twh": 208.03982821787196
+      },
+      "counts_toward_headline": {
+       "clean_share": 0.3265,
+       "co2_mt": 389.7496,
+       "d_co2_mt": -20.4517,
+       "federal_ces_dual": null,
+       "note": "as built: two independent rows, each satisfied on the same credited MWh (FFR-6B 6.4)",
+       "voluntary_dual": 7.0
+      }
+     }
+    }
+   },
+   "verdict": "REPORTED (both nettings, S11)"
+  }
+ },
+ "iso": "MISO",
+ "legs_expected": 13,
+ "legs_found": 13,
+ "pin": "bdfb3095e9fa0cd2bec3f4e843f320b42588c72b",
+ "s15_ladder": {
+  "CES-P10": {
+   "attribute_usd_per_mwh": 10.0,
+   "clears_state_acp_30": false,
+   "d_builds_renew_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_gas_cc_ccs_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 2662.7,
+    "2029": 5378.4,
+    "2030": 8378.4
+   },
+   "d_cap_nuclear_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_co2_mt": {
+    "2026": 0.0112,
+    "2027": 0.0108,
+    "2028": -5.8731,
+    "2029": -12.5714,
+    "2030": -20.4302
+   },
+   "d_retire_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_vre_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "instrument": "premium"
+  },
+  "CES-P20": {
+   "attribute_usd_per_mwh": 20.0,
+   "clears_state_acp_30": false,
+   "d_builds_renew_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_gas_cc_ccs_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 2663.7,
+    "2029": 5378.5,
+    "2030": 8378.5
+   },
+   "d_cap_nuclear_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_co2_mt": {
+    "2026": -0.0086,
+    "2027": 0.0027,
+    "2028": -5.9483,
+    "2029": -12.5958,
+    "2030": -20.4507
+   },
+   "d_retire_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_vre_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "instrument": "premium"
+  },
+  "CES-P30": {
+   "attribute_usd_per_mwh": 30.0,
+   "clears_state_acp_30": false,
+   "d_builds_renew_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_gas_cc_ccs_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 2663.1,
+    "2029": 5376.3,
+    "2030": 8376.3
+   },
+   "d_cap_nuclear_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_co2_mt": {
+    "2026": -0.0086,
+    "2027": 0.0008,
+    "2028": -5.9411,
+    "2029": -12.6143,
+    "2030": -20.4656
+   },
+   "d_retire_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_vre_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "instrument": "premium"
+  },
+  "CES-P60": {
+   "attribute_usd_per_mwh": 60.0,
+   "clears_state_acp_30": true,
+   "d_builds_renew_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_gas_cc_ccs_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 2665.1,
+    "2029": 5378.7,
+    "2030": 8378.7
+   },
+   "d_cap_nuclear_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 1000.0
+   },
+   "d_co2_mt": {
+    "2026": -0.009,
+    "2027": 0.0122,
+    "2028": -5.9713,
+    "2029": -12.6446,
+    "2030": -24.4652
+   },
+   "d_retire_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_vre_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "instrument": "premium"
+  },
+  "CES-T80": {
+   "attribute_usd_per_mwh": 50.0,
+   "clears_state_acp_30": true,
+   "d_builds_renew_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_gas_cc_ccs_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_cap_nuclear_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 1000.0
+   },
+   "d_co2_mt": {
+    "2026": 0.0105,
+    "2027": -0.0041,
+    "2028": -0.2132,
+    "2029": -0.2709,
+    "2030": -4.025
+   },
+   "d_retire_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "d_vre_mw": {
+    "2026": 0.0,
+    "2027": 0.0,
+    "2028": 0.0,
+    "2029": 0.0,
+    "2030": 0.0
+   },
+   "instrument": "target row (ACP dual)"
+  }
+ }
+}
