@@ -82,6 +82,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import http.client
 import io
 import json
 import re
@@ -160,7 +161,21 @@ def _fetch_zip(url: str, retries: int, sleep_s: float) -> tuple[bytes, str] | No
             with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT_S) as resp:
                 payload = resp.read()
                 cd = resp.headers.get("Content-Disposition", "") or ""
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        # http.client.HTTPException covers IncompleteRead — a TRUNCATED transfer,
+        # which is NOT an OSError and so used to escape this handler and kill the
+        # crawl outright. Measured 2026-09-07 (caiso-262): the 2022 RTM crawl died
+        # at day 256/365 on `IncompleteRead(7108218 bytes read)` mid-way through
+        # an 8.7 MB zip. A cut-off transfer is exactly what the retry loop below
+        # exists for — an 8,760-request crawl cannot be one truncated read away
+        # from stopping — and the environment's own proxy notes list interrupted
+        # transfers as an expected failure mode. The partial payload is discarded
+        # (it is not reassembled), so a retry re-fetches the whole archive.
+        except (
+            urllib.error.URLError,
+            http.client.HTTPException,
+            TimeoutError,
+            OSError,
+        ) as exc:
             print(
                 f"    attempt {attempt}/{retries} failed: {exc}",
                 file=sys.stderr,
