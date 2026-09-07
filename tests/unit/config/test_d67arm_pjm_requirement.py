@@ -49,7 +49,12 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #:
 #: The NAME is kept for its D67 genealogy but it means "PJM bare, every current arm
 #: applied", not "D67-armed only". A future PJM arm must re-measure it here.
-BARE_PJM_ARMED = "b518f5fe7d02f961"
+#:
+#: RE-MEASURED 2026-09-07 for capx D78-ARM: owner ruling Q56 arms
+#: ``retirement_sector_gate`` on ``_pjm_config`` — the next arm this note
+#: anticipated — moving bare ``b518f5fe7d02f961`` -> ``fb16fda2ddb0a94a``
+#: (``docs/handoffs/d78arm/keys_measured.json``, the PRECOMMIT §2 literal).
+BARE_PJM_ARMED = "fb16fda2ddb0a94a"
 
 #: UNCHANGED, and deliberately so: the D67 pre-arm recipe is still reachable and
 #: still keeps its own key. What went stale was the INVOCATION below, not this pin —
@@ -131,12 +136,16 @@ class TestQ52ArmingKeys(unittest.TestCase):
         # Every arm that landed on ``_pjm_config`` AFTER D67 has to be inverted too,
         # or this reaches an intermediate posture rather than the pre-arm one. Q55
         # (``pjm_vre_accreditation_vintage``) is that arm; without it the key is
-        # ``33041553d7541538``, which is not any declared posture.
+        # ``33041553d7541538``, which is not any declared posture. Q56
+        # (``retirement_sector_gate``, capx D78-ARM) is the second such arm and
+        # is inverted here for the same reason: without it the key is
+        # ``bc387828f931e0ac``, another intermediate posture.
         self.assertEqual(
             _hindcast_key(
                 "PJM",
                 capacity_adequacy_requirement_published=False,
                 pjm_vre_accreditation_vintage=False,
+                retirement_sector_gate=False,
             ),
             BARE_PJM_PRE_ARM,
         )
@@ -189,8 +198,14 @@ class TestD67ArmGdriftPosture(unittest.TestCase):
         # first line for ``year < ccs_retrofit_available_year``.
         self.assertGreater(self._recipe().ccs_retrofit_available_year, 2025)
 
-    def test_d78_sector_routing_moves_an_empty_set(self):
-        self.assertFalse(self._recipe().retirement_sector_gate)
+    def test_d78_sector_routing_is_armed_by_q56(self):
+        # Pinned FALSE at D67-ARM (the G-DRIFT posture: D78's routing moved an
+        # empty set on the shipped recipe). ARMED by owner ruling Q56 (capx
+        # D78-ARM, 2026-09-06) through the same _pjm_config override path, so
+        # the shipped recipe now carries the gate; the D67-ARM posture is
+        # reachable as --no-retirement-sector-gate --no-pjm-vre-accreditation-
+        # vintage (key a9c66d8ea25acb9d, pinned in test_capacity.py).
+        self.assertTrue(self._recipe().retirement_sector_gate)
 
     def test_the_default_off_scenario_axes_resolve_off(self):
         cfg = self._recipe()

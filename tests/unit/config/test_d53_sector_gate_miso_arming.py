@@ -54,8 +54,13 @@ class TestSectorGateMisoArming(unittest.TestCase):
         self.assertNotEqual(cfg.cache_key(), unarmed.cache_key())
 
     def test_every_other_iso_resolves_the_gate_off(self):
+        # Rule 25: the gate arms PER ISO, on that ISO's own ISOConfig and its
+        # own evidence. MISO (capx D53, 2026-09-05) and PJM (owner ruling Q56,
+        # capx D78-ARM, 2026-09-06, on the D78-R2 / D78-R3 full window) each
+        # carry their own arm; every other ISO still resolves the gate OFF
+        # and carries no override until it measures its own sector census.
         for iso in SUPPORTED_ISOS:
-            if iso == "MISO":
+            if iso in ("MISO", "PJM"):
                 continue
             cfg = apply_iso_scenario_defaults(
                 ScenarioConfig(iso=iso, mode="forecast"), iso

@@ -660,6 +660,38 @@ CURATED_IDENTIFICATIONS: dict[tuple[str, str], dict] = {
         ),
         "requires": "iso-registry",
     },
+    ("PJM", "retirement_sector_gate"): {
+        "identification": "design-decision",
+        "source": (
+            "capx D78-ARM, armed for PJM by owner ruling Q56 (served by "
+            "FINDING-capx-d78r3 section 5) on the D78-R2 / D78-R3 full "
+            "2021-2025 window. The SAME PURE CANDIDATE-SET PARTITION as MISO's "
+            "D53 row, on PJM's OWN evidence (rule 25 -- nothing transferred): "
+            "a sector-1 unit still OFFERS its accredited MW into the D57 "
+            "capacity clearing at its net-ACR cap (PJM's must-offer "
+            "requirement keys on existing-and-in-footprint, never ownership; "
+            "capx D78, owner ruling Q53) and is partitioned out of the "
+            "merchant EXIT decision only. The partition is exact in all five "
+            "years (every control-only failing row sector-1, the arm-only set "
+            "EMPTY, zero sector-1 rows in any decision ledger), the window "
+            "decided total lands on the pre-registered exact-partition point "
+            "value 9,394.156 MW to the milli-MW, the whole-ledger diff finds "
+            "zero unclassified rows, and purity holds on D57 section 4's "
+            "per-delivery-year zero-E&AS set. Reads the Sector column PJM's "
+            "EIA-860 plant table already carries and chooses no threshold, "
+            "share or MW"
+        ),
+        "evidence": (
+            "src/market_sim/config/iso_configs.py::_pjm_config "
+            "default_scenario_overrides retirement_sector_gate cite block "
+            "(owner ruling Q56); docs/handoffs/FINDING-capx-d78r2-2026-09-06.md "
+            "sections 3-8 (the identities, W4-prime, the whole-ledger diff, "
+            "the flip condition); docs/handoffs/FINDING-capx-d78r3-2026-09-06.md "
+            "sections 3-5 (W5-double-prime per delivery year, RECOMMEND ARM); "
+            "docs/handoffs/PRECOMMIT-capx-d78arm-2026-09-06.md"
+        ),
+        "requires": "iso-registry",
+    },
     ("CAISO", "negative_renewable_offers"): {
         "identification": "design-decision",
         "source": (

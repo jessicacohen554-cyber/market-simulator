@@ -76,6 +76,51 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-06h — capx D78-ARM / owner ruling Q56: the retirement-screen
+SECTOR GATE is armed for PJM. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for
+PJM's forecast recipes only, and for no backcast and no other ISO at all.**
+
+``retirement_sector_gate`` is armed ``True`` through
+``config/iso_configs.py::_pjm_config`` ``default_scenario_overrides`` — the
+D57/Q44 → D67-ARM → Q55 pattern — **not** a flip of the shared ``ScenarioConfig``
+default, which stays ``False`` (MISO's D53 arm sits on MISO's own ISOConfig the
+same way and is untouched). So there is no
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` entry, no other ISO's key moves, and
+a PJM plain backcast coerces the field back to ``False`` with its key unmoved at
+``3a566deac3a85682``. The bare PJM T1-H recipe advances ``b518f5fe7d02f961`` ->
+``fb16fda2ddb0a94a``; an explicit ``--no-retirement-sector-gate`` reaches the
+pre-arm (Q55) posture and KEEPS ``b518f5fe7d02f961``. Two of the moved legs land
+on keys that already carry a measurement: ``--no-pjm-vre-accreditation-vintage``
+now resolves ``bb6a60239d69508b``, which IS D78-R2's measured arm, and the
+``--no-`` pair of both reaches ``a9c66d8ea25acb9d``, the D67-ARM / D78-R2 graded
+control.
+
+Because the key advances, **nothing is silently re-interpreted**: the D67-ARM
+bundle that held the bare ``pjm-t1h`` id keeps its own key
+(``a9c66d8ea25acb9d``) under its own id and is re-keyed in
+``register_forecast_run.py`` to ``pjm-t1h-pre-d78arm`` **when the armed re-solve
+is registered** — that re-key lands WITH the registration, never before it, so
+``pjm-t1h`` never names a bundle that does not exist. Measured over every
+committed run config at the arm
+(``scripts/probes/capxd78arm_iso_override_no_op_check.py``, records under
+``docs/handoffs/d78arm/``, re-measured at HEAD 2026-09-07): of **173** committed
+configs, the **25 PJM forecast** configs move and **all 148 others — every
+non-PJM config of every ISO, and every backcast config including PJM's two —
+are byte-identical**. The probe
+differences the field's PRE-arm resolution against its POST-arm resolution
+(both off the shipped path) rather than the committed value against the armed
+value, because the field is already armed for MISO: nine pre-D53 MISO bundles
+re-keyed against D53, not against this arm, and are listed, not counted. THREE
+explicit control legs change meaning and are re-pinned in
+``tests/unit/model/test_capacity.py`` with their inverses beside them (the D57
+three-``--no-`` leg ``f1a9881ed29df6cb``, arm B's two-``--no-`` leg
+``944c89de0a74ca63``, and ``--no-pjm-vre-accreditation-vintage`` at
+``bb6a60239d69508b``); adding ``--no-retirement-sector-gate`` to each restores
+its pre-arm literal exactly, so every pre-arm recipe stays both reachable and
+identified. Evidence: ``FINDING-capx-d78r2-2026-09-06.md`` §§3–8,
+``FINDING-capx-d78r3-2026-09-06.md`` §§3–5; execution and every pre-declared
+key ``PRECOMMIT-capx-d78arm-2026-09-06.md`` §2.
+
 **Epoch 2026-09-06g — capx D75-R-ARM / owner ruling Q55: PJM's wind and solar
 are accredited at each delivery year's OWN published ELCC class ratings. A KEY
 ADVANCE, NOT A SAME-KEY INVALIDATION — for PJM's forecast recipes only, and for
