@@ -119,6 +119,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "K", ev: "registration only — read from pjm152_collapse_A/run_config.json; no PJM evidence, no verdict" },
     cc_capacity_reconcile_path: { cell: "U" },
+    cc_summer_derate_reconciled_basis: { cell: "U" },
     cc_mustrun_per_plant: { cell: "K" },
     winter_fuelsec_posture: { cell: "." },
     chp_steam_following: { cell: "K", ev: "pjm-148 (results/calibration/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md) — host-steam successor lane REFUSED, no LP spent" },
