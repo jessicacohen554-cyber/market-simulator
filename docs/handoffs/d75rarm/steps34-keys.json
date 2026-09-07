@@ -1,0 +1,38 @@
+{
+  "head": "f37121bd951fb3b40c74cd866968303ec3d9f9c2",
+  "keys": {
+    "bare pjm-t1h (THE ROW)": "fb16fda2ddb0a94a",
+    "bare + --no-retirement-sector-gate": "b518f5fe7d02f961",
+    "bare + --no-pjm-vre-accreditation-vintage": "bb6a60239d69508b",
+    "bare + both --no-": "a9c66d8ea25acb9d",
+    "D57 off3 (D67+Q55+Q56 on)": "f1a9881ed29df6cb",
+    "D57 off3 + nogate": "1785cb6086cd2b15",
+    "D57 off3 + novre + nogate": "61dfbc5c48af076b",
+    "D57 off3 + nogate + no-req-pub": "d2fe4e2b32aef073",
+    "D57 off2 (arm B)": "944c89de0a74ca63",
+    "D57 off2 + nogate": "ab0237198cff24ad",
+    "D57 off2 + novre + nogate": "2d5bebd2bceed991",
+    "D57 off2 + nogate + no-req-pub": "05cdf4af2b9adef8",
+    "MISO bare": "1f92943f84f42fd0",
+    "NYISO bare": "ee6a3e764324f28f",
+    "NEISO bare": "5b292e24dd752ea4",
+    "CAISO bare": "8f1c3766703a90c4",
+    "ERCOT bare": "46d013cbf1f35d27"
+  },
+  "resolved_pjm_posture": {
+    "pjm_accreditation_design_vintage": true,
+    "pjm_demand_response_supply": true,
+    "capacity_market_supply_clearing_by_iso": {
+      "PJM": true
+    },
+    "capacity_adequacy_requirement_published_by_iso": {
+      "PJM": true
+    },
+    "pjm_vre_accreditation_vintage": true,
+    "retirement_sector_gate": true,
+    "fossil_announced_exits_enabled": true,
+    "ccs_retrofit_capex_co2_scaling": true,
+    "eia860_vintage_tracks_solve_year": false,
+    "pjm_interface_feed_admissibility_gate": false
+  }
+}
