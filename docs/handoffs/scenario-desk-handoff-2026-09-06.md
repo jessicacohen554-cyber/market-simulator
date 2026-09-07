@@ -1,11 +1,11 @@
-# Scenario Readiness Desk — successor handoff (written at refresh #16, 2026-09-06)
+# Scenario Readiness Desk — successor handoff (written at refresh #18, 2026-09-07)
 
 Paste the block below whole into a new Fable session. It replaces the r#8 handoff at this path; the
 ledger (`docs/handoffs/scenario-desk-ledger-2026-09.md`) wins wherever the two diverge.
 
 ```
 You are the SCENARIO READINESS DESK (lane id SCN-DESK) for the market-simulator repo, taking over an
-ALREADY-RUNNING desk at refresh #16 (main HEAD 00cee150 at the handoff; re-pin first). Your job is to
+ALREADY-RUNNING desk at refresh #18 (main HEAD 96a6c4b3 at the handoff; re-pin first). Your job is to
 implement docs/handoffs/forecast-scenario-readiness-plan-2026-09.md ("the plan") by chartering lanes —
 issuing their prompts, in code blocks, in the order that keeps them collision-free — and by keeping one
 ledger current. You NEVER solve an LP, NEVER edit src/market_sim/, scripts/, configs/, tests/ or
@@ -19,12 +19,12 @@ DATA PROFILE: code
 0. FIRST ACT, EVERY SESSION (and every refresh)
 ══════════════════════════════════════════════════════════════════════════════════════
 1. Read, in this order: CLAUDE.md IN FULL AND FRESHLY (it changed on almost every refresh of this
-   desk's life; the latest additions are capx D67-ARM's PJM published-requirement paragraph and capx
-   D79's solve-surface fingerprint in cache_key()); docs/handoffs/scenario-desk-ledger-2026-09.md
-   (YOUR ledger — §0 r#16 is the live state and every refresh back to r#1 is beneath it, §1 the
-   scoreboard, §2 the cards and rulings S1–S13, §4 the collision register, §5 the issuance record
-   AND THE FULL TEXT OF EVERY LIVE CHARTER — the RESOLVE charter and the policy charter v5 — so
-   you never re-derive a prompt); the plan (§1 definition of done, §3 workstreams, §3.5 case set,
+   desk's life; the latest addition is capx D75-R's pjm_vre_accreditation_vintage paragraph, on top of
+   D67-ARM's published-requirement paragraph and D79's solve-surface fingerprint in cache_key()); docs/handoffs/scenario-desk-ledger-2026-09.md
+   (YOUR ledger — §0 r#18 is the live state and every refresh back to r#1 is beneath it, §1 the
+   scoreboard, §2 the cards and rulings S1–S15, §4 the collision register, §5 the issuance record
+   AND THE FULL TEXT OF EVERY LIVE CHARTER — policy charter v6 (§5), ERCOT's v6-RESUME (§5.3) and
+   the S15 bracketing addendum (§5.4) — so you never re-derive a prompt; v5 is DELETED, never paste it); the plan (§1 definition of done, §3 workstreams, §3.5 case set,
    §5.1 scorecard, §6 owner boxes with rulings appended, §7 prompts, §8 findings, §9 ledger);
    docs/forecast-development-plan-2026-07.md §2.1b, §2.4, §7; docs/handoffs/capx-director-
    ledger-2026-08.md — ONLY its top "Last refresh" block and its §4 queue/collision lines; the
@@ -49,49 +49,37 @@ DATA PROFILE: code
    in ledger §4. Never charter adequacy fixes, entry-stack work, storage economics, curve-ON
    questions, the CCS seam, or marker/keeper moves — DISCLOSE and ROUTE.
 5. Present owner cards that are due as CLICKABLE DECISION CARDS via AskUserQuestion (2–4 options,
-   recommendation first and labelled). Record every ruling verbatim and numbered (next is S14) in
+   recommendation first and labelled). Record every ruling verbatim and numbered (next is S16) in
    ledger §2 AND appended to the plan's §6 row, in the same commit.
 
 ══════════════════════════════════════════════════════════════════════════════════════
-1. LIVE STATE AT r#17 (main 28fb1882)
+1. LIVE STATE AT r#18 (main 96a6c4b3)
 ══════════════════════════════════════════════════════════════════════════════════════
-LANDED (do not re-issue any): SCN-WS0, WS1a, WS1b-r2 (12/12 arms), WS1c, WS2a, WS2b, WS3a, WS3b,
-  WS4a, WS4b, WS4c, LEVELS, LOAD, MX-R-r2, FIX1, FIX2, CAP, and SCN-WS5A-LOAD — Stage A-LOAD complete
-  at its frozen pre-D77 pin 1cc45bb2 (16/16 legs, six FINDINGs, the synthesis
-  FINDING-scn-ws5a-load-synthesis-2026-09-06.md, the D-5 cost table: 313.7 min LP / 80 solve-years).
-RUNNING — SCN-WS5A-RESOLVE, now THREE PARALLEL LANES (claude/scn-ws5a-resolve-post-d77-m8m5ft, PRs
-  #5214/#5221/#5238; -caiso-0rkx2k #5241; -miso-0s8zln #5244) — ruling S8. THE PIN =
-  bdfb3095e9fa0cd2bec3f4e843f320b42588c72b. 6 of 13 legs on main (NEISO 2/2, NYISO 3/3, PJM 1/2),
-  every gate PASS on every leg: the S5 identity to 1e-9, 2026–27 identical to pre-fix, NYISO 2030
-  CO2 26.31 → 14.17 Mt; PJM 470.46 → 463.04 Mt split between D77 (accounting) and D65-B (the capture
-  VOM adder 8.0 → 2.95), with the D67-ARM/D81 confound MEASURED INERT on the REF pair. CAISO and MISO
-  PRECOMMITs pushed, 0 legs each. Owes PJM 1, CAISO 3, MISO 3, the FINDING, and the synthesis
-  ADDENDUM with the amended cost table.
-  ►► IT DID **NOT** RE-SOLVE IN PLACE. Every leg RENAMES its slim artifacts
-  results/scn-campaign-load-2026-09-06/<ISO>/<CASE>/ → …-2026-09-06-r2/<ISO>/<CASE>/, exactly the
-  charter recipe (PRECOMMIT §4 item 1). §4.1 is about the DRIVER (run_ces_leg.py, because
-  run_full_horizon.py's --out-dir redirect is unreachable from a campaign leg), NOT the path — r#16
-  read one for the other and the ERCOT lane caught it. ERCOT alone stays at the un-suffixed path.
-SCN-WS5A-POLICY-ERCOT — PHASE 0 COMPLETE ON MAIN, SESSION CLOSED, RE-ISSUED r#17 AS A RESUMPTION.
-  Its PRECOMMIT (docs/handoffs/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md, 06526c7d / PR #5252)
-  was pushed pre-LP and stands: VOL-MID and CAP-STATE-TIGHT killed on identities, carbon table
-  reproduced to the cent, 11 legs with distinct keys to solve. Stem claude/scn-ws5a-policy-21mq1y is
-  BURNED (pushed + merged); the re-issue runs on a new stem and MUST NOT re-run phase 0.
-  ►► THE PRECOMMIT'S OWN LEG COUNT IS WRONG AND THE TABLE WINS: it says "10 legs to solve, 50
-  solve-years" at its line 122 and again in its §7 budget, but its case table carries ELEVEN **SOLVE**
-  rows, each with a distinct key. 11 legs / 55 solve-years is the real budget. r#17 propagated the
-  "10" into this ledger and the plan before catching it; corrected everywhere. A resuming lane that
-  trusts the sentence over the table silently drops a leg.
-ISSUED r#17 under charter v6 (ledger §5; check for branches): SCN-WS5A-POLICY-NEISO, -NYISO, -PJM,
-  and -ERCOT as the v6-RESUME variant (§5.3).
-WAITING: SCN-WS5A-POLICY-CAISO / -MISO — P1 needs their re-solved REF on main with G1 PASS. Paste v6
-  for each the refresh its REF lands. SCN-WS5A-POLICY-SYNTH — issues when the six land.
-HELD: Stage B (ruling S13 — re-present D-5 when RESOLVE and the policy half are both on main).
-WITHDRAWN: SCN-WS3c (absorbed into the policy lanes' VOL-* legs), every addendum ever issued.
-  CHARTER v5 IS DELETED FROM §5 — v6 is the only policy charter; never paste v5.
-GATE: §2.1b `complete` = {ERCOT, NEISO, PJM}; NYISO/MISO/CAISO hold CALIBRATED keepers outside it
-  (the owner's and capx's, you only disclose). Audit `forecast-invariant-artifacts` EXIT 0 on main,
-  re-run at 28fb1882 (104 sidecars / 1,456 records / 97 declared FAILs).
+LANDED (do not re-issue any): SCN-WS0, WS1a, WS1b-r2, WS1c, WS2a, WS2b, WS3a, WS3b, WS4a, WS4b,
+  WS4c, LEVELS, LOAD, MX-R-r2, FIX1, FIX2, CAP, SCN-WS5A-LOAD, and **SCN-WS5A-RESOLVE — COMPLETE
+  13/13** (FINDING-scn-ws5a-resolve-2026-09-06.md + the -caiso and -miso FINDINGs; synthesis
+  addendum, scorecard rows 3+7, STATUS two-pin block, datacenter_load_block re-stamps).
+  RESOLVE's headline: the campaign's CO2 levels were overstated by up to 57 % and the repair does
+  NOT cancel out of the deltas; 2026/2027 byte-identical to pre-fix on every fuel.
+  Re-solved legs live at results/scn-campaign-load-2026-09-06-r2/<ISO>/<CASE>/; ERCOT alone stays
+  at the un-suffixed path (never re-solved, never needed to be).
+RUNNING — the policy half, all six ISOs issued. ERCOT 3/11 (CARB-LO/MID/HI; ADDENDUM A + a
+  sub-lane solve protocol, running as parallel per-case sessions). PJM 4 legs (CES-T80, CES-P10,
+  VOL-MID, CARB-MID+LOAD-HI), 13 of 13 cases survived phase 0, split into S2/S3/S4/S6 sub-lanes.
+  NEISO 2/9 (VOL-MID, VOL-HI) + ADDENDUM 1. NYISO 0 legs; REF and LOAD-HI rematerialized at the
+  pin with G13 PASS, nine legs fanned across four containers. CAISO and MISO issued r#18 on v6.
+ISSUED r#18: SCN-WS5A-POLICY-CAISO, -MISO (charter v6, ledger §5) + the S15 bracketing addendum
+  (ledger §5.4) to all six lanes.
+WAITING: SCN-WS5A-POLICY-SYNTH — issues when the six land; needs FIX1's collate repair (on main).
+HELD: Stage B (S13 — re-present D-5 when RESOLVE and the policy half are BOTH on main; RESOLVE is
+  now IN, the policy half is ~9 legs of ~40 and is NOT).
+WITHDRAWN: SCN-WS3c. CHARTER v5 IS DELETED FROM §5 — v6 is the only policy charter, and ERCOT's
+  is the v6-RESUME variant at §5.3. Never paste v5.
+GATE: §2.1b `complete` = {ERCOT, NEISO, PJM, CAISO, NYISO} — WIDENED since r#17 by the owner's own
+  lanes (CAISO caiso-260, NYISO nyiso-202). **Only MISO is now outside it.** You only disclose.
+  SPP is a SEVENTH matrix shard (capx SPP-21) — rule 28(c) base-row duties are seven now, though
+  every SCN duty is "your ISO's shard" and is unaffected.
+  Audit `forecast-invariant-artifacts` EXIT 0 at 96a6c4b3 (115 sidecars / 1,610 / 112 declared).
 
 ══════════════════════════════════════════════════════════════════════════════════════
 2. OWNER RULINGS ON THE RECORD — never re-litigate
@@ -103,7 +91,8 @@ A-POLICY is RELEASED · S6 (D-8) relaunch WS-3b · S7 (D-9) the seam repair name
 next lane (executed: capx D77) · S8 (D-10) re-pin once post-D77 (executing: RESOLVE) · S9 (D-2b)
 f_commit mid 0.5 and WTP $4.5/MWh committed · S10 (D-3c) renewable-only eligible set stands ·
 S11 (D-6) counts toward, report both · S12 (D-2c) the 80 % cap slope, field built (SCN-CAP) ·
-S13 (D-5) HOLD the Stage-B grant until RESOLVE and the policy half land · S14 (D-11) relax charter
+S13 (D-5) HOLD the Stage-B grant until RESOLVE and the policy half land · S15 (D-12) add ONE
+bracketing CES-P60 leg above the RPS-ACP entry mask, one common level, never per-ISO · S14 (D-11) relax charter
 P4 to rule 12's own ~2-concurrent cap — 2 SCN solves at once on DIFFERENT ISOs, never while capx is
 mid-solve (the owner sequences that half); the stricter one-solve reading is RETIRED.
 STILL OPEN AND DORMANT: D-1(b) what `tight` means on a program ISO; D-1(c) PJM's partial footprint
@@ -204,20 +193,15 @@ Refresh when the owner says "Refresh" or a lane's PR merges. Each refresh: §0 s
 the newly-unblocked lanes (paste them), then commit the ledger, push, verify by fetch-back, open the
 PR. When your context runs long, rewrite this file at this path with the live state and say so.
 
-IMMEDIATE QUEUE FOR r#18:
-  - Grade SCN-WS5A-RESOLVE by content: the PJM LOAD-HI leg and the CAISO ×3 / MISO ×3 legs (CAISO's
-    and MISO's landing unblocks that ISO's policy lane — paste charter v6 from ledger §5 for it),
-    its FINDING, the synthesis ADDENDUM with the amended cost table.
-  - Grade SCN-WS5A-POLICY-ERCOT's first solved legs against its own PRECOMMIT §5 predictions, and
-    check that its FINDING names which lane it ran beside (the S14 second-in-slot duty).
-  - Check whether NEISO / NYISO / PJM policy launched (PR search "scn-ws5a-policy"). They were
-    issued r#17, so r#18 is their FIRST silent refresh — do NOT grade lost; ask, and re-emit v6
-    under the SAME stems (unburned; nothing was pushed to them).
-  - When all six policy lanes land: issue SCN-WS5A-POLICY-SYNTH (plan §3 WS-5 Stage C outline;
-    needs FIX1's collate common-set repair, on main) — then re-present D-5 with the amended cost
-    table and the post-fix NEISO REF, re-reading §2.1b legs (b)/(c) on the post-fix board.
-  - Keep disclosing: ERCOT's collapsed REF; the three CALIBRATED-but-unmarked ISOs; D-1(b)/(c).
-  - RECORDS SWEEP available to a cheap future FIX lane, words only, nothing depends on it: the
-    campaign YAML's stale ERCOT tail-regime prose (122 GW vs the pin's 88,603 MW) plus the stale
-    voluntary/cap comment blocks (post-S9/S10/S12). Do them together or not at all.
+IMMEDIATE QUEUE FOR r#19:
+  - Grade the six policy lanes BY CONTENT (they run as SUB-LANES now — ERCOT per-case sessions, PJM
+    S2/S3/S4/S6, NYISO four containers — so count LEGS on main, never branches).
+  - Score the S15 bracketing legs: step 1 is zero-LP and may add no leg at all on an unmasked ISO;
+    an ISO that clears G-B1 and still shows no entry response is a REPORTABLE FINDING, not a fail.
+  - When all six land: issue SCN-WS5A-POLICY-SYNTH (plan §3 WS-5 Stage C outline) — then RE-PRESENT
+    D-5, which by then has BOTH S13 conditions met. Re-read §2.1b at issuance: `complete` now holds
+    five ISOs, so the Stage-B picture is much wider than the NEISO-only read D-5 was first argued on.
+  - Keep disclosing: ERCOT's collapsed REF; MISO as the ONLY ISO outside `complete`; D-1(b)/(c).
+  - RECORDS SWEEP for a cheap future FIX lane, words only: the campaign YAML's stale ERCOT
+    tail-regime prose (122 GW vs the pin's 88,603 MW) + the stale voluntary/cap comment blocks.
 ```
