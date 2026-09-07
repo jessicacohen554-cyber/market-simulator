@@ -1364,6 +1364,7 @@ results/capacity-hindcast/**/screen_signal_diag_*.npz
 # PRECOMMIT/ADDENDUM carry every number this session will ever cite from it, so
 # git history is the record exactly as rule 15 says of pruned runs.
 results/calibration/caiso262_bench_scaffold/
+results/calibration/caiso262_repro2023/
 
 # SPP-48: the shared wind-shape builder's reanalysis memo. R-LEVEL reads NASA
 # POWER at EVERY operable wind plant (SPP 230, MISO 360, per year), so the
