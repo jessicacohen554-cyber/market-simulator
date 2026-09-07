@@ -144,6 +144,19 @@ class TestSppNeutralCoalBands(unittest.TestCase):
         # The structural share is not a band and stays generic.
         self.assertEqual(coal["econ_low_share"], 0.55)
 
+    def test_spp_supply_class_coal_entries_are_neutral(self):
+        # SPP-42 (2026-09-07): once coal_supply_SPP.csv tags each plant
+        # prb / lignite, the offer path resolves COAL_PRB / COAL_LIGNITE
+        # (fleet._COAL_SUPPLY_TO_CURVE) instead of COAL, so the identity is
+        # carried on every coal key — the crosswalk moves the class label,
+        # never the offer. The structural share stays the value SPP coal read
+        # from the generic COAL entry before the crosswalk.
+        curve = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group
+        for cls in ("COAL", "COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC"):
+            for band in self._BANDS:
+                self.assertEqual(curve[cls][band], 1.0, (cls, band))
+            self.assertEqual(curve[cls]["econ_low_share"], 0.55, cls)
+
     def test_spp_gas_bands_are_neutral_too(self):
         curve = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group
         for cls in ("CC_REGULAR", "CC_CHP", "CT_CHP", "CT_PEAKER", "ST_GAS"):
