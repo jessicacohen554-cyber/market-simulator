@@ -57,11 +57,40 @@ from market_sim.data.eia_loader import _eia_hourly_frame_filled  # noqa: E402
 import scripts.legitimacy_diagnostics as L  # noqa: E402
 
 ISO = "CAISO"
-YEARS = (2023, 2024, 2025)
+# 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint): the
+# keeper runs ``caiso_supply_consistent_demand=True`` and the loader RAISES
+# rather than falling back, so without the 2022 artifact the touchpoint cannot
+# solve at all. Same producer, same construction, same sources — only the year
+# is new. NOTE this script takes NO arguments and REWRITES every year listed
+# here on any invocation; the 2023-2025 outputs are asserted sha256-identical
+# after the run (PRECOMMIT-caiso262 A-7).
+YEARS = (2022, 2023, 2024, 2025)
 HOURS = 8760
 # FINDING §6 pre-registered annual levels (TWh) ±1.5 TWh tolerance: a derive
 # outside these windows means an input drifted — refuse to write.
-_ANNUAL_GUARD = {2023: (206.2, 209.2), 2024: (210.9, 213.9), 2025: (203.8, 206.8)}
+#
+# 2022's window is NOT a FINDING §6 level — none exists for a year never
+# derived, and a window fitted to this derive's own output would guard nothing.
+# It is **G-DEMAND-2022** (PRECOMMIT-caiso262 §5.2), a WEDGE band fixed from
+# the COMMITTED 2023-2025 artifacts BEFORE the 2022 derive ran, where
+#     wedge(y) = [930 CISO NetGen - TI](y) - derived demand(y)
+# measured +5.416 / +10.780 / +17.675 TWh for 2023/24/25. The admissible 2022
+# wedge is [-1.5, max(wedge) + 1.5] = [-1.500, +19.175] TWh, and the 2022 930
+# identity total is 218.809 TWh, giving the window below. The band is
+# one-sided-generous by design: it is computable ex ante, is not fitted to
+# 2022, and catches the failure it must (a corrupt NG cell, a missing CEMS
+# block, a clock slip), while not pretending to pin a level nobody has
+# measured. DIRECTION REPORTED, NOT GATED: the NG-cell corruption onset is
+# ~2024-05 (caiso-80 FINDING §6) and the wedge grows monotonically with it, so
+# 2022 is EXPECTED to sit near or below 2023's +5.4 rather than near 2025's
+# +17.7; if it does not, that is a finding to report, never a reason to move
+# the band.
+_ANNUAL_GUARD = {
+    2022: (199.6, 220.3),
+    2023: (206.2, 209.2),
+    2024: (210.9, 213.9),
+    2025: (203.8, 206.8),
+}
 # Committed-anchor reproduction tolerance (TWh) for the decoded CEMS hourly.
 _ANCHOR_TOL = 0.1
 

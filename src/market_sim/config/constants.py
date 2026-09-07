@@ -2339,6 +2339,17 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # Apr-May 2024, U1 Apr-May 2025 and U2 Oct 2025.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
     "CAISO": {
+        # 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint):
+        # same producer, same source, same recipe as the rows below —
+        # `derive_nuclear_monthly_cf.py --isos CAISO --years 2022` over EIA-923
+        # Page 1 monthly net generation. The 2023-2025 rows were re-derived in
+        # the SAME run as the producer re-proof (`--check`) and came back
+        # byte-identical, so no existing year's values moved. The Apr 0.54 /
+        # Oct 0.73 / Nov 0.58 dips are Diablo Canyon's 2022 refuelling outages
+        # (the two units refuel on alternating spring/fall cycles), which is
+        # the level anchor a 2022 rung would otherwise smear into the static
+        # seasonal pattern.
+        2022: [0.99, 0.98, 0.88, 0.54, 1.00, 1.00, 1.00, 1.00, 1.00, 0.73, 0.58, 1.00],
         2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
         2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
         2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],

@@ -54,6 +54,9 @@ from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
     YEARS,
     corridor_net_import,
 )
+from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
+    extra_years as _extra_years,
+)
 
 HOURS = 8760
 OVERNIGHT_HOD_MAX = 5  # hod 0-5 inclusive — FINDING-caiso91c/92b window
@@ -63,22 +66,25 @@ LOYO_MAX = 0.25
 
 def main() -> None:
     """Derive per-year unconditional overnight depths; exit 0 PASS / 2 FAIL."""
-    net = corridor_net_import()
+    extra = _extra_years(sys.argv[1:])
+    net = corridor_net_import(years=(*YEARS, *extra))
     hod = np.arange(HOURS) % 24
     overnight = hod <= OVERNIGHT_HOD_MAX
 
     depths: dict[int, float] = {}
     print("=== CAISO unconditional overnight (hod 0-5) WECC_DSW clean depth ===")
-    for yr in YEARS:
+    for yr in (*YEARS, *extra):
         flow = net.loc[yr]["WECC_DSW"].to_numpy()
         m = overnight & np.isfinite(flow)
         depths[yr] = float(np.percentile(flow[m], 95))
+        tag = "  [report-only, outside the gated sample]" if yr in extra else ""
         print(
             f"  {yr}: n={int(m.sum())} overnight hours -> mean "
             f"{flow[m].mean():,.0f} / p50 {np.percentile(flow[m], 50):,.0f} / "
-            f"p95 {depths[yr]:,.0f} MW"
+            f"p95 {depths[yr]:,.0f} MW{tag}"
         )
 
+    # Gates over the COMMITTED sample only — see extra_years' docstring.
     vals = np.array([depths[y] for y in YEARS])
     cv = float(vals.std() / vals.mean())
     g_cv = cv <= CV_MAX

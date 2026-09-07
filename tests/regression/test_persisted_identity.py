@@ -481,9 +481,43 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   `moved_rows("ERCOT")` still names `NUCLEAR_MONTHLY_CF_BY_YEAR` alone. It
 #   changes no year's solve but 2019-2021, which the table alone reaches; 2022
 #   onward are listed at exactly the shipped defaults.
+#
+# 2026-09-07 CAISO ADVANCED (caiso-262, the rule-22 2022 validation touchpoint).
+#   WHAT MOVED: two by-ISO tables, both by ADDING a 2022 key and moving NO
+#   existing year's value (hence the row count stays 202 — nothing was added
+#   or removed from the surface, only two existing rows changed value).
+#     1. `STATE_CARBON_PRICE_BY_ISO["CAISO"]` — 2022 = $28.45/t, the simple
+#        mean of that year's four CA-Quebec joint-auction current-vintage
+#        settlement prices (Feb $29.15, May $30.85, Aug $27.00, Nov $26.80),
+#        the identical recipe and source the 2023-2025 rows carry, each price
+#        attributed to its own CARB press release and cross-checked against
+#        EDF Climate 411 before it was written.
+#     2. `NUCLEAR_MONTHLY_CF_BY_YEAR["CAISO"]` — the 2022 monthly CF vector
+#        from `derive_nuclear_monthly_cf.py --isos CAISO --years 2022` over
+#        EIA-923 Page 1. The 2023-2025 rows were re-derived in the SAME run as
+#        the producer re-proof (`--check`) and came back byte-identical, so no
+#        existing year's values moved.
+#   WHICH ISOs: CAISO only — `moved_rows` is `{}` for MISO/PJM/NYISO/NEISO and
+#   names only ERCOT's own pre-existing NUCLEAR_MONTHLY_CF_BY_YEAR entry for
+#   ERCOT (rule 25 [R-ISO-SCOPE]; the by-ISO table shape is what confines it).
+#   WHY: rule 22 [R-HOLDOUT] — "what is held out is the SCORE, never the DATA".
+#   Both were SILENT fallbacks measured before they were fixed: without its row
+#   `state_carbon_price` returns None and `resolve_carbon_price(CAISO, 2022)`
+#   reads $0.00/tCO2 against 33.03/35.23/28.06 in the tuned years (~$11-12/MWh
+#   on a gas CC, and merit-order distorting since the CC-to-steam rate spread
+#   is ~2.9x) — the NYISO-134 D-1 defect, CAISO edition; and the nuclear CF
+#   would fall back to the static seasonal pattern, losing Diablo Canyon's 2022
+#   refuelling outages (Apr 0.54 / Oct 0.73 / Nov 0.58).
+#   WHAT IT COSTS: every future CAISO solve re-keys, so the keeper's cached
+#   results are no longer served by key. It does NOT change any committed
+#   number — a 2023-2025 solve reads only its own year's row from each table
+#   and every one of those is unchanged, so a re-solve reproduces the keeper
+#   bundle. (The same session also added 2022 rows to the CAISO import-tranche
+#   and DSW clean-depth tables, but those live in `model/interchange/spec.py`,
+#   which design §2.3 puts OUT of phase 1 — they move no fingerprint here.)
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("3fa1fe6b34dba665", 226),
-    "CAISO": ("22e6fdb4a5a23589", 202),
+    "CAISO": ("f4057d6db19fe8d3", 202),
     "MISO": ("8ee657ee4c7c49b0", 208),
     "PJM": ("0f749d17202c32d9", 211),
     "NYISO": ("48353917f7510af3", 206),
@@ -546,6 +580,22 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
             "ercot-253 2026-09-06: the 2021 row ADDED for the rule-22 "
             "validation ladder (no existing year's values moved) — see the "
             "cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+    },
+    "CAISO": {
+        "STATE_CARBON_PRICE_BY_ISO": (
+            "caiso-262 2026-09-07: the 2022 row ADDED for the rule-22 "
+            "validation touchpoint — $28.45/t, the four CA-Quebec joint "
+            "auctions' mean, same recipe as 2023-2025; without it the 2022 "
+            "CARB allowance cost read $0/tCO2 (no existing year's values "
+            "moved) — see the cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+        "NUCLEAR_MONTHLY_CF_BY_YEAR": (
+            "caiso-262 2026-09-07: the 2022 row ADDED for the rule-22 "
+            "validation touchpoint, EIA-923 Page 1 via "
+            "derive_nuclear_monthly_cf.py; the 2023-2025 rows re-derived in "
+            "the same run came back byte-identical (no existing year's values "
+            "moved) — see the cause block on PINNED_SURFACE_ROWS_BY_ISO"
         ),
     },
 }
