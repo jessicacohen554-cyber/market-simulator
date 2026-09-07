@@ -6725,11 +6725,12 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         _nod76 = dict(capacity_screen_peak_measured_hindcast=False)
         _novre = dict(pjm_vre_accreditation_vintage=False)
         _nogate = dict(retirement_sector_gate=False)
-        self.assertEqual(_key("PJM"), "f736025631d0d27e")  # = the D78-ARM posture
-        self.assertEqual(_key("PJM", **_nogate), "559c05579b47684b")  # = D75-R-ARM
-        self.assertEqual(_key("PJM", **_novre), "f577130c7aa36742")  # = D78-R2's arm
+        _nod84 = dict(pjm_thermal_accreditation_vintage=False)
+        self.assertEqual(_key("PJM"), "b9fa47dedb6c3319")  # = the D78-ARM posture
+        self.assertEqual(_key("PJM", **_nogate), "3b3c0463b53e2df0")  # = D75-R-ARM
+        self.assertEqual(_key("PJM", **_novre), "02b4d92349186a1e")  # = D78-R2's arm
         self.assertEqual(
-            _key("PJM", **_novre, **_nogate), "fd07e2dba50cd32b"
+            _key("PJM", **_novre, **_nogate), "0200586e10655e64"
         )  # = D67-ARM
         _off3 = dict(
             pjm_accreditation_design_vintage=False,
@@ -6737,12 +6738,12 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             capacity_market_supply_clearing=False,
         )
         self.assertEqual(
-            _key("PJM", **_off3), "46b2c0bceac36258"
+            _key("PJM", **_off3), "8f74247fb042eec9"
         )  # D57 off, D67+Q55+Q56 on
         self.assertEqual(
-            _key("PJM", **_off3, **_nogate), "e8d2c8577f93c6ef"
+            _key("PJM", **_off3, **_nogate), "943d161f2da63444"
         )  # D57 off, D67+D75R on
-        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "9bee91343c5e7f5a")
+        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "18de6fa20f8afa85")
         self.assertEqual(
             _key(
                 "PJM",
@@ -6750,7 +6751,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "f9c3584d6037fc58",  # D57 + D67 off, D75-R still on
+            "e8d661da3f81715f",  # D57 + D67 off, D75-R still on
         )
         self.assertEqual(
             _key(
@@ -6760,19 +6761,19 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "446401b0bae76068",  # = D45-R's bare key, the explicit control
+            "dde282050c2fa058",  # = D45-R's bare key, the explicit control
         )
         _off2 = dict(
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
         )
         self.assertEqual(
-            _key("PJM", **_off2), "d9839b6943dfd93e"
+            _key("PJM", **_off2), "d3fd2763909b5df8"
         )  # arm B, D67+Q55+Q56 on
         self.assertEqual(
-            _key("PJM", **_off2, **_nogate), "61443629327a35f5"
+            _key("PJM", **_off2, **_nogate), "8bcecb48a7db00bc"
         )  # arm B, D67+D75R on
-        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "a1b48ed68ae26809")
+        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "7036962575091ca1")
         self.assertEqual(
             _key(
                 "PJM",
@@ -6780,7 +6781,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "b2d170699f5a6536",  # D57 partial + D67 off, D75-R still on
+            "4c296bc13ff12be2",  # D57 partial + D67 off, D75-R still on
         )
         self.assertEqual(
             _key(
@@ -6790,11 +6791,35 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "72f7931efb6e7a27",  # = arm B
+            "daed452f928e9c45",  # = arm B
         )
         # The (b'-1) inverse, enforced: the pre-D76-ARM-B bare recipe is still
         # reachable and still carries its own key.
-        self.assertEqual(_key("PJM", **_nod76), "fb16fda2ddb0a94a")
+        self.assertEqual(_key("PJM", **_nod76), "bb4fd42e6d1f9e81")
+        # capx D84-ARM (owner ruling 2026-09-07, served by
+        # FINDING-capx-d84-2026-09-07.md §8): an EIGHTH field is armed through
+        # the ``_pjm_config`` override path — ``pjm_thermal_accreditation_
+        # vintage``, the THERMAL RATING half of the D48 devintage (the VRE half
+        # is Q55 above) — so every leg here re-keys, for the same structural
+        # cause the five arms above document: the field is a
+        # ``_CACHE_KEY_OPTIONAL_FIELDS`` member registered at ``False``, so it
+        # is dropped from the hash while unarmed and enters it once armed, on
+        # every PJM forecast leg whatever the other flags say — even the legs
+        # where the mechanism is INERT because its predicate also needs
+        # ``pjm_accreditation_design_vintage`` (inertness is a solve property,
+        # not a hash property).
+        #
+        # MEASURED, not assumed, for ALL FIFTEEN legs: adding
+        # ``pjm_thermal_accreditation_vintage=False`` to each restores its
+        # pre-arm literal EXACTLY, 15 of 15, so the whole move is this one
+        # field's and every pre-arm PJM recipe stays both reachable and
+        # identified by its own key (PRECOMMIT-capx-d84arm-2026-09-07.md §3;
+        # FINDING-capx-d84arm-2026-09-07.md §3). The post-arm bare key
+        # ``b9fa47dedb6c3319`` is D84's OWN measured full-window arm key — its
+        # control is the pre-arm bare recipe ``f736025631d0d27e`` to the digit
+        # — so the arm reproduces the recipe the A/B was measured on rather
+        # than naming a new one, and the registration owed no re-solve.
+        self.assertEqual(_key("PJM", **_nod84), "f736025631d0d27e")
         # Every other ISO resolves the PJM fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25). The sector gate is
         # ISO-agnostic in form and armed PER ISO on that ISO's own ISOConfig:

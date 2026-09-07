@@ -1363,6 +1363,74 @@ def _pjm_config() -> ISOConfig:
             # card B's remaining half. Execution:
             # PRECOMMIT-capx-d75r-arm-2026-09-06.md.
             "pjm_vre_accreditation_vintage": True,
+            # capx D84-ARM, OWNER RULING 2026-09-07 (served by
+            # FINDING-capx-d84-2026-09-07.md §8's card; execution
+            # PRECOMMIT-capx-d84arm-2026-09-07.md) on the measured D84 A/B.
+            # The THERMAL RATING half of the same D48 accreditation-design
+            # devintage the two entries above already carry: PJM's
+            # dispatchable classes are accredited at the delivery year's OWN
+            # published ELCC class ratings
+            # (constants.THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO) instead of
+            # the single-vintage 2026/2027 BRA table
+            # (THERMAL_ELCC_CLASS_RATING_BY_ISO), which the model applies to
+            # EVERY post-reform delivery year — including DY 2025/2026, the
+            # FIRST year of the ELCC-class design
+            # (THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"]),
+            # whose own published final (3IA, posted 2025-03-12) ratings
+            # differ: gas CC 78 vs 74, CT 63 vs 60, steam 74 vs 73, diesel
+            # 92 vs 91 (nuclear and coal equal).
+            #
+            # A SUB-GATE INSIDE the D48 family, not a mechanism beside it
+            # (rule 19 [R-ONE-MECH]): the predicate also requires
+            # ``pjm_accreditation_design_vintage``, which this same override
+            # block arms, so the RATING and BASIS axes are devintaged together
+            # or not at all. Pre-reform delivery years never reach the
+            # registry — the basis resolver has already returned "ucap" — so
+            # the two axes COMPOSE rather than stack.
+            #
+            # WHY, and the rule that decides it: rule 14 [R-ACCURATE], alone
+            # and dispositive — these are PJM's OWN published accreditation
+            # values for the delivery year the auction actually settled on.
+            # The rule requires preferring the published vintage WHATEVER it
+            # does to the fit, and D84 states it would have built the same
+            # mechanism had the residual moved the other way (rule 1
+            # [R-STRUCT]: a vintage is never selected by what it does to a
+            # criterion). ZERO scalar fields, ZERO free parameters and —
+            # unlike the VRE half — ZERO reconciliations (PJM rates each
+            # model thermal class with exactly one published class); every
+            # rating reconciles byte-for-byte to
+            # data/raw/capacity-market/elcc/pjm/pjm.csv by
+            # tests/unit/data/test_thermal_elcc_vintage_ratings.py.
+            #
+            # MEASURED (FINDING §5): accredited thermal +3,105.648 MW in DY
+            # 2025/2026 — the ONLY window delivery year on the ELCC axis —
+            # against the identity's predicted +3,105.6475, a gap of
+            # 0.00046 MW; exactly 0.000 MW and byte-identical ledgers in
+            # 2021-2024; only gas_cc / gas_ct / oil / gas_st move. ALL 361
+            # substantive scored records byte-identical between arms (26
+            # bands, zero flips either way).
+            #
+            # WHAT IT DOES NOT CLOSE, at the gate: all three published DY
+            # 2025/26 comparators move AWAY (cleared MW +481.708 further
+            # above published on both D66 frames; price 34.961 $/MW-day
+            # further below the published 269.92) — rule 14's "treat the
+            # worse fit as a discovered bug" case, reported at full
+            # magnitude and never a reason to restore a foreign vintage;
+            # unit_recall_gt300 and false_retire stay FAIL; and the Q56/D57
+            # collision below (100.0 % of the newly-uncleared MW is
+            # sector-1, so the clearing's failing set moves while nothing in
+            # it can exit) is REPORTED, not resolved (FINDING §9 item 1).
+            #
+            # POSTURE: this ISO override, never a (b'-1) shared-default flip.
+            # Measured at the arm over every committed run config
+            # (scripts/probes/capxd84arm_iso_override_no_op_check.py, records
+            # docs/handoffs/d84arm/): 33 of 227 move, ALL PJM/forecast; zero
+            # non-PJM and zero backcast, so every other ISO and every
+            # backcast keeper is byte-identical. Bare pjm-t1h
+            # f736025631d0d27e -> b9fa47dedb6c3319;
+            # --no-pjm-thermal-accreditation-vintage reaches the pre-arm
+            # posture and keeps its key.
+            "pjm_thermal_accreditation_vintage": True,
             # capx D78-ARM, OWNER RULING Q56 (served by
             # FINDING-capx-d78r3-2026-09-06.md §5 "RECOMMEND ARM"; ruled ARM
             # in this lane's charter) on the measured D78-R2 / D78-R3 full
