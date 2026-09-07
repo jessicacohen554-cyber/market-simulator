@@ -12998,3 +12998,100 @@ probe `scripts/probes/_miso239_merit_ladder_property_attribution_phase0.py` with
 `_miso239_merit_ladder_property_attribution_phase0.json` beside it. Rule 28(b) evidence appended
 to `seam_neighbour_hourly_ladder` and `seam_flow_envelopes` in **MISO's shard only** (rule 25),
 with the `§5.4` queue stamp.
+
+## miso-240 — 2026-09-07 — **QUEUE ITEM 1 CLOSES: `p(MISO_external)` IS the MISO Midwest energy price, so `s`'s own-net-load response is REAL, and NO DOF-FREE FORM EXISTS to charter**
+
+**Zero LP. No arm, no screen, no bundle, no registration, no field, no cell verdict.** Keeper
+UNCHANGED at `2026-09-07-miso-233-spp-hourly` (bundle `miso233_sppseam_K`), DETERMINATION
+**CALIBRATED**, C3c the single ledgered caveat, DOF **41/2**. Rule 22: 2023–2025 only; MISO holds
+no `complete` marker and no out-of-training year was solved, scored or registered. MISO still
+carries exactly one registered run (rule 15).
+
+Pre-registration `PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md` pushed
+at `5c503155` **before any adjudicating quantity**, with two addenda each pushed **before the
+numbers it governs** (`9316432b`, `c62ad456`); the probe itself was pushed before it was run.
+
+### The gate rejected this session's own instrument, and that is why the rest is trustworthy
+
+`G-ID2` FAILED at **869.6 MW** against a 1e-9 bar, in one cell of six (the other five read
+1.5e-11 to 9.4e-11). The cause was an interval-convention error in this session's own bin-impurity
+predicate — no predecessor quantity and no object implicated. The second ADDENDUM declared the
+repair before the repaired numbers existed, **moved no bar**, made impurity empirical and
+convention-free, and added a **stricter** gating leg `G-ID2b` (`n_impure ≤ n_crossed`, both
+ladders × three years, **6/6 PASS**). The §3 values had been emitted by the failing run and had
+been seen; that is disclosed, and the addendum's declared no-move check was **verified and
+published** — whole-report exact equality against a committed pre-repair artifact, **every verdict
+identical**. All **eight** legs then pass, reproducing miso-238's and miso-239's published columns
+to ≤ 0.004 of bar on an independent code path (`γ_MERIT` −870.18/−930.93/−791.43, shares
+0.668/0.306/0.026 · 0.284/0.682/0.035 · 0.731/0.221/0.048, `γ_np(p1)` −677.62/−662.69/−590.15,
+`γ_np(s)` −15.70/+2.00/−4.41, `γ_model` −866.18/−1043.37/−843.45, G-X0 0.000000 MW).
+
+### Q-A — INTERNAL-PRICE FORMATION. Deliverable (a) is answered and the premise fails
+
+On the keeper's **own committed P1 zonal duals** (not a reconstruction), `p(MISO_external)` ties a
+border zone in **0.9993 / 0.9999 / 1.0000** of hours and ties **all four** border zones in
+**0.9991 / 0.9999 / 1.0000**; a seam offer level sets it in **0.0007 / 0.0000 / 0.0000**.
+Invariant at `τ` = $0.001 / $0.01 / $0.10, to four decimals. **`p_ext` IS the MISO Midwest energy
+price**, so `s = p_bus − p_border` is a real footprint's import economics and its own-net-load
+response is a **REAL seam property, not a modelling artefact.**
+
+### Q-D — STAR-COUPLING INERT at exactly zero: the only DOF-free candidate is refused before an LP
+
+The per-seam external-node split — the transform `split_miso_south_external_node` already performs
+for South, over the tie geography already committed in `IMPORT_NODE_LINKS["MISO"]` — measures
+**0 hours out of 26,280** in all three years and all three `τ`. A node price-identical to every
+zone it touches cannot misprice any seam against them, so splitting it cannot move the merit
+signal **by construction**. Refused at zero LP, which is what rule 29 clause 0 exists to produce.
+
+### Q-C / Q-C2 — deliverable (b), and a suspicion of this session's own that is refuted
+
+The measured analogue **EXISTS**: `actual_lmp_hourly_zonal_MISO.parquet`, DA basis, all four
+border zones, coverage **1.0000 / 1.0000 / 0.9999**. And the lane's standing **"Indiana-hub DA"
+label is CONFIRMED** for the first time against an independent committed source — `INDIANA.HUB`
+matches the lane's `da` to $0.01 in **1.0000 / 1.0000 / 1.0000** of hours; every other candidate
+(seven named hubs + the eight-hub mean) matches in ≤ 0.0092. The first ADDENDUM had split this
+leg off precisely because the builder docstring calls the series a *system* reference; the gate
+says the lane is right.
+
+### Q-B — NOT MEANINGFUL, killed by this session's own pre-registered floor
+
+The declared placebo (the same frozen ladder `g` evaluated on the **measured** spread) returned
+denominators **216.48 / 14.18 / 327.89** and **−17.62 / −77.83 / +122.31** MW/z against a
+100 MW/z floor the first ADDENDUM applied to **both**. The leg **attaches nothing in either
+direction**; its ratios (0.0332 / 0.0362 / 0.0039) are reported and **not** read as a verdict, and
+the handoff's *"points at `s`"* reading is **neither confirmed nor withdrawn**. It stays what
+miso-239 made it: reported-not-gated, chartering nothing.
+
+### POST-HOC, labelled, and it corroborates a standing G
+
+The model's four Midwest border zones separate by > $0.01 in **0.0002 / 0.0000 / 0.0000** of hours
+while the **measured** hubs for the same four zones separate in **1.0000**, mean **$8.75 / $8.75 /
+$11.25**, p99 $35.25 / $51.80 / $54.14. The model's six-zone separation that exists is the
+RDT/South and Plains boundary (0.2830 / 0.2732 / 0.4252 of hours). `internal_congestion_split`
+stays **G** — corroborated on a new instrument, **not re-tested and not re-opened** (rule 28(a));
+nothing here proposes a zonal split.
+
+### The charter's verdict, and what it hands forward
+
+**NO DOF-FREE FORM EXISTS AT THE `s` SIDE**, on three grounds established rather than argued:
+there is no artefact to fix (Q-A); `p_ext` is an LP dual and not a tunable at all, and the one
+structural candidate has zero footprint (Q-D); and the one substitution that would change `s` —
+using a measured MISO price in the seam's own merit test — feeds the model's own **outcome** back
+into its clearing decision, which rule 13 `[R-MEASURED]` forbids absolutely. **Said, and stopped.**
+Item 1 closes **into** the existing queue and opens nothing new: the real PJM tie is 94–96 %
+non-price-driven (miso-235 §4b, `R²` 0.0577 / 0.0701 / 0.0375), so the open object remains the
+**missing non-price channel** — handoff items 2/3 and miso-237's SPP quantity-side charter, both
+unchanged and unstarted. **Nothing licenses a re-derive, a damping factor, a change of `K`, a
+re-spacing of `δ_k`, an envelope change or an interface-limit change** (rules 23 / 14 / 1;
+`PREREG-miso240` §5.2 fixed that for **every** outcome). Every number produced is declared
+**un-targetable**; miso-236's 328.6 / 341.7 / 207.5 MW sizing stays un-targetable. No promotion,
+no decertification; C3c untouched and still the designated frontier.
+
+**Records:** `results/calibration/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md`,
+`ADDENDUM-miso240-two-decision-rules-fixed-before-the-numbers-2026-09-07.md`,
+`ADDENDUM-miso240-gate-repair-the-support-predicate-2026-09-07.md`,
+`FINDING-miso240-the-external-bus-is-the-midwest-price-and-item-1-closes-2026-09-07.md`; probe
+`scripts/probes/_miso240_external_bus_price_charter_phase0.py` with
+`_miso240_external_bus_price_charter_phase0.json` and its `_PREREPAIR.json` beside it. Rule 28(b)
+evidence appended to `seam_neighbour_hourly_ladder` and `internal_congestion_split` in **MISO's
+shard only** (rule 25), with the `§5.4` queue stamp.

@@ -1,0 +1,719 @@
+{
+  "probe": "miso-240 phase 0 \u2014 charter or refuse queue item 1: the model's own external-bus price s = p(MISO_external) - p(PJM_border)",
+  "prereg": "results/calibration/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md (pushed 5c503155)",
+  "addendum": "results/calibration/ADDENDUM-miso240-two-decision-rules-fixed-before-the-numbers-2026-09-07.md (pushed before the numbers it governs)",
+  "keeper": "2026-09-07-miso-233-spp-hourly",
+  "zero_lp": true,
+  "evidence_class": "Q-A and Q-D read the keeper's OWN committed P1 zonal duals from hourly/system_<year>.parquet \u2014 NOT a reconstruction. Q-B rides miso-239's committed four-seam RECONSTRUCTION (harness corr +0.9845/+0.9745/+0.9839) and is labelled as one. Q-C/Q-C2 read committed measured parquets only.",
+  "price_basis": "Indiana-hub RT builds the ok mask (byte-identically to miso-236/237/238/239). The lane's `da` (derive_miso_seam_ladders.load_joined, from actual_lmp_hourly_MISO.parquet) is the basis of p1 = da - p_border and of every merit signal; WHETHER that series is in fact the Indiana hub is Q-C2's own gated question (ADDENDUM \u00a7B) and is not assumed either way here.",
+  "bars": {
+    "tol_gamma_mw_per_z": 0.5,
+    "tol_share": 0.005,
+    "tol_identity_1_mw": 1e-06,
+    "tol_identity_2_mw": 1e-09,
+    "tau_usd_per_mwh": 0.01,
+    "tau_sensitivity": [
+      0.001,
+      0.01,
+      0.1
+    ],
+    "qa_bar": 0.5,
+    "qb_artefact_bar": 0.25,
+    "qb_not_artefact_bar": 0.5,
+    "qb_floor_mw_per_z": 100.0,
+    "qc_coverage_bar": 0.95,
+    "qc2_confirm_bar": 0.99,
+    "qc2_mislabel_bar": 0.5,
+    "qc2_price_tol_usd": 0.01,
+    "qd_live_bar": 0.1,
+    "qd_inert_bar": 0.02
+  },
+  "gated_seam": "PJM",
+  "tranches": 8,
+  "provenance_gate": {
+    "legs": {
+      "G_P1_gamma_merit_miso239": true,
+      "G_P2_channel_shares_miso239": true,
+      "G_P3_ventile_columns_miso239": true,
+      "G_P4_gamma_model_miso238": true,
+      "G_X0_pjm_export_identically_zero": true,
+      "G_ID1_band_count_identity": true,
+      "G_ID2_pure_bin_support": false,
+      "ALL_PASS": false
+    },
+    "per_year": {
+      "2023": {
+        "G_P1_gamma_merit": {
+          "recomputed": -870.18,
+          "handoff": -870.18,
+          "committed_json": -870.18,
+          "max_abs_delta": 0.004
+        },
+        "G_P2_shares": {
+          "recomputed": {
+            "LINEAR": 0.6679,
+            "CURVE": 0.3063,
+            "STEP": 0.0259
+          },
+          "max_abs_delta": 4e-05
+        },
+        "G_P3_ventile_columns": {
+          "gamma_np_p1_recomputed": -677.62,
+          "gamma_np_s_recomputed": -15.7,
+          "max_abs_delta": 0.001
+        },
+        "G_P4_gamma_model": {
+          "recomputed": -866.18,
+          "handoff": -866.18,
+          "committed_json": null,
+          "max_abs_delta": 0.0
+        },
+        "G_X0_pjm_export_max_abs_mw": 0.0,
+        "G_ID1_band_count_identity_mw": 0.0
+      },
+      "2024": {
+        "G_P1_gamma_merit": {
+          "recomputed": -930.93,
+          "handoff": -930.93,
+          "committed_json": -930.93,
+          "max_abs_delta": 0.002
+        },
+        "G_P2_shares": {
+          "recomputed": {
+            "LINEAR": 0.2839,
+            "CURVE": 0.6816,
+            "STEP": 0.0345
+          },
+          "max_abs_delta": 4e-05
+        },
+        "G_P3_ventile_columns": {
+          "gamma_np_p1_recomputed": -662.69,
+          "gamma_np_s_recomputed": 2.0,
+          "max_abs_delta": 0.003
+        },
+        "G_P4_gamma_model": {
+          "recomputed": -1043.37,
+          "handoff": -1043.37,
+          "committed_json": null,
+          "max_abs_delta": 0.004
+        },
+        "G_X0_pjm_export_max_abs_mw": 0.0,
+        "G_ID1_band_count_identity_mw": 0.0
+      },
+      "2025": {
+        "G_P1_gamma_merit": {
+          "recomputed": -791.43,
+          "handoff": -791.43,
+          "committed_json": -791.43,
+          "max_abs_delta": 0.003
+        },
+        "G_P2_shares": {
+          "recomputed": {
+            "LINEAR": 0.7312,
+            "CURVE": 0.221,
+            "STEP": 0.0479
+          },
+          "max_abs_delta": 4e-05
+        },
+        "G_P3_ventile_columns": {
+          "gamma_np_p1_recomputed": -590.15,
+          "gamma_np_s_recomputed": -4.41,
+          "max_abs_delta": 0.001
+        },
+        "G_P4_gamma_model": {
+          "recomputed": -843.45,
+          "handoff": -843.45,
+          "committed_json": null,
+          "max_abs_delta": 0.004
+        },
+        "G_X0_pjm_export_max_abs_mw": 0.0,
+        "G_ID1_band_count_identity_mw": 0.0
+      }
+    }
+  },
+  "verdicts": {
+    "Q_A_formation": "INTERNAL-PRICE FORMATION",
+    "Q_A_by_tau": {
+      "0.001": "INTERNAL-PRICE FORMATION",
+      "0.01": "INTERNAL-PRICE FORMATION",
+      "0.1": "INTERNAL-PRICE FORMATION"
+    },
+    "Q_A_fragile": false,
+    "Q_A_share_ZONE": [
+      0.9993,
+      0.9999,
+      1.0
+    ],
+    "Q_A_share_BAND": [
+      0.0007,
+      0.0,
+      0.0
+    ],
+    "Q_A_share_NEITHER": [
+      0.0,
+      0.0001,
+      0.0
+    ],
+    "Q_B_placebo": "NOT MEANINGFUL (below the pre-registered 100 MW/z floor on a denominator)",
+    "Q_B_ratio_np_s_over_merit": [
+      0.018,
+      0.0021,
+      0.0056
+    ],
+    "Q_B_ratio_vs_mirror": [
+      0.0332,
+      0.0362,
+      0.0039
+    ],
+    "Q_B_ratio_vs_raw": [
+      0.4079,
+      0.0066,
+      0.0106
+    ],
+    "Q_C_measured_analogue": "EXISTS",
+    "Q_C2_basis_identity": "BASIS CONFIRMED",
+    "Q_C2_named_series": "INDIANA.HUB",
+    "Q_C2_indiana_match_share": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "Q_D_star_node": "STAR-COUPLING INERT",
+    "Q_D_by_tau": {
+      "0.001": "STAR-COUPLING INERT",
+      "0.01": "STAR-COUPLING INERT",
+      "0.1": "STAR-COUPLING INERT"
+    },
+    "Q_D_fragile": false,
+    "Q_D_share_total": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "years": {
+    "2023": {
+      "n_ok_hours": 8760,
+      "Q_A_formation": {
+        "tau_0.001": {
+          "share_ZONE": 0.9993,
+          "share_BAND": 0.0007,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9993,
+            "MISO-Indiana": 0.9993,
+            "MISO-East": 0.9991,
+            "MISO-West": 0.9993
+          },
+          "share_all_four_tied": 0.9991,
+          "mean_zones_tied": 3.997,
+          "share_pext_eq_min_of_border": 0.9993,
+          "share_pext_eq_max_of_border": 0.9991,
+          "share_pext_below_all_border": 0.0007,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.01": {
+          "share_ZONE": 0.9993,
+          "share_BAND": 0.0007,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9993,
+            "MISO-Indiana": 0.9993,
+            "MISO-East": 0.9991,
+            "MISO-West": 0.9993
+          },
+          "share_all_four_tied": 0.9991,
+          "mean_zones_tied": 3.997,
+          "share_pext_eq_min_of_border": 0.9993,
+          "share_pext_eq_max_of_border": 0.9991,
+          "share_pext_below_all_border": 0.0007,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.1": {
+          "share_ZONE": 0.9993,
+          "share_BAND": 0.0007,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9993,
+            "MISO-Indiana": 0.9993,
+            "MISO-East": 0.9991,
+            "MISO-West": 0.9993
+          },
+          "share_all_four_tied": 0.9991,
+          "mean_zones_tied": 3.997,
+          "share_pext_eq_min_of_border": 0.9993,
+          "share_pext_eq_max_of_border": 0.9991,
+          "share_pext_below_all_border": 0.0007,
+          "share_pext_above_all_border": 0.0
+        }
+      },
+      "Q_A_south_node_reported": {
+        "share_tie_MISO_South": 0.9993,
+        "note": "REPORTED, never gating \u2014 MISO_external_South has ONE border link."
+      },
+      "Q_B_placebo": {
+        "gamma_merit_s_ladder_mw_per_z": -870.18,
+        "gamma_np_s_on_merit_s": -15.7,
+        "ratio_np_s_over_merit": 0.018,
+        "gamma_np_p1_on_merit_s": -677.62,
+        "ratio_np_p1_over_merit": 0.7787,
+        "gamma_mirror_denominator_mw_per_z": 216.48,
+        "gamma_raw_denominator_mw_per_z": -17.62,
+        "gamma_np_p1_on_merit_p1": -7.19,
+        "gamma_np_s_on_merit_p1": 275.69,
+        "ratio_vs_mirror": 0.0332,
+        "ratio_vs_raw": 0.4079,
+        "ratio_cross_s_vs_mirror": 1.2735,
+        "support_s_ladder": {
+          "n_impure_bins": 7,
+          "n_crossed_thresholds": 8,
+          "share_hours_impure": 0.3388,
+          "max_abs_resid_on_pure_bins_mw": 1.91e-11
+        },
+        "support_p1_mirror": {
+          "n_impure_bins": 7,
+          "n_crossed_thresholds": 8,
+          "share_hours_impure": 0.35,
+          "max_abs_resid_on_pure_bins_mw": 1.523e-11
+        },
+        "reconstruction_note": "MERIT and MERIT_p1 ride miso-235's four-seam RECONSTRUCTION; labelled."
+      },
+      "Q_C_measured_analogue": {
+        "zones_present": [
+          "MISO-East",
+          "MISO-Illinois",
+          "MISO-Indiana",
+          "MISO-South",
+          "MISO-West"
+        ],
+        "da_coverage_by_border_zone": {
+          "MISO-Illinois": 1.0,
+          "MISO-Indiana": 1.0,
+          "MISO-East": 1.0,
+          "MISO-West": 1.0
+        },
+        "reported_never_gating": {
+          "MISO-Illinois": {
+            "corr_with_model_s": 0.5549,
+            "corr_with_p1": 0.7678
+          },
+          "MISO-Indiana": {
+            "corr_with_model_s": 0.4327,
+            "corr_with_p1": 1.0
+          },
+          "MISO-East": {
+            "corr_with_model_s": 0.5821,
+            "corr_with_p1": 0.8409
+          },
+          "MISO-West": {
+            "corr_with_model_s": 0.4695,
+            "corr_with_p1": 0.5839
+          },
+          "ZONE_MATCHED": {
+            "share_hours_matched": 0.9993,
+            "corr_with_model_s": 0.5984,
+            "corr_with_p1": 0.7327
+          }
+        }
+      },
+      "Q_C2_basis_identity": {
+        "match_share_by_candidate": {
+          "ARKANSAS.HUB": 0.0008,
+          "ILLINOIS.HUB": 0.0014,
+          "INDIANA.HUB": 1.0,
+          "LOUISIANA.HUB": 0.0014,
+          "MICHIGAN.HUB": 0.0088,
+          "MINN.HUB": 0.0011,
+          "MS.HUB": 0.0011,
+          "TEXAS.HUB": 0.0013,
+          "HUB8_MEAN": 0.0025
+        },
+        "lane_da_source": "actual_lmp_hourly_MISO.parquet (via load_joined)"
+      },
+      "Q_D_star_node": {
+        "tau_0.001": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.01": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.1": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        }
+      },
+      "identity_checks": {
+        "G_ID1_band_count_mw": 0.0,
+        "G_ID2_pure_bin_support_mw": 1.91e-11
+      }
+    },
+    "2024": {
+      "n_ok_hours": 8760,
+      "Q_A_formation": {
+        "tau_0.001": {
+          "share_ZONE": 0.9999,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0001,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9999,
+            "MISO-Indiana": 0.9999,
+            "MISO-East": 0.9999,
+            "MISO-West": 0.9999
+          },
+          "share_all_four_tied": 0.9999,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 0.9999,
+          "share_pext_eq_max_of_border": 0.9999,
+          "share_pext_below_all_border": 0.0001,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.01": {
+          "share_ZONE": 0.9999,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0001,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9999,
+            "MISO-Indiana": 0.9999,
+            "MISO-East": 0.9999,
+            "MISO-West": 0.9999
+          },
+          "share_all_four_tied": 0.9999,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 0.9999,
+          "share_pext_eq_max_of_border": 0.9999,
+          "share_pext_below_all_border": 0.0001,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.1": {
+          "share_ZONE": 0.9999,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0001,
+          "share_by_zone": {
+            "MISO-Illinois": 0.9999,
+            "MISO-Indiana": 0.9999,
+            "MISO-East": 0.9999,
+            "MISO-West": 0.9999
+          },
+          "share_all_four_tied": 0.9999,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 0.9999,
+          "share_pext_eq_max_of_border": 0.9999,
+          "share_pext_below_all_border": 0.0001,
+          "share_pext_above_all_border": 0.0
+        }
+      },
+      "Q_A_south_node_reported": {
+        "share_tie_MISO_South": 0.9999,
+        "note": "REPORTED, never gating \u2014 MISO_external_South has ONE border link."
+      },
+      "Q_B_placebo": {
+        "gamma_merit_s_ladder_mw_per_z": -930.93,
+        "gamma_np_s_on_merit_s": 2.0,
+        "ratio_np_s_over_merit": 0.0021,
+        "gamma_np_p1_on_merit_s": -662.69,
+        "ratio_np_p1_over_merit": 0.7119,
+        "gamma_mirror_denominator_mw_per_z": 14.18,
+        "gamma_raw_denominator_mw_per_z": -77.83,
+        "gamma_np_p1_on_merit_p1": 0.51,
+        "gamma_np_s_on_merit_p1": 238.2,
+        "ratio_vs_mirror": 0.0362,
+        "ratio_vs_raw": 0.0066,
+        "ratio_cross_s_vs_mirror": 16.803,
+        "support_s_ladder": {
+          "n_impure_bins": 8,
+          "n_crossed_thresholds": 8,
+          "share_hours_impure": 0.391,
+          "max_abs_resid_on_pure_bins_mw": 869.6
+        },
+        "support_p1_mirror": {
+          "n_impure_bins": 8,
+          "n_crossed_thresholds": 8,
+          "share_hours_impure": 0.4,
+          "max_abs_resid_on_pure_bins_mw": 1.478e-11
+        },
+        "reconstruction_note": "MERIT and MERIT_p1 ride miso-235's four-seam RECONSTRUCTION; labelled."
+      },
+      "Q_C_measured_analogue": {
+        "zones_present": [
+          "MISO-East",
+          "MISO-Illinois",
+          "MISO-Indiana",
+          "MISO-South",
+          "MISO-West"
+        ],
+        "da_coverage_by_border_zone": {
+          "MISO-Illinois": 1.0,
+          "MISO-Indiana": 1.0,
+          "MISO-East": 1.0,
+          "MISO-West": 1.0
+        },
+        "reported_never_gating": {
+          "MISO-Illinois": {
+            "corr_with_model_s": 0.4319,
+            "corr_with_p1": 0.7792
+          },
+          "MISO-Indiana": {
+            "corr_with_model_s": 0.2559,
+            "corr_with_p1": 1.0
+          },
+          "MISO-East": {
+            "corr_with_model_s": 0.4203,
+            "corr_with_p1": 0.8598
+          },
+          "MISO-West": {
+            "corr_with_model_s": 0.3971,
+            "corr_with_p1": 0.4573
+          },
+          "ZONE_MATCHED": {
+            "share_hours_matched": 0.9999,
+            "corr_with_model_s": 0.432,
+            "corr_with_p1": 0.7787
+          }
+        }
+      },
+      "Q_C2_basis_identity": {
+        "match_share_by_candidate": {
+          "ARKANSAS.HUB": 0.0008,
+          "ILLINOIS.HUB": 0.0007,
+          "INDIANA.HUB": 1.0,
+          "LOUISIANA.HUB": 0.0015,
+          "MICHIGAN.HUB": 0.0092,
+          "MINN.HUB": 0.0016,
+          "MS.HUB": 0.0011,
+          "TEXAS.HUB": 0.0021,
+          "HUB8_MEAN": 0.0019
+        },
+        "lane_da_source": "actual_lmp_hourly_MISO.parquet (via load_joined)"
+      },
+      "Q_D_star_node": {
+        "tau_0.001": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.01": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.1": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        }
+      },
+      "identity_checks": {
+        "G_ID1_band_count_mw": 0.0,
+        "G_ID2_pure_bin_support_mw": 869.6
+      }
+    },
+    "2025": {
+      "n_ok_hours": 8759,
+      "Q_A_formation": {
+        "tau_0.001": {
+          "share_ZONE": 1.0,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 1.0,
+            "MISO-Indiana": 1.0,
+            "MISO-East": 1.0,
+            "MISO-West": 1.0
+          },
+          "share_all_four_tied": 1.0,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 1.0,
+          "share_pext_eq_max_of_border": 1.0,
+          "share_pext_below_all_border": 0.0,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.01": {
+          "share_ZONE": 1.0,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 1.0,
+            "MISO-Indiana": 1.0,
+            "MISO-East": 1.0,
+            "MISO-West": 1.0
+          },
+          "share_all_four_tied": 1.0,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 1.0,
+          "share_pext_eq_max_of_border": 1.0,
+          "share_pext_below_all_border": 0.0,
+          "share_pext_above_all_border": 0.0
+        },
+        "tau_0.1": {
+          "share_ZONE": 1.0,
+          "share_BAND": 0.0,
+          "share_NEITHER": 0.0,
+          "share_by_zone": {
+            "MISO-Illinois": 1.0,
+            "MISO-Indiana": 1.0,
+            "MISO-East": 1.0,
+            "MISO-West": 1.0
+          },
+          "share_all_four_tied": 1.0,
+          "mean_zones_tied": 4.0,
+          "share_pext_eq_min_of_border": 1.0,
+          "share_pext_eq_max_of_border": 1.0,
+          "share_pext_below_all_border": 0.0,
+          "share_pext_above_all_border": 0.0
+        }
+      },
+      "Q_A_south_node_reported": {
+        "share_tie_MISO_South": 1.0,
+        "note": "REPORTED, never gating \u2014 MISO_external_South has ONE border link."
+      },
+      "Q_B_placebo": {
+        "gamma_merit_s_ladder_mw_per_z": -791.43,
+        "gamma_np_s_on_merit_s": -4.41,
+        "ratio_np_s_over_merit": 0.0056,
+        "gamma_np_p1_on_merit_s": -590.15,
+        "ratio_np_p1_over_merit": 0.7457,
+        "gamma_mirror_denominator_mw_per_z": 327.89,
+        "gamma_raw_denominator_mw_per_z": 122.31,
+        "gamma_np_p1_on_merit_p1": -1.29,
+        "gamma_np_s_on_merit_p1": 378.56,
+        "ratio_vs_mirror": 0.0039,
+        "ratio_vs_raw": 0.0106,
+        "ratio_cross_s_vs_mirror": 1.1545,
+        "support_s_ladder": {
+          "n_impure_bins": 7,
+          "n_crossed_thresholds": 7,
+          "share_hours_impure": 0.3335,
+          "max_abs_resid_on_pure_bins_mw": 9.436e-11
+        },
+        "support_p1_mirror": {
+          "n_impure_bins": 8,
+          "n_crossed_thresholds": 8,
+          "share_hours_impure": 0.4,
+          "max_abs_resid_on_pure_bins_mw": 7.958e-12
+        },
+        "reconstruction_note": "MERIT and MERIT_p1 ride miso-235's four-seam RECONSTRUCTION; labelled."
+      },
+      "Q_C_measured_analogue": {
+        "zones_present": [
+          "MISO-East",
+          "MISO-Illinois",
+          "MISO-Indiana",
+          "MISO-South",
+          "MISO-West"
+        ],
+        "da_coverage_by_border_zone": {
+          "MISO-Illinois": 0.9999,
+          "MISO-Indiana": 0.9999,
+          "MISO-East": 0.9999,
+          "MISO-West": 0.9999
+        },
+        "reported_never_gating": {
+          "MISO-Illinois": {
+            "corr_with_model_s": 0.4805,
+            "corr_with_p1": 0.8858
+          },
+          "MISO-Indiana": {
+            "corr_with_model_s": 0.379,
+            "corr_with_p1": 1.0
+          },
+          "MISO-East": {
+            "corr_with_model_s": 0.4446,
+            "corr_with_p1": 0.9335
+          },
+          "MISO-West": {
+            "corr_with_model_s": 0.5026,
+            "corr_with_p1": 0.7099
+          },
+          "ZONE_MATCHED": {
+            "share_hours_matched": 1.0,
+            "corr_with_model_s": 0.4805,
+            "corr_with_p1": 0.8858
+          }
+        }
+      },
+      "Q_C2_basis_identity": {
+        "match_share_by_candidate": {
+          "ARKANSAS.HUB": 0.0003,
+          "ILLINOIS.HUB": 0.0006,
+          "INDIANA.HUB": 1.0,
+          "LOUISIANA.HUB": 0.001,
+          "MICHIGAN.HUB": 0.0079,
+          "MINN.HUB": 0.0019,
+          "MS.HUB": 0.0011,
+          "TEXAS.HUB": 0.0019,
+          "HUB8_MEAN": 0.0017
+        },
+        "lane_da_source": "actual_lmp_hourly_MISO.parquet (via load_joined)"
+      },
+      "Q_D_star_node": {
+        "tau_0.001": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.01": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        },
+        "tau_0.1": {
+          "share_west_sets": 0.0,
+          "share_east_sets": 0.0,
+          "share_total": 0.0,
+          "mean_gap_usd_west_sets": 0.0,
+          "mean_gap_usd_east_sets": 0.0,
+          "n_hours_west_sets": 0,
+          "n_hours_east_sets": 0
+        }
+      },
+      "identity_checks": {
+        "G_ID1_band_count_mw": 0.0,
+        "G_ID2_pure_bin_support_mw": 9.436e-11
+      }
+    }
+  },
+  "non_claims": [
+    "Zero LP. Nothing armed, screened, solved, registered or pruned.",
+    "No cell verdict moves; rule 28(b) evidence-append form only, MISO's shard only.",
+    "Every number here is declared UN-TARGETABLE by PREREG \u00a75.3 before it was computed.",
+    "The frozen delta_k ladders and the measured (month x hod) envelope are untouched and PREREG \u00a75.2 forbids touching them whatever these verdicts read.",
+    "Q-B changes no miso-239 number: that column was published REPORTED-NOT-GATED and chartered nothing."
+  ]
+}
