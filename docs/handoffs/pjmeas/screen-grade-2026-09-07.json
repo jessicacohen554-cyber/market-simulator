@@ -1,0 +1,141 @@
+{
+ "arm_bundle": "results/capacity-hindcast/pjm-screen-eas-2021-2022-arm",
+ "arm_key": "8966e7cea75efc4e",
+ "key_matches_declared": true,
+ "G1_reachability": {
+  "control_screen_prices": {
+   "n": 103,
+   "max": 52.7715,
+   "mean": 36.9592,
+   "reserve_signal_mean": 0.0
+  },
+  "arm_screen_prices": {
+   "n": 103,
+   "max": 52.3638,
+   "mean": 36.9546,
+   "reserve_signal_mean": 0.0
+  },
+  "price_surface_moved": true,
+  "PASS": true
+ },
+ "G2_price_surface": {
+  "control_max_usd_mwh": 52.7715,
+  "arm_max_usd_mwh": 52.3638,
+  "direction_up": false,
+  "floor_usd_mwh": 60.0,
+  "PASS": false
+ },
+ "G3_operand": {
+  "control_by_fuel": {
+   "gas_st": {
+    "n": 103,
+    "mw": 8693.3,
+    "eas_usd": 122869.0,
+    "accredited_mw": 8084.727,
+    "eas_per_accredited_mw_day": 0.0416
+   }
+  },
+  "arm_by_fuel": {
+   "gas_st": {
+    "n": 103,
+    "mw": 8693.3,
+    "eas_usd": 121423.0,
+    "accredited_mw": 8084.727,
+    "eas_per_accredited_mw_day": 0.0411
+   }
+  },
+  "arm_max_eas_per_accredited_mw_day": 0.0411,
+  "floor": 12.7,
+  "predicted_band": [
+   25.0,
+   65.0
+  ],
+  "predicted_mw_weighted_mean": 40.656,
+  "in_predicted_band": false,
+  "PASS": false,
+  "NOTE": "an EMPTY arm decided cohort is NOT a G3 failure by itself \u2014 it is the predicted outcome when the operand clears every unit off the failing set; read it with G5 and the clearing below."
+ },
+ "G4_footprint": {
+  "units_in_both_stacks": 1399,
+  "units_only_in_control": 0,
+  "units_only_in_arm": 0,
+  "offers_moved": 366,
+  "NOTE": "a moved offer must be an E&AS change: the offer is max(0, GFC - EAS)/(A*365) and no other term in it is touched by the arm."
+ },
+ "G5_identity_I2": {
+  "n_uncleared": 133,
+  "n_failing": 103,
+  "failing_not_uncleared": [],
+  "uncleared_not_failing": [
+   "COAL_PJM_AEP_Ohio_p1040_committed",
+   "COAL_PJM_AEP_Ohio_p1040_econ",
+   "COAL_PJM_AEP_Ohio_p1040_peak",
+   "COAL_PJM_AEP_Ohio_p1384_committed",
+   "COAL_PJM_AEP_Ohio_p1384_econ",
+   "COAL_PJM_AEP_Ohio_p1384_peak",
+   "COAL_PJM_AEP_Ohio_p6166_peak",
+   "COAL_PJM_ATSI_p2936_committed",
+   "COAL_PJM_ATSI_p2936_econ",
+   "COAL_PJM_ATSI_p2936_mustrun"
+  ],
+  "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed",
+  "PASS": true
+ },
+ "clearing_2022": {
+  "control": {
+   "price_usd_per_mw_day": 90.4111,
+   "cleared_position": 1.042601,
+   "n_uncleared": 133,
+   "uncleared_mw_by_fuel": {
+    "coal": 1172.069,
+    "gas_st": 9536.643
+   },
+   "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed"
+  },
+  "arm": {
+   "price_usd_per_mw_day": 90.4355,
+   "cleared_position": 1.042595,
+   "n_uncleared": 133,
+   "uncleared_mw_by_fuel": {
+    "coal": 1172.069,
+    "gas_st": 9536.643
+   },
+   "marginal_unit": "COAL_PJM_AEP_Ohio_p6166_committed"
+  },
+  "predicted_from_phase0_C_delta40": {
+   "price_usd_per_mw_day": 67.76,
+   "cleared_position": 1.04835,
+   "uncleared_mw_by_fuel": {
+    "coal": 6647.812,
+    "gas_cc": 3605.197
+   }
+  }
+ },
+ "REPORTED_NOT_GATING": {
+  "control_retirements_2021_2022": {
+   "biomass/announced": 8.4,
+   "coal/announced": 3301.4,
+   "gas_cc/announced": 74.6,
+   "gas_st/announced": 43.0,
+   "gas_st/economic": 8693.3,
+   "oil/announced": 51.2
+  },
+  "arm_retirements_2021_2022": {
+   "biomass/announced": 8.4,
+   "coal/announced": 3301.4,
+   "gas_cc/announced": 74.6,
+   "gas_st/announced": 43.0,
+   "gas_st/economic": 8693.3,
+   "oil/announced": 51.2
+  },
+  "RULE": "rule 1 [R-STRUCT]: these are reported, never gating. A screen that read 'did unit_recall improve' would be the fitted-mechanism selection the rule forbids, done one year at a time."
+ },
+ "GATES": {
+  "G1_reachability": true,
+  "G2_price_surface": false,
+  "G3_operand": false,
+  "G4_footprint": null,
+  "G5_identity_I2": true
+ },
+ "VERDICT": "SCREEN KILLS THE ARM \u2014 reported as the session's result"
+}
