@@ -9,7 +9,7 @@ only the directory moved.
 
 | Location            | What lives there |
 |---------------------|------------------|
-| `scripts/` (top)    | Core entry points and standing tooling: calibration/backcast (`run_calibration_full.py`, `run_calibration.py`, `replay_keeper.py`), hindcast (`run_capacity_hindcast.py`, `register_hindcast.py`), the forecast program (`run_full_horizon.py`, `forecast_verdict.py`, `export_forecast_bands.py`, PB-5 assembly), scoring/verdicts (`calibration_verdict.py`, `score_*.py`, `legitimacy_diagnostics.py`, `screen_collateral_gate.py` — rule-29 screen G-4 on an UNREGISTERED bundle), dashboard/site (`dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `render_*.py`, `check_site_sri.py`), governance (`build_dof_ledger.py`, `regression_gate.py`, `capture_*_goldens.py`, `verify_holdout_intake.py`, `generate_parameter_registry.py`, `check_mechanism_matrix.py`, `mechanism_matrix_gap_sweep.py`), and per-ISO gate reporters. |
+| `scripts/` (top)    | Core entry points and standing tooling: calibration/backcast (`run_calibration_full.py`, `run_calibration.py`, `replay_keeper.py`), hindcast (`run_capacity_hindcast.py`, `register_hindcast.py`), the forecast program (`run_full_horizon.py`, `forecast_verdict.py`, `export_forecast_bands.py`, PB-5 assembly), scoring/verdicts (`calibration_verdict.py`, `score_*.py`, `legitimacy_diagnostics.py`, `screen_collateral_gate.py` — rule-29 screen G-4 on an UNREGISTERED bundle), dashboard/site (`dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `render_*.py`, `check_site_sri.py`), governance (`build_dof_ledger.py`, `regression_gate.py`, `capture_*_goldens.py`, `verify_holdout_intake.py`, `generate_parameter_registry.py`, `check_mechanism_matrix.py`, `mechanism_matrix_gap_sweep.py`, `check_key_provenance.py`), and per-ISO gate reporters. |
 | `scripts/data/`     | Data fetching and processing — everything between an external source and the model's inputs: `fetch_*` (raw downloads), `curate_*`/`process_*`/`convert_*`/`parse_*` (raw → `data/clean` per the schema contract), `derive_*` (measured-behaviour parameter derivation; CLAUDE.md rule 23 — frozen against residuals), and per-source builders (`build_*_hsl.py`, LMP references, AS withholding, …). Not core engine. |
 | `scripts/lib/`      | Shared helpers imported by scripts (`clean_io.py`, `bundle_io.py`, per-datatype registries). One deliberate exception carries an argparse main — see "`keeper_store.py`'s CLI" below. |
 | `scripts/probes/`   | Only the probe scripts that live code still imports or names (`derive_*` data scripts, `scripts/lib`, tests, standing docstrings). The record-only probes (1,229 files) and the whole `scripts/archive/` tree were DELETED 2026-09-05 on owner instruction — superseded per-run scripts are deleted, never archived; `git log` is the record. |
@@ -246,3 +246,37 @@ left behind if a sidecar were ever pruned without its payload). Run it before
 every dashboard push. Bundles no longer referenced by any sidecar are swept in
 the owner-signed one-time bundle sweep, not by `prune_iso` (which only touches
 the bundle of a run it is actively pruning).
+
+## Key provenance (`check_key_provenance.py` + the exception record)
+
+A committed bundle's `cache_key` is **what that bundle actually solved under**.
+When today's `ScenarioConfig.cache_key()` cannot recompute it, something moved
+underneath the record — a field registered late, a default flipped before the
+flips ledger existed, a relocated `MARKET_SIM_DATA_ROOT`, a writer that
+serialized the request instead of the resolution. The honest repair is to
+**derive** the literal, never to rewrite the artifact so it agrees with today
+(capx D85 §5 refuses both a key rewrite and a de-registration for exactly that
+reason).
+
+`scripts/check_key_provenance.py` hashes every committed `run_config.json` and
+gates the non-reproducing ones against the committed record
+**`docs/governance/key-provenance-exceptions.json`**, which carries each one's
+class, its executable recipe, its derivation and its citation. It prints
+`N KNOWN, M UNKNOWN` and exits non-zero on any of five gates — an **unlisted**
+mismatch (G1), a listed record that has started **reproducing** (G2 — a stale
+exception is dead scaffolding, rule 26 `[R-DELETE]`), a recipe that does not
+reproduce its literal (G3), a listed record whose bundle was pruned (G4), and a
+mis-keyed entry (G5). `tests/regression/test_key_provenance_exceptions.py` is
+the offline half and rides the blocking fast tier; the library both share is
+`scripts/lib/key_provenance.py`.
+
+**Two keys, always.** `cache_key` appends a `__solve_surface__` block for any ISO
+whose `config/solve_surface.py` rows have moved off their frozen declaration, so
+every row is hashed both ways and the summary names which construction matched.
+A record that reproduces only **at declaration** is capx D79's *designed* re-key
+("a re-derived registry table re-keys the ISOs whose rows moved") — reported,
+never repaired here: re-declaring a moved row belongs to the ISO lane that
+re-solves its frontier on the new table.
+
+**A new mismatch is a FINDING, not a list entry.** Do not append to the
+exception record to turn the gate green; stop and report it.
