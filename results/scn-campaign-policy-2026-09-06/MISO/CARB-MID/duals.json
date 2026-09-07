@@ -1,0 +1,76 @@
+{
+ "cache_key": "27fb6e72c0ad31ae",
+ "case": "CARB-MID",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "objective_value": 10972494575.987442
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 14952695200.85539
+  },
+  "2028": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 22684730585.35399
+  },
+  "2029": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 25885767358.769863
+  },
+  "2030": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 36919218110.576485
+  }
+ }
+}
