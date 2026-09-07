@@ -461,8 +461,10 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     written to fit the result. A "files changed, therefore void" heuristic with no audit behind it
     is not a reason to spend an LP.
 
-    **(c) DELETE BEFORE MERGE. A screen bundle, and any control bundle a screen earns under
-    (b)'s LIVE-hunk case, is deleted from `results/calibration/` before its PR merges** *(owner
+    **(c) DELETE BEFORE MERGE — which means KEEP IT OUT OF `main`, NOT erase it from disk.
+    SUBORDINATE TO RULE 31 `[R-RETAIN]`: nothing is removed from local disk until the owner has
+    ruled on promotion.** A screen bundle, and any control bundle a screen earns under
+    (b)'s LIVE-hunk case, must not be committed or merged *(owner
     ruling R-AV, audit-program director sitting 2026-09-05, verbatim: "Delete before merge";
     executed by Y-13, `docs/handoffs/FINDING-y13-ci-plumbing-2026-09-05.md`)*. The PRECOMMIT /
     FINDING doc carries **every number the session will ever cite** from such a bundle — the
@@ -476,7 +478,14 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     registered). This resolves the collision the v31 second coda recorded (`da99f34b`): a lane
     that obeyed rule 29 exactly ("never registered on the dashboard") turned the parity gate red
     *by obeying it*, because the bundle was committed and outlived its PR. The two duties compose
-    only when the bundle does not reach `main` at all.
+    only when the bundle does not reach `main` at all — **and `.gitignore` achieves that on its
+    own.** *(AMENDED 2026-09-07, owner instruction — the ercot-255 incident. This clause said
+    "deleted from `results/calibration/`", and a lane read it as `rm -rf` and destroyed four
+    solved bundles that were ALREADY gitignored, i.e. already incapable of reaching `main` or
+    turning the gate red; when the owner asked to promote the result an hour later it cost
+    ~50 min of re-solves that should have been zero. The requirement was always about the
+    REPOSITORY, never the working tree. Gitignoring the bundle family discharges this clause in
+    full. See rule 31 `[R-RETAIN]`; genealogy `docs/governance/rule-history.md` §16.)*
 
 1. `[R-TOUCHPOINT-FOLD]` **A touchpoint is the keeper, on another year — publish it that way, never
     as a separate run to click into.** *(Owner ruling 2026-09-05, verbatim: "the runs should all be
@@ -555,6 +564,40 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     now measured over what is still failing after the holdout reclassification. Rationale and the
     measured no-op effect over every registered run: `scripts/calibration_verdict.py` header, v3.6.
 
+
+1. `[R-RETAIN]` **NEVER DELETE A SOLVE'S RESULTS UNTIL THE OWNER HAS DECIDED ON PROMOTION.**
+    *(Owner instruction 2026-09-07, verbatim: "Do not delete results until I've decided on
+    promotion make it a rule". The incident: session ercot-255 solved a 2025 screen arm, its
+    control, the 2023–2025 full span and a 2021 re-test, wrote them up, judged the mechanism
+    not-promotable **on its own reading**, and `rm -rf`'d all four under rule 29 `[R-SCREEN]`
+    clause (c). The owner then ruled the opposite — promote it — and the artifacts a dashboard
+    run needs were gone, so the promotion cost a full re-solve of every year. Genealogy:
+    `docs/governance/rule-history.md` §16.)*
+    - **The bar is the OWNER'S decision, not the session's.** A session may *recommend* against
+      promotion; it may never act on that recommendation by destroying the evidence. "Not a
+      keeper in my judgement" is a sentence in the RESULT, never a licence to delete. The owner
+      routinely promotes what a session declined to — that is what a promotion decision **is**.
+    - **What discharges the delete-before-merge duties is `.gitignore`, not `rm`.** Rule 29
+      `[R-SCREEN]` (c) and rule 15 `[R-DASHBOARD]`'s keeper-only retention both govern **what
+      reaches `main` and what the dashboard shows** — neither has ever required erasing a
+      working-tree file. Add the bundle family to `.gitignore` the moment it is written; the
+      parity gate (`check_registry_payload_parity.py`) only ever sees committed dirs, so an
+      ignored bundle can sit on local disk indefinitely without turning anything red.
+    - **Delete only on one of two triggers**: (i) the owner has ruled on promotion and the
+      bundle is not needed — a superseded, pruned or declined run may then be removed, and git
+      history plus the RESULT doc remain the record exactly as rules 15/29 say; or (ii) the disk
+      allowance is genuinely exhausted and the session says so explicitly, naming what it is
+      removing and why, before removing it.
+    - **SURFACE THE DECISION BEFORE THE SESSION ENDS.** This container is ephemeral: an
+      uncommitted, gitignored bundle does not survive reclamation, so "keep it" is only
+      meaningful while the session is alive. A session that has solved anything promotable
+      therefore **asks the promotion question explicitly in its final report**, states that the
+      bundles are on local disk and will not survive the session, and never lets the question go
+      unasked. If the owner has not ruled by the end of the session, say so plainly rather than
+      tidying up.
+    - **A cost estimate is owed BEFORE re-solving, not after.** If results were lost anyway, the
+      session states the LP cost of reproducing them and waits, rather than silently launching
+      hours of solves.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
