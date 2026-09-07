@@ -8850,3 +8850,179 @@ the matrix row + one cell per shard that exists; the CLAUDE.md bullet; rule-27 b
 any file ≥300 lines. Report which ISOs' frontier bundles now owe a re-solve on their natural cadence,
 and state plainly that Q58 is discharged.
 ```
+
+## r#57 NOTE (2026-09-07): both r#56 charters landed and **Q58 is DISCHARGED** — the measured hindcast screen peak is armed for every ISO at 34 in-scope key moves and zero off-target. The chartered queue was EMPTY for the first time; **owner ruling Q59 sets three lanes, all DISPATCHABLE NOW and all on disjoint surfaces**. D82 is a DESIGN READ and may not recommend an arm. SPP onboarding is the BOARD half only — the T1-H recipe is the SPP desk's.
+
+## D82 DESIGN READ — the PJM CT plateau and the per-delivery-year zero-E&AS operand (r#57, owner ruling Q59)
+
+```
+You are the D82 DESIGN READ session of the capacity-expansion track, executing OWNER RULING Q59
+(capx ledger §0bb.3(a), r#57). MODEL: Fable. DATA PROFILE: pjm. BRANCH: claude/capx-d82-ct-plateau-design
+— FRESH off origin/main.
+
+*** THIS IS A READ. YOU DO NOT RECOMMEND AN ARM, AND YOU DO NOT SOLVE. *** Your deliverable is a
+design document. A design read that arrives carrying a recommendation has skipped the screen rule 29
+[R-SCREEN] requires, and the desk will void it exactly as it voided Q57's route. If the read makes an
+arm look obvious, say what the SCREEN would have to measure to establish it — that is the useful
+output, not the conclusion.
+
+THE OBJECT, and why it is now readable. D74 measured a 24.2 GW PJM CT plateau offering at the
+published bar on ZERO E&AS margin. D57 §4 named the CT / ST / oil E&AS operand as the reason the
+model's clearing price runs 1.5-5.7x the published, and D57's own record says that operand is zero in
+the hindcast prices and was NEVER haircut. D78's finding states, at its gate, that `false_retire`
+stays FAIL and that this operand is THE NAMED SUCCESSOR for the retirement bands. D78-R3 then
+established the per-delivery-year zero-E&AS set from D57 §4's own published rows -- {gas_ct, gas_st,
+oil} for DY2022/23, {gas_ct, gas_st} for 2023/24, {oil} for 2024/25, DY2025/26 NOT EVALUABLE. That set
+is the input D82 was reserved waiting for and it now exists.
+
+READ THESE FIRST, and cite them by section: FINDING-capx-d74 (the plateau measurement and its
+admission-cap re-fill), FINDING-capx-d57 §3.1 / §4 (the offer construction and the per-DY at-bar
+rows), FINDING-capx-d78r3 §3 (the derived set, its ONE-SIDEDNESS, and its proven false-positive class
+-- nuclear derives at bar in all four DYs and belongs at none, being a $0 price taker), and
+FINDING-capx-d78 / -d78arm (what the sector gate did and did not close).
+
+THE QUESTIONS THE READ MUST ANSWER, each with evidence from committed artifacts:
+ 1. WHAT IS THE PLATEAU, mechanically? Is a CT at the published bar there because its E&AS margin is
+    genuinely zero in these years, because the hindcast price series cannot express its scarcity
+    revenue, or because the offer construction floors it? Distinguish these -- they have different
+    repairs and only one of them is a model defect.
+ 2. IS THE ZERO E&AS OPERAND A DATA GAP OR A CONSTRUCTION GAP? D57 says it is zero in the hindcast
+    prices. Establish WHY from the code path and the committed price series, not by inference.
+ 3. WHAT WOULD A NON-ZERO OPERAND BE DERIVED FROM, and would it be admissible under rule 13
+    [R-MEASURED]'s forward test -- could the same quantity be produced for a forward year from
+    forward drivers, and would it respond to changed conditions? If the honest answer is that the
+    only available construction is a backcast-only overlay, SAY SO; that is a finding, and it closes
+    the object rather than opening a lane.
+ 4. WHAT IS THE BLAST RADIUS? Which consumers read the E&AS margin (rule 19 [R-ONE-MECH] enumeration,
+    complete before anything moves), and what else would move if it stopped being zero -- the clearing
+    price, the failing set, `false_retire`, the retirement bands, the entry screen.
+ 5. IS THERE A ZERO-LP PHASE 0? Rule 29(0) says an arm with a computable pre-solve gate does not
+    reach a solve until that gate passes. Name the phase-0 instrument a successor lane would build,
+    or say that none exists and why.
+
+STATE WHAT YOU CANNOT ANSWER. A design read whose §6 is empty is either a perfect object or an
+incurious read, and the second is far more likely. D78-R3's own derivation is one-sided and carries a
+proven false-positive class; assume yours has one too and go looking for it.
+
+DO NOT: solve anything; arm anything; edit src/market_sim/; propose a ScenarioConfig field; write a
+matrix cell (nothing is tested here); recommend. DO: write
+docs/handoffs/DESIGN-capx-d82-ct-plateau-<date>.md, cite every claim to a committed artifact, and
+close with the SCREEN SPECIFICATION a successor lane would pre-register -- the phase-0 gate, the
+screen year chosen on FOOTPRINT (never residual), and the STOP conditions.
+
+EXIT: the design doc committed and pushed; every one of questions 1-5 answered or explicitly declared
+unanswerable with its reason; a §6 of open questions that is not empty; no recommendation, no arm, no
+solve. Report the answer to question 3 first in your close -- it is the one that decides whether D82
+is a lane at all.
+```
+
+## SPP FORECAST BOARD ROW — put the seventh ISO on the §2.1b board (r#57, owner ruling Q59)
+
+```
+You are the SPP FORECAST BOARD ROW session of the capacity-expansion track, executing OWNER RULING
+Q59 (capx ledger §0bb.3(a), r#57). MODEL: Opus. DATA PROFILE: spp.
+BRANCH: claude/capx-spp-board-row — FRESH off origin/main.
+
+THE GAP, measured at r#57. SPP is a registered ISO in config/iso_configs.py (2 zones), holds TWO
+backcast keepers (2026-09-07-spp-1-baseline, then 2026-09-07-spp-2-crosswalk-hydro), and has a
+mechanism-matrix shard that capx D76-ARM-B correctly filled. It has NO forecast presence whatever:
+no hindcast sidecar under frontend/data/hindcast/, and NO row in
+frontend/data/forecast/program-status.json, whose gate board carries exactly six ISOs. SPP is the only
+ISO that is calibrated and forecast-invisible.
+
+*** SCOPE SPLIT, and it is the ruling's own term. *** You own THE BOARD ROW. You do NOT own the T1-H
+recipe, the SPP forecast data intake, or any solve to populate it — those are the SPP desk's and are
+routed there. If you find the board row cannot be written without the recipe, STOP AND SAY SO rather
+than building the recipe: that finding is the deliverable and it re-routes the whole item.
+
+STEP 1 — ESTABLISH WHAT A BOARD ROW ACTUALLY REQUIRES, from the code, before writing anything. Read
+scripts/register_forecast_run.py, whatever consumes program-status.json, and rule 15 [R-DASHBOARD]'s
+list of COMMITTED inputs for the forecast namespace (the hindcast sidecars + ff-verdicts.json +
+program-status.json; registry/ runs/ manifest.js program-status.js are GENERATED and gitignored).
+Determine: can a §2.1b row exist for an ISO with no hindcast sidecar, in a state that honestly reads
+"no forecast run yet"? Or does the board's schema require a verdict, making the row impossible until
+the SPP desk lands a T1-H? ANSWER THIS FROM THE SCHEMA, not from what would be convenient.
+
+STEP 2 — IF THE ROW CAN EXIST HONESTLY, write it: an SPP entry whose gate legs read their true state,
+with (a) keyed to SPP's live keeper (2026-09-07-spp-2-crosswalk-hydro at r#57 — RE-READ IT LIVE, it
+has moved twice in two days) and marker state (SPP is NOT in `complete`; check, do not assume), and
+(b)/(c)/(d) reading whatever "no forecast run" is in that schema. Add the gate_a_provenance stamp the
+same way every other ISO's row carries it. The row must never imply a forecast result SPP does not
+have.
+
+STEP 3 — IF THE ROW CANNOT EXIST until a T1-H lands, do not force one. Write the finding, name
+exactly which schema field blocks it, and state what the SPP desk must land first. That is a complete
+and successful session.
+
+A SCOPE-LABEL NOTE YOU MUST CARRY, from director ruling §0bb.3(b): every "all six ISOs" claim on the
+capx record — D76's "peak-inert in ALL SIX", D78's per-ISO census, every prior six-ISO count — is now
+a claim about SIX OF SEVEN. Those findings are NOT wrong and are NOT retro-edited: they measured the
+six ISOs that had forecast rows, and rewriting a scope label after the fact destroys the record. The
+repair is FORWARD ONLY. If your row lands, say plainly in your close that findings from this point
+count seven, and do not touch a single prior finding's text.
+
+DO NOT: solve anything; touch another ISO's row, shard or sidecar; edit the backcast namespace;
+build the SPP T1-H recipe; retro-edit any six-ISO claim. Rules 15, 25 (SPP's cells stay U — no verdict
+transfers in), 27 (program-status.json is well over 300 lines: TARGETED STRING EDIT, never a
+json.dumps round-trip, blob-verify after push), 28.
+
+EXIT: either the SPP board row committed with every leg reading its true state and gate (a) still
+exiting 0, or a finding naming exactly what blocks it. Either way: check_gate_a_provenance.py exits 0,
+the diff touches only SPP's row and its provenance stamp, and your close states whether the capx
+record now counts six or seven going forward.
+```
+
+## D85 — the fifteen committed configs whose cache_key the current rules cannot reproduce (r#57, owner ruling Q59)
+
+```
+You are the D85 KEY-PROVENANCE AUDIT session of the capacity-expansion track, executing OWNER RULING
+Q59 (capx ledger §0bb.3(a), r#57). MODEL: Fable. DATA PROFILE: code.
+BRANCH: claude/capx-d85-key-provenance — FRESH off origin/main.
+
+THE OBJECT. FINDING-capx-d76-arm-2026-09-07.md §6 routed, and did not repair: 15 committed run
+configs carry a `cache_key` that the CURRENT rules cannot reproduce — registration lag, of which 6 are
+explained by `caiso_offer_surface_measured_ungrounded` being registered AFTER those bundles solved.
+The lane established that this does NOT touch any census, because a row's move verdict is
+hash-independent, so nothing is blocked on it. It is nonetheless a real defect in committed artifacts:
+a key that cannot be recomputed is a provenance hole.
+
+*** THIS IS AN AUDIT. YOU DIAGNOSE AND CLASSIFY; YOU DO NOT REWRITE COMMITTED KEYS. *** A committed
+`cache_key` is what that bundle actually solved under. Rewriting one to match today's rules would
+make the artifact lie about its own provenance, which is worse than the hole. If the right repair
+turns out to be a key rewrite, that is an owner card, not your act.
+
+STEP 1 — REPRODUCE THE 15. Re-run D76-ARM's census instrument (docs/handoffs/d76arm/, and its
+key-census scripts) at YOUR head and confirm the count. The corpus has been growing ~10-20 configs a
+day, so the number may differ; report what you measure and note that D76-ARM measured over 173
+configs, D76-ARM-B over 190. If your count differs, say which configs are new.
+
+STEP 2 — CLASSIFY EVERY ONE, with a named cause. Expected classes, but find your own:
+  (a) REGISTRATION LAG — a field registered in _CACHE_KEY_OPTIONAL_FIELDS after the bundle solved, so
+      today's cache_key() reads a field the solving code did not. The 6
+      caiso_offer_surface_measured_ungrounded cases are stated to be this.
+  (b) DECLARED-DEFAULT FLIP — the bundle solved before a flip that has since been declared, so its
+      frozen-declaration comparison differs. Four flips now exist; D76-ARM-B added the fourth.
+  (c) SOLVE-SURFACE FINGERPRINT — since D79/Q54 the key carries a per-name, per-ISO value hash; a
+      bundle predating a registry re-derivation may not reproduce.
+  (d) SOMETHING ELSE — and if you find one, it is the most valuable output of this session.
+Every one of the 15 gets a class and a citation. An unclassified row is the finding, not a footnote.
+
+STEP 3 — SAY WHAT, IF ANYTHING, IS AT RISK. For each class: can a stale-keyed bundle be served to a
+run that should have re-solved? That is the failure mode Q20/(b'-1) exists to prevent, and it is the
+only question that decides whether this is housekeeping or a defect. Answer it from the code path
+(results/cache.py's is_cached config-equality refusal, which D24-R landed for exactly this), not by
+assertion. If the answer is "no, the equality refusal catches it", say so plainly — that is a good
+outcome and it downgrades the whole item.
+
+STEP 4 — PROPOSE, DO NOT EXECUTE. Price the candidate repairs (leave as provenance-only; add a
+recorded exception list; re-register the lagging fields; something you find) with what each costs and
+what it invalidates. Recommend one. The owner decides.
+
+DO NOT: rewrite any committed cache_key; delete or re-register any bundle; edit
+_CACHE_KEY_OPTIONAL_FIELDS or the FLIPS list; solve anything; widen to D82/D83/D84.
+
+EXIT: docs/handoffs/FINDING-capx-d85-key-provenance-<date>.md with the reproduced count, all rows
+classified with zero unclassified, step 3's risk answer derived from the code path, and a priced
+recommendation. Report the step-3 answer FIRST in your close — it decides whether this item is a
+defect or bookkeeping.
+```
