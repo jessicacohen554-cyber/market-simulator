@@ -1,0 +1,26 @@
+{
+  "cache_key": "f672e9134d51a475",
+  "case": "CES-P10",
+  "years": {
+    "2026": {
+      "clean_region_duals": null,
+      "objective_value": 5860534729.094523
+    },
+    "2027": {
+      "clean_region_duals": null,
+      "objective_value": 6693880869.684463
+    },
+    "2028": {
+      "clean_region_duals": null,
+      "objective_value": 7727458906.05553
+    },
+    "2029": {
+      "clean_region_duals": null,
+      "objective_value": 7113250465.725396
+    },
+    "2030": {
+      "clean_region_duals": null,
+      "objective_value": 8816019500.557833
+    }
+  }
+}
