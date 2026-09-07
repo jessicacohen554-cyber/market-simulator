@@ -1,4 +1,4 @@
-# Scenario delta report — ERCOT — ercot_scenario_campaign_matrix_78b01278f2
+# Scenario delta report — ERCOT — ercot_scenario_campaign_matrix_81af49756e
 
 **deterministic scenario range -- NOT a probability band** — deltas are
 case-vs-`REF` differences on one deterministic case set,
@@ -8,9 +8,9 @@ not a probability statement. Dollars are real 2026$.
 
 | Case | Cache key | Reference? |
 |---|---|---|
-| LOAD-HI | `31cf71afda5c610d` |  |
-| LOAD-HI-ORGANIC | `c5255cea87fbaacf` |  |
-| REF | `6e40769352a572ba` | **REF** |
+| LOAD-HI | `ec2ea8193e2e45a1` |  |
+| LOAD-HI-ORGANIC | `0c87f2f2467e95b3` |  |
+| REF | `de9c68e19316910e` | **REF** |
 
 ## Headline deltas vs `REF` (final cached year)
 
@@ -18,9 +18,9 @@ Final cached year on disk: **2030**.
 
 | case | emissions_mt | emissions_mt_delta | import_co2_mt_reported | unserved_mwh | backstop_built_mw | backstop_built_mwh | avg_price_usd_per_mwh | avg_price_usd_per_mwh_delta | curtailment_twh | clean_share |
 |---|---|---|---|---|---|---|---|---|---|---|
-| LOAD-HI | 342.281 | 13.407 | 0.000 | 538869515.134 | 0 | 0.000 | 4640.210 | 547.790 | 4.908 | 0.307 |
-| LOAD-HI-ORGANIC | 342.284 | 13.410 | 0.000 | 538858662.605 | 0 | 0.000 | 4643.720 | 551.300 | 4.908 | 0.307 |
-| REF | 328.874 | 0.000 | 0.000 | 127220357.427 | 0 | 0.000 | 4092.420 | 0.000 | 4.919 | 0.317 |
+| LOAD-HI | 325.463 | 12.598 | 0.000 | 538869515.134 | 0 | 0.000 | 4640.210 | 547.790 | 4.908 | 0.358 |
+| LOAD-HI-ORGANIC | 325.466 | 12.601 | 0.000 | 538858662.605 | 0 | 0.000 | 4643.720 | 551.300 | 4.908 | 0.358 |
+| REF | 312.865 | 0.000 | 0.000 | 127220357.427 | 0 | 0.000 | 4092.420 | 0.000 | 4.919 | 0.368 |
 
 ## Cumulative CO2 delta vs `REF` (Mt)
 
@@ -28,41 +28,43 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | year | cumulative_emissions_mt_delta |
 |---|---|---|
-| LOAD-HI | 2030 | 130.355 |
-| LOAD-HI-ORGANIC | 2030 | 125.728 |
+| LOAD-HI | 2030 | 128.760 |
+| LOAD-HI-ORGANIC | 2030 | 124.132 |
 | REF | 2030 | 0.000 |
 
 ## By-fuel deltas (final year)
 
 | case | fuel | capacity_gw_delta | generation_twh_delta | emissions_mt_delta |
 |---|---|---|---|---|
-| LOAD-HI | gas_cc | 0.000 | 1.207 | 0.945 |
-| LOAD-HI | gas_ct | 2.500 | 22.549 | 11.824 |
+| LOAD-HI | gas_cc | -0.168 | -0.129 | 0.057 |
+| LOAD-HI | gas_cc_ccs | 0.168 | 1.359 | 0.090 |
+| LOAD-HI | gas_ct | 2.500 | 22.527 | 11.812 |
 | LOAD-HI | gas_st | 0.000 | 0.912 | 0.639 |
-| LOAD-HI | solar | -7.500 | -16.989 | 0.000 |
-| LOAD-HI | wind | 5.000 | 15.299 | 0.000 |
-| LOAD-HI-ORGANIC | gas_cc | 0.000 | 1.211 | 0.946 |
-| LOAD-HI-ORGANIC | gas_ct | 2.500 | 22.549 | 11.824 |
+| LOAD-HI | solar | -7.500 | -17.007 | 0.000 |
+| LOAD-HI | wind | 5.000 | 15.316 | 0.000 |
+| LOAD-HI-ORGANIC | gas_cc | -0.168 | -0.126 | 0.058 |
+| LOAD-HI-ORGANIC | gas_cc_ccs | 0.168 | 1.359 | 0.090 |
+| LOAD-HI-ORGANIC | gas_ct | 2.500 | 22.527 | 11.812 |
 | LOAD-HI-ORGANIC | gas_st | 0.000 | 0.915 | 0.640 |
-| LOAD-HI-ORGANIC | solar | -7.500 | -16.987 | 0.000 |
-| LOAD-HI-ORGANIC | wind | 5.000 | 15.296 | 0.000 |
+| LOAD-HI-ORGANIC | solar | -7.500 | -17.007 | 0.000 |
+| LOAD-HI-ORGANIC | wind | 5.000 | 15.316 | 0.000 |
 
 ## By-zone CO2 deltas (final year, Mt)
 
 | case | zone | emissions_mt | emissions_mt_delta |
 |---|---|---|---|
-| LOAD-HI | Houston | 77.819 | 1.232 |
-| LOAD-HI | North | 135.765 | 11.094 |
+| LOAD-HI | Houston | 75.287 | 0.517 |
+| LOAD-HI | North | 123.265 | 11.094 |
 | LOAD-HI | Northeast | 21.029 | 0.042 |
 | LOAD-HI | South | 26.594 | 0.097 |
-| LOAD-HI | South_Central | 60.893 | 0.328 |
-| LOAD-HI | West | 20.181 | 0.615 |
-| LOAD-HI-ORGANIC | Houston | 77.819 | 1.232 |
-| LOAD-HI-ORGANIC | North | 135.765 | 11.094 |
+| LOAD-HI | South_Central | 59.280 | -0.452 |
+| LOAD-HI | West | 20.009 | 1.300 |
+| LOAD-HI-ORGANIC | Houston | 75.287 | 0.517 |
+| LOAD-HI-ORGANIC | North | 123.265 | 11.094 |
 | LOAD-HI-ORGANIC | Northeast | 21.032 | 0.045 |
 | LOAD-HI-ORGANIC | South | 26.594 | 0.097 |
-| LOAD-HI-ORGANIC | South_Central | 60.893 | 0.328 |
-| LOAD-HI-ORGANIC | West | 20.181 | 0.615 |
+| LOAD-HI-ORGANIC | South_Central | 59.280 | -0.452 |
+| LOAD-HI-ORGANIC | West | 20.009 | 1.300 |
 
 ## Capacity-evolution deltas vs `REF` (ledger totals, MW)
 
@@ -73,16 +75,19 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI | build | solar | 2654.6 | -7500.0 |
 | LOAD-HI | build | wind | 10000.0 | 5000.0 |
 | LOAD-HI | retirement | gas_st | 446.0 | 0.0 |
+| LOAD-HI | retrofit | gas_cc_ccs | 5932.1 | 168.4 |
 | LOAD-HI-ORGANIC | build | gas_cc | 8018.8 | 0.0 |
 | LOAD-HI-ORGANIC | build | gas_ct | 6636.4 | 2500.0 |
 | LOAD-HI-ORGANIC | build | solar | 2654.6 | -7500.0 |
 | LOAD-HI-ORGANIC | build | wind | 10000.0 | 5000.0 |
 | LOAD-HI-ORGANIC | retirement | gas_st | 446.0 | 0.0 |
+| LOAD-HI-ORGANIC | retrofit | gas_cc_ccs | 5932.1 | 168.4 |
 | REF | build | gas_cc | 8018.8 | 0.0 |
 | REF | build | gas_ct | 4136.4 | 0.0 |
 | REF | build | solar | 10154.6 | 0.0 |
 | REF | build | wind | 5000.0 | 0.0 |
 | REF | retirement | gas_st | 446.0 | 0.0 |
+| REF | retrofit | gas_cc_ccs | 5763.8 | 0.0 |
 
 ## Notes & definitions
 
