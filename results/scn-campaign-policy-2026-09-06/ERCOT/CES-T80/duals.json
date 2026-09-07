@@ -1,0 +1,36 @@
+{
+ "cache_key": "e6638b058ce4d5fb",
+ "case": "CES-T80",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    50.0
+   ],
+   "objective_value": 12555300862.10503
+  },
+  "2027": {
+   "clean_region_duals": [
+    50.0
+   ],
+   "objective_value": 39376286607.47152
+  },
+  "2028": {
+   "clean_region_duals": [
+    50.0
+   ],
+   "objective_value": 232591776051.6235
+  },
+  "2029": {
+   "clean_region_duals": [
+    50.0
+   ],
+   "objective_value": 495112720386.2123
+  },
+  "2030": {
+   "clean_region_duals": [
+    50.0
+   ],
+   "objective_value": 754792979276.6051
+  }
+ }
+}
