@@ -1,0 +1,52 @@
+{
+ "probe": "miso-233 screen gates (2023)",
+ "keeper": "2026-09-06-miso-232-hourly-seam",
+ "arm_bundle": "results/calibration/_miso233_spp_screen",
+ "gates": {
+  "G-1 confinement": {
+   "bar": "slack <= keeper 0.0000 TWh; dump = 0; wind/solar/nuclear/hydro each within 0.05 TWh",
+   "keeper_slack_twh": 0.0,
+   "arm_slack_twh": 0.0,
+   "arm_dump_twh": 0.0,
+   "must_take_moves_twh": {
+    "wind": 0.0,
+    "solar": 0.0,
+    "nuclear": 0.0,
+    "hydro": 0.0
+   },
+   "verdict": "PASS"
+  },
+  "G-2 footprint scale": {
+   "bar": "|delta annual gross imports| <= 1.5 TWh",
+   "keeper_twh": 44.763,
+   "arm_twh": 44.166,
+   "delta_twh": -0.597,
+   "verdict": "PASS"
+  },
+  "G-3 direction": {
+   "bar": "corr(imports, own hub price) may not RISE more than +0.05 above the keeper",
+   "keeper_corr": 0.1754,
+   "arm_corr": 0.0712,
+   "change": -0.1042,
+   "verdict": "PASS"
+  }
+ },
+ "reported_not_gated": {
+  "note": "the target residual. REPORTED, NEVER GATED (rule 1 [R-STRUCT], PRECOMMIT \u00a74).",
+  "keeper_decile_slope_measured_price_mw": 138.7,
+  "arm_decile_slope_measured_price_mw": 402.4,
+  "measured_target_mw": 1303.0,
+  "keeper_corr_imports_measured_price": -0.0823,
+  "arm_corr_imports_measured_price": -0.1095,
+  "class_energy_moves_twh": {
+   "CC_CHP": 0.047,
+   "CC_REGULAR": -0.136,
+   "COAL_BIT": 0.111,
+   "COAL_PRB": 0.227,
+   "CT_PEAKER": 0.241,
+   "ST_GAS": 0.122,
+   "import": -0.597
+  }
+ },
+ "g4": "scored separately by scripts/screen_collateral_gate.py"
+}
