@@ -1,0 +1,72 @@
+recipe kwargs: {'outage_source': 'historic', 'ercot_reserve_supply_cap_from_year': 2023, 'ercot_load_resource_reserve_from_year': 2023, 'ercot_storage_as_reserve_from_year': 2025, 'ercot_ecrs_requirement_from_year': 2023, 'ercot_storage_as_deployment_from_year': 2023, 'curve_smoothing': {'offer_curve_smoothing_n': None, 'offer_curve_smoothing_exp': None, 'offer_curve_smoothing_mid': None}, 'hydro_backfill_year': 2024, 'hydro_year': 'normal'}
+WARNING: SWPP 2023: repairing 1 demand-spike hour(s) > 2.5x median (30769 MW); max raw 3621097 MW -- EIA-930 metering artifact(s)
+INFO: SPP net interchange applied for 2023: +447 MW avg (export-positive, measured EIA-930)
+WARNING: SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+INFO: SPP per-zone wind SHAPE (2023): 3 zone(s) from spp_2023_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.97, SPP-Oklahoma=1.06, SPP-South=1.01
+WARNING: SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+WARNING: SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 55641->6.880
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Rebuilt binned fleet cache for SPP — 1012 plants → spp_fleet_binned.parquet
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+INFO: unit-outage derate (SPP 2023): 303 plant-tranches derated
+INFO: COD ramp (SPP 2023): 182 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2023 hydro budget pinned to monthly target total 8344.1 GWh (was 8400.3 GWh)
+INFO: Loaded SPP 2023 hydro budget: 23 plants, 8344.1 GWh annual, 3104 MW nameplate
+INFO: SPP 2023: 23 hydro plants in LP (3104 MW, 8.34 TWh monthly budget)
+INFO: unit-outage derate (SPP 2023): 303 plant-tranches derated
+INFO: COD ramp (SPP 2023): 319 unit-months masked offline (mid-year COD / retirement), 13 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2023: 383 generators priced from their own plant, 792 gap-filled from nearby (state/zone) plants
+
+===== 2023: zones ['SPP-North', 'SPP-Oklahoma', 'SPP-South']; LP units 1125
+zone        SPP-North  SPP-Oklahoma  SPP-South
+klass                                         
+CC_CHP            0.0           0.0      271.0
+CC_REGULAR     2324.0        5424.0     2300.0
+COAL          12727.0        3259.0     3861.0
+CT_CHP           79.0           0.0      162.0
+CT_PEAKER      7861.0        1738.0     2109.0
+ST_CHP           91.0          22.0        0.0
+ST_GAS          878.0        5320.0     4082.0
+hydro          2580.0         466.0       58.0
+nuclear        1945.0           0.0        0.0
+oil            1723.0          40.0       17.0
+  SPP-North     plants  223 units  811 thermal+hydro MW     30208 wind cap    16671 MW potential  56.40 TWh | solar cap     274 MW potential  0.22 TWh | demand  146.47 TWh (min   11235 max   28552 MW)
+  SPP-Oklahoma  plants   42 units  170 thermal+hydro MW     16269 wind cap    11624 MW potential  38.97 TWh | solar cap      54 MW potential  0.05 TWh | demand   79.18 TWh (min    6155 max   15744 MW)
+  SPP-South     plants   36 units  144 thermal+hydro MW     12860 wind cap     4654 MW potential  18.68 TWh | solar cap     319 MW potential  0.32 TWh | demand   58.86 TWh (min    4810 max   11041 MW)
+  demand total TWh 284.52  wind potential total 
+INFO: SPP net interchange applied for 2024: +186 MW avg (export-positive, measured EIA-930)
+INFO: SPP per-zone wind SHAPE (2024): 3 zone(s) from spp_2024_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.96, SPP-Oklahoma=0.96, SPP-South=1.13
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: unit-outage derate (SPP 2024): 293 plant-tranches derated
+INFO: COD ramp (SPP 2024): 318 unit-months masked offline (mid-year COD / retirement), 26 unit(s) fully not-yet-built/retired
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2024 hydro budget pinned to monthly target total 8973.1 GWh (was 8702.3 GWh)
+INFO: Loaded SPP 2024 hydro budget: 22 plants, 8973.1 GWh annual, 3078 MW nameplate
+INFO: SPP 2024: 22 hydro plants in LP (3078 MW, 8.97 TWh monthly budget)
+INFO: unit-outage derate (SPP 2024): 293 plant-tranches derated
+INFO: COD ramp (SPP 2024): 436 unit-months masked offline (mid-year COD / retirement), 34 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2024: 378 generators priced from their own plant, 822 gap-filled from nearby (state/zone) plants
