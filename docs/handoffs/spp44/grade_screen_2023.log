@@ -1,0 +1,88 @@
+
+=== leg (i) window agreement — 2023 ===
+bridge-floored unit-hours 7091, floor volume V = 0.4144 TWh
+CC_REGULAR: floored plants with CAMPD series 19 (without 4); agreement (floor-MWh-weighted) 0.694 vs unconditional online 0.660 (lift +0.034); bar 0.76 -> STOP
+ST_GAS: floored plants with CAMPD series 12 (without 1); agreement (floor-MWh-weighted) 0.968 vs unconditional online 0.499 (lift +0.469); bar 0.60 -> pass
+
+=== leg (ii) direction / magnitude — 2023 ===
+              control_twh     arm_twh  delta_twh
+klass                                           
+CC_CHP           1.883000    1.882000     -0.001
+CC_REGULAR      41.432999   41.577000      0.144
+COAL_LIGNITE     7.937000    7.929000     -0.009
+COAL_PRB        62.686001   62.562000     -0.124
+CT_CHP           1.271000    1.270000     -0.001
+CT_PEAKER       19.989000   19.945000     -0.044
+OTHER            0.507000    0.507000      0.000
+ST_CHP           0.369000    0.368000     -0.001
+ST_GAS           7.526000    7.562000      0.036
+biomass          1.101000    1.101000      0.000
+hydro            8.344000    8.344000      0.000
+nuclear         16.926001   16.926001      0.000
+oil              0.000000    0.000000      0.000
+solar            0.589000    0.589000      0.000
+wind           114.053001  114.053001      0.000
+dE(CC+ST) = +0.1798 TWh vs band [0.1036, 0.8289] (V 0.4144); dE(CT) = -0.0445 TWh (STOP if > +0.05; |dE| < 0.05 reported as 'CT not displaced') -> pass
+
+=== leg (iii) C8 / D-4 — 2023 ===
+D-2 CC_REGULAR: forced 0.2420 / class 44.215 TWh = 0.005
+D-2 ST_GAS: forced 0.0489 / class 10.630 TWh = 0.005
+D-4 {'year': 2023, 'check': 'window', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '', 'floored_twh': 0.242, 'offwindow_twh': 0.0, 'offwindow_share': 0.0, 'binding_hours': '', 'measured_median_mw': '', 'measured_zero_share': '', 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '165', 'floored_twh': 0.0068, 'offwindow_twh': '', 'offwindow_share': 0.028, 'binding_hours': 77, 'measured_median_mw': 420.02, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '201', 'floored_twh': 0.0139, 'offwindow_twh': '', 'offwindow_share': 0.0576, 'binding_hours': 470, 'measured_median_mw': 0.0, 'measured_zero_share': 0.5298, 'verdict': 'FAIL'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '1239', 'floored_twh': 0.0093, 'offwindow_twh': '', 'offwindow_share': 0.0385, 'binding_hours': 201, 'measured_median_mw': 141.005, 'measured_zero_share': 0.3632, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '2079', 'floored_twh': 0.0005, 'offwindow_twh': '', 'offwindow_share': 0.0022, 'binding_hours': 12, 'measured_median_mw': 128.13, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '3006', 'floored_twh': 0.01, 'offwindow_twh': '', 'offwindow_share': 0.0413, 'binding_hours': 194, 'measured_median_mw': 86.372, 'measured_zero_share': 0.4175, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '3604', 'floored_twh': 0.0056, 'offwindow_twh': '', 'offwindow_share': 0.0233, 'binding_hours': 417, 'measured_median_mw': 0.0, 'measured_zero_share': 0.9544, 'verdict': 'FAIL'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '7296', 'floored_twh': 0.0064, 'offwindow_twh': '', 'offwindow_share': 0.0267, 'binding_hours': 87, 'measured_median_mw': 266.457, 'measured_zero_share': 0.2069, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '8000', 'floored_twh': 0.0021, 'offwindow_twh': '', 'offwindow_share': 0.0085, 'binding_hours': 62, 'measured_median_mw': 0.0, 'measured_zero_share': 0.9194, 'verdict': 'FAIL'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '50558', 'floored_twh': 0.009, 'offwindow_twh': '', 'offwindow_share': 0.0374, 'binding_hours': 373, 'measured_median_mw': 81.459, 'measured_zero_share': 0.3995, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55065', 'floored_twh': 0.0013, 'offwindow_twh': '', 'offwindow_share': 0.0052, 'binding_hours': 14, 'measured_median_mw': 286.684, 'measured_zero_share': 0.3571, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55146', 'floored_twh': 0.0123, 'offwindow_twh': '', 'offwindow_share': 0.0509, 'binding_hours': 99, 'measured_median_mw': 171.726, 'measured_zero_share': 0.3131, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55178', 'floored_twh': 0.0282, 'offwindow_twh': '', 'offwindow_share': 0.1167, 'binding_hours': 233, 'measured_median_mw': 0.0, 'measured_zero_share': 0.618, 'verdict': 'FAIL'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55225', 'floored_twh': 0.0463, 'offwindow_twh': '', 'offwindow_share': 0.1913, 'binding_hours': 245, 'measured_median_mw': 97.122, 'measured_zero_share': 0.4327, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55463', 'floored_twh': 0.0178, 'offwindow_twh': '', 'offwindow_share': 0.0738, 'binding_hours': 91, 'measured_median_mw': 157.754, 'measured_zero_share': 0.3077, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '55664', 'floored_twh': 0.0047, 'offwindow_twh': '', 'offwindow_share': 0.0196, 'binding_hours': 47, 'measured_median_mw': 387.624, 'measured_zero_share': 0.0851, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '56458', 'floored_twh': 0.0365, 'offwindow_twh': '', 'offwindow_share': 0.1511, 'binding_hours': 343, 'measured_median_mw': 374.315, 'measured_zero_share': 0.0087, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × CC_REGULAR', 'window': 'h0-23', 'plant': '56610', 'floored_twh': 0.0189, 'offwindow_twh': '', 'offwindow_share': 0.078, 'binding_hours': 393, 'measured_median_mw': 142.554, 'measured_zero_share': 0.3486, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'window', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '', 'floored_twh': 0.0489, 'offwindow_twh': 0.0, 'offwindow_share': 0.0, 'binding_hours': '', 'measured_median_mw': '', 'measured_zero_share': '', 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '1416', 'floored_twh': 0.0023, 'offwindow_twh': '', 'offwindow_share': 0.0476, 'binding_hours': 271, 'measured_median_mw': 312.237, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '1417', 'floored_twh': 0.002, 'offwindow_twh': '', 'offwindow_share': 0.04, 'binding_hours': 114, 'measured_median_mw': 75.363, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '2454', 'floored_twh': 0.0013, 'offwindow_twh': '', 'offwindow_share': 0.0274, 'binding_hours': 92, 'measured_median_mw': 253.187, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '2956', 'floored_twh': 0.013, 'offwindow_twh': '', 'offwindow_share': 0.2657, 'binding_hours': 104, 'measured_median_mw': 382.435, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '3476', 'floored_twh': 0.003, 'offwindow_twh': '', 'offwindow_share': 0.061, 'binding_hours': 106, 'measured_median_mw': 77.108, 'measured_zero_share': 0.2453, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '3482', 'floored_twh': 0.005, 'offwindow_twh': '', 'offwindow_share': 0.1015, 'binding_hours': 129, 'measured_median_mw': 223.048, 'measured_zero_share': 0.0233, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '3484', 'floored_twh': 0.0114, 'offwindow_twh': '', 'offwindow_share': 0.2325, 'binding_hours': 303, 'measured_median_mw': 85.458, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '3485', 'floored_twh': 0.001, 'offwindow_twh': '', 'offwindow_share': 0.0198, 'binding_hours': 62, 'measured_median_mw': 0.0, 'measured_zero_share': 0.6129, 'verdict': 'FAIL'}
+D-4 {'year': 2023, 'check': 'unit-conduct', 'floor': 'spp_gas_commitment_bridge × ST_GAS', 'window': 'h0-23', 'plant': '6193', 'floored_twh': 0.008, 'offwindow_twh': '', 'offwindow_share': 0.1645, 'binding_hours': 96, 'measured_median_mw': 540.191, 'measured_zero_share': 0.0, 'verdict': 'pass'}
+-> STOP
+
+=== leg (iv) non-target C1 / C2 / C4 — 2023 ===
+C1 band: volume ±8.00 TWh, share ±3.0 pp
+  CC_CHP        actual    1.74 | control    1.88 ( +0.15, +0.06 pp, in) | arm    1.88 ( +0.14, +0.06 pp, in)  [non-target]
+  CC_REGULAR    actual   45.69 | control   41.43 ( -4.26, -1.30 pp, in) | arm   41.58 ( -4.12, -1.25 pp, in)  [target]
+  COAL_BIT      actual    0.03 | control    0.00 ( -0.03, -0.01 pp, in) | arm    0.00 ( -0.03, -0.01 pp, in)  [non-target]
+  COAL_LIGNITE  actual    9.40 | control    7.94 ( -1.46, -0.47 pp, in) | arm    7.93 ( -1.47, -0.47 pp, in)  [non-target]
+  COAL_PRB      actual   65.28 | control   62.69 ( -2.59, -0.63 pp, in) | arm   62.56 ( -2.72, -0.67 pp, in)  [non-target]
+  CT_CHP        actual    1.24 | control    1.27 ( +0.03, +0.02 pp, in) | arm    1.27 ( +0.03, +0.02 pp, in)  [non-target]
+  CT_PEAKER     actual   13.21 | control   19.99 ( +6.77, +2.44 pp, in) | arm   19.94 ( +6.73, +2.42 pp, in)  [target]
+  OTHER         actual    0.51 | control    0.51 ( -0.00, +0.00 pp, in) | arm    0.51 ( -0.00, +0.00 pp, in)  [other]
+  OTHER_FOSSIL  actual    1.39 | control    0.00 ( -1.39, -0.48 pp, in) | arm    0.00 ( -1.39, -0.48 pp, in)  [other]
+  ST_CHP        actual    0.53 | control    0.37 ( -0.16, -0.06 pp, in) | arm    0.37 ( -0.16, -0.06 pp, in)  [non-target]
+  ST_GAS        actual   15.02 | control    7.53 ( -7.49, -2.57 pp, in) | arm    7.56 ( -7.46, -2.55 pp, in)  [target]
+  biomass       actual    1.10 | control    1.10 ( -0.00, +0.00 pp, in) | arm    1.10 ( -0.00, +0.00 pp, in)  [other]
+  hydro         actual    8.35 | control    8.34 ( -0.00, +0.04 pp, in) | arm    8.34 ( -0.00, +0.04 pp, in)  [other]
+  nuclear       actual   17.23 | control   16.93 ( -0.30, -0.03 pp, in) | arm   16.93 ( -0.30, -0.03 pp, in)  [other]
+  oil           actual    0.26 | control    0.00 ( -0.26, -0.09 pp, in) | arm    0.00 ( -0.26, -0.09 pp, in)  [other]
+  solar         actual    0.59 | control    0.59 ( +0.00, +0.00 pp, in) | arm    0.59 ( +0.00, +0.00 pp, in)  [other]
+  wind          actual  106.63 | control  114.05 ( +7.42, +3.07 pp, OUT) | arm  114.05 ( +7.42, +3.07 pp, OUT)  [other]
+C4 gas: r control 0.966 | arm 0.966 (floor 0.7)
+C4 coal: r control 0.950 | arm 0.951 (floor 0.7)
+non-target C1 flips in->OUT: []; C4 flips: [] -> pass
+
+=== reported (never gated) — 2023 ===
+control: load-weighted price $27.88; hours > $200 (zone mean) 0; negative hours 7; unserved 0.0 MWh in 0 h; dump 0.0 MWh
+arm: load-weighted price $27.85; hours > $200 (zone mean) 0; negative hours 7; unserved 0.0 MWh in 0 h; dump 0.0 MWh
+
+VERDICTS: {'(i) CC_REGULAR': 'STOP', '(i) ST_GAS': 'pass', '(ii)': 'pass', '(iii)': 'STOP', '(iv)': 'pass'}
+SCREEN: KILLED

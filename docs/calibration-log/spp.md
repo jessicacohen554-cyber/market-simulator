@@ -226,7 +226,6 @@ PR (29c); every number is in the FINDING.
   is the branch's design commit (cited in the FINDING) for the re-issue. Matrix shard: `measured_interface_limits`
   stays O, SPP-57 evidence appended. Rule 22: 2025 only, training tier.
 
-**Next shorthand: spp-5.**
 
 ## 2026-09-07 — spp-5: SPP-57b Oklahoma pocket, constituent sets re-declared (SPP-57 R-12) — rule-29(a) screen (2025) KILLED at the STOP gate
 
@@ -258,7 +257,6 @@ only, reproduced by the census). Screen bundle deleted before the PR (29c).
   identity green); the three-zone implementation under (B′) is the branch's design commit `7bfe047d`. Matrix
   shard: `measured_interface_limits` stays O, SPP-57b evidence appended. Rule 22: 2025 only, training tier.
 
-**Next shorthand: spp-6.**
 
 ## 2026-09-07 — spp-6: keeper-2's recipe re-solved on the SPP-41 screened wind input — REGISTERED, **NOT PROMOTED** (the pre-declared rule stopped)
 
@@ -342,4 +340,31 @@ was tested). Gates re-run green after the promotion: `audit_keepers --check` PAS
 untouched: the 2024 CT/CC/ST gas split (C1, C3a-2023) and the price-shape family (C3b / C3c / spread /
 negative hours).
 
-**Next shorthand: spp-7.**
+
+## 2026-09-07 — spp-7: SPP-44 SPP gas commitment bridge (`spp_gas_commitment_bridge`) — rule-29(a) screen (2023) KILLED at the STOP gate
+
+**Result: KILLED — not a keeper candidate; full span not spent; nothing registered; the field landed default-off.**
+Record: `docs/handoffs/PRECOMMIT-spp-44-2026-09-07.md` (pushed before any solve) + `FINDING-spp-44-2026-09-07.md` +
+`docs/handoffs/spp44/`. Control = keeper-2 for 2024/2025 and, because the SPP-41 seam is LIVE for 2023 (G-DRIFT
+hunk 6), a flag-free 2023 re-solve of keeper-2's recipe at HEAD for the screen year (rule 29(b)'s LIVE-hunk
+clause; measured dispatch effect of the seam: wind −25 GWh, every criterion row unchanged). Both bundles deleted
+before the PR (29c); every number is in the FINDING.
+
+- **Measured (zero-LP):** CAMPD 2023–2025 plant-basis min-load CC_REGULAR **0.209** / ST_GAS **0.090** (per-unit
+  0.440 / 0.266 reported, not used — caiso-135 basis adjudication); min-run cap-wtd p25 **15 / 5 h**; LOYO folds
+  within ±0.013. Rule-18 census on keeper-2's fleet: 23 CC + 31 ST_GAS plants clear the gate (min-down 4–12 h,
+  $35–50/MW); every CT row fails on its 1 h min-down. Footprint 4,209 / 1,545 / 2,656 GWh → screen year 2023.
+- **Screen 2023** (P0 identical to the control's by construction; P1 obj −31.53 M → −30.27 M): the bridge fired —
+  7,091 unit-hours, **0.414 TWh** of floor (CC 0.355 / ST 0.059), 1,019 segments none > 24 h, D-2 forced share 0.5 %
+  on both classes; the commitment-real screen dropped 62 % / 78 % of the CC / ST P0 runs as phantom. **STOP on (i)**:
+  CC window agreement with CAMPD 0.694 vs a 0.76 bar (chance 0.660; ST_GAS 0.968 passes). **STOP on (iii)**: D-4
+  unit-conduct FAIL at five laid-up plants (CC 201 / 3604 / 8000 / 55178, ST 3485). (ii) pass: ΔE(CC+ST) +0.180
+  TWh inside [0.104, 0.829]; CT −0.044 = "CT not displaced" (coal −0.124 is what the floor displaces). (iv) pass.
+- **Structural reading:** a bridge can only refuse to stop a unit the model started; SPP's gas split is units the
+  model never starts (ST_GAS at zero in 5,914 h where the real fleet holds ~835 MW). Routed R-17 (the object → the
+  band channel or a measured commitment-STATE input, new PRECOMMIT), R-18 (lay-up membership prerequisite), R-19 /
+  R-20 (to SPP-43).
+- Records: seven keeper keys unmoved; solve surface 0 moved; matrix row + 7 cells; SPP cells
+  `spp_gas_commitment_bridge` and `gas_commitment_bridge` U → R; `keepers/SPP.json` untouched.
+
+**Next shorthand: spp-8.**

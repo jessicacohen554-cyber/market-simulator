@@ -48,9 +48,9 @@ pd.set_option("display.width", 250)
 def class_hourly(b: Path) -> pd.DataFrame:
     d = pd.read_parquet(b / "hourly" / f"class_hourly_{year}.parquet")
     d = d[(d["pass"] == "P1") & (d["year"] == year)]
-    return d.pivot_table(index="hour", columns="klass", values="mw", aggfunc="sum").reindex(
-        range(T), fill_value=0.0
-    )
+    return d.pivot_table(
+        index="hour", columns="klass", values="mw", aggfunc="sum"
+    ).reindex(range(T), fill_value=0.0)
 
 
 def system(b: Path) -> pd.DataFrame:
@@ -68,7 +68,9 @@ def pearson(a, b):
 
 ch_a, ch_c = class_hourly(arm), class_hourly(ctl)
 sy_a, sy_c = system(arm), system(ctl)
-bench = json.load(gzip.open(REPO / "frontend/data/backcast/bench/SPP" / f"{year}.json.gz"))
+bench = json.load(
+    gzip.open(REPO / "frontend/data/backcast/bench/SPP" / f"{year}.json.gz")
+)
 cfull = bench["bench"]["classFull"]
 e930 = load_eia_hourly_benchmark("SPP", year) or {}
 
@@ -83,7 +85,9 @@ pgroup = z["plant_group"] if "plant_group" in z else np.array([""] * len(pcode))
 on = pd.read_parquet(REPO / "docs/handoffs/spp44" / f"campd_online_{year}.parquet")
 bridge = (mech == MECH_SPP_GAS_COMMITMENT_BRIDGE) & (mg > 0)
 V_twh = float(mg[bridge].sum()) / 1e6
-print(f"bridge-floored unit-hours {int(bridge.sum())}, floor volume V = {V_twh:.4f} TWh")
+print(
+    f"bridge-floored unit-hours {int(bridge.sum())}, floor volume V = {V_twh:.4f} TWh"
+)
 uncond = {}
 for k in ("CC_REGULAR", "ST_GAS"):
     rows = np.flatnonzero(pgroup == k)
@@ -147,11 +151,16 @@ if lp.exists():
             f"D-2 {r['class']}: forced {r['forced_twh']:.4f} / class {r['class_total_twh']:.3f} TWh "
             f"= {r['share_of_class']:.3f}"
         )
-    over = [r for r in d2 if r["class"] in ("CC_REGULAR", "ST_GAS") and r["share_of_class"] > 0.30]
+    over = [
+        r
+        for r in d2
+        if r["class"] in ("CC_REGULAR", "ST_GAS") and r["share_of_class"] > 0.30
+    ]
     d4 = [
         r
         for r in ld["diagnostics"]["D4"]["rows"]
-        if r.get("year") == year and "spp_gas_commitment_bridge" in str(r.get("floor", ""))
+        if r.get("year") == year
+        and "spp_gas_commitment_bridge" in str(r.get("floor", ""))
     ]
     for r in d4:
         print(f"D-4 {r}")
@@ -174,7 +183,13 @@ def c1_rows(E: pd.Series, demand_twh: float):
     for c, a in cfull.items():
         m = float(E.get(c, 0.0))
         pp = 100.0 * m / m_gen - 100.0 * float(a) / a_gen
-        out[c] = (m, float(a), m - float(a), pp, abs(m - a) <= band and abs(pp) <= FUELMIX_SHARE_PP)
+        out[c] = (
+            m,
+            float(a),
+            m - float(a),
+            pp,
+            abs(m - a) <= band and abs(pp) <= FUELMIX_SHARE_PP,
+        )
     return out, band
 
 
@@ -211,9 +226,13 @@ for fuel in ("gas", "coal"):
         )
         ob = ob - fold * 1e6 / T
     for name, ch in (("control", ch_c), ("arm", ch_a)):
-        ms = sum((ch[c].to_numpy(float) for c in classes if c in ch.columns), np.zeros(T))
+        ms = sum(
+            (ch[c].to_numpy(float) for c in classes if c in ch.columns), np.zeros(T)
+        )
         c4[(fuel, name)] = pearson(ms, ob)
-    print(f"C4 {fuel}: r control {c4[(fuel, 'control')]:.3f} | arm {c4[(fuel, 'arm')]:.3f} (floor {DISP_R_FLOOR})")
+    print(
+        f"C4 {fuel}: r control {c4[(fuel, 'control')]:.3f} | arm {c4[(fuel, 'arm')]:.3f} (floor {DISP_R_FLOOR})"
+    )
 c4_flip = [
     f
     for f in ("gas", "coal")
@@ -236,4 +255,7 @@ for name, sy in (("control", sy_c), ("arm", sy_a)):
         f"{int((sy.groupby('hour')['slack'].sum() > 0).sum())} h; dump {float(sy['dump'].sum()):.1f} MWh"
     )
 print("\nVERDICTS:", verdicts)
-print("SCREEN:", "KILLED" if any(v == "STOP" for v in verdicts.values()) else "CLEARS the STOP gate")
+print(
+    "SCREEN:",
+    "KILLED" if any(v == "STOP" for v in verdicts.values()) else "CLEARS the STOP gate",
+)
