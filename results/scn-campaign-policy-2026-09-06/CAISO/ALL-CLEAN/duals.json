@@ -1,0 +1,46 @@
+{
+  "cache_key": "e2820065dbdcb708",
+  "case": "ALL-CLEAN",
+  "years": {
+    "2026": {
+      "clean_region_duals": [
+        50.0,
+        -0.0
+      ],
+      "objective_value": 8245938404.409223,
+      "co2_cap_price": null
+    },
+    "2027": {
+      "clean_region_duals": [
+        50.0,
+        -0.0
+      ],
+      "objective_value": 10120192338.945375,
+      "co2_cap_price": null
+    },
+    "2028": {
+      "clean_region_duals": [
+        50.0,
+        -0.0
+      ],
+      "objective_value": 11305591726.622776,
+      "co2_cap_price": null
+    },
+    "2029": {
+      "clean_region_duals": [
+        50.0,
+        -0.0
+      ],
+      "objective_value": 10528100534.578165,
+      "co2_cap_price": null
+    },
+    "2030": {
+      "clean_region_duals": [
+        50.0,
+        -0.0
+      ],
+      "objective_value": 13256033420.897936,
+      "co2_cap_price": null
+    }
+  }
+}
