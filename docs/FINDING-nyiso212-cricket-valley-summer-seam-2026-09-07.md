@@ -5,9 +5,12 @@
 **Keeper: `2026-09-06-nyiso-202-startup-aware` — UNCHANGED.** No `ScenarioConfig` field, no
 coefficient, no offer curve, no derive script, no scorer, no marker, no keeper, no gate moved.
 
-**ZERO LP SPENT.** Rule 29 `[R-SCREEN]` step 0 in full: three on-recipe `fleet_only` rebuilds of
-the keeper's `meta.json` (no solve, no dispatch, no prices), CSV and parquet reads. No screen, no
-arm, no bundle, no registration — 29(c) has nothing to delete, rule 15 nothing to register.
+**§0–§10 SPEND ZERO LP.** Rule 29 `[R-SCREEN]` step 0 in full: on-recipe `fleet_only` rebuilds of
+the keeper's `meta.json` (no solve, no dispatch, no prices), CSV and parquet reads.
+**The ADDENDUM at the end spends ONE LP** — the pre-registered one-year (2025) rule-29 screen of the
+repair §7 names — and that screen **KILLED the arm on the literal reading of two gates whose wording
+was mine**. The full span was not spent, nothing is registered (rule 15), and the screen bundle is
+deleted before this PR merges (rule 29(c)); the ADDENDUM is the record.
 
 **Pre-registration:**
 `results/calibration/PREREG-nyiso212-cricket-valley-outage-window-construction.md`, committed and
@@ -294,7 +297,9 @@ seam".
   the mechanism's own measured footprint (§4's table; the seam is a constant MW, so the footprint
   is the summer over-ceiling energy: 2025 at 57185, 292 GWh) — and only an arm that clears that
   screen and the full 2023–2025 span becomes a candidate to which the owner's formula and D-5(b)
-  apply. **Nothing is armed on the keeper here.**
+  apply. **Nothing is armed on the keeper here.** **The screen was run in this session and the arm
+  was KILLED on the literal reading of two gates whose wording was mine — see the ADDENDUM below;
+  the span was not spent.**
 * **A rule-14 question, named and not pursued:** what a CC plant's *summer capability* should be
   measured as, once a demonstrated-peak cap exists. EIA net summer (1,016) sits 6 % below the
   measured summer p99.9 (1,078), and a 3.5 % WEFOR residual sits on top of a capacity that is
@@ -345,9 +350,9 @@ seam".
 | **Rule 14 `[R-ACCURATE]`** | both measured inputs **stay**; the worse fit is a discovered construction bug, routed to a zero-DOF repair |
 | **Rule 19 `[R-ONE-MECH]`** | the defect *is* a rule-19 violation — one phenomenon stated twice — and is named as such |
 | **Rule 22 `[R-HOLDOUT]`** | in-sample years only; 2022 not read; no marker byte moved |
-| **Rule 29 `[R-SCREEN]`** | step 0 only; footprint measured (§4); the screen is pre-registered separately, its year by footprint; no bundle, so (c) has nothing to delete |
-| **Rule 15 `[R-DASHBOARD]`** | no run produced, nothing to register |
-| **Rule 28 `[R-MECH-MATRIX]`** | NYISO shard stamped in this session; **no cell verdict letter moves** — `cc_nameplate_summer_derate`, `cc_capacity_reconcile`, `unit_outage_extract_basis_share` stay `K` with the seam recorded; key set verified identical to `main` (306 cells) |
+| **Rule 29 `[R-SCREEN]`** | step 0 (§0–§10) then ONE pre-registered one-year screen (ADDENDUM), year chosen by the mechanism's own footprint; the arm is KILLED on the literal reading and the span is NOT spent; the screen bundle is deleted before merge, (c) |
+| **Rule 15 `[R-DASHBOARD]`** | no run registered — a screen bundle is never registered (rule 29(2)); nothing to prune |
+| **Rule 28 `[R-MECH-MATRIX]`** | NYISO shard stamped; `cc_nameplate_summer_derate`, `cc_capacity_reconcile`, `unit_outage_extract_basis_share` stay `K` with the seam recorded; the NEW row `cc_summer_derate_reconciled_basis` is added to the base and to all seven shards (rule 28(c)) and NYISO's cell reads **`U` → `O` (open: tested, no verdict earned)** after the screen — never `K`, never `R` |
 | **Rule 25 `[R-ISO-SCOPE]`** | NYISO only; MISO's gate-(a) failure reported, not touched |
 | **Rule 27 `[R-PUSH]`** | files ≥ 300 lines pushed are blob-verified after push |
 | **Markers / keeper / gates** | untouched; D-5(b) does not attach (no candidate) |
@@ -359,3 +364,174 @@ seam".
 falsified by the same table; the third outcome fired and its object was corrected in the open. A
 clean negative on the outage-window framing, and a two-mechanism seam measured to six decimals
 that no offer curve can reach.)*
+
+---
+
+# ADDENDUM (same session) — the rule-29 screen: **KILLED on the literal declared reading**, on two gates I mis-wrote; the mechanism itself did exactly what its arithmetic predicted
+
+**Pre-registration:** `results/calibration/PREREG-nyiso212-summer-seam-screen.md`, committed and
+pushed at `f76c3011` **before the solve was launched** and not edited since. **Machine record:**
+`results/calibration/_nyiso212_screen_gates_2025.json` (every number below).
+**Scorer:** `scripts/probes/nyiso212_screen_gates.py`. **ONE LP spent** (2025, one year, the
+pre-registered screen year). The screen bundle `results/calibration/_nyiso212_screen_2025` is a
+throwaway diagnostic probe: never registered, never a keeper, **deleted before this PR merges**
+(rule 29(c)) — this section is the record, and git history is the record for the bytes.
+
+**Command run, exactly as §5 of the PREREG declared it:**
+
+```
+uv run python scripts/run_calibration_full.py --iso NYISO \
+  --replay-bundle results/calibration/nyiso202_startup_aware --year 2025 \
+  --cc-summer-derate-reconciled-basis \
+  --out-dir results/calibration/_nyiso212_screen_2025
+```
+
+## 11.1 The verdict of record
+
+| gate | declared bar | measured | verdict |
+|---|---|---|---|
+| **S-1** recipe identity | config differs in exactly one key, the flag | live diff = **`weather_year` 2023→2025, `gas_price_override` 2.54→3.52**; the flag itself classified into the "new dataclass defaults" bucket | **FAIL** |
+| **S-2(a)** 57185 | Δ summer ∈ (0, +376.2] GWh | **+258.39** | pass |
+| **S-2(b)** 12 cap plants | Δ summer ∈ (0, +Σ ceiling Δ] | **+646.68** of +1,236.21 | pass |
+| **S-2(c)** 3 raise plants | Δ summer ≤ +1 % of keeper summer, each | 55375 **−40.68**, 56234 **−30.64** ok; **50978 +54.27** against a +1.71 bar | **FAIL** |
+| **S-3** footprint confinement | Δ annual CC_REGULAR ∈ [0, +892.95] GWh | **+567.95**, no other class outside expectation | pass |
+| **S-4** no load-bearing PASS→FAIL flip | none | **none**; C3a and C3b both stay PASS | pass |
+| **S-5** contradiction removed | meter never exceeds the arm's monthly ceiling at 57185 | **zero** months; max dispatch above ceiling **0.0000 MW** | pass |
+
+**The screen is KILLED as literally declared, and that is the verdict this session records.** The
+full 2023–2025 span is **NOT spent**, no arm is promoted, no keeper moves, and the matrix cell for
+`cc_summer_derate_reconciled_basis` goes `U → O` (open: tested, no verdict earned) — **not** `K`
+and **not** `R`, because neither was earned.
+
+## 11.2 Both failures are in the GATE'S OWN WORDING, and I state exactly what I got wrong
+
+Neither failure is a statement about the mechanism. I report them as failures anyway, and I do
+**not** act on the repaired reading — the discipline nyiso-211 followed when its own pre-registered
+verdict was voided by its own identity check.
+
+**S-1.** Two defects, both mine. (a) The keeper's `run_config.json` is a **three-year** bundle's
+record, so it carries `weather_year 2023` and that year's `gas_price_override 2.54`; a **one-year**
+replay of 2025 records 2025's own values. Those two keys encode the `--year` selection the
+PREREG's own §5 command specifies — they are not a recipe difference. (b) My comparison put any key
+absent from the keeper's record into a "new dataclass defaults" bucket, **including the flag
+itself**, which the keeper's record predates. The PREREG's prose anticipated exactly this ("the
+flag reads absent/False → True"); the code I wrote did not implement its own prose.
+Excluding the two year-selection keys, the recipe diff is **empty**, and the flag reads
+absent(=False) → `True` with seven other new dataclass defaults all at `False` — i.e. the
+substantive question S-1 asked is answered **yes**, by the replay path's construction. The declared
+bar still fails, and it is recorded as failed.
+
+**S-2(c).** The bar assumed the three `raise`-row plants are the plants whose summer ceiling
+**fell**. That is false, and the fact that falsifies it was already in
+`_nyiso212_arm_phase0.json` and in §4's own table, **both committed before the PREREG was
+written** — I mis-read my own file. The direction is not the reconcile table's `mode` label at
+all; it is one inequality, and it holds for all 15 plants:
+
+> **a plant's summer ceiling RISES under the flag iff its carried capacity is BELOW its EIA-860
+> nameplate, and FALLS iff it is above** — because the flag replaces `net_summer / nameplate` with
+> `min(1, net_summer / carried)`.
+
+| plant | mode | carried MW | nameplate MW | net summer MW | ceiling Δ (GWh, Jun–Sep) | Δ summer dispatch | within bound |
+|---|---|---:|---:|---:|---:|---:|:--:|
+| 57185 Cricket Valley | cap | 1,086.9 | 1,312.5 | 1,016.1 | **+511.52** | +258.39 | yes |
+| 55405 Athens | cap | 1,064.7 | 1,221.6 | 984.4 | +370.10 | +210.18 | yes |
+| 56940 CPV Valley | cap | 696.1 | 770.5 | 654.2 | +185.05 | +138.83 | yes |
+| 54574 Saranac | cap | 251.5 | 285.6 | 237.8 | +83.16 | +34.60 | yes |
+| 7314 Flynn | cap | 108.2 | 170.0 | 139.5 | +56.80 | +17.96 | yes |
+| **50978 Carr Street** | **raise** | 80.0 | 122.6 | 93.0 | **+56.51** | **+54.27** | **yes** |
+| 54593 Batavia | cap | 42.9 | 66.2 | 48.8 | +33.09 | +27.86 | yes |
+| 54592 Massena | cap | 53.6 | 102.1 | 81.0 | +32.50 | +27.38 | yes |
+| 54034 Rensselaer | cap | 78.0 | 88.2 | 79.4 | +22.84 | −0.59 | see below |
+| 50744 Sterling | cap | 43.9 | 64.2 | 54.8 | +18.74 | +16.44 | yes |
+| 10620 Carthage | cap | 53.6 | 62.9 | 61.1 | +4.39 | +0.17 | yes |
+| 10190 Castleton | cap | 71.2 | 72.0 | 67.0 | +2.05 | −3.38 | see below |
+| 56234 Caithness | raise | 361.7 | 348.9 | 317.3 | −33.96 | −30.64 | yes |
+| 55375 Astoria Energy | raise | 610.4 | 595.0 | 558.0 | −42.16 | −40.68 | yes |
+| **56196 Zeltmann** | **cap** | 560.0 | 528.0 | 474.0 | **−84.03** | −81.16 | yes |
+
+**The label and the direction come apart in both directions**: Zeltmann is a `cap` row whose
+ceiling **falls**, Carr Street a `raise` row whose ceiling **rises**. 50978 — the plant that fails
+the declared bar — moves **+54.27 GWh against a +56.51 GWh ceiling relief**, i.e. it behaves
+exactly as a bound-relieved plant must, and would have passed the bar written for its actual
+direction. Under that sign-correct reading (disclosed as **post-hoc**, and **not acted on**) all
+three plants clear.
+
+**A second over-specification in the same gate, reported not repaired:** the strict `0 <` lower
+bound is wrong for a small plant, because relieving a bound never *compels* a unit to run.
+Rensselaer 54034 (−0.59 GWh on a 4.51 GWh keeper summer) and Castleton 10190 (−3.38 on 56.89) take
+a ceiling relief and dispatch slightly *less* as merit re-allocates around them. Both are trivial;
+neither is evidence about the mechanism.
+
+## 11.3 What the mechanism actually did — reported at full magnitude, in both directions
+
+**S-5, the object of the whole session, is closed in the screen year.** At Cricket Valley 57185 in
+2025 the meter exceeds the LP's monthly ceiling in **no month** (keeper: Jun, Jul, Aug), and
+dispatch never exceeds the ceiling (max excess 0.0000 MW):
+
+| month (2025) | Jun | Jul | Aug | Sep |
+|---|---:|---:|---:|---:|
+| arm dispatch GWh | 321.5 | 400.4 | 465.3 | 444.4 |
+| CAMPD meter GWh | 415.4 | 476.8 | 580.1 | 512.6 |
+| **arm ceiling GWh** | **470.7** | **486.3** | **611.9** | **619.7** |
+
+Annual at 57185, 2025: arm dispatch **4,109.4 GWh** (keeper 3,851.3, **+258.1**) against a meter of
+4,861.8 and a ceiling of 5,637.3. The plant still under-runs its meter by 0.75 TWh — **object (B),
+the merit/offer-position defect, is untouched and remains open**, exactly as this session scoped it.
+
+**S-3 confinement holds, and the offsetting moves are large and are reported.** Δ annual class
+energy, arm − keeper (GWh): **CC_REGULAR +567.95**; ST_GAS **−313.89**; CC_CHP −109.72;
+CT_PEAKER −63.54; CT_CHP −39.24; ST_CHP −24.90; oil −1.12; hydro / nuclear / wind / solar / import
+**0.00**. Sum over all classes **+15.54 GWh** against a fixed load. Summer dispatch over the 15
+plants 9,091.07 → 9,720.70 GWh (+629.63); their **off-summer** dispatch rises **+382.42 GWh**
+although the flag provably does not touch off-summer availability (phase-0 F-1) — that is pure
+merit-order feedback, and it means CC_REGULAR plants *outside* the 15 give up roughly 0.44 TWh.
+Merit-order adjustment across classes is an intended effect of a capability change, not a defect.
+
+**S-4 holds, and both load-bearing price criteria get slightly WORSE. Stated plainly, not buried:**
+
+| criterion (2025) | keeper | arm |
+|---|---|---|
+| C3a mean LMP | PASS, **−6.3 %** (model 62.26 vs actual 66.43) | PASS, **−7.3 %** (model 61.58) |
+| C3b price shape | PASS, NRMSE **0.152** | PASS, NRMSE **0.160** |
+| C3c tail hours > $300 (reported) | 4 | 3 |
+| system mean price $/MWh (reported) | 59.293 | 58.734 |
+| C1 / C2, every cell | SKIPPED (preliminary EIA-923 vintage) | SKIPPED, identical |
+
+Under rule 1 `[R-STRUCT]` a structurally-correct mechanism is never judged by the residual, so
+these are reported and are not a reason to reject the repair — and equally, they are **not**
+smoothed over: the arm makes the 2025 price fit modestly worse while removing a physical
+contradiction. **C8** could not be scored (its `legitimacy_diagnostics.json` is written only by the
+register path, which a screen bundle never takes); the arm moves Jun–Sep availability at 15
+CC_REGULAR plants and no floor, so the D-2 forced volume is untouched by construction. **C6** is an
+attestation written at registration; the arm is the keeper recipe plus one declared, default-off,
+zero-DOF construction flag.
+
+**Instrument identity (the scorer's own check).** The screen scorer rebuilds the payload year-block
+the rubric functions read from a bundle's own hourly parquets. Rebuilt from the **keeper's**
+bundle it reproduces the committed payload with max abs diff **0.0** on zone mean price, **0.0** on
+all 12 monthly prices of all 6 zones, and **0.0** on every `gmModel` class total — so keeper and
+arm are scored by one instrument on one basis. (One repair, disclosed: the first pass divided by a
+zero demand sum at the `NYISO_external` node, which carries prices and no load; the committed
+payload takes the simple mean there, and the scorer now does too.)
+
+## 11.4 Disposition, and what is handed forward
+
+* **The span is NOT spent.** Re-writing S-1 and S-2(c) now, having seen the numbers, and then
+  spending 35–70 min of LP on the repaired reading, would be selecting a gate against a result —
+  the exact thing rule 29 and rule 1 `[R-STRUCT]` exist to forbid. The literal kill stands.
+* **The next session re-screens with the corrected gates**, pre-registered before it measures:
+  (a) S-1 compares recipes **excluding `weather_year` and `gas_price_override`** when the screen
+  year differs from the bundle's first year, and classifies the armed flag as the live delta rather
+  than as a new default; (b) S-2(c) is written on the **measured ceiling direction** (rises iff
+  carried < nameplate, from the phase-0 record), with `Δ ≤ ceiling Δ` where the ceiling rose and no
+  strict positive lower bound below ~10 GWh of relief. Every other gate stands as written and
+  passed.
+* **Everything else this session measured is unchanged**: the seam is real, the object is named,
+  the repair is built, gated default-off, cache-key registered, unit-tested and matrix-registered,
+  and the phase-0 arithmetic it predicted was reproduced by the solve to the GWh.
+* **No owner card is opened and no owner ruling is prejudged.** The five pending rulings are
+  untouched; markers, keeper and gates are untouched.
+
+*(nyiso-212 addendum, 2026-09-07. The screen killed the arm on two gates whose wording was mine and
+whose failure says nothing about the mechanism — reported as a kill anyway, both readings on the
+record, and the span left unspent.)*

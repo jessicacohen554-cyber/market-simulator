@@ -1,0 +1,446 @@
+{
+ "session": "nyiso-212",
+ "arm": "results/calibration/_nyiso212_screen_2025",
+ "year": 2025,
+ "gates": {
+  "S1": {
+   "pass": false,
+   "pass_excluding_year_selection_keys": false,
+   "live_diff": {
+    "gas_price_override": [
+     2.54,
+     3.52
+    ],
+    "weather_year": [
+     2023,
+     2025
+    ]
+   },
+   "year_selection_keys": {
+    "gas_price_override": [
+     2.54,
+     3.52
+    ],
+    "weather_year": [
+     2023,
+     2025
+    ]
+   },
+   "recipe_diff_excluding_year_keys": {},
+   "new_dataclass_defaults_reported_not_counted": {
+    "capacity_screen_peak_measured_hindcast": [
+     null,
+     false
+    ],
+    "eia860_vintage_tracks_solve_year": [
+     null,
+     false
+    ],
+    "pjm_interface_feed_admissibility_gate": [
+     null,
+     false
+    ],
+    "cc_summer_derate_reconciled_basis": [
+     null,
+     true
+    ],
+    "miso_seam_neighbour_hourly_spp": [
+     null,
+     false
+    ],
+    "miso_seam_neighbour_hourly_ladder": [
+     null,
+     false
+    ],
+    "gas_offer_margin_anchor_vintage": [
+     null,
+     false
+    ],
+    "pjm_vre_accreditation_vintage": [
+     null,
+     false
+    ]
+   }
+  },
+  "S2": {
+   "pass": false,
+   "c_raise_plants_sign_correct_reading_POST_HOC": {
+    "50978": {
+     "ceiling_rose_by_gwh": 56.51,
+     "delta": 54.27,
+     "ok": true
+    },
+    "55375": {
+     "ceiling_fell_by_gwh": -42.16,
+     "delta": -40.68,
+     "ok": true
+    },
+    "56234": {
+     "ceiling_fell_by_gwh": -33.96,
+     "delta": -30.64,
+     "ok": true
+    }
+   },
+   "pass_under_sign_correct_reading": true,
+   "a_57185": {
+    "delta_summer_gwh": 258.39,
+    "bound_gwh": 376.18,
+    "pass": true
+   },
+   "b_cap_plants": {
+    "delta_summer_gwh": 646.68,
+    "bound_gwh": 1236.21,
+    "pass": true
+   },
+   "c_raise_plants": {
+    "50978": 54.27,
+    "55375": -40.68,
+    "56234": -30.64,
+    "pass": false
+   },
+   "per_plant": {
+    "7314": {
+     "mode": "cap",
+     "keeper_summer_gwh": 138.09,
+     "arm_summer_gwh": 156.05,
+     "delta_summer_gwh": 17.96,
+     "keeper_offsummer_gwh": 255.49,
+     "arm_offsummer_gwh": 272.78,
+     "delta_offsummer_gwh": 17.29,
+     "ceiling_delta_summer_gwh": 56.8
+    },
+    "10190": {
+     "mode": "cap",
+     "keeper_summer_gwh": 56.89,
+     "arm_summer_gwh": 53.51,
+     "delta_summer_gwh": -3.38,
+     "keeper_offsummer_gwh": 101.79,
+     "arm_offsummer_gwh": 109.47,
+     "delta_offsummer_gwh": 7.68,
+     "ceiling_delta_summer_gwh": 2.05
+    },
+    "10620": {
+     "mode": "cap",
+     "keeper_summer_gwh": 7.03,
+     "arm_summer_gwh": 7.2,
+     "delta_summer_gwh": 0.17,
+     "keeper_offsummer_gwh": 0.0,
+     "arm_offsummer_gwh": 0.0,
+     "delta_offsummer_gwh": 0.0,
+     "ceiling_delta_summer_gwh": 4.39
+    },
+    "50744": {
+     "mode": "cap",
+     "keeper_summer_gwh": 100.86,
+     "arm_summer_gwh": 117.3,
+     "delta_summer_gwh": 16.44,
+     "keeper_offsummer_gwh": 109.66,
+     "arm_offsummer_gwh": 109.72,
+     "delta_offsummer_gwh": 0.06,
+     "ceiling_delta_summer_gwh": 18.74
+    },
+    "54034": {
+     "mode": "cap",
+     "keeper_summer_gwh": 4.51,
+     "arm_summer_gwh": 3.92,
+     "delta_summer_gwh": -0.59,
+     "keeper_offsummer_gwh": 0.0,
+     "arm_offsummer_gwh": 0.0,
+     "delta_offsummer_gwh": 0.0,
+     "ceiling_delta_summer_gwh": 22.84
+    },
+    "54574": {
+     "mode": "cap",
+     "keeper_summer_gwh": 256.02,
+     "arm_summer_gwh": 290.62,
+     "delta_summer_gwh": 34.6,
+     "keeper_offsummer_gwh": 398.14,
+     "arm_offsummer_gwh": 398.13,
+     "delta_offsummer_gwh": -0.01,
+     "ceiling_delta_summer_gwh": 83.16
+    },
+    "54592": {
+     "mode": "cap",
+     "keeper_summer_gwh": 110.41,
+     "arm_summer_gwh": 137.79,
+     "delta_summer_gwh": 27.38,
+     "keeper_offsummer_gwh": 106.82,
+     "arm_offsummer_gwh": 106.82,
+     "delta_offsummer_gwh": -0.0,
+     "ceiling_delta_summer_gwh": 32.5
+    },
+    "54593": {
+     "mode": "cap",
+     "keeper_summer_gwh": 82.02,
+     "arm_summer_gwh": 109.88,
+     "delta_summer_gwh": 27.86,
+     "keeper_offsummer_gwh": 85.21,
+     "arm_offsummer_gwh": 85.19,
+     "delta_offsummer_gwh": -0.02,
+     "ceiling_delta_summer_gwh": 33.09
+    },
+    "55405": {
+     "mode": "cap",
+     "keeper_summer_gwh": 1653.47,
+     "arm_summer_gwh": 1863.65,
+     "delta_summer_gwh": 210.18,
+     "keeper_offsummer_gwh": 1565.5,
+     "arm_offsummer_gwh": 1565.45,
+     "delta_offsummer_gwh": -0.05,
+     "ceiling_delta_summer_gwh": 370.1
+    },
+    "56196": {
+     "mode": "cap",
+     "keeper_summer_gwh": 1420.46,
+     "arm_summer_gwh": 1339.3,
+     "delta_summer_gwh": -81.16,
+     "keeper_offsummer_gwh": 2107.48,
+     "arm_offsummer_gwh": 2198.27,
+     "delta_offsummer_gwh": 90.79,
+     "ceiling_delta_summer_gwh": -84.03
+    },
+    "56940": {
+     "mode": "cap",
+     "keeper_summer_gwh": 1429.75,
+     "arm_summer_gwh": 1568.58,
+     "delta_summer_gwh": 138.83,
+     "keeper_offsummer_gwh": 2432.02,
+     "arm_offsummer_gwh": 2541.53,
+     "delta_offsummer_gwh": 109.51,
+     "ceiling_delta_summer_gwh": 185.05
+    },
+    "57185": {
+     "mode": "cap",
+     "keeper_summer_gwh": 1373.28,
+     "arm_summer_gwh": 1631.67,
+     "delta_summer_gwh": 258.39,
+     "keeper_offsummer_gwh": 2477.98,
+     "arm_offsummer_gwh": 2477.79,
+     "delta_offsummer_gwh": -0.19,
+     "ceiling_delta_summer_gwh": 511.52
+    },
+    "50978": {
+     "mode": "raise",
+     "keeper_summer_gwh": 171.01,
+     "arm_summer_gwh": 225.28,
+     "delta_summer_gwh": 54.27,
+     "keeper_offsummer_gwh": 399.45,
+     "arm_offsummer_gwh": 403.07,
+     "delta_offsummer_gwh": 3.62,
+     "ceiling_delta_summer_gwh": 56.51
+    },
+    "55375": {
+     "mode": "raise",
+     "keeper_summer_gwh": 1473.88,
+     "arm_summer_gwh": 1433.2,
+     "delta_summer_gwh": -40.68,
+     "keeper_offsummer_gwh": 2599.48,
+     "arm_offsummer_gwh": 2692.3,
+     "delta_offsummer_gwh": 92.82,
+     "ceiling_delta_summer_gwh": -42.16
+    },
+    "56234": {
+     "mode": "raise",
+     "keeper_summer_gwh": 813.39,
+     "arm_summer_gwh": 782.75,
+     "delta_summer_gwh": -30.64,
+     "keeper_offsummer_gwh": 1639.85,
+     "arm_offsummer_gwh": 1700.77,
+     "delta_offsummer_gwh": 60.92,
+     "ceiling_delta_summer_gwh": -33.96
+    }
+   }
+  },
+  "S3": {
+   "pass": true,
+   "cc_regular_delta_gwh": 567.95,
+   "bound_gwh": 892.95,
+   "class_delta_gwh": {
+    "CC_CHP": -109.72,
+    "CC_REGULAR": 567.95,
+    "CT_CHP": -39.24,
+    "CT_PEAKER": -63.54,
+    "OTHER": 0.0,
+    "ST_CHP": -24.9,
+    "ST_GAS": -313.89,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "import": 0.0,
+    "nuclear": 0.0,
+    "oil": -1.12,
+    "solar": 0.0,
+    "wind": 0.0
+   },
+   "sum_all_classes_delta_gwh": 15.54,
+   "offsummer_delta_15_plants_gwh": 382.42
+  },
+  "S4": {
+   "pass": true,
+   "flips_pass_to_fail": [],
+   "scores": {
+    "keeper": {
+     "C1": {
+      "CC_REGULAR": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CC_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CT_PEAKER": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_GAS": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "COAL_BIT": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "SKIPPED",
+       "-1.1%"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C3a": [
+      "PASS",
+      "-6.3%",
+      62.26,
+      66.43
+     ],
+     "C3b": [
+      "PASS",
+      "NRMSE 0.152"
+     ]
+    },
+    "arm": {
+     "C1": {
+      "CC_REGULAR": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CC_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CT_PEAKER": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_GAS": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "COAL_BIT": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "SKIPPED",
+       "-1.1%"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C3a": [
+      "PASS",
+      "-7.3%",
+      61.58,
+      66.43
+     ],
+     "C3b": [
+      "PASS",
+      "NRMSE 0.160"
+     ]
+    }
+   },
+   "payload_rebuild_identity_vs_committed": {
+    "lmp_p_max_abs_diff": 0.0,
+    "lmp_pMon_max_abs_diff": 0.0,
+    "gmModel_max_abs_diff": 0.0,
+    "zones_rebuilt_equal_payload_zones": true
+   },
+   "C3c_tail_reported": {
+    "keeper": {
+     "hours_max_zonal_gt_300": 4,
+     "system_mean": 59.293
+    },
+    "arm": {
+     "hours_max_zonal_gt_300": 3,
+     "system_mean": 58.734
+    }
+   },
+   "C8_forced_share": "NOT COMPUTABLE for an unregistered screen bundle (needs legitimacy_diagnostics.json, written only by the register path); the arm moves Jun-Sep availability at 15 CC_REGULAR plants and no floor, so the D-2 forced volume is untouched by construction -- REPORTED, and re-scored on the full-span bundle if the span is spent",
+   "C6_governance": "attestation is written at registration; the arm is the keeper recipe plus one declared, default-off, zero-DOF construction flag (S-1)"
+  },
+  "S5": {
+   "pass": true,
+   "months_meter_over_arm_ceiling": [],
+   "max_dispatch_over_ceiling_mw": 0.0,
+   "arm_57185_month_gwh": [
+    51.7,
+    187.2,
+    285.8,
+    298.8,
+    197.9,
+    321.5,
+    400.4,
+    465.3,
+    444.4,
+    407.0,
+    531.1,
+    518.3
+   ],
+   "meter_57185_month_gwh": [
+    49.1,
+    193.1,
+    317.0,
+    396.6,
+    236.6,
+    415.4,
+    476.8,
+    580.1,
+    512.6,
+    518.6,
+    665.9,
+    500.0
+   ],
+   "ceiling_57185_month_gwh": [
+    67.1,
+    243.3,
+    377.6,
+    486.7,
+    369.2,
+    470.7,
+    486.3,
+    611.9,
+    619.7,
+    545.4,
+    688.1,
+    671.3
+   ]
+  }
+ },
+ "verdict": "KILLED"
+}
