@@ -1400,3 +1400,13 @@ results/calibration/miso243_sppair_K/floors/
 results/calibration/miso243_sppair_K/hourly/unit_hourly_*.parquet
 results/calibration/miso243_sppair_K/hourly/network_*.parquet
 results/calibration/miso243_sppair_K/*.parquet
+
+# capx D84 (2026-09-07): the PJM thermal ELCC delivery-year vintage A/B legs
+# (pjm-t1h-d84-control / -thermalvintage). Rule 29 [R-SCREEN] (c) DELETE BEFORE
+# MERGE, as amended by rule 31 [R-RETAIN]: the duty is that the bundles never
+# reach `main`, NOT that they are erased from disk — gitignoring the family
+# discharges it in full, the parity gate never sees an unregistered bundle dir,
+# and the solved artifacts stay on local disk until the owner has ruled on
+# promotion. Every number this lane cites lives in
+# docs/handoffs/FINDING-capx-d84-2026-09-07.md and its d84/ instruments.
+results/hindcast/pjm-2021-2025-realized-t1h-d84-*/

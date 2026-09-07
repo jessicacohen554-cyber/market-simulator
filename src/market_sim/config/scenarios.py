@@ -1450,6 +1450,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # six ISOs is byte-stable; an armed run keys distinctly. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "pjm_vre_accreditation_vintage",
+    # capx D84: the THERMAL RATING half of the SAME devintage (its predicate
+    # requires pjm_accreditation_design_vintage, so the two can never separate).
+    # Dropped from the hash at its False default so every pre-existing cache key
+    # of all seven ISOs is byte-stable; an armed run keys distinctly. Registered
+    # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "pjm_thermal_accreditation_vintage",
     # capx D50: the CCS retrofit capex-scaling + CHP-exclusion construction
     # repair (GATED default off, byte-identical unarmed — the off path never
     # enters the scaling branch or the candidate filter). Dropped from the hash
@@ -2134,6 +2140,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # capx D75-R: the VRE half of the same devintage, registered at its
     # shipping False default (an armed run keys distinctly).
     "pjm_vre_accreditation_vintage": "False",
+    # capx D84: the thermal RATING half of the same devintage, registered at its
+    # shipping False default (an armed run keys distinctly).
+    "pjm_thermal_accreditation_vintage": "False",
     # capx D50: CCS retrofit capex-scaling + CHP-exclusion gate, registered at
     # its shipping False default (an armed run keys distinctly).
     "ccs_retrofit_capex_co2_scaling": "False",
@@ -17145,6 +17154,84 @@ class ScenarioConfig:
     # ISO's run and every backcast keeper is byte-identical, and no ISO
     # inherits PJM's verdict. Placed at the END of the field list so no
     # existing matrix `:line` anchor shifts.
+    pjm_thermal_accreditation_vintage: bool = False  # GATED default-OFF (capx
+    # D84 2026-09-07, executing FINDING-capx-d75r-2026-09-06.md §6 item 4 under
+    # OWNER RULING Q60). THE THERMAL RATING half of the capx D48
+    # accreditation-design devintage, and a SUB-GATE inside that family exactly
+    # as pjm_vre_accreditation_vintage is: the predicate
+    # (capacity_evolution/retirements.py::thermal_accreditation_vintage_armed)
+    # requires this field AND pjm_accreditation_design_vintage AND an entry for
+    # the ISO in constants.THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO, so the
+    # thermal RATING can never be vintaged while the accreditation BASIS is not
+    # (rule 19 [R-ONE-MECH] — a mixed accreditation vintage is the exact failure
+    # D45 §2.2 measured and the D48 family exists to remove).
+    #
+    # WHAT IT REPAIRS: THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"] is a
+    # SINGLE-VINTAGE table (its own comment: "the 2026/2027 BRA official/final
+    # class-average rating"), but THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_
+    # ISO["PJM"] is "2025/2026" — so DY 2025/2026, the FIRST delivery year on
+    # the ELCC-class design, is accredited at another delivery year's ratings
+    # even though it has its own published final set: Gas Combined Cycle 78 vs
+    # 74, Gas Combustion Turbine 63 vs 60, Steam 74 vs 73, Diesel Utility 92 vs
+    # 91 (Nuclear and Coal equal). Armed, thermal_accreditation_fraction reads
+    # the delivery year's OWN published class rating at the top of its
+    # elcc_class_rating branch, through resolve_thermal_vintage_rating.
+    #
+    # NO HOLD-LAST at either edge, and the two vintage axes COMPOSE rather than
+    # STACK: a delivery year absent from the registry falls straight through to
+    # the incumbent single-vintage table (which IS the 2026/27 set and is the
+    # right basis wherever no other final rating is published), and a delivery
+    # year before the reform entry never reaches the branch at all — the D48
+    # basis resolver has already returned "ucap" for it. In the PJM 2021-2025
+    # hindcast window exactly ONE delivery year sits on this axis: DY 2025/2026.
+    #
+    # ZERO scalar fields and ZERO free parameters (rules 5/21/24), and — unlike
+    # the VRE half — ZERO reconciliations: PJM rates each of the model's thermal
+    # classes with exactly ONE published class, so D75-R's cross-vintage solar
+    # mix has no analogue here and none is introduced. Every rating is a
+    # published PJM class rating already committed to
+    # data/raw/capacity-market/elcc/pjm/pjm.csv by the D75-R intake and
+    # reconciled to those rows BYTE-FOR-BYTE by test. The class mapping is
+    # UNCHANGED (gas_ct -> "Gas Combustion Turbine", not Dual Fuel; oil ->
+    # "Diesel Utility"), because re-mapping a class would be a second mechanism
+    # on the same phenomenon.
+    #
+    # ADMISSIBILITY, fixed before any solve and not selectable by a result: a
+    # published rating enters the registry iff it is elcc_type "class_average"
+    # AND an official/FINAL posting for that delivery year — so the
+    # "preliminary, non-binding, indicative" marginal rows are excluded by
+    # construction. DY 2025/2026 is read at its FINAL (3IA, posted 2025-03-12)
+    # ratings, the same posting D75-R's own 2025/2026 VRE row reads; the
+    # alternative — the ratings current when the 2025/26 BRA was held in July
+    # 2024 — is NOT SOURCEABLE, that report's tables being images that do not
+    # extract (FINDING-capx-d75 §5, FINDING-capx-d75r §6 item 3).
+    #
+    # SIGN (rule 14), pre-declared before the solve: the 3IA ratings are HIGHER
+    # than the wired 2026/27 set for every class that moves, so accredited
+    # thermal MW rise in DY 2025/2026 and the census position rises with them;
+    # every other window delivery year is inert by construction. The reason to
+    # prefer these ratings is rule 14 [R-ACCURATE], never the residual — they
+    # are the ISO's own published accreditation for the delivery year the
+    # auction settled on, and this gate would be built the same way had the
+    # residual moved the other way (rule 1 [R-STRUCT]).
+    #
+    # WHY DEFAULT-OFF, AND WHY A SEPARATE KEY: the same reason D75-R needed one.
+    # pjm_accreditation_design_vintage is ARMED for PJM through
+    # iso_configs.py::_pjm_config's default_scenario_overrides (owner ruling
+    # 2026-09-05 on the D57 A/B), so keying this axis off it alone would arm an
+    # untested mechanism by DEFAULT in every PJM forecast run and move the
+    # shipped pjm-t1h recipe key. A separate default-OFF key keeps arming an
+    # owner decision (rules 5/24/28) while the predicate's composition keeps the
+    # halves inseparable in the one direction that matters. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at False (unarmed keys byte-stable, armed keys
+    # distinctly); coerced to the DATACLASS DEFAULT in a plain backcast exactly
+    # as the D48/D75-R gates are (a forecast-lane mechanism — a backcast runs no
+    # capacity evolution). Hindcast harness: run_capacity_hindcast.py
+    # --pjm-thermal-accreditation-vintage. SCOPE: PJM-only by construction (the
+    # registry holds one ISO and the predicate requires an entry) — rule 25
+    # [R-ISO-SCOPE]; every other ISO's run and every backcast keeper is
+    # byte-identical, and no ISO inherits PJM's verdict. Placed at the END of
+    # the field list so no existing matrix `:line` anchor shifts.
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -17745,6 +17832,14 @@ class ScenarioConfig:
             # forecast-lane mechanism, same coercion to the DATACLASS DEFAULT.
             self.pjm_vre_accreditation_vintage = (
                 type(self).__dataclass_fields__["pjm_vre_accreditation_vintage"].default
+            )
+            # capx D84: the thermal RATING half of the same devintage, same
+            # class of forecast-lane mechanism, same coercion to the DATACLASS
+            # DEFAULT.
+            self.pjm_thermal_accreditation_vintage = (
+                type(self)
+                .__dataclass_fields__["pjm_thermal_accreditation_vintage"]
+                .default
             )
             # capx D51: the MISO dated-net accounting-ratio gate is the same
             # class of forecast-lane adequacy mechanism — coerced to the

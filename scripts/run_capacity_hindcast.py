@@ -494,6 +494,9 @@ META_RECORD_SPEC = RecordSpec(
         # capx D75-R: the VRE half of the same devintage. FromConfig so the
         # record reads the SOLVED gate (FFR-3R).
         "pjm_vre_accreditation_vintage": FromConfig(cast=bool),
+        # capx D84: the THERMAL RATING half of the same devintage. FromConfig
+        # so the record reads the SOLVED gate (FFR-3R).
+        "pjm_thermal_accreditation_vintage": FromConfig(cast=bool),
         # capx D57: the capacity-market supply-clearing gate (the PJM clearing
         # half). Derived through the ONE predicate so the record reads the
         # RESOLVED gate — an armed row over a curve gate that is off resolves
@@ -709,6 +712,7 @@ def build_config(
     pjm_accreditation_design_vintage: "bool | None" = None,
     pjm_demand_response_supply: "bool | None" = None,
     pjm_vre_accreditation_vintage: "bool | None" = None,
+    pjm_thermal_accreditation_vintage: "bool | None" = None,
     capacity_market_supply_clearing: "bool | None" = None,
     capacity_going_forward_bar_published: "bool | None" = None,
     capacity_adequacy_requirement_published: "bool | None" = None,
@@ -945,6 +949,12 @@ def build_config(
                 # even for PJM (unlike the two above, which _pjm_config arms),
                 # so None inherits OFF and True arms the D75-R A/B posture.
                 "pjm_vre_accreditation_vintage": pjm_vre_accreditation_vintage,
+                # capx D84: the THERMAL RATING half of the same devintage —
+                # default-off even for PJM (nothing arms it), so None inherits
+                # OFF and True arms the D84 A/B posture (distinct cache key).
+                "pjm_thermal_accreditation_vintage": (
+                    pjm_thermal_accreditation_vintage
+                ),
                 # capx D57: the capacity-market supply-clearing gate (the PJM
                 # clearing half, DESIGN-capx-d54 §7.1) — a {iso: bool} row
                 # for THIS ISO only; default None. None (omit) inherits the
@@ -1755,6 +1765,26 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--pjm-thermal-accreditation-vintage",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "capx D84 (2026-09-07) PJM-only arm, the THERMAL RATING half of "
+            "the D48 devintage: accredit dispatchable classes at the delivery "
+            "year's OWN published PJM ELCC class ratings (constants.THERMAL_"
+            "ELCC_VINTAGE_CLASS_RATING_BY_ISO -- DY 2025/26 at its FINAL 3IA "
+            "set, gas CC 78 / CT 63 / steam 74 / diesel 92 %) instead of the "
+            "single-vintage 2026/27 table (74 / 60 / 73 / 91 %) the model "
+            "applies to every post-reform delivery year. REQUIRES "
+            "--pjm-accreditation-design-vintage (rule 19: the rating and basis "
+            "axes are never devintaged apart) and is inert on every other ISO "
+            "and in every pre-reform delivery year. DEFAULT OFF everywhere, "
+            "including PJM -- nothing arms it; arming is an owner card. The "
+            "shared ScenarioConfig default stays off, so every other ISO and "
+            "every backcast key is unmoved."
+        ),
+    )
+    parser.add_argument(
         "--capacity-market-supply-clearing",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2444,6 +2474,7 @@ def main(argv: list[str] | None = None) -> int:
         pjm_accreditation_design_vintage=args.pjm_accreditation_design_vintage,
         pjm_demand_response_supply=args.pjm_demand_response_supply,
         pjm_vre_accreditation_vintage=args.pjm_vre_accreditation_vintage,
+        pjm_thermal_accreditation_vintage=(args.pjm_thermal_accreditation_vintage),
         capacity_market_supply_clearing=args.capacity_market_supply_clearing,
         capacity_going_forward_bar_published=(
             args.capacity_going_forward_bar_published

@@ -79,6 +79,7 @@ from market_sim.config.constants import (
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
     THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO,
     THERMAL_ELCC_CLASS_RATING_BY_ISO,
+    THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO,
     evaluate_renewable_elcc_curve,
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone, map_area
@@ -1613,6 +1614,54 @@ def vre_accreditation_vintage_armed(
     return accreditation_design_vintage_armed(config, iso)
 
 
+def thermal_accreditation_vintage_armed(
+    config: ScenarioConfig | None, iso: str | None
+) -> bool:
+    """True when ``iso`` accredits THERMAL on each delivery year's OWN published ratings.
+
+    The gate predicate behind the capx D84 thermal delivery-year vintage axis
+    (``FINDING-capx-d75r-2026-09-06.md`` §6 item 4, under owner ruling Q60):
+    armed, :func:`thermal_accreditation_fraction` reads
+    :data:`THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO` for the delivery year the
+    screen prices, instead of :data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`, which is
+    a SINGLE-VINTAGE table (PJM's 2026/2027 BRA official/final class-average
+    ratings) applied to every post-reform delivery year — including DY
+    2025/2026, the first year on the ELCC-class design, which has its own
+    published final ratings that differ.
+
+    **THREE conditions, all binding — the same composition D75-R's VRE half
+    uses** (:func:`vre_accreditation_vintage_armed`): the default-OFF
+    ``ScenarioConfig.pjm_thermal_accreditation_vintage`` gate, an entry for
+    ``iso`` in :data:`THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO` (PJM alone —
+    rule 25 ``[R-ISO-SCOPE]``: the flag armed on any other ISO's run is inert by
+    construction, and no ISO inherits PJM's verdict), and
+    :func:`accreditation_design_vintage_armed` must ALSO hold.
+
+    **Why the D48 predicate is a precondition (rule 19 ``[R-ONE-MECH]``).**
+    Identical in form to the VRE half's reason, on the other axis of the same
+    registry: the RATING and the BASIS are two axes of one accreditation, and
+    vintaging the rating while the basis stays on the reform-vintage design
+    would rebuild the mixed-vintage error D45 §2.2 measured and the D48 family
+    exists to remove. Requiring D48's gate makes the reachable states the
+    coherent ones. This gate alone resolves False.
+
+    **Why a SEPARATE key rather than reusing D48's.**
+    ``pjm_accreditation_design_vintage`` is ARMED for PJM by owner ruling,
+    through ``iso_configs.py::_pjm_config``'s ``default_scenario_overrides``
+    (2026-09-05, on the D57 A/B). Keying this axis off it alone would arm this
+    untested mechanism by DEFAULT in every PJM forecast run the moment it
+    landed, and move the shipped ``pjm-t1h`` recipe key — the same argument that
+    earned D75-R its own key. ``config=None`` / ``iso=None`` resolve False.
+    """
+    if config is None or iso is None:
+        return False
+    if not getattr(config, "pjm_thermal_accreditation_vintage", False):
+        return False
+    if iso not in THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO:
+        return False
+    return accreditation_design_vintage_armed(config, iso)
+
+
 def _delivery_year_before(label: str, reform_label: str) -> bool:
     """True when delivery-year ``label`` starts strictly before ``reform_label``.
 
@@ -2179,6 +2228,54 @@ def resolve_internal_supply_accounting_ratio(
     return ADEQUACY_INTERNAL_SUPPLY_ACCOUNTING_RATIO_BY_ISO.get(key, 1.0)
 
 
+def resolve_thermal_vintage_rating(
+    config: ScenarioConfig | None,
+    iso: str | None,
+    fuel_type: str,
+    year: int | None,
+) -> float | None:
+    """Published thermal ELCC class rating for ``iso``'s delivery year under the D84 arm.
+
+    The thermal RATING half of the accreditation-design devintage (capx D84):
+    when :func:`thermal_accreditation_vintage_armed` holds and ``year`` resolves
+    to a delivery year carried in
+    :data:`THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO`, returns that delivery
+    year's OWN published class rating for ``fuel_type``;
+    :func:`thermal_accreditation_fraction` accredits the class at it exactly as
+    it does the single-vintage table's value.
+
+    Every other case — unarmed, off-registry ISO, ``year=None``, a delivery year
+    outside the table, or a fuel class the ISO does not publish (model
+    ``biomass``, which has no PJM thermal ELCC class and keeps its UCAP
+    fallback) — returns ``None`` and the caller's existing ladder
+    (:data:`THERMAL_ELCC_CLASS_RATING_BY_ISO` -> UCAP) runs BYTE-IDENTICALLY.
+
+    **NO hold-last**, the same deliberate choice D75-R's
+    :func:`resolve_renewable_vintage_credit` makes and for the same reason: past
+    the last tabulated delivery year the incumbent single-vintage table IS the
+    right basis (it is digitized from precisely the 2026/27 ratings), so
+    carrying a rating forward past its own posting would re-introduce the
+    mixed-vintage error the arm removes. The table has a hard end at both edges
+    and nothing is extrapolated from it.
+
+    **It never reaches a PRE-reform delivery year**, so the two vintage axes
+    compose rather than stack (rule 19 ``[R-ONE-MECH]``): the only caller
+    consults it INSIDE the ``elcc_class_rating`` branch, which
+    :func:`resolve_thermal_accreditation_basis` has already declined to take for
+    a delivery year before the ISO's reform entry under the D48 arm.
+    """
+    if year is None or not thermal_accreditation_vintage_armed(config, iso):
+        return None
+    table = THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO.get(iso or "")
+    if not table:
+        return None
+    ratings = table.get(capdel.resolve_delivery_year(iso or "", year))
+    if not ratings:
+        return None
+    rating = ratings.get(fuel_type)
+    return None if rating is None else float(rating)
+
+
 def thermal_accreditation_fraction(
     fuel_type: str,
     eford: float,
@@ -2225,6 +2322,14 @@ def thermal_accreditation_fraction(
         # — QC is a per-unit SCC median, so there is no fuel-class ELCC table.
         return 1.0
     if basis == "elcc_class_rating":
+        # capx D84 rung 0: the delivery year's OWN published class rating, which
+        # is the strictly more specific fact than "what does this ISO accredit
+        # this class at" — exactly the relation D75-R's rung 0 has to the VRE
+        # ladder. Unarmed, year-less, or a delivery year outside the registry
+        # returns None and the single-vintage table below runs byte-identically.
+        vintaged = resolve_thermal_vintage_rating(config, iso, fuel_type, year)
+        if vintaged is not None:
+            return vintaged
         rating = THERMAL_ELCC_CLASS_RATING_BY_ISO.get(iso or "", {}).get(fuel_type)
         if rating is not None:
             return float(rating)

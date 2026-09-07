@@ -1,0 +1,451 @@
+{
+ "lane": "capx D84 phase 0 (zero LP)",
+ "reference_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d78-sectorgate/PJM/bb6a60239d69508b",
+ "reference_bundle_caveat": "key bb6a60239d69508b; HEAD's bare pjm-t1h resolves f736025631d0d27e (Q55/Q56/Q58 landed after it). The fleet below is a MAGNITUDE ANCHOR, not the number the screen reproduces \u2014 the graded prediction is the IDENTITY, evaluated on the control's own entering fleet.",
+ "gate": "STOP GATE (charter phase 0): if the predicted per-class accredited-MW move is ZERO in every delivery year in the window, the lane is INERT and ends here with that measurement as its result. Rule 29: it may kill the arm, never promote one, and it is never read against the target residual.",
+ "gate_armed_check": {
+  "control": false,
+  "arm": true
+ },
+ "reform_delivery_year": "2025/2026",
+ "incumbent_table_vintage": "2026/2027 BRA (official/final)",
+ "registry_delivery_years": [
+  "2025/2026",
+  "2026/2027",
+  "2027/2028"
+ ],
+ "years": {
+  "2021/2022": {
+   "model_year": 2021,
+   "basis_control": "ucap",
+   "basis_arm": "ucap",
+   "on_elcc_axis": false,
+   "thermal_accredited_control_mw": 161750.07825968997,
+   "thermal_accredited_arm_mw": 161750.07825968997,
+   "delta_accredited_thermal_mw": 0.0,
+   "delta_by_class_mw": {
+    "biomass": 0.0,
+    "coal": 0.0,
+    "gas_cc": 0.0,
+    "gas_ct": 0.0,
+    "gas_st": 0.0,
+    "nuclear": 0.0,
+    "oil": 0.0
+   },
+   "per_class": {
+    "biomass": {
+     "nameplate_mw": 2007.8,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "coal": {
+     "nameplate_mw": 45885.521,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_cc": {
+     "nameplate_mw": 53083.211,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_ct": {
+     "nameplate_mw": 25791.07,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_st": {
+     "nameplate_mw": 10297.413333,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "nuclear": {
+     "nameplate_mw": 32672.1,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "oil": {
+     "nameplate_mw": 4187.7,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    }
+   },
+   "screen_entering_firm_mw": null,
+   "screen_adequacy_requirement_mw": null,
+   "screen_reserve_position": null,
+   "census_mw": null,
+   "census_position": null,
+   "cleared_mw": null,
+   "clearing_price_usd_per_mw_day": null,
+   "predicted_screen_position_arm": null
+  },
+  "2022/2023": {
+   "model_year": 2022,
+   "basis_control": "ucap",
+   "basis_arm": "ucap",
+   "on_elcc_axis": false,
+   "thermal_accredited_control_mw": 161750.07825968997,
+   "thermal_accredited_arm_mw": 161750.07825968997,
+   "delta_accredited_thermal_mw": 0.0,
+   "delta_by_class_mw": {
+    "biomass": 0.0,
+    "coal": 0.0,
+    "gas_cc": 0.0,
+    "gas_ct": 0.0,
+    "gas_st": 0.0,
+    "nuclear": 0.0,
+    "oil": 0.0
+   },
+   "per_class": {
+    "biomass": {
+     "nameplate_mw": 2007.8,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "coal": {
+     "nameplate_mw": 45885.521,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_cc": {
+     "nameplate_mw": 53083.211,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_ct": {
+     "nameplate_mw": 25791.07,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_st": {
+     "nameplate_mw": 10297.413333,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "nuclear": {
+     "nameplate_mw": 32672.1,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "oil": {
+     "nameplate_mw": 4187.7,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    }
+   },
+   "screen_entering_firm_mw": 185264.153,
+   "screen_adequacy_requirement_mw": 163268.9,
+   "screen_reserve_position": 1.134718,
+   "census_mw": 181435.072,
+   "census_position": 1.111265,
+   "cleared_mw": 170224.366,
+   "clearing_price_usd_per_mw_day": 90.411052,
+   "predicted_screen_position_arm": 1.1347179591459242
+  },
+  "2023/2024": {
+   "model_year": 2023,
+   "basis_control": "ucap",
+   "basis_arm": "ucap",
+   "on_elcc_axis": false,
+   "thermal_accredited_control_mw": 152497.03086,
+   "thermal_accredited_arm_mw": 152497.03086,
+   "delta_accredited_thermal_mw": 0.0,
+   "delta_by_class_mw": {
+    "biomass": 0.0,
+    "coal": 0.0,
+    "gas_cc": 0.0,
+    "gas_ct": 0.0,
+    "gas_st": 0.0,
+    "nuclear": 0.0,
+    "oil": 0.0
+   },
+   "per_class": {
+    "biomass": {
+     "nameplate_mw": 1999.4,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "coal": {
+     "nameplate_mw": 41902.396,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_cc": {
+     "nameplate_mw": 55912.636,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_ct": {
+     "nameplate_mw": 25791.07,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_st": {
+     "nameplate_mw": 1561.2,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "nuclear": {
+     "nameplate_mw": 32672.1,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "oil": {
+     "nameplate_mw": 4136.5,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    }
+   },
+   "screen_entering_firm_mw": 175713.339,
+   "screen_adequacy_requirement_mw": 163166.2,
+   "screen_reserve_position": 1.076898,
+   "census_mw": 174053.119,
+   "census_position": 1.066723,
+   "cleared_mw": 170432.642,
+   "clearing_price_usd_per_mw_day": 86.517664,
+   "predicted_screen_position_arm": 1.0768979053259804
+  },
+  "2024/2025": {
+   "model_year": 2024,
+   "basis_control": "ucap",
+   "basis_arm": "ucap",
+   "on_elcc_axis": false,
+   "thermal_accredited_control_mw": 151303.933302,
+   "thermal_accredited_arm_mw": 151303.933302,
+   "delta_accredited_thermal_mw": 0.0,
+   "delta_by_class_mw": {
+    "biomass": 0.0,
+    "coal": 0.0,
+    "gas_cc": 0.0,
+    "gas_ct": 0.0,
+    "gas_st": 0.0,
+    "nuclear": 0.0,
+    "oil": 0.0
+   },
+   "per_class": {
+    "biomass": {
+     "nameplate_mw": 1999.4,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "coal": {
+     "nameplate_mw": 40896.396,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_cc": {
+     "nameplate_mw": 56425.7354,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_ct": {
+     "nameplate_mw": 25791.07,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_st": {
+     "nameplate_mw": 771.2,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "nuclear": {
+     "nameplate_mw": 32672.1,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "oil": {
+     "nameplate_mw": 4136.5,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    }
+   },
+   "screen_entering_firm_mw": 174575.279,
+   "screen_adequacy_requirement_mw": 164107.6,
+   "screen_reserve_position": 1.063785,
+   "census_mw": 174350.799,
+   "census_position": 1.062418,
+   "cleared_mw": 168659.256,
+   "clearing_price_usd_per_mw_day": 165.252476,
+   "predicted_screen_position_arm": 1.0637854614899005
+  },
+  "2025/2026": {
+   "model_year": 2025,
+   "basis_control": "elcc_class_rating",
+   "basis_arm": "elcc_class_rating",
+   "on_elcc_axis": true,
+   "thermal_accredited_control_mw": 128196.30287599997,
+   "thermal_accredited_arm_mw": 131276.141392,
+   "delta_accredited_thermal_mw": 3079.838516000018,
+   "delta_by_class_mw": {
+    "biomass": 0.0,
+    "coal": 0.0,
+    "gas_cc": 2257.029416000002,
+    "gas_ct": 773.7321000000006,
+    "gas_st": 7.712000000000008,
+    "nuclear": 0.0,
+    "oil": 41.36500000000004
+   },
+   "per_class": {
+    "biomass": {
+     "nameplate_mw": 1999.4,
+     "rating_control": 0.9299999999999999,
+     "rating_arm": 0.9299999999999999,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "coal": {
+     "nameplate_mw": 40652.396,
+     "rating_control": 0.83,
+     "rating_arm": 0.83,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "gas_cc": {
+     "nameplate_mw": 56425.7354,
+     "rating_control": 0.74,
+     "rating_arm": 0.78,
+     "delta_rating": 0.04,
+     "delta_accredited_mw": 2257.029416000002
+    },
+    "gas_ct": {
+     "nameplate_mw": 25791.07,
+     "rating_control": 0.6,
+     "rating_arm": 0.63,
+     "delta_rating": 0.03,
+     "delta_accredited_mw": 773.7321000000006
+    },
+    "gas_st": {
+     "nameplate_mw": 771.2,
+     "rating_control": 0.73,
+     "rating_arm": 0.74,
+     "delta_rating": 0.01,
+     "delta_accredited_mw": 7.712000000000008
+    },
+    "nuclear": {
+     "nameplate_mw": 32672.1,
+     "rating_control": 0.95,
+     "rating_arm": 0.95,
+     "delta_rating": 0.0,
+     "delta_accredited_mw": 0.0
+    },
+    "oil": {
+     "nameplate_mw": 4136.5,
+     "rating_control": 0.91,
+     "rating_arm": 0.92,
+     "delta_rating": 0.01,
+     "delta_accredited_mw": 41.36500000000004
+    }
+   },
+   "screen_entering_firm_mw": 146120.478,
+   "screen_adequacy_requirement_mw": 144450.0,
+   "screen_reserve_position": 1.011564,
+   "census_mw": 145835.975,
+   "census_position": 1.009595,
+   "cleared_mw": 145835.975,
+   "clearing_price_usd_per_mw_day": 236.945273,
+   "predicted_screen_position_arm": 1.0328855418206992
+  }
+ },
+ "identity_check": {
+  "rows": {
+   "2021/2022": {
+    "from_shipped_path_mw": 0.0,
+    "from_registry_difference_mw": 0.0,
+    "abs_gap_mw": 0.0
+   },
+   "2022/2023": {
+    "from_shipped_path_mw": 0.0,
+    "from_registry_difference_mw": 0.0,
+    "abs_gap_mw": 0.0
+   },
+   "2023/2024": {
+    "from_shipped_path_mw": 0.0,
+    "from_registry_difference_mw": 0.0,
+    "abs_gap_mw": 0.0
+   },
+   "2024/2025": {
+    "from_shipped_path_mw": 0.0,
+    "from_registry_difference_mw": 0.0,
+    "abs_gap_mw": 0.0
+   },
+   "2025/2026": {
+    "from_shipped_path_mw": 3079.838516000018,
+    "from_registry_difference_mw": 3079.838516000003,
+    "abs_gap_mw": 1.5006662579253316e-11
+   }
+  },
+  "holds": true
+ },
+ "prediction": {
+  "in_window_delivery_years_on_the_elcc_axis": [
+   "2025/2026"
+  ],
+  "delivery_years_that_move": [
+   "2025/2026"
+  ],
+  "delta_accredited_thermal_mw_by_dy": {
+   "2025/2026": 3079.838516000018
+  },
+  "window_total_mw": 3079.838516000018,
+  "sign": "UP"
+ },
+ "stop_gate": {
+  "verdict": "LIVE \u2014 proceed to the screen",
+  "reason": "1 delivery year(s) move: ['2025/2026']"
+ }
+}

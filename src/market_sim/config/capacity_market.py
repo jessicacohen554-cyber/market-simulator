@@ -3142,6 +3142,137 @@ THERMAL_ELCC_CLASS_RATING_BY_ISO: dict[str, dict[str, float]] = {
     },
 }
 
+# --------------------------------------------------------------------------- #
+# The DELIVERY-YEAR VINTAGE axis on THERMAL accreditation (capx D84, 2026-09-07)
+# --------------------------------------------------------------------------- #
+# THE DEFECT (FINDING-capx-d75r-2026-09-06.md §6 item 4, which ROUTED this card
+# here). THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"] above is a SINGLE-VINTAGE table
+# — its own comment says so: "the 2026/2027 BRA official/final class-average
+# rating". But THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"] is
+# "2025/2026", so DY 2025/2026 is the FIRST delivery year accredited on the
+# ELCC-class design at all — and it has its OWN published final class ratings,
+# which DIFFER: Gas Combined Cycle 78 vs 74, Gas Combustion Turbine 63 vs 60,
+# Steam 74 vs 73, Diesel Utility 92 vs 91 (Nuclear 95 and Coal 83 equal). One
+# post-reform rating table is therefore applied to a delivery year that settled
+# under a different published rating set. That is the SAME mixed-vintage defect
+# capx D48 repaired on the basis axis and capx D75-R repaired on the VRE axis,
+# left open on the thermal RATING axis — which is why this registry is keyed and
+# gated INSIDE the D48 family rather than as a mechanism of its own (rule 19
+# [R-ONE-MECH]), exactly as D75-R's is.
+#
+# THE BASIS IS RULE 14 [R-ACCURATE], NEVER THE RESIDUAL. These are the ISO's own
+# published accreditation values for the delivery year each auction actually
+# settled on. Preferring the published vintage is what the rule requires
+# whatever it does to the fit, and a rating vintage is never selected by what it
+# does to a criterion (rule 1 [R-STRUCT]).
+#
+# EVERY VALUE IS A PUBLISHED PJM CLASS RATING already committed to
+# data/raw/capacity-market/elcc/pjm/pjm.csv by the D75-R intake (which carried
+# the thermal rows alongside the VRE ones — FINDING-capx-d75r §6 item 4: "The
+# intake now carries them"), with source doc + page per row, and reconciled to
+# those committed rows BYTE-FOR-BYTE by tests/unit/data/test_thermal_elcc_
+# vintage_ratings.py. ZERO free parameters and ZERO scalar fields (rules 5/13/
+# 21/23/24): nothing here is typed that the csv does not carry, and nothing is
+# blended, reconciled or weighted — unlike the VRE half, PJM rates each of the
+# model's thermal classes with exactly ONE published class, so D75-R's single
+# cross-vintage reconciliation has NO analogue here and none is introduced.
+#
+# THE ADMISSIBILITY RULE, fixed before any solve and not selectable by a result:
+# a published rating enters this registry iff it is (i) elcc_type
+# "class_average" — the construct the accredited-UCAP census is built from, so
+# the "marginal" indicative rows are excluded by construction — AND (ii) an
+# OFFICIAL/FINAL posting FOR that delivery year, so every "preliminary,
+# non-binding, indicative" row is excluded. Applied to the committed csv that
+# admits exactly three PJM vintages: 2025/2026 3IA (final for DY 2025/2026,
+# posted 2025-03-12), 2026/2027 BRA (official/final) and 2027/2028 BRA
+# (official/final).
+#
+# WHICH POSTING GOVERNS DY 2025/2026 — and the trap that is NOT available. This
+# registry reads the delivery year's FINAL ratings, i.e. the 3IA posting of
+# 2025-03-12: the same "what did this delivery year actually settle on" question
+# D75-R's own 2025/2026 VRE row answers with the same posting, and its 2024/2025
+# row answers with the Dec-2023 final study rather than the Dec-2021
+# preliminary set. The alternative — the ratings current when the 2025/26 BRA
+# was held in July 2024 — IS NOT SOURCEABLE: that report's tables are images
+# that do not extract (FINDING-capx-d75-2026-09-06.md §5, FINDING-capx-d75r §6
+# item 3). A BRA-vintage rule that cannot be sourced is not available to this
+# lane; the rule actually used is stated here rather than left implicit.
+#
+# NO HOLD-LAST, DELIBERATELY — the same reasoning as D75-R's registry. A
+# delivery year absent from the table falls straight through to the incumbent
+# single-vintage THERMAL_ELCC_CLASS_RATING_BY_ISO, which IS the 2026/27 set and
+# is the right basis wherever no other final rating is published (2028/29 onward
+# carries only preliminary marginal ratings, which the admissibility rule
+# excludes). Carrying a rating forward past its own posting would rebuild the
+# very mixed-vintage error this registry removes.
+#
+# PRE-REFORM YEARS NEVER REACH THIS TABLE, and the two vintage axes COMPOSE
+# rather than STACK (rule 19). resolve_thermal_accreditation_basis already
+# resolves "ucap" for a delivery year strictly before the reform entry under the
+# D48 arm, so the elcc_class_rating branch — the only place this registry is
+# read — is not taken there at all. In the PJM 2021-2025 hindcast window that
+# leaves exactly ONE delivery year on this axis: DY 2025/2026.
+#
+# THE CLASS MAPPING IS UNCHANGED. This axis moves the VINTAGE only: it reuses
+# THERMAL_ELCC_CLASS_RATING_BY_ISO's model-fuel -> PJM-class mapping exactly
+# (gas_ct -> "Gas Combustion Turbine", not the Dual Fuel class; oil -> "Diesel
+# Utility"; gas_st -> "Steam"), and a model fuel the incumbent table does not
+# carry (biomass) stays absent here and keeps its UCAP fallback. Re-mapping a
+# class would be a second mechanism on the same phenomenon (rule 19).
+#
+# Read at the TOP of thermal_accreditation_fraction's elcc_class_rating branch
+# under the default-OFF ``ScenarioConfig.pjm_thermal_accreditation_vintage``
+# gate (predicate :func:`~market_sim.model.capacity_evolution.retirements.
+# thermal_accreditation_vintage_armed`, which additionally requires D48's own
+# gate — see its docstring). Keyed by the delivery-year label
+# :func:`~market_sim.data.capacity_deliverability.resolve_delivery_year` builds,
+# exactly as the D48 and D75-R halves are.
+THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO: dict[str, dict[str, dict[str, float]]] = {
+    "PJM": {
+        # 2025/2026 — PJM's FINAL class ratings for the delivery year, applied
+        # to its Third Incremental Auction (posted 2025-03-12); the same posting
+        # RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO["PJM"]["2025/2026"] reads. This
+        # is the FIRST delivery year on the ELCC-class design
+        # (THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"]), which this
+        # posting independently confirms by rating the thermal classes at all,
+        # and it is the ONE row the defect above is about.
+        "2025/2026": {
+            "nuclear": 0.95,  # Nuclear (equal to the 2026/27 set)
+            "coal": 0.83,  # Coal (equal to the 2026/27 set)
+            "gas_cc": 0.78,  # Gas Combined Cycle (2026/27: 0.74)
+            "gas_ct": 0.63,  # Gas Combustion Turbine (2026/27: 0.60)
+            "gas_st": 0.74,  # Steam (2026/27: 0.73)
+            "oil": 0.92,  # Diesel Utility (2026/27: 0.91)
+        },
+        # 2026/2027 BRA (official/final) — the vintage the incumbent
+        # single-vintage table already carries, restated here so the registry is
+        # the ISO's published rating SERIES rather than a one-year patch. An
+        # exact no-op against the incumbent by construction, and asserted so by
+        # test: if these two ever diverge, one of them is wrong.
+        "2026/2027": {
+            "nuclear": 0.95,
+            "coal": 0.83,
+            "gas_cc": 0.74,
+            "gas_ct": 0.60,
+            "gas_st": 0.73,
+            "oil": 0.91,
+        },
+        # 2027/2028 BRA (official/final) — the LAST vintage the admissibility
+        # rule admits. Outside the 2021-2025 hindcast window entirely; it is
+        # here because the rule above admits it, not because any measurement
+        # asked for it, and it is what makes the "no hold-last" fall-through
+        # start at DY 2028/2029 rather than at 2027/2028.
+        "2027/2028": {
+            "nuclear": 0.95,
+            "coal": 0.83,
+            "gas_cc": 0.74,
+            "gas_ct": 0.61,
+            "gas_st": 0.72,
+            "oil": 0.92,
+        },
+    },
+}
+
 # First delivery year on which an ISO's CURRENT thermal accreditation design
 # (THERMAL_ACCREDITATION_BASIS_BY_ISO) applies, per ISO — the vintage axis of
 # the accreditation basis (capx D48, 2026-09-04, executing
