@@ -593,19 +593,21 @@ why `FINDING-capx-d60-2026-09-05.md` §5.5 routed it rather than absorbing it.
 
 Every push in this batch that touched a file ≥ 300 lines was followed immediately by a blob
 fetch-back and a line-count + content-hash comparison against the local bytes, before the next
-commit. The files that qualify, and the transport each went over:
+commit. **Verified at `207aebaa`, 11 / 11 files, line count AND sha256 equal on every one.**
+The counts below are the verified ones (they include the other lanes' matrix lines this
+session's rebase brought in, which is why they exceed the pre-rebase figures):
 
 | file | lines (local) | transport | verified |
 |---|---:|---|---|
-| `docs/handoffs/FINDING-capx-d65br-2026-09-06.md` | 860 | `git push` (small pack) | line count + sha256 equal |
+| `docs/handoffs/FINDING-capx-d65br-2026-09-06.md` | 876 | `git push` (small pack) | line count + sha256 equal |
 | `docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md` | 964 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix.js` | 2,663 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/CAISO.js` | 654 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/ERCOT.js` | 499 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/MISO.js` | 515 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/NEISO.js` | 438 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/NYISO.js` | 931 | `git push` (small pack) | line count + sha256 equal |
-| `docs/codebase-site/data/mechanism-matrix/PJM.js` | 365 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix.js` | 2,667 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/CAISO.js` | 655 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/ERCOT.js` | 500 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/MISO.js` | 520 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/NEISO.js` | 439 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/NYISO.js` | 932 | `git push` (small pack) | line count + sha256 equal |
+| `docs/codebase-site/data/mechanism-matrix/PJM.js` | 366 | `git push` (small pack) | line count + sha256 equal |
 | `frontend/data/hindcast/invariant-failures.json` | 310 | `git push` (small pack) | line count + sha256 equal |
 | `frontend/data/hindcast/neiso-2026-2050-t3-golden3-d65br.json` | 635 (new file) | `git push` (small pack) | line count + sha256 equal |
 | `scripts/register_forecast_run.py` | 1,320 | **not modified by this lane** | n/a |
