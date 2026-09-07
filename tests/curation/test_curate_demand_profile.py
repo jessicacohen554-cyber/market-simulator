@@ -1,10 +1,13 @@
 """Tests for the ``demand-profile`` curation pipeline (scripts/data/curate_demand_profile.py).
 
 Covers the physical-bounds screen + interpolation repair on a tiny synthetic
-fixture (one spike hour, one zero-gap run), the schema-valid clean output, and
-that a non-modeled ISO (SPP) is screened/reported but not written. CLEAN_DIR and
-the raw fixture path are redirected to temp locations so the suite never
-touches the real data tree.
+fixture (one spike hour, one zero-gap run), the schema-valid clean output, that
+EVERY modeled ISO is written (SPP included since lane SPP-31, 2026-09-07 — it
+has been a registered ISO since SPP-20 and its partition is what keeps
+``load_demand_meta("SPP", 2023)`` off the corrupted legacy summary), and that a
+non-modeled balancing authority is still screened/reported but not written.
+CLEAN_DIR and the raw fixture path are redirected to temp locations so the suite
+never touches the real data tree.
 """
 
 import unittest
@@ -41,11 +44,18 @@ def _write_fixture(path: Path) -> None:
     for h, mw in enumerate(caiso):
         rows.append(("CAISO", 2022, h, float(mw)))
 
-    # SPP: not a modeled ISO — one spike, should be screened but not written.
+    # SPP: a modeled ISO since SPP-20 — one spike, screened AND written.
     spp = _series(300.0, 10)
     spp[0] = 9.0e7
     for h, mw in enumerate(spp):
         rows.append(("SPP", 2023, h, float(mw)))
+
+    # A balancing authority the model does not register. The real extract
+    # carries only the seven modeled ISOs today, so this row is synthetic: it
+    # keeps the ``iso not in MODEL_ISOS`` skip branch covered (screened and
+    # reported, never written) rather than letting it rot untested.
+    for h, mw in enumerate(_series(200.0, 10)):
+        rows.append(("FLA", 2023, h, float(mw)))
 
     df = pd.DataFrame(rows, columns=["iso", "year", "hour", "raw_mw"])
     df["normalized"] = df.groupby(["iso", "year"])["raw_mw"].transform(
@@ -117,9 +127,26 @@ class TestCurateAll(unittest.TestCase):
         names = {(p.parts[-2], p.name) for p in written}
         self.assertIn(("PJM", "demand-profile_2021.parquet"), names)
         self.assertIn(("CAISO", "demand-profile_2022.parquet"), names)
+        # SPP is a modeled ISO (SPP-20) and must be written like any other.
+        self.assertIn(("SPP", "demand-profile_2023.parquet"), names)
+        # A non-modeled BA is screened and reported but never written.
         self.assertFalse(
-            clean_io.paths.clean_path("demand-profile", iso="SPP", year=2023).exists()
+            clean_io.paths.clean_path("demand-profile", iso="FLA", year=2023).exists()
         )
+
+    def test_spp_spike_repaired_and_flagged(self):
+        """SPP's partition carries the repair, not the raw unit slip.
+
+        Without this partition ``load_demand_meta("SPP", 2023)`` falls through to
+        the legacy summary and reports the 3,621,097 MW artifact as ``peak_mw``
+        (lane SPP-31); the fixture's hour-0 spike stands in for it.
+        """
+        cdp.curate_all()
+        df = self._clean("SPP", 2023)
+        self.assertTrue(df.loc[0, "repaired"])
+        self.assertLess(df.loc[0, "raw_mw"], 1000.0)  # no longer the 9e7 spike
+        self.assertEqual(int(df["repaired"].sum()), 1)
+        self.assertAlmostEqual(df["normalized"].sum(), 1.0, places=6)
 
     def test_pjm_spike_repaired_and_flagged(self):
         cdp.curate_all()

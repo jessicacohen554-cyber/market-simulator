@@ -47,11 +47,23 @@ system-wide hub-average series of each market:
     see :func:`neiso_zone_hourly` for which is read when, and for the
     2018-2023 workbook DST defect that comparison exposed.
 
-The two zonal ISOs (NYISO, NEISO) additionally carry a ``zones`` sub-dict —
-``{model_zone: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
+  * SPP — the two SPP trading hubs (``SPPNORTH_HUB`` / ``SPPSOUTH_HUB``) from
+    the SPP Integrated Marketplace monthly settlement-location files; the
+    system price is their simple mean. SPP's raw exports are not staged in the
+    repo, so unlike every builder above :func:`_spp` reads the COMMITTED hourly
+    sidecars ``actual_lmp_hourly_SPP.parquet`` and
+    ``actual_lmp_hourly_zonal_SPP.parquet`` (fetched by
+    ``scripts/data/build_spp_lmp_reference.py``, lanes SPP-12/SPP-14) and emits
+    no hourly frame, so this script never rewrites them.
+
+The zonal ISOs (NYISO, NEISO, SPP) additionally carry a ``zones`` sub-dict —
+``{key: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
 ``da``/``rt``/``*_mon``/``*_pct``; the dashboard reads only the top-level hub
 fields, so the sub-dict is additive and leaves the ERCOT/PJM/CAISO blocks
-byte-identical.
+byte-identical. The key is a MODEL ZONE for NYISO/NEISO (and for MISO, whose
+block is built by ``scripts/data/build_miso_lmp_reference.py``) but a TRADING
+HUB for SPP, whose two hubs are node clusters rather than zone averages — each
+SPP record states this in its own ``comment`` field (:data:`SPP_HUB_COMMENT`).
 
 For ISOs with a true hourly source (PJM, CAISO, and ERCOT — the ERCOT
 HB_HUBAVG hub-average is itself the comparable system price, from the DAM
@@ -137,6 +149,29 @@ NEISO_SRC = (
     "ISO-NE SMD hourly DA_LMP / RT_LMP; hub is the .H.INTERNAL_HUB "
     "(ISO NE CA sheet), model zones the simple mean of their "
     "constituent SMD load zones"
+)
+SPP_SRC = (
+    "SPP Integrated Marketplace DA-LMP-MONTHLY-SL / RTBM-LMP-MONTHLY-SL "
+    "(portal.spp.org), system hub = simple mean of SPPNORTH_HUB and "
+    "SPPSOUTH_HUB (actual_lmp_hourly_SPP.parquet)"
+)
+SPP_ZONAL_SRC = (
+    "SPP Integrated Marketplace per-hub DA / RTBM LMP "
+    "(actual_lmp_hourly_zonal_SPP.parquet, lane SPP-14), keyed by SPP TRADING "
+    "HUB — not by model zone"
+)
+#: Stated on every SPP record because the key names invite the wrong reading.
+#: SPP's two trading hubs are fixed clusters of pricing nodes (their member
+#: nodes and weights are ``data/raw/spp-planning/Hub_Definitions.csv``), NOT
+#: area averages of the SPP-North / SPP-South model zones: SPPNORTH_HUB prices
+#: a Nebraska node cluster and SPPSOUTH_HUB a central-Oklahoma one, each a
+#: small part of the zone whose name it echoes. Treat a hub series as the
+#: locational reference the market itself quotes, never as a zone mean.
+SPP_HUB_COMMENT = (
+    "zones[] keys are SPP TRADING HUBS, not model zones: SPPNORTH_HUB is a "
+    "Nebraska node cluster and SPPSOUTH_HUB a central-Oklahoma node cluster "
+    "(node weightings: data/raw/spp-planning/Hub_Definitions.csv). Neither is "
+    "an average over the SPP-North / SPP-South model zone it is named after."
 )
 
 # CAISO has no single system hub; the comparable-to-the-model "system price"
@@ -1054,12 +1089,133 @@ def _neiso(year: int) -> tuple[dict, pd.DataFrame] | None:
     return _assemble_zonal(frames, year, NEISO_SRC, _STD_TZ["NEISO"])
 
 
+# ---------------------------------------------------------------------------
+# SPP — reduced from the committed hourly parquets, not from raw exports
+# ---------------------------------------------------------------------------
+# SPP's raw market exports are not staged in the repo (the monthly
+# settlement-location files are hundreds of MB per year and the archived years
+# arrive as multi-GB zips). What IS committed is the reduced hourly series the
+# other builders emit as a sidecar, produced by
+# ``scripts/data/build_spp_lmp_reference.py`` against portal.spp.org:
+# ``actual_lmp_hourly_SPP.parquet`` (system hub = the mean of the two trading
+# hubs) and ``actual_lmp_hourly_zonal_SPP.parquet`` (the two hubs separately,
+# lane SPP-14). This builder therefore READS those parquets and returns no
+# hourly frame, so ``main`` never rewrites them — the committed series is the
+# durable record and this path only reduces it to the JSON block. MISO is the
+# same case and is reduced by its own script,
+# ``scripts/data/build_miso_lmp_reference.py``.
+SPP_HOURLY_PARQUET = "actual_lmp_hourly_SPP.parquet"
+SPP_ZONAL_PARQUET = "actual_lmp_hourly_zonal_SPP.parquet"
+
+
+def _month_of_hour() -> np.ndarray:
+    """Month label (1-12) for each fixed non-leap hour-of-year (0..8759).
+
+    The dense parquet calendar is the Feb-29-dropped clock every hourly sidecar
+    is indexed on, so a searchsorted over :data:`_MONTH_START_HOUR` recovers the
+    month for each hour and lets a parquet-sourced builder reuse
+    :func:`_by_month` unchanged.
+    """
+    bounds = np.asarray(_MONTH_START_HOUR[1:])  # starts of Feb..Dec
+    return np.searchsorted(bounds, np.arange(_HOURS_PER_YEAR), side="right") + 1
+
+
+def _coverage(values: np.ndarray, months: np.ndarray) -> dict:
+    """Return ``{"annual": f, "mon": [12 f]}`` — the priced share of each window.
+
+    The means and percentiles beside it ignore NaN, so without this a month
+    covered by a single hour would read as that hour's price. SPP's committed
+    series carries a handful of unpriced hours a year (6-12), so the record says
+    how much of the year its NaN-ignoring statistics actually saw.
+    """
+    ok = ~np.isnan(values)
+    return {
+        "annual": round(float(ok.mean()), 4),
+        "mon": [round(float(ok[months == m].mean()), 4) for m in range(1, 13)],
+    }
+
+
+def _dense_year(g: pd.DataFrame, kind: str) -> np.ndarray:
+    """One year's ``kind`` column reindexed onto the dense 8760-hour calendar."""
+    s = g.set_index("hour")[kind].reindex(range(_HOURS_PER_YEAR))
+    return s.to_numpy(dtype=float)
+
+
+def _spp_zone_records(zdf: pd.DataFrame, months: np.ndarray) -> dict:
+    """Build the per-TRADING-HUB ``zones`` sub-dict for one SPP year.
+
+    Keyed by SPP hub name (``SPPNORTH_HUB`` / ``SPPSOUTH_HUB``), NOT by model
+    zone — see :data:`SPP_HUB_COMMENT`. Record shape mirrors the NYISO / NEISO /
+    MISO ``zones`` entries: ``{da, da_mon, rt, rt_mon}``.
+    """
+    zones: dict[str, dict] = {}
+    for hub, g in zdf.groupby("zone"):
+        g = g.sort_values("hour")
+        rec: dict = {}
+        for kind in ("da", "rt"):
+            v = _dense_year(g, kind)
+            rec[kind] = round(float(np.nanmean(v)), 2)
+            rec[f"{kind}_mon"] = _by_month(v, months)
+        zones[str(hub)] = {k: rec[k] for k in ("da", "da_mon", "rt", "rt_mon")}
+    return zones
+
+
+def _spp(year: int) -> tuple[dict, None] | None:
+    """Return ``(record, None)`` for SPP, or ``None`` if the year is absent.
+
+    Reduces the committed hourly parquets to the same
+    ``{da, rt, da_mon, rt_mon, da_pct, rt_pct, src}`` record the other ISOs
+    emit, plus ``da_cov``/``rt_cov`` (:func:`_coverage`) and the per-hub
+    ``zones`` sub-dict. The second tuple element is ``None`` because the hourly
+    sidecar is an INPUT here, never an output of this run.
+    """
+    p = HOURLY_OUT / SPP_HOURLY_PARQUET
+    if not p.exists():
+        return None
+    g = pd.read_parquet(p)
+    g = g[g["year"] == int(year)].sort_values("hour")
+    if g.empty:
+        return None
+    months = _month_of_hour()
+    rec: dict = {}
+    for kind in ("da", "rt"):
+        v = _dense_year(g, kind)
+        rec[kind] = round(float(np.nanmean(v)), 2)
+        rec[f"{kind}_mon"] = _by_month(v, months)
+        rec[f"{kind}_pct"] = _pct(v)
+        rec[f"{kind}_cov"] = _coverage(v, months)
+    rec = {
+        k: rec[k]
+        for k in (
+            "da",
+            "rt",
+            "da_mon",
+            "rt_mon",
+            "da_pct",
+            "rt_pct",
+            "da_cov",
+            "rt_cov",
+        )
+    }
+    rec["src"] = SPP_SRC
+    zp = HOURLY_OUT / SPP_ZONAL_PARQUET
+    if zp.exists():
+        z = pd.read_parquet(zp)
+        z = z[z["year"] == int(year)]
+        if not z.empty:
+            rec["zones"] = _spp_zone_records(z, months)
+            rec["zones_src"] = SPP_ZONAL_SRC
+            rec["comment"] = SPP_HUB_COMMENT
+    return rec, None
+
+
 BUILDERS = {
     "ERCOT": _ercot,
     "PJM": _pjm,
     "CAISO": _caiso,
     "NYISO": _nyiso,
     "NEISO": _neiso,
+    "SPP": _spp,
 }
 
 

@@ -26,9 +26,13 @@ parsing artifact in whatever legacy pipeline built this extract; others do
 not, and are presumably genuine EIA-930 reporting gaps recorded as 0 rather
 than NaN).
 
-This script screens and reports on every (iso, year) series in the raw file
-(all 7 ISOs it carries), but only ever repairs+writes the six ISOs the model
-registers (:data:`MODEL_ISOS`) — SPP is not a modeled ISO/RTO in this repo.
+This script screens and reports on every (iso, year) series in the raw file and
+repairs+writes every ISO the model registers (:data:`MODEL_ISOS`). SPP joined
+that set on 2026-09-07 (lane SPP-31): it has been registered since SPP-20, and
+until its partition was written ``load_demand_meta("SPP", 2023)`` fell through
+to the corrupted legacy summary and reported a 3,621,097 MW peak — the
+2023-06-12 21:00 unit slip this curator was already flagging and repairing for
+SPP, then discarding (``[skip ] SPP 2023: 1 physically-impossible hour(s)``).
 
 The script is idempotent and reads only ``data/raw``; the clean Parquet is
 overwritten on each run.
@@ -51,10 +55,15 @@ _RAW_FILE = EIA_930_DIR / "eia_demand_profiles.parquet"
 # max/median <= 2.1 and min/median >= 0.2).
 MAX_MEDIAN_RATIO: float = 5.0
 
-# ISOs this repo models (get_iso_config); the raw extract also carries SPP,
-# which is screened and reported on but never written as a clean partition.
+# ISOs this repo models (get_iso_config) — the seven of
+# ``iso_configs.SUPPORTED_ISOS``, which is exactly the ISO set the raw extract
+# carries. SPP was appended 2026-09-07 (lane SPP-31) after SPP-20 registered it:
+# every consumer of ``load_demand_meta`` (build_calibration_reference's demand
+# block among them) reads the repaired clean partition when one exists and the
+# corrupted legacy summary when it does not, so a registered ISO missing from
+# this set is served a 3.6 million MW peak.
 MODEL_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"}
+    {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"}
 )
 
 # Pre-window years the legacy extract does NOT carry, curated here from the
@@ -225,8 +234,8 @@ def curate_all() -> list:
     """Screen + repair every (iso, year) series; write clean Parquet for modeled ISOs.
 
     Returns the list of clean Parquet paths written. Prints a report of every
-    (iso, year) series the physical-bounds screen flagged, including
-    non-modeled ISOs (SPP) that are screened but not written.
+    (iso, year) series the physical-bounds screen flagged, including any
+    non-modeled ISO the extract carries (screened and reported, never written).
 
     Covers two sources: the legacy raw extract (2021-2025, repaired in place at
     this seam) and the pre-window years the legacy extract omits (see

@@ -18,11 +18,18 @@ consumer) can read pre-computed values rather than re-deriving them:
 * ``{ISO}_{year}_renewable_capacity.csv`` — one tidy CSV per ISO-year with
   the per-zone, per-month EIA-860 operable wind and solar capacity (MW).
 
+Every number here is a MEASURED OUTCOME used only as the SCORE (rule 13
+``[R-MEASURED]``): nothing in this file is an input to a solve. The one repair
+applied on the way in is :func:`_screen_fuel_spikes`, which removes EIA-930
+unit-slip hours from the ``NG:`` fuel series before they are summed — a defect
+in the telemetry, not a tuning channel.
+
 Run: ``python scripts/data/build_calibration_reference.py``
 """
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import json
 import logging
@@ -34,6 +41,18 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
+# Repo root FIRST: ``eia930.frames._read_clean_seam`` imports ``scripts.lib.
+# clean_io`` lazily, and on a DIRECT run (``python scripts/data/build_calibration
+# _reference.py``) sys.path[0] is this script's own directory, so that import
+# fails, the seam resolves to ``None``, and every ``load_demand_meta`` call below
+# silently falls back to the CORRUPTED legacy ``eia_demand_profiles`` summary —
+# the demand block would then carry PJM 2021's 2.1e9 MW spike and SPP 2023's
+# 3,621,097 MW unit slip as ``peak_mw``, and PJM 2019 (which the legacy summary
+# has no row for at all) would hard-fail. The committed reference was built with
+# the seam live, so this line reproduces it rather than changing it; the MISO
+# builder carries the same insert for the same reason. Added 2026-09-07, lane
+# SPP-31.
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
@@ -78,6 +97,7 @@ CALIBRATION_ISOS: tuple[str, ...] = (
     "NYISO",
     "NEISO",
     "MISO",
+    "SPP",
 )
 
 # Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
@@ -178,6 +198,20 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # 2018") — the same F3-class cross-ISO blocker recorded for NEISO above,
     # fix = extend eia_demand_profiles{,_meta}.parquet first.
     "MISO": (2021, 2022, 2023, 2024, 2025),
+    # SPP is the Stage-G addition (registered 2026-09-06 by lane SPP-20; this
+    # block landed 2026-09-07 by lane SPP-31). TRAINING TIER ONLY: 2023-2025,
+    # the three years rule 22 [R-HOLDOUT] lets any ISO be built and scored on.
+    # 2021-2022 are DELIBERATELY ABSENT even though every input for them now
+    # resolves (eia_demand_profiles.parquet carries SPP 2021-2025 and the clean
+    # demand-profile partitions cover 2019-2025): they are validation tier, SPP
+    # holds NO marker in calibration-complete.json, and the ISOs that do carry
+    # pre-2023 blocks got them through the owner-authorized rule-22 Option-2
+    # DATA-INTAKE channel recorded in that file's intake_log. SPP has no such
+    # authorization, so adding them here is not this lane's to do. Data
+    # readiness is unaffected either way (rule 22, 2026-08-06: "what is held out
+    # is the SCORE, never the DATA") — the inputs are prepared and consistent
+    # across every year already, and only the reference block waits on a grant.
+    "SPP": (2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -328,6 +362,9 @@ def _egrid_benchmark(iso: str) -> dict:
         # eGRID 2023 PLNT23 BACODE for MISO is the bare "MISO" (verified
         # against the workbook), unlike the EIA-930 abbreviations elsewhere.
         "MISO": "MISO",
+        # SPP's eGRID BACODE is the EIA-930 abbreviation "SWPP" (verified
+        # against the workbook: 661 PLNT23 rows, no "SPP" code exists).
+        "SPP": "SWPP",
     }[iso]
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
     plants = df[df["BACODE"] == ba_code].copy()
@@ -410,6 +447,7 @@ _ISO_BA_CODE: dict[str, str] = {
     "NYISO": "NYIS",
     "NEISO": "ISNE",
     "MISO": "MISO",
+    "SPP": "SWPP",
 }
 
 # Extra EIA-923 by-fuel benchmarks emitted only for the ISOs where they are
@@ -423,10 +461,20 @@ _ISO_BA_CODE: dict[str, str] = {
 # with NEISO's benchmarked hydro) and a non-trivial dual-fuel oil burn
 # (~2-3 TWh/yr, larger than the NYISO/NEISO oil totals already benchmarked),
 # so both are first-order energy classes for its by-fuel benchmark.
+# SPP carries material conventional hydro on the Missouri/Arkansas river
+# projects (EIA-923 WAT/HY: 8.4002 TWh in 2023, 8.7018 in 2024 — on par with
+# MISO's benchmarked ~9 TWh and above NEISO's), so hydro is first-order for its
+# by-fuel benchmark. OIL IS DELIBERATELY OMITTED: SPP's EIA-923 oil burn is
+# 0.2590 / 0.3237 / 0.2230 TWh over 2023-2025 (~0.09 % of a ~280 TWh system) —
+# an order of magnitude below the smallest oil total already benchmarked, and
+# EIA-930 agrees (0.2159 / 0.1007 / 0.0219 TWh). It is a fleet of 2.4 GW of
+# petroleum-liquids nameplate that essentially never runs, not a winter
+# dual-fuel switch, so it is not a first-order energy class here.
 _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
     "NYISO": ("hydro", "oil"),
     "NEISO": ("hydro", "oil"),
     "MISO": ("hydro", "oil"),
+    "SPP": ("hydro",),
 }
 
 
@@ -527,20 +575,117 @@ def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
     }
 
 
+# The demand screen's own spike factor (``eia930.demand._DEMAND_SPIKE_THRESHOLD``
+# = 2.5x a robust scale statistic), reused verbatim by :func:`_screen_fuel_spikes`
+# so the benchmark side of the same artifact class is screened on the same bar.
+_FUEL_SPIKE_RATIO: float = 2.5
+# The scale statistic the second limb uses: the series' own 99.9th percentile,
+# i.e. about the ninth-largest of 8,760 hours. See :func:`_screen_fuel_spikes`
+# for why the demand screen's median basis cannot be used alone on a fuel series.
+_FUEL_SPIKE_SCALE_PCT: float = 99.9
+# The EIA-930 wide columns that are NOT ``NG: <CODE>`` fuel rows: ``net_gen`` is
+# the ``NG`` total and ``interchange`` is ``TI``. P9's ruling scopes the screen
+# to the ``NG:`` columns, so these two are excluded — and the exclusion is load
+# bearing, not cosmetic: PJM 2021's ``NG`` total carries three int32-overflow
+# hours (2,147,480,064 MW at h6981-6983) whose ``NG:`` fuel cells are entirely
+# ordinary, so screening the total would repair real fuel data and would move a
+# committed PJM block. That defect is a separate finding, not this lane's.
+_NON_FUEL_BENCHMARK_SERIES: frozenset[str] = frozenset({"net_gen", "interchange"})
+
+
+def _screen_fuel_spikes(
+    iso: str, year: int, bench: dict[str, np.ndarray]
+) -> dict[str, np.ndarray]:
+    """Repair EIA-930 unit-slip hours in the ``NG:`` fuel series of a benchmark.
+
+    Card **P9** (SPP addition plan §5, RULED r#2): the committed ``SWPP hourly``
+    extract posts a ~100x unit slip at 2023-06-12 21:00 that inflates
+    ``NG: WND`` by 3.59 TWh. ``eia930.demand._screen_demand_spikes`` catches the
+    ``Demand`` column of that same hour and nothing else does — no screen in the
+    repo touches the fuel-mix columns, so the inflation would flow straight into
+    this reference's ``generation_twh`` and into C4. The repair belongs in the
+    benchmark builder, never in ``data/raw`` (audit §3.4 recommendation 3).
+
+    **Why the demand screen's test needs a second limb here.** That screen flags
+    ``x > 2.5 * median(x)``, and its own derivation says why that bar is valid:
+    every legitimate demand series in this extract has ``max/median <= 2.1``. A
+    fuel series has no such property — it legitimately runs from zero to
+    nameplate, so its median is not its operating scale. Measured over all seven
+    ISOs and 2021-2025, the median test ALONE flags 4,116 MISO 2023 solar hours,
+    3,860 NEISO 2024 solar hours and 3,131 NEISO 2025 oil hours: real midday
+    solar and real peaker starts, whose deletion would both fabricate a benchmark
+    and break the byte-identity the same ruling requires. So an hour is repaired
+    only when it clears the demand screen's bar against BOTH scale statistics —
+    the median AND the series' own robust operating peak
+    (:data:`_FUEL_SPIKE_SCALE_PCT`, immune to a handful of artifact hours). The
+    factor is the demand screen's, unchanged; no second threshold is introduced.
+
+    **Measured effect** over all seven ISOs, 2021-2025 (2026-09-07): two series
+    move, and neither is a value this reference consumes for the six registered
+    ISOs — SPP 2023 ``wind`` 106.6345 -> 103.0488 TWh (the P9 target, 1 hour) and
+    NYISO 2024 ``other`` 3.3846 -> 3.3486 TWh (5 hours at h6759-6763, the same
+    NYIS reporting-gap window ``_screen_demand_dropouts`` already documents for
+    the ``Demand`` column). Only ``wind``, ``solar`` and ``net_gen`` are read
+    downstream, so every pre-existing ISO block stays byte-identical.
+
+    Returns a new dict; series with nothing flagged are passed through unchanged.
+    """
+    out: dict[str, np.ndarray] = {}
+    for fuel, arr in bench.items():
+        a = np.asarray(arr, dtype=float)
+        if fuel in _NON_FUEL_BENCHMARK_SERIES:
+            out[fuel] = a
+            continue
+        finite = a[np.isfinite(a)]
+        if finite.size == 0:
+            out[fuel] = a
+            continue
+        median = float(np.median(finite))
+        peak = float(np.percentile(finite, _FUEL_SPIKE_SCALE_PCT))
+        spike = (
+            np.isfinite(a)
+            & (a > _FUEL_SPIKE_RATIO * median)
+            & (a > _FUEL_SPIKE_RATIO * peak)
+        )
+        n_spike = int(spike.sum())
+        if n_spike == 0:
+            out[fuel] = a
+            continue
+        logger.warning(
+            "%s %d: repairing %d EIA-930 NG:%s spike hour(s) %s "
+            "(max %.0f MW vs p%.1f %.0f MW) -- unit-slip artifact",
+            iso,
+            year,
+            n_spike,
+            fuel,
+            np.flatnonzero(spike).tolist(),
+            float(np.nanmax(a)),
+            _FUEL_SPIKE_SCALE_PCT,
+            peak,
+        )
+        repaired = a.copy()
+        repaired[spike] = np.nan
+        out[fuel] = (
+            pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
+        )
+    return out
+
+
 def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
     """Return EIA-930 grid-side net generation by fuel (TWh) for an ISO-year.
 
-    Reads the per-BA hourly extract and sums each delivered fuel series. Empty
-    when the ISO has no EIA-930 extract for the year. Grid-side telemetry, so
-    the variable-renewable totals are not subject to the EIA-923 survey's
-    under-count / BA mis-assignment.
+    Reads the per-BA hourly extract, repairs unit-slip hours in the ``NG:`` fuel
+    series (:func:`_screen_fuel_spikes`) and sums each. Empty when the ISO has no
+    EIA-930 extract for the year. Grid-side telemetry, so the variable-renewable
+    totals are not subject to the EIA-923 survey's under-count / BA
+    mis-assignment.
     """
     bench = load_eia_hourly_benchmark(iso, year)
     if not bench:
         return {}
     return {
         fuel: round(float(np.nansum(np.asarray(arr, dtype=float))) / _MWH_PER_TWH, 4)
-        for fuel, arr in bench.items()
+        for fuel, arr in _screen_fuel_spikes(iso, year, bench).items()
     }
 
 
@@ -621,16 +766,43 @@ def _eia923_is_incomplete(iso: str, year: int) -> bool:
     return e923_total < _EIA923_VINTAGE_COMPLETENESS_FRACTION * e930_total
 
 
-def build_reference() -> Path:
+def build_reference(isos_filter: tuple[str, ...] | None = None) -> Path:
     """Build the calibration reference JSON and per-year CSVs.
+
+    Args:
+        isos_filter: Optional subset of :data:`CALIBRATION_ISOS` to rebuild.
+            ``None`` (the default) rebuilds every ISO, exactly as before.
+
+    MERGE, NEVER REPLACE (added 2026-09-07, lane SPP-31 — plan §7 gate **G9**,
+    "shared regenerated files alter other ISOs' rows"). The committed reference
+    is loaded first and only the ISOs actually built this run are updated, so an
+    ISO left out keeps its committed block byte-for-byte. This is the same
+    discipline ``derive_actual_lmp.main`` and ``build_miso_lmp_reference.main``
+    already apply to ``actual_lmp.json``, and it matters for the same reason: a
+    whole-file rebuild silently folds in every upstream input that has landed
+    since the file was last written. Concretely, on 2026-09-07 a no-op rebuild of
+    the committed 2026-08-07 reference moved CAISO's ENTIRE renewables block —
+    ``zone_shares`` and ``monthly_capacity_mw`` reallocated across
+    NP15 / ZP26 / SP15_rest — because merge ``5a910016`` (2026-09-05) landed the
+    EIA-860 ``vintage_2024`` parquets and CAISO's measured plant-hub /
+    FSNO-subzone membership crosswalks a month after the reference was built.
+    That is a real and probably wanted CAISO re-derivation, but it is a CAISO
+    input change and it belongs to the CAISO lane, not to whichever lane happens
+    to add an ISO next.
 
     Returns:
         The path of the written ``calibration_reference.json``.
     """
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    build_isos = tuple(
+        iso for iso in CALIBRATION_ISOS if isos_filter is None or iso in isos_filter
+    )
+    unknown = sorted(set(isos_filter or ()) - set(CALIBRATION_ISOS))
+    if unknown:
+        raise SystemExit(f"not calibration ISOs: {unknown}")
 
     isos: dict[str, dict] = {}
-    for iso in CALIBRATION_ISOS:
+    for iso in build_isos:
         years: dict[str, dict] = {}
         for year in CALIBRATION_YEARS_BY_ISO.get(iso, CALIBRATION_YEARS):
             renewables = _eia860_renewables(iso, year)
@@ -651,25 +823,42 @@ def build_reference() -> Path:
             logger.info("wrote %s", csv_path.relative_to(REPO))
         isos[iso] = years
 
-    payload = {
-        "generated": dt.date.today().isoformat(),
-        "description": (
-            "Multi-year calibration reference: EIA-860 renewable capacity, "
-            "measured Henry Hub prices, EIA-930 demand totals, EIA-923 "
-            "by-fuel net generation (the per-year generation_twh benchmark, "
-            "2023-2025), and the eGRID 2023 generation/emissions benchmark."
-        ),
-        "calibration_years": list(CALIBRATION_YEARS),
-        "henry_hub_actual": {str(y): p for y, p in HENRY_HUB_ACTUAL.items()},
-        "egrid_benchmark": {iso: _egrid_benchmark(iso) for iso in CALIBRATION_ISOS},
-        "isos": isos,
-    }
-
     out_path = OUTPUT_DIR / "calibration_reference.json"
+    payload: dict = json.loads(out_path.read_text()) if out_path.exists() else {}
+    payload["generated"] = dt.date.today().isoformat()
+    payload["description"] = (
+        "Multi-year calibration reference: EIA-860 renewable capacity, "
+        "measured Henry Hub prices, EIA-930 demand totals, EIA-923 "
+        "by-fuel net generation (the per-year generation_twh benchmark, "
+        "2023-2025), and the eGRID 2023 generation/emissions benchmark."
+    )
+    payload["calibration_years"] = list(CALIBRATION_YEARS)
+    payload["henry_hub_actual"] = {str(y): p for y, p in HENRY_HUB_ACTUAL.items()}
+    payload.setdefault("egrid_benchmark", {}).update(
+        {iso: _egrid_benchmark(iso) for iso in build_isos}
+    )
+    payload.setdefault("isos", {}).update(isos)
+
     out_path.write_text(json.dumps(payload, indent=2, sort_keys=True))
-    logger.info("wrote %s", out_path.relative_to(REPO))
+    logger.info(
+        "wrote %s (built: %s)", out_path.relative_to(REPO), ", ".join(build_isos)
+    )
     return out_path
 
 
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--isos",
+        nargs="+",
+        default=None,
+        help="Subset of CALIBRATION_ISOS to rebuild; default all. Only the "
+        "built ISOs are updated -- every other ISO keeps its committed block "
+        "and per-year CSVs byte-for-byte (plan gate G9).",
+    )
+    args = ap.parse_args()
+    build_reference(tuple(args.isos) if args.isos else None)
+
+
 if __name__ == "__main__":
-    build_reference()
+    main()
