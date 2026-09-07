@@ -8,7 +8,8 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #57) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #58) ·
+**r#58 (HEAD `7b8f3699`):** **ALL THREE Q59 LANES LAND** (74 commits, 30 merges) · **D82 ANSWERS ITS DECISIVE QUESTION AND CLOSES AS A LANE**: every operand of the D57-measured size is a **BACKCAST-ONLY OVERLAY**, inadmissible under rule 13; the forward-admissible streams are disposed of by name — **refuted** (co-opt), **small** (reactive), **unbuilt** (make-whole) — and the record's own CT E&AS in the barred dispatch year is **~$2/kW-yr**; at HEAD the plateau clears in full, re-cleared under the joint unarmed D62+D74 posture it is **7.0 of 22.7 GW on a knife edge at an exact zero**. `false_retire` stays FAIL and now has **NO named successor in the E&AS direction** — the honest state · **D85: BOOKKEEPING, NOT A DEFECT** — 214 configs, 169 reproduce, 30 keyless, the same 15 mismatch, **all 15 derived to their recorded literal, ZERO UNCLASSIFIED** (6 registration lag · 3 pre-ledger flip · 5 flip + **split-root fold** · 1 **request-not-resolution**); step 3 from the code path: a stale key is **unreachable by construction** for every class but the D24 §4.2 collision form, which `cache_config_disagreements` refuses on the serving seam · **AND IT SURFACED 46 MORE KEYS NOBODY ASKED ABOUT** — ERCOT/CAISO solve surfaces off their declarations since 2026-09-07, the D79 designed re-key plus a census BLIND SPOT now reported · **SPP IS ON THE §2.1b BOARD** and the schema answer is durable: `program-status.json` is a hand-maintained COMMITTED seed wrapped VERBATIM, so **no forecast artifact is required for a row**; gate (a) needs two backcast facts and SPP has both · **THE CAPX RECORD COUNTS SEVEN FROM HERE FORWARD** · **AGAINST INTEREST: gate (a) is RED ON THE ROW THIS DESK JUST CHARTERED** — sixteenth Q34 firing and the FIRST that is not a promoter's miss; the lane followed my read-live warning exactly and SPP promoted a THIRD time within hours → doctrine **A ROW YOU WRITE IS A ROW YOU MAINTAIN** · **RULED: the treadmill is the GATE WORKING, not a defect — a derived keeper id would agree with itself and assert nothing; no change proposed** · **AGAINST INTEREST: I served Q59 recommending D82 as the highest-value LANE and the read closed it** — one zero-LP session replaced a solve program, which is the argument for reading first and a caution on my own pre-read weight · gates **9 of 10** · 2 charters issued (§0bc)
 **r#57 (HEAD `dcb609f4`):** **BOTH r#56 CHARTERS LAND AND Q58 IS DISCHARGED** (133 commits, 54 merges) · **`capacity_screen_peak_measured_hindcast` IS ARMED FOR EVERY ISO** — 34 keys move over **190** committed configs (grown from 173, and the 34/0 reproduced exactly), **every one a hindcast bundle the gate governs** (PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1), **ZERO backcast and ZERO non-hindcast forecast**; all seven `*-plain-backcast` keys unmoved, the seven `*-t1h-bare` keys advance and are LISTED, persisted-identity pins unmoved · **THE SECOND HALF IS THE LANE'S OWN CATCH**: `__post_init__` coerces to the **FROZEN DECLARATION**, not the dataclass default — which after the flip IS the armed value, so the obvious reading would have been a NO-OP and re-keyed **93 configs, ten of them backcast keepers** · **AGAINST INTEREST: my charter never said what the coercion coerces TO** — third sitting running a lane has supplied a load-bearing construction detail I left implicit while stating the target to four decimals → doctrine **SPECIFY THE MECHANISM AS TIGHTLY AS THE OUTCOME** · **THE CHARTERED QUEUE WAS EMPTY FOR THE FIRST TIME** (D65-B-R closed 7/7; Q56/Q57/Q58 all discharged) → **Q59 SERVED, RULED ALL THREE: D82 + SPP forecast onboarding + D85**; the pause option declined · **RULED: every "all six ISOs" claim is now SIX OF SEVEN and none is wrong** — SPP holds two keepers and a matrix shard but has NO forecast row and NO §2.1b board entry, so six-ISO findings stay true as measurements and their labels are repaired **forward, never backward** · gates **10 of 10 GREEN**, S1 cleared, no Q34 re-key owed (count stays 15) · NYISO → nyiso-213 (promotion records complete, no miss); SPP → spp-2 · 3 charters issued (§0bb)
 **r#56 (HEAD `8a4bfd29`):** **D78-ARM CLOSES Q56 BY DELETING ITS OWN REGISTRATION** (57 commits, 23 merges) — D75-R-ARM had landed the IDENTICAL key `fb16fda2ddb0a94a` first, because at that head **the bare pjm-t1h is ONE recipe carrying BOTH arms**, so there was only ever one solve to spend and one row to register; the duplicate bundle/sidecar/report DELETED under rule 29(c), parity clean, and the `VERDICT_MAP` conflict resolved **on the merits not merge order** (the preserved object is D67-ARM's `a9c66d8ea25acb9d`; **no bundle exists at `b518f5fe7d02f961`**, so `-pre-d75rarm` names it and `-pre-d78arm` would not — rule 19 in its REGISTRATION form) · **THE COLLISION BOUGHT AN UNCOMMISSIONED DETERMINISM PROOF: two lanes solved the same recipe on two different HEADs NINETEEN SECONDS APART and the output is BYTE-IDENTICAL** — five evolution ledgers matching to the sha256, `score.json` differing only in a UTC stamp · **AGAINST INTEREST: my r#54 ordering constraint's DUTY paid and its RATIONALE was impossible** — 'keep the two arms separable on the board' could not hold from the moment a second field armed on the same recipe, and I could have derived that when I wrote it · **AGAINST INTEREST: my STATUS REBUILD charter named two ISOs for a gate whose target MIGRATES** — S1 read ERCOT+MISO at r#55 and reads ERCOT+PJM now; naming targets where the criterion was what mattered is r#55's error again → doctrine **A CHARTER FOR A MOVING GATE NAMES THE CRITERION** · **BOTH r#55 charters NEVER DISPATCHED** (0 of 2, against 5 of 5 last window; recorded as a rate, no inference) · **SPP HAS ITS FIRST KEEPER** `2026-09-07-spp-1-baseline` — enters every capx cell as `U`, no verdict transfers (rule 25), no SPP charter issued · pjm-169's F4 SCREENED AND REJECTED by its own gate S4; caiso-262 opens CAISO's 2022 touchpoint · gates **9 of 10** (S1: ERCOT+PJM) · 2 charters re-emitted (§0ba)
 **r#55 (HEAD `6783b06b`):** **ALL FIVE r#54 CHARTERS LAND — the best dispatch rate this desk has had** (103 commits, 41 merges) · **D76-ARM's STOP FIRES STRUCTURALLY AND THE LANE REFUSES TO REINTERPRET IT**: since Q20/(b′-1) `cache_key()` drops a field IFF it equals its FROZEN declaration, so **"arm the gate" and "move no key" are the same sentence with opposite signs** — flip alone 128 moved / **94 OFF TARGET**; flip + the coercion the five sibling gates already ship **34 moved / 0 off target**; `src/market_sim/` untouched, three ways forward, **none taken** → **Q58 SERVED AND RULED: VARIANT B on the precedent standard**, the `__post_init__` coercion explicitly authorized · **AGAINST INTEREST: my Q57 card demanded a criterion NO arm in this family has ever met** — D75-R-ARM reported *21 of 153 move, all PJM forecast* and D78-ARM *zero non-PJM, zero backcast, PJM listed*; the house standard is **zero OFF-TARGET with in-scope listed**, not zero, and I built a STOP on a literal reading the mechanism makes unreachable · **D65-B-R CLOSES AT SEVEN OF SEVEN**: leg 7 key `0fc42cb56c24d544` = Addendum C to the digit, 25/25 years, **ALL GATES CLEARED — the only leg of seven on which none fires, and the only one whose comparator is a SAME-VINTAGE prior**; §0/§6 filled and re-ordered; **the ff-verdicts question I routed unasserted answered NO from the code path**; blob verification MEASURED 11/11 · **BOTH PJM LANES ANSWERED THE THREE-VINTAGE KEY QUESTION BEFORE THEIR SOLVES** — D75-R-ARM's Addendum B found the bare key carries `fb16fda2ddb0a94a` not `b518f5fe7d02f961`, re-solved at the DECLARED key with realized == declared and 14/14 invariants PASS, and corrected ERCOT's bare key on the way; **D78-ARM SOLVED, SCORED AND REGISTERED — Q56's registration condition DISCHARGED** (one commit awaiting merge) · MISO re-key landed on `miso-233-spp-hourly`, **newer than my charter named**, because it read live · gates **9 of 10** (audit_keepers S1: ERCOT/MISO status stale, `build_status.py`) · D85 RESERVED: 15 committed configs carry a cache_key the current rules cannot reproduce · 2 charters issued (§0az)
@@ -63,6 +64,123 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
+
+## 0bc. Refresh #58 (2026-09-07, main HEAD `7b8f3699`) — all three Q59 lanes land: D82 answers its decisive question and CLOSES as a lane (every operand of the measured size is a backcast-only overlay), D85 classifies all fifteen keys to zero unclassified and returns BOOKKEEPING-NOT-A-DEFECT while surfacing 46 more the census was blind to, and SPP's board row goes up — then goes stale within hours, on a gate (a) red that is THIS DESK'S OWN ROW for the first time
+
+**0. FIRST ACT.** Handoff claim (§0bb = r#57, merged `1bd73c7a`) **matched** the ledger's top entry.
+`git fetch origin --prune` moved `main` `dcb609f4 → 7b8f3699` — **74 commits, 30 merges**.
+Re-fetched before grading; two branches survive, both other desks'. **No open PRs.**
+**Gates: 9 of 10.** All green except **`check_gate_a_provenance` EXIT 1 — SPP**, diagnosed in §2(a).
+
+**1. GRADED BY CONTENT — 3 of 3.**
+
+- **D82 DESIGN READ — LANDED, AND IT CLOSES D82 AS AN E&AS LANE** (`830d84c9`). Zero LP, no solve,
+  no arm, no recommendation — exactly as chartered. **Question 3 was the one I said decides whether
+  D82 is a lane at all, and its answer closes it: the only operands of the D57-measured size are
+  BACKCAST-ONLY OVERLAYS**, inadmissible under rule 13 `[R-MEASURED]`'s forward test. The
+  forward-admissible streams are each disposed of by name — **refuted** (the co-opt), **small**
+  (reactive), or **unbuilt** (model make-whole) — and **the record's own CT E&AS in the barred
+  dispatch year is ~$2/kW-yr**, which is the measurement that makes the gap unbridgeable rather than
+  merely unbuilt. New measurement carried forward: **at HEAD the plateau clears in full**; re-cleared
+  under the joint unarmed D62+D74 posture at HEAD's armed requirement it is **7.0 of 22.7 GW, on a
+  knife edge at an exact zero**. The re-clear instrument and its JSON are committed.
+- **D85 — LANDED: BOOKKEEPING, NOT A DEFECT** (`8bc968e6`), audit-only, no key/bundle/registration/
+  flip/declaration changed. Census reproduced at HEAD: **214 configs, 169 reproduce, 30 keyless, the
+  same 15 mismatch**. **Every one of the 15 derived to its recorded literal under a named recipe,
+  ZERO UNCLASSIFIED** — 6 **registration lag** (`caiso_offer_surface_measured_ungrounded`, registered
+  2026-09-02 after those bundles solved); 3 **pre-ledger flip** (the R-A storage-entry pair, PR #4442,
+  dropped at the live default then, hashed at the frozen post-flip declaration now); 5 pre-ledger flip
+  **+ split-root fold** (the fc6 arms solved with `MARKET_SIM_DATA_ROOT` relocated, D21 finding 6);
+  1 **request-not-resolution** (the ERCOT golden fixture serialized the *unresolved* config).
+  **Step 3, answered from the code path as the charter demanded and not by assertion: a stale key is
+  UNREACHABLE BY CONSTRUCTION for every class except the D24 §4.2 collision form of the R-A pair,
+  which `cache_config_disagreements` refuses on the serving seam** — exercised on the committed
+  payloads; `results/<ISO>/` is gitignored and the four tracked bundle dirs carry `config.yaml` only.
+  **ALSO SURFACED, and nobody asked for it: since 2026-09-07 the ERCOT and CAISO solve surfaces are
+  OFF their declarations, so 46 FURTHER keys reproduce only with the surface at declaration** — the
+  D79 designed re-key behaving as designed, but **a blind spot the census instrument was not
+  reporting** and now does. Recommends a checked exception record plus three forward record repairs
+  (fold roots in the run record, resolved config in the golden writer, both keys in the census); it
+  **refuses** to re-register the lagging field or rewrite any key, which is the refusal the charter
+  asked for and the right one.
+- **SPP FORECAST BOARD ROW — LANDED** (`c547cefd`), and its step-1 schema answer is the durable part:
+  **`program-status.json` is a hand-maintained COMMITTED seed** and
+  `register_forecast_run.py::build_program_status` **wraps it verbatim**, deriving nothing from
+  `registry/` or the hindcast sidecars — **so no forecast artifact is required to produce a row.**
+  The board's only HARD gate reads leg (a) alone and needs exactly two parseable **backcast** facts
+  (`keeper <run-id>`, `marker complete=/final=`); SPP has both, and the one status constraint (a
+  `pass` row must hold `complete`) is satisfied by the row's true state, **`fail`**. Staleness is
+  WARN-never-FAIL and does not iterate the ISO set; `forecast-status.html::isoCard` is null-tolerant
+  on every forecast-derived field. **SPP is on the §2.1b board and the capx record counts seven from
+  here forward.**
+
+**2. RECORDED AGAINST INTEREST · desk acts.**
+
+- **(a) GATE (a) IS RED ON A ROW THIS DESK CREATED THIS WINDOW — the sixteenth firing of the Q34
+  duty and the FIRST that is not a promoter's miss.** The SPP row cites
+  `2026-09-07-spp-2-crosswalk-hydro`; SPP's live keeper is **`2026-09-07-spp-3-screened-input`**.
+  My charter explicitly warned the lane — *"RE-READ IT LIVE, it has moved twice in two days"* — and
+  **the lane did exactly that**; SPP then promoted a **third** time within hours of the row landing.
+  Nothing was done wrong by anyone: an ISO promoting three times in one day outruns any hand-written
+  id. Re-key issued as a prompt (§4), not executed here.
+- **(b) I chartered D82 as a read and it came back closing the object, which is the charter working
+  — but I should say plainly that I expected a lane.** I served Q59 recommending D82 as the highest
+  analytical value of the three and told the owner it was "the one open object a lane's own finding
+  named as its successor." The read says there is no admissible operand to build. **That is a better
+  outcome than a lane and it cost one zero-LP session instead of a solve program**, which is the
+  entire argument for reading before chartering — but the recommendation I gave the owner implied a
+  lane was likely, and it was not.
+
+**3. RULINGS / DECISIONS.**
+
+**(a) DIRECTOR-TIER — D82 IS CLOSED, NOT PARKED, AND THE LABEL IS SPENT.** The read establishes that
+every operand of the size D57 measured is a backcast-only overlay, so under rule 13 there is nothing
+admissible to arm; the forward-admissible streams are individually disposed of, and the ~$2/kW-yr
+measurement bounds what a correct operand could even be worth. **`false_retire` stays FAIL and now has
+NO named successor in the E&AS direction** — that is the honest state, and it is a better place to be
+than carrying a successor that cannot be built. A future lane may re-open the plateau on a *different*
+object (the admission cap, the requirement, the offer construction), but **not as an E&AS operand
+lane**, and not without new evidence. *This ruling would read identically had the plateau measured
+smaller*: the closure is about admissibility, not magnitude.
+
+**(b) DIRECTOR-TIER — THE GATE-(a) TREADMILL IS THE GATE WORKING, AND THIS DESK DOES NOT "FIX" IT.**
+The obvious repair to §2(a) is to make the row derive its keeper id instead of hard-coding it. **That
+would defeat the check.** Gate (a) compares identity precisely so that a promotion cannot silently
+drift past the board; a derived id would always agree with itself and the guard would assert nothing.
+The cost — a re-key every time a fast-moving ISO promotes — is the price of the guarantee, and it now
+falls on whichever desk owns the row. For SPP that is this desk. **Recorded as a cost, not a defect;
+no change proposed.**
+
+**(c) DIRECTOR-TIER — D85's 46-key surface-declaration finding is ROUTED INTO D85-R, not a new
+label.** It is the D79 mechanism behaving as designed (a re-derived registry re-keys the ISOs whose
+rows moved) plus a *reporting* gap in the census instrument. D85's own third recommended repair —
+"both keys in the census" — is exactly its fix, so it belongs to the follow-on rather than to a new
+reserved number.
+
+**4. THE QUEUE.**
+
+| lane | state |
+|---|---|
+| **SPP gate-(a) RE-KEY** | **DISPATCH NOW** — Q34, sixteenth firing, this desk's own row |
+| **D85-R RECORD REPAIRS** | **DISPATCH NOW** — D85's own four recommendations, including the 46-key census gap |
+| **D82** | **CLOSED** — label spent, §3(a) |
+| **D83 / D84** | RESERVED, unchanged |
+
+**Collision map.** Both lanes are zero-LP and disjoint: the re-key touches SPP's row in
+`program-status.json`; D85-R touches the run record, the golden writer and the census instrument.
+Neither solves, neither arms.
+
+**5. DOCTRINE.** One line added.
+
+- **A ROW YOU WRITE IS A ROW YOU MAINTAIN.** Creating a board row for an ISO takes on that ISO's
+  re-key cadence in perpetuity. SPP promoted three times in one day and the row this desk chartered
+  went stale within hours of landing — with the lane having followed the read-live instruction
+  exactly. Before chartering a row, price the maintenance, and expect the first re-key immediately.
+  (r#58 §2(a), §3(b).)
+- **READ BEFORE CHARTERING, AND EXPECT THE READ TO CLOSE THINGS.** D82 was recommended to the owner
+  as the highest-value lane and came back with no admissible operand to build. One zero-LP session
+  replaced a solve program — which is the argument for the read, and also a caution about how much
+  weight a director's pre-read recommendation should carry. (r#58 §2(b), §3(a).)
 
 ## 0bb. Refresh #57 (2026-09-07, main HEAD `dcb609f4`) — both r#56 charters land and Q58 is DISCHARGED: the measured hindcast screen peak is armed for every ISO at 34 in-scope key moves and ZERO off-target, on a two-half construction whose second half the lane had to reason out itself; the chartered queue is EMPTY for the first time, and Q59 sets the next three; SPP is a seventh ISO with a keeper and no forecast presence at all
 
@@ -7132,6 +7250,9 @@ the gap.
 | **STATUS REBUILD / D76-ARM-B (r#56)** | — | **BOTH NEVER DISPATCHED** — no branch, no commits, on a fresh census. `capacity_screen_peak_measured_hindcast: bool = False` at HEAD, so Q58 stands unexecuted. **The S1 red MIGRATED**: ERCOT+MISO at r#55 → **ERCOT+PJM** now (MISO cleared incidentally via #5430; PJM went stale as pjm-169 folded its touchpoints) | as chartered r#55 | Fable / Opus | code | Re-emitted whole. **My charter named two ISOs for a gate whose target moves** — the re-issue reads the gate at its own HEAD (§0ba.2(b)). 0 of 2 dispatched, against 5 of 5 last window. |
 | **D76-ARM-B (r#57)** | Execute Q58: arm the measured hindcast screen peak, variant B | **LANDED — Q58 DISCHARGED.** `capacity_screen_peak_measured_hindcast` now `bool = True` on the shared dataclass. TWO HALVES: the flip declared as the FOURTH `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry with the frozen drop value left `"False"`, plus a `__post_init__` coercion back **to that FROZEN DECLARATION — not the dataclass default, which after the flip IS the armed value and would make the coercion a NO-OP**. Measured over **190** configs ex ante and ex post: **34 move, all hindcast** (PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1), **0 backcast, 0 non-hindcast forecast**; without half 2, **93 configs re-key, ten of them backcast keepers**. Seven `*-plain-backcast` keys unmoved; seven `*-t1h-bare` advance and are listed | `claude/capx-d76-arm-variant-b` | Opus | code | **The coercion target was the lane's own derivation — my charter never named it (§0bb.2(a)).** Denominator grew 173 → 190 and 34/0 reproduced exactly. Rule 28 duty (c) across SEVEN shards, SPP included. |
 | **STATUS REBUILD (r#57)** | The S1 red, criterion not targets | **LANDED** (`e241b8f3`) — rebuilt exactly the two parts S1 named at its own HEAD (ERCOT + PJM). `audit_keepers` GREEN | `claude/status-rebuild-s1` | Fable | code | The criterion-not-targets re-issue worked: the charter named no ISOs and the lane read the gate. |
+| **D82 DESIGN READ (r#58)** | Q59: the PJM CT plateau / per-DY zero-E&AS operand | **LANDED AND CLOSES D82 AS AN E&AS LANE** (`830d84c9`). Zero LP, no solve, no arm, no recommendation. **Q3 — the decisive one — answers that every operand of the D57-measured size is a BACKCAST-ONLY OVERLAY**, inadmissible under rule 13's forward test; the forward-admissible streams are disposed of by name (**refuted** co-opt, **small** reactive, **unbuilt** make-whole); **the record's own CT E&AS in the barred dispatch year is ~$2/kW-yr**. At HEAD the plateau **clears in full**; re-cleared under the joint unarmed D62+D74 posture at HEAD's armed requirement it is **7.0 of 22.7 GW, on a knife edge at an exact zero**. Re-clear instrument + JSON committed | `claude/capx-d82-ct-plateau-design` | Fable | pjm | **LABEL SPENT (§0bc.3(a)).** `false_retire` stays FAIL and now has **NO named successor in the E&AS direction** — the honest state. A future lane may re-open the plateau on a DIFFERENT object, never as an E&AS operand lane. |
+| **D85 (r#58)** | Q59: the 15 non-reproducible committed cache keys | **LANDED — BOOKKEEPING, NOT A DEFECT** (`8bc968e6`), audit-only. Census at HEAD **214 configs, 169 reproduce, 30 keyless, the same 15 mismatch**; **all 15 derived to their recorded literal under a named recipe, ZERO UNCLASSIFIED**: 6 registration lag (`caiso_offer_surface_measured_ungrounded`), 3 pre-ledger flip (R-A storage pair, #4442), 5 flip + **split-root fold** (fc6 arms, `MARKET_SIM_DATA_ROOT` relocated), 1 **request-not-resolution** (ERCOT golden fixture serialized the UNRESOLVED config). **Step 3 from the code path: a stale key is UNREACHABLE BY CONSTRUCTION for every class but the D24 §4.2 collision form, which `cache_config_disagreements` refuses on the serving seam** | `claude/capx-d85-key-provenance` | Fable | code | **Surfaced unasked: 46 FURTHER keys reproduce only with the surface at declaration** (ERCOT/CAISO off their declarations since 2026-09-07) — the D79 designed re-key plus a census blind spot. Refuses to re-register the field or rewrite any key. → **D85-R**. |
+| **SPP FORECAST BOARD ROW (r#58)** | Q59: the board half only | **LANDED** (`c547cefd`). Step-1 schema answer, and it is the durable part: **`program-status.json` is a hand-maintained COMMITTED seed** that `build_program_status` **wraps VERBATIM**, deriving nothing from `registry/` or the sidecars — **no forecast artifact is required to produce a row**. The only HARD gate reads leg (a) and needs two parseable BACKCAST facts (`keeper`, `marker`); SPP has both and its `fail` status satisfies the one constraint. Staleness is WARN-never-FAIL; `isoCard` null-tolerant throughout | `claude/capx-spp-board-row` | Opus | spp | **The capx record counts SEVEN from here forward.** Row went stale within hours (SPP → spp-3) — gate (a) red, §0bc.2(a), and the treadmill is the gate WORKING (§0bc.3(b)). |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-09-05 @ `b2bd9fdb`, refresh #42)
@@ -7706,6 +7827,9 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-07 | **D82 DESIGN READ** | `claude/capx-d82-ct-plateau-design` | **Fable** | pjm | r#57 — Q59; zero-LP design read of the CT plateau / per-DY zero-E&AS operand; MAY NOT recommend an arm |
 | 2026-09-07 | **SPP FORECAST BOARD ROW** | `claude/capx-spp-board-row` | **Opus** | spp | r#57 — Q59; the board half only, recipe half routed to the SPP desk |
 | 2026-09-07 | **D85 KEY-PROVENANCE AUDIT** | `claude/capx-d85-key-provenance` | **Fable** | code | r#57 — Q59; the 15 committed configs whose cache_key the current rules cannot reproduce |
+
+| 2026-09-07 | **SPP gate-(a) RE-KEY (Q34)** | `claude/spp-gate-a-rekey` | **Fable** | code | r#58 — sixteenth firing, and the FIRST on a row this desk created; issued as a prompt |
+| 2026-09-07 | **D85-R RECORD REPAIRS** | `claude/capx-d85r-record-repairs` | **Opus** | code | r#58 — D85's own four recommendations incl. the 46-key census blind spot; no key rewritten |
 
 ## 5. History (compacted)
 
