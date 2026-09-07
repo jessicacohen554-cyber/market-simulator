@@ -630,8 +630,16 @@ for the reason §8.1 gave. The one-directional test was the right test.
   **excluded** from these rows per S17.
 - `docs/handoffs/scenario-desk-ledger-2026-09.md` — §3, the same two rows mirrored.
 - `docs/codebase-site/data/mechanism-matrix/CAISO.js` — **LAST commit after rebase**, one
-  appended evidence line each on `federal_ces`, `federal_ces_target`, `carbon_price_path` and
-  `voluntary_clean_demand`, CAISO's shard only (rule 28(b)).
+  appended evidence line each on `federal_ces` (the CES premium row), `federal_ces_target`,
+  `carbon_price_path` and `voluntary_clean_demand`, CAISO's shard only (rule 28(b)). Verdict
+  letters, stated because two are not the letters the charter anticipated:
+  `carbon_price_path` U → **I** and `voluntary_clean_demand` U → **I** as expected;
+  `federal_ces` U → **O** and `federal_ces_target` U → **O**, not K/R/I, because both are
+  **tested, right-signed and non-inert scenario levers that are never postures** — K is a
+  keeper verdict, R a rejection, and I is contradicted by a −0.82 to −3.35 Mt CO2 response.
+  **O** is the letter both sister lanes (ERCOT, NEISO) used for exactly these two cells, so
+  the column stays comparable across the campaign. `scripts/check_mechanism_matrix.py`
+  EXIT 0, and `--base origin/main` EXIT 0 with every anchor warning pre-existing.
 
 **Consumed, never edited:** `configs/scenario_campaign_matrix.yaml`, the CAISO base YAML,
 everything under `src/` and `scripts/`, every committed bundle and sidecar, every other ISO's
