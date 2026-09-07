@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-07-spp-2-crosswalk-hydro",
+  "label": "spp 2 crosswalk hydro",
+  "date": "2026-09-07",
+  "shorthand": "spp-2-crosswalk-hydro",
+  "definition": "spp-42: SPP coal supply-class crosswalk (EIA-923 rank -> COAL_PRB/COAL_LIGNITE, zero-LP inert) + 2025 hydro vintage repair (EIA-923 2024 backfill + EIA-930 NG:WAT monthly level pin, every year); otherwise the spp-1 baseline recipe",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-07-spp-2-crosswalk-hydro.js",
+  "bundle": "results/calibration/spp42_crosswalk_B"
+}
