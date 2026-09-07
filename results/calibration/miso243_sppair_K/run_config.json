@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-07T01:22:50",
+  "timestamp": "2026-09-07T19:10:44",
   "git": {
-    "sha": "e852c85c",
-    "basis_sha": "e852c85c858ab567aaf2c3447ea570244f33d956",
-    "branch": "claude/miso-backcast-calibration-cdww6i",
+    "sha": "710d4dad",
+    "basis_sha": "a1af05a7bc86a7a96ef6bc695ef4d4f56de0f038",
+    "branch": "claude/miso-backcast-calibration-fs6x99",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-233 full span: hourly neighbour anchor extended to the SPP seam",
+  "model_changes_note": "miso-243 FULL SPAN: SPP hourly ladder cross-year pairing repaired (construction defect; rules 14/23). Screen 2024 cleared all four structural gates.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -226,7 +226,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "e852c85c"
+    "git_sha": "710d4dad"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -559,6 +559,7 @@
     "nyiso_gas_bridge_plant_min_run": false,
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
+    "spp_gas_commitment_bridge": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
@@ -905,6 +906,7 @@
     "cc_duct_peaking_cap_pct": null,
     "cc_duct_peaking_row_scoped": false,
     "cc_nameplate_summer_derate": false,
+    "cc_summer_derate_reconciled_basis": false,
     "summer_derate_basis_aware": true,
     "commission_year_cod_fallback": true,
     "summer_wefor_share_override": 1.0599,
@@ -1160,6 +1162,8 @@
     "pjm_seam_export_limit": false,
     "pjm_seam_measured_ladder": false,
     "ercot_zonal_gas_basis": false,
+    "ercot_ep_gas_basis_monthly": false,
+    "ercot_zonal_spread_ep_referenced": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
     "oil_primary_bin_fuel": false,
@@ -1217,7 +1221,7 @@
     "rows": 208,
     "moved": {},
     "epochs": [],
-    "git_sha": "e852c85c"
+    "git_sha": "710d4dad"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1229,7 +1233,14 @@
       "pandas": "3.0.3",
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
-    }
+    },
+    "cache_key_path_roots": [
+      [
+        "<repo>",
+        "/home/user/market-simulator"
+      ]
+    ],
+    "market_sim_data_root": ""
   },
   "resolved_inputs": {
     "schema_version": 1,

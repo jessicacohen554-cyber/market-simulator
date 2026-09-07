@@ -1380,4 +1380,23 @@ results/calibration/caiso262_repro2023/
 # committed bundle is a parity-gate RED). Rule 31 [R-RETAIN]: gitignoring is
 # what discharges that duty -- the bundles stay on local disk until the owner
 # has ruled on promotion, and are NEVER deleted by the session.
-results/calibration/miso243_*/
+# ONLY the screen bundle is ignored: it is a throwaway diagnostic probe and rule
+# 29 (c) forbids it reaching `main`. The FULL-SPAN bundle is the PROMOTED KEEPER
+# and rule 15 [R-DASHBOARD] requires its slim files + hourly/ sidecars to be
+# committed, so it is deliberately NOT ignored.
+# The 2024 SCREEN bundle. Rule 29 (c): it must not reach `main` (a screen bundle
+# is never registered, and an unregistered committed bundle is a parity-gate
+# RED). Rule 31 [R-RETAIN]: gitignoring is what discharges that duty -- the
+# bundle is NOT deleted. It lives at
+#   <scratchpad>/miso243_screen2024
+# so the parity gate's working-tree sweep of results/calibration/ mirrors what
+# CI sees; the ignore rule stays for any future re-solve into this path.
+results/calibration/miso243_screen2024/
+# The keeper bundle commits exactly the slim files + hourly/ sidecars rule 15
+# [R-DASHBOARD] names (the same set the miso-233 predecessor committed); the
+# heavy per-unit / dispatch / network artifacts stay local.
+results/calibration/miso243_sppair_K/dispatch/
+results/calibration/miso243_sppair_K/floors/
+results/calibration/miso243_sppair_K/hourly/unit_hourly_*.parquet
+results/calibration/miso243_sppair_K/hourly/network_*.parquet
+results/calibration/miso243_sppair_K/*.parquet

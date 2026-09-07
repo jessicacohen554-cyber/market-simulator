@@ -13095,3 +13095,83 @@ no decertification; C3c untouched and still the designated frontier.
 `_miso240_external_bus_price_charter_phase0.json` and its `_PREREPAIR.json` beside it. Rule 28(b)
 evidence appended to `seam_neighbour_hourly_ladder` and `internal_congestion_split` in **MISO's
 shard only** (rule 25), with the `§5.4` queue stamp.
+
+## miso-243 — 2026-09-07
+
+**KEEPER PROMOTED → `2026-09-07-miso-243-spp-pairing`** (bundle
+`results/calibration/miso243_sppair_K`), DETERMINATION **CALIBRATED**, C3c the single ledgered
+non-downgrading caveat. **C1 16/16 all-class and 12/12 free-class; C2/C3a/C3b/C4/C6/C8 all PASS;
+grade summary scored 8 / target 7 / ledgered 1 / fails 0 — identical to the miso-233 predecessor in
+every one of those. DOF ledger UNCHANGED at 41/2.** Predecessor pruned; MISO carries exactly one
+registered run.
+
+**THE SINGLE DELTA IS NOT A `ScenarioConfig` FIELD.** No field changed, none was created, no gate
+was added and no flag flipped. The only delta is the committed registry table
+`MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR`, **re-derived by the byte-identical frozen estimator
+on a correctly paired frame**. `derive_spp_neighbour_hourly` joined a `(year, hour)`-MultiIndexed
+hub series onto a `df.loc[year]` frame indexed by `hour` alone, so pandas partial-joined on the
+shared level and paired each year's 8,760 MISO rows against **all three hub years** — drawing the
+Q-Q quantile from a three-year mixture of the spread instead of the year's own. The estimator's
+flow-exceedance *targets* were unaffected; only the quantile's sample was wrong. Band 1 import
+14.10/14.49/21.85 → **13.44/17.26/18.58**, export −4.20/−2.15/+1.04 → **−2.39/+1.44/−2.37**.
+
+**The case is rule 14 `[R-ACCURATE]` and rule 23's own construction, never a residual** (rule 1
+`[R-STRUCT]`): a rule-23 `[R-FROZEN-DERIVE]` re-derive citing a **construction defect**, not a
+source-data update; the pairing was not selected by which arm scores better, and both ladders are
+fully determined by the frozen estimator before any solve runs. **Zero free parameters added.**
+
+**The falsifiable structural evidence, and it could have failed:** the estimator asserts an identity
+— on the derive's own spread the dead band captures `P(|flow| ≤ 250 MW)` by construction — and
+`|Z_derive − Z_target|` moves **0.0395/0.0144/0.0089 → 0.0003/0.0000/0.0001** against a
+pre-registered 0.005 bar, four times tighter than miso-242's Q-A bar. **That, not a band, is why
+this is a keeper.** The defect cannot return: the derive now raises if the join changes the row
+count, and the rule-23 pin test was repaired **in the same commit** and made **stricter** (it
+asserts that row count; no `atol` loosened, no assertion removed). The **pooled forward ladder** was
+always correctly paired and is untouched — rule 13's forward story is intact.
+
+**Rule 29 `[R-SCREEN]` end to end.** Zero-LP phase 0 first; **one** screen year — **2024**, named by
+a footprint rule (`argmax F`, F = share of derive rows whose SPP band-count vector changes) fixed in
+the PREREG before either number existed and containing zero model output and zero residual, **which
+overruled the handoff's expected 2023** (F 0.0910/0.2376/0.1722); all four pre-registered
+**structural STOP-only** gates cleared, none of them the target residual (G-1 slack
+19,566.915 → 19,566.915 MWh, dump 0, must-take 0.00 %; G-2′(a) displacement ratio **0.9991** against
+a bar of 4.0; G-2′(b) served energy −0.00006 %; G-3 −48.345 MW with the predicted negative sign at
+0.449 of the pre-solve prediction; G-4 **zero** collateral flips). Control = the predecessor's
+**committed** bundle (form 4); **no control solve spent**. G-DRIFT `e852c85c..HEAD` all INERT
+hunk-by-hunk — capx D76 verified inert at the object level, and the one genuinely shared data seam
+(`_screen_fuel_spike_columns`) **measured** at 0 repaired MISO cells in all three years —
+corroborated by `surface_stamp` reproducing fingerprint `8ee657ee4c7c49b0` with `moved:{}`.
+
+**Published at full magnitude both ways, and a criterion in neither direction.** Full-span collateral
+gate: **zero flips, 23 scored moves split 11 toward / 12 away**, all small — 2023 mostly away
+(CC_REGULAR −6.445 → −6.460), 2024 mostly toward and larger (COAL_PRB −3.443 → −3.360, CT_PEAKER
+−1.934 → −1.830, gas system volume −6.76 → −6.47); C3a 2.12/1.14/−2.36 → 2.11/1.19/−2.40. Model net
+imports 44.17/29.34/20.62 → 44.22/28.92/21.06 TWh against a measured 32.52/20.02/19.95, and
+`corr(model net imports, measured Indiana-hub **DA**)` −0.2606/−0.2289/−0.2867 →
+−0.2616/−0.2304/−0.2882 against a measured −0.1937/−0.1416/−0.0829 — **marginally further from
+measured in all three years, reported and traded against nothing.**
+
+**Disclosed against interest:** this session's **own P-2 byte-identity leg FAILED** at 0.01, was
+published first, diagnosed **against the leg** (the caller change moves exactly 0.0; the cent is a
+**pre-existing** committed-vs-derive gap on the **incumbent** table, magnitude `NO_WASH_EPS`) and
+repaired to an **exact-zero** bar in a pushed addendum before the repaired numbers existed; **G-2 as
+pre-registered was not measurable** from the committed sidecars and was re-specified before the
+screen ran rather than satisfied with a reconstruction; the screen year overruled the handoff; and
+this session's independently derived band-1 values agree with miso-242 §5a **to the cent**, which is
+expected of a deterministic estimator and is not presented as independent corroboration.
+
+**What it does not close:** the structural item rule 1 names is **untouched** — the model's SPP seam
+is 0.70–0.79 spread-correlated while the measured one is +0.0409/−0.0200/+0.0502 — and **C3c stays
+the designated frontier** (3/7/11 h > $200 vs measured 30/37/88 h). **Named successor:** the
+**incumbent** table `MISO_SEAM_LADDER_BY_YEAR` does not reproduce its own derive to the cent on PJM
+2023, South 2023 and South 2024 (magnitude `NO_WASH_EPS`), and South is the seam actually cleared on
+it. Rule 22 `[R-HOLDOUT]`: 2023–2025 only; MISO holds no `complete` marker and no out-of-training
+year was solved, scored or registered.
+
+Records: `PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md`,
+`ADDENDUM-miso243-my-own-p2-leg-failed-and-the-screen-year-is-2024-2026-09-07.md`,
+`ADDENDUM-miso243-the-screen-cleared-all-four-gates-2026-09-07.md`,
+`ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`; probes
+`scripts/probes/_miso243_spp_pairing_repair_phase0.py` and `_miso243_screen_gates.py` with their
+JSON beside them. Rule 28(b): the `seam_neighbour_hourly_ladder` cell evidence and the keeper/gates
+stamp updated in **MISO's shard only** (rule 25), with the `§5.4` stamp.
