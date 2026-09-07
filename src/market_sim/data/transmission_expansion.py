@@ -69,11 +69,15 @@ DATATYPE = "transmission-expansion"
 #   PJM   2024 — 2024 transfer-limits/flows postings.
 #   NYISO 2025 — measured 2024-25 DAM Central-East mean (post-Segment-A/B).
 #   NEISO 2023 — RSP interface limits + ICR tie-benefit cap (pre-NECEC).
-#   SPP   2025 — the N<->S link is a Tier-3 placeholder read off the EIA-860
-#     2025 Early Release (iso_configs._spp_config), and the committed-project
-#     source scripts/lib/transmission_expansion/spp.py names is the 2025 ITP
-#     Assessment Report — the two vintages coincide. If SPP-13 lands a rated
-#     interface from a different vintage, this row follows its source.
+#   SPP   2026 — the N<->S link TTC (3,400 MW, lane SPP-53) is built from the
+#     per-flowgate `Real Time Effective Limit` of the 2026-03-17 -> 2026-09-05
+#     daily RTBM binding-constraint files (the column exists from 2026-03-17
+#     only; FINDING-spp-53-2026-09-07.md §3), so the static topology's limit
+#     vintage is 2026. This row followed its source, as the SPP-20 note here
+#     said it would (it read 2025 while the link was the EIA-860 2025 ER
+#     placeholder). The committed-project source
+#     scripts/lib/transmission_expansion/spp.py names is still the 2025 ITP
+#     Assessment Report; that is the project pipeline, not the limit vintage.
 TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "ERCOT": 2024,
     "CAISO": 2023,
@@ -81,7 +85,7 @@ TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "PJM": 2024,
     "NYISO": 2025,
     "NEISO": 2023,
-    "SPP": 2025,
+    "SPP": 2026,
 }
 
 # The target kinds the forward channel can express at this topology's grain.

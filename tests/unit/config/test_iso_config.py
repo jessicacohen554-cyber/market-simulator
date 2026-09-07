@@ -494,20 +494,28 @@ class TestISOConfig(unittest.TestCase):
         self.assertEqual(shares, {"SPP-North": 0.5125, "SPP-South": 0.4875})
         self.assertAlmostEqual(sum(shares.values()), 1.0)
 
-    def test_spp_single_link_is_a_non_binding_placeholder(self):
-        """One symmetric N<->S link whose TTC is the declared Tier-3 placeholder.
+    def test_spp_single_link_carries_the_spp53_corridor_ttc(self):
+        """One symmetric N<->S link whose TTC is SPP-53's derived corridor limit.
 
-        48,700 MW is the North zone's EIA-860 2025 ER summer capability — an
-        upper bound that cannot bind (rule 14; owner ruling P11: no rated
-        interface exists in the tree). A change here is a rated capability
-        landing (SPP-13 / SPP-53), never a residual tune.
+        3,400 MW is the binding-hours-weighted median first-contingency
+        transfer of the corridor's identified flowgates, built from SPP's own
+        2026 effective limits and a shift-factor identification on SPP's own
+        2023-25 prices (owner ruling P13; docs/handoffs/PRECOMMIT-spp-53-
+        2026-09-07.md §2.1, FINDING-spp-53-2026-09-07.md §4). It replaced
+        SPP-20's 48,700 MW Tier-3 placeholder, which could not bind. The
+        second assertion pins the property the placeholder lacked: the link
+        sits below the residual-blind bound B_plaus = 23,300 MW (North
+        non-gas capability minus North minimum load), so it CAN bind. A
+        change here is a re-derivation from source data (rule 23), never a
+        residual tune.
         """
         spp = get_iso_config("SPP")
         self.assertEqual(spp.n_links, 1)
         link = spp.links[0]
         self.assertEqual((link.from_zone, link.to_zone), ("SPP-North", "SPP-South"))
         self.assertTrue(link.is_bidirectional)
-        self.assertEqual(link.ttc_mw, 48700.0)
+        self.assertEqual(link.ttc_mw, 3400.0)
+        self.assertLess(link.ttc_mw, 23300.0)
         self.assertEqual(spp.interface_limits, [])
 
     def test_spp_voll_is_2000(self):

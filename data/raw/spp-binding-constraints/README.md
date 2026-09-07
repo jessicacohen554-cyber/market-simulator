@@ -283,3 +283,41 @@ file listing beside this README is the authority — not either section's "Lande
 
 `SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
 every file here, from either landing.
+
+---
+
+## STATUS UPDATE 2026-09-07 — lane SPP-53: the 2026 corridor-limit sidecar LANDED; the N↔S link TTC is derived (3,400 MW)
+
+FINDING: `docs/handoffs/FINDING-spp-53-2026-09-07.md` (construction fixed first in
+`PRECOMMIT-spp-53-2026-09-07.md`). **The four-group spec above and `docs/handoffs/spp14/groups.py`
+are UNCHANGED** — the corridor rows below are selected by those rules verbatim.
+
+**Where the effective-limit column actually begins — a correction to both SPP-14 sections above.**
+Every one of the 221 daily files `RTBM-DAILY-BC-20260128.csv` → `20260905.csv` was pulled and its
+rows counted by field count: the 14-column rows (`Source Limit`, `Real Time Effective Limit`,
+`Initial Effective Limit`, `Interconnect`) first appear on **2026-03-17** (a whole 14-column day),
+then **2026-03-18 → 03-24 are 10-column again**, **2026-03-25 is MIXED** (9,784 ten-field rows, then
+2,419 fourteen-field rows from interval 10:25 local under a 10-column header), **03-26 → 03-31 are
+10-column**, and **every day from 2026-04-01 is 14-column**. The `20260128.csv` the portal serves is
+10-column (14,501 rows) — the 14-column, 21,592-row file of that name SPP-13 read was the v35 guide's
+*sample*, not the served archive. So the measured-limit series runs **2026-03-17 (one day),
+2026-03-25 (part), and 2026-04-01 → latest**.
+
+**Landed — the reduced sidecar** (the LMP-sidecar precedent: the 221 daily pulls, ~550 MB, are not
+committed; git history + the fetch command are the record):
+
+| File | Rows | Span (`GMTIntervalEnd`, UTC) | Constraints | What it carries |
+|---|---:|---|---:|---|
+| `rtbm_bc_corridor_limits_2026.parquet` (1,435,141 B) | 563,450 | 2026-03-17 05:05 → 2026-09-06 05:00 (162 days) | 166 | every `State ∈ {BINDING 35,096, BREACHED 4,667, ACTIVATED 523,687}` row of the 14-column daily files whose constraint is `n_s_corridor` under `groups.py`'s rules; columns `Constraint Name`, `Monitored Facility`, `Contingent Facility`, `State`, `Shadow Price`, `Source Limit`, `Real Time Effective Limit`, `Initial Effective Limit`, `Interconnect`, `GMTIntervalEnd` (the 8 the charter named plus `State` and `Shadow Price`, so the binding subset is selectable without the pulls). `Interconnect` is blank on 3,452 rows of 2026-03-17/18 as served. |
+
+Fetch command (SPP-14's producer, listing + download; the loop is in the FINDING §3):
+`python scripts/data/fetch_spp_alt_portal.py --list rtbm-binding-constraints --path /2026/<mm>/By_Day`
+then `download("rtbm-binding-constraints", "/2026/<mm>/By_Day/RTBM-DAILY-BC-<yyyymmdd>.csv")` for
+every day ≥ 2026-01-28; parse with `csv.reader` (a 14-field row under a 10-column header is a
+schema-break row, not an error). sha256 in `SHA256SUMS.txt`.
+
+**What the sidecar says (derates are the norm):** over its 39,763 BINDING/BREACHED rows the
+effective limit sits below the `Source Limit` in **99.2 %** of intervals, at a median ratio of
+**0.92** — SPP runs the corridor's elements at a derated real-time limit almost always, which is why
+the limit-at-bind (the ERCOT instrument), not the registry rating, is the primary L_f. The
+per-constituent table (n, median / p10 / p90, source limit, derate share) is FINDING-spp-53 §3.
