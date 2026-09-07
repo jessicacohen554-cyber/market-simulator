@@ -1,0 +1,76 @@
+{
+ "cache_key": "e644893331d7708f",
+ "case": "CARB-MID+LOAD-HI",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 12911542460.00119
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 19900621813.09833
+  },
+  "2028": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 37940051036.611595
+  },
+  "2029": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 58555700356.6628
+  },
+  "2030": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 126740682465.2776
+  }
+ }
+}
