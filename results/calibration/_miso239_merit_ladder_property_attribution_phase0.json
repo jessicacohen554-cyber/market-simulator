@@ -1,0 +1,868 @@
+{
+ "probe": "miso-239 phase 0 \u2014 LINEAR / CURVE / STEP attribution of the PJM merit ladder's own-net-load response: which property of g does it?",
+ "prereg": "results/calibration/PREREG-miso239-which-property-of-g-2026-09-07.md (pushed c0e971ee)",
+ "predecessor_record_disclosure": "miso-238's FINDING and its phase-0 JSON never reached main, and the committed miso-238 probe carried the un-repaired (marginal-covariance) estimator its own ADDENDUM \u00a72 replaced. This session applied that declared repair and regenerated _miso238_pjm_seam_channel_attribution_phase0.json; G-P4 below reproduces miso-238's published column from scratch against the values the handoff quotes, restated in PREREG \u00a71 BEFORE being recomputed.",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "price_basis": "Indiana hub RT builds the ok mask and is the alignment price P; every regressor and every merit signal is Indiana hub DA. The ladder clears on the MODEL bus spread s = p_bus - p_border; the removed regressor is p1 = da - p_border. They are DIFFERENT SPREADS (PREREG \u00a70d(3)) and that is what the LINEAR channel is.",
+ "estimator": "gamma = PARTIAL OLS slope on z_own_net_load in r ~ [1 | z_own_nl | z_own_VRE] (miso-237's estimator via miso-238 ADDENDUM \u00a72). gamma_marginal (the simple covariance) is REPORTED beside it and NEVER gated.",
+ "bars": {
+  "tol_sigma_mw": 0.5,
+  "tol_coef_mw_per_z": 0.5,
+  "tol_alignment": 0.001,
+  "tol_identity_mw": 1e-06,
+  "channel_bar": 0.5,
+  "gamma_floor_mw_per_z": 200.0,
+  "sub_verdict_floor_mw_per_z": 100.0,
+  "np_survive_bar": 0.5,
+  "np_collapse_bar": 0.25,
+  "miso238_gp4_bars": {
+   "gamma_model_mw_per_z": 0.5,
+   "share_merit": 0.005,
+   "share_envelope_plus_interact": 0.005,
+   "a_merit_purged_mw": 0.5,
+   "a_model_purged_mw": 0.5,
+   "a_measured_purged_mw": 0.5,
+   "sat_share": 0.0005,
+   "mean_bands_in_merit": 0.005,
+   "corr_env_import_own_net_load": 0.0005
+  }
+ },
+ "gated_seam": "PJM",
+ "tranches": 8,
+ "provenance_gate": {
+  "worst_case": {
+   "G_P1_max_abs_delta_sigma_mw": 0.048,
+   "G_P2_max_abs_delta_coef_mw_per_z": 0.005,
+   "G_P3_max_abs_delta_alignment": 5e-05,
+   "G_P4_max_abs_delta_over_bar": 0.0,
+   "G_X0_pjm_export_max_abs_mw": 0.0,
+   "G_ID_max_abs_mw": 2.728e-12
+  },
+  "legs": {
+   "G_P1_sigmas_miso235": true,
+   "G_P2_own_net_load_coefs_miso237": true,
+   "G_P3_alignment_column_miso237": true,
+   "G_P4_miso238_published_column": true,
+   "G_X0_pjm_export_leg_identically_zero": true,
+   "G_ID_decomposition_identity": true,
+   "ALL_PASS": true
+  },
+  "by_year": {
+   "2023": {
+    "PJM": {
+     "max_abs_delta_sigma_mw": 0.036,
+     "max_abs_delta_coef_mw_per_z": 0.001,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "SPP": {
+     "max_abs_delta_sigma_mw": 0.046,
+     "max_abs_delta_coef_mw_per_z": 0.002,
+     "max_abs_delta_alignment": 5e-05
+    },
+    "South": {
+     "max_abs_delta_sigma_mw": 0.048,
+     "max_abs_delta_coef_mw_per_z": 0.001,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "Manitoba": {
+     "max_abs_delta_sigma_mw": 0.022,
+     "max_abs_delta_coef_mw_per_z": 0.003,
+     "max_abs_delta_alignment": 4e-05
+    }
+   },
+   "2024": {
+    "PJM": {
+     "max_abs_delta_sigma_mw": 0.025,
+     "max_abs_delta_coef_mw_per_z": 0.004,
+     "max_abs_delta_alignment": 5e-05
+    },
+    "SPP": {
+     "max_abs_delta_sigma_mw": 0.028,
+     "max_abs_delta_coef_mw_per_z": 0.005,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "South": {
+     "max_abs_delta_sigma_mw": 0.035,
+     "max_abs_delta_coef_mw_per_z": 0.003,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "Manitoba": {
+     "max_abs_delta_sigma_mw": 0.046,
+     "max_abs_delta_coef_mw_per_z": 0.005,
+     "max_abs_delta_alignment": 3e-05
+    }
+   },
+   "2025": {
+    "PJM": {
+     "max_abs_delta_sigma_mw": 0.029,
+     "max_abs_delta_coef_mw_per_z": 0.004,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "SPP": {
+     "max_abs_delta_sigma_mw": 0.04,
+     "max_abs_delta_coef_mw_per_z": 0.005,
+     "max_abs_delta_alignment": 3e-05
+    },
+    "South": {
+     "max_abs_delta_sigma_mw": 0.048,
+     "max_abs_delta_coef_mw_per_z": 0.005,
+     "max_abs_delta_alignment": 4e-05
+    },
+    "Manitoba": {
+     "max_abs_delta_sigma_mw": 0.042,
+     "max_abs_delta_coef_mw_per_z": 0.003,
+     "max_abs_delta_alignment": 3e-05
+    }
+   }
+  },
+  "export_leg_max_abs_mw_all_seams": {
+   "2023": {
+    "PJM": 0.0,
+    "SPP": 589.7,
+    "South": 2250.0,
+    "Manitoba": 725.0
+   },
+   "2024": {
+    "PJM": 0.0,
+    "SPP": 1000.0,
+    "South": 2562.9,
+    "Manitoba": 1087.5
+   },
+   "2025": {
+    "PJM": 0.0,
+    "SPP": 1000.0,
+    "South": 1875.0,
+    "Manitoba": 1057.3
+   }
+  },
+  "export_leg_note": "PREREG \u00a73: MERIT = g(s) - mean g holds ONLY where the export leg is identically zero. Reported for all four seams so 'PJM is the only seam this object exists on' is measured, not asserted; only PJM is gated."
+ },
+ "verdicts": {
+  "gated_seam": "PJM",
+  "Q_A_property": "MIXED",
+  "Q_A_sub_verdict": "n/a",
+  "shares_linear": [
+   0.6679,
+   0.2839,
+   0.7312
+  ],
+  "shares_curve": [
+   0.3063,
+   0.6816,
+   0.221
+  ],
+  "shares_step": [
+   0.0259,
+   0.0345,
+   0.0479
+  ],
+  "shares_nonlinear": [
+   0.3321,
+   0.7161,
+   0.2688
+  ],
+  "share_step_of_nonlinear": [
+   0.0779,
+   0.0482,
+   0.178
+  ],
+  "share_curve_clipped_regions": [
+   -0.2003,
+   0.3281,
+   -0.2502
+  ],
+  "share_curve_interior": [
+   1.2003,
+   0.6719,
+   1.2502
+  ],
+  "gamma_merit_mw_per_z": [
+   -870.18,
+   -930.93,
+   -791.43
+  ],
+  "Q_C_non_parametric_spread": "SURVIVES",
+  "Q_C_ratio_np_over_merit": [
+   0.7787,
+   0.7119,
+   0.7457
+  ],
+  "twin_agrees_on_sub_verdict": true,
+  "twin_share_step_of_nonlinear": [
+   0.1126,
+   0.0687,
+   0.2603
+  ],
+  "sub_verdict_fragile": false
+ },
+ "years": {
+  "2023": {
+   "n_ok_hours": 8760,
+   "gamma_merit_mw_per_z": -870.18,
+   "gamma_merit_marginal_mw_per_z": -474.91,
+   "by_channel_mw_per_z": {
+    "LINEAR": -581.16,
+    "CURVE": -266.51,
+    "STEP": -22.51
+   },
+   "share_of_merit": {
+    "LINEAR": 0.6679,
+    "CURVE": 0.3063,
+    "STEP": 0.0259
+   },
+   "share_nonlinear": 0.3321,
+   "share_step_of_nonlinear": 0.0779,
+   "region_gamma_mw_per_z": {
+    "LINEAR": {
+     "FLOOR": -131.05,
+     "INTERIOR": -355.62,
+     "CAP": -94.49
+    },
+    "CURVE": {
+     "FLOOR": 88.11,
+     "INTERIOR": -319.89,
+     "CAP": -34.73
+    },
+    "STEP": {
+     "FLOOR": -3.72,
+     "INTERIOR": -15.8,
+     "CAP": -3.0
+    },
+    "MERIT": {
+     "FLOOR": -46.66,
+     "INTERIOR": -691.31,
+     "CAP": -132.22
+    }
+   },
+   "share_curve_clipped_regions": -0.2003,
+   "share_curve_interior": 1.2003,
+   "non_parametric_limb": {
+    "gamma_np_ventiles_p1_mw_per_z": -677.62,
+    "ratio_np_over_merit": 0.7787,
+    "gamma_np_ventiles_model_spread_mw_per_z": -15.7,
+    "gamma_np_band_count_dummies_mw_per_z": -0.0,
+    "tautology_note": "band-count dummies span MERIT exactly (MERIT is measurable w.r.t. n(t)), so the last value MUST be 0 \u2014 a framing check, not a verdict"
+   },
+   "twin_reported_not_gated": {
+    "gamma_curve_mw_per_z": -256.49,
+    "gamma_step_mw_per_z": -32.54,
+    "share_curve": 0.2948,
+    "share_step": 0.0374,
+    "share_step_of_nonlinear": 0.1126
+   },
+   "census_reported_not_gated": {
+    "delta_k": [
+     -29.17,
+     -9.84,
+     -3.98,
+     -0.11,
+     2.43,
+     4.62,
+     7.05,
+     11.2
+    ],
+    "b_bar_mw": [
+     912.5,
+     912.5,
+     912.5,
+     912.5,
+     905.5,
+     792.9,
+     542.9,
+     274.0
+    ],
+    "cum_g_mw": [
+     912.5,
+     1825.0,
+     2737.5,
+     3650.0,
+     4555.5,
+     5348.4,
+     5891.2,
+     6165.2
+    ],
+    "band_count_histogram": {
+     "0": 48,
+     "1": 258,
+     "2": 338,
+     "3": 510,
+     "4": 871,
+     "5": 943,
+     "6": 1499,
+     "7": 2769,
+     "8": 1524
+    },
+    "level_set_knots": [
+     {
+      "n": 0,
+      "mean_spread": -73.948,
+      "g_mw": 0.0
+     },
+     {
+      "n": 1,
+      "mean_spread": -15.946,
+      "g_mw": 912.5
+     },
+     {
+      "n": 2,
+      "mean_spread": -6.605,
+      "g_mw": 1825.0
+     },
+     {
+      "n": 3,
+      "mean_spread": -1.985,
+      "g_mw": 2737.5
+     },
+     {
+      "n": 4,
+      "mean_spread": 1.354,
+      "g_mw": 3650.0
+     },
+     {
+      "n": 5,
+      "mean_spread": 3.697,
+      "g_mw": 4555.5
+     },
+     {
+      "n": 6,
+      "mean_spread": 5.806,
+      "g_mw": 5348.4
+     },
+     {
+      "n": 7,
+      "mean_spread": 9.044,
+      "g_mw": 5891.2
+     },
+     {
+      "n": 8,
+      "mean_spread": 13.472,
+      "g_mw": 6165.2
+     }
+    ],
+    "beta_mw_per_dollar": 106.75,
+    "sigma_g_step_mw": 1423.0,
+    "sigma_g_cont_mw": 1378.6,
+    "sigma_g_lin_mw": 1058.8,
+    "corr_model_spread_vs_p1": 0.4327,
+    "corr_model_spread_vs_z_own_net_load": -0.2679,
+    "corr_p1_vs_z_own_net_load": 0.0539
+   },
+   "identity_checks": {
+    "channel_identity_max_abs_mw": 2.728e-12,
+    "band_count_identity_max_abs_mw": 0.0,
+    "region_partition_max_abs_mw_per_z": 1.137e-13,
+    "knots_strictly_increasing": true
+   },
+   "gp4_miso238": {
+    "gamma_model_mw_per_z": {
+     "handoff": -866.18,
+     "recomputed": -866.18,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "share_merit": {
+     "handoff": 1.005,
+     "recomputed": 1.005,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "share_envelope_plus_interact": {
+     "handoff": -0.005,
+     "recomputed": -0.005,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "a_merit_purged_mw": {
+     "handoff": -278.2,
+     "recomputed": -278.2,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_model_purged_mw": {
+     "handoff": -327.0,
+     "recomputed": -327.0,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_measured_purged_mw": {
+     "handoff": -256.0,
+     "recomputed": -256.0,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "sat_share": {
+     "handoff": 0.174,
+     "recomputed": 0.174,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "mean_bands_in_merit": {
+     "handoff": 5.848,
+     "recomputed": 5.848,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "corr_env_import_own_net_load": {
+     "handoff": 0.3063,
+     "recomputed": 0.3063,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "merit_export_leg_zero": true
+   }
+  },
+  "2024": {
+   "n_ok_hours": 8760,
+   "gamma_merit_mw_per_z": -930.93,
+   "gamma_merit_marginal_mw_per_z": -539.06,
+   "by_channel_mw_per_z": {
+    "LINEAR": -264.27,
+    "CURVE": -634.56,
+    "STEP": -32.1
+   },
+   "share_of_merit": {
+    "LINEAR": 0.2839,
+    "CURVE": 0.6816,
+    "STEP": 0.0345
+   },
+   "share_nonlinear": 0.7161,
+   "share_step_of_nonlinear": 0.0482,
+   "region_gamma_mw_per_z": {
+    "LINEAR": {
+     "FLOOR": -179.27,
+     "INTERIOR": -157.45,
+     "CAP": 72.46
+    },
+    "CURVE": {
+     "FLOOR": -132.01,
+     "INTERIOR": -426.38,
+     "CAP": -76.17
+    },
+    "STEP": {
+     "FLOOR": -24.47,
+     "INTERIOR": -7.11,
+     "CAP": -0.52
+    },
+    "MERIT": {
+     "FLOOR": -335.75,
+     "INTERIOR": -590.95,
+     "CAP": -4.23
+    }
+   },
+   "share_curve_clipped_regions": 0.3281,
+   "share_curve_interior": 0.6719,
+   "non_parametric_limb": {
+    "gamma_np_ventiles_p1_mw_per_z": -662.69,
+    "ratio_np_over_merit": 0.7119,
+    "gamma_np_ventiles_model_spread_mw_per_z": 2.0,
+    "gamma_np_band_count_dummies_mw_per_z": 0.0,
+    "tautology_note": "band-count dummies span MERIT exactly (MERIT is measurable w.r.t. n(t)), so the last value MUST be 0 \u2014 a framing check, not a verdict"
+   },
+   "twin_reported_not_gated": {
+    "gamma_curve_mw_per_z": -620.83,
+    "gamma_step_mw_per_z": -45.83,
+    "share_curve": 0.6669,
+    "share_step": 0.0492,
+    "share_step_of_nonlinear": 0.0687
+   },
+   "census_reported_not_gated": {
+    "delta_k": [
+     -13.87,
+     -6.23,
+     -1.91,
+     1.04,
+     3.46,
+     6.18,
+     10.47,
+     19.31
+    ],
+    "b_bar_mw": [
+     912.5,
+     912.5,
+     910.6,
+     861.7,
+     686.1,
+     474.2,
+     234.3,
+     71.4
+    ],
+    "cum_g_mw": [
+     912.5,
+     1825.0,
+     2735.6,
+     3597.3,
+     4283.4,
+     4757.6,
+     4991.9,
+     5063.4
+    ],
+    "band_count_histogram": {
+     "0": 409,
+     "1": 479,
+     "2": 713,
+     "3": 922,
+     "4": 911,
+     "5": 1558,
+     "6": 2374,
+     "7": 1334,
+     "8": 60
+    },
+    "level_set_knots": [
+     {
+      "n": 0,
+      "mean_spread": -30.423,
+      "g_mw": 0.0
+     },
+     {
+      "n": 1,
+      "mean_spread": -9.528,
+      "g_mw": 912.5
+     },
+     {
+      "n": 2,
+      "mean_spread": -3.654,
+      "g_mw": 1825.0
+     },
+     {
+      "n": 3,
+      "mean_spread": -0.266,
+      "g_mw": 2735.6
+     },
+     {
+      "n": 4,
+      "mean_spread": 2.324,
+      "g_mw": 3597.3
+     },
+     {
+      "n": 5,
+      "mean_spread": 4.86,
+      "g_mw": 4283.4
+     },
+     {
+      "n": 6,
+      "mean_spread": 8.323,
+      "g_mw": 4757.6
+     },
+     {
+      "n": 7,
+      "mean_spread": 12.992,
+      "g_mw": 4991.9
+     },
+     {
+      "n": 8,
+      "mean_spread": 76.001,
+      "g_mw": 5063.4
+     }
+    ],
+    "beta_mw_per_dollar": 50.01,
+    "sigma_g_step_mw": 1442.1,
+    "sigma_g_cont_mw": 1377.0,
+    "sigma_g_lin_mw": 818.6,
+    "corr_model_spread_vs_p1": 0.2559,
+    "corr_model_spread_vs_z_own_net_load": -0.1458,
+    "corr_p1_vs_z_own_net_load": 0.0663
+   },
+   "identity_checks": {
+    "channel_identity_max_abs_mw": 2.046e-12,
+    "band_count_identity_max_abs_mw": 0.0,
+    "region_partition_max_abs_mw_per_z": 3.411e-13,
+    "knots_strictly_increasing": true
+   },
+   "gp4_miso238": {
+    "gamma_model_mw_per_z": {
+     "handoff": -1043.37,
+     "recomputed": -1043.37,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "share_merit": {
+     "handoff": 0.892,
+     "recomputed": 0.892,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "share_envelope_plus_interact": {
+     "handoff": 0.108,
+     "recomputed": 0.108,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "a_merit_purged_mw": {
+     "handoff": -226.7,
+     "recomputed": -226.7,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_model_purged_mw": {
+     "handoff": -263.3,
+     "recomputed": -263.3,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_measured_purged_mw": {
+     "handoff": -119.5,
+     "recomputed": -119.5,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "sat_share": {
+     "handoff": 0.0068,
+     "recomputed": 0.0068,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "mean_bands_in_merit": {
+     "handoff": 4.585,
+     "recomputed": 4.585,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "corr_env_import_own_net_load": {
+     "handoff": -0.0843,
+     "recomputed": -0.0843,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "merit_export_leg_zero": true
+   }
+  },
+  "2025": {
+   "n_ok_hours": 8759,
+   "gamma_merit_mw_per_z": -791.43,
+   "gamma_merit_marginal_mw_per_z": -542.99,
+   "by_channel_mw_per_z": {
+    "LINEAR": -578.66,
+    "CURVE": -174.89,
+    "STEP": -37.88
+   },
+   "share_of_merit": {
+    "LINEAR": 0.7312,
+    "CURVE": 0.221,
+    "STEP": 0.0479
+   },
+   "share_nonlinear": 0.2688,
+   "share_step_of_nonlinear": 0.178,
+   "region_gamma_mw_per_z": {
+    "LINEAR": {
+     "FLOOR": -333.46,
+     "INTERIOR": -245.21,
+     "CAP": 0.0
+    },
+    "CURVE": {
+     "FLOOR": 43.76,
+     "INTERIOR": -218.65,
+     "CAP": 0.0
+    },
+    "STEP": {
+     "FLOOR": -25.36,
+     "INTERIOR": -12.52,
+     "CAP": 0.0
+    },
+    "MERIT": {
+     "FLOOR": -315.06,
+     "INTERIOR": -476.37,
+     "CAP": 0.0
+    }
+   },
+   "share_curve_clipped_regions": -0.2502,
+   "share_curve_interior": 1.2502,
+   "non_parametric_limb": {
+    "gamma_np_ventiles_p1_mw_per_z": -590.15,
+    "ratio_np_over_merit": 0.7457,
+    "gamma_np_ventiles_model_spread_mw_per_z": -4.41,
+    "gamma_np_band_count_dummies_mw_per_z": -0.0,
+    "tautology_note": "band-count dummies span MERIT exactly (MERIT is measurable w.r.t. n(t)), so the last value MUST be 0 \u2014 a framing check, not a verdict"
+   },
+   "twin_reported_not_gated": {
+    "gamma_curve_mw_per_z": -157.38,
+    "gamma_step_mw_per_z": -55.39,
+    "share_curve": 0.1989,
+    "share_step": 0.07,
+    "share_step_of_nonlinear": 0.2603
+   },
+   "census_reported_not_gated": {
+    "delta_k": [
+     -15.79,
+     -6.12,
+     -0.67,
+     2.64,
+     5.82,
+     9.68,
+     16.93,
+     29.86
+    ],
+    "b_bar_mw": [
+     912.5,
+     912.5,
+     909.9,
+     827.2,
+     550.0,
+     322.7,
+     178.9,
+     56.4
+    ],
+    "cum_g_mw": [
+     912.5,
+     1825.0,
+     2734.9,
+     3562.1,
+     4112.1,
+     4434.8,
+     4613.7,
+     4670.1
+    ],
+    "band_count_histogram": {
+     "0": 865,
+     "1": 847,
+     "2": 1180,
+     "3": 955,
+     "4": 1562,
+     "5": 1588,
+     "6": 1627,
+     "7": 135,
+     "8": 0
+    },
+    "level_set_knots": [
+     {
+      "n": 0,
+      "mean_spread": -36.947,
+      "g_mw": 0.0
+     },
+     {
+      "n": 1,
+      "mean_spread": -10.258,
+      "g_mw": 912.5
+     },
+     {
+      "n": 2,
+      "mean_spread": -2.99,
+      "g_mw": 1825.0
+     },
+     {
+      "n": 3,
+      "mean_spread": 1.117,
+      "g_mw": 2734.9
+     },
+     {
+      "n": 4,
+      "mean_spread": 4.268,
+      "g_mw": 3562.1
+     },
+     {
+      "n": 5,
+      "mean_spread": 7.748,
+      "g_mw": 4112.1
+     },
+     {
+      "n": 6,
+      "mean_spread": 12.488,
+      "g_mw": 4434.8
+     },
+     {
+      "n": 7,
+      "mean_spread": 18.398,
+      "g_mw": 4613.7
+     }
+    ],
+    "beta_mw_per_dollar": 65.18,
+    "sigma_g_step_mw": 1482.7,
+    "sigma_g_cont_mw": 1397.5,
+    "sigma_g_lin_mw": 1119.2,
+    "corr_model_spread_vs_p1": 0.379,
+    "corr_model_spread_vs_z_own_net_load": -0.3165,
+    "corr_p1_vs_z_own_net_load": 0.1219
+   },
+   "identity_checks": {
+    "channel_identity_max_abs_mw": 1.364e-12,
+    "band_count_identity_max_abs_mw": 0.0,
+    "region_partition_max_abs_mw_per_z": 2.274e-13,
+    "knots_strictly_increasing": true
+   },
+   "gp4_miso238": {
+    "gamma_model_mw_per_z": {
+     "handoff": -843.45,
+     "recomputed": -843.45,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "share_merit": {
+     "handoff": 0.938,
+     "recomputed": 0.938,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "share_envelope_plus_interact": {
+     "handoff": 0.062,
+     "recomputed": 0.062,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "a_merit_purged_mw": {
+     "handoff": -213.9,
+     "recomputed": -213.9,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_model_purged_mw": {
+     "handoff": -242.0,
+     "recomputed": -242.0,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "a_measured_purged_mw": {
+     "handoff": -205.4,
+     "recomputed": -205.4,
+     "abs_delta": 0.0,
+     "bar": 0.5,
+     "pass": true
+    },
+    "sat_share": {
+     "handoff": 0.0,
+     "recomputed": 0.0,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "mean_bands_in_merit": {
+     "handoff": 3.535,
+     "recomputed": 3.535,
+     "abs_delta": 0.0,
+     "bar": 0.005,
+     "pass": true
+    },
+    "corr_env_import_own_net_load": {
+     "handoff": 0.3638,
+     "recomputed": 0.3638,
+     "abs_delta": 0.0,
+     "bar": 0.0005,
+     "pass": true
+    },
+    "merit_export_leg_zero": true
+   }
+  }
+ }
+}
