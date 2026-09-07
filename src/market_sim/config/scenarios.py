@@ -1333,6 +1333,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # delivered-gas array (a different merit order) and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly",
+    # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
+    # SPREAD, default off: dropped from the hash at its False default so every
+    # pre-existing ERCOT key (the designated keeper's included) stays
+    # byte-stable — the off path builds the identical raw basis vector, so it is
+    # byte-identical by construction. An armed run shifts the F923 rows by
+    # -ep_basis before the recentring (a different cross-zonal split, so a
+    # different merit order) and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ercot_zonal_spread_ep_referenced",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -2031,6 +2040,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
+    # Added by ercot-255 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_zonal_spread_ep_referenced": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -15654,6 +15666,54 @@ class ScenarioConfig:
     # .basis.ercot.ercot_electric_power_gas_basis_monthly.
     ercot_ep_gas_basis_monthly: bool = False
 
+    # Tier 3 (calibration) — ercot-255. Reference the EIA-923-MEASURED rows of
+    # the ERCOT zonal gas table to the SAME statewide series that carries the
+    # level, instead of to Henry Hub.
+    #
+    # ``apply_ercot_zonal_gas_basis`` composes a gas unit's delivered price as
+    # ``HH + level_corr + zone_spread[z]``, where ``level_corr`` is the measured
+    # TX electric-power delivered basis (``ep_basis``) and ``zone_spread`` is the
+    # per-zone row minus its gas-capacity-weighted mean. That recentring is
+    # documented as dropping "the EIA-923 regulated-utility level bias ... only
+    # its relative shape is kept" — and it CANNOT, because only part of the
+    # vector is on the EIA-923 level. data/raw/ercot_zonal_gas_hub.csv mixes two
+    # provenance classes in one column: North/Northeast/South_Central/South are
+    # F923 Schedule-5 qty-weighted DELIVERED prices minus HH (level + locational
+    # differential), while Houston is a cited hub-vs-hub constant (-0.15, no Sch5
+    # sample) and West/Panhandle is a Waha hub basis (differential only).
+    # Subtracting one mean from that mixed vector removes a BLEND, so the F923
+    # group's level survives into the spread with weight ``1 - w923``, where
+    # w923 = 0.66516 is the F923 zones' share of ERCOT gas capacity (measured on
+    # the committed bundles' own fleets, identical 2021 and 2023-2025).
+    #
+    # The surviving term is ``ep_basis`` itself, and 2021 is where it bites: it
+    # reads +5.2779 $/MMBtu (Winter Storm Uri) against +0.0045/-0.0858/-0.4634 in
+    # 2023/2024/2025, so a STATEWIDE fuel event enters the merit order as false
+    # LOCATIONAL dispersion. Within the three measured zones the 2021 raw spread
+    # is only 1.94 $/MMBtu (vs 1.10 in 2023); the headline 6.45 $/MMBtu range is
+    # ~70% common mode, produced by three zones carrying an event the other three
+    # conventions do not. Rule 19 [R-ONE-MECH]: the statewide level is carried
+    # TWICE, once correctly by level_corr and again by accident.
+    #
+    # ON, the F923-sourced rows are shifted by ``-ep_basis`` before the existing
+    # capacity-weighted recentring; the convention rows, the contract haircut,
+    # the delivered floor and the level term are untouched. ZERO new data and
+    # ZERO free parameters (rules 21 [R-DOF] / 24 [R-REGISTRY]) — ``ep_basis`` is
+    # already loaded by the same function and there is no weighting choice to
+    # make. The construction is an IDENTITY: for a F923 zone the delivered price
+    # becomes ``HH + raw[z]`` (its own measured delivered price) up to the
+    # fleet-level recentring constant. Group membership is read from the table's
+    # own ``source`` provenance, never hardcoded.
+    #
+    # Default OFF; no-op unless ercot_zonal_gas_basis is also on and
+    # iso == "ERCOT", and inert whenever the EP series or the source column is
+    # unavailable — which includes every forecast year, where the level term is
+    # already 0 (rule 13 [R-MEASURED]). Every other ISO and every forecast is
+    # byte-identical. See market_sim.data.fuel.apply_ercot_zonal_gas_basis and
+    # .basis.ercot.ercot_zonal_gas_basis_source_group, and
+    # docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md.
+    ercot_zonal_spread_ep_referenced: bool = False
+
     # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
     # The West/Panhandle basis in data/raw/ercot_zonal_gas_hub.csv is a Waha *hub*
     # (pooling-point) basis (2024 -2.19): the takeaway-constrained price at which
@@ -19511,6 +19571,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
+    "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
     "oil_primary_bin_fuel": 3,

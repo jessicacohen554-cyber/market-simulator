@@ -160,6 +160,67 @@ def ercot_zonal_gas_basis_by_zone(
     return {str(r.zone): float(r.basis_vs_hh_usd_mmbtu) for r in sub.itertuples()}
 
 
+# Provenance markers in ``ERCOT_ZONAL_GAS_HUB_PATH``'s own ``source`` column that
+# identify a row as an EIA-923 Schedule-5 MEASURED delivered price (as opposed to
+# a cited hub-vs-hub convention). ``proxy->North`` is Northeast, which carries
+# North's F923 row verbatim because it reports no Sch5 gas receipts of its own.
+# Read from the data rather than hardcoded as a zone tuple, so a re-derivation
+# that changes a zone's provenance re-classifies it automatically (rule 23
+# [R-FROZEN-DERIVE] — this reads provenance, it never re-derives a value).
+_F923_SOURCE_MARKERS: tuple[str, ...] = ("EIA-923 Sch5", "proxy->North")
+
+
+def ercot_zonal_gas_basis_source_group(
+    year: int, path: Path | None = None
+) -> dict[str, str] | None:
+    """Return ``{zone: "f923" | "convention"}`` for ERCOT's zonal basis rows.
+
+    ``data/raw/ercot_zonal_gas_hub.csv`` mixes two provenance classes in one
+    ``basis_vs_hh_usd_mmbtu`` column, and they are **not commensurable**:
+
+    * **f923** — North / Northeast / South_Central / South carry the EIA-923
+      Schedule-5 quantity-weighted *delivered* price minus Henry Hub. That is a
+      statewide delivered LEVEL **plus** a locational differential.
+    * **convention** — Houston is a cited hub-vs-hub constant (HSC ~ HH - 0.15;
+      the zone reports no Sch5 gas receipts at all) and West / Panhandle is a
+      Waha *hub* basis. Both are locational differentials carrying no level.
+
+    :func:`apply_ercot_zonal_gas_basis` recentres the combined vector on its
+    gas-capacity-weighted mean and documents that as dropping the EIA-923 level
+    bias. It cannot: subtracting one mean from a mixed vector removes a *blend*,
+    so the f923 group's level survives into the spread with weight
+    ``1 - w923`` (w923 = the f923 zones' share of ERCOT gas capacity, 0.66516 on
+    the committed fleets). The surviving term is the measured statewide basis
+    itself, which is ~nil in the training years and **+5.28 $/MMBtu in 2021**,
+    where Winter Storm Uri therefore enters the merit order as false locational
+    dispersion. This function is what lets
+    ``config.ercot_zonal_spread_ep_referenced`` put the two groups back on one
+    footing (``docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md``).
+
+    Args:
+        year: The solve year.
+        path: Override for the zonal hub table (tests).
+
+    Returns:
+        ``{zone: group}`` for every zone with a row in ``year``, or ``None`` when
+        the table is missing, has no rows for ``year``, or carries no ``source``
+        column — the fail-closed condition that keeps the caller on the
+        unreferenced construction rather than on a silently mis-grouped one.
+    """
+    frame = _load_ercot_zonal_gas_hub(path)
+    if frame is None or "source" not in frame.columns:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    out: dict[str, str] = {}
+    for row in sub.itertuples():
+        src = str(getattr(row, "source", "") or "")
+        is_f923 = any(marker in src for marker in _F923_SOURCE_MARKERS)
+        out[str(row.zone)] = "f923" if is_f923 else "convention"
+    return out
+
+
 def ercot_waha_collapse_freq(year: int, path: Path | None = None) -> float | None:
     """Return the measured Waha negative-price-day frequency for ``year``, or None.
 
@@ -469,6 +530,17 @@ def apply_ercot_zonal_gas_basis(
     plant-monthly overwrite and before :func:`apply_dual_fuel_pricing`, so oil
     parity still caps any winter spike.
 
+    When ``config.ercot_zonal_spread_ep_referenced`` is set (ercot-255,
+    default off), the EIA-923-sourced rows are first shifted by ``-ep_basis`` so
+    they are referenced to the same statewide series the level term carries,
+    rather than to Henry Hub. Piece 2's mean-zero recentring is documented above
+    as dropping the EIA-923 level bias, and it cannot while Houston and
+    West/Panhandle sit on cited hub-vs-hub conventions instead of on that level:
+    one mean over a mixed vector removes a blend, so the measured group's level
+    survives into the SPREAD and a statewide fuel event becomes false locational
+    dispersion (~nil in 2023-2025, +5.28 $/MMBtu in 2021). See
+    :func:`ercot_zonal_gas_basis_source_group`.
+
     Gated on ``config.ercot_zonal_gas_basis`` and ``config.iso == "ERCOT"``
     (a default-off diagnostic; see the field docstring on ScenarioConfig), so
     every other ISO and all forecasts are byte-identical. Mutates ``fuel_prices``
@@ -493,6 +565,49 @@ def apply_ercot_zonal_gas_basis(
     basis_by_zone_idx = np.array(
         [basis.get(name, 0.0) for name in zone_names], dtype=float
     )
+    # ercot-255 EP REFERENCE (config.ercot_zonal_spread_ep_referenced, default
+    # off). The rows above are not commensurable: the EIA-923-sourced ones are a
+    # measured DELIVERED price minus Henry Hub (a statewide level PLUS a
+    # locational differential) while Houston and West/Panhandle are cited
+    # hub-vs-hub conventions (differential only). The capacity-weighted
+    # recentring below is documented as dropping the EIA-923 level bias, but it
+    # removes a BLEND of the two groups, so the F923 level survives into the
+    # SPREAD with weight 1 - w923 (w923 = 0.66516, the F923 zones' share of
+    # ERCOT gas capacity). That surviving term is ``ep_basis`` — the same
+    # statewide quantity ``level_corr`` below already carries in full — so a
+    # statewide fuel event is counted twice and reaches the merit order as false
+    # LOCATIONAL dispersion (rule 19 [R-ONE-MECH]). It is ~nil in 2023-2025
+    # (+0.004/-0.086/-0.463) and +5.278 $/MMBtu in 2021, where Winter Storm Uri
+    # inflates the cross-zonal range to 6.45 $/MMBtu against 1.94 within the
+    # measured zones themselves.
+    #
+    # Referencing the F923 rows to ``ep_basis`` puts both groups on one footing
+    # and makes the composition an identity — a F923 zone's unit then pays
+    # ``HH + raw[z]``, its own measured delivered price, up to the fleet-level
+    # recentring constant. Zero new data, zero free parameters: ``ep_basis`` is
+    # read here from the same function the level term uses, and there is no
+    # weighting choice to make. Fail-closed — an absent EP value or source
+    # column leaves the vector untouched, which is every forecast year (rule 13
+    # [R-MEASURED]), so the off path and every non-backcast solve are
+    # byte-identical.
+    ep_basis = ercot_electric_power_gas_basis(year)
+    if getattr(config, "ercot_zonal_spread_ep_referenced", False):
+        groups = _pkg_ns().ercot_zonal_gas_basis_source_group(year, path)
+        if groups is not None and ep_basis is not None:
+            f923_mask = np.array(
+                [groups.get(name) == "f923" for name in zone_names], dtype=bool
+            )
+            basis_by_zone_idx = basis_by_zone_idx - f923_mask * float(ep_basis)
+            logger.info(
+                "ERCOT zonal spread EP reference (%d): %d/%d zone row(s) "
+                "F923-sourced, shifted by %+.4f $/MMBtu; convention row(s) %s "
+                "untouched",
+                year,
+                int(f923_mask.sum()),
+                f923_mask.size,
+                -float(ep_basis),
+                [n for n, m in zip(zone_names, f923_mask) if not m],
+            )
     # MEASURED CONTRACT HAIRCUT (re-grounds the floor depth, CLAUDE.md #11/#12):
     # only the SPOT-purchased fraction of a unit's gas sees the Waha hub collapse;
     # the firm-contracted fraction is priced off a term index and is insulated.
@@ -576,7 +691,8 @@ def apply_ercot_zonal_gas_basis(
         if getattr(config, "ercot_ep_gas_basis_monthly", False)
         else None
     )
-    ep_basis = ercot_electric_power_gas_basis(year)
+    # ``ep_basis`` was read above the raw-basis vector (the ercot-255 EP
+    # reference needs it there); the same cached value is used here.
     if level_monthly is not None:
         # (n_gas, T) offset: the mean-zero zonal spread per unit plus this
         # hour's month's own measured level correction. np.repeat/take only —

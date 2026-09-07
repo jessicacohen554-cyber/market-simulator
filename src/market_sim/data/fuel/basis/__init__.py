@@ -35,6 +35,7 @@ from .ercot import (
     ercot_waha_collapse_freq,
     ercot_west_oversupply_collapse_freq,
     ercot_zonal_gas_basis_by_zone,
+    ercot_zonal_gas_basis_source_group,
 )
 from .meanzero import (
     CAISO_ZONAL_GAS_HUB_PATH,
@@ -115,6 +116,7 @@ __all__ = [
     "ercot_waha_collapse_freq",
     "ercot_west_oversupply_collapse_freq",
     "ercot_zonal_gas_basis_by_zone",
+    "ercot_zonal_gas_basis_source_group",
     "miso_chicago_daily_shape_factors",
     "miso_zonal_gas_basis_by_zone",
     "nyiso_downstate_ct_gas_premium",
