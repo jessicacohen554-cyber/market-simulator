@@ -1,0 +1,852 @@
+[
+ {
+  "total_supply_mw": 181435.0559999991,
+  "cleared_mw": 170224.36367283133,
+  "uncleared_total_mw": 11210.69232716778,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "coal": 904.2
+   },
+   "mw_at_price": 904.2,
+   "cleared_part_mw": 402.2,
+   "uncleared_part_mw": 502.0
+  },
+  "year": 2022,
+  "scenario": "S0",
+  "committed_price": 90.411052,
+  "committed_position": 1.042601,
+  "price": 90.4111,
+  "ratio_vs_published": 1.808222,
+  "position": 1.0426012772354767,
+  "d_position_pt": -0.8398722764523248,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163268.9,
+  "price_takers_mw": 23331.628,
+  "n_offers": 1399,
+  "by_fuel": {
+   "coal": {
+    "n": 188,
+    "mw": 38550.203,
+    "unc_mw": 1172.068,
+    "max_offer": 174.2108,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 237,
+    "mw": 50358.204,
+    "unc_mw": 0.0,
+    "max_offer": 86.5177,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 61.2066,
+    "at_max": 22727.71
+   },
+   "gas_st": {
+    "n": 118,
+    "mw": 9536.637,
+    "unc_mw": 9536.637,
+    "max_offer": 103.108,
+    "at_max": 3218.482
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   },
+   "oil": {
+    "n": 421,
+    "mw": 3722.85,
+    "unc_mw": 0.0,
+    "max_offer": 76.1035,
+    "at_max": 3722.85
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 28.14,
+   "gas_cc": -1.35,
+   "gas_ct": -10.02,
+   "gas_st": 4.31,
+   "nuclear": -32.01,
+   "oil": -4.7
+  }
+ },
+ {
+  "total_supply_mw": 181435.0559999991,
+  "cleared_mw": 171389.9063100889,
+  "uncleared_total_mw": 10045.149689910206,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "gas_st": 6080.7
+   },
+   "mw_at_price": 6080.7,
+   "cleared_part_mw": 3070.7,
+   "uncleared_part_mw": 3010.0
+  },
+  "year": 2022,
+  "scenario": "S62",
+  "committed_price": 90.411052,
+  "committed_position": 1.042601,
+  "price": 62.2774091471498,
+  "ratio_vs_published": 1.245548182942996,
+  "position": 1.0497400687460312,
+  "d_position_pt": -0.12599312539687268,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163268.9,
+  "price_takers_mw": 23331.628,
+  "n_offers": 1399,
+  "by_fuel": {
+   "coal": {
+    "n": 188,
+    "mw": 38550.203,
+    "unc_mw": 93.848,
+    "max_offer": 80.4079,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 237,
+    "mw": 50358.204,
+    "unc_mw": 0.0,
+    "max_offer": 52.6057,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 46.7822,
+    "at_max": 22727.71
+   },
+   "gas_st": {
+    "n": 118,
+    "mw": 9536.637,
+    "unc_mw": 3218.482,
+    "max_offer": 62.3391,
+    "at_max": 3218.482
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   },
+   "oil": {
+    "n": 421,
+    "mw": 3722.85,
+    "unc_mw": 3722.85,
+    "max_offer": 64.417,
+    "at_max": 3722.85
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 6.09,
+   "gas_cc": -3.35,
+   "gas_ct": -5.32,
+   "gas_st": 0.02,
+   "nuclear": -22.05,
+   "oil": 0.7
+  }
+ },
+ {
+  "total_supply_mw": 181435.05600000007,
+  "cleared_mw": 172031.8514955438,
+  "uncleared_total_mw": 9403.204504456284,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "gas_ct": 22727.7
+   },
+   "mw_at_price": 22727.7,
+   "cleared_part_mw": 15707.5,
+   "uncleared_part_mw": 7020.2
+  },
+  "year": 2022,
+  "scenario": "S74",
+  "committed_price": 90.411052,
+  "committed_position": 1.042601,
+  "price": 46.782233925969116,
+  "ratio_vs_published": 0.9356446785193824,
+  "position": 1.0536718964575849,
+  "d_position_pt": 0.26718964575849213,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163268.9,
+  "price_takers_mw": 36591.1149999999,
+  "n_offers": 860,
+  "by_fuel": {
+   "coal": {
+    "n": 188,
+    "mw": 38550.203,
+    "unc_mw": 237.845,
+    "max_offer": 80.4079,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 237,
+    "mw": 50358.204,
+    "unc_mw": 2145.155,
+    "max_offer": 52.6057,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 46.7822,
+    "at_max": 22727.71
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 11.29,
+   "gas_cc": 2.02,
+   "gas_ct": 0.0,
+   "nuclear": -16.56
+  }
+ },
+ {
+  "total_supply_mw": 173298.4760000001,
+  "cleared_mw": 170432.64046707505,
+  "uncleared_total_mw": 2865.8355329250626,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "gas_cc": 1237.7
+   },
+   "mw_at_price": 1237.7,
+   "cleared_part_mw": 1165.4,
+   "uncleared_part_mw": 72.4
+  },
+  "year": 2023,
+  "scenario": "S0",
+  "committed_price": 86.517664,
+  "committed_position": 1.044534,
+  "price": 86.5177,
+  "ratio_vs_published": 2.5349457954878405,
+  "position": 1.0445339811007122,
+  "d_position_pt": -1.0666018899287755,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163166.2,
+  "price_takers_mw": 30406.838,
+  "n_offers": 861,
+  "by_fuel": {
+   "coal": {
+    "n": 184,
+    "mw": 37624.683,
+    "unc_mw": 2076.244,
+    "max_offer": 174.2108,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 48615.239,
+    "unc_mw": 0.0,
+    "max_offer": 86.5177,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 403,
+    "mw": 24242.563,
+    "unc_mw": 0.0,
+    "max_offer": 61.2066,
+    "at_max": 22727.71
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 717.216,
+    "unc_mw": 717.216,
+    "max_offer": 103.108,
+    "at_max": 246.803
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 29.45,
+   "gas_cc": 0.0,
+   "gas_ct": -8.68,
+   "gas_st": 5.63,
+   "nuclear": -30.63
+  }
+ },
+ {
+  "total_supply_mw": 173298.4760000001,
+  "cleared_mw": 171756.6763519017,
+  "uncleared_total_mw": 1541.7996480984148,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "gas_cc": 1237.7
+   },
+   "mw_at_price": 1237.7,
+   "cleared_part_mw": 644.7,
+   "uncleared_part_mw": 593.0
+  },
+  "year": 2023,
+  "scenario": "S62",
+  "committed_price": 86.517664,
+  "committed_position": 1.044534,
+  "price": 52.60565962509012,
+  "ratio_vs_published": 1.541331955027545,
+  "position": 1.052648626688013,
+  "d_position_pt": -0.25513733119868487,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163166.2,
+  "price_takers_mw": 30406.838,
+  "n_offers": 861,
+  "by_fuel": {
+   "coal": {
+    "n": 184,
+    "mw": 37624.683,
+    "unc_mw": 231.571,
+    "max_offer": 80.4079,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 48615.239,
+    "unc_mw": 0.0,
+    "max_offer": 52.6057,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 403,
+    "mw": 24242.563,
+    "unc_mw": 0.0,
+    "max_offer": 46.7822,
+    "at_max": 22727.71
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 717.216,
+    "unc_mw": 717.216,
+    "max_offer": 62.3391,
+    "at_max": 246.803
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 9.34,
+   "gas_cc": 0.0,
+   "gas_ct": -2.0,
+   "gas_st": 3.3,
+   "nuclear": -18.63
+  }
+ },
+ {
+  "total_supply_mw": 173298.4760000001,
+  "cleared_mw": 171769.85734926356,
+  "uncleared_total_mw": 1528.6186507365492,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "gas_cc": 390.0
+   },
+   "mw_at_price": 390.0,
+   "cleared_part_mw": 330.7,
+   "uncleared_part_mw": 59.3
+  },
+  "year": 2023,
+  "scenario": "S74",
+  "committed_price": 86.517664,
+  "committed_position": 1.044534,
+  "price": 52.268059625090125,
+  "ratio_vs_published": 1.5314403640518641,
+  "position": 1.05272940933394,
+  "d_position_pt": -0.24705906660598131,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 163166.2,
+  "price_takers_mw": 31124.053999999996,
+  "n_offers": 849,
+  "by_fuel": {
+   "coal": {
+    "n": 184,
+    "mw": 37624.683,
+    "unc_mw": 231.571,
+    "max_offer": 80.4079,
+    "at_max": 30.36
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 48615.239,
+    "unc_mw": 1237.729,
+    "max_offer": 52.6057,
+    "at_max": 1237.729
+   },
+   "gas_ct": {
+    "n": 403,
+    "mw": 24242.563,
+    "unc_mw": 0.0,
+    "max_offer": 46.7822,
+    "at_max": 22727.71
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 9.45,
+   "gas_cc": 0.12,
+   "gas_ct": -1.88,
+   "nuclear": -18.51
+  }
+ },
+ {
+  "total_supply_mw": 174630.9,
+  "cleared_mw": 168633.26272189533,
+  "uncleared_total_mw": 5997.637278104667,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "coal": 1070.1
+   },
+   "mw_at_price": 1070.1,
+   "cleared_part_mw": 950.9,
+   "uncleared_part_mw": 119.2
+  },
+  "year": 2024,
+  "scenario": "S0",
+  "committed_price": 165.968925,
+  "committed_position": 1.027577,
+  "price": 165.9689,
+  "ratio_vs_published": 5.738896957123098,
+  "position": 1.0275774109297517,
+  "d_position_pt": -2.792258907024836,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 164107.6,
+  "price_takers_mw": 22637.684,
+  "n_offers": 866,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 37400.203,
+    "unc_mw": 5878.448,
+    "max_offer": 170.8993,
+    "at_max": 1.518
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 54217.413,
+    "unc_mw": 0.0,
+    "max_offer": 77.3864,
+    "at_max": 1079.905
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 55.507,
+    "at_max": 14.956
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 717.216,
+    "unc_mw": 0.0,
+    "max_offer": 95.1807,
+    "at_max": 107.582
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   },
+   "oil": {
+    "n": 8,
+    "mw": 3722.85,
+    "unc_mw": 0.0,
+    "max_offer": 76.1035,
+    "at_max": 3722.85
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 1.66,
+   "gas_cc": -30.72,
+   "gas_ct": -37.9,
+   "gas_st": -24.03,
+   "nuclear": -58.76,
+   "oil": -29.52
+  }
+ },
+ {
+  "total_supply_mw": 174630.9,
+  "cleared_mw": 171960.19886728423,
+  "uncleared_total_mw": 2670.701132715767,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "coal": 1083.6
+   },
+   "mw_at_price": 1083.6,
+   "cleared_part_mw": 435.8,
+   "uncleared_part_mw": 647.8
+  },
+  "year": 2024,
+  "scenario": "S62",
+  "committed_price": 165.968925,
+  "committed_position": 1.027577,
+  "price": 74.27374115544968,
+  "ratio_vs_published": 2.568248311045978,
+  "position": 1.0478503059412496,
+  "d_position_pt": -0.7649694058750489,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 164107.6,
+  "price_takers_mw": 22637.684,
+  "n_offers": 866,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 37400.203,
+    "unc_mw": 2022.89,
+    "max_offer": 77.0964,
+    "at_max": 1.518
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 54217.413,
+    "unc_mw": 0.0,
+    "max_offer": 43.4744,
+    "at_max": 1079.905
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 41.0826,
+    "at_max": 14.956
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 717.216,
+    "unc_mw": 0.0,
+    "max_offer": 54.4118,
+    "at_max": 107.582
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   },
+   "oil": {
+    "n": 8,
+    "mw": 3722.85,
+    "unc_mw": 0.0,
+    "max_offer": 64.417,
+    "at_max": 3722.85
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 0.95,
+   "gas_cc": -10.68,
+   "gas_ct": -11.39,
+   "gas_st": -6.74,
+   "nuclear": -26.3,
+   "oil": -3.24
+  }
+ },
+ {
+  "total_supply_mw": 174630.9,
+  "cleared_mw": 171960.19886728423,
+  "uncleared_total_mw": 2670.701132715767,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {
+    "coal": 1083.6
+   },
+   "mw_at_price": 1083.6,
+   "cleared_part_mw": 435.8,
+   "uncleared_part_mw": 647.8
+  },
+  "year": 2024,
+  "scenario": "S74",
+  "committed_price": 165.968925,
+  "committed_position": 1.027577,
+  "price": 74.27374115544968,
+  "ratio_vs_published": 2.568248311045978,
+  "position": 1.0478503059412496,
+  "d_position_pt": -0.7649694058750489,
+  "how": "marginal_offer_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 164107.6,
+  "price_takers_mw": 27077.749999999993,
+  "n_offers": 846,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 37400.203,
+    "unc_mw": 2022.89,
+    "max_offer": 77.0964,
+    "at_max": 1.518
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 54217.413,
+    "unc_mw": 0.0,
+    "max_offer": 43.4744,
+    "at_max": 1079.905
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 24243.597,
+    "unc_mw": 0.0,
+    "max_offer": 41.0826,
+    "at_max": 14.956
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31691.937,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31691.937
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": 0.95,
+   "gas_cc": -10.68,
+   "gas_ct": -11.39,
+   "nuclear": -26.3
+  }
+ },
+ {
+  "total_supply_mw": 146165.13400000002,
+  "cleared_mw": 146165.13399999996,
+  "uncleared_total_mw": 5.820766091346741e-11,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {},
+   "mw_at_price": 0,
+   "cleared_part_mw": 0.0,
+   "uncleared_part_mw": 0.0
+  },
+  "year": 2025,
+  "scenario": "S0",
+  "committed_price": 213.056369,
+  "committed_position": 1.011874,
+  "price": 213.05586888258424,
+  "ratio_vs_published": 0.7893296861387975,
+  "position": 1.0118735479404635,
+  "d_position_pt": 0.6973547940463565,
+  "how": "all_offers_clear_curve_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 144450.0,
+  "price_takers_mw": 19634.383,
+  "n_offers": 866,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 33457.903,
+    "unc_mw": 0.0,
+    "max_offer": 183.1537,
+    "at_max": 1.369
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 42232.511,
+    "unc_mw": 0.0,
+    "max_offer": 87.1569,
+    "at_max": 841.19
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 15474.651,
+    "unc_mw": 0.0,
+    "max_offer": 74.7505,
+    "at_max": 9.547
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 562.976,
+    "unc_mw": 0.0,
+    "max_offer": 109.5643,
+    "at_max": 84.446
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31038.495,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31038.495
+   },
+   "oil": {
+    "n": 8,
+    "mw": 3764.215,
+    "unc_mw": 0.0,
+    "max_offer": 75.2672,
+    "at_max": 3764.215
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": -9.55,
+   "gas_cc": -43.34,
+   "gas_ct": -38.85,
+   "gas_st": -33.06,
+   "nuclear": -75.43,
+   "oil": -45.77
+  }
+ },
+ {
+  "total_supply_mw": 146165.13400000002,
+  "cleared_mw": 146165.13399999996,
+  "uncleared_total_mw": 5.820766091346741e-11,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {},
+   "mw_at_price": 0,
+   "cleared_part_mw": 0.0,
+   "uncleared_part_mw": 0.0
+  },
+  "year": 2025,
+  "scenario": "S62",
+  "committed_price": 213.056369,
+  "committed_position": 1.011874,
+  "price": 213.05586888258424,
+  "ratio_vs_published": 0.7893296861387975,
+  "position": 1.0118735479404635,
+  "d_position_pt": 0.6973547940463565,
+  "how": "all_offers_clear_curve_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 144450.0,
+  "price_takers_mw": 19634.383,
+  "n_offers": 866,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 33457.903,
+    "unc_mw": 0.0,
+    "max_offer": 84.5356,
+    "at_max": 1.369
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 42232.511,
+    "unc_mw": 0.0,
+    "max_offer": 52.9943,
+    "at_max": 841.19
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 15474.651,
+    "unc_mw": 0.0,
+    "max_offer": 57.1343,
+    "at_max": 9.547
+   },
+   "gas_st": {
+    "n": 12,
+    "mw": 562.976,
+    "unc_mw": 0.0,
+    "max_offer": 66.2426,
+    "at_max": 84.446
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31038.495,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31038.495
+   },
+   "oil": {
+    "n": 8,
+    "mw": 3764.215,
+    "unc_mw": 0.0,
+    "max_offer": 63.7092,
+    "at_max": 3764.215
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": -41.05,
+   "gas_cc": -55.09,
+   "gas_ct": -43.8,
+   "gas_st": -46.9,
+   "nuclear": -75.43,
+   "oil": -49.61
+  }
+ },
+ {
+  "total_supply_mw": 146165.134,
+  "cleared_mw": 146165.13399999993,
+  "uncleared_total_mw": 5.820766091346741e-11,
+  "marginal_plateau": {
+   "mw_at_price_by_fuel": {},
+   "mw_at_price": 0,
+   "cleared_part_mw": 0.0,
+   "uncleared_part_mw": 0.0
+  },
+  "year": 2025,
+  "scenario": "S74",
+  "committed_price": 213.056369,
+  "committed_position": 1.011874,
+  "price": 213.05586888258424,
+  "ratio_vs_published": 0.7893296861387975,
+  "position": 1.0118735479404635,
+  "d_position_pt": 0.6973547940463565,
+  "how": "all_offers_clear_curve_sets_price",
+  "marginal_unit": null,
+  "requirement_mw": 144450.0,
+  "price_takers_mw": 23961.573999999997,
+  "n_offers": 846,
+  "by_fuel": {
+   "coal": {
+    "n": 180,
+    "mw": 33457.903,
+    "unc_mw": 0.0,
+    "max_offer": 84.5356,
+    "at_max": 1.369
+   },
+   "gas_cc": {
+    "n": 231,
+    "mw": 42232.511,
+    "unc_mw": 0.0,
+    "max_offer": 52.9943,
+    "at_max": 841.19
+   },
+   "gas_ct": {
+    "n": 404,
+    "mw": 15474.651,
+    "unc_mw": 0.0,
+    "max_offer": 57.1343,
+    "at_max": 9.547
+   },
+   "nuclear": {
+    "n": 31,
+    "mw": 31038.495,
+    "unc_mw": 0.0,
+    "max_offer": 0.0,
+    "at_max": 31038.495
+   }
+  },
+  "eas_to_reach_price_kw_yr": {
+   "coal": -41.05,
+   "gas_cc": -55.09,
+   "gas_ct": -43.8,
+   "nuclear": -75.43
+  }
+ }
+]
