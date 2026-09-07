@@ -307,8 +307,23 @@ def test_marker_state_reflects_committed_markers():
     assert B._marker_state("MISO")["marker"] == "none"
     caiso = B._marker_state("CAISO")
     assert caiso["keeper"] == "2026-09-06-caiso-260-b1-demand"
+    #
+    # NYISO RE-KEYED 2026-09-07 (session nyiso-213, rule 22 D-5(b)): the
+    # `complete` marker's `keeper` field tracks NYISO's CURRENT designated
+    # keeper, so the nyiso-213 promotion moved it
+    # 2026-09-06-nyiso-202-startup-aware -> 2026-09-07-nyiso-213-summer-seam.
+    # The marker's own `rekey_note` records the artifact-only determination
+    # re-verification D-5(b) requires (CALIBRATED, grade 7/8, fails 0, C3c the
+    # lone ledgered caveat -- IDENTICAL to the superseded keeper, so the Q5
+    # "a WORSE determination STOPS the promotion" clause did not fire).
+    # `declared`, `by` and `keeper_at_declaration` are untouched by a re-key, so
+    # only the one string moves. The assertion did NOT move in that lane's
+    # commit -- the same bookkeeping-desync class every comment above records --
+    # and is corrected here by SPP-38
+    # (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 12; NOT an SPP
+    # failure).
     nyiso = B._marker_state("NYISO")
-    assert nyiso["keeper"] == "2026-09-06-nyiso-202-startup-aware"
+    assert nyiso["keeper"] == "2026-09-07-nyiso-213-summer-seam"
     assert nyiso["declared"] == "2026-09-06"
 
 
@@ -353,9 +368,20 @@ def test_build_registration_scorecard_no_iso_gate_open():
     # card) on 2026-09-06-caiso-260-b1-demand, CALIBRATED — Gate A is GREEN
     # for NEISO and CAISO; the pinned invariant is unchanged (gate B HOLD on
     # the FF-2D key for every ISO, so no gate opens).
+    # [2026-09-06, nyiso-209] NYISO RE-DECLARED `complete` (owner in-session
+    # ruling, verbatim 'Ok declare it and run 22') on the keeper lineage that
+    # returned to CALIBRATED by structural repair -- its FOURTH grant, and the
+    # same marker move test_marker_state_reflects_committed_markers pins above.
+    # That lane moved its own copy of the assertion but not this
+    # integration-marked one, so this test stayed red on the string; corrected
+    # by SPP-38 (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 13; NOT an
+    # SPP failure). `withdrawn` is EMPTY at HEAD. THE PINNED INVARIANT IS
+    # UNCHANGED and is the point of this test: gate B (FF-2D T1-F) still reads
+    # HOLD for every ISO, so a backcast marker -- complete or withdrawn -- never
+    # opens the forecast gate on its own.
     assert sc["NEISO"]["gate_a_backcast"]["marker"] == "complete"
     assert sc["CAISO"]["gate_a_backcast"]["marker"] == "complete"
-    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "withdrawn"
+    assert sc["NYISO"]["gate_a_backcast"]["marker"] == "complete"
     for iso in ("NEISO", "NYISO", "CAISO"):
         assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
         assert not sc[iso]["gate_open"], iso

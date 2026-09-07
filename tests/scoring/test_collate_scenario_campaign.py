@@ -158,9 +158,13 @@ class TestRollup(CampaignTree):
         self.assertEqual(ref["isos"], "PJM+NEISO")
 
     def test_the_sum_names_the_isos_it_is_missing(self):
+        # SEVEN ISOs since SPP-20 registered SPP (2026-09-06): the fixture tree
+        # carries NEISO and PJM, so `isos_missing` -- which the collator derives
+        # from SUPPORTED_ISOS, never from a hand-kept list -- names the other
+        # five. Extended by SPP-38 (lane charter: a six-ISO tuple becomes seven).
         system = self._csv("campaign_emissions_system")
         missing = set(system.iloc[0]["isos_missing"].split("+"))
-        self.assertEqual(missing, {"ERCOT", "CAISO", "MISO", "NYISO"})
+        self.assertEqual(missing, {"ERCOT", "CAISO", "MISO", "NYISO", "SPP"})
 
     def test_the_total_is_never_labelled_national(self):
         # Every summed row carries the six-ISO label, and the only place the

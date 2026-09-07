@@ -249,7 +249,37 @@ STATUS_ERROR_MT = -13.368  # exactly NEISO's REF 2030 level
 STATUS_ISOS = ("ERCOT", "NEISO", "NYISO")
 
 
-@unittest.skipUnless(CAMPAIGN.is_dir(), "campaign artifacts not on disk")
+# The class below reads the per-case ``full_horizon_summary.json`` files, which
+# is what ``discover_summaries`` walks -- NOT the campaign directory as a whole.
+# The guard used to test ``CAMPAIGN.is_dir()``, which stayed true after session
+# SCN-WS5A-RESOLVE-{CAISO,MISO,ERCOT} deleted every per-case summary from the
+# tree as "pre-fix slim artifacts" (commit c29f6107, 2026-09-07; the same lane
+# deleted CAISO's at 7964a50f/0b5f38fb/cf279436 and MISO's at 7200af05). With the
+# directory present and the summaries gone, ``discover_summaries`` returned zero
+# rows and the five regression tests raised KeyError/IndexError on an empty
+# frame instead of skipping -- a stale guard, not a defect in the repair it
+# pins. The guard now names the artifact the class actually reads.
+#
+# SPP-38 did NOT re-point the class at the surviving committed rollup
+# (``_rollup/campaign_emissions_by_iso.csv``, which is byte-for-byte the shape
+# ``build_iso_frame`` returns and does still reproduce all three STATUS numbers
+# -- 18.830 / 5.462 / 13.368): that rollup was last written 2026-09-06 16:35 UTC,
+# BEFORE the RESOLVE lane's re-solves, so it is a superseded vintage, and
+# ``test_the_repair_holds_over_the_whole_committed_tree`` no longer holds against
+# it (CAISO and MISO ORGANIC legs landed after the STATUS doc, moving the
+# whole-tree common-set delta 18.830 -> 101.967). Restoring the summaries or
+# re-rolling ``_rollup`` is the SCN desk's call, not a test repair
+# (docs/handoffs/FINDING-spp-38-2026-09-07.md §4).
+_SUMMARIES = (
+    sorted(CAMPAIGN.rglob("full_horizon_summary.json")) if CAMPAIGN.is_dir() else []
+)
+
+
+@unittest.skipUnless(
+    _SUMMARIES,
+    "campaign per-case full_horizon_summary.json artifacts not on disk "
+    "(deleted by SCN-WS5A-RESOLVE at c29f6107; see the note above)",
+)
 class TestScnCampaignLoadRegression(unittest.TestCase):
     """Reproduce the routed defect's measured numbers from committed artifacts."""
 
