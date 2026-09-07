@@ -291,7 +291,7 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-55** VRL-based scarcity (P5's deferred object; issued r#10 once SPP-44's 28c edit merged) — **LANDED 2026-09-07: KILLED AT ZERO LP** (`FINDING-spp-55-2026-09-07.md` — the object is SPP's published Contingency Reserve Demand Curve $275/$550/$1,100 (not the VRLs), registered as the SPP entry of the shared `energy_reserve_coopt` gate with NO new field; keeper-3's reserve-eligible headroom never falls to the 1.5 GW requirement in any measured shortage hour, so the row cannot bind — INERT, cell U → I; 1/0/0 of the C3c hours coincide with reserve shortage; no solve spent, nothing registered) | FABLE · mechanism design: an in-LP reserve demand curve on SPP's own published VRL steps; kill-grading is adjudication | spp | `config/reserve_config.py` SPP entry (requirements + the VRL step curve, every number cited to SPP-12's Exhibit 4-1 / Planning Criteria), ONE new ISO-exclusive `ScenarioConfig` gate if the reserve machinery needs one (default off, drop value declared) + matrix row + a cell in EVERY shard (28c), tests, `PRECOMMIT-/FINDING-spp-55`, screen bundle (TEMPORARY), `results/calibration/spp55_vrl_B/` if the screen clears, the SPP shard cells it moves | zero-LP: rule-19 enumeration (SPP has NO scarcity mechanism, zero slack/dump — price-family §1.3); the measured target (42 / 59 / 68 h > $200 at ordinary load, 79–93× gas); footprint by year from the `spp-or-mcp` RTBM MCP files (hours the spinning MCP sits at/above the $250 VRL step) → screen year | `FINDING-spp-55-<date>.md` | STOP gate structural (the reserve row binds in the measured shortage hours; the price response has the VRL's own order; no non-target flip); never C3c-gated; control = keeper-3; promotion = card P15 |
 | **SPP-46** the C1-2024 gas split — SPP-44 R-17's two admissible objects (issued r#12) | FABLE · the object choice, the carve-out declaration and the kill-grading are all adjudications | spp | `PRECOMMIT-/FINDING-spp-46`, `docs/handoffs/spp46/`, its own SPP shard cell line(s), and — candidate (A) only — one SPP-exclusive default-off `ScenarioConfig` field with its matrix row + rule-28(c) cells | **rule-29 phase 0 is a kill condition**: the committed-state census + the offer-array delta, both zero-LP, decide the candidate and may end the lane before any solve | `FINDING-spp-46-<date>.md` | screen year named by FOOTPRINT ex ante; STOP gate structural with ex-ante dominance thresholds, identity on the P0 objective + LP input arrays (never P1), NEVER read on C1; control = keeper-3 committed (form 4) + G-DRIFT, no control solve; bundles gitignored, NEVER deleted (rule 31) |
 | **SPP-47** P16 — the reference's incomplete-fuel swap rule, repo-wide (issued r#12 under owner ruling P16) | OPUS · an enumerated one-line rule change; the SCOPE is ruled, the MEASUREMENT is the lane | shared | `scripts/data/build_calibration_reference.py`, `data/raw/_validation-source/calibration_reference.json`, `bench/SPP/` only if it goes STALE, `FINDING-spp-47` | zero-LP throughout; `calibration_verdict.py --run-id` on committed artifacts, never a solve | `FINDING-spp-47-<date>.md` | the five cells move and nothing else does; per-ISO determination delta reported at full magnitude; all seven gates at their pre-lane exit code or better; no other ISO's bench part touched |
-| **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule (issued r#12 under owner ruling P17) | FABLE · a construction repair crossing an ISO boundary; the correctness argument is the deliverable | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
+| **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule (issued r#12 under owner ruling P17; **re-assigned FABLE → OPUS the same sitting**, the desk closing the construction choice rather than leaving it to the lane) | OPUS · `scripts/data/` is Opus territory (r#20 economy rule) and the construction is now NAMED — implement, verify, measure, recommend | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
 | **SPP-51…57** | per §4 (SPP-51 → **FABLE** since r#6: it carries SPP-33's R2 anchor correction and an ERCOT limit-vs-clip decision, both adjudications; SPP-58 added — see §8 W5) | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -2347,12 +2347,12 @@ OWNER REPORT (FINDING §0): the five-cell before/after table; any sixth moved ce
 determination delta table; the bench-freshness before/after and which desks you routed to.
 ```
 
-#### SPP-48 `[FABLE]` — P17: the wind-shape builder's per-zone LEVEL rule (derive + measure; the desk sequences the landing)
+#### SPP-48 `[OPUS]` — P17: the wind-shape builder's per-zone LEVEL rule (derive + measure; the desk sequences the landing)
 
 ```
-You are lane SPP-48. MODEL: Fable claude-fable-5-1 — a construction repair whose correctness argument is
-the deliverable, and it crosses an ISO boundary. DATA PROFILE: spp. Branch stem:
-claude/spp-48-wind-level-rule-<4 chars>.
+You are lane SPP-48. MODEL: Opus claude-opus-5 — the construction is NAMED below and the scope is ruled,
+so nothing here is an adjudication: you implement one zero-DOF rule, verify it, measure four things and
+recommend. DATA PROFILE: spp. Branch stem: claude/spp-48-wind-level-rule-<4 chars>.
 
 Read CLAUDE.md freshly and in full (rules 1 [R-STRUCT], 13, 14 [R-ACCURATE], 23 [R-FROZEN-DERIVE],
 25 [R-ISO-SCOPE], 29, 31); docs/handoffs/FINDING-spp-54-2026-09-07.md §4 AND its R-21 IN FULL — it is
@@ -2370,12 +2370,19 @@ LEVELS act as zonal capacity-factor LEVELS. Splitting SPP's old South moved the 
 +1.38 / +1.47 / +1.91 TWh at an identical system total, and h8509 flipped from +440 MW feasible to
 −545 MW infeasible. This is why every three-zone SPP solve is blocked.
 
-THE REPAIR, zero DOF, rule 14 (SPP-54 R-21's candidate — you may propose a better one, but you must show
-it is not a new free parameter): each zone's LEVEL from its WHOLE operable fleet (capacity-weighted over
-all plants), with the six-site DIURNAL SHAPE retained; or all-plant sampling outright (254 NASA POWER
-point-years per year for SPP). Whichever you take, the level must come from a measured fleet quantity,
-never from a residual, and it must regenerate for a forward year (rule 13's forward test, answered in
-writing).
+THE REPAIR — NAMED BY THE DESK, NOT CHOSEN BY YOU (r#12). SPP-54 R-21 offered two candidates; the desk
+takes the first, because it is the minimal change and it leaves the existing diurnal derivation frozen
+(rule 23 [R-FROZEN-DERIVE]): **each zone's LEVEL comes from its WHOLE operable fleet, capacity-weighted
+over all plants, and the six-site DIURNAL SHAPE is retained unchanged.** Zero DOF, one measured fleet
+quantity, no new parameter, no residual anywhere in the derivation. Answer rule 13's forward test in
+writing (it regenerates for a forward year from that year's own operable fleet, and responds to fleet
+change — say so, and say what would break it).
+
+The ONE case in which you may depart: if the identity leg (item 2) cannot be met under this construction
+— Σ_z cap_z · cf_z(t) ≠ M(t) beyond machine precision — then it is the WRONG construction, and the
+fallback is all-plant sampling outright (254 NASA POWER point-years per year for SPP). Do not switch on
+preference, on the h8509 result, or on either delta; switch only on a failed identity, and report the
+failure that made you switch. Anything else is a construction chosen against a result.
 
 WHAT YOU DELIVER, ALL ZERO-LP:
   1. The repaired construction, in BOTH builders, with the shared rule expressed ONCE and each ISO's
