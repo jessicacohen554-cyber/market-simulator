@@ -115,6 +115,7 @@ _RESERVE_SURFACE = (
     "get_reserve_design",
     "pjm_pergen_pool_ramp10",
     "pjm_pergen_structure",
+    "spp_contingency_reserve_demand_steps",
     "_ERCOT_POSTURE_CHP_GROUPS",
     "_caiso_design",
     "_caiso_locational_as_families",
@@ -128,6 +129,7 @@ _RESERVE_SURFACE = (
     "_posture_pool_params",
     "_quick_start_eligible",
     "_reserve_eligible",
+    "_spp_design",
 )
 
 # Every meaningful top-level name of the pre-move config/interchange_config.py

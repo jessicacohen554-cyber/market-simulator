@@ -2625,3 +2625,99 @@ class TestAllClassBalanceFamily(unittest.TestCase):
     def test_no_cap_leaves_dual_none(self):
         res = self._solve(700.0, with_total=True)
         self.assertIsNone(res.reserve_supply_cap_dual)
+
+
+class TestSppContingencyReserveLP(unittest.TestCase):
+    """SPP-55 identity check at toy scale: slack reserve clears at $0; a
+    shortage inside the first band prices the family at the published $275
+    step and lifts the energy LMP by exactly that step; a deep shortage
+    prices at $1,100 (Protocols §4.1.5(2)(a): 'the Energy LMP is increased by
+    the Operating Reserve shortage price')."""
+
+    def _fleet(self, T=4):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        nuc_idx = FUEL_TYPE_NAMES.index("nuclear")
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        n = 2
+        return FleetArrays(
+            # MSSC = the 1,296.3 MW nuclear unit -> requirement ~1,500 MW;
+            # the CC supplies the headroom.
+            pmax=np.array([1296.3, 3000.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([0.0, 7.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0]),
+            fuel_type_idx=np.array([nuc_idx, cc_idx]),
+            availability=np.ones((n, T)),
+            unit_ids=["wc1", "cc"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([210, 9001]),
+        )
+
+    def _solve(self, demand_mw, T=4):
+        from types import SimpleNamespace
+
+        from market_sim.config.reserve_config import (
+            _spp_design,
+            build_reserve_dispatch_kwargs,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet = self._fleet(T)
+        design = _spp_design(
+            SimpleNamespace(iso="SPP", mode="backcast", weather_year=2024),
+            fleet,
+            T,
+            ["z0"],
+            largest_unit_mw={210: 1296.3, 9001: 300.0},
+        )
+        kw = build_reserve_dispatch_kwargs(design)
+        res = solve_dispatch(
+            fleet,
+            np.array([[demand_mw] * T]),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            reserve_requirement=kw["reserve_requirement"],
+            reserve_eligible=kw["reserve_eligible"],
+            ordc_penalties=kw["ordc_penalties"],
+            ordc_step_widths=kw["ordc_step_widths"],
+        )
+        return res, float(kw["reserve_requirement"][0])
+
+    def test_slack_zero_shallow_275_deep_1100(self):
+        # Requirement = 0.964 x 1.2 x 1296.3 = 1,499.6 MW. Total eligible
+        # capacity 4,296.3. Slack: demand 2,000 -> headroom 2,296 >= req.
+        slack, req = self._solve(2000.0)
+        self.assertEqual(slack.status, "Optimal")
+        self.assertAlmostEqual(
+            float(np.asarray(slack.reserve_price).mean()), 0.0, places=6
+        )
+        # Shallow: demand 4,296.3 - req + 50 -> a 50 MW shortage, inside the
+        # first 125 MW band -> dual $275, and the LMP = gas marginal cost + 275.
+        shallow, _ = self._solve(4296.3 - req + 50.0)
+        self.assertEqual(shallow.status, "Optimal")
+        self.assertAlmostEqual(
+            float(np.asarray(shallow.reserve_price).mean()), 275.0, places=3
+        )
+        gas_mc = 7.0  # heat_rate 7 x fuel price 1
+        self.assertAlmostEqual(
+            float(np.asarray(shallow.prices).mean())
+            - float(np.asarray(slack.prices).mean()),
+            275.0,
+            places=3,
+        )
+        self.assertAlmostEqual(float(np.asarray(slack.prices).mean()), gas_mc, places=3)
+        # Deep: a 400 MW shortage (> the 250 MW margin) -> the $1,100 step.
+        deep, _ = self._solve(4296.3 - req + 400.0)
+        self.assertEqual(deep.status, "Optimal")
+        self.assertAlmostEqual(
+            float(np.asarray(deep.reserve_price).mean()), 1100.0, places=3
+        )

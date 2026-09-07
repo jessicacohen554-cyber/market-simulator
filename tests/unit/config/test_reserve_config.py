@@ -1995,3 +1995,132 @@ class TestErcotReserveSupplyCapNetCredits(unittest.TestCase):
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
         armed = ScenarioConfig(ercot_reserve_supply_cap_net_credits=True)
         self.assertNotEqual(armed.cache_key(), "547053bdfccd4264")
+
+
+class TestSppContingencyReserveDesign(unittest.TestCase):
+    """SPP-55: the one BAA-wide Contingency Reserve family on SPP's published
+    demand curve, requirement = ratio x 1.2 x hourly MSSC (largest single
+    reserve-eligible unit >= 600 MW nameplate, availability-scaled)."""
+
+    def _fleet(self, T=24):
+        nuc_idx = FUEL_TYPE_NAMES.index("nuclear")
+        coal_idx = FUEL_TYPE_NAMES.index("coal")
+        cc_idx = FUEL_TYPE_NAMES.index("gas_cc")
+        wind_idx = FUEL_TYPE_NAMES.index("wind")
+        n = 4
+        avail = np.ones((n, T))
+        avail[0, 12:] = 0.5  # the nuclear unit is derated for half the horizon
+        return FleetArrays(
+            # Row 1 is a 2,000 MW coal STATION whose largest single unit is
+            # 700 MW; row 0 is the 1,296 MW single nuclear unit (Wolf Creek);
+            # row 2 a CC below the 600 MW screen; row 3 a 1,500 MW wind farm.
+            pmax=np.array([1176.7, 2000.0, 500.0, 1500.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([0.0, 10.0, 7.0, 0.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 0, 1, 1]),
+            fuel_type_idx=np.array([nuc_idx, coal_idx, cc_idx, wind_idx]),
+            availability=avail,
+            unit_ids=["wc1", "coal_station", "cc", "wind"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([210, 6068, 55463, 64665]),
+        )
+
+    def _design(self, T=24, largest=None):
+        from types import SimpleNamespace
+
+        from market_sim.config.reserve_config import _spp_design
+
+        if largest is None:
+            largest = {210: 1296.3, 6068: 720.0, 55463: 198.9, 64665: 1027.0}
+        return _spp_design(
+            SimpleNamespace(iso="SPP", mode="backcast", weather_year=2024),
+            self._fleet(T),
+            T,
+            ["SPP-North", "SPP-South"],
+            largest_unit_mw=largest,
+        )
+
+    def test_requirement_is_ratio_scaled_hourly_mssc(self):
+        from market_sim.config.reserve_config import (
+            SPP_BA_CR_REQUIREMENT_RATIO,
+            SPP_RSG_CR_SCALING_FACTOR,
+        )
+
+        T = 24
+        design = self._design(T)
+        self.assertEqual(len(design.families), 1)
+        fam = design.families[0]
+        self.assertEqual(fam.name, "spp_contingency_reserve")
+        # Hours 0-11: Wolf Creek at full nameplate is the MSSC (1,296.3 > the
+        # coal station's largest UNIT 720 — never its 2,000 MW aggregate).
+        k = SPP_BA_CR_REQUIREMENT_RATIO * SPP_RSG_CR_SCALING_FACTOR
+        np.testing.assert_allclose(fam.requirement[:12], k * 1296.3)
+        # Hours 12-23: the derated nuclear unit (648) drops below the 720 MW
+        # coal unit, which becomes the MSSC — the requirement tracks the fleet.
+        np.testing.assert_allclose(fam.requirement[12:], k * 720.0)
+        # BAA-wide: the family spans both model zones.
+        np.testing.assert_array_equal(fam.zone_mask, [True, True])
+        # Wind is never a potential MSSC here and never reserve-eligible.
+        np.testing.assert_array_equal(design.eligible[0], [True, True, True, False])
+        self.assertFalse(design.storage_eligible)
+
+    def test_demand_curve_is_the_published_three_steps(self):
+        from market_sim.config.reserve_config import (
+            SPP_BA_CR_REQUIREMENT_RATIO,
+            SPP_RSG_CR_SCALING_FACTOR,
+            build_reserve_dispatch_kwargs,
+        )
+
+        design = self._design()
+        kw = build_reserve_dispatch_kwargs(design)
+        pens, widths = kw["ordc_penalties"], kw["ordc_step_widths"]
+        np.testing.assert_allclose(pens, [275.0, 550.0, 1100.0])
+        req_max = SPP_BA_CR_REQUIREMENT_RATIO * SPP_RSG_CR_SCALING_FACTOR * 1296.3
+        # Widths span the annual-max requirement; the two shallow bands are each
+        # half of the 0.2/1.2 scaling margin.
+        self.assertAlmostEqual(float(widths.sum()), req_max, places=6)
+        np.testing.assert_allclose(widths[:2], req_max / 12.0)
+        # Single family, single class: the kwargs squeeze to (T,) / (n_gen,).
+        self.assertEqual(kw["reserve_requirement"].shape, (24,))
+        self.assertEqual(kw["reserve_eligible"].shape, (4,))
+
+    def test_no_qualifying_unit_builds_no_family(self):
+        # Every largest unit below the 600 MW potential-MSSC screen: no
+        # contingency to reserve against -> empty design, no LP rows.
+        from market_sim.config.reserve_config import build_reserve_dispatch_kwargs
+
+        design = self._design(largest={210: 500.0, 6068: 550.0, 55463: 198.9})
+        self.assertEqual(design.families, [])
+        self.assertEqual(build_reserve_dispatch_kwargs(design), {})
+
+    def test_get_reserve_design_routes_spp(self):
+        from types import SimpleNamespace
+        from unittest import mock
+
+        import market_sim.model.reserves.spec as spec
+
+        with mock.patch.object(
+            spec, "_spp_largest_unit_nameplate", return_value={210: 1296.3}
+        ):
+            design = get_reserve_design(
+                SimpleNamespace(iso="SPP", mode="backcast", weather_year=2024),
+                self._fleet(),
+                24,
+                ["SPP-North", "SPP-South"],
+            )
+        self.assertEqual([f.name for f in design.families], ["spp_contingency_reserve"])
+
+    def test_steps_helper_edge_cases(self):
+        from market_sim.config.reserve_config import (
+            spp_contingency_reserve_demand_steps,
+        )
+
+        pens, wids = spp_contingency_reserve_demand_steps(0.0)
+        self.assertEqual(len(pens), 0)
+        pens, wids = spp_contingency_reserve_demand_steps(1200.0)
+        np.testing.assert_allclose(wids, [100.0, 100.0, 1000.0])
+        self.assertTrue(np.all(np.diff(pens) > 0))
