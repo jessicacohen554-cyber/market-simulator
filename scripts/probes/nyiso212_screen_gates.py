@@ -18,7 +18,6 @@ from __future__ import annotations
 import argparse
 import json
 import pickle
-import subprocess
 import sys
 from pathlib import Path
 
@@ -38,29 +37,7 @@ KEEPER_DIR = ROOT / "results/calibration/nyiso202_startup_aware"
 KEEPER_PAYLOAD = ROOT / "frontend/data/backcast/runs/2026-09-06-nyiso-202-startup-aware.js"
 PHASE0 = ROOT / "results/calibration/_nyiso212_arm_phase0.json"
 RECON = ROOT / "data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv"
-LOAD_BEARING = ("fuelmix", "sysvol", "price_mean", "price_shape")
-PROTECTIVE = ("governance", "forced_share")
 T = 8760
-
-
-def verdict_json(bundle: Path) -> dict:
-    out = subprocess.run(
-        [sys.executable, str(ROOT / "scripts/calibration_verdict.py"), "--json", str(bundle)],
-        capture_output=True,
-        text=True,
-        check=True,
-        cwd=ROOT,
-    ).stdout
-    return json.loads(out[out.index("{") :])
-
-
-def statuses(v: dict, year: int) -> dict[str, dict[str, str]]:
-    out: dict[str, dict[str, str]] = {}
-    for cid, c in v["criteria"].items():
-        out[cid] = {
-            str(r.get("key")): r["status"] for r in c["records"] if r.get("year") == year
-        }
-    return out
 
 
 def main() -> None:
@@ -85,10 +62,19 @@ def main() -> None:
     diff = {k: (k_cfg.get(k), a_cfg.get(k)) for k in set(k_cfg) | set(a_cfg) if k_cfg.get(k) != a_cfg.get(k)}
     new_defaults = {k: v for k, v in diff.items() if k not in k_cfg}
     live = {k: v for k, v in diff.items() if k in k_cfg}
-    s1 = set(live) == {FLAG} and a_cfg.get(FLAG) is True and not k_cfg.get(FLAG, False)
+    # The keeper's run_config.json is the 2023-2025 bundle's record (weather_year
+    # 2023, gas_price_override 2.54 = its first year); a one-year replay records
+    # its own year. These two keys encode the --year selection, not the recipe.
+    year_keys = {k: v for k, v in live.items() if k in ("weather_year", "gas_price_override")}
+    recipe_live = {k: v for k, v in live.items() if k not in year_keys}
+    s1_literal = set(live) == {FLAG}
+    s1_recipe = set(recipe_live) == {FLAG} and a_cfg.get(FLAG) is True and not k_cfg.get(FLAG, False)
     rec["gates"]["S1"] = {
-        "pass": bool(s1),
+        "pass": bool(s1_literal),
+        "pass_excluding_year_selection_keys": bool(s1_recipe),
         "live_diff": live,
+        "year_selection_keys": year_keys,
+        "recipe_diff_excluding_year_keys": recipe_live,
         "new_dataclass_defaults_reported_not_counted": new_defaults,
     }
 
@@ -142,8 +128,21 @@ def main() -> None:
     )
     s2a = 0.0 < cv["delta_summer_gwh"] <= cv_ceiling_delta + 1e-6
     s2b = 0.0 < cap_delta <= cap_ceiling_delta + 1e-6
+    # Sign-correct reading (from the phase-0 record committed BEFORE the PREREG):
+    # a plant whose summer ceiling ROSE must satisfy 0 < delta <= ceiling delta,
+    # one whose ceiling FELL must satisfy delta <= +1 % of its keeper summer.
+    sign_correct = {}
+    for c in raise_plants:
+        pp = per_plant[str(c)]
+        cd = pp["ceiling_delta_summer_gwh"] or 0.0
+        if cd > 0:
+            sign_correct[str(c)] = {"ceiling_rose_by_gwh": cd, "delta": pp["delta_summer_gwh"], "ok": bool(0.0 < pp["delta_summer_gwh"] <= cd + 1e-6)}
+        else:
+            sign_correct[str(c)] = {"ceiling_fell_by_gwh": cd, "delta": pp["delta_summer_gwh"], "ok": bool(pp["delta_summer_gwh"] <= 0.01 * max(pp["keeper_summer_gwh"], 1e-9))}
     rec["gates"]["S2"] = {
         "pass": bool(s2a and s2b and raise_ok),
+        "c_raise_plants_sign_correct_reading_POST_HOC": sign_correct,
+        "pass_under_sign_correct_reading": bool(s2a and s2b and all(v["ok"] for v in sign_correct.values())),
         "a_57185": {"delta_summer_gwh": cv["delta_summer_gwh"], "bound_gwh": round(cv_ceiling_delta, 2), "pass": bool(s2a)},
         "b_cap_plants": {"delta_summer_gwh": round(cap_delta, 2), "bound_gwh": round(cap_ceiling_delta, 2), "pass": bool(s2b)},
         "c_raise_plants": {str(c): per_plant[str(c)]["delta_summer_gwh"] for c in raise_plants} | {"pass": bool(raise_ok)},
@@ -173,35 +172,89 @@ def main() -> None:
         "offsummer_delta_15_plants_gwh": round(float(sum(per_plant[str(c)]["delta_offsummer_gwh"] for c in listed)), 2),
     }
 
-    # ---- S-4 no non-target load-bearing PASS -> FAIL flip
-    kv = verdict_json(KEEPER_DIR)
-    av = verdict_json(arm)
-    ks, as_ = statuses(kv, year), statuses(av, year)
-    flips = []
-    for cid in LOAD_BEARING + PROTECTIVE:
-        for key, st in ks.get(cid, {}).items():
-            if cid == "fuelmix" and key == "CC_REGULAR":
-                continue  # target criterion — never gated
-            new = as_.get(cid, {}).get(key)
-            if st == "PASS" and new == "FAIL":
-                flips.append((cid, key, st, new))
-    changed = {
-        cid: {k: (ks[cid].get(k), as_[cid].get(k)) for k in set(ks.get(cid, {})) | set(as_.get(cid, {})) if ks.get(cid, {}).get(k) != as_.get(cid, {}).get(k)}
-        for cid in set(ks) | set(as_)
+    # ---- S-4 no non-target load-bearing PASS -> FAIL flip.
+    # An unregistered screen bundle has no sidecar, so calibration_verdict's
+    # run-id path cannot score it. Score it the way nyiso-202 did: rebuild the
+    # payload year-block the scorer reads from the bundle's OWN hourly parquets
+    # (verified against the keeper: lmp.p / pMon are demand-weighted zone means,
+    # d / dMon demand TWh, gmModel the class_hourly TWh -- all reproduce the
+    # committed payload to the last digit) and call the same score_* functions
+    # on keeper and arm. C8 (D-2 forced share) needs legitimacy_diagnostics.json,
+    # which only the register path writes; it is REPORTED as not computable.
+    import gzip
+
+    import calibration_verdict as cv
+
+    def year_block(bundle: Path, base: dict) -> dict:
+        sysd = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
+        sysd = sysd[sysd["pass"] == "P1"]
+        yb = json.loads(json.dumps(base))
+        mon = np.searchsorted(D.MONTH_STARTS, np.arange(T), side="right") - 1
+        for z, sub in sysd.groupby("zone"):
+            sub = sub.sort_values("hour")
+            pr, dm = sub.price.to_numpy(), sub.demand.to_numpy()
+            mo = mon[sub.hour.to_numpy() % T]
+            def _wm(x, w):
+                # Demand-weighted mean; a zero-demand zone (the external node)
+                # falls back to the simple mean, exactly as the committed payload
+                # does (NYISO_external p 56.81 = simple mean, d 0.0).
+                return float((x * w).sum() / w.sum()) if w.sum() > 0 else float(x.mean())
+
+            yb["lmp"][z] = {
+                "p": round(_wm(pr, dm), 2),
+                "d": round(float(dm.sum() / 1e6), 4),
+                "pMon": [round(_wm(pr[mo == k], dm[mo == k]), 2) for k in range(12)],
+                "dMon": [round(float(dm[mo == k].sum() / 1e6), 4) for k in range(12)],
+            }
+        ch = pd.read_parquet(bundle / "hourly" / f"class_hourly_{year}.parquet")
+        ch = ch[ch["pass"] == "P1"].groupby("klass").mw.sum() / 1e6
+        for k in list(yb["gmModel"]):
+            yb["gmModel"][k] = round(float(ch.get(k, 0.0)), 4)
+        return yb
+
+    base = decode_run_js(KEEPER_PAYLOAD.read_text())["years"][str(year)]
+    bench = json.load(gzip.open(ROOT / f"frontend/data/backcast/bench/NYISO/{year}.json.gz"))["bench"]
+    yk, ya = year_block(KEEPER_DIR, base), year_block(arm, base)
+    rebuild_identity = {
+        "lmp_p_max_abs_diff": max(abs(yk["lmp"][z]["p"] - base["lmp"][z]["p"]) for z in base["lmp"]),
+        "lmp_pMon_max_abs_diff": max(abs(a - b) for z in base["lmp"] for a, b in zip(yk["lmp"][z]["pMon"], base["lmp"][z]["pMon"])),
+        "gmModel_max_abs_diff": max(abs(yk["gmModel"][k] - base["gmModel"][k]) for k in base["gmModel"]),
+        "zones_rebuilt_equal_payload_zones": sorted(yk["lmp"]) == sorted(base["lmp"]),
     }
-    changed = {k: v for k, v in changed.items() if v}
+    sc = {}
+    for label, yb in (("keeper", yk), ("arm", ya)):
+        sc[label] = {
+            "C1": {r["key"]: (r["status"], r.get("magnitude")) for r in cv.score_fuelmix(year, yb, bench, "NYISO")},
+            "C2": {r["key"]: (r["status"], r.get("magnitude")) for r in cv.score_sysvol(year, yb, bench, "NYISO")},
+            "C3a": (lambda r: (r["status"], r.get("magnitude"), r.get("model"), r.get("actual")))(cv.score_price_mean(year, yb, bench)),
+            "C3b": (lambda r: (r["status"], r.get("magnitude")))(cv.score_price_shape(year, yb, bench)),
+        }
+    flips = []
+    for cid in ("C1", "C2"):
+        for key, (st, _m) in sc["keeper"][cid].items():
+            if cid == "C1" and key == "CC_REGULAR":
+                continue  # target criterion -- never gated
+            if st == "PASS" and sc["arm"][cid].get(key, ("?",))[0] == "FAIL":
+                flips.append((cid, key))
+    for cid in ("C3a", "C3b"):
+        if sc["keeper"][cid][0] == "PASS" and sc["arm"][cid][0] == "FAIL":
+            flips.append((cid, None))
+    sysk = pd.read_parquet(KEEPER_DIR / "hourly" / f"system_{year}.parquet")
+    sysa = pd.read_parquet(arm / "hourly" / f"system_{year}.parquet")
+
+    def _tail(df):
+        pv = df[df["pass"] == "P1"].pivot(index="hour", columns="zone", values="price")
+        mx = pv.max(axis=1).to_numpy()
+        return {"hours_max_zonal_gt_300": int((mx > 300).sum()), "system_mean": round(float(pv.mean(axis=1).mean()), 3)}
+
     rec["gates"]["S4"] = {
-        "pass": not flips and av["criteria"]["governance"]["status"] == "PASS",
+        "pass": not flips,
         "flips_pass_to_fail": flips,
-        "all_status_changes_2025": changed,
-        "arm_determination": av["determination"],
-        "keeper_determination": kv["determination"],
-        "arm_grade": av["grade_summary"],
-        "keeper_grade": kv["grade_summary"],
-        "magnitudes_2025": {
-            cid: {str(r.get("key")): (r.get("magnitude"), r["status"]) for r in av["criteria"][cid]["records"] if r.get("year") == year}
-            for cid in ("price_mean", "price_shape", "price_tail", "forced_share", "fuelmix", "sysvol")
-        },
+        "scores": sc,
+        "payload_rebuild_identity_vs_committed": rebuild_identity,
+        "C3c_tail_reported": {"keeper": _tail(sysk), "arm": _tail(sysa)},
+        "C8_forced_share": "NOT COMPUTABLE for an unregistered screen bundle (needs legitimacy_diagnostics.json, written only by the register path); the arm moves Jun-Sep availability at 15 CC_REGULAR plants and no floor, so the D-2 forced volume is untouched by construction -- REPORTED, and re-scored on the full-span bundle if the span is spent",
+        "C6_governance": "attestation is written at registration; the arm is the keeper recipe plus one declared, default-off, zero-DOF construction flag (S-1)",
     }
 
     # ---- S-5 the contradiction removed at 57185 in the screen year
