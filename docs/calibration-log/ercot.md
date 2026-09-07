@@ -13462,4 +13462,70 @@ matrix shard evidence updated on four cells, no verdict changed. Gates at HEAD: 
 PASS, parity OK, status in sync, matrix diff gate OK, scoring suite 11 pre-existing failures.
 Full record: `docs/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`.
 
-**Next shorthand: ercot-253** (ercot-199 remains unclaimed)
+## ercot-253 — 2026-09-06/07
+
+**The 2021 validation rung: NOT-YET on {C1, C3a, C3b}, and every price prediction I registered
+was wrong in SIGN.** Run `2026-09-07-ercot253-2021-rung` (bundle `ercot253_2021_touchpoint`),
+the keeper's 2023 CARVE-OUT config replayed on 2021 from the ercot-252 bundle, config NAMED in
+the PRECOMMIT before the solve. Four owner rulings executed (all fixed pre-solve): **D1** the two
+reserve `from_year` gates DECLARED in the keeper's own recipe at 2020 (byte-identical in every
+training year — both are monotone `year >= from_year`, so no re-solve was performed or needed);
+**D2** 2021 only; **D3** ERCOT's ORDC order parameters year-vintaged to their PUBLISHED values,
+so 2021 solves at HCAP **$9,000** / MCL **2,000 MW** (16 TAC 25.509 / PUCT 52631; OBDRR038 /
+PUCT 52373), zero DOF, 2022-2025 listed at exactly the shipped defaults; **D4** the capx-D79
+solve-surface neutralization made the default for cache-key pins.
+
+| criterion | **predicted** | **measured** | prediction |
+|---|---|---|---|
+| C1 CC_REGULAR | −3 to −9 TWh, in band | **FAIL −16.02 TWh** (−4.0 pp) | **WRONG** |
+| C3a mean LMP | **FAIL LOW**, central −40 % | **FAIL +28.2 %** ($176.19 vs $137.43) | **WRONG ON SIGN** |
+| C3b NRMSE | FAIL 0.25-0.60 | **FAIL 0.361** | correct |
+| C3c tail | 60-160 h vs 258, below floor | **PASS 234 h (0.907×)** | **WRONG** |
+| C2 / C4 / C6 / C8 | hold | PASS | correct |
+| determination | NOT-YET {C3a, C3b} | **NOT-YET {C1, C3a, C3b}** | partly |
+
+**A defect found and fixed mid-session, before any registered solve.** The first 2021 solve was
+STOPPED ~5 min in and its bundle DELETED: its log read `per-product req means [0, 0, 0, 0] MW`.
+`ASPLANNP433` exists for 2022+ only and the loader's missing-file contract is all-zero — which
+`spec.py`'s own comment says fails loud in forecast and is **silent in backcast** — so 2021 had
+procured no reserve at all. Replaced by the MEASURED cleared DAM quantity (Gen + Load 60-Day
+awards, `build_ercot_as_cleared_requirement.py`) through the new
+`scarcity.ercot_as_measured_requirement_mw`; 2022/2023 verified identical to the plan-only path.
+Validated on the 7,319 h of 2022 where both sources exist (the only such year): cleared runs
+below plan by **RRS −753.1 MW (−26.6 %)**, NSPIN −269.7, RegUp −14.9 — self-arranged AS is not in
+the awards. **NO offset added back** (identifiable on 2022 alone, un-validatable transport,
+rule 21 `[R-DOF]`); the understatement is carried as a pre-registered LOW bias instead.
+
+**THE FINDING (RESULT §3): the model prices 31 hours ABOVE ERCOT's published offer cap.** Max
+hour = λ $1,904.5 + adder $8,866.9 = **$10,771.4** against a 2021 HCAP of $9,000 (mean overshoot
+$199.6). The adder alone is well-behaved (max $8,905.6 < VOLL — ercot-213's `(VOLL − λ)` anchor
+working); **the SUM is not capped anywhere in the model.** ercot-213's G-CAP read the 2023 keeper
+landing at exactly VOLL because `(VOLL − λ) + λ = VOLL` identically when λ is small — the
+protocol cap has been holding in the keeper years **by arithmetic coincidence of a low λ, not by
+construction**. D3 did not cause this, it EXPOSED it (rule 14), and **reverting D3 is refused**:
+that would restore a cap the 2021 market did not have and bury a real error in a wrong input.
+Successor named, NOT armed: an explicit protocol-cap clamp on the settled price.
+
+Uri carries the whole overshoot — 192 h at mean **$4,325.5** (34 h ≥ $9,000) contributing
+**$94.81 of the $176.19** annual mean, while the other 8,568 h average $83.21. C1's −16.02 TWh is
+gas-internal merit order (CT_PEAKER **+115.5 %**, ST_GAS **+38.6 %**, coal within a few points,
+C2 PASS), negative in all twelve months — routed to the 2023-2025 loop, never tuned on 2021.
+
+Measured-input extensions applied to 2021 first (rule 22, data is never held out): 60-Day DAM
+thermal availability (committed 2022-2025 rows verified byte-identical to HEAD; the joint
+re-derive's 100.0 MW rating move REPORTED not applied), `NUCLEAR_MONTHLY_CF_BY_YEAR` 2021
+(2022/2023 re-derived byte-identically), the gtc-limits 2021 partition (13,538 rows / 14 GTCs),
+and the NP3-565-CD native-load reader extended to the report's CSV container.
+
+**Rule 30(c): ERCOT stays CALIBRATED on the train tier** — status rebuild confirms
+`[ERCOT:CALIBRATED]`. Stamped `holdout.keeper` (rule 30(a)); the fold reports price_tail
+IMPROVED (in-sample CAVEAT → holdout PASS) and price_shape degraded. Also landed: the C3c
+adder-**argument** phase-0 FINDING, identified on 2023-2025 only — the model writes an adder in
+573/191/67 h against the published RTORPA's 1,705/560/253, a strict SUBSET, then writes 3.0×/1.8×
+the dollars, because it prices off cleared-to-REQUIREMENT reserve while ERCOT prices off RTOLCAP
+online CAPABILITY (+5.0/+9.1/+11.9 GW above the model's argument). No matrix cell verdict changed.
+Full record: `docs/RESULT-ercot253-2021-rung-2026-09-06.md`,
+`docs/FINDING-ercot253-c3c-adder-distribution-phase0-2026-09-06.md`,
+`docs/PRECOMMIT-ercot253-2021-rung-2026-09-06.md` + `docs/ADDENDUM-ercot253-as-requirement-2026-09-06.md`.
+
+**Next shorthand: ercot-254** (ercot-199 remains unclaimed)
