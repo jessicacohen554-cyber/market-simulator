@@ -134,6 +134,18 @@ CT_PEAKER +115.5 % / ST_GAS +38.6 % / CC_REGULAR −14.0 % (−16.02 TWh) is thi
 and nothing else: CC and ST_GAS sit in the contaminated zones, CT_PEAKER's capacity
 is disproportionately in the two zones the contamination misses.
 
+> **CORRECTION, added 2026-09-07 after the 2021 re-test
+> (`docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md` §4).** The **price half of
+> §3 is confirmed by solve** — repairing the level moves the eleven non-Uri months
+> from +160.8 % to +79.1 %, every month improving. **The merit-order half is NOT.**
+> Removing the level term moves CC_REGULAR by only **+0.87 TWh** of the 16 TWh miss,
+> and CT_PEAKER and ST_GAS both **RISE** rather than fall, because cheaper gas
+> displaces **coal** (COAL_PRB −3.65 TWh) and that energy spreads across the whole
+> gas fleet. The C1 claim below therefore **overclaims**: the level term is not
+> shown to be the C1 driver, and the likelier driver is the **zonal SPREAD's** own
+> 2021 contamination (§1a), which the level repair does not touch. §§1, 1a, 2, 5
+> and 6 stand as measured; this paragraph and the sentence closing §3 do not.
+
 **C3a — the level.** A fleet whose CC baseload offers at $73/MWh and whose gas steam
 offers at $119/MWh sets non-scarcity prices at exactly the +144.0 % `RESULT §2a`
 measured across the eleven non-Uri months.
