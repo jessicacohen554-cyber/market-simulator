@@ -131,9 +131,7 @@ class TestLookAheadRefusal:
                 if year >= min(trajectory):
                     continue  # a knot or beyond it: the branch is unreachable
                 for neighbour in _PJM_NEIGHBOURS:
-                    assert neighbor_gas_price(
-                        neighbour, year, key
-                    ) == pytest.approx(
+                    assert neighbor_gas_price(neighbour, year, key) == pytest.approx(
                         _hold_flat_extrapolate(trajectory, year) + neighbour.gas_basis,
                         abs=1e-12,
                     )
@@ -170,9 +168,11 @@ class TestInertAboveTheFirstKnot:
         for iso_neighbours in INTERFACE_NEIGHBORS.values():
             for neighbour in iso_neighbours:
                 for year in range(first_knot, 2051):
-                    assert neighbor_gas_price(
-                        neighbour, year, gas_scenario
-                    ) == _hold_flat_extrapolate(trajectory, year) + neighbour.gas_basis
+                    assert (
+                        neighbor_gas_price(neighbour, year, gas_scenario)
+                        == _hold_flat_extrapolate(trajectory, year)
+                        + neighbour.gas_basis
+                    )
 
     @pytest.mark.parametrize("gas_scenario", _PRICE_KEYS)
     @pytest.mark.parametrize("year", (2023, 2024, 2025))
@@ -331,7 +331,10 @@ class TestSeamBaselineMagnitudes:
         standing: the screen-year choice was not contaminated.
         """
         deltas = {}
-        for year, arm_mean in ((2021, self._ARM_MEAN_2021), (2022, self._ARM_MEAN_2022)):
+        for year, arm_mean in (
+            (2021, self._ARM_MEAN_2021),
+            (2022, self._ARM_MEAN_2022),
+        ):
             measured = [self._baseload(n, year) for n in _PJM_NEIGHBOURS]
             assert sum(measured) / len(measured) == pytest.approx(arm_mean, abs=1e-3)
             deltas[year] = arm_mean - self._CONTROL_MEAN_2022
