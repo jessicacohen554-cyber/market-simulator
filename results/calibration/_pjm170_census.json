@@ -1,0 +1,177 @@
+{
+ "footprint": [
+  {
+   "year": 2021,
+   "gas_mean": 4.1093767868860205,
+   "params_control": {
+    "floor": 0.65,
+    "ceil": 1.32,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "params_arm": {
+    "floor": 0.65,
+    "ceil": 1.0,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "pt_control_mean": 1.1204951089590935,
+   "pt_control_max": 1.3175856268665656,
+   "pt_arm_mean": 0.895781027068183,
+   "pt_arm_max": 0.9987387603034298,
+   "footprint_mean_abs_delta": 0.22471408189091036,
+   "footprint_max_abs_delta": 0.31884686656313577,
+   "hours_on_ceil_control_frac": 0.0,
+   "s2_arm_max_le_one": true,
+   "s2_arm_never_above_control": true
+  },
+  {
+   "year": 2022,
+   "gas_mean": 7.120796850142759,
+   "params_control": {
+    "floor": 0.65,
+    "ceil": 1.32,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "params_arm": {
+    "floor": 0.65,
+    "ceil": 1.0,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "pt_control_mean": 1.3187779137554405,
+   "pt_control_max": 1.319999853854108,
+   "pt_arm_mean": 0.9993615967379165,
+   "pt_arm_max": 0.9999999236551311,
+   "footprint_mean_abs_delta": 0.31941631701752377,
+   "footprint_max_abs_delta": 0.3199999301989769,
+   "hours_on_ceil_control_frac": 0.7479452054794521,
+   "s2_arm_max_le_one": true,
+   "s2_arm_never_above_control": true
+  },
+  {
+   "year": 2023,
+   "gas_mean": 3.255149880167057,
+   "params_control": {
+    "floor": 0.65,
+    "ceil": 1.32,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "params_arm": {
+    "floor": 0.65,
+    "ceil": 1.0,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "pt_control_mean": 0.9165521423237595,
+   "pt_control_max": 1.3071949979918103,
+   "pt_arm_mean": 0.7892436564377848,
+   "pt_arm_max": 0.993310819846468,
+   "footprint_mean_abs_delta": 0.1273084858859747,
+   "footprint_max_abs_delta": 0.3138841781453423,
+   "hours_on_ceil_control_frac": 0.0,
+   "s2_arm_max_le_one": true,
+   "s2_arm_never_above_control": true
+  },
+  {
+   "year": 2024,
+   "gas_mean": 2.8556397330101735,
+   "params_control": {
+    "floor": 0.65,
+    "ceil": 1.32,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "params_arm": {
+    "floor": 0.65,
+    "ceil": 1.0,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "pt_control_mean": 0.8140089365251924,
+   "pt_control_max": 1.3097556581518335,
+   "pt_arm_mean": 0.7356763101251005,
+   "pt_arm_max": 0.9946484781390175,
+   "footprint_mean_abs_delta": 0.07833262640009184,
+   "footprint_max_abs_delta": 0.315107180012816,
+   "hours_on_ceil_control_frac": 0.0,
+   "s2_arm_max_le_one": true,
+   "s2_arm_never_above_control": true
+  },
+  {
+   "year": 2025,
+   "gas_mean": 3.934138598879508,
+   "params_control": {
+    "floor": 0.65,
+    "ceil": 1.32,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "params_arm": {
+    "floor": 0.65,
+    "ceil": 1.0,
+    "gas_mid": 3.4,
+    "gas_slope": 2.5
+   },
+   "pt_control_mean": 1.0565150459856614,
+   "pt_control_max": 1.319860685785716,
+   "pt_arm_mean": 0.8623586061119125,
+   "pt_arm_max": 0.9999272239179113,
+   "footprint_mean_abs_delta": 0.19415643987374873,
+   "footprint_max_abs_delta": 0.3199334618678047,
+   "hours_on_ceil_control_frac": 0.08493150684931507,
+   "s2_arm_max_le_one": true,
+   "s2_arm_never_above_control": true
+  }
+ ],
+ "other_supplies_identical": {
+  "2021": {
+   "prb": true,
+   "subbituminous": true,
+   "lignite": true,
+   "waste": true
+  },
+  "2022": {
+   "prb": true,
+   "subbituminous": true,
+   "lignite": true,
+   "waste": true
+  },
+  "2023": {
+   "prb": true,
+   "subbituminous": true,
+   "lignite": true,
+   "waste": true
+  },
+  "2024": {
+   "prb": true,
+   "subbituminous": true,
+   "lignite": true,
+   "waste": true
+  },
+  "2025": {
+   "prb": true,
+   "subbituminous": true,
+   "lignite": true,
+   "waste": true
+  }
+ },
+ "offer_delta": {
+  "year": 2022,
+  "n_gen_rows": 3405,
+  "hours": 8760,
+  "n_directly_priced_rows": 243,
+  "n_rows_changed": 243,
+  "n_rows_changed_outside_set": 0,
+  "unit_ids_changed_outside_set": [],
+  "n_cells_changed": 2128680,
+  "n_cells_changed_outside_set": 0,
+  "mean_delta_mc_usd_mwh": -9.226725748660657,
+  "min_delta_mc_usd_mwh": -43.91263457635765,
+  "max_delta_mc_usd_mwh": -2.1066103588705154,
+  "directly_priced_pmax_mw": 25504.284699999986,
+  "s4a_pass": true
+ }
+}
