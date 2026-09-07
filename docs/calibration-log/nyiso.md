@@ -12819,3 +12819,80 @@ failed / 69 passed at HEAD. Record:
 `results/calibration/_nyiso210_cc_overrun_attribution.json`,
 `scripts/probes/nyiso210_cc_overrun_attribution.py`; NYISO matrix shard `gates` stamp (rule 28(d)),
 no cell verdict letter moved, key set verified identical to `main` (306).
+
+## nyiso-213 — 2026-09-07
+
+**KEEPER PROMOTED: `2026-09-07-nyiso-213-summer-seam` (CALIBRATED, grade 7/8, fails 0, C3c the lone
+ledgered caveat), superseding `2026-09-06-nyiso-202-startup-aware`.** The arm is that keeper's
+recipe plus ONE registered field, `cc_summer_derate_reconciled_basis` — a rule-19 `[R-ONE-MECH]`
+construction repair of the seam between `cc_capacity_reconcile` (which removes MW a plant's fleet
+rows over-state) and `cc_nameplate_summer_derate` (which then derates the REMAINING capacity by a
+ratio referenced to the FULL nameplate). The two composed multiplicatively and removed the same MW
+twice. **Zero free parameters, zero new DOF entries, `authorized_price_tuning` NONE.**
+
+**The defect is physical and measured, not a residual:** at Cricket Valley 57185 the CAMPD meter
+EXCEEDED the LP's own monthly summer ceiling in **7 of 36 scored months** — a model forbidding
+generation the plant demonstrably produced. The arm takes that **7 → 1** (2023 `[7]`→`[]`, 2024
+`[7,8,9]`→`[8]`, 2025 `[6,7,8]`→`[]`), max dispatch above ceiling 0.0000 MW.
+
+**What this session actually did.** nyiso-212 built the mechanism, screened it on 2025, and **killed
+its own arm** on the literal reading of two gates whose wording was its own — leaving the span
+unspent. This session wrote those two gates correctly in a PREREG **pushed before any new number was
+read** (S-1 excludes the two `--year` selection keys and classifies the armed flag as the live delta;
+S-2(c) is written on the MEASURED ceiling direction over ALL 15 plants, **stricter in coverage** than
+the 3-plant `mode`-label bar it replaces), re-screened, and **CLEARED all five gates**. The PREREG's
+§0 discloses that this session had seen nyiso-212's numbers and states plainly that a re-screen with
+them in hand is weaker evidence than a blind one.
+
+**The PREREG's declared disjoint third outcome did not fire.** The re-solve ran on a solve-path tree
+11 files (+1 docstring) removed from nyiso-212's and reproduced its numbers **6 of 6** to the declared
+tolerances, so the G-DRIFT audit is an empirical result rather than a reading — corroborated by the
+whole zero-LP phase-0 chain regenerating **byte-identically** at HEAD for all three years.
+
+**Reported at full magnitude, and NOT the reason for the promotion (rule 1 `[R-STRUCT]`).** The arm
+IMPROVES both load-bearing price criteria in 2023 (C3a +5.7→+4.3 %, C3b 0.124→0.122) and 2024
+(+6.5→+5.3 %, 0.185→0.179) and DEGRADES both in 2025 (−6.3→−7.3 %, 0.152→0.160); all six still PASS.
+**My PRED-B was wrong in sign for two of three years** — it generalised the single screen year — and
+that is recorded as an error, not absorbed. C1 CC_REGULAR moves FURTHER ABOVE actual in 2023
+(+0.37→+0.79 TWh) and 2024 (+2.39→+2.91) and stays PASS in every class.
+
+**STATED AT THE GATE, NOT ABSORBED.** (i) Aug 2024 remains over-ceiling — **predicted** by the
+committed phase-0 record before any PREREG existed. (ii) 55375 Astoria Energy's 2024 summer dispatch
+falls **7.65 GWh more than its own ceiling tightening** (0.48 % of its keeper summer) while its
+off-summer rises +37.61 GWh — seasonal merit re-allocation, reported as a real breach of the
+confinement bound at one plant in one year. (iii) **THE 2022 VALIDATION TOUCHPOINT DEGRADES on all
+three of its failing criteria** (C1 CC_REGULAR +4.35→+5.01 TWh, C3a −11.2→−12.5 %, C3b 0.227→0.229)
+at an unchanged NOT-YET grade 4/8 — live selection evidence AGAINST the arm. Rule 30(c) forbids
+letting a held-out year downgrade the ISO (NYISO stays CALIBRATED on the train tier) and rule 22
+forbids re-tuning against a touchpoint year, so it is handed forward, not answered.
+
+**THE HANDED-FORWARD OBJECT: CC_REGULAR AGGREGATE OVER-PRODUCTION** — the counterpart of the still-open
+**object (B)**, in which 57185 under-runs its OWN meter by ~0.75 TWh in 2025 at corrected
+availability while the class as a whole over-runs. The seam repair separated these two cleanly;
+closing the aggregate half is the next lever, on the training tier.
+
+**Records (all in one PR):** keeper shard + promotion prose (nyiso-202's audit-E11 declaration carried
+forward; both `ccs_retrofit_*` fields are byte-identical between the two keepers and forecast-only);
+`calibration-complete.NYISO` re-keyed under D-5(b) after an artifact-only re-verification that read
+CALIBRATED (not worse ⇒ no stop, no escalation), `keeper_at_declaration` preserved, `final` untouched;
+`status/NYISO.js` rebuilt with the 2022 rung in the per-year holdout ladder (rule 30(b)); the 2022
+touchpoint `2026-09-07-nyiso-213-tp2022` registered and stamped to the keeper (rule 30(a)); forecast
+gate (a) re-keyed in the SAME PR (rule R-T / Q34), **verdict unmoved** pass→pass, prior detail
+preserved verbatim by sha; NYISO matrix shard cell `cc_summer_derate_reconciled_basis` **O → K** with
+keeper + gates stamps and the §5.x prose header re-stamped (rule 28). Screen bundle deleted before
+merge (rule 29(c)). The superseded 2022 touchpoint is NOT pruned — its id is cited in the preserved
+nyiso-209 owner-declaration record, and pruning would dangle a citation inside an owner ruling.
+
+**Re-measured, not repeated (rule 25):** `test_gate_a_provenance::test_live_board_passes`, which
+nyiso-210 / -211 / -212 all recorded as FAILING on MISO's stale gate-(a) stamp, now **PASSES** —
+`main` repaired it. 29 passed / 0 failed over that file, the mechanism's own guard and rule 30's
+holdout-render guard.
+
+**Markers:** `final` still ABSENT, the locked-test freeze untouched, 2019 and H1-2026 **not granted
+and not spent**, 2020 and 2021 **unspent** (a separate owner spend). **The five pending owner rulings
+are untouched and no new card is opened.**
+
+Record: `docs/FINDING-nyiso213-summer-seam-rescreen-2026-09-07.md`,
+`results/calibration/PREREG-nyiso213-summer-seam-rescreen.md`,
+`results/calibration/_nyiso213_screen_gates_2025.json`,
+`scripts/probes/nyiso213_screen_gates.py`.
