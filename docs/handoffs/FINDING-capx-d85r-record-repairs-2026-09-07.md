@@ -202,3 +202,34 @@ git fetch --depth=1 origin f0f7c67d937c11e487255784e8298faf3c98c0c1
 .venv/bin/python scripts/check_key_provenance.py            # exit 0: 15 KNOWN, 0 UNKNOWN
 .venv/bin/python -m pytest tests/regression/test_key_provenance_exceptions.py -q   # 9 passed
 ```
+
+## 9. Validation run, including the pre-existing red
+
+* `scripts/check_key_provenance.py` — exit 0, `15 KNOWN, 0 UNKNOWN`.
+* `tests/regression/test_key_provenance_exceptions.py` — **9 passed**, and 9 passed again under a
+  simulated blobless checkout (`_git_blob` stubbed to `None`, `fetch_commit` wired to raise).
+* Targeted guards, all green: `test_golden_forecast_bands`, `test_reuse_solved`,
+  `test_audit_keepers_lineage`, `test_persisted_identity`,
+  `test_cache_key_default_flip_guard` (73 passed, 1 skipped).
+* `ruff check` + `ruff format` clean across every touched file.
+* **Full fast tier** (`pytest -n 2 -m "not slow and not integration and not fulldata"`):
+  **7 failed, 9066 passed, 53 skipped, 1 xfailed, 695 subtests passed** in 10m27s.
+
+**The 7 are pre-existing `main` red and none is this lane's**, established by measurement rather
+than by inspection: with `src/market_sim/pipeline/persist.py` and
+`scripts/golden_forecast_bands.py` reverted to `origin/main` and this lane's new test file removed,
+**the same 7 fail identically** —
+
+```
+tests/scoring/test_forecast_parity.py::test_all_seven_keepers_resolve
+tests/scoring/test_forecast_parity.py::test_check_exits_zero_on_the_current_keepers
+tests/scoring/test_gate_a_provenance.py::test_live_board_passes
+tests/unit/data/test_caiso_st_gas_peak_measured.py::…::test_registry_value_matches_the_committed_artifact
+tests/unit/model/test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none
+tests/unit/results/test_cache_solve_surface.py::…::test_a_bundle_solved_on_S1_is_not_addressed_on_S2
+tests/unit/results/test_cache_solve_surface.py::…::test_sidecar_is_written_beside_the_config
+```
+
+They belong to other lanes (forecast keeper parity, the Gate-A board, a CAISO registry artifact,
+an RPS registry row, and the D79 solve-surface sidecar) and are **reported, not touched** — fixing
+another lane's red is outside record hygiene, and silencing one would be worse.
