@@ -122,6 +122,8 @@ row verbatim and numbered in the ledger §2.
 | **P10** `voll` value (SPP-12 correction to P5's citation) | SPP's posted Safety-Net Energy Offer Cap is **$1,000/MWh** (Market Protocols 119 §8.2.5 pp. 356–357); $2,000 is Order 831's hard ceiling for cost-verified offers | register **$2,000** = the highest price a dispatchable cost-verified SPP offer can reach (the NEISO reading of Order 831); the comment cites BOTH numbers; SPP-55 revisits shortage pricing against the VRLs ($250/MW spinning, $50,000/MW power balance) | FINDING-spp-12 §6 | **RULED r#3: "$2,000 — the cost-verified ceiling"** |
 | **P11** unblocking portal rows 5–9 + the N↔S TTC (row 11) | the portal needs an `X-SPP-UI-Token`; SPP's *System Interfaces Stakeholder Reference Guide* names an untried **FTP public-data route**; the 2025 ITP Assessment Report carries no transfer-capability table (ITP Manual v3.3 is the next candidate) | charter **SPP-13** (Opus probe lane: FTP route for rows 5–9; ITP Manual / 20-Year Assessment sweep for the N↔S capability + SPS tie ratings); W2 proceeds in parallel; SPP-20 registers the N↔S TTC **Tier-3 with the misalignment documented** (doc 04 convention, rule 14) if SPP-13 has not landed a number first; the SPP-54/57 ranking waits for the flowgate archive | FINDING-spp-12 §2, §6, §8 | **RULED r#3: "Charter SPP-13 probe lane; W2 proceeds in parallel"** |
 | **P12** rows 5–9 after SPP-13: the route is anonymous FTP (`pubftp.spp.org`, user `anonymous`) blocked ONLY by the session egress (port 21); row 11 is NDA/CEII, not public | owner-side pull vs defer vs NDA | the desk recommended an owner-side pull of the 36 monthly LMP files + the RTBM daily binding-constraint files | FINDING-spp-13 §1, §4, §6 | **RULED r#4: "Try to find the data somewhere else"** → lane **SPP-14**; W3/W4 proceed regardless; row 11 stays Tier-3 in SPP-20. **CLOSED 2026-09-06 — and the premise was wrong.** SPP-14 swept the candidate list and found the data at SPP itself: `portal.spp.org`'s download and listing calls are both anonymous over plain HTTPS. No owner-side pull, no NDA and no third-party mirror is needed for rows 5–9. The `gridstatus` client reading these URLs with a bare `pd.read_csv` was the tell. `FINDING-spp-14-2026-09-06.md` §1 |
+| **P1 — RANKING APPLIED r#5** (a desk act under the ruled test, no card) | SPP-14's four-group table (FINDING-spp-14-…-session-b §5.2): `oklahoma_internal` binds 60–68 % of hours at $188–331/MWh mean \|shadow\|; `n_s_corridor` 52–63 % at $140–227; `sps_tie` 26–34 % at $52–70 — in ALL three years, on BOTH legs | — | FINDING-spp-14 §5 | **APPLIED r#5: SPP-57 (Oklahoma pocket) outranks SPP-54 (SPS pocket); the SPS tie never reaches the N↔S share, so SPP-54 does not clear the README's test and stays queued behind SPP-57** |
+| **P13** the N↔S TTC for the first keeper | SPP-20 registered a **48,700 MW placeholder** (North summer capability — cannot bind); no public rating exists (SPP-13); the RTBM archive carries `Real Time Effective Limit` only from **2026-01-28** (SPP-14 §5.4) | pull SPP-53 into W3 as SPP-40's precondition: a Fable derive lane reconciling the 2026→ corridor-flowgate limits (SPP's own rated limits, the ERCOT GTC analogue) into one link TTC, misalignment documented, cross-checked on the 2023–25 corridor binding frequency | FINDING-spp-20 §5 R-6, FINDING-spp-14 §5.4 | **RULED r#5: "Pull SPP-53 into W3 as SPP-40's precondition"** |
 | **P9** EIA-930 SWPP defective hours (raised by the audit §3.4) | a 100× unit slip on 2023-06-12 21:00 inflates `NG: WND` by 3.6 TWh (caught on demand, not on fuel-mix columns); two low-side demand dropouts (2025-06-21 05:00 = 1,505 MW; 2024-07-19 00:00) no screen catches | benchmark-side fix in SPP-31 (existing median-ratio test applied to `NG:` columns when building benchmarks, six ISOs byte-identical); the low-side demand screen is a repo-wide defect with cache-key risk → ROUTED to the audit track; SPP-40's PRECOMMIT names the two hours; no new `ScenarioConfig` parameter in W2–W4 | audit §3.4 | **RULED r#2: "Benchmark-side fix in SPP-31; demand-side routed"** |
 
 Two further defaults that need no card, recorded here so no lane re-litigates them: `_MULTI_YEAR_ISOS`
@@ -161,6 +163,7 @@ W3  Phase 2 derivation (parallel; each lane owns only its outputs)   ∥  site/d
     └─────┬─────┘ └─────┬─────┘ └───────┬────────┘ └─────┬─────┘  (SPP-33 is NOT a W4 precondition)
           └─────────────┴───────┬───────┴───────────────┘
                                 ▼
+    + SPP-53 [FABLE] N↔S TTC derive (P13, r#5) — pulled from W5 into W3; SPP-40's FOURTH precondition
 W4  First-ever solve → FIRST KEEPER → dashboard flip (one lane)
     ┌──────────────────────────────────────────────────────────────────────────────┐
     │ SPP-40 smoke → rule-29 screen (P7) → 2023-25 bundle → register → keepers/    │
@@ -171,7 +174,7 @@ W4  First-ever solve → FIRST KEEPER → dashboard flip (one lane)
 W5  Calibration loop — §5.7 lever queue, ONE lever = ONE lane = ONE PR, sequential, keeper is control
     SPP-51 seams (P2/P3 priced, --priced-interchange A/B)  [OPUS]
     SPP-52 HSL / curtailment as first-class metric          [OPUS]
-    SPP-53 N↔S TTC from binding-constraint frequency        [FABLE]
+    SPP-53 N↔S TTC — MOVED INTO W3 at r#5 (P13); see §4 above
     SPP-54 SPS-pocket third zone   ┐ P1 pre-declared levers, RANKED by SPP-12's per-flowgate
     SPP-57 Oklahoma-pocket zone    ┘ binding share + shadow price vs the N↔S corridor  [FABLE]
     SPP-55 VRL-based scarcity design                        [FABLE]
@@ -180,7 +183,7 @@ W5  Calibration loop — §5.7 lever queue, ONE lever = ONE lane = ONE PR, seque
 W6  Forecast-program entry — GATED, ROUTED to the capx director (P8)
     SPP-60 T1-F hindcast + program-status.json row + GOLDEN_ISOS + goldens  [FABLE]
 
-CRITICAL PATH:  SPP-11 (OK/NE CEMS)  →  SPP-20  →  SPP-30  →  SPP-40
+CRITICAL PATH (r#5):  SPP-20 ✔  →  {SPP-30, SPP-31, SPP-32, SPP-53}  →  SPP-40
 ```
 
 Sequencing rules (playbook §8.5): lanes inside a wave are parallel because their files are disjoint by
@@ -214,7 +217,8 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-32** zonal shares + wind shape + gas hub | OPUS · data-intake contract execution | spp | `curate_zonal_shares.py` SPP branch + `_SPP_SUBBA_ZONE_GROUPS`; the clean `zonal-shares` rows for SPP; new `scripts/data/build_spp_wind_shape.py` (clone of `build_miso_wind_shape.py`, NASA POWER `WS50M` at EIA-860 wind sites) → `data/raw/spp-wind-shape/spp_<yr>_wind_zone_shape.parquet`; `data/raw/spp_zonal_gas_hub.csv` (MISO csv pattern; EIA delivered-to-EP state series as the Panhandle / NGPL-MidCon proxy) + `data/fuel/hubs.py` wiring; `renewables.py` SPP membership in the wind-zone-shape ISO set (a membership, not a field); SPP reference curtailment rate only if SPP-12 landed a published annual rate | shares sum to 1.0 every hour; the redistribution identity holds to 1e-9 | `FINDING-spp-32-<date>.md` with a G-DRIFT hunk audit classifying every `renewables.py` / `hubs.py` hunk INERT for the six ISOs | `data-intake` skill contract (`write_clean`/`read_clean`, tmp-`CLEAN_DIR` tests); no `ScenarioConfig` field |
 | **SPP-33** seam derive | OPUS · derive only | spp | `derive_neighbor_hr_by_year.py --iso SPP` outputs (MISO from `actual_lmp_hourly_zonal_MISO.parquet` West/South rows; ERCOT from its hourly parquet); SWPP interchange duration curves by DIBA; `data/raw/reference/spp_seam_*.csv` | — | `FINDING-spp-33-<date>.md` — the `hr_by_year` and measured-flow numbers **for SPP-51 to arm** | does NOT edit `spec.py`; numbers reproduce from committed inputs |
 | **SPP-34** site + docs | OPUS · execution | code | `docs/codebase-site/js/iso-configs-table.js:16-30,230`, `js/viz-iso-topology.js:16,118`, `css/site.css:402-407`, `data/iso-topologies.json` (regenerate from `get_iso_config`), `forecast-runs.html:90` (add SPP; verify the page tolerates an ISO with no forecast runs), `data-completeness.html:360`, `scripts/render_data_dictionary.py:49`, `docs/codebase/08-config-reference.md`, `docs/README.md`, `index.html` "six ISOs", `docs/calibration-log/spp.md` (header, MISO's format), CHANGELOG | — | `FINDING-spp-34-<date>.md` | `accessibility-audit` skill on touched pages; `sync-docs`; **`ff_readiness_battery.GOLDEN_ISOS` NOT touched** (W6) |
-| **SPP-40** first solve → first keeper | FABLE · novel-object kill-grading, determination, attestation | spp | `results/calibration/spp40_baseline_B/` (+ `hourly/` sidecars), `frontend/data/backcast/{registry,runs}/<id>.*`, `keepers/SPP.json` (new), `keepers/index.json` (+SPP), `status/SPP.js` (`build_status.py --iso SPP`), `bench/SPP/<yr>.json.gz`, `mechanism-matrix/SPP.js` keeper + gates stamp (LAST commit), `docs/calibration-log/spp.md` entry, `PRECOMMIT-spp-40-<date>.md` | `run_calibration.py --iso SPP` smoke on the screen year (fuel-mix only); fleet / offer-array census; PRECOMMIT pushed before any solve | `FINDING-spp-40-<date>.md` | `audit_keepers --check`, `check_registry_payload_parity`, `check_mechanism_matrix`, `check_bench_freshness` all 0; screen bundle DELETED before merge (29c); dashboard renders SPP with its determination; DOF ledger lists zero residual-identified parameters; `authorized_price_tuning` declares **none** (every `offer_curve_by_group` band 1.0 — rule 25) |
+| **SPP-40** first solve → first keeper (PRECONDITIONS r#5: SPP-30, SPP-31, SPP-32 **and SPP-53** landed) | FABLE · novel-object kill-grading, determination, attestation | spp | `results/calibration/spp40_baseline_B/` (+ `hourly/` sidecars), `frontend/data/backcast/{registry,runs}/<id>.*`, `keepers/SPP.json` (new), `keepers/index.json` (+SPP), `status/SPP.js` (`build_status.py --iso SPP`), `bench/SPP/<yr>.json.gz`, `mechanism-matrix/SPP.js` keeper + gates stamp (LAST commit), `docs/calibration-log/spp.md` entry, `PRECOMMIT-spp-40-<date>.md` | `run_calibration.py --iso SPP` smoke on the screen year (fuel-mix only); fleet / offer-array census; PRECOMMIT pushed before any solve | `FINDING-spp-40-<date>.md` | `audit_keepers --check`, `check_registry_payload_parity`, `check_mechanism_matrix`, `check_bench_freshness` all 0; screen bundle DELETED before merge (29c); dashboard renders SPP with its determination; DOF ledger lists zero residual-identified parameters; `authorized_price_tuning` declares **none** (every `offer_curve_by_group` band 1.0 — rule 25) |
+| **SPP-53** N↔S TTC derive (W3 since r#5, P13) | FABLE · a TTC is a design object: the reconciliation of parallel flowgate limits into one link rating is adjudication | spp | `data/raw/spp-binding-constraints/rtbm_bc_corridor_limits_2026.parquet` (NEW reduced sidecar: the `n_s_corridor` rows of the 2026-01-28→ 14-column daily files) + README/SOURCES; `src/market_sim/config/iso_configs.py` `_spp_config` TTC value + comment (rule 27); `config/transmission_expansion.py` `TRANSMISSION_BASE_STATIC_VINTAGE["SPP"]` if the vintage moves; `docs/parameter-citations.md` row | the construction rule is written in the PRECOMMIT BEFORE any limit is read | `PRECOMMIT-spp-53-<date>.md`, `FINDING-spp-53-<date>.md` | no solve; the six keepers' keys unmoved (`solve_surface_register.py --diff`); SPP-40 reads the value |
 | **SPP-51…56** | per §4 | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -867,6 +871,11 @@ scripts/tag_mixed_plants.py → build_offer_curve_overrides.py. GATES: window co
 incl. OK and NE; ZERO full-year fallbacks (a unit falling to the fallback is reported by unit with
 the reason); the committed-% and tranche distributions summarised by class vs MISO's as a sanity
 band (report, never tune). Every output header cites source + method + the CEMS vintage.
+RULINGS APPLIED (r#5, 2026-09-07): SPP-20 LANDED (PR #5329) — get_iso_config("SPP") is live (2 zones,
+SPP-North 0.5125 / SPP-South 0.4875); campd.ISO_STATES["SPP"] is the 14-state list. SPP-15 landed
+2019–2022 CEMS for OK/NE/NM — derive the TRAINING years only (--years 2023 2024 2025) per this charter;
+the back years are a later intake batch, not yours. The legacy-binning fleet SPP-20 built is 1,012
+thermal units / 56,036.9 MW; your tranche outputs are what move SPP-40 onto the per-plant CAMPD path.
 RULES THAT BITE: 13, 14, 23 [R-FROZEN-DERIVE] (nothing re-derives against a residual — there is no
 residual yet), 27 (CSV outputs by git push; SHA/row counts in the FINDING), 28 (no cell moves).
 EXIT: docs/handoffs/FINDING-spp-30-<date>.md (windows per state-year, units covered %, fallback list,
@@ -906,6 +915,14 @@ flagged hour — inside the benchmark builder, never in data/raw. PROVE the six 
 benchmark blocks are byte-identical afterwards (they have no such hour). Report the 2023 SWPP wind
 TWh before and after. The two LOW-side demand hours (2025-06-21 05:00, 2024-07-19 00:00) are NOT
 yours — routed to the audit track; list them in the FINDING as known artifacts only.
+RULINGS APPLIED (r#5, 2026-09-07): SPP-20 LANDED; TAIL_THRESHOLD["SPP"] = 200 exists in all three files.
+SPP-14 LANDED the per-hub parquet data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet
+(52,560 rows; zone = SPPNORTH_HUB / SPPSOUTH_HUB — hub names, NOT model zones; cross-check gate passed
+byte-identical) and Hub_Definitions.csv under data/raw/spp-planning/ (the node weightings of the two
+hubs). Build actual_lmp.json's SPP zonal entries FROM the per-hub parquet, keyed by hub name, and state
+in the block's comment field that a hub is a node cluster (Nebraska / central Oklahoma), not a zone
+average — SPP-40's PRECOMMIT cites this. ALSO YOURS (routed by SPP-14): the README row for the new
+parquet in data/raw/_validation-source/README.md.
 RULES THAT BITE: 13 (benchmarks are measured outcomes used ONLY as the score, never as an input),
 14, 27 (derive_actual_lmp.py is ≥ 300 lines — Edit tool, fetch-back verify), 28 (no cell moves).
 EXIT: docs/handoffs/FINDING-spp-31-<date>.md with the SPP benchmark table (per year: load TWh,
@@ -946,6 +963,22 @@ reconcile to the 930 aggregate within the builder's documented tolerance; the hu
 per zone-month set. G-DRIFT: in the FINDING, classify EVERY hunk you add to renewables.py and hubs.py
 as INERT for each of the six ISOs, with the reason (SPP-keyed branch / registry entry), and re-run
 tests/regression/test_persisted_identity.py.
+RULINGS APPLIED (r#5, 2026-09-07): SPP-20 LANDED with the P1 zone grouping (North = EDE INDN KACY KCPL
+LES MPS NPPD OPPD SECI SPRM WAUE WR; South = CSWS GRDA OKGE SPS WFEC; load shares 0.5125 / 0.4875 from
+SPP-11's sub-BA energy). THREE MEASURED INPUTS LANDED SINCE YOUR CHARTER — use them, cite them: (a)
+data/raw/spp-planning/SL_to_Pnode_to_Zone_with_Area.csv + the NODE_AREA ↔ EIA-930 sub-BA join table
+(FINDING-spp-14-2026-09-06.md §8) — the measured settlement-location → area map; state which side any
+straddling area (EDE) lands on and why; (b) data/raw/spp-hourly-load/HOURLY_LOAD-YYYYMM.csv ×36 (SPP's
+own hourly load by control zone, UTC; the control zones ARE the sub-BA tokens) — cross-check the EIA-930
+sub-BA shares against it per year and report the max hourly divergence; (c) data/raw/spp-genmix/
+GenMix_{2023,2024,2025}.csv (complete 5-minute wind delivered = WIND_MKT + WIND_SELF, UTC) — the
+reconciliation target for the NASA-POWER wind shape AND, with data/raw/spp-hsl/
+spp_wind_curtailment_annual.csv (ASOM average hourly curtailment MW), BOTH legs of the reference
+curtailment rate are now measured: rate_y = curtailed_MWh / (delivered_MWh + curtailed_MWh), derived=yes
+with the formula — register it for SPP in the uncurtailed-fallback set with the citation. ALSO YOURS
+(routed by SPP-20 R-2, one word): data/raw/load-forecast/spp/spp.csv `basis=coincident` is outside the
+datatype vocabulary {net, gross, unspecified} and makes parse_iso("SPP") raise — correct it to
+`unspecified`, add a SOURCES note, and prove `curate_load_forecast.py` runs for SPP.
 RULES THAT BITE: 2 (no hour loops — numpy over the parquet), 5, 13, 14, 23, 24 [R-REGISTRY], 27
 (renewables.py and hubs.py are core files ≥ 300 lines — Edit tool, fetch-back verify), 28 (no cell
 moves — you arm no mechanism; the wind-shape membership is an input, not a lever).
@@ -969,6 +1002,16 @@ MISO-West/South rows; ERCOT to actual_lmp_hourly_ERCOT.parquet), data/raw/refere
 interchange/spec.py (SPP-51 arms the numbers you derive); MISO's SPP seam; ScenarioConfig.
 RUN: derive_neighbor_hr_by_year.py --iso SPP --years 2023 2024 2025; the elasticity derive; the
 SWPP net-interchange duration curves per DIBA per year with the sign convention stated.
+RULINGS APPLIED (r#5, 2026-09-07): SPP-20 LANDED INTERFACE_NEIGHBORS["SPP"] = MISO + AECI + ERCOT, all
+default-off, anchored (MISO) on the West+South ZONAL rows of actual_lmp_hourly_zonal_MISO.parquet.
+SPP-20 R-7: derive_neighbor_hr_by_year.py's _NEIGHBOR_LMP_ISO maps neighbour "MISO" to the MISO SYSTEM
+file, not the zonal anchor the registration names — derive against the anchor SPP-20 registered; if the
+producer cannot without a src/scripts change, STOP that item and route it (never edit the producer).
+SPP-15 widened the SWPP interchange parquet to 2019–2025 (2023–25 rows byte-identical) — derive the
+training years only. SPP-14 landed data/raw/spp-planning/TieFlows_Sep2025.csv (one month of 1-minute
+tie flows by neighbour): use it ONLY as a sign/magnitude sanity check on the EIA-930 DIBA series. Note
+for SPP-51: miso-233 (MISO lane) has since registered `miso_seam_neighbour_hourly_spp` on MISO's side —
+a MISO object, rule 25; cite, never edit.
 RULES THAT BITE: 13, 23, 25 (SPP's numbers from SPP's data; nothing mirrored from MISO's fitted
 seam), 27, 28 (no cell moves).
 EXIT: docs/handoffs/FINDING-spp-33-<date>.md with the hr_by_year table and the duration summaries,
@@ -996,12 +1039,97 @@ forecast runs; regenerate the data dictionary; update 08-config-reference.md's z
 per-ISO mechanism lists for SPP; fix every "six ISOs" phrase in docs/README.md, index.html,
 data-pipeline.html; create docs/calibration-log/spp.md with the header + "Next shorthand: spp-1";
 CHANGELOG entry. Run the accessibility-audit skill on every page touched; run sync-docs at the end.
+RULINGS APPLIED (r#5, 2026-09-07): SPP-20 LANDED — get_iso_config("SPP") drives iso-topologies.json now.
+FOUR ROUTED ITEMS FROM FINDING-spp-20 §5 ARE YOURS: R-3 the parameter registry — `scripts/validate_
+parameters.py` reports +33 uncited rows, exactly the new SPP rows; regenerate / cite them in
+docs/parameter-citations.md (every SPP value with its audit-§5 citation) and report the before/after
+count; R-4 `scripts/hydrate_data.py` split-child exact match — a split-directory child named exactly
+`SPP` / `spp` (zone-specific-demand/SPP, load-forecast/spp) is not claimed by the substring tokens: add
+exact-name matching for split children + a unit test (hydrate_data.py is ~400 lines: Edit tool,
+fetch-back verify); R-5 docs/multi-iso/00-iso-addition-protocol.md §0/§3 must now say SPP IS registered
+(2 zones, seam TTC Tier-3 pending SPP-53) — SPP-10's "not registered" correction is stale; R-8
+`scripts/data/export_lce_lmp._DUMMY_BASE_LMP` gains an SPP row and tests/unit/results/
+test_export_lce_lmp.py is extended to seven. Also: keepers/index.json is NOT yours (SPP-40 adds SPP at
+registration); forecast-runs.html must render with SPP present and no forecast runs.
 RULES THAT BITE: 15 (dashboard text is generated from sidecars — do not hand-write status),
 26, 27 (several ≥ 300-line files — Edit tool, fetch-back verify), 28 (no cell moves).
 EXIT: docs/handoffs/FINDING-spp-34-<date>.md (file → change table, audit output); plan §5 row → LANDED.
 ```
 
-### W4 — first solve → first keeper (issued the sitting after SPP-30/31/32 merge)
+#### SPP-53 `[FABLE]` — the N↔S corridor TTC from SPP's own rated flowgate limits (moved into W3 at r#5 under ruling P13)
+
+```
+You are lane SPP-53. MODEL: Fable claude-fable-5-1 — a TTC is a market/physical design object; turning
+parallel flowgate ratings into ONE pipe-and-bubble link limit is adjudication, and it edits a ≥300-line
+core file (iso_configs.py — Edit tool, exact bytes, fetch-back verify). DATA PROFILE: spp.
+Branch stem: claude/spp-53-ns-ttc-f6dz.
+Read CLAUDE.md freshly and in full (rules 1, 5, 13, 14 [R-ACCURATE] — its misalignment clause is the
+whole of this lane —, 23, 27, 29(b) G-DRIFT); docs/multi-iso/spp-addition-plan-2026-09.md §3 P1 (as
+APPLIED r#5), P11, P13 (as ruled), §5 row SPP-53, §7 G8; docs/multi-iso/04-transmission-zones-and-
+congestion.md (the binding-frequency method and the ERCOT WESTEX/PNHNDL precedent — GTC limits ARE
+link TTCs there); docs/handoffs/FINDING-spp-20-2026-09-06.md §3 (the 48,700 MW placeholder row and
+why it cannot bind) and §5 R-6; docs/handoffs/FINDING-spp-14-2026-09-06-session-b.md §5 IN FULL (the
+four-group rules, `docs/handoffs/spp14/groups.py`, the corridor constituents by hours — Franklin 161 kV
+transformer, Viola transformer, First Creek–Roanridge, Smoky Hills–Summit, Nashua, Jayhawk–Franklin —
+and §5.4: the 14-column schema with `Real Time Effective Limit` exists from 2026-01-28 ONLY);
+data/raw/spp-binding-constraints/README.md + Flowgates.csv + Temp_Flowgate.csv (SPP-14 landed SPP's two
+flowgate registries — check FIRST whether they carry ratings); scripts/data/fetch_spp_alt_portal.py
+(SPP-14's producer for portal files); iso_configs.py _spp_config (the link you will re-rate).
+
+PRECONDITIONS (git log origin/main --grep=SPP-20 / SPP-14): both LANDED. Parallel with SPP-30/31/32/33/34
+— you own none of their files. Nothing solves in this lane.
+FILES YOU OWN: NEW data/raw/spp-binding-constraints/rtbm_bc_corridor_limits_2026.parquet — the REDUCED
+sidecar (the LMP-sidecar precedent: the multi-GB daily pulls are not committed; only the corridor rows
+are): every `State ∈ {BINDING, BREACHED, ACTIVATED}` row of the 2026-01-28 → latest daily RTBM BC files
+whose constraint falls in `n_s_corridor` under groups.py's rules, with `Constraint Name`, `Monitored
+Facility`, `Contingent Facility`, `Source Limit`, `Real Time Effective Limit`, `Initial Effective
+Limit`, `Interconnect`, `GMTIntervalEnd` — plus a README row (fetch command, span, row count, sha256)
+and SOURCES; src/market_sim/config/iso_configs.py — the `_spp_config` N↔S TransferLink `ttc_mw` and its
+citation comment ONLY; src/market_sim/config/transmission_expansion.py TRANSMISSION_BASE_STATIC_VINTAGE
+["SPP"] ONLY if your source vintage differs from 2025; docs/parameter-citations.md (one row);
+docs/handoffs/PRECOMMIT-spp-53-<date>.md, FINDING-spp-53-<date>.md.
+FILES YOU MUST NOT TOUCH: anything else in iso_configs.py (SPP-20's registration stands); ScenarioConfig;
+the four-group rules in groups.py / the README (fixed before the data — rule 1); any other ISO's file;
+the matrix shards (no mechanism is tested; a TTC value is an input).
+
+DO, in this order:
+(0) PRECOMMIT FIRST — write and push it BEFORE reading a single limit value. It states: (a) the
+    construction rule for turning per-flowgate effective limits into one link TTC (choose and JUSTIFY
+    one: the rating of the corridor's dominant defining flowgate as the ERCOT-GTC analogue; or a
+    simultaneous-transfer construction over the parallel Kansas paths; or the hour-wise minimum over
+    flowgates binding together — state which physical reading of a pipe-and-bubble link each one is,
+    pick one, and name what would make you reject it); (b) the misalignment you are documenting under
+    rule 14: the limits are 2026 ratings applied to 2023–2025, and a flowgate limit is a monitored-element
+    rating under a contingency, not a corridor transfer capability; (c) the CROSS-CHECK, residual-blind:
+    the 2023–2025 corridor binding frequency (52–63 % of hours) and the 2024 spread must be consistent
+    with a link that CAN bind — a TTC above the corridor's plausible peak transfer (bounded by the
+    zonal load/generation imbalance implied by SPP-11's sub-BA energy split and the North fleet) is
+    rejected as still-a-placeholder; (d) the STOP conditions: no daily file reachable, or Flowgates.csv
+    already carrying a corridor rating that makes the archive pull unnecessary.
+(1) Flowgates.csv / Temp_Flowgate.csv: read them for rating columns first. If SPP publishes the
+    corridor flowgates' ratings there, that is the source and the archive pull in (2) is a cross-check.
+(2) Pull the 2026-01-28 → latest daily RTBM BC files with SPP-14's producer to the scratchpad; extract
+    the corridor rows (groups.py rules, unchanged) into the reduced sidecar; report per corridor
+    flowgate: n intervals, median / p10 / p90 of `Real Time Effective Limit`, `Source Limit`, and how
+    often the effective limit sits below the source limit (derates).
+(3) Apply the PRECOMMIT's construction rule → ONE ttc_mw with its citation comment (rule 5), the
+    vintage, the misalignment statement, and the rejected alternatives. Cross-check per (0c). Run
+    `uv run python scripts/solve_surface_register.py --diff origin/main HEAD` → zero moved rows for the
+    six ISOs (iso_configs.py is not a surface module, but prove it); `get_iso_config("SPP").
+    validate_topology()`; `pytest tests/unit/config -q`.
+Never tune the value to any price or flow residual — there is no SPP residual yet and there must not
+be one in this lane; the construction rule is declared before the data and the number falls out of it.
+RULES THAT BITE: 1, 5, 13, 14, 23, 24, 25, 26, 27 [R-PUSH], 28 (no cell moves).
+EXIT: PRECOMMIT + FINDING (the per-flowgate limit table, the construction, the number, the cross-check,
+the G8 proof), the re-rated link in iso_configs.py, the citations row; plan §5 row → LANDED and §3 P13
+row's ruling cell annotated with the value. Report to the owner: the TTC, its construction and its
+misalignment statement, first. SPP-40 reads it.
+Push by pack size (CLAUDE.md Git & Pushing); fetch-back verify every pushed file ≥300 lines; no CI
+workflows; no default moves; no solve; if you must touch a file outside your regions, STOP and route to
+SPP-DESK in your FINDING.
+```
+
+### W4 — first solve → first keeper (issued the sitting after SPP-30/31/32 AND SPP-53 merge)
 
 #### SPP-40 `[FABLE]` — smoke, rule-29 screen, the 2023–2025 bundle, registration, the dashboard flip
 
@@ -1018,7 +1146,9 @@ prune_iso_runs.py, check_registry_payload_parity.py; frontend/data/backcast/keep
 (promotion protocol) and keepers/MISO.json (shard shape); docs/calibration-log/miso.md (a recent
 entry as the format); one recent PRECOMMIT-miso*.md (the PRECOMMIT form).
 
-PRECONDITIONS (git log origin/main --grep=SPP-3; STOP if unmet): SPP-30, SPP-31, SPP-32 LANDED.
+PRECONDITIONS (git log origin/main --grep=SPP-3 and --grep=SPP-53; STOP if unmet): SPP-30, SPP-31, SPP-32
+AND SPP-53 LANDED (P13: the N↔S link must carry SPP-53's derived TTC, never SPP-20's 48,700 MW
+placeholder — check the value in _spp_config before the smoke).
 SPP-33 is NOT a precondition (seams are served, not priced, in this keeper — P2). Ask the desk whether
 another per-plant solve is running before you start (rule 12: ≤ 2 concurrent per-plant LPs).
 
@@ -1106,6 +1236,7 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-13 | `docs/handoffs/FINDING-spp-13-2026-09-06.md` | 2026-09-06 |
 | SPP-14 | `docs/handoffs/FINDING-spp-14-2026-09-06.md` | **LANDED** (incl. the r#4 am.1 addendum: items A/B/C were already landed by the parallel SPP-14 session, PR #5335, and are verified at HEAD rather than duplicated; the NODE_AREA↔EIA-930 sub-BA join table is FINDING §8.2 — all 17 tokens match 1:1, but reserve zone 21's `WACM`/`PRPA`/`WAUW` (232 SLs) have no sub-BA token at all) — the portal route is anonymous HTTPS; rows 5/6/7/9 served, row 8's four-group table computed (SPP-57 > SPP-54, both legs, all years), gate PASS 0.0000 %; row-8 schema correction removes SPP-53's effective-limit input for 2023–2025 |
 | SPP-15 | `docs/handoffs/FINDING-spp-15-2026-09-06.md` | 2026-09-06 |
+| SPP-53 | `docs/handoffs/FINDING-spp-53-<date>.md` (+ PRECOMMIT) | — |
 | SPP-21 | `docs/handoffs/FINDING-spp-21-2026-09-06.md` | 2026-09-06 |
 
 ## 10. Ledger

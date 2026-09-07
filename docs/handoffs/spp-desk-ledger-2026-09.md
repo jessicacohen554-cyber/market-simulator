@@ -10,6 +10,45 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0f. r#5 — sitting #5: SPP IS REGISTERED; SPP-14/15/20 landed; P1 ranking applied; P13 ruled; W3 + SPP-53 issued (2026-09-07, main HEAD `96a6c4b3`, 01:35 UTC)
+
+- Pin `96a6c4b3` (137 commits since r#4). Branch fast-forwarded. **Needs-registration line (E-4
+  standing): SPP-20 has merged — nothing is gated on registration any more.**
+- **GRADED BY CONTENT.** SPP-20 **LANDED** (PR #5329, `claude/spp-20-topology-market-design-1iew99`,
+  `FINDING-spp-20-2026-09-06.md`): `SUPPORTED_ISOS` = 7; SPP-North 0.5125 / SPP-South 0.4875; voll 2000;
+  PRM 0.16; TAIL 200; `SURFACE_ISOS` = 7; overrides `{}`; six keepers unmoved (0 moved surface rows,
+  persisted identity 23/23, MISO keeper `fleet_only` hash-identical); 15 six-tuple tests extended, 3
+  documented exclusions. **The N↔S link is a 48,700 MW PLACEHOLDER that cannot bind** (no public
+  rating; SPP-20 §5 R-6) → card P13. Eight routed items (§3 R-i…R-p). SPP-14 **LANDED** (PRs #5335,
+  #5341; two parallel sessions → an add/add collision on the FINDING, salvaged onto main by the owner's
+  lane as `df5e8c3d` / `3cfb73bc`; both reports kept): `portal.spp.org` answered anonymously on
+  2026-09-06 (the SPP-12/13 block did not reproduce; UA-independent); rows 5–9 ALL SERVED from SPP's own
+  files; per-hub parquet promoted under the cross-check gate (sha256-identical system rebuild); hourly
+  \|N−S\| mean/p90: **2024 widest on both legs, both markets** (RT mean 17.23 vs 12.13 / 15.18; p90 41.4
+  vs 28.5 / 36.2) → **P7 stands on the hourly measure**; the four-group table served (below); RTBM
+  effective limits exist only from 2026-01-28 (§5.4). SPP-15 **LANDED** (PR #5333): 12 back-year CEMS
+  parquets, 4 sub-BA files, interchange widened 2019–2025 with the 2023–25 slice byte-identical, gas
+  back years; blocked table EMPTY.
+- **P1 RANKING APPLIED (desk act under the ruled test, no card).** `oklahoma_internal` 0.603 / 0.681 /
+  0.648 of hours at $188 / $229 / $331 mean \|shadow\| ≥ `n_s_corridor` 0.555 / 0.516 / 0.631 at $140 /
+  $194 / $227 ≫ `sps_tie` 0.258 / 0.342 / 0.282 at $52 / $70 / $59 (2023 / 2024 / 2025). The SPS tie
+  never reaches the N↔S share → **SPP-57 outranks SPP-54**; SPP-54 stays queued behind it.
+- **CARD P13 RULED** (§2): SPP-53 pulled from W5 into W3 as SPP-40's fourth precondition — a Fable
+  derive lane reconciling the 2026→ corridor-flowgate effective limits into one link TTC under rule
+  14's misalignment clause, construction declared in a PRECOMMIT before any limit is read.
+- **ISSUED: SPP-30, SPP-31, SPP-32, SPP-33, SPP-34, SPP-53** (six parallel lanes; the W3 charters carry
+  "RULINGS APPLIED (r#5)" blocks assigning SPP-20's and SPP-14's routed items: R-2 → SPP-32, R-3/R-4/R-5/
+  R-8 → SPP-34, R-7 → SPP-33, the `_validation-source/README.md` row → SPP-31, R-6 → SPP-53).
+- Gates at the pin: audit_keepers 0 · parity 0 (15 runs / 48 dirs — the owner's MISO lane pruned) ·
+  bench 0 (25 parts) · goldens 0 · refactor-guards 0 (the SPP allowlist entry is gone) · matrix validate
+  0 · **`check_gate_a_provenance` EXIT 1, now MISO** (`gate.a_keeper_marker` cites superseded
+  `miso-230-ctdrag-seam`) — capx Q34 duty, §3 R-e updated. `keepers/index.json` still six — correct
+  until SPP-40 registers.
+- Standing note from the SPP-14 collision: **one charter = one session.** A charter pasted into two
+  sessions produces two FINDINGs at one path and a salvage merge; the desk asks the owner before
+  re-issuing anything that might already be running (§0 rule 3 already says so — restated because it
+  cost a salvage).
+
 ### 0e. r#4 — sitting #4: SPP-13 and SPP-21 landed, SPP-20 running, P12 ruled, SPP-14 chartered (2026-09-06, main HEAD `5a20cec1`, 23:01 UTC)
 
 - Pin `5a20cec1` (61 commits since r#3; the r#3 desk commit merged as PR #5291). Branch fast-forwarded.
@@ -154,17 +193,18 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | SPP-11 EPA CAMPD + EIA fetch | W1 | Opus | shared | **LANDED 2026-09-06** — all four §6 items 1–4 GOT, blocked table EMPTY | `claude/spp-11-fetch-epa-eia-xs70mz` (stem issued `…-m3rd`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-11-2026-09-06.md` |
 | SPP-12 portal.spp.org + spp.org fetch | W1 | Opus | shared | **LANDED 2026-09-06** — rows 10–14 + NRC served; rows 5–9 token-blocked; row 11 not found; addendum (A)(B-spec)(C) honoured | `claude/spp-12-fetch-portal-x9cn-6atxy2` | #5285 | `docs/handoffs/FINDING-spp-12-2026-09-06.md` |
 | SPP-13 portal FTP route + N↔S TTC (P11) | W2 | Opus | shared | **LANDED 2026-09-06** — FTP route documented (anonymous; egress-blocked on port 21); row 11 NOT PUBLIC (NDA/CEII); gen-mix + monthly peak landed | `claude/spp-13-portal-ftp-ttc-h2vk-h9c6q8` | #5314 | `docs/handoffs/FINDING-spp-13-2026-09-06.md` |
-| SPP-14 alt HTTPS sources for rows 5–9 (P12) | W2 | Opus | shared | **ISSUED r#4**; addendum r#4 am.1 (v35 zip files) | — (stem `claude/spp-14-alt-sources-w6dp`) | — | — |
+| SPP-14 alt HTTPS sources for rows 5–9 (P12) | W2 | Opus | shared | **LANDED 2026-09-06** — rows 5–9 ALL served from SPP's own portal (open anonymously that day); per-hub parquet promoted (gate PASS); four-group table served; addendum (A)(B)(C) landed | `claude/spp-14-alt-sources-w6dp` + `-i49r3m` (two parallel sessions; salvaged `df5e8c3d`, `3cfb73bc`) | #5335, #5341 | `FINDING-spp-14-2026-09-06.md` + `-session-b.md` |
 | SPP-15 back-year intake 2019–2022 (rule-22 data prep) | W2∥ | Opus | shared | **LANDED 2026-09-06** — all four items GOT, blocked table EMPTY; producers unmodified; interchange widened with the 2023-2025 slice proven byte-identical (268,177 rows, sha256 `243889469b96…`, before and after); nothing solved/scored/registered and no marker claimed. Four source defects reported and routed, not filled — incl. **`N3045OK3` publishes nothing 2015-2021** (OK gas exists for only 3 of the 7 years 2019-2025) and two impossible `AECI` prints that sign-flip SWPP's 2020 system net | `claude/spp-15-backyears-intake-0cah85` (stem issued `…-q3nf`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-15-2026-09-06.md` |
-| SPP-20 register (pin flip) | W2 | Fable | shared→spp | **RUNNING** (owner-confirmed r#4, "running on another branch") | unknown (stem was `claude/spp-20-register-p8nz`) | — | — |
+| SPP-20 register (pin flip) | W2 | Fable | shared→spp | **LANDED 2026-09-06** — SPP registered; six keepers unmoved; N↔S link a 48,700 MW placeholder (→ P13 / SPP-53); 8 routed items assigned r#5 | `claude/spp-20-topology-market-design-1iew99` | #5329 | `docs/handoffs/FINDING-spp-20-2026-09-06.md` |
 | SPP-21 matrix shard + §5.7 | W2 | Opus | code | **LANDED 2026-09-06** — seventh shard live (305 cells: 162 `U` / 47 fc-only `U` / 96 `.`), `check_mechanism_matrix.py` exit 0 on 7 shards, 33/33 matrix tests pass, page renders 7 columns. **TWO out-of-region edits, both owner-authorized in session:** (1) 4 six-ISO assertions in `tests/unit/config/test_mechanism_matrix_{shard_migration,keeper_stamp}.py` (the charter budgeted one); (2) a one-line repair to `mechanism-matrix-assemble.js` for a PRE-EXISTING anchor mismatch that had left the rendered page blank since the 2026-08-11 sharding | `claude/spp-21-matrix-shard-ti2gy3` (stem issued `…-r4tq`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-21-2026-09-06.md` |
-| SPP-30 outages + tranches | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
-| SPP-31 benchmarks | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-12 | — | — | — |
-| SPP-32 zonal + wind shape + gas hub | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
-| SPP-33 seam derive | W3 | Opus | spp | CHARTERED · blocked on SPP-20, SPP-11 | — | — | — |
-| SPP-34 site + docs | W3 | Opus | code | CHARTERED · blocked on SPP-20 | — | — | — |
-| SPP-40 first solve → first keeper | W4 | Fable | spp | CHARTERED · blocked on SPP-30/31/32 | — | — | — |
-| SPP-51…57 levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · SPP-54 vs SPP-57 ranked by SPP-12's binding-share table (P1) | — | — | — |
+| SPP-30 outages + tranches | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-30-outages-tranches-b8kt`) | — | — |
+| SPP-31 benchmarks | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-31-benchmarks-n2vw`) | — | — |
+| SPP-32 zonal + wind shape + gas hub | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-32-zonal-wind-gas-r7ql`) | — | — |
+| SPP-33 seam derive | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-33-seam-derive-c4hm`) | — | — |
+| SPP-34 site + docs | W3 | Opus | code | **ISSUED r#5** | — (stem `claude/spp-34-site-docs-t9xe`) | — | — |
+| SPP-40 first solve → first keeper | W4 | Fable | spp | CHARTERED · blocked on SPP-30/31/32 **+ SPP-53** (P13) | — | — | — |
+| SPP-53 N↔S TTC derive (P13 — W5 → W3) | W3 | Fable | spp | **ISSUED r#5** | — (stem `claude/spp-53-ns-ttc-f6dz`) | — | — |
+| SPP-51, 52, 54, 55, 56, 57 levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · **P1 ranking APPLIED r#5: SPP-57 (Oklahoma pocket) before SPP-54 (SPS pocket)** | — | — | — |
 | SPP-60 forecast entry | W6 | Fable | spp | ROUTED to capx director (P8) | — | — | — |
 
 ---
@@ -187,6 +227,8 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | P10 | 2026-09-06 r#3 | `voll` after SPP-12's correction (posted cap $1,000; Order 831 hard ceiling $2,000) | "$2,000 — the cost-verified ceiling (Recommended)" | SPP-20 registers 2000.0 with both numbers cited; SPP-55 revisits against the VRLs |
 | P11 | 2026-09-06 r#3 | unblocking portal rows 5–9 + the N↔S TTC | "Charter SPP-13 probe lane; W2 proceeds in parallel (Recommended)" | SPP-13 chartered (FTP route, ITP Manual sweep); SPP-20 registers the N↔S TTC Tier-3 with misalignment documented if SPP-13 has not landed; SPP-54/57 ranking waits for the flowgate archive |
 | P12 | 2026-09-06 r#4 | rows 5–9 after SPP-13 (anonymous FTP, egress-blocked; row 11 NDA-only) | "Try to find the data somewhere else" | SPP-14 chartered (HTTPS third-party / mirror sweep with a rule-14 cross-check gate); W3/W4 proceed regardless; row 11 stays Tier-3 in SPP-20 |
+| P1 (applied) | 2026-09-07 r#5 | the SPP-54 vs SPP-57 ranking under P1's own test | — (desk act; SPP-14 §5.2 measured `oklahoma_internal` ≥ `n_s_corridor` ≫ `sps_tie` in all three years on both legs) | SPP-57 first; SPP-54 does not clear "SPS-tie share ≥ N↔S share" and stays queued |
+| P13 | 2026-09-07 r#5 | the N↔S TTC for the first keeper (SPP-20's 48,700 MW placeholder cannot bind) | "Pull SPP-53 into W3 as SPP-40's precondition (Recommended)" | SPP-53 issued (Fable derive, PRECOMMIT-first construction, rule 14 misalignment documented); SPP-40's preconditions now SPP-30/31/32/53 |
 | P9 | 2026-09-06 r#2 | EIA-930 SWPP defective hours (audit §3.4) | "Benchmark-side fix in SPP-31; demand-side routed (Recommended)" | SPP-31 screens `NG:` columns in the benchmark builder; low-side demand screen → audit track (§3 R-f); SPP-40 PRECOMMIT names the hours |
 
 ---
@@ -199,8 +241,10 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | R-b | `complete` marker for SPP holdout years | owner (rule 22) | manifest row 15 deferred; no out-of-training solve chartered |
 | R-c | MISO's own SPP seam constants | MISO calibration lane | rule 25; SPP-20 adds SPP's blocks only |
 | R-d | rule-28(c) CI enforcement gap | audit track | inherited consequence: read checker output, not exit code |
-| R-e | `check_gate_a_provenance` EXIT 1 at r#2 (NEISO, since re-keyed) and again at r#3: **CAISO** `gate.a_keeper_marker` cites superseded `2026-09-06-caiso-257-b1-ctonly` | capx director (standing Q34 re-key duty) | seen at this desk's pin; not this desk's file |
+| R-e | `check_gate_a_provenance` EXIT 1 at r#2 (NEISO), r#3 (CAISO), r#5 (**MISO**: cites superseded `miso-230-ctdrag-seam`) `gate.a_keeper_marker` cites superseded `2026-09-06-caiso-257-b1-ctonly` | capx director (standing Q34 re-key duty) | seen at this desk's pin; not this desk's file |
 | R-h | Row 11 — the N↔S transfer capability / SPS tie ratings exist only in SPP's ITP Constraint Assessment NDA/CEII workbook (`SPPSPSTIES`, `SPSNMTIES`), FINDING-spp-13 §4 | owner (an NDA read is an owner act, never a lane's) | SPP-20 registers Tier-3 with the misalignment documented; SPP-53 uses the RTBM `Real Time Effective Limit` as the measured substitute once row 8 lands |
+| R-i | **D79 declared-hash ledger has no new-ISO-row limb** (FINDING-spp-20 §5 R-1): `check_cache_key_registration.py` check 6 treats a by-ISO entry as one string, so appending SPP's row is an "edit" breach and `--declare` refuses already-declared names → SPP's 17 new surface rows are UNDECLARED (they stay out of SPP's own cache key) | capx director (D79 owner) — wanted before SPP-40 registers, so SPP's first bundle's key sees its rows | the six ISOs are unaffected; SPP's key is incomplete until the limb exists |
+| R-j | The 2026-01-28→ 14-column daily RTBM BC files are a forward-looking measured limit series (FINDING-spp-14 §5.4) | SPP-53 (now chartered) | its reduced corridor sidecar is SPP-53's deliverable |
 | R-g | Cooper Nuclear (801 MW, NE) licence expires **2034-01-18** with its SLR under review; Wolf Creek 2045 with intent only — an SPP forecast assuming both firm through 2050 assumes an outcome the instrument record does not yet support (FINDING-spp-12 §7) | forecast lane / capx director, at W6 | recorded so SPP-60's charter carries it; no backcast consequence |
 | R-f | low-side EIA-930 demand dropout screen (`_screen_demand_dropouts` catches only exactly-0.0; SWPP 2025-06-21 05:00 = 1,505 MW and 2024-07-19 00:00 escape) — repo-wide, cache-key risk | audit track (ruling P9) | SPP-40's PRECOMMIT names the hours as known artifacts; no SPP lane adds a screen parameter |
 
@@ -240,7 +284,13 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#3 | SPP-13 | `claude/spp-13-portal-ftp-ttc-h2vk` | `claude/spp-13-portal-ftp-ttc-h2vk-h9c6q8` | plan §8 W2 · SPP-13 | LANDED #5314 |
 | r#4 | SPP-14 | `claude/spp-14-alt-sources-w6dp` | — | plan §8 W2 · SPP-14 | new charter under P12 |
 | r#4 am.1 | SPP-14 addendum | (into the SPP-14 session) | — | plan §8 · SPP-14 ADDENDUM | three v35-zip measured files |
-| r#4 am.1 | SPP-15 | `claude/spp-15-backyears-q3nf` | — | plan §8 · SPP-15 | back-year intake; rule 22 data prep |
+| r#4 am.1 | SPP-15 | `claude/spp-15-backyears-q3nf` | `claude/spp-15-backyears-intake-0cah85` | plan §8 · SPP-15 | LANDED #5333 |
+| r#5 | SPP-30 | `claude/spp-30-outages-tranches-b8kt` | — | plan §8 W3 · SPP-30 (+ r#5 block) | issued |
+| r#5 | SPP-31 | `claude/spp-31-benchmarks-n2vw` | — | plan §8 W3 · SPP-31 (+ r#2/r#5 blocks) | issued |
+| r#5 | SPP-32 | `claude/spp-32-zonal-wind-gas-r7ql` | — | plan §8 W3 · SPP-32 (+ r#5 block) | issued |
+| r#5 | SPP-33 | `claude/spp-33-seam-derive-c4hm` | — | plan §8 W3 · SPP-33 (+ r#5 block) | issued |
+| r#5 | SPP-34 | `claude/spp-34-site-docs-t9xe` | — | plan §8 W3 · SPP-34 (+ r#5 block) | issued |
+| r#5 | SPP-53 | `claude/spp-53-ns-ttc-f6dz` | — | plan §8 · SPP-53 (new, P13) | issued |
 
 ---
 
