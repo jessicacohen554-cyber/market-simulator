@@ -1,0 +1,35 @@
+
+SPP-48 / SPP-54 C-3 re-run, 2025-12-21 window. Demand, thermal+hydro availability and solar are SPP-54's committed fleet_only values; only wind moves.
+
+      h   wS+wSPS    wS(2z) |  margin 3z  margin 2z    delta |  as-built 3z  as-built 2z | STOP?
+   8496     10651     10651 |      +9285      +9285   +0.000 |        +9520        +8308 | ok
+   8497      9903      9903 |      +8537      +8537   +0.000 |        +8246        +7010 | ok
+   8498      9000      9000 |      +7634      +7634   +0.000 |        +7027        +5617 | ok
+   8499      8278      8278 |      +6911      +6911   +0.000 |        +6354        +4939 | ok
+   8500      7731      7731 |      +6365      +6365   +0.000 |        +6368        +5015 | ok
+   8501      6998      6998 |      +5632      +5632   +0.000 |        +6151        +4780 | ok
+   8502      6370      6370 |      +5004      +5004   +0.000 |        +5832        +4350 | ok
+   8503      5156      5156 |      +3790      +3790   +0.000 |        +4826        +3162 | ok
+   8504      3853      3853 |      +2486      +2486   +0.000 |        +3871        +1721 | ok
+   8505      2221      2221 |       +855       +855   +0.000 |        +1612         +321 | ok
+   8506       850       850 |       -516       -516   -0.000 |         -375         -665 | ok
+   8507       490       490 |       -876       -876   -0.000 |         -962         -808 | ok
+   8508       677       677 |       -689       -689   +0.000 |         -920         -407 | ok
+   8509      1291      1291 |        -75        -75   +0.000 |         -545         +440 | ok
+   8510      2224      2224 |       +858       +858   +0.000 |          +42        +1465 | ok
+   8511      2724      2724 |      +1358      +1358   -0.000 |         +460        +1750 | ok
+   8512      4063      4063 |      +2697      +2697   -0.000 |        +1542        +2756 | ok
+   8513      5704      5704 |      +4338      +4338   +0.000 |        +2997        +4224 | ok
+   8514      6666      6666 |      +5300      +5300   -0.000 |        +4096        +5230 | ok
+   8515      7217      7217 |      +5851      +5851   +0.000 |        +4977        +6063 | ok
+   8516      7548      7548 |      +6182      +6182   +0.000 |        +5391        +6333 | ok
+   8517      7798      7798 |      +6431      +6431   +0.000 |        +5659        +6492 | ok
+   8518      8023      8023 |      +6657      +6657   -0.000 |        +5949        +6776 | ok
+   8519      8227      8227 |      +6861      +6861   +0.000 |        +6014        +6889 | ok
+   8520      9381      9381 |     +12058     +12058   +0.000 |       +10943       +11991 | ok
+
+C-3 verdict (repaired): hours the three-zone inputs make infeasible while the two-zone inputs were feasible: 0 -> PASS
+P2 end-to-end: max |margin_3z - margin_2z| over the window = 0.000000 MW (the ex-ante prediction is 0 — a boundary change cannot move the region's own wind)
+
+h8509 (SPP-54's STOP hour): repaired three-zone margin -75 MW; repaired two-zone -75; as-built three-zone -545; as-built two-zone +440 (SPP-54 read -545 / +440)
+wrote /home/user/market-simulator/docs/handoffs/spp48/h8509.csv

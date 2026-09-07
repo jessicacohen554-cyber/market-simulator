@@ -1,0 +1,27 @@
+  SPP-North: 6 of 115 plants sampled, 2,433.5 of 16,671.3 MW
+  SPP-South: 6 of 62 plants sampled, 2,559.2 of 11,623.6 MW
+  SPP-SPS: 6 of 42 plants sampled, 2,835.3 of 4,653.5 MW
+
+=== SPP 2023 per-zone shape (RETIRED six-largest rule) ===
+  SPP-North       mean=0.325  night=0.314  aft=0.322  night/aft=0.97
+  SPP-South       mean=0.306  night=0.302  aft=0.284  night/aft=1.06
+  SPP-SPS         mean=0.336  night=0.321  aft=0.317  night/aft=1.01
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-before/spp_2023_wind_zone_shape.parquet
+  SPP-North: 6 of 116 plants sampled, 2,433.5 of 16,870.1 MW
+  SPP-South: 6 of 66 plants sampled, 2,559.2 of 12,327.2 MW
+  SPP-SPS: 6 of 42 plants sampled, 2,835.3 of 4,653.5 MW
+
+=== SPP 2024 per-zone shape (RETIRED six-largest rule) ===
+  SPP-North       mean=0.349  night=0.334  aft=0.349  night/aft=0.96
+  SPP-South       mean=0.335  night=0.318  aft=0.331  night/aft=0.96
+  SPP-SPS         mean=0.353  night=0.357  aft=0.317  night/aft=1.13
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-before/spp_2024_wind_zone_shape.parquet
+  SPP-North: 6 of 120 plants sampled, 2,440.1 of 17,664.3 MW
+  SPP-South: 6 of 68 plants sampled, 2,857.6 of 13,145.6 MW
+  SPP-SPS: 6 of 42 plants sampled, 2,835.3 of 4,653.5 MW
+
+=== SPP 2025 per-zone shape (RETIRED six-largest rule) ===
+  SPP-North       mean=0.345  night=0.324  aft=0.354  night/aft=0.91
+  SPP-South       mean=0.308  night=0.292  aft=0.307  night/aft=0.95
+  SPP-SPS         mean=0.333  night=0.335  aft=0.299  night/aft=1.12
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-before/spp_2025_wind_zone_shape.parquet

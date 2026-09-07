@@ -1,0 +1,9 @@
+
+Building SPP wind shape for 2025...
+  SPP-North: 120 plant(s), 17,664.3 MW operable
+  SPP-South: 110 plant(s), 17,799.1 MW operable
+
+=== SPP 2025 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  SPP-North       mean=0.331  night(00-06)=0.315  afternoon(12-18)=0.335  night/aft=0.94
+  SPP-South       mean=0.308  night(00-06)=0.297  afternoon(12-18)=0.298  night/aft=1.00
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp2-cold/spp_2025_wind_zone_shape.parquet (219.3 KiB)

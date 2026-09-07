@@ -1,0 +1,51 @@
+
+Building SPP wind shape for 2023...
+  SPP-North: 115 plant(s), 16,671.3 MW operable
+  SPP-South: 62 plant(s), 11,623.6 MW operable
+  SPP-SPS: 42 plant(s), 4,653.5 MW operable
+
+=== SPP 2023 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  SPP-North       mean=0.310  night(00-06)=0.301  afternoon(12-18)=0.304  night/aft=0.99
+  SPP-South       mean=0.295  night(00-06)=0.290  afternoon(12-18)=0.276  night/aft=1.05
+  SPP-SPS         mean=0.334  night(00-06)=0.319  afternoon(12-18)=0.315  night/aft=1.01
+
+=== SPP 2023 profile vs SPP GenMix delivered wind (no level pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8590
+  diurnal (24h) corr  : 0.6567
+  seasonal (12m) corr : 0.9858
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-after/spp_2023_wind_zone_shape.parquet (302.3 KiB)
+
+Building SPP wind shape for 2024...
+  SPP-North: 116 plant(s), 16,870.1 MW operable
+  SPP-South: 66 plant(s), 12,327.2 MW operable
+  SPP-SPS: 42 plant(s), 4,653.5 MW operable
+
+=== SPP 2024 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  SPP-North       mean=0.339  night(00-06)=0.323  afternoon(12-18)=0.337  night/aft=0.96
+  SPP-South       mean=0.323  night(00-06)=0.309  afternoon(12-18)=0.317  night/aft=0.97
+  SPP-SPS         mean=0.352  night(00-06)=0.355  afternoon(12-18)=0.316  night/aft=1.12
+
+=== SPP 2024 profile vs SPP GenMix delivered wind (no level pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8397
+  diurnal (24h) corr  : 0.6014
+  seasonal (12m) corr : 0.9299
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-after/spp_2024_wind_zone_shape.parquet (302.5 KiB)
+
+Building SPP wind shape for 2025...
+  SPP-North: 120 plant(s), 17,664.3 MW operable
+  SPP-South: 68 plant(s), 13,145.6 MW operable
+  SPP-SPS: 42 plant(s), 4,653.5 MW operable
+
+=== SPP 2025 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  SPP-North       mean=0.331  night(00-06)=0.315  afternoon(12-18)=0.335  night/aft=0.94
+  SPP-South       mean=0.300  night(00-06)=0.284  afternoon(12-18)=0.299  night/aft=0.95
+  SPP-SPS         mean=0.331  night(00-06)=0.333  afternoon(12-18)=0.295  night/aft=1.13
+
+=== SPP 2025 profile vs SPP GenMix delivered wind (no level pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8329
+  diurnal (24h) corr  : 0.6400
+  seasonal (12m) corr : 0.9084
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/spp3-after/spp_2025_wind_zone_shape.parquet (302.5 KiB)

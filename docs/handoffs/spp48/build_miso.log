@@ -1,0 +1,51 @@
+
+Building MISO wind shape for 2023...
+  MISO-West: 158 plant(s), 9,414.2 MW operable
+  MISO-Plains: 117 plant(s), 13,386.4 MW operable
+  MISO-Illinois: 23 plant(s), 3,075.0 MW operable
+  MISO-Indiana: 6 plant(s), 1,239.9 MW operable
+  MISO-East: 46 plant(s), 4,403.7 MW operable
+  MISO-South: 0 plant(s), 0.0 MW operable
+
+=== MISO 2023 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  MISO-West       mean=0.315  night(00-06)=0.300  afternoon(12-18)=0.324  night/aft=0.92
+  MISO-Plains     mean=0.304  night(00-06)=0.286  afternoon(12-18)=0.314  night/aft=0.91
+  MISO-Illinois   mean=0.298  night(00-06)=0.271  afternoon(12-18)=0.313  night/aft=0.87
+  MISO-Indiana    mean=0.269  night(00-06)=0.235  afternoon(12-18)=0.292  night/aft=0.81
+  MISO-East       mean=0.285  night(00-06)=0.276  afternoon(12-18)=0.290  night/aft=0.95
+  MISO-South      mean=0.294  night(00-06)=0.274  afternoon(12-18)=0.307  night/aft=0.89
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/miso-after/miso_2023_wind_zone_shape.parquet (544.8 KiB)
+
+Building MISO wind shape for 2024...
+  MISO-West: 158 plant(s), 9,414.2 MW operable
+  MISO-Plains: 117 plant(s), 13,386.4 MW operable
+  MISO-Illinois: 26 plant(s), 3,515.3 MW operable
+  MISO-Indiana: 6 plant(s), 1,239.9 MW operable
+  MISO-East: 46 plant(s), 4,403.7 MW operable
+  MISO-South: 1 plant(s), 184.5 MW operable
+
+=== MISO 2024 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  MISO-West       mean=0.349  night(00-06)=0.329  afternoon(12-18)=0.362  night/aft=0.91
+  MISO-Plains     mean=0.330  night(00-06)=0.313  afternoon(12-18)=0.347  night/aft=0.90
+  MISO-Illinois   mean=0.324  night(00-06)=0.307  afternoon(12-18)=0.331  night/aft=0.93
+  MISO-Indiana    mean=0.292  night(00-06)=0.277  afternoon(12-18)=0.304  night/aft=0.91
+  MISO-East       mean=0.318  night(00-06)=0.294  afternoon(12-18)=0.340  night/aft=0.86
+  MISO-South      mean=0.245  night(00-06)=0.243  afternoon(12-18)=0.240  night/aft=1.01
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/miso-after/miso_2024_wind_zone_shape.parquet (476.5 KiB)
+
+Building MISO wind shape for 2025...
+  MISO-West: 158 plant(s), 9,414.2 MW operable
+  MISO-Plains: 117 plant(s), 13,386.4 MW operable
+  MISO-Illinois: 31 plant(s), 4,453.5 MW operable
+  MISO-Indiana: 6 plant(s), 1,239.9 MW operable
+  MISO-East: 46 plant(s), 4,403.7 MW operable
+  MISO-South: 2 plant(s), 328.5 MW operable
+
+=== MISO 2025 per-zone wind capacity factor (R-LEVEL, whole fleet) ===
+  MISO-West       mean=0.341  night(00-06)=0.327  afternoon(12-18)=0.352  night/aft=0.93
+  MISO-Plains     mean=0.316  night(00-06)=0.306  afternoon(12-18)=0.323  night/aft=0.95
+  MISO-Illinois   mean=0.312  night(00-06)=0.293  afternoon(12-18)=0.319  night/aft=0.92
+  MISO-Indiana    mean=0.285  night(00-06)=0.259  afternoon(12-18)=0.298  night/aft=0.87
+  MISO-East       mean=0.330  night(00-06)=0.309  afternoon(12-18)=0.345  night/aft=0.90
+  MISO-South      mean=0.247  night(00-06)=0.249  afternoon(12-18)=0.233  night/aft=1.07
+Wrote /tmp/claude-0/-home-user-market-simulator/d106e853-6b41-5f9e-86b0-09d9f6b75d66/scratchpad/miso-after/miso_2025_wind_zone_shape.parquet (526.0 KiB)

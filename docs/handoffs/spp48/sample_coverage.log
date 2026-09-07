@@ -1,0 +1,25 @@
+Capacity share the RETIRED six-largest-plants sample covered, per zone
+  iso   year  zone              plants     top6 MW     zone MW  coverage
+  SPP   2023  SPP-North            115     2,433.5    16,671.3    14.6%
+  SPP   2023  SPP-South            104     3,681.3    16,277.1    22.6%
+  SPP   2024  SPP-North            116     2,433.5    16,870.1    14.4%
+  SPP   2024  SPP-South            108     3,681.3    16,980.7    21.7%
+  SPP   2025  SPP-North            120     2,440.1    17,664.3    13.8%
+  SPP   2025  SPP-South            110     3,976.2    17,799.1    22.3%
+  MISO  2023  MISO-West            158     1,389.0     9,414.2    14.8%
+  MISO  2023  MISO-Plains          117     2,567.0    13,386.4    19.2%
+  MISO  2023  MISO-Illinois         23     1,486.8     3,075.0    48.4%
+  MISO  2023  MISO-Indiana           6     1,239.9     1,239.9   100.0%
+  MISO  2023  MISO-East             46     1,348.0     4,403.7    30.6%
+  MISO  2024  MISO-West            158     1,389.0     9,414.2    14.8%
+  MISO  2024  MISO-Plains          117     2,567.0    13,386.4    19.2%
+  MISO  2024  MISO-Illinois         26     1,486.8     3,515.3    42.3%
+  MISO  2024  MISO-Indiana           6     1,239.9     1,239.9   100.0%
+  MISO  2024  MISO-East             46     1,348.0     4,403.7    30.6%
+  MISO  2024  MISO-South             1       184.5       184.5   100.0%
+  MISO  2025  MISO-West            158     1,389.0     9,414.2    14.8%
+  MISO  2025  MISO-Plains          117     2,567.0    13,386.4    19.2%
+  MISO  2025  MISO-Illinois         31     1,597.1     4,453.5    35.9%
+  MISO  2025  MISO-Indiana           6     1,239.9     1,239.9   100.0%
+  MISO  2025  MISO-East             46     1,348.0     4,403.7    30.6%
+  MISO  2025  MISO-South             2       328.5       328.5   100.0%

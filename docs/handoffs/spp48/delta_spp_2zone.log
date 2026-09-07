@@ -1,0 +1,63 @@
+SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+
+===== SPP 2023 =====
+C-1 identity  before max rel 4.432e-16 | after 5.864e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 0.993887 | after lost 0 h, max cf 0.993887  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'SPP-North': np.float64(1.0), 'SPP-South': np.float64(1.0)}; spread max/min-1 = 6.661e-16
+    system total M: 114.0552 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      SPP-North           16,671    55.022    56.937    +1.915   +3.48       786.8    -2125    +3063       6147
+      SPP-South           16,277    59.034    57.118    -1.915   -3.24       786.8    -3063    +2125       6147
+    max |delta| over all zone-hours: 6,147 MW  (re-baseline threshold: > 1 MW in any hour)
+
+===== SPP 2024 =====
+C-1 identity  before max rel 5.165e-16 | after 4.817e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 1.000000 | after lost 0 h, max cf 1.000000  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'SPP-North': np.float64(1.0), 'SPP-South': np.float64(1.0)}; spread max/min-1 = 2.220e-16
+    system total M: 120.9925 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      SPP-North           16,870    59.742    62.046    +2.304   +3.86       865.2    -2289    +3187       9014
+      SPP-South           16,981    61.250    58.947    -2.304   -3.76       865.2    -3187    +2289       9014
+    max |delta| over all zone-hours: 9,014 MW  (re-baseline threshold: > 1 MW in any hour)
+
+===== SPP 2025 =====
+C-1 identity  before max rel 5.217e-16 | after 4.566e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 1.000000 | after lost 0 h, max cf 1.000000  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'SPP-North': np.float64(1.0), 'SPP-South': np.float64(1.0)}; spread max/min-1 = 4.441e-16
+    system total M: 122.2552 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      SPP-North           17,664    62.117    64.248    +2.131   +3.43       886.0    -2150    +3729       7832
+      SPP-South           17,799    60.138    58.007    -2.131   -3.54       886.0    -3729    +2150       7832
+    max |delta| over all zone-hours: 7,832 MW  (re-baseline threshold: > 1 MW in any hour)
+    Dec-21-2025 window, per-zone wind potential MW (before -> after):
+      h8496  SPP-North:    7798 ->    6821  SPP-South:    9674 ->   10651
+      h8497  SPP-North:    9096 ->    7569  SPP-South:    8377 ->    9903
+      h8498  SPP-North:   10489 ->    8472  SPP-South:    6983 ->    9000
+      h8499  SPP-North:   11166 ->    9194  SPP-South:    6306 ->    8278
+      h8500  SPP-North:   11091 ->    9741  SPP-South:    6381 ->    7731
+      h8501  SPP-North:   11326 ->   10474  SPP-South:    6146 ->    6998
+      h8502  SPP-North:   11756 ->   11102  SPP-South:    5717 ->    6370
+      h8503  SPP-North:   12944 ->   12316  SPP-South:    4528 ->    5156
+      h8504  SPP-North:   14385 ->   13619  SPP-South:    3087 ->    3853
+      h8505  SPP-North:   15785 ->   15251  SPP-South:    1687 ->    2221
+      h8506  SPP-North:   16771 ->   16622  SPP-South:     701 ->     850
+      h8507  SPP-North:   16914 ->   16982  SPP-South:     558 ->     490
+      h8508  SPP-North:   16513 ->   16795  SPP-South:     960 ->     677
+      h8509  SPP-North:   15665 ->   16181  SPP-South:    1807 ->    1291
+      h8510  SPP-North:   14640 ->   15248  SPP-South:    2832 ->    2224
+      h8511  SPP-North:   14356 ->   14748  SPP-South:    3116 ->    2724
+      h8512  SPP-North:   13350 ->   13409  SPP-South:    4122 ->    4063
+      h8513  SPP-North:   11882 ->   11768  SPP-South:    5590 ->    5704
+      h8514  SPP-North:   10876 ->   10806  SPP-South:    6596 ->    6666
+      h8515  SPP-North:   10043 ->   10255  SPP-South:    7429 ->    7217
+      h8516  SPP-North:    9773 ->    9924  SPP-South:    7699 ->    7548
+      h8517  SPP-North:    9614 ->    9674  SPP-South:    7858 ->    7798
+      h8518  SPP-North:    9330 ->    9449  SPP-South:    8142 ->    8023
+      h8519  SPP-North:    9216 ->    9245  SPP-South:    8256 ->    8227
+      h8520  SPP-North:   10154 ->   10087  SPP-South:    9314 ->    9381
+
+wrote docs/handoffs/spp48/delta_spp_2zone.csv

@@ -1358,3 +1358,12 @@ results/capacity-hindcast/**/screen_signal_diag_*.npz
 # PRECOMMIT/ADDENDUM carry every number this session will ever cite from it, so
 # git history is the record exactly as rule 15 says of pruned runs.
 results/calibration/caiso262_bench_scaffold/
+
+# SPP-48: the shared wind-shape builder's reanalysis memo. R-LEVEL reads NASA
+# POWER at EVERY operable wind plant (SPP 230, MISO 360, per year), so the
+# builder memoises each (lat, lon, year) speed series here. It is DERIVED,
+# disposable and policy-free — a cold and a warm build produce byte-identical
+# parquets (proved by scripts/lib/wind_shape.py's own test) — and it lives under
+# data/clean/, which line 229 already ignores; this entry is a signpost, not a
+# second rule. Regenerate with docs/handoffs/spp48/warm_cache.py.
+/data/clean/wind-shape-reanalysis/

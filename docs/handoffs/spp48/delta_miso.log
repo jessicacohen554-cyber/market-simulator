@@ -1,0 +1,47 @@
+
+===== MISO 2023 =====
+C-1 identity  before max rel 6.419e-16 | after 6.534e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 1.000000 | after lost 0 h, max cf 1.000000  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'MISO-West': np.float64(1.0), 'MISO-Plains': np.float64(1.0), 'MISO-Illinois': np.float64(1.0), 'MISO-Indiana': np.float64(1.0), 'MISO-East': np.float64(1.0), 'MISO-South': np.float64(nan)}; spread max/min-1 = 6.661e-16
+    system total M: 96.4347 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      MISO-West            9,414    31.405    30.608    -0.797   -2.54       715.6    -2152    +2343       4610
+      MISO-Plains         13,386    39.130    40.616    +1.486   +3.80       660.2    -2004    +2298       3773
+      MISO-Illinois        3,075     9.727     8.939    -0.789   -8.11       168.8     -710     +457       1785
+      MISO-Indiana         1,240     3.571     3.444    -0.127   -3.54        38.2     -262     +142        845
+      MISO-East            4,404    12.602    12.827    +0.226   +1.79       212.9     -880     +815       2259
+      MISO-South               0     0.000     0.000    +0.000   +0.00         0.0       +0       +0          0
+    max |delta| over all zone-hours: 4,610 MW  (re-baseline threshold: > 1 MW in any hour)
+
+===== MISO 2024 =====
+C-1 identity  before max rel 8.664e-16 | after 8.602e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 1.000000 | after lost 0 h, max cf 1.000000  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'MISO-West': np.float64(1.0), 'MISO-Plains': np.float64(1.0), 'MISO-Illinois': np.float64(1.0), 'MISO-Indiana': np.float64(1.0), 'MISO-East': np.float64(1.0), 'MISO-South': np.float64(1.0)}; spread max/min-1 = 6.661e-16
+    system total M: 103.3076 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      MISO-West            9,414    32.617    32.100    -0.517   -1.59       671.4    -2115    +2234       4219
+      MISO-Plains         13,386    41.360    42.781    +1.422   +3.44       637.8    -1877    +2287       4417
+      MISO-Illinois        3,515    11.350    10.451    -0.899   -7.92       205.0     -783     +532       1447
+      MISO-Indiana         1,240     3.703     3.551    -0.152   -4.09        39.9     -297     +129        920
+      MISO-East            4,404    13.963    14.122    +0.160   +1.14       212.8     -934     +832       1851
+      MISO-South             184     0.316     0.302    -0.013   -4.19         3.6      -35      +17        129
+    max |delta| over all zone-hours: 4,417 MW  (re-baseline threshold: > 1 MW in any hour)
+
+===== MISO 2025 =====
+C-1 identity  before max rel 8.252e-16 | after 7.865e-16   (gate 1e-9)  ->  PASS
+C-2 overflow  before lost 0 h, max cf 1.000000 | after lost 0 h, max cf 1.000000  ->  PASS
+C-5 model weight cap_z vs builder capacity C_z: ratio {'MISO-West': np.float64(1.0), 'MISO-Plains': np.float64(1.0), 'MISO-Illinois': np.float64(1.0), 'MISO-Indiana': np.float64(1.0), 'MISO-East': np.float64(1.0), 'MISO-South': np.float64(1.0)}; spread max/min-1 = 6.661e-16
+    system total M: 104.0335 TWh (identical by construction: max |dM| = 0.000e+00 MW)
+    per-zone annual potential TWh, and the LP wind upper-bound delta:
+      zone                cap MW    before     after     d TWh     d %  mean|d| MW    p1 MW   p99 MW  max|d| MW
+      MISO-West            9,414    32.721    31.951    -0.770   -2.35       781.8    -2427    +2509       4205
+      MISO-Plains         13,386    39.270    41.032    +1.762   +4.49       700.4    -2135    +2543       4236
+      MISO-Illinois        4,454    13.211    12.247    -0.964   -7.29       294.1    -1065     +939       2055
+      MISO-Indiana         1,240     3.608     3.464    -0.144   -3.99        73.4     -397     +290        840
+      MISO-East            4,404    14.576    14.727    +0.151   +1.04       290.5    -1252    +1168       2916
+      MISO-South             328     0.647     0.612    -0.036   -5.53        15.2     -104      +62        300
+    max |delta| over all zone-hours: 4,236 MW  (re-baseline threshold: > 1 MW in any hour)
+
+wrote docs/handoffs/spp48/delta_miso.csv
