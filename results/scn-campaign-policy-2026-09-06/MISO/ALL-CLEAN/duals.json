@@ -1,0 +1,86 @@
+{
+ "cache_key": "00edacf5f50c88fc",
+ "case": "ALL-CLEAN",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    50.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 23533276088.556755
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    50.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 33472196341.57752
+  },
+  "2028": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    50.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 53911255580.97928
+  },
+  "2029": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    50.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 77027923021.65823
+  },
+  "2030": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    50.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 147006631456.7412
+  }
+ }
+}
