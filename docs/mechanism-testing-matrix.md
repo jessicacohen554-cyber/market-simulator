@@ -16814,6 +16814,37 @@ each in full at issuance. Standing rules that already bind the queue:
   band channel under rule 1's carve-out, or a measured commitment-STATE input on the ST_GAS fleet, under a new
   PRECOMMIT. `docs/handoffs/FINDING-spp-44-2026-09-07.md`.
 
+- **SPP MERIT-ORDER — the MHR-rotation family, 2026-09-07: BOTH ARMS R, ZERO LP SPENT.**
+  The R-17 successor named by SPP-44 (the `offer_curve_by_group` band channel) is now **CLOSED**, and
+  so is the per-class question the SPP PRICE-FAMILY lane left open. Phase 0 (rule 29 clause 0) refused
+  both arms on their own arithmetic before any solve, against a threshold **inherited unchanged** from
+  the price-family lane's pre-registered G-2 (the steepening ratio `MHR(>95pct)/MHR(25-75pct)` must
+  rise ≥ 10 % of the control):
+  **ARM A `tranche_startup_amortization` + v3** — rule 19 ADMITS it on SPP by the exact enumeration
+  that refused it on ERCOT (ERCOT-145 §1: fitted CT margins +$13/+$35/+$292–451 vs a $2.9–4.0 measured
+  amortization; SPP's same rows carry **$0.00**), and SPP's own artifact was derived and committed
+  (`campd_ct_run_lengths_SPP.csv`, 51 facilities / 50,460 runs, class median **9.0 h** — SPP's CTs run
+  longer than every other ISO's). At its MAXIMUM markup ($2.14/MWh cap-wt on 11.6 GW of CT econ+peak)
+  the ratio moves **+0.147 / +0.676 / +1.008 %** and the LEVEL moves the wrong way. Cell U → R.
+  **ARM B a PER-CLASS differentiated curve** — derived by one declared rule from SPP's own realized
+  prices, the whole set spans **0.784–0.895** (peaker-over-coal separation only +13.3 %) and the ratio
+  moves **+4.006 / +2.029 / +3.312 %**, on an instrument VALIDATED against the price-family lane's
+  SOLVED 2025 arm and measured to **over-state rotation ≈ 4×**. `offer_curve_by_group` stays R with its
+  scope widened to ANY per-band or per-class multiplier set.
+  **THE STRUCTURAL RESULT the queue should carry forward:** there is no regime to separate —
+  `CT_PEAKER` is the marginal class in **24–27 % of SPP's MEDIAN-load hours** and 49–60 % of its top
+  hours, so any multiplier lifts the middle nearly as much as the top. `pct_peaking` is INERT on price
+  (all bands 1.0 ⇒ price-identical tranches; a large perturbation moves the supply curve 3.83 MW).
+  **Two successors, both measured, neither an offer lever:** (i) **the middle** is a dispatch object —
+  3 GW of *available* coal and 3 GW of *available* CC sit idle at median load while peakers run; its
+  lead is SPP's `ST_GAS` fleet paying a **+29.3 % / +0.1 % / +7.9 %** delivered-gas premium over the CT
+  fleet with the ST_GAS under-run tracking it (a rule-14 `gas_plant_monthly_fuel_pricing` question);
+  (ii) **the top** is the missing AS-opportunity-cost layer — `get_reserve_design` **raises for SPP**,
+  so **SPP-56 is a prerequisite for the top-of-stack leg, not the last item**, and SPP publishes its own
+  RTBM reserve MCP (`data/raw/spp-or-mcp/`, 2023–2025). Wind is +11.00 / +11.67 / +11.80 TWh over in
+  every year and is reported, not an offer object.
+  `docs/handoffs/FINDING-spp-merit-order-2026-09-07.md` (+ `PRECOMMIT-spp-merit-order-2026-09-07.md`).
+
 **Not in this queue, deliberately.** W6 / **SPP-60** (forecast-program entry —
 `program-status.json` row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens) is
 **routed to the capx director** by card **P8** and is never written by this
