@@ -23,10 +23,8 @@ from market_sim.config.paths import WIND_SHAPE_DIRS, wind_shape_dir
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data import renewables as rn
 
-_ZONES = ["SPP-North", "SPP-Oklahoma", "SPP-South"]
+_ZONES = ["SPP-North", "SPP-South"]
 _YEAR = 2023
-# EIA-860 2025 ER operable wind by zone (North / Oklahoma / residual South), MW.
-_CAP = np.array([17664.3, 12944.0, 4855.0])
 
 
 # ---------------------------------------------------------------------------
@@ -75,18 +73,13 @@ def test_the_other_six_isos_are_untouched():
 # ---------------------------------------------------------------------------
 
 
-def _write_shape_parquet(directory, year: int, north, south, oklahoma=None):
-    """Write a three-zone wind-shape parquet in the schema the loader expects.
-
-    ``oklahoma`` defaults to ``south`` so the two-zone-era tests keep their
-    North-vs-South reading with the pocket sharing the South's shape.
-    """
+def _write_shape_parquet(directory, year: int, north, south):
+    """Write a two-zone wind-shape parquet in the schema the loader expects."""
     directory.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(
         {
             "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
             "SPP-North": north,
-            "SPP-Oklahoma": south if oklahoma is None else oklahoma,
             "SPP-South": south,
         }
     )
@@ -116,14 +109,13 @@ def test_shape_loader_reads_both_zones(tmp_path):
         config=ScenarioConfig(iso="SPP"),
     )
     assert shapes is not None
-    assert shapes.shape == (3, HOURS_PER_YEAR)
+    assert shapes.shape == (2, HOURS_PER_YEAR)
     hod = np.arange(HOURS_PER_YEAR) % 24
     night = shapes[:, (hod >= 0) & (hod < 6)].mean(axis=1)
     aft = shapes[:, (hod >= 12) & (hod < 18)].mean(axis=1)
-    # SPP-Oklahoma / SPP-South are the nocturnal zones (LLJ core over OK/KS/TX
-    # Panhandle); this asserts the loader preserves the sign, not that it is 1.1.
+    # SPP-South is the nocturnal zone (LLJ core over OK/KS/TX Panhandle);
+    # this asserts the loader preserves the sign, not that the sign is 1.1.
     assert night[0] / aft[0] < 1.0 < night[1] / aft[1]
-    assert night[2] / aft[2] > 1.0
 
 
 def test_shape_loader_is_a_noop_for_solar(tmp_path):
@@ -207,12 +199,12 @@ def test_redistribution_preserves_the_iso_aggregate(tmp_path, ramp_on):
         data_dir=tmp_path,
         config=ScenarioConfig(iso="SPP"),
     )
-    cap = _CAP
+    cap = np.array([17664.3, 17799.1])
     rng = np.random.default_rng(7)
     ramp_t = (
-        rng.uniform(0.5, 1.0, size=(3, HOURS_PER_YEAR))
+        rng.uniform(0.5, 1.0, size=(2, HOURS_PER_YEAR))
         if ramp_on
-        else np.ones((3, HOURS_PER_YEAR))
+        else np.ones((2, HOURS_PER_YEAR))
     )
     cf_profile = np.clip(rng.uniform(0.0, 0.8, size=HOURS_PER_YEAR), 0.0, 1.0)
 
@@ -240,8 +232,8 @@ def test_redistribution_actually_moves_wind_between_zones(tmp_path):
         data_dir=tmp_path,
         config=ScenarioConfig(iso="SPP"),
     )
-    cap = _CAP
-    ramp_t = np.ones((3, HOURS_PER_YEAR))
+    cap = np.array([17664.3, 17799.1])
+    ramp_t = np.ones((2, HOURS_PER_YEAR))
     cf_profile = np.full(HOURS_PER_YEAR, 0.35)
     flat = cf_profile[None, :] * ramp_t
     cf = rn._redistribute_preserving_total(cf_profile, cap, ramp_t, shapes)

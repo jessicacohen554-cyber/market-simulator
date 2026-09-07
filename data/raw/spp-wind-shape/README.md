@@ -86,15 +86,12 @@ via `market_sim.config.paths.WIND_SHAPE_DIRS["SPP"]`).
 
 ---
 
-## REBUILT 2026-09-07 — lane SPP-57: three zones
+## NOTE 2026-09-07 — lane SPP-57: a three-zone rebuild was made and NOT landed
 
-The parquets now carry three columns (`SPP-North`, `SPP-Oklahoma`, `SPP-South`) for the SPP-57
-topology; same builder, same NASA POWER `WS50M` sites (the largest six operable wind plants per
-zone by nameplate, zone-assigned by `build_zone_lookup("SPP")`), same power curve and shear
-exponent. Measured night(00-06)/afternoon(12-18) ratio, 2023 / 2024 / 2025: SPP-North 0.97 /
-0.96 / 0.91, **SPP-Oklahoma 1.06 / 0.96 / 0.95**, **SPP-South 1.01 / 1.13 / 1.12** — the
-Panhandle / New Mexico residual is the most nocturnal zone, Oklahoma sits between. Reconciliation
-to SPP's own GenMix delivered wind: hourly r 0.842 / 0.829 / 0.829, seasonal r 0.983 / 0.929 /
-0.905 (SPP-32's two-zone build read 0.848 / 0.836 / 0.833 and 0.984 / 0.931 / 0.907). The
-redistribution identity is re-proved by `tests/unit/data/test_spp_renewable_inputs.py` on
-three-zone fixtures.
+The SPP-57 rule-29(a) screen (`docs/handoffs/FINDING-spp-57-2026-09-07.md` §5) killed the
+three-zone arm, so the parquets here stay the SPP-32 two-zone build. The three-zone rebuild
+(`SPP-North` / `SPP-Oklahoma` / `SPP-South`; night/afternoon ratios 0.97 / 1.06 / 1.01 (2023),
+0.96 / 0.96 / 1.13 (2024), 0.91 / 0.95 / 1.12 (2025); GenMix reconciliation hourly r 0.842 /
+0.829 / 0.829) is recorded in that FINDING §4 and lives in the branch history
+(`claude/spp-57-oklahoma-pocket-yedapf`, the design commit) for a re-issue to reuse — the same
+builder regenerates it in minutes.

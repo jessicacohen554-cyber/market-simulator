@@ -18,5 +18,12 @@ for year in (2023, 2024, 2025):
     months = b._monthly_bytes(b.FS_RT, "RTBM-LMP", year)
     for m, data in months.items():
         (OUT / f"RTBM-LMP-MONTHLY-SL-{year}{m:02d}.csv").write_bytes(data)
-    print(year, "months", sorted(months), "bytes", sum(len(v) for v in months.values()), flush=True)
+    print(
+        year,
+        "months",
+        sorted(months),
+        "bytes",
+        sum(len(v) for v in months.values()),
+        flush=True,
+    )
 print("done", flush=True)

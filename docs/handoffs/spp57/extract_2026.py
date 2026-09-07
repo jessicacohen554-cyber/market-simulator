@@ -9,7 +9,6 @@ import glob
 import re
 import sys
 
-import numpy as np
 import pandas as pd
 
 S = sys.argv[1]
@@ -18,7 +17,19 @@ OUT = sys.argv[2]
 KANSAS = {"WR", "SECI", "KCPL", "MPS", "KACY"}
 OKLA = {"OKGE", "WFEC", "GRDA"}
 OKLA_PLUS = OKLA | {"CSWS"}
-WEST = {"WACM", "WAUW", "PSCO", "BHBA", "PRPA", "BEPM", "TSGT", "CRCG", "WAPA", "BLKH", "MPC"}
+WEST = {
+    "WACM",
+    "WAUW",
+    "PSCO",
+    "BHBA",
+    "PRPA",
+    "BEPM",
+    "TSGT",
+    "CRCG",
+    "WAPA",
+    "BLKH",
+    "MPC",
+}
 sl = pd.read_csv(
     "/home/user/market-simulator/data/raw/spp-planning/SL_to_Pnode_to_Zone_with_Area.csv",
     dtype=str,
@@ -27,8 +38,32 @@ sl = pd.read_csv(
 AREAS = (
     set(sl.NODE_AREA.dropna().unique())
     | WEST
-    | {"SPA", "AECI", "AMRN", "MEC", "OTP", "GRE", "NSP", "ALTW", "DPC", "MDU", "MHEB", "SOUC",
-       "TVA", "EES", "CLEC", "LAFA", "EDE", "SPRM", "INDN", "SPS", "WAUE", "NPPD", "OPPD", "LES"}
+    | {
+        "SPA",
+        "AECI",
+        "AMRN",
+        "MEC",
+        "OTP",
+        "GRE",
+        "NSP",
+        "ALTW",
+        "DPC",
+        "MDU",
+        "MHEB",
+        "SOUC",
+        "TVA",
+        "EES",
+        "CLEC",
+        "LAFA",
+        "EDE",
+        "SPRM",
+        "INDN",
+        "SPS",
+        "WAUE",
+        "NPPD",
+        "OPPD",
+        "LES",
+    }
 )
 
 
@@ -69,12 +104,27 @@ def group(row):
 # ---------------------------------------------------------------------------------------------
 # PRECOMMIT-spp-57 §3.2 membership for the OK<->S / Oklahoma-entry candidate set
 def admitted(g, why):
-    return g in ("oklahoma_internal", "sps_tie") or (g == "other" and why == "other areas: CSWS")
+    return g in ("oklahoma_internal", "sps_tie") or (
+        g == "other" and why == "other areas: CSWS"
+    )
 
 
-C14 = ["Interval", "GMTIntervalEnd", "Constraint Name", "Constraint Type", "NERCID", "TLR Level",
-       "State", "Shadow Price", "Monitored Facility", "Contingent Facility", "Source Limit",
-       "Real Time Effective Limit", "Initial Effective Limit", "Interconnect"]
+C14 = [
+    "Interval",
+    "GMTIntervalEnd",
+    "Constraint Name",
+    "Constraint Type",
+    "NERCID",
+    "TLR Level",
+    "State",
+    "Shadow Price",
+    "Monitored Facility",
+    "Contingent Facility",
+    "Source Limit",
+    "Real Time Effective Limit",
+    "Initial Effective Limit",
+    "Interconnect",
+]
 files = sorted(glob.glob(f"{S}/daily/RTBM-DAILY-BC-*.csv"))
 rows = []
 n14_days = 0
@@ -86,7 +136,9 @@ for f in files:
     if not any(len(r) == 14 for r in recs):
         continue
     n14_days += 1
-    d = pd.DataFrame([r + [None] * (14 - len(r)) for r in recs if len(r) in (10, 14)], columns=C14)
+    d = pd.DataFrame(
+        [r + [None] * (14 - len(r)) for r in recs if len(r) in (10, 14)], columns=C14
+    )
     d = d[d["Real Time Effective Limit"].notna()]
     d = d[d.State.isin(["BINDING", "BREACHED", "ACTIVATED"])].copy()
     d["tok"] = d["Contingent Facility"].map(tokens)
@@ -94,19 +146,46 @@ for f in files:
     d["group"] = g[0]
     d["why"] = g[1]
     d = d[[admitted(a, b) for a, b in zip(d["group"], d["why"])]]
-    rows.append(d[["Constraint Name", "Monitored Facility", "Contingent Facility", "State",
-                   "Shadow Price", "Source Limit", "Real Time Effective Limit",
-                   "Initial Effective Limit", "Interconnect", "GMTIntervalEnd", "group"]])
+    rows.append(
+        d[
+            [
+                "Constraint Name",
+                "Monitored Facility",
+                "Contingent Facility",
+                "State",
+                "Shadow Price",
+                "Source Limit",
+                "Real Time Effective Limit",
+                "Initial Effective Limit",
+                "Interconnect",
+                "GMTIntervalEnd",
+                "group",
+            ]
+        ]
+    )
 print("files", len(files), "14-column days", n14_days)
 D = pd.concat(rows, ignore_index=True)
-for c in ("Shadow Price", "Source Limit", "Real Time Effective Limit", "Initial Effective Limit"):
+for c in (
+    "Shadow Price",
+    "Source Limit",
+    "Real Time Effective Limit",
+    "Initial Effective Limit",
+):
     D[c] = pd.to_numeric(D[c], errors="coerce")
 D["GMTIntervalEnd"] = pd.to_datetime(D["GMTIntervalEnd"], format="mixed", utc=True)
 D = D.sort_values(["GMTIntervalEnd", "Constraint Name"]).reset_index(drop=True)
 D.to_parquet(OUT, index=False)
-print("sidecar rows", len(D), "span", D.GMTIntervalEnd.min(), D.GMTIntervalEnd.max(),
-      "constraints", D["Constraint Name"].nunique(), D.State.value_counts().to_dict(),
-      D.group.value_counts().to_dict())
+print(
+    "sidecar rows",
+    len(D),
+    "span",
+    D.GMTIntervalEnd.min(),
+    D.GMTIntervalEnd.max(),
+    "constraints",
+    D["Constraint Name"].nunique(),
+    D.State.value_counts().to_dict(),
+    D.group.value_counts().to_dict(),
+)
 b = D[D.State.isin(["BINDING", "BREACHED"])]
 st = (
     b.groupby(["Constraint Name", "Monitored Facility", "group"])
@@ -117,8 +196,10 @@ st = (
         rtel_p90=("Real Time Effective Limit", lambda s: s.quantile(0.9)),
         src_med=("Source Limit", "median"),
         init_med=("Initial Effective Limit", "median"),
-        derate_share=("Real Time Effective Limit",
-                      lambda s: float((s < b.loc[s.index, "Source Limit"] - 1e-9).mean())),
+        derate_share=(
+            "Real Time Effective Limit",
+            lambda s: float((s < b.loc[s.index, "Source Limit"] - 1e-9).mean()),
+        ),
         mean_asp=("Shadow Price", lambda s: s.abs().mean()),
     )
     .reset_index()
@@ -127,5 +208,9 @@ st = (
 st.to_csv(f"{S}/bc/limits_2026_oklahoma_by_constraint.csv", index=False)
 pd.set_option("display.width", 300)
 print(st.head(40).to_string(index=False, max_colwidth=34))
-print("derate share over binding rows:", float((b["Real Time Effective Limit"] < b["Source Limit"] - 1e-9).mean()),
-      "median ratio", float((b["Real Time Effective Limit"] / b["Source Limit"]).median()))
+print(
+    "derate share over binding rows:",
+    float((b["Real Time Effective Limit"] < b["Source Limit"] - 1e-9).mean()),
+    "median ratio",
+    float((b["Real Time Effective Limit"] / b["Source Limit"]).median()),
+)
