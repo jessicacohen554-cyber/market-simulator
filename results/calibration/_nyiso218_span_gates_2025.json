@@ -1,0 +1,392 @@
+{
+ "session": "nyiso-218",
+ "arm": "results/calibration/_nyiso218_span_lift103",
+ "year": 2025,
+ "gates": {
+  "S1": {
+   "pass": false,
+   "n_bands_moved": 30,
+   "n_bands_expected": 30,
+   "all_ratios_exactly_1.03": true,
+   "violations": [],
+   "non_offer_curve_recipe_diff": {
+    "spp_gas_commitment_bridge": [
+     null,
+     false
+    ],
+    "ercot_zonal_spread_ep_referenced": [
+     null,
+     false
+    ]
+   },
+   "year_selection_keys_excluded": {},
+   "band_moves": {
+    "CC_CHP.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CC_CHP.econ_high": [
+     1.24,
+     1.2772000000000001,
+     1.03
+    ],
+    "CC_CHP.econ_low": [
+     0.98,
+     1.0094,
+     1.03
+    ],
+    "CC_REGULAR.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CC_REGULAR.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CC_REGULAR.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "COAL.econ_high": [
+     1.1,
+     1.1330000000000002,
+     1.03
+    ],
+    "COAL.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_BIT.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "COAL_BIT.econ_high": [
+     1.1,
+     1.1330000000000002,
+     1.03
+    ],
+    "COAL_BIT.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.committed": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.econ_high": [
+     1.15,
+     1.1844999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.econ_low": [
+     1.14,
+     1.1742,
+     1.03
+    ],
+    "COAL_PRB.committed": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_PRB.econ_high": [
+     1.19,
+     1.2257,
+     1.03
+    ],
+    "COAL_PRB.econ_low": [
+     0.77,
+     0.7931,
+     1.03
+    ],
+    "COAL_WC.committed": [
+     0.85,
+     0.8755,
+     1.03
+    ],
+    "COAL_WC.econ_high": [
+     1.02,
+     1.0506,
+     1.03
+    ],
+    "COAL_WC.econ_low": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CT_CHP.committed": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_CHP.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_CHP.econ_low": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_PEAKER.committed": [
+     1.35,
+     1.3905,
+     1.03
+    ],
+    "CT_PEAKER.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_PEAKER.econ_low": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "ST_GAS.committed": [
+     1.05,
+     1.0815000000000001,
+     1.03
+    ],
+    "ST_GAS.econ_high": [
+     1.13,
+     1.1639,
+     1.03
+    ],
+    "ST_GAS.econ_low": [
+     1.08,
+     1.1124,
+     1.03
+    ]
+   }
+  },
+  "S2": {
+   "pass": true,
+   "keeper_lw_price": 61.5839,
+   "arm_lw_price": 62.472,
+   "measured_d_lw_price": 0.8881,
+   "pred_inzone": 0.6609,
+   "pred_system": 0.8665,
+   "accept_window": [
+    0.3305,
+    1.733
+   ],
+   "same_sign": true,
+   "realized_over_pred_inzone": 1.3437,
+   "passthrough_usd_mwh_per_1pct_band": 0.296
+  },
+  "S3": {
+   "pass": true,
+   "moved_class_aggregate_delta_twh": -0.062,
+   "all_class_sum_delta_twh": 0.0004,
+   "energy_balance_tol_twh": 0.766,
+   "st_chp_abs_delta_twh": 0.0445,
+   "class_delta_twh": {
+    "CC_CHP": -0.0181,
+    "CC_REGULAR": 0.0063,
+    "CT_CHP": 0.0117,
+    "CT_PEAKER": 0.0233,
+    "OTHER": 0.0,
+    "ST_CHP": 0.0445,
+    "ST_GAS": -0.0852,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "import": 0.0184,
+    "nuclear": 0.0,
+    "oil": -0.0005,
+    "solar": 0.0,
+    "wind": 0.0
+   }
+  },
+  "S4": {
+   "pass": true,
+   "flips_pass_to_fail": [],
+   "gated_criteria": [
+    "C1",
+    "C2",
+    "C4"
+   ],
+   "reported_not_gated": [
+    "C3a",
+    "C3b",
+    "C3c"
+   ],
+   "scores": {
+    "keeper": {
+     "C1": {
+      "CC_REGULAR": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CC_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CT_PEAKER": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_GAS": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "COAL_BIT": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "SKIPPED",
+       "-1.1%"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C4": {
+      "gas": [
+       "PASS",
+       "r=0.841, NRMSE=0.187"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal hourly fit absent"
+      ]
+     },
+     "C3a_REPORTED": [
+      "PASS",
+      "-7.3%",
+      61.58,
+      66.43
+     ],
+     "C3b_REPORTED": [
+      "PASS",
+      "NRMSE 0.160"
+     ]
+    },
+    "arm": {
+     "C1": {
+      "CC_REGULAR": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (11/20 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CC_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (12/17 prior plants missing (29% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "CT_PEAKER": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (17/20 prior plants missing (15% reporting); plant-months 89% present); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_GAS": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (3/10 prior plants missing (70% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "ST_CHP": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: incomplete plant data (2/6 prior plants missing (67% reporting)); not gated \u2014 C2 family grid reconcile covers this class"
+      ],
+      "COAL_BIT": [
+       "SKIPPED",
+       "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "SKIPPED",
+       "-1.1%"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C4": {
+      "gas": [
+       "PASS",
+       "r=0.841, NRMSE=0.187"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal hourly fit absent"
+      ]
+     },
+     "C3a_REPORTED": [
+      "PASS",
+      "-6.0%",
+      62.47,
+      66.43
+     ],
+     "C3b_REPORTED": [
+      "PASS",
+      "NRMSE 0.154"
+     ]
+    }
+   },
+   "payload_rebuild_identity_vs_committed": {
+    "lmp_p_max_abs_diff": 0.0,
+    "gmModel_max_abs_diff": 0.0,
+    "zones_match": true,
+    "fuelRows_gas_committed_vs_rebuilt": {
+     "committed": {
+      "m": 69.51,
+      "b": 70.25,
+      "r": 0.841,
+      "nrmse": 0.187
+     },
+     "rebuilt_keeper": {
+      "m": 69.51,
+      "b": 70.25,
+      "r": 0.841,
+      "nrmse": 0.187
+     }
+    }
+   },
+   "C8_forced_share": "NOT COMPUTABLE for an unregistered screen bundle (needs legitimacy_diagnostics.json, written only by the register path). The arm moves no floor, no share and no availability \u2014 only three offer bands \u2014 so the forced VOLUME is untouched by construction; REPORTED, and re-scored on the full-span bundle if the span is spent.",
+   "C6_governance": "the attestation is written at registration; the arm is the keeper recipe plus the declared authorized_price_tuning channel (rule 1 carve-out conditions (a)-(e))."
+  },
+  "S5": {
+   "pass": null,
+   "note": "REPORTED ONLY \u2014 C3c is the standing ledgered caveat; never a gate here.",
+   "keeper": {
+    "hours_max_zonal_gt_300": 3,
+    "hours_max_zonal_gt_100": 796,
+    "system_mean": 58.7338
+   },
+   "arm": {
+    "hours_max_zonal_gt_300": 3,
+    "hours_max_zonal_gt_100": 815,
+    "system_mean": 59.6048
+   }
+  }
+ },
+ "screen_verdict": {
+  "gates_pass": false,
+  "per_gate": {
+   "S1": false,
+   "S2": true,
+   "S3": true,
+   "S4": true,
+   "S5": null
+  }
+ }
+}

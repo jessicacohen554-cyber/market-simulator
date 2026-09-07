@@ -1,0 +1,46 @@
+{
+ "envelope_percentile": 95.0,
+ "min_flow_percentile": 5.0,
+ "by_year": {
+  "2023": {
+   "hours_at_ceiling": 2842,
+   "share_at_ceiling": 0.32442922374429223,
+   "hours_over_ceiling": 603,
+   "model_over_ceiling_p50_ratio": 0.8994222012527391,
+   "model_over_ceiling_p90_ratio": 1.0000000456992497,
+   "share_interior_below_99pct_of_ceiling": 0.6634703196347032,
+   "ceiling_mean_mw": 3511.79200913242,
+   "model_mean_mw": 3038.3299678436697
+  },
+  "2024": {
+   "hours_at_ceiling": 3692,
+   "share_at_ceiling": 0.4214611872146119,
+   "hours_over_ceiling": 100,
+   "model_over_ceiling_p50_ratio": 0.9257432489518926,
+   "model_over_ceiling_p90_ratio": 1.0000000219991103,
+   "share_interior_below_99pct_of_ceiling": 0.5703196347031964,
+   "ceiling_mean_mw": 3462.675878995434,
+   "model_mean_mw": 3052.4012302625124
+  },
+  "2025": {
+   "hours_at_ceiling": 3646,
+   "share_at_ceiling": 0.41621004566210046,
+   "hours_over_ceiling": 187,
+   "model_over_ceiling_p50_ratio": 0.9399412592535987,
+   "model_over_ceiling_p90_ratio": 1.0000000166149874,
+   "share_interior_below_99pct_of_ceiling": 0.5764840182648402,
+   "ceiling_mean_mw": 3228.0451369863013,
+   "model_mean_mw": 2746.4450079652274
+  },
+  "2022": {
+   "hours_at_ceiling": 2359,
+   "share_at_ceiling": 0.26929223744292236,
+   "hours_over_ceiling": 654,
+   "model_over_ceiling_p50_ratio": 0.8590619390376484,
+   "model_over_ceiling_p90_ratio": 1.0000000522372592,
+   "share_interior_below_99pct_of_ceiling": 0.723744292237443,
+   "ceiling_mean_mw": 3476.8630136986303,
+   "model_mean_mw": 2923.6780568022705
+  }
+ }
+}
