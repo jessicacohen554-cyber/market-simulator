@@ -1,0 +1,780 @@
+{
+  "bundle": "results/capacity-hindcast/pjm-2021-2025-realized-t1h-d67arm",
+  "cache_key": "a9c66d8ea25acb9d",
+  "years": {
+    "2021": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 0,
+          "sector_1": 0
+        }
+      }
+    },
+    "2022": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 244,
+          "sector_1": 38
+        },
+        "retirements[reason=economic]": {
+          "rows": 115,
+          "sector_1": 12
+        }
+      }
+    },
+    "2023": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 60,
+          "sector_1": 20
+        },
+        "retirements[reason=economic]": {
+          "rows": 23,
+          "sector_1": 3
+        }
+      }
+    },
+    "2024": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 34,
+          "sector_1": 34
+        },
+        "retirements[reason=economic]": {
+          "rows": 14,
+          "sector_1": 14
+        }
+      }
+    },
+    "2025": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 0,
+          "sector_1": 0
+        }
+      }
+    }
+  },
+  "violations": [
+    {
+      "year": "2021",
+      "kind": "missing sector_gated block"
+    },
+    {
+      "year": "2022",
+      "kind": "missing sector_gated block"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "pipeline_events",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_committed"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_peak"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_ComEd_p972_econ"
+    },
+    {
+      "year": "2022",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_econ"
+    },
+    {
+      "year": "2023",
+      "kind": "missing sector_gated block"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_committed"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "pipeline_events",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_peak"
+    },
+    {
+      "year": "2023",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "missing sector_gated block"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3948_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3948_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3948_mustrun"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3948_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "pipeline_events",
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_West_APS_p3954_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "year": "2024",
+      "kind": "retirements[reason=economic]",
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "year": "2025",
+      "kind": "missing sector_gated block"
+    }
+  ],
+  "unknown_sector_rows": 0,
+  "S4": "FIRED"
+}
