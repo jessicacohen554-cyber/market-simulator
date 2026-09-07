@@ -31,6 +31,21 @@ corroboration on an independent instrument.
 Part C exists because the owner asked, mid-session, why MISO wind is overproducing and whether
 MISO HSL data is needed. It is answered in §3.
 
+### 0a. A BASIS DISCLOSURE that a first draft of this document got wrong, corrected here
+
+The lane's published "measured price decile slope" column is scored on the Indiana-hub **RT**
+price — `_miso224_floor_anatomy_phase0.actual_zone_price` reads `values="rt"` — while
+`MISO_SEAM_LADDER_BY_YEAR` was Q-Q **derived** against the Indiana-hub **DA**. **They are not the
+same instrument**: they correlate only **+0.402 / +0.424 / +0.553**. A first pass of §1 labelled
+the DA basis "the scored basis"; that was wrong, and every decile statement below now names its
+basis and reports both.
+
+**This resolves half of the handoff's known-comparator warning, in the favourable direction.**
+miso-233's own published measured South column **reproduces EXACTLY** on its own instrument:
+import-positive **+71.8 / +60.4 / +646.0** here against its published +71.8 / +60.4 / +646.1.
+What miso-233 §5 could not reproduce was the *miso-232* column (+1,303/+1,384/+948), a different
+series; nothing in this session restates that one as reproduced.
+
 ---
 
 ## 1. Part A — the measured South seam IS price-responsive; it responds to the price of the
@@ -46,18 +61,25 @@ says the premise is basis-dependent, and the answer changes with the basis:**
 
 | year | basis | pearson | spearman | export decile slope |
 |---|---|---:|---:|---:|
-| 2023 | MISO Indiana hub DA (**the scored basis**) | +0.029 | −0.067 | −125.4 MW |
+| 2023 | Indiana hub **DA** (the ladder's derivation basis) | +0.029 | −0.067 | −125.4 MW |
+| | Indiana hub **RT** (**the scored basis**) | +0.012 | −0.058 | −71.8 MW |
 | | **MISO-South zonal DA** (the bus the seam terminates on) | −0.107 | **−0.193** | **+323.3 MW** |
+| | MISO-South zonal RT | −0.095 | −0.178 | +296.0 MW |
 | 2024 | Indiana hub DA | −0.059 | −0.064 | −10.2 MW |
+| | Indiana hub **RT** | −0.012 | −0.020 | −60.4 MW |
 | | **MISO-South zonal DA** | −0.133 | **−0.176** | **+426.8 MW** |
+| | MISO-South zonal RT | −0.068 | −0.121 | +317.4 MW |
 | 2025 | Indiana hub DA | +0.141 | +0.082 | −636.4 MW |
+| | Indiana hub **RT** | +0.098 | +0.129 | −646.0 MW |
 | | MISO-South zonal DA | +0.064 | −0.001 | −235.6 MW |
+| | MISO-South zonal RT | −0.006 | +0.040 | −326.8 MW |
 
-On the **local** price the seam carries the correct arbitrage sign in 2023 and 2024 — export
-falls as the South price rises — and a decile slope of +323 / +427 MW. On the **Indiana hub**
-basis, which is the basis the residual decile slope is scored against, the same flow reads flat.
-So "the South seam is price-independent" is a statement about the *comparator*, not about the
-seam.
+**The reading is basis-robust and that is why it is stated.** On either *Indiana* basis, DA or
+RT, the seam reads flat-to-negative in every year. On the **local South** price it carries the
+correct arbitrage sign in 2023 and 2024 on **both** DA and RT (spearman −0.193/−0.178 and
+−0.176/−0.121) with a decile slope of +323/+296 and +427/+317 MW. So "the South seam is
+price-independent" is a statement about the *comparator*, not about the seam. 2025 is the
+exception in both directions and is not claimed either way.
 
 Firmness, against the firm-block reading: lag-1 autocorrelation **+0.95 / +0.95 / +0.96**, but
 mean absolute hour-to-hour change **203 / 206 / 213 MW (15–21 % of the mean)** and
@@ -73,7 +95,8 @@ BA the model's South interface names as its `ba_code`.
 ## 2. Part B — the South seam's wrong-signed slope is INHERITED. 56–68 % of it is the model's
 missing North–South price separation, measured at zero LP
 
-`scripts/probes/_miso234_ns_separation_phase0.py` → `_miso234_ns_separation_phase0.json`.
+`scripts/probes/_miso234_ns_separation_phase0.py` → `_miso234_ns_separation_phase0.json`. **Deciles in this part and in §4 and §5 are on the Indiana
+hub RT price** (the scored basis, per §0a); §1's table is the only place both are tabulated.
 
 **The model's South price carries no independent South information at all.** From Part A:
 `corr(model MISO_external_South bus, measured South DA)` = +0.712 / +0.569 / +0.665 against

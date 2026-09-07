@@ -12523,9 +12523,13 @@ own numbers, and does not**. Evidence is appended to five cells; every verdict i
 slope) is CLOSED AS A SEAM OBJECT at phase 0, before any LP minute was spent** — the outcome rule
 29 clause 0 exists to produce. The handoff's premise (that near price-independence is the RDT
 firm-contract signature) is **basis-dependent and does not survive**: on the **MISO-South local**
-DA the measured seam carries the correct arbitrage sign (spearman −0.193/−0.176 in 2023/2024,
-export decile slope +323.3/+426.8 MW) and only on the **Indiana-hub** basis the residual is
-*scored* against does it read flat (−125.4/−10.2/−636.4). Firmness refuses a flat block too
+DA the measured seam carries the correct arbitrage sign in 2023/2024 on **both DA and RT**
+(spearman −0.193/−0.178 and −0.176/−0.121) while on **either Indiana basis** it reads
+flat-to-negative in every year (DA −125.4/−10.2/−636.4; RT −71.8/−60.4/−646.0). **Basis
+disclosed**: the published decile column is scored on Indiana **RT**, the ladder was derived
+against Indiana **DA**, and they correlate only +0.402/+0.424/+0.553 — and on its own instrument
+miso-233's published measured South column **reproduces exactly** (+71.8/+60.4/+646.0 vs
++71.8/+60.4/+646.1); the unreproduced column was *miso-232's*. Firmness refuses a flat block too
 (lag-1 acf +0.95/+0.95/+0.96 but mean |Δh| 15–21 % of mean; between-month variance share
 0.11/0.13/0.34; p10 base 34/212/**−200** MW). And the slope is **inherited**: `corr(model
 MISO_external_South bus, measured South DA)` = +0.712/+0.569/+0.665 against `corr(same bus,
