@@ -57,7 +57,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     unit_network_layer_sidecar: { cell: "I" },
     matrix_gap_census: { cell: "K", ev: "pjm-151 (results/calibration/FINDING-pjm151-matrix-column-closure-2026-08-03.md; sweep before/after results/calibration/_matrix_gap_sweep_PJM.json)" },
     forecast_xyear_warmstart: { cell: ".", fc: "R" },
-    energy_reserve_coopt: { cell: "K", ev: "pjm-120 §6.1; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3)" },
+    energy_reserve_coopt: { cell: "K", fc: "R", ev: "pjm-120 §6.1; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3) — BACKCAST cell UNCHANGED (K). FORECAST-LANE cell SPLIT OFF AND SET R by the PJM RUBRIC-RESIDUAL lane 2026-09-07 (docs/handoffs/FINDING-pjm-eas-screen-2026-09-07.md; PRECOMMIT-pjm-eas-operand-2026-09-07.md + ADDENDUM-pjm-eas-key-window-2026-09-07.md pushed before any LP; screen arm key 8966e7cea75efc4e against the registered pjm-t1h control fb16fda2ddb0a94a, rule 29(b) form 4, G-DRIFT clean). Until now `fc` was OMITTED, i.e. DECLARED == the backcast K, while the T1-H hindcast in fact carried energy_reserve_coopt / pjm_reserve_pergen / pjm_reserve_supply_cap ALL FALSE — the gap this lane measured. ARMING ALL THREE IN THE FORECAST LANE IS REFUTED AS AN ANSWER TO THE ZERO E&AS OPERAND. It is REACHABLE and it FIRES (co-opt live in forecast mode: req mean 2639 MW, 4 ORDC steps, 1436 eligible units; PER-GEN 40 R columns / 1405 member units, 2 balance families; 366 of 1399 offers moved, so NOT byte-inert) — but it supplies essentially none of the E&AS the failing set needs: the 2022 decided cohort operand moves 0.0416 -> 0.0411 $/accredited MW-day, i.e. DOWN, against a measured 12.7 threshold and a 25-65 predicted band (~1000x short); the largest offer move anywhere in the stack is 0.1864 $/MW-day and coal/gas_cc medians move the WRONG SIGN (+0.091/+0.121); the screen price max goes DOWN 52.7715 -> 52.3638 $/MWh against a pre-registered UP direction and a $60 floor; and the 2022 clearing is unchanged to the milli-MW in every fuel (price 90.4111 -> 90.4355, uncleared coal 1172.069 / gas_st 9536.643 both arms, same marginal unit), with 2021-2022 retirements BYTE-IDENTICAL. CAUSE, measured and predicted by pjm_reserve_supply_cap's own docstring: reserve supply is ~19x the requirement (deliverable ramp mean 51.0 GW vs req mean 2639 MW) EVEN WITH the deliverable-ramp re-scoping armed, so the published ORDC knee never fires and reserve_signal_mean stays 0.0 in the arm exactly as in the control. CONSEQUENCE FOR THE MATRIX BEYOND THIS CELL: this REFUTES the phase-0 attribution of PJM's backcast price tail (max $213.46) vs the hindcast's ($52.77) to the co-opt, and it retires the whole FAMILY of PJM levers whose route to the capacity screen runs through reserve scarcity — dead on arrival at this fleet size. ordc_scarcity_overlay's G is NOT re-opened (this lane armed the co-opt its citation defers to, never the overlay). NOTHING ARMS: the three harness passthroughs added this session default to None, every existing posture keeps its recipe key, and the PJM keeper is UNCHANGED. Rule 29(c): screen bundle deleted before merge, every number in the FINDING. DO-NOT-REDO: do not re-propose arming the PJM reserve co-opt in the forecast lane as a fix for the retirement-screen E&AS operand without new evidence — the LANE-CONSISTENCY question (keeper True vs forecast False, against _build_config's own same-price-formation docstring) is real but is a separate owner-facing proposal about every PJM forecast run's cache key, and this lane establishes that closing it does NOT fix the operand and costs a small price-surface regression" },
     ercot_multiproduct_as: { cell: "." },
     online_capacity_envelope: { cell: "R", ev: "pjm frontier §2" },
     reserve_pergen: { cell: "K", ev: "pjm-120" },
@@ -364,4 +364,40 @@ window.MECH_MATRIX_SHARDS.PJM = {
  *
  * Evidence: results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md
  *           results/calibration/PRECOMMIT-pjm166-c1-object-2026-09-06.md
+ */
+
+/* ---------------------------------------------------------------------------
+ * PJM column re-stamp — PJM RUBRIC-RESIDUAL lane, 2026-09-07.
+ *
+ * ONE cell moved: energy_reserve_coopt gains an explicit forecast-lane
+ * posture, fc: 'R'. The BACKCAST cell stays K (pjm-120 / pjm-138 untouched),
+ * and no other cell moves. Keeper UNCHANGED at 2026-08-15-pjm-162-inputclock;
+ * nothing armed, promoted or reverted; the three harness passthroughs this
+ * session added to run_capacity_hindcast.py default to None, so every existing
+ * posture keeps its recipe key and the registered pjm-t1h control key
+ * fb16fda2ddb0a94a is unmoved.
+ *
+ * Why the cell needed splitting at all: `fc` was OMITTED here, which the shard
+ * header defines as 'same as cell' — i.e. the matrix DECLARED the forecast lane
+ * ran PJM's reserve co-optimization, while the T1-H hindcast actually carried
+ * energy_reserve_coopt / pjm_reserve_pergen / pjm_reserve_supply_cap all False.
+ * The declaration and the runs disagreed. They no longer do.
+ *
+ * DO-NOT-REDO, added by this session: arming PJM's reserve co-optimization in
+ * the FORECAST lane as a fix for the retirement screen's zero E&AS operand is
+ * REFUTED by a pre-registered one-year screen and should not be re-proposed
+ * without new evidence. It fires (366 of 1399 offers moved) and supplies
+ * ~0.15 % of the required magnitude, mostly with the wrong sign, because
+ * reserve supply is ~19x the requirement even with the deliverable-ramp cap
+ * armed. The same ratio retires every PJM lever whose route to the capacity
+ * screen runs through reserve scarcity.
+ *
+ * ALSO REFUTED, against this lane's own interest: phase 0 attributed the gap
+ * between PJM's backcast price surface (max $213.46/MWh) and the hindcast's
+ * (max $52.7715) to the co-opt. Arming it moves that tail by -0.41 $/MWh. The
+ * cause of PJM's backcast tail is still unidentified and is the successor.
+ *
+ * Evidence: docs/handoffs/FINDING-pjm-eas-screen-2026-09-07.md
+ *           docs/handoffs/PRECOMMIT-pjm-eas-operand-2026-09-07.md
+ *           docs/handoffs/ADDENDUM-pjm-eas-key-window-2026-09-07.md
  */
