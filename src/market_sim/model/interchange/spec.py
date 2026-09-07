@@ -1219,46 +1219,110 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # (REFERENCE_PRICE_DEFAULT_ISOS is untouched), so the first keeper serves
     # the measured EIA-930 ``Total interchange`` schedule
     # (eia930.envelopes.spp_net_interchange) and these blocks are a
-    # byte-identical no-op until SPP-51 validates them with
-    # ``--priced-interchange``. Rule 25 [R-ISO-SCOPE]: nothing here is
-    # copied from another ISO's fitted values — each ``marginal_heat_rate``
-    # is this registry's own documented construction (the neighbour's
-    # realized annual-mean RT LMP / Henry Hub, pooled over 2023-2025) read
-    # off the COMMITTED anchor files named per block, with
-    # HENRY_HUB_TRAJECTORIES' historical 2.54 / 2.19 / 3.52 $/MMBtu; the
-    # per-year ``hr_by_year`` re-anchor is SPP-33's derive
-    # (scripts/data/derive_neighbor_hr_by_year.py --iso SPP) and is left
-    # ``None`` here so a value is never entered twice by two lanes.
+    # byte-identical no-op: SPP has NO IMPORT_ZONE / IMPORT_NODE_LINKS entry
+    # (plan §7 G7), so get_interchange_spec returns an EMPTY spec for SPP and
+    # these blocks build no rows even under --priced-interchange. Lane SPP-51
+    # (2026-09-07, PRECOMMIT-spp-51 §2) traced that gap and DESIGNED the
+    # topology any LP test needs — two external buses, one per side of the
+    # SPP-53 N<->S corridor (a single shared bus linked to both zones is a
+    # free wheeling path around the 3,400 MW link, the defect
+    # split_miso_south_external_node removes for MISO's RDT) — and ROUTED it
+    # rather than building it, because its own rule-29 phase-0 gate KILLED
+    # the spread-clearing arm on the MEASURED record before any solve: the
+    # measured SPP hub minus the measured MISO-West / MISO-South anchor
+    # predicts the measured seam direction in 0.42-0.50 of non-hold hours
+    # (corr ~0) in every year and both runs (PRECOMMIT-spp-51 §3.5;
+    # FINDING-spp-51). The SPP<->MISO flow is scheduled / JOA / loop flow,
+    # not a function of the hourly spread — the same finding MISO's own lane
+    # made from its side (PRECOMMIT-miso233 §104-113), which is why MISO's
+    # keeper prices this seam as a measured hourly-anchored OFFSET ladder.
+    # The blocks are kept, corrected and default-off as the registered P2/P3
+    # forward objects; matrix cells priced_interchange /
+    # reference_price_interface read R for SPP.
+    #
+    # Rule 25 [R-ISO-SCOPE]: nothing here is copied from another ISO's
+    # fitted values — every number is read off the COMMITTED anchor file
+    # named per block with HENRY_HUB_TRAJECTORIES' historical 2.54 / 2.19 /
+    # 3.52 $/MMBtu, by scripts/data/derive_neighbor_hr_by_year.py --iso SPP
+    # (its per-ISO anchor map is SPP-51's repair of SPP-33 R1) and pinned by
+    # tests/iso/spp/test_spp_priced_seams.py.
+    #
+    # THE HH + BASIS CORRECTION (SPP-33 §4 R2, made by SPP-51). The seam
+    # prices as (henry_hub + gas_basis) x HR x shape
+    # (data/neighbor_price.py: neighbor_gas_price returns HH + basis;
+    # neighbor_reference_price / seam_tranche_prices multiply it by
+    # neighbor_heat_rate), so the HR that reproduces a measured annual mean
+    # divides by HH + BASIS. SPP-20's flat values divided by bare HH and
+    # mis-constructed their own anchors by +14/-24/-43 %. Per block below:
+    # ``hr_by_year`` = mean_anchor_RT[y] / ((HH[y] + basis) x K[y]) with
+    # K = 1.000000 exactly (load_shape_exponent 1.0), the MEASURED backcast
+    # value neighbor_heat_rate resolves first; ``marginal_heat_rate`` = the
+    # mean of the three hr_by_year cells, the FORWARD fallback (there is no
+    # _HR_GAS_ELASTIC key for any SPP seam — SPP-33 §5 R3, reported, not
+    # fixed: ERCOT's fit is degenerate and the MISO legs' names are now
+    # unique, so a later lane may key them if it derives one).
+    #
     # ``hurdle`` = 2.0 $/MWh on every seam: the SPP<->MISO seam is ONE
     # physical object and MISO's side already registers it at 2.0, so a
     # different dead-band from this side would make the same seam clear on
     # two rules (rule 19); AECI and ERCOT take the same Tier-3 dead-band
-    # pending SPP-51 (never fitted). ``load_shape_exponent`` = 1.0, the
-    # parameter-free mean-preserving default. Border zones follow the P1
-    # state map: MISO-West borders the Dakotas/MN/IA (North) and MISO-South
-    # borders AR/LA (South); AECI is the Missouri co-op island (North); the
-    # ERCOT DC ties (Oklaunion 220 + Monticello 600 MW) land in Oklahoma /
-    # east Texas (South).
+    # (never fitted). ``load_shape_exponent`` = 1.0, the parameter-free
+    # mean-preserving default. Border zones follow the P1 state map:
+    # MISO-West borders the Dakotas/MN/IA (North) and MISO-South borders
+    # AR/LA (South); AECI is the Missouri co-op island (North); the ERCOT DC
+    # ties (Oklaunion 220 + Monticello 600 MW) land in Oklahoma / east Texas
+    # (South).
     "SPP": [
+        # THE MISO SEAM IS TWO BLOCKS, ONE PER BORDERING MISO ZONE (SPP-51,
+        # replacing SPP-20's single "MISO" block that averaged the two zones
+        # equal-weight). SPP-20 itself anchored on "the two MISO zones
+        # physically adjacent to SPP — one price per zone"; the two zones are
+        # different prices (RT 28.75 / 27.43 / 40.19 West vs 27.04 / 25.12 /
+        # 35.45 South, $1.7-4.7 apart) that border DIFFERENT SPP zones and, in
+        # any LP landing, must sit on different sides of the N<->S corridor.
+        # One block per zone is the per-zone form of the same registration:
+        # the equal-weight mean of the two legs' hr_by_year reproduces
+        # SPP-33 §3's combined table (9.82 / 10.55 / 9.90) exactly, which is
+        # the check that nothing was re-derived. Limits: the MMU's ">6,000 MW
+        # of AC interties" (SOM 2025 §2.8, PDF p. 70) split by the measured
+        # |flow| share of SPP's own MISO-member tie columns in
+        # TieFlows_Sep2025.csv — West/North members (AMRN MEC ALTW DPC GRE
+        # MDU NSP OTP) 59.1 %, Entergy + Cleco (EES CLEC) 40.9 % over 673 h
+        # (rule 14 reconciliation of a total onto our two-zone boundary;
+        # stated as a one-month measurement). The measured hourly envelope on
+        # the EIA-930 SWPP->MISO DIBA (both legs summed) is -5,377 .. +3,469
+        # MW. gas_basis = MISO's own delivered basis (the NYISO-seam
+        # precedent for referencing a neighbour's registry value); both legs
+        # shape on the MISO BA-level EIA-930 load (no West/South extract).
         NeighborInterface(
-            # Measured anchors: actual_lmp_hourly_zonal_MISO.parquet rows
-            # MISO-West + MISO-South (the two MISO zones physically adjacent
-            # to SPP), annual-mean RT 27.90 / 26.28 / 37.82 $/MWh for
-            # 2023 / 2024 / 2025 -> implied HR 10.98 / 12.00 / 10.74, pooled
-            # mean 11.24. Interface limit: SPP MMU State of the Market 2025
-            # §2.8 (PDF p. 70), ">6,000 MW of AC interties" — the published
-            # floor of the range; the measured hourly envelope on the EIA-930
-            # SWPP->MISO DIBA series is -5,377 .. +3,469 MW (FINDING-spp-11
-            # §4.1), inside it. gas_basis = MISO's own delivered basis, the
-            # NYISO-seam precedent for referencing a neighbour's registry value.
-            name="MISO",
+            # Anchor: actual_lmp_hourly_zonal_MISO.parquet, zone MISO-West
+            # (the MINN hub), annual-mean RT 28.7524 / 27.4275 / 40.1926 $/MWh
+            # over HH + 0.30 = 2.84 / 2.49 / 3.82 -> 10.12 / 11.02 / 10.52;
+            # flat = their mean 10.55.
+            name="MISO_West",
             ba_code="MISO",
             gas_basis=GAS_BASIS_DIFFERENTIAL["MISO"],
-            marginal_heat_rate=11.24,
+            marginal_heat_rate=10.55,
             hurdle=2.0,
-            interface_limit_mw=6000.0,
-            border_zones=("SPP-North", "SPP-South"),
+            interface_limit_mw=3550.0,
+            border_zones=("SPP-North",),
             load_shape_exponent=1.0,
+            hr_by_year={2023: 10.12, 2024: 11.02, 2025: 10.52},
+        ),
+        NeighborInterface(
+            # Anchor: actual_lmp_hourly_zonal_MISO.parquet, zone MISO-South
+            # (ARKANSAS / LOUISIANA / MS / TEXAS hubs, the zone mean),
+            # annual-mean RT 27.0420 / 25.1159 / 35.4525 $/MWh over
+            # 2.84 / 2.49 / 3.82 -> 9.52 / 10.09 / 9.28; flat = their mean 9.63.
+            name="MISO_South",
+            ba_code="MISO",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["MISO"],
+            marginal_heat_rate=9.63,
+            hurdle=2.0,
+            interface_limit_mw=2450.0,
+            border_zones=("SPP-South",),
+            load_shape_exponent=1.0,
+            hr_by_year={2023: 9.52, 2024: 10.09, 2025: 9.28},
         ),
         NeighborInterface(
             # AECI (Associated Electric Cooperative, MO) — the LARGEST net
@@ -1267,48 +1331,61 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # LMP and has no EIA-930 hourly extract in the tree. Its price
             # anchor is therefore a PROXY, declared as such: the SPP system
             # hub itself (actual_lmp_hourly_SPP.parquet, annual-mean RT
-            # 23.47 / 23.31 / 27.11 -> implied HR 9.24 / 10.64 / 7.70, pooled
-            # 9.19 — the same numbers MISO's own SPP seam carries as
-            # hr_by_year, which is the check that the construction matches);
-            # load shape off SWPP via ``proxy_ba`` (the CAISO SRP/BPAT
-            # precedent). gas_basis = SPP's own (Panhandle Eastern; AECI sits
-            # in the same Southern Star / Panhandle gas region). Interface
-            # limit: SOM 2025 §2.8 (PDF p. 70) ">5,000 MW of AC" interties —
-            # seven times the ERCOT DC ties; measured hourly max 1,492 MW.
-            # SPP-33 derives the measured seam parameters; SPP-51 arms.
+            # 23.4732 / 23.3135 / 27.1112 over HH - 0.26 = 2.28 / 1.93 / 3.26
+            # -> 10.30 / 12.08 / 8.32; flat = their mean 10.23). Stated at the
+            # gate (SPP-33 §3; measured by SPP-51 PRECOMMIT §3.2): a seam
+            # priced at SPP's OWN realized hub cannot discriminate an
+            # AECI-side signal — whatever residual the LP's SPP price carries
+            # over the hub becomes seam flow by construction. Load shape off
+            # SWPP via ``proxy_ba`` (the CAISO SRP/BPAT precedent).
+            # gas_basis = SPP's own (Panhandle Eastern; AECI sits in the same
+            # Southern Star / Panhandle gas region). Interface limit: SOM 2025
+            # §2.8 (PDF p. 70) ">5,000 MW of AC" interties; measured hourly
+            # max 1,492 MW.
             name="AECI",
             ba_code="AECI",
             proxy_ba="SWPP",
             gas_basis=GAS_BASIS_DIFFERENTIAL["SPP"],
-            marginal_heat_rate=9.19,
+            marginal_heat_rate=10.23,
             hurdle=2.0,
             interface_limit_mw=5000.0,
             border_zones=("SPP-North",),
             load_shape_exponent=1.0,
+            hr_by_year={2023: 10.30, 2024: 12.08, 2025: 8.32},
         ),
         NeighborInterface(
-            # ERCOT DC ties (owner ruling P3: "820 MW, border SPP-South"):
-            # Monticello (DC-East, 600 MW) + Oklaunion (DC-North, 220 MW),
-            # the CDR ratings constants.ERCOT_DC_TIE_ZONE_MAP["SWPP"] already
-            # carries from ERCOT's side. Rule 14 reconciliation, stated not
-            # buried: SPP's own SOM 2025 §2.8 prints "720 MW of DC ties" for
-            # SPP<->ERCOT, while the measured EIA-930 SWPP->ERCO series clips
-            # at exactly +835 MW in all three years (FINDING-spp-11 §4.1);
-            # 820 is the tie-rating sum both the ERCOT registry and the
-            # measured clip support, so the MMU's 720 is recorded as the
-            # discrepancy, not adopted. Measured anchor:
-            # actual_lmp_hourly_ERCOT.parquet system RT 48.36 / 26.82 / 32.49
-            # -> implied HR 19.04 / 12.25 / 9.23, pooled 13.51 (2023 carries
-            # ERCOT's scarcity summer, which is why SPP-33's per-year
-            # re-anchor matters more here than on the other two seams).
+            # ERCOT DC ties (owner ruling P3: border SPP-South): Monticello
+            # (DC-East, 600 MW) + Oklaunion (DC-North, 220 MW), CDR rating
+            # sum 820 — the value constants.ERCOT_DC_TIE_ZONE_MAP["SWPP"]
+            # carries from ERCOT's side and SPP-20 registered here.
+            # LIMIT = 835 MW (SPP-51, rule 14 [R-ACCURATE]): the measured
+            # EIA-930 SWPP->ERCO series clips at a hard +835 MW in all three
+            # years (max 835; min -832 / -833 / -818), and SPP's own 1-minute
+            # tie meter (ERCOTE + ERCOTN, SPP-14 TieFlows_Sep2025.csv) agrees
+            # at corr +1.0000, mean difference 0.1 MW (FINDING-spp-33 §8) —
+            # the ties' scheduled operating envelope on two independent
+            # meters. At 820 an armed seam would refuse flows the meter
+            # recorded in 547 / 128 / 21 h of 2023 / 2024 / 2025 (SPP-33
+            # §7b). MISALIGNMENT, stated: 835 is a metered scheduled MAXIMUM,
+            # not a published rating; the 15 MW gap to the CDR sum and the
+            # 115 MW gap to the MMU's printed 720 (SOM 2025 §2.8) are recorded,
+            # not explained. ERCOT's own registry row stays 820 (rule 25).
+            # Measured anchor: actual_lmp_hourly_ERCOT.parquet system RT
+            # 48.3568 / 26.8250 / 32.4906 over HH - 0.50 = 2.04 / 1.69 / 3.02
+            # -> 23.70 / 15.87 / 10.76 (2023 carries ERCOT's scarcity summer,
+            # which is why the per-year re-anchor matters most here); flat =
+            # their mean 16.78. SPP-33 §5: this seam's gas-elasticity fit is
+            # DEGENERATE (R2 0.0001, negative hr_phys) and must never be
+            # keyed — the flat value is its forward price.
             name="ERCOT",
             ba_code="ERCO",
             gas_basis=GAS_BASIS_DIFFERENTIAL["ERCOT"],
-            marginal_heat_rate=13.51,
+            marginal_heat_rate=16.78,
             hurdle=2.0,
-            interface_limit_mw=820.0,
+            interface_limit_mw=835.0,
             border_zones=("SPP-South",),
             load_shape_exponent=1.0,
+            hr_by_year={2023: 23.70, 2024: 15.87, 2025: 10.76},
         ),
     ],
 }
