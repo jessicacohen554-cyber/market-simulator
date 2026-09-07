@@ -1,0 +1,674 @@
+{
+  "session": "nyiso-219",
+  "prereg": "results/calibration/PREREG-nyiso219-hydro-daily-driver-data-question.md",
+  "keeper": "2026-09-07-nyiso-213-summer-seam",
+  "keeper_cache_key": "95d4d8d167373eb7",
+  "zero_lp": true,
+  "M1_water_source_census": {
+    "n_plants": 163,
+    "unmatched_in_860_plant_file": 0,
+    "fleet_mw": 4681.0,
+    "pct_plants_resolved": 100.0,
+    "pct_mw_resolved": 100.0,
+    "n_sources_for_95pct_mw": 18,
+    "great_lakes_outflow_pct_mw": 71.38,
+    "largest_non_great_lakes": {
+      "source": "Hudson River",
+      "pct_mw": 5.5
+    },
+    "sources": [
+      {
+        "source": "Niagara River",
+        "mw": 2429.1,
+        "n_plants": 1,
+        "pct_mw": 51.893,
+        "cum_pct_mw": 51.893
+      },
+      {
+        "source": "St Lawrence River",
+        "mw": 912.0,
+        "n_plants": 1,
+        "pct_mw": 19.483,
+        "cum_pct_mw": 71.376
+      },
+      {
+        "source": "Hudson River",
+        "mw": 257.3,
+        "n_plants": 11,
+        "pct_mw": 5.497,
+        "cum_pct_mw": 76.872
+      },
+      {
+        "source": "Raquette River",
+        "mw": 184.9,
+        "n_plants": 18,
+        "pct_mw": 3.95,
+        "cum_pct_mw": 80.822
+      },
+      {
+        "source": "Black River",
+        "mw": 108.6,
+        "n_plants": 17,
+        "pct_mw": 2.32,
+        "cum_pct_mw": 83.142
+      },
+      {
+        "source": "Mohawk River",
+        "mw": 76.7,
+        "n_plants": 5,
+        "pct_mw": 1.639,
+        "cum_pct_mw": 84.781
+      },
+      {
+        "source": "Sacandaga River",
+        "mw": 60.5,
+        "n_plants": 2,
+        "pct_mw": 1.292,
+        "cum_pct_mw": 86.073
+      },
+      {
+        "source": "Genesee River",
+        "mw": 55.1,
+        "n_plants": 3,
+        "pct_mw": 1.177,
+        "cum_pct_mw": 87.251
+      },
+      {
+        "source": "Oswego River",
+        "mw": 53.4,
+        "n_plants": 8,
+        "pct_mw": 1.141,
+        "cum_pct_mw": 88.391
+      },
+      {
+        "source": "Beaver River",
+        "mw": 51.3,
+        "n_plants": 11,
+        "pct_mw": 1.096,
+        "cum_pct_mw": 89.487
+      },
+      {
+        "source": "Saranac River",
+        "mw": 50.2,
+        "n_plants": 7,
+        "pct_mw": 1.072,
+        "cum_pct_mw": 90.56
+      },
+      {
+        "source": "West Canada Creek",
+        "mw": 44.2,
+        "n_plants": 4,
+        "pct_mw": 0.944,
+        "cum_pct_mw": 91.504
+      },
+      {
+        "source": "Salmon River",
+        "mw": 44.0,
+        "n_plants": 2,
+        "pct_mw": 0.94,
+        "cum_pct_mw": 92.444
+      },
+      {
+        "source": "Oswegatchie River",
+        "mw": 36.2,
+        "n_plants": 10,
+        "pct_mw": 0.773,
+        "cum_pct_mw": 93.217
+      },
+      {
+        "source": "East Canada Creek",
+        "mw": 31.0,
+        "n_plants": 3,
+        "pct_mw": 0.662,
+        "cum_pct_mw": 93.88
+      },
+      {
+        "source": "Mongaup River",
+        "mw": 26.1,
+        "n_plants": 3,
+        "pct_mw": 0.558,
+        "cum_pct_mw": 94.437
+      },
+      {
+        "source": "Neversink Reservoir",
+        "mw": 25.0,
+        "n_plants": 1,
+        "pct_mw": 0.534,
+        "cum_pct_mw": 94.971
+      },
+      {
+        "source": "Hoosic River",
+        "mw": 20.0,
+        "n_plants": 2,
+        "pct_mw": 0.427,
+        "cum_pct_mw": 95.398
+      },
+      {
+        "source": "Walkill River",
+        "mw": 19.2,
+        "n_plants": 2,
+        "pct_mw": 0.41,
+        "cum_pct_mw": 95.809
+      },
+      {
+        "source": "Pepatcon Reservoir",
+        "mw": 18.0,
+        "n_plants": 1,
+        "pct_mw": 0.385,
+        "cum_pct_mw": 96.193
+      },
+      {
+        "source": "Mohawk River, Ny Barge Canal",
+        "mw": 13.0,
+        "n_plants": 1,
+        "pct_mw": 0.278,
+        "cum_pct_mw": 96.471
+      },
+      {
+        "source": "Battenkill River",
+        "mw": 12.7,
+        "n_plants": 2,
+        "pct_mw": 0.271,
+        "cum_pct_mw": 96.742
+      },
+      {
+        "source": "The Moose River",
+        "mw": 12.6,
+        "n_plants": 1,
+        "pct_mw": 0.269,
+        "cum_pct_mw": 97.011
+      },
+      {
+        "source": "Lachute River",
+        "mw": 9.0,
+        "n_plants": 2,
+        "pct_mw": 0.192,
+        "cum_pct_mw": 97.204
+      },
+      {
+        "source": "Hinckley Reservoir",
+        "mw": 9.0,
+        "n_plants": 1,
+        "pct_mw": 0.192,
+        "cum_pct_mw": 97.396
+      },
+      {
+        "source": "Grasse River",
+        "mw": 8.2,
+        "n_plants": 1,
+        "pct_mw": 0.175,
+        "cum_pct_mw": 97.571
+      },
+      {
+        "source": "NYC W. Delaware Tunnel Outlet",
+        "mw": 7.5,
+        "n_plants": 1,
+        "pct_mw": 0.16,
+        "cum_pct_mw": 97.731
+      },
+      {
+        "source": "St Regis River",
+        "mw": 7.0,
+        "n_plants": 2,
+        "pct_mw": 0.15,
+        "cum_pct_mw": 97.881
+      },
+      {
+        "source": "Seneca River",
+        "mw": 6.6,
+        "n_plants": 2,
+        "pct_mw": 0.141,
+        "cum_pct_mw": 98.022
+      },
+      {
+        "source": "Kinderhook Creek",
+        "mw": 6.0,
+        "n_plants": 1,
+        "pct_mw": 0.128,
+        "cum_pct_mw": 98.15
+      },
+      {
+        "source": "Moose River",
+        "mw": 6.0,
+        "n_plants": 3,
+        "pct_mw": 0.128,
+        "cum_pct_mw": 98.278
+      },
+      {
+        "source": "Oak Orchard Creek",
+        "mw": 5.5,
+        "n_plants": 2,
+        "pct_mw": 0.117,
+        "cum_pct_mw": 98.396
+      },
+      {
+        "source": "Indian River",
+        "mw": 4.9,
+        "n_plants": 2,
+        "pct_mw": 0.105,
+        "cum_pct_mw": 98.5
+      },
+      {
+        "source": "Ausable River",
+        "mw": 4.7,
+        "n_plants": 2,
+        "pct_mw": 0.1,
+        "cum_pct_mw": 98.601
+      },
+      {
+        "source": "Ashokan Reservoir",
+        "mw": 4.6,
+        "n_plants": 1,
+        "pct_mw": 0.098,
+        "cum_pct_mw": 98.699
+      },
+      {
+        "source": "Hydroelectric-River",
+        "mw": 4.4,
+        "n_plants": 1,
+        "pct_mw": 0.094,
+        "cum_pct_mw": 98.793
+      },
+      {
+        "source": "Salmon (North) River",
+        "mw": 4.0,
+        "n_plants": 2,
+        "pct_mw": 0.085,
+        "cum_pct_mw": 98.878
+      },
+      {
+        "source": "Caroga Creek",
+        "mw": 4.0,
+        "n_plants": 1,
+        "pct_mw": 0.085,
+        "cum_pct_mw": 98.964
+      },
+      {
+        "source": "Fish Creek",
+        "mw": 3.7,
+        "n_plants": 2,
+        "pct_mw": 0.079,
+        "cum_pct_mw": 99.043
+      },
+      {
+        "source": "Oswehatchie River",
+        "mw": 3.5,
+        "n_plants": 1,
+        "pct_mw": 0.075,
+        "cum_pct_mw": 99.118
+      },
+      {
+        "source": "Hudson",
+        "mw": 3.4,
+        "n_plants": 1,
+        "pct_mw": 0.073,
+        "cum_pct_mw": 99.19
+      },
+      {
+        "source": "Deer River",
+        "mw": 3.3,
+        "n_plants": 1,
+        "pct_mw": 0.07,
+        "cum_pct_mw": 99.261
+      },
+      {
+        "source": "Rondout Creek",
+        "mw": 3.2,
+        "n_plants": 1,
+        "pct_mw": 0.068,
+        "cum_pct_mw": 99.329
+      },
+      {
+        "source": "Barge Canal",
+        "mw": 3.0,
+        "n_plants": 1,
+        "pct_mw": 0.064,
+        "cum_pct_mw": 99.393
+      },
+      {
+        "source": "Poestenkill",
+        "mw": 3.0,
+        "n_plants": 1,
+        "pct_mw": 0.064,
+        "cum_pct_mw": 99.457
+      },
+      {
+        "source": "Schroon River",
+        "mw": 2.9,
+        "n_plants": 1,
+        "pct_mw": 0.062,
+        "cum_pct_mw": 99.519
+      },
+      {
+        "source": "Hoosick River",
+        "mw": 2.5,
+        "n_plants": 1,
+        "pct_mw": 0.053,
+        "cum_pct_mw": 99.573
+      },
+      {
+        "source": "Owegatchie River",
+        "mw": 2.5,
+        "n_plants": 1,
+        "pct_mw": 0.053,
+        "cum_pct_mw": 99.626
+      },
+      {
+        "source": "Walking River",
+        "mw": 2.4,
+        "n_plants": 1,
+        "pct_mw": 0.051,
+        "cum_pct_mw": 99.677
+      },
+      {
+        "source": "Wappingers Lake",
+        "mw": 2.0,
+        "n_plants": 1,
+        "pct_mw": 0.043,
+        "cum_pct_mw": 99.72
+      },
+      {
+        "source": "Fall Creek",
+        "mw": 1.9,
+        "n_plants": 1,
+        "pct_mw": 0.041,
+        "cum_pct_mw": 99.761
+      },
+      {
+        "source": "West Branch Oswegatchie River",
+        "mw": 1.8,
+        "n_plants": 1,
+        "pct_mw": 0.038,
+        "cum_pct_mw": 99.799
+      },
+      {
+        "source": "Chatteaugay",
+        "mw": 1.7,
+        "n_plants": 1,
+        "pct_mw": 0.036,
+        "cum_pct_mw": 99.836
+      },
+      {
+        "source": "Chaleaugay River",
+        "mw": 1.6,
+        "n_plants": 1,
+        "pct_mw": 0.034,
+        "cum_pct_mw": 99.87
+      },
+      {
+        "source": "Susquehanna River",
+        "mw": 1.4,
+        "n_plants": 1,
+        "pct_mw": 0.03,
+        "cum_pct_mw": 99.9
+      },
+      {
+        "source": "Normanskill",
+        "mw": 1.2,
+        "n_plants": 1,
+        "pct_mw": 0.026,
+        "cum_pct_mw": 99.925
+      },
+      {
+        "source": "Batten Kill",
+        "mw": 1.1,
+        "n_plants": 1,
+        "pct_mw": 0.023,
+        "cum_pct_mw": 99.949
+      },
+      {
+        "source": "Catskill Creek",
+        "mw": 1.0,
+        "n_plants": 1,
+        "pct_mw": 0.021,
+        "cum_pct_mw": 99.97
+      },
+      {
+        "source": "Oswgatchie River",
+        "mw": 1.0,
+        "n_plants": 1,
+        "pct_mw": 0.021,
+        "cum_pct_mw": 99.991
+      },
+      {
+        "source": "Lake Ontario",
+        "mw": 0.4,
+        "n_plants": 1,
+        "pct_mw": 0.009,
+        "cum_pct_mw": 100.0
+      }
+    ],
+    "material_sources_ge_3pct": [
+      "Niagara River",
+      "St Lawrence River",
+      "Hudson River",
+      "Raquette River"
+    ]
+  },
+  "M2_gauge_census": {
+    "Niagara River": {
+      "site": "04216000",
+      "station": "NIAGARA RIVER AT BUFFALO NY",
+      "role": "material-basin",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2555
+      },
+      "cv_whole_pct": 6.04,
+      "cv_within_month_pct": 4.01,
+      "years_scored": 7
+    },
+    "St Lawrence River": {
+      "site": "04264331",
+      "station": "ST. LAWRENCE R AT CORNWALL ONT NR MASSENA NY",
+      "role": "material-basin",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2555
+      },
+      "cv_whole_pct": 8.25,
+      "cv_within_month_pct": 3.11,
+      "years_scored": 7
+    },
+    "Hudson River": {
+      "site": "01327750",
+      "station": "HUDSON RIVER AT FORT EDWARD NY",
+      "role": "material-basin",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2470,
+        "A:e": 85
+      },
+      "cv_whole_pct": 59.76,
+      "cv_within_month_pct": 24.31,
+      "years_scored": 7
+    },
+    "Raquette River": {
+      "site": "04267500",
+      "station": "RAQUETTE RIVER AT SOUTH COLTON NY",
+      "role": "material-basin",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2555
+      },
+      "cv_whole_pct": 63.05,
+      "cv_within_month_pct": 37.23,
+      "years_scored": 7
+    },
+    "_check_Hudson_Hadley": {
+      "site": "01318500",
+      "station": "HUDSON RIVER AT HADLEY NY",
+      "role": "cross-check",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2484,
+        "A:e": 71
+      },
+      "cv_whole_pct": 93.16,
+      "cv_within_month_pct": 40.18,
+      "years_scored": 7
+    },
+    "_check_Raquette_Raymondville": {
+      "site": "04268000",
+      "station": "RAQUETTE RIVER AT RAYMONDVILLE NY",
+      "role": "cross-check",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2410,
+        "A:e": 145
+      },
+      "cv_whole_pct": 63.48,
+      "cv_within_month_pct": 34.79,
+      "years_scored": 7
+    },
+    "_comparator_Mohawk": {
+      "site": "01357500",
+      "station": "MOHAWK RIVER AT COHOES NY",
+      "role": "runoff-comparator",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2555
+      },
+      "cv_whole_pct": 97.57,
+      "cv_within_month_pct": 56.48,
+      "years_scored": 7
+    },
+    "Black River": {
+      "site": "04260500",
+      "station": "BLACK RIVER AT WATERTOWN NY",
+      "role": "sub-threshold",
+      "coverage_pct_2019_2025": 100.0,
+      "approved_pct_of_present": 100.0,
+      "flag_counts": {
+        "A": 2546,
+        "A:e": 9
+      },
+      "cv_whole_pct": 74.69,
+      "cv_within_month_pct": 38.98,
+      "years_scored": 7
+    }
+  },
+  "M3_driver_scores": {
+    "d_b_weights_pct_fleet_mw": {
+      "Niagara River": 51.893,
+      "St Lawrence River": 19.483,
+      "Hudson River": 5.497,
+      "Raquette River": 3.95
+    },
+    "d_b_weight_total_pct_fleet_mw": 80.82,
+    "per_year": {
+      "2019": {
+        "D-A_loyo_climatology_r": 0.0478,
+        "D-B_basin_discharge_r": 0.1965,
+        "D-B_per_basin_r": {
+          "Niagara River": 0.1242,
+          "St Lawrence River": 0.2695,
+          "Hudson River": -0.0351,
+          "Raquette River": 0.1678
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.1399,
+        "D-C_load_r": 0.1655,
+        "actual_within_month_daily_cv_pct": 6.453
+      },
+      "2020": {
+        "D-A_loyo_climatology_r": -0.035,
+        "D-B_basin_discharge_r": 0.0954,
+        "D-B_per_basin_r": {
+          "Niagara River": -0.1326,
+          "St Lawrence River": -0.0655,
+          "Hudson River": 0.1903,
+          "Raquette River": 0.2424
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.1124,
+        "D-C_load_r": 0.2827,
+        "actual_within_month_daily_cv_pct": 5.958
+      },
+      "2021": {
+        "D-A_loyo_climatology_r": 0.0665,
+        "D-B_basin_discharge_r": 0.3094,
+        "D-B_per_basin_r": {
+          "Niagara River": -0.0061,
+          "St Lawrence River": 0.0885,
+          "Hudson River": 0.3252,
+          "Raquette River": 0.3618
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.2547,
+        "D-C_load_r": 0.2668,
+        "actual_within_month_daily_cv_pct": 6.117
+      },
+      "2022": {
+        "D-A_loyo_climatology_r": 0.0247,
+        "D-B_basin_discharge_r": 0.2228,
+        "D-B_per_basin_r": {
+          "Niagara River": 0.1373,
+          "St Lawrence River": 0.188,
+          "Hudson River": 0.0266,
+          "Raquette River": 0.2673
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.1627,
+        "D-C_load_r": 0.3582,
+        "actual_within_month_daily_cv_pct": 7.956
+      },
+      "2023": {
+        "D-A_loyo_climatology_r": -0.0155,
+        "D-B_basin_discharge_r": 0.3006,
+        "D-B_per_basin_r": {
+          "Niagara River": 0.0919,
+          "St Lawrence River": -0.0323,
+          "Hudson River": 0.2272,
+          "Raquette River": 0.2681
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.1562,
+        "D-C_load_r": 0.4668,
+        "actual_within_month_daily_cv_pct": 6.739
+      },
+      "2024": {
+        "D-A_loyo_climatology_r": 0.0551,
+        "D-B_basin_discharge_r": 0.2492,
+        "D-B_per_basin_r": {
+          "Niagara River": 0.1027,
+          "St Lawrence River": 0.0078,
+          "Hudson River": 0.1661,
+          "Raquette River": 0.2519
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.0844,
+        "D-C_load_r": 0.2038,
+        "actual_within_month_daily_cv_pct": 5.705
+      },
+      "2025": {
+        "D-A_loyo_climatology_r": 0.0743,
+        "D-B_basin_discharge_r": 0.3265,
+        "D-B_per_basin_r": {
+          "Niagara River": 0.233,
+          "St Lawrence River": 0.1061,
+          "Hudson River": 0.0969,
+          "Raquette River": 0.2966
+        },
+        "D-B_weight_covered_pct_fleet_mw": 80.82,
+        "D-B_mohawk_only_r": 0.0427,
+        "D-C_load_r": 0.4096,
+        "actual_within_month_daily_cv_pct": 7.805
+      }
+    },
+    "D-X_forbidden_pin_r": 1.0
+  },
+  "inherited_model_within_month_r": {
+    "2022": 0.358,
+    "2023": 0.392,
+    "2024": 0.248,
+    "2025": 0.207
+  }
+}
