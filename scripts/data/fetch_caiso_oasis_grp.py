@@ -104,6 +104,7 @@ import http.client
 import io
 import json
 import re
+import signal
 import sys
 import time
 import urllib.error
@@ -116,7 +117,10 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-from scripts.data.fetch_caiso_oasis import _oasis_error  # noqa: E402
+from scripts.data.fetch_caiso_oasis import (  # noqa: E402
+    _RequestTimeout,
+    _oasis_error,
+)
 from scripts.data.fold_caiso_oasis_grp_zips import LMP_DIR, fold  # noqa: E402
 
 BASE = "https://oasis.caiso.com/oasisapi/GroupZip"
@@ -132,6 +136,31 @@ MARKETS = {
 }
 _CD_NAME = re.compile(r'filename="?([^";]+)"?')
 REQUEST_TIMEOUT_S = 300
+
+#: Hard wall-clock bound per request, enforced with ``SIGALRM``.
+#:
+#: ``urlopen(timeout=...)`` is a **per-socket-operation** timeout, not a total
+#: one, so a throttled OASIS that trickles bytes never trips it. The sibling
+#: SingleZip fetcher learned this in caiso-165 and carries the same guard
+#: (``fetch_caiso_oasis.REQUEST_WALL_CLOCK_S``); this module — written later
+#: (caiso-261) — did not, and hung on exactly that failure mode: measured
+#: 2026-09-07, a Q3-2021 RTM crawl stopped dead on hour-group 11 of trade date
+#: 2021-07-03 and sat in a socket read for **31 minutes** with the process
+#: alive, no 429, no diagnostic and zero forward progress, while ``retries``
+#: never ran because nothing ever raised. The bound is what turns a trickling
+#: read into a catchable failure so the retry/backoff path below can work.
+#:
+#: Sized well above any legitimate transfer rather than tight: a GroupZip
+#: archive is 7-12 MB and lands in seconds (measured 8.3-9.1 MB per RTM
+#: hour-group), so 420 s cannot cut off a slow-but-live download.
+REQUEST_WALL_CLOCK_S = 420
+
+
+def _alarm(_signum, _frame):  # noqa: ANN001 - signal handler signature
+    """SIGALRM handler: turn a trickling read into a catchable failure."""
+    raise _RequestTimeout(
+        f"exceeded {REQUEST_WALL_CLOCK_S}s wall clock (OASIS throttle trickle)"
+    )
 
 
 def _start_utc(day: dt.date) -> str:
@@ -193,6 +222,8 @@ def _fetch_zip(url: str, retries: int, sleep_s: float) -> tuple[bytes, str] | No
     """Download one GroupZip; returns ``(payload, filename)`` or ``None``."""
     delay = max(sleep_s, 5.0)
     for attempt in range(1, retries + 1):
+        prev = signal.signal(signal.SIGALRM, _alarm)
+        signal.alarm(REQUEST_WALL_CLOCK_S)
         try:
             with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT_S) as resp:
                 payload = resp.read()
@@ -207,6 +238,7 @@ def _fetch_zip(url: str, retries: int, sleep_s: float) -> tuple[bytes, str] | No
         # transfers as an expected failure mode. The partial payload is discarded
         # (it is not reassembled), so a retry re-fetches the whole archive.
         except (
+            _RequestTimeout,
             urllib.error.URLError,
             http.client.HTTPException,
             TimeoutError,
@@ -218,6 +250,9 @@ def _fetch_zip(url: str, retries: int, sleep_s: float) -> tuple[bytes, str] | No
                 flush=True,
             )
             payload, cd = b"", ""
+        finally:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, prev)
         if payload[:2] == b"PK":
             if _is_error_zip(payload):
                 err = _oasis_error(payload)
