@@ -6,6 +6,7 @@
   "CAISO",
   "NYISO",
   "NEISO",
-  "MISO"
+  "MISO",
+  "SPP"
  ]
 }
