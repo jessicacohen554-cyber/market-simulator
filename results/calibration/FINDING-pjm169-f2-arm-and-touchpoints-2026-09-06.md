@@ -80,8 +80,75 @@ accepts the new parameter, so a future bundle's recorded `None` still falls thro
 
 ## 3. Verification and touchpoints
 
-*(§3.1 the 2023 bit-identity re-verification, §3.2 the re-run 2021/2022 touchpoints and their fold
-— appended when the solves land.)*
+### 3.1 The 2023 re-verification — BIT-IDENTICAL through the shipping site
+
+pjm-168 proved H6 through the `replay_keeper --set` override channel. This session arms the
+mechanism at a **different site**, so the proof was re-run through the site that ships: a 2023
+replay of the keeper recipe (`results/calibration/pjm169_verify_2023arm`, since deleted per rule 29
+clause (c) — this table is the record), with nothing forced on the CLI, so the arm reaches the
+solve only via `backcast_config`.
+
+| sidecar | rows × cols | exact-equal | max abs numeric Δ |
+|---|---|---|---|
+| `class_hourly_2023` | 166,440 × 5 | **True** | **0** |
+| `system_2023` | 78,840 × 9 | **True** | **0** |
+| `reserve_family_2023` | 17,520 × 10 | **True** | **0** |
+| `storage_2023` | 17,520 × 6 | **True** | **0** |
+
+**VERDICT: BIT-IDENTICAL** to the keeper's committed 2023 sidecars. Alongside it:
+
+- **Zero `INADMISSIBLE` log lines** in 2023 — the gate evaluates every consumed series and passes
+  all of them, i.e. it takes the identical branch, which is *why* the dispatch is identical rather
+  than a coincidence of it.
+- `run_config.json` records **`pjm_interface_feed_admissibility_gate: true`** for a caller that
+  passed no flag — the rule 24 `[R-REGISTRY]` requirement that the record report the posture the
+  LP solved, satisfied by the armed default rather than by a CLI echo.
+- P0 objective 8.7952e9 → P1 9.0715e9, the ordering the bid-cost pass must have.
+
+So arming cannot move PJM's `CALIBRATED` determination: the runs that determination is computed
+from are reproduced to the bit.
+
+### 3.1a The box: the pjm-168 recipe was necessary but its stated reason was incomplete
+
+The first attempt at this solve was **OOM-killed** at 30 minutes. `dmesg`:
+
+```
+Memory cgroup out of memory: Killed process 11660 (python3)
+  total-vm:23565636kB, anon-rss:13755496kB
+  oom_memcg=/process_api/.../claude-code-bash
+```
+
+Two facts neither pjm-167 nor pjm-168 recorded, and the next PJM lane needs both:
+
+1. **The binding constraint is a cgroup limit, not host RAM.** The bash cgroup carries
+   `memory.limit_in_bytes = 14,327,676,928` = **13.34 GiB**. `free` reports ~15 GiB — the HOST
+   view — so it is actively misleading here. The LP peaks at **13.755 GiB** anon-RSS, i.e. ~420 MiB
+   over the cap. This is why pjm-167 saw "the cap on this box is zero" and why pjm-168's
+   16 GB framing understates the margin: the usable figure is 13.34 GiB, not 15.4.
+2. **Swap works because `memory.memsw.limit_in_bytes` is effectively unlimited**, so swapped-out
+   pages are not charged against that 13.34 GiB cap. That is the mechanism behind pjm-168's
+   `swapon`, which its §4 records as a recipe without saying why it works.
+
+The swapfile had also been **silently deactivated** between session start and the solve peak (the
+file was still on disk, untouched; `swapon --show` was empty) — reproducing pjm-167's OOM exactly.
+Re-armed with `vm.swappiness=60` rather than pjm-168's `10` — clearing a hard cap needs real
+spilling, not idle-page reclaim — plus a watchdog re-arming the swapfile every 10 s. Measured on
+the successful run: **12,735 MB resident against the 13,663 MiB cap with 1,828 MB spilled**, and
+3,713 MB spilled at the P1 peak. **Recipe for the next PJM lane:**
+
+```bash
+fallocate -l 12G /home/user/swapfile && chmod 600 /home/user/swapfile
+mkswap /home/user/swapfile && swapon /home/user/swapfile && sysctl vm.swappiness=60
+# and keep it armed — it can be dropped underneath a running solve:
+nohup bash -c 'while :; do swapon --show | grep -q swapfile || swapon /home/user/swapfile; sleep 10; done' &
+export MALLOC_ARENA_MAX=2 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+# check the REAL limit, not free(1):
+cat /sys/fs/cgroup/memory/$(sed -n 's/^4:memory://p' /proc/self/cgroup)/memory.limit_in_bytes
+```
+
+### 3.2 The re-run 2021/2022 touchpoints
+
+*(Appended when the solves land.)*
 
 ## 4. F4 — built, unspent, and two corrections to its framing
 
