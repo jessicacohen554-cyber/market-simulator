@@ -29,7 +29,7 @@
     MISO: 'Six LRZ-union zones with per-zone CIL/CEL limits and the asymmetric RDT path to MISO-South.',
     NYISO: 'Five zones with downstate import constraints (Progressive eastern islanding).',
     NEISO: 'Four load zones plus the HQ import node for the Quebec interconnection.',
-    SPP: 'Two zones along the North–South seam; the N↔S TTC is a non-binding placeholder until a rated capability lands.',
+    SPP: 'Two zones along the North–South seam; the N↔S TTC is 3,400 MW — the rule-14 reconciled corridor limit derived from SPP’s own published flowgate limits (FINDING-spp-53).',
   };
 
   /**
