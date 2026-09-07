@@ -321,3 +321,22 @@ effective limit sits below the `Source Limit` in **99.2 %** of intervals, at a m
 **0.92** — SPP runs the corridor's elements at a derated real-time limit almost always, which is why
 the limit-at-bind (the ERCOT instrument), not the registry rating, is the primary L_f. The
 per-constituent table (n, median / p10 / p90, source limit, derate share) is FINDING-spp-53 §3.
+
+---
+
+## STATUS UPDATE 2026-09-07 — lane SPP-57: the 2026 Oklahoma-set limit sidecar LANDED; the two chain-link TTCs are derived (N↔OK 6,500 MW, OK↔S 6,700 MW)
+
+Companion to the SPP-53 section above, same construction, same daily pull (221 files, 160
+14-column days, 2026-03-17 → 2026-09-05), same parser (`docs/handoffs/spp57/extract_2026.py`,
+group rules copied verbatim from `spp14/groups.py`); only the group filter differs.
+
+**`rtbm_bc_oklahoma_limits_2026.parquet`** — 1,083,301 rows, 262 constraints, every
+`State ∈ {BINDING 87,678, BREACHED 6,770, ACTIVATED 988,853}` row of the 14-column files whose
+constraint is `oklahoma_internal` (770,908 rows), `sps_tie` (154,118) or a CSWS-only `other`
+row (158,275) — the OK↔S and Oklahoma-entry candidate set of `PRECOMMIT-spp-57-2026-09-07.md`
+§3.2. Columns: the ten of the corridor sidecar plus `group`. Derates over the binding rows:
+99.4 % of intervals below `Source Limit`, median ratio 0.91.
+
+What it fed (FINDING-spp-57 §3): the per-constituent limit-at-bind `L_f` for the Oklahoma-set,
+SPS-tie and CSWS constituents of both links; the corridor constituents keep SPP-53's committed
+`L_f`. The four-group spec above is untouched.

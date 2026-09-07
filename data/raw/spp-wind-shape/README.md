@@ -83,3 +83,18 @@ and returns, and the written values are byte-identical with and without it.
 
 **Consumer:** `src/market_sim/data/renewables.py` (`_wind_zone_reanalysis_shapes`,
 via `market_sim.config.paths.WIND_SHAPE_DIRS["SPP"]`).
+
+---
+
+## REBUILT 2026-09-07 — lane SPP-57: three zones
+
+The parquets now carry three columns (`SPP-North`, `SPP-Oklahoma`, `SPP-South`) for the SPP-57
+topology; same builder, same NASA POWER `WS50M` sites (the largest six operable wind plants per
+zone by nameplate, zone-assigned by `build_zone_lookup("SPP")`), same power curve and shear
+exponent. Measured night(00-06)/afternoon(12-18) ratio, 2023 / 2024 / 2025: SPP-North 0.97 /
+0.96 / 0.91, **SPP-Oklahoma 1.06 / 0.96 / 0.95**, **SPP-South 1.01 / 1.13 / 1.12** — the
+Panhandle / New Mexico residual is the most nocturnal zone, Oklahoma sits between. Reconciliation
+to SPP's own GenMix delivered wind: hourly r 0.842 / 0.829 / 0.829, seasonal r 0.983 / 0.929 /
+0.905 (SPP-32's two-zone build read 0.848 / 0.836 / 0.833 and 0.984 / 0.931 / 0.907). The
+redistribution identity is re-proved by `tests/unit/data/test_spp_renewable_inputs.py` on
+three-zone fixtures.
