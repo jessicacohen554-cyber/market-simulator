@@ -1,0 +1,86 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant,derate_factor
+Platte,59,1,109.8,109.8,100.0,COAL,eia_exact,2023-12-21,2023-12-29,9.0,0,1,0.561
+Platte,59,1,109.8,109.8,100.0,COAL,eia_exact,2024-02-29,2024-03-14,15.0,0,1,0.561
+Platte,59,1,109.8,109.8,100.0,COAL,eia_exact,2024-04-14,2024-04-21,8.0,0,1,0.64
+Platte,59,1,109.8,109.8,100.0,COAL,eia_exact,2025-03-24,2025-03-31,8.0,0,1,0.673
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2023-09-30,2023-10-05,6.0,1,2,0.561
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2024-02-24,2024-03-03,9.0,1,2,0.549
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2024-06-14,2024-06-18,5.0,1,2,0.561
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2024-10-14,2024-10-19,6.0,1,2,0.524
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2024-10-25,2024-11-19,26.0,1,2,0.543
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2024-12-06,2024-12-10,5.0,1,2,0.573
+Gerald Whelan Energy Center,60,1,76.3,324.3,23.5,COAL,eia_exact,2025-04-11,2025-04-17,7.0,1,2,0.451
+Gerald Whelan Energy Center,60,2,248.0,324.3,76.5,COAL,eia_exact,2023-09-30,2023-10-06,7.0,1,2,0.614
+Gerald Whelan Energy Center,60,2,248.0,324.3,76.5,COAL,eia_exact,2024-07-19,2024-07-23,5.0,1,2,0.523
+Gerald Whelan Energy Center,60,2,248.0,324.3,76.5,COAL,eia_exact,2024-07-25,2024-08-24,31.0,1,2,0.523
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2023-09-28,2023-10-03,6.0,0,1,0.335
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2023-12-21,2023-12-28,8.0,0,1,0.443
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2024-06-15,2024-06-19,5.0,0,1,0.359
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2024-10-15,2024-10-22,8.0,0,1,0.347
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2024-10-26,2024-11-07,13.0,0,1,0.412
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2024-11-09,2024-11-14,6.0,0,1,0.649
+Holcomb,108,SGU1,348.7,348.7,100.0,COAL,eia_digits,2025-05-15,2025-05-22,8.0,0,1,0.293
+Lon D Wright Power Plant,2240,8,91.5,135.5,67.5,COAL,eia_exact,2023-03-13,2023-03-18,6.0,1,2,0.721
+Lon D Wright Power Plant,2240,8,91.5,135.5,67.5,COAL,eia_exact,2023-04-11,2023-04-20,10.0,1,2,0.622
+Lon D Wright Power Plant,2240,8,91.5,135.5,67.5,COAL,eia_exact,2023-10-27,2023-11-01,6.0,1,2,0.576
+Lon D Wright Power Plant,2240,8,91.5,134.5,68.0,COAL,eia_exact,2024-01-30,2024-02-11,13.0,1,2,0.628
+Lon D Wright Power Plant,2240,8,91.5,134.5,68.0,COAL,eia_exact,2024-02-15,2024-02-23,9.0,1,2,0.64
+Lon D Wright Power Plant,2240,8,91.5,134.5,68.0,COAL,eia_exact,2024-02-26,2024-03-29,33.0,1,2,0.605
+Lon D Wright Power Plant,2240,8,91.5,132.5,69.1,COAL,eia_exact,2025-03-23,2025-04-18,27.0,1,2,0.632
+Lon D Wright Power Plant,2240,8,91.5,132.5,69.1,COAL,eia_exact,2025-09-02,2025-09-08,7.0,1,2,0.644
+North Omaha Station,2291,4,136.0,644.7,21.1,COAL,eia_exact,2025-05-15,2025-05-20,6.0,4,5,0.639
+North Omaha Station,2291,5,217.6,644.7,33.8,COAL,eia_exact,2023-03-29,2023-04-02,5.0,4,5,0.459
+North Omaha Station,2291,5,217.6,644.7,33.8,COAL,eia_exact,2025-03-17,2025-03-21,5.0,4,5,0.565
+North Omaha Station,2291,5,217.6,644.7,33.8,COAL,eia_exact,2025-04-11,2025-04-16,6.0,4,5,0.489
+Leland Olds,2817,1,216.0,656.0,32.9,COAL,eia_exact,2024-04-20,2024-04-24,5.0,1,2,0.52
+Leland Olds,2817,2,440.0,656.0,67.1,COAL,eia_exact,2024-09-03,2024-09-08,6.0,1,2,0.518
+Leland Olds,2817,2,440.0,656.0,67.1,COAL,eia_exact,2024-09-19,2024-09-24,6.0,1,2,0.518
+Leland Olds,2817,2,440.0,656.0,67.1,COAL,eia_exact,2024-10-22,2024-10-27,6.0,1,2,0.579
+Leland Olds,2817,2,440.0,656.0,67.1,COAL,eia_exact,2024-10-31,2024-11-07,8.0,1,2,0.598
+Leland Olds,2817,2,440.0,656.0,67.1,COAL,eia_exact,2025-11-14,2025-12-20,37.0,1,2,0.523
+Northeastern,2963,3313,502.0,1308.0,38.4,COAL,observed_peak,2024-05-08,2024-05-14,7.0,3,4,0.513
+Jeffrey Energy Center,6068,1,720.0,2160.0,33.3,COAL,eia_exact,2024-03-26,2024-03-30,5.0,2,3,0.742
+Jeffrey Energy Center,6068,1,720.0,2160.0,33.3,COAL,eia_exact,2024-11-17,2024-11-22,6.0,2,3,0.683
+Jeffrey Energy Center,6068,1,720.0,2160.0,33.3,COAL,eia_exact,2025-01-20,2025-01-26,7.0,2,3,0.53
+Jeffrey Energy Center,6068,1,720.0,2160.0,33.3,COAL,eia_exact,2025-04-14,2025-04-18,5.0,2,3,0.574
+Jeffrey Energy Center,6068,2,720.0,2160.0,33.3,COAL,eia_exact,2025-04-14,2025-04-19,6.0,2,3,0.378
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2024-01-14,2024-01-22,9.0,2,3,0.346
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2024-04-16,2024-04-22,7.0,2,3,0.449
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2024-11-10,2024-11-18,9.0,2,3,0.89
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2025-03-13,2025-03-21,9.0,2,3,0.47
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2025-04-06,2025-04-23,18.0,2,3,0.626
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2025-05-25,2025-06-01,8.0,2,3,0.507
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2025-07-16,2025-07-24,9.0,2,3,0.549
+Jeffrey Energy Center,6068,3,720.0,2160.0,33.3,COAL,eia_exact,2025-10-17,2025-10-28,12.0,2,3,0.565
+Gerald Gentleman Station,6077,1,681.3,1362.6,50.0,COAL,eia_exact,2024-10-27,2024-10-31,5.0,1,2,0.414
+Gerald Gentleman Station,6077,1,681.3,1362.6,50.0,COAL,eia_exact,2025-04-11,2025-04-17,7.0,1,2,0.353
+Gerald Gentleman Station,6077,2,681.3,1362.6,50.0,COAL,eia_exact,2024-11-09,2024-11-14,6.0,1,2,0.479
+Nebraska City Station,6096,1,651.6,1389.6,46.9,COAL,eia_exact,2023-04-09,2023-04-15,7.0,1,2,0.561
+Nebraska City Station,6096,1,651.6,1389.6,46.9,COAL,eia_exact,2024-04-13,2024-04-19,7.0,1,2,0.567
+Nebraska City Station,6096,1,651.6,1389.6,46.9,COAL,eia_exact,2025-04-13,2025-04-19,7.0,1,2,0.636
+Nebraska City Station,6096,2,738.0,1389.6,53.1,COAL,eia_exact,2023-02-05,2023-02-17,13.0,1,2,0.496
+Nebraska City Station,6096,2,738.0,1389.6,53.1,COAL,eia_exact,2023-06-24,2023-08-12,50.0,1,2,0.473
+Nebraska City Station,6096,2,738.0,1389.6,53.1,COAL,eia_exact,2024-01-18,2024-01-22,5.0,1,2,0.518
+Nebraska City Station,6096,2,738.0,1389.6,53.1,COAL,eia_exact,2024-06-27,2024-07-17,21.0,1,2,0.476
+Nebraska City Station,6096,2,738.0,1389.6,53.1,COAL,eia_exact,2024-12-16,2024-12-20,5.0,1,2,0.561
+Flint Creek Power Plant,6138,1,558.0,558.0,100.0,COAL,eia_exact,2024-02-02,2024-02-07,6.0,0,1,0.392
+Welsh Power Plant,6139,1,558.0,1116.0,50.0,COAL,eia_exact,2024-02-02,2024-02-14,13.0,1,2,0.52
+Welsh Power Plant,6139,1,558.0,1116.0,50.0,COAL,eia_exact,2024-03-09,2024-03-15,7.0,1,2,0.618
+Welsh Power Plant,6139,1,558.0,1116.0,50.0,COAL,eia_exact,2025-06-06,2025-06-28,23.0,1,2,0.555
+Welsh Power Plant,6139,1,558.0,1116.0,50.0,COAL,eia_exact,2025-09-19,2025-09-30,12.0,1,2,0.557
+Welsh Power Plant,6139,3,558.0,1116.0,50.0,COAL,eia_exact,2023-12-21,2023-12-25,5.0,1,2,0.458
+Welsh Power Plant,6139,3,558.0,1116.0,50.0,COAL,eia_exact,2024-01-27,2024-02-20,25.0,1,2,0.51
+Welsh Power Plant,6139,3,558.0,1116.0,50.0,COAL,eia_exact,2024-02-22,2024-02-28,7.0,1,2,0.603
+Welsh Power Plant,6139,3,558.0,1116.0,50.0,COAL,eia_exact,2024-03-08,2024-03-13,6.0,1,2,0.6
+John Twitty Energy Center,6195,1,203.0,616.0,33.0,COAL,observed_peak,2023-08-05,2023-08-26,22.0,5,6,0.483
+John Twitty Energy Center,6195,1,203.0,616.0,33.0,COAL,observed_peak,2023-09-05,2023-09-24,20.0,5,6,0.58
+John Twitty Energy Center,6195,1,203.0,619.0,32.8,COAL,observed_peak,2024-02-20,2024-03-06,16.0,5,6,0.518
+John Twitty Energy Center,6195,1,201.0,620.0,32.4,COAL,observed_peak,2025-08-26,2025-09-01,7.0,5,6,0.616
+John Twitty Energy Center,6195,2,303.0,616.0,49.2,COAL,observed_peak,2023-04-11,2023-04-16,6.0,5,6,0.672
+John Twitty Energy Center,6195,2,303.0,616.0,49.2,COAL,observed_peak,2023-08-19,2023-08-30,12.0,5,6,0.462
+John Twitty Energy Center,6195,2,308.0,619.0,49.8,COAL,observed_peak,2024-11-09,2024-11-25,17.0,5,6,0.571
+John Twitty Energy Center,6195,2,305.0,620.0,49.2,COAL,observed_peak,2025-07-04,2025-07-17,14.0,5,6,0.495
+John Twitty Energy Center,6195,2,305.0,620.0,49.2,COAL,observed_peak,2025-08-27,2025-09-01,6.0,5,6,0.487
+John Twitty Energy Center,6195,2,305.0,620.0,49.2,COAL,observed_peak,2025-12-11,2025-12-17,7.0,5,6,0.609
+Antelope Valley,6469,B1,477.0,954.0,50.0,COAL,eia_digits,2025-05-17,2025-05-23,7.0,1,2,0.634
+H W Pirkey Power Plant,7902,1,704.0,704.0,100.0,COAL,observed_peak,2023-01-01,2023-01-19,19.0,0,1,0.579

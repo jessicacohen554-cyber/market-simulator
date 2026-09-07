@@ -1,0 +1,1090 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant,out_of_merit_share
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-01-01,2023-02-15,45.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-02-15,2023-05-08,81.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-05-09,2023-06-12,34.5,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-06-13,2023-06-26,12.8,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-07-01,2023-08-01,31.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-08-04,2023-08-11,6.5,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-08-12,2023-08-20,8.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2023-08-31,2023-12-31,123.0,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-01-01,2024-01-11,10.6,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-01-20,2024-04-17,88.1,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-04-17,2024-04-24,6.3,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-04-25,2024-06-03,38.6,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-06-04,2024-07-10,35.8,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-07-17,2024-07-23,6.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-07-24,2024-08-01,8.3,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-08-06,2024-08-15,8.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-08-15,2024-08-26,11.0,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-08-27,2024-09-19,22.5,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-09-20,2024-10-04,13.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2024-10-09,2024-12-31,84.0,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.2,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-01-08,2025-01-20,12.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-01-21,2025-02-19,29.2,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-02-21,2025-04-06,43.9,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-04-07,2025-06-09,62.6,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-06-10,2025-07-01,21.0,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-07-02,2025-07-08,6.3,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-07-09,2025-07-29,20.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-07-30,2025-08-12,13.3,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-08-13,2025-08-18,5.2,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-08-22,2025-10-02,41.3,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-10-07,2025-11-20,44.4,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-11-21,2025-12-03,11.8,1,2,1.0
+Earl F Wisdom,1217,1,37.5,119.1,31.5,ST_GAS,eia_exact,2025-12-03,2025-12-31,28.2,1,2,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-01-01,2023-05-08,127.1,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-05-09,2023-05-16,7.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-05-18,2023-06-26,38.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-06-26,2023-07-11,15.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-07-14,2023-07-20,5.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-08-04,2023-08-10,5.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-08-12,2023-08-20,7.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-09-07,2023-09-25,17.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-09-27,2023-11-09,43.1,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2023-11-11,2023-12-31,50.6,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-01-01,2024-01-12,12.0,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-01-21,2024-03-26,65.5,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-03-29,2024-04-03,5.7,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-04-06,2024-04-13,7.6,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-04-17,2024-04-24,7.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-04-27,2024-05-06,9.7,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-05-22,2024-05-27,5.1,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-06-05,2024-06-23,17.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-07-16,2024-07-22,5.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-08-19,2024-08-25,6.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-08-28,2024-09-18,21.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-09-21,2024-10-02,11.5,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-10-12,2024-10-21,9.1,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-10-25,2024-10-30,6.0,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-11-02,2024-11-21,19.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-11-23,2024-11-28,5.0,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2024-12-01,2024-12-31,30.8,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-01-21,2025-02-12,22.4,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-02-21,2025-03-30,37.5,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-04-09,2025-04-29,20.4,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-04-29,2025-07-01,62.4,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-07-10,2025-07-17,7.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-07-19,2025-07-28,9.0,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-07-30,2025-08-11,11.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-08-22,2025-10-02,40.3,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-10-13,2025-11-09,26.9,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-11-12,2025-11-17,5.2,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-11-20,2025-11-30,10.0,0,1,1.0
+Cimarron River,1230,1,50.0,50.0,100.0,ST_GAS,eia_exact,2025-12-04,2025-12-31,28.0,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2023-01-01,2023-05-07,126.6,0,1,0.983
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2023-05-19,2023-06-04,16.2,0,1,0.967
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2023-07-04,2023-07-09,6.0,0,1,0.958
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2023-10-04,2023-12-31,89.0,0,1,0.989
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-01-01,2024-01-13,12.7,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-01-20,2024-03-26,66.1,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-04-07,2024-04-13,6.7,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-04-17,2024-04-28,11.2,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-05-14,2024-05-21,7.0,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-05-28,2024-06-02,5.9,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-06-07,2024-06-23,16.9,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-07-19,2024-07-24,5.9,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-08-19,2024-08-25,6.1,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-09-01,2024-09-24,23.9,0,1,0.998
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2024-09-30,2024-12-31,92.2,0,1,0.996
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-01-01,2025-01-23,22.4,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-01-29,2025-03-19,49.0,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-03-23,2025-04-05,13.6,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-04-11,2025-04-20,9.0,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-04-24,2025-05-13,19.2,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-05-17,2025-06-26,40.5,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-07-10,2025-07-16,6.4,0,1,0.974
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-07-31,2025-08-10,11.0,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-08-22,2025-08-30,8.1,0,1,1.0
+Fort Dodge aka Judson Large,1233,4,149.0,149.0,100.0,ST_GAS,eia_exact,2025-09-03,2025-12-31,120.0,0,1,0.998
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-01-01,2023-05-07,127.0,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-05-09,2023-06-04,26.1,0,1,0.995
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-06-07,2023-06-26,18.3,0,1,0.904
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-07-02,2023-07-11,9.1,0,1,0.968
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-08-30,2023-09-06,6.3,0,1,0.927
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-09-08,2023-10-29,51.8,0,1,0.986
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-11-01,2023-11-09,8.8,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2023-11-11,2023-12-31,50.2,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-01-01,2024-01-13,12.8,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-01-16,2024-03-26,70.2,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-04-07,2024-04-14,6.9,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-04-17,2024-04-29,11.7,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-05-14,2024-05-22,8.1,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-05-28,2024-06-03,5.8,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-06-06,2024-06-23,16.2,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-06-24,2024-07-02,8.5,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-07-13,2024-07-23,10.1,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-07-26,2024-07-31,5.4,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-08-19,2024-08-25,6.2,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-08-29,2024-09-24,26.5,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2024-10-01,2024-12-31,91.9,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-01-01,2025-06-23,173.4,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-06-24,2025-07-06,12.4,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-07-10,2025-07-21,10.5,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-07-30,2025-08-22,22.2,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-08-25,2025-10-06,41.4,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-10-21,2025-11-09,18.5,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-11-12,2025-12-05,22.5,0,1,1.0
+Great Bend Station aka Arthur Mullergren,1235,3,81.6,81.6,100.0,ST_GAS,eia_exact,2025-12-05,2025-12-31,26.2,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-01-01,2023-01-31,30.2,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-01-31,2023-05-08,96.8,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-05-11,2023-05-17,6.0,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-05-19,2023-07-13,55.4,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-07-22,2023-07-29,7.1,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-08-04,2023-08-10,5.7,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-08-12,2023-08-20,7.8,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-08-26,2023-09-06,10.5,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-09-12,2023-09-25,12.9,0,1,1.0
+Coffeyville,1271,4,33.0,33.0,100.0,ST_GAS,observed_peak,2023-09-26,2023-12-31,96.6,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-01-01,2024-01-13,12.2,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-01-17,2024-04-04,78.1,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-04-06,2024-04-14,8.2,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-04-17,2024-05-07,19.6,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-05-16,2024-05-27,11.1,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-06-05,2024-06-26,20.9,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-06-28,2024-07-22,24.0,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-08-14,2024-08-26,11.8,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-08-28,2024-09-19,21.9,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-09-21,2024-10-03,12.0,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-10-12,2024-10-22,9.9,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-10-24,2024-11-21,28.1,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2024-12-01,2024-12-31,30.8,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-01-08,2025-01-13,5.0,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-01-22,2025-02-13,22.1,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-02-21,2025-04-06,44.2,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-04-09,2025-04-30,21.5,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-05-02,2025-07-01,59.8,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-07-10,2025-07-24,14.0,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-07-30,2025-08-11,11.7,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-08-20,2025-09-22,32.9,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-09-24,2025-10-02,7.9,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-10-04,2025-11-10,36.2,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-11-12,2025-11-18,6.2,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-11-20,2025-12-01,10.6,0,1,1.0
+Coffeyville,1271,4,31.0,31.0,100.0,ST_GAS,observed_peak,2025-12-04,2025-12-31,27.8,0,1,1.0
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-01-01,2024-02-27,57.6,2,3,0.955
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-02-28,2024-03-26,26.8,2,3,0.939
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-03-28,2024-04-03,5.6,2,3,0.985
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-06-26,2024-07-02,6.2,2,3,0.987
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-11-01,2024-11-28,26.4,2,3,0.957
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2024-12-06,2024-12-31,25.1,2,3,0.993
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-01-08,2025-01-18,10.3,2,3,1.0
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-01-21,2025-02-12,22.2,2,3,0.972
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-02-22,2025-03-30,36.2,2,3,0.985
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-10-12,2025-11-09,28.6,2,3,0.929
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-11-11,2025-11-18,6.3,2,3,1.0
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-11-20,2025-12-21,30.8,2,3,0.991
+Garden City,1336,S-2,97.9,240.3,40.7,ST_GAS,eia_exact,2025-12-23,2025-12-31,8.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-01-01,2023-01-31,30.5,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-02-02,2023-03-27,52.6,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-03-29,2023-04-04,5.6,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-04-28,2023-05-03,5.5,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-05-25,2023-05-30,5.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-07-06,2023-07-12,6.5,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-07-18,2023-07-29,11.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-09-09,2023-10-22,42.8,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,503.0,24.9,ST_GAS,eia_digits,2023-11-13,2023-12-31,48.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-01-01,2024-01-12,11.7,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-01-24,2024-02-28,35.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-03-01,2024-03-18,16.5,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-03-24,2024-04-01,7.1,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-05-05,2024-06-04,29.6,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-06-23,2024-07-02,8.8,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-07-04,2024-07-16,12.1,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-07-25,2024-08-01,6.5,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-09-02,2024-09-19,17.3,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-09-24,2024-10-21,27.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-11-19,2024-12-16,26.3,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,507.0,24.7,ST_GAS,eia_digits,2024-12-22,2024-12-31,10.0,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-01-01,2025-01-06,5.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-01-08,2025-01-19,11.0,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-01-21,2025-02-12,22.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-02-21,2025-03-21,28.0,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-03-24,2025-03-31,7.0,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-04-05,2025-05-08,33.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-05-08,2025-05-27,18.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-06-04,2025-06-10,6.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-07-03,2025-07-09,6.3,2,3,0.974
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-07-31,2025-08-07,7.8,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-08-12,2025-08-18,5.4,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-08-21,2025-08-29,7.8,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-09-05,2025-09-16,11.1,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-10-19,2025-10-25,6.2,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-10-28,2025-12-05,38.6,2,3,1.0
+Arsenal Hill Power Plant,1416,5A,125.0,512.0,24.4,ST_GAS,eia_digits,2025-12-05,2025-12-31,26.2,2,3,1.0
+Arsenal Hill Power Plant,1416,CTG-6A,187.0,503.0,37.2,ST_GAS,observed_peak,2023-02-24,2023-03-28,31.3,2,3,0.985
+Arsenal Hill Power Plant,1416,CTG-6A,187.0,503.0,37.2,ST_GAS,observed_peak,2023-10-21,2023-11-10,20.5,2,3,0.982
+Arsenal Hill Power Plant,1416,CTG-6A,190.0,507.0,37.5,ST_GAS,observed_peak,2024-03-16,2024-04-26,40.3,2,3,0.975
+Arsenal Hill Power Plant,1416,CTG-6A,190.0,507.0,37.5,ST_GAS,observed_peak,2024-10-18,2024-11-10,22.5,2,3,0.95
+Arsenal Hill Power Plant,1416,CTG-6A,193.0,512.0,37.7,ST_GAS,observed_peak,2025-03-12,2025-04-05,24.0,2,3,0.922
+Arsenal Hill Power Plant,1416,CTG-6B,191.0,503.0,38.0,ST_GAS,observed_peak,2023-02-24,2023-03-23,26.3,2,3,1.0
+Arsenal Hill Power Plant,1416,CTG-6B,191.0,503.0,38.0,ST_GAS,observed_peak,2023-10-21,2023-11-08,18.4,2,3,0.941
+Arsenal Hill Power Plant,1416,CTG-6B,192.0,507.0,37.9,ST_GAS,observed_peak,2024-03-16,2024-04-24,38.2,2,3,0.967
+Arsenal Hill Power Plant,1416,CTG-6B,192.0,507.0,37.9,ST_GAS,observed_peak,2024-10-18,2024-11-11,23.5,2,3,0.936
+Arsenal Hill Power Plant,1416,CTG-6B,194.0,512.0,37.9,ST_GAS,observed_peak,2025-03-12,2025-04-04,23.8,2,3,0.912
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-01-01,2023-01-31,30.2,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-02-02,2023-03-27,52.8,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-03-29,2023-04-10,11.7,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-04-12,2023-06-16,64.7,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-07-02,2023-07-12,10.2,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-09-03,2023-09-23,20.4,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-10-03,2023-10-22,19.4,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-10-25,2023-10-30,5.3,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2023-11-10,2023-12-31,51.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-01-01,2024-01-12,11.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-01-22,2024-02-28,36.9,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-03-01,2024-04-25,55.3,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-05-01,2024-05-08,7.3,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-06-12,2024-06-25,13.3,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-06-27,2024-07-03,5.6,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-07-25,2024-07-31,5.6,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-08-27,2024-09-19,22.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-09-21,2024-09-29,7.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-10-05,2024-10-12,6.4,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-10-14,2024-10-22,7.4,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-10-25,2024-12-20,55.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2024-12-25,2024-12-31,6.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.0,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-01-08,2025-01-14,6.2,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-01-25,2025-02-12,18.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-02-21,2025-03-11,17.9,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-03-13,2025-05-01,48.7,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-05-03,2025-05-10,6.2,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-06-23,2025-06-30,7.3,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-07-19,2025-07-25,6.2,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-07-31,2025-08-09,8.9,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-08-22,2025-08-28,5.5,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-10-21,2025-11-10,20.0,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-11-12,2025-11-26,13.8,1,2,1.0
+Lieberman Power Plant,1417,3,114.0,228.0,50.0,ST_GAS,eia_exact,2025-12-04,2025-12-31,28.0,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-01-01,2023-04-04,93.2,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-04-06,2023-05-07,30.8,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-05-10,2023-06-07,28.2,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-06-09,2023-06-15,5.6,1,2,0.97
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-07-06,2023-07-14,8.3,1,2,0.9
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-09-03,2023-10-18,45.3,1,2,0.978
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-10-18,2023-10-30,11.8,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-11-04,2023-11-09,5.0,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2023-11-11,2023-12-31,50.8,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2024-01-01,2024-01-12,11.6,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2024-11-16,2024-11-22,6.2,1,2,0.932
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2024-11-24,2024-12-17,23.3,1,2,0.912
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2024-12-19,2024-12-31,12.2,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.2,1,2,0.984
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2025-01-25,2025-02-04,9.5,1,2,1.0
+Lieberman Power Plant,1417,4,114.0,228.0,50.0,ST_GAS,eia_exact,2025-02-04,2025-02-12,7.8,1,2,0.978
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-01-01,2023-01-25,24.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-03,2023-02-11,8.4,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-17,2023-02-24,6.7,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-24,2023-03-08,11.6,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-03-09,2023-03-15,5.9,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-03-27,2023-04-03,6.7,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-04-10,2023-04-16,5.8,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-04-27,2023-05-03,5.3,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-09-11,2023-09-17,5.8,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-11-02,2023-11-21,18.9,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-11-27,2023-12-05,7.3,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-12-05,2023-12-11,5.4,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-12-11,2023-12-22,10.8,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-12-22,2023-12-31,9.4,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-01-04,2024-01-13,9.1,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-01-25,2024-02-18,23.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-02-18,2024-02-28,9.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-03-01,2024-03-13,11.9,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-03-18,2024-03-27,8.6,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-05-08,2024-05-14,5.4,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-05-20,2024-05-27,6.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-06-14,2024-06-20,5.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-10-23,2024-11-06,13.5,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-12-20,2024-12-30,9.7,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-02-05,2025-02-11,6.0,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-02-27,2025-03-05,5.7,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-03-20,2025-04-01,11.7,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-04-15,2025-04-20,5.1,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-05-20,2025-05-27,6.2,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-08-22,2025-09-04,13.0,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-09-17,2025-12-16,89.8,3,5,1.0
+Hawthorn,2079,7,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-12-16,2025-12-26,9.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-01-07,2023-01-12,5.2,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-01-17,2023-01-26,8.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-03,2023-02-11,8.4,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-17,2023-02-24,6.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-02-24,2023-03-10,13.6,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-03-27,2023-04-03,6.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-04-10,2023-04-16,5.8,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-05-01,2023-05-07,6.0,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-11-02,2023-11-29,27.1,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-11-29,2023-12-11,11.6,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-12-11,2023-12-22,11.0,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2023-12-22,2023-12-31,9.4,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-01-04,2024-01-10,5.6,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-01-25,2024-02-18,23.5,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-02-18,2024-02-28,9.5,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-03-01,2024-03-13,11.8,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-03-21,2024-03-27,5.4,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-05-08,2024-05-14,5.4,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-08-24,2024-12-13,111.2,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2024-12-20,2024-12-30,9.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-02-05,2025-02-13,7.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-02-21,2025-02-27,5.3,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-02-27,2025-03-05,5.3,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-03-20,2025-04-01,11.7,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-04-15,2025-04-20,5.0,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-05-21,2025-05-27,5.3,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-08-22,2025-09-04,13.0,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-09-17,2025-09-25,7.8,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-10-07,2025-10-31,23.5,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-11-10,2025-11-15,5.1,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-11-24,2025-11-30,5.6,3,5,1.0
+Hawthorn,2079,8,82.2,1189.0,6.9,CC_REGULAR,eia_exact,2025-12-17,2025-12-26,8.8,3,5,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-01-01,2023-01-19,18.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-01-19,2023-02-15,26.9,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-02-15,2023-03-19,32.4,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-03-21,2023-03-27,6.1,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-03-29,2023-04-10,11.5,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-04-10,2023-05-03,22.4,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-05-08,2023-05-16,7.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-05-24,2023-05-30,6.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-08-12,2023-08-20,7.4,1,2,0.972
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-10-03,2023-10-09,6.1,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-10-09,2023-10-20,10.4,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-11-15,2023-11-22,6.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-11-29,2023-12-11,11.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-12-11,2023-12-18,6.7,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2023-12-22,2023-12-28,5.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-01-01,2024-01-13,13.0,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-01-17,2024-02-05,18.9,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-02-05,2024-02-12,6.9,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-02-13,2024-02-18,5.0,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-02-18,2024-02-28,9.8,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-02-29,2024-03-09,9.7,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-03-10,2024-03-15,5.8,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-03-20,2024-03-26,5.9,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-04-08,2024-04-14,5.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-04-17,2024-04-24,6.7,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-05-08,2024-05-14,5.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-06-06,2024-06-11,5.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-06-14,2024-06-23,8.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-07-03,2024-07-09,5.7,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-08-27,2024-09-05,8.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-09-10,2024-09-16,5.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-11-11,2024-11-22,10.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-11-22,2024-12-17,24.5,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2024-12-21,2024-12-31,10.2,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-01-08,2025-01-20,11.6,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-01-21,2025-01-30,9.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-02-02,2025-02-12,10.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-02-13,2025-02-19,5.6,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-02-21,2025-03-16,22.5,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-03-20,2025-03-31,10.5,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-04-15,2025-04-21,5.4,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-04-21,2025-05-27,35.6,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-06-19,2025-06-24,5.3,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-08-29,2025-09-23,25.0,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-10-18,2025-10-30,12.0,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-11-30,2025-12-10,9.4,1,2,1.0
+Lake Road,2098,6,24.0,109.0,22.0,CT_CHP,eia_exact,2025-12-12,2025-12-23,10.3,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-01-24,2023-02-13,19.7,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-02-17,2023-02-24,6.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-03-03,2023-03-09,5.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-03-20,2023-03-25,5.2,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-03-25,2023-04-02,7.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-04-10,2023-04-21,10.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-04-23,2023-05-01,7.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-05-24,2023-06-25,31.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-07-11,2023-07-21,9.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-07-23,2023-07-29,5.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-09-17,2023-10-16,28.5,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-10-25,2023-11-04,9.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-11-06,2023-11-13,6.5,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-11-17,2023-11-25,7.1,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2023-12-11,2023-12-30,18.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-01-07,2024-01-14,6.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-01-17,2024-01-24,7.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-01-26,2024-02-18,22.7,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-02-18,2024-03-03,14.0,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-03-09,2024-06-09,91.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-06-14,2024-06-23,8.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-11-11,2024-11-29,17.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-12-01,2024-12-11,9.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-12-12,2024-12-24,12.0,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2024-12-24,2024-12-31,7.2,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-01-03,2025-01-16,12.7,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-02-09,2025-02-18,8.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-03-06,2025-03-12,5.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-04-21,2025-05-27,35.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-05-31,2025-06-06,5.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-07-30,2025-08-08,8.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-08-18,2025-08-25,7.3,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-08-25,2025-09-02,7.7,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-09-02,2025-09-16,13.8,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-10-10,2025-10-30,19.5,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-11-18,2025-11-26,7.4,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-12-02,2025-12-08,5.7,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-12-08,2025-12-14,5.6,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-12-16,2025-12-23,7.3,1,2,1.0
+Lake Road,2098,GT5,85.0,109.0,78.0,CT_CHP,eia_digits,2025-12-23,2025-12-29,6.0,1,2,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-01-01,2023-05-08,127.4,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-05-10,2023-05-17,7.0,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-05-23,2023-06-05,12.6,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-06-09,2023-06-26,17.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-06-28,2023-07-11,12.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-07-14,2023-07-27,13.4,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-08-04,2023-09-06,32.6,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-09-10,2023-12-04,85.9,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2023-12-13,2023-12-31,18.2,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-01-01,2024-01-15,14.2,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-01-20,2024-02-20,30.9,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-02-21,2024-04-14,53.4,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-04-17,2024-04-29,11.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-05-06,2024-05-22,16.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-05-27,2024-06-05,8.7,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-06-08,2024-06-23,15.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-06-26,2024-07-23,27.0,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-07-25,2024-08-02,7.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-08-09,2024-08-16,7.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-08-20,2024-08-27,7.4,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-08-31,2024-09-25,25.4,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-10-01,2024-10-09,7.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-10-14,2024-11-28,44.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2024-12-03,2024-12-31,28.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.1,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-01-08,2025-01-19,10.6,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-01-22,2025-02-13,22.1,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-02-20,2025-03-19,27.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-03-22,2025-03-31,9.1,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-04-07,2025-04-15,7.8,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-04-17,2025-04-24,7.1,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-04-26,2025-05-14,18.0,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-05-16,2025-06-30,44.9,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-07-02,2025-07-21,18.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-07-27,2025-08-11,14.3,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-08-13,2025-08-22,8.5,0,1,1.0
+Canaday,2226,1,108.8,108.8,100.0,ST_GAS,eia_exact,2025-08-26,2025-12-31,127.0,0,1,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-01-01,2023-07-06,186.4,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-07-08,2023-07-25,17.5,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-07-30,2023-08-04,5.3,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-08-05,2023-08-11,6.4,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-08-12,2023-08-20,8.5,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2023-08-26,2023-12-31,128.0,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-01-01,2024-05-16,136.3,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-05-17,2024-05-22,5.2,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-05-23,2024-06-23,30.8,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-06-26,2024-07-03,6.4,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-07-04,2024-07-10,6.3,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-07-17,2024-07-29,11.7,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-08-06,2024-08-15,8.4,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-08-16,2024-08-22,5.5,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2024-08-22,2024-12-31,131.3,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-01-01,2025-03-31,89.2,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-03-31,2025-04-06,5.7,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-04-07,2025-07-14,97.4,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-07-14,2025-07-24,9.3,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-07-30,2025-08-11,11.7,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-08-12,2025-08-18,5.5,4,5,1.0
+North Omaha Station,2291,1,73.5,644.7,11.4,ST_GAS,eia_exact,2025-08-22,2025-12-31,132.0,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-01-01,2023-05-08,127.3,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-05-09,2023-06-26,48.4,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-07-01,2023-07-18,17.4,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-08-04,2023-08-11,6.5,4,5,0.981
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-08-12,2023-08-20,8.3,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-08-26,2023-09-06,11.3,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2023-09-07,2023-12-31,116.0,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-01-01,2024-05-29,149.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-05-29,2024-06-23,24.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-06-26,2024-07-03,6.4,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-07-04,2024-07-10,6.3,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-07-17,2024-07-29,11.9,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-08-06,2024-08-16,9.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-08-17,2024-08-22,5.1,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-08-22,2024-09-19,27.7,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-09-20,2024-10-04,13.4,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-10-13,2024-10-22,9.2,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-10-23,2024-10-31,7.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2024-10-31,2024-12-31,61.0,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-01-01,2025-06-10,160.0,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-06-10,2025-07-01,21.0,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-07-02,2025-07-08,6.2,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-07-09,2025-07-14,5.2,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-07-14,2025-07-24,9.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-07-30,2025-08-11,11.9,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-08-12,2025-08-18,5.5,4,5,1.0
+North Omaha Station,2291,2,108.8,644.7,16.9,ST_GAS,eia_exact,2025-08-22,2025-12-31,132.0,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-01-01,2023-02-03,33.1,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-02-03,2023-04-10,66.0,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-04-10,2023-04-23,12.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-04-25,2023-05-03,7.6,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-05-08,2023-05-16,7.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-05-20,2023-05-30,9.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-09-29,2023-10-09,9.3,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2023-11-03,2023-12-31,58.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-01-01,2024-04-14,104.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-04-19,2024-04-29,9.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-05-08,2024-05-14,5.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-06-28,2024-07-03,5.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-08-27,2024-09-16,19.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-09-21,2024-09-29,7.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-10-14,2024-10-22,7.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-10-25,2024-10-31,5.5,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-11-11,2024-12-02,20.6,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-12-05,2024-12-12,6.2,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2024-12-12,2024-12-31,19.2,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-01-01,2025-01-05,5.0,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-01-14,2025-01-19,5.1,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-01-21,2025-02-10,19.7,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-02-13,2025-02-19,5.7,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-02-20,2025-03-25,32.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-04-11,2025-04-20,8.8,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-04-21,2025-04-28,6.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-05-01,2025-05-12,11.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-05-13,2025-05-27,13.4,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-05-27,2025-06-04,7.3,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-06-19,2025-06-26,7.2,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-07-30,2025-08-06,6.7,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-08-28,2025-09-09,11.2,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-09-09,2025-09-16,6.3,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-10-13,2025-10-22,8.6,4,5,1.0
+North Omaha Station,2291,3,108.8,644.7,16.9,ST_GAS,eia_exact,2025-10-23,2025-12-31,69.2,4,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-01-01,2023-04-03,92.2,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-04-15,2023-06-03,48.9,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-07-03,2023-07-09,5.5,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-07-15,2023-07-23,8.5,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-09-15,2023-09-20,5.2,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-09-30,2023-10-16,16.1,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-10-17,2023-10-27,10.7,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-11-20,2023-11-26,6.1,3,5,1.0
+Horseshoe Lake,2951,6,170.0,734.0,23.2,ST_GAS,observed_peak,2023-12-01,2023-12-31,30.1,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-01-01,2023-02-01,31.8,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-02-06,2023-03-14,35.4,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-03-15,2023-04-18,34.3,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-04-23,2023-05-24,30.4,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-06-21,2023-07-02,11.3,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-07-27,2023-08-15,18.5,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-08-25,2023-09-02,8.2,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-09-05,2023-09-12,6.5,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-10-04,2023-11-27,53.6,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-12-02,2023-12-11,8.4,3,5,1.0
+Horseshoe Lake,2951,8,443.0,734.0,60.4,ST_GAS,eia_exact,2023-12-16,2023-12-31,15.7,3,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-01-01,2024-01-08,7.2,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-01-10,2024-03-09,59.3,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-03-14,2024-04-14,30.6,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-04-18,2024-05-04,15.5,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-05-23,2024-05-30,6.8,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-06-07,2024-06-19,12.2,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-07-20,2024-07-31,11.2,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-08-28,2024-09-23,25.6,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-09-29,2024-10-05,5.8,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2024-10-15,2024-12-31,78.0,2,5,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-01-01,2025-05-15,134.8,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-05-15,2025-05-27,11.5,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-06-08,2025-07-01,23.2,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-07-12,2025-07-21,9.3,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-08-04,2025-08-11,6.9,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-08-23,2025-09-15,23.1,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-10-15,2025-11-23,38.7,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-11-23,2025-11-30,6.5,2,3,1.0
+Horseshoe Lake,2951,8,443.0,564.0,78.5,ST_GAS,eia_exact,2025-12-06,2025-12-31,25.5,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2023-01-01,2023-01-12,11.6,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2023-02-04,2023-03-29,53.2,2,3,0.99
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2023-10-25,2023-11-26,32.0,2,3,0.984
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2023-12-01,2023-12-27,25.7,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-01-01,2024-01-12,10.7,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-01-26,2024-02-19,24.1,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-03-04,2024-03-15,11.2,2,3,0.948
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-10-12,2024-10-22,9.5,2,3,0.925
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-11-05,2024-12-31,56.6,2,3,0.977
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.6,2,3,1.0
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-08-23,2025-09-04,11.7,2,3,0.961
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-10-17,2025-10-29,12.2,2,3,0.966
+Muskogee,2952,4,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-12-04,2025-12-31,27.0,2,3,1.0
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2023-12-08,2023-12-31,23.3,2,3,1.0
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-01-01,2024-01-11,10.4,2,3,1.0
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-01-28,2024-02-19,22.3,2,3,1.0
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-02-22,2024-03-04,11.4,2,3,0.942
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-11-15,2024-11-26,11.2,2,3,0.944
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2024-12-05,2024-12-31,26.1,2,3,0.931
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-09-02,2025-09-15,12.5,2,3,0.927
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-10-23,2025-11-07,14.6,2,3,0.917
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-11-12,2025-11-26,13.7,2,3,0.954
+Muskogee,2952,5,572.0,1716.0,33.3,ST_GAS,eia_exact,2025-12-04,2025-12-31,27.1,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-01-01,2023-04-10,99.1,2,3,0.993
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-04-21,2023-05-02,10.5,2,3,0.964
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-05-19,2023-05-26,7.5,2,3,0.955
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-09-12,2023-10-08,26.5,2,3,0.906
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-10-21,2023-10-27,5.7,2,3,0.934
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-11-18,2023-12-31,43.4,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-01-01,2024-06-18,169.8,2,3,0.966
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-07-20,2024-07-29,8.4,2,3,0.901
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-08-08,2024-08-14,5.3,2,3,0.992
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-08-27,2024-09-05,9.0,2,3,0.916
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-09-06,2024-09-12,5.4,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-09-21,2024-11-25,65.7,2,3,0.963
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-12-10,2024-12-31,21.2,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-01-01,2025-01-06,5.1,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-01-24,2025-02-12,19.5,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-02-22,2025-03-05,11.0,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-03-10,2025-03-21,10.8,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-03-26,2025-04-20,25.1,2,3,0.95
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-05-16,2025-05-27,11.1,2,3,0.962
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-06-27,2025-07-05,8.0,2,3,0.948
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-08-30,2025-09-06,6.7,2,3,1.0
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-09-11,2025-12-23,103.0,2,3,0.977
+Seminole (2956),2956,1,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-12-24,2025-12-31,7.1,2,3,1.0
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-01-01,2023-04-09,98.5,2,3,0.912
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-12-06,2023-12-31,26.0,2,3,1.0
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-01-01,2024-01-08,7.3,2,3,1.0
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-01-27,2024-03-08,41.6,2,3,0.979
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-06-15,2024-06-22,6.7,2,3,0.907
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2024-12-13,2024-12-31,18.5,2,3,1.0
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-01-01,2025-03-07,65.9,2,3,0.918
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-11-13,2025-11-20,7.5,2,3,0.916
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-12-02,2025-12-09,7.0,2,3,0.929
+Seminole (2956),2956,2,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-12-14,2025-12-31,17.2,2,3,1.0
+Seminole (2956),2956,3,567.0,1701.0,33.3,ST_GAS,eia_exact,2023-12-17,2023-12-31,15.0,2,3,1.0
+Seminole (2956),2956,3,567.0,1701.0,33.3,ST_GAS,eia_exact,2025-01-24,2025-02-12,19.9,2,3,0.973
+Northeastern,2963,3301A,174.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-01-01,2023-04-12,101.1,3,4,0.935
+Northeastern,2963,3301A,174.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-10-26,2023-11-20,24.5,3,4,0.918
+Northeastern,2963,3301A,177.0,1328.0,13.3,CC_REGULAR,observed_peak,2025-03-08,2025-05-14,67.7,3,4,1.0
+Northeastern,2963,3301A,177.0,1328.0,13.3,CC_REGULAR,observed_peak,2025-08-29,2025-09-07,8.7,3,4,1.0
+Northeastern,2963,3301A,177.0,1328.0,13.3,CC_REGULAR,observed_peak,2025-11-10,2025-12-11,31.0,3,4,1.0
+Northeastern,2963,3301B,175.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-01-01,2023-04-11,100.5,3,4,1.0
+Northeastern,2963,3301B,175.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-04-22,2023-04-27,5.5,3,4,1.0
+Northeastern,2963,3301B,175.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-05-07,2023-05-17,10.3,3,4,0.984
+Northeastern,2963,3301B,175.0,1331.0,13.1,CC_REGULAR,observed_peak,2023-06-15,2023-12-17,185.0,3,4,0.997
+Northeastern,2963,3301B,179.0,1308.0,13.7,CC_REGULAR,observed_peak,2024-02-23,2024-06-16,113.7,3,4,1.0
+Northeastern,2963,3301B,179.0,1308.0,13.7,CC_REGULAR,observed_peak,2024-09-20,2024-10-10,19.9,3,4,1.0
+Northeastern,2963,3301B,179.0,1328.0,13.5,CC_REGULAR,observed_peak,2025-03-07,2025-05-12,66.0,3,4,1.0
+Northeastern,2963,3301B,179.0,1328.0,13.5,CC_REGULAR,observed_peak,2025-08-29,2025-09-06,8.1,3,4,1.0
+Northeastern,2963,3301B,179.0,1328.0,13.5,CC_REGULAR,observed_peak,2025-11-10,2025-12-09,29.0,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-01-10,2023-02-09,30.6,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-02-15,2023-03-14,27.2,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-04-19,2023-05-08,19.3,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-05-08,2023-05-16,8.1,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-05-29,2023-06-18,19.5,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-07-21,2023-07-29,8.0,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-09-11,2023-09-20,8.7,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-10-24,2023-11-06,13.1,3,4,1.0
+Northeastern,2963,3302,480.0,1331.0,36.1,ST_GAS,observed_peak,2023-11-11,2023-12-31,50.7,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-01-01,2024-01-11,10.4,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-02-01,2024-03-26,54.4,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-04-29,2024-05-07,8.0,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-07-01,2024-07-09,7.6,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-07-25,2024-08-04,10.2,3,4,1.0
+Northeastern,2963,3302,448.0,1308.0,34.3,ST_GAS,observed_peak,2024-10-22,2024-12-31,70.1,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-01-01,2025-01-09,8.3,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-01-24,2025-02-09,15.9,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-02-21,2025-03-04,11.0,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-04-06,2025-04-27,21.1,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-04-27,2025-05-12,14.5,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-06-15,2025-06-26,11.1,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-08-04,2025-08-11,6.5,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-08-26,2025-09-11,15.6,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-09-19,2025-10-01,12.0,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-10-20,2025-10-28,7.6,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-11-21,2025-11-30,9.3,3,4,1.0
+Northeastern,2963,3302,469.0,1328.0,35.3,ST_GAS,observed_peak,2025-12-08,2025-12-31,23.3,3,4,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-01-10,2023-01-18,7.8,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-01-20,2023-01-29,8.8,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-02-02,2023-03-27,52.7,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-03-29,2023-04-22,23.7,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-04-26,2023-05-03,7.2,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-05-09,2023-05-14,5.2,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-05-28,2023-06-06,8.7,5,6,1.0
+Southwestern,2964,8002,83.0,652.0,12.7,ST_GAS,observed_peak,2023-12-17,2023-12-31,15.0,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-01-01,2024-01-10,10.0,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-02-09,2024-03-01,20.8,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-03-19,2024-03-25,7.0,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-04-01,2024-04-08,6.5,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-04-14,2024-04-22,7.5,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-06-15,2024-06-23,8.0,5,6,1.0
+Southwestern,2964,8002,83.0,650.0,12.8,ST_GAS,observed_peak,2024-10-08,2024-12-14,66.5,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-02-05,2025-02-13,7.2,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-02-21,2025-06-14,112.8,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-06-20,2025-07-13,23.3,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-10-13,2025-11-21,38.8,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-12-05,2025-12-23,18.4,5,6,1.0
+Southwestern,2964,8002,83.0,660.0,12.6,ST_GAS,observed_peak,2025-12-25,2025-12-31,6.5,5,6,1.0
+Southwestern,2964,8003,332.0,652.0,50.9,ST_GAS,observed_peak,2023-01-02,2023-01-19,17.5,5,6,1.0
+Southwestern,2964,8003,332.0,652.0,50.9,ST_GAS,observed_peak,2023-03-01,2023-03-09,7.8,5,6,1.0
+Southwestern,2964,8003,332.0,652.0,50.9,ST_GAS,observed_peak,2023-04-08,2023-04-22,13.7,5,6,0.997
+Southwestern,2964,8003,332.0,652.0,50.9,ST_GAS,observed_peak,2023-05-21,2023-05-29,7.6,5,6,0.962
+Southwestern,2964,8003,332.0,652.0,50.9,ST_GAS,observed_peak,2023-11-17,2023-11-28,11.3,5,6,1.0
+Southwestern,2964,8003,331.0,650.0,50.9,ST_GAS,observed_peak,2024-01-26,2024-02-08,13.0,5,6,1.0
+Southwestern,2964,8003,331.0,650.0,50.9,ST_GAS,observed_peak,2024-03-02,2024-03-08,6.7,5,6,1.0
+Southwestern,2964,8003,331.0,650.0,50.9,ST_GAS,observed_peak,2024-04-14,2024-04-23,8.5,5,6,1.0
+Southwestern,2964,8003,331.0,650.0,50.9,ST_GAS,observed_peak,2024-05-01,2024-06-15,45.2,5,6,1.0
+Southwestern,2964,8003,331.0,650.0,50.9,ST_GAS,observed_peak,2024-10-08,2024-12-24,76.2,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-01-01,2025-01-06,5.2,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-01-26,2025-03-12,45.8,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-03-17,2025-03-23,5.8,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-04-01,2025-05-01,30.2,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-05-06,2025-05-14,8.7,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-05-17,2025-05-27,10.2,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-06-17,2025-06-25,8.0,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-09-05,2025-09-11,6.3,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-09-24,2025-10-01,7.4,5,6,1.0
+Southwestern,2964,8003,333.0,660.0,50.5,ST_GAS,observed_peak,2025-11-17,2025-12-23,36.2,5,6,1.0
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-01-01,2023-01-29,28.1,5,6,1.0
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-02-02,2023-03-20,46.0,5,6,1.0
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-03-21,2023-05-08,47.5,5,6,1.0
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-05-08,2023-05-16,7.5,5,6,0.95
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-05-18,2023-06-07,20.0,5,6,1.0
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-07-05,2023-07-11,6.2,5,6,0.959
+Southwestern,2964,801N,30.0,652.0,4.6,ST_GAS,observed_peak,2023-08-26,2023-12-31,127.2,5,6,0.986
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-01-01,2024-01-11,10.3,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-02-11,2024-03-01,18.8,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-03-11,2024-03-17,6.0,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-03-21,2024-04-03,12.5,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-04-12,2024-04-21,9.9,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-06-17,2024-06-22,5.8,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-08-30,2024-09-15,16.4,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-09-17,2024-09-30,13.4,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-10-08,2024-12-10,62.7,5,6,1.0
+Southwestern,2964,801N,31.0,650.0,4.8,ST_GAS,observed_peak,2024-12-19,2024-12-31,12.8,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-01-23,2025-02-12,20.6,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-02-23,2025-05-19,85.4,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-05-22,2025-06-01,10.3,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-06-02,2025-07-06,34.6,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-07-11,2025-07-24,12.3,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-08-25,2025-09-25,31.3,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-10-16,2025-11-09,24.7,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-11-12,2025-12-05,22.4,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-12-07,2025-12-19,12.1,5,6,1.0
+Southwestern,2964,801N,32.0,660.0,4.8,ST_GAS,observed_peak,2025-12-19,2025-12-31,12.6,5,6,1.0
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-01-01,2023-01-29,28.1,5,6,1.0
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-02-02,2023-03-20,46.0,5,6,1.0
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-03-21,2023-05-08,47.5,5,6,1.0
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-05-08,2023-05-16,7.5,5,6,0.95
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-05-18,2023-06-07,20.0,5,6,1.0
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-07-05,2023-07-11,6.2,5,6,0.959
+Southwestern,2964,801S,30.0,652.0,4.6,ST_GAS,observed_peak,2023-08-26,2023-12-31,127.2,5,6,0.986
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-01-01,2024-01-11,10.3,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-02-11,2024-03-01,18.8,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-03-11,2024-03-17,6.0,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-03-21,2024-04-03,12.5,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-04-12,2024-04-21,9.9,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-06-17,2024-06-22,5.9,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-08-30,2024-09-15,16.4,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-09-17,2024-09-30,13.3,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-10-08,2024-12-10,62.7,5,6,1.0
+Southwestern,2964,801S,31.0,650.0,4.8,ST_GAS,observed_peak,2024-12-19,2024-12-31,12.8,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-01-23,2025-02-12,20.7,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-02-23,2025-05-19,85.4,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-05-22,2025-06-01,10.3,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-06-02,2025-07-06,34.6,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-07-11,2025-07-24,12.3,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-08-25,2025-09-25,31.3,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-10-16,2025-11-09,24.7,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-11-12,2025-12-05,22.4,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-12-07,2025-12-19,12.1,5,6,1.0
+Southwestern,2964,801S,32.0,660.0,4.8,ST_GAS,observed_peak,2025-12-19,2025-12-31,12.6,5,6,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-01-01,2023-01-12,11.6,1,2,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-01-21,2023-01-31,10.0,1,2,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-02-06,2023-02-24,18.2,1,2,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-09-16,2023-09-24,8.0,1,2,0.953
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-10-05,2023-10-10,5.3,1,2,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-11-18,2023-11-29,10.6,1,2,1.0
+Tulsa,2965,1402,181.0,336.0,53.9,ST_GAS,observed_peak,2023-12-02,2023-12-31,30.0,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-01-06,2024-01-11,5.3,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-01-27,2024-02-27,31.3,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-03-12,2024-03-18,6.2,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-04-04,2024-04-27,23.0,1,2,0.993
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-04-30,2024-05-06,5.5,1,2,0.939
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-05-30,2024-06-05,6.3,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-06-11,2024-06-23,11.4,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-08-20,2024-08-26,6.4,1,2,1.0
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-10-15,2024-10-23,8.2,1,2,0.98
+Tulsa,2965,1402,176.0,332.0,53.0,ST_GAS,observed_peak,2024-11-13,2024-12-23,39.7,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-01-01,2025-01-14,13.5,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-01-22,2025-02-12,21.9,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-02-21,2025-02-27,6.0,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-03-02,2025-04-16,45.2,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-05-04,2025-05-09,5.2,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-05-21,2025-05-27,5.8,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-09-05,2025-09-22,17.0,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-09-24,2025-10-02,7.9,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-10-28,2025-11-03,6.3,1,2,1.0
+Tulsa,2965,1402,172.0,329.0,52.3,ST_GAS,observed_peak,2025-11-13,2025-12-31,48.2,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-01-06,2023-02-01,26.2,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-02-06,2023-02-24,18.3,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-02-28,2023-03-20,20.2,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-03-30,2023-04-05,6.2,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-05-25,2023-05-30,5.4,1,2,1.0
+Tulsa,2965,1404,155.0,336.0,46.1,ST_GAS,observed_peak,2023-09-08,2023-12-31,114.2,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-01-01,2024-02-25,55.5,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-03-01,2024-03-09,7.9,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-03-13,2024-03-25,12.2,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-05-04,2024-05-11,7.5,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-06-15,2024-06-21,6.3,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-07-02,2024-07-09,7.2,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-08-05,2024-08-12,6.6,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-10-01,2024-11-17,46.5,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-12-15,2024-12-21,6.2,1,2,1.0
+Tulsa,2965,1404,156.0,332.0,47.0,ST_GAS,observed_peak,2024-12-24,2024-12-31,8.0,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-01-22,2025-02-17,26.8,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-02-21,2025-03-05,12.1,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-04-08,2025-05-14,36.2,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-08-01,2025-08-06,5.2,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-08-22,2025-09-03,11.7,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-10-02,2025-10-10,7.4,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-10-11,2025-11-07,27.0,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-11-13,2025-12-23,39.5,1,2,1.0
+Tulsa,2965,1404,157.0,329.0,47.7,ST_GAS,observed_peak,2025-12-26,2025-12-31,5.2,1,2,1.0
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-01-01,2023-05-08,127.4,2,3,0.999
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-05-09,2023-06-26,48.5,2,3,0.976
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-07-01,2023-07-18,17.4,2,3,0.928
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-07-18,2023-07-26,7.5,2,3,0.972
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-08-14,2023-08-20,6.0,2,3,0.944
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2023-08-27,2023-12-31,126.4,2,3,0.986
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-01-01,2024-01-11,11.0,2,3,1.0
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-01-22,2024-02-01,9.7,2,3,1.0
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-02-01,2024-04-14,72.7,2,3,0.998
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-04-17,2024-07-10,83.9,2,3,0.931
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-08-29,2024-09-19,20.8,2,3,0.98
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-09-22,2024-10-04,11.8,2,3,0.954
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-10-12,2024-10-22,9.5,2,3,0.978
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2024-10-25,2024-12-31,67.5,2,3,0.995
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-01-11,2025-01-17,6.2,2,3,1.0
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-01-22,2025-02-10,19.0,2,3,1.0
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-02-17,2025-04-06,47.7,2,3,0.919
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-04-09,2025-07-01,82.8,2,3,0.923
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-08-01,2025-08-12,10.8,2,3,0.911
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-08-21,2025-09-26,36.2,2,3,0.957
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-09-26,2025-10-02,5.5,2,3,0.969
+Mooreland,3008,1,45.0,305.0,14.8,ST_GAS,eia_exact,2025-10-13,2025-12-31,79.4,2,3,0.983
+Mooreland,3008,2,125.0,305.0,41.0,ST_GAS,eia_exact,2024-02-05,2024-02-13,7.4,2,3,0.983
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-01-05,2023-01-13,7.2,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-01-13,2023-01-20,6.5,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-01-20,2023-01-28,8.4,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-02-02,2023-02-24,21.8,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-02-24,2023-03-13,16.2,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-03-17,2023-03-27,9.2,2,3,0.995
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-04-10,2023-04-16,5.7,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-04-17,2023-04-22,5.7,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-06-08,2023-06-14,6.2,2,3,0.96
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-10-01,2023-11-15,44.3,2,3,0.99
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-12-04,2023-12-11,6.5,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-12-11,2023-12-18,6.7,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2023-12-22,2023-12-28,5.3,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2024-01-01,2024-01-14,13.1,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2024-01-23,2024-02-14,21.5,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2024-02-14,2024-12-18,308.4,2,3,0.951
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2024-12-20,2024-12-31,11.5,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-01-01,2025-02-05,35.7,2,3,0.902
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-02-08,2025-02-14,6.2,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-02-26,2025-03-10,12.0,2,3,0.951
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-10-21,2025-10-27,5.3,2,3,0.914
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-11-19,2025-11-26,6.3,2,3,1.0
+Mooreland,3008,3,135.0,305.0,44.3,ST_GAS,eia_exact,2025-11-28,2025-12-31,34.0,2,3,0.941
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2023-01-01,2023-01-13,12.6,0,1,0.983
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2023-01-13,2023-01-30,16.5,0,1,0.995
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2023-02-03,2023-03-14,39.4,0,1,0.924
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2023-12-13,2023-12-18,5.3,0,1,1.0
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2023-12-21,2023-12-31,11.0,0,1,1.0
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2024-01-01,2024-01-07,6.9,0,1,1.0
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2024-10-15,2024-10-21,6.2,0,1,0.919
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2024-12-22,2024-12-28,6.4,0,1,1.0
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2025-01-25,2025-02-12,18.0,0,1,0.986
+Knox Lee Power Plant,3476,5,351.0,351.0,100.0,ST_GAS,eia_exact,2025-02-22,2025-03-01,6.5,0,1,0.962
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-01-01,2023-01-31,30.1,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-02-04,2023-02-24,19.6,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-03-01,2023-03-27,26.1,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-04-18,2023-05-03,15.3,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-05-10,2023-06-07,27.5,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-06-26,2023-07-14,17.7,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-08-04,2023-08-11,6.5,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-08-24,2023-09-02,9.3,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-09-11,2023-10-30,48.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-12-01,2023-12-18,17.0,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2023-12-23,2023-12-31,9.0,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-01-01,2024-01-12,11.8,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-01-26,2024-02-28,32.9,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-03-01,2024-03-09,8.0,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-03-15,2024-04-17,33.1,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-05-11,2024-05-24,12.5,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-07-04,2024-07-10,6.3,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-07-20,2024-08-01,12.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-08-29,2024-09-18,20.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-10-07,2024-10-12,5.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-10-15,2024-12-01,47.1,2,3,0.999
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2024-12-15,2024-12-21,6.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-01-11,2025-01-18,7.5,2,3,0.994
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-02-13,2025-02-19,5.6,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-02-22,2025-03-11,16.6,2,3,0.997
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-03-13,2025-03-20,6.6,2,3,0.968
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-08-31,2025-09-05,5.8,2,3,0.935
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-10-27,2025-11-03,6.4,2,3,0.981
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-11-21,2025-11-26,5.2,2,3,1.0
+Wilkes Power Plant,3478,1,180.0,882.0,20.4,ST_GAS,eia_exact,2025-12-06,2025-12-31,25.9,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2023-01-01,2023-01-11,10.6,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2023-01-12,2023-02-24,42.4,2,3,0.968
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2023-02-26,2023-03-20,21.5,2,3,0.992
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2024-01-30,2024-02-07,8.6,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2024-02-21,2024-02-28,7.3,2,3,0.989
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2024-11-23,2024-11-28,5.2,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2024-12-25,2024-12-31,7.0,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-02-05,2025-02-12,7.0,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-03-02,2025-03-09,7.5,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-04-02,2025-04-30,28.4,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-05-16,2025-06-11,26.9,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-06-24,2025-06-30,6.2,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-09-14,2025-12-11,88.7,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-12-18,2025-12-23,5.2,2,3,1.0
+Wilkes Power Plant,3478,2,351.0,882.0,39.8,ST_GAS,eia_exact,2025-12-26,2025-12-31,5.2,2,3,1.0
+Wilkes Power Plant,3478,3,351.0,882.0,39.8,ST_GAS,eia_exact,2024-01-04,2024-01-11,7.8,2,3,0.941
+Wilkes Power Plant,3478,3,351.0,882.0,39.8,ST_GAS,eia_exact,2024-12-20,2024-12-31,11.1,2,3,1.0
+Wilkes Power Plant,3478,3,351.0,882.0,39.8,ST_GAS,eia_exact,2025-01-25,2025-02-18,23.6,2,3,0.912
+Jones Station,3482,152B,255.0,893.0,28.6,ST_GAS,observed_peak,2023-12-02,2023-12-18,15.4,3,4,0.992
+Nichols Station,3484,142B,110.0,489.0,22.5,ST_GAS,observed_peak,2023-02-01,2023-02-07,5.6,2,3,1.0
+Nichols Station,3484,142B,110.0,489.0,22.5,ST_GAS,observed_peak,2023-02-13,2023-02-24,10.7,2,3,1.0
+Nichols Station,3484,142B,110.0,489.0,22.5,ST_GAS,observed_peak,2023-03-08,2023-04-10,33.4,2,3,1.0
+Nichols Station,3484,142B,110.0,489.0,22.5,ST_GAS,observed_peak,2023-11-28,2023-12-04,5.7,2,3,1.0
+Nichols Station,3484,142B,110.0,491.0,22.4,ST_GAS,observed_peak,2024-05-13,2024-05-20,7.3,2,3,0.955
+Nichols Station,3484,142B,110.0,483.0,22.8,ST_GAS,observed_peak,2025-01-01,2025-01-07,5.6,2,3,1.0
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-01-01,2023-01-08,7.5,2,3,1.0
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-01-13,2023-01-21,8.1,2,3,1.0
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-02-01,2023-02-07,5.5,2,3,1.0
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-02-25,2023-03-03,5.9,2,3,1.0
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-05-21,2023-05-28,6.3,2,3,0.934
+Nichols Station,3484,143B,263.0,489.0,53.8,ST_GAS,observed_peak,2023-11-07,2023-11-18,10.9,2,3,0.947
+Nichols Station,3484,143B,262.0,491.0,53.4,ST_GAS,observed_peak,2024-02-10,2024-02-16,5.8,2,3,1.0
+Nichols Station,3484,143B,262.0,491.0,53.4,ST_GAS,observed_peak,2024-09-05,2024-09-12,6.4,2,3,0.954
+Nichols Station,3484,143B,256.0,483.0,53.0,ST_GAS,observed_peak,2025-12-08,2025-12-18,10.6,2,3,1.0
+Plant X,3485,114B,199.0,199.0,100.0,ST_GAS,observed_peak,2023-12-26,2023-12-31,5.6,0,3,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-01-01,2023-04-17,106.5,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-04-25,2023-05-08,13.3,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-05-19,2023-06-06,18.3,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-09-09,2023-09-27,17.4,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-10-04,2023-10-12,7.3,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-10-19,2023-12-11,53.3,3,4,1.0
+Riverside (4940),4940,1501,453.0,1086.0,41.7,ST_GAS,observed_peak,2023-12-11,2023-12-31,20.1,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-01-01,2024-01-12,11.1,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-01-20,2024-03-26,66.0,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-03-30,2024-04-20,20.8,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-04-27,2024-05-27,30.1,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-06-23,2024-07-03,10.0,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-08-29,2024-09-19,21.5,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-10-14,2024-10-23,8.5,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-11-03,2024-12-06,32.6,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-12-06,2024-12-17,10.9,3,4,1.0
+Riverside (4940),4940,1501,450.0,1089.0,41.3,ST_GAS,observed_peak,2024-12-17,2024-12-31,14.3,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-01-09,2025-01-18,8.8,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-01-22,2025-02-17,26.7,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-02-22,2025-03-24,30.5,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-03-27,2025-06-05,69.5,3,4,0.998
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-06-12,2025-06-24,11.5,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-07-02,2025-07-07,5.3,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-07-19,2025-07-24,5.2,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-08-01,2025-08-11,9.6,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-08-23,2025-09-08,16.3,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-09-09,2025-10-02,22.4,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-10-19,2025-12-13,54.5,3,4,1.0
+Riverside (4940),4940,1501,449.0,1104.0,40.7,ST_GAS,observed_peak,2025-12-14,2025-12-31,17.3,3,4,1.0
+Riverside (4940),4940,1502,463.0,1086.0,42.6,ST_GAS,observed_peak,2023-01-01,2023-04-27,116.5,3,4,1.0
+Riverside (4940),4940,1502,463.0,1086.0,42.6,ST_GAS,observed_peak,2023-05-09,2023-06-06,28.5,3,4,1.0
+Riverside (4940),4940,1502,463.0,1086.0,42.6,ST_GAS,observed_peak,2023-10-05,2023-12-14,70.4,3,4,1.0
+Riverside (4940),4940,1502,463.0,1086.0,42.6,ST_GAS,observed_peak,2023-12-14,2023-12-31,17.1,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-01-01,2024-01-10,9.9,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-01-28,2024-02-27,30.4,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-03-01,2024-05-09,68.8,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-05-09,2024-05-16,6.5,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-05-25,2024-06-03,8.8,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-06-06,2024-06-13,6.5,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-08-20,2024-08-27,6.8,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-09-02,2024-09-13,11.3,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-10-14,2024-10-25,10.3,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-11-04,2024-12-04,30.7,3,4,1.0
+Riverside (4940),4940,1502,462.0,1089.0,42.4,ST_GAS,observed_peak,2024-12-08,2024-12-31,23.8,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-01-08,2025-01-19,10.5,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-01-24,2025-02-13,20.0,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-02-21,2025-03-15,21.9,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-03-23,2025-03-29,6.6,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-04-11,2025-05-20,38.5,3,4,0.982
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-05-21,2025-06-06,16.3,3,4,0.982
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-06-10,2025-06-18,7.5,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-07-30,2025-08-09,10.0,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-08-22,2025-09-08,17.0,3,4,1.0
+Riverside (4940),4940,1502,467.0,1104.0,42.3,ST_GAS,observed_peak,2025-09-12,2025-12-31,110.1,3,4,0.979
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2023-01-01,2023-07-26,206.6,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2023-08-05,2023-08-21,16.2,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2023-08-26,2023-12-31,127.5,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2024-01-01,2024-06-23,174.5,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2024-06-27,2024-07-03,5.9,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2024-07-16,2024-10-14,90.1,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2024-10-15,2024-10-22,6.8,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2024-10-26,2024-12-31,66.5,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-01-01,2025-01-19,18.6,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-01-23,2025-03-31,66.5,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-04-08,2025-04-30,22.6,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-05-04,2025-07-07,64.1,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-07-14,2025-07-24,9.8,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-07-30,2025-11-04,96.8,0,1,1.0
+East 12th Street,7013,4,26.5,26.5,100.0,ST_GAS,eia_exact,2025-11-05,2025-12-31,56.5,0,1,1.0
+Terry Bundy Generating Station,7887,SVGS2,62.0,185.5,33.4,CC_REGULAR,observed_peak,2024-12-24,2024-12-31,7.3,2,3,0.949
+Terry Bundy Generating Station,7887,SVGS3,63.0,185.5,34.0,CC_REGULAR,observed_peak,2024-01-30,2024-02-05,5.6,2,3,0.963
+Terry Bundy Generating Station,7887,SVGS3,63.0,185.5,34.0,CC_REGULAR,observed_peak,2024-12-24,2024-12-31,7.3,2,3,1.0
+Terry Bundy Generating Station,7887,SVGS3,59.0,178.5,33.1,CC_REGULAR,observed_peak,2025-01-29,2025-02-04,5.9,2,3,0.993
+Terry Bundy Generating Station,7887,SVGS3,59.0,178.5,33.1,CC_REGULAR,observed_peak,2025-02-05,2025-02-12,7.6,2,3,0.984
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-01-01,2023-02-14,44.7,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-02-15,2023-03-17,29.7,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-03-19,2023-04-10,21.5,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-04-11,2023-04-25,13.8,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-04-28,2023-05-05,7.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-05-09,2023-05-19,9.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-06-09,2023-06-18,8.4,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-07-07,2023-07-12,5.0,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-07-25,2023-07-30,5.5,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-08-01,2023-08-11,10.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-09-08,2023-09-19,11.1,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-10-15,2023-10-30,14.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-11-11,2023-12-03,22.6,1,2,1.0
+Comanche (8059),8059,7251,73.0,150.0,48.7,CC_REGULAR,observed_peak,2023-12-19,2023-12-27,7.4,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-03-15,2024-07-26,133.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-09-01,2024-09-19,18.2,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-10-01,2024-10-08,6.6,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-10-13,2024-11-21,39.3,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-11-22,2024-12-02,9.5,1,2,1.0
+Comanche (8059),8059,7251,73.0,149.0,49.0,CC_REGULAR,observed_peak,2024-12-22,2024-12-31,9.4,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-01-13,2025-01-19,5.7,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-01-29,2025-02-10,11.5,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-02-23,2025-04-04,40.1,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-05-02,2025-05-15,13.3,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-05-17,2025-06-23,36.5,1,2,1.0
+Comanche (8059),8059,7251,77.0,156.0,49.4,CC_REGULAR,observed_peak,2025-08-21,2025-12-31,132.2,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-01-01,2023-02-21,51.6,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-03-08,2023-03-16,8.2,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-03-19,2023-04-09,21.3,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-04-11,2023-04-22,11.2,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-04-28,2023-05-05,7.0,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-05-09,2023-05-18,9.0,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-06-10,2023-06-18,7.4,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-07-07,2023-07-12,5.2,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-07-25,2023-07-30,5.2,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-08-31,2023-09-18,18.5,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-10-04,2023-10-30,26.4,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-11-09,2023-12-03,23.7,1,2,1.0
+Comanche (8059),8059,7252,77.0,150.0,51.3,CC_REGULAR,observed_peak,2023-12-19,2023-12-26,7.3,1,2,1.0
+Comanche (8059),8059,7252,76.0,149.0,51.0,CC_REGULAR,observed_peak,2024-03-15,2024-07-27,134.0,1,2,1.0
+Comanche (8059),8059,7252,76.0,149.0,51.0,CC_REGULAR,observed_peak,2024-09-01,2024-09-25,24.8,1,2,1.0
+Comanche (8059),8059,7252,76.0,149.0,51.0,CC_REGULAR,observed_peak,2024-10-13,2024-12-01,49.8,1,2,1.0
+Comanche (8059),8059,7252,76.0,149.0,51.0,CC_REGULAR,observed_peak,2024-12-22,2024-12-31,9.2,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-01-13,2025-01-19,5.5,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-01-29,2025-02-09,11.3,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-02-23,2025-04-04,40.4,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-05-02,2025-05-15,13.1,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-05-17,2025-06-10,23.3,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-06-13,2025-06-23,10.0,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-08-21,2025-11-25,96.1,1,2,1.0
+Comanche (8059),8059,7252,79.0,156.0,50.6,CC_REGULAR,observed_peak,2025-11-26,2025-12-31,35.9,1,2,1.0
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-02-18,2024-03-04,14.4,1,2,0.957
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-12-15,2024-12-21,5.5,1,2,1.0
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-12-21,2024-12-31,10.5,1,2,1.0
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-01-04,2025-02-08,34.5,1,2,0.95
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-04-25,2025-05-09,14.0,1,2,0.947
+McClain Energy Facility,55457,CT1,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-12-18,2025-12-23,5.2,1,2,1.0
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-02-18,2024-03-04,14.3,1,2,0.956
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-12-15,2024-12-21,5.6,1,2,1.0
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2024-12-21,2024-12-31,10.5,1,2,1.0
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-01-04,2025-02-08,34.7,1,2,0.934
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-04-25,2025-05-09,13.9,1,2,0.943
+McClain Energy Facility,55457,CT2,275.6,551.3,50.0,CC_REGULAR,eia_exact_cc,2025-12-18,2025-12-23,5.4,1,2,1.0
