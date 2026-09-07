@@ -274,6 +274,7 @@ frontend/data/forecast/program-status.js
 /results/MISO/
 /results/NYISO/
 /results/NEISO/
+/results/SPP/
 # FFR-SA T0 smoke legs (results/ffr-sa-smoke/<iso>-<arm>/): the summary +
 # run_config + leg log ARE committed (the FF-G4 §2 acceptance evidence); the
 # nested per-ISO LP cache dir each self-contained leg writes is the same

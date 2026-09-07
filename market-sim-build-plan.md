@@ -6,10 +6,10 @@
 > long-completed migration) and is **not maintained against the live code**.
 > Where it disagrees with reality, the code wins. Known drift vs. the current
 > repo:
-> - **6 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO,
->   NYISO, NEISO — all share one ISO-agnostic LP (not "separate model
+> - **7 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO,
+>   NYISO, NEISO, SPP — all share one ISO-agnostic LP (not "separate model
 >   instances"). Zone counts: ERCOT 7 (6 carry load), CAISO 3 + WECC import,
->   PJM 8, MISO 3, NYISO 5, NEISO 4 + HQ import. Phrases like "ERCOT
+>   PJM 8, MISO 3, NYISO 5, NEISO 4 + HQ import, SPP 2. Phrases like "ERCOT
 >   4-zone" / "CAISO single zone" / two-ISO framing below are stale.
 > - **Major subsystems built since this plan and absent from it:** the
 >   backcast/calibration mode (`ScenarioConfig.mode`), the P0→P1→P2 commitment

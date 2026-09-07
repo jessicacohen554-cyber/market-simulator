@@ -118,7 +118,7 @@ market-simulator/
   methodology (LP formulation, pricing, capacity evolution, calibration).
 - [`docs/codebase/README.md`](docs/codebase/README.md) — the code-derived
   engineering reference (what the code actually does, page by page).
-- [`docs/multi-iso/README.md`](docs/multi-iso/README.md) — the six-ISO topology
+- [`docs/multi-iso/README.md`](docs/multi-iso/README.md) — the seven-ISO topology
   and per-ISO addition protocol.
 - [`docs/forecast-development-plan-2026-07.md`](docs/forecast-development-plan-2026-07.md)
   — the forecast program (tier ladder, lanes, waves, prompt pack).
