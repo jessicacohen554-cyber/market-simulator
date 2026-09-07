@@ -325,4 +325,21 @@ exists in one year, so the screen and the full span are the same solve (exemptio
   diff against keeper-2 is empty). Rule 22: 2023–2025 only; SPP holds no marker. Rule 29(c): nothing owed —
   no screen or control bundle was produced.
 
+**OWNER RULING, in-session (the card this entry raised as R-16), verbatim:** *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress that may still be a
+keeper."* **PROMOTED to the THIRD SPP KEEPER `2026-09-07-spp-3-screened-input`.** The ruling's conditional is
+not reached: no gate regresses at all (the determination is identical in every cell) and structural
+integrity strictly improves. The leg-(i) finding is not withdrawn — keeper-2's 2024/2025 P1 objectives are
+genuinely not reproduced, and stopping rather than re-cutting the lane's own gate was right; the owner was
+the party to decide. Executed: `keepers/SPP.json` re-keyed; **keeper-1 and keeper-2 PRUNED** (rule 15
+keeper-only retention — SPP now carries the designated keeper alone), with **no `--force-uncite` and no
+dangling citation** (the shard names its predecessors by lane and FINDING, and the SPP-42-local
+`keeper_previous` field, read by no script and carried by no other ISO, was dropped); `status/SPP.js`
+rebuilt; the SPP matrix shard's keeper + gates stamps updated with **no cell verdict moved** (no mechanism
+was tested). Gates re-run green after the promotion: `audit_keepers --check` PASS,
+`check_registry_payload_parity` OK (19 runs, 52 bundle dirs), `check_mechanism_matrix` 0,
+`check_bench_freshness` 0 STALE, `check_golden_manifest` OK. Remaining rubric failures are inherited and
+untouched: the 2024 CT/CC/ST gas split (C1, C3a-2023) and the price-shape family (C3b / C3c / spread /
+negative hours).
+
 **Next shorthand: spp-7.**
