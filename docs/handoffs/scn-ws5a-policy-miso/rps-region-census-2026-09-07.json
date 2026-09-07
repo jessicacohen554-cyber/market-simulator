@@ -1,0 +1,410 @@
+{
+ "zone_names": [
+  "MISO-West",
+  "MISO-Plains",
+  "MISO-Illinois",
+  "MISO-Indiana",
+  "MISO-East",
+  "MISO-South"
+ ],
+ "rps_regions": {
+  "MN": {
+   "2026": {
+    "floor": 0.26,
+    "obligation_twh": 20.8675,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2027": {
+    "floor": 0.295,
+    "obligation_twh": 25.0319,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2028": {
+    "floor": 0.33,
+    "obligation_twh": 29.5976,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2029": {
+    "floor": 0.365,
+    "obligation_twh": 34.5945,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 114.456,
+    "must_escape_vs_iso_pool": false
+   },
+   "2030": {
+    "floor": 0.4,
+    "obligation_twh": 40.055,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 127.506,
+    "must_escape_vs_iso_pool": false
+   }
+  },
+  "MI": {
+   "2026": {
+    "floor": 0.35,
+    "obligation_twh": 34.879,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2027": {
+    "floor": 0.3875,
+    "obligation_twh": 41.015,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2028": {
+    "floor": 0.425,
+    "obligation_twh": 47.7424,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2029": {
+    "floor": 0.4625,
+    "obligation_twh": 55.1023,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 114.456,
+    "must_escape_vs_iso_pool": false
+   },
+   "2030": {
+    "floor": 0.5,
+    "obligation_twh": 63.1389,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 127.506,
+    "must_escape_vs_iso_pool": false
+   }
+  },
+  "WI": {
+   "2026": {
+    "floor": 0.1,
+    "obligation_twh": 7.5178,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2027": {
+    "floor": 0.1,
+    "obligation_twh": 7.9848,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2028": {
+    "floor": 0.1,
+    "obligation_twh": 8.4744,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2029": {
+    "floor": 0.1,
+    "obligation_twh": 8.9878,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 114.456,
+    "must_escape_vs_iso_pool": false
+   },
+   "2030": {
+    "floor": 0.1,
+    "obligation_twh": 9.5262,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 127.506,
+    "must_escape_vs_iso_pool": false
+   }
+  },
+  "IL": {
+   "2026": {
+    "floor": 0.25,
+    "obligation_twh": 12.201,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2027": {
+    "floor": 0.2875,
+    "obligation_twh": 14.9027,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2028": {
+    "floor": 0.325,
+    "obligation_twh": 17.8793,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2029": {
+    "floor": 0.3625,
+    "obligation_twh": 21.1502,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 114.456,
+    "must_escape_vs_iso_pool": false
+   },
+   "2030": {
+    "floor": 0.4,
+    "obligation_twh": 24.7362,
+    "n_eligible_zones": 1,
+    "iso_wide_eligible_twh": 127.506,
+    "must_escape_vs_iso_pool": false
+   }
+  },
+  "MO": {
+   "2026": {
+    "floor": 0.15,
+    "obligation_twh": 6.3596,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2027": {
+    "floor": 0.15,
+    "obligation_twh": 6.7389,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2028": {
+    "floor": 0.15,
+    "obligation_twh": 7.1373,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 103.5691,
+    "must_escape_vs_iso_pool": false
+   },
+   "2029": {
+    "floor": 0.15,
+    "obligation_twh": 7.5558,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 114.456,
+    "must_escape_vs_iso_pool": false
+   },
+   "2030": {
+    "floor": 0.15,
+    "obligation_twh": 7.9956,
+    "n_eligible_zones": 5,
+    "iso_wide_eligible_twh": 127.506,
+    "must_escape_vs_iso_pool": false
+   }
+  }
+ },
+ "clean_regions": {
+  "MN": {
+   "2026": {
+    "floor": 0.8,
+    "obligation_twh": 64.2076,
+    "n_eligible_zones": 5,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "hydrogen_ct",
+     "hydrogen_ccgt",
+     "biomass"
+    ]
+   },
+   "2027": {
+    "floor": 0.8,
+    "obligation_twh": 67.8832,
+    "n_eligible_zones": 5,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "hydrogen_ct",
+     "hydrogen_ccgt",
+     "biomass"
+    ]
+   },
+   "2028": {
+    "floor": 0.8,
+    "obligation_twh": 71.7517,
+    "n_eligible_zones": 5,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "hydrogen_ct",
+     "hydrogen_ccgt",
+     "biomass"
+    ]
+   },
+   "2029": {
+    "floor": 0.8,
+    "obligation_twh": 75.8236,
+    "n_eligible_zones": 5,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "hydrogen_ct",
+     "hydrogen_ccgt",
+     "biomass"
+    ]
+   },
+   "2030": {
+    "floor": 0.8,
+    "obligation_twh": 80.11,
+    "n_eligible_zones": 5,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "hydrogen_ct",
+     "hydrogen_ccgt",
+     "biomass"
+    ]
+   }
+  },
+  "MI": {
+   "2026": {
+    "floor": 0.8,
+    "obligation_twh": 79.7235,
+    "n_eligible_zones": 1,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "biomass",
+     "gas_cc_ccs"
+    ]
+   },
+   "2027": {
+    "floor": 0.8,
+    "obligation_twh": 84.6762,
+    "n_eligible_zones": 1,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "biomass",
+     "gas_cc_ccs"
+    ]
+   },
+   "2028": {
+    "floor": 0.8,
+    "obligation_twh": 89.8681,
+    "n_eligible_zones": 1,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "biomass",
+     "gas_cc_ccs"
+    ]
+   },
+   "2029": {
+    "floor": 0.8,
+    "obligation_twh": 95.3121,
+    "n_eligible_zones": 1,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "biomass",
+     "gas_cc_ccs"
+    ]
+   },
+   "2030": {
+    "floor": 0.8,
+    "obligation_twh": 101.0223,
+    "n_eligible_zones": 1,
+    "qualifying_fuels": [
+     "nuclear",
+     "hydro",
+     "wind",
+     "solar",
+     "biomass",
+     "gas_cc_ccs"
+    ]
+   }
+  }
+ },
+ "zonal_demand_twh": {
+  "2026": {
+   "MISO-West": 104.233,
+   "MISO-Plains": 98.5978,
+   "MISO-Illinois": 48.8038,
+   "MISO-Indiana": 96.6438,
+   "MISO-East": 174.8322,
+   "MISO-South": 194.1317
+  },
+  "2027": {
+   "MISO-West": 110.2,
+   "MISO-Plains": 104.4787,
+   "MISO-Illinois": 51.8353,
+   "MISO-Indiana": 102.6524,
+   "MISO-East": 185.6934,
+   "MISO-South": 201.6989
+  },
+  "2028": {
+   "MISO-West": 116.48,
+   "MISO-Plains": 110.6555,
+   "MISO-Illinois": 55.0132,
+   "MISO-Indiana": 108.9509,
+   "MISO-East": 197.0791,
+   "MISO-South": 209.8516
+  },
+  "2029": {
+   "MISO-West": 123.0902,
+   "MISO-Plains": 117.1444,
+   "MISO-Illinois": 58.3455,
+   "MISO-Indiana": 115.5552,
+   "MISO-East": 209.0178,
+   "MISO-South": 218.622
+  },
+  "2030": {
+   "MISO-West": 130.0486,
+   "MISO-Plains": 123.9625,
+   "MISO-Illinois": 61.8406,
+   "MISO-Indiana": 122.4819,
+   "MISO-East": 221.5401,
+   "MISO-South": 228.0441
+  }
+ },
+ "zone_admitting_rps_regions": {
+  "MISO-West": [
+   "MN",
+   "WI",
+   "MO"
+  ],
+  "MISO-Plains": [
+   "MN",
+   "WI",
+   "MO"
+  ],
+  "MISO-Illinois": [
+   "MN",
+   "WI",
+   "IL",
+   "MO"
+  ],
+  "MISO-Indiana": [
+   "MN",
+   "WI",
+   "MO"
+  ],
+  "MISO-East": [
+   "MN",
+   "MI",
+   "WI",
+   "MO"
+  ],
+  "MISO-South": []
+ }
+}

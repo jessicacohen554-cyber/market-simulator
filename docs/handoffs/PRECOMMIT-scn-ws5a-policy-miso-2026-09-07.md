@@ -610,3 +610,80 @@ containers ⇒ ~52–62 min of LP per container plus ~35–45 min of fixed setup
 4. **`miso-2026-2030-d60-arm` remains stale as a description of HEAD** (+14.7 % energy; I3
    fails in REF where the board key has it passing) — RESOLVE-MISO §7 item 3, restated so it
    does not get lost, for the capx director.
+
+---
+
+## ADDENDUM A — 2026-09-07, the S15 mask is ZONAL, and half of MISO is unmasked
+
+**Written and pushed BEFORE any shard produced a result** (the seven shards were launched at
+03:34–03:36 UTC and each pays ~40 min of `regenerate_clean` before its first LP; nothing had
+solved). This is **zero-LP registry arithmetic that belonged in §7.1 and was not done there** —
+it sharpens a prediction rather than revising one against an answer, and §7.1's own stated limit
+("whether a *lower*-dual MISO region exists … is not determinable at zero LP") is what it
+closes. **No case, key, kill, level or gate moves.** Instrument:
+`docs/handoffs/scn-ws5a-policy-miso/rps-region-census-2026-09-07.py` → `…json`.
+
+### A(a) MISO's RPS row is FIVE regions with FIVE different eligible geographies
+
+`MISO_RPS_COMPLIANCE_REGIONS` at THE PIN, with each region's obligation computed as
+`obligated_load_share × floor(year) × (that zone's own annual demand on the runner's demand
+chain)`, against the ISO-wide eligible pool `G` (= REF's dispatched wind + solar):
+
+| region | obligated zone × share | eligible zones | floor 2026→2030 | obligation TWh 2026→2030 | vs `G` (103.6 → 127.5) |
+|---|---|---|---|---|---|
+| **MN** | MISO-West × 0.77 | **5** (all but MISO-South) | 0.26 → 0.40 | 20.87 → 40.06 | far under |
+| **MI** | MISO-East × 0.57 | **MISO-East only** | 0.35 → 0.50 | 34.88 → **63.14** | one zone's VRE must cover it |
+| **WI** | MISO-East × 0.43 | **5** | 0.10 | 7.52 → 9.53 | far under |
+| **IL** | MISO-Illinois × 1.00 | **MISO-Illinois only** | 0.25 → 0.40 | 12.20 → **24.74** | one zone's VRE must cover it |
+| **MO** | MISO-Plains × 0.43 | **5** | 0.15 | 6.36 → 8.00 | far under |
+
+### A(b) The consequence: `rps_credit_for_zone` is structurally ZERO in two of six zones
+
+`p[z] = max{dual_r : z ∈ eligible_zones(r)}` (`policy/rps.py:145–179`), so a zone admitted by no
+region earns **0 by construction, whatever any dual does**:
+
+| zone | admitting RPS regions | admitting clean-tier regions | 2030 demand TWh |
+|---|---|---|---|
+| MISO-West | MN, WI, MO | MN | 130.05 |
+| MISO-Plains | MN, WI, MO | MN | 123.96 |
+| MISO-Illinois | MN, WI, **IL**, MO | MN | 61.84 |
+| MISO-Indiana | MN, WI, MO | MN | 122.48 |
+| MISO-East | MN, **MI**, WI, MO | MN, **MI** | 221.54 |
+| **MISO-South** | **none** | **none** | **228.04** |
+
+**MISO-South is in no RPS region's and no clean-tier region's eligible geography — and it is
+MISO's largest demand zone** (26 % of 2030 ISO demand). Its attribute alternative is identically
+zero, so the federal CES premium is **never masked there**, at $10 or at any level.
+
+### A(c) The refined S15 answer — P-7b, pre-registered beside P-7
+
+§7.1's measurement stands unchanged: the ledger scalar `rps_dual` = 30.0 = `STATE_RPS_ACP["MISO"]`
+in 5 of 5 years, and it is a **MAX over regions**. A(a) now says *which* regions can plausibly
+be at that ceiling — the two **single-zone** ones, MI (63.1 TWh of obligation against MISO-East's
+own VRE) and IL (24.7 TWh against MISO-Illinois's own) — while the three five-zone regions carry
+obligations of 8–40 TWh against a 104–128 TWh pool and are very likely slack at a dual of 0.
+
+**P-7b (pre-registered, falsified or confirmed by the shards' `rps_region_duals`):** the
+predicted per-zone RPS credit is **30 in MISO-East and MISO-Illinois** and **0 in MISO-West,
+MISO-Plains, MISO-Indiana and MISO-South**. If that holds, the S15 mask on MISO is **zonally
+partial, not ISO-wide**, and `CES-P10`/`P20`/`P30` **DO** reach the entry screen in four of six
+zones — including the two largest by demand. **P-7 as written in §6.3 (no new VRE entry
+response) is then WRONG, and it is scored as written and at full magnitude**; P-7b is scored
+beside it. This is the sharpest thing this lane can say before an LP runs, and it makes MISO's
+answer to ruling S15 qualitatively different from an ISO whose RPS row is ISO-wide.
+
+**What does NOT change:** the ledger measurement, the "mask binds" verdict in §7.1 (it binds —
+in the two zones where a region escapes), the decision to add `CES-P60`, and **G-B1**, which is
+*strengthened*: in the unmasked zones REF's attr is 0, so $60 clears by the full $60 rather than
+by $30, and the ≤ $30 upper bound used in §7.3 remains a valid bound everywhere.
+
+### A(d) One precision fix to P-8, recorded rather than quietly corrected
+
+§6.3's P-8 says "every `gas_cc_ccs` unit has zero attribute alternative". That is too strong as
+a general statement: `MISO_CLEAN_TIER_REGIONS["MI"]`'s `qualifying_fuels` **includes**
+`gas_cc_ccs` (MN's does not). It is nonetheless true of **MISO's actual retrofit cohort**, which
+is two plants — `p7985` in **MISO-Plains** and `p1007` in **MISO-Indiana**
+(`FINDING-scn-ws5a-resolve-miso-2026-09-06.md` §2.1) — and MI's eligible geography is
+**MISO-East only**, so neither host can earn the MI clean credit. P-8's prediction is unchanged;
+its justification is narrowed from "every CCS unit" to "every CCS unit outside MISO-East, which
+is both of MISO's".
