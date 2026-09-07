@@ -12661,3 +12661,72 @@ Records: `results/calibration/PREREG-miso235-manitoba-seam-and-the-sigma-questio
 probes `scripts/probes/_miso235_seam_variance_decomposition_phase0.py`,
 `scripts/probes/_miso235_residual_character_addendum.py`. MISO shard evidence appended to
 `seam_flow_envelopes` (K) and `seam_neighbour_hourly_ladder` (K), both **UNCHANGED**.
+
+## 2026-09-07 — miso-236: the missing seam variation is a MISSING INPUT on SPP, IDIOSYNCRATIC on South, UNREACHABLE on Manitoba, and the model's PJM residual is not the template artifact the handoff named
+
+**Zero LP. Keeper UNCHANGED at `2026-09-07-miso-233-spp-hourly`** (CALIBRATED, C3c the single
+ledgered caveat, DOF 41/2). Nothing minted, armed, registered or pruned; **no cell verdict moves
+in either direction** (rule 28(b) evidence-append form). Rule 22: 2023–2025 only. MISO carries
+exactly one registered run.
+
+**Process.** PREREG pushed at `92de849b` **before any adjudicating quantity**; ADDENDUM at
+`98516b69` **before the two supplementary measurements it governs**, both declared REPORTED-NOT-
+GATED and, for the sizing number, explicitly un-targetable. The ADDENDUM also labels its one
+census disclosure (`SIKE`) as **post-hoc** and shows arithmetically that it moves nothing. This is
+the miso-235 discipline, not miso-234's.
+
+**Provenance gate cleared exactly** — miso-235's `sigma_measured` / `sigma_resid_measured` for all
+four seams × three years reproduce to **0.00 MW**, so this decomposes miso-235's residual and not
+a lookalike.
+
+**The handoff's data question, settled four ways.** Scheduled/net-scheduled interchange: none on
+disk, misoenergy.org allowlist-blocked (403), and the EIA-930 DIBA flow itself is the outcome the
+LP computes — inadmissible under rule 13, named in the PREREG before the numbers. Neighbour state:
+`EIA930_BALANCE` carries 62 US BAs and covers SWPP+SPA (100 % of the SPP seam's gross flow),
+SOCO+TVA+AECI+LGEE (100 % of South's) and PJM (82–84 %, IESO absent) — but **not MHEB**, so
+**Manitoba's leg is answered by data absence**.
+
+**The adjudication** (nested OLS on the measured residual; Block B = MISO's own state, Block A =
+neighbour net load + VRE, gated **without** the weak hydro limb, fixed ex ante):
+
+| seam | `ΔR²_A` (gated) | unexplained | verdict |
+|---|---|---|---|
+| **SPP** | **0.3246 / 0.2472 / 0.1140** | 0.499 / 0.561 / 0.725 | **ADMISSIBLE NEIGHBOUR-STATE DRIVER IDENTIFIED**, not fragile (0.2235 out-of-year vs 0.2286 in-year) |
+| South | 0.1158 / 0.0759 / 0.0531 | **0.8388 / 0.8853 / 0.8968** | MIXED, **PREDOMINANTLY IDIOSYNCRATIC** — route CLOSED |
+| PJM | 0.1701 / 0.0478 / 0.1638 | 0.706 / 0.863 / 0.656 | MIXED (82–84 % census) |
+| Manitoba | — | — | **NO INSTRUMENT** |
+
+SPP rests entirely on the two clean limbs (hydro contributes 0.0023 / 0.0070 / 0.0000). Sizing,
+reported not gated: 328.6 / 341.7 / 207.5 MW of σ against a −349.9 / −440.1 / −408.9 MW
+residual-σ gap (94 / 78 / 51 %). South stays routed **upstream** to the South-gas price-out lane;
+`miso_south_firm_export_block` **G** and `miso_south_export_ladder_rt_tail` **R** are corroborated
+on a third independent instrument and never re-tested.
+
+**Handoff item 3 is PARTIAL — half confirmed, half refuted.** The model's PJM residual is majority
+`(month × hod)` template (dof-adjusted 0.5719 / 0.5779 / 0.5474, clearing the 0.50 leg) **but so
+is the real seam's** (0.3899 / 0.4354 / 0.5172), ratio 1.47 / 1.33 / 1.06 against a 3.0 bar — the
+template is **removed** as the cause of miso-235 §4b's 2.5–4.6× residual price-alignment defect,
+which survives with no named cause. Manitoba inverts it: the measured MHEB residual is 0.7380 /
+0.7205 / 0.6594 template against the model's 0.6036 / 0.5207 / 0.2869.
+
+**Cross-cutting:** MISO's own state explains 4–19 % of every seam's measured residual and the
+model reproduces none of it — an **unused** input, not a missing one.
+
+**No lever proposed and none licensed.** The PJM and SPP `delta_k` ladders stay derived, frozen
+and pinned to their derives by test (rule 23); the sizing number is never a tuning target
+(rules 1 / 13); C3c is untouched and stays the designated frontier.
+
+Records: `results/calibration/PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-07.md`,
+`ADDENDUM-miso236-sizing-and-the-spp-limb-2026-09-07.md`,
+`FINDING-miso236-an-admissible-driver-exists-on-spp-and-nowhere-else-2026-09-07.md`;
+probe `scripts/probes/_miso236_neighbour_state_residual_phase0.py` with
+`_miso236_neighbour_state_residual_phase0.json` beside it.
+
+**One incidental repair, disclosed:** `frontend/data/backcast/status/MISO.js` was **stale on
+arrival** (`audit_keepers --iso MISO` check S1) and was regenerated with `build_status.py --iso
+MISO`, as the standing rule for that generated file requires. The drift is entirely from an
+updated **preliminary EIA-923 vintage** changing the plant-count text on the 2025 C1 rows that are
+**SKIPPED and never read as evidence** (e.g. CT_PEAKER `71/96 → 73/98`, ST_CHP `35/66 → 36/67`).
+**No verdict, caveat or determination moves** — MISO stays CALIBRATED — and the drift originated on
+`main`, not in this session. `check_registry_payload_parity.py` is clean (16 runs, 49 bundle dirs,
+0 tolerated).
