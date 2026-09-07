@@ -1,0 +1,474 @@
+{
+ "probe": "miso-235 phase 0 \u2014 four-seam attribution repair + the price/non-price variance split",
+ "prereg": "results/calibration/PREREG-miso235-manitoba-seam-and-the-sigma-question-2026-09-07.md",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "keeper_armed_flags": {
+  "miso_manitoba_seam": true,
+  "miso_firm_imports": true,
+  "reference_price_interface": true,
+  "miso_seam_measured_ladder": true,
+  "miso_seam_neighbour_hourly_ladder": true,
+  "miso_seam_neighbour_hourly_spp": true,
+  "miso_south_seam_split": true
+ },
+ "static_registry_seams": [
+  "PJM",
+  "SPP",
+  "South"
+ ],
+ "keeper_resolved_seams": [
+  "PJM",
+  "SPP",
+  "South",
+  "Manitoba"
+ ],
+ "price_basis": "P = Indiana hub RT (scored basis); every regressor = Indiana hub DA",
+ "bars": {
+  "beta_ratio_overshoot": 1.5,
+  "resid_ratio_missing_nonprice": 0.5,
+  "manitoba_inert_sigma_mw": 100.0
+ },
+ "years": {
+  "2023": {
+   "instrument": {
+    "three_seam": {
+     "harness_corr_recon_vs_committed": 0.9216,
+     "mean_abs_level_error_mw": 607.9,
+     "recon_mean_mw": 4433.9,
+     "recon_sigma_mw": 1377.8,
+     "corr_recon_vs_measured_price": -0.2069
+    },
+    "four_seam": {
+     "harness_corr_recon_vs_committed": 0.9845,
+     "mean_abs_level_error_mw": 49.4,
+     "recon_mean_mw": 5091.2,
+     "recon_sigma_mw": 1349.7,
+     "corr_recon_vs_measured_price": -0.1015
+    },
+    "I1_corr_rises": true,
+    "I2_level_error_not_worse": true
+   },
+   "attribution": {
+    "three_seam_model": {
+     "PJM": -0.3291,
+     "SPP": 0.0186,
+     "South": 0.1036
+    },
+    "four_seam_model": {
+     "PJM": -0.3359,
+     "SPP": 0.0189,
+     "South": 0.1058,
+     "Manitoba": 0.1098
+    },
+    "measured": {
+     "PJM": -0.0778,
+     "SPP": -0.0291,
+     "South": -0.0048,
+     "Manitoba": 0.0568
+    },
+    "corr_committed_vs_measured_price": -0.1095,
+    "corr_measured_total_vs_measured_price": -0.0549
+   },
+   "manitoba_sigma_model_mw": 515.7,
+   "manitoba_mean_model_mw": 657.3,
+   "manitoba_sigma_measured_mw": 819.1,
+   "manitoba_mean_measured_mw": 615.2,
+   "Q2_premise_refuted": true,
+   "decomposition": {
+    "PJM": {
+     "regressor": "MISO Indiana hub DA - PJM border price",
+     "sigma_z": 7.929,
+     "beta_model_mw_per_usd": 43.164,
+     "beta_measured_mw_per_usd": 48.927,
+     "beta_ratio": 0.882,
+     "sigma_model_mw": 1528.6,
+     "sigma_measured_mw": 1615.4,
+     "sigma_price_explained_model_mw": 342.2,
+     "sigma_price_explained_measured_mw": 387.9,
+     "sigma_resid_model_mw": 1489.8,
+     "sigma_resid_measured_mw": 1568.2,
+     "resid_ratio": 0.95,
+     "r2_model": 0.0501,
+     "r2_measured": 0.0577,
+     "price_leg_mw": -45.7,
+     "resid_leg_mw": -78.3,
+     "flags": [],
+     "headline": "NEITHER"
+    },
+    "SPP": {
+     "regressor": "MISO Indiana hub DA - SPP NORTH hub DA",
+     "sigma_z": 22.111,
+     "beta_model_mw_per_usd": 7.385,
+     "beta_measured_mw_per_usd": 1.069,
+     "beta_ratio": 6.909,
+     "sigma_model_mw": 279.5,
+     "sigma_measured_mw": 577.3,
+     "sigma_price_explained_model_mw": 163.3,
+     "sigma_price_explained_measured_mw": 23.6,
+     "sigma_resid_model_mw": 226.9,
+     "sigma_resid_measured_mw": 576.8,
+     "resid_ratio": 0.393,
+     "r2_model": 0.3412,
+     "r2_measured": 0.0017,
+     "price_leg_mw": 139.6,
+     "resid_leg_mw": -350.0,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "South": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 12.813,
+     "beta_model_mw_per_usd": 20.145,
+     "beta_measured_mw_per_usd": -1.911,
+     "beta_ratio": 10.542,
+     "sigma_model_mw": 414.2,
+     "sigma_measured_mw": 856.2,
+     "sigma_price_explained_model_mw": 258.1,
+     "sigma_price_explained_measured_mw": 24.5,
+     "sigma_resid_model_mw": 324.0,
+     "sigma_resid_measured_mw": 855.8,
+     "resid_ratio": 0.379,
+     "r2_model": 0.3883,
+     "r2_measured": 0.0008,
+     "price_leg_mw": 233.6,
+     "resid_leg_mw": -531.9,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "Manitoba": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 12.813,
+     "beta_model_mw_per_usd": 22.583,
+     "beta_measured_mw_per_usd": 20.098,
+     "beta_ratio": 1.124,
+     "sigma_model_mw": 515.7,
+     "sigma_measured_mw": 819.1,
+     "sigma_price_explained_model_mw": 289.3,
+     "sigma_price_explained_measured_mw": 257.5,
+     "sigma_resid_model_mw": 426.9,
+     "sigma_resid_measured_mw": 777.6,
+     "resid_ratio": 0.549,
+     "r2_model": 0.3148,
+     "r2_measured": 0.0988,
+     "price_leg_mw": 31.8,
+     "resid_leg_mw": -350.7,
+     "flags": [],
+     "headline": "NEITHER"
+    }
+   },
+   "sigma_split": {
+    "price_leg_sum_mw": 359.4,
+    "resid_leg_sum_mw": -1310.9,
+    "price_share_pct": 21.5,
+    "resid_share_pct": 78.5,
+    "sum_of_per_seam_sigma_gap_mw": -1130.0,
+    "total_sigma_gap_mw": -755.3,
+    "reconciliation_note": "the per-seam legs sum over seams; the total sigma gap carries cross-seam covariance too, so the two differ by construction and both are reported"
+   },
+   "model_total_sigma_mw": 1349.7,
+   "measured_total_sigma_mw": 2105.1,
+   "committed_sigma_mw": 1349.9
+  },
+  "2024": {
+   "instrument": {
+    "three_seam": {
+     "harness_corr_recon_vs_committed": 0.9432,
+     "mean_abs_level_error_mw": 389.9,
+     "recon_mean_mw": 2959.9,
+     "recon_sigma_mw": 1557.5,
+     "corr_recon_vs_measured_price": -0.1664
+    },
+    "four_seam": {
+     "harness_corr_recon_vs_committed": 0.9745,
+     "mean_abs_level_error_mw": 41.6,
+     "recon_mean_mw": 3391.5,
+     "recon_sigma_mw": 1494.6,
+     "corr_recon_vs_measured_price": -0.0811
+    },
+    "I1_corr_rises": true,
+    "I2_level_error_not_worse": true
+   },
+   "attribution": {
+    "three_seam_model": {
+     "PJM": -0.2922,
+     "SPP": 0.0132,
+     "South": 0.1126
+    },
+    "four_seam_model": {
+     "PJM": -0.3045,
+     "SPP": 0.0138,
+     "South": 0.1174,
+     "Manitoba": 0.0923
+    },
+    "measured": {
+     "PJM": -0.0573,
+     "SPP": -0.0372,
+     "South": 0.005,
+     "Manitoba": 0.0527
+    },
+    "corr_committed_vs_measured_price": -0.1145,
+    "corr_measured_total_vs_measured_price": -0.0367
+   },
+   "manitoba_sigma_model_mw": 486.7,
+   "manitoba_mean_model_mw": 431.5,
+   "manitoba_sigma_measured_mw": 832.6,
+   "manitoba_mean_measured_mw": 344.0,
+   "Q2_premise_refuted": true,
+   "decomposition": {
+    "PJM": {
+     "regressor": "MISO Indiana hub DA - PJM border price",
+     "sigma_z": 9.911,
+     "beta_model_mw_per_usd": 32.262,
+     "beta_measured_mw_per_usd": 41.781,
+     "beta_ratio": 0.772,
+     "sigma_model_mw": 1652.2,
+     "sigma_measured_mw": 1563.9,
+     "sigma_price_explained_model_mw": 319.8,
+     "sigma_price_explained_measured_mw": 414.1,
+     "sigma_resid_model_mw": 1621.0,
+     "sigma_resid_measured_mw": 1508.1,
+     "resid_ratio": 1.075,
+     "r2_model": 0.0375,
+     "r2_measured": 0.0701,
+     "price_leg_mw": -94.3,
+     "resid_leg_mw": 112.9,
+     "flags": [],
+     "headline": "NEITHER"
+    },
+    "SPP": {
+     "regressor": "MISO Indiana hub DA - SPP NORTH hub DA",
+     "sigma_z": 23.971,
+     "beta_model_mw_per_usd": 5.18,
+     "beta_measured_mw_per_usd": -0.574,
+     "beta_ratio": 9.019,
+     "sigma_model_mw": 276.6,
+     "sigma_measured_mw": 687.3,
+     "sigma_price_explained_model_mw": 124.2,
+     "sigma_price_explained_measured_mw": 13.8,
+     "sigma_resid_model_mw": 247.1,
+     "sigma_resid_measured_mw": 687.2,
+     "resid_ratio": 0.36,
+     "r2_model": 0.2016,
+     "r2_measured": 0.0004,
+     "price_leg_mw": 110.4,
+     "resid_leg_mw": -440.1,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "South": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 19.891,
+     "beta_model_mw_per_usd": 15.081,
+     "beta_measured_mw_per_usd": 2.587,
+     "beta_ratio": 5.83,
+     "sigma_model_mw": 495.7,
+     "sigma_measured_mw": 872.6,
+     "sigma_price_explained_model_mw": 300.0,
+     "sigma_price_explained_measured_mw": 51.5,
+     "sigma_resid_model_mw": 394.6,
+     "sigma_resid_measured_mw": 871.1,
+     "resid_ratio": 0.453,
+     "r2_model": 0.3662,
+     "r2_measured": 0.0035,
+     "price_leg_mw": 248.5,
+     "resid_leg_mw": -476.5,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "Manitoba": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 19.891,
+     "beta_model_mw_per_usd": 9.877,
+     "beta_measured_mw_per_usd": 7.834,
+     "beta_ratio": 1.261,
+     "sigma_model_mw": 486.7,
+     "sigma_measured_mw": 832.6,
+     "sigma_price_explained_model_mw": 196.5,
+     "sigma_price_explained_measured_mw": 155.8,
+     "sigma_resid_model_mw": 445.3,
+     "sigma_resid_measured_mw": 817.9,
+     "resid_ratio": 0.544,
+     "r2_model": 0.163,
+     "r2_measured": 0.035,
+     "price_leg_mw": 40.6,
+     "resid_leg_mw": -372.7,
+     "flags": [],
+     "headline": "NEITHER"
+    }
+   },
+   "sigma_split": {
+    "price_leg_sum_mw": 305.2,
+    "resid_leg_sum_mw": -1176.4,
+    "price_share_pct": 20.6,
+    "resid_share_pct": 79.4,
+    "sum_of_per_seam_sigma_gap_mw": -1045.2,
+    "total_sigma_gap_mw": -524.8,
+    "reconciliation_note": "the per-seam legs sum over seams; the total sigma gap carries cross-seam covariance too, so the two differ by construction and both are reported"
+   },
+   "model_total_sigma_mw": 1494.6,
+   "measured_total_sigma_mw": 2019.4,
+   "committed_sigma_mw": 1477.6
+  },
+  "2025": {
+   "instrument": {
+    "three_seam": {
+     "harness_corr_recon_vs_committed": 0.9673,
+     "mean_abs_level_error_mw": 112.6,
+     "recon_mean_mw": 2466.0,
+     "recon_sigma_mw": 1482.4,
+     "corr_recon_vs_measured_price": -0.1793
+    },
+    "four_seam": {
+     "harness_corr_recon_vs_committed": 0.9839,
+     "mean_abs_level_error_mw": 55.3,
+     "recon_mean_mw": 2408.7,
+     "recon_sigma_mw": 1431.4,
+     "corr_recon_vs_measured_price": -0.1139
+    },
+    "I1_corr_rises": true,
+    "I2_level_error_not_worse": true
+   },
+   "attribution": {
+    "three_seam_model": {
+     "PJM": -0.2907,
+     "SPP": 0.0312,
+     "South": 0.0803
+    },
+    "four_seam_model": {
+     "PJM": -0.3011,
+     "SPP": 0.0323,
+     "South": 0.0831,
+     "Manitoba": 0.0718
+    },
+    "measured": {
+     "PJM": -0.0326,
+     "SPP": 0.0188,
+     "South": -0.0405,
+     "Manitoba": 0.034
+    },
+    "corr_committed_vs_measured_price": -0.1128,
+    "corr_measured_total_vs_measured_price": -0.0203
+   },
+   "manitoba_sigma_model_mw": 302.9,
+   "manitoba_mean_model_mw": -57.3,
+   "manitoba_sigma_measured_mw": 655.4,
+   "manitoba_mean_measured_mw": -113.3,
+   "Q2_premise_refuted": true,
+   "decomposition": {
+    "PJM": {
+     "regressor": "MISO Indiana hub DA - PJM border price",
+     "sigma_z": 12.725,
+     "beta_model_mw_per_usd": 28.868,
+     "beta_measured_mw_per_usd": 25.064,
+     "beta_ratio": 1.152,
+     "sigma_model_mw": 1633.9,
+     "sigma_measured_mw": 1647.0,
+     "sigma_price_explained_model_mw": 367.4,
+     "sigma_price_explained_measured_mw": 318.9,
+     "sigma_resid_model_mw": 1592.1,
+     "sigma_resid_measured_mw": 1615.8,
+     "resid_ratio": 0.985,
+     "r2_model": 0.0505,
+     "r2_measured": 0.0375,
+     "price_leg_mw": 48.4,
+     "resid_leg_mw": -23.7,
+     "flags": [],
+     "headline": "NEITHER"
+    },
+    "SPP": {
+     "regressor": "MISO Indiana hub DA - SPP NORTH hub DA",
+     "sigma_z": 29.161,
+     "beta_model_mw_per_usd": 4.884,
+     "beta_measured_mw_per_usd": 1.06,
+     "beta_ratio": 4.606,
+     "sigma_model_mw": 250.3,
+     "sigma_measured_mw": 615.4,
+     "sigma_price_explained_model_mw": 142.4,
+     "sigma_price_explained_measured_mw": 30.9,
+     "sigma_resid_model_mw": 205.8,
+     "sigma_resid_measured_mw": 614.7,
+     "resid_ratio": 0.335,
+     "r2_model": 0.3237,
+     "r2_measured": 0.0025,
+     "price_leg_mw": 111.5,
+     "resid_leg_mw": -408.8,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "South": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 26.123,
+     "beta_model_mw_per_usd": 8.694,
+     "beta_measured_mw_per_usd": -5.428,
+     "beta_ratio": 1.602,
+     "sigma_model_mw": 385.9,
+     "sigma_measured_mw": 1008.6,
+     "sigma_price_explained_model_mw": 227.1,
+     "sigma_price_explained_measured_mw": 141.8,
+     "sigma_resid_model_mw": 312.0,
+     "sigma_resid_measured_mw": 998.6,
+     "resid_ratio": 0.312,
+     "r2_model": 0.3463,
+     "r2_measured": 0.0198,
+     "price_leg_mw": 85.3,
+     "resid_leg_mw": -686.6,
+     "flags": [
+      "PRICE_RESPONSE_OVERSHOOT",
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    },
+    "Manitoba": {
+     "regressor": "MISO Indiana hub DA (level)",
+     "sigma_z": 26.123,
+     "beta_model_mw_per_usd": 7.134,
+     "beta_measured_mw_per_usd": 4.981,
+     "beta_ratio": 1.432,
+     "sigma_model_mw": 302.9,
+     "sigma_measured_mw": 655.4,
+     "sigma_price_explained_model_mw": 186.4,
+     "sigma_price_explained_measured_mw": 130.1,
+     "sigma_resid_model_mw": 238.8,
+     "sigma_resid_measured_mw": 642.3,
+     "resid_ratio": 0.372,
+     "r2_model": 0.3785,
+     "r2_measured": 0.0394,
+     "price_leg_mw": 56.3,
+     "resid_leg_mw": -403.5,
+     "flags": [
+      "MISSING_NON_PRICE_VARIATION"
+     ],
+     "headline": "MISSING_NON_PRICE_VARIATION"
+    }
+   },
+   "sigma_split": {
+    "price_leg_sum_mw": 301.5,
+    "resid_leg_sum_mw": -1522.7,
+    "price_share_pct": 16.5,
+    "resid_share_pct": 83.5,
+    "sum_of_per_seam_sigma_gap_mw": -1353.4,
+    "total_sigma_gap_mw": -1005.4,
+    "reconciliation_note": "the per-seam legs sum over seams; the total sigma gap carries cross-seam covariance too, so the two differ by construction and both are reported"
+   },
+   "model_total_sigma_mw": 1431.4,
+   "measured_total_sigma_mw": 2436.8,
+   "committed_sigma_mw": 1427.5
+  }
+ }
+}
