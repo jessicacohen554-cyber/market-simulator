@@ -218,7 +218,7 @@ pre-fix bundle. Defeated three ways, each measured:
 | **(a)** `results/CAISO/<PIN key>/` absent pre-solve (`ls` recorded) | **absent** | **absent** | **absent** |
 | **(b)** `run_config.json` / summary `cache_key` == PRECOMMIT §2 PIN key | `2d16a246bb372e4a` ✓ | `86bfde6ed2896b99` ✓ | `ff8c04bc4eef6605` ✓ |
 | **(c)** `git.sha` a PIN descendant, zero solve-path diff, `dirty == false` | `c538ecfb`, **diff empty**, `false` | idem | idem |
-| **(d)** `total_wall_s` a solve's, all five per-year `wall_s` | **1704.2 s**, 5/5 | **1689.5 s**, 5/5 | **1638.4 s**, 5/5 |
+| **(d)** `total_wall_s` a solve's, all five per-year `wall_s` | **1704.2 s**, 5/5 | **1689.5 s**, 5/5 | **1635.4 s**, 5/5 |
 | **(e)** 2028–30 rate is `host × 0.10`, not ~0.37 | ✓ (§2.1) | ✓ | ✓ |
 | trajectory reproduces the pre-fix bundle to the digit? | **NO** | **NO** | **NO** |
 
