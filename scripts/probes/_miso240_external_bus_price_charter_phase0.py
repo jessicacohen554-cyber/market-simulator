@@ -58,6 +58,10 @@ MISO239 = (
 )
 ZONAL_ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet"
 OUT = REPO / "results/calibration/_miso240_external_bus_price_charter_phase0.json"
+PREREPAIR = (
+    REPO
+    / "results/calibration/_miso240_external_bus_price_charter_phase0_PREREPAIR.json"
+)
 
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
@@ -495,19 +499,31 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         # G-ID2: the support identity — the residual is EXACTLY zero on ventile bins
         # containing no threshold. Computed for both the s-ladder and the p1-mirror.
         def support(x: np.ndarray, m: np.ndarray, dks: np.ndarray, design) -> dict:
+            """Bin-impurity support census (SECOND ADDENDUM §2's declared repair).
+
+            Impurity is EMPIRICAL and convention-free: a ventile bin is impure iff ``m`` is
+            not constant on it to ``TOL_ID2``. The first version assigned bins to thresholds
+            by interval arithmetic (``lo < d <= hi``) against ``searchsorted(side="right")``
+            bins that are ``[lo, hi)``, which displaced by one position any threshold landing
+            exactly on a ventile edge and failed G-ID2 at 869.6 MW in 2024. The falsifiable
+            content is carried by the new gating leg ``G-ID2b``: a monotone K-step function of
+            ``x`` can make at most ONE bin of ``x`` impure per crossed threshold, so
+            ``n_impure <= n_crossed``. Zero free parameters.
+            """
             edges = np.quantile(x, np.linspace(0.0, 1.0, VENTILES + 1)[1:-1])
             b_idx = np.searchsorted(edges, x, side="right")
-            lo = np.concatenate([[-np.inf], edges])
-            hi = np.concatenate([edges, [np.inf]])
             crossed = [d for d in dks if (x > d).any() and (~(x > d)).any()]
-            impure = np.array(
-                [any(lo[b] < d <= hi[b] for d in crossed) for b in range(VENTILES)]
-            )
+            impure = np.zeros(VENTILES, dtype=bool)
+            for b in range(VENTILES):
+                sel = b_idx == b
+                if sel.any():
+                    impure[b] = bool(m[sel].max() - m[sel].min() > TOL_ID2)
             r = resid_on(m, design)
             pure_hours = ~impure[b_idx]
             return {
                 "n_impure_bins": int(impure.sum()),
                 "n_crossed_thresholds": int(len(crossed)),
+                "g_id2b_n_impure_le_n_crossed": bool(impure.sum() <= len(crossed)),
                 "share_hours_impure": round(float((~pure_hours).mean()), 4),
                 "max_abs_resid_on_pure_bins_mw": float(
                     f"{float(np.abs(r[pure_hours]).max() if pure_hours.any() else 0.0):.3e}"
@@ -607,8 +623,51 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
 
         qd = {f"tau_{t}": star(t) for t in TAU_SENSITIVITY}
 
+        # ---- POST-HOC, LABELLED, AND IT MOVES NOTHING ----
+        # Not named in the PREREG or either addendum. It reads no gated quantity: every
+        # verdict is computed from share_ZONE / share_BAND, the Q-B ratios and floor, the
+        # Q-C coverage, the Q-C2 match shares and the Q-D shares, none of which touches any
+        # value below. Reported because a reader should be able to see WHERE the model's
+        # price does and does not separate, which is the context Q-A's answer sits in.
+        six = [z for z in ("MISO-Illinois", "MISO-Indiana", "MISO-East", "MISO-West",
+                           "MISO-Plains", "MISO-South") if z in zp]
+        mm6 = np.column_stack([zp[z][ok] for z in six])
+        spread6 = mm6.max(axis=1) - mm6.min(axis=1)
+        mm4 = np.column_stack([zp[z][ok] for z in BORDER_ZONES])
+        spread4 = mm4.max(axis=1) - mm4.min(axis=1)
+        meas4 = np.column_stack([zone_da[z][ok] for z in BORDER_ZONES])
+        mfin = np.isfinite(meas4).all(axis=1)
+        mspread4 = (meas4.max(axis=1) - meas4.min(axis=1))[mfin]
+        post_hoc = {
+            "label": "POST-HOC, NOT PRE-REGISTERED, reads no gated quantity, moves nothing",
+            "zones_in_sidecar": six,
+            "model_border4_max_minus_min": {
+                "share_hours_gt_1c": round(float((spread4 > 0.01).mean()), 4),
+                "mean_usd": round(float(spread4.mean()), 4),
+                "p99_usd": round(float(np.percentile(spread4, 99)), 4),
+                "max_usd": round(float(spread4.max()), 3),
+            },
+            "model_six_zone_max_minus_min": {
+                "share_hours_gt_1c": round(float((spread6 > 0.01).mean()), 4),
+                "mean_usd": round(float(spread6.mean()), 4),
+                "p99_usd": round(float(np.percentile(spread6, 99)), 4),
+                "max_usd": round(float(spread6.max()), 3),
+            },
+            "measured_border4_max_minus_min_da": {
+                "share_hours_gt_1c": round(float((mspread4 > 0.01).mean()), 4),
+                "mean_usd": round(float(mspread4.mean()), 4),
+                "p99_usd": round(float(np.percentile(mspread4, 99)), 4),
+                "max_usd": round(float(mspread4.max()), 3),
+            },
+            "note": (
+                "CORROBORATES internal_congestion_split G (miso-79 NO-BUILD, miso-204) on a "
+                "new instrument; rule 28(a) — NOT re-tested and NOT re-opened."
+            ),
+        }
+
         years_out[str(year)] = {
             "n_ok_hours": nT,
+            "post_hoc_not_preregistered": post_hoc,
             "Q_A_formation": qa,
             "Q_A_south_node_reported": qa_south,
             "Q_B_placebo": {
@@ -677,6 +736,12 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             y["identity_checks"]["G_ID2_pure_bin_support_mw"] for y in ys
         )
         <= TOL_ID2,
+        # SECOND ADDENDUM §2: n_impure <= n_crossed on BOTH ladders, all three years.
+        "G_ID2b_n_impure_le_n_crossed": all(
+            y["Q_B_placebo"][k]["g_id2b_n_impure_le_n_crossed"]
+            for y in ys
+            for k in ("support_s_ladder", "support_p1_mirror")
+        ),
     }
     gate_legs["ALL_PASS"] = all(gate_legs.values())
 
@@ -794,6 +859,47 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         "Q-B changes no miso-239 number: that column was published REPORTED-NOT-GATED and "
         "chartered nothing.",
     ]
+
+    # SECOND ADDENDUM §3: the declared no-move verification. The repair touched ONLY the
+    # bin-impurity predicate, which feeds no verdict, so every other value in this report must
+    # be identical to the pre-repair run's. The pre-repair artifact is committed beside this
+    # one so the comparison is reproducible rather than asserted.
+    if PREREPAIR.exists():
+        def _strip(d: dict) -> dict:
+            d = json.loads(json.dumps(d))
+            for y in d["years"].values():
+                for k in ("support_s_ladder", "support_p1_mirror"):
+                    y["Q_B_placebo"].pop(k, None)
+                y["identity_checks"].pop("G_ID2_pure_bin_support_mw", None)
+                # the POST-HOC census was added after both runs and reads no gated
+                # quantity; it exists in neither the pre-repair artifact nor any verdict.
+                y.pop("post_hoc_not_preregistered", None)
+            d["provenance_gate"]["legs"] = {
+                k: v
+                for k, v in d["provenance_gate"]["legs"].items()
+                if "ID2" not in k and k != "ALL_PASS"
+            }
+            d.pop("s3_values_unchanged_after_repair", None)
+            return d
+
+        pre = json.loads(PREREPAIR.read_text())
+        same = json.dumps(_strip(pre), sort_keys=True) == json.dumps(
+            _strip(report), sort_keys=True
+        )
+        report["s3_values_unchanged_after_repair"] = {
+            "verified": bool(same),
+            "verdicts_identical": bool(
+                json.dumps(pre["verdicts"], sort_keys=True)
+                == json.dumps(report["verdicts"], sort_keys=True)
+            ),
+            "method": (
+                "whole-report exact equality after removing ONLY the repaired predicate's own "
+                "reported columns (support_s_ladder, support_p1_mirror, "
+                "G_ID2_pure_bin_support_mw), the G-ID2 gate legs, and the POST-HOC census "
+                "block, which was added after both runs and feeds no verdict"
+            ),
+            "prerepair_artifact": PREREPAIR.name,
+        }
 
     OUT.write_text(json.dumps(report, indent=2) + "\n")
 
