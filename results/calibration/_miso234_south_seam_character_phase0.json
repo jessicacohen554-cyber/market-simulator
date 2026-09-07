@@ -38,6 +38,16 @@
       46.21
      ]
     },
+    "hub_rt": {
+     "pearson_r": 0.012,
+     "spearman_rho": -0.058,
+     "decile_slope_cheap_minus_dear_mw": -71.8,
+     "basis_mean": 31.79,
+     "basis_p10_p90": [
+      18.6,
+      43.75
+     ]
+    },
     "south_da": {
      "pearson_r": -0.107,
      "spearman_rho": -0.193,
@@ -79,6 +89,7 @@
      "cv_of_net": 0.576,
      "p10_mw": -1054.0,
      "spearman_vs_hub_da": -0.177,
+     "spearman_vs_hub_rt": -0.172,
      "spearman_vs_south_da": -0.35,
      "spearman_vs_spread": 0.257,
      "decile_slope_vs_hub_da_mw": 145.1,
@@ -94,6 +105,7 @@
      "cv_of_net": 0.436,
      "p10_mw": 737.0,
      "spearman_vs_hub_da": -0.016,
+     "spearman_vs_hub_rt": 0.013,
      "spearman_vs_south_da": -0.161,
      "spearman_vs_spread": 0.26,
      "decile_slope_vs_hub_da_mw": -95.1,
@@ -109,6 +121,7 @@
      "cv_of_net": 3.775,
      "p10_mw": -672.0,
      "spearman_vs_hub_da": 0.109,
+     "spearman_vs_hub_rt": 0.082,
      "spearman_vs_south_da": 0.263,
      "spearman_vs_spread": -0.271,
      "decile_slope_vs_hub_da_mw": -306.4,
@@ -124,6 +137,7 @@
      "cv_of_net": 1.172,
      "p10_mw": -111.1,
      "spearman_vs_hub_da": -0.167,
+     "spearman_vs_hub_rt": -0.154,
      "spearman_vs_south_da": -0.202,
      "spearman_vs_spread": 0.098,
      "decile_slope_vs_hub_da_mw": 131.0,
@@ -139,6 +153,7 @@
      "cv_of_net": NaN,
      "p10_mw": NaN,
      "spearman_vs_hub_da": NaN,
+     "spearman_vs_hub_rt": NaN,
      "spearman_vs_south_da": NaN,
      "spearman_vs_spread": NaN,
      "decile_slope_vs_hub_da_mw": NaN,
@@ -201,6 +216,16 @@
       46.15
      ]
     },
+    "hub_rt": {
+     "pearson_r": -0.012,
+     "spearman_rho": -0.02,
+     "decile_slope_cheap_minus_dear_mw": -60.4,
+     "basis_mean": 30.8,
+     "basis_p10_p90": [
+      16.33,
+      45.65
+     ]
+    },
     "south_da": {
      "pearson_r": -0.133,
      "spearman_rho": -0.176,
@@ -242,6 +267,7 @@
      "cv_of_net": 0.518,
      "p10_mw": -1027.0,
      "spearman_vs_hub_da": -0.248,
+     "spearman_vs_hub_rt": -0.182,
      "spearman_vs_south_da": -0.342,
      "spearman_vs_spread": 0.056,
      "decile_slope_vs_hub_da_mw": 249.6,
@@ -257,6 +283,7 @@
      "cv_of_net": 0.332,
      "p10_mw": 1211.0,
      "spearman_vs_hub_da": 0.162,
+     "spearman_vs_hub_rt": 0.182,
      "spearman_vs_south_da": 0.018,
      "spearman_vs_spread": 0.273,
      "decile_slope_vs_hub_da_mw": -445.7,
@@ -272,6 +299,7 @@
      "cv_of_net": 1.008,
      "p10_mw": -780.0,
      "spearman_vs_hub_da": -0.131,
+     "spearman_vs_hub_rt": -0.176,
      "spearman_vs_south_da": -0.056,
      "spearman_vs_spread": -0.161,
      "decile_slope_vs_hub_da_mw": 44.0,
@@ -287,6 +315,7 @@
      "cv_of_net": 0.946,
      "p10_mw": -54.0,
      "spearman_vs_hub_da": -0.143,
+     "spearman_vs_hub_rt": -0.067,
      "spearman_vs_south_da": -0.125,
      "spearman_vs_spread": -0.05,
      "decile_slope_vs_hub_da_mw": 141.9,
@@ -302,6 +331,7 @@
      "cv_of_net": NaN,
      "p10_mw": NaN,
      "spearman_vs_hub_da": NaN,
+     "spearman_vs_hub_rt": NaN,
      "spearman_vs_south_da": NaN,
      "spearman_vs_spread": NaN,
      "decile_slope_vs_hub_da_mw": NaN,
@@ -364,6 +394,16 @@
       69.09
      ]
     },
+    "hub_rt": {
+     "pearson_r": 0.098,
+     "spearman_rho": 0.129,
+     "decile_slope_cheap_minus_dear_mw": -646.0,
+     "basis_mean": 42.85,
+     "basis_p10_p90": [
+      22.62,
+      63.03
+     ]
+    },
     "south_da": {
      "pearson_r": 0.064,
      "spearman_rho": -0.001,
@@ -405,6 +445,7 @@
      "cv_of_net": 0.583,
      "p10_mw": -1169.0,
      "spearman_vs_hub_da": -0.061,
+     "spearman_vs_hub_rt": -0.006,
      "spearman_vs_south_da": -0.182,
      "spearman_vs_spread": 0.134,
      "decile_slope_vs_hub_da_mw": 103.7,
@@ -420,6 +461,7 @@
      "cv_of_net": 0.415,
      "p10_mw": 910.0,
      "spearman_vs_hub_da": 0.216,
+     "spearman_vs_hub_rt": 0.242,
      "spearman_vs_south_da": 0.088,
      "spearman_vs_spread": 0.248,
      "decile_slope_vs_hub_da_mw": -1015.2,
@@ -435,6 +477,7 @@
      "cv_of_net": 0.91,
      "p10_mw": -946.0,
      "spearman_vs_hub_da": -0.118,
+     "spearman_vs_hub_rt": -0.147,
      "spearman_vs_south_da": 0.02,
      "spearman_vs_spread": -0.206,
      "decile_slope_vs_hub_da_mw": 106.3,
@@ -450,6 +493,7 @@
      "cv_of_net": 1.228,
      "p10_mw": -143.1,
      "spearman_vs_hub_da": -0.144,
+     "spearman_vs_hub_rt": -0.079,
      "spearman_vs_south_da": -0.109,
      "spearman_vs_spread": -0.101,
      "decile_slope_vs_hub_da_mw": 168.6,
@@ -465,6 +509,7 @@
      "cv_of_net": 19.659,
      "p10_mw": 0.0,
      "spearman_vs_hub_da": -0.014,
+     "spearman_vs_hub_rt": -0.01,
      "spearman_vs_south_da": -0.015,
      "spearman_vs_spread": -0.012,
      "decile_slope_vs_hub_da_mw": 0.2,

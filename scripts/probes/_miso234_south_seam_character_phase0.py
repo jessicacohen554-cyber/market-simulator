@@ -12,9 +12,13 @@ DIBAs and miso-182 measured that TVA carries 79-86 % of gross export while MISO
 is a NET IMPORTER from SOCO).
 
 Bases tested (all measured, all committed):
-  * ``hub_da``    MISO Indiana-hub DA  — the basis MISO_SEAM_LADDER_BY_YEAR was
-                  Q-Q derived against, and the price the model's decile slope is
-                  scored on.
+  * ``hub_da``    MISO Indiana-hub DA — the basis MISO_SEAM_LADDER_BY_YEAR was Q-Q
+                  DERIVED against.
+  * ``hub_rt``    MISO Indiana-hub RT — the basis the lane's published decile-slope
+                  column is SCORED on (``_miso224_floor_anatomy_phase0.actual_zone_price``
+                  reads ``values="rt"``). THE TWO ARE NOT THE SAME INSTRUMENT: they
+                  correlate only +0.40 / +0.42 / +0.55, so every decile statement must
+                  name which one it is on. Both are reported here for exactly that reason.
   * ``south_da``  MISO-South zonal DA (mean of ARKANSAS/LOUISIANA/MS/TEXAS hubs)
                   — the price at the bus the seam physically terminates on, and
                   the price the model's own ``MISO_external_South`` bus tracks
@@ -102,6 +106,7 @@ def zonal_prices() -> pd.DataFrame:
 
 def main() -> int:
     from market_sim.config.interchange_config import MISO_SEAM_DIBA
+    from _miso224_floor_anatomy_phase0 import actual_zone_price
 
     spec_ld = importlib.util.spec_from_file_location(
         "derive_miso_seam_ladders", REPO / "scripts/data/derive_miso_seam_ladders.py"
@@ -132,9 +137,12 @@ def main() -> int:
         south_da = sz["da"].to_numpy(float)
         south_rt = sz["rt"].to_numpy(float)
         spread = hub_da - south_da
+        hub_rt = actual_zone_price(year)["MISO-Indiana"].to_numpy(float)
+        hub_rt = pd.Series(hub_rt).interpolate(limit=3).ffill().bfill().to_numpy(float)
 
         bases = {
             "hub_da": hub_da,
+            "hub_rt": hub_rt,
             "south_da": south_da,
             "south_rt": south_rt,
             "spread_hub_minus_south": spread,
@@ -197,6 +205,7 @@ def main() -> int:
                 "cv_of_net": round(float(x.std() / abs(x.mean())) if x.mean() else float("nan"), 3),
                 "p10_mw": round(float(np.quantile(x, 0.10)), 1),
                 "spearman_vs_hub_da": round(spearman(x, hub_da), 3),
+                "spearman_vs_hub_rt": round(spearman(x, hub_rt), 3),
                 "spearman_vs_south_da": round(spearman(x, south_da), 3),
                 "spearman_vs_spread": round(spearman(x, spread), 3),
                 "decile_slope_vs_hub_da_mw": round(decile_slope(x, hub_da), 1),

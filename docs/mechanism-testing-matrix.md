@@ -5624,9 +5624,16 @@ loss.
 > spent, which is the outcome rule 29 clause 0 exists to produce. The handoff's premise —
 > that near price-independence is the Entergy–MISO RDT firm-contract signature — is
 > **basis-dependent and does not survive**: on the **MISO-South LOCAL** DA the measured
-> seam carries the **correct arbitrage sign** (spearman −0.193/−0.176 in 2023/2024, export
-> decile slope +323.3/+426.8 MW); only on the **Indiana-hub** basis the residual is *scored*
-> against does it read flat (−125.4/−10.2/−636.4). Firmness refuses a flat block in both
+> seam carries the **correct arbitrage sign** in 2023/2024 on **both DA and RT** (spearman
+> −0.193/−0.178 and −0.176/−0.121; export decile slope +323.3/+296.0 and +426.8/+317.4 MW),
+> while on **either Indiana basis** it reads flat-to-negative in every year (DA
+> −125.4/−10.2/−636.4; RT −71.8/−60.4/−646.0). **Basis disclosed** — the two are not one
+> instrument: the lane's published decile column is scored on Indiana **RT** while the ladder
+> was Q-Q **derived** against Indiana **DA**, and they correlate only +0.402/+0.424/+0.553.
+> Half the handoff's known-comparator warning resolves **favourably**: miso-233's own published
+> measured South column **reproduces exactly** on its own instrument (+71.8/+60.4/+646.0 against
+> its published +71.8/+60.4/+646.1); the unreproduced column was *miso-232's*, a different
+> series, and nothing here restates it. Firmness refuses a flat block in both
 > directions (lag-1 acf +0.95/+0.95/+0.96 but mean |Δh| 203/206/213 MW = 15–21 % of mean;
 > between-month variance share 0.11/0.13/0.34; p10 base 34/212/**−200** MW — the seam
 > net-IMPORTS in >10 % of 2025 hours). miso-182's premise correction reproduced
