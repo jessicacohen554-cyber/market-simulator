@@ -4837,3 +4837,74 @@ Its conclusion is unaffected, but a guard written to the literal sentinel catche
 use a `> 1e6 MW` bound.
 
 Next shorthand: **pjm-172.**
+
+
+## pjm-171 ADDENDUM 2 — 2026-09-07 — the EMAAC CC over-run: CEMS coverage is ruled out; the defect is outage APPLICATION, not detection (zero LP)
+
+**Owner observation:** *"too much available capacity for cc regular … Bergen is +4 twh … they
+indicate CEMS is missing data but there's no reason our model should be 2x the 923 data."*
+**Confirmed, and the CEMS objection is answered.** Record:
+`results/calibration/ADDENDUM-pjm171-emaac-availability-census-2026-09-07.md`.
+
+**26.85 TWh** of PJM 2021 gas-fleet model energy is produced in hours the plant's own CEMS record
+reads zero; **9.79 TWh in EMAAC** (Central PA 4.69, SWMAAC 3.87, Dominion 3.25, AEP Ohio 1.63,
+ComEd 1.38, West APS 1.13, ATSI 1.11).
+
+**The discriminating statistic is the longest continuous off-run.** Bergen: CEMS zero for **838
+consecutive hours (35 days)**, model longest off **24 h**. Red Oak **800 h vs 7 h**. Hopewell
+**1,155 h vs 0 h** — never stopped. Against a clean control set where the machinery works to a few
+percent: Wildcat Point 460/489, Tenaska Virginia 1,589/1,608, Fremont 463/480, Woodbridge 315/336,
+St Joseph 299/312. **The mechanism works; it does not reach the rows above.**
+
+**CEMS coverage is ruled out.** Every named plant is present in raw CAMPD with a full per-unit
+8,760-h record (Bergen 52,560 rows / 6 units; `nodata` = False). CEMS *does* under-report Bergen
+(1.104 vs EIA-923's 1.740 TWh) but **the model sits above both at 5.586 TWh = 3.21× the 923**.
+
+**Detection is mostly not the problem either — APPLICATION is.** `unit-outage-events/PJM` carries
+1,379 PJM 2021 rows including a **282-day** Chalk Point event and a **132-day** Montour event, yet
+the model's longest off-run at Chalk Point is **68 h**. The event table is per-UNIT with
+`unit_pct_of_plant` while the LP row is a per-PLANT CAMPD bin, so a plant whose units are out at
+different times carries a derate without ever going offline. Two genuine detection gaps survive:
+**Hunterstown 55976** (0 events vs 37 measured days off) and **Eddystone 3161** (1 event of 11.7 d
+vs 187 days).
+
+**Honest split, and it matters.** A CEMS zero is not proof of unavailability. Availability is the
+live hypothesis for the modern CCs — Bergen (45.6 % model CF vs 9.0 % measured), Red Oak (70.2 vs
+21.9), Hay Road, Woodbridge, West Deptford. **Merit order** is the likelier owner for Eddystone (a
+1960s steam plant, 187 days off) and the Chalk Point ST_GAS bin — those belong with the parent
+finding's offer-stack object. Phantom energy is an **upper bound**, never "the availability error".
+
+**Phase B is blocked at HEAD and the block is named:** the fleet rebuild needs
+`data/raw/pjm-da-virtuals/hrl_da_incs_decs_2021_*`, a converted corpus whose payload is gitignored
+(recovery = re-fetch). Successor card, zero LP once unblocked: take `pmax × availability` per plant
+and test Chalk Point's detected 282-day event against it — the event never reaches the fleet, or it
+reaches it as a partial derate, or the binning re-spreads it. Three different repairs.
+
+**Not a route to the band either.** Cutting phantom CC energy reduces CC volume (toward C1's
++26.77 TWh) but removes mid-merit supply, raising price — the same direction as the seam repair and
+away from 2021's +10.8 %. Rule 30(c): PJM stays **CALIBRATED**.
+
+**In-session correction:** an earlier pass used plant codes recalled from memory and reported
+"Eddystone not in CAMPD" and "Hunterstown zero events in all years". Both were wrong-identifier
+artifacts (Eddystone is 3161 not 3169; Hunterstown 55976 not 55196). Every code in the addendum is
+now read from the committed payloads.
+
+## pjm-172 PRECOMMIT — 2026-09-07 — seam-local measured backcast gas (F-A), written before any build
+
+`docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md`. Owner decision 2026-09-07: the
+repair shape is **seam-local**, not an edit to the shared `HENRY_HUB_TRAJECTORIES`. ONE declared
+delta (the gas level); **F-B (the missing 2021/2022 `hr_by_year` entries) is explicitly NOT
+bundled** (rule 19). Zero free parameters — measured EIA HH annual means already on disk (2021
+3.910, 2022 6.419). **Look-ahead guard is load-bearing and fixed ex ante:** the measured path is
+refused for every `hindcast_asknown_*` scenario key, so the as-known hindcast lane cannot be
+contaminated. **Screen year 2022, chosen on FOOTPRINT before any solve** — seam baseload delta
++44.122 $/MWh (2022) vs +15.579 (2021), a 2.83× ratio. Disclosed against interest: 2022 is also
+where the repair is expected to help the residual, which is a coincidence of the footprint rule and
+**C3a is deliberately not a pass condition**. Six pre-registered STOP gates (S1 resolution, S2
+bit-identity for every year ≥2023 and every forecast year, S3 magnitude against the tabled
+prediction, S4 footprint = the 80 seam rows only, S5 net export rises, S6 collateral). G-CTRL form 4
+against the committed touchpoint with a G-DRIFT audit owed before the arm solves. Expected residual
+movement recorded ex ante: **2022 improves, 2021 worsens** — rule 14, never a reason to keep the
+estimate.
+
+Next shorthand: **pjm-172.**
