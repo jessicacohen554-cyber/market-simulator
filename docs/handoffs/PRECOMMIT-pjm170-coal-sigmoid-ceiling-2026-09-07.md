@@ -538,3 +538,89 @@ weakened by them worsening: they are **reported at full magnitude in the RESULT 
 gate nothing either way** (§5). The control determination for 2022 is **NOT-YET**,
 and rule 30(c) governs regardless: a held-out year never downgrades PJM, whose
 headline stays CALIBRATED on the 2023–2025 train tier.
+
+---
+
+## ADDENDUM B — PHASE 0 RESULT. Every zero-LP gate PASSES. Recorded before the solve.
+
+Probe `scripts/probes/_pjm170_ceil_footprint.py`; artifact
+`results/calibration/_pjm170_ceil_census.json`. Environment verified at bit-parity
+with the control before running (highspy 1.14.0 / numpy 2.4.6 / scipy 1.17.1 /
+pandas 3.0.3 / pyarrow 24.0.0 / pydantic 2.13.4 / CPython 3.11.15 — all seven match
+the control's recorded `environment` block exactly).
+
+| gate | pass condition (§5) | **measured** | verdict |
+|---|---|---|---|
+| **S1** | only `ceil` differs | control `{0.65, 1.32, 3.40, 2.5}` → arm `{0.65, 1.00, 3.40, 2.5}` | **PASS** |
+| **S2** | `Δpassthrough = s(g)·(1.00−1.32)`, ≤1e-12 | max abs resid **2.220e-16** (machine epsilon) | **PASS** |
+| **S3** | measured = predicted ≤1e-6 $/MWh, sign negative | **−9.226726** vs **−9.226726**, `|err|` **0.000e+00** | **PASS** |
+| **S4-A** | zero unpredicted rows, zero predicted non-movers | predicted **243**, moved **243**, unpredicted-moved **0**, predicted-not-moved **0** | **PASS** |
+
+Supporting measurements: leverage `s̄` = **0.9982** (p50 0.9999, 91.5 % of hours
+≥0.99), reproducing §2's 0.998 from an independently built config; passthrough mean
+**1.3188 → 0.9994**; direct effect range **−43.913 .. −2.107 $/MWh** over
+**25,504.3 MW** of bituminous capacity.
+
+### B.1 AMENDMENT 1 WAS NECESSARY — corroborated, not merely argued
+
+The bituminous fleet carries **284** rows: **25** `_mustrun`, **16** `_sync`, **243**
+DIRECT. Under §4.2 limb A *as first written* the 16 `_sync` rows would have sat in
+`predicted_not_moved`, and the "equals exactly" clause would have **FAILED the arm**
+— for rows that cannot move by construction (`legacy_bins.py:449` returns a
+hard-coded 1.0 without consulting `passthrough_by_supply`). That is precisely the
+gate mis-specification class §4.1 was chartered to correct, and it was caught in this
+card's own gate before the solve rather than after a number was on the table. With
+the amendment the prediction is **exact in both directions**, which is the stronger
+claim.
+
+### B.2 S4-C's headroom bound, FIXED HERE at 32.441 TWh
+
+From the control's committed `hourly/class_band_hourly_2022.parquet` and the
+`fleet_only` arrays, zero LP:
+
+| quantity | value |
+|---|---|
+| DIRECT capability `Σ_t pmax·availability` | **123.202 TWh** (25,504.3 MW) |
+| DIRECT control dispatch (bands `committed`, `econc00–05`, `peak`) | **90.762 TWh** |
+| **S4-C headroom bound** | **32.441 TWh** |
+
+**S4-C PASSes iff the DIRECT rows' energy moves UP and by ≤ 32.441 TWh.** Fixed
+before the solve.
+
+### B.3 §3.3 RECONCILIATION — the derive script's level is MISALIGNED, exactly as §3.3 anticipated
+
+| delivered coal $/MMBtu, PJM bituminous | value |
+|---|---|
+| **the model's own** (measured EIA-923 monthly, capacity-weighted over the DIRECT rows) | **2.786** |
+| `derive_coal_sigmoid.py`'s reconstruction (annual ACR region f.o.b. ÷ 0.85 commodity share) | **4.307** |
+| discrepancy | **+54.6 %** |
+
+This is a **large, one-directional misalignment**, and it vindicates the disposition
+§3.3 declared *before* the measurement: the derived `gas_mid` **7.08** is built on
+`deliv × HR_coal / HR_cc` using the $4.307 reconstruction, so transcribing it would
+have imported a merit crossover computed against a price the LP never sees. The
+model-consistent crossover is `2.786 × 11.02 / 6.7 = ` **$4.58/MMBtu** — not 7.08,
+and also not the live 3.40.
+
+**Reported, and it selects nothing here** (§3.3, §3.4). Two consequences, both routed
+rather than absorbed:
+- **Table B's level parameters (`floor` 0.50, `gas_mid` 7.08, `gas_slope` 1.0) must
+  NOT be transcribed** to PJM as they stand — a rule 14 `[R-ACCURATE]` misalignment,
+  documented here, not buried.
+- The live `gas_mid` **3.40** is *also* not the model-consistent crossover (4.58).
+  That gap is a **real open finding** and belongs to the §3.4 successor card, with
+  its own PRECOMMIT and its own screen. **This card does not touch it.**
+- `ceil` is untouched by all of it: its derivation is the level-independent
+  "never above full measured delivered cost" rule (§3.3), which is exactly why it,
+  and only it, was made this card's object before any of this was measured.
+
+### B.4 Reported, NOT gated — and explicitly not a rescue
+
+§5 forbids any gate reading the target residual. Recorded here in advance so it
+cannot become one: the arm lowers the bituminous bid by a mean **$9.23/MWh**, which
+must move coal UP and gas DOWN through the merit order, and 2022's live C1 failure is
+a `CC_REGULAR` **over**-run of +22.02 TWh. **That the arm points the helpful way is
+not a pass condition, no gate reads it, and it is not why this card exists** — §1(a)–(c)
+is. Rule 1 `[R-STRUCT]`: an arm survives on structure or not at all.
+
+**PHASE 0 CLEARS. The 2022 screen solve is authorized to proceed.**
