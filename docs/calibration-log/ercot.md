@@ -13741,4 +13741,44 @@ merge (rule 29(c)); nothing registered, no dashboard entry moved, nothing tuned 
 `docs/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`,
 `docs/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`.
 
+### ercot-255 CODA — PROMOTED on owner instruction, as ONE five-year run
+
+**Owner, 2026-09-07 (verbatim):** *"Leave the 2023 results be as they are under a
+different config. Promote the combined result of 2021-22-24-25 along with the 23
+config as a single run on the dashboards. 23 was an outlier year with weird market
+design."* The session's own recommendation had been NOT-PROMOTED; the owner ruled the
+other way, and the evidence supports the ruling — **the stated blocker was answered,
+not waived**: 2023 is composed byte-for-byte from the committed ercot-248 bundle
+rather than replayed, so rule 16 `[R-ALLYEARS]` is satisfied by composition.
+
+**THE DESIGNATED ERCOT KEEPER IS NOW `2026-09-07-ercot255-five-year-keeper`** —
+2024/2025 forward config + EP reference, 2023 the UNCHANGED carve-out (EP reference
+absent per the instruction; its measured 2023 footprint is 0.0020 $/MMBtu anyway),
+2021/2022 the carve-out recipe + EP reference as folded VALIDATION rungs.
+
+| span | determination |
+|---|---|
+| {2024, 2025} forward | **CALIBRATED** |
+| {2023} carve-out | **CALIBRATED** |
+| **train {2023, 2024, 2025}** | **CALIBRATED** |
+| {2022} validation | CALIBRATED-WITH-CAVEATS |
+| {2021} validation | NOT-YET (reported, never gating) |
+
+**Rule 22 D-5(b) re-verification PASSES**: recomputed from committed artifacts with
+no solve, the new keeper is **identical to the ercot-248 incumbent on all three
+designated train spans**. `calibration-complete.json` re-keyed with
+`keeper_at_declaration` preserved; the ercot253/run252 standalone rungs stamped to
+the new keeper so they FOLD (rule 30(a)) instead of showing as duplicate cards.
+
+**Two scorer-path repairs this promotion required**, both rule-30(c) citations rather
+than judgement calls — a `config_partition` may now designate a HELD-OUT span, which
+neither surface anticipated: `build_status.py`'s worst-over-spans fold and
+`audit_keepers.py`'s M1b rollup now run over **train-tier configs only** (held-out
+configs still scored and rendered, but they cannot decertify the ISO; fail-closed
+when no train config exists). A config without `tier` defaults to `train`, so **every
+other ISO is byte-identical** — verified by rebuilding all six.
+
+Gates at promotion: `audit_keepers --iso ERCOT` **PASS 0/0**, parity OK (21 runs, 54
+bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`**.
+
 **Next shorthand: ercot-256** (ercot-199 remains unclaimed)

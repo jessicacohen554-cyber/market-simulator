@@ -660,12 +660,23 @@ def build_part(iso: str) -> dict | None:
             span = [int(y) for y in cfg.get("years", [])]
             span_v = cv.determine(cfg["run_id"], years=span)
             full_v = cv.determine(cfg["run_id"])
+            # RULE 30(c) [R-TOUCHPOINT-FOLD]: "The ISO's calibration
+            # determination is the train-tier (2023-2025) verdict and nothing
+            # else. A validation-tier score is iterable model-SELECTION evidence
+            # ... it cannot certify and it cannot decertify." A partition may
+            # now designate a HELD-OUT span (ERCOT 2021/2022 since ercot-255),
+            # so such a config is scored and RENDERED exactly like any other but
+            # is excluded from the ISO-level worst-over-spans fold below.
+            # Absent/`train` keeps every pre-existing ISO byte-identical.
+            cfg_tier = str(cfg.get("tier") or "train").lower()
             scored_configs.append(
                 {
                     "role": cfg.get("role"),
                     "label": cfg.get("label"),
                     "run_id": cfg["run_id"],
                     "years": span,
+                    "tier": cfg_tier,
+                    "gating": cfg_tier == "train",
                     "determination": span_v["determination"],
                     "reasons": span_v.get("reasons", []),
                     "grade_summary": span_v.get("grade_summary"),
@@ -684,15 +695,20 @@ def build_part(iso: str) -> dict | None:
                 return 1
             return 2
 
+        # Rule 30(c): fold over the TRAIN-tier configs only. Held-out configs
+        # stay in scored_configs (so the page renders them at full magnitude)
+        # but never move the ISO headline in either direction.
         partition_det = min(
-            (c["determination"] for c in scored_configs),
+            (c["determination"] for c in scored_configs if c["gating"]),
             key=_det_rank,
             default=verdict["determination"],
         )
         verdict["registered_determination"] = verdict["determination"]
         verdict["registered_reasons"] = verdict.get("reasons", [])
         verdict["determination"] = partition_det
-        verdict["reasons"] = [r for c in scored_configs for r in c["reasons"]]
+        verdict["reasons"] = [
+            r for c in scored_configs if c["gating"] for r in c["reasons"]
+        ]
         verdict["determination_basis"] = (
             "config-partition: worst config determination over the DESIGNATED "
             "spans (owner ruling 2026-08-31, session ercot-246). The forward "
