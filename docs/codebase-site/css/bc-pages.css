@@ -128,8 +128,18 @@
   gap: 7px;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #fff;
-  background: var(--c, var(--hydro));
+  /* The tinted-background pattern of shared.css's .badge--iso-* : the ISO
+     accent at 12 % over white, with dark text. White-on-accent failed WCAG AA
+     on five of the seven accents (ERCOT 2.28:1, CAISO 2.15:1, SPP 2.49:1,
+     PJM 2.77:1, MISO 2.80:1; only NYISO 4.35:1 and NEISO 6.30:1 passed) —
+     FINDING-spp-34-2026-09-07.md section 7 S-2. The 88 % white layer over the
+     accent IS rgba(accent, 0.12), so no new hue is introduced; it is an
+     !important background-IMAGE because js/backcast-runs.js sets an inline
+     background shorthand on #isoBadge (that file is not this lane's), while
+     forecast-runs / forecast-status / forecast-bands pass the accent as --c. */
+  color: var(--text-primary);
+  background-color: var(--c, var(--hydro));
+  background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)) !important;
   padding: 4px 12px 4px 10px;
   border-radius: 999px;
   box-shadow: var(--shadow-sm);
@@ -140,7 +150,14 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
+  /* The text colour, on every page: a white dot is invisible on the tint, and
+     the accent itself only reaches 1.96-3.61:1 against its own 12 % tint (below
+     the 3:1 of WCAG 1.4.11, even though a dot beside the ISO's own name is
+     decorative). !important because js/backcast-runs.js injects this dot with
+     an inline white background of its own — that file is not this lane's, and
+     without the override the same component would render differently there
+     than on forecast-runs / forecast-status / forecast-bands. */
+  background: currentColor !important;
 }
 
 /* ---------------------------------------------------------------------------

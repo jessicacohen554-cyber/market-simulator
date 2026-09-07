@@ -19,8 +19,8 @@ ISOs, run forward 2026→2050 with a historical-backcast mode (2021–2025 for
 ERCOT; 2023–2025 for the other multi-year ISOs) for
 calibration. The solver is HiGHS via `highspy`; **prices are recovered as the LP
 duals on the energy-balance constraints** — there is no separate pricing model.
-Six ISOs share one ISO-agnostic LP: ERCOT (the calibrated reference), CAISO,
-PJM, MISO, NYISO, NEISO.
+Seven ISOs share one ISO-agnostic LP: ERCOT (the calibrated reference), CAISO,
+PJM, MISO, NYISO, NEISO, SPP.
 
 ## Reading order
 
