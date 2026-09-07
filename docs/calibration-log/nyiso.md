@@ -12758,3 +12758,64 @@ scaled by the 2022 fuel regime; the named objects are nyiso-201 §5.3 / `DECISIO
 untouched; nothing identified against 2022. Reported, not fixed: CAISO's gate-(a) stamp is stale
 (cites `caiso-257` while the shard names `caiso-260`), another lane's. Record:
 `docs/FINDING-nyiso209-redeclaration-and-2022-touchpoint-2026-09-06.md`.
+
+## nyiso-210 — 2026-09-06
+
+**Touchpoint loop step 2, completed: the 2022 CC_REGULAR over-run DECOMPOSED, and nyiso-209 §2.4's
+reading REPLACED. ZERO LP. Keeper `2026-09-06-nyiso-202-startup-aware` UNCHANGED; no marker, gate,
+parameter, offer curve, cell verdict or determination moved.**
+
+Pre-registered at `f520bd1f` before the probe was written
+(`results/calibration/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md`), with one
+construction addendum at `c30612c5` (`ADDENDUM-nyiso210-band-vocabulary-2026-09-06.md`: the
+committed sidecar emits CC_REGULAR's economic region as six `econc*` tranches, not the registry's
+`econ_low`/`econ_high` pair, so the partition was reassembled three-way — no threshold moved and no
+verdict value had been read).
+
+**The pre-registered verdict fired and this session reports its mechanism REFUTED on the same
+artifacts.** P2 — declared as the prediction that would falsify the lane's preferred answer — fires:
+the `committed` band is **+0.855 TWh** above its in-sample mean. But the bundles' own D-2 puts
+CC_REGULAR forced energy at **0.0774 TWh in 2022, the LOWEST of the four years** (in-sample mean
+0.1880), so `nyiso_gas_commitment_bridge` moved the *opposite* way and cannot carry it. The PREREG's
+mapping of forcing onto the `committed` band was a construction error — `committed` is an **offer**
+tranche — and `class_band_hourly` carries no measured side and no zone, so the band axis could not
+have answered the question at any threshold. Stated at full strength rather than repaired.
+
+**THE ANSWER IS ZONAL, AND IT IS AN IN-SAMPLE PROPERTY.** On a CAMPD-consistent basis the class gap
+deteriorates **+2.136 TWh** from its in-sample mean to 2022: **Capital_Hudson +1.592 (74.5 %, a SIGN
+FLIP from −1.104 to +0.488)** and **NYC +1.032 (48.3 %)**, Upstate_West −0.623, Long_Island +0.135
+(sums exactly). NYC's gap is **positive in all four years and winter-loaded in all four**
+(+1,062 / +795 / +294 / +479 GWh). **In-sample C1 PASSES BY CANCELLATION** — NYC +0.884 against
+Capital_Hudson −1.104 nets to +0.223 TWh at class grain — **and both legs GROW across the training
+window** (NYC +0.945 → +1.296; CH −0.641 → −1.564). **2022 creates no new error; it removes the
+offset.** Same five plants every year — over: Bethlehem 2539, Zeltmann 56196, Astoria Energy 55375;
+under: Cricket Valley 57185, CPV Valley 56940, the two newest H-class units — so **no new plant
+object**, and a **merit-order inversion inside CC_REGULAR** that is worsening at Cricket Valley
+(−0.441 → −0.608 → −1.010).
+
+**Three mechanisms refuted, each independently.** Forcing (D-2, above). **Availability**: the
+committed overlay's 2022 CC_REGULAR coverage is 654.2 GW-days against 698.3 / 645.0 / 721.0, and
+Bethlehem (40.1 vs 21.1) and Zeltmann (52.1 vs 29.4) carry **nearly double** the in-sample derate in
+2022 and over-run anyway — the neiso-85/86 thin-input hypothesis returns a clean negative. A
+**fleet-wide fuel-level merit effect**: the economic share moves +1.05 pp against a declared 3.0 pp
+bar. P4 does not fire and its falsifier fires twice — **disclosed as a defect in the pre-registered
+statistic** (it ranked by |gap|, mixing over- and under-dispatch) and not repaired into a pass. P5
+falsified and reported: the model burns 0.353 TWh of CC_REGULAR oil in 2022 and 0.673 in 2025, so
+`dual_fuel_switching` needs no attention from this result.
+
+**Basis stated:** C1 scores against the bench `classFull` series (+4.35 TWh) while this session
+reads CAMPD consistently on both sides in all four years (+2.36 TWh); the `classFull`-minus-CAMPD
+offset itself swings −2.0 / −0.4 / −2.4 / −0.3 TWh, reported and claimed as nothing.
+
+**Rule 22:** 2022 was already spent by nyiso-209; only its committed sidecars and payload were read,
+and **nothing is identified against 2022** — the object is present and repairable entirely within
+2023–2025, which is what unblocks step 3. 2020 / 2021 not spent, `final` and the freeze untouched.
+**Objects 1 and 2 of the charter are NOT reached** (both are `ST_GAS` mechanisms; CC_REGULAR's D-2
+forcing is an order of magnitude too small to move a ~1 TWh zonal gap), so no DO-NOT-REDO cell was
+re-tested and the five owner cards stay unruled. Reported, not fixed (rule 25): MISO's stale gate-(a)
+stamp fails `test_gate_a_provenance::test_live_board_passes`, and the six charter files read 36
+failed / 69 passed at HEAD. Record:
+`docs/FINDING-nyiso210-cc-regular-2022-zonal-cancellation-2026-09-06.md`,
+`results/calibration/_nyiso210_cc_overrun_attribution.json`,
+`scripts/probes/nyiso210_cc_overrun_attribution.py`; NYISO matrix shard `gates` stamp (rule 28(d)),
+no cell verdict letter moved, key set verified identical to `main` (306).

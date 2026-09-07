@@ -107,14 +107,22 @@ def band_month_table(year: int) -> dict:
     df = pd.read_parquet(path)
     df = df[(df["pass"] == PASS) & (df["klass"] == KLASS)].copy()
     df["month"] = df["hour"].map(lambda h: MONTH_OF_HOUR[int(h) % 8760])
-    raw_band = df.groupby("band")["mw"].sum() / 1e6  # MWh -> TWh
+    # run_calibration_full.py L680-682: ``mw_oil`` carries the re-attributed
+    # oil portion, so the class_hourly view is ``mw - mw_oil``. The band table is
+    # therefore built on the NET basis, which is the one class_hourly and C1 use;
+    # the gross basis is reported alongside and changes no verdict here.
+    df["mw_net"] = df["mw"] - df["mw_oil"]
+    raw_band = df.groupby("band")["mw_net"].sum() / 1e6  # MWh -> TWh
+    raw_band_gross = df.groupby("band")["mw"].sum() / 1e6
     by_band = _fold_bands(raw_band)
+    by_band_gross = _fold_bands(raw_band_gross)
     by_band_month = (
-        df.groupby(["band", "month"])["mw"].sum().unstack(fill_value=0.0) / 1e3
+        df.groupby(["band", "month"])["mw_net"].sum().unstack(fill_value=0.0) / 1e3
     )  # GWh
     oil = float(df["mw_oil"].sum() / 1e6)
     return {
         "bands_twh": {b: round(by_band[b], 4) for b in BANDS},
+        "bands_gross_twh": {b: round(by_band_gross[b], 4) for b in BANDS},
         "raw_bands_twh": {
             str(b): round(float(v), 4) for b, v in raw_band.sort_index().items()
         },
@@ -334,12 +342,113 @@ def main() -> None:
             }
         )
 
+    # ---- ZONE x MONTH: the cancellation decomposition -----------------------
+    # Not pre-registered as a gate. It is the reported month axis of PREREG §1
+    # resolved one level finer, and it is what the band axis could not give:
+    # class_band_hourly carries no zone and no measured side, so the only place
+    # a zonal model-minus-measured gap exists in committed artifacts is the
+    # plant tables, which carry the bench's own zone label.
+    zones = sorted({r["zone"] for y in years for r in plants[y].values() if r["zone"]})
+    zonal: dict = {}
+    for y in years:
+        zy: dict = {}
+        for z in zones:
+            g = [0.0] * 12
+            m = [0.0] * 12
+            c = [0.0] * 12
+            for r in plants[y].values():
+                if r["zone"] != z:
+                    continue
+                for i in range(12):
+                    m[i] += r["model_mon_gwh"][i]
+                    c[i] += r["campd_mon_gwh"][i]
+                    g[i] += r["model_mon_gwh"][i] - r["campd_mon_gwh"][i]
+            zy[z] = {
+                "gap_gwh": [round(v, 2) for v in g],
+                "model_twh": round(sum(m) / 1e3, 4),
+                "campd_twh": round(sum(c) / 1e3, 4),
+                "gap_twh": round(sum(g) / 1e3, 4),
+                "winter_gap_gwh": round(sum(g[i] for i in WINTER), 2),
+                "summer_gap_gwh": round(sum(g[i] for i in SUMMER), 2),
+            }
+        zonal[y] = zy
+
+    # The deterioration of the class gap between the in-sample mean and 2022,
+    # split by zone. Sums to the class deterioration by construction.
+    cancel = {}
+    for z in zones:
+        ins = statistics.mean(zonal[y][z]["gap_twh"] for y in IN_SAMPLE)
+        tgt_z = zonal[TARGET][z]["gap_twh"]
+        cancel[z] = {
+            "in_sample_mean_gap_twh": round(ins, 4),
+            "target_gap_twh": round(tgt_z, 4),
+            "deterioration_twh": round(tgt_z - ins, 4),
+        }
+    class_ins = statistics.mean(psum[y]["gap_twh"] for y in IN_SAMPLE)
+    class_det = round(psum[TARGET]["gap_twh"] - class_ins, 4)
+    for z in zones:
+        cancel[z]["share_of_deterioration"] = (
+            round(cancel[z]["deterioration_twh"] / class_det, 4) if class_det else None
+        )
+    cancellation = {
+        "class_in_sample_mean_gap_twh": round(class_ins, 4),
+        "class_target_gap_twh": psum[TARGET]["gap_twh"],
+        "class_deterioration_twh": class_det,
+        "sum_of_zonal_deterioration_twh": round(
+            sum(cancel[z]["deterioration_twh"] for z in zones), 4
+        ),
+        "by_zone": cancel,
+    }
+
     # ---- P5: dual fuel ------------------------------------------------------
     p5 = {
         "oil_twh_by_year": {y: band[y]["oil_twh"] for y in years},
         "target_oil_twh": band[TARGET]["oil_twh"],
         "within_prediction": bool(band[TARGET]["oil_twh"] <= P5_OIL_TWH),
     }
+
+    # ---- M3 cross-check: the committed outage overlay's own coverage ---------
+    ovl = pd.read_csv(
+        ROOT / "data/raw/campd-unit-outages-perunitmerit-NYISO.csv",
+        parse_dates=["outage_start", "outage_end"],
+    )
+    outage: dict = {}
+    for y in years:
+        s0 = pd.Timestamp(f"{y}-01-01")
+        e0 = pd.Timestamp(f"{y}-12-31 23:00")
+        sub = ovl[(ovl.outage_end >= s0) & (ovl.outage_start <= e0)].copy()
+        sub["d"] = (
+            sub.outage_end.clip(upper=e0) - sub.outage_start.clip(lower=s0)
+        ).dt.total_seconds() / 86400.0
+        cc = sub[sub.plant_group == KLASS]
+        per_plant = {}
+        for code in ("2539", "56196", "55375", "57185", "56940"):
+            q = cc[cc.facility_id == int(code)]
+            per_plant[code] = {
+                "windows": int(len(q)),
+                "gw_days": round(float((q.unit_capacity_mw * q.d).sum() / 1e3), 2),
+            }
+        outage[y] = {
+            "class_windows": int(len(cc)),
+            "class_gw_days": round(float((cc.unit_capacity_mw * cc.d).sum() / 1e3), 1),
+            "named_plants": per_plant,
+        }
+
+    # ---- C1 benchmark basis (reported: C1 scores against classFull, not CAMPD)
+    c1_basis = {}
+    for y in years:
+        bb = json.load(gzip.open(BENCH / f"{y}.json.gz"))["bench"]
+        cf = float(bb["classFull"].get(KLASS) or 0.0)
+        cam = sum(
+            float(p.get("c_ann") or 0.0)
+            for p in bb["plants"].values()
+            if p.get("group") == KLASS
+        )
+        c1_basis[y] = {
+            "classFull_twh": round(cf, 4),
+            "campd_plant_sum_twh": round(cam, 4),
+            "classFull_minus_campd_twh": round(cf - cam, 4),
+        }
 
     out = {
         "session": "nyiso-210",
@@ -368,7 +477,11 @@ def main() -> None:
         },
         "band_month_gwh": {y: band[y]["band_month_gwh"] for y in years},
         "class_month_gap": month_gap,
+        "outage_overlay_census": outage,
+        "c1_benchmark_basis": c1_basis,
         "plant_summary": psum,
+        "zonal": zonal,
+        "cancellation": cancellation,
         "plants": plants,
         "predictions": {
             "P2_forcing_fires": p2,
@@ -381,8 +494,15 @@ def main() -> None:
     }
     dest = ROOT / "results/calibration/_nyiso210_cc_overrun_attribution.json"
     dest.write_text(json.dumps(out, indent=1, sort_keys=False, default=str))
-    print(json.dumps({k: v for k, v in out.items() if k != "plants"}, indent=1,
-                     default=str)[:9000])
+    print(json.dumps(
+        {
+            k: v
+            for k, v in out.items()
+            if k in ("I1_instrument_identity", "cancellation", "predictions")
+        },
+        indent=1,
+        default=str,
+    ))
     print(f"\nwrote {dest}")
 
 
