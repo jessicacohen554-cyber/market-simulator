@@ -42,56 +42,56 @@ the span of calendar years curated for that datatype and ISO; `—` means none i
 curated. Markets (DAM/RTM) are aggregated here — see each datatype's section
 for the market split.
 
-| datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO |
-|---|---|---|---|---|---|---|
-| lmp | — | — | — | — | — | — |
-| lmp-components | — | — | — | — | — | — |
-| load | — | — | — | — | — | — |
-| demand-profile | — | — | — | — | — | — |
-| ancillary-services | — | — | — | — | — | — |
-| energy-offers | — | — | — | — | — | — |
-| dam-public-bids | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — |
-| renewables | — | — | — | — | — | — |
-| validation | — | — | — | — | — | — |
-| fuel-basis | — | — | — | — | — | — |
-| fuel-zonal-hub | — | — | — | — | — | — |
-| unit-outage-events | — | — | — | — | — | — |
-| partial-outages | — | — | — | — | — | — |
-| capacity-deliverability | — | — | — | — | — | — |
-| confirmed-retirements | — | — | — | — | — | — |
-| nuclear-license-status | — | — | — | — | — | — |
-| gtc-limits | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | — | — | — | — |
-| transmission-expansion | — | — | — | — | — | — |
-| ramp-capability | — | — | — | — | — | — |
-| winter-fuel-inventory | — | — | — | — | — | — |
-| chp-btm-share | — | — | — | — | — | — |
-| nyiso-downstate-gas | — | — | — | — | — | — |
-| ercot-wtx-congestion | — | — | — | — | — | — |
-| nyiso-renewable-curtailment | — | — | — | — | — | — |
-| nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
-| nyiso-reserve-requirements | — | — | — | — | — | — |
-| nyiso-operating-events | — | — | — | — | — | — |
-| nyiso-interface-flows | — | — | — | — | — | — |
-| nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
-| reserve-requirements | — | — | — | — | — | — |
-| som-competitive-conduct | — | — | — | — | — | — |
-| capacity-market-demand-curve | — | — | — | — | — | — |
-| capacity-market-auction-price | — | — | — | — | — | — |
-| capacity-market-auction-supply | — | — | — | — | — | — |
-| capacity-market-elcc | — | — | — | — | — | — |
-| transfer-constraint-binding | — | — | — | — | — | — |
-| maxgen-events | — | — | — | — | — | — |
-| storage-as-awards | — | — | — | — | — | — |
-| capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
-| benchmark-corridor | — | — | — | — | — | — |
-| hydro-plant-modes | — | — | — | — | — | — |
-| miso-m2m-flowgates | — | — | — | — | — | — |
-| gas-ofo-events | — | — | — | — | — | — |
-| ps-water-state | — | — | — | — | — | — |
-| ra-import-allocations | — | — | — | — | — | — |
-| load-forecast | — | — | — | — | — | — |
+| datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO | SPP |
+|---|---|---|---|---|---|---|---|
+| lmp | — | — | — | — | — | — | — |
+| lmp-components | — | — | — | — | — | — | — |
+| load | — | — | — | — | — | — | — |
+| demand-profile | — | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — | — |
+| energy-offers | — | — | — | — | — | — | — |
+| dam-public-bids | — | — | — | — | — | — | — |
+| generation | — | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — | — |
+| fuel-basis | — | — | — | — | — | — | — |
+| fuel-zonal-hub | — | — | — | — | — | — | — |
+| unit-outage-events | — | — | — | — | — | — | — |
+| partial-outages | — | — | — | — | — | — | — |
+| capacity-deliverability | — | — | — | — | — | — | — |
+| confirmed-retirements | — | — | — | — | — | — | — |
+| nuclear-license-status | — | — | — | — | — | — | — |
+| gtc-limits | — | — | — | — | — | — | — |
+| transfer-interface-limits | — | — | — | — | — | — | — |
+| transmission-expansion | — | — | — | — | — | — | — |
+| ramp-capability | — | — | — | — | — | — | — |
+| winter-fuel-inventory | — | — | — | — | — | — | — |
+| chp-btm-share | — | — | — | — | — | — | — |
+| nyiso-downstate-gas | — | — | — | — | — | — | — |
+| ercot-wtx-congestion | — | — | — | — | — | — | — |
+| nyiso-renewable-curtailment | — | — | — | — | — | — | — |
+| nyiso-renewable-curtailment-monthly | — | — | — | — | — | — | — |
+| nyiso-reserve-requirements | — | — | — | — | — | — | — |
+| nyiso-operating-events | — | — | — | — | — | — | — |
+| nyiso-interface-flows | — | — | — | — | — | — | — |
+| nyiso-som-hub-fuel-annual | — | — | — | — | — | — | — |
+| reserve-requirements | — | — | — | — | — | — | — |
+| som-competitive-conduct | — | — | — | — | — | — | — |
+| capacity-market-demand-curve | — | — | — | — | — | — | — |
+| capacity-market-auction-price | — | — | — | — | — | — | — |
+| capacity-market-auction-supply | — | — | — | — | — | — | — |
+| capacity-market-elcc | — | — | — | — | — | — | — |
+| transfer-constraint-binding | — | — | — | — | — | — | — |
+| maxgen-events | — | — | — | — | — | — | — |
+| storage-as-awards | — | — | — | — | — | — | — |
+| capacity-market-avoidable-cost-rate | — | — | — | — | — | — | — |
+| benchmark-corridor | — | — | — | — | — | — | — |
+| hydro-plant-modes | — | — | — | — | — | — | — |
+| miso-m2m-flowgates | — | — | — | — | — | — | — |
+| gas-ofo-events | — | — | — | — | — | — | — |
+| ps-water-state | — | — | — | — | — | — | — |
+| ra-import-allocations | — | — | — | — | — | — | — |
+| load-forecast | — | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1778,14 +1778,14 @@ capacity-evolution screens. Schema:
 | `technology` | `string` | `none` | no | ATB's technology field (e.g. LandbasedWind, UtilityPV, Nuclear). |
 | `techdetail` | `string` | `none` | no | ATB's resource-class / configuration detail within technology (e.g. Class4, "Nuclear - Large", "NG 2-on-1 Combined Cycle (F-Frame)", "4Hr Battery Storage"). |
 | `display_name` | `string` | `none` | no | ATB's human-readable technology + techdetail label. |
-| `parameter` | `string` | `none` | no | One of CAPEX \| Fixed O&M (ATB's core_metric_parameter, filtered to this subset). |
+| `parameter` | `string` | `none` | no | One of CAPEX \| Fixed O&M \| Variable O&M \| Heat Rate (ATB's core_metric_parameter, filtered to this subset). The parameter scope is PER TECHNOLOGY: every technology lands CAPEX and Fixed O&M; only NaturalGas_FE additionally lands Variable O&M and Heat Rate (capx D65-B, 2026-09-06 — see scripts/data/fetch_nrel_atb.py's EXTRA_PARAMETERS_BY_TECHNOLOGY for why). So a row set filtered to one parameter is not populated for every technology. |
 | `financial_case` | `string` | `none` | no | ATB's core_metric_case. Only "Market" is landed (the market-financed view a capacity-expansion screen wants); ATB's "R&D" (program-cost) case is out of scope and never appears here. |
 | `tax_credit_case` | `string` | `none` | yes | ATB's tax_credit_case tag (ITC \| PTC), where the technology carries one; null for technologies with neither (e.g. natural gas). Informational only -- verified during intake that CAPEX/Fixed O&M/etc. do not vary by this tag for a fixed (technology, techdetail, year, cost_case); it does not multiply row count. |
 | `cost_case` | `string` | `none` | no | ATB's scenario field, renamed to avoid clashing with this model's own "scenario" concept: Advanced \| Moderate \| Conservative. Maps to this model's tech_cost_path lever ("low"/"mid"/"high" -> Advanced/Moderate/ Conservative respectively, matching TECH_COST_MULTIPLIERS' existing documented mapping in constants.py). |
 | `is_default_class` | `bool` | `none` | no | Whether ATB flags this techdetail as the technology's own representative/ default resource class (its `default` column). Informational -- lets a consumer that only wants one row per technology filter on this. |
 | `year` | `int64` | `year` | no | Calendar (projection) year, ATB's core_metric_variable (2022-2050). |
 | `value` | `float64` | `mixed` | no | The metric's value, in the unit given by the `unit` column. |
-| `unit` | `string` | `none` | no | Unit for `value`, by parameter (the raw ATBe.csv's own `units` column ships empty for every row -- confirmed during intake, not a fetch bug -- so this is an annotation applied during curation from ATB's public documentation/glossary convention, not extracted verbatim from the source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr". ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct fetch of the ATB site's own 2024 electricity page, which states "Monetary values are in 2022$" -- this CLOSES the former "confirmed only via indexed/cached content, flagged for verification with browser access" caveat. The site moved to atb.nlr.gov on the lab's rename and that domain IS reachable here, unlike the proxy-blocked atb.nrel.gov the earlier intake tried (see data/raw/nrel-atb/README.md). |
+| `unit` | `string` | `none` | no | Unit for `value`, by parameter (the raw ATBe.csv's own `units` column ships empty for every row -- confirmed during intake, not a fetch bug -- so this is an annotation applied during curation from ATB's public documentation/glossary convention, not extracted verbatim from the source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr", Variable O&M = "2022 $/MWh", Heat Rate = "MMBtu/MWh" (a physical quantity, so it carries no dollar year). ATB 2024's dollar year is 2022. VERIFIED 2026-07-31 (FFR-PB) by direct fetch of the ATB site's own 2024 electricity page, which states "Monetary values are in 2022$" -- this CLOSES the former "confirmed only via indexed/cached content, flagged for verification with browser access" caveat. The site moved to atb.nlr.gov on the lab's rename and that domain IS reachable here, unlike the proxy-blocked atb.nrel.gov the earlier intake tried (see data/raw/nrel-atb/README.md). |
 | `source_doc` | `string` | `none` | no | Citation string for the row's own edition/version ("NREL ATB 2024 v3.0.0 electricity, OEDI data lake"; "NREL ATB 2024 v4.0.0 electricity, OEDI data lake"). |
 | `source_page` | `string` | `none` | yes | The originating S3 object key (full traceability to the source file). |
 

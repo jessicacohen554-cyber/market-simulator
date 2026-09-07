@@ -13,7 +13,7 @@ import { addTooltip, cssColor } from './chart-utils.js';
 const DATA_URL = 'data/iso-topologies.json';
 const MOUNT_ID = 'viz-iso-topology';
 
-const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO'];
+const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP'];
 
 /* ISO accent colors (matches CSS --iso-* vars) */
 const ISO_COLORS = {
@@ -23,6 +23,7 @@ const ISO_COLORS = {
   MISO:  '#F97316',
   NYISO: '#E91E63',
   NEISO: '#9C27B0',
+  SPP:   '#14B8A6',
 };
 
 /* Import-node zone names (styled differently) */

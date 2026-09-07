@@ -357,11 +357,18 @@
     // normalise cov chars to lowercase (uppercase P in data = same as p, just eye-catching in source)
     const covOf = r => r.cov.toLowerCase();
     const rowComplete = r => covOf(r).split('').every(c => c==='y' || c==='b' || c==='x');
-    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO'];
+    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP'];
+    // SPP registered 2026-09-06 (lane SPP-20), AFTER this page's 2026-07-10 census,
+    // so it has no audited rows yet. The cross-ISO wildcard labels below ("all 6
+    // ISOs", "all ISOs", "all states") were written about the six ISOs registered at
+    // census time and were never checked for SPP -- so they deliberately do NOT match
+    // the SPP filter. Showing them under SPP would over-claim coverage nobody verified.
+    const CENSUSED_ISOS = new Set(['ERCOT','CAISO','PJM','MISO','NYISO','NEISO']);
     const rowMatchesIso = r => {
       if(isoFilter==='all') return true;
       const L = r.iso.toUpperCase();
-      if(L.includes('ALL 6') || L.includes('ALL ISOS') || L.includes('ALL STATES') || L.includes('ALL ISO')) return true;
+      if(CENSUSED_ISOS.has(isoFilter)
+         && (L.includes('ALL 6') || L.includes('ALL ISOS') || L.includes('ALL STATES') || L.includes('ALL ISO'))) return true;
       return L.includes(isoFilter);
     };
 
@@ -417,6 +424,12 @@
           h += '<td class="note">'+esc(r.note||'')+'</td></tr>';
         });
       });
+      if(h.indexOf('<tr class="sec">') === -1){
+        h += '<tr><td class="note" colspan="'+(NY+2)+'" style="text-align:left">No audited rows for '+
+             esc(isoFilter)+'. This census was taken 2026-07-10; SPP was registered 2026-09-06 '+
+             '(lane SPP-20) and its data coverage has not been audited into this page yet '+
+             '(the SPP census lives in <code>docs/multi-iso/spp-data-audit.md</code>).</td></tr>';
+      }
       h += '</tbody>';
       document.getElementById('grid').innerHTML = h;
     }

@@ -405,6 +405,7 @@
 .tabs__tab[data-iso="MISO"]  { --iso-accent: var(--iso-miso); }
 .tabs__tab[data-iso="NYISO"] { --iso-accent: var(--iso-nyiso); }
 .tabs__tab[data-iso="NEISO"] { --iso-accent: var(--iso-neiso); }
+.tabs__tab[data-iso="SPP"]   { --iso-accent: var(--iso-spp); }
 
 .tabs__tab.active[data-iso] {
   color: var(--iso-accent);

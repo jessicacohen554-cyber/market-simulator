@@ -101,10 +101,11 @@ EIA-860 Schedule-3 fossil date is an exogenous step-1b exit and its plant is
 **exempt** from the economic screen, so `forecast_fossil_retirement_economic=True`
 now governs only the residual **undated** fossil fleet.
 `reserve_margin_build_enabled=None` (**tri-state** — resolves ON for the five
-capacity-market ISOs, OFF for energy-only ERCOT),
+capacity-market ISOs, OFF for energy-only ERCOT and for any ISO absent from
+`MARKET_DESIGN`, which since 2026-09-06 includes energy-only SPP),
 `planning_reserve_margin=0.1375` (the per-ISO `PLANNING_RESERVE_MARGIN_BY_ISO`
 registry leads: ERCOT 0.1375, CAISO 0.15, PJM 0.178, MISO 0.157, NYISO 0.244,
-NEISO 0.1277). (`retirement_reserve_margin` was **deleted** with the
+NEISO 0.1277, SPP 0.16). (`retirement_reserve_margin` was **deleted** with the
 floor-accreditation rebuild — rule 26 `[R-DELETE]`; it is no longer a field.)
 
 ### Storage
@@ -149,6 +150,12 @@ curves): `cc_committed_hr_mult=1.23` / `cc_econ_hr_mult=0.96`, with `ct_*`,
 - **NYISO RCPF**: `nyiso_rcpf_enabled=False` (+ optional product/locational
   overrides).
 - **NEISO RCPF**: `neiso_rcpf_enabled=False`.
+- **SPP**: **none, deliberately.** SPP registered with an empty
+  `default_scenario_overrides` (owner rulings P4/P5, 2026-09-06): no scarcity
+  seed, and reserve co-optimization deferred. SPP's scarcity ceiling is its VRL
+  stack, which lever SPP-55 designs; co-optimization is lever SPP-56, queued
+  last. `voll=2000.0` = the FERC Order 831 cost-verified ceiling (ruling P10;
+  SPP's posted Safety-Net Energy Offer Cap is the lower $1,000/MWh).
 - **Reserve co-optimization**: `energy_reserve_coopt`,
   `ercot_multiproduct_as_coopt`.
 
@@ -172,11 +179,21 @@ removed):
 - **NYISO**: `nyiso_local_selfsupply`.
 - **NEISO**: `neiso_gas_coldsnap_derate` (gas-pipeline availability derate,
   not a commitment floor).
+- **SPP**: none. No floor, bridge or derate is registered for SPP — its first
+  keeper (lane SPP-40) is built without one, so any later floor arrives through
+  rule 17 `[R-FLOOR-WINDOW]` with its own driver and window.
 
 ### Transmission / interchange
 
 `interchange_shaping`, `interchange_shaping_export_only`,
 `reference_price_interface` (forecast-grade priced interchange; PJM/MISO).
+
+SPP is served by the **measured EIA-930 `Total interchange` schedule**
+(`_SCALAR_INTERCHANGE_ISOS`, owner ruling P2 — the PJM/NYISO/NEISO precedent,
+positive = net export) rather than a priced seam. Its three
+`INTERFACE_NEIGHBORS["SPP"]` blocks (MISO / AECI / ERCOT, the last carrying the
+820 MW DC ties of ruling P3) are registered **default-off**; lever SPP-51
+validates arming them with `--priced-interchange`.
 
 ## 8.2 ISO topology (`iso_configs.py`)
 
@@ -187,19 +204,20 @@ ttc_mw, is_bidirectional)`, `InterfaceLimit(name, links, cap_mw, bidirectional)`
 
 The seven registered ISOs:
 
-| ISO | Zones | Notable topology |
-|-----|-------|------------------|
-| **ERCOT** | 7: West, Panhandle, North, Northeast, Houston, South_Central, South | calibrated reference; WESTEX/NE_LOB interfaces; VOLL $5,000 |
-| **CAISO** | 4: NP15, ZP26, SP15, WECC_import | Path 15/26 cutsets; WECC import bubble, 8,300 MW simultaneous cap; VOLL $2,000 |
-| **PJM** | 8: ComEd, AEP_Ohio, ATSI, West_APS, Central_PA, Dominion, EMAAC, SWMAAC | 8-zone split captures AP-South / Eastern-Hub gradients |
-| **MISO** | 3: North, Central, South | RDT one-way links (3,000 N→S / 2,500 S→N) |
-| **NYISO** | 5: Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island | nested downstate import cutsets; cable-limited LI |
-| **NEISO** | 5: North, Central, Boston, Connecticut, HQ_import | import pockets + HQ Phase-II HVDC node |
+| ISO | Zones | Links | Notable topology |
+|-----|-------|-------|------------------|
+| **ERCOT** | 7: West, Panhandle, North, Northeast, Houston, South_Central, South | 10 | calibrated reference; WESTEX/NE_LOB interfaces; VOLL $5,000 |
+| **CAISO** | 6: NP15, ZP26, LA_BASIN, SDGE, SP15_rest, WECC_import | 6 | Path 15/26 cutsets; WECC import bubble, `WECC_import_simultaneous` 7,500 MW cap; VOLL $2,000 |
+| **PJM** | 8: ComEd, AEP_Ohio, ATSI, West_APS, Central_PA, Dominion, EMAAC, SWMAAC | 11 | 8-zone split captures AP-South / Eastern-Hub gradients |
+| **MISO** | 6: West, Plains, Illinois, Indiana, East, South | 8 | RDT one-way links (3,000 N→S / 2,500 S→N); five per-zone CIL/CEL interface groups |
+| **NYISO** | 5: Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island | 4 | nested downstate import cutsets; cable-limited LI |
+| **NEISO** | 5: North, Central, Boston, Connecticut, HQ_import | 7 | import pockets + HQ Phase-II HVDC node; `HQ_import_simultaneous` 3,850 MW cap |
+| **SPP** | 2: SPP-North, SPP-South | 1 | registered 2026-09-06 (lane SPP-20, owner rulings P1/P10). The single N↔S link's 48,700 MW TTC is a **Tier-3 placeholder that cannot bind**, not a rated interface — no public document states an SPP North↔South capability (FINDING-spp-13 §0), so the first solve is a two-zone copperplate on price until lever SPP-53 reconciles one. No import node: the seams are the served EIA-930 `Total interchange` schedule plus three default-off `NeighborInterface` blocks (MISO / AECI / ERCOT). VOLL $2,000 |
 
 Zone names above are shown unprefixed for readability; in `iso_configs.py` the
-literal `Zone.name` strings for PJM/MISO carry an ISO prefix — `PJM_ComEd`,
-`MISO-North`, etc. (ERCOT, CAISO, NYISO, NEISO zone names are
-unprefixed as listed).
+literal `Zone.name` strings for PJM, MISO and SPP carry an ISO prefix —
+`PJM_ComEd`, `MISO-West`, `SPP-North`, etc. (ERCOT, CAISO, NYISO, NEISO zone
+names are unprefixed as listed).
 
 VOLL is $2,000/MWh for all non-ERCOT ISOs (FERC Order 831 / tariff caps).
 

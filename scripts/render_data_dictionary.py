@@ -46,7 +46,7 @@ from market_sim.config import paths  # noqa: E402
 DOC_PATH: Path = paths.DICTIONARY_DIR / "data-dictionary.md"
 
 # ISO columns of the coverage matrix, in the project's canonical order.
-ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
+ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
 
 # Datatype sections, in render order. Mostly mirrors scripts/regenerate_clean.DATATYPES,
 # plus `energy-offers`, which ships a schema but is curated by a dedicated pipeline
