@@ -565,6 +565,12 @@ VERDICT_MAP = {
     # MISO added by capx D50-R (2026-09-05): PREDECL §2.4 made this leg
     # conditional on the PJM arm contradicting §2.2, and it did (P3's 2029 leg
     # missed on its own falsifier), so the conditional fired on its literal terms.
+    # SPP-60 (2026-09-07, owner ruling Q59) measured SPP's FIRST-EVER T1-H — no
+    # prior `spp-*` key of any tier existed anywhere in ff-verdicts.json, so the
+    # bare per-tier key IS this run (the nyiso-t1x precedent above). Bare
+    # harness invocation at HEAD, key e586d7cae19eab13 pre-declared in
+    # docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md §2.1.
+    "spp-2021-2025-realized-t1h-spp60": "spp-t1h",
 }
 
 
