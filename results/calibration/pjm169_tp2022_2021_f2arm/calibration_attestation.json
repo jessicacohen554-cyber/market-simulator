@@ -281,7 +281,7 @@
     "no_fit_to_price_residuals": true,
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
-    "attested_by": "rule-22 validation-tier TOUCHPOINT for PJM [2022, 2021] \u2014 a frozen-recipe replay of the designated keeper 2026-08-15-pjm-162-inputclock (pjm_debugb_inputclock_A) through the sanctioned replay_keeper channel (the keeper bundle's own meta.json supplies every solve kwarg, so the recipe is reproduced rather than re-expressed flag-by-flag). RECIPE IDENTITY IS COMPUTED, NOT ASSERTED: scripts/gen_touchpoint_attestation.py compared every shared meta.json key and found ZERO differences outside the provenance set (run stamps, the solve span, and the per-year Henry Hub actual, which is a year-scoped measured input rather than a recipe knob) \u2014 the generator refuses to write this file otherwise. ZERO free parameters introduced or moved, so the rule-20 [R-DOF] ledger, the disclosures and the exceptions ledger carry from the keeper unchanged and this run spends NO new ledger slot. NOTHING WAS TUNED FOR, AGAINST, OR IN RESPONSE TO the held-out year(s): the recipe was frozen before the solve and no parameter is identified against them (rule 22 step 3 \u2014 fitting happens only on 2023-2025). STATED LIMIT ON THE COMPARISON: the keeper solved at git 457ae04 and this replay at 46e08e5b, and 29 solve kwarg(s) were added to the surface in between; each is verified here to sit at its ScenarioConfig default (a non-default would be a hard error), but the in-sample column this touchpoint is read against was measured on the earlier HEAD. Any in-sample-to-holdout delta should be read with that drift in mind unless a same-HEAD in-sample control is registered alongside. VALIDATION-TIER RESULT: ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number. SUPERSEDES the stale touchpoint 2026-08-05-pjm-2022-touchpoint."
+    "attested_by": "rule-22 validation-tier TOUCHPOINT for PJM [2022, 2021] \u2014 a frozen-recipe replay of the designated keeper 2026-08-15-pjm-162-inputclock (pjm_debugb_inputclock_A) through the sanctioned replay_keeper channel (the keeper bundle's own meta.json supplies every solve kwarg, so the recipe is reproduced rather than re-expressed flag-by-flag). RECIPE IDENTITY IS COMPUTED, NOT ASSERTED: scripts/gen_touchpoint_attestation.py compared every shared meta.json key and found ZERO differences outside the provenance set (run stamps, the solve span, and the per-year Henry Hub actual, which is a year-scoped measured input rather than a recipe knob) \u2014 the generator refuses to write this file otherwise. ZERO free parameters introduced or moved, so the rule-20 [R-DOF] ledger, the disclosures and the exceptions ledger carry from the keeper unchanged and this run spends NO new ledger slot. NOTHING WAS TUNED FOR, AGAINST, OR IN RESPONSE TO the held-out year(s): the recipe was frozen before the solve and no parameter is identified against them (rule 22 step 3 \u2014 fitting happens only on 2023-2025). STATED LIMIT ON THE COMPARISON: the keeper solved at git 457ae04 and this replay at f36cee6e, and 33 solve kwarg(s) were added to the surface in between; each is verified here to sit at its ScenarioConfig default (a non-default would be a hard error), but the in-sample column this touchpoint is read against was measured on the earlier HEAD. Any in-sample-to-holdout delta should be read with that drift in mind unless a same-HEAD in-sample control is registered alongside. VALIDATION-TIER RESULT: ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number. SUPERSEDES the stale touchpoint 2026-09-05-pjm-2022-2021-touchpoints."
   },
   "touchpoint": {
     "tier": "validation",
@@ -292,7 +292,7 @@
     "keeper_run_id": "2026-08-15-pjm-162-inputclock",
     "keeper_bundle": "results/calibration/pjm_debugb_inputclock_A",
     "keeper_git_sha": "457ae04",
-    "touchpoint_git_sha": "46e08e5b",
+    "touchpoint_git_sha": "f36cee6e",
     "recipe_identity": "PASS \u2014 0 differing shared meta.json keys outside the provenance set",
     "carried_sections": [
       "free_parameters",
@@ -315,15 +315,19 @@
       "ercot_ordc_adder_family_counterpart",
       "ercot_ordc_adder_published_anchor",
       "fleet_state_from_eia860",
+      "gas_offer_margin_anchor_vintage",
       "miso_reserve_online_gated",
       "miso_seam_envelope_hour_ending_key",
       "nearby_fuel_price_zone_donor_guard",
       "nyiso_chp_btm_measured",
+      "nyiso_ct_peaker_bands_measured",
       "nyiso_gas_bridge_online_hours",
       "nyiso_gas_bridge_plant_exclusions",
       "nyiso_gas_bridge_plant_min_run",
       "nyiso_gas_bridge_reserve_duty_exclusions",
+      "nyiso_gas_bridge_startup_aware",
       "nyiso_gas_bridge_state_floor_min_run",
+      "pjm_interface_feed_admissibility_gate",
       "reliability_floor_plant_exclusions",
       "unit_outage_mixed_gas_routing",
       "unit_outage_per_unit_clip",
@@ -334,7 +338,7 @@
       "nyiso_solar_registry_cod_dates"
     ],
     "added_kwargs_all_at_scenario_default": true,
-    "supersedes": "2026-08-05-pjm-2022-touchpoint",
+    "supersedes": "2026-09-05-pjm-2022-2021-touchpoints",
     "generator": "scripts/gen_touchpoint_attestation.py"
   }
 }

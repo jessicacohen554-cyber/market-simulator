@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T23:29:55",
+  "timestamp": "2026-09-07T01:09:30",
   "iso": "PJM",
   "years": [
     2022,
@@ -260,6 +260,7 @@
   "caiso_st_gas_committed_measured": false,
   "caiso_st_gas_peak_measured": false,
   "caiso_ct_peaker_committed_measured": false,
+  "nyiso_ct_peaker_bands_measured": false,
   "caiso_offer_surface_conditional": false,
   "nearby_fuel_price_zone_donor_guard": false,
   "fleet_state_from_eia860": false,
@@ -304,6 +305,8 @@
   "reliability_floor": true,
   "reliability_floor_plant_exclusions": null,
   "ct_netload_drag": true,
+  "pjm_interface_feed_admissibility_gate": null,
+  "gas_offer_margin_anchor_vintage": false,
   "gas_st_netload_drag": true,
   "ct_drag_overrides": {
     "ct_drag_slope_per_gw": 0.01108,
@@ -375,6 +378,7 @@
   "nyiso_gas_bridge_plant_min_run": null,
   "nyiso_gas_bridge_online_hours": null,
   "nyiso_gas_bridge_state_floor_min_run": null,
+  "nyiso_gas_bridge_startup_aware": null,
   "nyiso_chp_btm_measured": null,
   "cc_reserve_duty_split": null,
   "chp_layup_duty_split": null,
@@ -428,8 +432,8 @@
     "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet",
     "capacity_deliverability": "../_shared/PJM/capacity_deliverability-7b81c5eca3cf.parquet"
   },
-  "git_sha": "46e08e5b",
-  "basis_sha": "c8fec4df6f61ab3ee7162bd4902c30836677fb0f",
+  "git_sha": "f36cee6e",
+  "basis_sha": "a269fb77b4a09a7b7431a212499e1072ed028617",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
