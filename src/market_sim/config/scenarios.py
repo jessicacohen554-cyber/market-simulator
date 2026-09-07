@@ -1584,6 +1584,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly through that field too. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "gas_offer_margin_anchor_vintage",
+    # nyiso-212: the CC summer derate on the reconciled capacity basis (GATED
+    # default False => the incumbent nameplate ratio, byte-identical). Dropped
+    # from the hash at its declared False so every pre-existing key of all six
+    # ISOs is byte-stable; an armed run carries a different Jun-Sep capability
+    # at every reconciled CC plant and so keys distinctly. SHARED field -- very
+    # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "cc_summer_derate_reconciled_basis",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2145,6 +2153,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia860_vintage_tracks_solve_year": "False",
     "pjm_interface_feed_admissibility_gate": "False",
     "gas_offer_margin_anchor_vintage": "False",
+    "cc_summer_derate_reconciled_basis": "False",
 }
 
 
@@ -13040,6 +13049,38 @@ class ScenarioConfig:
     # Coal/CT/ST and ERCOT (CAMPD-bin nameplate capacity) are unaffected. Off by
     # default.
     cc_nameplate_summer_derate: bool = False
+
+    # Summer derate on the RECONCILED capacity basis (nyiso-212, GATED default
+    # off; rule 19 [R-ONE-MECH] seam repair, rule 14 [R-ACCURATE]: both inputs
+    # stay). Under cc_nameplate_summer_derate the Jun-Sep multiplier is
+    # net_summer / nameplate (fleet.cc_summer_derate_ratio), premised on
+    # fleet_to_bins having carried the plant at NAMEPLATE. A cc_capacity_reconcile
+    # row moves that capacity to the CAMPD demonstrated peak AFTER the rescale
+    # (campd_bins._reconcile_cc_capacity, "applied after the summer-derate
+    # nameplate rescale"), and the nameplate ratio was still applied to it — so
+    # every cap plant's summer capability read reconciled x net_summer / nameplate
+    # instead of the published net_summer, i.e. the plant's summer capability was
+    # stated TWICE by two constructions that disagree by ratio x (nameplate -
+    # reconciled). MEASURED at NYISO (docs/FINDING-nyiso212-cricket-valley-summer-
+    # seam-2026-09-07.md; zero LP): Cricket Valley 57185's statistical factor
+    # reads 0.965 off-summer and 0.747075 = 0.965 x (1016.1 / 1312.5) in Jun-Sep
+    # on a capacity already capped to 1,086.9 — a constructed summer capability
+    # of 841.4 MW against a published net-summer rating of 1,016.1 and a measured
+    # summer p99.9 of 1,078; the plant's own meter exceeds that ceiling in 1,906
+    # summer hours (261.7 GWh) over 2023-2025, and the seam removes 470.2 MW of
+    # Jun-Sep capability across NYISO's 12 cap-row CC_REGULAR plants (the sign
+    # reverses at the 3 raise rows). With this flag, at every plant the
+    # reconcile table lists the summer multiplier becomes min(1, net_summer /
+    # capacity actually carried) — the ratio divided by the capacity it
+    # multiplies — so the summer capability is stated ONCE (the published
+    # net-summer rating) and the cap bounds the year. Unlisted plants are
+    # byte-identical (their carried capacity IS nameplate, so the ratio is
+    # unchanged); a missing table no-ops; requires cc_capacity_reconcile AND
+    # cc_nameplate_summer_derate (it repairs their composition and does nothing
+    # alone). Zero free parameters. It does NOT touch the WEFOR residual on the
+    # capped capacity nor the gap between the published net-summer rating and
+    # the measured summer peak — both named, not absorbed (FINDING §7).
+    cc_summer_derate_reconciled_basis: bool = False
 
     # BASIS-AWARE flat summer derate (summer_derate_basis_aware, off by
     # default; miso-148). The flat class haircut _SUMMER_CLASS_DERATE

@@ -118,6 +118,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     cc_winter_capability_basis: { cell: "R", ev: "caiso-186 (results/calibration/PRECHECK-caiso186-seasonal-capability-2026-08-09.md @ 7fb3bee1, FINDING-caiso186-seasonal-capability-2026-08-09.md; probes _caiso186_seasonal_capability.py / _caiso186_be_proof.py; records _caiso186_seasonal_capability.json / _caiso186_be_proof.json; test tests/unit/data/test_fleet.py::TestCcWinterCapabilityBasis)" },
     cc_capacity_reconcile: { cell: "R", ev: "caiso-185 (results/calibration/PRECHECK-caiso185-cc-reconcile-2026-08-09.md, FINDING-caiso185-cc-reconcile-2026-08-09.md; probes _caiso185_table_provenance.py / _caiso185_seasonal_stack.py / _caiso185_arm_capability.py / _caiso185_g358.py / _caiso185_be_proof.py; records _caiso185_table_provenance.json / _caiso185_seasonal_stack.json / _caiso185_arm_capability.json / _caiso185_g358.json / _caiso185_be_proof.json)" },
     cc_capacity_reconcile_path: { cell: "U" },
+    cc_summer_derate_reconciled_basis: { cell: "U" },
     cc_mustrun_per_plant: { cell: "R", ev: "caiso-140 (FINDING-caiso140-belly-supply-state-2026-07-30 §C/§D; probes _caiso140_belly_supply_state.py + _caiso140_d3_walkdown.py)" },
     winter_fuelsec_posture: { cell: "." },
     chp_steam_following: { cell: "K" },

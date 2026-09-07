@@ -237,6 +237,23 @@ applied to a capacity *above* nameplate, so Astoria / Caithness / Zeltmann carry
 * **The reconcile table's own comment** ("bounds the final LP capacity") is true of the capacity
   leg and false of the availability leg; the docstrings of both mechanisms describe the pre-seam
   world.
+* **This seam was named before, at CAISO, and NYISO armed the composition anyway — on its own
+  evidence, without addressing it.** The `cc_capacity_reconcile` base row (matrix, caiso-185,
+  2026-08-09) refused the flag at CAISO *ex ante* on exactly this construction: *"the demonstrated
+  peak is a REALIZED OUTPUT and therefore sits on the availability-INCLUSIVE side of pmax ×
+  availability, while capacity_mw is the availability-EXCLUSIVE slot the hook writes it into …
+  every multiplier between the two — the cc_nameplate_summer_derate seasonal ratio, WEFOR/POF …
+  — is applied a SECOND time"*, measured there as 0.76–0.98 of each capped plant's own summer
+  output, and it flagged PJM's `reconcile + summer derate` composition as *"a live unmeasured
+  exposure"*. NYISO's cell records the flag's promotion by nyiso-188 (2026-09-04, U → K: *"bounds
+  the FINAL LP capacity_mw at the CAMPD p99.9 … −740 MW over 12 capped plants … NOT-YET (grade 5,
+  fails 3) → CALIBRATED (grade 7, fails 0)"*) with no mention of the summer-ratio stacking, and the
+  nyiso-190/191/192 entries adjudicate scope, not this composition. Rule 28(d) is respected in both
+  directions: CAISO's `R` transferred nothing to NYISO, and this session's measurement is NYISO's
+  own — but the record now shows the same construction measured inadmissible at two ISOs, and
+  the NYISO keeper's current determination was reached **with the seam armed**. That is a fact
+  about provenance, stated here so it cannot be read as a fit argument later (rule 1: the seam is
+  wrong whatever the repair does to any gate).
 
 ## 6. Rule 14 / rule 19 reading, stated plainly
 
@@ -261,12 +278,23 @@ seam".
   where `summer_capability` is the plant's net-summer capability before any reconcile (the
   quantity step 1 of §3 rescales *from*). Byte-identical for every unreconciled plant (the ratio is
   then unchanged), 0.9349 instead of 0.7742 at Cricket Valley, deeper at the three `raise` plants.
-  Zero free parameters. It needs its own `ScenarioConfig` field, a matrix row in every ISO shard
-  (rule 28(c)), a unit test on the seam, and a **separately pre-registered rule-29 screen** — the
-  screen year chosen by the mechanism's own measured footprint (§4's table; the seam is a constant
-  MW so the footprint is the summer over-ceiling energy: 2025 at 57185, 292 GWh) — before any
-  full-span arm exists to which the owner's formula and D-5(b) could apply. **Nothing is armed
-  here.**
+  Zero free parameters. **BUILT IN THIS SESSION, GATED AND DEFAULT-OFF:**
+  `ScenarioConfig.cc_summer_derate_reconciled_basis` (registered in
+  `_CACHE_KEY_OPTIONAL_FIELDS` at `False`, so every existing key is byte-stable),
+  `fleet/arrays.py::_reconciled_summer_ratios` feeding both `cc_summer_derate_ratio` read sites
+  in `_availability_matrix` (the summer leg and the temperature-curve anchor, so the two can never
+  disagree), the replay override `--cc-summer-derate-reconciled-basis` on the same recorded bag
+  as `--caiso-dsw-daytime-evening-trim` (so a rule-29 arm is provably the keeper recipe plus one
+  value), the matrix row + a `U` cell in all seven shards (rule 28(c)), and
+  `tests/unit/data/test_cc_summer_derate_reconciled_basis.py` (listed-plant summer ratio moves by
+  exactly nameplate / carried; unlisted plant byte-identical; inert without the reconcile; default
+  off and cache-key registered). It acts only where BOTH `cc_nameplate_summer_derate` and
+  `cc_capacity_reconcile` are armed and only at the plants the table lists. Its **rule-29 screen is
+  pre-registered separately** (`PREREG-nyiso212-summer-seam-screen.md`), the screen year chosen by
+  the mechanism's own measured footprint (§4's table; the seam is a constant MW, so the footprint
+  is the summer over-ceiling energy: 2025 at 57185, 292 GWh) — and only an arm that clears that
+  screen and the full 2023–2025 span becomes a candidate to which the owner's formula and D-5(b)
+  apply. **Nothing is armed on the keeper here.**
 * **A rule-14 question, named and not pursued:** what a CC plant's *summer capability* should be
   measured as, once a demonstrated-peak cap exists. EIA net summer (1,016) sits 6 % below the
   measured summer p99.9 (1,078), and a 3.5 % WEFOR residual sits on top of a capacity that is
