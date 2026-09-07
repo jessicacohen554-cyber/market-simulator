@@ -1,0 +1,544 @@
+{
+  "probe": "miso-242 phase 0 \u2014 why is the model's SPP seam at EXACTLY ZERO in 42/41/48 % of hours?",
+  "prereg": "results/calibration/PREREG-miso242-why-the-spp-seam-is-idle-2026-09-07.md",
+  "keeper": "2026-09-07-miso-233-spp-hourly",
+  "zero_lp": true,
+  "queue_item": "miso-241 handoff item 1 (RECOMMENDED)",
+  "price_basis": "ok mask = Indiana hub RT finite; every spread = Indiana hub DA; SPP anchor = measured SPP NORTH hub DA; p_bus = keeper MISO_external P1",
+  "bars": {
+    "tol_share": 0.002,
+    "tol_mean_n": 0.01,
+    "tol_identity_mw": 1e-06,
+    "tol_corr": 0.002,
+    "tol_level_mw": 0.5,
+    "qa_bar": 0.02,
+    "qb_bar": 0.05
+  },
+  "predecessor_artifacts": {
+    "miso241": "_miso241_spp_quantity_side_charter_phase0.json"
+  },
+  "years": {
+    "2023": {
+      "provenance": {
+        "G_Z": {
+          "zero_share_recomputed": 0.4175,
+          "zero_share_reference": 0.4175,
+          "abs_delta_zero": 0.0,
+          "env_i_zero_recomputed": 0.0106,
+          "env_i_zero_reference": 0.0106,
+          "abs_delta_env_i_zero": 0.0
+        },
+        "G_L": {
+          "ceiling_active_share_recomputed": 0.2572,
+          "ceiling_active_share_reference": 0.2572,
+          "abs_delta_ceiling": 0.0,
+          "mean_bands_in_merit_import_recomputed": 0.5035,
+          "mean_bands_in_merit_import_reference": 0.5035,
+          "abs_delta_mean_n": 0.0
+        },
+        "G_ID": {
+          "max_abs_mw": 0.0,
+          "total_prefix_violations": 0
+        },
+        "G_B": {
+          "corr_recomputed": 0.9917,
+          "corr_reference": 0.9917,
+          "abs_delta_corr": 0.0,
+          "level_recomputed": 8.9,
+          "level_reference": 8.9,
+          "abs_delta_level_mw": 0.02
+        },
+        "G_DB": {
+          "seams": {
+            "SPP": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.4175,
+              "share_from_dead_band": 0.4175
+            },
+            "PJM": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.0042,
+              "share_from_dead_band": 0.0042
+            }
+          },
+          "total_disagreeing_hours": 0
+        }
+      },
+      "QA": {
+        "SPP": {
+          "n_rows_R_D": 8754,
+          "mid1_mw": 250.0,
+          "Z_target": 0.3501,
+          "Z_derive": 0.3897,
+          "abs_delta": 0.0395,
+          "P_flow_gt_mid1": 0.4051,
+          "P_flow_lt_neg_mid1": 0.2448,
+          "spread_derive_mean": 8.75,
+          "spread_derive_sigma": 22.12,
+          "measured_flow_mean_mw": 109.9,
+          "measured_flow_sigma_mw": 577.5
+        },
+        "PJM": {
+          "n_rows_R_D": 8760,
+          "mid1_mw": 456.25,
+          "Z_target": 0.0022,
+          "Z_derive": 0.0022,
+          "abs_delta": 0.0,
+          "P_flow_gt_mid1": 0.9975,
+          "P_flow_lt_neg_mid1": 0.0003,
+          "spread_derive_mean": 4.12,
+          "spread_derive_sigma": 7.93,
+          "measured_flow_mean_mw": 4673.8,
+          "measured_flow_sigma_mw": 1615.4
+        },
+        "VERDICT": "IDENTITY FAILS"
+      },
+      "QB": {
+        "SPP": {
+          "n_rows_R_K": 8760,
+          "Z_model": 0.4175,
+          "Z_derive_K": 0.3901,
+          "abs_delta": 0.0274,
+          "signed_delta": 0.0274,
+          "mean_s_model": 10.11,
+          "mean_s_derive": 8.74,
+          "sigma_s_model": 18.59,
+          "sigma_s_derive": 22.11
+        },
+        "PJM": {
+          "n_rows_R_K": 8760,
+          "Z_model": 0.0042,
+          "Z_derive_K": 0.0022,
+          "abs_delta": 0.0021,
+          "signed_delta": 0.0021,
+          "mean_s_model": 5.48,
+          "mean_s_derive": 4.12,
+          "sigma_s_model": 9.92,
+          "sigma_s_derive": 7.93
+        },
+        "VERDICT": "TRANSMITTED"
+      },
+      "QD": {
+        "gated_question": "Z_target(PJM) < Z_target(SPP)?",
+        "Z_target_PJM": 0.0022,
+        "Z_target_SPP": 0.3501,
+        "PJM_lt_SPP": true,
+        "reported_not_gated": {
+          "dead_band_width_SPP": 18.3,
+          "dead_band_width_PJM": 64.81,
+          "Z_model_PJM": 0.0042,
+          "Z_derive_K_PJM": 0.0022,
+          "import_leg_zero_share_PJM": 0.0055,
+          "import_leg_zero_share_SPP": 0.5718
+        }
+      },
+      "QE": {
+        "E1_corr_model_net_vs_s_model": 0.7946,
+        "E1_PASS": true,
+        "reported_not_gated": {
+          "corr_measured_net_vs_s_derive": 0.0409,
+          "corr_p_bus_vs_miso_da": 0.6925,
+          "mean_p_bus": 34.35,
+          "mean_miso_da": 32.98,
+          "sigma_p_bus": 6.09,
+          "sigma_miso_da": 12.81,
+          "mean_spp_hub": 24.24
+        }
+      }
+    },
+    "2024": {
+      "provenance": {
+        "G_Z": {
+          "zero_share_recomputed": 0.4066,
+          "zero_share_reference": 0.4066,
+          "abs_delta_zero": 0.0,
+          "env_i_zero_recomputed": 0.0035,
+          "env_i_zero_reference": 0.0035,
+          "abs_delta_env_i_zero": 0.0
+        },
+        "G_L": {
+          "ceiling_active_share_recomputed": 0.2952,
+          "ceiling_active_share_reference": 0.2952,
+          "abs_delta_ceiling": 0.0,
+          "mean_bands_in_merit_import_recomputed": 0.488,
+          "mean_bands_in_merit_import_reference": 0.488,
+          "abs_delta_mean_n": 0.0
+        },
+        "G_ID": {
+          "max_abs_mw": 0.0,
+          "total_prefix_violations": 0
+        },
+        "G_B": {
+          "corr_recomputed": 0.9935,
+          "corr_reference": 0.9935,
+          "abs_delta_corr": 0.0,
+          "level_recomputed": 1.8,
+          "level_reference": 1.8,
+          "abs_delta_level_mw": 0.05
+        },
+        "G_DB": {
+          "seams": {
+            "SPP": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.4066,
+              "share_from_dead_band": 0.4066
+            },
+            "PJM": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.0354,
+              "share_from_dead_band": 0.0354
+            }
+          },
+          "total_disagreeing_hours": 0
+        }
+      },
+      "QA": {
+        "SPP": {
+          "n_rows_R_D": 8757,
+          "mid1_mw": 250.0,
+          "Z_target": 0.358,
+          "Z_derive": 0.3724,
+          "abs_delta": 0.0144,
+          "P_flow_gt_mid1": 0.3304,
+          "P_flow_lt_neg_mid1": 0.3116,
+          "spread_derive_mean": 10.07,
+          "spread_derive_sigma": 23.97,
+          "measured_flow_mean_mw": -42.7,
+          "measured_flow_sigma_mw": 687.4
+        },
+        "PJM": {
+          "n_rows_R_D": 8760,
+          "mid1_mw": 456.25,
+          "Z_target": 0.0142,
+          "Z_derive": 0.0142,
+          "abs_delta": 0.0,
+          "P_flow_gt_mid1": 0.9838,
+          "P_flow_lt_neg_mid1": 0.0021,
+          "spread_derive_mean": 2.81,
+          "spread_derive_sigma": 9.91,
+          "measured_flow_mean_mw": 3678.4,
+          "measured_flow_sigma_mw": 1563.9
+        },
+        "VERDICT": "IDENTITY HOLDS"
+      },
+      "QB": {
+        "SPP": {
+          "n_rows_R_K": 8760,
+          "Z_model": 0.4066,
+          "Z_derive_K": 0.3723,
+          "abs_delta": 0.0344,
+          "signed_delta": 0.0344,
+          "mean_s_model": 10.86,
+          "mean_s_derive": 10.07,
+          "sigma_s_model": 24.11,
+          "sigma_s_derive": 23.97
+        },
+        "PJM": {
+          "n_rows_R_K": 8760,
+          "Z_model": 0.0354,
+          "Z_derive_K": 0.0142,
+          "abs_delta": 0.0212,
+          "signed_delta": 0.0212,
+          "mean_s_model": 3.59,
+          "mean_s_derive": 2.81,
+          "sigma_s_model": 16.37,
+          "sigma_s_derive": 9.91
+        },
+        "VERDICT": "TRANSMITTED"
+      },
+      "QD": {
+        "gated_question": "Z_target(PJM) < Z_target(SPP)?",
+        "Z_target_PJM": 0.0142,
+        "Z_target_SPP": 0.358,
+        "PJM_lt_SPP": true,
+        "reported_not_gated": {
+          "dead_band_width_SPP": 16.64,
+          "dead_band_width_PJM": 21.16,
+          "Z_model_PJM": 0.0354,
+          "Z_derive_K_PJM": 0.0142,
+          "import_leg_zero_share_PJM": 0.0467,
+          "import_leg_zero_share_SPP": 0.5788
+        }
+      },
+      "QE": {
+        "E1_corr_model_net_vs_s_model": 0.6989,
+        "E1_PASS": true,
+        "reported_not_gated": {
+          "corr_measured_net_vs_s_derive": -0.02,
+          "corr_p_bus_vs_miso_da": 0.5863,
+          "mean_p_bus": 32.16,
+          "mean_miso_da": 31.37,
+          "sigma_p_bus": 16.51,
+          "sigma_miso_da": 19.89,
+          "mean_spp_hub": 21.3
+        }
+      }
+    },
+    "2025": {
+      "provenance": {
+        "G_Z": {
+          "zero_share_recomputed": 0.481,
+          "zero_share_reference": 0.481,
+          "abs_delta_zero": 0.0,
+          "env_i_zero_recomputed": 0.0034,
+          "env_i_zero_reference": 0.0034,
+          "abs_delta_env_i_zero": 0.0
+        },
+        "G_L": {
+          "ceiling_active_share_recomputed": 0.2474,
+          "ceiling_active_share_reference": 0.2474,
+          "abs_delta_ceiling": 0.0,
+          "mean_bands_in_merit_import_recomputed": 0.3311,
+          "mean_bands_in_merit_import_reference": 0.3311,
+          "abs_delta_mean_n": 0.0
+        },
+        "G_ID": {
+          "max_abs_mw": 0.0,
+          "total_prefix_violations": 0
+        },
+        "G_B": {
+          "corr_recomputed": 0.9935,
+          "corr_reference": 0.9935,
+          "abs_delta_corr": 0.0,
+          "level_recomputed": 5.8,
+          "level_reference": 5.8,
+          "abs_delta_level_mw": 0.03
+        },
+        "G_DB": {
+          "seams": {
+            "SPP": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.481,
+              "share_from_dead_band": 0.481
+            },
+            "PJM": {
+              "disagreeing_hours": 0,
+              "share_from_counts": 0.0876,
+              "share_from_dead_band": 0.0876
+            }
+          },
+          "total_disagreeing_hours": 0
+        }
+      },
+      "QA": {
+        "SPP": {
+          "n_rows_R_D": 8757,
+          "mid1_mw": 250.0,
+          "Z_target": 0.3698,
+          "Z_derive": 0.3787,
+          "abs_delta": 0.0089,
+          "P_flow_gt_mid1": 0.4101,
+          "P_flow_lt_neg_mid1": 0.2202,
+          "spread_derive_mean": 15.65,
+          "spread_derive_sigma": 29.17,
+          "measured_flow_mean_mw": 109.8,
+          "measured_flow_sigma_mw": 615.3
+        },
+        "PJM": {
+          "n_rows_R_D": 8760,
+          "mid1_mw": 456.25,
+          "Z_target": 0.0314,
+          "Z_derive": 0.0314,
+          "abs_delta": 0.0,
+          "P_flow_gt_mid1": 0.9653,
+          "P_flow_lt_neg_mid1": 0.0033,
+          "spread_derive_mean": 2.29,
+          "spread_derive_sigma": 12.73,
+          "measured_flow_mean_mw": 3198.5,
+          "measured_flow_sigma_mw": 1646.9
+        },
+        "VERDICT": "IDENTITY HOLDS"
+      },
+      "QB": {
+        "SPP": {
+          "n_rows_R_K": 8759,
+          "Z_model": 0.481,
+          "Z_derive_K": 0.3793,
+          "abs_delta": 0.1017,
+          "signed_delta": 0.1017,
+          "mean_s_model": 13.21,
+          "mean_s_derive": 15.65,
+          "sigma_s_model": 21.21,
+          "sigma_s_derive": 29.16
+        },
+        "PJM": {
+          "n_rows_R_K": 8759,
+          "Z_model": 0.0876,
+          "Z_derive_K": 0.0314,
+          "abs_delta": 0.0562,
+          "signed_delta": 0.0562,
+          "mean_s_model": -0.15,
+          "mean_s_derive": 2.28,
+          "sigma_s_model": 17.17,
+          "sigma_s_derive": 12.73
+        },
+        "VERDICT": "DISPLACED"
+      },
+      "QD": {
+        "gated_question": "Z_target(PJM) < Z_target(SPP)?",
+        "Z_target_PJM": 0.0314,
+        "Z_target_SPP": 0.3698,
+        "PJM_lt_SPP": true,
+        "reported_not_gated": {
+          "dead_band_width_SPP": 20.81,
+          "dead_band_width_PJM": 44.7,
+          "Z_model_PJM": 0.0876,
+          "Z_derive_K_PJM": 0.0314,
+          "import_leg_zero_share_PJM": 0.0988,
+          "import_leg_zero_share_SPP": 0.7052
+        }
+      },
+      "QE": {
+        "E1_corr_model_net_vs_s_model": 0.7434,
+        "E1_PASS": true,
+        "reported_not_gated": {
+          "corr_measured_net_vs_s_derive": 0.0502,
+          "corr_p_bus_vs_miso_da": 0.7833,
+          "mean_p_bus": 41.3,
+          "mean_miso_da": 43.73,
+          "sigma_p_bus": 15.22,
+          "sigma_miso_da": 26.12,
+          "mean_spp_hub": 28.08
+        }
+      }
+    }
+  },
+  "G_T": {
+    "ladder_matches_prereg": true,
+    "monotonicity_violations": 0,
+    "detail": {
+      "2023": {
+        "spp_import_matches": true,
+        "spp_export_matches": true,
+        "pjm_band1_matches": true,
+        "monotonicity_violations": 0,
+        "spp_dead_band": [
+          -4.2,
+          14.1
+        ],
+        "spp_dead_band_width": 18.3,
+        "pjm_dead_band": [
+          -93.98,
+          -29.17
+        ],
+        "pjm_dead_band_width": 64.81
+      },
+      "2024": {
+        "spp_import_matches": true,
+        "spp_export_matches": true,
+        "pjm_band1_matches": true,
+        "monotonicity_violations": 0,
+        "spp_dead_band": [
+          -2.15,
+          14.49
+        ],
+        "spp_dead_band_width": 16.64,
+        "pjm_dead_band": [
+          -35.03,
+          -13.87
+        ],
+        "pjm_dead_band_width": 21.16
+      },
+      "2025": {
+        "spp_import_matches": true,
+        "spp_export_matches": true,
+        "pjm_band1_matches": true,
+        "monotonicity_violations": 0,
+        "spp_dead_band": [
+          1.04,
+          21.85
+        ],
+        "spp_dead_band_width": 20.81,
+        "pjm_dead_band": [
+          -60.49,
+          -15.79
+        ],
+        "pjm_dead_band_width": 44.7
+      }
+    },
+    "PASS": true
+  },
+  "read_only_derive_verification_reported_not_gated": {
+    "2023": {
+      "import": [
+        14.1,
+        32.64,
+        54.43,
+        85.36,
+        145.25,
+        185.08,
+        185.08,
+        185.08
+      ],
+      "export": [
+        -4.2,
+        -24.96,
+        -47.33,
+        -92.59,
+        -241.46,
+        -521.38,
+        -521.38,
+        -521.38
+      ],
+      "notes": [],
+      "band1_import_delta_vs_committed": 0.0,
+      "band1_export_delta_vs_committed": 0.0
+    },
+    "2024": {
+      "import": [
+        14.49,
+        35.59,
+        78.29,
+        212.51,
+        290.73,
+        290.73,
+        290.73,
+        290.73
+      ],
+      "export": [
+        -2.15,
+        -19.39,
+        -33.38,
+        -42.97,
+        -54.84,
+        -64.17,
+        -70.15,
+        -83.23
+      ],
+      "notes": [],
+      "band1_import_delta_vs_committed": 0.0,
+      "band1_export_delta_vs_committed": 0.0
+    },
+    "2025": {
+      "import": [
+        21.85,
+        46.55,
+        87.43,
+        169.08,
+        216.02,
+        252.76,
+        276.99,
+        345.4
+      ],
+      "export": [
+        1.04,
+        -14.46,
+        -29.2,
+        -45.92,
+        -125.99,
+        -316.8,
+        -515.34,
+        -515.34
+      ],
+      "notes": [],
+      "band1_import_delta_vs_committed": 0.0,
+      "band1_export_delta_vs_committed": 0.0
+    }
+  },
+  "GATE": {
+    "failed_legs": [],
+    "PASS": true
+  },
+  "VERDICT": "TABLE-INTERNAL",
+  "QD_gated": true
+}
