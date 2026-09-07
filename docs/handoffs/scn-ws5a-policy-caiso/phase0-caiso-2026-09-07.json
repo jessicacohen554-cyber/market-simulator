@@ -1,0 +1,5342 @@
+{
+  "base_config": "configs/scenarios/caiso_scenario_base_2026_2030.yaml",
+  "cases": {
+    "ALL-CLEAN": {
+      "cache_key": "e2820065dbdcb708",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153123870427244
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 22.623719870427244
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 32.7471126700134
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153679670013396
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 39.387607930630146
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 29.730145930630147
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 46.07687163352908
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 33.35538063352909
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 52.81727577820596
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 37.03175577820596
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "mid",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        },
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CAP-STATE-TIGHT": {
+      "cache_key": "2c5abed281bcee82",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": {
+              "cap_tons": 30500000.0,
+              "label": "co2"
+            },
+            "price_adder": null
+          },
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": 30500000.0,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": {
+              "cap_tons": 29500000.0,
+              "label": "co2"
+            },
+            "price_adder": null
+          },
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": 29500000.0,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": {
+              "cap_tons": 28500000.0,
+              "label": "co2"
+            },
+            "price_adder": null
+          },
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": 28500000.0,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": {
+              "cap_tons": 27500000.0,
+              "label": "co2"
+            },
+            "price_adder": null
+          },
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": 27500000.0,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": {
+              "cap_tons": 26500000.0,
+              "label": "co2"
+            },
+            "price_adder": null
+          },
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": 26500000.0,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": true,
+        "mass_cap_program": "co2",
+        "mass_cap_tons_by_year": {
+          "CAISO": {
+            "2026": 30500000.0,
+            "2030": 26500000.0,
+            "2040": 16500000.0,
+            "2050": 6100000.0
+          },
+          "NEISO": {
+            "2026": 20670000.0,
+            "2030": 18000000.0,
+            "2040": 11400000.0,
+            "2050": 4100000.0
+          },
+          "NYISO": {
+            "2026": 23160000.0,
+            "2030": 20200000.0,
+            "2040": 12800000.0,
+            "2050": 4600000.0
+          }
+        },
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CARB-HI": {
+      "cache_key": "2d1950d20e4ce38a",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "high",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CARB-LO": {
+      "cache_key": "7dc545a5e5abbe8b",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "low",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CARB-MID": {
+      "cache_key": "e43c47c8f49e4dd1",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "mid",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CARB-MID+LOAD-HI": {
+      "cache_key": "2eaf1143794bada5",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153123870427244
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 22.623719870427244
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 32.7471126700134
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153679670013396
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 39.387607930630146
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 29.730145930630147
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 46.07687163352908
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 33.35538063352909
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 52.81727577820596
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 37.03175577820596
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "mid",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-P10": {
+      "cache_key": "f672e9134d51a475",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 10.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 10.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 10.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 10.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 10.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 10.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 10.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-P20": {
+      "cache_key": "46f5eb984e5a4614",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-P20+VOL-HI": {
+      "cache_key": "130a2410b012cf93",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 20.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 20.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-P30": {
+      "cache_key": "cedae86096ba6c3e",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 30.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 30.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 30.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 30.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 30.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 30.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 30.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-P60": {
+      "cache_key": "cb35acef1879e80e",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 60.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 60.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 60.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 60.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 60.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 60.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 60.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "CES-T80": {
+      "cache_key": "2ad09fb1eac689a9",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 1.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        },
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "LOAD-HI": {
+      "cache_key": "86bfde6ed2896b99",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153123870427244
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.058808,
+              "energy_non_dc_twh": 238.67894838034053,
+              "energy_total_twh": 245.73775638034053,
+              "iso_weight": 1.0,
+              "volume_twh": 22.623719870427244
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 32.7471126700134
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 13.186866,
+              "energy_non_dc_twh": 244.50308337516748,
+              "energy_total_twh": 257.6899493751675,
+              "iso_weight": 1.0,
+              "volume_twh": 26.153679670013396
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 39.387607930630146
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 19.314923999999998,
+              "energy_non_dc_twh": 250.90854913287689,
+              "energy_total_twh": 270.22347313287685,
+              "iso_weight": 1.0,
+              "volume_twh": 29.730145930630147
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 46.07687163352908
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 25.44298199999999,
+              "energy_non_dc_twh": 257.9236204191137,
+              "energy_total_twh": 283.3666024191137,
+              "iso_weight": 1.0,
+              "volume_twh": 33.35538063352909
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 52.81727577820596
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 31.57104,
+              "energy_non_dc_twh": 265.57794722757455,
+              "energy_total_twh": 297.14898722757454,
+              "iso_weight": 1.0,
+              "volume_twh": 37.03175577820596
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "REF": {
+      "cache_key": "2d16a246bb372e4a",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "VOL-HI": {
+      "cache_key": "810c744cda2cacfc",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    },
+    "VOL-MID": {
+      "cache_key": "ff4ddde42fbffe97",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "per_year": {
+        "2026": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 30.0242
+          },
+          "carbon_usd_per_t": 30.0242,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 21.81513222506544
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 2.9992487999999997,
+              "energy_non_dc_twh": 235.19854281331797,
+              "energy_total_twh": 238.197791613318,
+              "iso_weight": 1.0,
+              "volume_twh": 20.31550782506544
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 32.125894
+          },
+          "carbon_usd_per_t": 32.125894,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 24.520994832510382
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 5.2687896,
+              "energy_non_dc_twh": 240.65256540637978,
+              "energy_total_twh": 245.92135500637977,
+              "iso_weight": 1.0,
+              "volume_twh": 21.886600032510383
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 34.37470658
+          },
+          "carbon_usd_per_t": 34.37470658,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 27.24689236339693
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 7.5383303999999995,
+              "energy_non_dc_twh": 246.35702454246166,
+              "energy_total_twh": 253.89535494246167,
+              "iso_weight": 1.0,
+              "volume_twh": 23.47772716339693
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 36.780936040600004
+          },
+          "carbon_usd_per_t": 36.780936040600004,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 29.993474450117677
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 9.807871200000001,
+              "energy_non_dc_twh": 252.32004062647098,
+              "energy_total_twh": 262.12791182647095,
+              "iso_weight": 1.0,
+              "volume_twh": 25.08953885011768
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": {
+            "cap_spec": null,
+            "price_adder": 39.35560156344201
+          },
+          "carbon_usd_per_t": 39.35560156344201,
+          "ces_premium_usd_per_mwh": 0.0,
+          "entry_attr": {
+            "battery": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "gas_cc": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "geothermal": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "offshore_wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "solar": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            },
+            "wind": {
+              "credit_fraction": 0.0,
+              "eac_leg": 0.0
+            }
+          },
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 32.76141178939554
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 12.077412000000002,
+              "energy_non_dc_twh": 258.5499973674443,
+              "energy_total_twh": 270.6274093674443,
+              "iso_weight": 1.0,
+              "volume_twh": 26.72270578939554
+            }
+          }
+        }
+      },
+      "resolved": {
+        "caiso_fsno_subzonal_topology": false,
+        "caiso_ra_mustoffer": false,
+        "capacity_deliverability_limits": false,
+        "carbon_price_delta": 0.0,
+        "carbon_price_path": "zero",
+        "ccs_retrofit_available_year": 2028,
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_replaces_state_rps": false,
+        "federal_ces_suppresses_state_rps": false,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_program": null,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "rps_enabled": true,
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "mid",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "NP15",
+        "ZP26",
+        "LA_BASIN",
+        "SDGE",
+        "SP15_rest",
+        "WECC_import"
+      ]
+    }
+  },
+  "constants": {
+    "CARBON_PRICE_PATHS": {
+      "high": {
+        "2026": 0,
+        "2030": 30,
+        "2040": 70,
+        "2050": 110
+      },
+      "low": {
+        "2026": 0,
+        "2030": 8,
+        "2040": 18,
+        "2050": 25
+      },
+      "mid": {
+        "2026": 0,
+        "2030": 15,
+        "2040": 35,
+        "2050": 50
+      },
+      "zero": {
+        "2026": 0,
+        "2030": 0,
+        "2040": 0,
+        "2050": 0
+      }
+    },
+    "VOLUNTARY_BASELINE_ISO_WEIGHT_CAISO": null,
+    "VOLUNTARY_BASELINE_SHARE": {
+      "high": {
+        "2023": 0.08
+      },
+      "low": {
+        "2023": 0.06
+      },
+      "mid": {
+        "2023": 0.08
+      }
+    },
+    "VOLUNTARY_COMMITTED_DC_FRACTION": {
+      "high": {
+        "2026": 1.0
+      },
+      "low": {
+        "2026": 0.0
+      },
+      "mid": {
+        "2026": 0.5
+      }
+    },
+    "VOLUNTARY_ELIGIBLE_FUELS_DEFAULT": [
+      "wind",
+      "solar",
+      "offshore_wind",
+      "geothermal"
+    ],
+    "VOLUNTARY_WTP_CEILING_USD_PER_MWH": {
+      "high": 7.0,
+      "low": 2.0,
+      "mid": 4.5
+    }
+  },
+  "iso": "CAISO",
+  "matrix": "configs/scenario_campaign_matrix.yaml",
+  "set_legs": {
+    "CES-P60": [
+      "CES-P30",
+      {
+        "federal_ces_premium_usd_per_mwh": 60.0
+      }
+    ]
+  },
+  "years": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+  ]
+}
