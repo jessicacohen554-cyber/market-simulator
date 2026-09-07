@@ -209,6 +209,10 @@ W5  Calibration loop — §5.7 lever queue, ONE lever = ONE lane = ONE PR, seque
     ISSUED r#9: SPP-45 [OPUS] board-row re-key + records · SPP-58 [FABLE] second ψ identification (prerequisite for any
          SPS-tie rating) · SPP-54 [FABLE] SPS pocket (design now; rate + solve after SPP-58) · SPP-51 [FABLE] priced seams ·
          SPP-60 [FABLE] T1-H recipe + forecast intake (Q59). HELD: SPP-55 until SPP-44 lands (28c shard collision).
+    r#10: SPP-44 LANDED — 2023 screen KILLED (CC window agreement 0.694 < 0.76; D-4 unit-conduct FAIL at five laid-up
+         plants); the bridge fires 0.41 TWh against a 4.2 TWh measured committed-state gap — SPP's gas problem is units
+         the model NEVER STARTS, not units it stops (R-17 → SPP-46 queued: a measured commitment-STATE input on ST_GAS, or
+         a per-class band under the carve-out). Field landed default-off; cells U → R. SPP-55 hold LIFTED → ISSUED r#10.
     SPP-54 SPS-pocket third zone   ┐ P1 pre-declared levers, RANKED by SPP-12's per-flowgate
     SPP-57 Oklahoma-pocket zone    ┘ binding share + shadow price vs the N↔S corridor  [FABLE]
     SPP-55 VRL-based scarcity design                        [FABLE]
@@ -217,7 +221,7 @@ W5  Calibration loop — §5.7 lever queue, ONE lever = ONE lane = ONE PR, seque
 W6  Forecast-program entry — GATED, ROUTED to the capx director (P8)
     SPP-60 T1-F hindcast + program-status.json row + GOLDEN_ISOS + goldens  [FABLE]
 
-CRITICAL PATH (r#9):  keeper-3 ✔ (`2026-09-07-spp-3-screened-input`, screened input)  →  SPP-44 screen (RUNNING)  ∥  SPP-58 ψ₂ → SPP-54 rating/solve  ∥  SPP-51  ∥  SPP-60 (T1-H, per Q59)
+CRITICAL PATH (r#10):  keeper-3 ✔  →  SPP-58 ψ₂ → SPP-54 rating/solve  ∥  SPP-51  ∥  SPP-55 (scarcity, now unblocked)  ∥  SPP-60 (T1-H)  ∥  SPP-45 (gate-(a))
 ```
 
 Sequencing rules (playbook §8.5): lanes inside a wave are parallel because their files are disjoint by
@@ -268,6 +272,7 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-54** the SPS / Texas-Panhandle pocket as a third zone (P1's second lever; issued r#9: design now, rating + solve after SPP-58) | FABLE · topology + one link are design objects | spp | as SPP-57b's file list with `SPP-SPS` in place of `SPP-Oklahoma`; `PRECOMMIT-/FINDING-spp-54`; screen bundle (TEMPORARY) | zero-LP: the SPS bubble census (SPS sub-BA load, 4.65 GW wind, thermal), the measured SPS-vs-residual price table (SPP-57 R-13), the per-zone wind reconciliation SPP-57b R-18 asks for; link direction declared from the sps_tie set's own binding direction | `FINDING-spp-54-<date>.md` | screen year = largest `sps_tie` footprint, named ex ante; STOP gate with the E-6 thresholds; control = keeper-3; promotion = card P15 |
 | **SPP-51** priced seams MISO / AECI / ERCOT (P2's forward mechanism; issued r#9) | FABLE · carries SPP-33's R1 anchor map, R2 `HH + basis` correction and the ERCOT 820-vs-±835 clip adjudication | spp | `config/interchange/spec.py` SPP blocks (`hr_by_year`), the neighbour-anchor producer (`derive_neighbor_hr_by_year.py` per-ISO anchor map — SPP-33 R1), tests, SPP shard cell for the seam mechanism, `PRECOMMIT-/FINDING-spp-51` | zero-LP: the offer-array delta of the priced seam vs served; SWPP interchange duration curves by DIBA (SPP-33) as the footprint | `FINDING-spp-51-<date>.md` | A/B served vs `--priced-interchange` on the screen year; STOP gate = modelled interchange duration curve sign/magnitude vs EIA-930; MISO's own seam constants untouched (rule 25); promotion = card P15 |
 | **SPP-60** the SPP T1-H recipe + forecast data intake (W6 half ROUTED TO THIS DESK by owner ruling Q59; issued r#9) | FABLE · a forecast recipe is a design object; the intake gaps are adjudications | spp | `scripts/lib/load_forecast/spp.py` (a real edition + vintage — manifest row 11), the SPP rows of confirmed-retirement / planned-addition / queue-cap / fuel-trajectory registries, the T1-H hindcast bundle + sidecar via `register_forecast_run.py`, legs (b)/(c) of the SPP board row (after SPP-45), `PRECOMMIT-/FINDING-spp-60` | zero-LP first: the gap table (what T1-H reads vs what SPP has), the load-forecast edition census | `FINDING-spp-60-<date>.md` | backcast keeper untouched; `GOLDEN_ISOS` only if the readiness battery admits it (report, never assert); rule 22: the crossover window is forecast-mode, no measured H1-2026 actuals |
+| **SPP-55** VRL-based scarcity (P5's deferred object; issued r#10 once SPP-44's 28c edit merged) | FABLE · mechanism design: an in-LP reserve demand curve on SPP's own published VRL steps; kill-grading is adjudication | spp | `config/reserve_config.py` SPP entry (requirements + the VRL step curve, every number cited to SPP-12's Exhibit 4-1 / Planning Criteria), ONE new ISO-exclusive `ScenarioConfig` gate if the reserve machinery needs one (default off, drop value declared) + matrix row + a cell in EVERY shard (28c), tests, `PRECOMMIT-/FINDING-spp-55`, screen bundle (TEMPORARY), `results/calibration/spp55_vrl_B/` if the screen clears, the SPP shard cells it moves | zero-LP: rule-19 enumeration (SPP has NO scarcity mechanism, zero slack/dump — price-family §1.3); the measured target (42 / 59 / 68 h > $200 at ordinary load, 79–93× gas); footprint by year from the `spp-or-mcp` RTBM MCP files (hours the spinning MCP sits at/above the $250 VRL step) → screen year | `FINDING-spp-55-<date>.md` | STOP gate structural (the reserve row binds in the measured shortage hours; the price response has the VRL's own order; no non-target flip); never C3c-gated; control = keeper-3; promotion = card P15 |
 | **SPP-51…57** | per §4 (SPP-51 → **FABLE** since r#6: it carries SPP-33's R2 anchor correction and an ERCOT limit-vs-clip decision, both adjudications; SPP-58 added — see §8 W5) | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -2021,6 +2026,91 @@ row → LANDED; plan §1 row 6 updated to "T1-H registered; GOLDEN_ISOS pending 
 report: the gap table and the legs table first.
 ```
 
+#### SPP-55 `[FABLE]` — VRL-based scarcity: an in-LP reserve demand curve on SPP's own published steps (issued r#10)
+
+```
+You are lane SPP-55. MODEL: Fable claude-fable-5-1 — a mechanism design (which reserve object, on which
+published curve, in which LP row family) and a kill-graded screen. DATA PROFILE: spp.
+Branch stem: claude/spp-55-vrl-scarcity-d7xm.
+Read CLAUDE.md freshly and in full (rules 1, 4, 5, 12, 13, 17, 19, 21, 24, 25, 27, 28 — 28c BINDS if you add a
+field: matrix row + a cell in EVERY shard — 29); plan §3 P4 ("defer reserve co-optimisation — M2 LAST", still
+binding: you are NOT SPP-56; you build ONE scarcity demand curve, not a three-product co-opt priced on
+measured MCPs) and P5 ("no scarcity/ORDC seed at registration; SPP-55 designs the VRL-based mechanism after a
+keeper exists" — the keeper exists: keeper-3); FINDING-spp-12 "VRL steps" (Exhibit 4-1: Resource Capacity
+$100,000/MW · Global Power Balance $50,000/MW · Resource Ramp $5,000/MW · Operating Constraint $1,500/MW,
+non-escalating · M2M = MISO's shadow price · Spinning Reserve $250/MW — "the binding ceiling in an SPP shortage
+is the $250/MW spinning VRL and the $50,000/MW power-balance VRL"); FINDING-spp-price-family §1.3 (your measured
+target: the >$200 hours — 42 / 59 / 68 — sit at ORDINARY load (only 3 / 5 / 3 in the top-5 % load hours), at
+market heat rates 79–93× gas, in a model with no scarcity mechanism and zero slack/dump — C3c is a separate
+object from the load-driven level miss, unmoved by any band) and §6; data/raw/spp-or-mcp/ (RTBM_MCP_2023–2025,
+da-mcp — the measured per-reserve-zone MCPs; README: manifest row 9, "SPP-56 input only" under P4 — you may
+READ them for the footprint and the gate, never price a product on them); src/market_sim/config/
+reserve_config.py (how every other ISO's reserve requirements and demand-curve steps are registered — the
+MISO RBDC entry is your closest template; ERCOT's ORDC is a post-solve overlay and is NOT the pattern);
+the matrix rows ordc_scarcity_overlay, energy_reserve_coopt, dynamic_reserve_requirements,
+reserve_family_dual_sidecar and SPP's cells (all U or ·); CLAUDE.md rule 15's reserve_family sidecar
+paragraph (the ONLY artifact in which a reserve family's binding is observable); FINDING-spp-44 §2 (rule 19:
+nothing floors SPP's gas fleet; no scarcity, no floor, no bridge armed) and §6 R-17/R-18 (the gas-split
+object is NOT yours — do not let a reserve requirement become a back-door commitment floor: if the curve's
+main effect is to start ST_GAS plants, say so and stop); FINDING-spp-43 (keeper-3's recipe in
+spp43_screened_B/meta.json = your control); SPP-12/SPP-13 transcriptions of SPP's Planning Criteria and
+Market Protocols (reserve requirement definitions: contingency reserve = largest single contingency, the
+spin share, regulation).
+
+PRECONDITIONS: SPP-43 LANDED (keeper-3 = control); SPP-44 LANDED (PR #5535 — its 28c every-shard edit is
+merged, so yours will not collide; rebase LAST and re-run check_mechanism_matrix). Ask the desk before any
+solve (rule 12; SPP-54 / SPP-51 / SPP-60 may be solving).
+FILES YOU OWN: reserve_config.py's SPP entry ONLY (requirements by product, the VRL step curve — every
+$/MW and MW cited to SPP's own publication and its page), at most ONE new ISO-exclusive ScenarioConfig gate
+(default off, `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` drop value declared; seven keys unmoved by key diff),
+the LP-side wiring ONLY if the existing reserve row family cannot express a stepped demand curve for SPP
+(state which existing family you use FIRST; a new family is a STOP-and-report, not a build), tests, the
+matrix row (if a field) + a cell line in EVERY shard, docs/mechanism-testing-matrix.md §5.7, PRECOMMIT-/
+FINDING-spp-55, the screen bundle (TEMPORARY), results/calibration/spp55_vrl_B/ if the screen clears, the
+SPP shard cells you move. MUST NOT TOUCH: any other ISO's reserve entry, branch or cells beyond one `·`
+line; offer bands (rule 25); keepers/SPP.json (promotion = card P15); the ORDC post-solve overlay path
+(rule 19 — one scarcity mechanism per ISO, and yours is in the LP); reliability_floor_overrides; the
+SPP-44 bridge field (it stays default-off, R).
+
+DO, in order:
+(0) DESIGN + MEASURE, zero-LP, in the PRECOMMIT before any solve: (a) rule-19 enumeration — every
+    mechanism that could price scarcity or reserves in SPP today (expected: none armed; ORDC overlay `·`;
+    co-opt off) and the statement that the curve REPLACES nothing and STACKS on nothing; (b) THE OBJECT:
+    which reserve product carries SPP scarcity in the LP — the contingency/spinning requirement with the
+    $250/MW spinning VRL as the first step and the $50,000/MW power-balance VRL as the ceiling (a two-step
+    demand curve in the reserve balance row, MISO-RBDC form), requirement = SPP's own published rule
+    (largest single contingency; the spin share) regenerating from the fleet each year (rule 13);
+    (c) THE FOOTPRINT by year from the measured RTBM MCPs: hours the spinning MCP ≥ the $250 step (reserve
+    shortage hours) and hours the energy price carries the power-balance VRL; the SCREEN YEAR = the year
+    with the largest measured shortage-hour footprint, named here, NEVER the year with the biggest C3c
+    residual; (d) rule 17 for the row: driver (SPP's own VRL), window (the shortage hours the curve may
+    price), forward story (VRLs are tariff parameters; requirements regenerate from the fleet); (e) THE
+    STOP GATE, structural: (i) the reserve row binds (dual > 0) in ≥ a declared share of the MEASURED
+    shortage hours and in ≤ a declared share of non-shortage hours (window agreement, both sides);
+    (ii) when it binds, the energy price rises by the order of the VRL step (the reserve_family sidecar's
+    dual against $250 / $50,000 — the identity the design asserts); (iii) no ST_GAS / CC commitment
+    side-effect beyond what the requirement's MW implies (the SPP-44 R-17 guard: the curve prices
+    scarcity, it does not start plants — report ΔE by class); (iv) no non-target load-bearing criterion
+    flips PASS → FAIL; it NEVER reads C3c or C3a. G-DRIFT vs keeper-3's git_sha. (f) DOF ledger: every
+    step and requirement MEASURED (published), zero tuned.
+(1) IMPLEMENT: the reserve_config SPP entry, the gate if needed, tests (seven keys unmoved; every other
+    ISO's reserve rows byte-identical), matrix row/cells.
+(2) SCREEN on the named year (keeper-3's recipe + the gate); grade against the STOP gate only from the
+    screen's reserve_family_<year>.parquet and system sidecars; a kill is the result. Report beside it,
+    never gated: hours > $200 vs 42/59/68, the C3c row, load-weighted price, unserved.
+(3) FULL SPAN only if it clears; LOYO; delete the screen bundle before the PR (29c); register as a
+    CANDIDATE; stamp the SPP shard cells (U → K / R / I / O with evidence); do NOT edit keepers/SPP.json.
+GATES before push: check_mechanism_matrix.py 0; pytest tests/unit/config tests/unit/model tests/unit/pipeline
+-q; tests/regression/test_persisted_identity.py; solve_surface_register.py --diff 0 moved for the six;
+audit_keepers --check; parity.
+RULES THAT BITE: 1, 4 (prices are duals — the VRL enters as a demand-curve step, never as an adder),
+5, 12, 13, 17, 19, 21, 24, 25, 27 (reserve_config.py / scenarios.py are core: Edit locally, git push,
+fetch-back verify), 28c, 29(a)(b)(c).
+EXIT: PRECOMMIT pushed before any solve; FINDING-spp-55 with the design (a)–(f), the footprint table,
+the STOP-gate table, the reserve-dual identity check, LOYO if the span ran, the P15 recommendation;
+plan §5 row → LANDED. Owner report: the footprint table and the STOP-gate table first.
+```
+
 ### W5 — the lever queue (DISPATCHABLE since r#7 — SPP-40 landed; SPP-57 issued r#7 in full below the table)
 
 | Lane | Model | Charter stub (expanded by the desk at issuance) |
@@ -2030,7 +2120,7 @@ report: the gap table and the legs table first.
 | SPP-53 | — | **LANDED in W3** (P13). Its successor lever is SPP-58 below |
 | SPP-54 `[FABLE]` — **ISSUED r#9** (design now; rating after SPP-58) | topology change | the SPS / Texas-Panhandle pocket as a third zone (own sub-BA `SPS`, 12.6 % of load; Lubbock FCA). RANKED against SPP-57 by SPP-12's per-flowgate binding share + shadow price vs the N↔S corridor (P1 as ruled); the higher-ranked pocket is issued first; scored leave-one-year-out (rule 22) |
 | SPP-57 `[FABLE]` — **screen KILLED r#8** (FINDING-spp-57); **SPP-57b ISSUED r#8** (charter in W4c above, R-12 construction) | topology change | an Oklahoma pocket (OKC/Tulsa split of SPP-South — Osage–Webber $75/MWh and Russett–S.Brown $61/MWh are the market's two highest-value constraints, audit §6.1). Needs a `CSWS` sub-allocation for its load share and a TTC; same ranking test and LOYO scoring as SPP-54 |
-| SPP-55 `[FABLE]` — HELD r#9 until SPP-44 lands (28c shard collision); its measured target is FINDING-spp-price-family §1.3 (spikes at ordinary load, 79–93× gas, no scarcity mechanism, zero slack) | mechanism design | VRL-based scarcity: an in-LP reserve demand curve (closer to MISO's RBDC than to the post-solve ORDC overlay), designed against the SPP tail counts; screen structural only |
+| SPP-55 `[FABLE]` — **ISSUED r#10** (SPP-44 merged, hold lifted; charter above); its measured target is FINDING-spp-price-family §1.3 (spikes at ordinary load, 79–93× gas, no scarcity mechanism, zero slack) | mechanism design | VRL-based scarcity: an in-LP reserve demand curve (closer to MISO's RBDC than to the post-solve ORDC overlay), designed against the SPP tail counts; screen structural only |
 | SPP-56 `[FABLE]` | mechanism design, LAST | reserve co-optimisation Reg/Spin/Supp on the `da-mcp`/`rtbm-mcp` measured prices; must first prove non-inertness (MISO precedent) |
 | SPP-58 `[FABLE]` — **ISSUED r#9** (charter above; now the PREREQUISITE for any SPS-tie rating, SPP-57b R-20) | TTC asymmetry is a design object | the N↔S link as an ASYMMETRIC pair — N→S 3,400 / S→N 4,206 MW by SPP-53's own FCITC rule (FINDING-spp-53 §3) — with a SECOND, independent shift-factor identification (the first used SPP's 2023–25 hub spread × shadow prices; the second must not) so ψ is not a one-source number; rule 14; keeper = control; LOYO; ranked after SPP-57 |
 | SPP-59 `[OPUS]` (reserved r#6) | consolidation, zero-behaviour | SPP-32 R-3/R-4/R-5: fold MISO's `_reference_curtailment_rate` branch into the provider table, one ISO-generic wind-shape builder, move `_SPP_SUBBA_ZONE_GROUPS` beside MISO's in `eia930/zonal_shares.py`; byte-identity of every output is the gate; needs the MISO lane's consent (their files) — held until the MISO calibration lane is idle |
@@ -2153,6 +2243,7 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-54 | `PRECOMMIT-/FINDING-spp-54-<date>.md` | issued r#9 (design now; rating after SPP-58) |
 | SPP-51 | `PRECOMMIT-/FINDING-spp-51-<date>.md` | issued r#9 |
 | SPP-60 | `PRECOMMIT-/FINDING-spp-60-<date>.md` | issued r#9 (Q59) |
+| SPP-55 | `PRECOMMIT-/FINDING-spp-55-<date>.md` | issued r#10 |
 | SPP-35 | `docs/handoffs/FINDING-spp-35-2026-09-07.md` | **LANDED** 2026-09-07 — S-1/S-2 + O-4/O-6 closed; six items routed (FINDING §5) |
 
 ## 10. Ledger
