@@ -730,6 +730,7 @@ def run_year(
     unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
+    netload_drag_layup_window_mask: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1634,6 +1635,15 @@ def run_year(
         # [R-ONE-MECH] reason, and is inert without the gate above.
         config = config.with_overrides(
             campd_outage_merit_order_guard=campd_outage_merit_order_guard
+        )
+    if netload_drag_layup_window_mask is not None:
+        # ercot-256: the net-load drag floors' measured lay-up WINDOW MASK. It
+        # consumes the very extract the guard above writes, so the two ride the
+        # same replay path; inert (an empty share dict) when no extract exists
+        # for the ISO/year, and refused outright in forecast mode by
+        # _BACKCAST_ONLY_OVERLAY_FIELDS (rule 13 [R-MEASURED]).
+        config = config.with_overrides(
+            netload_drag_layup_window_mask=netload_drag_layup_window_mask
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(
