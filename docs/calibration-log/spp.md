@@ -540,4 +540,36 @@ declarations; solve surface 0 moved).
   pocket → desk), R-25 (`iso-topologies.json` staleness → site). Matrix shard: `measured_interface_limits` stays O,
   SPP-54 evidence appended (no mechanism tested, rule 28(b)).
 
-**Next shorthand: spp-12.**
+
+## 2026-09-07 — spp-12: SPP-51 priced seams (MISO / AECI / ERCOT, cards P2/P3) — three adjudications LANDED; arm KILLED at rule-29 PHASE 0 on the measured record, NO LP spent
+
+- **Lane** SPP-51 (Fable) · `docs/handoffs/PRECOMMIT-spp-51-2026-09-07.md` · `FINDING-spp-51-2026-09-07.md` ·
+  control keeper-3 (`623184f3`, G-DRIFT all INERT). **No solve, no bundle, no registration, keeper untouched.**
+- **Adjudications (spec.py SPP list only; producer; tests):** (a) SPP-33 R1 — `derive_neighbor_hr_by_year.py`
+  anchor map is now PER ISO (`NEIGHBOR_LMP_ANCHORS`), SPP anchored on MISO-West / MISO-South zonal rows, SPP hub
+  (declared PROXY) and ERCOT system; an ISO with no map or a declared anchor with no rows FAILS, an unanchored
+  neighbour is printed (was: one wrong-anchor row, two seams silently dropped); PJM/MISO tables byte-identical.
+  (b) SPP-33 R2 — the seam multiplies `(HH + gas_basis) × HR`; flat HRs re-built on that construction as the mean of
+  the measured `hr_by_year`: MISO split into `MISO_West` 10.12/11.02/10.52 (flat 10.55, 3,550 MW → SPP-North) and
+  `MISO_South` 9.52/10.09/9.28 (9.63, 2,450 MW → SPP-South; split = measured tie |flow| share 59/41 on SPP's own
+  meter), AECI 10.30/12.08/8.32 (10.23), ERCOT 23.70/15.87/10.76 (16.78); the legs' equal-weight mean reproduces
+  SPP-33's 9.82/10.55/9.90 exactly. (c) ERCOT limit 820 → **835 MW** (rule 14: the measured clip on EIA-930 and
+  SPP's own meter, corr +1.0000, all three years; misalignment stated; ERCOT's own row untouched).
+- **Blocker found:** SPP has no `IMPORT_ZONE` / `IMPORT_NODE_LINKS`, so `--priced-interchange` builds NO seam at
+  HEAD and only drops the served schedule; the one-bus repair is a free wheel around the SPP-53 3,400 MW corridor
+  (the `split_miso_south_external_node` defect). Two-bus topology designed, ROUTED (R-a), not built.
+- **Phase 0 (rule 29(0)):** screen year **2024** named on footprint (gross 9.706 TWh through the three seams).
+  Pre-solve gate P0-b, declared before computed: MEASURED SPP hub − MEASURED anchor, hurdle ±2, vs the EIA-930
+  direction, ≥ 0.55 non-hold sign agreement on the MISO seam. **FAIL**: MISO_West 0.485/**0.436**/0.479,
+  MISO_South 0.501/**0.482**/0.484 (RT; DA the same), corr(spread, import) ≈ 0; ERCOT 0.56–0.61 (weak pass,
+  cannot be armed alone under the all-or-nothing switch); AECI degenerate (anchor = SPP's own hub — keeper-3's
+  price residual over the hub would become 5–19 TWh/yr of seam import by construction). The SPP↔MISO seam is a
+  spread-blind schedule — miso-233's own reading from the other side (corr +0.041/−0.020/+0.050). **Killed;
+  the ~150 s screen deliberately not spent.** Residual-blind: no C3a/C3b/C3c read.
+- Records: seven keeper keys unmoved by construction (`spec.py` outside the solve surface; no `ScenarioConfig`
+  change; cache-key + solve-surface tests green); MISO's SPP-seam constants untouched (hunks confined to the SPP
+  list); SPP cells `priced_interchange` / `reference_price_interface` U → R (fc U); plan §5 row LANDED;
+  `keepers/SPP.json` untouched; **NO P15 candidate**. Routed: R-a topology, R-b the schedule-shaped seam form
+  (miso-233 mirrored from SPP's side, or ERCOT-only priced), R-c elasticity keys (R3), R-d ERCOT-side 820 vs 835.
+
+**Next shorthand: spp-13.**
