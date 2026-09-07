@@ -815,3 +815,150 @@ armed *and* acts-undone, is **byte-identical when computed at `81c8aa6c` and at 
 measured by re-running the same script against a code-only `git archive` of each tree, never by
 reading the diff and concluding. That is the strongest form of this check available at zero LP: the
 delta is inert on the key surface by measurement, not by classification.
+
+---
+
+## ADDENDUM H (2026-09-07, session **D65-B-R COMPLETION-2**) — the FIFTH rebase re-audit, BEFORE leg 7
+
+**Why it exists.** The batch branch merged and was deleted a third time (#5283, the board write
+`c36a3fe7`), and the completion lane's branch `claude/capx-d65br-completion2` is recreated off
+`origin/main` **`f37121bd`**. Addendum G's basis was `29a76482`; `29a76482` is an ancestor of
+`f37121bd` and the window between them is **300 commits** — by far the largest this batch has had
+to audit. Written BEFORE any leg-7 LP, per Addendum C §C.3.
+
+### H.1 `constants.py` FIRST: it HAS hunks this time — **+131 / −0, and every one is SPP**
+
+The check a matched cache key cannot make, because `constants.py` is outside the key. Solve-path
+scope `src/market_sim scripts/run_calibration.py scripts/run_calibration_full.py
+scripts/run_full_horizon.py scripts/lib data/raw/_validation-source data/raw/reference` =
+**38 files, +28,179 / −26,338**. Per D65 §3d, every hunk in an EXISTING function names its gate or
+shows its arithmetic; a file-level verdict is inadmissible.
+
+`constants.py`: **11 hunks, ZERO deletions.** Nine append an `"SPP"` key to an existing per-ISO
+registry (`NUCLEAR_MONTHLY_CF`, `NUCLEAR_MONTHLY_CF_BY_YEAR`, `DEMAND_GROWTH_RATES`,
+`DATACENTER_ADDITIONS_MW`, `ELECTRIFICATION_LAYERS`, `RENEWABLE_AVG_CF`, `RENEWABLE_INSTALLED_MW`,
+`WEATHER_YEAR_POOL_BY_ISO`, `VOLUNTARY_BASELINE_ISO_WEIGHT`) — **a `dict[str, …]` gaining a key
+NEISO does not read cannot change what NEISO reads.** The tenth is comment-only inside
+`GAS_OFFER_MARGIN_ANCHOR_BY_ISO` (recording that SPP is deliberately absent). The eleventh is one
+re-export line, `PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE`, PJM-scoped by name and by its only
+consumers (`capacity_market.py` ELCC arithmetic + `solve_surface_declared.py`). **INERT.**
+
+### H.2 The delta, hunk by hunk, each gate MEASURED
+
+**The window is exactly three lanes**, and the audit is a classification of those three:
+
+| file(s) | hunk class | verdict | the gate, MEASURED |
+|---|---|---|---|
+| `config/constants.py` (+131) | 9 registry keys + 2 comment/re-export | **INERT** | §H.1 |
+| `config/iso_configs.py` (+265/−3) | **1 NEW `_spp_config()` (+137) after `_neiso_config`**, 1 NEW `_pjm_config` block (+129), `_ISO_BUILDERS` +1 entry, 3 comment lines | **INERT** | `_neiso_config`'s own body has **zero changed lines** — the +137 begins after its closing paren. The PJM block is D75-R-ARM (Q55) + D78-ARM (Q56), and both fields are **measured `False` on leg 7's own resolved recipe** (`pjm_vre_accreditation_vintage`, `retirement_sector_gate`) |
+| `config/capacity_market.py` (+136), `config/fuel_trajectories.py` (+33), `data/campd.py` (+26), `data/renewables.py` (+9), `data/fleet/models.py` (+3), `data/transmission_expansion.py` (+6), `data/eia930/frames.py` (+4) | per-ISO registries gaining one `"SPP"` key each | **INERT** | same shape as H.1; zero deletions in any of them |
+| `model/interchange/spec.py` (+222) | `INTERFACE_NEIGHBORS["SPP"]` + 2 new `MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_*` tables | **INERT** | new dict keys; the two tables are read only under `miso_seam_neighbour_hourly_ladder`, **measured `False` on leg 7's recipe**, and are MISO-scoped besides |
+| `model/interchange/registry.py` (+15/−4) | `INTERCHANGE_INJECTIONS["SPP"]` + a comment rewrite | **INERT** | one new dict key; the four deleted lines are comment prose |
+| `model/interchange/miso.py` (+39/−1) | the deleted line is an import folded into a multi-import that adds `measured_miso_spp_hub_prices` | **INERT — twice over** | `inject_miso_seam_ladder_prices`'s first statement is `if iso != "MISO": return False`, and leg 7 is **NEISO** |
+| `data/eia930/envelopes.py` (+100/−1) | 1 NEW `spp_net_interchange`, `_SCALAR_INTERCHANGE_ISOS["SPP"]`, comment | **INERT** | `neiso_net_interchange`'s body is **unchanged context**, not a `+` line; the dict gains one key |
+| `data/eia930/demand.py` (+71/−2) | **docstring-only** in `_screen_demand_spikes`; 1 NEW `_load_spp_hourly_demand`; `DEMAND_LOADERS["SPP"]`; a `_pjm_demand_source` note | **INERT** | the `_screen_demand_spikes` hunk contains **no code line** — the two deletions are docstring sentences |
+| `data/zone_assignment.py` (+73/−4) | 1 NEW `_spp_zone`, `_zone_from_location` gains `if iso == "SPP"`, `_EIA860_SUPPLEMENT_ISOS` gains `"SPP"`, docstring | **INERT** | `_neiso_zone` unchanged; the new branch sits **after** the NEISO branch and is unreachable for NEISO; set membership for `"NEISO"` is unchanged |
+| `data/neighbor_price.py` (+38/−4) | new SPP heat-rate rows + a comment rewrite | **INERT** | keys are neighbour names; NEISO registers none of them |
+| `data/eia930/__init__.py` (+5) | re-exports of the new SPP functions | **INERT** | additive `__all__` / import surface |
+| `results/scarcity.py` (+6/−1) | docstring | **INERT** | prose; and the function is `ercot_load_resource_reserve_mw` |
+| `results/cache.py` (+77) | cache-epoch notes (`2026-09-06h` D78-ARM, and the Q55/Q57 entries) | **INERT** | prose; no code hunk |
+| `pipeline/backcast_config.py` (+46) | `pjm_interface_feed_admissibility_gate=(iso.upper() == "PJM")` and its note | **INERT — twice over** | `backcast_config()` is the **backcast** builder and leg 7 is measured `mode="forecast"`, `hindcast=False`; and the expression is PJM-scoped |
+| `config/scenarios.py` (+122/−2) | new default-off fields + the D78/Q55 arming notes; 2 comment deletions | **INERT** | every new field measured `False` on leg 7's own resolved recipe (§H.3) |
+| `config/solve_surface.py` (+17/−3) | `SURFACE_ISOS` gains `"SPP"` | **INERT for NEISO** | the fingerprint is **per-name, per-ISO**; §H.3 measures NEISO's contribution unmoved |
+| `scripts/lib/{confirmed_retirements,load_forecast,nuclear_license_status,transmission_expansion}/spp.py` + their `__init__` (+242/−4) | new SPP registry modules | **INERT** | per-ISO registries; SPP-keyed |
+| `scripts/lib/mech_matrix.py` (+7/−2) | the seven-ISO shard list | **INERT** | tooling; not imported by `run_full_horizon` |
+| `scripts/run_calibration.py` (+124/−15), `scripts/run_calibration_full.py` (+104) | SPP CLI wiring | **INERT** | **backcast** entry points; this lane runs `run_full_horizon.py`, which **has no hunk in this window** |
+| `data/raw/_validation-source/caiso_supply_consistent_demand_{2023,2024,2025}.csv` + `provenance.json`, `actual_lmp_hourly_zonal_SPP.parquet` | data | **INERT** | CAISO **backcast** validation source and a new SPP LMP file; neither is read by a NEISO forecast solve |
+
+**VERDICT: every hunk INERT. Zero LIVE.** No control solve is earned (rule 29(b)) and G-CTRL
+**form 4** — differencing leg 7 against the incumbent GOLDEN-3's committed numbers — stays VALID.
+
+### H.3 The measurement that outranks the classification
+
+Classification is the argument; the key is the measurement, and it is taken through the runner's
+**own argv path** (`run_full_horizon.main` with `solve_and_summarize` stubbed), never a
+hand-assembled kwargs dict:
+
+| leg 7 | pre-declared | measured at `f37121bd` | |
+|---|---|---|---|
+| armed (the shipped posture — both acts are defaults on `main`) | `0fc42cb56c24d544` | **`0fc42cb56c24d544`** | **HIT** |
+| the two D65-B acts undone (`ccs_retrofit_vom_adder=8.0`, `ccs_retrofit_fixed_cost_co2_scaling=False`) | `f04fd06348e1623d` | **`f04fd06348e1623d`** | **HIT** |
+
+So the STOP *"a realized key ≠ its pre-declared value"* does not fire for leg 7, and step 1c's
+independent confirmation — that leg 7's own recipe still reconstructs the incumbent GOLDEN-3's
+committed key when exactly the two acts are undone — holds for the **fifth** time, now across a
+300-commit window.
+
+**On leg 7's own resolved recipe**, every gate this window could have armed reads off:
+`miso_seam_neighbour_hourly_ladder` `False` · `eia860_vintage_tracks_solve_year` `False` ·
+`pjm_interface_feed_admissibility_gate` `False` · **`pjm_vre_accreditation_vintage` `False`** ·
+**`retirement_sector_gate` `False`** · `miso_gas_variable_transport` `False` ·
+`miso_seam_neighbour_anchored_ladder` `False` · `capacity_market_supply_clearing_by_iso` `None` ·
+`capacity_adequacy_requirement_published_by_iso` `None`. And the two acts read armed:
+`ccs_retrofit_vom_adder` **2.95**, `ccs_retrofit_fixed_cost_co2_scaling` **True**,
+`ccs_retrofit_capex_co2_scaling` **True**.
+
+### H.4 Bare keys: **13 / 14 unmoved**, and the one that moved is PJM's, twice
+
+| ISO | forecast | vs Addendum G | backcast | vs Addendum G |
+|---|---|---|---|---|
+| CAISO | `2f3e1df634cae1d8` | unmoved | `efebcc735768c122` | unmoved |
+| ERCOT | `95d789d6dfb98831` | unmoved | `406cb30ad62bc27b` | unmoved |
+| MISO | `6808780f515fce63` | unmoved | `b10d58628ba3a057` | unmoved |
+| NEISO | `31ca8b9d010f7e7f` | unmoved | `27e80d27acd995de` | unmoved |
+| NYISO | `8e87bfe58f75212a` | unmoved | `cadaba3d344e84b9` | unmoved |
+| **PJM** | `748a1cfaecd3acef` → **`f1d009b918ea0669`** | **MOVED** | `3a566deac3a85682` | unmoved |
+| (global) | `547053bdfccd4264` | unmoved | `f61891696e671969` | unmoved |
+
+**The PJM forecast move is D75-R-ARM's and D78-ARM's, both in-window, both PJM-only, and neither is
+this lane's to reconcile.** Q55 armed `pjm_vre_accreditation_vintage` and Q56 armed
+`retirement_sector_gate`, each through `iso_configs.py::_pjm_config` `default_scenario_overrides` —
+ISO overrides, not shared default flips, which is why **PJM's own backcast key is unmoved** and why
+no other ISO's key moves at all. PJM's leg (leg 5) had already solved and landed under Addendum E's
+re-declaration `542eeedadab83ee1`, so nothing in this batch is re-keyed by it, and **leg 7 is
+NEISO**. The board row consequence is disclosed in FINDING §5.5's own terms and is not netted here.
+
+---
+
+## ADDENDUM I (2026-09-07, session **D65-B-R COMPLETION-2**) — the SIXTH re-audit, taken BEFORE the rebase rather than after it
+
+**Why it is here and not in Addendum H.** `origin/main` moved **`f37121bd` → `9518fe0b`, 49
+commits**, *while leg 7's LP was running*. The HEAD guard forbids rebasing during a leg, so the
+window was audited **read-only against the fetched ref** and the rebase deferred until the leg
+landed — which is stronger than auditing afterwards, because the answer was fixed before the leg's
+numbers were seen.
+
+### I.1 `constants.py` FIRST: **+42 / −0**
+
+Two hunks. `NUCLEAR_DORMANT_UNTIL` gains SPP entries (a `dict` key NEISO does not read), and a NEW
+table `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR` is added — ERCOT-keyed by name and by its only
+consumer. **INERT.**
+
+### I.2 The window is ONE lane plus data, and it is ERCOT BACKCAST
+
+**18 files, +1,438 / −4**, and the solve-path code is four files:
+
+| file | hunk class | verdict | the gate, MEASURED |
+|---|---|---|---|
+| `config/constants.py` (+42) | SPP keys + 1 new ERCOT table | **INERT** | §I.1 |
+| `model/reserves/spec.py` (+4/−4) | 2 call sites inside the EXISTING `_ercot_multiproduct_design` | **INERT** | the function is **ERCOT's own** design builder; leg 7 is NEISO. The change swaps `ercot_as_plan_requirement_mw` → `ercot_as_measured_requirement_mw` inside it |
+| `pipeline/backcast_config.py` (+32/−4) | the new ORDC-order block + its import | **INERT — twice over** | `backcast_config()` is the **backcast** builder and leg 7 is measured `mode="forecast"`, `hindcast=False`; and the block is ERCOT-keyed |
+| `results/scarcity.py` (+85) | 1 NEW `ercot_as_measured_requirement_mw` | **INERT** | additive; ERCOT-only by name and by its single call site above |
+| `config/solve_surface_declared.py` (+1) | one declared fingerprint for the new ERCOT table | **INERT for NEISO** | the D79 fingerprint is **per-name, per-ISO**; measured in §I.3, NEISO's contribution does not move |
+| `data/raw/_validation-source/*` (SPP renewable capacity, `actual_lmp.json`, `calibration_reference.json`), `data/raw/reference/spp_seam_*` | data | **INERT** | SPP intake and backcast validation source; not read by a NEISO forecast solve |
+
+**Every hunk INERT. Zero LIVE.**
+
+### I.3 And the keys are measured at `9518fe0b`, not merely classified
+
+Computed against a **code-only `git archive` of `origin/main`** with `data/` symlinked, through the
+runner's own argv path — never by reading the diff and concluding:
+
+| leg 7 | at `f37121bd` (the solve's HEAD) | at `9518fe0b` | |
+|---|---|---|---|
+| armed | `0fc42cb56c24d544` | **`0fc42cb56c24d544`** | **byte-identical** |
+| the two acts undone | `f04fd06348e1623d` | **`f04fd06348e1623d`** | **byte-identical** |
+
+**The window moves neither key**, so leg 7 is not superseded by the rebase and its bundle is the
+bundle a run at the rebased HEAD would compute. This is the one check that matters for a leg that
+straddles a `main` movement, and it is the check the D79 fingerprint exists to make possible.
