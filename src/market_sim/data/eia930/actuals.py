@@ -5,10 +5,17 @@ The per-fuel hourly benchmark series the calibration report scores against
 renewable / battery / other readers), plus the normalized generation-profile
 distributions. Split out of ``data/eia_loader.py`` as pure code motion (W-D2,
 2026-07-20).
+
+Every reader here obtains its ``<BA> hourly`` frame through ONE seam,
+:func:`_screen_fuel_spike_columns` (lane SPP-41, 2026-09-07), which repairs
+EIA-930 unit-slip hours in the per-fuel ``NG: <CODE>`` columns before any
+consumer sees them — the calibration benchmark (C1/C4), the delivered wind /
+solar profile the LP consumes, and the ERCOT-specific readers alike.
 """
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +23,7 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 
+from .demand import _DEMAND_SPIKE_THRESHOLD
 from .frames import (
     DATA_DIR,
     _GENERATION_PROFILES_FILE,
@@ -28,6 +36,8 @@ from .frames import (
     _read_clean_iso_year,
     _use_clean,
 )
+
+logger = logging.getLogger(__name__)
 
 
 # Clean ``generation`` fuel bucket -> model benchmark series name, restricted to
@@ -92,7 +102,7 @@ def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
     ...}`` of ``(HOURS_PER_YEAR,)`` arrays, or ``None`` when the file, the
     year, or the per-source generation columns are unavailable.
     """
-    frame = _ercot_hourly_frame(year)
+    frame = _ercot_hourly_frame_screened(year)
     if frame is None:
         return None
     out: dict[str, np.ndarray] = {}
@@ -183,6 +193,163 @@ _ZERO_CODED_GAP_SERIES: dict[str, frozenset[str]] = {
     "NYIS": frozenset({"NG: NUC"}),
 }
 
+# ---------------------------------------------------------------------------
+# EIA-930 ``NG:`` unit-slip screen — ONE mechanism at ONE seam (lane SPP-41).
+#
+# The factor is the demand screen's own (``eia930.demand._DEMAND_SPIKE_THRESHOLD``
+# = 2.5x a robust scale statistic), bound by IMPORT rather than re-spelled so
+# there is provably no second threshold (rule 19 [R-ONE-MECH]; SPP-31 §3.2).
+_FUEL_SPIKE_RATIO: float = _DEMAND_SPIKE_THRESHOLD
+# The scale statistic the second limb uses: the series' own 99.9th percentile,
+# about the ninth-largest of 8,760 hours — a robust operating peak that a
+# handful of artifact hours cannot drag up. See :func:`_screen_fuel_spike_columns`
+# for why the demand screen's median basis cannot be used alone on a fuel series.
+_FUEL_SPIKE_SCALE_PCT: float = 99.9
+# The screen's scope is the per-fuel ``NG: <CODE>`` columns EXACTLY as card P9
+# ruled (SPP addition plan §5, RULED r#2). ``Net generation`` (the ``NG`` total),
+# ``Total interchange`` (``TI``) and every ``Demand`` column are outside it, and
+# that exclusion is load-bearing, not cosmetic: PJM 2021's ``NG`` total carries
+# three int32-overflow hours (2,147,480,064 MW at h6981-6983) whose ``NG:`` fuel
+# cells are entirely ordinary, so screening the total would repair real fuel
+# data and move a committed PJM block. Demand is ``eia930.demand``'s phenomenon
+# (``_screen_demand_spikes`` / ``_screen_demand_dropouts``), never this one's.
+_EIA930_FUEL_COLUMN_PREFIX: str = "NG: "
+
+
+def _screen_fuel_spike_columns(
+    frame: pd.DataFrame, *, ba_code: str, year: int
+) -> pd.DataFrame:
+    """Return ``frame`` with EIA-930 unit-slip hours in its ``NG:`` columns as NaN.
+
+    **What it repairs.** The ``SWPP hourly`` extract posts ``NG: WND`` =
+    3,589,445 MW at 2023-06-12 21:00 local (h3907 of the 8760 clock) — a ~100x
+    unit slip against a 22,597 MW robust peak — in the same hour
+    ``eia930.demand._screen_demand_spikes`` repairs the ``Demand`` column.
+    Left in, it inflates SPP 2023 wind by 3.5857 TWh on EVERY consumer of the
+    column: the C1/C4 benchmark (``run_calibration_full._eia930_frame_generic``
+    → ``e930`` → ``bench/SPP/2023.json.gz``), the ``calibration_reference.json``
+    builder, AND the model's own delivered wind profile
+    (:func:`load_eia_hourly_renewable_gen` → ``renewables._eia_hourly_cf_profile``
+    → the LP's wind bound; SPP-40 §4). SPP-31 screened the builder alone; this
+    seam screens the frame every reader in this module obtains, so no consumer
+    can reach an unscreened copy (rule 19 ``[R-ONE-MECH]``).
+
+    **Why the demand screen's test needs a second limb here.** That screen
+    flags ``x > 2.5 * median(x)``, and its own derivation says why that bar is
+    valid: every legitimate demand series has ``max/median <= 2.1``. A fuel
+    series has no such property — it legitimately runs from zero to nameplate,
+    so its median is not its operating scale. Measured over all seven ISOs and
+    2021-2025 (SPP-31 §3.1), the median test ALONE flags 4,116 MISO 2023 solar
+    hours, 3,860 NEISO 2024 solar hours and 3,131 NEISO 2025 oil hours — real
+    midday solar and real peaker starts — and the largest legitimate
+    ``max/median`` anywhere (NEISO 2025 oil, 523x) exceeds the artifact's
+    (299x), so no median-ratio threshold separates them. An hour is therefore
+    repaired only when it clears the demand screen's bar against BOTH scale
+    statistics — the median AND the series' own robust peak
+    (:data:`_FUEL_SPIKE_SCALE_PCT`). Since the p99.9 is never below the median
+    the peak limb implies the median limb: the test is the demand screen's,
+    strengthened and never loosened, and what it can flag is exactly an hour
+    above 2.5x the series' own ninth-largest hour. A series whose robust peak is
+    not positive (an all-charging storage net series) has no operating scale to
+    screen against and passes through.
+
+    **Rule 13 ``[R-MEASURED]`` admissibility.** The screen is a property of the
+    series itself — two order statistics of the same 8,760 hours — so it
+    regenerates for any forward year from that year's own extract and responds
+    to nothing but the extract; it reads no residual, no model output and no
+    per-window registry. Rule 14 ``[R-ACCURATE]``: the artifact is a defect in
+    the telemetry, repaired by the same NaN + linear interpolation the loaders
+    apply to a missing meter hour, never a haircut on the measurement. Rule 24
+    ``[R-REGISTRY]``: nothing here is a tunable — the factor is the demand
+    screen's by import and the anchor is a fixed order statistic; neither is a
+    ``ScenarioConfig`` field, an env var or a CLI flag, and neither enters
+    ``cache_key()`` (data is not in the key).
+
+    **The screen runs on the RAW column, before any gap-fill** — the order is
+    load-bearing. SPP-31's builder-side copy ran on the already-interpolated
+    series, and at NYIS 2024 h6759 (a 16,117 MW ``NG: OTH`` hour immediately
+    followed by a 9-hour NaN reporting gap) that interpolated THROUGH the spike
+    first and then "repaired" five hours of its own interpolation; on the
+    H1-2026 partial year the same smear pulled the p99.9 anchor above the
+    artifact and flagged nothing. Screening the raw observations flags the one
+    real artifact hour, and the loader's own gap-fill then bridges spike and
+    gap together from the last real hour to the next. Two order statistics of a
+    ~3,900-hour half year sit at the 4th-5th largest hour, so a run of four or
+    more consecutive slip hours in a partial year could lift the anchor —
+    stated as a limit of the construction, never tuned around.
+
+    **Measured effect** over all seven ISOs, 2019-2026, every reader
+    (SPP-41 tables 0a/0b): exactly two benchmark series move in 2021-2025 —
+    SPP 2023 ``wind`` 106.6345 → 103.0488 TWh (1 hour, h3907) and NYISO 2024
+    ``other`` 3.3846 → 3.3197 TWh (1 hour, h6759, the same NYIS reporting-gap
+    window ``_screen_demand_dropouts`` documents for that BA's ``Demand``;
+    SPP-31's post-fill copy read 3.3486 for the reason above) — plus NYISO
+    H1-2026 ``other`` 5.3153 → 5.1552 (3 hours, h2957-2959, an unscored series
+    in a locked-test year, data readiness only) and ONE delivered-profile
+    series, SPP 2023 wind, identically. Every other ISO x year x series, and
+    every ERCOT-specific reader, is byte-identical.
+
+    Only the ``NG: <CODE>`` columns are touched (:data:`_EIA930_FUEL_COLUMN_PREFIX`).
+    Returns ``frame`` itself when nothing is flagged and a COPY otherwise —
+    ``frames`` caches the raw extract, and a repair must never be written back
+    into the shared cache. Flagged hours become NaN so each reader's existing
+    gap-fill (``interpolate().bfill().ffill()``) bridges them exactly as it
+    bridges a missing meter hour.
+    """
+    out: pd.DataFrame | None = None
+    for column in frame.columns:
+        if not str(column).startswith(_EIA930_FUEL_COLUMN_PREFIX):
+            continue
+        values = pd.to_numeric(frame[column], errors="coerce").to_numpy(dtype=float)
+        finite = values[np.isfinite(values)]
+        if finite.size == 0:
+            continue
+        median = float(np.median(finite))
+        peak = float(np.percentile(finite, _FUEL_SPIKE_SCALE_PCT))
+        if peak <= 0.0:
+            continue
+        spike = (
+            np.isfinite(values)
+            & (values > _FUEL_SPIKE_RATIO * median)
+            & (values > _FUEL_SPIKE_RATIO * peak)
+        )
+        n_spike = int(spike.sum())
+        if n_spike == 0:
+            continue
+        logger.warning(
+            "%s %d: repairing %d EIA-930 %s spike hour(s) %s "
+            "(max %.0f MW vs p%.1f %.0f MW) -- unit-slip artifact",
+            ba_code,
+            year,
+            n_spike,
+            column,
+            np.flatnonzero(spike).tolist(),
+            float(np.nanmax(values)),
+            _FUEL_SPIKE_SCALE_PCT,
+            peak,
+        )
+        if out is None:
+            out = frame.copy()
+        repaired = values.copy()
+        repaired[spike] = np.nan
+        out[column] = repaired
+    return frame if out is None else out
+
+
+def _ercot_hourly_frame_screened(year: int) -> pd.DataFrame | None:
+    """Return :func:`_ercot_hourly_frame` for ``year`` through the fuel-spike seam.
+
+    The ERCOT-specific readers below (fossil / renewable / nuclear / other /
+    battery — ``run_calibration_full._eia930_frame``'s ERCOT branch) all obtain
+    their frame here, so they inherit :func:`_screen_fuel_spike_columns` exactly
+    as the generic loaders do. Measured inert for ERCOT 2019-2026 (no ERCO
+    ``NG:`` series moves); wired so there is no unscreened side door.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None:
+        return None
+    return _screen_fuel_spike_columns(frame, ba_code="ERCO", year=year)
+
 
 def _pad_to_year(series: np.ndarray) -> np.ndarray:
     """Return ``series`` coerced to exactly ``HOURS_PER_YEAR`` samples.
@@ -216,6 +383,14 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     a zero is a filing gap rather than an observation — see that registry for
     the per-entry evidence.
 
+    The year's frame passes through :func:`_screen_fuel_spike_columns` first,
+    so an EIA-930 unit-slip hour in any ``NG:`` column (SPP 2023 wind, h3907)
+    is NaN by the time the gap-fill runs and is bridged like a missing meter
+    hour. The screen runs before the zero-coded mask: a registered zero gap can
+    only lower a series' median (loosening the implied median limb) and cannot
+    move its p99.9, so the order does not change what is flagged. ``Net
+    generation`` and ``Total interchange`` are outside the screen by ruling.
+
     EIA's interchange sign convention is positive = net export.
 
     Returns ``None`` when the ISO is unmapped, the file is missing, or the
@@ -234,6 +409,7 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     ].sort_values("UTC time")
     if df.empty:
         return None
+    df = _screen_fuel_spike_columns(df, ba_code=ba_code, year=year)
 
     out: dict[str, np.ndarray] = {}
     for name, column in _EIA930_BENCHMARK_COLUMNS:
@@ -291,6 +467,13 @@ def load_eia_hourly_renewable_gen(iso: str, year: int) -> dict[str, np.ndarray] 
     BA-year a day short of 8760 still yields a measured profile instead of
     silently falling back to the normalized EIA-930 distribution shape.
 
+    This is the delivered-profile path the LP consumes
+    (``renewables._eia_hourly_cf_profile`` turns it into the wind / solar
+    bound), so the frame passes through :func:`_screen_fuel_spike_columns`
+    exactly as the benchmark loader's does: the SPP 2023 h3907 wind slip that
+    inflated the C4 benchmark by 3.5857 TWh reached the model's wind input
+    through this function (SPP-40 §4) and is repaired at the same seam.
+
     Returns ``{"wind": ..., "solar": ...}`` of ``(HOURS_PER_YEAR,)`` arrays for
     whichever of the two fuels the BA reports with a usable full-year series,
     or ``None`` when the ISO is unmapped, the file/year is unavailable, or
@@ -302,6 +485,7 @@ def load_eia_hourly_renewable_gen(iso: str, year: int) -> dict[str, np.ndarray] 
     frame = _eia_hourly_frame_filled(ba_code, year)
     if frame is None:
         return None
+    frame = _screen_fuel_spike_columns(frame, ba_code=ba_code, year=year)
     out: dict[str, np.ndarray] = {}
     for fuel, column in (("wind", "NG: WND"), ("solar", "NG: SUN")):
         if column not in frame.columns:
@@ -325,7 +509,7 @@ def load_ercot_fossil_gen(year: int) -> dict[str, np.ndarray] | None:
     or ``None`` when the file, the year, or the per-source columns are
     unavailable.
     """
-    frame = _ercot_hourly_frame(year)
+    frame = _ercot_hourly_frame_screened(year)
     if frame is None:
         return None
     out: dict[str, np.ndarray] = {}
@@ -347,7 +531,7 @@ def load_ercot_nuclear_gen(year: int) -> np.ndarray | None:
     Returns a ``(HOURS_PER_YEAR,)`` array, or ``None`` when the file,
     the year, or the column is unavailable.
     """
-    frame = _ercot_hourly_frame(year)
+    frame = _ercot_hourly_frame_screened(year)
     if frame is None or "NG: NUC" not in frame.columns:
         return None
     series = frame["NG: NUC"].interpolate().bfill().ffill()
@@ -373,7 +557,7 @@ def load_ercot_other_gen(year: int) -> np.ndarray | None:
     instead of scoring the model's gas fleet against gas + other. Returns
     ``None`` when the file, the year, or the column is unavailable.
     """
-    frame = _ercot_hourly_frame(year)
+    frame = _ercot_hourly_frame_screened(year)
     if frame is None or "NG: OTH" not in frame.columns:
         return None
     series = frame["NG: OTH"].interpolate().bfill().ffill()
@@ -398,7 +582,7 @@ def load_ercot_battery_gen(year: int) -> dict[str, np.ndarray] | None:
     yields a benchmark over its reported window. Returns ``None`` when the
     file, the year, or both battery columns are unavailable.
     """
-    frame = _ercot_hourly_frame(year)
+    frame = _ercot_hourly_frame_screened(year)
     if frame is None:
         return None
     cols = [c for c in ("NG: BAT", "NG: UES") if c in frame.columns]
