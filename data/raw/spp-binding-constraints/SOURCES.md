@@ -139,3 +139,13 @@ makes and records"* — is recorded in FINDING-spp-14 section 4.1, area code by 
 
 - `https://portal.spp.org/file-browser-api/download/rtbm-binding-constraints?path=%2F2026%2F<mm>%2FBy_Day%2FRTBM-DAILY-BC-<yyyymmdd>.csv`, every day 2026-01-28 → 2026-09-05 (221 files, 1.9–3.3 MB each, ~550 MB; listed via `?fsName=rtbm-binding-constraints&path=%2F2026%2F<mm>%2FBy_Day&type=folder`). Anonymous HTTPS, byte-for-byte as served, to the session scratchpad only. **Schema-break correction**: 14-column rows begin 2026-03-17 (one day), recur on 2026-03-25 from 10:25 local under a 10-column header, and are continuous from 2026-04-01; the served `20260128.csv` is 10-column.
 - `rtbm_bc_corridor_limits_2026.parquet` — DERIVED from those files by `docs/handoffs/spp53/extract_2026.py` (the `n_s_corridor` rows under `docs/handoffs/spp14/groups.py`'s unchanged rules, `State ∈ {BINDING, BREACHED, ACTIVATED}`, 563,450 rows, 2026-03-17 → 2026-09-06 UTC). sha256 `b5756023cef5da66ed23bf86a54a09e88d5a072a54ff8c027877c7b067a4626f`. Licence as above (SPP Terms & Conditions).
+
+## Appended 2026-09-07 by lane SPP-57 — the reduced Oklahoma-set sidecar (landed)
+
+- **Route:** the same anonymous HTTPS daily files as the SPP-53 row above
+  (`rtbm-binding-constraints`, `/2026/<mm>/By_Day/RTBM-DAILY-BC-YYYYMMDD.csv`, 2026-01-28 →
+  2026-09-05, 221 files, 0 failures; pulled by `docs/handoffs/spp53/pull_daily.py`, scratch only).
+- **`rtbm_bc_oklahoma_limits_2026.parquet`** — producer `docs/handoffs/spp57/extract_2026.py`;
+  rows = `State ∈ {BINDING, BREACHED, ACTIVATED}` × 14-column days × group ∈ {`oklahoma_internal`,
+  `sps_tie`, `other`/"other areas: CSWS"}; 1,083,301 rows, 2026-03-17 05:05 → 2026-09-06 05:00 UTC;
+  sha256 in `SHA256SUMS.txt`. Licence: SPP Terms & Conditions as quoted above.
