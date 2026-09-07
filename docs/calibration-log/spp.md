@@ -436,4 +436,30 @@ Control = keeper-3 `2026-09-07-spp-3-screened-input` / `spp43_screened_B` (`git_
   to any per-band or per-class multiplier set. `campd_ct_run_lengths_SPP.csv` committed (rule 23, the
   ERCOT-145 precedent). Rule 29(c) has nothing to delete: no screen ran.
 
-**Next shorthand: spp-9.**
+## 2026-09-07 — spp-9: SPP-58 ψ₂ — the second, independent shift-factor identification (zero-LP): OUTSIDE the band on every object; `ttc_mw` untouched; card served
+
+**Result: no keeper touched, no solve, no value edited.** Record: `docs/handoffs/PRECOMMIT-spp-58-2026-09-07.md`
+(pushed `da1bb516` before any PTDF) + `FINDING-spp-58-2026-09-07.md` + `docs/handoffs/spp58/` (the reduced DC
+network, the element map, ψ₂ per constituent, the aggregates).
+
+- **Construction:** ψ₂ = DC PTDF (OTDF where the contingency resolves) on a reduced network from public HIFLD
+  line geometry (17,873 features, 2023 vintage) + EIA-860 plants, generator-weighted bubble pairs; price-free.
+  Option (a) unavailable (no flow column in the served RTBM schema; no measured intra-BA interchange), option (b)
+  absent (the Public Data Guide v35 lists no shift-factor product). Interconnection cleaning (owner + geography +
+  ERCOT CREZ station list + tie cuts) verified by EIA-860 BA codes: only Kiamichi and Denison Dam remain ERCOT-coded
+  in the Eastern component. K1–K4 hold (cut-set identities 1.000; line sign agreement 7/8).
+- **Verdicts (band = 1.92×, declared ex ante):** N→S like-for-like T*₂ 11,022 vs T*₁ 4,919 on the same subset and
+  vs the standing 3,400 — OUTSIDE (ψ₂ lands on ψ₁'s drop-2024 fold, 11,121); S→N 13,175 vs 4,206 — OUTSIDE;
+  `sps_tie` **1,600 vs 10,705** — OUTSIDE the other way (the ties are the cut-set, ψ ≈ 1, T* ≈ limit-at-bind).
+  Potter County width COLLAPSED (ψ₂ 0.369 / 0.311 = 1.19; OTDF > PTDF, the reverse of ψ₁). Double attribution of
+  the western-Oklahoma elements is REAL physics (loaded by both transfers). Franklin 161/69 — 44 % of the corridor's
+  hours and ψ₁'s median — is UNRESOLVABLE (no sub-115 kV public line data).
+- **Structural reading:** ψ₁ assigns the 115/161 kV under-lay elements sensitivities (0.035–0.365) the topology does
+  not support (≤ 0.026, mostly ≤ 0.005); the 345 kV backbone elements agree in sign and order. Sensitivities
+  (transformer X ×0.5/×2, inner box) move no verdict; a wind→gas transfer composition moves ψ₂ toward ψ₁.
+- Routed: R-21 the card (both identifications side by side; `ttc_mw` stays 3,400 by the rule), R-22 SPP-54's rating
+  input 1,600 MW, R-23 a 69 kV under-lay source, R-24 a proper HIFLD intake, R-25 the cleaning rule as record.
+  Rule 28(b): no mechanism tested, no cell moved; `measured_interface_limits` evidence appended (stays O). Rule 22:
+  2023–2025 weights only.
+
+**Next shorthand: spp-10.**
