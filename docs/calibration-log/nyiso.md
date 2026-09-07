@@ -13109,3 +13109,105 @@ failure at this HEAD.** nyiso-215's stale-`metrics.json` trap is unchanged and w
 still no unit test covers `cc_reserve_duty_split`'s split behaviour, and this session deliberately
 does not add one — a guard encoding the current membership would now lock in the pooled-statistic
 defect P4 measured.
+
+## nyiso-217 — 2026-09-07
+
+**The C1/C4 benchmark debt on `_screen_fuel_spike_columns` is PAID and CLOSED. A clean negative,
+measured rather than argued.** Keeper unchanged (`2026-09-07-nyiso-213-summer-seam`); nothing
+promoted, armed, screened, registered or regenerated; no marker moved. **ZERO LP.** Finding:
+`docs/FINDING-nyiso217-eia930-fuel-spike-screen-bench-debt-2026-09-07.md`. PREREG:
+`results/calibration/PREREG-nyiso217-eia930-fuel-spike-screen-bench-debt.md` (`d27b3705`, pushed
+before the first number was read). Machine record:
+`results/calibration/_nyiso217_screen_bench_debt.json`. Instrument:
+`scripts/probes/nyiso217_screen_bench_debt.py`. **No in-sample rubric failure exists or is targeted.**
+
+nyiso-215 §7 flagged the SPP-41 seam and was out of scope; nyiso-216 §1 discharged its **fleet** half
+by execution and explicitly passed the **benchmark** half forward. This session pays it.
+
+* **P1 FIRES — provenance by EXECUTION, not by reading.** The keeper scores **byte-identically**
+  (43,261 chars, rc 0) with the screen live and with it monkey-patched to the identity (patch
+  verified in force by two in-child assertions). `calibration_verdict.py` scores from **committed
+  artifacts** — `bench/NYISO/<year>.json.gz` for C1/C2, the run payload's `fuelRows` for C4 — and
+  never reaches the live loader. **A screen change cannot move a keeper score until a bundle
+  regenerates the part**, and the slim keeper bundle carries no `inputs/` with which to do so. That
+  is the direct answer to the handoff's question (a).
+* **P2 FIRES exactly as declared.** Over 2022–2025 × every series, the moved set is
+  **`{2024: other}` and nothing else**: `3.3846 → 3.3197 TWh`, one flagged hour (h6759, `NG: OTH`,
+  16,117 MW vs a p99.9 of 3,290), reproducing SPP-41's declared NYISO effect to **0.0000 TWh**
+  against a ≤ 0.001 bar. 2022/2023/2025 byte-identical in every series. The hurts limb (any other
+  series or year, especially gas/coal/wind/solar) does **not** fire.
+* **P3 FIRES, sub-case (3a) — C1 UNMOVED.** The one route from `e930.other` to `classFull` is
+  `reconcile_vintage_classes`, gated by two switches in series. In 2024 **both are shut**: the
+  `max(0, OTHER+biomass − other)` clamp holds with **0.3590 TWh** headroom at the tighter (screened)
+  end (2.9611 vs 3.3197), so `∂_tgt/∂e930.other = 0` **exactly**, and the reconcile **provably did
+  not fire**. Per-class `classFull` move **0.000000000 TWh** in all four years.
+* **P4 FIRES — C2 unmoved** (0.000000000 TWh), by the same clamp, on the tighter test that has no
+  band in its way.
+* **P5 FIRES on both declared counts — C4 unmoved.** `NYISO ∉ CEMS_GAS_ANCHOR_ISOS` (`{CAISO}`,
+  onset 2023), so C4 reads a committed payload value; **and** the screen flags **zero** hours in
+  `NG: NG` / `NG: COL` in every year.
+* **§8, un-pre-registered and labelled as such:** the third consumer the screen's own docstring
+  names — the delivered VRE profile feeding the LP's wind bound — is **0 hours changed, max delta
+  0.0** in every year. With nyiso-216 §1's fleet check, **all three declared consumers are now
+  measured inert for NYISO.**
+
+**Verdict: outcome-partition branch (B) — QUANTIFIED NULL. THE DEBT IS DISCHARGED AND CLOSED.**
+No escalation is owed to another lane (branch (D) not reached).
+
+**Reported at full magnitude, including against myself.** All five predictions fired and **no**
+hurts limb did — stated plainly rather than dressed as a discovery: paying a verification debt
+usually confirms, and what makes it evidence is that P1 was settled by execution and P2/P4 by exact
+arithmetic, not by trusting the docstring under test. **My PREREG carried a construction defect
+(§4.2):** P3's fired/did-not-fire test asserted a mutual exclusivity that does **not** hold (firing
+forces `post == _tgt`, which is trivially in-band). Corrected in the instrument, reported as a
+defect, and **the gate was not rewritten after the number was seen**. **What I did not isolate:**
+whether the reconcile fired in 2022 and 2025 — pre-reconcile `classFull` is unrecoverable from a
+slim bundle. It changes nothing (Δ`other` = 0 in both).
+
+**TWO LATENT CHANNELS THE CLAMP DOES NOT PROTECT — named, not absorbed.** "Doubly protected" is a
+fact about **2024**, not a structural property. (i) **2022's clamp is OPEN**: `OTHER+biomass =
+3.2438` vs `e930.other = 3.2030`, headroom **−0.0408 TWh**, so `∂_tgt/∂other = +1` there; the screen
+happens to move nothing in 2022. (ii) **NYISO's `wind` mirror is a 1:1 unclamped channel**
+`classFull.wind ← e930.wind` — verified by execution (`actuals_source("wind","NYISO") == "eia930"`,
+`solar → "eia923"`); a single `NG: WND` flag would move `a_gen` in full. Neither is a lever; both
+are flagged so a future lane knows the channel is open before it starts. Also recorded: **2024's
+fossil total sits only 0.1777 TWh (0.26 %) inside the 3 % reconcile band**, and the screen pushes it
+**further inside**, never toward firing.
+
+**Ungated statistic, reported whatever it says.** Committed bench `e930` vs HEAD's screen-on loader
+agrees to **≤ 0.0005 TWh on every series in every year**, except (a) `solar`, a **basis** difference
+verified by execution (NYISO's 930 extract has no solar; the render mirrors the EIA-923 total into
+the `e930` slot by design), and (b) 2024 `other` at −0.0653 — **which is the screen**. So the
+committed part *is* what HEAD would produce, and the screen is the only thing between them.
+
+**Rule 14 `[R-ACCURATE]`: the screen is not weakened, haircut, bypassed or proposed for reversion**
+under any outcome, and none was needed. **No bench part regenerated** (that would change what every
+registered NYISO run is scored against — not a lane decision). Rule 22: **no out-of-training year
+solved, scored or registered**; 2022 appears only as a loader-input diff and arithmetic on a
+committed benchmark *input*, which "what is held out is the SCORE, never the DATA" leaves
+unrestricted; 2020/2021 unspent, `final` never granted, freeze untouched. Rule 25: **no other ISO's
+bench touched, read for comparison or regenerated.** Rule 28: `_screen_fuel_spike_columns` is a
+**data-loader repair, not a solve-affecting mechanism** — no `ScenarioConfig` field, no CLI flag, no
+`cache_key` membership, hence no matrix row and none invented; no cell verdict moves. **No eighth
+owner card opened**; the seven pending rulings are untouched.
+
+**Governance/environment.** G-DRIFT **re-measured** `51f2fc2d` → `12e71b89`: **22 files, +9,879/−23**
+(eight more than nyiso-216 audited), **21 INERT** with per-file reasons, **1 LIVE** —
+`data/eia930/actuals.py`, *this session's object*, measured rather than argued. Rule 29(b) scope
+limit: the keeper's committed artifacts were the **object of study**, never a control for an arm.
+Fleet instrument validated (`nyiso196_rebuild_checks.py --year 2024` exit 0, `git status
+--porcelain -uno` **EMPTY**). Keeper `cache_key` re-measured at HEAD `12e71b89` is
+**`95d4d8d167373eb7`** — unchanged from nyiso-216's reading, so capx D79's solve-surface fingerprint
+did not move NYISO's key; recorded, not used. Tests named rather than inherited —
+`test_gate_a_provenance.py`, `test_cc_summer_derate_reconciled_basis.py`,
+`test_holdout_render_parity.py`, `test_campd_bins.py`, plus `test_bench_stamp_ast.py` (added because
+this session's object is the bench chain) — **83 passed, 2 skipped, 1 FAILED**;
+`ruff format --check .` 1,406 files already formatted; `ruff check` passes. **THE ONE FAILURE IS
+PRE-EXISTING AT `main` AND IS SPP'S**: `test_gate_a_provenance::test_live_board_passes` cites SPP's
+superseded keeper `2026-09-07-spp-2-crosswalk-hydro` against the designated
+`2026-09-07-spp-3-screened-input`. Verified pre-existing **by execution** (`git stash -u` to a clean
+`main` reproduces it identically: 1 failed, 12 passed); **not repaired here** — rule 25, the SPP
+lane's (audit board F-5). The stale-`metrics.json` trap is unchanged and was not walked into (P1
+read the scorer, twice). Still no unit test covers `cc_reserve_duty_split`'s split behaviour; this
+session adds no test at all, because it changed no behaviour — the instrument is the re-checkable
+record and it re-runs in seconds.
