@@ -1,0 +1,6 @@
+case,year,emissions_mt,import_co2_mt_reported,unserved_mwh,co2_cap_price_usd_per_t,n_co2_caps_binding,nox_tonnes,so2_tonnes,peak_price,curtailment_twh,storage_cycles,clean_share,negative_price_hours,avg_price_usd_per_mwh,backstop_built_mw,backstop_built_mwh,generation_twh
+CES-T80,2026,23.6954,10.450569,0.0,0.0,0,5783.56,202.99,68.97,0.0,9.74,0.3924,0.0,49.24,0,0.0,154.1239
+CES-T80,2027,24.5913,10.153614,0.0,0.0,0,6065.37,208.29,67.01,0.0,9.34,0.3879,0.0,48.27,0,0.0,155.9436
+CES-T80,2028,17.1344,10.519853,0.0,0.0,0,6258.64,215.96,69.39,0.0,7.58,0.5214,0.0,50.01,0,0.0,157.7806
+CES-T80,2029,11.3295,9.475991,0.0,0.0,0,5762.03,196.61,72.4,0.0,16.41,0.6331,0.0,46.09,0,0.0,159.6748
+CES-T80,2030,9.2987,10.311935,0.0,0.0,0,5461.35,192.99,80.83,0.0,18.14,0.6609,0.0,51.24,0,0.0,161.566
