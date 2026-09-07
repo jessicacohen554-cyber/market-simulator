@@ -72,6 +72,16 @@
    "I7",
    "I12"
   ],
+  "miso-2026-2030-scn-campaign-policy-2026-09-06-carb-hi": [
+   "I12",
+   "I3",
+   "I7"
+  ],
+  "miso-2026-2030-scn-campaign-policy-2026-09-06-carb-mid-load-hi": [
+   "I12",
+   "I3",
+   "I7"
+  ],
   "pjm-2026-2030-d65br-arm": [
    "I7",
    "I12"
