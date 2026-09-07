@@ -10,6 +10,47 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0i. r#8 — sitting #8: W4b ALL LANDED — KEEPER-2; SPP-57 screen KILLED; SPP-43 / SPP-38 / SPP-57b / SPP-44 issued (2026-09-07, main HEAD `b054988c`)
+
+- Pin `b054988c` (123 commits since r#7; the desk branch itself merged as PR #5460). Branch fast-forwarded.
+- **GRADED BY CONTENT — five lanes LANDED 2026-09-07.** **SPP-42** (`claude/spp-42-coal-hydro-5y1z3h`,
+  PR #5471, ran as Fable; the owner launched it immediately, NOT after SPP-36/41 — it derived the coal
+  crosswalk itself): **KEEPER-2 `2026-09-07-spp-2-crosswalk-hydro`**, determination **NOT-YET** at full
+  magnitude, promoted under its charter's rule (no load-bearing PASS → FAIL). Movement vs keeper-1:
+  C3a-2025 +21.7 % → +7.2 % PASS; C3b-2025 0.283 → 0.189 PASS; unserved 2,007 MWh/6 h → 89 MWh/1 h
+  (the survivor is a South shortfall behind the bound corridor — the SPP-57 object); C5a −67 % → −3 %;
+  C1-2023 every class in band; C1-2024 the gas split alone (CC −8.6 / CT +9.9 TWh); C3c 24 → 1 h in
+  2025. The 2025 screen missed its literal "unserved → 0" leg and the lane proceeded on rule 14 with the
+  miss stated (§2.3) — the desk accepts that reading (E-7 below). **SPP-36** (PR #5480): the gate record;
+  its artifact converged byte-identically with SPP-42's (rule-23 check). **SPP-41** (PR #5497): ONE seam;
+  the SPP-31 two series + one input series move, nothing else across 7 ISOs × 2019–2026; seven keys
+  unmoved — but it landed AFTER keeper-2 was solved, so keeper-2's 2023 wind input (+27 GWh) and
+  `bench/SPP/2023` (wind 106.634) still carry the slip. **SPP-37** (PR #5474): six leftovers closed.
+  **SPP-57** (PRs #5479/#5483/#5493/#5496): the 2025 screen **KILLED as pre-registered** — the union rule
+  pooled `oklahoma_internal` into the N↔OK set and rated both links 6,500 / 6,700 MW; neither is live
+  (2.5 % / 0 %), the pocket traps nothing, negative hours 6 → 0. Topology NOT landed (solve path restored
+  byte-identical to keeper-2's); design, instruments, the measured EIA-861 CSWS split and the T* tables
+  landed for the re-issue (commit `f5926636`). The owner asked the lane in-session whether it was a
+  candidate; the lane answered NO under P14 (structure regressed).
+- **GATES at the pin: ALL SEVEN EXIT 0** (audit_keepers 0 — someone rebuilt ERCOT/PJM status parts;
+  parity 0 — every screen bundle deleted before merge; bench 0; goldens 0 with the pre-existing ERCOT/
+  NEISO STALE notes; refactor-guards 0; matrix 0). Registration surfaces verified: keeper-2 sidecar +
+  payload, `keepers/SPP.json` (`keeper_previous` = spp-1), status, bench ×3, shard stamp, §5.7 header,
+  log spp-3/spp-4. Keeper-1 is still registered — rule 15 prunes it at the NEXT registration (SPP-43).
+- **NO CARDS.** P15 has no candidate (SPP-57 killed; keeper-2 promoted under a pre-declared rule).
+- **ISSUED (all parallel): SPP-43** [OPUS] keeper-2's recipe re-solved through the SPP-41 seam → keeper-3
+  candidate, identity check (2024/2025 objectives identical), C1/C4-2023 wind scored for the first time,
+  prunes keeper-1/-2, folds N-1/N-2 + the R-15 / plant-6193 zero-LP reports; **SPP-38** [OPUS] the 15
+  SPP-era red tests at HEAD in the SPP-20 pattern (never GOLDEN_ISOS / program-status); **SPP-57b**
+  [FABLE] R-12 — N↔OK = `n_s_corridor` alone (3,400, live N→OK-dominant 2,065 h in the killed screen's own
+  flows), OK↔S = `sps_tie` alone on (p_S − p_OK), `oklahoma_internal` excluded from both, same gate; screen
+  control keeper-2 (the seam moves no 2025 series); **SPP-44** [FABLE] the gas split as a P1-native
+  commitment bridge (SPP-42 §7's rule-19 enumeration: nothing floors CT today), measured from SPP's CAMPD
+  conduct by the NYISO construction, a new ISO-exclusive field with its matrix row (28c).
+- Next sitting: grade the four; serve P15 if SPP-57b or SPP-44 reports a candidate; then SPP-51 (Fable),
+  SPP-58 (ψ second identification — R-14 makes it load-bearing for every FCITC rating that admits
+  Oklahoma-internal elements), SPP-54 (start from SPP-57 R-13's table, not the P1 prose).
+
 ### 0h. r#7 — sitting #7: FIRST SPP KEEPER LANDED (NOT-YET, owner direction); SPP-35 landed; SPP-41 unlaunched → v2; W4b repairs + SPP-57 issued (2026-09-07, main HEAD `8a4bfd29`)
 
 - Pin `8a4bfd29` (109 commits since r#6). Branch fast-forwarded.
@@ -286,14 +327,18 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | SPP-33 seam derive | W3 | Opus | spp | **LANDED 2026-09-07** — `hr_by_year` for SPP-51; R1/R2 → SPP-51 (Fable), R3 → desk | `claude/spp-33-seam-derive-ezmktp` (stem `claude/spp-33-seam-derive-c4hm`) | #5377 | `docs/handoffs/FINDING-spp-33-2026-09-07.md` |
 | SPP-34 site + docs | W3 | Opus | code | **LANDED 2026-09-07** — S-1/S-2 → SPP-35; S-3 evidence job open; S-4 → audit | `claude/spp-34-site-docs-hjykvj` (stem `claude/spp-34-site-docs-t9xe`) | #5388 | `docs/handoffs/FINDING-spp-34-2026-09-07.md` |
 | SPP-40 first solve → first keeper | W4 | Fable | spp | **LANDED 2026-09-07 — FIRST SPP KEEPER `2026-09-07-spp-1-baseline`, NOT-YET (P14 owner direction over the pre-registered 2024 screen kill); the 29(b) control for every later SPP lane; R-1…R-8 assigned r#7** | `claude/spp-40-first-solve-pvanrx` | #5425, #5434, #5446, #5447 | `docs/handoffs/FINDING-spp-40-2026-09-07.md` (+ PRECOMMIT) |
-| SPP-41 EIA-930 spike screen → loader seam (SPP-31 §5a + SPP-40 §4 wind input) | W4b | Fable | code | **ISSUED r#6 — NOT LAUNCHED; RE-ISSUED v2 r#7** | — (stem `claude/spp-41-fuel-spike-seam-k2mr`) | — | — |
+| SPP-41 EIA-930 spike screen → loader seam (SPP-31 §5a + SPP-40 §4 wind input) | W4b | Fable | code | **LANDED 2026-09-07** — one seam; two bench + one input series move, seven keys unmoved; landed AFTER keeper-2 → SPP-43 | `claude/spp-41-fuel-spike-seam-oqq8w4` (stem `…-k2mr`) | #5497 | `docs/handoffs/FINDING-spp-41-2026-09-07.md` |
 | SPP-35 seven-ISO prose + badge contrast (S-1/S-2, O-4/O-6) | W4∥ | Opus | code | **LANDED 2026-09-07** — all four closed; six leftovers R-1…R-6 → SPP-37 (R-3 routed) | `claude/spp-35-seven-iso-prose-ypsq70` (stem `…-v8jd`) | #5440 | `docs/handoffs/FINDING-spp-35-2026-09-07.md` |
-| SPP-36 coal supply class (SPP-40 R-7) | W4b | Opus | spp | **ISSUED r#7** | — (stem `claude/spp-36-coal-supply-class-t3kp`) | — | — |
-| SPP-37 SPP-35's six leftovers | W4b | Opus | code | **ISSUED r#7** | — (stem `claude/spp-37-leftovers-q7hn`) | — | — |
-| SPP-42 hydro-2025 repair + re-baseline → keeper-2 candidate (SPP-40 R-8) | W4b | Opus | spp | **ISSUED r#7** · preconditions SPP-36 + SPP-41 | — (stem `claude/spp-42-hydro-rebaseline-w8nd`) | — | — |
-| SPP-57 Oklahoma pocket (P1 first lever) | W5 | Fable | spp | **ISSUED r#7** · design now, solve after SPP-42; promotion = card P15 | — (stem `claude/spp-57-oklahoma-pocket-m4rt`) | — | — |
+| SPP-36 coal supply class (SPP-40 R-7) | W4b | Opus | spp | **LANDED 2026-09-07** — gate record; artifact byte-identical to SPP-42's (converged); R-9 tranche guard → model desk, R-10 plant 6193 → SPP-43 | `claude/spp-36-coal-supply-67urkl` (stem `…-t3kp`) | #5480 | `docs/handoffs/FINDING-spp-36-2026-09-07.md` |
+| SPP-37 SPP-35's six leftovers | W4b | Opus | code | **LANDED 2026-09-07** — all six closed; N-1/N-2 → SPP-43; R-3 routed | `claude/spp-37-leftovers-q7hn-w9r00a` | #5474 | `docs/handoffs/FINDING-spp-37-2026-09-07.md` |
+| SPP-42 hydro-2025 repair + re-baseline (+ the coal crosswalk, R-7) | W4b | Fable (ran as; chartered Opus) | spp | **LANDED 2026-09-07 — KEEPER-2 `2026-09-07-spp-2-crosswalk-hydro`, NOT-YET**; C3a/C3b-2025 PASS; unserved 2,007 → 89 MWh; C5a in band; solved BEFORE the SPP-41 seam → SPP-43 | `claude/spp-42-coal-hydro-5y1z3h` (stem `…-w8nd`) | #5471 | `docs/handoffs/FINDING-spp-42-2026-09-07.md` |
+| SPP-57 Oklahoma pocket (P1 first lever) | W5 | Fable | spp | **LANDED 2026-09-07 — 2025 SCREEN KILLED** (union-rated links 6,500 / 6,700 inert); topology NOT landed; design + instruments landed (`f5926636`, `spp57/`); R-12 → SPP-57b | `claude/spp-57-oklahoma-pocket-yedapf` (stem `…-m4rt`) | #5479, #5483, #5493, #5496 | `docs/handoffs/FINDING-spp-57-2026-09-07.md` (+ PRECOMMIT) |
+| SPP-43 re-baseline on the screened input → keeper-3 candidate | W4c | Opus | spp | **ISSUED r#8** | — (stem `claude/spp-43-screened-rebaseline-p2vq`) | — | — |
+| SPP-38 the 15 SPP-era red tests at HEAD | W4c | Opus | code | **ISSUED r#8** | — (stem `claude/spp-38-seventh-iso-tests-n6wr`) | — | — |
+| SPP-57b Oklahoma pocket, constituent sets re-declared (R-12) | W5 | Fable | spp | **ISSUED r#8** · screen vs keeper-2; promotion = P15 | — (stem `claude/spp-57b-oklahoma-pocket-sets-h3km`) | — | — |
+| SPP-44 gas split as a P1-native commitment bridge (SPP-42 §7 / R-q) | W5 | Fable | spp | **ISSUED r#8** · new field + matrix row (28c); promotion = P15 | — (stem `claude/spp-44-gas-commitment-bridge-r5tc`) | — | — |
 | SPP-53 N↔S TTC derive (P13 — W5 → W3) | W3 | Fable | spp | **LANDED 2026-09-07** — `ttc_mw` 48,700 → **3,400 MW** (FCITC, ex-ante construction); S→N set 4,206 → SPP-58 | `claude/spp-53-ttc-link-limit-67e3yf` (stem `claude/spp-53-ns-ttc-f6dz`) | #5374, #5383, #5393 | `docs/handoffs/FINDING-spp-53-2026-09-07.md` |
-| SPP-51 (→ Fable r#6), 52, 54, 55, 56, 58 (new r#6), 59 (reserved r#6) levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · **P1 ranking APPLIED r#5: SPP-57 (Oklahoma pocket) before SPP-54 (SPS pocket)** | — | — | — |
+| SPP-51 (→ Fable r#6), 52, 54 (start from SPP-57 R-13), 55, 56, 58 (load-bearing since SPP-57 R-14), 59 (reserved r#6) levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · **P1 ranking APPLIED r#5: SPP-57 (Oklahoma pocket) before SPP-54 (SPS pocket)** | — | — | — |
 | SPP-60 forecast entry | W6 | Fable | spp | ROUTED to capx director (P8) | — | — | — |
 
 ---
@@ -318,7 +363,7 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | P12 | 2026-09-06 r#4 | rows 5–9 after SPP-13 (anonymous FTP, egress-blocked; row 11 NDA-only) | "Try to find the data somewhere else" | SPP-14 chartered (HTTPS third-party / mirror sweep with a rule-14 cross-check gate); W3/W4 proceed regardless; row 11 stays Tier-3 in SPP-20 |
 | P1 (applied) | 2026-09-07 r#5 | the SPP-54 vs SPP-57 ranking under P1's own test | — (desk act; SPP-14 §5.2 measured `oklahoma_internal` ≥ `n_s_corridor` ≫ `sps_tie` in all three years on both legs) | SPP-57 first; SPP-54 does not clear "SPS-tie share ≥ N↔S share" and stays queued |
 | P13 | 2026-09-07 r#5 | the N↔S TTC for the first keeper (SPP-20's 48,700 MW placeholder cannot bind) | "Pull SPP-53 into W3 as SPP-40's precondition (Recommended)" | SPP-53 issued (Fable derive, PRECOMMIT-first construction, rule 14 misalignment documented); SPP-40's preconditions now SPP-30/31/32/53 — **EXECUTED 2026-09-07 (SPP-53): 3,400 MW** |
-| P14 | 2026-09-07 (given IN the SPP-40 session, recorded r#7) | the 2024 screen killed on a 22-h direction tie — is the baseline a keeper candidate? | "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper." | the full span was solved and `2026-09-07-spp-1-baseline` promoted as the FIRST SPP KEEPER at NOT-YET; STANDING for W5: a candidate that improves structure may be promoted even if gates regress — but promotion is served as a card (P15…), never a lane's act |
+| P14 | 2026-09-07 (given IN the SPP-40 session, recorded r#7) | the 2024 screen killed on a 22-h direction tie — is the baseline a keeper candidate? | "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper." | the full span was solved and `2026-09-07-spp-1-baseline` promoted as the FIRST SPP KEEPER at NOT-YET; STANDING for W5: a candidate that improves structure may be promoted even if gates regress — but promotion is served as a card (P15…), never a lane's act — **APPLIED r#8 by SPP-42** (promoted under a pre-declared rule with a stated gate miss, rule 14) **and by SPP-57** (the owner re-asked in-session; the lane answered NO — structure regressed, two inert pipes replaced one live one) |
 | P9 | 2026-09-06 r#2 | EIA-930 SWPP defective hours (audit §3.4) | "Benchmark-side fix in SPP-31; demand-side routed (Recommended)" | SPP-31 screens `NG:` columns in the benchmark builder; low-side demand screen → audit track (§3 R-f); SPP-40 PRECOMMIT names the hours |
 
 ---
@@ -348,6 +393,14 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | R-r | FINDING-spp-53 §6 O-1/O-2 (asymmetric pair 3,400 / 4,206; identification width 2,645–11,121 MW) — SPP-40 §7.2 shows S→N live at the symmetric rating | SPP-58 (chartered r#6) | queued after SPP-57 |
 | R-s | `audit_keepers --check` S1: `status/ERCOT.js`, `status/PJM.js` stale at pin `8a4bfd29` | ERCOT / PJM promoting lanes | not this desk's files |
 | R-t | Three pre-existing STALE goldens (NEISO perfb-campd ×2 vs live `neiso-106`; ERCOT perfb-campd-ercot-after, provenance pruned) | NEISO / ERCOT lanes | reported by `check_golden_manifest` at the pin, exit 0 |
+| R-u | SPP-42 R-9 / SPP-41 §8: stuck EIA-930 SWPP `Demand` runs (2025: 698 h / 19 runs, longest 155 h from 12-15; 2024: 396 h; 2023: 36 h; the surviving 2025 unserved hour sits inside the December window); SPP-41's co-flag proposal (repair the `NG` total only where an `NG:` cell was flagged) | audit track (ruling P9: demand-side routed) — the desk's adjudication on the co-flag: NOT chartered now, it reaches no criterion; revisit if the completeness ratio is ever gated | `src/` demand-path screen with cache-key risk, repo-wide |
+| R-v | SPP-36 R-9: `assembly.py` six-slice econ ramp has no feasibility precondition — a sub-3.0 MW econ block is silently deleted by `MIN_TRANCHE_CAPACITY_MW` (2.40 MW on one SPP plant; ISO-agnostic) | model desk / audit | pre-existing, not SPP's |
+| R-w | SPP-41 §7(f): 16 red tests at HEAD — one CAISO (SPP-31 §5e), fifteen SPP-era | SPP-38 (chartered r#8) for the fifteen; CAISO lane for the one | SPP-caused breakage on `main` |
+| R-x | SPP-41 §7(b): the record carries NYISO 2024 `other` 3.3197 (screen-before-gap-fill), not SPP-31's projected 3.3486 — DESK RULING r#8: the seam's construction stands; SPP-31 §3.2's number is superseded, not restored | closed | unscored series |
+| R-y | SPP-35 R-3 / SPP-37 N-3: the registry generator cannot express an `iso_configs` value; `docs/parameter-citations.md:1744`'s hand-added N↔S row dies on the next generator run | registry owner / audit track | still open |
+| R-z | SPP-57 R-13: the residual-South price reads SPS DEARER than the Oklahoma hub on the annual mean in 2024–2025 (+4.74 / +12.07) — SPP-54's design starts from that table, not P1's prose | SPP-54 (queued) | recorded so the charter carries it |
+| R-aa | SPP-57 R-14: the hub-pair ψ identification double-attributes intra-Oklahoma elements to whichever link the regression is run for — SPP-58's second identification is load-bearing for every FCITC rating that admits them | SPP-58 (queued; now ranked right after SPP-57b / SPP-51) | — |
+| R-ab | SPP-57 R-15: `calibration_reference.json` SPP 2025 hydro = EIA-923 preliminary 0.02 TWh, so leg (v) reads hydro out of band on every 2025 run carrying keeper-2's repair | SPP-43 (zero-LP report + proposed one-rule repair, not applied) | builder-side vintage question |
 
 ---
 
@@ -367,6 +420,8 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | `results/cache.py`, `ScenarioConfig` fields | capx D77/D79 (cache fingerprint) | none | never touched by any SPP lane through W4 (plan §7 G8) |
 | Per-plant solve slots | capx / SCN campaigns, per-ISO calibration lanes | SPP-40, SPP-5x | advisory: confirm no other per-plant solve before the SPP leg (rule 12, ≤ 2 concurrent) |
 | r#7 | MISO lane keeper `2026-09-07-miso-233-spp-hourly` (bundle `miso233_sppseam_K`) — MISO's priced SPP seam, rule 25 | VERIFIED no SPP object moved (`iso_configs.py`, `interchange/`, `spp_seam_*` diff empty 7347933c..8a4bfd29); SPP-51 will read MISO's seam constants but never edit them |
+| r#8 | SPP-44 adds a `ScenarioConfig` field → a cell line in EVERY ISO shard (rule 28c, the one non-parallel edit) | SPP-44 rebases LAST and re-runs `check_mechanism_matrix`; the capx / SCN / per-ISO lanes writing shards this week are the collision surface — the lane touches one `·` line per foreign shard and nothing else |
+| r#8 | SPP-43 (full span) ∥ SPP-57b (screen) ∥ SPP-44 (screen) — three per-plant SPP solves in flight | separate sessions/containers; rule 12's ~2-per-host cap holds per container; each charter asks the desk before solving |
 
 Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix files are continuous, so the charter's rebase-immediately-before-commit line is the protocol); `mechanism-matrix.js` last written by capx D78-R2 (`8e68a471`, 18:36 UTC) and the shards by nyiso-204b (`330e3cac`, 18:26 UTC) within the hour before the pin. Re-check at sitting #2.
 
@@ -401,6 +456,10 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#7 | SPP-37 | `claude/spp-37-leftovers-q7hn` | — | plan §8 W4b · SPP-37 | issued |
 | r#7 | SPP-42 | `claude/spp-42-hydro-rebaseline-w8nd` | — | plan §8 W4b · SPP-42 | issued; launch after SPP-36 + SPP-41 land |
 | r#7 | SPP-57 | `claude/spp-57-oklahoma-pocket-m4rt` | — | plan §8 W5 · SPP-57 | issued; design now, solve after SPP-42 |
+| r#8 | SPP-43 | `claude/spp-43-screened-rebaseline-p2vq` | — | plan §8 W4c · SPP-43 | issued |
+| r#8 | SPP-38 | `claude/spp-38-seventh-iso-tests-n6wr` | — | plan §8 W4c · SPP-38 | issued |
+| r#8 | SPP-57b | `claude/spp-57b-oklahoma-pocket-sets-h3km` | — | plan §8 W4c · SPP-57b | issued (SPP-57 R-12) |
+| r#8 | SPP-44 | `claude/spp-44-gas-commitment-bridge-r5tc` | — | plan §8 W4c · SPP-44 | issued |
 
 ---
 
@@ -414,3 +473,4 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | E-2 | r#2 | The desk ran `git merge --ff-only origin/main` on its branch while the harness was in plan mode (read-only). | None — a fast-forward with no local commits; nothing lost or rewritten. | Recorded because the mode was explicit; the desk does not repeat state changes under plan mode. |
 | E-5 | r#5 charters (found r#6) | Three charter defects the W3 lanes had to catch: (i) SPP-30's sequence named `derive_cc_committed_pct.py --iso SPP` — the script has no `argparse`, is ERCOT-only and would have overwritten ERCOT's committed file; (ii) SPP-32 named `data/fuel/hubs.py` as the basis home — the SPP rows belong in `basis/meanzero.py`; (iii) SPP-30's gate read "ZERO full-year fallbacks" — unachievable, every ISO carries `eia923_netzero` units (MISO 135, PJM 95 …). | None landed wrong: SPP-30 refused the script on a scratch proof and reported 9 itemised fallbacks; SPP-32 wired the right file. The desk had asserted the sequence and the gate from docstrings it had not run. | Plan §5/§8 corrected this sitting; standing note: a charter's RUN line is verified against `--help` output, not a docstring, before issuance. |
 | E-6 | r#5/r#6 charters (found r#7) | The SPP-40 STOP gate was chartered as "link binds in the measured direction" with no dominance threshold, so the lane operationalised it as a strict inequality and a 22-hour (0.25 %) tie killed a screen whose every sign-based reading agreed with the market; the owner had to direct the full span (P14). | One extra owner intervention; no wrong number landed — the screen record stands unedited and the keeper is the honest baseline. | Standing rule from r#7: every direction/sign leg in an SPP STOP gate states an ex-ante dominance threshold (e.g. ≥ 55 % of at-bound hours) and a minimum liveness (≥ 5 % of hours); written into SPP-57's charter. |
+| E-7 | r#7 (found r#8) | The desk chartered SPP-36 → SPP-42 as a dependency chain ("launch SPP-42 after SPP-36 + SPP-41 land") and told the owner it would hold SPP-42 — but the owner launched it at once; it derived the crosswalk itself and solved BEFORE the SPP-41 seam, so keeper-2 carries the unscreened 2023 wind input and a fourth solve (SPP-43) is now owed. The desk's sequencing was advisory and it did not say so. | One extra ~6-minute solve; two lanes derived one file (benign — byte-identical, and a rule-23 check the desk could not have bought otherwise). | Standing from r#8: every charter states what to do when a precondition is UNMET at launch (proceed on a stated basis, or STOP) instead of assuming the desk's order holds; the owner launches what is issued, so issue only what may run now, and put the rest in the next sitting's queue. |
