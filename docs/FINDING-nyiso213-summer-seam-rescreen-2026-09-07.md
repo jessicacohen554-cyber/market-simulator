@@ -191,3 +191,124 @@ instrument on one basis (G-CTRL form 4: no control solve was spent, rule 29(b)).
 
 *(nyiso-213 screen, 2026-09-07. The gates were written before the solve; the arm cleared them; and
 the one prediction that could have voided the whole exercise was tested and did not fire.)*
+
+---
+
+# ADDENDUM (same session) — the span was spent, and the arm was **PROMOTED**; the 2022 rung **degrades** and is reported, not absorbed
+
+## 6. The full span: CALIBRATED, identical to the keeper it supersedes
+
+One `--year 2023 2024 2025` invocation of the same replay + flag (rule 16 `[R-ALLYEARS]`), bundle
+`results/calibration/nyiso213_summer_seam`, registered as **`2026-09-07-nyiso-213-summer-seam`**.
+
+**DETERMINATION: CALIBRATED — grade 7/8, fails 0, C3c the lone ledgered caveat.** Byte-for-byte the
+same headline the superseded keeper carries, so rule 22's **D-5(b)** stop ("a WORSE determination
+STOPS the promotion") did not fire; the determination was re-verified **artifact-only** before the
+marker was re-keyed. Under the owner's standing formula — *"If structural integrity improves but
+gates regress that may still be a keeper"* — the arm was **promoted**.
+
+**Structural result across the span.** Over-ceiling months at Cricket Valley 57185 go **7 → 1**:
+
+| year | keeper months meter > LP ceiling | arm |
+|---|---|---|
+| 2023 | `[7]` | **`[]`** |
+| 2024 | `[7, 8, 9]` | **`[8]`** |
+| 2025 | `[6, 7, 8]` | **`[]`** |
+
+Max dispatch above ceiling **0.0000 MW** in every year.
+
+## 7. My PRED-B was wrong in sign for two of three years, and I say so
+
+PRED-B declared, from the 2025 screen, that the arm makes the price fit worse. **On the span it
+improves it in two years of three:**
+
+| criterion | 2023 keeper → arm | 2024 keeper → arm | 2025 keeper → arm |
+|---|---|---|---|
+| C3a mean LMP | +5.7 % → **+4.3 %** ✔ better | +6.5 % → **+5.3 %** ✔ better | −6.3 % → **−7.3 %** ✘ worse |
+| C3b NRMSE | 0.124 → **0.122** ✔ better | 0.185 → **0.179** ✔ better | 0.152 → **0.160** ✘ worse |
+
+All six stay PASS. **PRED-B generalised a single screen year and was wrong in direction for 2023 and
+2024** — recorded here as an error of mine rather than quietly absorbed into a favourable result.
+Under rule 1 `[R-STRUCT]` neither the improvement nor the degradation is the reason for the
+promotion; the structural repair is.
+
+**C1 moves the other way and is reported at full magnitude.** CC_REGULAR — a class the model already
+over-produces — moves **further above** actual in both scored years: 2023 **+0.37 → +0.79 TWh**,
+2024 **+2.39 → +2.91 TWh**. Every class stays PASS in both years; ST_GAS improves in 2023
+(+1.92 → +1.67 TWh). 2025's C1/C2 are SKIPPED identically on both sides (preliminary EIA-923).
+
+## 8. The un-pre-registered span diagnostic, labelled as such
+
+The gates were pre-registered for the **screen year 2025 only**. Running the same instrument on 2023
+and 2024 is a diagnostic extension chosen **after** the screen cleared; it is **not** a gate verdict
+and the 2025-written bars are **not** rewritten to fit it. Both reads:
+
+* **2023** — every leg inside the 2025-written bars.
+* **2024** — two reads outside them:
+  * **S-5**: Aug 2024 remains over-ceiling. **Not a new fact and not a surprise** —
+    `_nyiso212_arm_phase0.json`, committed before any PREREG existed, *predicted*
+    `months_meter_over_ceiling_on == [8]` for 2024. The "no month" bar was written for 2025, where
+    phase 0 predicted `[]`.
+  * **S-2(c)**: exactly one plant outside its bound — **55375 Astoria Energy**, whose ceiling fell
+    42.16 GWh while its summer dispatch fell **49.81 GWh**, i.e. **7.65 GWh (0.48 % of its
+    1,589.68 GWh keeper summer) more than its own tightening**. Its **off-summer rises +37.61 GWh**
+    in the same year, so the plant is roughly flat on the year (−12.2 GWh net). This is seasonal
+    merit re-allocation, which the flag provably cannot cause directly (it does not touch
+    off-summer availability, phase-0 F-1) — reported as a **real breach of the confinement bound at
+    one plant in one year**, not explained away.
+
+## 9. The 2022 validation touchpoint DEGRADES — the strongest evidence against this arm
+
+`2026-09-07-nyiso-213-tp2022`: the newly promoted keeper's frozen recipe replayed on 2022 under the
+standing `complete` marker, stamped to the keeper (rule 30 `[R-TOUCHPOINT-FOLD]`).
+
+| criterion (2022) | prior keeper's touchpoint | this keeper's touchpoint |
+|---|---|---|
+| C1 CC_REGULAR | +4.35 TWh, +3.3 pp | **+5.01 TWh, +3.8 pp** |
+| C3a mean LMP | −11.2 % | **−12.5 %** |
+| C3b NRMSE | 0.227 | **0.229** |
+| determination | NOT-YET, grade 4/8, 3 fails | NOT-YET, grade 4/8, 3 fails |
+
+**All three failing criteria degrade.** The determination and grade are unchanged, but the direction
+is not. This is **live model-SELECTION evidence pointing against the arm**, and it is consistent
+with the in-sample C1 direction: the arm adds CC_REGULAR volume in every year, and NYISO's model
+already over-produces that class.
+
+Two rules govern what happens next, and both are followed rather than argued around:
+
+* **Rule 30(c)** — a held-out year **never downgrades the ISO**. NYISO's determination is its
+  train-tier verdict and stays **CALIBRATED**. A validation number is iterable selection evidence
+  that can neither certify nor decertify.
+* **Rule 22** — **nothing may be identified against a touchpoint year.** So the degradation is
+  *not* re-tuned against here. It is handed forward.
+
+**The object it hands forward**, named: **CC_REGULAR aggregate over-production** — the counterpart of
+the still-open **object (B)**, in which Cricket Valley 57185 under-runs its **own** meter by ~0.75 TWh
+in 2025 at corrected availability while the class as a whole over-runs. The seam repair has separated
+these two cleanly; closing the aggregate half is the next session's work, on the training tier.
+
+## 10. Promotion records, all in the same PR
+
+Keeper shard + promotion prose (with nyiso-202's audit-E11 declaration carried forward — the two
+`ccs_retrofit_*` fields are byte-identical between the two keepers and are forecast-only);
+`calibration-complete.NYISO` re-keyed under D-5(b) with `keeper_at_declaration` preserved and `final`
+untouched; `status/NYISO.js` rebuilt (holdout ladder carries the 2022 rung per-year, rule 30(b));
+forecast **gate (a) re-keyed in the same PR** (rule R-T / owner ruling Q34) with the **verdict
+unmoved** (pass → pass) and the prior detail preserved verbatim under its sha; NYISO matrix shard
+cell **`O → K`** with keeper and gates stamps and the prose header re-stamped (rule 28).
+
+Verified: `audit_keepers --iso NYISO` PASS 0/0 · `check_gate_a_provenance` OK ·
+`check_registry_payload_parity` OK (18 runs, 51 bundle dirs, 0 tolerated) ·
+`check_mechanism_matrix` no NYISO keeper-stamp or prose-header drift · 29 passed / 0 failed on the
+holdout-render, gate-a-provenance and mechanism guards. Screen bundle deleted before merge (rule
+29(c)). The superseded 2022 touchpoint is **not** pruned: its id is cited in the preserved nyiso-209
+owner-declaration record, and pruning it would dangle a citation inside a preserved owner ruling.
+
+**Markers untouched beyond the D-5(b) re-key duty:** `final` still ABSENT, the locked-test freeze
+(`scope.tiers = ['locked_test']`) untouched, 2019 and H1-2026 **not granted and not spent**, 2020 and
+2021 **unspent** — a separate owner spend. **The five pending owner rulings are untouched and no new
+card is opened.**
+
+*(nyiso-213 addendum, 2026-09-07. The arm cleared its corrected gates and was promoted on the
+structural half; the price fit improved in two years and worsened in one; and the held-out year got
+worse, which is on the record at full magnitude and is the next session's object.)*
