@@ -144,3 +144,29 @@ with 14.4 % of slots missing; `GenMixYTD_SPP.csv` missing 10.8 % and stopping
 2025-12-16) under rule 14 `[R-ACCURATE]`. The sample files are left in place because
 they are lane SPP-13's payloads and deleting another lane's files is outside SPP-14's
 regions — **routed to SPP-DESK** as a prune. Values are MW, not percentages.
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-14: the ROOT-LEVEL yearly files 2023–2025 LANDED from SPP's own portal (row 7 SERVED, with a discrepancy stated)
+
+FINDING: `docs/handoffs/FINDING-spp-14-2026-09-06.md`. **Route (measured 2026-09-06 by SPP-14):** `https://portal.spp.org/file-browser-api/download/<fsName>?path=<p>` and the `?fsName=<fs>&path=<p>&type=folder` listing — **serving data to an anonymous caller again**, no `X-SPP-UI-Token`, no cookie, no User-Agent dependence (curl default, `python-requests/2.32.3`, an empty UA and a Chrome UA all return the same bytes). The `200 []` / `404` SPP-12 and SPP-13 measured earlier the same day did not reproduce; the FTP route (port 21) stays egress-blocked and was not needed. Producer: `scripts/data/fetch_spp_alt_portal.py` (re-fetches every file below; verify against `SHA256SUMS.txt`). Payloads are SPP's own files, byte-for-byte as served (the `data/raw/` contract).
+
+| File | Source path | Span | Rows | Header |
+|---|---|---|---:|---|
+| `GenMix_2023.csv` | `generation-mix-historical /GenMix_2023.csv` | 2023-01-01T06:05Z → 2024-01-01T06:00Z | 105,120 | `GMT MKT Interval, Coal Market, Coal Self, Diesel Fuel Oil Market, Diesel Fuel Oil Self, Hydro Market, Hydro Self, Natural Gas Market, Gas Self, Nuclear Market, Nuclear Self, Solar Market, Solar Self, Waste Disposal Services Market, Waste Disposal Services Self, Wind Market, Wind Self, Waste Heat Market, Waste Heat Self, Other Market, Other Self, Load` |
+| `GenMix_2024.csv` | `/GenMix_2024.csv` | 2024-01-01T06:05Z → 2025-01-01T06:00Z | 105,408 | same |
+| `GenMix_2025.csv` | `/GenMix_2025.csv` | 2025-01-01T06:05Z → 2026-01-01T06:00Z | 105,120 | same (the final 2026-01-01T06:00Z row is empty) |
+
+These are **complete** 5-minute series (12 × 8,760 = 105,120 intervals; 2024 leap = 105,408), where the `SPP/`-sub-folder product SPP-13 landed (`GenMix_2024_SPP.csv`, `GenMixYTD_SPP.csv`) carries 10.8–14.4 % missing intervals and a different header (`GMTTIME, COAL_MKT, …, LOAD`). **They are NOT the same series.** Measured on the 79,103 common 2024 stamps: fuel totals (market + self) agree only loosely — coal corr 0.985 (mean 8,016 vs 8,135 MW), gas 0.986 (9,588 vs 9,764), wind 0.956 (12,725 vs 11,876), load 0.948 (32,855 vs 32,915) — with exact agreement (< 1 MW) at 0–37 % of stamps per fuel, and **no 5/10/60-minute timestamp shift reconciles them** (correlations unchanged under ±5, ±10, +60 min). The market/self split differs most (root coal-self mean 3,611 vs 6,215; gas-market 8,575 vs 3,583). Which of SPP's two publications is the footprint SPP-32 wants is **reported, not decided** here; the root files are the ones the `gridstatus` SPP client (0.36.0) reads as `generation-mix-historical`. The `SPP/` sub-folder also serves `GenMix365_SPP.csv` (18.1 MB) and `GenMixYTD_SPP.csv` (12.3 MB, newer than the landed one) and a `SWPW/` sibling for the WEIS BAA — not landed. Stamps are UTC (`Z`), values MW (guide p. 18). Licence: SPP Terms \& Conditions (<https://www.spp.org/terms-conditions/>, read 2026-09-06), verbatim: *"Permission is implicitly granted to copy and distribute (via computer network or printed form) in whole or in part (with appropriate citation) EXCEPT when such materials will be used, in whole or in part, within a commercial publication (printed or otherwise) or when the author(s) or SPP will be quoted in commercial materials, forums or publications. Any commercial use of these materials requires prior, express written authorization from the author(s) or a duly authorized officer of SPP."*
+
+
+---
+
+## MERGE RECONCILIATION 2026-09-06 — BOTH SPP-14 landings are in this directory
+
+The two SPP-14 status sections above were written by **two parallel sessions of the same
+lane**, each describing only its own landing, and both landings are now present. Neither
+section is wrong; each is partial. What this directory actually holds is the union, and the
+file listing beside this README is the authority — not either section's "Landed:" line.
+
+`SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
+every file here, from either landing.

@@ -138,3 +138,36 @@ rolled into a year zip** (SPP zips a year about two years on), so it is served a
 daily files at `/2025/` and is fetched per-day from the same route when a lane needs
 it. SPP changed this product's format on **2026-03-24** (wide -> long); 2023-2025 are
 the wide format.
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-14: 2023–2025 LANDED from SPP's own portal (row 6 SERVED)
+
+FINDING: `docs/handoffs/FINDING-spp-14-2026-09-06.md`. **Route (measured 2026-09-06 by SPP-14):** `https://portal.spp.org/file-browser-api/download/<fsName>?path=<p>` and the `?fsName=<fs>&path=<p>&type=folder` listing — **serving data to an anonymous caller again**, no `X-SPP-UI-Token`, no cookie, no User-Agent dependence (curl default, `python-requests/2.32.3`, an empty UA and a Chrome UA all return the same bytes). The `200 []` / `404` SPP-12 and SPP-13 measured earlier the same day did not reproduce; the FTP route (port 21) stays egress-blocked and was not needed. Producer: `scripts/data/fetch_spp_alt_portal.py` (re-fetches every file below; verify against `SHA256SUMS.txt`). Payloads are SPP's own files, byte-for-byte as served (the `data/raw/` contract).
+
+| File(s) | Source path on the portal | Rows | Format |
+|---|---|---:|---|
+| `HOURLY_LOAD-2023MM.csv` ×12, `HOURLY_LOAD-2024MM.csv` ×12 | members of `hourly-load /<yr>/<yr>.zip` (the 365 `DAILY_HOURLY_LOAD-*.csv` members are NOT landed — the monthlies are their roll-up) | 743 / 720–744 per month | **WIDE**: `MarketHour, CSWS, EDE, GRDA, INDN, KACY, KCPL, LES, MPS, NPPD, OKGE, OPPD, SECI, SPRM, SPS, WAUE, WFEC, WR` — the 17 EIA-930 sub-BA tokens as columns, MW |
+| `HOURLY_LOAD-2025MM.csv` ×12 | `hourly-load /2025/HOURLY_LOAD-2025MM.csv` (live layout) | same | same wide format (the long `Balancing Area Name / Control Zone Name` format SPP-13 recorded from the 2026 sample starts after this span; `gridstatus` 0.36.0 dates the wide format's end at 2026-03-24) |
+
+**Timezone confirmed on the files:** `MarketHour` is **UTC** despite the name — every month's first row is `MM/01/YYYY 07:00:00` in winter (= 01:00 CST) / `06:00:00` in summer (= 01:00 CDT); March carries 743 rows (the spring-forward hour absent), November 721 (the fall-back hour present) — i.e. the local-clock DST hours are encoded on a UTC axis, and a local-hour 8760 needs the `America/Chicago` conversion `scripts/data/convert_eia930.py` already applies to `SWPP`. Values are the hourly MW by legacy control area; the sum over the 17 columns is the SPP BAA load (the `SWPW` BAA is not in this product's 2023–2025 files). **Not landed:** the daily files (roll-ups cover them). Licence: SPP Terms \& Conditions (<https://www.spp.org/terms-conditions/>, read 2026-09-06), verbatim: *"Permission is implicitly granted to copy and distribute (via computer network or printed form) in whole or in part (with appropriate citation) EXCEPT when such materials will be used, in whole or in part, within a commercial publication (printed or otherwise) or when the author(s) or SPP will be quoted in commercial materials, forums or publications. Any commercial use of these materials requires prior, express written authorization from the author(s) or a duly authorized officer of SPP."*
+
+
+---
+
+## MERGE RECONCILIATION 2026-09-06 — BOTH SPP-14 landings are in this directory
+
+The two SPP-14 status sections above were written by **two parallel sessions of the same
+lane**, each describing only its own landing, and both landings are now present. Neither
+section is wrong; each is partial. What this directory actually holds is the union, and the
+file listing beside this README is the authority — not either section's "Landed:" line.
+
+The one substantive overlap, measured rather than assumed: the extracted monthly
+`HOURLY_LOAD-2023MM.csv` / `-2024MM.csv` files are **byte-identical to members of the
+`hourly-load-2023.zip` / `-2024.zip` archives** in this same directory (all 24 verified by
+sha256 against the archive members). They are kept in both shapes deliberately: the archives
+are SPP's own published artifact and the extracted monthlies give 2023-2025 one uniform,
+globbable shape for a downstream curation script. A consumer must therefore **not** glob the
+zips and the CSVs together, or it will double-count 2023-2024.
+
+`SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
+every file here, from either landing.

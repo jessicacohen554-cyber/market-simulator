@@ -92,3 +92,8 @@ for a row the plan scopes to SPP-56 alone. Fetch it when SPP-56 needs it:
 `python scripts/data/fetch_spp_alt_portal.py --product rtbm-mcp --years 2023 2024`.
 2025 is served per-month at `/2025/<MM>/` (plus a `2025AnnualRollup` folder) for both
 products, not as a year zip.
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; 2023–2025 MCPs landed
+
+- `https://portal.spp.org/file-browser-api/download/rtbm-mcp?path=%2F2023%2F2023.zip` (47,156,480 B), `…%2F2024%2F2024.zip` (47,605,298 B): only the `RTBM_MCP_<yr>.csv.zip` annual-roll-up member landed. `…?path=%2F2025%2F2025AnnualRollup%2FRTBM_MCP_2025.csv.zip` (3,255,073 B).
+- `https://portal.spp.org/file-browser-api/download/da-mcp?path=%2F2023%2F2023.zip` (418,589 B), `…%2F2024%2F2024.zip` (417,669 B) landed whole; `…?path=%2F2025%2F<mm>%2FDA-MCP-2025MMDD0100.csv` ×365 landed under `da-mcp-2025/`.
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only or-mcp`. Checksums: `SHA256SUMS.txt` (new).

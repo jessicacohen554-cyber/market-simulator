@@ -93,3 +93,7 @@ oldest-first at the portal root vs `GMTTIME,COAL_MKT,COAL_SELF,...` newest-first
 sample zip); the columns are the same quantities. Values are **MW**, not percentages
 (SPP-13 §5 — SPP's page metadata says "percentage" and is wrong). `GenMix_2011.csv`
 .. `GenMix_2022.csv` are on the same route for the rule-22 holdout years, unfetched.
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; the root-level yearly files landed
+
+- `https://portal.spp.org/file-browser-api/download/generation-mix-historical?path=%2FGenMix_2023.csv` (16,257,034 B), `…GenMix_2024.csv` (16,432,226 B), `…GenMix_2025.csv` (16,412,421 B), fetched 2026-09-06; the portal root also lists `GenMix_2011.csv` … `GenMix_2022.csv` (not landed — rule-22 data prep for SPP-15 if wanted).
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only genmix`. Checksums: `SHA256SUMS.txt` (new; the SPP-13 files stay recorded in `../spp-planning/SHA256SUMS.txt`).
