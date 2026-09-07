@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-07-spp-3-screened-input",
+  "label": "spp 3 screened input",
+  "date": "2026-09-07",
+  "shorthand": "spp-3-screened-input",
+  "definition": "spp-43: keeper-2's recipe (spp42_crosswalk_B) byte-for-byte, re-solved through the SPP-41 screened EIA-930 loader seam. The only changed input is SPP 2023 wind: -27.476 GWh on the LP bound at h3907 (one artifact hour, the NG: WND unit slip). 2024 and 2025 carry no moved LP input (27-array identity census, PRECOMMIT-spp-43-2026-09-07.md 2c). No flag, band, default or mechanism differs from keeper-2.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-07-spp-3-screened-input.js",
+  "bundle": "results/calibration/spp43_screened_B"
+}

@@ -12953,3 +12953,68 @@ untouched. **Re-measured, not inherited (rule 25):** the named test set
 `scripts/probes/nyiso214_duct_gap_census.py`; NYISO matrix shard `gates` stamp plus the
 `cc_duct_peaking` and `cc_nameplate_summer_derate` cells annotated (rule 28(b)), **no cell verdict
 letter moved**.
+
+## nyiso-215 — 2026-09-07
+
+**ZERO LP. Keeper UNCHANGED (`2026-09-07-nyiso-213-summer-seam`, CALIBRATED, grade 7/8, fails 0,
+C3c the lone ledgered caveat — re-verified this session at HEAD, artifact-only). Nothing
+promoted, armed, screened or registered; no marker moved; 2020/2021 unspent.**
+
+Took nyiso-214 §7's named-not-pursued object: the seven small `CC_REGULAR` plants (10621, 54034,
+7784, 10620, 54592, 50744, 54593 — 441.7 MW) represented by a **single `_peak` tranche**, and
+asked which binning path builds them, whether it is a small-band-filter artifact, and whether any
+measured conduct justifies offering their base load at a scarcity multiplier.
+
+**Answer: the path is `cc_reserve_duty_split` (nyiso-146), it is deliberate, its MEMBERSHIP
+survives audit, and its LEVEL does not.**
+
+* **P1 FIRES** — the seven are exactly the `reserve_duty = True` cohort; the keeper's own
+  `fleet_only` rebuild reproduces nyiso-214's **441.700 MW** to 0.0 % and its 716.8 MW duct
+  population to **0.039 MW**.
+* **P2** — causation established beyond doubt (flag off ⇒ **7 of 7** regain 7–8 tranches, 0 remain
+  single), so it is **not** a builder artifact. Its 400 MW magnitude limb missed by **2.252 MW**
+  and **the gate was reported as written, not restated**; the pre-registered outcome partition was
+  additionally not exhaustive, disclosed in the finding.
+* **P3(a) FIRES / P3(b) HOLDS** — the cohort's one 0.10 threshold rides **two** statistics (CAMPD
+  online share at 19 plants, EIA-923 pooled CF at 3), median ratio **0.473** all-plant / **0.418**
+  boundary-clean, one-sided toward inclusion **empirically, not analytically** (19 of 20 < 1; the
+  sole ratio > 1 is boundary-contaminated 2500 Ravenswood at CF 1.383). The one plant riding the
+  fallback (7784 Allegany) qualifies on **every** reconciliation (0.037 / 0.041 / 0.059). A real
+  construction defect, quantified, **non-load-bearing**. `derive_reserve_duty_cc.py` **audited,
+  never re-derived** (rule 23).
+* **P4 FIRES / P5 mean limb fires, exceedance limb misses** — the split routes the cohort to the
+  **class** peak band `2.25 × base`, i.e. **duct-firing physics borrowed to express a duty role**
+  (explicitly, to avoid a new scalar under rule 21). A multiplier fixed in heat-rate space is a
+  fixed **cost** offer, so the protection **erodes as the price level rises**: implied economic
+  on-share **0.042 → 0.167 → 0.521** (2023/24/25) against a measured 0.036 online / **0.00144 CF**
+  (ratios 1.18 / 4.66 / 14.54) while Upstate_West mean LMP goes **$24.48 → $35.83 → $53.91** and
+  the cohort's own `mc` rises only ~30 %. The keeper's **own committed** `class_band_hourly` puts a
+  **strict lower bound of 4.778 GWh — 0.855× the cohort's entire 2023 measured annual energy —
+  through in 38 hours**.
+* **Reported at full magnitude, not averaged:** 54034 Rensselaer runs the mechanism the **opposite**
+  way (implied 0.004–0.010 vs measured 0.064) in all three years — the level is *un*-levelled, not
+  merely mis-levelled. C3a −7.3 % in 2025 means the erosion is **worse** against actual prices.
+* **NEW OWNER CARD (the seventh pending, prejudging none — including nyiso-214 §6's membership
+  card, which is a different mechanism at a disjoint cohort):** should a duty-role offer position
+  be expressed in **cost** space or in **price-percentile** space? The band's price stays closed in
+  both directions (nyiso-194 up, nyiso-195 down; `phys_peak == peak`), so a successor gives the
+  cohort its own basis or routes it elsewhere. **Nothing built, armed, screened or sized.**
+* **Found on the way, reported not repaired:** the keeper bundle's committed `metrics.json` reads
+  `determination: NOT-YET` on a stale in-run *"no governance attestation in bundle"* reason while
+  the scorer's `--run-id` path (the rule-22 D-5(b) route) returns **CALIBRATED**. Systemic across
+  at least four ISOs (`neiso105`, `neiso99`, `nyiso202`, `nyiso213_tp2022`, `pjm169`,
+  `pjm_debugb`); out of this lane to fix. Read the scorer, not the file.
+
+Instrument validated: `nyiso196_rebuild_checks.py --year 2024` reproduces its committed record
+**byte-identically**, `git status --porcelain -uno` empty. G-DRIFT `51f2fc2d → dcb609f4` audited
+hunk-by-hunk in the PREREG before measurement: 10 INERT, 1 LIVE-but-out-of-scope
+(`eia930/actuals.py` `_screen_fuel_spike_columns` — recorded for any lane that re-scores C1/C4).
+Tests named rather than inherited: `test_gate_a_provenance`,
+`test_cc_summer_derate_reconciled_basis`, `test_holdout_render_parity`, `test_campd_bins` —
+**75 passed, 0 failed**; `ruff format --check .` 1,405 files formatted, `ruff check` passes.
+Record: `docs/FINDING-nyiso215-reserve-duty-band-erodes-2026-09-07.md`,
+`results/calibration/PREREG-nyiso215-reserve-duty-single-peak.md` (pushed before any number was
+read), `results/calibration/_nyiso215_reserve_duty_census.json`,
+`_nyiso215_band_energy_bound.json`, `scripts/probes/nyiso215_reserve_duty_census.py`,
+`nyiso215_band_energy_bound.py`; NYISO matrix shard `offer_curve_by_group` cell annotated
+(rule 28(b)), **no cell verdict letter moved**.

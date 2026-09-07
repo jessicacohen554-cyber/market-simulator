@@ -189,17 +189,23 @@ class TestCampaignMatrix(unittest.TestCase):
         )
 
     def test_cap_state_tight_resolves_to_nothing_on_the_no_program_isos(self):
-        # ERCOT / MISO carry no cap-and-trade program, so the case resolves
-        # to NO carbon program at all there — no row, no adder — and the LP is
-        # byte-identical to REF's. PJM is deliberately NOT in this list: it
-        # carries a partial RGGI program and falls through to the published
-        # regional budget in 2027-2030 (a slack row), which
+        # ERCOT / MISO / SPP carry no cap-and-trade program, so the case
+        # resolves to NO carbon program at all there — no row, no adder — and
+        # the LP is byte-identical to REF's. PJM is deliberately NOT in this
+        # list: it carries a partial RGGI program and falls through to the
+        # published regional budget in 2027-2030 (a slack row), which
         # tests/unit/policy/test_mass_cap_schedule.py pins and
         # FINDING-scn-cap-2026-09-06.md §5 routes to the desk.
+        #
+        # SPP added by SPP-38 once its REF bases landed: SPP-20 §4 records
+        # CAP_AND_TRADE_PROGRAMS as a DOCUMENTED SPP exclusion ("no carbon
+        # program"), so the seventh ISO belongs on the no-program leg, not on
+        # the three-program leg below. This test was GREEN before the addition
+        # (it never named SPP); extending it is a strengthening, not a repair.
         from market_sim.policy.cap_and_trade import resolve_carbon_program
         from market_sim.policy.constraints import get_active_policy_constraints
 
-        for iso in ("ERCOT", "MISO"):
+        for iso in ("ERCOT", "MISO", "SPP"):
             base = ScenarioConfig.from_yaml(
                 CONFIGS / "scenarios" / f"{iso.lower()}_scenario_base_2026_2030.yaml"
             )

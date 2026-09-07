@@ -1,0 +1,6 @@
+case,year,emissions_mt,import_co2_mt_reported,unserved_mwh,co2_cap_price_usd_per_t,n_co2_caps_binding,nox_tonnes,so2_tonnes,peak_price,curtailment_twh,storage_cycles,clean_share,negative_price_hours,avg_price_usd_per_mwh,backstop_built_mw,backstop_built_mwh,generation_twh
+CES-P30,2026,23.692,10.454796,0.0,0.0,0,5781.76,203.01,68.97,0.0,9.69,0.3924,0.0,49.23,0,0.0,154.1237
+CES-P30,2027,24.5906,10.153614,0.0,0.0,0,6066.87,208.75,67.01,0.0,9.3,0.3879,0.0,48.27,0,0.0,155.9436
+CES-P30,2028,17.2098,10.512144,0.0,0.0,0,6150.45,215.07,69.39,0.0,7.79,0.5221,0.0,49.9,0,0.0,157.7813
+CES-P30,2029,8.958,9.005075,0.0,0.0,0,5875.8,203.1,72.4,0.0,21.58,0.6815,0.0,43.48,0,0.0,159.692
+CES-P30,2030,6.303,8.570597,0.0,0.0,0,6365.29,204.51,80.83,0.0,23.49,0.7401,0.0,44.21,0,0.0,161.5846

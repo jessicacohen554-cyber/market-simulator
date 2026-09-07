@@ -1,7 +1,7 @@
 """Tests for the backcast→forecast parity check (FR-22 / FFR-1E).
 
 Trivial cases first per the repo testing pattern: a synthetic ``ScenarioConfig``
-source and a synthetic one-field keeper posture, then the real six-keeper sweep
+source and a synthetic one-field keeper posture, then the real seven-keeper sweep
 and the nyiso-102 regression (``docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md``).
 
 No LP anywhere — the checker is pure ``ast`` + ``json``.
@@ -236,7 +236,7 @@ def test_dynamic_consumer_patterns_are_anchored_and_narrow():
 
 
 # ---------------------------------------------------------------------------
-# The real six-keeper sweep
+# The real seven-keeper sweep (six ISOs until SPP-20 registered SPP, 2026-09-06)
 # ---------------------------------------------------------------------------
 
 
@@ -266,7 +266,18 @@ def keeper_sweep():
 # with no consumer and no declaration reds this test immediately.
 
 
-def test_all_six_keepers_resolve(keeper_sweep):
+def test_all_seven_keepers_resolve(keeper_sweep):
+    # SEVEN since SPP-20 registered SPP as the seventh ISO (2026-09-06) and the
+    # SPP desk designated a keeper: the sweep reads the keeper shards, so SPP
+    # entered it the moment frontend/data/backcast/keepers/SPP.json landed and
+    # the six-ISO set assertion went stale by construction. Extended (not
+    # relaxed) by SPP-38: SPP resolves CLEAN at 2026-09-07 -- 34 armed, 34
+    # FORECAST_WIRED, 0 alias / 0 backcast-only / 0 inert / 0 GAP / 0
+    # UNACCOUNTED on 2026-09-07-spp-2-crosswalk-hydro -- so it adds no exemption
+    # and the strong zero-unaccounted form below applies to it unchanged. Rule
+    # 26 [R-DELETE]: the six-ISO set and the function's own "six" name are
+    # replaced, not hedged with an SPP special case.
+    # (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 5.)
     reports, registry_failures = keeper_sweep
     assert registry_failures == []
     assert {r.iso for r in reports} == {
@@ -276,6 +287,7 @@ def test_all_six_keepers_resolve(keeper_sweep):
         "NYISO",
         "NEISO",
         "MISO",
+        "SPP",
     }
     for rep in reports:
         assert rep.errors == [], rep.iso
