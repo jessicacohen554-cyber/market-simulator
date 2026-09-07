@@ -643,10 +643,13 @@ results/
   if present**, so runs are stop/resume capable. To force a re-solve, delete the
   year file (or change the config, which changes the key).
   <!-- results/cache.py::is_cached; runner.py per-year loop step 5 -->
-- `results/{ISO}/` is **gitignored for all six ISOs** — forecast caches are
+- `results/{ISO}/` is **gitignored for six of the seven ISOs** — forecast caches are
   transient and reproducible from config. Only `results/calibration/` bundles are
-  tracked.
-  <!-- .gitignore results/ block, verified with git check-ignore for all six -->
+  tracked. **`results/SPP/` has no `.gitignore` entry yet**, so an SPP forecast
+  cache lands untracked-but-not-ignored until that line is added
+  (`FINDING-spp-35-2026-09-07.md` §5, routed — `.gitignore` is not that lane's file).
+  <!-- .gitignore lines 271-276; git check-ignore over all seven, 2026-09-07:
+       ERCOT/CAISO/PJM/MISO/NYISO/NEISO ignored, SPP not -->
 - `MARKET_SIM_DATA_ROOT` relocates the whole `data/` + `results/` root if you
   need the cache off the repo volume.
   <!-- config/paths.py::DATA_ROOT -->
