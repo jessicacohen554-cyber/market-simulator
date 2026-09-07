@@ -20,6 +20,26 @@ gap:
   number is registered (CI passes) but the human still owes a primary source.
 * Orphan entries (registry ids no longer in the code) are kept untouched.
 
+**Scope, and what it means for hand-added rows.** The registry covers exactly
+what ``validate_parameters.expected_param_ids()`` enumerates: module-level
+constants in ``config/constants.py`` and ``ScenarioConfig`` defaults. A number
+that lives anywhere else has no ``param_id``, so this generator never writes an
+entry for it — in particular the objects in ``config/iso_configs.py``
+(``TransferLink.ttc_mw``, ``InterfaceLimit`` caps, zone load shares …). That
+asymmetry has a sharp edge, because ``docs/parameter-citations.md`` is
+**re-rendered in full** from the registry on every run
+(``CITATIONS_MD.write_text(render_markdown(registry))``): the
+preserve-curated-entries contract above protects entries in
+``frontend/data/parameters.json``, NOT hand edits to the rendered Markdown. A
+citation row typed straight into ``docs/parameter-citations.md`` for an
+``iso_configs`` value is therefore **silently dropped the next time this script
+runs**. Live instance: the SPP N<->S ``TransferLink.ttc_mw`` row lane SPP-53
+hand-added (``FINDING-spp-53-2026-09-07.md`` §6 O-6, on
+``FINDING-spp-20-2026-09-06.md`` §5 R-3). Until the generator learns those
+objects — the open fix, and the only durable one — the citation that survives
+is the comment beside the value in ``iso_configs.py`` plus the lane's FINDING;
+treat a hand-added Markdown row as a copy of that record, never as its home.
+
 Run::
 
     python scripts/generate_parameter_registry.py          # write both files
