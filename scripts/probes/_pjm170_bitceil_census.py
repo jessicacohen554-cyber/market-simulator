@@ -243,7 +243,13 @@ def main() -> None:
     rows, ident = [], {}
     for year in args.years:
         cfg_c = build_config(bundle, year, arm=False)
-        cfg_a = build_config(bundle, year, arm=True)
+        # The arm config is DERIVED rather than re-built: the generic
+        # prb_overrides channel is itself exactly
+        # ``config.with_overrides(**{k: v ...})`` (run_calibration.py:1869) and
+        # nothing downstream re-derives the ceil, so this is the identical
+        # object at half the fleet builds. Part B below still exercises the
+        # real two-build route, where the offer array makes it load-bearing.
+        cfg_a = cfg_c.with_overrides(coal_bit_passthrough_ceil=ARM_CEIL)
         rows.append(footprint_row(cfg_c, cfg_a, year))
         ident[year] = other_supplies_identical(cfg_c, cfg_a, year)
 
