@@ -612,14 +612,10 @@ def test_pjm_fleet_loads():
 
 
 def test_spp_state_mapping():
-    """SPP zones are unions of whole states, except Texas, which splits by county.
+    """SPP zones are exact unions of whole states along the KS/OK and MO/AR lines.
 
-    North = ND SD NE MN MT IA KS MO CO; residual South = OK AR LA (+ Texas
-    outside the SPS counties); SPS = NM whole (+ the SPS Texas counties)
-    (docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option B; lane
-    SPP-54, PRECOMMIT §2.1; WY deliberately absent). A Texas plant with no
-    county code and no coordinates lands in the residual South, the larger
-    of the two Texas halves by plant count.
+    North = ND SD NE MN MT IA KS MO CO; South = OK TX NM AR LA
+    (docs/multi-iso/spp-data-audit.md §5 rows 4/5; WY deliberately absent).
     """
     north = {
         "38": "ND",
@@ -632,31 +628,11 @@ def test_spp_state_mapping():
         "29": "MO",
         "8": "CO",
     }
-    south = {"40": "OK", "48": "TX", "5": "AR", "22": "LA"}
+    south = {"40": "OK", "48": "TX", "35": "NM", "5": "AR", "22": "LA"}
     for fips in north:
         assert assign_zone_by_fips(fips, None, "SPP") == "SPP-North", north[fips]
     for fips in south:
         assert assign_zone_by_fips(fips, None, "SPP") == "SPP-South", south[fips]
-    assert assign_zone_by_fips("35", None, "SPP") == "SPP-SPS"  # NM whole
-
-
-def test_spp_texas_splits_by_the_sps_county_set():
-    """Texas is the one state a state map cannot express (audit §6.3 option B).
-
-    The SPS pocket's Texas half is the Panhandle + South Plains (+ Gaines)
-    county set; every other Texas county is the SWEPCO / PSO residual South.
-    County FIPS pinned against eGRID's FIPSCNTY for the counties with SWPP
-    plants (PRECOMMIT-spp-54 §2.1).
-    """
-    from market_sim.data.zone_assignment import _SPP_SPS_TX_COUNTIES
-
-    assert len(_SPP_SPS_TX_COUNTIES) == 42  # 26 Panhandle + 15 South Plains + Gaines
-    sps = {375: "Potter", 303: "Lubbock", 279: "Lamb", 501: "Yoakum", 165: "Gaines"}
-    residual = {203: "Harrison", 449: "Titus", 315: "Marion", 23: "Baylor", 67: "Cass"}
-    for county in sps:
-        assert assign_zone_by_fips("48", county, "SPP") == "SPP-SPS", sps[county]
-    for county in residual:
-        assert assign_zone_by_fips("48", county, "SPP") == "SPP-South", residual[county]
 
 
 def test_spp_wyoming_is_not_in_the_footprint():
@@ -675,31 +651,15 @@ def test_spp_unmapped_state_falls_back_to_north():
 
 
 def test_spp_coords_fallback_splits_at_the_kansas_oklahoma_line():
-    """Coords-only callers split at 37.0 N (the KS/OK state line), then by the
-    SPS pocket's own geography inside the South tier: west of the 100th
-    meridian AND south of the Oklahoma Panhandle strip (36.5 N), or west of
-    103 W (New Mexico). The EIA-860 post-eGRID supplement reaches this limb
-    with coordinates only, so it must place the Panhandle correctly on its own.
-    """
+    """Coords-only callers split at 37.0 N (the KS/OK state line)."""
     assert assign_zone_by_coords(35.5, -97.5, "SPP") == "SPP-South"  # Oklahoma City
-    assert assign_zone_by_coords(36.9, -99.0, "SPP") == "SPP-South"  # OK Panhandle (E)
-    assert (
-        assign_zone_by_coords(36.7, -101.5, "SPP") == "SPP-South"
-    )  # Guymon, OK Panhandle
-    assert (
-        assign_zone_by_coords(33.7, -99.0, "SPP") == "SPP-South"
-    )  # Diversion Wind, Baylor
-    assert (
-        assign_zone_by_coords(35.3, -101.7, "SPP") == "SPP-SPS"
-    )  # Amarillo (Harrington)
-    assert assign_zone_by_coords(33.5, -101.7, "SPP") == "SPP-SPS"  # Lubbock (Jones)
-    assert assign_zone_by_coords(32.7, -103.3, "SPP") == "SPP-SPS"  # Hobbs, NM
+    assert assign_zone_by_coords(36.9, -99.0, "SPP") == "SPP-South"  # OK Panhandle
     assert assign_zone_by_coords(37.1, -97.3, "SPP") == "SPP-North"  # south Kansas
     assert assign_zone_by_coords(41.3, -96.0, "SPP") == "SPP-North"  # Omaha
 
 
 def test_spp_known_plants_resolve_to_expected_zones():
-    """Named SPP plants land on their side of each seam (EIA-860 plant codes)."""
+    """Named SPP plants land on their side of the seam (EIA-860 plant codes)."""
     cases = {
         210: "SPP-North",  # Wolf Creek nuclear (Kansas)
         8036: "SPP-North",  # Cooper nuclear (Nebraska)
@@ -709,14 +669,9 @@ def test_spp_known_plants_resolve_to_expected_zones():
         6469: "SPP-North",  # Antelope Valley (North Dakota)
         6095: "SPP-South",  # Sooner (Oklahoma)
         2952: "SPP-South",  # Muskogee (Oklahoma)
+        6194: "SPP-South",  # Tolk (Texas Panhandle, SPS)
         6138: "SPP-South",  # Flint Creek (Arkansas)
-        7902: "SPP-South",  # Pirkey (Harrison County, east Texas — SWEPCO)
-        6139: "SPP-South",  # Welsh (Titus County, east Texas — SWEPCO)
-        6194: "SPP-SPS",  # Tolk (Lamb County, Texas Panhandle — SPS)
-        6193: "SPP-SPS",  # Harrington (Potter County, Amarillo — SPS)
-        3482: "SPP-SPS",  # Jones (Lubbock — SPS)
-        55065: "SPP-SPS",  # Mustang Station (Yoakum — Golden Spread, in the pocket)
-        2454: "SPP-SPS",  # Cunningham (Lea County, New Mexico — SPS)
+        2454: "SPP-South",  # Cunningham (New Mexico)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "SPP") == expected, f"ORIS {oris}"
@@ -727,6 +682,6 @@ def test_spp_every_plant_resolves():
     lookup = build_zone_lookup("SPP")
     # 828 EIA-860 SWPP plants (715 with operable generators) + eGRID 2023 rows.
     assert len(lookup) > 700
-    valid = {"SPP-North", "SPP-South", "SPP-SPS"}
+    valid = {"SPP-North", "SPP-South"}
     assert set(lookup.values()) <= valid
     assert valid <= set(lookup.values())

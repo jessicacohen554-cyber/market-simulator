@@ -1701,98 +1701,76 @@ def _neiso_config() -> ISOConfig:
 def _spp_config() -> ISOConfig:
     """Build the Southwest Power Pool (SPP) topology configuration.
 
-    **Three zones** since 2026-09-07 (lane SPP-54 — owner ruling P1's
-    "2 zones now; two ranked levers", SPP desk r#2; the SPS pocket was P1's
-    second-ranked lever until SPP-57b's R-17 re-ranked it first, because the
-    residual South the Oklahoma pocket left behind was two disjoint pockets —
-    SPS west of Oklahoma, SWEPCO east of it — joined by a copperplate that no
-    link rating could reach; design fixed in
-    ``docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md`` before any limit, ψ,
-    price or flow was read):
+    **Two zones**, drawn along the North–South seam the SPP MMU itself names
+    as the footprint's structural price divide (owner ruling P1, SPP desk
+    sitting r#2, 2026-09-06 — "2 zones now; two ranked levers";
+    ``docs/handoffs/spp-desk-ledger-2026-09.md`` §2):
 
     - **SPP-North** — ND, SD, NE, MN, MT, IA, KS, MO plus the 19.5 MW of
       Colorado solar: the coal / nuclear / wind tier (both nuclear units,
-      Wolf Creek KS and Cooper NE, sit here). Unchanged from SPP-20.
-    - **SPP-SPS** — the Southwestern Public Service (Xcel) transmission
-      footprint: the Texas Panhandle + South Plains (+ Gaines) and eastern
-      New Mexico. Its own EIA-930 sub-BA token (``SPS``, 12.6 % of SWPP
-      energy), its own ITP interface names (``SPPSPSTIES``), Lubbock as a
-      2024 Frequently Constrained Area, and a fleet of ≈ 4.65 GW of wind +
-      ≈ 7.2 GW of thermal (Tolk coal, Harrington / Jones / Nichols / Plant X /
-      Cunningham / Maddox / Hobbs / Mustang gas) against a 3.0–6.3 GW load:
-      thermally self-sufficient at its own peak, a wind exporter overnight.
-    - **SPP-South** (residual) — OK whole (OG&E, PSO, GRDA, WFEC), AR, LA
-      and the SWEPCO / PSO east- and north-central-Texas counties. Wyoming
-      is NOT in the footprint — no EIA-860 plant carries balancing authority
+      Wolf Creek KS and Cooper NE, sit here).
+    - **SPP-South** — OK, TX (Panhandle + east Texas), NM, AR, LA: the
+      gas-heavy tier (the gas-CC fleet concentrates in OK/TX). Wyoming is
+      NOT in the footprint — no EIA-860 plant carries balancing authority
       ``SWPP`` there (``docs/multi-iso/spp-data-audit.md`` §2.4).
 
     Fleet partition: the FIPS state map ``zone_assignment._SPP_STATE_ZONES``
-    (NM whole → SPS; the North/South seam runs along the KS/OK and MO/AR
-    state lines) plus the ONE county rule the footprint needs,
-    ``zone_assignment._SPP_SPS_TX_COUNTIES`` (Texas is the one state a state
-    map cannot express — audit §6.3 option B). Load partition: the EIA-930
-    sub-BA grouping North = {EDE, INDN, KACY, KCPL, LES, MPS, NPPD, OPPD,
-    SECI, SPRM, WAUE, WR}, SPS = {SPS}, South = {CSWS, GRDA, OKGE, WFEC}
-    (audit §5 row 5; FINDING-spp-32 §2 — SPS is its own token, so NO
-    sub-allocation is needed and ``CSWS`` stays whole). ``EDE`` (Liberty /
-    Empire District, 1.9 % of system energy) is the one sub-BA that
-    genuinely straddles the North seam — it serves MO, KS, OK and AR — and
-    is placed NORTH because its service territory is centred on Joplin,
+    (the seam runs along the KS/OK and MO/AR state lines, so no state
+    straddles it on the plant side). Load partition: the EIA-930 sub-BA
+    grouping North = {EDE, INDN, KACY, KCPL, LES, MPS, NPPD, OPPD, SECI,
+    SPRM, WAUE, WR}, South = {CSWS, GRDA, OKGE, SPS, WFEC} (audit §5 row 5).
+    ``EDE`` (Liberty / Empire District, 1.9 % of system energy) is the one
+    sub-BA that genuinely straddles — it serves MO, KS, OK and AR — and is
+    placed NORTH because its service territory is centred on Joplin,
     Missouri (a North state under the plant-side map), so its fleet and its
-    load stay on the same side of the seam. Stated, not patched: WFEC's Lea /
-    Roosevelt County NM assets fall to SPS by the state rule while WFEC's
-    LOAD is a whole sub-BA in the residual South (PRECOMMIT-spp-54 §2.1).
+    load stay on the same side of the seam; moving it South would shift the
+    split by 1.9 points and put a Missouri-centred sub-BA's load in the zone
+    whose fleet holds no Missouri plant.
 
     Load shares are the static fallback used only when the per-zone hourly
     sub-BA demand shapes are absent (SPP-32 curates them); the values are the
-    measured 2023-2025 energy shares of the three sub-BA groups computed from
+    measured 2023-2025 energy shares of the two sub-BA groups computed from
     ``data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv``
     (landed by SPP-11; 17 sub-BAs, 26,297 hours, a complete partition of the
-    BA demand to 0.9995-0.9999): North 0.5125 (byte-identical to SPP-20's —
-    the pocket is carved out of the former South alone), SPS 0.1259
-    (109.977 TWh; per year 0.1251 / 0.1266 / 0.1260), South 0.3616 (residual;
-    sum 1.0000). Independent cross-check from a DIFFERENT source: the SPP MMU
-    State of the Market 2025 Fig. 2-8 participant roll-up gives North 50.2 % /
-    South 49.6 % of 2025 energy (audit §5 row 6) — within one point.
+    BA demand to 0.9995-0.9999): North 447.675 TWh / South 425.770 TWh over
+    the three years = 0.5125 / 0.4875 (per year 0.5149 / 0.5129 / 0.5099).
+    Independent cross-check from a DIFFERENT source: the SPP MMU State of the
+    Market 2025 Fig. 2-8 participant roll-up gives North 50.2 % / South
+    49.6 % of 2025 energy (audit §5 row 6) — within one point, so the two
+    attributions agree.
 
-    Congestion structure — two symmetric ``TransferLink``s. (1) The N↔S link
-    (3,400 MW) is **untouched in value, identification and citation**: a
-    **rule-14 reconciled figure derived from SPP's own published flowgate
-    limits by lane SPP-53** (owner ruling P13; construction fixed in
+    Congestion structure. The single N↔S ``TransferLink`` is the only
+    structure beyond copperplate. Its TTC (3,400 MW) is a **rule-14
+    reconciled figure derived from SPP's own published flowgate limits by
+    lane SPP-53** (owner ruling P13; construction fixed in
     ``PRECOMMIT-spp-53-2026-09-07.md`` before any limit was read; every
     number in ``FINDING-spp-53-2026-09-07.md``) — see the citation comment
     on the link below for the two measured legs, the misalignment statement
     and the rejected alternatives. It replaced SPP-20's 48,700 MW Tier-3
-    placeholder (``FINDING-spp-20`` §3, §5 R-6). No public document states
-    an SPP North↔South rated interface (FINDING-spp-13 §0), which is why the
-    value is derived from the binding-constraint archive rather than
-    transcribed; the MMU's ">6,000 MW SPP↔MISO AC interties" is a SEAM
-    rating and is deliberately not borrowed. The link is symmetric by
-    construction, which is right: the MMU records the North−South hub spread
-    REVERSING sign for six (DA) to eight (RT) months of 2025 (FINDING-spp-12
-    §4), and the corridor's South→North-loaded flowgates give 4,206 MW by
-    the same construction (FINDING-spp-53 §4; the asymmetric pair is
-    SPP-58's question). (2) The South↔SPS link — positive flow = South→SPS =
-    INTO the Panhandle — is rated by the same FCITC construction on the
-    ``sps_tie`` flowgate set with SPP-58's second, independent shift-factor
-    identification ψ₂ (SPP-57b R-20: never on the SPP-57 hub-pair ψ table);
-    the rule is PRECOMMIT-spp-54 §3.3 and the citation comment on the link
-    carries the number once it is filled in. No North↔SPS link: no SWPP
-    element crosses from the North tier into the Panhandle without
-    transiting the Oklahoma-side network (the SPS ties land at Woodward /
-    Tuco / Potter), and SPP-53's corridor set has no Panhandle constituent.
+    placeholder (the North zone's EIA-860 2025 ER summer capability, an
+    upper bound that could not bind — ``FINDING-spp-20`` §3, §5 R-6). No
+    public document states an SPP North↔South rated interface — SPP-13's
+    row-11 sweep found the ITP Constraint Assessment ratings are NDA / CEII
+    (FINDING-spp-13 §0) — which is why the value is derived from the
+    binding-constraint archive rather than transcribed. The MMU's ">6,000 MW
+    SPP↔MISO AC interties" is a SEAM rating, not the internal corridor, and
+    is deliberately not borrowed. The link is symmetric by construction,
+    which is right: the MMU records the North−South hub spread REVERSING
+    sign for six (DA) to eight (RT) months of 2025 (FINDING-spp-12 §4), and
+    the corridor's South→North-loaded flowgates give 4,206 MW by the same
+    construction (FINDING-spp-53 §4).
 
-    What three zones still cannot represent, said here rather than found in
-    a residual (audit §6.1): seven of the ten highest-valued 2025
-    constraints are INSIDE Oklahoma (Osage–Webber Tap, Russett–South Brown)
-    and OKC / Tulsa sit inside the residual South — the Oklahoma pocket
-    (lever SPP-57 / 57b, twice screened and killed on its link ratings) is
-    intra-Oklahoma wind-delivery congestion a bubble cannot hold
-    (FINDING-spp-57 §3.3). The published hubs are node clusters (North ≈
-    Nebraska, South ≈ central Oklahoma), so the hub spread is a two-point
-    spread, not a zonal price — SPP-40's PRECOMMIT states this limitation
-    (audit §6.1); the SPS pocket's own measured price is the ``SPS_SPS``
-    load-zone settlement location (FINDING-spp-57 §3.1, R-13).
+    What two zones cannot represent, said here rather than found in a
+    residual (audit §6.1): seven of the ten highest-valued 2025 constraints
+    are INSIDE Oklahoma (Osage–Webber Tap, Russett–South Brown), and three
+    of the four 2024 Frequently Constrained Areas (OKC, Tulsa, Lubbock) sit
+    inside SPP-South. The SPS / Texas-Panhandle pocket (lever SPP-54) and an
+    Oklahoma pocket (lever SPP-57) are pre-declared structural levers,
+    ranked by the per-flowgate binding-share evidence when the binding-
+    constraint archive lands (FINDING-spp-12 §5). The published hubs are
+    node clusters (North ≈ Nebraska, South ≈ central Oklahoma), so the hub
+    spread is a two-point spread, not a zonal price — SPP-40's PRECOMMIT
+    states this limitation (audit §6.1).
 
     No import node (G7): SPP's seams are represented by the served measured
     EIA-930 ``Total interchange`` schedule (``_SCALAR_INTERCHANGE_ISOS``,
@@ -1810,11 +1788,9 @@ def _spp_config() -> ISOConfig:
     """
     zones = [
         # Static fallback = measured 2023-2025 sub-BA energy shares (EIA-930
-        # sub-BA demand, SPP-11 intake; SPS = its own token, SPP-54; sum =
-        # 1.0000). See the docstring.
+        # sub-BA demand, SPP-11 intake; sum = 1.0000). See the docstring.
         Zone(name="SPP-North", iso="SPP", load_share=0.5125),
-        Zone(name="SPP-South", iso="SPP", load_share=0.3616),
-        Zone(name="SPP-SPS", iso="SPP", load_share=0.1259),
+        Zone(name="SPP-South", iso="SPP", load_share=0.4875),
     ]
     # N<->S link TTC = 3,400 MW: the North->South transfer at which the
     # corridor's limiting flowgate reaches its own effective limit (the
@@ -1868,24 +1844,6 @@ def _spp_config() -> ISOConfig:
         TransferLink(
             from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_ns_corridor_ttc
         ),
-        # South<->SPS link (lane SPP-54, 2026-09-07): positive flow =
-        # South->SPS = INTO the Panhandle. NOT YET RATED: the TTC is the
-        # SPP-53 FCITC construction (T*_f = L_f / |psi_f|, binding-hours-
-        # weighted 2023-2025 median over the identified constituents, nearest
-        # 100 MW) on the `sps_tie` flowgate set — Potter County 345/230 kV
-        # (TEMP50_23126 / TMP555_29231 / TMP200_25341 / TMP775_29068),
-        # SPSNMTIES, SPPSPSTIES, TMP703_28546 — with SPP-57's committed
-        # limit-at-bind L_f and pooled binding hours (docs/handoffs/spp57/
-        # tstar_ok_s.csv) and SPP-58's SECOND, independent shift-factor
-        # identification psi_2 (SPP-57b R-20: the SPP-57 hub-pair psi table is
-        # never this link's rating input). The rule, the set, the direction
-        # convention and R1-R4 are fixed in PRECOMMIT-spp-54-2026-09-07.md
-        # §3.3-§3.4; the link is appended here, with its number and citation,
-        # the moment FINDING-spp-58 lands. UNTIL THEN THIS TOPOLOGY MUST NOT
-        # BE SOLVED — SPP-SPS is an island — and the only permitted uses are
-        # the zero-LP design proofs (fleet_only census, the wind-shape
-        # rebuild and its reconciliation, validate_topology, the solve-
-        # surface diff). Rule 14: the N<->S value above is untouched.
     ]
     # voll = $2,000/MWh (owner ruling P10, desk sitting r#3, 2026-09-06):
     # the FERC Order 831 hard ceiling for COST-VERIFIED incremental energy

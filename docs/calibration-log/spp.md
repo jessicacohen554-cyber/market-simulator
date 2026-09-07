@@ -491,3 +491,53 @@ Record: `docs/handoffs/PRECOMMIT-spp-55-2026-09-07.md` (its own commit, before t
   `keepers/SPP.json` untouched; 0 new fields, solve surface 0 moved, every keeper key unmoved by construction.
 
 **Next shorthand: spp-11.**
+
+
+## 2026-09-07 — spp-11: SPP-54 SPS / Texas-Panhandle pocket (third zone) — DESIGN LANDED on the branch; the R-18 wind reconciliation STOPPED before any solve; the link rating WAITS for SPP-58
+
+**Result: NO SOLVE SPENT — not a keeper candidate (nothing to grade); design complete on the design commit `8d427adc`;
+topology NOT landed on main (solve path restored byte-identical, the SPP-57/57b posture).** Record:
+`docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md` (pushed at `c9742b58` before any limit, ψ, price or flow was read) +
+`FINDING-spp-54-2026-09-07.md` + `docs/handoffs/spp54/`. Control = keeper-3 `spp43_screened_B` (rule 29(b) form 4;
+G-DRIFT `623184f3` → `9708d69e`: 13 files, all INERT — SPP-44 default-off, ercot-255 ERCOT-only, two surface
+declarations; solve surface 0 moved).
+
+- **Design (A), the pocket:** `SPP-SPS` = NM whole + a 42-county SPS Texas set (26 Panhandle + 15 South Plains +
+  Gaines; the T/D-owner field read as corroboration only: 10,156 of 12,167 MW report SPS); residual `SPP-South` = OK +
+  AR + LA + SWEPCO/PSO Texas; `SPS → SPP-SPS` on the load side with NO sub-allocation (its own EIA-930 token; CSWS
+  whole). Static shares **0.5125 / 0.3616 / 0.1259** (SPS 0.1251 / 0.1266 / 0.1260 by year); hourly Σ = 1 to 2.2e-16.
+  Census on keeper-3's recipe (2025): SPS 19 plants / 84 units / 6,799 MW thermal (gas 5,715; Tolk coal 1,067) +
+  4,654 MW wind (18.05 TWh) + 284 MW solar against 38.06 TWh (3,345–6,368 MW) — thermally self-sufficient at peak,
+  an exporter overnight; B_plaus SPS 2,676–3,054 / South 10,476–11,953 (→ **R2 = 10,476 MW**: the record's SPP-57-ψ
+  reading 10,700 would fail it; the ITP-interface readings 3,602 / 3,850 pass).
+- **Design (B), the link:** ONE `SPP-South ↔ SPP-SPS` link, positive = South→SPS = into the Panhandle; named
+  direction South→SPS from the `sps_tie` set's own binding direction, and — unlike SPP-57b — NOT in conflict with
+  the bubble's balance (the pocket's scarce hours are import hours; its export never reaches 3,400). Rating rule =
+  SPP-53's FCITC median over the `sps_tie` set with SPP-57's L_f / hours and **SPP-58's ψ₂** (R-20). **Not filled:
+  SPP-58 has not landed**; `_spp_config` carries the slot, the rule and a "must not be solved" note (SPS is an
+  island until then).
+- **Design (C), the SPP-57b R-18 reconciliation — the lane's result:** C-1 identity Σ_z cap·cf = delivered ×
+  1.106808 to **6e-16** every hour, all years; C-2 no overflow lost; **C-3 STOP at h8509** (2025-12-21 13:00): the
+  South+SPS region's margin **+440 MW (two-zone wind) → −545 MW (three-zone)** at identical demand, availability and
+  3,400 MW import, through the regional wind potential 1,807 → 821 MW. C-4 attribution: the North's annual potential
+  rises **+1.38 / +1.47 / +1.91 TWh** under the split, **75–85 % from the residual South's own six-site sample
+  changing** (Oklahoma-only vs the old mixed OK+Panhandle six), NOT from the SPS shape (−0.56 / −0.55 / −0.74). The
+  builder's six-site MEAN LEVEL is load-bearing in the redistribution — R-18's mechanism, measured. Not repaired
+  in-lane (rules 23 / 29); routed **R-21** to the desk (candidate: a zone's level from its whole fleet, zero DOF).
+- **Design (D):** every registry gained `SPP-SPS` (config, zone map + coordinate limb refined for the OK Panhandle
+  strip, crosswalk, fallback allocation, gas-basis TX rows re-keyed to SPS, reference renewables block, wind parquets,
+  `iso-topologies.json` — which also corrects the 48,700 SPP-53 left there), tests (145 SPP + 965 related green);
+  `solve_surface_register --diff` 299 → 299 **0 moved**; persisted identity 24/24; parity OK; `audit_keepers` PASS;
+  `check_mechanism_matrix` 0. All of it is `8d427adc`; the branch's final state restores the solve path (and the
+  three-zone parquets, which the two-zone loader would silently accept) to `origin/main` bytes.
+- **Not done, by rule:** no rating on the SPP-57 ψ table; no solve without a rating; no solve past the C-3 STOP; no
+  builder change after its result was seen; nothing registered; `keepers/SPP.json` untouched. Rule 22: nothing solved.
+- **SPP-58 landed during the merge rebase (FINDING Addendum A):** its one line for this lane is T*₂ = **1,600 MW**
+  on the South-rest → SPS pair (LOYO 1,618–1,636; passes R2 / R3 / R4 with room; band verdict OUTSIDE vs ψ₁'s
+  10,705, the card pending) — recorded, not written into `_spp_config`; the solve stays blocked by C-3.
+- Routed: R-21 (builder level rule → SPP-DESK card, gates every three-zone SPP solve), R-22 (`SPSNMTIES`
+  membership → SPP-58), R-23 (R2 = 10,476 → SPP-58 / the follow-up), R-24 (gate leg (iii) sign for an importing
+  pocket → desk), R-25 (`iso-topologies.json` staleness → site). Matrix shard: `measured_interface_limits` stays O,
+  SPP-54 evidence appended (no mechanism tested, rule 28(b)).
+
+**Next shorthand: spp-12.**

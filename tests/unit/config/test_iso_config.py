@@ -473,39 +473,29 @@ class TestISOConfig(unittest.TestCase):
 
     # --- SPP (registered 2026-09-06, lane SPP-20; owner rulings P1-P11) -----
 
-    def test_spp_has_three_zones(self):
-        """SPP defines North, the residual South and the SPS pocket, and nothing else.
+    def test_spp_has_two_zones(self):
+        """SPP defines the two P1-ruled zones, North and South, and nothing else.
 
-        Three zones since lane SPP-54 (2026-09-07): P1's "2 zones now; two
-        ranked levers" plus the SPS / Texas-Panhandle pocket, the lever
-        SPP-57b R-17 re-ranked first (docs/handoffs/PRECOMMIT-spp-54-
-        2026-09-07.md §2). No import node (plan §7 G7): the served EIA-930
-        schedule and the default-off neighbour blocks represent the seams.
+        No import node (plan §7 G7): the served EIA-930 schedule and the
+        default-off neighbour blocks represent the seams.
         """
         spp = get_iso_config("SPP")
-        self.assertEqual(spp.n_zones, 3)
-        self.assertEqual(set(spp.zone_names), {"SPP-North", "SPP-South", "SPP-SPS"})
+        self.assertEqual(spp.n_zones, 2)
+        self.assertEqual(set(spp.zone_names), {"SPP-North", "SPP-South"})
 
     def test_spp_validates(self):
         """SPP topology passes the consistency check (Stage A)."""
         get_iso_config("SPP").validate_topology()
 
     def test_spp_load_shares_are_the_measured_sub_ba_split(self):
-        """Shares = the measured 2023-2025 EIA-930 sub-BA energy split, sum 1.0.
-
-        North is byte-identical to SPP-20's 0.5125 — the SPS pocket (its own
-        sub-BA token, 0.1259) is carved out of the former South alone, so the
-        residual South reads 0.4875 - 0.1259 = 0.3616.
-        """
+        """Shares = the measured 2023-2025 EIA-930 sub-BA energy split, sum 1.0."""
         spp = get_iso_config("SPP")
         shares = {z.name: z.load_share for z in spp.zones}
-        self.assertEqual(
-            shares, {"SPP-North": 0.5125, "SPP-South": 0.3616, "SPP-SPS": 0.1259}
-        )
+        self.assertEqual(shares, {"SPP-North": 0.5125, "SPP-South": 0.4875})
         self.assertAlmostEqual(sum(shares.values()), 1.0)
 
-    def test_spp_north_south_link_carries_the_spp53_corridor_ttc(self):
-        """The symmetric N<->S link keeps SPP-53's derived corridor limit, untouched.
+    def test_spp_single_link_carries_the_spp53_corridor_ttc(self):
+        """One symmetric N<->S link whose TTC is SPP-53's derived corridor limit.
 
         3,400 MW is the binding-hours-weighted median first-contingency
         transfer of the corridor's identified flowgates, built from SPP's own
@@ -517,40 +507,16 @@ class TestISOConfig(unittest.TestCase):
         sits below the residual-blind bound B_plaus = 23,300 MW (North
         non-gas capability minus North minimum load), so it CAN bind. A
         change here is a re-derivation from source data (rule 23), never a
-        residual tune — and the SPP-54 pocket does NOT touch it (rule 14;
-        the asymmetric pair is SPP-58's question).
+        residual tune.
         """
         spp = get_iso_config("SPP")
-        ns = [
-            ln
-            for ln in spp.links
-            if (ln.from_zone, ln.to_zone) == ("SPP-North", "SPP-South")
-        ]
-        self.assertEqual(len(ns), 1)
-        link = ns[0]
+        self.assertEqual(spp.n_links, 1)
+        link = spp.links[0]
+        self.assertEqual((link.from_zone, link.to_zone), ("SPP-North", "SPP-South"))
         self.assertTrue(link.is_bidirectional)
         self.assertEqual(link.ttc_mw, 3400.0)
         self.assertLess(link.ttc_mw, 23300.0)
         self.assertEqual(spp.interface_limits, [])
-
-    def test_spp_links_touch_only_spp_zones_and_never_north_to_sps(self):
-        """Every SPP link joins two SPP zones, and none joins North to the SPS pocket.
-
-        No SWPP element crosses from the North tier into the Panhandle without
-        transiting the Oklahoma-side network (the SPS ties land at Woodward /
-        Tuco / Potter), so the pocket's only link is South<->SPS
-        (PRECOMMIT-spp-54 §3.1). The South<->SPS link itself is appended when
-        SPP-58's psi_2 rates it; until then the pocket is deliberately an
-        island and the topology is not solved.
-        """
-        spp = get_iso_config("SPP")
-        zones = set(spp.zone_names)
-        for link in spp.links:
-            self.assertIn(link.from_zone, zones)
-            self.assertIn(link.to_zone, zones)
-            self.assertNotEqual(
-                {link.from_zone, link.to_zone}, {"SPP-North", "SPP-SPS"}
-            )
 
     def test_spp_voll_is_2000(self):
         """SPP uses the Order 831 cost-verified ceiling, $2,000/MWh (ruling P10)."""

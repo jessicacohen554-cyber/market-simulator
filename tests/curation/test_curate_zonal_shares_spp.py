@@ -31,14 +31,12 @@ from scripts.data import curate_zonal_shares as czs
 from scripts.lib.clean_io import read_clean, write_clean
 
 _YEAR = 2023
-_ZONES = ["SPP-North", "SPP-South", "SPP-SPS"]
+_ZONES = ["SPP-North", "SPP-South"]
 
 # One representative token per zone is enough to exercise the partition; the
-# full 17 are pinned separately by the crosswalk tests below. SPS is its own
-# token and its own zone since lane SPP-54 (2026-09-07).
+# full 17 are pinned separately by the crosswalk tests below.
 _NORTH_TOKENS = ("WR", "NPPD", "EDE")
-_SOUTH_TOKENS = ("OKGE", "CSWS")
-_SPS_TOKENS = ("SPS",)
+_SOUTH_TOKENS = ("OKGE", "SPS")
 
 
 def _fake_frame(year: int) -> pd.DataFrame:
@@ -55,21 +53,15 @@ def _fake_frame(year: int) -> pd.DataFrame:
     )
 
 
-def _write_subba_fixture(
-    directory, year: int, north_mw: float, south_mw: float, sps_mw: float = 0.0
-):
+def _write_subba_fixture(directory, year: int, north_mw: float, south_mw: float):
     """Write a synthetic SPP sub-BA demand CSV covering the whole year.
 
-    Splits ``north_mw`` / ``south_mw`` / ``sps_mw`` evenly across the tokens of
-    each zone so the expected share is exactly each total over the grand total.
+    Splits ``north_mw`` and ``south_mw`` evenly across the tokens of each zone
+    so the expected share is exactly ``north_mw / (north_mw + south_mw)``.
     """
     utc = _fake_frame(year)["UTC time"]
     rows = []
-    for tokens, total in (
-        (_NORTH_TOKENS, north_mw),
-        (_SOUTH_TOKENS, south_mw),
-        (_SPS_TOKENS, sps_mw),
-    ):
+    for tokens, total in ((_NORTH_TOKENS, north_mw), (_SOUTH_TOKENS, south_mw)):
         per = total / len(tokens)
         for tok in tokens:
             rows.append(
@@ -128,16 +120,10 @@ def test_crosswalk_covers_the_seventeen_eia930_subbas():
     }
 
 
-def test_crosswalk_is_the_spp20_p1_partition_with_the_sps_pocket():
-    """North gets 12 sub-BAs (owner ruling r#5), the residual South 4, SPS its own.
-
-    SPS is its own EIA-930 token (FINDING-spp-32 §2), so the SPP-54 pocket
-    needs no sub-allocation — every token still maps whole and the grouping
-    is a partition. CSWS stays whole in the residual South.
-    """
+def test_crosswalk_is_the_spp20_p1_partition():
+    """North gets 12 sub-BAs and South 5, exactly as owner ruling r#5 grouped them."""
     north = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-North"}
     south = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-South"}
-    sps = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-SPS"}
     assert north == {
         "EDE",
         "INDN",
@@ -152,8 +138,7 @@ def test_crosswalk_is_the_spp20_p1_partition_with_the_sps_pocket():
         "WAUE",
         "WR",
     }
-    assert south == {"CSWS", "GRDA", "OKGE", "WFEC"}
-    assert sps == {"SPS"}
+    assert south == {"CSWS", "GRDA", "OKGE", "SPS", "WFEC"}
 
 
 def test_ede_lands_north():
@@ -185,28 +170,23 @@ def test_parse_shape(spp_raw):
     _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=5000.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert shares is not None
-    assert shares.shape == (3, HOURS_PER_YEAR)
+    assert shares.shape == (2, HOURS_PER_YEAR)
     assert shares.dtype == np.float64
 
 
 def test_shares_sum_to_one_every_hour(spp_raw):
     """THE GATE: shares sum to 1.0 in every one of the 8760 hours."""
-    _write_subba_fixture(
-        spp_raw, _YEAR, north_mw=5125.0, south_mw=3616.0, sps_mw=1259.0
-    )
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5125.0, south_mw=4875.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert np.abs(shares.sum(axis=0) - 1.0).max() < 1e-9
 
 
 def test_shares_reproduce_the_injected_split(spp_raw):
-    """A known North/South/SPS MW split comes back as exactly that share."""
-    _write_subba_fixture(
-        spp_raw, _YEAR, north_mw=5000.0, south_mw=3500.0, sps_mw=1500.0
-    )
+    """A known North/South MW split comes back as exactly that share."""
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=6000.0, south_mw=4000.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
-    assert np.allclose(shares[0], 0.50, atol=1e-12)
-    assert np.allclose(shares[1], 0.35, atol=1e-12)
-    assert np.allclose(shares[2], 0.15, atol=1e-12)
+    assert np.allclose(shares[0], 0.6, atol=1e-12)
+    assert np.allclose(shares[1], 0.4, atol=1e-12)
 
 
 def test_shares_are_bounded(spp_raw):
@@ -269,9 +249,7 @@ def test_unknown_subba_tokens_are_ignored(spp_raw):
 
 def test_round_trip_through_clean_parquet(spp_raw, tmp_clean_dir):
     """Parse -> write_clean -> read_clean returns a bit-identical matrix."""
-    _write_subba_fixture(
-        spp_raw, _YEAR, north_mw=5125.0, south_mw=3616.0, sps_mw=1259.0
-    )
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5125.0, south_mw=4875.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
 
     df = czs._shares_to_long(shares, _ZONES)
