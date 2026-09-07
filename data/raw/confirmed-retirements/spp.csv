@@ -1,0 +1,24 @@
+# SPP confirmed-retirement registry.
+# Binding instruments in SPP's largely vertically-integrated footprint are STATE
+# COMMISSION ORDERS (NMPRC / OCC / KCC / MPSC / NPSC / PUCT), federal consent
+# decrees and statutes; SPP runs no PJM-style deactivation-acceptance process, so
+# no `rto_deactivation` rows are expected. An EIA-860 planned-retirement date,
+# an IRP filing or a utility/public-power board resolution that DEFERS a date is
+# NOT an instrument (announced-stage; those ride the step-1 owner-filed channel).
+# First curated 2026-09-07 by lane SPP-60 (docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md
+# s1.2 step 0 / s1.4). Candidates evaluated and NOT rows, with the reason:
+#   North Omaha 4/5 (OPPD, EIA 2291) -- OPPD Board resolution of 2025-12 extends
+#     current operation and defers the coal exit to "at least 2028" with no binding
+#     date (announced-stage, reversible; the 2026 ISP assumes refuelling to gas);
+#   Lawrence 4/5 (Evergy, EIA 1250) -- KCC IRP filings only (2021 / 2023 / 2025
+#     updates move the date 2023 -> 2028 -> 2032); an IRP is not an order;
+#   Northeastern 3 (PSO, EIA 2963, 2026) -- 860-dated, no OCC order located;
+#   Pirkey 1 (SWEPCO, EIA 7902, 2023) and Horseshoe Lake ST6/ST7 (OG&E, EIA 2951,
+#     2024) -- real in-window exits already carried by their EIA-860 owner-filed
+#     dates (step 1b); a confirmed row would decide the same exit twice (rule 19).
+# Information gate: every instrument below post-dates 2020-12-31, so a
+# 2020-vintage hindcast applies NONE of these rows (RC-0B s c.5 / IS2020_CUTOFF);
+# they are live in forecast and 2023-vintage runs.
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes,superseding_instrument_date
+SPP,6194,1,Tolk 1,567.9,2029,3,regulatory_order,nmprc-22-00286-ut-tolk-1,"New Mexico Public Regulation Commission Case No. 22-00286-UT (Southwestern Public Service Co. general rate case) -- final order approving the stipulation, voted 2023-10-19: SPS to retire the Tolk Generating Station (both units) by the end of 2028 and to offer it into SPP only when economic; retirement date subsequently deferred three months to 2029-03-31 by the NMPRC's 2026-05-07 approval of SPS's 2025 New Mexico Integrated Resource Plan (replacement resources online)",2023-10-19,false,,https://www.utilitydive.com/news/new-mexico-regulators-finalize-closure-xcel-energy-coal-fired-tolk-power-plant/697727/,"Utility Dive 2023-10-20, 'New Mexico approves early closure agreement for Xcel's coal-fired Tolk power plant' (Case 22-00286-UT); Utility Dive 2026-05-08, 'New Mexico regulators approve SPS' $9B, gas-heavy resource plan' (Tolk deferred to 2029-03-31)",2026-09-07,"Coal (PRB sub-bituminous), Lamb County TX, SWEPCO/SPS in SPP (BA SWPP). exit_year/month carry the currently binding date (2029-03) after the 2026-05-07 deferral; the original 22-00286-UT date was 2028-12. Nameplate per EIA-860 operable sheet (567.9 MW; the press figure 1,067-1,100 MW is the plant total). Post-2020 instrument: inert in a 2020-vintage hindcast by the information gate.",
+SPP,6194,2,Tolk 2,567.9,2029,3,regulatory_order,nmprc-22-00286-ut-tolk-2,"New Mexico Public Regulation Commission Case No. 22-00286-UT (Southwestern Public Service Co. general rate case) -- final order approving the stipulation, voted 2023-10-19: SPS to retire the Tolk Generating Station (both units) by the end of 2028 and to offer it into SPP only when economic; retirement date subsequently deferred three months to 2029-03-31 by the NMPRC's 2026-05-07 approval of SPS's 2025 New Mexico Integrated Resource Plan (replacement resources online)",2023-10-19,false,,https://www.utilitydive.com/news/new-mexico-regulators-finalize-closure-xcel-energy-coal-fired-tolk-power-plant/697727/,"Utility Dive 2023-10-20, 'New Mexico approves early closure agreement for Xcel's coal-fired Tolk power plant' (Case 22-00286-UT); Utility Dive 2026-05-08, 'New Mexico regulators approve SPS' $9B, gas-heavy resource plan' (Tolk deferred to 2029-03-31)",2026-09-07,"Coal (PRB sub-bituminous), Lamb County TX, SWEPCO/SPS in SPP (BA SWPP). exit_year/month carry the currently binding date (2029-03) after the 2026-05-07 deferral; the original 22-00286-UT date was 2028-12. Nameplate per EIA-860 operable sheet (567.9 MW). Post-2020 instrument: inert in a 2020-vintage hindcast by the information gate.",
