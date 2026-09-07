@@ -209,6 +209,12 @@ CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 CAISO_CURTAILMENT_DIR: Path = RAW_DATA_DIR / "caiso-curtailment"
 NYISO_HSL_DIR: Path = RAW_DATA_DIR / "nyiso-hsl"
 MISO_HSL_DIR: Path = RAW_DATA_DIR / "miso-hsl"
+# SPP's curtailed leg. Like MISO, SPP publishes no hourly HSL series, so this
+# directory holds the MMU's Annual-State-of-the-Market wind-curtailment table
+# rather than an hourly parquet — the same shape MISO_HSL_DIR takes for the
+# Potomac Economics table. Landed by lane SPP-12; read by
+# market_sim.data.renewables for SPP's reference curtailment rate.
+SPP_HSL_DIR: Path = RAW_DATA_DIR / "spp-hsl"
 # Per-zone wind SHAPE (NASA POWER MERRA-2 reanalysis → power curve), one parquet
 # per backcast year. Built by scripts/data/build_miso_wind_shape.py; read by
 # market_sim.data.renewables to give MISO's three regions distinct wind diurnal/
@@ -220,6 +226,19 @@ MISO_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "miso-wind-shape"
 # Gulf sea breeze, and those two peak at different hours — so one ISO-wide
 # hourly profile averages them together. Same builder, same parquet schema.
 ERCOT_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "ercot-wind-shape"
+# SPP analogue (SPP-32): SPP's 35.5 GW wind fleet splits almost exactly in half
+# across the North/South seam (EIA-860 operable: 17.7 GW / 135 plants North,
+# 17.8 GW / 119 plants South), and the two halves peak at different hours.
+# Measured night(00-06)/afternoon(12-18) ratio, 2023/2024/2025: SPP-South
+# 1.04/1.06/1.03 (overnight-weighted) vs SPP-North 0.97/0.96/0.91
+# (afternoon-weighted) — the SOUTH is the nocturnal zone here, because the
+# Great-Plains low-level jet's core sits over Oklahoma / Kansas / the Texas
+# Panhandle and weakens northward. (The MISO contrast points the other way; do
+# not carry that intuition across.) One SWPP-wide hourly profile averages the
+# two together.
+# Same builder pattern, same parquet schema; built by
+# scripts/data/build_spp_wind_shape.py.
+SPP_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "spp-wind-shape"
 
 # Per-ISO wind-shape directory registry (no ``if iso ==`` ladder at the call
 # sites). An ISO absent here has no per-zone wind SHAPE, which the renewable
@@ -227,6 +246,7 @@ ERCOT_WIND_SHAPE_DIR: Path = RAW_DATA_DIR / "ercot-wind-shape"
 WIND_SHAPE_DIRS: dict[str, Path] = {
     "MISO": MISO_WIND_SHAPE_DIR,
     "ERCOT": ERCOT_WIND_SHAPE_DIR,
+    "SPP": SPP_WIND_SHAPE_DIR,
 }
 
 

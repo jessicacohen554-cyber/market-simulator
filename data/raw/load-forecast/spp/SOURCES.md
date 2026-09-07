@@ -100,3 +100,35 @@ The 2023 and 2024 ITP Assessment Reports also exist
 the same peak series — useful if a hindcast ever needs the forecast as it stood at
 an information cutoff, which is exactly the vintage-gating rule 13 `[R-MEASURED]`
 asks of a forward-regenerable input.
+
+## The `basis` column reads `unspecified`, not `coincident` (corrected 2026-09-07)
+
+**Correction landed by lane SPP-32** (charter: plan §8 SPP-32, routed by SPP-20's
+exit finding R-2 — `docs/handoffs/FINDING-spp-20-2026-09-06.md` §0 item 3).
+
+As first committed, all four rows carried `basis=coincident`. That is the
+publisher's **peak definition**, not the datatype's `basis` key, whose vocabulary
+is exactly `{net, gross, unspecified}` (`scripts/lib/load_forecast/__init__.py`
+`BASES`). The consequence was hard, not cosmetic:
+
+    >>> load_forecast.parse_iso("SPP", RAW_DATA_DIR)
+    ValueError: load-forecast tidy checks failed:
+      - basis(es) not in vocab: ['coincident']
+
+i.e. **SPP's rows could not be curated at all** — `validate_tidy` rejected the
+frame and `curate_load_forecast.py --iso SPP` could never write a clean file.
+
+The four rows now read `basis=unspecified`, which is what
+`scripts/lib/load_forecast/spp.py` already declared as the spec's
+`default_basis`, and which that module's docstring already justified in prose:
+SPP draws no net/gross distinction for this series, and `unspecified` is the
+label the package reserves for exactly that case.
+
+**Nothing was lost.** The publisher's own word is preserved verbatim on every
+row's `source_page` — *"Figure 2.1 'Coincident Peak Load by Model Year'"* — which
+is where a publication's own vocabulary belongs. The `metric` (`annual_peak_mw`),
+`value`, `unit`, `year` and every provenance field are byte-unchanged; the diff is
+four occurrences of one word in one column.
+
+Verified after the edit: `parse_iso("SPP", RAW_DATA_DIR)` returns the 4 rows and
+`curate_load_forecast.py --iso SPP` writes and validates its clean file.

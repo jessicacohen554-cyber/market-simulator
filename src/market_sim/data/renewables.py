@@ -123,6 +123,7 @@ from __future__ import annotations
 
 import logging
 import os
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
@@ -142,6 +143,7 @@ from market_sim.config.paths import (
     ERCOT_HSL_DIR,
     MISO_HSL_DIR,
     NYISO_HSL_DIR,
+    SPP_HSL_DIR,
     wind_shape_dir,
 )
 from market_sim.config.scenarios import ScenarioConfig
@@ -195,7 +197,21 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # publishes a series granular enough to derive a rate from. The
 # modeled-vs-reported curtailment gap is a diagnostic, never a fit target
 # (CLAUDE.md #11).
-_UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset({"ERCOT", "CAISO", "MISO"})
+#
+# SPP joins on the same footing as MISO and for the same reason, only more so
+# (SPP-32, 2026-09-07): SPP publishes no hourly HSL series either, but its MMU
+# publishes an average hourly wind-curtailment MW in every Annual State of the
+# Market report, and SPP's own 5-minute metered generation mix supplies the
+# delivered leg — so BOTH legs of the rate are measured, from two independent
+# SPP publications (:func:`_spp_wind_reference_curtailment_rate`). The measured
+# 2023-2025 rate is ~9.7% of potential (~12 TWh/yr, ~1.1-1.5 GW hourly average),
+# roughly twice MISO's ~4.9%, which is far past where explicit re-curtailment
+# moves dispatch. SPP solar is ~0.73% of SPP's curtailment (ASOM 2025 p. 54) and
+# has no separable published series, so SPP solar keeps the delivered profile
+# exactly as MISO solar does.
+_UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "MISO", "SPP"}
+)
 
 # Years probed (newest first) for an HSL-covered reference year when grossing a
 # no-HSL year's delivered profile up to an uncurtailed potential (see
@@ -329,7 +345,20 @@ _SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
 # annual energy unchanged — only the inter-zone split moves). Gated per ISO so
 # the redistribution cannot touch any other ISO's outputs; ISOs not listed keep
 # the legacy single-shape behaviour.
-_WIND_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"MISO"})
+#
+# SPP joins as a MEMBERSHIP, not a new gate (SPP-32, 2026-09-07): SPP has no
+# keeper yet, so there is no calibrated run for a per-zone split to perturb, and
+# adding a ``ScenarioConfig`` field for it would move all six existing keepers'
+# cache keys for nothing (plan §7 gate G8). SPP qualifies on the same test MISO
+# does — its 35.5 GW wind fleet splits 17.7/17.8 GW across the North/South seam
+# and the two halves peak at DIFFERENT hours. Measured night(00-06)/afternoon
+# (12-18) ratio, 2023/2024/2025: SPP-South 1.04/1.06/1.03 (overnight-weighted)
+# vs SPP-North 0.97/0.96/0.91 (afternoon-weighted). Note the sign: in SPP the
+# SOUTH is the nocturnal zone, because the Great-Plains low-level jet's core
+# sits over Oklahoma / Kansas / the Texas Panhandle and weakens northward — the
+# opposite of the MISO contrast a reader might carry across. Built by
+# scripts/data/build_spp_wind_shape.py; data/raw/spp-wind-shape/README.md.
+_WIND_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"MISO", "SPP"})
 
 # ISOs whose per-zone wind SHAPE is available but KEEPER-AFFECTING, so it is
 # armed by a named ScenarioConfig gate instead of unconditionally. ERCOT is the
@@ -727,6 +756,121 @@ def _miso_wind_reference_curtailment_rate() -> tuple[float, int] | None:
     return sum(rates) / len(rates), latest_year
 
 
+# SPP's measured annual wind-curtailment table (SPP MMU Annual State of the
+# Market, transcribed by lane SPP-12; the metered delivered leg measured from
+# SPP's own 5-minute generation mix by lane SPP-32). Same role as
+# :data:`_MISO_WIND_CURTAILMENT_ANNUAL`: SPP publishes no hourly HSL series.
+_SPP_WIND_CURTAILMENT_ANNUAL: Path = SPP_HSL_DIR / "spp_wind_curtailment_annual.csv"
+
+# Training-window years (CLAUDE.md #22 ``[R-HOLDOUT]``) whose rows set the SPP
+# wind reference curtailment rate. Restricted to 2023-2025 for exactly the
+# reason the MISO set is: the structural rate must never read a validation or
+# locked-test year (SPP's table also carries 2019 and 2022 rows, both holdout
+# years, and both are excluded here by construction rather than by discipline).
+_SPP_REFERENCE_RATE_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
+
+# The two metric rows the SPP rate is formed from, both on an AVERAGE-MW basis.
+# Pairing two average-MW quantities needs no hours-per-year assumption at all,
+# which is why these are used in preference to the table's ``curtailed_energy_gwh``
+# rows (those multiply by a flat 8760 and so are 0.27% off in a leap year).
+_SPP_CURTAILED_METRIC: str = "avg_hourly_curtailment_mw"
+_SPP_DELIVERED_METRIC: str = "avg_hourly_wind_delivered_mw"
+
+
+def _spp_wind_reference_curtailment_rate() -> tuple[float, int] | None:
+    """Return ``(rate, year)`` — SPP's measured annual wind curtailment rate.
+
+    Reads SPP's annual wind-curtailment table
+    (:data:`_SPP_WIND_CURTAILMENT_ANNUAL`) and returns the training-window
+    (:data:`_SPP_REFERENCE_RATE_YEARS`) mean of the annual rates
+    ``curtailed / (delivered + curtailed)``, tagged with the latest contributing
+    year. Both legs are measured and they come from two INDEPENDENT SPP
+    publications:
+
+    * **curtailed** — ``avg_hourly_curtailment_mw``, printed verbatim in the SPP
+      MMU's Annual State of the Market reports (2023 p. 55, 2024 p. 47, 2025
+      p. 54);
+    * **delivered** — ``avg_hourly_wind_delivered_mw``, the mean of SPP's own
+      5-minute metered generation mix (``Wind Market`` + ``Wind Self``).
+
+    Both are average MW over the year, so the ratio needs no hours-per-year
+    convention and is leap-year-safe. This is SPP's forward-reproducible
+    reference curtailment rate: a measured aggregate market parameter used to
+    gross the delivered EIA-930 wind profile up to an uncurtailed potential
+    (:func:`_forecast_uncurtailed_cf`) — the same construction MISO's rate and
+    ERCOT's no-HSL years use. It references no target-year dispatch outcome, so
+    it cannot pin the backcast (CLAUDE.md rules 13 ``[R-MEASURED]`` / 1
+    ``[R-STRUCT]``), and it re-derives only when its source data updates (rule
+    23 ``[R-FROZEN-DERIVE]``).
+
+    Two properties of the source, stated rather than smoothed:
+
+    * SPP's 2025 curtailment MW is published on a *variable energy resources*
+      (wind + solar) basis where 2023/2024 are wind-only. The same ASOM page
+      bounds the difference — solar is 0.73% of SPP's curtailment — so the
+      series is comparable in practice and no adjustment is applied.
+    * The rate is ~9.7% averaged over 2023-2025, about twice MISO's ~4.9%.
+
+    Returns ``None`` when the table is missing, unreadable, or carries no
+    training-year row with both legs present.
+    """
+    if not _SPP_WIND_CURTAILMENT_ANNUAL.exists():
+        return None
+    try:
+        table = pd.read_csv(_SPP_WIND_CURTAILMENT_ANNUAL)
+    except (OSError, ValueError):
+        return None
+    if not {"year", "metric", "value"} <= set(table.columns):
+        return None
+    legs: dict[int, dict[str, float]] = {}
+    _pos = {name: i for i, name in enumerate(table.columns)}
+    _i_year, _i_metric, _i_value = _pos["year"], _pos["metric"], _pos["value"]
+    for row in table.itertuples(index=False, name=None):
+        year = _as_int(row[_i_year])
+        if year is None or year not in _SPP_REFERENCE_RATE_YEARS:
+            continue
+        metric = str(row[_i_metric]).strip()
+        if metric not in (_SPP_CURTAILED_METRIC, _SPP_DELIVERED_METRIC):
+            continue
+        value = _as_float(row[_i_value])
+        if value is None or value < 0.0:
+            continue
+        legs.setdefault(year, {})[metric] = value
+    rates: list[float] = []
+    latest_year = 0
+    for year, leg in legs.items():
+        curtailed = leg.get(_SPP_CURTAILED_METRIC)
+        delivered = leg.get(_SPP_DELIVERED_METRIC)
+        if curtailed is None or delivered is None:
+            continue
+        potential = delivered + curtailed
+        if potential <= 0.0:
+            continue
+        rates.append(curtailed / potential)
+        latest_year = max(latest_year, year)
+    if not rates:
+        return None
+    return sum(rates) / len(rates), latest_year
+
+
+# Per-(ISO, fuel) providers of a measured ANNUAL reference curtailment rate, for
+# ISOs that publish no hourly HSL series but do publish an aggregate rate the
+# gross-up can be built from. A registry rather than a branch (rule 24
+# ``[R-REGISTRY]``) so a new ISO registers a callable instead of growing an
+# ``if iso ==`` ladder inside :func:`_reference_curtailment_rate`.
+#
+# MISO's provider is reached by the explicit branch that predates this registry
+# and is deliberately left where it is: lane SPP-32 owns SPP's rows in this
+# module and not MISO's, so folding MISO in here is a one-line consolidation
+# routed to SPP-DESK rather than taken unilaterally. Behaviour is identical
+# either way — the registry is consulted only after every HSL year has missed.
+_ANNUAL_REFERENCE_RATE_PROVIDERS: dict[
+    tuple[str, str], Callable[[], tuple[float, int] | None]
+] = {
+    ("SPP", "wind"): _spp_wind_reference_curtailment_rate,
+}
+
+
 def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None:
     """Return ``(rate, year)`` — the per-tech curtailment rate of a recent HSL year.
 
@@ -747,6 +891,13 @@ def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None
     solar has no such published series, so it returns ``None`` and keeps the
     delivered profile.
 
+    The same situation for any other ISO is served by
+    :data:`_ANNUAL_REFERENCE_RATE_PROVIDERS`, a ``(iso, fuel) -> callable``
+    registry consulted after every HSL year has missed — SPP wind is registered
+    there (:func:`_spp_wind_reference_curtailment_rate`). An ISO-fuel with
+    neither an HSL year nor a registered provider returns ``None`` and keeps the
+    delivered profile, which is the documented fallback.
+
     Returns ``None`` when the ISO has no HSL-covered reference year (the caller
     then keeps the delivered profile, leaving curtailment unmodeled).
     """
@@ -760,6 +911,9 @@ def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None
             return 1.0 - gen / hsl, ref_year
     if iso == "MISO" and fuel == "wind":
         return _miso_wind_reference_curtailment_rate()
+    provider = _ANNUAL_REFERENCE_RATE_PROVIDERS.get((iso, fuel))
+    if provider is not None:
+        return provider()
     return None
 
 
