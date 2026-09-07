@@ -20,10 +20,21 @@
 > in `pipeline/backcast_config.py`, following the `caiso_ra_mustoffer` / `ct_netload_drag`
 > per-ISO precedent, and both of the owner's conditions hold exactly and are measured (§2).
 >
-> **F4 is BUILT, default-off, and its screen is UNSPENT.** Its PRECOMMIT was written before any
-> build, as the handoff required. Two corrections to the handoff's F4 framing were found at zero
-> LP cost (§4): `COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU` is **inert in the PJM keeper**, and the live
-> coal-side window-extrapolation pushes the **opposite** way to the gas anchor.
+> **The re-run touchpoints remove the EMAAC VOLL artifact ENTIRELY in BOTH held-out years**
+> (2021: 99,100 MWh over 74 h → 0; 2022: 42,582 MWh over 45 h → 0) and collapse the inverted
+> east–west wedge to +$1.21 / +$1.36 against an actual −$5.43; C3b 2021 flips FAIL → PASS and
+> C3a 2021 improves +25.7 % → +10.8 %. **Both rungs still read `NOT-YET`** — the arm repairs a
+> real input defect, it does not close 2022 — and per rule 30(c) PJM's headline is unchanged at
+> **CALIBRATED**.
+>
+> **F4 is BUILT, SCREENED, and REJECTED by its own pre-registered STOP gate S4.** Its PRECOMMIT was written before any build,
+> as the handoff required; S1-S3 and S5 pass (S3 to a ratio of 0.999 against a magnitude fixed
+> before the solve) and S4 fails on a 3.28 % coal move. Three corrections to the handoff's F4
+> framing were found at zero LP cost: `COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU` is **inert in the PJM
+> keeper** (§4.1); the live coal-side window-extrapolation pushes the **opposite** way (§4.2);
+> and **2021 is inside the anchor's identification support**, so F4 was never the 2021 story
+> (§4.4). **The session's strongest remaining lead is the coal sigmoid's `ceil`**, which prices
+> PJM bituminous in 91.5 % of 2022 hours against 0.0 % in 2023 and 2024 — a separate card.
 
 ## 2. F2 — the arm, and why the site moved
 
@@ -146,9 +157,59 @@ export MALLOC_ARENA_MAX=2 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREA
 cat /sys/fs/cgroup/memory/$(sed -n 's/^4:memory://p' /proc/self/cgroup)/memory.limit_in_bytes
 ```
 
-### 3.2 The re-run 2021/2022 touchpoints
+### 3.2 The re-run 2021/2022 touchpoints — the VOLL artifact is gone in BOTH years
 
-*(Appended when the solves land.)*
+`2026-09-07-pjm-2022-2021-touchpoints` (bundle `pjm169_tp2022_2021_f2arm`), the SAME frozen keeper
+recipe with the F2 arm reaching the solve through `backcast_config` and nothing forced on the CLI.
+The touchpoint attestation reports **recipe identity PASS — 0 differing shared `meta.json` keys
+outside the provenance set**, i.e. the arm is a declared default, not a recipe edit. Rule 22
+`[R-HOLDOUT]`: validation tier, `--holdout-authorized`, PJM holds `complete`, freeze scope is
+locked-test only; the registration-time marker gate (rule 22, owner ruling R-AZ) passed.
+
+**The gate fires in both years, loudly and exactly as pre-registered** — precisely
+`Average Western` dropped from `PJM_AEP_Ohio→PJM_West_APS`, `Average Eastern` dropped from
+`PJM_Central_PA→PJM_EMAAC`, and the joint `pjm_east_interface_cut` NOT APPLIED, in 2021 and 2022
+alike; no other series is touched.
+
+| | EMAAC slack (VOLL) | hours | ISO-wide slack | EMAAC $ | rest $ | wedge |
+|---|---|---|---|---|---|---|
+| 2021 control | 99,100 MWh | 74 | 99,100 | 61.18 | 40.23 | **+20.95** |
+| **2021 F2 arm** | **0** | **0** | **0** | 41.66 | 40.45 | **+1.21** |
+| 2022 control | 42,582 MWh | 45 | 42,582 | 78.89 | 63.60 | **+15.29** |
+| **2022 F2 arm** | **0** | **0** | **0** | 65.35 | 63.99 | **+1.36** |
+
+ISO-wide slack **equals** EMAAC slack in every cell: the VOLL artifact was entirely EMAAC, and it
+is entirely gone. The inverted east–west gradient collapses toward the actual **−$5.43** (NJ Hub −
+AEP-Dayton). **2022 is new evidence** — pjm-168 screened 2021 only — and it lands where the
+zero-LP admissibility census said it would (2022 exceedance: Average Eastern 17.5 %, Average
+Western 9.7 %).
+
+**Scored, control → arm** (`calibration_verdict.py`, committed artifacts only):
+
+| criterion · year | control | F2 arm |
+|---|---|---|
+| **C3b price shape · 2021** | **FAIL** NRMSE 0.355 | **PASS** |
+| **C3a mean LMP · 2021** | **FAIL** +25.7 % | **FAIL** +10.8 % |
+| C3b price shape · 2022 | FAIL 0.250 | FAIL 0.257 |
+| C1 2021 CC_REGULAR / ST_GAS / COAL_BIT | +28.72 / +8.07 / −9.45 TWh | +28.59 / +8.11 / −9.04 |
+| C1 2022 CC_REGULAR | +22.26 TWh | +22.02 |
+| C2, C4, C6, C8 | PASS | PASS |
+
+**BOTH RUNGS STILL READ `NOT-YET`**, on the same three criteria (`fuelmix`, `price_mean`,
+`price_shape`). **The arm repairs a real input defect; it does not close 2022.** What it removed
+was an artifact — 141,682 MWh of VOLL across the two years, caused by enforcing a differently-
+aggregated pre-2023 posting as a hard LP bound below flows PJM actually carried — and what remains
+is the CC_REGULAR over-run the F4 lane exists to investigate.
+
+**Rule 30 `[R-TOUCHPOINT-FOLD]` discharged:** (a) stamped to the keeper
+(`stamp_touchpoint_holdout.py`), so the Run Explorer renders 2021/2022 as ordinary year columns of
+the keeper's report rather than a second card; (b) `build_status.py --iso PJM` rebuilt the derived
+holdout ladder — no `perYear` block, correctly, because both rungs read the same determination;
+(c) **the ISO's headline is UNCHANGED — `PJM: CALIBRATED`**, the train-tier verdict, exactly as
+rule 30(c) requires. The keeper `2026-08-15-pjm-162-inputclock` is **unpromoted**; no D-5(b)
+re-verification is owed because no promotion occurred. The superseded
+`2026-09-05-pjm-2022-2021-touchpoints` is pruned under rule 15's keeper-only retention, its
+supersession recorded in the `complete` marker, and git history is its record.
 
 ## 4. F4 — built, unspent, and two corrections to its framing
 
@@ -222,3 +283,32 @@ PRECOMMIT gate S1 is exactly this identity.
 - `tests/unit/config/test_d67arm_pjm_requirement.py` carries **2 pre-existing failures**, with
   byte-identical key values with and without this session's changes — which incidentally confirms
   this work is inert on PJM's forecast/hindcast key path.
+
+## 7. F4 — screened and REJECTED (full gate table)
+
+The screen ran on 2022 (year chosen on footprint, declared before any solve), single declared
+delta on the F2-armed keeper recipe, control = §3.2's own 2022 at the same HEAD. Full table,
+prediction and reasoning: `docs/handoffs/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md` §9.
+
+| gate | measured | verdict |
+|---|---|---|
+| S1 identity of the resolution | anchor 7.1208 vs census mean 7.120797 | **PASS** |
+| S2 identity at the anchor | `mc` delta = 0 exactly at `fuel == anchor` | **PASS** |
+| S3 direction & magnitude | **+$10.57/MWh** vs a **+$10.58** prediction fixed pre-solve — ratio **0.999** | **PASS** |
+| **S4 footprint confined** | **COAL_BIT +3.28 %**, COAL_PRB +7.09 %, COAL_WC +3.31 % (bar 1.0 %) | **FAIL** |
+| S5 no load-bearing flip | C1 FAIL→FAIL, C2/C4 PASS→PASS | **PASS** |
+
+**Kill rule applied: the remaining years were never spent and nothing is promoted.** C1 2022
+`CC_REGULAR` improving +22.02 → +10.77 TWh is reported, **not** a rescue — rule 1 `[R-STRUCT]`
+does not let a target revive an arm killed on structure. PRECOMMIT §9.2 records, at full
+magnitude, that S4 probably cannot separate the confound it was written for from ordinary
+merit-order displacement, and why the verdict stands anyway.
+
+### 7.1 A fourth correction to the handoff's F4 framing
+
+**2021 is INSIDE the anchor's identification support** (gap abs-max 0.67× the in-window maximum).
+The mechanism does not meaningfully extrapolate there, so F4 could never have been the 2021 story
+the handoff framed it as; only 2022 is outside support (1.80×, and gas above the anchor in all
+8,760 hours). This also corrects **this PRECOMMIT's own §3 magnitude claim** — it reasoned from
+annual Henry Hub scalars rather than the hourly `_gas_series` the anchor is defined on, and
+overstated the 2022 footprint as ≈2.7×.

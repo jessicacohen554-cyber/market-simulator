@@ -1,0 +1,172 @@
+[
+  {
+    "year": 2021,
+    "anchor_mmbtu": 3.3483,
+    "gas_mean": 4.1093767868860205,
+    "gas_min": 2.9433866325456886,
+    "gas_max": 5.648891192265635,
+    "gap_mean": -0.7610767868860201,
+    "gap_absmax": 2.3005911922656352,
+    "hours_gas_above_anchor": 5832,
+    "coal": {
+      "bituminous": {
+        "params": {
+          "floor": 0.65,
+          "ceil": 1.32,
+          "gas_mid": 3.4,
+          "gas_slope": 2.5
+        },
+        "passthrough_mean": 1.1204951089590935,
+        "passthrough_max": 1.3175856268665656,
+        "frac_hours_within_1pct_of_ceil": 0.16712328767123288
+      },
+      "subbituminous": {
+        "params": {
+          "floor": 1.1,
+          "ceil": 2.1,
+          "gas_mid": 3.7,
+          "gas_slope": 3.0
+        },
+        "passthrough_mean": 1.7001416121399404,
+        "passthrough_max": 2.097118830252885,
+        "frac_hours_within_1pct_of_ceil": 0.16712328767123288
+      }
+    }
+  },
+  {
+    "year": 2022,
+    "anchor_mmbtu": 3.3483,
+    "gas_mean": 7.120796850142759,
+    "gas_min": 5.0892482519887094,
+    "gas_max": 9.535273067776236,
+    "gap_mean": -3.772496850142759,
+    "gap_absmax": 6.186973067776236,
+    "hours_gas_above_anchor": 8760,
+    "coal": {
+      "bituminous": {
+        "params": {
+          "floor": 0.65,
+          "ceil": 1.32,
+          "gas_mid": 3.4,
+          "gas_slope": 2.5
+        },
+        "passthrough_mean": 1.3187779137554405,
+        "passthrough_max": 1.319999853854108,
+        "frac_hours_within_1pct_of_ceil": 0.915068493150685
+      },
+      "subbituminous": {
+        "params": {
+          "floor": 1.1,
+          "ceil": 2.1,
+          "gas_mid": 3.7,
+          "gas_slope": 3.0
+        },
+        "passthrough_mean": 2.098269505855387,
+        "passthrough_max": 2.099999975035705,
+        "frac_hours_within_1pct_of_ceil": 0.915068493150685
+      }
+    }
+  },
+  {
+    "year": 2023,
+    "anchor_mmbtu": 3.3483,
+    "gas_mean": 3.255149880167057,
+    "gas_min": 2.313817872436819,
+    "gas_max": 4.975257959425741,
+    "gap_mean": 0.09315011983294304,
+    "gap_absmax": 1.6269579594257406,
+    "hours_gas_above_anchor": 3624,
+    "coal": {
+      "bituminous": {
+        "params": {
+          "floor": 0.65,
+          "ceil": 1.32,
+          "gas_mid": 3.4,
+          "gas_slope": 2.5
+        },
+        "passthrough_mean": 0.9165521423237595,
+        "passthrough_max": 1.3071949979918103,
+        "frac_hours_within_1pct_of_ceil": 0.0
+      },
+      "subbituminous": {
+        "params": {
+          "floor": 1.1,
+          "ceil": 2.1,
+          "gas_mid": 3.7,
+          "gas_slope": 3.0
+        },
+        "passthrough_mean": 1.3860616943752866,
+        "passthrough_max": 2.0786636092940207,
+        "frac_hours_within_1pct_of_ceil": 0.0
+      }
+    }
+  },
+  {
+    "year": 2024,
+    "anchor_mmbtu": 3.3483,
+    "gas_mean": 2.8556397330101735,
+    "gas_min": 2.2242004559470208,
+    "gas_max": 5.066057605278972,
+    "gap_mean": 0.49266026698982684,
+    "gap_absmax": 1.7177576052789716,
+    "hours_gas_above_anchor": 1488,
+    "coal": {
+      "bituminous": {
+        "params": {
+          "floor": 0.65,
+          "ceil": 1.32,
+          "gas_mid": 3.4,
+          "gas_slope": 2.5
+        },
+        "passthrough_mean": 0.8140089365251924,
+        "passthrough_max": 1.3097556581518335,
+        "frac_hours_within_1pct_of_ceil": 0.0
+      },
+      "subbituminous": {
+        "params": {
+          "floor": 1.1,
+          "ceil": 2.1,
+          "gas_mid": 3.7,
+          "gas_slope": 3.0
+        },
+        "passthrough_mean": 1.2722944089826078,
+        "passthrough_max": 2.0836681726613113,
+        "frac_hours_within_1pct_of_ceil": 0.0
+      }
+    }
+  },
+  {
+    "year": 2025,
+    "anchor_mmbtu": 3.3483,
+    "gas_mean": 3.934138598879508,
+    "gas_min": 2.655407983556733,
+    "gas_max": 6.791237248679716,
+    "gap_mean": -0.5858385988795086,
+    "gap_absmax": 3.4429372486797156,
+    "hours_gas_above_anchor": 5088,
+    "coal": {
+      "bituminous": {
+        "params": {
+          "floor": 0.65,
+          "ceil": 1.32,
+          "gas_mid": 3.4,
+          "gas_slope": 2.5
+        },
+        "passthrough_mean": 1.0565150459856614,
+        "passthrough_max": 1.319860685785716,
+        "frac_hours_within_1pct_of_ceil": 0.08493150684931507
+      },
+      "subbituminous": {
+        "params": {
+          "floor": 1.1,
+          "ceil": 2.1,
+          "gas_mid": 3.7,
+          "gas_slope": 3.0
+        },
+        "passthrough_mean": 1.597793441081299,
+        "passthrough_max": 2.099906149324858,
+        "frac_hours_within_1pct_of_ceil": 0.08493150684931507
+      }
+    }
+  }
+]

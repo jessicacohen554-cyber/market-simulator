@@ -159,8 +159,156 @@ pjm-167 §6). The coal-sigmoid `ceil` extrapolation of §3.1 is **recorded, not 
 
 ## 7. Phase-0 census and the pre-solve algebraic prediction
 
-*(Appended before the screen is launched — see §3.)*
+Run before the screen, per §3. Artifact: `results/calibration/_pjm169_f4_census.json`; probe
+`scripts/probes/_pjm169_f4_window_footprint.py`. Measured on the keeper's own resolved config, on
+`_gas_series` — the **hourly** delivered series the offer path actually prices against.
+
+| year | gas mean | min | max | gap mean | **gap abs-max** | ×in-window | hours gas > anchor |
+|---|---|---|---|---|---|---|---|
+| 2021 | 4.109 | 2.943 | 5.649 | −0.761 | 2.3006 | **0.67×** | 5,832 |
+| **2022** | **7.121** | 5.089 | 9.535 | **−3.772** | **6.1870** | **1.80×** | **8,760** |
+| 2023 | 3.255 | 2.314 | 4.975 | +0.093 | 1.6270 | 0.47× | 3,624 |
+| 2024 | 2.856 | 2.224 | 5.066 | +0.493 | 1.7178 | 0.50× | 1,488 |
+| 2025 | 3.934 | 2.655 | 6.791 | −0.586 | **3.4429** | 1.00× | 5,088 |
+
+### 7.1 THE CENSUS CORRECTS §1 AND §3 OF THIS DOCUMENT — recorded, not quietly amended
+
+**§3's magnitude claim was WRONG and is withdrawn.** It reasoned from the recipe's *annual Henry
+Hub scalars* and asserted an in-window abs-max gap of $1.158/MMBtu and a 2022 footprint of "≈2.7×".
+The identification point is defined on `_gas_series`, which is hourly and carries the monthly
+EIA-923 actuals and the hub overlay, so its in-window spread is far wider: the true in-window
+abs-max is **$3.4429/MMBtu (2025)**, and 2022's is **$6.1870 = 1.80×**, not 2.7×.
+
+**What survives, and what does not:**
+
+- **The screen year still stands at 2022, by the rule declared in §3 before any measurement** —
+  largest measured footprint, 1.80× the in-window maximum, and the only year in which gas exceeds
+  the anchor in **every one of 8,760 hours**. The pre-registered tie-break ("if the census names a
+  different year, the census wins") did not need to fire.
+- **2021 is INSIDE the identification support** (0.67×). The mechanism is *not* meaningfully
+  extrapolating there, so F4 cannot be the 2021 story — which is a real narrowing of the
+  hypothesis, and the handoff's framing of F4 as the 2021/2022 object is wrong for 2021.
+- **The defect is smaller than §1 implied but is still real and one-directional in 2022**: the
+  gap mean is −3.772 $/MMBtu across the whole year, so the mechanism marks gas offers DOWN in
+  every hour of 2022, and the year sits entirely outside the sign regime the window identified
+  (2023 and 2024 have positive gap means).
+
+### 7.2 The confound of §3.1 is now QUANTIFIED, and in 2022 it is the LARGER effect
+
+| year | PJM bit passthrough mean | max | `ceil` | **hours ON the ceiling** |
+|---|---|---|---|---|
+| 2021 | 1.1205 | 1.3176 | 1.320 | 16.7 % |
+| **2022** | **1.3188** | 1.3200 | 1.320 | **91.5 %** |
+| 2023 | 0.9166 | 1.3072 | 1.320 | **0.0 %** |
+| 2024 | 0.8140 | 1.3098 | 1.320 | **0.0 %** |
+| 2025 | 1.0565 | 1.3199 | 1.320 | 8.5 % |
+
+(Sub-bituminous is identical in shape on `ceil` 2.100.) **In 2022 the PJM bituminous coal bid is
+priced by its `ceil` asymptote in 91.5 % of hours — an asymptote the training window touches in
+0.0 % of hours in two of its three years.** That is a *larger* and *better-evidenced* window
+extrapolation than the gas anchor's 1.80×, and `ceil > 1` marks coal **UP** while the gas anchor
+marks gas **DOWN**. The two corrections oppose each other, and the coal one is the bigger.
+
+**This does not change what F4 is or what this screen does** — F4 touches only the gas anchor, and
+gate **S4** exists precisely to detect the coal side moving. It does change the priority order the
+session reports: **the coal-sigmoid `ceil` is now the stronger candidate for PJM's 2022 offer-order
+defect**, and it is a separate card with its own PRECOMMIT, never folded into this one
+(rule 19 `[R-ONE-MECH]`).
+
+### 7.3 The S3 pre-solve algebraic prediction, fixed here before the solve
+
+From the 2022 control solve's own log: **981 gas tranches** compressed, **median fixed margin
+$9.39/MWh** at the 3.3483 anchor ⇒ median `markup_hr` = 9.39 / 3.3483 = **2.804 MMBtu/MWh**.
+
+Arming moves the anchor to the 2022 mean of `_gas_series`, **7.121 $/MMBtu**, so:
+
+> **Predicted median gas-tranche `mc` shift = markup_hr × (anchor_arm − anchor_control)
+> = 2.804 × (7.121 − 3.3483) = +$10.58/MWh**, i.e. gas offers move **UP** — the arm REMOVES a
+> downward extrapolation rather than adding a markup.
+
+**S3 passes iff the measured mean gas-tranche `mc` delta is positive and within
+[0.5×, 2.0×] of $10.58/MWh, i.e. in [$5.29, $21.16]/MWh.** Fixed here, before the solve.
+
+*(Direction note, reported not gated: a rise in gas offers would be expected to REDUCE gas
+dispatch, and 2022's live C1 failure is a CC_REGULAR OVER-run of +22.02 TWh. That the arm points
+the helpful way is **not** a pass condition and no gate reads it — saying so here, in advance, is
+what stops it becoming one.)*
 
 ## 8. G-DRIFT audit
 
-*(Appended before the arm is solved — see §4.)*
+**Discharged trivially, and that is the point of §4's control choice.** The control is
+`results/calibration/pjm169_tp2022_2021_f2arm`'s 2022 — solved **in this session, at this HEAD,
+on this branch**, with the F2 arm already live. The arm and the control therefore share their
+entire solve path by construction: there is no interval between them for code to drift across,
+so G-CTRL **form 4** is valid with **zero LP spent on a control** and no hunk classification is
+required.
+
+This is the LIVE-hunk case §4 anticipated, resolved by ordering rather than by a solve: the one
+live hunk known in advance was this session's own F2 arm, and re-running the touchpoint first put
+it on **both** sides of the comparison. The F4 screen therefore isolates a single delta — the
+anchor's vintage — and F2 and F4 are never confounded.
+
+*(The `46e08e5b` sha the superseded touchpoint bundle recorded is not resolvable on `main` — that
+branch was squash-merged — which is a further reason the re-run control is the right instrument
+here rather than the pruned bundle.)*
+
+---
+
+## 9. RESULT — the screen was run, and **S4 KILLS the arm**
+
+Screen solved 2022 on the F2-armed keeper recipe with one declared delta
+(`--set gas_offer_margin_anchor_vintage=true`). Control: this session's
+`pjm169_tp2022_2021_f2arm` 2022, same HEAD (§8). Both bundles deleted per clause (c);
+this table is the record.
+
+| # | gate | pass condition | measured | verdict |
+|---|---|---|---|---|
+| **S1** | identity of the resolution | resolved anchor = that year's own mean `_gas_series`, ±1e-6 | **7.1208** vs census **7.120797** | **PASS** |
+| **S2** | the identity it asserts | `mc` delta = 0 exactly at `fuel == anchor` | analytic + `test_gas_offer_margin_anchor_vintage` (8 tests) | **PASS** |
+| **S3** | direction & order of magnitude | sign positive, magnitude in [0.5×, 2.0×] of the §7.3 prediction $10.58 | **+$10.57/MWh** (981 tranches both sides; median fixed margin 9.39 → 19.96) — **ratio 0.999** | **PASS** |
+| **S4** | footprint confined | every non-gas class < 1.0 % annual energy | **COAL_BIT +3.28 %** (+4.55 TWh), COAL_PRB +7.09 %, COAL_WC +3.31 %, oil +26.57 % | **FAIL** |
+| **S5** | no non-target load-bearing flip | C1, C2, C4 not PASS → FAIL | C1 FAIL→FAIL, C2 PASS→PASS, C4 PASS→PASS | **PASS** |
+
+P0 objective 17.668e9 → 18.375e9, P1 19.433e9 → 20.137e9 (+3.6 %) — the sign a
+raised offer stack must have.
+
+**KILL RULE APPLIED (§5). S4 fails ⇒ the arm is dead, the remaining years are NEVER
+spent, and nothing is promoted.** The full-span step is not taken.
+
+### 9.1 Reported only — NOT gated, and explicitly NOT a rescue
+
+Rule 1 `[R-STRUCT]`: an arm killed on structure is not revived by a target improving.
+Recorded because §5 requires the magnitudes be reported, never as a pass condition.
+
+| quantity (2022) | control | F4 arm |
+|---|---|---|
+| C1 `CC_REGULAR` | +22.02 TWh | **+10.77 TWh** |
+| C3b NRMSE | 0.257 | 0.243 |
+| C3a mean LMP | PASS | PASS |
+| determination | NOT-YET | NOT-YET |
+
+### 9.2 S4 may have been MIS-SPECIFIED — and that does not change the verdict
+
+The honest reading of the S4 failure is that **the gate cannot distinguish the two
+things it was meant to separate**. It was written (§3.1) to detect *the coal-sigmoid
+confound leaking into the measurement*. But raising every gas tranche's offer by
+$10.57/MWh **must** re-allocate dispatch through the merit order, and in PJM the
+next unit up is coal — so `CC_REGULAR −11.25 TWh` against `COAL_BIT +4.55 TWh` is
+ordinary merit-order displacement, arguably the mechanism working, not a confound.
+
+**The verdict stands anyway.** Rule 29 clause (c) and §5 of this document fix the
+gates before the solve precisely so they cannot be re-read once a number is on the
+table; re-specifying S4 now, having seen that it is what kills the arm, is the
+fitted-mechanism selection this whole protocol exists to forbid. **F4 is REJECTED on
+its own pre-registered gate.** A future charter may re-specify a displacement-aware
+footprint gate — one that bounds *direct* class effects while allowing merit-order
+re-allocation — but it must do so **in its own PRECOMMIT, before its own solve**,
+and re-run the screen from scratch.
+
+### 9.3 What the session recommends instead
+
+§7.2's measurement stands as the stronger lead and is untouched by this rejection:
+**PJM bituminous coal sits on its `ceil` asymptote in 91.5 % of 2022 hours, against
+0.0 % in 2023 and 2024.** That is a larger, better-evidenced window extrapolation than
+the gas anchor's 1.80×, it points the opposite way, and it is a separate card
+(rule 19 `[R-ONE-MECH]`) with its own PRECOMMIT still to be written.
