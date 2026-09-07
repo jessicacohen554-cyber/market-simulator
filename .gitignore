@@ -752,7 +752,11 @@ results/calibration/ercot255_keeper_*/
 # cites from one is written into the PREREG/FINDING; git history is the record.
 results/calibration/_nyiso218_screen_*/
 results/calibration/_nyiso218_span_*/
-results/calibration/ercot255_five_year_*/
+# NOTE: ercot255_five_year_keeper is the DESIGNATED ERCOT KEEPER and is NOT
+# ignored — rule 15 [R-DASHBOARD] requires a keeper's slim files + hourly/
+# sidecars to be committed. Its heavy artifacts (system/dispatch/flows/storage/
+# btm) are excluded by the repo-wide slim-bundle rules below, as for every
+# other keeper.
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
