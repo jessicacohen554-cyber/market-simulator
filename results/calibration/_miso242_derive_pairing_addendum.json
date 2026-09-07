@@ -1,0 +1,460 @@
+{
+  "probe": "miso-242 V-1..V-5 \u2014 does the SPP ladder's derive pair across years?",
+  "addendum": "results/calibration/ADDENDUM-miso242-the-derive-pairs-across-years-2026-09-07.md",
+  "zero_lp": true,
+  "repairs_nothing": true,
+  "atol": 0.005,
+  "years": {
+    "2023": {
+      "V1": {
+        "join_rows": 26280,
+        "expected_if_replicated": 26280,
+        "rows_match": true,
+        "hub_year_blocks": {
+          "2023": 8760,
+          "2024": 8760,
+          "2025": 8760
+        },
+        "max_abs_da_deviation_across_blocks": 0.0,
+        "max_abs_flow_deviation_across_blocks": 0.0,
+        "PASS": true
+      },
+      "V2": {
+        "mispaired_ladder": {
+          "import": [
+            14.1,
+            32.64,
+            54.43,
+            85.36,
+            145.25,
+            185.08,
+            185.08,
+            185.08
+          ],
+          "export": [
+            -4.2,
+            -24.96,
+            -47.33,
+            -92.59,
+            -241.46,
+            -521.38,
+            -521.38,
+            -521.38
+          ]
+        },
+        "committed": {
+          "import": [
+            14.1,
+            32.64,
+            54.43,
+            85.36,
+            145.25,
+            185.08,
+            185.08,
+            185.08
+          ],
+          "export": [
+            -4.2,
+            -24.96,
+            -47.33,
+            -92.59,
+            -241.46,
+            -521.38,
+            -521.38,
+            -521.38
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true,
+        "notes": []
+      },
+      "V3_control_pjm": {
+        "derived_ladder": {
+          "import": [
+            -29.17,
+            -9.84,
+            -3.98,
+            -0.11,
+            2.43,
+            4.62,
+            7.05,
+            11.2
+          ],
+          "export": [
+            -93.98,
+            -121.47,
+            -121.47,
+            -121.47,
+            -121.47,
+            -121.47,
+            -121.47,
+            -121.47
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true
+      },
+      "V4_reported_not_gated_correctly_paired": {
+        "n_rows": 8754,
+        "ladder": {
+          "import": [
+            13.44,
+            30.3,
+            50.82,
+            83.92,
+            123.33,
+            152.94,
+            152.94,
+            152.94
+          ],
+          "export": [
+            -2.39,
+            -21.49,
+            -41.89,
+            -90.15,
+            -178.51,
+            -212.03,
+            -212.03,
+            -212.03
+          ]
+        },
+        "dead_band_committed": [
+          -4.2,
+          14.1
+        ],
+        "dead_band_correctly_paired": [
+          -2.39,
+          13.44
+        ],
+        "dead_band_width_committed": 18.3,
+        "dead_band_width_correctly_paired": 15.83,
+        "Z_derive_with_committed_ladder": 0.3897,
+        "Z_derive_with_correctly_paired_ladder": 0.3498,
+        "Z_target": 0.3501,
+        "abs_delta_committed_vs_target": 0.0395,
+        "abs_delta_corrected_vs_target": 0.0003,
+        "notes": []
+      }
+    },
+    "2024": {
+      "V1": {
+        "join_rows": 26280,
+        "expected_if_replicated": 26280,
+        "rows_match": true,
+        "hub_year_blocks": {
+          "2023": 8760,
+          "2024": 8760,
+          "2025": 8760
+        },
+        "max_abs_da_deviation_across_blocks": 0.0,
+        "max_abs_flow_deviation_across_blocks": 0.0,
+        "PASS": true
+      },
+      "V2": {
+        "mispaired_ladder": {
+          "import": [
+            14.49,
+            35.59,
+            78.29,
+            212.51,
+            290.73,
+            290.73,
+            290.73,
+            290.73
+          ],
+          "export": [
+            -2.15,
+            -19.39,
+            -33.38,
+            -42.97,
+            -54.84,
+            -64.17,
+            -70.15,
+            -83.23
+          ]
+        },
+        "committed": {
+          "import": [
+            14.49,
+            35.59,
+            78.29,
+            212.51,
+            290.73,
+            290.73,
+            290.73,
+            290.73
+          ],
+          "export": [
+            -2.15,
+            -19.39,
+            -33.38,
+            -42.97,
+            -54.84,
+            -64.17,
+            -70.15,
+            -83.23
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true,
+        "notes": []
+      },
+      "V3_control_pjm": {
+        "derived_ladder": {
+          "import": [
+            -13.87,
+            -6.23,
+            -1.91,
+            1.04,
+            3.46,
+            6.18,
+            10.47,
+            19.31
+          ],
+          "export": [
+            -35.03,
+            -65.32,
+            -74.37,
+            -74.37,
+            -74.37,
+            -74.37,
+            -74.37,
+            -74.37
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true
+      },
+      "V4_reported_not_gated_correctly_paired": {
+        "n_rows": 8757,
+        "ladder": {
+          "import": [
+            17.26,
+            37.56,
+            65.15,
+            139.78,
+            230.88,
+            230.88,
+            230.88,
+            230.88
+          ],
+          "export": [
+            1.44,
+            -12.98,
+            -23.83,
+            -33.09,
+            -43.06,
+            -48.41,
+            -55.24,
+            -66.13
+          ]
+        },
+        "dead_band_committed": [
+          -2.15,
+          14.49
+        ],
+        "dead_band_correctly_paired": [
+          1.44,
+          17.26
+        ],
+        "dead_band_width_committed": 16.64,
+        "dead_band_width_correctly_paired": 15.82,
+        "Z_derive_with_committed_ladder": 0.3724,
+        "Z_derive_with_correctly_paired_ladder": 0.358,
+        "Z_target": 0.358,
+        "abs_delta_committed_vs_target": 0.0144,
+        "abs_delta_corrected_vs_target": 0.0,
+        "notes": []
+      }
+    },
+    "2025": {
+      "V1": {
+        "join_rows": 26280,
+        "expected_if_replicated": 26280,
+        "rows_match": true,
+        "hub_year_blocks": {
+          "2023": 8760,
+          "2024": 8760,
+          "2025": 8760
+        },
+        "max_abs_da_deviation_across_blocks": 0.0,
+        "max_abs_flow_deviation_across_blocks": 0.0,
+        "PASS": true
+      },
+      "V2": {
+        "mispaired_ladder": {
+          "import": [
+            21.85,
+            46.55,
+            87.43,
+            169.08,
+            216.02,
+            252.76,
+            276.99,
+            345.4
+          ],
+          "export": [
+            1.04,
+            -14.46,
+            -29.2,
+            -45.92,
+            -125.99,
+            -316.8,
+            -515.34,
+            -515.34
+          ]
+        },
+        "committed": {
+          "import": [
+            21.85,
+            46.55,
+            87.43,
+            169.08,
+            216.02,
+            252.76,
+            276.99,
+            345.4
+          ],
+          "export": [
+            1.04,
+            -14.46,
+            -29.2,
+            -45.92,
+            -125.99,
+            -316.8,
+            -515.34,
+            -515.34
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true,
+        "notes": []
+      },
+      "V3_control_pjm": {
+        "derived_ladder": {
+          "import": [
+            -15.79,
+            -6.12,
+            -0.67,
+            2.64,
+            5.82,
+            9.68,
+            16.93,
+            29.86
+          ],
+          "export": [
+            -60.49,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07,
+            -166.07
+          ]
+        },
+        "max_abs_delta": 0.0,
+        "PASS": true
+      },
+      "V4_reported_not_gated_correctly_paired": {
+        "n_rows": 8757,
+        "ladder": {
+          "import": [
+            18.58,
+            41.9,
+            78.87,
+            152.95,
+            197.69,
+            237.84,
+            271.99,
+            338.83
+          ],
+          "export": [
+            -2.37,
+            -19.0,
+            -31.11,
+            -44.88,
+            -70.49,
+            -122.45,
+            -254.63,
+            -254.63
+          ]
+        },
+        "dead_band_committed": [
+          1.04,
+          21.85
+        ],
+        "dead_band_correctly_paired": [
+          -2.37,
+          18.58
+        ],
+        "dead_band_width_committed": 20.81,
+        "dead_band_width_correctly_paired": 20.95,
+        "Z_derive_with_committed_ladder": 0.3787,
+        "Z_derive_with_correctly_paired_ladder": 0.3696,
+        "Z_target": 0.3698,
+        "abs_delta_committed_vs_target": 0.0089,
+        "abs_delta_corrected_vs_target": 0.0001,
+        "notes": []
+      }
+    }
+  },
+  "V5_pooled": {
+    "pooled_join_rows": 26280,
+    "expected_if_correctly_paired": 26280,
+    "correctly_paired": true,
+    "derived_from_correctly_paired": {
+      "import": [
+        16.26,
+        36.58,
+        64.0,
+        133.2,
+        196.48,
+        237.83,
+        271.99,
+        338.83
+      ],
+      "export": [
+        -0.74,
+        -17.19,
+        -31.07,
+        -43.76,
+        -59.56,
+        -82.03,
+        -94.69,
+        -128.06
+      ]
+    },
+    "committed": {
+      "import": [
+        16.26,
+        36.58,
+        64.0,
+        133.2,
+        196.48,
+        237.83,
+        271.99,
+        338.83
+      ],
+      "export": [
+        -0.74,
+        -17.19,
+        -31.07,
+        -43.76,
+        -59.56,
+        -82.03,
+        -94.69,
+        -128.06
+      ]
+    },
+    "max_abs_delta": 0.0,
+    "PASS": true,
+    "notes": []
+  },
+  "V1_PASS": true,
+  "V2_PASS": true,
+  "V2_max_abs_delta": 0.0,
+  "V3_PASS": true,
+  "V3_max_abs_delta": 0.0,
+  "HYPOTHESIS": "CONFIRMED"
+}
