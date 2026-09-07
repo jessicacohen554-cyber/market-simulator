@@ -73,11 +73,14 @@ from market_sim.data.renewables import (  # noqa: E402
 
 # An incomplete current-year EIA-923 release (e.g. the 2025 early monthly
 # survey, ~70% of plants reporting) silently under-counts every fuel — most
-# severely the variable renewables, which have no CEMS backfill. When the
-# EIA-923 BA solar+wind total falls below this fraction of the EIA-930
-# grid-side (wind+solar) telemetry, the vintage is treated as incomplete and
-# wind/solar are sourced from EIA-930 instead (the authority the volume gate
-# already uses for these classes, see results.calibration.actuals_source).
+# severely the classes with no CEMS backfill: the variable renewables, and
+# (SPP-47) conventional hydro, whose 2025 release is worse under-counted than
+# either. When a benchmarked fuel's EIA-923 BA total falls below this fraction
+# of the EIA-930 grid-side telemetry for that same fuel, it is sourced from
+# EIA-930 instead (the authority the volume gate already uses for these
+# classes, see results.calibration.actuals_source). Which fuels are tested is
+# _incomplete_renewable_fuels' candidate set: wind and solar everywhere, plus
+# the ISO's own _EIA923_EXTRA_FUELS_BY_ISO entries.
 _EIA923_RENEWABLE_COMPLETENESS_FRACTION: float = 0.80
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -482,9 +485,10 @@ _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
 
 def _eia923_generation(iso: str, year: int) -> dict[str, float]:
     """EIA-923 net generation by model fuel (TWh), with the incomplete-vintage
-    guard applied (wind/solar deferred to EIA-930 when the 923 release is a
-    partial current-year survey). See :func:`_eia923_generation_raw` for the
-    raw extraction and :func:`_guard_incomplete_eia923` for the guard.
+    guard applied (an under-counted benchmarked fuel deferred to EIA-930 when
+    the 923 release is a partial current-year survey). See
+    :func:`_eia923_generation_raw` for the raw extraction and
+    :func:`_guard_incomplete_eia923` for the guard.
     """
     return _guard_incomplete_eia923(iso, year, _eia923_generation_raw(iso, year))
 
@@ -543,7 +547,7 @@ def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
     Classifies each balancing-authority row (:func:`_eia923_ba_frame`) by
     reported fuel code and prime mover. Gas is split into combined cycle (prime
     movers CA/CT/CC/CS), combustion turbine (GT) and gas steam (ST). For ISOs in
-    :data:`_EIA923_EXTRA_FUELS_BY_ISO` (NYISO/NEISO) conventional hydro
+    :data:`_EIA923_EXTRA_FUELS_BY_ISO` (NYISO/NEISO/MISO/SPP) conventional hydro
     (WAT/HY) and oil (:data:`_EIA923_OIL_FUELS`) are emitted too. Unlike the
     eGRID plant snapshot, these totals sum to the balancing authority's actual
     net generation, so they are a self-consistent calibration benchmark.
@@ -601,22 +605,40 @@ def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
 def _incomplete_renewable_fuels(
     iso: str, year: int, raw: dict[str, float]
 ) -> list[str]:
-    """Return the variable-renewable fuels EIA-923 under-counts for an ISO-year.
+    """Return the benchmarked fuels EIA-923 under-counts for an ISO-year.
 
-    A fuel (wind or solar) is under-counted when its raw EIA-923 BA total is
-    below :data:`_EIA923_RENEWABLE_COMPLETENESS_FRACTION` of the EIA-930
-    grid-side telemetry for that fuel. Evaluated PER FUEL (not on the combined
-    renewable total) so a partial wind release is caught even when solar
-    reports fully. Empty for complete vintages (the two sources then agree to
-    within a few percent), so the guard is a no-op there. Also empty when there
-    is no EIA-923 vintage at all (``raw`` empty, e.g. 2021/2022): a missing
-    benchmark is left missing, not fabricated from EIA-930.
+    A fuel is under-counted when its raw EIA-923 BA total is below
+    :data:`_EIA923_RENEWABLE_COMPLETENESS_FRACTION` of the EIA-930 grid-side
+    telemetry for that fuel. Evaluated PER FUEL (not on the combined renewable
+    total) so a partial wind release is caught even when solar reports fully.
+    Empty for complete vintages (the two sources then agree to within a few
+    percent), so the guard is a no-op there. Also empty when there is no EIA-923
+    vintage at all (``raw`` empty, e.g. 2021/2022): a missing benchmark is left
+    missing, not fabricated from EIA-930.
+
+    The candidate set is wind and solar PLUS the ISO's own
+    :data:`_EIA923_EXTRA_FUELS_BY_ISO` entries (lane SPP-47, owner ruling P16
+    2026-09-07, on FINDING-spp-43 §6 / FINDING-spp-57 R-15). Those extras are
+    exactly the fuels this builder already declares first-order and benchmarked
+    for that ISO, so a fuel the same file's own logic would reject for wind is
+    no longer scored on a preliminary EIA-923 vintage: SPP 2025 hydro read
+    0.0233 TWh against EIA-930's 8.8299 (ratio 0.0026), by far the worst of its
+    three benchmarked classes, and was the only one left unswapped. This is a
+    CONSTRUCTION REPAIR of the loop's candidate set, not a re-derivation against
+    a residual (rule 23 ``[R-FROZEN-DERIVE]``): the 0.80 threshold, the EIA-930
+    authority, and the per-fuel evaluation are all unchanged, and it introduces
+    no new parameter (rules 5 ``[R-NO-MAGIC]`` / 21 ``[R-DOF]``). The ``ref <=
+    0.0`` guard below restricts it to fuels EIA-930 actually reports, which is
+    why MISO oil — carried in the extras but absent from EIA-930's MISO series —
+    is never swapped. An ISO with no extras evaluates exactly the former pair,
+    so ERCOT/PJM/CAISO are unreachable by construction (rule 25
+    ``[R-ISO-SCOPE]``).
     """
     if not raw:
         return []
     e930 = _eia930_annual_by_fuel(iso, year)
     out: list[str] = []
-    for fuel in ("wind", "solar"):
+    for fuel in ("wind", "solar") + _EIA923_EXTRA_FUELS_BY_ISO.get(iso, ()):
         ref = e930.get(fuel, 0.0)
         if ref <= 0.0:
             continue
@@ -628,14 +650,16 @@ def _incomplete_renewable_fuels(
 def _guard_incomplete_eia923(
     iso: str, year: int, gen: dict[str, float]
 ) -> dict[str, float]:
-    """Source wind/solar from EIA-930 when the EIA-923 vintage under-counts them.
+    """Source a benchmarked fuel from EIA-930 when EIA-923 under-counts it.
 
-    The incomplete current-year EIA-923 release under-counts the variable
-    renewables (no CEMS backfill reaches them). Any wind/solar fuel below the
-    completeness fraction (:func:`_incomplete_renewable_fuels`) is replaced with
-    the EIA-930 grid total — byte-identical for complete vintages, where the two
-    agree. Other classes are left on EIA-923 (thermal is backfilled from CAMPD
-    downstream); callers flag the year via :func:`_eia923_is_incomplete`.
+    The incomplete current-year EIA-923 release under-counts the classes with no
+    CEMS backfill — the variable renewables, and the ISO's own extra benchmarked
+    fuels. Any candidate fuel below the completeness fraction
+    (:func:`_incomplete_renewable_fuels`, whose docstring carries the candidate
+    set and the SPP-47 repair) is replaced with the EIA-930 grid total —
+    byte-identical for complete vintages, where the two agree. Other classes are
+    left on EIA-923 (thermal is backfilled from CAMPD downstream); callers flag
+    the year via :func:`_eia923_is_incomplete`.
     """
     e930 = _eia930_annual_by_fuel(iso, year)
     patched = dict(gen)
@@ -722,8 +746,9 @@ def build_reference(isos_filter: tuple[str, ...] | None = None) -> Path:
                 "generation_twh": _eia923_generation(iso, year),
             }
             if _eia923_is_incomplete(iso, year):
-                # Partial current-year EIA-923 release: wind/solar already
-                # swapped to EIA-930 above; flag so scorecards know the
+                # Partial current-year EIA-923 release: the under-counted
+                # benchmarked fuels are already swapped to EIA-930 above (wind,
+                # solar, and the ISO's extras); flag so scorecards know the
                 # remaining EIA-923 by-fuel totals (notably the gas split) are
                 # incomplete and should defer to EIA-930 grid totals.
                 block["eia923_incomplete"] = True
