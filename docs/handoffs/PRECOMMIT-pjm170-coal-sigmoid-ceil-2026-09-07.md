@@ -273,7 +273,84 @@ number the session will ever cite from it. Git history is the record.
 
 ## 7. Phase-0 census and the pre-solve prediction
 
-*(Appended after measurement, before any LP. See §7 below the G-DRIFT audit.)*
+Run before the screen and before any LP, per §4 and rule 29 clause (0). Artifacts:
+`results/calibration/_pjm170_census.json` and `_pjm170_offer_delta.json`; probe
+`scripts/probes/_pjm170_bitceil_census.py`. Measured on the keeper's own resolved config
+through `run_calibration.run_year(fleet_only=True)`.
+
+### 7.1 Part A — the footprint census, and the screen year it selects
+
+**The declared statistic is `mean |passthrough_arm(t) - passthrough_control(t)|`** (§4, fixed
+before measurement). `×in-win` normalises to the largest TRAINING-window year.
+
+| year | gas mean | `pt` control | `pt` arm | **FOOTPRINT** | ×in-win | on-`ceil` (1e-3) | on-`ceil` (pjm-169 conv.) |
+|---|---|---|---|---|---|---|---|
+| 2021 | 4.109 | 1.1205 | 0.8958 | 0.2247 | 1.16 | 0.0 % | 16.7 % |
+| **2022** | **7.121** | **1.3188** | **0.9994** | **0.3194** | **1.65** | **74.8 %** | **91.5 %** |
+| 2023 | 3.255 | 0.9166 | 0.7892 | 0.1273 | 0.66 | 0.0 % | 0.0 % |
+| 2024 | 2.856 | 0.8140 | 0.7357 | 0.0783 | 0.40 | 0.0 % | 0.0 % |
+| 2025 | 3.934 | 1.0565 | 0.8624 | 0.1942 | 1.00 | 8.5 % | 8.5 % |
+
+**THE SCREEN YEAR IS 2022, on the statistic declared before it was computed** — footprint
+0.3194, **1.65×** the largest in-window year. The §4 pre-registered tie-break did not need to
+fire.
+
+**A CORRECTION TO THE OCCUPANCY COLUMN, recorded rather than quietly adopted.** pjm-169 §7.2
+reported 2022 at **91.5 %** on-`ceil` and 2021 at 16.7 %; this probe's own convention
+(`pt >= ceil - 1e-3`) measures **74.8 %** and 0.0 %. The gap is **entirely the threshold
+convention and not the curve**: pjm-169 used `pt >= ceil - 0.01 x (ceil - floor)`, i.e. within
+1 % of the curve's RANGE (threshold 1.3133), while this probe used a stricter absolute
+tolerance (threshold 1.3190). The curve itself reproduces **exactly** — the control mean
+passthrough matches pjm-169 to four decimals in all five years (1.1205 / 1.3188 / 0.9166 /
+0.8140 / 1.0565). Both columns are reported above; **neither is the selector** (§4), and both
+say the same thing qualitatively: 2022 sits on the asymptote for most of the year and two of
+the three training years never reach it at all.
+
+**A structural confirmation, reported not gated:** under the arm, 2022's mean passthrough is
+**0.9994** — the dear-gas year lands at essentially exactly full delivered fuel cost, which is
+precisely what §2.2's cost-tracking construction says the dear-gas asymptote should be. The arm
+does not introduce a discount; it removes a markup.
+
+### 7.2 Gates S1 and S2, satisfied pre-solve
+
+| gate | measured | verdict |
+|---|---|---|
+| **S1** other coal supplies untouched | `prb`, `subbituminous`, `lignite`, `waste` passthrough arrays **byte-identical** (`np.array_equal`) control vs arm, in all five years | **PASS** (pre-solve leg) |
+| **S2** `max(passthrough_arm) <= 1.0 + 1e-9` | True in all five years | **PASS** |
+| **S2** `passthrough_arm(t) <= passthrough_control(t)` ∀ t | True in all five years | **PASS** |
+
+S1's remaining leg (the arm's `run_config.json` records `ceil = 1.0` with `floor`/`gas_mid`/
+`gas_slope` unmoved) is read off the solved bundle in §9.
+
+### 7.3 Part B — S4a, and the S3 prediction fixed before the solve
+
+Offer-array (`mc_base`) diff for 2022, control vs arm, both assembled through the same
+`fleet_only` path the solve uses:
+
+| quantity | measured |
+|---|---|
+| generator rows in the PJM LP | 3,405 |
+| rows the mechanism may reach by construction (§3.2) | **243** (25,504.28 MW) |
+| rows that changed | **243** |
+| **rows that changed OUTSIDE the set** | **0** |
+| cells that changed | **2,128,680** = 243 × 8,760 exactly |
+| **cells that changed OUTSIDE the set** | **0** |
+
+> **S4a PASSES exactly, at zero tolerance, before any LP.** The mechanism reprices the 243
+> bituminous above-must-run tranches and *nothing else* — not a single one of the other 3,162
+> rows moves by any amount. This is the measurement pjm-169's S4 was reaching for and could not
+> express: it bounds the DIRECT effect exactly while leaving merit-order re-allocation entirely
+> free.
+
+**THE S3 PREDICTION, FIXED HERE BEFORE THE SOLVE:**
+
+> **mean ΔMC over the directly-priced tranche-hours = −$9.2267/MWh** (min −$43.9126, max
+> −$2.1066). **S3 passes iff the solved arm's mean ΔMC on those tranches is NEGATIVE and within
+> ±2 % of −9.2267, i.e. in [−9.4113, −9.0422] $/MWh.**
+
+Independent arithmetic cross-check: Δpassthrough ≈ −0.3194 (§7.1) × PJM bituminous delivered
+fuel × heat rate ≈ $28.9/MWh ⇒ ≈ −$9.2/MWh. The sign is the operative part — the arm **removes**
+a dear-gas markup rather than adding a discount.
 
 ## 8. G-DRIFT audit — the keeper's committed bundle IS the control (rule 29 clause (b))
 
