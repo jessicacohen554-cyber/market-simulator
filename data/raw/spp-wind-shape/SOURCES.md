@@ -86,3 +86,12 @@ except a residual, which rule 1 `[R-STRUCT]` forbids.
 ## Regeneration
 
     python scripts/data/build_spp_wind_shape.py --years 2023 2024 2025 --reconcile
+
+---
+
+## NOTE 2026-09-07 — lane SPP-54: three-zone rebuild (not landed here)
+
+Same inputs, same builder, on the SPP-54 three-zone map (design commit `8d427adc`): SPP-North 17,664.3 MW
+(unchanged), SPP-South (residual, Oklahoma + SWEPCO) 13,145.6 MW, SPP-SPS (Texas Panhandle + South Plains +
+eastern NM) 4,653.5 MW; 3 zones × 6 sample points × 3 years = 54 point-years, HTTP 200 throughout. See the
+README note for why the committed parquets stay two-zone.

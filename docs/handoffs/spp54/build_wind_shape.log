@@ -1,0 +1,51 @@
+
+Building SPP wind shape for 2023...
+  SPP-North: 6 sample point(s)
+  SPP-South: 6 sample point(s)
+  SPP-SPS: 6 sample point(s)
+
+=== SPP 2023 per-zone wind SHAPE (relative CF) ===
+  SPP-North     mean=0.325  night(00-06)=0.314  afternoon(12-18)=0.322  night/aft=0.97
+  SPP-South     mean=0.306  night(00-06)=0.302  afternoon(12-18)=0.284  night/aft=1.06
+  SPP-SPS       mean=0.336  night(00-06)=0.321  afternoon(12-18)=0.317  night/aft=1.01
+
+=== SPP 2023 SHAPE vs SPP GenMix delivered wind (level NOT pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8416
+  diurnal (24h) corr  : 0.6726
+  seasonal (12m) corr : 0.9826
+Wrote data/raw/spp-wind-shape/spp_2023_wind_zone_shape.parquet (296.8 KiB)
+
+Building SPP wind shape for 2024...
+  SPP-North: 6 sample point(s)
+  SPP-South: 6 sample point(s)
+  SPP-SPS: 6 sample point(s)
+
+=== SPP 2024 per-zone wind SHAPE (relative CF) ===
+  SPP-North     mean=0.349  night(00-06)=0.334  afternoon(12-18)=0.349  night/aft=0.96
+  SPP-South     mean=0.335  night(00-06)=0.318  afternoon(12-18)=0.331  night/aft=0.96
+  SPP-SPS       mean=0.353  night(00-06)=0.357  afternoon(12-18)=0.317  night/aft=1.13
+
+=== SPP 2024 SHAPE vs SPP GenMix delivered wind (level NOT pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8293
+  diurnal (24h) corr  : 0.6884
+  seasonal (12m) corr : 0.9287
+Wrote data/raw/spp-wind-shape/spp_2024_wind_zone_shape.parquet (296.3 KiB)
+
+Building SPP wind shape for 2025...
+  SPP-North: 6 sample point(s)
+  SPP-South: 6 sample point(s)
+  SPP-SPS: 6 sample point(s)
+
+=== SPP 2025 per-zone wind SHAPE (relative CF) ===
+  SPP-North     mean=0.345  night(00-06)=0.324  afternoon(12-18)=0.354  night/aft=0.91
+  SPP-South     mean=0.308  night(00-06)=0.292  afternoon(12-18)=0.307  night/aft=0.95
+  SPP-SPS       mean=0.333  night(00-06)=0.335  afternoon(12-18)=0.299  night/aft=1.12
+
+=== SPP 2025 SHAPE vs SPP GenMix delivered wind (level NOT pinned; unit-mean normalised) ===
+  hours compared      : 8760
+  hourly correlation  : 0.8292
+  diurnal (24h) corr  : 0.7116
+  seasonal (12m) corr : 0.9054
+Wrote data/raw/spp-wind-shape/spp_2025_wind_zone_shape.parquet (295.4 KiB)

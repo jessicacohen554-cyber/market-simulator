@@ -115,3 +115,16 @@ The table is six numbers, each the mean of twelve published monthly prints minus
 the matching Henry Hub prints. Re-derive only when the **source data** updates
 (rule 23 `[R-FROZEN-DERIVE]`) — in practice, when EIA publishes `N3045OK3` for
 2025 — never because a residual moved.
+
+---
+
+## STATUS UPDATE 2026-09-07 — lane SPP-54: a re-key for the SPS-pocket topology exists in the design commit
+
+`docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md` §5. On the SPP-54 three-zone map (`SPP-North` / `SPP-South`
+residual / `SPP-SPS`; design commit `8d427adc`, not landed on main — no solve has run) the table is re-keyed
+with **no measured value moved**: North and the residual South keep their KS and OK rows (Oklahoma is ~60 %
+of the residual's gas fleet once the pocket is carved out), and `SPP-SPS` takes the **TX proxy** rows
+(`N3045TX3`: 2022 −0.081 / 2023 +0.096 / 2024 −0.010, the values lane SPP-57 derived by this instrument
+for its residual-South row) — the pocket's gas fleet is TX ≈ 4,680 of ≈ 6,100 MW (NM ≈ 1,410), and EIA
+prints no New Mexico delivered-to-electric-power series usable here. The 2022–2024 span rule and the
+no-applier posture are unchanged.

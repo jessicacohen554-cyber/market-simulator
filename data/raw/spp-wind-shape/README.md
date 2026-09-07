@@ -95,3 +95,24 @@ three-zone arm, so the parquets here stay the SPP-32 two-zone build. The three-z
 0.829 / 0.829) is recorded in that FINDING §4 and lives in the branch history
 (`claude/spp-57-oklahoma-pocket-yedapf`, the design commit) for a re-issue to reuse — the same
 builder regenerates it in minutes.
+
+## NOTE 2026-09-07 — lane SPP-54: a three-zone (SPS-pocket) rebuild was made and NOT landed here
+
+`docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md` §4 / `FINDING-spp-54-2026-09-07.md` §4. The SPS /
+Texas-Panhandle pocket (`SPP-North` / `SPP-South` / `SPP-SPS`) was designed and its parquets rebuilt by this
+builder (54 point-years; night/afternoon **N 0.97 / S 1.06 / SPS 1.01** (2023), **0.96 / 0.96 / 1.13**
+(2024), **0.91 / 0.95 / 1.12** (2025) — the SPS pocket is the most nocturnal zone; GenMix hourly r 0.842 /
+0.829 / 0.829). They live on that branch's design commit **`8d427adc`** (with the three-zone `_spp_config`),
+not here, because no solve of that topology has run: the link rating waits for SPP-58's ψ₂ and the lane's
+pre-solve wind reconciliation STOPPED. **Do not copy the three-zone parquets in alone**: the two-zone loader
+accepts any parquet whose columns include its zone names, so a three-zone file here would silently apply
+Oklahoma's six-site shape to the whole two-zone South under keeper-3.
+
+**What SPP-54 measured about this builder (its R-21, routed to SPP-DESK):** the redistribution weights each
+zone by `cap_z · SHAPE_z(t)`, so the six-site samples' relative MEAN LEVELS act as zonal capacity-factor
+levels, not only their diurnal shape ("the level is never pinned" above is true of the system total and of
+the shape, not of the inter-zone level split). Splitting the old South's six-site set into Oklahoma's six
+and the Panhandle's six moved the North's annual wind potential **+1.38 / +1.47 / +1.91 TWh** at an identical
+system total (identity 6e-16), **75–85 % of it from the residual South's own sample changing**, not from
+the SPS shape. A zone's level from its whole operable fleet (capacity-weighted over all plants) is the
+candidate zero-DOF repair; nothing here was changed after that number was seen.
