@@ -122,3 +122,4 @@ price) — and whether to run it in this session or a fresh one.
   crawl with `--market rtm`, fold, `postprocess_oasis_downloads.py`,
   `derive_actual_lmp.py` (RT + DA), `derive_actual_tail.py`.
 
+**RESULT (2026-09-07):** DAM 2022 crawled 365 / 365, 0 missing, 1.56 h; `CAISO_dam_hourly_2022.csv` (87,600 rows, 10 nodes) and the 2022 MALIN / PALOVRDE rows in `wecc_intertie_lmp_hourly_CAISO.parquet` committed; 2023–2026 inputs byte-/row-identical. H-3 is CLOSED. H-2 (RT) waits on the RTM crawl — fresh session.
