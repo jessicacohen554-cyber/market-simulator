@@ -273,7 +273,9 @@ def load_wind_sample_points(
     wind = wind.dropna(subset=["lat", "lon", "cap", "zone"])
     wind = wind[wind["cap"] > 0.0]
 
-    out: dict[str, list[tuple[float, float, float, float]]] = {z: [] for z in zone_names}
+    out: dict[str, list[tuple[float, float, float, float]]] = {
+        z: [] for z in zone_names
+    }
     # Aggregate to one row per plant (sum generator nameplate; first coords/hub).
     by_plant = wind.groupby("Plant Code").agg(
         lat=("lat", "first"),
@@ -528,9 +530,7 @@ def reconcile_year(
         print(f"  GenMix {year}: not available; reconciliation skipped.")
         return None
     points = load_wind_sample_points(year, zone_names, iso)
-    weights = np.array(
-        [sum(p[2] for p in points[z]) for z in zone_names], dtype=float
-    )
+    weights = np.array([sum(p[2] for p in points[z]) for z in zone_names], dtype=float)
     if weights.sum() <= 0.0:
         return None
     modelled = (df[zone_names].to_numpy(dtype=float) * weights).sum(axis=1) / (

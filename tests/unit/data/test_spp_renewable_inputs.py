@@ -62,9 +62,7 @@ def test_the_other_six_isos_are_untouched():
     its prior cache key.
     """
     assert rn._WIND_ZONE_SHAPE_ISOS == frozenset({"MISO", "SPP"})
-    assert rn._UNCURTAILED_FALLBACK_ISOS == frozenset(
-        {"ERCOT", "CAISO", "MISO", "SPP"}
-    )
+    assert rn._UNCURTAILED_FALLBACK_ISOS == frozenset({"ERCOT", "CAISO", "MISO", "SPP"})
     for iso in ("PJM", "NYISO", "NEISO"):
         assert not rn._wind_zone_shape_enabled(iso, ScenarioConfig(iso=iso))
         assert wind_shape_dir(iso) is None
@@ -103,7 +101,11 @@ def test_shape_loader_reads_both_zones(tmp_path):
     """A well-formed parquet yields one relative SHAPE row per model zone."""
     _write_shape_parquet(tmp_path, _YEAR, _diurnal(0.9), _diurnal(1.1))
     shapes = rn._wind_zone_reanalysis_shapes(
-        "SPP", "wind", _ZONES, _YEAR, data_dir=tmp_path,
+        "SPP",
+        "wind",
+        _ZONES,
+        _YEAR,
+        data_dir=tmp_path,
         config=ScenarioConfig(iso="SPP"),
     )
     assert shapes is not None
@@ -119,18 +121,32 @@ def test_shape_loader_reads_both_zones(tmp_path):
 def test_shape_loader_is_a_noop_for_solar(tmp_path):
     """Only wind is shaped here; solar keeps the legacy single profile."""
     _write_shape_parquet(tmp_path, _YEAR, _diurnal(0.9), _diurnal(1.1))
-    assert rn._wind_zone_reanalysis_shapes(
-        "SPP", "solar", _ZONES, _YEAR, data_dir=tmp_path,
-        config=ScenarioConfig(iso="SPP"),
-    ) is None
+    assert (
+        rn._wind_zone_reanalysis_shapes(
+            "SPP",
+            "solar",
+            _ZONES,
+            _YEAR,
+            data_dir=tmp_path,
+            config=ScenarioConfig(iso="SPP"),
+        )
+        is None
+    )
 
 
 def test_shape_loader_is_a_noop_when_the_parquet_is_absent(tmp_path):
     """A year with no built shape degrades to the legacy behaviour, not an error."""
-    assert rn._wind_zone_reanalysis_shapes(
-        "SPP", "wind", _ZONES, 2099, data_dir=tmp_path,
-        config=ScenarioConfig(iso="SPP"),
-    ) is None
+    assert (
+        rn._wind_zone_reanalysis_shapes(
+            "SPP",
+            "wind",
+            _ZONES,
+            2099,
+            data_dir=tmp_path,
+            config=ScenarioConfig(iso="SPP"),
+        )
+        is None
+    )
 
 
 def test_shape_loader_is_a_noop_when_a_zone_column_is_missing(tmp_path):
@@ -147,10 +163,17 @@ def test_shape_loader_is_a_noop_when_a_zone_column_is_missing(tmp_path):
         pa.Table.from_pandas(df, preserve_index=False),
         directory / f"spp_{_YEAR}_wind_zone_shape.parquet",
     )
-    assert rn._wind_zone_reanalysis_shapes(
-        "SPP", "wind", _ZONES, _YEAR, data_dir=directory,
-        config=ScenarioConfig(iso="SPP"),
-    ) is None
+    assert (
+        rn._wind_zone_reanalysis_shapes(
+            "SPP",
+            "wind",
+            _ZONES,
+            _YEAR,
+            data_dir=directory,
+            config=ScenarioConfig(iso="SPP"),
+        )
+        is None
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +192,11 @@ def test_redistribution_preserves_the_iso_aggregate(tmp_path, ramp_on):
     """
     _write_shape_parquet(tmp_path, _YEAR, _diurnal(0.85), _diurnal(1.15))
     shapes = rn._wind_zone_reanalysis_shapes(
-        "SPP", "wind", _ZONES, _YEAR, data_dir=tmp_path,
+        "SPP",
+        "wind",
+        _ZONES,
+        _YEAR,
+        data_dir=tmp_path,
         config=ScenarioConfig(iso="SPP"),
     )
     cap = np.array([17664.3, 17799.1])
@@ -198,7 +225,11 @@ def test_redistribution_actually_moves_wind_between_zones(tmp_path):
     """
     _write_shape_parquet(tmp_path, _YEAR, _diurnal(0.5), _diurnal(1.5))
     shapes = rn._wind_zone_reanalysis_shapes(
-        "SPP", "wind", _ZONES, _YEAR, data_dir=tmp_path,
+        "SPP",
+        "wind",
+        _ZONES,
+        _YEAR,
+        data_dir=tmp_path,
         config=ScenarioConfig(iso="SPP"),
     )
     cap = np.array([17664.3, 17799.1])
@@ -215,8 +246,16 @@ def test_redistribution_actually_moves_wind_between_zones(tmp_path):
 
 
 _CURTAILMENT_COLUMNS = [
-    "iso", "year", "metric", "value", "unit", "basis", "derived",
-    "source_doc", "source_page", "note",
+    "iso",
+    "year",
+    "metric",
+    "value",
+    "unit",
+    "basis",
+    "derived",
+    "source_doc",
+    "source_page",
+    "note",
 ]
 
 
@@ -225,9 +264,16 @@ def _write_curtailment_table(path, rows):
     frame = pd.DataFrame(
         [
             {
-                "iso": "SPP", "year": year, "metric": metric, "value": value,
-                "unit": "mw", "basis": "test", "derived": "yes",
-                "source_doc": "synthetic fixture", "source_page": "n/a", "note": "",
+                "iso": "SPP",
+                "year": year,
+                "metric": metric,
+                "value": value,
+                "unit": "mw",
+                "basis": "test",
+                "derived": "yes",
+                "source_doc": "synthetic fixture",
+                "source_page": "n/a",
+                "note": "",
             }
             for year, metric, value in rows
         ],
@@ -248,8 +294,10 @@ def test_rate_is_curtailed_over_potential(curtailment_table):
     """rate = curtailed / (delivered + curtailed), on the average-MW basis."""
     _write_curtailment_table(
         curtailment_table,
-        [(2023, "avg_hourly_curtailment_mw", 1000.0),
-         (2023, "avg_hourly_wind_delivered_mw", 9000.0)],
+        [
+            (2023, "avg_hourly_curtailment_mw", 1000.0),
+            (2023, "avg_hourly_wind_delivered_mw", 9000.0),
+        ],
     )
     rate, year = rn._spp_wind_reference_curtailment_rate()
     assert rate == pytest.approx(0.10)
@@ -260,10 +308,12 @@ def test_rate_is_the_mean_over_training_years(curtailment_table):
     """Multiple training years average, and the tag is the latest of them."""
     _write_curtailment_table(
         curtailment_table,
-        [(2023, "avg_hourly_curtailment_mw", 1000.0),
-         (2023, "avg_hourly_wind_delivered_mw", 9000.0),
-         (2024, "avg_hourly_curtailment_mw", 2000.0),
-         (2024, "avg_hourly_wind_delivered_mw", 8000.0)],
+        [
+            (2023, "avg_hourly_curtailment_mw", 1000.0),
+            (2023, "avg_hourly_wind_delivered_mw", 9000.0),
+            (2024, "avg_hourly_curtailment_mw", 2000.0),
+            (2024, "avg_hourly_wind_delivered_mw", 8000.0),
+        ],
     )
     rate, year = rn._spp_wind_reference_curtailment_rate()
     assert rate == pytest.approx((0.10 + 0.20) / 2)
@@ -280,12 +330,14 @@ def test_holdout_years_can_never_enter_the_rate(curtailment_table):
     assert 2022 not in rn._SPP_REFERENCE_RATE_YEARS
     _write_curtailment_table(
         curtailment_table,
-        [(2019, "avg_hourly_curtailment_mw", 9999.0),
-         (2019, "avg_hourly_wind_delivered_mw", 1.0),
-         (2022, "avg_hourly_curtailment_mw", 9999.0),
-         (2022, "avg_hourly_wind_delivered_mw", 1.0),
-         (2023, "avg_hourly_curtailment_mw", 1000.0),
-         (2023, "avg_hourly_wind_delivered_mw", 9000.0)],
+        [
+            (2019, "avg_hourly_curtailment_mw", 9999.0),
+            (2019, "avg_hourly_wind_delivered_mw", 1.0),
+            (2022, "avg_hourly_curtailment_mw", 9999.0),
+            (2022, "avg_hourly_wind_delivered_mw", 1.0),
+            (2023, "avg_hourly_curtailment_mw", 1000.0),
+            (2023, "avg_hourly_wind_delivered_mw", 9000.0),
+        ],
     )
     rate, year = rn._spp_wind_reference_curtailment_rate()
     assert rate == pytest.approx(0.10)
@@ -296,9 +348,11 @@ def test_a_year_missing_either_leg_is_dropped(curtailment_table):
     """Both legs must be present; a half-populated year contributes nothing."""
     _write_curtailment_table(
         curtailment_table,
-        [(2023, "avg_hourly_curtailment_mw", 1000.0),
-         (2023, "avg_hourly_wind_delivered_mw", 9000.0),
-         (2024, "avg_hourly_curtailment_mw", 2000.0)],
+        [
+            (2023, "avg_hourly_curtailment_mw", 1000.0),
+            (2023, "avg_hourly_wind_delivered_mw", 9000.0),
+            (2024, "avg_hourly_curtailment_mw", 2000.0),
+        ],
     )
     rate, year = rn._spp_wind_reference_curtailment_rate()
     assert rate == pytest.approx(0.10)
@@ -323,8 +377,10 @@ def test_provider_is_reached_through_the_registry(curtailment_table, monkeypatch
     )
     _write_curtailment_table(
         curtailment_table,
-        [(2023, "avg_hourly_curtailment_mw", 1000.0),
-         (2023, "avg_hourly_wind_delivered_mw", 9000.0)],
+        [
+            (2023, "avg_hourly_curtailment_mw", 1000.0),
+            (2023, "avg_hourly_wind_delivered_mw", 9000.0),
+        ],
     )
     monkeypatch.setattr(rn, "load_hsl_hourly", lambda iso, year: None)
     assert rn._reference_curtailment_rate("SPP", "wind")[0] == pytest.approx(0.10)

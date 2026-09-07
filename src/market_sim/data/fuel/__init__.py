@@ -392,6 +392,7 @@ __all__ = [
     "NYISO_GAS_HUB_REFERENCE_ZONE",
     "NYISO_ZONAL_GAS_HUB_PATH",
     "PJM_ZONAL_GAS_HUB_PATH",
+    "SPP_ZONAL_GAS_HUB_PATH",
     "TRANSCO_IROQUOIS_MONTHLY_PATH",
     "apply_caiso_zonal_gas_basis",
     "apply_ercot_west_netload_gas_shape",

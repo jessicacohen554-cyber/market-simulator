@@ -29,8 +29,11 @@ def _write_hub_table(path, rows):
     pd.DataFrame(
         [
             {
-                "zone": zone, "year": year, "basis_vs_hh_usd_mmbtu": basis,
-                "hub": "test hub", "source": "synthetic fixture",
+                "zone": zone,
+                "year": year,
+                "basis_vs_hh_usd_mmbtu": basis,
+                "hub": "test hub",
+                "source": "synthetic fixture",
             }
             for zone, year, basis in rows
         ],

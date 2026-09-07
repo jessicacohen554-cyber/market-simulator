@@ -85,7 +85,9 @@ def _write_subba_fixture(directory, year: int, north_mw: float, south_mw: float)
 def spp_raw(tmp_path, monkeypatch):
     """Redirect the curation module's raw dir and clock onto a synthetic fixture."""
     monkeypatch.setattr(czs, "ZONE_DEMAND_DIR", tmp_path)
-    monkeypatch.setattr(czs, "_eia_hourly_frame_filled", lambda ba, year: _fake_frame(year))
+    monkeypatch.setattr(
+        czs, "_eia_hourly_frame_filled", lambda ba, year: _fake_frame(year)
+    )
     return tmp_path
 
 
@@ -98,8 +100,23 @@ def test_crosswalk_covers_the_seventeen_eia930_subbas():
     """All 17 SWPP sub-BA tokens are mapped, and only those 17."""
     assert len(czs._SPP_SUBBA_ZONE_GROUPS) == 17
     assert set(czs._SPP_SUBBA_ZONE_GROUPS) == {
-        "CSWS", "EDE", "GRDA", "INDN", "KACY", "KCPL", "LES", "MPS", "NPPD",
-        "OKGE", "OPPD", "SECI", "SPRM", "SPS", "WAUE", "WFEC", "WR",
+        "CSWS",
+        "EDE",
+        "GRDA",
+        "INDN",
+        "KACY",
+        "KCPL",
+        "LES",
+        "MPS",
+        "NPPD",
+        "OKGE",
+        "OPPD",
+        "SECI",
+        "SPRM",
+        "SPS",
+        "WAUE",
+        "WFEC",
+        "WR",
     }
 
 
@@ -108,8 +125,18 @@ def test_crosswalk_is_the_spp20_p1_partition():
     north = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-North"}
     south = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-South"}
     assert north == {
-        "EDE", "INDN", "KACY", "KCPL", "LES", "MPS",
-        "NPPD", "OPPD", "SECI", "SPRM", "WAUE", "WR",
+        "EDE",
+        "INDN",
+        "KACY",
+        "KCPL",
+        "LES",
+        "MPS",
+        "NPPD",
+        "OPPD",
+        "SECI",
+        "SPRM",
+        "WAUE",
+        "WR",
     }
     assert south == {"CSWS", "GRDA", "OKGE", "SPS", "WFEC"}
 
