@@ -349,21 +349,38 @@ VERDICT_MAP = {
     # a9c66d8ea25acb9d: THIS is the shipped PJM T1-H posture from here on, so
     # it takes the bare `pjm-t1h`. Solved 2021-2025 in ONE sequential
     # invocation, PJM solo, HEAD-guarded. FINDING-capx-d67arm-2026-09-06.md.
-    # capx D78-ARM (2026-09-06, owner ruling Q56): the retirement-screen SECTOR
-    # GATE is armed for PJM through _pjm_config, so the bare `pjm-t1h` recipe
-    # advances b518f5fe7d02f961 -> fb16fda2ddb0a94a and is RE-SOLVED at HEAD on
-    # the joint posture (D57 + D67 + Q55 + Q56). The D67-ARM record
-    # (a9c66d8ea25acb9d) is preserved verbatim at `pjm-t1h-pre-d78arm`, its
-    # own verdict standing -- the D45-R / D57 / D67 convention. (No
-    # `pjm-t1h-pre-d75r` step exists: the Q55-only posture, b518f5fe7d02f961,
-    # was never registered -- D75-R-ARM's steps 3-4 were HELD on the board
-    # lock and never released; its numbers survive in FINDING-capx-d75r §5.2.)
-    # The D78-R2 arm (bb6a60239d69508b, the gate WITHOUT Q55) was likewise
-    # never registered (FINDING-capx-d78r3 §2); the armed re-solve here is the
-    # registration that lane owed. PRECOMMIT-capx-d78arm-2026-09-06.md §2.2 /
-    # FINDING-capx-d78arm-2026-09-06.md.
-    "pjm-2021-2025-realized-t1h-d67arm": "pjm-t1h-pre-d78arm",
-    "pjm-2021-2025-realized-t1h-d78arm": "pjm-t1h",
+    # RE-POINTED by capx D75-R-ARM steps 3-4 (2026-09-07). The bare PJM T1-H
+    # recipe advanced TWICE since this bundle was solved, through the same
+    # `_pjm_config` override path: owner ruling Q55 armed
+    # `pjm_vre_accreditation_vintage` (a9c66d8ea25acb9d -> b518f5fe7d02f961) and
+    # owner ruling Q56 armed `retirement_sector_gate` (-> fb16fda2ddb0a94a). At
+    # HEAD there is exactly ONE bare `pjm-t1h` recipe and it carries BOTH arms,
+    # so the re-solve below is a JOINT Q55+Q56 posture and no number in it may
+    # be attributed to either arm alone (the isolated attributions stay in
+    # FINDING-capx-d75r and FINDING-capx-d78r3). The same fact makes it the
+    # solve D78-ARM still owed -- same invocation, same key, same control --
+    # so registering it once discharges both lanes and no second `pjm-t1h` is
+    # solved (rule 19 [R-ONE-MECH] in its registration form).
+    #
+    # THE PRESERVED NAME IS `-pre-d75rarm`, ON THE MERITS and not merely by
+    # charter: this bundle is a9c66d8ea25acb9d, which is the posture
+    # immediately before D75-R-ARM. The posture immediately before D78-ARM is
+    # b518f5fe7d02f961 and NO bundle at that key exists to preserve -- D76-P3B
+    # solved it as its own control and deleted it before merge under rule
+    # 29(c). Naming this bundle `-pre-d78arm` would therefore label an
+    # a9c66d8ea25acb9d bundle with a b518f5fe7d02f961 posture's name; the
+    # D78-ARM salvage's held hunk (FINDING-pr5319-d78arm-salvage §3) should
+    # adopt this id rather than create a second alias for one object.
+    # Its own verdict stands under the preserved key; nothing is re-scored.
+    # PRECOMMIT-capx-d75r-arm-2026-09-06-ADDENDUM-B-steps34.md §1-§2.
+    "pjm-2021-2025-realized-t1h-d67arm": "pjm-t1h-pre-d75rarm",
+    # The D75-R-ARM steps 3-4 re-solve of the bare (now doubly armed) recipe at
+    # HEAD, key fb16fda2ddb0a94a: THIS is the shipped PJM T1-H posture from here
+    # on, so it takes the bare `pjm-t1h`. Solved 2021-2025 in ONE sequential
+    # invocation, PJM solo, HEAD-guarded at 10cda1fa, and the realized cache key
+    # was compared to the key declared before the solve and matched exactly.
+    # 14/14 invariants PASS. FINDING-capx-d75rarm-steps34-2026-09-07.md.
+    "pjm-2021-2025-realized-t1h-d75rarm": "pjm-t1h",
     # capx-D62 (2026-09-06): the PJM PUBLISHED GOING-FORWARD BAR
     # (`capacity_going_forward_bar_published_by_iso[PJM]` ON — the retirement
     # screen's bar, and through the D57 identity the sell-offer cap, becomes

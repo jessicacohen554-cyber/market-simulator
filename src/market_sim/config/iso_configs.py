@@ -1740,32 +1740,25 @@ def _spp_config() -> ISOConfig:
     attributions agree.
 
     Congestion structure. The single N↔S ``TransferLink`` is the only
-    structure beyond copperplate. Its TTC is a **Tier-3 PLACEHOLDER, NOT a
-    rated interface** (rule 14 ``[R-ACCURATE]``; owner ruling P11): no
-    document in the tree carries an SPP North↔South transfer capability —
-    the 2025 ITP Assessment Report is a project portfolio with no rated
-    interface (FINDING-spp-12 §6), SPP OASIS is host-blocked, and SPP-13's
-    row-11 sweep of the four candidate documents (ITP Manual v3.3, the 2022
-    20-Year Assessment Report + Manual, the ITP Postings folder) found that
-    NONE states an MW — the rated interface data is NDA / CEII, not public
-    (FINDING-spp-13 §0; the two PDFs also answered HTTP 503 to this lane on
-    2026-09-06). The MMU's ">6,000 MW SPP↔MISO
-    AC interties" is a SEAM rating, not the internal corridor, and is
-    deliberately not borrowed. The placeholder is the North zone's own
-    EIA-860 2025 ER summer capability (48,711.8 MW; audit §2.4 state table:
-    KS 19,970.8 + NE 11,440.1 + MO 7,895.9 + ND 4,548.4 + SD 4,152.4 + IA
-    486.0 + MT 125.0 + MN 73.7 + CO 19.5) — an UPPER BOUND on what the
-    corridor could ever be asked to carry, so it cannot bind: the two zones
-    price identically until SPP-13 lands a rated capability and lever SPP-53
-    reconciles it. This is the MISO precedent for "no posted bilateral TTC"
-    (``_miso_config``'s ``_placeholder_ttc``) and it is never tuned to a
-    price residual. Consequence stated at the gate (rule 1 ``[R-STRUCT]``):
-    the first SPP solve is a two-zone copperplate on price, so SPP-40's P7
-    STOP gate ("link binds in the measured direction/season") cannot be met
-    until the rated capability lands — FINDING-spp-20 opens it as a
-    root-cause item. The link is symmetric by construction, which is right:
-    the MMU records the North−South hub spread REVERSING sign for six (DA)
-    to eight (RT) months of 2025 (FINDING-spp-12 §4).
+    structure beyond copperplate. Its TTC (3,400 MW) is a **rule-14
+    reconciled figure derived from SPP's own published flowgate limits by
+    lane SPP-53** (owner ruling P13; construction fixed in
+    ``PRECOMMIT-spp-53-2026-09-07.md`` before any limit was read; every
+    number in ``FINDING-spp-53-2026-09-07.md``) — see the citation comment
+    on the link below for the two measured legs, the misalignment statement
+    and the rejected alternatives. It replaced SPP-20's 48,700 MW Tier-3
+    placeholder (the North zone's EIA-860 2025 ER summer capability, an
+    upper bound that could not bind — ``FINDING-spp-20`` §3, §5 R-6). No
+    public document states an SPP North↔South rated interface — SPP-13's
+    row-11 sweep found the ITP Constraint Assessment ratings are NDA / CEII
+    (FINDING-spp-13 §0) — which is why the value is derived from the
+    binding-constraint archive rather than transcribed. The MMU's ">6,000 MW
+    SPP↔MISO AC interties" is a SEAM rating, not the internal corridor, and
+    is deliberately not borrowed. The link is symmetric by construction,
+    which is right: the MMU records the North−South hub spread REVERSING
+    sign for six (DA) to eight (RT) months of 2025 (FINDING-spp-12 §4), and
+    the corridor's South→North-loaded flowgates give 4,206 MW by the same
+    construction (FINDING-spp-53 §4).
 
     What two zones cannot represent, said here rather than found in a
     residual (audit §6.1): seven of the ten highest-valued 2025 constraints
@@ -1799,14 +1792,57 @@ def _spp_config() -> ISOConfig:
         Zone(name="SPP-North", iso="SPP", load_share=0.5125),
         Zone(name="SPP-South", iso="SPP", load_share=0.4875),
     ]
-    # Tier-3 PLACEHOLDER (see docstring): the North zone's EIA-860 2025 ER
-    # summer capability, 48,711.8 MW -> an upper bound that cannot bind.
-    # Vintage 2025 (EIA-860 2025 Early Release), the same vintage
-    # TRANSMISSION_BASE_STATIC_VINTAGE["SPP"] records. Never tune to a residual.
-    _placeholder_ttc = 48700.0
+    # N<->S link TTC = 3,400 MW: the North->South transfer at which the
+    # corridor's limiting flowgate reaches its own effective limit (the
+    # FCITC reading), derived by lane SPP-53 from SPP's OWN published limits
+    # under a construction fixed BEFORE any limit was read
+    # (docs/handoffs/PRECOMMIT-spp-53-2026-09-07.md §2.1; result and every
+    # per-constituent number: FINDING-spp-53-2026-09-07.md §3-§5). Two
+    # measured legs, no free parameter:
+    #   L_f  = per-constituent limit-at-bind, the median `Real Time Effective
+    #          Limit` over BINDING/BREACHED intervals of the 2026-03-17 ->
+    #          2026-09-05 daily RTBM binding-constraint files (the ERCOT
+    #          derive_ttc_limits.py instrument; reduced sidecar
+    #          data/raw/spp-binding-constraints/rtbm_bc_corridor_limits_2026
+    #          .parquet), else the registry rating (Temp_Flowgate.csv /
+    #          Flowgates.csv) when the element bound < 100 intervals;
+    #   psi_f = the constituent's sensitivity to a North->South hub transfer,
+    #          identified from SPP's own price decomposition: hourly RT
+    #          (SPPSOUTH_HUB - SPPNORTH_HUB) regressed on every constraint's
+    #          hourly mean |shadow price| over 2023-2025 (OLS, HC1; 12 of the
+    #          30 corridor constituents identify with psi > 0, t >= 2).
+    #   TTC  = binding-hours-weighted median of T*_f = L_f / psi_f over the
+    #          identified constituents = 3,355 MW -> 3,400 (nearest 100).
+    # The median falls on the corridor's dominant constituent, the Franklin
+    # 161/69 kV transformer (WR; 4,103 of the 2023-25 corridor's binding
+    # hours; 100 MW registry rating / psi 0.0298); its neighbours read
+    # LEC-LAWH 3,487, Sibley 345/161 kV 4,574, Mullergren-Ellsworth 6,408,
+    # Cooper-St Joe 345 kV 6,437, Nashua 345/161 kV 9,378 MW. The
+    # South->North-loaded set (psi < 0: Viola transformer, Stilwell-Redel,
+    # Spearville-Mullergren, ...) gives 4,206 MW by the same rule, so the
+    # symmetric link is within 25 % of the corridor's own reverse reading.
+    # Rule 14 [R-ACCURATE] MISALIGNMENT, stated: (i) 2026 limits applied to a
+    # 2023-2025 solve (no in-window limit column exists, FINDING-spp-14
+    # §5.4); (ii) a flowgate limit is an element-under-contingency rating,
+    # NOT a corridor capability -- SPP publishes no N<->S interface flowgate
+    # (PRECOMMIT §1.2 census: the only cut-crossing SWPP element is the SPS
+    # tie), so this is the N_TO_H case of _ercot_config, reconciled through
+    # psi rather than used literally (a literal 100 MW element rating would
+    # island two zones whose measured mean |hub spread| is $12-17/MWh);
+    # (iii) psi is the Nebraska-hub -> central-Oklahoma-hub sensitivity, not
+    # the bubble-to-bubble transfer PTDF; (iv) leave-one-year-out re-fits of
+    # psi move the same construction to 2,645 / 3,681 / 11,121 MW (drop 2025
+    # / 2023 / 2024) -- the honest width, reported beside the pooled value.
+    # Residual-blind cross-check (PRECOMMIT §4): 3,400 < B_plaus 23,300 <
+    # B_hard 37,400 MW, so the link CAN bind, unlike the 48,700 MW SPP-20
+    # placeholder it replaces. Vintage 2026 (TRANSMISSION_BASE_STATIC_VINTAGE
+    # ["SPP"]). Never tuned to a price or flow residual -- no SPP residual
+    # exists; rejected alternatives (the literal dominant-flowgate rating,
+    # a simultaneous-transfer sum, the hour-wise minimum) in PRECOMMIT §2.
+    _ns_corridor_ttc = 3400.0
     links = [
         TransferLink(
-            from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_placeholder_ttc
+            from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_ns_corridor_ttc
         ),
     ]
     # voll = $2,000/MWh (owner ruling P10, desk sitting r#3, 2026-09-06):

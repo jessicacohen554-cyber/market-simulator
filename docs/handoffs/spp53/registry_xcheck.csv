@@ -1,0 +1,31 @@
+Constraint Name,mon,hours,psi,t,ident,perm_fg_match,perm_normal_mean,perm_emerg_mean,temp_fg_match,temp_norm,temp_emer,elem_perm_n,elem_perm_normal_range,elem_temp_n,elem_temp_norm_range,elem_volt
+TMP266_27514,XFMR FRANKLN5 - FRANKLN5,4103.0,0.0298,4.8,True,0,,,1,100.0,110.0,0,,2,"(np.float64(100.0), np.float64(100.0))", 161/69 kV
+TMP477_24580,XFMR VIOLA7 - VIOLA7,1236.0,-0.1353,-6.3,False,0,,,0,,,0,,2,"(np.float64(400.0), np.float64(400.0))",7 345/1 kV
+EDWXFR87CRAI,XFMR EDWV - EDWV,802.0,0.0075,2.9,True,1,167.0,167.0,0,,,1,"(np.float64(167.0), np.float64(167.0))",1,"(np.float64(167.0), np.float64(167.0))",115/161
+TMP142_25323,LN WAVERLY7 - LACYGNE,732.0,-0.0539,-6.1,False,0,,,0,,,0,,1,"(np.float64(1183.0), np.float64(1183.0))",GNE 345 kV
+NASXFRNASHAW,XFMR NASHUA - NASHUA,644.0,0.0724,7.7,True,1,650.0,715.0,0,,,1,"(np.float64(650.0), np.float64(650.0))",2,"(np.float64(650.0), np.float64(650.0))",345/1
+TEMP61_22964,LN WR_SMKHL - SUMM,634.0,-0.0347,-2.0,False,0,,,1,355.0,355.0,2,"(np.float64(389.0), np.float64(389.0))",9,"(np.float64(355.0), np.float64(355.0))",230
+TMP122_26551,LN WR_SMKHL - SUMM,607.0,-0.0294,-1.3,False,0,,,1,355.0,355.0,2,"(np.float64(389.0), np.float64(389.0))",9,"(np.float64(355.0), np.float64(355.0))",230
+TMP501_28727,LN WR_SMKHL - SUMM,593.0,-0.0306,-1.6,False,0,,,1,355.0,355.0,2,"(np.float64(389.0), np.float64(389.0))",9,"(np.float64(355.0), np.float64(355.0))",230
+TP1136_32015,LN GORD - MAIZ,515.0,-0.0025,-0.6,False,0,,,1,296.0,296.0,0,,1,"(np.float64(296.0), np.float64(296.0))",AIZ 138 kV
+TMP777_28815,LN FIRSTCRK - ROANRDGE,513.0,0.0207,7.9,True,0,,,1,285.0,285.0,0,,2,"(np.float64(285.0), np.float64(285.0))",DGE 161 kV
+COPSTJCPFRSJ,LN COOPER - ST_JOE,508.0,0.1689,3.9,True,1,1128.25,1192.5,0,,,1,"(np.float64(1128.25), np.float64(1128.25))",3,"(np.float64(1042.0), np.float64(1042.0))",345
+SMOSUMMULCIR,LN WR_SMKHL - SUMM,476.0,-0.008,-0.6,False,1,389.0,389.0,0,,,2,"(np.float64(389.0), np.float64(389.0))",9,"(np.float64(355.0), np.float64(355.0))",230
+TMP427_25433,LN COLBY3 - ATWOOD,472.0,0.0041,1.4,False,0,,,1,70.0,77.0,0,,2,"(np.float64(70.0), np.float64(70.0))",OOD 115 kV
+TMP845_30027,LN MARSHAL3 - KNOB,464.0,0.3653,4.4,True,0,,,1,70.0,70.0,0,,5,"(np.float64(70.0), np.float64(70.0))",AL3 115 kV
+TMP338_28287,LN STILWELL - REDEL5,460.0,-0.0739,-5.2,False,0,,,1,334.0,334.0,0,,1,"(np.float64(334.0), np.float64(334.0))",EL5 161 kV
+LECLAWSTR87,LN LEC - LAWH,458.0,0.0458,2.0,True,1,159.75,159.75,0,,,1,"(np.float64(159.75), np.float64(159.75))",0,,115
+TMP840_28870,XFMR SIBLEY - SIBLEY,415.0,0.0813,7.5,True,0,,,0,,,0,,1,"(np.float64(400.0), np.float64(400.0))",Y 345/1 kV
+TMP486_31685,LN OVRLD_PK - MERRIAM2,392.0,-0.0467,-3.2,False,0,,,1,200.0,223.0,0,,1,"(np.float64(200.0), np.float64(200.0))",AM2 161 kV
+TMP634_28149,XFMR SIBLEY - SIBLEY,384.0,0.0875,8.3,True,0,,,1,400.0,440.0,0,,1,"(np.float64(400.0), np.float64(400.0))",Y 345/1 kV
+TMP662_28227,LN SPERVI1 - MULGRE2,376.0,-0.1186,-3.4,False,0,,,1,398.4,398.4,0,,1,"(np.float64(398.4), np.float64(398.4))",RE2 230 kV
+TMP436_28110,LN MULGRE2 - ELLSWTP3,357.0,0.0143,2.7,True,0,,,1,89.0,89.0,0,,1,"(np.float64(89.0), np.float64(89.0))",TP3 115 kV
+TMP564_26167,LN N345 - BLACKBRY,312.0,0.0103,1.2,False,0,,,1,829.0,829.0,0,,4,"(np.float64(829.0), np.float64(829.0))",BRY 345 kV
+TMP867_31042,XFMR HAWTHORN - HAWTHORN,310.0,0.035,4.4,True,0,,,0,,,1,"(np.float64(650.0), np.float64(650.0))",0,,345/1
+TMP765_28745,LN SEWARD3 - ST-JOHN,296.0,0.0459,5.3,True,0,,,0,,,0,,1,"(np.float64(101.0), np.float64(101.0))",OHN 115 kV
+TMP696_28306,LN LACYGNE - STILWELL,293.0,-0.0697,-2.4,False,0,,,1,1712.0,1712.0,0,,1,"(np.float64(1712.0), np.float64(1712.0))",ELL 345 kV
+TEMP37_25116,LN COLI - TECH,287.0,-0.0199,-2.0,False,0,,,0,,,0,,0,,
+CRALENCRALEN,LN CRAIG - LENEXA,278.0,-0.0564,-3.3,False,1,346.75,383.0,0,,,1,"(np.float64(346.75), np.float64(346.75))",4,"(np.float64(316.0), np.float64(316.0))",161
+TMP124_29862,LN JAY_HAWK - FRANKLN5,273.0,0.006,0.1,False,0,,,1,193.0,193.0,0,,5,"(np.float64(193.0), np.float64(193.0))",LN5 161 kV
+TP1121_31979,LN JAY_HAWK - FRANKLN5,269.0,-0.026,-1.8,False,0,,,1,193.0,193.0,0,,5,"(np.float64(193.0), np.float64(193.0))",LN5 161 kV
+TEMP82_22539,LN SHAYS - MULGRE2,263.0,0.0278,0.9,False,0,,,1,303.0,303.0,0,,8,"(np.float64(303.0), np.float64(303.0))",RE2 230 kV

@@ -1,0 +1,647 @@
+{
+ "session": "nyiso-212",
+ "status": "PHASE 0 (zero LP) for the cc_summer_derate_reconciled_basis arm; the screen is pre-registered separately",
+ "keeper": "2026-09-06-nyiso-202-startup-aware",
+ "flag": "cc_summer_derate_reconciled_basis",
+ "by_year": {
+  "2023": {
+   "G_DRIFT_flag_off_vs_prechange_rebuild_max_abs": 0.0,
+   "F1_units_moved": 81,
+   "F1_units_total": 812,
+   "F1_plants_moved": [
+    7314,
+    10190,
+    10620,
+    50744,
+    50978,
+    54034,
+    54574,
+    54592,
+    54593,
+    55375,
+    55405,
+    56196,
+    56234,
+    56940,
+    57185
+   ],
+   "F1_groups_moved": [
+    "CC_REGULAR"
+   ],
+   "F1_moved_set_equals_reconcile_table": true,
+   "F1_pmax_hr_mc_identical": true,
+   "F1_offsummer_untouched": true,
+   "F2_worst_abs_err": 2.220446049250313e-16,
+   "F2_per_plant": {
+    "7314": {
+     "mode": "cap",
+     "carried_mw": 108.2,
+     "nameplate_mw": 170.0,
+     "net_summer_mw": 139.5,
+     "expected_on_over_off": 1.218638,
+     "measured_on_over_off": 1.218638,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 88.8,
+     "summer_capability_on_mw": 108.2
+    },
+    "10190": {
+     "mode": "cap",
+     "carried_mw": 71.2,
+     "nameplate_mw": 72.0,
+     "net_summer_mw": 67.0,
+     "expected_on_over_off": 1.011236,
+     "measured_on_over_off": 1.011236,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 66.3,
+     "summer_capability_on_mw": 67.0
+    },
+    "10620": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 62.9,
+     "net_summer_mw": 61.1,
+     "expected_on_over_off": 1.02946,
+     "measured_on_over_off": 1.02946,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 52.1,
+     "summer_capability_on_mw": 53.6
+    },
+    "50744": {
+     "mode": "cap",
+     "carried_mw": 43.9,
+     "nameplate_mw": 64.2,
+     "net_summer_mw": 54.8,
+     "expected_on_over_off": 1.171533,
+     "measured_on_over_off": 1.171533,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 37.5,
+     "summer_capability_on_mw": 43.9
+    },
+    "50978": {
+     "mode": "raise",
+     "carried_mw": 80.0,
+     "nameplate_mw": 122.6,
+     "net_summer_mw": 93.0,
+     "expected_on_over_off": 1.31828,
+     "measured_on_over_off": 1.31828,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 60.7,
+     "summer_capability_on_mw": 80.0
+    },
+    "54034": {
+     "mode": "cap",
+     "carried_mw": 78.0,
+     "nameplate_mw": 88.2,
+     "net_summer_mw": 79.4,
+     "expected_on_over_off": 1.110831,
+     "measured_on_over_off": 1.110831,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 70.2,
+     "summer_capability_on_mw": 78.0
+    },
+    "54574": {
+     "mode": "cap",
+     "carried_mw": 251.5,
+     "nameplate_mw": 285.6,
+     "net_summer_mw": 237.8,
+     "expected_on_over_off": 1.135586,
+     "measured_on_over_off": 1.135586,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 209.4,
+     "summer_capability_on_mw": 237.8
+    },
+    "54592": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 102.1,
+     "net_summer_mw": 81.0,
+     "expected_on_over_off": 1.260494,
+     "measured_on_over_off": 1.260494,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 42.5,
+     "summer_capability_on_mw": 53.6
+    },
+    "54593": {
+     "mode": "cap",
+     "carried_mw": 42.9,
+     "nameplate_mw": 66.2,
+     "net_summer_mw": 48.8,
+     "expected_on_over_off": 1.356557,
+     "measured_on_over_off": 1.356557,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 31.6,
+     "summer_capability_on_mw": 42.9
+    },
+    "55375": {
+     "mode": "raise",
+     "carried_mw": 610.4,
+     "nameplate_mw": 595.0,
+     "net_summer_mw": 558.0,
+     "expected_on_over_off": 0.974771,
+     "measured_on_over_off": 0.974771,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 572.4,
+     "summer_capability_on_mw": 558.0
+    },
+    "55405": {
+     "mode": "cap",
+     "carried_mw": 1064.7,
+     "nameplate_mw": 1221.6,
+     "net_summer_mw": 984.4,
+     "expected_on_over_off": 1.147365,
+     "measured_on_over_off": 1.147365,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 858.0,
+     "summer_capability_on_mw": 984.4
+    },
+    "56196": {
+     "mode": "cap",
+     "carried_mw": 560.0,
+     "nameplate_mw": 528.0,
+     "net_summer_mw": 474.0,
+     "expected_on_over_off": 0.942857,
+     "measured_on_over_off": 0.942857,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 502.7,
+     "summer_capability_on_mw": 474.0
+    },
+    "56234": {
+     "mode": "raise",
+     "carried_mw": 361.7,
+     "nameplate_mw": 348.9,
+     "net_summer_mw": 317.3,
+     "expected_on_over_off": 0.964612,
+     "measured_on_over_off": 0.964612,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 328.9,
+     "summer_capability_on_mw": 317.3
+    },
+    "56940": {
+     "mode": "cap",
+     "carried_mw": 696.1,
+     "nameplate_mw": 770.5,
+     "net_summer_mw": 654.2,
+     "expected_on_over_off": 1.106881,
+     "measured_on_over_off": 1.106881,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 591.0,
+     "summer_capability_on_mw": 654.2
+    },
+    "57185": {
+     "mode": "cap",
+     "carried_mw": 1086.9,
+     "nameplate_mw": 1312.5,
+     "net_summer_mw": 1016.1,
+     "expected_on_over_off": 1.207563,
+     "measured_on_over_off": 1.207563,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 841.4,
+     "summer_capability_on_mw": 1016.1
+    }
+   },
+   "F3_cricket_valley": {
+    "summer_statistical_factor_off": 0.747075,
+    "summer_statistical_factor_on": 0.90214,
+    "summer_available_gwh_off": 2338.55,
+    "summer_available_gwh_on": 2823.95,
+    "summer_hours_meter_above_ceiling_off": 1346,
+    "summer_hours_meter_above_ceiling_on": 804,
+    "summer_gwh_meter_above_ceiling_off": 220.78,
+    "summer_gwh_meter_above_ceiling_on": 33.84,
+    "months_meter_over_ceiling_off": [
+     7
+    ],
+    "months_meter_over_ceiling_on": [],
+    "annual_available_gwh_off": 6802.49,
+    "annual_available_gwh_on": 7287.89
+   },
+   "class_available_energy_delta_gwh": {
+    "CC_REGULAR": 860.34
+   }
+  },
+  "2024": {
+   "G_DRIFT_flag_off_vs_prechange_rebuild_max_abs": 0.0,
+   "F1_units_moved": 80,
+   "F1_units_total": 809,
+   "F1_plants_moved": [
+    7314,
+    10190,
+    10620,
+    50744,
+    50978,
+    54574,
+    54592,
+    54593,
+    55375,
+    55405,
+    56196,
+    56234,
+    56940,
+    57185
+   ],
+   "F1_groups_moved": [
+    "CC_REGULAR"
+   ],
+   "F1_moved_set_equals_reconcile_table": false,
+   "F1_pmax_hr_mc_identical": true,
+   "F1_offsummer_untouched": true,
+   "F2_worst_abs_err": 2.220446049250313e-16,
+   "F2_per_plant": {
+    "7314": {
+     "mode": "cap",
+     "carried_mw": 108.2,
+     "nameplate_mw": 170.0,
+     "net_summer_mw": 139.5,
+     "expected_on_over_off": 1.218638,
+     "measured_on_over_off": 1.218638,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 88.8,
+     "summer_capability_on_mw": 108.2
+    },
+    "10190": {
+     "mode": "cap",
+     "carried_mw": 71.2,
+     "nameplate_mw": 72.0,
+     "net_summer_mw": 67.0,
+     "expected_on_over_off": 1.011236,
+     "measured_on_over_off": 1.011236,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 66.3,
+     "summer_capability_on_mw": 67.0
+    },
+    "10620": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 62.9,
+     "net_summer_mw": 61.1,
+     "expected_on_over_off": 1.02946,
+     "measured_on_over_off": 1.02946,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 52.1,
+     "summer_capability_on_mw": 53.6
+    },
+    "50744": {
+     "mode": "cap",
+     "carried_mw": 43.9,
+     "nameplate_mw": 64.2,
+     "net_summer_mw": 54.8,
+     "expected_on_over_off": 1.171533,
+     "measured_on_over_off": 1.171533,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 37.5,
+     "summer_capability_on_mw": 43.9
+    },
+    "50978": {
+     "mode": "raise",
+     "carried_mw": 80.0,
+     "nameplate_mw": 122.6,
+     "net_summer_mw": 93.0,
+     "expected_on_over_off": 1.31828,
+     "measured_on_over_off": 1.31828,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 60.7,
+     "summer_capability_on_mw": 80.0
+    },
+    "54574": {
+     "mode": "cap",
+     "carried_mw": 251.5,
+     "nameplate_mw": 285.6,
+     "net_summer_mw": 237.8,
+     "expected_on_over_off": 1.135586,
+     "measured_on_over_off": 1.135586,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 209.4,
+     "summer_capability_on_mw": 237.8
+    },
+    "54592": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 102.1,
+     "net_summer_mw": 81.0,
+     "expected_on_over_off": 1.260494,
+     "measured_on_over_off": 1.260494,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 42.5,
+     "summer_capability_on_mw": 53.6
+    },
+    "54593": {
+     "mode": "cap",
+     "carried_mw": 42.9,
+     "nameplate_mw": 66.2,
+     "net_summer_mw": 48.8,
+     "expected_on_over_off": 1.356557,
+     "measured_on_over_off": 1.356557,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 31.6,
+     "summer_capability_on_mw": 42.9
+    },
+    "55375": {
+     "mode": "raise",
+     "carried_mw": 610.4,
+     "nameplate_mw": 595.0,
+     "net_summer_mw": 558.0,
+     "expected_on_over_off": 0.974771,
+     "measured_on_over_off": 0.974771,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 572.4,
+     "summer_capability_on_mw": 558.0
+    },
+    "55405": {
+     "mode": "cap",
+     "carried_mw": 1064.7,
+     "nameplate_mw": 1221.6,
+     "net_summer_mw": 984.4,
+     "expected_on_over_off": 1.147365,
+     "measured_on_over_off": 1.147365,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 858.0,
+     "summer_capability_on_mw": 984.4
+    },
+    "56196": {
+     "mode": "cap",
+     "carried_mw": 560.0,
+     "nameplate_mw": 528.0,
+     "net_summer_mw": 474.0,
+     "expected_on_over_off": 0.942857,
+     "measured_on_over_off": 0.942857,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 502.7,
+     "summer_capability_on_mw": 474.0
+    },
+    "56234": {
+     "mode": "raise",
+     "carried_mw": 361.7,
+     "nameplate_mw": 348.9,
+     "net_summer_mw": 317.3,
+     "expected_on_over_off": 0.964612,
+     "measured_on_over_off": 0.964612,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 328.9,
+     "summer_capability_on_mw": 317.3
+    },
+    "56940": {
+     "mode": "cap",
+     "carried_mw": 696.1,
+     "nameplate_mw": 770.5,
+     "net_summer_mw": 654.2,
+     "expected_on_over_off": 1.106881,
+     "measured_on_over_off": 1.106881,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 591.0,
+     "summer_capability_on_mw": 654.2
+    },
+    "57185": {
+     "mode": "cap",
+     "carried_mw": 1086.9,
+     "nameplate_mw": 1312.5,
+     "net_summer_mw": 1016.1,
+     "expected_on_over_off": 1.207563,
+     "measured_on_over_off": 1.207563,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 841.4,
+     "summer_capability_on_mw": 1016.1
+    }
+   },
+   "F3_cricket_valley": {
+    "summer_statistical_factor_off": 0.747075,
+    "summer_statistical_factor_on": 0.90214,
+    "summer_available_gwh_off": 1513.56,
+    "summer_available_gwh_on": 1827.72,
+    "summer_hours_meter_above_ceiling_off": 2123,
+    "summer_hours_meter_above_ceiling_on": 1370,
+    "summer_gwh_meter_above_ceiling_off": 222.0,
+    "summer_gwh_meter_above_ceiling_on": 32.4,
+    "months_meter_over_ceiling_off": [
+     7,
+     8,
+     9
+    ],
+    "months_meter_over_ceiling_on": [
+     8
+    ],
+    "annual_available_gwh_off": 4853.13,
+    "annual_available_gwh_on": 5167.29
+   },
+   "class_available_energy_delta_gwh": {
+    "CC_REGULAR": 878.79
+   }
+  },
+  "2025": {
+   "G_DRIFT_flag_off_vs_prechange_rebuild_max_abs": 0.0,
+   "F1_units_moved": 81,
+   "F1_units_total": 809,
+   "F1_plants_moved": [
+    7314,
+    10190,
+    10620,
+    50744,
+    50978,
+    54034,
+    54574,
+    54592,
+    54593,
+    55375,
+    55405,
+    56196,
+    56234,
+    56940,
+    57185
+   ],
+   "F1_groups_moved": [
+    "CC_REGULAR"
+   ],
+   "F1_moved_set_equals_reconcile_table": true,
+   "F1_pmax_hr_mc_identical": true,
+   "F1_offsummer_untouched": true,
+   "F2_worst_abs_err": 2.220446049250313e-16,
+   "F2_per_plant": {
+    "7314": {
+     "mode": "cap",
+     "carried_mw": 108.2,
+     "nameplate_mw": 170.0,
+     "net_summer_mw": 139.5,
+     "expected_on_over_off": 1.218638,
+     "measured_on_over_off": 1.218638,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 88.8,
+     "summer_capability_on_mw": 108.2
+    },
+    "10190": {
+     "mode": "cap",
+     "carried_mw": 71.2,
+     "nameplate_mw": 72.0,
+     "net_summer_mw": 67.0,
+     "expected_on_over_off": 1.011236,
+     "measured_on_over_off": 1.011236,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 66.3,
+     "summer_capability_on_mw": 67.0
+    },
+    "10620": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 62.9,
+     "net_summer_mw": 61.1,
+     "expected_on_over_off": 1.02946,
+     "measured_on_over_off": 1.02946,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 52.1,
+     "summer_capability_on_mw": 53.6
+    },
+    "50744": {
+     "mode": "cap",
+     "carried_mw": 43.9,
+     "nameplate_mw": 64.2,
+     "net_summer_mw": 54.8,
+     "expected_on_over_off": 1.171533,
+     "measured_on_over_off": 1.171533,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 37.5,
+     "summer_capability_on_mw": 43.9
+    },
+    "50978": {
+     "mode": "raise",
+     "carried_mw": 80.0,
+     "nameplate_mw": 122.6,
+     "net_summer_mw": 93.0,
+     "expected_on_over_off": 1.31828,
+     "measured_on_over_off": 1.31828,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 60.7,
+     "summer_capability_on_mw": 80.0
+    },
+    "54034": {
+     "mode": "cap",
+     "carried_mw": 78.0,
+     "nameplate_mw": 88.2,
+     "net_summer_mw": 79.4,
+     "expected_on_over_off": 1.110831,
+     "measured_on_over_off": 1.110831,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 70.2,
+     "summer_capability_on_mw": 78.0
+    },
+    "54574": {
+     "mode": "cap",
+     "carried_mw": 251.5,
+     "nameplate_mw": 285.6,
+     "net_summer_mw": 237.8,
+     "expected_on_over_off": 1.135586,
+     "measured_on_over_off": 1.135586,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 209.4,
+     "summer_capability_on_mw": 237.8
+    },
+    "54592": {
+     "mode": "cap",
+     "carried_mw": 53.6,
+     "nameplate_mw": 102.1,
+     "net_summer_mw": 81.0,
+     "expected_on_over_off": 1.260494,
+     "measured_on_over_off": 1.260494,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 42.5,
+     "summer_capability_on_mw": 53.6
+    },
+    "54593": {
+     "mode": "cap",
+     "carried_mw": 42.9,
+     "nameplate_mw": 66.2,
+     "net_summer_mw": 48.8,
+     "expected_on_over_off": 1.356557,
+     "measured_on_over_off": 1.356557,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 31.6,
+     "summer_capability_on_mw": 42.9
+    },
+    "55375": {
+     "mode": "raise",
+     "carried_mw": 610.4,
+     "nameplate_mw": 595.0,
+     "net_summer_mw": 558.0,
+     "expected_on_over_off": 0.974771,
+     "measured_on_over_off": 0.974771,
+     "max_abs_err": 0.0,
+     "summer_capability_off_mw": 572.4,
+     "summer_capability_on_mw": 558.0
+    },
+    "55405": {
+     "mode": "cap",
+     "carried_mw": 1064.7,
+     "nameplate_mw": 1221.6,
+     "net_summer_mw": 984.4,
+     "expected_on_over_off": 1.147365,
+     "measured_on_over_off": 1.147365,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 858.0,
+     "summer_capability_on_mw": 984.4
+    },
+    "56196": {
+     "mode": "cap",
+     "carried_mw": 560.0,
+     "nameplate_mw": 528.0,
+     "net_summer_mw": 474.0,
+     "expected_on_over_off": 0.942857,
+     "measured_on_over_off": 0.942857,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 502.7,
+     "summer_capability_on_mw": 474.0
+    },
+    "56234": {
+     "mode": "raise",
+     "carried_mw": 361.7,
+     "nameplate_mw": 348.9,
+     "net_summer_mw": 317.3,
+     "expected_on_over_off": 0.964612,
+     "measured_on_over_off": 0.964612,
+     "max_abs_err": 1.1102230246251565e-16,
+     "summer_capability_off_mw": 328.9,
+     "summer_capability_on_mw": 317.3
+    },
+    "56940": {
+     "mode": "cap",
+     "carried_mw": 696.1,
+     "nameplate_mw": 770.5,
+     "net_summer_mw": 654.2,
+     "expected_on_over_off": 1.106881,
+     "measured_on_over_off": 1.106881,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 591.0,
+     "summer_capability_on_mw": 654.2
+    },
+    "57185": {
+     "mode": "cap",
+     "carried_mw": 1086.9,
+     "nameplate_mw": 1312.5,
+     "net_summer_mw": 1016.1,
+     "expected_on_over_off": 1.207563,
+     "measured_on_over_off": 1.207563,
+     "max_abs_err": 2.220446049250313e-16,
+     "summer_capability_off_mw": 841.4,
+     "summer_capability_on_mw": 1016.1
+    }
+   },
+   "F3_cricket_valley": {
+    "summer_statistical_factor_off": 0.747075,
+    "summer_statistical_factor_on": 0.90214,
+    "summer_available_gwh_off": 1812.38,
+    "summer_available_gwh_on": 2188.56,
+    "summer_hours_meter_above_ceiling_off": 2225,
+    "summer_hours_meter_above_ceiling_on": 1638,
+    "summer_gwh_meter_above_ceiling_off": 292.29,
+    "summer_gwh_meter_above_ceiling_on": 38.05,
+    "months_meter_over_ceiling_off": [
+     6,
+     7,
+     8
+    ],
+    "months_meter_over_ceiling_on": [],
+    "annual_available_gwh_off": 5261.02,
+    "annual_available_gwh_on": 5637.2
+   },
+   "class_available_energy_delta_gwh": {
+    "CC_REGULAR": 892.95
+   }
+  }
+ }
+}

@@ -131,6 +131,42 @@ def _neutralize_generic_gas_bands(
     return out
 
 
+# SPP thermal offer curve — NEUTRAL (1.0) on the one class the generic gas
+# neutralization above does not reach and SPP actually carries: COAL.
+# Rule 25 [R-ISO-SCOPE]: "Tuned curves never cross ISO boundaries ... generic
+# fallbacks carry neutral (1.0) bands." The generic ``COAL`` entry (committed
+# 0.90 / econ_low 0.95 / econ_high 1.10 / peak 1.45) is the ERCOT-fitted
+# legacy shape — the _MISO_OFFER_CURVE comment calls it "the generic
+# ERCOT-fitted coal bands" and MISO replaced it on 2026-07-10 — and SPP,
+# registered 2026-09-06 with no merge curve of its own, inherited it: lane
+# SPP-40's zero-LP phase-0 offer census (rule 29(0), docs/handoffs/
+# PRECOMMIT-spp-40-2026-09-07.md §2.2) measured every SPP coal plant's
+# per-plant tranches priced at exactly 0.90x (committed) and 1.45x (peak)
+# its own base heat rate, while every gas class already read 1.0 on every
+# band through _neutralize_generic_gas_bands (the SPP-30 verification, which
+# listed the gas classes only). This block is the rule-25 correction for SPP
+# and nothing else: the four COAL band multipliers become the identity, so an
+# SPP coal tranche offers at its OWN measured heat rate x delivered fuel +
+# VOM. The thermal_tranches_SPP.csv shares still partition each plant into
+# must-run / committed / peak tranches (measured structure, rule 23,
+# untouched); only the price SHAPE across the tranches is flattened to SRMC.
+# ``econ_low_share`` is left generic (SPP coal carries no econ tranche).
+# NOT a tuned value: declared before any SPP solve existed, no SPP residual
+# has ever been read (rules 1/13), zero degrees of freedom (rule 21), and the
+# run's attestation declares authorized_price_tuning = NONE. Deep-merged for
+# iso == "SPP" only, so every other ISO is byte-identical (PJM / CAISO /
+# NEISO / NYISO deliberately keep the generic coal bands — "coal keep the
+# generic defaults" — so the generic entry itself is not edited).
+_SPP_OFFER_CURVE: dict[str, dict[str, float]] = {
+    "COAL": {
+        "committed": 1.0,
+        "econ_low": 1.0,
+        "econ_high": 1.0,
+        "peak": 1.0,
+    },
+}
+
+
 # Calibrated PJM thermal offer curve (per-class band heat-rate multipliers on
 # AHR x delivered fuel price). Price-calibrated multipliers, not literal heat
 # rates. COAL_LIGNITE / COAL_PRB are carried for completeness but unused by
@@ -2201,6 +2237,16 @@ def backcast_config(
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _NYISO_OFFER_CURVE
+            )
+        )
+    # SPP: the rule-25 NEUTRAL coal bands (see _SPP_OFFER_CURVE) — the generic
+    # gas neutralization above leaves COAL on the ERCOT-fitted generic shape,
+    # and SPP is the only fallback ISO whose coal actually reads it (lane
+    # SPP-40, 2026-09-07). Deep-merged so the structural shares are kept.
+    if iso.upper() == "SPP":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _SPP_OFFER_CURVE
             )
         )
     # CAISO gas offer curves (DMM-grounded near-SRMC shape + the $1,000-2,000

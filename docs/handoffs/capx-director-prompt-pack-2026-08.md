@@ -8617,3 +8617,112 @@ key with the HEAD guard held; registered with its prior preserved; every invaria
 FAIL declared against its own prior; the PJM matrix shard stamped; rule-27 blob verification for any
 file >=300 lines. Report the key realized-vs-declared and the before/after row.
 ```
+
+## r#55 NOTE (2026-09-07): ALL FIVE r#54 charters landed. TWO charters below, both DISPATCHABLE NOW. Also owed and not a charter: **MERGE `cf6ddf51`** on `claude/pjm-retirement-sector-gate-at0cao-lsffr8` — D78-ARM solved, scored and REGISTERED the armed `pjm-t1h` at `fb16fda2ddb0a94a`, discharging Q56's registration condition; it is one commit sitting on a branch.
+
+## STATUS REBUILD — the `audit_keepers` S1 red on ERCOT and MISO (r#55)
+
+```
+You are a one-act status-rebuild session for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. BRANCH: claude/status-rebuild-ercot-miso — FRESH off origin/main.
+
+THE DEFECT. scripts/audit_keepers.py --check is RED on main:
+  ✗ S1: stale vs the current verdicts: frontend/data/backcast/status/ERCOT.js,
+        frontend/data/backcast/status/MISO.js — re-run: python scripts/build_status.py
+Both ISOs' keepers moved recently (MISO -> 2026-09-07-miso-233-spp-hourly; ERCOT's verdicts
+re-scored) and the generated status parts were not rebuilt.
+
+YOUR ONLY JOB is to regenerate those two status parts and commit them. Do not edit any keeper shard,
+any registry sidecar, calibration-complete.json, program-status.json, or any scorer. Nothing is
+solved, scored or registered. You are running a generator, not authoring a verdict.
+
+METHOD.
+ 1. Reproduce the red first and paste the exact failure text.
+ 2. Run the per-ISO rebuild, one ISO at a time, as the keepers README requires (a lane edits only the
+    ISO it is rebuilding): python3 scripts/build_status.py --iso ERCOT ; then --iso MISO.
+ 3. Re-run python3 scripts/audit_keepers.py --check and confirm it exits 0.
+ 4. `git diff --stat` must touch ONLY frontend/data/backcast/status/ERCOT.js and .../MISO.js. If it
+    touches anything else, STOP and report what and why — a status rebuild that moves a third file is
+    not a status rebuild.
+
+READ THE DIFF BEFORE YOU COMMIT, and say in your close what actually changed in each file — which
+keeper id, which determination, which per-year rows. If a determination TEXT changes for either ISO,
+say so explicitly and quote both sides: a generated file is still a published artifact, and a silent
+determination change is exactly what the S1 check exists to surface. If either ISO's rebuilt
+determination is WORSE than what the file previously carried, STOP and report rather than committing —
+that is a rule-22 D-5(b) escalation, not a housekeeping commit.
+
+EXIT: audit_keepers --check exits 0; the diff touches exactly two files; the per-ISO changes are
+described in the close; commit and push. Do not open a PR unless asked.
+```
+
+## D76-ARM-B — arm `capacity_screen_peak_measured_hindcast`, variant B, under owner ruling Q58 (r#55)
+
+```
+You are the D76-ARM-B session, executing OWNER RULING Q58 (capx ledger §0az.3(a), r#55).
+MODEL: Opus. DATA PROFILE: code, widening to all only if a verification solve is needed.
+BRANCH: claude/capx-d76-arm-variant-b — FRESH off origin/main.
+
+WHY THIS CHARTER EXISTS. Q57 authorized this arm "via the D50 (b′-1) route" under a STOP requiring
+ZERO KEY MOVES. The D76-ARM lane verified that route and it FAILS STRUCTURALLY: since Q20/(b′-1),
+cache_key() drops a registered field IFF it equals its FROZEN declaration, so a config resolving the
+new default necessarily enters the hash — which is the mechanism that stops a post-flip armed run
+being served the pre-flip bundle. "Arm the gate" and "move no key" are the same sentence with opposite
+signs. The lane measured both variants, took neither, and returned the card. READ
+docs/handoffs/FINDING-capx-d76-arm-2026-09-07.md IN FULL before you touch anything — it is your
+pre-registration and its numbers are the ones you must reproduce.
+
+THE DESK'S ERROR, so you do not inherit it. My Q57 card demanded a criterion NO arm in this family has
+ever met. D75-R-ARM reported "21 of 153 configs move, ALL PJM FORECAST, 132 byte-identical"; D78-ARM
+reported "zero non-PJM moves, zero backcast moves … PJM forecast moves and is listed, because a moved
+key is the intended effect and must be inspectable." THE HOUSE STANDARD IS ZERO OFF-TARGET MOVES WITH
+IN-SCOPE MOVES LISTED. Report yourself in exactly that form.
+
+THE RULING. Arm capacity_screen_peak_measured_hindcast as VARIANT B: the declared default flip PLUS
+the non-hindcast coercion the five sibling gates already ship. THE __post_init__ COERCION IS EXPLICITLY
+AUTHORIZED BY THIS RULING — it is the one thing D76-ARM correctly refused to land on its own, because a
+construction change is not something a lane may add under a ruling whose route it must not reinterpret.
+You have that authority now; you do not have authority to invent a third variant.
+
+PRE-DECLARE, BEFORE YOU COMPUTE A SINGLE KEY, and reproduce D76-ARM's census to the config:
+  * expected: 34 moved, 0 OFF TARGET — PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1
+  * expected: 0 backcast moves, 0 non-hindcast forecast moves
+  * the moved set is exactly the hindcast configs the gate governs, enumerated by id
+If your census does not reproduce those counts, STOP AND REPORT before editing src/market_sim/ — a
+divergence means main moved under the measurement and the card's basis needs re-reading, not a patch.
+
+ASSERT THE INERT SET BY TEST, do not state it: the gate is inert by construction in every forecast
+year, every crossover forward year and every backcast, because a forecast year has no measured load
+and the growth path remains THE forecast methodology (rule 13's forward test, met by construction).
+D76-ARM re-verified this at its HEAD; re-verify at yours and ship the test.
+
+DO NOT ARGUE THE ARM FROM THE RESIDUAL. The basis is rule 14 [R-ACCURATE]: the de-grown estimate is
+wrong by −23.3 % to +15.4 % against the IDENTICAL array the LP dispatches, and rule 14's only
+exception (data misaligned to our representation) does not apply because it is the same array. That
+decisions move in only 2 of 6 ISOs (CAISO −2,532.391 MW of backstop gas CT; MISO 343.312 MW of coal
+saved from a 2024 exit, outside the scored window) is NOT a point for or against and must not be
+written as one — the four inert ISOs are evidence the gate is well-behaved. Do not arm only where it
+bites; that was offered to the owner and refused as fitted-mechanism selection (rule 1 [R-STRUCT]).
+
+MATRIX (rule 28): the mechanism's row plus a cell line in EVERY ISO shard (duty c — the one
+deliberately non-parallel edit), since this changes a solve-affecting default for all six. CLAUDE.md's
+Capacity Evolution section gets its bullet in the same PR.
+
+STOP GATES. (1) A census that does not reproduce 34/0 — STOP and report. (2) Any off-target move at
+all, backcast or non-hindcast forecast — STOP; variant B is defined by having none. (3) Any forecast,
+crossover-forward or backcast row proving NOT inert — STOP; the construction is wrong. (4) Any
+determination flipping anywhere — STOP and report; the card's basis was "no determination flips
+anywhere". (5) A consumer of the seam that FINDING-capx-d76 §4.2 does not enumerate — STOP and route;
+rule 19 requires the enumeration complete before the seam moves.
+
+ROUTED, NOT YOURS: 15 committed run configs carry a cache_key the current rules cannot reproduce
+(registration lag; 6 explained by caiso_offer_surface_measured_ungrounded registered after those
+bundles solved). D76-ARM established this does NOT touch the census — a row's move verdict is
+hash-independent — so it is not a dependency. It is RESERVED as D85. Do not audit it here; if your
+census trips over one of the 15, name it and move on.
+
+EXIT: the gate armed as variant B with the coercion; the census reported as "N moved, 0 off target,
+in-scope listed" with the per-ISO breakdown; inertness asserted by test; the matrix row + six shard
+cells; the CLAUDE.md bullet; rule-27 blob verification for any file ≥300 lines. Report which ISOs'
+frontier bundles now owe a re-solve on their natural cadence, and state plainly that Q58 is discharged.
+```

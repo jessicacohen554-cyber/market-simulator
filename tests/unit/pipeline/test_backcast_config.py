@@ -128,3 +128,35 @@ class TestBackcastFlagToField(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSppNeutralCoalBands(unittest.TestCase):
+    """Rule 25 [R-ISO-SCOPE] for SPP (lane SPP-40, 2026-09-07): the generic
+    ``COAL`` bands are ERCOT-fitted and a fallback ISO carries 1.0. The
+    correction is SPP-scoped — every other ISO's coal bands are untouched."""
+
+    _BANDS = ("committed", "econ_low", "econ_high", "peak")
+
+    def test_spp_coal_bands_are_neutral(self):
+        coal = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group["COAL"]
+        for band in self._BANDS:
+            self.assertEqual(coal[band], 1.0, band)
+        # The structural share is not a band and stays generic.
+        self.assertEqual(coal["econ_low_share"], 0.55)
+
+    def test_spp_gas_bands_are_neutral_too(self):
+        curve = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group
+        for cls in ("CC_REGULAR", "CC_CHP", "CT_CHP", "CT_PEAKER", "ST_GAS"):
+            for band in self._BANDS:
+                self.assertEqual(curve[cls][band], 1.0, (cls, band))
+
+    def test_other_isos_keep_their_coal_bands(self):
+        # CAISO / NEISO / NYISO keep the generic ERCOT-fitted coal entry by
+        # design ("coal keep the generic defaults"); MISO carries its own.
+        for iso in ("CAISO", "NEISO", "NYISO"):
+            coal = backcast_config(2024, iso, 24, 3.0).offer_curve_by_group["COAL"]
+            self.assertEqual(
+                [coal[b] for b in self._BANDS], [0.90, 0.95, 1.10, 1.45], iso
+            )
+        miso = backcast_config(2024, "MISO", 24, 3.0).offer_curve_by_group["COAL"]
+        self.assertEqual([miso[b] for b in self._BANDS], [1.00, 1.00, 1.10, 1.45])

@@ -1,4 +1,4 @@
-# FINDING — capx D78-ARM: the armed PJM `pjm-t1h` is solved at the declared key, scored and REGISTERED; owner ruling **Q56 is discharged**, and the one band that crossed FAIL → PASS is the one this lane refuses to argue from
+# FINDING — capx D78-ARM completion: the armed PJM `pjm-t1h` is solved at the declared key and **independently REPRODUCES D75-R-ARM steps 3–4 byte-for-byte**; **Q56 is discharged by that lane's registration**, this lane's duplicate bundle is deleted, and the one band that crossed FAIL → PASS is the one neither lane argues from
 
 **Lane:** capx **D78-ARM completion**. **Branch:** `claude/pjm-retirement-sector-gate-at0cao-lsffr8`,
 fast-forwarded onto `origin/main` **`9518fe0b`**. **Date:** 2026-09-07. **Model:** Opus.
@@ -20,16 +20,31 @@ before the edit), `FINDING-capx-d78r3-2026-09-06.md` §5 (the serving recommenda
 ## 0. Result in one paragraph
 
 The armed PJM T1-H solved at **`fb16fda2ddb0a94a`** — the key the PRECOMMIT declared at `8875af59`,
-reproduced exactly ~200 commits later — with the HEAD guard holding, and is registered on the
-**forecast** namespace as **`pjm-t1h`**, the D67-ARM record preserved at `pjm-t1h-pre-d78arm`.
-**14 of 14 forecast invariants PASS.** Of **26 scored bands, exactly two flip**, and they are the
-same quantity twice: `retire.total_gw` raw and IS-2020, **FAIL → PASS**, 18.058 → **15.292 GW**
-against 15.062 actual. **That crossing is not an argument for arming and is not cited as one**
-(rule 14; D78-R3 §5.2 item 2 said so before any of this was solved, and a worse band would not have
-been an argument against). Against it, at equal weight: `unit_recall_gt300` **FALLS** 0.650 → 0.550
-exactly as pre-declared, coal exits move **away** from actual, `false_retire` stays FAIL, and the
-DY2026/27 clearing price moves 358.267 → **213.056 $/MW-day** on the steep VRR limb. Limb (d) still
-cannot discriminate on recall. Q56 is discharged; the model is not thereby better.
+reproduced exactly ~200 commits later — with the HEAD guard holding. **While it was solving, capx
+D75-R-ARM steps 3–4 merged to `main` carrying the SAME key**, because at this head the bare `pjm-t1h`
+recipe is one recipe carrying both arms. The charter anticipated exactly this and instructed
+*"rebase and re-declare rather than assume"*, so this lane does: **D75-R-ARM steps 3–4 landed first
+and holds the bare `pjm-t1h`**, its `pjm-t1h-pre-d75rarm` naming is adopted on the merits over this
+lane's held `-pre-d78arm`, and **Q56's registration condition is discharged by that registration** —
+one solve, one bundle, one row (rule 19 `[R-ONE-MECH]` in its registration form). This lane's own
+bundle is a **duplicate and is deleted before merge**, not registered.
+
+**What the collision bought, and it is not nothing:** two lanes solved the same recipe independently,
+on two different HEADs, nineteen seconds apart — and the output is **byte-identical**. All five
+`evolution_<year>.json`, `score.json` and every `year_*_floor_retentions.json` match to the sha256;
+the *only* differing leaves in either bundle are `solve_surface.json`'s recorded `git_sha`
+(`10cda1fa` vs `04222503`) and a timestamp. That is an **independent reproduction** of the joint
+Q55+Q56 posture and an empirical confirmation that capx D79's solve-surface fingerprint means what it
+claims. §4's numbers therefore describe the row `main` now carries, measured twice.
+
+**14 of 14 forecast invariants PASS.** Of **26 scored bands, exactly two flip**, the same quantity
+twice: `retire.total_gw` raw and IS-2020, **FAIL → PASS**, 18.058 → **15.292 GW** against 15.062
+actual. **That crossing is not an argument for arming and is not cited as one** (rule 14; D78-R3
+§5.2 item 2 said so before any of this was solved, and a worse band would not have been an argument
+against). Against it, at equal weight: `unit_recall_gt300` **FALLS** 0.650 → 0.550 exactly as
+pre-declared, coal exits move **away** from actual, `false_retire` stays FAIL, and the DY2026/27
+clearing price moves 358.267 → **213.056 $/MW-day**. Limb (d) still cannot discriminate on recall.
+Q56 is discharged; the model is not thereby better.
 
 ---
 
@@ -54,28 +69,54 @@ not "did something else". Verified at my HEAD, not assumed:
 
 ---
 
-## 2. The key, realized vs declared — and **which key this row carries**
+## 2. The key, realized vs declared — and **which lane's row carries it**
 
 The charter required this lane to name its key, because the bare `pjm-t1h` recipe has **three
-vintages** in play and two PJM registration lanes were chartered against different ones.
+vintages** in play and two PJM registration lanes were chartered against different ones. It also gave
+the tie-break in advance: *"if D75-R-ARM steps 3-4 has landed before you, rebase and re-declare rather
+than assume."* **It landed.** `git log origin/main --grep="D75-R-ARM"` at `1ee2efba` carries
+`FINDING-capx-d75rarm-steps34-2026-09-07.md` and the registered bundle
+`results/capacity-hindcast/pjm-2021-2025-realized-t1h-d75rarm`.
 
-| vintage | key | status on `main` at `9518fe0b` |
+| vintage | key | status after the re-declaration |
 |---|---|---|
-| pre-Q55 | `a9c66d8ea25acb9d` | the committed D67-ARM bundle, the graded control of D78-R2/R3 |
-| post-Q55, pre-Q56 | `b518f5fe7d02f961` | **never registered** — D75-R-ARM's steps 3–4 were HELD on the board lock and never released (`git log origin/main --grep="D75-R-ARM"` shows the arm `6164231e` and its PRECOMMIT `25e5b5e6` and no registration). Its numbers survive as document only, `FINDING-capx-d75r` §5.2. |
-| **post-Q56 — THIS ROW** | **`fb16fda2ddb0a94a`** | **registered here** |
+| pre-Q55 | `a9c66d8ea25acb9d` | the committed D67-ARM bundle, the graded control — **preserved as `pjm-t1h-pre-d75rarm`** |
+| post-Q55, pre-Q56 | `b518f5fe7d02f961` | **no bundle exists at this key**; D76-P3B solved it as its own control and deleted it under rule 29(c) |
+| **post-Q56 = the joint Q55+Q56 posture** | **`fb16fda2ddb0a94a`** | **registered on `main` as the bare `pjm-t1h` by D75-R-ARM steps 3–4**, id `pjm-2021-2025-realized-t1h-d75rarm` |
 
-**D75-R-ARM steps 3–4 have NOT landed ahead of me**, so no rebase-and-re-declare was needed; had they,
-this row would have re-declared rather than assumed. **Realized == declared:** the runner logged
-`run_scenario_iso start: iso=PJM cache_key=fb16fda2ddb0a94a` and finished on the same key.
+**Realized == declared** on both sides: this lane's runner logged
+`run_scenario_iso start: iso=PJM cache_key=fb16fda2ddb0a94a` and finished on it, and D75-R-ARM's
+ADDENDUM B declared the same key before its LP ran.
 
-**S1 — the key table at MY HEAD, not the PRECOMMIT's.** `docs/handoffs/d78arm/keys_probe.py` re-run at
-`9518fe0b` reproduces the committed `keys_measured.json` on **every PJM leg** and on MISO / NYISO /
-NEISO / CAISO. Two rows moved and **neither is PJM's**: `ercot bare` `46d013cbf1f35d27` →
-`f18431f2447bad01` and the bare `scenario_config_default_key`. That asymmetry is capx **D79**'s
-solve-surface fingerprint working — `ercot-253` (`09c812aa`) re-declared
-`ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR`, which projects onto ERCOT and not onto PJM. Record:
-`docs/handoffs/d78arm/keys_measured_9518fe0b.json`.
+### 2.0 Why this lane adopts `-pre-d75rarm` and drops its own held `-pre-d78arm`
+
+**On the merits, not merely because that lane merged first.** The preserved object is the D67-ARM
+bundle, whose key is `a9c66d8ea25acb9d` — which is the posture immediately before **D75-R-ARM**. The
+posture immediately before **D78-ARM** is `b518f5fe7d02f961`, and *no bundle at that key exists to
+preserve*. Naming an `a9c66d8ea25acb9d` bundle `-pre-d78arm` would therefore label it with a
+different posture's name. D75-R-ARM's own `VERDICT_MAP` comment makes that argument and invites this
+lane to adopt its id "rather than create a second alias for one object"; the argument is correct, and
+a second alias for one object is precisely what rule 19 `[R-ONE-MECH]` refuses in its registration
+form. **The held hunk from PR #5319 is therefore superseded, not applied.**
+
+### 2.0b The reproduction — the one thing the collision produced that neither lane could have alone
+
+Both lanes solved the same recipe at the same key, independently, on different HEADs, **nineteen
+seconds apart**. Differenced file by file:
+
+| artifact | result |
+|---|---|
+| `evolution_2021.json` … `evolution_2025.json` | **byte-identical**, sha256 `b23c54a3176d6010` · `a4a77735463552a4` · `2ef88bc80966293b` · `8f774e463a8c6b18` · `cab2aae339d5bca9` |
+| `score.json` (incl. `--flip-gate-extras`) | **identical on every leaf** but `flip_gate_extras.utc` (03:00:16Z vs 03:00:35Z) |
+| `year_*_floor_retentions.json` | **byte-identical** |
+| `solve_surface.json` | **one** differing leaf: `git_sha` `10cda1fa` (theirs) vs `04222503` (mine) |
+
+Two independent solves of one cache key on two different code states produced the same numbers to the
+byte. That is a real result: it is an **independent reproduction** of the joint Q55+Q56 posture, and
+an empirical confirmation from a second direction that capx D79's solve-surface fingerprint keys what
+it claims to key — the two HEADs differ, the fingerprint says PJM's surface does not, and the output
+agrees with the fingerprint. It is recorded here because a duplicated effort that agrees is evidence,
+and deleting the bundle should not delete the finding.
 
 ### 2.1 G-DRIFT increment, written before the solve
 
@@ -145,7 +186,11 @@ run (gate **+** Q55) reads **0** in 2024 and 2025 as well. Reported, and it was 
 
 Every row here is **reported and gated on nothing** (rule 14). Control = the committed D67-ARM bundle
 `a9c66d8ea25acb9d`; "gate only" is D78-R2's **document** figure (that bundle was never registered —
-§6 item 1), and this lane's arm is **gate + Q55**, so it is not expected to equal it.
+§6 item 1), and the armed run is **gate + Q55**, so it is not expected to equal it.
+
+**These are the numbers of the row `main` now carries** (`pjm-2021-2025-realized-t1h-d75rarm`,
+key `fb16fda2ddb0a94a`) — measured independently by both lanes and byte-identical (§2.0b), so nothing
+here is lost by deleting this lane's duplicate bundle.
 
 | quantity | control (D67-ARM) | Q55 only (doc) | gate only (doc) | **armed run** |
 |---|---:|---:|---:|---:|
@@ -196,30 +241,28 @@ so all band movement in this run is inside the retirement screen, which is where
 
 ---
 
-## 5. The board
+## 5. The board — **registered by D75-R-ARM steps 3–4, not by this lane**
 
-Registered through the single `scripts/register_forecast_run.py` path, **forecast namespace, never
-the backcast registry** (rule 15). Canonical committed record:
-`frontend/data/hindcast/pjm-2021-2025-realized-t1h-d78arm.json` (`cache_key` `fb16fda2ddb0a94a`,
-`scored_at_sha` `def45e017294`). `registry/` + `runs/` + `manifest.js` are gitignored and rebuilt by
-the Pages deploy. Slim ledgers committed on the D67-ARM retention class (`.gitignore` already excludes
-`year_*.parquet`, `config.yaml`, `screen_signal_diag_*.npz`); **14 files, ~39.6k lines** — D67-ARM's 13
-plus `solve_surface.json`, new since capx D79. `check_registry_payload_parity.py`: **OK, 16 runs, 49
-bundle dirs swept, 0 tolerated**.
+Q56 reads *ARM, **REGISTRATION REQUIRED***, and the requirement is met: the armed posture
+`fb16fda2ddb0a94a` **is** registered on the forecast namespace, as the bare **`pjm-t1h`**, under
+`pjm-2021-2025-realized-t1h-d75rarm`, with the D67-ARM record preserved at `pjm-t1h-pre-d75rarm`.
+That lane's own `VERDICT_MAP` comment states the reasoning this lane accepts: *"registering it once
+discharges both lanes and no second `pjm-t1h` is solved."* **Q56 is discharged.**
 
-**The held `VERDICT_MAP` re-key lands HERE, with the registration and not before** — which is exactly
-what the salvage held it for (`FINDING-pr5319-…-salvage` §3, measured through
-`rescore_forecast_verdicts.plan()`). Applied verbatim from PR #5319's own hunk, not re-authored:
+**What this lane consequently DELETES rather than registers.** Its own bundle, sidecar and hindcast
+report are a duplicate of a registered object at the same key:
 
-- `pjm-2021-2025-realized-t1h-d67arm` → **`pjm-t1h-pre-d78arm`** (preserved, its own verdict standing)
-- `pjm-2021-2025-realized-t1h-d78arm` → **`pjm-t1h`** (the shipped posture)
+- `results/capacity-hindcast/pjm-2021-2025-realized-t1h-d78arm/` (14 slim files)
+- `frontend/data/hindcast/pjm-2021-2025-realized-t1h-d78arm.json`
+- `docs/hindcast-reports/pjm-2021-2025-realized-t1h-d78arm-2026-09-07.md`
 
-`pjm-t1h-pre-d78arm` has **no `ff-verdicts.json` entry**, so that run renders **score-only, no
-verdict**. That is not a defect introduced here: it is the state `pjm-t1h-pre-d67` has carried since
-the immediately preceding arm in this same chain, and two other PJM rows with it
-(`pjm-t1h-d74-nodefaultcap`, `pjm-t1h-d78r-sectorgate`) — four in total, measured.
+This is required, not tidying: `check_registry_payload_parity.py`'s bundle-retention sweep makes an
+**unregistered bundle dir a gate RED**, and rule 29(c)'s "delete before merge" says git history is the
+record for the bytes. Every number this lane will ever cite is in *this document*. Re-run after the
+deletion: **registry/payload parity OK (16 runs checked, 49 bundle dirs swept, 0 tolerated)**.
 
----
+**The held `VERDICT_MAP` re-key is SUPERSEDED, not applied** (§2.0). `main`'s rows stand unchanged;
+this branch contributes no `VERDICT_MAP` edit at all after the merge resolution.
 
 ## 6. What this lane does NOT claim
 
@@ -236,6 +279,14 @@ the immediately preceding arm in this same chain, and two other PJM rows with it
    did for D67-ARM. Changing that scan is outside S5's declared set.
 5. **The board snapshot stays HELD** (the D65-B-R lock), per the lane's charter. Nothing in
    `program-status.json` was touched.
+6. **It does not claim the registration as its own.** D75-R-ARM steps 3–4 registered the armed
+   posture; this lane confirms it, re-declares against it, and deletes its duplicate. What this lane
+   contributes to the record is the reconciliation (§1), the pre-solve G-DRIFT increment audit
+   (§2.1), the S4 identity grading with its known-answer (§3.1), the independent reproduction
+   (§2.0b), and this document.
+7. **It takes no position on which lane *should* have been dispatched.** Two lanes were chartered
+   against the same object and both solved it; that is a coordination fact for the director's ledger,
+   not a finding about the model. It is recorded in §7.1 item 3 rather than argued here.
 
 ---
 
@@ -256,7 +307,7 @@ is **not duplicated**, only its "still owed" clause discharged. **Rule 29 `[R-SC
 not apply (a ruled arming, nothing to select); 29(b) form 4 validated by the G-DRIFT increment audit
 committed before the solve; no screen or control bundle exists, so 29(c) has no object.
 
-### 7.1 Two things recorded against interest
+### 7.1 Three things recorded against interest
 
 1. **I moved HEAD while the HEAD-guarded solve was running.** Two docs-only commits (`04222503`,
    `def45e01`) landed after `run_arm.sh` captured its baseline. I noticed before the guard evaluated,
@@ -271,6 +322,13 @@ committed before the solve; no screen or control bundle exists, so 29(c) has no 
    identical pattern (`capacity_adequacy_requirement_published_by_iso: null` in its yaml, `{"PJM":
    true}` in its json). Flagged because the yaml alone would mislead a reader into thinking the arm
    was off; not changed, because that is outside S5's declared set.
+3. **I spent an LP that turned out to be a duplicate.** D75-R-ARM steps 3–4 was solving the identical
+   recipe at the identical key in the same minutes, and neither lane knew. I did not discover it
+   until `main` moved under the PR and the merge conflicted. Nothing hid it — the charter named the
+   collision risk explicitly and gave the tie-break, and I checked `git log --grep="D75-R-ARM"` at
+   session start, when steps 3–4 had **not** yet landed. It is recorded because the honest reading is
+   that the cost was real (one full 2021–2025 PJM window) and the mitigation is a coordination one,
+   not a technical one. What the spend bought back is §2.0b's reproduction.
 
 ### 7.2 Environment notes
 
@@ -295,8 +353,12 @@ this document's citation and the registered key.
 - **`false_retire` remains FAIL** (6.825 GW, 0.446 of model);
 - **coal exits move away from actual** under the partition (err −0.340 → −0.459) — the gate removes
   *false* exits without finding missing *true* ones, the same shape D75-R §5.4 recorded;
-- **D75-R-ARM steps 3–4** remain unspent: the Q55-only posture `b518f5fe7d02f961` is still registered
-  nowhere, and its numbers survive as document only.
+- **the Q55-only posture `b518f5fe7d02f961` is registered nowhere and no bundle exists at that key**
+  (D76-P3B deleted its control under rule 29(c)), so Q55's isolated attribution stays document-only in
+  `FINDING-capx-d75r` §5.2 — the registered row is the JOINT Q55+Q56 posture and **no number in it may
+  be attributed to either arm alone**;
+- **two lanes were chartered against one object and both solved it** — a coordination item for the
+  director's ledger, not a model finding (§7.1 item 3).
 
 ---
 

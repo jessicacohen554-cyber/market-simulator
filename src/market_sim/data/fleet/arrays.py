@@ -208,6 +208,57 @@ COAL_SUMMER_MAX_CF: dict[int, float] = {
 }
 
 
+def _reconciled_summer_ratios(
+    generators: list["Generator"], reconcile_path: str | None
+) -> dict[int, float]:
+    """Return ``{plant_code: min(1, net_summer / carried CC capacity)}`` for the
+    CC plants a ``cc_capacity_reconcile`` table lists.
+
+    Support for ``ScenarioConfig.cc_summer_derate_reconciled_basis`` (nyiso-212,
+    rule 19 ``[R-ONE-MECH]``). Under ``cc_nameplate_summer_derate`` the Jun-Sep
+    multiplier is ``net_summer / nameplate`` (:func:`cc_summer_derate_ratio`),
+    premised on ``fleet_to_bins`` having carried the plant at NAMEPLATE. A
+    reconcile row moves that capacity to the CAMPD demonstrated peak AFTER the
+    rescale (``campd_bins._reconcile_cc_capacity``), and the nameplate ratio was
+    still applied to it — so a ``cap`` plant's summer capability read
+    ``reconciled x net_summer / nameplate`` instead of ``net_summer`` (Cricket
+    Valley 57185: 1,086.9 x 1016.1/1312.5 = 841.4 MW against a published
+    net-summer rating of 1,016.1 and a measured summer p99.9 of 1,078;
+    FINDING-nyiso212). Here the ratio's denominator is the capacity the plant
+    ACTUALLY carries — the summed ``pmax_mw`` of its CC generators after the
+    reconcile — so the summer capability is stated once, as the published
+    net-summer rating, and the cap bounds the year. Only plants the table lists
+    are returned: an unlisted plant's carried capacity IS its nameplate, so its
+    ratio is unchanged and the caller's incumbent path is byte-identical there.
+    A missing table yields ``{}`` (the flag no-ops with the reconcile it
+    repairs). Zero free parameters.
+    """
+    from pathlib import Path as _Path
+
+    import pandas as _pd
+
+    if not reconcile_path:
+        return {}
+    path = _Path(reconcile_path)
+    if not path.exists():
+        return {}
+    listed = set(_pd.read_csv(path, usecols=["plant_code"])["plant_code"].astype(int))
+    carried: dict[int, float] = {}
+    for g in generators:
+        if g.plant_group in ("CC_REGULAR", "CC_CHP") and int(g.plant_code) in listed:
+            carried[int(g.plant_code)] = carried.get(int(g.plant_code), 0.0) + float(
+                g.pmax_mw
+            )
+    caps = _pkg_ns().cc_summer_capacity()
+    out: dict[int, float] = {}
+    for code, cap_mw in carried.items():
+        pair = caps.get(code)
+        if pair is None or cap_mw <= 0.0:
+            continue
+        out[code] = min(1.0, float(pair[1]) / cap_mw)
+    return out
+
+
 def _thermal_outage(category: str, age: float) -> tuple[float, float, float]:
     """Return ``(POF, WEFOR, derate)`` for a thermal unit's age.
 
@@ -680,6 +731,29 @@ def _availability_matrix(
                 and gen.zone in _td_tmax
             )
 
+        # nyiso-212 seam repair (config.cc_summer_derate_reconciled_basis, GATED
+        # default-off, rule 19 [R-ONE-MECH]): at a plant a cc_capacity_reconcile
+        # row has moved off nameplate, the Jun-Sep multiplier below divides the
+        # published net-summer rating by the capacity the plant ACTUALLY carries
+        # instead of by nameplate (see _reconciled_summer_ratios). Empty — and
+        # every read site below falls through to the incumbent ratio, byte-
+        # identical — unless both this flag and the reconcile are armed.
+        _recon_summer_ratio: dict[int, float] = {}
+        if (
+            cc_np_derate
+            and getattr(config, "cc_summer_derate_reconciled_basis", False)
+            and getattr(config, "cc_capacity_reconcile", False)
+        ):
+            _recon_summer_ratio = _reconciled_summer_ratios(
+                generators, getattr(config, "cc_capacity_reconcile_path", None)
+            )
+            if _recon_summer_ratio:
+                logger.info(
+                    "CC summer derate on the reconciled basis (%s): %d reconciled "
+                    "plant(s) take min(1, net_summer / carried capacity) in Jun-Sep",
+                    _iso or "?",
+                    len(_recon_summer_ratio),
+                )
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -831,7 +905,13 @@ def _availability_matrix(
                 if is_cc_np:
                     _pair = _cc_seasonal_pair(gen)
                     if _pair is None:
-                        ratio = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
+                        # Reconciled basis (nyiso-212) where armed and listed,
+                        # else the incumbent nameplate ratio.
+                        ratio = _recon_summer_ratio.get(int(gen.plant_code))
+                        if ratio is None:
+                            ratio = _pkg_ns().cc_summer_derate_ratio(
+                                int(gen.plant_code)
+                            )
                         if ratio is not None and ratio < 1.0:
                             availability[g_idx, summer] *= ratio
                     else:
@@ -981,7 +1061,11 @@ def _availability_matrix(
                     # forbids.
                     _anchor = _cc_pair[0]
                 elif cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP"):
-                    _r = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
+                    # Same two-way read as the summer leg above (nyiso-212), so
+                    # the curve's anchor and the flat leg can never disagree.
+                    _r = _recon_summer_ratio.get(int(gen.plant_code))
+                    if _r is None:
+                        _r = _pkg_ns().cc_summer_derate_ratio(int(gen.plant_code))
                     _anchor = _r if (_r is not None and _r < 1.0) else None
                 elif gen.plant_group in _SUMMER_CLASS_DERATE:
                     # Basis-aware (miso-148): when the flat derate is suppressed

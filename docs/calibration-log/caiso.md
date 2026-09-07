@@ -14091,3 +14091,12 @@ Four more owner decisions, each executed or chartered here:
 
 **Next number: caiso-262.**
 
+### caiso-261 closing addendum — the 2022 DAM crawl (owner card "DAM now, RTM in a fresh session") EXECUTED
+
+* **Crawl:** `scripts/data/fetch_caiso_oasis_grp.py --market dam --start 2022-01-01 --end 2022-12-31 --sleep 6` — **365 / 365 trade dates** (`DAM_LMP_GRP` v12, one GroupZip per date, ≈ 10–12 MB each, extract-and-discard), 0 missing, 0 throttle events, 1.56 h wall. Every zip deleted after its window; the 365 per-day windows staged out of the tree (`postprocess_oasis_downloads.py --stage-dir`), and the window pattern gitignored.
+* **Aggregate written:** `data/raw/lmp-data/CAISO/CAISO_dam_hourly_2022.csv` — 87,600 rows = 10 nodes × 8,760 h (3 hubs + 4 DLAPs + MALIN_5_N101 / CAPTJACK_5_N003 / PALOVRDE_ASR-APND, the GRP fold's node set, as the GRP-folded Jan–Mar 2023 rows already carry). 2022 DAM hub means: NP15 $89.03, SP15 $84.80, ZP26 $82.12/MWh. **Every 2023–2026 aggregate is byte-identical** (sha256 snapshot before / after the fold).
+* **Intertie rows (H-3 closed):** `fetch_caiso_intertie_lmp.py --from-grp-windows --years 2022` → `wecc_intertie_lmp_hourly_CAISO.parquet` 52,560 → 70,080 rows; 2022 MALIN mean $86.39, PALOVRDE $82.95/MWh, 8,759 finite hours each (the one NaN is the DST spring-forward hour the loader interpolates); **2023–2025 rows row-identical** to the prior parquet. `tests/curation/test_fetch_caiso_intertie_lmp.py` 8 passed.
+* **What is NOT done:** `CAISO_rtm_hourly_2022.csv` (the scored RT price) — the RTM hour-group crawl goes to a fresh session on the charter; `derive_actual_lmp.py` / `derive_actual_tail.py` NOT run (a DA-only 2022 record would be emitted with RT NaN; left for the RTM session so the parquet is rewritten once); no 2022 solve, score or registration; the H-1 demand artifact not built.
+* **Record housekeeping:** the keeper-shard field `declared_residual_ct_volume` was audited by the `calibration-keeper-auditor` agent (PASS, one correction: the quoted CT_PEAKER model energies moved from the caiso-257 figures 1.862 / 1.585 TWh to the caiso-260 bundle's own 2.033 / 1.673 TWh; actuals 4.128 / 4.326 unchanged) and landed on the branch as its own commit with the rebuilt status part, followed by a gitignore commit for the transient per-day window CSVs.
+
+**Session caiso-261 closed. Keeper `2026-09-06-caiso-260-b1-demand` UNCHANGED and CALIBRATED; `complete` + frontier declared; no solve spent. Next number: caiso-262.**
