@@ -10,6 +10,47 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0g. r#6 — sitting #6: W3 ALL LANDED; SPP-40 owner-launched; C4-2023 blocker relayed; SPP-41 + SPP-35 issued (2026-09-07, main HEAD `7347933c`)
+
+- Pin `7347933c` (branch fast-forwarded from `9bdd0709`; the two newer merges are MISO/PJM lanes, no SPP
+  touch). **Owner note: "spp 40 has launched."** No `claude/spp-40*` head is visible on origin at the
+  pin, so per the standing line SPP-40 reads **RUNNING (owner-launched), branch unconfirmed**.
+- **GRADED BY CONTENT — six lanes LANDED 2026-09-07:** SPP-30 (#5378), SPP-31 (#5389), SPP-32 (#5396 +
+  #5399), SPP-33 (#5377), SPP-34 (#5388), SPP-53 (#5374/#5383/#5393). SPP-40's four preconditions
+  verified at the pin: `_spp_config` link `ttc_mw = 3400.0` (not the 48,700 placeholder); outages
+  `campd-unit-outages-SPP.csv` + siblings; `actual_lmp.json` / `calibration_reference.json` SPP
+  blocks; clean zonal shares + wind shape + `meanzero.py` basis rows.
+- **GATES at the pin:** parity 0 (16 runs / 49 dirs), gate-(a) 0, bench-freshness 0 (26 parts),
+  goldens 0, refactor-guards 0, matrix 0 (7 shards). `audit_keepers --check` **EXIT 1 — S1: stale
+  `status/ERCOT.js` and `status/MISO.js`**, neither this desk's (§3 R-k). `keepers/index.json` still
+  six; no SPP bundle exists yet, as expected.
+- **BLOCKER FOUND FOR SPP-40, relayed as an addendum, not a re-charter.** FINDING-spp-31 §3.3/§5a:
+  the P9 `NG:` spike screen closed only inside `calibration_reference.json`; the C4 scoring path
+  (`run_calibration_full._eia930_frame_generic` → `e930.parquet` → `bench/`) calls the loader
+  unscreened, so SPP 2023's C4 would score wind against +3.5857 TWh (one hour, h3907). → **SPP-41
+  chartered (Fable)**: move the screen into `load_eia_hourly_benchmark`, zero-LP two-series proof
+  first (SPP 2023 wind, NYISO 2024 `other`), cache-key + bench-freshness consequence audit. SPP-40
+  told to report C4-2023 as UNSCORED pending SPP-41; the desk re-renders bench/SPP/2023 afterwards
+  (no re-solve — the LP never reads the benchmark).
+- **SPP-35 chartered (Opus)**: SPP-34's S-1 (five stale "six ISOs" sentences in CLAUDE.md / spec /
+  codebase README / user manual) + S-2 (ISO badge contrast, five of seven fail WCAG AA; the passing
+  `.badge--iso-*` pattern already exists) + SPP-20's O-4 / O-6 doc items.
+- **W5 reshaped from W3 evidence (no card needed — desk acts within P1/P13 as ruled):** SPP-51 is
+  re-labelled **Fable** — SPP-33's R1 (anchor map) and R2 (`HH + gas_basis` heat-rate correction:
+  10.09 / 10.23 / 16.78 vs the registered values) and the ERCOT 820-vs-±835 MW clip question are
+  adjudications riding the same PR; **SPP-58** added (asymmetric pair 3,400 / 4,206 MW with a second
+  ψ identification, after SPP-57); **SPP-59** reserved (SPP-32's R-3/R-4/R-5 consolidations — MISO
+  files, held for the MISO lane's consent). SPP-33's R3 (`_HR_GAS_ELASTIC` global key) stays with
+  the desk as a W5 card (§3 R-n) — it is forward-only and inert for the keeper.
+- **CHARTER DEFECTS FOUND BY THE LANES, corrected here (§6 E-5):** `derive_cc_committed_pct.py` in
+  the SPP-30 sequence (ERCOT-only legacy, would have overwritten ERCOT's file); `hubs.py` named as
+  the SPP-32 basis home (it is `basis/meanzero.py`); the SPP-30 charter's "zero full-year fallbacks"
+  gate was unachievable as written (every ISO carries `eia923_netzero` units) — the lane reported 9,
+  itemised, inside the cross-ISO band, and the desk accepts that as the gate's intent.
+- ISSUED: SPP-40 ADDENDUM (into the running session), SPP-41, SPP-35. Next sitting: grade all three;
+  when SPP-40 lands verify `keepers/SPP.json`, `index.json`, `status/SPP.js`, `bench/SPP`, the shard
+  stamp; after SPP-41 re-render + re-score C4-2023; then W5 in ranked order (SPP-57 → SPP-51 → SPP-58 …).
+
 ### 0f. r#5 — sitting #5: SPP IS REGISTERED; SPP-14/15/20 landed; P1 ranking applied; P13 ruled; W3 + SPP-53 issued (2026-09-07, main HEAD `96a6c4b3`, 01:35 UTC)
 
 - Pin `96a6c4b3` (137 commits since r#4). Branch fast-forwarded. **Needs-registration line (E-4
@@ -197,14 +238,16 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | SPP-15 back-year intake 2019–2022 (rule-22 data prep) | W2∥ | Opus | shared | **LANDED 2026-09-06** — all four items GOT, blocked table EMPTY; producers unmodified; interchange widened with the 2023-2025 slice proven byte-identical (268,177 rows, sha256 `243889469b96…`, before and after); nothing solved/scored/registered and no marker claimed. Four source defects reported and routed, not filled — incl. **`N3045OK3` publishes nothing 2015-2021** (OK gas exists for only 3 of the 7 years 2019-2025) and two impossible `AECI` prints that sign-flip SWPP's 2020 system net | `claude/spp-15-backyears-intake-0cah85` (stem issued `…-q3nf`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-15-2026-09-06.md` |
 | SPP-20 register (pin flip) | W2 | Fable | shared→spp | **LANDED 2026-09-06** — SPP registered; six keepers unmoved; N↔S link a 48,700 MW placeholder (→ P13 / SPP-53); 8 routed items assigned r#5 | `claude/spp-20-topology-market-design-1iew99` | #5329 | `docs/handoffs/FINDING-spp-20-2026-09-06.md` |
 | SPP-21 matrix shard + §5.7 | W2 | Opus | code | **LANDED 2026-09-06** — seventh shard live (305 cells: 162 `U` / 47 fc-only `U` / 96 `.`), `check_mechanism_matrix.py` exit 0 on 7 shards, 33/33 matrix tests pass, page renders 7 columns. **TWO out-of-region edits, both owner-authorized in session:** (1) 4 six-ISO assertions in `tests/unit/config/test_mechanism_matrix_{shard_migration,keeper_stamp}.py` (the charter budgeted one); (2) a one-line repair to `mechanism-matrix-assemble.js` for a PRE-EXISTING anchor mismatch that had left the rendered page blank since the 2026-08-11 sharding | `claude/spp-21-matrix-shard-ti2gy3` (stem issued `…-r4tq`; branch set by the session's own directive) | — | `docs/handoffs/FINDING-spp-21-2026-09-06.md` |
-| SPP-30 outages + tranches | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-30-outages-tranches-b8kt`) | — | — |
-| SPP-31 benchmarks | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-31-benchmarks-n2vw`) | — | — |
-| SPP-32 zonal + wind shape + gas hub | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-32-zonal-wind-gas-r7ql`) | — | — |
-| SPP-33 seam derive | W3 | Opus | spp | **ISSUED r#5** | — (stem `claude/spp-33-seam-derive-c4hm`) | — | — |
-| SPP-34 site + docs | W3 | Opus | code | **ISSUED r#5** | — (stem `claude/spp-34-site-docs-t9xe`) | — | — |
-| SPP-40 first solve → first keeper | W4 | Fable | spp | CHARTERED · blocked on SPP-30/31/32 **+ SPP-53** (P13) | — | — | — |
-| SPP-53 N↔S TTC derive (P13 — W5 → W3) | W3 | Fable | spp | **ISSUED r#5** | — (stem `claude/spp-53-ns-ttc-f6dz`) | — | — |
-| SPP-51, 52, 54, 55, 56, 57 levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · **P1 ranking APPLIED r#5: SPP-57 (Oklahoma pocket) before SPP-54 (SPS pocket)** | — | — | — |
+| SPP-30 outages + tranches | W3 | Opus | spp | **LANDED 2026-09-07** — G4 PASS (OK 1060 / NE 358 windows); 9 itemised full-year fallbacks; `derive_cc_committed_pct` dropped (E-5) | `claude/spp-30-outages-tranches-l2mdug` (stem `claude/spp-30-outages-tranches-b8kt`) | #5378 | `docs/handoffs/FINDING-spp-30-2026-09-07.md` |
+| SPP-31 benchmarks | W3 | Opus | spp | **LANDED 2026-09-07** — SPP blocks in every shared JSON, others byte-identical; P9 closed in the builder; **§5a C4-path gap → SPP-41** | `claude/spp-31-benchmarks-calibration-klpemi` (stem `claude/spp-31-benchmarks-n2vw`) | #5389 | `docs/handoffs/FINDING-spp-31-2026-09-07.md` |
+| SPP-32 zonal + wind shape + gas hub | W3 | Opus | spp | **LANDED 2026-09-07** — all gates PASS; six keepers unmoved; basis 2022–24 in `meanzero.py`; R-3/4/5 → SPP-59 | `claude/spp-32-zonal-wind-gas-tmuwui` (stem `claude/spp-32-zonal-wind-gas-r7ql`) | #5396, #5399 | `docs/handoffs/FINDING-spp-32-2026-09-07.md` |
+| SPP-33 seam derive | W3 | Opus | spp | **LANDED 2026-09-07** — `hr_by_year` for SPP-51; R1/R2 → SPP-51 (Fable), R3 → desk | `claude/spp-33-seam-derive-ezmktp` (stem `claude/spp-33-seam-derive-c4hm`) | #5377 | `docs/handoffs/FINDING-spp-33-2026-09-07.md` |
+| SPP-34 site + docs | W3 | Opus | code | **LANDED 2026-09-07** — S-1/S-2 → SPP-35; S-3 evidence job open; S-4 → audit | `claude/spp-34-site-docs-hjykvj` (stem `claude/spp-34-site-docs-t9xe`) | #5388 | `docs/handoffs/FINDING-spp-34-2026-09-07.md` |
+| SPP-40 first solve → first keeper | W4 | Fable | spp | **RUNNING — owner-launched 2026-09-07 (r#6)**; preconditions all verified; addendum issued (C4-2023 unquotable until SPP-41) | unconfirmed at pin (no `claude/spp-40*` head yet) | — | — |
+| SPP-41 fuel-spike screen → loader seam (SPP-31 §5a) | W4∥ | Fable | code | **ISSUED r#6** | — (stem `claude/spp-41-fuel-spike-seam-k2mr`) | — | — |
+| SPP-35 seven-ISO prose + badge contrast (S-1/S-2, O-4/O-6) | W4∥ | Opus | code | **ISSUED r#6** | — (stem `claude/spp-35-seven-iso-prose-v8jd`) | — | — |
+| SPP-53 N↔S TTC derive (P13 — W5 → W3) | W3 | Fable | spp | **LANDED 2026-09-07** — `ttc_mw` 48,700 → **3,400 MW** (FCITC, ex-ante construction); S→N set 4,206 → SPP-58 | `claude/spp-53-ttc-link-limit-67e3yf` (stem `claude/spp-53-ns-ttc-f6dz`) | #5374, #5383, #5393 | `docs/handoffs/FINDING-spp-53-2026-09-07.md` |
+| SPP-51 (→ Fable r#6), 52, 54, 55, 56, 57, 58 (new r#6), 59 (reserved r#6) levers | W5 | per plan §8 | spp | RESERVED · blocked on SPP-40 · **P1 ranking APPLIED r#5: SPP-57 (Oklahoma pocket) before SPP-54 (SPS pocket)** | — | — | — |
 | SPP-60 forecast entry | W6 | Fable | spp | ROUTED to capx director (P8) | — | — | — |
 
 ---
@@ -228,7 +271,7 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | P11 | 2026-09-06 r#3 | unblocking portal rows 5–9 + the N↔S TTC | "Charter SPP-13 probe lane; W2 proceeds in parallel (Recommended)" | SPP-13 chartered (FTP route, ITP Manual sweep); SPP-20 registers the N↔S TTC Tier-3 with misalignment documented if SPP-13 has not landed; SPP-54/57 ranking waits for the flowgate archive |
 | P12 | 2026-09-06 r#4 | rows 5–9 after SPP-13 (anonymous FTP, egress-blocked; row 11 NDA-only) | "Try to find the data somewhere else" | SPP-14 chartered (HTTPS third-party / mirror sweep with a rule-14 cross-check gate); W3/W4 proceed regardless; row 11 stays Tier-3 in SPP-20 |
 | P1 (applied) | 2026-09-07 r#5 | the SPP-54 vs SPP-57 ranking under P1's own test | — (desk act; SPP-14 §5.2 measured `oklahoma_internal` ≥ `n_s_corridor` ≫ `sps_tie` in all three years on both legs) | SPP-57 first; SPP-54 does not clear "SPS-tie share ≥ N↔S share" and stays queued |
-| P13 | 2026-09-07 r#5 | the N↔S TTC for the first keeper (SPP-20's 48,700 MW placeholder cannot bind) | "Pull SPP-53 into W3 as SPP-40's precondition (Recommended)" | SPP-53 issued (Fable derive, PRECOMMIT-first construction, rule 14 misalignment documented); SPP-40's preconditions now SPP-30/31/32/53 |
+| P13 | 2026-09-07 r#5 | the N↔S TTC for the first keeper (SPP-20's 48,700 MW placeholder cannot bind) | "Pull SPP-53 into W3 as SPP-40's precondition (Recommended)" | SPP-53 issued (Fable derive, PRECOMMIT-first construction, rule 14 misalignment documented); SPP-40's preconditions now SPP-30/31/32/53 — **EXECUTED 2026-09-07 (SPP-53): 3,400 MW** |
 | P9 | 2026-09-06 r#2 | EIA-930 SWPP defective hours (audit §3.4) | "Benchmark-side fix in SPP-31; demand-side routed (Recommended)" | SPP-31 screens `NG:` columns in the benchmark builder; low-side demand screen → audit track (§3 R-f); SPP-40 PRECOMMIT names the hours |
 
 ---
@@ -247,6 +290,12 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | R-j | The 2026-01-28→ 14-column daily RTBM BC files are a forward-looking measured limit series (FINDING-spp-14 §5.4) | SPP-53 (now chartered) | its reduced corridor sidecar is SPP-53's deliverable |
 | R-g | Cooper Nuclear (801 MW, NE) licence expires **2034-01-18** with its SLR under review; Wolf Creek 2045 with intent only — an SPP forecast assuming both firm through 2050 assumes an outcome the instrument record does not yet support (FINDING-spp-12 §7) | forecast lane / capx director, at W6 | recorded so SPP-60's charter carries it; no backcast consequence |
 | R-f | low-side EIA-930 demand dropout screen (`_screen_demand_dropouts` catches only exactly-0.0; SWPP 2025-06-21 05:00 = 1,505 MW and 2024-07-19 00:00 escape) — repo-wide, cache-key risk | audit track (ruling P9) | SPP-40's PRECOMMIT names the hours as known artifacts; no SPP lane adds a screen parameter |
+
+| R-k | `audit_keepers --check` S1: `status/ERCOT.js` and `status/MISO.js` stale against their keeper shards at pin `7347933c` | the ERCOT / MISO promoting lanes (rule 22 D-5(b) re-key duty) or capx | seen at this desk's pin; not this desk's files |
+| R-l | CAISO `calibration_reference.json` renewables block predates the 2026-09-05 EIA-860 `vintage_2024` intake (FINDING-spp-31 §4a); three CAISO test files red on `main` (FINDING-spp-32 §8) | CAISO calibration lane | pre-existing, proven at HEAD without SPP code |
+| R-m | 63 non-SPP registry rows regenerated by SPP-34's R-3, 35 still `needs-citation` (FINDING-spp-34 S-4) | audit track (rule 5 citations) | not an SPP object |
+| R-n | `_HR_GAS_ELASTIC` global name key blocks SPP↔MISO forward elasticity (FINDING-spp-33 R3; PJM owns `"MISO"`) | SPP-DESK — a W5 card, forward-only, inert for the backcast keeper | a keying change in `neighbor_price.py` is mechanism-shaped; not SPP-51's one lever |
+| R-o | SPP-30's `derive_cc_committed_pct.py` has no `argparse` and silently ignores `--iso` (would overwrite ERCOT's file) | ERCOT lane / audit — a guard (refuse `--iso ≠ ERCOT`) or deletion (rule 26, superseded by `derive_thermal_tranches`) | not run for SPP; recorded so nobody else does |
 
 ---
 
@@ -291,6 +340,9 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#5 | SPP-33 | `claude/spp-33-seam-derive-c4hm` | — | plan §8 W3 · SPP-33 (+ r#5 block) | issued |
 | r#5 | SPP-34 | `claude/spp-34-site-docs-t9xe` | — | plan §8 W3 · SPP-34 (+ r#5 block) | issued |
 | r#5 | SPP-53 | `claude/spp-53-ns-ttc-f6dz` | — | plan §8 · SPP-53 (new, P13) | issued |
+| r#6 | SPP-40 addendum | (into the running SPP-40 session, owner-launched) | — | plan §8 · SPP-40 ADDENDUM | six facts; C4-2023 unquotable until SPP-41 |
+| r#6 | SPP-41 | `claude/spp-41-fuel-spike-seam-k2mr` | — | plan §8 · SPP-41 (new) | issued |
+| r#6 | SPP-35 | `claude/spp-35-seven-iso-prose-v8jd` | — | plan §8 · SPP-35 (new) | issued |
 
 ---
 
@@ -302,3 +354,4 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | E-4 | r#4 (found r#4 am.1) | The r#4 entry stated "W3 waits on SPP-20" and "nothing else newly issuable" without measuring which scripts impose the gate or listing what needs no registration. The owner asked. | Two issuable lanes (SPP-15, the SPP-14 addendum) were a sitting late. | Measured (`get_iso_config` in every W3 derive) and recorded; from r#5 every sitting's §0 entry carries a "what needs no registration / what does" line until SPP-20 merges. |
 | E-3 | r#0/r#2 (found r#3) | The plan carried **PRM 15 %** (manifest row 12) and card P5 cited "$2,000 — FERC 831 offer cap" as if it were SPP's posted cap. SPP-12's transcriptions: the live East BAA Base PRM is **16 %** (v5.0A; 15 % was PY2023–25), and SPP's posted Safety-Net Energy Offer Cap is **$1,000** ($2,000 is the Order 831 hard ceiling). The r#2 addendum also cited audit §6.1 to a lane that read it before SPP-10 had merged. | P5's value survives on a different justification (card P10); the PRM row now carries the live vintage with the history cited. | Plan §3 and the SPP-20 charter corrected r#3; the desk cites only landed files in addenda from now on. |
 | E-2 | r#2 | The desk ran `git merge --ff-only origin/main` on its branch while the harness was in plan mode (read-only). | None — a fast-forward with no local commits; nothing lost or rewritten. | Recorded because the mode was explicit; the desk does not repeat state changes under plan mode. |
+| E-5 | r#5 charters (found r#6) | Three charter defects the W3 lanes had to catch: (i) SPP-30's sequence named `derive_cc_committed_pct.py --iso SPP` — the script has no `argparse`, is ERCOT-only and would have overwritten ERCOT's committed file; (ii) SPP-32 named `data/fuel/hubs.py` as the basis home — the SPP rows belong in `basis/meanzero.py`; (iii) SPP-30's gate read "ZERO full-year fallbacks" — unachievable, every ISO carries `eia923_netzero` units (MISO 135, PJM 95 …). | None landed wrong: SPP-30 refused the script on a scratch proof and reported 9 itemised fallbacks; SPP-32 wired the right file. The desk had asserted the sequence and the gate from docstrings it had not run. | Plan §5/§8 corrected this sitting; standing note: a charter's RUN line is verified against `--help` output, not a docstring, before issuance. |
