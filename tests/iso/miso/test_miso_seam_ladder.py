@@ -418,3 +418,201 @@ class TestHourlyNeighbourOverlay(unittest.TestCase):
             iso="MISO", mode="backcast", miso_seam_neighbour_hourly_ladder=True
         )
         self.assertTrue(cfg.miso_seam_neighbour_hourly_ladder)
+
+
+class TestHourlySppOverlay(unittest.TestCase):
+    """miso-233: the hourly neighbour anchor extended to the SECOND seam, SPP.
+
+    A SUB-GATE of :class:`TestHourlyNeighbourOverlay`'s mechanism, never one
+    beside it (rule 19 ``[R-ONE-MECH]``): the SPP entry rides the same per-seam
+    ``hourly_anchor`` mapping and is refused without its parent. Its object is
+    the miso-233 phase-0 attribution — under the miso-232 keeper the repaired
+    PJM seam is already STEEPER than the measured PJM seam, and what cancels it
+    is SPP and South still clearing a FIXED ladder against the model's own
+    price. SOUTH stays uncovered: SOCO/TVA publish no hub price.
+    """
+
+    def _fleet_and_mc(self):
+        node = build_reference_price_node("MISO")
+        zone_names = sorted({g.zone for g in node})
+        fleet = generators_to_fleet_arrays(node, zone_names, hours=T)
+        return fleet, np.full((len(node), T), -123.0)
+
+    def test_registry_holds_rising_offsets_for_spp_only(self):
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
+        )
+
+        for year in (2023, 2024, 2025):
+            overlay = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR[year]
+            self.assertEqual(set(overlay), {"SPP"})
+            imp = overlay["SPP"]["import"]
+            exp = overlay["SPP"]["export"]
+            self.assertEqual(len(imp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(len(exp), SEAM_FLOW_TRANCHES)
+            self.assertEqual(list(imp), sorted(imp), msg=f"{year} import not rising")
+            self.assertEqual(
+                list(exp), sorted(exp, reverse=True), msg=f"{year} export not falling"
+            )
+            self.assertLess(max(exp), min(imp), msg=f"{year} wash ordering violated")
+
+    def test_registry_reproduces_the_frozen_derivation(self):
+        """Rule 23 ``[R-FROZEN-DERIVE]``: the table IS the derive's output.
+
+        Recomputes the ladder with ``derive_spp_neighbour_hourly`` on the same
+        committed measured series and pins it byte-for-byte to the registry, so
+        a hand-edited offset (or a silently re-tuned one) fails here rather
+        than reaching a solve.
+        """
+        import importlib.util
+        from pathlib import Path
+
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
+        )
+
+        repo = Path(__file__).resolve().parents[3]
+        script = repo / "scripts/data/derive_miso_seam_ladders.py"
+        if not script.exists():
+            self.skipTest("derive script unavailable")
+        spec = importlib.util.spec_from_file_location("_derive_miso_seam", script)
+        dm = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(dm)
+            joined = dm.load_joined()
+        except Exception:  # pragma: no cover - source data not hydrated
+            self.skipTest("measured seam/LMP series not available")
+        for year, entry in MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR.items():
+            derived, _notes = dm.derive_spp_neighbour_hourly(joined.loc[year])
+            for side in ("import", "export"):
+                np.testing.assert_allclose(
+                    np.asarray(entry["SPP"][side], dtype=float),
+                    np.asarray(derived[side], dtype=float),
+                    atol=0.005,
+                    err_msg=f"{year} {side} offsets drifted from the derivation",
+                )
+
+    def test_spp_bands_become_hourly_and_equal_hub_plus_offset(self):
+        from market_sim.data.eia_loader import measured_miso_spp_hub_prices
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
+        )
+
+        hub = measured_miso_spp_hub_prices("MISO", 2024, T)
+        if hub is None:
+            self.skipTest("no measured SPP hub series under data/raw")
+        overlay = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR[2024]["SPP"]
+
+        fleet, mc = self._fleet_and_mc()
+        self.assertTrue(
+            inject_miso_seam_ladder_prices(
+                fleet,
+                mc,
+                "MISO",
+                2024,
+                neighbour_anchored=True,
+                neighbour_hourly=True,
+                neighbour_hourly_spp=True,
+            )
+        )
+        moved = 0
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_IMPORT_MARK, 1)[1], "import"
+            elif _REF_EXPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_EXPORT_MARK, 1)[1], "export"
+            else:
+                continue
+            name, _, k = tag.partition("#")
+            if name != "SPP":
+                continue
+            np.testing.assert_allclose(mc[row, :], hub + overlay[side][int(k) - 1])
+            self.assertGreater(float(mc[row, :].std()), 1.0)
+            moved += 1
+        self.assertEqual(moved, 2 * SEAM_FLOW_TRANCHES)
+
+    def test_south_and_pjm_are_untouched_by_the_spp_extension(self):
+        """Confinement: only the SPP rows move against the miso-232 keeper arm."""
+        fleet, base = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet,
+            base,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=True,
+        )
+        _f, arm = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet,
+            arm,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=True,
+            neighbour_hourly_spp=True,
+        )
+        moved = set()
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag = uid.rsplit(_REF_IMPORT_MARK, 1)[1]
+            elif _REF_EXPORT_MARK in uid:
+                tag = uid.rsplit(_REF_EXPORT_MARK, 1)[1]
+            else:
+                np.testing.assert_array_equal(arm[row, :], base[row, :])
+                continue
+            seam = tag.partition("#")[0]
+            if np.array_equal(arm[row, :], base[row, :]):
+                continue
+            moved.add(seam)
+        self.assertEqual(moved, {"SPP"})
+
+    def test_off_is_byte_identical_to_the_keeper_arm(self):
+        fleet, a = self._fleet_and_mc()
+        _f2, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet, a, "MISO", 2024, neighbour_anchored=True, neighbour_hourly=True
+        )
+        inject_miso_seam_ladder_prices(
+            fleet,
+            b,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=True,
+            neighbour_hourly_spp=False,
+        )
+        np.testing.assert_array_equal(a, b)
+
+    def test_spp_extension_is_inert_without_its_parent(self):
+        """Rule 19: the sub-gate never arms a seam on its own."""
+        fleet, a = self._fleet_and_mc()
+        _f2, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024, neighbour_anchored=True)
+        inject_miso_seam_ladder_prices(
+            fleet,
+            b,
+            "MISO",
+            2024,
+            neighbour_anchored=True,
+            neighbour_hourly=False,
+            neighbour_hourly_spp=True,
+        )
+        np.testing.assert_array_equal(a, b)
+
+    def test_the_solve_path_refuses_the_sub_gate_without_its_parent(self):
+        from pathlib import Path
+
+        source = (
+            Path(__file__).resolve().parents[3] / "scripts/run_calibration.py"
+        ).read_text()
+        self.assertIn('"miso_seam_neighbour_hourly_spp requires "', source)
+        self.assertIn('"miso_seam_neighbour_hourly_ladder: the SPP hourly entry', source)
+
+    def test_field_is_registered_and_off_by_default(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        base = ScenarioConfig(iso="MISO", mode="backcast")
+        self.assertFalse(base.miso_seam_neighbour_hourly_spp)
+        armed = base.with_overrides(miso_seam_neighbour_hourly_spp=True)
+        self.assertNotEqual(base.cache_key(), armed.cache_key())

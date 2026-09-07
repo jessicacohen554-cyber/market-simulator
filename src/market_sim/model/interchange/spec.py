@@ -1604,6 +1604,128 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[str, dict[str, tuple[float, ...]]
 }
 
 
+# MISO SPP seam — the HOURLY neighbour-anchored ladder, as per-band OFFSETS
+# (miso-233).  Applied price: pi_k(t) = spp_hub(t) + delta_k, assembled at solve
+# time against the measured hourly SPP NORTH hub DA series
+# (data.eia_loader.measured_miso_spp_hub_prices).  So band k clears in hour t
+# iff spread(t) = MISO_price(t) - spp_hub(t) > delta_k.  Derived by
+# derive_miso_seam_ladders.py::derive_spp_neighbour_hourly — byte-for-byte the
+# estimator MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR's PJM entry uses (same
+# _derive_one/qq coupling, same midpoint-depth grid on the same
+# SEAM_FLOW_TRANCHES, same measured EIA-930 flows, same no-wash reconciliation);
+# the ONE degree of freedom exercised is which measured series the coupling
+# reads.  Zero fitted parameters; identical rule-23 [R-FROZEN-DERIVE] trigger.
+#
+# THE DEFECT IT ATTACKS — measured from the miso-232 keeper's own committed
+# sidecars, zero LP (scripts/probes/_miso233_seam_slope_anatomy_phase0.py and
+# _miso233_allseam_slope_attribution_phase0.py).  miso-232 repaired the seam's
+# measured-price decile slope in SIGN but reached only 11 / 8 / 72 % of the
+# measured magnitude, and its non-claim 1 left the magnitude open.  The
+# per-seam decomposition says the shortfall is NOT on the repaired seam:
+#   seam    reconstructed slope d1-d10      MEASURED seam slope
+#   PJM     +2,377 / +2,611 / +2,704 MW     +1,319 / +1,052 / +815 MW
+#   SPP       -414 /   -481 /   -553 MW       +317 /   +466 /   -50 MW
+#   South     -919 / -1,135 /   -827 MW        +72 /    +60 /  +646 MW
+# PJM is already STEEPER than measured (its cheapest decile loses only
+# 194-271 MW to the deliverability envelope, so the "deep bands k=6-8
+# under-clear in cheap hours" reading is falsified).  What cancels it is the
+# two seams still on the INCUMBENT fixed MISO-hub ladder, which carries the
+# exact defect miso-226 named: cleared against the model's OWN price, a fixed
+# ladder leaves merit when MISO's price falls — which is when MISO imports.
+#
+# WHY IT COULD NOT BE DONE BEFORE, AND CAN NOW.  derive_pjm_neighbour_hourly's
+# docstring states the exclusion as a DATA boundary: "no measured SPP or
+# SOCO/TVA price series is held under data/raw".  Lane SPP-14 landed one on
+# 2026-09-06 — data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet,
+# SPPNORTH_HUB / SPPSOUTH_HUB DA+RT hourly, 8,754 of 8,760 hours in each of
+# 2023-2025, from SPP's own portal.spp.org file-browser API — so the boundary
+# has moved for SPP.  Rule 14 [R-ACCURATE] is then directly on point: the
+# incumbent SPP anchor is an ESTIMATE standing in for the neighbour's price and
+# the measured neighbour price now exists.
+#
+# STATED AT THE GATE — this is WEAKER evidence than the PJM case was.  The
+# miso-231 admissibility statistic does not transfer: corr(measured SPP seam
+# flow, MISO DA - SPP hub DA) = +0.041 / -0.020 / +0.050, against
+# corr(flow, MISO DA) = -0.216 / -0.377 / +0.082 and against the PJM spread's
+# +0.240 / +0.265 / +0.194.  The spread is UNINFORMATIVE about this seam's
+# hourly flow; what it does is remove the WRONG-SIGNED response rather than
+# supply a right-signed one (simulated-vs-measured flow correlation
+# -0.213 / -0.289 / +0.065 -> +0.011 / -0.107 / +0.050).  The case is
+# structural and rule-14, never the statistic, and it is recorded here so no
+# later reader mistakes one for the other.
+#
+# THE ANCHOR HUB IS SPPNORTH_HUB, named on TOPOLOGY before any ladder existed
+# (rule 14's misalignment clause): the seam is one collapsed link hosted on the
+# MISO_external (Midwest) bus, so its MISO-facing counterparty is SPP North.
+# SPPSOUTH_HUB is computed as a sensitivity in the phase-0 probe and selects
+# nothing — choosing the hub that scored better would be the fitted-mechanism
+# selection rule 1 [R-STRUCT] forbids.
+#
+# SOUTH REMAINS EXCLUDED and remains a DATA boundary: SOCO and TVA are not
+# organised markets and publish no hub or nodal price, so no measured series
+# exists to anchor that seam on.  It keeps the incumbent ladder.
+#
+# Entries here OVERLAY the per-year table and DISPLACE the annual neighbour
+# overlay on any row they cover (alternatives, never stacked — rule 19
+# [R-ONE-MECH]).  Gated by ScenarioConfig.miso_seam_neighbour_hourly_spp, a
+# SUB-GATE of miso_seam_neighbour_hourly_ladder (never armed apart from its
+# family); byte-identical when False, and a no-op for any year absent here or
+# when the measured hub series is unavailable.
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2023: {
+        "SPP": {
+            "import": (14.10, 32.64, 54.43, 85.36, 145.25, 185.08, 185.08, 185.08),
+            "export": (
+                -4.20,
+                -24.96,
+                -47.33,
+                -92.59,
+                -241.46,
+                -521.38,
+                -521.38,
+                -521.38,
+            ),
+        },
+    },
+    2024: {
+        "SPP": {
+            "import": (14.49, 35.59, 78.29, 212.51, 290.73, 290.73, 290.73, 290.73),
+            "export": (-2.15, -19.39, -33.38, -42.97, -54.84, -64.17, -70.15, -83.23),
+        },
+    },
+    2025: {
+        "SPP": {
+            "import": (21.85, 46.55, 87.43, 169.08, 216.02, 252.76, 276.99, 345.40),
+            "export": (
+                1.04,
+                -14.46,
+                -29.20,
+                -45.92,
+                -125.99,
+                -316.80,
+                -515.34,
+                -515.34,
+            ),
+        },
+    },
+}
+
+#: The pooled 2023-2025 HOURLY neighbour-anchored SPP offsets — the FORWARD
+#: story (rule 13 [R-MEASURED]): the multi-year revealed spread structure a
+#: forecast year regenerates from, the same two-track design every other MISO
+#: seam ladder uses.
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_POOLED: dict[
+    str, dict[str, tuple[float, ...]]
+] = {
+    "SPP": {
+        "import": (16.26, 36.58, 64.00, 133.20, 196.48, 237.83, 271.99, 338.83),
+        "export": (-0.74, -17.19, -31.07, -43.76, -59.56, -82.03, -94.69, -128.06),
+    },
+}
+
+
 #: The pooled 2023-2025 neighbour-anchored PJM ladder — the FORWARD story
 #: (rule 13): the multi-year revealed neighbour-priced seam structure a forecast
 #: year regenerates from, the same two-track design the incumbent ladder uses.
