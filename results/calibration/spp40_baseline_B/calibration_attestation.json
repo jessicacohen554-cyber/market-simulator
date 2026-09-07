@@ -1,0 +1,170 @@
+{
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 3,
+    "n_residual": 1,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "measured-physical",
+        "lineage_solves": "1 (this bundle; first SPP solve ever) + 1 rule-29 screen (2024)",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 0,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "note": "IDENTITY for SPP: 1.0 on every band (committed / econ_low / econ_high / peak) of every class SPP carries \u2014 CC_REGULAR, CC_CHP, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP via _neutralize_generic_gas_bands and COAL via the SPP-40 rule-25 _SPP_OFFER_CURVE merge (the generic ERCOT-fitted COAL 0.90/0.95/1.10/1.45 entry SPP had inherited was measured on the phase-0 offer census and replaced by 1.0 BEFORE any solve). Every tranche therefore offers at its own measured heat rate x measured delivered fuel + VOM. The only non-identity values in the dict sit on classes SPP has NO unit in (CC_INTERMEDIATE, CT_INTERMEDIATE, ST_GAS_INTERMEDIATE, COAL_PRB/BIT/LIGNITE/WC) and are provably inert. Structural shares (econ_low_share, pct_peaking) are generic and are not bands; per-plant committed / must-run / peaking shares come from thermal_tranches_SPP.csv (SPP-30, rule 23). Zero tuned scalars; authorized_price_tuning = NONE."
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "measured-physical",
+        "lineage_solves": "1 (this bundle; first SPP solve ever) + 1 rule-29 screen (2024)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 0,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "note": "INERT for SPP: the n=6 / exp=1.0 econ-ramp interpolates between econ_low and econ_high, and both are 1.0 on every SPP class, so the ramp has zero span. Recorded because the fields exist in run_config; no shape was chosen and none can act."
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": "1 (this bundle; first SPP solve ever) + 1 rule-29 screen (2024)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page",
+        "note": "INHERITED generic default (backcast_config.py: 1.0 for MISO, 0.7 for every other ISO), NOT re-chosen by SPP-40 and NOT identified on any SPP residual \u2014 none existed. It scales the statistical forced-outage rate that sits on top of SPP's measured unit-level CAMPD outage overlay (SPP-30: 97.9 % of qualifying MW). Neither 0.7 nor 1.0 has an SPP identification, so the default is kept and the entry is carried at full magnitude as residual-sourced with the standing audit C-15 root cause (the successor is the overlay/statistical double-count repair wefor_residual names \u2014 a desk lever, not this lane's). This is the ONE residual-sourced row in SPP's ledger; the PRECOMMIT expected zero and this row is why it reads one."
+      }
+    ],
+    "lineage_note": "SPP-40 is the FIRST SPP solve of any kind (2026-09-07): lineage = 1 full-span solve + 1 one-year rule-29 screen (2024, deleted before merge). No SPP residual existed when any value in this recipe was fixed; every entry below is an inherited generic default, a measured SPP input, or the identity. PRECOMMIT-spp-40-2026-09-07.md \u00a76 declared this ledger before the solve."
+  },
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "authorized_price_tuning": null,
+    "authorized_price_tuning_declared": "NONE. No offer_curve_by_group band (or any other value) in this run was set by looking at a price residual: this is the first SPP solve and no SPP residual existed before it. Every band SPP carries is the identity 1.0 (rule 25 [R-ISO-SCOPE]); rule 1's carve-out is not invoked and there is nothing to declare under it (plan \u00a77 G5 asks for the declaration even as NONE, so it is written here explicitly).",
+    "attested_by": "SPP-40 (2026-09-07), the FIRST SPP solve and the first SPP keeper: the all-defaults backcast recipe (PRECOMMIT-spp-40-2026-09-07.md \u00a72, pushed at commit 45d02b0e BEFORE the solve) on the two-zone SPP topology with the SPP-53 N<->S link at 3,400 MW, measured EIA-930 SWPP demand + served Total interchange (P2), measured CAMPD unit-outage windows and thermal-tranche shares (SPP-30), measured EIA-923 delivered fuel, the per-zone NASA POWER wind shape and MMU reference curtailment rate (SPP-32), and every offer band at 1.0. Control = none (P7): this bundle IS the rule-29(b) control for every later SPP lane. Rule 29 satisfied: zero-LP phase 0 (fleet / offer / demand / footprint census), a ONE-year screen on 2024 (named in the PRECOMMIT on the corridor's largest measured hub spread, never on a residual) graded on the four structural STOP legs of PRECOMMIT \u00a73 and nothing else, then the full span --year 2023 2024 2025 in ONE invocation, years sequential (rule 12/16). No floor, bridge, adder, seam ladder, scarcity overlay or reserve product is armed. outage_source=historic (measured CAMPD windows), no pinning of any output to an actual. Every criterion is reported at full magnitude in FINDING-spp-40-2026-09-07.md."
+  },
+  "disclosures": {
+    "note": "SPP-40 disclosures \u2014 reported, not patched (rules 1/13/14).",
+    "input_artifacts_named_before_the_solve": [
+      "2023-06-12 21:00 local: the EIA-930 SWPP 100x unit slip. Demand is REPAIRED by the live 2.5x spike screen; the NG:WND slip is NOT screened on the model's wind-input path (CF 0.96 in that hour, +27 GWh of phantom wind, 0.024 % of 2023 wind potential) nor on the C1/bench e930 path (SPP-31 \u00a73.3/\u00a75a open): C1 wind 2023 is scored against an actual inflated by 3.59 TWh. Routed to SPP-DESK; nothing tuned.",
+      "2024-07-18 15:00 -> 07-19 00:00 local: a 9-hour served-demand plateau at 43,094-43,105 MW then a 10 GW step (the audit's 'partial dropout'); P9 routed to the audit track; passes through.",
+      "2025-06-21 05:00 (audit: 1,505 MW): NOT present in the served series (min in +-12 h = 34,446 MW).",
+      "2025 hydro budget reads 0.023 TWh (EIA-923 preliminary vintage; SPP-31 \u00a71.2) against ~8.8 TWh actual: 2025 hydro is missing from the dispatch and C1 hydro 2025 reads at full magnitude."
+    ],
+    "inherited_defaults_shared_by_every_iso": [
+      "wefor_multiplier 0.7 (ledgered residual, audit C-15)",
+      "SUMMER_WEFOR_SHARE 0.30 (uncited generic constant; MISO replaced it for MISO only)",
+      "wind dispatch offer -$26/MWh (IRA/PTC dispatch credit; wind_ptc_vintage_offers default-off)",
+      "coal must-run tranche offered at VOM only (fuel sunk on the measured must-run share)"
+    ],
+    "hub_spread_limitation": "SPPNORTH_HUB ~ Nebraska, SPPSOUTH_HUB ~ central Oklahoma (audit \u00a76.1): the N-S hub spread is a two-point spread, not a zonal price; it screens the link's direction/season only."
+  },
+  "exceptions": []
+}

@@ -1,0 +1,6 @@
+case,year,emissions_mt,import_co2_mt_reported,unserved_mwh,co2_cap_price_usd_per_t,n_co2_caps_binding,nox_tonnes,so2_tonnes,peak_price,curtailment_twh,storage_cycles,clean_share,negative_price_hours,avg_price_usd_per_mwh,backstop_built_mw,backstop_built_mwh,generation_twh
+VOL-MID,2026,23.6954,10.450569,0.0,0.0,0,5783.6,202.99,68.97,0.0,9.74,0.3924,0.0,49.24,0,0.0,154.1239
+VOL-MID,2027,24.5913,10.153614,0.0,0.0,0,6065.37,208.29,67.01,0.0,9.34,0.3879,0.0,48.27,0,0.0,155.9436
+VOL-MID,2028,17.163,10.539266,0.0,0.0,0,6215.28,215.97,69.39,0.0,7.6,0.5205,0.0,50.02,0,0.0,157.7805
+VOL-MID,2029,13.7079,9.811155,0.0,0.0,0,5416.0,188.16,72.4,0.0,13.89,0.5863,0.0,48.21,0,0.0,159.6653
+VOL-MID,2030,10.9042,11.075982,0.0,0.0,0,5616.74,189.71,80.83,0.0,14.57,0.6227,0.0,53.78,0,0.0,161.5531

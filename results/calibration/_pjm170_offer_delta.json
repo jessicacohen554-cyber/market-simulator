@@ -1,0 +1,16 @@
+{
+ "year": 2022,
+ "n_gen_rows": 3405,
+ "hours": 8760,
+ "n_directly_priced_rows": 243,
+ "n_rows_changed": 243,
+ "n_rows_changed_outside_set": 0,
+ "unit_ids_changed_outside_set": [],
+ "n_cells_changed": 2128680,
+ "n_cells_changed_outside_set": 0,
+ "mean_delta_mc_usd_mwh": -9.226725748660657,
+ "min_delta_mc_usd_mwh": -43.91263457635765,
+ "max_delta_mc_usd_mwh": -2.1066103588705154,
+ "directly_priced_pmax_mw": 25504.284699999986,
+ "s4a_pass": true
+}

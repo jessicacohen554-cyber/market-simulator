@@ -117,9 +117,20 @@ price) — and whether to run it in this session or a fresh one.
   missing, the aggregate written, the intertie rows) is in the caiso-261
   closing addendum of `docs/calibration-log/caiso.md`.
 * **RTM 2022 → a fresh session** on this charter: size the hour-group
-  delivery first (`RTM_LMP_GRP` at `version=3` was 7 groups/day in the
-  tracked Jan-2023 zips; at `version=1` one operating hour per request), then
-  crawl with `--market rtm`, fold, `postprocess_oasis_downloads.py`,
-  `derive_actual_lmp.py` (RT + DA), `derive_actual_tail.py`.
+  delivery first, then crawl with `--market rtm`, fold,
+  `postprocess_oasis_downloads.py`, `derive_actual_lmp.py` (RT + DA),
+  `derive_actual_tail.py`.
+  **SIZED 2026-09-07 (caiso-262, `ADDENDUM-caiso262-rtm-sizing-2026-09-07.md`):
+  `version=3` is ONE OPERATING HOUR PER REQUEST, exactly as `version=1` is** —
+  24 requests on 2022-06-01 returned 24 archives whose group index tracks
+  `OPR_HR` exactly, 210.0 MB and 292 s for the trade date. *(This bullet
+  previously said v3 "was 7 groups/day in the tracked Jan-2023 zips". That was
+  a miscount of how many hours had been hand-downloaded on some dates — the
+  tracked `SHA256SUMS.txt` carries group indices `01`…`24` — and there is no
+  cheaper version: the year is 8,760 requests, exactly as §4 sized it.)* The
+  crawl uses **v3** on rule 14 `[R-ACCURATE]`: v3 alone carries `MGHG`, which
+  the committed 2023–2025 RTM aggregates all populate (v1 returns one member
+  with the other four types and the price column named `MW`; v3 returns five
+  per-type members and names it `VALUE`, which the fold now normalises).
 
 **RESULT (2026-09-07):** DAM 2022 crawled 365 / 365, 0 missing, 1.56 h; `CAISO_dam_hourly_2022.csv` (87,600 rows, 10 nodes) and the 2022 MALIN / PALOVRDE rows in `wecc_intertie_lmp_hourly_CAISO.parquet` committed; 2023–2026 inputs byte-/row-identical. H-3 is CLOSED. H-2 (RT) waits on the RTM crawl — fresh session.

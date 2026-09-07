@@ -468,14 +468,31 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--acceptance", action="store_true")
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument(
+        "--extra-years",
+        nargs="+",
+        type=int,
+        default=[],
+        help="ALSO emit these years' own per-year rows. The POOLED (year = 0) "
+        "rows stay computed over YEARS alone, so the forecast-mode fallback "
+        "surface and every committed train-year row are byte-unchanged — an "
+        "extra year gets its own measured surface and changes nothing else "
+        "(rule 23 [R-FROZEN-DERIVE]). caiso-262 uses it for the rule-22 2022 "
+        "validation touchpoint, which is derivable because caiso-261 landed "
+        "CAISO_dam_hourly_2022.csv from the OASIS GroupZip DAM archives; "
+        "without its own rows a 2022 solve silently falls back to the pooled "
+        "surface while 2023-2025 ride their own measured one.",
+    )
     args = ap.parse_args(argv)
 
-    frames = {year: _load_components(year) for year in YEARS}
+    extra = tuple(y for y in dict.fromkeys(args.extra_years) if y not in YEARS)
+    frames = {year: _load_components(year) for year in (*YEARS, *extra)}
 
     rows: list[dict] = []
-    for year in YEARS:
+    for year in (*YEARS, *extra):
         rows.extend(_deviation_rows({year: frames[year]}, year))
-    rows.extend(_deviation_rows(frames, POOLED_YEAR))
+    # POOLED over YEARS ONLY — never over the extra years (see --extra-years).
+    rows.extend(_deviation_rows({y: frames[y] for y in YEARS}, POOLED_YEAR))
     surface = pd.DataFrame(rows).sort_values(["year", "zone", "month"])
 
     out_path = Path(args.out)

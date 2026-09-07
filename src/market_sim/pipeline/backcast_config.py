@@ -157,12 +157,31 @@ def _neutralize_generic_gas_bands(
 # iso == "SPP" only, so every other ISO is byte-identical (PJM / CAISO /
 # NEISO / NYISO deliberately keep the generic coal bands — "coal keep the
 # generic defaults" — so the generic entry itself is not edited).
+#
+# EXTENDED to the supply-class coal entries by lane SPP-42 (2026-09-07,
+# FINDING-spp-40 §7.3 R-7): once ``data/raw/_processed-legacy/
+# coal_supply_SPP.csv`` (scripts/data/derive_coal_supply.py --iso SPP, the
+# EIA-923 fuel-rank derive every other coal ISO carries) tags each SPP coal
+# plant ``prb`` / ``lignite``, ``data.offer_curves`` resolves its curve
+# through ``fleet._COAL_SUPPLY_TO_CURVE`` to the COAL_PRB / COAL_LIGNITE
+# entry INSTEAD of the bare COAL one — and the generic COAL_PRB /
+# COAL_LIGNITE / COAL_BIT / COAL_WC entries are the same ERCOT-fitted lineage
+# (rule 25). So the identity is carried on all five coal keys, with the
+# structural ``econ_low_share`` held at the value the SPP plants read from
+# the generic COAL entry before the crosswalk (a plant's dispatch class label
+# moves; nothing it offers does — the zero-LP census in
+# docs/handoffs/FINDING-spp-42-2026-09-07.md §1 pins mc_base byte-identical).
+_SPP_COAL_IDENTITY_BANDS: dict[str, float] = {
+    "committed": 1.0,
+    "econ_low": 1.0,
+    "econ_high": 1.0,
+    "peak": 1.0,
+}
 _SPP_OFFER_CURVE: dict[str, dict[str, float]] = {
-    "COAL": {
-        "committed": 1.0,
-        "econ_low": 1.0,
-        "econ_high": 1.0,
-        "peak": 1.0,
+    "COAL": dict(_SPP_COAL_IDENTITY_BANDS),
+    **{
+        cls: {**_SPP_COAL_IDENTITY_BANDS, "econ_low_share": 0.55}
+        for cls in ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC")
     },
 }
 

@@ -1,0 +1,172 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session — audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20); carried unchanged from the spp-1 keeper by lane SPP-42 (2026-09-07) — the two SPP-42 changes are zero-DOF inputs and add no entry",
+  "n_entries": 3,
+  "n_residual": 1,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "measured-physical",
+    "lineage_solves": "2 full-span bundles (spp40_baseline_B, this bundle) + 2 rule-29 screens (2024 at SPP-40, 2025 at SPP-42)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 0,
+    "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "note": "IDENTITY for SPP: 1.0 on every band (committed / econ_low / econ_high / peak) of every class SPP carries — CC_REGULAR, CC_CHP, CT_CHP, CT_PEAKER, ST_GAS, ST_CHP via _neutralize_generic_gas_bands, and ALL FIVE coal keys (COAL, COAL_PRB, COAL_LIGNITE, COAL_BIT, COAL_WC) via the SPP-scoped _SPP_OFFER_CURVE merge. SPP-42 (2026-09-07) extended the merge from COAL alone to the supply-class keys because the new coal_supply_SPP.csv crosswalk (EIA-923 rank: 27 plants prb, 2 lignite; scripts/data/derive_coal_supply.py) routes each SPP coal plant's offer curve through fleet._COAL_SUPPLY_TO_CURVE to COAL_PRB / COAL_LIGNITE — entries that are the same ERCOT-fitted lineage as the generic COAL one (rule 25). The structural econ_low_share on those keys is held at 0.55, the value SPP coal read from the generic COAL entry before the crosswalk. Proven inert on the LP: the zero-LP before/after fleet_only census (FINDING-spp-42-2026-09-07.md §1) finds mc_base, fuel_prices, availability, min_gen and every bound byte-identical for all 1,127-1,151 LP units in each of 2023/2024/2025. Every tranche offers at its own measured heat rate x measured delivered fuel + VOM; per-plant must-run / committed / peaking shares come from thermal_tranches_SPP.csv (SPP-30, rule 23). Zero tuned scalars; authorized_price_tuning = NONE."
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "measured-physical",
+    "lineage_solves": "2 full-span bundles (spp40_baseline_B, this bundle) + 2 rule-29 screens (2024 at SPP-40, 2025 at SPP-42)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 0,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "note": "INERT for SPP: the n=6 / exp=1.0 econ-ramp interpolates between econ_low and econ_high, and both are 1.0 on every SPP class, so the ramp has zero span. Recorded because the fields exist in run_config; no shape was chosen and none can act."
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": "2 full-span bundles (spp40_baseline_B, this bundle) + 2 rule-29 screens (2024 at SPP-40, 2025 at SPP-42)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) — the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page",
+    "note": "INHERITED generic default (backcast_config.py: 1.0 for MISO, 0.7 for every other ISO), NOT re-chosen by SPP-40 and NOT identified on any SPP residual — none existed. It scales the statistical forced-outage rate that sits on top of SPP's measured unit-level CAMPD outage overlay (SPP-30: 97.9 % of qualifying MW). Neither 0.7 nor 1.0 has an SPP identification, so the default is kept and the entry is carried at full magnitude as residual-sourced with the standing audit C-15 root cause (the successor is the overlay/statistical double-count repair wefor_residual names — a desk lever, not this lane's). This is the ONE residual-sourced row in SPP's ledger; the PRECOMMIT expected zero and this row is why it reads one."
+   }
+  ],
+  "lineage_note": "SPP-40 is the FIRST SPP solve of any kind (2026-09-07): lineage = 1 full-span solve + 1 one-year rule-29 screen (2024, deleted before merge). No SPP residual existed when any value in this recipe was fixed; every entry below is an inherited generic default, a measured SPP input, or the identity. PRECOMMIT-spp-40-2026-09-07.md §6 declared this ledger before the solve."
+ },
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "authorized_price_tuning": null,
+  "authorized_price_tuning_declared": "NONE. No offer_curve_by_group band (or any other value) in this run was set by looking at a price residual. Every band SPP carries is the identity 1.0 (rule 25 [R-ISO-SCOPE]), on all five coal keys since SPP-42; rule 1's carve-out is not invoked and there is nothing to declare under it (plan §7 G5 asks for the declaration even as NONE, so it is written here explicitly).",
+  "attested_by": "SPP-42 (2026-09-07): the spp-1 keeper recipe (PRECOMMIT-spp-40-2026-09-07.md §2 — two-zone SPP, SPP-53 N<->S link 3,400 MW, measured EIA-930 SWPP demand + served Total interchange, measured CAMPD unit-outage windows and thermal-tranche shares, measured EIA-923 delivered fuel, the SPP-32 wind shape and reference curtailment rate, every offer band 1.0) plus TWO zero-DOF measured-input changes routed by FINDING-spp-40 §7.3: (R-7) the SPP coal supply-class crosswalk data/raw/_processed-legacy/coal_supply_SPP.csv (EIA-923 fuel rank -> prb / lignite, the derive every other coal ISO carries; rule 23 — keyed on source data, never a residual), proven byte-identical on every LP input by the phase-0 census and therefore a SCORING-CLASS change only; and (R-8) the hydro vintage repair --hydro-backfill-year 2024 --hydro-eia930-monthly (the pair every multi-year keeper carries; rule 13/14 — the measured EIA-930 NG:WAT monthly level, 8.3441 / 8.9731 / 8.8299 TWh, replaces the EIA-923 0.0233 TWh preliminary 2025 vintage and re-pins 2023/2024 by -0.056 / +0.271 TWh), applied to EVERY year of the span as rule 22 requires of a measured input. Rule 29: zero-LP phase 0 (the census), ONE screen on 2025 (the year the hydro repair's footprint is largest, +8.8 TWh; the crosswalk is LP-inert in every year so it needed no screen) graded on the charter's STOP gate, then the full span --year 2023 2024 2025 in ONE invocation, years sequential (rules 12/16). Control = the spp-1 keeper's committed bundle (rule 29(b) form 4; the only solve-path hunk since its git_sha is this lane's own SPP-scoped identity merge, INERT by the census). No floor, bridge, adder, seam ladder, scarcity overlay or reserve product is armed; no band, floor, adder or the 3,400 MW TTC was moved; nothing was tuned against a residual. Every criterion is reported at full magnitude in FINDING-spp-42-2026-09-07.md."
+ },
+ "disclosures": {
+  "note": "SPP-42 disclosures — reported, not patched (rules 1/13/14). Inherits SPP-40's.",
+  "input_artifacts_named_before_the_solve": [
+   "2023-06-12 21:00 local: the EIA-930 SWPP 100x unit slip. Demand is REPAIRED by the live 2.5x spike screen; the NG:WND slip is NOT screened on the model's wind-input path (CF 0.96 in that hour, +27 GWh of phantom wind, 0.024 % of 2023 wind potential) nor on the C1/bench e930 path (SPP-31 §3.3/§5a open): C1 wind 2023 is scored against an actual inflated by 3.59 TWh. Routed to SPP-DESK; nothing tuned.",
+   "2024-07-18 15:00 -> 07-19 00:00 local: a 9-hour served-demand plateau at 43,094-43,105 MW then a 10 GW step (the audit's 'partial dropout'); P9 routed to the audit track; passes through.",
+   "2025-06-21 05:00 (audit: 1,505 MW): NOT present in the served series (min in +-12 h = 34,446 MW).",
+   "2025 hydro budget: REPAIRED by SPP-42 (R-8). EIA-923 2025 read 0.0233 TWh (1 plant; preliminary vintage, SPP-31 §1.2) against EIA-930 NG:WAT 8.8299 TWh; --hydro-backfill-year 2024 carries the 21 non-reporting plants (8,682 GWh) and --hydro-eia930-monthly pins the monthly level to the measured 8,829.9 GWh. 2023/2024 are re-pinned from EIA-923 HY 8.4003 / 8.7023 to EIA-930 8.3441 / 8.9731 TWh (the same measured series in every year).",
+   "EIA-930 SWPP `Demand` carries STUCK (identical-value) runs the served series inherits — a forward-filled / frozen feed, NOT a spike, so the live 2.5x spike screen does not see it: 2023 36 h in 5 runs (longest 12 h); 2024 396 h in 11 runs (longest 96 h from 2024-03-19); 2025 698 h in 19 runs (longest 155 h, 2025-12-15 14:00 -> 12-22 00:00 at a flat 37,455 MW; 109 h from 05-19; 82 h from 10-07). `Net generation` is flat in the same windows while `Demand forecast` varies hour by hour (153 distinct values in the December window). The keeper's six 2025 unserved hours and the screen's residual hour (2025-12-21 11:00) sit INSIDE the 155-hour December window. Found by SPP-42's screen census; ROUTED to SPP-DESK as a P9-class demand-path item beside the h3907 NG:WND slip (a src/ screen with cache-key risk); nothing repaired in this lane."
+  ],
+  "inherited_defaults_shared_by_every_iso": [
+   "wefor_multiplier 0.7 (ledgered residual, audit C-15)",
+   "SUMMER_WEFOR_SHARE 0.30 (uncited generic constant; MISO replaced it for MISO only)",
+   "wind dispatch offer -$26/MWh (IRA/PTC dispatch credit; wind_ptc_vintage_offers default-off)",
+   "coal must-run tranche offered at VOM only (fuel sunk on the measured must-run share)"
+  ],
+  "hub_spread_limitation": "SPPNORTH_HUB ~ Nebraska, SPPSOUTH_HUB ~ central Oklahoma (audit §6.1): the N-S hub spread is a two-point spread, not a zonal price; it screens the link's direction/season only.",
+  "coal_supply_class_crosswalk": "29 SPP coal plants classified from the processed EIA-923 Page-1 generation parquet (dominant rank by net MWh, all vintages, the same signal the benchmark's classFull uses): 27 prb (17,636.7 MW), 2 lignite (2,210.0 MW; plants 2817 and 6469), 0 bituminous / waste, 0 unclassified; coal capacity 19,846.7 MW unchanged. Before the crosswalk the model scored 19,196.7 MW of coal as a bare COAL class the benchmark never has, so C1's COAL_PRB / COAL_LIGNITE rows FAILED by construction and ~70 Mt of coal CO2 fell out of C5a's by-class sum (FINDING-spp-40 §7.3)."
+ },
+ "exceptions": []
+}

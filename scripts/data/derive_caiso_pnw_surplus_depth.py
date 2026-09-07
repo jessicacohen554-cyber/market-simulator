@@ -54,6 +54,9 @@ from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
     corridor_net_import,
     hub_prices,
 )
+from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
+    extra_years as _extra_years,
+)
 
 SUMAS = GAS_PRICES_DIR / "sumas_weekly.csv"
 # Same coupling constants as the south trigger (interchange_config /
@@ -85,23 +88,26 @@ def sumas_hourly(year: int) -> np.ndarray:
 
 def main() -> None:
     """Derive per-year north depths, print the gates, exit 0 PASS / 2 FAIL."""
-    net = corridor_net_import()
-    hub = hub_prices()
+    extra = _extra_years(sys.argv[1:])
+    net = corridor_net_import(years=(*YEARS, *extra))
+    hub = hub_prices(years=(*YEARS, *extra))
     depths: dict[int, float] = {}
     print("=== CAISO north-corridor (WECC_PNW) surplus-clean depth ===")
     print(f"trigger: MALIN < {HR_CCGT:.2f} x Sumas + {REMOTE_VOM}")
-    for yr in YEARS:
+    for yr in (*YEARS, *extra):
         malin = hub.loc[yr]["MALIN"].to_numpy()
         flow = net.loc[yr]["WECC_PNW"].to_numpy()
         floor = HR_CCGT * sumas_hourly(yr) + REMOTE_VOM
         on = np.isfinite(malin) & (malin < floor)
         m = on & np.isfinite(flow)
         depths[yr] = float(np.percentile(flow[m], 95))
+        tag = "  [report-only, outside the gated sample]" if yr in extra else ""
         print(
             f"  {yr}: trigger-ON {on.mean():5.1%} of hours "
-            f"({int(m.sum())} measured) -> p95 depth {depths[yr]:,.0f} MW"
+            f"({int(m.sum())} measured) -> p95 depth {depths[yr]:,.0f} MW{tag}"
         )
 
+    # Gates over the COMMITTED sample only — see extra_years' docstring.
     vals = np.array([depths[y] for y in YEARS])
     cv = float(vals.std() / vals.mean())
     stability_ok = cv <= CV_MAX

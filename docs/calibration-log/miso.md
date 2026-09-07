@@ -12730,3 +12730,84 @@ updated **preliminary EIA-923 vintage** changing the plant-count text on the 202
 **No verdict, caveat or determination moves** — MISO stays CALIBRATED — and the drift originated on
 `main`, not in this session. `check_registry_payload_parity.py` is clean (16 runs, 49 bundle dirs,
 0 tolerated).
+
+## miso-237 (2026-09-07) — the SPP neighbour-state channel is QUANTITY-SIDE, not a price-representation deficiency; handoff item 2's premise is REFUTED on three of four seams; and item 3 gets its first (partial) cause. ZERO LP, no arm, no screen, NO CELL VERDICT MOVES; keeper UNCHANGED
+
+**Keeper UNCHANGED at `2026-09-07-miso-233-spp-hourly`** (bundle `miso233_sppseam_K`),
+DETERMINATION **CALIBRATED**, C3c the single ledgered caveat, DOF ledger **41/2**. Rule 22:
+2023–2025 only; MISO holds no `complete` marker and no out-of-training year was solved, scored or
+registered. MISO carries exactly one registered run (rule 15); nothing registered or pruned.
+
+**Process.** PREREG `PREREG-miso237-price-representation-or-quantity-channel-2026-09-07.md` pushed
+at `887c7cad` **before any adjudicating quantity**; ADDENDUM
+`ADDENDUM-miso237-own-state-purge-and-the-conditioning-leg-2026-09-07.md` pushed at `9b729a6e`
+**before the two supplementary numbers it governs**, and it discloses against interest, before any
+number, that this session's increment is **not** miso-236's `ΔR²_A` and is never presented as it.
+FINDING: `FINDING-miso237-the-channel-is-quantity-side-and-the-own-state-premise-is-refuted-2026-09-07.md`.
+Probe `scripts/probes/_miso237_price_representation_vs_state_phase0.py` →
+`_miso237_price_representation_vs_state_phase0.json`.
+
+**Provenance cleared on both pre-registered legs.** miso-235's `sigma_measured_mw` /
+`sigma_resid_measured_mw` (4 seams × 3 years) reproduce to **0.00 MW** against a 0.5 MW bar;
+miso-236's **gated** `delta_r2_A_nohydro`, recomputed **in miso-236's own metric**, reproduces to
+**0.00005** over all nine PJM/SPP/South × year cells against a 0.005 bar. Unplanned and reported
+for the instrument rather than any verdict: miso-235 §4b's published PJM alignment column
+reproduces **exactly** (model 0.3243 / 0.3143 / 0.2858; measured 0.1260 / 0.1234 / 0.0621).
+
+**Q-1 — the handoff's item-1 FORM question is answered; the miso-236 §6.3 alternative is REFUTED
+for SPP.** Three nested price blocks fixed ex ante: `P1` = the single **linear** spread
+miso-235/236 used; `P2` = the same series **non-parametrically** (20-ventile step), which is the
+**band ladder's own expressive class** (`spec.py` clears band `k` iff `p_bus − p_nbr > delta_k`);
+`P3` = `P2` plus **each leg of the spread separately and non-parametrically** — what only a
+**better price representation** could express, since the merit test sees the difference alone.
+Gated statistic `rho = ΔR²_S|P3 / ΔR²_S|P1` on dof-**ADJUSTED** R² with **rank-based** `k`.
+**SPP: QUANTITY-SIDE FORM** — `rho` 0.822 / 0.782 / 1.933 on increments 0.2891 / 0.1873 / 0.0688
+(bars: `rho ≥ 0.50` and `ΔR²|P3 ≥ 0.05`, all three years). ADDENDUM §B corroborates under
+miso-236's own conditioning at **95 / 96 / 101 %** (`rho_nbr|own` 0.954 / 0.957 / 1.013). So
+miso-236 §5.1's object stands as a **quantity-side measured input** — **not chartered, not sized,
+not named**, and miso-236's 328.6 / 341.7 / 207.5 MW stays un-targetable. **PJM points the other
+way**: its neighbour increment is **59 / 63 / 74 % absorbed** by `P3`, so PJM's neighbour channel
+is substantially a **price** object where SPP's is not; PJM reads MIXED under both conditionings.
+South reads MIXED on the 0.05 floor and its route stays **CLOSED** (miso-236 D-4, corroborated on a
+further statistic, never re-tested — rule 28(a)); Manitoba has no block (MHEB is outside EIA's
+US-BA universe) and `miso_manitoba_seam` stays CLOSED as already-armed.
+
+**Q-2 — handoff item 2's premise is REFUTED on three of four seams and the item splits in two.**
+The model's own solved bus price is **16–39 % own-state** by R², and the model transmits that into
+three of its four seam residuals **more** strongly than the real seams carry it: `R²(r_model|own)`
+vs `R²(r_meas|own)` is 0.2475 / 0.3175 / 0.2450 vs 0.1241 / 0.0888 / 0.1800 on PJM
+(**1.99× / 3.58× / 1.36×**), 0.1294 / 0.2015 / 0.0400 vs 0.0451 / 0.0385 / 0.0499 on South, and
+0.2059 / 0.3445 / 0.1054 vs 0.0715 / 0.2554 / 0.0030 on Manitoba. **SPP is the single seam where
+the model genuinely UNDER-transmits** (0.07–0.28×) — and it is also the seam carrying the
+admissible neighbour-state driver, so the one seam starved of state information is starved of it on
+**both** blocks. Own state is therefore **not an unused input**; the item as filed closes and
+becomes an **over**-transmission defect on PJM and an **under**-transmission one on SPP. Own-state
+form verdicts: PJM and SPP **QUANTITY-SIDE** (gated), South **MIXED** on the 0.05 floor (gated,
+corroborating miso-236's PREDOMINANTLY IDIOSYNCRATIC on a different statistic), Manitoba **MIXED**
+(reported — its increment swings 0.0047–0.2673, which is why the PREREG declined to gate it).
+
+**ADDENDUM §A — queue item 3 gets its first cause and it is half of one.** The model's PJM residual
+carries a large, stable, **negative** own-net-load response (−866.2 / −1043.4 / −843.5 MW per
+z-score) the real seam does not have (+47.4 / −361.1 / +271.5, sign-unstable and 2–18× smaller). On
+the addendum's pre-registered bars, purging the own-state block removes **36 / 62 / 50 %** of the
+model's excess price alignment (`phi` 0.360 / 0.616 / 0.495 → **PARTIAL**: no year under the 0.20
+refutation bar, one year under the 0.50 confirmation bar), taking `|corr|` 0.3243 / 0.3143 / 0.2858
+→ 0.2530 / 0.1967 / 0.1750 against a measured 0.1260 / 0.1234 / 0.0621. The measured side is the
+control and behaves differently — the same purge **raises** the real seam's alignment in 2023 and
+2025. So roughly half the defect miso-236 left uncaused is the spurious own-net-load response and
+roughly half is still unaccounted for; PARTIAL **closes nothing and licenses nothing**. The three
+non-gated seams' `phi` divide by a near-zero alignment gap and are disclosed as **meaningless**.
+
+**Reported, not gated, and declared un-targetable before computation:** a better price
+representation reaches `ΔR²` 0.1642 / 0.1943 / 0.1594 on PJM and 0.0809 / 0.1139 / 0.0232 on SPP
+over the single linear spread, and on PJM most of that is in the **separate legs**
+(`P3−P2` 0.1052 / 0.1516 / 0.0944) rather than the step function of the spread
+(`P2−P1` 0.0591 / 0.0427 / 0.0650).
+
+**Governance.** No lever proposed, none licensed. `P2`/`P3` are **measurement instruments, not
+candidates**, and the §A purge is a **diagnostic projection** — nothing proposes removing a term
+from the model. The PJM and SPP `delta_k` ladders stay derived, frozen and pinned to their derives
+by test (rule 23 `[R-FROZEN-DERIVE]`); PREREG §5.2 and ADDENDUM §A fixed that in advance and it
+binds despite the headroom measured above. Rule 28(b): no verdict moves — evidence appended in
+this session to `seam_neighbour_hourly_ladder` and `seam_flow_envelopes` in MISO's shard only
+(rule 25), plus the §5.4 stamp. C3c untouched and still the designated frontier (2026-07-20).

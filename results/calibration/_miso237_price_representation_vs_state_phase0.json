@@ -1,0 +1,1439 @@
+{
+  "probe": "miso-237 phase 0 \u2014 price representation vs quantity channel on MISO's seams",
+  "prereg": "results/calibration/PREREG-miso237-price-representation-or-quantity-channel-2026-09-07.md (pushed 887c7cad)",
+  "keeper": "2026-09-07-miso-233-spp-hourly",
+  "zero_lp": true,
+  "price_basis": "Indiana hub RT builds the ok mask only (miso-236's hour set); every regressor is Indiana hub DA",
+  "bars": {
+    "provenance_tol_mw": 0.5,
+    "provenance_tol_dr2": 0.005,
+    "rho_quantity_side": 0.5,
+    "rho_price_representation": 0.25,
+    "dr2_absolute_floor": 0.05,
+    "ventiles": 20,
+    "purge_candidate_cause": 0.5,
+    "purge_refute": 0.2
+  },
+  "gated_seams": {
+    "neighbour_block": [
+      "SPP"
+    ],
+    "own_block": [
+      "PJM",
+      "SPP",
+      "South"
+    ]
+  },
+  "seams_with_neighbour_price": [
+    "PJM",
+    "SPP"
+  ],
+  "years": {
+    "2023": {
+      "seams": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0576,
+              "base_rank": 1,
+              "full_r2_adj": 0.1746,
+              "full_rank": 3,
+              "delta_r2_adj": 0.117,
+              "delta_r2_raw": 0.1172
+            },
+            "P2": {
+              "base_r2_adj": 0.1166,
+              "base_rank": 20,
+              "full_r2_adj": 0.2415,
+              "full_rank": 22,
+              "delta_r2_adj": 0.1249,
+              "delta_r2_raw": 0.1248
+            },
+            "P3": {
+              "base_r2_adj": 0.2218,
+              "base_rank": 58,
+              "full_r2_adj": 0.4591,
+              "full_rank": 60,
+              "delta_r2_adj": 0.2374,
+              "delta_r2_raw": 0.2359
+            },
+            "rho_P3_over_P1": 2.029
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0576,
+              "base_rank": 1,
+              "full_r2_adj": 0.0947,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0371,
+              "delta_r2_raw": 0.0373
+            },
+            "P2": {
+              "base_r2_adj": 0.1167,
+              "base_rank": 20,
+              "full_r2_adj": 0.1488,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0322,
+              "delta_r2_raw": 0.0323
+            },
+            "P3": {
+              "base_r2_adj": 0.2218,
+              "base_rank": 58,
+              "full_r2_adj": 0.2538,
+              "full_rank": 60,
+              "delta_r2_adj": 0.032,
+              "delta_r2_raw": 0.0319
+            },
+            "rho_P3_over_P1": 0.863,
+            "n_hours_block": 8759,
+            "neighbour_net_load_coef_given_P3": 266.94
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.3946,
+            "r2_resid_measured_on_own_state_adj": 0.1241,
+            "r2_resid_model_on_own_state_adj": 0.2475,
+            "own_net_load_coef_resid_measured": 47.4,
+            "own_net_load_coef_resid_model": -866.18
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0576,
+            "r2_P2_adj": 0.1166,
+            "r2_P3_adj": 0.2218,
+            "delta_P2_over_P1": 0.0591,
+            "delta_P3_over_P1": 0.1642,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.3243,
+            "alignment_model_purged": 0.253,
+            "alignment_measured": 0.126,
+            "alignment_measured_purged": 0.1745,
+            "gap_model_minus_measured": 0.1983,
+            "phi_movement_fraction": 0.36,
+            "gated": true
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 0.41,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.1686,
+              "P3": 0.0692
+            },
+            "rho_own_given_nbr": 1.105,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.2485,
+              "P3": 0.2746
+            }
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0016,
+              "base_rank": 1,
+              "full_r2_adj": 0.1801,
+              "full_rank": 3,
+              "delta_r2_adj": 0.1786,
+              "delta_r2_raw": 0.1787
+            },
+            "P2": {
+              "base_r2_adj": 0.0037,
+              "base_rank": 20,
+              "full_r2_adj": 0.1869,
+              "full_rank": 22,
+              "delta_r2_adj": 0.1832,
+              "delta_r2_raw": 0.183
+            },
+            "P3": {
+              "base_r2_adj": 0.0825,
+              "base_rank": 58,
+              "full_r2_adj": 0.1973,
+              "full_rank": 60,
+              "delta_r2_adj": 0.1149,
+              "delta_r2_raw": 0.1143
+            },
+            "rho_P3_over_P1": 0.643
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0016,
+              "base_rank": 1,
+              "full_r2_adj": 0.3535,
+              "full_rank": 3,
+              "delta_r2_adj": 0.3519,
+              "delta_r2_raw": 0.352
+            },
+            "P2": {
+              "base_r2_adj": 0.0037,
+              "base_rank": 20,
+              "full_r2_adj": 0.3552,
+              "full_rank": 22,
+              "delta_r2_adj": 0.3516,
+              "delta_r2_raw": 0.3509
+            },
+            "P3": {
+              "base_r2_adj": 0.0825,
+              "base_rank": 58,
+              "full_r2_adj": 0.3715,
+              "full_rank": 60,
+              "delta_r2_adj": 0.2891,
+              "delta_r2_raw": 0.2873
+            },
+            "rho_P3_over_P1": 0.822,
+            "n_hours_block": 8759,
+            "neighbour_net_load_coef_given_P3": -359.77
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.3946,
+            "r2_resid_measured_on_own_state_adj": 0.1764,
+            "r2_resid_model_on_own_state_adj": 0.0498,
+            "own_net_load_coef_resid_measured": -296.63,
+            "own_net_load_coef_resid_model": -51.15
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0016,
+            "r2_P2_adj": 0.0037,
+            "r2_P3_adj": 0.0825,
+            "delta_P2_over_P1": 0.0021,
+            "delta_P3_over_P1": 0.0809,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0244,
+            "alignment_model_purged": 0.0342,
+            "alignment_measured": 0.1141,
+            "alignment_measured_purged": 0.0155,
+            "gap_model_minus_measured": -0.0897,
+            "phi_movement_fraction": 0.109,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 0.954,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.3252,
+              "P3": 0.3102
+            },
+            "rho_own_given_nbr": 0.896,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.1518,
+              "P3": 0.136
+            }
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0007,
+              "base_rank": 1,
+              "full_r2_adj": 0.0472,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0465,
+              "delta_r2_raw": 0.0467
+            },
+            "P2": {
+              "base_r2_adj": 0.0285,
+              "base_rank": 20,
+              "full_r2_adj": 0.0686,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0401,
+              "delta_r2_raw": 0.0402
+            },
+            "P3": {
+              "base_r2_adj": 0.0285,
+              "base_rank": 20,
+              "full_r2_adj": 0.0686,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0401,
+              "delta_r2_raw": 0.0402
+            },
+            "rho_P3_over_P1": 0.862
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0007,
+              "base_rank": 1,
+              "full_r2_adj": 0.0295,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0288,
+              "delta_r2_raw": 0.029
+            },
+            "P2": {
+              "base_r2_adj": 0.0285,
+              "base_rank": 20,
+              "full_r2_adj": 0.0586,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0301,
+              "delta_r2_raw": 0.0302
+            },
+            "P3": {
+              "base_r2_adj": 0.0285,
+              "base_rank": 20,
+              "full_r2_adj": 0.0586,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0301,
+              "delta_r2_raw": 0.0302
+            },
+            "rho_P3_over_P1": 1.045,
+            "n_hours_block": 8760,
+            "neighbour_net_load_coef_given_P3": -133.03
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.3935,
+            "r2_resid_measured_on_own_state_adj": 0.0451,
+            "r2_resid_model_on_own_state_adj": 0.1294,
+            "own_net_load_coef_resid_measured": 13.11,
+            "own_net_load_coef_resid_model": 73.14
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0007,
+            "r2_P2_adj": 0.0285,
+            "r2_P3_adj": 0.0285,
+            "delta_P2_over_P1": 0.0278,
+            "delta_P3_over_P1": 0.0278,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.1201,
+            "alignment_model_purged": 0.0497,
+            "alignment_measured": 0.0002,
+            "alignment_measured_purged": 0.0226,
+            "gap_model_minus_measured": 0.1199,
+            "phi_movement_fraction": 0.587,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 1.038,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.1159,
+              "P3": 0.1203
+            },
+            "rho_own_given_nbr": 0.975,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.1336,
+              "P3": 0.1303
+            }
+          }
+        },
+        "Manitoba": {
+          "covered_dibas": [],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0987,
+              "base_rank": 1,
+              "full_r2_adj": 0.1898,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0911,
+              "delta_r2_raw": 0.0913
+            },
+            "P2": {
+              "base_r2_adj": 0.1264,
+              "base_rank": 20,
+              "full_r2_adj": 0.2065,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0801,
+              "delta_r2_raw": 0.0801
+            },
+            "P3": {
+              "base_r2_adj": 0.1264,
+              "base_rank": 20,
+              "full_r2_adj": 0.2065,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0801,
+              "delta_r2_raw": 0.0801
+            },
+            "rho_P3_over_P1": 0.879
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.3946,
+            "r2_resid_measured_on_own_state_adj": 0.0715,
+            "r2_resid_model_on_own_state_adj": 0.2059,
+            "own_net_load_coef_resid_measured": 195.94,
+            "own_net_load_coef_resid_model": 161.33
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0987,
+            "r2_P2_adj": 0.1264,
+            "r2_P3_adj": 0.1264,
+            "delta_P2_over_P1": 0.0277,
+            "delta_P3_over_P1": 0.0277,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0745,
+            "alignment_model_purged": 0.0368,
+            "alignment_measured": 0.0207,
+            "alignment_measured_purged": 0.0482,
+            "gap_model_minus_measured": 0.0538,
+            "phi_movement_fraction": 0.701,
+            "gated": false
+          }
+        }
+      }
+    },
+    "2024": {
+      "seams": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.07,
+              "base_rank": 1,
+              "full_r2_adj": 0.1545,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0845,
+              "delta_r2_raw": 0.0847
+            },
+            "P2": {
+              "base_r2_adj": 0.1127,
+              "base_rank": 20,
+              "full_r2_adj": 0.1801,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0674,
+              "delta_r2_raw": 0.0674
+            },
+            "P3": {
+              "base_r2_adj": 0.2643,
+              "base_rank": 58,
+              "full_r2_adj": 0.3518,
+              "full_rank": 60,
+              "delta_r2_adj": 0.0875,
+              "delta_r2_raw": 0.0871
+            },
+            "rho_P3_over_P1": 1.036
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.07,
+              "base_rank": 1,
+              "full_r2_adj": 0.106,
+              "full_rank": 3,
+              "delta_r2_adj": 0.036,
+              "delta_r2_raw": 0.0362
+            },
+            "P2": {
+              "base_r2_adj": 0.1127,
+              "base_rank": 20,
+              "full_r2_adj": 0.1327,
+              "full_rank": 22,
+              "delta_r2_adj": 0.02,
+              "delta_r2_raw": 0.0202
+            },
+            "P3": {
+              "base_r2_adj": 0.2645,
+              "base_rank": 58,
+              "full_r2_adj": 0.2791,
+              "full_rank": 60,
+              "delta_r2_adj": 0.0146,
+              "delta_r2_raw": 0.0147
+            },
+            "rho_P3_over_P1": 0.406,
+            "n_hours_block": 8759,
+            "neighbour_net_load_coef_given_P3": 279.88
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.1606,
+            "r2_resid_measured_on_own_state_adj": 0.0888,
+            "r2_resid_model_on_own_state_adj": 0.3175,
+            "own_net_load_coef_resid_measured": -361.1,
+            "own_net_load_coef_resid_model": -1043.37
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.07,
+            "r2_P2_adj": 0.1127,
+            "r2_P3_adj": 0.2643,
+            "delta_P2_over_P1": 0.0427,
+            "delta_P3_over_P1": 0.1943,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.3143,
+            "alignment_model_purged": 0.1967,
+            "alignment_measured": 0.1234,
+            "alignment_measured_purged": 0.083,
+            "gap_model_minus_measured": 0.1909,
+            "phi_movement_fraction": 0.616,
+            "gated": true
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 0.373,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.0426,
+              "P3": 0.0159
+            },
+            "rho_own_given_nbr": 0.974,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.0912,
+              "P3": 0.0888
+            }
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0003,
+              "base_rank": 1,
+              "full_r2_adj": 0.2106,
+              "full_rank": 3,
+              "delta_r2_adj": 0.2103,
+              "delta_r2_raw": 0.2105
+            },
+            "P2": {
+              "base_r2_adj": 0.0246,
+              "base_rank": 20,
+              "full_r2_adj": 0.221,
+              "full_rank": 22,
+              "delta_r2_adj": 0.1963,
+              "delta_r2_raw": 0.196
+            },
+            "P3": {
+              "base_r2_adj": 0.1142,
+              "base_rank": 58,
+              "full_r2_adj": 0.2606,
+              "full_rank": 60,
+              "delta_r2_adj": 0.1464,
+              "delta_r2_raw": 0.1456
+            },
+            "rho_P3_over_P1": 0.696
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0003,
+              "base_rank": 1,
+              "full_r2_adj": 0.2399,
+              "full_rank": 3,
+              "delta_r2_adj": 0.2396,
+              "delta_r2_raw": 0.2398
+            },
+            "P2": {
+              "base_r2_adj": 0.0246,
+              "base_rank": 20,
+              "full_r2_adj": 0.2604,
+              "full_rank": 22,
+              "delta_r2_adj": 0.2357,
+              "delta_r2_raw": 0.2354
+            },
+            "P3": {
+              "base_r2_adj": 0.1142,
+              "base_rank": 58,
+              "full_r2_adj": 0.3015,
+              "full_rank": 60,
+              "delta_r2_adj": 0.1873,
+              "delta_r2_raw": 0.1862
+            },
+            "rho_P3_over_P1": 0.782,
+            "n_hours_block": 8760,
+            "neighbour_net_load_coef_given_P3": -381.26
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.1606,
+            "r2_resid_measured_on_own_state_adj": 0.1914,
+            "r2_resid_model_on_own_state_adj": 0.0132,
+            "own_net_load_coef_resid_measured": -301.92,
+            "own_net_load_coef_resid_model": -34.13
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0003,
+            "r2_P2_adj": 0.0246,
+            "r2_P3_adj": 0.1142,
+            "delta_P2_over_P1": 0.0244,
+            "delta_P3_over_P1": 0.1139,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0087,
+            "alignment_model_purged": 0.0444,
+            "alignment_measured": 0.1062,
+            "alignment_measured_purged": 0.0136,
+            "gap_model_minus_measured": -0.0975,
+            "phi_movement_fraction": 0.366,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 0.957,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.2303,
+              "P3": 0.2204
+            },
+            "rho_own_given_nbr": 0.893,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.2009,
+              "P3": 0.1795
+            }
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0034,
+              "base_rank": 1,
+              "full_r2_adj": 0.0457,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0423,
+              "delta_r2_raw": 0.0425
+            },
+            "P2": {
+              "base_r2_adj": 0.0133,
+              "base_rank": 20,
+              "full_r2_adj": 0.0629,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0496,
+              "delta_r2_raw": 0.0497
+            },
+            "P3": {
+              "base_r2_adj": 0.0133,
+              "base_rank": 20,
+              "full_r2_adj": 0.0629,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0496,
+              "delta_r2_raw": 0.0497
+            },
+            "rho_P3_over_P1": 1.173
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0034,
+              "base_rank": 1,
+              "full_r2_adj": 0.0101,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0067,
+              "delta_r2_raw": 0.0069
+            },
+            "P2": {
+              "base_r2_adj": 0.0133,
+              "base_rank": 20,
+              "full_r2_adj": 0.0205,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0072,
+              "delta_r2_raw": 0.0074
+            },
+            "P3": {
+              "base_r2_adj": 0.0133,
+              "base_rank": 20,
+              "full_r2_adj": 0.0205,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0072,
+              "delta_r2_raw": 0.0074
+            },
+            "rho_P3_over_P1": 1.075,
+            "n_hours_block": 8760,
+            "neighbour_net_load_coef_given_P3": -21.54
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.1611,
+            "r2_resid_measured_on_own_state_adj": 0.0385,
+            "r2_resid_model_on_own_state_adj": 0.2015,
+            "own_net_load_coef_resid_measured": 90.71,
+            "own_net_load_coef_resid_model": 152.72
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0034,
+            "r2_P2_adj": 0.0133,
+            "r2_P3_adj": 0.0133,
+            "delta_P2_over_P1": 0.0099,
+            "delta_P3_over_P1": 0.0099,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.1223,
+            "alignment_model_purged": 0.0007,
+            "alignment_measured": 0.0135,
+            "alignment_measured_purged": 0.0548,
+            "gap_model_minus_measured": 0.1089,
+            "phi_movement_fraction": 1.117,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 1.016,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.0729,
+              "P3": 0.0741
+            },
+            "rho_own_given_nbr": 1.073,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.1085,
+              "P3": 0.1165
+            }
+          }
+        },
+        "Manitoba": {
+          "covered_dibas": [],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0349,
+              "base_rank": 1,
+              "full_r2_adj": 0.3689,
+              "full_rank": 3,
+              "delta_r2_adj": 0.334,
+              "delta_r2_raw": 0.3341
+            },
+            "P2": {
+              "base_r2_adj": 0.1048,
+              "base_rank": 20,
+              "full_r2_adj": 0.3721,
+              "full_rank": 22,
+              "delta_r2_adj": 0.2673,
+              "delta_r2_raw": 0.2668
+            },
+            "P3": {
+              "base_r2_adj": 0.1048,
+              "base_rank": 20,
+              "full_r2_adj": 0.3721,
+              "full_rank": 22,
+              "delta_r2_adj": 0.2673,
+              "delta_r2_raw": 0.2668
+            },
+            "rho_P3_over_P1": 0.8
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.1606,
+            "r2_resid_measured_on_own_state_adj": 0.2554,
+            "r2_resid_model_on_own_state_adj": 0.3445,
+            "own_net_load_coef_resid_measured": 422.32,
+            "own_net_load_coef_resid_model": 251.62
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0349,
+            "r2_P2_adj": 0.1048,
+            "r2_P3_adj": 0.1048,
+            "delta_P2_over_P1": 0.0698,
+            "delta_P3_over_P1": 0.0698,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.1227,
+            "alignment_model_purged": 0.0601,
+            "alignment_measured": 0.0495,
+            "alignment_measured_purged": 0.1191,
+            "gap_model_minus_measured": 0.0732,
+            "phi_movement_fraction": 0.855,
+            "gated": false
+          }
+        }
+      }
+    },
+    "2025": {
+      "seams": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0374,
+              "base_rank": 1,
+              "full_r2_adj": 0.2111,
+              "full_rank": 3,
+              "delta_r2_adj": 0.1737,
+              "delta_r2_raw": 0.1738
+            },
+            "P2": {
+              "base_r2_adj": 0.1024,
+              "base_rank": 20,
+              "full_r2_adj": 0.2844,
+              "full_rank": 22,
+              "delta_r2_adj": 0.1821,
+              "delta_r2_raw": 0.1818
+            },
+            "P3": {
+              "base_r2_adj": 0.1968,
+              "base_rank": 58,
+              "full_r2_adj": 0.533,
+              "full_rank": 60,
+              "delta_r2_adj": 0.3362,
+              "delta_r2_raw": 0.3341
+            },
+            "rho_P3_over_P1": 1.936
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0374,
+              "base_rank": 1,
+              "full_r2_adj": 0.0568,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0195,
+              "delta_r2_raw": 0.0197
+            },
+            "P2": {
+              "base_r2_adj": 0.1023,
+              "base_rank": 20,
+              "full_r2_adj": 0.1263,
+              "full_rank": 22,
+              "delta_r2_adj": 0.024,
+              "delta_r2_raw": 0.0241
+            },
+            "P3": {
+              "base_r2_adj": 0.1968,
+              "base_rank": 58,
+              "full_r2_adj": 0.276,
+              "full_rank": 60,
+              "delta_r2_adj": 0.0792,
+              "delta_r2_raw": 0.0789
+            },
+            "rho_P3_over_P1": 4.062,
+            "n_hours_block": 8758,
+            "neighbour_net_load_coef_given_P3": 562.89
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.2684,
+            "r2_resid_measured_on_own_state_adj": 0.18,
+            "r2_resid_model_on_own_state_adj": 0.245,
+            "own_net_load_coef_resid_measured": 271.46,
+            "own_net_load_coef_resid_model": -843.45
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0374,
+            "r2_P2_adj": 0.1024,
+            "r2_P3_adj": 0.1968,
+            "delta_P2_over_P1": 0.065,
+            "delta_P3_over_P1": 0.1594,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.2858,
+            "alignment_model_purged": 0.175,
+            "alignment_measured": 0.0621,
+            "alignment_measured_purged": 0.1404,
+            "gap_model_minus_measured": 0.2236,
+            "phi_movement_fraction": 0.495,
+            "gated": true
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 0.257,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.162,
+              "P3": 0.0416
+            },
+            "rho_own_given_nbr": 0.944,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.3161,
+              "P3": 0.2985
+            }
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0024,
+              "base_rank": 1,
+              "full_r2_adj": 0.1766,
+              "full_rank": 3,
+              "delta_r2_adj": 0.1742,
+              "delta_r2_raw": 0.1744
+            },
+            "P2": {
+              "base_r2_adj": 0.0168,
+              "base_rank": 20,
+              "full_r2_adj": 0.1797,
+              "full_rank": 22,
+              "delta_r2_adj": 0.1629,
+              "delta_r2_raw": 0.1627
+            },
+            "P3": {
+              "base_r2_adj": 0.0256,
+              "base_rank": 58,
+              "full_r2_adj": 0.2019,
+              "full_rank": 60,
+              "delta_r2_adj": 0.1763,
+              "delta_r2_raw": 0.1753
+            },
+            "rho_P3_over_P1": 1.012
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0024,
+              "base_rank": 1,
+              "full_r2_adj": 0.038,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0356,
+              "delta_r2_raw": 0.0358
+            },
+            "P2": {
+              "base_r2_adj": 0.0168,
+              "base_rank": 20,
+              "full_r2_adj": 0.0616,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0448,
+              "delta_r2_raw": 0.0449
+            },
+            "P3": {
+              "base_r2_adj": 0.0256,
+              "base_rank": 58,
+              "full_r2_adj": 0.0945,
+              "full_rank": 60,
+              "delta_r2_adj": 0.0688,
+              "delta_r2_raw": 0.0686
+            },
+            "rho_P3_over_P1": 1.933,
+            "n_hours_block": 8759,
+            "neighbour_net_load_coef_given_P3": -128.18
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.2684,
+            "r2_resid_measured_on_own_state_adj": 0.1606,
+            "r2_resid_model_on_own_state_adj": 0.0144,
+            "own_net_load_coef_resid_measured": -16.98,
+            "own_net_load_coef_resid_model": -26.95
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0024,
+            "r2_P2_adj": 0.0168,
+            "r2_P3_adj": 0.0256,
+            "delta_P2_over_P1": 0.0144,
+            "delta_P3_over_P1": 0.0232,
+            "ranks": [
+              1,
+              20,
+              58
+            ],
+            "P3_equals_P2_by_data_boundary": false
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0589,
+            "alignment_model_purged": 0.0258,
+            "alignment_measured": 0.0539,
+            "alignment_measured_purged": 0.045,
+            "gap_model_minus_measured": 0.005,
+            "phi_movement_fraction": 6.618,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 1.013,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.1014,
+              "P3": 0.1027
+            },
+            "rho_own_given_nbr": 0.875,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.24,
+              "P3": 0.2101
+            }
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0197,
+              "base_rank": 1,
+              "full_r2_adj": 0.0688,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0491,
+              "delta_r2_raw": 0.0493
+            },
+            "P2": {
+              "base_r2_adj": 0.0346,
+              "base_rank": 20,
+              "full_r2_adj": 0.0812,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0466,
+              "delta_r2_raw": 0.0467
+            },
+            "P3": {
+              "base_r2_adj": 0.0346,
+              "base_rank": 20,
+              "full_r2_adj": 0.0812,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0466,
+              "delta_r2_raw": 0.0467
+            },
+            "rho_P3_over_P1": 0.949
+          },
+          "neighbour_state": {
+            "P1": {
+              "base_r2_adj": 0.0197,
+              "base_rank": 1,
+              "full_r2_adj": 0.033,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0134,
+              "delta_r2_raw": 0.0136
+            },
+            "P2": {
+              "base_r2_adj": 0.0346,
+              "base_rank": 20,
+              "full_r2_adj": 0.0513,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0167,
+              "delta_r2_raw": 0.0168
+            },
+            "P3": {
+              "base_r2_adj": 0.0346,
+              "base_rank": 20,
+              "full_r2_adj": 0.0513,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0167,
+              "delta_r2_raw": 0.0168
+            },
+            "rho_P3_over_P1": 1.246,
+            "n_hours_block": 8759,
+            "neighbour_net_load_coef_given_P3": -173.63
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.1955,
+            "r2_resid_measured_on_own_state_adj": 0.0499,
+            "r2_resid_model_on_own_state_adj": 0.04,
+            "own_net_load_coef_resid_measured": -1.09,
+            "own_net_load_coef_resid_model": 70.84
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0197,
+            "r2_P2_adj": 0.0346,
+            "r2_P3_adj": 0.0346,
+            "delta_P2_over_P1": 0.015,
+            "delta_P3_over_P1": 0.015,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0209,
+            "alignment_model_purged": 0.0841,
+            "alignment_measured": 0.0204,
+            "alignment_measured_purged": 0.0321,
+            "gap_model_minus_measured": 0.0006,
+            "phi_movement_fraction": -113.714,
+            "gated": false
+          },
+          "conditioned_addendum_B_reported_not_gated": {
+            "rho_nbr_given_own": 1.039,
+            "delta_r2_nbr_given_own": {
+              "P1": 0.0525,
+              "P3": 0.0545
+            },
+            "rho_own_given_nbr": 0.957,
+            "delta_r2_own_given_nbr": {
+              "P1": 0.0882,
+              "P3": 0.0845
+            }
+          }
+        },
+        "Manitoba": {
+          "covered_dibas": [],
+          "own_state": {
+            "P1": {
+              "base_r2_adj": 0.0393,
+              "base_rank": 1,
+              "full_r2_adj": 0.0434,
+              "full_rank": 3,
+              "delta_r2_adj": 0.0041,
+              "delta_r2_raw": 0.0044
+            },
+            "P2": {
+              "base_r2_adj": 0.0461,
+              "base_rank": 20,
+              "full_r2_adj": 0.0508,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0047,
+              "delta_r2_raw": 0.0049
+            },
+            "P3": {
+              "base_r2_adj": 0.0461,
+              "base_rank": 20,
+              "full_r2_adj": 0.0508,
+              "full_rank": 22,
+              "delta_r2_adj": 0.0047,
+              "delta_r2_raw": 0.0049
+            },
+            "rho_P3_over_P1": 1.146
+          },
+          "own_state_reported": {
+            "r2_model_bus_price_on_own_state_adj": 0.2684,
+            "r2_resid_measured_on_own_state_adj": 0.003,
+            "r2_resid_model_on_own_state_adj": 0.1054,
+            "own_net_load_coef_resid_measured": -30.61,
+            "own_net_load_coef_resid_model": 55.56
+          },
+          "price_representation_reported_not_gated": {
+            "r2_P1_adj": 0.0393,
+            "r2_P2_adj": 0.0461,
+            "r2_P3_adj": 0.0461,
+            "delta_P2_over_P1": 0.0068,
+            "delta_P3_over_P1": 0.0068,
+            "ranks": [
+              1,
+              20,
+              20
+            ],
+            "P3_equals_P2_by_data_boundary": true
+          },
+          "own_state_purge_addendum_A": {
+            "alignment_model": 0.0012,
+            "alignment_model_purged": 0.0805,
+            "alignment_measured": 0.0171,
+            "alignment_measured_purged": 0.0319,
+            "gap_model_minus_measured": -0.0159,
+            "phi_movement_fraction": 4.983,
+            "gated": false
+          }
+        }
+      }
+    }
+  },
+  "provenance_gate": {
+    "G_P1_max_abs_delta_mw": 0.0,
+    "G_P1_tolerance_mw": 0.5,
+    "G_P2_max_abs_delta_r2": 5e-05,
+    "G_P2_tolerance_r2": 0.005,
+    "G_P2_cells_checked": 9,
+    "PASS": true,
+    "by_year": {
+      "2023": {
+        "PJM": {
+          "sigma_measured_mw": 1615.4,
+          "sigma_measured_mw_miso235": 1615.4,
+          "sigma_resid_measured_mw": 1568.2,
+          "sigma_resid_measured_mw_miso235": 1568.2,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.1701,
+          "delta_r2_A_nohydro_miso236": 0.1701,
+          "max_abs_delta_r2": 5e-05
+        },
+        "SPP": {
+          "sigma_measured_mw": 577.3,
+          "sigma_measured_mw_miso235": 577.3,
+          "sigma_resid_measured_mw": 576.8,
+          "sigma_resid_measured_mw_miso235": 576.8,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.3246,
+          "delta_r2_A_nohydro_miso236": 0.3246,
+          "max_abs_delta_r2": 5e-05
+        },
+        "South": {
+          "sigma_measured_mw": 856.2,
+          "sigma_measured_mw_miso235": 856.2,
+          "sigma_resid_measured_mw": 855.8,
+          "sigma_resid_measured_mw_miso235": 855.8,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.1158,
+          "delta_r2_A_nohydro_miso236": 0.1158,
+          "max_abs_delta_r2": 5e-05
+        },
+        "Manitoba": {
+          "sigma_measured_mw": 819.1,
+          "sigma_measured_mw_miso235": 819.1,
+          "sigma_resid_measured_mw": 777.6,
+          "sigma_resid_measured_mw_miso235": 777.6,
+          "max_abs_delta_mw": 0.0
+        }
+      },
+      "2024": {
+        "PJM": {
+          "sigma_measured_mw": 1563.9,
+          "sigma_measured_mw_miso235": 1563.9,
+          "sigma_resid_measured_mw": 1508.1,
+          "sigma_resid_measured_mw_miso235": 1508.1,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.0478,
+          "delta_r2_A_nohydro_miso236": 0.0478,
+          "max_abs_delta_r2": 0.0
+        },
+        "SPP": {
+          "sigma_measured_mw": 687.3,
+          "sigma_measured_mw_miso235": 687.3,
+          "sigma_resid_measured_mw": 687.2,
+          "sigma_resid_measured_mw_miso235": 687.2,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.2472,
+          "delta_r2_A_nohydro_miso236": 0.2472,
+          "max_abs_delta_r2": 4e-05
+        },
+        "South": {
+          "sigma_measured_mw": 872.6,
+          "sigma_measured_mw_miso235": 872.6,
+          "sigma_resid_measured_mw": 871.1,
+          "sigma_resid_measured_mw_miso235": 871.1,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.0759,
+          "delta_r2_A_nohydro_miso236": 0.0759,
+          "max_abs_delta_r2": 2e-05
+        },
+        "Manitoba": {
+          "sigma_measured_mw": 832.6,
+          "sigma_measured_mw_miso235": 832.6,
+          "sigma_resid_measured_mw": 817.9,
+          "sigma_resid_measured_mw_miso235": 817.9,
+          "max_abs_delta_mw": 0.0
+        }
+      },
+      "2025": {
+        "PJM": {
+          "sigma_measured_mw": 1647.0,
+          "sigma_measured_mw_miso235": 1647.0,
+          "sigma_resid_measured_mw": 1615.8,
+          "sigma_resid_measured_mw_miso235": 1615.8,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.1638,
+          "delta_r2_A_nohydro_miso236": 0.1638,
+          "max_abs_delta_r2": 1e-05
+        },
+        "SPP": {
+          "sigma_measured_mw": 615.4,
+          "sigma_measured_mw_miso235": 615.4,
+          "sigma_resid_measured_mw": 614.7,
+          "sigma_resid_measured_mw_miso235": 614.7,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.114,
+          "delta_r2_A_nohydro_miso236": 0.114,
+          "max_abs_delta_r2": 3e-05
+        },
+        "South": {
+          "sigma_measured_mw": 1008.6,
+          "sigma_measured_mw_miso235": 1008.6,
+          "sigma_resid_measured_mw": 998.6,
+          "sigma_resid_measured_mw_miso235": 998.6,
+          "max_abs_delta_mw": 0.0,
+          "delta_r2_A_nohydro": 0.0531,
+          "delta_r2_A_nohydro_miso236": 0.0531,
+          "max_abs_delta_r2": 2e-05
+        },
+        "Manitoba": {
+          "sigma_measured_mw": 655.4,
+          "sigma_measured_mw_miso235": 655.4,
+          "sigma_resid_measured_mw": 642.3,
+          "sigma_resid_measured_mw_miso235": 642.3,
+          "max_abs_delta_mw": 0.0
+        }
+      }
+    }
+  },
+  "verdicts": {
+    "PJM": {
+      "neighbour_state": {
+        "gated": false,
+        "verdict": "MIXED",
+        "rho_by_year": [
+          0.863,
+          0.406,
+          4.062
+        ],
+        "delta_r2_P1_by_year": [
+          0.0371,
+          0.036,
+          0.0195
+        ],
+        "delta_r2_P3_by_year": [
+          0.032,
+          0.0146,
+          0.0792
+        ]
+      },
+      "own_state": {
+        "gated": true,
+        "verdict": "QUANTITY-SIDE FORM",
+        "rho_by_year": [
+          2.029,
+          1.036,
+          1.936
+        ],
+        "delta_r2_P1_by_year": [
+          0.117,
+          0.0845,
+          0.1737
+        ],
+        "delta_r2_P3_by_year": [
+          0.2374,
+          0.0875,
+          0.3362
+        ]
+      }
+    },
+    "SPP": {
+      "neighbour_state": {
+        "gated": true,
+        "verdict": "QUANTITY-SIDE FORM",
+        "rho_by_year": [
+          0.822,
+          0.782,
+          1.933
+        ],
+        "delta_r2_P1_by_year": [
+          0.3519,
+          0.2396,
+          0.0356
+        ],
+        "delta_r2_P3_by_year": [
+          0.2891,
+          0.1873,
+          0.0688
+        ]
+      },
+      "own_state": {
+        "gated": true,
+        "verdict": "QUANTITY-SIDE FORM",
+        "rho_by_year": [
+          0.643,
+          0.696,
+          1.012
+        ],
+        "delta_r2_P1_by_year": [
+          0.1786,
+          0.2103,
+          0.1742
+        ],
+        "delta_r2_P3_by_year": [
+          0.1149,
+          0.1464,
+          0.1763
+        ]
+      }
+    },
+    "South": {
+      "neighbour_state": {
+        "gated": false,
+        "verdict": "MIXED",
+        "rho_by_year": [
+          1.045,
+          1.075,
+          1.246
+        ],
+        "delta_r2_P1_by_year": [
+          0.0288,
+          0.0067,
+          0.0134
+        ],
+        "delta_r2_P3_by_year": [
+          0.0301,
+          0.0072,
+          0.0167
+        ]
+      },
+      "own_state": {
+        "gated": true,
+        "verdict": "MIXED",
+        "rho_by_year": [
+          0.862,
+          1.173,
+          0.949
+        ],
+        "delta_r2_P1_by_year": [
+          0.0465,
+          0.0423,
+          0.0491
+        ],
+        "delta_r2_P3_by_year": [
+          0.0401,
+          0.0496,
+          0.0466
+        ]
+      }
+    },
+    "Manitoba": {
+      "neighbour_state": {
+        "verdict": "NO BLOCK \u2014 data absence",
+        "gated": false
+      },
+      "own_state": {
+        "gated": false,
+        "verdict": "MIXED",
+        "rho_by_year": [
+          0.879,
+          0.8,
+          1.146
+        ],
+        "delta_r2_P1_by_year": [
+          0.0911,
+          0.334,
+          0.0041
+        ],
+        "delta_r2_P3_by_year": [
+          0.0801,
+          0.2673,
+          0.0047
+        ]
+      }
+    }
+  },
+  "addendum_A_verdict": {
+    "seam": "PJM",
+    "phi_by_year": [
+      0.36,
+      0.616,
+      0.495
+    ],
+    "verdict": "PARTIAL",
+    "note": "Names an object for a successor's charter and charters nothing; phi is NEVER a tuning target (ADDENDUM \u00a7A)."
+  }
+}

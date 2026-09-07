@@ -67,6 +67,9 @@ from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
     corridor_net_import,
     hub_prices,
 )
+from scripts.data.derive_caiso_import_tranches import (  # noqa: E402
+    extra_years as _extra_years,
+)
 from market_sim.config.interchange_config import (  # noqa: E402
     CAISO_DSW_SURPLUS_REMOTE_VOM,
 )
@@ -85,8 +88,9 @@ def main() -> None:
     """Derive per-year daytime trigger-OFF depths; exit 0 PASS / 2 FAIL."""
     evening_trim = "--evening-trim" in sys.argv[1:]
     hod_max = TRIM_HOD_MAX if evening_trim else HOD_MAX
-    net = corridor_net_import()
-    hub = hub_prices()
+    extra = _extra_years(sys.argv[1:])
+    net = corridor_net_import(years=(*YEARS, *extra))
+    hub = hub_prices(years=(*YEARS, *extra))
     hod = np.arange(HOURS) % 24
     daytime_hod = (hod >= HOD_MIN) & (hod <= hod_max)
 
@@ -98,7 +102,7 @@ def main() -> None:
         f"    window: daytime hod AND measured-hub AND NOT surplus "
         f"(PV >= {HR_CCGT:.2f} x SoCal_citygate + {CAISO_DSW_SURPLUS_REMOTE_VOM})"
     )
-    for yr in YEARS:
+    for yr in (*YEARS, *extra):
         pv = hub.loc[yr]["PALOVRDE"].to_numpy()
         flow = net.loc[yr]["WECC_DSW"].to_numpy()
         gas = np.asarray(socal_citygate_weekly_hourly(yr, HOURS))
@@ -108,12 +112,14 @@ def main() -> None:
         window = daytime_hod & measured & ~surplus
         m = window & np.isfinite(flow)
         depths[yr] = float(np.percentile(flow[m], 95))
+        tag = "  [report-only, outside the gated sample]" if yr in extra else ""
         print(
             f"  {yr}: n={int(m.sum())} daytime-OFF hours (of {int((daytime_hod & measured).sum())} "
             f"measured daytime) -> mean {flow[m].mean():,.0f} / p50 "
-            f"{np.percentile(flow[m], 50):,.0f} / p95 {depths[yr]:,.0f} MW"
+            f"{np.percentile(flow[m], 50):,.0f} / p95 {depths[yr]:,.0f} MW{tag}"
         )
 
+    # Gates over the COMMITTED sample only — see extra_years' docstring.
     vals = np.array([depths[y] for y in YEARS])
     cv = float(vals.std() / vals.mean())
     g_cv = cv <= CV_MAX

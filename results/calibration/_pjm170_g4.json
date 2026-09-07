@@ -1,0 +1,218 @@
+{
+ "gate": "G-4 no collateral flip (rule 29 screen; STOP-only, never promotes)",
+ "bar": "no non-target load-bearing criterion (fuelmix, sysvol, price_mean, price_shape, governance) flips PASS->FAIL vs the keeper's committed scores; C3c excluded (ledgered caveat, rubric v3.3); every other move reported, not gated",
+ "keeper": "2026-09-07-pjm-2022-2021-touchpoints",
+ "arm_bundle": "pjm170_screen2022_ceil10",
+ "arm_scored_as": "2026-09-07-pjm170-screen2022-ceil10",
+ "years": [
+  2022
+ ],
+ "bench": "committed frontend/data/backcast/bench parts (held fixed)",
+ "arm_determination_NOT_A_RESULT": "NOT-YET",
+ "flips": [
+  {
+   "criterion": "price_mean",
+   "year": 2022,
+   "key": null,
+   "keeper_status": "PASS",
+   "arm_status": "FAIL",
+   "keeper_magnitude": "-9.9%",
+   "arm_magnitude": "-10.1%",
+   "keeper_gap": -7.34,
+   "arm_gap": -7.51,
+   "direction": "away",
+   "gated": true
+  }
+ ],
+ "moves": [
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "CC_REGULAR",
+   "keeper_status": "FAIL",
+   "arm_status": "FAIL",
+   "keeper_magnitude": "+22.02 TWh, share +1.7pp (volume out of band)",
+   "arm_magnitude": "+21.40 TWh, share +1.6pp (volume out of band)",
+   "keeper_gap": 22.019,
+   "arm_gap": 21.4,
+   "direction": "toward",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "CC_CHP",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "+1.81 TWh, share +0.2pp",
+   "arm_magnitude": "+1.76 TWh, share +0.2pp",
+   "keeper_gap": 1.805,
+   "arm_gap": 1.763,
+   "direction": "toward",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "CT_PEAKER",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "-2.97 TWh, share -0.4pp",
+   "arm_magnitude": "-3.22 TWh, share -0.4pp",
+   "keeper_gap": -2.975,
+   "arm_gap": -3.216,
+   "direction": "away",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "ST_GAS",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "+7.67 TWh, share +0.9pp",
+   "arm_magnitude": "+7.59 TWh, share +0.9pp",
+   "keeper_gap": 7.668,
+   "arm_gap": 7.585,
+   "direction": "toward",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "ST_CHP",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "-1.15 TWh, share -0.1pp",
+   "arm_magnitude": "-1.16 TWh, share -0.1pp",
+   "keeper_gap": -1.153,
+   "arm_gap": -1.155,
+   "direction": "away",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "COAL_PRB",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "-0.27 TWh, share -0.1pp",
+   "arm_magnitude": "-0.34 TWh, share -0.1pp",
+   "keeper_gap": -0.273,
+   "arm_gap": -0.342,
+   "direction": "away",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "COAL_BIT",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "+2.70 TWh, share -0.1pp",
+   "arm_magnitude": "+4.09 TWh, share +0.1pp",
+   "keeper_gap": 2.703,
+   "arm_gap": 4.092,
+   "direction": "away",
+   "gated": true
+  },
+  {
+   "criterion": "fuelmix",
+   "year": 2022,
+   "key": "COAL_WC",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "+0.06 TWh, share -0.0pp",
+   "arm_magnitude": "+0.05 TWh, share -0.0pp",
+   "keeper_gap": 0.061,
+   "arm_gap": 0.048,
+   "direction": "toward",
+   "gated": true
+  },
+  {
+   "criterion": "sysvol",
+   "year": 2022,
+   "key": "gas",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "C1 flags: CC_REGULAR",
+   "arm_magnitude": "C1 flags: CC_REGULAR",
+   "keeper_gap": 27.36,
+   "arm_gap": 26.37,
+   "direction": "toward",
+   "gated": true
+  },
+  {
+   "criterion": "sysvol",
+   "year": 2022,
+   "key": "coal",
+   "keeper_status": "PASS",
+   "arm_status": "PASS",
+   "keeper_magnitude": "all classes in band (C1)",
+   "arm_magnitude": "all classes in band (C1)",
+   "keeper_gap": 2.49,
+   "arm_gap": 3.79,
+   "direction": "away",
+   "gated": true
+  },
+  {
+   "criterion": "price_mean",
+   "year": 2022,
+   "key": null,
+   "keeper_status": "PASS",
+   "arm_status": "FAIL",
+   "keeper_magnitude": "-9.9%",
+   "arm_magnitude": "-10.1%",
+   "keeper_gap": -7.34,
+   "arm_gap": -7.51,
+   "direction": "away",
+   "gated": true
+  }
+ ],
+ "unscorable": [
+  {
+   "criterion": "price_mean",
+   "year": 2022,
+   "key": "da_diagnostic",
+   "keeper_status": "SKIPPED",
+   "arm_status": "SKIPPED",
+   "keeper_magnitude": "-6.2% vs DA (DA\u2212RT premium $-2.93)",
+   "arm_magnitude": "-6.4% vs DA (DA\u2212RT premium $-2.93)",
+   "keeper_gap": -4.41,
+   "arm_gap": -4.58,
+   "direction": "away",
+   "note": "SKIPPED on both sides"
+  },
+  {
+   "criterion": "governance",
+   "year": null,
+   "key": null,
+   "keeper_status": "PASS",
+   "arm_status": "UNATTESTED",
+   "keeper_magnitude": "rule-22 validation-tier TOUCHPOINT for PJM [2022, 2021] \u2014 a frozen-recipe replay of the designated keeper 2026-08-15-pjm-162-inputclock (pjm_debugb_inputclock_A) through the sanctioned replay_keeper channel (the keeper bundle's own meta.json supplies every solve kwarg, so the recipe is reproduced rather than re-expressed flag-by-flag). RECIPE IDENTITY IS COMPUTED, NOT ASSERTED: scripts/gen_touchpoint_attestation.py compared every shared meta.json key and found ZERO differences outside the provenance set (run stamps, the solve span, and the per-year Henry Hub actual, which is a year-scoped measured input rather than a recipe knob) \u2014 the generator refuses to write this file otherwise. ZERO free parameters introduced or moved, so the rule-20 [R-DOF] ledger, the disclosures and the exceptions ledger carry from the keeper unchanged and this run spends NO new ledger slot. NOTHING WAS TUNED FOR, AGAINST, OR IN RESPONSE TO the held-out year(s): the recipe was frozen before the solve and no parameter is identified against them (rule 22 step 3 \u2014 fitting happens only on 2023-2025). STATED LIMIT ON THE COMPARISON: the keeper solved at git 457ae04 and this replay at f36cee6e, and 33 solve kwarg(s) were added to the surface in between; each is verified here to sit at its ScenarioConfig default (a non-default would be a hard error), but the in-sample column this touchpoint is read against was measured on the earlier HEAD. Any in-sample-to-holdout delta should be read with that drift in mind unless a same-HEAD in-sample control is registered alongside. VALIDATION-TIER RESULT: ITERABLE model-SELECTION evidence, NEVER a certified out-of-sample skill number. SUPERSEDES the stale touchpoint 2026-09-05-pjm-2022-2021-touchpoints.",
+   "arm_magnitude": "no governance attestation in bundle",
+   "note": "not scorable at a screen (no attestation)"
+  },
+  {
+   "criterion": "forced_share",
+   "year": 2022,
+   "key": "ST_GAS",
+   "keeper_status": "SKIPPED",
+   "arm_status": "SKIPPED",
+   "keeper_magnitude": "ST_GAS immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 55.1% forced",
+   "arm_magnitude": "ST_GAS immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 55.9% forced",
+   "note": "SKIPPED on both sides"
+  },
+  {
+   "criterion": "forced_share",
+   "year": 2022,
+   "key": "hydro",
+   "keeper_status": "SKIPPED",
+   "arm_status": "SKIPPED",
+   "keeper_magnitude": "hydro immaterial (2.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced",
+   "arm_magnitude": "hydro immaterial (2.0% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced",
+   "note": "SKIPPED on both sides"
+  }
+ ],
+ "verdict": "FAIL"
+}

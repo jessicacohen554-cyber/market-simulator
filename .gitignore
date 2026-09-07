@@ -274,6 +274,7 @@ frontend/data/forecast/program-status.js
 /results/MISO/
 /results/NYISO/
 /results/NEISO/
+/results/SPP/
 # FFR-SA T0 smoke legs (results/ffr-sa-smoke/<iso>-<arm>/): the summary +
 # run_config + leg log ARE committed (the FF-G4 §2 acceptance evidence); the
 # nested per-ISO LP cache dir each self-contained leg writes is the same
@@ -1321,3 +1322,14 @@ data/raw/load-forecast/ercot/ErcotAdjustedForecast.xlsb
 results/capacity-hindcast/**/year_*.parquet
 results/capacity-hindcast/**/config.yaml
 results/capacity-hindcast/**/screen_signal_diag_*.npz
+
+# caiso-262: the rule-29(c) BENCH SCAFFOLD bundle. A scaffold/screen bundle is
+# never registered and is DELETED before its PR merges (rule 29 [R-SCREEN](c),
+# owner ruling R-AV "Delete before merge"), and an unregistered bundle dir that
+# reaches main is a check_registry_payload_parity RED — not an allowlist
+# candidate. It also cannot be pushed: a full bundle dir (~94 MB of parquet) is
+# outside the Git & Pushing pack-size licence. It exists on disk only so the
+# G-BENCH-A/B identity check can compare it against the rung's bench part; the
+# PRECOMMIT/ADDENDUM carry every number this session will ever cite from it, so
+# git history is the record exactly as rule 15 says of pruned runs.
+results/calibration/caiso262_bench_scaffold/
