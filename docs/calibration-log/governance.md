@@ -2635,3 +2635,81 @@ controls that mutate the source back toward the pre-amendment shape. The FIRST d
 hits the run loader (line 972), not `renderReport` (line 1171) — a control that would have proven
 nothing. It now splices through `render_report_body`. A guard written the same day as the change it
 protects is exactly where this failure mode lives.
+
+## 2026-09-06 — neiso-107: the per-year ladder's spurious governance FAIL is fixed IN THE CALLER — 12 rows move, 0 determinations move, rule 1 (b)'s equality untouched
+
+**Cross-ISO governance session, ZERO LP minutes.** Run as a governance session rather than a NEISO
+calibration lane precisely because the fix changes MISO's published status part as well as NEISO's —
+which is why neiso-106 escalated instead of patching (rule 25 `[R-ISO-SCOPE]`). Diagnosis, blast
+radius and the proposed fix were already on record in
+`results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`, now annotated
+RESOLVED.
+
+**The defect.** `build_status.build_years` — the rule 30(b) per-year ladder — scores each year in
+isolation via `cv.determine(run_id, years=[year])`. That `years` subset propagated into the C6
+governance gate, where rule 1 `[R-STRUCT]` condition (b) compares the `authorized_price_tuning`
+declaration's `years_held` against the scored span as an **exact set**. For any run that legitimately
+declares the channel, a one-year display subset made the comparison `{2023,2024,2025} != {2023}` and
+returned FAIL. Result: **`NOT-YET` on EVERY year of two ISOs' `CALIBRATED` keepers**, on the exact
+surface rule 30(b) designates for the holdout ladder.
+
+**The fix is one operand, in the caller.** `calibration_verdict.determine_from_artifacts` now keeps
+the run's own unfiltered scored span (`run_scorable_years`) and passes THAT to `score_governance`.
+`years` still restricts which criterion-YEARS are scored; it no longer narrows the run-level question
+rule 1 (b) asks about the run's configuration. The same line fixes the two partition-span callers
+(`build_status` line 661, `audit_keepers` line 306), which had the identical category error under the
+two-config keeper ruling.
+
+**The equality is NOT relaxed to a subset test, deliberately.** A subset test would let a genuinely
+per-year `years_held` pass rule 1 (b) — the exact failure mode the condition exists to catch. Both
+halves are pinned by `tests/scoring/test_calibration_verdict.py::PerYearGovernanceScopeTests`
+(5 tests, 3 subtests). All five FAIL against the pre-fix line, verified by reverting it; two of them
+are the negative control — a declaration held on one of three scored years still FAILs on the full
+span **and** on the single year it was held on, which is the hole a subset test would have opened.
+
+**Measured effect, over all 14 registered runs on `main` at `b7ff89ca` (before/after snapshot of
+every full-span and every per-year verdict — 37 per-year rows in total).**
+
+- **Run-level determinations moved: 0.** Nothing that gates, and nothing rule 30(c) makes an ISO's
+  determination, changes anywhere.
+- **Per-year rows moved: 12**, in exactly the runs that declare the channel — MISO
+  `miso-232-hourly-seam` (keeper), NEISO `neiso-105`, NEISO `neiso-106` (keeper), NEISO
+  `neiso-106-touchpoints-2020`. Every one goes `NOT-YET [gov FAIL]` → its true per-year verdict:
+  `CALIBRATED` on 2020–2024, `CALIBRATED-WITH-CAVEATS` on 2025 for a real reason
+  (`unscored criteria: fuelmix, sysvol` — the 2025 EIA-923 completeness gate), never the spurious one.
+  (Measured three times: first against `49773428` — 15 rows over 16 runs, MISO keeper `miso-230`;
+  again after the rebase onto `dd78f46b`; and again on the salvage rebase onto `b7ff89ca`, where
+  the MISO lane's own prunes/promotion had moved that ISO's keeper. Same defect, same repair,
+  0 run-level moves all three times.)
+- **Status parts rebuilt: `status/NEISO.js` and `status/MISO.js` only** — the two
+  `build_status.py --check` named stale; the other four ISOs' parts were never touched, and the gate
+  now passes for all six keepers.
+- **`shared.js` carries NO change here.** The drift this session originally picked up (a lane had
+  added `SPP` to the C3c threshold list without rebuilding the derived part) was repaired on `main`
+  by the MISO lane at `2f9cd4d8` before this rebase. `build_status.py --iso` still rewrites the file
+  unconditionally, but it is deterministic, so the rebuild is a byte-for-byte no-op and the file is
+  left out of this commit.
+
+**`RUBRIC_VERSION` stays 3.6.** No criterion band, tier, ledger route, caveat budget or determination
+rule moved. The rubric was always right; the caller was asking it the wrong question, so there is no
+new rubric to version. The module header records this in place, above `RUBRIC_VERSION`, as an
+explicit NOT-A-RUBRIC-CHANGE entry so a later reader does not mistake the moved rows for a
+loosened gate.
+
+**Gates re-run green on the salvage rebase (`b7ff89ca`):** `build_status.py --check` (6/6),
+`audit_keepers.py` (0 failures, 0 warnings, all six ISOs + holdout/marker/status checks),
+`check_registry_payload_parity.py` (14 runs, 47 bundle dirs, 0 known-unsynced tolerated),
+`tests/scoring/test_calibration_verdict.py` (151 passed, of which the 5 new
+`PerYearGovernanceScopeTests` all FAIL against the pre-fix line). **Pre-existing and NOT mine:**
+`tests/scoring/` has **16 failures on unmodified `main`** and the SAME 16 on this branch — verified
+by capturing both failure sets and diffing them, identical, with the branch's pass count rising
+1483 -> 1488 (the 5 new guards). They are the forecast-parity / FF-readiness / scenario-campaign
+lanes (`test_forecast_parity`, `test_ff_readiness_battery`, `test_scenario_campaign_configs`,
+`test_collate_scenario_campaign*`, `test_crossover_harness`, `test_gate_a_provenance`), all
+untouched here; `main` being red on FR-22 parity is a standing condition this salvage neither
+causes nor repairs.
+
+**Nothing else moved.** No keeper, keeper shard, marker, holdout freeze, matrix shard or locked-test
+year was touched; no run was registered or pruned; no ScenarioConfig field was added. NEISO's C3c
+frontier stays closed pending its own owner charter, and the rule 29 `[R-SCREEN]` screen-year
+amendment filed in PREREG-neiso106 §7 remains the owner's call, unamended here.
