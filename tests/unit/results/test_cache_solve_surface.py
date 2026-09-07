@@ -20,12 +20,18 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from market_sim.config import constants
+from market_sim.config import scenarios
 from market_sim.config import solve_surface as S
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.dispatch import DispatchResult
 from market_sim.results import cache
+
+# This file is ABOUT the surface entering the key, so it opts out of the
+# autouse neutralization in tests/conftest.py.
+pytestmark = pytest.mark.solve_surface_live
 
 
 def _make_result() -> DispatchResult:
@@ -73,11 +79,29 @@ class SolveSurfaceSidecarTest(unittest.TestCase):
         self.assertTrue(sidecar.exists())
         self.assertTrue((bundle / "config.yaml").exists())
 
+        config_from_disk = ScenarioConfig.from_yaml(bundle / "config.yaml")
         stamp = json.loads(sidecar.read_text())
         self.assertEqual(stamp["iso"], "ERCOT")
-        self.assertEqual(stamp["moved"], {})
-        self.assertEqual(stamp["epochs"], [])
+
+        # Asserted against the LIVE surface, never against a dict literal. This
+        # expectation read `{}` from D79's landing (when nothing had moved) until
+        # ercot-253 added the NUCLEAR_MONTHLY_CF_BY_YEAR 2021 row and the literal
+        # went stale — a stale scope label, not a wrong measurement. A literal of
+        # today's moved set would go stale identically at the next ledgered move.
+        self.assertEqual(stamp["moved"], S.moved_rows("ERCOT"))
+        self.assertEqual(stamp["epochs"], S.applicable_epochs(config_from_disk))
         self.assertEqual(stamp["rows"], len(S.surface_rows("ERCOT")))
+
+        # Not a weakening: an UNLEDGERED move still fails here. The ledger is
+        # owned by tests/regression/test_persisted_identity.py (imported, never
+        # copied — one ledger, one place to advance when a row legitimately
+        # moves).
+        from tests.regression.test_persisted_identity import (
+            LEDGERED_SURFACE_MOVES_BY_ISO,
+        )
+
+        ledgered = LEDGERED_SURFACE_MOVES_BY_ISO.get("ERCOT", {})
+        self.assertEqual(sorted(set(stamp["moved"]) - set(ledgered)), [])
 
     def test_sidecar_and_config_agree(self):
         """The stamp describes the surface the STORED config would hash under."""
@@ -127,6 +151,27 @@ class SolveSurfaceSidecarTest(unittest.TestCase):
         # again. A re-declaration would have been needed under a naive scheme.
         self.assertEqual(config.cache_key(), key_s1)
         self.assertTrue(cache.is_cached("MISO", config.cache_key(), 2030))
+
+    def test_the_surface_actually_reaches_the_key_in_this_file(self):
+        """The opt-out is armed — if it is ever dropped again, THIS goes red.
+
+        ``tests/conftest.py::_solve_surface_neutralized`` is autouse and rebinds
+        ``scenarios.moved_rows``/``applicable_epochs`` to stubs for every test
+        that does not carry ``@pytest.mark.solve_surface_live``. This file went
+        without the marker from D79's landing, which left
+        ``test_a_bundle_solved_on_S1_is_not_addressed_on_S2`` unable to pass and
+        ``test_another_isos_key_is_untouched_by_a_MISO_row`` green for the wrong
+        reason — a stubbed ``moved_rows`` cannot move ANY ISO's key, so the rule
+        25 [R-ISO-SCOPE] assertion was trivially satisfied.
+
+        ``scenarios`` binds both names at import (``from ... import``), so these
+        module attributes are what ``cache_key()`` actually calls and what the
+        fixture actually patches. Identity against the real functions is
+        therefore an exact test of "the marker is in force here", and it fails
+        for the whole file at once rather than one silent vacuity at a time.
+        """
+        self.assertIs(scenarios.moved_rows, S.moved_rows)
+        self.assertIs(scenarios.applicable_epochs, S.applicable_epochs)
 
     def test_another_isos_key_is_untouched_by_a_MISO_row(self):
         """Rule 25 [R-ISO-SCOPE]: a repair to one ISO's row is that ISO's."""
