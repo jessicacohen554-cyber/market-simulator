@@ -1,0 +1,62 @@
+INFO: SPP net interchange applied for 2025: +270 MW avg (export-positive, measured EIA-930)
+INFO: SPP per-zone wind SHAPE (2025): 3 zone(s) from spp_2025_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.91, SPP-South=0.95, SPP-SPS=1.12
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 55641->6.880
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 314 unit-months masked offline (mid-year COD / retirement), 22 unit(s) fully not-yet-built/retired
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2025 hydro budget: backfilled 21 non-reporting plants (8682.3 GWh) from 2024
+INFO: SPP 2025 hydro budget pinned to monthly target total 8829.9 GWh (was 8705.6 GWh)
+INFO: Loaded SPP 2025 hydro budget: 22 plants, 8829.9 GWh annual, 3078 MW nameplate
+INFO: SPP 2025: 22 hydro plants in LP (3078 MW, 8.83 TWh monthly budget)
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 430 unit-months masked offline (mid-year COD / retirement), 29 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2025: 343 generators priced from their own plant, 815 gap-filled from nearby (state/zone) plants
+run_year(fleet_only) keys: ['config', 'demand', 'fleet', 'fleet_arrays', 'fuel_prices', 'mc_base', 'solar_cap', 'solar_cf', 'solar_mc', 'storage', 'storage_power_cap', 'storage_units', 'wind_cap', 'wind_cf', 'wind_mc']
+availability from fleet_arrays.availability, shape (1122, 8760)
+
+  h   | demand N / S / SPS | thermal+hydro available S / SPS (nameplate S / SPS) | wind S / SPS | solar S+SPS | region S+SPS: supply3z (incl. 3,400) - demand | with two-zone wind | STOP?
+  8496 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |  10026 /   859 |   362 |    28116 -   18597 =    +9520 |    +8308 | ok
+  8497 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   8861 /   751 |   362 |    26843 -   18597 =    +8246 |    +7010 | ok
+  8498 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   7858 /   535 |   362 |    25623 -   18597 =    +7027 |    +5617 | ok
+  8499 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   7319 /   401 |   362 |    24951 -   18597 =    +6354 |    +4939 | ok
+  8500 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   7292 /   443 |   362 |    24965 -   18597 =    +6368 |    +5015 | ok
+  8501 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   7030 /   487 |   362 |    24747 -   18597 =    +6151 |    +4780 | ok
+  8502 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   6742 /   456 |   362 |    24428 -   18597 =    +5832 |    +4350 | ok
+  8503 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   5893 /   299 |   362 |    23422 -   18597 =    +4826 |    +3162 | ok
+  8504 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   5085 /   152 |   362 |    22468 -   18597 =    +3871 |    +1721 | ok
+  8505 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   2947 /    31 |   362 |    20208 -   18597 =    +1612 |     +321 | ok
+  8506 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |    921 /    70 |   362 |    18221 -   18597 =     -375 |     -665 | ok
+  8507 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |    235 /   170 |   362 |    17635 -   18597 =     -962 |     -808 | ok
+  8508 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |     51 /   395 |   362 |    17676 -   18597 =     -920 |     -407 | ok
+  8509 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |     29 /   793 |   362 |    18051 -   18597 =     -545 |     +440 | STOP
+  8510 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |    122 /  1286 |   362 |    18638 -   18597 =      +42 |    +1465 | ok
+  8511 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |    508 /  1317 |   362 |    19056 -   18597 =     +460 |    +1750 | ok
+  8512 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   1320 /  1589 |   362 |    20139 -   18597 =    +1542 |    +2756 | ok
+  8513 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   2281 /  2083 |   362 |    21594 -   18597 =    +2997 |    +4224 | ok
+  8514 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   3047 /  2415 |   362 |    22693 -   18597 =    +4096 |    +5230 | ok
+  8515 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   3614 /  2729 |   362 |    23573 -   18597 =    +4977 |    +6063 | ok
+  8516 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   3997 /  2760 |   362 |    23988 -   18597 =    +5391 |    +6333 | ok
+  8517 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   4285 /  2741 |   362 |    24256 -   18597 =    +5659 |    +6492 | ok
+  8518 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   4562 /  2753 |   362 |    24545 -   18597 =    +5949 |    +6776 | ok
+  8519 |   19131 /   14257 /   4339 |    8642 /   4827 ( 22311 /  6799) |   4584 /  2796 |   362 |    24611 -   18597 =    +6014 |    +6889 | ok
+  8520 |   17476 /   10410 /   4160 |    8642 /   4827 ( 22311 /  6799) |   5121 /  3145 |   378 |    25512 -   14569 =   +10943 |   +11991 | ok
+
+C-3: hours the three-zone inputs make infeasible while the two-zone inputs were feasible: 1 -> STOP; min regional margin 3z -962 MW (2z -808)
+SPS pocket own margin (available thermal + wind + solar - demand) over the window: min +640 max +3939 MW
+system demand == 37,455 MW (the stuck run) at 0 hours in h8300-h8759; first [] last []

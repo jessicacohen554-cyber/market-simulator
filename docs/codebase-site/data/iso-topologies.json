@@ -628,15 +628,19 @@
       },
       {
         "name": "SPP-South",
-        "load_share": 0.4875
+        "load_share": 0.3616
+      },
+      {
+        "name": "SPP-SPS",
+        "load_share": 0.1259
       }
     ],
-    "n_zones": 2,
+    "n_zones": 3,
     "links": [
       {
         "from": "SPP-North",
         "to": "SPP-South",
-        "ttc_mw": 48700.0,
+        "ttc_mw": 3400.0,
         "bidirectional": true
       }
     ],

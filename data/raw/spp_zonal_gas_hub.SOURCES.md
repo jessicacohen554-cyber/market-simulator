@@ -115,3 +115,29 @@ The table is six numbers, each the mean of twelve published monthly prints minus
 the matching Henry Hub prints. Re-derive only when the **source data** updates
 (rule 23 `[R-FROZEN-DERIVE]`) — in practice, when EIA publishes `N3045OK3` for
 2025 — never because a residual moved.
+
+---
+
+## STATUS UPDATE 2026-09-07 — lane SPP-54: re-keyed for the SPS-pocket three-zone topology
+
+`docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md` §5. The SPP topology gained the SPS /
+Texas-Panhandle pocket (`SPP-SPS` = eastern New Mexico + the SPS Texas county set on the
+fleet side; the `SPS` sub-BA on the load side), so the table is re-keyed, **no measured
+value moved**:
+
+| Zone | Proxy state | EIA series | Rows |
+|---|---|---|---|
+| SPP-North | KS | `N3045KS3` | unchanged (2022–2024) |
+| SPP-South (residual: OK, AR, LA, SWEPCO east Texas) | OK | `N3045OK3` | unchanged (2022 +0.612 / 2023 +0.418 / 2024 +0.861) — Oklahoma is ~60 % of the residual's gas fleet once the pocket is carved out (OK 10,700 of ~18,000 MW by EIA-860 nameplate) |
+| **SPP-SPS** (TX Panhandle / South Plains + eastern NM) | **TX** | `N3045TX3` | NEW rows for this zone: 2022 −0.081 / 2023 +0.096 / 2024 −0.010 — the values lane SPP-57 derived by the same instrument for its residual-South row (design commit `f5926636`; recomputed there from the committed inputs beside the OK rows, which reproduced SPP-32's three values exactly) |
+
+Why TX for the pocket, measured (EIA-860 2025 ER, `OP`, BA `SWPP`, gas prime movers, state-summed
+under `zone_assignment.build_zone_lookup("SPP")`): TX ≈ 4,680 MW of the pocket's ≈ 6,100 MW of gas
+(NM ≈ 1,410) — an outright majority — and EIA publishes no New Mexico delivered-to-electric-power
+series that could carry the NM quarter, so the TX row is a proxy for the whole pocket in the same
+way the KS row is for the North (stated limitation, same construction).
+
+**The 2022–2024 span rule is unchanged**: `N3045TX3` is published through 2026-06, but the table
+still stops at the intersection with `N3045OK3` (2024), for the reason stated above — a
+partly-populated year hands an applier a fabricated spread. **No applier is armed** (no
+`ScenarioConfig` field, plan §7 G8); this table is dispatch-inert for every SPP keeper.

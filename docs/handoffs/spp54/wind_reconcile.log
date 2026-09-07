@@ -1,0 +1,57 @@
+reference curtailment rate 0.096501 (gross-up 1.106808), source year 2025
+SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+SWPP 2023: repairing 1 EIA-930 NG: WND spike hour(s) [3907] (max 3589445 MW vs p99.9 22597 MW) -- unit-slip artifact
+
+===== 2023 =====
+cap3 {'SPP-North': np.float64(16671.3), 'SPP-South': np.float64(11623.6), 'SPP-SPS': np.float64(4653.5)}  cap2 {'SPP-North': np.float64(16671.3), 'SPP-South': np.float64(16277.1)}  installed 32948.4 MW
+C-1 identity: max rel |sum_z cap cf3 - M| 5.939e-16 (two-zone 5.012e-16); vs delivered/(1-r): max rel 6.036e-16, hours where M != delivered/(1-r) beyond 1e-6 (the CF clip) 0; annual M 114.0552 TWh = delivered 103.0488 x 1.106808 -> PASS
+C-2 feasibility: max cf3 1.000000; hours with lost overflow 0; per-zone max cf {'SPP-North': np.float64(0.9494), 'SPP-South': np.float64(1.0), 'SPP-SPS': np.float64(1.0)} -> PASS
+night/afternoon ratio {'SPP-North': np.float64(0.975), 'SPP-South': np.float64(1.061), 'SPP-SPS': np.float64(1.012)}; shape corr N-S 0.626, N-SPS 0.465, S-SPS 0.605
+annual potential TWh three-zone {'SPP-North': np.float64(56.404), 'SPP-South': np.float64(38.973), 'SPP-SPS': np.float64(18.678)}; two-zone {'SPP-North': np.float64(55.022), 'SPP-South': np.float64(59.034)}; South+SPS three-zone 57.651
+C-4 North change (three-zone minus two-zone): annual +1382.3 GWh; mean |.| 518.8 MW; p1/p99 -1337/+2292 MW; of which the SPS-shape replacement alone -561.0 GWh (mean |.| 245.3 MW); residual (the South's own 6-site set changing) +1943.3 GWh
+
+===== 2024 =====
+cap3 {'SPP-North': np.float64(16870.1), 'SPP-South': np.float64(12327.2), 'SPP-SPS': np.float64(4653.5)}  cap2 {'SPP-North': np.float64(16870.1), 'SPP-South': np.float64(16980.7)}  installed 33850.8 MW
+C-1 identity: max rel |sum_z cap cf3 - M| 5.715e-16 (two-zone 4.580e-16); vs delivered/(1-r): max rel 5.654e-16, hours where M != delivered/(1-r) beyond 1e-6 (the CF clip) 0; annual M 120.9925 TWh = delivered 109.3165 x 1.106808 -> PASS
+C-2 feasibility: max cf3 1.000000; hours with lost overflow 0; per-zone max cf {'SPP-North': np.float64(1.0), 'SPP-South': np.float64(1.0), 'SPP-SPS': np.float64(1.0)} -> PASS
+night/afternoon ratio {'SPP-North': np.float64(0.956), 'SPP-South': np.float64(0.963), 'SPP-SPS': np.float64(1.126)}; shape corr N-S 0.640, N-SPS 0.520, S-SPS 0.601
+annual potential TWh three-zone {'SPP-North': np.float64(61.217), 'SPP-South': np.float64(41.323), 'SPP-SPS': np.float64(18.452)}; two-zone {'SPP-North': np.float64(59.742), 'SPP-South': np.float64(61.25)}; South+SPS three-zone 59.775
+C-4 North change (three-zone minus two-zone): annual +1474.7 GWh; mean |.| 581.7 MW; p1/p99 -1507/+2409 MW; of which the SPS-shape replacement alone -546.2 GWh (mean |.| 247.2 MW); residual (the South's own 6-site set changing) +2020.9 GWh
+
+===== 2025 =====
+cap3 {'SPP-North': np.float64(17664.3), 'SPP-South': np.float64(13145.6), 'SPP-SPS': np.float64(4653.5)}  cap2 {'SPP-North': np.float64(17664.3), 'SPP-South': np.float64(17799.1)}  installed 35463.4 MW
+C-1 identity: max rel |sum_z cap cf3 - M| 5.958e-16 (two-zone 5.958e-16); vs delivered/(1-r): max rel 5.767e-16, hours where M != delivered/(1-r) beyond 1e-6 (the CF clip) 0; annual M 122.2552 TWh = delivered 110.4574 x 1.106808 -> PASS
+C-2 feasibility: max cf3 1.000000; hours with lost overflow 0; per-zone max cf {'SPP-North': np.float64(1.0), 'SPP-South': np.float64(1.0), 'SPP-SPS': np.float64(1.0)} -> PASS
+night/afternoon ratio {'SPP-North': np.float64(0.914), 'SPP-South': np.float64(0.948), 'SPP-SPS': np.float64(1.121)}; shape corr N-S 0.725, N-SPS 0.557, S-SPS 0.587
+annual potential TWh three-zone {'SPP-North': np.float64(64.03), 'SPP-South': np.float64(40.178), 'SPP-SPS': np.float64(18.048)}; two-zone {'SPP-North': np.float64(62.117), 'SPP-South': np.float64(60.138)}; South+SPS three-zone 58.225
+C-4 North change (three-zone minus two-zone): annual +1912.6 GWh; mean |.| 596.6 MW; p1/p99 -1516/+2896 MW; of which the SPS-shape replacement alone -737.8 GWh (mean |.| 289.7 MW); residual (the South's own 6-site set changing) +2650.4 GWh
+
+C-3 Dec-21-2025 window, wind potential MW (two-zone South = South+SPS):
+  h    M(t)   N_3z    S_3z   SPS_3z | N_2z    S_2z  | dN(3z-2z) | region S+SPS 3z vs 2z
+  8496   17472    6586   10026     859 |    7798    9674 |    -1212 |   10886 vs    9674 (+1212)
+  8497   17472    7859    8861     751 |    9096    8377 |    -1236 |    9613 vs    8377 (+1236)
+  8498   17472    9079    7858     535 |   10489    6983 |    -1410 |    8393 vs    6983 (+1410)
+  8499   17472    9752    7319     401 |   11166    6306 |    -1415 |    7720 vs    6306 (+1415)
+  8500   17472    9738    7292     443 |   11091    6381 |    -1353 |    7734 vs    6381 (+1353)
+  8501   17472    9955    7030     487 |   11326    6146 |    -1371 |    7517 vs    6146 (+1371)
+  8502   17472   10274    6742     456 |   11756    5717 |    -1482 |    7198 vs    5717 (+1482)
+  8503   17472   11280    5893     299 |   12944    4528 |    -1664 |    6192 vs    4528 (+1664)
+  8504   17472   12234    5085     152 |   14385    3087 |    -2151 |    5238 vs    3087 (+2151)
+  8505   17472   14494    2947      31 |   15785    1687 |    -1291 |    2978 vs    1687 (+1291)
+  8506   17472   16481     921      70 |   16771     701 |     -290 |     991 vs     701 (+290)
+  8507   17472   17068     235     170 |   16914     558 |     +154 |     404 vs     558 (-154)
+  8508   17472   17026      51     395 |   16513     960 |     +513 |     446 vs     960 (-513)
+  8509   17472   16651      29     793 |   15665    1807 |     +986 |     821 vs    1807 (-986)
+  8510   17472   16064     122    1286 |   14640    2832 |    +1424 |    1408 vs    2832 (-1424)
+  8511   17472   15646     508    1317 |   14356    3116 |    +1291 |    1826 vs    3116 (-1291)
+  8512   17472   14564    1320    1589 |   13350    4122 |    +1214 |    2908 vs    4122 (-1214)
+  8513   17472   13109    2281    2083 |   11882    5590 |    +1227 |    4364 vs    5590 (-1227)
+  8514   17472   12010    3047    2415 |   10876    6596 |    +1134 |    5462 vs    6596 (-1134)
+  8515   17472   11129    3614    2729 |   10043    7429 |    +1086 |    6343 vs    7429 (-1086)
+  8516   17472   10715    3997    2760 |    9773    7699 |     +942 |    6757 vs    7699 (-942)
+  8517   17472   10447    4285    2741 |    9614    7858 |     +833 |    7025 vs    7858 (-833)
+  8518   17472   10157    4562    2753 |    9330    8142 |     +827 |    7315 vs    8142 (-827)
+  8519   17472   10092    4584    2796 |    9216    8256 |     +875 |    7380 vs    8256 (-875)
+  8520   19468   11202    5121    3145 |   10154    9314 |    +1048 |    8266 vs    9314 (-1048)
+
+===== C-1/C-2 over all years: PASS =====

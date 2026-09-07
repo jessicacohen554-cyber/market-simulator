@@ -517,12 +517,20 @@ _SPP_SUBBA_ZONE_GROUPS: dict[str, str] = {
     "SPRM": "SPP-North",  # City of Springfield (MO)
     "WAUE": "SPP-North",  # WAPA Upper Great Plains East (ND/SD/MN)
     "WR": "SPP-North",  # Westar Energy (KS)
-    # --- South (5 sub-BAs): Oklahoma / Texas Panhandle / western Arkansas ----
-    "CSWS": "SPP-South",  # AEP West (OK/AR/LA/TX)
+    # --- residual South (4 sub-BAs): Oklahoma / AEP West whole ---------------
+    "CSWS": "SPP-South",  # AEP West (OK/AR/LA/TX) — whole, no split (SPP-54)
     "GRDA": "SPP-South",  # Grand River Dam Authority (OK)
     "OKGE": "SPP-South",  # Oklahoma Gas and Electric (OK)
-    "SPS": "SPP-South",  # Southwestern Public Service (TX Panhandle / NM)
-    "WFEC": "SPP-South",  # Western Farmers Electric Cooperative (OK)
+    "WFEC": "SPP-South",  # Western Farmers Electric Cooperative (OK; NM fleet -> SPS)
+    # --- SPS pocket (1 sub-BA): Texas Panhandle / South Plains / eastern NM --
+    # THIRD ZONE since 2026-09-07 (lane SPP-54, P1's second ranked lever,
+    # re-ranked first by SPP-57b R-17; docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md
+    # §2.2). SPS is its own EIA-930 token (FINDING-spp-32 §2: the 17 NODE_AREA
+    # values match the 17 sub-BAs 1:1), so the pocket needs NO sub-allocation —
+    # unlike the Oklahoma pocket SPP-57 screened, which had to split CSWS by a
+    # retail-sales ratio. Every token still maps whole; the grouping remains a
+    # partition and the hourly redistribution identity is untouched.
+    "SPS": "SPP-SPS",  # Southwestern Public Service (TX Panhandle / NM)
 }
 
 

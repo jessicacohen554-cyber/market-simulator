@@ -79,24 +79,30 @@ MISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "miso_zonal_gas_hub.csv"
 CAISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "caiso_zonal_gas_hub.csv"
 
 
-# SPP per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. SPP's two
+# SPP per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year. SPP's
 # zones straddle the Mid-Continent gas complex: SPP-North on NGPL
 # Mid-Continent / Panhandle Eastern (KS proxy, EIA N3045KS3 — the plurality
-# 30.1% of the zone's gas fleet, the only North state EIA publishes) and
-# SPP-South on ANR Oklahoma / Panhandle Eastern (OK proxy, N3045OK3 — an
-# outright 59.0% majority of that zone's gas fleet). Built by lane SPP-32 the
+# 30.1% of the zone's gas fleet, the only North state EIA publishes), the
+# residual SPP-South on ANR Oklahoma / Panhandle Eastern (OK proxy, N3045OK3 —
+# Oklahoma is ~60% of the residual's gas fleet once the SPS pocket is carved
+# out) and SPP-SPS on Waha / Permian-Panhandle (TX proxy, N3045TX3 — the
+# pocket's gas fleet is TX ~77% / NM ~23% by nameplate, and EIA prints no NM
+# delivered-to-electric-power series usable here). Built by lane SPP-32 (two
+# zones) and re-keyed for the SPP-54 three-zone topology (2026-09-07) the
 # same way every sibling table here is: the EIA delivered-to-electric-power
 # state series minus the Henry Hub monthly mean, averaged over the year's 12
-# monthly prints.
+# monthly prints. The TX rows (2022 −0.081 / 2023 +0.096 / 2024 −0.010) are
+# the ones lane SPP-57 derived by the same instrument for its residual-South
+# row (design commit f5926636), re-keyed to the zone they now describe.
 #
 # Two properties a consumer must know, both recorded in full in
 # ``data/raw/spp_zonal_gas_hub.SOURCES.md``:
 #   * The committed span is **2022-2024**, not 2023-2025. N3045OK3 is an
 #     intermittent series that EIA does not print for 2025, and the table stops
-#     at the intersection of the two zones' published years ON PURPOSE — a
-#     North-only 2025 row would let SPP-South default to a 0.0 basis and
-#     manufacture a ~$0.7/MMBtu spread out of a publication gap. With no 2025
-#     row the lookup returns ``None`` and an applier no-ops visibly instead.
+#     at the intersection of the zones' published years ON PURPOSE — a
+#     2025 row for the other zones would let SPP-South default to a 0.0 basis
+#     and manufacture a ~$0.7/MMBtu spread out of a publication gap. With no
+#     2025 row the lookup returns ``None`` and an applier no-ops visibly instead.
 #   * The 2025 hole is NOT filled by blending TX/NM into SPP-South: measured,
 #     TX+NM sits $0.43 (2023) and $1.10 (2024) /MMBtu away from OK, so
 #     renormalising would swing the South basis $1.34/MMBtu between 2024 and

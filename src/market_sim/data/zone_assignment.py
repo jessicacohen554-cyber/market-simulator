@@ -112,10 +112,11 @@ _LARGEST_ZONE: dict[str, str] = {
     # Central (WCMA/SEMA/RI) is ISO-NE's largest-load-share zone (0.30) and
     # holds central/coastal Massachusetts, so unlocated NEISO plants land there.
     "NEISO": "Central",
-    # SPP-North is SPP's largest-load-share zone (0.5125 vs 0.4875 — the
-    # measured 2023-2025 sub-BA energy split, iso_configs._spp_config) and
-    # holds the KS/NE/MO plurality of the footprint's plant count, so an
-    # unlocated SPP plant lands there (SPP-20, 2026-09-06).
+    # SPP-North is SPP's largest-load-share zone (0.5125 vs the residual
+    # South's 0.3616 and the SPS pocket's 0.1259 since SPP-54 — the measured
+    # 2023-2025 sub-BA energy split, iso_configs._spp_config) and holds the
+    # KS/NE/MO plurality of the footprint's plant count, so an unlocated SPP
+    # plant lands there (SPP-20, 2026-09-06).
     "SPP": "SPP-North",
 }
 
@@ -344,10 +345,18 @@ _MISO_STATE_ZONES: dict[int, str] = {
 _MISO_SOUTH_LAT: float = 36.0
 
 # SPP model zone by FIPS state code (owner ruling P1, SPP desk r#2, 2026-09-06;
-# docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option A). The two
-# zones are exact unions of whole states: the North/South seam runs along the
-# KS/OK and MO/AR state lines, and the EIA-860 census puts no SWPP plant in a
-# state that crosses it, so the state map is authoritative and needs no
+# docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option A; THIRD ZONE
+# added 2026-09-07 by lane SPP-54 — P1's second ranked lever, the SPS /
+# Texas-Panhandle pocket, re-ranked first by SPP-57b R-17 — design fixed in
+# docs/handoffs/PRECOMMIT-spp-54-2026-09-07.md §2 before the fleet was built).
+# North and the residual South are exact unions of whole states: the
+# North/South seam runs along the KS/OK and MO/AR state lines, and the
+# EIA-860 census puts no SWPP plant in a state that crosses it. The SPS
+# pocket is New Mexico WHOLE (every SWPP plant in NM sits in SPS's eastern-NM
+# footprint — Chaves / Curry / Eddy / Lea / Quay / Roosevelt) plus the Texas
+# counties of :data:`_SPP_SPS_TX_COUNTIES`; Texas is the ONE state a state map
+# cannot express (audit §6.3 option B: SPS's Panhandle / South Plains vs the
+# SWEPCO / PSO east- and north-central-Texas footprint), so it carries the
 # county rule. Wyoming is deliberately ABSENT — zero EIA-860 plants carry
 # balancing authority SWPP there (Laramie River files under WAUW, a WECC BA);
 # Colorado IS present (eight small solar sites, 19.5 MW, all North).
@@ -361,18 +370,99 @@ _SPP_STATE_ZONES: dict[int, str] = {
     20: "SPP-North",  # KS
     29: "SPP-North",  # MO
     8: "SPP-North",  # CO (19.5 MW of solar; no CEMS unit)
-    40: "SPP-South",  # OK
-    48: "SPP-South",  # TX (SPS Panhandle + AEP/Golden Spread east Texas)
-    35: "SPP-South",  # NM
+    40: "SPP-South",  # OK (the residual South: OG&E / PSO / GRDA / WFEC)
+    48: "SPP-South",  # TX outside _SPP_SPS_TX_COUNTIES (SWEPCO / PSO east Texas)
+    35: "SPP-SPS",  # NM (SPS's eastern-NM footprint, whole)
     5: "SPP-South",  # AR
     22: "SPP-South",  # LA
 }
+
+# The Texas counties of the SPS (Southwestern Public Service, Xcel) service
+# territory — the SPP-SPS pocket's Texas half (lane SPP-54, PRECOMMIT §2.1):
+# the 26 Panhandle counties, the 15 South Plains counties, and Gaines (the
+# Permian-edge county SPS serves). A geographic rule, not a per-plant table,
+# so a future plant is placed by county with nothing to maintain (rule 13's
+# forward test). The EIA-860 `Transmission or Distribution System Owner` field
+# was read as the CORROBORATION, never the rule: 10,156 of the set's 12,167 MW
+# report owner 17718 (SPS) and the rest the co-ops that ride SPS's
+# transmission (Golden Spread, Lea County EC, South Plains EC, Farmers EC-NM)
+# — the one disagreement is Palo Duro Wind (Ochiltree; offtaker OG&E), which
+# the county rule keeps in the pocket because it is physically in it, and
+# International Paper Texarkana (Cass; owner field 17718) which the county
+# rule rightly leaves in east Texas. Texas county FIPS are the alphabetical
+# odd-number series; the codes with SWPP plants are pinned against eGRID's
+# FIPSCNTY (Bailey 17, Carson 65, Castro 69, Cochran 79, Crosby 107, Hale 189,
+# Hansford 195, Hutchinson 233, Lamb 279, Lubbock 303, Lynn 305, Moore 341,
+# Ochiltree 357, Oldham 359, Potter 375, Randall 381, Sherman 421, Yoakum 501).
+_SPP_SPS_TX_COUNTIES: frozenset[int] = frozenset(
+    {
+        # --- Panhandle (26) ---------------------------------------------------
+        11,  # Armstrong
+        45,  # Briscoe
+        65,  # Carson
+        69,  # Castro
+        75,  # Childress
+        87,  # Collingsworth
+        111,  # Dallam
+        117,  # Deaf Smith
+        129,  # Donley
+        179,  # Gray
+        191,  # Hall
+        195,  # Hansford
+        205,  # Hartley
+        211,  # Hemphill
+        233,  # Hutchinson
+        295,  # Lipscomb
+        341,  # Moore
+        357,  # Ochiltree
+        359,  # Oldham
+        369,  # Parmer
+        375,  # Potter
+        381,  # Randall
+        393,  # Roberts
+        421,  # Sherman
+        437,  # Swisher
+        483,  # Wheeler
+        # --- South Plains (15) ------------------------------------------------
+        17,  # Bailey
+        79,  # Cochran
+        107,  # Crosby
+        125,  # Dickens
+        153,  # Floyd
+        169,  # Garza
+        189,  # Hale
+        219,  # Hockley
+        269,  # King
+        279,  # Lamb
+        303,  # Lubbock
+        305,  # Lynn
+        345,  # Motley
+        445,  # Terry
+        501,  # Yoakum
+        # --- Permian edge (1) -------------------------------------------------
+        165,  # Gaines
+    }
+)
 
 # Latitude of the SPP North/South seam for the coords-only fallback (no FIPS
 # state): the KS/OK state line is 37.0 N and the MO/AR line 36.5 N, so a plant
 # south of 37.0 N is in the South tier. FIPS state is strongly preferred; this
 # only triggers when a caller supplies coordinates without a state code.
 _SPP_SEAM_LAT: float = 37.0
+
+# The SPS pocket's coords-only fallback inside the South tier (SPP-54): the
+# 100th meridian is the OK/TX Panhandle line and, measured on the EIA-860 SWPP
+# fleet, separates the pocket (easternmost plant Celanese, Gray, -100.84 W)
+# from the residual South's Texas plants (westernmost Diversion Wind, Baylor,
+# -99.02 W) with 1.8 degrees of clearance. The Oklahoma Panhandle strip
+# (36.5-37.0 N, 100-103 W) is Oklahoma, i.e. the residual South, so the
+# meridian limb applies only SOUTH of 36.5 N; west of 103 W (New Mexico) the
+# pocket takes the whole South tier. This limb is reached by the EIA-860
+# post-eGRID supplement (coordinates only, no FIPS) and by any caller without
+# a county code.
+_SPP_SPS_LON_100TH: float = -100.0  # the 100th meridian (OK/TX Panhandle line)
+_SPP_SPS_LON_NM: float = -103.0  # the TX/NM and OK-Panhandle/NM line
+_SPP_OK_PANHANDLE_LAT: float = 36.5  # the OK Panhandle strip's southern line
 
 # FIPS state code for New York. NYISO's eleven load zones (A–K) follow
 # county lines closely enough that county FIPS carries the assignment, with
@@ -953,20 +1043,45 @@ def _neiso_zone(
     return _LARGEST_ZONE["NEISO"]
 
 
-def _spp_zone(lat: float | None, fips_state: int | None) -> str:
+def _spp_zone(
+    lat: float | None,
+    lon: float | None,
+    fips_state: int | None,
+    fips_county: int | None,
+) -> str:
     """Return the SPP model zone for a plant location.
 
-    FIPS state carries the assignment — the two model zones are exact unions
-    of whole states (see :data:`_SPP_STATE_ZONES`) and eGRID / EIA-860 carry a
-    state for every SWPP plant. A plant whose state is outside the SPP map (a
-    stray cross-seam attribution) falls back to the seam latitude when
-    coordinates are available (South below 37.0 N, the KS/OK line), and
-    otherwise to the largest-load-share zone (SPP-North).
+    FIPS state carries the assignment for every state but Texas — North, the
+    residual South and New Mexico are exact unions of whole states (see
+    :data:`_SPP_STATE_ZONES`) and eGRID / EIA-860 carry a state for every
+    SWPP plant. Texas splits by county: a plant in :data:`_SPP_SPS_TX_COUNTIES`
+    (the SPS Panhandle / South Plains territory) is ``SPP-SPS``, any other
+    Texas county is the residual ``SPP-South``; a Texas plant with no county
+    code takes the coordinate limb below. A plant whose state is outside the
+    SPP map (a stray cross-seam attribution) or that carries coordinates only
+    falls back to the seam latitude (South tier below 37.0 N, the KS/OK line)
+    and, inside the South tier, to the SPS pocket's own geography (west of the
+    100th meridian and south of the Oklahoma Panhandle strip, or west of
+    103 W — lane SPP-54); otherwise to the largest-load-share zone
+    (SPP-North).
     """
-    if fips_state in _SPP_STATE_ZONES:
+    if fips_state == _TEXAS_FIPS and fips_county is not None:
+        return "SPP-SPS" if fips_county in _SPP_SPS_TX_COUNTIES else "SPP-South"
+    if fips_state in _SPP_STATE_ZONES and not (
+        fips_state == _TEXAS_FIPS and lat is not None and lon is not None
+    ):
         return _SPP_STATE_ZONES[fips_state]
     if lat is not None:
-        return "SPP-South" if lat < _SPP_SEAM_LAT else "SPP-North"
+        if lat >= _SPP_SEAM_LAT:
+            return "SPP-North"
+        if lon is not None and (
+            lon < _SPP_SPS_LON_NM
+            or (lon < _SPP_SPS_LON_100TH and lat < _SPP_OK_PANHANDLE_LAT)
+        ):
+            return "SPP-SPS"
+        return "SPP-South"
+    if fips_state in _SPP_STATE_ZONES:
+        return _SPP_STATE_ZONES[fips_state]
     return _LARGEST_ZONE["SPP"]
 
 
@@ -993,7 +1108,7 @@ def _zone_from_location(
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
     if iso == "SPP":
-        return _spp_zone(lat, fips_state)
+        return _spp_zone(lat, lon, fips_state, fips_county)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 
