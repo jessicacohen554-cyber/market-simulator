@@ -86,3 +86,9 @@ destination name carries the `fsName` because several products publish a bare
 Format note carried from the `gridstatus` client (v0.36.0): SPP changed the hourly-load
 file format on **2026-03-24** — wide before, long after. The 2023-2025 files are the
 wide format.
+## Appended 2026-09-06 by lane SPP-14 — the portal route is OPEN; 2023–2025 monthly files landed
+
+- `https://portal.spp.org/file-browser-api/download/hourly-load?path=%2F2023%2F2023.zip` (1,443,643 B) and `…%2F2024%2F2024.zip` (1,448,045 B): the 12 `HOURLY_LOAD-YYYYMM.csv` members of each landed; daily members not landed.
+- `https://portal.spp.org/file-browser-api/download/hourly-load?path=%2F2025%2FHOURLY_LOAD-2025MM.csv` ×12 (111–124 KB each), fetched 2026-09-06.
+- Producer: `scripts/data/fetch_spp_alt_portal.py --only hourly-load`. Checksums: `SHA256SUMS.txt` (new).
+- Licence: SPP Terms & Conditions, quoted verbatim in `README.md` (this update) and in `../spp-planning/SOURCES.md`.

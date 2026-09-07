@@ -133,3 +133,30 @@ reachable on the same route and deliberately not landed** — ~47 MB per year, ~
 for the span, which is not a pack this lane pushes for a row scoped to SPP-56 alone:
 `python scripts/data/fetch_spp_alt_portal.py --product rtbm-mcp --years 2023 2024`.
 2025 is served per-month for both products.
+---
+
+## STATUS UPDATE 2026-09-06 — lane SPP-14: 2023–2025 LANDED from SPP's own portal (row 9 SERVED)
+
+FINDING: `docs/handoffs/FINDING-spp-14-2026-09-06.md`. **Route (measured 2026-09-06 by SPP-14):** `https://portal.spp.org/file-browser-api/download/<fsName>?path=<p>` and the `?fsName=<fs>&path=<p>&type=folder` listing — **serving data to an anonymous caller again**, no `X-SPP-UI-Token`, no cookie, no User-Agent dependence (curl default, `python-requests/2.32.3`, an empty UA and a Chrome UA all return the same bytes). The `200 []` / `404` SPP-12 and SPP-13 measured earlier the same day did not reproduce; the FTP route (port 21) stays egress-blocked and was not needed. Producer: `scripts/data/fetch_spp_alt_portal.py` (re-fetches every file below; verify against `SHA256SUMS.txt`). Payloads are SPP's own files, byte-for-byte as served (the `data/raw/` contract).
+
+| File(s) | Source path on the portal | Content |
+|---|---|---|
+| `RTBM_MCP_2023.csv.zip`, `RTBM_MCP_2024.csv.zip` | member `<yr>/<yr>AnnualRollup/RTBM_MCP_<yr>.csv.zip` of `rtbm-mcp /<yr>/<yr>.zip` (the 104k five-minute `RTBM-MCP-*.csv` members are NOT landed) | SPP's own annual roll-up of the 5-minute RTBM MCPs: 630,720 rows (2023) / 632,448 (2024, leap) = 105,120 (105,408) intervals × 6 rows (reserve zones `1`…`5` + `SPP`). Header 2023: `Interval,GMTIntervalEnd,Reserve Zone,RegUPService,RegDNService,RegUpMile, RegDNMile,RampUP,RampDN,Spin,Supp`; 2024 adds `UncUP` (the uncertainty product) |
+| `RTBM_MCP_2025.csv.zip` | `rtbm-mcp /2025/2025AnnualRollup/RTBM_MCP_2025.csv.zip` | 630,720 rows, same 12-column 2024 header |
+| `DA-MCP-2023.zip`, `DA-MCP-2024.zip` | `da-mcp /<yr>/<yr>.zip` (whole archive, 0.4 MB each) | 365 daily `DA-MCP-YYYYMMDD0100.csv` (one operating day of hourly rows × reserve zones); header `Interval,GMTIntervalEnd,Reserve Zone,RegUP,RegDN,Spin,Supp,RampUP,RampDN` |
+| `da-mcp-2025/DA-MCP-2025MMDD0100.csv` ×365 | `da-mcp /2025/<mm>/DA-MCP-2025MMDD0100.csv` (no 2025 archive exists yet — SPP zips a year after ~2 years) | 13 KB each, same header as 2024 (`UncUP` where present) |
+
+**Timezone confirmed on the files:** `Interval` is Central Prevailing Time, `GMTIntervalEnd` UTC (6 h ahead in January). Reserve zones are SPP's numbered reserve zones (`RESZONE` in `../spp-planning/SL_to_Pnode_to_Zone_with_Area.csv`) plus the `SPP` system row. Licence: SPP Terms \& Conditions (<https://www.spp.org/terms-conditions/>, read 2026-09-06), verbatim: *"Permission is implicitly granted to copy and distribute (via computer network or printed form) in whole or in part (with appropriate citation) EXCEPT when such materials will be used, in whole or in part, within a commercial publication (printed or otherwise) or when the author(s) or SPP will be quoted in commercial materials, forums or publications. Any commercial use of these materials requires prior, express written authorization from the author(s) or a duly authorized officer of SPP."*
+
+
+---
+
+## MERGE RECONCILIATION 2026-09-06 — BOTH SPP-14 landings are in this directory
+
+The two SPP-14 status sections above were written by **two parallel sessions of the same
+lane**, each describing only its own landing, and both landings are now present. Neither
+section is wrong; each is partial. What this directory actually holds is the union, and the
+file listing beside this README is the authority — not either section's "Landed:" line.
+
+`SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
+every file here, from either landing.

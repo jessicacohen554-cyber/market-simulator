@@ -38,7 +38,24 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #: Pre-declared in ``PRECOMMIT-capx-d67arm-2026-09-06.md`` §2 and §5 (P-F/P-G),
 #: measured through the shipped harness path at base ``131291b5`` BEFORE the
 #: override landed. The bare PJM key advances; every other ISO's is unmoved.
-BARE_PJM_ARMED = "a9c66d8ea25acb9d"
+#:
+#: RE-PINNED 2026-09-07: PJM's bare key is a function of EVERY armed PJM override,
+#: so each new arm on ``_pjm_config`` moves it and restales this constant. Q55
+#: (``pjm_vre_accreditation_vintage``, capx D75-R) armed after D67 and moved it
+#: ``a9c66d8ea25acb9d`` -> ``b518f5fe7d02f961`` without re-pinning here, which left
+#: this file RED on ``main``. The old value is not wrong-in-itself — it is exactly
+#: the pre-Q55 bare key, i.e. ``_hindcast_key("PJM", pjm_vre_accreditation_vintage=
+#: False)`` — it had simply stopped naming "bare".
+#:
+#: The NAME is kept for its D67 genealogy but it means "PJM bare, every current arm
+#: applied", not "D67-armed only". A future PJM arm must re-measure it here.
+BARE_PJM_ARMED = "b518f5fe7d02f961"
+
+#: UNCHANGED, and deliberately so: the D67 pre-arm recipe is still reachable and
+#: still keeps its own key. What went stale was the INVOCATION below, not this pin —
+#: reaching the pre-arm posture now requires inverting Q55 as well as D67. Re-pinning
+#: this constant instead of completing the inverse would have silently discarded the
+#: (b'-1) invertibility property the test exists to hold.
 BARE_PJM_PRE_ARM = "15a723ba3b6dc856"
 BARE_BY_ISO_UNMOVED = {
     "MISO": "1f92943f84f42fd0",
@@ -111,8 +128,16 @@ class TestQ52ArmingKeys(unittest.TestCase):
     def test_explicit_off_reaches_the_pre_arm_posture_and_keeps_its_key(self):
         # (b′-1) inverse test: the arm is fully invertible, so every pre-arm
         # bundle's recipe stays reachable AND identified by its own key.
+        # Every arm that landed on ``_pjm_config`` AFTER D67 has to be inverted too,
+        # or this reaches an intermediate posture rather than the pre-arm one. Q55
+        # (``pjm_vre_accreditation_vintage``) is that arm; without it the key is
+        # ``33041553d7541538``, which is not any declared posture.
         self.assertEqual(
-            _hindcast_key("PJM", capacity_adequacy_requirement_published=False),
+            _hindcast_key(
+                "PJM",
+                capacity_adequacy_requirement_published=False,
+                pjm_vre_accreditation_vintage=False,
+            ),
             BARE_PJM_PRE_ARM,
         )
 
