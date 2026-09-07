@@ -2334,6 +2334,77 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # the SUPERSEDED posture; D65-B re-solves every bare forecast key and the
     # blast-radius reconciliation is FINDING-capx-d65b-2026-09-06.md.
     ("2026-09-06", "ccs_retrofit_fixed_cost_co2_scaling", "True"),
+    #
+    # capx D76-ARM-B, executing OWNER RULING Q58 (director sitting r#55,
+    # 2026-09-07): the MEASURED hindcast capacity-screen PEAK arms as the
+    # default posture for every ISO, on the six-ISO zero-LP census
+    # (``docs/handoffs/FINDING-capx-d76-2026-09-06.md``, ``-p2-``, ``-p3-``).
+    # The FOURTH entry in this ledger.
+    #
+    # A REPAIR, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact) and NOT a
+    # residual argument (rules 1/13/14). The basis is rule 14 [R-ACCURATE]
+    # alone: in every hindcast year that is not the weather year the capacity
+    # screens tested a peak ``_scale_demand`` had DE-GROWN out of the weather
+    # year -- wrong by -23.3 % to +15.4 % against the IDENTICAL array the same
+    # year's LP dispatches -- and rule 14's misalignment exception cannot apply
+    # BECAUSE IT IS THE SAME ARRAY. Zero scalar fields, zero free parameters
+    # (rules 21/24); the gate carries no per-ISO number and it is the same
+    # repair everywhere because the defect is in one shared seam.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays ``"False"``, so a post-flip default config no longer equals the drop
+    # value: it ENTERS the hash and takes its own key, while an EXPLICIT
+    # ``False`` still collapses onto the pre-flip key and keeps its bundle --
+    # one committed artifact already exercises that,
+    # ``results/capacity-hindcast/pjm-2021-2025-realized-t1h-d75rarm``, which
+    # recorded the field explicitly ``false`` because it solved after D76
+    # phase 1 registered it. The cost is a one-time cache MISS per config,
+    # never a wrong answer.
+    #
+    # THIS ENTRY IS ONE HALF OF A TWO-HALF ARM, which is what makes it
+    # different from the three above. ``__post_init__`` coerces the field back
+    # to its FROZEN DECLARATION whenever ``not self.hindcast`` -- the sibling
+    # gates' coercion on the broader predicate the seam's own branch implies.
+    # WITHOUT that half the flip re-keys 93 configs the mechanism cannot reach,
+    # TEN OF THEM BACKCAST KEEPERS, for behaviour that is byte-identical; WITH
+    # it, measured over all 190 committed ``run_config.json`` at the arm,
+    # **34 keys move and every one of them is a hindcast bundle the gate
+    # governs** -- PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1 -- with
+    # ZERO backcast moves and ZERO non-hindcast forecast moves. All seven
+    # ``*-plain-backcast`` keys are unmoved and all seven ``*-t1h-bare`` recipe
+    # keys advance (the intended effect, listed rather than counted):
+    # ercot ``46d013cbf1f35d27`` -> ``f238df2e5b1ef838``; caiso
+    # ``8f1c3766703a90c4`` -> ``28f4f62b90e2f74b``; miso ``1f92943f84f42fd0``
+    # -> ``71156d9eb2ea896d``; pjm ``fb16fda2ddb0a94a`` ->
+    # ``f736025631d0d27e``; nyiso ``ee6a3e764324f28f`` -> ``ee0d44e7d6f26397``;
+    # neiso ``5b292e24dd752ea4`` -> ``806f31b59b10c911``; spp
+    # ``7d1c3f080475310e`` -> ``8acea51fd756a867``.
+    #
+    # WHY THE ROUTE CHANGED. Q57 had authorized the flip alone under a STOP
+    # requiring ZERO key moves. ``FINDING-capx-d76-arm-2026-09-07.md`` measured
+    # that route and it fails STRUCTURALLY, not by execution: under (b'-1) a
+    # field is dropped IFF it equals its frozen declaration, so arming moves the
+    # resolved value OFF that declaration and the armed configs enter the hash
+    # BY DESIGN -- "arm the gate" and "move no key" are the same sentence with
+    # opposite signs. Q58 voided Q57's route and ruled variant B on the standard
+    # the two immediate arms actually met (D75-R-ARM, D78-ARM): ZERO OFF-TARGET
+    # moves with the in-scope moves LISTED.
+    #
+    # BACKCAST BEHAVIOUR IS BYTE-IDENTICAL, and so is every forecast run and
+    # every crossover FORWARD year -- by CONSTRUCTION, not by measurement: the
+    # seam branch (``runner.py``) is ``config.hindcast and not
+    # config.is_crossover_forward_year(year)``, so a year with no measured load
+    # to read never enters it, and half 2 additionally puts the flag itself out
+    # of reach on a non-hindcast config. Both layers are asserted by test
+    # (``tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py``).
+    # No keeper, sidecar, determination or dashboard row moves and nothing needs
+    # re-scoring. The 34 hindcast bundles solved at the pre-flip default carry
+    # the SUPERSEDED screen operand and are re-solved by their own ISO's lane on
+    # its natural cadence -- Q57's own "frontier bundles re-solved on their
+    # natural cadence rather than a repository-wide sweep"; this lane re-ran
+    # nothing. Execution and every pre-declared number:
+    # ``docs/handoffs/PRECOMMIT-capx-d76-arm-b-2026-09-07.md``.
+    ("2026-09-07", "capacity_screen_peak_measured_hindcast", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -2429,6 +2500,25 @@ def _resolve_declared_default(src: str):
             if kw.arg == "default_factory" and isinstance(kw.value, ast.Lambda):
                 return ast.literal_eval(kw.value.body)
     raise ValueError(f"declared default is not evaluable: {src!r}")
+
+
+#: The value ``capacity_screen_peak_measured_hindcast`` is coerced to on a
+#: NON-HINDCAST config (capx D76-ARM-B / owner ruling Q58, ``__post_init__``
+#: half 2 of the arm). It is the field's FROZEN cache-key declaration, resolved
+#: ONCE at import from the ledger above rather than restated as a literal —
+#: which is the sibling gates' "never a literal" discipline pointed at the RIGHT
+#: object. Those gates coerce to the DATACLASS DEFAULT because for them the two
+#: coincide; here they do not, and must not: the dataclass default is the ARMED
+#: value after the flip, so coercing to it would be a no-op and half 2 would buy
+#: nothing. What the coercion has to reproduce is the value at which
+#: :meth:`ScenarioConfig.cache_key` DROPS the field, which is this one and is
+#: append-only under (b'-1). Resolved from the source text rather than through
+#: :func:`cache_key_drop_defaults` because that function constructs a
+#: ``ScenarioConfig`` on its fallback path and would recurse into
+#: ``__post_init__``.
+_CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION = _resolve_declared_default(
+    _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["capacity_screen_peak_measured_hindcast"]
+)
 
 
 def cache_key_drop_defaults() -> dict:
@@ -16784,10 +16874,12 @@ class ScenarioConfig:
     # name. SCOPE: generic in form, PJM-scoped by DATA — an ISO with no intaken
     # default-ACR table has no "NA" cell, so the gate is inert by construction
     # (rule 25 [R-ISO-SCOPE]; nothing transfers).
-    capacity_screen_peak_measured_hindcast: bool = False
-    # GATED default-OFF (capx D76 2026-09-06, executing FINDING-capx-d67-
-    # 2026-09-06.md §8(a) as measured across all six ISOs by
-    # FINDING-capx-d76-2026-09-06.md). WHAT IT CHANGES: the OPERAND of the
+    capacity_screen_peak_measured_hindcast: bool = True
+    # ARMED AS THE DEFAULT POSTURE for every ISO (capx D76-ARM-B, executing
+    # OWNER RULING Q58, director sitting r#55, 2026-09-07) -- built default-OFF
+    # by capx D76 2026-09-06, executing FINDING-capx-d67-2026-09-06.md
+    # §8(a) as measured across all six ISOs by
+    # FINDING-capx-d76-2026-09-06.md. WHAT IT CHANGES: the OPERAND of the
     # capacity screens' peak. ``runner.py`` builds that peak at the top of its
     # year loop from ``_scale_demand`` over the once-loaded weather-year base
     # (the GROWTH path) and only the LP's own ``year_demand``, 500 lines down,
@@ -16815,14 +16907,45 @@ class ScenarioConfig:
     # measured peak is a reproducible physical input for a realized year, never
     # an outcome pinned to a residual. Inert (same predicate as the LP's own
     # branch) for every forecast run, every crossover FORWARD year, and every
-    # backcast; the field is a plain bool whose False default needs no
-    # backcast coercion, and it is registered in _CACHE_KEY_OPTIONAL_FIELDS at
-    # False so an unarmed run's cache key is byte-stable and an armed run keys
-    # distinctly. WHY DEFAULT-OFF: arming changes the screen operand of EVERY
-    # hindcast bundle in the repo and therefore every FC-1 / FC-3 T1-H row on
-    # the forecast board, so it is an owner card, not a lane decision.
+    # backcast — asserted by test at BOTH layers in
+    # tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py
+    # (TestNonHindcastCoercion for the coercion, and
+    # TestSeamPeakInertWhereThereIsNoMeasuredLoad, which sets the flag on the
+    # RESOLVED config so it bypasses the coercion and the SEAM's own inertness
+    # is proved rather than merely made unreachable).
+    #
+    # HOW IT IS ARMED (capx D76-ARM-B / owner ruling Q58, 2026-09-07) — the
+    # (b'-1) DEFAULT-FLIP route, in TWO halves that must be read together:
+    #   (1) this dataclass default moves False -> True, declared by APPENDING
+    #       to _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS while the frozen entry
+    #       in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS stays "False" and is NOT
+    #       edited (append-only, guard check 4). So a config resolving the new
+    #       default ENTERS the hash and takes its own key — which is the
+    #       mechanism that stops a post-flip armed run being served the
+    #       pre-flip unarmed bundle — while an EXPLICIT False still collapses
+    #       onto the pre-flip key and keeps its bundle (one committed artifact
+    #       already exercises that: results/capacity-hindcast/
+    #       pjm-2021-2025-realized-t1h-d75rarm).
+    #   (2) __post_init__ coerces the field back to the DATACLASS DEFAULT,
+    #       never a literal, whenever ``not self.hindcast`` — the one
+    #       predicate under which the gate is inert for the WHOLE run rather
+    #       than year by year (the LP's own branch predicate with the year
+    #       term dropped). Without half 2 the flip re-keys 93 configs the
+    #       mechanism cannot reach; with it, 0.
+    # Q57 had authorized half 1 alone under a STOP requiring ZERO key moves;
+    # FINDING-capx-d76-arm-2026-09-07.md measured that route and it fails
+    # STRUCTURALLY — under (b'-1) "arm the gate" and "move no key" are the
+    # same sentence with opposite signs — so Q58 VOIDED it and ruled variant
+    # B on the house standard the two immediate arms met: ZERO OFF-TARGET
+    # moves with the in-scope moves LISTED. MEASURED at the arm over all 190
+    # committed run_config.json: 34 move, ALL of them the hindcast bundles the
+    # gate governs (PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1),
+    # 0 backcast moves and 0 non-hindcast forecast moves. Execution and every
+    # pre-declared number: PRECOMMIT-capx-d76-arm-b-2026-09-07.md.
     # Hindcast harness: run_capacity_hindcast.py
-    # --capacity-screen-peak-measured-hindcast. SCOPE: ISO-agnostic by
+    # --capacity-screen-peak-measured-hindcast, and
+    # --no-capacity-screen-peak-measured-hindcast reaches the pre-arm posture
+    # and KEEPS its pre-flip key. SCOPE: ISO-agnostic by
     # construction — it carries no per-ISO number and nothing is transferred
     # (rule 25 [R-ISO-SCOPE]); it is the same repair in every ISO because the
     # defect is in one shared seam.
@@ -17530,6 +17653,43 @@ class ScenarioConfig:
         if self.mode == "backcast":
             self.retirement_sector_gate = (
                 type(self).__dataclass_fields__["retirement_sector_gate"].default
+            )
+
+        # capx D76-ARM-B (OWNER RULING Q58, 2026-09-07): HALF 2 of the arm.
+        # ``capacity_screen_peak_measured_hindcast`` now defaults to True, so
+        # it needs the coercion the five sibling gates above already ship —
+        # but on a BROADER predicate than theirs, and deliberately so. Those
+        # gates coerce in a plain backcast because a backcast runs no capacity
+        # evolution. This one is inert wherever there is NO MEASURED LOAD TO
+        # READ, which is every non-hindcast run of either mode: the seam's own
+        # branch is ``config.hindcast and not is_crossover_forward_year(year)``
+        # (runner.py), so ``not self.hindcast`` is that predicate with the year
+        # term dropped — the one condition under which the gate is inert for
+        # the WHOLE run rather than year by year. Coerced to the DATACLASS
+        # DECLARATION, never a literal — see
+        # _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION for why this one coerces to
+        # the FROZEN declaration where the gates above coerce to the dataclass
+        # default (for them the two coincide; after this flip they do not, and
+        # coercing to the dataclass default would be a no-op).
+        #
+        # WHY IT IS PART OF THE ARM AND NOT A TIDY-UP. Under (b'-1) a
+        # registered field is dropped from the hash iff it equals its FROZEN
+        # declaration ("False"), so without this coercion every non-hindcast
+        # config that does not record the field would resolve the new default,
+        # ENTER the hash and re-key — 93 of the 190 committed run configs, 10
+        # of them BACKCAST KEEPERS, all for behaviour that is byte-identical.
+        # With it: 34 move, every one a hindcast bundle the gate governs, 0 off
+        # target (PRECOMMIT-capx-d76-arm-b-2026-09-07.md §2.2). That is the
+        # house standard Q58 ruled on, and this line is what meets it.
+        #
+        # It does NOT weaken the inertness claim to an unreachability claim:
+        # the dataclass is mutable, so the seam tests set the flag on the
+        # RESOLVED config and prove the runner's branch inert on its own
+        # (TestSeamPeakInertWhereThereIsNoMeasuredLoad), with the coercion
+        # asserted separately (TestNonHindcastCoercion).
+        if not self.hindcast:
+            self.capacity_screen_peak_measured_hindcast = (
+                _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION
             )
 
         # capx D59: the NYISO locality capacity-curve gate is likewise a

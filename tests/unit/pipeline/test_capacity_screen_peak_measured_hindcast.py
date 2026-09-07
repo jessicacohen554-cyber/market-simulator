@@ -17,6 +17,15 @@ share one array, rule 19 ``[R-ONE-MECH]``); and the gate is inert wherever
 there is no measured load to read -- a forecast run and a crossover FORWARD
 year -- so the growth path remains the forecast methodology (rule 13
 ``[R-MEASURED]``).
+
+Since capx D76-ARM-B (owner ruling Q58, 2026-09-07) the gate is ARMED BY
+DEFAULT, in two halves, and the tests pin both: the dataclass default is ``True``
+and the bare hindcast recipe therefore takes the ARMED key while an explicit
+``False`` keeps the pre-flip one, and ``__post_init__`` coerces the field back to
+its frozen declaration on any NON-hindcast config. The second half is why the
+inertness tests set the flag on the RESOLVED config rather than through the
+constructor -- otherwise the coercion would satisfy them trivially and they
+would stop being claims about the seam at all.
 """
 
 import tempfile
@@ -28,7 +37,11 @@ import numpy as np
 
 from market_sim import runner
 from market_sim.config.iso_configs import apply_iso_scenario_defaults, get_iso_config
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import (
+    _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION,
+    ScenarioConfig,
+    cache_key_drop_defaults,
+)
 from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import solve as pipeline_solve
 from market_sim.results import cache
@@ -89,11 +102,22 @@ class _SeamCase(_HermeticCleanDir):
             weather_year=2024,
             eia860_vintage_year=2020,
             datacenter_load_path="off",
-            capacity_screen_peak_measured_hindcast=armed,
         )
         if crossover_forward_year is not None:
             overrides["crossover_forward_year"] = crossover_forward_year
         config = ScenarioConfig(**overrides)
+        # THE FLAG IS SET ON THE RESOLVED CONFIG, DELIBERATELY (capx D76-ARM-B /
+        # owner ruling Q58). Half 2 of the arm coerces the field to its frozen
+        # declaration whenever ``not self.hindcast``, so passing ``armed`` to the
+        # constructor would silently drop it on the ``hindcast=False`` arm and
+        # turn the forecast inertness test below into a tautology -- both arms
+        # unarmed, equal for a reason that has nothing to do with the seam.
+        # Assigning afterwards bypasses ``__post_init__`` (the dataclass is not
+        # frozen), so what is compared is the RUNNER'S OWN BRANCH with the flag
+        # genuinely on, which is the claim worth making: the seam is inert where
+        # there is no measured load even if the flag reaches it. The coercion is
+        # asserted separately and on its own terms by TestNonHindcastCoercion.
+        config.capacity_screen_peak_measured_hindcast = armed
 
         captured, loaded = {}, []
         original = runner.evolve_fleet
@@ -231,14 +255,42 @@ class TestCacheKeyRegistration(unittest.TestCase):
             iso,
         ).cache_key()
 
-    def test_explicit_off_keeps_the_bare_key_and_armed_moves_it(self):
+    def test_bare_hindcast_key_is_the_ARMED_key_and_explicit_off_moves_it(self):
+        """The POST-flip invariant (capx D76-ARM-B / owner ruling Q58).
+
+        Before the arm this read ``bare == off`` and ``bare != on``. The flip
+        inverts it, and the inversion is the whole point of the (b'-1) route:
+        the bare hindcast recipe now resolves the ARMED default, so it takes the
+        armed key -- which is what stops a post-flip armed run being served the
+        pre-flip unarmed bundle -- while an EXPLICIT ``False`` still equals the
+        frozen declaration, is dropped from the hash, and therefore keeps the
+        PRE-flip key and its bundle. That second half is not a formality: one
+        committed artifact already exercises it
+        (``results/capacity-hindcast/pjm-2021-2025-realized-t1h-d75rarm``).
+        """
         for iso in self.ISOS:
             with self.subTest(iso=iso):
                 bare = self._key(iso)
                 off = self._key(iso, capacity_screen_peak_measured_hindcast=False)
                 on = self._key(iso, capacity_screen_peak_measured_hindcast=True)
-                self.assertEqual(off, bare)
-                self.assertNotEqual(on, bare)
+                self.assertEqual(on, bare)
+                self.assertNotEqual(off, bare)
+
+    def test_non_hindcast_forecast_key_is_untouched(self):
+        """Half 2's own key claim: a forecast run the gate cannot reach.
+
+        The backcast case below was true before the arm and stays true; THIS one
+        is true only because of the ``__post_init__`` coercion, and it is the
+        assertion that keeps 83 committed forecast configs from re-keying for
+        byte-identical behaviour.
+        """
+        for iso in self.ISOS:
+            with self.subTest(iso=iso):
+                base = apply_iso_scenario_defaults(
+                    ScenarioConfig(iso=iso, hindcast=False), iso
+                )
+                off = base.with_overrides(capacity_screen_peak_measured_hindcast=False)
+                self.assertEqual(off.cache_key(), base.cache_key())
 
     def test_backcast_key_is_untouched(self):
         """A backcast runs no capacity evolution; its key must not move."""
@@ -249,6 +301,73 @@ class TestCacheKeyRegistration(unittest.TestCase):
                 )
                 off = base.with_overrides(capacity_screen_peak_measured_hindcast=False)
                 self.assertEqual(off.cache_key(), base.cache_key())
+
+
+class TestNonHindcastCoercion(unittest.TestCase):
+    """Half 2 of the arm (capx D76-ARM-B / owner ruling Q58), on its own terms.
+
+    The gate's runtime branch is ``config.hindcast and not
+    config.is_crossover_forward_year(year)``, so a run with no measured load to
+    read is inert for its WHOLE horizon. ``__post_init__`` makes that structural:
+    on any non-hindcast config the field is forced back to its FROZEN
+    declaration -- not to the dataclass default, which after the flip is the
+    ARMED value and would make the coercion a no-op.
+    """
+
+    ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
+
+    def test_the_dataclass_default_is_armed(self):
+        """The flip itself, read off the field rather than a resolved instance."""
+        self.assertIs(
+            ScenarioConfig.__dataclass_fields__[
+                "capacity_screen_peak_measured_hindcast"
+            ].default,
+            True,
+        )
+
+    def test_coerced_off_on_every_non_hindcast_config(self):
+        for iso in self.ISOS:
+            for mode in ("forecast", "backcast"):
+                with self.subTest(iso=iso, mode=mode):
+                    cfg = apply_iso_scenario_defaults(
+                        ScenarioConfig(iso=iso, mode=mode, hindcast=False), iso
+                    )
+                    self.assertFalse(cfg.capacity_screen_peak_measured_hindcast)
+
+    def test_an_explicit_true_does_not_survive_a_non_hindcast_config(self):
+        """The coercion is unconditional, not a default-only fallback."""
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            hindcast=False,
+            capacity_screen_peak_measured_hindcast=True,
+        )
+        self.assertFalse(cfg.capacity_screen_peak_measured_hindcast)
+
+    def test_a_hindcast_config_keeps_both_values(self):
+        """The coercion must not reach the runs the gate governs."""
+        for iso in self.ISOS:
+            with self.subTest(iso=iso):
+                armed = ScenarioConfig(iso=iso, hindcast=True)
+                self.assertTrue(armed.capacity_screen_peak_measured_hindcast)
+                off = ScenarioConfig(
+                    iso=iso,
+                    hindcast=True,
+                    capacity_screen_peak_measured_hindcast=False,
+                )
+                self.assertFalse(off.capacity_screen_peak_measured_hindcast)
+
+    def test_the_coercion_target_is_the_frozen_declaration(self):
+        """Rule 24: the coerced value tracks the ledger, not a literal.
+
+        If the frozen declaration ever moved, the coercion would move with it --
+        which is the property that makes ``__post_init__`` and ``cache_key``
+        agree on what "unarmed" means, and therefore the property that makes the
+        non-hindcast keys stable.
+        """
+        self.assertEqual(
+            _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION,
+            cache_key_drop_defaults()["capacity_screen_peak_measured_hindcast"],
+        )
 
 
 if __name__ == "__main__":

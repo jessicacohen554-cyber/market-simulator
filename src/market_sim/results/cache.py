@@ -76,6 +76,75 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-07 — capx D76-ARM-B / owner ruling Q58: the capacity screens'
+PEAK becomes the hindcast year's OWN MEASURED peak, armed as the default posture
+for every ISO. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for HINDCAST
+recipes only, and for no backcast and no plain forecast run at all.**
+
+``capacity_screen_peak_measured_hindcast`` flips ``False -> True`` on the shared
+``ScenarioConfig`` default, declared by APPENDING to
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`` (its FOURTH entry) while the frozen
+entry in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` stays ``"False"`` — the D44 /
+D60 / D65-B (b'-1) route. **It lands in TWO halves**, and the second is what
+makes the first affordable: ``__post_init__`` coerces the field back to that
+frozen declaration whenever ``not config.hindcast``, the seam's own branch
+predicate with the year term dropped. Without half 2 the flip re-keys 93 of the
+190 committed run configs — **ten of them BACKCAST KEEPERS** — for behaviour
+that is byte-identical, because a config resolving the new default no longer
+equals the drop value and enters the hash.
+
+**Measured at the arm over all 190 committed** ``run_config.json``
+(``scripts/probes/capxd76arm_default_flip_key_census.py --variant b``, records
+under ``docs/handoffs/d76armb/``, run against BOTH the pre-edit and the
+post-edit tree and agreeing to the config): **34 keys move and every one of them
+is a hindcast bundle the gate governs** — PJM 10, MISO 9, NEISO 6, NYISO 5,
+ERCOT 3, CAISO 1 — with **ZERO backcast moves and ZERO non-hindcast forecast
+moves**. All seven ``*-plain-backcast`` keys are unmoved
+(``406cb30ad62bc27b`` ERCOT, ``efebcc735768c122`` CAISO, ``b10d58628ba3a057``
+MISO, ``3a566deac3a85682`` PJM, ``cadaba3d344e84b9`` NYISO, ``27e80d27acd995de``
+NEISO, ``989da50bbf0f99d8`` SPP) and all seven ``*-t1h-bare`` recipe keys
+advance, which is the intended effect and is listed rather than counted:
+``46d013cbf1f35d27 -> f238df2e5b1ef838`` (ERCOT), ``8f1c3766703a90c4 ->
+28f4f62b90e2f74b`` (CAISO), ``1f92943f84f42fd0 -> 71156d9eb2ea896d`` (MISO),
+``fb16fda2ddb0a94a -> f736025631d0d27e`` (PJM), ``ee6a3e764324f28f ->
+ee0d44e7d6f26397`` (NYISO), ``5b292e24dd752ea4 -> 806f31b59b10c911`` (NEISO),
+``7d1c3f080475310e -> 8acea51fd756a867`` (SPP).
+``--no-capacity-screen-peak-measured-hindcast`` reaches the pre-arm posture and
+KEEPS the pre-flip key — a property one committed artifact already exercises,
+``results/capacity-hindcast/pjm-2021-2025-realized-t1h-d75rarm``, which recorded
+the field explicitly ``false`` because it solved after D76 phase 1 registered it.
+
+**Because the key advances, nothing is silently re-interpreted.** The 34 hindcast
+bundles solved at the pre-flip default carry the SUPERSEDED screen operand under
+their own keys and are re-solved by their own ISO's lane on its natural cadence
+(Q57's own words, kept by Q58); this lane re-ran nothing and registered nothing.
+Backcast behaviour is byte-identical by construction, so no keeper, sidecar,
+determination or dashboard row moves. **The pinned default and backcast
+``cache_key`` literals in** ``tests/regression/test_persisted_identity.py`` **do
+NOT advance**: both are non-hindcast configs, half 2 coerces the field to the
+frozen declaration there, and ``cache_key()`` drops it — measured identical
+against ``origin/main``'s own resolved payload, field by field.
+
+**WHY THE ROUTE CHANGED.** Owner ruling Q57 had authorized the flip alone under a
+STOP requiring ZERO key moves. ``FINDING-capx-d76-arm-2026-09-07.md`` verified
+that route and it fails STRUCTURALLY: under (b'-1) a registered field is dropped
+IFF it equals its frozen declaration, so arming necessarily moves the resolved
+value off that declaration and the armed configs enter the hash BY DESIGN —
+which is the mechanism that stops a post-flip armed run being served the pre-flip
+unarmed bundle. "Arm the gate" and "move no key" are the same sentence with
+opposite signs. Q58 voided Q57's route and ruled **variant B** on the standard
+the two immediate arms in this family actually met (D75-R-ARM: *"21 of 153
+configs move, ALL PJM FORECAST"*; D78-ARM: *"zero non-PJM moves, zero backcast
+moves … PJM forecast moves and is listed"*): **zero OFF-TARGET moves, in-scope
+moves listed**.
+
+Evidence: ``FINDING-capx-d76-2026-09-06.md`` (§2 the -23.3 % to +15.4 % operand
+error, §4.2 the rule-19 consumer enumeration, re-verified complete at this HEAD),
+``-p2-``, ``-p3-``; the route measurement ``FINDING-capx-d76-arm-2026-09-07.md``;
+execution and every pre-declared number
+``PRECOMMIT-capx-d76-arm-b-2026-09-07.md``, graded in
+``FINDING-capx-d76-arm-b-2026-09-07.md``.
+
 **Epoch 2026-09-06h — capx D78-ARM / owner ruling Q56: the retirement-screen
 SECTOR GATE is armed for PJM. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for
 PJM's forecast recipes only, and for no backcast and no other ISO at all.**
