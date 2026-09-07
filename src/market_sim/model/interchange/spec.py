@@ -146,7 +146,27 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
 # no pooling, the derive gates are the cross-year transfer check).
 # ---------------------------------------------------------------------------
 CAISO_DSW_SURPLUS_CLEAN_NAME: str = "DSW_surplus_clean"
+# 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint). Rule 22
+# as amended 2026-08-06 — "what is held out is the SCORE, never the DATA": a
+# held-out year rides its OWN measured depth exactly as every other backcast
+# year does, or the 2022 rung would silently run the pooled STATIC while
+# 2023-2025 run measured values, i.e. a recipe the keeper was never scored on.
+# Derivable only since caiso-261 landed the 2022 MALIN / PALOVRDE hub rows of
+# wecc_intertie_lmp_hourly_CAISO.parquet from the OASIS GroupZip DAM archives
+# (H-3); caiso-259 §2 listed S-3 as NOT derivable, and that is superseded by
+# the H-3 landing, which is the source-data change rule 23 [R-FROZEN-DERIVE]
+# requires a re-derivation to cite.
+# PRODUCER, NEW AND VERIFIED: scripts/data/derive_caiso_dsw_surplus_depth.py.
+# This depth was the one of the three with NO committed producer (the comment
+# above still calls it a "scratch derivation in FINDING-caiso86b"); the new
+# script transcribes the construction documented above and REPRODUCES the three
+# committed values to the MW (5,311.600 / 4,791.900 / 5,472.500 against 5,312 /
+# 4,792 / 5,472), the pooled static (5,192) and the published gates (CV 0.056,
+# LOYO worst 12.5%) before it emits any new year. The 2023-2025 values and the
+# static are UNCHANGED — the extra year is report-only and never enters the
+# pooled mean or the gates, so the committed rows are not re-adjudicated.
 CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2022: 5813.0,
     2023: 5312.0,
     2024: 4792.0,
     2025: 5472.0,
@@ -199,7 +219,14 @@ CAISO_DSW_SURPLUS_REMOTE_VOM: float = 2.5
 # point-to-point charge, corroborated by the measured overnight spread).
 # ---------------------------------------------------------------------------
 CAISO_DSW_OVERNIGHT_CLEAN_NAME: str = "DSW_overnight_clean"
+# 2022 ADDED 2026-09-07 (caiso-262) — same rule-22 rationale, same H-3 source
+# unlock and the same report-only discipline as the surplus block above.
+# Producer: derive_caiso_overnight_clean_depth.py --extra-years 2022, whose
+# DEFAULT run reproduces 5,870 / 6,205 / 6,487, the gates (CV 0.041, LOYO worst
+# 8.1%) and this block byte-for-byte. 2022's 6,309 MW sits INSIDE the
+# 2023-2025 range, which is why nothing here is re-adjudicated.
 CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2022: 6309.0,
     2023: 5870.0,
     2024: 6205.0,
     2025: 6487.0,
@@ -256,7 +283,23 @@ CAISO_OVERNIGHT_CLEAN_HOD_MAX: int = 5
 # caiso-93 overnight tranche, so no hour double-carries clean depth.
 # ---------------------------------------------------------------------------
 CAISO_DSW_DAYTIME_CLEAN_NAME: str = "DSW_daytime_clean"
+# 2022 ADDED 2026-09-07 (caiso-262) — same rule-22 rationale, same H-3 source
+# unlock and the same report-only discipline as the surplus block above.
+# Producer: derive_caiso_daytime_clean_depth.py --extra-years 2022, whose
+# DEFAULT run reproduces 5,441 / 5,762 / 5,998, the static (5,733) and the
+# gates (CV 0.040, LOYO worst 8.1%) byte-for-byte.
+# REPORTED AT FULL MAGNITUDE, NOT SMOOTHED: 2022's 6,774 MW sits ~13 % ABOVE
+# the 2023-2025 range (5,441-5,998) — the only one of the three depths that
+# does. The mechanism is visible in the window itself: 2022 is a high-gas year
+# (the Dec-2022 West spike), the trigger floor is HR_CCGT x SoCal citygate, so
+# a higher floor puts MORE hours on the trigger-OFF side (3,398 of 5,840
+# measured daytime hours) and the p95 of that wider, deeper population rises.
+# That is the construction responding to a changed condition exactly as rule 13
+# [R-MEASURED] requires of an admissible input — NOT a fitted value, and not a
+# reason to substitute the pooled static, which would replace a measured year
+# with a mean of three other years.
 CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2022: 6774.0,
     2023: 5441.0,
     2024: 5762.0,
     2025: 5998.0,
@@ -452,7 +495,44 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # all three years — Tier-3 contract-cost proxies, not a measured Q-Q
     # derivation like MISO_SEAM_LADDER_BY_YEAR or the NEISO ladders below.
     # Labelled per rule 24/rule 11 honesty; values unchanged.
+    #
+    # 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint) —
+    # same source, same table, same recipe, ZERO new parameters. Without the
+    # row a 2022 rung falls to the STATIC ladder (1,566 / 1,805) and runs a
+    # firm block the keeper was never scored on, silently (caiso-259 §2, S-2).
+    #   DMM 2022 Annual Report on Market Issues and Performance (July 11 2023),
+    #   **Table 8.5** "Average system resource adequacy capacity, availability,
+    #   and performance by fuel", p. 234 — the `Imports` row = **3,171 MW**.
+    #   The sibling `Imports-MSS` row (273 MW) is EXCLUDED, which is not a
+    #   judgment call: the DMM 2023 report's Table 8.4 `Imports` row is 2,323
+    #   MW, exactly the committed 2023 level, while its `Imports-MSS` is 326 —
+    #   so the committed convention is the `Imports` row alone, and 2022 follows
+    #   it. (Figure 8.2's "about 2,900 MW" bid-in volume is a DIFFERENT object —
+    #   a chart-read of bid-in MW in Aug/Sep peak hours — and is NOT used.)
+    #   MIC north share 2022 = 7,411 / 15,780 = 0.46965 (published branch-group
+    #   import limits, the same north-of-Path-15 partition), so
+    #   PNW_hydro_base = round(3,171 x 0.46965) = 1,489 and DSW_solar_PV =
+    #   3,171 - 1,489 = 1,682.
+    # THE CONSTRUCTION WAS RE-PROVED BEFORE 2022 WAS WRITTEN: applying it to
+    # 2023/2024/2025 reproduces the committed pairs 1072/1251, 1558/1813 and
+    # 1566/1805 **to the MW, all three**. Two transcription traps it exposed,
+    # recorded so the next lane does not re-hit them: (a) the north set must
+    # include the 22 MW Westley branch group, which the caiso-188 census
+    # probe's transcription omits — without it every year lands 3-5 MW low;
+    # (b) CAISO RENAMED that branch group `Westley-Los Banos` -> `Westley-Fink`
+    # for delivery year 2025, so a name-keyed north set silently drops it in
+    # 2025 alone. Spot tranches and every price are identical to the other
+    # years, i.e. the same STATIC-FITTED-PENDING-MEASURED Tier-3 proxies the
+    # G-26 label above already declares.
     "CAISO": {
+        2022: [
+            ("PNW_hydro_base", 1489.0, 28.0),
+            ("PNW_midC", 1800.0, 36.0),
+            ("DSW_solar_PV", 1682.0, 48.0),
+            ("DSW_CCGT", 1800.0, 68.0),
+            ("DSW_CT", 2200.0, 110.0),
+            ("WECC_scarcity", 3000.0, 180.0),
+        ],
         2023: [
             ("PNW_hydro_base", 1072.0, 28.0),
             ("PNW_midC", 1800.0, 36.0),

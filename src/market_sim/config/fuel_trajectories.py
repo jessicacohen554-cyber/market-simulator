@@ -1181,9 +1181,35 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # Source: CARB "Summary of Auction Settlement Prices and Results" /
 #   CA-Quebec joint auction summary results reports (ww2.arb.ca.gov),
 #   cross-checked against the WCI auction price history.
+#   2022: Feb $29.15, May $30.85, Aug $27.00, Nov $26.80 -> $28.45
 #   2023: Feb $27.85, May $30.33, Aug $35.20, Nov $38.73 -> $33.03
 #   2024: Feb $41.76, May $37.02, Aug $30.24, Nov $31.91 -> $35.23
 #   2025: Feb $29.27, May $25.87 (floor), Aug $28.76, Nov $28.32 -> $28.06
+# 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint). SAME
+# SOURCE, SAME RECIPE, ZERO FREE PARAMETERS: the four CA-Quebec joint auctions
+# of the calendar year (the 30th 2022-02-16, 31st 2022-05-18, 32nd Aug, 33rd
+# Nov), current-vintage settlement price as published, simple mean. Each price
+# is attributed to its OWN CARB press release (rows in
+# data/raw/policy/carbon-auction-results/carbon-auction-results.csv) and was
+# cross-checked against EDF Climate 411's independent auction commentary before
+# it was written; ww2.arb.ca.gov still blocks automated fetches from this
+# environment (403/405/503 on every pattern — the carbon-auction-results raw
+# README), so this is the same press-release provenance the 2023-2025 rows
+# carry, no stronger and no weaker.
+# WHY IT MATTERS, MEASURED: without the row `state_carbon_price` returns None
+# and `resolve_carbon_price(CAISO, 2022)` reads **$0.00/tCO2** against
+# 33.03/35.23/28.06 in the tuned years — the NYISO-134 D-1 defect, CAISO
+# edition. At the CAISO fossil fleet's ~0.41 t/MWh that is ~$11-12/MWh on a
+# gas CC and it is MERIT-ORDER distorting, not a level shift, because the
+# CC-to-steam rate spread is ~2.9x. A 2022 rung solved without it would be
+# running a recipe the keeper was never scored on, silently.
+# STILL OPEN, NAMED NOT FIXED: **2019-2021 remain absent**, so those rungs
+# still resolve to $0/t. They were NOT added here because the auction-by-
+# auction attribution could not be completed from this environment to the
+# standard above (the 27th/May-2021 price came back self-contradictory in
+# search, and the carbon-auction README's own rule is that no price or metadata
+# is ever inferred). That is a data-intake item for the lane that spends the
+# 2020/2021 touchpoints, not a modelling question.
 # NYISO is a RGGI state: every in-state fossil unit surrenders one RGGI CO2
 # allowance per (short) ton emitted, so the auction clearing price enters
 # marginal cost exactly as the CARB allowance does for CAISO. Each year is the
@@ -1272,7 +1298,7 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # METRIC-CONVERTED (x 1.10231) — the harmonization asymmetry documented above is
 # preserved exactly for the new years.
 STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
-    "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
+    "CAISO": {2022: 28.45, 2023: 33.03, 2024: 35.23, 2025: 28.06},
     "NYISO": {
         2018: 4.41,
         2019: 5.42,

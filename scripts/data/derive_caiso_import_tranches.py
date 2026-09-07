@@ -135,11 +135,46 @@ def corridor_net_import(years=YEARS) -> pd.DataFrame:
     return net.reindex(full)
 
 
-def hub_prices() -> pd.DataFrame:
-    """Dense (year, hour) DA hub price per corridor proxy ($/MWh)."""
+def extra_years(argv: list[str]) -> tuple[int, ...]:
+    """Parse ``--extra-years Y [Y ...]`` for the clean-depth derives.
+
+    REPORT-ONLY BY CONSTRUCTION (caiso-262, rule 23 [R-FROZEN-DERIVE]). An
+    extra year's per-year depth is measured on the SAME construction as
+    :data:`YEARS`, but it never enters the pooled static, the year-stability CV
+    or the LOYO gate — those stay computed over the committed 2023-2025 sample,
+    so a derive's own gates are byte-unchanged and cannot be moved by widening
+    the sample. That matters because the gates test whether the CONSTRUCTION is
+    stable across the tuned years; recomputing them over a 4-year sample would
+    silently re-adjudicate three already-committed rows.
+
+    A caller that wants the pooled sample itself widened is asking for a
+    different object (``derive_caiso_import_depth_widesample``), not this.
+    """
+    if "--extra-years" not in argv:
+        return ()
+    i = argv.index("--extra-years") + 1
+    out: list[int] = []
+    while i < len(argv) and not argv[i].startswith("-"):
+        out.append(int(argv[i]))
+        i += 1
+    return tuple(y for y in out if y not in YEARS)
+
+
+def hub_prices(years=YEARS) -> pd.DataFrame:
+    """Dense (year, hour) DA hub price per corridor proxy ($/MWh).
+
+    ``years`` selects the rows of the dense frame and defaults to :data:`YEARS`
+    (2023-2025), so every existing caller is byte-unaffected — the same
+    widening :func:`corridor_net_import` already carries. caiso-262 passes 2022
+    here for the rule-22 validation touchpoint's per-year clean depths; the
+    2022 MALIN / PALOVRDE rows of the parquet were landed by caiso-261 from the
+    OASIS GroupZip DAM archives (H-3), so the hub series exists for that year.
+    """
     df = pd.read_parquet(HUB_LMP)
     piv = df.pivot_table(index=["year", "hour"], columns="hub", values="price")
-    full = pd.MultiIndex.from_product([YEARS, range(_HOURS)], names=["year", "hour"])
+    full = pd.MultiIndex.from_product(
+        [list(years), range(_HOURS)], names=["year", "hour"]
+    )
     return piv.reindex(full)
 
 
