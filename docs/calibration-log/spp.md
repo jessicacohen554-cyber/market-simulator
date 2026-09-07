@@ -102,4 +102,46 @@ solve) and `docs/handoffs/FINDING-spp-40-2026-09-07.md` (every screen number; th
 - Matrix shard: `measured_interface_limits` U → O; `keeper` / `gates` empty. Rule 22: only 2024
   (training tier) solved; nothing registered.
 
-**Next shorthand: spp-2.**
+## 2026-09-07 — spp-2: SPP-40 full span 2023–2025 → FIRST SPP KEEPER `2026-09-07-spp-1-baseline` (owner direction)
+
+**Result: PROMOTED — determination NOT-YET.** Owner direction, verbatim: *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress that may still be a
+keeper."* The same all-defaults recipe as spp-1 (PRECOMMIT §2; every offer band 1.0; N↔S 3,400 MW;
+served interchange) solved 2023+2024+2025 in ONE invocation (369 s wall, **5.25 GB peak RSS** —
+memory class `per_plant=True, co_opt=False, peak_gb=5.3`), bundle `results/calibration/spp40_baseline_B`
+(+ `hourly/`), registered, `keepers/SPP.json` created, `index.json` += SPP, `status/SPP.js` built,
+`bench/SPP/{2023,2024,2025}` written, attestation + `legitimacy_diagnostics.json` committed. **This
+bundle is the rule-29(b) control for every later SPP lane** (P7). Record: `FINDING-spp-40-2026-09-07.md` §7.
+
+| criterion | 2023 | 2024 | 2025 | status |
+|---|---|---|---|---|
+| C1 fuel-mix | CC −2.8 TWh (+3.7 pp), **CT +6.7**, ST −9.2, **COAL_PRB −62.6 / LIGNITE −8.4 (class crosswalk)** | **CT +10.3**, COAL_PRB −58.9 / LIGNITE −8.5 | SKIPPED (preliminary 923) | **FAIL** |
+| C2 family volume | PASS | PASS | skipped | PASS |
+| C3a mean LMP | **+14.1 %** | in band (−3.7 % vs DA) | **+21.7 %** | **FAIL** |
+| C3b NRMSE | 0.239 | 0.228 | 0.283 | **FAIL** |
+| C3c tail >$200 | 0 h vs 42 | 3 vs 59 | 24 vs 68 | FAIL (not lone → no standing-rule caveat) |
+| C4 dispatch r | PASS | PASS | PASS | PASS |
+| C6 governance | attested; `authorized_price_tuning` NONE | | | PASS |
+| C8 forced share | PASS | PASS | PASS | PASS |
+| C5a CO2 (reported) | −67.1 % | −60.8 % | −66.9 % | the COAL-class drop below |
+
+- **Two input/crosswalk defects found by the score, not by dispatch (routed, never patched):** (i) the
+  benchmark scores SPP coal as `COAL_PRB` / `COAL_LIGNITE` while the model dispatches one `COAL` class
+  (`coal_supply` is empty on every SPP plant), so C1's coal rows fail by construction and the coal CO2
+  (~70 Mt) is absent from C5a's by-class sum — an EIA-923 fuel-type supply-class crosswalk SPP-30
+  did not derive; (ii) the 2025 hydro budget reads 0.02 TWh (EIA-923 preliminary vintage, SPP-31
+  §1.2) against ~8.8 TWh, and 2025 carries **2,007 MWh unserved in 6 hours** (Jul 24 14:00, Jul 30
+  13–14:00, Dec 21 10–12:00; VOLL $2,000) — the missing hydro surfacing as scarcity; 2023/2024 have
+  zero unserved energy.
+- **Link (P7 evidence, three years):** at bound 2023 **1,702 N→S / 275 S→N**, 2024 878 / 897, 2025
+  **1,245 / 373** — the 2024 tie that killed the screen is year-specific; the measured N→S-dominant
+  direction holds in 2023 and 2025. Mean |S−N| zonal spread still ~$1 vs $12–17 measured; negative
+  hours 9 / 7 / 6 vs ~1,000–1,170; wind 1.07 / 1.11 / 1.11× EIA-930 (0.0 % re-curtailment).
+- **C1/C4-2023 wind: UNSCORED pending SPP-41** (r#6 addendum; the h3907 +3.5857 TWh EIA-930 slip on the
+  bench path). 2024/2025 clean.
+- Gas basis: the run log records no 2025 basis fallback line (the per-plant EIA-923 delivered path
+  served every year; state-series basis not consulted).
+- Rule 22: 2023–2025 only; SPP holds no marker. Rule 25: nothing crossed. Lever queue corroborated:
+  **SPP-57 first**, then the coal supply-class crosswalk (a data lane, zero DOF), then SPP-51.
+
+**Next shorthand: spp-3.**
