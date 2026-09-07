@@ -1,0 +1,267 @@
+{
+ "lane": "capx D84 measurement (post-solve; the gate verdict is in screen-gates.json)",
+ "control_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d84-control/PJM/f736025631d0d27e",
+ "arm_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d84-thermalvintage/PJM/b9fa47dedb6c3319",
+ "target_delivery_year": "2025/2026",
+ "published_comparators": {
+  "bra_clearing_price_usd_per_mw_day": 269.92,
+  "bra_cleared_mw_frame_a_rpm_only": 135684.0,
+  "cleared_mw_frame_b_rpm_plus_committed_frr": 145883.0,
+  "reliability_requirement_mw": 144450.0,
+  "source": "data/raw/capacity-market/auction-price/pjm/pjm.csv (RTO, base_residual_auction) + demand-curve/pjm/pjm.csv; frame B from D66 \u00a71.2 as carried by the D75-R phase 0 instrument"
+ },
+ "consumers": {
+  "MOVED_1_accredited_and_position": {
+   "screen_entering_firm_mw": {
+    "control": 146449.63,
+    "arm": 149555.278,
+    "delta": 3105.6479999999865
+   },
+   "screen_reserve_position": {
+    "control": 1.013843,
+    "arm": 1.035343,
+    "delta": 0.021499999999999853
+   },
+   "capacity_reserve_position": {
+    "control": 1.013843,
+    "arm": 1.035343,
+    "delta": 0.021499999999999853
+   }
+  },
+  "MOVED_4_d57_clearing": {
+   "census_mw": {
+    "control": 146165.127,
+    "arm": 149270.775,
+    "delta": 3105.6479999999865
+   },
+   "census_position": {
+    "control": 1.011874,
+    "arm": 1.033373,
+    "delta": 0.021499000000000157
+   },
+   "offered_mw": {
+    "control": 126530.744,
+    "arm": 129636.392,
+    "delta": 3105.648000000001
+   },
+   "price_takers_mw": {
+    "control": 19634.383,
+    "arm": 19634.383,
+    "delta": 0.0
+   },
+   "cleared_mw": {
+    "control": 146165.127,
+    "arm": 146646.835,
+    "delta": 481.70799999998417
+   },
+   "cleared_position": {
+    "control": 1.011874,
+    "arm": 1.015208,
+    "delta": 0.00333400000000017
+   },
+   "price_usd_per_mw_day": {
+    "control": 213.056369,
+    "arm": 178.095377,
+    "delta": -34.960991999999976
+   },
+   "price_per_firm_mw_yr": {
+    "control": 77765.575,
+    "arm": 65004.813,
+    "delta": -12760.761999999995
+   },
+   "n_uncleared": {
+    "control": 0,
+    "arm": 14,
+    "delta": 14
+   },
+   "n_offers": {
+    "control": 866,
+    "arm": 866,
+    "delta": 0
+   },
+   "how": {
+    "control": "all_offers_clear_curve_sets_price",
+    "arm": "marginal_offer_sets_price",
+    "delta": null
+   },
+   "marginal_unit": {
+    "control": null,
+    "arm": "COAL_PJM_AEP_Ohio_p3935_committed",
+    "delta": null
+   },
+   "uncleared_mw_by_fuel": {
+    "control": {},
+    "arm": {
+     "coal": 2083.627
+    },
+    "delta": null
+   }
+  },
+  "NOT_MOVED_measured": {
+   "screen_adequacy_requirement_mw": {
+    "identical": true,
+    "value": 144450.0
+   },
+   "adequacy_requirement_mw": {
+    "identical": true,
+    "value": 144450.0
+   },
+   "screen_peak_demand_mw": {
+    "identical": true,
+    "value": 160560.0
+   },
+   "peak_demand_mw": {
+    "identical": true,
+    "value": 160560.0
+   },
+   "retirements": {
+    "identical": true,
+    "value": [
+     {
+      "fuel": "biomass",
+      "mw": 1.0,
+      "reason": "announced",
+      "unit_id": "58439_CBE01"
+     }
+    ]
+   },
+   "entry_decided_mw_by_tech": {
+    "identical": true,
+    "value": {
+     "solar": 2440.6
+    }
+   },
+   "floor_retained": {
+    "identical": true,
+    "value": []
+   },
+   "fleet_by_fuel_after": {
+    "identical": true,
+    "value": {
+     "biomass": 1998.4,
+     "coal": 40310.729333,
+     "gas_cc": 61070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    }
+   },
+   "renewable_credit_applied": {
+    "identical": true,
+    "value": {
+     "solar": 0.135197,
+     "wind": 0.38
+    }
+   },
+   "storage_firm_mw": {
+    "identical": true,
+    "value": 3801.526
+   },
+   "wind_cap_mw": {
+    "identical": true,
+    "value": 11653.9
+   },
+   "solar_cap_mw": {
+    "identical": true,
+    "value": 9431.0
+   },
+   "sector_gated": {
+    "identical": true,
+    "value": {
+     "mw": 38619.72899999999,
+     "mw_by_fuel": {
+      "coal": 17004.595999999994,
+      "gas_cc": 8435.399999999998,
+      "gas_ct": 6663.5329999999985,
+      "gas_st": 771.1999999999999,
+      "nuclear": 5745.0
+     },
+     "mw_by_sector": {
+      "1": 38619.72899999999
+     },
+     "units": 191,
+     "unknown_sector_mw": 10090.3,
+     "unknown_sector_units": 13,
+     "year": 2025
+    }
+   }
+  }
+ },
+ "clearing_reconciliation": {
+  "census_minus_cleared_mw": 2623.9400000000023,
+  "fully_uncleared_mw": 2083.6259999999997,
+  "marginal_unit_uncleared_remainder_mw": 540.3140000000026,
+  "identity_I1_price_takers_plus_offers_equals_census": {
+   "computed": 149270.77100000007,
+   "census_mw": 149270.775,
+   "abs_gap_mw": 0.003999999928055331
+  }
+ },
+ "attribution": {
+  "newly_uncleared_plants": {
+   "1040": {
+    "eia860_sector": 1,
+    "tranches": 3,
+    "accredited_mw": 82.751
+   },
+   "6166": {
+    "eia860_sector": 1,
+    "tranches": 2,
+    "accredited_mw": 858.884
+   },
+   "3954": {
+    "eia860_sector": 1,
+    "tranches": 2,
+    "accredited_mw": 386.692
+   },
+   "7213": {
+    "eia860_sector": 1,
+    "tranches": 3,
+    "accredited_mw": 727.9100000000001
+   },
+   "2936": {
+    "eia860_sector": 1,
+    "tranches": 4,
+    "accredited_mw": 27.389000000000003
+   },
+   "3935": {
+    "eia860_sector": 1,
+    "tranches": 1,
+    "accredited_mw": 832.822
+   }
+  },
+  "all_sector_1": true,
+  "sector_1_share_of_uncleared_mw": 1.0,
+  "why_it_matters": "EIA-860 Sector 1 is a regulated electric utility. Under owner ruling Q56 (retirement_sector_gate, ARMED for PJM) a sector-1 unit still OFFERS its accredited MW into the D57 clearing at its net-ACR cap, but is PARTITIONED OUT of the step-3 economic exit decision. So the arm's entire newly-uncleared set is exempt from exiting BY CONSTRUCTION, and the screen's failing set can move without any retirement moving. This is a COLLISION BETWEEN TWO ARMED MECHANISMS, reported, not resolved here."
+ },
+ "published_residual_reported_never_the_reason": {
+  "cleared_mw_frame_b": {
+   "published": 145883.0,
+   "control": 146165.127,
+   "arm": 146646.835,
+   "control_gap": 282.1270000000077,
+   "arm_gap": 763.8349999999919,
+   "direction": "AWAY from published",
+   "abs_gap_change": 481.70799999998417
+  },
+  "cleared_mw_frame_a": {
+   "published": 135684.0,
+   "control": 146165.127,
+   "arm": 146646.835,
+   "control_gap": 10481.127000000008,
+   "arm_gap": 10962.834999999992,
+   "direction": "AWAY from published",
+   "abs_gap_change": 481.70799999998417
+  },
+  "clearing_price": {
+   "published": 269.92,
+   "control": 213.056369,
+   "arm": 178.095377,
+   "control_gap": -56.86363100000003,
+   "arm_gap": -91.824623,
+   "direction": "AWAY from published",
+   "abs_gap_change": 34.960991999999976
+  }
+ }
+}
