@@ -1,0 +1,6 @@
+case,year,emissions_mt,import_co2_mt_reported,unserved_mwh,co2_cap_price_usd_per_t,n_co2_caps_binding,nox_tonnes,so2_tonnes,peak_price,curtailment_twh,storage_cycles,clean_share,negative_price_hours,avg_price_usd_per_mwh,backstop_built_mw,backstop_built_mwh,generation_twh
+CAP-STATE-TIGHT,2026,23.16,10.82601,0.0,26.9792,1,5737.43,196.71,71.0,0.0,9.9,0.3924,0.0,50.5,0,0.0,154.1252
+CAP-STATE-TIGHT,2027,22.42,11.726497,0.0,47.1569,1,5970.43,203.12,80.24,0.0,8.52,0.3879,0.0,56.64,0,0.0,155.9422
+CAP-STATE-TIGHT,2028,21.68,12.935016,0.0,186.3067,1,5909.11,197.92,167.37,0.0,7.94,0.3833,0.0,114.14,0,0.0,157.7828
+CAP-STATE-TIGHT,2029,20.94,12.58142,0.0,70.4527,1,5480.36,173.77,96.29,0.0,13.76,0.4075,0.0,64.71,0,0.0,159.6643
+CAP-STATE-TIGHT,2030,20.2,12.935016,1566947.72,4130.3483,1,4974.57,89.64,2000.0,0.0,6.04,0.4068,0.0,1412.71,0,0.0,159.9584
