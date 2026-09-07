@@ -179,10 +179,45 @@ before going wider.
 
 ## Coverage by year
 
-| series | 2020 | 2022 | 2023–2025 |
-| --- | --- | --- | --- |
-| `asreq` | full year (2019-12-27 → 2021-01-05) | 2022-01-15 → 2022-03-06 only | complete |
-| `asprc_{ru,rd,sr,nr}` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | — | complete |
-| `asresults` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | — | — |
+| series | 2020 | 2021 | 2022 | 2023–2025 |
+| --- | --- | --- | --- | --- |
+| `asreq` | full year (2019-12-27 → 2021-01-05) | **full year** (365/365) | 2022-01-15 → 2022-03-06 only | complete |
+| `asprc_{ru,rd,sr,nr}` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1** (2021-01-01 → 2021-04-01) | — | complete |
+| `asresults` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1** (2021-01-01 → 2021-04-01) | — | — |
 
-Nothing in any 2020 extension has been solved, folded, derived or scored.
+Nothing in any of these extensions has been solved, folded, derived or scored.
+
+## Q1-2021 extension (caiso-264, 2026-09-07)
+
+Fetched 2026-09-07 by `scripts/data/fetch_caiso_oasis.py --datasets asresults asprc_ru
+asprc_rd asprc_sr asprc_nr --years 2021 --end-date 2021-04-01`. Coverage **verified
+complete: 2,159 of 2,159 (day, hour) pairs** — 89 × 24 h plus the 23-hour DST
+spring-forward day 2021-03-14 (CAISO skips `OPR_HR 3`) — for `asresults` and all four
+`asprc_*` products. No head-window loss: Q1 is PST throughout, so
+`fetch_caiso_oasis.UTC_OFFSET_HOURS = 8` puts the first request instant at local
+midnight and `2021-01-01 HE1` is present; the range's single tail spill is
+`2021-04-01 HE1`, exactly as the DST note above describes.
+
+`asreq` already carried Q1-2021 in full (the 2020-12-11 → 2021-01-05 window bridges
+Jan 1–4), so its re-fetch was a pure duplicate — **112,320 overlapping (day, hour,
+region, product, item) keys, 0 value mismatches, 0 keys not already present** — and the
+four redundant windows were deleted rather than committed, as caiso-263 did for Q2-2020.
+The zero-mismatch cross-check is also an independent confirmation that OASIS serves this
+vintage reproducibly.
+
+Companion in the same session: `CAISO_tac_load_hourly_2021.csv` gained **MWD-TAC** for
+Q1 (2,160 rows added, 0 removed, 0 changed in place), closing part of the caiso-175 gap
+— MWD was added to `postprocess_oasis_downloads.CAISO_TACS` on 2026-08-05 but only the
+2023–2025 aggregates were rebuilt, so 2019–2022 still carry five areas and
+`load_zonal_shares` re-apportions MWD's ~126–172 MW pro rata across the other four
+(rule 14 `[R-ACCURATE]`). **2019, 2020 and 2022 remain five-area and are still open.**
+
+**No LMPs accompany this intake, and none can.** The GroupZip boundary was
+**re-measured in this session** and is unchanged at **2021-04-27** (`DAM_LMP_GRP` v12:
+2021-03-31 and 2021-04-26 → 3,018-byte "No data returned"; 2021-04-27 → 9.85 MB,
+2021-04-28 → 9.90 MB), so all of Q1-2021 sits before it on both the GroupZip and the
+per-node `SingleZip` endpoints. Details: `data/raw/lmp-data/CAISO/README.md`.
+
+Scope note as in the Q2-2020 section: intake only. Nothing here was solved, folded into
+a clean datatype, derived or scored (rule 22 `[R-HOLDOUT]` — what is held out is the
+score, never the data).
