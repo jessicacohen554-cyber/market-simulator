@@ -1,0 +1,653 @@
+{
+ "probe": "miso-243 phase 0 \u2014 repair the per-year SPP hourly ladder's cross-year pairing (CONSTRUCTION defect, rule 14 / rule 23)",
+ "prereg": "results/calibration/PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "read_only": true,
+ "repairs_nothing_in_this_file": true,
+ "queue_item": "miso-242 handoff RECOMMENDED item",
+ "price_basis": "ok mask = Indiana hub RT finite; every spread = Indiana hub DA; SPP anchor = measured SPP NORTH hub DA; p_bus = keeper MISO_external P1 price",
+ "bars": {
+  "tol_ladder": 0.005,
+  "tol_corr": 0.002,
+  "p1_identity_bar": 0.005,
+  "mid_1_mw": 250.0,
+  "step_mw": 500.0
+ },
+ "gates": {
+  "G_T": {
+   "ladder_matches_prereg": true,
+   "monotonicity_violations": 0,
+   "detail": {
+    "2023": {
+     "spp_import_matches": true,
+     "spp_export_matches": true,
+     "pjm_band1_matches": true,
+     "monotonicity_violations": 0
+    },
+    "2024": {
+     "spp_import_matches": true,
+     "spp_export_matches": true,
+     "pjm_band1_matches": true,
+     "monotonicity_violations": 0
+    },
+    "2025": {
+     "spp_import_matches": true,
+     "spp_export_matches": true,
+     "pjm_band1_matches": true,
+     "monotonicity_violations": 0
+    }
+   },
+   "PASS": true
+  },
+  "G_V1": {
+   "detail": {
+    "2023": {
+     "join_rows": 26280,
+     "expected_rows": 26280,
+     "hub_year_blocks": {
+      "2023": 8760,
+      "2024": 8760,
+      "2025": 8760
+     },
+     "max_abs_da_deviation_across_blocks": 0.0,
+     "max_abs_flow_deviation_across_blocks": 0.0,
+     "PASS": true,
+     "repaired_join_rows": 8760,
+     "repaired_input_rows": 8760,
+     "repaired_row_count_preserved": true,
+     "repaired_notes": []
+    },
+    "2024": {
+     "join_rows": 26280,
+     "expected_rows": 26280,
+     "hub_year_blocks": {
+      "2023": 8760,
+      "2024": 8760,
+      "2025": 8760
+     },
+     "max_abs_da_deviation_across_blocks": 0.0,
+     "max_abs_flow_deviation_across_blocks": 0.0,
+     "PASS": true,
+     "repaired_join_rows": 8760,
+     "repaired_input_rows": 8760,
+     "repaired_row_count_preserved": true,
+     "repaired_notes": []
+    },
+    "2025": {
+     "join_rows": 26280,
+     "expected_rows": 26280,
+     "hub_year_blocks": {
+      "2023": 8760,
+      "2024": 8760,
+      "2025": 8760
+     },
+     "max_abs_da_deviation_across_blocks": 0.0,
+     "max_abs_flow_deviation_across_blocks": 0.0,
+     "PASS": true,
+     "repaired_join_rows": 8760,
+     "repaired_input_rows": 8760,
+     "repaired_row_count_preserved": true,
+     "repaired_notes": []
+    }
+   },
+   "PASS": true
+  },
+  "G_V2": {
+   "detail": {
+    "2023": {
+     "mispaired": {
+      "import": [
+       14.1,
+       32.64,
+       54.43,
+       85.36,
+       145.25,
+       185.08,
+       185.08,
+       185.08
+      ],
+      "export": [
+       -4.2,
+       -24.96,
+       -47.33,
+       -92.59,
+       -241.46,
+       -521.38,
+       -521.38,
+       -521.38
+      ]
+     },
+     "committed": {
+      "import": [
+       14.1,
+       32.64,
+       54.43,
+       85.36,
+       145.25,
+       185.08,
+       185.08,
+       185.08
+      ],
+      "export": [
+       -4.2,
+       -24.96,
+       -47.33,
+       -92.59,
+       -241.46,
+       -521.38,
+       -521.38,
+       -521.38
+      ]
+     },
+     "max_abs_delta": 0.0,
+     "PASS": true
+    },
+    "2024": {
+     "mispaired": {
+      "import": [
+       14.49,
+       35.59,
+       78.29,
+       212.51,
+       290.73,
+       290.73,
+       290.73,
+       290.73
+      ],
+      "export": [
+       -2.15,
+       -19.39,
+       -33.38,
+       -42.97,
+       -54.84,
+       -64.17,
+       -70.15,
+       -83.23
+      ]
+     },
+     "committed": {
+      "import": [
+       14.49,
+       35.59,
+       78.29,
+       212.51,
+       290.73,
+       290.73,
+       290.73,
+       290.73
+      ],
+      "export": [
+       -2.15,
+       -19.39,
+       -33.38,
+       -42.97,
+       -54.84,
+       -64.17,
+       -70.15,
+       -83.23
+      ]
+     },
+     "max_abs_delta": 0.0,
+     "PASS": true
+    },
+    "2025": {
+     "mispaired": {
+      "import": [
+       21.85,
+       46.55,
+       87.43,
+       169.08,
+       216.02,
+       252.76,
+       276.99,
+       345.4
+      ],
+      "export": [
+       1.04,
+       -14.46,
+       -29.2,
+       -45.92,
+       -125.99,
+       -316.8,
+       -515.34,
+       -515.34
+      ]
+     },
+     "committed": {
+      "import": [
+       21.85,
+       46.55,
+       87.43,
+       169.08,
+       216.02,
+       252.76,
+       276.99,
+       345.4
+      ],
+      "export": [
+       1.04,
+       -14.46,
+       -29.2,
+       -45.92,
+       -125.99,
+       -316.8,
+       -515.34,
+       -515.34
+      ]
+     },
+     "max_abs_delta": 0.0,
+     "PASS": true
+    }
+   },
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_V3_control_pjm": {
+   "detail": {
+    "2023": {
+     "max_abs_delta": 0.0,
+     "PASS": true
+    },
+    "2024": {
+     "max_abs_delta": 0.0,
+     "PASS": true
+    },
+    "2025": {
+     "max_abs_delta": 0.0,
+     "PASS": true
+    }
+   },
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_V5_pooled_forward": {
+   "derived": {
+    "import": [
+     16.26,
+     36.58,
+     64.0,
+     133.2,
+     196.48,
+     237.83,
+     271.99,
+     338.83
+    ],
+    "export": [
+     -0.74,
+     -17.19,
+     -31.07,
+     -43.76,
+     -59.56,
+     -82.03,
+     -94.69,
+     -128.06
+    ]
+   },
+   "committed": {
+    "import": [
+     16.26,
+     36.58,
+     64.0,
+     133.2,
+     196.48,
+     237.83,
+     271.99,
+     338.83
+    ],
+    "export": [
+     -0.74,
+     -17.19,
+     -31.07,
+     -43.76,
+     -59.56,
+     -82.03,
+     -94.69,
+     -128.06
+    ]
+   },
+   "max_abs_delta": 0.0,
+   "join_rows": 26280,
+   "input_rows": 26280,
+   "row_count_preserved": true,
+   "PASS": true
+  },
+  "P_2_byte_identity": {
+   "detail": {
+    "2023": {
+     "incumbent_per_seam_max_abs_delta": {
+      "PJM": 0.01,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "pjm_annual_neighbour_max_abs_delta": 0.0,
+     "pjm_hourly_neighbour_max_abs_delta": 0.0,
+     "worst": 0.01,
+     "PASS": false
+    },
+    "2024": {
+     "incumbent_per_seam_max_abs_delta": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "pjm_annual_neighbour_max_abs_delta": 0.0,
+     "pjm_hourly_neighbour_max_abs_delta": 0.0,
+     "worst": 0.01,
+     "PASS": false
+    },
+    "2025": {
+     "incumbent_per_seam_max_abs_delta": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "pjm_annual_neighbour_max_abs_delta": 0.0,
+     "pjm_hourly_neighbour_max_abs_delta": 0.0,
+     "worst": 0.0,
+     "PASS": true
+    }
+   },
+   "max_abs_delta": 0.010000000000001563,
+   "PASS": false
+  },
+  "G_DOC": {
+   "detail": {
+    "2023": {
+     "corr_measured_flow_vs_derive_spread": 0.0409,
+     "reference": 0.041,
+     "abs_delta": 0.0001,
+     "PASS": true
+    },
+    "2024": {
+     "corr_measured_flow_vs_derive_spread": -0.02,
+     "reference": -0.02,
+     "abs_delta": 0.0,
+     "PASS": true
+    },
+    "2025": {
+     "corr_measured_flow_vs_derive_spread": 0.0503,
+     "reference": 0.05,
+     "abs_delta": 0.0003,
+     "PASS": true
+    }
+   },
+   "PASS": true
+  },
+  "P_1_identity": {
+   "detail": {
+    "2023": {
+     "n_rows_R_D": 8754,
+     "Z_target": 0.3501,
+     "Z_derive_committed": 0.3897,
+     "Z_derive_repaired": 0.3498,
+     "abs_delta_committed": 0.0395,
+     "abs_delta_repaired": 0.0003,
+     "dead_band_committed": [
+      -4.2,
+      14.1
+     ],
+     "dead_band_repaired": [
+      -2.39,
+      13.44
+     ],
+     "PASS": true
+    },
+    "2024": {
+     "n_rows_R_D": 8757,
+     "Z_target": 0.358,
+     "Z_derive_committed": 0.3724,
+     "Z_derive_repaired": 0.358,
+     "abs_delta_committed": 0.0144,
+     "abs_delta_repaired": 0.0,
+     "dead_band_committed": [
+      -2.15,
+      14.49
+     ],
+     "dead_band_repaired": [
+      1.44,
+      17.26
+     ],
+     "PASS": true
+    },
+    "2025": {
+     "n_rows_R_D": 8757,
+     "Z_target": 0.3698,
+     "Z_derive_committed": 0.3787,
+     "Z_derive_repaired": 0.3696,
+     "abs_delta_committed": 0.0089,
+     "abs_delta_repaired": 0.0001,
+     "dead_band_committed": [
+      1.04,
+      21.85
+     ],
+     "dead_band_repaired": [
+      -2.37,
+      18.58
+     ],
+     "PASS": true
+    }
+   },
+   "PASS": true
+  }
+ },
+ "years": {},
+ "P_3_footprint": {
+  "detail": {
+   "2023": {
+    "F_share_of_R_D_rows_with_changed_band_counts": 0.091044,
+    "n_rows_R_D": 8754,
+    "n_rows_changed": 797,
+    "mean_n_import_committed": 0.5082,
+    "mean_n_import_repaired": 0.5529,
+    "mean_n_export_committed": 0.2864,
+    "mean_n_export_repaired": 0.3328
+   },
+   "2024": {
+    "F_share_of_R_D_rows_with_changed_band_counts": 0.237638,
+    "n_rows_R_D": 8757,
+    "n_rows_changed": 2081,
+    "mean_n_import_committed": 0.4917,
+    "mean_n_import_repaired": 0.4237,
+    "mean_n_export_committed": 0.3474,
+    "mean_n_export_repaired": 0.5096
+   },
+   "2025": {
+    "F_share_of_R_D_rows_with_changed_band_counts": 0.172205,
+    "n_rows_R_D": 8757,
+    "n_rows_changed": 1508,
+    "mean_n_import_committed": 0.4703,
+    "mean_n_import_repaired": 0.5615,
+    "mean_n_export_committed": 0.4122,
+    "mean_n_export_repaired": 0.3371
+   }
+  }
+ },
+ "P_4_presolve_prediction": {
+  "detail": {
+   "2023": {
+    "dq_hat_model_basis_mw": 5.25,
+    "dq_hat_derive_basis_mw": -0.86,
+    "n_rows_R_K": 8760,
+    "model_mean_n_import_committed": 0.5035,
+    "model_mean_n_import_repaired": 0.5519,
+    "model_mean_n_export_committed": 0.1991,
+    "model_mean_n_export_repaired": 0.237,
+    "model_band_count_change_share": 0.086301
+   },
+   "2024": {
+    "dq_hat_model_basis_mw": -107.65,
+    "dq_hat_derive_basis_mw": -115.17,
+    "n_rows_R_K": 8760,
+    "model_mean_n_import_committed": 0.488,
+    "model_mean_n_import_repaired": 0.391,
+    "model_mean_n_export_committed": 0.2605,
+    "model_mean_n_export_repaired": 0.3788,
+    "model_band_count_change_share": 0.21153
+   },
+   "2025": {
+    "dq_hat_model_basis_mw": 90.76,
+    "dq_hat_derive_basis_mw": 83.19,
+    "n_rows_R_K": 8759,
+    "model_mean_n_import_committed": 0.3311,
+    "model_mean_n_import_repaired": 0.4411,
+    "model_mean_n_export_committed": 0.325,
+    "model_mean_n_export_repaired": 0.2536,
+    "model_band_count_change_share": 0.185866
+   }
+  }
+ },
+ "screen_year": {
+  "rule": "argmax_year F(year); ties break to the EARLIEST year (PREREG \u00a72.3)",
+  "F_by_year": {
+   "2023": 0.091044,
+   "2024": 0.237638,
+   "2025": 0.172205
+  },
+  "SCREEN_YEAR": 2024,
+  "basis": "measured MISO hub DA spread, measured SPP NORTH hub DA, and the two ladders. ZERO model output, zero scored criterion, zero residual."
+ },
+ "repaired_ladder": {
+  "2023": {
+   "import": [
+    13.44,
+    30.3,
+    50.82,
+    83.92,
+    123.33,
+    152.94,
+    152.94,
+    152.94
+   ],
+   "export": [
+    -2.39,
+    -21.49,
+    -41.89,
+    -90.15,
+    -178.51,
+    -212.03,
+    -212.03,
+    -212.03
+   ]
+  },
+  "2024": {
+   "import": [
+    17.26,
+    37.56,
+    65.15,
+    139.78,
+    230.88,
+    230.88,
+    230.88,
+    230.88
+   ],
+   "export": [
+    1.44,
+    -12.98,
+    -23.83,
+    -33.09,
+    -43.06,
+    -48.41,
+    -55.24,
+    -66.13
+   ]
+  },
+  "2025": {
+   "import": [
+    18.58,
+    41.9,
+    78.87,
+    152.95,
+    197.69,
+    237.84,
+    271.99,
+    338.83
+   ],
+   "export": [
+    -2.37,
+    -19.0,
+    -31.11,
+    -44.88,
+    -70.49,
+    -122.45,
+    -254.63,
+    -254.63
+   ]
+  }
+ },
+ "committed_ladder": {
+  "2023": {
+   "import": [
+    14.1,
+    32.64,
+    54.43,
+    85.36,
+    145.25,
+    185.08,
+    185.08,
+    185.08
+   ],
+   "export": [
+    -4.2,
+    -24.96,
+    -47.33,
+    -92.59,
+    -241.46,
+    -521.38,
+    -521.38,
+    -521.38
+   ]
+  },
+  "2024": {
+   "import": [
+    14.49,
+    35.59,
+    78.29,
+    212.51,
+    290.73,
+    290.73,
+    290.73,
+    290.73
+   ],
+   "export": [
+    -2.15,
+    -19.39,
+    -33.38,
+    -42.97,
+    -54.84,
+    -64.17,
+    -70.15,
+    -83.23
+   ]
+  },
+  "2025": {
+   "import": [
+    21.85,
+    46.55,
+    87.43,
+    169.08,
+    216.02,
+    252.76,
+    276.99,
+    345.4
+   ],
+   "export": [
+    1.04,
+    -14.46,
+    -29.2,
+    -45.92,
+    -125.99,
+    -316.8,
+    -515.34,
+    -515.34
+   ]
+  }
+ },
+ "FAILED_LEGS": [
+  "P-2"
+ ],
+ "ALL_LEGS_PASS": false
+}
