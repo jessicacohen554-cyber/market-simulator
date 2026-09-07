@@ -1,0 +1,3117 @@
+{
+  "base_config": "configs/scenarios/miso_scenario_base_2026_2030.yaml",
+  "baselines": {
+    "LOAD-HI": {
+      "2026": {
+        "co2_mt": 387.0428,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 12.3899662,
+          "coal": 295.1759333,
+          "gas_cc": 193.56170469999998,
+          "gas_ct": 36.6100239,
+          "gas_st": 15.084808599999999,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.2293714,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 59.632,
+        "rps_dual": 30.0,
+        "total_gen_twh": 756.1122825
+      },
+      "2027": {
+        "co2_mt": 406.8978,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 14.363994199999999,
+          "coal": 273.42956139999995,
+          "gas_cc": 239.0941135,
+          "gas_ct": 65.51000479999999,
+          "gas_st": 22.617133,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.6859854000000001,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 106.334,
+        "rps_dual": 30.0,
+        "total_gen_twh": 818.7612664
+      },
+      "2028": {
+        "co2_mt": 432.7259,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 14.7527709,
+          "coal": 241.418308,
+          "gas_cc": 256.1230566,
+          "gas_cc_ccs": 2.56782,
+          "gas_ct": 129.97134359999998,
+          "gas_st": 32.640216699999996,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 3.7496448,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 301.077,
+        "rps_dual": 30.0,
+        "total_gen_twh": 884.2836348999999
+      },
+      "2029": {
+        "co2_mt": 455.1277,
+        "eligible_twh": 114.4559538,
+        "generation_by_fuel_twh": {
+          "biomass": 14.965805099999999,
+          "coal": 225.55236290000002,
+          "gas_cc": 286.2098147,
+          "gas_cc_ccs": 5.5455287,
+          "gas_ct": 158.95563769999998,
+          "gas_st": 41.3018089,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 6.3728218,
+          "solar": 20.087678,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 473.619,
+        "rps_dual": 30.0,
+        "total_gen_twh": 952.8511328999999
+      },
+      "2030": {
+        "co2_mt": 482.6176,
+        "eligible_twh": 127.5060054,
+        "generation_by_fuel_twh": {
+          "biomass": 14.907102199999999,
+          "coal": 220.4139382,
+          "gas_cc": 293.2265419,
+          "gas_cc_ccs": 5.5455287,
+          "gas_ct": 181.6766922,
+          "gas_st": 50.3816434,
+          "hydro": 9.2925156,
+          "nuclear": 85.3676256,
+          "oil": 14.7784939,
+          "solar": 20.7616771,
+          "wind": 106.74432829999999
+        },
+        "lw_price": 1073.91,
+        "rps_dual": 30.0,
+        "total_gen_twh": 1003.0960872
+      }
+    },
+    "REF": {
+      "2026": {
+        "co2_mt": 368.5353,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 12.0064956,
+          "coal": 293.83317960000005,
+          "gas_cc": 168.580846,
+          "gas_ct": 28.2843129,
+          "gas_st": 12.1450099,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.0590447,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 44.599,
+        "rps_dual": 30.0,
+        "total_gen_twh": 717.969363
+      },
+      "2027": {
+        "co2_mt": 371.1727,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 13.7707791,
+          "coal": 265.553088,
+          "gas_cc": 216.71566230000002,
+          "gas_ct": 42.495394399999995,
+          "gas_st": 16.1226285,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.1595022,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 53.787,
+        "rps_dual": 30.0,
+        "total_gen_twh": 757.8775287000001
+      },
+      "2028": {
+        "co2_mt": 381.2997,
+        "eligible_twh": 103.56907489999999,
+        "generation_by_fuel_twh": {
+          "biomass": 14.516921199999999,
+          "coal": 238.1551117,
+          "gas_cc": 238.97518630000002,
+          "gas_cc_ccs": 2.1476025,
+          "gas_ct": 81.6931327,
+          "gas_st": 21.069369899999998,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.4930087,
+          "solar": 9.2007991,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 91.967,
+        "rps_dual": 30.0,
+        "total_gen_twh": 800.1108072000001
+      },
+      "2029": {
+        "co2_mt": 387.9419,
+        "eligible_twh": 114.4559538,
+        "generation_by_fuel_twh": {
+          "biomass": 14.646367199999998,
+          "coal": 222.66574269999998,
+          "gas_cc": 268.6508508,
+          "gas_cc_ccs": 4.1227255,
+          "gas_ct": 95.6822133,
+          "gas_st": 24.2491266,
+          "hydro": 9.2925156,
+          "nuclear": 90.19888359999999,
+          "oil": 0.7541653,
+          "solar": 20.087678,
+          "wind": 94.36827579999999
+        },
+        "lw_price": 90.727,
+        "rps_dual": 30.0,
+        "total_gen_twh": 844.7185445
+      },
+      "2030": {
+        "co2_mt": 410.2013,
+        "eligible_twh": 127.5060054,
+        "generation_by_fuel_twh": {
+          "biomass": 14.8350849,
+          "coal": 220.4139382,
+          "gas_cc": 275.31733460000004,
+          "gas_cc_ccs": 4.690751,
+          "gas_ct": 120.64842279999999,
+          "gas_st": 30.247977600000002,
+          "hydro": 9.2925156,
+          "nuclear": 85.3676256,
+          "oil": 2.1995492000000003,
+          "solar": 20.7616771,
+          "wind": 106.74432829999999
+        },
+        "lw_price": 206.363,
+        "rps_dual": 30.0,
+        "total_gen_twh": 890.519205
+      }
+    }
+  },
+  "cases": {
+    "ALL-CLEAN": {
+      "cache_key": "00edacf5f50c88fc",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "mid",
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        },
+        "voluntary_clean_demand_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 68.341203765166
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 64.044861765166
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 3.75,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 117.70803395317851
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 89.29316720317851
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 7.5,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 167.48666505690588
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 114.95327355690588
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 11.25,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 217.71108959473668
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 141.05917334473668
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 15.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 268.4181060314824
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 167.6476650314824
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "mid",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        },
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CAP-STATE-TIGHT": {
+      "cache_key": "32584ac5c0133d89",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "zero",
+        "mass_cap_enabled": true,
+        "mass_cap_program": "co2",
+        "mass_cap_tons_by_year": {
+          "CAISO": {
+            "2026": 30500000.0,
+            "2030": 26500000.0,
+            "2040": 16500000.0,
+            "2050": 6100000.0
+          },
+          "NEISO": {
+            "2026": 20670000.0,
+            "2030": 18000000.0,
+            "2040": 11400000.0,
+            "2050": 4100000.0
+          },
+          "NYISO": {
+            "2026": 23160000.0,
+            "2030": 20200000.0,
+            "2040": 12800000.0,
+            "2050": 4600000.0
+          }
+        },
+        "state_carbon_pricing": true
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": true,
+        "mass_cap_tons_by_year": {
+          "CAISO": {
+            "2026": 30500000.0,
+            "2030": 26500000.0,
+            "2040": 16500000.0,
+            "2050": 6100000.0
+          },
+          "NEISO": {
+            "2026": 20670000.0,
+            "2030": 18000000.0,
+            "2040": 11400000.0,
+            "2050": 4100000.0
+          },
+          "NYISO": {
+            "2026": 23160000.0,
+            "2030": 20200000.0,
+            "2040": 12800000.0,
+            "2050": 4600000.0
+          }
+        },
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CARB-HI": {
+      "cache_key": "40bc61fac2b5271d",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 7.5,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 15.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 22.5,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 30.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "high",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CARB-LO": {
+      "cache_key": "1c815555d55e5db2",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "low"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 2.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 4.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 6.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 8.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "low",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CARB-MID": {
+      "cache_key": "27fb6e72c0ad31ae",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "mid"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 3.75,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 7.5,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 11.25,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 15.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "mid",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CARB-MID+LOAD-HI": {
+      "cache_key": "e644893331d7708f",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "overrides": {
+        "carbon_price_path": "mid",
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 68.341203765166
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 64.044861765166
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 3.75,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 117.70803395317851
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 89.29316720317851
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 7.5,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 167.48666505690588
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 114.95327355690588
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 11.25,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 217.71108959473668
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 141.05917334473668
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 15.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 268.4181060314824
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 167.6476650314824
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "mid",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CES-P10": {
+      "cache_key": "e4ba286178e0d499",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 10.0
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 10.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 10.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 10.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 10.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 10.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 10.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CES-P20": {
+      "cache_key": "472af7fd5ba90f99",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CES-P20+VOL-HI": {
+      "cache_key": "ed42e5d7d1d95d3e",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0,
+        "voluntary_clean_demand_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 20.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 20.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CES-P30": {
+      "cache_key": "3a4b528c75d7fd6d",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 30.0
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 30.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 30.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 30.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 30.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 30.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 30.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "CES-T80": {
+      "cache_key": "82c916d847270ebf",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        }
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": 50.0,
+        "federal_ces_enabled": true,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": {
+          "2026": 0.55,
+          "2035": 0.8,
+          "2050": 1.0
+        },
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "LOAD-HI": {
+      "cache_key": "9688b06c1b0a5a54",
+      "demand_key": [
+        "high",
+        "high",
+        "off"
+      ],
+      "overrides": {
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 68.341203765166
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 746.8564970645749,
+              "energy_total_twh": 755.449181064575,
+              "iso_weight": 1.0,
+              "volume_twh": 64.044861765166
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 117.70803395317851
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 56.8297335,
+              "energy_non_dc_twh": 760.9787556647314,
+              "energy_total_twh": 817.8084891647313,
+              "iso_weight": 1.0,
+              "volume_twh": 89.29316720317851
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 167.48666505690588
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 105.066783,
+              "energy_non_dc_twh": 780.2485257113235,
+              "energy_total_twh": 885.3153087113235,
+              "iso_weight": 1.0,
+              "volume_twh": 114.95327355690588
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 217.71108959473668
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 153.3038325,
+              "energy_non_dc_twh": 805.0907136842083,
+              "energy_total_twh": 958.3945461842083,
+              "iso_weight": 1.0,
+              "volume_twh": 141.05917334473668
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 268.4181060314824
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 201.540882,
+              "energy_non_dc_twh": 835.9653003935299,
+              "energy_total_twh": 1037.5061823935298,
+              "iso_weight": 1.0,
+              "volume_twh": 167.6476650314824
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "high",
+        "demand_growth_path": "high",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "REF": {
+      "cache_key": "f1b3caa22b3f14ff",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {},
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "off",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "off",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "VOL-HI": {
+      "cache_key": "7e1a2a2145711bab",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "voluntary_clean_demand_path": "high"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "high",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "high",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    },
+    "VOL-MID": {
+      "cache_key": "dc8ca3580e277d72",
+      "demand_key": [
+        "mid",
+        "mid",
+        "off"
+      ],
+      "overrides": {
+        "voluntary_clean_demand_path": "mid"
+      },
+      "per_year": {
+        "2026": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 65.28466100472387
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 8.592684,
+              "energy_non_dc_twh": 708.6497125590485,
+              "energy_total_twh": 717.2423965590484,
+              "iso_weight": 1.0,
+              "volume_twh": 60.98831900472388
+            }
+          }
+        },
+        "2027": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 100.70525242150634
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 43.674513,
+              "energy_non_dc_twh": 712.8842427688294,
+              "energy_total_twh": 756.5587557688293,
+              "iso_weight": 1.0,
+              "volume_twh": 78.86799592150635
+            }
+          }
+        },
+        "2028": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 136.29825708200426
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 78.75634199999999,
+              "energy_non_dc_twh": 719.2739385250534,
+              "energy_total_twh": 798.0302805250534,
+              "iso_weight": 1.0,
+              "volume_twh": 96.92008608200426
+            }
+          }
+        },
+        "2029": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 172.07312599058514
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 113.838171,
+              "energy_non_dc_twh": 727.9369373823146,
+              "energy_total_twh": 841.7751083823146,
+              "iso_weight": 1.0,
+              "volume_twh": 115.15404049058516
+            }
+          }
+        },
+        "2030": {
+          "carbon_program": null,
+          "carbon_usd_per_t": 0.0,
+          "ces_premium_usd_per_mwh": 0.0,
+          "scheduled_budget_tons": null,
+          "voluntary": {
+            "armed_path": "mid",
+            "high": {
+              "baseline_share": 0.08,
+              "committed_fraction": 1.0,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 208.03982821787196
+            },
+            "mid": {
+              "baseline_share": 0.08,
+              "committed_fraction": 0.5,
+              "energy_dc_twh": 148.92,
+              "energy_non_dc_twh": 738.9978527233997,
+              "energy_total_twh": 887.9178527233996,
+              "iso_weight": 1.0,
+              "volume_twh": 133.57982821787198
+            }
+          }
+        }
+      },
+      "resolved": {
+        "carbon_price_path": "zero",
+        "ccs_retrofit_vom_adder": 2.95,
+        "datacenter_load_path": "mid",
+        "demand_growth_path": "mid",
+        "electrification_path": "off",
+        "end_year": 2030,
+        "federal_ces_acp_usd_per_mwh": null,
+        "federal_ces_enabled": false,
+        "federal_ces_premium_usd_per_mwh": 0.0,
+        "federal_ces_target_by_year": null,
+        "mass_cap_enabled": false,
+        "mass_cap_tons_by_year": null,
+        "mode": "forecast",
+        "start_year": 2026,
+        "state_carbon_pricing": true,
+        "voluntary_clean_demand_path": "mid",
+        "voluntary_wtp_ceiling_usd_per_mwh": null
+      },
+      "zone_names": [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South"
+      ]
+    }
+  },
+  "constants": {
+    "CARBON_PRICE_PATHS": {
+      "high": {
+        "2026": 0,
+        "2030": 30,
+        "2040": 70,
+        "2050": 110
+      },
+      "low": {
+        "2026": 0,
+        "2030": 8,
+        "2040": 18,
+        "2050": 25
+      },
+      "mid": {
+        "2026": 0,
+        "2030": 15,
+        "2040": 35,
+        "2050": 50
+      },
+      "zero": {
+        "2026": 0,
+        "2030": 0,
+        "2040": 0,
+        "2050": 0
+      }
+    },
+    "VOLUNTARY_BASELINE_ISO_WEIGHT_MISO": null,
+    "VOLUNTARY_BASELINE_SHARE": {
+      "high": {
+        "2023": 0.08
+      },
+      "low": {
+        "2023": 0.06
+      },
+      "mid": {
+        "2023": 0.08
+      }
+    },
+    "VOLUNTARY_COMMITTED_DC_FRACTION": {
+      "high": {
+        "2026": 1.0
+      },
+      "low": {
+        "2026": 0.0
+      },
+      "mid": {
+        "2026": 0.5
+      }
+    },
+    "VOLUNTARY_ELIGIBLE_FUELS_DEFAULT": [
+      "wind",
+      "solar",
+      "offshore_wind",
+      "geothermal"
+    ],
+    "VOLUNTARY_WTP_CEILING_USD_PER_MWH": {
+      "high": 7.0,
+      "low": 2.0,
+      "mid": 4.5
+    }
+  },
+  "iso": "MISO",
+  "matrix": "configs/scenario_campaign_matrix.yaml",
+  "regime": {
+    "ALL-CLEAN": {
+      "baseline": "LOAD-HI",
+      "per_year": {
+        "2026": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 68.341203765166,
+          "binds": false,
+          "slack_twh": 35.22787113483399
+        },
+        "2027": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 117.70803395317851,
+          "binds": true,
+          "slack_twh": -14.138959053178525
+        },
+        "2028": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 167.48666505690588,
+          "binds": true,
+          "slack_twh": -63.91759015690589
+        },
+        "2029": {
+          "G_twh": 114.4559538,
+          "V_twh": 217.71108959473668,
+          "binds": true,
+          "slack_twh": -103.25513579473667
+        },
+        "2030": {
+          "G_twh": 127.5060054,
+          "V_twh": 268.4181060314824,
+          "binds": true,
+          "slack_twh": -140.91210063148242
+        }
+      }
+    },
+    "CES-P20+VOL-HI": {
+      "baseline": "REF",
+      "per_year": {
+        "2026": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 65.28466100472387,
+          "binds": false,
+          "slack_twh": 38.28441389527612
+        },
+        "2027": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 100.70525242150634,
+          "binds": false,
+          "slack_twh": 2.8638224784936455
+        },
+        "2028": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 136.29825708200426,
+          "binds": true,
+          "slack_twh": -32.729182182004266
+        },
+        "2029": {
+          "G_twh": 114.4559538,
+          "V_twh": 172.07312599058514,
+          "binds": true,
+          "slack_twh": -57.61717219058514
+        },
+        "2030": {
+          "G_twh": 127.5060054,
+          "V_twh": 208.03982821787196,
+          "binds": true,
+          "slack_twh": -80.53382281787195
+        }
+      }
+    },
+    "VOL-HI": {
+      "baseline": "REF",
+      "per_year": {
+        "2026": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 65.28466100472387,
+          "binds": false,
+          "slack_twh": 38.28441389527612
+        },
+        "2027": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 100.70525242150634,
+          "binds": false,
+          "slack_twh": 2.8638224784936455
+        },
+        "2028": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 136.29825708200426,
+          "binds": true,
+          "slack_twh": -32.729182182004266
+        },
+        "2029": {
+          "G_twh": 114.4559538,
+          "V_twh": 172.07312599058514,
+          "binds": true,
+          "slack_twh": -57.61717219058514
+        },
+        "2030": {
+          "G_twh": 127.5060054,
+          "V_twh": 208.03982821787196,
+          "binds": true,
+          "slack_twh": -80.53382281787195
+        }
+      }
+    },
+    "VOL-MID": {
+      "baseline": "REF",
+      "per_year": {
+        "2026": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 60.98831900472388,
+          "binds": false,
+          "slack_twh": 42.58075589527611
+        },
+        "2027": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 78.86799592150635,
+          "binds": false,
+          "slack_twh": 24.70107897849364
+        },
+        "2028": {
+          "G_twh": 103.56907489999999,
+          "V_twh": 96.92008608200426,
+          "binds": false,
+          "slack_twh": 6.648988817995729
+        },
+        "2029": {
+          "G_twh": 114.4559538,
+          "V_twh": 115.15404049058516,
+          "binds": true,
+          "slack_twh": -0.698086690585157
+        },
+        "2030": {
+          "G_twh": 127.5060054,
+          "V_twh": 133.57982821787198,
+          "binds": true,
+          "slack_twh": -6.073822817871971
+        }
+      }
+    }
+  },
+  "years": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+  ]
+}
