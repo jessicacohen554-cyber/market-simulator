@@ -12896,3 +12896,60 @@ Record: `docs/FINDING-nyiso213-summer-seam-rescreen-2026-09-07.md`,
 `results/calibration/PREREG-nyiso213-summer-seam-rescreen.md`,
 `results/calibration/_nyiso213_screen_gates_2025.json`,
 `scripts/probes/nyiso213_screen_gates.py`.
+## nyiso-214 — 2026-09-07
+
+**ZERO LP. No solve, no bundle, no year spent. Keeper unchanged
+(`2026-09-07-nyiso-213-summer-seam`, CALIBRATED, grade 7/8, fails 0, C3c the lone ledgered
+caveat). There are NO in-sample rubric failures.** PREREG
+(`results/calibration/PREREG-nyiso214-duct-gap-double-reading.md`) pushed before P1–P4 were read;
+**all four fire**, including the limb declared to hurt and the reproduction bar that would have
+voided the census.
+
+**The nyiso-213 hand-forward object (B) is moved off a refuted hypothesis onto a measured one.**
+The efficiency reading is **refuted at zero LP**: Cricket Valley 57185's model/CAMPD heat-rate
+ratio is 1.023 / 1.031 / 1.043, inside the band every material CC occupies, so a per-plant
+measured heat-rate repair is not this object's lever. Base heat rates span ±4 % across the eight
+material `CC_REGULAR` plants while the **peak-band share spans 0.0 %–22.6 %** — the band, not the
+heat rate, is the within-class merit allocator.
+
+**The measured result: one EIA-860 quantity, two contradictory readings.** `cc_duct_peaking_pct`
+assigns a peak band from the `nameplate − net_summer` gap gated on `Duct Burners == Y`, while
+`cc_nameplate_summer_derate` (on nyiso-213's reconciled basis) reads the same gap at the same
+plants as ambient derate — **11 plants / 819.462 MW of peak band carry both** (P1), and at 57185
+the two are proved to read one pair to **0.0 pp** and **4 × 10⁻⁵** (P4). A rule 19 `[R-ONE-MECH]`
+collision of the nyiso-212/213 family. **The flag does not track the physics** (P2, the
+load-bearing prediction whose < 4.0 % limb would have refuted the framing): Athens 55405 carries a
+**19.417 %** gap and receives **0.0 MW** of band — the second-largest gap of any material CC,
+larger than five of the six flagged plants that do get one — and Zeltmann 56196 10.227 % / 0.0 MW,
+against 57185's 22.583 % / 245.6 MW. P3 reproduction bar (> 50 % would have VOIDED): 92.7 of 296.4
+MW (31.275 %) on `Y` rows, i.e. **203.7 MW on `X` rows — reproducing nyiso-198 exactly** at this
+HEAD. And the allocator does not track the meter: over the five boundary-clean material plants,
+band size vs the plants' own share of online hours **above** their published net-summer rating
+reads **ρ = −0.10, no relationship** — 57185 has the largest band and the *smallest* reach
+(7.56 % mean), 55405 has none and 13.23 %.
+
+**Handed to the owner as a SIXTH decision card**, five membership forms sized over the 16
+multi-tranche plants (A status quo 716.8 MW / B row-scoped 203.4 / C symmetric-none 0.0 / D
+symmetric-all 1,065.8 / E demonstrated headroom 688.5). **Nothing built, armed, screened or
+promoted**; no form recommended. Form E's within-class redistribution is **reported and explicitly
+not a reason** (rule 1 — the only dispatch evidence that exists, nyiso-200's form-B screen, points
+the other way), and **E′ (CAMPD demonstrated peak − net_summer) is refuted as constructed** on
+plant-boundary contamination (694.0 MW at 55375, 1,669.5 at 2500). `cc_duct_peaking_row_scoped`'s
+own `R` re-test condition was **not** re-opened.
+
+**Named, not pursued:** seven small `CC_REGULAR` plants (441.7 MW) are represented by a **single
+tranche labelled `_peak`**, so their whole capacity is offered at 2.25 × base HR all year, and two
+of them carry no `Y` row at all — a different path from the duct mechanism. Six plants are
+boundary-contaminated and excluded from every measured-side statistic.
+
+**Rule 22:** training-tier only; no out-of-training year solved, scored or registered. `final` not
+granted, locked test not spent, 2020/2021 unspent; no marker moved; the five pending owner rulings
+untouched. **Re-measured, not inherited (rule 25):** the named test set
+(`test_gate_a_provenance.py`, `test_cc_summer_derate_reconciled_basis.py`,
+`test_holdout_render_parity.py`, `test_campd_bins.py`) reads **75 passed / 0 failed**, and
+`ruff format --check .` / `ruff check` pass. Record:
+`docs/FINDING-nyiso214-duct-gap-double-reading-2026-09-07.md`,
+`results/calibration/_nyiso214_duct_gap_census.json`,
+`scripts/probes/nyiso214_duct_gap_census.py`; NYISO matrix shard `gates` stamp plus the
+`cc_duct_peaking` and `cc_nameplate_summer_derate` cells annotated (rule 28(b)), **no cell verdict
+letter moved**.
