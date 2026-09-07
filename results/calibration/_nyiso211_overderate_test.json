@@ -868,6 +868,95 @@
    ]
   }
  },
+ "repair_month_delta": {
+  "2023": {
+   "gained": [],
+   "lost": [
+    {
+     "plant": "50292",
+     "name": "Bethpage Power Plant",
+     "n_before": 5,
+     "n_after": 0
+    },
+    {
+     "plant": "55405",
+     "name": "Athens Generating Plant",
+     "n_before": 7,
+     "n_after": 3
+    },
+    {
+     "plant": "56940",
+     "name": "CPV Valley Energy Center",
+     "n_before": 7,
+     "n_after": 5
+    }
+   ]
+  },
+  "2024": {
+   "gained": [
+    {
+     "plant": "57185",
+     "name": "Cricket Valley Energy",
+     "before": [],
+     "after": [
+      7,
+      8,
+      9
+     ]
+    }
+   ],
+   "lost": [
+    {
+     "plant": "2539",
+     "name": "Bethlehem Energy Center",
+     "n_before": 1,
+     "n_after": 0
+    },
+    {
+     "plant": "50292",
+     "name": "Bethpage Power Plant",
+     "n_before": 3,
+     "n_after": 0
+    },
+    {
+     "plant": "55405",
+     "name": "Athens Generating Plant",
+     "n_before": 7,
+     "n_after": 3
+    }
+   ]
+  },
+  "2025": {
+   "gained": [
+    {
+     "plant": "57185",
+     "name": "Cricket Valley Energy",
+     "before": [
+      8
+     ],
+     "after": [
+      6,
+      7,
+      8
+     ]
+    }
+   ],
+   "lost": [
+    {
+     "plant": "55405",
+     "name": "Athens Generating Plant",
+     "n_before": 7,
+     "n_after": 4
+    },
+    {
+     "plant": "57664",
+     "name": "Astoria Energy II",
+     "n_before": 2,
+     "n_after": 0
+    }
+   ]
+  }
+ },
  "plants": {
   "2023": {
    "2500": {

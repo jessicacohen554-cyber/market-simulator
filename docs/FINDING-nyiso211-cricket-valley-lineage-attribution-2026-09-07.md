@@ -196,15 +196,25 @@ Cricket Valley 57185 (LP pmax 1,086.9 MW):
 
 **Reported against it, at full magnitude — the condition is endemic, not unique to this plant.**
 On the keeper basis **12 / 9 / 9 of the 21** CC_REGULAR plants carry at least one over-ceiling
-month in 2023 / 2024 / 2025, and two are over-derated on an **annual** basis, which Cricket Valley
-is not: Ravenswood 2500 (meas/avail **1.014** in 2023, 1.001 in 2024) and CPV Valley 56940
-(**1.0005** in 2023, **1.0003** in 2025). **And the repair improved the class**: class-wide
-over-ceiling months fall **44 → 33, 37 → 32, 29 → 26**.
+month in 2023 / 2024 / 2025, and several are over-derated on an **annual** basis, which Cricket
+Valley is not — 2023: Ravenswood 2500 (meas/avail **1.014**), Rensselaer Cogen 54034 (1.017), CPV
+Valley 56940 (1.0005); 2024: Ravenswood 2500 (1.001), Carthage 10620 (**2.893**), CH Resources
+Syracuse 10621 (1.486); 2025: CPV Valley 56940 (1.0003). **And the repair improved the class on
+every measure**: class-wide over-ceiling months fall **44 → 33, 37 → 32, 29 → 26**, the
+plants carrying one fall **13 → 12, 10 → 9, 10 → 9**, and the one plant that was over-derated
+annually in **every** year before it — Athens 55405 (1.042 / 1.059 / 1.028) — no longer is in any.
+No plant becomes annually over-derated that was not already; Ravenswood 2500 (1.030 → 1.014 in
+2023) and CPV Valley 56940 (1.010 → 1.0005) are reduced but not cleared.
 
-What is distinctive at Cricket Valley is narrower than "uniquely broken", and is stated as such:
-it is the **only** plant whose over-ceiling months were *created* by the repair (2024: none → three),
+What is distinctive at Cricket Valley is narrower than "uniquely broken", and is stated as such —
+but it is exact, and it was measured rather than asserted: across the whole class and all three
+years, **57185 is the ONLY plant that gains an over-ceiling month from the repair** (2024 none →
+Jul/Aug/Sep; 2025 Aug → Jun/Jul/Aug). **Every other movement in the class is a loss** — Athens
+55405 7 → 3, 7 → 3, 7 → 4; Bethpage 50292 5 → 0 and 3 → 0; CPV Valley 56940 7 → 5; Bethlehem 2539
+1 → 0; Astoria Energy II 57664 2 → 0. So the repair is one-sidedly corrective everywhere except at
+the plant it was named for,
 and its availability is the lowest of any large modern CC in the fleet — 0.51 / 0.55 against
-Bethlehem 0.855, Zeltmann 0.833, Ravenswood 0.840, Astoria Energy 0.892 — which inverts the
+(2024) Bethlehem 0.855, Zeltmann 0.833, Ravenswood 0.840, Astoria Energy 0.892 — which inverts the
 physical expectation for the newest unit. (Athens 55405, 1,222 MW, sits at 0.439 and is named here
 as an unexplained second instance; its gap is small, so it is reported and not pursued.)
 

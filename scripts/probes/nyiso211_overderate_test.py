@@ -169,6 +169,38 @@ def main() -> None:
             "availability_ranked_ascending": ranked,
         }
 
+    # ---- which plants GAIN an over-ceiling month from the repair? ----------
+    # The one-sidedness test: pre-196 (keeper basis, flag OFF) vs the current
+    # keeper (arm basis, flag ON), per plant per year.
+    repair_month_delta = {}
+    for year in YEARS:
+        yr = rows[str(year)]
+        gained, lost = [], []
+        for plant, e in yr.items():
+            if not (e.get("keeper") and e.get("arm")):
+                continue
+            before = set(e["keeper"]["months_over_1"])
+            after = set(e["arm"]["months_over_1"])
+            if after - before:
+                gained.append(
+                    {
+                        "plant": plant,
+                        "name": e["name"],
+                        "before": sorted(before),
+                        "after": sorted(after),
+                    }
+                )
+            if before - after:
+                lost.append(
+                    {
+                        "plant": plant,
+                        "name": e["name"],
+                        "n_before": len(before),
+                        "n_after": len(after),
+                    }
+                )
+        repair_month_delta[str(year)] = {"gained": gained, "lost": lost}
+
     target = {
         str(y): {
             "keeper_basis": rows[str(y)][str(TARGET)]["keeper"],
@@ -186,12 +218,14 @@ def main() -> None:
         "target_plant": TARGET,
         "target": target,
         "class_census": census,
+        "repair_month_delta": repair_month_delta,
         "plants": rows,
     }
     dest = ROOT / "results/calibration/_nyiso211_overderate_test.json"
     dest.write_text(json.dumps(out, indent=1))
     print(json.dumps(target, indent=1))
-    print(json.dumps(census, indent=1)[:4000])
+    print(json.dumps(repair_month_delta, indent=1))
+    print(json.dumps(census, indent=1)[:2000])
     print(f"\nwrote {dest}")
 
 
