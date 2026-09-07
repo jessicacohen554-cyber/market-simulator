@@ -8,9 +8,11 @@ data profile.
 
 What is pinned:
 
-* the 17 EIA-930 SPP sub-BA tokens and their North/South partition — the
-  SPP-20 P1 zone grouping, including the one member (``EDE``) whose side is
-  not decidable from SPP's reserve-zone registry;
+* the 17 EIA-930 SPP sub-BA tokens and their North / Oklahoma / South
+  partition — the SPP-20 P1 zone grouping as split by the SPP-57 Oklahoma
+  pocket, including the one member (``EDE``) whose side is not decidable from
+  SPP's reserve-zone registry and the one member (``CSWS``) that straddles the
+  Oklahoma seam and is split by a measured EIA-861 retail-sales share;
 * the share contract — ``(n_zones, HOURS_PER_YEAR)``, every hour summing to
   1.0, which is this lane's headline gate;
 * the round trip through the ``write_clean`` / ``read_clean`` seam;
@@ -31,12 +33,15 @@ from scripts.data import curate_zonal_shares as czs
 from scripts.lib.clean_io import read_clean, write_clean
 
 _YEAR = 2023
-_ZONES = ["SPP-North", "SPP-South"]
+_ZONES = ["SPP-North", "SPP-Oklahoma", "SPP-South"]
 
 # One representative token per zone is enough to exercise the partition; the
-# full 17 are pinned separately by the crosswalk tests below.
+# full 17 are pinned separately by the crosswalk tests below. The fixture
+# writes NO ``CSWS`` row unless a test adds one, so the injected North /
+# Oklahoma / South MW come back as exactly those shares.
 _NORTH_TOKENS = ("WR", "NPPD", "EDE")
-_SOUTH_TOKENS = ("OKGE", "SPS")
+_OK_TOKENS = ("OKGE", "WFEC")
+_SOUTH_TOKENS = ("SPS",)
 
 
 def _fake_frame(year: int) -> pd.DataFrame:
@@ -53,15 +58,33 @@ def _fake_frame(year: int) -> pd.DataFrame:
     )
 
 
-def _write_subba_fixture(directory, year: int, north_mw: float, south_mw: float):
+def _write_subba_fixture(
+    directory,
+    year: int,
+    north_mw: float,
+    south_mw: float,
+    ok_mw: float = 0.0,
+    csws_mw: float = 0.0,
+):
     """Write a synthetic SPP sub-BA demand CSV covering the whole year.
 
-    Splits ``north_mw`` and ``south_mw`` evenly across the tokens of each zone
-    so the expected share is exactly ``north_mw / (north_mw + south_mw)``.
+    Splits ``north_mw`` / ``ok_mw`` / ``south_mw`` evenly across the tokens of
+    each zone so the expected share is exactly each zone's MW over the total;
+    ``csws_mw`` writes the straddling ``CSWS`` row, which the parser splits by
+    the measured Oklahoma share before grouping.
     """
     utc = _fake_frame(year)["UTC time"]
     rows = []
-    for tokens, total in ((_NORTH_TOKENS, north_mw), (_SOUTH_TOKENS, south_mw)):
+    groups = [
+        (_NORTH_TOKENS, north_mw),
+        (_OK_TOKENS, ok_mw),
+        (_SOUTH_TOKENS, south_mw),
+    ]
+    if csws_mw:
+        groups.append((("CSWS",), csws_mw))
+    for tokens, total in groups:
+        if not total:
+            continue
         per = total / len(tokens)
         for tok in tokens:
             rows.append(
@@ -97,9 +120,12 @@ def spp_raw(tmp_path, monkeypatch):
 
 
 def test_crosswalk_covers_the_seventeen_eia930_subbas():
-    """All 17 SWPP sub-BA tokens are mapped, and only those 17."""
-    assert len(czs._SPP_SUBBA_ZONE_GROUPS) == 17
-    assert set(czs._SPP_SUBBA_ZONE_GROUPS) == {
+    """All 17 SWPP sub-BA tokens are accounted for: 16 mapped whole plus the
+    one straddling token (``CSWS``) that is split, and nothing else."""
+    assert len(czs._SPP_SUBBA_ZONE_GROUPS) == 16
+    assert czs._SPP_SPLIT_SUBBA == "CSWS"
+    assert "CSWS" not in czs._SPP_SUBBA_ZONE_GROUPS
+    assert set(czs._SPP_SUBBA_ZONE_GROUPS) | {czs._SPP_SPLIT_SUBBA} == {
         "CSWS",
         "EDE",
         "GRDA",
@@ -120,9 +146,12 @@ def test_crosswalk_covers_the_seventeen_eia930_subbas():
     }
 
 
-def test_crosswalk_is_the_spp20_p1_partition():
-    """North gets 12 sub-BAs and South 5, exactly as owner ruling r#5 grouped them."""
+def test_crosswalk_is_the_spp20_p1_partition_split_by_the_spp57_pocket():
+    """North keeps its 12 sub-BAs (ruling r#5); the P1 South's five split into
+    the Oklahoma pocket (OKGE / GRDA / WFEC + the PSO share of CSWS) and the
+    residual South (SPS + the SWEPCO share of CSWS) — PRECOMMIT-spp-57 §2.1."""
     north = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-North"}
+    oklahoma = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-Oklahoma"}
     south = {k for k, v in czs._SPP_SUBBA_ZONE_GROUPS.items() if v == "SPP-South"}
     assert north == {
         "EDE",
@@ -138,7 +167,24 @@ def test_crosswalk_is_the_spp20_p1_partition():
         "WAUE",
         "WR",
     }
-    assert south == {"CSWS", "GRDA", "OKGE", "SPS", "WFEC"}
+    assert oklahoma == {"GRDA", "OKGE", "WFEC"}
+    assert south == {"SPS"}
+    assert czs._SPP_SPLIT_ZONES == ("SPP-Oklahoma", "SPP-South")
+
+
+def test_csws_split_is_the_measured_eia861_share_with_hold_last():
+    """The CSWS Oklahoma share is the EIA-861 PSO / (PSO + SWEPCO) retail-sales
+    ratio per data year (data/raw/eia-861), and a year past the last published
+    row holds that row (the rule declared in PRECOMMIT-spp-57 §2.2), never a
+    silent 0 or 1.
+    """
+    assert czs._SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR == {2023: 0.5216, 2024: 0.5383}
+    assert czs._spp_csws_oklahoma_share(2023) == 0.5216
+    assert czs._spp_csws_oklahoma_share(2024) == 0.5383
+    assert czs._spp_csws_oklahoma_share(2025) == 0.5383  # hold-last
+    assert czs._spp_csws_oklahoma_share(2019) == 0.5216  # back years: first row
+    for w in czs._SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR.values():
+        assert 0.0 < w < 1.0
 
 
 def test_ede_lands_north():
@@ -154,10 +200,10 @@ def test_ede_lands_north():
 
 
 def test_crosswalk_targets_are_the_model_zones():
-    """Every crosswalk target is a real SPP model zone."""
-    assert set(czs._SPP_SUBBA_ZONE_GROUPS.values()) == set(
-        get_iso_config("SPP").zone_names
-    )
+    """Every crosswalk target (and both split targets) is a real SPP model zone."""
+    zones = set(get_iso_config("SPP").zone_names)
+    assert set(czs._SPP_SUBBA_ZONE_GROUPS.values()) == zones
+    assert set(czs._SPP_SPLIT_ZONES) <= zones
 
 
 # ---------------------------------------------------------------------------
@@ -167,31 +213,51 @@ def test_crosswalk_targets_are_the_model_zones():
 
 def test_parse_shape(spp_raw):
     """The parser returns (n_zones, HOURS_PER_YEAR) float64."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=5000.0)
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=3000.0, ok_mw=2000.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert shares is not None
-    assert shares.shape == (2, HOURS_PER_YEAR)
+    assert shares.shape == (3, HOURS_PER_YEAR)
     assert shares.dtype == np.float64
 
 
 def test_shares_sum_to_one_every_hour(spp_raw):
     """THE GATE: shares sum to 1.0 in every one of the 8760 hours."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=5125.0, south_mw=4875.0)
+    _write_subba_fixture(
+        spp_raw, _YEAR, north_mw=5125.0, south_mw=2000.0, ok_mw=1875.0, csws_mw=1000.0
+    )
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert np.abs(shares.sum(axis=0) - 1.0).max() < 1e-9
 
 
 def test_shares_reproduce_the_injected_split(spp_raw):
-    """A known North/South MW split comes back as exactly that share."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=6000.0, south_mw=4000.0)
+    """A known North / Oklahoma / South MW split comes back as exactly that share."""
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=6000.0, south_mw=1000.0, ok_mw=3000.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert np.allclose(shares[0], 0.6, atol=1e-12)
-    assert np.allclose(shares[1], 0.4, atol=1e-12)
+    assert np.allclose(shares[1], 0.3, atol=1e-12)
+    assert np.allclose(shares[2], 0.1, atol=1e-12)
+
+
+def test_csws_row_is_split_by_the_measured_share_as_an_identity(spp_raw):
+    """The straddling CSWS MW lands w_OK in Oklahoma and (1 - w_OK) in South.
+
+    The two parts sum to the measured CSWS MW, so the hourly normalisation is
+    untouched: with 5,000 MW North, 0 Oklahoma-whole, 0 South-whole and a
+    5,000 MW CSWS row, North reads exactly 0.5 and the other two read
+    0.5 * w_OK and 0.5 * (1 - w_OK).
+    """
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=0.0, csws_mw=5000.0)
+    shares = czs.parse_spp_shares(_YEAR, _ZONES)
+    w = czs._spp_csws_oklahoma_share(_YEAR)
+    assert np.allclose(shares[0], 0.5, atol=1e-12)
+    assert np.allclose(shares[1], 0.5 * w, atol=1e-12)
+    assert np.allclose(shares[2], 0.5 * (1.0 - w), atol=1e-12)
+    assert np.abs(shares.sum(axis=0) - 1.0).max() < 1e-12
 
 
 def test_shares_are_bounded(spp_raw):
     """No share falls outside [0, 1] and none is NaN."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=9000.0, south_mw=1000.0)
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=9000.0, south_mw=500.0, ok_mw=500.0)
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
     assert np.isfinite(shares).all()
     assert shares.min() >= 0.0 and shares.max() <= 1.0
@@ -214,13 +280,13 @@ def test_uncovered_year_returns_none(spp_raw):
     (Jan 1st's first UTC hours belong to the previous local year), so the
     ``df.empty`` guard alone does not catch this — the NaN sweep does.
     """
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=5000.0)
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=2500.0, ok_mw=2500.0)
     assert czs.parse_spp_shares(2024, _ZONES) is None
 
 
 def test_missing_clock_returns_none(spp_raw, monkeypatch):
     """No EIA-930 SWPP frame for the year -> None."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=5000.0)
+    _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=2500.0, ok_mw=2500.0)
     monkeypatch.setattr(czs, "_eia_hourly_frame_filled", lambda ba, year: None)
     assert czs.parse_spp_shares(_YEAR, _ZONES) is None
 
@@ -231,7 +297,9 @@ def test_unknown_subba_tokens_are_ignored(spp_raw):
     EIA-930 does not report SPP's western RESZONE-21 members as SWPP sub-BAs,
     but a future export that added one must not silently enter the shares.
     """
-    spp_dir = _write_subba_fixture(spp_raw, _YEAR, north_mw=5000.0, south_mw=5000.0)
+    spp_dir = _write_subba_fixture(
+        spp_raw, _YEAR, north_mw=5000.0, south_mw=2500.0, ok_mw=2500.0
+    )
     path = spp_dir / "spp_subba_demand_2023-2025.csv"
     df = pd.read_csv(path)
     intruder = df[df["subba"] == "WR"].copy()
@@ -249,7 +317,9 @@ def test_unknown_subba_tokens_are_ignored(spp_raw):
 
 def test_round_trip_through_clean_parquet(spp_raw, tmp_clean_dir):
     """Parse -> write_clean -> read_clean returns a bit-identical matrix."""
-    _write_subba_fixture(spp_raw, _YEAR, north_mw=5125.0, south_mw=4875.0)
+    _write_subba_fixture(
+        spp_raw, _YEAR, north_mw=5125.0, south_mw=2045.0, ok_mw=2830.0, csws_mw=500.0
+    )
     shares = czs.parse_spp_shares(_YEAR, _ZONES)
 
     df = czs._shares_to_long(shares, _ZONES)

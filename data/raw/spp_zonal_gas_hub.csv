@@ -2,6 +2,9 @@ zone,year,basis_vs_hh_usd_mmbtu,hub,source
 SPP-North,2022,0.85,NGPL Mid-Continent / Panhandle Eastern (KS),KS delivered-to-electric-power (EIA N3045KS3) minus Henry Hub monthly mean; mean of 12 monthly observations
 SPP-North,2023,0.784,NGPL Mid-Continent / Panhandle Eastern (KS),KS delivered-to-electric-power (EIA N3045KS3) minus Henry Hub monthly mean; mean of 12 monthly observations
 SPP-North,2024,0.729,NGPL Mid-Continent / Panhandle Eastern (KS),KS delivered-to-electric-power (EIA N3045KS3) minus Henry Hub monthly mean; mean of 12 monthly observations
-SPP-South,2022,0.612,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
-SPP-South,2023,0.418,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
-SPP-South,2024,0.861,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-Oklahoma,2022,0.612,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-Oklahoma,2023,0.418,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-Oklahoma,2024,0.861,ANR Oklahoma / Panhandle Eastern (OK),OK delivered-to-electric-power (EIA N3045OK3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-South,2022,-0.081,Waha / Permian-Panhandle (TX),TX delivered-to-electric-power (EIA N3045TX3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-South,2023,0.096,Waha / Permian-Panhandle (TX),TX delivered-to-electric-power (EIA N3045TX3) minus Henry Hub monthly mean; mean of 12 monthly observations
+SPP-South,2024,-0.01,Waha / Permian-Panhandle (TX),TX delivered-to-electric-power (EIA N3045TX3) minus Henry Hub monthly mean; mean of 12 monthly observations

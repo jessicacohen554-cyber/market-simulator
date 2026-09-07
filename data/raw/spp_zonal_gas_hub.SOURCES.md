@@ -115,3 +115,30 @@ The table is six numbers, each the mean of twelve published monthly prints minus
 the matching Henry Hub prints. Re-derive only when the **source data** updates
 (rule 23 `[R-FROZEN-DERIVE]`) — in practice, when EIA publishes `N3045OK3` for
 2025 — never because a residual moved.
+
+---
+
+## STATUS UPDATE 2026-09-07 — lane SPP-57: re-keyed for the three-zone topology
+
+`docs/handoffs/PRECOMMIT-spp-57-2026-09-07.md` §2.3. The SPP topology gained the
+Oklahoma pocket (`SPP-Oklahoma` = the state of Oklahoma on the fleet side), so the
+table is re-keyed, **no measured value moved**:
+
+| Zone | Proxy state | EIA series | Rows |
+|---|---|---|---|
+| SPP-North | KS | `N3045KS3` | unchanged (2022–2024) |
+| **SPP-Oklahoma** | OK | `N3045OK3` | the former `SPP-South` rows, value-identical (2022 +0.612 / 2023 +0.418 / 2024 +0.861) |
+| **SPP-South** (residual: TX Panhandle, NM, AR, LA) | **TX** | `N3045TX3` | NEW: 2022 −0.081 / 2023 +0.096 / 2024 −0.010 |
+
+Why TX for the residual, measured (EIA-860 2025 ER, `OP`, BA `SWPP`, `Energy Source 1 = NG`,
+state-summed): TX 6,547 MW of the residual's 8,986 MW of gas (NM 1,200, LA 829, AR 380) —
+an outright majority, on both the SPS (Panhandle) and SWEPCO (east Texas) halves. The same
+construction as every row above (12 monthly prints minus Henry Hub, mean); the OK rows
+were recomputed from the committed inputs by the same code and reproduce SPP-32's three
+values exactly, which is the check that the TX values are on the same footing.
+
+**The 2022–2024 span rule is unchanged**: `N3045TX3` is published through 2026-06, but the
+table still stops at the intersection with `N3045OK3` (2024), for the reason the section
+above states — a partly-populated year hands an applier a fabricated spread. **No applier
+is armed** (no `ScenarioConfig` field, plan §7 G8); this table is dispatch-inert for every
+SPP keeper.

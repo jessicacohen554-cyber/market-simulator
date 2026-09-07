@@ -627,20 +627,30 @@
         "load_share": 0.5125
       },
       {
+        "name": "SPP-Oklahoma",
+        "load_share": 0.283
+      },
+      {
         "name": "SPP-South",
-        "load_share": 0.4875
+        "load_share": 0.2045
       }
     ],
-    "n_zones": 2,
+    "n_zones": 3,
     "links": [
       {
         "from": "SPP-North",
+        "to": "SPP-Oklahoma",
+        "ttc_mw": 6500.0,
+        "bidirectional": true
+      },
+      {
+        "from": "SPP-Oklahoma",
         "to": "SPP-South",
-        "ttc_mw": 48700.0,
+        "ttc_mw": 6700.0,
         "bidirectional": true
       }
     ],
-    "n_links": 1,
+    "n_links": 2,
     "interface_limits": []
   }
 }

@@ -1,0 +1,106 @@
+
+===== n_ok: n=26256 k=134 R2=0.170 intercept=0.611 (t=2.5); mean dependent +3.506
+  n_s_corridor: n=30 identified(psi>0,t>=2)=12 reverse(psi<0,t<=-2)=8 hours id=9254 hours rev=4054
+  oklahoma_internal: n=37 identified(psi>0,t>=2)=16 reverse(psi<0,t<=-2)=9 hours id=16881 hours rev=11138
+  sps_tie: n=7 identified(psi>0,t>=2)=2 reverse(psi<0,t<=-2)=1 hours id=2632 hours rev=1097
+  other: n=59 identified(psi>0,t>=2)=16 reverse(psi<0,t<=-2)=16 hours id=14742 hours rev=13261
+Constraint Name       Monitored Facility             group                                   why  hours       psi         t  identified  reverse
+   TEMP89_22229   LN GRACMONT - ANADARKO oklahoma_internal contingency areas within OK utilities 6658.0  0.030050  4.763290        True    False
+   OSAWEBCLESOO   LN OSAGE_OG - WEBBTAP4 oklahoma_internal                named Osage-Webber Tap 3455.0 -0.000387 -0.320760       False    False
+   TMP270_23432   LN CLEVLND7 - CLEV_AEC oklahoma_internal contingency areas within OK utilities 3313.0 -0.009749 -3.404954       False     True
+   TMP253_27481   LN GRACMONT - ANADARKO oklahoma_internal contingency areas within OK utilities 3010.0 -0.037992 -4.815166       False     True
+   TEMP50_23126 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 2231.0  0.000884  0.167512       False    False
+   TMP374_25996   LN GRACMONT - ANADARKO             other                     other areas: CSWS 2206.0  0.032855  6.645383        True    False
+   TMP128_29363      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown 2124.0  0.004263  1.913016       False    False
+   TMP573_26592     LN FPLSWTCH - WDWRD1 oklahoma_internal contingency areas within OK utilities 2087.0  0.079614  3.366267        True    False
+   TMP555_29231 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 1638.0  0.005519  0.526175       False    False
+   TMP200_25341 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 1421.0  0.033410  2.622225        True    False
+   CIMXF2CIMXF3 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities 1410.0  0.066569 10.920216        True    False
+      SPSNMTIES Multi-Element Constraint           sps_tie                   named ITP interface 1211.0  0.056326  3.500516        True    False
+   TMP563_26603      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown 1122.0 -0.005240 -2.047282       False     True
+     SPPSPSTIES Multi-Element Constraint           sps_tie                   named ITP interface 1097.0 -0.070914 -2.392357       False     True
+   TMP109_22593    LN STONEWSW - TUPELO2 oklahoma_internal contingency areas within OK utilities  993.0 -0.005089 -2.642110       False     True
+   CORNAPTERSUN     LN CORNTP4 - NAPLES1 oklahoma_internal contingency areas within OK utilities  946.0  0.027144  3.844083        True    False
+   TMP419_25392     LN FULTON_C - PAT_WX             other                     other areas: CSWS  867.0  0.012601  0.166206       False    False
+   TEMP47_28178       LN KINZE - KINZEG1 oklahoma_internal contingency areas within OK utilities  862.0 -0.018488 -6.600389       False     True
+   TEMP70_29435     LN CRESCENT - CTNWD1 oklahoma_internal contingency areas within OK utilities  796.0 -0.181135 -4.530109       False     True
+   TP1078_31925    LN CLARTOK4 - AMC_TAP             other                     other areas: CSWS  770.0 -0.003651 -0.375704       False    False
+   TMP775_29068 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored)  762.0 -0.020464 -0.699719       False    False
+   CIMXF3CIMXF2 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities  731.0  0.032613  6.066372        True    False
+   TMP505_26383      LN SPRIN - DRIPPING oklahoma_internal contingency areas within OK utilities  683.0  0.011763  2.564352        True    False
+   TMP462_27381      LN CIMARRON - CKHAL oklahoma_internal contingency areas within OK utilities  668.0  0.020320  6.147838        True    False
+   TMP311_30771       LN CARTR2 - CKSAW1 oklahoma_internal contingency areas within OK utilities  664.0  0.002548  1.078857       False    False
+   TMP525_27546         LN QUAIL - SKYLN oklahoma_internal contingency areas within OK utilities  622.0  0.015667  6.779199        True    False
+   TMP711_28604     LN CORNTP4 - NAPLES1 oklahoma_internal contingency areas within OK utilities  615.0  0.003811  0.854888       False    False
+   TMP839_29049 XFMR SEMINOLE - SEMINOLE oklahoma_internal contingency areas within OK utilities  534.0  0.001706  0.228871       False    False
+   TMP825_28866   LN EASTX_SW - HARRISON             other                     other areas: CSWS  509.0 -0.003475 -0.110755       False    False
+   TMP336_31246     XFMR DUNCAN - DUNCAN oklahoma_internal contingency areas within OK utilities  490.0  0.004305  1.317429       False    False
+   TAHH59MUSFTS     LN TAHLQH5 - HWY59TP oklahoma_internal contingency areas within OK utilities  481.0  0.022705  2.889938        True    False
+   TMP159_24149      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown  477.0  0.025678  3.516650        True    False
+   TMP302_27254     LN CIMARRON - DRAPR1 oklahoma_internal contingency areas within OK utilities  462.0 -0.007454 -0.776313       False    False
+   TMP926_29347    LN STONEWSW - TUPELO2 oklahoma_internal contingency areas within OK utilities  459.0 -0.033338 -9.371954       False     True
+   TMP601_28916 XFMR ELK-CITY - ELK-CITY oklahoma_internal contingency areas within OK utilities  432.0 -0.048984 -1.008700       False    False
+   TMP730_30195         LN PENN1 - SNTFE oklahoma_internal contingency areas within OK utilities  412.0  0.008215  2.334011        True    False
+   TMP703_28546     LN FPLSWTCH - WDWRD1           sps_tie           SPS + East-area contingency  411.0  0.022566  0.629727       False    False
+   TMP553_25633 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities  410.0  0.054629  6.670060        True    False
+   TP1192_32077    LN GILLIAM - SUPERIOR             other                     other areas: CSWS  401.0 -0.045119 -2.087577       False     True
+   TMP580_32295     XFMR WDRNG1 - WDRNG1 oklahoma_internal contingency areas within OK utilities  397.0  0.057280  3.033968        True    False
+   TMP480_31271         XFMR SHAM - SHAM             other                     other areas: CSWS  387.0  0.006680  1.769716       False    False
+   TMP504_27821      LN MAID1 - KERR_HYD oklahoma_internal contingency areas within OK utilities  387.0 -0.009803 -0.627862       False    False
+   TEMP62_32032       LN DOVRT - TURCRK2 oklahoma_internal contingency areas within OK utilities  357.0 -0.003889 -0.905064       False    False
+   SWSANAGRAANA     LN SW_STA - ANADARKO oklahoma_internal contingency areas within OK utilities  355.0  0.013117  1.915988       False    False
+   TP1166_32048   LN SW_134TP - WESTMOR4 oklahoma_internal contingency areas within OK utilities  351.0  0.036327  2.693342        True    False
+
+===== ok_s: n=26256 k=134 R2=0.064 intercept=6.449 (t=12.3); mean dependent +5.290
+  n_s_corridor: n=30 identified(psi>0,t>=2)=3 reverse(psi<0,t<=-2)=11 hours id=1405 hours rev=4745
+  oklahoma_internal: n=37 identified(psi>0,t>=2)=1 reverse(psi<0,t<=-2)=18 hours id=862 hours rev=18079
+  sps_tie: n=7 identified(psi>0,t>=2)=4 reverse(psi<0,t<=-2)=0 hours id=6177 hours rev=0
+  other: n=59 identified(psi>0,t>=2)=8 reverse(psi<0,t<=-2)=19 hours id=4667 hours rev=13384
+Constraint Name       Monitored Facility             group                                   why  hours       psi          t  identified  reverse
+   TEMP89_22229   LN GRACMONT - ANADARKO oklahoma_internal contingency areas within OK utilities 6658.0 -0.032147  -3.943348       False     True
+   OSAWEBCLESOO   LN OSAGE_OG - WEBBTAP4 oklahoma_internal                named Osage-Webber Tap 3455.0 -0.000224  -0.112063       False    False
+   TMP270_23432   LN CLEVLND7 - CLEV_AEC oklahoma_internal contingency areas within OK utilities 3313.0  0.007855   1.793344       False    False
+   TMP253_27481   LN GRACMONT - ANADARKO oklahoma_internal contingency areas within OK utilities 3010.0  0.017420   1.500812       False    False
+   TEMP50_23126 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 2231.0  0.047258   2.537574        True    False
+   TMP374_25996   LN GRACMONT - ANADARKO             other                     other areas: CSWS 2206.0  0.010326   1.097812       False    False
+   TMP128_29363      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown 2124.0  0.003433   0.821517       False    False
+   TMP573_26592     LN FPLSWTCH - WDWRD1 oklahoma_internal contingency areas within OK utilities 2087.0 -0.065642  -2.229598       False     True
+   TMP555_29231 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 1638.0  0.132113   3.496224        True    False
+   TMP200_25341 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored) 1421.0  0.004929   0.212397       False    False
+   CIMXF2CIMXF3 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities 1410.0 -0.050802  -8.389348       False     True
+      SPSNMTIES Multi-Element Constraint           sps_tie                   named ITP interface 1211.0  0.089228   2.350324        True    False
+   TMP563_26603      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown 1122.0  0.011033   1.244196       False    False
+     SPPSPSTIES Multi-Element Constraint           sps_tie                   named ITP interface 1097.0  0.282612   2.359435        True    False
+   TMP109_22593    LN STONEWSW - TUPELO2 oklahoma_internal contingency areas within OK utilities  993.0  0.008714   1.961364       False    False
+   CORNAPTERSUN     LN CORNTP4 - NAPLES1 oklahoma_internal contingency areas within OK utilities  946.0 -0.050128  -6.451181       False     True
+   TMP419_25392     LN FULTON_C - PAT_WX             other                     other areas: CSWS  867.0 -0.163738  -2.742968       False     True
+   TEMP47_28178       LN KINZE - KINZEG1 oklahoma_internal contingency areas within OK utilities  862.0  0.022618   2.427687        True    False
+   TEMP70_29435     LN CRESCENT - CTNWD1 oklahoma_internal contingency areas within OK utilities  796.0 -0.158806  -2.653152       False     True
+   TP1078_31925    LN CLARTOK4 - AMC_TAP             other                     other areas: CSWS  770.0  0.011335   0.752007       False    False
+   TMP775_29068 XFMR POTTER_S - POTTER_S           sps_tie Potter County interchange (monitored)  762.0 -0.006128  -0.131956       False    False
+   CIMXF3CIMXF2 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities  731.0 -0.042748  -4.544597       False     True
+   TMP505_26383      LN SPRIN - DRIPPING oklahoma_internal contingency areas within OK utilities  683.0 -0.033604  -6.943519       False     True
+   TMP462_27381      LN CIMARRON - CKHAL oklahoma_internal contingency areas within OK utilities  668.0 -0.035901  -9.109181       False     True
+   TMP311_30771       LN CARTR2 - CKSAW1 oklahoma_internal contingency areas within OK utilities  664.0  0.008113   1.559813       False    False
+   TMP525_27546         LN QUAIL - SKYLN oklahoma_internal contingency areas within OK utilities  622.0 -0.008287  -1.237845       False    False
+   TMP711_28604     LN CORNTP4 - NAPLES1 oklahoma_internal contingency areas within OK utilities  615.0  0.002565   0.288285       False    False
+   TMP839_29049 XFMR SEMINOLE - SEMINOLE oklahoma_internal contingency areas within OK utilities  534.0 -0.009534  -2.102233       False     True
+   TMP825_28866   LN EASTX_SW - HARRISON             other                     other areas: CSWS  509.0 -0.089300  -2.646243       False     True
+   TMP336_31246     XFMR DUNCAN - DUNCAN oklahoma_internal contingency areas within OK utilities  490.0 -0.015205  -6.469140       False     True
+   TAHH59MUSFTS     LN TAHLQH5 - HWY59TP oklahoma_internal contingency areas within OK utilities  481.0 -0.016449  -1.389510       False    False
+   TMP159_24149      LN RUSSETT - SBROWN oklahoma_internal                 named Russett-S Brown  477.0 -0.024999  -4.237408       False     True
+   TMP302_27254     LN CIMARRON - DRAPR1 oklahoma_internal contingency areas within OK utilities  462.0  0.012726   0.676449       False    False
+   TMP926_29347    LN STONEWSW - TUPELO2 oklahoma_internal contingency areas within OK utilities  459.0  0.006434   0.748140       False    False
+   TMP601_28916 XFMR ELK-CITY - ELK-CITY oklahoma_internal contingency areas within OK utilities  432.0 -0.079251  -3.139333       False     True
+   TMP730_30195         LN PENN1 - SNTFE oklahoma_internal contingency areas within OK utilities  412.0 -0.013705  -2.206449       False     True
+   TMP703_28546     LN FPLSWTCH - WDWRD1           sps_tie           SPS + East-area contingency  411.0 -0.006104  -0.169591       False    False
+   TMP553_25633 XFMR CIMARRON - CIMARRON oklahoma_internal contingency areas within OK utilities  410.0 -0.068636 -11.764420       False     True
+   TP1192_32077    LN GILLIAM - SUPERIOR             other                     other areas: CSWS  401.0 -0.029009  -2.533824       False     True
+   TMP580_32295     XFMR WDRNG1 - WDRNG1 oklahoma_internal contingency areas within OK utilities  397.0 -0.020585  -1.003237       False    False
+   TMP480_31271         XFMR SHAM - SHAM             other                     other areas: CSWS  387.0 -0.015057  -3.645262       False     True
+   TMP504_27821      LN MAID1 - KERR_HYD oklahoma_internal contingency areas within OK utilities  387.0 -0.019538  -1.672311       False    False
+   TEMP62_32032       LN DOVRT - TURCRK2 oklahoma_internal contingency areas within OK utilities  357.0 -0.008878  -2.106075       False     True
+   SWSANAGRAANA     LN SW_STA - ANADARKO oklahoma_internal contingency areas within OK utilities  355.0 -0.018389  -2.325187       False     True
+   TP1166_32048   LN SW_134TP - WESTMOR4 oklahoma_internal contingency areas within OK utilities  351.0 -0.067534  -6.011013       False     True
+
+N<->OK reuse check vs spp53/psi_all.csv: rows 134 max |psi diff| 0.0 max |t diff| 0.0
