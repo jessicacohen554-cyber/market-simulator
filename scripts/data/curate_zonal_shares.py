@@ -132,18 +132,41 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 
 
 def parse_ercot_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Parse ERCOT native-load XLSX -> ``(n_zones, HOURS_PER_YEAR)`` shares.
+    """Parse an ERCOT native-load workbook -> ``(n_zones, HOURS_PER_YEAR)`` shares.
 
-    Reads ``data/raw/zone-specific-demand/ERCOT_Native_Load_{year}.xlsx``
+    Reads ``data/raw/zone-specific-demand/ERCOT_Native_Load_{year}.{xlsx,csv}``
     (NP3-565-CD), maps the eight weather zones to the model transmission zones,
     and normalises each hour to fractions summing to 1.0.  Returns ``None``
-    when the file is absent.
+    when no file is present for the year.
+
+    **Container, not content (ercot-253).** ERCOT publishes the same NP3-565-CD
+    report as a workbook in some years and a CSV in others — 2023-2025 are
+    ``.xlsx``, the back years 2018-2021 (and 2026) are ``.csv``, with identical
+    columns, identical ``MM/DD/YYYY HH:MM`` hour-ending stamps and identical
+    weather-zone MW.  The only schema drift is the header spelling of the
+    timestamp column (``HourEnding`` in 2018-2020, ``Hour Ending`` elsewhere),
+    normalised below.  ``.xlsx`` is tried FIRST so every year that has one -
+    all three training years - resolves exactly as before and the parse is
+    byte-identical there (rule 23 ``[R-FROZEN-DERIVE]``: no measured value
+    moves).  Extending the reader to the CSV container is a rule-14
+    ``[R-ACCURATE]`` completeness fix, zero DOF: without it a back-year solve
+    silently drops to the static per-zone ``load_share`` and loses every
+    ERCOT zone's measured diurnal shape, which is measured data being held
+    out - forbidden by rule 22 ``[R-HOLDOUT]`` ("what is held out is the
+    SCORE, never the DATA").
     """
-    path = ZONE_DEMAND_DIR / f"ERCOT_Native_Load_{year}.xlsx"
-    if not path.exists():
-        logger.warning("ERCOT native-load file not found (%s); skipping", path)
+    xlsx = ZONE_DEMAND_DIR / f"ERCOT_Native_Load_{year}.xlsx"
+    csv = ZONE_DEMAND_DIR / f"ERCOT_Native_Load_{year}.csv"
+    if xlsx.exists():
+        path, df = xlsx, pd.read_excel(xlsx)
+    elif csv.exists():
+        path, df = csv, pd.read_csv(csv)
+    else:
+        logger.warning("ERCOT native-load file not found (%s); skipping", xlsx)
         return None
-    df = pd.read_excel(path)
+    # Header spelling drift across publication vintages; the column itself,
+    # its format and its values are unchanged.
+    df = df.rename(columns={"HourEnding": "Hour Ending"})
     he = df["Hour Ending"].astype(str).str.split(" ", n=1, expand=True)
     date = pd.to_datetime(he[0], format="mixed", dayfirst=False)
     hour_of_day = he[1].str.slice(0, 2).astype(int) - 1

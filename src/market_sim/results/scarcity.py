@@ -57,6 +57,7 @@ code edit. Nothing here is fitted to price residuals.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -116,6 +117,11 @@ from market_sim.config.reserve_config import (
 )
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+#: Module logger — the AS-requirement fallback below must announce itself
+#: (ercot-253): a silently-degraded reserve requirement is exactly the defect
+#: that fallback exists to replace.
+logger = logging.getLogger(__name__)
 
 # Fuel types whose headroom counts toward operating reserves. Renewables
 # hold nothing back (their headroom is curtailment, not reserve), hydro is
@@ -1214,6 +1220,85 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
                 break
             out[i] = float(key.get((day.month, day.day, h), 0.0))
             i += 1
+    return out
+
+
+def ercot_as_measured_requirement_mw(year: int, hours: int, as_type: str) -> np.ndarray:
+    """ERCOT's measured hourly AS requirement, from the best source that year has.
+
+    Prefers the published AS Plan (:func:`ercot_as_plan_requirement_mw`). That
+    report is on disk for 2022 onward ONLY — ERCOT MIS retention does not reach
+    the earlier delivery years — and the plan loader's contract for a missing
+    file is "all-zero, no-op". In a forecast that fails loud; in a BACKCAST it is
+    silent, so a pre-2022 year procured **no reserve at all**, the ORDC family
+    never bound, and every price criterion measured the missing input rather than
+    the model. Found on the ERCOT 2021 validation rung (ercot-253, 2026-09-06):
+    ``per-product req means [0, 0, 0, 0] MW``.
+
+    For a year with no plan, this falls back to the **cleared DAM ancillary
+    quantity** — the system sum of the 60-Day DAM Disclosure's per-resource
+    Gen + Load awards, built by
+    ``scripts/data/build_ercot_as_cleared_requirement.py``. Rule 13
+    ``[R-MEASURED]``: an ERCOT-published cleared MW quantity, never a price, and
+    the identical construction regenerates for any year the disclosure covers.
+
+    **THE GAP, STATED AT THE SEAM (owner ruling 2026-09-06).** Cleared awards are
+    not the whole requirement: self-arranged AS counts toward it and never
+    appears as a DAM award. Measured on the 7,319 hours of 2022 where both
+    sources exist — the ONLY such year, since the Load Resource files cover
+    delivery 2018-2021 fully and 2022 partially while the AS Plans start in 2022
+    — cleared runs below plan by **RRS -753.1 MW (-26.6 %), NSPIN -269.7
+    (-6.8 %), RegUp -14.9 (-4.1 %)**, correlations 0.918 / 0.975 / 0.997. The
+    RRS gap is a standing ~750 MW block (monthly -704 .. -775 MW, sd 22 MW,
+    stable across the 2022-10-15 RRS split), not a fixed fraction.
+
+    That offset is deliberately **NOT** added back. It could only be identified
+    on 2022 and transported across the post-Uri reform boundary to a held-out
+    year with no second year to validate the transport against, which is a free
+    parameter this seam refuses to carry (rule 21 ``[R-DOF]``). The consequence
+    is carried instead, at full magnitude: a fallback year's RRS requirement is
+    understated by roughly a quarter, which SUPPRESSES reserve scarcity and
+    biases mean price and the price tail LOW. Every fallback is logged.
+
+    Args:
+        year: Delivery year.
+        hours: Fleet-clock length (8760).
+        as_type: AS-Plan product code (``REGUP`` / ``RRS`` / ``ECRS`` / ``NSPIN``).
+
+    Returns:
+        ``(hours,)`` MW. All-zero only when neither source has the year, and
+        for a product that did not exist that year (ECRS before 2023-06-10),
+        which is how the onset stays carried by the data.
+    """
+    plan_path = _ERCOT_ASPLAN_DIR / f"ASPLANNP433_{int(year)}.parquet"
+    if plan_path.exists():
+        return ercot_as_plan_requirement_mw(year, hours, as_type)
+    cleared = (
+        _ERCOT_ASPLAN_DIR / f"ercot_{int(year)}_as_cleared_requirement_hourly.parquet"
+    )
+    if not cleared.exists():
+        return np.zeros(int(hours), dtype=float)
+    import pandas as pd
+
+    col = f"{str(as_type).lower()}_mw"
+    df = pd.read_parquet(cleared)
+    if col not in df.columns:
+        return np.zeros(int(hours), dtype=float)
+    out = np.zeros(int(hours), dtype=float)
+    vals = df[col].to_numpy(dtype=float)
+    n = min(len(vals), int(hours))
+    out[:n] = vals[:n]
+    logger.warning(
+        "ERCOT AS requirement %d/%s: no published AS Plan for this year — using "
+        "the MEASURED CLEARED DAM quantity (mean %.1f MW). Self-arranged AS is "
+        "not in the awards, so this UNDERSTATES the requirement (2022-measured "
+        "gap: RRS -26.6%%, NSPIN -6.8%%, RegUp -4.1%%) and biases price and the "
+        "price tail LOW. Not offset back: the correction is identifiable on 2022 "
+        "alone (rule 21 [R-DOF]).",
+        int(year),
+        as_type,
+        float(out.mean()),
+    )
     return out
 
 

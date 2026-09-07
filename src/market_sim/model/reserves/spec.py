@@ -1487,7 +1487,7 @@ def _ercot_multiproduct_design(
     from market_sim.results.scarcity import (
         ercot_as_forward_drivers,
         ercot_as_forward_requirement_mw,
-        ercot_as_plan_requirement_mw,
+        ercot_as_measured_requirement_mw,
         ercot_load_resource_reserve_credit_mw,
         ercot_rtolcap_supply_cap_mw,
         nyiso_rcpf_product_shortfall_steps,
@@ -1537,7 +1537,7 @@ def _ercot_multiproduct_design(
                 "(ASPLANNP433; arm ercot_as_forward_requirement and thread "
                 "the load/VRE drivers for the forward formula)",
             )
-            req_t = ercot_as_plan_requirement_mw(year, T, code)
+            req_t = ercot_as_measured_requirement_mw(year, T, code)
         # ercot-227 F1/F1b held-DEPTH (PRECOMMIT-ercot226 §2 F1/F1b +
         # Amendment 3, owner order): deepen the requirement to the measured
         # telemetered held quantity where it exceeds the plan —

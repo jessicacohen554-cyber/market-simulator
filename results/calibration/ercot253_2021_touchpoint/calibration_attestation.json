@@ -1,0 +1,214 @@
+{
+ "schema": "calibration-attestation/v1",
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 10,
+  "n_residual": 7,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 107,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_perplant_offer_curves (per-plant measured TPO curves)",
+    "where": "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO via run_config.scenario_config.coal_perplant_offer_curves; applied in fleet.legacy_bins.apply_coal_tranches",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "n_scalars": 0,
+    "source": "each plant's merged modal 60-Day SCED Submitted TPO supply curve, pooled over the four 2024-2025 disclosure subsets \u2014 verbatim submitted conduct, zero fitted parameters (frozen scripts/data/derive_coal_perplant_offer.py; provenance data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json; ERCOT-144, chartered by ERCOT-143 \u00a72's per-plant measurement)",
+    "note": "re-derive trigger is a new SCED disclosure subset only (rule 23), never a residual; representation bounds declared in the ERCOT-144 precommit: the 2023 application is an extrapolation (no 2023 SCED exists), levels are fuel-invariant by measurement (mid-band only \u2014 _mustrun/_peak keep their measured fuel/gas responses), and within-tranche measured dispersion is capacity-weight averaged at the CAMPD tranche grain"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.02,
+    "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "battery_dispatch_adder",
+    "where": "run_config.scenario_config.battery_dispatch_adder",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 10.0,
+    "source": "grid-battery throughput/cycling adder $/MWh \u2014 inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+    "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
+   },
+   {
+    "name": "ercot_adaptive_half_life_days / ercot_adaptive_beta",
+    "where": "run_config.scenario_config.ercot_adaptive_*",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": [
+     30.0,
+     3.0077
+    ],
+    "n_scalars": 2,
+    "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/calibration/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
+   },
+   {
+    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+    "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 35.0,
+    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "offer_2023_discrete_peak_scale (ercot-235 k_peak, re-selected at ercot-236)",
+    "where": "run_config.scenario_config.offer_curve_by_group (2023-discrete values: gas-group peak/phys_peak/peak_ladder multipliers x33.0 vs the cross-year keeper recipe, applied UNDER the SWCAP offer-domain clip ercot_offer_swcap_clip)",
+    "identification": "residual",
+    "lineage_solves": "11 solves (ercot-235 rounds 1-4, PRECOMMIT-ercot235) + 5 solves (ercot-236 D-1 diagnosis, V-0/V-1 verification legs and the {27,33} re-bracket, PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md)",
+    "value": {
+     "k_peak": 33.0,
+     "k_eh": 1.0
+    },
+    "n_scalars": 1,
+    "source": "rule-1-sanctioned offer-curve tuning surface, 2023-discrete under the OWNER ORDER of 2026-08-25 (ercot-235 log entry: solve 2023 for its own conditions; rule-16 waiver invoked; Q-B/R-A superseded by the owner). Re-selected on the SWCAP-clipped surface after the ercot-236 h4097 repair (the clip is a market constant + an epsilon-class tiebreaker, NOT a fitted value): min |official C3a-2023| over the clean precommitted candidates {24, 27, 30, 33}. At k=33 the top gas peak tranches saturate at the clip level $4,999.99 \u2014 exactly where the MEASURED 2023 evening asks saturate (ercot-161/162: SCED asks $3.4-5k at the $5k cap), so the tuned surface expresses the documented conduct: a scarcity wall AT the cap, not past it",
+    "root_cause": "the adjudicated 2023 model-class conduct object (C3c exceptions ledger lineage; ercot-209/211/216): an LP with competitive offers cannot form the ECRS-era scarcity equilibrium, so the 2023-discrete level is carried as an explicit tuned parameter, identified in-sample on 2023 only; no held-out validation exists"
+   }
+  ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "ercot-253 2021 VALIDATION RUNG (2026-09-06), NOT A KEEPER (rule 22 [R-HOLDOUT]): the 2023 CARVE-OUT config of the two-config ERCOT keeper 2026-09-05-ercot248-two-config-keeper replayed on 2021 from the committed bundle ercot252_2022_touchpoint_repair via --replay-bundle --holdout-authorized, plus the OWNER-RULED deltas declared in the disclosures (D1 the from_year gates declared in the keeper recipe, byte-identical in every training year; D3 the PUBLISHED pre-Uri ORDC order parameters, PUCT order values at zero DOF; the measured cleared-DAM AS requirement with NO offset added back) and the four measured-input extensions rule 22 requires. Zero parameters fitted, zero fields minted; the DOF ledger is the source keeper's own and is carried over unchanged. Every lever still traces to a measured or published input, nothing is fit to a price residual and no output is pinned to actuals. Solved in-session, never on CI. Source attestation preserved below in lineage. || LINEAGE: ercot-252 2022 VALIDATION TOUCHPOINT (2026-09-06), NOT A KEEPER (rule 22 [R-HOLDOUT]): the 2023 CARVE-OUT config of the two-config ERCOT keeper 2026-09-05-ercot248-two-config-keeper replayed on 2022 from the committed bundle ercot250_2022_touchpoint_carveout via --replay-bundle --holdout-authorized, plus exactly two OWNER-RULED deltas declared in the disclosures (R2 provenance-predicate repair, zero DOF; R4 reserve from_year gates 2023 -> 2020, data-availability gates on measured series). Zero parameters fitted, zero fields minted; the DOF ledger is the source keeper's own and is carried over unchanged. Every lever still traces to a measured input, nothing is fit to a price residual and no output is pinned to actuals. Solved in-session, never on CI. Source attestation preserved below in lineage. || LINEAGE: ercot-250 2022 VALIDATION TOUCHPOINT (2026-09-05), NOT A KEEPER (rule 22 [R-HOLDOUT]): the 2023 CARVE-OUT config (ercot_offer_swcap_clip + k_peak 33) of the two-config ERCOT keeper 2026-09-05-ercot248-two-config-keeper, replayed VERBATIM on 2022 from the committed bundle ercot236_k33_clip via --replay-bundle --holdout-authorized. Zero parameters changed, zero fields minted, zero mechanisms tested; the DOF ledger is the source keeper's own and is carried over unchanged. Every lever still traces to a measured input, nothing is fit to a price residual and no output is pinned to actuals - the replay cannot do otherwise, since it sets nothing. Solved in-session, never on CI (CLAUDE.md GitHub Actions rule). Source keeper attestation preserved below in lineage. || LINEAGE: ercot-236 session (2026-08-25): the h4097 manufactured-shed repair + k_peak re-selection under the standing 2023-DISCRETE-CONFIG owner order (ercot-235 log entry; rule-16 waiver invoked, Q-B/R-A superseded by the owner). The ercot-235 keeper recipe with TWO deltas: (1) ercot_offer_swcap_clip=true \u2014 the STRUCTURAL system-wide offer cap (every real SCED energy offer is capped at the SWCAP $5,000 = VOLL; the model offer surface previously had no cap, so k_peak > 24 walked implied offers past VOLL and manufactured the h4097 shed against physically-available capacity \u2014 D-1 measured: thermal -48.28 MW undispatched at all-zone $5,000, storage +12.33, net reserve held 0.0; PRECOMMIT-ercot236 Amendment 1). The clip carries ZERO fitted values (the cap is the documented market constant; the 0.01 epsilon is a dispatch-before-shed strict-preference tiebreaker in the R-EPSILON class) and is measured INERT below the cap (V-0: k=24+clip officials identical to the keeper to the digit). (2) k_peak 24 -> 33, re-selected on the repaired surface by the precommitted kill-gated {27, 30, 33} re-bracket (kills identical to PRECOMMIT-ercot235: no shed, off-season protected at $5, coal 0.5 TWh \u2014 the winner is CLEAN on all; coal +0.0993 TWh vs the ercot-234 baseline, +0.0001 vs the k24 keeper). The tuned scalar remains declared in the DOF ledger (n_residual 7, unchanged); the identification is the 2023 residual and is stated as such \u2014 the rule-1 sanctioned tuning surface, not a hidden channel; no output is pinned to actuals and no measured outcome is fed back as an input. 2023-only by owner order; 2024/2025 deliberately not solved (the cross-year keeper 2026-08-25-234-eastex-identity is their standing reference)."
+ },
+ "exceptions": [],
+ "disclosures": {
+  "ercot-250_2022_touchpoint": "THIS RUN IS A RULE-22 [R-HOLDOUT] VALIDATION-TIER TOUCHPOINT ON 2022 AND IS NOT A KEEPER OR A KEEPER CANDIDATE. ERCOT holds a 'complete' marker, which authorizes the validation ladder (2020-2022) to be solved, scored and registered; the locked test (2019 / H1-2026) is untouched and stays frozen for every ISO. (1) WHAT WAS RUN: the designated keeper recipe replayed VERBATIM on 2022 via --replay-bundle, which takes every flag from the source bundle's meta.json. No parameter was changed, no ScenarioConfig field minted, no mechanism armed, disarmed or tested, and no mechanism-matrix cell touched. The DOF ledger below is the source keeper's own, unchanged. (2) WHAT THE NUMBER IS: model-SELECTION evidence for the touchpoint loop (run the frozen recipe -> diagnose the OBJECT it surfaces -> re-train on 2023-2025 around that object -> re-test). Because the validation tier is iterated against, it is NEVER quotable as a certified out-of-sample skill number; only 2019, spent once at the end, is that. (3) NOTHING WAS FITTED TO 2022. No parameter is identified against this year; any repair the touchpoint motivates is derived in a later 2023-2025 session, which is the discipline that keeps the touchpoint honest. (4) KNOWN 2022 INPUT/RECIPE GAPS, stated at the gate and NOT patched in this session: ERCOT HSL 2022 is absent (owner manual upload only), so 2022 renewables ride the RENEWABLE_BOUND_FORECAST_UNCURTAILED construction and both ercot_gtc_limits_measured and ercot_wtx_curtailment_driver self-disable for the year; the *_from_year=2023 gates leave ercot_reserve_supply_cap, ercot_load_resource_reserve and ercot_storage_as_deployment UNARMED in 2022 (ercot_ecrs_requirement is correctly zero - ECRS launched June 2023); year-scoped SCED conduct tables carry 2023-2025 only, so the fast-start pool is inert, the cleared-share boundary pooled and the coal peak yearly level static (2022 SCED 60-day disclosures are past MIS retention and cannot be extended); and the storage AS product parquets are absent, reading zeros. These are recipe semantics and owner-side uploads, not this session's to change - arming them in 2022 is an owner recipe decision raised in the finding.",
+  "ercot-252_2022_touchpoint_repair": "THIS RUN IS A RULE-22 [R-HOLDOUT] VALIDATION-TIER TOUCHPOINT ON 2022 AND IS NOT A KEEPER OR A KEEPER CANDIDATE. ERCOT holds a 'complete' marker (validation ladder authorized); the locked test (2019 / H1-2026) is untouched and frozen. (1) WHAT WAS RUN: the 2023 CARVE-OUT config (ercot_offer_swcap_clip + k_peak 33) of the two-config keeper 2026-09-05-ercot248-two-config-keeper, replayed on 2022 from the committed bundle ercot250_2022_touchpoint_carveout via --replay-bundle --holdout-authorized, with EXACTLY TWO owner-ruled deltas (2026-09-06, docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md, committed before the solve): (R2) the curtailment-gate provenance-predicate repair, admitted as a correctness fix - ercot_gtc_limits_measured and ercot_wtx_curtailment_driver skip their ceiling only when the renewable bound is delivered_pinned, so on this no-HSL year the reference-rate grossed-up bound is re-curtailed by the ceilings the forecast leg already pairs with it (zero DOF; byte-identical in 2023-2025); (R4) ercot_reserve_supply_cap_from_year and ercot_load_resource_reserve_from_year 2023 -> 2020 as one paired change (the ercot-212 net_credits construction nets the LR series off the cap rows), arming the measured RTOLCAP cap (ercot_2022_ordc_reserves_hourly.parquet) and the measured 2022 load-resource RRS credit (ercot_2022_as_up_mw.parquet, built from the 60-Day Load Resource awards by scripts/data/build_ercot_as_backyear.py). No other parameter changed, no ScenarioConfig field minted; the DOF ledger is the source keeper's own, unchanged. (2) WHAT THE NUMBER IS: model-SELECTION evidence for the touchpoint loop, NEVER quotable as a certified out-of-sample skill number (2019 alone is that). (3) NOTHING WAS FITTED TO 2022: the predicate carries no value; each from_year is the measured series' own first year; the frozen depths, reference curtailment rates and every other tunable were not re-chosen, and the PRECOMMIT predicted the C1/C3a trade before the solve so the report could not be written to fit the result. (4) KNOWN 2022 GAPS, stated at the gate and NOT patched: the measured HSL 2022 archive is still absent (owner: 'I can't do it now but eventually'), so the bound is the delivered profile grossed up by the 2025 reference rate rather than a measured potential; the 2022 LR series' Nov 2 - Dec 31 tail (1,441 h) is a within-year residual reconstruction (metadata-flagged); ercot_storage_as_deployment / ercot_storage_as_reserve stay at from_year 2023 (no 2022 product parquet; not part of the ruling); year-scoped SCED conduct tables carry 2023-2025 only (fast-start pool inert, cleared-share boundary pooled, coal peak yearly level static; 2022 60-day disclosures are past MIS retention). (5) SUPERSEDES 2026-09-05-run250-2022-touchpoint-carveout on the site (owner ruling 2026-09-06: ONE 2022 run); run250's numbers stand in docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md and git history.",
+  "ercot-253_2021_rung": "THIS RUN IS A RULE-22 [R-HOLDOUT] VALIDATION-TIER RUNG ON 2021 AND IS NOT A KEEPER OR A KEEPER CANDIDATE. ERCOT holds a 'complete' marker (validation ladder 2020-2022 authorized, iterable); the locked test (2019 / H1-2026) is untouched and remains frozen for every ISO. (1) WHAT WAS RUN: the 2023 CARVE-OUT config (ercot_offer_swcap_clip + k_peak 33) of the two-config keeper 2026-09-05-ercot248-two-config-keeper, replayed on 2021 from the committed bundle ercot252_2022_touchpoint_repair via --replay-bundle --holdout-authorized --no-p1-basis-seed. The config was NAMED IN THE PRECOMMIT BEFORE THE SOLVE and no second config was solved, so no arm was chosen after a result was seen. (2) THE OWNER-RULED DELTAS, all fixed before the solve: (D1) ercot_reserve_supply_cap_from_year and ercot_load_resource_reserve_from_year are now DECLARED IN THE KEEPER'S OWN RECIPE at 2020 rather than carried as per-rung replay overrides - byte-identical in every training year by construction, since both gates are monotone 'year >= from_year' comparisons and every training year is >= 2023 >= 2020, so NO re-solve of the keeper was performed or needed; (D3) ERCOT's ORDC price-formation order parameters are year-vintaged to their PUBLISHED values - 2021 solves at the system-wide offer cap HCAP $9,000/MWh and minimum contingency level 2,000 MW, the figures in force before the PUCT moved them to $5,000 / 3,000 MW effective 2022-01-01 (16 TAC 25.509, PUCT Project 52631; OBDRR038, PUCT Project 52373). Zero DOF: every value is a regulatory order figure, and the new table lists 2022-2025 at exactly the shipped defaults so every training year, the 2022 rung and every forecast year are BYTE-IDENTICAL. (3) THE MEASURED-INPUT EXTENSIONS (rule 22: what is held out is the SCORE, never the DATA) - all applied to 2021 before the solve, none tuned: 60-Day DAM thermal availability derived for 2021 with the committed 2022-2025 rows kept byte-identical to HEAD (the joint re-derive's 100.0 MW rating move REPORTED, NOT APPLIED); NUCLEAR_MONTHLY_CF_BY_YEAR ERCOT 2021 derived from EIA-923 with 2022/2023 re-derived byte-identically as the producer re-proof; the gtc-limits 2021 clean partition curated from the committed NP6-86 raws (13,538 rows / 14 GTCs), so ercot_gtc_limits_measured arms instead of falling back to static TTC; and the NP3-565-CD native-load reader extended to the report's CSV container (2018-2021 are published as CSV, .xlsx tried first so training years are byte-identical), without which 2021 would silently drop to the static per-zone load_share and lose every ERCOT zone's measured diurnal shape. (4) THE AS REQUIREMENT, AND THE DEFECT IT REPLACES: the first 2021 solve was STOPPED ~5 minutes in and its partial bundle DELETED after its log read 'per-product req means [0, 0, 0, 0] MW'. ERCOT's published AS Plan (ASPLANNP433) is on disk for 2022 onward only, and the loader's contract for a missing file is all-zero - which fails loud in forecast and is SILENT in backcast - so 2021 had procured no reserve at all and every price criterion would have measured the missing input rather than the model. It is replaced by the MEASURED cleared DAM ancillary quantity: the system sum of the 60-Day DAM Disclosure's per-resource Gen + Load awards (scripts/data/build_ercot_as_cleared_requirement.py), consumed through scarcity.ercot_as_measured_requirement_mw, which prefers the published plan and falls back only when it is absent - 2022 and 2023 verified identical to the plan-only path, so every training year and the 2022 rung are unchanged. (5) KNOWN 2021 GAPS, STATED AT THE GATE AND DELIBERATELY NOT PATCHED, all four biasing price and the price tail LOW and all four pre-registered before the solve: (a) the AS requirement is UNDERSTATED because self-arranged AS counts toward the requirement and never appears as a DAM award - measured on the 7,319 hours of 2022 where both sources exist (the only such year) the gap is RRS -753.1 MW (-26.6%), NSPIN -269.7 (-6.8%), RegUp -14.9 (-4.1%), and NO offset is added back because it is identifiable on 2022 alone and would have to be transported across the post-Uri reform boundary with no second year to validate the transport (rule 21 [R-DOF]); (b) DEMAND IS METERED LOAD, so the ~20 GW of firm load shed during Uri (2021-02-13..20) is absent from what the LP must serve and the model faces a materially easier Uri than the market did; (c) the 60-Day DAM availability view is a DAY-AHEAD declaration that reads CC_REGULAR 0.886 -> 0.691 across Feb 14-18, far above the real-time freeze-off, so the depth of the model's Uri outage is set by the CAMPD measured-event precedence cap rather than by that overlay; (d) only the ORDC cap and MCL are vintaged by D3, NOT the LOLP curve shape (ordc_lolp_params_path), so 2021 prices on the keeper's curve with the published 2021 anchors. Also unextendable and unchanged: there is no measured ERCOT HSL for 2021 (owner: 'I can't do it now but eventually'), so renewables ride the reference-rate grossed-up bound re-curtailed by the armed ceilings; and the year-scoped SCED conduct tables carry 2023-2025 only (fast-start pool inert, cleared-share boundary pooled, coal peak yearly level static) because the 2021 60-day disclosures are past MIS retention. (6) WHAT THE NUMBER IS: model-SELECTION evidence for the rule-22 touchpoint loop, NEVER quotable as a certified out-of-sample skill number (2019 alone is that, still frozen and never granted). Rule 30(c): a held-out year never downgrades the ISO - ERCOT's determination is the train-tier 2023-2025 verdict, CALIBRATED, and this rung neither certifies nor decertifies it. (7) NOTHING WAS FITTED TO 2021: no parameter was identified on it, the frozen depths and reference curtailment rates were not re-chosen, no offer-curve multiplier was swept, and the PRECOMMIT fixed every prediction - C3a FAIL LOW at a central -40%, C3c 60-160 h vs 258, C3b 0.25-0.60, C1 -3 to -9 TWh, determination NOT-YET on {C3a, C3b} - before the solve, so the report could not be written to fit the result."
+ }
+}

@@ -29,6 +29,7 @@ value they moved.
 from __future__ import annotations
 
 import sys
+import pytest
 import unittest
 from dataclasses import dataclass
 from enum import Enum
@@ -42,6 +43,10 @@ from market_sim.config import solve_surface as S  # noqa: E402
 from market_sim.config.iso_configs import SUPPORTED_ISOS  # noqa: E402
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.config.solve_surface_declared import DECLARED  # noqa: E402
+
+# This file is ABOUT the surface entering the key, so it opts out of the
+# autouse neutralization in tests/conftest.py.
+pytestmark = pytest.mark.solve_surface_live
 from scripts import check_cache_key_registration as G  # noqa: E402
 
 
@@ -156,10 +161,36 @@ class FrozenHashDropTest(unittest.TestCase):
     def tearDown(self):
         S.reset_caches()
 
-    def test_the_landing_moved_zero_keys(self):
-        """Every ISO's surface is AT its declarations — the merge gate."""
+    def test_moved_rows_reports_exactly_the_rows_off_their_declaration(self):
+        """``moved_rows`` is sound and complete against ``DECLARED``.
+
+        This USED to assert ``moved_rows(iso) == {}`` for every ISO — the D79
+        landing state. That is a claim about repo state, not about the
+        mechanism, and it goes stale the moment any registry value is
+        legitimately repaired (the first was ercot-253's ERCOT
+        ``NUCLEAR_MONTHLY_CF_BY_YEAR`` 2021 row, 2026-09-06). The merge gate on
+        UNLEDGERED movement lives in
+        ``tests/regression/test_persisted_identity.py`` — beside
+        ``PINNED_SURFACE_ROWS_BY_ISO`` and ``LEDGERED_SURFACE_MOVES_BY_ISO``,
+        which is where a cause block can actually be written — and it is not
+        duplicated here. What this test pins is the property that gate rests on:
+        a row is reported moved if and only if its live hash differs from its
+        frozen declaration.
+        """
         for iso in S.SURFACE_ISOS:
-            self.assertEqual(S.moved_rows(iso), {}, f"{iso} has moved rows")
+            live = S.surface_rows(iso)
+            moved = S.moved_rows(iso)
+            for name, live_hash in live.items():
+                declared = DECLARED.get(name)
+                if isinstance(declared, dict):
+                    declared = declared.get(iso)
+                if declared is None:  # undeclared names stay out of the key
+                    self.assertNotIn(name, moved, f"{iso}/{name}")
+                elif declared == live_hash:
+                    self.assertNotIn(name, moved, f"{iso}/{name}")
+                else:
+                    self.assertEqual(moved.get(name), live_hash, f"{iso}/{name}")
+            self.assertEqual(set(moved) - set(live), set(), f"{iso}: phantom rows")
 
     def test_every_surface_name_is_declared(self):
         self.assertEqual(set(S.surface_fingerprint()) - set(DECLARED), set())
@@ -183,14 +214,19 @@ class FrozenHashDropTest(unittest.TestCase):
 
         table = constants.DEMAND_GROWTH_RATES
         original = table["MISO"]
+        baseline = {iso: dict(S.moved_rows(iso)) for iso in S.SURFACE_ISOS}
         try:
             table["MISO"] = (
                 {**original, 2031: 0.4242} if isinstance(original, dict) else 0.4242
             )
             S.reset_caches()
             self.assertEqual(list(S.moved_rows("MISO")), ["DEMAND_GROWTH_RATES"])
+            # Measured as a DELTA against each ISO's own pre-edit state, not
+            # against {}: an ISO may legitimately carry a ledgered move of its
+            # own (see the regression ledger), and the claim here is that this
+            # edit reaches no ISO but MISO.
             for iso in set(S.SURFACE_ISOS) - {"MISO"}:
-                self.assertEqual(S.moved_rows(iso), {}, f"{iso} moved too")
+                self.assertEqual(S.moved_rows(iso), baseline[iso], f"{iso} moved too")
         finally:
             table["MISO"] = original
             S.reset_caches()
@@ -217,11 +253,14 @@ class FrozenHashDropTest(unittest.TestCase):
 
         config = ScenarioConfig(iso="ERCOT")
         before = config.cache_key()
+        before_moved = dict(S.moved_rows("ERCOT"))
         try:
             constants.A_BRAND_NEW_SURFACE_TABLE = {"ERCOT": 1.0}
             S.reset_caches()
             self.assertIn("A_BRAND_NEW_SURFACE_TABLE", S.surface_fingerprint())
-            self.assertEqual(S.moved_rows("ERCOT"), {})
+            # Unchanged from before, not empty: an undeclared name adds no
+            # moved row, whatever ledgered moves the ISO already carries.
+            self.assertEqual(S.moved_rows("ERCOT"), before_moved)
             self.assertEqual(config.cache_key(), before)
         finally:
             del constants.A_BRAND_NEW_SURFACE_TABLE
