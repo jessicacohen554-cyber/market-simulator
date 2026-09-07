@@ -205,3 +205,61 @@ session could not answer.
   `0f749d17202c32d9` identical at `f36cee6e` and HEAD. G-CTRL form 4 was valid and no control LP was
   spent — a conclusion the kill then made moot, but which is recorded because it was established
   before the arm was built, as rule 29(b) requires.
+
+---
+
+## 8. ADDENDUM — the 2021/2022 measurement was ATTEMPTED and is BLOCKED ON CONTAINER RAM
+
+*(Appended after the owner directed the lane to finish the repair rather than stop at the gate
+grading of §1. The instruction is followed; the arm was built, the data gaps were closed, and the
+solve was launched. It could not complete here, for a reason that has nothing to do with the
+mechanism.)*
+
+**What was done.** The G-CTRL form-4 A/B was set up exactly as §6 of the PRECOMMIT specifies:
+`scripts/replay_keeper.py results/calibration/pjm169_tp2022_2021_f2arm` at this HEAD, which replays
+the committed touchpoint's own kwargs so the **only** difference against the control is the F-A
+code delta (G-DRIFT having established zero LIVE hunks). Two environment gaps had to be closed
+first, both of them container state rather than repo state:
+
+1. **`data/clean/` was entirely unbuilt** (it is derived, disposable and gitignored). Curated from
+   `data/raw` — `transfer-interface-limits` (2019–2025), `ramp-capability`, `load`,
+   `demand-profile`, `ancillary-services`, `generation`, `renewables`, `outages`, `fleet`, `egrid`,
+   `unit-outage-events`, `partial-outages`, `gtc-limits`, `hydro-plant-modes`,
+   `ercot-wtx-congestion`. (`lmp` fails on a **CAISO** raw column — `KeyError: 'MGHG'` in
+   `parse_caiso_file` — a pre-existing defect in another ISO's drop, unrelated to PJM and to this
+   card.)
+2. **`data/raw/pjm-da-virtuals/` was empty** — the converted-corpus payload is gitignored and was
+   stripped from history, so recovery is re-fetch only, exactly as the charter's Phase-B note
+   warned. **Re-fetched: all 24 monthly `hrl_da_incs_decs_{2021,2022}_*.parquet` files**
+   (`scripts/data/fetch_pjm_da_virtuals.py`, DataMiner2 public subscription key, ~3.8 MB). This
+   unblocks the EMAAC availability card's Phase B as a side effect.
+
+**Where it stopped.** The solve reached LP construction on 2022 — past every data gate, with the
+seam repricing and the per-gen reserve co-opt (39 R columns / 2,392 member units, two balance
+families) both logged — and was then **killed by the kernel, SIGKILL / exit 137**, twice:
+
+| attempt | conditions | outcome |
+|---|---|---|
+| 1 | `--years 2022 2021`, clean-layer build running concurrently | OOM at LP construction |
+| 2 | `--years 2022` alone, whole box, **14 GB free at launch** | OOM at LP construction |
+
+Available memory fell monotonically 14 → 6 → 3 → 2 → 0 GB across attempt 2. **This container has
+15 GB total, and one PJM plant-level 8760 LP on the keeper recipe exceeds it.** Rule 12
+`[R-PARALLEL]` already warns that a single year's LP uses several GB and caps *concurrent*
+per-plant multi-zone runs at ~2; here even **one** does not fit.
+
+**Not worked around, deliberately.** Every available lever — dropping `pjm_da_virtual_bids`,
+the per-gen reserve co-opt, or the zonal loss surface — would change the recipe, and the A/B's
+entire validity rests on the arm being the committed touchpoint's recipe *plus the F-A delta and
+nothing else*. A cheaper solve would measure a different model. Nothing was disabled.
+
+**So §4's "NOT established" list stands unchanged**: S4 footprint, S5 net-export direction, S6
+collateral and **any C3a movement in either year remain unmeasured and unquotable.** The two
+partial bundle directories (`results/calibration/pjm172_fa_arm{,_2022}/`) contain no solved
+output — they hold an empty `dispatch/` dir and nothing else — so rule 31 `[R-RETAIN]` has no
+artifact to preserve and the promotion question is not gated on them.
+
+**What the successor needs:** a runner with **more RAM** (≥ 32 GB is the safe read on a 15 GB
+box OOMing at peak), and nothing else. The repair, the tests, the G-DRIFT audit, the curated
+clean layer and the re-fetched virtuals corpus are all in place; the command is one line, in §9
+of the handoff.

@@ -4976,3 +4976,28 @@ its 40 tests are on the branch, **unarmed and unpromoted**, and inert in every s
 is still its lane's to verify.
 
 Matrix: `reference_price_interface` STAYS **K**, cell annotated in the PJM shard (rule 32 duty b).
+
+### pjm-172 addendum (same day) — the 2021/2022 measurement is BLOCKED ON CONTAINER RAM, not on the mechanism
+
+Owner directed the lane to finish the repair rather than stop at the gate grading. Done as far as
+the environment allows. The G-CTRL form-4 A/B was set up per PRECOMMIT §6 (`replay_keeper` on the
+committed touchpoint at this HEAD, so the only delta is F-A), and two container-state gaps were
+closed first: `data/clean/` was entirely unbuilt (curated 15 datatypes from `data/raw`; `lmp` fails
+on a pre-existing **CAISO** column defect, `KeyError: 'MGHG'`, unrelated to PJM), and
+`data/raw/pjm-da-virtuals/` was empty — **all 24 monthly `hrl_da_incs_decs_{2021,2022}` files
+re-fetched**, which also unblocks the EMAAC availability card's Phase B.
+
+The solve then reached LP construction on 2022 — past every data gate, seam repricing and per-gen
+reserve co-opt both logged — and was **OOM-killed (exit 137) twice**: once with the clean build
+competing, and once **alone on the box with 14 GB free at launch**, memory falling 14 → 6 → 3 → 2 →
+0 GB. This container has 15 GB and one PJM plant-level 8760 LP on the keeper recipe exceeds it
+(rule 12 `[R-PARALLEL]` caps *concurrent* per-plant runs at ~2; here even one does not fit).
+Nothing was disabled to make it fit — dropping the virtuals, the per-gen co-opt or the loss surface
+would change the recipe and the A/B's validity rests on the arm being the touchpoint recipe plus
+F-A and nothing else.
+
+**Unchanged: S4 / S5 / S6 and any C3a movement in either year remain UNMEASURED and unquotable.**
+Both partial bundle dirs hold no solved output, so rule 31 `[R-RETAIN]` has no artifact at risk.
+**Not a keeper candidate in either direction** — the repair is byte-identical in 2023–2025, so it
+cannot move the keeper's scored years or its determination; it is an input correction to the
+held-out pre-2023 seam. Successor needs a larger-RAM runner and nothing else.
