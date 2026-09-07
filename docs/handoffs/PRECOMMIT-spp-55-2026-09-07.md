@@ -278,7 +278,7 @@ held MW, the `miso_reserve_pergen` construction) — SPP-56's object under card 
   TestSppContingencyReserveLP` (1), `tests/regression/test_config_model_layering.py` surface list (+2 names).
 - SPP shard cell `energy_reserve_coopt` U → **I** with this evidence (`reserve_family_dual_sidecar`, `ordc_scarcity_overlay`,
   `dynamic_reserve_requirements` annotated, not moved: no sidecar was produced, no overlay tested, no measured-hourly
-  requirement armed); §5.7 item 5; plan §5 / §9 rows; `docs/calibration-log/spp.md` spp-8.
+  requirement armed); §5.7 item 5; plan §5 / §9 rows; `docs/calibration-log/spp.md` spp-10.
 - Nothing registered; `keepers/SPP.json` untouched; no bundle written, so rules 29(c) / 31 have nothing to keep or delete.
 - Rebase onto `origin/main` LAST, then `check_mechanism_matrix` re-run (the SPP-44 28c collision the charter names is moot:
   no shard line is added).
