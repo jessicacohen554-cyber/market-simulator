@@ -154,6 +154,43 @@ FINDING: `docs/handoffs/FINDING-spp-14-2026-09-06.md`. **Route (measured 2026-09
 
 ---
 
+## MEASURED COMPLETENESS 2026-09-07 — 5 hours are ABSENT from the 36 monthly files
+
+Not a landing defect: the files are byte-for-byte as SPP served them (verified against
+`SHA256SUMS.txt`). This records what a consumer will actually find, because nothing above states
+it and a naive 8760 build will hit five holes.
+
+Measured over all 36 files against the true elapsed UTC hours between local month boundaries
+(`America/Chicago`), **not** `days x 24` — the two differ in March and November and the naive
+count is what makes this look bigger than it is. **32 of 36 months are exactly right.** The four
+that are not:
+
+| Month | Rows | True UTC hours | Missing stamp(s) (UTC) | What it is |
+|---|---:|---:|---|---|
+| 2023-03 | 742 | 743 | `2023-03-12 09:00` | DST spring-forward instant |
+| 2024-03 | 742 | 743 | `2024-03-10 09:00` | DST spring-forward instant |
+| 2024-11 | 720 | 721 | `2024-11-03 07:00` | DST fall-back instant |
+| 2023-05 | 742 | 744 | `2023-05-24 03:00`, `04:00` | **a real 2-hour publication gap**, no DST involved |
+
+**Total 26,299 rows against 26,304 true hours — 5 missing, 0.019 % of the span.**
+
+Two distinct causes, and they need different handling:
+
+1. **Three DST-transition hours.** `MarketHour` is stamped UTC (the section above is right about
+   that), but SPP evidently folds the series on the LOCAL clock before stamping, so the transition
+   instant drops out of the UTC axis where a true UTC series would carry it. Note this is not
+   uniform — 2025-03 carries its full 743 and both 2023-11 and 2025-11 carry their full 721 — so it
+   is a publication inconsistency, not a stable rule to code against. Detect the holes, don't
+   predict them.
+2. **`2023-05-24 03:00`-`04:00` is a genuine gap** in SPP's publication, unrelated to DST, and is
+   the only one of the five that loses real market hours.
+
+Neither is repaired here — `data/raw/` holds source bytes untouched. A curation step building an
+8760 must reindex onto a complete hourly axis and decide explicitly how to fill these five; it must
+not assume `days x 24` per month, and must not assume the DST behaviour is consistent across years.
+
+---
+
 ## MERGE RECONCILIATION 2026-09-06 — BOTH SPP-14 landings are in this directory
 
 The two SPP-14 status sections above were written by **two parallel sessions of the same

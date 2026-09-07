@@ -607,7 +607,9 @@ class TestHourlySppOverlay(unittest.TestCase):
             Path(__file__).resolve().parents[3] / "scripts/run_calibration.py"
         ).read_text()
         self.assertIn('"miso_seam_neighbour_hourly_spp requires "', source)
-        self.assertIn('"miso_seam_neighbour_hourly_ladder: the SPP hourly entry', source)
+        self.assertIn(
+            '"miso_seam_neighbour_hourly_ladder: the SPP hourly entry', source
+        )
 
     def test_field_is_registered_and_off_by_default(self):
         from market_sim.config.scenarios import ScenarioConfig
