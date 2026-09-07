@@ -1,0 +1,176 @@
+{
+  "probe": "miso-242 D-EDGE \u2014 the two edges of the Q-Q identity, split",
+  "addendum": "results/calibration/ADDENDUM-miso242-the-edge-decomposition-2026-09-07.md",
+  "status": "REPORTED, GATED NOWHERE \u2014 no bar, no decision rule, no verdict",
+  "zero_lp": true,
+  "years": {
+    "2023": {
+      "SPP": {
+        "delta_1_import": 14.1,
+        "delta_1_export": -4.2,
+        "mid1_mw": 250.0,
+        "n_rows_R_D": 8754,
+        "import_edge": {
+          "P_spread_gt_delta": 0.3884,
+          "P_flow_gt_mid1_target": 0.4051,
+          "signed_residual": -0.0167
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.222,
+          "P_flow_lt_neg_mid1_target": 0.2448,
+          "signed_residual": -0.0228
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8733,
+          "n_distinct_flow_values": 2442,
+          "rows_flow_exactly_on_mid1": 12
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": 13.4437,
+          "quantile_at_P_flow_lt": -2.3937
+        }
+      },
+      "PJM": {
+        "delta_1_import": -29.17,
+        "delta_1_export": -93.98,
+        "mid1_mw": 456.25,
+        "n_rows_R_D": 8760,
+        "import_edge": {
+          "P_spread_gt_delta": 0.9975,
+          "P_flow_gt_mid1_target": 0.9975,
+          "signed_residual": 0.0
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.0003,
+          "P_flow_lt_neg_mid1_target": 0.0003,
+          "signed_residual": 0.0
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8754,
+          "n_distinct_flow_values": 4699,
+          "rows_flow_exactly_on_mid1": 0
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": -29.1702,
+          "quantile_at_P_flow_lt": -93.9756
+        }
+      }
+    },
+    "2024": {
+      "SPP": {
+        "delta_1_import": 14.49,
+        "delta_1_export": -2.15,
+        "mid1_mw": 250.0,
+        "n_rows_R_D": 8757,
+        "import_edge": {
+          "P_spread_gt_delta": 0.3886,
+          "P_flow_gt_mid1_target": 0.3304,
+          "signed_residual": 0.0582
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.239,
+          "P_flow_lt_neg_mid1_target": 0.3116,
+          "signed_residual": -0.0726
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8729,
+          "n_distinct_flow_values": 2548,
+          "rows_flow_exactly_on_mid1": 16
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": 17.2599,
+          "quantile_at_P_flow_lt": 1.4442
+        }
+      },
+      "PJM": {
+        "delta_1_import": -13.87,
+        "delta_1_export": -35.03,
+        "mid1_mw": 456.25,
+        "n_rows_R_D": 8760,
+        "import_edge": {
+          "P_spread_gt_delta": 0.9838,
+          "P_flow_gt_mid1_target": 0.9838,
+          "signed_residual": 0.0
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.0021,
+          "P_flow_lt_neg_mid1_target": 0.0021,
+          "signed_residual": 0.0
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8758,
+          "n_distinct_flow_values": 4635,
+          "rows_flow_exactly_on_mid1": 0
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": -13.866,
+          "quantile_at_P_flow_lt": -35.0312
+        }
+      }
+    },
+    "2025": {
+      "SPP": {
+        "delta_1_import": 21.85,
+        "delta_1_export": 1.04,
+        "mid1_mw": 250.0,
+        "n_rows_R_D": 8757,
+        "import_edge": {
+          "P_spread_gt_delta": 0.3562,
+          "P_flow_gt_mid1_target": 0.4101,
+          "signed_residual": -0.0539
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.2652,
+          "P_flow_lt_neg_mid1_target": 0.2202,
+          "signed_residual": 0.045
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8735,
+          "n_distinct_flow_values": 2510,
+          "rows_flow_exactly_on_mid1": 9
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": 18.5814,
+          "quantile_at_P_flow_lt": -2.3651
+        }
+      },
+      "PJM": {
+        "delta_1_import": -15.79,
+        "delta_1_export": -60.49,
+        "mid1_mw": 456.25,
+        "n_rows_R_D": 8760,
+        "import_edge": {
+          "P_spread_gt_delta": 0.9653,
+          "P_flow_gt_mid1_target": 0.9653,
+          "signed_residual": 0.0
+        },
+        "export_edge": {
+          "P_spread_lt_delta": 0.0033,
+          "P_flow_lt_neg_mid1_target": 0.0033,
+          "signed_residual": 0.0
+        },
+        "tie_census": {
+          "rows_spread_exactly_on_import_threshold": 0,
+          "rows_price_exactly_on_export_threshold": 0,
+          "n_distinct_spread_values": 8757,
+          "n_distinct_flow_values": 4724,
+          "rows_flow_exactly_on_mid1": 0
+        },
+        "quantile_recheck": {
+          "quantile_at_1_minus_P_flow_gt": -15.7899,
+          "quantile_at_P_flow_lt": -60.4944
+        }
+      }
+    }
+  }
+}
