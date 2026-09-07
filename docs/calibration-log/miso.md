@@ -12442,3 +12442,67 @@ share 49.2/31.2/34.0 → 42.2/27.2/25.1 % (C8 grounded route). Non-claims carrie
 magnitude; C3c untouched; no volume claim. Rule 15: miso-217/220/230 pruned. Also added
 `scripts/screen_collateral_gate.py` (G-4 on an unregistered screen bundle).
 `ASSESSMENT-miso232-hourly-seam-fullspan-2026-09-06.md`.
+
+## miso-233 — 2026-09-07
+
+**KEEPER → `2026-09-07-miso-233-spp-hourly`** (bundle `miso233_sppseam_K`), promoted from
+`2026-09-06-miso-232-hourly-seam`. **DETERMINATION CALIBRATED**, C3c the single ledgered
+caveat (non-downgrading, rubric v3.3); C1 16/16 all-class and 12/12 free-class,
+C2/C3a/C3b/C4/C6/C8 all PASS. DOF ledger unchanged at **41/2**.
+
+**Single delta:** `miso_seam_neighbour_hourly_spp=true` — the hourly neighbour anchor
+extended to MISO's SECOND seam, pricing SPP band *k* at `pi_k(t) = spp_hub(t) + delta_k`
+against the measured SPP NORTH hub DA. A SUB-GATE of `miso_seam_neighbour_hourly_ladder`,
+refused without its parent (rule 19); `delta_k` from the byte-identical incumbent Q-Q
+estimator on the MISO-minus-SPP spread, pinned to that derive by test; zero fitted parameters.
+
+**Phase 0 (zero LP) falsified the lever queue's own item 1.** Reconstructing every seam from
+the keeper's committed sidecars (harness corr +0.924/+0.946/+0.971): the repaired PJM seam is
+**already steeper than the measured PJM seam** (+2,377/+2,611/+2,704 vs +1,319/+1,052/+815 MW,
+its cheapest decile losing only 194–271 MW to the deliverability envelope). What cancels it is
+**SPP (−414/−481/−553)** and **South (−919/−1,135/−827)**, both still clearing a FIXED
+MISO-hub ladder. Queue item 3's blocker had just lifted: lane SPP-14 landed the measured SPP
+hourly hub price on 2026-09-06, so rule 14 `[R-ACCURATE]` applies directly.
+
+**THE SCREEN PASSED — rule 29 satisfied end to end**, unlike the predecessor. Screen year 2023,
+named on the mechanism's own measured footprint (5,279 disagreeing band-hours, the maximum on
+every sub-measure) and not on the residual; all four pre-registered STRUCTURAL gates cleared
+(G-1 confinement, G-2 footprint scale −0.597 TWh vs a 1.5 TWh bar, G-3 direction corr −0.1042,
+G-4 zero collateral flips), **none of them the target residual**. The miso-232 predecessor's
+span was solved under OWNER RE-CHARTER after its screen was killed on G-1 by 0.0183; that
+provenance travels forward unsoftened. G-DRIFT `451e6109..b7ff89ca` all INERT hunk-by-hunk
+over main's SPP-ISO registration drift (MISO `surface_stamp` `moved: {}`); keeper bundle =
+control, no control solve.
+
+**The open item miso-232 named moves.** Measured-price decile slope d1−d10
++138.7/+111.2/+680.9 → **+402.4/+631.9/+1,026.8 MW**, i.e. 11/12/57 % → **33/69/86 %** of the
+measured summed-seam +1,218.0/+914.1/+1,189.0. `corr(imports, own hub price)`
++0.1754/+0.1644/+0.0368 → +0.0712/+0.0818/−0.0386, falling in every year. Gross imports fall
+0.60/0.41/0.89 TWh while cheap-hour (<$20) imports rise +132/+175/+156 MW — redistribution,
+not addition. Slack and dump unchanged. G-4 on the full span: **zero PASS→FAIL flips**, 11 of
+16 scored C1 cells toward actual (CT_PEAKER −3.29/−2.28 → −3.05/−1.93; COAL_PRB −2.00/−3.66 →
+−1.77/−3.44), all four C2 family rows toward.
+
+**Reported against the candidate.** SOUTH is untouched and is the **larger** remaining
+cancelling seam — a DATA boundary, since SOCO/TVA publish no hub price. `corr(imports,
+measured price)` **overshoots** in 2024/2025 (−0.0636/−0.0852 → −0.1145/−0.1128 vs measured
+−0.039/−0.059) having improved in 2023. The CC_REGULAR-2023 give-back worsens −6.313 → −6.445
+TWh, **named in the screen addendum before the span**. Gated C3a away in 2023/2024
+(+2.05 → +2.12 %, +1.05 → +1.14 %), toward in 2025 (−2.52 → −2.36 %), all far inside band.
+**The admissibility statistic does NOT support this arm** — `corr(SPP seam flow, spread)` =
++0.041/−0.020/+0.050 against the PJM spread's +0.240/+0.265/+0.194; the spread REMOVES a
+wrong-signed response rather than supplying a right-signed one, and the case rests on rule 14
+plus rule 1's instruction that a structurally-correct mechanism is not judged by the residual.
+C3c untouched, still the frontier since 2026-07-20. CT_PEAKER forced share 41.2/26.4/23.6 %,
+C8 passing only through rule 18's grounded route. 2025 C1/C2 SKIPPED on the preliminary
+EIA-923 vintage and not read as evidence. A comparator discrepancy is disclosed in the
+assessment §5: miso-232's published measured column (+1,303/+1,384/+948) could not be
+reproduced exactly from the committed series, and is not restated as if it had been.
+
+Rule 15 keeper-only retention: miso-232 pruned (`--force-uncite`). Rule 29(c): the screen
+bundle deleted before merge. Docs:
+`ASSESSMENT-miso233-spp-hourly-seam-fullspan-2026-09-07.md`,
+`PRECOMMIT-miso233-spp-hourly-seam-2026-09-07.md`,
+`ADDENDUM-miso233-screen-2026-09-07.md`, `_miso233_screen_gates.json`,
+`_miso233_seam_slope_anatomy_phase0.json`, `_miso233_allseam_slope_attribution_phase0.json`,
+`_miso233_spp_hourly_phase0.json`.
