@@ -1,0 +1,666 @@
+{
+ "session": "nyiso-211",
+ "prereg": "results/calibration/PREREG-nyiso211-cricket-valley-lineage-attribution.md",
+ "basis": "CAMPD (bench c_ann) on both sides in every year; E-923 not used",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "anchors": [
+  {
+   "name": "nyiso-186",
+   "run_id": null,
+   "bundle": null
+  },
+  {
+   "name": "nyiso-192",
+   "run_id": "2026-09-05-nyiso-192-astoria-panel",
+   "bundle": "nyiso192_astoria_panel"
+  },
+  {
+   "name": "nyiso-196",
+   "run_id": "2026-09-06-nyiso-196-extract-basis",
+   "bundle": "nyiso196_extract_basis"
+  },
+  {
+   "name": "nyiso-202",
+   "run_id": "2026-09-06-nyiso-202-startup-aware",
+   "bundle": "nyiso202_startup_aware"
+  }
+ ],
+ "steps": [
+  {
+   "key": "d1",
+   "from": "nyiso-186",
+   "to": "nyiso-192",
+   "flag": "LUMPED \u2014 several promotions, bundles pruned"
+  },
+  {
+   "key": "d2",
+   "from": "nyiso-192",
+   "to": "nyiso-196",
+   "flag": "unit_outage_extract_basis_share: False -> True"
+  },
+  {
+   "key": "d3",
+   "from": "nyiso-196",
+   "to": "nyiso-202",
+   "flag": "nyiso_gas_bridge_startup_aware: False -> True"
+  }
+ ],
+ "I1_control_measured_basis": {
+  "tol": 0.02,
+  "worst_rel": 0.4929,
+  "n_violations": 3,
+  "n_record_rows_without_campd_column": 3,
+  "split_keyed_plants_excluded_from_186_anchor": [
+   "2500:CC_REGULAR",
+   "50292:CC_REGULAR"
+  ],
+  "violations": [
+   {
+    "year": 2023,
+    "plant": "55375",
+    "name": "Astoria Energy",
+    "bench_campd_twh": 4.2578,
+    "record_campd_twh": 8.2924,
+    "rel": 0.4865
+   },
+   {
+    "year": 2024,
+    "plant": "55375",
+    "name": "Astoria Energy",
+    "bench_campd_twh": 4.2823,
+    "record_campd_twh": 8.4451,
+    "rel": 0.4929
+   },
+   {
+    "year": 2025,
+    "plant": "55375",
+    "name": "Astoria Energy",
+    "bench_campd_twh": 4.0162,
+    "record_campd_twh": 6.3278,
+    "rel": 0.3653
+   }
+  ],
+  "PASS": false
+ },
+ "I2_payload_reconciliation": {
+  "tol": 0.05,
+  "rows": [
+   {
+    "anchor": "nyiso-192",
+    "year": 2023,
+    "payload_plant_sum_twh": 34.0742,
+    "class_hourly_twh": 34.0912,
+    "rel": 0.0005,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-192",
+    "year": 2024,
+    "payload_plant_sum_twh": 37.6137,
+    "class_hourly_twh": 37.7382,
+    "rel": 0.0033,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-192",
+    "year": 2025,
+    "payload_plant_sum_twh": 35.4336,
+    "class_hourly_twh": 35.4335,
+    "rel": 0.0,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-196",
+    "year": 2023,
+    "payload_plant_sum_twh": 33.8231,
+    "class_hourly_twh": 33.8404,
+    "rel": 0.0005,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-196",
+    "year": 2024,
+    "payload_plant_sum_twh": 36.9371,
+    "class_hourly_twh": 37.0672,
+    "rel": 0.0035,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-196",
+    "year": 2025,
+    "payload_plant_sum_twh": 35.1021,
+    "class_hourly_twh": 35.1018,
+    "rel": 0.0,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-202",
+    "year": 2023,
+    "payload_plant_sum_twh": 33.3603,
+    "class_hourly_twh": 33.378,
+    "rel": 0.0005,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-202",
+    "year": 2024,
+    "payload_plant_sum_twh": 36.3209,
+    "class_hourly_twh": 36.4551,
+    "rel": 0.0037,
+    "PASS": true
+   },
+   {
+    "anchor": "nyiso-202",
+    "year": 2025,
+    "payload_plant_sum_twh": 34.7635,
+    "class_hourly_twh": 34.7633,
+    "rel": 0.0,
+    "PASS": true
+   }
+  ],
+  "PASS": true
+ },
+ "plant_table": {
+  "57185": {
+   "name": "Cricket Valley Energy",
+   "zone": "Capital_Hudson",
+   "npl_mw": 1312,
+   "campd_twh": 5.3214,
+   "years": {
+    "2023": {
+     "campd_twh": 5.3214,
+     "model_twh": {
+      "nyiso-186": 6.445,
+      "nyiso-192": 5.4055,
+      "nyiso-196": 4.8123,
+      "nyiso-202": 4.8805
+     },
+     "gap_twh": {
+      "nyiso-186": 1.1236,
+      "nyiso-192": 0.0841,
+      "nyiso-196": -0.5091,
+      "nyiso-202": -0.4409
+     },
+     "step_delta_twh": {
+      "d1": -1.0395,
+      "d2": -0.5932,
+      "d3": 0.0682
+     },
+     "total_delta_twh": -1.5645
+    },
+    "2024": {
+     "campd_twh": 4.2409,
+     "model_twh": {
+      "nyiso-186": 5.9992,
+      "nyiso-192": 5.0378,
+      "nyiso-196": 3.7061,
+      "nyiso-202": 3.633
+     },
+     "gap_twh": {
+      "nyiso-186": 1.7583,
+      "nyiso-192": 0.7969,
+      "nyiso-196": -0.5348,
+      "nyiso-202": -0.6079
+     },
+     "step_delta_twh": {
+      "d1": -0.9614,
+      "d2": -1.3317,
+      "d3": -0.0731
+     },
+     "total_delta_twh": -2.3662
+    },
+    "2025": {
+     "campd_twh": 4.8618,
+     "model_twh": {
+      "nyiso-186": 6.0022,
+      "nyiso-192": 5.0438,
+      "nyiso-196": 3.8982,
+      "nyiso-202": 3.8513
+     },
+     "gap_twh": {
+      "nyiso-186": 1.1404,
+      "nyiso-192": 0.182,
+      "nyiso-196": -0.9636,
+      "nyiso-202": -1.0105
+     },
+     "step_delta_twh": {
+      "d1": -0.9584,
+      "d2": -1.1456,
+      "d3": -0.0469
+     },
+     "total_delta_twh": -2.1509
+    }
+   }
+  },
+  "56940": {
+   "name": "CPV Valley Energy Center",
+   "zone": "Capital_Hudson",
+   "npl_mw": 770,
+   "campd_twh": 4.3761,
+   "years": {
+    "2023": {
+     "campd_twh": 4.3761,
+     "model_twh": {
+      "nyiso-186": 4.0024,
+      "nyiso-192": 3.6162,
+      "nyiso-196": 3.6502,
+      "nyiso-202": 3.6587
+     },
+     "gap_twh": {
+      "nyiso-186": -0.3737,
+      "nyiso-192": -0.7599,
+      "nyiso-196": -0.7259,
+      "nyiso-202": -0.7174
+     },
+     "step_delta_twh": {
+      "d1": -0.3862,
+      "d2": 0.034,
+      "d3": 0.0085
+     },
+     "total_delta_twh": -0.3437
+    },
+    "2024": {
+     "campd_twh": 4.9819,
+     "model_twh": {
+      "nyiso-186": 4.721,
+      "nyiso-192": 4.2961,
+      "nyiso-196": 4.3542,
+      "nyiso-202": 4.2406
+     },
+     "gap_twh": {
+      "nyiso-186": -0.2609,
+      "nyiso-192": -0.6858,
+      "nyiso-196": -0.6277,
+      "nyiso-202": -0.7413
+     },
+     "step_delta_twh": {
+      "d1": -0.4249,
+      "d2": 0.0581,
+      "d3": -0.1136
+     },
+     "total_delta_twh": -0.4804
+    },
+    "2025": {
+     "campd_twh": 4.7024,
+     "model_twh": {
+      "nyiso-186": 4.3439,
+      "nyiso-192": 3.8455,
+      "nyiso-196": 3.8457,
+      "nyiso-202": 3.8618
+     },
+     "gap_twh": {
+      "nyiso-186": -0.3585,
+      "nyiso-192": -0.8569,
+      "nyiso-196": -0.8567,
+      "nyiso-202": -0.8406
+     },
+     "step_delta_twh": {
+      "d1": -0.4984,
+      "d2": 0.0002,
+      "d3": 0.0161
+     },
+     "total_delta_twh": -0.4821
+    }
+   }
+  },
+  "2539": {
+   "name": "Bethlehem Energy Center",
+   "zone": "Capital_Hudson",
+   "npl_mw": 893,
+   "campd_twh": 4.1799,
+   "years": {
+    "2023": {
+     "campd_twh": 4.1799,
+     "model_twh": {
+      "nyiso-186": 2.0826,
+      "nyiso-192": 4.9141,
+      "nyiso-196": 4.8568,
+      "nyiso-202": 4.7487
+     },
+     "gap_twh": {
+      "nyiso-186": -2.0973,
+      "nyiso-192": 0.7342,
+      "nyiso-196": 0.6769,
+      "nyiso-202": 0.5688
+     },
+     "step_delta_twh": {
+      "d1": 2.8315,
+      "d2": -0.0573,
+      "d3": -0.1081
+     },
+     "total_delta_twh": 2.6661
+    },
+    "2024": {
+     "campd_twh": 5.539,
+     "model_twh": {
+      "nyiso-186": 3.8268,
+      "nyiso-192": 5.9649,
+      "nyiso-196": 5.9904,
+      "nyiso-202": 5.9354
+     },
+     "gap_twh": {
+      "nyiso-186": -1.7122,
+      "nyiso-192": 0.4259,
+      "nyiso-196": 0.4514,
+      "nyiso-202": 0.3964
+     },
+     "step_delta_twh": {
+      "d1": 2.1381,
+      "d2": 0.0255,
+      "d3": -0.055
+     },
+     "total_delta_twh": 2.1086
+    },
+    "2025": {
+     "campd_twh": 5.2666,
+     "model_twh": {
+      "nyiso-186": 3.7338,
+      "nyiso-192": 5.7,
+      "nyiso-196": 5.7145,
+      "nyiso-202": 5.7077
+     },
+     "gap_twh": {
+      "nyiso-186": -1.5328,
+      "nyiso-192": 0.4334,
+      "nyiso-196": 0.4479,
+      "nyiso-202": 0.4411
+     },
+     "step_delta_twh": {
+      "d1": 1.9662,
+      "d2": 0.0145,
+      "d3": -0.0068
+     },
+     "total_delta_twh": 1.9739
+    }
+   }
+  },
+  "56196": {
+   "name": "Zeltmann",
+   "zone": "NYC",
+   "npl_mw": 528,
+   "campd_twh": 3.4986,
+   "years": {
+    "2023": {
+     "campd_twh": 3.4986,
+     "model_twh": {
+      "nyiso-186": 4.5017,
+      "nyiso-192": 4.0355,
+      "nyiso-196": 4.0546,
+      "nyiso-202": 4.0546
+     },
+     "gap_twh": {
+      "nyiso-186": 1.0031,
+      "nyiso-192": 0.5369,
+      "nyiso-196": 0.556,
+      "nyiso-202": 0.556
+     },
+     "step_delta_twh": {
+      "d1": -0.4662,
+      "d2": 0.0191,
+      "d3": 0.0
+     },
+     "total_delta_twh": -0.4471
+    },
+    "2024": {
+     "campd_twh": 3.7824,
+     "model_twh": {
+      "nyiso-186": 4.5491,
+      "nyiso-192": 4.0445,
+      "nyiso-196": 4.0466,
+      "nyiso-202": 4.0466
+     },
+     "gap_twh": {
+      "nyiso-186": 0.7667,
+      "nyiso-192": 0.2621,
+      "nyiso-196": 0.2642,
+      "nyiso-202": 0.2642
+     },
+     "step_delta_twh": {
+      "d1": -0.5046,
+      "d2": 0.0021,
+      "d3": 0.0
+     },
+     "total_delta_twh": -0.5025
+    },
+    "2025": {
+     "campd_twh": 3.0891,
+     "model_twh": {
+      "nyiso-186": 4.0293,
+      "nyiso-192": 3.5265,
+      "nyiso-196": 3.5279,
+      "nyiso-202": 3.5279
+     },
+     "gap_twh": {
+      "nyiso-186": 0.9402,
+      "nyiso-192": 0.4374,
+      "nyiso-196": 0.4388,
+      "nyiso-202": 0.4388
+     },
+     "step_delta_twh": {
+      "d1": -0.5028,
+      "d2": 0.0014,
+      "d3": 0.0
+     },
+     "total_delta_twh": -0.5014
+    }
+   }
+  },
+  "55375": {
+   "name": "Astoria Energy",
+   "zone": "NYC",
+   "npl_mw": 595,
+   "campd_twh": 4.2578,
+   "years": {
+    "2023": {
+     "campd_twh": 4.2578,
+     "model_twh": {
+      "nyiso-186": 4.1288,
+      "nyiso-192": 4.6047,
+      "nyiso-196": 4.6053,
+      "nyiso-202": 4.5516
+     },
+     "gap_twh": {
+      "nyiso-186": -0.129,
+      "nyiso-192": 0.3469,
+      "nyiso-196": 0.3475,
+      "nyiso-202": 0.2938
+     },
+     "step_delta_twh": {
+      "d1": 0.4759,
+      "d2": 0.0006,
+      "d3": -0.0537
+     },
+     "total_delta_twh": 0.4228
+    },
+    "2024": {
+     "campd_twh": 4.2823,
+     "model_twh": {
+      "nyiso-186": 4.0575,
+      "nyiso-192": 4.5965,
+      "nyiso-196": 4.6009,
+      "nyiso-202": 4.5202
+     },
+     "gap_twh": {
+      "nyiso-186": -0.2248,
+      "nyiso-192": 0.3142,
+      "nyiso-196": 0.3186,
+      "nyiso-202": 0.2379
+     },
+     "step_delta_twh": {
+      "d1": 0.539,
+      "d2": 0.0044,
+      "d3": -0.0807
+     },
+     "total_delta_twh": 0.4627
+    },
+    "2025": {
+     "campd_twh": 4.0162,
+     "model_twh": {
+      "nyiso-186": 2.6159,
+      "nyiso-192": 4.096,
+      "nyiso-196": 4.1246,
+      "nyiso-202": 4.0734
+     },
+     "gap_twh": {
+      "nyiso-186": -1.4003,
+      "nyiso-192": 0.0798,
+      "nyiso-196": 0.1084,
+      "nyiso-202": 0.0572
+     },
+     "step_delta_twh": {
+      "d1": 1.4801,
+      "d2": 0.0286,
+      "d3": -0.0512
+     },
+     "total_delta_twh": 1.4575
+    }
+   }
+  }
+ },
+ "P1_P2_P3_attribution_57185_2023": {
+  "step_delta_twh": {
+   "d1": -1.0395,
+   "d2": -0.5932,
+   "d3": 0.0682
+  },
+  "S_abs_sum_twh": 1.7009,
+  "shares": {
+   "d1": 0.6111,
+   "d2": 0.3488,
+   "d3": 0.0401
+  },
+  "dominance_bar": 0.6,
+  "P1_fires": false,
+  "P2_fires": true,
+  "P3_fires": false,
+  "d3_dominant_note": false,
+  "verdict": "P2 (upstream of nyiso-192)"
+ },
+ "PREREG_I1_fallback_payload_only_lineage": {
+  "why": "I1 failed, so PREREG \u00a73.1 voids Delta_1's comparability; 192 -> 196 -> 202 is the declared fallback",
+  "by_year": {
+   "2023": {
+    "d2_twh": -0.5932,
+    "d3_twh": 0.0682,
+    "d2_share_of_payload_movement": 0.8969,
+    "gap_before_d2_twh": 0.0841,
+    "gap_after_d2_twh": -0.5091,
+    "sign_flips_at_d2": true
+   },
+   "2024": {
+    "d2_twh": -1.3317,
+    "d3_twh": -0.0731,
+    "d2_share_of_payload_movement": 0.948,
+    "gap_before_d2_twh": 0.7969,
+    "gap_after_d2_twh": -0.5348,
+    "sign_flips_at_d2": true
+   },
+   "2025": {
+    "d2_twh": -1.1456,
+    "d3_twh": -0.0469,
+    "d2_share_of_payload_movement": 0.9607,
+    "gap_before_d2_twh": 0.182,
+    "gap_after_d2_twh": -0.9636,
+    "sign_flips_at_d2": true
+   }
+  }
+ },
+ "P4_repair_flat_while_deficit_grows": {
+  "d2_by_year_twh": [
+   -0.5932,
+   -1.3317,
+   -1.1456
+  ],
+  "d2_cv": 0.3064,
+  "cv_bar": 0.35,
+  "keeper_gap_by_year_twh": [
+   -0.4409,
+   -0.6079,
+   -1.0105
+  ],
+  "deficit_grows_monotonically": true,
+  "P4_fires": true
+ },
+ "P5_overrunner_control": {
+  "bar_twh": 0.5,
+  "rows": [
+   {
+    "plant": "2539",
+    "name": "Bethlehem Energy Center",
+    "total_delta_2023_twh": 2.6661
+   },
+   {
+    "plant": "56196",
+    "name": "Zeltmann",
+    "total_delta_2023_twh": -0.4471
+   },
+   {
+    "plant": "55375",
+    "name": "Astoria Energy",
+    "total_delta_2023_twh": 0.4228
+   }
+  ],
+  "P5_holds": false
+ },
+ "P7_partner_move": {
+  "d2_57185_twh": -0.5932,
+  "d2_56940_twh": 0.034,
+  "frac_bar": 0.25,
+  "plant_specific_reading": true
+ },
+ "P8_class_grain": {
+  "bar_twh": 0.5,
+  "rows": {
+   "2023": {
+    "gap_twh": {
+     "nyiso-186": 0.52,
+     "nyiso-192": 0.9493,
+     "nyiso-196": 0.6052,
+     "nyiso-202": 0.2404
+    },
+    "gap_full_set_twh": {
+     "nyiso-186": null,
+     "nyiso-192": 0.6194,
+     "nyiso-196": 0.3683,
+     "nyiso-202": -0.0945
+    },
+    "total_delta_twh": -0.2796
+   },
+   "2024": {
+    "gap_twh": {
+     "nyiso-186": 1.8671,
+     "nyiso-192": 1.3954,
+     "nyiso-196": 0.6081,
+     "nyiso-202": 0.0349
+    },
+    "gap_full_set_twh": {
+     "nyiso-186": null,
+     "nyiso-192": 1.1733,
+     "nyiso-196": 0.4967,
+     "nyiso-202": -0.1195
+    },
+    "total_delta_twh": -1.8322
+   },
+   "2025": {
+    "gap_twh": {
+     "nyiso-186": 3.12,
+     "nyiso-192": 1.7711,
+     "nyiso-196": 1.3649,
+     "nyiso-202": 1.1073
+    },
+    "gap_full_set_twh": {
+     "nyiso-186": null,
+     "nyiso-192": 1.5534,
+     "nyiso-196": 1.2219,
+     "nyiso-202": 0.8833
+    },
+    "total_delta_twh": -2.0127
+   }
+  },
+  "P8_holds": true
+ }
+}

@@ -1,0 +1,1583 @@
+{
+ "session": "nyiso-211",
+ "status": "POST-HOC phase 0 \u2014 arms nothing, moves no default, decides no declared verdict",
+ "flag": "unit_outage_per_unit_clip (miso-202; NYISO cell UNTESTED, rule 28(d))",
+ "bases": {
+  "pre196": "{'extract_basis_share': False, 'per_unit_clip': False}",
+  "keeper": "{'extract_basis_share': True, 'per_unit_clip': False}",
+  "clipped": "{'extract_basis_share': True, 'per_unit_clip': True}"
+ },
+ "summary": {
+  "2023": {
+   "target": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.8008,
+     "available_gwh": 7624.25,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.698
+    },
+    "keeper": {
+     "mean_avail": 0.7145,
+     "available_gwh": 6802.49,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.7823
+    },
+    "clipped": {
+     "mean_avail": 0.7153,
+     "available_gwh": 6810.88,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.7813
+    }
+   },
+   "class_months_over_ceiling": {
+    "pre196": 44,
+    "keeper": 33,
+    "clipped": 33
+   },
+   "class_plants_over_ceiling": {
+    "pre196": 13,
+    "keeper": 12,
+    "clipped": 12
+   },
+   "plants_clip_moves": [
+    "50292",
+    "54574",
+    "57185"
+   ]
+  },
+  "2024": {
+   "target": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.6955,
+     "available_gwh": 6621.66,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6405
+    },
+    "keeper": {
+     "mean_avail": 0.5097,
+     "available_gwh": 4853.13,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8738
+    },
+    "clipped": {
+     "mean_avail": 0.5106,
+     "available_gwh": 4861.52,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8723
+    }
+   },
+   "class_months_over_ceiling": {
+    "pre196": 37,
+    "keeper": 32,
+    "clipped": 32
+   },
+   "class_plants_over_ceiling": {
+    "pre196": 10,
+    "keeper": 9,
+    "clipped": 9
+   },
+   "plants_clip_moves": [
+    "50292",
+    "54574",
+    "57185"
+   ]
+  },
+  "2025": {
+   "target": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.7175,
+     "available_gwh": 6831.44,
+     "months_meter_exceeds_ceiling": [
+      8
+     ],
+     "measured_over_available": 0.7117
+    },
+    "keeper": {
+     "mean_avail": 0.5526,
+     "available_gwh": 5261.02,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9241
+    },
+    "clipped": {
+     "mean_avail": 0.5534,
+     "available_gwh": 5269.41,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9226
+    }
+   },
+   "class_months_over_ceiling": {
+    "pre196": 29,
+    "keeper": 26,
+    "clipped": 26
+   },
+   "class_plants_over_ceiling": {
+    "pre196": 10,
+    "keeper": 9,
+    "clipped": 9
+   },
+   "plants_clip_moves": [
+    "50292",
+    "54574",
+    "55405",
+    "57185",
+    "57664"
+   ]
+  }
+ },
+ "plants": {
+  "2023": {
+   "2500": {
+    "pmax_mw": 268.5,
+    "pre196": {
+     "mean_avail": 0.8227,
+     "available_gwh": 1934.99,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.0303
+    },
+    "keeper": {
+     "mean_avail": 0.8361,
+     "available_gwh": 1966.52,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.0138
+    },
+    "clipped": {
+     "mean_avail": 0.8361,
+     "available_gwh": 1966.52,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.0138
+    }
+   },
+   "2539": {
+    "pmax_mw": 893.1,
+    "pre196": {
+     "mean_avail": 0.8943,
+     "available_gwh": 6996.53,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5974
+    },
+    "keeper": {
+     "mean_avail": 0.8822,
+     "available_gwh": 6901.98,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6056
+    },
+    "clipped": {
+     "mean_avail": 0.8822,
+     "available_gwh": 6901.98,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6056
+    }
+   },
+   "10190": {
+    "pmax_mw": 71.2,
+    "pre196": {
+     "mean_avail": 0.2186,
+     "available_gwh": 136.34,
+     "months_meter_exceeds_ceiling": [
+      9,
+      11
+     ],
+     "measured_over_available": 0.69
+    },
+    "keeper": {
+     "mean_avail": 0.2186,
+     "available_gwh": 136.34,
+     "months_meter_exceeds_ceiling": [
+      9,
+      11
+     ],
+     "measured_over_available": 0.69
+    },
+    "clipped": {
+     "mean_avail": 0.2186,
+     "available_gwh": 136.34,
+     "months_meter_exceeds_ceiling": [
+      9,
+      11
+     ],
+     "measured_over_available": 0.69
+    }
+   },
+   "10620": {
+    "pmax_mw": 53.6,
+    "pre196": {
+     "mean_avail": 0.0051,
+     "available_gwh": 2.41,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.991
+    },
+    "keeper": {
+     "mean_avail": 0.0051,
+     "available_gwh": 2.41,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.991
+    },
+    "clipped": {
+     "mean_avail": 0.0051,
+     "available_gwh": 2.41,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.991
+    }
+   },
+   "10621": {
+    "pmax_mw": 102.7,
+    "pre196": {
+     "mean_avail": 0.0322,
+     "available_gwh": 29.01,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.4281
+    },
+    "keeper": {
+     "mean_avail": 0.0322,
+     "available_gwh": 29.01,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.4281
+    },
+    "clipped": {
+     "mean_avail": 0.0322,
+     "available_gwh": 29.01,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.4281
+    }
+   },
+   "50292": {
+    "pmax_mw": 179.6,
+    "pre196": {
+     "mean_avail": 0.3636,
+     "available_gwh": 572.12,
+     "months_meter_exceeds_ceiling": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "measured_over_available": 0.8032
+    },
+    "keeper": {
+     "mean_avail": 0.5235,
+     "available_gwh": 823.66,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5579
+    },
+    "clipped": {
+     "mean_avail": 0.524,
+     "available_gwh": 824.39,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5574
+    }
+   },
+   "54034": {
+    "pmax_mw": 78.0,
+    "pre196": {
+     "mean_avail": 0.0357,
+     "available_gwh": 24.39,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 1.0179
+    },
+    "keeper": {
+     "mean_avail": 0.0357,
+     "available_gwh": 24.39,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 1.0179
+    },
+    "clipped": {
+     "mean_avail": 0.0357,
+     "available_gwh": 24.39,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 1.0179
+    }
+   },
+   "54574": {
+    "pmax_mw": 251.5,
+    "pre196": {
+     "mean_avail": 0.1651,
+     "available_gwh": 363.77,
+     "months_meter_exceeds_ceiling": [
+      7,
+      11
+     ],
+     "measured_over_available": 0.6817
+    },
+    "keeper": {
+     "mean_avail": 0.2076,
+     "available_gwh": 457.48,
+     "months_meter_exceeds_ceiling": [
+      7,
+      11
+     ],
+     "measured_over_available": 0.5421
+    },
+    "clipped": {
+     "mean_avail": 0.2089,
+     "available_gwh": 460.28,
+     "months_meter_exceeds_ceiling": [
+      7,
+      11
+     ],
+     "measured_over_available": 0.5388
+    }
+   },
+   "55375": {
+    "pmax_mw": 610.4,
+    "pre196": {
+     "mean_avail": 0.892,
+     "available_gwh": 4769.41,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.8927
+    },
+    "keeper": {
+     "mean_avail": 0.8922,
+     "available_gwh": 4770.81,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.8925
+    },
+    "clipped": {
+     "mean_avail": 0.8922,
+     "available_gwh": 4770.81,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.8925
+    }
+   },
+   "55405": {
+    "pmax_mw": 1064.7,
+    "pre196": {
+     "mean_avail": 0.1929,
+     "available_gwh": 1799.59,
+     "months_meter_exceeds_ceiling": [
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12
+     ],
+     "measured_over_available": 1.0417
+    },
+    "keeper": {
+     "mean_avail": 0.2175,
+     "available_gwh": 2028.62,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9,
+      12
+     ],
+     "measured_over_available": 0.9241
+    },
+    "clipped": {
+     "mean_avail": 0.2175,
+     "available_gwh": 2028.62,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9,
+      12
+     ],
+     "measured_over_available": 0.9241
+    }
+   },
+   "56188": {
+    "pmax_mw": 82.0,
+    "pre196": {
+     "mean_avail": 0.3967,
+     "available_gwh": 284.95,
+     "months_meter_exceeds_ceiling": [
+      5
+     ],
+     "measured_over_available": 0.3102
+    },
+    "keeper": {
+     "mean_avail": 0.3967,
+     "available_gwh": 284.95,
+     "months_meter_exceeds_ceiling": [
+      5
+     ],
+     "measured_over_available": 0.3102
+    },
+    "clipped": {
+     "mean_avail": 0.3967,
+     "available_gwh": 284.95,
+     "months_meter_exceeds_ceiling": [
+      5
+     ],
+     "measured_over_available": 0.3102
+    }
+   },
+   "56196": {
+    "pmax_mw": 560.0,
+    "pre196": {
+     "mean_avail": 0.8238,
+     "available_gwh": 4041.33,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8657
+    },
+    "keeper": {
+     "mean_avail": 0.8279,
+     "available_gwh": 4061.55,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8614
+    },
+    "clipped": {
+     "mean_avail": 0.8279,
+     "available_gwh": 4061.55,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8614
+    }
+   },
+   "56234": {
+    "pmax_mw": 361.7,
+    "pre196": {
+     "mean_avail": 0.8829,
+     "available_gwh": 2797.49,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9142
+    },
+    "keeper": {
+     "mean_avail": 0.8829,
+     "available_gwh": 2797.49,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9142
+    },
+    "clipped": {
+     "mean_avail": 0.8829,
+     "available_gwh": 2797.49,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9142
+    }
+   },
+   "56940": {
+    "pmax_mw": 696.1,
+    "pre196": {
+     "mean_avail": 0.7105,
+     "available_gwh": 4332.66,
+     "months_meter_exceeds_ceiling": [
+      1,
+      3,
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "measured_over_available": 1.01
+    },
+    "keeper": {
+     "mean_avail": 0.7173,
+     "available_gwh": 4374.13,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "measured_over_available": 1.0005
+    },
+    "clipped": {
+     "mean_avail": 0.7173,
+     "available_gwh": 4374.13,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "measured_over_available": 1.0005
+    }
+   },
+   "57185": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.8008,
+     "available_gwh": 7624.25,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.698
+    },
+    "keeper": {
+     "mean_avail": 0.7145,
+     "available_gwh": 6802.49,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.7823
+    },
+    "clipped": {
+     "mean_avail": 0.7153,
+     "available_gwh": 6810.88,
+     "months_meter_exceeds_ceiling": [
+      7
+     ],
+     "measured_over_available": 0.7813
+    }
+   },
+   "57664": {
+    "pmax_mw": 650.0,
+    "pre196": {
+     "mean_avail": 0.831,
+     "available_gwh": 4731.86,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8526
+    },
+    "keeper": {
+     "mean_avail": 0.8351,
+     "available_gwh": 4754.86,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8485
+    },
+    "clipped": {
+     "mean_avail": 0.8351,
+     "available_gwh": 4754.86,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8485
+    }
+   }
+  },
+  "2024": {
+   "2500": {
+    "pmax_mw": 268.5,
+    "pre196": {
+     "mean_avail": 0.8305,
+     "available_gwh": 1953.43,
+     "months_meter_exceeds_ceiling": [
+      2,
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.0124
+    },
+    "keeper": {
+     "mean_avail": 0.84,
+     "available_gwh": 1975.67,
+     "months_meter_exceeds_ceiling": [
+      2,
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.001
+    },
+    "clipped": {
+     "mean_avail": 0.84,
+     "available_gwh": 1975.67,
+     "months_meter_exceeds_ceiling": [
+      2,
+      3,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12
+     ],
+     "measured_over_available": 1.001
+    }
+   },
+   "2539": {
+    "pmax_mw": 893.1,
+    "pre196": {
+     "mean_avail": 0.8539,
+     "available_gwh": 6680.28,
+     "months_meter_exceeds_ceiling": [
+      3
+     ],
+     "measured_over_available": 0.8292
+    },
+    "keeper": {
+     "mean_avail": 0.8549,
+     "available_gwh": 6688.24,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8282
+    },
+    "clipped": {
+     "mean_avail": 0.8549,
+     "available_gwh": 6688.24,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8282
+    }
+   },
+   "10190": {
+    "pmax_mw": 71.2,
+    "pre196": {
+     "mean_avail": 0.2286,
+     "available_gwh": 142.59,
+     "months_meter_exceeds_ceiling": [
+      8
+     ],
+     "measured_over_available": 0.6258
+    },
+    "keeper": {
+     "mean_avail": 0.2286,
+     "available_gwh": 142.59,
+     "months_meter_exceeds_ceiling": [
+      8
+     ],
+     "measured_over_available": 0.6258
+    },
+    "clipped": {
+     "mean_avail": 0.2286,
+     "available_gwh": 142.59,
+     "months_meter_exceeds_ceiling": [
+      8
+     ],
+     "measured_over_available": 0.6258
+    }
+   },
+   "10620": {
+    "pmax_mw": 53.6,
+    "pre196": {
+     "mean_avail": 0.0026,
+     "available_gwh": 1.21,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 2.8693
+    },
+    "keeper": {
+     "mean_avail": 0.0026,
+     "available_gwh": 1.21,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 2.8693
+    },
+    "clipped": {
+     "mean_avail": 0.0026,
+     "available_gwh": 1.21,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 2.8693
+    }
+   },
+   "10621": {
+    "pmax_mw": 102.7,
+    "pre196": {
+     "mean_avail": 0.0133,
+     "available_gwh": 11.98,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 1.4894
+    },
+    "keeper": {
+     "mean_avail": 0.0133,
+     "available_gwh": 11.98,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 1.4894
+    },
+    "clipped": {
+     "mean_avail": 0.0133,
+     "available_gwh": 11.98,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 1.4894
+    }
+   },
+   "50292": {
+    "pmax_mw": 179.6,
+    "pre196": {
+     "mean_avail": 0.4103,
+     "available_gwh": 645.57,
+     "months_meter_exceeds_ceiling": [
+      10,
+      11,
+      12
+     ],
+     "measured_over_available": 0.7559
+    },
+    "keeper": {
+     "mean_avail": 0.5367,
+     "available_gwh": 844.45,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5779
+    },
+    "clipped": {
+     "mean_avail": 0.5403,
+     "available_gwh": 849.99,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5742
+    }
+   },
+   "54034": {
+    "pmax_mw": 78.0,
+    "pre196": {
+     "mean_avail": 0.0291,
+     "available_gwh": 19.87,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9572
+    },
+    "keeper": {
+     "mean_avail": 0.0291,
+     "available_gwh": 19.87,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9572
+    },
+    "clipped": {
+     "mean_avail": 0.0291,
+     "available_gwh": 19.87,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9572
+    }
+   },
+   "54574": {
+    "pmax_mw": 251.5,
+    "pre196": {
+     "mean_avail": 0.266,
+     "available_gwh": 585.96,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6349
+    },
+    "keeper": {
+     "mean_avail": 0.322,
+     "available_gwh": 709.33,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5244
+    },
+    "clipped": {
+     "mean_avail": 0.327,
+     "available_gwh": 720.49,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5163
+    }
+   },
+   "55375": {
+    "pmax_mw": 610.4,
+    "pre196": {
+     "mean_avail": 0.8921,
+     "available_gwh": 4769.97,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8978
+    },
+    "keeper": {
+     "mean_avail": 0.8921,
+     "available_gwh": 4769.97,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8978
+    },
+    "clipped": {
+     "mean_avail": 0.8921,
+     "available_gwh": 4769.97,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8978
+    }
+   },
+   "55405": {
+    "pmax_mw": 1064.7,
+    "pre196": {
+     "mean_avail": 0.4097,
+     "available_gwh": 3820.8,
+     "months_meter_exceeds_ceiling": [
+      2,
+      3,
+      4,
+      7,
+      8,
+      9,
+      10
+     ],
+     "measured_over_available": 1.059
+    },
+    "keeper": {
+     "mean_avail": 0.4387,
+     "available_gwh": 4091.98,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9888
+    },
+    "clipped": {
+     "mean_avail": 0.4387,
+     "available_gwh": 4091.98,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9888
+    }
+   },
+   "56188": {
+    "pmax_mw": 82.0,
+    "pre196": {
+     "mean_avail": 0.2974,
+     "available_gwh": 213.65,
+     "months_meter_exceeds_ceiling": [
+      12
+     ],
+     "measured_over_available": 0.3919
+    },
+    "keeper": {
+     "mean_avail": 0.2974,
+     "available_gwh": 213.65,
+     "months_meter_exceeds_ceiling": [
+      12
+     ],
+     "measured_over_available": 0.3919
+    },
+    "clipped": {
+     "mean_avail": 0.2974,
+     "available_gwh": 213.65,
+     "months_meter_exceeds_ceiling": [
+      12
+     ],
+     "measured_over_available": 0.3919
+    }
+   },
+   "56196": {
+    "pmax_mw": 560.0,
+    "pre196": {
+     "mean_avail": 0.8325,
+     "available_gwh": 4084.1,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9261
+    },
+    "keeper": {
+     "mean_avail": 0.8329,
+     "available_gwh": 4085.72,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9258
+    },
+    "clipped": {
+     "mean_avail": 0.8329,
+     "available_gwh": 4085.72,
+     "months_meter_exceeds_ceiling": [
+      3,
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9258
+    }
+   },
+   "56234": {
+    "pmax_mw": 361.7,
+    "pre196": {
+     "mean_avail": 0.6723,
+     "available_gwh": 2130.25,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8981
+    },
+    "keeper": {
+     "mean_avail": 0.6723,
+     "available_gwh": 2130.25,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8981
+    },
+    "clipped": {
+     "mean_avail": 0.6723,
+     "available_gwh": 2130.25,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.8981
+    }
+   },
+   "56940": {
+    "pmax_mw": 696.1,
+    "pre196": {
+     "mean_avail": 0.8183,
+     "available_gwh": 4989.79,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9984
+    },
+    "keeper": {
+     "mean_avail": 0.8251,
+     "available_gwh": 5031.38,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9902
+    },
+    "clipped": {
+     "mean_avail": 0.8251,
+     "available_gwh": 5031.38,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9902
+    }
+   },
+   "57185": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.6955,
+     "available_gwh": 6621.66,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6405
+    },
+    "keeper": {
+     "mean_avail": 0.5097,
+     "available_gwh": 4853.13,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8738
+    },
+    "clipped": {
+     "mean_avail": 0.5106,
+     "available_gwh": 4861.52,
+     "months_meter_exceeds_ceiling": [
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8723
+    }
+   },
+   "57664": {
+    "pmax_mw": 650.0,
+    "pre196": {
+     "mean_avail": 0.8253,
+     "available_gwh": 4699.53,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8802
+    },
+    "keeper": {
+     "mean_avail": 0.8307,
+     "available_gwh": 4730.2,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8745
+    },
+    "clipped": {
+     "mean_avail": 0.8307,
+     "available_gwh": 4730.2,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.8745
+    }
+   }
+  },
+  "2025": {
+   "2500": {
+    "pmax_mw": 268.5,
+    "pre196": {
+     "mean_avail": 0.8367,
+     "available_gwh": 1968.02,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9775
+    },
+    "keeper": {
+     "mean_avail": 0.8457,
+     "available_gwh": 1989.04,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9672
+    },
+    "clipped": {
+     "mean_avail": 0.8457,
+     "available_gwh": 1989.04,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8,
+      9
+     ],
+     "measured_over_available": 0.9672
+    }
+   },
+   "2539": {
+    "pmax_mw": 893.1,
+    "pre196": {
+     "mean_avail": 0.8565,
+     "available_gwh": 6700.59,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.786
+    },
+    "keeper": {
+     "mean_avail": 0.861,
+     "available_gwh": 6736.13,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.7818
+    },
+    "clipped": {
+     "mean_avail": 0.861,
+     "available_gwh": 6736.13,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.7818
+    }
+   },
+   "7784": {
+    "pmax_mw": 67.0,
+    "pre196": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    },
+    "keeper": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    },
+    "clipped": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    }
+   },
+   "10190": {
+    "pmax_mw": 71.2,
+    "pre196": {
+     "mean_avail": 0.3868,
+     "available_gwh": 241.28,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6124
+    },
+    "keeper": {
+     "mean_avail": 0.3868,
+     "available_gwh": 241.28,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6124
+    },
+    "clipped": {
+     "mean_avail": 0.3868,
+     "available_gwh": 241.28,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6124
+    }
+   },
+   "10620": {
+    "pmax_mw": 53.6,
+    "pre196": {
+     "mean_avail": 0.0154,
+     "available_gwh": 7.24,
+     "months_meter_exceeds_ceiling": [
+      6
+     ],
+     "measured_over_available": 0.9772
+    },
+    "keeper": {
+     "mean_avail": 0.0154,
+     "available_gwh": 7.24,
+     "months_meter_exceeds_ceiling": [
+      6
+     ],
+     "measured_over_available": 0.9772
+    },
+    "clipped": {
+     "mean_avail": 0.0154,
+     "available_gwh": 7.24,
+     "months_meter_exceeds_ceiling": [
+      6
+     ],
+     "measured_over_available": 0.9772
+    }
+   },
+   "10621": {
+    "pmax_mw": 102.7,
+    "pre196": {
+     "mean_avail": 0.073,
+     "available_gwh": 65.71,
+     "months_meter_exceeds_ceiling": [
+      1,
+      6
+     ],
+     "measured_over_available": 0.912
+    },
+    "keeper": {
+     "mean_avail": 0.073,
+     "available_gwh": 65.71,
+     "months_meter_exceeds_ceiling": [
+      1,
+      6
+     ],
+     "measured_over_available": 0.912
+    },
+    "clipped": {
+     "mean_avail": 0.073,
+     "available_gwh": 65.71,
+     "months_meter_exceeds_ceiling": [
+      1,
+      6
+     ],
+     "measured_over_available": 0.912
+    }
+   },
+   "50292": {
+    "pmax_mw": 179.6,
+    "pre196": {
+     "mean_avail": 0.5925,
+     "available_gwh": 932.17,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6971
+    },
+    "keeper": {
+     "mean_avail": 0.6752,
+     "available_gwh": 1062.21,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6117
+    },
+    "clipped": {
+     "mean_avail": 0.6774,
+     "available_gwh": 1065.72,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6097
+    }
+   },
+   "54034": {
+    "pmax_mw": 78.0,
+    "pre196": {
+     "mean_avail": 0.1647,
+     "available_gwh": 112.56,
+     "months_meter_exceeds_ceiling": [
+      1,
+      9,
+      10
+     ],
+     "measured_over_available": 0.6262
+    },
+    "keeper": {
+     "mean_avail": 0.1647,
+     "available_gwh": 112.56,
+     "months_meter_exceeds_ceiling": [
+      1,
+      9,
+      10
+     ],
+     "measured_over_available": 0.6262
+    },
+    "clipped": {
+     "mean_avail": 0.1647,
+     "available_gwh": 112.56,
+     "months_meter_exceeds_ceiling": [
+      1,
+      9,
+      10
+     ],
+     "measured_over_available": 0.6262
+    }
+   },
+   "54574": {
+    "pmax_mw": 251.5,
+    "pre196": {
+     "mean_avail": 0.2707,
+     "available_gwh": 596.29,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6687
+    },
+    "keeper": {
+     "mean_avail": 0.3369,
+     "available_gwh": 742.27,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5372
+    },
+    "clipped": {
+     "mean_avail": 0.3382,
+     "available_gwh": 745.0,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.5352
+    }
+   },
+   "54808": {
+    "pmax_mw": 11.0,
+    "pre196": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    },
+    "keeper": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    },
+    "clipped": {
+     "mean_avail": 0.0,
+     "available_gwh": 0.0
+    }
+   },
+   "55375": {
+    "pmax_mw": 610.4,
+    "pre196": {
+     "mean_avail": 0.8093,
+     "available_gwh": 4327.29,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.9281
+    },
+    "keeper": {
+     "mean_avail": 0.8141,
+     "available_gwh": 4353.33,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.9226
+    },
+    "clipped": {
+     "mean_avail": 0.8141,
+     "available_gwh": 4353.33,
+     "months_meter_exceeds_ceiling": [
+      7,
+      9
+     ],
+     "measured_over_available": 0.9226
+    }
+   },
+   "55405": {
+    "pmax_mw": 1064.7,
+    "pre196": {
+     "mean_avail": 0.3461,
+     "available_gwh": 3228.28,
+     "months_meter_exceeds_ceiling": [
+      1,
+      3,
+      6,
+      7,
+      8,
+      10,
+      11
+     ],
+     "measured_over_available": 1.0278
+    },
+    "keeper": {
+     "mean_avail": 0.3893,
+     "available_gwh": 3631.2,
+     "months_meter_exceeds_ceiling": [
+      1,
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9138
+    },
+    "clipped": {
+     "mean_avail": 0.3911,
+     "available_gwh": 3647.57,
+     "months_meter_exceeds_ceiling": [
+      1,
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9097
+    }
+   },
+   "56188": {
+    "pmax_mw": 82.0,
+    "pre196": {
+     "mean_avail": 0.3938,
+     "available_gwh": 282.86,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.3466
+    },
+    "keeper": {
+     "mean_avail": 0.3938,
+     "available_gwh": 282.86,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.3466
+    },
+    "clipped": {
+     "mean_avail": 0.3938,
+     "available_gwh": 282.86,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.3466
+    }
+   },
+   "56196": {
+    "pmax_mw": 560.0,
+    "pre196": {
+     "mean_avail": 0.7374,
+     "available_gwh": 3617.33,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.854
+    },
+    "keeper": {
+     "mean_avail": 0.7377,
+     "available_gwh": 3618.73,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.8536
+    },
+    "clipped": {
+     "mean_avail": 0.7377,
+     "available_gwh": 3618.73,
+     "months_meter_exceeds_ceiling": [
+      9
+     ],
+     "measured_over_available": 0.8536
+    }
+   },
+   "56234": {
+    "pmax_mw": 361.7,
+    "pre196": {
+     "mean_avail": 0.8685,
+     "available_gwh": 2751.78,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9002
+    },
+    "keeper": {
+     "mean_avail": 0.8685,
+     "available_gwh": 2751.78,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9002
+    },
+    "clipped": {
+     "mean_avail": 0.8685,
+     "available_gwh": 2751.78,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.9002
+    }
+   },
+   "56940": {
+    "pmax_mw": 696.1,
+    "pre196": {
+     "mean_avail": 0.769,
+     "available_gwh": 4689.36,
+     "months_meter_exceeds_ceiling": [
+      2,
+      6,
+      7,
+      8,
+      9,
+      12
+     ],
+     "measured_over_available": 1.0028
+    },
+    "keeper": {
+     "mean_avail": 0.7709,
+     "available_gwh": 4700.93,
+     "months_meter_exceeds_ceiling": [
+      2,
+      6,
+      7,
+      8,
+      9,
+      12
+     ],
+     "measured_over_available": 1.0003
+    },
+    "clipped": {
+     "mean_avail": 0.7709,
+     "available_gwh": 4700.93,
+     "months_meter_exceeds_ceiling": [
+      2,
+      6,
+      7,
+      8,
+      9,
+      12
+     ],
+     "measured_over_available": 1.0003
+    }
+   },
+   "57185": {
+    "pmax_mw": 1086.9,
+    "pre196": {
+     "mean_avail": 0.7175,
+     "available_gwh": 6831.44,
+     "months_meter_exceeds_ceiling": [
+      8
+     ],
+     "measured_over_available": 0.7117
+    },
+    "keeper": {
+     "mean_avail": 0.5526,
+     "available_gwh": 5261.02,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9241
+    },
+    "clipped": {
+     "mean_avail": 0.5534,
+     "available_gwh": 5269.41,
+     "months_meter_exceeds_ceiling": [
+      6,
+      7,
+      8
+     ],
+     "measured_over_available": 0.9226
+    }
+   },
+   "57664": {
+    "pmax_mw": 650.0,
+    "pre196": {
+     "mean_avail": 0.6037,
+     "available_gwh": 3437.48,
+     "months_meter_exceeds_ceiling": [
+      9,
+      11
+     ],
+     "measured_over_available": 0.6725
+    },
+    "keeper": {
+     "mean_avail": 0.637,
+     "available_gwh": 3627.32,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.6373
+    },
+    "clipped": {
+     "mean_avail": 0.6423,
+     "available_gwh": 3657.43,
+     "months_meter_exceeds_ceiling": [],
+     "measured_over_available": 0.632
+    }
+   }
+  }
+ }
+}

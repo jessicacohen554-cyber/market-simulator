@@ -1,0 +1,451 @@
+{
+ "session": "nyiso-196",
+ "year": 2025,
+ "keeper": "2026-09-05-nyiso-192-astoria-panel",
+ "flag": "unit_outage_extract_basis_share",
+ "flag_state": {
+  "keeper": false,
+  "arm": true
+ },
+ "F1_footprint": {
+  "units_availability_moved": 129,
+  "plants_moved": [
+   2500,
+   2539,
+   10725,
+   50006,
+   50292,
+   50450,
+   50451,
+   54114,
+   54547,
+   54574,
+   55375,
+   55405,
+   56196,
+   56259,
+   56940,
+   57185,
+   57664
+  ],
+  "groups_moved": [
+   "CC_CHP",
+   "CC_REGULAR"
+  ],
+  "non_cc_units_moved": 0,
+  "pmax_max_abs_delta": 0.0,
+  "hr_max_abs_delta": 0.0,
+  "markup_hr_max_abs_delta": 0.0,
+  "mc_base_max_abs_delta": 0.0,
+  "fuel_price_max_abs_delta": 0.0,
+  "PASS": true
+ },
+ "F2_identity": {
+  "plants": [
+   {
+    "plant": 2500,
+    "group": "CC_REGULAR",
+    "tranches": 7,
+    "mean_avail_keeper": 0.8367,
+    "mean_avail_arm": 0.8457,
+    "loader_off_mean": 0.9233,
+    "loader_on_mean": 0.9327,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 2539,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.8565,
+    "mean_avail_arm": 0.861,
+    "loader_off_mean": 0.9176,
+    "loader_on_mean": 0.9223,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 10725,
+    "group": "CC_CHP",
+    "tranches": 7,
+    "mean_avail_keeper": 0.3844,
+    "mean_avail_arm": 0.1822,
+    "loader_off_mean": 0.4445,
+    "loader_on_mean": 0.2284,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 50006,
+    "group": "CC_CHP",
+    "tranches": 8,
+    "mean_avail_keeper": 0.8076,
+    "mean_avail_arm": 0.8455,
+    "loader_off_mean": 0.8507,
+    "loader_on_mean": 0.8898,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 50292,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.5925,
+    "mean_avail_arm": 0.6752,
+    "loader_off_mean": 0.6954,
+    "loader_on_mean": 0.7852,
+    "max_ratio_err": 4e-06
+   },
+   {
+    "plant": 50450,
+    "group": "CC_CHP",
+    "tranches": 7,
+    "mean_avail_keeper": 0.4997,
+    "mean_avail_arm": 0.4224,
+    "loader_off_mean": 0.5363,
+    "loader_on_mean": 0.4548,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 50451,
+    "group": "CC_CHP",
+    "tranches": 7,
+    "mean_avail_keeper": 0.3095,
+    "mean_avail_arm": 0.2521,
+    "loader_off_mean": 0.3608,
+    "loader_on_mean": 0.2986,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 54114,
+    "group": "CC_CHP",
+    "tranches": 7,
+    "mean_avail_keeper": 0.8711,
+    "mean_avail_arm": 0.8695,
+    "loader_off_mean": 0.8962,
+    "loader_on_mean": 0.8945,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 54547,
+    "group": "CC_CHP",
+    "tranches": 8,
+    "mean_avail_keeper": 0.7987,
+    "mean_avail_arm": 0.8091,
+    "loader_off_mean": 0.8648,
+    "loader_on_mean": 0.876,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 54574,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.2707,
+    "mean_avail_arm": 0.3369,
+    "loader_off_mean": 0.3005,
+    "loader_on_mean": 0.3733,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 55375,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.8093,
+    "mean_avail_arm": 0.8141,
+    "loader_off_mean": 0.8579,
+    "loader_on_mean": 0.863,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 55405,
+    "group": "CC_REGULAR",
+    "tranches": 7,
+    "mean_avail_keeper": 0.3461,
+    "mean_avail_arm": 0.3893,
+    "loader_off_mean": 0.402,
+    "loader_on_mean": 0.4495,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 56196,
+    "group": "CC_REGULAR",
+    "tranches": 7,
+    "mean_avail_keeper": 0.7374,
+    "mean_avail_arm": 0.7377,
+    "loader_off_mean": 0.7983,
+    "loader_on_mean": 0.7986,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 56259,
+    "group": "CC_CHP",
+    "tranches": 8,
+    "mean_avail_keeper": 0.7933,
+    "mean_avail_arm": 0.7955,
+    "loader_off_mean": 0.8539,
+    "loader_on_mean": 0.8561,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 56940,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.769,
+    "mean_avail_arm": 0.7709,
+    "loader_off_mean": 0.8474,
+    "loader_on_mean": 0.8493,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 57185,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.7175,
+    "mean_avail_arm": 0.5526,
+    "loader_off_mean": 0.8098,
+    "loader_on_mean": 0.6301,
+    "max_ratio_err": 0.0
+   },
+   {
+    "plant": 57664,
+    "group": "CC_REGULAR",
+    "tranches": 8,
+    "mean_avail_keeper": 0.6037,
+    "mean_avail_arm": 0.637,
+    "loader_off_mean": 0.6607,
+    "loader_on_mean": 0.6986,
+    "max_ratio_err": 0.0
+   }
+  ],
+  "max_ratio_err": 3.5646189786575633e-06,
+  "PASS": true
+ },
+ "A1_cv_bucket_a": {
+  "zone": "Capital_Hudson",
+  "bucket_a_hours": 787,
+  "bucket_a_gwh": 315.5,
+  "share_hours_lmp_ge_committed_offer": 0.982,
+  "committed_offer_mean_$MWh": 45.1,
+  "zone_lmp_mean_in_a_$MWh": 66.28,
+  "share_a_hours_in_over_availed_windows": 1.0,
+  "share_a_hours_in_extract_dark_windows": 0.872,
+  "a_gwh_in_over_availed_windows": 315.5,
+  "a_gwh_in_extract_dark_windows": 267.2,
+  "bridge_binding_h_d4_2024": 40
+ },
+ "G1_delivered_gas_cc_regular_by_zone": {
+  "Capital_Hudson": {
+   "model_monthly_$MMBtu": [
+    11.597,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.294,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    9.021
+   ],
+   "measured_ref_monthly": [
+    14.095,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.293,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    9.174
+   ],
+   "ref_series": "Iroquois Z2 (committed monthly construction)",
+   "model_over_ref_monthly": [
+    0.823,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.983
+   ],
+   "model_annual": 5.337,
+   "ref_annual": 5.558,
+   "som_annual_zone_hub": 6.02
+  },
+  "Long_Island": {
+   "model_monthly_$MMBtu": [
+    9.877,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.294,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    8.916
+   ],
+   "measured_ref_monthly": [
+    14.095,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.293,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    9.174
+   ],
+   "ref_series": "Iroquois Z2 (committed monthly construction)",
+   "model_over_ref_monthly": [
+    0.701,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.972
+   ],
+   "model_annual": 5.185,
+   "ref_annual": 5.558,
+   "som_annual_zone_hub": 6.02
+  },
+  "NYC": {
+   "model_monthly_$MMBtu": [
+    7.347,
+    6.016,
+    3.428,
+    2.855,
+    2.394,
+    2.332,
+    2.914,
+    2.241,
+    1.86,
+    2.345,
+    3.239,
+    7.572
+   ],
+   "measured_ref_monthly": [
+    12.715,
+    6.016,
+    3.428,
+    2.855,
+    2.394,
+    2.333,
+    2.913,
+    2.241,
+    1.859,
+    2.345,
+    3.239,
+    7.794
+   ],
+   "ref_series": "Transco Z6 NY",
+   "model_over_ref_monthly": [
+    0.578,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.971
+   ],
+   "model_annual": 3.712,
+   "ref_annual": 4.178,
+   "som_annual_zone_hub": 4.64
+  },
+  "Upstate_West": {
+   "model_monthly_$MMBtu": [
+    9.671,
+    4.316,
+    1.728,
+    1.158,
+    0.769,
+    0.77,
+    1.213,
+    0.752,
+    0.244,
+    0.803,
+    1.539,
+    6.064
+   ],
+   "measured_ref_monthly": [
+    14.095,
+    7.396,
+    4.808,
+    4.235,
+    3.774,
+    3.712,
+    4.293,
+    3.621,
+    3.24,
+    3.725,
+    4.619,
+    9.174
+   ],
+   "ref_series": "Iroquois Z2 (committed monthly construction)",
+   "model_over_ref_monthly": [
+    0.686,
+    0.584,
+    0.359,
+    0.274,
+    0.204,
+    0.207,
+    0.283,
+    0.208,
+    0.075,
+    0.216,
+    0.333,
+    0.661
+   ],
+   "model_annual": 2.419,
+   "ref_annual": 5.558,
+   "som_annual_zone_hub": 2.94
+  }
+ },
+ "I1_import_capability": {
+  "import_pseudo_units": 13,
+  "unit_ids": [
+   "NYISO_DR_Capital_Hudson",
+   "NYISO_DR_Long_Island",
+   "NYISO_DR_Lower_Hudson",
+   "NYISO_DR_NYC",
+   "NYISO_DR_Upstate_West",
+   "NYISO_external_HQ_hydro",
+   "NYISO_external_IESO_Ontario",
+   "NYISO_external_ISONE_tie",
+   "NYISO_external_PJM_shoulder",
+   "NYISO_external_PJM_west",
+   "NYISO_external_eastern_mid",
+   "NYISO_external_export_surplus",
+   "NYISO_external_import_scarcity"
+  ],
+  "capability_twh": 64.25,
+  "measured_sched_import_twh": 19.245,
+  "hours_measured_exceeds_capability": 0,
+  "mwh_measured_above_capability_gwh": 0.0,
+  "capability_p50_mw": 7563.0,
+  "measured_p50_mw": 2128.0,
+  "measured_p99_mw": 4549.0
+ }
+}
