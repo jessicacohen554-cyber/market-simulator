@@ -1,0 +1,210 @@
+{
+ "session": "nyiso-211",
+ "status": "POST-HOC phase 0 \u2014 arms nothing, moves no default, decides no declared verdict",
+ "keeper": "2026-09-06-nyiso-202-startup-aware",
+ "flag": "unit_outage_per_unit_clip",
+ "instrument": "two on-recipe fleet_only rebuilds; diff of FleetArrays.availability (all four loader channels at once)",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "by_year": {
+  "2023": {
+   "units_availability_moved": 71,
+   "units_total": 812,
+   "groups_moved": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "ST_GAS"
+   ],
+   "max_abs_availability_delta": 0.464386,
+   "class_available_energy_delta_gwh": {
+    "CC_CHP": 4.01,
+    "CC_REGULAR": 11.92,
+    "ST_GAS": 62.92
+   },
+   "total_available_energy_delta_gwh": 78.84,
+   "per_plant_gwh": [
+    {
+     "plant": 2625,
+     "group": "ST_GAS",
+     "gwh": 35.52,
+     "units_moved": 8
+    },
+    {
+     "plant": 8906,
+     "group": "ST_GAS",
+     "gwh": 12.71,
+     "units_moved": 8
+    },
+    {
+     "plant": 2480,
+     "group": "ST_GAS",
+     "gwh": 10.92,
+     "units_moved": 8
+    },
+    {
+     "plant": 57185,
+     "group": "CC_REGULAR",
+     "gwh": 8.39,
+     "units_moved": 8
+    },
+    {
+     "plant": 10725,
+     "group": "CC_CHP",
+     "gwh": 4.0,
+     "units_moved": 7
+    },
+    {
+     "plant": 2511,
+     "group": "ST_GAS",
+     "gwh": 3.76,
+     "units_moved": 8
+    },
+    {
+     "plant": 54574,
+     "group": "CC_REGULAR",
+     "gwh": 2.8,
+     "units_moved": 8
+    },
+    {
+     "plant": 50292,
+     "group": "CC_REGULAR",
+     "gwh": 0.73,
+     "units_moved": 8
+    },
+    {
+     "plant": 54547,
+     "group": "CC_CHP",
+     "gwh": 0.01,
+     "units_moved": 8
+    }
+   ]
+  },
+  "2024": {
+   "units_availability_moved": 64,
+   "units_total": 809,
+   "groups_moved": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "ST_GAS"
+   ],
+   "max_abs_availability_delta": 0.486,
+   "class_available_energy_delta_gwh": {
+    "CC_CHP": 7.61,
+    "CC_REGULAR": 25.09,
+    "ST_GAS": 36.05
+   },
+   "total_available_energy_delta_gwh": 68.75,
+   "per_plant_gwh": [
+    {
+     "plant": 2500,
+     "group": "ST_GAS",
+     "gwh": 11.85,
+     "units_moved": 8
+    },
+    {
+     "plant": 54574,
+     "group": "CC_REGULAR",
+     "gwh": 11.16,
+     "units_moved": 8
+    },
+    {
+     "plant": 8906,
+     "group": "ST_GAS",
+     "gwh": 9.29,
+     "units_moved": 8
+    },
+    {
+     "plant": 2480,
+     "group": "ST_GAS",
+     "gwh": 8.98,
+     "units_moved": 8
+    },
+    {
+     "plant": 57185,
+     "group": "CC_REGULAR",
+     "gwh": 8.39,
+     "units_moved": 8
+    },
+    {
+     "plant": 56259,
+     "group": "CC_CHP",
+     "gwh": 7.61,
+     "units_moved": 8
+    },
+    {
+     "plant": 2490,
+     "group": "ST_GAS",
+     "gwh": 5.94,
+     "units_moved": 8
+    },
+    {
+     "plant": 50292,
+     "group": "CC_REGULAR",
+     "gwh": 5.54,
+     "units_moved": 8
+    }
+   ]
+  },
+  "2025": {
+   "units_availability_moved": 55,
+   "units_total": 809,
+   "groups_moved": [
+    "CC_REGULAR",
+    "ST_GAS"
+   ],
+   "max_abs_availability_delta": 0.4825,
+   "class_available_energy_delta_gwh": {
+    "CC_REGULAR": 56.97,
+    "ST_GAS": 24.62
+   },
+   "total_available_energy_delta_gwh": 81.59,
+   "per_plant_gwh": [
+    {
+     "plant": 57664,
+     "group": "CC_REGULAR",
+     "gwh": 27.56,
+     "units_moved": 8
+    },
+    {
+     "plant": 2625,
+     "group": "ST_GAS",
+     "gwh": 21.02,
+     "units_moved": 8
+    },
+    {
+     "plant": 55405,
+     "group": "CC_REGULAR",
+     "gwh": 14.79,
+     "units_moved": 7
+    },
+    {
+     "plant": 57185,
+     "group": "CC_REGULAR",
+     "gwh": 8.39,
+     "units_moved": 8
+    },
+    {
+     "plant": 2480,
+     "group": "ST_GAS",
+     "gwh": 3.6,
+     "units_moved": 8
+    },
+    {
+     "plant": 50292,
+     "group": "CC_REGULAR",
+     "gwh": 3.51,
+     "units_moved": 8
+    },
+    {
+     "plant": 54574,
+     "group": "CC_REGULAR",
+     "gwh": 2.73,
+     "units_moved": 8
+    }
+   ]
+  }
+ }
+}
