@@ -16,6 +16,24 @@ validation touchpoint needs (rule 22; charter
 rule-14 alignment exact: same reports, nodes, components and downstream chain as
 2023-2025.
 
+**GroupZip HAS ITS OWN RETENTION BOUNDARY — it is LONGER than the per-node
+one, not absent (MEASURED 2026-09-07, caiso-263).** The clause above ("does NOT
+share that limit") is true only in the sense that the two boundaries differ; it
+was read as "no limit", and the ``data/raw/lmp-data/CAISO/README.md`` correction
+it seeded went further ("the 2022 (and, if wanted, 2019-2021) history is
+fetchable"). **2019-2021 is NOT all fetchable.** Binary-searched on 2026-09-07
+through the session proxy, ``DAM_LMP_GRP`` v12: **2021-04-26 returns a 3,018-byte
+"No data returned" envelope and 2021-04-27 returns a 9.85 MB archive**, so
+**2021-04-27 is the earliest trade date served**. The bound is a property of the
+report, not the version or the market: v1 and v3 age out on the same dates, and
+``RTM_LMP_GRP`` v3 tracks it (no data at 2020-04-01, 6.94 MB at 2021-04-27).
+Like the per-node boundary this one MOVES with the calendar — **re-measure it,
+never hardcode it** — and a Q2-2020 (or any pre-2021-04-27) LMP intake is
+therefore NOT a fetch task on either endpoint. What still reaches 2020 is the
+non-LMP OASIS reports, which carry no such window: ``AS_REQ``, ``AS_RESULTS``,
+``PRC_AS`` and ``SLD_FCST`` all returned full data for 2020-04-01..04 on
+2026-09-07 (``scripts/data/fetch_caiso_oasis.py``).
+
 WHAT IT DOES. For each trade date in ``[--start, --end]``:
 
 1. ``GET GroupZip`` for the market's group, with the request instant expressed

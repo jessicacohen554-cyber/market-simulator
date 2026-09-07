@@ -42,3 +42,37 @@ regions containing it (`AS_CAISO + AS_CAISO_EXP` + its own sub-region's `AS_NP26
 small against the system row, impossible were rows totals. Purpose: the measured price leg of
 the CAISO storage AS-revenue identification (D-9 value-stack lane,
 `scripts/probes/caiso_storage_as_revenue_phase0.py`, joined to `data/raw/storage-as-awards/CAISO`).
+
+## Q2-2020 extension (caiso-263, 2026-09-07)
+
+Fetched 2026-09-07 by `scripts/data/fetch_caiso_oasis.py --datasets asresults asprc_ru
+asprc_rd asprc_sr asprc_nr --years 2020 --start-date 2020-04-01 --end-date 2020-07-01`
+plus a `--start-date 2020-03-31 --end-date 2020-04-01` head window (see the DST note
+below). Coverage **verified complete: 2,184 of 2,184 (day, hour) pairs** — 91 days ×
+24 h — for `asresults` and all four `asprc_*` products. `asreq` already carried a
+contiguous 2019-12-27 → 2021-01-05 chain, so its Q2-2020 re-fetch was a pure duplicate
+(0 new days, rows identical modulo the response-sequence `GROUP` column) and was
+deleted rather than committed.
+
+**The "train years only" scope stated for the 2023–2025 intakes above is SUPERSEDED**
+by the 2026-08-06 owner clarification carried in rule 22 `[R-HOLDOUT]`: *what is held
+out is the SCORE, never the DATA* — measured inputs are collected once and applied
+consistently across every year, and data intake needs no marker or authorization. Only
+solving, scoring or registering an out-of-training year is the spend. Nothing here was
+solved, folded, derived or scored.
+
+**DST head-window note (applies to EVERY window fetch in this corpus).**
+`fetch_caiso_oasis.UTC_OFFSET_HOURS = 8` is PST, so in a PDT month a window's first
+request instant lands at 01:00 local, not midnight: the first trade date of a fetched
+range loses `OPR_HR 1` and the range spills one hour into the day after its end. Inside
+a contiguous chain this is invisible (each window's missing head hour is the previous
+window's tail), but it bites at the START of any range — 2020-04-01 came back with
+HE2–HE24 only. Fixed here by fetching the preceding day's window; check `OPR_HR 1` of
+the first day whenever a new range is opened.
+
+**Why there are no 2020 LMPs beside these.** MEASURED 2026-09-07: the OASIS `GroupZip`
+bulk endpoint has its own retention boundary at **2021-04-27** (`DAM_LMP_GRP` v12;
+2021-04-26 → "No data returned"), and the per-node `SingleZip` `PRC_LMP` boundary is far
+later still, so 2020 hub / DLAP prices are unobtainable from OASIS by any endpoint. The
+AS reports and `SLD_FCST` carry no such window. Details:
+`data/raw/lmp-data/CAISO/README.md`.
