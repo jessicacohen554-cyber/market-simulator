@@ -1,0 +1,6 @@
+registered_seam,tieflow_columns,eia930_diba,overlap_hours,correlation,mean_tieflow_mw,mean_eia930_mw,mean_diff_mw,signs_agree
+MISO,AMRN+MEC+ALTW+DPC+GRE+MDU+NSP+OTP+EES+CLEC,MISO,673,0.9953,234.1,242.9,-8.8,True
+AECI,AECI,AECI,673,0.9988,149.9,139.7,10.3,True
+ERCOT,ERCOTE+ERCOTN,ERCO,673,1.0,102.7,102.9,-0.1,True
+,SPA,SPA,673,0.9997,-357.5,-357.6,0.2,True
+,SPC,SPC,673,0.9936,-80.0,-81.0,1.0,True
