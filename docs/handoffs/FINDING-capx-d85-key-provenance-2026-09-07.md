@@ -1,5 +1,15 @@
 # FINDING — capx D85: key-provenance audit of the 15 non-reproducible committed `cache_key`s
 
+> **ANNOTATION (capx D85-R, 2026-09-07) — the instrument MOVED; every measurement below stands.**
+> §5's recommended repairs (ii) and (v) are landed. `docs/handoffs/d85/key_provenance_census.py` was
+> promoted verbatim to `scripts/lib/key_provenance.py` (library) + `scripts/check_key_provenance.py`
+> (CLI gate), the derivation of the 15 is committed as the checked record
+> `docs/governance/key-provenance-exceptions.json`, and the census now reports BOTH key
+> constructions. **§7's second command is therefore dead — use `scripts/check_key_provenance.py`.**
+> Nothing else here is amended: no key, bundle, registration, flip or surface declaration was
+> changed, and this lane's own measurement record `docs/handoffs/d85/key-provenance-census.json`
+> is untouched evidence. See `docs/handoffs/FINDING-capx-d85r-record-repairs-2026-09-07.md`.
+
 **Session:** capx D85 (owner ruling **Q59**, capx ledger §0bb.3(a), r#57). **Model:** Fable.
 **Branch:** `claude/capx-d85-key-provenance-etmyjh`, fresh off `origin/main` at `db0c1d85`
 (2026-09-07). **DATA PROFILE:** code. **An AUDIT: nothing committed was rewritten, re-registered,
@@ -298,6 +308,9 @@ for s in 54ca19ae0782871bd4adbcb482bc531a66618402 9e56f0fecd861b79bae12a2049a049
          360b83eebfecd0e6f671228ee24d1a16548ec72c f0f7c67d937c11e487255784e8298faf3c98c0c1; do
   git fetch --depth=1 origin $s; done
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py --variant b   # 214 / 169 / 30 / 15
-.venv/bin/python docs/handoffs/d85/key_provenance_census.py \
-    --out docs/handoffs/d85/key-provenance-census.json                              # exit 0, 0 unclassified
+# SUPERSEDED by capx D85-R — the instrument now lives in scripts/ and gates against
+# the committed exception record. The line below is kept as the historical command.
+#   .venv/bin/python docs/handoffs/d85/key_provenance_census.py \
+#       --out docs/handoffs/d85/key-provenance-census.json                          # exit 0, 0 unclassified
+.venv/bin/python scripts/check_key_provenance.py                                    # exit 0, 0 UNKNOWN
 ```
