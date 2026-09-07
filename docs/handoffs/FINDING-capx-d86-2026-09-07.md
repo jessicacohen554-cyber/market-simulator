@@ -128,13 +128,42 @@ with a mutated `git_sha`/epoch, or assert the sidecar's mtime/bytes change on a 
 | `ruff check` / `ruff format --check` | clean / already formatted |
 | diff | 1 file, +47 −2 |
 
+### The A/B that proves the change is strictly additive
+
+`tests/unit tests/scoring tests/regression`, identical command, run twice — once with this file at
+`origin/main`, once with the repair. Nothing else differed.
+
+| Run | Result |
+|---|---|
+| baseline (`origin/main`'s copy of the file) | **57 failed**, 7002 passed, 51 skipped, 1 xfailed |
+| repaired (this branch) | **55 failed**, 7005 passed, 51 skipped, 1 xfailed |
+
+Set difference on the FAILED ids:
+
+- **Fixed (2):** `test_a_bundle_solved_on_S1_is_not_addressed_on_S2`,
+  `test_sidecar_is_written_beside_the_config` — exactly defects A and C.
+- **Newly broken: 0.**
+- **Unchanged: 55.**
+
+The +3 passes are the 2 repaired tests plus the step-4 marker guard.
+
 ### Still red, and NOT mine (fixed none)
 
-Red on `main` before this branch existed; named here so the next reader does not attribute them to
-D86:
+**55 tests are red on `main` and stay red — none is D86's**, and none is in this file. The charter
+named four of them; the full set is larger, so it is inventoried here rather than left implied. Data
+is fully hydrated (6.1 G under `data/raw`), so these are not hydration artifacts.
 
-1. `tests/scoring/test_forecast_parity.py` (2) — miso-233 arms three `miso_seam_neighbour_*` fields
-   with no `forecast_parity_registry` declaration. MISO's lane.
-2. `tests/unit/data/test_caiso_st_gas_peak_measured.py` — CAISO, registry 1.166 vs artifact 1.154.
-3. `tests/unit/model/test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none` — SPP now has
-   an RPS floor, so `get_rps_target("SPP", 2030)` is `0.0`, not `None`.
+| File | Count | Note |
+|---|---|---|
+| `tests/unit/model/test_d62_published_going_forward_bar.py` | 15 | capx D62's lane |
+| `tests/unit/model/test_d74_no_default_cap_convention.py` | 12 | capx D74's lane |
+| `tests/scoring/test_golden_manifest_provenance.py` | 7 | |
+| `tests/regression/test_soundness.py` | 6 | `TestEndToEnd` |
+| `tests/unit/results/test_export.py` | 4 | |
+| `tests/scoring/test_ff_readiness_battery.py` | 4 | |
+| `tests/scoring/test_forecast_parity.py` | 2 | charter-named: miso-233 arms three `miso_seam_neighbour_*` fields with no `forecast_parity_registry` declaration — MISO's lane |
+| `tests/unit/data/test_caiso_st_gas_peak_measured.py` | 1 | charter-named: registry 1.166 vs artifact 1.154 — CAISO's lane |
+| `tests/unit/model/test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none` | 1 | charter-named: SPP now has an RPS floor, so `get_rps_target("SPP", 2030)` is `0.0`, not `None` |
+| `tests/scoring/test_registration_marker_gate.py` | 1 | |
+| `tests/scoring/test_gate_a_provenance.py` | 1 | |
+| `tests/scoring/test_backcast_artifacts.py` | 1 | |
