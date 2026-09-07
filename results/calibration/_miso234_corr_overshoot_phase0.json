@@ -1,0 +1,104 @@
+{
+ "probe": "miso-234 phase 0 part D \u2014 corr(imports, measured price) attributed per seam",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "identity": "corr(sum_s x_s, P) = sum_s cov(x_s,P)/(sigma_total*sigma_P)",
+ "years": {
+  "2023": {
+   "harness_corr_recon_vs_committed": 0.922,
+   "corr_committed_vs_measured_price": -0.1095,
+   "corr_recon_vs_measured_price": -0.2069,
+   "corr_measured_total_vs_measured_price": -0.0549,
+   "model_contributions": {
+    "PJM": -0.3291,
+    "SPP": 0.0186,
+    "South": 0.1036
+   },
+   "model_contribution_sum": -0.2069,
+   "measured_contributions": {
+    "PJM": -0.0778,
+    "SPP": -0.0291,
+    "South": -0.0048,
+    "Manitoba": 0.0568
+   },
+   "measured_contribution_sum": -0.0549,
+   "model_seam_sigma_mw": {
+    "PJM": 1528.6,
+    "SPP": 279.5,
+    "South": 414.2
+   },
+   "measured_seam_sigma_mw": {
+    "PJM": 1615.4,
+    "SPP": 577.3,
+    "South": 856.2,
+    "Manitoba": 819.1
+   },
+   "model_total_sigma_mw": 1377.8,
+   "measured_total_sigma_mw": 2105.1
+  },
+  "2024": {
+   "harness_corr_recon_vs_committed": 0.943,
+   "corr_committed_vs_measured_price": -0.1145,
+   "corr_recon_vs_measured_price": -0.1664,
+   "corr_measured_total_vs_measured_price": -0.0367,
+   "model_contributions": {
+    "PJM": -0.2922,
+    "SPP": 0.0132,
+    "South": 0.1126
+   },
+   "model_contribution_sum": -0.1664,
+   "measured_contributions": {
+    "PJM": -0.0573,
+    "SPP": -0.0372,
+    "South": 0.005,
+    "Manitoba": 0.0527
+   },
+   "measured_contribution_sum": -0.0368,
+   "model_seam_sigma_mw": {
+    "PJM": 1652.2,
+    "SPP": 276.6,
+    "South": 495.7
+   },
+   "measured_seam_sigma_mw": {
+    "PJM": 1563.9,
+    "SPP": 687.3,
+    "South": 872.6,
+    "Manitoba": 832.6
+   },
+   "model_total_sigma_mw": 1557.5,
+   "measured_total_sigma_mw": 2019.4
+  },
+  "2025": {
+   "harness_corr_recon_vs_committed": 0.967,
+   "corr_committed_vs_measured_price": -0.1128,
+   "corr_recon_vs_measured_price": -0.1793,
+   "corr_measured_total_vs_measured_price": -0.0203,
+   "model_contributions": {
+    "PJM": -0.2907,
+    "SPP": 0.0312,
+    "South": 0.0803
+   },
+   "model_contribution_sum": -0.1792,
+   "measured_contributions": {
+    "PJM": -0.0326,
+    "SPP": 0.0188,
+    "South": -0.0405,
+    "Manitoba": 0.034
+   },
+   "measured_contribution_sum": -0.0203,
+   "model_seam_sigma_mw": {
+    "PJM": 1633.9,
+    "SPP": 250.3,
+    "South": 385.9
+   },
+   "measured_seam_sigma_mw": {
+    "PJM": 1647.0,
+    "SPP": 615.4,
+    "South": 1008.6,
+    "Manitoba": 655.4
+   },
+   "model_total_sigma_mw": 1482.4,
+   "measured_total_sigma_mw": 2436.8
+  }
+ }
+}

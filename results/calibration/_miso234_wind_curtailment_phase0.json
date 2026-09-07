@@ -1,0 +1,58 @@
+{
+ "probe": "miso-234 phase 0 part C \u2014 MISO wind overproduction",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "reference_curtailment_rate": 0.048947,
+ "reference_rate_latest_year": 2024,
+ "implied_grossup_factor": 1.051466,
+ "years": {
+  "2023": {
+   "wind_actual_TWh": 91.715,
+   "wind_model_TWh": 96.4347,
+   "wind_residual_TWh": 4.7197,
+   "uncurtailed_potential_TWh": 96.4352,
+   "model_curtailment_TWh": 0.0005,
+   "model_curtailment_pct_of_potential": 0.001,
+   "reported_curtailment_pct": 4.895,
+   "residual_explained_by_grossup_pct": 100.01,
+   "solar_residual_TWh": -0.0003,
+   "model_max_minus_min_zonal_price_mean": 0.91,
+   "measured_max_minus_min_zonal_price_mean": 11.02,
+   "zonal_spread_compression_ratio": 0.083,
+   "model_hours_all_zones_within_1_usd_pct": 77.9,
+   "measured_hours_all_zones_within_1_usd_pct": 1.0
+  },
+  "2024": {
+   "wind_actual_TWh": 98.251,
+   "wind_model_TWh": 103.3076,
+   "wind_residual_TWh": 5.0566,
+   "uncurtailed_potential_TWh": 103.3076,
+   "model_curtailment_TWh": 0.0,
+   "model_curtailment_pct_of_potential": 0.0,
+   "reported_curtailment_pct": 4.895,
+   "residual_explained_by_grossup_pct": 100.0,
+   "solar_residual_TWh": -0.0003,
+   "model_max_minus_min_zonal_price_mean": 1.49,
+   "measured_max_minus_min_zonal_price_mean": 11.84,
+   "zonal_spread_compression_ratio": 0.126,
+   "model_hours_all_zones_within_1_usd_pct": 78.7,
+   "measured_hours_all_zones_within_1_usd_pct": 0.6
+  },
+  "2025": {
+   "wind_actual_TWh": 98.938,
+   "wind_model_TWh": 104.0335,
+   "wind_residual_TWh": 5.0955,
+   "uncurtailed_potential_TWh": 104.03,
+   "model_curtailment_TWh": -0.0036,
+   "model_curtailment_pct_of_potential": -0.003,
+   "reported_curtailment_pct": 4.895,
+   "residual_explained_by_grossup_pct": 99.93,
+   "solar_residual_TWh": -0.0032,
+   "model_max_minus_min_zonal_price_mean": 2.86,
+   "measured_max_minus_min_zonal_price_mean": 17.4,
+   "zonal_spread_compression_ratio": 0.164,
+   "model_hours_all_zones_within_1_usd_pct": 62.8,
+   "measured_hours_all_zones_within_1_usd_pct": 0.1
+  }
+ }
+}

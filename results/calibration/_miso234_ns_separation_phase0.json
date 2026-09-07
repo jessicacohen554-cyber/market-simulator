@@ -1,0 +1,103 @@
+{
+ "probe": "miso-234 phase 0 part B \u2014 North-South separation, model vs measured",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "years": {
+  "2023": {
+   "separation": {
+    "measured_mean_sep": 4.89,
+    "measured_mean_abs_sep": 6.19,
+    "measured_std_sep": 8.18,
+    "measured_p90_abs_sep": 13.56,
+    "measured_corr_indiana_south": 0.771,
+    "model_mean_sep": 0.07,
+    "model_mean_abs_sep": 0.91,
+    "model_std_sep": 2.28,
+    "model_p90_abs_sep": 3.53,
+    "model_corr_indiana_south": 0.947,
+    "sep_compression_ratio_meanabs": 0.148
+   },
+   "counterfactual": {
+    "basis_for_deciles": "measured MISO Indiana-hub DA (the scored basis)",
+    "model_bus_export_mean_mw": 754.2,
+    "model_bus_export_slope_mw": 1025.7,
+    "cf_bus_export_mean_mw": 1164.4,
+    "cf_bus_export_slope_mw": 386.1,
+    "measured_export_mean_mw": 1071.0,
+    "measured_export_slope_mw": -125.4,
+    "model_bus_net_slope_mw": -1033.3,
+    "cf_bus_net_slope_mw": -405.7,
+    "measured_net_slope_mw": 125.4,
+    "cf_bus_mean": 29.52,
+    "cf_bus_std": 9.01,
+    "model_bus_mean": 34.28,
+    "model_bus_std": 5.39,
+    "slope_gap_closed_pct": 55.6
+   }
+  },
+  "2024": {
+   "separation": {
+    "measured_mean_sep": 5.89,
+    "measured_mean_abs_sep": 6.95,
+    "measured_std_sep": 10.49,
+    "measured_p90_abs_sep": 14.2,
+    "measured_corr_indiana_south": 0.854,
+    "model_mean_sep": -0.99,
+    "model_mean_abs_sep": 1.49,
+    "model_std_sep": 7.59,
+    "model_p90_abs_sep": 4.02,
+    "model_corr_indiana_south": 0.891,
+    "sep_compression_ratio_meanabs": 0.215
+   },
+   "counterfactual": {
+    "basis_for_deciles": "measured MISO Indiana-hub DA (the scored basis)",
+    "model_bus_export_mean_mw": 1019.5,
+    "model_bus_export_slope_mw": 1274.7,
+    "cf_bus_export_mean_mw": 1502.4,
+    "cf_bus_export_slope_mw": 396.8,
+    "measured_export_mean_mw": 1349.9,
+    "measured_export_slope_mw": -10.2,
+    "model_bus_net_slope_mw": -1322.8,
+    "cf_bus_net_slope_mw": -432.7,
+    "measured_net_slope_mw": 10.2,
+    "cf_bus_mean": 26.27,
+    "cf_bus_std": 15.52,
+    "model_bus_mean": 33.15,
+    "model_bus_std": 15.85,
+    "slope_gap_closed_pct": 68.3
+   }
+  },
+  "2025": {
+   "separation": {
+    "measured_mean_sep": 7.94,
+    "measured_mean_abs_sep": 10.15,
+    "measured_std_sep": 16.73,
+    "measured_p90_abs_sep": 24.29,
+    "measured_corr_indiana_south": 0.771,
+    "model_mean_sep": -2.43,
+    "model_mean_abs_sep": 2.86,
+    "model_std_sep": 6.37,
+    "model_p90_abs_sep": 9.18,
+    "model_corr_indiana_south": 0.913,
+    "sep_compression_ratio_meanabs": 0.281
+   },
+   "counterfactual": {
+    "basis_for_deciles": "measured MISO Indiana-hub DA (the scored basis)",
+    "model_bus_export_mean_mw": 666.6,
+    "model_bus_export_slope_mw": 966.5,
+    "cf_bus_export_mean_mw": 1208.0,
+    "cf_bus_export_slope_mw": -45.8,
+    "measured_export_mean_mw": 1030.8,
+    "measured_export_slope_mw": -636.4,
+    "model_bus_net_slope_mw": -976.4,
+    "cf_bus_net_slope_mw": 47.3,
+    "measured_net_slope_mw": 636.4,
+    "cf_bus_mean": 33.36,
+    "cf_bus_std": 15.49,
+    "model_bus_mean": 43.73,
+    "model_bus_std": 15.28,
+    "slope_gap_closed_pct": 63.2
+   }
+  }
+ }
+}

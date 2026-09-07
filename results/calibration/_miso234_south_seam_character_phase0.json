@@ -1,0 +1,497 @@
+{
+ "probe": "miso-234 phase 0 part A \u2014 what kind of object is the South seam",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "sign_convention": "EXPORT-POSITIVE MW (MISO -> the southern DIBA pool)",
+ "years": {
+  "2023": {
+   "measured_pooled_export": {
+    "mean_mw": 1071.0,
+    "std_mw": 856.2,
+    "cv": 0.799,
+    "quantiles_mw": {
+     "p5": -259.0,
+     "p10": 33.8,
+     "p25": 484.0,
+     "p50": 1027.0,
+     "p75": 1630.0,
+     "p90": 2179.1,
+     "p95": 2531.0
+    },
+    "pct_hours_exporting": 90.6,
+    "always_exported_base_p10_mw": 33.8,
+    "base_share_of_mean": 0.032,
+    "lag1_autocorr": 0.954,
+    "lag24_autocorr": 0.564,
+    "mean_abs_hourly_change_mw": 202.9,
+    "hourly_change_as_pct_of_mean": 18.9,
+    "between_month_variance_share": 0.109
+   },
+   "measured_price_response": {
+    "hub_da": {
+     "pearson_r": 0.029,
+     "spearman_rho": -0.067,
+     "decile_slope_cheap_minus_dear_mw": -125.4,
+     "basis_mean": 32.98,
+     "basis_p10_p90": [
+      21.36,
+      46.21
+     ]
+    },
+    "south_da": {
+     "pearson_r": -0.107,
+     "spearman_rho": -0.193,
+     "decile_slope_cheap_minus_dear_mw": 323.3,
+     "basis_mean": 28.09,
+     "basis_p10_p90": [
+      18.16,
+      40.57
+     ]
+    },
+    "south_rt": {
+     "pearson_r": -0.095,
+     "spearman_rho": -0.178,
+     "decile_slope_cheap_minus_dear_mw": 296.0,
+     "basis_mean": 27.04,
+     "basis_p10_p90": [
+      16.97,
+      36.51
+     ]
+    },
+    "spread_hub_minus_south": {
+     "pearson_r": 0.181,
+     "spearman_rho": 0.212,
+     "decile_slope_cheap_minus_dear_mw": -589.0,
+     "basis_mean": 4.89,
+     "basis_p10_p90": [
+      -1.29,
+      13.03
+     ]
+    }
+   },
+   "measured_per_diba": {
+    "SOCO": {
+     "present": true,
+     "net_export_mean_mw": -598.1,
+     "gross_export_TWh": 0.058,
+     "gross_import_TWh": 5.298,
+     "pct_hours_exporting": 4.2,
+     "cv_of_net": 0.576,
+     "p10_mw": -1054.0,
+     "spearman_vs_hub_da": -0.177,
+     "spearman_vs_south_da": -0.35,
+     "spearman_vs_spread": 0.257,
+     "decile_slope_vs_hub_da_mw": 145.1,
+     "decile_slope_vs_south_da_mw": 403.8,
+     "share_of_gross_export_pct": NaN
+    },
+    "TVA": {
+     "present": true,
+     "net_export_mean_mw": 1539.4,
+     "gross_export_TWh": 13.522,
+     "gross_import_TWh": 0.037,
+     "pct_hours_exporting": 98.6,
+     "cv_of_net": 0.436,
+     "p10_mw": 737.0,
+     "spearman_vs_hub_da": -0.016,
+     "spearman_vs_south_da": -0.161,
+     "spearman_vs_spread": 0.26,
+     "decile_slope_vs_hub_da_mw": -95.1,
+     "decile_slope_vs_south_da_mw": 254.6,
+     "share_of_gross_export_pct": NaN
+    },
+    "AECI": {
+     "present": true,
+     "net_export_mean_mw": -116.3,
+     "gross_export_TWh": 1.073,
+     "gross_import_TWh": 2.091,
+     "pct_hours_exporting": 36.6,
+     "cv_of_net": 3.775,
+     "p10_mw": -672.0,
+     "spearman_vs_hub_da": 0.109,
+     "spearman_vs_south_da": 0.263,
+     "spearman_vs_spread": -0.271,
+     "decile_slope_vs_hub_da_mw": -306.4,
+     "decile_slope_vs_south_da_mw": -576.4,
+     "share_of_gross_export_pct": NaN
+    },
+    "LGEE": {
+     "present": true,
+     "net_export_mean_mw": 245.9,
+     "gross_export_TWh": 2.411,
+     "gross_import_TWh": 0.257,
+     "pct_hours_exporting": 80.9,
+     "cv_of_net": 1.172,
+     "p10_mw": -111.1,
+     "spearman_vs_hub_da": -0.167,
+     "spearman_vs_south_da": -0.202,
+     "spearman_vs_spread": 0.098,
+     "decile_slope_vs_hub_da_mw": 131.0,
+     "decile_slope_vs_south_da_mw": 241.3,
+     "share_of_gross_export_pct": NaN
+    },
+    "SIKE": {
+     "present": true,
+     "net_export_mean_mw": NaN,
+     "gross_export_TWh": NaN,
+     "gross_import_TWh": NaN,
+     "pct_hours_exporting": 0.0,
+     "cv_of_net": NaN,
+     "p10_mw": NaN,
+     "spearman_vs_hub_da": NaN,
+     "spearman_vs_south_da": NaN,
+     "spearman_vs_spread": NaN,
+     "decile_slope_vs_hub_da_mw": NaN,
+     "decile_slope_vs_south_da_mw": NaN,
+     "share_of_gross_export_pct": NaN
+    }
+   },
+   "model_south_bus": {
+    "external_south_bus_mean": 34.28,
+    "external_south_bus_p10_p90": [
+     27.66,
+     40.78
+    ],
+    "external_south_bus_std": 5.39,
+    "miso_south_zone_mean": 34.35,
+    "miso_south_zone_std": 6.5,
+    "measured_south_da_mean": 28.09,
+    "measured_south_da_std": 10.35,
+    "corr_bus_vs_measured_south_da": 0.712,
+    "corr_bus_vs_measured_hub_da": 0.711,
+    "export_bands_in_merit_mean": 2.03,
+    "export_bands_in_merit_decile_slope": 2.87,
+    "export_ladder_top_band_price": 17.34,
+    "export_ladder_base_band_price": 43.04,
+    "pct_hours_bus_below_top_band": 0.0,
+    "pct_hours_bus_below_base_band": 94.6
+   }
+  },
+  "2024": {
+   "measured_pooled_export": {
+    "mean_mw": 1349.9,
+    "std_mw": 872.6,
+    "cv": 0.646,
+    "quantiles_mw": {
+     "p5": -165.0,
+     "p10": 212.0,
+     "p25": 807.0,
+     "p50": 1385.0,
+     "p75": 1901.0,
+     "p90": 2412.0,
+     "p95": 2704.0
+    },
+    "pct_hours_exporting": 92.7,
+    "always_exported_base_p10_mw": 212.0,
+    "base_share_of_mean": 0.157,
+    "lag1_autocorr": 0.954,
+    "lag24_autocorr": 0.605,
+    "mean_abs_hourly_change_mw": 205.5,
+    "hourly_change_as_pct_of_mean": 15.2,
+    "between_month_variance_share": 0.128
+   },
+   "measured_price_response": {
+    "hub_da": {
+     "pearson_r": -0.059,
+     "spearman_rho": -0.064,
+     "decile_slope_cheap_minus_dear_mw": -10.2,
+     "basis_mean": 31.37,
+     "basis_p10_p90": [
+      18.66,
+      46.15
+     ]
+    },
+    "south_da": {
+     "pearson_r": -0.133,
+     "spearman_rho": -0.176,
+     "decile_slope_cheap_minus_dear_mw": 426.8,
+     "basis_mean": 25.48,
+     "basis_p10_p90": [
+      15.4,
+      36.9
+     ]
+    },
+    "south_rt": {
+     "pearson_r": -0.068,
+     "spearman_rho": -0.121,
+     "decile_slope_cheap_minus_dear_mw": 317.4,
+     "basis_mean": 25.12,
+     "basis_p10_p90": [
+      14.41,
+      33.35
+     ]
+    },
+    "spread_hub_minus_south": {
+     "pearson_r": 0.081,
+     "spearman_rho": 0.162,
+     "decile_slope_cheap_minus_dear_mw": -343.1,
+     "basis_mean": 5.89,
+     "basis_p10_p90": [
+      -0.89,
+      13.85
+     ]
+    }
+   },
+   "measured_per_diba": {
+    "SOCO": {
+     "present": true,
+     "net_export_mean_mw": -617.4,
+     "gross_export_TWh": 0.015,
+     "gross_import_TWh": 5.423,
+     "pct_hours_exporting": 1.8,
+     "cv_of_net": 0.518,
+     "p10_mw": -1027.0,
+     "spearman_vs_hub_da": -0.248,
+     "spearman_vs_south_da": -0.342,
+     "spearman_vs_spread": 0.056,
+     "decile_slope_vs_hub_da_mw": 249.6,
+     "decile_slope_vs_south_da_mw": 354.0,
+     "share_of_gross_export_pct": NaN
+    },
+    "TVA": {
+     "present": true,
+     "net_export_mean_mw": 2031.8,
+     "gross_export_TWh": 17.811,
+     "gross_import_TWh": 0.012,
+     "pct_hours_exporting": 99.4,
+     "cv_of_net": 0.332,
+     "p10_mw": 1211.0,
+     "spearman_vs_hub_da": 0.162,
+     "spearman_vs_south_da": 0.018,
+     "spearman_vs_spread": 0.273,
+     "decile_slope_vs_hub_da_mw": -445.7,
+     "decile_slope_vs_south_da_mw": -58.0,
+     "share_of_gross_export_pct": NaN
+    },
+    "AECI": {
+     "present": true,
+     "net_export_mean_mw": -349.5,
+     "gross_export_TWh": 0.285,
+     "gross_import_TWh": 3.346,
+     "pct_hours_exporting": 15.2,
+     "cv_of_net": 1.008,
+     "p10_mw": -780.0,
+     "spearman_vs_hub_da": -0.131,
+     "spearman_vs_south_da": -0.056,
+     "spearman_vs_spread": -0.161,
+     "decile_slope_vs_hub_da_mw": 44.0,
+     "decile_slope_vs_south_da_mw": -40.4,
+     "share_of_gross_export_pct": NaN
+    },
+    "LGEE": {
+     "present": true,
+     "net_export_mean_mw": 285.0,
+     "gross_export_TWh": 2.673,
+     "gross_import_TWh": 0.177,
+     "pct_hours_exporting": 85.6,
+     "cv_of_net": 0.946,
+     "p10_mw": -54.0,
+     "spearman_vs_hub_da": -0.143,
+     "spearman_vs_south_da": -0.125,
+     "spearman_vs_spread": -0.05,
+     "decile_slope_vs_hub_da_mw": 141.9,
+     "decile_slope_vs_south_da_mw": 171.1,
+     "share_of_gross_export_pct": NaN
+    },
+    "SIKE": {
+     "present": true,
+     "net_export_mean_mw": NaN,
+     "gross_export_TWh": NaN,
+     "gross_import_TWh": NaN,
+     "pct_hours_exporting": 0.0,
+     "cv_of_net": NaN,
+     "p10_mw": NaN,
+     "spearman_vs_hub_da": NaN,
+     "spearman_vs_south_da": NaN,
+     "spearman_vs_spread": NaN,
+     "decile_slope_vs_hub_da_mw": NaN,
+     "decile_slope_vs_south_da_mw": NaN,
+     "share_of_gross_export_pct": NaN
+    }
+   },
+   "model_south_bus": {
+    "external_south_bus_mean": 33.15,
+    "external_south_bus_p10_p90": [
+     23.64,
+     40.37
+    ],
+    "external_south_bus_std": 15.85,
+    "miso_south_zone_mean": 33.16,
+    "miso_south_zone_std": 15.87,
+    "measured_south_da_mean": 25.48,
+    "measured_south_da_std": 15.23,
+    "corr_bus_vs_measured_south_da": 0.569,
+    "corr_bus_vs_measured_hub_da": 0.597,
+    "export_bands_in_merit_mean": 2.74,
+    "export_bands_in_merit_decile_slope": 3.53,
+    "export_ladder_top_band_price": 16.0,
+    "export_ladder_base_band_price": 46.72,
+    "pct_hours_bus_below_top_band": 0.0,
+    "pct_hours_bus_below_base_band": 97.0
+   }
+  },
+  "2025": {
+   "measured_pooled_export": {
+    "mean_mw": 1030.8,
+    "std_mw": 1008.7,
+    "cv": 0.979,
+    "quantiles_mw": {
+     "p5": -514.1,
+     "p10": -200.1,
+     "p25": 324.0,
+     "p50": 973.0,
+     "p75": 1686.0,
+     "p90": 2361.0,
+     "p95": 2743.0
+    },
+    "pct_hours_exporting": 85.1,
+    "always_exported_base_p10_mw": -200.1,
+    "base_share_of_mean": -0.194,
+    "lag1_autocorr": 0.963,
+    "lag24_autocorr": 0.718,
+    "mean_abs_hourly_change_mw": 213.1,
+    "hourly_change_as_pct_of_mean": 20.7,
+    "between_month_variance_share": 0.342
+   },
+   "measured_price_response": {
+    "hub_da": {
+     "pearson_r": 0.141,
+     "spearman_rho": 0.082,
+     "decile_slope_cheap_minus_dear_mw": -636.4,
+     "basis_mean": 43.73,
+     "basis_p10_p90": [
+      24.77,
+      69.09
+     ]
+    },
+    "south_da": {
+     "pearson_r": 0.064,
+     "spearman_rho": -0.001,
+     "decile_slope_cheap_minus_dear_mw": -235.6,
+     "basis_mean": 35.79,
+     "basis_p10_p90": [
+      22.86,
+      51.27
+     ]
+    },
+    "south_rt": {
+     "pearson_r": -0.006,
+     "spearman_rho": 0.04,
+     "decile_slope_cheap_minus_dear_mw": -326.8,
+     "basis_mean": 35.45,
+     "basis_p10_p90": [
+      21.27,
+      46.98
+     ]
+    },
+    "spread_hub_minus_south": {
+     "pearson_r": 0.15,
+     "spearman_rho": 0.14,
+     "decile_slope_cheap_minus_dear_mw": -626.6,
+     "basis_mean": 7.94,
+     "basis_p10_p90": [
+      -2.07,
+      23.31
+     ]
+    }
+   },
+   "measured_per_diba": {
+    "SOCO": {
+     "present": true,
+     "net_export_mean_mw": -664.8,
+     "gross_export_TWh": 0.043,
+     "gross_import_TWh": 5.867,
+     "pct_hours_exporting": 4.5,
+     "cv_of_net": 0.583,
+     "p10_mw": -1169.0,
+     "spearman_vs_hub_da": -0.061,
+     "spearman_vs_south_da": -0.182,
+     "spearman_vs_spread": 0.134,
+     "decile_slope_vs_hub_da_mw": 103.7,
+     "decile_slope_vs_south_da_mw": 196.7,
+     "share_of_gross_export_pct": 0.2
+    },
+    "TVA": {
+     "present": true,
+     "net_export_mean_mw": 1897.0,
+     "gross_export_TWh": 16.656,
+     "gross_import_TWh": 0.038,
+     "pct_hours_exporting": 98.7,
+     "cv_of_net": 0.415,
+     "p10_mw": 910.0,
+     "spearman_vs_hub_da": 0.216,
+     "spearman_vs_south_da": 0.088,
+     "spearman_vs_spread": 0.248,
+     "decile_slope_vs_hub_da_mw": -1015.2,
+     "decile_slope_vs_south_da_mw": -454.0,
+     "share_of_gross_export_pct": 85.8
+    },
+    "AECI": {
+     "present": true,
+     "net_export_mean_mw": -443.6,
+     "gross_export_TWh": 0.271,
+     "gross_import_TWh": 4.157,
+     "pct_hours_exporting": 13.4,
+     "cv_of_net": 0.91,
+     "p10_mw": -946.0,
+     "spearman_vs_hub_da": -0.118,
+     "spearman_vs_south_da": 0.02,
+     "spearman_vs_spread": -0.206,
+     "decile_slope_vs_hub_da_mw": 106.3,
+     "decile_slope_vs_south_da_mw": -86.3,
+     "share_of_gross_export_pct": 1.4
+    },
+    "LGEE": {
+     "present": true,
+     "net_export_mean_mw": 242.4,
+     "gross_export_TWh": 2.436,
+     "gross_import_TWh": 0.313,
+     "pct_hours_exporting": 78.4,
+     "cv_of_net": 1.228,
+     "p10_mw": -143.1,
+     "spearman_vs_hub_da": -0.144,
+     "spearman_vs_south_da": -0.109,
+     "spearman_vs_spread": -0.101,
+     "decile_slope_vs_hub_da_mw": 168.6,
+     "decile_slope_vs_south_da_mw": 107.7,
+     "share_of_gross_export_pct": 12.6
+    },
+    "SIKE": {
+     "present": true,
+     "net_export_mean_mw": -0.2,
+     "gross_export_TWh": 0.0,
+     "gross_import_TWh": 0.002,
+     "pct_hours_exporting": 0.0,
+     "cv_of_net": 19.659,
+     "p10_mw": 0.0,
+     "spearman_vs_hub_da": -0.014,
+     "spearman_vs_south_da": -0.015,
+     "spearman_vs_spread": -0.012,
+     "decile_slope_vs_hub_da_mw": 0.2,
+     "decile_slope_vs_south_da_mw": 0.3,
+     "share_of_gross_export_pct": 0.0
+    }
+   },
+   "model_south_bus": {
+    "external_south_bus_mean": 43.73,
+    "external_south_bus_p10_p90": [
+     33.36,
+     53.61
+    ],
+    "external_south_bus_std": 15.28,
+    "miso_south_zone_mean": 43.73,
+    "miso_south_zone_std": 15.28,
+    "measured_south_da_mean": 35.79,
+    "measured_south_da_std": 18.28,
+    "corr_bus_vs_measured_south_da": 0.665,
+    "corr_bus_vs_measured_hub_da": 0.725,
+    "export_bands_in_merit_mean": 1.82,
+    "export_bands_in_merit_decile_slope": 2.84,
+    "export_ladder_top_band_price": 22.35,
+    "export_ladder_base_band_price": 53.0,
+    "pct_hours_bus_below_top_band": 0.0,
+    "pct_hours_bus_below_base_band": 88.3
+   }
+  }
+ }
+}
