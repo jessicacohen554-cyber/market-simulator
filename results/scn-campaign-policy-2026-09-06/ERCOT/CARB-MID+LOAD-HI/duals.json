@@ -1,0 +1,26 @@
+{
+ "cache_key": "b99311bb1f3032e0",
+ "case": "CARB-MID+LOAD-HI",
+ "years": {
+  "2026": {
+   "clean_region_duals": null,
+   "objective_value": 22591401039.224308
+  },
+  "2027": {
+   "clean_region_duals": null,
+   "objective_value": 369551559743.65796
+  },
+  "2028": {
+   "clean_region_duals": null,
+   "objective_value": 1156974245607.3525
+  },
+  "2029": {
+   "clean_region_duals": null,
+   "objective_value": 1826354204745.9885
+  },
+  "2030": {
+   "clean_region_duals": null,
+   "objective_value": 2721666292785.945
+  }
+ }
+}
