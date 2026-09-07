@@ -20,7 +20,10 @@ import logging
 import os
 from dataclasses import fields
 
-from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+from market_sim.config.constants import (
+    ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR,
+    GAS_BASIS_DIFFERENTIAL,
+)
 from market_sim.config.scenarios import ScenarioConfig
 
 logger = logging.getLogger(__name__)
@@ -1239,6 +1242,26 @@ def backcast_config(
     Returns:
         The calibration :class:`ScenarioConfig`.
     """
+    # ERCOT's ORDC price-formation order parameters are PUBLISHED and VINTAGED
+    # (ercot-253, owner ruling 2026-09-06). The system-wide offer cap is the
+    # ORDC's VOLL anchor and the minimum contingency level is where its LOLP
+    # pins to 1.0, and the PUCT moved BOTH effective 2022-01-01 — so a pre-2022
+    # backcast solved on the shipped defaults prices that year's scarcity
+    # against a cap the market did not have. Resolved HERE, at the one seam
+    # that holds both the ISO and the solve year, so the value reaches a replay
+    # through `meta.json` (which records neither field) and is written into
+    # `run_config.json` as the number the LP actually solved with
+    # (rule 24 [R-REGISTRY]). Zero DOF: every value is a PUCT order figure.
+    # BYTE-IDENTICAL for 2022-2025 and for every ISO but ERCOT — the table
+    # lists those years at exactly the `ScenarioConfig` defaults, and a year
+    # absent from it falls through to those defaults (the correct posture for
+    # every forecast year, which no order has yet moved).
+    _ordc_order = (
+        ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR.get(int(year), {})
+        if iso.upper() == "ERCOT"
+        else {}
+    )
+
     config = ScenarioConfig(
         weather_year=year,
         iso=iso,
@@ -2546,4 +2569,11 @@ def backcast_config(
     # (fleet.build_ercot_offer_midcurve_conditional_markup).
     if ercot_offer_surface_midcurve_conditional and iso == "ERCOT":
         config = config.with_overrides(ercot_offer_surface_midcurve_conditional=True)
+    # ERCOT published ORDC order parameters for the solve year (see the
+    # `_ordc_order` resolution at the top of this function). Applied LAST so it
+    # is unambiguous that nothing above re-derives from the shipped default;
+    # empty for every non-ERCOT ISO and for every year the table does not list,
+    # in which case this is a no-op and the config is byte-identical.
+    if _ordc_order:
+        config = config.with_overrides(**_ordc_order)
     return config

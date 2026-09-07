@@ -574,4 +574,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     },
     "WIND_PTC_STATUTORY_USD_PER_MWH": "a352453fcf7d6993",
     "WRIGHT_REFERENCE_GW": "062d4f988ac0e420",
+    "ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR": "0551c6e43b642c6c",
 }

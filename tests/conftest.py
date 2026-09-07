@@ -104,3 +104,46 @@ def tmp_clean_dir(tmp_path, monkeypatch) -> Path:
     clean = tmp_path / "clean"
     monkeypatch.setattr(paths, "CLEAN_DIR", clean)
     return clean
+
+
+# --------------------------------------------------------------------------- #
+# The SOLVE SURFACE, neutralized by default (capx D79; ercot-253 2026-09-06)
+# --------------------------------------------------------------------------- #
+# Since capx D79 `ScenarioConfig.cache_key()` also carries any registry row that
+# has MOVED off its frozen declaration. That is deliberate and it is how a
+# registry repair takes its own bundle — but it means every test that pins a
+# cache-key literal is pinning two independent things at once: the config's own
+# field set and defaults, AND whatever registry values happen to be repaired at
+# that moment. Those tests are named for a FIELD ("the D30 arming moves the
+# ERCOT forecast key"), and a registry repair in an unrelated lane should not
+# make them fail with "the arming moved the key".
+#
+# `tests/regression/test_persisted_identity.py` already solved this for its own
+# pins with the `config_identity_only` fixture, whose docstring states the
+# contract this fixture generalizes: "a registry move fails
+# PINNED_SURFACE_ROWS_BY_ISO and nothing else". It held only inside that one
+# file, so the FIRST real registry move (ercot-253's measured ERCOT
+# `NUCLEAR_MONTHLY_CF_BY_YEAR` 2021 row, owner ruling 2026-09-06) failed 12
+# field-arming pins across nine other lanes' files that had nothing to do with
+# it. Making the neutralization the default is that contract, applied where the
+# pins actually live.
+#
+# WHAT IS NOT WEAKENED. The surface's own pins are untouched and still fail
+# loudly on any move: `PINNED_SURFACE_ROWS_BY_ISO` (per-ISO fingerprint + row
+# count, each advance carrying a dated cause block) and
+# `LEDGERED_SURFACE_MOVES_BY_ISO` (an UNLEDGERED move is still an error). Tests
+# that are ABOUT the surface reaching the key opt out with
+# `@pytest.mark.solve_surface_live`.
+@pytest.fixture(autouse=True)
+def _solve_surface_neutralized(request, monkeypatch):
+    """Measure ``cache_key()`` as a statement about the CONFIG alone.
+
+    Autouse, so it reaches ``unittest.TestCase`` methods too (they cannot take
+    fixture arguments, but autouse fixtures still apply to them).
+    """
+    if request.node.get_closest_marker("solve_surface_live"):
+        return
+    from market_sim.config import scenarios as _scen
+
+    monkeypatch.setattr(_scen, "moved_rows", lambda iso: {}, raising=True)
+    monkeypatch.setattr(_scen, "applicable_epochs", lambda config: [], raising=True)

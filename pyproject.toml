@@ -41,6 +41,7 @@ markers = [
     "integration: exercises real data inputs, not a hermetic unit test",
     "fulldata: needs the real data/raw tree present (replaces ad-hoc raw-data skipifs)",
     "golden: byte-identity / band-regression golden guard (see docs/testing.md)",
+    "solve_surface_live: opt OUT of the autouse solve-surface neutralization in tests/conftest.py -- for the few tests that are ABOUT the surface entering the cache key (capx D79) rather than about a ScenarioConfig field",
 ]
 # --strict-markers ONLY: an unregistered @pytest.mark typo is an error, not a
 # silently-ignored mark. Deliberately NOT a default `-m` deselection — the lane

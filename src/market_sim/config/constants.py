@@ -2271,6 +2271,42 @@ NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
     8011: 2027,
 }
 
+# ERCOT's PUBLISHED ORDC price-formation order parameters, by year — the
+# system-wide offer cap (HCAP, which IS the ORDC's VOLL anchor) and the minimum
+# contingency level X (the reserve level at which LOLP is administratively 1.0
+# and the adder pins to VOLL - lambda). BOTH ARE PUCT ORDER VALUES, not model
+# parameters: they change on an order's effective date and nothing else.
+#
+#   through 2021 : HCAP $9,000/MWh, MCL 2,000 MW
+#   from 2022-01-01: HCAP $5,000/MWh (16 TAC 25.509, PUCT Project 52631),
+#                    MCL 3,000 MW (OBDRR038, PUCT Project 52373 blueprint order)
+#
+# WHY THE TABLE EXISTS (ercot-253, owner ruling 2026-09-06 on the 2021
+# validation rung). ``ScenarioConfig.ordc_voll`` / ``ordc_mcl_mw`` ship at the
+# POST-order values, and their own comments already say the pre-Uri values were
+# $9,000 / 2,000 MW — so a pre-2022 backcast was solving the right market on the
+# wrong published cap, and structurally could not reach that year's price level.
+# Rule 14 [R-ACCURATE]: this is the accurate measured market-design input, and
+# an estimate (or the wrong vintage) is not kept because it is convenient.
+# Rule 21 [R-DOF]: ZERO free parameters — every value is a published order
+# figure, fixed before any solve, and no year's value is selectable by a result.
+#
+# EXPLICIT PER YEAR, never extrapolated: a year absent from the table falls
+# through to the ``ScenarioConfig`` default, which is the current post-order
+# value and so is correct for every forecast year. 2022-2025 are listed at
+# exactly those defaults, which is what makes every training-year and 2022-rung
+# solve BYTE-IDENTICAL under this table.
+# Tier: 1 (published market design)
+ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR: dict[int, dict[str, float]] = {
+    2019: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
+    2020: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
+    2021: {"ordc_voll": 9000.0, "ordc_mcl_mw": 2000.0},
+    2022: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
+    2023: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
+    2024: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
+    2025: {"ordc_voll": 5000.0, "ordc_mcl_mw": 3000.0},
+}
+
 # Per-year nuclear monthly capacity factor derived from EIA-923 net generation
 # (the actual staggered refueling cadence each year, not a fixed seasonal
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
@@ -2283,6 +2319,12 @@ NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
 # Tier: 3 (calibration)
 NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     "ERCOT": {
+        # 2021 derived 2026-09-06 (ercot-253, same script/source; the 2022 and
+        # 2023 rows re-derived byte-identically in the same run as the producer
+        # re-proof) for the rule-22 validation ladder. Feb 2021 reads 0.99: the
+        # Uri STP-1 trip is a ~4-day event, and its TIMING is carried by the
+        # measured daily nuclear-availability windows, not by a monthly level.
+        2021: [1.00, 0.99, 0.91, 0.83, 1.00, 0.86, 0.99, 1.00, 1.00, 0.59, 0.83, 1.00],
         # 2022 derived 2026-09-05 (same script, same EIA-923 source; 2023 row
         # re-derived identically in the same run) for the rule-22 validation touchpoint.
         2022: [1.00, 1.00, 1.00, 0.85, 0.87, 1.00, 1.00, 1.00, 0.93, 0.79, 0.91, 1.00],

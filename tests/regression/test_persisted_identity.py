@@ -451,8 +451,38 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 # probe over every committed run config reads 0 moved
 # (`docs/handoffs/capxd79-solve-surface-no-op-record.json`). 296 surface names,
 # 76 of them by-ISO tables.
+#
+# 2026-09-06 ERCOT ADVANCED (ercot-253, the rule-22 validation ladder).
+#   WHAT MOVED: `NUCLEAR_MONTHLY_CF_BY_YEAR["ERCOT"]` — one ADDED key, 2021,
+#   derived by `scripts/data/derive_nuclear_monthly_cf.py --isos ERCOT --years
+#   2021` from EIA-923 Page 1 monthly net generation, the same script and source
+#   the 2022-2025 rows carry. The 2022 and 2023 rows were re-derived in the same
+#   run as the producer re-proof and came back byte-identical, so NO EXISTING
+#   YEAR'S VALUES MOVED.
+#   WHICH ISOs: ERCOT only (`moved_rows` is `{}` for the other five — rule 25
+#   [R-ISO-SCOPE]; the by-ISO table shape is what confines it).
+#   WHY: rule 22 [R-HOLDOUT] — "what is held out is the SCORE, never the DATA".
+#   The 2021 validation rung needs the same measured nuclear level anchor every
+#   other year has; leaving the row absent would make the pre-2022 nuclear block
+#   a timing series with an unreconciled level.
+#   WHAT IT COSTS: every future ERCOT solve re-keys, so the keeper's cached
+#   results are no longer served by key. It does NOT change any committed
+#   number: a 2022-2025 solve reads only its own year's row and every one of
+#   those is unchanged, so a re-solve reproduces the keeper bundle. The row
+#   count moves 225 -> 226 for the SECOND, separate change in the same session
+#   (below), not for this one.
+#
+#   ALSO IN THIS ADVANCE: the ADDED table
+#   `ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR` (ERCOT's PUCT-ordered
+#   system-wide offer cap and minimum contingency level by year, resolved onto
+#   `ordc_voll` / `ordc_mcl_mw` in `pipeline/backcast_config.py`; owner ruling
+#   2026-09-06 on the 2021 rung). That is an ADDITION, declared at its live
+#   hash, so it moves NO key — it is why the row count goes 225 -> 226 while
+#   `moved_rows("ERCOT")` still names `NUCLEAR_MONTHLY_CF_BY_YEAR` alone. It
+#   changes no year's solve but 2019-2021, which the table alone reaches; 2022
+#   onward are listed at exactly the shipped defaults.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("67e2587c8b78f212", 225),
+    "ERCOT": ("3fa1fe6b34dba665", 226),
     "CAISO": ("22e6fdb4a5a23589", 202),
     "MISO": ("8ee657ee4c7c49b0", 208),
     "PJM": ("0f749d17202c32d9", 211),
@@ -501,20 +531,64 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
     )
 
 
-def test_the_landing_moved_no_row_off_its_declaration() -> None:
-    """``moved_rows`` is empty for every ISO — the D79 merge gate, in-suite.
+#: Rows deliberately moved off their declaration, each with the dated cause
+#: block above that explains it. APPEND-ONLY, and an entry is only ever added by
+#: the lane that moved the row, in the same commit as its cause block.
+#:
+#: A moved row is the D79 mechanism WORKING — the row enters the ISO's cache key
+#: and the repaired value takes its own bundle — so the merge gate below cannot
+#: be "nothing ever moves" once any repair has landed. What it must stay is a
+#: gate on UNLEDGERED movement: a row that moved with no cause block is a
+#: registry value that changed while every reader still believes the pin.
+LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
+    "ERCOT": {
+        "NUCLEAR_MONTHLY_CF_BY_YEAR": (
+            "ercot-253 2026-09-06: the 2021 row ADDED for the rule-22 "
+            "validation ladder (no existing year's values moved) — see the "
+            "cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+    },
+}
 
-    A non-empty result is not itself a failure of the mechanism (it is the
-    mechanism working), but it means the surface pins above are stale: the row
-    moved and nobody wrote the cause block.
+
+def test_no_unledgered_row_moved_off_its_declaration() -> None:
+    """Every moved row is one the ledger above names — the D79 merge gate.
+
+    A non-empty ``moved_rows`` is not itself a failure of the mechanism (it is
+    the mechanism working: the repaired row enters the key and takes its own
+    bundle). What fails here is an UNLEDGERED move — a registry value that
+    changed while the pins above, and every reader of them, still say otherwise.
     """
     from market_sim.config.solve_surface import moved_rows
 
-    moved = {iso: moved_rows(iso) for iso in PINNED_SURFACE_ROWS_BY_ISO}
-    assert not any(moved.values()), (
-        f"rows have moved off their declaration: "
-        f"{ {k: sorted(v) for k, v in moved.items() if v} }. Advance "
-        "PINNED_SURFACE_ROWS_BY_ISO with a dated cause block naming them."
+    unledgered = {
+        iso: sorted(set(moved_rows(iso)) - set(LEDGERED_SURFACE_MOVES_BY_ISO.get(iso, {})))
+        for iso in PINNED_SURFACE_ROWS_BY_ISO
+    }
+    unledgered = {iso: rows for iso, rows in unledgered.items() if rows}
+    assert not unledgered, (
+        f"rows have moved off their declaration with no ledger entry: "
+        f"{unledgered}. Advance PINNED_SURFACE_ROWS_BY_ISO with a dated cause "
+        "block naming them, and add them to LEDGERED_SURFACE_MOVES_BY_ISO. Do "
+        "NOT re-declare the row in config/solve_surface_declared.py — that "
+        "restores the pre-change key and re-serves the pre-change bundle."
+    )
+
+
+def test_every_ledgered_move_is_still_a_real_move() -> None:
+    """The ledger carries no stale entry (rule 26 [R-DELETE] in the other
+    direction): a row listed as moved that is no longer moved would silently
+    widen the gate above for a future, genuinely unledgered move."""
+    from market_sim.config.solve_surface import moved_rows
+
+    stale = {
+        iso: sorted(set(rows) - set(moved_rows(iso)))
+        for iso, rows in LEDGERED_SURFACE_MOVES_BY_ISO.items()
+    }
+    stale = {iso: rows for iso, rows in stale.items() if rows}
+    assert not stale, (
+        f"LEDGERED_SURFACE_MOVES_BY_ISO names rows that are no longer moved: "
+        f"{stale}. Remove the entry — a stale allowance is a hole in the gate."
     )
 
 
@@ -722,8 +796,18 @@ def test_solve_surface_is_checkout_path_invariant(monkeypatch) -> None:
         reset_caches()
 
 
-def test_default_cache_key_is_checkout_path_invariant(monkeypatch) -> None:
+def test_default_cache_key_is_checkout_path_invariant(
+    monkeypatch, config_identity_only
+) -> None:
     """The default key is identical whatever directory the checkout lives in.
+
+    Takes ``config_identity_only`` for the reason that fixture exists: this is a
+    statement about the CONFIG's path handling, so it must not also carry the
+    solve surface. Without it the first legitimate registry move fails here too
+    — pointing the reader at "cache_key() is checkout-path-dependent again" when
+    nothing about paths changed — and the fixture's own contract ("a registry
+    move fails PINNED_SURFACE_ROWS_BY_ISO and nothing else") would not hold.
+    Added ercot-253 2026-09-06, on the first such move.
 
     Pins the PROPERTY behind the 2026-07-27 cache-epoch bump, not just its
     literal: before the fix, six absolute-path fields put the checkout
