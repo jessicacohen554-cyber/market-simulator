@@ -37,7 +37,9 @@ annihilates:
   ADDENDUM §A's four-value alignment column, 4 x 3, to <= 0.001. (G-ID) the decomposition
   identity to <= 1e-6 MW. Any leg failing declares the instrument BROKEN and nothing else
   is read.
-* **Q-A (PREREG §3, item 3).** ``gamma = cov(ols_resid(., p1), z_own_net_load)`` decomposed
+* **Q-A (PREREG §3, item 3).** ``gamma`` — miso-237's PARTIAL OLS coefficient on own net
+  load in ``ols_resid(., p1) ~ [1 | z_own_net_load | z_own_VRE]`` (see
+  ``ADDENDUM-miso238-gate-repair-and-the-partial-coefficient-2026-09-07.md``) — decomposed
   across the three channels. GATED on PJM: ENVELOPE-DRIVEN iff
   ``(gamma_ENV + gamma_INT)/gamma_model >= 0.50`` all three years, MERIT-DRIVEN iff
   ``gamma_MERIT/gamma_model >= 0.50`` all three years, else MIXED; read only where
@@ -76,7 +78,9 @@ sys.path.insert(0, str(REPO / "scripts" / "probes"))
 KEEPER = REPO / "results/calibration/miso233_sppseam_K"
 BALANCE_DIR = REPO / "data/raw/eia-930"
 MISO235 = REPO / "results/calibration/_miso235_seam_variance_decomposition_phase0.json"
-MISO237 = REPO / "results/calibration/_miso237_price_representation_vs_state_phase0.json"
+MISO237 = (
+    REPO / "results/calibration/_miso237_price_representation_vs_state_phase0.json"
+)
 OUT = REPO / "results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json"
 
 YEARS = (2023, 2024, 2025)
@@ -136,10 +140,30 @@ def _z(a: np.ndarray) -> np.ndarray:
     return (a - a.mean()) / s if s > 0 else np.zeros_like(a)
 
 
-def gamma(r: np.ndarray, z_nl: np.ndarray) -> float:
-    """``cov(r, z_own_net_load)`` in MW per z-score — miso-237's own-net-load coefficient.
+def gamma(r: np.ndarray, s_own: np.ndarray) -> float:
+    """miso-237's ``own_net_load_coef_resid_*`` — the PARTIAL OLS coefficient on own net load.
 
-    Linear in ``r``, so it decomposes exactly across the PREREG §2 channels.
+    The slope on ``z_own_net_load`` in ``r ~ [1 | z_own_net_load | z_own_VRE]``, i.e. holding
+    own VRE fixed. Byte-for-byte miso-237's estimator
+    (``_miso237_price_representation_vs_state_phase0.py`` lines 543-558); the ADDENDUM
+    ``ADDENDUM-miso238-gate-repair-and-the-partial-coefficient-2026-09-07.md`` records that
+    the PREREG named a simple covariance here, that provenance leg G-P2 caught it at
+    457.126 MW/z against a 0.5 bar before any adjudicating quantity was read, and that the
+    repair moves no bar.
+
+    ``e1' (X'X)^-1 X' r`` with ``X = [1 | S_own]`` fixed across channels is **linear in r**,
+    exactly as a covariance is, so the PREREG §2 decomposition stays exact.
+    """
+    A = _design(s_own, len(r))
+    return float(np.linalg.lstsq(A, r, rcond=None)[0][1])
+
+
+def gamma_marginal(r: np.ndarray, z_nl: np.ndarray) -> float:
+    """``cov(r, z_own_net_load)`` — the MARGINAL coefficient, REPORTED NOT GATED.
+
+    The statistic the PREREG originally named. Reported beside :func:`gamma` per the
+    ADDENDUM §2 disclosure so the size of the correction is visible rather than asserted; no
+    bar attaches to it and no verdict is read on it.
     """
     return float(((r - r.mean()) * (z_nl - z_nl.mean())).mean())
 
@@ -457,8 +481,8 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
             ref237 = prior237[str(year)]["seams"][seam]
             r237 = ref237["own_state_reported"]
             a237 = ref237["own_state_purge_addendum_A"]
-            g_model = gamma(r_model, z_nl)
-            g_meas = gamma(r_meas, z_nl)
+            g_model = gamma(r_model, s_own)
+            g_meas = gamma(r_meas, s_own)
             rm_p = purge(r_model, s_own)
             rx_p = purge(r_meas, s_own)
             align = {
@@ -505,8 +529,8 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
             # ---- Q-A: the own-net-load response, decomposed ----
             r_chan = {c: ols_resid(chan[c], p1s) for c in CHANNELS}
             r_legs = {k: ols_resid(v, p1s) for k, v in legs.items()}
-            g_chan = {c: gamma(r_chan[c], z_nl) for c in CHANNELS}
-            g_legs = {k: gamma(v, z_nl) for k, v in r_legs.items()}
+            g_chan = {c: gamma(r_chan[c], s_own) for c in CHANNELS}
+            g_legs = {k: gamma(v, s_own) for k, v in r_legs.items()}
             share_g = (
                 {c: g_chan[c] / g_model for c in CHANNELS}
                 if abs(g_model) > 0
@@ -520,9 +544,7 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
             a_meas_p = align_num(rx_p, p_rt)
             a_chan = {c: align_num(r_chan[c], p_rt) for c in CHANNELS}
             a_chan_p = {c: align_num(purge(r_chan[c], s_own), p_rt) for c in CHANNELS}
-            a_legs_p = {
-                k: align_num(purge(v, s_own), p_rt) for k, v in r_legs.items()
-            }
+            a_legs_p = {k: align_num(purge(v, s_own), p_rt) for k, v in r_legs.items()}
             share_a_p = (
                 {c: a_chan_p[c] / a_model_p for c in CHANNELS}
                 if abs(a_model_p) > 0
@@ -563,6 +585,12 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
                 "own_net_load_response": {
                     "gamma_model_mw_per_z": round(g_model, 2),
                     "gamma_measured_mw_per_z": round(g_meas, 2),
+                    "gamma_marginal_model_mw_per_z": round(
+                        gamma_marginal(r_model, z_nl), 2
+                    ),
+                    "gamma_marginal_measured_mw_per_z": round(
+                        gamma_marginal(r_meas, z_nl), 2
+                    ),
                     "by_channel": {c: round(g_chan[c], 2) for c in CHANNELS},
                     "share_of_model": {c: round(share_g[c], 3) for c in CHANNELS},
                     "share_envelope_plus_interact": round(
@@ -591,9 +619,7 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
                     "share_envelope_plus_interact_purged": round(
                         share_a_p["ENVELOPE"] + share_a_p["INTERACT"], 3
                     ),
-                    "a_by_leg_purged_mw": {
-                        k: round(v, 1) for k, v in a_legs_p.items()
-                    },
+                    "a_by_leg_purged_mw": {k: round(v, 1) for k, v in a_legs_p.items()},
                 },
                 "saturation_census_reported_not_gated": census,
             }
@@ -604,19 +630,23 @@ def main() -> int:  # noqa: PLR0915 - one linear probe, mirrors the PREREG secti
     # ---------------- provenance verdicts ----------------
     worst = {
         "G_P1_max_abs_delta_sigma_mw": max(
-            provenance[str(y)][s]["max_abs_delta_sigma_mw"] for y in YEARS
+            provenance[str(y)][s]["max_abs_delta_sigma_mw"]
+            for y in YEARS
             for s in FOUR_SEAM
         ),
         "G_P2_max_abs_delta_coef_mw_per_z": max(
-            provenance[str(y)][s]["max_abs_delta_coef_mw_per_z"] for y in YEARS
+            provenance[str(y)][s]["max_abs_delta_coef_mw_per_z"]
+            for y in YEARS
             for s in FOUR_SEAM
         ),
         "G_P3_max_abs_delta_alignment": max(
-            provenance[str(y)][s]["max_abs_delta_alignment"] for y in YEARS
+            provenance[str(y)][s]["max_abs_delta_alignment"]
+            for y in YEARS
             for s in FOUR_SEAM
         ),
         "G_ID_max_abs_mw": max(
-            provenance[str(y)][s]["identity_max_abs_mw"] for y in YEARS
+            provenance[str(y)][s]["identity_max_abs_mw"]
+            for y in YEARS
             for s in FOUR_SEAM
         ),
     }

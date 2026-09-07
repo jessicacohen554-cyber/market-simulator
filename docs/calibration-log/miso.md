@@ -12811,3 +12811,81 @@ by test (rule 23 `[R-FROZEN-DERIVE]`); PREREG §5.2 and ADDENDUM §A fixed that 
 binds despite the headroom measured above. Rule 28(b): no verdict moves — evidence appended in
 this session to `seam_neighbour_hourly_ladder` and `seam_flow_envelopes` in MISO's shard only
 (rule 25), plus the §5.4 stamp. C3c untouched and still the designated frontier (2026-07-20).
+
+## miso-238 (2026-09-07) — the handoff's NAMED saturation hypothesis is REFUTED: the carrier of BOTH open PJM seam defects is the merit ladder's own nonlinear transform of the spread, not the deliverability envelope. ZERO LP, no arm, no screen, NO CELL VERDICT MOVES; keeper UNCHANGED
+
+**Keeper UNCHANGED at `2026-09-07-miso-233-spp-hourly`** (bundle `miso233_sppseam_K`),
+DETERMINATION **CALIBRATED**, C3c the single ledgered caveat, DOF **41/2**. No bundle produced,
+nothing registered or pruned; MISO still carries exactly one registered run (rule 15). Rule 22:
+2023–2025 only; MISO holds no `complete` marker and no out-of-training year was touched.
+
+**Queue selection (rule 28(a)).** The handoff's **item 3** (the PJM over-transmission defect,
+whose saturation hypothesis it called NAMED AND UNTESTED and ordered tested at zero LP "before
+anything else") together with its **item 2** (the unaccounted remainder of PJM's price-alignment
+defect), taken as **ONE OBJECT on ONE instrument** exactly as the handoff licenses. Items 1, 4, 5
+and 6 are not taken and stay where they are filed.
+
+**Documents.** `PREREG-miso238-pjm-seam-channel-attribution-2026-09-07.md` (pushed `0deffdb9`,
+before any adjudicating quantity) and
+`ADDENDUM-miso238-gate-repair-and-the-partial-coefficient-2026-09-07.md` (pushed `6937a251`);
+`FINDING-miso238-the-carrier-is-the-ladder-not-the-envelope-2026-09-07.md` carries every number
+this session will ever cite. Probe
+`scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py` →
+`_miso238_pjm_seam_channel_attribution_phase0.json`.
+
+**Stated first, against interest: the provenance gate rejected this session's own instrument.**
+On the first run leg **G-P2 FAILED at 457.126 MW per z-score against a 0.5 bar** and the probe
+returned before printing a single adjudicating value — the PREREG had named a simple covariance
+where miso-237's `own_net_load_coef_resid_model` is the **partial** OLS slope on own net load
+holding own VRE fixed. The ADDENDUM declared the repair **before** the repaired numbers were
+computed and **moved no bar, floor, gating seam or channel definition**. After the repair:
+G-P1 **0.048 MW** (miso-235's σ column), G-P2 **0.005 MW/z** (miso-237's coefficients, in
+miso-237's own metric), G-P3 **0.00005** (miso-237 ADDENDUM §A's alignment column), G-ID
+**9.095e-13 MW** (the decomposition identity) — **all four pass**.
+
+**The instrument.** The keeper's seam reconstruction is exactly
+`Σ_k (price indicator) × (envelope weight)`, so mean-plus-deviation splits it **exactly** into
+**MERIT** (a function of the prices alone, at fixed annual-mean band weights), **ENVELOPE** (the
+measured `(month × hod)` deliverability template's own variation) and **INTERACT** (the envelope
+binding differently by price hour). **Zero free parameters.**
+
+**Q-A (GATED, PJM) — MERIT-DRIVEN. The saturation hypothesis is REFUTED as the carrier.**
+ENVELOPE + INTERACT carry **−0.5 / +10.8 / +6.2 %** of `γ_model` (−866.18 / −1043.37 / −843.45
+MW/z); MERIT carries **1.005 / 0.892 / 0.938**. The census refutes it a second time on its own
+terms: `sat_share` (all 8 import bands in merit) is **0.1740 / 0.0068 / 0.0000**, so **in 2025 the
+envelope never binds and the response is undiminished**; saturation is ~6× rarer in the top
+own-net-load decile (0.0297 vs 0.1740 in 2023) and sits at `z = −0.122`; and the envelope is
+**looser, not tighter**, in high-own-net-load hours in two of three years
+(`corr(env_i, z_own_nl)` +0.3063 / −0.0843 / +0.3638).
+
+**Q-B (GATED, PJM) — MERIT-DRIVEN REMAINDER, so items 2 and 3 are ONE OBJECT.** The same channel
+carries **85.1 / 86.1 / 88.4 %** of the own-state-purged alignment remainder (`a_MERIT`
+−278.2 / −226.7 / −213.9 MW of a model −327.0 / −263.3 / −242.0, against a measured control of
+−256.0 / −119.5 / −205.4 MW). On PJM, MERIT is arithmetically `g(spread)` for a monotone bounded
+8-step `g`, so the carrier is `g`'s own nonlinearity and nothing else.
+
+**A live alternative flagged in advance and closed.** PREREG §0c(4) recorded, as a code fact
+before any number, that the armed keeper's import legs clear on the hourly **spread** while every
+export leg still clears on the `p_bus` **level** against the fixed Q-Q ladder. That asymmetry is
+**structurally inert on PJM**: every export sub-channel is exactly 0.00 in both statistics and all
+three years, because the `MISO_external` price never falls below the export ladder's first rung
+($12.34 / $11.32 / $18.36) in any of 8,760 hours — even in the 420 hours of 2025 where the export
+envelope is non-zero. Nothing is proposed about it.
+
+**SPP, South and Manitoba read NOT MEANINGFUL** on both legs (`|γ_model|` 26.95–251.62 MW/z
+against a 200 MW/z floor; `|a_model^purged|` 0.3–25.7 MW against a 100 MW floor) and carry no
+verdict in either direction.
+
+**Still open inside the named channel, stated so no successor over-reads this:** *which* property
+of `g` does it — its boundedness, its `K = 8` granularity, the `δ_k` placement, or the spread's
+own relation to own net load — is not resolved and is the successor's zero-LP question.
+
+**No lever proposed and none licensed.** The PJM and SPP `delta_k` ladders stay derived, frozen
+and pinned to their derives by test (rule 23 `[R-FROZEN-DERIVE]`) and the measured `(month × hod)`
+envelope is untouched (rule 14 `[R-ACCURATE]`) — PREREG §5.2 fixed that in advance *for exactly
+this outcome*, and every number was declared un-targetable before it was computed (§5.3).
+miso-237's SPP quantity-side object stays named and not chartered; South stays CLOSED (miso-236
+D-4); `miso_manitoba_seam` stays CLOSED as already-armed; the `(month × hod)` template stays
+REMOVED (miso-236 §3); none was re-tested (rule 28(a)). C3c untouched and still the designated
+frontier (2026-07-20). Rule 28(b): evidence appended to `seam_flow_envelopes` and
+`seam_neighbour_hourly_ladder` in MISO's shard only; no cell verdict moves.
