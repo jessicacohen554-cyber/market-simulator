@@ -4908,3 +4908,96 @@ movement recorded ex ante: **2022 improves, 2021 worsens** — rule 14, never a 
 estimate.
 
 Next shorthand: **pjm-172.**
+
+## 2026-09-07 — pjm-172: F-A (seam-local MEASURED backcast gas) BUILT and KILLED at its own pre-solve gates S1/S3 — ZERO LP, nothing promoted
+
+**Card** `docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` (binding, not rewritten).
+**Result** `results/calibration/FINDING-pjm172-seam-measured-gas-2026-09-07.md`.
+**Keeper** `2026-08-15-pjm-162-inputclock` — unchanged. **PJM headline: CALIBRATED** (rule 30(c)).
+**LP spent: none.** No screen bundle exists; PJM's `complete` marker is unspent and
+`--holdout-authorized` was never passed.
+
+**G-DRIFT first (rule 29(b)), zero LP.** `git diff f36cee6e HEAD` over the solve path = 69 files,
++15,065/−76, and **every hunk classifies INERT for the PJM backcast path** — appended as Appendix A
+to the PRECOMMIT *before* the arm was built. Two instrument checks: the PJM solve-surface
+fingerprint is `0f749d17202c32d9` / 211 rows / `moved {}` at **both** revisions, matching the value
+the control bundle recorded; and the control's config rebuilt at HEAD resolves every recorded field
+unchanged, with the five new default-off fields **and** the `capacity_screen_peak_measured_hindcast`
+default flip all dropping out of `cache_key()`. Two hunks were adjudicated on measurement rather
+than category: PJM's new `retirement_sector_gate` ISOConfig override (coerced to `False` in
+backcast — verified by running it) and the new **ungated** EIA-930 fuel-spike screen (**0 hours
+flagged for PJM in every year 2021–2025**, raw and filled frames alike). ⇒ **G-CTRL form 4 valid,
+no control LP.**
+
+**The arm was implemented exactly as §2 declares and it works.** Below the trajectory's first knot
+`neighbor_gas_price` now resolves Henry Hub from the measured annual series — 2022 **$2.54 →
+$6.419058**/MMBtu, 2021 → **$3.909683** — with `gas_basis` unchanged, **zero free parameters, zero
+new `ScenarioConfig` fields**, plus the load-bearing `hindcast_asknown_*` look-ahead refusal (with a
+reachability assertion so the guard cannot go vacuous). **Gate S2 PASSES**: 2023/2024/2025 and every
+forecast year are **bit-identical** across all five seams and all of `low`/`mid`/`high`, for every
+registered ISO — asserted by test, so no keeper can move.
+
+**S1 and S3 FAIL, both from one structural fact the card did not anticipate.** Carolinas / TVA /
+LGEE carry `hr_by_year = None` in **every** year — SERC publishes no nodal LMP to anchor one to —
+so they always take `neighbor_heat_rate`'s gas-elastic branch `hr = 5.6 + 14.2/gas`. Their implied
+heat rate is a *function of the very gas level this card moves*, and falls as gas rises —
+deliberately, so the coal/nuclear Southeast does not ride Henry Hub up in a dear-gas year.
+
+- **S1 FAIL** — it requires `neighbor_heat_rate` **unchanged**; it moves on 3 of 5 seams
+  (11.1906 → 9.2320 in 2021; 11.1906 → **7.8122** in 2022).
+- **S3 FAIL** — measured 2022 seam baseload mean **61.1448 $/MWh** vs §4's predicted **74.156**
+  (tolerance 1e-6). MISO **82.806** and NYISO **72.478** reproduce §4 exactly; Carolinas/TVA/LGEE
+  land **50.147** against a predicted 71.833 (−21.686 each).
+- **S4 / S5 / S6 NOT REACHED** — they need the solve, and the kill lands before it.
+
+**Root cause is the card's arithmetic, not the implementation.** §4's arm column carried the
+*control's* heat rate (`71.833 = 6.419058 × 11.1906`, the $2.54 heat rate). The apparatus is
+vindicated by the control column, which reproduces §4 on **all five** seams (32.766 / 32.136 /
+28.424 ×3, mean 30.0348 vs 30.035). **S1 is structurally unsatisfiable for any change to PJM's
+pre-2023 seam gas level, and card F-B cannot rescue it** — the Southeast trio's elastic branch is
+not a 2021/2022 gap but their permanent price-formation anchor. This refines pjm-171's F-B reading:
+the 11.19/11.19 two-year identity holds on the *frozen* path precisely because the gas is the same
+held knot in both years; repair the gas and the years separate.
+
+**Corrected footprint:** the mechanism moves the seam baseload **+31.110 $/MWh** in 2022 and
+**+10.985** in 2021 — ~70 % of the predicted size — but the ratio is **2.832**, i.e. §4's stated
+**2.83×**, so the screen-year choice was uncontaminated.
+
+**NOT measured, not quotable:** the 2022 net-export direction, the `mc` footprint, any collateral
+criterion, and **any C3a movement in either year**. The card's ex-ante predictions (2022 improves,
+2021 worsens) remain predictions.
+
+**Open and owner-facing.** The pre-2023 input defect is **real and unrepaired**, and rule 14
+`[R-ACCURATE]` argues for landing the corrected input regardless of the gate outcome. The code and
+its 40 tests are on the branch, **unarmed and unpromoted**, and inert in every scored year. Routes:
+(a) a successor card restating S1/S3 with the gas-elasticity in them (S3 = 61.145) then screening
+2022 — **recommended**; (b) land it as an input correction on rule-14 grounds without a screen;
+(c) drop it. Cross-ISO unchanged (rule 25): no verdict transfers, and MISO's own pre-2023 exposure
+is still its lane's to verify.
+
+Matrix: `reference_price_interface` STAYS **K**, cell annotated in the PJM shard (rule 32 duty b).
+
+### pjm-172 addendum (same day) — the 2021/2022 measurement is BLOCKED ON CONTAINER RAM, not on the mechanism
+
+Owner directed the lane to finish the repair rather than stop at the gate grading. Done as far as
+the environment allows. The G-CTRL form-4 A/B was set up per PRECOMMIT §6 (`replay_keeper` on the
+committed touchpoint at this HEAD, so the only delta is F-A), and two container-state gaps were
+closed first: `data/clean/` was entirely unbuilt (curated 15 datatypes from `data/raw`; `lmp` fails
+on a pre-existing **CAISO** column defect, `KeyError: 'MGHG'`, unrelated to PJM), and
+`data/raw/pjm-da-virtuals/` was empty — **all 24 monthly `hrl_da_incs_decs_{2021,2022}` files
+re-fetched**, which also unblocks the EMAAC availability card's Phase B.
+
+The solve then reached LP construction on 2022 — past every data gate, seam repricing and per-gen
+reserve co-opt both logged — and was **OOM-killed (exit 137) twice**: once with the clean build
+competing, and once **alone on the box with 14 GB free at launch**, memory falling 14 → 6 → 3 → 2 →
+0 GB. This container has 15 GB and one PJM plant-level 8760 LP on the keeper recipe exceeds it
+(rule 12 `[R-PARALLEL]` caps *concurrent* per-plant runs at ~2; here even one does not fit).
+Nothing was disabled to make it fit — dropping the virtuals, the per-gen co-opt or the loss surface
+would change the recipe and the A/B's validity rests on the arm being the touchpoint recipe plus
+F-A and nothing else.
+
+**Unchanged: S4 / S5 / S6 and any C3a movement in either year remain UNMEASURED and unquotable.**
+Both partial bundle dirs hold no solved output, so rule 31 `[R-RETAIN]` has no artifact at risk.
+**Not a keeper candidate in either direction** — the repair is byte-identical in 2023–2025, so it
+cannot move the keeper's scored years or its determination; it is an input correction to the
+held-out pre-2023 seam. Successor needs a larger-RAM runner and nothing else.

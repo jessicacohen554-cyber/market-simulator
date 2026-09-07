@@ -757,6 +757,12 @@ results/calibration/_nyiso218_span_*/
 # sidecars to be committed. Its heavy artifacts (system/dispatch/flows/storage/
 # btm) are excluded by the repo-wide slim-bundle rules below, as for every
 # other keeper.
+# pjm-172 F-A arm bundles (seam-local measured pre-2023 Henry Hub). Ignored so
+# they can never reach a commit — the only thing rule 29 [R-SCREEN] (c)
+# requires, and what rule 31 [R-RETAIN] names as the mechanism that discharges
+# it. Ignoring is NOT a licence to delete: these stay on local disk until the
+# OWNER has ruled on promotion.
+results/calibration/pjm172_*/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
