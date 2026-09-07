@@ -1,5 +1,51 @@
 # Changelog
 
+## 2026-09-07 — SPP's W5/W6 batch: six lanes, five killed arms, one T1-H (lanes SPP-45 · 51 · 54 · 55 · 58 · 60)
+
+Six SPP lanes landed together. **Exactly one spent an LP** (SPP-60's T1-H); four of the other five were
+decided at **zero LP** on measured records, and the fifth stopped before its screen. **No keeper moved** —
+`2026-09-07-spp-3-screened-input` stands, NOT-YET on the same four criteria — **no default flipped**, and
+the seven-ISO backcast recipes are untouched. Records: `docs/handoffs/FINDING-spp-{45,51,54,55,58,60}-2026-09-07.md`;
+desk ledger `spp-desk-ledger-2026-09.md` §0m (r#12).
+
+- **SPP-51 — the priced SPP↔MISO seam is refused by its own identity, not by a residual.** *Flow follows
+  spread* fails on the **measured** record in every year: sign agreement 0.436–0.501 against a 0.55 bar,
+  corr(measured spread, measured import) ≈ 0. The real flow is scheduled / JOA / loop flow — which is why
+  MISO's own keeper prices this seam as an hourly-anchored offset ladder. Three adjudications did land:
+  `derive_neighbor_hr_by_year.py` now carries a **per-ISO** anchor map (an ISO with no map fails), the
+  SPP seam blocks carry the **HH + basis** heat rates (`MISO_West` 10.55, `MISO_South` 9.63, `AECI` 10.23,
+  `ERCOT` 16.78), and SPP's ERCOT DC-tie block carries the **measured 835 MW clip** (rule 14; ERCOT's own
+  820 row untouched, rule 25).
+- **SPP-55 — SPP's Contingency Reserve family lands default-off, under the shared `energy_reserve_coopt`
+  gate; no new field.** On the published $275 / $550 / $1,100 curve with SPP's own RSG requirement rule,
+  the row can bind in **0 / 1 / 0 hours** of 2023 / 2024 / 2025 and in **none** of the 4 / 3 / 7 measured
+  hour-long shortage hours — inert on the keeper's dispatch. It also settles what the C3c tail is *not*:
+  **1 / 0 / 0** of 42 / 59 / 68 C3c hours carry any reserve-short interval, and the RT LMP in the shortage
+  hours has a median of $32–36. C3c is a five-minute price-formation object.
+- **SPP-58 — a second, model-blind identification of the N↔S link disagrees with the first.** ψ₂ is a DC
+  PTDF/OTDF on a reduced network from public HIFLD geometry + EIA-860 coordinates: it reads no price, no
+  shadow price and no model output. It puts the corridor at **11,022 / 13,175 MW** against ψ₁'s
+  3,400 / 4,206, and the SPS tie at **1,600 MW** against 10,705. `ttc_mw` is **untouched** — outside the
+  pre-declared band is a card, never an edit. The disagreement has a physical address: ψ₁ rests on
+  Franklin 161/69 (44 % of binding hours), which HIFLD's 2023 edition cannot see below 115 kV.
+- **SPP-54 — the three-zone SPS / Texas-Panhandle pocket is designed and censused, and stopped before any
+  solve.** The per-zone wind reconciliation passes both identity legs (Σ_z cap·cf = M(t) to 6e-16) and
+  fails feasibility in one hour, because the wind-shape builder weights zones by `cap_z · SHAPE_z(t)` —
+  so a six-site sample's mean **level** acts as a zonal capacity-factor level, and splitting the South
+  moves the North's potential **+1.4 / +1.5 / +1.9 TWh** at an identical system total. The solve path was
+  restored to `origin/main`'s bytes before the PR: **HEAD is still two zones and one 3,400 MW link.**
+- **SPP-60 — SPP's first T1-H is on the forecast dashboard** (`spp-2021-2025-realized-t1h-spp60`, key
+  `e586d7cae19eab13`; verdict `spp-t1h` **HOLD / FC-3 FAIL at full magnitude**, the reading every ISO's
+  bare T1-H has at HEAD). The intake it needed landed with it: **1,527 SWPP rows** in the 2020-vintage
+  `eia860_generators.parquet` (the six existing BAs byte-for-byte preserved), `capacity_actuals_spp.csv`
+  (110 retirements / 2.2 GW; 185 additions / 13.9 GW), and SPP's first `confirmed-retirements` rows
+  (Tolk 1/2, NMPRC 22-00286-UT). `GOLDEN_ISOS` untouched.
+- **SPP-45 — the forecast board row's gate-(a) provenance is green**, and the lane's finding is that the
+  re-key had already landed under the same standing duty, so it did not manufacture a supersession; it
+  supplied the promotion instrument the row was missing. `docs/codebase-site/data/iso-topologies.json`
+  also loses the last **48,700 MW** N↔S placeholder (desk repair, SPP-54 R-25) — the site now matches
+  `get_iso_config("SPP")`.
+
 ## 2026-09-07 — The seven-ISO prose sweep finished, and the ISO badges made readable (lanes SPP-35 + SPP-37)
 
 SPP-34's changelog entry claimed "every 'six ISOs' phrase in the prose" was reached; it was not.

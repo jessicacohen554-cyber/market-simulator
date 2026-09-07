@@ -636,7 +636,7 @@
       {
         "from": "SPP-North",
         "to": "SPP-South",
-        "ttc_mw": 48700.0,
+        "ttc_mw": 3400.0,
         "bidirectional": true
       }
     ],
