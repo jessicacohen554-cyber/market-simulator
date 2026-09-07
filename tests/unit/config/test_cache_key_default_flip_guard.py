@@ -59,6 +59,27 @@ def _synthetic(live: str, declared: str) -> str:
     )
 
 
+def _dataclass_default(name):
+    """The field's DECLARED default, read off the dataclass, not an instance.
+
+    ``ScenarioConfig()`` is a RESOLVED config: ``__post_init__`` coerces several
+    forecast-lane gates back to an unarmed value on a plain backcast, and since
+    capx D76-ARM-B (owner ruling Q58, 2026-09-07) one of them --
+    ``capacity_screen_peak_measured_hindcast`` -- is coerced on any NON-HINDCAST
+    config, which a bare ``ScenarioConfig()`` is. Reading the default off an
+    instance therefore returns the COERCED value and makes the two ledger
+    invariants below unsatisfiable for that field however the ledger is written.
+
+    The declared default is what the flips ledger is about and what the shipped
+    guard compares (``scripts/check_cache_key_registration.py`` check 3 resolves
+    the dataclass default's SOURCE TEXT, never an instance), so this is the
+    object both tests always meant. The invariants are unchanged and are NOT
+    relaxed: a real drift between a declared flip and the live default still
+    fails, and a "synced" frozen entry still fails.
+    """
+    return ScenarioConfig.__dataclass_fields__[name].default
+
+
 class DeclaredLedgerCoversTheRegistryTest(unittest.TestCase):
     """Registry and ledger cover each other, and the ledger matches HEAD."""
 
@@ -86,14 +107,13 @@ class DeclaredLedgerCoversTheRegistryTest(unittest.TestCase):
         current = dict(_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS)
         for _date, name, new_src in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS:
             current[name] = new_src
-        live = ScenarioConfig()
         checked = 0
         for name, src in current.items():
             try:
                 want = eval(src, {"__builtins__": {}}, {})  # noqa: S307 — literals
             except Exception:  # noqa: BLE001 — field(default_factory=...) etc.
                 continue
-            self.assertEqual(getattr(live, name), want, msg=name)
+            self.assertEqual(_dataclass_default(name), want, msg=name)
             checked += 1
         self.assertGreater(checked, 100, "expected most entries to be plain literals")
 
@@ -103,12 +123,11 @@ class DeclaredLedgerCoversTheRegistryTest(unittest.TestCase):
         # declaration must therefore still differ from its live default — if
         # someone "syncs" the entry, the cache key silently re-bases and the
         # post-flip config collides with its pre-flip bundle again.
-        live = ScenarioConfig()
         for _date, name, _new_src in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS:
             frozen = eval(  # noqa: S307 — ledger literals
                 _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[name], {"__builtins__": {}}, {}
             )
-            self.assertNotEqual(getattr(live, name), frozen, msg=name)
+            self.assertNotEqual(_dataclass_default(name), frozen, msg=name)
 
 
 class TheHazardItselfTest(unittest.TestCase):

@@ -54,7 +54,17 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #: ``retirement_sector_gate`` on ``_pjm_config`` — the next arm this note
 #: anticipated — moving bare ``b518f5fe7d02f961`` -> ``fb16fda2ddb0a94a``
 #: (``docs/handoffs/d78arm/keys_measured.json``, the PRECOMMIT §2 literal).
-BARE_PJM_ARMED = "fb16fda2ddb0a94a"
+#:
+#: RE-MEASURED 2026-09-07 for capx D76-ARM-B: owner ruling Q58 arms
+#: ``capacity_screen_peak_measured_hindcast`` as the SHARED ``ScenarioConfig``
+#: default -- the first arm to move this constant WITHOUT touching
+#: ``_pjm_config``, so the note above ("a future PJM arm must re-measure it")
+#: understated the trigger: a shared default flip that a hindcast recipe
+#: resolves moves it too. Bare ``fb16fda2ddb0a94a`` -> ``f736025631d0d27e``
+#: (``docs/handoffs/d76armb/key-census-variant-b-postflip.json``, the
+#: PRECOMMIT-capx-d76-arm-b §2.6 literal, and the value the inverse test below
+#: is anchored against).
+BARE_PJM_ARMED = "f736025631d0d27e"
 
 #: UNCHANGED, and deliberately so: the D67 pre-arm recipe is still reachable and
 #: still keeps its own key. What went stale was the INVOCATION below, not this pin —
@@ -62,7 +72,31 @@ BARE_PJM_ARMED = "fb16fda2ddb0a94a"
 #: this constant instead of completing the inverse would have silently discarded the
 #: (b'-1) invertibility property the test exists to hold.
 BARE_PJM_PRE_ARM = "15a723ba3b6dc856"
+#: The five non-PJM bare T1-H recipe keys. The NAME still means what it says
+#: about D67 -- a PJM-scoped arm must not move another ISO's key -- and that is
+#: still what a regression here would catch.
+#:
+#: RE-MEASURED 2026-09-07 for capx D76-ARM-B (owner ruling Q58). These moved for
+#: a reason D67 has nothing to do with: ``capacity_screen_peak_measured_hindcast``
+#: armed on the SHARED ``ScenarioConfig`` default, which every hindcast recipe of
+#: every ISO resolves. Re-pinning is therefore a re-BASELINE, not a relaxation,
+#: and the proof is beside it: :data:`BARE_BY_ISO_PRE_D76` holds each ISO's
+#: PRE-flip literal and ``test_no_other_isos_bare_key_moves`` asserts that
+#: inverting the D76 flag alone reaches it EXACTLY -- the (b'-1) invertibility
+#: property, now pinned for six ISOs instead of one.
 BARE_BY_ISO_UNMOVED = {
+    "MISO": "71156d9eb2ea896d",
+    "NYISO": "ee0d44e7d6f26397",
+    "NEISO": "806f31b59b10c911",
+    "CAISO": "28f4f62b90e2f74b",
+    "ERCOT": "f238df2e5b1ef838",
+}
+
+#: Each ISO's bare key BEFORE the capx D76-ARM-B flip, i.e. the literals
+#: :data:`BARE_BY_ISO_UNMOVED` carried until 2026-09-07. Reachable today by
+#: inverting the one flag, which is what makes every pre-flip hindcast bundle
+#: still identified by its own key.
+BARE_BY_ISO_PRE_D76 = {
     "MISO": "1f92943f84f42fd0",
     "NYISO": "ee6a3e764324f28f",
     "NEISO": "5b292e24dd752ea4",
@@ -139,13 +173,21 @@ class TestQ52ArmingKeys(unittest.TestCase):
         # ``33041553d7541538``, which is not any declared posture. Q56
         # (``retirement_sector_gate``, capx D78-ARM) is the second such arm and
         # is inverted here for the same reason: without it the key is
-        # ``bc387828f931e0ac``, another intermediate posture.
+        # ``bc387828f931e0ac``, another intermediate posture. Q58
+        # (``capacity_screen_peak_measured_hindcast``, capx D76-ARM-B) is the
+        # THIRD, and the first that is not a ``_pjm_config`` override at all --
+        # it is a shared default flip this hindcast recipe resolves -- so it is
+        # inverted here for the same reason: without it the key is
+        # ``296d933530c3123f``, a third intermediate posture. BARE_PJM_PRE_ARM
+        # is deliberately NOT re-pinned; completing the inverse is what holds
+        # the (b'-1) property the test exists for.
         self.assertEqual(
             _hindcast_key(
                 "PJM",
                 capacity_adequacy_requirement_published=False,
                 pjm_vre_accreditation_vintage=False,
                 retirement_sector_gate=False,
+                capacity_screen_peak_measured_hindcast=False,
             ),
             BARE_PJM_PRE_ARM,
         )
@@ -153,6 +195,24 @@ class TestQ52ArmingKeys(unittest.TestCase):
     def test_no_other_isos_bare_key_moves(self):
         for iso, expected in BARE_BY_ISO_UNMOVED.items():
             self.assertEqual(_hindcast_key(iso), expected, iso)
+
+    def test_every_iso_pre_d76_recipe_is_still_reachable_and_identified(self):
+        """The (b'-1) inverse, for the five non-PJM ISOs (capx D76-ARM-B).
+
+        The 2026-09-07 arm moved every ISO's bare hindcast key, which is the
+        intended effect. What must ALSO hold -- and is the reason a moved key is
+        a cost rather than a loss -- is that inverting the one flag reaches the
+        PRE-flip key exactly, so every hindcast bundle solved before the arm
+        stays both reachable and identified by its own key. PJM's version of
+        this is the test above; this is the other five.
+        """
+        for iso, pre in BARE_BY_ISO_PRE_D76.items():
+            with self.subTest(iso=iso):
+                self.assertEqual(
+                    _hindcast_key(iso, capacity_screen_peak_measured_hindcast=False),
+                    pre,
+                )
+                self.assertNotEqual(BARE_BY_ISO_UNMOVED[iso], pre)
 
 
 class TestD67ArmGdriftPosture(unittest.TestCase):

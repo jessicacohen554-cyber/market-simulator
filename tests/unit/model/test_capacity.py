@@ -6702,13 +6702,34 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
         # measured arm (the gate without Q55; d78r2/keys_probe.json), and both
         # ``--no-`` flags reach ``a9c66d8ea25acb9d``, the D67-ARM / D78-R2
         # graded control. The post-arm bare key is ``fb16fda2ddb0a94a``.
+        # capx D76-ARM-B (owner ruling Q58): a SEVENTH field re-keys every leg
+        # below — ``capacity_screen_peak_measured_hindcast``, the measured
+        # hindcast capacity-screen peak — and it is the FIRST that is not armed
+        # through ``_pjm_config`` at all. It is a flip of the SHARED
+        # ``ScenarioConfig`` default (False -> True, the fourth entry in
+        # ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``), which every one of these
+        # legs resolves because they are all HINDCAST configs. Same structural
+        # cause as the five arms above and the reason a moved key is the
+        # intended effect: the field is a ``_CACHE_KEY_OPTIONAL_FIELDS`` member
+        # registered at ``False``, so it is dropped from the hash while it
+        # equals that frozen declaration and enters it once it does not.
+        #
+        # MEASURED, not assumed, and for ALL FOURTEEN legs rather than the
+        # customary three: adding ``capacity_screen_peak_measured_hindcast=
+        # False`` to each leg restores its pre-arm literal EXACTLY, 14 of 14
+        # (PRECOMMIT-capx-d76-arm-b-2026-09-07.md; FINDING §3). So the whole
+        # move is this one field's, the Q44/Q52/Q55/Q56 postures this test
+        # asserts are untouched, and every pre-arm PJM recipe stays both
+        # reachable and identified by its own key. The bare inverse is asserted
+        # below rather than only narrated.
+        _nod76 = dict(capacity_screen_peak_measured_hindcast=False)
         _novre = dict(pjm_vre_accreditation_vintage=False)
         _nogate = dict(retirement_sector_gate=False)
-        self.assertEqual(_key("PJM"), "fb16fda2ddb0a94a")  # = the D78-ARM posture
-        self.assertEqual(_key("PJM", **_nogate), "b518f5fe7d02f961")  # = D75-R-ARM
-        self.assertEqual(_key("PJM", **_novre), "bb6a60239d69508b")  # = D78-R2's arm
+        self.assertEqual(_key("PJM"), "f736025631d0d27e")  # = the D78-ARM posture
+        self.assertEqual(_key("PJM", **_nogate), "559c05579b47684b")  # = D75-R-ARM
+        self.assertEqual(_key("PJM", **_novre), "f577130c7aa36742")  # = D78-R2's arm
         self.assertEqual(
-            _key("PJM", **_novre, **_nogate), "a9c66d8ea25acb9d"
+            _key("PJM", **_novre, **_nogate), "fd07e2dba50cd32b"
         )  # = D67-ARM
         _off3 = dict(
             pjm_accreditation_design_vintage=False,
@@ -6716,12 +6737,12 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
             capacity_market_supply_clearing=False,
         )
         self.assertEqual(
-            _key("PJM", **_off3), "f1a9881ed29df6cb"
+            _key("PJM", **_off3), "46b2c0bceac36258"
         )  # D57 off, D67+Q55+Q56 on
         self.assertEqual(
-            _key("PJM", **_off3, **_nogate), "1785cb6086cd2b15"
+            _key("PJM", **_off3, **_nogate), "e8d2c8577f93c6ef"
         )  # D57 off, D67+D75R on
-        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "61dfbc5c48af076b")
+        self.assertEqual(_key("PJM", **_off3, **_novre, **_nogate), "9bee91343c5e7f5a")
         self.assertEqual(
             _key(
                 "PJM",
@@ -6729,7 +6750,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "d2fe4e2b32aef073",  # D57 + D67 off, D75-R still on
+            "f9c3584d6037fc58",  # D57 + D67 off, D75-R still on
         )
         self.assertEqual(
             _key(
@@ -6739,19 +6760,19 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "c5ec052057905966",  # = D45-R's bare key, the explicit control
+            "446401b0bae76068",  # = D45-R's bare key, the explicit control
         )
         _off2 = dict(
             pjm_accreditation_design_vintage=False,
             pjm_demand_response_supply=False,
         )
         self.assertEqual(
-            _key("PJM", **_off2), "944c89de0a74ca63"
+            _key("PJM", **_off2), "d9839b6943dfd93e"
         )  # arm B, D67+Q55+Q56 on
         self.assertEqual(
-            _key("PJM", **_off2, **_nogate), "ab0237198cff24ad"
+            _key("PJM", **_off2, **_nogate), "61443629327a35f5"
         )  # arm B, D67+D75R on
-        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "2d5bebd2bceed991")
+        self.assertEqual(_key("PJM", **_off2, **_novre, **_nogate), "a1b48ed68ae26809")
         self.assertEqual(
             _key(
                 "PJM",
@@ -6759,7 +6780,7 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "05cdf4af2b9adef8",  # D57 partial + D67 off, D75-R still on
+            "b2d170699f5a6536",  # D57 partial + D67 off, D75-R still on
         )
         self.assertEqual(
             _key(
@@ -6769,8 +6790,11 @@ class TestPjmCapacitySupplyClearing(unittest.TestCase):
                 **_nogate,
                 capacity_adequacy_requirement_published=False,
             ),
-            "6ba67a81ed4d2ed6",  # = arm B
+            "72f7931efb6e7a27",  # = arm B
         )
+        # The (b'-1) inverse, enforced: the pre-D76-ARM-B bare recipe is still
+        # reachable and still carries its own key.
+        self.assertEqual(_key("PJM", **_nod76), "fb16fda2ddb0a94a")
         # Every other ISO resolves the PJM fields OFF (their own keys are
         # their own lanes' — never pinned here, rule 25). The sector gate is
         # ISO-agnostic in form and armed PER ISO on that ISO's own ISOConfig:

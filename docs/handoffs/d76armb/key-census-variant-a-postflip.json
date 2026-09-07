@@ -2,7 +2,7 @@
   "probe": "capxd76arm_default_flip_key_census",
   "ruling": "Q57 (capx ledger \u00a70ay.3(a)) \u2014 ARM capacity_screen_peak_measured_hindcast via the D50 (b'-1) route",
   "field": "capacity_screen_peak_measured_hindcast",
-  "variant": "b",
+  "variant": "a",
   "frozen_drop_value": false,
   "live_dataclass_default": true,
   "pre_flip_default": false,
@@ -11,14 +11,14 @@
   "instrument_validated": 150,
   "instrument_unvalidatable_no_recorded_key": 27,
   "instrument_mismatch": 15,
-  "keys_moved": 33,
-  "keys_moved_off_target": 0,
-  "keys_moved_all_rows": 34,
-  "keys_moved_off_target_all_rows": 0,
+  "keys_moved": 112,
+  "keys_moved_off_target": 79,
+  "keys_moved_all_rows": 127,
+  "keys_moved_off_target_all_rows": 93,
   "by_bucket": {
     "backcast/not-hindcast": {
       "configs": 20,
-      "moved": 0
+      "moved": 10
     },
     "forecast/hindcast": {
       "configs": 34,
@@ -26,7 +26,7 @@
     },
     "forecast/not-hindcast": {
       "configs": 123,
-      "moved": 0
+      "moved": 69
     }
   },
   "recipe_legs": {
@@ -39,8 +39,8 @@
     },
     "ercot-plain-backcast": {
       "key_pre_flip": "406cb30ad62bc27b",
-      "key_post_flip": "406cb30ad62bc27b",
-      "moved": false,
+      "key_post_flip": "46d022d4c945abf6",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -53,8 +53,8 @@
     },
     "caiso-plain-backcast": {
       "key_pre_flip": "efebcc735768c122",
-      "key_post_flip": "efebcc735768c122",
-      "moved": false,
+      "key_post_flip": "199a40026a933576",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -67,8 +67,8 @@
     },
     "miso-plain-backcast": {
       "key_pre_flip": "b10d58628ba3a057",
-      "key_post_flip": "b10d58628ba3a057",
-      "moved": false,
+      "key_post_flip": "794a570f80ef6fc6",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -81,8 +81,8 @@
     },
     "pjm-plain-backcast": {
       "key_pre_flip": "3a566deac3a85682",
-      "key_post_flip": "3a566deac3a85682",
-      "moved": false,
+      "key_post_flip": "21806c39c42c339a",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -95,8 +95,8 @@
     },
     "nyiso-plain-backcast": {
       "key_pre_flip": "cadaba3d344e84b9",
-      "key_post_flip": "cadaba3d344e84b9",
-      "moved": false,
+      "key_post_flip": "9b238afdde0244bf",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -109,8 +109,8 @@
     },
     "neiso-plain-backcast": {
       "key_pre_flip": "27e80d27acd995de",
-      "key_post_flip": "27e80d27acd995de",
-      "moved": false,
+      "key_post_flip": "e473671602163f40",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     },
@@ -123,13 +123,193 @@
     },
     "spp-plain-backcast": {
       "key_pre_flip": "989da50bbf0f99d8",
-      "key_post_flip": "989da50bbf0f99d8",
-      "moved": false,
+      "key_post_flip": "c447003bd9cb0be8",
+      "moved": true,
       "hindcast": false,
       "mode": "backcast"
     }
   },
   "moved_detail": [
+    {
+      "run_config": "docs/handoffs/scn-ws1a/t0/base-run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "706eec14f63096e8",
+      "key_pre_flip": "706eec14f63096e8",
+      "key_post_flip": "c27aa577c3f220c8",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "f129fd3720e3e874",
+      "key_pre_flip": "f129fd3720e3e874",
+      "key_post_flip": "7f92ebdf5feed2e2",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/_nyiso114_baseattrib_2024/run_config.json",
+      "iso": "NYISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "1aa2f0cb0dc53c22",
+      "key_post_flip": "189d12e347a78ea4",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/ercot234_eastex_identity/run_config.json",
+      "iso": "ERCOT",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "1e9fb1391ec06a95",
+      "key_post_flip": "7cc3aab0cb0f2615",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/ercot236_k33_clip/run_config.json",
+      "iso": "ERCOT",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "982d32542949148c",
+      "key_post_flip": "843b21b849e2235b",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/ercot248_two_config_keeper/run_config.json",
+      "iso": "ERCOT",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "3711b15e1ace5077",
+      "key_post_flip": "85c5b616a56668b8",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/neiso99_joint_B/run_config.json",
+      "iso": "NEISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "be3ebfbbae26ea54",
+      "key_post_flip": "92f240d9f7f6dd2d",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/neiso_tp2022_k99/run_config.json",
+      "iso": "NEISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "f6c66ec6d22dcfe8",
+      "key_post_flip": "fdb3a4f4c7b34b8e",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/nyiso192_astoria_panel/run_config.json",
+      "iso": "NYISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "0ac15036eacc3d22",
+      "key_post_flip": "97c227df1b3b0209",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/nyiso196_extract_basis/run_config.json",
+      "iso": "NYISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "cc529eedb3383829",
+      "key_post_flip": "d6216dff2f1d35e2",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/nyiso202_startup_aware/run_config.json",
+      "iso": "NYISO",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "942480d844dfeaa1",
+      "key_post_flip": "c2dc2b0aae2fc73c",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
+    {
+      "run_config": "results/calibration/pjm_debugb_inputclock_A/run_config.json",
+      "iso": "PJM",
+      "mode": "backcast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": null,
+      "key_pre_flip": "159733571efa869b",
+      "key_post_flip": "b23183dd21b9d310",
+      "reproduces_recorded_key": null,
+      "moved": true
+    },
     {
       "run_config": "results/capacity-hindcast/pjm-2021-2025-realized-t1h-d67arm/run_config.json",
       "iso": "PJM",
@@ -142,6 +322,351 @@
       "recorded_cache_key": "a9c66d8ea25acb9d",
       "key_pre_flip": "a9c66d8ea25acb9d",
       "key_post_flip": "fd07e2dba50cd32b",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d45r/miso/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "8d8bc63a0d4378a9",
+      "key_pre_flip": "8d8bc63a0d4378a9",
+      "key_post_flip": "1a4c189101db4bae",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d45r/nyiso/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "cc7d1050a8090c76",
+      "key_pre_flip": "cc7d1050a8090c76",
+      "key_post_flip": "7292719823cc4cb0",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d45r/pjm/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "321f04e9060787f0",
+      "key_pre_flip": "321f04e9060787f0",
+      "key_post_flip": "51c474dd3a09cd69",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d46/caiso/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "772b1e5abc7fc80c",
+      "key_pre_flip": "772b1e5abc7fc80c",
+      "key_post_flip": "9420a980f8000e85",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d46/ercot/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "873d8c0e6cab52ae",
+      "key_pre_flip": "873d8c0e6cab52ae",
+      "key_post_flip": "619f2eaa7a6f9536",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d46/neiso/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "6690e4d6d66bc819",
+      "key_pre_flip": "6690e4d6d66bc819",
+      "key_post_flip": "1637b26b2b7ba93c",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d50/ercot/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "0c3e9cd5b5993bdf",
+      "key_pre_flip": "0c3e9cd5b5993bdf",
+      "key_post_flip": "106009814b03acab",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d50/neiso/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "18515067bf4d2fbe",
+      "key_pre_flip": "18515067bf4d2fbe",
+      "key_post_flip": "74c077769c2141ab",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d50/pjm/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "167e65187f32056b",
+      "key_pre_flip": "167e65187f32056b",
+      "key_post_flip": "54647cdcd5decdc7",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d60/caiso/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "29f8eb372810195f",
+      "key_pre_flip": "29f8eb372810195f",
+      "key_post_flip": "5c86cca876710b41",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d60/miso/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "b1a73a087064ffd8",
+      "key_pre_flip": "b1a73a087064ffd8",
+      "key_post_flip": "bc6387d7426031f5",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d60/nyiso/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "19a9690bb12c8459",
+      "key_pre_flip": "19a9690bb12c8459",
+      "key_post_flip": "998dac988735d6c0",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d60/pjm/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "09996eca71ee80fd",
+      "key_pre_flip": "09996eca71ee80fd",
+      "key_post_flip": "d93c88ce3858d4de",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d65-a1/neiso/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "8ebed20ae90ec0e7",
+      "key_pre_flip": "8ebed20ae90ec0e7",
+      "key_post_flip": "db6d7e52efe7499c",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-d65-ctl/neiso/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "18515067bf4d2fbe",
+      "key_pre_flip": "18515067bf4d2fbe",
+      "key_post_flip": "74c077769c2141ab",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-s4hydro/neiso-control/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "key_pre_flip": "9a7f68fc7dcac931",
+      "key_post_flip": "067905e96032e48f",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t1f-s4hydro/neiso/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "9a7f68fc7dcac931",
+      "key_pre_flip": "9a7f68fc7dcac931",
+      "key_post_flip": "067905e96032e48f",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/base/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "67678e58b2d0526c",
+      "key_pre_flip": "67678e58b2d0526c",
+      "key_post_flip": "0e61bbc56d976aff",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/carbon_plus25/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "56019f3b0850e9f9",
+      "key_pre_flip": "56019f3b0850e9f9",
+      "key_post_flip": "f227f42a83259278",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/gaspm5/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "e84079053b581a9e",
+      "key_pre_flip": "e84079053b581a9e",
+      "key_post_flip": "3fc96aa20b4ca7c2",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/gasup150/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "96984c538320d6d6",
+      "key_pre_flip": "96984c538320d6d6",
+      "key_post_flip": "d4951b374625db1e",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d46/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "67678e58b2d0526c",
+      "key_pre_flip": "67678e58b2d0526c",
+      "key_post_flip": "0e61bbc56d976aff",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/ff-t3-neiso-golden/bau-d60/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "f04fd06348e1623d",
+      "key_pre_flip": "f04fd06348e1623d",
+      "key_post_flip": "0c4d3965807dc3c3",
       "reproduces_recorded_key": true,
       "moved": true
     },
@@ -624,6 +1149,666 @@
       "key_post_flip": "4f0f6e58282b4a64",
       "reproduces_recorded_key": null,
       "moved": true
+    },
+    {
+      "run_config": "results/scenario-probes/scn-ws2a/neiso-2026-t0-ref/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "c3592c1adbc8ac17",
+      "key_pre_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scenario-probes/scn-ws2a/neiso-2026-t0-target/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "277e96c45549a70e",
+      "key_pre_flip": "277e96c45549a70e",
+      "key_post_flip": "53061c5fa9e58958",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-campaign-load-2026-09-06/ERCOT/LOAD-HI-ORGANIC/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "c5255cea87fbaacf",
+      "key_pre_flip": "c5255cea87fbaacf",
+      "key_post_flip": "98d23b1c7f701a84",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-campaign-load-2026-09-06/ERCOT/LOAD-HI/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "31cf71afda5c610d",
+      "key_pre_flip": "31cf71afda5c610d",
+      "key_post_flip": "3acdf58060b6f3e2",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-campaign-load-2026-09-06/ERCOT/REF/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "6e40769352a572ba",
+      "key_pre_flip": "6e40769352a572ba",
+      "key_post_flip": "ac3c0552e87c8028",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws0-smoke/neiso/CARB/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "eed460b6ddfaab1c",
+      "key_pre_flip": "eed460b6ddfaab1c",
+      "key_post_flip": "7a8496e3988c6f18",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws0-smoke/neiso/REF/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "c3592c1adbc8ac17",
+      "key_pre_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/caiso/CARB/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "bc8d37094bc09257",
+      "key_pre_flip": "bc8d37094bc09257",
+      "key_post_flip": "0cc2b3df9597dc0f",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/caiso/REF/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "40db53ac56d6f65b",
+      "key_pre_flip": "40db53ac56d6f65b",
+      "key_post_flip": "c66dd73809803bd5",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/ercot/CARB/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "ff31f680a740d905",
+      "key_pre_flip": "ff31f680a740d905",
+      "key_post_flip": "d3443c541a98e037",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/ercot/REF/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "0c2e6c5b9d6d0f07",
+      "key_pre_flip": "0c2e6c5b9d6d0f07",
+      "key_post_flip": "50825f13c95a1d7e",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/miso/CARB/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "a31305098f97c7ef",
+      "key_pre_flip": "a31305098f97c7ef",
+      "key_post_flip": "50d5660b27698bd9",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/miso/REF/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "1b9e15c5a85f6302",
+      "key_pre_flip": "1b9e15c5a85f6302",
+      "key_post_flip": "6f2a7e93383682eb",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/neiso/CARB/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "59395c9c0651ce70",
+      "key_pre_flip": "59395c9c0651ce70",
+      "key_post_flip": "ae62e3e89900c35a",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/neiso/REF/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "5ed8ea2e1988013e",
+      "key_pre_flip": "5ed8ea2e1988013e",
+      "key_post_flip": "f948cabd206d3b74",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/nyiso/CARB/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "c943601863d3032b",
+      "key_pre_flip": "c943601863d3032b",
+      "key_post_flip": "87c8a247138de212",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/nyiso/REF/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "1d3cb39cddb19e14",
+      "key_pre_flip": "1d3cb39cddb19e14",
+      "key_post_flip": "cd209a1bcf336ce1",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/pjm/CARB/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "bd1839f1478eb801",
+      "key_pre_flip": "bd1839f1478eb801",
+      "key_post_flip": "cba9a932a94a5579",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws1-probe/pjm/REF/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "8021741688f9b1f6",
+      "key_pre_flip": "8021741688f9b1f6",
+      "key_post_flip": "4993ddec0e39f371",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/ercot/BAU/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "d88c8585e76f2935",
+      "key_pre_flip": "d88c8585e76f2935",
+      "key_post_flip": "d35c571cd9d6437c",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/ercot/CES-20/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "075e6aa30813f061",
+      "key_pre_flip": "075e6aa30813f061",
+      "key_post_flip": "041d840206e3f400",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/ercot/CES-40/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "383509581661faba",
+      "key_pre_flip": "383509581661faba",
+      "key_post_flip": "eb03e608c7803a01",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/neiso/BAU/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "5e2c52ea81694c10",
+      "key_pre_flip": "5e2c52ea81694c10",
+      "key_post_flip": "bf13317f574b7036",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/neiso/CES-20/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "43b921da2f0bcfc7",
+      "key_pre_flip": "43b921da2f0bcfc7",
+      "key_post_flip": "df865193c5f15327",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws2-ladder/neiso/CES-40/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "7d36e0b517ffb0e3",
+      "key_pre_flip": "7d36e0b517ffb0e3",
+      "key_post_flip": "199963d742b01396",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe-t1f/ercot/LOAD-HI/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "3da3a8dce270a5cd",
+      "key_pre_flip": "3da3a8dce270a5cd",
+      "key_post_flip": "2d6e54cf6a3c9184",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe-t1f/ercot/REF/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "6cfa33538294713c",
+      "key_pre_flip": "6cfa33538294713c",
+      "key_post_flip": "47ae32c86a1b83dc",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe-t1f/neiso/LOAD-HI/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "6e364efaa728fc92",
+      "key_pre_flip": "6e364efaa728fc92",
+      "key_post_flip": "e1e85c4128e8866b",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe-t1f/neiso/REF/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "77b56ef19cb7200e",
+      "key_pre_flip": "77b56ef19cb7200e",
+      "key_post_flip": "bd2f8c831d3e5643",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/caiso/LOAD-HI/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "cc8af31b3173465e",
+      "key_pre_flip": "cc8af31b3173465e",
+      "key_post_flip": "d4a2ecfcd860a717",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/caiso/REF/run_config.json",
+      "iso": "CAISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "a998110c3dfb4fa7",
+      "key_pre_flip": "a998110c3dfb4fa7",
+      "key_post_flip": "d521785bd20b9c71",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/ercot/LOAD-HI-ORGANIC/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "e4a9e2dbb5ee5528",
+      "key_pre_flip": "e4a9e2dbb5ee5528",
+      "key_post_flip": "45e1f44ae4d7e65d",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/ercot/LOAD-HI/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "7172ac611ebbf67c",
+      "key_pre_flip": "7172ac611ebbf67c",
+      "key_post_flip": "0cbbbea9091ba91a",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/ercot/REF/run_config.json",
+      "iso": "ERCOT",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "8e01cd28ea757f1a",
+      "key_pre_flip": "8e01cd28ea757f1a",
+      "key_post_flip": "25786388ac8b6da7",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/miso/LOAD-HI-ORGANIC/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "abe5759c41a76e7b",
+      "key_pre_flip": "abe5759c41a76e7b",
+      "key_post_flip": "902e187572488c9f",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/miso/LOAD-HI/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "759ccceb7923b1fe",
+      "key_pre_flip": "759ccceb7923b1fe",
+      "key_post_flip": "963280e6e1cb1099",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/miso/REF/run_config.json",
+      "iso": "MISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "8e72c2256983f981",
+      "key_pre_flip": "8e72c2256983f981",
+      "key_post_flip": "e60391f683b1564f",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/neiso/LOAD-HI/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "ec78d9814e295e37",
+      "key_pre_flip": "ec78d9814e295e37",
+      "key_post_flip": "bf6a3ee91a06e055",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/neiso/REF/run_config.json",
+      "iso": "NEISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "c3592c1adbc8ac17",
+      "key_pre_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/nyiso/LOAD-HI-ORGANIC/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "97f765a39320f765",
+      "key_pre_flip": "97f765a39320f765",
+      "key_post_flip": "cbddc1424d23bb69",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/nyiso/LOAD-HI/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "3f2d67121a98bcd9",
+      "key_pre_flip": "3f2d67121a98bcd9",
+      "key_post_flip": "220831930dc12c57",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/nyiso/REF/run_config.json",
+      "iso": "NYISO",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "7c0ad83004421a23",
+      "key_pre_flip": "7c0ad83004421a23",
+      "key_post_flip": "760c9a169c18619d",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/pjm/LOAD-HI/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "7370b703046ef374",
+      "key_pre_flip": "7370b703046ef374",
+      "key_post_flip": "6eee038a64aac16a",
+      "reproduces_recorded_key": true,
+      "moved": true
+    },
+    {
+      "run_config": "results/scn-ws4-probe/pjm/REF/run_config.json",
+      "iso": "PJM",
+      "mode": "forecast",
+      "hindcast": false,
+      "committed_field_value": null,
+      "field_recorded": false,
+      "resolved_pre_flip": false,
+      "resolved_post_flip": true,
+      "recorded_cache_key": "058444cfe884b79b",
+      "key_pre_flip": "058444cfe884b79b",
+      "key_post_flip": "e81f9b338834f2c8",
+      "reproduces_recorded_key": true,
+      "moved": true
     }
   ],
   "instrument_mismatch_detail": [
@@ -635,12 +1820,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "587dc5b32ba71ceb",
       "key_pre_flip": "223ed4e475c6842f",
-      "key_post_flip": "223ed4e475c6842f",
+      "key_post_flip": "e176446c38852fcd",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-s6-pjm/ledger/run_config.json",
@@ -650,12 +1835,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "31a19d815fa319a7",
       "key_pre_flip": "2f1a55ad9c824b11",
-      "key_post_flip": "2f1a55ad9c824b11",
+      "key_post_flip": "9f7f3c04ae12e487",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/base/run_config.json",
@@ -665,12 +1850,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0365174ab16cc318",
       "key_pre_flip": "dd519f7dd4bfe807",
-      "key_post_flip": "dd519f7dd4bfe807",
+      "key_post_flip": "9caad869cf2386c2",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon25/run_config.json",
@@ -680,12 +1865,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7924eccc695c0168",
       "key_pre_flip": "64dbc1017d1729fa",
-      "key_post_flip": "64dbc1017d1729fa",
+      "key_post_flip": "aa4bc9f3411f6d2e",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon_plus25/run_config.json",
@@ -695,12 +1880,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7784d408fc955785",
       "key_pre_flip": "6830f327c8891c40",
-      "key_post_flip": "6830f327c8891c40",
+      "key_post_flip": "5da75497011dac05",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gaspm5/run_config.json",
@@ -710,12 +1895,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "1de43201e2040f7f",
       "key_pre_flip": "ee46ccd7c36532a1",
-      "key_post_flip": "ee46ccd7c36532a1",
+      "key_post_flip": "55b9d5e545a8107a",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gasup150/run_config.json",
@@ -725,12 +1910,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "13f9357712250600",
       "key_pre_flip": "0315eaa0c519c723",
-      "key_post_flip": "0315eaa0c519c723",
+      "key_post_flip": "616cce9d4e64e45c",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/run_config.json",
@@ -740,12 +1925,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "a4b11ef4aaa1be35",
       "key_pre_flip": "dd519f7dd4bfe807",
-      "key_post_flip": "dd519f7dd4bfe807",
+      "key_post_flip": "9caad869cf2386c2",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/base/run_config.json",
@@ -755,12 +1940,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "706e7ba8e6582d42",
       "key_pre_flip": "a4b11ef4aaa1be35",
-      "key_post_flip": "a4b11ef4aaa1be35",
+      "key_post_flip": "579bcc7a10e58343",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/carbon_plus25/run_config.json",
@@ -770,12 +1955,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "f7cced798488ddac",
       "key_pre_flip": "c84ded1f95fa7a62",
-      "key_post_flip": "c84ded1f95fa7a62",
+      "key_post_flip": "9c91850d6a5af646",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gaspm5/run_config.json",
@@ -785,12 +1970,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "2d017ed9675aa386",
       "key_pre_flip": "05cc241b6e729a4e",
-      "key_post_flip": "05cc241b6e729a4e",
+      "key_post_flip": "9f830414299bfd48",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gasup150/run_config.json",
@@ -800,12 +1985,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "65662ca117959ee5",
       "key_pre_flip": "41fe22b4d33e6746",
-      "key_post_flip": "41fe22b4d33e6746",
+      "key_post_flip": "9857b4ee02cdfd63",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/run_config.json",
@@ -815,12 +2000,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "706e7ba8e6582d42",
       "key_pre_flip": "a4b11ef4aaa1be35",
-      "key_post_flip": "a4b11ef4aaa1be35",
+      "key_post_flip": "579bcc7a10e58343",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/hindcast/miso-2021-2025-realized-t1h-d27/run_config.json",
@@ -845,12 +2030,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0d6f2710f8dedf56",
       "key_pre_flip": "6a23be2f5cb8d027",
-      "key_post_flip": "6a23be2f5cb8d027",
+      "key_post_flip": "8e753bda2ae28158",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     }
   ],
   "rows": [
@@ -862,12 +2047,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "706eec14f63096e8",
       "key_pre_flip": "706eec14f63096e8",
-      "key_post_flip": "706eec14f63096e8",
+      "key_post_flip": "c27aa577c3f220c8",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
@@ -877,12 +2062,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "f129fd3720e3e874",
       "key_pre_flip": "f129fd3720e3e874",
-      "key_post_flip": "f129fd3720e3e874",
+      "key_post_flip": "7f92ebdf5feed2e2",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/_nyiso114_baseattrib_2024/run_config.json",
@@ -892,12 +2077,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "1aa2f0cb0dc53c22",
-      "key_post_flip": "1aa2f0cb0dc53c22",
+      "key_post_flip": "189d12e347a78ea4",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/caiso260_demand_vintage/run_config.json",
@@ -922,12 +2107,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "1e9fb1391ec06a95",
-      "key_post_flip": "1e9fb1391ec06a95",
+      "key_post_flip": "7cc3aab0cb0f2615",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/ercot236_k33_clip/run_config.json",
@@ -937,12 +2122,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "982d32542949148c",
-      "key_post_flip": "982d32542949148c",
+      "key_post_flip": "843b21b849e2235b",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/ercot248_two_config_keeper/run_config.json",
@@ -952,12 +2137,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "3711b15e1ace5077",
-      "key_post_flip": "3711b15e1ace5077",
+      "key_post_flip": "85c5b616a56668b8",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/ercot252_2022_touchpoint_repair/run_config.json",
@@ -1057,12 +2242,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "be3ebfbbae26ea54",
-      "key_post_flip": "be3ebfbbae26ea54",
+      "key_post_flip": "92f240d9f7f6dd2d",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/neiso_tp2022_k99/run_config.json",
@@ -1072,12 +2257,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "f6c66ec6d22dcfe8",
-      "key_post_flip": "f6c66ec6d22dcfe8",
+      "key_post_flip": "fdb3a4f4c7b34b8e",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/nyiso192_astoria_panel/run_config.json",
@@ -1087,12 +2272,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "0ac15036eacc3d22",
-      "key_post_flip": "0ac15036eacc3d22",
+      "key_post_flip": "97c227df1b3b0209",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/nyiso196_extract_basis/run_config.json",
@@ -1102,12 +2287,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "cc529eedb3383829",
-      "key_post_flip": "cc529eedb3383829",
+      "key_post_flip": "d6216dff2f1d35e2",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/nyiso202_startup_aware/run_config.json",
@@ -1117,12 +2302,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "942480d844dfeaa1",
-      "key_post_flip": "942480d844dfeaa1",
+      "key_post_flip": "c2dc2b0aae2fc73c",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/nyiso209_2022_touchpoint/run_config.json",
@@ -1162,12 +2347,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": null,
       "key_pre_flip": "159733571efa869b",
-      "key_post_flip": "159733571efa869b",
+      "key_post_flip": "b23183dd21b9d310",
       "reproduces_recorded_key": null,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/calibration/spp40_baseline_B/run_config.json",
@@ -1222,12 +2407,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "8d8bc63a0d4378a9",
       "key_pre_flip": "8d8bc63a0d4378a9",
-      "key_post_flip": "8d8bc63a0d4378a9",
+      "key_post_flip": "1a4c189101db4bae",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d45r/nyiso/run_config.json",
@@ -1237,12 +2422,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "cc7d1050a8090c76",
       "key_pre_flip": "cc7d1050a8090c76",
-      "key_post_flip": "cc7d1050a8090c76",
+      "key_post_flip": "7292719823cc4cb0",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d45r/pjm/run_config.json",
@@ -1252,12 +2437,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "321f04e9060787f0",
       "key_pre_flip": "321f04e9060787f0",
-      "key_post_flip": "321f04e9060787f0",
+      "key_post_flip": "51c474dd3a09cd69",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d46/caiso/run_config.json",
@@ -1267,12 +2452,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "772b1e5abc7fc80c",
       "key_pre_flip": "772b1e5abc7fc80c",
-      "key_post_flip": "772b1e5abc7fc80c",
+      "key_post_flip": "9420a980f8000e85",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d46/ercot/run_config.json",
@@ -1282,12 +2467,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "873d8c0e6cab52ae",
       "key_pre_flip": "873d8c0e6cab52ae",
-      "key_post_flip": "873d8c0e6cab52ae",
+      "key_post_flip": "619f2eaa7a6f9536",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d46/neiso/run_config.json",
@@ -1297,12 +2482,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "6690e4d6d66bc819",
       "key_pre_flip": "6690e4d6d66bc819",
-      "key_post_flip": "6690e4d6d66bc819",
+      "key_post_flip": "1637b26b2b7ba93c",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d50/ercot/run_config.json",
@@ -1312,12 +2497,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0c3e9cd5b5993bdf",
       "key_pre_flip": "0c3e9cd5b5993bdf",
-      "key_post_flip": "0c3e9cd5b5993bdf",
+      "key_post_flip": "106009814b03acab",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d50/neiso/run_config.json",
@@ -1327,12 +2512,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "18515067bf4d2fbe",
       "key_pre_flip": "18515067bf4d2fbe",
-      "key_post_flip": "18515067bf4d2fbe",
+      "key_post_flip": "74c077769c2141ab",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d50/pjm/run_config.json",
@@ -1342,12 +2527,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "167e65187f32056b",
       "key_pre_flip": "167e65187f32056b",
-      "key_post_flip": "167e65187f32056b",
+      "key_post_flip": "54647cdcd5decdc7",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d60/caiso/run_config.json",
@@ -1357,12 +2542,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "29f8eb372810195f",
       "key_pre_flip": "29f8eb372810195f",
-      "key_post_flip": "29f8eb372810195f",
+      "key_post_flip": "5c86cca876710b41",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d60/miso/run_config.json",
@@ -1372,12 +2557,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "b1a73a087064ffd8",
       "key_pre_flip": "b1a73a087064ffd8",
-      "key_post_flip": "b1a73a087064ffd8",
+      "key_post_flip": "bc6387d7426031f5",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d60/nyiso/run_config.json",
@@ -1387,12 +2572,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "19a9690bb12c8459",
       "key_pre_flip": "19a9690bb12c8459",
-      "key_post_flip": "19a9690bb12c8459",
+      "key_post_flip": "998dac988735d6c0",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d60/pjm/run_config.json",
@@ -1402,12 +2587,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "09996eca71ee80fd",
       "key_pre_flip": "09996eca71ee80fd",
-      "key_post_flip": "09996eca71ee80fd",
+      "key_post_flip": "d93c88ce3858d4de",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d65-a1/neiso/run_config.json",
@@ -1417,12 +2602,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "8ebed20ae90ec0e7",
       "key_pre_flip": "8ebed20ae90ec0e7",
-      "key_post_flip": "8ebed20ae90ec0e7",
+      "key_post_flip": "db6d7e52efe7499c",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d65-ctl/neiso/run_config.json",
@@ -1432,12 +2617,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "18515067bf4d2fbe",
       "key_pre_flip": "18515067bf4d2fbe",
-      "key_post_flip": "18515067bf4d2fbe",
+      "key_post_flip": "74c077769c2141ab",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-d65br/caiso/run_config.json",
@@ -1537,12 +2722,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "587dc5b32ba71ceb",
       "key_pre_flip": "223ed4e475c6842f",
-      "key_post_flip": "223ed4e475c6842f",
+      "key_post_flip": "e176446c38852fcd",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-s4hydro/neiso-control/run_config.json",
@@ -1552,12 +2737,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "9a7f68fc7dcac931",
       "key_pre_flip": "9a7f68fc7dcac931",
-      "key_post_flip": "9a7f68fc7dcac931",
+      "key_post_flip": "067905e96032e48f",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-s4hydro/neiso/run_config.json",
@@ -1567,12 +2752,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "9a7f68fc7dcac931",
       "key_pre_flip": "9a7f68fc7dcac931",
-      "key_post_flip": "9a7f68fc7dcac931",
+      "key_post_flip": "067905e96032e48f",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t1f-s6-pjm/ledger/run_config.json",
@@ -1582,12 +2767,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "31a19d815fa319a7",
       "key_pre_flip": "2f1a55ad9c824b11",
-      "key_post_flip": "2f1a55ad9c824b11",
+      "key_post_flip": "9f7f3c04ae12e487",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/base/run_config.json",
@@ -1597,12 +2782,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "67678e58b2d0526c",
       "key_pre_flip": "67678e58b2d0526c",
-      "key_post_flip": "67678e58b2d0526c",
+      "key_post_flip": "0e61bbc56d976aff",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/carbon_plus25/run_config.json",
@@ -1612,12 +2797,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "56019f3b0850e9f9",
       "key_pre_flip": "56019f3b0850e9f9",
-      "key_post_flip": "56019f3b0850e9f9",
+      "key_post_flip": "f227f42a83259278",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/gaspm5/run_config.json",
@@ -1627,12 +2812,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "e84079053b581a9e",
       "key_pre_flip": "e84079053b581a9e",
-      "key_post_flip": "e84079053b581a9e",
+      "key_post_flip": "3fc96aa20b4ca7c2",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d46/fc6/arms/gasup150/run_config.json",
@@ -1642,12 +2827,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "96984c538320d6d6",
       "key_pre_flip": "96984c538320d6d6",
-      "key_post_flip": "96984c538320d6d6",
+      "key_post_flip": "d4951b374625db1e",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d46/run_config.json",
@@ -1657,12 +2842,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "67678e58b2d0526c",
       "key_pre_flip": "67678e58b2d0526c",
-      "key_post_flip": "67678e58b2d0526c",
+      "key_post_flip": "0e61bbc56d976aff",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d60/run_config.json",
@@ -1672,12 +2857,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "f04fd06348e1623d",
       "key_pre_flip": "f04fd06348e1623d",
-      "key_post_flip": "f04fd06348e1623d",
+      "key_post_flip": "0c4d3965807dc3c3",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-d65br/run_config.json",
@@ -1702,12 +2887,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0365174ab16cc318",
       "key_pre_flip": "dd519f7dd4bfe807",
-      "key_post_flip": "dd519f7dd4bfe807",
+      "key_post_flip": "9caad869cf2386c2",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon25/run_config.json",
@@ -1717,12 +2902,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7924eccc695c0168",
       "key_pre_flip": "64dbc1017d1729fa",
-      "key_post_flip": "64dbc1017d1729fa",
+      "key_post_flip": "aa4bc9f3411f6d2e",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/carbon_plus25/run_config.json",
@@ -1732,12 +2917,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7784d408fc955785",
       "key_pre_flip": "6830f327c8891c40",
-      "key_post_flip": "6830f327c8891c40",
+      "key_post_flip": "5da75497011dac05",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gaspm5/run_config.json",
@@ -1747,12 +2932,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "1de43201e2040f7f",
       "key_pre_flip": "ee46ccd7c36532a1",
-      "key_post_flip": "ee46ccd7c36532a1",
+      "key_post_flip": "55b9d5e545a8107a",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/fc6/arms/gasup150/run_config.json",
@@ -1762,12 +2947,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "13f9357712250600",
       "key_pre_flip": "0315eaa0c519c723",
-      "key_post_flip": "0315eaa0c519c723",
+      "key_post_flip": "616cce9d4e64e45c",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau-prera-2026-08-31/run_config.json",
@@ -1777,12 +2962,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "a4b11ef4aaa1be35",
       "key_pre_flip": "dd519f7dd4bfe807",
-      "key_post_flip": "dd519f7dd4bfe807",
+      "key_post_flip": "9caad869cf2386c2",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/base/run_config.json",
@@ -1792,12 +2977,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "706e7ba8e6582d42",
       "key_pre_flip": "a4b11ef4aaa1be35",
-      "key_post_flip": "a4b11ef4aaa1be35",
+      "key_post_flip": "579bcc7a10e58343",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/carbon_plus25/run_config.json",
@@ -1807,12 +2992,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "f7cced798488ddac",
       "key_pre_flip": "c84ded1f95fa7a62",
-      "key_post_flip": "c84ded1f95fa7a62",
+      "key_post_flip": "9c91850d6a5af646",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gaspm5/run_config.json",
@@ -1822,12 +3007,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "2d017ed9675aa386",
       "key_pre_flip": "05cc241b6e729a4e",
-      "key_post_flip": "05cc241b6e729a4e",
+      "key_post_flip": "9f830414299bfd48",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/fc6/arms/gasup150/run_config.json",
@@ -1837,12 +3022,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "65662ca117959ee5",
       "key_pre_flip": "41fe22b4d33e6746",
-      "key_post_flip": "41fe22b4d33e6746",
+      "key_post_flip": "9857b4ee02cdfd63",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/ff-t3-neiso-golden/bau/run_config.json",
@@ -1852,12 +3037,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "706e7ba8e6582d42",
       "key_pre_flip": "a4b11ef4aaa1be35",
-      "key_post_flip": "a4b11ef4aaa1be35",
+      "key_post_flip": "579bcc7a10e58343",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/hindcast/caiso-2021-2025-realized-t1h-d46/run_config.json",
@@ -2362,12 +3547,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "c3592c1adbc8ac17",
       "key_pre_flip": "c3592c1adbc8ac17",
-      "key_post_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scenario-probes/scn-ws2a/neiso-2026-t0-target/run_config.json",
@@ -2377,12 +3562,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "277e96c45549a70e",
       "key_pre_flip": "277e96c45549a70e",
-      "key_post_flip": "277e96c45549a70e",
+      "key_post_flip": "53061c5fa9e58958",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-campaign-load-2026-09-06-r2/CAISO/LOAD-HI-ORGANIC/run_config.json",
@@ -2587,12 +3772,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "c5255cea87fbaacf",
       "key_pre_flip": "c5255cea87fbaacf",
-      "key_post_flip": "c5255cea87fbaacf",
+      "key_post_flip": "98d23b1c7f701a84",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-campaign-load-2026-09-06/ERCOT/LOAD-HI/run_config.json",
@@ -2602,12 +3787,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "31cf71afda5c610d",
       "key_pre_flip": "31cf71afda5c610d",
-      "key_post_flip": "31cf71afda5c610d",
+      "key_post_flip": "3acdf58060b6f3e2",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-campaign-load-2026-09-06/ERCOT/REF/run_config.json",
@@ -2617,12 +3802,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "6e40769352a572ba",
       "key_pre_flip": "6e40769352a572ba",
-      "key_post_flip": "6e40769352a572ba",
+      "key_post_flip": "ac3c0552e87c8028",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-campaign-policy-2026-09-06/ERCOT/ALL-CLEAN/run_config.json",
@@ -3142,12 +4327,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "eed460b6ddfaab1c",
       "key_pre_flip": "eed460b6ddfaab1c",
-      "key_post_flip": "eed460b6ddfaab1c",
+      "key_post_flip": "7a8496e3988c6f18",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws0-smoke/neiso/REF/run_config.json",
@@ -3157,12 +4342,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "c3592c1adbc8ac17",
       "key_pre_flip": "c3592c1adbc8ac17",
-      "key_post_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/caiso/CARB/run_config.json",
@@ -3172,12 +4357,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "bc8d37094bc09257",
       "key_pre_flip": "bc8d37094bc09257",
-      "key_post_flip": "bc8d37094bc09257",
+      "key_post_flip": "0cc2b3df9597dc0f",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/caiso/REF/run_config.json",
@@ -3187,12 +4372,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "40db53ac56d6f65b",
       "key_pre_flip": "40db53ac56d6f65b",
-      "key_post_flip": "40db53ac56d6f65b",
+      "key_post_flip": "c66dd73809803bd5",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/ercot/CARB/run_config.json",
@@ -3202,12 +4387,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "ff31f680a740d905",
       "key_pre_flip": "ff31f680a740d905",
-      "key_post_flip": "ff31f680a740d905",
+      "key_post_flip": "d3443c541a98e037",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/ercot/REF/run_config.json",
@@ -3217,12 +4402,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0c2e6c5b9d6d0f07",
       "key_pre_flip": "0c2e6c5b9d6d0f07",
-      "key_post_flip": "0c2e6c5b9d6d0f07",
+      "key_post_flip": "50825f13c95a1d7e",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/miso/CARB/run_config.json",
@@ -3232,12 +4417,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "a31305098f97c7ef",
       "key_pre_flip": "a31305098f97c7ef",
-      "key_post_flip": "a31305098f97c7ef",
+      "key_post_flip": "50d5660b27698bd9",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/miso/REF/run_config.json",
@@ -3247,12 +4432,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "1b9e15c5a85f6302",
       "key_pre_flip": "1b9e15c5a85f6302",
-      "key_post_flip": "1b9e15c5a85f6302",
+      "key_post_flip": "6f2a7e93383682eb",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/neiso/CARB/run_config.json",
@@ -3262,12 +4447,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "59395c9c0651ce70",
       "key_pre_flip": "59395c9c0651ce70",
-      "key_post_flip": "59395c9c0651ce70",
+      "key_post_flip": "ae62e3e89900c35a",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/neiso/REF/run_config.json",
@@ -3277,12 +4462,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "5ed8ea2e1988013e",
       "key_pre_flip": "5ed8ea2e1988013e",
-      "key_post_flip": "5ed8ea2e1988013e",
+      "key_post_flip": "f948cabd206d3b74",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/nyiso/CARB/run_config.json",
@@ -3292,12 +4477,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "c943601863d3032b",
       "key_pre_flip": "c943601863d3032b",
-      "key_post_flip": "c943601863d3032b",
+      "key_post_flip": "87c8a247138de212",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/nyiso/REF/run_config.json",
@@ -3307,12 +4492,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "1d3cb39cddb19e14",
       "key_pre_flip": "1d3cb39cddb19e14",
-      "key_post_flip": "1d3cb39cddb19e14",
+      "key_post_flip": "cd209a1bcf336ce1",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/pjm/CARB/run_config.json",
@@ -3322,12 +4507,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "bd1839f1478eb801",
       "key_pre_flip": "bd1839f1478eb801",
-      "key_post_flip": "bd1839f1478eb801",
+      "key_post_flip": "cba9a932a94a5579",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws1-probe/pjm/REF/run_config.json",
@@ -3337,12 +4522,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "8021741688f9b1f6",
       "key_pre_flip": "8021741688f9b1f6",
-      "key_post_flip": "8021741688f9b1f6",
+      "key_post_flip": "4993ddec0e39f371",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/ercot/BAU/run_config.json",
@@ -3352,12 +4537,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "d88c8585e76f2935",
       "key_pre_flip": "d88c8585e76f2935",
-      "key_post_flip": "d88c8585e76f2935",
+      "key_post_flip": "d35c571cd9d6437c",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/ercot/CES-20/run_config.json",
@@ -3367,12 +4552,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "075e6aa30813f061",
       "key_pre_flip": "075e6aa30813f061",
-      "key_post_flip": "075e6aa30813f061",
+      "key_post_flip": "041d840206e3f400",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/ercot/CES-40/run_config.json",
@@ -3382,12 +4567,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "383509581661faba",
       "key_pre_flip": "383509581661faba",
-      "key_post_flip": "383509581661faba",
+      "key_post_flip": "eb03e608c7803a01",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/neiso/BAU/run_config.json",
@@ -3397,12 +4582,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "5e2c52ea81694c10",
       "key_pre_flip": "5e2c52ea81694c10",
-      "key_post_flip": "5e2c52ea81694c10",
+      "key_post_flip": "bf13317f574b7036",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/neiso/CES-20/run_config.json",
@@ -3412,12 +4597,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "43b921da2f0bcfc7",
       "key_pre_flip": "43b921da2f0bcfc7",
-      "key_post_flip": "43b921da2f0bcfc7",
+      "key_post_flip": "df865193c5f15327",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws2-ladder/neiso/CES-40/run_config.json",
@@ -3427,12 +4612,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7d36e0b517ffb0e3",
       "key_pre_flip": "7d36e0b517ffb0e3",
-      "key_post_flip": "7d36e0b517ffb0e3",
+      "key_post_flip": "199963d742b01396",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe-t1f/ercot/LOAD-HI/run_config.json",
@@ -3442,12 +4627,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "3da3a8dce270a5cd",
       "key_pre_flip": "3da3a8dce270a5cd",
-      "key_post_flip": "3da3a8dce270a5cd",
+      "key_post_flip": "2d6e54cf6a3c9184",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe-t1f/ercot/REF/run_config.json",
@@ -3457,12 +4642,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "6cfa33538294713c",
       "key_pre_flip": "6cfa33538294713c",
-      "key_post_flip": "6cfa33538294713c",
+      "key_post_flip": "47ae32c86a1b83dc",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe-t1f/neiso/LOAD-HI/run_config.json",
@@ -3472,12 +4657,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "6e364efaa728fc92",
       "key_pre_flip": "6e364efaa728fc92",
-      "key_post_flip": "6e364efaa728fc92",
+      "key_post_flip": "e1e85c4128e8866b",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe-t1f/neiso/REF/run_config.json",
@@ -3487,12 +4672,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "77b56ef19cb7200e",
       "key_pre_flip": "77b56ef19cb7200e",
-      "key_post_flip": "77b56ef19cb7200e",
+      "key_post_flip": "bd2f8c831d3e5643",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/caiso/LOAD-HI/run_config.json",
@@ -3502,12 +4687,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "cc8af31b3173465e",
       "key_pre_flip": "cc8af31b3173465e",
-      "key_post_flip": "cc8af31b3173465e",
+      "key_post_flip": "d4a2ecfcd860a717",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/caiso/REF/run_config.json",
@@ -3517,12 +4702,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "a998110c3dfb4fa7",
       "key_pre_flip": "a998110c3dfb4fa7",
-      "key_post_flip": "a998110c3dfb4fa7",
+      "key_post_flip": "d521785bd20b9c71",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/ercot/LOAD-HI-ORGANIC/run_config.json",
@@ -3532,12 +4717,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "e4a9e2dbb5ee5528",
       "key_pre_flip": "e4a9e2dbb5ee5528",
-      "key_post_flip": "e4a9e2dbb5ee5528",
+      "key_post_flip": "45e1f44ae4d7e65d",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/ercot/LOAD-HI/run_config.json",
@@ -3547,12 +4732,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7172ac611ebbf67c",
       "key_pre_flip": "7172ac611ebbf67c",
-      "key_post_flip": "7172ac611ebbf67c",
+      "key_post_flip": "0cbbbea9091ba91a",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/ercot/REF/run_config.json",
@@ -3562,12 +4747,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "8e01cd28ea757f1a",
       "key_pre_flip": "8e01cd28ea757f1a",
-      "key_post_flip": "8e01cd28ea757f1a",
+      "key_post_flip": "25786388ac8b6da7",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/miso/LOAD-HI-ORGANIC/run_config.json",
@@ -3577,12 +4762,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "abe5759c41a76e7b",
       "key_pre_flip": "abe5759c41a76e7b",
-      "key_post_flip": "abe5759c41a76e7b",
+      "key_post_flip": "902e187572488c9f",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/miso/LOAD-HI/run_config.json",
@@ -3592,12 +4777,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "759ccceb7923b1fe",
       "key_pre_flip": "759ccceb7923b1fe",
-      "key_post_flip": "759ccceb7923b1fe",
+      "key_post_flip": "963280e6e1cb1099",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/miso/REF/run_config.json",
@@ -3607,12 +4792,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "8e72c2256983f981",
       "key_pre_flip": "8e72c2256983f981",
-      "key_post_flip": "8e72c2256983f981",
+      "key_post_flip": "e60391f683b1564f",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/neiso/LOAD-HI/run_config.json",
@@ -3622,12 +4807,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "ec78d9814e295e37",
       "key_pre_flip": "ec78d9814e295e37",
-      "key_post_flip": "ec78d9814e295e37",
+      "key_post_flip": "bf6a3ee91a06e055",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/neiso/REF/run_config.json",
@@ -3637,12 +4822,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "c3592c1adbc8ac17",
       "key_pre_flip": "c3592c1adbc8ac17",
-      "key_post_flip": "c3592c1adbc8ac17",
+      "key_post_flip": "7ee458a79a839a4e",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/nyiso/LOAD-HI-ORGANIC/run_config.json",
@@ -3652,12 +4837,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "97f765a39320f765",
       "key_pre_flip": "97f765a39320f765",
-      "key_post_flip": "97f765a39320f765",
+      "key_post_flip": "cbddc1424d23bb69",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/nyiso/LOAD-HI/run_config.json",
@@ -3667,12 +4852,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "3f2d67121a98bcd9",
       "key_pre_flip": "3f2d67121a98bcd9",
-      "key_post_flip": "3f2d67121a98bcd9",
+      "key_post_flip": "220831930dc12c57",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/nyiso/REF/run_config.json",
@@ -3682,12 +4867,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7c0ad83004421a23",
       "key_pre_flip": "7c0ad83004421a23",
-      "key_post_flip": "7c0ad83004421a23",
+      "key_post_flip": "760c9a169c18619d",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/pjm/LOAD-HI/run_config.json",
@@ -3697,12 +4882,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "7370b703046ef374",
       "key_pre_flip": "7370b703046ef374",
-      "key_post_flip": "7370b703046ef374",
+      "key_post_flip": "6eee038a64aac16a",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "results/scn-ws4-probe/pjm/REF/run_config.json",
@@ -3712,12 +4897,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "058444cfe884b79b",
       "key_pre_flip": "058444cfe884b79b",
-      "key_post_flip": "058444cfe884b79b",
+      "key_post_flip": "e81f9b338834f2c8",
       "reproduces_recorded_key": true,
-      "moved": false
+      "moved": true
     },
     {
       "run_config": "tests/golden/ercot_2026_2040.run_config.json",
@@ -3727,12 +4912,12 @@
       "committed_field_value": null,
       "field_recorded": false,
       "resolved_pre_flip": false,
-      "resolved_post_flip": false,
+      "resolved_post_flip": true,
       "recorded_cache_key": "0d6f2710f8dedf56",
       "key_pre_flip": "6a23be2f5cb8d027",
-      "key_post_flip": "6a23be2f5cb8d027",
+      "key_post_flip": "8e753bda2ae28158",
       "reproduces_recorded_key": false,
-      "moved": false
+      "moved": true
     }
   ]
 }
