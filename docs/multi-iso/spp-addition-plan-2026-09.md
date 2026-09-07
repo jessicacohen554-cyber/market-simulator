@@ -290,6 +290,8 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-60** the SPP T1-H recipe + forecast data intake — **LANDED 2026-09-07** (`docs/handoffs/FINDING-spp-60-2026-09-07.md`; T1-H `spp-2021-2025-realized-t1h-spp60` registered, verdict `spp-t1h` HOLD / FC-3 FAIL at full magnitude; gap table closed: `capacity_actuals_spp.csv` built, `confirmed-retirements/spp.csv` first rows (Tolk 1/2), the 2020-vintage `eia860_generators.parquet` lacked every SWPP row and was extended with the six-BA rows preserved byte-for-byte; `load_forecast/spp.py` already carried a real edition (2025 ITP) — the 2026 ITP vintage is routed) | FABLE · a forecast recipe is a design object; the intake gaps are adjudications | spp | `scripts/lib/load_forecast/spp.py` (a real edition + vintage — manifest row 11), the SPP rows of confirmed-retirement / planned-addition / queue-cap / fuel-trajectory registries, the T1-H hindcast bundle + sidecar via `register_forecast_run.py`, legs (b)/(c) of the SPP board row (after SPP-45), `PRECOMMIT-/FINDING-spp-60` | zero-LP first: the gap table (what T1-H reads vs what SPP has), the load-forecast edition census | `FINDING-spp-60-<date>.md` | backcast keeper untouched; `GOLDEN_ISOS` only if the readiness battery admits it (report, never assert); rule 22: the crossover window is forecast-mode, no measured H1-2026 actuals |
 | **SPP-55** VRL-based scarcity (P5's deferred object; issued r#10 once SPP-44's 28c edit merged) — **LANDED 2026-09-07: KILLED AT ZERO LP** (`FINDING-spp-55-2026-09-07.md` — the object is SPP's published Contingency Reserve Demand Curve $275/$550/$1,100 (not the VRLs), registered as the SPP entry of the shared `energy_reserve_coopt` gate with NO new field; keeper-3's reserve-eligible headroom never falls to the 1.5 GW requirement in any measured shortage hour, so the row cannot bind — INERT, cell U → I; 1/0/0 of the C3c hours coincide with reserve shortage; no solve spent, nothing registered) | FABLE · mechanism design: an in-LP reserve demand curve on SPP's own published VRL steps; kill-grading is adjudication | spp | `config/reserve_config.py` SPP entry (requirements + the VRL step curve, every number cited to SPP-12's Exhibit 4-1 / Planning Criteria), ONE new ISO-exclusive `ScenarioConfig` gate if the reserve machinery needs one (default off, drop value declared) + matrix row + a cell in EVERY shard (28c), tests, `PRECOMMIT-/FINDING-spp-55`, screen bundle (TEMPORARY), `results/calibration/spp55_vrl_B/` if the screen clears, the SPP shard cells it moves | zero-LP: rule-19 enumeration (SPP has NO scarcity mechanism, zero slack/dump — price-family §1.3); the measured target (42 / 59 / 68 h > $200 at ordinary load, 79–93× gas); footprint by year from the `spp-or-mcp` RTBM MCP files (hours the spinning MCP sits at/above the $250 VRL step) → screen year | `FINDING-spp-55-<date>.md` | STOP gate structural (the reserve row binds in the measured shortage hours; the price response has the VRL's own order; no non-target flip); never C3c-gated; control = keeper-3; promotion = card P15 |
 | **SPP-46** the C1-2024 gas split — SPP-44 R-17's two admissible objects (issued r#12) | FABLE · the object choice, the carve-out declaration and the kill-grading are all adjudications | spp | `PRECOMMIT-/FINDING-spp-46`, `docs/handoffs/spp46/`, its own SPP shard cell line(s), and — candidate (A) only — one SPP-exclusive default-off `ScenarioConfig` field with its matrix row + rule-28(c) cells | **rule-29 phase 0 is a kill condition**: the committed-state census + the offer-array delta, both zero-LP, decide the candidate and may end the lane before any solve | `FINDING-spp-46-<date>.md` | screen year named by FOOTPRINT ex ante; STOP gate structural with ex-ante dominance thresholds, identity on the P0 objective + LP input arrays (never P1), NEVER read on C1; control = keeper-3 committed (form 4) + G-DRIFT, no control solve; bundles gitignored, NEVER deleted (rule 31) |
+| **SPP-47** P16 — the reference's incomplete-fuel swap rule, repo-wide (issued r#12 under owner ruling P16) | OPUS · an enumerated one-line rule change; the SCOPE is ruled, the MEASUREMENT is the lane | shared | `scripts/data/build_calibration_reference.py`, `data/raw/_validation-source/calibration_reference.json`, `bench/SPP/` only if it goes STALE, `FINDING-spp-47` | zero-LP throughout; `calibration_verdict.py --run-id` on committed artifacts, never a solve | `FINDING-spp-47-<date>.md` | the five cells move and nothing else does; per-ISO determination delta reported at full magnitude; all seven gates at their pre-lane exit code or better; no other ISO's bench part touched |
+| **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule (issued r#12 under owner ruling P17) | FABLE · a construction repair crossing an ISO boundary; the correctness argument is the deliverable | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
 | **SPP-51…57** | per §4 (SPP-51 → **FABLE** since r#6: it carries SPP-33's R2 anchor correction and an ERCOT limit-vs-clip decision, both adjudications; SPP-58 added — see §8 W5) | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -2289,6 +2291,126 @@ reason; the STOP-gate table with its declared thresholds beside the realised val
 as a REPORT line clearly marked "not gated on"; the promotion question and the bundle-retention statement.
 ```
 
+#### SPP-47 `[OPUS]` — P16: the reference's incomplete-fuel swap rule, repo-wide (5 cells, 4 ISOs)
+
+```
+You are lane SPP-47. MODEL: Opus claude-opus-5 — an enumerated one-line rule change whose SCOPE the owner
+has already ruled; you execute and MEASURE, you do not re-open the scope. DATA PROFILE: shared.
+Branch stem: claude/spp-47-reference-vintage-rule-<4 chars>.
+
+Read CLAUDE.md freshly and in full (rules 14 [R-ACCURATE], 23 [R-FROZEN-DERIVE], 24, 25 [R-ISO-SCOPE]);
+docs/handoffs/FINDING-spp-43-2026-09-07.md §6 IN FULL — it is your specification, including the four-ISO
+table; docs/handoffs/FINDING-spp-57-2026-09-07.md §8; docs/multi-iso/spp-addition-plan-2026-09.md §8.0.
+
+OWNER RULING P16 (2026-09-07, this desk's r#12): **repo-wide, one rule, all five cells.** The scope
+question is CLOSED — do not re-litigate it, and do not narrow it to SPP.
+
+THE CHANGE, exactly as SPP-43 §6 specifies it and no wider: in
+`scripts/data/build_calibration_reference.py`, `_incomplete_renewable_fuels` / `_guard_incomplete_eia923`
+iterate the literal tuple `("wind", "solar")`. Extend it to
+`("wind", "solar") + _EIA923_EXTRA_FUELS_BY_ISO.get(iso, ())`, restricted to fuels EIA-930 actually
+reports. SAME 0.80 threshold, SAME EIA-930 authority, SAME per-fuel evaluation, **ZERO new parameters**
+(rules 5 / 21 / 23 — this is a construction repair, not a re-derivation against a residual, and your
+commit message says so). If the one-line form does not reproduce SPP-43 §6's five-cell table exactly,
+STOP and report the discrepancy rather than widening the rule to force the table.
+
+WHAT YOU MUST MEASURE AND REPORT (this is the bulk of the lane, not the edit):
+  1. The five cells before/after — SPP 2025 hydro (0.0233 → EIA-930 8.8299), MISO 2025 hydro, NEISO 2025
+     hydro, NEISO 2025 oil, NYISO 2023 oil — each with its EIA-923 value, EIA-930 value and ratio.
+  2. **Every cell that moves and is NOT one of the five.** Run the builder over all seven ISOs and every
+     year and diff `calibration_reference.json` in full. A sixth moved cell is a finding, not a footnote.
+  3. **The determination delta for every affected ISO's keeper**, from COMMITTED artifacts only —
+     `python3 scripts/calibration_verdict.py --run-id <keeper id>` per ISO, before and after. NEVER a
+     solve. Report each ISO's before/after determination at full magnitude, including "unchanged".
+  4. `scripts/check_bench_freshness.py` before and after. If SPP's bench part goes STALE you may
+     regenerate **SPP's part only** (this desk's ISO). If any OTHER ISO's part goes STALE, **do not
+     touch it** — report it, name the ISO's desk, and say so in your FINDING §0.
+
+`data/raw/_validation-source/calibration_reference.json` is a SHARED file under the G9
+merge-never-replace discipline: regenerate it, never hand-edit it, and verify no unrelated ISO's block
+lost a key. Rebase last (§8.0 rule 3) — a live calibration lane in another ISO may be writing it.
+
+GATES before the PR: `check_bench_freshness`, `audit_keepers --check`, `check_registry_payload_parity`,
+`check_golden_manifest`, `ci_refactor_guards`, `check_mechanism_matrix`. All seven of the desk's gates
+must be at their pre-lane exit code or better; a gate that goes red because of item 4 is a STOP, not a
+thing to allowlist.
+
+FILES YOU OWN: `scripts/data/build_calibration_reference.py`,
+`data/raw/_validation-source/calibration_reference.json`, `frontend/data/backcast/bench/SPP/` (only if
+item 4 requires it), `docs/handoffs/FINDING-spp-47-<date>.md`, any test you add for the rule.
+FILES YOU DO NOT TOUCH: any other ISO's bench part, keeper shard, status file, registry sidecar or log;
+`frontend/data/forecast/`; the plan; the ledger; `docs/calibration-log/spp.md`; `CHANGELOG.md`.
+NO SOLVE OF ANY KIND. NO holdout year. If you find yourself wanting to re-score by re-solving, stop —
+`calibration_verdict.py` reads committed artifacts and that is the whole point of this lane.
+
+OWNER REPORT (FINDING §0): the five-cell before/after table; any sixth moved cell; the per-ISO
+determination delta table; the bench-freshness before/after and which desks you routed to.
+```
+
+#### SPP-48 `[FABLE]` — P17: the wind-shape builder's per-zone LEVEL rule (derive + measure; the desk sequences the landing)
+
+```
+You are lane SPP-48. MODEL: Fable claude-fable-5-1 — a construction repair whose correctness argument is
+the deliverable, and it crosses an ISO boundary. DATA PROFILE: spp. Branch stem:
+claude/spp-48-wind-level-rule-<4 chars>.
+
+Read CLAUDE.md freshly and in full (rules 1 [R-STRUCT], 13, 14 [R-ACCURATE], 23 [R-FROZEN-DERIVE],
+25 [R-ISO-SCOPE], 29, 31); docs/handoffs/FINDING-spp-54-2026-09-07.md §4 AND its R-21 IN FULL — it is
+your specification and its C-4 attribution is your baseline measurement;
+docs/handoffs/FINDING-spp-57b-2026-09-07.md R-18; docs/multi-iso/spp-addition-plan-2026-09.md §8.0.
+
+OWNER RULING P17 (2026-09-07, this desk's r#12): **shared builder repair; each ISO re-derives its own
+numbers (rule 25).** The scope question is CLOSED. What is NOT closed, and is yours to establish, is
+whether the repair is CORRECT.
+
+THE DEFECT (SPP-54 §4.2 C-4, measured): both `scripts/data/build_spp_wind_shape.py` and
+`scripts/data/build_miso_wind_shape.py` take the `_SAMPLES_PER_ZONE = 6` largest plants per zone and the
+redistribution then weights each zone by `cap_z · SHAPE_z(t)` — so the six-site samples' relative MEAN
+LEVELS act as zonal capacity-factor LEVELS. Splitting SPP's old South moved the North's annual potential
++1.38 / +1.47 / +1.91 TWh at an identical system total, and h8509 flipped from +440 MW feasible to
+−545 MW infeasible. This is why every three-zone SPP solve is blocked.
+
+THE REPAIR, zero DOF, rule 14 (SPP-54 R-21's candidate — you may propose a better one, but you must show
+it is not a new free parameter): each zone's LEVEL from its WHOLE operable fleet (capacity-weighted over
+all plants), with the six-site DIURNAL SHAPE retained; or all-plant sampling outright (254 NASA POWER
+point-years per year for SPP). Whichever you take, the level must come from a measured fleet quantity,
+never from a residual, and it must regenerate for a forward year (rule 13's forward test, answered in
+writing).
+
+WHAT YOU DELIVER, ALL ZERO-LP:
+  1. The repaired construction, in BOTH builders, with the shared rule expressed ONCE and each ISO's
+     numbers re-derived from its OWN data (rule 25 — no SPP number reaches MISO and none of MISO's
+     reaches SPP).
+  2. The IDENTITY legs, on both ISOs and every year: Σ_z cap_z · cf_z(t) = M(t) (the system total the
+     builder is given) to machine precision, and no capacity overflow lost. Report the residual.
+  3. **The h8509 test.** Re-run SPP-54's C-3 feasibility check on the three-zone inputs from
+     `8d427adc` with the repaired levels. Does the window hour become feasible? Report the number, and
+     report it even if the answer is no — a repair that is correct and does NOT unblock the pocket is
+     still the right repair, and it is the desk's problem, not a reason to tune.
+  4. **The two-zone delta.** The repair moves SPP's CURRENT two-zone wind input, which is keeper-3's
+     input. Quantify it: per-zone annual potential, 2023 / 2024 / 2025, before and after, and the
+     implied change to the LP's wind upper bound. Say plainly whether keeper-3 needs a re-baseline.
+  5. **The MISO delta**, measured the same way, so MISO's desk can act on a number rather than a claim.
+
+LANDING IS THE DESK'S CALL, NOT YOURS. Land the repaired BUILDERS and your instruments on the branch,
+but **do NOT regenerate or commit the SPP or MISO wind-shape parquets the solve path reads** — SPP-46 is
+solving against keeper-3 in parallel and a changed wind input would invalidate its control mid-flight
+(rule 29(b)). If your item 4 says keeper-3 needs a re-baseline, say so and the desk sequences it; SPP-54
+did exactly this (design landed, solve path restored to `origin/main`'s bytes before the PR) and it is
+the pattern to copy. NO SOLVE. NO holdout year.
+
+FILES YOU OWN: `scripts/data/build_spp_wind_shape.py`, `scripts/data/build_miso_wind_shape.py` (the
+shared rule only — never a MISO number), `docs/handoffs/PRECOMMIT-spp-48-<date>.md`,
+`docs/handoffs/FINDING-spp-48-<date>.md`, `docs/handoffs/spp48/`, tests.
+FILES YOU DO NOT TOUCH: the wind-shape parquets on the solve path, `keepers/*.json`, any bench part, any
+registry sidecar, `frontend/data/forecast/`, the plan, the ledger, `docs/calibration-log/spp.md`,
+`CHANGELOG.md`, MISO's log / shard / status.
+
+OWNER REPORT (FINDING §0): the construction, in one paragraph, with its forward test answered; the
+identity table; the h8509 verdict; the two-zone keeper-3 delta and your re-baseline recommendation; the
+MISO delta and the note routing it to MISO's desk.
+```
+
 ### W5 — the lever queue (DISPATCHABLE since r#7 — SPP-40 landed; SPP-57 issued r#7 in full below the table)
 
 | Lane | Model | Charter stub (expanded by the desk at issuance) |
@@ -2422,6 +2544,8 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-51 | `docs/handoffs/PRECOMMIT-spp-51-2026-09-07.md` · `FINDING-spp-51-2026-09-07.md` | **LANDED** 2026-09-07 — three adjudications made (R1 per-ISO anchor map; R2 HH+basis flat HRs 10.55 / 9.63 / 10.23 / 16.78 with `hr_by_year` armed, MISO split into West/South legs; ERCOT 835 MW measured clip); **arm KILLED at rule-29 phase 0 on the measured record, NO LP spent** (MISO legs 0.42–0.50 sign agreement vs 0.55; corr ≈ 0); cells `priced_interchange` / `reference_price_interface` U → R; topology gap (no SPP `IMPORT_ZONE`; one-bus repair = corridor bypass) designed + routed R-a; NO P15 candidate |
 | SPP-60 | `docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md`, `docs/handoffs/FINDING-spp-60-2026-09-07.md` | **LANDED** 2026-09-07 — gap table + T1-H `spp-2021-2025-realized-t1h-spp60` registered (`spp-t1h`: HOLD, FC-3 FAIL); board legs (b)/(c) filled; six routed items (FINDING §4) |
 | SPP-55 | `docs/handoffs/FINDING-spp-55-2026-09-07.md` (+ `PRECOMMIT-spp-55-2026-09-07.md`, `docs/handoffs/spp55/`) | **LANDED 2026-09-07 — KILLED AT ZERO LP (rule 29 step 0):** the SPP Contingency Reserve family built on SPP's published $275/$550/$1,100 curve and RSG requirement rule (six published constants, one measured share), registered under `energy_reserve_coopt` (no new field); keeper-3's headroom is below the requirement in 0/1/0 hours and in no measured shortage hour → INERT, cell U → I; the C3c tail is a 5-minute RT object (1/0/0 overlap); no candidate for P15; R-21…R-25 routed |
+| SPP-47 | `docs/handoffs/FINDING-spp-47-<date>.md` | issued r#12 (owner ruling P16) |
+| SPP-48 | `docs/handoffs/PRECOMMIT-spp-48-<date>.md` / `FINDING-spp-48-<date>.md` | issued r#12 (owner ruling P17) |
 | SPP-46 | `docs/handoffs/PRECOMMIT-spp-46-<date>.md` / `FINDING-spp-46-<date>.md` | issued r#12 |
 | SPP-35 | `docs/handoffs/FINDING-spp-35-2026-09-07.md` | **LANDED** 2026-09-07 — S-1/S-2 + O-4/O-6 closed; six items routed (FINDING §5) |
 

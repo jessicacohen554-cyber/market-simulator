@@ -100,7 +100,19 @@ that finds them (§6).
   **BLOCKED ON CARDS, not issued: SPP-54b** (the pocket's rating + solve half — it needs P17 *and* P18)
   and any `ttc_mw` question (P18). **SPP-56 stays LAST** (P4), now with its non-inertness instrument
   (`docs/handoffs/spp55/headroom.py`, SPP-55 R-22).
-- Next sitting: grade SPP-46; apply P16 / P17 / P18 if ruled; issue SPP-54b the moment P17 + P18 land.
+- **am.1 — ALL THREE CARDS RULED IN-SITTING (2026-09-07).** **P16 → REPO-WIDE, one rule, all five cells**
+  → **SPP-47** issued [OPUS]. **P17 → SHARED builder repair, each ISO re-derives its own numbers**
+  → **SPP-48** issued [FABLE], with the landing sequenced by the desk (its repaired parquets are NOT
+  merged while SPP-46 solves against keeper-3 — a changed wind input is a LIVE hunk that would invalidate
+  SPP-46's rule-29(b) form-4 control mid-flight). **P18 → KEEP 3,400, record ψ₂ as unresolved**: `ttc_mw`
+  is not re-keyed, SPP-54b will rate the South↔SPS link at **ψ₂'s 1,600 MW** (the only identification that
+  saw it) and state the disagreement at its gate; SPP-58 R-23's missing 69 kV under-lay stays open (R-aq).
+- **THREE LANES ISSUED r#12, files disjoint by construction, safe in parallel:** SPP-46 (the gas split —
+  the LP lane, and the only one that solves), SPP-47 (the reference vintage rule — zero-LP, scoring side),
+  SPP-48 (the wind level rule — zero-LP, builders only, landing held). **SPP-54b stays UNISSUED**: P18
+  gives it its rating but P17's repair must land first, and that is gated behind SPP-46.
+- Next sitting: grade SPP-46 / 47 / 48; sequence SPP-48's landing and any keeper-3 re-baseline it
+  recommends; issue SPP-54b once the wind repair is on `main`.
 
 ### 0l. r#11 — desk act: the PR-collision fix (2026-09-07, main HEAD `bfbb0b6a`)
 
@@ -562,7 +574,9 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | P13 | 2026-09-07 r#5 | the N↔S TTC for the first keeper (SPP-20's 48,700 MW placeholder cannot bind) | "Pull SPP-53 into W3 as SPP-40's precondition (Recommended)" | SPP-53 issued (Fable derive, PRECOMMIT-first construction, rule 14 misalignment documented); SPP-40's preconditions now SPP-30/31/32/53 — **EXECUTED 2026-09-07 (SPP-53): 3,400 MW** |
 | P14 | 2026-09-07 (given IN the SPP-40 session, recorded r#7) | the 2024 screen killed on a 22-h direction tie — is the baseline a keeper candidate? | "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper." | the full span was solved and `2026-09-07-spp-1-baseline` promoted as the FIRST SPP KEEPER at NOT-YET; STANDING for W5: a candidate that improves structure may be promoted even if gates regress — but promotion is served as a card (P15…), never a lane's act — **APPLIED r#8 by SPP-42** (promoted under a pre-declared rule with a stated gate miss, rule 14) **and by SPP-57** (the owner re-asked in-session; the lane answered NO — structure regressed, two inert pipes replaced one live one) — **APPLIED a third time r#9 by SPP-43** (owner ruled in-session over the lane's own bit-identity leg (i): structure improved, no gate regressed → keeper-3) |
 | Q59 (capx card, 2026-09-07, capx ledger §0bb(a)) | ruled on the capx director's card | SPP forecast onboarding | "SPP onboarding split — the board-row half here, the T1-H recipe half routed to the SPP desk" | SUPERSEDES P8 for the T1-H half: SPP-60 is THIS desk's (chartered r#9); the board row itself stays the capx director's file, edited by this desk only under the Q34 re-key form (SPP-45) and for legs (b)/(c) from measured results (SPP-60) |
-| P16 | 2026-09-07 r#9 | SPP-43 §6 / SPP-57 R-15: a one-rule, zero-parameter repair of the reference's hydro/oil vintage (use the EIA-930 swap other renewables already get when the EIA-923 vintage is preliminary) reaches FIVE cells in FOUR ISOs (SPP/MISO/NEISO 2025 hydro, NEISO 2025 oil, NYISO 2023 oil) — apply repo-wide, SPP-only, or not at all? | SERVED r#9 — pending | the answer decides whether a shared-builder lane is chartered (and by whom: it touches four ISOs' reference cells) |
+| P16 | 2026-09-07 r#9, **RULED r#12** | SPP-43 §6 / SPP-57 R-15: a one-rule, zero-parameter repair of the reference's hydro/oil vintage (use the EIA-930 swap other renewables already get when the EIA-923 vintage is preliminary) reaches FIVE cells in FOUR ISOs (SPP/MISO/NEISO 2025 hydro, NEISO 2025 oil, NYISO 2023 oil) — apply repo-wide, SPP-only, or not at all? | **REPO-WIDE, ONE RULE, ALL FIVE CELLS** (2026-09-07, r#12) | → **SPP-47** issued r#12 [OPUS]: the one-line swap-loop extension, every moved cell diffed over all seven ISOs, and the per-ISO determination delta measured from COMMITTED artifacts (`calibration_verdict.py --run-id`, never a solve). Non-SPP bench parts are reported and routed to their desks, never edited |
+| P17 | 2026-09-07 r#12 | SPP-54 R-21: the wind-shape builder weights zones by `cap_z · SHAPE_z(t)`, so a six-site sample's mean LEVEL acts as a zonal capacity-factor level (splitting SPP's South moves the North +1.4/+1.5/+1.9 TWh at an identical system total, and h8509 flips infeasible). It blocks EVERY three-zone SPP solve and the same builder serves MISO — SPP-only, shared, or not now? | **SHARED BUILDER REPAIR; EACH ISO RE-DERIVES ITS OWN NUMBERS (rule 25)** (2026-09-07, r#12) | → **SPP-48** issued r#12 [FABLE]: the repair in both builders, the identity legs on both ISOs, the h8509 verdict, the two-zone keeper-3 delta with a re-baseline recommendation, and the MISO delta routed to MISO's desk. **The solve-path parquets are NOT regenerated** — SPP-46 is solving against keeper-3 in parallel and a changed wind input would invalidate its rule-29(b) control mid-flight; the desk sequences the landing |
+| P18 | 2026-09-07 r#12 | SPP-58 R-21/R-22: two independent identifications of SPP's links disagree far outside the declared band — N↔S ψ₁ 3,400/4,206 (REGISTERED) vs ψ₂ 11,022/13,175; SPS tie ψ₁-era 10,705 vs ψ₂ 1,600. ψ₂ is model-blind but cannot see Franklin 161/69, which carries 44 % of the corridor's binding hours (no public 69 kV data exists in this repo's reach) | **KEEP 3,400; RECORD ψ₂ AS UNRESOLVED** (2026-09-07, r#12) | `ttc_mw` is NOT re-keyed — ψ₂ is blind to the element that decides ψ₁'s number, and the corridor is measurably LIVE at 3,400 (SPP-57b: 23.5 % of hours, 93 % N→S). SPP-54b rates the South↔SPS link at **ψ₂'s 1,600 MW**, the only identification that saw it, and states the disagreement at the gate. SPP-58 R-23 (the missing 69 kV under-lay) stays open as R-aq: no lane can close it without new data |
 | P9 | 2026-09-06 r#2 | EIA-930 SWPP defective hours (audit §3.4) | "Benchmark-side fix in SPP-31; demand-side routed (Recommended)" | SPP-31 screens `NG:` columns in the benchmark builder; low-side demand screen → audit track (§3 R-f); SPP-40 PRECOMMIT names the hours |
 
 ---
@@ -689,6 +703,8 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#9 | SPP-60 | `claude/spp-60-t1h-recipe-w3pd` | — | plan §8 W5-r#9 · SPP-60 | issued (Q59) |
 | r#10 | SPP-55 | `claude/spp-55-vrl-scarcity-d7xm` | — | plan §8 W5-r#9 · SPP-55 | issued (hold lifted) |
 | r#12 | SPP-46 | `claude/spp-46-gas-split-object-<suffix>` | — | plan §8 W5-r#12 · SPP-46 | issued (SPP-44 R-17; phase 0 before any LP) |
+| r#12 | SPP-47 | `claude/spp-47-reference-vintage-rule-<suffix>` | — | plan §8 W5-r#12 · SPP-47 | issued under owner ruling P16 (repo-wide) |
+| r#12 | SPP-48 | `claude/spp-48-wind-level-rule-<suffix>` | — | plan §8 W5-r#12 · SPP-48 | issued under owner ruling P17 (shared repair; landing held behind SPP-46) |
 
 ---
 
