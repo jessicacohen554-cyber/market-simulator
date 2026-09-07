@@ -1,0 +1,400 @@
+{
+ "session": "nyiso-218",
+ "arm": "results/calibration/_nyiso218_screen_2023",
+ "year": 2023,
+ "gates": {
+  "S1": {
+   "pass": false,
+   "n_bands_moved": 30,
+   "n_bands_expected": 30,
+   "all_ratios_exactly_1.03": true,
+   "violations": [],
+   "non_offer_curve_recipe_diff": {
+    "ercot_zonal_spread_ep_referenced": [
+     null,
+     false
+    ],
+    "spp_gas_commitment_bridge": [
+     null,
+     false
+    ]
+   },
+   "year_selection_keys_excluded": {},
+   "band_moves": {
+    "CC_CHP.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CC_CHP.econ_high": [
+     1.24,
+     1.2772000000000001,
+     1.03
+    ],
+    "CC_CHP.econ_low": [
+     0.98,
+     1.0094,
+     1.03
+    ],
+    "CC_REGULAR.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CC_REGULAR.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CC_REGULAR.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "COAL.econ_high": [
+     1.1,
+     1.1330000000000002,
+     1.03
+    ],
+    "COAL.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_BIT.committed": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "COAL_BIT.econ_high": [
+     1.1,
+     1.1330000000000002,
+     1.03
+    ],
+    "COAL_BIT.econ_low": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.committed": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.econ_high": [
+     1.15,
+     1.1844999999999999,
+     1.03
+    ],
+    "COAL_LIGNITE.econ_low": [
+     1.14,
+     1.1742,
+     1.03
+    ],
+    "COAL_PRB.committed": [
+     0.95,
+     0.9784999999999999,
+     1.03
+    ],
+    "COAL_PRB.econ_high": [
+     1.19,
+     1.2257,
+     1.03
+    ],
+    "COAL_PRB.econ_low": [
+     0.77,
+     0.7931,
+     1.03
+    ],
+    "COAL_WC.committed": [
+     0.85,
+     0.8755,
+     1.03
+    ],
+    "COAL_WC.econ_high": [
+     1.02,
+     1.0506,
+     1.03
+    ],
+    "COAL_WC.econ_low": [
+     0.9,
+     0.927,
+     1.03
+    ],
+    "CT_CHP.committed": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_CHP.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_CHP.econ_low": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_PEAKER.committed": [
+     1.35,
+     1.3905,
+     1.03
+    ],
+    "CT_PEAKER.econ_high": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "CT_PEAKER.econ_low": [
+     1.0,
+     1.03,
+     1.03
+    ],
+    "ST_GAS.committed": [
+     1.05,
+     1.0815000000000001,
+     1.03
+    ],
+    "ST_GAS.econ_high": [
+     1.13,
+     1.1639,
+     1.03
+    ],
+    "ST_GAS.econ_low": [
+     1.08,
+     1.1124,
+     1.03
+    ]
+   }
+  },
+  "S2": {
+   "pass": true,
+   "keeper_lw_price": 33.6455,
+   "arm_lw_price": 34.3622,
+   "measured_d_lw_price": 0.7167,
+   "pred_inzone": 0.6418,
+   "pred_system": 0.6715,
+   "accept_window": [
+    0.3209,
+    1.343
+   ],
+   "same_sign": true,
+   "realized_over_pred_inzone": 1.1167,
+   "passthrough_usd_mwh_per_1pct_band": 0.2389
+  },
+  "S3": {
+   "pass": true,
+   "moved_class_aggregate_delta_twh": -0.0947,
+   "all_class_sum_delta_twh": -0.0027,
+   "energy_balance_tol_twh": 0.7416,
+   "st_chp_abs_delta_twh": 0.0747,
+   "class_delta_twh": {
+    "CC_CHP": -0.0441,
+    "CC_REGULAR": -0.052,
+    "CT_CHP": 0.0537,
+    "CT_PEAKER": 0.0105,
+    "OTHER": 0.0,
+    "ST_CHP": 0.0747,
+    "ST_GAS": -0.0628,
+    "biomass": 0.0,
+    "hydro": 0.0001,
+    "import": 0.0172,
+    "nuclear": 0.0,
+    "oil": 0.0,
+    "solar": 0.0,
+    "wind": 0.0
+   }
+  },
+  "S4": {
+   "pass": true,
+   "flips_pass_to_fail": [],
+   "gated_criteria": [
+    "C1",
+    "C2",
+    "C4"
+   ],
+   "reported_not_gated": [
+    "C3a",
+    "C3b",
+    "C3c"
+   ],
+   "scores": {
+    "keeper": {
+     "C1": {
+      "CC_REGULAR": [
+       "PASS",
+       "+0.79 TWh, share +1.1pp"
+      ],
+      "CC_CHP": [
+       "PASS",
+       "+1.10 TWh, share +1.1pp"
+      ],
+      "CT_PEAKER": [
+       "PASS",
+       "-1.72 TWh, share -1.3pp"
+      ],
+      "ST_GAS": [
+       "PASS",
+       "+1.67 TWh, share +1.5pp"
+      ],
+      "ST_CHP": [
+       "PASS",
+       "+0.20 TWh, share +0.2pp"
+      ],
+      "COAL_PRB": [
+       "PASS",
+       "+0.00 TWh, share +0.0pp"
+      ],
+      "COAL_BIT": [
+       "PASS",
+       "+0.00 TWh, share +0.0pp"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "PASS",
+       "all classes in band (C1)"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C4": {
+      "gas": [
+       "PASS",
+       "r=0.941, NRMSE=0.124"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal hourly fit absent"
+      ]
+     },
+     "C3a_REPORTED": [
+      "PASS",
+      "+4.3%",
+      33.65,
+      32.25
+     ],
+     "C3b_REPORTED": [
+      "PASS",
+      "NRMSE 0.122"
+     ]
+    },
+    "arm": {
+     "C1": {
+      "CC_REGULAR": [
+       "PASS",
+       "+0.74 TWh, share +1.1pp"
+      ],
+      "CC_CHP": [
+       "PASS",
+       "+1.06 TWh, share +1.1pp"
+      ],
+      "CT_PEAKER": [
+       "PASS",
+       "-1.71 TWh, share -1.3pp"
+      ],
+      "ST_GAS": [
+       "PASS",
+       "+1.61 TWh, share +1.4pp"
+      ],
+      "ST_CHP": [
+       "PASS",
+       "+0.28 TWh, share +0.2pp"
+      ],
+      "COAL_PRB": [
+       "PASS",
+       "+0.00 TWh, share +0.0pp"
+      ],
+      "COAL_BIT": [
+       "PASS",
+       "+0.00 TWh, share +0.0pp"
+      ]
+     },
+     "C2": {
+      "gas": [
+       "PASS",
+       "all classes in band (C1)"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+      ]
+     },
+     "C4": {
+      "gas": [
+       "PASS",
+       "r=0.941, NRMSE=0.124"
+      ],
+      "coal": [
+       "SKIPPED",
+       "coal hourly fit absent"
+      ]
+     },
+     "C3a_REPORTED": [
+      "PASS",
+      "+6.5%",
+      34.36,
+      32.25
+     ],
+     "C3b_REPORTED": [
+      "PASS",
+      "NRMSE 0.132"
+     ]
+    }
+   },
+   "payload_rebuild_identity_vs_committed": {
+    "lmp_p_max_abs_diff": 0.0,
+    "gmModel_max_abs_diff": 0.0,
+    "zones_match": true,
+    "fuelRows_gas_committed_vs_rebuilt": {
+     "committed": {
+      "m": 62.81,
+      "b": 61.0,
+      "r": 0.941,
+      "nrmse": 0.124
+     },
+     "rebuilt_keeper": {
+      "m": 62.81,
+      "b": 61.0,
+      "r": 0.941,
+      "nrmse": 0.124
+     }
+    }
+   },
+   "C8_forced_share": "NOT COMPUTABLE for an unregistered screen bundle (needs legitimacy_diagnostics.json, written only by the register path). The arm moves no floor, no share and no availability \u2014 only three offer bands \u2014 so the forced VOLUME is untouched by construction; REPORTED, and re-scored on the full-span bundle if the span is spent.",
+   "C6_governance": "the attestation is written at registration; the arm is the keeper recipe plus the declared authorized_price_tuning channel (rule 1 carve-out conditions (a)-(e))."
+  },
+  "S5": {
+   "pass": null,
+   "note": "REPORTED ONLY \u2014 C3c is the standing ledgered caveat; never a gate here.",
+   "keeper": {
+    "hours_max_zonal_gt_300": 2,
+    "hours_max_zonal_gt_100": 44,
+    "system_mean": 33.0137
+   },
+   "arm": {
+    "hours_max_zonal_gt_300": 2,
+    "hours_max_zonal_gt_100": 44,
+    "system_mean": 33.7233
+   }
+  }
+ },
+ "screen_verdict": {
+  "gates_pass": false,
+  "per_gate": {
+   "S1": false,
+   "S2": true,
+   "S3": true,
+   "S4": true,
+   "S5": null
+  }
+ }
+}
