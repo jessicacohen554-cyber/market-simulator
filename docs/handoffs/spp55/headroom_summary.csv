@@ -1,0 +1,4 @@
+year,req_median_mw,req_max_mw,headroom_min_mw,headroom_p1_mw,headroom_median_mw,hours_headroom_below_req,short_hours,max_shortfall_mw
+2023,1500,1500,2884,6668,18181,0,[],-1384.2
+2024,1425,1500,1169,6323,18046,1,[5727],150.9
+2025,1500,1500,2399,6983,17581,0,[],-899.3

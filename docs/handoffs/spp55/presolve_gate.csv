@@ -1,0 +1,4 @@
+year,req_median,model_short_hours,short_hours_list,max_shortfall_mw,short_in_window_any,short_in_window_mean,window_any,window_mean,short_in_tail,headroom_over_req_min,headroom_over_req_p1,headroom_over_req_median,min_headroom_in_window_any,min_headroom_in_window_mean
+2023,1500,0,[],0.0,0,0,66,4,0,1.92,4.45,12.3,2884,4540
+2024,1425,1,[5727],150.9,0,0,43,3,0,0.89,4.65,13.6,2503,7616
+2025,1500,0,[],0.0,0,0,40,7,0,1.6,4.7,12.2,6480,8051
