@@ -1,0 +1,41 @@
+  --set overrides: federal_ces_premium_usd_per_mwh=60.0
+zones = ['Upstate_West', 'Capital_Hudson', 'Lower_Hudson', 'NYC', 'Long_Island']
+rps_shadow_price = 40.0  (= STATE_RPS_ACP['NYISO'] = the escape ceiling)
+
+EAC leg  = effective_eac_price_for_tech (= premium x credit fraction)
+case      tech      2026    2027    2028    2029    2030
+REF       wind      0.00    0.00    0.00    0.00    0.00
+REF       solar     0.00    0.00    0.00    0.00    0.00
+CES-P10   wind     10.00   10.00   10.00   10.00   10.00
+CES-P10   solar    10.00   10.00   10.00   10.00   10.00
+CES-P20   wind     20.00   20.00   20.00   20.00   20.00
+CES-P20   solar    20.00   20.00   20.00   20.00   20.00
+CES-P30   wind     30.00   30.00   30.00   30.00   30.00
+CES-P30   solar    30.00   30.00   30.00   30.00   30.00
+CES-P60   wind     60.00   60.00   60.00   60.00   60.00
+CES-P60   solar    60.00   60.00   60.00   60.00   60.00
+
+attr = the FOLD (identical in every zone; the RPS dual is a scalar)
+case      tech      2026    2027    2028    2029    2030
+REF       wind     40.00   40.00   40.00   40.00   40.00
+REF       solar    40.00   40.00   40.00   40.00   40.00
+CES-P10   wind     40.00   40.00   40.00   40.00   40.00
+CES-P10   solar    40.00   40.00   40.00   40.00   40.00
+CES-P20   wind     40.00   40.00   40.00   40.00   40.00
+CES-P20   solar    40.00   40.00   40.00   40.00   40.00
+CES-P30   wind     40.00   40.00   40.00   40.00   40.00
+CES-P30   solar    40.00   40.00   40.00   40.00   40.00
+CES-P60   wind     60.00   60.00   60.00   60.00   60.00
+CES-P60   solar    60.00   60.00   60.00   60.00   60.00
+
+G-B1: attr(CES-P60) - attr(REF), per tech-zone-year
+  wind    +20.00  +20.00  +20.00  +20.00  +20.00
+  solar   +20.00  +20.00  +20.00  +20.00  +20.00
+
+G-B1 CLEARS: attr strictly exceeds REF's for at least one eligible tech-zone-year.
+
+The MASK, stated per year: is rps_dual >= the CES dual the leg carries?
+  CES-P10   premium= 10.0  vs rps_dual=40.0  -> 2026:MASKED 2027:MASKED 2028:MASKED 2029:MASKED 2030:MASKED
+  CES-P20   premium= 20.0  vs rps_dual=40.0  -> 2026:MASKED 2027:MASKED 2028:MASKED 2029:MASKED 2030:MASKED
+  CES-P30   premium= 30.0  vs rps_dual=40.0  -> 2026:MASKED 2027:MASKED 2028:MASKED 2029:MASKED 2030:MASKED
+  CES-P60   premium= 60.0  vs rps_dual=40.0  -> 2026:LIVE 2027:LIVE 2028:LIVE 2029:LIVE 2030:LIVE

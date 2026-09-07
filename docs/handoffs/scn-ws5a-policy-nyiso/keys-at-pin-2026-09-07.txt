@@ -1,0 +1,13 @@
+  --set overrides: federal_ces_premium_usd_per_mwh=60.0
+REF              f10cc93084b4c0db  OK 
+LOAD-HI          c2ceaefa4afafcda  OK 
+CES-P10          3c96d694c18e5547  OK 
+CES-P20          9da7c76372c98406  OK 
+CES-P30          89a70dd1140c6731  OK 
+CES-T80          eb1b0e1df942db47  OK 
+VOL-MID          9528d708b81b5074  OK 
+VOL-HI           893acae55a1a898f  OK 
+CES-P20+VOL-HI   566335c8ca37dc17  OK 
+ALL-CLEAN        e13b0d801b1ffce1  OK 
+CAP-STATE-TIGHT  76c60ac152400146  OK 
+CES-P60          c3013cc6087bd2aa  NEW
