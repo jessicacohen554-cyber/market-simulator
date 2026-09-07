@@ -58,9 +58,22 @@ for `20230101_20230101_DAM_LMP_GRP_N_N_v12_csv.zip` above (`6523fedd…`)**, and
 the same request for 2022-06-01 (and every 2022 trade date crawled since)
 returns the full four-component archive, while the per-node `SingleZip` for the
 same date returns "no data". So every zip in `SHA256SUMS.txt` can be
-re-downloaded and verified against it, the 2022 (and, if wanted, 2019–2021)
-history is fetchable, and the refs/pull salvage paragraph above is moot for
-these bytes. Fetcher: `scripts/data/fetch_caiso_oasis_grp.py` (GroupZip per
+re-downloaded and verified against it, the 2022 history is fetchable, and the
+refs/pull salvage paragraph above is moot for these bytes.
+
+**BOUNDED 2026-09-07 (session caiso-263) — "and, if wanted, 2019–2021" was
+WRONG, and this correction is itself corrected: GroupZip has its OWN retention
+boundary, LONGER than the per-node one but not absent.** Binary-searched
+2026-09-07 through the session proxy, `DAM_LMP_GRP` v12: **2021-04-26 → 3,018-byte
+"No data returned" envelope, 2021-04-27 → 9.85 MB archive**, so the earliest
+trade date served is **2021-04-27**. It is a property of the report, not of the
+version or the market — v1 and v3 age out on the same dates, and `RTM_LMP_GRP`
+v3 tracks it (no data at 2020-04-01, 6.94 MB at 2021-04-27) — and it MOVES with
+the calendar exactly as the per-node one does, so **re-measure it, never
+hardcode it**. Consequence for the holdout ladder (rule 22): the 2022 rung's
+prices are fetchable and were fetched; **2019, 2020 and Jan–Apr 2021 hub/DLAP
+LMPs are NOT obtainable from OASIS by any endpoint**, so a price basis for those
+rungs needs a different source adjudicated under rule 14, not another crawl. Fetcher: `scripts/data/fetch_caiso_oasis_grp.py` (GroupZip per
 trade date → `fold_caiso_oasis_grp_zips.fold` → zip deleted, extract-and-
 discard). `RTM_LMP_GRP` is served as **hour groups — one operating hour per request at
 BOTH `version=1` and `version=3`**, so a real-time year is 8,760 requests.

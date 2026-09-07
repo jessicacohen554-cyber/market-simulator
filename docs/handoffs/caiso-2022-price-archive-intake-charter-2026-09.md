@@ -23,6 +23,19 @@ caiso-87/93/94 injector input) were therefore unfetchable — H-2 / H-3.
 **OASIS `GroupZip` all-node bulk archives are NOT subject to the per-node
 retention.** Measured 2026-09-06 through the session proxy:
 
+> **BOUNDED 2026-09-07 (caiso-263).** Read as "GroupZip has no retention
+> window", this sentence is FALSE — GroupZip has its own, **longer**, boundary.
+> Binary-searched 2026-09-07, `DAM_LMP_GRP` v12: 2021-04-26 → "No data
+> returned", **2021-04-27 → 9.85 MB archive**; `RTM_LMP_GRP` v3 tracks it, and
+> v1/v3 age out on the same dates (property of the report, not the version).
+> It MOVES with the calendar like the per-node one. **This charter's scope —
+> 2022 — is unaffected and its §2 conclusion stands**; what it does not license
+> is the extrapolation to earlier rungs. **2019, 2020 and Jan–Apr 2021 hub /
+> DLAP / intertie LMPs cannot be fetched from OASIS by any endpoint**, so those
+> rungs need a different source adjudicated under rule 14 `[R-ACCURATE]`, not
+> another crawl. The non-LMP reports carry no such window and DO reach 2020
+> (`AS_REQ`, `AS_RESULTS`, `PRC_AS`, `SLD_FCST` — verified 2026-09-07).
+
 | request | result |
 |---|---|
 | `GroupZip?groupid=DAM_LMP_GRP&startdatetime=20220601T07:00-0000&version=1&resultformat=6` | **HTTP 200, 12.3 MB zip** (`Content-Disposition: 20220601_20220601_DAM_LMP_GRP_N_N_v1_csv.zip`), two component CSVs (`PRC_LMP_DAM_LMP`, `PRC_LMP_DAM_MCE`, ~62 MB each), every node; **TH_NP15/TH_SP15/TH_ZP26 (72 rows = 3 hubs × 24 h), MALIN_5_N101, PALOVRDE_5_N101, PALOVRDE_ASR-APND, BPAT_MALIN-APND, DLAP_PGAE/SCE/SDGE/VEA-APND all present** |
