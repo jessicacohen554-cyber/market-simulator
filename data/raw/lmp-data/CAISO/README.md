@@ -62,10 +62,24 @@ re-downloaded and verified against it, the 2022 (and, if wanted, 2019–2021)
 history is fetchable, and the refs/pull salvage paragraph above is moot for
 these bytes. Fetcher: `scripts/data/fetch_caiso_oasis_grp.py` (GroupZip per
 trade date → `fold_caiso_oasis_grp_zips.fold` → zip deleted, extract-and-
-discard). `RTM_LMP_GRP` is served as **hour groups** (one operating hour per
-request at `version=1`; the tracked Jan-2023 `v3` zips were 7 groups/day) —
-size a real-time year before crawling it (charter:
-`docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`).
+discard). `RTM_LMP_GRP` is served as **hour groups — one operating hour per request at
+BOTH `version=1` and `version=3`**, so a real-time year is 8,760 requests.
+*(The clause here previously read "the tracked Jan-2023 `v3` zips were 7
+groups/day", leaving open a hope that v3 batched hours. It does not: MEASURED
+2026-09-07 on 2022-06-01 (caiso-262, `ADDENDUM-caiso262-rtm-sizing-2026-09-07.md`),
+24 v3 requests returned 24 archives with the group index tracking `OPR_HR`
+exactly, 8.34–9.07 MB each, 210.0 MB and 292 s for the trade date. "7
+groups/day" was a miscount of how many hours had been hand-downloaded on some
+January-2023 dates — `SHA256SUMS.txt` above carries group indices `01`…`24`.)*
+The two versions differ in **shape, not content**: v1 returns ONE member with
+every `LMP_TYPE` and names the price column `MW`; **v3 returns FIVE members,
+one per type — and it is the only one of the two that carries `MGHG`** — and
+names the column `VALUE`. The 2022 crawl uses **v3** under rule 14
+`[R-ACCURATE]`, because the committed `CAISO_rtm_hourly_{2023,2024,2025}.csv`
+all carry a populated `MGHG` column that v1 could not fill;
+`fold_caiso_oasis_grp_zips` resolves either price-column name and normalises to
+`MW`. Charter:
+`docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md`.
 `CAISO_dam_hourly_2022.csv` (added by that crawl) carries the 10-node set the
 GRP fold keeps (3 hubs + 4 DLAPs + MALIN_5_N101 / CAPTJACK_5_N003 /
 PALOVRDE_ASR-APND), exactly as the GRP-folded Jan–Mar 2023 rows of
