@@ -455,3 +455,54 @@ solve; `MALLOC_ARENA_MAX=2`, single-threaded BLAS. One PJM invocation at a time
   re-stamped with this adjudication in this session (rule 32 duty b), the §3
   reconciliation is recorded whatever the verdict, and the §3.4 level parameters
   stay open and un-adjudicated.
+
+---
+
+## AMENDMENT 1 — limb A's prediction basis, sharpened. Written BEFORE any measurement exists.
+
+**Status when written:** the phase-0 probe has not been run, the arm has not been
+built, no `mc` delta of any kind exists, and no solve has happened. This amendment
+is recorded, not silently applied (the pjm-169 §7.1 precedent).
+
+**The defect in §4.2 limb A as first written.** It defines the predicted DIRECT set
+as "every coal tranche whose `coal_supply` tag is `bituminous` and whose supply
+passthrough is non-zero (i.e. non-`mustrun`)", and gates on that set being **exactly**
+the moved set. The parenthetical is **wrong**, and reading
+`data/fleet/legacy_bins.py::campd_tranche_fuel_frac` — not any measurement — shows it:
+
+```
+legacy_bins.py:449   if gen.unit_id.endswith("_sync"):    return 1.0
+legacy_bins.py:451   if gen.unit_id.endswith("_mustrun"): ... return 0.0
+```
+
+`_sync` (the step-3a synchronization tranche, `coal_sync_srmc_tranche`, armed on this
+keeper) returns a hard-coded **1.0** and never consults `passthrough_by_supply` at
+all — by construction, because it bids its full SRMC while the contracted share is
+carried by the fuel-free `_mustrun` band beside it. So a bituminous `_sync` row is
+**tagged bituminous, carries a non-zero passthrough, and yet cannot move** when
+`ceil` changes. Under the clause as first written it would land in
+`predicted_not_moved` and fail the "equals exactly" reading of limb A — an arm killed
+for the routing behaving exactly as its own code says it must. That is the same class
+of gate mis-specification this card was chartered to correct (§4.1); catching it in
+my own gate before the solve is the point of writing gates down first.
+
+**The amendment.** Limb A's predicted DIRECT set is:
+
+> every LP row whose generator carries the `coal_supply` tag `bituminous` **and**
+> whose `unit_id` ends in neither `_mustrun` (fuel-free / take-or-pay sunk,
+> `legacy_bins.py:451`) nor `_sync` (passthrough pinned at 1.0 by construction,
+> `legacy_bins.py:449`).
+
+Both exclusions are read off the routing code, cited by line, and neither is
+selected by an outcome. **The gate is otherwise unchanged and reads exactly as
+before:** the set of rows with `Δmc ≠ 0` must equal this set exactly — zero
+unpredicted rows moving, and zero predicted rows failing to move.
+
+**This makes the gate HARDER, not looser.** It removes two known-inert row families
+from the prediction, so the surviving prediction is a tighter claim: every remaining
+predicted row must now actually move, with no benign-non-mover left to absorb a
+mistake. A mis-tagged plant, a supply-stem collision, or an overlay re-reading the
+sigmoid elsewhere still fails it, exactly as before.
+
+**Nothing else moves.** S1, S2, S3, S4-B, S4-C, S5, the kill rule, the candidate
+value 1.0, the anti-sweep clause, the screen year and the control are all unchanged.
