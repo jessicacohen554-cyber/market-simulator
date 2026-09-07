@@ -176,9 +176,7 @@ def build_year(year: int, hours: int = 8760) -> pd.DataFrame:
     parts = [f for f in (_hourly_award_totals(p, year) for p in files) if not f.empty]
     if not parts:
         raise SystemExit(f"no {year} delivery rows in any disclosure file")
-    total = (
-        pd.concat(parts).groupby(level=0).sum(numeric_only=True).sort_index()
-    )
+    total = pd.concat(parts).groupby(level=0).sum(numeric_only=True).sort_index()
     out = pd.DataFrame({"hour": np.arange(hours, dtype=int)})
     for code in _PRODUCTS:
         series = total[code] if code in total.columns else pd.Series(dtype=float)
@@ -197,7 +195,9 @@ def build_year(year: int, hours: int = 8760) -> pd.DataFrame:
     gap = ~out["covered"].to_numpy()
     if gap.any():
         cols = [c for c in out.columns if c.endswith("_mw")]
-        out[cols] = out[cols].mask(pd.Series(gap, index=out.index), other=pd.NA).ffill().bfill()
+        out[cols] = (
+            out[cols].mask(pd.Series(gap, index=out.index), other=pd.NA).ffill().bfill()
+        )
     return out
 
 
@@ -252,13 +252,22 @@ def main() -> None:
     args = ap.parse_args()
     if args.validate_year:
         print(f"cleared-vs-plan, delivery {args.validate_year}:")
-        print(validate_against_plan(args.validate_year, args.hours).to_string(index=False))
+        print(
+            validate_against_plan(args.validate_year, args.hours).to_string(index=False)
+        )
     if args.build_year:
         df = build_year(args.build_year, args.hours)
-        out = _ERCOT_DIR / f"ercot_{args.build_year}_as_cleared_requirement_hourly.parquet"
+        out = (
+            _ERCOT_DIR
+            / f"ercot_{args.build_year}_as_cleared_requirement_hourly.parquet"
+        )
         df.to_parquet(out, index=False)
-        means = {c: round(float(df[c].mean()), 1) for c in df.columns if c.endswith("_mw")}
-        print(f"wrote {out} — {len(df)} h, covered {int(df['covered'].sum())} h, means {means}")
+        means = {
+            c: round(float(df[c].mean()), 1) for c in df.columns if c.endswith("_mw")
+        }
+        print(
+            f"wrote {out} — {len(df)} h, covered {int(df['covered'].sum())} h, means {means}"
+        )
 
 
 if __name__ == "__main__":

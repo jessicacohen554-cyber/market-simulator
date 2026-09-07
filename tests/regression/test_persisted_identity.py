@@ -562,7 +562,9 @@ def test_no_unledgered_row_moved_off_its_declaration() -> None:
     from market_sim.config.solve_surface import moved_rows
 
     unledgered = {
-        iso: sorted(set(moved_rows(iso)) - set(LEDGERED_SURFACE_MOVES_BY_ISO.get(iso, {})))
+        iso: sorted(
+            set(moved_rows(iso)) - set(LEDGERED_SURFACE_MOVES_BY_ISO.get(iso, {}))
+        )
         for iso in PINNED_SURFACE_ROWS_BY_ISO
     }
     unledgered = {iso: rows for iso, rows in unledgered.items() if rows}
