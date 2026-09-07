@@ -1,0 +1,41 @@
+{
+ "cache_key": "619cfffde44422b2",
+ "case": "ALL-CLEAN",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    50.0,
+    7.0
+   ],
+   "objective_value": 29269733267.055023
+  },
+  "2027": {
+   "clean_region_duals": [
+    50.0,
+    7.0
+   ],
+   "objective_value": 381909669570.1561
+  },
+  "2028": {
+   "clean_region_duals": [
+    50.0,
+    7.0
+   ],
+   "objective_value": 1175275026891.4739
+  },
+  "2029": {
+   "clean_region_duals": [
+    50.0,
+    7.0
+   ],
+   "objective_value": 1851193286309.3154
+  },
+  "2030": {
+   "clean_region_duals": [
+    50.0,
+    7.0
+   ],
+   "objective_value": 2754906296362.422
+  }
+ }
+}
