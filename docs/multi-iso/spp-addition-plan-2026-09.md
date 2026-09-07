@@ -340,8 +340,37 @@ size (CLAUDE.md "Git & Pushing"; HTTP/1.1 retry on 408/500); fetch-back verify e
 (rule 27); no CI workflows (private repo, billed minutes); no `ScenarioConfig` default moves; no
 holdout-year solve (rule 22); never touch `frontend/data/forecast/`, any other ISO's keeper shard, log or
 matrix shard; if you must touch a file outside your regions, STOP and route to SPP-DESK in your FINDING.
-Findings to `docs/handoffs/FINDING-spp-<id>-<date>.md`; update this plan's §5 row status and the ledger
-pointer in the same PR.* Model labels: `[FABLE]` / `[OPUS]`.
+Findings to `docs/handoffs/FINDING-spp-<id>-<date>.md` — and NOTHING ELSE shared (§8.0 collision rules,
+r#11: the desk moves the plan row, the ledger, the log and the CHANGELOG).* Model labels: `[FABLE]` / `[OPUS]`.
+
+### 8.0 COLLISION RULES (r#11, standing — pasted into every lane session, running or new)
+
+Why: through r#10 every lane edited the same shared files at the same lines — this plan's §5/§9 tables,
+the ledger, `docs/calibration-log/spp.md`, `CHANGELOG.md`, the SPP shard's keeper/gates stamp — so each
+merge invalidated every open PR (SPP-57 needed four PRs, SPP-43 three, SPP-57b merged `main` into itself
+twice to keep a table row alive). The house style above CAUSED it ("update this plan's §5 row status and
+the ledger pointer in the same PR" — WITHDRAWN). From r#11:
+
+1. **A lane touches NO shared record.** Not this plan, not the ledger, not `docs/calibration-log/spp.md`,
+   not `CHANGELOG.md`, not the shard's `keeper`/`gates` stamp, not `docs/mechanism-testing-matrix.md`.
+   The DESK writes every one of those at the next refresh, from the lane's FINDING. A lane's record is
+   ONE new file — its FINDING (+ PRECOMMIT, + its own `docs/handoffs/spp<id>/` instruments) — and its
+   FINDING carries a `## Log entry` section in `spp.md`'s format that the desk appends verbatim.
+2. **The only shared file a lane may edit is its OWN CELL LINE in `mechanism-matrix/SPP.js`** (and, under
+   rule 28c, one `·` cell line per foreign shard when it adds a field). The keeper/gates stamp lines are
+   edited ONLY by a lane that promotes a keeper, and that lane also owns `keepers/SPP.json`,
+   `status/SPP.js`, `bench/SPP/`, the registry sidecar + payload — never two promoting lanes at once.
+3. **Rebase, never merge-in.** Before opening the PR and again before merge: `git fetch origin main &&
+   git rebase origin/main`, re-run the gates, `git push --force-with-lease` on your own branch. A
+   "Merge origin/main into claude/…" commit on a lane branch is a defect, not a fix.
+4. **One PR per lane**, opened when the lane is DONE (records included), not per milestone. A PRECOMMIT
+   that must be pushed before a solve goes on the branch (it is "pushed" when the branch is) — it does not
+   need its own PR.
+5. **Data and code regions stay disjoint by construction** (FILES YOU OWN); a second lane needing the same
+   file is the desk's sequencing error — STOP and route, never edit around it.
+
+Every charter's EXIT line that reads "plan §5 row → LANDED" is superseded by rule 1: the lane reports
+LANDED in its FINDING §0; the desk moves the row.
 
 ### W1 — Phase 0/1 (issuable now; the three lanes are parallel)
 

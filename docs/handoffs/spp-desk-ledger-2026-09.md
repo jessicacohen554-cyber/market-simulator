@@ -10,6 +10,21 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0l. r#11 — desk act: the PR-collision fix (2026-09-07, main HEAD `bfbb0b6a`)
+
+- Pin `bfbb0b6a` (56 commits since r#10, none SPP's; branch fast-forwarded). No lane graded — none of the
+  six issued lanes has a branch yet.
+- **THE DEFECT (E-10):** the desk's own house style told every lane to "update this plan's §5 row status and
+  the ledger pointer in the same PR", and the charters' EXIT lines said "plan §5 row → LANDED". Six-plus
+  lanes therefore edited the same two tables, the same log tail, the same CHANGELOG top and the same shard
+  stamp — so each merge invalidated every open PR (SPP-57: 4 PRs; SPP-43: 3; SPP-57b merged `main` into
+  itself twice to keep one table row; the desk branch itself diverged twice).
+- **THE FIX (plan §8.0, handoff §5, standing):** a lane touches NO shared record — its FINDING (with a
+  `## Log entry` section) and its own shard cell line are its whole footprint; the DESK moves plan rows,
+  appends the log, writes the CHANGELOG line and re-stamps the shard at each refresh; rebase never
+  merge-in; one PR per lane, opened when done. A STANDING RULES block is pasted into every lane session.
+- P16 still pending. Next sitting: grade whatever launched; execute the desk's new duties for each LANDED lane.
+
 ### 0k. r#10 — sitting #10: SPP-44 LANDED (screen KILLED — the gas problem is never-started units); SPP-55 issued; P16 still pending (2026-09-07, main HEAD `32516df6`)
 
 - Pin `32516df6` (8 commits since r#9). The desk branch had diverged (main took SPP-44's plan rows while
@@ -588,3 +603,4 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | E-7 | r#7 (found r#8) | The desk chartered SPP-36 → SPP-42 as a dependency chain ("launch SPP-42 after SPP-36 + SPP-41 land") and told the owner it would hold SPP-42 — but the owner launched it at once; it derived the crosswalk itself and solved BEFORE the SPP-41 seam, so keeper-2 carries the unscreened 2023 wind input and a fourth solve (SPP-43) is now owed. The desk's sequencing was advisory and it did not say so. | One extra ~6-minute solve; two lanes derived one file (benign — byte-identical, and a rule-23 check the desk could not have bought otherwise). | Standing from r#8: every charter states what to do when a precondition is UNMET at launch (proceed on a stated basis, or STOP) instead of assuming the desk's order holds; the owner launches what is issued, so issue only what may run now, and put the rest in the next sitting's queue. |
 | E-8 | r#8 (found r#9) | The SPP-43 charter's promotion leg (i) demanded bit-identical 2024/2025 P1 objectives without knowing that P1 is warm-started from a basis seeded across years in one invocation, so a byte-identical LP landed on another vertex of the same optimal face and the lane had to STOP on a self-imposed test stricter than any rubric criterion; an owner intervention was needed to promote. | One in-session card; the lane's record is correct and stands. | Standing from r#9: identity legs are written on the P0 objective + the LP input arrays (what the code guarantees), never on a warm-started P1 objective; every SPP FINDING records every pass's objective per year (R-ac). |
 | E-9 | r#8 (found r#9) | The desk chartered SPP-38 as "the 15 SPP-era red tests" from SPP-41 §7f's attribution by test NAME; eleven of the fifteen were three unrelated defects (SCN skip guard, unbuilt `data/clean`, NYISO marker drift, miso-233 parity debt). The charter's exit ("the CAISO failure is the ONLY red") was unreachable from the lane's ownership. | A lane spent on triage the desk could have done from the failure causes; two red remain, MISO's. | Standing from r#9: a test-repair charter is issued only after the desk has read the failure CAUSES (`pytest -x` output), not the names; G19 added to plan §7 (build `data/clean` before gates; cold-start curation failures). |
+| E-10 | r#0–r#10 (found r#11) | The desk's house style and every charter's EXIT line made lanes edit the shared tables (plan §5/§9, ledger, log, CHANGELOG, shard stamp) in their own PRs. Parallel lanes then collided on every merge. | Four PRs for SPP-57, three for SPP-43, merge-in commits on lane branches, two desk-branch divergences; hours of owner time re-merging. | Plan §8.0 COLLISION RULES (standing): lanes own only their FINDING + their cell line; the desk writes every shared record from the FINDING at refresh; rebase never merge-in; one PR per lane. |
