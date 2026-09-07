@@ -1,0 +1,315 @@
+
+
+================ 2023 ================
+
+--- A. delivered gas price by provenance (cap-weighted, $/MMBtu; MW = avail-wtd)
+     klass    prov  rows  plants     mw  fuel    hr    mc
+CC_REGULAR     own    54      15 4614.0 3.039  7.96 25.93
+CC_REGULAR gapfill    31       8 2735.0 2.898  7.52 24.04
+ CT_PEAKER     own   115      32 6841.0 3.294 11.61 42.13
+ CT_PEAKER gapfill   268      91 2591.0 3.014 12.42   NaN
+    ST_GAS     own    76      19 4002.0 3.680 11.50 38.27
+    ST_GAS gapfill    48      12  193.0 2.970 13.96 44.08
+    CC_CHP gapfill     4       1  226.0 2.858  5.81 18.87
+    CT_CHP     own     4       1   37.0 2.401 11.50 31.17
+    CT_CHP gapfill    27       8  173.0 2.898  6.28 21.98
+    ST_CHP     own     3       1   75.0 2.401 10.64 30.05
+    ST_CHP gapfill    11       8   27.0 2.914  7.07   NaN
+EIA state delivered-to-EP means: {'KS': 3.202, 'OK': 2.848, 'TX': 2.538}
+
+ST_GAS plants (top 12 by MW):
+                                name       zone      mw  own_months   fuel     hr     mc
+plant_code                                                                              
+2956         Seminole (OK) committed  SPP-South  1521.5          12   3.42  11.07  33.46
+6193            Harrington committed  SPP-South  1018.0          12   2.47  11.32  32.23
+2952              Muskogee committed  SPP-South   989.0          11   6.56  11.64  48.37
+4940        Riverside (OK) committed  SPP-South   909.0          12  11.10  13.54  68.68
+3478                Wilkes committed  SPP-South   883.0          12   3.21  11.07  38.41
+3482                 Jones committed  SPP-South   486.0          12   2.40  10.81  31.10
+3484               Nichols committed  SPP-South   457.0          12   2.35  11.34  30.62
+2964          Southwestern committed  SPP-South   446.0          12   3.02  12.64  40.44
+2963          Northeastern committed  SPP-South   434.0          11   3.00  12.24  37.94
+2951        Horseshoe Lake committed  SPP-South   377.0          12   3.14  11.04  34.25
+3476              Knox Lee committed  SPP-South   342.0          12   2.75  10.64  32.33
+2965                 Tulsa committed  SPP-South   322.0          12   3.74  13.21  50.78
+
+CT_PEAKER plants (top 12 by MW):
+                                            name       zone     mw  own_months  fuel     hr     mc
+plant_code                                                                                        
+57881       Pioneer Generation Station committed  SPP-North  763.0          12  2.86   3.43  13.34
+56502            Emporia Energy Center committed  SPP-North  668.8          12  2.70  12.18  36.40
+58835                         Elk Station econlo  SPP-South  583.1          12  1.98  10.61  24.60
+56326           Mustang Station Unit 4 committed  SPP-South  459.3          12  1.91  11.09  24.75
+64547                     Turtle Creek committed  SPP-North  442.2           0  3.08   9.00    NaN
+2953                           Mustang committed  SPP-South  398.0          12  3.99   9.99  43.96
+7929                      West Gardner committed  SPP-North  342.6          11  3.39  11.87  44.06
+3482                                Jones econlo  SPP-South  334.0          12  2.40  10.81  29.39
+55972                      Cass County committed  SPP-North  323.8          11  7.87  11.85  97.46
+1240        Gordon Evans Energy Center committed  SPP-North  323.4          12  3.17  11.80  40.92
+56151                     South Harper committed  SPP-North  321.2          11  3.88  13.01  54.27
+2292                      Sarpy County committed  SPP-North  312.5          12  3.10  13.51  45.67
+
+CC_REGULAR plants (top 12 by MW):
+                                               name       zone       mw  own_months  fuel     hr     mc
+plant_code                                                                                             
+55463                  Redbud Power Plant committed  SPP-South  1433.60          12  2.98   7.69  24.81
+55225                 Oneta Energy Center committed  SPP-South  1086.40           0  2.86   7.51  23.79
+55146         Green Country Power Station committed  SPP-South   783.00           0  2.86   7.26  22.93
+55178             Dogwood Energy Facility committed  SPP-North   655.20           0  3.08   7.37  25.23
+56458            Hobbs Generating Station committed  SPP-South   573.80           0  2.86   7.54  23.76
+7296            State Line Combined Cycle committed  SPP-North   538.30          12  3.17   7.14  23.70
+55664       Harrison County Power Project committed  SPP-South   514.40          12  2.42   7.19  19.39
+56565                  J Lamar Stall Unit committed  SPP-South   511.00          12  2.87   6.70  21.28
+55457             McClain Energy Facility committed  SPP-South   486.98          12  3.42   6.90  26.15
+165                                  GREC committed  SPP-South   480.70          12  3.74   8.02  32.39
+55065                     Mustang Station committed  SPP-South   464.80          12  1.83   7.91  16.25
+2963                         Northeastern committed  SPP-South   444.00          11  3.00  12.24  35.96
+
+--- B. availability-weighted annual-mean mc per class (p10/p25/p50/p75/p90) and crossover
+COAL         MW    11501    4.50  15.47  22.34  25.35  29.33
+CC_REGULAR   MW     7348   19.39  23.49  24.70  25.89  32.39
+CT_PEAKER    MW     9433   24.45  29.39  37.99  48.29  58.20
+ST_GAS       MW     4195   30.62  32.23  33.46  40.41  56.51
+  share of CT_PEAKER MW cheaper than CC_REGULAR median: 0.128;  share of CC_REGULAR MW dearer than CT_PEAKER median: 0.000
+  share of CT_PEAKER MW cheaper than ST_GAS median: 0.333;  share of ST_GAS MW dearer than CT_PEAKER median: 0.338
+  share of CC_REGULAR MW cheaper than ST_GAS median: 0.917;  share of ST_GAS MW dearer than CC_REGULAR median: 0.972
+
+--- C. in-merit capacity at keeper-3's own zonal prices vs keeper dispatch (TWh)
+  CC_REGULAR: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.551 0.675 0.822 0.919 0.967; share of out-of-merit MWh with price/mc >= 0.9: 0.297, >= 0.8: 0.541, >= 0.7: 0.716
+  ST_GAS: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.521 0.627 0.751 0.865 0.937; share of out-of-merit MWh with price/mc >= 0.9: 0.182, >= 0.8: 0.399, >= 0.7: 0.609
+     klass  strict_twh  marginal_twh  out_twh  keeper_twh  hours_outside_band  avail_twh
+CC_REGULAR      42.438         3.014   18.920   41.433998                4867     64.371
+ CT_PEAKER      19.559         1.650   61.420   19.989000                 572     82.629
+    ST_GAS       6.771         1.468   28.505    7.526000                   0     36.744
+ COAL(all)      76.237         3.725   20.786   70.623001                  -1    100.749
+  CT_PEAKER strict in-merit energy at hours where the zonal price < 24.7 (CC median mc): 3.254 TWh
+  marginal-capacity share (|mc-p|<=tol): {'COAL': 0.378, 'CC_REGULAR': 0.306, 'CT_PEAKER': 0.167, 'ST_GAS': 0.149}
+
+--- D. re-clearing predictor (reach test) — dE per class (TWh) and LW price ratio
+  self-check at 1.0: recon vs keeper TWh — CC_REGULAR 42.99/41.43, CT_PEAKER 20.62/19.99, ST_GAS 6.48/7.53, COAL 77.83/70.62; retained hours (all four within 250 MW): 1660 of 8760; LW price recon/keeper 1.015
+               set  dCC_all  dCT_all  dST_all  dCOAL_all  dCC_kept  dCT_kept  dST_kept  dCOAL_kept  lw_price_ratio
+           CT x1.1     0.89    -3.26     1.20       1.13      0.35     -1.88      0.48        1.03           1.023
+           CT x1.2     1.34    -5.54     2.06       2.06      0.54     -3.35      0.98        1.81           1.045
+           CT x1.3     1.80    -7.66     3.04       2.71      0.80     -4.33      1.35        2.14           1.066
+           CT x1.5     2.22    -9.77     4.17       3.22      1.06     -5.22      1.72        2.39           1.103
+           CT x2.0     2.87   -12.32     5.27       3.98      1.73     -7.60      2.00        3.77           1.191
+           ST x0.9    -0.58    -1.35     2.92      -0.94     -0.20     -0.56      0.99       -0.20           0.983
+           ST x0.8    -1.54    -2.55     6.90      -2.72     -0.85     -1.33      3.32       -1.08           0.963
+           ST x0.7    -2.88    -3.92    12.12      -5.18     -1.70     -2.07      6.47       -2.62           0.943
+           ST x0.6    -4.54    -4.97    17.68      -7.98     -4.41     -2.83     12.69       -5.31           0.925
+           ST x0.5    -7.45    -5.61    23.48     -10.15     -8.43     -3.30     20.34       -8.32           0.910
+           CC x0.9     3.95    -0.97    -0.53      -2.41      3.66     -0.49     -0.14       -2.99           0.980
+           CC x0.8     7.93    -1.72    -0.84      -5.23      8.17     -0.95     -0.33       -6.64           0.960
+           CC x0.7    10.97    -2.29    -1.00      -7.14     12.60     -1.41     -0.53       -9.58           0.942
+merit-order lane B     6.78     1.08     0.36      -8.35      7.17      0.65      0.02       -7.78           0.916
+  (kept = retained-hour delta scaled to 8760; target 2024 object: CT -9.94 / CC +8.60 TWh)
+
+
+================ 2024 ================
+
+--- A. delivered gas price by provenance (cap-weighted, $/MMBtu; MW = avail-wtd)
+     klass    prov  rows  plants     mw  fuel    hr    mc
+CC_REGULAR     own    54      15 4388.0 3.157  8.01 29.33
+CC_REGULAR gapfill    31       8 2463.0 2.628  7.51   NaN
+ CT_PEAKER     own   115      32 6841.0 2.967 11.61 39.19
+ CT_PEAKER gapfill   274      93 2590.0 2.827 12.35   NaN
+    ST_GAS     own    76      19 4259.0 2.590 11.56 31.14
+    ST_GAS gapfill    48      12  160.0 2.870 12.27   NaN
+    CC_CHP gapfill     4       1  226.0 2.571  5.81 17.38
+    CT_CHP     own     4       1   37.0 2.739 11.50 35.53
+    CT_CHP gapfill    19       6  148.0 2.611  5.51 18.25
+    ST_CHP     own     3       1   75.0 2.739 10.64 33.63
+    ST_CHP gapfill    11       8   29.0 2.679  7.17 23.22
+EIA state delivered-to-EP means: {'KS': 2.817, 'OK': 2.944, 'TX': 2.105}
+
+ST_GAS plants (top 12 by MW):
+                                name       zone      mw  own_months  fuel     hr     mc
+plant_code                                                                             
+2956         Seminole (OK) committed  SPP-South  1521.5          11  3.46  11.07  32.31
+6193            Harrington committed  SPP-South  1018.0          12  1.48  11.32  20.81
+2952              Muskogee committed  SPP-South   989.0          12  4.14  11.64  39.18
+4940        Riverside (OK) committed  SPP-South   909.0          12  3.69  13.54  47.08
+3478                Wilkes committed  SPP-South   883.0          12  3.15  11.07  38.19
+3482                 Jones committed  SPP-South   486.0          12  1.16  10.81  17.74
+3484               Nichols committed  SPP-South   457.0          12  1.70  11.34  23.28
+2964          Southwestern committed  SPP-South   446.0          12  3.69  12.64  50.01
+2963          Northeastern committed  SPP-South   434.0          12  3.04  12.24  39.07
+2951        Horseshoe Lake committed  SPP-South   377.0          12  2.76  11.04  29.84
+3476              Knox Lee committed  SPP-South   342.0           9  2.98  10.64  35.89
+2965                 Tulsa committed  SPP-South   322.0          12  3.62  13.21  48.33
+
+CT_PEAKER plants (top 12 by MW):
+                                            name       zone     mw  own_months   fuel     hr      mc
+plant_code                                                                                          
+57881       Pioneer Generation Station committed  SPP-North  763.0          12   2.50   3.43   12.08
+56502            Emporia Energy Center committed  SPP-North  668.8          12   3.05  12.18   41.16
+58835                         Elk Station econlo  SPP-South  583.1          12   0.24  10.61    6.02
+56326           Mustang Station Unit 4 committed  SPP-South  459.3          12   0.16  11.09    5.28
+64547                     Turtle Creek committed  SPP-North  442.2           0   2.92   9.00     NaN
+2953                           Mustang committed  SPP-South  398.0          12   3.17   9.99   35.78
+7929                      West Gardner committed  SPP-North  342.6          12   2.82  11.87   37.34
+3482                                Jones econlo  SPP-South  334.0          12   1.16  10.81   16.33
+55972                      Cass County committed  SPP-North  323.8          12  12.31  11.85  151.73
+1240        Gordon Evans Energy Center committed  SPP-North  323.4          12   4.19  11.80   53.77
+56151                     South Harper committed  SPP-North  321.2          12   4.35  13.01   60.64
+2292                      Sarpy County committed  SPP-North  312.5          12   3.86  13.51   56.52
+
+CC_REGULAR plants (top 12 by MW):
+                                               name       zone       mw  own_months  fuel     hr     mc
+plant_code                                                                                             
+55463                  Redbud Power Plant committed  SPP-South  1433.60          12  2.36   7.69  20.19
+55225                 Oneta Energy Center committed  SPP-South  1086.40           0  2.57   7.51  21.55
+55146         Green Country Power Station committed  SPP-South   783.00           0  2.57   7.26  22.05
+55178             Dogwood Energy Facility committed  SPP-North   655.20           0  2.92   7.37  25.08
+56458            Hobbs Generating Station committed  SPP-South   573.80           0  2.57   7.54  24.20
+7296            State Line Combined Cycle committed  SPP-North   538.30          12  2.86   7.14  22.19
+55664       Harrison County Power Project committed  SPP-South   514.40          11  2.37   7.19  19.45
+56565                  J Lamar Stall Unit committed  SPP-South   511.00          12  2.96   6.70  21.93
+55457             McClain Energy Facility committed  SPP-South   486.98          10  3.10   6.90  22.36
+165                                  GREC committed  SPP-South   480.70          12  3.24   8.02  28.21
+55065                     Mustang Station committed  SPP-South   464.80          12  0.12   7.91   3.85
+2963                         Northeastern committed  SPP-South   444.00          12  3.04  12.24  43.23
+
+--- B. availability-weighted annual-mean mc per class (p10/p25/p50/p75/p90) and crossover
+COAL         MW    11340    4.50  15.51  21.19  25.14  29.43
+CC_REGULAR   MW     6851   19.45  20.19  22.05  24.37  29.99
+CT_PEAKER    MW     9432   10.39  27.32  36.35  50.59  60.64
+ST_GAS       MW     4419   17.74  20.81  32.31  39.18  48.33
+  share of CT_PEAKER MW cheaper than CC_REGULAR median: 0.218;  share of CC_REGULAR MW dearer than CT_PEAKER median: 0.063
+  share of CT_PEAKER MW cheaper than ST_GAS median: 0.360;  share of ST_GAS MW dearer than CT_PEAKER median: 0.410
+  share of CC_REGULAR MW cheaper than ST_GAS median: 0.937;  share of ST_GAS MW dearer than CC_REGULAR median: 0.667
+
+--- C. in-merit capacity at keeper-3's own zonal prices vs keeper dispatch (TWh)
+  CC_REGULAR: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.457 0.639 0.789 0.896 0.952; share of out-of-merit MWh with price/mc >= 0.9: 0.236, >= 0.8: 0.477, >= 0.7: 0.651
+  ST_GAS: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.437 0.529 0.648 0.788 0.903; share of out-of-merit MWh with price/mc >= 0.9: 0.102, >= 0.8: 0.228, >= 0.7: 0.403
+     klass  strict_twh  marginal_twh  out_twh  keeper_twh  hours_outside_band  avail_twh
+CC_REGULAR      38.683         2.810   18.523   37.662998                4352     60.016
+ CT_PEAKER      25.708         1.126   55.786   25.966000                 287     82.620
+    ST_GAS      14.415         1.125   23.168   14.986000                   0     38.709
+ COAL(all)      66.931         3.835   28.575   61.032001                  -1     99.342
+  CT_PEAKER strict in-merit energy at hours where the zonal price < 22.1 (CC median mc): 7.439 TWh
+  marginal-capacity share (|mc-p|<=tol): {'COAL': 0.431, 'CC_REGULAR': 0.316, 'CT_PEAKER': 0.127, 'ST_GAS': 0.126}
+
+--- D. re-clearing predictor (reach test) — dE per class (TWh) and LW price ratio
+  self-check at 1.0: recon vs keeper TWh — CC_REGULAR 39.26/37.66, CT_PEAKER 26.28/25.97, ST_GAS 14.30/14.99, COAL 67.68/61.03; retained hours (all four within 250 MW): 1969 of 8760; LW price recon/keeper 1.025
+               set  dCC_all  dCT_all  dST_all  dCOAL_all  dCC_kept  dCT_kept  dST_kept  dCOAL_kept  lw_price_ratio
+           CT x1.1     0.49    -2.09     0.46       1.11      0.42     -1.07      0.25        0.40           1.021
+           CT x1.2     0.79    -3.53     0.87       1.81      0.65     -1.73      0.39        0.66           1.040
+           CT x1.3     1.01    -4.56     1.21       2.25      0.95     -2.42      0.55        0.87           1.059
+           CT x1.5     1.37    -6.03     1.81       2.74      1.45     -3.45      0.79        1.15           1.093
+           CT x2.0     2.40    -8.66     2.67       3.45      3.36     -6.66      1.23        1.99           1.167
+           ST x0.9    -0.44    -0.55     1.75      -0.74     -0.52     -0.29      0.98       -0.15           0.987
+           ST x0.8    -1.01    -1.10     3.71      -1.56     -1.33     -0.52      2.26       -0.39           0.974
+           ST x0.7    -1.59    -1.73     6.40      -2.99     -2.17     -0.90      4.54       -1.40           0.959
+           ST x0.6    -2.46    -2.49     9.81      -4.73     -3.53     -1.28      7.40       -2.45           0.942
+           ST x0.5    -3.99    -3.13    14.05      -6.75     -5.88     -1.69     11.65       -3.87           0.923
+           CC x0.9     2.84    -0.57    -0.44      -1.76      2.79     -0.59     -0.38       -1.68           0.976
+           CC x0.8     5.59    -1.02    -0.88      -3.49      5.81     -1.05     -0.86       -3.63           0.953
+           CC x0.7     8.08    -1.38    -1.14      -5.08      8.53     -1.45     -1.38       -4.96           0.931
+merit-order lane B     4.60     1.12     0.22      -6.10      4.80     -0.00     -0.31       -4.42           0.915
+  (kept = retained-hour delta scaled to 8760; target 2024 object: CT -9.94 / CC +8.60 TWh)
+
+
+================ 2025 ================
+
+--- A. delivered gas price by provenance (cap-weighted, $/MMBtu; MW = avail-wtd)
+     klass    prov  rows  plants     mw  fuel    hr    mc
+CC_REGULAR     own    55      15 4612.0 3.486  7.95 29.44
+CC_REGULAR gapfill    30       8 2095.0 3.019  7.70   NaN
+ CT_PEAKER     own   110      30 6820.0 3.841 11.52 50.84
+ CT_PEAKER gapfill   279      95 2832.0 3.542 12.28   NaN
+    ST_GAS     own    48      12 2480.0 4.022 11.47 38.61
+    ST_GAS gapfill    76      19 1279.0 2.893 11.57   NaN
+    CC_CHP gapfill     4       1  237.0 2.806  5.81 18.48
+    CT_CHP     own     4       1   37.0 3.637 11.50 45.54
+    CT_CHP gapfill    19       6  148.0 2.928  5.51 20.23
+    ST_CHP     own     3       1   75.0 3.637 10.64 43.08
+    ST_CHP gapfill    11       8   25.0 3.021  7.11   NaN
+EIA state delivered-to-EP means: {'KS': 4.492, 'OK': nan, 'TX': 3.063}
+
+ST_GAS plants (top 12 by MW):
+                                name       zone      mw  own_months   fuel     hr     mc
+plant_code                                                                              
+2956         Seminole (OK) committed  SPP-South  1521.5          11   3.95  11.07  45.04
+6193            Harrington committed  SPP-South  1018.0          12   4.59  11.32  36.48
+2952              Muskogee committed  SPP-South   989.0          12  10.48  11.64  50.47
+4940        Riverside (OK) committed  SPP-South   909.0          12   4.20  13.54  56.43
+3478                Wilkes committed  SPP-South   883.0           0   2.81  11.07  35.66
+3482                 Jones committed  SPP-South   486.0          12   1.45  10.81  18.28
+3484               Nichols committed  SPP-South   457.0          12   1.58  11.34  21.73
+2964          Southwestern committed  SPP-South   446.0           0   2.81  12.64  38.62
+2963          Northeastern committed  SPP-South   434.0          12   3.57  12.24  47.22
+2951        Horseshoe Lake committed  SPP-South   377.0           0   2.81  11.04  31.29
+3476              Knox Lee committed  SPP-South   342.0           0   2.81  10.64  33.91
+2965                 Tulsa committed  SPP-South   322.0           0   2.81  13.21  40.24
+
+CT_PEAKER plants (top 12 by MW):
+                                            name       zone     mw  own_months  fuel     hr     mc
+plant_code                                                                                        
+57881       Pioneer Generation Station committed  SPP-North  763.0          12  2.59   3.43  12.39
+56502            Emporia Energy Center committed  SPP-North  668.8          12  5.03  12.18  65.38
+58835                         Elk Station econlo  SPP-South  583.1          12  1.48  10.61  19.32
+56326           Mustang Station Unit 4 committed  SPP-South  459.3          12  0.64  11.09  10.62
+64547                     Turtle Creek committed  SPP-North  442.2           7  7.98   9.00  99.71
+2953                           Mustang committed  SPP-South  398.0          12  3.79   9.99  41.63
+7929                      West Gardner committed  SPP-North  342.6          12  3.83  11.87  49.44
+3482                                Jones econlo  SPP-South  334.0          12  1.45  10.81  19.45
+55972                      Cass County committed  SPP-North  323.8          12  6.56  11.85  82.43
+1240        Gordon Evans Energy Center committed  SPP-North  323.4          12  4.62  11.80  58.46
+56151                     South Harper committed  SPP-North  321.2          12  5.93  13.01  81.21
+2292                      Sarpy County committed  SPP-North  312.5          12  4.76  13.51  68.88
+
+CC_REGULAR plants (top 12 by MW):
+                                               name       zone       mw  own_months  fuel     hr     mc
+plant_code                                                                                             
+55463                  Redbud Power Plant committed  SPP-South  1433.60          12  3.50   7.69  27.99
+55225                 Oneta Energy Center committed  SPP-South  1086.40           0  2.81   7.51  23.49
+55146         Green Country Power Station committed  SPP-South   783.00           2  2.82   7.26  23.88
+55178             Dogwood Energy Facility committed  SPP-North   655.20           0  3.90   7.37  30.79
+56458            Hobbs Generating Station committed  SPP-South   573.80           0  2.81   7.54  23.54
+7296            State Line Combined Cycle committed  SPP-North   538.30          12  4.00   7.14  29.22
+55664       Harrison County Power Project committed  SPP-South   514.40          11  3.48   7.19  27.44
+56565                  J Lamar Stall Unit committed  SPP-South   511.00          12  3.63   6.70  26.35
+55457             McClain Energy Facility committed  SPP-South   486.98          12  4.28   6.90  29.42
+165                                  GREC committed  SPP-South   480.70          12  4.07   8.02  34.91
+55065                     Mustang Station committed  SPP-South   464.80          12  0.63   7.91   9.90
+2963                         Northeastern committed  SPP-South   444.00          12  3.57  12.24  46.18
+
+--- B. availability-weighted annual-mean mc per class (p10/p25/p50/p75/p90) and crossover
+COAL         MW    12675    4.50  15.09  21.70  24.42  28.55
+CC_REGULAR   MW     6707   23.14  23.54  27.44  30.39  39.60
+CT_PEAKER    MW     9652   12.39  32.25  48.67  65.55  82.43
+ST_GAS       MW     3760   20.38  33.91  36.48  45.04  55.30
+  share of CT_PEAKER MW cheaper than CC_REGULAR median: 0.195;  share of CC_REGULAR MW dearer than CT_PEAKER median: 0.000
+  share of CT_PEAKER MW cheaper than ST_GAS median: 0.331;  share of ST_GAS MW dearer than CT_PEAKER median: 0.176
+  share of CC_REGULAR MW cheaper than ST_GAS median: 0.892;  share of ST_GAS MW dearer than CC_REGULAR median: 0.800
+
+--- C. in-merit capacity at keeper-3's own zonal prices vs keeper dispatch (TWh)
+  CC_REGULAR: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.544 0.662 0.790 0.901 0.956; share of out-of-merit MWh with price/mc >= 0.9: 0.254, >= 0.8: 0.476, >= 0.7: 0.684
+  ST_GAS: OUT-of-merit row-hours: price/mc cap-wtd p10/p25/p50/p75/p90 = 0.449 0.562 0.684 0.814 0.912; share of out-of-merit MWh with price/mc >= 0.9: 0.121, >= 0.8: 0.275, >= 0.7: 0.461
+     klass  strict_twh  marginal_twh  out_twh  keeper_twh  hours_outside_band  avail_twh
+CC_REGULAR      33.751         2.368   22.632   32.574001                4269     58.751
+ CT_PEAKER      22.233         0.721   61.595   22.348000                 211     84.549
+    ST_GAS       9.535         0.711   22.691    9.830000                   0     32.937
+ COAL(all)      88.172         3.844   19.015   83.195999                  -1    111.031
+  CT_PEAKER strict in-merit energy at hours where the zonal price < 27.4 (CC median mc): 7.627 TWh
+  marginal-capacity share (|mc-p|<=tol): {'COAL': 0.503, 'CC_REGULAR': 0.31, 'CT_PEAKER': 0.094, 'ST_GAS': 0.093}
+
+--- D. re-clearing predictor (reach test) — dE per class (TWh) and LW price ratio
+  self-check at 1.0: recon vs keeper TWh — CC_REGULAR 33.84/32.57, CT_PEAKER 22.75/22.35, ST_GAS 9.29/9.83, COAL 89.47/83.20; retained hours (all four within 250 MW): 2222 of 8760; LW price recon/keeper 1.009
+               set  dCC_all  dCT_all  dST_all  dCOAL_all  dCC_kept  dCT_kept  dST_kept  dCOAL_kept  lw_price_ratio
+           CT x1.1     0.50    -1.83     0.56       0.73      0.57     -1.84      0.33        0.92           1.021
+           CT x1.2     0.86    -3.18     1.04       1.20      0.83     -2.94      0.70        1.37           1.040
+           CT x1.3     1.18    -4.38     1.41       1.69      1.06     -4.33      0.95        2.29           1.058
+           CT x1.5     1.98    -6.29     1.96       2.23      1.44     -5.82      1.30        3.03           1.090
+           CT x2.0     2.98    -9.53     2.72       3.67      2.12     -9.14      1.93        5.02           1.171
+           ST x0.9    -0.47    -0.62     1.57      -0.46     -0.25     -0.34      0.90       -0.28           0.987
+           ST x0.8    -1.08    -1.26     3.87      -1.48     -0.84     -1.11      2.99       -0.99           0.972
+           ST x0.7    -1.85    -1.85     6.64      -2.88     -1.50     -1.57      5.12       -1.98           0.954
+           ST x0.6    -3.92    -2.40    11.28      -4.88     -3.28     -1.98      8.72       -3.36           0.935
+           ST x0.5    -6.19    -2.79    16.05      -6.97     -5.14     -2.29     12.60       -5.06           0.918
+           CC x0.9     3.71    -0.59    -0.45      -2.64      3.03     -0.67     -0.38       -1.95           0.974
+           CC x0.8     7.88    -1.10    -0.91      -5.77      8.10     -1.37     -0.86       -5.77           0.949
+           CC x0.7    12.14    -1.70    -1.46      -8.68     12.78     -1.99     -1.46       -8.96           0.924
+merit-order lane B     6.84     0.49    -0.03      -7.33      6.83     -0.01     -0.21       -6.62           0.912
+  (kept = retained-hour delta scaled to 8760; target 2024 object: CT -9.94 / CC +8.60 TWh)

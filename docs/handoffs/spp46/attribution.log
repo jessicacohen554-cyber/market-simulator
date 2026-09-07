@@ -1,0 +1,279 @@
+  NOTE: OK 2025 state series absent -> mean of published SPP states used as its reference
+
+
+================ 2023 ================
+
+--- CC_REGULAR: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                                name       zone       mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                             
+56565                   J Lamar Stall Unit committed  SPP-South   511.00          12  2.87   6.70  3580.47      NaN  3580.47      clean
+55463                   Redbud Power Plant committed  SPP-South  1433.60          12  2.98   7.69  7133.82  5190.63  1943.18      clean
+55065                      Mustang Station committed  SPP-South   464.80          12  1.83   7.91  3176.40  2147.66  1028.74   fuel_low
+7887        Terry Bundy Generating Station committed  SPP-North   121.80          12  4.22   7.34   599.81    69.04   530.77  fuel_high
+7546                            Ponca City committed  SPP-South    62.90           0  2.86   7.50   369.07      NaN   369.07      clean
+8000                              Beatrice committed  SPP-North   219.50          12  2.62   8.92   884.65   605.65   279.00   fuel_low
+55457              McClain Energy Facility committed  SPP-South   486.98          12  3.42   6.90  1940.64  1702.46   238.19      clean
+56610                   Deer Creek Station committed  SPP-North   295.00          12  2.82   8.05  1256.71  1093.86   162.85      clean
+50558                             Frontier committed  SPP-South   131.40           0  2.86   8.16   517.70   659.83  -142.12      clean
+55225                  Oneta Energy Center committed  SPP-South  1086.40           0  2.86   7.51  5639.41  5855.70  -216.29      clean
+7296             State Line Combined Cycle committed  SPP-North   538.30          12  3.17   7.14  2036.44  2360.44  -324.00      clean
+1239                              Riverton committed  SPP-North   252.20          11  3.64   7.56   652.32  1191.30  -538.98      clean
+3006                        Anadarko Plant committed  SPP-South   282.00          12  4.60   9.31   349.67   982.39  -632.72  fuel_high
+2963                          Northeastern committed  SPP-South   444.00          11  3.00  12.24   227.91   879.14  -651.22         HR
+56458             Hobbs Generating Station committed  SPP-South   573.80           0  2.86   7.54  3171.40  4045.30  -873.90      clean
+165                                   GREC committed  SPP-South   480.70          12  3.74   8.02  1115.00  2943.40 -1828.40      clean
+CC_REGULAR by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              2   685.8    593.3   1134.1  -540.7
+clean          17  8273.9  38341.0  35837.7  2503.3
+fuel_high       2   403.8    949.5   1051.4  -101.9
+fuel_low        2   684.3   4061.0   2753.3  1307.7
+CC_REGULAR totals: model 43.94 TWh (keeper 41.43), CAMPD 40.78 TWh, plants without a CAMPD series: 2 (574 MW, 3950 GWh model)
+
+--- CT_PEAKER: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                             name       zone     mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                        
+57881        Pioneer Generation Station committed  SPP-North  763.0          12  2.86   3.43  5657.75   498.48  5159.26         HR
+58835                          Elk Station econlo  SPP-South  583.1          12  1.98  10.61  2905.59      NaN  2905.59      clean
+56326            Mustang Station Unit 4 committed  SPP-South  459.3          12  1.91  11.09  2279.09   905.08  1374.01      clean
+3482                                 Jones econlo  SPP-South  334.0          12  2.40  10.81  1055.60   509.98   545.61      clean
+2446                                Maddox econlo  SPP-South   71.0          12  2.19   7.30   484.96      NaN   484.96      clean
+7296             State Line Combined Cycle econlo  SPP-North   89.0          12  3.17   7.14   403.09    29.38   373.71      clean
+56238         Groton Generation Station committed  SPP-North  170.0           0  3.08   8.21   486.55   222.12   264.42      clean
+7887        Terry Bundy Generating Station econlo  SPP-North   47.6          12  4.22   7.34   207.66     0.00   207.66  fuel_high
+55651        Spring Creek Energy Center committed  SPP-South  293.5          12  3.34  13.34     3.02   192.99  -189.97      clean
+2454                         Cunningham committed  SPP-South  207.0          12  2.19  12.40   620.66   814.53  -193.88      clean
+1240         Gordon Evans Energy Center committed  SPP-North  323.4          12  3.17  11.80   247.49   464.97  -217.49   fuel_low
+55972                       Cass County committed  SPP-North  323.8          11  7.87  11.85     2.19   221.03  -218.85  fuel_high
+6223               Empire Energy Center committed  SPP-North  244.0          12  3.35  13.28     1.80   250.35  -248.56      clean
+57943            Lonesome Creek Station committed  SPP-North  240.0          12  2.43   9.54   835.59  1183.99  -348.40      clean
+57865                  Antelope Station committed  SPP-South  162.0           0  2.86   9.00   471.38   993.70  -522.32      clean
+56502             Emporia Energy Center committed  SPP-North  668.8          12  2.70  12.18   290.62  1286.80  -996.18   fuel_low
+CT_PEAKER by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              1   763.0   5657.7    498.5  5159.3
+clean         112  8356.0  12909.4   7885.0  5024.4
+fuel_high       6  1190.4    975.5   1067.7   -92.2
+fuel_low        4  1398.1    840.8   2060.6 -1219.8
+CT_PEAKER totals: model 20.38 TWh (keeper 19.99), CAMPD 11.51 TWh, plants without a CAMPD series: 74 (2567 MW, 4990 GWh model)
+
+--- ST_GAS: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                  name       zone      mw  own_months   fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                               
+6193              Harrington committed  SPP-South  1018.0          12   2.47  11.32  1661.23      NaN  1661.23      clean
+2446                  Maddox committed  SPP-South   117.0          12   2.19   7.30   670.33   502.64   167.69      clean
+1416            Arsenal Hill committed  SPP-South   110.0           0   2.86   7.34   245.79   189.65    56.14      clean
+1270             Clay Center committed  SPP-North     8.0           0   3.08  10.30     8.72      NaN     8.72      clean
+1330            Wellington 1 committed  SPP-North    19.5           0   3.08  15.20     0.13      NaN     0.13      clean
+3602                Ty Cooke committed  SPP-South    88.0           0   2.86  18.56     0.08      NaN     0.08      clean
+1317                   Pratt committed  SPP-North    13.0           0   3.08  16.90     0.05      NaN     0.05      clean
+7013        East 12th Street committed  SPP-North    25.8           0   3.08  13.16     0.11     3.98    -3.87      clean
+3485                 Plant X committed  SPP-South   190.0          12   2.78  10.77   171.21   691.12  -519.91      clean
+2951          Horseshoe Lake committed  SPP-South   377.0          12   3.14  11.04   132.56   694.59  -562.03      clean
+2964            Southwestern committed  SPP-South   446.0          12   3.02  12.64   118.01   964.82  -846.81      clean
+2963            Northeastern committed  SPP-South   434.0          11   3.00  12.24   153.42  1096.63  -943.20      clean
+2952                Muskogee committed  SPP-South   989.0          11   6.56  11.64    86.14  1064.31  -978.17  fuel_high
+4940          Riverside (OK) committed  SPP-South   909.0          12  11.10  13.54    98.13  1172.12 -1073.99  fuel_high
+3478                  Wilkes committed  SPP-South   883.0          12   3.21  11.07    54.82  1192.60 -1137.78      clean
+2956           Seminole (OK) committed  SPP-South  1521.5          12   3.42  11.07  1446.96  2796.64 -1349.68      clean
+ST_GAS by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+clean          27  7820.5   7280.0  12694.6 -5414.6
+fuel_high       4  2460.0    225.1   2516.9 -2291.8
+ST_GAS totals: model 7.51 TWh (keeper 7.53), CAMPD 15.21 TWh, plants without a CAMPD series: 5 (1147 MW, 1670 GWh model)
+
+--- screen arithmetic: re-clearing with the F923 own-month plausibility screen (dE TWh vs the 1.0 reconstruction)
+  band [0.5, 2.0]: plant-months screened 47, rows touched 77 (6502 MW; low-side rows 34, high-side 47); CC_REGULAR +0.02, CT_PEAKER +0.04, ST_GAS -0.05, COAL +0.06, CC_CHP +0.00, CT_CHP -0.03, ST_CHP -0.05; LW price ratio 0.999
+  band [0.6, 1.67]: plant-months screened 75, rows touched 115 (10169 MW; low-side rows 34, high-side 47); CC_REGULAR +0.28, CT_PEAKER -0.12, ST_GAS -0.09, COAL +0.04, CC_CHP +0.00, CT_CHP -0.04, ST_CHP -0.07; LW price ratio 1.001
+  band [0.5, 2.0] + CT HR floor 9.0 on HR<6 rows: CC_REGULAR +1.13, CT_PEAKER -2.86, ST_GAS +0.10, COAL +1.67, CC_CHP +0.02, CT_CHP -0.02, ST_CHP -0.04; LW price ratio 1.010
+  HR-flagged CT_PEAKER: 4 rows / 763 MW / model in-merit 5.66 TWh, plants [57881]
+  HR-flagged CC_REGULAR: 7 rows / 686 MW / model in-merit 0.59 TWh, plants [2079, 2963]
+
+
+================ 2024 ================
+
+--- CC_REGULAR: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                               name       zone       mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                            
+56565                  J Lamar Stall Unit committed  SPP-South   511.00          12  2.96   6.70  2895.09      NaN  2895.09      clean
+55463                  Redbud Power Plant committed  SPP-South  1433.60          12  2.36   7.69  6852.90  5275.09  1577.81   fuel_low
+55065                     Mustang Station committed  SPP-South   464.80          12  0.12   7.91  3025.62  2381.71   643.91   fuel_low
+55457             McClain Energy Facility committed  SPP-South   486.98          10  3.10   6.90  1862.92  1353.25   509.67      clean
+7546                           Ponca City committed  SPP-South    62.90           0  2.57   7.50   376.47      NaN   376.47      clean
+56610                  Deer Creek Station committed  SPP-North   295.00          12  2.46   8.05  1475.09  1161.45   313.64      clean
+55178             Dogwood Energy Facility committed  SPP-North   655.20           0  2.92   7.37  2350.11  2133.28   216.83      clean
+201                       Thomas Fitzhugh committed  SPP-South   162.00           0  2.57   8.79   562.18   496.17    66.01      clean
+55146         Green Country Power Station committed  SPP-South   783.00           0  2.57   7.26  3987.40  4357.08  -369.68      clean
+55664       Harrison County Power Project committed  SPP-South   514.40          11  2.37   7.19  2916.26  3356.47  -440.21      clean
+7296            State Line Combined Cycle committed  SPP-North   538.30          12  2.86   7.14  1731.07  2240.40  -509.33      clean
+1239                             Riverton committed  SPP-North   252.20          11  3.21   7.56   631.50  1286.32  -654.82  fuel_high
+56458            Hobbs Generating Station committed  SPP-South   573.80           0  2.57   7.54  2037.88  2747.40  -709.52      clean
+3006                       Anadarko Plant committed  SPP-South   282.00          12  3.53   9.31   536.38  1343.63  -807.25      clean
+2963                         Northeastern committed  SPP-South   444.00          12  3.04  12.24    77.23  1149.57 -1072.34         HR
+165                                  GREC committed  SPP-South   480.70          12  3.24   8.02  1304.73  2790.65 -1485.91      clean
+CC_REGULAR by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              2   685.8    360.6   1523.7 -1163.1
+clean          15  6637.1  28455.8  28590.0  -134.2
+fuel_high       4   826.5   1392.9   2183.5  -790.5
+fuel_low        2  1898.4   9878.5   7656.8  2221.7
+CC_REGULAR totals: model 40.09 TWh (keeper 37.66), CAMPD 39.95 TWh, plants without a CAMPD series: 2 (574 MW, 3272 GWh model)
+
+--- CT_PEAKER: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                            name       zone     mw  own_months   fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                        
+57881       Pioneer Generation Station committed  SPP-North  763.0          12   2.50   3.43  5627.00   614.43  5012.57         HR
+58835                         Elk Station econlo  SPP-South  583.1          12   0.24  10.61  4332.77      NaN  4332.77   fuel_low
+56326           Mustang Station Unit 4 committed  SPP-South  459.3          12   0.16  11.09  3414.80  1740.42  1674.39   fuel_low
+3482                                Jones econlo  SPP-South  334.0          12   1.16  10.81  2218.44   625.50  1592.94   fuel_low
+2454                        Cunningham committed  SPP-South  207.0          12   0.91  12.40  1242.09   683.59   558.50   fuel_low
+2446                               Maddox econlo  SPP-South   71.0          12   0.91   7.30   515.46      NaN   515.46   fuel_low
+2953                           Mustang committed  SPP-South  398.0          12   3.17   9.99   900.66   613.44   287.22  fuel_high
+56238        Groton Generation Station committed  SPP-North  170.0           0   2.92   8.21   449.38   195.02   254.36      clean
+6074                    Greenwood (MO) committed  SPP-North  248.5          12   2.71  22.06     3.98   181.02  -177.04      clean
+56013                            Exira committed  SPP-North  140.1           0   2.92  10.57   133.15   339.13  -205.98      clean
+55972                      Cass County committed  SPP-North  323.8          12  12.31  11.85     0.66   214.07  -213.41  fuel_high
+7929                      West Gardner committed  SPP-North  342.6          12   2.82  11.87   281.02   516.67  -235.65      clean
+56151                     South Harper committed  SPP-North  321.2          12   4.35  13.01     1.84   293.35  -291.51  fuel_high
+57943           Lonesome Creek Station committed  SPP-North  240.0          12   2.50   9.54   589.92  1142.83  -552.91   fuel_low
+57865                 Antelope Station committed  SPP-South  162.0           0   2.57   9.00   580.94  1302.00  -721.06      clean
+56502            Emporia Energy Center committed  SPP-North  668.8          12   3.05  12.18   345.44  1605.40 -1259.96      clean
+CT_PEAKER by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              1   763.0   5627.0    614.4  5012.6
+clean         110  7079.6   6614.4   6858.4  -244.1
+fuel_high       8  2017.5   1716.5   1793.5   -77.0
+fuel_low        6  1894.4  12313.5   4192.3  8121.1
+CT_PEAKER totals: model 26.27 TWh (keeper 25.97), CAMPD 13.46 TWh, plants without a CAMPD series: 76 (2614 MW, 6629 GWh model)
+
+--- ST_GAS: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                name       zone      mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                            
+6193            Harrington committed  SPP-South  1018.0          12  1.48  11.32  5818.98      NaN  5818.98   fuel_low
+3482                 Jones committed  SPP-South   486.0          12  1.16  10.81  2230.06  1979.24   250.83   fuel_low
+3485               Plant X committed  SPP-South   190.0          12  0.79  10.77  1059.90   850.76   209.13   fuel_low
+2446                Maddox committed  SPP-South   117.0          12  0.91   7.30   685.88   673.41    12.48   fuel_low
+1270           Clay Center committed  SPP-North     8.0           0  2.92  10.30     8.31      NaN     8.31      clean
+1330          Wellington 1 committed  SPP-North    19.5           0  2.92  15.20     0.79      NaN     0.79      clean
+1317                 Pratt committed  SPP-North    13.0           0  2.92  16.90     0.15      NaN     0.15      clean
+3602              Ty Cooke committed  SPP-South    88.0           0  2.57  18.56     0.00      NaN     0.00      clean
+2951        Horseshoe Lake committed  SPP-South   377.0          12  2.76  11.04   176.91   492.78  -315.87      clean
+2965                 Tulsa committed  SPP-South   322.0          12  3.62  13.21     2.52   436.54  -434.02      clean
+2964          Southwestern committed  SPP-South   446.0          12  3.69  12.64     8.24   735.18  -726.94      clean
+3478                Wilkes committed  SPP-South   883.0          12  3.15  11.07   184.87  1262.62 -1077.76      clean
+2963          Northeastern committed  SPP-South   434.0          12  3.04  12.24    66.36  1322.91 -1256.55      clean
+4940        Riverside (OK) committed  SPP-South   909.0          12  3.69  13.54    32.12  1330.80 -1298.69      clean
+2956         Seminole (OK) committed  SPP-South  1521.5          11  3.46  11.07  1120.61  2450.13 -1329.53  fuel_high
+2952              Muskogee committed  SPP-South   989.0          12  4.14  11.64   349.32  2707.91 -2358.59  fuel_high
+ST_GAS by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+clean          23  5536.0   2714.4   8663.6 -5949.2
+fuel_high       3  2750.5   1512.1   5313.0 -3800.9
+fuel_low        5  1994.0  10751.5   4615.7  6135.9
+ST_GAS totals: model 14.98 TWh (keeper 14.99), CAMPD 18.59 TWh, plants without a CAMPD series: 5 (1147 MW, 5828 GWh model)
+
+--- screen arithmetic: re-clearing with the F923 own-month plausibility screen (dE TWh vs the 1.0 reconstruction)
+  band [0.5, 2.0]: plant-months screened 120, rows touched 110 (12144 MW; low-side rows 53, high-side 72); CC_REGULAR +4.26, CT_PEAKER -4.17, ST_GAS -4.17, COAL +3.95, CC_CHP +0.05, CT_CHP +0.05, ST_CHP +0.04; LW price ratio 1.032
+  band [0.6, 1.67]: plant-months screened 135, rows touched 144 (15148 MW; low-side rows 53, high-side 72); CC_REGULAR +4.55, CT_PEAKER -4.44, ST_GAS -4.11, COAL +3.87, CC_CHP +0.05, CT_CHP +0.04, ST_CHP +0.04; LW price ratio 1.033
+  band [0.5, 2.0] + CT HR floor 9.0 on HR<6 rows: CC_REGULAR +5.11, CT_PEAKER -6.82, ST_GAS -3.80, COAL +5.34, CC_CHP +0.06, CT_CHP +0.06, ST_CHP +0.05; LW price ratio 1.044
+  HR-flagged CT_PEAKER: 4 rows / 763 MW / model in-merit 5.63 TWh, plants [57881]
+  HR-flagged CC_REGULAR: 7 rows / 686 MW / model in-merit 0.36 TWh, plants [2079, 2963]
+
+
+================ 2025 ================
+
+--- CC_REGULAR: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                               name       zone       mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                            
+56565                  J Lamar Stall Unit committed  SPP-South   511.00          12  3.63   6.70  2677.60      NaN  2677.60  fuel_high
+55225                 Oneta Energy Center committed  SPP-South  1086.40           0  2.81   7.51  6479.60  5003.09  1476.51      clean
+56610                  Deer Creek Station committed  SPP-North   295.00          12  2.60   8.05  1671.47  1201.68   469.79   fuel_low
+55457             McClain Energy Facility committed  SPP-South   486.98          12  4.28   6.90  1321.36   897.20   424.16      clean
+7546                           Ponca City committed  SPP-South    62.90           0  2.81   7.50   415.11      NaN   415.11      clean
+55065                     Mustang Station committed  SPP-South   464.80          12  0.63   7.91  2951.57  2572.56   379.02   fuel_low
+55463                  Redbud Power Plant committed  SPP-South  1433.60          12  3.50   7.69  4841.21  4470.46   370.74      clean
+8059                        Comanche (OK) committed  SPP-South   233.00           0  2.81   9.74   481.37   190.97   290.40      clean
+56458            Hobbs Generating Station committed  SPP-South   573.80           0  2.81   7.54  3069.31  3383.53  -314.22      clean
+55178             Dogwood Energy Facility committed  SPP-North   655.20           0  3.90   7.37  1672.96  2034.46  -361.50      clean
+3006                       Anadarko Plant committed  SPP-South   282.00          12  4.95   9.31   121.61   579.18  -457.57  fuel_high
+1239                             Riverton committed  SPP-North   252.20          11  4.06   7.56   624.14  1382.88  -758.73      clean
+55664       Harrison County Power Project committed  SPP-South   514.40          11  3.48   7.19  1864.57  2662.48  -797.91      clean
+7296            State Line Combined Cycle committed  SPP-North   538.30          12  4.00   7.14  1250.12  2473.74 -1223.61      clean
+2963                         Northeastern committed  SPP-South   444.00          12  3.57  12.24   114.82  1591.32 -1476.50         HR
+165                                  GREC committed  SPP-South   480.70          12  4.07   8.02   820.94  2686.07 -1865.13      clean
+CC_REGULAR by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              2   685.8    135.8   1871.4 -1735.6
+clean          16  7687.4  27268.2  29827.4 -2559.2
+fuel_high       3   914.8   2907.6    666.7  2240.9
+fuel_low        2   759.8   4623.0   3774.2   848.8
+CC_REGULAR totals: model 34.93 TWh (keeper 32.57), CAMPD 36.14 TWh, plants without a CAMPD series: 2 (574 MW, 3093 GWh model)
+
+--- CT_PEAKER: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                            name       zone     mw  own_months  fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                                       
+57881       Pioneer Generation Station committed  SPP-North  763.0          12  2.59   3.43  5663.09   573.29  5089.81         HR
+58835                         Elk Station econlo  SPP-South  583.1          12  1.48  10.61  4209.32      NaN  4209.32   fuel_low
+3482                                Jones econlo  SPP-South  334.0          12  1.45  10.81  2077.44   684.98  1392.46   fuel_low
+56326           Mustang Station Unit 4 committed  SPP-South  459.3          12  0.64  11.09  3412.47  2205.15  1207.32   fuel_low
+2446                               Maddox econlo  SPP-South   71.0          12  2.55   7.30   399.38      NaN   399.38   fuel_low
+7296            State Line Combined Cycle econlo  SPP-North   89.0          12  4.00   7.14   236.95    43.71   193.23      clean
+59647            Stillwater Energy Center econlo  SPP-South   55.8           0  2.81   9.45   189.13      NaN   189.13      clean
+2966                             Weleetka econlo  SPP-South  106.0           0  2.81  11.50   178.43     0.00   178.43      clean
+2079                             Hawthorn econlo  SPP-North  157.4          12  4.35  11.79    12.33   173.56  -161.23      clean
+56013                            Exira committed  SPP-North  140.1           0  3.90  10.57    78.48   265.69  -187.21      clean
+2454                        Cunningham committed  SPP-South  207.0          12  2.55  12.40   617.67   820.76  -203.09   fuel_low
+56151                     South Harper committed  SPP-North  321.2          12  5.93  13.01     0.13   228.73  -228.60      clean
+64547                     Turtle Creek committed  SPP-North  442.2           7  7.98   9.00    91.02   362.96  -271.95  fuel_high
+1240        Gordon Evans Energy Center committed  SPP-North  323.4          12  4.62  11.80    28.96   325.97  -297.01      clean
+57865                 Antelope Station committed  SPP-South  162.0           0  2.81   9.00   612.42  1052.37  -439.95      clean
+56502            Emporia Energy Center committed  SPP-North  668.8          12  5.03  12.18    16.42   644.74  -628.32      clean
+CT_PEAKER by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+HR              1   763.0   5663.1    573.3  5089.8
+clean         109  7035.5   4725.6   5451.1  -725.5
+fuel_high       7  1802.6    293.3   1079.0  -785.7
+fuel_low        8  2153.4  11911.9   4706.4  7205.5
+CT_PEAKER totals: model 22.59 TWh (keeper 22.35), CAMPD 11.81 TWh, plants without a CAMPD series: 75 (2171 MW, 6005 GWh model)
+
+--- ST_GAS: model in-merit vs CAMPD, GWh (top/bottom 8 by delta)
+                                name       zone      mw  own_months   fuel     hr  e_model  e_campd    delta       flag
+plant_code                                                                                                             
+3484               Nichols committed  SPP-South   457.0          12   1.58  11.34  2507.92  1778.38   729.54      clean
+3482                 Jones committed  SPP-South   486.0          12   1.45  10.81  2486.78  2386.69   100.10   fuel_low
+1416          Arsenal Hill committed  SPP-South   110.0           0   2.81   7.34   176.95   128.38    48.57      clean
+1270           Clay Center committed  SPP-North     8.0           0   3.90  10.30     5.05      NaN     5.05      clean
+1330          Wellington 1 committed  SPP-North    19.5           0   3.90  15.20     0.30      NaN     0.30      clean
+1317                 Pratt committed  SPP-North    13.0           0   3.90  16.90     0.10      NaN     0.10      clean
+3602              Ty Cooke committed  SPP-South    88.0           0   2.81  18.56     0.00      NaN     0.00      clean
+1217         Earl F Wisdom committed  SPP-North    37.5           0   3.90  19.36     0.00     5.84    -5.84      clean
+2965                 Tulsa committed  SPP-South   322.0           0   2.81  13.21   112.78   335.31  -222.53      clean
+3485               Plant X committed  SPP-South   190.0           0   2.81  10.77   286.64   612.06  -325.42      clean
+2454            Cunningham committed  SPP-South   183.0          12   2.55  12.40   409.11  1023.41  -614.30   fuel_low
+4940        Riverside (OK) committed  SPP-South   909.0          12   4.20  13.54     3.49   723.60  -720.12  fuel_high
+2963          Northeastern committed  SPP-South   434.0          12   3.57  12.24    46.15  1133.18 -1087.03      clean
+2952              Muskogee committed  SPP-South   989.0          12  10.48  11.64    45.72  1407.58 -1361.86  fuel_high
+6193            Harrington committed  SPP-South  1018.0          12   4.59  11.32   811.26  2184.86 -1373.60   fuel_low
+2956         Seminole (OK) committed  SPP-South  1521.5          11   3.95  11.07   223.15  2121.30 -1898.15      clean
+ST_GAS by flag group (GWh):
+           plants      mw  e_model  e_campd   delta
+flag                                               
+clean          23  6016.5   5577.5   8952.0 -3374.5
+fuel_high       4  2460.0     50.9   2416.3 -2365.4
+fuel_low        4  1804.0   4262.1   6191.8 -1929.7
+ST_GAS totals: model 9.89 TWh (keeper 9.83), CAMPD 17.56 TWh, plants without a CAMPD series: 4 (128 MW, 5 GWh model)
+
+--- screen arithmetic: re-clearing with the F923 own-month plausibility screen (dE TWh vs the 1.0 reconstruction)
+  band [0.5, 2.0]: plant-months screened 71, rows touched 107 (10658 MW; low-side rows 56, high-side 55); CC_REGULAR +2.87, CT_PEAKER -6.36, ST_GAS -0.94, COAL +4.37, CC_CHP +0.03, CT_CHP +0.02, ST_CHP +0.02; LW price ratio 1.045
+  band [0.6, 1.67]: plant-months screened 118, rows touched 145 (16786 MW; low-side rows 56, high-side 55); CC_REGULAR +4.42, CT_PEAKER -6.63, ST_GAS -2.90, COAL +5.06, CC_CHP +0.03, CT_CHP +0.02, ST_CHP +0.02; LW price ratio 1.051
+  band [0.5, 2.0] + CT HR floor 9.0 on HR<6 rows: CC_REGULAR +3.92, CT_PEAKER -8.70, ST_GAS -0.76, COAL +5.46, CC_CHP +0.03, CT_CHP +0.02, ST_CHP +0.03; LW price ratio 1.060
+  HR-flagged CT_PEAKER: 4 rows / 763 MW / model in-merit 5.66 TWh, plants [57881]
+  HR-flagged CC_REGULAR: 7 rows / 686 MW / model in-merit 0.14 TWh, plants [2079, 2963]
