@@ -190,10 +190,15 @@ removed):
 
 SPP is served by the **measured EIA-930 `Total interchange` schedule**
 (`_SCALAR_INTERCHANGE_ISOS`, owner ruling P2 — the PJM/NYISO/NEISO precedent,
-positive = net export) rather than a priced seam. Its three
-`INTERFACE_NEIGHBORS["SPP"]` blocks (MISO / AECI / ERCOT, the last carrying the
-820 MW DC ties of ruling P3) are registered **default-off**; lever SPP-51
-validates arming them with `--priced-interchange`.
+positive = net export) rather than a priced seam. Its four
+`INTERFACE_NEIGHBORS["SPP"]` blocks (MISO_West / MISO_South — the MISO seam
+split per bordering MISO zone by SPP-51 — / AECI / ERCOT, the last carrying the
+DC ties of ruling P3 at the measured 835 MW clip) are registered
+**default-off** with measured `hr_by_year` and HH+basis flat heat rates. SPP has
+no `IMPORT_ZONE` / `IMPORT_NODE_LINKS` entry, so `--priced-interchange` builds
+no seam for SPP at HEAD; lane SPP-51 (2026-09-07) killed the spread-clearing
+arm at rule-29 phase 0 on the measured record and routed the two-bus topology
+any LP test needs (`docs/handoffs/FINDING-spp-51-2026-09-07.md`).
 
 ## 8.2 ISO topology (`iso_configs.py`)
 

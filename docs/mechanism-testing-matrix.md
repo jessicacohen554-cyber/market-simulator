@@ -16795,7 +16795,19 @@ each in full at issuance. Standing rules that already bind the queue:
 
 **The queue (plan §4 W5, in issue order).**
 
-1. **SPP-51 — priced seams (cards P2 / P3).** `[OPUS]`, pre-declared execution
+1. **SPP-51 — priced seams (cards P2 / P3).** **DONE 2026-09-07 (Fable):
+   KILLED at rule-29 phase 0 on the measured record, no LP spent** — the
+   MEASURED SPP hub minus the MEASURED MISO-West / MISO-South anchor predicts
+   the MEASURED seam direction in 0.42–0.50 of non-hold hours (corr ≈ 0) in
+   every year; the SPP↔MISO seam is a spread-blind schedule (miso-233 found
+   the same from MISO's side). Cells `priced_interchange` /
+   `reference_price_interface` U → R. Also found: SPP has NO `IMPORT_ZONE`,
+   so `--priced-interchange` builds nothing at HEAD, and the one-bus repair is
+   a free wheel around the 3,400 MW corridor — two-bus topology routed (R-a).
+   The measured `hr_by_year` (MISO split West/South), the HH+basis flat HRs
+   and the ERCOT 835 MW clip LANDED default-off.
+   `docs/handoffs/FINDING-spp-51-2026-09-07.md`. Charter as issued:
+   `[OPUS]`, pre-declared execution
    of SPP-33's derived numbers. Arms `hr_by_year` on
    `INTERFACE_NEIGHBORS["SPP"]` MISO and ERCOT, A/B'd against
    `--priced-interchange`. The first keeper serves the **measured EIA-930
