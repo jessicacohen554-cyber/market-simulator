@@ -259,6 +259,7 @@ from .basis.meanzero import (
     CAISO_ZONAL_GAS_HUB_PATH,
     MISO_ZONAL_GAS_HUB_PATH,
     PJM_ZONAL_GAS_HUB_PATH,
+    SPP_ZONAL_GAS_HUB_PATH,
     _ZONAL_HUB_CACHE as _ZONAL_HUB_CACHE,
     _ZONAL_HUB_ISO_CLEAN_CACHE as _ZONAL_HUB_ISO_CLEAN_CACHE,
     _apply_meanzero_zonal_gas_basis as _apply_meanzero_zonal_gas_basis,
