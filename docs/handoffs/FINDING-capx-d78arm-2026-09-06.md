@@ -384,6 +384,32 @@ The remainder (`TestGetRPSTarget::test_unregistered_iso_is_none`, the four
 registration and SCN campaign lanes. **None is repaired here** — they are other lanes' objects, and
 S5 scopes this PR.
 
+### 9.1 The CI reading, and the three failures the local selection did not cover
+
+CI's `Fast test tier` runs a wider selection than the local one and reports **15 failed / 9,012
+passed**. Twelve are the local set. The other three were re-checked the same way — run on this branch,
+then on a detached clean `origin/main` — and **all three fail identically on both**:
+
+| failure | reading |
+|---|---|
+| `test_caiso_st_gas_peak_measured::test_registry_value_matches_the_committed_artifact` | `1.154 != 1.166` — a CAISO measured-registry value against its committed artifact |
+| `test_cache_solve_surface::test_sidecar_is_written_beside_the_config` | `{'NUCLEAR_MONTHLY_CF_BY_YEAR': '00a8e8726fd0edd6'} != {}` — a `SURFACE_MODULES` table whose live hash has drifted from its `solve_surface_declared.py` declaration |
+| `test_cache_solve_surface::test_a_bundle_solved_on_S1_is_not_addressed_on_S2` | the same undeclared drift, seen from the addressing side |
+
+The two `test_cache_solve_surface` rows are the closest thing on the board to this lane's subject
+matter — capx D79's fingerprint — so they were checked rather than waved through. They are **not**
+this lane's: the drift is in `NUCLEAR_MONTHLY_CF_BY_YEAR`, a `constants.py` table this PR does not
+touch, and this PR's entire diff is three files, none of them code. **This lane's own use of the
+fingerprint is sound and independently confirmed** — see §2.0b, where two solves on two different
+HEADs agree byte-for-byte exactly as the fingerprint predicts.
+
+**Every one of the 15 is therefore a pre-existing base-branch failure**, and none is repaired here
+(other lanes' objects; S5 scopes this PR). The two red *checks* beyond the test tier — `FR-22
+backcast->forecast parity` and the `Rule-22 quarantine gates` S1 status-freshness sub-check — were
+established the same way and are documented in the PR's standing-down comment, with a proposed patch
+for the owning lane in each case and **no port**, because both fixes are substantive claims about
+another ISO's mechanism or another lane's derived artifact.
+
 `ruff check` and `ruff format --check` clean on both touched Python files.
 `check_mechanism_matrix.py --base origin/main` exits **0**; its anchor warnings are all emitted with
 the `(pre-existing, not this PR)` marker.
