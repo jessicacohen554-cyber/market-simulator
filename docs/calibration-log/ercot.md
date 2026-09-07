@@ -13540,3 +13540,90 @@ Full record: `docs/RESULT-ercot253-2021-rung-2026-09-06.md`,
 `docs/PRECOMMIT-ercot253-2021-rung-2026-09-06.md` + `docs/ADDENDUM-ercot253-as-requirement-2026-09-06.md`.
 
 **Next shorthand: ercot-254** (ercot-199 remains unclaimed)
+
+## ercot-254 — 2026-09-07 — THE 2021 ROOT CAUSE IS FOUND AND MEASURED: the ERCOT delivered-gas **LEVEL anchor is an annual mean of a monthly series whose February 2021 print is 30.7σ**, so 2021 carries **+5.778 $/MMBtu** against +0.199/+0.504 in 2022/2023. The monthly repair is BUILT, screened clean on 2025, and **halves the eleven non-Uri months' price bias (+160.8 % → +79.1 %) — but it is NOT a keeper candidate**: two of three pre-registered C1 predictions were WRONG IN SIGN, C3c regresses 234 → 688 h, and the cause is the same defect one resolution finer
+
+**Phase 0 (zero LP, rule 29 clause 0).** `ercot_electric_power_gas_basis` reduces the
+twelve monthly prints of EIA N3045TX3 to ONE annual mean and `apply_ercot_zonal_gas_basis`
+adds that scalar to every gas unit in all 8,760 hours — while the price it is added to is
+already monthly. February 2021 (Uri) prints **$61.88/Mcf** against a $4.49 median over the
+other eleven months (**30.7 σ**, 13.8×), so the 2021 annual mean is a measurement OF
+FEBRUARY: `level_corr` **+5.778 $/MMBtu** vs +0.282/+0.544/+0.199/+0.504/+0.414/+0.037 in
+2019/2020/2022/2023/2024/2025. Measured on the three committed bundles' own fuel arrays,
+CC_REGULAR and ST_GAS pay **+7.330 $/MMBtu over hub** in 2021 (2022 −0.129, 2023 −0.081)
+while CT_PEAKER pays +1.060, because CT capacity sits in the two zones the contamination
+misses — **Houston, a flat cited −0.15 in every year, and West/Panhandle, which has no 2021
+hub row at all**. The CT−CC merit-order spread collapses **$23.12 → $4.78**. The addendum's
+candidate 1 was right and the search ended there; its `gas_offer_margin_anchor_vintage`
+withdrawal was right too, though for the wrong operand (it compared the $3.72 hub, not the
+$9.9–11.1 delivered).
+
+**The repair, default OFF.** `ercot_ep_gas_basis_monthly` resolves the SAME series at its
+native monthly resolution, `basis[m] = EP[m]/1.036 − HH[m]`, through the canonical
+`_expand_monthly_to_hourly` seam (rule 19). Zero new data, zero new source, **zero free
+parameters**, and **mean-preserving by construction** — the mean is linear, so it relocates
+a measured quantity back to the months it was measured in rather than re-levelling the year
+(rule 14 `[R-ACCURATE]`). Registered in both cache-key tables at `"False"` in the same
+commit as the field; byte-identical off, every ISO and every forecast year.
+
+**Screen (2025, named ex ante on the mechanism's own footprint 0.2412 $/MMBtu vs
+0.2064/0.1243): every gate PASSES.** Zero-LP G-1 as written FIRED at 0.6151 and was
+diagnosed **mis-scoped, not a defect of the arm** — 1,727/1,727 non-West gas rows satisfy the
+identity EXACTLY and all 97 residual rows are West, where `apply_ercot_west_netload_gas_shape`
+owns the level outright and the arm is measured **exactly inert**. The PRECOMMIT was not
+rewritten; a committed addendum records the fire, the diagnosis and a corrected scope
+(G-1′ + a new, stricter G-1″) *before* any LP. Post-solve vs a same-HEAD control one flag
+apart: G-4 +0.2974 $/MWh vs the $5.00 bar, G-5/G-6 no flip, G-7 slack and dump **exactly
+0.0000** in both. **The control earned its cost**: it measured HEAD drift against the
+committed keeper at **+0.0293 $/MWh**, an order of magnitude below the mechanism's own
+move — a stronger statement than the G-DRIFT audit (172 files, 153,004 insertions since
+`0207d69d`) could honestly have made.
+
+**Training window: near-inert, no criterion flips** — 2024 C3a 30.9214 → 30.8179, C3b 0.131
+→ 0.123; 2025 C3a 33.4132 → 33.7399, C3b 0.101 → 0.107; C3c identical both years.
+
+**2021 re-test (rule-22 touchpoint loop STEP 4, predictions committed BEFORE the solve).**
+THE PRICE HALF WORKS: the eleven non-Uri months' bias falls **+160.8 % → +79.1 %** with
+**every one of the twelve months improving**, and February moves **−4.1 % → +16.7 %** (one
+basis, hourly system load-weighted, recomputed for both arms — `RESULT-ercot253` §2a's
+−14.9 %/+144.0 % is a different aggregation and is not mixed in). **THE MERIT-ORDER HALF
+DOES NOT**: CC_REGULAR 97.226 → 98.095 TWh against 113.245 (miss −16.02 → −15.15), and
+**two of three pre-registered class predictions were WRONG IN SIGN** — CT_PEAKER 10.641 →
+**11.133** and ST_GAS 17.105 → **18.533** both RISE. Diagnosed, not excused: cheaper gas
+displaced **coal** (COAL_PRB 58.956 → 55.306 TWh) and the ~3.7 TWh spread across the whole
+gas fleet rather than to CC; my arithmetic reasoned only within the gas fleet. **Gates
+regress**: C3c **234 → 688 h** against actual 258 (PASS → FAIL), C3b 0.361 → 0.501.
+
+**THE CAUSE OF THE REGRESSION IS THE SAME DEFECT ONE RESOLUTION FINER.** A *monthly* level
+applies February 2021's $59.73/MMBtu to all **672** February hours; the real Uri spike lasted
+about **five days**. February's mean lands close (+16.7 %) while its **breadth** is far too
+wide — the 454 extra hours above $200 are essentially February's non-storm hours.
+
+**NOT PROMOTED**, and one blocking fact beyond the merits: `replay_keeper` on the merged
+two-config keeper applies the **FORWARD** config to every year (the merged `meta.json`
+carries neither `ercot_offer_swcap_clip` nor the carve-out CC `peak` 151.008), so the
+full-span run's 2023 reads the **ercot-234 forward-on-2023** numbers (C3a $38.92, C3b 0.725)
+and not this mechanism — rule 16 `[R-ALLYEARS]` cannot be satisfied from that bundle. The
+mechanism stays BUILT and default-OFF, matrix cell `O`, one CLI switch from the successor's
+A/B.
+
+**Successor, identified in-sample: a DAILY delivered-gas basis** (daily Waha / Houston Ship
+Channel settlements — data intake, unrestricted under rule 22), which SUBSUMES this
+mechanism (rule 19) and prices February 2021's five storm days rather than its twenty-eight.
+Also named and untouched: the **2021 per-zone SPREAD table's** own February contamination
+(the likelier C1 driver — range 6.45 vs 1.95 $/MMBtu in 2023), the absent 2021 West
+`neg_day_freq` (falls back to a **2024** default 0.42, **inverted** regimes: deep $7.45 above
+firm $3.41), and two provenance defects (`meta.json` records `ercot_zonal_gas_basis` /
+`ercot_west_netload_gas_shape` as `false` on runs that armed them via `prb_overrides`, so
+`replay_keeper._ENV_GATED_INERT`'s hard-fail is blind exactly where it was written to bite).
+
+**Rule 30(c): ERCOT stays CALIBRATED on the train tier**, keeper
+`2026-09-05-ercot248-two-config-keeper` unchanged. All four probe bundles deleted before
+merge (rule 29(c)); nothing registered, no dashboard entry moved, nothing tuned on 2021.
+Record: `docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`,
+`docs/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md`,
+`docs/ADDENDUM-ercot254-g1-scope-correction-2026-09-07.md`,
+`docs/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`,
+`docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md`.
+
+**Next shorthand: ercot-255** (ercot-199 remains unclaimed)
