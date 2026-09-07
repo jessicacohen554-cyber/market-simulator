@@ -1,0 +1,2426 @@
+{
+  "probe": "miso-241 phase 0 \u2014 the SPP quantity-side charter: does a DOF-free form exist?",
+  "prereg": "results/calibration/PREREG-miso241-the-spp-quantity-side-charter-2026-09-07.md (pushed 6fbc5e83)",
+  "addendum": "results/calibration/ADDENDUM-miso241-the-q2-instrument-gate-2026-09-07.md",
+  "keeper": "2026-09-07-miso-233-spp-hourly",
+  "zero_lp": true,
+  "gated_seam": "SPP",
+  "price_basis": "ok mask = Indiana hub RT finite; every merit signal and regressor = Indiana hub DA; SPP anchor = measured SPP NORTH hub DA",
+  "bars": {
+    "tol_sigma_mw": 0.5,
+    "tol_delta_r2": 0.005,
+    "tol_corr": 0.002,
+    "tol_level_mw": 0.5,
+    "tol_sat_share": 0.002,
+    "tol_gamma_mw_per_z": 0.5,
+    "tol_identity_mw": 1e-06,
+    "tol_envelope_mw": 1e-06,
+    "q1_ceiling_bar": 0.5,
+    "q1_merit_bar": 0.1,
+    "q2_min_samples": 12,
+    "q2_n_perm": 200,
+    "q2_seed": 20260907,
+    "q2_z_bar": 3.0,
+    "q2_material_frac": 0.1,
+    "q2_inert_frac": 0.02
+  },
+  "predecessor_artifacts": {
+    "miso235": "_miso235_seam_variance_decomposition_phase0.json",
+    "miso236": "_miso236_neighbour_state_residual_phase0.json",
+    "miso238": "_miso238_pjm_seam_channel_attribution_phase0.json",
+    "miso239": "_miso239_merit_ladder_property_attribution_phase0.json"
+  },
+  "years": {
+    "2023": {
+      "n_ok_hours": 8760,
+      "Q0_instrument_repair": {
+        "harness": {
+          "incumbent": {
+            "corr_recon_vs_committed": 0.9845,
+            "mean_abs_level_error_mw": 49.4,
+            "recon_mean_mw": 5091.2,
+            "recon_sigma_mw": 1349.7
+          },
+          "repaired": {
+            "corr_recon_vs_committed": 0.9917,
+            "mean_abs_level_error_mw": 8.9,
+            "recon_mean_mw": 5050.7,
+            "recon_sigma_mw": 1346.1
+          }
+        },
+        "per_seam": {
+          "PJM": {
+            "export_incumbent_mean_mw": 0.0,
+            "export_repaired_mean_mw": 0.0,
+            "export_incumbent_sigma_mw": 0.0,
+            "export_repaired_sigma_mw": 0.0,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": 4989.1,
+            "net_repaired_mean_mw": 4989.1,
+            "net_incumbent_sigma_mw": 1528.6,
+            "net_repaired_sigma_mw": 1528.6,
+            "measured_sigma_mw": 1615.4
+          },
+          "SPP": {
+            "export_incumbent_mean_mw": 12.6,
+            "export_repaired_mean_mw": 53.1,
+            "export_incumbent_sigma_mw": 66.6,
+            "export_repaired_sigma_mw": 151.7,
+            "export_disagree_share": 0.1785,
+            "net_incumbent_mean_mw": 198.3,
+            "net_repaired_mean_mw": 157.8,
+            "net_incumbent_sigma_mw": 279.5,
+            "net_repaired_sigma_mw": 348.4,
+            "measured_sigma_mw": 577.3
+          },
+          "South": {
+            "export_incumbent_mean_mw": 754.2,
+            "export_repaired_mean_mw": 754.2,
+            "export_incumbent_sigma_mw": 412.5,
+            "export_repaired_sigma_mw": 412.5,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": -753.5,
+            "net_repaired_mean_mw": -753.5,
+            "net_incumbent_sigma_mw": 414.2,
+            "net_repaired_sigma_mw": 414.2,
+            "measured_sigma_mw": 856.2
+          },
+          "Manitoba": {
+            "export_incumbent_mean_mw": 5.3,
+            "export_repaired_mean_mw": 5.3,
+            "export_incumbent_sigma_mw": 48.4,
+            "export_repaired_sigma_mw": 48.4,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": 657.3,
+            "net_repaired_mean_mw": 657.3,
+            "net_incumbent_sigma_mw": 515.7,
+            "net_repaired_sigma_mw": 515.7,
+            "measured_sigma_mw": 819.1
+          }
+        },
+        "miso235_s4_rows_both_variants": {
+          "PJM": {
+            "beta_measured": 48.93,
+            "sigma_resid_measured_mw": 1568.2,
+            "incumbent": {
+              "beta_model": 43.16,
+              "beta_ratio": 0.88,
+              "sigma_model_mw": 1528.6,
+              "sigma_resid_model_mw": 1489.8,
+              "sigma_resid_ratio": 0.95
+            },
+            "repaired": {
+              "beta_model": 43.16,
+              "beta_ratio": 0.88,
+              "sigma_model_mw": 1528.6,
+              "sigma_resid_model_mw": 1489.8,
+              "sigma_resid_ratio": 0.95
+            }
+          },
+          "SPP": {
+            "beta_measured": 1.07,
+            "sigma_resid_measured_mw": 576.8,
+            "incumbent": {
+              "beta_model": 7.38,
+              "beta_ratio": 6.91,
+              "sigma_model_mw": 279.5,
+              "sigma_resid_model_mw": 226.9,
+              "sigma_resid_ratio": 0.39
+            },
+            "repaired": {
+              "beta_model": 11.17,
+              "beta_ratio": 10.45,
+              "sigma_model_mw": 348.4,
+              "sigma_resid_model_mw": 245.7,
+              "sigma_resid_ratio": 0.43
+            }
+          },
+          "South": {
+            "beta_measured": -1.91,
+            "sigma_resid_measured_mw": 855.8,
+            "incumbent": {
+              "beta_model": 20.15,
+              "beta_ratio": -10.54,
+              "sigma_model_mw": 414.2,
+              "sigma_resid_model_mw": 324.0,
+              "sigma_resid_ratio": 0.38
+            },
+            "repaired": {
+              "beta_model": 20.15,
+              "beta_ratio": -10.54,
+              "sigma_model_mw": 414.2,
+              "sigma_resid_model_mw": 324.0,
+              "sigma_resid_ratio": 0.38
+            }
+          },
+          "Manitoba": {
+            "beta_measured": 20.1,
+            "sigma_resid_measured_mw": 777.6,
+            "incumbent": {
+              "beta_model": 22.58,
+              "beta_ratio": 1.12,
+              "sigma_model_mw": 515.7,
+              "sigma_resid_model_mw": 426.9,
+              "sigma_resid_ratio": 0.55
+            },
+            "repaired": {
+              "beta_model": 22.58,
+              "beta_ratio": 1.12,
+              "sigma_model_mw": 515.7,
+              "sigma_resid_model_mw": 426.9,
+              "sigma_resid_ratio": 0.55
+            }
+          }
+        },
+        "miso235_s5_contributions": {
+          "incumbent": {
+            "PJM": -0.3359,
+            "SPP": 0.0189,
+            "South": 0.1058,
+            "Manitoba": 0.1098,
+            "TOTAL": -0.1015
+          },
+          "repaired": {
+            "PJM": -0.3369,
+            "SPP": 0.0124,
+            "South": 0.106,
+            "Manitoba": 0.1101,
+            "TOTAL": -0.1083
+          },
+          "measured": {
+            "PJM": -0.0778,
+            "SPP": -0.0291,
+            "South": -0.0048,
+            "Manitoba": 0.0568,
+            "TOTAL": -0.0549
+          },
+          "committed_total": -0.1095
+        }
+      },
+      "Q1_binding_census": {
+        "PJM": {
+          "import": {
+            "share_ceiling_set": 0.3783,
+            "share_merit_set": 0.6217,
+            "share_tie": 0.0389,
+            "share_n_zero": 0.0055,
+            "mean_n": 5.8484
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0,
+            "share_merit_set": 1.0,
+            "share_tie": 0.0,
+            "share_n_zero": 1.0,
+            "mean_n": 0.0
+          },
+          "ceiling_active_share_incumbent": 0.3783,
+          "merit_active_share_incumbent": 0.6217,
+          "export_repaired": {
+            "share_ceiling_set": 0.0013,
+            "share_merit_set": 0.9987,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9987,
+            "mean_n": 0.01
+          },
+          "ceiling_active_share_repaired": 0.3796,
+          "merit_active_share_repaired": 0.6204,
+          "env_i_mean_mw": 6165.2,
+          "env_i_sigma_mw": 882.3,
+          "env_e_mean_mw": 0.0,
+          "env_e_sigma_mw": 0.0,
+          "share_seam_exactly_zero_incumbent": 0.0055,
+          "share_seam_exactly_zero_repaired": 0.0042,
+          "env_i_zero_share": 0.0,
+          "env_e_zero_share": 1.0,
+          "corr_net_vs_env_i_incumbent": 0.3312,
+          "corr_net_vs_env_i_repaired": 0.3312
+        },
+        "SPP": {
+          "import": {
+            "share_ceiling_set": 0.1497,
+            "share_merit_set": 0.8503,
+            "share_tie": 0.0,
+            "share_n_zero": 0.5718,
+            "mean_n": 0.5035
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0462,
+            "share_merit_set": 0.9538,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9466,
+            "mean_n": 0.0562
+          },
+          "ceiling_active_share_incumbent": 0.1929,
+          "merit_active_share_incumbent": 0.8071,
+          "export_repaired": {
+            "share_ceiling_set": 0.1075,
+            "share_merit_set": 0.8925,
+            "share_tie": 0.0,
+            "share_n_zero": 0.8457,
+            "mean_n": 0.1991
+          },
+          "ceiling_active_share_repaired": 0.2572,
+          "merit_active_share_repaired": 0.7428,
+          "env_i_mean_mw": 682.4,
+          "env_i_sigma_mw": 340.8,
+          "env_e_mean_mw": 480.3,
+          "env_e_sigma_mw": 362.2,
+          "share_seam_exactly_zero_incumbent": 0.5441,
+          "share_seam_exactly_zero_repaired": 0.4175,
+          "env_i_zero_share": 0.0106,
+          "env_e_zero_share": 0.0666,
+          "corr_net_vs_env_i_incumbent": 0.312,
+          "corr_net_vs_env_i_repaired": 0.3537
+        },
+        "South": {
+          "import": {
+            "share_ceiling_set": 0.0041,
+            "share_merit_set": 0.9959,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9952,
+            "mean_n": 0.0054
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0217,
+            "share_merit_set": 0.9783,
+            "share_tie": 0.0,
+            "share_n_zero": 0.0541,
+            "mean_n": 2.0274
+          },
+          "ceiling_active_share_incumbent": 0.0258,
+          "merit_active_share_incumbent": 0.9742,
+          "export_repaired": {
+            "share_ceiling_set": 0.0217,
+            "share_merit_set": 0.9783,
+            "share_tie": 0.0,
+            "share_n_zero": 0.0541,
+            "mean_n": 2.0274
+          },
+          "ceiling_active_share_repaired": 0.0258,
+          "merit_active_share_repaired": 0.9742,
+          "env_i_mean_mw": 85.4,
+          "env_i_sigma_mw": 194.5,
+          "env_e_mean_mw": 2021.5,
+          "env_e_sigma_mw": 451.5,
+          "share_seam_exactly_zero_incumbent": 0.0493,
+          "share_seam_exactly_zero_repaired": 0.0493,
+          "env_i_zero_share": 0.6857,
+          "env_e_zero_share": 0.0,
+          "corr_net_vs_env_i_incumbent": 0.2509,
+          "corr_net_vs_env_i_repaired": 0.2509
+        },
+        "Manitoba": {
+          "import": {
+            "share_ceiling_set": 0.4087,
+            "share_merit_set": 0.5913,
+            "share_tie": 0.0011,
+            "share_n_zero": 0.1099,
+            "mean_n": 2.5321
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0192,
+            "share_merit_set": 0.9808,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9708,
+            "mean_n": 0.0362
+          },
+          "ceiling_active_share_incumbent": 0.4279,
+          "merit_active_share_incumbent": 0.5721,
+          "export_repaired": {
+            "share_ceiling_set": 0.0192,
+            "share_merit_set": 0.9808,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9708,
+            "mean_n": 0.0362
+          },
+          "ceiling_active_share_repaired": 0.4279,
+          "merit_active_share_repaired": 0.5721,
+          "env_i_mean_mw": 1089.2,
+          "env_i_sigma_mw": 711.5,
+          "env_e_mean_mw": 214.6,
+          "env_e_sigma_mw": 351.6,
+          "share_seam_exactly_zero_incumbent": 0.0807,
+          "share_seam_exactly_zero_repaired": 0.0807,
+          "env_i_zero_share": 0.1046,
+          "env_e_zero_share": 0.6275,
+          "corr_net_vs_env_i_incumbent": 0.644,
+          "corr_net_vs_env_i_repaired": 0.644
+        }
+      },
+      "Q2_conditional_envelope": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 0.9999,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": -980.45,
+            "null_mean_mw": 1.72,
+            "null_sd_mw": 46.44,
+            "z": -21.15,
+            "env_mean_mw": 6231.0,
+            "material_bar_mw": 623.1,
+            "inert_bar_mw": 124.6
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": 1044.94,
+            "null_mean_mw": -4.69,
+            "null_sd_mw": 41.95,
+            "z": 25.02,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 222.14,
+            "null_mean_mw": 1.93,
+            "null_sd_mw": 48.74,
+            "z": 4.52,
+            "env_mean_mw": 6231.0,
+            "material_bar_mw": 623.1,
+            "inert_bar_mw": 124.6
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -394.91,
+            "null_mean_mw": -3.24,
+            "null_sd_mw": 43.1,
+            "z": -9.09,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 336.31,
+            "null_mean_mw": -4.8,
+            "null_sd_mw": 50.34,
+            "z": 6.78,
+            "env_mean_mw": 6231.0,
+            "material_bar_mw": 623.1,
+            "inert_bar_mw": 124.6
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -533.19,
+            "null_mean_mw": 1.58,
+            "null_sd_mw": 41.24,
+            "z": -12.97,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 0.9999,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": -556.07,
+            "null_mean_mw": 1.12,
+            "null_sd_mw": 17.82,
+            "z": -31.26,
+            "env_mean_mw": 682.4,
+            "material_bar_mw": 68.2,
+            "inert_bar_mw": 13.6
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": 517.65,
+            "null_mean_mw": -1.42,
+            "null_sd_mw": 20.22,
+            "z": 25.68,
+            "env_mean_mw": 480.3,
+            "material_bar_mw": 48.0,
+            "inert_bar_mw": 9.6
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": 519.14,
+            "null_mean_mw": 0.58,
+            "null_sd_mw": 18.06,
+            "z": 28.71,
+            "env_mean_mw": 682.4,
+            "material_bar_mw": 68.2,
+            "inert_bar_mw": 13.6
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": -417.83,
+            "null_mean_mw": 0.14,
+            "null_sd_mw": 19.59,
+            "z": -21.34,
+            "env_mean_mw": 480.3,
+            "material_bar_mw": 48.0,
+            "inert_bar_mw": 9.6
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 131.3,
+            "null_mean_mw": 0.59,
+            "null_sd_mw": 16.7,
+            "z": 7.83,
+            "env_mean_mw": 682.4,
+            "material_bar_mw": 68.2,
+            "inert_bar_mw": 13.6
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -93.68,
+            "null_mean_mw": -1.93,
+            "null_sd_mw": 21.69,
+            "z": -4.23,
+            "env_mean_mw": 480.3,
+            "material_bar_mw": 48.0,
+            "inert_bar_mw": 9.6
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 1.0,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -413.81,
+            "null_mean_mw": 0.42,
+            "null_sd_mw": 26.88,
+            "z": -15.41,
+            "env_mean_mw": 85.4,
+            "material_bar_mw": 8.5,
+            "inert_bar_mw": 1.7
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 790.5,
+            "null_mean_mw": -2.62,
+            "null_sd_mw": 33.75,
+            "z": 23.5,
+            "env_mean_mw": 2026.0,
+            "material_bar_mw": 202.6,
+            "inert_bar_mw": 40.5
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -323.48,
+            "null_mean_mw": 2.49,
+            "null_sd_mw": 30.16,
+            "z": -10.81,
+            "env_mean_mw": 85.4,
+            "material_bar_mw": 8.5,
+            "inert_bar_mw": 1.7
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 530.22,
+            "null_mean_mw": 2.81,
+            "null_sd_mw": 36.13,
+            "z": 14.6,
+            "env_mean_mw": 2026.0,
+            "material_bar_mw": 202.6,
+            "inert_bar_mw": 40.5
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 268.5,
+            "null_mean_mw": 0.36,
+            "null_sd_mw": 26.59,
+            "z": 10.08,
+            "env_mean_mw": 85.4,
+            "material_bar_mw": 8.5,
+            "inert_bar_mw": 1.7
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -44.1,
+            "null_mean_mw": 1.61,
+            "null_sd_mw": 34.23,
+            "z": -1.34,
+            "env_mean_mw": 2026.0,
+            "material_bar_mw": 202.6,
+            "inert_bar_mw": 40.5
+          }
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT \u2014 no US-BA record",
+          "dibas": [
+            "MHEB"
+          ]
+        }
+      }
+    },
+    "2024": {
+      "n_ok_hours": 8760,
+      "Q0_instrument_repair": {
+        "harness": {
+          "incumbent": {
+            "corr_recon_vs_committed": 0.9745,
+            "mean_abs_level_error_mw": 41.6,
+            "recon_mean_mw": 3391.5,
+            "recon_sigma_mw": 1494.6
+          },
+          "repaired": {
+            "corr_recon_vs_committed": 0.9935,
+            "mean_abs_level_error_mw": 1.8,
+            "recon_mean_mw": 3351.7,
+            "recon_sigma_mw": 1482.2
+          }
+        },
+        "per_seam": {
+          "PJM": {
+            "export_incumbent_mean_mw": 0.0,
+            "export_repaired_mean_mw": 0.0,
+            "export_incumbent_sigma_mw": 0.0,
+            "export_repaired_sigma_mw": 0.0,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": 3831.5,
+            "net_repaired_mean_mw": 3831.5,
+            "net_incumbent_sigma_mw": 1652.2,
+            "net_repaired_sigma_mw": 1652.2,
+            "measured_sigma_mw": 1563.9
+          },
+          "SPP": {
+            "export_incumbent_mean_mw": 45.0,
+            "export_repaired_mean_mw": 84.8,
+            "export_incumbent_sigma_mw": 141.0,
+            "export_repaired_sigma_mw": 247.4,
+            "export_disagree_share": 0.2465,
+            "net_incumbent_mean_mw": 141.7,
+            "net_repaired_mean_mw": 101.9,
+            "net_incumbent_sigma_mw": 276.6,
+            "net_repaired_sigma_mw": 392.2,
+            "measured_sigma_mw": 687.3
+          },
+          "South": {
+            "export_incumbent_mean_mw": 1019.5,
+            "export_repaired_mean_mw": 1019.5,
+            "export_incumbent_sigma_mw": 479.4,
+            "export_repaired_sigma_mw": 479.4,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": -1013.2,
+            "net_repaired_mean_mw": -1013.2,
+            "net_incumbent_sigma_mw": 495.7,
+            "net_repaired_sigma_mw": 495.7,
+            "measured_sigma_mw": 872.6
+          },
+          "Manitoba": {
+            "export_incumbent_mean_mw": 25.4,
+            "export_repaired_mean_mw": 25.4,
+            "export_incumbent_sigma_mw": 110.3,
+            "export_repaired_sigma_mw": 110.3,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": 431.5,
+            "net_repaired_mean_mw": 431.5,
+            "net_incumbent_sigma_mw": 486.7,
+            "net_repaired_sigma_mw": 486.7,
+            "measured_sigma_mw": 832.6
+          }
+        },
+        "miso235_s4_rows_both_variants": {
+          "PJM": {
+            "beta_measured": 41.78,
+            "sigma_resid_measured_mw": 1508.1,
+            "incumbent": {
+              "beta_model": 32.26,
+              "beta_ratio": 0.77,
+              "sigma_model_mw": 1652.2,
+              "sigma_resid_model_mw": 1621.0,
+              "sigma_resid_ratio": 1.07
+            },
+            "repaired": {
+              "beta_model": 32.26,
+              "beta_ratio": 0.77,
+              "sigma_model_mw": 1652.2,
+              "sigma_resid_model_mw": 1621.0,
+              "sigma_resid_ratio": 1.07
+            }
+          },
+          "SPP": {
+            "beta_measured": -0.57,
+            "sigma_resid_measured_mw": 687.2,
+            "incumbent": {
+              "beta_model": 5.18,
+              "beta_ratio": -9.02,
+              "sigma_model_mw": 276.6,
+              "sigma_resid_model_mw": 247.1,
+              "sigma_resid_ratio": 0.36
+            },
+            "repaired": {
+              "beta_model": 10.65,
+              "beta_ratio": -18.54,
+              "sigma_model_mw": 392.2,
+              "sigma_resid_model_mw": 297.7,
+              "sigma_resid_ratio": 0.43
+            }
+          },
+          "South": {
+            "beta_measured": 2.59,
+            "sigma_resid_measured_mw": 871.1,
+            "incumbent": {
+              "beta_model": 15.08,
+              "beta_ratio": 5.83,
+              "sigma_model_mw": 495.7,
+              "sigma_resid_model_mw": 394.6,
+              "sigma_resid_ratio": 0.45
+            },
+            "repaired": {
+              "beta_model": 15.08,
+              "beta_ratio": 5.83,
+              "sigma_model_mw": 495.7,
+              "sigma_resid_model_mw": 394.6,
+              "sigma_resid_ratio": 0.45
+            }
+          },
+          "Manitoba": {
+            "beta_measured": 7.83,
+            "sigma_resid_measured_mw": 817.9,
+            "incumbent": {
+              "beta_model": 9.88,
+              "beta_ratio": 1.26,
+              "sigma_model_mw": 486.7,
+              "sigma_resid_model_mw": 445.3,
+              "sigma_resid_ratio": 0.54
+            },
+            "repaired": {
+              "beta_model": 9.88,
+              "beta_ratio": 1.26,
+              "sigma_model_mw": 486.7,
+              "sigma_resid_model_mw": 445.3,
+              "sigma_resid_ratio": 0.54
+            }
+          }
+        },
+        "miso235_s5_contributions": {
+          "incumbent": {
+            "PJM": -0.3045,
+            "SPP": 0.0138,
+            "South": 0.1174,
+            "Manitoba": 0.0923,
+            "TOTAL": -0.0811
+          },
+          "repaired": {
+            "PJM": -0.3071,
+            "SPP": -0.0163,
+            "South": 0.1183,
+            "Manitoba": 0.093,
+            "TOTAL": -0.112
+          },
+          "measured": {
+            "PJM": -0.0573,
+            "SPP": -0.0372,
+            "South": 0.005,
+            "Manitoba": 0.0527,
+            "TOTAL": -0.0367
+          },
+          "committed_total": -0.1145
+        }
+      },
+      "Q1_binding_census": {
+        "PJM": {
+          "import": {
+            "share_ceiling_set": 0.3119,
+            "share_merit_set": 0.6881,
+            "share_tie": 0.0001,
+            "share_n_zero": 0.0467,
+            "mean_n": 4.5853
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0,
+            "share_merit_set": 1.0,
+            "share_tie": 0.0,
+            "share_n_zero": 1.0,
+            "mean_n": 0.0
+          },
+          "ceiling_active_share_incumbent": 0.3119,
+          "merit_active_share_incumbent": 0.6881,
+          "export_repaired": {
+            "share_ceiling_set": 0.0113,
+            "share_merit_set": 0.9887,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9887,
+            "mean_n": 0.0312
+          },
+          "ceiling_active_share_repaired": 0.3232,
+          "merit_active_share_repaired": 0.6768,
+          "env_i_mean_mw": 5063.4,
+          "env_i_sigma_mw": 1168.9,
+          "env_e_mean_mw": 0.0,
+          "env_e_sigma_mw": 0.0,
+          "share_seam_exactly_zero_incumbent": 0.0467,
+          "share_seam_exactly_zero_repaired": 0.0354,
+          "env_i_zero_share": 0.0,
+          "env_e_zero_share": 1.0,
+          "corr_net_vs_env_i_incumbent": 0.5323,
+          "corr_net_vs_env_i_repaired": 0.5323
+        },
+        "SPP": {
+          "import": {
+            "share_ceiling_set": 0.2067,
+            "share_merit_set": 0.7933,
+            "share_tie": 0.0,
+            "share_n_zero": 0.5788,
+            "mean_n": 0.488
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0707,
+            "share_merit_set": 0.9293,
+            "share_tie": 0.0,
+            "share_n_zero": 0.8788,
+            "mean_n": 0.1368
+          },
+          "ceiling_active_share_incumbent": 0.2711,
+          "merit_active_share_incumbent": 0.7289,
+          "export_repaired": {
+            "share_ceiling_set": 0.0885,
+            "share_merit_set": 0.9115,
+            "share_tie": 0.0,
+            "share_n_zero": 0.8279,
+            "mean_n": 0.2605
+          },
+          "ceiling_active_share_repaired": 0.2952,
+          "merit_active_share_repaired": 0.7048,
+          "env_i_mean_mw": 578.5,
+          "env_i_sigma_mw": 286.0,
+          "env_e_mean_mw": 720.8,
+          "env_e_sigma_mw": 590.6,
+          "share_seam_exactly_zero_incumbent": 0.513,
+          "share_seam_exactly_zero_repaired": 0.4066,
+          "env_i_zero_share": 0.0035,
+          "env_e_zero_share": 0.0686,
+          "corr_net_vs_env_i_incumbent": 0.2094,
+          "corr_net_vs_env_i_repaired": 0.2715
+        },
+        "South": {
+          "import": {
+            "share_ceiling_set": 0.0127,
+            "share_merit_set": 0.9873,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9852,
+            "mean_n": 0.0304
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0213,
+            "share_merit_set": 0.9787,
+            "share_tie": 0.0,
+            "share_n_zero": 0.0301,
+            "mean_n": 2.7358
+          },
+          "ceiling_active_share_incumbent": 0.034,
+          "merit_active_share_incumbent": 0.966,
+          "export_repaired": {
+            "share_ceiling_set": 0.0213,
+            "share_merit_set": 0.9787,
+            "share_tie": 0.0,
+            "share_n_zero": 0.0301,
+            "mean_n": 2.7358
+          },
+          "ceiling_active_share_repaired": 0.034,
+          "merit_active_share_repaired": 0.966,
+          "env_i_mean_mw": 93.7,
+          "env_i_sigma_mw": 192.7,
+          "env_e_mean_mw": 2262.8,
+          "env_e_sigma_mw": 431.3,
+          "share_seam_exactly_zero_incumbent": 0.0153,
+          "share_seam_exactly_zero_repaired": 0.0153,
+          "env_i_zero_share": 0.7073,
+          "env_e_zero_share": 0.0,
+          "corr_net_vs_env_i_incumbent": 0.3522,
+          "corr_net_vs_env_i_repaired": 0.3522
+        },
+        "Manitoba": {
+          "import": {
+            "share_ceiling_set": 0.359,
+            "share_merit_set": 0.641,
+            "share_tie": 0.0,
+            "share_n_zero": 0.2672,
+            "mean_n": 1.8822
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0562,
+            "share_merit_set": 0.9438,
+            "share_tie": 0.0,
+            "share_n_zero": 0.8943,
+            "mean_n": 0.1305
+          },
+          "ceiling_active_share_incumbent": 0.4152,
+          "merit_active_share_incumbent": 0.5848,
+          "export_repaired": {
+            "share_ceiling_set": 0.0562,
+            "share_merit_set": 0.9438,
+            "share_tie": 0.0,
+            "share_n_zero": 0.8943,
+            "mean_n": 0.1305
+          },
+          "ceiling_active_share_repaired": 0.4152,
+          "merit_active_share_repaired": 0.5848,
+          "env_i_mean_mw": 884.1,
+          "env_i_sigma_mw": 654.1,
+          "env_e_mean_mw": 401.0,
+          "env_e_sigma_mw": 411.0,
+          "share_seam_exactly_zero_incumbent": 0.1615,
+          "share_seam_exactly_zero_repaired": 0.1615,
+          "env_i_zero_share": 0.1485,
+          "env_e_zero_share": 0.3317,
+          "corr_net_vs_env_i_incumbent": 0.6221,
+          "corr_net_vs_env_i_repaired": 0.6221
+        }
+      },
+      "Q2_conditional_envelope": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "n_rows": 8757,
+          "row_retention_after_join": 0.9999,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8756,
+            "spread_mw": -498.29,
+            "null_mean_mw": 3.28,
+            "null_sd_mw": 43.93,
+            "z": -11.42,
+            "env_mean_mw": 5068.5,
+            "material_bar_mw": 506.8,
+            "inert_bar_mw": 101.4
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8756,
+            "spread_mw": 920.21,
+            "null_mean_mw": -0.22,
+            "null_sd_mw": 41.38,
+            "z": 22.24,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 635.95,
+            "null_mean_mw": 2.48,
+            "null_sd_mw": 44.1,
+            "z": 14.36,
+            "env_mean_mw": 5068.5,
+            "material_bar_mw": 506.8,
+            "inert_bar_mw": 101.4
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -733.33,
+            "null_mean_mw": -2.61,
+            "null_sd_mw": 41.71,
+            "z": -17.52,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 505.17,
+            "null_mean_mw": 7.44,
+            "null_sd_mw": 43.93,
+            "z": 11.33,
+            "env_mean_mw": 5068.5,
+            "material_bar_mw": 506.8,
+            "inert_bar_mw": 101.4
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -221.31,
+            "null_mean_mw": -1.29,
+            "null_sd_mw": 40.69,
+            "z": -5.41,
+            "env_mean_mw": 0.0,
+            "material_bar_mw": 0.0,
+            "inert_bar_mw": 0.0
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "n_rows": 8757,
+          "row_retention_after_join": 1.0,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -446.27,
+            "null_mean_mw": 0.62,
+            "null_sd_mw": 18.42,
+            "z": -24.26,
+            "env_mean_mw": 578.5,
+            "material_bar_mw": 57.9,
+            "inert_bar_mw": 11.6
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 701.19,
+            "null_mean_mw": -1.18,
+            "null_sd_mw": 32.62,
+            "z": 21.53,
+            "env_mean_mw": 720.8,
+            "material_bar_mw": 72.1,
+            "inert_bar_mw": 14.4
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 341.48,
+            "null_mean_mw": 1.39,
+            "null_sd_mw": 18.31,
+            "z": 18.58,
+            "env_mean_mw": 578.5,
+            "material_bar_mw": 57.9,
+            "inert_bar_mw": 11.6
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -489.25,
+            "null_mean_mw": 1.06,
+            "null_sd_mw": 28.55,
+            "z": -17.17,
+            "env_mean_mw": 720.8,
+            "material_bar_mw": 72.1,
+            "inert_bar_mw": 14.4
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 140.45,
+            "null_mean_mw": 0.81,
+            "null_sd_mw": 19.1,
+            "z": 7.31,
+            "env_mean_mw": 578.5,
+            "material_bar_mw": 57.9,
+            "inert_bar_mw": 11.6
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -51.23,
+            "null_mean_mw": 1.28,
+            "null_sd_mw": 29.57,
+            "z": -1.78,
+            "env_mean_mw": 720.8,
+            "material_bar_mw": 72.1,
+            "inert_bar_mw": 14.4
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "n_rows": 8757,
+          "row_retention_after_join": 1.0,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -424.81,
+            "null_mean_mw": 3.27,
+            "null_sd_mw": 30.94,
+            "z": -13.84,
+            "env_mean_mw": 93.7,
+            "material_bar_mw": 9.4,
+            "inert_bar_mw": 1.9
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 566.38,
+            "null_mean_mw": -2.9,
+            "null_sd_mw": 33.05,
+            "z": 17.22,
+            "env_mean_mw": 2293.5,
+            "material_bar_mw": 229.3,
+            "inert_bar_mw": 45.9
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -49.03,
+            "null_mean_mw": -1.45,
+            "null_sd_mw": 29.07,
+            "z": -1.64,
+            "env_mean_mw": 93.7,
+            "material_bar_mw": 9.4,
+            "inert_bar_mw": 1.9
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 321.59,
+            "null_mean_mw": 1.18,
+            "null_sd_mw": 32.83,
+            "z": 9.76,
+            "env_mean_mw": 2293.5,
+            "material_bar_mw": 229.3,
+            "inert_bar_mw": 45.9
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": -92.94,
+            "null_mean_mw": 4.99,
+            "null_sd_mw": 28.85,
+            "z": -3.39,
+            "env_mean_mw": 93.7,
+            "material_bar_mw": 9.4,
+            "inert_bar_mw": 1.9
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8757,
+            "spread_mw": 119.94,
+            "null_mean_mw": 0.61,
+            "null_sd_mw": 31.71,
+            "z": 3.76,
+            "env_mean_mw": 2293.5,
+            "material_bar_mw": 229.3,
+            "inert_bar_mw": 45.9
+          }
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT \u2014 no US-BA record",
+          "dibas": [
+            "MHEB"
+          ]
+        }
+      }
+    },
+    "2025": {
+      "n_ok_hours": 8759,
+      "Q0_instrument_repair": {
+        "harness": {
+          "incumbent": {
+            "corr_recon_vs_committed": 0.9839,
+            "mean_abs_level_error_mw": 55.3,
+            "recon_mean_mw": 2408.7,
+            "recon_sigma_mw": 1431.4
+          },
+          "repaired": {
+            "corr_recon_vs_committed": 0.9935,
+            "mean_abs_level_error_mw": 5.8,
+            "recon_mean_mw": 2359.2,
+            "recon_sigma_mw": 1429.6
+          }
+        },
+        "per_seam": {
+          "PJM": {
+            "export_incumbent_mean_mw": 0.0,
+            "export_repaired_mean_mw": 0.1,
+            "export_incumbent_sigma_mw": 0.0,
+            "export_repaired_sigma_mw": 7.6,
+            "export_disagree_share": 0.0002,
+            "net_incumbent_mean_mw": 3005.5,
+            "net_repaired_mean_mw": 3005.4,
+            "net_incumbent_sigma_mw": 1633.9,
+            "net_repaired_sigma_mw": 1634.1,
+            "measured_sigma_mw": 1647.0
+          },
+          "SPP": {
+            "export_incumbent_mean_mw": 18.4,
+            "export_repaired_mean_mw": 67.9,
+            "export_incumbent_sigma_mw": 90.6,
+            "export_repaired_sigma_mw": 179.9,
+            "export_disagree_share": 0.2146,
+            "net_incumbent_mean_mw": 126.1,
+            "net_repaired_mean_mw": 76.6,
+            "net_incumbent_sigma_mw": 250.3,
+            "net_repaired_sigma_mw": 327.0,
+            "measured_sigma_mw": 615.4
+          },
+          "South": {
+            "export_incumbent_mean_mw": 666.6,
+            "export_repaired_mean_mw": 666.6,
+            "export_incumbent_sigma_mw": 383.6,
+            "export_repaired_sigma_mw": 383.6,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": -665.6,
+            "net_repaired_mean_mw": -665.6,
+            "net_incumbent_sigma_mw": 385.9,
+            "net_repaired_sigma_mw": 385.9,
+            "measured_sigma_mw": 1008.6
+          },
+          "Manitoba": {
+            "export_incumbent_mean_mw": 127.7,
+            "export_repaired_mean_mw": 127.7,
+            "export_incumbent_sigma_mw": 211.3,
+            "export_repaired_sigma_mw": 211.3,
+            "export_disagree_share": 0.0,
+            "net_incumbent_mean_mw": -57.3,
+            "net_repaired_mean_mw": -57.3,
+            "net_incumbent_sigma_mw": 302.9,
+            "net_repaired_sigma_mw": 302.9,
+            "measured_sigma_mw": 655.4
+          }
+        },
+        "miso235_s4_rows_both_variants": {
+          "PJM": {
+            "beta_measured": 25.06,
+            "sigma_resid_measured_mw": 1615.8,
+            "incumbent": {
+              "beta_model": 28.87,
+              "beta_ratio": 1.15,
+              "sigma_model_mw": 1633.9,
+              "sigma_resid_model_mw": 1592.1,
+              "sigma_resid_ratio": 0.99
+            },
+            "repaired": {
+              "beta_model": 28.88,
+              "beta_ratio": 1.15,
+              "sigma_model_mw": 1634.1,
+              "sigma_resid_model_mw": 1592.3,
+              "sigma_resid_ratio": 0.99
+            }
+          },
+          "SPP": {
+            "beta_measured": 1.06,
+            "sigma_resid_measured_mw": 614.7,
+            "incumbent": {
+              "beta_model": 4.88,
+              "beta_ratio": 4.61,
+              "sigma_model_mw": 250.3,
+              "sigma_resid_model_mw": 205.8,
+              "sigma_resid_ratio": 0.33
+            },
+            "repaired": {
+              "beta_model": 7.21,
+              "beta_ratio": 6.8,
+              "sigma_model_mw": 327.0,
+              "sigma_resid_model_mw": 250.5,
+              "sigma_resid_ratio": 0.41
+            }
+          },
+          "South": {
+            "beta_measured": -5.43,
+            "sigma_resid_measured_mw": 998.6,
+            "incumbent": {
+              "beta_model": 8.69,
+              "beta_ratio": -1.6,
+              "sigma_model_mw": 385.9,
+              "sigma_resid_model_mw": 312.0,
+              "sigma_resid_ratio": 0.31
+            },
+            "repaired": {
+              "beta_model": 8.69,
+              "beta_ratio": -1.6,
+              "sigma_model_mw": 385.9,
+              "sigma_resid_model_mw": 312.0,
+              "sigma_resid_ratio": 0.31
+            }
+          },
+          "Manitoba": {
+            "beta_measured": 4.98,
+            "sigma_resid_measured_mw": 642.3,
+            "incumbent": {
+              "beta_model": 7.13,
+              "beta_ratio": 1.43,
+              "sigma_model_mw": 302.9,
+              "sigma_resid_model_mw": 238.8,
+              "sigma_resid_ratio": 0.37
+            },
+            "repaired": {
+              "beta_model": 7.13,
+              "beta_ratio": 1.43,
+              "sigma_model_mw": 302.9,
+              "sigma_resid_model_mw": 238.8,
+              "sigma_resid_ratio": 0.37
+            }
+          }
+        },
+        "miso235_s5_contributions": {
+          "incumbent": {
+            "PJM": -0.3011,
+            "SPP": 0.0323,
+            "South": 0.0831,
+            "Manitoba": 0.0718,
+            "TOTAL": -0.1139
+          },
+          "repaired": {
+            "PJM": -0.3016,
+            "SPP": 0.0301,
+            "South": 0.0832,
+            "Manitoba": 0.0719,
+            "TOTAL": -0.1164
+          },
+          "measured": {
+            "PJM": -0.0326,
+            "SPP": 0.0188,
+            "South": -0.0405,
+            "Manitoba": 0.034,
+            "TOTAL": -0.0203
+          },
+          "committed_total": -0.1128
+        }
+      },
+      "Q1_binding_census": {
+        "PJM": {
+          "import": {
+            "share_ceiling_set": 0.2451,
+            "share_merit_set": 0.7549,
+            "share_tie": 0.0,
+            "share_n_zero": 0.0988,
+            "mean_n": 3.5354
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0,
+            "share_merit_set": 1.0,
+            "share_tie": 0.0,
+            "share_n_zero": 1.0,
+            "mean_n": 0.0
+          },
+          "ceiling_active_share_incumbent": 0.2451,
+          "merit_active_share_incumbent": 0.7549,
+          "export_repaired": {
+            "share_ceiling_set": 0.0112,
+            "share_merit_set": 0.9888,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9888,
+            "mean_n": 0.0224
+          },
+          "ceiling_active_share_repaired": 0.2563,
+          "merit_active_share_repaired": 0.7437,
+          "env_i_mean_mw": 4670.1,
+          "env_i_sigma_mw": 1208.7,
+          "env_e_mean_mw": 8.3,
+          "env_e_sigma_mw": 55.0,
+          "share_seam_exactly_zero_incumbent": 0.0988,
+          "share_seam_exactly_zero_repaired": 0.0876,
+          "env_i_zero_share": 0.0,
+          "env_e_zero_share": 0.952,
+          "corr_net_vs_env_i_incumbent": 0.3822,
+          "corr_net_vs_env_i_repaired": 0.3823
+        },
+        "SPP": {
+          "import": {
+            "share_ceiling_set": 0.0816,
+            "share_merit_set": 0.9184,
+            "share_tie": 0.0,
+            "share_n_zero": 0.7052,
+            "mean_n": 0.3311
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0235,
+            "share_merit_set": 0.9765,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9523,
+            "mean_n": 0.0491
+          },
+          "ceiling_active_share_incumbent": 0.1034,
+          "merit_active_share_incumbent": 0.8966,
+          "export_repaired": {
+            "share_ceiling_set": 0.1658,
+            "share_merit_set": 0.8342,
+            "share_tie": 0.0,
+            "share_n_zero": 0.7758,
+            "mean_n": 0.325
+          },
+          "ceiling_active_share_repaired": 0.2474,
+          "merit_active_share_repaired": 0.7526,
+          "env_i_mean_mw": 734.8,
+          "env_i_sigma_mw": 236.5,
+          "env_e_mean_mw": 542.1,
+          "env_e_sigma_mw": 414.8,
+          "share_seam_exactly_zero_incumbent": 0.6753,
+          "share_seam_exactly_zero_repaired": 0.481,
+          "env_i_zero_share": 0.0034,
+          "env_e_zero_share": 0.1013,
+          "corr_net_vs_env_i_incumbent": 0.058,
+          "corr_net_vs_env_i_repaired": 0.0296
+        },
+        "South": {
+          "import": {
+            "share_ceiling_set": 0.0293,
+            "share_merit_set": 0.9707,
+            "share_tie": 0.0,
+            "share_n_zero": 0.9699,
+            "mean_n": 0.0508
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.0662,
+            "share_merit_set": 0.9338,
+            "share_tie": 0.0,
+            "share_n_zero": 0.1168,
+            "mean_n": 1.8218
+          },
+          "ceiling_active_share_incumbent": 0.0956,
+          "merit_active_share_incumbent": 0.9044,
+          "export_repaired": {
+            "share_ceiling_set": 0.0662,
+            "share_merit_set": 0.9338,
+            "share_tie": 0.0,
+            "share_n_zero": 0.1168,
+            "mean_n": 1.8218
+          },
+          "ceiling_active_share_repaired": 0.0956,
+          "merit_active_share_repaired": 0.9044,
+          "env_i_mean_mw": 185.4,
+          "env_i_sigma_mw": 323.0,
+          "env_e_mean_mw": 1952.1,
+          "env_e_sigma_mw": 686.1,
+          "share_seam_exactly_zero_incumbent": 0.0867,
+          "share_seam_exactly_zero_repaired": 0.0867,
+          "env_i_zero_share": 0.5895,
+          "env_e_zero_share": 0.0,
+          "corr_net_vs_env_i_incumbent": 0.0785,
+          "corr_net_vs_env_i_repaired": 0.0785
+        },
+        "Manitoba": {
+          "import": {
+            "share_ceiling_set": 0.12,
+            "share_merit_set": 0.88,
+            "share_tie": 0.0,
+            "share_n_zero": 0.7516,
+            "mean_n": 0.3345
+          },
+          "export_incumbent": {
+            "share_ceiling_set": 0.1292,
+            "share_merit_set": 0.8708,
+            "share_tie": 0.0,
+            "share_n_zero": 0.6327,
+            "mean_n": 0.474
+          },
+          "ceiling_active_share_incumbent": 0.2492,
+          "merit_active_share_incumbent": 0.7508,
+          "export_repaired": {
+            "share_ceiling_set": 0.1292,
+            "share_merit_set": 0.8708,
+            "share_tie": 0.0,
+            "share_n_zero": 0.6327,
+            "mean_n": 0.474
+          },
+          "ceiling_active_share_repaired": 0.2492,
+          "merit_active_share_repaired": 0.7508,
+          "env_i_mean_mw": 450.3,
+          "env_i_sigma_mw": 475.1,
+          "env_e_mean_mw": 595.9,
+          "env_e_sigma_mw": 392.0,
+          "share_seam_exactly_zero_incumbent": 0.3843,
+          "share_seam_exactly_zero_repaired": 0.3843,
+          "env_i_zero_share": 0.3341,
+          "env_e_zero_share": 0.1676,
+          "corr_net_vs_env_i_incumbent": 0.453,
+          "corr_net_vs_env_i_repaired": 0.453
+        }
+      },
+      "Q2_conditional_envelope": {
+        "PJM": {
+          "covered_dibas": [
+            "PJM"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 0.9999,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": -386.32,
+            "null_mean_mw": 3.31,
+            "null_sd_mw": 47.65,
+            "z": -8.18,
+            "env_mean_mw": 4670.6,
+            "material_bar_mw": 467.1,
+            "inert_bar_mw": 93.4
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8759,
+            "spread_mw": 564.36,
+            "null_mean_mw": 1.34,
+            "null_sd_mw": 35.66,
+            "z": 15.79,
+            "env_mean_mw": 8.3,
+            "material_bar_mw": 0.8,
+            "inert_bar_mw": 0.2
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 563.41,
+            "null_mean_mw": 5.76,
+            "null_sd_mw": 49.53,
+            "z": 11.26,
+            "env_mean_mw": 4670.6,
+            "material_bar_mw": 467.1,
+            "inert_bar_mw": 93.4
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -442.85,
+            "null_mean_mw": 5.21,
+            "null_sd_mw": 33.22,
+            "z": -13.49,
+            "env_mean_mw": 8.3,
+            "material_bar_mw": 0.8,
+            "inert_bar_mw": 0.2
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 693.97,
+            "null_mean_mw": 0.34,
+            "null_sd_mw": 52.09,
+            "z": 13.32,
+            "env_mean_mw": 4670.6,
+            "material_bar_mw": 467.1,
+            "inert_bar_mw": 93.4
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -377.05,
+            "null_mean_mw": -0.76,
+            "null_sd_mw": 36.96,
+            "z": -10.18,
+            "env_mean_mw": 8.3,
+            "material_bar_mw": 0.8,
+            "inert_bar_mw": 0.2
+          }
+        },
+        "SPP": {
+          "covered_dibas": [
+            "SWPP",
+            "SPA"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 1.0,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -410.7,
+            "null_mean_mw": 1.57,
+            "null_sd_mw": 24.02,
+            "z": -17.17,
+            "env_mean_mw": 734.9,
+            "material_bar_mw": 73.5,
+            "inert_bar_mw": 14.7
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 423.52,
+            "null_mean_mw": 1.36,
+            "null_sd_mw": 24.26,
+            "z": 17.4,
+            "env_mean_mw": 542.2,
+            "material_bar_mw": 54.2,
+            "inert_bar_mw": 10.8
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 392.38,
+            "null_mean_mw": -2.66,
+            "null_sd_mw": 22.34,
+            "z": 17.68,
+            "env_mean_mw": 734.9,
+            "material_bar_mw": 73.5,
+            "inert_bar_mw": 14.7
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -304.58,
+            "null_mean_mw": 0.32,
+            "null_sd_mw": 23.87,
+            "z": -12.77,
+            "env_mean_mw": 542.2,
+            "material_bar_mw": 54.2,
+            "inert_bar_mw": 10.8
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 316.91,
+            "null_mean_mw": -0.26,
+            "null_sd_mw": 22.28,
+            "z": 14.24,
+            "env_mean_mw": 734.9,
+            "material_bar_mw": 73.5,
+            "inert_bar_mw": 14.7
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -154.93,
+            "null_mean_mw": 2.57,
+            "null_sd_mw": 23.81,
+            "z": -6.62,
+            "env_mean_mw": 542.2,
+            "material_bar_mw": 54.2,
+            "inert_bar_mw": 10.8
+          }
+        },
+        "South": {
+          "covered_dibas": [
+            "SOCO",
+            "TVA",
+            "AECI",
+            "LGEE",
+            "SIKE"
+          ],
+          "n_rows": 8760,
+          "row_retention_after_join": 1.0,
+          "nl_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -265.3,
+            "null_mean_mw": -0.71,
+            "null_sd_mw": 29.64,
+            "z": -8.93,
+            "env_mean_mw": 185.4,
+            "material_bar_mw": 18.5,
+            "inert_bar_mw": 3.7
+          },
+          "nl_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 516.98,
+            "null_mean_mw": -5.95,
+            "null_sd_mw": 30.21,
+            "z": 17.31,
+            "env_mean_mw": 1988.1,
+            "material_bar_mw": 198.8,
+            "inert_bar_mw": 39.8
+          },
+          "vre_nbr__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": -67.38,
+            "null_mean_mw": 4.42,
+            "null_sd_mw": 28.93,
+            "z": -2.48,
+            "env_mean_mw": 185.4,
+            "material_bar_mw": 18.5,
+            "inert_bar_mw": 3.7
+          },
+          "vre_nbr__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 91.48,
+            "null_mean_mw": 0.01,
+            "null_sd_mw": 30.82,
+            "z": 2.97,
+            "env_mean_mw": 1988.1,
+            "material_bar_mw": 198.8,
+            "inert_bar_mw": 39.8
+          },
+          "nl_miso_own__import": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 106.01,
+            "null_mean_mw": -2.18,
+            "null_sd_mw": 30.2,
+            "z": 3.58,
+            "env_mean_mw": 185.4,
+            "material_bar_mw": 18.5,
+            "inert_bar_mw": 3.7
+          },
+          "nl_miso_own__export": {
+            "n_buckets": 288,
+            "n_hours": 8760,
+            "spread_mw": 48.28,
+            "null_mean_mw": -2.19,
+            "null_sd_mw": 31.68,
+            "z": 1.59,
+            "env_mean_mw": 1988.1,
+            "material_bar_mw": 198.8,
+            "inert_bar_mw": 39.8
+          }
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT \u2014 no US-BA record",
+          "dibas": [
+            "MHEB"
+          ]
+        }
+      }
+    }
+  },
+  "provenance": {
+    "2023": {
+      "G_P1": {
+        "seams": {
+          "PJM": {
+            "sigma_measured_mw": 1615.4,
+            "sigma_resid_measured_mw": 1568.2,
+            "miso235_sigma_measured_mw": 1615.4,
+            "miso235_sigma_resid_measured_mw": 1568.2,
+            "abs_delta_mw": 0.0
+          },
+          "SPP": {
+            "sigma_measured_mw": 577.3,
+            "sigma_resid_measured_mw": 576.8,
+            "miso235_sigma_measured_mw": 577.3,
+            "miso235_sigma_resid_measured_mw": 576.8,
+            "abs_delta_mw": 0.0
+          },
+          "South": {
+            "sigma_measured_mw": 856.2,
+            "sigma_resid_measured_mw": 855.8,
+            "miso235_sigma_measured_mw": 856.2,
+            "miso235_sigma_resid_measured_mw": 855.8,
+            "abs_delta_mw": 0.0
+          },
+          "Manitoba": {
+            "sigma_measured_mw": 819.1,
+            "sigma_resid_measured_mw": 777.6,
+            "miso235_sigma_measured_mw": 819.1,
+            "miso235_sigma_resid_measured_mw": 777.6,
+            "abs_delta_mw": 0.0
+          }
+        },
+        "max_abs_delta_mw": 0.0,
+        "status": null
+      },
+      "G_P3": {
+        "corr_recomputed": 0.9845,
+        "corr_reference": 0.9845,
+        "level_recomputed": 49.4,
+        "level_reference": 49.4,
+        "abs_delta_corr": 0.0,
+        "abs_delta_level_mw": 0.0
+      },
+      "G_P2": {
+        "PJM": {
+          "delta_r2_A_nohydro": 0.1701,
+          "miso236": 0.1701,
+          "abs_delta": 0.0
+        },
+        "SPP": {
+          "delta_r2_A_nohydro": 0.3246,
+          "miso236": 0.3246,
+          "abs_delta": 0.0
+        },
+        "South": {
+          "delta_r2_A_nohydro": 0.1158,
+          "miso236": 0.1158,
+          "abs_delta": 0.0
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT"
+        }
+      },
+      "G_P4": {
+        "sat_share_recomputed": 0.174,
+        "reference": 0.174,
+        "abs_delta": 0.0
+      },
+      "G_P5": {
+        "gamma_merit_recomputed": -870.18,
+        "reference": -870.18,
+        "abs_delta": 0.004
+      },
+      "G_X0": {
+        "pjm_export_leg_max_abs_mw_incumbent": 0.0,
+        "pjm_export_leg_max_abs_mw_repaired": 0.0,
+        "pjm_export_leg_nonzero_hours_repaired": 0,
+        "spp_export_leg_nonzero_hours_incumbent": 402,
+        "spp_export_leg_nonzero_hours_repaired": 1244
+      },
+      "G_ID": {
+        "seams": {
+          "PJM": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "SPP": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "South": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "Manitoba": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          }
+        },
+        "max_abs_mw": 0.0,
+        "total_prefix_violations": 0
+      },
+      "G_P6": {
+        "per_seam_max_abs_mw": {
+          "PJM": 0.0,
+          "SPP": 0.0,
+          "South": 0.0,
+          "Manitoba": 0.0
+        }
+      }
+    },
+    "2024": {
+      "G_P1": {
+        "seams": {
+          "PJM": {
+            "sigma_measured_mw": 1563.9,
+            "sigma_resid_measured_mw": 1508.1,
+            "miso235_sigma_measured_mw": 1563.9,
+            "miso235_sigma_resid_measured_mw": 1508.1,
+            "abs_delta_mw": 0.0
+          },
+          "SPP": {
+            "sigma_measured_mw": 687.3,
+            "sigma_resid_measured_mw": 687.2,
+            "miso235_sigma_measured_mw": 687.3,
+            "miso235_sigma_resid_measured_mw": 687.2,
+            "abs_delta_mw": 0.0
+          },
+          "South": {
+            "sigma_measured_mw": 872.6,
+            "sigma_resid_measured_mw": 871.1,
+            "miso235_sigma_measured_mw": 872.6,
+            "miso235_sigma_resid_measured_mw": 871.1,
+            "abs_delta_mw": 0.0
+          },
+          "Manitoba": {
+            "sigma_measured_mw": 832.6,
+            "sigma_resid_measured_mw": 817.9,
+            "miso235_sigma_measured_mw": 832.6,
+            "miso235_sigma_resid_measured_mw": 817.9,
+            "abs_delta_mw": 0.0
+          }
+        },
+        "max_abs_delta_mw": 0.0,
+        "status": null
+      },
+      "G_P3": {
+        "corr_recomputed": 0.9745,
+        "corr_reference": 0.9745,
+        "level_recomputed": 41.6,
+        "level_reference": 41.6,
+        "abs_delta_corr": 0.0,
+        "abs_delta_level_mw": 0.0
+      },
+      "G_P2": {
+        "PJM": {
+          "delta_r2_A_nohydro": 0.0478,
+          "miso236": 0.0478,
+          "abs_delta": 0.0
+        },
+        "SPP": {
+          "delta_r2_A_nohydro": 0.2472,
+          "miso236": 0.2472,
+          "abs_delta": 0.0
+        },
+        "South": {
+          "delta_r2_A_nohydro": 0.0759,
+          "miso236": 0.0759,
+          "abs_delta": 0.0
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT"
+        }
+      },
+      "G_P4": {
+        "sat_share_recomputed": 0.0068,
+        "reference": 0.0068,
+        "abs_delta": 0.0
+      },
+      "G_P5": {
+        "gamma_merit_recomputed": -930.93,
+        "reference": -930.93,
+        "abs_delta": 0.002
+      },
+      "G_X0": {
+        "pjm_export_leg_max_abs_mw_incumbent": 0.0,
+        "pjm_export_leg_max_abs_mw_repaired": 0.0,
+        "pjm_export_leg_nonzero_hours_repaired": 0,
+        "spp_export_leg_nonzero_hours_incumbent": 949,
+        "spp_export_leg_nonzero_hours_repaired": 1416
+      },
+      "G_ID": {
+        "seams": {
+          "PJM": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "SPP": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "South": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "Manitoba": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          }
+        },
+        "max_abs_mw": 0.0,
+        "total_prefix_violations": 0
+      },
+      "G_P6": {
+        "per_seam_max_abs_mw": {
+          "PJM": 0.0,
+          "SPP": 0.0,
+          "South": 0.0,
+          "Manitoba": 0.0
+        }
+      }
+    },
+    "2025": {
+      "G_P1": {
+        "seams": {
+          "PJM": {
+            "sigma_measured_mw": 1647.0,
+            "sigma_resid_measured_mw": 1615.8,
+            "miso235_sigma_measured_mw": 1647.0,
+            "miso235_sigma_resid_measured_mw": 1615.8,
+            "abs_delta_mw": 0.0
+          },
+          "SPP": {
+            "sigma_measured_mw": 615.4,
+            "sigma_resid_measured_mw": 614.7,
+            "miso235_sigma_measured_mw": 615.4,
+            "miso235_sigma_resid_measured_mw": 614.7,
+            "abs_delta_mw": 0.0
+          },
+          "South": {
+            "sigma_measured_mw": 1008.6,
+            "sigma_resid_measured_mw": 998.6,
+            "miso235_sigma_measured_mw": 1008.6,
+            "miso235_sigma_resid_measured_mw": 998.6,
+            "abs_delta_mw": 0.0
+          },
+          "Manitoba": {
+            "sigma_measured_mw": 655.4,
+            "sigma_resid_measured_mw": 642.3,
+            "miso235_sigma_measured_mw": 655.4,
+            "miso235_sigma_resid_measured_mw": 642.3,
+            "abs_delta_mw": 0.0
+          }
+        },
+        "max_abs_delta_mw": 0.0,
+        "status": null
+      },
+      "G_P3": {
+        "corr_recomputed": 0.9839,
+        "corr_reference": 0.9839,
+        "level_recomputed": 55.3,
+        "level_reference": 55.3,
+        "abs_delta_corr": 0.0,
+        "abs_delta_level_mw": 0.0
+      },
+      "G_P2": {
+        "PJM": {
+          "delta_r2_A_nohydro": 0.1638,
+          "miso236": 0.1638,
+          "abs_delta": 0.0
+        },
+        "SPP": {
+          "delta_r2_A_nohydro": 0.114,
+          "miso236": 0.114,
+          "abs_delta": 0.0
+        },
+        "South": {
+          "delta_r2_A_nohydro": 0.0531,
+          "miso236": 0.0531,
+          "abs_delta": 0.0
+        },
+        "Manitoba": {
+          "status": "NO NEIGHBOUR-STATE INSTRUMENT"
+        }
+      },
+      "G_P4": {
+        "sat_share_recomputed": 0.0,
+        "reference": 0.0,
+        "abs_delta": 0.0
+      },
+      "G_P5": {
+        "gamma_merit_recomputed": -791.43,
+        "reference": -791.43,
+        "abs_delta": 0.003
+      },
+      "G_X0": {
+        "pjm_export_leg_max_abs_mw_incumbent": 0.0,
+        "pjm_export_leg_max_abs_mw_repaired": 698.5,
+        "pjm_export_leg_nonzero_hours_repaired": 2,
+        "spp_export_leg_nonzero_hours_incumbent": 389,
+        "spp_export_leg_nonzero_hours_repaired": 1595
+      },
+      "G_ID": {
+        "seams": {
+          "PJM": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "SPP": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "South": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          },
+          "Manitoba": {
+            "import": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_incumbent": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            },
+            "export_repaired": {
+              "max_abs_mw": 0.0,
+              "violations": 0
+            }
+          }
+        },
+        "max_abs_mw": 0.0,
+        "total_prefix_violations": 0
+      },
+      "G_P6": {
+        "per_seam_max_abs_mw": {
+          "PJM": 0.0,
+          "SPP": 0.0,
+          "South": 0.0,
+          "Manitoba": 0.0
+        }
+      }
+    }
+  },
+  "gate": {
+    "G_P1_max_abs_delta_mw": 0.0,
+    "G_P3_max_abs_delta_corr": 0.0,
+    "G_P3_max_abs_delta_level_mw": 0.0,
+    "G_P4_max_abs_delta": 0.0,
+    "G_P5_max_abs_delta_mw_per_z": 0.004,
+    "G_X0_pjm_export_max_abs_mw_incumbent": 0.0,
+    "G_X0_pjm_export_max_abs_mw_repaired": 698.5,
+    "G_ID_max_abs_mw": 0.0,
+    "G_ID_total_prefix_violations": 0,
+    "G_P6_max_abs_mw": 0.0,
+    "G_P2_max_abs_delta": 0.0,
+    "G_P2_cells": 9,
+    "passes": {
+      "G_P2": true,
+      "G_P1": true,
+      "G_P3_corr": true,
+      "G_P3_level": true,
+      "G_P4": true,
+      "G_P5": true,
+      "G_X0": true,
+      "G_ID": true,
+      "G_P6": true
+    },
+    "all_pass": true
+  },
+  "Q0_verdict": {
+    "I1_corr_rises_all_years": true,
+    "I2_level_error_not_worse_all_years": true,
+    "verdict": "REPAIRED SUPERSEDES",
+    "superseding_instrument": "repaired"
+  },
+  "Q1_verdict": {
+    "seam": "SPP",
+    "instrument": "repaired",
+    "ceiling_active_share": [
+      0.2572,
+      0.2952,
+      0.2474
+    ],
+    "verdict": "MIXED"
+  },
+  "Q2_verdict": {
+    "seam": "SPP",
+    "combos": [
+      {
+        "combo": "nl_nbr/import",
+        "spread_mw": [
+          -556.07,
+          -446.27,
+          -410.7
+        ],
+        "z": [
+          -31.26,
+          -24.26,
+          -17.17
+        ],
+        "material_bar_mw": [
+          68.2,
+          57.9,
+          73.5
+        ],
+        "inert_bar_mw": [
+          13.6,
+          11.6,
+          14.7
+        ],
+        "z_clears": true,
+        "material_clears": true,
+        "sign_consistent": true,
+        "inert": false
+      },
+      {
+        "combo": "nl_nbr/export",
+        "spread_mw": [
+          517.65,
+          701.19,
+          423.52
+        ],
+        "z": [
+          25.68,
+          21.53,
+          17.4
+        ],
+        "material_bar_mw": [
+          48.0,
+          72.1,
+          54.2
+        ],
+        "inert_bar_mw": [
+          9.6,
+          14.4,
+          10.8
+        ],
+        "z_clears": true,
+        "material_clears": true,
+        "sign_consistent": true,
+        "inert": false
+      },
+      {
+        "combo": "vre_nbr/import",
+        "spread_mw": [
+          519.14,
+          341.48,
+          392.38
+        ],
+        "z": [
+          28.71,
+          18.58,
+          17.68
+        ],
+        "material_bar_mw": [
+          68.2,
+          57.9,
+          73.5
+        ],
+        "inert_bar_mw": [
+          13.6,
+          11.6,
+          14.7
+        ],
+        "z_clears": true,
+        "material_clears": true,
+        "sign_consistent": true,
+        "inert": false
+      },
+      {
+        "combo": "vre_nbr/export",
+        "spread_mw": [
+          -417.83,
+          -489.25,
+          -304.58
+        ],
+        "z": [
+          -21.34,
+          -17.17,
+          -12.77
+        ],
+        "material_bar_mw": [
+          48.0,
+          72.1,
+          54.2
+        ],
+        "inert_bar_mw": [
+          9.6,
+          14.4,
+          10.8
+        ],
+        "z_clears": true,
+        "material_clears": true,
+        "sign_consistent": true,
+        "inert": false
+      }
+    ],
+    "verdict": "FOOTPRINT PRESENT",
+    "clearing_combos": [
+      "nl_nbr/import",
+      "nl_nbr/export",
+      "vre_nbr/import",
+      "vre_nbr/export"
+    ]
+  },
+  "C7_census": {
+    "narrow_as_committed": {
+      "paths": [
+        "data/raw/MISO",
+        "data/raw/eia-930-interchange",
+        "data/raw/iso-specific-transmission",
+        "data/raw/campd-unit-level",
+        "data/raw/outages",
+        "data/raw/reference"
+      ],
+      "matches": {
+        "data/raw/MISO": [],
+        "data/raw/eia-930-interchange": [],
+        "data/raw/iso-specific-transmission": [],
+        "data/raw/campd-unit-level": [],
+        "data/raw/outages": [
+          "ABSENT"
+        ],
+        "data/raw/reference": [
+          "storage_facilities.csv",
+          "spp_seam_tieflow_crosscheck.csv",
+          "tx-jan-aug23-unit-outages.csv"
+        ]
+      }
+    },
+    "wide_tokens": [
+      "outage",
+      "derate",
+      "forced",
+      "unavail",
+      "eea",
+      "alert",
+      "conservative",
+      "emergency",
+      "tie",
+      "interface",
+      "constraint",
+      "transfer",
+      "atc",
+      "ttc",
+      "flowgate",
+      "curtail"
+    ],
+    "wide_top_level_matches": [
+      "caiso-curtailment",
+      "caiso-dam-outages",
+      "campd-partial-outages-CAISO.csv",
+      "campd-partial-outages-MISO.csv",
+      "campd-partial-outages-MISO.meta.json",
+      "campd-partial-outages-NEISO.csv",
+      "campd-partial-outages-NYISO.csv",
+      "campd-partial-outages-PJM.csv",
+      "campd-partial-outages-SPP.csv",
+      "campd-partial-outages-SPP.meta.json",
+      "campd-partial-outages-shaped.csv",
+      "campd-partial-outages-units.csv",
+      "campd-partial-outages.csv",
+      "campd-unit-outages-CAISO.csv",
+      "campd-unit-outages-MISO.csv",
+      "campd-unit-outages-NEISO.csv",
+      "campd-unit-outages-NYISO.csv",
+      "campd-unit-outages-PJM.csv",
+      "campd-unit-outages-SPP.csv",
+      "campd-unit-outages-SPP.meta.json",
+      "campd-unit-outages-e923-CAISO.csv",
+      "campd-unit-outages-e923-ERCOT.csv",
+      "campd-unit-outages-e923-MISO.csv",
+      "campd-unit-outages-e923-NEISO.csv",
+      "campd-unit-outages-e923-NYISO.csv",
+      "campd-unit-outages-e923-PJM.csv",
+      "campd-unit-outages-e923-SPP.csv",
+      "campd-unit-outages-layup-CAISO.csv",
+      "campd-unit-outages-layup-MISO.csv",
+      "campd-unit-outages-layup-NEISO.csv",
+      "campd-unit-outages-layup-NYISO.csv",
+      "campd-unit-outages-layup-PJM.csv",
+      "campd-unit-outages-layup-SPP.csv",
+      "campd-unit-outages-layup-perunitmerit-NYISO.csv",
+      "campd-unit-outages-layup.csv",
+      "campd-unit-outages-maxgen-MISO.csv",
+      "campd-unit-outages-maxgen-unitroute-MISO.csv",
+      "campd-unit-outages-perunit-NYISO.csv",
+      "campd-unit-outages-perunit-NYISO.meta.json",
+      "campd-unit-outages-perunitmerit-NYISO.csv",
+      "campd-unit-outages-perunitmerit-NYISO.meta.json",
+      "campd-unit-outages-perunitnofs-NYISO.meta.json",
+      "campd-unit-outages-short-CAISO.csv",
+      "campd-unit-outages-short-MISO.csv",
+      "campd-unit-outages-short-NEISO.csv",
+      "campd-unit-outages-short-NYISO.csv",
+      "campd-unit-outages-short-PJM.csv",
+      "campd-unit-outages-short-SPP.csv",
+      "campd-unit-outages-short-SPP.meta.json",
+      "campd-unit-outages-unitroute-MISO.csv",
+      "campd-unit-outages.csv",
+      "ercot-outages.csv",
+      "miso-generation-outages",
+      "miso-m2m-flowgates",
+      "nyiso-renewable-curtailment",
+      "pjm-binding-constraints",
+      "pjm-outages",
+      "spp-binding-constraints",
+      "transfer-constraint-binding"
+    ],
+    "spp_or_swpp_children_in_full": [
+      "SWPP_fueltype.parquet",
+      "SWPP_region.parquet",
+      "campd-partial-outages-SPP.csv",
+      "campd-partial-outages-SPP.meta.json",
+      "campd-unit-outages-SPP.csv",
+      "campd-unit-outages-SPP.meta.json",
+      "campd-unit-outages-e923-SPP.csv",
+      "campd-unit-outages-layup-SPP.csv",
+      "campd-unit-outages-short-SPP.csv",
+      "campd-unit-outages-short-SPP.meta.json",
+      "spp-binding-constraints",
+      "spp-genmix",
+      "spp-hourly-load",
+      "spp-hsl",
+      "spp-lmp-alt",
+      "spp-or-mcp",
+      "spp-planning",
+      "spp-wind-shape",
+      "spp_zonal_gas_hub.SOURCES.md",
+      "spp_zonal_gas_hub.csv"
+    ]
+  }
+}
