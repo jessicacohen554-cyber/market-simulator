@@ -4692,6 +4692,20 @@ def run_year(
                 "to overlay when the ladder itself is off (rule 19 "
                 "[R-ONE-MECH])"
             )
+        # miso-233: the SPP hourly overlay is a SUB-GATE of the PJM one, so it
+        # is refused rather than silently half-arming a family (rule 19
+        # [R-ONE-MECH]); same fail-closed point of use as its parent.
+        if getattr(config, "miso_seam_neighbour_hourly_spp", False) and not getattr(
+            config, "miso_seam_neighbour_hourly_ladder", False
+        ):
+            raise ValueError(
+                "miso_seam_neighbour_hourly_spp requires "
+                "miso_seam_neighbour_hourly_ladder: the SPP hourly entry is a "
+                "SUB-GATE of the hourly neighbour-anchored family, not a "
+                "mechanism beside it, and arming one seam hourly while the "
+                "other keeps a frozen annual anchor is the half-armed state "
+                "rule 19 [R-ONE-MECH] exists to prevent"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
@@ -4708,6 +4722,9 @@ def run_year(
             neighbour_hourly = bool(
                 getattr(config, "miso_seam_neighbour_hourly_ladder", False)
             )
+            neighbour_hourly_spp = bool(
+                getattr(config, "miso_seam_neighbour_hourly_spp", False)
+            )
             if inject_miso_seam_ladder_prices(
                 fleet_arrays,
                 mc_base,
@@ -4715,6 +4732,7 @@ def run_year(
                 year,
                 neighbour_anchored=neighbour,
                 neighbour_hourly=neighbour_hourly,
+                neighbour_hourly_spp=neighbour_hourly_spp,
             ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
@@ -4723,9 +4741,16 @@ def run_year(
                     iso,
                     year,
                     (
-                        "HOURLY PJM western-border DA + measured spread "
-                        "offsets on the PJM seam (miso-231), MISO DA hub "
-                        "quantiles on SPP/South"
+                        (
+                            "HOURLY PJM western-border DA + measured spread "
+                            "offsets on the PJM seam (miso-231) AND HOURLY SPP "
+                            "NORTH hub DA + measured spread offsets on the SPP "
+                            "seam (miso-233), MISO DA hub quantiles on South"
+                            if neighbour_hourly_spp
+                            else "HOURLY PJM western-border DA + measured "
+                            "spread offsets on the PJM seam (miso-231), MISO "
+                            "DA hub quantiles on SPP/South"
+                        )
                         if neighbour_hourly
                         else (
                             "PJM WESTERN-BORDER DA quantiles on the PJM seam "

@@ -634,6 +634,73 @@ def measured_miso_pjm_border_prices(
     return price[:hours]
 
 
+#: SPP trading hub the MISO-SPP seam is anchored on (miso-233). Named on
+#: TOPOLOGY — the seam is one collapsed link hosted on the ``MISO_external``
+#: (Midwest) bus, so its MISO-facing counterparty is SPP North — and fixed
+#: before any ladder was derived (rule 14 ``[R-ACCURATE]`` misalignment clause;
+#: ``SPPSOUTH_HUB`` is a reported sensitivity that selects nothing).
+MISO_SPP_ANCHOR_HUB: str = "SPPNORTH_HUB"
+
+
+def measured_miso_spp_hub_prices(
+    iso: str, year: int, hours: int, hub: str = MISO_SPP_ANCHOR_HUB
+) -> np.ndarray | None:
+    """Return measured hourly SPP hub DA LMP for MISO's SPP seam.
+
+    The SPP counterpart of :func:`measured_miso_pjm_border_prices`. Reads
+    ``actual_lmp_hourly_zonal_SPP.parquet`` (columns ``year``, ``hour``
+    [0..8759], ``zone`` [``SPPNORTH_HUB`` / ``SPPSOUTH_HUB``], ``rt``, ``da``
+    [$/MWh]) built by ``scripts/data/build_spp_lmp_reference.py --per-hub`` from
+    SPP's own ``portal.spp.org`` monthly hourly DA LMP files and landed
+    2026-09-06 by lane SPP-14.
+
+    **Clocks already agree, they are not converted here.** The file is written on
+    the model's fixed non-leap 8760-hour LOCAL calendar and SPP runs on Central
+    Prevailing Time — the same dispatch clock MISO's own
+    ``actual_lmp_hourly_MISO.parquet`` and this module's MISO seam envelopes use
+    — so row ``hour`` is the model hour with no shift (that script's module
+    docstring; the same convention ``derive_miso_seam_ladders.load_spp_hub_da``
+    reads it under, so the derived offsets and the applied anchor cannot drift
+    apart).
+
+    **The six nulls.** Each year carries exactly 6 null ``da`` hours — hours
+    0-5 of 1 January, a LEADING source edge rather than a scatter
+    (``docs/multi-iso/spp-data-audit.md`` §; the audit records 6/6/6 for
+    2023/24/25 and names ``interpolate().bfill().ffill()`` as the handling this
+    file expects, the same convention its own MISO/CAISO siblings carry far more
+    of). They are filled on exactly that convention: interpolation cannot reach
+    a leading run, so the fill is a back-fill from hour 6 across six overnight
+    New Year hours (0.07 % of the year). Zero degrees of freedom, and it cannot
+    reach the derived offsets at all — ``derive_spp_neighbour_hourly`` drops
+    every null row before the Q-Q coupling, so the ladder is identical with or
+    without this fill. A series still not finite after it returns ``None``, so a
+    genuinely broken year falls back rather than solving against a NaN price.
+
+    Returns ``(hours,)`` array of $/MWh, or ``None`` when the ISO is not MISO,
+    the parquet is absent, the hub is missing, or the year is uncovered — in
+    which case the caller keeps the incumbent ladder (byte-identical).
+    """
+    if iso.upper() != "MISO":
+        return None
+    path = _calibration_dir() / "actual_lmp_hourly_zonal_SPP.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[(frame["year"] == year) & (frame["zone"].astype(str) == hub)]
+    if frame.empty:
+        return None
+    price = (
+        pd.to_numeric(frame.sort_values("hour")["da"], errors="coerce")
+        .interpolate(limit=2)
+        .bfill()
+        .ffill()
+        .to_numpy(dtype=float)
+    )
+    if price.shape[0] < hours or not np.all(np.isfinite(price[:hours])):
+        return None
+    return price[:hours]
+
+
 # Measured clock offset of the CISO per-DIBA interchange stamps relative to
 # the model's hourly frame (the ``<BA> hourly`` extract row clock every CAISO
 # demand/renewable series runs on): the stamps lag the model clock by 1 hour

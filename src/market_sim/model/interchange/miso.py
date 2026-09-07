@@ -284,6 +284,7 @@ def inject_miso_seam_ladder_prices(
     year: int,
     neighbour_anchored: bool = False,
     neighbour_hourly: bool = False,
+    neighbour_hourly_spp: bool = False,
 ) -> bool:
     """Overwrite MISO's seam band rows of ``mc`` with the measured Q-Q ladders.
 
@@ -329,6 +330,25 @@ def inject_miso_seam_ladder_prices(
     covers (alternatives, never stacked) and degrades to it, never to an
     unpriced seam, when the year or the measured series is missing.
 
+    ``neighbour_hourly_spp`` (miso-233,
+    ``ScenarioConfig.miso_seam_neighbour_hourly_spp``) extends that hourly form
+    to the SECOND seam, pricing SPP band ``k`` at ``spp_hub(t) + delta_k``
+    against the measured SPP NORTH hub DA
+    (:func:`~market_sim.data.eia_loader.measured_miso_spp_hub_prices`, landed
+    2026-09-06 by lane SPP-14). It is a SUB-GATE of ``neighbour_hourly``, never
+    a mechanism beside it (rule 19 ``[R-ONE-MECH]``): the predicate requires
+    the parent, so the two seams are never anchored apart, and the SPP entries
+    ride the same per-seam ``hourly_anchor`` mapping the PJM entry already
+    uses. Its object is the miso-233 phase-0 attribution — under the miso-232
+    keeper the repaired PJM seam is ALREADY steeper than the measured PJM seam
+    (+2,377 / +2,611 / +2,704 MW of price-decile slope against a measured
+    +1,319 / +1,052 / +815), and what cancels it is SPP (-414 / -481 / -553)
+    and South (-919 / -1,135 / -827) still clearing a FIXED ladder against the
+    model's own price. SOUTH IS NOT COVERED and that stays a data boundary:
+    SOCO/TVA publish no hub or nodal price. Degrades to the seam's incumbent
+    ladder — never to an unpriced seam — when the year or the measured hub
+    series is missing.
+
     No hurdle is added on top: the ladder prices are revealed clearing
     thresholds that already embed delivery/wheeling costs. Band capacities,
     the measured (month × hour-of-day) seam deliverability envelopes
@@ -347,8 +367,12 @@ def inject_miso_seam_ladder_prices(
         MISO_SEAM_LADDER_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
     )
-    from market_sim.data.eia_loader import measured_miso_pjm_border_prices
+    from market_sim.data.eia_loader import (
+        measured_miso_pjm_border_prices,
+        measured_miso_spp_hub_prices,
+    )
 
     if iso != "MISO":
         return False
@@ -374,6 +398,19 @@ def inject_miso_seam_ladder_prices(
             anchors = {seam: border for seam in hourly}
         else:
             hourly = None
+    # miso-233: the SPP seam's hourly overlay, a SUB-GATE of the PJM one. It is
+    # applied only when the parent is armed AND actually took (a run whose PJM
+    # anchor was unavailable has fallen back to the annual/incumbent ladder, and
+    # arming one seam hourly while the other silently degrades would be the
+    # half-armed state rule 19 [R-ONE-MECH] exists to prevent). Same per-seam
+    # `anchors` mapping, so `_inject_seam_ladder` needs no change.
+    if neighbour_hourly_spp and hourly:
+        spp_rows = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR.get(year)
+        if spp_rows:
+            spp_hub = measured_miso_spp_hub_prices("MISO", year, int(mc.shape[1]))
+            if spp_hub is not None:
+                ladder = {**ladder, **spp_rows}
+                anchors = {**anchors, **{seam: spp_hub for seam in spp_rows}}
     if neighbour_anchored:
         overlay = {
             # Per-seam overlay: a seam absent from the neighbour table (SPP,

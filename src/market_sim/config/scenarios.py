@@ -1228,6 +1228,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # an armed run reprices the PJM seam's 16 band rows HOURLY and hashes
     # distinctly. Registered WITH the field, per the nyiso-119 discipline.
     "miso_seam_neighbour_hourly_ladder",
+    # miso-233: byte-identical OFF (the SPP overlay is read only inside the
+    # armed branch, and the flag is REFUSED without its parent
+    # miso_seam_neighbour_hourly_ladder); an armed run reprices the SPP seam's
+    # 16 band rows HOURLY and hashes distinctly. Registered WITH the field, per
+    # the nyiso-119 discipline.
+    "miso_seam_neighbour_hourly_spp",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -1984,6 +1990,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-231 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_hourly_ladder": "False",
+    # Added by miso-233 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_neighbour_hourly_spp": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -15228,6 +15237,55 @@ class ScenarioConfig:
     # PRECOMMIT-miso231-hourly-seam-ladder-2026-09-06.md.
     miso_seam_neighbour_hourly_ladder: bool = False
 
+    # The SAME hourly neighbour anchor extended to MISO's SECOND seam, SPP
+    # (miso-233). A SUB-GATE of the flag above, never a mechanism beside it
+    # (rule 19 [R-ONE-MECH]): REFUSED without miso_seam_neighbour_hourly_ladder,
+    # so the two seams are never anchored apart. Armed, SPP band k's offer
+    # becomes pi_k(t) = spp_hub(t) + delta_k against the measured SPP NORTH hub
+    # DA (data.eia_loader.measured_miso_spp_hub_prices), with the delta_k
+    # offsets derived by the IDENTICAL Q-Q duration coupling read off the
+    # MISO-minus-SPP spread (interchange spec
+    # MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
+    # derive_miso_seam_ladders.py::derive_spp_neighbour_hourly, rule 23). Zero
+    # fitted parameters; the DOF ledger does not move.
+    #
+    # THE OBJECT (miso-233 phase 0, zero-LP, from the miso-232 keeper's own
+    # committed sidecars — scripts/probes/_miso233_seam_slope_anatomy_phase0.py
+    # and _miso233_allseam_slope_attribution_phase0.py): miso-232 repaired the
+    # seam's measured-price decile slope in SIGN but reached 11 / 8 / 72 % of
+    # the measured magnitude, and left the magnitude open as non-claim 1. The
+    # per-seam decomposition says the shortfall is NOT on the repaired seam —
+    # PJM reconstructs at +2,377 / +2,611 / +2,704 MW against a MEASURED PJM
+    # seam of +1,319 / +1,052 / +815 (already steeper; its cheapest decile
+    # loses only 194-271 MW to the deliverability envelope, so "the deep bands
+    # k=6-8 under-clear in cheap hours" is falsified) — it is SPP at
+    # -414 / -481 / -553 and South at -919 / -1,135 / -827, against measured
+    # seams of +317 / +466 / -50 and +72 / +60 / +646. Both still clear a FIXED
+    # ladder against the model's own price, which is the exact defect miso-226
+    # named and miso-231 repaired on PJM alone.
+    #
+    # WHY IT IS POSSIBLE NOW: the exclusion was a DATA boundary — no measured
+    # SPP price series was held under data/raw — and lane SPP-14 landed one on
+    # 2026-09-06 (actual_lmp_hourly_zonal_SPP.parquet, 8,754/8,760 hours per
+    # year, from SPP's own portal). Rule 14 [R-ACCURATE] then applies directly:
+    # the incumbent SPP anchor is an ESTIMATE standing in for the neighbour's
+    # price and the measured price now exists.
+    #
+    # STATED AT THE GATE, weaker than the PJM case: the miso-231 admissibility
+    # statistic does NOT transfer. corr(measured SPP seam flow, MISO DA - SPP
+    # hub DA) = +0.041 / -0.020 / +0.050 against corr(flow, MISO DA) of
+    # -0.216 / -0.377 / +0.082, and against the PJM spread's +0.240 / +0.265 /
+    # +0.194. The spread is UNINFORMATIVE about this seam's hourly flow; what
+    # it does is REMOVE the wrong-signed response rather than supply a
+    # right-signed one. The case is structural and rule-14, never the statistic.
+    #
+    # SOUTH IS NOT COVERED and stays a data boundary (SOCO/TVA are not
+    # organised markets and publish no hub or nodal price). Off by default;
+    # byte-identical off, and a no-op for a year absent from the table or when
+    # the measured hub series is unavailable. See results/calibration/
+    # PRECOMMIT-miso233-spp-hourly-seam-2026-09-07.md.
+    miso_seam_neighbour_hourly_spp: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -19199,6 +19257,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_gas_variable_transport": 3,
     "miso_seam_neighbour_anchored_ladder": 3,
     "miso_seam_neighbour_hourly_ladder": 3,
+    "miso_seam_neighbour_hourly_spp": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,

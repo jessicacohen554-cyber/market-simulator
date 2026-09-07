@@ -1,0 +1,276 @@
+{
+ "probe": "miso-233 phase 0 part C \u2014 SPP hourly neighbour ladder, admissibility + footprint",
+ "keeper": "2026-09-06-miso-232-hourly-seam",
+ "zero_lp": true,
+ "anchor_hub": "SPPNORTH_HUB",
+ "sensitivity_hub": "SPPSOUTH_HUB",
+ "anchor_choice_basis": "structural \u2014 the SPP seam link is hosted on the MISO_external (Midwest) bus; SPPSOUTH is reported, never selected",
+ "source": "data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet",
+ "band_width_mw": 500.0,
+ "years": {
+  "2023": {
+   "measured_spp_seam_mean_mw": 109.9,
+   "corr_flow_vs_miso_da": -0.216,
+   "corr_flow_vs_spread_SPPNORTH_HUB": 0.041,
+   "corr_miso_da_vs_SPPNORTH_HUB": 0.13,
+   "mean_SPPNORTH_HUB": 24.24,
+   "mean_spread_SPPNORTH_HUB": 8.74,
+   "corr_flow_vs_spread_SPPSOUTH_HUB": 0.067,
+   "corr_miso_da_vs_SPPSOUTH_HUB": 0.061,
+   "mean_SPPSOUTH_HUB": 26.97,
+   "mean_spread_SPPSOUTH_HUB": 6.01,
+   "delta_k_registry_import": [
+    14.1,
+    32.64,
+    54.43,
+    85.36,
+    145.25,
+    185.08,
+    185.08,
+    185.08
+   ],
+   "delta_k_recompute_max_abs_diff": 32.14,
+   "delta_k_import": [
+    14.1,
+    32.64,
+    54.43,
+    85.36,
+    145.25,
+    185.08,
+    185.08,
+    185.08
+   ],
+   "delta_k_export": [
+    -2.39,
+    -21.49,
+    -41.89,
+    -90.15,
+    -178.51,
+    -212.03,
+    -212.03,
+    -212.03
+   ],
+   "incumbent_import": [
+    33.03,
+    44.43,
+    64.03,
+    111.92,
+    177.08,
+    204.68,
+    204.68,
+    204.68
+   ],
+   "derive_notes": [],
+   "offline": {
+    "measured_flow": {
+     "mean_mw": 109.9,
+     "corr_vs_miso_da": -0.216,
+     "decile_slope_on_miso_da_mw": 400.7
+    },
+    "incumbent": {
+     "mean_mw": 276.2,
+     "corr_vs_miso_da": 0.885,
+     "decile_slope_on_miso_da_mw": -1120.4,
+     "corr_vs_measured_flow": -0.213
+    },
+    "hourly": {
+     "mean_mw": 253.9,
+     "corr_vs_miso_da": 0.53,
+     "decile_slope_on_miso_da_mw": -603.3,
+     "corr_vs_measured_flow": 0.01
+    }
+   },
+   "static_remerit": {
+    "incumbent_mean_mw": 239.0,
+    "hourly_mean_mw": 209.8,
+    "incumbent_slope_mw": -346.4,
+    "hourly_slope_mw": -103.2,
+    "measured_seam_slope_mw": 316.8,
+    "slope_move_mw": 243.2
+   },
+   "footprint": {
+    "band_hours_disagree": 5279,
+    "band_hours_disagree_pct": 7.53,
+    "hours_with_any_disagreement_pct": 54.55,
+    "abs_mw_moved_mean": 233.7,
+    "abs_twh_moved": 2.0476
+   }
+  },
+  "2024": {
+   "measured_spp_seam_mean_mw": -42.6,
+   "corr_flow_vs_miso_da": -0.377,
+   "corr_flow_vs_spread_SPPNORTH_HUB": -0.02,
+   "corr_miso_da_vs_SPPNORTH_HUB": 0.473,
+   "mean_SPPNORTH_HUB": 21.3,
+   "mean_spread_SPPNORTH_HUB": 10.07,
+   "corr_flow_vs_spread_SPPSOUTH_HUB": 0.127,
+   "corr_miso_da_vs_SPPSOUTH_HUB": 0.455,
+   "mean_SPPSOUTH_HUB": 30.55,
+   "mean_spread_SPPSOUTH_HUB": 0.82,
+   "delta_k_registry_import": [
+    14.49,
+    35.59,
+    78.29,
+    212.51,
+    290.73,
+    290.73,
+    290.73,
+    290.73
+   ],
+   "delta_k_recompute_max_abs_diff": 72.73,
+   "delta_k_import": [
+    14.49,
+    35.59,
+    78.29,
+    212.51,
+    290.73,
+    290.73,
+    290.73,
+    290.73
+   ],
+   "delta_k_export": [
+    1.42,
+    -12.98,
+    -23.83,
+    -33.09,
+    -43.06,
+    -48.41,
+    -55.24,
+    -66.13
+   ],
+   "incumbent_import": [
+    31.2,
+    49.28,
+    116.01,
+    239.27,
+    284.59,
+    284.59,
+    284.59,
+    284.59
+   ],
+   "derive_notes": [],
+   "offline": {
+    "measured_flow": {
+     "mean_mw": -42.6,
+     "corr_vs_miso_da": -0.377,
+     "decile_slope_on_miso_da_mw": 587.9
+    },
+    "incumbent": {
+     "mean_mw": 211.8,
+     "corr_vs_miso_da": 0.818,
+     "decile_slope_on_miso_da_mw": -965.2,
+     "corr_vs_measured_flow": -0.289
+    },
+    "hourly": {
+     "mean_mw": 245.8,
+     "corr_vs_miso_da": 0.423,
+     "decile_slope_on_miso_da_mw": -546.2,
+     "corr_vs_measured_flow": -0.084
+    }
+   },
+   "static_remerit": {
+    "incumbent_mean_mw": 184.5,
+    "hourly_mean_mw": 185.9,
+    "incumbent_slope_mw": -287.4,
+    "hourly_slope_mw": -2.9,
+    "measured_seam_slope_mw": 465.5,
+    "slope_move_mw": 284.5
+   },
+   "footprint": {
+    "band_hours_disagree": 5010,
+    "band_hours_disagree_pct": 7.15,
+    "hours_with_any_disagreement_pct": 51.47,
+    "abs_mw_moved_mean": 214.3,
+    "abs_twh_moved": 1.8776
+   }
+  },
+  "2025": {
+   "measured_spp_seam_mean_mw": 109.5,
+   "corr_flow_vs_miso_da": 0.082,
+   "corr_flow_vs_spread_SPPNORTH_HUB": 0.05,
+   "corr_miso_da_vs_SPPNORTH_HUB": 0.251,
+   "mean_SPPNORTH_HUB": 28.08,
+   "mean_spread_SPPNORTH_HUB": 15.65,
+   "corr_flow_vs_spread_SPPSOUTH_HUB": 0.15,
+   "corr_miso_da_vs_SPPSOUTH_HUB": 0.269,
+   "mean_SPPSOUTH_HUB": 29.34,
+   "mean_spread_SPPSOUTH_HUB": 14.39,
+   "delta_k_registry_import": [
+    21.85,
+    46.55,
+    87.43,
+    169.08,
+    216.02,
+    252.76,
+    276.99,
+    345.4
+   ],
+   "delta_k_recompute_max_abs_diff": 18.33,
+   "delta_k_import": [
+    21.85,
+    46.55,
+    87.43,
+    169.08,
+    216.02,
+    252.76,
+    276.99,
+    345.4
+   ],
+   "delta_k_export": [
+    -2.33,
+    -18.94,
+    -31.11,
+    -44.88,
+    -70.49,
+    -122.45,
+    -254.63,
+    -254.63
+   ],
+   "incumbent_import": [
+    40.09,
+    64.24,
+    112.65,
+    198.83,
+    247.99,
+    296.9,
+    310.0,
+    406.47
+   ],
+   "derive_notes": [],
+   "offline": {
+    "measured_flow": {
+     "mean_mw": 109.5,
+     "corr_vs_miso_da": 0.082,
+     "decile_slope_on_miso_da_mw": 5.7
+    },
+    "incumbent": {
+     "mean_mw": 280.9,
+     "corr_vs_miso_da": 0.902,
+     "decile_slope_on_miso_da_mw": -1151.3,
+     "corr_vs_measured_flow": 0.065
+    },
+    "hourly": {
+     "mean_mw": 235.0,
+     "corr_vs_miso_da": 0.695,
+     "decile_slope_on_miso_da_mw": -783.7,
+     "corr_vs_measured_flow": 0.053
+    }
+   },
+   "static_remerit": {
+    "incumbent_mean_mw": 207.3,
+    "hourly_mean_mw": 146.2,
+    "incumbent_slope_mw": -471.9,
+    "hourly_slope_mw": -147.9,
+    "measured_seam_slope_mw": -50.1,
+    "slope_move_mw": 324.0
+   },
+   "footprint": {
+    "band_hours_disagree": 4469,
+    "band_hours_disagree_pct": 6.38,
+    "hours_with_any_disagreement_pct": 48.56,
+    "abs_mw_moved_mean": 229.3,
+    "abs_twh_moved": 2.0088
+   }
+  }
+ }
+}

@@ -364,6 +364,124 @@ def derive_pjm_neighbour_hourly(
     )
 
 
+SPP_HUB_PARQUET = (
+    RAW / "_validation-source" / "actual_lmp_hourly_zonal_SPP.parquet"
+)
+
+#: The SPP trading hub the MISO-SPP seam is anchored on (miso-233).
+#:
+#: The seam our topology carries is ONE collapsed link hosted on the
+#: ``MISO_external`` (Midwest) bus, while the measured DIBAs behind it are
+#: ``SWPP`` + ``SPA`` and the real boundary is two paths — MISO Midwest <->
+#: SPP North and MISO South <-> SPP South. ``SPPNORTH_HUB`` is the anchor on
+#: the STRUCTURAL ground that the MISO-facing side of the link our reduced
+#: network represents is SPP North (MISO's southern seam has its own external
+#: bus, ``split_miso_south_external_node``, and its own SOCO/TVA neighbours).
+#: This is rule 14 ``[R-ACCURATE]``'s misalignment clause taken explicitly: the
+#: hub is named on topology, before any ladder is derived, and NEVER chosen by
+#: which one scores better — ``SPPSOUTH_HUB`` is reported as a sensitivity in
+#: ``scripts/probes/_miso233_spp_hourly_phase0.py`` and selects nothing.
+SPP_ANCHOR_HUB = "SPPNORTH_HUB"
+
+
+def load_spp_hub_da(hub: str = SPP_ANCHOR_HUB) -> pd.Series:
+    """Return the measured SPP hub DA LMP, indexed ``(year, hour)``.
+
+    Reads ``actual_lmp_hourly_zonal_SPP.parquet`` (landed 2026-09-06 by lane
+    SPP-14 from SPP's own ``portal.spp.org`` file-browser API; columns
+    ``year``/``hour``/``zone``/``rt``/``da``). The file is already on the
+    model's fixed non-leap 8760-hour LOCAL calendar — SPP runs on Central
+    Prevailing Time, the same dispatch clock MISO's own
+    ``actual_lmp_hourly_MISO.parquet`` uses — so the two series align
+    hour-for-hour with no shift (``scripts/data/build_spp_lmp_reference.py``
+    module docstring). Isolated gaps (the DST spring-forward hour) are
+    interpolated on the same ``limit=3`` rule :func:`load_joined` applies.
+    """
+    frame = pd.read_parquet(SPP_HUB_PARQUET)
+    frame = frame[frame["zone"].astype(str) == hub]
+    series = (
+        frame.set_index(["year", "hour"])["da"].astype(float).sort_index().rename(hub)
+    )
+    return series.interpolate(limit=3)
+
+
+def derive_spp_neighbour_hourly(
+    g: pd.DataFrame, hub: str = SPP_ANCHOR_HUB
+) -> tuple[dict[str, list[float]], list[str]]:
+    """Derive the SPP seam's HOURLY neighbour-anchored ladder as OFFSETS.
+
+    The miso-233 extension of :func:`derive_pjm_neighbour_hourly` to the SECOND
+    seam, on the SAME estimator and the same single degree of freedom — which
+    measured series the Q-Q coupling reads. Band ``k``'s offer becomes hourly::
+
+        pi_k(t) = spp_hub(t) + delta_k
+
+    so band ``k`` clears in hour ``t`` iff ``spread(t) > delta_k``, with
+    ``spread = MISO hub DA - SPP hub DA``. The returned ladder holds the OFFSETS
+    ``delta_k``, not prices; the applied price is assembled at solve time
+    against the measured hourly hub series
+    (:func:`market_sim.data.eia_loader.measured_miso_spp_hub_prices`).
+
+    WHY THE SECOND SEAM, AND WHY NOW
+    --------------------------------
+    miso-233's phase 0 decomposed the miso-232 keeper's residual price-decile
+    slope from its own committed sidecars and found the defect is NOT on the
+    repaired PJM seam: reconstructed PJM slope +2,377 / +2,611 / +2,704 MW
+    against a MEASURED PJM seam of +1,319 / +1,052 / +815 — already steeper
+    than measured, with the cheapest decile losing only 194-271 MW to the
+    deliverability envelope. What cancels it is the two seams still on the
+    INCUMBENT fixed MISO-hub ladder: SPP contributes -414 / -481 / -553 MW and
+    South -919 / -1,135 / -827 MW, against measured seams of +317 / +466 / -50
+    and +72 / +60 / +646. They carry the exact defect miso-226 named — a FIXED
+    ladder cleared against the model's OWN price leaves merit when MISO's price
+    falls, which is when MISO actually imports most.
+
+    The blocker on record (mechanism-matrix §5.4 lever queue item 3) was that
+    no measured hourly SPP price series was held under ``data/raw``. Lane
+    SPP-14 landed one on 2026-09-06 (:data:`SPP_HUB_PARQUET`, 8,754 of 8,760
+    hours in every year 2023-2025), so the exclusion that kept
+    :func:`derive_pjm_neighbour_hourly` PJM-only no longer applies to SPP.
+    Rule 14 ``[R-ACCURATE]`` is then directly on point: the incumbent SPP
+    anchor is an ESTIMATE standing in for the neighbour's price, the measured
+    neighbour price now exists, and the accurate input is preferred whatever it
+    does to the residual.
+
+    STATED AT THE GATE, because it is weaker than the PJM case. The
+    admissibility statistic miso-231 §1 leaned on does NOT transfer:
+    ``corr(measured SPP seam flow, MISO DA - SPP hub DA)`` is +0.041 / -0.020 /
+    +0.050 against ``corr(flow, MISO DA)`` of -0.216 / -0.377 / +0.082 — the
+    spread is UNINFORMATIVE about the SPP seam's hourly flow where the PJM
+    spread was informative (+0.240 / +0.265 / +0.194). What the spread basis
+    does is remove the WRONG-SIGNED response rather than supply a right-signed
+    one: the simulated flow's correlation with the measured seam moves
+    -0.213 / -0.289 / +0.065 -> +0.011 / -0.107 / +0.050. The case for the
+    change is structural and rule-14, never the statistic.
+
+    SOUTH IS STILL EXCLUDED, and that is still a DATA boundary rather than a
+    choice: SOCO and TVA are not organised markets and publish no nodal or hub
+    price, so no measured series exists to anchor that seam on. It keeps the
+    incumbent MISO-hub ladder and phase 0 records what that costs.
+
+    The estimator is byte-for-byte the incumbent one — the same
+    :func:`_derive_one` / :func:`qq_import` / :func:`qq_export` coupling, the
+    same midpoint-depth grid on the same ``SEAM_FLOW_TRANCHES``, the same
+    measured seam flows, the same no-wash reconciliation. Nothing is fitted;
+    the rule-23 ``[R-FROZEN-DERIVE]`` re-derive trigger is identical (the
+    source series extending, never a residual moving).
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    spec = {n.name: n for n in INTERFACE_NEIGHBORS["MISO"]}["SPP"]
+    notes: list[str] = []
+    work = g.join(load_spp_hub_da(hub), how="left")
+    work = work.dropna(subset=[hub, "da", spec.name])
+    spread = (work["da"] - work[hub]).to_numpy(dtype=float)
+    return (
+        _derive_one(spread, work[spec.name].to_numpy(dtype=float), spec, notes),
+        notes,
+    )
+
+
 def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]:
     """Score each seam's ladder against its measured flow, driven by actual DA.
 
@@ -452,6 +570,15 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
     print(f'        "export": {tuple(hb["export"])},')
     for n in hb_notes:
         print(f"  note (hourly): {n}")
+    sb, sb_notes = derive_spp_neighbour_hourly(g)
+    print(
+        '    # miso-233 HOURLY NEIGHBOUR-ANCHORED "SPP" '
+        "(OFFSETS delta_k; applied price = spp_hub(t) + delta_k):"
+    )
+    print(f'        "import": {tuple(sb["import"])},')
+    print(f'        "export": {tuple(sb["export"])},')
+    for n in sb_notes:
+        print(f"  note (SPP hourly): {n}")
     for seam, s in offline_score(g, ladders).items():
         print(
             f"  offline P9 {seam}: {s['sim_twh']:+.2f} TWh vs {s['act_twh']:+.2f} "
