@@ -12506,3 +12506,73 @@ bundle deleted before merge. Docs:
 `ADDENDUM-miso233-screen-2026-09-07.md`, `_miso233_screen_gates.json`,
 `_miso233_seam_slope_anatomy_phase0.json`, `_miso233_allseam_slope_attribution_phase0.json`,
 `_miso233_spp_hourly_phase0.json`.
+
+## miso-234 (2026-09-07) — the South seam is a REPORTER of the North–South separation deficit, not an object of its own. ZERO LP, no arm, no screen, NO CELL VERDICT MOVES; keeper UNCHANGED
+
+**Keeper UNCHANGED at `2026-09-07-miso-233-spp-hourly`**, determination re-verified from
+committed artifacts only (`calibration_verdict.py --run-id`, never a solve): **CALIBRATED**,
+C3c the single ledgered caveat, C1 16/16 all-class / 12/12 free-class, C2/C3a/C3b/C4/C6/C8 PASS,
+DOF 41/2. Rule 22: 2023–2025 only; MISO holds no `complete` marker and no holdout year was
+solved, scored or registered. Nothing armed, minted, registered or pruned.
+
+**Stated against interest first:** no PREREG was pushed ahead of these measurements, so — unlike
+miso-182/184/185/206 — this session is **not entitled to close, refuse or re-open anything on its
+own numbers, and does not**. Evidence is appended to five cells; every verdict is unchanged.
+
+**Queue item 1 (the South seam, the largest single contributor to the residual price-decile
+slope) is CLOSED AS A SEAM OBJECT at phase 0, before any LP minute was spent** — the outcome rule
+29 clause 0 exists to produce. The handoff's premise (that near price-independence is the RDT
+firm-contract signature) is **basis-dependent and does not survive**: on the **MISO-South local**
+DA the measured seam carries the correct arbitrage sign (spearman −0.193/−0.176 in 2023/2024,
+export decile slope +323.3/+426.8 MW) and only on the **Indiana-hub** basis the residual is
+*scored* against does it read flat (−125.4/−10.2/−636.4). Firmness refuses a flat block too
+(lag-1 acf +0.95/+0.95/+0.96 but mean |Δh| 15–21 % of mean; between-month variance share
+0.11/0.13/0.34; p10 base 34/212/**−200** MW). And the slope is **inherited**: `corr(model
+MISO_external_South bus, measured South DA)` = +0.712/+0.569/+0.665 against `corr(same bus,
+measured Indiana DA)` = +0.711/+0.597/+0.725 — the model's South price carries no independent
+South information. A zero-LP counterfactual holding ladder, envelope and band grid fixed and
+changing only the bus price to carry the measured N–S separation closes **55.6/68.3/63.2 %** of
+the export-slope gap; it is **named INADMISSIBLE as a mechanism in place** (rule 13 outcome pin)
+and used only to size which object owns the residual. Separation compression, mean|·|:
+**0.148/0.215/0.281**. Both seam-side remedies stay adjudicated and are corroborated, never
+re-tested — `miso_south_firm_export_block` **G** (miso-182; re-open closed negative at miso-185)
+and `miso_south_export_ladder_rt_tail` **R** (miso-184). Re-routed to the already-open South-gas
+price-out lane (miso-211/212). **No lever licensed.**
+
+**Queue item 2 attributed — it is the PJM seam, NOT the SPP arm miso-233 promoted.** On the exact
+additivity identity (harness corr vs committed imports +0.922/+0.943/+0.967): model PJM
+contribution **−0.3291/−0.2922/−0.2907** against a measured **−0.0778/−0.0573/−0.0326**, a
+**4.2×/5.1×/8.9×** over-response that is the whole overshoot. The SPP arm is **exonerated**
+(+0.0186/+0.0132/+0.0312 — small and positive). Model total interchange σ 1,378/1,558/1,482 MW
+against a measured 2,105/2,019/2,437: it moves *less* than the real seam while being *far more*
+price-driven — missing **non-price** variation. No lever proposed; the PJM `delta_k` ladder is
+derived, frozen and pinned to its derive by test.
+
+**Queue item 3 attributed.** The miso-232 hour-level diff is **not computable at HEAD** (bundle
+pruned under rule 15 keeper-only retention; git history is the record), so the level object is
+attributed instead: **CC_REGULAR-2023 is a LEVEL deficit, not a shape one** — 9.2–10.7 % of
+measured in *every* price decile, shape-normalised span only −126…+147 MW on a ~16 GW class. A
+monotone shape emerges only in 2024 (−44 → +336 MW) and 2025 (−813 → +464 MW).
+
+**An owner question answered mid-session — why wind overproduces, and whether MISO HSL data is
+needed.** The LP re-curtails **0.001/0.000/−0.003 %** of the reference-rate gross-up against a
+reported **4.895 %**, so **100.0/100.0/99.9 %** of the +4.720/+5.057/+5.096 TWh wind residual is
+the un-recurtailed gross-up (solar control −0.0003/−0.0003/−0.0032 TWh). Reproduces
+`vre_reference_rate_curtailment_grossup` (**K**, miso-206) to the digit on an independent
+instrument. **MISO HSL data is not the fix**: the LP already holds the +4.9 % headroom and
+delivers all of it, a measured potential is *higher* in exactly the congested hours, and with
+slack and dump both 0.0000 TWh there is no channel to spill wind at all. The binding object is
+`internal_congestion_split` (**G**, miso-79 NO-BUILD fundamental, 88–99.7 % intra-LBA) at a
+zonal-spread compression of **0.083/0.126/0.164**; access is separately shut (5-minute workbooks
+allowlist-blocked, HTTP 403). The South-seam finding and the wind answer are the **same root
+object seen twice**.
+
+**Handed forward, named not chartered:** the PJM seam's 4–9× correlation over-response (whose
+admissible form is *not* a re-derive or damping factor); Manitoba's missing price response
+(measured +0.057/+0.053/+0.034, model zero by construction); the CC_REGULAR 2024→2025 shape
+emergence; the South residual as **upstream** work; and C3c, untouched, still the designated
+frontier (2026-07-20).
+
+Records: `FINDING-miso234-the-south-seam-is-a-reporter-not-an-object-2026-09-07.md`; probes
+`scripts/probes/_miso234_{south_seam_character,ns_separation,wind_curtailment,corr_overshoot,cc_giveback}_phase0.py`
+with `_miso234_*_phase0.json` beside each.
