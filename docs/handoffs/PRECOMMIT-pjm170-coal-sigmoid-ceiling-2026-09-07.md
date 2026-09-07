@@ -455,3 +455,86 @@ solve; `MALLOC_ARENA_MAX=2`, single-threaded BLAS. One PJM invocation at a time
   re-stamped with this adjudication in this session (rule 32 duty b), the §3
   reconciliation is recorded whatever the verdict, and the §3.4 level parameters
   stay open and un-adjudicated.
+
+---
+
+## AMENDMENT 1 — limb A's prediction basis, sharpened. Written BEFORE any measurement exists.
+
+**Status when written:** the phase-0 probe has not been run, the arm has not been
+built, no `mc` delta of any kind exists, and no solve has happened. This amendment
+is recorded, not silently applied (the pjm-169 §7.1 precedent).
+
+**The defect in §4.2 limb A as first written.** It defines the predicted DIRECT set
+as "every coal tranche whose `coal_supply` tag is `bituminous` and whose supply
+passthrough is non-zero (i.e. non-`mustrun`)", and gates on that set being **exactly**
+the moved set. The parenthetical is **wrong**, and reading
+`data/fleet/legacy_bins.py::campd_tranche_fuel_frac` — not any measurement — shows it:
+
+```
+legacy_bins.py:449   if gen.unit_id.endswith("_sync"):    return 1.0
+legacy_bins.py:451   if gen.unit_id.endswith("_mustrun"): ... return 0.0
+```
+
+`_sync` (the step-3a synchronization tranche, `coal_sync_srmc_tranche`, armed on this
+keeper) returns a hard-coded **1.0** and never consults `passthrough_by_supply` at
+all — by construction, because it bids its full SRMC while the contracted share is
+carried by the fuel-free `_mustrun` band beside it. So a bituminous `_sync` row is
+**tagged bituminous, carries a non-zero passthrough, and yet cannot move** when
+`ceil` changes. Under the clause as first written it would land in
+`predicted_not_moved` and fail the "equals exactly" reading of limb A — an arm killed
+for the routing behaving exactly as its own code says it must. That is the same class
+of gate mis-specification this card was chartered to correct (§4.1); catching it in
+my own gate before the solve is the point of writing gates down first.
+
+**The amendment.** Limb A's predicted DIRECT set is:
+
+> every LP row whose generator carries the `coal_supply` tag `bituminous` **and**
+> whose `unit_id` ends in neither `_mustrun` (fuel-free / take-or-pay sunk,
+> `legacy_bins.py:451`) nor `_sync` (passthrough pinned at 1.0 by construction,
+> `legacy_bins.py:449`).
+
+Both exclusions are read off the routing code, cited by line, and neither is
+selected by an outcome. **The gate is otherwise unchanged and reads exactly as
+before:** the set of rows with `Δmc ≠ 0` must equal this set exactly — zero
+unpredicted rows moving, and zero predicted rows failing to move.
+
+**This makes the gate HARDER, not looser.** It removes two known-inert row families
+from the prediction, so the surviving prediction is a tighter claim: every remaining
+predicted row must now actually move, with no benign-non-mover left to absorb a
+mistake. A mis-tagged plant, a supply-stem collision, or an overlay re-reading the
+sigmoid elsewhere still fails it, exactly as before.
+
+**Nothing else moves.** S1, S2, S3, S4-B, S4-C, S5, the kill rule, the candidate
+value 1.0, the anti-sweep clause, the screen year and the control are all unchanged.
+
+---
+
+## ADDENDUM A — S5's control baseline, fixed before the arm exists
+
+Scored from **committed artifacts only**, no solve:
+`scripts/calibration_verdict.py --run-id 2026-09-07-pjm-2022-2021-touchpoints --years 2022`
+(rubric v3.6; span-restricted to 2022, so it is the control year's own verdict and
+not the touchpoint bundle's registered full-span determination).
+
+| criterion | tier | **control 2022** | in S5's protected set? |
+|---|---|---|---|
+| C1 fuel-mix | load-bearing | **FAIL** (`CC_REGULAR +22.02 TWh`, share +1.7 pp) | no — already failing |
+| C2 system volume | load-bearing | **PASS** | **YES** |
+| C3a mean LMP | load-bearing | **PASS** | **YES** |
+| C3b price duration/shape | load-bearing | **FAIL** (NRMSE 0.257) | no — already failing |
+| C3c price tail / scarcity | supporting | CAVEAT, ledgered (rubric v3.6 holdout clause) | no — not a PASS |
+| C4 dispatch correlation | supporting | **PASS** | **YES** |
+| C6 governance | protective | **PASS** | **YES** |
+| C8 forced-energy share | protective | **PASS** | **YES** |
+| C5a CO2 | reported-only | PASS +5.0 % | no — contributes no status |
+
+**S5's protected set is therefore `{C2, C3a, C4, C6, C8}`**, fixed here, before any
+arm number exists. S5 FAILs iff any of those five reads FAIL on the arm's 2022.
+
+**C1 and C3b are deliberately OUTSIDE the protected set** because they already FAIL
+on the control — and this is the direction that costs the arm, not the one that
+flatters it. S5 cannot be satisfied by C1 or C3b *improving*, and it is not
+weakened by them worsening: they are **reported at full magnitude in the RESULT and
+gate nothing either way** (§5). The control determination for 2022 is **NOT-YET**,
+and rule 30(c) governs regardless: a held-out year never downgrades PJM, whose
+headline stays CALIBRATED on the 2023–2025 train tier.
