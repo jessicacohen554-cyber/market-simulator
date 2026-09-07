@@ -1,4 +1,4 @@
-# Scenario matrix -- MISO -- miso_scenario_campaign_matrix_a6b9ed6639
+# Scenario matrix -- MISO -- miso_scenario_campaign_matrix_982d651e2b
 
 **DETERMINISTIC SCENARIO RANGE -- NOT A PROBABILITY BAND**
 
@@ -8,9 +8,9 @@
 
 | Case | Cache key |
 |---|---|
-| LOAD-HI | `6f4fff944c9b5528` |
-| LOAD-HI-ORGANIC | `eca5bcfb14a379ad` |
-| REF | `b08a51a33ab6bb9d` |
+| LOAD-HI | `9688b06c1b0a5a54` |
+| LOAD-HI-ORGANIC | `b87deb7735c242a0` |
+| REF | `f1b3caa22b3f14ff` |
 
 ## Emissions trajectory (Mt CO2)
 
@@ -18,9 +18,9 @@
 |---|---|---|---|
 | 2026 | 387.04 | 387.04 | 368.54 |
 | 2027 | 406.90 | 406.85 | 371.17 |
-| 2028 | 434.06 | 433.67 | 382.43 |
-| 2029 | 458.01 | 457.31 | 390.09 |
-| 2030 | 485.50 | 485.43 | 412.63 |
+| 2028 | 432.73 | 432.34 | 381.30 |
+| 2029 | 455.13 | 454.43 | 387.94 |
+| 2030 | 482.62 | 482.55 | 410.20 |
 
 ## Envelope (min/max across cases)
 
@@ -28,6 +28,6 @@
 |---|---|---|
 | 2026 | 368.54 (REF) | 387.04 (LOAD-HI) |
 | 2027 | 371.17 (REF) | 406.90 (LOAD-HI) |
-| 2028 | 382.43 (REF) | 434.06 (LOAD-HI) |
-| 2029 | 390.09 (REF) | 458.01 (LOAD-HI) |
-| 2030 | 412.63 (REF) | 485.50 (LOAD-HI) |
+| 2028 | 381.30 (REF) | 432.73 (LOAD-HI) |
+| 2029 | 387.94 (REF) | 455.13 (LOAD-HI) |
+| 2030 | 410.20 (REF) | 482.62 (LOAD-HI) |

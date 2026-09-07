@@ -1,4 +1,4 @@
-# Scenario delta report — MISO — miso_scenario_campaign_matrix_a6b9ed6639
+# Scenario delta report — MISO — miso_scenario_campaign_matrix_982d651e2b
 
 **deterministic scenario range -- NOT a probability band** — deltas are
 case-vs-`REF` differences on one deterministic case set,
@@ -8,9 +8,9 @@ not a probability statement. Dollars are real 2026$.
 
 | Case | Cache key | Reference? |
 |---|---|---|
-| LOAD-HI | `6f4fff944c9b5528` |  |
-| LOAD-HI-ORGANIC | `eca5bcfb14a379ad` |  |
-| REF | `b08a51a33ab6bb9d` | **REF** |
+| LOAD-HI | `9688b06c1b0a5a54` |  |
+| LOAD-HI-ORGANIC | `b87deb7735c242a0` |  |
+| REF | `f1b3caa22b3f14ff` | **REF** |
 
 ## Headline deltas vs `REF` (final cached year)
 
@@ -18,9 +18,9 @@ Final cached year on disk: **2030**.
 
 | case | emissions_mt | emissions_mt_delta | import_co2_mt_reported | unserved_mwh | backstop_built_mw | backstop_built_mwh | avg_price_usd_per_mwh | avg_price_usd_per_mwh_delta | curtailment_twh | clean_share |
 |---|---|---|---|---|---|---|---|---|---|---|
-| LOAD-HI | 485.496 | 72.862 | 0.000 | 42391105.879 | 16098.800 | 0.000 | 992.680 | 810.940 | 0.000 | 0.225 |
-| LOAD-HI-ORGANIC | 485.428 | 72.793 | 0.000 | 42007362.791 | 16098.800 | 0.000 | 954.300 | 772.560 | 0.000 | 0.225 |
-| REF | 412.634 | 0.000 | 0.000 | 2824183.485 | 16098.800 | 0.000 | 181.740 | 0.000 | 0.000 | 0.252 |
+| LOAD-HI | 482.618 | 72.416 | 0.000 | 42391105.879 | 16098.800 | 0.000 | 992.680 | 810.940 | 0.000 | 0.227 |
+| LOAD-HI-ORGANIC | 482.549 | 72.348 | 0.000 | 42007362.791 | 16098.800 | 0.000 | 954.300 | 772.560 | 0.000 | 0.227 |
+| REF | 410.201 | 0.000 | 0.000 | 2824183.485 | 16098.800 | 0.000 | 181.740 | 0.000 | 0.000 | 0.255 |
 
 ## Cumulative CO2 delta vs `REF` (Mt)
 
@@ -28,8 +28,8 @@ Running sum of the per-year CO2 delta, through **2030**.
 
 | case | year | cumulative_emissions_mt_delta |
 |---|---|---|
-| LOAD-HI | 2030 | 246.631 |
-| LOAD-HI-ORGANIC | 2030 | 245.430 |
+| LOAD-HI | 2030 | 245.261 |
+| LOAD-HI-ORGANIC | 2030 | 244.061 |
 | REF | 2030 | 0.000 |
 
 ## By-fuel deltas (final year)
@@ -37,34 +37,34 @@ Running sum of the per-year CO2 delta, through **2030**.
 | case | fuel | capacity_gw_delta | generation_twh_delta | emissions_mt_delta |
 |---|---|---|---|---|
 | LOAD-HI | biomass | 0.000 | 0.072 | 0.033 |
-| LOAD-HI | gas_cc | -0.150 | 17.552 | 7.044 |
-| LOAD-HI | gas_cc_ccs | 0.150 | 1.214 | 0.702 |
-| LOAD-HI | gas_ct | 0.000 | 61.023 | 40.229 |
-| LOAD-HI | gas_st | 0.000 | 20.135 | 12.315 |
+| LOAD-HI | gas_cc | -0.104 | 17.909 | 7.250 |
+| LOAD-HI | gas_cc_ccs | 0.104 | 0.855 | 0.049 |
+| LOAD-HI | gas_ct | 0.000 | 61.028 | 40.231 |
+| LOAD-HI | gas_st | 0.000 | 20.134 | 12.314 |
 | LOAD-HI | oil | 0.000 | 12.579 | 12.538 |
 | LOAD-HI-ORGANIC | biomass | 0.000 | 0.072 | 0.033 |
-| LOAD-HI-ORGANIC | gas_cc | -0.150 | 18.467 | 7.430 |
-| LOAD-HI-ORGANIC | gas_cc_ccs | 0.150 | 1.214 | 0.702 |
-| LOAD-HI-ORGANIC | gas_ct | 0.000 | 60.580 | 39.774 |
-| LOAD-HI-ORGANIC | gas_st | 0.000 | 21.212 | 12.896 |
+| LOAD-HI-ORGANIC | gas_cc | -0.104 | 18.824 | 7.635 |
+| LOAD-HI-ORGANIC | gas_cc_ccs | 0.104 | 0.855 | 0.049 |
+| LOAD-HI-ORGANIC | gas_ct | 0.000 | 60.585 | 39.776 |
+| LOAD-HI-ORGANIC | gas_st | 0.000 | 21.210 | 12.895 |
 | LOAD-HI-ORGANIC | oil | 0.000 | 12.003 | 11.959 |
 
 ## By-zone CO2 deltas (final year, Mt)
 
 | case | zone | emissions_mt | emissions_mt_delta |
 |---|---|---|---|
-| LOAD-HI | MISO-East | 103.981 | 20.725 |
-| LOAD-HI | MISO-Illinois | 48.824 | 5.596 |
-| LOAD-HI | MISO-Indiana | 88.351 | 9.057 |
-| LOAD-HI | MISO-Plains | 72.529 | 11.063 |
-| LOAD-HI | MISO-South | 119.946 | 18.196 |
-| LOAD-HI | MISO-West | 51.865 | 8.226 |
+| LOAD-HI | MISO-East | 103.981 | 20.724 |
+| LOAD-HI | MISO-Illinois | 48.824 | 5.600 |
+| LOAD-HI | MISO-Indiana | 87.339 | 8.641 |
+| LOAD-HI | MISO-Plains | 70.663 | 11.028 |
+| LOAD-HI | MISO-South | 119.946 | 18.197 |
+| LOAD-HI | MISO-West | 51.865 | 8.225 |
 | LOAD-HI-ORGANIC | MISO-East | 103.206 | 19.950 |
-| LOAD-HI-ORGANIC | MISO-Illinois | 48.548 | 5.319 |
-| LOAD-HI-ORGANIC | MISO-Indiana | 88.142 | 8.848 |
-| LOAD-HI-ORGANIC | MISO-Plains | 71.921 | 10.455 |
-| LOAD-HI-ORGANIC | MISO-South | 121.995 | 20.245 |
-| LOAD-HI-ORGANIC | MISO-West | 51.615 | 7.976 |
+| LOAD-HI-ORGANIC | MISO-Illinois | 48.548 | 5.324 |
+| LOAD-HI-ORGANIC | MISO-Indiana | 87.129 | 8.432 |
+| LOAD-HI-ORGANIC | MISO-Plains | 70.055 | 10.420 |
+| LOAD-HI-ORGANIC | MISO-South | 121.995 | 20.246 |
+| LOAD-HI-ORGANIC | MISO-West | 51.615 | 7.975 |
 
 ## Capacity-evolution deltas vs `REF` (ledger totals, MW)
 
@@ -83,7 +83,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI | retirement | gas_st | 1855.8 | 0.0 |
 | LOAD-HI | retirement | nuclear | 617.0 | 0.0 |
 | LOAD-HI | retirement | oil | 119.0 | 0.0 |
-| LOAD-HI | retrofit | gas_cc_ccs | 484.1 | 149.7 |
+| LOAD-HI | retrofit | gas_cc_ccs | 721.9 | 103.8 |
 | LOAD-HI-ORGANIC | build | gas_cc | 3722.0 | 0.0 |
 | LOAD-HI-ORGANIC | build | gas_ct | 18129.6 | 0.0 |
 | LOAD-HI-ORGANIC | build | iron_air | 9600.0 | 0.0 |
@@ -97,7 +97,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | LOAD-HI-ORGANIC | retirement | gas_st | 1855.8 | 0.0 |
 | LOAD-HI-ORGANIC | retirement | nuclear | 617.0 | 0.0 |
 | LOAD-HI-ORGANIC | retirement | oil | 119.0 | 0.0 |
-| LOAD-HI-ORGANIC | retrofit | gas_cc_ccs | 484.1 | 149.7 |
+| LOAD-HI-ORGANIC | retrofit | gas_cc_ccs | 721.9 | 103.8 |
 | REF | build | gas_cc | 3722.0 | 0.0 |
 | REF | build | gas_ct | 18129.6 | 0.0 |
 | REF | build | iron_air | 9600.0 | 0.0 |
@@ -111,7 +111,7 @@ Running sum of the per-year CO2 delta, through **2030**.
 | REF | retirement | gas_st | 1855.8 | 0.0 |
 | REF | retirement | nuclear | 617.0 | 0.0 |
 | REF | retirement | oil | 119.0 | 0.0 |
-| REF | retrofit | gas_cc_ccs | 334.5 | 0.0 |
+| REF | retrofit | gas_cc_ccs | 618.1 | 0.0 |
 
 ## Notes & definitions
 
