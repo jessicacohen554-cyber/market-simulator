@@ -1,0 +1,164 @@
+{
+ "probe": "miso-235 addendum \u2014 residual character (price-coherent vs non-price)",
+ "addendum": "results/calibration/ADDENDUM-miso235-residual-character-2026-09-07.md",
+ "keeper": "2026-09-07-miso-233-spp-hourly",
+ "zero_lp": true,
+ "bars": {
+  "corr_ratio": 2.0,
+  "r2_model_own_driver": 0.9,
+  "r2_measured": 0.6
+ },
+ "years": {
+  "2023": {
+   "PJM": {
+    "prereg_headline_restated": "NEITHER",
+    "s1_corr_resid_model_vs_P": -0.3243,
+    "s1_corr_resid_measured_vs_P": -0.126,
+    "s1_ratio": 2.574,
+    "s2_r2_model_on_own_clearing_spread": 0.4946,
+    "s2_r2_measured_on_measured_spread": 0.0577,
+    "s3_model_sigma_mw": 1528.6,
+    "s3_model_sigma_explained_by_own_driver_mw": 1075.1,
+    "s3_model_sigma_explained_pct": 70.3,
+    "qualifies_price_coherent_residual": false
+   },
+   "SPP": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": -0.0244,
+    "s1_corr_resid_measured_vs_P": -0.1141,
+    "s1_ratio": 0.214,
+    "s2_r2_model_on_own_clearing_spread": 0.4107,
+    "s2_r2_measured_on_measured_spread": 0.0017,
+    "s3_model_sigma_mw": 279.5,
+    "s3_model_sigma_explained_by_own_driver_mw": 179.1,
+    "s3_model_sigma_explained_pct": 64.1,
+    "qualifies_price_coherent_residual": false
+   },
+   "South": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": 0.1201,
+    "s1_corr_resid_measured_vs_P": -0.0002,
+    "s1_ratio": 596.18,
+    "s2_r2_model_on_own_clearing_spread": 0.8751,
+    "s2_r2_measured_on_measured_spread": 0.0008,
+    "s3_model_sigma_mw": 414.2,
+    "s3_model_sigma_explained_by_own_driver_mw": 387.5,
+    "s3_model_sigma_explained_pct": 93.5,
+    "qualifies_price_coherent_residual": false
+   },
+   "Manitoba": {
+    "prereg_headline_restated": "NEITHER",
+    "s1_corr_resid_model_vs_P": 0.0745,
+    "s1_corr_resid_measured_vs_P": 0.0207,
+    "s1_ratio": 3.605,
+    "s2_r2_model_on_own_clearing_spread": 0.4333,
+    "s2_r2_measured_on_measured_spread": 0.0988,
+    "s3_model_sigma_mw": 515.7,
+    "s3_model_sigma_explained_by_own_driver_mw": 339.4,
+    "s3_model_sigma_explained_pct": 65.8,
+    "qualifies_price_coherent_residual": false
+   }
+  },
+  "2024": {
+   "PJM": {
+    "prereg_headline_restated": "NEITHER",
+    "s1_corr_resid_model_vs_P": -0.3143,
+    "s1_corr_resid_measured_vs_P": -0.1234,
+    "s1_ratio": 2.547,
+    "s2_r2_model_on_own_clearing_spread": 0.2726,
+    "s2_r2_measured_on_measured_spread": 0.0701,
+    "s3_model_sigma_mw": 1652.2,
+    "s3_model_sigma_explained_by_own_driver_mw": 862.6,
+    "s3_model_sigma_explained_pct": 52.2,
+    "qualifies_price_coherent_residual": false
+   },
+   "SPP": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": 0.0087,
+    "s1_corr_resid_measured_vs_P": -0.1062,
+    "s1_ratio": 0.082,
+    "s2_r2_model_on_own_clearing_spread": 0.1826,
+    "s2_r2_measured_on_measured_spread": 0.0004,
+    "s3_model_sigma_mw": 276.6,
+    "s3_model_sigma_explained_by_own_driver_mw": 118.2,
+    "s3_model_sigma_explained_pct": 42.7,
+    "qualifies_price_coherent_residual": false
+   },
+   "South": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": 0.1223,
+    "s1_corr_resid_measured_vs_P": -0.0135,
+    "s1_ratio": 9.088,
+    "s2_r2_model_on_own_clearing_spread": 0.3755,
+    "s2_r2_measured_on_measured_spread": 0.0035,
+    "s3_model_sigma_mw": 495.7,
+    "s3_model_sigma_explained_by_own_driver_mw": 303.8,
+    "s3_model_sigma_explained_pct": 61.3,
+    "qualifies_price_coherent_residual": false
+   },
+   "Manitoba": {
+    "prereg_headline_restated": "NEITHER",
+    "s1_corr_resid_model_vs_P": 0.1227,
+    "s1_corr_resid_measured_vs_P": 0.0495,
+    "s1_ratio": 2.479,
+    "s2_r2_model_on_own_clearing_spread": 0.125,
+    "s2_r2_measured_on_measured_spread": 0.035,
+    "s3_model_sigma_mw": 486.7,
+    "s3_model_sigma_explained_by_own_driver_mw": 172.0,
+    "s3_model_sigma_explained_pct": 35.4,
+    "qualifies_price_coherent_residual": false
+   }
+  },
+  "2025": {
+   "PJM": {
+    "prereg_headline_restated": "NEITHER",
+    "s1_corr_resid_model_vs_P": -0.2858,
+    "s1_corr_resid_measured_vs_P": -0.0621,
+    "s1_ratio": 4.599,
+    "s2_r2_model_on_own_clearing_spread": 0.5302,
+    "s2_r2_measured_on_measured_spread": 0.0375,
+    "s3_model_sigma_mw": 1633.9,
+    "s3_model_sigma_explained_by_own_driver_mw": 1189.8,
+    "s3_model_sigma_explained_pct": 72.8,
+    "qualifies_price_coherent_residual": false
+   },
+   "SPP": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": -0.0589,
+    "s1_corr_resid_measured_vs_P": 0.0539,
+    "s1_ratio": 1.093,
+    "s2_r2_model_on_own_clearing_spread": 0.3893,
+    "s2_r2_measured_on_measured_spread": 0.0025,
+    "s3_model_sigma_mw": 250.3,
+    "s3_model_sigma_explained_by_own_driver_mw": 156.2,
+    "s3_model_sigma_explained_pct": 62.4,
+    "qualifies_price_coherent_residual": false
+   },
+   "South": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": -0.0209,
+    "s1_corr_resid_measured_vs_P": -0.0204,
+    "s1_ratio": 1.027,
+    "s2_r2_model_on_own_clearing_spread": 0.3886,
+    "s2_r2_measured_on_measured_spread": 0.0198,
+    "s3_model_sigma_mw": 385.9,
+    "s3_model_sigma_explained_by_own_driver_mw": 240.6,
+    "s3_model_sigma_explained_pct": 62.3,
+    "qualifies_price_coherent_residual": false
+   },
+   "Manitoba": {
+    "prereg_headline_restated": "MISSING_NON_PRICE_VARIATION",
+    "s1_corr_resid_model_vs_P": -0.0012,
+    "s1_corr_resid_measured_vs_P": 0.0171,
+    "s1_ratio": 0.069,
+    "s2_r2_model_on_own_clearing_spread": 0.3438,
+    "s2_r2_measured_on_measured_spread": 0.0394,
+    "s3_model_sigma_mw": 302.9,
+    "s3_model_sigma_explained_by_own_driver_mw": 177.6,
+    "s3_model_sigma_explained_pct": 58.6,
+    "qualifies_price_coherent_residual": false
+   }
+  }
+ },
+ "qualified_seams_all_years": []
+}
