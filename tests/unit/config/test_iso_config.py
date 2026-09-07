@@ -473,68 +473,49 @@ class TestISOConfig(unittest.TestCase):
 
     # --- SPP (registered 2026-09-06, lane SPP-20; owner rulings P1-P11) -----
 
-    def test_spp_has_three_zones(self):
-        """SPP defines the P1 North / South seam plus the SPP-57 Oklahoma pocket.
+    def test_spp_has_two_zones(self):
+        """SPP defines the two P1-ruled zones, North and South, and nothing else.
 
         No import node (plan §7 G7): the served EIA-930 schedule and the
         default-off neighbour blocks represent the seams.
         """
         spp = get_iso_config("SPP")
-        self.assertEqual(spp.n_zones, 3)
-        self.assertEqual(
-            set(spp.zone_names), {"SPP-North", "SPP-Oklahoma", "SPP-South"}
-        )
+        self.assertEqual(spp.n_zones, 2)
+        self.assertEqual(set(spp.zone_names), {"SPP-North", "SPP-South"})
 
     def test_spp_validates(self):
         """SPP topology passes the consistency check (Stage A)."""
         get_iso_config("SPP").validate_topology()
 
     def test_spp_load_shares_are_the_measured_sub_ba_split(self):
-        """Shares = the measured 2023-2025 EIA-930 sub-BA energy split with the
-        CSWS row split by the EIA-861 PSO/SWEPCO ratio (SPP-57 PRECOMMIT §2.2);
-        North is byte-identical to SPP-20's 0.5125 — the pocket is carved out
-        of the former South alone; sum 1.0."""
+        """Shares = the measured 2023-2025 EIA-930 sub-BA energy split, sum 1.0."""
         spp = get_iso_config("SPP")
         shares = {z.name: z.load_share for z in spp.zones}
-        self.assertEqual(
-            shares, {"SPP-North": 0.5125, "SPP-Oklahoma": 0.2830, "SPP-South": 0.2045}
-        )
+        self.assertEqual(shares, {"SPP-North": 0.5125, "SPP-South": 0.4875})
         self.assertAlmostEqual(sum(shares.values()), 1.0)
 
-    def test_spp_chain_links_carry_the_spp57b_fcitc_ttcs(self):
-        """Two symmetric links in a chain, both SPP-53's FCITC construction,
-        each rated by ONE flowgate group (lane SPP-57b).
+    def test_spp_single_link_carries_the_spp53_corridor_ttc(self):
+        """One symmetric N<->S link whose TTC is SPP-53's derived corridor limit.
 
-        N<->OK 3,400 MW is the `n_s_corridor` group alone — SPP-53's own
-        reading, carried unchanged (its dependent is the Nebraska-to-
-        central-Oklahoma hub pair, so it IS a North<->Oklahoma capability).
-        OK<->S 10,700 MW is the `sps_tie` group alone (SPPSPSTIES / SPSNMTIES
-        / Potter County) on the residual-South-minus-Oklahoma spread, the
-        binding-hours-weighted median of its four OK->S-identified
-        constituents (PRECOMMIT-spp-57b-2026-09-07.md §3, FINDING-spp-57b
-        §2). The `oklahoma_internal` group is EXCLUDED from both sets: its
-        elements identify on both spreads (SPP-57 §3.3), so they are the
-        intra-pocket object, not a link — SPP-57's union-rated 6,500 / 6,700
-        were both inert. The SPP-53 direct N<->S link is RETIRED, not
-        re-rated. The bound assertions pin the property SPP-20's placeholder
-        lacked: each link sits below its residual-blind B_plaus (North
-        23,300 MW; Oklahoma 11,085 MW), so it CAN bind. A change here is a
-        re-derivation from source data (rule 23), never a residual tune.
+        3,400 MW is the binding-hours-weighted median first-contingency
+        transfer of the corridor's identified flowgates, built from SPP's own
+        2026 effective limits and a shift-factor identification on SPP's own
+        2023-25 prices (owner ruling P13; docs/handoffs/PRECOMMIT-spp-53-
+        2026-09-07.md §2.1, FINDING-spp-53-2026-09-07.md §4). It replaced
+        SPP-20's 48,700 MW Tier-3 placeholder, which could not bind. The
+        second assertion pins the property the placeholder lacked: the link
+        sits below the residual-blind bound B_plaus = 23,300 MW (North
+        non-gas capability minus North minimum load), so it CAN bind. A
+        change here is a re-derivation from source data (rule 23), never a
+        residual tune.
         """
         spp = get_iso_config("SPP")
-        self.assertEqual(spp.n_links, 2)
-        pairs = {(link.from_zone, link.to_zone): link for link in spp.links}
-        self.assertEqual(
-            set(pairs),
-            {("SPP-North", "SPP-Oklahoma"), ("SPP-Oklahoma", "SPP-South")},
-        )
-        n_ok = pairs[("SPP-North", "SPP-Oklahoma")]
-        ok_s = pairs[("SPP-Oklahoma", "SPP-South")]
-        self.assertTrue(n_ok.is_bidirectional and ok_s.is_bidirectional)
-        self.assertEqual(n_ok.ttc_mw, 3400.0)
-        self.assertEqual(ok_s.ttc_mw, 10700.0)
-        self.assertLess(n_ok.ttc_mw, 23300.0)
-        self.assertLess(ok_s.ttc_mw, 11085.0)
+        self.assertEqual(spp.n_links, 1)
+        link = spp.links[0]
+        self.assertEqual((link.from_zone, link.to_zone), ("SPP-North", "SPP-South"))
+        self.assertTrue(link.is_bidirectional)
+        self.assertEqual(link.ttc_mw, 3400.0)
+        self.assertLess(link.ttc_mw, 23300.0)
         self.assertEqual(spp.interface_limits, [])
 
     def test_spp_voll_is_2000(self):

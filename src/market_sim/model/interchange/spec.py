@@ -1307,14 +1307,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             marginal_heat_rate=13.51,
             hurdle=2.0,
             interface_limit_mw=820.0,
-            # Border zones since the SPP-57 three-zone topology (2026-09-07):
-            # the DC-North tie (Oklaunion, 220 MW) lands on the Lawton, OK side
-            # (SPP-Oklahoma) and the DC-East tie (Monticello, 600 MW) on the
-            # SWEPCO east-Texas side (the residual SPP-South), so P3's "border
-            # SPP-South" splits across the two bubbles the old South became.
-            # Default-off (reference_price_interface is off for SPP), so this
-            # is dispatch-inert for every SPP keeper until SPP-51 arms it.
-            border_zones=("SPP-Oklahoma", "SPP-South"),
+            border_zones=("SPP-South",),
             load_shape_exponent=1.0,
         ),
     ],

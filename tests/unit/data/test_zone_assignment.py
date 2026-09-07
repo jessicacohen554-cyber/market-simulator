@@ -614,9 +614,8 @@ def test_pjm_fleet_loads():
 def test_spp_state_mapping():
     """SPP zones are exact unions of whole states along the KS/OK and MO/AR lines.
 
-    North = ND SD NE MN MT IA KS MO CO; Oklahoma = OK (the SPP-57 pocket,
-    2026-09-07); South = TX NM AR LA (docs/multi-iso/spp-data-audit.md §5 rows
-    4/5; PRECOMMIT-spp-57 §2.1; WY deliberately absent).
+    North = ND SD NE MN MT IA KS MO CO; South = OK TX NM AR LA
+    (docs/multi-iso/spp-data-audit.md §5 rows 4/5; WY deliberately absent).
     """
     north = {
         "38": "ND",
@@ -629,10 +628,9 @@ def test_spp_state_mapping():
         "29": "MO",
         "8": "CO",
     }
-    south = {"48": "TX", "35": "NM", "5": "AR", "22": "LA"}
+    south = {"40": "OK", "48": "TX", "35": "NM", "5": "AR", "22": "LA"}
     for fips in north:
         assert assign_zone_by_fips(fips, None, "SPP") == "SPP-North", north[fips]
-    assert assign_zone_by_fips("40", None, "SPP") == "SPP-Oklahoma"  # OK
     for fips in south:
         assert assign_zone_by_fips(fips, None, "SPP") == "SPP-South", south[fips]
 
@@ -653,16 +651,9 @@ def test_spp_unmapped_state_falls_back_to_north():
 
 
 def test_spp_coords_fallback_splits_at_the_kansas_oklahoma_line():
-    """Coords-only callers split at 37.0 N (the KS/OK state line), then at the
-    Oklahoma state box inside the South tier (SPP-57)."""
-    assert assign_zone_by_coords(35.5, -97.5, "SPP") == "SPP-Oklahoma"  # Oklahoma City
-    assert assign_zone_by_coords(36.9, -99.0, "SPP") == "SPP-Oklahoma"  # OK Panhandle
-    assert assign_zone_by_coords(36.2, -95.9, "SPP") == "SPP-Oklahoma"  # Tulsa
-    assert assign_zone_by_coords(35.2, -101.8, "SPP") == "SPP-South"  # Amarillo (SPS)
-    assert (
-        assign_zone_by_coords(32.5, -93.7, "SPP") == "SPP-South"
-    )  # Shreveport (SWEPCO)
-    assert assign_zone_by_coords(35.4, -94.4, "SPP") == "SPP-South"  # Fort Smith AR
+    """Coords-only callers split at 37.0 N (the KS/OK state line)."""
+    assert assign_zone_by_coords(35.5, -97.5, "SPP") == "SPP-South"  # Oklahoma City
+    assert assign_zone_by_coords(36.9, -99.0, "SPP") == "SPP-South"  # OK Panhandle
     assert assign_zone_by_coords(37.1, -97.3, "SPP") == "SPP-North"  # south Kansas
     assert assign_zone_by_coords(41.3, -96.0, "SPP") == "SPP-North"  # Omaha
 
@@ -676,8 +667,8 @@ def test_spp_known_plants_resolve_to_expected_zones():
         6068: "SPP-North",  # Jeffrey Energy Center (Kansas)
         6065: "SPP-North",  # Iatan (Missouri)
         6469: "SPP-North",  # Antelope Valley (North Dakota)
-        6095: "SPP-Oklahoma",  # Sooner (Oklahoma)
-        2952: "SPP-Oklahoma",  # Muskogee (Oklahoma)
+        6095: "SPP-South",  # Sooner (Oklahoma)
+        2952: "SPP-South",  # Muskogee (Oklahoma)
         6194: "SPP-South",  # Tolk (Texas Panhandle, SPS)
         6138: "SPP-South",  # Flint Creek (Arkansas)
         2454: "SPP-South",  # Cunningham (New Mexico)
@@ -691,6 +682,6 @@ def test_spp_every_plant_resolves():
     lookup = build_zone_lookup("SPP")
     # 828 EIA-860 SWPP plants (715 with operable generators) + eGRID 2023 rows.
     assert len(lookup) > 700
-    valid = {"SPP-North", "SPP-Oklahoma", "SPP-South"}
+    valid = {"SPP-North", "SPP-South"}
     assert set(lookup.values()) <= valid
     assert valid <= set(lookup.values())

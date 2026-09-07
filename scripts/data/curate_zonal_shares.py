@@ -503,16 +503,6 @@ def parse_neiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 # SPRM, the other Missouri-Kansas members, all North.  Nothing here re-decides
 # it; the paragraph exists so a reader does not have to reconstruct why RESZONE
 # 4 membership is not evidence to the contrary.
-#
-# THREE ZONES since 2026-09-07 (lane SPP-57, P1's first ranked lever; design
-# in docs/handoffs/PRECOMMIT-spp-57-2026-09-07.md §2): the Oklahoma pocket
-# ``SPP-Oklahoma`` = OKGE + GRDA + WFEC + the Oklahoma (PSO) share of CSWS; the
-# residual ``SPP-South`` = SPS + the SWEPCO share of CSWS. CSWS is the ONE
-# sub-BA that straddles the new seam — AEP West spans Oklahoma (PSO) and
-# Arkansas / Louisiana / east Texas (SWEPCO) and EIA-930 reports it as one
-# series — so it is NOT in this dict: its MW row is split by
-# :data:`_SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR` before the grouping (see
-# :func:`_spp_csws_oklahoma_share`). Every other token maps whole.
 _SPP_SUBBA_ZONE_GROUPS: dict[str, str] = {
     # --- North (12 sub-BAs): Nebraska / Dakotas / Missouri / Kansas ----------
     "EDE": "SPP-North",  # Empire District Electric (MO) — see the note above
@@ -527,59 +517,13 @@ _SPP_SUBBA_ZONE_GROUPS: dict[str, str] = {
     "SPRM": "SPP-North",  # City of Springfield (MO)
     "WAUE": "SPP-North",  # WAPA Upper Great Plains East (ND/SD/MN)
     "WR": "SPP-North",  # Westar Energy (KS)
-    # --- Oklahoma pocket (3 whole sub-BAs + the PSO share of CSWS) -----------
-    "GRDA": "SPP-Oklahoma",  # Grand River Dam Authority (OK)
-    "OKGE": "SPP-Oklahoma",  # Oklahoma Gas and Electric (OK)
-    "WFEC": "SPP-Oklahoma",  # Western Farmers Electric Cooperative (OK; NM fleet -> South)
-    # --- residual South (1 whole sub-BA + the SWEPCO share of CSWS) ----------
+    # --- South (5 sub-BAs): Oklahoma / Texas Panhandle / western Arkansas ----
+    "CSWS": "SPP-South",  # AEP West (OK/AR/LA/TX)
+    "GRDA": "SPP-South",  # Grand River Dam Authority (OK)
+    "OKGE": "SPP-South",  # Oklahoma Gas and Electric (OK)
     "SPS": "SPP-South",  # Southwestern Public Service (TX Panhandle / NM)
+    "WFEC": "SPP-South",  # Western Farmers Electric Cooperative (OK)
 }
-
-# The straddling sub-BA and the zone its Oklahoma share lands in.
-_SPP_SPLIT_SUBBA: str = "CSWS"  # AEP West = PSO (OK) + SWEPCO (AR/LA/TX)
-_SPP_SPLIT_ZONES: tuple[str, str] = ("SPP-Oklahoma", "SPP-South")
-
-# Oklahoma share of the CSWS sub-BA load, by data year — a MEASURED value under
-# rule 14's misalignment clause (SPP-57 PRECOMMIT §2.2, declared before the
-# source was read): PSO retail sales / (PSO + SWEPCO retail sales), EIA-861
-# ``Sales_Ult_Cust_<year>`` (utility 15474 Public Service Co of Oklahoma, OK;
-# utility 17698 Southwestern Electric Power Co, AR + LA + TX), TOTAL MWh —
-# data/raw/eia-861/sales_ult_cust_aep_west_2023-2024.csv:
-#   2023: 18,421,783 / (18,421,783 + 16,894,653) = 0.5216
-#   2024: 19,127,158 / (19,127,158 + 16,404,504) = 0.5383
-# A year absent from the table takes the LAST published year (hold-last, the
-# rule declared ex ante): 2025 reads 0.5383 until EIA-861 2025 is published.
-# Stated misalignment: the CSWS sub-BA also carries non-AEP load (AECC / ETEC /
-# OMPA / GSEC) whose MW are not separately published, so the AEP retail split
-# is applied to the whole sub-BA; the direction of that bias is unknown and is
-# not adjusted. Zero free parameters: nothing here is tuned to a residual.
-_SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR: dict[int, float] = {
-    2023: 0.5216,
-    2024: 0.5383,
-}
-
-
-def _spp_csws_oklahoma_share(year: int) -> float:
-    """Return the Oklahoma (PSO) share of the CSWS sub-BA load for ``year``.
-
-    Reads :data:`_SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR`; a year after the last
-    published row takes that row (hold-last), and a year before the first row
-    takes the first (the rule-22 back years, where EIA-861 is published but not
-    yet transcribed — a visible, single-valued fallback rather than a silent
-    zero).
-
-    Args:
-        year: Calendar year of the demand series being split.
-
-    Returns:
-        The share in [0, 1] of the CSWS MW that lands in ``SPP-Oklahoma``.
-    """
-    years = sorted(_SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR)
-    if year in _SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR:
-        return _SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR[year]
-    if year > years[-1]:
-        return _SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR[years[-1]]
-    return _SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR[years[0]]
 
 
 def _spp_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None:
@@ -620,10 +564,8 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     Reads the combined multi-year file
     ``data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv`` (and
     the per-year back-files ``spp_subba_demand_<year>.csv`` that lane SPP-15
-    landed for 2019-2022), filters to ``year``, maps the 17 sub-BAs to the three
-    model zones via :data:`_SPP_SUBBA_ZONE_GROUPS` — the straddling ``CSWS``
-    row split by :func:`_spp_csws_oklahoma_share` first — and normalises each
-    hour.
+    landed for 2019-2022), filters to ``year``, maps the 17 sub-BAs to the two
+    model zones via :data:`_SPP_SUBBA_ZONE_GROUPS`, and normalises each hour.
     The UTC ``period`` column is mapped to the model's local hour-of-year
     through SPP's own hourly frame (:func:`_spp_utc_to_local_hoy`) so zonal
     shapes index the same wall-clock hour as renewable CF.
@@ -651,10 +593,7 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         logger.warning("SPP sub-BA load file not found (%s); skipping", path)
         return None
     df = pd.read_csv(path, usecols=["period", "subba", "value"], dtype={"subba": str})
-    df = df[
-        df["subba"].isin(_SPP_SUBBA_ZONE_GROUPS) | (df["subba"] == _SPP_SPLIT_SUBBA)
-    ]
-    df = df.copy()
+    df = df[df["subba"].isin(_SPP_SUBBA_ZONE_GROUPS)].copy()
     period_utc = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
     hoy_local = _spp_utc_to_local_hoy(period_utc, year)
     if hoy_local is None:
@@ -681,19 +620,9 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         .melt(id_vars="hoy", var_name="subba", value_name="mw")
         .dropna(subset=["mw"])
     )
-    # The straddling CSWS row is split w_OK : (1 - w_OK) into the two zones in
-    # every hour BEFORE the grouping (an identity: the two parts sum to the
-    # measured CSWS MW, so the hourly normalisation and the redistribution
-    # identity are untouched), then the 17-token grouping runs unchanged.
-    w_ok = _spp_csws_oklahoma_share(year)
-    split = long[long["subba"] == _SPP_SPLIT_SUBBA]
-    whole = long[long["subba"] != _SPP_SPLIT_SUBBA]
-    ok_part = split.assign(mw=split["mw"] * w_ok, _mzone=_SPP_SPLIT_ZONES[0])
-    s_part = split.assign(mw=split["mw"] * (1.0 - w_ok), _mzone=_SPP_SPLIT_ZONES[1])
-    whole = whole.assign(_mzone=whole["subba"].map(_SPP_SUBBA_ZONE_GROUPS))
-    long = pd.concat([whole, ok_part, s_part], ignore_index=True)
+    mzone = long["subba"].map(_SPP_SUBBA_ZONE_GROUPS)
     shares = _hourly_shares_from_groups(
-        long["_mzone"], long["hoy"].to_numpy(), long["mw"], zone_names
+        mzone, long["hoy"].to_numpy(), long["mw"], zone_names
     )
     # Same guard as the MISO parser: the multi-year export spans only the years
     # it was pulled for, and for any other year the UTC->local mapping still
