@@ -1,0 +1,36 @@
+[
+  {
+    "year": 2022,
+    "params_control": {
+      "floor": 0.65,
+      "ceil": 1.32,
+      "gas_mid": 3.4,
+      "gas_slope": 2.5
+    },
+    "params_arm": {
+      "floor": 0.65,
+      "ceil": 1.0,
+      "gas_mid": 3.4,
+      "gas_slope": 2.5
+    },
+    "gas_mean": 7.120796850142759,
+    "leverage_mean": 0.9981759906797616,
+    "leverage_p50": 0.9999147637343512,
+    "leverage_frac_ge_099": 0.915068493150685,
+    "passthrough_mean_control": 1.3187779137554405,
+    "passthrough_mean_arm": 0.9993615967379165,
+    "s2_identity_max_abs_resid": 2.220446049250313e-16,
+    "n_predicted_direct": 243,
+    "n_moved": 243,
+    "unpredicted_moved": [],
+    "predicted_not_moved": [],
+    "mc_delta_mean_direct": -9.226725748660657,
+    "mc_delta_min": -43.91263457635765,
+    "mc_delta_max": -2.1066103588705154,
+    "s3_predicted_mc_delta": -9.226725748660657,
+    "s3_abs_error": 0.0,
+    "delivered_coal_mmbtu_model": 2.786336859374337,
+    "delivered_coal_mmbtu_derive": 4.307,
+    "direct_capacity_mw": 25504.284699999997
+  }
+]
