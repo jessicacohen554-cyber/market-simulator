@@ -1,0 +1,81 @@
+{
+ "cache_key": "dc8ca3580e277d72",
+ "case": "VOL-MID",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "objective_value": 10972352640.729452
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 13538215201.8116
+  },
+  "2028": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 19762189916.084587
+  },
+  "2029": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    4.5
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 21451346961.90361
+  },
+  "2030": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    4.5
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 30695240972.267723
+  }
+ }
+}
