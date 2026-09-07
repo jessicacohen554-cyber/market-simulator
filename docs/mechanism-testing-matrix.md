@@ -16382,7 +16382,7 @@ charter with a new measured identification** before a solve:
    criterion is an owner call. Evidence:
    `results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`.
 
-### 5.7 SPP — **NO KEEPER YET.** Column seeded at SPP-21 (2026-09-06) as the seventh shard; every cell is `U` or `.` and NO verdict has been minted in this ISO
+### 5.7 SPP — keeper `2026-09-07-spp-1-baseline` (**FIRST SPP KEEPER, PROMOTED at SPP-40, 2026-09-07, by owner direction** — the all-defaults backcast on the two-zone topology with the SPP-53 N↔S link at 3,400 MW, served EIA-930 interchange, every offer band 1.0, `authorized_price_tuning` NONE; DETERMINATION **NOT-YET**: C1 fuel-mix FAIL 2023/2024 (CT over / CC+ST under; coal scored as `COAL_PRB`/`COAL_LIGNITE` against one model `COAL` class — a supply-class crosswalk defect, routed), C3a FAIL 2023 +14.1 % / 2025 +21.7 %, C3b NRMSE 0.239/0.228/0.283, C3c 0/3/24 h vs 42/59/68; C2/C4/C6/C8 PASS; C1/C4-2023 wind UNSCORED pending SPP-41. This bundle is every later SPP lane's rule-29(b) control. Record: `docs/handoffs/FINDING-spp-40-2026-09-07.md`; the rule-29(a) 2024 screen and its direction-tie kill are §0–§6 there. ONE cell minted: `measured_interface_limits` U → O. PRIOR HEADER, preserved: "NO KEEPER YET." Column seeded at SPP-21 (2026-09-06) as the seventh shard; every other cell is still `U` or `.` — no verdict beyond that one O has been minted in this ISO)
 
 **Status.** SPP is being added by the SPP ADDITION PROGRAM
 (`docs/multi-iso/spp-addition-plan-2026-09.md`, director lane `SPP-DESK`,
