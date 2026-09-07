@@ -6941,6 +6941,43 @@ reaches shared solve machinery (S-1), per its charter.
 
 **What the desk declined, and why.** The lane's own case-against led with "the measured benefit is narrow and got narrower" — decisions move in **2 of 6 ISOs** (CAISO −2,532.391 MW of backstop gas CT it does not need; MISO 343.312 MW of coal saved from a 2024 exit, outside the scored window). **That is a residual argument and the desk named it as one**: rule 1 `[R-STRUCT]` forbids judging a structurally-correct mechanism by whether the answer moved, and the four inert ISOs' inertness is evidence the gate is well-behaved rather than evidence it is unneeded — each cause being structural (peak-independent requirement in PJM/D67 and NYISO/D52; energy-only ERCOT reads no position; NEISO's fleet long by 5.0–7.6 GW). The **one legitimate counter is cost and sequencing** — the blast radius genuinely reaches every hindcast bundle and every FC-3 T1-H row on the board — and that is an owner call, which is why the card was served rather than decided at the desk. The option **"arm only in CAISO and MISO" was offered and marked NOT RECOMMENDED with its reason stated**: arming a mechanism only where it changes the answer is the fitted-mechanism selection rule 1 exists to forbid. **The ruling would read identically had PJM's census come back peak-SENSITIVE** — that would have made the operand matter more, not made it more correct, and correctness was never what D76-P3B measured. Execution: **D76-ARM** (§4, pack r#54).
 
+**EXECUTION OUTCOME (2026-09-07, D76-ARM, `FINDING-capx-d76-arm-2026-09-07.md`): THE ROUTE DOES NOT
+HOLD, THE STOP FIRED, AND NOTHING IS ARMED.** `src/market_sim/` is untouched — no default flipped, no
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` entry appended, no matrix cell stamped, no CLAUDE.md bullet.
+**Why zero is unreachable rather than merely unmet:** since Q20/(b′-1), `cache_key()` drops a
+registered field **iff it equals its FROZEN declaration** (`"False"`, append-only), so a config
+resolving the new default necessarily **enters** the hash — which is exactly the mechanism that stops
+a post-flip armed run being served the pre-flip bundle (D24 §4.1/§4.2), and exactly what D44
+(`cedadc285f8603b9 → 4c6b03ae098b6e3e`) and D60 (`4c6b03ae098b6e3e → e5ecd4105ada3e58`) recorded as
+their intended effect. **"Arm the gate" and "move no key" are the same sentence with opposite signs.**
+Measured over all 173 committed `run_config.json`, pre-registered in
+`PRECOMMIT-capx-d76-arm-2026-09-07.md` **before the first key was computed** and reproduced to the
+config: **the flip alone moves 128 keys, 94 of them OFF TARGET** (11 backcast — the outcome D78-ARM's
+own probe names as *"the variant that orphans all six backcast keepers and was never licensed"* — and
+83 non-hindcast forecast); **the flip plus the `__post_init__` non-hindcast coercion that the five
+sibling gates already ship moves 34, ALL in the hindcast configs the gate governs, 0 off target**
+(PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1; SPP has no committed hindcast bundle). The
+field's own shipped test suite already encodes the broken invariant
+(`TestCacheKeyRegistration::test_explicit_off_keeps_the_bare_key_and_armed_moves_it` fails in both
+variants; `test_backcast_key_is_untouched` fails in variant A, confirmed against real keys — PJM
+`21806c39c42c339a` vs `3a566deac3a85682`). Bare recipe keys, both variants:
+`pjm-t1h` `fb16fda2ddb0a94a → f736025631d0d27e` (the lane NAMES the post-Q56 key it read, per the
+r#54 collision map), `caiso` `8f1c3766703a90c4 → 28f4f62b90e2f74b`, `miso` `1f92943f84f42fd0 →
+71156d9eb2ea896d`, `nyiso` `ee6a3e764324f28f → ee0d44e7d6f26397`, `neiso` `5b292e24dd752ea4 →
+806f31b59b10c911`, `ercot` `46d013cbf1f35d27 → f238df2e5b1ef838`, `spp` `7d1c3f080475310e →
+8acea51fd756a867`. **THREE WAYS FORWARD, NONE TAKEN BY THE LANE** (choosing the reading that makes
+the STOP pass is fitted selection one layer up): (i) read "zero key moves" as D75-R-ARM and D78-ARM
+report their own arms — zero OFF-TARGET moves, in-scope moves listed — and authorize the coercion
+variant, which matches this ruling's own *"frontier bundles re-solved on their natural cadence"*;
+(ii) authorize the flip alone and accept 94 off-target cache misses including 11 backcast; (iii)
+withdraw or re-route. **Nothing about the mechanism's correctness is in question** — rule 14 stands,
+the inert set was re-verified BY TEST at this HEAD (forecast run and crossover FORWARD year
+byte-identical armed and unarmed; a backcast never enters the branch), and no determination moves in
+any variant. **Routed, not repaired:** 15 committed `run_config.json` carry a `cache_key` the current
+rules cannot reproduce — a registration-lag artifact (6 explained by
+`caiso_offer_surface_measured_ungrounded` registered after those bundles were solved), orthogonal to
+D76, and it does not touch the census because a row's move verdict is hash-independent.
+
 ### Q56 (refresh #53) — arm `retirement_sector_gate` for PJM (D78-R3's RECOMMEND ARM)
 
 **RULED: ARM, REGISTRATION REQUIRED.** Arm through `iso_configs.py::_pjm_config` `default_scenario_overrides` — the D57/Q44 → D67-ARM → Q55 way, never a shared `ScenarioConfig` default flip, so every other ISO and every backcast keeper stays byte-identical and `--no-retirement-sector-gate` keeps the pre-arm key. **The registration condition is part of the ruling, not a note on it:** the arming lane must solve AND REGISTER PJM T1-H on the new default, closing by construction the gap D78-R3 §5.2 item 1 flagged — that the evidence for limbs (b)–(d) rests on an arm bundle committed nowhere, because the D78-R2 arm was never registered (merge `80c88b76` landed docs and JSON only).
@@ -7290,7 +7327,7 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 
 | 2026-09-07 | **MISO gate-(a) RE-KEY (Q34)** | `claude/miso-gate-a-rekey-q34` | **Fable** | code | r#54 — fifteenth firing; issued as a PROMPT per the owner's instruction, not executed at the desk |
 | 2026-09-07 | **D78-ARM COMPLETION (Q56)** | `claude/pjm-retirement-sector-gate-at0cao` (continue) | **Opus** | pjm | r#54 — items (1)–(6) of the lane's own WIP handoff; COMPLETE, never re-derive; Q56's registration condition |
-| 2026-09-07 | **D76-ARM (Q57 execution)** | `claude/capx-d76-arm-measured-peak` | **Opus** | code → all | r#54 — owner ruling Q57; D50 (b′-1) declared default flip; STOP: do not commit without zero key moves |
+| 2026-09-07 | **D76-ARM (Q57 execution)** | `claude/d76-arm-capacity-peak-oxltrr` (branch assigned at dispatch, not the pack's placeholder) | **Opus** | code | r#54 — owner ruling Q57; D50 (b′-1) declared default flip; STOP: do not commit without zero key moves. **STOPPED AT ITS OWN STOP — NOTHING ARMED.** Zero is unreachable while arming: (b′-1) drops a registered field iff it equals its FROZEN declaration, so the armed configs enter the hash BY DESIGN. Measured over all 173 committed run configs, pre-registered before the first key was computed and reproduced to the config: **flip alone 128 moved / 94 OFF TARGET** (11 backcast, 83 non-hindcast forecast); **flip + the non-hindcast coercion the five sibling gates already ship 34 moved / 0 off target** (the 34 hindcast bundles the gate governs — PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1). Card returned with three ways forward, none taken. `FINDING-capx-d76-arm-2026-09-07.md` |
 | 2026-09-07 | **D65-B-R COMPLETION-2 (re-emitted)** | `claude/capx-d65br-completion2` | **Opus** | all | r#54 — never dispatched at r#53; leg 7 + FINDING §0/§6 + the `ff-verdicts` question |
 | 2026-09-07 | **D75-R-ARM STEPS 3–4 (re-emitted)** | `claude/capx-d75r-arm-steps34` | **Opus** | pjm | r#54 — never dispatched at r#53; must now declare WHICH bare key its row carries (three vintages in play) |
 

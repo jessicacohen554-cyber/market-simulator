@@ -221,11 +221,17 @@ def _recipe_legs(variant: str, drop_at: dict, roots) -> dict:
                     vintage=2020,
                     entry_screen_diagnostics=True,
                 )
-                _leg(f"{iso.lower()}-t1h-bare", iso_configs.apply_iso_scenario_defaults(cfg, iso))
+                _leg(
+                    f"{iso.lower()}-t1h-bare",
+                    iso_configs.apply_iso_scenario_defaults(cfg, iso),
+                )
             except Exception as exc:  # pragma: no cover - per-ISO recipe guard
                 legs[f"{iso.lower()}-t1h-bare"] = {"unavailable": repr(exc)}
         back = ScenarioConfig(iso=iso, mode="backcast")
-        _leg(f"{iso.lower()}-plain-backcast", iso_configs.apply_iso_scenario_defaults(back, iso))
+        _leg(
+            f"{iso.lower()}-plain-backcast",
+            iso_configs.apply_iso_scenario_defaults(back, iso),
+        )
     return legs
 
 
@@ -309,6 +315,14 @@ def main(argv: list[str] | None = None) -> int:
     # so a non-hindcast config is inert for its whole horizon: a key move there
     # buys nothing and orphans a cache for byte-identical behaviour.
     off_target = [r for r in moved if not r["hindcast"]]
+    # A row's MOVE verdict does not depend on the instrument reproducing its
+    # recorded key: under (b'-1) a row moves iff its resolved value stops
+    # equalling the frozen drop value, which is a property of the payload's
+    # field, not of the hash. So the mismatched rows are excluded from the
+    # VALIDATED counts above and reported again here at full population, and the
+    # two numbers must be read together rather than one being quoted alone.
+    moved_all = [r for r in rows if r["moved"]]
+    off_target_all = [r for r in moved_all if not r["hindcast"]]
 
     by_bucket: dict[str, dict[str, int]] = {}
     for row in counted:
@@ -335,6 +349,8 @@ def main(argv: list[str] | None = None) -> int:
         "instrument_mismatch": len(mismatches),
         "keys_moved": len(moved),
         "keys_moved_off_target": len(off_target),
+        "keys_moved_all_rows": len(moved_all),
+        "keys_moved_off_target_all_rows": len(off_target_all),
         "by_bucket": dict(sorted(by_bucket.items())),
         "recipe_legs": _recipe_legs(args.variant, drop_at, roots),
         "moved_detail": moved,
@@ -366,8 +382,18 @@ def main(argv: list[str] | None = None) -> int:
             len(moved), len(counted), len(off_target)
         )
     )
+    print(
+        "  ALL ROWS (mismatched included, whose move verdict is hash-independent): "
+        "moved {} of {}; OFF TARGET {}".format(
+            len(moved_all), len(rows), len(off_target_all)
+        )
+    )
     if mismatches:
-        print("FAIL: the instrument does not reproduce {} recorded key(s)".format(len(mismatches)))
+        print(
+            "FAIL: the instrument does not reproduce {} recorded key(s)".format(
+                len(mismatches)
+            )
+        )
         return 1
     if moved:
         print(
