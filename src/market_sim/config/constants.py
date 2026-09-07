@@ -358,6 +358,39 @@ NYISO_STATE_FLOOR_MIN_RUN_HOURS: float = 100.0
 # 1 h min-down unit it can never fire anyway.
 RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 
+# SPP gas commitment bridge (ScenarioConfig.spp_gas_commitment_bridge, lane
+# SPP-44, PRECOMMIT-spp-44-2026-09-07 §2): the two MEASURED per-class
+# statistics the bridge's floor reads, keyed by LP fuel type. Both come from
+# the CAMPD 2023-2025 loading-when-on derive on the PLANT basis
+# (scripts/data/derive_campd_gas_commitment_params.py --iso SPP --plant-basis
+# -> data/raw/_processed-legacy/campd_gas_commitment_params_plant_SPP.csv):
+# the facility's units are summed to ONE series before any statistic is
+# taken, so the fraction is the plant's minimum stable CONFIGURATION over its
+# full capability — the basis a floor multiplied by PLANT pmax requires
+# (FINDING-caiso135 §A / §R adjudication; the shared detector floors
+# min_load_frac x plant pmax, clipped to the base tranche). Per-unit values
+# (CC 0.440 / ST 0.266) are reported in the same derive and NOT used.
+#
+#   min_load_frac  = HSL-weighted p50 of plant lsl_frac (LSL = p5 of
+#                    online-hour load, HSL = p99.5 of pooled load):
+#                    CC_REGULAR 0.209 (p25 0.141 / p75 0.320, 19 plants,
+#                    10,403 MW); ST_GAS 0.090 (0.076 / 0.139, 26 plants,
+#                    11,373 MW) — SPP's gas steam is legacy multi-unit
+#                    stations running one boiler at a time.
+#   min_run_hours  = capacity-weighted p25 of the plant-basis run-length
+#                    distribution (an observed run bounds a minimum-run
+#                    CONSTRAINT from above, so the low order statistic is the
+#                    identification — the derive's own docstring, the nyiso-90
+#                    precedent): CC_REGULAR 15 h (5,290 runs), ST_GAS 5 h
+#                    (2,931 runs).
+#
+# Rules 5/13/21/23: measured unit-conduct properties that regenerate for any
+# vintage and re-derive ONLY when the CAMPD extracts update — never from a
+# residual. Rule 25: SPP's own market's data; NYISO's 0.523 / 0.239 and
+# 21 / 13 h are not inherited. Read only when the SPP bridge gate is on.
+SPP_GAS_BRIDGE_MIN_LOAD_FRAC: dict[str, float] = {"gas_cc": 0.209, "gas_st": 0.090}
+SPP_GAS_BRIDGE_MIN_RUN_HOURS: dict[str, float] = {"gas_cc": 15.0, "gas_st": 5.0}
+
 # Fast-start eligibility threshold (h) for the ERCOT offline fast-start pool
 # offer leg (ScenarioConfig.ercot_faststart_pool_offer): a unit is
 # SCED-startable intra-hour — the OFFQS/OFFNS telemetry family the pool

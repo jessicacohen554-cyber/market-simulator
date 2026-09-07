@@ -40,10 +40,8 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 from derive_campd_gas_commitment_params import (  # noqa: E402
-    _HSL_PCTILE,
     _ONLINE_FRAC,
     UNIT_LEVEL_DIR,
-    unit_run_lengths,
 )
 from market_sim.data.campd import _ONLINE_MW, states_for_iso  # noqa: E402
 from market_sim.model.commitment import find_runs  # noqa: E402
@@ -66,14 +64,14 @@ def plant_series(codes: set[int], year: int) -> dict[int, np.ndarray]:
         path = UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
         if not path.exists():
             continue
-        df = pd.read_parquet(
-            path, columns=["facilityId", "date", "hour", "grossLoad"]
-        )
+        df = pd.read_parquet(path, columns=["facilityId", "date", "hour", "grossLoad"])
         df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
         df = df[df["facilityId"].isin(codes)]
         if df.empty:
             continue
-        g = df.groupby(["facilityId", "date", "hour"], as_index=False)["grossLoad"].sum()
+        g = df.groupby(["facilityId", "date", "hour"], as_index=False)[
+            "grossLoad"
+        ].sum()
         for fid, sub in g.groupby("facilityId"):
             out.setdefault(int(fid), []).append(sub)
     series = {}
@@ -130,9 +128,7 @@ def main() -> None:
             F = np.zeros(8760)
             for f in plants_k:
                 F += online[f] * float(lsl[f])
-            D = (
-                ch[ch.klass == k].sort_values("hour")["mw"].to_numpy(dtype=float)
-            )
+            D = ch[ch.klass == k].sort_values("hour")["mw"].to_numpy(dtype=float)
             assert D.size == 8760, (k, D.size)
             excess = np.maximum(0.0, F - D)
             rows.append(
