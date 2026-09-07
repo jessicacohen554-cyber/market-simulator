@@ -763,7 +763,18 @@ to it.
    reading a different clean-attribute seam from the entry screen; a crediting-mode difference
    between the two forms — are `src/` questions and outside this lane's regions. **Any
    cross-ISO synthesis that treats "the CES lever" as one instrument is wrong on PJM.**
-9. **An accreditation observation, reported not diagnosed.** In the CES-premium arms
+9. **ROW 3 OF THE PLAN §5.1 SCORECARD AND ITS LEDGER §3 MIRROR NO LONGER RENDER AS A TABLE,
+   AND IT IS NOT THIS LANE'S CELLS.** A sibling lane's appends left **raw, unescaped `|`
+   characters** inside row 3's CES-premium and Voluntary cells (`ΔP30−ΔP20|/|ΔP20|`, `|20|`,
+   a bare `|Δ`), so GFM splits that row into **17 cells against the header's 7** and every
+   column after the first stray pipe renders in the wrong place. Measured on `a6a8cd46`
+   before this lane touched the file. **This lane did not fix it** — those are another lane's
+   cells and rule 25's spirit applies to the record as much as to the model — and it appended
+   its own text with every pipe escaped (`\|`), detecting the true cell boundaries from each
+   column's opening marker rather than by splitting, so its four inserts land in the right
+   cells despite the breakage. The one-character fix is the owning lane's; flagging it is
+   this lane's.
+10. **An accreditation observation, reported not diagnosed.** In the CES-premium arms
    `total_cap_mw` and `peak_demand_mw` are byte-identical to REF, yet the reserve margin rises
    +0.30 / +0.41 / +0.70 pp at 2028/2029/2030 — so a gas-CC MW and its CCS-converted self are
    accredited differently. Whether that is intended is a capacity-accreditation question, not
