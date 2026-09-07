@@ -562,6 +562,14 @@ META_RECORD_SPEC = RecordSpec(
         "exit_rate_limits": FromConfig(cast=bool),
         "capacity_screen_unified_lookahead": FromConfig(cast=bool),
         "capacity_screen_scarcity_restoration": FromConfig(cast=bool),
+        # PJM RUBRIC-RESIDUAL: PJM's OWN reserve co-optimization footing, the
+        # three fields its calibrated backcast keeper carries True and this
+        # forecast lane carries False. FromConfig so the record reads the
+        # SOLVED gate (FFR-3R: a meta may never claim an arming the solve
+        # lacked).
+        "energy_reserve_coopt": FromConfig(cast=bool),
+        "pjm_reserve_pergen": FromConfig(cast=bool),
+        "pjm_reserve_supply_cap": FromConfig(cast=bool),
         # FFR-5C anti-cobweb guard relocation, armed per-invocation by the
         # FFR-9C measurement lane. FromConfig so the record reads the SOLVED
         # gate (FFR-3R: a meta may never claim an arming the solve lacked).
@@ -715,6 +723,9 @@ def build_config(
     exit_rate_limits: "bool | None" = None,
     capacity_screen_unified_lookahead: "bool | None" = None,
     capacity_screen_scarcity_restoration: "bool | None" = None,
+    energy_reserve_coopt: "bool | None" = None,
+    pjm_reserve_pergen: "bool | None" = None,
+    pjm_reserve_supply_cap: "bool | None" = None,
     vre_procurement_additions: "bool | None" = None,
     entry_pipeline_aware_signal: "bool | None" = None,
     entry_forward_expectation_signal: "bool | None" = None,
@@ -1031,6 +1042,18 @@ def build_config(
                 "capacity_screen_scarcity_restoration": (
                     capacity_screen_scarcity_restoration
                 ),
+                # PJM's reserve co-optimization footing (PJM RUBRIC-RESIDUAL).
+                # The hindcast must exercise the capacity screens under the
+                # SAME price formation the ISO's model uses — this function's
+                # own docstring — and PJM's calibrated backcast keeper carries
+                # all three True while this lane carried them False, so the
+                # screens priced against a bare merit-order dual surface with
+                # no reserve opportunity cost in it. Default-off; None inherits
+                # the shipped default and the control keeps the bare recipe
+                # key, True arms the measurement posture (distinct key).
+                "energy_reserve_coopt": energy_reserve_coopt,
+                "pjm_reserve_pergen": pjm_reserve_pergen,
+                "pjm_reserve_supply_cap": pjm_reserve_supply_cap,
                 # FF-1B correlated cold-event forced-outage derate
                 # (data/outages.apply_correlated_outage_derate): a leg's deep-
                 # cold days (Uri 2021, Heather 2024) physically thin the fleet
@@ -2023,6 +2046,37 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--energy-reserve-coopt",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "PJM RUBRIC-RESIDUAL arm: install the ISO's energy+reserve "
+            "co-optimization (published two-step ORDC as reserve balance "
+            "rows) in the hindcast, as the ISO's calibrated backcast keeper "
+            "does. None keeps the recipe's value and the bare recipe key."
+        ),
+    )
+    parser.add_argument(
+        "--pjm-reserve-pergen",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "PJM RUBRIC-RESIDUAL arm: PJM per-generator reserve supply layout "
+            "(requires --energy-reserve-coopt). None keeps the recipe's value."
+        ),
+    )
+    parser.add_argument(
+        "--pjm-reserve-supply-cap",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "PJM RUBRIC-RESIDUAL arm: cap co-optimized reserve supply at the "
+            "fleet's 10-minute DELIVERABLE ramp (RAMP10_FRAC_BY_GROUP x pmax, "
+            "availability-scaled) instead of total eligible thermal headroom "
+            "(requires --energy-reserve-coopt). None keeps the recipe's value."
+        ),
+    )
+    parser.add_argument(
         "--entry-forward-expectation-signal",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -2405,6 +2459,9 @@ def main(argv: list[str] | None = None) -> int:
         capacity_screen_scarcity_restoration=(
             args.capacity_screen_scarcity_restoration
         ),
+        energy_reserve_coopt=args.energy_reserve_coopt,
+        pjm_reserve_pergen=args.pjm_reserve_pergen,
+        pjm_reserve_supply_cap=args.pjm_reserve_supply_cap,
         vre_procurement_additions=args.vre_procurement_additions,
         entry_pipeline_aware_signal=args.entry_pipeline_aware_signal,
         entry_forward_expectation_signal=args.entry_forward_expectation_signal,
