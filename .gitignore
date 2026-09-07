@@ -743,6 +743,15 @@ results/calibration/ercot255_screen_*/
 results/calibration/ercot255_fullspan_*/
 results/calibration/ercot255_2021_retest/
 results/calibration/ercot255_keeper_*/
+# nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
+# (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
+# a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
+# deleting it from local disk before the owner has ruled on promotion, so
+# .gitignore is what discharges both: an ignored bundle can sit on disk
+# indefinitely without turning the parity gate red. Every number the session
+# cites from one is written into the PREREG/FINDING; git history is the record.
+results/calibration/_nyiso218_screen_*/
+results/calibration/_nyiso218_span_*/
 results/calibration/ercot255_five_year_*/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
