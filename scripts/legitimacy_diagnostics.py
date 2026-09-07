@@ -100,6 +100,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+    MECH_SPP_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
     MECH_HYDRO_ROR_FLAT,
     MECH_NAMES,
@@ -522,6 +523,32 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   P0 run pattern plus the two measured class constants, which re-derive
     #   only on a CAMPD vintage change (rules 13/23).
     (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "CT_PEAKER"): (0, 24),
+    # spp_gas_commitment_bridge (SPP-44, MECH_SPP_GAS_COMMITMENT_BRIDGE —
+    # pipeline.commitment.build_spp_gas_bridge_p1_prep): the SPP leg of the
+    # same P1-native committed-state bridge, on SPP's merchant slow-start gas
+    # fleet by the rule-18 physics gate (CC min-down 4-6 h / $50 per MW;
+    # ST_GAS 8-12 h / $35; the CT classes fail on their 1 h min-down and are
+    # never bridged). Rule-17 declaration, both floored classes
+    # (PRECOMMIT-spp-44-2026-09-07 §3):
+    # * WINDOW — self-windowing by construction, ALL 24 hours by driver: the
+    #   floor exists ONLY inside an idle gap between two P0-detected runs of
+    #   the same plant (shorter than the unit's min-down, or bounded by one DA
+    #   operating day on the restart-economics leg) or in the hours after a
+    #   P0 run-start inside the plant's own measured minimum run. No clock
+    #   hour is declared off. The measured record supports it: SPP's eligible
+    #   plants show ~1,100-1,300 CC and ~300 ST_GAS idle gaps of min-down…24 h
+    #   per year in CAMPD 2023-2025 (spp44/footprint.csv).
+    # * DRIVER — unit-commitment physics only: minimum run, minimum down and
+    #   the restart inequality at the model's own P0 duals; level = the
+    #   measured PLANT-basis minimum stable load
+    #   (constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC, CC 0.209 / ST_GAS 0.090) and
+    #   the measured plant-basis run-length p25
+    #   (constants.SPP_GAS_BRIDGE_MIN_RUN_HOURS, 15 / 5 h).
+    # * FORWARD STORY — regenerates in any forecast year from the model's own
+    #   P0 run pattern plus four measured constants that re-derive only on a
+    #   CAMPD vintage change (rules 13/23).
+    (MECH_SPP_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+    (MECH_SPP_GAS_COMMITMENT_BRIDGE, "ST_GAS"): (0, 24),
     # miso_coal_night_floor (miso-113, MECH_MISO_COAL_NIGHT_FLOOR —
     # pipeline.commitment.build_miso_coal_night_floor_p1_prep): the P1-native
     # within-run NIGHT floor on MISO's regulated PRB/subbituminous coal fleet,
@@ -803,6 +830,7 @@ BRIDGE_MECHS: tuple[int, ...] = (
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
+    MECH_SPP_GAS_COMMITMENT_BRIDGE,
 )
 
 # D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE

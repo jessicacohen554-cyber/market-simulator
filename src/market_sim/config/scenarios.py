@@ -790,6 +790,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "nyiso_gas_bridge_plant_min_run",
     "nyiso_gas_bridge_online_hours",
     "nyiso_gas_bridge_state_floor_min_run",
+    # SPP gas commitment bridge (SPP-44): the ONE SPP gate flag, inert at its
+    # default (off — the P1 prep hook returns None), so it is dropped from the
+    # hash at its declared False and every pre-existing key of all seven ISOs
+    # is byte-stable; an armed run enters the key as a distinct scenario. Its
+    # four measured constants live in constants.py (no sub-fields).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_gas_commitment_bridge",
     # Measured CHP behind-the-meter electric share (nyiso-147): inert at its
     # default (off — the measured artifact is not read), so it is dropped
     # from the hash at default and every pre-existing cache key is
@@ -1911,6 +1918,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_gas_bridge_plant_min_run": "False",
     "nyiso_gas_bridge_online_hours": "False",
     "nyiso_gas_bridge_state_floor_min_run": "False",
+    # SPP-44: the SPP gas commitment bridge gate, registered IN THE SAME
+    # COMMIT as the field at its shipping default (off).
+    "spp_gas_commitment_bridge": "False",
     "nyiso_chp_btm_measured": "False",
     "cc_reserve_duty_split": "False",
     "chp_layup_duty_split": "False",
@@ -7508,6 +7518,61 @@ class ScenarioConfig:
     # population-gap separator, the membership a frozen measured artifact —
     # rules 5/21/23). Default off so the unscoped arm stays reproducible.
     nyiso_gas_bridge_state_floor_min_run: bool = False
+    # SPP GAS COMMITMENT BRIDGE (default off, SPP-gated — lane SPP-44,
+    # PRECOMMIT-spp-44-2026-09-07): the SPP leg of the P1-native committed-
+    # state bridge family. THE ONE FIELD this lane adds; everything it reads
+    # is either the shared detector's registered class physics or a measured
+    # constant in constants.py, so there is nothing else to tune.
+    #
+    # THE OBJECT (FINDING-spp-42 §7): the keeper's C1-2024 gas split reads
+    # CC_REGULAR -8.6 / CT_PEAKER +9.9 TWh with the same sign pattern in 2023
+    # (CT +6.1 / CC -4.6 / ST_GAS -7.8). Rule 19 [R-ONE-MECH] first: nothing
+    # floors SPP's gas fleet today — keeper-2's D-2 shows 0.0 % forced energy
+    # on CC_REGULAR / ST_GAS / CT_PEAKER, no reliability-floor limb is
+    # registered for SPP, no bridge, drag or posture is armed, and every band
+    # is 1.0 — so this stacks on nothing and replaces nothing (the NYISO leg's
+    # NYISO_PEAK_WINDOW_FLOORS_OFF companion has no SPP analogue).
+    #
+    # Mechanism: the same ISO-neutral detector the CAISO RA must-offer, ERCOT
+    # and NYISO bridges ride (model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.build_spp_gas_bridge_p1_prep, injected at the P0→P1
+    # seam), fed the model's OWN base-cost P0 run pattern and duals — no
+    # measured generation enters, so it is forward-native (rules 13/18). Four
+    # legs, all commitment physics and all fixed (no sub-flags): (a) a gap
+    # shorter than the unit's physical min-down is a restart bar and always
+    # bridges; (b) a gap at/over min-down and within one DA operating day
+    # (constants.DA_COMMITMENT_HORIZON_HOURS) bridges when re-paying the
+    # published startup exceeds the net cost of holding at min-load, priced
+    # at the model's own P0 duals; (c) a P0 run shorter than the plant's
+    # measured minimum run is extended to it; (d) the commitment-real run
+    # screen (the nyiso-200 startup_aware leg): a P0 run anchors any leg only
+    # when its own P0 margin repays the unit's startup, so a phantom fragment
+    # the base-cost LP manufactures can never be extended into a floor.
+    #
+    # CLASS SCOPE by unit PHYSICS, never a class-name tuple (rule 18
+    # [R-PHYSICS]): eligibility is _ra_bridge_unit_params' min-down / startup
+    # on each committed tranche. Measured on keeper-2's fleet (spp44/
+    # census_eligibility.py): gas_cc resolves 4-6 h / $50 per MW (23 plants,
+    # 3,466 MW of committed tranche), gas_st 8-12 h / $35 (31 plants,
+    # 2,026 MW) — both clear the slow-start gate; every gas_ct row resolves
+    # 1 h / $20 and is therefore NEVER bridged (the physical leg is
+    # unreachable and RA_BRIDGE_ECON_MIN_DOWN_HOURS refuses the economic
+    # one); *_CHP groups are excluded by the detector's cogen rule.
+    #
+    # LEVEL and MIN-RUN are the MEASURED plant-basis CAMPD 2023-2025
+    # statistics constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC (CC 0.209 / ST_GAS
+    # 0.090) and constants.SPP_GAS_BRIDGE_MIN_RUN_HOURS (15 / 5 h) — see their
+    # citation block for the basis adjudication (caiso-135: a floor
+    # multiplied by PLANT pmax carries the PLANT statistic). Frozen against
+    # residuals (rules 13/21/23); SPP's own market's data, nothing inherited
+    # from NYISO's 0.523 / 0.239 (rule 25). D-2 id
+    # MECH_SPP_GAS_COMMITMENT_BRIDGE (24); D-4 window (0, 24) by driver,
+    # declared in scripts/legitimacy_diagnostics.py. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at its declared False so every committed key
+    # is unmoved; an armed run keys distinctly. Rule 17: driver = commitment
+    # physics; window = self-windowing on the model's own run pattern (no
+    # clock hour); forward story = regenerates from any year's own P0.
+    spp_gas_commitment_bridge: bool = False
     # Measured NYISO CHP behind-the-meter electric share (nyiso-147). The
     # chp_steam_following LP carve sizes a CHP plant's grid capacity as
     # nameplate x (1 - BTM share) with the share from the sector-keyed
@@ -19258,6 +19323,9 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_gas_bridge_plant_min_run": 1,
     "nyiso_gas_bridge_online_hours": 1,
     "nyiso_gas_bridge_state_floor_min_run": 1,
+    # SPP-44: the SPP leg of the gas commitment bridge — a structural gate
+    # flag (its measured constants are constants.py entries, not fields).
+    "spp_gas_commitment_bridge": 1,
     "nyiso_chp_btm_measured": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,

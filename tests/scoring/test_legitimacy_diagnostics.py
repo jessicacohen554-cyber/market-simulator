@@ -1177,14 +1177,18 @@ class TestMechanismThreading:
             MECH_MISO_COAL_NIGHT_FLOOR,
             MECH_NYISO_GAS_COMMITMENT_BRIDGE,
             MECH_RA_MUSTOFFER,
+            MECH_SPP_GAS_COMMITMENT_BRIDGE,
         )
         from scripts.legitimacy_diagnostics import BRIDGE_MECHS
 
+        # SPP-44 added the SPP leg (same detector, same P0-pattern anchor, so
+        # the same "no fleet_only rebuild can reproduce it" property).
         assert set(BRIDGE_MECHS) == {
             MECH_RA_MUSTOFFER,
             MECH_GAS_COMMITMENT_BRIDGE,
             MECH_NYISO_GAS_COMMITMENT_BRIDGE,
             MECH_MISO_COAL_NIGHT_FLOOR,
+            MECH_SPP_GAS_COMMITMENT_BRIDGE,
         }
 
     def test_rebuild_rename_map_threads_generic_override_channels(self):

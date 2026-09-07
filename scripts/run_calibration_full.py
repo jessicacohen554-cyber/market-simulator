@@ -3776,6 +3776,7 @@ def solve_and_persist(
     nyiso_east_reserve_families: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
+    spp_gas_commitment_bridge: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
@@ -4742,6 +4743,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge
             )
+        if spp_gas_commitment_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                spp_gas_commitment_bridge=spp_gas_commitment_bridge
+            )
         if miso_coal_night_floor is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_coal_night_floor=miso_coal_night_floor
@@ -5603,6 +5608,7 @@ def solve_and_persist(
             reliability_floor_overrides=reliability_floor_overrides,
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
+            spp_gas_commitment_bridge=spp_gas_commitment_bridge,
             miso_coal_night_floor=miso_coal_night_floor,
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac,
             nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac,
@@ -6557,6 +6563,7 @@ def solve_and_persist(
         "nyiso_east_reserve_families": nyiso_east_reserve_families,
         "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
+        "spp_gas_commitment_bridge": spp_gas_commitment_bridge,
         "miso_coal_night_floor": miso_coal_night_floor,
         "nyiso_gas_bridge_cc_min_load_frac": nyiso_gas_bridge_cc_min_load_frac,
         "nyiso_gas_bridge_st_min_load_frac": nyiso_gas_bridge_st_min_load_frac,
@@ -12618,6 +12625,20 @@ def main() -> None:
         "stacked on them (rule 19).",
     )
     parser.add_argument(
+        "--spp-gas-commitment-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="SPP P1-native gas commitment bridge (SPP-44): hold SPP's merchant "
+        "slow-start gas fleet (CC_REGULAR + ST_GAS by unit physics; the CT "
+        "classes fail on their own 1 h min-down) at its MEASURED plant-basis "
+        "minimum stable load (constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC: CC 0.209 "
+        "/ ST_GAS 0.090, CAMPD 2023-2025) across P0 idle gaps its own "
+        "commitment physics says it cannot cycle through, with the measured "
+        "minimum-run extension (15 / 5 h) and the commitment-real run screen. "
+        "Rule 19: SPP's gas classes carry no other floor, so nothing is "
+        "stacked or replaced. Default off (byte-identical).",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-cc-min-load-frac",
         type=float,
         default=None,
@@ -13385,6 +13406,7 @@ def main() -> None:
         reliability_floor_overrides=reliability_floor_overrides,
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
+        spp_gas_commitment_bridge=args.spp_gas_commitment_bridge,
         miso_coal_night_floor=args.miso_coal_night_floor,
         nyiso_gas_bridge_cc_min_load_frac=args.nyiso_gas_bridge_cc_min_load_frac,
         nyiso_gas_bridge_st_min_load_frac=args.nyiso_gas_bridge_st_min_load_frac,

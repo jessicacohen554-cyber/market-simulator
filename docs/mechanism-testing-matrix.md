@@ -16801,6 +16801,19 @@ each in full at issuance. Standing rules that already bind the queue:
    Cells: `energy_reserve_coopt`, `reserve_pergen`,
    `reserve_deliverability_scoping`, `measured_ramp_capability`.
 
+**Adjudicated off-queue since the queue was written (rule 28(b), in issue order).**
+- **SPP-44 — the gas split as a P1-native commitment bridge (`spp_gas_commitment_bridge`), 2026-09-07: R.**
+  A new ISO-exclusive field (the SPP leg of the shared `gas_commitment_bridge` detector at four MEASURED
+  plant-basis CAMPD constants — min-load CC 0.209 / ST_GAS 0.090, min-run 15 / 5 h; rule-18 physics gate,
+  every CT row excluded on its 1 h min-down), screened on 2023 (the largest measured footprint, 4.2 TWh)
+  against a LIVE-hunk control and KILLED at its pre-registered STOP gate: CC window agreement with CAMPD
+  0.694 (bar 0.76, chance 0.660) and D-4 unit-conduct FAIL at five laid-up plants. The bridge reaches 0.41 TWh
+  of the gap because the model never STARTS these plants and a bridge can only refuse to stop one. Cells
+  `spp_gas_commitment_bridge` / `gas_commitment_bridge` U → R; field landed default-off, every keeper key
+  unmoved. **Successor (R-17):** the object is a never-started / merit question — the `offer_curve_by_group`
+  band channel under rule 1's carve-out, or a measured commitment-STATE input on the ST_GAS fleet, under a new
+  PRECOMMIT. `docs/handoffs/FINDING-spp-44-2026-09-07.md`.
+
 **Not in this queue, deliberately.** W6 / **SPP-60** (forecast-program entry —
 `program-status.json` row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens) is
 **routed to the capx director** by card **P8** and is never written by this

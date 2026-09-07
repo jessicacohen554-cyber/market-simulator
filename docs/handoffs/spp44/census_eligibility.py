@@ -120,7 +120,10 @@ def main() -> None:
                 plants=("plant_code", "nunique"),
                 mw=("pmax_mw", "sum"),
                 eligible_rows=("eligible", "sum"),
-                eligible_mw=("pmax_mw", lambda s: s[sub.loc[s.index, "eligible"]].sum()),
+                eligible_mw=(
+                    "pmax_mw",
+                    lambda s: s[sub.loc[s.index, "eligible"]].sum(),
+                ),
                 econ_rows=("econ_eligible", "sum"),
                 min_down_set=(
                     "resolved_min_down",
@@ -141,10 +144,14 @@ def main() -> None:
     plant_pmax = sub.groupby("plant_code")["pmax_mw"].sum()
     base = sub[sub.eligible].groupby("plant_code")["pmax_mw"].sum()
     klass = sub.groupby("plant_code")["plant_group"].first()
-    frac_unit = {"CC_REGULAR": class_unit.loc["CC_REGULAR", "min_load_frac"],
-                 "ST_GAS": class_unit.loc["ST_GAS", "min_load_frac"]}
-    frac_plant = {"CC_REGULAR": class_plant.loc["CC_REGULAR", "min_load_frac"],
-                  "ST_GAS": class_plant.loc["ST_GAS", "min_load_frac"]}
+    frac_unit = {
+        "CC_REGULAR": class_unit.loc["CC_REGULAR", "min_load_frac"],
+        "ST_GAS": class_unit.loc["ST_GAS", "min_load_frac"],
+    }
+    frac_plant = {
+        "CC_REGULAR": class_plant.loc["CC_REGULAR", "min_load_frac"],
+        "ST_GAS": class_plant.loc["ST_GAS", "min_load_frac"],
+    }
     lsl_plant = plant_stats.set_index("plant_code")["lsl_frac"]
     out = []
     for pc in plant_pmax.index:
