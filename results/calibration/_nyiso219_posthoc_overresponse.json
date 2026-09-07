@@ -1,0 +1,149 @@
+{
+  "PH1_model_vs_actual_response": {
+    "2023": {
+      "model_r_with_load": 0.6469,
+      "actual_r_with_load": 0.4668,
+      "model_within_month_daily_sd_gwh": 9.206,
+      "actual_within_month_daily_sd_gwh": 4.955,
+      "sd_ratio_model_over_actual": 1.858,
+      "model_r_with_actual": 0.3916
+    },
+    "2024": {
+      "model_r_with_load": 0.6855,
+      "actual_r_with_load": 0.2038,
+      "model_within_month_daily_sd_gwh": 8.123,
+      "actual_within_month_daily_sd_gwh": 4.185,
+      "sd_ratio_model_over_actual": 1.941,
+      "model_r_with_actual": 0.2476
+    },
+    "2025": {
+      "model_r_with_load": 0.6155,
+      "actual_r_with_load": 0.4096,
+      "model_within_month_daily_sd_gwh": 11.58,
+      "actual_within_month_daily_sd_gwh": 5.154,
+      "sd_ratio_model_over_actual": 2.247,
+      "model_r_with_actual": 0.2066
+    }
+  },
+  "PH2_per_basin_mean_r_2019_2025": {
+    "Niagara River": {
+      "mean_r": 0.0786,
+      "pct_fleet_mw": 51.89,
+      "n_years": 7
+    },
+    "St Lawrence River": {
+      "mean_r": 0.0803,
+      "pct_fleet_mw": 19.48,
+      "n_years": 7
+    },
+    "Hudson River": {
+      "mean_r": 0.1424,
+      "pct_fleet_mw": 5.5,
+      "n_years": 7
+    },
+    "Raquette River": {
+      "mean_r": 0.2651,
+      "pct_fleet_mw": 3.95,
+      "n_years": 7
+    }
+  },
+  "PH3_load_plus_flow": {
+    "2019": {
+      "multiple_r_load_plus_flow": 0.2768,
+      "r_load_only": 0.1655,
+      "r_flow_only": 0.1965
+    },
+    "2020": {
+      "multiple_r_load_plus_flow": 0.2994,
+      "r_load_only": 0.2827,
+      "r_flow_only": 0.0954
+    },
+    "2021": {
+      "multiple_r_load_plus_flow": 0.4385,
+      "r_load_only": 0.2668,
+      "r_flow_only": 0.3094
+    },
+    "2022": {
+      "multiple_r_load_plus_flow": 0.409,
+      "r_load_only": 0.3582,
+      "r_flow_only": 0.2228
+    },
+    "2023": {
+      "multiple_r_load_plus_flow": 0.5182,
+      "r_load_only": 0.4668,
+      "r_flow_only": 0.3006
+    },
+    "2024": {
+      "multiple_r_load_plus_flow": 0.3412,
+      "r_load_only": 0.2038,
+      "r_flow_only": 0.2492
+    },
+    "2025": {
+      "multiple_r_load_plus_flow": 0.5296,
+      "r_load_only": 0.4096,
+      "r_flow_only": 0.3265
+    }
+  },
+  "PH4_actual_within_month_amplitude": {
+    "2019": {
+      "mean_daily_gwh": 78.905,
+      "within_month_daily_sd_gwh": 5.092,
+      "within_month_daily_sd_pct_of_mean": 6.453,
+      "max_abs_within_month_dev_pct_of_mean": 28.0,
+      "p95_abs_within_month_dev_pct_of_mean": 12.32
+    },
+    "2020": {
+      "mean_daily_gwh": 76.834,
+      "within_month_daily_sd_gwh": 4.578,
+      "within_month_daily_sd_pct_of_mean": 5.958,
+      "max_abs_within_month_dev_pct_of_mean": 21.06,
+      "p95_abs_within_month_dev_pct_of_mean": 11.76
+    },
+    "2021": {
+      "mean_daily_gwh": 74.665,
+      "within_month_daily_sd_gwh": 4.567,
+      "within_month_daily_sd_pct_of_mean": 6.117,
+      "max_abs_within_month_dev_pct_of_mean": 20.3,
+      "p95_abs_within_month_dev_pct_of_mean": 11.72
+    },
+    "2022": {
+      "mean_daily_gwh": 71.733,
+      "within_month_daily_sd_gwh": 5.707,
+      "within_month_daily_sd_pct_of_mean": 7.956,
+      "max_abs_within_month_dev_pct_of_mean": 32.28,
+      "p95_abs_within_month_dev_pct_of_mean": 15.57
+    },
+    "2023": {
+      "mean_daily_gwh": 73.525,
+      "within_month_daily_sd_gwh": 4.955,
+      "within_month_daily_sd_pct_of_mean": 6.739,
+      "max_abs_within_month_dev_pct_of_mean": 24.09,
+      "p95_abs_within_month_dev_pct_of_mean": 13.28
+    },
+    "2024": {
+      "mean_daily_gwh": 73.363,
+      "within_month_daily_sd_gwh": 4.185,
+      "within_month_daily_sd_pct_of_mean": 5.705,
+      "max_abs_within_month_dev_pct_of_mean": 27.11,
+      "p95_abs_within_month_dev_pct_of_mean": 11.11
+    },
+    "2025": {
+      "mean_daily_gwh": 66.038,
+      "within_month_daily_sd_gwh": 5.154,
+      "within_month_daily_sd_pct_of_mean": 7.805,
+      "max_abs_within_month_dev_pct_of_mean": 26.36,
+      "p95_abs_within_month_dev_pct_of_mean": 15.2
+    }
+  },
+  "_provenance": {
+    "post_hoc": true,
+    "pre_registered": false,
+    "moves_no_gate": true,
+    "model_years_read": [
+      2023,
+      2024,
+      2025
+    ],
+    "keeper_bundle": "results/calibration/nyiso213_summer_seam"
+  }
+}
