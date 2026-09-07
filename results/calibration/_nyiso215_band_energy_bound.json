@@ -1,0 +1,45 @@
+{
+ "session": "nyiso-215",
+ "kind": "POST-HOC DIAGNOSTIC \u2014 not a pre-registered gate",
+ "D2_p2_gap": {
+  "cohort_peak_mw_keeper": 441.7,
+  "class_peak_mw_fall_split_off": 397.748,
+  "cohort_peak_mw_retained_split_off": 43.952,
+  "retained_pct_of_cohort_capacity": 9.951,
+  "class_curve_pct_peaking": 8.0,
+  "declared_bar_mw": 400.0,
+  "shortfall_vs_declared_bar_mw": 2.252
+ },
+ "duct_population_mw_derived": 716.761,
+ "nyiso214_form_A_duct_mw": 716.8,
+ "D1_energy_bound": {
+  "2023": {
+   "band_peak_energy_gwh": 386.375,
+   "cohort_lower_bound_energy_gwh": 4.778,
+   "cohort_lower_bound_hours": 38,
+   "cohort_eia923_net_gwh": 5.589,
+   "lower_bound_over_measured": 0.855,
+   "cohort_capacity_mw": 441.7,
+   "cohort_measured_cf_from_e923": 0.00144
+  },
+  "2024": {
+   "band_peak_energy_gwh": 468.859,
+   "cohort_lower_bound_energy_gwh": 0.021,
+   "cohort_lower_bound_hours": 2,
+   "cohort_eia923_net_gwh": 6.371,
+   "lower_bound_over_measured": 0.0033,
+   "cohort_capacity_mw": 441.7,
+   "cohort_measured_cf_from_e923": 0.00165
+  },
+  "2025": {
+   "band_peak_energy_gwh": 1191.298,
+   "cohort_lower_bound_energy_gwh": 5.801,
+   "cohort_lower_bound_hours": 104,
+   "cohort_eia923_net_gwh": 0.0,
+   "lower_bound_over_measured": null,
+   "cohort_capacity_mw": 441.7,
+   "cohort_measured_cf_from_e923": 0.0
+  }
+ },
+ "D1_note": "The lower bound is model GROSS band MW against EIA-923 NET generation, and it is a LOWER bound only: hours in which the band sits below the duct population's capacity may still carry cohort generation, so a ratio below 1 is NOT evidence the cohort under-runs."
+}

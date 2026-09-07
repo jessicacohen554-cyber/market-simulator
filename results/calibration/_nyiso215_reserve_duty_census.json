@@ -1,0 +1,486 @@
+{
+ "session": "nyiso-215",
+ "keeper": "2026-09-07-nyiso-213-summer-seam",
+ "prereg": "results/calibration/PREREG-nyiso215-reserve-duty-single-peak.md",
+ "zero_lp": true,
+ "P1": {
+  "peak_only_plants": [
+   7784,
+   10620,
+   10621,
+   50744,
+   54034,
+   54592,
+   54593
+  ],
+  "summed_pmax_mw": 441.7,
+  "per_plant_mw": {
+   "7784": 67.0,
+   "10620": 53.6,
+   "10621": 102.7,
+   "50744": 43.9,
+   "54034": 78.0,
+   "54592": 53.6,
+   "54593": 42.9
+  },
+  "nyiso214_target_mw": 441.7,
+  "set_matches": true,
+  "abs_pct_diff_mw": 0.0,
+  "void": false
+ },
+ "P2": {
+  "tranche_count_with_split_off": {
+   "7784": 8,
+   "10620": 8,
+   "10621": 8,
+   "50744": 7,
+   "54034": 8,
+   "54592": 8,
+   "54593": 7
+  },
+  "n_plants_multi_tranche": 7,
+  "class_peak_mw_keeper": 1158.461,
+  "class_peak_mw_split_off": 760.714,
+  "class_peak_mw_fall": 397.748,
+  "fires": false,
+  "refutes": false
+ },
+ "P3": {
+  "dual_basis": {
+   "threshold": 0.1,
+   "plants": [
+    {
+     "plant_code": 2500,
+     "model_pmax_mw": 222.2,
+     "campd_online_share": 0.94924,
+     "e923_pooled_cf": 1.38349,
+     "ratio_cf_over_onshare": 1.4575,
+     "has_campd": true
+    },
+    {
+     "plant_code": 2539,
+     "model_pmax_mw": 812.7,
+     "campd_online_share": 0.93552,
+     "e923_pooled_cf": 0.53509,
+     "ratio_cf_over_onshare": 0.572,
+     "has_campd": true
+    },
+    {
+     "plant_code": 7314,
+     "model_pmax_mw": 170.0,
+     "campd_online_share": 0.41332,
+     "e923_pooled_cf": 0.19435,
+     "ratio_cf_over_onshare": 0.4702,
+     "has_campd": true
+    },
+    {
+     "plant_code": 7784,
+     "model_pmax_mw": 60.0,
+     "campd_online_share": null,
+     "e923_pooled_cf": 0.0173,
+     "ratio_cf_over_onshare": null,
+     "has_campd": false
+    },
+    {
+     "plant_code": 10190,
+     "model_pmax_mw": 72.0,
+     "campd_online_share": 0.22373,
+     "e923_pooled_cf": 0.09353,
+     "ratio_cf_over_onshare": 0.418,
+     "has_campd": true
+    },
+    {
+     "plant_code": 10620,
+     "model_pmax_mw": 61.1,
+     "campd_online_share": 0.01217,
+     "e923_pooled_cf": 0.00345,
+     "ratio_cf_over_onshare": 0.2836,
+     "has_campd": true
+    },
+    {
+     "plant_code": 10621,
+     "model_pmax_mw": 86.2,
+     "campd_online_share": 0.04695,
+     "e923_pooled_cf": 0.01191,
+     "ratio_cf_over_onshare": 0.2536,
+     "has_campd": true
+    },
+    {
+     "plant_code": 50292,
+     "model_pmax_mw": 128.99,
+     "campd_online_share": 0.87606,
+     "e923_pooled_cf": 0.34463,
+     "ratio_cf_over_onshare": 0.3934,
+     "has_campd": true
+    },
+    {
+     "plant_code": 50744,
+     "model_pmax_mw": 54.8,
+     "campd_online_share": 0.02387,
+     "e923_pooled_cf": 0.00406,
+     "ratio_cf_over_onshare": 0.1702,
+     "has_campd": true
+    },
+    {
+     "plant_code": 50978,
+     "model_pmax_mw": 58.0,
+     "campd_online_share": 0.3447,
+     "e923_pooled_cf": 0.22389,
+     "ratio_cf_over_onshare": 0.6495,
+     "has_campd": true
+    },
+    {
+     "plant_code": 54034,
+     "model_pmax_mw": 79.4,
+     "campd_online_share": 0.06353,
+     "e923_pooled_cf": 0.02088,
+     "ratio_cf_over_onshare": 0.3287,
+     "has_campd": true
+    },
+    {
+     "plant_code": 54574,
+     "model_pmax_mw": 237.8,
+     "campd_online_share": 0.4264,
+     "e923_pooled_cf": 0.0943,
+     "ratio_cf_over_onshare": 0.2212,
+     "has_campd": true
+    },
+    {
+     "plant_code": 54592,
+     "model_pmax_mw": 81.0,
+     "campd_online_share": 0.03977,
+     "e923_pooled_cf": 0.016,
+     "ratio_cf_over_onshare": 0.4023,
+     "has_campd": true
+    },
+    {
+     "plant_code": 54593,
+     "model_pmax_mw": 48.8,
+     "campd_online_share": 0.02464,
+     "e923_pooled_cf": 0.00746,
+     "ratio_cf_over_onshare": 0.3027,
+     "has_campd": true
+    },
+    {
+     "plant_code": 54808,
+     "model_pmax_mw": 11.0,
+     "campd_online_share": null,
+     "e923_pooled_cf": 0.5138,
+     "ratio_cf_over_onshare": null,
+     "has_campd": false
+    },
+    {
+     "plant_code": 55375,
+     "model_pmax_mw": 558.0,
+     "campd_online_share": 0.99194,
+     "e923_pooled_cf": 0.82808,
+     "ratio_cf_over_onshare": 0.8348,
+     "has_campd": true
+    },
+    {
+     "plant_code": 55405,
+     "model_pmax_mw": 984.4,
+     "campd_online_share": 0.58314,
+     "e923_pooled_cf": 0.33339,
+     "ratio_cf_over_onshare": 0.5717,
+     "has_campd": true
+    },
+    {
+     "plant_code": 56188,
+     "model_pmax_mw": 74.5,
+     "campd_online_share": 0.16997,
+     "e923_pooled_cf": 0.08089,
+     "ratio_cf_over_onshare": 0.4759,
+     "has_campd": true
+    },
+    {
+     "plant_code": 56196,
+     "model_pmax_mw": 560.0,
+     "campd_online_share": 0.86747,
+     "e923_pooled_cf": 0.66414,
+     "ratio_cf_over_onshare": 0.7656,
+     "has_campd": true
+    },
+    {
+     "plant_code": 56234,
+     "model_pmax_mw": 317.3,
+     "campd_online_share": 0.85827,
+     "e923_pooled_cf": 0.80414,
+     "ratio_cf_over_onshare": 0.9369,
+     "has_campd": true
+    },
+    {
+     "plant_code": 56940,
+     "model_pmax_mw": 654.19,
+     "campd_online_share": 0.87241,
+     "e923_pooled_cf": 0.82128,
+     "ratio_cf_over_onshare": 0.9414,
+     "has_campd": true
+    },
+    {
+     "plant_code": 57185,
+     "model_pmax_mw": 1016.1,
+     "campd_online_share": 0.90081,
+     "e923_pooled_cf": 0.52957,
+     "ratio_cf_over_onshare": 0.5879,
+     "has_campd": true
+    },
+    {
+     "plant_code": 57664,
+     "model_pmax_mw": 540.0,
+     "campd_online_share": null,
+     "e923_pooled_cf": 0.71384,
+     "ratio_cf_over_onshare": null,
+     "has_campd": false
+    }
+   ]
+  },
+  "n_plants_with_both": 20,
+  "median_ratio_cf_over_onshare": 0.473,
+  "median_ratio_low_duty_subset": 0.2932,
+  "n_low_duty_subset": 6,
+  "a_fires_bias_material": true,
+  "plant_7784_e923_cf": 0.0173,
+  "plant_7784_implied_online_share": 0.03657,
+  "b_holds_membership_survives": true
+ },
+ "P4_P5_by_year": {
+  "2023": {
+   "plants": [
+    {
+     "plant_code": 7784,
+     "zone": "Upstate_West",
+     "pmax_mw": 67.0,
+     "mc_peak_mean_usd_mwh": 44.419,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.07603,
+     "measured_duty_stat": 0.0173
+    },
+    {
+     "plant_code": 10620,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 48.403,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.04292,
+     "measured_duty_stat": 0.0122
+    },
+    {
+     "plant_code": 10621,
+     "zone": "Upstate_West",
+     "pmax_mw": 102.7,
+     "mc_peak_mean_usd_mwh": 48.813,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.05171,
+     "measured_duty_stat": 0.047
+    },
+    {
+     "plant_code": 50744,
+     "zone": "Upstate_West",
+     "pmax_mw": 43.9,
+     "mc_peak_mean_usd_mwh": 46.894,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.04932,
+     "measured_duty_stat": 0.0239
+    },
+    {
+     "plant_code": 54034,
+     "zone": "Capital_Hudson",
+     "pmax_mw": 78.0,
+     "mc_peak_mean_usd_mwh": 74.053,
+     "zone_lmp_mean_usd_mwh": 35.648,
+     "implied_on_share": 0.00377,
+     "measured_duty_stat": 0.0635
+    },
+    {
+     "plant_code": 54592,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 47.053,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.03938,
+     "measured_duty_stat": 0.0398
+    },
+    {
+     "plant_code": 54593,
+     "zone": "Upstate_West",
+     "pmax_mw": 42.9,
+     "mc_peak_mean_usd_mwh": 51.432,
+     "zone_lmp_mean_usd_mwh": 24.483,
+     "implied_on_share": 0.03162,
+     "measured_duty_stat": 0.0246
+    }
+   ],
+   "cap_weighted_implied_on_share": 0.04218,
+   "cap_weighted_measured_duty": 0.03584,
+   "ratio_implied_over_measured": 1.177,
+   "band_peak_mean_mw": 44.107,
+   "band_peak_max_mw": 1004.935,
+   "band_peak_p95_mw": 142.525,
+   "band_hours_above_duct_ceiling_pct": 0.4338
+  },
+  "2024": {
+   "plants": [
+    {
+     "plant_code": 7784,
+     "zone": "Upstate_West",
+     "pmax_mw": 67.0,
+     "mc_peak_mean_usd_mwh": 44.661,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.31027,
+     "measured_duty_stat": 0.0173
+    },
+    {
+     "plant_code": 10620,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 49.241,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.19224,
+     "measured_duty_stat": 0.0122
+    },
+    {
+     "plant_code": 10621,
+     "zone": "Upstate_West",
+     "pmax_mw": 102.7,
+     "mc_peak_mean_usd_mwh": 48.097,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.23596,
+     "measured_duty_stat": 0.047
+    },
+    {
+     "plant_code": 50744,
+     "zone": "Upstate_West",
+     "pmax_mw": 43.9,
+     "mc_peak_mean_usd_mwh": 48.182,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.17671,
+     "measured_duty_stat": 0.0239
+    },
+    {
+     "plant_code": 54034,
+     "zone": "Capital_Hudson",
+     "pmax_mw": 78.0,
+     "mc_peak_mean_usd_mwh": 67.219,
+     "zone_lmp_mean_usd_mwh": 39.027,
+     "implied_on_share": 0.00639,
+     "measured_duty_stat": 0.0635
+    },
+    {
+     "plant_code": 54592,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 50.448,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.11678,
+     "measured_duty_stat": 0.0398
+    },
+    {
+     "plant_code": 54593,
+     "zone": "Upstate_West",
+     "pmax_mw": 42.9,
+     "mc_peak_mean_usd_mwh": 53.517,
+     "zone_lmp_mean_usd_mwh": 35.826,
+     "implied_on_share": 0.09121,
+     "measured_duty_stat": 0.0246
+    }
+   ],
+   "cap_weighted_implied_on_share": 0.16698,
+   "cap_weighted_measured_duty": 0.03584,
+   "ratio_implied_over_measured": 4.659,
+   "band_peak_mean_mw": 53.523,
+   "band_peak_max_mw": 731.73,
+   "band_peak_p95_mw": 287.359,
+   "band_hours_above_duct_ceiling_pct": 0.0228
+  },
+  "2025": {
+   "plants": [
+    {
+     "plant_code": 7784,
+     "zone": "Upstate_West",
+     "pmax_mw": 67.0,
+     "mc_peak_mean_usd_mwh": 60.704,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.67888,
+     "measured_duty_stat": 0.0173
+    },
+    {
+     "plant_code": 10620,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 58.331,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.61906,
+     "measured_duty_stat": 0.0122
+    },
+    {
+     "plant_code": 10621,
+     "zone": "Upstate_West",
+     "pmax_mw": 102.7,
+     "mc_peak_mean_usd_mwh": 66.039,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.64406,
+     "measured_duty_stat": 0.047
+    },
+    {
+     "plant_code": 50744,
+     "zone": "Upstate_West",
+     "pmax_mw": 43.9,
+     "mc_peak_mean_usd_mwh": 64.279,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.63961,
+     "measured_duty_stat": 0.0239
+    },
+    {
+     "plant_code": 54034,
+     "zone": "Capital_Hudson",
+     "pmax_mw": 78.0,
+     "mc_peak_mean_usd_mwh": 113.714,
+     "zone_lmp_mean_usd_mwh": 59.491,
+     "implied_on_share": 0.00982,
+     "measured_duty_stat": 0.0635
+    },
+    {
+     "plant_code": 54592,
+     "zone": "Upstate_West",
+     "pmax_mw": 53.6,
+     "mc_peak_mean_usd_mwh": 59.089,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.58995,
+     "measured_duty_stat": 0.0398
+    },
+    {
+     "plant_code": 54593,
+     "zone": "Upstate_West",
+     "pmax_mw": 42.9,
+     "mc_peak_mean_usd_mwh": 70.706,
+     "zone_lmp_mean_usd_mwh": 53.906,
+     "implied_on_share": 0.57865,
+     "measured_duty_stat": 0.0246
+    }
+   ],
+   "cap_weighted_implied_on_share": 0.52095,
+   "cap_weighted_measured_duty": 0.03584,
+   "ratio_implied_over_measured": 14.535,
+   "band_peak_mean_mw": 135.993,
+   "band_peak_max_mw": 846.051,
+   "band_peak_p95_mw": 437.763,
+   "band_hours_above_duct_ceiling_pct": 1.1872
+  }
+ },
+ "P4": {
+  "ratio_by_year": [
+   1.177,
+   4.659,
+   14.535
+  ],
+  "fires_under_correction": true,
+  "refutes_right_sized": false
+ },
+ "P5": {
+  "mean_mw_2025": 135.993,
+  "hours_above_716_8_pct_2025": 1.1872,
+  "fires": false,
+  "refutes": false
+ }
+}
