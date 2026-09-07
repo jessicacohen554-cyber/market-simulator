@@ -303,7 +303,7 @@ not a gate.
 |---|---|
 | `docs/handoffs/spp58/` | `pull_hifld_lines.py`, `build_network.py`, `query_lines.py`, `element_map.csv`, `binding_hours_by_year.csv` (this push); then `ptdf.py`, `aggregate_ttc_58.py`, `nodes.csv` / `branches.csv` / `plants.csv` (reduced network), `psi2_by_constituent.csv`, `tstar_58.csv`, the logs |
 | `docs/handoffs/PRECOMMIT-spp-58-2026-09-07.md` (this file), `FINDING-spp-58-2026-09-07.md` | the record |
-| `docs/multi-iso/spp-addition-plan-2026-09.md` §5 SPP-58 row → LANDED; `docs/handoffs/spp-desk-ledger-2026-09.md` row; `docs/calibration-log/spp.md` spp-8 | the record |
+| `docs/multi-iso/spp-addition-plan-2026-09.md` §5 SPP-58 row → LANDED; `docs/handoffs/spp-desk-ledger-2026-09.md` row; `docs/calibration-log/spp.md` spp-9 | the record |
 | `docs/codebase-site/data/mechanism-matrix/SPP.js` `measured_interface_limits` | evidence text appended; **cell stays O** |
 | `src/market_sim/config/iso_configs.py` `_ns_corridor_ttc` | **ONLY under the band rule of §4 — and the rule as declared never edits it** (inside the band it stands; outside it stops). No edit is expected from this lane |
 

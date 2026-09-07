@@ -1,0 +1,59 @@
+== K3 / K4 ==
+K3 cut-set identities: {'P-NS': {'sum': 0.9999999999999087, 'n_crossing': 59}, 'P-SS': {'sum': 1.0000000000000362, 'n_crossing': 8}}
+K4 sign agreement on resolved corridor LINES with |t1|>=2: 7/8 = 88%  (TMP142_25323:agree, COPSTJCPFRSJ:agree, TMP845_30027:agree, LECLAWSTR87:DISAGREE, TMP662_28227:agree, TMP765_28745:agree, TMP696_28306:agree, CRALENCRALEN:agree)
+   transformers (|psi| only): TMP477_24580 psi1 -0.1353 psi2 -0.0558, EDWXFR87CRAI psi1 +0.0075 psi2 -0.0050, TMP840_28870 psi1 +0.0813 psi2 -0.0263, TMP634_28149 psi1 +0.0875 psi2 +0.0012, TMP867_31042 psi1 +0.0350 psi2 -0.0002
+
+== N->S, the like-for-like object: S2 = psi1-identified N->S ∩ resolved ==
+S2 = 8 of 12: EDWXFR87CRAI, COPSTJCPFRSJ, TMP845_30027, LECLAWSTR87, TMP840_28870, TMP634_28149, TMP867_31042, TMP765_28745; psi2-identified among them: 2
+T*1(S2) [SPP-53's rule on the subset]: n=8 hours=3637 weighted median 4,919 -> 4,900 MW | p25/p75 3,487/18,564 (5.32x) | LOYO drop23/24/25 4,574/6,437/4,574 | vs None: ratio nan -> n/a
+   TMP845_30027 174 (464 h); TMP765_28745 2,202 (296 h); LECLAWSTR87 3,487 (458 h); TMP634_28149 4,574 (384 h); TMP840_28870 4,919 (415 h); COPSTJCPFRSJ 6,437 (508 h); TMP867_31042 18,564 (310 h); EDWXFR87CRAI 22,240 (802 h)
+T*2(S2): n=2 hours=972 weighted median 11,022 -> 11,000 MW | p25/p75 7,748/11,022 (1.42x) | LOYO drop23/24/25 7,748/11,022/11,022 | vs 4919.474500860514: ratio 2.24 -> OUTSIDE the band (STOP; card)
+   TMP845_30027 7,748 (464 h); COPSTJCPFRSJ 11,022 (508 h)
+   T*2(S2) vs 3,400: ratio 3.24 -> OUTSIDE the band
+
+== N->S, all-psi2 object: every corridor constituent with psi2 >= 0.005 under P-NS ==
+T*2(all-psi2 N->S): n=8 hours=4060 weighted median 31,331 -> 31,300 MW | p25/p75 19,793/31,331 (1.58x) | LOYO drop23/24/25 31,331/29,645/31,331 | vs 3400: ratio 9.21 -> OUTSIDE the band (STOP; card)
+   TMP845_30027 7,748 (464 h); COPSTJCPFRSJ 11,022 (508 h); TEMP82_22539 19,793 (263 h); TMP122_26551 29,645 (607 h); TEMP61_22964 31,331 (634 h); TMP501_28727 31,331 (593 h); SMOSUMMULCIR 40,240 (476 h); TP1136_32015 47,311 (515 h)
+
+== S->N ==
+S2(S->N) = 5 of 8: TMP477_24580, TMP142_25323, TMP662_28227, TMP696_28306, CRALENCRALEN; psi2 reverse-loaded among them: 5
+T*1(S2, S->N): n=5 hours=2915 weighted median 3,125 -> 3,100 MW | p25/p75 3,025/21,937 (7.25x) | LOYO drop23/24/25 3,025/21,937/3,125 | vs None: ratio nan -> n/a
+   TMP477_24580 3,025 (1236 h); TMP662_28227 3,125 (376 h); CRALENCRALEN 5,999 (278 h); TMP142_25323 21,937 (732 h); TMP696_28306 23,343 (293 h)
+T*2(S2, S->N): n=5 hours=2915 weighted median 13,175 -> 13,200 MW | p25/p75 7,330/21,250 (2.90x) | LOYO drop23/24/25 7,330/14,969/13,175 | vs 3124.8270485507005: ratio 4.22 -> OUTSIDE the band (STOP; card)
+   TMP477_24580 7,330 (1236 h); TMP662_28227 13,175 (376 h); TMP696_28306 14,969 (293 h); TMP142_25323 21,250 (732 h); CRALENCRALEN 38,237 (278 h)
+   T*2(S2,S->N) vs 4,206: ratio 3.13 -> OUTSIDE the band
+T*2(all-psi2 S->N): n=8 hours=3872 weighted median 15,189 -> 15,200 MW | p25/p75 7,330/21,250 (2.90x) | LOYO drop23/24/25 13,175/15,189/14,969 | vs 4206: ratio 3.61 -> OUTSIDE the band (STOP; card)
+   TMP477_24580 7,330 (1236 h); TMP662_28227 13,175 (376 h); TMP696_28306 14,969 (293 h); TMP840_28870 15,189 (415 h); TP1121_31979 16,064 (269 h); TMP124_29862 17,264 (273 h); TMP142_25323 21,250 (732 h); CRALENCRALEN 38,237 (278 h)
+
+== sps_tie under P-SS (South-rest -> SPS) ==
+T*2(sps_tie, psi2-identified OK->SPS): n=7 hours=8771 weighted median 1,618 -> 1,600 MW | p25/p75 1,370/1,636 (1.19x) | LOYO drop23/24/25 1,636/1,618/1,618 | vs 10705: ratio 0.15 -> OUTSIDE the band (STOP; card)
+   SPPSPSTIES 1,193 (1097 h); TEMP50_23126 1,370 (2231 h); TMP200_25341 1,618 (1421 h); TMP555_29231 1,636 (1638 h); TMP775_29068 1,636 (762 h); TMP703_28546 2,315 (411 h); SPSNMTIES 24,959 (1211 h)
+T*2(sps_tie) excluding SPSNMTIES (2/10 elements present, a lower-bound psi): n=6 hours=7560 weighted median 1,618 -> 1,600 MW | p25/p75 1,370/1,636 (1.19x) | LOYO drop23/24/25 1,636/1,618/1,618 | vs 10705: ratio 0.15 -> OUTSIDE the band (STOP; card)
+   SPPSPSTIES 1,193 (1097 h); TEMP50_23126 1,370 (2231 h); TMP200_25341 1,618 (1421 h); TMP555_29231 1,636 (1638 h); TMP775_29068 1,636 (762 h); TMP703_28546 2,315 (411 h)
+Potter County width: psi2(TEMP50, OTDF Border-Tuco out) 0.3692 (PTDF 0.3109) vs psi2(TMP555, PTDF) 0.3109: ratio 1.19 -> COLLAPSED; psi1 0.0473 vs 0.1321 (2.79x) | T*2 1,370 vs 1,636 MW; T*1 10,705 vs 3,850
+
+== sensitivities (weighted medians of the same objects) ==
+x0.5: NS like-for-like 11,173 | NS all-psi2 30,774 | SN like-for-like 12,544 | sps_tie 1,622 | Potter ratio 1.20
+x2: NS like-for-like 10,775 | NS all-psi2 32,309 | SN like-for-like 14,552 | sps_tie 1,615 | Potter ratio 1.16
+x1_inner: NS like-for-like 12,668 | NS all-psi2 52,396 | SN like-for-like 11,650 | sps_tie 1,622 | Potter ratio 1.19
+wind-only source / gas-only sink: NS like-for-like 9,737 (n=3) | NS all-psi2 8,053
+
+== H-NEOK (hub-pair proxy) vs psi1 on the resolved psi1-significant corridor constituents ==
+   TMP477_24580   XFMR VIOLA7 - VIOLA7       psi1 -0.1353  psi2 P-NS -0.0558  H-NEOK -0.0678  P-NOK -0.0652  ratio psi2/psi1 +0.41
+   EDWXFR87CRAI   XFMR EDWV - EDWV           psi1 +0.0075  psi2 P-NS -0.0050  H-NEOK -0.0096  P-NOK -0.0054  ratio psi2/psi1 -0.66
+   TMP142_25323   LN WAVERLY7 - LACYGNE      psi1 -0.0539  psi2 P-NS -0.0557  H-NEOK -0.0797  P-NOK -0.0577  ratio psi2/psi1 +1.03
+   COPSTJCPFRSJ   LN COOPER - ST_JOE         psi1 +0.1689  psi2 P-NS +0.0987  H-NEOK +0.3001  P-NOK +0.1030  ratio psi2/psi1 +0.58
+   TMP845_30027   LN MARSHAL3 - KNOB         psi1 +0.3653  psi2 P-NS +0.0082  H-NEOK -0.0000  P-NOK +0.0082  ratio psi2/psi1 +0.02
+   LECLAWSTR87    LN LEC - LAWH              psi1 +0.0458  psi2 P-NS -0.0027  H-NEOK +0.0010  P-NOK -0.0028  ratio psi2/psi1 -0.06
+   TMP840_28870   XFMR SIBLEY - SIBLEY       psi1 +0.0813  psi2 P-NS -0.0263  H-NEOK -0.0372  P-NOK -0.0265  ratio psi2/psi1 -0.32
+   TMP634_28149   XFMR SIBLEY - SIBLEY       psi1 +0.0875  psi2 P-NS +0.0012  H-NEOK +0.0024  P-NOK +0.0008  ratio psi2/psi1 +0.01
+   TMP662_28227   LN SPERVI1 - MULGRE2       psi1 -0.1186  psi2 P-NS -0.0281  H-NEOK -0.0408  P-NOK -0.0244  ratio psi2/psi1 +0.24
+   TMP867_31042   XFMR HAWTHORN - HAWTHORN   psi1 +0.0350  psi2 P-NS -0.0002  H-NEOK +0.0376  P-NOK +0.0009  ratio psi2/psi1 -0.00
+   TMP765_28745   LN SEWARD3 - ST-JOHN       psi1 +0.0459  psi2 P-NS +0.0043  H-NEOK +0.0100  P-NOK +0.0049  ratio psi2/psi1 +0.09
+   TMP696_28306   LN LACYGNE - STILWELL      psi1 -0.0697  psi2 P-NS -0.1087  H-NEOK -0.1665  P-NOK -0.1170  ratio psi2/psi1 +1.56
+   CRALENCRALEN   LN CRAIG - LENEXA          psi1 -0.0564  psi2 P-NS -0.0088  H-NEOK -0.0118  P-NOK -0.0093  ratio psi2/psi1 +0.16
+
+== double attribution (oklahoma_internal, resolved) ==
+   CIMXF2CIMXF3: psi1 (OK-N) +0.0666 t +10.9 | psi1 (S-OK) -0.0508 t -8.4 || psi2 P-NOK +0.0300 | psi2 P-SS -0.0107 -> DOUBLE-ATTRIBUTED
+   TMP573_26592: psi1 (OK-N) +0.0796 t +3.4 | psi1 (S-OK) -0.0656 t -2.2 || psi2 P-NOK -0.0252 | psi2 P-SS +0.0321 -> DOUBLE-ATTRIBUTED
+   CORNAPTERSUN: psi1 (OK-N) +0.0271 t +3.8 | psi1 (S-OK) -0.0501 t -6.5 || psi2 P-NOK -0.0074 | psi2 P-SS -0.0070 -> DOUBLE-ATTRIBUTED

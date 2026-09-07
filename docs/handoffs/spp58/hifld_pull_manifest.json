@@ -1,0 +1,14 @@
+{
+ "service": "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Electric_Power_Transmission_Lines/FeatureServer/0/query",
+ "box": {
+  "xmin": -108.0,
+  "ymin": 29.0,
+  "xmax": -88.0,
+  "ymax": 49.5
+ },
+ "count": 17873,
+ "rows": 17873,
+ "pages": 9,
+ "sha256_pages": "f70786b9d46c789b7445713568f069429a44aeabce3a1b413b26325d7cdbf2ef",
+ "pulled_utc": "2026-09-07T16:42:06Z"
+}

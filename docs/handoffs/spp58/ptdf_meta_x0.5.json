@@ -1,0 +1,25 @@
+{
+ "xfmr_scale": 0.5,
+ "inner_box": false,
+ "k3": {
+  "P-NS": {
+   "sum": 0.9999999999999379,
+   "n_crossing": 59
+  },
+  "P-SS": {
+   "sum": 1.0000000000000586,
+   "n_crossing": 8
+  }
+ },
+ "slack_node": 6923,
+ "n_nodes_in_solve": 8286,
+ "n_branches": 10694,
+ "pairs_source_mw": {
+  "P-NS N": 45537.7,
+  "P-NS S": 45662.0,
+  "P-SS S-rest": 36783.0,
+  "P-SS SPS": 8879.0,
+  "NE": 10000.3,
+  "OK": 30483.0
+ }
+}
