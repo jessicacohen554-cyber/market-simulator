@@ -11,8 +11,8 @@
     "capacity_market_clearing": false,
     "datacenter_load_path": "high",
     "correlated_forced_outage": true,
-    "cache_key": "31cf71afda5c610d",
-    "bundle": "/home/user/market-simulator/results/ERCOT/31cf71afda5c610d",
+    "cache_key": "ec2ea8193e2e45a1",
+    "bundle": "/home/user/market-simulator/results/ERCOT/ec2ea8193e2e45a1",
     "solved_years": [
       2026,
       2027,
@@ -22,33 +22,33 @@
     ],
     "n_solved_years": 5,
     "error": null,
-    "total_wall_s": 372.5,
-    "global_peak_rss_mb": 3875.3,
+    "total_wall_s": 361.8,
+    "global_peak_rss_mb": 3714.9,
     "per_year_perf": [
       {
         "year": 2026,
-        "wall_s": 149.5,
-        "peak_rss_mb": 3548.1
+        "wall_s": 148.6,
+        "peak_rss_mb": 3407.9
       },
       {
         "year": 2027,
-        "wall_s": 102.7,
-        "peak_rss_mb": 3875.3
+        "wall_s": 92.0,
+        "peak_rss_mb": 3714.9
       },
       {
         "year": 2028,
-        "wall_s": 60.0,
-        "peak_rss_mb": 3604.8
+        "wall_s": 54.3,
+        "peak_rss_mb": 3616.8
       },
       {
         "year": 2029,
-        "wall_s": 35.3,
-        "peak_rss_mb": 3431.7
+        "wall_s": 35.4,
+        "peak_rss_mb": 3414.2
       },
       {
         "year": 2030,
-        "wall_s": 24.7,
-        "peak_rss_mb": 3433.9
+        "wall_s": 31.1,
+        "peak_rss_mb": 3449.7
       }
     ],
     "year_summary": [
@@ -93,7 +93,7 @@
         "reserve_margin": -0.3552,
         "lw_price": 4998.44,
         "max_hourly_price": 5000.0,
-        "co2_mt": 321.88,
+        "co2_mt": 313.15,
         "hours_ge_500": 8760,
         "retire_mw": 446.0,
         "builds_thermal_mw": 6690.2,
@@ -105,7 +105,7 @@
         "reserve_margin": -0.4309,
         "lw_price": 4999.55,
         "max_hourly_price": 5000.0,
-        "co2_mt": 342.28,
+        "co2_mt": 325.46,
         "hours_ge_500": 8760,
         "retire_mw": 0.0,
         "builds_thermal_mw": 6000.0,
@@ -113,10 +113,8 @@
         "builds_storage_mw": 0.0
       }
     ],
-    "started_utc": "2026-09-06T04:14:17Z",
+    "started_utc": "2026-09-07T05:01:39Z",
     "bridged_years": [],
-    "campaign": "scn-campaign-load-2026-09-06",
-    "case": "LOAD-HI",
     "reference_case": "REF"
   },
   "score": null,
@@ -125,7 +123,7 @@
       "ident": "I1",
       "name": "energy balance",
       "status": "PASS",
-      "detail": "max |supply−demand| = 1.455e-10 MW (year 2030); tol 1.0"
+      "detail": "max |supply−demand| = 1.31e-10 MW (year 2026); tol 1.0"
     },
     {
       "ident": "I2",
@@ -137,7 +135,7 @@
       "ident": "I3",
       "name": "unserved/dump",
       "status": "FAIL",
-      "detail": "2026: slack 0.39% of load (440 h, 2,656.5 GWh, peak 26,560 MW); 2027: slack 8.79% of load (5992 h, 71,322.4 GWh, peak 52,146 MW); 2028: slack 23.27% of load (8695 h, 227,788.5 GWh, peak 73,209 MW); 2029: slack 30.57% of load (8760 h, 360,984.0 GWh, peak 94,041 MW); 2030: slack 37.83% of load (8760 h, 538,869.5 GWh, peak 121,718 MW)"
+      "detail": "2026: slack 0.39% of load (440 h, 2,656.5 GWh, peak 26,560 MW); 2027: slack 8.79% of load (5992 h, 71,322.4 GWh, peak 52,146 MW); 2028: slack 23.27% of load (8695 h, 227,788.5 GWh, peak 73,209 MW); 2029: slack 30.57% of load (8760 h, 360,984.0 GWh, peak 94,041 MW); 2030: slack 37.83% of load (8760 h, 538,869.5 GWh, peak 121,724 MW)"
     },
     {
       "ident": "I4",
@@ -206,11 +204,12 @@
       "detail": "2026: LW $769.5 outside [0.5×,3.0×] CC MC $23.7; 2027: LW $4039.4 outside [0.5×,3.0×] CC MC $23.7; 2028: LW $4991.0 outside [0.5×,3.0×] CC MC $23.7; 2029: LW $4998.4 outside [0.5×,3.0×] CC MC $23.7; 2030: LW $4999.5 outside [0.5×,3.0×] CC MC $23.7"
     }
   ],
-  "registered_utc": "2026-09-06T04:14:17Z",
+  "registered_utc": "2026-09-07T05:01:39Z",
   "provenance": {
     "schema": "forecast-provenance/v1",
-    "scored_at_sha": "73c109cb4098",
-    "scored_at_date": "2026-09-06T04:14:17Z",
-    "cache_epoch": "31cf71afda5c610d"
+    "solve_surface": null,
+    "scored_at_sha": "48c45be4be13",
+    "scored_at_date": "2026-09-07T05:01:39Z",
+    "cache_epoch": "ec2ea8193e2e45a1"
   }
 }

@@ -228,7 +228,15 @@ were, and §0 above already says why they are contaminated. This addendum report
 
 **The campaign now stands at TWO pins, deliberately.** ERCOT's three legs are **CCS-clean** — its
 retrofit ledger is empty in all three — so G-DRIFT lets them stand at `1cc45bb2` and they were
-not re-solved. The other 13 legs are re-solved at **THE PIN
+not re-solved. *(**CORRECTED 2026-09-07 — this paragraph is FALSE as written and is kept only so
+the error is legible.** ERCOT's three legs were re-solved at THE PIN by SCN-WS5A-RESOLVE-ERCOT and
+they are **not** CCS-clean there: REF converts 0 → 5,763.8 MW by 2030 and its 2030 CO2 falls
+328.874 → 312.866 Mt. The "clean" reading was of the **pre-fix screen's output**, not of the
+mechanism — the two D65-B fields that move at the pin are inputs to the retrofit screen, so an
+empty pre-fix ledger proves nothing about the post-fix one. **The campaign stands at ONE pin: all
+16 legs are at `bdfb3095`.** See ADDENDUM 2026-09-07 below and
+`docs/handoffs/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md`.)* The other 13 legs are re-solved at
+**THE PIN
 `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`** (a descendant of capx D77 `fc583339` and capx D65-B
 `b1f77621`), into `results/scn-campaign-load-2026-09-06-r2/`, and **re-registered under their
 original run ids** with the pre-fix slim artifacts deleted. Method, gates, per-leg numbers and the
@@ -249,7 +257,7 @@ unabated gas and coal:
 | PJM | 0.42 % | **1.58 %** | 470.455 → **463.039** Mt |
 | CAISO | 16.2 % | *pending sibling lane* | 31.160 → — |
 | MISO | ≈0.27 % | *pending sibling lane* | 412.634 → — |
-| ERCOT | 0 (clean) | 0 (clean) | unchanged at `1cc45bb2` |
+| ERCOT | *(stated 0 — wrong, see below)* | **4.87 %** | 328.874 → **312.866** Mt |
 
 **So §5's shares are lower bounds, not estimates**, and the same caution applies to CAISO's and
 MISO's until their lanes land. **2026 and 2027 do not move in any leg** — every fuel row is
@@ -377,3 +385,51 @@ only on CAISO and MISO.
    every PJM leg. Its measured effect on this campaign is nil (every PJM capacity row is identical
    pre → post, because PJM's backstop is clamped at its rate cap at a −16 % reserve margin), but
    the stated reason was false. Routed to SCN-DESK, not edited here.
+
+
+---
+
+# ADDENDUM 2026-09-07 — ERCOT joins THE PIN (lane SCN-WS5A-RESOLVE-ERCOT, ruling S8's excluded three)
+
+**Appended, never a rewrite**, except for the two marked corrections above — the §A.1 ERCOT row and
+the "TWO pins" paragraph — which asserted a fact this lane measured to be false and would otherwise
+mislead every reader of the table they sit in.
+
+**All 16 campaign legs now sit at THE PIN `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`.** ERCOT's
+`REF` / `LOAD-HI` / `LOAD-HI-ORGANIC` were re-solved into
+`results/scn-campaign-load-2026-09-06-r2/ERCOT/` and re-registered under their original run ids,
+with the pre-fix slim artifacts deleted and the campaign-root bundle/report rebuilt. Method, gates,
+per-leg numbers: `docs/handoffs/{PRECOMMIT,FINDING}-scn-ws5a-resolve-ercot-2026-09-07.md`.
+
+## B.1 The 2030 levels
+
+| leg | 2030 CO2 pre → post | share of level | `gas_cc_ccs` 2030 pre → post |
+|---|---|---|---|
+| ERCOT REF | 328.874 → **312.866** Mt | **−4.87 %** | 0 → **46.46** TWh (5,763.8 MW) |
+| ERCOT LOAD-HI | 342.281 → **325.463** Mt | −4.91 % | 0 → **47.82** TWh (5,932.1 MW) |
+| ERCOT LOAD-HI-ORGANIC | 342.284 → **325.466** Mt | −4.91 % | 0 → **47.82** TWh (5,932.1 MW) |
+
+**2026, 2027 AND 2028 do not move at all** — every fuel row, price and CO2 identical to the pre-fix
+bundle — because nothing converts before 2029 on any ERCOT load leg. That is one year stronger than
+the confinement the other five ISOs could show.
+
+## B.2 What this does NOT change, and it is the load campaign's headline
+
+- **The load response barely moves.** ΔCO2 (LOAD-HI − REF) at 2030: **+13.4072 → +12.5978 Mt**, a
+  fall of 6.0 %. NEISO's fell 82 % and NYISO's 42 %. Both ERCOT arms convert on the same schedule
+  at nearly the same size, so the correction almost cancels out of the difference.
+- **The DC-shape gap is untouched to four decimal places**: ΔORGANIC − ΔLOAD-HI at 2030
+  **+0.0030 → +0.0029 Mt**. **§1.1's headline — "the DC volume axis is worth almost nothing; its
+  shape is worth everything" — is unaffected on ERCOT**, for the strongest possible reason: the two
+  high-load arms convert identically, so the repair cannot reach the gap.
+- **Unserved energy does not move by one GWh** in any ERCOT arm or year. §5's expectation that the
+  capture derate would cost deliverable energy is wrong: the derate raises the converted unit's
+  heat rate, not its pmax.
+
+## B.3 The six-ISO post-fix table is now assemblable
+
+The A.2 caution ("the common set is currently FOUR ISOs") is discharged for ERCOT: with CAISO and
+MISO landed by their sibling lanes and ERCOT landed here, **all six ISOs are on one pin** and the
+six-ISO post-fix system table can be written. Assembling it is the parent lane's, not this one's —
+note only that `collate_scenario_campaign.py` must cover **both** roots, since every ISO's legs are
+now under `…-r2/` while the bundles and reports stay at the campaign root.

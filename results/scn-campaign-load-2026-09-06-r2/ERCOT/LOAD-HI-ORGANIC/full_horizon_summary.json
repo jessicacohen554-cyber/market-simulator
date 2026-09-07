@@ -18,11 +18,11 @@
     "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
     "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md \u00a74"
   },
-  "cache_key": "c5255cea87fbaacf",
-  "run_dir": "/home/user/market-simulator/results/ERCOT/c5255cea87fbaacf",
+  "cache_key": "0c87f2f2467e95b3",
+  "run_dir": "/home/user/market-simulator/results/ERCOT/0c87f2f2467e95b3",
   "error": null,
-  "total_wall_s": 343.2,
-  "global_peak_rss_mb": 3534.8,
+  "total_wall_s": 354.5,
+  "global_peak_rss_mb": 3481.0,
   "n_solved_years": 5,
   "solved_years": [
     2026,
@@ -34,28 +34,28 @@
   "per_year_perf": [
     {
       "year": 2026,
-      "wall_s": 149.0,
-      "peak_rss_mb": 3534.8
+      "wall_s": 150.0,
+      "peak_rss_mb": 3407.8
     },
     {
       "year": 2027,
       "wall_s": 90.9,
-      "peak_rss_mb": 3492.8
+      "peak_rss_mb": 3481.0
     },
     {
       "year": 2028,
-      "wall_s": 45.1,
-      "peak_rss_mb": 3429.7
+      "wall_s": 45.7,
+      "peak_rss_mb": 3438.9
     },
     {
       "year": 2029,
-      "wall_s": 32.9,
-      "peak_rss_mb": 3431.3
+      "wall_s": 34.7,
+      "peak_rss_mb": 3439.4
     },
     {
       "year": 2030,
-      "wall_s": 25.0,
-      "peak_rss_mb": 3390.0
+      "wall_s": 32.8,
+      "peak_rss_mb": 3450.1
     }
   ],
   "invariants": [
@@ -75,7 +75,7 @@
       "id": "I3",
       "name": "unserved/dump",
       "status": "FAIL",
-      "detail": "2026: slack 0.87% of load (818 h, 5,873.3 GWh, peak 31,595 MW); 2027: slack 9.54% of load (5471 h, 77,450.6 GWh, peak 60,855 MW); 2028: slack 23.26% of load (8463 h, 227,775.1 GWh, peak 83,661 MW); 2029: slack 30.56% of load (8759 h, 360,930.1 GWh, peak 110,446 MW); 2030: slack 37.83% of load (8760 h, 538,858.7 GWh, peak 141,654 MW)"
+      "detail": "2026: slack 0.87% of load (818 h, 5,873.3 GWh, peak 31,595 MW); 2027: slack 9.54% of load (5471 h, 77,450.6 GWh, peak 60,855 MW); 2028: slack 23.26% of load (8463 h, 227,775.1 GWh, peak 83,661 MW); 2029: slack 30.56% of load (8759 h, 360,930.1 GWh, peak 110,446 MW); 2030: slack 37.83% of load (8760 h, 538,858.7 GWh, peak 141,567 MW)"
     },
     {
       "id": "I4",
@@ -305,7 +305,7 @@
       "hours_ge_500": 8760,
       "hours_ge_1000": 8760,
       "hours_ge_2000": 8760,
-      "co2_mt": 321.9044,
+      "co2_mt": 313.166,
       "peak_demand_mw": 200796.758,
       "reserve_margin": -0.4242,
       "rps_dual": 0.0,
@@ -326,7 +326,8 @@
       "retire_mw": 446.0000000000001,
       "capacity_by_fuel_mw": {
         "coal": 13397.9,
-        "gas_cc": 42259.8,
+        "gas_cc": 39327.7,
+        "gas_cc_ccs": 2932.1,
         "gas_ct": 14071.6,
         "gas_st": 10404.5,
         "hydro": 546.3,
@@ -336,7 +337,8 @@
       },
       "generation_by_fuel_mwh": {
         "coal": 89824854.6,
-        "gas_cc": 320794710.2,
+        "gas_cc": 297914590.0,
+        "gas_cc_ccs": 22880120.2,
         "gas_ct": 103959079.6,
         "gas_st": 51032650.6,
         "hydro": 411108.0,
@@ -357,7 +359,7 @@
       "hours_ge_500": 8760,
       "hours_ge_1000": 8760,
       "hours_ge_2000": 8760,
-      "co2_mt": 342.2844,
+      "co2_mt": 325.4662,
       "peak_demand_mw": 241937.968,
       "reserve_margin": -0.492313,
       "rps_dual": 0.0,
@@ -377,7 +379,8 @@
       "retire_mw": 0.0,
       "capacity_by_fuel_mw": {
         "coal": 13397.9,
-        "gas_cc": 45259.8,
+        "gas_cc": 39327.7,
+        "gas_cc_ccs": 5932.1,
         "gas_ct": 17071.6,
         "gas_st": 10404.5,
         "hydro": 546.3,
@@ -387,20 +390,21 @@
       },
       "generation_by_fuel_mwh": {
         "coal": 89228530.2,
-        "gas_cc": 344974129.3,
+        "gas_cc": 297152109.7,
+        "gas_cc_ccs": 47822019.5,
         "gas_ct": 128783096.6,
         "gas_st": 50591211.4,
         "hydro": 411108.0,
         "nuclear": 38353968.0,
-        "solar": 80669065.7,
-        "wind": 152498609.8
+        "solar": 80640497.2,
+        "wind": 152527178.3
       },
       "total_gen_mwh": 885509719.0,
       "storage_discharge_mwh": 240.6,
       "storage_charge_mwh": 283.1
     }
   ],
-  "run_config_path": "/home/user/market-simulator/results/scn-campaign-load-2026-09-06/ERCOT/LOAD-HI-ORGANIC/run_config.json",
+  "run_config_path": "results/scn-campaign-load-2026-09-06-r2/ERCOT/LOAD-HI-ORGANIC/run_config.json",
   "set_overrides": {},
   "case": "LOAD-HI-ORGANIC",
   "campaign": "scn-campaign-load-2026-09-06",

@@ -1,4 +1,4 @@
-# Scenario matrix -- ERCOT -- ercot_scenario_campaign_matrix_78b01278f2
+# Scenario matrix -- ERCOT -- ercot_scenario_campaign_matrix_81af49756e
 
 **DETERMINISTIC SCENARIO RANGE -- NOT A PROBABILITY BAND**
 
@@ -8,9 +8,9 @@
 
 | Case | Cache key |
 |---|---|
-| LOAD-HI | `31cf71afda5c610d` |
-| LOAD-HI-ORGANIC | `c5255cea87fbaacf` |
-| REF | `6e40769352a572ba` |
+| LOAD-HI | `ec2ea8193e2e45a1` |
+| LOAD-HI-ORGANIC | `0c87f2f2467e95b3` |
+| REF | `de9c68e19316910e` |
 
 ## Emissions trajectory (Mt CO2)
 
@@ -19,8 +19,8 @@
 | 2026 | 256.02 | 255.26 | 214.39 |
 | 2027 | 298.77 | 294.83 | 255.97 |
 | 2028 | 301.53 | 301.58 | 285.70 |
-| 2029 | 321.88 | 321.90 | 305.19 |
-| 2030 | 342.28 | 342.28 | 328.87 |
+| 2029 | 313.15 | 313.17 | 297.24 |
+| 2030 | 325.46 | 325.47 | 312.87 |
 
 ## Envelope (min/max across cases)
 
@@ -29,5 +29,5 @@
 | 2026 | 214.39 (REF) | 256.02 (LOAD-HI) |
 | 2027 | 255.97 (REF) | 298.77 (LOAD-HI) |
 | 2028 | 285.70 (REF) | 301.58 (LOAD-HI-ORGANIC) |
-| 2029 | 305.19 (REF) | 321.90 (LOAD-HI-ORGANIC) |
-| 2030 | 328.87 (REF) | 342.28 (LOAD-HI-ORGANIC) |
+| 2029 | 297.24 (REF) | 313.17 (LOAD-HI-ORGANIC) |
+| 2030 | 312.87 (REF) | 325.47 (LOAD-HI-ORGANIC) |
