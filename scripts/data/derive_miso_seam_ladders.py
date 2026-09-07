@@ -364,9 +364,7 @@ def derive_pjm_neighbour_hourly(
     )
 
 
-SPP_HUB_PARQUET = (
-    RAW / "_validation-source" / "actual_lmp_hourly_zonal_SPP.parquet"
-)
+SPP_HUB_PARQUET = RAW / "_validation-source" / "actual_lmp_hourly_zonal_SPP.parquet"
 
 #: The SPP trading hub the MISO-SPP seam is anchored on (miso-233).
 #:
