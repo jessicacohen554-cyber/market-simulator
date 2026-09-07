@@ -13018,3 +13018,94 @@ read), `results/calibration/_nyiso215_reserve_duty_census.json`,
 `_nyiso215_band_energy_bound.json`, `scripts/probes/nyiso215_reserve_duty_census.py`,
 `nyiso215_band_energy_bound.py`; NYISO matrix shard `offer_curve_by_group` cell annotated
 (rule 28(b)), **no cell verdict letter moved**.
+
+## nyiso-216 — 2026-09-07
+
+**ZERO LP. Keeper unchanged (`2026-09-07-nyiso-213-summer-seam`, CALIBRATED, grade 7/8, fails 0,
+C3c the lone ledgered caveat). Nothing built, armed, screened, sized, recommended or registered;
+no marker moved; `final` never granted, locked test frozen, 2020/2021 unspent. The seven pending
+owner rulings are untouched and none is prejudged — and NO eighth card is opened.**
+
+**Finding:** `docs/FINDING-nyiso216-duty-role-protection-scales-with-zonal-gas-basis-2026-09-07.md`.
+**PREREG:** `results/calibration/PREREG-nyiso216-rensselaer-counterexample.md`, pushed at
+`1b3795e5` before any gated number was read. **Machine record:**
+`results/calibration/_nyiso216_rensselaer_counterexample.json`. **Instrument:**
+`scripts/probes/nyiso216_rensselaer_counterexample.py`.
+
+**Object:** nyiso-215 §4's named-not-pursued intra-cohort counter-example — 54034 Rensselaer Cogen
+runs `cc_reserve_duty_split` the *opposite* way to the cohort's other six in all three years
+(implied economic on-share 0.0038 / 0.0064 / 0.0098 against a measured 0.0635). Is the sign flip a
+**zone**, a **heat-rate**, or a **fleet-representation** effect, and does 54034 belong?
+
+**Answer: a ZONE effect, through the zonal GAS BASIS rather than the zonal LMP — which was none of
+the three as the question framed them.**
+
+* **P2 fires, COST 3 of 3.** A 2×2 swap of {54034, the cap-weighted six} × {Capital_Hudson,
+  Upstate_West} on the keeper's own committed P1 prices puts **99.7–103.2 %** of the gap on the
+  cost leg, with the price leg **negative** every year. The LMP channel is excluded in the *strong*
+  direction: `S(cohort, CH) > S(cohort, UW)` in every year, so Capital_Hudson is the **more**
+  favourable zone and moving 54034 to Upstate_West would push it *further* out of merit.
+* **P3's prediction FAILED and its declared "hurts" limb FIRED, at full strength.** Predicted
+  HEAT-RATE; measured **FUEL 3 of 3** (shares 1.081 / 1.144 / 1.063), with the heat-rate term
+  **negative** every year — 54034's base heat rate **8.8975** is **2.3 % below** the cap-weighted
+  cohort's **9.1090**, i.e. mid-cohort physics. `F_A / F_B = 1.75 / 1.61 / 2.10`. **P3 additionally
+  VOIDS on its own declared identity bar** (2025 residual **$0.0463** against a **$0.01** bar; 2023
+  $0.0079 and 2024 $0.0017 close) and **the gate was not rewritten**. The residual is 0.09 % of Δ;
+  its source was **not isolated and is not claimed**.
+* **The object (D4, post-hoc).** 54034 is `gas_cc`, the same fuel type as all six, and its price is
+  its **zone's**, not its own: every Capital_Hudson `gas_cc` unit pays ~**5.23 $/MMBtu** in 2025
+  against ~**2.21** in Upstate_West — **2.37×**. 54034 is an ordinary Capital_Hudson combined
+  cycle; the cohort is six Upstate_West plants plus one across that basis.
+* **The unifying identity (D2, post-hoc, verified numerically to 1e-3).** The class peak multiplier
+  buys out-of-merit protection of `(2.25 − 1) × HR_base × F_local`, so
+  `protection(A)/protection(B) = (F_A/F_B) × (HR_base ratio)`; the HR ratio is a constant **0.9768**,
+  so **the protection ratio simply IS the fuel-price ratio** — **$56.24/MWh** at 54034 against
+  **$27.41** for the six in 2025. **One cause for both halves of nyiso-215's "un-levelled"
+  observation**: over-correction where gas is dear (cost 2.05× while the zone LMP is only 1.10×),
+  erosion where gas is cheap and the price level rose 120 %.
+* **P4's prediction FAILED: MARGINAL, not ROBUST.** On `derive_reserve_duty_cc`'s own construction
+  54034's per-year CAMPD online share is **0.04189 / 0.03085 / 0.11792** — **above the 0.10
+  threshold in 2025**, i.e. not a duty-role plant that year, while the split routes its whole
+  capacity to the peak band regardless. The pooled 2023–2025 `duty_stat` of 0.0635 conceals it.
+  Basis-robust (identical on the derive's pooled p99.5 HSL and on 2025's own) and **CAMPD 2025 is
+  complete, 8,760 h for every cohort plant**; deliberately not an EIA-923 number (preliminary
+  vintage returns 0.0 for these plants — undefined, never a measurement).
+* **D3 (post-hoc, beyond P4's declared scope):** 54034 is the only member crossing in any year, but
+  **every** member's 2025 share is its three-year high by 2.0–4.8×, and 10621 reaches **0.0903**.
+  The pooled denominator understates 2025 duty **cohort-wide**; 54034 is where it first changes an
+  answer.
+* **P5 COHERENT** on both declared limbs (intensity-when-on 0.865 within 0.773–0.908; mean run
+  length 37.133 h within 9.697–38.741) — its conduct *shape* is cohort-like. **An ungated third
+  statistic is disclosed as outside range**: pooled online share **0.06353** against
+  **0.01217–0.04695**. The classification stands as written and is not restated.
+* **P1 reproduction bar fires** over all 21 plant-years (max on-share diff **5 × 10⁻⁶**, max `mc`
+  diff **0.001 %**), which discharges the one **LIVE** G-DRIFT hunk
+  (`data/eia930/actuals.py::_screen_fuel_spike_columns`) **by execution**. G-DRIFT `51f2fc2d` →
+  `71e62675` is 14 files (three more than nyiso-215 audited), 13 INERT with per-file reasons. **The
+  C1/C4 benchmark half is passed forward, not absorbed** — a NYISO lane that re-solves or re-scores
+  C1/C4 still owes it a check.
+
+**The measured input is NOT the defect.** A Capital_Hudson CC genuinely pays more for gas than an
+Upstate_West one; the zonal basis is measured and rule 14 `[R-ACCURATE]` protects it. Nothing here
+proposes to weaken, haircut or rescale it. **`2.25` is not moved** (nyiso-194 killed it UP on shape,
+nyiso-195 killed the econ ramp DOWN on direction, `phys_peak == peak`, rule 1's carve-out conditions
+unmet).
+
+**Handed INTO the owner's pending card (vii)** (nyiso-215 §6, cost space vs price-percentile space),
+which this sharpens from *time*-varying to **also zone-varying**. A separate eighth card was
+deliberately **not** opened: the pooled membership denominator and the cost-space level are the same
+mechanism's two faces, and splitting them would invite deciding one without the other.
+
+**Governance/environment.** Rule 29 step 0 only — no screen, no control (29(b) form 4: the keeper's
+committed bundle IS the control), no bundle, nothing to delete under 29(c). Rule 22 training tier
+only. Rule 23: `derive_reserve_duty_cc.py` **audited, never re-derived**. Rule 28: NYISO shard
+stamped this session (`offer_curve_by_group`, where `cc_reserve_duty_split` is registered), failed
+predictions included; no cell letter moves. Keeper `cache_key` re-measured at HEAD `71e62675` is
+**`95d4d8d167373eb7`**; no solve spent, so it is recorded, not used. Tests named rather than
+inherited — `test_gate_a_provenance.py`, `test_cc_summer_derate_reconciled_basis.py`,
+`test_holdout_render_parity.py`, `test_campd_bins.py` — **75 passed, 0 failed**;
+`ruff format --check .` 1,405 files already formatted; `ruff check` passes. **No pre-existing
+failure at this HEAD.** nyiso-215's stale-`metrics.json` trap is unchanged and was not walked into;
+still no unit test covers `cc_reserve_duty_split`'s split behaviour, and this session deliberately
+does not add one — a guard encoding the current membership would now lock in the pooled-statistic
+defect P4 measured.
