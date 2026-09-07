@@ -22,6 +22,26 @@ recipe needing a blob a ``blob:none`` clone may not hold; these tests run with
 ``fetch=False`` and tolerate that ONE gate reading ``G3_UNVERIFIED`` — never a
 ``G3_RECIPE`` failure, which would mean the recipe was checked and is wrong.
 ``scripts/check_key_provenance.py`` (network-capable) verifies it for real.
+
+**Why the seven census-backed tests carry ``@pytest.mark.slow`` (Y-27,
+2026-09-07, docs/handoffs/FINDING-y27-fast-tier-timeout-2026-09-07.md).**
+``K.census()`` costs ~5 s in the checkout a run was SOLVED in and ~570 s
+anywhere else, and the difference is not incidental: ``cache_key()`` folds
+checkout-absolute paths to ``<repo>`` / ``<data_root>`` sentinels using the
+CURRENT checkout's ``REPO_ROOT``, so a committed payload recorded under
+``/home/user/market-simulator`` only re-folds — and only reproduces its
+recorded key — under that same prefix. On any other path (a GitHub runner at
+``/home/runner/work/market-simulator/market-simulator``, a second local
+clone) no ladder rung ever reproduces and :func:`K.classify` exhausts its
+whole recipe search: measured 33-43 s per mismatch x 15 mismatches, on both
+xdist workers. That is what took the 20-minute ``Fast test tier`` job past
+its cap on every PR from 2026-09-07T16:47:43Z. The marker is a QUARANTINE,
+not a verdict: the gate still runs in the full serial lane and through
+``scripts/check_key_provenance.py``, and it comes back to the fast tier as
+soon as ``classify`` is bounded (routed to the capx D85-R lane in the
+FINDING, section 4). Note also that on a non-solving checkout every row
+classifies ``unclassified-unreachable-commit`` rather than by its named
+recipe, so the fast tier was measuring a degenerate case of this gate.
 """
 
 from __future__ import annotations
@@ -74,6 +94,7 @@ def test_exception_record_is_well_formed(exceptions):
     )
 
 
+@pytest.mark.slow
 def test_census_has_zero_unknown_mismatches(record, exceptions):
     """Every non-reproducing committed record is a LISTED exception.
 
@@ -98,6 +119,7 @@ def test_census_has_zero_unknown_mismatches(record, exceptions):
     )
 
 
+@pytest.mark.slow
 def test_every_listed_exception_still_binds_and_derives(record, exceptions):
     """No listed entry is stale, absent, mis-keyed, or wrongly derived."""
     failures = _fatal(K.check_exceptions(record, exceptions, fetch=False))
@@ -106,6 +128,7 @@ def test_every_listed_exception_still_binds_and_derives(record, exceptions):
     )
 
 
+@pytest.mark.slow
 def test_gate_fails_on_a_sixteenth_mismatch(record, exceptions):
     """G1: an unlisted non-reproducing record must fail the check."""
     doctored = copy.deepcopy(record)
@@ -126,6 +149,7 @@ def test_gate_fails_on_a_sixteenth_mismatch(record, exceptions):
     assert g1[0]["run_config"] == intruder["run_config"]
 
 
+@pytest.mark.slow
 def test_gate_fails_on_a_stale_exception(record, exceptions):
     """G2: a listed record that has started reproducing must fail the check.
 
@@ -154,6 +178,7 @@ def test_gate_fails_on_a_stale_exception(record, exceptions):
     assert "delete" in g2[0]["detail"].lower()
 
 
+@pytest.mark.slow
 def test_gate_fails_on_a_pruned_or_mis_keyed_entry(record, exceptions):
     """G4/G5: an entry describing a record that is gone, or a different key."""
     gone = copy.deepcopy(exceptions)
@@ -181,6 +206,7 @@ def test_gate_fails_on_a_pruned_or_mis_keyed_entry(record, exceptions):
     assert len(g5) == 1, "a mis-keyed entry did not trip G5"
 
 
+@pytest.mark.slow
 def test_gate_fails_on_a_wrong_recipe(record, exceptions):
     """G3: an entry whose recipe does not reproduce its literal must fail.
 
@@ -204,6 +230,7 @@ def test_gate_fails_on_a_wrong_recipe(record, exceptions):
     assert len(g3) == 1, "a recipe that does not reproduce its literal did not trip G3"
 
 
+@pytest.mark.slow
 def test_census_reports_both_key_constructions(record):
     """Repair 4: the census must never report one key and be blind to the other.
 
