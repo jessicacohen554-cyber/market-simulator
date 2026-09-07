@@ -9144,3 +9144,221 @@ exception check fails correctly on both a new mismatch and a stale entry (demons
 test); a FINDING recording what the repairs changed and what they deliberately did not. Report the
 zero-unknown census line first in your close.
 ```
+
+---
+
+## r#59 NOTE
+
+Two charters, both issued 2026-09-07 at main `60f244e3`, both against ledger §0bd.
+
+* **D84** discharges **owner ruling Q60** ("D84 first, D83 after") — the last unclosed half of the
+  D48 devintage, reserved since r#51 and unblocked since D75-R-ARM landed at r#55.
+* **D86** is **director-tier** and needs no card: it repairs the guards on this desk's own D79 /
+  Q54 mechanism, which are red and — worse — one of them green and vacuous. No arm, no default, no
+  determination, no LP.
+
+They are **disjoint by file and by act** and may run concurrently. D86 owns
+`tests/unit/results/test_cache_solve_surface.py` and touches nothing else; D84 must not touch that
+file. **NEXT FREE LABEL after these: D87** (check for collisions before spending it).
+
+---
+
+## D86 — the D79 solve-surface guard repair (Fable, code, zero LP)
+
+```
+You are the D86 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. Branch: claude/capx-d86-d79-guard-repair, fresh off origin/main.
+ZERO LP. No solve, no registration, no keeper, no marker, no arm, no default flip, no matrix stamp.
+
+WHY YOU EXIST. capx D79 (owner ruling Q54) put a solve-surface fingerprint in ScenarioConfig.cache_key():
+a registry table the solve reads but the config cannot express enters the key once its live hash moves
+off its FROZEN declaration in config/solve_surface_declared.py. The MECHANISM IS SOUND. Its GUARDS are
+not, and one of them is passing for the wrong reason. The capx director measured this at main 60f244e3:
+
+  (i) OUTSIDE pytest, at HEAD: mutate constants.DEMAND_GROWTH_RATES["MISO"], call
+      solve_surface.reset_caches(), re-hash ScenarioConfig(iso="MISO").cache_key() ->
+      bcaf6043b8bfea74 becomes 13afdf6f728e5336, and moved_rows("MISO") reads
+      {'DEMAND_GROWTH_RATES': '6744aaed2256cf46'}. The mechanism works.
+
+  (ii) INSIDE pytest, the same mutation moves nothing, because tests/conftest.py:138
+      _solve_surface_neutralized is AUTOUSE and monkeypatches scenarios.moved_rows -> lambda iso: {}
+      and scenarios.applicable_epochs -> lambda config: [] for every test that does not carry
+      @pytest.mark.solve_surface_live. tests/unit/config/test_solve_surface.py:49 carries the opt-out
+      as a module-level `pytestmark`. tests/unit/results/test_cache_solve_surface.py -- whose module
+      docstring IS "the addressing half: a bundle solved on surface S1 is NOT handed to a config
+      running on S2" -- never got it.
+
+THE THREE DEFECTS, graded per test in that one file:
+  A. test_a_bundle_solved_on_S1_is_not_addressed_on_S2 -- RED. D79's addressing half has no passing
+     guard at HEAD.
+  B. test_another_isos_key_is_untouched_by_a_MISO_row -- GREEN AND VACUOUS. With moved_rows stubbed
+     to {}, the ERCOT key cannot move for ANY mutation, so the rule 25 [R-ISO-SCOPE] per-ISO
+     isolation assertion is trivially satisfied. This is the worse of the two: nobody looks at a
+     green test.
+  C. test_sidecar_is_written_beside_the_config -- RED for a DIFFERENT reason, and the reason is
+     correctness. The sidecar writer calls solve_surface.surface_stamp directly, which the fixture
+     does NOT stub, so it truthfully reports
+     moved = {'NUCLEAR_MONTHLY_CF_BY_YEAR': '00a8e8726fd0edd6'}. The assertEqual(stamp["moved"], {})
+     expectation was true when D79 landed at zero moves and false since ercot-253 (2026-09-06) added
+     the 2021 row. A STALE SCOPE LABEL IS NOT A WRONG MEASUREMENT -- REPAIR IT FORWARD, NEVER
+     BACKWARD.
+
+STEP 0 -- REPRODUCE (ii) YOURSELF, BEFORE EDITING ANYTHING, and write it into your PRECOMMIT.
+Run the (i) repro outside pytest at your own HEAD and record both keys.
+  ** STOP GATE. If the key does NOT move outside pytest at your HEAD, STOP AND REPORT. **
+  That would mean the mechanism itself is broken, not its guards; the object of repair is then
+  src/market_sim/config/solve_surface.py, which is a DIFFERENT and owner-tier card, and this
+  charter does not authorize it. Do not proceed on your own reading.
+
+STEP 1 -- ARM THE FILE. Add the module-level opt-out to
+tests/unit/results/test_cache_solve_surface.py in the SAME form the precedent file uses
+(tests/unit/config/test_solve_surface.py:47-49: a two-line comment saying the file is ABOUT the
+surface entering the key, then `pytestmark = pytest.mark.solve_surface_live`). The marker is already
+registered in pyproject.toml:44 -- do not re-register it.
+
+STEP 2 -- REPAIR DEFECT C FORWARD. This is the construction detail the charter is explicit about,
+because the obvious reading is wrong: do NOT replace {} with the ERCOT dict literal, which goes
+stale at the next ledgered move exactly as {} did. Assert the stamp against the LIVE surface and the
+LIVE ledger:
+  - stamp["moved"] == solve_surface.moved_rows("ERCOT")           (the stamp is truthful)
+  - every name in stamp["moved"] is a key of
+    tests.regression.test_persisted_identity.LEDGERED_SURFACE_MOVES_BY_ISO["ERCOT"]
+    (an UNLEDGERED move still fails here, so this is not a weakening)
+  - stamp["epochs"] == solve_surface.applicable_epochs(config)
+  - stamp["rows"] == len(solve_surface.surface_rows("ERCOT"))
+If importing the ledger from tests/regression is awkward, move nothing -- read the constant, do not
+copy its contents into this file, and say in a comment which module owns it.
+
+STEP 3 -- DEMONSTRATE NON-VACUITY, one test at a time. This is the deliverable, not step 1.
+For EACH of the five tests in the file, break the thing it claims to measure and confirm that test
+goes RED, then restore. Record the five results in a table in your FINDING: test name, what you
+broke, red/not-red. A test that stays green when you break its subject is a SECOND finding -- report
+it, do not paper over it.
+
+STEP 4 -- MAKE THE MARKER'S REMOVAL LOUD. Add one test to the file that fails if the opt-out is ever
+silently dropped again -- assert that the name the config module actually calls is the real function,
+e.g. `assert scenarios.moved_rows is solve_surface.moved_rows`. A marker that can vanish without a
+red is this defect recurring, and step 1 alone does not prevent it.
+
+NEVER, under any reading:
+  - edit src/market_sim/config/solve_surface_declared.py. It is APPEND-ONLY (rule 26 [R-DELETE]), and
+    re-declaring a moved row RESTORES THE PRE-CHANGE KEY and re-serves the pre-change bundle. The two
+    live moves are ledgered and correct: ERCOT NUCLEAR_MONTHLY_CF_BY_YEAR (ercot-253, the 2021 row
+    ADDED for the rule-22 ladder) and CAISO STATE_CARBON_PRICE_BY_ISO + NUCLEAR_MONTHLY_CF_BY_YEAR
+    (caiso-262, the 2022 rows ADDED for the validation touchpoint).
+  - edit anything under src/market_sim/. This is a test-file repair.
+  - weaken, scope down, or delete tests/conftest.py's _solve_surface_neutralized fixture. It is
+    correct and it exists for a good reason (ercot-253's real move failed 12 field-arming pins across
+    nine unrelated lanes' files). The repair is the OPT-OUT, not the fixture.
+  - touch any other lane's red. FOUR other fast-tier tests are red on main at 60f244e3 and NONE is
+    yours: tests/scoring/test_forecast_parity.py (2, MISO's miso-233 arms three miso_seam_neighbour_*
+    fields with no forecast_parity_registry declaration), tests/unit/data/test_caiso_st_gas_peak_measured.py
+    (CAISO, registry 1.166 vs artifact 1.154), tests/unit/model/test_capacity.py::TestGetRPSTarget::
+    test_unregistered_iso_is_none (SPP now has an RPS floor, so get_rps_target("SPP",2030) is 0.0 not
+    None). Name them in your FINDING as still-red-and-not-mine; fix none.
+
+EXIT: the five tests in tests/unit/results/test_cache_solve_surface.py green AND each demonstrated
+non-vacuous by the step-3 table; the step-4 marker guard added; scripts/check_key_provenance.py,
+scripts/audit_keepers.py --check and tests/regression/test_persisted_identity.py all still green and
+UNCHANGED; ruff check + ruff format clean; a short FINDING
+(docs/handoffs/FINDING-capx-d86-2026-09-07.md) whose first line is the step-3 table. Lead your close
+with that table, not with a list of edits. Rule 27 [R-PUSH]: the file is under 300 lines, but push
+the exact on-disk bytes regardless and verify the pushed blob.
+```
+
+---
+
+## D84 — PJM's 2025/26 3IA THERMAL accreditation vintage (Opus, pjm)
+
+```
+You are the D84 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: pjm. Branch: claude/capx-d84-pjm-thermal-3ia-vintage, fresh off origin/main.
+Authority: OWNER RULING Q60 (2026-09-07, capx ledger §0bd.3(c)) -- "D84 first, D83 after".
+This charter authorizes phase 0 and, if its gate passes, ONE screen solve. IT DOES NOT AUTHORIZE AN
+ARM: arming is an owner card you SERVE, never an act you take.
+
+THE OBJECT, exactly. constants.THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"] (defined at
+src/market_sim/config/capacity_market.py:3134) is a SINGLE-VINTAGE table -- its own comment says so:
+"the 2026/2027 BRA official/final class-average rating". But
+THERMAL_ACCREDITATION_REFORM_DELIVERY_YEAR_BY_ISO["PJM"] == "2025/2026", so delivery year 2025/26 is
+the FIRST year accredited on the ELCC-class design -- and 2025/26 has its OWN published 3IA class
+ratings, which DIFFER: gas CC 78 vs 74, gas CT 63 vs 60, steam 74 vs 73, diesel 92 vs 91 (nuclear and
+coal equal). One post-reform rating table is therefore being applied to a delivery year that cleared
+under a different published construct.
+
+THIS IS THE THERMAL TRANSPOSE OF A LANE THAT ALREADY WORKED. D75-R (owner ruling Q55, ARMED at r#55)
+fixed exactly this defect on the VRE side: RENEWABLE_ELCC_CURVES_BY_ISO["PJM"] is digitized from the
+2026/27+ MARGINAL ELCC ratings and CLAMPS on every PJM pool in the window, so D75-R introduced
+RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO plus the gate pjm_vre_accreditation_vintage as a SUB-GATE of
+pjm_accreditation_design_vintage (the two halves are never devintaged apart -- rule 19 [R-ONE-MECH]).
+It measured accredited VRE down 754.6 / 332.9 / 148.3 MW in DY 2023/24-2025/26, reproducing its
+zero-LP prediction to ~0.001 MW, with ALL 26 SCORED BANDS BYTE-IDENTICAL. Read
+docs/handoffs/FINDING-capx-d75r-2026-09-06.md (esp. §6 item 4, which ROUTED this card to you) and
+PRECOMMIT-capx-d75r-arm-2026-09-06.md before you design anything. Follow that shape unless you can
+say why it does not fit -- and if it does not, say so and stop rather than inventing a third form.
+
+THE BASIS IS RULE 14 [R-ACCURATE], NEVER THE RESIDUAL. You are preferring the delivery year's own
+published rating over a rating published for a different year. If the repair makes a scored band
+worse, that is rule 14's "treat the worse fit as a discovered bug" case and you report it at full
+magnitude -- you do NOT revert to the 2026/27 table because it fits better, and you do not select
+between vintages by which one moves a criterion (rule 1 [R-STRUCT]: that is the fitted-mechanism
+selection the rule exists to forbid).
+
+PHASE 0 -- ZERO LP, AND IT MAY KILL THE LANE (rule 29 [R-SCREEN] step 0).
+ (a) THE INTAKE IS ALREADY THERE. D75-R §6 item 4 states "The intake now carries them" -- the 2025/26
+     3IA rows are in the committed data/raw/capacity-market/elcc/pjm/pjm.csv. CONFIRM THAT YOURSELF
+     and quote the rows. If they are absent, STOP and report: an intake card is a different lane.
+     ZERO SCALAR FIELDS is the standard D67 and D75-R both met -- the MW/ratings are digitized from
+     committed rows and reconciled against them BY TEST, never typed (rules 21 [R-DOF] / 24
+     [R-REGISTRY]).
+ (b) DECIDE AND WRITE DOWN THE VINTAGE RULE AND THE FALL-THROUGH RULE **BEFORE ANY SOLVE**, exactly as
+     D67 did. Which published table governs which delivery year; what a pre-reform year does (it is
+     UCAP 1-EFORd under pjm_accreditation_design_vintage, so state that the two must compose and not
+     stack); what a year past the forward edge does. NOTE THE KNOWN TRAP, from D75-R §6 item 3: the
+     2025/26 BRA cleared on the ratings current in July 2024, and THAT report's tables are IMAGES
+     THAT DO NOT EXTRACT -- so a BRA-vintage rule you cannot source is not available to you. Say which
+     vintage you use and why, and neither rule may be selectable by a result.
+ (c) COMPUTE THE PREDICTION, per fuel class per delivery year, in accredited MW: what the census
+     moves by, with sign, before any LP. D75-R's prediction reproduced to ~0.001 MW; hold yourself to
+     that. Name which delivery years in the window are in-table and which fall through.
+ (d) ENUMERATE THE CONSUMERS of the accreditation census the way D76 §4.2 did -- the D57 clearing
+     half's sell-offer stack, the reliability floor, the reserve-margin backstop, the D67 published
+     adequacy requirement, the CR-1 position -- and say which this moves and which it cannot.
+ (e) G-DRIFT (rule 29(b)): audit `git diff <PJM keeper 2026-08-15-pjm-162-inputclock git_sha> HEAD`
+     over the backcast solve path and classify every hunk INERT-with-reason or LIVE. NO CONTROL
+     SOLVE: the committed keeper is the control (form 4). A matched cache key is not a G-DRIFT
+     verdict -- read constants.py first.
+
+     ** PHASE 0 STOP GATE. If the predicted per-class accredited-MW move is ZERO in every delivery
+     year in the window, the lane is INERT and it ENDS HERE with that measurement as its result. Do
+     not spend an LP to confirm a zero you already computed. **
+
+SCREEN (only if phase 0's gate passes) -- ONE YEAR, named in your PRECOMMIT BEFORE it runs, and named
+on the MECHANISM'S OWN LARGEST MEASURED FOOTPRINT from (c), NEVER on the biggest residual. The gate is
+STRUCTURAL and STOP-ONLY (rule 29): does the dispatch/decision response have the direction and order
+of magnitude the pre-solve delta implies; is the footprint confined to the rows the mechanism claims;
+does the identity hold; does any non-target load-bearing criterion flip PASS -> FAIL. It may kill the
+arm; it may NEVER promote one, and it is NEVER read against the target residual.
+
+RULE 31 [R-RETAIN] BINDS YOU ABSOLUTELY. Gitignore the screen bundle family the moment it is written
+(that alone discharges rule 29(c) -- the duty is about what reaches `main`, not what sits on disk).
+DO NOT rm ANY solved bundle. The ercot-255 incident cost ~50 min of re-solves because a lane deleted
+results it had judged not-promotable and the owner then ruled promote. Your final report must ASK THE
+PROMOTION QUESTION EXPLICITLY and state that the bundles are on local disk and will not survive the
+session.
+
+DELIVERABLES: a PRECOMMIT pushed BEFORE any solve carrying (a)-(e), the vintage + fall-through rules,
+the per-class per-DY prediction and the named screen year; then
+docs/handoffs/FINDING-capx-d84-2026-09-07.md with the measurement against the prediction at full
+magnitude, every consumer's move, what it does NOT close stated at the gate, and an OWNER CARD
+recommending arm or not-arm with both sides at equal strength. If you recommend arming, the card must
+say it would be the (b'-1) declared-default route or an iso_configs default_scenario_overrides arm
+(D57/D67/Q55/Q56 all used the latter for PJM), what re-keys, and that every other ISO and every
+backcast keeper stays byte-identical. Rule 28 [R-MECH-MATRIX] duty (c): a NEW ScenarioConfig field
+needs its base row in docs/codebase-site/data/mechanism-matrix.js plus a cell line in ALL SEVEN
+shards (SPP included) in the same PR -- CI enforces this half. Rule 27 [R-PUSH]: capacity_market.py
+and scenarios.py are far over 300 lines -- edit locally, push on-disk bytes, blob-verify after every
+push.
+
+DO NOT TOUCH tests/unit/results/test_cache_solve_surface.py -- the concurrent D86 lane owns it.
+```

@@ -8,7 +8,8 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #58) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-07 (refresh #59) ·
+**r#59 (HEAD `60f244e3`):** **BOTH r#58 CHARTERS LAND AND ALL ELEVEN GATES GO GREEN** (106 commits, 40 merges) — including the gate (a) red that was **this desk's own row**, closed at `d26652f3` on the **sixteenth** Q34 firing · **D85-R LANDS ALL FOUR REPAIRS**: census **223 / 179 / 29 / 15 — 15 KNOWN, ZERO UNKNOWN**, the 15 SET-EQUAL to D85's; the census script promoted to the standing gate `scripts/check_key_provenance.py` (five gates, **both failure directions demonstrated by test**, and 9 tests passing again under a simulated blobless checkout); the run record now carries `cache_key_path_roots` + `market_sim_data_root`; the golden writer serializes the **RESOLUTION** and **raises rather than falling back**; and both key constructions are in the census — **129 both · 50 at-declaration-only (CAISO 21 · ERCOT 29) · 0 live-only** · **D85-R REPORTED 7 PRE-EXISTING FAST-TIER REDS ON `main` AGAINST ITS OWN INTEREST; I RE-MEASURED 6 AT MY HEAD** and the one that healed was healed by this desk's own charter · **THE SHARPEST FINDING OF THE SITTING IS ON THIS DESK'S OWN MECHANISM: D79 WORKS AND ITS GUARDS ARE DISARMED.** Outside pytest a `DEMAND_GROWTH_RATES["MISO"]` mutation moves the key **`bcaf6043b8bfea74` → `13afdf6f728e5336`**; inside it, `tests/conftest.py`'s autouse `_solve_surface_neutralized` stubs `moved_rows → {}` for every test lacking `@pytest.mark.solve_surface_live`, and the one file whose docstring IS "the addressing half" never got the marker — so the addressing guard is **RED** and the rule 25 `[R-ISO-SCOPE]` isolation guard is **GREEN AND VACUOUS**, passing for the wrong reason since the fixture landed; a third assertion's `moved == {}` is a **STALE LABEL** against ercot-253's ledgered ERCOT `NUCLEAR_MONTHLY_CF_BY_YEAR` move, repaired **forward** → **D86** · four other reds **ROUTED** by name (MISO's three unaccounted seam fields on miso-233, CAISO's 1.166-vs-1.154 registry drift, SPP's now-registered RPS floor) · **Q60 SERVED AND RULED: D84 first, D83 after** — D84 chartered on the D75-R template · **a collision I did not deconflict** (the SPP desk had SPP-45 chartered for the same row; its lane refused to redo it and supplied the promotion citation my charter required) · no keeper moved, `final` still EMPTY, 2 charters issued
 **r#58 (HEAD `7b8f3699`):** **ALL THREE Q59 LANES LAND** (74 commits, 30 merges) · **D82 ANSWERS ITS DECISIVE QUESTION AND CLOSES AS A LANE**: every operand of the D57-measured size is a **BACKCAST-ONLY OVERLAY**, inadmissible under rule 13; the forward-admissible streams are disposed of by name — **refuted** (co-opt), **small** (reactive), **unbuilt** (make-whole) — and the record's own CT E&AS in the barred dispatch year is **~$2/kW-yr**; at HEAD the plateau clears in full, re-cleared under the joint unarmed D62+D74 posture it is **7.0 of 22.7 GW on a knife edge at an exact zero**. `false_retire` stays FAIL and now has **NO named successor in the E&AS direction** — the honest state · **D85: BOOKKEEPING, NOT A DEFECT** — 214 configs, 169 reproduce, 30 keyless, the same 15 mismatch, **all 15 derived to their recorded literal, ZERO UNCLASSIFIED** (6 registration lag · 3 pre-ledger flip · 5 flip + **split-root fold** · 1 **request-not-resolution**); step 3 from the code path: a stale key is **unreachable by construction** for every class but the D24 §4.2 collision form, which `cache_config_disagreements` refuses on the serving seam · **AND IT SURFACED 46 MORE KEYS NOBODY ASKED ABOUT** — ERCOT/CAISO solve surfaces off their declarations since 2026-09-07, the D79 designed re-key plus a census BLIND SPOT now reported · **SPP IS ON THE §2.1b BOARD** and the schema answer is durable: `program-status.json` is a hand-maintained COMMITTED seed wrapped VERBATIM, so **no forecast artifact is required for a row**; gate (a) needs two backcast facts and SPP has both · **THE CAPX RECORD COUNTS SEVEN FROM HERE FORWARD** · **AGAINST INTEREST: gate (a) is RED ON THE ROW THIS DESK JUST CHARTERED** — sixteenth Q34 firing and the FIRST that is not a promoter's miss; the lane followed my read-live warning exactly and SPP promoted a THIRD time within hours → doctrine **A ROW YOU WRITE IS A ROW YOU MAINTAIN** · **RULED: the treadmill is the GATE WORKING, not a defect — a derived keeper id would agree with itself and assert nothing; no change proposed** · **AGAINST INTEREST: I served Q59 recommending D82 as the highest-value LANE and the read closed it** — one zero-LP session replaced a solve program, which is the argument for reading first and a caution on my own pre-read weight · gates **9 of 10** · 2 charters issued (§0bc)
 **r#57 (HEAD `dcb609f4`):** **BOTH r#56 CHARTERS LAND AND Q58 IS DISCHARGED** (133 commits, 54 merges) · **`capacity_screen_peak_measured_hindcast` IS ARMED FOR EVERY ISO** — 34 keys move over **190** committed configs (grown from 173, and the 34/0 reproduced exactly), **every one a hindcast bundle the gate governs** (PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1), **ZERO backcast and ZERO non-hindcast forecast**; all seven `*-plain-backcast` keys unmoved, the seven `*-t1h-bare` keys advance and are LISTED, persisted-identity pins unmoved · **THE SECOND HALF IS THE LANE'S OWN CATCH**: `__post_init__` coerces to the **FROZEN DECLARATION**, not the dataclass default — which after the flip IS the armed value, so the obvious reading would have been a NO-OP and re-keyed **93 configs, ten of them backcast keepers** · **AGAINST INTEREST: my charter never said what the coercion coerces TO** — third sitting running a lane has supplied a load-bearing construction detail I left implicit while stating the target to four decimals → doctrine **SPECIFY THE MECHANISM AS TIGHTLY AS THE OUTCOME** · **THE CHARTERED QUEUE WAS EMPTY FOR THE FIRST TIME** (D65-B-R closed 7/7; Q56/Q57/Q58 all discharged) → **Q59 SERVED, RULED ALL THREE: D82 + SPP forecast onboarding + D85**; the pause option declined · **RULED: every "all six ISOs" claim is now SIX OF SEVEN and none is wrong** — SPP holds two keepers and a matrix shard but has NO forecast row and NO §2.1b board entry, so six-ISO findings stay true as measurements and their labels are repaired **forward, never backward** · gates **10 of 10 GREEN**, S1 cleared, no Q34 re-key owed (count stays 15) · NYISO → nyiso-213 (promotion records complete, no miss); SPP → spp-2 · 3 charters issued (§0bb)
 **r#56 (HEAD `8a4bfd29`):** **D78-ARM CLOSES Q56 BY DELETING ITS OWN REGISTRATION** (57 commits, 23 merges) — D75-R-ARM had landed the IDENTICAL key `fb16fda2ddb0a94a` first, because at that head **the bare pjm-t1h is ONE recipe carrying BOTH arms**, so there was only ever one solve to spend and one row to register; the duplicate bundle/sidecar/report DELETED under rule 29(c), parity clean, and the `VERDICT_MAP` conflict resolved **on the merits not merge order** (the preserved object is D67-ARM's `a9c66d8ea25acb9d`; **no bundle exists at `b518f5fe7d02f961`**, so `-pre-d75rarm` names it and `-pre-d78arm` would not — rule 19 in its REGISTRATION form) · **THE COLLISION BOUGHT AN UNCOMMISSIONED DETERMINISM PROOF: two lanes solved the same recipe on two different HEADs NINETEEN SECONDS APART and the output is BYTE-IDENTICAL** — five evolution ledgers matching to the sha256, `score.json` differing only in a UTC stamp · **AGAINST INTEREST: my r#54 ordering constraint's DUTY paid and its RATIONALE was impossible** — 'keep the two arms separable on the board' could not hold from the moment a second field armed on the same recipe, and I could have derived that when I wrote it · **AGAINST INTEREST: my STATUS REBUILD charter named two ISOs for a gate whose target MIGRATES** — S1 read ERCOT+MISO at r#55 and reads ERCOT+PJM now; naming targets where the criterion was what mattered is r#55's error again → doctrine **A CHARTER FOR A MOVING GATE NAMES THE CRITERION** · **BOTH r#55 charters NEVER DISPATCHED** (0 of 2, against 5 of 5 last window; recorded as a rate, no inference) · **SPP HAS ITS FIRST KEEPER** `2026-09-07-spp-1-baseline` — enters every capx cell as `U`, no verdict transfers (rule 25), no SPP charter issued · pjm-169's F4 SCREENED AND REJECTED by its own gate S4; caiso-262 opens CAISO's 2022 touchpoint · gates **9 of 10** (S1: ERCOT+PJM) · 2 charters re-emitted (§0ba)
@@ -62,6 +63,244 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0bd. Refresh #59 (2026-09-07, main HEAD `60f244e3`) — both r#58 charters land and all ELEVEN gates go green, including the gate (a) red that was this desk's own row; then the graded lane's own against-interest report leads to the sharpest finding of the sitting — D79's mechanism is sound and its GUARDS are disarmed, one of them GREEN AND VACUOUS on this desk's rule-25 isolation promise
+
+**0. FIRST ACT.** Handoff claim (§0bc = r#58) **matched** the ledger's top entry, and the r#58
+director commit **`1f741fb6` HAS MERGED** (it had not at the prompt's writing, which the prompt
+said). `git fetch origin --prune`; main **`7b8f3699` → `60f244e3`**, **106 commits, 40 merges** —
+the second-largest window this desk has graded. Both r#58 charters landed and merged; **zero open
+PRs**.
+
+**SECOND FETCH BEFORE GRADING DISPATCH** (the r#52 discipline): re-fetched after reading the
+findings. Three live branches, **none of them capx** — `claude/model-audit-director-a68igo`,
+`claude/nyiso-backcast-calibration-hr6c08`, `claude/spp-iso-addition-desk-i1xril`. **The chartered
+queue is EMPTY for the second sitting running**, which is why Q60 is a priority card.
+
+---
+
+### 1. GRADED BY CONTENT
+
+**(a) SPP GATE-(a) RE-KEY (r#58, Fable) — LANDED.** `d26652f3` (PR #5548), the **sixteenth**
+firing of the Q34 standing duty and the first on a row this desk created. The row now cites
+keeper **`2026-09-07-spp-3-screened-input`**, bundle `results/calibration/spp43_screened_B`,
+`marker complete=False final=False`, determination **NOT-YET** (rubric v3.6; grade 4 of 8, fails 4,
+0 ledgered caveats; per year 2023 NOT-YET · 2024 NOT-YET · 2025 CALIBRATED-WITH-CAVEATS; C1
+fuelmix / C3a price_mean / C3b price_shape / C3c price_tail FAIL; C2 C4 C6 C8 PASS).
+`check_gate_a_provenance.py` is **EXIT 0 on 7 rows** at my HEAD.
+
+**A COLLISION I DID NOT DECONFLICT, and it came out well by luck plus a good lane.** The SPP desk
+had its **own** SPP-45 row chartered for the identical act (its plan §5, issued at SPP r#9). SPP-45
+opened after `d26652f3` landed, **re-read the live store, found no re-key owed, and did not redo
+it** — "re-keying an already-correct row would have asserted a supersession that did not happen"
+(`FINDING-spp-45-2026-09-07.md` §0). It then delivered the one element of my charter's required row
+content that the Fable lane's text lacked: the **promotion instrument**, `FINDING-spp-43`
+**ADDENDUM A** (the row cited PR #5526 / `c6a5a254` / "BY OWNER RULING in-session" but named no
+document), plus the `corrected_by` line in MISO's Q34 form. Verdict unmoved throughout: **FAIL
+before, FAIL after** — SPP is absent from both blocks of `calibration-complete.json` and no marker
+is claimed or implied.
+
+**(b) D85-R RECORD REPAIRS (r#58, Opus) — LANDED, all four.** `FINDING-capx-d85r-record-repairs-2026-09-07.md`.
+Record hygiene only: **no solve, no key rewritten, no registration, no gate moved, no bundle, no
+flip entry, no surface declaration.**
+
+* **The census line.** **223 committed run configs at `12e71b89`: 179 reproduce, 29 have no key, 15
+  mismatch — 15 KNOWN, 0 UNKNOWN.** Drift against D85's `214 / 169 / 30 / 15` at `db0c1d85` is net
+  **+9 = 11 added, 2 pruned**, every one enumerated (added: `spp43_screened_B` + ten
+  `scn-campaign-policy-2026-09-06` configs, CAISO ×4 MISO ×4 PJM ×2; pruned: `spp40_baseline_B`,
+  `spp42_crosswalk_B`). **The 15 are SET-EQUAL to D85's 15 — checked, not assumed.** ZERO UNKNOWN
+  is the gate; the counts are measurements and will drift again.
+* **Repair 1 — the checked exception record.** `docs/governance/key-provenance-exceptions.json`, 15
+  entries, each with ISO, recorded literal, solve timestamp + sha, class, **executable recipe**,
+  derivation prose and its D85 §3 citation. Classes: `lag` 6 · `pre-ledger-flip` 3 ·
+  `pre-ledger-flip+split-root` 5 · `vintage+resolved` 1. **DERIVED, not typed** — the classifier's
+  own output converted to schema, so the list cannot assert a derivation the instrument does not
+  reproduce. D85's one-off census script is promoted to standing tooling:
+  `scripts/lib/key_provenance.py` + `scripts/check_key_provenance.py`, five gates (**G1_UNKNOWN** a
+  sixteenth · **G2_STALE** a listed record that now reproduces, i.e. rule 26 dead scaffolding ·
+  **G3_RECIPE** · **G4_PRESENT** · **G5_KEY**), **both failure directions demonstrated by test**
+  (`tests/regression/test_key_provenance_exceptions.py`, 9 passing, and 9 again under a simulated
+  blobless checkout with `fetch_commit` wired to raise).
+* **Repair 2 — fold roots in the run record.** `environment_block()` records
+  `cache_key_path_roots` and `market_sim_data_root`, closing D85 §3.3: the five `fc6` arms produced
+  a different-but-equally-correct key because `MARKET_SIM_DATA_ROOT` was relocated and **nothing in
+  the record said so**. Verified both ways; a future split-root key is now derivable from
+  `run_config.json` alone. Inert against `cache_key`, `--reuse-solved`, `replay_keeper` and
+  `audit_keepers.E11`, each pinned by its own test.
+* **Repair 3 — resolved config in the golden writer.** `golden_forecast_bands.py` serialized the
+  **request** while `run_scenario_iso` hashed the **resolution** (ERCOT's
+  `scarcity_price_overlay: True` override), which is the sole `vintage+resolved` exception. New
+  `resolved_scenario_config(run_dir)` reads the solve's own `config.yaml` and **raises rather than
+  falling back**. Nothing reseeded — seeding is owner-gated, the fixture is byte-identical and
+  entry 15 stays listed.
+* **Repair 4 — both keys in the census.** Every row now carries `key_at_declaration` and
+  `key_live_surface`: **129 reproduce under both · 50 only at declaration (CAISO 21 · ERCOT 29) · 0
+  only live · 15 neither · 29 keyless**, with `179 = 129 + 50` pinned by
+  `test_census_reports_both_key_constructions`. **The 50 are not a defect** — they are D79/Q54
+  behaving as designed, and re-declaring the moved ERCOT/CAISO rows is D85 §5 row (vi), routed to
+  the ISO lane that re-solves its frontier, explicitly not a record lane's call.
+* **One declared degradation, stated at the gate rather than discovered later.** The golden
+  fixture's `vintage+resolved` recipe needs the `f0f7c67d` `scenarios.py` blob, absent from a
+  `blob:none` clone; the offline test reports that gate as **`G3_UNVERIFIED`, never `G3_RECIPE`**
+  (which would mean *checked and wrong*), and a matching `unclassified` /
+  `unclassified-unreachable-commit` split keeps a property-of-the-checkout from reading as a
+  finding. Collapsing the two would have made the gate red on every CI run — "which is how a
+  checked record turns into a disabled one."
+
+`scripts/check_key_provenance.py` is **EXIT 0 at my HEAD** (`15 KNOWN, 0 UNKNOWN`), so the desk
+now stands eleven checks, not ten.
+
+**(c) ROUTED, NOT GRADED (other desks' lanes, read for deconfliction only).** SPP-60 registered
+**SPP's first T1-H** (`spp-2021-2025-realized-t1h-spp60`, key `e586d7cae19eab13` — the pre-declared
+key, matched), verdict **HOLD / FC-3 FAIL** at full magnitude (`retire.total_gw` 0.744 vs 1.994
+actual, −62.7 %; `unit_recall_gt300` 0/1; `false_retire` 0.0 PASS; additions 0.0 GW every tech),
+34.5 s wall / 1.01 GB peak — the cheapest T1-H on record. **The Q59 routing of the T1-H recipe half
+to the SPP desk is discharged.** SPP-51 and SPP-55 both KILLED their arms at rule-29 phase 0 with
+**zero LP spent**; SPP-54's SPS-pocket design STOPPED pre-solve. miso-241 found and repaired an SPP
+export-leg mispricing dating to miso-235 and **REFUSED the SPP quantity-side charter: no DOF-free
+form exists.**
+
+---
+
+### 2. RECORDED AGAINST INTEREST
+
+**(a) I chartered a row on another desk's ISO without reading that desk's own queue.** My r#58 SPP
+gate-(a) charter was careful about the thing I had been burned on — it told the lane to trust no
+keeper id in the charter, because SPP had promoted three times in one day — and that instruction
+worked. What it did not do is check `spp-desk-ledger-2026-09.md` §5, where **SPP-45 was already
+chartered for the same row**. Two desks issued a prompt for one act in one window. Nothing was
+wasted, but only because SPP-45 re-read the live store instead of executing its charter, and the
+overlap *produced* the promotion-instrument citation rather than a conflict. **That is a good lane
+covering for a director, not deconfliction.** Adopted as duty: when this desk charters a row on an
+ISO another desk owns, read that desk's lever/lane queue first — the same DO-NOT-REDO discipline
+rule 28(a) already imposes on mechanisms.
+
+**(b) The prompt I inherited carried a stale line and I checked it rather than repeating it.**
+CLAUDE.md's D78 entry (and this desk's own r#58 state block) says "the armed `pjm-t1h` re-solve and
+its registration are still owed by that lane." **It was discharged at r#56**: `0b9e427a` records
+that D75-R-ARM registered the identical key `fb16fda2ddb0a94a` nineteen seconds earlier, so Q56's
+registration duty was met by that row and D78-ARM deleted its duplicate bundle under rule 29(c).
+Routed as a `/sync-docs` correction; **not acted on here** — CLAUDE.md is not this desk's file to
+edit on its own initiative.
+
+**(c) No desk act this sitting.** Per the owner instruction of 2026-09-06, the Q34 duty went out as
+a charter at r#58 and the repair below goes out as a charter too. This desk wrote two files and
+issued two prompts.
+
+---
+
+### 3. RULINGS / DECISIONS
+
+**(a) DIRECTOR-TIER — D79's MECHANISM IS SOUND; ITS GUARDS ARE DISARMED, AND ONE OF THEM IS GREEN
+AND VACUOUS. → D86.**
+
+D85-R reported, against its own interest, **7 pre-existing fast-tier reds on `main`**, none of them
+its own, established by revert-and-measure rather than by inspection. I re-measured at **my** HEAD
+`60f244e3`: **6 of the 7 are still red, and `tests/scoring/test_gate_a_provenance.py::test_live_board_passes`
+HAS HEALED** — cured by the very SPP re-key this desk chartered at r#58. Reds heal; a report is
+re-measured at the grading desk's own head, not quoted.
+
+Two of the six are **this desk's own D79 / Q54 mechanism**, and the cause is not a broken mechanism:
+
+| what I measured | result |
+|---|---|
+| Mutate `constants.DEMAND_GROWTH_RATES["MISO"]`, `reset_caches()`, re-hash — **outside pytest**, at HEAD | key **`bcaf6043b8bfea74` → `13afdf6f728e5336`**; `moved_rows("MISO")` = `{'DEMAND_GROWTH_RATES': '6744aaed2256cf46'}`. **THE MECHANISM WORKS.** |
+| The same mutation **inside pytest** | key does not move — `bcaf6043b8bfea74 == bcaf6043b8bfea74` |
+| Why | `tests/conftest.py:138` `_solve_surface_neutralized` is **autouse** and monkeypatches `scenarios.moved_rows → lambda iso: {}` and `scenarios.applicable_epochs → lambda config: []` for every test lacking `@pytest.mark.solve_surface_live`. `tests/unit/config/test_solve_surface.py:49` carries the opt-out as `pytestmark`. **`tests/unit/results/test_cache_solve_surface.py` — whose module docstring IS "the addressing half: a bundle solved on surface S1 is NOT handed to a config running on S2" — never got it.** |
+
+Graded per test in that file, which is the part that matters:
+
+* `test_a_bundle_solved_on_S1_is_not_addressed_on_S2` — **RED.** The addressing half of D79 has no
+  passing guard at HEAD.
+* `test_another_isos_key_is_untouched_by_a_MISO_row` — **GREEN AND VACUOUS.** With `moved_rows`
+  stubbed to `{}`, the ERCOT key cannot move for *any* mutation, so the rule 25 `[R-ISO-SCOPE]`
+  isolation assertion is trivially satisfied. **This desk's per-ISO isolation promise has been
+  passing for the wrong reason since the fixture landed.** A green test proving nothing is worse
+  than a red one, because nobody looks at it.
+* `test_sidecar_is_written_beside_the_config` — **RED for a different reason, and the reason is
+  correctness.** The sidecar writer calls `S.surface_stamp` directly, which the fixture does **not**
+  stub, so it truthfully reports `moved = {'NUCLEAR_MONTHLY_CF_BY_YEAR': '00a8e8726fd0edd6'}`. The
+  `assertEqual(stamp["moved"], {})` expectation was true when D79 landed at zero moves and false
+  since **ercot-253, 2026-09-06**. **A STALE SCOPE LABEL IS NOT A WRONG MEASUREMENT — REPAIR IT
+  FORWARD, NEVER BACKWARD.**
+* `test_sidecar_is_rewritten_when_the_surface_moves` and `test_sidecar_and_config_agree` — green,
+  and the first is genuinely non-vacuous (it reads `S.surface_stamp`, unstubbed).
+
+**And the surface's OWN pins are green and see both real moves**: `test_persisted_identity` 24
+passed, with `LEDGERED_SURFACE_MOVES_BY_ISO` carrying ERCOT `NUCLEAR_MONTHLY_CF_BY_YEAR`
+(ercot-253, the 2021 row ADDED for the rule-22 ladder) and CAISO `STATE_CARBON_PRICE_BY_ISO` +
+`NUCLEAR_MONTHLY_CF_BY_YEAR` (caiso-262, the 2022 rows ADDED for the validation touchpoint). So the
+ledger is intact, the mechanism is intact, and only the guards are not.
+
+**THIS RULING WOULD READ IDENTICALLY HAD THE NUMBERS COME OUT THE OTHER WAY.** Had the
+outside-pytest repro shown the MISO key *not* moving, the identical charter would issue — against
+`config/solve_surface.py` instead of the test file, with D79 as the defect rather than its guard.
+The measurement decided **which object** the repair lands on; it did not decide whether to look, and
+it did not decide the verdict that a red guard on a landed mechanism is this desk's to close.
+
+**(b) DIRECTOR-TIER — the other four reds are ROUTED, not fixed** (rule 28(c) discipline: a red
+belonging to another lane is named, cited and handed over; fixing it here would hide who owns it):
+
+| red at `60f244e3` | measured | owner |
+|---|---|---|
+| `test_forecast_parity::test_all_seven_keepers_resolve` + `::test_check_exits_zero_on_the_current_keepers` | keeper `2026-09-07-miso-233-spp-hourly` arms `miso_seam_neighbour_anchored_ladder`, `miso_seam_neighbour_hourly_ladder`, `miso_seam_neighbour_hourly_spp` — **UNACCOUNTED**: no forecast-orchestrator consumer and no `scripts/lib/forecast_parity_registry.py` declaration | **MISO lane** (the promoting lane) |
+| `test_caiso_st_gas_peak_measured::test_registry_value_matches_the_committed_artifact` | registry `1.166` vs the committed `caiso_offer_curve_measured.json` `CT_PEAKER.bands.peak` **`1.154`**, Δ **0.012** | **CAISO lane** |
+| `test_capacity::TestGetRPSTarget::test_unregistered_iso_is_none` | `get_rps_target("SPP", 2030)` returns **`0.0`**, not `None`; the test's premise ("SPP is not modeled") went stale at SPP onboarding | **SPP desk** |
+
+**(c) OWNER-TIER — Q60 SERVED AND RULED: D84 FIRST, D83 AFTER.** Card and register entry at §3
+below. D84 is chartered this sitting; D83 follows on D84's read.
+
+---
+
+### 4. THE QUEUE
+
+| lane | act | model | profile | collides with |
+|---|---|---|---|---|
+| **D84** (Q60) — PJM thermal 3IA accreditation vintage | zero-LP phase 0 → screen → arm card | Opus | `pjm` | nothing live. Touches `config/scenarios.py` + `config/iso_configs.py` + the seven matrix shards |
+| **D86** — the D79 guard repair | one test file, zero LP | Fable | `code` | nothing live. Touches **only** `tests/unit/results/test_cache_solve_surface.py` |
+
+**Collision map.** The two are disjoint by file and by act: D86 owns
+`tests/unit/results/test_cache_solve_surface.py` and nothing else; D84 must not touch it. D86 does
+not block D84 — a new default-off registered field moves no surface row, and D86's repaired
+assertions read the **live** ledger rather than a frozen literal, so a D84 field addition passes
+through them unchanged. **RESERVED:** D83 (chartered after D84's read, per Q60). **CLOSED/SPENT:**
+D82, D85. **NEXT FREE LABEL: D87** — check for collisions before spending it; other desks have
+twice created a D-number this desk never chartered.
+
+**Gates at HEAD `60f244e3`: ELEVEN of ELEVEN GREEN** — `audit_keepers --check` PASS (0 failures, 0
+warnings) · `check_registry_payload_parity` OK (19 runs, 52 bundle dirs, 0 tolerated) ·
+`check_gate_a_provenance` OK (**7 rows**) · `check_mechanism_matrix` 0 (5 anchor-digit warnings,
+another desk's `--fix-anchors` chore, ROUTED) · `check_forecast_staleness` 0 ·
+`check_bench_freshness` 0 · `check_golden_manifest` OK · `check_forecast_invariants --sidecar-dir`
+OK (176 sidecars, 2464 records, 217 declared FAILs) · `ruff check` clean · `ruff format --check`
+1410 files · **`check_key_provenance` 0 (15 KNOWN, 0 UNKNOWN)** — the eleventh, new this window.
+**No keeper moved** (ERCOT ercot248 · CAISO caiso-260 · PJM pjm-162 · MISO miso-233 · NYISO
+nyiso-213 · NEISO neiso-106 · SPP spp-3); `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM}, `final`
+**EMPTY**. **Every gate script is green while the fast test tier is red on six** — which is itself
+the sitting's lesson: exit codes are not coverage.
+
+---
+
+### 5. DOCTRINE
+
+* **A GREEN TEST IS NOT A GUARD UNTIL YOU KNOW IT CAN GO RED.** The rule 25 `[R-ISO-SCOPE]`
+  isolation test on this desk's own D79 mechanism has been passing vacuously ever since an autouse
+  fixture stubbed the thing it measures. A desk that grades by exit code cannot see this. The check
+  is cheap and it is now standing: **break the mechanism on purpose and confirm the test notices.**
+* **A CROSS-CUTTING AUTOUSE FIXTURE INHERITS THE DUTY TO NAME ITS OWN EXCEPTIONS.** The
+  neutralizing fixture's docstring names the opt-out marker and one file uses it — but the one file
+  whose entire subject is the neutralized behaviour did not get it. When a lane lands a global
+  neutralizer, enumerating what it neutralizes is part of that lane, not the next reader's problem.
+* **A PROMOTION THAT ARMS A NEW FIELD OWES THE FORECAST-PARITY REGISTRY ROW, NOT ONLY THE GATE-(a)
+  ROW.** miso-233 armed three seam fields and left the seven-keeper sweep red. Gate (a) is the
+  re-key this desk counts; this is a second, differently-shaped promoter duty, and nothing on this
+  desk was watching for it.
+* **A LANE THAT REPORTS ANOTHER LANE'S RED IS DOING THE DESK'S WORK — AND THE DESK RE-MEASURES IT.**
+  D85-R's 7 is 6 at my head, and the one that healed was healed by this desk's own charter. Quoting
+  the number would have carried a stale red and missed that the queue had closed a loop.
+* **CHECK THE OTHER DESK'S QUEUE BEFORE CHARTERING ON ITS ISO** (§2(a)).
 
 ---
 
@@ -7253,6 +7492,10 @@ the gap.
 | **D82 DESIGN READ (r#58)** | Q59: the PJM CT plateau / per-DY zero-E&AS operand | **LANDED AND CLOSES D82 AS AN E&AS LANE** (`830d84c9`). Zero LP, no solve, no arm, no recommendation. **Q3 — the decisive one — answers that every operand of the D57-measured size is a BACKCAST-ONLY OVERLAY**, inadmissible under rule 13's forward test; the forward-admissible streams are disposed of by name (**refuted** co-opt, **small** reactive, **unbuilt** make-whole); **the record's own CT E&AS in the barred dispatch year is ~$2/kW-yr**. At HEAD the plateau **clears in full**; re-cleared under the joint unarmed D62+D74 posture at HEAD's armed requirement it is **7.0 of 22.7 GW, on a knife edge at an exact zero**. Re-clear instrument + JSON committed | `claude/capx-d82-ct-plateau-design` | Fable | pjm | **LABEL SPENT (§0bc.3(a)).** `false_retire` stays FAIL and now has **NO named successor in the E&AS direction** — the honest state. A future lane may re-open the plateau on a DIFFERENT object, never as an E&AS operand lane. |
 | **D85 (r#58)** | Q59: the 15 non-reproducible committed cache keys | **LANDED — BOOKKEEPING, NOT A DEFECT** (`8bc968e6`), audit-only. Census at HEAD **214 configs, 169 reproduce, 30 keyless, the same 15 mismatch**; **all 15 derived to their recorded literal under a named recipe, ZERO UNCLASSIFIED**: 6 registration lag (`caiso_offer_surface_measured_ungrounded`), 3 pre-ledger flip (R-A storage pair, #4442), 5 flip + **split-root fold** (fc6 arms, `MARKET_SIM_DATA_ROOT` relocated), 1 **request-not-resolution** (ERCOT golden fixture serialized the UNRESOLVED config). **Step 3 from the code path: a stale key is UNREACHABLE BY CONSTRUCTION for every class but the D24 §4.2 collision form, which `cache_config_disagreements` refuses on the serving seam** | `claude/capx-d85-key-provenance` | Fable | code | **Surfaced unasked: 46 FURTHER keys reproduce only with the surface at declaration** (ERCOT/CAISO off their declarations since 2026-09-07) — the D79 designed re-key plus a census blind spot. Refuses to re-register the field or rewrite any key. → **D85-R**. |
 | **SPP FORECAST BOARD ROW (r#58)** | Q59: the board half only | **LANDED** (`c547cefd`). Step-1 schema answer, and it is the durable part: **`program-status.json` is a hand-maintained COMMITTED seed** that `build_program_status` **wraps VERBATIM**, deriving nothing from `registry/` or the sidecars — **no forecast artifact is required to produce a row**. The only HARD gate reads leg (a) and needs two parseable BACKCAST facts (`keeper`, `marker`); SPP has both and its `fail` status satisfies the one constraint. Staleness is WARN-never-FAIL; `isoCard` null-tolerant throughout | `claude/capx-spp-board-row` | Opus | spp | **The capx record counts SEVEN from here forward.** Row went stale within hours (SPP → spp-3) — gate (a) red, §0bc.2(a), and the treadmill is the gate WORKING (§0bc.3(b)). |
+| **SPP GATE-(a) RE-KEY (r#58)** | Q34 standing duty: re-key the SPP §2.1b gate-(a) row | **LANDED** (`d26652f3`, PR #5548) — **sixteenth firing, and the first on a row this desk created** (not a promoter miss). Row now cites keeper **`2026-09-07-spp-3-screened-input`**, bundle `spp43_screened_B`, determination **NOT-YET** (rubric v3.6; grade 4 of 8, fails 4, 0 ledgered; per year 2023 NOT-YET · 2024 NOT-YET · 2025 CALIBRATED-WITH-CAVEATS), `marker complete=False final=False`. `check_gate_a_provenance` **EXIT 0 on 7 rows** | `claude/spp-gate-a-rekey-xahefb` | Fable | code | **COLLISION I DID NOT DECONFLICT:** the SPP desk's own SPP-45 was chartered for the identical act; it opened after this landed, **re-read the live store, refused to redo it**, and supplied the promotion instrument my charter required and this text lacked (`FINDING-spp-43` ADDENDUM A). §0bd.2(a). |
+| **D85-R RECORD REPAIRS (r#58)** | D85 §5's four recommended repairs | **LANDED — all four** (`FINDING-capx-d85r-record-repairs-2026-09-07.md`). Census **223 / 179 / 29 / 15 — 15 KNOWN, 0 UNKNOWN**; the 15 **SET-EQUAL** to D85's, drift +9 (11 added, 2 pruned) enumerated. (1) `key-provenance-exceptions.json`, **derived not typed**, promoted to standing tooling `scripts/check_key_provenance.py` — five gates G1–G5, **both failure directions demonstrated by test** (9 passing, and 9 again under a simulated blobless checkout). (2) `cache_key_path_roots` + `market_sim_data_root` in the run record, closing D85 §3.3's split-root blind spot. (3) golden writer serializes the **RESOLUTION** and **raises rather than falling back**. (4) both key constructions in the census: **129 both · 50 at-declaration-only (CAISO 21 · ERCOT 29) · 0 live-only · 15 neither · 29 keyless**, `179 = 129 + 50` pinned by test | `claude/capx-d85r-record-repairs-wyrs3y` | Opus | code | **No key rewritten, no field re-registered, no fixture reseeded, no gate moved.** ONE declared degradation stated at the gate: `G3_UNVERIFIED` (never `G3_RECIPE`) on a blobless clone. **Reported against interest: 7 pre-existing fast-tier reds on `main`, none its own** — 6 at my head, and the healed one was healed by (a). → **D86**. |
+| **D86 (r#59)** | The D79 guard repair — one test file, zero LP | **CHARTERED** — `tests/unit/results/test_cache_solve_surface.py` is disarmed by the autouse `_solve_surface_neutralized` fixture it never opted out of. Outside pytest the mechanism WORKS (`bcaf6043b8bfea74` → `13afdf6f728e5336` on a `DEMAND_GROWTH_RATES["MISO"]` mutation); inside it, the addressing guard is RED and the **rule 25 isolation guard is GREEN AND VACUOUS**. Third test's `moved == {}` is a STALE LABEL against ercot-253's ledgered move — repaired FORWARD | `claude/capx-d86-d79-guard-repair` | Fable | code | §0bd.3(a). **Never re-declare the moved row** (`solve_surface_declared.py` is append-only and re-declaring restores the pre-change key), never weaken the fixture, never touch `src/`. |
+| **D84 (r#59)** | Q60: PJM 2025/26 3IA THERMAL accreditation ratings vs the wired 2026/27 set | **CHARTERED — RESERVED SINCE r#51, UNBLOCKED SINCE r#55.** CC 78 vs 74 · CT 63 vs 60 · ST 74 vs 73 · diesel 92 vs 91 — the THERMAL analogue of the VRE clamp D75-R fixed, i.e. one post-reform published rating applied to delivery years that cleared under a different construct. Rule 14 `[R-ACCURATE]`, not a residual. D75-R template: zero-LP phase 0 prediction → rule-29 screen → arm card | `claude/capx-d84-pjm-thermal-3ia-vintage` | Opus | pjm | Q60 RULED **D84 first, D83 after**. D75-R's precedent: prediction reproduced to ~0.001 MW, 26/26 bands byte-identical, and rule 14 — not the residual — was the reason it armed. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-09-05 @ `b2bd9fdb`, refresh #42)
@@ -7398,7 +7641,37 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)**, **Q58 r#55 (Q57's route VOID — RULED VARIANT B on the precedent standard)**, **Q59 r#57 (RULED all three: D82 + SPP onboarding + D85)** (2026-09-06) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)**, **Q58 r#55 (Q57's route VOID — RULED VARIANT B on the precedent standard)**, **Q59 r#57 (RULED all three: D82 + SPP onboarding + D85)**, **Q60 r#59 (RULED D84 first, D83 after — the empty-queue priority card)** (2026-09-07) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-TWO ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+
+### Q60 (refresh #59) — the chartered queue is empty again; D84 or D83 first
+
+**RULED 2026-09-07: D84 FIRST, D83 AFTER** (the recommended option).
+
+**The card.** Both r#58 charters landed and merged, the branch census showed zero capx branches on
+a second fetch, and the two lanes RESERVED since r#51 are both unblocked — D84's own reservation
+text reads "follow-on card after D75-R-ARM", which landed at r#55. So the question was priority,
+not admissibility.
+
+**D84** — PJM's 2025/26 3IA **THERMAL** accreditation ratings differ from the wired 2026/27 set:
+**CC 78 vs 74 · CT 63 vs 60 · ST 74 vs 73 · diesel 92 vs 91**. This is the same defect class D75-R
+fixed for VRE — one post-reform published rating applied to delivery years that cleared under a
+different published construct — and D75-R armed cleanly at Q55 (accredited VRE **−754.6 / −332.9 /
+−148.3 MW** in DY 2023/24–2025/26, reproducing its zero-LP prediction to **~0.001 MW**, **all 26
+scored bands byte-identical**, and rule 14 `[R-ACCURATE]` rather than the residual as its reason).
+The four thermal classes are the operand the D57 clearing half prices, so D84 is the only one of the
+two that can move a forecast number.
+
+**D83** — `evolution_2022.json` carries no adequacy block while 2021 and 2023–2025 do; reproduced on
+a fresh solve, and it has forced manual pool reconstruction in **two** separate lanes (D75, D75-R).
+A ledger-writer record defect: zero-LP to diagnose, arms nothing, moves no band — but every future
+PJM lane pays its tax again.
+
+**Served with both sides at equal strength**, and with a fourth option ("hold the desk") marked NOT
+RECOMMENDED and its reason given: the queue was already empty, D84's blocker cleared two sittings
+earlier, and the owner had declined the pause option at Q59.
+
+**Consequence.** D84 chartered this sitting on the D75-R template (zero-LP phase 0 → rule-29 screen
+→ arm card, Opus, profile `pjm`). D83 is chartered on D84's read, not before.
 
 ### Q59 (refresh #57) — the chartered queue is empty; what does the next window buy
 
@@ -7830,6 +8103,9 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 
 | 2026-09-07 | **SPP gate-(a) RE-KEY (Q34)** | `claude/spp-gate-a-rekey` | **Fable** | code | r#58 — sixteenth firing, and the FIRST on a row this desk created; issued as a prompt |
 | 2026-09-07 | **D85-R RECORD REPAIRS** | `claude/capx-d85r-record-repairs` | **Opus** | code | r#58 — D85's own four recommendations incl. the 46-key census blind spot; no key rewritten |
+
+| 2026-09-07 | **D84 — PJM THERMAL 3IA VINTAGE** | `claude/capx-d84-pjm-thermal-3ia-vintage` | **Opus** | pjm | r#59 — Q60 RULED D84 first; reserved since r#51, unblocked since r#55 |
+| 2026-09-07 | **D86 — D79 GUARD REPAIR** | `claude/capx-d86-d79-guard-repair` | **Fable** | code | r#59 — director-tier; the addressing guard is red and the rule-25 guard green-and-vacuous |
 
 ## 5. History (compacted)
 
