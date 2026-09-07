@@ -132,8 +132,11 @@ say so in ledger §5):
           the rulings that scope it (O-*, P-*) · a rule-29 PRECOMMIT requirement if it solves (screen
           year named, expected sign/magnitude/footprint, structural STOP gate that may kill but never
           promote, never gated on a residual; 29(c) DELETE BEFORE MERGE) · RULES THAT BITE by ID ·
-          EXIT / DELIVERABLES incl. FINDING path docs/handoffs/FINDING-spp-<id>-<date>.md and the
-          plan §5 row status, shard cells as the LAST commit after rebase (7 shards) ·
+          EXIT / DELIVERABLES: the FINDING path docs/handoffs/FINDING-spp-<id>-<date>.md with a
+          `## Log entry` section; the lane's OWN shard cell line as the LAST commit after rebase
+          (+ one `·` line per foreign shard only under 28c). NO plan row, NO ledger, NO log, NO
+          CHANGELOG, NO keeper/gates stamp — the DESK writes those from the FINDING (plan §8.0,
+          COLLISION RULES r#11) ·
           closing line: "Push by pack size (CLAUDE.md Git & Pushing); fetch-back verify every pushed
           file ≥300 lines; no CI workflows; no default moves; no solve outside your PRECOMMIT; if you
           must touch a file outside your regions, STOP and route to SPP-DESK in your FINDING."
@@ -142,6 +145,9 @@ adjudication (topology, market objects, the pin flip, first-keeper determination
 design, kill-grading a novel object) → Fable. Sonnet never.
 Copy the stem into ledger §5 AND record the branch the lane actually realised — they never match.
 Close every sitting that issues lanes with: "dispatch is unconfirmed until a branch exists".
+Every refresh: for each LANDED lane, the DESK moves its plan §5/§9 rows, appends its FINDING's
+`## Log entry` to docs/calibration-log/spp.md, writes the CHANGELOG line, and re-stamps the shard header
+if a keeper moved — lanes never do (plan §8.0). Paste the STANDING RULES block into every lane session.
 
 ════════════════════════════════════════════════════════════════════════════════════════
 6. WHAT YOU NEVER DO
