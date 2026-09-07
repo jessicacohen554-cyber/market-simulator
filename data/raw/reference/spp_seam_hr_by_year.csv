@@ -1,0 +1,19 @@
+neighbor,year,run,anchor_file,anchor_kind,anchor_rows,shape_ba,mean_lmp_usd_mwh,henry_hub_usd_mmbtu,gas_basis_usd_mmbtu,delivered_gas_usd_mmbtu,shape_convexity_k,hr_by_year_mmbtu_mwh,registered_marginal_heat_rate,flat_hr_constructed_mean_usd_mwh,flat_hr_error_pct
+MISO,2023,rt,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,27.8972,2.54,0.3,2.84,1.0,9.82,11.24,31.92,14.43
+MISO,2024,rt,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,26.2717,2.19,0.3,2.49,1.0,10.55,11.24,27.99,6.53
+MISO,2025,rt,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,37.8225,3.52,0.3,3.82,1.0,9.9,11.24,42.94,13.52
+AECI,2023,rt,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,23.4732,2.54,-0.26,2.28,1.0,10.3,9.19,20.95,-10.74
+AECI,2024,rt,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,23.3135,2.19,-0.26,1.93,1.0,12.08,9.19,17.74,-23.92
+AECI,2025,rt,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,27.1112,3.52,-0.26,3.26,1.0,8.32,9.19,29.96,10.51
+ERCOT,2023,rt,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,48.3568,2.54,-0.5,2.04,1.0,23.7,13.51,27.56,-43.01
+ERCOT,2024,rt,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,26.825,2.19,-0.5,1.69,1.0,15.87,13.51,22.83,-14.89
+ERCOT,2025,rt,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,32.4906,3.52,-0.5,3.02,1.0,10.76,13.51,40.8,25.58
+MISO,2023,da,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,28.2871,2.54,0.3,2.84,1.0,9.96,11.24,31.92,12.85
+MISO,2024,da,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,26.3959,2.19,0.3,2.49,1.0,10.6,11.24,27.99,6.03
+MISO,2025,da,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean then equal weight over the two bordering zones,43800,MISO,38.4783,3.52,0.3,3.82,1.0,10.07,11.24,42.94,11.59
+AECI,2023,da,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,25.6029,2.54,-0.26,2.28,1.0,11.23,9.19,20.95,-18.16
+AECI,2024,da,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,25.9239,2.19,-0.26,1.93,1.0,13.43,9.19,17.74,-31.58
+AECI,2025,da,actual_lmp_hourly_SPP.parquet,PROXY - SPP's own system hub (AECI publishes no LMP),8760,SWPP,28.7151,3.52,-0.26,3.26,1.0,8.81,9.19,29.96,4.33
+ERCOT,2023,da,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,55.9417,2.54,-0.5,2.04,1.0,27.42,13.51,27.56,-50.73
+ERCOT,2024,da,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,28.1104,2.19,-0.5,1.69,1.0,16.63,13.51,22.83,-18.78
+ERCOT,2025,da,actual_lmp_hourly_ERCOT.parquet,system,8760,ERCO,33.4972,3.52,-0.5,3.02,1.0,11.09,13.51,40.8,21.8
