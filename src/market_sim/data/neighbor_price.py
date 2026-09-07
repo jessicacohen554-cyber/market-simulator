@@ -211,6 +211,60 @@ def neighbor_heat_rate(
     return neighbor.marginal_heat_rate
 
 
+#: Scenario-key prefix of the AS-KNOWN-THEN hindcast gas paths
+#: (``hindcast_asknown_aeo<edition>``), whose entire purpose is to price a
+#: hindcast year with ONLY the information available at the time. The measured
+#: pre-first-knot path below is REFUSED for these keys — see
+#: :func:`_measured_henry_hub_annual` and ``neighbor_gas_price``.
+_HINDCAST_ASKNOWN_PREFIX: str = "hindcast_asknown_"
+
+#: Months a calendar year must carry in the measured monthly spot series before
+#: its annual mean is admissible as a Henry Hub level. A partial year (the
+#: extract's forward edge — H1-2026 carries 6) would otherwise yield a
+#: half-year mean dressed as an annual one; such a year falls back to the
+#: hold-flat rule instead. Not a tunable: it is the definition of "annual".
+_MEASURED_HENRY_HUB_MONTHS: int = 12
+
+
+def _measured_henry_hub_annual(year: int) -> float | None:
+    """Return the measured Henry Hub spot annual mean ($/MMBtu) for ``year``.
+
+    The mean of the twelve monthly EIA Henry Hub spot prices in
+    ``data/raw/gas-prices/henry_hub_monthly.csv`` — the SAME series
+    :data:`~market_sim.config.constants.HENRY_HUB_TRAJECTORIES` cites for its
+    own historical knots (``fuel_trajectories`` "hindcast_realized": *"the
+    annual mean of data/raw/gas-prices/henry_hub_monthly.csv (EIA Henry Hub
+    spot)"*), read through the ``market_sim.data.fuel`` package namespace so
+    the loader's monkeypatch seam and its path cache are shared rather than
+    duplicated.
+
+    Rule 13 ``[R-MEASURED]`` admissibility: a published physical fuel price,
+    not a model outcome, entering as a formulaic input; the identical
+    construction regenerates for any year the EIA series covers and responds to
+    nothing but that series. Rules 21 ``[R-DOF]`` / 24 ``[R-REGISTRY]``: zero
+    free parameters and no new ``ScenarioConfig`` field — the values are
+    2019 **2.5651** · 2020 **2.0337** · 2021 **3.9097** · 2022 **6.4191**.
+
+    Args:
+        year: Calendar year.
+
+    Returns:
+        The annual mean in $/MMBtu, or ``None`` when the series does not carry
+        a COMPLETE year (:data:`_MEASURED_HENRY_HUB_MONTHS` months) — a missing
+        year or the extract's partial forward edge — in which case the caller
+        keeps the hold-flat rule.
+    """
+    from market_sim.data.fuel import _henry_hub_monthly
+
+    monthly = _henry_hub_monthly(None)
+    months = [
+        price for (row_year, _month), price in monthly.items() if row_year == int(year)
+    ]
+    if len(months) != _MEASURED_HENRY_HUB_MONTHS:
+        return None
+    return sum(months) / float(_MEASURED_HENRY_HUB_MONTHS)
+
+
 def neighbor_gas_price(
     neighbor: NeighborInterface, year: int, gas_scenario: str = "mid"
 ) -> float:
@@ -221,6 +275,33 @@ def neighbor_gas_price(
     the historical values for backcast years identically across scenarios)
     shifted by the neighbor hub's basis. Mirrors the ISO's own gas pricing so
     a neighbor and its bordering ISO see the same Henry Hub level.
+
+    **The pre-first-knot measured path (pjm-172, card F-A).** That contract used
+    to break below the trajectory's FIRST knot. ``low``/``mid``/``high`` begin
+    at 2023, and :func:`_hold_flat_extrapolate` hands every earlier year that
+    2023 knot ($2.54) while the ISO's own units burn the measured year price —
+    a **-32 % error in 2021 and -61 % in 2022**, binding wherever
+    ``reference_price_interface`` is armed on a pre-2023 year
+    (``results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md``).
+    A year below the first knot therefore resolves its Henry Hub level from the
+    measured annual series (:func:`_measured_henry_hub_annual`) instead. The
+    neighbour's own ``gas_basis`` is applied unchanged, so the seam keeps its
+    existing basis structure, and the repair is SEAM-LOCAL by owner decision
+    (2026-09-07) — ``HENRY_HUB_TRAJECTORIES`` is not edited.
+
+    **INERT ABOVE THE FIRST KNOT BY CONSTRUCTION.** The branch cannot execute
+    when ``year`` is a knot or beyond one, which is every training year
+    (2023/2024/2025) and every forecast year through 2050 on every scenario
+    key; those paths are bit-identical. Asserted by
+    ``tests/unit/data/test_neighbor_price_measured_gas.py``, not argued.
+
+    **THE LOOK-AHEAD REFUSAL.** ``hindcast_asknown_*`` paths
+    (:data:`_HINDCAST_ASKNOWN_PREFIX`) exist to price a hindcast year with only
+    the information available at the time, so injecting a REALIZED price there
+    would be look-ahead contamination — ``run_capacity_hindcast`` reaches this
+    function under exactly those keys. They keep the hold-flat rule
+    unconditionally. ``hindcast_realized`` already carries its own 2021 knot and
+    never enters the branch.
 
     Args:
         neighbor: The seam specification.
@@ -246,7 +327,18 @@ def neighbor_gas_price(
     # data.fuel.resolve_gas_scenario_path and asserted per-year by
     # run_capacity_hindcast.assert_forward_drivers — this hold-flat is the
     # end-of-trajectory rule, never a licence to hold a measured path forward.
-    henry_hub = _hold_flat_extrapolate(HENRY_HUB_TRAJECTORIES[gas_scenario], year)
+    trajectory = HENRY_HUB_TRAJECTORIES[gas_scenario]
+    henry_hub = _hold_flat_extrapolate(trajectory, year)
+    # pjm-172 F-A: below the trajectory's FIRST knot the hold-flat rule states a
+    # level the source data does not support for that year, and the measured
+    # series does. Refused for the as-known-then paths (look-ahead), and
+    # unreachable for any year at or above the first knot.
+    if int(year) < min(trajectory) and not gas_scenario.startswith(
+        _HINDCAST_ASKNOWN_PREFIX
+    ):
+        measured = _measured_henry_hub_annual(year)
+        if measured is not None:
+            henry_hub = measured
     return henry_hub + neighbor.gas_basis
 
 
