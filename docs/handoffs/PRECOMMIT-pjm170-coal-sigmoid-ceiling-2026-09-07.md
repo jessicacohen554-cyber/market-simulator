@@ -506,3 +506,35 @@ sigmoid elsewhere still fails it, exactly as before.
 
 **Nothing else moves.** S1, S2, S3, S4-B, S4-C, S5, the kill rule, the candidate
 value 1.0, the anti-sweep clause, the screen year and the control are all unchanged.
+
+---
+
+## ADDENDUM A — S5's control baseline, fixed before the arm exists
+
+Scored from **committed artifacts only**, no solve:
+`scripts/calibration_verdict.py --run-id 2026-09-07-pjm-2022-2021-touchpoints --years 2022`
+(rubric v3.6; span-restricted to 2022, so it is the control year's own verdict and
+not the touchpoint bundle's registered full-span determination).
+
+| criterion | tier | **control 2022** | in S5's protected set? |
+|---|---|---|---|
+| C1 fuel-mix | load-bearing | **FAIL** (`CC_REGULAR +22.02 TWh`, share +1.7 pp) | no — already failing |
+| C2 system volume | load-bearing | **PASS** | **YES** |
+| C3a mean LMP | load-bearing | **PASS** | **YES** |
+| C3b price duration/shape | load-bearing | **FAIL** (NRMSE 0.257) | no — already failing |
+| C3c price tail / scarcity | supporting | CAVEAT, ledgered (rubric v3.6 holdout clause) | no — not a PASS |
+| C4 dispatch correlation | supporting | **PASS** | **YES** |
+| C6 governance | protective | **PASS** | **YES** |
+| C8 forced-energy share | protective | **PASS** | **YES** |
+| C5a CO2 | reported-only | PASS +5.0 % | no — contributes no status |
+
+**S5's protected set is therefore `{C2, C3a, C4, C6, C8}`**, fixed here, before any
+arm number exists. S5 FAILs iff any of those five reads FAIL on the arm's 2022.
+
+**C1 and C3b are deliberately OUTSIDE the protected set** because they already FAIL
+on the control — and this is the direction that costs the arm, not the one that
+flatters it. S5 cannot be satisfied by C1 or C3b *improving*, and it is not
+weakened by them worsening: they are **reported at full magnitude in the RESULT and
+gate nothing either way** (§5). The control determination for 2022 is **NOT-YET**,
+and rule 30(c) governs regardless: a held-out year never downgrades PJM, whose
+headline stays CALIBRATED on the 2023–2025 train tier.
