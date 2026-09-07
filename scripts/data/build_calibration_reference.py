@@ -19,10 +19,12 @@ consumer) can read pre-computed values rather than re-deriving them:
   the per-zone, per-month EIA-860 operable wind and solar capacity (MW).
 
 Every number here is a MEASURED OUTCOME used only as the SCORE (rule 13
-``[R-MEASURED]``): nothing in this file is an input to a solve. The one repair
-applied on the way in is :func:`_screen_fuel_spikes`, which removes EIA-930
-unit-slip hours from the ``NG:`` fuel series before they are summed — a defect
-in the telemetry, not a tuning channel.
+``[R-MEASURED]``): nothing in this file is an input to a solve. The EIA-930
+``NG:`` fuel series arrive already screened for unit-slip hours — the repair
+lives at the loader seam (``eia930.actuals._screen_fuel_spike_columns``, lane
+SPP-41), where every consumer inherits it, so this builder applies no screen
+of its own (rule 19 ``[R-ONE-MECH]``; the builder-local ``_screen_fuel_spikes``
+SPP-31 landed here was deleted, rule 26 ``[R-DELETE]``).
 
 Run: ``python scripts/data/build_calibration_reference.py``
 """
@@ -575,117 +577,24 @@ def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
     }
 
 
-# The demand screen's own spike factor (``eia930.demand._DEMAND_SPIKE_THRESHOLD``
-# = 2.5x a robust scale statistic), reused verbatim by :func:`_screen_fuel_spikes`
-# so the benchmark side of the same artifact class is screened on the same bar.
-_FUEL_SPIKE_RATIO: float = 2.5
-# The scale statistic the second limb uses: the series' own 99.9th percentile,
-# i.e. about the ninth-largest of 8,760 hours. See :func:`_screen_fuel_spikes`
-# for why the demand screen's median basis cannot be used alone on a fuel series.
-_FUEL_SPIKE_SCALE_PCT: float = 99.9
-# The EIA-930 wide columns that are NOT ``NG: <CODE>`` fuel rows: ``net_gen`` is
-# the ``NG`` total and ``interchange`` is ``TI``. P9's ruling scopes the screen
-# to the ``NG:`` columns, so these two are excluded — and the exclusion is load
-# bearing, not cosmetic: PJM 2021's ``NG`` total carries three int32-overflow
-# hours (2,147,480,064 MW at h6981-6983) whose ``NG:`` fuel cells are entirely
-# ordinary, so screening the total would repair real fuel data and would move a
-# committed PJM block. That defect is a separate finding, not this lane's.
-_NON_FUEL_BENCHMARK_SERIES: frozenset[str] = frozenset({"net_gen", "interchange"})
-
-
-def _screen_fuel_spikes(
-    iso: str, year: int, bench: dict[str, np.ndarray]
-) -> dict[str, np.ndarray]:
-    """Repair EIA-930 unit-slip hours in the ``NG:`` fuel series of a benchmark.
-
-    Card **P9** (SPP addition plan §5, RULED r#2): the committed ``SWPP hourly``
-    extract posts a ~100x unit slip at 2023-06-12 21:00 that inflates
-    ``NG: WND`` by 3.59 TWh. ``eia930.demand._screen_demand_spikes`` catches the
-    ``Demand`` column of that same hour and nothing else does — no screen in the
-    repo touches the fuel-mix columns, so the inflation would flow straight into
-    this reference's ``generation_twh`` and into C4. The repair belongs in the
-    benchmark builder, never in ``data/raw`` (audit §3.4 recommendation 3).
-
-    **Why the demand screen's test needs a second limb here.** That screen flags
-    ``x > 2.5 * median(x)``, and its own derivation says why that bar is valid:
-    every legitimate demand series in this extract has ``max/median <= 2.1``. A
-    fuel series has no such property — it legitimately runs from zero to
-    nameplate, so its median is not its operating scale. Measured over all seven
-    ISOs and 2021-2025, the median test ALONE flags 4,116 MISO 2023 solar hours,
-    3,860 NEISO 2024 solar hours and 3,131 NEISO 2025 oil hours: real midday
-    solar and real peaker starts, whose deletion would both fabricate a benchmark
-    and break the byte-identity the same ruling requires. So an hour is repaired
-    only when it clears the demand screen's bar against BOTH scale statistics —
-    the median AND the series' own robust operating peak
-    (:data:`_FUEL_SPIKE_SCALE_PCT`, immune to a handful of artifact hours). The
-    factor is the demand screen's, unchanged; no second threshold is introduced.
-
-    **Measured effect** over all seven ISOs, 2021-2025 (2026-09-07): two series
-    move, and neither is a value this reference consumes for the six registered
-    ISOs — SPP 2023 ``wind`` 106.6345 -> 103.0488 TWh (the P9 target, 1 hour) and
-    NYISO 2024 ``other`` 3.3846 -> 3.3486 TWh (5 hours at h6759-6763, the same
-    NYIS reporting-gap window ``_screen_demand_dropouts`` already documents for
-    the ``Demand`` column). Only ``wind``, ``solar`` and ``net_gen`` are read
-    downstream, so every pre-existing ISO block stays byte-identical.
-
-    Returns a new dict; series with nothing flagged are passed through unchanged.
-    """
-    out: dict[str, np.ndarray] = {}
-    for fuel, arr in bench.items():
-        a = np.asarray(arr, dtype=float)
-        if fuel in _NON_FUEL_BENCHMARK_SERIES:
-            out[fuel] = a
-            continue
-        finite = a[np.isfinite(a)]
-        if finite.size == 0:
-            out[fuel] = a
-            continue
-        median = float(np.median(finite))
-        peak = float(np.percentile(finite, _FUEL_SPIKE_SCALE_PCT))
-        spike = (
-            np.isfinite(a)
-            & (a > _FUEL_SPIKE_RATIO * median)
-            & (a > _FUEL_SPIKE_RATIO * peak)
-        )
-        n_spike = int(spike.sum())
-        if n_spike == 0:
-            out[fuel] = a
-            continue
-        logger.warning(
-            "%s %d: repairing %d EIA-930 NG:%s spike hour(s) %s "
-            "(max %.0f MW vs p%.1f %.0f MW) -- unit-slip artifact",
-            iso,
-            year,
-            n_spike,
-            fuel,
-            np.flatnonzero(spike).tolist(),
-            float(np.nanmax(a)),
-            _FUEL_SPIKE_SCALE_PCT,
-            peak,
-        )
-        repaired = a.copy()
-        repaired[spike] = np.nan
-        out[fuel] = (
-            pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
-        )
-    return out
-
-
 def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
     """Return EIA-930 grid-side net generation by fuel (TWh) for an ISO-year.
 
-    Reads the per-BA hourly extract, repairs unit-slip hours in the ``NG:`` fuel
-    series (:func:`_screen_fuel_spikes`) and sums each. Empty when the ISO has no
-    EIA-930 extract for the year. Grid-side telemetry, so the variable-renewable
-    totals are not subject to the EIA-923 survey's under-count / BA
-    mis-assignment.
+    Reads the per-BA hourly extract through the calibration bench loader and
+    sums each series. The ``NG:`` fuel series arrive with EIA-930 unit-slip
+    hours already repaired at the loader seam
+    (``eia930.actuals._screen_fuel_spike_columns``, SPP-41) — this function
+    applies no screen of its own, so the loader is the ONLY place the repair
+    happens (rule 19 ``[R-ONE-MECH]``). Empty when the ISO has no EIA-930
+    extract for the year. Grid-side telemetry, so the variable-renewable totals
+    are not subject to the EIA-923 survey's under-count / BA mis-assignment.
     """
     bench = load_eia_hourly_benchmark(iso, year)
     if not bench:
         return {}
     return {
         fuel: round(float(np.nansum(np.asarray(arr, dtype=float))) / _MWH_PER_TWH, 4)
-        for fuel, arr in _screen_fuel_spikes(iso, year, bench).items()
+        for fuel, arr in bench.items()
     }
 
 
