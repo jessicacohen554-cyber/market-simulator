@@ -200,6 +200,39 @@ covers every field through which the scaffold could have influenced the
 artifact chain, and G-BENCH-B refuses every difference except the single one
 whose cause is named in advance.
 
+## §7a — S-7: an EIGHTH silent fallback caiso-259 did not list, found and closed
+
+`data/raw/iso-specific-transmission/CAISO_loss_surface.csv` carried year labels
+**{0 (pooled), 2023, 2024, 2025}** and no 2022. The keeper runs
+`caiso_zonal_loss_surface=True`, and `load_zone_month_deviation` resolves "the
+year's own rows when the surface carries them, **else the pooled `year = 0`
+rows**" — so a 2022 rung would have run the pooled forecast-mode fallback
+surface while every training year rode its own measured one. That is exactly
+the class caiso-259 §2 enumerates (S-1…S-6) and it is not on that list; it is
+recorded here as **S-7**.
+
+It needed no new data: the derive reads `CAISO_dam_hourly_<year>.csv`, and
+**caiso-261 already landed the 2022 DAM aggregate** — so this was closable the
+moment H-3 closed, and nobody noticed.
+
+**The pooled rows are the trap, and they were protected.** `POOLED_YEAR = 0` is
+computed over `YEARS`; adding 2022 to `YEARS` would have recomputed the
+forecast-mode fallback surface over 2022–2025 — a change to a TRAINING-recipe
+object. `--extra-years` therefore emits the extra year's own per-year rows and
+leaves the pooled computation over `YEARS` alone, the same report-only
+discipline as S-3.
+
+Measured: the **DEFAULT run reproduces the committed 240-row file
+sha256-identically** (`b883a359…` before and after), which is the strongest
+available proof that the derive is frozen and this change is inert by default.
+With `--extra-years 2022`: 60 rows added (5 zones × 12 months) and **every
+pre-existing row — 2023, 2024, 2025 AND the pooled `year = 0` — unchanged**.
+2022 carries **zero interpolated month-cells**, i.e. better DAM coverage than
+2023 (12 interpolated cells each for LA_BASIN and SDGE, the Jan–Feb 2023 OASIS
+retention gap), and its zone ordering matches 2024/2025 (ZP26 −0.0494 most
+negative, then SP15_rest −0.0379, NP15 −0.0182, LA_BASIN −0.0134, SDGE
+−0.0034).
+
 ## §8 — Test status, checked against a clean base rather than asserted
 
 `tests/regression/test_persisted_identity.py` — the suite that directly guards
