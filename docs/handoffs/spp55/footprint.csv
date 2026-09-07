@@ -1,0 +1,4 @@
+year,CR_short_intervals,CR_hours_any_interval,CR_hours_ge6_intervals,CR_hours_hourly_mean_ge275,intervals_at_1100,spin250_hours,spin_only_hours,rt_gt200_hours,rt_gt200_and_CR,rt_median_in_CR_hours,rt_mean_in_CR_hours
+2023,140,66,1,4,20,70,4,42,1,32.0,47.2
+2024,117,43,5,3,14,51,8,59,0,32.2,47.6
+2025,109,40,5,7,40,49,9,68,0,36.1,44.1

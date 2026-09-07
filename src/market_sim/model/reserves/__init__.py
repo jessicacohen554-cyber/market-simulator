@@ -104,6 +104,7 @@ from market_sim.model.reserves.spec import (  # noqa: F401
     get_reserve_design,
     pjm_pergen_pool_ramp10,
     pjm_pergen_structure,
+    spp_contingency_reserve_demand_steps,
     _ERCOT_POSTURE_CHP_GROUPS as _ERCOT_POSTURE_CHP_GROUPS,
     _caiso_design as _caiso_design,
     _caiso_locational_as_families as _caiso_locational_as_families,
@@ -117,6 +118,7 @@ from market_sim.model.reserves.spec import (  # noqa: F401
     _posture_pool_params as _posture_pool_params,
     _quick_start_eligible as _quick_start_eligible,
     _reserve_eligible as _reserve_eligible,
+    _spp_design as _spp_design,
 )
 
 __all__ = [
@@ -203,4 +205,5 @@ __all__ = [
     "get_reserve_design",
     "pjm_pergen_pool_ramp10",
     "pjm_pergen_structure",
+    "spp_contingency_reserve_demand_steps",
 ]

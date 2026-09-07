@@ -242,6 +242,21 @@ def _log_reserve_coopt(
                 float(design.online_rho),
                 int((rclass == 2).sum()),
             )
+    elif iso == "SPP":
+        # SPP-55: one BAA-wide Contingency Reserve family (or none, when no
+        # unit clears the 600 MW potential-MSSC screen) on the published
+        # three-step $275 / $550 / $1,100 demand curve.
+        logger.info(
+            "energy+reserve co-opt (SPP): %d Contingency Reserve family/ies, "
+            "requirement %.0f MW at h0 (ratio x 1.2 x hourly MSSC), "
+            "%d demand-curve steps ($%.0f-$%.0f), %d reserve-eligible units",
+            len(design.families),
+            float(req[0, 0]) if design.families else 0.0,
+            len(pen),
+            float(pen.min()) if len(pen) else 0.0,
+            float(pen.max()) if len(pen) else 0.0,
+            int(elig2d[0].sum()),
+        )
     elif iso == "MISO":
         _measured = bool(getattr(config, "miso_measured_reserve_requirements", False))
         logger.info(

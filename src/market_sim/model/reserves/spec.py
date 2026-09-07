@@ -263,6 +263,73 @@ MISO_MIDWEST_ZONES: tuple[str, ...] = (
 MISO_EMERGENCY_TIER1_OFFER_FLOOR: float = 500.0
 MISO_EMERGENCY_TIER2_OFFER_FLOOR: float = 1000.0
 
+# --- SPP (config.energy_reserve_coopt + iso == "SPP", _spp_design; lane SPP-55) --
+# ONE system-wide Contingency Reserve family on the SPP Balancing Authority
+# Area basis, priced by SPP's OWN published Contingency Reserve Demand Curve
+# (Integrated Marketplace Protocols v119 §4.1.5(1)(a) + §4.1.5.2(1), printed
+# pp. 74–75 / 87; transcription data/raw/spp-planning/transcriptions/
+# Integrated_Marketplace_Protocols_119.txt; SPP MMU ASOM 2024 p. 98 / ASOM 2025
+# p. 94 restate it as "three steps with a maximum price of $1,100/MW"):
+#   scarcity price = Contingency Reserve Scarcity Factor
+#                    x (Safety-Net Energy Offer Cap + Contingency Reserve Offer Cap)
+#   factor 0.25 for shortages <= 1/2 of "the SPP Reserve Sharing Group
+#   Contingency Reserve requirement above the BAACRM", 0.5 up to the whole of
+#   it, 1.0 beyond -> $275 / $550 / $1,100 per MW.
+# The two offer caps are Protocols §8.2.5 (printed pp. 356–357; FINDING-spp-12
+# §6 transcribed them: Safety-Net Energy Offer Cap $1,000/MWh, Contingency
+# Reserve Offer Cap $100/MW). Measured corroboration (FINDING-spp-55 §1): the
+# RTBM Supplemental MCP in every 2023–2025 contingency-reserve-short interval
+# sits at exactly 275 / 550 / 1,100 (140 / 117 / 109 intervals; 90-30-20,
+# 65-33-14, 43-23-40), and never above 1,100.
+SPP_SAFETY_NET_ENERGY_OFFER_CAP: float = 1000.0
+SPP_CONTINGENCY_RESERVE_OFFER_CAP: float = 100.0
+# (shortfall band as a fraction of the "requirement above the BAACRM" margin,
+# scarcity factor), cheapest band first — the ordering model.dispatch consumes.
+SPP_CR_SCARCITY_STEPS: tuple[tuple[float, float], ...] = (
+    (0.5, 0.25),
+    (0.5, 0.5),
+)
+SPP_CR_SCARCITY_FACTOR_DEEP: float = 1.0
+# Requirement basis — SPP Reserve Sharing Group Operating Process – East,
+# 0820EXT00002 v4.0 (effective 2026-06-01; fetched 2026-09-07 from
+# https://www.spp.org/documents/63838/ — the RSG rule in force through the
+# whole 2023–2025 window per its revision history, v2.0 2022-06-01 onward):
+#   §4.1 (p. 10)  the Most Severe Single Contingency is the largest potential
+#                 Balancing Contingency Event, assessed HOURLY; a potential
+#                 MSSC is the loss of a SINGLE generating unit (or a wind
+#                 cluster at one interconnection point) of >= 600 MW
+#                 nameplate; units on outage are not potential MSSCs (§4.1.2).
+#   §4.2 (p. 11)  the RSG Minimum Hourly Contingency Reserve = MSSC x a
+#                 scaling factor whose ORWG-approved minimum is 1.2 (SMCE x
+#                 1.0, the multi-unit common-fuel/RAS event, not modelled).
+#   §4.3 (p. 12)  each member BA's requirement is its Annual Contingency
+#                 Reserve Requirement Ratio (previous-year system peak
+#                 responsibility share) x the RSG requirement.
+#   Definitions (p. 5): Contingency Reserve = Spinning + Supplemental, at
+#                 least half Spinning. The spin share is a SUB-constraint of
+#                 the one family (its $250/MW Spinning Reserve VRL, Protocols
+#                 Exhibit 4-1, caps that sub-constraint's shadow price) and is
+#                 SPP-56's object — this family pools both products.
+# The "RSG requirement above the BAACRM" that sizes the two shallow bands is
+# read as the 0.2 x MSSC scaling margin (the BAACRM sets the BA's share of the
+# MSSC itself; the RSG requirement sits 20 % above it) — the reading the
+# measured MCP step distribution corroborates (a median shortage of ~5 % of
+# the requirement, ASOM 2024 p. 99, lands in the $275 band, which carries
+# 40–64 % of the short intervals; the alternative reading, the ~3 % share
+# other RSG members carry, would put that median in the $1,100 band).
+SPP_RSG_CR_SCALING_FACTOR: float = 1.2
+SPP_RSG_MSSC_MIN_NAMEPLATE_MW: float = 600.0
+# The SPP BAA's Annual Contingency Reserve Requirement Ratio (§4.3) is posted
+# to members, not published. MEASURED from SPP's own posted record (rule 13
+# [R-MEASURED], a market-design parameter that regenerates as a tariff/RSG
+# constant): the ratio of the SPP-BAA cleared Spinning + Supplemental reserve
+# (portal.spp.org `operating-reserves` RTBM-OR 5-minute files, 2023 + 2024
+# annual archives, 207,876 intervals) to 1.2 x the largest single SPP unit's
+# nameplate (Wolf Creek 1, EIA-860 1,296.3 MW) — hourly-mean median 1,514 MW
+# (2023) / 1,484 MW (2024) -> 0.973 / 0.954, pooled 0.964. Derivation:
+# FINDING-spp-55-2026-09-07.md §1.4 (zero-LP; the archives are NOT landed).
+SPP_BA_CR_REQUIREMENT_RATIO: float = 0.964
+
 # --- CAISO (config.caiso_reserve_coopt, _caiso_design, issue #1492) ---------
 # BAL-002-WECC-3 R1 Contingency Reserve requirement: max(most-severe single
 # contingency, 3% of hourly-integrated load + 3% of hourly-integrated
@@ -919,6 +986,8 @@ def get_reserve_design(
             system_load=system_load,
             sim_year=sim_year,
         )
+    if iso == "SPP":
+        return _spp_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     raise ValueError(f"No reserve design for ISO {iso!r}")
 
 
@@ -4257,4 +4326,203 @@ def _caiso_design(
         posture_pools=posture_pools,
         posture_mlf=posture_mlf,
         posture_startup=posture_startup,
+    )
+
+
+# ---------------------------------------------------------------------------
+# SPP — one Contingency Reserve family on the published demand curve (SPP-55)
+# ---------------------------------------------------------------------------
+
+
+def spp_contingency_reserve_demand_steps(
+    requirement_mw: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Discretize SPP's published Contingency Reserve Demand Curve into LP steps.
+
+    Protocols v119 §4.1.5(1)(a) / §4.1.5.2(1): the scarcity price is the
+    Contingency Reserve Scarcity Factor (0.25 / 0.5 / 1.0) times the sum of
+    the Safety-Net Energy Offer Cap and the Contingency Reserve Offer Cap
+    ($1,000 + $100), with the factor stepping at one-half of, and at the
+    whole of, "the SPP Reserve Sharing Group Contingency Reserve requirement
+    above the BAACRM" — read as the RSG scaling margin
+    ``(SPP_RSG_CR_SCALING_FACTOR - 1) / SPP_RSG_CR_SCALING_FACTOR`` of the
+    requirement (the constants block above states the reading and its
+    measured corroboration). Bands ascend cheapest (shallowest shortage)
+    first — the contract :func:`nyiso_rcpf_product_shortfall_steps` produces
+    and ``model.dispatch`` consumes — and the widths sum to exactly
+    ``requirement_mw`` so the balance row stays feasible at zero reserve.
+
+    Args:
+        requirement_mw: The Contingency Reserve requirement the steps span
+            (the family's annual maximum when the requirement varies by hour,
+            the static-width convention every published-curve design uses).
+
+    Returns:
+        ``(penalties, widths)`` ascending cheapest-first, each ``(3,)``; empty
+        arrays when ``requirement_mw <= 0``.
+    """
+    req = float(requirement_mw)
+    if req <= 0.0:
+        return np.zeros(0, dtype=float), np.zeros(0, dtype=float)
+    price = SPP_SAFETY_NET_ENERGY_OFFER_CAP + SPP_CONTINGENCY_RESERVE_OFFER_CAP
+    margin = req * (SPP_RSG_CR_SCALING_FACTOR - 1.0) / SPP_RSG_CR_SCALING_FACTOR
+    pens = [factor * price for _, factor in SPP_CR_SCARCITY_STEPS]
+    wids = [frac * margin for frac, _ in SPP_CR_SCARCITY_STEPS]
+    pens.append(SPP_CR_SCARCITY_FACTOR_DEEP * price)
+    wids.append(req - float(sum(wids)))
+    return np.asarray(pens, dtype=float), np.asarray(wids, dtype=float)
+
+
+def _spp_largest_unit_nameplate(plant_codes: np.ndarray) -> dict[int, float]:
+    """Largest single thermal generator nameplate (MW) per EIA plant code.
+
+    The RSG rule's potential-MSSC event is the loss of ONE generating unit
+    (Operating Process §4.1 A), so a per-plant fleet row — a whole station
+    binned into tranches — needs its largest single generator, not its
+    aggregate. Read from the active EIA-860 vintage's ``eia860_generators``
+    table (``paths.active_eia860_dir``, the same vintage the fleet was built
+    from); wind / solar / storage / hydro prime movers are excluded so a
+    co-located battery or solar field never poses as a thermal unit. Plants
+    absent from the table are absent from the result (the caller falls back
+    to the row's own capacity).
+
+    Args:
+        plant_codes: The fleet's ``plant_code`` array (any dtype castable to
+            int; codes ``<= 0`` are skipped).
+
+    Returns:
+        ``{plant_code: nameplate_mw}`` for the plant codes found.
+    """
+    import pandas as pd
+
+    from market_sim.config.paths import active_eia860_dir
+
+    wanted = {int(p) for p in np.asarray(plant_codes).tolist() if int(p) > 0}
+    if not wanted:
+        return {}
+    path = active_eia860_dir() / "eia860_generators.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path, columns=["plant_id", "prime_mover", "nameplate_capacity_mw"]
+    )
+    df = df[df["plant_id"].astype(int).isin(wanted)]
+    df = df[
+        ~df["prime_mover"]
+        .astype(str)
+        .str.strip()
+        .isin(("WT", "WS", "PV", "BA", "PS", "HY"))
+    ]
+    mw = pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce").fillna(0.0)
+    largest = mw.groupby(df["plant_id"].astype(int)).max()
+    return {int(p): float(v) for p, v in largest.items() if v > 0.0}
+
+
+def _spp_design(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str] | None = None,
+    *,
+    sim_year: int | None = None,
+    largest_unit_mw: dict[int, float] | None = None,
+) -> ReserveDesign:
+    """SPP energy+reserve co-optimization: ONE Contingency Reserve family.
+
+    The SPP Balancing Authority Area basis (Protocols §4.1.5(1): the demand
+    curves apply "on an SPP Balancing Authority Area basis and/or a Reserve
+    Zone basis"; the per-Reserve-Zone curves never separated from the BAA
+    curve in 2023–2025 — every reserve zone's RTBM MCP is identical in all
+    315,648 posted intervals, FINDING-spp-55 §1.2 — so one BAA-wide family
+    spanning every model zone is the measured structure). Spinning and
+    Supplemental are pooled: the family draws on the whole reserve-eligible
+    thermal fleet's headroom (:func:`_reserve_eligible`; storage excluded —
+    SPP-56's object), exactly as MISO's market-wide RBDC family does.
+
+    Requirement, HOURLY and fleet-derived (rule 13 — it regenerates for a
+    forecast fleet and responds to retirements / outages): the RSG rule
+    ``ratio x 1.2 x MSSC_t``, with ``MSSC_t`` the largest single reserve-
+    eligible generating unit deliverable at hour ``t`` — each fleet row's
+    plant's largest EIA-860 generator nameplate (or the row's own capacity
+    where no plant record exists) scaled by that row's hourly availability,
+    over rows whose unit nameplate clears the 600 MW potential-MSSC screen
+    (Operating Process §4.1 / §4.2 / §4.3; constants block for citations).
+    A fleet with no qualifying unit builds NO family (an empty design):
+    there is then no potential MSSC to reserve against.
+
+    Demand curve: :func:`spp_contingency_reserve_demand_steps` sized to the
+    hourly requirement's annual maximum (static widths, the NYISO/MISO
+    convention: a narrower anchor could leave requirement beyond the priced
+    steps in the peak-requirement hour).
+
+    Rule 19 [R-ONE-MECH]: SPP arms no ORDC overlay, no scarcity adder and no
+    floor; this family replaces nothing and stacks on nothing. The energy
+    slack keeps the ISO's registered ``voll`` ($2,000, owner ruling P10) —
+    SPP's $50,000/MW Global Power Balance VRL is the SCED relaxation cap on
+    that same energy-balance constraint and is NOT a second price object.
+    Zero fitted scalars: three published caps/factors, two published RSG
+    constants, one MEASURED share (rule 21 DOF ledger, FINDING-spp-55 §1.4).
+
+    Args:
+        config: ScenarioConfig-like (``iso`` must be ``"SPP"``).
+        fleet_arrays: The vectorized fleet.
+        hours: LP horizon ``T``.
+        zone_names: Unused (the family spans every zone); accepted for the
+            shared :func:`get_reserve_design` signature.
+        sim_year: Unused (nothing here is year-keyed); accepted for the
+            shared signature.
+        largest_unit_mw: Optional ``{plant_code: nameplate_mw}`` override for
+            tests; ``None`` reads the active EIA-860 vintage.
+
+    Returns:
+        A one-family :class:`ReserveDesign` (or an empty-family design).
+    """
+    T = int(hours)
+    n_gen = int(fleet_arrays.pmax.shape[0])
+    eligible = _reserve_eligible(fleet_arrays)
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)
+    if avail.ndim == 1:
+        avail = np.repeat(avail[:, None], T, axis=1)
+    avail = avail[:, :T]
+    plant_code = np.asarray(fleet_arrays.plant_code)
+    nameplate_by_plant = (
+        largest_unit_mw
+        if largest_unit_mw is not None
+        else _spp_largest_unit_nameplate(plant_code)
+    )
+    # Per row: the largest single unit at its plant, else its own capacity.
+    unit_mw = np.array(
+        [
+            nameplate_by_plant.get(int(pc), float(pmax[g]))
+            if int(pc) > 0
+            else float(pmax[g])
+            for g, pc in enumerate(plant_code.tolist())
+        ],
+        dtype=float,
+    )
+    candidate = eligible & (unit_mw >= SPP_RSG_MSSC_MIN_NAMEPLATE_MW)
+    n_zones = int(np.max(fleet_arrays.zone_idx)) + 1 if n_gen else 1
+    if not candidate.any():
+        return ReserveDesign(
+            families=[], eligible=eligible.reshape(1, -1), storage_eligible=False
+        )
+    # (T,) hourly MSSC: the largest deliverable single unit in each hour.
+    mssc_t = (unit_mw[candidate, None] * avail[candidate]).max(axis=0)
+    requirement = SPP_BA_CR_REQUIREMENT_RATIO * SPP_RSG_CR_SCALING_FACTOR * mssc_t
+    penalties, widths = spp_contingency_reserve_demand_steps(float(requirement.max()))
+    families = [
+        ReserveFamily(
+            name="spp_contingency_reserve",
+            requirement=requirement.astype(float),
+            zone_mask=np.ones(n_zones, dtype=bool),
+            ordc_penalties=penalties,
+            ordc_step_widths=widths,
+            reserve_class=0,
+        )
+    ]
+    return ReserveDesign(
+        families=families,
+        eligible=eligible.reshape(1, -1),
+        storage_eligible=False,
     )

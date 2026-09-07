@@ -16871,25 +16871,38 @@ each in full at issuance. Standing rules that already bind the queue:
    ISO columns — is exactly what ruling P1 refused**; if the archive stays
    blocked the desk re-serves P1, it is not decided by whoever gets there
    first.
-5. **SPP-55 — VRL-based scarcity design.** `[FABLE]`, mechanism design. An
-   **in-LP reserve demand curve** built on SPP's published Value of Reserve
-   Loss, closer to MISO's RBDC than to the post-solve ORDC overlay, designed
-   against SPP's own tail counts at `TAIL_THRESHOLD["SPP"] = $200` (card **P6**,
-   ruled r#2). Card **P5** already refused to seed a scarcity override at
-   registration, precisely so this lane
-   designs the object against a committed control rather than inheriting a
-   seed. **The registered `voll` is $2,000** — card **P10** (ruled r#3,
-   correcting P5's citation): SPP's own posted Safety-Net Energy Offer Cap is
-   **$1,000**/MWh, and $2,000 is Order 831's hard ceiling for a cost-verified
-   offer, i.e. the highest price a dispatchable SPP offer can actually reach.
-   A scarcity design that clears above $1,000 must say which of the two it is
-   pricing against. *Gate:* structural only — the curve's own arithmetic (shortfall hours,
-   held MW, the reserve-family dual) behaves as the pre-solve delta implies.
-   *Pre-declared promotion condition:* rule 19 `[R-ONE-MECH]` — if it arms,
-   it is the **sole** scarcity mechanism; it is never stacked on an ORDC
-   overlay. C3c is an accepted ledgered caveat under the standing rule and is
-   **not** this lane's promotion test. Cells: `ordc_scarcity_overlay`,
-   `dynamic_reserve_requirements`, `maxgen_emergency_tier_pricing`.
+5. **SPP-55 — VRL-based scarcity design.** `[FABLE]`, mechanism design.
+   **LANDED 2026-09-07 — KILLED AT ZERO LP, cell `energy_reserve_coopt` U → I**
+   (`docs/handoffs/PRECOMMIT-spp-55-2026-09-07.md`, `FINDING-spp-55-2026-09-07.md`,
+   `docs/handoffs/spp55/`). The object, corrected from SPP's own protocols: not
+   the VRLs but SPP's published **Contingency Reserve Demand Curve** — scarcity
+   factor 0.25 / 0.5 / 1.0 × (Safety-Net Energy Offer Cap $1,000 + Contingency
+   Reserve Offer Cap $100) = **$275 / $550 / $1,100 per MW** (Protocols v119
+   §4.1.5(1)(a) / §4.1.5.2; the posted RTBM MCPs sit at exactly those values in
+   every 2023–2025 short interval), one BAA-wide family in the LP under the
+   existing `energy_reserve_coopt` gate (`model/reserves/spec.py::_spp_design`,
+   the MISO-RBDC template, **no new field**), requirement = 0.964 × 1.2 × hourly
+   MSSC (RSG Operating Process 0820EXT00002 §4.1–4.3; 1,500 MW on keeper-3's
+   fleet vs SPP's posted cleared 1,514 / 1,484 MW). The $250 spin VRL caps the
+   spin sub-constraint (SPP-56's) and the $50,000 power-balance VRL is the
+   energy slack's relaxation cap — the registered `voll` $2,000 (P10) stays the
+   one energy-shortage price (rule 19). **Measured footprint:** 140 / 117 / 109
+   five-minute short intervals in 68 / 45 / 37 events of median length ONE
+   interval, 4 / 3 / 7 hour-long shortage hours, and **1 / 0 / 0 of the 42 / 59 /
+   68 C3c hours coincide with any reserve shortage** (the shortage hours price at
+   a median $32–36). **Pre-solve gate:** keeper-3's reserve-eligible headroom is
+   below the requirement in 0 / 1 / 0 hours and in NO measured shortage hour
+   (3.4–17× the requirement there), so the row cannot bind where SPP posts
+   shortage — leg (i)(a) = 0.00 in every year; under rule 29 step 0 no LP was
+   spent, nothing registered, keeper-3 unchanged. *Structural reading:* SPP's
+   reserve scarcity is a 5-minute ramp/capacity object an hourly LP without a
+   deliverability bound clears out of 6–18 GW of slow-unit headroom (miso-38
+   gate 4 on SPP's own data) → making the family LIVE is **SPP-56's**
+   deliverability question (R-22); C3c is a 5-minute RT price-formation object
+   no hourly lever reaches (R-21 — the ledgered model-class caveat). Cells
+   `ordc_scarcity_overlay` (rule-19-excluded while the in-LP family exists),
+   `reserve_family_dual_sidecar`, `dynamic_reserve_requirements` annotated, not
+   moved; `maxgen_emergency_tier_pricing` untouched (MISO's object).
 6. **SPP-56 — reserve co-optimisation (M2), LAST.** `[FABLE]`. Reg / Spin /
    Supplemental on SPP's measured `da-mcp` / `rtbm-mcp` prices. Owner ruling
    **P4** (r#2, 2026-09-06): *deferred; cells `U`; SPP-56 last* — M2 is last by

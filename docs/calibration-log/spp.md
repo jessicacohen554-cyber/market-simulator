@@ -462,4 +462,32 @@ network, the element map, ψ₂ per constituent, the aggregates).
   Rule 28(b): no mechanism tested, no cell moved; `measured_interface_limits` evidence appended (stays O). Rule 22:
   2023–2025 weights only.
 
-**Next shorthand: spp-10.**
+## 2026-09-07 — spp-10: SPP-55 VRL-based scarcity as an in-LP Contingency Reserve demand curve — KILLED AT ZERO LP at the pre-solve half of the STOP gate (INERT)
+
+**Result: KILLED — no solve spent (rule 29 step 0); not a keeper candidate; nothing registered; the SPP reserve entry
+landed default-off under the existing `energy_reserve_coopt` gate (no new field).**
+Record: `docs/handoffs/PRECOMMIT-spp-55-2026-09-07.md` (its own commit, before the implementation) +
+`FINDING-spp-55-2026-09-07.md` + `docs/handoffs/spp55/`. Control = keeper-3 (G-DRIFT `623184f3` → HEAD all-INERT).
+
+- **The object, from SPP's own protocols (not the VRLs):** the Contingency Reserve Demand Curve — scarcity factor
+  0.25 / 0.5 / 1.0 × (Safety-Net Energy Offer Cap $1,000 + Contingency Reserve Offer Cap $100) = **$275 / $550 /
+  $1,100 per MW** (Protocols v119 §4.1.5(1)(a) / §4.1.5.2); the posted RTBM Supp MCP is exactly one of those three
+  values in every 2023–2025 short interval and the Spin MCP maxima are the curve + the $250 spin VRL stacked on it.
+  Requirement = 0.964 × 1.2 × hourly MSSC (RSG Operating Process 0820EXT00002 §4.1–4.3: largest single unit ≥ 600 MW
+  × availability; Wolf Creek 1 → 1,500 MW vs posted cleared medians 1,514 / 1,484). Six published constants, one
+  MEASURED share, zero tuned. One BAA-wide family, MISO-RBDC form (`model/reserves/spec.py::_spp_design`).
+- **Measured footprint (zero LP):** 140 / 117 / 109 five-minute short intervals in 68 / 45 / 37 events of median length
+  ONE interval; 4 / 3 / 7 hour-long shortage hours; **1 / 0 / 0 of the 42 / 59 / 68 C3c hours coincide with any reserve
+  shortage** (shortage hours price at a median $32–36; the tail is RT-only and mostly system-wide).
+- **Pre-solve gate:** keeper-3's reserve-eligible headroom (min 2,884 / 1,169 / 2,399 MW; p1 6.3–7.0 GW) is below the
+  requirement in **0 / 1 / 0** hours and in **no** measured shortage hour (3.4–17× the requirement there) → leg (i)(a)
+  = 0.00 in every year; the row cannot bind where SPP posts shortage. INERT; the screen year (2025, named ex ante) was
+  not solved. A ~10-minute verification solve is offered to the desk, not run.
+- **Structural reading:** SPP's reserve scarcity is a 5-minute ramp/capacity object an hourly perfect-foresight LP
+  without a deliverability bound clears out of 6–18 GW of slow-unit headroom (miso-38 gate 4 on SPP's own data) —
+  making the family LIVE is SPP-56's deliverability question (R-22); C3c is a 5-minute RT price-formation object no
+  hourly lever reaches (R-21, the ledgered model-class caveat). Routed R-21…R-25.
+- Records: cell `energy_reserve_coopt` U → **I**; three cells annotated, not moved; §5.7 item 5; plan §5 / §9 rows;
+  `keepers/SPP.json` untouched; 0 new fields, solve surface 0 moved, every keeper key unmoved by construction.
+
+**Next shorthand: spp-11.**
