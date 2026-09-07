@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-07-nyiso-213-summer-seam",
+  "label": "nyiso 213 summer seam",
+  "date": "2026-09-07",
+  "shorthand": "nyiso-213-summer-seam",
+  "definition": "nyiso-213: keeper recipe + cc_summer_derate_reconciled_basis (rule-19 seam repair), full span; screen CLEARED all five corrected gates on 2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-07-nyiso-213-summer-seam.js",
+  "bundle": "results/calibration/nyiso213_summer_seam"
+}
