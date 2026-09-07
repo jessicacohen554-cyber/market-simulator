@@ -253,3 +253,47 @@ It does not claim either arm closes what its own finding says it does not: the m
 over-retires against 15.062 GW actual, `unit_recall_gt300` does not improve, and the 2024/25 and
 2025/26 census stay below the published cleared position — D66 card B's remaining half, routed and
 untouched.
+
+---
+
+## 7. RE-MEASURED AT `abdd30c9` — the declaration HOLDS, and one non-PJM literal in §1.1 does not
+
+`origin/main` advanced **45 commits** (`f37121bd` → **`abdd30c9`**) between this addendum's push and
+the solve. The addendum's own commit (`df1cda74`) is among them, so the branch fast-forwards rather
+than diverging. Because §4's D-1 declaration and §3's G-DRIFT window were both pinned to `f37121bd`,
+**the key was re-measured at the new head before the solve was started** — a solve launched at a
+stale head either trips its own guard or registers a key that was never declared.
+
+**Instrument:** the same probe, unmodified. **Output:** `docs/handoffs/d75rarm/steps34-keys-abdd30c9.json`,
+committed beside the `f37121bd` measurement so both are inspectable.
+
+**Result: every one of the twelve PJM legs is byte-identical to §1.1.** The bare row is
+**`fb16fda2ddb0a94a`**, the three inverse legs are `b518f5fe7d02f961` / `bb6a60239d69508b` /
+`a9c66d8ea25acb9d`, and the four D57/D67 control legs and their inverses all reproduce. **The D-1
+declaration stands unchanged and the solve proceeds against it.** The resolved PJM forecast posture
+is also unchanged field for field, `pjm_interface_feed_admissibility_gate=False` included.
+
+**One literal in §1.1's last row is now WRONG, and it is corrected rather than quietly restated.**
+ERCOT's bare key moved **`46d013cbf1f35d27` → `f18431f2447bad01`**. §1.1 declared all five non-PJM
+bare keys "byte-identical to PRECOMMIT §2"; that is true of MISO, NYISO, NEISO and CAISO at
+`abdd30c9` and **false of ERCOT**. The cause is ERCOT's own lane, not this one: `09c812aa`
+(*ercot-253 PRECOMMIT: the 2021 validation rung, its four measured-input extensions, and the
+published pre-Uri ORDC order parameters*) is the only commit in the window touching
+`src/market_sim/config/`, and neither `iso_configs.py` nor `scenarios.py` changed in it at all.
+
+Reported at full magnitude and **not** a defect in this lane's act: rule 25 `[R-ISO-SCOPE]` says a
+lane owns its own ISO, and the property §1.1 was actually asserting — that **the Q55 arm moves no
+non-PJM key** — is untouched, because the mover is another ISO's measured-input act rather than
+anything in `_pjm_config`. The four non-PJM keys that a PJM override could plausibly have disturbed
+are all still exactly where the PRECOMMIT put them.
+
+**G-DRIFT extension over the 45 commits:** the window adds no `_pjm_config` edit, no
+`scenarios.py` edit and no PJM forecast-path change — measured, and independently corroborated by the
+twelve unmoved PJM keys, which is the strongest available statement that the PJM solve surface did
+not move. `b4f1da55` (*capx D76-ARM: the (b′-1) route cannot land at zero key moves — STOP fires,
+nothing armed*) is the one capx arming attempt in the window and it **armed nothing**. The lanes that
+did land — ercot-253, the SPP-2x/3x/5x series, miso-233/234/235, nyiso-211, SCN-DESK — are all other
+ISOs' or non-solve. **The §3 verdict is unchanged: the only live drift on this row is the two ruled
+arms.**
+
+**The HEAD guard is re-pinned:** `H0` = `abdd30c92058133677f22c6a84ec2852fd9175b6`.
