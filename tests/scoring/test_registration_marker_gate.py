@@ -297,10 +297,32 @@ class TestCommittedHoldoutSidecarsStillValid:
         # superseded), docs/calibration-log/ercot.md (ercot-251) and
         # docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md Addendum 1
         # carry the pruned arm's numbers; git history carries its bytes.
+        #
+        # SEVEN rows and FOUR ISOs at 2026-09-07 (SPP-38). NYISO joined after
+        # session nyiso-209 RE-DECLARED its `complete` marker 2026-09-06 (owner
+        # in-session ruling, verbatim 'Ok declare it and run 22') and spent the
+        # 2022 validation touchpoint under it, then nyiso-213 re-ran 2022 on the
+        # re-keyed keeper: 2026-09-06-nyiso-209-2022-touchpoint and
+        # 2026-09-07-nyiso-213-tp2022. The allowlist below is deliberately
+        # HAND-KEPT and not derived from the marker file -- deriving it from the
+        # same JSON `registration_refusals` already reads would make it
+        # self-fulfilling -- so it goes stale by design and is extended in the
+        # open, never relaxed: NYISO is added because NYISO HOLDS `complete`
+        # (frontend/data/backcast/calibration-complete.json, complete.NYISO,
+        # fourth grant), which is exactly what the message asserts. Both NYISO
+        # rows pass `registration_refusals` above; the invariant is unchanged.
+        # SPP is NOT in this list and must not be added on sight: it holds no
+        # marker of either tier, so an SPP holdout registration is a rule-22
+        # breach this tripwire must catch (SPP's own runs are all 2023-2025 and
+        # never reach this loop). The list is not this lane's to grow further --
+        # docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 15.
         assert len(checked) >= 4, checked
-        assert {iso for _, iso, _ in checked} <= {"ERCOT", "NEISO", "PJM"}, (
-            "every registered holdout run must belong to a `complete` ISO"
-        )
+        assert {iso for _, iso, _ in checked} <= {
+            "ERCOT",
+            "NEISO",
+            "PJM",
+            "NYISO",
+        }, "every registered holdout run must belong to a `complete` ISO"
         assert all(
             hp.tier_for_year(y) == hp.TIER_VALIDATION
             for _, _, years in checked
