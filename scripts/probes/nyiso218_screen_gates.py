@@ -179,11 +179,15 @@ def main() -> None:
                     band_bad.append(f"{g}.{b} ratio {ratio!r}")
             else:
                 band_bad.append(f"{g}.{b} moved but is not a lifted energy band")
-    s1 = not other and not band_bad and len(band_moves) == 39
+    # 30 = 10 routable fossil groups x 3 energy bands. The three
+    # ``*_INTERMEDIATE`` groups left the override at
+    # ADDENDUM-nyiso218-intermediate-drop-2026-09-07 (the router cannot
+    # resolve them; the drop was MEASURED bitwise-identical on mc_base).
+    s1 = not other and not band_bad and len(band_moves) == 30
     rec["gates"]["S1"] = {
         "pass": bool(s1),
         "n_bands_moved": len(band_moves),
-        "n_bands_expected": 39,
+        "n_bands_expected": 30,
         "all_ratios_exactly_1.03": not band_bad,
         "violations": band_bad,
         "non_offer_curve_recipe_diff": other,

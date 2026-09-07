@@ -1,0 +1,10 @@
+{
+ "dropped_groups": [
+  "CC_INTERMEDIATE",
+  "CT_INTERMEDIATE",
+  "ST_GAS_INTERMEDIATE"
+ ],
+ "unit_ids_identical": true,
+ "mc_base_max_abs_diff": 0.0,
+ "bitwise_identical": true
+}
