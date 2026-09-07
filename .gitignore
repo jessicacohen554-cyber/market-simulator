@@ -732,6 +732,18 @@ results/calibration/ercot235_r[0-9]*/
 # the selected WINNER is registered via `git add -f` of its slim set,
 # overriding this rule — the ercot-235 pattern).
 results/calibration/ercot236_*/
+# ercot-255 rule-29 [R-SCREEN] screen family: the 2025 screen ARM, its
+# same-HEAD zero-delta CONTROL, the full-span arm and the 2021 re-test. All are
+# throwaway diagnostic probes on a default-off mechanism — never registered,
+# never keepers, and DELETED BEFORE MERGE under rule 29 clause (c) (owner ruling
+# R-AV, 2026-09-05). Their every cited number lives in
+# docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md and its
+# RESULT; git history is the record for the bytes (rule 15 [R-DASHBOARD]).
+# Ignored so the bytes can never reach a commit by accident in the window
+# between the solve and the delete.
+results/calibration/ercot255_screen_*/
+results/calibration/ercot255_fullspan_*/
+results/calibration/ercot255_2021_retest/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
