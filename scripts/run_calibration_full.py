@@ -8767,6 +8767,7 @@ def run_replay_bundle(
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
+    cc_summer_derate_reconciled_basis: bool | None = None,
     ercot_reserve_supply_cap_from_year: int | None = None,
     ercot_load_resource_reserve_from_year: int | None = None,
     enable_legacy_p2: bool = False,
@@ -8850,6 +8851,13 @@ def run_replay_bundle(
             keeper set it through and the caiso-252 arm is provably the
             committed keeper recipe plus this ONE value (caiso-243 §10.4 /
             caiso-244 §7.7 — a recipe is never rebuilt by parameter name).
+        cc_summer_derate_reconciled_basis: Override the bundle's recorded
+            ``cc_summer_derate_reconciled_basis`` (nyiso-212: the CC summer
+            derate divided by the capacity the plant actually carries at every
+            cc_capacity_reconcile-listed plant; ``None`` keeps the recipe's own
+            value). Rides the SAME recorded generic override bag as
+            ``caiso_dsw_daytime_evening_trim`` above, so a rule-29 arm is
+            provably the committed keeper recipe plus this ONE value.
         enable_legacy_p2: Unlock the ARCHIVED P2 commitment pass when the
             REPLAYED RECIPE arms it (see :func:`enforce_legacy_p2_kwargs`).
             Without it a bundle recorded with ``commitment=true`` is a hard
@@ -8954,6 +8962,19 @@ def run_replay_bundle(
         )
         _bag = dict(kwargs.get(_bag_key) or {})
         _bag["caiso_dsw_daytime_evening_trim"] = bool(caiso_dsw_daytime_evening_trim)
+        kwargs[_bag_key] = _bag
+    if cc_summer_derate_reconciled_basis is not None:
+        # nyiso-212: same channel, same discipline as the caiso-252 override
+        # directly above — the recorded bag is COPIED and edited, never the
+        # recipe dict, so the arm is the keeper recipe plus this one value.
+        _bag_key = next(
+            (k for k in ("prb_overrides", "coal_prb_sigmoid_overrides") if k in kwargs),
+            "prb_overrides",
+        )
+        _bag = dict(kwargs.get(_bag_key) or {})
+        _bag["cc_summer_derate_reconciled_basis"] = bool(
+            cc_summer_derate_reconciled_basis
+        )
         kwargs[_bag_key] = _bag
     if zero_forcing_ablation:
         # D-3 linkage: the twin's run_config must name its base bundle
@@ -9284,6 +9305,20 @@ def main() -> None:
         "committed untrimmed depth; --... forces the caiso-97 trimmed window. "
         "Absent (default None) keeps the bundle's own value, so the replay "
         "path is byte-identical (caiso-252).",
+    )
+    parser.add_argument(
+        "--cc-summer-derate-reconciled-basis",
+        dest="cc_summer_derate_reconciled_basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="REPLAY-ONLY override (--replay-bundle) of the recorded "
+        "ScenarioConfig.cc_summer_derate_reconciled_basis (nyiso-212): --... "
+        "makes the cc_nameplate_summer_derate Jun-Sep multiplier "
+        "min(1, net_summer / carried capacity) at every "
+        "cc_capacity_reconcile-listed CC plant instead of net_summer / "
+        "nameplate applied to an already-reconciled capacity; --no-... forces "
+        "the incumbent nameplate ratio. Absent (default None) keeps the "
+        "bundle's own value, so the replay path is byte-identical.",
     )
     parser.add_argument(
         "--gas-offer-margin-zonal-anchor",
@@ -12883,6 +12918,7 @@ def main() -> None:
                 else None
             ),
             caiso_dsw_daytime_evening_trim=args.caiso_dsw_daytime_evening_trim,
+            cc_summer_derate_reconciled_basis=args.cc_summer_derate_reconciled_basis,
             ercot_reserve_supply_cap_from_year=(
                 args.ercot_reserve_supply_cap_from_year
                 if "--ercot-reserve-supply-cap-from-year" in sys.argv
