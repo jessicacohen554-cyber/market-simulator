@@ -70,3 +70,61 @@ INFO: SPP 2024: 22 hydro plants in LP (3078 MW, 8.97 TWh monthly budget)
 INFO: unit-outage derate (SPP 2024): 293 plant-tranches derated
 INFO: COD ramp (SPP 2024): 436 unit-months masked offline (mid-year COD / retirement), 34 unit(s) fully not-yet-built/retired
 INFO: F923 fuel costs for 2024: 378 generators priced from their own plant, 822 gap-filled from nearby (state/zone) plants
+
+===== 2024: zones ['SPP-North', 'SPP-Oklahoma', 'SPP-South']; LP units 1122
+zone        SPP-North  SPP-Oklahoma  SPP-South
+klass                                         
+CC_CHP            0.0           0.0      271.0
+CC_REGULAR     2324.0        5424.0     2300.0
+COAL          12727.0        3259.0     3861.0
+CT_CHP           61.0           0.0      149.0
+CT_PEAKER      7888.0        1738.0     2129.0
+ST_CHP           91.0          22.0        0.0
+ST_GAS          878.0        5320.0     4082.0
+hydro          2580.0         466.0       32.0
+nuclear        1945.0           0.0        0.0
+oil            1723.0          40.0       17.0
+  SPP-North     plants  223 units  810 thermal+hydro MW     30217 wind cap    16870 MW potential  61.22 TWh | solar cap     382 MW potential  0.50 TWh | demand  149.20 TWh (min   11646 max   27844 MW)
+  SPP-Oklahoma  plants   42 units  170 thermal+hydro MW     16269 wind cap    12327 MW potential  41.32 TWh | solar cap     174 MW potential  0.22 TWh | demand   82.45 TWh (min    6115 max   15680 MW)
+  SPP-South     plants   35 units  142 thermal+hydro MW     12841 wind cap     4654 MW potential  18.45 TWh | solar cap     324 MW potential  0.48 TWh | demand   59.24 TWh (min    4488 max   10718 MW)
+  demand total TWh 290.89  wind potential total 
+INFO: SPP net interchange applied for 2025: +270 MW avg (export-positive, measured EIA-930)
+INFO: SPP per-zone wind SHAPE (2025): 3 zone(s) from spp_2025_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.91, SPP-Oklahoma=0.95, SPP-South=1.12
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 314 unit-months masked offline (mid-year COD / retirement), 22 unit(s) fully not-yet-built/retired
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2025 hydro budget: backfilled 21 non-reporting plants (8682.3 GWh) from 2024
+INFO: SPP 2025 hydro budget pinned to monthly target total 8829.9 GWh (was 8705.6 GWh)
+INFO: Loaded SPP 2025 hydro budget: 22 plants, 8829.9 GWh annual, 3078 MW nameplate
+INFO: SPP 2025: 22 hydro plants in LP (3078 MW, 8.83 TWh monthly budget)
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 430 unit-months masked offline (mid-year COD / retirement), 29 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2025: 343 generators priced from their own plant, 820 gap-filled from nearby (state/zone) plants
+
+===== 2025: zones ['SPP-North', 'SPP-Oklahoma', 'SPP-South']; LP units 1122
+zone        SPP-North  SPP-Oklahoma  SPP-South
+klass                                         
+CC_CHP            0.0           0.0      271.0
+CC_REGULAR     2324.0        5424.0     2300.0
+COAL          12727.0        3259.0     3861.0
+CT_CHP           61.0           0.0      149.0
+CT_PEAKER      7888.0        1738.0     2129.0
+ST_CHP           91.0          22.0        0.0
+ST_GAS          878.0        5320.0     4082.0
+hydro          2580.0         466.0       32.0
+nuclear        1945.0           0.0        0.0
+oil            1723.0          40.0       17.0
+  SPP-North     plants  223 units  810 thermal+hydro MW     30217 wind cap    17664 MW potential  64.03 TWh | solar cap     596 MW potential  1.17 TWh | demand  153.94 TWh (min   12131 max   29509 MW)
+  SPP-Oklahoma  plants   42 units  170 thermal+hydro MW     16269 wind cap    13146 MW potential  40.18 TWh | solar cap     423 MW potential  0.41 TWh | demand   86.60 TWh (min    6693 max   16702 MW)
+  SPP-South     plants   35 units  142 thermal+hydro MW     12841 wind cap     4654 MW potential  18.05 TWh | solar cap     422 MW potential  0.77 TWh | demand   61.31 TWh (min    5153 max   11135 MW)
+  demand total TWh 301.84  wind potential total 

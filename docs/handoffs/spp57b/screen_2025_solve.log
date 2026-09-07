@@ -1,0 +1,110 @@
+INFO: SPP backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: cross-year LP warm-start: ON
+INFO: P1 basis seed: ON
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 55641->6.880
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP net interchange applied for 2025: +270 MW avg (export-positive, measured EIA-930)
+INFO: solving SPP 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: SPP per-zone wind SHAPE (2025): 3 zone(s) from spp_2025_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.91, SPP-Oklahoma=0.95, SPP-South=1.12
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: loaded 17 within-window retiree units for SPP (902 MW, plants [1314, 2297, 3602, 3604, 7131, 7902, 50169])
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 314 unit-months masked offline (mid-year COD / retirement), 22 unit(s) fully not-yet-built/retired
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2025 hydro budget: backfilled 21 non-reporting plants (8682.3 GWh) from 2024
+INFO: SPP 2025 hydro budget pinned to monthly target total 8829.9 GWh (was 8705.6 GWh)
+INFO: Loaded SPP 2025 hydro budget: 22 plants, 8829.9 GWh annual, 3078 MW nameplate
+INFO: SPP 2025: 22 hydro plants in LP (3078 MW, 8.83 TWh monthly budget)
+INFO: unit-outage derate (SPP 2025): 303 plant-tranches derated
+INFO: COD ramp (SPP 2025): 430 unit-months masked offline (mid-year COD / retirement), 29 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2025: 343 generators priced from their own plant, 820 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 7.256s, Solve: 108.045s (cold, simplex iterations 103507, objective -238159367.5663)
+INFO: Matrix build: 7.256s, Solve: 35.925s (warm, simplex iterations 18110, objective -159605223.7520)
+WARNING: CAMPD extract not found for CO 2025 (looked in /home/user/market-simulator/data/raw/campd-facility-level, /campd-unit-level, and the flat dir)
+INFO: EIA-923 2025: CAMPD-backfilled 37 under-reported plant(s) across 41 class-row(s) (2 replaced, 39 added)
+INFO: EIA-923 2025 wind 87.71 TWh under-counts EIA-930 110.46 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 1.61 TWh under-counts EIA-930 2.35 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro -0.01 TWh under-counts EIA-930 8.83 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 biomass 0.81 TWh incomplete (vintage 80%); carrying 2024 biomass 1.18 TWh x completeness -> 0.95 TWh
+INFO: year 2025 phase timing: data_prep=14.3s solve_p0=108.0s markup=27.3s solve_p1=35.9s results_write=26.2s total=211.9s (markup: setup=0.0s p0_post=4.0s markup=0.2s seam=0.1s p1_post=4.2s tail=18.9s other=0.1s) (results_write: state=0.5s frames=1.4s parquet=2.2s bench=12.9s sidecars=9.3s)
+INFO: year 2025 memory after release: resident=0.63 GB peak=4.93 GB (malloc_trim=yes) | accumulators 0.05 GB (campd=0.04)
+INFO: year 2025 glibc arena: total=0.89 GB in_use=0.11 GB free_retained=0.78 GB mmapped=0.09 GB trim_top=0.00 GB
+INFO: year 2025 retained heap: ndarray=0.06 GB (n=261) [pandas=0.08 GB n=12, sparse=0.00 GB n=0 — slices, not additions] | 20 populated cache(s), 22 entries | top: _chp_by_plant=2, thermal_tranche_overrides=2, _load_cod_map=1, _iso_plant_capacity=1, unit_outage_derate_factors=1
+INFO: year 2025 retained frame: 42.3 MB  3171120 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2025 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2025 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2025 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+INFO: year 2025 retained frame: 1.9 MB  26280 x 9  cols=year,pass,zone,hour,price,slack,dump,demand,reserve_price
+INFO: year 2025 retained frame: 1.1 MB  17520 x 6  cols=year,pass,from_zone,to_zone,hour,mw
+INFO: capacity-deliverability: no partition for ISO SPP (energy-only / no locational RA construct)
+WARNING: no hydro-plant-modes clean partition for SPP — run scripts/data/curate_hydro_plant_modes.py (and review the completion rule for this ISO first)
+WARNING: no hydro-plant-modes clean partition for SPP — run scripts/data/curate_hydro_plant_modes.py (and review the completion rule for this ISO first)
+INFO: wrote calibration bundle to results/calibration/_spp57b_screen
+
+================================================================================
+  CALIBRATION REPORT  (SPP; run 2026-09-07T05:59:31; git 7bfe047d)
+  bundle: results/calibration/_spp57b_screen
+================================================================================
+
+================================================================================
+  SPP 2025 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal        83.97  27.8   87.70  29.0   77.46  29.2
+    gas         67.40  22.3   75.95  25.1   58.42  22.1
+    nuclear     15.78   5.2   16.24   5.4   16.19   6.1
+    wind       122.25  40.5  110.46  36.6       —     —
+    solar        2.35   0.8    2.35   0.8       —     —
+    hydro        8.82   2.9    8.83   2.9    0.02   0.0
+    oil          0.00   0.0    0.02   0.0       —     —
+    biomass      0.95   0.3    0.95   0.3       —     —
+    other        0.49   0.2    0.59   0.2       —     —
+    TOTAL      302.02 100.0  302.14 100.0  264.90 100.0
+    import          —     —   -2.36  -0.8       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  302.02 − EIA-930 net gen  302.14 =  -0.12 TWh (tol ±3.0)
+    note: EIA-930 'gas' (75.9) folds in geothermal+biomass (~1.4 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): +2.36 TWh (+270 MW avg)
+    model            :    0.00 TWh (energy-only; no external interchange node)
+
+  [2b] Battery cycling — 2025 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.41        —
+                            charge TWh   0.48        —
+    evening (h17-22) discharge share %   23.4        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 0.43 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    SPP-North         29.11        4
+    SPP-Oklahoma      30.88        0
+    SPP-South         30.88        0
+
+  [3] System price duration ($/MWh)
+    avg    30.29   max  1339.51   p90   40.79   p50   28.48   p10   21.42   min     4.50
+    negative-price hours: 0
