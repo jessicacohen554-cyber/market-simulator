@@ -1,0 +1,73 @@
+{
+ "probe": "miso-243 screen gate (2024)",
+ "arm_bundle": "results/calibration/miso243_screen2024",
+ "control": "results/calibration/miso233_sppseam_K (COMMITTED, G-CTRL form 4)",
+ "year": 2024,
+ "bars_source": "ADDENDUM-miso243-my-own-p2-leg-failed-and-the-screen-year-is-2024-2026-09-07.md section 3, pushed before the solve",
+ "gates": {
+  "G_1_confinement": {
+   "slack_mwh_keeper": 19566.91513299472,
+   "slack_mwh_arm": 19566.915132994734,
+   "dump_mwh_keeper": 0.0,
+   "dump_mwh_arm": 0.0,
+   "must_take_pct_change": {
+    "wind": 0.0,
+    "solar": 0.0,
+    "nuclear": 0.0,
+    "hydro": 0.0
+   },
+   "bar": "slack/dump not above keeper; must-take within 0.5%",
+   "PASS": true
+  },
+  "G_2a_displacement": {
+   "delta_import_mwh": -423500.0,
+   "sum_abs_delta_generation_mwh": 423112.1,
+   "ratio": 0.9991,
+   "bar": "<= 4.0",
+   "PASS": true
+  },
+  "G_2b_scale": {
+   "served_energy_pct_change": -6e-05,
+   "bar": "<= 0.5%",
+   "PASS": true
+  },
+  "G_3_direction_and_magnitude": {
+   "dq_hat_mw": -107.65,
+   "dq_solved_mw": -48.345,
+   "ratio_solved_over_hat": 0.4491,
+   "window": [
+    -26.91,
+    -430.6
+   ],
+   "sign_matches": true,
+   "in_window": true,
+   "bar": "sign match AND 0.25 <= ratio <= 4.0",
+   "PASS": true
+  }
+ },
+ "reported_never_gated": {
+  "per_class_delta_mwh": {
+   "CC_CHP": 33690.0,
+   "CC_REGULAR": 121168.0,
+   "COAL": 104.9,
+   "COAL_BIT": 29120.0,
+   "COAL_LIGNITE": 1521.5,
+   "COAL_PRB": 83440.0,
+   "CT_CHP": 3849.0,
+   "CT_PEAKER": 104282.0,
+   "OTHER": 0.0,
+   "ST_CHP": 3121.0,
+   "ST_GAS": 42784.0,
+   "biomass": 0.0,
+   "hydro": 0.0,
+   "import": -423500.0,
+   "nuclear": 0.0,
+   "oil": 31.7,
+   "solar": 0.0,
+   "wind": 0.0
+  },
+  "note": "Every criterion band, the measured-price decile slope and the system interchange ratio are REPORTED elsewhere and are NOT gates here (PREREG section 3 / ADDENDUM section 3)."
+ },
+ "FAILED_GATES": [],
+ "ALL_GATES_PASS_EXCEPT_G4": true
+}

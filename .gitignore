@@ -1374,3 +1374,10 @@ results/calibration/caiso262_repro2023/
 # data/clean/, which line 229 already ignores; this entry is a signpost, not a
 # second rule. Regenerate with docs/handoffs/spp48/warm_cache.py.
 /data/clean/wind-shape-reanalysis/
+
+# miso-243 screen + full-span bundles. Rule 29 [R-SCREEN] (c): they must not
+# reach `main` (a screen bundle is never registered, and an unregistered
+# committed bundle is a parity-gate RED). Rule 31 [R-RETAIN]: gitignoring is
+# what discharges that duty -- the bundles stay on local disk until the owner
+# has ruled on promotion, and are NEVER deleted by the session.
+results/calibration/miso243_*/

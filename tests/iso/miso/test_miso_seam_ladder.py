@@ -463,6 +463,19 @@ class TestHourlySppOverlay(unittest.TestCase):
         committed measured series and pins it byte-for-byte to the registry, so
         a hand-edited offset (or a silently re-tuned one) fails here rather
         than reaching a solve.
+
+        **This test is also a CORRECTNESS pin as of miso-243, and it was not
+        before.** It previously passed ``joined.loc[year]``, whose index is
+        ``hour`` alone, into a derive that joins a ``(year, hour)``-MultiIndexed
+        hub series -- so pandas partial-joined on the shared level, the sample
+        was replicated across all three hub years, and the test compared the
+        committed table against that same mispaired output and agreed with it.
+        It pinned CONSISTENCY, which is what rule 23 asks, but could not see a
+        defect in the join itself. It now passes ``joined.loc[[year]]`` (the
+        MultiIndex survives, so the join pairs within the year) and
+        additionally asserts the JOIN'S ROW COUNT, which is the assertion that
+        would have caught the defect. The same invariant is enforced inside
+        ``derive_spp_neighbour_hourly`` itself, so no caller can reintroduce it.
         """
         import importlib.util
         from pathlib import Path
@@ -483,7 +496,21 @@ class TestHourlySppOverlay(unittest.TestCase):
         except Exception:  # pragma: no cover - source data not hydrated
             self.skipTest("measured seam/LMP series not available")
         for year, entry in MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR.items():
-            derived, _notes = dm.derive_spp_neighbour_hourly(joined.loc[year])
+            sample = joined.loc[[year]]
+            # THE ROW-COUNT PIN (miso-243): the hub join is a left join, so it
+            # can never legitimately add rows. A partial join on a single-level
+            # `hour` index silently triples the sample and re-draws every
+            # quantile from a three-year mixture of the spread.
+            self.assertEqual(
+                len(sample.join(dm.load_spp_hub_da(), how="left")),
+                len(sample),
+                msg=(
+                    f"{year}: the SPP hub join changed the row count -- the "
+                    "frame passed in has lost its 'year' index level and pandas "
+                    "partial-joined across hub years"
+                ),
+            )
+            derived, _notes = dm.derive_spp_neighbour_hourly(sample)
             for side in ("import", "export"):
                 np.testing.assert_allclose(
                     np.asarray(entry["SPP"][side], dtype=float),

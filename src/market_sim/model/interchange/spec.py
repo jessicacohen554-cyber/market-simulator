@@ -1828,42 +1828,81 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[str, dict[str, tuple[float, ...]]
 # SUB-GATE of miso_seam_neighbour_hourly_ladder (never armed apart from its
 # family); byte-identical when False, and a no-op for any year absent here or
 # when the measured hub series is unavailable.
+#
+# CROSS-YEAR PAIRING REPAIR (miso-243, 2026-09-07).  The values below are the
+# output of the frozen estimator on the CORRECTLY PAIRED frame.  The superseded
+# 2023-2025 entries were derived through a join defect: derive_spp_neighbour_hourly
+# received df.loc[year], indexed by `hour` ALONE, while load_spp_hub_da() is
+# (year, hour)-MultiIndexed, so pandas PARTIAL-joined on the shared level and
+# paired each year's 8,760 MISO rows against ALL THREE hub years -- drawing the
+# Q-Q quantile from a three-year MIXTURE of the spread instead of the year's own.
+# The estimator's flow-exceedance TARGETS were unaffected (replicating a sample
+# three times does not change a share); only the quantile's sample was wrong.
+#
+# This is a rule 23 [R-FROZEN-DERIVE] re-derive citing a CONSTRUCTION DEFECT --
+# NOT a source-data update and NOT a residual that moved.  The case is rule 14
+# [R-ACCURATE] and rule 23's own construction; rule 1 [R-STRUCT]: the pairing was
+# NOT selected by which arm scores better, and both ladders are fully determined
+# by the estimator before any solve runs.  Rule 21 [R-DOF]: ZERO free parameters
+# -- the repair removes an error, it does not add a knob.  K is unchanged at
+# SEAM_FLOW_TRANCHES, the midpoint-depth grid, the measured flow series, the
+# SPPNORTH_HUB anchor and the no-wash reconciliation are byte-for-byte the
+# incumbent ones, and the no-wash clamp raised no note.
+#
+# THE FALSIFIABLE EVIDENCE THAT THE REPAIR IS THE RIGHT ONE, and it could have
+# failed: the estimator asserts an identity -- on the derive's own spread the
+# dead band [delta_1^export, delta_1^import] captures P(|flow| <= mid_1) by
+# construction.  Measured, |Z_derive - Z_target| moves
+# 0.0395 / 0.0144 / 0.0089  ->  0.0003 / 0.0000 / 0.0001 (2023/2024/2025),
+# against a bar of 0.005.  The identity is essentially exact once the pairing is
+# right.  Diagnosis confirmed on three independently refuting legs plus a PJM
+# no-join control (ADDENDUM-miso242-the-derive-pairs-across-years-2026-09-07.md);
+# repair pre-registered and gated in
+# PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md and
+# ADDENDUM-miso243-my-own-p2-leg-failed-and-the-screen-year-is-2024-2026-09-07.md.
+#
+# THE POOLED FORWARD LADDER BELOW IS NOT AFFECTED and is NOT touched: df.loc[a:b]
+# keeps the MultiIndex, so its join was always proper (verified: it reproduces at
+# 0.0).  Rule 13's forward story is intact; only this per-year backcast table was
+# implicated.  The defect can no longer be reintroduced from any caller: the
+# derive itself now raises if the join changes the row count, and the rule-23 pin
+# test asserts that row count too.
 MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR: dict[
     int, dict[str, dict[str, tuple[float, ...]]]
 ] = {
     2023: {
         "SPP": {
-            "import": (14.10, 32.64, 54.43, 85.36, 145.25, 185.08, 185.08, 185.08),
+            "import": (13.44, 30.30, 50.82, 83.92, 123.33, 152.94, 152.94, 152.94),
             "export": (
-                -4.20,
-                -24.96,
-                -47.33,
-                -92.59,
-                -241.46,
-                -521.38,
-                -521.38,
-                -521.38,
+                -2.39,
+                -21.49,
+                -41.89,
+                -90.15,
+                -178.51,
+                -212.03,
+                -212.03,
+                -212.03,
             ),
         },
     },
     2024: {
         "SPP": {
-            "import": (14.49, 35.59, 78.29, 212.51, 290.73, 290.73, 290.73, 290.73),
-            "export": (-2.15, -19.39, -33.38, -42.97, -54.84, -64.17, -70.15, -83.23),
+            "import": (17.26, 37.56, 65.15, 139.78, 230.88, 230.88, 230.88, 230.88),
+            "export": (1.44, -12.98, -23.83, -33.09, -43.06, -48.41, -55.24, -66.13),
         },
     },
     2025: {
         "SPP": {
-            "import": (21.85, 46.55, 87.43, 169.08, 216.02, 252.76, 276.99, 345.40),
+            "import": (18.58, 41.90, 78.87, 152.95, 197.69, 237.84, 271.99, 338.83),
             "export": (
-                1.04,
-                -14.46,
-                -29.20,
-                -45.92,
-                -125.99,
-                -316.80,
-                -515.34,
-                -515.34,
+                -2.37,
+                -19.00,
+                -31.11,
+                -44.88,
+                -70.49,
+                -122.45,
+                -254.63,
+                -254.63,
             ),
         },
     },
