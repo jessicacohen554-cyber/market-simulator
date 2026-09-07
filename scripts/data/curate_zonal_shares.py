@@ -13,13 +13,14 @@ Output schema: ``data/dictionary/schema/zonal-shares.schema.yaml``
 
 Output path (via clean_path): ``data/clean/zonal-shares/<ISO>/zonal-shares_<year>.parquet``
 
-Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO
+Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP
 
 Usage
 -----
   python scripts/data/curate_zonal_shares.py --iso ERCOT --year 2023
   python scripts/data/curate_zonal_shares.py --iso PJM --year 2023 2024 2025
   python scripts/data/curate_zonal_shares.py --iso MISO --year 2023
+  python scripts/data/curate_zonal_shares.py --iso SPP --year 2023 2024 2025
 """
 
 from __future__ import annotations
@@ -50,6 +51,7 @@ from market_sim.data.eia_loader import (
     _NEISO_LOAD_ZONE_GROUPS,
     _NYISO_LOAD_ZONE_GROUPS,
     _PJM_LOAD_ZONE_GROUPS,
+    _eia_hourly_frame_filled,
     _hourly_shares_from_groups,
     _hours_of_year,
     _miso_utc_to_local_hoy,
@@ -438,6 +440,185 @@ def parse_neiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 
 
 # ---------------------------------------------------------------------------
+# SPP (added 2026-09-07 by lane SPP-32; plan §5 row SPP-32)
+#
+# Placement note, stated once here rather than repeated below: MISO's crosswalk
+# and its UTC->local helper live in ``market_sim.data.eia930.zonal_shares`` (the
+# ``eia_loader`` re-export imported above).  SPP's live HERE instead, because
+# lane SPP-32's charter owns this script and not that module, and this script is
+# the single source both the clean-curation path and the raw fallback read
+# (``eia930.zonal_shares._zonal_shares_from_raw`` imports ``_PARSE_FUNCS`` from
+# here), so nothing downstream can tell the difference.  Folding the two ISOs'
+# crosswalks back together is a consolidation routed to SPP-DESK in
+# ``docs/handoffs/FINDING-spp-32-2026-09-07.md``, not a defect in either.
+# ---------------------------------------------------------------------------
+
+# EIA-930 SPP sub-BA -> model zone.  EIA-930 reports SWPP hourly demand at
+# exactly the 17 sub-BAs below, and SPP's own settlement-location registry
+# (``data/raw/spp-planning/SL_to_Pnode_to_Zone_with_Area.csv``) carries the same
+# 17 tokens as ``NODE_AREA`` values, matching 1:1 by name with an empty
+# unmatched set — so no crosswalk table stands between the demand series and
+# SPP's own areas (FINDING-spp-14-2026-09-06.md §8.2, which counts the
+# settlement locations per area).
+#
+# The North/South partition is the SPP-20 P1 zone grouping, owner-ruled r#5 and
+# carried by ``iso_configs._spp_config``; this dict is that ruling written on
+# the sub-BA tokens, not an independent judgement by this script
+# (FINDING-spp-20-2026-09-06.md).  It follows SPP's own legacy seam: the
+# Integrated-System / Nebraska-and-Dakotas footprint plus the
+# Missouri/Kansas members in the North, and the Oklahoma / Texas-Panhandle /
+# western-Arkansas members in the South.
+#
+# EDE (Empire District Electric, Joplin MO) is the one member whose side is
+# worth stating explicitly, because SPP's *reserve*-zone registry does not
+# settle it: EDE's 25 settlement locations sit wholly in RESZONE 4, and RESZONE
+# 4 straddles the seam (it also holds OKGE, CSWS, GRDA, SPS and WFEC, all
+# South).  The reserve zones are therefore not the North/South key and cannot
+# decide EDE.  EDE lands NORTH on the ruling, and the ruling agrees with EDE's
+# geography and interconnection: Empire District is a southwest-Missouri utility
+# whose load sits north-east of the seam alongside MPS / KCPL / INDN / KACY /
+# SPRM, the other Missouri-Kansas members, all North.  Nothing here re-decides
+# it; the paragraph exists so a reader does not have to reconstruct why RESZONE
+# 4 membership is not evidence to the contrary.
+_SPP_SUBBA_ZONE_GROUPS: dict[str, str] = {
+    # --- North (12 sub-BAs): Nebraska / Dakotas / Missouri / Kansas ----------
+    "EDE": "SPP-North",  # Empire District Electric (MO) — see the note above
+    "INDN": "SPP-North",  # Independence Power & Light (MO)
+    "KACY": "SPP-North",  # Kansas City Board of Public Utilities (KS)
+    "KCPL": "SPP-North",  # Kansas City Power & Light (MO/KS)
+    "LES": "SPP-North",  # Lincoln Electric System (NE)
+    "MPS": "SPP-North",  # KCP&L Greater Missouri Operations (MO)
+    "NPPD": "SPP-North",  # Nebraska Public Power District (NE)
+    "OPPD": "SPP-North",  # Omaha Public Power District (NE)
+    "SECI": "SPP-North",  # Sunflower Electric (KS)
+    "SPRM": "SPP-North",  # City of Springfield (MO)
+    "WAUE": "SPP-North",  # WAPA Upper Great Plains East (ND/SD/MN)
+    "WR": "SPP-North",  # Westar Energy (KS)
+    # --- South (5 sub-BAs): Oklahoma / Texas Panhandle / western Arkansas ----
+    "CSWS": "SPP-South",  # AEP West (OK/AR/LA/TX)
+    "GRDA": "SPP-South",  # Grand River Dam Authority (OK)
+    "OKGE": "SPP-South",  # Oklahoma Gas and Electric (OK)
+    "SPS": "SPP-South",  # Southwestern Public Service (TX Panhandle / NM)
+    "WFEC": "SPP-South",  # Western Farmers Electric Cooperative (OK)
+}
+
+
+def _spp_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None:
+    """Map UTC timestamps to SPP local hour-of-year on the renewable clock.
+
+    The same construction as :func:`_miso_utc_to_local_hoy`, against SPP's own
+    EIA-930 hourly extract (BA code ``SWPP``): the SPP sub-BA demand CSV stamps
+    its ``period`` in UTC, while the renewable CF and the system demand these
+    shares are multiplied into live on SPP local wall-clock time.  Frame row
+    ``k`` is local hour-of-year ``k`` (Feb 29 already dropped, DST handled by
+    the extract), so inverting the frame's own ``UTC time`` column lands each
+    share at the wall-clock hour the renewables use.  The offset is derived
+    from the clock itself — no IANA-zone or fixed-offset assumption — so it
+    stays valid for any year that ships a frame.  Periods outside the local
+    year's UTC window map to NaN and the caller drops them.
+
+    Args:
+        period_utc: UTC timestamps parsed from the sub-BA CSV's ``period``.
+        year: Calendar year whose SWPP frame supplies the clock.
+
+    Returns:
+        Float hour-of-year per input row (NaN outside the year), or ``None``
+        when the SWPP hourly extract for ``year`` is unavailable.
+    """
+    frame = _eia_hourly_frame_filled("SWPP", year)
+    if frame is None:
+        return None
+    # frame row k == model local hour-of-year k; invert UTC time -> k.
+    utc_index = pd.DatetimeIndex(pd.to_datetime(frame["UTC time"]))
+    hoy_of_utc = pd.Series(np.arange(len(frame), dtype=float), index=utc_index)
+    hoy_of_utc = hoy_of_utc[~hoy_of_utc.index.duplicated(keep="first")]
+    return period_utc.map(hoy_of_utc)
+
+
+def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Parse SPP EIA-930 sub-BA CSV -> ``(n_zones, HOURS_PER_YEAR)`` shares.
+
+    Reads the combined multi-year file
+    ``data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv`` (and
+    the per-year back-files ``spp_subba_demand_<year>.csv`` that lane SPP-15
+    landed for 2019-2022), filters to ``year``, maps the 17 sub-BAs to the two
+    model zones via :data:`_SPP_SUBBA_ZONE_GROUPS`, and normalises each hour.
+    The UTC ``period`` column is mapped to the model's local hour-of-year
+    through SPP's own hourly frame (:func:`_spp_utc_to_local_hoy`) so zonal
+    shapes index the same wall-clock hour as renewable CF.
+
+    The 17 sub-BAs are the whole of what EIA-930 reports under ``SWPP``, and
+    their hourly sum reconciles to the ``SWPP`` system demand these shares are
+    applied to (measured: annual sums within 0.03% for 2023-2025), so the
+    share basis and the demand basis are the same footprint.  SPP's western
+    RESZONE-21 members WACM / PRPA / WAUW carry no sub-BA token
+    (FINDING-spp-14 §8.2 item 3) — but EIA-930 does not report them under
+    ``SWPP`` either, so they are absent from BOTH sides of the ratio and their
+    absence here is consistency, not a gap.
+
+    Returns ``None`` when the raw file is absent, when SPP's hourly frame for
+    the year is unavailable, or when the assembled series does not cover the
+    year.
+    """
+    spp_dir = ZONE_DEMAND_DIR / "SPP"
+    # Prefer the per-year back-file when one exists (SPP-15 landed 2019-2022
+    # that way); otherwise the combined 2023-2025 export.
+    path = spp_dir / f"spp_subba_demand_{year}.csv"
+    if not path.exists():
+        path = spp_dir / "spp_subba_demand_2023-2025.csv"
+    if not path.exists():
+        logger.warning("SPP sub-BA load file not found (%s); skipping", path)
+        return None
+    df = pd.read_csv(path, usecols=["period", "subba", "value"], dtype={"subba": str})
+    df = df[df["subba"].isin(_SPP_SUBBA_ZONE_GROUPS)].copy()
+    period_utc = pd.to_datetime(df["period"], format="%Y-%m-%dT%H", errors="coerce")
+    hoy_local = _spp_utc_to_local_hoy(period_utc, year)
+    if hoy_local is None:
+        logger.warning("SPP hourly frame unavailable for %d; skipping", year)
+        return None
+    keep = ~df.duplicated(subset=["period", "subba"], keep="first")
+    keep &= hoy_local.notna().to_numpy()
+    df, hoy_local = df[keep], hoy_local[keep]
+    if df.empty:
+        logger.warning("SPP sub-BA load file has no rows for %d; skipping", year)
+        return None
+    df = df.assign(
+        hoy=hoy_local.to_numpy(dtype=int),
+        mw=pd.to_numeric(df["value"], errors="coerce"),
+    )
+    wide = (
+        df.pivot_table(index="hoy", columns="subba", values="mw", aggfunc="first")
+        .sort_index()
+        .ffill()
+        .bfill()
+    )
+    long = (
+        wide.reset_index()
+        .melt(id_vars="hoy", var_name="subba", value_name="mw")
+        .dropna(subset=["mw"])
+    )
+    mzone = long["subba"].map(_SPP_SUBBA_ZONE_GROUPS)
+    shares = _hourly_shares_from_groups(
+        mzone, long["hoy"].to_numpy(), long["mw"], zone_names
+    )
+    # Same guard as the MISO parser: the multi-year export spans only the years
+    # it was pulled for, and for any other year the UTC->local mapping still
+    # lands a handful of rows (Jan 1st's first UTC hours belong to the previous
+    # local year), which the ``df.empty`` check above does not catch.  A short
+    # year would otherwise return shares that are NaN for the rest of the clock
+    # and propagate straight into ``load_demand``'s zonal allocation.
+    if shares is None or np.isnan(shares).any():
+        logger.warning(
+            "SPP sub-BA load file covers %d only partially (%d/%d hours); skipping",
+            year,
+            0 if shares is None else int((~np.isnan(shares[0])).sum()),
+            HOURS_PER_YEAR,
+        )
+        return None
+    return shares
+
+
+# ---------------------------------------------------------------------------
 # Dispatch table: iso -> parse function
 # ---------------------------------------------------------------------------
 _PARSE_FUNCS = {
@@ -447,6 +628,7 @@ _PARSE_FUNCS = {
     "MISO": parse_miso_shares,
     "NYISO": parse_nyiso_shares,
     "NEISO": parse_neiso_shares,
+    "SPP": parse_spp_shares,
 }
 
 
