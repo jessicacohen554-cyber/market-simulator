@@ -8,9 +8,20 @@
 > repo:
 > - **7 ISOs**, not two: ERCOT (calibrated reference), CAISO, PJM, MISO,
 >   NYISO, NEISO, SPP — all share one ISO-agnostic LP (not "separate model
->   instances"). Zone counts: ERCOT 7 (6 carry load), CAISO 3 + WECC import,
->   PJM 8, MISO 3, NYISO 5, NEISO 4 + HQ import, SPP 2. Phrases like "ERCOT
+>   instances"). Zone counts: ERCOT 7 (6 carry load), CAISO 5 + WECC import,
+>   PJM 8, MISO 6, NYISO 5, NEISO 4 + HQ import, SPP 2. Phrases like "ERCOT
 >   4-zone" / "CAISO single zone" / two-ISO framing below are stale.
+>   <!-- CAISO and MISO corrected 2026-09-07 by lane SPP-43 (SPP-37 N-2, routed
+>        there because it is a value repair rather than the six->seven sweep).
+>        RE-MEASURED from config.iso_configs.get_iso_config(...).zones, not copied:
+>        ERCOT 7 [West, Panhandle, North, Northeast, Houston, South_Central, South];
+>        CAISO 6 [NP15, ZP26, LA_BASIN, SDGE, SP15_rest, WECC_import] — the entry
+>        read "3 + WECC import"; PJM 8; MISO 6 [West, Plains, Illinois, Indiana,
+>        East, South] — the entry read "3"; NYISO 5; NEISO 5 [North, Central,
+>        Boston, Connecticut, HQ_import], i.e. "4 + HQ import", already correct;
+>        SPP 2. NOTE, NOT FIXED HERE: CLAUDE.md's own elevator tree still says
+>        "CAISO (3 zones + WECC import node)" and "MISO (6 zones)" — the CAISO half
+>        is stale by the same measurement, and CLAUDE.md is not this lane's file. -->
 > - **Major subsystems built since this plan and absent from it:** the
 >   backcast/calibration mode (`ScenarioConfig.mode`), the P0→P1→P2 commitment
 >   screen (`model/commitment.py`), energy–reserve co-optimization and scarcity

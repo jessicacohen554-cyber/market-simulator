@@ -138,7 +138,7 @@ bundle is the rule-29(b) control for every later SPP lane** (P7). Record: `FINDI
   direction holds in 2023 and 2025. Mean |S−N| zonal spread still ~$1 vs $12–17 measured; negative
   hours 9 / 7 / 6 vs ~1,000–1,170; wind 1.07 / 1.11 / 1.11× EIA-930 (0.0 % re-curtailment).
 - **C1/C4-2023 wind: UNSCORED pending SPP-41** (r#6 addendum; the h3907 +3.5857 TWh EIA-930 slip on the
-  bench path). 2024/2025 clean.
+  bench path). 2024/2025 clean. *(DISCHARGED 2026-09-07 by lane SPP-43: the re-solve on the SPP-41 screened loader landed `bench/SPP/2023` wind 106.634 -> 103.049 and scored C1/C4-2023 wind at +10.68 %, the same value 2024/2025 read. See `docs/handoffs/FINDING-spp-43-2026-09-07.md` §3–§4.)*
 - Gas basis: the run log records no 2025 basis fallback line (the per-plant EIA-923 delivered path
   served every year; state-series basis not consulted).
 - Rule 22: 2023–2025 only; SPP holds no marker. Rule 25: nothing crossed. Lever queue corroborated:
@@ -226,6 +226,8 @@ PR (29c); every number is in the FINDING.
   is the branch's design commit (cited in the FINDING) for the re-issue. Matrix shard: `measured_interface_limits`
   stays O, SPP-57 evidence appended. Rule 22: 2025 only, training tier.
 
+**Next shorthand: spp-5.**
+
 ## 2026-09-07 — spp-5: SPP-57b Oklahoma pocket, constituent sets re-declared (SPP-57 R-12) — rule-29(a) screen (2025) KILLED at the STOP gate
 
 **Result: KILLED — not a keeper candidate; full span not spent; nothing registered; topology NOT landed.**
@@ -257,3 +259,87 @@ only, reproduced by the census). Screen bundle deleted before the PR (29c).
   shard: `measured_interface_limits` stays O, SPP-57b evidence appended. Rule 22: 2025 only, training tier.
 
 **Next shorthand: spp-6.**
+
+## 2026-09-07 — spp-6: keeper-2's recipe re-solved on the SPP-41 screened wind input — REGISTERED, **NOT PROMOTED** (the pre-declared rule stopped)
+
+**Result: `2026-09-07-spp-3-screened-input` registered; `keepers/SPP.json` UNTOUCHED; keeper-1 and keeper-2
+NOT pruned. Determination NOT-YET on the same four criteria as keeper-2.** Record:
+`docs/handoffs/PRECOMMIT-spp-43-2026-09-07.md` (pushed at `623184f3` before the solve) +
+`FINDING-spp-43-2026-09-07.md`. Control = `spp42_crosswalk_B` (rule 29(b) form 4; G-DRIFT from its sha
+`33034499`: 11 files, all hunks INERT except the SPP-41 seam, LIVE for SPP 2023 only — `backcast_config.py`'s
+five coal keys are keeper-2's OWN recipe, already in its committed `run_config`). Rule 29(a): the object
+exists in one year, so the screen and the full span are the same solve (exemption stated ex ante).
+
+- **The recipe is keeper-2's, machine-verified, not asserted:** 0 differences across 289 `meta.json` keys
+  outside provenance and 0 across all 820 `run_config.scenario_config` fields. Of eight shared-input
+  fingerprints exactly one moved — `eia930 facff98b252a → 017f3b3531c0`, the seam, isolated.
+- **Zero-LP phase 0 (in the PRECOMMIT):** table 0b reproduced to the digit — 2023 wind 106,634.4740 →
+  103,048.7595 GWh the only mover; LP bound 114,082.7166 → 114,055.2406 (**−27.4760 GWh**); a 27-array
+  identity census moved `wind_cf` and nothing else in 2023 (**one hour**, h3907, −27,476.0 MWh) and
+  **nothing at all** in 2024/2025.
+- **THE STRUCTURAL RESULT.** SPP's wind bound is the delivered EIA-930 series grossed up by the SPP-32
+  measured reference curtailment rate **0.096501** (factor **1.106808**, year-invariant, both legs measured
+  from two independent SPP publications) with **0.0 % LP re-curtailment**, so `model/delivered` **must**
+  equal 1.10681 every year. Before: 2023 **1.06985** (dev 0.03696), 2024/2025 exact. **After: all three
+  exact to five decimals (dev 0.00000).** The seam restores a construction identity in exactly the year the
+  artifact sat in — measured without reference to any residual.
+- **C1/C4-2023 wind, SCORED for the first time** (discharging the "UNSCORED pending SPP-41" lines): model
+  114.052 vs actual 103.049, **+10.68 %** — the same +10.68 % 2024 and 2025 already read. Wind is a
+  delivered-pinned row, excluded from the C1 gate and from skill claims, so this is a consistency
+  statement, not a pass/fail.
+- **Bench (SPP-41 §8 R-10, discharged):** `bench/SPP/2023` wind **106.634 → 103.049** — the screened
+  EIA-930 value, i.e. the run-side 0.90 completeness test still fires (not the EIA-923 total 102.1214) —
+  and `classFull` **288.201 → 284.616**. **The wind class alone moved**; the other 16 classes are
+  byte-identical and 2024/2025 parts are unchanged. R-10's "spread across fossil classes" reading is wrong.
+- **Scorecard: unchanged from keeper-2 in every cell.** C1 FAIL (2024 CC_REGULAR −8.60 / CT_PEAKER +9.94
+  only; every 2023 class in band), C2 PASS, C3a FAIL 2023 +14.1 %, C3b FAIL 0.239 / 0.229, C3c FAIL
+  0 / 3 / 1 h vs 42 / 59 / 68, C4 / C6 / C8 PASS, C5a −3.1 / −3.3 / +1.2 %. That is the honest reading:
+  27 GWh in one hour of one year cannot move a criterion, and the repair's justification is rules 13/14 and
+  the identity above, never the residual.
+- **WHY NO PROMOTION.** The PRECOMMIT's promotion rule required, as leg (i), that the **2024 and 2025 P1
+  objectives be IDENTICAL to keeper-2's**. They are not (2025 P1 −150,671,250.73 vs −150,674,071.8, +2,821
+  = 1.87e-5; keeper-2's 2024 P1 objective was never recorded at all). Legs (ii), (iii) and (iv) are all MET
+  — 2023 moves only where wind can move it, nothing flips PASS → FAIL in either direction, and the DOF
+  ledger is unchanged at 3 entries / 1 residual / 0 tuned scalars. The mover is **named, not hidden**: the
+  2024/2025 **P0** objectives are identical to the cent and every LP input array is byte-identical, so the
+  LP is provably the same; `P1 basis seed: ON` carries 2023's genuinely-changed basis across years and a
+  degenerate LP lands a different vertex of the same optimal face (1–2 GWh on 291/302 TWh, prices within
+  0.0015 $/MWh). But leg (i) fails as written, and re-cutting a gate after seeing the result is what
+  rules 1 and 29 forbid — so the lane registered and stopped, as its own rule directs.
+- **The card the desk owes (R-16):** may an SPP keeper's committed 2024/2025 numbers move to a different
+  vertex of the *same* LP when the recipe is byte-identical and only 2023's input changed? Yes → spp-43 is
+  keeper-3 and one registration prunes keeper-1 + keeper-2. No → keeper-2 stands and spp-43 is a registered
+  non-keeper carrying the repaired 2023. **Until then SPP's dashboard carries three runs — a stated,
+  deliberate overhang against rule 15's keeper-only retention, not an oversight.**
+- **Zero-LP reports delivered, neither applied:** (a) **R-15** — the reference's SPP 2025 hydro is the
+  EIA-923 preliminary **0.0233 TWh** because `_incomplete_renewable_fuels` iterates the literal tuple
+  `("wind","solar")`; hydro's ratio 0.0026 is the worst of the three yet it alone is left unswapped, even
+  though SPP is declared first-order in `_EIA923_EXTRA_FUELS_BY_ISO`. The proposed one-rule, zero-parameter
+  repair reaches **5 cells in 4 ISOs** (SPP/MISO/NEISO 2025 hydro, NEISO 2025 oil, **NYISO 2023 oil**), so
+  it is a shared-file desk card. (b) **plant 6193 = Harrington** IS in the EIA-860 SWPP fleet — three units,
+  1,018 MW, SPP-South — carried as **`gas_st`**, and there is **no crosswalk row** because the derive
+  classifies the fleet's coal set and 6193 is not in it. EIA-860 **vintage_2023 has all three units `SUB`
+  coal**; vintage_2024 converts unit 1 to `NG`. A mid-conversion station whose fleet fuel type tracks
+  neither vintage — a fleet-population question, and repairing it would *widen* the C1-2023 ST_GAS gap.
+- Rule 28(b): **no cell moved and the shard was not stamped** — no mechanism was tested (the `run_config`
+  diff against keeper-2 is empty). Rule 22: 2023–2025 only; SPP holds no marker. Rule 29(c): nothing owed —
+  no screen or control bundle was produced.
+
+**OWNER RULING, in-session (the card this entry raised as R-16), verbatim:** *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress that may still be a
+keeper."* **PROMOTED to the THIRD SPP KEEPER `2026-09-07-spp-3-screened-input`.** The ruling's conditional is
+not reached: no gate regresses at all (the determination is identical in every cell) and structural
+integrity strictly improves. The leg-(i) finding is not withdrawn — keeper-2's 2024/2025 P1 objectives are
+genuinely not reproduced, and stopping rather than re-cutting the lane's own gate was right; the owner was
+the party to decide. Executed: `keepers/SPP.json` re-keyed; **keeper-1 and keeper-2 PRUNED** (rule 15
+keeper-only retention — SPP now carries the designated keeper alone), with **no `--force-uncite` and no
+dangling citation** (the shard names its predecessors by lane and FINDING, and the SPP-42-local
+`keeper_previous` field, read by no script and carried by no other ISO, was dropped); `status/SPP.js`
+rebuilt; the SPP matrix shard's keeper + gates stamps updated with **no cell verdict moved** (no mechanism
+was tested). Gates re-run green after the promotion: `audit_keepers --check` PASS,
+`check_registry_payload_parity` OK (19 runs, 52 bundle dirs), `check_mechanism_matrix` 0,
+`check_bench_freshness` 0 STALE, `check_golden_manifest` OK. Remaining rubric failures are inherited and
+untouched: the 2024 CT/CC/ST gas split (C1, C3a-2023) and the price-shape family (C3b / C3c / spread /
+negative hours).
+
+**Next shorthand: spp-7.**
