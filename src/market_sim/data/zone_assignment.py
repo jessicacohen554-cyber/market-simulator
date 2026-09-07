@@ -344,13 +344,19 @@ _MISO_STATE_ZONES: dict[int, str] = {
 _MISO_SOUTH_LAT: float = 36.0
 
 # SPP model zone by FIPS state code (owner ruling P1, SPP desk r#2, 2026-09-06;
-# docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option A). The two
-# zones are exact unions of whole states: the North/South seam runs along the
-# KS/OK and MO/AR state lines, and the EIA-860 census puts no SWPP plant in a
-# state that crosses it, so the state map is authoritative and needs no
-# county rule. Wyoming is deliberately ABSENT — zero EIA-860 plants carry
-# balancing authority SWPP there (Laramie River files under WAUW, a WECC BA);
-# Colorado IS present (eight small solar sites, 19.5 MW, all North).
+# docs/multi-iso/spp-data-audit.md §5 rows 4/5 and §6.3 option A; THIRD ZONE
+# added 2026-09-07 by lane SPP-57, P1's first ranked lever —
+# docs/handoffs/PRECOMMIT-spp-57-2026-09-07.md §2). The three zones are exact
+# unions of whole states: the North/South seam runs along the KS/OK and MO/AR
+# state lines, the Oklahoma pocket is the state of Oklahoma (every PSO plant is
+# in OK and every SWEPCO plant in AR/LA/TX, EIA-860 2025 ER), and the EIA-860
+# census puts no SWPP plant in a state that crosses either seam, so the state
+# map is authoritative and needs no county rule. Wyoming is deliberately
+# ABSENT — zero EIA-860 plants carry balancing authority SWPP there (Laramie
+# River files under WAUW, a WECC BA); Colorado IS present (eight small solar
+# sites, 19.5 MW, all North). WFEC's New Mexico assets fall to SPP-South by
+# this rule while WFEC's LOAD is counted in SPP-Oklahoma (the sub-BA-vs-state
+# seam, stated in the SPP-57 PRECOMMIT §2.1 rather than patched).
 _SPP_STATE_ZONES: dict[int, str] = {
     38: "SPP-North",  # ND
     46: "SPP-North",  # SD
@@ -361,7 +367,7 @@ _SPP_STATE_ZONES: dict[int, str] = {
     20: "SPP-North",  # KS
     29: "SPP-North",  # MO
     8: "SPP-North",  # CO (19.5 MW of solar; no CEMS unit)
-    40: "SPP-South",  # OK
+    40: "SPP-Oklahoma",  # OK (the pocket: OKGE / PSO / GRDA / WFEC fleets)
     48: "SPP-South",  # TX (SPS Panhandle + AEP/Golden Spread east Texas)
     35: "SPP-South",  # NM
     5: "SPP-South",  # AR
@@ -373,6 +379,21 @@ _SPP_STATE_ZONES: dict[int, str] = {
 # south of 37.0 N is in the South tier. FIPS state is strongly preferred; this
 # only triggers when a caller supplies coordinates without a state code.
 _SPP_SEAM_LAT: float = 37.0
+
+# Oklahoma state outline for the coords-only fallback inside the South tier
+# (SPP-57, 2026-09-07), two rectangles: the main body east of the 100th
+# meridian (100.0 W to the Arkansas line 94.43 W, north of the Red River's
+# southernmost reach 33.62 N) and the Panhandle strip (36.5-37.0 N, 100-103 W).
+# Amarillo / Lubbock (SPS, Texas Panhandle) sit west of 100 W and south of
+# 36.5 N, so they stay in the residual South; Fort Smith AR (94.40 W) sits
+# east of the line. Two rectangles over-reach into the Texas wedge south of the
+# Red River's bends, which is why FIPS state is the primary key and this limb
+# is reached only without one.
+_SPP_OKLAHOMA_LON_WEST: float = -103.0  # Panhandle strip's NM border
+_SPP_OKLAHOMA_LON_100TH: float = -100.0  # the 100th meridian (TX/OK Panhandle line)
+_SPP_OKLAHOMA_LON_EAST: float = -94.43  # AR border
+_SPP_OKLAHOMA_LAT_SOUTH: float = 33.62  # Red River, southernmost reach
+_SPP_OKLAHOMA_PANHANDLE_LAT: float = 36.5  # Panhandle strip's southern line
 
 # FIPS state code for New York. NYISO's eleven load zones (A–K) follow
 # county lines closely enough that county FIPS carries the assignment, with
@@ -953,20 +974,35 @@ def _neiso_zone(
     return _LARGEST_ZONE["NEISO"]
 
 
-def _spp_zone(lat: float | None, fips_state: int | None) -> str:
+def _spp_zone(lat: float | None, lon: float | None, fips_state: int | None) -> str:
     """Return the SPP model zone for a plant location.
 
-    FIPS state carries the assignment — the two model zones are exact unions
+    FIPS state carries the assignment — the three model zones are exact unions
     of whole states (see :data:`_SPP_STATE_ZONES`) and eGRID / EIA-860 carry a
     state for every SWPP plant. A plant whose state is outside the SPP map (a
     stray cross-seam attribution) falls back to the seam latitude when
-    coordinates are available (South below 37.0 N, the KS/OK line), and
-    otherwise to the largest-load-share zone (SPP-North).
+    coordinates are available (South tier below 37.0 N, the KS/OK line; inside
+    the South tier, SPP-Oklahoma when the point lies in the Oklahoma state box
+    and a longitude is supplied — lane SPP-57), and otherwise to the
+    largest-load-share zone (SPP-North).
     """
     if fips_state in _SPP_STATE_ZONES:
         return _SPP_STATE_ZONES[fips_state]
     if lat is not None:
-        return "SPP-South" if lat < _SPP_SEAM_LAT else "SPP-North"
+        if lat >= _SPP_SEAM_LAT:
+            return "SPP-North"
+        if lon is not None:
+            main_body = (
+                _SPP_OKLAHOMA_LON_100TH <= lon < _SPP_OKLAHOMA_LON_EAST
+                and lat > _SPP_OKLAHOMA_LAT_SOUTH
+            )
+            panhandle = (
+                _SPP_OKLAHOMA_LON_WEST <= lon < _SPP_OKLAHOMA_LON_100TH
+                and lat >= _SPP_OKLAHOMA_PANHANDLE_LAT
+            )
+            if main_body or panhandle:
+                return "SPP-Oklahoma"
+        return "SPP-South"
     return _LARGEST_ZONE["SPP"]
 
 
@@ -993,7 +1029,7 @@ def _zone_from_location(
     if iso == "PJM":
         return _pjm_zone(lat, lon, fips_state, fips_county)
     if iso == "SPP":
-        return _spp_zone(lat, fips_state)
+        return _spp_zone(lat, lon, fips_state)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 

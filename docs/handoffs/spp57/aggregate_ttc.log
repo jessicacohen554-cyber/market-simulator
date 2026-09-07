@@ -1,0 +1,104 @@
+
+================ N<->OK (+ = N->OK): 67 members >= 263 h; fwd-identified 28 (26135 h), rev-identified 17 (15192 h), neither 22 (14580 h)
+Constraint Name       Monitored Facility             group  hours       psi         t   fwd   rev      L_f                           L_source  n_bind_2026  src_med       T_star
+   TEMP89_22229   LN GRACMONT - ANADARKO oklahoma_internal   6658  0.030050  4.763290  True False  215.280 2026 archive (same Constraint N...         4228    234.0  7163.991141
+   TMP266_27514 XFMR FRANKLN5 - FRANKLN5      n_s_corridor   4103  0.029808  4.799838  True False  100.000 SPP-53 committed (registry Temp...            0      NaN  3354.797929
+   TMP270_23432   LN CLEVLND7 - CLEV_AEC oklahoma_internal   3313 -0.009749 -3.404954 False  True  367.200 2026 archive (same Constraint N...         1557    408.0 37666.600853
+   TMP253_27481   LN GRACMONT - ANADARKO oklahoma_internal   3010 -0.037992 -4.815166 False  True  215.280 2026 archive (same Monitored Fa...         7298    234.0  5666.433227
+   TMP573_26592     LN FPLSWTCH - WDWRD1 oklahoma_internal   2087  0.079614  3.366267  True False  119.210 2026 archive (same Monitored Fa...         2583    131.0  1497.349291
+   CIMXF2CIMXF3 XFMR CIMARRON - CIMARRON oklahoma_internal   1410  0.066569 10.920216  True False  434.980 2026 archive (same Constraint N...          999    478.0  6534.226263
+   TMP477_24580     XFMR VIOLA7 - VIOLA7      n_s_corridor   1236 -0.135291 -6.263965 False  True  409.200 SPP-53 committed (2026 archive ...          224    440.0  3024.593247
+   TMP563_26603      LN RUSSETT - SBROWN oklahoma_internal   1122 -0.005240 -2.047282 False  True  123.760 2026 archive (same Monitored Fa...         4866    136.0 23616.688278
+   TMP109_22593    LN STONEWSW - TUPELO2 oklahoma_internal    993 -0.005089 -2.642110 False  True  153.790 2026 archive (same Constraint N...          817    169.0 30220.647209
+   CORNAPTERSUN     LN CORNTP4 - NAPLES1 oklahoma_internal    946  0.027144  3.844083  True False  153.790 2026 archive (same Constraint N...          537    169.0  5665.654747
+   TEMP47_28178       LN KINZE - KINZEG1 oklahoma_internal    862 -0.018488 -6.600389 False  True      NaN                               none            0      NaN          NaN
+   EDWXFR87CRAI         XFMR EDWV - EDWV      n_s_corridor    802  0.007509  2.852216  True False  167.000 SPP-53 committed (registry Flow...            0      NaN 22239.723389
+   TEMP70_29435     LN CRESCENT - CTNWD1 oklahoma_internal    796 -0.181135 -4.530109 False  True  261.170 2026 archive (same Constraint N...         5556    287.0  1441.848924
+   TMP142_25323    LN WAVERLY7 - LACYGNE      n_s_corridor    732 -0.053926 -6.069416 False  True 1183.000 SPP-53 committed (registry Temp...            0      NaN 21937.290459
+   CIMXF3CIMXF2 XFMR CIMARRON - CIMARRON oklahoma_internal    731  0.032613  6.066372  True False  434.980 2026 archive (same Monitored Fa...         1045    478.0 13337.786958
+   TMP505_26383      LN SPRIN - DRIPPING oklahoma_internal    683  0.011763  2.564352  True False  133.000   registry Temp_Flowgate NormLimit            0      NaN 11306.931302
+   TMP462_27381      LN CIMARRON - CKHAL oklahoma_internal    668  0.020320  6.147838  True False      NaN                               none            0      NaN          NaN
+   NASXFRNASHAW     XFMR NASHUA - NASHUA      n_s_corridor    644  0.072427  7.714137  True False  679.250 SPP-53 committed (2026 archive ...          138    715.0  9378.452090
+   TMP525_27546         LN QUAIL - SKYLN oklahoma_internal    622  0.015667  6.779199  True False  280.280 2026 archive (same Constraint N...          698    308.0 17890.210587
+   TMP777_28815   LN FIRSTCRK - ROANRDGE      n_s_corridor    513  0.020746  7.937467  True False  270.750 SPP-53 committed (2026 archive ...         1447    285.0 13050.654596
+   COPSTJCPFRSJ       LN COOPER - ST_JOE      n_s_corridor    508  0.168939  3.879322  True False 1087.450 SPP-53 committed (2026 archive ...         1344   1195.0  6436.946923
+   TAHH59MUSFTS     LN TAHLQH5 - HWY59TP oklahoma_internal    481  0.022705  2.889938  True False  148.000 registry Flowgates seasonal Nor...            0      NaN  6518.338476
+   TMP159_24149      LN RUSSETT - SBROWN oklahoma_internal    477  0.025678  3.516650  True False  123.760 2026 archive (same Monitored Fa...         4866    136.0  4819.773428
+   TMP845_30027       LN MARSHAL3 - KNOB      n_s_corridor    464  0.365342  4.385831  True False   63.700 SPP-53 committed (2026 archive ...         1833     70.0   174.357058
+   TMP338_28287     LN STILWELL - REDEL5      n_s_corridor    460 -0.073852 -5.168652 False  True  310.620 SPP-53 committed (2026 archive ...         2316    334.0  4205.999207
+   TMP926_29347    LN STONEWSW - TUPELO2 oklahoma_internal    459 -0.033338 -9.371954 False  True  157.170 2026 archive (same Monitored Fa...         1330    169.0  4714.401463
+    LECLAWSTR87            LN LEC - LAWH      n_s_corridor    458  0.045811  2.032424  True False  159.750 SPP-53 committed (registry Flow...            0      NaN  3487.118885
+   TMP840_28870     XFMR SIBLEY - SIBLEY      n_s_corridor    415  0.081309  7.460473  True False  400.000 SPP-53 committed (registry Temp...            0      NaN  4919.474501
+   TMP730_30195         LN PENN1 - SNTFE oklahoma_internal    412  0.008215  2.334011  True False  181.450 2026 archive (same Monitored Fa...          130    191.0 22088.911994
+   TMP553_25633 XFMR CIMARRON - CIMARRON oklahoma_internal    410  0.054629  6.670060  True False  434.980 2026 archive (same Monitored Fa...         1045    478.0  7962.409918
+   TMP580_32295     XFMR WDRNG1 - WDRNG1 oklahoma_internal    397  0.057280  3.033968  True False  332.075 2026 archive (same Monitored Fa...          117    359.0  5797.423297
+   TMP486_31685   LN OVRLD_PK - MERRIAM2      n_s_corridor    392 -0.046724 -3.184058 False  True  200.000 SPP-53 committed (registry Temp...            0      NaN  4280.433266
+   TMP634_28149     XFMR SIBLEY - SIBLEY      n_s_corridor    384  0.087457  8.252077  True False  400.000 SPP-53 committed (registry Temp...            0      NaN  4573.674600
+   TMP662_28227     LN SPERVI1 - MULGRE2      n_s_corridor    376 -0.118570 -3.405613 False  True  370.512 SPP-53 committed (2026 archive ...          583    398.4  3124.827049
+   TMP436_28110    LN MULGRE2 - ELLSWTP3      n_s_corridor    357  0.014344  2.734912  True False   91.910 SPP-53 committed (2026 archive ...         1000    101.0  6407.723686
+   TP1166_32048   LN SW_134TP - WESTMOR4 oklahoma_internal    351  0.036327  2.693342  True False      NaN                               none            0      NaN          NaN
+   TMP867_31042 XFMR HAWTHORN - HAWTHORN      n_s_corridor    310  0.035014  4.363668  True False  650.000 SPP-53 committed (registry Flow...            0      NaN 18564.197830
+   TMP743_31320   LN OSAGE_OG - WEBBTAP4 oklahoma_internal    303 -0.007203 -2.769645 False  True  151.700 2026 archive (same Monitored Fa...         4992    180.0 21060.378822
+   TMP765_28745     LN SEWARD3 - ST-JOHN      n_s_corridor    296  0.045864  5.295641  True False  101.000 SPP-53 committed (registry Temp...            0      NaN  2202.158989
+   TMP696_28306    LN LACYGNE - STILWELL      n_s_corridor    293 -0.069674 -2.352512 False  True 1626.400 SPP-53 committed (2026 archive ...          666   1712.0 23342.970033
+   TEMP37_25116           LN COLI - TECH      n_s_corridor    287 -0.019853 -2.003443 False  True      NaN                               none            0      NaN          NaN
+   TMP781_29254    LN PITTSB9 - SEMINOLE oklahoma_internal    282  0.169405  2.404732  True False  956.000   registry Temp_Flowgate NormLimit            0      NaN  5643.296375
+   TMP864_30210   LN GRACMONT - ANADARKO oklahoma_internal    280 -0.062467 -3.021477 False  True  215.280 2026 archive (same Monitored Fa...         7298    234.0  3446.316778
+   CRALENCRALEN        LN CRAIG - LENEXA      n_s_corridor    278 -0.056377 -3.303229 False  True  338.200 SPP-53 committed (2026 archive ...          542    356.0  5998.905786
+   TMP580_25700     XFMR WDRNG1 - WDRNG1 oklahoma_internal    266  0.024243  2.456321  True False  332.075 2026 archive (same Monitored Fa...          117    359.0 13697.531381
+  forward: n=26 hours=25116 weighted median T* = 6,534 -> 6,500 MW | p25 3,355 p75 7,164 ratio 2.14 | unweighted median 6,478 min 174 max 22,240
+     by group n_s_corridor: n=12 hours=9254 weighted median 3,355
+     by group oklahoma_internal: n=14 hours=15862 weighted median 7,164
+     LOYO drop 2023: weighted median T* = 3,681
+     LOYO drop 2024: weighted median T* = 11,478
+     LOYO drop 2025: weighted median T* = 7,767
+  reverse: n=15 hours=14043 weighted median T* = 5,999 -> 6,000 MW | p25 4,280 p75 30,221 ratio 7.06 | unweighted median 5,666 min 1,442 max 37,667
+     by group n_s_corridor: n=7 hours=3767 weighted median 4,206
+     by group oklahoma_internal: n=8 hours=10276 weighted median 23,617
+     LOYO drop 2023: weighted median T* = 5,449
+     LOYO drop 2024: weighted median T* = 25,904
+     LOYO drop 2025: weighted median T* = 11,170
+  NAMED DIRECTION = forward (forward 25116 h vs reverse 14043 h)
+
+================ OK<->S (+ = OK->S): 54 members >= 263 h; fwd-identified 5 (7039 h), rev-identified 23 (20523 h), neither 26 (25750 h)
+Constraint Name       Monitored Facility             group  hours       psi          t   fwd   rev      L_f                           L_source  n_bind_2026  src_med       T_star
+   TEMP89_22229   LN GRACMONT - ANADARKO oklahoma_internal   6658 -0.032147  -3.943348 False  True  215.280 2026 archive (same Constraint N...         4228    234.0  6696.650855
+   TEMP50_23126 XFMR POTTER_S - POTTER_S           sps_tie   2231  0.047258   2.537574  True False  505.895 2026 archive (same Monitored Fa...         9823    559.0 10705.045658
+   TMP573_26592     LN FPLSWTCH - WDWRD1 oklahoma_internal   2087 -0.065642  -2.229598 False  True  119.210 2026 archive (same Monitored Fa...         2583    131.0  1816.058581
+   TMP555_29231 XFMR POTTER_S - POTTER_S           sps_tie   1638  0.132113   3.496224  True False  508.690 2026 archive (same Constraint N...         2117    559.0  3850.403660
+   CIMXF2CIMXF3 XFMR CIMARRON - CIMARRON oklahoma_internal   1410 -0.050802  -8.389348 False  True  434.980 2026 archive (same Constraint N...          999    478.0  8562.335815
+      SPSNMTIES Multi-Element Constraint           sps_tie   1211  0.089228   2.350324  True False 1018.000 2026 archive (same Monitored Fa...          178   1316.5 11409.014926
+     SPPSPSTIES Multi-Element Constraint           sps_tie   1097  0.282612   2.359435  True False 1018.000 2026 archive (same Monitored Fa...          178   1316.5  3602.105772
+   CORNAPTERSUN     LN CORNTP4 - NAPLES1 oklahoma_internal    946 -0.050128  -6.451181 False  True  153.790 2026 archive (same Constraint N...          537    169.0  3067.963103
+   TMP419_25392     LN FULTON_C - PAT_WX             other    867 -0.163738  -2.742968 False  True  149.150 2026 archive (same Constraint N...          405    157.0   910.907636
+   TEMP47_28178       LN KINZE - KINZEG1 oklahoma_internal    862  0.022618   2.427687  True False      NaN                               none            0      NaN          NaN
+   TEMP70_29435     LN CRESCENT - CTNWD1 oklahoma_internal    796 -0.158806  -2.653152 False  True  261.170 2026 archive (same Constraint N...         5556    287.0  1644.586501
+   CIMXF3CIMXF2 XFMR CIMARRON - CIMARRON oklahoma_internal    731 -0.042748  -4.544597 False  True  434.980 2026 archive (same Monitored Fa...         1045    478.0 10175.557893
+   TMP505_26383      LN SPRIN - DRIPPING oklahoma_internal    683 -0.033604  -6.943519 False  True  133.000   registry Temp_Flowgate NormLimit            0      NaN  3957.861277
+   TMP462_27381      LN CIMARRON - CKHAL oklahoma_internal    668 -0.035901  -9.109181 False  True      NaN                               none            0      NaN          NaN
+   TMP839_29049 XFMR SEMINOLE - SEMINOLE oklahoma_internal    534 -0.009534  -2.102233 False  True  380.000 2026 archive (same Monitored Fa...          287    400.0 39857.005883
+   TMP825_28866   LN EASTX_SW - HARRISON             other    509 -0.089300  -2.646243 False  True      NaN                               none            0      NaN          NaN
+   TMP336_31246     XFMR DUNCAN - DUNCAN oklahoma_internal    490 -0.015205  -6.469140 False  True   65.335 2026 archive (same Constraint N...         4583     73.0  4296.869863
+   TMP159_24149      LN RUSSETT - SBROWN oklahoma_internal    477 -0.024999  -4.237408 False  True  123.760 2026 archive (same Monitored Fa...         4866    136.0  4950.686116
+   TMP601_28916 XFMR ELK-CITY - ELK-CITY oklahoma_internal    432 -0.079251  -3.139333 False  True  330.300 2026 archive (same Constraint N...          455    361.0  4167.782258
+   TMP730_30195         LN PENN1 - SNTFE oklahoma_internal    412 -0.013705  -2.206449 False  True  181.450 2026 archive (same Monitored Fa...          130    191.0 13239.680643
+   TMP553_25633 XFMR CIMARRON - CIMARRON oklahoma_internal    410 -0.068636 -11.764420 False  True  434.980 2026 archive (same Monitored Fa...         1045    478.0  6337.520153
+   TP1192_32077    LN GILLIAM - SUPERIOR             other    401 -0.029009  -2.533824 False  True   39.000   registry Temp_Flowgate NormLimit            0      NaN  1344.402395
+   TMP480_31271         XFMR SHAM - SHAM             other    387 -0.015057  -3.645262 False  True   33.300 2026 archive (same Constraint N...          684     37.0  2211.594781
+   TEMP62_32032       LN DOVRT - TURCRK2 oklahoma_internal    357 -0.008878  -2.106075 False  True   68.400 2026 archive (same Constraint N...          884     72.0  7704.744553
+   SWSANAGRAANA     LN SW_STA - ANADARKO oklahoma_internal    355 -0.018389  -2.325187 False  True  196.100 2026 archive (same Monitored Fa...          685    212.0 10663.929713
+   TP1166_32048   LN SW_134TP - WESTMOR4 oklahoma_internal    351 -0.067534  -6.011013 False  True      NaN                               none            0      NaN          NaN
+   TMP781_29254    LN PITTSB9 - SEMINOLE oklahoma_internal    282 -0.161270  -2.027773 False  True  956.000   registry Temp_Flowgate NormLimit            0      NaN  5927.945038
+   TMP143_30165   LN RSH_SPRG - OMMARLO4             other    280 -0.040979  -3.406556 False  True      NaN                               none            0      NaN          NaN
+  forward: n=4 hours=6177 weighted median T* = 10,705 -> 10,700 MW | p25 3,850 p75 10,705 ratio 2.78 | unweighted median 7,278 min 3,602 max 11,409
+     by group sps_tie: n=4 hours=6177 weighted median 10,705
+     LOYO drop 2023: weighted median T* = 8,395
+     LOYO drop 2024: weighted median T* = 10,490
+     LOYO drop 2025: weighted median T* = 14,796
+  reverse: n=19 hours=18715 weighted median T* = 6,697 -> 6,700 MW | p25 3,068 p75 6,697 ratio 2.18 | unweighted median 4,951 min 911 max 39,857
+     by group oklahoma_internal: n=16 hours=17060 weighted median 6,697
+     by group other: n=3 hours=1655 weighted median 911
+     LOYO drop 2023: weighted median T* = 4,254
+     LOYO drop 2024: weighted median T* = 8,892
+     LOYO drop 2025: weighted median T* = 14,218
+  NAMED DIRECTION = reverse (forward 6177 h vs reverse 18715 h)

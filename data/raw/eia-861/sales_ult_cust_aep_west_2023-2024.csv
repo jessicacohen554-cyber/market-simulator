@@ -1,0 +1,9 @@
+data_year,utility_id,utility_name,state,part,service_type,ownership,ba_code,total_sales_mwh
+2023,15474.0,Public Service Co of Oklahoma,OK,A,Bundled,Investor Owned,SWPP,18421783.0
+2023,17698.0,Southwestern Electric Power Co,AR,A,Bundled,Investor Owned,SWPP,3548497.0
+2023,17698.0,Southwestern Electric Power Co,LA,A,Bundled,Investor Owned,SWPP,6264772.0
+2023,17698.0,Southwestern Electric Power Co,TX,A,Bundled,Investor Owned,SWPP,7081384.0
+2024,15474.0,Public Service Co of Oklahoma,OK,A,Bundled,Investor Owned,SWPP,19127158.0
+2024,17698.0,Southwestern Electric Power Co,AR,A,Bundled,Investor Owned,SWPP,3439358.0
+2024,17698.0,Southwestern Electric Power Co,LA,A,Bundled,Investor Owned,SWPP,6044274.0
+2024,17698.0,Southwestern Electric Power Co,TX,A,Bundled,Investor Owned,SWPP,6920872.0
