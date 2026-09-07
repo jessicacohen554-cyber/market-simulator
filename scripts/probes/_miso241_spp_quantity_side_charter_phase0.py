@@ -640,6 +640,15 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             "pjm_export_leg_max_abs_mw_repaired": round(
                 float(np.abs(R["PJM"]["exp_repaired"][ok]).max()), 6
             ),
+            "pjm_export_leg_nonzero_hours_repaired": int(
+                (np.abs(R["PJM"]["exp_repaired"][ok]) > 1e-9).sum()
+            ),
+            "spp_export_leg_nonzero_hours_incumbent": int(
+                (np.abs(R["SPP"]["exp_incumbent"][ok]) > 1e-9).sum()
+            ),
+            "spp_export_leg_nonzero_hours_repaired": int(
+                (np.abs(R["SPP"]["exp_repaired"][ok]) > 1e-9).sum()
+            ),
         }
 
         # G-ID — the prefix identity on both legs of both variants, all four seams.
@@ -819,6 +828,11 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             entry["env_i_sigma_mw"] = round(float(R[seam]["env_i_eff"][ok].std()), 1)
             entry["env_e_mean_mw"] = round(float(R[seam]["env_e_eff"][ok].mean()), 1)
             entry["env_e_sigma_mw"] = round(float(R[seam]["env_e_eff"][ok].std()), 1)
+            for tag in ("incumbent", "repaired"):
+                both_zero = (R[seam]["n_i"][ok] == 0) & (R[seam][f"n_e_{tag}"][ok] == 0)
+                entry[f"share_seam_exactly_zero_{tag}"] = round(
+                    float(both_zero.mean()), 4
+                )
             entry["env_i_zero_share"] = round(
                 float((R[seam]["env_i_eff"][ok] <= 1e-9).mean()), 4
             )
@@ -1064,7 +1078,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
     report["Q2_verdict"] = q2v
 
     # ---------------- C7 data census (PREREG §5) ----------------
-    searched = [
+    narrow_paths = [
         "data/raw/MISO",
         "data/raw/eia-930-interchange",
         "data/raw/iso-specific-transmission",
@@ -1072,23 +1086,57 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         "data/raw/outages",
         "data/raw/reference",
     ]
-    hits: dict[str, list[str]] = {}
-    for rel in searched:
+    narrow_tokens = ("outage", "derate", "eea", "alert", "tie", "conservative")
+    # The WIDENED census declared by
+    # ADDENDUM-miso241-the-census-is-too-narrow-2026-09-07.md §1. Monotone: a superset
+    # of paths and of tokens can only ADD matches, never remove one.
+    wide_tokens = (
+        "outage",
+        "derate",
+        "forced",
+        "unavail",
+        "eea",
+        "alert",
+        "conservative",
+        "emergency",
+        "tie",
+        "interface",
+        "constraint",
+        "transfer",
+        "atc",
+        "ttc",
+        "flowgate",
+        "curtail",
+    )
+    narrow: dict[str, list[str]] = {}
+    for rel in narrow_paths:
         d = REPO / rel
         if not d.exists():
-            hits[rel] = ["ABSENT"]
+            narrow[rel] = ["ABSENT"]
             continue
-        names = [
-            p.name
-            for p in sorted(d.rglob("*"))
-            if p.is_file()
-            and any(
-                t in p.name.lower()
-                for t in ("outage", "derate", "eea", "alert", "tie", "conservative")
-            )
-        ]
-        hits[rel] = names[:20]
-    report["C7_census"] = {"searched": searched, "matches": hits}
+        narrow[rel] = [
+            q.name
+            for q in sorted(d.rglob("*"))
+            if q.is_file() and any(t in q.name.lower() for t in narrow_tokens)
+        ][:20]
+
+    raw_root = REPO / "data/raw"
+    wide_top = sorted(
+        q.name
+        for q in raw_root.iterdir()
+        if any(t in q.name.lower() for t in wide_tokens)
+    )
+    spp_children = sorted(
+        q.name
+        for q in raw_root.iterdir()
+        if ("spp" in q.name.lower() or "swpp" in q.name.lower())
+    )
+    report["C7_census"] = {
+        "narrow_as_committed": {"paths": narrow_paths, "matches": narrow},
+        "wide_tokens": list(wide_tokens),
+        "wide_top_level_matches": wide_top,
+        "spp_or_swpp_children_in_full": spp_children,
+    }
 
     OUT.write_text(json.dumps(report, indent=2, default=str) + "\n")
 
