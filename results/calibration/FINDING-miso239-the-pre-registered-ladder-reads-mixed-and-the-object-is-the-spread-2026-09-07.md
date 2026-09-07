@@ -33,16 +33,28 @@ the flat year — and not which property of `g` acts. That is the mechanical rea
 MIXED, and it is a defect in this session's instrument, disclosed before its numbers are
 interpreted.
 
-### 0c. miso-238's record was INCOMPLETE on `main`, and this session repaired it
+### 0c. miso-238's record was incomplete when this session read `main` — **and it LANDED MID-SESSION; see the ADDENDUM**
 
 Read at `origin/main` = `8377e878`: miso-238's **FINDING and its phase-0 JSON never landed**, and
 the committed miso-238 probe still carried the *marginal covariance* estimator that its own
 committed `ADDENDUM` §2 had replaced with miso-237's **partial** OLS slope — i.e. the instrument
 on `main` was the one that had failed its own G-P2 at **457.126 MW/z** against a 0.5 bar. **No
-miso-238 number quoted in this session's handoff was reproducible from a committed artifact.**
+miso-238 number quoted in this session's handoff was reproducible from a committed artifact** *at
+that commit*.
+
+> **SUPERSEDED MID-SESSION — read
+> `ADDENDUM-miso239-the-predecessor-record-landed-mid-session-2026-09-07.md`.** miso-238's own
+> FINDING, JSON and repaired probe landed on `main` at **`3cae3b15`** (PR #5488) while this
+> session was running, so the premise above has expired. **This session dropped its own repair
+> commit and rebuilt on miso-238's authoritative version.** The accident produced a stronger
+> result than either version alone: the two independently-applied executions of the same declared
+> repair agree on **every numeric value in the file** — the only difference anywhere is one key
+> *name* no gate reads (`gamma_marginal_mw_per_z` → `gamma_marginal_model_mw_per_z`) — and
+> re-running this session's probe against miso-238's landed module reproduces this session's JSON
+> **byte-identically**, G-P4 included. **No number below changes, and no verdict moves.**
 
 Declared in PREREG §0b before it was run, this session applied **exactly and only** that
-addendum's declared repair (partial-OLS `gamma`, plus its declared `gamma_marginal_mw_per_z`
+addendum's declared repair (a commit since dropped in favour of miso-238's own — §0c's box) (partial-OLS `gamma`, plus its declared `gamma_marginal_mw_per_z`
 disclosure column) and regenerated `_miso238_pjm_seam_channel_attribution_phase0.json`. **No
 miso-238 bar, floor, gating seam, channel definition or decision rule was touched.** The repair
 is verified, not asserted: G-P2 falls from 457.126 to **0.005 MW/z**, and **every one of the nine

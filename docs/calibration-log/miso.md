@@ -12889,3 +12889,112 @@ D-4); `miso_manitoba_seam` stays CLOSED as already-armed; the `(month × hod)` t
 REMOVED (miso-236 §3); none was re-tested (rule 28(a)). C3c untouched and still the designated
 frontier (2026-07-20). Rule 28(b): evidence appended to `seam_flow_envelopes` and
 `seam_neighbour_hourly_ladder` in MISO's shard only; no cell verdict moves.
+
+## miso-239 (2026-09-07) — miso-238's own successor question is taken and **NOT closed**: the pre-registered property ladder reads **MIXED**. ZERO LP, no arm, no screen, NO CELL VERDICT MOVES; keeper UNCHANGED
+
+**Keeper `2026-09-07-miso-233-spp-hourly`** (bundle `results/calibration/miso233_sppseam_K`),
+DETERMINATION **CALIBRATED**, C3c the single ledgered caveat, **DOF 41/2**. Zero LP minutes, no
+`ScenarioConfig` field created or armed, **no bundle produced**, no run registered or pruned,
+keeper not replayed and not touched. **There is no keeper candidate here and none is proposed.**
+MISO carries exactly ONE registered run (rule 15). Rule 22: 2023–2025 only; MISO holds no
+`complete` marker.
+
+**Pre-registration `PREREG-miso239-which-property-of-g-2026-09-07.md`, pushed at `c0e971ee`
+BEFORE any adjudicating quantity.** Lever-queue item 1 (rule 28(a)) — the successor question
+miso-238's own FINDING named and left open.
+
+### The gated question did NOT resolve — Q-A reads MIXED
+
+PREREG §3a requires a share ≥ 0.50 in **all three years** and gets neither: `σ_LIN` =
+0.668 / **0.284** / 0.731 and `σ_CURVE + σ_STEP` = 0.332 / **0.716** / 0.269, each clearing the
+bar in the two years the other fails. Per PREREG §3a a MIXED verdict **closes and licenses
+nothing**; **queue item 1 stays open.**
+
+### Disclosed against interest: this session's own §2b mapping over-claimed
+
+PREREG §2b assigned `LINEAR → candidate (d)`. **Withdrawn as an interpretation** (the arithmetic
+stands; the label was wrong): `CURVE` is *also* a function of the model's merit spread, so the
+regressor mismatch acts on both channels and the LINEAR/CURVE split tracks **β** =
+106.75 / **50.01** / 65.18 MW per $ — where the ladder is *operating* — not which property of
+`g` acts. That is the mechanical reason the verdict is MIXED, and **a successor re-running this
+ladder will get MIXED again: change the decomposition, not the bars.**
+
+### The provenance gate — all six legs PASS
+
+G-P1 **0.048 MW** (bar 0.5) · G-P2 **0.005 MW/z** (bar 0.5) · G-P3 **0.00005** (bar 0.001) ·
+**G-P4 miso-238's published PJM column reproduced EXACTLY — 9 quantities × 3 years, `abs_delta`
+0.000000 on every cell, by an independent code path** · G-X0 the PJM export leg identically
+**0.000000 MW** · G-ID **2.728e-12 MW** (bar 1e-6). Two further exact checks: the band-count
+identity `g(s) ≡ G_{n−1}` at 0.000e+00 MW, and `γ` of `MERIT` residualized on band-count dummies
+at exactly 0.000000 (the framing check).
+
+### The numbers (PJM, `ok` hours, 2023 / 2024 / 2025, MW per z-score)
+
+`γ_MERIT` **−870.18 / −930.93 / −791.43** (marginal, reported: −474.91 / −539.06 / −542.99) ·
+`γ_LINEAR` −581.16 / −264.27 / −578.66 · `γ_CURVE` −266.51 / −634.56 / −174.89 · `γ_STEP`
+**−22.51 / −32.10 / −37.88**. Shares 0.668/0.284/0.731 · 0.306/0.682/0.221 ·
+**0.026/0.035/0.048**.
+
+**Q-C (gated) — SURVIVES.** `γ_np(p1)` = −677.62 / −662.69 / −590.15, i.e.
+**0.779 / 0.712 / 0.746** of `γ_MERIT`: the response is **not** a functional-form
+misspecification of the measured Indiana-hub-DA-minus-border spread.
+
+**REPORTED, NEVER GATED, and labelled** (PREREG §4 declared them as framing checks that cannot
+move a verdict): the same non-parametric test on the **model's own** merit spread annihilates the
+response — **−15.70 / +2.00 / −4.41 MW/z, 1.8 % / 0.2 % / 0.6 %** of `γ_MERIT`. `K = 8`
+granularity never exceeds **0.048** of `γ_MERIT`, and 0.078/0.048/0.178 of the ladder's own
+non-linearity (PREREG §2c twin: 0.113/0.069/0.260, **agreeing in every year**). The **cap**
+region carries 0.152 / 0.005 / **0.000** of `γ_MERIT` on 1,524 / 60 / **0** hours — in 2025 the
+cap is never reached and `γ_MERIT` is still −791.43 — corroborating miso-238's refutation of the
+saturation hypothesis on an independent partition; the INTERIOR carries 0.794/0.635/0.602.
+*Against interest:* the **FLOOR** (`g` clipped at zero) is a different object and moves the other
+way, 0.054 / 0.361 / 0.398 on 48 / 409 / 865 hours — clipping is migrating from the top to the
+bottom, reported and not adjudicated. Census: `corr(s, z_own_nl)` −0.2679/−0.1458/−0.3165 against
+`corr(p1, z_own_nl)` +0.0539/+0.0663/+0.1219, `corr(s, p1)` only 0.4327/0.2559/0.3790.
+
+### Process note — miso-238's record landed MID-SESSION
+
+This session read `main` at `8377e878`, where miso-238's FINDING and phase-0 JSON had not landed
+and its committed probe still carried the marginal-covariance estimator its own `ADDENDUM` §2 had
+replaced; PREREG §0b declared, before running anything, that this session would apply that
+declared repair itself. **miso-238's own deliverables landed at `3cae3b15` (PR #5488) while this
+session was running, so this session DROPPED its own repair commit and rebuilt on the
+predecessor's authoritative version.** The accident corroborates both: the two independent
+executions of the same declared repair agree on **every numeric value in the file** — the only
+difference anywhere is one key *name* no gate reads — and re-running this session's probe against
+miso-238's landed module reproduces this session's JSON **byte-identically**, G-P4 included.
+Full record: `ADDENDUM-miso239-the-predecessor-record-landed-mid-session-2026-09-07.md`.
+
+### What is NOT licensed — restated after the numbers exactly as the PREREG fixed it before them
+
+**No re-derive, no damping factor, no smoothing of the steps, no change of `K`, no re-spacing of
+`δ_k`, no envelope change, no interface-limit change** (rules 23 `[R-FROZEN-DERIVE]` / 14
+`[R-ACCURATE]` / 1 `[R-STRUCT]`). The small `σ_STEP` is **not** a reason to raise `K` and the
+collapsing cap share is **not** a reason to move a bound. Every number produced is declared
+**un-targetable** (rules 1/13); miso-236's 328.6/341.7/207.5 MW sizing stays un-targetable. No
+adjudicated cell re-tested (rule 28(a)): the saturation hypothesis stays REFUTED, the
+`(month × hod)` template stays REMOVED, the PJM import/export asymmetry stays CLOSED FOR PJM (and
+G-X0 **measures** that the other three seams' export legs are live — SPP 589.7/1,000.0/1,000.0,
+South 2,250.0/2,562.9/1,875.0, Manitoba 725.0/1,087.5/1,057.3 MW — so this session's object does
+not exist there and nothing is reported for them), South's neighbour-state route stays CLOSED,
+Manitoba stays CLOSED as already-armed, the item-1 form question stays ANSWERED and its SPP
+object stays NOT CHARTERED. **No promotion, no decertification**; C3c untouched.
+
+### The successor question — NAMED, explicitly NOT CHARTERED
+
+Every candidate that is a property of `g`'s *shape* is bounded small in at least one year, while
+**any** function of the model's own merit spread `s` absorbs 98–100 % of the response. That
+points at `s` itself — the model's `MISO_external` price minus the PJM border price — and **this
+session charters nothing about it**: no field, no window, no forecast story, no rule-17
+`[R-FLOOR-WINDOW]` argument and no rule-19 `[R-ONE-MECH]` enumeration exists for it here, and a
+successor owes all four at zero LP before any solve, plus its own PREREG with a gate reproducing
+this session's column. A DOF-free construction is the bar; **if none exists, saying so and
+stopping is a complete session result.** Handoff items 2–6 are not taken and stay where filed.
+
+**Records:** `results/calibration/PREREG-miso239-which-property-of-g-2026-09-07.md`,
+`ADDENDUM-miso239-the-predecessor-record-landed-mid-session-2026-09-07.md`,
+`FINDING-miso239-the-pre-registered-ladder-reads-mixed-and-the-object-is-the-spread-2026-09-07.md`;
+probe `scripts/probes/_miso239_merit_ladder_property_attribution_phase0.py` with
+`_miso239_merit_ladder_property_attribution_phase0.json` beside it. Rule 28(b) evidence appended
+to `seam_neighbour_hourly_ladder` and `seam_flow_envelopes` in **MISO's shard only** (rule 25),
+with the `§5.4` queue stamp.
