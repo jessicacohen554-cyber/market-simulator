@@ -26,7 +26,14 @@ CONTROL = ROOT / "results/capacity-hindcast/pjm-2021-2025-realized-t1h-d75rarm"
 CONTROL_LEDGERS = CONTROL / "PJM/fb16fda2ddb0a94a"
 
 # --- the PRECOMMIT's declared numbers, verbatim ----------------------------
-DECLARED_ARM_KEY = "cf9b7dc1ca285c35"
+# CORRECTED by ADDENDUM-pjm-eas-key-window-2026-09-07.md: the PRECOMMIT §4 key
+# cf9b7dc1ca285c35 was computed on the control's recorded FULL-SPAN window
+# (2021-2025) while §5 declared a truncated screen (2021-2022), and
+# ScenarioConfig.cache_key() includes the window. Recomputed from first
+# principles off the SAME committed control config by the SAME three-flag delta.
+# No gate, threshold, band or point prediction is changed by that addendum.
+DECLARED_ARM_KEY = "8966e7cea75efc4e"       # arm, window 2021-2022
+DECLARED_ARM_KEY_FULL_SPAN = "cf9b7dc1ca285c35"  # arm, window 2021-2025 (PRECOMMIT §4)
 CONTROL_SCREEN_PRICE_MAX = 52.7715          # $/MWh, control, every decided row
 G2_FLOOR_USD_MWH = 60.0                     # STOP below
 G3_FLOOR_USD_PER_ACCREDITED_MW_DAY = 12.7   # STOP below (phase-0 C threshold)
