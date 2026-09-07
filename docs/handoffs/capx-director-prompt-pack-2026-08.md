@@ -9026,3 +9026,121 @@ classified with zero unclassified, step 3's risk answer derived from the code pa
 recommendation. Report the step-3 answer FIRST in your close — it decides whether this item is a
 defect or bookkeeping.
 ```
+
+## r#58 NOTE (2026-09-07): all three Q59 lanes landed. **D82 is CLOSED — the label is spent** (every operand of the measured size is a backcast-only overlay; `false_retire` stays FAIL with NO named successor in the E&AS direction). Two charters below, both zero-LP and disjoint. The SPP re-key is the SIXTEENTH Q34 firing and the FIRST on a row this desk itself chartered — SPP promoted a third time within hours of the row landing, after the lane followed the read-live instruction exactly.
+
+## SPP gate-(a) RE-KEY — the Q34 standing duty on this desk's own row (r#58)
+
+```
+You are a one-act SPP gate-(a) re-key session for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. BRANCH: claude/spp-gate-a-rekey — FRESH off origin/main.
+
+THE DEFECT. scripts/check_gate_a_provenance.py is RED on main:
+  SPP: gate.a_keeper_marker cites SUPERSEDED keeper '2026-09-07-spp-2-crosswalk-hydro';
+  the ISO's current designated keeper is '2026-09-07-spp-3-screened-input'.
+
+*** DO NOT TRUST THAT KEEPER ID EITHER. *** SPP has promoted THREE times in about a day
+(spp-1-baseline -> spp-2-crosswalk-hydro -> spp-3-screened-input). The row that is now stale was
+written yesterday by a lane that was explicitly told to read the keeper live, and it did — SPP simply
+moved again within hours. Your FIRST act is to run the gate and read BOTH ids it names at YOUR head,
+and re-key to whatever `frontend/data/backcast/keepers/SPP.json` says at the moment you write. If the
+gate exits 0, say so and stop.
+
+CONTEXT YOU SHOULD CARRY, from director ruling §0bc.3(b): this is the SIXTEENTH firing of the Q34
+duty and the FIRST that is not a promoter's miss. The obvious "fix" — making the row derive its
+keeper id instead of hard-coding it — WOULD DEFEAT THE CHECK: gate (a) compares identity precisely so
+a promotion cannot silently drift past the board, and a derived id would always agree with itself and
+assert nothing. DO NOT propose or implement that. The re-key treadmill is the cost of the guarantee.
+
+YOUR ONLY JOB is SPP's row. Do not touch any other ISO's row, any other gate leg, any keeper shard,
+calibration-complete.json, or the backcast namespace. Nothing is solved, scored or registered.
+
+METHOD — BINDING. Edit frontend/data/forecast/program-status.json by TARGETED STRING EDIT scoped by
+string position. NEVER a json.dumps round-trip: the file's formatting is load-bearing and a
+re-serialize rewrites the whole document — the rule 27 [R-PUSH] hazard, and file-integrity-guard
+would NOT catch it because a reformat is not a >30 % shrink. Assert each old string occurs exactly
+once BEFORE replacing and json.load() parses AFTER. Watch for a leading space where prior text
+continues. Push the exact on-disk bytes and blob-verify after the push.
+
+THE THREE LEAVES, all inside the SPP block: (1) gate.a_keeper_marker.detail — the live keeper id and
+live determination, with a RE-KEYED clause prepended AHEAD OF THE PRESERVED PRIOR TEXT; (2)
+gate.a_keeper_marker.read_live_at — the sha you actually read at, with the existing corrected_by text
+moved under a "PRIOR:" label; (3) the top-level gate_a_provenance block — derived_at_sha,
+derived_at_date, derived_by with the supersession chain prepended ahead of the preserved prior text.
+
+READ EVERY FACT LIVE: keeper id and registry years from keepers/SPP.json and the registry sidecar;
+determination, grade summary, fails, caveats from frontend/data/backcast/status/SPP.js; rubric version
+from RUBRIC_VERSION in scripts/calibration_verdict.py; marker state from calibration-complete.json.
+
+STATE THE VERDICT EFFECT PRECISELY. SPP is NOT in the `complete` block, so gate (a) reads FAIL before
+and FAIL after — the marker did not move, and this re-key changes IDENTITY AND DETERMINATION TEXT
+ONLY. The row's `fail` status is what makes it schema-legal (a `pass` row must hold `complete`), so do
+not "improve" it to pass.
+
+EXIT: check_gate_a_provenance.py exits 0; json.load parses; `git diff` touches exactly the three
+leaves in one file and nothing else; prior text preserved in all three; commit, push, blob-verify.
+Report the diff, the gate exit code, and the keeper id you actually found. Do not open a PR unless asked.
+```
+
+## D85-R — execute D85's own four record repairs, including the 46-key census blind spot (r#58)
+
+```
+You are the D85-R session of the capacity-expansion track, executing the recommendations of
+docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md (owner ruling Q59's follow-on; capx ledger
+§0bc.3(c)). MODEL: Opus. DATA PROFILE: code. BRANCH: claude/capx-d85r-record-repairs — FRESH off
+origin/main.
+
+WHAT D85 ESTABLISHED, and you do not re-litigate it. Census at HEAD: 214 committed run configs, 169
+reproduce, 30 keyless, 15 mismatch. All 15 derived to their recorded literal under a named recipe with
+ZERO UNCLASSIFIED: 6 registration lag (caiso_offer_surface_measured_ungrounded, registered 2026-09-02
+after those bundles solved), 3 pre-ledger flip (the R-A storage-entry pair, PR #4442), 5 pre-ledger
+flip + split-root fold (the fc6 arms solved with MARKET_SIM_DATA_ROOT relocated, D21 finding 6), and 1
+request-not-resolution (the ERCOT golden fixture serialized the UNRESOLVED config). Step 3, from the
+code path: a stale key is UNREACHABLE BY CONSTRUCTION for every class except the D24 §4.2 collision
+form of the R-A pair, which cache_config_disagreements refuses on the serving seam. VERDICT:
+BOOKKEEPING, NOT A DEFECT.
+
+*** THE REFUSALS ARE PART OF THE FINDING AND THEY BIND YOU. *** D85 refused to re-register the lagging
+field and refused to rewrite any committed cache_key, and it was right: a committed key is what that
+bundle actually solved under, and rewriting it makes the artifact lie about its own provenance. You
+inherit both refusals. If you conclude a key rewrite is the right repair, that is an OWNER CARD, not
+your act — stop and report.
+
+THE FOUR REPAIRS, all forward-looking, none touching a committed key:
+ 1. A CHECKED EXCEPTION RECORD for the 15 — a committed list, machine-checked, so the census reports
+    "15 known, 0 unknown" instead of "15 mismatch". The check must FAIL if a SIXTEENTH appears, and
+    must fail if a listed one starts reproducing (a stale exception is its own defect). Each entry
+    carries its class and its citation.
+ 2. FOLD ROOTS IN THE RUN RECORD — the 5 split-root cases are unreproducible only because the run
+    record does not say which data root the solve folded. Record it going forward.
+ 3. RESOLVED CONFIG IN THE GOLDEN WRITER — the 1 request-not-resolution case is the ERCOT golden
+    fixture serializing the config as REQUESTED rather than as RESOLVED. Fix the writer so future
+    fixtures serialize the resolved config.
+ 4. BOTH KEYS IN THE CENSUS — D85 surfaced, unasked, that since 2026-09-07 the ERCOT and CAISO solve
+    surfaces are OFF their declarations, so 46 FURTHER keys reproduce only with the surface AT
+    DECLARATION. That is the D79/Q54 mechanism behaving exactly as designed (a re-derived registry
+    re-keys the ISOs whose rows moved) — it is NOT a defect and you must not "fix" the re-key. What
+    was wrong is that the census reported one key and was blind to the other. Report BOTH: the
+    at-HEAD-surface key and the at-declaration-surface key, so a reader can tell a designed re-key
+    from a genuine mismatch at a glance.
+
+PRE-REGISTER, before you edit: the exception list's expected membership (the 15, by config id and
+class) and the expected census output after each repair. If your reproduced count differs from 214 /
+169 / 30 / 15 — and it will, the corpus grows ~10-20 configs a day — report the drift and say which
+configs are new. The COUNTS are measurements; ZERO UNKNOWN is the gate.
+
+STOP GATES. (1) A sixteenth unclassified mismatch — STOP and report; that is a new finding, not a
+list entry. (2) Any repair that would change a committed key, bundle, registration, flip entry or
+surface declaration — STOP; that is outside the refusals. (3) The exception check passing when a
+listed config starts reproducing — the check is wrong, fix the check. (4) Any determination or gate
+moving anywhere — STOP; this is record hygiene and must move nothing scored.
+
+DO NOT: rewrite a committed cache_key; re-register caiso_offer_surface_measured_ungrounded or any
+lagging field; edit _CACHE_KEY_OPTIONAL_FIELDS, the FLIPS list or solve_surface_declared.py; solve
+anything; touch D83/D84.
+
+EXIT: the four repairs landed; the census reads "N known, ZERO unknown" and reports both keys; the
+exception check fails correctly on both a new mismatch and a stale entry (demonstrate both with a
+test); a FINDING recording what the repairs changed and what they deliberately did not. Report the
+zero-unknown census line first in your close.
+```

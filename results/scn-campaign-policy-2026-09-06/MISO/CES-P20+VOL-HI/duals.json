@@ -1,0 +1,81 @@
+{
+ "cache_key": "ed42e5d7d1d95d3e",
+ "case": "CES-P20+VOL-HI",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "objective_value": 6911141745.777395
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    -0.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 9477005254.125122
+  },
+  "2028": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 15613339559.607433
+  },
+  "2029": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 16926032083.451393
+  },
+  "2030": {
+   "clean_region_duals": [
+    -0.0,
+    -0.0,
+    7.0
+   ],
+   "rps_region_duals": [
+    -0.0,
+    30.0,
+    -0.0,
+    30.0,
+    -0.0
+   ],
+   "objective_value": 25849880061.437508
+  }
+ }
+}

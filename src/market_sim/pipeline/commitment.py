@@ -1214,6 +1214,180 @@ def build_nyiso_gas_bridge_p1_prep(
     return _fleet_prep
 
 
+# SPP gas commitment bridge (SPP-44): the merchant slow-start gas fuels the
+# SPP leg offers the shared detector. ``gas_cc`` is the CC_REGULAR class,
+# ``gas_st`` the ST_GAS class; the detector excludes every ``*_CHP`` group on
+# top (cogens follow their steam host). The fast-start CT class is NOT offered:
+# on keeper-2's fleet every gas_ct committed tranche resolves a 1 h min-down /
+# $20 per MW start, so the physical bridge is unreachable and
+# RA_BRIDGE_ECON_MIN_DOWN_HOURS refuses the economic leg — it would be inert by
+# physics even if offered (rule 18 [R-PHYSICS]; spp44/census_eligibility.py).
+# Scoping is still by unit physics inside the detector; this tuple only names
+# the populations the two measured constants describe.
+_SPP_BRIDGE_FUELS: tuple[str, ...] = ("gas_cc", "gas_st")
+
+
+def _spp_bridge_min_run_hours(fleet: list, fleet_arrays) -> np.ndarray:
+    """Return the ``(n_gen,)`` minimum run duration for the SPP bridge.
+
+    The MEASURED plant-basis class values
+    (``constants.SPP_GAS_BRIDGE_MIN_RUN_HOURS``, the cap-weighted p25 of the
+    CAMPD 2023-2025 plant run-length distribution: CC 15 h, ST_GAS 5 h), one
+    per eligible fuel; every other row — the wrong fuel, a cogen — carries 0,
+    which the detector reads as "no extension". No class table fallback and no
+    per-plant channel: the SPP leg has exactly the two constants
+    (PRECOMMIT-spp-44 §2.2 / §2.6).
+
+    Args:
+        fleet: The dispatch fleet, aligned with ``fleet_arrays`` rows.
+        fleet_arrays: The vectorized fleet (row count only).
+
+    Returns:
+        A ``(n_gen,)`` float array of minimum run hours.
+    """
+    from market_sim.config.constants import SPP_GAS_BRIDGE_MIN_RUN_HOURS
+
+    out = np.zeros(len(fleet), dtype=float)
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type in _SPP_BRIDGE_FUELS and not gen.plant_group.endswith("_CHP"):
+            out[g] = float(SPP_GAS_BRIDGE_MIN_RUN_HOURS[gen.fuel_type])
+    return out
+
+
+def _spp_gas_bridge_floor(
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray,
+    mc_base: np.ndarray,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` SPP gas commitment-bridge floor.
+
+    Runs the ISO-neutral detector ONCE PER CLASS (the NYISO precedent) because
+    the measured plant-basis minimum stable load differs by more than 2x
+    between the two eligible classes (CC 0.209 vs ST_GAS 0.090 —
+    ``constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC``) and the detector takes one
+    scalar. The per-class floors compose by maximum, which is exact: a unit
+    has one fuel type, so the two calls floor disjoint rows.
+
+    Legs, all fixed (PRECOMMIT-spp-44 §3): the physical restart bar, the
+    economic restart inequality capped at one DA operating day, the measured
+    minimum-run extension, and the commitment-real run screen
+    (``startup_aware``). Every input is the model's own P0 solution plus
+    registered physics and the four measured constants.
+
+    Returns ``None`` when neither class produces a floor.
+    """
+    from market_sim.config.constants import (
+        DA_COMMITMENT_HORIZON_HOURS,
+        SPP_GAS_BRIDGE_MIN_LOAD_FRAC,
+    )
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    min_run = _spp_bridge_min_run_hours(fleet, fleet_arrays)
+    total = None
+    for fuel in _SPP_BRIDGE_FUELS:
+        frac = float(SPP_GAS_BRIDGE_MIN_LOAD_FRAC[fuel])
+        stats: dict = {}
+        part = caiso_ra_mustoffer_min_gen(
+            p0_dispatch,
+            fleet_arrays,
+            fleet,
+            frac,
+            p1_prices=p0_prices,
+            base_mc=mc_base,
+            startup_bridge=True,
+            fuel_types=(fuel,),
+            max_econ_gap_hours=float(DA_COMMITMENT_HORIZON_HOURS),
+            min_run_hours=min_run,
+            startup_aware=True,
+            screen_stats=stats,
+        )
+        # PER-CLASS trace, logged even when zero: a leg that floors nothing is
+        # exactly the "mechanism is inert" reading a rule-29 screen must be
+        # able to see (nyiso-89 §4a), and the run-screen census is the
+        # mechanism's own arithmetic stated in the log.
+        logger.info(
+            "SPP gas bridge leg %s (min_load_frac %.3f, min_run %.0fh): %d P0 runs "
+            "detected, %d dropped as phantom (margin < startup) covering %d P0 "
+            "online hours at %d unit(s); %d unit-hours floored, %.4f TWh floor volume",
+            fuel,
+            frac,
+            max(
+                (min_run[g] for g, gen in enumerate(fleet) if gen.fuel_type == fuel),
+                default=0.0,
+            ),
+            int(stats.get("runs_detected", 0)),
+            int(stats.get("runs_dropped", 0)),
+            int(stats.get("dropped_hours", 0)),
+            len(stats.get("units_with_drops", [])),
+            int((part > 0.0).sum()),
+            float(part.sum()) / 1e6,
+        )
+        total = part if total is None else np.maximum(total, part)
+    if total is None or not np.any(total > 0.0):
+        return None
+    # D-4 trace: every floored segment is a bridged idle gap or a min-run
+    # extension, so its length distribution is the direct evidence of the
+    # declared self-windowing.
+    seg = np.array(
+        [
+            e - s
+            for g in np.flatnonzero((total > 0.0).any(axis=1))
+            for s, e in find_runs(total[g] > 0.0)
+        ]
+    )
+    if seg.size:
+        logger.info(
+            "SPP gas commitment bridge: %d unit-hours floored (%.2f TWh floor "
+            "volume), %d floored segments by length %s",
+            int((total > 0.0).sum()),
+            float(total.sum()) / 1e6,
+            int(seg.size),
+            {
+                "<4h": int((seg < 4).sum()),
+                "4-8h": int(((seg >= 4) & (seg < 8)).sum()),
+                "8-16h": int(((seg >= 8) & (seg < 16)).sum()),
+                "16-24h": int(((seg >= 16) & (seg <= 24)).sum()),
+                ">24h": int((seg > 24).sum()),
+            },
+        )
+    return total
+
+
+def build_spp_gas_bridge_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc_base):
+    """Return a ``p1_fleet_prep`` hook for the SPP gas commitment bridge.
+
+    The SPP leg of the P1-native committed-state bridge family (lane SPP-44):
+    SPP's merchant slow-start gas fleet — CC_REGULAR + ST_GAS by the rule-18
+    physics gate — is held at its measured plant-basis minimum stable load by
+    its own commitment physics (minimum run, minimum down, the restart
+    inequality at the model's own P0 duals). Detector:
+    :func:`_spp_gas_bridge_floor`; D-2 attribution:
+    ``MECH_SPP_GAS_COMMITMENT_BRIDGE``.
+
+    Returns ``None`` when the mechanism is off or the ISO is not SPP, so every
+    other path is byte-identical. ISO-exclusive with the CAISO, ERCOT, NYISO,
+    MISO and PJM P1-prep hooks by construction (each gates on its own ISO).
+    """
+    if not (getattr(config, "spp_gas_commitment_bridge", False) and iso == "SPP"):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_SPP_GAS_COMMITMENT_BRIDGE
+
+    def _fleet_prep(r0):
+        bridge_floor = _spp_gas_bridge_floor(
+            fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+        )
+        if bridge_floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays, bridge_floor, MECH_SPP_GAS_COMMITMENT_BRIDGE
+        )
+
+    return _fleet_prep
+
+
 _MISO_NIGHT_FLOOR_SUPPLIES = ("prb", "subbituminous")
 
 

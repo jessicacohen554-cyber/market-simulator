@@ -45,6 +45,9 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     # half reaches the p1_fleet_prep chain in all three orchestrators, so
     # it is a bridge this file must cover like any other.
     "build_pjm_reserve_p1_prep": "pjm_fleet_prep",
+    # SPP-44: the SPP leg of the gas commitment bridge family, registered on
+    # the roster in the same PR that wires it (the miso-113 lesson).
+    "build_spp_gas_bridge_p1_prep": "spp_bridge_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (

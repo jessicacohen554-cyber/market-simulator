@@ -1,0 +1,41 @@
+{
+  "cache_key": "130a2410b012cf93",
+  "case": "CES-P20+VOL-HI",
+  "years": {
+    "2026": {
+      "clean_region_duals": [
+        -0.0
+      ],
+      "objective_value": 5325942692.549529,
+      "co2_cap_price": null
+    },
+    "2027": {
+      "clean_region_duals": [
+        -0.0
+      ],
+      "objective_value": 6159235487.932737,
+      "co2_cap_price": null
+    },
+    "2028": {
+      "clean_region_duals": [
+        -0.0
+      ],
+      "objective_value": 7142592143.101585,
+      "co2_cap_price": null
+    },
+    "2029": {
+      "clean_region_duals": [
+        -0.0
+      ],
+      "objective_value": 6310217494.715771,
+      "co2_cap_price": null
+    },
+    "2030": {
+      "clean_region_duals": [
+        -0.0
+      ],
+      "objective_value": 7875532364.123633,
+      "co2_cap_price": null
+    }
+  }
+}

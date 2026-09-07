@@ -202,6 +202,7 @@ from market_sim.pipeline import (
     build_ercot_gas_bridge_p1_preps,
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
+    build_spp_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     reset_pass_timing_log,
     run_commitment_pass,
@@ -3618,6 +3619,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             nyiso_bridge_prep = build_nyiso_gas_bridge_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays, mc_base
             )
+            # P1-native SPP gas commitment bridge (SPP-44): the SPP leg of the
+            # same family on SPP's merchant slow-start gas fleet at its
+            # measured plant-basis minimum stable load; forward-native, so
+            # the forecast path carries it identically (D-5 parity). None for
+            # every non-SPP / gate-off run (byte-identical).
+            spp_bridge_prep = build_spp_gas_bridge_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays, mc_base
+            )
             # P1-native MISO regulated-coal night floor (miso-113):
             # committed-state floor on the regulated PRB/subbituminous fleet
             # at each plant's OWN measured within-run night level, net of its
@@ -3664,6 +3673,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ra_p1_prep
                     or ercot_bridge_prep
                     or nyiso_bridge_prep
+                    or spp_bridge_prep
                     or miso_night_floor_prep
                     or pjm_fleet_prep
                 ),

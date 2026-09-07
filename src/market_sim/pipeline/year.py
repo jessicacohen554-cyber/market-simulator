@@ -51,6 +51,7 @@ from market_sim.pipeline.commitment import (
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
+    build_spp_gas_bridge_p1_prep,
 )
 from market_sim.pipeline.kwargs import (
     apply_ercot_commitment_posture,
@@ -342,6 +343,14 @@ def run_year_solve(
     nyiso_bridge_prep = build_nyiso_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native SPP gas commitment bridge (SPP-44): the SPP leg of the same
+    # family on SPP's merchant slow-start gas fleet (CC_REGULAR + ST_GAS by
+    # unit physics) at its measured plant-basis minimum stable load. The
+    # ISO-exclusive sibling of the hooks above; None for every non-SPP /
+    # gate-off run (byte-identical).
+    spp_bridge_prep = build_spp_gas_bridge_p1_prep(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
     # P1-native MISO regulated-coal night floor (miso-113): committed-state
     # floor on the regulated PRB/subbituminous fleet at each plant's OWN
     # measured within-run night level, net of its _mustrun band (rule 19), on
@@ -381,6 +390,7 @@ def run_year_solve(
             ra_p1_prep
             or ercot_bridge_prep
             or nyiso_bridge_prep
+            or spp_bridge_prep
             or miso_night_floor_prep
             or pjm_fleet_prep
         ),

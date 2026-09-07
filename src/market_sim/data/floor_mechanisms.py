@@ -172,6 +172,22 @@ MECH_MISO_COAL_NIGHT_FLOOR: int = 22
 # the ST_GAS net-load drag) reconcile through maximum-composition with
 # per-mechanism attribution (ties keep the incumbent id).
 MECH_ERCOT_RUC_COMMITMENT: int = 23
+# SPP gas commitment bridge (ScenarioConfig.spp_gas_commitment_bridge, SPP-44):
+# the P1-native committed-state floor on SPP's merchant slow-start gas fleet
+# (gas_cc + gas_st by the rule-18 physics gate: min-down 4-12 h, $35-50/MW
+# starts on every committed tranche; the CT classes fail on their own 1 h
+# min-down and are never named). The same ISO-neutral detector as the CAISO /
+# ERCOT / NYISO legs (model.commitment.caiso_ra_mustoffer_min_gen via
+# pipeline.commitment.build_spp_gas_bridge_p1_prep), at the MEASURED
+# plant-basis minimum stable load (constants.SPP_GAS_BRIDGE_MIN_LOAD_FRAC) with
+# the measured minimum-run extension (constants.SPP_GAS_BRIDGE_MIN_RUN_HOURS)
+# and the commitment-real run screen. Its own id — the
+# MECH_NYISO_GAS_COMMITMENT_BRIDGE precedent — so D-2/D-4 attribution and
+# per-ISO arming stay independent (rule 25). Rule 19: SPP's gas classes carry
+# NO other floor, bridge, drag or posture (keeper-2 D-2: 0.0 % forced on
+# CC_REGULAR / ST_GAS / CT_PEAKER), so this stacks on nothing. A merchant
+# commitment floor — subject to the D-2 forced-share gate.
+MECH_SPP_GAS_COMMITMENT_BRIDGE: int = 24
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -198,6 +214,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_COAL_MIN_CONFIG: "coal_min_config",
     MECH_MISO_COAL_NIGHT_FLOOR: "miso_coal_night_floor",
     MECH_ERCOT_RUC_COMMITMENT: "ercot_ruc_commitment",
+    MECH_SPP_GAS_COMMITMENT_BRIDGE: "spp_gas_commitment_bridge",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -263,6 +280,9 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_HYDRO_ROR_FLAT: {"hydro_ror_split": False},
     # ercot-227 F3: ABLATED (visible, switchable merchant commitment floor).
     MECH_ERCOT_RUC_COMMITMENT: {"ercot_ruc_commitment_floor": False},
+    # SPP-44: the SPP leg of the gas commitment bridge family, ABLATED like
+    # the ERCOT and NYISO legs (a visible, switchable merchant floor).
+    MECH_SPP_GAS_COMMITMENT_BRIDGE: {"spp_gas_commitment_bridge": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
