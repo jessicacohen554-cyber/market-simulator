@@ -8726,3 +8726,127 @@ in-scope listed" with the per-ISO breakdown; inertness asserted by test; the mat
 cells; the CLAUDE.md bullet; rule-27 blob verification for any file ≥300 lines. Report which ISOs'
 frontier bundles now owe a re-solve on their natural cadence, and state plainly that Q58 is discharged.
 ```
+
+## r#56 NOTE (2026-09-07): both r#55 charters were never dispatched and are RE-EMITTED WHOLE below. The STATUS REBUILD charter is CHANGED in one way — it no longer names ISOs, because the S1 gate's target migrates between sittings (ERCOT+MISO at r#55, ERCOT+PJM now). D76-ARM-B is unchanged except for one added check: SPP now holds a keeper (`2026-09-07-spp-1-baseline`), so the mechanism matrix may carry a seventh column.
+
+## STATUS REBUILD — the `audit_keepers` S1 red, whatever it names at YOUR head (r#56, re-emitted)
+
+```
+You are a one-act status-rebuild session for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. BRANCH: claude/status-rebuild-s1 — FRESH off origin/main.
+
+THE DEFECT. scripts/audit_keepers.py --check is RED on main with an S1 failure: one or more
+frontend/data/backcast/status/<ISO>.js parts are stale vs the current verdicts.
+
+*** DO NOT TRUST ANY ISO LIST, INCLUDING ONE IN THIS CHARTER. *** S1 re-computes against whatever the
+current verdicts are, so the ISOs it names MIGRATE between sittings as owner lanes promote and fold —
+it read ERCOT + MISO on 2026-09-07 morning and ERCOT + PJM the same afternoon. Your first act is to
+RUN THE GATE AND READ WHICH ISOs IT NAMES AT YOUR HEAD, and those are the ISOs you rebuild. If it
+exits 0, say so and stop — a stale charter is not a reason to rebuild anything.
+
+YOUR ONLY JOB is to regenerate the status parts S1 names and commit them. Do not edit any keeper
+shard, any registry sidecar, calibration-complete.json, program-status.json, or any scorer. Nothing is
+solved, scored or registered. You are running a generator, not authoring a verdict.
+
+METHOD.
+ 1. Run python3 scripts/audit_keepers.py --check, paste the exact failure text, and list the ISOs.
+ 2. Rebuild ONE ISO AT A TIME, as the keepers README requires:
+    python3 scripts/build_status.py --iso <ISO>   for each ISO the gate named, in turn.
+ 3. Re-run audit_keepers.py --check and confirm exit 0.
+ 4. `git diff --stat` must touch ONLY the frontend/data/backcast/status/<ISO>.js files for the ISOs
+    the gate named. If it touches anything else — a third ISO, a sidecar, a keeper shard — STOP and
+    report what and why. A status rebuild that moves a file the gate did not name is not a status
+    rebuild.
+
+READ THE DIFF BEFORE YOU COMMIT and say in your close, per ISO, what actually changed: which keeper
+id, which determination, which per-year rows. If a determination TEXT changes for any ISO, quote both
+sides — a generated file is still a published artifact, and a silent determination change is exactly
+what S1 exists to surface. IF ANY ISO'S REBUILT DETERMINATION IS WORSE than what the file previously
+carried, STOP AND REPORT rather than committing: that is a rule-22 D-5(b) escalation to the owner, not
+a housekeeping commit.
+
+NOTE FOR CONTEXT, not a target: ERCOT has been stale across two consecutive director sittings while
+MISO cleared itself and PJM newly went stale. If ERCOT is still named at your head, look at WHY its
+part keeps going stale and say what you find — a part that never clears is a different defect from a
+part that goes stale after a promotion, and nobody has looked.
+
+EXIT: audit_keepers --check exits 0; the diff touches only the named ISOs' status parts; the per-ISO
+changes described in the close; commit and push. Do not open a PR unless asked.
+```
+
+## D76-ARM-B — arm `capacity_screen_peak_measured_hindcast`, variant B, under owner ruling Q58 (r#56, re-emitted)
+
+```
+You are the D76-ARM-B session, executing OWNER RULING Q58 (capx ledger §0az.3(a), r#55).
+MODEL: Opus. DATA PROFILE: code, widening to all only if a verification solve is needed.
+BRANCH: claude/capx-d76-arm-variant-b — FRESH off origin/main.
+
+WHY THIS CHARTER EXISTS. Q57 authorized this arm "via the D50 (b′-1) route" under a STOP requiring
+ZERO KEY MOVES. The D76-ARM lane verified that route and it FAILS STRUCTURALLY: since Q20/(b′-1),
+cache_key() drops a registered field IFF it equals its FROZEN declaration, so a config resolving the
+new default necessarily enters the hash — which is the mechanism that stops a post-flip armed run
+being served the pre-flip bundle. "Arm the gate" and "move no key" are the same sentence with opposite
+signs. The lane measured both variants, took neither, and returned the card. READ
+docs/handoffs/FINDING-capx-d76-arm-2026-09-07.md IN FULL before you touch anything — it is your
+pre-registration and its numbers are the ones you must reproduce.
+
+THE DESK'S ERROR, so you do not inherit it. My Q57 card demanded a criterion NO arm in this family has
+ever met. D75-R-ARM reported "21 of 153 configs move, ALL PJM FORECAST, 132 byte-identical"; D78-ARM
+reported "zero non-PJM moves, zero backcast moves … PJM forecast moves and is listed, because a moved
+key is the intended effect and must be inspectable." THE HOUSE STANDARD IS ZERO OFF-TARGET MOVES WITH
+IN-SCOPE MOVES LISTED. Report yourself in exactly that form.
+
+THE RULING. Arm capacity_screen_peak_measured_hindcast as VARIANT B: the declared default flip PLUS
+the non-hindcast coercion the five sibling gates already ship. THE __post_init__ COERCION IS EXPLICITLY
+AUTHORIZED BY THIS RULING — it is the one thing D76-ARM correctly refused to land on its own, because a
+construction change is not something a lane may add under a ruling whose route it must not reinterpret.
+You have that authority now; you do not have authority to invent a third variant.
+
+PRE-DECLARE, BEFORE YOU COMPUTE A SINGLE KEY, and reproduce D76-ARM's census to the config:
+  * expected: 34 moved, 0 OFF TARGET — PJM 10, MISO 9, NEISO 6, NYISO 5, ERCOT 3, CAISO 1
+  * expected: 0 backcast moves, 0 non-hindcast forecast moves
+  * the moved set is exactly the hindcast configs the gate governs, enumerated by id
+D76-ARM measured over 173 committed run_config.json. THE CORPUS HAS GROWN SINCE (SPP landed its first
+keeper, and other lanes have registered), so your denominator will differ and MAY your counts. If the
+per-ISO breakdown or the off-target count differs from the above, do NOT patch toward it: report the
+divergence, say which configs are new since 2026-09-07, and confirm the OFF-TARGET count is still
+ZERO. Zero off-target is the ruling's criterion; 34 is a measurement, not the gate.
+
+ASSERT THE INERT SET BY TEST, do not state it: the gate is inert by construction in every forecast
+year, every crossover forward year and every backcast, because a forecast year has no measured load
+and the growth path remains THE forecast methodology (rule 13's forward test, met by construction).
+D76-ARM re-verified this at its HEAD; re-verify at yours and ship the test.
+
+DO NOT ARGUE THE ARM FROM THE RESIDUAL. The basis is rule 14 [R-ACCURATE]: the de-grown estimate is
+wrong by −23.3 % to +15.4 % against the IDENTICAL array the LP dispatches, and rule 14's only
+exception (data misaligned to our representation) does not apply because it is the same array. That
+decisions move in only 2 of 6 ISOs (CAISO −2,532.391 MW of backstop gas CT; MISO 343.312 MW of coal
+saved from a 2024 exit, outside the scored window) is NOT a point for or against and must not be
+written as one — the four inert ISOs are evidence the gate is well-behaved. Do not arm only where it
+bites; that was offered to the owner and refused as fitted-mechanism selection (rule 1 [R-STRUCT]).
+
+MATRIX (rule 28): the mechanism's row plus a cell line in EVERY ISO shard (duty c — the one
+deliberately non-parallel edit), since this changes a solve-affecting default. *** SPP NOW HOLDS A
+KEEPER (2026-09-07-spp-1-baseline), so the matrix may carry a SEVENTH column. Check
+docs/codebase-site/data/mechanism-matrix/ for an SPP.js shard before you write duty (c)'s cells, and
+if it exists give SPP a cell too — as U (untested), never a transferred verdict (rule 25
+[R-ISO-SCOPE]). *** CLAUDE.md's Capacity Evolution section gets its bullet in the same PR.
+
+STOP GATES. (1) Any OFF-TARGET move at all, backcast or non-hindcast forecast — STOP; variant B is
+defined by having none. (2) Any forecast, crossover-forward or backcast row proving NOT inert — STOP;
+the construction is wrong. (3) Any determination flipping anywhere — STOP and report; the card's basis
+was "no determination flips anywhere". (4) A consumer of the seam that FINDING-capx-d76 §4.2 does not
+enumerate — STOP and route; rule 19 requires the enumeration complete before the seam moves.
+
+ROUTED, NOT YOURS: 15 committed run configs carry a cache_key the current rules cannot reproduce
+(registration lag; 6 explained by caiso_offer_surface_measured_ungrounded registered after those
+bundles solved). D76-ARM established this does NOT touch the census — a row's move verdict is
+hash-independent — so it is not a dependency. It is RESERVED as D85. Do not audit it here; if your
+census trips over one of the 15, name it and move on.
+
+EXIT: the gate armed as variant B with the coercion; the census reported as "N moved, 0 off target,
+in-scope listed" with the per-ISO breakdown and your denominator stated; inertness asserted by test;
+the matrix row + one cell per shard that exists; the CLAUDE.md bullet; rule-27 blob verification for
+any file ≥300 lines. Report which ISOs' frontier bundles now owe a re-solve on their natural cadence,
+and state plainly that Q58 is discharged.
+```
