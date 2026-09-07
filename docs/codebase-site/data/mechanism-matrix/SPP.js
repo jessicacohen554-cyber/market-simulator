@@ -66,7 +66,7 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.SPP = {
   iso: "SPP",
-  updated: "2026-09-06",
+  updated: "2026-09-07",
   keeper: "",
   gates: "",
   cells: {
@@ -270,7 +270,7 @@ window.MECH_MATRIX_SHARDS.SPP = {
     caiso_da_rt_two_settlement: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is CAISO's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
     caiso_ps_charge_shape_anchor: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is CAISO's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
     caiso_ps_plant_params: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is CAISO's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
-    measured_interface_limits: { cell: "U", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — U: UNTESTED. SPP has no keeper, no solve and no measurement on this mechanism; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.7." },
+    measured_interface_limits: { cell: "O", ev: "SPP-40 (2026-09-07) — O: OPEN, first structural evidence on SPP's own data. The SPP-53 N<->S link TTC (3,400 MW, FCITC construction from SPP's own flowgate limits) was exercised by the FIRST SPP solve, the rule-29(a) ONE-year screen on 2024 (PRECOMMIT-spp-40-2026-09-07.md §3, pushed before the solve; docs/handoffs/FINDING-spp-40-2026-09-07.md §2). The link is LIVE: at its bound in 1,776 of 8,760 h (20.3 %) — 877 h N->S (midday, North wind + coal exporting south) and 899 h S->N (overnight, South wind + South CC exporting north), link dual mean -6.0 $/MWh when N->S bound, +3.8 when S->N bound. The pre-registered P7 STOP gate FIRED on the direction leg (S->N 899 > N->S 877, a 22-hour tie against the market's 1.7:1 N->S dominance — 2,951 vs 1,751 RT hub hours), so the full span was NOT spent, no bundle registered, no keeper (rule 29(a)(2)). Season leg passed (Spearman +0.14 vs the measured monthly S-N spread); the model's mean |S-N| zonal spread is $0.99 vs $17.23 measured (17x under-separation). NOT a verdict on the TTC value, which was NOT moved (rule 14): the tie is driven by what the two bubbles contain (South wind and CC untrapped by the Oklahoma-internal constraints that bind 60-68 % of hours, FINDING-spp-14 §5), not by the pipe's width. Routed to SPP-DESK: FINDING-spp-53 §6 O-1 (asymmetric pair; S->N is live at the symmetric rating) and O-2 (identification width 2,645-11,121 MW); SPP-57 corroborated as the first lever. Re-issue recommended with the direction leg re-cut ex ante as a dominance ratio. No other cell moved (rule 28(d))." },
     internal_congestion_split: { cell: "U", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — U: UNTESTED. SPP has no keeper, no solve and no measurement on this mechanism; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.7." },
     caiso_fsno_subzonal_topology: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is CAISO's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
     tsa_transfer_derate: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is NYISO's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
@@ -380,3 +380,15 @@ window.MECH_MATRIX_SHARDS.SPP = {
     startup_co2_reporting: { cell: "U", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — U: UNTESTED. SPP has no keeper, no solve and no measurement on this mechanism; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.7." },
   }
 };
+
+/* SPP column re-stamp history (append-only).
+ * 2026-09-07 — SPP-40 (Fable): FIRST SPP SOLVE, the rule-29(a) screen on 2024, KILLED at the
+ *   pre-registered P7 STOP gate (direction leg: S->N at-bound 899 h > N->S 877 h, a tie against a
+ *   1.7:1 N->S market). Full span not spent; NO keeper, NO registered run; `keeper` / `gates` stay
+ *   empty. ONE cell moved: measured_interface_limits U -> O (the SPP-53 link is live at 3,400 MW in
+ *   20.3 % of hours; the tie is a bubble-contents question, routed to FINDING-spp-53 §6 O-1/O-2 and
+ *   SPP-57). Zero-LP rule-25 correction landed in the same lane (SPP coal bands 0.90/1.45 -> 1.0,
+ *   pipeline/backcast_config.py _SPP_OFFER_CURVE; six keepers unmoved) — a registry fix, not a
+ *   mechanism, so no cell for it. Records: docs/handoffs/PRECOMMIT-spp-40-2026-09-07.md,
+ *   docs/handoffs/FINDING-spp-40-2026-09-07.md.
+ */
