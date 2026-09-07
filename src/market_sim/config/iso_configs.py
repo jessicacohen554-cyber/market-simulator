@@ -1414,7 +1414,10 @@ def _pjm_config() -> ISOConfig:
             # on recall in either leg. Evidence:
             # FINDING-capx-d78r2-2026-09-06.md §§3-8 and
             # FINDING-capx-d78r3-2026-09-06.md §§3-5. Execution:
-            # PRECOMMIT-capx-d78arm-2026-09-06.md, FINDING-capx-d78arm-2026-09-06.md.
+            # PRECOMMIT-capx-d78arm-2026-09-06.md. The arming lane still OWES
+            # the armed pjm-t1h re-solve, its scoring and its registration
+            # (Q56 reads ARM, REGISTRATION REQUIRED); this override is the
+            # config act alone and claims nothing about a registered bundle.
             "retirement_sector_gate": True,
         },
     )

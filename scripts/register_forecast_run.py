@@ -349,21 +349,7 @@ VERDICT_MAP = {
     # a9c66d8ea25acb9d: THIS is the shipped PJM T1-H posture from here on, so
     # it takes the bare `pjm-t1h`. Solved 2021-2025 in ONE sequential
     # invocation, PJM solo, HEAD-guarded. FINDING-capx-d67arm-2026-09-06.md.
-    # capx D78-ARM (2026-09-06, owner ruling Q56): the retirement-screen SECTOR
-    # GATE is armed for PJM through _pjm_config, so the bare `pjm-t1h` recipe
-    # advances b518f5fe7d02f961 -> fb16fda2ddb0a94a and is RE-SOLVED at HEAD on
-    # the joint posture (D57 + D67 + Q55 + Q56). The D67-ARM record
-    # (a9c66d8ea25acb9d) is preserved verbatim at `pjm-t1h-pre-d78arm`, its
-    # own verdict standing -- the D45-R / D57 / D67 convention. (No
-    # `pjm-t1h-pre-d75r` step exists: the Q55-only posture, b518f5fe7d02f961,
-    # was never registered -- D75-R-ARM's steps 3-4 were HELD on the board
-    # lock and never released; its numbers survive in FINDING-capx-d75r §5.2.)
-    # The D78-R2 arm (bb6a60239d69508b, the gate WITHOUT Q55) was likewise
-    # never registered (FINDING-capx-d78r3 §2); the armed re-solve here is the
-    # registration that lane owed. PRECOMMIT-capx-d78arm-2026-09-06.md §2.2 /
-    # FINDING-capx-d78arm-2026-09-06.md.
-    "pjm-2021-2025-realized-t1h-d67arm": "pjm-t1h-pre-d78arm",
-    "pjm-2021-2025-realized-t1h-d78arm": "pjm-t1h",
+    "pjm-2021-2025-realized-t1h-d67arm": "pjm-t1h",
     # capx-D62 (2026-09-06): the PJM PUBLISHED GOING-FORWARD BAR
     # (`capacity_going_forward_bar_published_by_iso[PJM]` ON — the retirement
     # screen's bar, and through the D57 identity the sell-offer cap, becomes

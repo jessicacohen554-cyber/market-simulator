@@ -98,12 +98,15 @@ control.
 Because the key advances, **nothing is silently re-interpreted**: the D67-ARM
 bundle that held the bare ``pjm-t1h`` id keeps its own key
 (``a9c66d8ea25acb9d``) under its own id and is re-keyed in
-``register_forecast_run.py`` to ``pjm-t1h-pre-d78arm``. Measured over every
+``register_forecast_run.py`` to ``pjm-t1h-pre-d78arm`` **when the armed re-solve
+is registered** — that re-key lands WITH the registration, never before it, so
+``pjm-t1h`` never names a bundle that does not exist. Measured over every
 committed run config at the arm
 (``scripts/probes/capxd78arm_iso_override_no_op_check.py``, records under
-``docs/handoffs/d78arm/``): of **157** committed configs, the **21 PJM forecast**
-configs move and **all 136 others — every non-PJM config of every ISO, and
-every backcast config including PJM's two — are byte-identical**. The probe
+``docs/handoffs/d78arm/``, re-measured at HEAD 2026-09-07): of **173** committed
+configs, the **25 PJM forecast** configs move and **all 148 others — every
+non-PJM config of every ISO, and every backcast config including PJM's two —
+are byte-identical**. The probe
 differences the field's PRE-arm resolution against its POST-arm resolution
 (both off the shipped path) rather than the committed value against the armed
 value, because the field is already armed for MISO: nine pre-D53 MISO bundles
