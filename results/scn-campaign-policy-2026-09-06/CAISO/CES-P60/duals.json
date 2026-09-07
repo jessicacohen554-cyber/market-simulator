@@ -1,0 +1,34 @@
+{
+ "cache_key": "cb35acef1879e80e",
+ "case": "CES-P30",
+ "set_overrides": {
+  "federal_ces_premium_usd_per_mwh": 60.0
+ },
+ "years": {
+  "2026": {
+   "clean_region_duals": null,
+   "co2_cap_price": null,
+   "objective_value": 915231503.0330677
+  },
+  "2027": {
+   "clean_region_duals": null,
+   "co2_cap_price": null,
+   "objective_value": 1748548746.1341925
+  },
+  "2028": {
+   "clean_region_duals": null,
+   "co2_cap_price": null,
+   "objective_value": 1858693277.06725
+  },
+  "2029": {
+   "clean_region_duals": null,
+   "co2_cap_price": null,
+   "objective_value": -1210445869.3369806
+  },
+  "2030": {
+   "clean_region_duals": null,
+   "co2_cap_price": null,
+   "objective_value": -343991254.7040403
+  }
+ }
+}
