@@ -367,4 +367,73 @@ before the PR (29c); every number is in the FINDING.
 - Records: seven keeper keys unmoved; solve surface 0 moved; matrix row + 7 cells; SPP cells
   `spp_gas_commitment_bridge` and `gas_commitment_bridge` U → R; `keepers/SPP.json` untouched.
 
-**Next shorthand: spp-8.**
+## 2026-09-07 — spp-8: SPP MERIT-ORDER / MHR rotation — **BOTH candidate arms REFUSED at phase 0, ZERO LP spent**
+
+Lane SPP MERIT-ORDER (Opus), branch `claude/spp-merit-order-mhr-rotation-cbx1pu` off `origin/main`
+`e042a9f5`. **PRECOMMIT `docs/handoffs/PRECOMMIT-spp-merit-order-2026-09-07.md` and FINDING
+`docs/handoffs/FINDING-spp-merit-order-2026-09-07.md` pushed BEFORE any LP — and no LP followed.**
+Control = keeper-3 `2026-09-07-spp-3-screened-input` / `spp43_screened_B` (`git_sha 623184f3`), rule
+29(b) form 4. **`keepers/SPP.json` untouched; no bundle created, none registered, nothing to prune.**
+
+- **G-DRIFT re-run from 623184f3 → ALL HUNKS INERT, all three years.** 13 files, two mechanisms:
+  `spp_gas_commitment_bridge` (SPP-44 — its P1 hook returns `None` unless the field is set AND
+  `iso == "SPP"`; default `False`, absent from the keeper's recipe) and
+  `ercot_zonal_spread_ep_referenced` (ercot-255 — new bool, default `False`, ERCOT-only basis code).
+  Form 4 is now valid for **2023 too**: the price-family lane's one LIVE hunk (the SPP-41 seam) is
+  *inside* keeper-3. No control solve earned, none spent.
+- **Target, reproduced on keeper-3:** steepening `MHR(>95pct)/MHR(25-75pct)` measured **2.3375 /
+  2.0993 / 2.1069** vs keeper **1.5620 / 1.5163 / 1.6187**; the model is **+29.0 / +25.5 / +13.8 %**
+  too dear in the middle and **−13.9 / −9.4 / −12.6 %** too cheap at the top. A rotation, not a level.
+- **Phase 0, zero LP, on-recipe `fleet_only` rebuilds + the keeper's committed hourlies.** Every SPP
+  band multiplier is **1.0**, so a plant's four tranches are **price-identical**. Two consequences:
+  (a) **`pct_peaking` is INERT on price by measurement** — CT 7.0→40.0 and CC 8.0→30.0 move the LP
+  supply curve by **3.83 MW** and total pmax by **5.16 of 59,613 MW**, killing the handoff's arm 2;
+  (b) any marginal-*band* statistic is degenerate and is used as evidence nowhere.
+- **Who is marginal** (two identifications, agreeing; Method A median |mc − price| = **$0.0000**,
+  99.3–99.5 % within $0.50; Method B cap-weighted over every row within $0.25): **CT_PEAKER is the
+  marginal class in 24–27 % of MEDIAN-load hours** and 49–60 % of top hours; coal ≈ CC ≈ CT each
+  ~25 % at mid load. **That overlap is what bounds every offer lever** — a per-class multiplier lifts
+  the middle nearly as much as the top.
+- **And the middle is not an offer object:** at mid load the model leaves **3,084 / 3,725 / 2,829 MW**
+  of *available* coal and **3,271 / 2,898 / 3,261 MW** of *available* CC idle (util 0.51–0.75) while
+  dispatching 1.9–2.7 GW of peakers.
+- **ARM A — `tranche_startup_amortization` + v3 `tranche_startup_measured_runs`: REFUSED.** Rule 19
+  ADMITS it on SPP by the exact test that refused it on ERCOT (ERCOT-145 §1: fitted CT margins
+  +$13/+$35/+$292–451 vs a $2.9–4.0 measured amortization = stacking; **SPP's same rows carry
+  $0.00**). SPP's own artifact derived and committed: `campd_ct_run_lengths_SPP.csv` — 51 facilities
+  / 138 units / **50,460 measured runs**, class-fallback median **9.0 h** (SPP's CTs run longer than
+  every other ISO's: NYISO 4, CAISO 4, ERCOT 6, PJM 7, MISO 10 h). Footprint 384 rows /
+  **11,600–11,631 MW**, max markup **$2.14/MWh** cap-wt on CT econ+peak. At that MAXIMUM the ratio
+  moves **+0.147 / +0.676 / +1.008 %** against a pre-registered **≥ +10 %** — STOP by 10–68× — and
+  the LEVEL moves the wrong way (×1.0230 / ×1.0228 / ×1.0188). Granting the un-computable CC-peak
+  leg a 9 h (or 4 h) horizon turns rotation **negative in two of three years**.
+- **ARM B — the PER-CLASS differentiated offer curve: REFUSED, and the price-family lane's open
+  question is CLOSED.** Derived by one declared rule from SPP's own realized prices: COAL_PRB
+  **0.7838** / COAL_LIGNITE 0.8152 / CC_REGULAR 0.8028 / CT_PEAKER **0.8880** / CT_CHP 0.8019 /
+  ST_GAS 0.8949 / ST_CHP 0.8271 — the whole set spans **0.784–0.895**, i.e. SPP's own data says the
+  classes are barely differentiated (peaker-over-coal separation **+13.3 %** against a ~30 % deficit).
+  Ratio **+4.006 / +2.029 / +3.312 %** against ≥ +10 %, at LW level **0.8614 / 0.8608 / 0.8522**. The
+  same LEVEL lever the uniform quadruple was.
+- **The gate's threshold was INHERITED UNCHANGED** from the price-family lane's pre-registered G-2
+  (ratio must rise ≥ 10 % of control), so it cannot have been cut to fit. The zero-LP **re-clearing
+  predictor** was **VALIDATED against that lane's SOLVED 2025 arm**: LP-measured LW −9.05 % vs
+  predicted −8.11/−9.12 %; LP-measured rotation +0.52 % vs predicted +2.09 % — i.e. the instrument
+  **OVER-STATES rotation ≈ 4×**, reported against interest, and the bias can only make the gate
+  easier. Self-check is strict: only the **25.9–28.6 %** of hours where an all-1.0 reconstruction
+  returns the keeper's own price EXACTLY are retained.
+- **Reported at full magnitude, routed not fitted:** wind **+11.00 / +11.67 / +11.80 TWh** over
+  actual (the largest single class error); `CT_PEAKER` **+6.78 / +10.06 / +11.06** with `ST_GAS`
+  **−7.49 / −5.12 / −10.27** and `CC_REGULAR` **−4.26 / −8.24 / −10.19**; and the NEW measured lead —
+  SPP's ST_GAS fleet pays a **+29.3 % / +0.1 % / +7.9 %** delivered-gas premium over the CT fleet
+  (model fuel $4.149/2.930/4.118 vs $3.210/2.927/3.818 per MMBtu) and its under-run tracks it. That
+  is a rule-14 `[R-ACCURATE]` question about `gas_plant_monthly_fuel_pricing`, not this lane's channel.
+- **Checked, not assumed:** `energy_reserve_coopt` cannot be armed for SPP —
+  `model/reserves/spec.py::get_reserve_design` raises `ValueError` for SPP. The whole
+  AS-opportunity-cost layer is structurally absent, and it is the strongest routed lead for the
+  top-of-stack leg (SPP publishes its own RTBM reserve MCP, `data/raw/spp-or-mcp/`, 2023–2025).
+- **Records:** SPP shard cells `tranche_startup_amortization` **U → R** (covers v2+v3; v4 stays `U`,
+  never part of the arm) and `offer_curve_by_group` **R evidence widened** from "uniform quadruple"
+  to any per-band or per-class multiplier set. `campd_ct_run_lengths_SPP.csv` committed (rule 23, the
+  ERCOT-145 precedent). Rule 29(c) has nothing to delete: no screen ran.
+
+**Next shorthand: spp-9.**
