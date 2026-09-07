@@ -56,7 +56,7 @@ SHARED_FILE = STATUS_DIR / "shared.js"
 STATMODE_D7_FILE = DATA / "statmode_d7.json"
 
 # Display order for the ISO card grid (others fall in alphabetically after these).
-ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO")
+ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP")
 
 
 def _tail_note() -> str:
