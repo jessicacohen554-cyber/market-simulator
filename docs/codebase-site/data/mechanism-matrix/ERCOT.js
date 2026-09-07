@@ -73,6 +73,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     nyiso_scr_edrp_reserve_eligible: { cell: "." },
     nyiso_import_reconciliation: { cell: "." },
     nyiso_downstate_ct_gas_basis: { cell: "." },
+    ercot_ep_gas_basis_monthly: { cell: "O", ev: "ercot-254 (2026-09-07): BUILT, default-off, byte-identical off; the defect it repairs is measured zero-LP on the committed bundles' own fuel arrays (docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md). Screen pre-registered on 2025 by the mechanism's OWN footprint (docs/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md). NOT armed on any keeper." },
     nyiso_local_selfsupply: { cell: "." },
     nyiso_firm_imports: { cell: "." },
     nyiso_rcpf_postsolve_overlay: { cell: "." },

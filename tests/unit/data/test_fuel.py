@@ -3033,3 +3033,158 @@ def test_miso_gas_variable_transport_table_is_measured_and_nonempty():
     # off the Chicago proxy really do buy under the index) and is never clipped.
     values = list(by_plant.values())
     assert min(values) < 0.0 < max(values)
+
+
+# ---------------------------------------------------------------------------
+# ercot-254: MONTHLY resolution of the ERCOT delivered-gas LEVEL anchor
+# ---------------------------------------------------------------------------
+
+
+def test_ercot_ep_gas_basis_monthly_mean_equals_the_annual_form():
+    """The repair relocates a measured level; it never re-levels the year.
+
+    ``mean(EP[m] - HH[m]) == mean(EP) - mean(HH)`` because the mean is linear,
+    so the monthly basis carries exactly the annual form's value and the whole
+    change is a within-year redistribution back to the months the series was
+    measured in. Checked on every year the committed series covers, so a future
+    intake that broke the identity would fail here.
+    """
+    from market_sim.data.fuel import (
+        ercot_electric_power_gas_basis,
+        ercot_electric_power_gas_basis_monthly,
+    )
+
+    checked = 0
+    for year in range(2019, 2026):
+        monthly = ercot_electric_power_gas_basis_monthly(year)
+        if monthly is None:
+            continue
+        assert monthly.shape == (12,)
+        annual = ercot_electric_power_gas_basis(year)
+        assert annual is not None
+        np.testing.assert_allclose(float(monthly.mean()), annual, atol=1e-12)
+        checked += 1
+    assert checked >= 5
+
+
+def test_ercot_ep_gas_basis_monthly_is_none_for_a_forward_year():
+    """A year with no measured rows returns None under BOTH forms.
+
+    That is what keeps every forecast solve byte-identical: the caller degrades
+    to the same mean-zero spread it always did.
+    """
+    from market_sim.data.fuel import (
+        ercot_electric_power_gas_basis,
+        ercot_electric_power_gas_basis_monthly,
+    )
+
+    assert ercot_electric_power_gas_basis(2035) is None
+    assert ercot_electric_power_gas_basis_monthly(2035) is None
+
+
+def test_ercot_ep_gas_basis_monthly_gate_is_byte_identical_when_off():
+    """Default-off is byte-identical to the pre-repair annual branch."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 8760
+    fleet = _ercot_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    assert cfg.ercot_ep_gas_basis_monthly is False
+
+    annual = base.copy()
+    apply_ercot_zonal_gas_basis(annual, fleet, cfg, 2021)
+    explicit_off = base.copy()
+    apply_ercot_zonal_gas_basis(
+        explicit_off, fleet, cfg.with_overrides(ercot_ep_gas_basis_monthly=False), 2021
+    )
+    np.testing.assert_array_equal(annual, explicit_off)
+
+
+def test_ercot_ep_gas_basis_monthly_moves_uri_cost_back_into_february():
+    """The 2021 defect and its repair, on the applier itself.
+
+    The annual form smears February 2021's $61.88/Mcf print over all 8,760
+    hours: every ordinary hour is lifted and February is left too cheap. The
+    monthly form puts that cost back in February. Both must hold at once, and
+    the hour-weighted annual mean must barely move (only month lengths separate
+    the two, since the month-mean identity is exact).
+    """
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 8760
+    fleet = _ercot_gas_fleet(hours)
+    north = fleet.unit_ids.index("GAS_NORTH")
+    base = np.full((fleet.n_gen, hours), 3.72)  # 2021 Henry Hub
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+
+    annual = base.copy()
+    apply_ercot_zonal_gas_basis(annual, fleet, cfg, 2021)
+    monthly = base.copy()
+    apply_ercot_zonal_gas_basis(
+        monthly, fleet, cfg.with_overrides(ercot_ep_gas_basis_monthly=True), 2021
+    )
+
+    feb = slice(31 * 24, (31 + 28) * 24)
+    july = slice(
+        (31 + 28 + 31 + 30 + 31 + 30) * 24, (31 + 28 + 31 + 30 + 31 + 30 + 31) * 24
+    )
+
+    # February: the measured Uri cost lands where it was measured.
+    assert monthly[north, feb].mean() > annual[north, feb].mean() + 40.0
+    # An ordinary month: the smeared lift is removed.
+    assert monthly[north, july].mean() < annual[north, july].mean() - 4.0
+    # The annual level barely moves — this is a redistribution, not a re-level.
+    # The residual is pure month-length weighting: the month-mean identity is
+    # exact (see the identity test above), but February carries 28/365 of the
+    # hours rather than 1/12, so down-weighting a +54.88 $/MMBtu February lowers
+    # the HOUR-weighted 2021 level by 0.350 $/MMBtu. That is the entire level
+    # effect of the repair in the worst year in the record.
+    assert abs(monthly[north].mean() - annual[north].mean()) < 0.40
+
+
+def test_ercot_ep_gas_basis_monthly_is_near_inert_in_the_training_window():
+    """In 2023-2025 the same repair is a sub-$0.3/MMBtu redistribution.
+
+    The defect is a property of 2021's extreme within-year distribution, not of
+    the construction firing hard everywhere: the training years' monthly prints
+    are tame, so the repair moves each hour by well under a dollar and moves the
+    annual level essentially not at all.
+    """
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 8760
+    fleet = _ercot_gas_fleet(hours)
+    north = fleet.unit_ids.index("GAS_NORTH")
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+
+    for year, hub in ((2023, 2.54), (2024, 2.19), (2025, 3.52)):
+        base = np.full((fleet.n_gen, hours), hub)
+        annual = base.copy()
+        apply_ercot_zonal_gas_basis(annual, fleet, cfg, year)
+        monthly = base.copy()
+        apply_ercot_zonal_gas_basis(
+            monthly, fleet, cfg.with_overrides(ercot_ep_gas_basis_monthly=True), year
+        )
+        delta = np.abs(monthly[north] - annual[north])
+        assert delta.max() < 1.5, f"{year}: max hourly move {delta.max()}"
+        assert delta.mean() < 0.30, f"{year}: mean hourly move {delta.mean()}"
+        assert abs(monthly[north].mean() - annual[north].mean()) < 0.05
+
+
+def test_ercot_ep_gas_basis_monthly_leaves_other_isos_alone():
+    """Rule 25 [R-ISO-SCOPE]: the gate cannot reach a non-ERCOT solve."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(
+        iso="PJM",
+        hours=hours,
+        ercot_zonal_gas_basis=True,
+        ercot_ep_gas_basis_monthly=True,
+    )
+    out = base.copy()
+    apply_ercot_zonal_gas_basis(out, fleet, cfg, 2021)
+    np.testing.assert_array_equal(out, base)

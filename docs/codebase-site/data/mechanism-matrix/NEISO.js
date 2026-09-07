@@ -73,6 +73,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     nyiso_scr_edrp_reserve_eligible: { cell: "." },
     nyiso_import_reconciliation: { cell: "." },
     nyiso_downstate_ct_gas_basis: { cell: "." },
+    ercot_ep_gas_basis_monthly: { cell: ".", ev: "ERCOT-gated in code (apply_ercot_zonal_gas_basis returns early unless iso == ERCOT); row minted ercot-254 2026-09-07. No verdict transfers (rule 25 [R-ISO-SCOPE])." },
     nyiso_local_selfsupply: { cell: "." },
     nyiso_firm_imports: { cell: "." },
     nyiso_rcpf_postsolve_overlay: { cell: "." },

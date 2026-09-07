@@ -24,6 +24,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays
 
 from .._shared import (
+    _expand_monthly_to_hourly,
     _FUEL_ERCOT_EP_GAS_DATATYPE,
     _FUEL_TAKEORPAY_DATATYPE,
     _FUEL_ZONAL_HUB_DATATYPE,
@@ -235,6 +236,71 @@ def ercot_electric_power_gas_basis(
     if not hh_months:
         return None
     return ep_mmbtu - float(np.mean(hh_months))
+
+
+def ercot_electric_power_gas_basis_monthly(
+    year: int, path: Path | None = None, henry_hub_path: Path | None = None
+) -> np.ndarray | None:
+    """Return the SAME measured TX electric-power gas basis, resolved MONTHLY.
+
+    :func:`ercot_electric_power_gas_basis` reduces the twelve monthly prints of
+    EIA series N3045TX3 to one annual mean before differencing it against the
+    annual mean of Henry Hub. This returns the per-month basis instead —
+    ``EP[m] / 1.036 - HH[m]`` for ``m = 1..12`` — the identical measured series
+    at its own native resolution, with no new data, no new source and no free
+    parameter.
+
+    **Why the annual mean is the wrong statistic and this is the right one.**
+    The quantity being anchored is a *basis*: a spread between two monthly
+    series, one of which (the model's own gas price) the merit order already
+    prices month by month. Reducing one side to a scalar is a resolution
+    mismatch, harmless while the within-year distribution is tame and
+    catastrophic when it is not. The 2021 print is not tame: February 2021
+    (Winter Storm Uri) reads $61.88/Mcf against a $4.49 median over the other
+    eleven months — 30.7 standard deviations above their mean — so the annual
+    mean is a measurement of February, applied flat to all 8,760 hours. It
+    lifts every ordinary hour of 2021 by ~+$5.3/MMBtu and, by the same
+    arithmetic, removes that cost from February itself
+    (``docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`` SS1-SS3).
+
+    **The repair moves no annual level.** The mean over months of
+    ``EP[m] - HH[m]`` is identically ``mean(EP) - mean(HH)`` — the mean is
+    linear — so this is a pure within-year *relocation* of a measured quantity
+    back to the months it was measured in, not a re-level. Only the
+    hour-weighting (month lengths differ) separates the two annual means.
+
+    Forward behaviour is unchanged: a year with no EP rows or no Henry Hub
+    months returns ``None`` here exactly as the annual form does, so a forecast
+    year degrades to the same mean-zero spread and every non-backcast solve is
+    byte-identical (rules 13 ``[R-MEASURED]`` / 14 ``[R-ACCURATE]``).
+
+    Args:
+        year: The solve year.
+        path: Override for the EP series CSV (tests).
+        henry_hub_path: Override for the Henry Hub monthly series (tests).
+
+    Returns:
+        A ``(12,)`` array of $/MMBtu basis values indexed Jan..Dec, or ``None``
+        when the EP series, any of the twelve EP months, or any of the twelve
+        Henry Hub months is missing for ``year`` — the fail-closed condition
+        that keeps a partial year on the annual form rather than on a silently
+        gap-filled monthly one.
+    """
+    frame = _load_ercot_electric_power_gas(path)
+    if frame is None:
+        return None
+    sub = frame[frame["year"] == year]
+    if sub.empty:
+        return None
+    by_month = {int(m): float(v) for m, v in zip(sub["month"], sub["price_usd_mcf"])}
+    if any(m not in by_month for m in range(1, 13)):
+        return None
+    hh = _pkg_ns()._henry_hub_monthly(henry_hub_path)
+    if any((year, m) not in hh for m in range(1, 13)):
+        return None
+    ep = np.array([by_month[m] for m in range(1, 13)], dtype=float) / _MCF_TO_MMBTU
+    hub = np.array([hh[(year, m)] for m in range(1, 13)], dtype=float)
+    return ep - hub
 
 
 _ERCOT_GAS_SPOT_CACHE: dict[tuple[Path, Path], dict[str, float] | None] = {}
@@ -488,22 +554,66 @@ def apply_ercot_zonal_gas_basis(
     # LEVEL correction: replace the flat -0.50 scalar already in the price with the
     # measured TX electric-power delivered basis. 0.0 if the series is unavailable
     # (forward years) -> pure mean-zero spread, the prior behaviour.
-    ep_basis = ercot_electric_power_gas_basis(year)
+    #
+    # ercot-254: under ``config.ercot_ep_gas_basis_monthly`` the SAME measured
+    # series enters at its native MONTHLY resolution
+    # (:func:`ercot_electric_power_gas_basis_monthly`) instead of as one annual
+    # mean. The annual form is a resolution mismatch — it differences a monthly
+    # series against a monthly Henry Hub after collapsing one side to a scalar —
+    # and it fails outright when a year's within-year distribution is extreme:
+    # February 2021 (Uri) is 30.7 sigma above the other eleven months, so the
+    # 2021 annual mean lifts every ordinary hour by +5.78 $/MMBtu and takes that
+    # same cost OUT of February. Because the mean is linear, the monthly form's
+    # mean over months is identically the annual form's value — this relocates a
+    # measured quantity back to its measured months and moves no annual level,
+    # adding no data, no source and no free parameter (rules 13/14; the
+    # measurement is FINDING-ercot254-2021-offer-level-root-cause-2026-09-07).
+    # Default OFF, ERCOT-only, and inert wherever the monthly series is
+    # incomplete, so every other ISO and every forecast is byte-identical.
     scalar = GAS_BASIS_DIFFERENTIAL.get("ERCOT", 0.0)
-    level_corr = (ep_basis - scalar) if ep_basis is not None else 0.0
-    gen_offset = level_corr + zone_spread
-    floored = np.maximum(
-        fuel_prices[gas_rows, :] + gen_offset[:, np.newaxis], _GAS_PRICE_FLOOR
+    level_monthly = (
+        ercot_electric_power_gas_basis_monthly(year)
+        if getattr(config, "ercot_ep_gas_basis_monthly", False)
+        else None
     )
+    ep_basis = ercot_electric_power_gas_basis(year)
+    if level_monthly is not None:
+        # (n_gas, T) offset: the mean-zero zonal spread per unit plus this
+        # hour's month's own measured level correction. np.repeat/take only —
+        # no Python loop over hours (rule 2 [R-VECTOR]).
+        # The SAME hour->month seam the monthly gas price itself is expanded
+        # through (``_shared._expand_monthly_to_hourly``, non-leap 365-day table,
+        # rule 8 [R-8760]) — so the basis lands on exactly the months its Henry
+        # Hub counterpart does, and one mechanism owns the mapping (rule 19
+        # [R-ONE-MECH]). Vectorised fancy-index, no loop over hours (rule 2).
+        level_hourly = _expand_monthly_to_hourly(
+            level_monthly - scalar, fuel_prices.shape[1]
+        )
+        gen_offset_2d = zone_spread[:, np.newaxis] + level_hourly[np.newaxis, :]
+        floored = np.maximum(fuel_prices[gas_rows, :] + gen_offset_2d, _GAS_PRICE_FLOOR)
+        level_corr = float(np.mean(level_monthly - scalar))
+    else:
+        level_corr = (ep_basis - scalar) if ep_basis is not None else 0.0
+        gen_offset = level_corr + zone_spread
+        floored = np.maximum(
+            fuel_prices[gas_rows, :] + gen_offset[:, np.newaxis], _GAS_PRICE_FLOOR
+        )
     fuel_prices[gas_rows, :] = floored
     logger.info(
         "ERCOT zonal gas basis (%d): %d gas units; level %+.2f -> measured EP "
-        "%+.2f (corr %+.2f), zonal spread %.2f..%.2f $/MMBtu%s",
+        "%+.2f (corr %+.2f%s), zonal spread %.2f..%.2f $/MMBtu%s",
         year,
         gas_rows.size,
         scalar,
         (ep_basis if ep_basis is not None else scalar),
         level_corr,
+        (
+            " MONTHLY, month corr "
+            f"{float((level_monthly - scalar).min()):+.2f}.."
+            f"{float((level_monthly - scalar).max()):+.2f}"
+            if level_monthly is not None
+            else ""
+        ),
         float(zone_spread.min()),
         float(zone_spread.max()),
         (

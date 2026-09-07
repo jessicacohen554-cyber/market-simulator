@@ -1325,6 +1325,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # existing keeper keeps its key; the armed A/B leg hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced",
+    # ercot-254 monthly resolution of the ERCOT delivered-gas LEVEL anchor,
+    # default off: dropped from the hash at its False default so every
+    # pre-existing ERCOT key (the designated keeper's included) stays
+    # byte-stable — the off path takes the identical annual-mean branch, so it
+    # is byte-identical by construction. An armed run prices a different
+    # delivered-gas array (a different merit order) and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ercot_ep_gas_basis_monthly",
     # Hindcast announced-exit verification (owner directive 2026-08-22, the
     # PJM Byron/Dresden false-retire investigation): dropped from the hash at
     # its False default so every pre-existing cache key of all six ISOs stays
@@ -2012,6 +2020,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-213 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
+    # Added by ercot-254 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_ep_gas_basis_monthly": "False",
     # Added by miso-170 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_plant_exclusions": "False",
@@ -15474,6 +15485,44 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
     ercot_zonal_gas_basis: bool = False
 
+    # Tier 3 (calibration) — ercot-254. Resolve the ERCOT delivered-gas LEVEL
+    # anchor MONTHLY instead of as one annual mean. The anchor is a *basis*: a
+    # spread between the measured TX electric-power delivered gas series (EIA
+    # N3045TX3, monthly) and Henry Hub (monthly, already priced month by month
+    # by the merit order). ``ercot_electric_power_gas_basis`` collapses the EP
+    # side to a single annual mean and adds the difference as one flat scalar to
+    # every gas unit in all 8,760 hours. That is a resolution mismatch: harmless
+    # while a year's within-year distribution is tame, and a defect when it is
+    # not. February 2021 (Winter Storm Uri) prints $61.88/Mcf against a $4.49
+    # median over the other eleven months — 30.7 sigma above their mean — so the
+    # 2021 annual mean is a measurement OF FEBRUARY, and applying it flat lifts
+    # every ordinary 2021 hour by +5.78 $/MMBtu (vs +0.20/+0.50 in 2022/2023)
+    # while removing that same cost from February itself. Measured consequence:
+    # CC_REGULAR and ST_GAS pay +7.33 $/MMBtu over hub in 2021 against -0.13 in
+    # 2022 and -0.08 in 2023, the CT-CC merit-order spread collapses $23.12 ->
+    # $4.78, and the model overshoots the eleven non-Uri months by +144% while
+    # undershooting Uri by 14.9% — one term, both signs
+    # (docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md).
+    #
+    # ON, the SAME series enters at its own native monthly resolution:
+    # basis[m] = EP[m]/1.036 - HH[m], applied per hour by calendar month. No new
+    # data, no new source, ZERO free parameters (rules 21 [R-DOF] / 24
+    # [R-REGISTRY]). Because the mean is linear, the monthly basis's mean over
+    # months is IDENTICALLY the annual form's value — this relocates a measured
+    # quantity back to the months it was measured in and moves no annual level,
+    # so it is an accuracy repair under rule 14 [R-ACCURATE] rather than a
+    # re-level. Forward-reproducible and condition-responsive exactly as the
+    # annual form is (rule 13 [R-MEASURED]): a year with no EP rows returns None
+    # under both forms and degrades to the same mean-zero spread.
+    #
+    # Default OFF; no-op unless ercot_zonal_gas_basis is also on and
+    # iso == "ERCOT", and additionally inert whenever any of the year's twelve
+    # EP or Henry Hub months is missing (fail-closed to the annual form rather
+    # than to a gap-filled monthly one). Every other ISO and every forecast is
+    # byte-identical. See market_sim.data.fuel.apply_ercot_zonal_gas_basis and
+    # .basis.ercot.ercot_electric_power_gas_basis_monthly.
+    ercot_ep_gas_basis_monthly: bool = False
+
     # Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis above.
     # The West/Panhandle basis in data/raw/ercot_zonal_gas_hub.csv is a Waha *hub*
     # (pooling-point) basis (2024 -2.19): the takeaway-constrained price at which
@@ -19260,6 +19309,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_neighbour_hourly_spp": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
+    "ercot_ep_gas_basis_monthly": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
     "oil_primary_bin_fuel": 3,
