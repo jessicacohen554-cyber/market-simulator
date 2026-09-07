@@ -251,6 +251,32 @@
     "rt_gt": 59,
     "threshold": 200.0
    }
+  },
+  "SPP": {
+   "2023": {
+    "da_coverage": 0.999,
+    "da_gt": 6,
+    "hours": 8760,
+    "rt_coverage": 0.999,
+    "rt_gt": 42,
+    "threshold": 200.0
+   },
+   "2024": {
+    "da_coverage": 0.999,
+    "da_gt": 35,
+    "hours": 8760,
+    "rt_coverage": 0.999,
+    "rt_gt": 59,
+    "threshold": 200.0
+   },
+   "2025": {
+    "da_coverage": 0.999,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 0.999,
+    "rt_gt": 68,
+    "threshold": 200.0
+   }
   }
  },
  "note": "Actual scarcity-tail hour counts per ISO-year at the rubric \u00a75 threshold. rt_gt (real-time hourly hub average) is the actual RT scarcity tail the C3c criterion gates on for every ISO (rubric v2.7, owner amendment 2026-07-16); da_gt (day-ahead) is the reported non-gated diagnostic companion (prices scarcity expectations \u2014 embeds the DA forecast-risk premium). Counts over covered hours only \u2014 a coverage < 1.0 makes the count a lower bound. Source: data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub series). Regenerate with scripts/data/derive_actual_tail.py when a source series updates (rule 23: re-derivation commits cite the data change). Years restricted by the rule-22 TIER gates (scripts/lib/holdout_policy): 2023-2025 always; a validation-ladder year (2020/2021/2022) only for an ISO in the marker file's `complete` block; a locked-test year (2019, H1-2026) only for an ISO in `final`. The tier marker is the SOLE gate \u2014 any year not enumerated as train or validation (2017, 2018) fails closed to the locked tier.",
@@ -260,6 +286,7 @@
   "MISO": 200.0,
   "NEISO": 300.0,
   "NYISO": 300.0,
-  "PJM": 200.0
+  "PJM": 200.0,
+  "SPP": 200.0
  }
 }
