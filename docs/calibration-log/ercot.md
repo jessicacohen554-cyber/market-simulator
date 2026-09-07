@@ -13626,4 +13626,119 @@ Record: `docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`,
 `docs/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`,
 `docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md`.
 
-**Next shorthand: ercot-255** (ercot-199 remains unclaimed)
+## ercot-255 — 2026-09-07 — THE 2021 C1 DRIVER IS FOUND AND FIXED: the zonal gas SPREAD is referenced to **Henry Hub** while the LEVEL it competes against is the **EP series**, so a statewide fuel event enters the merit order as false **LOCATIONAL** dispersion. The repair is BUILT, screened clean on 2025, and **flips C1 FAIL → PASS on 2021** (CC_REGULAR's −16.02 TWh miss → **−3.95**). **NOT PROMOTED** — blocked by the same two-config `meta.json` provenance defect that stopped ercot-254
+
+**Lever B taken; Lever A refused on evidence.** The charter offered a daily
+delivered-gas basis (A) or the 2021 per-zone spread (B). Phase 0 swept the disk:
+**no daily Waha / HSC / Katy series exists on disk and none is free from EIA**
+(the derive script says so independently — *"the Waha average is NOT derivable
+from an in-repo/API source"*), daily Henry Hub cannot substitute because ERCOT
+already runs `gas_daily_shape` **as a keeper** (cell `K`) and it is
+mean-preserving on the commodity while February 2021's basis is additive and flat
+at **+$54.4/MMBtu**, and the two adjacent cells are already adjudicated `G` for
+ERCOT (`gas_monthly_actuals` rejected at Run-77; `gas_plant_monthly_fuel_pricing`
+off by measured design). Re-entering that family without new evidence is the
+DO-NOT-REDO rule 28 forbids. A stands as a data-intake charter.
+
+**Phase 0 (zero LP) — and the object is NOT the one the charter named.** Within
+the three EIA-923-measured zones the 2021 raw spread is **1.94 $/MMBtu** against
+1.10 in 2023 — barely wider. `ercot_zonal_gas_hub.csv` **mixes two provenance
+classes in one column**: North/Northeast/South_Central/South carry Sch5
+qty-weighted **delivered** prices minus HH (statewide **level** + differential)
+while Houston (**124 fleet gas plants, ZERO Sch5 cost reporters**) and
+West/Panhandle carry cited hub-vs-hub conventions (differential only). The
+capacity-weighted recentring is documented as dropping *"the EIA-923
+regulated-utility level bias"* and **cannot**: one mean over a mixed vector
+removes a BLEND, so the F923 level survives into the SPREAD with weight
+`1 − w923 = 0.33484`. The surviving term is **`ep_basis` — the same statewide
+quantity `level_corr` already carries in full** (rule 19 `[R-ONE-MECH]` double
+count): +0.0045/−0.0858/−0.4634 in 2023/2024/2025 and **+5.2779 $/MMBtu in
+2021**. The 6.45 $/MMBtu "cross-zonal dispersion" is **~70 % common mode**. The
+arithmetic reproduces the committed solve logs to the cent (2021 `−4.04..2.41`,
+2023 `−0.92..1.03`) and the F923 sample reproduces the committed coverage exactly.
+
+**The repair** (`ercot_zonal_spread_ep_referenced`, default off, ERCOT-only):
+reference the F923 rows to that same series. **Zero new data, ZERO free
+parameters** — `ep_basis` is already loaded by the same function and *no
+weighting choice exists* — and the composition becomes an **identity**. Group
+membership is read from the table's own `source` column, never hardcoded, and
+fails closed to a no-op, which includes every forecast year.
+
+**SCREEN (2025, named ex ante on the mechanism's own footprint 0.1919 $/MMBtu vs
+0.0382/0.0020 in 2024/2023): EVERY GATE PASSES.** Pre-solve, each zone's delta is
+ONE exact constant reproducing the registered prediction to six decimals, non-gas
+rows are exactly 0, and **level neutrality at the mechanism's own seam is MACHINE
+ZERO** in 2023/2025/2021 (−5.5e-17 / −1.9e-17 / −4.9e-16). Post-solve vs a
+same-HEAD control one flag apart: Δ system LW LMP **−0.0477 $/MWh** vs the $5.00
+bar, **ZERO status flips across 21 scored records** (C8 PASS in both), slack and
+dump exactly **0.0000** in both, and CT_PEAKER energy **RISES +0.8555 TWh** as the
+direction gate required. **S-1 correct on all five classes**, and COAL_PRB moves
+only +0.2965 TWh — closing *by construction* the coal-displacement blind spot that
+made two of ercot-254's three class predictions wrong in sign. **NOT A 2021 FIT,
+and the sign proves it**: `ep_basis` is NEGATIVE in every training year, so the
+arm **WIDENS** the 2025 spread range 2.970 → 3.433 and collapses 2021's only.
+G-CTRL: the one control solve measured HEAD drift at **+0.0293 $/MWh**, the same
+value ercot-254 measured at a different HEAD, licensing form 4 for the rest.
+
+**A gate correction the gates themselves caught, before any LP ran.** PRECOMMIT
+G-1c asserted West would be exactly inert, transcribed from ercot-254's G-1″.
+That is *their* arm's property: `apply_ercot_west_netload_gas_shape` is
+annual-**mean**-preserving, so their within-year relocation left `p_mean`
+untouched while this arm moves it by construction. Corrected in a pushed addendum
+before the screen solved.
+
+**TRAINING WINDOW NEAR-INERT** — 2024 C3a −0.2 % → −0.0 %, C3b 0.131 → 0.132;
+2025 C3a −7.9 % → −8.0 %, C3b 0.101 → 0.101; C3c byte-identical both years
+(22 h, 1 h); C8 inert. 2023 is **CONFOUNDED, not moved**: `replay_keeper` applies
+the FORWARD config to 2023, reading the ercot-234 numbers (−39.7 %, 0.730) — a
+mechanism whose 2023 footprint is 0.0020 $/MMBtu cannot move C3a by 32 points.
+
+**2021 RE-TEST (touchpoint-loop step 4; eight predictions committed BEFORE the
+solve): C1 `fuelmix` FLIPS FAIL → PASS.** CC_REGULAR **97.226 → 109.294** against
+113.245 (miss **−16.02 → −3.95**, −75 %); CT_PEAKER **10.641 → 6.043** (+6.00 →
+**+1.40**, −77 %); ST_GAS **17.105 → 11.177** (+4.76 → **−1.17**, −75 %); CC_CHP
+**30.027 → 28.786** (+2.90 → **+1.65**). C2 goes from "C1 flags: CC_REGULAR" to
+"all classes in band". **C3a +28.2 % → +26.2 %** and **C3b 0.361 → 0.333** (both
+still FAIL); **C3c HOLDS PASS, 234 → 230 h** against actual 258 — the contrast
+with ercot-254's 234 → 688 is the point: that was a LEVEL effect and this arm has
+none. **Every one of the twelve months improves**; ex-Feb +160.8 % → **+149.0 %**.
+
+**THE COST, reported at full magnitude: C8 forced-share on ST_GAS flips PASS →
+FAIL, 20.8 % → 37.6 %.** The decomposition is the finding, not an excuse: the drag
+floor's MW are a function of net load alone and **identical in both arms**, forced
+volume rose only **+0.6432 TWh** while class energy fell **−5.9278**, and at the
+**measured** 2021 ST_GAS volume the floor forces **34.1 % either way** — run253
+passed C8 only because its ST_GAS was over-running by **+38.6 %**. The arm
+**revealed** an over-budget floor rather than causing one. Unadjudicated: rule 16's
+escalation needs a cited `D4_WINDOWS` entry and a D-1 shape check.
+
+**PREDICTIONS: 6 of 8 fully correct**, P8 within **$0.71** of its registered
+target (CT−CC mc spread 16.73 → **33.19** vs the ~33.9 fuel-scaled 2023 value),
+P6 direction-right but outside its band (2.0 pts = 7.1 % vs a registered < 5 %),
+and **P4 WRONG IN SIGN — I registered ST_GAS as an expected ADVERSE outcome and it
+FELL 5.93 TWh.** The error is the mirror of the one ercot-254 diagnosed in itself:
+I reasoned on each class's own Δmc and ignored the **competition for the freed
+energy** — CC_REGULAR and ST_GAS got near-identical relief ($5.44 vs $5.56/MWh),
+but CT_PEAKER's +$28.68 displacement freed ~4.6 TWh into a 33 GW CC fleet with
+16 TWh of headroom, so CC absorbed it *and* took ST_GAS's marginal hours.
+
+**NOT PROMOTED, and the blocker is not the merits.** The merged two-config
+`meta.json` carries neither `ercot_offer_swcap_clip` nor the carve-out CC `peak`
+band 151.008, so `replay_keeper` applies the forward config to 2023 and **rule 16
+`[R-ALLYEARS]` is unsatisfiable from that bundle** — the identical blocker that
+stopped ercot-254, **now blocking a second consecutive mechanism. It is the
+binding constraint on ERCOT promotions and should be fixed before the next
+attempt.** Rule 22 also forbids banking a validation-rung gain, and the C8
+question is open. The mechanism stays BUILT and default-OFF, matrix cell `O`,
+**the leading candidate for the next ERCOT keeper**, one CLI switch from a
+promotion A/B.
+
+**Rule 30(c): ERCOT stays CALIBRATED on the train tier**, keeper
+`2026-09-05-ercot248-two-config-keeper` unchanged. All four bundles deleted before
+merge (rule 29(c)); nothing registered, no dashboard entry moved, nothing tuned on
+2021. Record:
+`docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md`,
+`docs/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`,
+`docs/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`.
+
+**Next shorthand: ercot-256** (ercot-199 remains unclaimed)
