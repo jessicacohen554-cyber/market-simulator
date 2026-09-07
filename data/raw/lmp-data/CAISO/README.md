@@ -116,6 +116,22 @@ CAISO 2021 bench year is emitted and the quarter cannot masquerade as a full
 one. Completing 2021 means crawling the remaining nine months by the same
 command; nothing else changes.
 
+**`CAISO_rtm_hourly_2021.csv` is INCOMPLETE and being filled incrementally
+(2026-09-07).** RTM is served one operating hour per request, so Q3 alone is
+2,208 requests, and OASIS applies a SUSTAINED-RATE quota that a short DAM
+crawl never reaches: measured here, RTM trade dates 1 and 2 cost 208 s and
+217 s, after which the rate collapsed by roughly an order of magnitude
+(HTTP 429 with the fetcher's exponential back-off absorbing it). The crawl is
+therefore committed day-by-day as trade dates complete — **read the file's own
+`interval_start_gmt` span for the authoritative coverage; do not assume Q3 is
+whole.** Rows already present are final: each trade date is folded only after
+all 24 of its hour-groups are on disk, the merge de-dups on
+(`interval_start_gmt`, `node`) keeping the last write, and RTM v3 populates
+`MGHG` exactly as the 2023-2025 files do. Resuming needs only
+`fetch_caiso_oasis_grp.py --market rtm --start <first missing date> --end
+2021-09-30`. As with DAM, `CAISO_MIN_HOURS = 6500` means no 2021 bench year is
+emitted from a partial file.
+
 **Consumers of the zips** (all tolerate their absence at tip):
 `scripts/data/fold_caiso_oasis_grp_zips.py` — the standing folder that turns
 restored GRP zips into the hourly aggregates above (the aggregates already
