@@ -1073,10 +1073,60 @@ Clauses (b) and (c) are untouched, as are every marker, the holdout freeze, ever
 every determination. Verified by headless render of all six ISO keeper pages plus the Charts and
 Tables views and a folded deep link.
 
-## 16. Changes to this file
+## 16. Rule 31 `[R-RETAIN]` — never delete a solve's results until the owner has decided on promotion (owner, 2026-09-07)
+
+**Owner instruction, verbatim:** *"Do not delete results until I've decided on promotion make it
+a rule"* — issued in session ercot-255 immediately after the incident below, and preceded by
+*"Why would you delete wtf"*.
+
+**The incident.** Session ercot-255 built `ercot_zonal_spread_ep_referenced`, solved four bundles
+(a 2025 screen arm, its same-HEAD zero-delta control, the 2023-2025 full span, and a 2021
+validation re-test), wrote every number into
+`docs/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md`, and concluded **on its own
+reading** that the mechanism was not a keeper candidate - the stated blocker being the merged
+two-config `meta.json`, which cannot reproduce the 2023 carve-out and so makes rule 16
+`[R-ALLYEARS]` unsatisfiable from that bundle. It then `rm -rf`'d all four bundles, citing rule 29
+`[R-SCREEN]` clause (c) "delete before merge".
+
+The owner then ruled the **opposite** - promote the combined 2021/2022/2024/2025 result together
+with the 2023 config as a single dashboard run. The numbers all survived in the RESULT, but the
+artifacts a registered run actually needs (`hourly/*_<year>.parquet` and the payload built from
+them) were gone, so the promotion required re-solving every year: ~50 min of LP that should have
+been zero. The session launched those re-solves without first stating the cost, and the owner
+stopped them (*"Don't solve all 4 years wtf"*).
+
+**Two errors, and the second is the instructive one.**
+
+1. **Scope.** Rule 29 (c) covers *a screen bundle and any control a screen earns*. The full-span
+   arm and the 2021 re-test are neither - rule 29 clause (2) calls the full span the real run.
+   A screen-only rule was applied to bundles it never governed.
+2. **Reading.** "Delete before merge" is a statement about **the repository**, not the working
+   tree. The session had *already* added the whole bundle family to `.gitignore` (commit
+   `c905a77a`), whose own comment reads "ignored so the bytes can never reach a commit by
+   accident" - so rule 29 (c) was **already discharged in full** and the parity gate, which only
+   ever sweeps committed dirs, could never have gone red. The `rm -rf` was pure loss with no
+   duty behind it.
+
+**What rule 31 fixes.** The bar for destroying a solve's output is now the **owner's** promotion
+decision, never the session's own recommendation - a session may argue against promotion in its
+RESULT, but may not act on that argument by destroying the evidence, because the owner routinely
+promotes what a session declined to. `.gitignore`, not `rm`, is named as the mechanism that
+discharges rules 29 (c) and 15's retention. Deletion is permitted on exactly two triggers (the
+owner has ruled, or the disk allowance is genuinely exhausted and the session says so first).
+And because this container is ephemeral, the rule adds a positive duty: a session that solved
+anything promotable **asks the promotion question in its final report** and states that the
+bundles are local-only and will not survive the session.
+
+**Rule 29 (c) is amended in place** to say what it always meant - keep it out of `main` - with a
+pointer to rule 31 and a note that gitignoring the family satisfies it. No other clause of rule 29
+moves: the screen is still STOP-only, still never promotes, still never reads the target residual,
+and a screen bundle is still never registered.
+
+## 17. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-07 | Added §16: rule 31 `[R-RETAIN]` (owner instruction, verbatim above) — a solve's results are never deleted until the OWNER has ruled on promotion; a session's own “not a keeper” reading is never a licence to delete. Names `.gitignore`, not `rm`, as what discharges rule 29 `[R-SCREEN]` (c) and rule 15's retention, since the parity gate only sweeps committed dirs. Adds the ephemeral-container duty (surface the promotion question before the session ends) and the cost-estimate-before-re-solving duty. Rule 29 (c) amended in place to say what it always meant — keep it out of `main`, not erase it from disk; every other clause of rule 29 unchanged. “Changes to this file” renumbered §16 → §17 (no external reference cited §16). |
 | 2026-09-06 | Added §15: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended AGAIN the same day by owner instruction (verbatim above) — the Run Explorer's Report is **scores and charts only**. The run-definition panel (the per-year determination essay the instruction names), the rule-22 footnote §14 had kept, the zero-forcing ablation twin + market story, and the auto-generated diagnostics are **deleted** (rule 26); run identity moves to the page sub-header. Rule 22's reading now rests entirely on clause (b)'s status-page year table (Tier column + "reported, not gating"), and the guard was re-pointed there with negative controls. Fold fix: a **dangling** `holdout.keeper` stamp (keeper pruned under rule 15) now reads as unstamped, so a promotion cannot drop an ISO's held-out years. Presentation only — no scorer path, marker, freeze, shard or determination touched; verified by headless render across all six ISOs. "Changes to this file" renumbered §15 → §16 (no external reference cited §15). |
 | 2026-09-06 | Added §14: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended by owner instruction (verbatim above) — a folded held-out year renders as an ORDINARY YEAR COLUMN in the Run Explorer's Report, with the mandated *Validation Touchpoints* panel, year-selector optgroup split, tier suffix and held-out banner **deleted** (rule 26), and rule 22's tier caveat kept as a single footnote. Presentation only: no scorer path touched, all three affected keepers re-score identically, clause (b)'s status-page ladder and clause (c) untouched, no holdout marker or freeze moved. Verified by headless render across all six ISOs with a negative control on `main`. "Changes to this file" renumbered §14 → §15 (no external reference cited §14). Executed by session neiso-103. |
 | 2026-09-06 | §4: recorded owner ruling **R-AZ** (audit-program director sitting, card "Marker gate", verbatim option *"Re-check at registration"*) — the rule-22 tier marker is now re-checked at REGISTRATION as well as at solve launch, closing the Z-6 window in which a multi-hour LP outlives the marker it launched under. New `holdout_policy.registration_refusals` + `dashboard_add_run.enforce_registration_marker_gate`; no bypass flag; launch gate, D-6, `audit_keepers`, markers, freeze, shards and every registered run untouched — all five holdout-year sidecars at HEAD replay clean. Executed by audit lane Y-16. |
