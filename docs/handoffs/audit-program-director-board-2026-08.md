@@ -1,5 +1,270 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🔴 **THE FAST TIER IS NOT RED — IT IS `cancelled` AT A 20-MINUTE TIMEOUT, AND THE BOUNDARY IS TWENTY SECONDS WIDE** — RECORDS-ONLY LANE **v41**, director pin **`78173793`**, sitting **2026-09-07**, director branch `claude/model-audit-director-onboard-rjjnbf`, `main` at the sitting's close **`c49e541d`** (**17:59:36Z**). 🟢 **This is the reading v40 could not take, and it changes the OBJECT, not the colour:** `Fast test tier` hits `ci.yml`'s `timeout-minutes: 20` and reports **`cancelled`** — not `failure` — on **20 of 20** completed runs created at or after **2026-09-07T16:47:43Z**, across **12** branches, at **20.3–20.4 min uniformly**; on the two ancestor-of-`main` runs read per-job, **the other six required checks are `success`** and the only `failure` is **FR-22, which is not in the set**. The boundary is **twenty seconds wide** (last short run created **16:47:23Z**, 11.6 min; first long **16:47:43Z**, 20.4 min) and the sole merge inside it is **PR #5556 → `248f087d` @ 16:47:29Z** — recorded as a **CANDIDATE, never as a verdict**. 🟢 **`Y-27` CHARTERED** on that fact. 🔴 **READING 30: `main` still `protected: false`** — Card 1 ruled **2026-09-06** and is **still not performed**. ⚪ **NO CAPTURE LANE IS CHARTERABLE: all SEVEN R-AI clocks are unexpired at 18:05Z**, and **v40's PJM row is CORRECTED IN PLACE** — PJM's shard resolves **REAL** to `3001f913` @ **2026-09-06T01:37:59Z**, a content touch, clock **2026-09-08T01:37Z**.
+>
+> **Records only.** No solve, no scoring, no registration, no keeper shard, no
+> marker, no freeze file, no matrix shard, no workflow, no `program-status.json`,
+> no `status/*.js`, no `results/calibration/`, no `CLAUDE.md`, no scorer. This lane
+> **audits nothing, runs no lane and adjudicates nothing**. **v41 is inserted ABOVE
+> v40**, insertion-only. **v40 and below are not renumbered and not rewritten** —
+> the single exception is the **in-place annotation** of v40's PJM R-AI row, which
+> **preserves v40's prior text verbatim** and adds a dated superseding reading
+> beneath it, exactly as this lane's charter permits. Board rows are cited **by
+> their text**, never by line number.
+>
+> **PIN DISCIPLINE, and the honest container note.** The sitting's pin is
+> **`78173793`** and it **resolves in this container**
+> (`git rev-parse --verify 78173793^{commit}` → `781737937509c62f1234646a51fe4ce1bfe415cd`);
+> so does the sitting's stated close **`c49e541d`**. Read-side git ran under
+> `GIT_NO_LAZY_FETCH=1` (partial-clone discipline, CLAUDE.md "Cloning & session
+> data"). **`git rev-parse --is-shallow-repository` → `true`.** ⚠️ **The clone shape
+> differs from the sitting's again, and in BOTH directions this time:** the sitting
+> reports **51 grafts / 1203 commits**; this container reads **41 grafts / 1288
+> commits** — *shallower on one axis and deeper on the other*, which is the
+> sharpest available restatement of the standing finding that **the horizon is a
+> property of the container, never of `main`**. Where a `git log` on a shard path
+> landed on a graft here, the reading was **taken from the API instead and marked
+> as such** in the clocks table below; **no graft value is published as a clock.**
+>
+> ---
+>
+> ## 1. 🔴 G2 LEG 2 — **THE READING v40 COULD NOT TAKE, AND IT IS NOT "RED"**
+>
+> v40 recorded `Fast test tier` as **`failure`** at step 5 (`Fast pytest tier`),
+> **9 m 55 s** on run 2743 and **9 m 47 s** on run 2751. **That is not what the job
+> does now.** At and after **2026-09-07T16:47:43Z** the job runs to the wall and the
+> runner kills it: it hits `.github/workflows/ci.yml`'s **`timeout-minutes: 20`**
+> (the `fast-tests` job, read at this pin) and the conclusion the API returns is
+> **`cancelled`**, not `failure`.
+>
+> | measurement | value |
+> |---|---|
+> | completed runs created **at or after 16:47:43Z** whose `Fast test tier` reads `cancelled` | **20 of 20** |
+> | distinct branches those runs span | **12** |
+> | duration, every one of them | **20.3 – 20.4 min** — i.e. **the timeout, not a test** |
+> | `ci.yml` job / limit | `fast-tests` · **`timeout-minutes: 20`** |
+>
+> **The set is otherwise GREEN, and that is the part that matters.** Per-job on the
+> **two completed runs whose heads are ancestors of `main`**:
+>
+> | run | head | the other six required checks | the only `failure` |
+> |---|---|---|---|
+> | **`34148206271`** | `63acb08d` | 🟢 **all six `success`** | 🟠 **FR-22** — **not in the set** |
+> | **`34147726877`** | `64680615` | 🟢 **all six `success`** | 🟠 **FR-22** — **not in the set** |
+>
+> So the required set does not read "one job failing its tests". It reads **six
+> green and a seventh that returns NO VERDICT AT ALL** — and a check that never
+> reports is a materially different object from a check that reports red. **This is
+> recorded as a change of kind, not of degree.**
+>
+> ### 🔵 The boundary is TWENTY SECONDS wide — measured, and offered as a candidate
+>
+> | | created | head | `Fast test tier` |
+> |---|---|---|---|
+> | **last SHORT run** | **2026-09-07T16:47:23Z** | `44ac71ba` | **11.6 min**, completes |
+> | **first LONG run** | **2026-09-07T16:47:43Z** | `7b7b758c` | **20.4 min**, `cancelled` |
+>
+> Between **02:07Z and 16:47Z** the job ran **8–12 min** with **zero** long runs in
+> **200+ sampled**. The step change is therefore **not gradual and not per-branch**
+> — it is **main-side**, which the trigger shape explains: `ci.yml` fires on
+> **`pull_request` only**, and a `pull_request` run checks out **the PR head merged
+> with the CURRENT `main`**, so every branch inherits a `main` regression at the
+> same instant regardless of its own content. The **sole merge inside the 20-second
+> gap** is **PR #5556 → `248f087d` @ 16:47:29Z**.
+>
+> 🔴 **THAT IS A CANDIDATE AND IS RECORDED AS ONE.** A merge landing inside the
+> boundary window is **temporal coincidence plus a mechanism**, which is a lead, not
+> a cause. **This lane does not bisect, does not read the diff, does not attribute
+> and does not adjudicate.** The candidate is handed to `Y-27` below **with the
+> boundary times attached so its lane can falsify it cheaply**, and nothing on this
+> board should be read as a finding against #5556.
+>
+> ---
+>
+> ## 2. 🟢 `Y-27` — **CHARTERED ON THAT FACT**
+>
+> | field | charter |
+> |---|---|
+> | **name** | **`Y-27`** — the fast-tier timeout lane |
+> | **chartered on** | the measurement in §1: `Fast test tier` `cancelled` at `timeout-minutes: 20`, 20/20 runs, 12 branches, a 20-second boundary at 16:47:23Z → 16:47:43Z, candidate `248f087d` (PR #5556) |
+> | **scope** | **CI plumbing.** The `fast-tests` job's runtime and whatever on the `main`-side merge product made it double. Bisect the boundary, identify the object, fix it at its source. |
+> | **boundary — ROUTE, DO NOT EDIT** | 🔴 **The lane may not edit another desk's content to make the tier fit inside 20 minutes.** If the cause lands in a calibration desk's tests, a keeper's artifacts, a data fixture or another lane's module, **route it to that desk with the measurement** and stop. The lane owns the plumbing; it does not own the payload. |
+> | **explicitly REFUSED as the default fix** | 🔴 **"Raise the `timeout-minutes`."** A limit raised to accommodate an unexplained doubling **converts a visible stop into an invisible cost** and destroys the only instrument that detected this at all. The lane may propose a limit change **only after** the doubling is explained, and then as a **sizing decision on a known runtime**, never as the remedy. |
+> | **relation to the flip** | `Y-27` is the reason reading 30's sequencing question is live (§3). It is **not** recorded here as a precondition of anything — **that sequencing is the owner's to rule**, and this lane records the question, not an answer. |
+>
+> **`Y-27` was free before this entry.** The board's last lane-collision sweep read
+> *"`Y-23` `Y-24` `Y-25` `Y-26` — **0** each — 🟢 free"*; `Y-27` is minted here.
+> **This lane does none of `Y-27`'s work and proposes no remedy beyond the two
+> boundaries above.**
+>
+> ---
+>
+> ## 3. 🔴 READING 30 — **`main` IS STILL `protected: false`, AND CARD 1 IS STILL NOT PERFORMED**
+>
+> `list_branches` (API) at this lane's reading returns **5 branches**, and **every
+> one of them, `main` included, reads `protected: false`:**
+>
+> | branch | head per API | `protected` |
+> |---|---|---|
+> | **`main`** | `5de0319b` | 🔴 **`false`** — **reading 30** |
+> | `claude/model-audit-director-onboard-rjjnbf` | **`c49e541d`** | `false` — **the director's branch, sitting exactly at the sitting's stated close sha** |
+> | `claude/model-audit-director-a68igo` | `f0832144` | `false` |
+> | `claude/scn-desk-r21-vq4m` | `a06656b7` | `false` |
+> | `claude/spp-iso-addition-desk-i1xril` | `9dc4d8b4` | `false` |
+>
+> **Card 1 — the branch-protection flip — was RULED on 2026-09-06** (recorded as
+> v40's ruling 1: *flip now, checks required, strict OFF*, ruled **against** holding
+> for a 6-of-6 head). **It has still not been performed**, and the count of
+> `protected: false` readings across this series is now **30**.
+>
+> 🆕 **WHAT IS NEW HERE, AND WHY IT IS NOT A RE-LITIGATION.** The sitting **put the
+> (a)/(b)/(c) sequencing question to the owner**, and the reason it did so is a
+> **fact that did not exist when Card 1 was ruled**: at the ruling, the seventh
+> check **failed**; at this pin it **never reports at all** (§1). Those are different
+> objects for a branch-protection rule — a `failure` blocks a merge with a verdict,
+> while a job killed at its timeout leaves its check **without one**, which is the
+> same shape as the pending-forever trap `Y-26` was chartered on. **The ruling is
+> not reopened by this entry and nothing here argues against it**; what is recorded
+> is that a **new fact arrived after it**, that the sitting routed that fact to the
+> owner as a sequencing question rather than acting on it, and that the answer is
+> **the owner's alone**. **This lane records the question and does not answer it.**
+>
+> ---
+>
+> ## 4. ⚪ NO CAPTURE LANE IS CHARTERABLE — **ALL SEVEN R-AI CLOCKS UNEXPIRED AT 18:05Z**
+>
+> Seven keeper shards now exist (**SPP has one**). Every touch below is the shard's
+> **last** touch; the clock is **touch + 48 h**; `graft?` was tested with
+> `grep -qx <sha> .git/shallow ; echo $?` **on its own line**, and where the local
+> query landed on a graft the reading was **replaced by the API's**, never published
+> from the graft.
+>
+> | ISO | last shard touch | UTC | **R-AI clock** | expired at **18:05Z**? | source |
+> |---|---|---|---|---|---|
+> | **PJM** | `3001f913` | **2026-09-06T01:37:59Z** | **2026-09-08T01:37Z** | 🔴 **no** | **API** (local = graft) |
+> | **NEISO** | `7c38a208` | 2026-09-06T23:01:57Z | 2026-09-08T23:01Z | 🔴 no | **API** (local = graft) |
+> | **CAISO** | `5851f206` | 2026-09-06T23:38:46Z | 2026-09-08T23:38Z | 🔴 no | **API** (local = graft) |
+> | **ERCOT** | `e9c72006` | 2026-09-06T23:42:30Z | 2026-09-08T23:42Z | 🔴 no | **API** (local = graft) |
+> | **MISO** | `e5b03049` | 2026-09-07T01:39:39Z | 2026-09-09T01:39Z | 🔴 no | local, **real** |
+> | **NYISO** | `218a0271` | 2026-09-07T04:48:03Z | 2026-09-09T04:48Z | 🔴 no | local, **real** |
+> | **SPP** | `c6a5a254` | 2026-09-07T06:33:57Z | 2026-09-09T06:33Z | 🔴 no | local, **real** |
+>
+> **The earliest expiry on the board is PJM's, 2026-09-08T01:37Z — more than seven
+> hours after this reading. NO capture lane is charterable at this sitting**, and
+> none is chartered here.
+>
+> ### 🟢 CORRECTION TO v40, PLACED HERE **AND** ANNOTATED IN PLACE — **PJM's shard resolves REAL**
+>
+> v40 recorded, at its own pin, that **PJM's** shard query landed on `4e05a698`, a
+> **graft** with no parents whose `--stat` listed all six shards at once, and
+> correctly **refused to publish** the 2026-09-08 05:14Z clock that a face-value
+> reading would have produced. **v40's refusal was right and is not disturbed.**
+> What v40 could not do — because the object was not in its clone — was say what
+> the real touch **is**. It is:
+>
+> > `3001f913d273b6141a297fe0b0452346ea4ea301` · **2026-09-06T01:37:59Z** ·
+> > *"pjm-166: repair the stale PJM keeper-shard `holdout_touchpoint` — the status
+> > card was showing two different 2022 numbers"*
+>
+> and its own commit message states **`Keeper unchanged (2026-08-15-pjm-162-inputclock)`**
+> — i.e. **a CONTENT-ONLY touch**, precisely the class ruling 3 (R-AI stillness)
+> holds **does** reset the 48 h clock. **PJM's clock is therefore
+> `2026-09-08T01:37Z`, NOT "a graft, long passed" and NOT the 05:14Z value the
+> graft would have produced.** The correction is **dated, not a contradiction**:
+> v40 read what its container had.
+>
+> ### 🔵 The container finding, extended to a SIXTH clone — and the collapse is REPRODUCIBLE
+>
+> The sitting reports **ERCOT / PJM / CAISO / NEISO all collapsing onto one graft,
+> `5b00386b`**. In **this** container the same four ISOs collapse onto
+> **`94e5f4e0`** — **the same four shards, a different sha, a different clone**. The
+> series' finding has therefore moved from *"four containers, four different wrong
+> shas"* to something stronger and more useful: **the SET of shards a shallow clone
+> cannot answer for is reproducible even though the sha is not.** MISO, NYISO and
+> SPP resolve to real commits in both. **The operational rule stands unchanged and is
+> now demonstrated six ways: no shard-path `git log` in a shallow clone is a fact
+> about `main`; take the clock from the API or do not publish it.**
+>
+> ---
+>
+> ## 5. DRIFT SINCE v40 — **each recorded as MOTION, none adjudicated**
+>
+> | # | what moved | v40 | **at this sitting** |
+> |---|---|---|---|
+> | **1** | 🔴 **FR-22 backcast→forecast parity** | `failure`, **one** MISO cell | **THREE** MISO fails — `miso_seam_neighbour_anchored_ladder`, `miso_seam_neighbour_hourly_ladder`, `miso_seam_neighbour_hourly_spp` *(exact field names as read at this pin; the shared prefix is `miso_seam_neighbour_`, and the `_hourly_spp` leg is a declared SUB-GATE of `_hourly_ladder`)*. **Owed to the MISO backcast desk. FR-22 is NOT in the required set** and was `failure` on both ancestor-of-`main` runs in §1. |
+> | **2** | 🟢 **CLAUDE.md "six ISOs" drift — RESOLVED** | carried as owed | **`CLAUDE.md` line 19 reads "seven ISOs … SPP"** — verified by reading it. The **single remaining hit**, `CLAUDE.md:250` (*"every keeper of all six ISOs is unchanged"*), is a **frozen 2026-08-09 rubric v3.2 measurement** and is **correctly historical** — a measured fact of a moment, which must not be "updated". 🟢 **STRUCK from the owed-elsewhere table; it is not carried into this entry's.** |
+> | **3** | 🟡 **G2 leg 1** | 25 stale enforced entries; stage-0 currency **`{PJM}`** | **unchanged** — carried as the sitting reports it, **not re-derived here** (this lane runs no gates). See the corrected obligation below. |
+> | **4** | 🟢 **Nine gates** | **8 of 9** (gate-(a) red on the CAISO row) | **9 of 9 GREEN** per the sitting |
+> | **5** | 🟢 **Forecast-invariant audit** | `$?` 0 — 104 sidecars / 1456 records / 97 declared | **GREEN — 176 sidecars, 2464 records, 217 declared.** Ruling 2's precondition is not merely met; it is **being maintained as the board grows** (v40 read a branch predicting 110/1540; `main` has since passed it by 66 sidecars). |
+> | **6** | ⚪ **Open PRs** | — | **ZERO open PRs at the pin** — confirmed by this lane's own API call. |
+>
+> ### 🟢 THE STAGE-0 OBLIGATION — **v40's "eight-config" FRAMING IS CORRECTED**
+>
+> Read directly from `results/regression-goldens/perfb-stage0/manifest.json` at this
+> pin, the `keepers` block carries **SEVEN capture keys**, not eight:
+>
+> `CAISO` · `ERCOT` · **`ERCOT__carveout-2023`** · `MISO` · `NEISO` · `NYISO` · `PJM`
+>
+> Three corrections follow, and they **reduce** the obligation rather than
+> restating it:
+>
+> 1. 🟢 **`ERCOT__carveout-2023` is RETIRED by ruling R-AW and is NOT OWED.** The
+>    board's own R-AW rows already say so (*"`ERCOT__carveout-2023` on the RETIRED
+>    key"*, carried through v32 → v40). It must not be counted as a pending capture,
+>    and **checklist item 13's "full coverage is 7 captures, not 6" is superseded by
+>    R-AW** — annotated in place below.
+> 2. 🔴 **SPP has NO stage-0 key at all.** SPP is the seventh registered ISO
+>    (`CLAUDE.md` line 19) and holds a keeper shard (§4), but the stage-0 manifest
+>    has no `SPP` entry. That is a **new key to mint**, not a re-capture.
+> 3. ⚖️ **So the live obligation is SIX re-captures plus ONE new SPP key** — not
+>    eight configs, and not seven. **This lane counts; it does not charter, and
+>    §4 forbids chartering any of them at this sitting anyway.**
+>
+> ---
+>
+> ## 6. OWED ELSEWHERE — **routed by record, dispatched by nobody here**
+>
+> | # | item | owed to | this lane |
+> |---|---|---|---|
+> | **1** | **FR-22 · three MISO parity fails** (`miso_seam_neighbour_anchored_ladder` / `_hourly_ladder` / `_hourly_spp`) | **MISO backcast desk** | recorded; **not dispatched, not worked** |
+> | **2** | **The fast-tier timeout** and its 20-second boundary + candidate `248f087d` | **`Y-27`** (chartered §2) | recorded; **not worked** |
+> | **3** | **The `ci.yml` path-filter gap** | **`Y-26`** (chartered at v40) | carried unchanged; **not worked** |
+> | **4** | **Six stage-0 re-captures + one new SPP key** | queued, **NOT chartered** (all seven clocks unexpired) | counted, **not chartered** |
+> | **5** | **Card 1 — the branch-protection flip**, and the (a)/(b)/(c) sequencing question | **the owner** | recorded at reading 30; **not answered** |
+>
+> ⚪ **Nothing above was dispatched by this lane under any framing, and no lane
+> other than `Y-27` is chartered by this record.**
+>
+> ---
+>
+> ## 7. THIS LANE'S OWN TWO CHECKS — **the only things it was asked to run**
+>
+> | check | result |
+> |---|---|
+> | the board file still **parses** | 🟢 **yes** — the entry is inserted as a blockquote block above v40, the file's heading structure is unchanged, and no prior entry is renumbered |
+> | the **three CI record paths** keep it **enrolled** (`Y-26`) | 🟢 **yes** — `.github/workflows/ci.yml` still lists `docs/handoffs/audit-program-director-board-2026-08.md`, `docs/model-audit-release-plan-2026-08.md` and `docs/FINDING-*.md`. **This lane's PR touches only the first**, so it **is** enrolled and CI runs on it — i.e. **this PR is not in `Y-26`'s gap** |
+>
+> ⚠️ **AND IT WILL BE `cancelled`, NOT GREEN.** Per §1, a `pull_request` run at this
+> pin merges the head with the current `main`, so **this records PR's own
+> `Fast test tier` is expected to hit the 20-minute wall like every other branch's**.
+> **That is `Y-27`'s object, not a defect in this PR**, whose entire diff is one
+> markdown file — recorded here in advance so the next reader is not misled by it.
+>
+> ---
+>
+> ## 🔵 CODA — `main` MOVED UNDER THIS LANE, AS IT DID UNDER v39 AND v40
+>
+> The sitting closed with `main` at **`c49e541d`** (17:59:36Z). By the time this
+> lane read the branch list, **`main` was at `5de0319b`**, and by the time this
+> entry was committed it was at **`5ab772c5`** (merge of **PR #5588**) — **three
+> `main` shas across one records lane's readings.** Every figure above is a
+> **moment, not a state** — the standing rule of this series — and the pin for the
+> sitting's readings is and remains **`78173793`**. The director's branch
+> `claude/model-audit-director-onboard-rjjnbf` still sits exactly at `c49e541d`,
+> which is why the sitting's close sha is independently confirmable at all.
+>
+> ---
+
 > # 🟢 **SIX OWNER RULINGS RECORDED — THE BRANCH-PROTECTION FLIP IS DECIDED, THE R-AE SET BECOMES SEVEN, AND THE ERCOT SHARD QUERY RESOLVES TO A REAL COMMIT** — RECORDS-ONLY LANE **v40**, director pin `6f074049` → **THIS LANE'S PIN `4122ecd6`**, `main` at open of this lane's readings **`4122ecd6`** and **`4c57b68a`** by the time leg 4 was read. 🔴 **TWO dispatch figures do not reproduce and are corrected here, not adjudicated:** the nine gates read **8 OF 9**, not 9 of 9 — `check_gate_a_provenance.py` went **RED after the sitting closed**, on the **SIXTH** keeper move of 2026-09-06 (CAISO `caaa3e05` at **22:09:55Z**, a move the dispatch's five does not contain); and the flip set on run **2743** is **4 OF 6**, not 5 of 6 — **both** `Fast test tier` **and** `Structural refactor guards` are `failure` on that run, so "Fast test tier went green there" is not what run 2743 records. 🟢 **The ERCOT shard query resolves for the first time in five containers, and the retirement is by MEASUREMENT: `f1ff2cda`, one parent, not in `.git/shallow`, keeper id unchanged on both sides — ruling 3's clock is confirmed independently at 2026-09-08 18:57Z.** The full fast tier run here has **ELEVEN** failures, not the three root causes' seven: **three more defect classes** exist that the dispatch's three do not name, and all of them are other desks' too. G2 leg 4 reads `protected: false` at a **TWENTY-NINTH** reading.
 >
 > **Records only.** No solve, no scoring, no registration, no keeper shard, no
@@ -232,6 +497,16 @@
 > lane that read it at face value would publish a PJM R-AI clock of
 > **2026-09-08 05:14Z** on no evidence. The other five queries all land on real
 > commits (`grep -qx … ; echo $?` → **1** for each).
+>
+> > 🔵 **ANNOTATED AT v41 (2026-09-07), SUPERSEDING READING ONLY — THE TEXT ABOVE IS
+> > PRESERVED VERBATIM AND IS NOT EDITED.** v40's refusal to publish the 05:14Z value
+> > was **correct** and stands. What v40's container could not supply, v41 measured
+> > from the API: **PJM's shard resolves REAL to `3001f913`, 2026-09-06T01:37:59Z**
+> > (*"pjm-166: repair the stale PJM keeper-shard `holdout_touchpoint`"*), whose own
+> > commit message records **`Keeper unchanged (2026-08-15-pjm-162-inputclock)`** —
+> > i.e. a **CONTENT-ONLY touch**, the class ruling 3 holds **does** reset the clock.
+> > **PJM's R-AI clock is `2026-09-08T01:37Z`** — **not** the graft's 05:14Z, and
+> > **not** "a graft, long passed". See v41 §4.
 >
 > ---
 >
@@ -12829,6 +13104,76 @@ a **red golden tier** behind the permission it removed (item 9, now the binding
 step), and items 3–5, 7, 9b and 13 are all still work. **Whoever resumes starts
 here, not at change (a).**
 
+### ⬅ **NEW AT v41 (2026-09-07) — READ THESE FIVE BEFORE ITEM 0**
+
+*Lettered, not numbered, so nothing below is renumbered. These are the newest
+facts on this board; every one of them is a **moment**, so re-measure before
+quoting.*
+
+**v41-A. 🔴 `Fast test tier` IS `cancelled`, NOT `failure` — DO NOT READ IT AS A
+TEST RED.** It hits `.github/workflows/ci.yml`'s `fast-tests` **`timeout-minutes:
+20`** and is killed at the wall: **20 of 20** completed runs created at or after
+**2026-09-07T16:47:43Z**, across **12** branches, all **20.3–20.4 min**. On the two
+ancestor-of-`main` runs read per-job (`34148206271` / `63acb08d`,
+`34147726877` / `64680615`) **the other six required checks are `success`** and the
+only `failure` is **FR-22, which is not in the set**. So the set is **six green and
+a seventh that returns NO VERDICT** — a different object from a red check, and the
+same shape as `Y-26`'s pending-forever trap. **The boundary is twenty seconds wide**
+(last short run created **16:47:23Z**, `44ac71ba`, 11.6 min; first long
+**16:47:43Z**, `7b7b758c`, 20.4 min; 02:07Z–16:47Z ran 8–12 min, **zero** long runs
+in 200+ sampled), it is **main-side** (a `pull_request` run checks out head merged
+with current `main`), and the **sole merge in the gap is PR #5556 → `248f087d` @
+16:47:29Z** — 🔴 **a CANDIDATE, never a verdict; do not cite it as a cause.**
+⚠️ **Expect your own records PR's fast tier to be `cancelled` too.** That is v41-B's
+object, not a defect in your PR.
+
+**v41-B. 🟢 `Y-27` IS CHARTERED — the fast-tier timeout lane.** Scope: **CI
+plumbing**. Two boundaries are part of the charter, not commentary: **(i)
+ROUTE, DON'T EDIT** — if the cause lands in another desk's tests, keeper
+artifacts, fixtures or modules, hand it to that desk with the measurement and
+stop; **(ii) "raise the `timeout-minutes`" is REFUSED as the default fix** — a
+limit raised to accommodate an unexplained doubling converts a visible stop into
+an invisible cost and destroys the instrument that caught it. A limit change is
+available only **after** the doubling is explained, as sizing on a known runtime.
+**`Y-26` is unchanged and still chartered.**
+
+**v41-C. 🔴 CARD 1 IS RULED AND STILL NOT PERFORMED — `main` reads `protected:
+false` at READING 30.** Ruled **2026-09-06** (flip now, checks required, strict
+OFF). All 5 branches at the v41 reading are unprotected. 🆕 The sitting **put the
+(a)/(b)/(c) sequencing question to the owner** because of a **new** fact, not to
+reopen the ruling: at the ruling the seventh check **failed**; at this pin it
+**never reports** (v41-A). **The answer is the owner's. Do not act on it, and do
+not re-litigate the ruling.**
+
+**v41-D. ⚪ NO CAPTURE LANE IS CHARTERABLE — ALL SEVEN R-AI CLOCKS WERE UNEXPIRED
+AT 18:05Z.** PJM `2026-09-08T01:37Z` (`3001f913`) · NEISO `09-08T23:01Z`
+(`7c38a208`) · CAISO `09-08T23:38Z` (`5851f206`) · ERCOT `09-08T23:42Z`
+(`e9c72006`) · MISO `09-09T01:39Z` (`e5b03049`) · NYISO `09-09T04:48Z`
+(`218a0271`) · SPP `09-09T06:33Z` (`c6a5a254`). ⚠️ **FOUR of those (PJM, NEISO,
+CAISO, ERCOT) had to be taken from the API**: in a shallow clone their shard
+`git log` collapses onto a single graft — `94e5f4e0` here, `5b00386b` at the
+sitting, **the same four shards, a different sha per container**. **Never publish
+a clock off a graft.** v40's PJM row is annotated in place accordingly.
+
+**v41-E. 🟢 THE STAGE-0 OBLIGATION IS SMALLER THAN THE BOARD HAS BEEN SAYING —
+SIX RE-CAPTURES PLUS ONE NEW SPP KEY.** `results/regression-goldens/perfb-stage0/manifest.json`
+carries **SEVEN** capture keys, not eight: `CAISO` · `ERCOT` ·
+`ERCOT__carveout-2023` · `MISO` · `NEISO` · `NYISO` · `PJM`. **The carve-out key is
+RETIRED by ruling R-AW and is NOT owed** (which supersedes item 13's *"full
+coverage is 7 captures, not 6"* — annotated there). **SPP has NO stage-0 key at
+all** and is a key to **mint**, not to re-capture. G2 leg 1 is otherwise unmoved at
+**25 stale enforced entries**, stage-0 currency **`{PJM}`** alone.
+
+**Also true at v41, carried without re-derivation:** nine gates **9 of 9 GREEN**;
+the forecast-invariant audit **GREEN** (**176 sidecars / 2464 records / 217
+declared**, up from v40's 104/1456/97 — the backlog is being *maintained* at zero
+as the board grows); **zero open PRs** at the pin; **FR-22 now carries THREE MISO
+fails** (`miso_seam_neighbour_anchored_ladder`, `miso_seam_neighbour_hourly_ladder`,
+`miso_seam_neighbour_hourly_spp`), **owed to the MISO backcast desk**; and
+**`CLAUDE.md`'s "six ISOs" drift is RESOLVED** — line 19 reads *"seven ISOs"*
+including SPP, and the one remaining hit (`CLAUDE.md:250`) is a **frozen 2026-08-09
+rubric measurement that is correctly historical and must not be "updated"**.
+
 0. **🔴 ⬅ CORRECTED AT v21: SIX OF SEVEN EXIT 0 — `check_registry_payload_parity.py`
    IS EXIT 1 at `0653bf13`** on `results/calibration/miso200_control_A`, a bundle
    **committed to `main`** (#4591) with no sidecar. It is the calibration desk's
@@ -13013,3 +13358,10 @@ here, not at change (a).**
     capture. **Chartered by R-O and NOT LAUNCHED as of `72576ebe`** (G-6). Until
     it runs, "ERCOT CURRENT" means *forward config only* and full coverage is
     **7 captures, not 6**.
+    ⬅ 🔵 **ANNOTATED AT v41 — SUPERSEDING READING ONLY; the text above is
+    preserved verbatim.** The *"7 captures, not 6"* arithmetic is **superseded by
+    ruling R-AW**, which **RETIRED** the `ERCOT__carveout-2023` key — so the
+    carve-out capture is **not owed**, and R-O's schema lane is no longer what
+    stands between ERCOT and full coverage. The live obligation, read from the
+    manifest at v41's pin, is **six re-captures plus ONE NEW `SPP` KEY** (SPP has
+    no stage-0 entry at all). See v41 §5 and checklist item **v41-E**.
