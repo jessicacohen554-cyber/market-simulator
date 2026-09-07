@@ -3188,3 +3188,222 @@ def test_ercot_ep_gas_basis_monthly_leaves_other_isos_alone():
     out = base.copy()
     apply_ercot_zonal_gas_basis(out, fleet, cfg, 2021)
     np.testing.assert_array_equal(out, base)
+
+
+# ---------------------------------------------------------------------------
+# ercot-255: EP REFERENCE for the F923-sourced rows of the ERCOT zonal SPREAD
+# ---------------------------------------------------------------------------
+
+
+def _ercot_mixed_provenance_fleet(hours: int = 24):
+    """One 400 MW gas CT in each of three zones spanning both provenance groups.
+
+    ``North`` and ``South_Central`` carry EIA-923 Schedule-5 measured rows;
+    ``Houston`` carries the cited hub-vs-hub convention. West is deliberately
+    excluded so the applier's own seam is measured without
+    ``apply_ercot_west_netload_gas_shape`` in the way.
+    """
+    generators = [
+        Generator(
+            unit_id="GAS_NORTH",
+            name="DFW CT",
+            zone="North",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+            plant_code=3456,
+        ),
+        Generator(
+            unit_id="GAS_SC",
+            name="South TX CT",
+            zone="South_Central",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+            plant_code=3548,
+        ),
+        Generator(
+            unit_id="GAS_HOUSTON",
+            name="HSC CT",
+            zone="Houston",
+            fuel_type="gas_ct",
+            pmax_mw=400.0,
+            plant_code=3469,
+        ),
+    ]
+    # The applier indexes its per-zone basis vector by ``get_iso_config("ERCOT")
+    # .zone_names``, so the fleet's zone order must be the ISO's own, in full.
+    from market_sim.config.iso_configs import get_iso_config
+
+    return generators_to_fleet_arrays(
+        generators, list(get_iso_config("ERCOT").zone_names), hours=hours
+    )
+
+
+def test_ercot_zonal_basis_source_group_reads_the_tables_own_provenance():
+    """The F923/convention partition comes from the data, not a zone list.
+
+    North / Northeast / South_Central / South are EIA-923 Schedule-5 measured
+    delivered prices; Houston is a cited hub-vs-hub constant and West/Panhandle
+    a Waha hub basis. Checked on every year the committed table covers, so a
+    re-derivation that changed a zone's provenance would re-classify it here.
+    """
+    from market_sim.data.fuel import ercot_zonal_gas_basis_source_group
+
+    checked = 0
+    for year in range(2019, 2026):
+        groups = ercot_zonal_gas_basis_source_group(year)
+        if groups is None:
+            continue
+        for zone in ("North", "South_Central", "South"):
+            assert groups[zone] == "f923", (year, zone)
+        if "Northeast" in groups:
+            assert groups["Northeast"] == "f923", year
+        assert groups["Houston"] == "convention", year
+        for zone in ("West", "Panhandle"):
+            if zone in groups:
+                assert groups[zone] == "convention", (year, zone)
+        checked += 1
+    assert checked >= 5
+
+
+def test_ercot_zonal_basis_source_group_is_none_for_a_forward_year():
+    """No rows -> None, so the caller keeps the unreferenced construction."""
+    from market_sim.data.fuel import ercot_zonal_gas_basis_source_group
+
+    assert ercot_zonal_gas_basis_source_group(2035) is None
+
+
+def test_ercot_zonal_spread_ep_referenced_gate_is_byte_identical_when_off():
+    """Default-off is byte-identical to the pre-repair branch."""
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    assert cfg.ercot_zonal_spread_ep_referenced is False
+
+    default = base.copy()
+    apply_ercot_zonal_gas_basis(default, fleet, cfg, 2021)
+    explicit_off = base.copy()
+    apply_ercot_zonal_gas_basis(
+        explicit_off,
+        fleet,
+        cfg.with_overrides(ercot_zonal_spread_ep_referenced=False),
+        2021,
+    )
+    np.testing.assert_array_equal(default, explicit_off)
+
+
+def test_ercot_zonal_spread_ep_referenced_shifts_only_the_f923_group():
+    """Each zone's delta is ONE exact constant, and the two groups split it.
+
+    The F923 rows move by ``-ep_basis * (1 - w923)`` and the convention rows by
+    ``+ep_basis * w923``, where w923 is the F923 zones' gas-capacity share --
+    the arithmetic of shifting one group before a capacity-weighted mean-zero
+    recentring. On this fixture w923 = 2/3.
+    """
+    from market_sim.data.fuel import (
+        apply_ercot_zonal_gas_basis,
+        ercot_electric_power_gas_basis,
+    )
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    ep = ercot_electric_power_gas_basis(2021)
+    assert ep is not None
+
+    control = base.copy()
+    apply_ercot_zonal_gas_basis(control, fleet, cfg, 2021)
+    arm = base.copy()
+    apply_ercot_zonal_gas_basis(
+        arm, fleet, cfg.with_overrides(ercot_zonal_spread_ep_referenced=True), 2021
+    )
+    delta = arm - control
+
+    w923 = 2.0 / 3.0  # North + South_Central of three equal-pmax units
+    for row, zone in enumerate(("North", "South_Central", "Houston")):
+        expected = -ep * (1.0 - w923) if zone != "Houston" else ep * w923
+        assert np.ptp(delta[row]) == pytest.approx(0.0, abs=1e-12), zone
+        assert delta[row, 0] == pytest.approx(expected, abs=1e-9), zone
+    # 2021 is the year the defect bites: the F923 rows fall and Houston rises.
+    assert delta[0, 0] < -1.0 and delta[2, 0] > 1.0
+
+
+def test_ercot_zonal_spread_ep_referenced_is_exactly_level_neutral():
+    """The mechanism is a pure redistribution: the fleet level does not move.
+
+    This is the defining property. The capacity-weighted mean delivered gas
+    price must be unchanged to machine precision in EVERY year the table
+    covers -- if it moves, the mechanism is re-levelling, which is a different
+    (and forbidden) thing.
+    """
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+    weights = fleet.pmax
+
+    checked = 0
+    for year in range(2019, 2026):
+        control = base.copy()
+        apply_ercot_zonal_gas_basis(control, fleet, cfg, year)
+        arm = base.copy()
+        apply_ercot_zonal_gas_basis(
+            arm, fleet, cfg.with_overrides(ercot_zonal_spread_ep_referenced=True), year
+        )
+        delta = (arm - control).mean(axis=1)
+        level = float((delta * weights).sum() / weights.sum())
+        assert level == pytest.approx(0.0, abs=1e-9), year
+        checked += 1
+    assert checked >= 6
+
+
+def test_ercot_zonal_spread_ep_referenced_preserves_within_group_differentials():
+    """Referencing shifts the F923 group bodily; it never reshapes it.
+
+    Two F923 zones keep exactly their measured price difference, which is the
+    locational content the spread is supposed to carry.
+    """
+    from market_sim.data.fuel import apply_ercot_zonal_gas_basis
+
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(iso="ERCOT", hours=hours, ercot_zonal_gas_basis=True)
+
+    control = base.copy()
+    apply_ercot_zonal_gas_basis(control, fleet, cfg, 2021)
+    arm = base.copy()
+    apply_ercot_zonal_gas_basis(
+        arm, fleet, cfg.with_overrides(ercot_zonal_spread_ep_referenced=True), 2021
+    )
+    # rows 0 and 1 are North and South_Central, both F923.
+    assert (arm[0, 0] - arm[1, 0]) == pytest.approx(
+        control[0, 0] - control[1, 0], abs=1e-12
+    )
+
+
+def test_ercot_zonal_spread_ep_referenced_is_inert_for_a_forward_year():
+    """No EP row -> no reference -> byte-identical, so forecasts never move."""
+    from market_sim.data.fuel import (
+        apply_ercot_zonal_gas_basis,
+        ercot_electric_power_gas_basis,
+    )
+
+    assert ercot_electric_power_gas_basis(2035) is None
+    hours = 24
+    fleet = _ercot_mixed_provenance_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.72)
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        hours=hours,
+        ercot_zonal_gas_basis=True,
+        ercot_zonal_spread_ep_referenced=True,
+    )
+    out = base.copy()
+    apply_ercot_zonal_gas_basis(out, fleet, cfg, 2035)
+    np.testing.assert_array_equal(out, base)
