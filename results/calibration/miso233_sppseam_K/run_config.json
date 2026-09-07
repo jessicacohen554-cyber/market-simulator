@@ -1,19 +1,21 @@
 {
-  "timestamp": "2026-09-07T00:32:02",
+  "timestamp": "2026-09-07T01:22:50",
   "git": {
-    "sha": "79f73030",
-    "basis_sha": "79f73030f153b96c84c88dd58c24c0e4114684de",
+    "sha": "e852c85c",
+    "basis_sha": "e852c85c858ab567aaf2c3447ea570244f33d956",
     "branch": "claude/miso-backcast-calibration-cdww6i",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-233 SCREEN: hourly neighbour anchor extended to the SPP seam",
+  "model_changes_note": "miso-233 full span: hourly neighbour anchor extended to the SPP seam",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
     "years": [
-      2023
+      2023,
+      2024,
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +24,9 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2023": 2.54,
+      "2024": 2.19,
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -222,7 +226,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "79f73030"
+    "git_sha": "e852c85c"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -1213,7 +1217,7 @@
     "rows": 208,
     "moved": {},
     "epochs": [],
-    "git_sha": "79f73030"
+    "git_sha": "e852c85c"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1236,6 +1240,26 @@
         "2023": {
           "iso": "MISO",
           "year": 2023,
+          "flag_armed": false,
+          "cap_mw": 8700.0,
+          "source": "flag_off",
+          "delivery_year": null,
+          "season": null,
+          "import_zone": "MISO_external"
+        },
+        "2024": {
+          "iso": "MISO",
+          "year": 2024,
+          "flag_armed": false,
+          "cap_mw": 8700.0,
+          "source": "flag_off",
+          "delivery_year": null,
+          "season": null,
+          "import_zone": "MISO_external"
+        },
+        "2025": {
+          "iso": "MISO",
+          "year": 2025,
           "flag_armed": false,
           "cap_mw": 8700.0,
           "source": "flag_off",

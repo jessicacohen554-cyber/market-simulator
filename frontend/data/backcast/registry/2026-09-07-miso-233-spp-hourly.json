@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-07-miso-233-spp-hourly",
+  "label": "miso 233 spp hourly",
+  "date": "2026-09-07",
+  "shorthand": "miso-233-spp-hourly",
+  "definition": "miso-233 full span: hourly neighbour anchor extended to the SPP seam",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-07-miso-233-spp-hourly.js",
+  "bundle": "results/calibration/miso233_sppseam_K"
+}
