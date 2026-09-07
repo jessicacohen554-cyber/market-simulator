@@ -1,0 +1,215 @@
+{
+  "run_id": "caiso-2026-2030-scn-campaign-policy-2026-09-06-all-clean",
+  "meta": {
+    "kind": "scenario",
+    "label": "scn-campaign-policy-2026-09-06-all-clean",
+    "variant": "forecast-baseline",
+    "iso": "CAISO",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": true,
+    "datacenter_load_path": "high",
+    "correlated_forced_outage": true,
+    "cache_key": "e2820065dbdcb708",
+    "bundle": "/home/user/market-simulator/results/CAISO/e2820065dbdcb708",
+    "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 1277.8,
+    "global_peak_rss_mb": 5002.9,
+    "per_year_perf": [
+      {
+        "year": 2026,
+        "wall_s": 461.9,
+        "peak_rss_mb": 4771.9
+      },
+      {
+        "year": 2027,
+        "wall_s": 234.2,
+        "peak_rss_mb": 3941.8
+      },
+      {
+        "year": 2028,
+        "wall_s": 213.7,
+        "peak_rss_mb": 4432.4
+      },
+      {
+        "year": 2029,
+        "wall_s": 181.0,
+        "peak_rss_mb": 4978.5
+      },
+      {
+        "year": 2030,
+        "wall_s": 186.9,
+        "peak_rss_mb": 5002.9
+      }
+    ],
+    "year_summary": [
+      {
+        "year": 2026,
+        "reserve_margin": 0.0662,
+        "lw_price": 57.17,
+        "max_hourly_price": 73.9,
+        "co2_mt": 34.3,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2027,
+        "reserve_margin": 0.0258,
+        "lw_price": 57.98,
+        "max_hourly_price": 76.8,
+        "co2_mt": 39.33,
+        "hours_ge_500": 0,
+        "retire_mw": 1527.3,
+        "builds_thermal_mw": 1396.4,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2028,
+        "reserve_margin": 0.0355,
+        "lw_price": 64.44,
+        "max_hourly_price": 965.2,
+        "co2_mt": 36.85,
+        "hours_ge_500": 23,
+        "retire_mw": 0.8,
+        "builds_thermal_mw": 2792.8,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2029,
+        "reserve_margin": 0.1352,
+        "lw_price": 69.0,
+        "max_hourly_price": 1124.5,
+        "co2_mt": 29.29,
+        "hours_ge_500": 50,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 7585.6,
+        "builds_renew_mw": 4702.2,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2030,
+        "reserve_margin": 0.1527,
+        "lw_price": 87.7,
+        "max_hourly_price": 1153.7,
+        "co2_mt": 28.93,
+        "hours_ge_500": 135,
+        "retire_mw": 1127.2,
+        "builds_thermal_mw": 4920.5,
+        "builds_renew_mw": 702.2,
+        "builds_storage_mw": 0.0
+      }
+    ],
+    "started_utc": "2026-09-07T06:24:10Z",
+    "bridged_years": [],
+    "reference_case": "REF"
+  },
+  "score": null,
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 1.673e-10 MW (year 2029); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "FAIL",
+      "detail": "2029: slack 0.01% of load (19 h, 38.8 GWh, peak 4,983 MW); 2030: slack 0.04% of load (56 h, 106.2 GWh, peak 6,207 MW)"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2026: accredited firm 55030 < requirement 59356 MW; 2027: accredited firm 54936 < requirement 61587 MW; 2028: accredited firm 57589 < requirement 63959 MW; 2029: accredited firm 65627 < requirement 66481 MW"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "FAIL",
+      "detail": "2028: simultaneous chg+dis 0.14% of throughput"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "FAIL",
+      "detail": "requirement-implied floor [15.0%, 30.0%]; out: 2026:6.6% (band [15.0%, 30.0%]), 2027:2.6% (band [15.0%, 30.0%]), 2028:3.5% (band [15.0%, 30.0%]), 2029:13.5% (band [15.0%, 30.0%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "registered_utc": "2026-09-07T06:24:10Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "solve_surface": null,
+    "scored_at_sha": "2bab4304664a",
+    "scored_at_date": "2026-09-07T06:24:10Z",
+    "cache_epoch": "e2820065dbdcb708"
+  }
+}

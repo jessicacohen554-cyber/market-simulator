@@ -15,6 +15,12 @@
  },
  "curated_subsets": {},
  "declared_failures": {
+  "caiso-2026-2030-scn-campaign-policy-2026-09-06-all-clean": [
+   "I12",
+   "I3",
+   "I7",
+   "I9"
+  ],
   "caiso-2026-2030-scn-campaign-policy-2026-09-06-ces-p20-vol-hi": [
    "I12",
    "I7"
