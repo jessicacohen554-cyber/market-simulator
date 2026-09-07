@@ -5,8 +5,10 @@
 > before any LP ran. All bundles are **deleted before merge** (rule 29
 > `[R-SCREEN]` clause c); every number this session cites is in these three
 > documents, and git history is the record for the bytes.
-> **Rule 30(c): ERCOT's determination is the train-tier verdict and is
-> untouched — CALIBRATED on `2026-09-05-ercot248-two-config-keeper`.**
+> **Rule 30(c): ERCOT's determination is the train-tier verdict and is UNCHANGED at
+> CALIBRATED. The designated keeper is now `2026-09-07-ercot255-five-year-keeper`
+> (owner instruction 2026-09-07; §5) — re-verified CALIBRATED on the train tier and
+> on every designated span, identical to the ercot-248 incumbent it replaces.**
 
 ## 0. Bottom line
 
@@ -20,7 +22,7 @@
 | **2021 C3c** | **holds PASS** (234 → 230 h vs actual 258) — no blow-out. §4 |
 | **The cost, reported at full magnitude** | **C8 ST_GAS 20.8 % → 37.6 % forced, PASS → FAIL.** §4c — and the arithmetic says the arm *revealed* this rather than caused it. |
 | **Predictions** | 6 of 8 fully correct, 1 outside its registered band in the right direction, **1 WRONG IN SIGN**. §4b |
-| **Keeper candidate?** | **NOT PROMOTED this session**, and the blocking fact is not the merits. §5 |
+| **Keeper candidate?** | **PROMOTED** by owner ruling as ONE five-year run; train tier re-verifies CALIBRATED, identical to the incumbent. §5 |
 
 ## 1. Phase 0 (zero LP) — the object, and why it is not the object the charter named
 
@@ -302,7 +304,55 @@ decomposition is the finding, not an excuse:
 Also reported: 2021 slack rises **1,113.99 → 1,763.96 MWh** (dump 0.0000 in
 both) — +650 MWh on a ~380 TWh year, in the one year ERCOT genuinely shed load.
 
-## 5. Disposition — NOT PROMOTED, and the blocking fact is not the merits
+## 5. Disposition — **PROMOTED** by owner ruling, as ONE five-year run
+
+> **SUPERSEDED 2026-09-07 by owner instruction**, verbatim: *"Leave the 2023 results
+> be as they are under a different config. Promote the combined result of
+> 2021-22-24-25 along with the 23 config as a single run on the dashboards. 23 was
+> an outlier year with weird market design."* This section's original recommendation
+> — NOT promoted — is preserved below as §5a because the reasoning that produced it
+> is part of the record, and because **its stated blocker was answered rather than
+> waived**: the merged `meta.json` could not reproduce the 2023 carve-out, so the
+> promotion does not ask it to. 2023 is copied byte-for-byte from the committed
+> ercot-248 composite, exactly as ercot-248 itself composed its two configs.
+
+**The designated ERCOT keeper is now `2026-09-07-ercot255-five-year-keeper`**, one
+run spanning 2021–2025:
+
+| span | config | determination |
+|---|---|---|
+| 2024, 2025 | forward + EP reference | **CALIBRATED** |
+| 2023 | carve-out, **UNCHANGED**, byte-for-byte from ercot-248 | **CALIBRATED** |
+| **train {2023, 2024, 2025}** | — | **CALIBRATED** |
+| 2022 | carve-out recipe + EP reference (**validation**) | CALIBRATED-WITH-CAVEATS |
+| 2021 | carve-out recipe + EP reference (**validation**) | NOT-YET |
+
+**Rule 22 D-5(b) re-verification PASSES.** Recomputed from committed artifacts with
+no solve, the new keeper reads **CALIBRATED** on the train tier and on each
+designated span — **identical to the ercot-248 incumbent on all three**. A promotion
+whose re-verified determination were *worse* would have stopped here; it is not.
+
+**Rule 30(c) governs the two held-out rungs**: they are REPORTED at full magnitude
+on the keeper's panel and the status page's per-year ladder, and they move the ISO
+headline in neither direction. ERCOT stays **CALIBRATED** on the train-tier verdict.
+
+**Two scorer-path repairs this promotion required**, both narrow and both rule-30(c)
+citations rather than judgement calls — a `config_partition` may now designate a
+HELD-OUT span, which neither surface anticipated:
+
+* `scripts/build_status.py` — the "worst config determination over the designated
+  spans" fold now runs over **train-tier configs only**; held-out configs are still
+  scored and rendered, but cannot decertify the ISO.
+* `scripts/audit_keepers.py` — the same filter in M1b's partition rollup, fail-closed
+  (a partition with no train-tier config falls back to the plain single-run compare).
+
+A config without a `tier` field defaults to `train`, so **every other ISO's rollup and
+status part is byte-identical** — verified by rebuilding all six and finding only
+timestamp deltas, which were reverted.
+
+### 5a. The original recommendation, preserved
+
+
 
 **The merits are strong**, and stronger than ercot-254's:
 
@@ -332,16 +382,19 @@ Two further reasons a promotion would be wrong *today*, independent of that:
 * **The C8 ST_GAS breach is unadjudicated** (§4c). It needs the D-4 window
   evidence rule 16 requires, and that is a separate piece of work.
 
-**Recommendation: keep `ercot_zonal_spread_ep_referenced` BUILT and default-OFF**,
-on main, byte-identical off, matrix cell `O` — and treat it as **the leading
-candidate for the next ERCOT keeper** once the two-config provenance defect is
-repaired and the ST_GAS forcing question is adjudicated. It is one CLI switch
-from a promotion A/B.
+**Recommendation (SUPERSEDED — the owner ruled promote; see §5): keep
+`ercot_zonal_spread_ep_referenced` BUILT and default-OFF** … *It is one CLI switch
+from a promotion A/B.* — which is exactly what the owner then called for. The
+mechanism is now **armed on the designated keeper** in 2021/2022/2024/2025, and the
+matrix cell reads **`K`**.
 
 ## 6. Named, and NOT taken here
 
-* **THE TWO-CONFIG `meta.json` PROVENANCE DEFECT IS NOW THE BINDING CONSTRAINT ON
-  ERCOT PROMOTIONS.** It has blocked ercot-254 and ercot-255 in succession. The
+* **The two-config `meta.json` provenance defect is ANSWERED FOR THIS PROMOTION,
+  not fixed.** The five-year keeper composes 2023 byte-for-byte from the committed
+  ercot-248 bundle rather than asking `replay_keeper` to reproduce it, so rule 16 is
+  satisfied by composition. `replay_keeper` on the merged bundle still applies the
+  forward config to 2023, so the defect is live for anything that replays it: It has blocked ercot-254 and ercot-255 in succession. The
   merged bundle records neither `ercot_offer_swcap_clip` nor the carve-out
   CC_REGULAR `peak` band 151.008, so `replay_keeper` applies the forward config to
   2023 and rule 16 is unsatisfiable from it. **Fix this before the next ERCOT

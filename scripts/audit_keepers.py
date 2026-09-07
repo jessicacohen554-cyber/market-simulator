@@ -76,8 +76,9 @@ parsed as a fallback) it verifies:
       never scored against. For an ISO whose keeper shard carries an
       owner-ruled ``config_partition.iso_determination`` (the ercot-246 ruling,
       2026-08-31), the live value M1b compares against is the partition rollup
-      — worst config determination over the DESIGNATED spans — recomputed from
-      committed artifacts, never read from the shard's own assertion. Costs no
+      — worst config determination over the DESIGNATED TRAIN spans, held-out
+      configs excluded per rule 30(c) — recomputed from committed artifacts,
+      never read from the shard's own assertion. Costs no
       solve — ``calibration_verdict`` reads committed artifacts only.
   E12 referential integrity of the shard's LIVE run-id pointers — the fields
       ``build_status.py`` copies into ``status/<ISO>.js`` and
@@ -302,11 +303,25 @@ def _live_iso_determination(iso: str, run_id: str) -> str | None:
             return 1
         return 2
 
+    # RULE 30(c) [R-TOUCHPOINT-FOLD]: "The ISO's calibration determination is
+    # the train-tier (2023-2025) verdict and nothing else. A validation-tier
+    # score is iterable model-SELECTION evidence ... it cannot certify and it
+    # cannot decertify." Since ercot-255 a partition may designate a HELD-OUT
+    # span (ERCOT 2021/2022), so a config marked `tier: "validation"` is
+    # excluded from this rollup while still being scored and rendered
+    # everywhere else. Absent/`train` keeps every pre-existing ISO's rollup
+    # byte-identical, and the fold stays fail-closed: a partition whose configs
+    # are ALL held-out has no train-tier verdict to assert, so it falls back to
+    # the plain single-run comparison rather than silently passing.
     span_dets = []
     for cfg in cp["configs"]:
+        if str(cfg.get("tier") or "train").lower() != "train":
+            continue
         span = [int(y) for y in cfg.get("years", [])]
         span_dets.append(cv.determine(cfg["run_id"], years=span).get("determination"))
-    return min(span_dets, key=_rank) if span_dets else None
+    if not span_dets:
+        return cv.determine(run_id).get("determination")
+    return min(span_dets, key=_rank)
 
 
 def ablation_twin_finding(
