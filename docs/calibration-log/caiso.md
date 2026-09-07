@@ -14100,3 +14100,87 @@ Four more owner decisions, each executed or chartered here:
 * **Record housekeeping:** the keeper-shard field `declared_residual_ct_volume` was audited by the `calibration-keeper-auditor` agent (PASS, one correction: the quoted CT_PEAKER model energies moved from the caiso-257 figures 1.862 / 1.585 TWh to the caiso-260 bundle's own 2.033 / 1.673 TWh; actuals 4.128 / 4.326 unchanged) and landed on the branch as its own commit with the rebuilt status part, followed by a gitignore commit for the transient per-day window CSVs.
 
 **Session caiso-261 closed. Keeper `2026-09-06-caiso-260-b1-demand` UNCHANGED and CALIBRATED; `complete` + frontier declared; no solve spent. Next number: caiso-262.**
+
+## caiso-262 — 2026-09-07
+
+**THE 2022 VALIDATION TOUCHPOINT IS SPENT AND FOLDED INTO THE KEEPER.
+DETERMINATION NOT-YET on C3a (+21.1 %) and C3b (NRMSE 0.286); CAISO STAYS
+CALIBRATED (rule 30(c)).** Keeper `2026-09-06-caiso-260-b1-demand` UNCHANGED.
+Run `2026-09-07-caiso-262-2022-touchpoint`, stamped to the keeper (rule 30(a)),
+`build_status.py --iso CAISO` → CALIBRATED, `audit_keepers.py --iso CAISO`
+PASS 0/0, parity gate OK. Pre-registered in
+`PRECOMMIT-caiso262-2022-touchpoint-2026-09-07.md` + two addenda, all pushed
+before the measurement they govern. `FINDING-caiso262-2022-touchpoint-2026-09-07.md`.
+
+**SCORED 2022:** C1 PASS (6/6, free 4/4) · C2 PASS · **C3a FAIL +21.1 %** ·
+**C3b FAIL 0.286** · **C3c PASS — model 580 h vs actual 510 h** · C4 PASS ·
+C6 PASS (attested) · C8 PASS · C5a −6.4 %. Held: C1/C2/C4/C6/C8. Degraded:
+C3a, C3b. **Improved: C3c**, the standing CAISO limitation.
+
+**THE FINDING IS THAT THE MISS IS WINTER, NOT SUMMER.** Monthly model-vs-actual
+RT: Jan +28.5 %, Feb +31.4 %, Dec +27.7 % against Jun +7.5 %, Aug +8.6 %,
+Sep +8.4 %, Nov +4.5 % — the September heat-wave month (record 52,061 MW peak)
+is IN BAND. December misses by +$66.16 on a $238.53 actual. The mechanism is in
+the run's own log: the hub-basis overlay repriced 1,443 gas generators at the
+measured citygate spot with a **winter max $54.05/MMBtu** — the December-2022
+western gas crisis passed through faithfully into a regime the training window
+(gas $2.19–3.52) never contained. Hypothesis, not conclusion; rule 22 requires
+any repair identified on 2023–2025 first.
+
+**C3c INVERTED and that is evidence:** the model has never made a scarcity tail
+in the calibrated years (23/0/0 vs 47/35/8, the ledgered caveat since
+caiso-184); in a year that genuinely had one it makes 580 against 510 actual.
+The tail machinery works when the drivers are present.
+
+**PROVENANCE — this is the keeper's MODEL, proved not assumed.** HEAD is 68
+files / 40,931 insertions past the keeper's sha `e162147b`, so the keeper recipe
+was replayed on **2023** at HEAD: `class_hourly_2023` (122,640×5) and
+`system_2023` (61,320×9) came back **BIT-IDENTICAL** to the keeper's committed
+sidecars. `gen_touchpoint_attestation.py` independently machine-checked recipe
+identity (0 differing shared meta keys; drift +2 −0 kwargs at their defaults).
+G-BENCH passed in its strongest form (zero differing keys, `avgLMP` included).
+A-1…A-9 all discharged; no STOP rule fired.
+
+**H-2 CLOSED.** RTM crawl 365/365 dates, **8,760/8,760 hours**, 0 missing,
+~85 GB transferred and discarded. RT $79.07 / DA $86.31; RT tail 510 h.
+**A silent DST loss was caught first:** the year initially folded 8,749 h
+(2022-03-13 13-of-23, 2022-11-06 24-of-25) because the fetcher's intra-day
+resume probe keyed on the REQUEST INDEX while OASIS keys on `OPR_HR`, which
+diverge after the spring-forward gap. Probe deleted, both days re-crawled, and a
+coverage check now reads the folded artifact instead of counting successful
+requests. Also fixed: `IncompleteRead` (a truncated transfer) escaped the retry
+clause and killed the crawl at day 256/365.
+
+**EIGHT 2022 INPUTS LANDED**, each reproducing its committed years before the
+new year was written: S-1 CARB $28.45/t (2022 previously resolved to **$0/t** —
+the NYISO-134 D-1 defect, CAISO edition) · S-2 DMM Table 8.5 `Imports`
+3,171 MW × MIC north 0.46965 → 1,489/1,682 (construction re-proved to the MW on
+all three committed years; two transcription traps recorded — the missing 22 MW
+Westley group and its 2025 rename to `Westley-Fink`) · S-3 clean depths
+5,813/6,309/6,774 MW, with a **new committed producer** for the DSW surplus
+depth that previously had none · S-4 nuclear 2022 CF + 730 daily rows ·
+**S-7 the zonal loss surface**, an eighth silent fallback caiso-259 §2 never
+listed · H-1 the demand artifact, 219.538 TWh.
+
+**H-1's wedge independently corroborates caiso-80:** `930 identity − derived
+demand` reads **−0.729 TWh in 2022** against +5.4/+10.8/+17.7 in 2023–2025. That
+wedge IS the fabricated `NG: NG` block; in the one year predating the corruption
+it is ~zero. caiso-80 had only 2023–2025 and could never see this.
+
+**Solve-surface (capx D79):** `PINNED_SURFACE_ROWS_BY_ISO` CAISO
+`22e6fdb4a5a23589 → f4057d6db19fe8d3` (202 rows, unchanged) with a dated cause
+block and two LEDGERED entries; `solve_surface_declared.py` NOT re-declared.
+`moved_rows` `{}` for MISO/PJM/NYISO/NEISO — rule 25 by measurement.
+
+**QUEUE.** (1) the 2022 winter over-pricing is the new named object — the first
+CAISO object in some time that is neither DO-NOT-REDO nor blocked on an owner
+decision; (2) the C3c inversion is evidence for the standing C3c lane;
+(3) **2020/2021 rungs are blocked on TWO inputs** — CARB prices absent, and per
+caiso-263 OASIS GroupZip's own retention boundary is 2021-04-27, so those years'
+hub LMPs are unfetchable by any OASIS endpoint and need a rule-14 source
+adjudication; (4) carried unchanged: hod 22–23 (CLOSED), Panoche (DECLARED
+PERMANENT RESIDUAL), whole-plant-off days (DO-NOT-REDO), S2, the per-zone
+sidecar, the G-26 surface.
+
+**No keeper change, no `ScenarioConfig` field, no offer-curve channel, no matrix
+verdict move, no determination change. Next number: caiso-264.**
