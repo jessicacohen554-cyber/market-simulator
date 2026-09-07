@@ -208,7 +208,13 @@
     }
 
     .iso-badge.iso-caiso {
-      background: rgba(245, 158, 11, 0.15);
+      /* 0.12, not 0.15: --amber-text on a 15 % amber tint reaches only
+         4.4786:1 (4.50 as Chromium actually paints it) against WCAG AA's
+         4.5:1 for normal text. The lighter tint gives 4.5829 (4.57 painted)
+         with no hue change, and puts this rule on the same alpha as
+         shared.css's .badge--iso-* pattern. SPP-37 R-4, routed by
+         FINDING-spp-35 s3.3 / s5; measurement in FINDING-spp-37 s3. */
+      background: rgba(245, 158, 11, 0.12);
       color: var(--amber-text);
     }
 
