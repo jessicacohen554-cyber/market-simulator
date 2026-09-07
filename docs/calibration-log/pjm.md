@@ -4768,3 +4768,72 @@ cancel, and the cancellation holds the tuned years inside the band. Re-opening e
 owner decision on rule 1 `[R-STRUCT]` structural grounds, never on the fit.
 
 Next shorthand: **pjm-172.**
+
+
+## pjm-171 ADDENDUM — 2026-09-07 — the priced-interchange seam is FROZEN AT 2023 CONDITIONS in every pre-2023 year (zero LP; keeper untouched)
+
+**Owner question:** *"Are imports being repriced each year? If not they should be."*
+**Answer: not before 2023 — and it binds on both the keeper and the registered touchpoint.**
+Record: `results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`.
+
+**Two stacking freezes.** (F-A) `constants.HENRY_HUB_TRAJECTORIES` (`low`/`mid`/`high`) has its
+**first knot at 2023**, so `_hold_flat_extrapolate` hands the seam the 2023 knot ($2.54) for every
+earlier year. (F-B) `NeighborInterface.hr_by_year` covers **{2023, 2024, 2025} only**, so 2021/2022
+fall through to the **gas-elastic forward formula** and resolve identically to each other
+(MISO 12.90/12.90, NYISO 10.40/10.40, DUK/TVA/LGEE 11.19/11.19) across a $3.91-vs-$6.42 Henry Hub gap.
+
+**The contract that fails.** `neighbor_gas_price`'s own docstring promises *"a neighbor and its
+bordering ISO see the same Henry Hub level"*. Measured: error 0 % in 2023/2024/2025, **−32 % in
+2021** (own 3.72 vs seam 2.54) and **−61 % in 2022** (6.45 vs 2.54). 2019/2020 are affected too.
+
+**It binds:** `reference_price_interface = True` and `priced_interchange = True` in BOTH
+`pjm_debugb_inputclock_A` and `pjm169_tp2022_2021_f2arm`.
+
+**Measured consequence** — model net export vs EIA-930 (sentinels masked, `> 1e6 MW`):
+2021 **23.43 vs 37.94 (−14.51 TWh)** · 2022 21.65 vs 31.64 (−9.99) · 2023 27.47 vs 39.87 (−12.40) ·
+2024 20.45 vs 32.56 (−12.12) · 2025 23.23 vs 17.97 (+5.26). Too **import-ward** in 2021–2024 —
+the exact mechanism `derive_neighbor_hr_by_year.py`'s docstring names as *"the root of the PJM 2025
+over-export / 2024 under-export"*, never applied to the two dearest-gas years it flags as worst.
+
+**Demand is ruled out.** Model LP demand vs EIA-930: +0.0 / +0.3 / +0.2 / −0.1 / −0.0 % for
+2021–2025. This is NOT the 2020-style inflated-zonal-demand blocker.
+
+**Rules 22 + 14.** The measured anchor exists, is derived by a committed script, and is applied to
+the three TRAINING years only — an input-parity break, with the data on disk
+(`henry_hub_monthly.csv` 1997–2025; `hindcast_realized` already carries a 2021 knot).
+
+**The repair is inert in the training window by construction** (the extrapolator returns the exact
+knot when present; new `hr_by_year` keys cannot change 2023–2025 lookups), so it moves only
+pre-2023 backcast years: keeper untouched, no training re-solve, nothing promoted. Input coverage
+checked — NYISO realized LMP 2018–2026 (2021 ✓ 2022 ✓); MISO 2022–2026, so 2021 has no MISO anchor
+and falls back to the structural `marginal_heat_rate`, that script's own designed behaviour.
+
+**Stated against interest:** correcting it is expected to move 2021's C3a **further from the band**
+(dearer imports ⇒ less import, more export ⇒ PJM climbs its own stack ⇒ the trough leg, already
++$3.56/MWh high, rises). A prediction needing a screen — and under rule 14 never a reason to keep
+the estimate.
+
+**Owner-facing fork, nothing built:** `HENRY_HUB_TRAJECTORIES` is shared by every ISO, so the
+repair is either (1) pre-2023 knots on the shared table, or (2) a seam-local measured-backcast gas
+resolution mirroring the ISO's own `gas_price_override` path. **Cross-ISO (rule 25):** any ISO
+arming `reference_price_interface` on a pre-2023 year hits the same freeze — every lane must verify
+its own exposure before spending a pre-2023 touchpoint; no verdict transfers.
+
+**Plant-level corroboration.** PJM 2021 model − EIA-923 by zone (TWh): **EMAAC +12.98** (vs CEMS
+**+21.7**), SWMAAC +4.96, ATSI +0.35, Central PA +0.20, West APS −0.68, **AEP Ohio −1.66**,
+ComEd −1.70, Dominion −1.75. By class: **CC_REGULAR +26.77**, COAL_BIT −6.84, CT_PEAKER −11.40.
+**Bergen (2398, EMAAC, CC_REGULAR, 1401 MW): model 5.586 vs CEMS 1.104 vs EIA-923 1.740 — 3.21× the
+923, `nodata` = False.** CEMS does under-report Bergen (1.104 < 1.740) but the model is above BOTH,
+so no CEMS-coverage argument reaches a 3.2× over-run. Also Linden +2.64, Red Oak +2.64, Wildcat
+Point +2.04, Hay Road +1.68, Chalk Point ST_GAS +1.54 (15.3×). Correction to the standing read:
+**AEP Ohio nets −1.66 TWh** (it contains over-runs — Rockport +1.60, Hanging Rock +1.10 — but is
+net under). The EMAAC concentration in CC plants with low measured utilisation is consistent with
+the open availability-envelope over-count, **as a hypothesis, not a measurement** — the next probe
+is named in the addendum §8.
+
+**Also corrected:** `ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §3.4 says all three
+corrupt PJM 2021 hours carry 2,147,480,064 MW; only one does (the others carry 1.528e9 and 4.31e8).
+Its conclusion is unaffected, but a guard written to the literal sentinel catches one of three —
+use a `> 1e6 MW` bound.
+
+Next shorthand: **pjm-172.**
