@@ -251,7 +251,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = ap.parse_args(argv)
 
-    live_default = bool(getattr(ScenarioConfig(), FIELD))
+    # AMENDED by capx D76-ARM-B (owner ruling Q58): read the DATACLASS FIELD
+    # DEFAULT, not a resolved instance. Variant B's ``__post_init__`` coercion
+    # forces the field to its frozen declaration on any NON-hindcast config, and
+    # a bare ``ScenarioConfig()`` is non-hindcast — so after the arm the old
+    # read returned the COERCED value and ``--expect-live-default true`` could
+    # never pass, however the tree was edited. The census arithmetic
+    # (``_pre_flip_value`` / ``_post_flip_value`` / ``_key``) is UNTOUCHED by
+    # this amendment, which is why the ex-ante and ex-post records still agree
+    # to the config.
+    live_default = bool(ScenarioConfig.__dataclass_fields__[FIELD].default)
     if args.expect_live_default is not None:
         want = args.expect_live_default == "true"
         if live_default is not want:

@@ -1000,12 +1000,15 @@ def build_config(
                 # measurement posture (distinct cache key).
                 "retirement_sector_gate": retirement_sector_gate,
                 # capx D76: the measured-hindcast capacity-screen peak gate
-                # — default-off; None inherits the shipped default, True arms
-                # the D76 A/B measurement posture (distinct cache key). An
-                # explicit False is passed through here rather than outside
-                # the dict: the field is registered at its declared False, so
-                # False still drops from the hash and the control arm keeps the
-                # bare recipe key.
+                # — ARMED BY DEFAULT since capx D76-ARM-B / owner ruling Q58
+                # (2026-09-07). None inherits that shipped default (armed on a
+                # hindcast; coerced off in __post_init__ on anything else), so
+                # True is now a no-op restating it and FALSE is the meaningful
+                # leg: the explicit pre-arm control. An explicit False is
+                # passed through here rather than outside the dict because the
+                # field is registered at its FROZEN declared False, so False
+                # still drops from the hash and the control arm keeps the
+                # pre-flip bare recipe key.
                 "capacity_screen_peak_measured_hindcast": (
                     capacity_screen_peak_measured_hindcast
                 ),
@@ -1853,7 +1856,8 @@ def main(argv: list[str] | None = None) -> int:
         action=argparse.BooleanOptionalAction,
         default=None,
         help=(
-            "capx D76 (2026-09-06) arm: in HINDCAST mode the capacity screens' "
+            "capx D76, ARMED AS THE DEFAULT POSTURE 2026-09-07 for every ISO "
+            "(capx D76-ARM-B, owner ruling Q58): in HINDCAST mode the capacity screens' "
             "peak is the solve year's OWN MEASURED load -- the same array the "
             "LP dispatches -- instead of the weather year's load de-grown back "
             "across the span by _scale_demand. Repairs the seam "
@@ -1866,10 +1870,14 @@ def main(argv: list[str] | None = None) -> int:
             "peak, never stacks on it (rule 19); ZERO free parameters. Inert "
             "for every forecast run and every crossover FORWARD year, where "
             "there is no measured load and growth IS the methodology (rule 13). "
-            "OMIT to inherit the shipped default (off, owner-armed only); "
-            "--capacity-screen-peak-measured-hindcast arms it (distinct cache "
-            "key); --no-capacity-screen-peak-measured-hindcast is the explicit "
-            "OFF control, which keeps the bare recipe key."
+            "OMIT to inherit the shipped default, WHICH IS NOW ARMED "
+            "(--capacity-screen-peak-measured-hindcast is therefore a no-op "
+            "restating it); --no-capacity-screen-peak-measured-hindcast is the "
+            "explicit OFF control and reaches the PRE-ARM posture, keeping the "
+            "pre-flip key so an existing bundle stays reachable. The arm moved "
+            "34 committed hindcast keys and ZERO others; a plain backcast or "
+            "forecast config coerces the field off in __post_init__ and is "
+            "byte-identical either way."
         ),
     )
     parser.add_argument(
