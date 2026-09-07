@@ -85,6 +85,24 @@ GRP fold keeps (3 hubs + 4 DLAPs + MALIN_5_N101 / CAPTJACK_5_N003 /
 PALOVRDE_ASR-APND), exactly as the GRP-folded Jan–Mar 2023 rows of
 `CAISO_dam_hourly_2023.csv` already do.
 
+**2021 Q3 (PARTIAL YEAR — added 2026-09-07).** `CAISO_dam_hourly_2021.csv`
+covers **trade dates 2021-07-01 .. 2021-09-30 ONLY** (2,208 h x the same
+10-node set, 22,080 rows, no gaps, no nulls; `LMP == MCE+MCC+MCL` to 7e-05).
+It was fetched by the same GroupZip route as 2022 — `DAM_LMP_GRP` v12, one
+request per trade date, 92/92 fetched, 0 missing, 0 partial, 0.949 GB
+transferred in 875 s — which confirms by measurement that GroupZip serves
+2021 as readily as 2022 (the per-node `SingleZip` API cannot: 2021 is far
+past its moving ~39-month retention). Like 2021/2022 generally, the v12 DAM
+archive carries four components and therefore **no `MGHG` column**; 2023+
+files have one.
+
+**This partial year is NOT scoreable, by design and without any extra guard.**
+`scripts/data/derive_actual_lmp.py`'s `CAISO_MIN_HOURS = 6500` rejects it
+(2,208 h), and 2021 is deliberately absent from `CAISO_PARTIAL_YEARS`, so no
+CAISO 2021 bench year is emitted and the quarter cannot masquerade as a full
+one. Completing 2021 means crawling the remaining nine months by the same
+command; nothing else changes.
+
 **Consumers of the zips** (all tolerate their absence at tip):
 `scripts/data/fold_caiso_oasis_grp_zips.py` — the standing folder that turns
 restored GRP zips into the hourly aggregates above (the aggregates already
