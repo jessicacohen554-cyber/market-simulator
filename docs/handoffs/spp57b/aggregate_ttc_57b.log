@@ -1,0 +1,62 @@
+
+================ N<->OK (+ = N->OK): set = ('n_s_corridor',); 30 members >= 263 h (excluded groups: ['oklahoma_internal'], 37 rows, 25 of them |t| >= 2 on this spread)
+Constraint Name       Monitored Facility        group  hours       psi         t   fwd   rev      L_f       T_star
+   TMP266_27514 XFMR FRANKLN5 - FRANKLN5 n_s_corridor   4103  0.029808  4.799838  True False  100.000  3354.797929
+   TMP477_24580     XFMR VIOLA7 - VIOLA7 n_s_corridor   1236 -0.135291 -6.263965 False  True  409.200  3024.593247
+   EDWXFR87CRAI         XFMR EDWV - EDWV n_s_corridor    802  0.007509  2.852216  True False  167.000 22239.723389
+   TMP142_25323    LN WAVERLY7 - LACYGNE n_s_corridor    732 -0.053926 -6.069416 False  True 1183.000 21937.290459
+   NASXFRNASHAW     XFMR NASHUA - NASHUA n_s_corridor    644  0.072427  7.714137  True False  679.250  9378.452090
+   TEMP61_22964       LN WR_SMKHL - SUMM n_s_corridor    634 -0.034661 -1.979610 False False  346.500          NaN
+   TMP122_26551       LN WR_SMKHL - SUMM n_s_corridor    607 -0.029404 -1.302683 False False  346.500          NaN
+   TMP501_28727       LN WR_SMKHL - SUMM n_s_corridor    593 -0.030550 -1.613853 False False  346.500          NaN
+   TP1136_32015           LN GORD - MAIZ n_s_corridor    515 -0.002541 -0.591916 False False  278.240          NaN
+   TMP777_28815   LN FIRSTCRK - ROANRDGE n_s_corridor    513  0.020746  7.937467  True False  270.750 13050.654596
+   COPSTJCPFRSJ       LN COOPER - ST_JOE n_s_corridor    508  0.168939  3.879322  True False 1087.450  6436.946923
+   SMOSUMMULCIR       LN WR_SMKHL - SUMM n_s_corridor    476 -0.008030 -0.621169 False False  350.350          NaN
+   TMP427_25433       LN COLBY3 - ATWOOD n_s_corridor    472  0.004075  1.409356 False False   74.620          NaN
+   TMP845_30027       LN MARSHAL3 - KNOB n_s_corridor    464  0.365342  4.385831  True False   63.700   174.357058
+   TMP338_28287     LN STILWELL - REDEL5 n_s_corridor    460 -0.073852 -5.168652 False  True  310.620  4205.999207
+    LECLAWSTR87            LN LEC - LAWH n_s_corridor    458  0.045811  2.032424  True False  159.750  3487.118885
+   TMP840_28870     XFMR SIBLEY - SIBLEY n_s_corridor    415  0.081309  7.460473  True False  400.000  4919.474501
+   TMP486_31685   LN OVRLD_PK - MERRIAM2 n_s_corridor    392 -0.046724 -3.184058 False  True  200.000  4280.433266
+   TMP634_28149     XFMR SIBLEY - SIBLEY n_s_corridor    384  0.087457  8.252077  True False  400.000  4573.674600
+   TMP662_28227     LN SPERVI1 - MULGRE2 n_s_corridor    376 -0.118570 -3.405613 False  True  370.512  3124.827049
+   TMP436_28110    LN MULGRE2 - ELLSWTP3 n_s_corridor    357  0.014344  2.734912  True False   91.910  6407.723686
+   TMP564_26167       LN N345 - BLACKBRY n_s_corridor    312  0.010293  1.169102 False False  787.550          NaN
+   TMP867_31042 XFMR HAWTHORN - HAWTHORN n_s_corridor    310  0.035014  4.363668  True False  650.000 18564.197830
+   TMP765_28745     LN SEWARD3 - ST-JOHN n_s_corridor    296  0.045864  5.295641  True False  101.000  2202.158989
+   TMP696_28306    LN LACYGNE - STILWELL n_s_corridor    293 -0.069674 -2.352512 False  True 1626.400 23342.970033
+   TEMP37_25116           LN COLI - TECH n_s_corridor    287 -0.019853 -2.003443 False  True      NaN          NaN
+   CRALENCRALEN        LN CRAIG - LENEXA n_s_corridor    278 -0.056377 -3.303229 False  True  338.200  5998.905786
+   TMP124_29862   LN JAY_HAWK - FRANKLN5 n_s_corridor    273  0.006036  0.105633 False False  175.630          NaN
+   TP1121_31979   LN JAY_HAWK - FRANKLN5 n_s_corridor    269 -0.025976 -1.808359 False False  175.630          NaN
+   TEMP82_22539       LN SHAYS - MULGRE2 n_s_corridor    263  0.027763  0.870094 False False  293.910          NaN
+  forward: n=12 hours=9254 weighted median T* = 3,355 -> 3,400 MW | p25 3,355 p75 6,437 ratio 1.92 | unweighted median 5,664 min 174 max 22,240
+     LOYO drop 2023: n=12 weighted median T* = 3,681
+     LOYO drop 2024: n=12 weighted median T* = 11,121
+/home/user/market-simulator/docs/handoffs/spp57b/aggregate_ttc_57b.py:66: RuntimeWarning: divide by zero encountered in divide
+  J = I.assign(T_star=I.L_f.values / ps)
+     LOYO drop 2025: n=11 weighted median T* = 1,510
+  reverse: n=7 hours=3767 weighted median T* = 4,206 -> 4,200 MW | p25 3,025 p75 21,937 ratio 7.25 | unweighted median 4,280 min 3,025 max 23,343
+     LOYO drop 2023: n=7 weighted median T* = 4,125
+     LOYO drop 2024: n=7 weighted median T* = 4,168
+     LOYO drop 2025: n=7 weighted median T* = 4,425
+  NAMED DIRECTION = forward (forward 9254 h vs reverse 3767 h)
+  TTC (named) = 3,400 MW | R1 (>=3 identified w/ L_f) pass | R2 (TTC < max B_plaus 23,300) pass | R3 (TTC < max B_hard 37,400) pass | R4 (p75/p25 <= 10) pass
+
+================ OK<->S (+ = OK->S): set = ('sps_tie',); 7 members >= 263 h (excluded groups: ['oklahoma_internal', 'other'], 47 rows, 24 of them |t| >= 2 on this spread)
+Constraint Name       Monitored Facility   group  hours       psi         t   fwd   rev      L_f       T_star
+   TEMP50_23126 XFMR POTTER_S - POTTER_S sps_tie   2231  0.047258  2.537574  True False  505.895 10705.045658
+   TMP555_29231 XFMR POTTER_S - POTTER_S sps_tie   1638  0.132113  3.496224  True False  508.690  3850.403660
+   TMP200_25341 XFMR POTTER_S - POTTER_S sps_tie   1421  0.004929  0.212397 False False  503.100          NaN
+      SPSNMTIES Multi-Element Constraint sps_tie   1211  0.089228  2.350324  True False 1018.000 11409.014926
+     SPPSPSTIES Multi-Element Constraint sps_tie   1097  0.282612  2.359435  True False 1018.000  3602.105772
+   TMP775_29068 XFMR POTTER_S - POTTER_S sps_tie    762 -0.006128 -0.131956 False False  508.690          NaN
+   TMP703_28546     LN FPLSWTCH - WDWRD1 sps_tie    411 -0.006104 -0.169591 False False  119.210          NaN
+  forward: n=4 hours=6177 weighted median T* = 10,705 -> 10,700 MW | p25 3,850 p75 10,705 ratio 2.78 | unweighted median 7,278 min 3,602 max 11,409
+     LOYO drop 2023: n=4 weighted median T* = 8,395
+     LOYO drop 2024: n=4 weighted median T* = 10,490
+     LOYO drop 2025: n=4 weighted median T* = 14,796
+  reverse: no identified constituent with an L_f (R1 FAILS in this direction: 0 < 3)
+  NAMED DIRECTION = forward (forward 6177 h vs reverse 0 h)
+  TTC (named) = 10,700 MW | R1 (>=3 identified w/ L_f) pass | R2 (TTC < max B_plaus 11,085) pass | R3 (TTC < max B_hard 24,383) pass | R4 (p75/p25 <= 10) pass

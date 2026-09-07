@@ -1,0 +1,40 @@
+
+=== LEG (i) links, 2025 ===
+SPP-North->SPP-Oklahoma TTC 3,400: at bound 2061 h (23.5 %) — positive 1920 h, negative 141 h; named direction + share 93.2 % | flow mean +1281 p10 -1349 p50 +1527 p90 +3400 | live(>=5%)=True direction(>=55%)=True
+   by month +bound: [249, 203, 164, 191, 146, 187, 105, 169, 206, 99, 34, 167]
+   by month -bound: [0, 2, 6, 1, 11, 0, 2, 8, 6, 8, 25, 72]
+   by hour-of-day +bound: [83, 89, 90, 93, 98, 88, 85, 76, 79, 73, 69, 78, 93, 96, 99, 97, 84, 73, 58, 51, 52, 68, 70, 78]
+   by hour-of-day -bound: [10, 9, 7, 5, 6, 6, 8, 3, 3, 5, 2, 3, 5, 6, 8, 6, 6, 6, 6, 6, 5, 6, 7, 7]
+SPP-Oklahoma->SPP-South TTC 10,700: at bound 0 h (0.0 %) — positive 0 h, negative 0 h; named direction + share 0.0 % | flow mean -1182 p10 -3140 p50 -1188 p90 +781 | live(>=5%)=False direction(>=55%)=False
+   by month +bound: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+   by month -bound: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+   by hour-of-day +bound: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+   by hour-of-day -bound: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+=== LEG (ii) spreads, 2025 ===
+OK-N: model annual mean +1.77 (mean|.| 1.91, p90|.| 5.81) vs measured +0.15 (mean|.| 15.18, p90 36.25) -> sign MATCH
+   model monthly mean: [2.5, 2.1, 2.0, 2.8, 1.4, 1.2, 0.3, 0.6, 1.3, 0.4, 0.1, 6.4]
+S-OK: model annual mean +0.00 (mean|.| 0.00, p90|.| 0.00) vs measured +11.29 (mean|.| 19.03, p90 34.66) -> sign MISMATCH
+   model monthly mean: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+load-weighted price 30.54; zone means N 29.11 OK 30.88 S 30.88
+negative-price hours by zone {'SPP-North': 4, 'SPP-Oklahoma': 0, 'SPP-South': 0}; total zone-hours 4; hours any zone < 0: 4; hours > $200 (any zone) 2; > $1000 2; min -26.00 max 2000.00
+
+=== LEG (iv) unserved, 2025 ===
+slack hours 2, MWh 444.3, by zone {'SPP-South': 444.3}; hours [8507, 8508]
+dump MWh 0.0; leg (iv) inside the control set {8507}: False
+
+=== LEG (iii) re-curtailment, 2025 === wind delivered 122.25 TWh / potential 122.26 -> re-curtailment 0.00 % (STOP if exactly 0.0)
+=== LEG (v) fuel families vs reference, 2025 ===
+  coal     model   83.97 actual   77.46 ratio  1.08 ok
+  gas_cc   model   31.23 actual   40.47 ratio  0.77 ok
+  gas_ct   model   24.03 actual    5.39 ratio  4.46 ok
+  gas_st   model   12.14 actual   12.56 ratio  0.97 ok
+  nuclear  model   15.78 actual   16.19 ratio  0.97 ok
+  hydro    model    8.82 actual    0.02 ratio 378.71 OUT
+  wind     model  122.25 actual  110.46 ratio  1.11 ok
+  solar    model    2.35 actual    2.35 ratio  1.00 ok
+by class TWh: {'CC_CHP': 2.069000005722046, 'CC_REGULAR': 29.16200065612793, 'COAL_LIGNITE': 6.218999862670898, 'COAL_PRB': 77.75499725341797, 'CT_CHP': 1.2100000381469727, 'CT_PEAKER': 22.820999145507812, 'OTHER': 0.48899999260902405, 'ST_CHP': 0.1589999943971634, 'ST_GAS': 11.979000091552734, 'biomass': 0.9490000009536743, 'hydro': 8.824000358581543, 'nuclear': 15.779999732971191, 'oil': 0.0, 'solar': 2.3480000495910645, 'wind': 122.25399780273438}
+
+=== CONTROL spp42_crosswalk_B, 2025 === load-weighted price 29.97; |S-N| mean 1.35; negative hours (any zone) 6; unserved 89.3 MWh in 1 h; by class {'CC_CHP': 2.0339999198913574, 'CC_REGULAR': 32.573001861572266, 'COAL_LIGNITE': 6.031000137329102, 'COAL_PRB': 77.16600036621094, 'CT_CHP': 1.184999942779541, 'CT_PEAKER': 22.347999572753906, 'OTHER': 0.48899999260902405, 'ST_CHP': 0.20499999821186066, 'ST_GAS': 9.829999923706055, 'biomass': 0.9490000009536743, 'hydro': 8.824000358581543, 'nuclear': 15.779999732971191, 'oil': 0.0, 'solar': 2.3480000495910645, 'wind': 122.25499725341797}
+
+===== STOP GATE 2025: leg(i) {('SPP-North', 'SPP-Oklahoma'): (np.True_, True), ('SPP-Oklahoma', 'SPP-South'): (np.False_, False)} | leg(ii) False | leg(iii) recurt>0 True | leg(iv) False | leg(v) False -> STOP

@@ -1,0 +1,24 @@
+
+SPP-North -> SPP-Oklahoma (positive = North->Oklahoma): flow p1 -3400 p10 -1349 p50 +1527 p90 +3400 p99 +3400 min -3400 max +3400
+   rating  3,400: at/over bound  2061 h  (+  1920 / -   141)
+   rating  4,000: at/over bound     0 h  (+     0 / -     0)
+   rating  4,500: at/over bound     0 h  (+     0 / -     0)
+   rating  5,000: at/over bound     0 h  (+     0 / -     0)
+   rating  6,000: at/over bound     0 h  (+     0 / -     0)
+   rating  6,500: at/over bound     0 h  (+     0 / -     0)
+   rating  6,700: at/over bound     0 h  (+     0 / -     0)
+   rating  8,000: at/over bound     0 h  (+     0 / -     0)
+   rating 10,000: at/over bound     0 h  (+     0 / -     0)
+   rating 10,700: at/over bound     0 h  (+     0 / -     0)
+
+SPP-Oklahoma -> SPP-South (positive = Oklahoma->South): flow p1 -4682 p10 -3140 p50 -1188 p90 +781 p99 +2183 min -6211 max +3133
+   rating  3,400: at/over bound   638 h  (+     0 / -   638)
+   rating  4,000: at/over bound   282 h  (+     0 / -   282)
+   rating  4,500: at/over bound   122 h  (+     0 / -   122)
+   rating  5,000: at/over bound    55 h  (+     0 / -    55)
+   rating  6,000: at/over bound     3 h  (+     0 / -     3)
+   rating  6,500: at/over bound     0 h  (+     0 / -     0)
+   rating  6,700: at/over bound     0 h  (+     0 / -     0)
+   rating  8,000: at/over bound     0 h  (+     0 / -     0)
+   rating 10,000: at/over bound     0 h  (+     0 / -     0)
+   rating 10,700: at/over bound     0 h  (+     0 / -     0)
