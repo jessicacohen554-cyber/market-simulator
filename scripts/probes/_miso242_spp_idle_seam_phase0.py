@@ -135,9 +135,33 @@ def _json(path: Path):
         return None
 
 
-def share_in_band(x: np.ndarray, lo: float, hi: float) -> float:
-    """``P(lo <= x <= hi)`` — the DEAD-BAND share (PREREG §0 F3), closed on both edges."""
-    return float(((x >= lo) & (x <= hi)).mean())
+def in_dead_band(
+    x: np.ndarray, anchor: np.ndarray, d_imp1: float, d_exp1: float
+) -> np.ndarray:
+    """DEAD-BAND membership in the INSTRUMENT'S OWN TWO OPERAND FORMS.
+
+    ADDENDUM-miso242-the-dead-band-predicate-was-a-rearrangement §3, declared before the
+    repaired numbers existed. ``build_recons`` does not use one operand form: the import
+    leg tests the SPREAD ``(x - anchor) > delta`` (a subtraction) and the export leg tests
+    the LEVEL ``x < anchor + delta`` (an addition). PREREG §0 F3 rearranged the export edge
+    into the spread form, which is exact in real arithmetic and NOT exact in IEEE double
+    arithmetic at ties -- the 16/1/26 SPP hours in which ``x == anchor + delta_1^export``
+    to the bit. Each edge is therefore evaluated here in its own leg's form:
+
+        n_i == 0  <=>  (x - anchor) <= delta_1^import
+        n_e == 0  <=>   x           >= anchor + delta_1^export
+
+    No tolerance is introduced and no bar moves; the gate is STRICTER because it now tests
+    the predicate the code evaluates rather than a rearrangement of it.
+    """
+    return ((x - anchor) <= d_imp1) & (x >= anchor + d_exp1)
+
+
+def share_in_dead_band(
+    x: np.ndarray, anchor: np.ndarray, d_imp1: float, d_exp1: float
+) -> float:
+    """The dead-band share, on :func:`in_dead_band`'s operand forms."""
+    return float(in_dead_band(x, anchor, d_imp1, d_exp1).mean())
 
 
 def corr(a: np.ndarray, b: np.ndarray) -> float:
@@ -317,7 +341,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         ref_zero = REF_ZERO_SHARE_SPP[yi]
         ref_env0 = REF_ENV_I_ZERO_SPP[yi]
         if prior241:
-            q1p = prior241["years"][str(year)]["Q1"]["SPP"]
+            q1p = prior241["years"][str(year)]["Q1_binding_census"]["SPP"]
             ref_zero = q1p.get("share_seam_exactly_zero_repaired", ref_zero)
             ref_env0 = q1p.get("env_i_zero_share", ref_env0)
         pv["G_Z"] = {
@@ -346,7 +370,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         ref_ceil = REF_CEILING_SHARE_SPP[yi]
         ref_mn = REF_MEAN_N_IMPORT_SPP[yi]
         if prior241:
-            q1p = prior241["years"][str(year)]["Q1"]["SPP"]
+            q1p = prior241["years"][str(year)]["Q1_binding_census"]["SPP"]
             ref_ceil = q1p.get("ceiling_active_share_repaired", ref_ceil)
             ref_mn = q1p.get("import", {}).get("mean_n", ref_mn)
         pv["G_L"] = {
@@ -398,7 +422,9 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         ref_c = REF_HARNESS_CORR_REPAIRED[yi]
         ref_l = REF_HARNESS_LEVEL_REPAIRED[yi]
         if prior241:
-            hp = prior241["years"][str(year)]["Q0"]["harness"]["repaired"]
+            hp = prior241["years"][str(year)]["Q0_instrument_repair"]["harness"][
+                "repaired"
+            ]
             ref_c = hp.get("corr_recon_vs_committed", ref_c)
             ref_l = hp.get("mean_abs_level_error_mw", ref_l)
         pv["G_B"] = {
@@ -416,6 +442,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             gate_fail.append(f"G-B {year}")
 
         # --- G-DB: the DEAD-BAND identity (PREREG §0 F3), SPP and PJM, on R_K ---
+        anchor_of = {"SPP": spp_hub, "PJM": border}
         s_model = {
             "SPP": (bus_price[BUS_OF_SEAM["SPP"]] - spp_hub)[ok],
             "PJM": (bus_price[BUS_OF_SEAM["PJM"]] - border)[ok],
@@ -451,7 +478,9 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         for seam in ("SPP", "PJM"):
             lo, hi = band1[seam]
             from_counts = (R[seam]["n_i"][ok] == 0) & (R[seam]["n_e_repaired"][ok] == 0)
-            from_band = (s_model[seam] >= lo) & (s_model[seam] <= hi)
+            from_band = in_dead_band(
+                bus_price[BUS_OF_SEAM[seam]][ok], anchor_of[seam][ok], hi, lo
+            )
             bad = int((from_counts != from_band).sum())
             db_bad += bad
             db[seam] = {
@@ -471,10 +500,12 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             ("PJM", "pjm_border", 0.5 * widths["PJM"]),
         ):
             sub = wy.dropna(subset=[hub_series, "da", seam])
-            spread_d = (sub["da"] - sub[hub_series]).to_numpy(float)
+            da_d = sub["da"].to_numpy(float)
+            anch_d = sub[hub_series].to_numpy(float)
+            spread_d = da_d - anch_d
             flow_d = sub[seam].to_numpy(float)
             lo, hi = band1[seam]
-            z_derive = share_in_band(spread_d, lo, hi)
+            z_derive = share_in_dead_band(da_d, anch_d, hi, lo)
             z_target = (
                 1.0 - float((flow_d > mid1).mean()) - float((flow_d < -mid1).mean())
             )
@@ -499,8 +530,10 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         qb = {}
         for seam in ("SPP", "PJM"):
             lo, hi = band1[seam]
-            z_model = share_in_band(s_model[seam], lo, hi)
-            z_der_k = share_in_band(s_derive_K[seam], lo, hi)
+            z_model = share_in_dead_band(
+                bus_price[BUS_OF_SEAM[seam]][ok], anchor_of[seam][ok], hi, lo
+            )
+            z_der_k = share_in_dead_band(da[ok], anchor_of[seam][ok], hi, lo)
             qb[seam] = {
                 "n_rows_R_K": int(ok.sum()),
                 "Z_model": round(z_model, 4),
