@@ -76,3 +76,55 @@ bulk endpoint has its own retention boundary at **2021-04-27** (`DAM_LMP_GRP` v1
 later still, so 2020 hub / DLAP prices are unobtainable from OASIS by any endpoint. The
 AS reports and `SLD_FCST` carry no such window. Details:
 `data/raw/lmp-data/CAISO/README.md`.
+
+## asresults — DAM ancillary-service market results (OASIS AS_RESULTS)
+
+Content section for the series the Q2/Q3-2020 extensions introduced (it had been registered
+in `scripts/data/fetch_caiso_oasis.py` but marked "not yet fetched in bulk" until 2026-09-07).
+
+Hourly procured MW per AS region and product. `XML_DATA_ITEM`
+`{SP,NS,RU,RD,RMU,RMD}_{TOT,SPROC,PROC}_MW` plus `_TOT_CST_PRC` — i.e. total procurement
+(market + self), self-provided, and market-procured legs carried separately. Purpose: the
+measured TOTAL-procurement denominator across all resource types. The battery-held award
+itself comes from the Daily Energy Storage Report intake (`data/raw/storage-as-awards`), so
+this series is the battery-share denominator and the eventual measured replacement for the
+`as_reserve_formula` scaffold. Same `ANC_REGION` nesting as `asprc` above.
+
+## Q3-2020 extension (caiso-oasis-q3-2020, 2026-09-07)
+
+Fetched 2026-09-07 by `scripts/data/fetch_caiso_oasis.py --datasets asresults asprc_ru
+asprc_rd asprc_sr asprc_nr --years 2020 --start-date 2020-07-01 --end-date 2020-10-01`,
+4 windows per series. Extends the Q2-2020 chain above to **2020-04-01 → 2020-10-01
+contiguous** for `asresults` and all four `asprc_*` products.
+
+**The DST head-window note above bit this range too, and the Q2 chain is what repairs it.**
+2020-07-01 came back HE2–HE24 (23 h) in all five series, exactly as that note predicts for
+the first trade date of a PDT-month range. No head window was fetched for it, because the
+Q2 lane's own tail window (`*_ALL_20200615_20200701.csv`) already carries 2020-07-01 **HE1**
+and nothing else — the "invisible inside a contiguous chain" case. **Verified across the
+rebase**, per series: Q2-tail tail-day = 2020-07-01, hours = [1]; Q3 first day = 2020-07-01,
+hours = HE2–HE24. Read the two together and Q3 is 2,208/2,208 (day, hour) pairs, 92 days ×
+24 h. Read the Q3 files ALONE and 2020-07-01 is short one hour — so any consumer that globs
+only the Q3 windows must be checked against this.
+
+Row counts as fetched: `asresults` 229,632; each `asprc_*` 13,248; 6 AS regions throughout.
+The trailing `2020-10-01` rows are the same one-hour spill the DST note describes (HE1 only,
+from the exclusive end bound) and are the head hour for whatever range opens Q4.
+
+`asreq` and `load` were NOT re-fetched for Q3: `asreq` already carried the contiguous
+2019-12-27 → 2021-01-05 chain, and
+`data/raw/zone-specific-demand/CAISO/CAISO_tac_load_hourly_2020.csv` already covered Q3.
+Re-running `asreq` at Q3-aligned window boundaries would additionally have written
+overlapping duplicate files, since the fetch script's skip check keys on the exact
+`{start}_{end}` filename, not on day coverage.
+
+## Coverage by year
+
+| series | 2020 | 2022 | 2023–2025 |
+| --- | --- | --- | --- |
+| `asreq` | full year (2019-12-27 → 2021-01-05) | 2022-01-15 → 2022-03-06 only | complete |
+| `asprc_{ru,rd,sr,nr}` | **Q2+Q3** (2020-04-01 → 2020-10-01) | — | complete |
+| `asresults` | **Q2+Q3** (2020-04-01 → 2020-10-01) | — | — |
+
+Nothing in either 2020 extension has been solved, folded, derived or scored.
+
