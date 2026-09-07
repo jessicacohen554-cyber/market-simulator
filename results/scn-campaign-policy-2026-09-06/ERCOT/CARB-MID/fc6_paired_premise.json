@@ -1,0 +1,44 @@
+[
+  {
+    "ident": "P1",
+    "name": "CO2 monotone vs carbon",
+    "status": "SKIP",
+    "detail": "not scored at this grain (committed run_config only; emissions need the cache dirs, --paired) \u2014 premise mis-constructed, see P1.premise"
+  },
+  {
+    "ident": "P1.premise",
+    "name": "carbon pair premise",
+    "status": "FAIL",
+    "detail": "MIS-CONSTRUCTED: high-arm effective carbon \u2264 base in 1/5 years (first 2026: \u0394+0.00 $/t) \u2014 the pair does not construct a carbon-price increase, P1 not scored",
+    "data": {
+      "years": [
+        2026,
+        2027,
+        2028,
+        2029,
+        2030
+      ],
+      "base": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "high": [
+        0.0,
+        3.75,
+        7.5,
+        11.25,
+        15.0
+      ],
+      "delta": [
+        0.0,
+        3.75,
+        7.5,
+        11.25,
+        15.0
+      ]
+    }
+  }
+]

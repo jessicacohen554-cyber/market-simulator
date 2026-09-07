@@ -1,0 +1,26 @@
+{
+ "cache_key": "ab8d79646b49abbd",
+ "case": "CARB-MID",
+ "years": {
+  "2026": {
+   "clean_region_duals": null,
+   "objective_value": 8173068736.874231
+  },
+  "2027": {
+   "clean_region_duals": null,
+   "objective_value": 32899695574.054123
+  },
+  "2028": {
+   "clean_region_duals": null,
+   "objective_value": 223690869097.32568
+  },
+  "2029": {
+   "clean_region_duals": null,
+   "objective_value": 413268820212.44354
+  },
+  "2030": {
+   "clean_region_duals": null,
+   "objective_value": 676420858789.1409
+  }
+ }
+}
