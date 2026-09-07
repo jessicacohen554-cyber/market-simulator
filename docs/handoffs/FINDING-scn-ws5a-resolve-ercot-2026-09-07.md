@@ -263,23 +263,36 @@ Peak RSS **4.00 GB on a 15 GB box** — comfortable, unlike MISO's 9.98 GB.
 ## 4. Routed to SCN-DESK — not executed, outside this lane's regions
 
 1. **The eleven committed ERCOT policy legs must be re-differenced against THIS REF** — the policy
-   FINDING's owed **ADDENDUM B**. Its §2 tables at 2028–2030 are differenced against a REF that
+   FINDING's owed **ADDENDUM B**. **LANDED 2026-09-07:** `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`. Its §2 tables at 2028–2030 are differenced against a REF that
    converts nothing; every one of them changes. §0 item 3 above already says which way the
    headline reading moves (2028 is policy, 2029–30 is the pin), but the numbers are the parent
    lane's or a follow-up's to restate. **Until it lands, no ERCOT policy-vs-REF delta at 2028–2030
    should be quoted from either document.**
 2. **The `unit_id`-keyed G1 in five sibling lanes** (§1.5). Zero-LP re-check; false-PASS risk.
+   **ANSWERED 2026-09-07 — `docs/handoffs/FINDING-scn-resolve-g1-recheck-2026-09-07.md`.** The five caches are
+   absent from any container, but the re-check did not need them: `aggregate_fleet` returns
+   `passthrough + representatives` and nothing downstream reorders, so the converted twin is **always** at the lower
+   index — **the defect is one-directional and can produce a false FAIL only**. A masked cohort member fails BOTH legs
+   of the sibling predicate (rate *and* `fuel_type`), and all five reported zero failures, so **their G1 PASSes stand**
+   and the false-PASS risk routed here does not exist through this mechanism. Item 3 below is what remains open.
 3. **`unit_id` is not unique in the ERCOT fleet**, and this reaches further than one gate: any
    per-unit attribution, ledger join or diagnostic keyed on `unit_id` is exposed. The duplicate
    here is a legacy heat-rate-bin label (`gas_cc_h_class_North`) colliding with new-build capacity
    in the same bin. Whether the fleet builder should be emitting unique ids, or every consumer
    should be qualifying by fuel type, is a code question this lane does not own.
+   **OPENED as desk card D-14** (`scenario-desk-ledger-2026-09.md` §2), with the exposure enumerated: ~20 committed
+   sites key on `unit_id`, three of them on the decision path (`retirements.py:3318`/`:3403`, `:3833`, `evolve.py:686`)
+   plus the `ccs_retrofits` ledger this gate reads. Recommendation: a uniqueness guard, then rename-on-retrofit;
+   *not* "every consumer qualifies by fuel type". Proposed, not implemented.
 4. **P-B's failure re-opens the policy FINDING §2.1 attribution.** That document reads the carbon
    arms' +2.28 / +2.89 TWh of extra 2029–30 unserved as "the capture parasitic derate on 5.9 /
    8.9 GW of converted CC". Measured here, the derate moves unserved by **exactly zero** — it
    raises the converted unit's heat rate, not its pmax. So that +2.28 / +2.89 was the gap between
    an arm converting ~8.9 GW and a REF converting none, and against this control it should largely
-   close. Belongs with item 1.
+   close. **MEASURED 2026-09-07 (ADDENDUM B §4): it does NOT close — Δunserved is unchanged in every cell, because
+   REF's unserved never moved. The derate is confirmed at exactly zero; the real driver is the 500 MW gas-CT the
+   carbon and CES arms do not build in 2029** (Δthermal −500 / −1,500 / −3,500 MW → +2.28 / +6.97 / +16.82 TWh, with
+   `VOL-HI` at Δthermal 0 and Δunserved 0.0000 as the control). Belongs with item 1.
 5. **The synthesis's A.1 table row for ERCOT** ("0 (clean) / 0 (clean) / unchanged at `1cc45bb2`")
    is now false. Corrected in this commit as a marked correction beside the addendum, per §5 of
    this document; the parent lane owns any further restatement.
