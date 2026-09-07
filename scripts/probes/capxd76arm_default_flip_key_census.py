@@ -127,6 +127,20 @@ def _key(payload: dict, drop_at: dict, roots) -> str:
     ``ScenarioConfig.cache_key`` for any payload that is a faithful
     ``asdict(config)`` — which the instrument-validation step verifies against
     the payloads' own recorded ``cache_key`` rather than assuming.
+
+    **CORRECTION, capx D85 §3.5 / D85-R.** That last sentence was true when
+    written and is not true unconditionally: this construction OMITS the
+    ``__solve_surface__`` block, so it reproduces ``cache_key()`` only while
+    every ``config/solve_surface.py`` row of the payload's ISO sits at its
+    frozen declaration. Since 2026-09-07 the ERCOT and CAISO rows have moved
+    (capx D79's designed re-key), so for those ISOs this hashes the key AT
+    DECLARATION and the live method returns a different one. **This lane's
+    measurement is unaffected** — it differences two variants of the SAME
+    payload, and the omitted block is identical on both sides, so every move
+    count stands — but the "validated" count it prints is the at-declaration
+    count. The standing census that reports BOTH constructions, and gates the
+    non-reproducing records against a committed exception list, is
+    ``scripts/check_key_provenance.py``.
     """
     out = dict(payload)
     for name in _CACHE_KEY_OPTIONAL_FIELDS:

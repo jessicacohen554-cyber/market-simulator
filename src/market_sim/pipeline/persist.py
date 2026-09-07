@@ -79,9 +79,35 @@ def environment_block() -> dict:
     fails) on a mismatch; the ``--reuse-solved`` gate ignores this block (reuse
     is pinned by the persisted ``scenario_config`` plus the dedicated highspy
     version gate), so adding it does not change any reuse decision.
+
+    **The fold roots (capx D85-R repair (v-a), FINDING-capx-d85 §3.3).**
+    ``ScenarioConfig.cache_key`` rewrites checkout-absolute paths to sentinels
+    through ``_cache_key_path_roots()``, which returns ``(<data_root>, …)``
+    FIRST and only when ``MARKET_SIM_DATA_ROOT`` actually relocates the data
+    root away from the checkout. A solve run that way folds the same six
+    path-valued fields to ``<data_root>/data/raw/…`` instead of
+    ``<repo>/data/raw/…`` and therefore produces a DIFFERENT, equally correct
+    key for the same config — which is exactly what happened to the five D21 /
+    D26 ``fc6`` arms (repo worktree ``/home/user/msim-vintage``, data root
+    ``/home/user/market-simulator``). Nothing in the record said so: ``git``
+    carries sha/branch/dirtiness and this block carried versions, so those keys
+    were recoverable only because two findings happened to state the
+    environment in prose. Recording the roots closes that: a split-root key
+    becomes derivable from ``run_config.json`` alone.
+
+    Additive and inert by construction — the block is not an input to any key
+    (``cache_key`` never reads it), ``--reuse-solved`` ignores it,
+    ``replay_keeper._warn_on_environment_mismatch`` compares only
+    ``python_version`` / ``platform`` / ``packages``, and
+    ``audit_keepers.E11_META_PROVENANCE`` excludes ``"environment"`` from the
+    recipe block. Only runs solved after this lands carry the new keys; no
+    committed record is rewritten.
     """
+    import os
     import platform
     from importlib.metadata import PackageNotFoundError, version
+
+    from market_sim.config.scenarios import _cache_key_path_roots
 
     versions: dict[str, str] = {}
     for name in ENVIRONMENT_PACKAGES:
@@ -93,6 +119,14 @@ def environment_block() -> dict:
         "python_version": platform.python_version(),
         "platform": platform.platform(),
         "packages": versions,
+        # The (sentinel, absolute-prefix) pairs this solve's cache key folded
+        # paths through, in the order cache_key applied them. A single-element
+        # list is the ordinary case (DATA_ROOT == REPO_ROOT); two elements mean
+        # a relocated data root, and the key is a split-root fold.
+        "cache_key_path_roots": [list(pair) for pair in _cache_key_path_roots()],
+        # The raw environment variable behind it, "" when unset, so the record
+        # says WHY the roots are what they are and not merely what they are.
+        "market_sim_data_root": os.environ.get("MARKET_SIM_DATA_ROOT", ""),
     }
 
 

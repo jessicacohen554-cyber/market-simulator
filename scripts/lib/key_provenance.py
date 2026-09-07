@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-"""capx D85 key-provenance census — reproduce, then CLASSIFY, every committed
+"""Key-provenance census — reproduce, then CLASSIFY, every committed
 ``run_config.json`` whose recorded ``cache_key`` the current rules cannot
-reproduce (owner ruling Q59, capx ledger §0bb.3(a), r#57).
+reproduce, and check the result against the committed exception record.
+
+**Standing tooling.** Seeded as the one-off ``docs/handoffs/d85/
+key_provenance_census.py`` by capx D85 (owner ruling Q59, capx ledger
+§0bb.3(a), r#57) and promoted here by capx **D85-R**, which executes D85 §5's
+recommended repairs (ii) + (v). The CLI is ``scripts/check_key_provenance.py``;
+this module is the library it and ``tests/regression/
+test_key_provenance_exceptions.py`` share. D85's own measurement record stays
+at ``docs/handoffs/d85/key-provenance-census.json``.
 
 **What it measures.** The same census ``capxd76arm_default_flip_key_census``
 runs (hash each committed ``scenario_config`` payload under the LIVE drop
@@ -40,19 +48,31 @@ set or a different solve environment:
 
 Combinations are tried in a fixed order and the FIRST reproducing recipe is
 recorded, so the record is deterministic. A row no recipe reproduces is the
-finding, and the script exits 1 on it.
+finding.
 
-Usage::
+**Two keys, never one (D85 §3.5, D85-R repair 4).** ``cache_key`` appends a
+``__solve_surface__`` block for any ISO whose ``config/solve_surface.py`` rows
+have moved off their frozen declaration, so there are two constructions and a
+census that reports one is blind to the other. Every row therefore carries BOTH
+``key_at_declaration`` (the surface at its declaration — the construction D85
+and the D76-ARM census used) and ``key_live_surface`` (the live
+``moved_rows(iso)`` block appended, i.e. exactly what ``cache_key()`` returns
+today), and a row counts as reproducing when EITHER matches. A row that
+reproduces only at declaration is capx D79's DESIGNED re-key — "a re-derived
+registry table re-keys the ISOs whose rows moved" — not a mismatch, and this
+module never repairs it.
 
-    uv run python docs/handoffs/d85/key_provenance_census.py \
-        --out docs/handoffs/d85/key-provenance-census.json
-
-Exit 0 iff every non-reproducing row is classified; 1 otherwise.
+**The exception record.** ``docs/governance/key-provenance-exceptions.json``
+lists every known non-reproducing record with its class, its executable recipe
+and its citation, so the census reports "N known, ZERO unknown" instead of "N
+mismatch". :func:`check_exceptions` enforces five gates over it — see that
+function's docstring; G1 (a SIXTEENTH mismatch) and G2 (a listed entry that has
+started reproducing, i.e. dead scaffolding under rule 26) are the load-bearing
+pair and both are fully offline.
 """
 
 from __future__ import annotations
 
-import argparse
 import ast
 import hashlib
 import itertools
@@ -62,7 +82,7 @@ import sys
 from dataclasses import fields
 from pathlib import Path
 
-_REPO = Path(__file__).resolve().parents[3]
+_REPO = Path(__file__).resolve().parents[2]
 for _p in (_REPO, _REPO / "src"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
@@ -292,8 +312,17 @@ def _git_blob(sha: str, rel: str) -> str | None:
         return None
 
 
-def load_vintage(sha: str) -> VintageRules | None:
+def load_vintage(sha: str, *, fetch: bool = False) -> VintageRules | None:
+    """The cache-key rules of one commit, or ``None`` when its blob is absent.
+
+    ``fetch`` retries once through a depth-1 fetch: the clone is ``blob:none``
+    and shallow, so a vintage's ``scenarios.py`` is routinely not present until
+    asked for. Callers that must stay offline (the test lane) leave it False and
+    read ``unclassified_unreachable_commit`` rather than a false finding.
+    """
     src = _git_blob(sha, "src/market_sim/config/scenarios.py")
+    if src is None and fetch and fetch_commit(sha):
+        src = _git_blob(sha, "src/market_sim/config/scenarios.py")
     if src is None:
         return None
     return VintageRules(src, _git_blob(sha, "src/market_sim/config/iso_configs.py"))
@@ -303,9 +332,22 @@ def load_vintage(sha: str) -> VintageRules | None:
 # Classification ladder
 # --------------------------------------------------------------------------- #
 def classify(
-    payload: dict, want: str, iso: str, sha: str | None, vintages: dict
+    payload: dict,
+    want: str,
+    iso: str,
+    sha: str | None,
+    vintages: dict,
+    *,
+    fetch: bool = False,
 ) -> dict:
-    """Return the FIRST recipe that reproduces ``want``, or ``unclassified``."""
+    """Return the FIRST recipe that reproduces ``want``, or an unclassified row.
+
+    Two unclassified outcomes, deliberately distinct. ``unclassified`` means the
+    whole ladder ran and nothing derived the literal — a genuine finding.
+    ``unclassified-unreachable-commit`` means the vintage half of the ladder
+    could not run because the blob is not in this clone; that is a property of
+    the checkout, not of the record, and it must never be reported as a finding.
+    """
     drop_at = {n: _jsonable(v) for n, v in cache_key_drop_defaults().items()}
     lag_cands = [
         n
@@ -377,7 +419,7 @@ def classify(
     if sha:
         v = vintages.get(sha)
         if v is None and sha not in vintages:
-            v = vintages[sha] = load_vintage(sha)
+            v = vintages[sha] = load_vintage(sha, fetch=fetch)
         if v is not None:
             trials = [
                 ("vintage", {"sha": sha}, lambda: v.key(payload)),
@@ -407,7 +449,7 @@ def classify(
                 "vintage_key": v.key(payload),
             }
         return {
-            "class": "unclassified",
+            "class": "unclassified-unreachable-commit",
             "reproduced": False,
             "vintage": "commit not reachable",
         }
@@ -425,11 +467,227 @@ def _committed_run_configs() -> list[Path]:
     return [_REPO / rel for rel in sorted(out)]
 
 
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--out", help="write the JSON record here")
-    args = ap.parse_args(argv)
+# --------------------------------------------------------------------------- #
+# The committed exception record
+# --------------------------------------------------------------------------- #
+#: The checked list of known non-reproducing committed records. Every entry
+#: names the record, the class D85 derived it to, the EXECUTABLE recipe that
+#: reproduces its literal, and the citation. Committed so a census can report
+#: "N known, ZERO unknown" — and so a SIXTEENTH is loud at PR time.
+EXCEPTIONS_PATH = _REPO / "docs" / "governance" / "key-provenance-exceptions.json"
 
+
+def load_exceptions(path: Path | None = None) -> dict:
+    """Read the exception record. Returns ``{"entries": [...], ...}``."""
+    return json.loads((path or EXCEPTIONS_PATH).read_text())
+
+
+def fetch_commit(sha: str) -> bool:
+    """Fetch one commit at depth 1 so its blobs are readable. True on success.
+
+    The clone is ``blob:none`` and shallow, so a ``vintage`` recipe's
+    ``scenarios.py`` may simply not be present. This is the same
+    ``git fetch --depth=1 origin <sha>`` D85 §7's reproduction block prescribes,
+    done by the instrument instead of by hand.
+    """
+    return (
+        subprocess.run(
+            ["git", "fetch", "--quiet", "--depth=1", "origin", sha],
+            cwd=_REPO,
+            capture_output=True,
+            text=True,
+        ).returncode
+        == 0
+    )
+
+
+def apply_recipe(
+    payload: dict, recipe: dict, iso: str, *, fetch: bool = True
+) -> tuple[str | None, str]:
+    """Recompute a key under one exception entry's recorded recipe.
+
+    Returns ``(key, note)``; ``key`` is ``None`` when the recipe cannot be
+    executed here, and ``note`` says why. The recipe keys, all optional:
+
+    ``undrop``
+        registered fields to keep in the hash even at their drop value (``lag``).
+    ``drop``
+        fields to remove unconditionally (``pre-ledger-flip``).
+    ``roots``
+        ``[[sentinel, prefix], ...]`` replacing the checkout's fold roots
+        (``split-root``).
+    ``surface``
+        ``"declaration"`` (default) or ``"live"`` — which of the two
+        constructions to hash under.
+    ``vintage_sha``
+        hash under the rules AST-extracted from that commit's ``scenarios.py``
+        instead of HEAD's. Needs the blob; fetched at depth 1 when ``fetch``.
+    ``resolve_iso_overrides``
+        with ``vintage_sha``, first apply that vintage's ISO
+        ``default_scenario_overrides`` to the payload — for a writer that
+        serialized the REQUEST while the runner hashed the RESOLUTION.
+    """
+    roots = recipe.get("roots")
+    roots = tuple(tuple(pair) for pair in roots) if roots else None
+    sha = recipe.get("vintage_sha")
+    if sha:
+        vintage = load_vintage(sha)
+        if vintage is None and fetch and fetch_commit(sha):
+            vintage = load_vintage(sha)
+        if vintage is None:
+            return None, f"vintage blob for {sha[:8]} not reachable"
+        body = payload
+        if recipe.get("resolve_iso_overrides"):
+            body = vintage.resolved(body, iso)
+        return vintage.key(body, roots=roots), f"vintage {sha[:8]}"
+    return (
+        head_key(
+            payload,
+            undrop=tuple(recipe.get("undrop", ())),
+            extra_drop=tuple(recipe.get("drop", ())),
+            roots=roots,
+            surface=recipe.get("surface", "declaration") == "live",
+        ),
+        "head rules",
+    )
+
+
+def check_exceptions(
+    record: dict, exceptions: dict, *, fetch: bool = True
+) -> list[dict]:
+    """Return the gate failures, empty when the record and the list agree.
+
+    Five gates, each a distinct way the pair can be wrong:
+
+    ``G1_UNKNOWN``
+        a committed record does not reproduce and is NOT listed — a
+        **sixteenth**. That is a new finding, not a list entry: the lane that
+        meets it stops and reports rather than appending.
+    ``G2_STALE``
+        a listed entry now REPRODUCES its recorded key under HEAD rules. A
+        stale exception is its own defect (rule 26 ``[R-DELETE]``: an entry that
+        still parses is a re-armable excuse), so the entry must be deleted, and
+        the check must FAIL until it is — never pass quietly.
+    ``G3_RECIPE``
+        a listed entry does not reproduce its recorded literal under its OWN
+        recorded recipe. The list then asserts a derivation that is not true.
+    ``G4_PRESENT``
+        a listed entry's ``run_config.json`` is no longer committed (its bundle
+        was pruned under rule 15). Delete the entry; git history is the record.
+    ``G5_KEY``
+        a listed ``recorded_cache_key`` is not the key the file itself records —
+        the entry describes some other record.
+
+    G1, G2, G4 and G5 are pure arithmetic over committed bytes and never touch
+    the network. Only a ``vintage_sha`` recipe (G3) needs a blob; when it cannot
+    be reached the failure is reported as ``G3_UNVERIFIED`` so an offline runner
+    can distinguish "not checked" from "checked and wrong" — the caller decides
+    whether that is fatal (``scripts/check_key_provenance.py`` says yes unless
+    ``--no-fetch``).
+    """
+    rows = {r["run_config"]: r for r in record["rows"]}
+    listed = {e["run_config"]: e for e in exceptions["entries"]}
+    failures: list[dict] = []
+
+    for path, row in rows.items():
+        if row["reproduces_recorded_key"] is False and path not in listed:
+            failures.append(
+                {
+                    "gate": "G1_UNKNOWN",
+                    "run_config": path,
+                    "recorded_cache_key": row["recorded_cache_key"],
+                    "detail": (
+                        "a committed record does not reproduce and is not in "
+                        f"{EXCEPTIONS_PATH.name}. This is a SIXTEENTH: stop and "
+                        "report it as a new finding, do not append it here."
+                    ),
+                    "classification": row.get("classification"),
+                }
+            )
+
+    for path, entry in listed.items():
+        row = rows.get(path)
+        if row is None:
+            failures.append(
+                {
+                    "gate": "G4_PRESENT",
+                    "run_config": path,
+                    "detail": (
+                        "listed record is no longer a committed run_config.json "
+                        "(bundle pruned?) — delete this entry; git history is "
+                        "the record (rule 15)."
+                    ),
+                }
+            )
+            continue
+        if entry.get("recorded_cache_key") != row["recorded_cache_key"]:
+            failures.append(
+                {
+                    "gate": "G5_KEY",
+                    "run_config": path,
+                    "detail": (
+                        f"entry waives {entry.get('recorded_cache_key')!r} but the "
+                        f"file records {row['recorded_cache_key']!r}."
+                    ),
+                }
+            )
+            continue
+        if row["reproduces_recorded_key"] is not False:
+            failures.append(
+                {
+                    "gate": "G2_STALE",
+                    "run_config": path,
+                    "detail": (
+                        "listed record REPRODUCES its recorded key under today's "
+                        "rules — the exception is dead scaffolding, delete it "
+                        "(rule 26 [R-DELETE])."
+                    ),
+                }
+            )
+            continue
+        key, note = apply_recipe(
+            row["scenario_config"],
+            entry.get("recipe") or {},
+            str(row.get("iso") or ""),
+            fetch=fetch,
+        )
+        if key is None:
+            failures.append(
+                {
+                    "gate": "G3_UNVERIFIED",
+                    "run_config": path,
+                    "detail": f"recipe not executable here: {note}.",
+                }
+            )
+        elif key != entry["recorded_cache_key"]:
+            failures.append(
+                {
+                    "gate": "G3_RECIPE",
+                    "run_config": path,
+                    "detail": (
+                        f"recipe ({note}) reproduces {key!r}, not the recorded "
+                        f"{entry['recorded_cache_key']!r}."
+                    ),
+                }
+            )
+    return failures
+
+
+# --------------------------------------------------------------------------- #
+# The census
+# --------------------------------------------------------------------------- #
+def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
+    """Hash every committed ``run_config.json`` and classify what does not fit.
+
+    Each row carries BOTH key constructions (see the module docstring) and
+    ``reproduces_recorded_key`` is true when EITHER matches, so D79's designed
+    surface re-key is never miscounted as a provenance mismatch.
+
+    ``keep_payloads`` keeps each row's ``scenario_config`` in the returned
+    record so :func:`check_exceptions` can re-hash it under a recipe; it is
+    dropped before the record is written to disk (it would multiply the file
+    size by the full config surface for no added evidence).
+    """
     live_fields = {f.name for f in fields(ScenarioConfig)}
     rows, mismatches = [], []
     vintages: dict = {}
@@ -440,11 +698,10 @@ def main(argv: list[str] | None = None) -> int:
             continue
         payload = _jsonable(payload)
         recorded = record.get("cache_key")
-        key = head_key(payload)
+        key_decl = head_key(payload)
         key_live = head_key(payload, surface=True)
-        reproduces = (
-            (recorded == key) if isinstance(recorded, str) and recorded else None
-        )
+        has_key = isinstance(recorded, str) and bool(recorded)
+        reproduces = (recorded in (key_decl, key_live)) if has_key else None
         git = record.get("git") or {}
         sha = (git.get("sha") if isinstance(git, dict) and git else None) or record.get(
             "git_sha"
@@ -458,12 +715,18 @@ def main(argv: list[str] | None = None) -> int:
             "git_sha": sha,
             "git_dirty": git.get("dirty") if isinstance(git, dict) else None,
             "recorded_cache_key": recorded,
-            "key_head_rules": key,
-            "key_live_rules_with_surface": key_live,
+            # BOTH constructions, always (D85-R repair 4).
+            "key_at_declaration": key_decl,
+            "key_live_surface": key_live,
             "reproduces_recorded_key": reproduces,
+            "reproduces_at_declaration": has_key and recorded == key_decl,
+            "reproduces_live_surface": has_key and recorded == key_live,
             # True iff the recorded key is reproducible ONLY with the surface at
-            # its declaration, i.e. the ISO's surface has since moved (class c).
-            "reproduces_at_declaration_only": bool(reproduces) and key_live != key,
+            # its declaration, i.e. the ISO's surface has since moved (class c,
+            # D79's designed re-key — reported, never repaired here).
+            "reproduces_at_declaration_only": bool(reproduces)
+            and recorded == key_decl
+            and key_live != key_decl,
             "fields_missing_unregistered": sorted(
                 n
                 for n in live_fields - set(payload)
@@ -472,10 +735,16 @@ def main(argv: list[str] | None = None) -> int:
             "retired_fields_carried": sorted(
                 n for n in _CACHE_KEY_RETIRED_FIELDS if n in payload
             ),
+            "scenario_config": payload,
         }
         if reproduces is False:
             row["classification"] = classify(
-                payload, recorded, str(payload.get("iso") or ""), sha, vintages
+                payload,
+                recorded,
+                str(payload.get("iso") or ""),
+                sha,
+                vintages,
+                fetch=fetch_vintages,
             )
             # Independent cross-check, recorded whenever the solve commit is
             # reachable: the key under the bundle's OWN vintage rules. A
@@ -483,7 +752,7 @@ def main(argv: list[str] | None = None) -> int:
             # a vintage miss with a HEAD-recipe hit (the dirty-tree fc6 arms,
             # whose recorded ``git.sha`` understates the tree) is stated.
             if sha and sha not in vintages:
-                vintages[sha] = load_vintage(sha)
+                vintages[sha] = load_vintage(sha, fetch=fetch_vintages)
             v = vintages.get(sha) if sha else None
             if v is not None:
                 vk = v.key(payload)
@@ -504,12 +773,21 @@ def main(argv: list[str] | None = None) -> int:
 
     by_class: dict[str, int] = {}
     for m in mismatches:
-        by_class[m["classification"]["class"]] = (
-            by_class.get(m["classification"]["class"], 0) + 1
-        )
-    unclassified = [m for m in mismatches if not m["classification"]["reproduced"]]
+        cls = m["classification"]["class"]
+        by_class[cls] = by_class.get(cls, 0) + 1
+    # A row nothing derived, split by WHY: a real finding, versus a vintage
+    # blob this clone simply does not hold (see ``classify``).
+    unclassified = [
+        m for m in mismatches if m["classification"]["class"] == "unclassified"
+    ]
+    unreachable = [
+        m
+        for m in mismatches
+        if m["classification"]["class"] == "unclassified-unreachable-commit"
+    ]
     assert not SOLVE_EPOCHS, (
-        "SOLVE_EPOCHS is non-empty: model __solve_epochs__ before trusting key_live"
+        "SOLVE_EPOCHS is non-empty: model __solve_epochs__ before trusting "
+        "key_live_surface"
     )
     surface_moved = {
         iso: moved_rows(iso)
@@ -520,9 +798,9 @@ def main(argv: list[str] | None = None) -> int:
     for r in rows:
         if r["reproduces_at_declaration_only"]:
             at_declaration_only[r["iso"]] = at_declaration_only.get(r["iso"], 0) + 1
-    record_out = {
-        "probe": "capxd85_key_provenance_census",
-        "ruling": "Q59 (capx ledger §0bb.3(a), r#57) — D85 key-provenance audit",
+    out = {
+        "probe": "key_provenance_census",
+        "seeded_by": "capx D85 (Q59, capx ledger §0bb.3(a)); promoted by capx D85-R",
         "head": subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"],
             cwd=_REPO,
@@ -533,12 +811,27 @@ def main(argv: list[str] | None = None) -> int:
         "instrument_validated": sum(
             1 for r in rows if r["reproduces_recorded_key"] is True
         ),
+        # The both-keys split (D85-R repair 4): which construction validated.
+        "validated_under_both_constructions": sum(
+            1
+            for r in rows
+            if r["reproduces_at_declaration"] and r["reproduces_live_surface"]
+        ),
+        "validated_at_declaration_only": sum(
+            1 for r in rows if r["reproduces_at_declaration_only"]
+        ),
+        "validated_live_surface_only": sum(
+            1
+            for r in rows
+            if r["reproduces_live_surface"] and not r["reproduces_at_declaration"]
+        ),
         "instrument_unvalidatable_no_recorded_key": sum(
             1 for r in rows if r["reproduces_recorded_key"] is None
         ),
         "instrument_mismatch": len(mismatches),
         "mismatch_by_class": dict(sorted(by_class.items())),
         "unclassified": len(unclassified),
+        "unclassified_unreachable_commit": len(unreachable),
         # Class (c): the surface rows currently off their declaration, and the
         # validated keys that reproduce only with the surface AT declaration.
         "surface_moved_rows_by_iso": surface_moved,
@@ -547,32 +840,7 @@ def main(argv: list[str] | None = None) -> int:
         "mismatch_detail": mismatches,
         "rows": rows,
     }
-    if args.out:
-        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.out).write_text(json.dumps(record_out, indent=2) + "\n")
-
-    print(
-        f"{len(rows)} committed run configs at {record_out['head']}: "
-        f"{record_out['instrument_validated']} reproduce, "
-        f"{record_out['instrument_unvalidatable_no_recorded_key']} have no key, "
-        f"{len(mismatches)} MISMATCH"
-    )
-    for m in mismatches:
-        c = m["classification"]
-        print(
-            f"  {c['class']:28s} {m['recorded_cache_key']}  {m['run_config']}  {c.get('recipe', '')}"
-        )
-    print(f"  by class: {record_out['mismatch_by_class']}")
-    print(f"  surface rows off declaration: {surface_moved}")
-    print(
-        f"  validated keys reproducible only at declaration (class c): {at_declaration_only}"
-    )
-    if unclassified:
-        print(f"FAIL: {len(unclassified)} recorded key(s) reproduce under NO recipe")
-        return 1
-    print("ok: every mismatch classified")
-    return 0
-
-
-if __name__ == "__main__":  # pragma: no cover - CLI
-    raise SystemExit(main())
+    if not keep_payloads:
+        for r in out["rows"]:
+            r.pop("scenario_config", None)
+    return out

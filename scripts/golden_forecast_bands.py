@@ -144,12 +144,55 @@ REGEN_POLICY = (
 # Solve + metric extraction
 # --------------------------------------------------------------------------- #
 def solve_reference(cache_root: Path) -> tuple[C.Run, Path, ScenarioConfig]:
-    """Solve the pinned reference scenario into ``cache_root`` and load it."""
+    """Solve the pinned reference scenario into ``cache_root`` and load it.
+
+    The returned ``ScenarioConfig`` is the REQUEST — the object handed to the
+    runner. It is deliberately not what gets serialized as the run's
+    ``scenario_config``; see :func:`resolved_scenario_config`.
+    """
     cachemod.CACHE_ROOT = cache_root
     config = ScenarioConfig(**REFERENCE_SCENARIO_KWARGS)
     key = run_scenario(config, config.iso)
     run_dir = cache_root / config.iso / key
     return C.load_run(run_dir), run_dir, config
+
+
+def resolved_scenario_config(run_dir: Path) -> dict:
+    """The config the solve ACTUALLY ran, read from its own cache dump.
+
+    **Why this is not ``dataclasses.asdict(config)``** (capx D85 §3.4, repaired
+    by D85-R (v-b)). ``runner.run_scenario_iso`` re-binds the ISO, resolves the
+    policy bundle and applies the ISO's ``default_scenario_overrides`` before
+    it hashes and solves — for ERCOT that is
+    ``{"scarcity_price_overlay": True}`` — so the pre-solve object is a
+    **REQUEST** and the on-disk dump is the **RESOLUTION**. Seeding the request
+    made the committed fixture claim ``scarcity_price_overlay: False`` for a
+    solve that ran it ``True``, and made its recorded ``cache_key`` (which IS
+    the resolution's) unreproducible from its own payload: the sole
+    ``vintage+resolved`` entry in
+    ``docs/governance/key-provenance-exceptions.json``.
+
+    This is the same rule, from the same source, that
+    ``scripts/lib/run_record.write_run_config`` states for every other runner:
+    read the cache directory's ``config.yaml`` VERBATIM, reconstructing and
+    defaulting nothing. Raises rather than silently falling back to the
+    request — a fixture that records the wrong config is worse than a seed that
+    stops, and a seed is an owner-authorized invocation somebody is watching.
+    """
+    import yaml
+
+    cfg_yaml = Path(run_dir) / "config.yaml"
+    if not cfg_yaml.exists():
+        raise FileNotFoundError(
+            f"{cfg_yaml} is missing: the solve wrote no resolved config dump, so "
+            "there is nothing truthful to seed run_config.json's scenario_config "
+            "from. Recording the pre-solve REQUEST instead is the defect capx "
+            "D85 §3.4 found; refusing rather than repeating it."
+        )
+    resolved = yaml.safe_load(cfg_yaml.read_text())
+    if not isinstance(resolved, dict) or not resolved:
+        raise ValueError(f"{cfg_yaml} did not parse to a non-empty config mapping")
+    return resolved
 
 
 def compute_metrics(run: C.Run) -> dict:
@@ -321,7 +364,15 @@ def cmd_seed(args: argparse.Namespace) -> int:
         metrics = compute_metrics(run)
 
         run_config_payload = {
-            "scenario_config": dataclasses.asdict(config),
+            # The RESOLUTION, not the request (D85-R (v-b)) — this is the config
+            # `cache_key` below was computed from, so the sidecar is now
+            # self-verifying instead of describing a different object.
+            "scenario_config": resolved_scenario_config(run_dir),
+            "scenario_config_source": str(run_dir / "config.yaml"),
+            # The REQUEST kwargs, kept explicitly and named as such: `check_bands`
+            # re-solves from these, so a reader needs both halves and must not
+            # have to guess which one they are looking at.
+            "scenario_request_kwargs": dataclasses.asdict(config),
             "git_sha": sha,
             "cache_key": run_dir.name,
         }
