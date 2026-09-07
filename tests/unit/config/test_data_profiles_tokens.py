@@ -83,3 +83,73 @@ def test_no_other_iso_claims_an_spp_name(isos):
     """Symmetric safety: no earlier ISO's tokens match the SPP names above."""
     for name in ("SWPP hourly.parquet", "spp-planning"):
         assert hydrate_data.iso_for_name(name, isos) == "SPP"
+
+
+class TestSplitChildWholeNameMatch:
+    """The whole-name limb for split-directory children (lane SPP-34, R-4).
+
+    A split directory's child IS the ISO label — ``lmp-data/ERCOT``,
+    ``zone-specific-demand/SPP``, ``load-forecast/spp``. Because SPP's tokens
+    are delimiter-bounded to dodge ``DAMLZHBSPP_*.zip``, none of them matched a
+    bare ``SPP`` / ``spp`` directory name, so those two subtrees classified
+    ``shared`` — hydrated by every profile instead of only by ``spp``.
+    ``iso_for_split_child`` tries whole-name equality first, which closes the
+    gap without re-admitting the substring trap.
+    """
+
+    @pytest.mark.parametrize("name", ["SPP", "spp", "Spp", " spp "])
+    def test_exact_child_name_resolves_to_spp(self, isos, name):
+        assert hydrate_data.iso_for_split_child(name, isos) == "SPP"
+        # The plain token matcher is what could NOT do this — the reason the
+        # limb exists. If this ever starts passing, the tokens changed and the
+        # DAMLZHBSPP trap needs re-checking.
+        assert hydrate_data.iso_for_name(name, isos) is None
+
+    @pytest.mark.parametrize("iso", ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"])
+    def test_every_other_iso_still_resolves_by_whole_name(self, isos, iso):
+        assert hydrate_data.iso_for_split_child(iso, isos) == iso
+        assert hydrate_data.iso_for_split_child(iso.lower(), isos) == iso
+
+    def test_the_trap_is_still_shut(self, isos):
+        """Whole-name equality does not re-admit the ERCOT settlement zips."""
+        for name in ("DAMLZHBSPP_2023.zip", "RTMLZHBSPP_2025.zip"):
+            assert hydrate_data.iso_for_split_child(name, isos) != "SPP"
+
+    def test_spp_split_children_are_spp_owned_end_to_end(self, isos):
+        paths = [
+            "data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv",
+            "data/raw/zone-specific-demand/MISO/x.csv",
+            "data/raw/load-forecast/spp/spp.csv",
+            "data/raw/load-forecast/miso/miso.csv",
+            "data/raw/lmp-data/DAMLZHBSPP_2023.zip",
+            "data/raw/lmp-data/ERCOT/x.csv",
+        ]
+        splits = hydrate_data.split_dirs(paths, isos)
+        assert {"zone-specific-demand", "load-forecast", "lmp-data"} <= splits
+        assert hydrate_data.owner_of(paths[0], isos, splits) == "SPP"
+        assert hydrate_data.owner_of(paths[1], isos, splits) == "MISO"
+        assert hydrate_data.owner_of(paths[2], isos, splits) == "SPP"
+        assert hydrate_data.owner_of(paths[3], isos, splits) == "MISO"
+        # ...and the ERCOT zip is still not SPP's.
+        assert hydrate_data.owner_of(paths[4], isos, splits) != "SPP"
+
+    def test_no_six_iso_attribution_moves_on_the_real_tree(self, isos):
+        """Nothing but SPP changes owner: the limb is additive over HEAD.
+
+        Reads trees only (``raw_entries`` is ``ls-tree``), so it is safe in a
+        blobless partial clone — see the ``hydrate_data`` module docstring.
+        """
+        paths = [p for _, p in hydrate_data.raw_entries()]
+        if not paths:
+            pytest.skip("no data/raw at HEAD")
+        splits = hydrate_data.split_dirs(paths, isos)
+        moved = {}
+        for path in paths:
+            seg = path.split("/")
+            if len(seg) < 4 or seg[2] not in splits:
+                continue
+            after = hydrate_data.iso_for_split_child(seg[3], isos)
+            before = hydrate_data.iso_for_name(seg[3], isos)
+            if after != before:
+                moved.setdefault((before, after), set()).add(seg[2] + "/" + seg[3])
+        assert all(after == "SPP" for (_, after) in moved), moved

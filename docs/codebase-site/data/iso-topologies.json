@@ -1,8 +1,8 @@
 {
   "_meta": {
     "source": "Extracted from src/market_sim/config/iso_configs.py. One-pass serialization of zone names, load shares, links, and TTCs.",
-    "description": "All 6 ISOs with their zonal topology, transmission links, and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes.",
-    "date": "2026-08-19"
+    "description": "All 7 ISOs with their zonal topology, transmission links, and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes.",
+    "date": "2026-09-07"
   },
   "ERCOT": {
     "name": "ERCOT",
@@ -60,7 +60,7 @@
       {
         "from": "Northeast",
         "to": "North",
-        "ttc_mw": 1300.0,
+        "ttc_mw": 2300.0,
         "bidirectional": false
       },
       {
@@ -617,5 +617,30 @@
         "bidirectional": true
       }
     ]
+  },
+  "SPP": {
+    "name": "SPP",
+    "voll": 2000.0,
+    "zones": [
+      {
+        "name": "SPP-North",
+        "load_share": 0.5125
+      },
+      {
+        "name": "SPP-South",
+        "load_share": 0.4875
+      }
+    ],
+    "n_zones": 2,
+    "links": [
+      {
+        "from": "SPP-North",
+        "to": "SPP-South",
+        "ttc_mw": 48700.0,
+        "bidirectional": true
+      }
+    ],
+    "n_links": 1,
+    "interface_limits": []
   }
 }

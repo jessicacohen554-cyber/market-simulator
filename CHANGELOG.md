@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-09-07 — SPP on the codebase site and in the docs (lane SPP-34; no solve, no keeper, no default)
+
+The seventh ISO reaches every hardcoded ISO list on the codebase site and every "six ISOs" phrase in
+the prose. **No `ScenarioConfig` field, no default flip, no `results/cache.py` edit, no matrix cell
+move, no keeper shard, no `frontend/data/forecast/` or `frontend/data/backcast/` touch** — the six
+existing keepers' cache keys are unmoved by construction (nothing on the solve surface changed).
+Record: `docs/handoffs/FINDING-spp-34-2026-09-07.md`.
+
+- **Site.** `js/iso-configs-table.js` (`ISO_COLORS` / `ISO_DESCRIPTIONS` / `isoOrder`),
+  `js/viz-iso-topology.js` (`ISO_ORDER` / `ISO_COLORS`), `css/site.css`
+  (`.tabs__tab[data-iso="SPP"]` on the already-reserved `--iso-spp`), `forecast-runs.html`
+  `ISO_ORDER`, `data-completeness.html` `ISOS`.
+- **`data/iso-topologies.json` re-serialized from `get_iso_config`** — the file's own `_meta`
+  contract. Adds SPP (2 zones, 1 link, VOLL $2,000) and picks up **one drifted ERCOT value**:
+  the `Northeast → North` TTC is 2,300 MW in the config, not the 1,300 MW serialized on
+  2026-08-19. Every other pre-existing block is byte-identical. Site counts follow: 7 ISOs,
+  39 zones (36 carry load), 47 links — `network.html` stat cards, `index.html` page card.
+- **Prose.** `docs/README.md`, `data-pipeline.html`, `docs/codebase/08-config-reference.md`
+  (SPP row in the zone table, plus the stale CAISO 4→6 / MISO 3→6 rows repaired against the config;
+  SPP's "no scarcity seed / no floor / served scalar interchange" entries in the per-ISO mechanism
+  lists), `docs/multi-iso/00-iso-addition-protocol.md` §0/§3 (**SPP IS registered** — SPP-10's
+  "not registered" correction was itself stale), `scripts/render_data_dictionary.py` `ISO_ORDER`
+  + the regenerated `data/dictionary/data-dictionary.md` coverage matrix.
+- **`docs/calibration-log/spp.md`** opened on the MISO header format — lane state, the two
+  inherited facts (the non-binding N↔S TTC placeholder; the hubs are a two-point spread), the
+  holdout posture (neither marker), the pre-push checklist, `Next shorthand: spp-1`.
+- **Four items routed to this lane by `FINDING-spp-20` §5, all closed.** **R-3** — the parameter
+  registry regenerated: 1,927 → 2,023 entries, of which **33 are exactly the SPP rows**, each
+  re-cited from its own constant's SPP-row comment block (the generator harvests at the constant,
+  not at the nested key, so all 33 had landed `needs-citation`); `validate_parameters.py` goes
+  FAIL 96 → **OK**. **R-4** — `hydrate_data.iso_for_split_child`: a split-directory child named
+  exactly `SPP`/`spp` now matches on whole name before token, moving 8 files
+  (`zone-specific-demand/SPP` ×6, `load-forecast/spp` ×2) from `shared` to the `spp` profile with
+  **no other ISO's attribution moved** and the `DAMLZHBSPP_*.zip` trap still shut. **R-5** — the
+  protocol doc's stale "not registered" claim. **R-8** — `export_lce_lmp._DUMMY_BASE_LMP["SPP"]`
+  plus a test that every `SUPPORTED_ISOS` member has a row, which is what would have caught it.
+
 ## 2026-09-06 — SPP addition program chartered (docs only)
 
 A seventh ISO — SPP (Southwest Power Pool) — gets a plan and a standing workstream director.

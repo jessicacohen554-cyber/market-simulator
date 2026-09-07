@@ -67,12 +67,15 @@ isos:
   # `SWPP_fueltype.parquet`), `spp-` (the six `spp-*` corpus directories:
   # spp-planning, spp-hsl, spp-genmix, spp-binding-constraints, spp-or-mcp,
   # spp-hourly-load), plus `_spp.`, `-spp.`, `/spp/` for suffix / path forms.
-  # `tests/unit/config/test_data_profiles_tokens.py` pins the trap. KNOWN
-  # LIMIT (routed to SPP-DESK, FINDING-spp-20): tokens are substring-matched on
-  # a bare NAME, so a split-directory child named exactly `SPP` / `spp`
-  # (zone-specific-demand/SPP, load-forecast/spp) cannot be claimed without
-  # re-admitting the trap and classifies as `shared` — over-hydrated, never
-  # missing.
+  # `tests/unit/config/test_data_profiles_tokens.py` pins the trap. The former
+  # KNOWN LIMIT is CLOSED (2026-09-07, lane SPP-34, routed item R-4 of
+  # FINDING-spp-20 §5): a split-directory child named exactly `SPP` / `spp`
+  # (zone-specific-demand/SPP, load-forecast/spp) used to match none of these
+  # delimiter-bounded tokens and classified `shared` — over-hydrated, never
+  # missing. `hydrate_data.iso_for_split_child` now matches a split child on
+  # WHOLE NAME first and falls back to these tokens, which claims those two
+  # subtrees for `spp` without re-admitting the DAMLZHBSPP trap (a zip name is
+  # not equal to `SPP`).
   SPP:
     tokens: [swpp, "spp-", "_spp.", "-spp.", "/spp/"]
 

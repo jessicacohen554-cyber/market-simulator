@@ -15,13 +15,17 @@
 > winter basis, RGGI in MC, dual-fuel switching, measured interchange
 > schedule. See `docs/sessions/multi-iso/neiso-backcast-2024.md` (archived).
 
-Status: **topology landed for the six REGISTERED ISOs; calibration pending.**
-**SPP is NOT registered** — see the §0 row and
-`docs/multi-iso/spp-addition-plan-2026-09.md`. The **six** ISOs in
-`config/iso_configs._ISO_BUILDERS` (ERCOT, CAISO, PJM, MISO, NYISO, NEISO) each
+Status: **topology landed for all SEVEN registered ISOs; calibration pending.**
+**SPP IS registered** since 2026-09-06 (lane SPP-20,
+`docs/handoffs/FINDING-spp-20-2026-09-06.md`) — this doc's earlier "SPP is not
+registered" correction is now itself stale and is repaired here. The **seven**
+ISOs in `config/iso_configs._ISO_BUILDERS` (ERCOT, CAISO, PJM, MISO, NYISO,
+NEISO, SPP) each
 have real (cited, Tier-3) zone load shares and inter-zone TTCs and a
 plant-to-zone splitter in `data/zone_assignment.py` (Stages A–B done for each of
-those six). What remains per non-ERCOT registered ISO is the *data and
+those seven — with the one disclosure that SPP's single N↔S TTC is a **Tier-3
+placeholder that cannot bind**, not a rated interface; see the §0 row). What
+remains per non-ERCOT registered ISO is the *data and
 calibration* spine — Stages C–H: EIA-930 demand,
 renewable CF profiles, calibration references, market-design module wiring, and
 a validated backcast. ERCOT stays the reference for **CAISO, PJM, ISO-NE
@@ -49,18 +53,19 @@ Companion documents in this directory:
 | CAISO | 3 zones (NP15/ZP26/SP15) + WECC import    | CISO   | Path 15/26 + FIPS   | none       | none           | No       |
 | PJM   | 8 zones (ComEd…SWMAAC), cited zonal-peak shares + TTCs | PJM    | FIPS state→zone     | none       | none           | No       |
 | MISO  | 3 zones (N/C/S) + South contract path      | MISO   | FIPS state→zone     | none       | none           | No       |
-| SPP   | **NOT REGISTERED** — no `_spp_config()`, no `_ISO_BUILDERS` entry, no zone assignment. Target 2 zones (N/S); see `spp-addition-plan-2026-09.md` | SWPP (planned; not yet in `_ISO_TO_BA_CODE`) | none yet | none | `SWPP hourly` **present** | No |
+| SPP   | **REGISTERED 2026-09-06** (lane SPP-20): 2 zones (SPP-North/SPP-South), measured sub-BA load shares 0.5125/0.4875, VOLL $2,000. Its ONE N↔S link's 48,700 MW TTC is a **Tier-3 placeholder that cannot bind** — no public document states an SPP North↔South capability (FINDING-spp-13 §0) — so seam TTC is **pending lever SPP-53**; see `spp-addition-plan-2026-09.md` | SWPP | FIPS state→zone (`_SPP_STATE_ZONES`) | none yet (SPP-31) | `SWPP hourly` **present** | No — first solve is lane SPP-40 |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
 | NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
 
-**Six** ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` — ERCOT,
-CAISO, PJM, MISO, NYISO, NEISO. **SPP is the seventh and is not registered**: it
-has no config builder, no BA-code entry and no zone splitter, and its Stage A–B
-work is chartered as wave W2 of
-`docs/multi-iso/spp-addition-plan-2026-09.md` (lane SPP-20). For the six
-registered ISOs the remaining gaps are **data + market-design fidelity**
-(Stages C–H), not topology; for SPP, topology is still ahead. SPP's Phase-0 data
-census is `docs/multi-iso/spp-data-audit.md`.
+**Seven** ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` — ERCOT,
+CAISO, PJM, MISO, NYISO, NEISO and, since 2026-09-06, **SPP** (`_spp_config()`,
+`_ISO_TO_BA_CODE["SPP"] = "SWPP"`, `zone_assignment._SPP_STATE_ZONES`; wave W2 of
+`docs/multi-iso/spp-addition-plan-2026-09.md`, lane SPP-20). For all seven the
+remaining gaps are **data + market-design fidelity** (Stages C–H), not topology.
+SPP carries one topology item still open: the **N↔S seam TTC**, a Tier-3
+placeholder pending lever **SPP-53** (owner ruling P13). SPP's Phase-0 data
+census is `docs/multi-iso/spp-data-audit.md`; its first solve and first keeper
+are lane SPP-40.
 
 > **NEISO price row — now scored (2026-06-12, P10/U2 landed).** The NEISO P12
 > sign-off was price-*level-only*; with the `actual_lmp.json` NEISO block now
@@ -215,16 +220,23 @@ STAGE H — Docs
 > **Status (partly executed):** this section is the *original* build order and
 > describes each ISO's pre-build starting state, so phrases like "single zone
 > today" and "4-zone stub" below are the historical starting point, not current
-> state. **Six** ISOs are now registered **multi-zone** in
+> state. **Seven** ISOs are now registered **multi-zone** in
 > `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO 4+import, PJM 8,
 > MISO (six zones since the zonal refinement; this note's older "3" is stale —
-> not this lane's to restate, see `docs/multi-iso/miso-zonal-refinement-scope.md`).
-> **Item 6, SPP, is NOT built and NOT registered**: it has no `_spp_config()`,
-> no `_ISO_BUILDERS` or `_ISO_TO_BA_CODE` entry and no zone splitter. Its
+> not this lane's to restate, see `docs/multi-iso/miso-zonal-refinement-scope.md`),
+> SPP 2.
+> **Item 6, SPP, IS built and registered** as of 2026-09-06 (lane SPP-20,
+> `docs/handoffs/FINDING-spp-20-2026-09-06.md`): `_spp_config()`, the
+> `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` entries and the
+> `_SPP_STATE_ZONES` splitter all exist. *(This paragraph previously said the
+> opposite — that correction was written by lane SPP-10 before the registration
+> landed and is repaired here by SPP-34, routed item R-5 of FINDING-spp-20 §5.)*
+> One Stage-A item stays open: the N↔S seam TTC is a **Tier-3 placeholder that
+> cannot bind**, pending lever **SPP-53** (owner ruling P13). The rest of the
 > addition is chartered end-to-end by
-> `docs/multi-iso/spp-addition-plan-2026-09.md`, whose wave W2 (lane SPP-20)
-> does the Stage A–B registration; the Phase-0 data census that precedes it is
-> `docs/multi-iso/spp-data-audit.md`.
+> `docs/multi-iso/spp-addition-plan-2026-09.md`; the Phase-0 data census that
+> preceded registration is `docs/multi-iso/spp-data-audit.md`, and the first
+> solve / first keeper is lane SPP-40.
 
 Order by *incremental difficulty* so each ISO reuses the last one's new
 machinery:
@@ -243,9 +255,11 @@ machinery:
 5. **MISO** — built from scratch; very large, seasonal capacity construct
    (PRA), north/central/south sub-regions + the MISO-South contract-path
    constraint, big wind + coal fleet.
-6. **SPP** — **still to be built** (see the status note above); built from
+6. **SPP** — **registered 2026-09-06** (see the status note above); built from
    scratch; wind-dominated, large geography, RA construct (no centralized
-   capacity market), strong interchange with MISO/ERCOT. Measured at Phase 0
+   capacity market — SPP is deliberately absent from
+   `capacity_market.MARKET_DESIGN`), strong interchange with MISO/ERCOT served as
+   the measured EIA-930 `Total interchange` schedule. Measured at Phase 0
    (`spp-data-audit.md`): 103,330.8 MW nameplate over 715 plants in 14 states,
    36.6 % of 2025 net generation from wind, and 11–13 % of real-time hours at a
    negative hub price.

@@ -93,6 +93,12 @@ _DUMMY_BASE_LMP: dict[str, float] = {
     "MISO": 34.0,
     "NYISO": 45.0,
     "NEISO": 48.0,
+    # SPP added 2026-09-07 (lane SPP-34, routed item R-8 of FINDING-spp-20 §5)
+    # on SPP's registration as the seventh ISO. Placed below MISO like the rest
+    # of the table's loose ordering: SPP is wind-dominated (36.6 % of 2025 net
+    # generation) and spends 11-13 % of real-time hours at a negative hub price
+    # (docs/multi-iso/spp-data-audit.md). PLACEHOLDER, like every row here.
+    "SPP": 32.0,
 }
 _DUMMY_DEFAULT_BASE: float = 40.0  # any ISO not in the table above
 

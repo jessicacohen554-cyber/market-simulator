@@ -31,11 +31,20 @@ ATTRIBUTION
                                     subdirectories it is a *split* directory
                                     (``lmp-data``, ``zone-specific-demand``,
                                     ``storage-as-awards``, ...) and each entry is
-                                    attributed on its own name.
+                                    attributed on its own name — by **whole-name
+                                    equality first**, token match second
+                                    (``iso_for_split_child``).
       3. anything else            — ``shared``, hydrated by every data profile.
 
     Split directories are detected, not listed, so a directory that becomes
     per-ISO later needs no edit here.
+
+    Rule 2's whole-name limb exists because an ISO's tokens may be deliberately
+    delimiter-bounded to dodge a substring collision, which then makes them miss
+    a bare directory name: SPP's tokens avoid ERCOT's ``DAMLZHBSPP_*.zip``, so
+    ``zone-specific-demand/SPP`` and ``load-forecast/spp`` matched nothing and
+    fell through to ``shared`` (over-hydrated, never missing). See
+    :func:`iso_for_split_child`.
 
 PARTIAL-CLONE SAFETY — the trap this script exists to avoid
     In a blobless clone, ANY git command that reads a missing blob silently
@@ -161,10 +170,38 @@ def iso_for_name(name: str, isos: dict) -> str | None:
     return None
 
 
+def iso_for_split_child(name: str, isos: dict) -> str | None:
+    """Return the ISO owning a *split-directory child* ``name``, or None.
+
+    Same question as :func:`iso_for_name`, but for the one position where the
+    directory name IS the ISO label — ``lmp-data/ERCOT``,
+    ``zone-specific-demand/SPP``, ``load-forecast/spp``. There a **whole-name**
+    match is both stronger and safer than the substring token match, so it is
+    tried first and the token match only backs it up.
+
+    Why the extra limb exists (lane SPP-34, 2026-09-07; routed item R-4 of
+    ``docs/handoffs/FINDING-spp-20-2026-09-06.md`` §5). SPP's tokens are
+    deliberately delimiter-bounded — ``swpp``, ``spp-``, ``_spp.``, ``-spp.``,
+    ``/spp/`` — because a bare ``spp`` token would also claim ERCOT's
+    settlement-point zips ``DAMLZHBSPP_<year>.zip`` (plan §7 gate G3). But a
+    bare directory NAME carries no delimiter, so ``zone-specific-demand/SPP``
+    and ``load-forecast/spp`` matched none of them and fell through to
+    ``shared`` — over-hydrated for every profile, never missing, but wrong.
+    Whole-name equality closes that without re-admitting the trap:
+    ``DAMLZHBSPP_2023.zip`` is not equal to ``SPP``.
+    """
+    exact = name.strip().lower()
+    for iso in isos:
+        if exact == iso.lower():
+            return iso
+    return iso_for_name(name, isos)
+
+
 def split_dirs(paths: list[str], isos: dict) -> set[str]:
     """Return ``data/raw`` children that hold per-ISO subdirectories.
 
-    A directory qualifies when at least one immediate child is ISO-named.
+    A directory qualifies when at least one immediate child is ISO-named —
+    by whole name or by token (:func:`iso_for_split_child`).
     Detected rather than configured, so it stays correct as the tree grows.
     """
     grandchildren: dict[str, set[str]] = {}
@@ -175,7 +212,7 @@ def split_dirs(paths: list[str], isos: dict) -> set[str]:
     return {
         child
         for child, kids in grandchildren.items()
-        if any(iso_for_name(k, isos) for k in kids)
+        if any(iso_for_split_child(k, isos) for k in kids)
     }
 
 
@@ -189,7 +226,7 @@ def owner_of(path: str, isos: dict, splits: set[str]) -> str:
     if direct:
         return direct
     if child in splits and len(seg) > 3:
-        nested = iso_for_name(seg[3], isos)
+        nested = iso_for_split_child(seg[3], isos)
         if nested:
             return nested
     return SHARED

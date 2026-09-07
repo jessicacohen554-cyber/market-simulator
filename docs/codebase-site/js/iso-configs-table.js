@@ -19,6 +19,7 @@
     MISO: '#F97316',
     NYISO: '#E91E63',
     NEISO: '#9C27B0',
+    SPP: '#14B8A6',
   };
 
   const ISO_DESCRIPTIONS = {
@@ -28,6 +29,7 @@
     MISO: 'Six LRZ-union zones with per-zone CIL/CEL limits and the asymmetric RDT path to MISO-South.',
     NYISO: 'Five zones with downstate import constraints (Progressive eastern islanding).',
     NEISO: 'Four load zones plus the HQ import node for the Quebec interconnection.',
+    SPP: 'Two zones along the North–South seam; the N↔S TTC is a non-binding placeholder until a rated capability lands.',
   };
 
   /**
@@ -227,7 +229,7 @@
     }
 
     let html = '';
-    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO'];
+    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP'];
     isoOrder.forEach((iso) => {
       if (data[iso]) {
         html += renderIsoSection(iso, data[iso]);

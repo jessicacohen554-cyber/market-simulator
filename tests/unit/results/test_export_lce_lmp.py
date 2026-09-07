@@ -124,12 +124,25 @@ class TestSyntheticStub:
     def test_full_calendar_and_sane_level(self):
         # The consumer requires hours 0..8759; means must sit in the
         # forecast-plausible $15-80/MWh class for every registered ISO.
-        for iso in ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]:
+        for iso in ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]:
             lmp = xl.synthetic_lmp(iso, 2026)
             assert lmp.shape == (8760,)
             assert 15.0 < lmp.mean() < 80.0, f"{iso} mean {lmp.mean():.2f}"
             assert lmp.min() > 0.0
             assert lmp.max() < 2000.0
+
+    def test_every_registered_iso_has_a_dummy_base(self):
+        """Every ISO in ``_ISO_BUILDERS`` needs its own placeholder level.
+
+        Without this, a newly registered ISO silently falls through to
+        ``_DUMMY_DEFAULT_BASE`` and its stub is indistinguishable from PJM's
+        — which is exactly how SPP's row was missed at registration
+        (FINDING-spp-20 §5 routed item R-8).
+        """
+        from market_sim.config.iso_configs import SUPPORTED_ISOS
+
+        missing = [i for i in SUPPORTED_ISOS if i not in xl._DUMMY_BASE_LMP]
+        assert not missing, f"no _DUMMY_BASE_LMP row for {missing}"
 
     def test_dummy_block_contract_and_provenance(self):
         frame, prov = xl.export_iso_dummy("ercot", 2026, T=48)
