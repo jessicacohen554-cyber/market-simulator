@@ -13506,8 +13506,19 @@ construction**. D3 did not cause this, it EXPOSED it (rule 14), and **reverting 
 that would restore a cap the 2021 market did not have and bury a real error in a wrong input.
 Successor named, NOT armed: an explicit protocol-cap clamp on the settled price.
 
-Uri carries the whole overshoot — 192 h at mean **$4,325.5** (34 h ≥ $9,000) contributing
-**$94.81 of the $176.19** annual mean, while the other 8,568 h average $83.21. C1's −16.02 TWh is
+**CORRECTED 2026-09-07 on the owner's challenge — Uri is NOT the overshoot.** The RESULT first
+read "Uri carries the whole overshoot"; that compared Uri's share of the MODEL's own mean and never
+compared month against actual. Done properly against the bench: **Feb (Uri) model $1,295.03 vs actual
+$1,521.84 = −14.9 % — the model UNDERSHOOTS Uri**, as the four pre-registered low biases predicted —
+**while the other eleven months read $83.30 vs $34.15 = +144.0 %**, every month +89 % to +221 %. The
++28.2 % annual number is the NET of two opposite errors. This confirms the owner's reading: the
+year-round overshoot IS the class substitution (CT_PEAKER +115.5 %, ST_GAS +38.6 % displacing
+CC_REGULAR −14.0 % puts expensive units on the margin in ORDINARY hours, which scarcity pricing
+cannot produce). The cap finding stands as a real defect worth ~31 Uri hours, but it is NOT the C3a
+cause. **Named lead for ercot-254:** `gas_offer_margin_anchor_vintage` (pjm-169 F4, SHARED field,
+default off) — the gas-offer margin's identification point is the frozen 2023-2025 window mean and the
+markup is a linear extrapolation with no saturation, so a year far below that window (2021 HH ~$3.9)
+departs furthest while 2022 (~$6.4) sits inside it. Identify on 2023-2025, never on 2021. C1's −16.02 TWh is
 gas-internal merit order (CT_PEAKER **+115.5 %**, ST_GAS **+38.6 %**, coal within a few points,
 C2 PASS), negative in all twelve months — routed to the 2023-2025 loop, never tuned on 2021.
 
