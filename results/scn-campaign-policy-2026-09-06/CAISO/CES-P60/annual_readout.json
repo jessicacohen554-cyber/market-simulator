@@ -1,0 +1,51 @@
+{
+ "case": "CES-P60",
+ "cache_key": "cb35acef1879e80e",
+ "years": {
+  "2026": {
+   "emissions_mt": 31.306,
+   "import_co2_mt_reported": 0.0,
+   "unserved_mwh": 0.0,
+   "co2_cap_price_usd_per_t": 0.0,
+   "co2_cap_price_by_cap": [],
+   "n_co2_caps_binding": 0,
+   "clean_share": 0.4607
+  },
+  "2027": {
+   "emissions_mt": 34.5157,
+   "import_co2_mt_reported": 0.0,
+   "unserved_mwh": 0.0,
+   "co2_cap_price_usd_per_t": 0.0,
+   "co2_cap_price_by_cap": [],
+   "n_co2_caps_binding": 0,
+   "clean_share": 0.4462
+  },
+  "2028": {
+   "emissions_mt": 30.1787,
+   "import_co2_mt_reported": 0.0,
+   "unserved_mwh": 0.0,
+   "co2_cap_price_usd_per_t": 0.0,
+   "co2_cap_price_by_cap": [],
+   "n_co2_caps_binding": 0,
+   "clean_share": 0.5175
+  },
+  "2029": {
+   "emissions_mt": 18.2829,
+   "import_co2_mt_reported": 0.0,
+   "unserved_mwh": 461.945,
+   "co2_cap_price_usd_per_t": 0.0,
+   "co2_cap_price_by_cap": [],
+   "n_co2_caps_binding": 0,
+   "clean_share": 0.6556
+  },
+  "2030": {
+   "emissions_mt": 16.6077,
+   "import_co2_mt_reported": 0.020423,
+   "unserved_mwh": 15724.348,
+   "co2_cap_price_usd_per_t": 0.0,
+   "co2_cap_price_by_cap": [],
+   "n_co2_caps_binding": 0,
+   "clean_share": 0.692
+  }
+ }
+}
