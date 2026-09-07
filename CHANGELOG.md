@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026-09-07 — The seven-ISO prose sweep finished, and the ISO badges made readable (lanes SPP-35 + SPP-37)
+
+SPP-34's changelog entry claimed "every 'six ISOs' phrase in the prose" was reached; it was not.
+SPP-35 took the five core-doc claims and the `.iso-badge` contrast bug, and routed six leftovers;
+SPP-37 executed all six. Together they close the seven-ISO prose position and put every ISO badge
+on the site above WCAG AA. **No `src/`, no `frontend/data/`, no matrix shard, no `ScenarioConfig`
+field, no default flip, no cache key, no solve, no keeper** — the seven ISOs' recipes are untouched
+by construction. The only `scripts/` touch across both lanes is SPP-35's two docstrings (below);
+SPP-37 is prose, CSS and one `.gitignore` line. Records: `docs/handoffs/FINDING-spp-35-2026-09-07.md`,
+`docs/handoffs/FINDING-spp-37-2026-09-07.md`.
+
+- **Eight "six ISOs" prose sites go to seven, SPP appended last.** SPP-35: `CLAUDE.md:19`,
+  `model-methodology-spec.md:13,719`, `docs/codebase/README.md:22`, and `docs/user-manual.md:646`
+  (a *correction*, not a substitution — `git check-ignore` over all seven showed `results/SPP/`
+  was NOT ignored, so the line stated the measured six-of-seven position). SPP-37: root
+  `index.html` ×3 (`:7` meta description, `:34` hero, `:153` footer), `README.md:121`, and
+  `market-sim-build-plan.md:9` (that doc's own known-drift banner, plus "SPP 2" in the same
+  bullet's zone-count list). Zone count from `get_iso_config("SPP").zones` = 2.
+- **`.gitignore` gains `/results/SPP/`** (`:277`), beside the six. An SPP forecast cache would
+  otherwise have landed untracked-but-unignored; `git check-ignore -v results/SPP/x` now resolves.
+  This also discharges the `user-manual.md:646` caveat SPP-35 had to write.
+- **`.iso-badge` contrast: 10 of 10 badges now pass WCAG AA.** SPP-35 routed the shared
+  `.iso-badge` (config-reference.html + `css/bc-pages.css`) onto shared.css's tinted
+  `.badge--iso-*` pattern — **7/7 at 17.35–19.13:1**, from five outright FAILs plus NYISO at 4.35;
+  the seven accents are unchanged and no new hue was introduced. SPP-37 took the one badge outside
+  that pattern: `policy-scarcity.html`'s own `.iso-badge` block, whose CAISO cell measured
+  4.4786:1 arithmetically. Alpha 0.15 → 0.12 on that one rule: **CAISO 4.57, PJM 5.12,
+  NYISO 4.66** — measured in Chromium on painted pixels over the page as served. Reported against
+  interest: as Chromium actually paints it the pre-fix CAISO cell read **4.50**, i.e. exactly on
+  the threshold rather than SPP-35's 0.03 under it.
+- **Two stale-value repairs to the SPP-53 position.** SPP-35 brought
+  `scripts/lib/transmission_expansion/spp.py`'s docstring off "Tier-3 placeholder / vintage 2025"
+  and gave `scripts/generate_parameter_registry.py`'s preserve-curated-entries contract its missing
+  scope; SPP-37 replaced `js/iso-configs-table.js:32`'s "the N↔S TTC is a non-binding placeholder"
+  with the **3,400 MW** rule-14 reconciled corridor limit (`FINDING-spp-53`). The code half of the
+  registry item — teaching the generator the `iso_configs` link objects, so a hand-added
+  `parameter-citations.md` row survives regeneration — stays **open** and routed.
+
 ## 2026-09-07 — SPP on the codebase site and in the docs (lane SPP-34; no solve, no keeper, no default)
 
 The seventh ISO reaches every hardcoded ISO list on the codebase site and every "six ISOs" phrase in
