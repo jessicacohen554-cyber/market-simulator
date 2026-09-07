@@ -1,0 +1,36 @@
+{
+ "cache_key": "5b7774c817ee425b",
+ "case": "CES-P20+VOL-HI",
+ "years": {
+  "2026": {
+   "clean_region_duals": [
+    -0.0
+   ],
+   "objective_value": 3452582263.5008273
+  },
+  "2027": {
+   "clean_region_duals": [
+    -0.0
+   ],
+   "objective_value": 27190417152.45577
+  },
+  "2028": {
+   "clean_region_duals": [
+    7.0
+   ],
+   "objective_value": 216593484700.61234
+  },
+  "2029": {
+   "clean_region_duals": [
+    7.0
+   ],
+   "objective_value": 404372034406.1625
+  },
+  "2030": {
+   "clean_region_duals": [
+    7.0
+   ],
+   "objective_value": 657781200682.5181
+  }
+ }
+}
