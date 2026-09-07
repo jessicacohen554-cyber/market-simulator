@@ -3760,6 +3760,7 @@ def solve_and_persist(
     unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
+    netload_drag_layup_window_mask: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -5140,6 +5141,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 campd_outage_merit_order_guard=campd_outage_merit_order_guard
             )
+        if netload_drag_layup_window_mask is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                netload_drag_layup_window_mask=netload_drag_layup_window_mask
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5591,6 +5596,7 @@ def solve_and_persist(
             unit_outage_per_unit_clip=unit_outage_per_unit_clip,
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
+            netload_drag_layup_window_mask=netload_drag_layup_window_mask,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6547,6 +6553,7 @@ def solve_and_persist(
         "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
+        "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8771,6 +8778,7 @@ def run_replay_bundle(
     unit_outage_per_unit_clip: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
+    netload_drag_layup_window_mask: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
@@ -8948,6 +8956,11 @@ def run_replay_bundle(
         # nyiso-177: the lay-up guard rides the SAME replay path, so a
         # vintage-matched availability basis is reachable from a keeper recipe.
         kwargs["campd_outage_merit_order_guard"] = campd_outage_merit_order_guard
+    if netload_drag_layup_window_mask is not None:
+        # ercot-256: the net-load drag's lay-up WINDOW MASK rides the same
+        # replay path, so the single-field A/B arm is the keeper's recorded
+        # recipe plus one flag.
+        kwargs["netload_drag_layup_window_mask"] = netload_drag_layup_window_mask
     if egrid_family_heat_rates is not None:
         # nyiso-184: the eGRID family heat-rate construction rides the same
         # replay path, so the single-field A/B arm is the keeper's recorded
@@ -11961,6 +11974,23 @@ def main() -> None:
         "postings are a different time/area aggregation under one series name.",
     )
     parser.add_argument(
+        "--netload-drag-layup-window-mask",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Mask the ST_GAS / CT_PEAKER net-load reliability-drag floors "
+        "with the MEASURED economic-lay-up windows "
+        "(ScenarioConfig.netload_drag_layup_window_mask, ercot-256). The "
+        "merit-order guard already removes a >=5-day full stop from the "
+        "AVAILABILITY envelope when the unit sat out of merit, on the express "
+        "charter that an economically idle unit stays available; without this "
+        "mask the drag floor forces the plant on inside those very windows "
+        "(rule 17 [R-FLOOR-WINDOW]). When armed the floor's clip basis becomes "
+        "pmax x max(0, availability - layup_share); availability itself is "
+        "untouched. BACKCAST ONLY (rule 13) and zero free parameters (rule 21) "
+        "— the windows and shares are the frozen derive layer's. Tri-state: "
+        "unset keeps the per-ISO default (off everywhere).",
+    )
+    parser.add_argument(
         "--ct-netload-drag",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -12980,6 +13010,7 @@ def main() -> None:
                 or "--no-campd-per-unit-attribution" in sys.argv
                 else None
             ),
+            netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
             campd_outage_merit_order_guard=(
                 args.campd_outage_merit_order_guard
                 if "--campd-outage-merit-order-guard" in sys.argv
@@ -13390,6 +13421,7 @@ def main() -> None:
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
+        netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,

@@ -616,6 +616,142 @@ class TestGasStNetloadDragFloor(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[2], 0.0)
 
 
+class TestNetloadDragLayupWindowMask(unittest.TestCase):
+    """ercot-256 measured lay-up window mask on the net-load drag floors.
+
+    The mask subtracts the merit-order guard's measured ECONOMIC-LAY-UP share
+    from the floor's eligible-capacity clip basis, so the drag cannot force a
+    plant on inside a window the model's own outage pipeline classified as
+    not-operating (rule 17 [R-FLOOR-WINDOW]). Availability itself is untouched.
+    """
+
+    @staticmethod
+    def _st_tranches():
+        """One ST_GAS plant: 200 MW committed + 200 MW econ + 100 MW peak."""
+        shared = dict(
+            name="ST",
+            zone="North",
+            fuel_type="gas_st",
+            online_year=1975,
+            plant_group="ST_GAS",
+            plant_code=555,
+        )
+        return [
+            Generator(
+                unit_id="p555_committed", pmax_mw=200.0, heat_rate=11.0, **shared
+            ),
+            Generator(unit_id="p555_econc00", pmax_mw=200.0, heat_rate=12.0, **shared),
+            Generator(unit_id="p555_peak", pmax_mw=100.0, heat_rate=14.0, **shared),
+        ]
+
+    @staticmethod
+    def _cfg(**kw):
+        return ScenarioConfig(
+            gas_st_netload_drag=True,
+            gas_st_drag_slope_per_gw=0.00906,
+            gas_st_drag_intercept=-0.1376,
+            gas_st_drag_cap=0.34,
+            **kw,
+        )
+
+    def test_none_is_byte_identical_to_the_unmasked_clip(self):
+        gens = self._st_tranches()
+        fa_a = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        fa_b = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        net = np.full(48, 40_000.0)
+        apply_gas_st_netload_drag_floor(fa_a, gens, net, self._cfg())
+        apply_gas_st_netload_drag_floor(fa_b, gens, net, self._cfg(), None)
+        np.testing.assert_array_equal(fa_a.min_gen, fa_b.min_gen)
+
+    def test_a_plant_with_no_series_is_unmasked(self):
+        gens = self._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        # A series for a DIFFERENT plant must not reach plant 555.
+        other = {(999, "ST_GAS"): np.ones(48)}
+        apply_gas_st_netload_drag_floor(
+            fa, gens, np.full(48, 40_000.0), self._cfg(), other
+        )
+        frac = 0.00906 * 40.0 - 0.1376
+        np.testing.assert_allclose(fa.min_gen[0], frac * 200.0, rtol=1e-6)
+
+    def test_full_layup_hours_lose_the_floor_entirely(self):
+        gens = self._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        lu = np.zeros(48)
+        lu[:24] = 1.0  # day 1 fully laid up, day 2 operating
+        apply_gas_st_netload_drag_floor(
+            fa, gens, np.full(48, 40_000.0), self._cfg(), {(555, "ST_GAS"): lu}
+        )
+        frac = 0.00906 * 40.0 - 0.1376
+        np.testing.assert_allclose(fa.min_gen[0, :24], 0.0)
+        np.testing.assert_allclose(fa.min_gen[0, 24:], frac * 200.0, rtol=1e-6)
+
+    def test_partial_layup_caps_the_floor_at_the_non_laidup_share(self):
+        gens = self._st_tranches()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        # Eligible = availability - 0.90, well below the 0.2264 curve fraction,
+        # so the masked clip binds and sets the floor.
+        avail = float(fa.availability[0, 0])
+        apply_gas_st_netload_drag_floor(
+            fa,
+            gens,
+            np.full(48, 40_000.0),
+            self._cfg(),
+            {(555, "ST_GAS"): np.full(48, 0.90)},
+        )
+        np.testing.assert_allclose(
+            fa.min_gen[0], max(0.0, avail - 0.90) * 200.0, rtol=1e-6
+        )
+
+    def test_the_mask_can_only_remove_forcing_never_add_it(self):
+        gens = self._st_tranches()
+        fa_ctrl = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        fa_arm = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        net = np.linspace(20_000.0, 55_000.0, 48)
+        rng = np.random.default_rng(0)
+        lu = rng.random(48)
+        apply_gas_st_netload_drag_floor(fa_ctrl, gens, net, self._cfg())
+        apply_gas_st_netload_drag_floor(
+            fa_arm, gens, net, self._cfg(), {(555, "ST_GAS"): lu}
+        )
+        self.assertTrue(np.all(fa_arm.min_gen <= fa_ctrl.min_gen + 1e-9))
+
+    def test_resolver_is_inert_off_and_in_forecast_mode(self):
+        from market_sim.data.fleet.floors import _resolve_drag_layup_shares
+
+        off = ScenarioConfig(iso="ERCOT", mode="backcast")
+        self.assertEqual(_resolve_drag_layup_shares(off, "ERCOT", 2021, 8760), {})
+        # The field is registered in _BACKCAST_ONLY_OVERLAY_FIELDS, so arming it
+        # in forecast mode is refused at construction (rule 13) — the engine
+        # gate below is the second layer.
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                iso="ERCOT", mode="forecast", netload_drag_layup_window_mask=True
+            )
+
+    def test_ct_drag_forwards_the_mask_too(self):
+        shared = dict(
+            name="CT",
+            zone="North",
+            fuel_type="gas_ct",
+            online_year=2000,
+            plant_group="CT_PEAKER",
+            plant_code=777,
+        )
+        gens = [
+            Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.0, **shared)
+        ]
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        apply_ct_netload_drag_floor(
+            fa,
+            gens,
+            np.full(48, 40_000.0),
+            ScenarioConfig(ct_netload_drag=True),
+            {(777, "CT_PEAKER"): np.ones(48)},
+        )
+        np.testing.assert_allclose(fa.min_gen[0], 0.0)
+
+
 class TestGasStSeasonalDrag(unittest.TestCase):
     """ERCOT-91 season-grain fix of the ST_GAS drag curve (gas_st_drag_seasonal)."""
 

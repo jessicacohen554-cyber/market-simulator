@@ -1410,3 +1410,15 @@ results/calibration/miso243_sppair_K/*.parquet
 # promotion. Every number this lane cites lives in
 # docs/handoffs/FINDING-capx-d84-2026-09-07.md and its d84/ instruments.
 results/hindcast/pjm-2021-2025-realized-t1h-d84-*/
+
+# ercot-256 screen / full-span / rung bundles for the net-load drag lay-up
+# window mask. Rule 29 [R-SCREEN] (c) as AMENDED 2026-09-07 by rule 31
+# [R-RETAIN]: the duty is to keep them OUT OF `main`, never to erase them from
+# disk — .gitignore discharges it in full, and the parity gate only ever sweeps
+# COMMITTED bundle dirs, so an ignored bundle sits on local disk without turning
+# anything red. They stay until the owner has ruled on promotion (rule 31); the
+# PRECOMMIT/RESULT carry every number this session will ever cite, so git
+# history is the record for the bytes exactly as rule 15 says of pruned runs.
+results/calibration/ercot256_screen_2025_arm/
+results/calibration/ercot256_fullspan/
+results/calibration/ercot256_rungs/
