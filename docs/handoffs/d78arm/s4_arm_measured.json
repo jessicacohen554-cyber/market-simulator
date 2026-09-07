@@ -1,0 +1,159 @@
+{
+  "bundle": "results/capacity-hindcast/pjm-2021-2025-realized-t1h-d78arm",
+  "cache_key": "fb16fda2ddb0a94a",
+  "years": {
+    "2021": {
+      "sector_gated_block": false,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 0,
+          "sector_1": 0
+        }
+      }
+    },
+    "2022": {
+      "sector_gated_block": true,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 206,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 103,
+          "sector_1": 0
+        }
+      }
+    },
+    "2023": {
+      "sector_gated_block": true,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 8,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 4,
+          "sector_1": 0
+        }
+      }
+    },
+    "2024": {
+      "sector_gated_block": true,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 0,
+          "sector_1": 0
+        }
+      }
+    },
+    "2025": {
+      "sector_gated_block": true,
+      "counts": {
+        "decided": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "entry_capped": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "floor_retained": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "throughput_deferred": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "pipeline_events": {
+          "rows": 0,
+          "sector_1": 0
+        },
+        "retirements[reason=economic]": {
+          "rows": 0,
+          "sector_1": 0
+        }
+      }
+    }
+  },
+  "violations": [
+    {
+      "year": "2021",
+      "kind": "missing sector_gated block"
+    }
+  ],
+  "unknown_sector_rows": 0,
+  "S4": "FIRED"
+}
