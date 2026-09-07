@@ -22,9 +22,10 @@ DATA PROFILE: code
    desk's life; the latest addition is capx D75-R's pjm_vre_accreditation_vintage paragraph, on top of
    D67-ARM's published-requirement paragraph and D79's solve-surface fingerprint in cache_key()); docs/handoffs/scenario-desk-ledger-2026-09.md
    (YOUR ledger — §0 r#18 is the live state and every refresh back to r#1 is beneath it, §1 the
-   scoreboard, §2 the cards and rulings S1–S15, §4 the collision register, §5 the issuance record
+   scoreboard, §2 the cards and rulings S1–S16, §4 the collision register, §5 the issuance record
    AND THE FULL TEXT OF EVERY LIVE CHARTER — policy charter v6 (§5), ERCOT's v6-RESUME (§5.3) and
-   the S15 bracketing addendum (§5.4) — so you never re-derive a prompt; v5 is DELETED, never paste it); the plan (§1 definition of done, §3 workstreams, §3.5 case set,
+   the S15 bracketing addendum (§5.4) and charter v7 = the S16 coordinator/shard addendum (§5.5) — so
+   you never re-derive a prompt; v5 is DELETED, never paste it); the plan (§1 definition of done, §3 workstreams, §3.5 case set,
    §5.1 scorecard, §6 owner boxes with rulings appended, §7 prompts, §8 findings, §9 ledger);
    docs/forecast-development-plan-2026-07.md §2.1b, §2.4, §7; docs/handoffs/capx-director-
    ledger-2026-08.md — ONLY its top "Last refresh" block and its §4 queue/collision lines; the
@@ -49,7 +50,7 @@ DATA PROFILE: code
    in ledger §4. Never charter adequacy fixes, entry-stack work, storage economics, curve-ON
    questions, the CCS seam, or marker/keeper moves — DISCLOSE and ROUTE.
 5. Present owner cards that are due as CLICKABLE DECISION CARDS via AskUserQuestion (2–4 options,
-   recommendation first and labelled). Record every ruling verbatim and numbered (next is S16) in
+   recommendation first and labelled). Record every ruling verbatim and numbered (next is S17) in
    ledger §2 AND appended to the plan's §6 row, in the same commit.
 
 ══════════════════════════════════════════════════════════════════════════════════════
@@ -69,7 +70,12 @@ RUNNING — the policy half, all six ISOs issued. ERCOT 3/11 (CARB-LO/MID/HI; AD
   NEISO 2/9 (VOL-MID, VOL-HI) + ADDENDUM 1. NYISO 0 legs; REF and LOAD-HI rematerialized at the
   pin with G13 PASS, nine legs fanned across four containers. CAISO and MISO issued r#18 on v6.
 ISSUED r#18: SCN-WS5A-POLICY-CAISO, -MISO (charter v6, ledger §5) + the S15 bracketing addendum
-  (ledger §5.4) to all six lanes.
+  (§5.4) and the S16 coordinator/shard addendum (**charter v7, §5.5**) to all six lanes. EVERY policy
+  lane is now a COORDINATOR: it keeps phase 0 / PRECOMMIT / keys / kills / gates / FINDING / matrix,
+  and LAUNCHES shard sessions that only solve+register+declare. Legs per shard, derived from the
+  synthesis §8 rates at a 60-min LP budget: NEISO 10 · ERCOT 9 · NYISO 2 · CAISO 2 · MISO 2 · PJM 1.
+  Rule 12's ~2 cap is PER-CONTAINER and does not compose across shards; years stay sequential inside
+  a leg, always.
 WAITING: SCN-WS5A-POLICY-SYNTH — issues when the six land; needs FIX1's collate repair (on main).
 HELD: Stage B (S13 — re-present D-5 when RESOLVE and the policy half are BOTH on main; RESOLVE is
   now IN, the policy half is ~9 legs of ~40 and is NOT).
@@ -92,7 +98,9 @@ next lane (executed: capx D77) · S8 (D-10) re-pin once post-D77 (executing: RES
 f_commit mid 0.5 and WTP $4.5/MWh committed · S10 (D-3c) renewable-only eligible set stands ·
 S11 (D-6) counts toward, report both · S12 (D-2c) the 80 % cap slope, field built (SCN-CAP) ·
 S13 (D-5) HOLD the Stage-B grant until RESOLVE and the policy half land · S15 (D-12) add ONE
-bracketing CES-P60 leg above the RPS-ACP entry mask, one common level, never per-ISO · S14 (D-11) relax charter
+bracketing CES-P60 leg above the RPS-ACP entry mask, one common level, never per-ISO · S16 the per-ISO
+lane is a COORDINATOR that launches its own shards, each <60 min of LP (charter v7, ledger §5.5) ·
+S14 (D-11) relax charter
 P4 to rule 12's own ~2-concurrent cap — 2 SCN solves at once on DIFFERENT ISOs, never while capx is
 mid-solve (the owner sequences that half); the stricter one-solve reading is RETIRED.
 STILL OPEN AND DORMANT: D-1(b) what `tight` means on a program ISO; D-1(c) PJM's partial footprint
