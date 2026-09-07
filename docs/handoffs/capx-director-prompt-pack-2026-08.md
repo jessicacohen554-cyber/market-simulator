@@ -8290,3 +8290,330 @@ pre-declaration, every STOP graded, the whole-ledger diff at zero unclassified, 
 weaknesses repaired or explicitly routed, bundles deleted before merge, PJM matrix shard stamped.
 Report the six-ISO synthesis row for PJM and state plainly whether the D76 card is now six-of-six.
 ```
+
+## r#54 NOTE (2026-09-07): FIVE charters, all DISPATCHABLE NOW. D76 phase 3B closed its card six-of-six and Q57 RULED ARM via the D50 (b′-1) route. D78-ARM is ARMED on a live branch and was interrupted by owner reassignment — it is re-dispatched to COMPLETE, never to re-derive. D65-B-R COMPLETION-2 and D75-R-ARM STEPS 3–4 were never dispatched at r#53 and are re-emitted WHOLE. THE BARE `pjm-t1h` KEY NOW HAS THREE VINTAGES IN PLAY (`a9c66d8ea25acb9d` pre-Q55 · `b518f5fe7d02f961` post-Q55 · `fb16fda2ddb0a94a` post-Q56, on D78-ARM's unmerged branch) — whichever PJM lane registers first MUST NAME its key in the row, and the second rebases and re-declares rather than assuming.
+
+## MISO gate-(a) RE-KEY — the Q34 standing duty, fifteenth firing (r#54)
+
+```
+You are a one-act MISO gate-(a) re-key session for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. BRANCH: claude/miso-gate-a-rekey-q34 — FRESH off origin/main.
+
+THE DEFECT. scripts/check_gate_a_provenance.py is RED on main:
+  MISO: gate.a_keeper_marker cites SUPERSEDED keeper '2026-09-06-miso-230-ctdrag-seam';
+  the ISO's current designated keeper is '2026-09-06-miso-232-hourly-seam'.
+The owner's MISO lane promoted miso-232 without re-keying the gate-(a) board row in
+frontend/data/forecast/program-status.json. FIFTEENTH firing of the Q34 duty, THIRTEENTH promoter
+miss since R-T. Record it in those terms. (NEISO's same-window promotion to neiso-106 did NOT miss —
+its row was re-keyed at source, which is the pattern that makes this duty stop firing.)
+
+YOUR ONLY JOB is that one row. Do not touch any other ISO's row, any other gate leg, any keeper
+shard, calibration-complete.json, or the backcast namespace. Nothing is solved, scored or registered.
+
+METHOD — BINDING. Edit frontend/data/forecast/program-status.json by TARGETED STRING EDIT scoped by
+string position (Edit tool or an assert-guarded str.replace). NEVER a json.dumps round-trip: this
+file's formatting is load-bearing and a re-serialize would rewrite the whole document — the rule 27
+[R-PUSH] hazard, and file-integrity-guard would NOT catch it because a reformat is not a >30 %
+shrink. Assert each old string occurs exactly once BEFORE replacing, and assert json.load() parses
+AFTER. Watch for a LEADING SPACE where the prior text continues, so a prepended clause does not leave
+a double space. Push the exact on-disk bytes and blob-verify after the push (fetch the file back,
+compare line count + hash to local) — program-status.json is well over 300 lines.
+
+THE THREE LEAVES, all inside the MISO block:
+ 1. gate.a_keeper_marker.detail — replace the head naming '2026-09-06-miso-230-ctdrag-seam' with the
+    live keeper id and live determination, and prepend a RE-KEYED clause AHEAD OF THE PRESERVED PRIOR
+    TEXT (preserve it verbatim; do not delete it).
+ 2. gate.a_keeper_marker.read_live_at — the sha you actually read at; move the existing corrected_by
+    text under a "PRIOR:" label rather than deleting it.
+ 3. the top-level gate_a_provenance block — derived_at_sha, derived_at_date, and derived_by with the
+    supersession chain prepended ahead of the preserved prior derived_by text.
+
+READ EVERY FACT LIVE at your own HEAD before writing — keeper id and registry years from
+frontend/data/backcast/keepers/MISO.json and the registry sidecar; determination, grade summary,
+fails, ledgered caveats and C1 counts from frontend/data/backcast/status/MISO.js; the rubric version
+from RUBRIC_VERSION in scripts/calibration_verdict.py; marker state from
+frontend/data/backcast/calibration-complete.json. Do NOT copy figures from any prior row.
+
+STATE THE VERDICT EFFECT PRECISELY. MISO is NOT in the `complete` block (the owner declined it at
+Q49), so gate (a) reads FAIL before and FAIL after — the marker did not move and this re-key changes
+IDENTITY AND DETERMINATION TEXT ONLY. Say exactly that in the row; do not imply the promotion changed
+the gate.
+
+EXIT: check_gate_a_provenance.py exits 0; json.load parses; `git diff` touches exactly the three
+leaves in one file and nothing else; the prior text is preserved in all three; commit, push,
+blob-verify. Report the diff and the gate exit code. Do not open a PR unless asked.
+```
+
+## D78-ARM COMPLETION — finish the interrupted lane: items (1)–(6), Q56's registration condition (r#54)
+
+```
+You are the D78-ARM COMPLETION session. The D78-ARM lane executed owner ruling Q56, ARMED
+retirement_sector_gate for PJM, pushed and blob-verified it — and was then INTERRUPTED BY OWNER
+REASSIGNMENT to SPP-14. You finish it. MODEL: Opus. DATA PROFILE: pjm.
+BRANCH: continue on claude/pjm-retirement-sector-gate-at0cao (rebase onto origin/main first). If you
+must branch fresh, branch FROM that branch, never from main — the arm lives only there.
+
+YOU COMPLETE; YOU DO NOT RE-DERIVE. The arm (a154222c) is complete and blob-verified, and every
+PRECOMMIT expectation reproduced exactly (docs/handoffs/d78arm/*measured.json). You may NOT re-argue
+the arm, re-run the probes, or re-open Q56. If a probe now disagrees with the PRECOMMIT, STOP and
+report — that is also not re-deriving.
+
+WHAT IS ALREADY TRUE, MEASURED: _pjm_config default_scenario_overrides gains
+retirement_sector_gate=True; the shared ScenarioConfig default stays False, so every other ISO and
+every backcast key is byte-identical. Bare pjm-t1h b518f5fe7d02f961 -> fb16fda2ddb0a94a. Cache-epoch
+2026-09-06h. PJM matrix cell O -> K. VERDICT_MAP re-keyed (d67arm -> pjm-t1h-pre-d78arm; the armed
+re-solve takes pjm-t1h). The override pin re-keyed with every inverse beside it.
+
+THE SIX ITEMS THE LANE ITSELF LEFT OWED, verbatim from its WIP commit 3b369f26:
+ (1) tests/unit/config/test_d67arm_pjm_requirement.py TestQ52ArmingKeys — BARE_PJM_ARMED must move
+     a9c66d8ea25acb9d -> fb16fda2ddb0a94a, and the explicit-off leg needs
+     pjm_vre_accreditation_vintage=False + retirement_sector_gate=False beside
+     capacity_adequacy_requirement_published=False to reach 15a723ba3b6dc856. Measured at the lane's
+     HEAD: bare fb16fda2ddb0a94a, no-req 250882fbbbf64377, no-req+no-vre+no-gate 15a723ba3b6dc856.
+     NOTE: this test was ALREADY RED on main since 6164231e (Q55 moved the bare key without
+     re-pinning the file) and a separate commit d41ac928 has since landed on main claiming to repair
+     the stale PJM cache-key pins. RE-READ THAT FILE AT YOUR HEAD FIRST and reconcile: state whether
+     d41ac928 already did item (1), partly did it, or did something else, before you edit anything.
+ (2) a data/clean rebuild (regenerate_clean.py) — the lane was killed at 6/56 datatypes.
+ (3) the solve: bash docs/handoffs/d78arm/run_arm.sh (expected key fb16fda2ddb0a94a). HEAD GUARD:
+     H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. If the
+     realized key is not fb16fda2ddb0a94a, STOP and report.
+ (4) score_capacity_hindcast.py --bundle ... and --flip-gate-extras.
+ (5) register_forecast_run.py --bundle ... (VERDICT_MAP already re-keyed). THIS IS Q56's REGISTRATION
+     CONDITION and it is part of the ruling, not a note on it: arming without registering does not
+     discharge Q56.
+ (6) the slim record + sidecar commit, FINDING-capx-d78arm-2026-09-06.md, the PR.
+
+NAME YOUR KEY IN THE ROW. The bare pjm-t1h key has THREE vintages in play: a9c66d8ea25acb9d (pre-Q55),
+b518f5fe7d02f961 (post-Q55, which the D75-R-ARM STEPS 3-4 lane was chartered to register), and
+fb16fda2ddb0a94a (yours, post-Q56). Whichever of the two PJM registration lanes lands first must state
+in its row which key it carries; if D75-R-ARM steps 3-4 has landed before you, rebase and re-declare
+rather than assume. Check with: git log origin/main --oneline --grep="D75-R-ARM".
+
+REPORT AT FULL MAGNITUDE, from FINDING-capx-d78r3 §5.2, whichever way they fall: retire.total_gw's
+FAIL -> PASS is EXPLICITLY NOT an argument for arming (rule 14) and must not be cited as support;
+unit_recall_gt300 falls 0.650 -> 0.550; the 2025 clearing price moves 358.267 -> 236.945 $/MW-day;
+limb (d) cannot discriminate on recall; limbs (b)/(c)/(d) were carried, not re-measured, and YOUR
+registration is what closes that gap; and W5''s PASS came from a corrected DECLARATION, not a new
+measurement, with the derivation one-sided and silent on gas_ct/gas_st.
+
+THE BOARD SNAPSHOT STAYS HELD (the D65-B-R lock), exactly as the WIP commit says.
+
+MATRIX (rule 28): PJM's shard only; the cell is already O -> K — verify, do not duplicate.
+
+EXIT: items (1)-(6) done; d41ac928 reconciled and stated; the armed leg solved at fb16fda2ddb0a94a
+with the HEAD guard held, scored, and REGISTERED with its prior preserved; the §5.2 disclosures in the
+FINDING's head; rule-27 blob verification for any file >=300 lines. Report the key realized-vs-declared,
+the before/after row, and Q56 discharged.
+```
+
+## D76-ARM — arm `capacity_screen_peak_measured_hindcast` under owner ruling Q57, via the D50 (b′-1) route (r#54)
+
+```
+You are the D76-ARM session, executing OWNER RULING Q57 (capx ledger §0ay.3(a), r#54): "ARM via the
+D50 (b′-1) route." MODEL: Opus. DATA PROFILE: code, widening to all if a verification solve is needed.
+BRANCH: claude/capx-d76-arm-measured-peak — FRESH off origin/main.
+
+BINDING: FINDING-capx-d76-2026-09-06.md + -p2- + -p3- (whose §7 is the card the owner ruled on) +
+PRECOMMIT-capx-d76-measured-screen-peak-2026-09-06.md + the D50/Q42 landing as the ROUTE precedent
+(CLAUDE.md, Capacity Evolution, step 2: "landed as a (b′-1) declared default flip with the frozen
+cache-key drop value left at False, so an explicit False still selects the pre-flip construction and
+keeps its key"). Capx ledger §0ay.3(a) and register Q57.
+
+THE RULING. Arm capacity_screen_peak_measured_hindcast so the capacity screens test the solve year's
+OWN MEASURED LOAD — the identical array the LP dispatches — instead of the weather year's load
+de-grown across the span. Land it as a DECLARED DEFAULT FLIP with the frozen cache-key drop value
+left at the OLD default, so existing bundles keep their keys and the correct operand applies going
+forward, with frontier bundles re-solved on their natural cadence rather than a repository-wide sweep.
+
+*** THE ROUTE IS PART OF THE RULING. *** The owner ruled the D50 (b′-1) route specifically, not
+"arm somehow". So:
+ - VERIFY ZERO KEY MOVES BEFORE YOU COMMIT THE FLIP. Measure it, do not assert it: enumerate every
+   committed run config, compute the key under the pre-flip and post-flip constructions, and show the
+   count that moves. Use scripts/check_cache_key_registration.py and
+   scripts/solve_surface_register.py --diff origin/main HEAD as D75-R-ARM and the facade fix did.
+ - IF IT DOES NOT LAND AT ZERO KEY MOVES, STOP AND RETURN TO THE OWNER. Do not work around it, do not
+   widen to a full re-solve on your own authority, do not arm without the flip. A route that does not
+   hold voids the authority rather than being reinterpreted. Report exactly which configs move and why.
+
+WHAT THE MECHANISM IS, so you can check you have the right seam: ONE gate, ONE seam, ZERO scalar
+fields, ZERO free parameters (rules 21/24). The seam and its full consumer enumeration are
+FINDING-capx-d76 §4.1 and §4.2 (the rule-19 enumeration). It is INERT BY CONSTRUCTION in every
+forecast year, every crossover forward year and every backcast — a forecast year has no measured load,
+so the growth path remains THE forecast methodology and rule 13's forward test is met by construction.
+ASSERT that inertness by test, do not just state it.
+
+PRE-REGISTER, BEFORE ANY VALUE IS OPENED: the flip's expected key-move count (zero), the expected
+inert set (all forecast/crossover-forward/backcast rows), and the two ISOs where decisions are
+expected to move — CAISO (−2,532.391 MW of backstop gas CT it does not need) and MISO (343.312 MW of
+coal saved from a 2024 exit, outside the scored window). Four ISOs are expected to show NO decision
+change: PJM (D67 makes the requirement peak-independent), NYISO (D52 likewise), ERCOT (energy-only,
+nothing reads the position), NEISO (fleet long by 5.0–7.6 GW).
+
+DO NOT ARM ONLY WHERE IT BITES. The owner was offered "arm only in CAISO and MISO" and it was marked
+NOT RECOMMENDED: arming a mechanism only where it changes the answer is the fitted-mechanism selection
+rule 1 [R-STRUCT] exists to forbid. The gate arms everywhere or not at all.
+
+DO NOT ARGUE THE ARM FROM THE RESIDUAL. The basis is rule 14 [R-ACCURATE]: the de-grown estimate is
+wrong by −23.3 % to +15.4 % against the identical array the LP dispatches, and rule 14's only
+exception (data misaligned to our representation) does not apply because it is the SAME array. The
+fact that decisions move in only 2 of 6 ISOs is not a point for or against and must not be written as
+one — the four inert ISOs are evidence the gate is well-behaved.
+
+MATRIX (rule 28): the mechanism's row plus a cell line in EVERY ISO shard (duty c — the one
+deliberately non-parallel edit), since this changes a solve-affecting default for all six.
+
+STOP GATES. (1) Non-zero key moves — STOP, return to the owner (above). (2) Any forecast, crossover
+forward or backcast row proving NOT inert — STOP; the construction is wrong. (3) Any determination
+flipping anywhere — STOP and report; the card's basis was "no determination flips anywhere". (4) A
+consumer of the seam that FINDING-capx-d76 §4.2 does not enumerate — STOP and route; rule 19 requires
+the enumeration to be complete before the seam moves.
+
+EXIT: the gate armed as a (b′-1) declared default flip with the frozen drop value at the old default;
+zero key moves MEASURED and shown; inertness asserted by test for forecast/crossover-forward/backcast;
+the matrix row + six shard cells; CLAUDE.md's Capacity Evolution section given its bullet in the same
+PR; rule-27 blob verification for any file >=300 lines. Report the key-move count, the inert set, and
+which ISOs' frontier bundles now owe a re-solve on their natural cadence.
+```
+
+## D65-B-R COMPLETION-2 — leg 7 and the finding's §0/§6 (r#54; RE-EMITTED WHOLE, never dispatched at r#53)
+
+```
+You are the D65-B-R COMPLETION-2 session of the capacity-expansion track. The batch (owner ruling
+Q47) has SIX legs registered on main and its board write merged as #5283. You are finishing it.
+MODEL: Opus. DATA PROFILE: all. BRANCH: claude/capx-d65br-completion2 — FRESH off origin/main.
+
+BINDING: pack §D65-B-R (the original) + this section + docs/handoffs/FINDING-capx-d65br-2026-09-06.md
++ PRECOMMIT-capx-d65b-2026-09-06.md Addendum C (the pre-declared per-ISO gates) and Addendum G (the
+fourth rebase re-audit) + FINDING-capx-d64-2026-09-05.md §2.3/§2.4. Capx ledger §0ax and §0ay.
+
+ALREADY DONE — DO NOT REDO, RE-GRADE, RE-SOLVE OR RE-REGISTER ANY OF IT. Legs 1-6 are solved,
+graded and REGISTERED: ercot 9b9e5a48e3ca5c8e, neiso c3519b861f920bbe, nyiso f62431376dd9df03,
+caiso 17770cdad3230938, pjm 542eeedadab83ee1, miso 74359fedbf2eadd6 — every key equal to the
+Addendum C pre-declaration to the digit (PJM on Addendum E's re-declaration). Their sidecars are on
+main under frontend/data/hindcast/. Step 0 and steps 1-2 are on main. The ERCOT screen is NOT re-run.
+
+STEP A — LEG 7, your only solve: neiso-t3 GOLDEN-3 (~33 min), sequential, scored, verdict, registered
+in place with its -pre-d65b prior through the SINGLE scripts/register_forecast_run.py path, graded
+against Addendum C's G0'-G6' exactly as legs 1-6 were. D64 §2.3 POSITIVELY INDICATES this leg — an
+expectation to test, never a target to hit; report the measurement whichever way it falls. HEAD GUARD:
+H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90. Rebase BETWEEN legs
+only, never during one; re-audit any rebase delta hunk by hunk with constants.py read first.
+
+STEP B — ANSWER A QUESTION THE DIRECTOR GOT WRONG, and treat it as open. At r#52 I asserted the batch
+had "written no board byte" and proved it by citing frontend/data/forecast/ff-verdicts.json. That was
+the WRONG INSTRUMENT: the registration artifact is the per-run hindcast sidecar under
+frontend/data/hindcast/ (7 files in c36a3fe7, zero under frontend/data/forecast/), while
+ff-verdicts.json is the FF-2D VERDICT SNAPSHOT, a different object that moves only when a verdict
+moves. So the genuinely open question, which I am NOT asserting either way: DO any of the seven legs
+require an ff-verdicts.json update? Determine it from the code path (register_forecast_run.py, what
+writes ff-verdicts.json, and what --reindex consumes) and from rule 15's list of committed inputs.
+Report the answer with its evidence. If yes, make the update and say which verdicts moved and why. If
+no, say so and say what WOULD have moved it. Either answer is a good outcome; an unexamined one is not.
+
+STEP C — FINDING §0 AND §6, plus the ordering repair. Fill §0 "The verdicts" (still the placeholder
+"*(filled at the close of the batch)*") with the per-ISO Addendum C grade and the batch verdict. Fill
+§6 Governance and MOVE it: §6 currently sits at line ~142 BETWEEN §5.1 and §5.2, so §5.2-§5.6 read as
+if they were inside governance. Put §6 after your new §5.7. Governance carries the rule-27 blob
+checks, the D8 curated DOF rows for the flipped default, the D77 §8 blast-radius reconciliation, the
+D50 §6.2 radius, and an explicit statement that the D72-prehunk neiso-t1f residue key is DISCHARGED.
+
+STEP C-2 — THE BASIS DISCLOSURE, and it is the director's defect, not yours. Your leg 6 established
+the general form: "All three fired gates share one root: Addendum C compares a HEAD solve against a
+prior that predates HEAD, and two of the three are measuring that gap, not the arm." That is true and
+§0 must say so in those terms. Concretely: G5' fired on neiso-t1f and nyiso-t1f (VOIDED as a STOP by
+director adjudication r#51 §0av.3(b) and reclassified to REPORTED — those legs registered), and G4'
+fired on miso-t1f and is provably not the acts' (I3 fails from 2026; apply_ccs_retrofit returns at
+year < ccs_retrofit_available_year before reading either field; G0' measured 0 rows in 2026 and 2027).
+Record all three as ONE root with its arithmetic. BASIS DISCLOSURE, not a re-grade: no leg's numbers
+change, no gate is retro-declared passed, no prior is re-solved, every fired gate stays reported at
+full magnitude. Grade leg 7's gates the same way if one fires on the same vintage gap.
+
+STEP D — MATRIX (rule 28): the ccs_retrofit_screen row's def/note carries Act B; the
+ccs_retrofit_fixed_cost_co2_scaling row's cells read fc: K where the arm is now the bare leg. Six
+shards, ONE line each, last commit. Edit only cells your own evidence covers.
+
+STOP GATES. (1) Leg 7 exceeding the D60 wall/RSS envelope (G6') — stop and report, do not retry blind.
+(2) HEAD guard trip (exit 90) — rebase, re-audit, re-solve. (3) A board row you cannot reconcile to a
+committed leg artifact — stop, do not hand-author it. (4) A gate you cannot grade from a committed
+document — stop and route to the director rather than inventing a band.
+
+DO NOT: re-solve legs 1-6 or the ERCOT screen; arm anything; touch the backcast registry, another
+desk's ledger, or any ISO shard your evidence does not cover; widen to D82/D83/D84.
+
+COLLISIONS: you are NEISO and you collide with nobody. Three PJM lanes are or may be live (D78-ARM
+COMPLETION, D75-R-ARM steps 3-4, D76-ARM); stay out of PJM's shard and PJM's sidecars. Rules 12, 15,
+22 (forecast mode only), 24, 25, 27, 28, 29.
+
+EXIT: leg 7 solved, scored, registered with its prior; the ff-verdicts question answered with
+evidence; FINDING §0 and §6 filled with §6 correctly ordered and the basis disclosure in §0; six
+matrix shards stamped; rule-27 blob verification for any file >=300 lines pushed. Nothing else arms.
+Report the batch verdict and the seven-row board table.
+```
+
+## D75-R-ARM STEPS 3–4 — the held re-solve and board registration (r#54; RE-EMITTED WHOLE, never dispatched at r#53, with the key question now live)
+
+```
+You are the D75-R-ARM STEPS 3-4 session of the capacity-expansion track. Steps 1-2 LANDED
+(#5267/#5272, 6164231e): pjm_vre_accreditation_vintage is ARMED for PJM under owner ruling Q55. Steps
+3-4 were held behind D65-B-R's board write; THAT MERGED (#5283, c36a3fe7) and the STOP IS MET. This
+charter was issued at r#53 and never dispatched; it is re-emitted whole with ONE change, marked below.
+MODEL: Opus. DATA PROFILE: pjm. BRANCH: claude/capx-d75r-arm-steps34 — FRESH off origin/main.
+
+BINDING: PRECOMMIT-capx-d75r-arm-2026-09-06.md + FINDING-capx-d75r-2026-09-06.md + the D67-ARM
+precedent (FINDING-capx-d67arm-2026-09-06.md, whose §2.1 recorded the moving-control-legs miss
+against itself). Capx ledger §0ax.1 and §0ay.
+
+WHAT IS ALREADY TRUE, MEASURED, DO NOT RE-ARGUE IT. The arm is an ISO override in
+_pjm_config.default_scenario_overrides, not a shared default flip. Of 153 committed run configs the
+21 PJM FORECAST configs move and all 132 others are byte-identical. Bare pjm-t1h goes
+a9c66d8ea25acb9d -> b518f5fe7d02f961; --no-pjm-vre-accreditation-vintage reaches the pre-arm control
+and keeps a9c66d8ea25acb9d.
+
+*** [r#54 CHANGE] THE KEY QUESTION IS NOW LIVE AND YOU MUST ANSWER IT FIRST. *** Since this charter
+was written, D78-ARM armed retirement_sector_gate for PJM on branch
+claude/pjm-retirement-sector-gate-at0cao (UNMERGED at r#54) and moved the bare pjm-t1h key AGAIN:
+b518f5fe7d02f961 -> fb16fda2ddb0a94a. There are now THREE vintages of that key in play. Before you
+solve anything: read origin/main AND that branch, determine which key the bare recipe carries at YOUR
+head, and DECLARE it in an addendum pushed before the solve. If D78-ARM has merged before you start,
+your row carries fb16fda2ddb0a94a and this lane's job is to register the VRE-devintage row against the
+correct prior — say so explicitly rather than silently registering a different key than the charter
+names. If it has not merged, you carry b518f5fe7d02f961 as originally chartered. Either way: NAME THE
+KEY IN THE ROW. Do not assume.
+
+STEP 3 — RE-SOLVE the bare pjm-t1h at the key you declared, preserving its prior as -pre-d75rarm.
+DECLARE the expected key BEFORE the solve, in the addendum above, and report realized-vs-declared.
+HEAD GUARD mandatory: H0=$(git rev-parse HEAD); <solve>; [ "$(git rev-parse HEAD)" = "$H0" ] || exit
+90. If the realized key is not the declared one, STOP and report — a mismatch means the arm does not
+reproduce the recipe the A/B was measured on, and the Q55 basis needs re-reading.
+
+STEP 4 — REGISTER through the SINGLE scripts/register_forecast_run.py path (rule 15). Score the row,
+report every invariant at full magnitude, and DECLARE any FAIL against the leg's own committed prior
+in the same commit (the Y-24 ratchet). A declaration is not a fix: nothing is relaxed, re-scored or
+exempted.
+
+NOTE ON THE COMMITTED ARTIFACT SET, because the director got this wrong at r#52 and corrected it at
+r#53: register_forecast_run.py writes the per-run hindcast sidecar; ff-verdicts.json is the FF-2D
+verdict snapshot and moves only when a verdict moves. Determine from the code path which of the two
+your registration must touch, and say which and why in your close.
+
+NOTE ON D76-P3B: it solved the bare pjm-t1h at b518f5fe7d02f961 as its own control and then DELETED
+that bundle before merge under rule 29(c). That solve does NOT discharge your registration; do not
+cite it as though the row already exists.
+
+THE FOUR D57/D67 CONTROL LEGS MOVE, and that was PRE-DECLARED in PRECOMMIT §2.1 rather than
+discovered afterwards — the exact miss FINDING-capx-d67arm §2.1 recorded against itself. Handle them
+as that precedent did: name each, say why it moved, and do not treat the movement as a defect.
+
+DO NOT: arm anything further; touch retirement_sector_gate (D78-ARM COMPLETION owns it); re-open
+D75-R's A/B; touch another ISO's shard (rule 25 — PJM only, locked by test across the other five).
+
+COLLISIONS: D78-ARM COMPLETION is the other PJM registration lane and carries the same
+name-your-key duty. Whichever of you lands first states its key; the second rebases and re-declares
+rather than assuming. Rules 12, 15, 24, 25, 27, 28, 29.
+
+EXIT: the key question answered and declared before the solve; bare pjm-t1h re-solved at the declared
+key with the HEAD guard held; registered with its prior preserved; every invariant reported and every
+FAIL declared against its own prior; the PJM matrix shard stamped; rule-27 blob verification for any
+file >=300 lines. Report the key realized-vs-declared and the before/after row.
+```

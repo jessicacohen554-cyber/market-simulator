@@ -8,7 +8,8 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #53) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-06 (refresh #54) ·
+**r#54 (HEAD `433cdf58`):** **D76 CLOSES ITS OWN CARD AT SIX-OF-SIX AND THE ANSWER INVERTS PHASE 2's FEAR** (121 commits, 44 merges, PRs #5322-#5365 — but only ONE capx merge) · **D76 PHASE 3B: with the vintage armed PJM's census is peak-inert MORE firmly, and the evidence is the SHAPE of the rows, not their equality — 2021-22 still vary with penetration (solar 0.1064 → 0.08839 → 0.0789) while 2023-25 are CONSTANT across installed MW, because the published per-DY class rating has neither a peak term nor a penetration term. Phase 2's inertness was ACCIDENTAL (a curve that saturated); this is STRUCTURAL, and §4.1's 'may become peak-sensitive again' is CLOSED against the direction it feared. STOPs 1-6 all PASS, STOP 2 = 0.000 MW in five years, whole-ledger diff moves screen_peak_demand_mw and NOTHING else. FC-3 17.294 GW / +0.148 vs phase 2's 18.058 / +0.199 — the whole improvement is gas_cc 0.903 → 0.139; gas_st and coal UNCHANGED, so D75-R-ARM did NOT touch the steam over-exit and D74's object survives intact** · **Q57 SERVED AND RULED: ARM `capacity_screen_peak_measured_hindcast` VIA THE D50 (b′-1) ROUTE** — rule 14 is dispositive (the de-grown estimate is wrong by −23.3 % to +15.4 % against the IDENTICAL array the LP dispatches; the misalignment exception does not apply), and I DECLINED the 'benefit is narrow' objection AS A RESIDUAL ARGUMENT under rule 1; 'arm only where it bites' offered and marked NOT RECOMMENDED as fitted-mechanism selection · **D78-ARM ARMED, BLOB-VERIFIED, AND INTERRUPTED BY OWNER REASSIGNMENT to SPP-14** — bare pjm-t1h `b518f5fe7d02f961 → fb16fda2ddb0a94a`, every PRECOMMIT expectation reproduced exactly, and a WIP commit carrying a SIX-ITEM STILL-OWED list 'so no successor re-derives it', including a red it diagnosed as NOT ITS OWN; **Q56's registration condition is UNMET** · **TWO of my four r#53 charters were NEVER DISPATCHED and a third was reassigned away — 1 of 4 completed; the queue is a proposal, not a plan**, both re-emitted whole, nothing graded lost · **NYISO RE-DECLARED `complete` — five of six ISOs** {CAISO, ERCOT, NEISO, NYISO, PJM}, only MISO absent by the owner's own Q49 decline; Q51 RESOLVED BY OWNER ACT · MISO → miso-232, NEISO → neiso-106 · gates **8 of 10**: gate (a) RED on MISO (fifteenth firing, thirteenth promoter miss) — **issued as a PROMPT, not executed here, per the owner's 2026-09-06 instruction**; ruff format red on two MISO-lane files, routed · **THE BARE pjm-t1h KEY NOW HAS THREE VINTAGES IN PLAY** — whichever lane registers first must NAME its key · 5 charters issued (§0ay)
 **r#53 (HEAD `5a20cec1`):** **THE LARGEST WINDOW THIS DESK HAS GRADED — 110 commits, 50 merges, PRs #5266-#5315 — AND EVERY LANE IN IT LANDS** · **D65-B-R BOARD WRITE (#5283): six legs register on keys EQUAL TO THE ADDENDUM-C PRE-DECLARATION TO THE DIGIT, my r#51 G5′ void executed as written (NEISO/NYISO register, the CEILING form on ercot/pjm/miso untouched); Y-24 ratchet four legs declared against their OWN priors with zero PASS→FAIL flips except miso's pre-registered G4′ confound; leg 7 + §0/§6 still owed** · **D75-R-ARM: PJM's VRE devintage ARMED (Q55) — 21 of 153 configs move, ALL PJM FORECAST, 132 byte-identical; bare pjm-t1h `a9c66d8ea25acb9d → b518f5fe7d02f961` which IS D75-R's own measured arm key; steps 3-4 HELD by the lane** · **D78-R3: W5″ PASSES on D57 §4's PER-DY ROWS (943/403/8 gated, 0 moved), all four limbs MET, S1 reproduces the carried control BYTE-IDENTICALLY 165 commits later → Q56 SERVED AND RULED ARM, REGISTRATION REQUIRED; the lane records against itself that NOTHING MEASURED CHANGED between FAIL and PASS — only the declaration — and that its derivation is one-sided, SILENT on the two deciding classes, with a proven false-positive class (nuclear at bar in all four DYs)** · **D76 PHASE 3: NYISO INERT END-TO-END as pre-declared though its seam peak moves 7.2 %/5.4 % of load (D52 has no term in the model's peak); NEISO's requirement LIVE to 0.045 MW and CONSUMED BY NOTHING (fleet 7,560.5 / 4,992.9 MW above requirement); ACROSS SIX ISOs the accreditation census is PEAK-INERT IN ALL SIX, the requirement is the only live consumer, the reliability floor never binds anywhere; the lane REFUSES to recommend on a five-of-six card, citing this desk's own STOP-only doctrine back at it** · **OWNER RE-DECLARES CAISO `complete` on caiso-260 — Q50 RESOLVED BY OWNER ACT, not by this desk; `complete` = {ERCOT, NEISO, PJM, CAISO}** · **TWO OF TWO HELD PHASES PROCEEDED PAST AN UNMET STOP AND BOTH WERE RIGHT TO** (D75-R-ARM armed 21:58, its board write merged 22:13; merge-base proves it) — because I wrote the STOP against a SESSION instead of an ACT; both lanes partitioned correctly and disclosed the gap → doctrine **A STOP NAMES AN ACT, NOT A SESSION** · **AGAINST INTEREST: at r#52 I proved 'no board byte' with the WRONG ARTIFACT** — `ff-verdicts.json` is the FF-2D verdict snapshot; the registration is the per-run hindcast sidecar (7 files in `c36a3fe7`, zero under `frontend/data/forecast`) — the conclusion held, the proof did not, and the open question is routed unasserted · **RE-FETCH BEFORE GRADING DISPATCH vindicated hard: ZERO capx branches at HEAD and FOUR capx lanes merged inside the window** · gates **10/10 green**, no Q34 re-key owed (CAISO's lane re-keyed at source; count stays 14) · no open PRs · 4 charters issued, all dispatchable, three PJM lanes ordered by act-scoped STOPs (§0ax)
 **r#52 (HEAD `28fb1882`):** **A CONSOLIDATING WINDOW THAT TURNS ON TWO THINGS THIS DESK GOT WRONG** (32 commits, 14 merges, PRs #5245-#5259) · **MY FIRST-ACT BRANCH CENSUS READ ZERO CAPX BRANCHES AND BOTH DISPATCHABLE CHARTERS WERE ALREADY LIVE** — D75-R FACADE FIX pushed 21:40:25Z (PR #5257), D78-R3 21:43:03Z (`e79a4ddd`), both AFTER my fetch; read literally my own charter would have re-emitted two live lanes and bought a second PR #5160 → doctrine RE-FETCH IMMEDIATELY BEFORE GRADING DISPATCH · **MY FACADE CHARTER NAMED THE WRONG HALF OF A TWO-PART FIX** — `RENEWABLE_ELCC_VINTAGE_RATINGS_BY_ISO` was ALREADY on the facade; only `PJM_SOLAR_CLASS_MIX_FIXED_TILT_SHARE` was missing, and the red test reads the frozen `MOVED_SURFACE` INVENTORY, so a facade-only edit clears nothing (the lane found it; #5257 blob-verified, recommend MERGE) · **D65-B-R LEG 6 CLEARS: G1' 1.2898-1.3930 inside MISO's OWN D64 band 1.26-1.39, the THIRD ISO in its own band; G4' FIRES and is provably NOT the acts' (I3 fails from 2026; the mechanism is inert before 2028) — which makes THREE OF THREE fired gates in this batch my ADDENDUM-C BASIS, a HEAD solve against a pre-HEAD prior, not the arm** · **D78-R3 pre-registers PER DELIVERY YEAR before opening a value and finds the control-P bundle DELETED *and* THE D78-R2 ARM NEVER REGISTERED — a control-P re-solve is EARNED; the desk's deleted-control doctrine billed exactly where r#51 predicted** · **RULED: neiso-105's rule-29 complaint is a MISUSE of the screen year, not a rule-29 defect — a screen TESTS a mechanism, it never SIZES a coefficient (identification is rules 21/23); the ruling reads identically had the cut landed on target** · D65-B-R has written NO BOARD BYTE (ff-verdicts.json last touched by D63 #5108) so all seven rows are outstanding and D75-R-ARM / D76-P3 keep their STOPs · **TEN OF TEN GREEN WITH NO DESK ACT — gate (a) opened green on its own, a first; no keeper or marker moved, no Q34 re-key owed (count stays 13)** · `main` returned a FORCED update: a sha-rebasing event, content intact, 9 of 11 ledger shas LIVE (`fb0868eb`/`04e6906d` DEAD) · Q56 stays RESERVED — no card on a lane that has not produced its derivation · 1 charter issued (D65-B-R COMPLETION, the critical path) (§0aw)
 **r#51 (HEAD `00cee150`):** **ALL FIVE IN-FLIGHT CAPX LANES LAND IN ONE WINDOW** (102 commits, 25 merges) · **D79 PHASE 1: the solve-surface fingerprint is IN THE KEY at ZERO moves (296/296 declared, 0/148 configs move, `--diff` over SCN-LOAD names the 3 tables / 6 ISOs the design predicted) — CLOSED, the standing instrument** · **D78-R2: W4′ HIT at 9,394.156 MW to the milli-MW, whole-ledger diff ZERO unclassified rows in five years, W5′ FIRED as a falsified per-delivery-year class set (D57 §4 is per DY) → HOLD; D78-R3 chartered** · **D76 PHASE 2: STOP 2 = 0.000 MW every year every ISO; ONE live consumer of six; PJM INERT under D67-ARM; CAISO −2,532 MW phantom CT; arming card SEQUENCED behind D75-R-ARM** · **D75-R: lands on its prediction to 0.001 MW, 26/26 bands byte-identical, FC-3 err 0.199 → 0.148 — Q55 SERVED, RULED ARM; D75-R-ARM chartered (sequenced after D65-B-R's board write)** · **D65-B-R 5/7 legs: G1′ measured in each ISO's OWN band (r#48 §3(a) MEASURED), PJM 2028 408.2 MW vs a 0.41 GW zero-LP ceiling; G5′ FIRED on NEISO + NYISO against its own source — VOIDED as a STOP by this desk (D64 §2.3 verbatim), legs register, GOLDEN-3 leg positively indicated** · **MISO PROMOTED (miso-230, CALIBRATED) and this desk RE-KEYED gate (a) — thirteenth firing** · D83/D84 RESERVED · gates 8/8 green after the re-key · 5 charters issued
@@ -59,6 +60,190 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
+
+## 0ay. Refresh #54 (2026-09-07, main HEAD `433cdf58`) — D76 closes its own card at six-of-six and the answer inverts phase 2's fear: with the vintage armed PJM's census is peak-inert *more* firmly, because the published class rating has no peak term where the old curve merely saturated; Q57 SERVED AND RULED ARM via the D50 (b′-1) route; D78-ARM is armed, blob-verified and INTERRUPTED BY OWNER REASSIGNMENT with a six-item state handoff; two of my four r#53 charters were never dispatched; NYISO is re-declared `complete`, making it five of six ISOs
+
+**0. FIRST ACT.** Handoff claim (§0ax = r#53, merged `6aaa0993`) **matched** the ledger's top entry.
+`git fetch origin --prune` moved `main` `5a20cec1 → 433cdf58` — **121 commits, 44 merges**, PRs
+#5322–#5365, of which **exactly one is a capx merge** (#5336); the rest are owner backcast lanes, SCN
+and SPP. **Re-fetched before grading dispatch** (the r#52 doctrine), which again mattered: it is how
+`claude/pjm-retirement-sector-gate-at0cao` — D78-ARM, under a branch stem that matches no charter —
+was found live rather than graded lost. **No open PRs.**
+
+**Gates at HEAD: 8 of 10.** `audit_keepers` 0 · parity 0 · **gate (a) EXIT 1 — MISO cites the
+SUPERSEDED miso-230** · matrix 0 · staleness 0 · bench 0 · goldens 0 · `check_forecast_invariants
+--sidecar-dir` 0 · `ruff check .` 0 · **`ruff format --check .` EXIT 1 — two files,
+`scripts/data/derive_miso_seam_ladders.py` and `tests/iso/miso/test_miso_seam_ladder.py`** (the
+owner's MISO seam-ladder lane; routed to it, not repaired here). Both reds belong to the same
+owner lane and neither is capx's.
+
+**1. GRADED BY CONTENT.**
+
+- **D76 PHASE 3B — LANDED (#5336, `1a2cbe32`) AND THE CARD CLOSES AT SIX-OF-SIX.** D75-R-ARM merged
+  mid-lane, so the question phase 3 was chartered to ask became askable and **the lane asked it
+  rather than closing with it open** — Addendum 1 (`f43ab84d`) pushed BEFORE the first PJM LP with
+  the hunk-by-hunk re-audit, the re-declared keys and the zero-LP census answer; the legs then
+  confirmed it. Legs 7-C `b518f5fe7d02f961` (== bare at that head) and 7-A `559c05579b47684b`,
+  2021–2025, both at `57bc34a7` **with `pjm_vre_accreditation_vintage` ARMED ON BOTH SIDES** — which
+  is what isolates this gate against an already-repaired accreditation. Sequential, no commit between
+  them. **STOPs 1–6 ALL PASS; STOP 2 = 0.000 MW in all five years** and against the ledger's own
+  `peak_demand_mw` in every solved year. The whole-ledger diff moves `screen_peak_demand_mw` **and
+  nothing else** — 1/36, 1/31, 1/39, **0/39** (2024, the weather year), 1/39 — zero UNCLASSIFIED,
+  zero SCREEN, zero DECISION, zero FLEET.
+  **THE ANSWER, and it inverts the direction phase 2 feared:** with the vintage armed the census is
+  **still peak-inert**, and **the arming makes the inertness STRONGER, not weaker**. The evidence is
+  the *shape* of the rows rather than their equality — probed across installed-MW levels, 2021–2022
+  still vary with penetration (solar 0.1064 → 0.08839 → 0.0789) while **2023–2025 are constant
+  across installed MW**, because the armed vintage replaces the penetration-indexed curve with PJM's
+  published per-delivery-year class rating, **whose functional form has neither a peak term nor a
+  penetration term**. Phase 2's inertness was **ACCIDENTAL** (a curve that happened to saturate);
+  this is **STRUCTURAL**. Phase 2 §4.1's caveat — "may become peak-sensitive again" — is **CLOSED,
+  against the direction it feared.**
+  FC-3 identical in both legs and it independently corroborates the arm is live in this control by
+  reproducing D75-R's own post-arm figure: `total_gw` actual 15.062 / model **17.294** / err_frac
+  **+0.148** against phase 2's pre-arm 18.058 / +0.199. Per fuel, `gas_st` 2.702 / 10.297 / +2.811
+  and coal are **UNCHANGED**; the whole improvement is `gas_cc` 0.903 → 0.139 GW. **So D75-R-ARM did
+  NOT touch the steam over-exit — D74's object survives the arm intact and D76 remains not a
+  contributing cause at either head. Routed, not absorbed.** §12 records the actual order of work —
+  unmet STOP, reduced scope, two ISOs solved, D75-R-ARM merges, addendum pushed, PJM solved —
+  including that **PJM sits at a different base than NEISO/NYISO and no cross-ISO claim rests on
+  differencing them.** All six bundles DELETED before merge (rule 29(c)); nothing registered; `fc`
+  stays `O` — measured, not adjudicated. → **Q57 SERVED AND RULED, §3(a).**
+
+- **D78-ARM — CHECKPOINT: the arm is COMPLETE, pushed and blob-verified; the lane was INTERRUPTED BY
+  OWNER REASSIGNMENT to SPP-14.** Branch `claude/pjm-retirement-sector-gate-at0cao`, two commits,
+  unmerged. `a154222c`: the D57/Q44 → D67-ARM → Q55 pattern executed — `_pjm_config`
+  `default_scenario_overrides` gains `retirement_sector_gate=True`, the shared `ScenarioConfig`
+  default stays False, **every other ISO and every backcast key byte-identical**; bare `pjm-t1h`
+  `b518f5fe7d02f961 → fb16fda2ddb0a94a`; **the post-edit probes reproduce the PRECOMMIT's expectation
+  exactly** (`docs/handoffs/d78arm/`); cache-epoch `2026-09-06h`, the CLI help string, the CLAUDE.md
+  bullet, PJM matrix cell `O → K`, the `VERDICT_MAP` re-key (`d67arm → pjm-t1h-pre-d78arm`), the
+  override pin re-keyed with every inverse beside it.
+  **`3b369f26` is the model of how to be interrupted**: a WIP commit whose message is a six-item
+  STILL-OWED list written "so no successor re-derives it" — (1) `test_d67arm_pjm_requirement.py`
+  `TestQ52ArmingKeys` `BARE_PJM_ARMED` `a9c66d8ea25acb9d → fb16fda2ddb0a94a`, plus the explicit-off
+  leg needing all three `False` flags to reach `15a723ba3b6dc856` (measured at that HEAD: bare
+  `fb16fda2ddb0a94a`, no-req `250882fbbbf64377`, no-req+no-vre+no-gate `15a723ba3b6dc856`); (2) a
+  `data/clean` rebuild (`regenerate_clean.py`, killed at 6/56 datatypes); (3) the solve
+  (`docs/handoffs/d78arm/run_arm.sh`); (4) `score_capacity_hindcast.py`; (5)
+  `register_forecast_run.py`; (6) the slim record + sidecar + FINDING + PR. It also **diagnosed a red
+  that was not its own** — `TestQ52ArmingKeys` had been red on `main` since `6164231e`, when Q55
+  moved the bare key without re-pinning that file; a separate commit `d41ac928` ("repair the stale
+  PJM cache-key pins that left `test_d67arm` red on main") has since landed on `main`.
+  **Q56's registration condition is therefore UNMET** — arming without registering does not discharge
+  it, as the ruling said in terms. Re-dispatch (§4).
+
+- **D65-B-R COMPLETION-2 — NEVER DISPATCHED.** No branch, no commits, verified after a re-fetch. Leg
+  7 (`neiso-t3` GOLDEN-3), FINDING §0/§6 and the `ff-verdicts` question are all still owed. Re-emitted
+  whole (§4); nothing is graded lost.
+- **D75-R-ARM STEPS 3–4 — NEVER DISPATCHED.** Same. Note D76-P3B *solved* the bare `pjm-t1h` at
+  `b518f5fe7d02f961` as its own control and then **deleted it before merge** under rule 29(c), so
+  that solve does **not** discharge the registration — and the key has since moved again on D78-ARM's
+  branch (`→ fb16fda2ddb0a94a`), which is why the ordering in §4 now matters more than it did.
+
+- **Owner acts, three of them.** **MISO keeper → `2026-09-06-miso-232-hourly-seam`** (gate (a) not
+  re-keyed — §2(c)). **NEISO keeper → `2026-09-06-neiso-106-fossil-offer`** (gate (a) *was* re-keyed,
+  or the guard would name it too). **NYISO RE-DECLARED `complete`** (`ad8ebac9`, nyiso-209, re-applied
+  onto caiso-261's same-day CAISO re-declaration). `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM} —
+  **five of six**; only MISO is absent, by the owner's own explicit Q49 decline. `final` still empty.
+
+**2. RECORDED AGAINST INTEREST · desk acts.**
+
+- **(a) Two of my four r#53 charters were never dispatched and a third was reassigned away by the
+  owner mid-flight. The queue is a proposal, not a plan.** D76-P3B ran; D78-ARM ran and was pulled to
+  SPP-14; D65-B-R COMPLETION-2 and D75-R-ARM STEPS 3–4 never started. I record the rate rather than
+  the excuse: **1 of 4 completed, 1 of 4 interrupted, 2 of 4 unstarted.** The relevant desk failure
+  would be treating an unstarted charter as evidence about the *work* rather than about *scheduling* —
+  the r#43 relaunch protocol exists for exactly this and is applied: both are re-emitted whole, and
+  neither is graded lost or downgraded.
+- **(b) The r#53 ordering constraint I wrote is now partly overtaken by events, and I say so rather
+  than restating it.** I ordered D75-R-ARM steps 3–4 ahead of D78-ARM so the two PJM arms would stay
+  separable on the board. D78-ARM has since armed and moved the bare key again
+  (`b518f5fe7d02f961 → fb16fda2ddb0a94a`) **on its branch**, unmerged. The constraint still holds and
+  its rationale is unchanged, but the cheap ordering is gone: whichever lane registers first now has
+  to say which key its row carries. §4's STOPs are rewritten to that reality instead of to the
+  situation I described a sitting ago.
+- **(c) No Q34 re-key executed at this desk, by owner instruction.** Gate (a) is RED on MISO
+  (`miso-230 → miso-232`) — the **fifteenth firing** and the **thirteenth promoter miss since R-T**.
+  Under the owner's 2026-09-06 instruction ("You're not supposed to do work here you issue prompts")
+  the re-key is issued as a charter (§4), not performed here. The duty is unchanged; only the hand
+  that executes it is. NEISO's promotion did *not* miss — its row was re-keyed at source, which is
+  the pattern that makes this duty stop firing.
+
+**3. RULINGS / DECISIONS.**
+
+**(a) OWNER — Q57 SERVED AND RULED: ARM `capacity_screen_peak_measured_hindcast` VIA THE D50 (b′-1)
+ROUTE.** Land it as a declared default flip with the frozen cache-key drop value left at the old
+default (the D50/Q42 pattern), so existing bundles keep their keys and the correct operand applies
+going forward, with frontier bundles re-solved on their natural cadence rather than a repository-wide
+sweep. **The arming lane must verify zero key moves before committing; if it cannot, it stops and
+returns to the owner** — the route is the ruling, so a route that does not hold voids the authority
+rather than being worked around.
+*The reasoning, and it is deliberately not a residual argument.* Rule 14 `[R-ACCURATE]` is dispositive
+on correctness and its only exception — data misaligned to our representation — **does not apply**:
+this is the *identical array the LP dispatches*, so the de-grown estimate is simply wrong, by
+**−23.3 % to +15.4 %** across the six ISOs. Zero scalar fields, zero free parameters; inert by
+construction in every forecast year, crossover forward year and backcast, so rule 13's forward test is
+met by construction. Across **twelve legs in six ISOs** every STOP is structurally clean, the identity
+lands to 0.000 MW everywhere, zero unclassified movement in any ISO, and **no determination flips
+anywhere**. **The "benefit is narrow" objection is a residual argument and I decline it as such**:
+decisions move in 2 of 6 ISOs (CAISO −2,532.391 MW of backstop gas CT it does not need; MISO 343.312
+MW of coal saved from a 2024 exit, outside the scored window), and rule 1 `[R-STRUCT]` says never
+judge a structurally-correct mechanism by whether the answer moved. **Four ISOs' inertness is evidence
+the gate is well-behaved, not evidence it is unneeded there** — and its three causes are each
+structural (peak-independent requirement in PJM/D67 and NYISO/D52; energy-only ERCOT reads no
+position; NEISO's fleet too long at 5.0–7.6 GW of slack). The one legitimate counter is **cost and
+sequencing** — the blast radius genuinely reaches every hindcast bundle and every FC-3 T1-H row — and
+cost is an owner call, which is why it went to the owner rather than being decided here. The
+alternative "arm only in CAISO and MISO" was offered **and marked NOT RECOMMENDED with the reason
+stated**: arming a mechanism only where it changes the answer is the fitted-mechanism selection rule 1
+exists to forbid. **This ruling would read identically had the census come back peak-SENSITIVE in
+PJM** — that would have made the operand matter more, not made it more correct; correctness was never
+the thing D76-P3B was measuring.
+
+**(b) DIRECTOR-TIER — D78-ARM is re-dispatched to COMPLETE, never to re-derive.** Its arm is on a
+branch, blob-verified, with every PRECOMMIT expectation reproduced exactly and a six-item owed-list in
+its own WIP commit. The successor's job is items (1)–(6) and nothing else: it may not re-argue the
+arm, re-run the probes, or re-open Q56. **This would read identically had the probes disagreed with
+the PRECOMMIT** — in that case the successor's job would be to stop and report, which is also not
+re-deriving.
+
+**4. THE QUEUE.**
+
+| lane | state | STOP (an act) |
+|---|---|---|
+| **MISO gate-(a) RE-KEY** | **DISPATCH NOW** (Q34, fifteenth firing) | none |
+| **D78-ARM COMPLETION** | **DISPATCH NOW** — items (1)–(6); Q56's registration condition | none |
+| **D76-ARM (Q57)** | **DISPATCH NOW**, config act + PRECOMMIT immediately | **do not COMMIT** the flip until zero key moves is verified; if it cannot be, STOP and return to the owner |
+| **D65-B-R COMPLETION-2** | **DISPATCH NOW** (re-emitted, never dispatched) | none — NEISO, collides with nobody |
+| **D75-R-ARM STEPS 3–4** | **DISPATCH NOW** (re-emitted, never dispatched) | **do not REGISTER** until it has read D78-ARM's branch state and declared which bare key its row carries |
+| **D82 / D83 / D84** | RESERVED | D82's input exists (D78-R3 §3) |
+
+**Collision map.** Three PJM lanes again, and the bare `pjm-t1h` key now has three vintages in play —
+`a9c66d8ea25acb9d` (pre-Q55), `b518f5fe7d02f961` (post-Q55, what D75-R-ARM steps 3–4 was told to
+register), `fb16fda2ddb0a94a` (post-Q56, on D78-ARM's unmerged branch). **Whichever registers first
+must name its key in the row**; the second must rebase and re-declare rather than assume. D76-ARM
+touches a different seam (the screen peak) and is zero-LP until its verification clears, so it does not
+collide. **D65-B-R COMPLETION-2 is NEISO and collides with nobody.** The MISO re-key is a three-leaf
+string edit in `program-status.json` and collides with nobody. Rule 12's ~2-concurrent cap applies to
+the solving lanes only.
+
+**Routed, not repaired here:** `ruff format --check` is red on `scripts/data/derive_miso_seam_ladders.py`
+and `tests/iso/miso/test_miso_seam_ladder.py` — the owner's MISO seam-ladder lane's files, routed to
+that lane.
+
+**5. DOCTRINE.** One line added.
+
+- **AN INTERRUPTED LANE IS NOT A LOST LANE — AND A GOOD ONE HANDS OFF ITS STATE.** D78-ARM was pulled
+  to SPP-14 mid-flight and wrote a six-item STILL-OWED list into its WIP commit "so no successor
+  re-derives it", naming the measured keys, the killed rebuild's progress (6/56), the exact test that
+  must move, and a red it diagnosed as *not its own*. That is the standard: an interruption costs the
+  successor nothing if the state is committed, and costs it the entire derivation if it is not. A
+  successor charter for an interrupted lane says COMPLETE, never REDO. (r#54 §1, §3(b).)
+- **A "BENEFIT IS NARROW" OBJECTION IS A RESIDUAL ARGUMENT — NAME IT AS ONE.** Rule 14 settles whether
+  an operand is correct; how much the answer moves settles nothing, and rule 1 forbids letting it. The
+  legitimate counter to a correct-operand arm is cost and sequencing, which is an owner decision, not a
+  correctness finding. (r#54 §3(a), Q57.)
 
 ## 0ax. Refresh #53 (2026-09-06, main HEAD `5a20cec1`) — the largest window this desk has graded (110 commits, 50 merges) and every lane in it lands: D65-B-R's six legs register on keys equal to their pre-declaration to the digit, D75-R-ARM arms PJM's VRE devintage and holds its own board write, D78-R3 clears the last limb and earns Q56 (RULED ARM, registration required), D76 phase 3 measures the accreditation census PEAK-INERT IN ALL SIX ISOs and refuses to recommend on a five-of-six card; the owner re-declares CAISO `complete`, resolving Q50 by owner act; and TWO held phases both proceeded past an unmet STOP and both were RIGHT to, because I wrote the STOP against a session instead of an act
 
@@ -6597,6 +6782,10 @@ the gap.
 | **D78-R3 (r#53)** | — | **LANDED (#5295/#5310, `4d668500`) — THE LAST HELD LIMB FALLS.** W5″ PASSES on D57 §4's PER-DELIVERY-YEAR rows: DY2022/23 {gas_ct,gas_st,oil} **943 gated, 0 moved**; DY2023/24 {gas_ct,gas_st} **403 gated, 0 moved** (gas_st vacuous under D74); DY2024/25 {oil} **8 gated, 0 moved**; DY2025/26 NOT EVALUABLE. All four limbs MET ⇒ **RECOMMEND ARM**. ZERO LP; **S1 reproduces D78-R2's committed `control_band.json` at sha256 `509320eb4d3de316` BYTE-IDENTICALLY 165 commits later**, which is what makes carrying (b)/(c)/(d) sound | `claude/capx-d78r3-perdy-set` | Opus | pjm | **→ Q56 SERVED, RULED ARM + REGISTRATION REQUIRED.** Against itself: *nothing measured changed — only the declaration did*; the derivation is ONE-SIDED, silent on `gas_ct`/`gas_st` (the deciding classes), with a proven false-positive class (nuclear at bar in all 4 DYs, $0 price taker). It CORROBORATES the declaration; it does not replace it. |
 | **D76 PHASE 3 (r#53)** | NEISO + NYISO on 2021–2023; PJM re-A/B | **LANDED (#5268/#5315, `be871bec`) AND REFUSES TO RECOMMEND.** Four legs, ONE solve-code state, no commit between A/B legs (the fix for phase 2's literal STOP-3 FAIL — it worked). Every key = `p3_predeclare.json` before the first LP. **STOPs 1–6 PASS; STOP 2 lands to 0.000 MW in every year of both ISOs**; whole-ledger diff ZERO UNCLASSIFIED. **NYISO INERT END-TO-END, pre-declared**, though its seam peak moves +2,188/+1,555 MW (7.2 %/5.4 % of load) — D52 puts no term of the model's peak in the requirement. **NEISO's requirement LIVE to 0.045 MW and CONSUMED BY NOTHING** (fleet 7,560.5 / 4,992.9 MW ABOVE requirement) | `claude/capx-d76-p3-neiso-nyiso-pjm-sraz8b` (spent) → `claude/capx-d76-p3b-pjm` | Opus | neiso/nyiso | **PJM NOT ANSWERED and the FINDING says so** — D75-R-ARM had not merged. **Card is FIVE-OF-SIX, labelled one, recommends NOTHING** (a rule-29 screen may kill, never promote). Six-ISO: census PEAK-INERT in ALL SIX; requirement the only live consumer (LIVE 4, peak-independent 2); floor never binds; decisions move in 2 of 6. |
 | **NEISO gate-(a) RE-KEY (r#52 prompt)** | Execute the Q34 duty as a LANE, not a desk act | **LANDED** PR #5277 (`a9b08783`) — keeper `neiso-99` → `2026-09-06-neiso-105-fossil-offer`; verdict unaffected (pass→pass, the `complete` marker did not move) | `claude/neiso-gate-a-rekey-s6uil6` | Fable | code | Fourteenth firing, twelfth promoter miss since R-T. Issued as a prompt after the owner ruled the desk issues prompts rather than executing. |
+| **D76 PHASE 3B (r#54)** | The PJM leg phase 3 could not ask, at a HEAD carrying Q55 | **LANDED (#5336, `1a2cbe32`) — CARD CLOSES AT SIX-OF-SIX.** Legs 7-C `b518f5fe7d02f961` / 7-A `559c05579b47684b`, 2021–2025, **the vintage ARMED ON BOTH SIDES** so the A/B isolates this gate against an already-repaired accreditation. STOPs 1–6 PASS; **STOP 2 = 0.000 MW in all five years**; whole-ledger diff moves `screen_peak_demand_mw` and nothing else (1/36, 1/31, 1/39, **0/39**, 1/39), zero UNCLASSIFIED. **THE CENSUS IS STILL PEAK-INERT AND THE ARMING MAKES IT STRONGER** — 2021-22 vary with penetration (solar 0.1064 → 0.08839 → 0.0789), 2023-25 are CONSTANT across installed MW: phase 2's inertness was ACCIDENTAL, this is STRUCTURAL. §4.1's caveat CLOSED against the direction it feared. FC-3 17.294 / +0.148 vs 18.058 / +0.199, the whole gain `gas_cc` 0.903 → 0.139 with `gas_st`/coal UNCHANGED | `claude/capx-d76-p3-neiso-nyiso-pjm-sraz8b` | Opus | pjm | **→ Q57 SERVED, RULED ARM via the D50 (b′-1) route.** D75-R-ARM did NOT touch the steam over-exit — D74's object survives intact, D76 not a contributing cause at either head. Six bundles deleted before merge; nothing registered; `fc` stays `O`. |
+| **D78-ARM (r#54)** | Execute Q56: arm `retirement_sector_gate` for PJM + REGISTER | **CHECKPOINT — ARMED, PUSHED, BLOB-VERIFIED; LANE INTERRUPTED BY OWNER REASSIGNMENT to SPP-14.** `a154222c`: `_pjm_config` gains `retirement_sector_gate=True`, shared default stays False, every other ISO and every backcast key byte-identical; bare `pjm-t1h` `b518f5fe7d02f961 → fb16fda2ddb0a94a`; **post-edit probes reproduce the PRECOMMIT exactly**; cache-epoch `2026-09-06h`, PJM matrix `O → K`, `VERDICT_MAP` re-keyed. `3b369f26` carries a **SIX-ITEM STILL-OWED list** written so no successor re-derives it, and diagnoses a `TestQ52ArmingKeys` red as **NOT ITS OWN** (red since `6164231e`; `d41ac928` has since repaired it on main) | `claude/pjm-retirement-sector-gate-at0cao` (live, unmerged) | Fable → **Opus** | pjm | **Q56's REGISTRATION CONDITION IS UNMET** — arming without registering does not discharge it. Re-dispatched to COMPLETE items (1)–(6), never to re-derive (§0ay.3(b)). **The model of how to be interrupted.** |
+| **D65-B-R COMPLETION-2 / D75-R-ARM STEPS 3–4 (r#54)** | — | **NEVER DISPATCHED** — no branch, no commits, verified after a re-fetch. Two of my four r#53 charters; a third (D78-ARM) was reassigned away mid-flight. **1 of 4 completed** | as chartered r#53 | Opus | all / pjm | Re-emitted WHOLE under the r#43 relaunch protocol; **nothing graded lost or downgraded** — an unstarted charter is evidence about scheduling, not about the work (§0ay.2(a)). |
+| **MISO gate-(a) RE-KEY (r#54)** | Q34 standing duty, fifteenth firing | **ISSUED AS A PROMPT, NOT EXECUTED HERE** — gate (a) RED: `miso-230-ctdrag-seam` → `2026-09-06-miso-232-hourly-seam`; thirteenth promoter miss since R-T. NEISO's promotion did NOT miss (re-keyed at source) | `claude/miso-gate-a-rekey-q34` | Fable | code | Per the owner's 2026-09-06 instruction ("You're not supposed to do work here you issue prompts"). The duty is unchanged; only the hand that executes it is. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-09-05 @ `b2bd9fdb`, refresh #42)
@@ -6742,7 +6931,15 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)** (2026-09-06) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)** (2026-09-06) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-ONE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+
+### Q57 (refresh #54) — arm `capacity_screen_peak_measured_hindcast` (D76's six-of-six card)
+
+**RULED: ARM VIA THE D50 (b′-1) ROUTE.** Land it as a declared default flip with the frozen cache-key drop value left at the old default (the D50/Q42 pattern), so existing bundles keep their keys and the correct operand applies going forward, with frontier bundles re-solved on their natural cadence rather than a repository-wide sweep. **The arming lane must verify zero key moves before committing; if it cannot, it stops and returns to the owner** — the route is part of the ruling, so a route that does not hold voids the authority rather than being worked around.
+
+**The basis.** Armed, the capacity screens test the solve year's **own measured load — the identical array the LP dispatches** — instead of the weather year's load de-grown across the span. Rule 14 `[R-ACCURATE]` is dispositive on correctness and **its only exception (data misaligned to our representation) does not apply**: it is the same array, so the de-grown estimate is simply wrong, by **−23.3 % to +15.4 %** across the six ISOs. Zero scalar fields, zero free parameters (rules 21/24); rule 13's forward test is met by construction, since a forecast year has no measured load and the growth path remains THE forecast methodology — the gate is inert in every forecast year, every crossover forward year and every backcast. Across **twelve legs in six ISOs**: every STOP structurally clean, the identity to 0.000 MW everywhere, the footprint inside the pre-declared partition with **zero unclassified movement in any ISO**, and **no determination flips anywhere**.
+
+**What the desk declined, and why.** The lane's own case-against led with "the measured benefit is narrow and got narrower" — decisions move in **2 of 6 ISOs** (CAISO −2,532.391 MW of backstop gas CT it does not need; MISO 343.312 MW of coal saved from a 2024 exit, outside the scored window). **That is a residual argument and the desk named it as one**: rule 1 `[R-STRUCT]` forbids judging a structurally-correct mechanism by whether the answer moved, and the four inert ISOs' inertness is evidence the gate is well-behaved rather than evidence it is unneeded — each cause being structural (peak-independent requirement in PJM/D67 and NYISO/D52; energy-only ERCOT reads no position; NEISO's fleet long by 5.0–7.6 GW). The **one legitimate counter is cost and sequencing** — the blast radius genuinely reaches every hindcast bundle and every FC-3 T1-H row on the board — and that is an owner call, which is why the card was served rather than decided at the desk. The option **"arm only in CAISO and MISO" was offered and marked NOT RECOMMENDED with its reason stated**: arming a mechanism only where it changes the answer is the fitted-mechanism selection rule 1 exists to forbid. **The ruling would read identically had PJM's census come back peak-SENSITIVE** — that would have made the operand matter more, not made it more correct, and correctness was never what D76-P3B measured. Execution: **D76-ARM** (§4, pack r#54).
 
 ### Q56 (refresh #53) — arm `retirement_sector_gate` for PJM (D78-R3's RECOMMEND ARM)
 
@@ -7090,6 +7287,12 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-06 | **D75-R-ARM STEPS 3–4** | `claude/capx-d75r-arm-steps34` | **Opus** | pjm | r#53 — the STOP is MET (#5283); re-solve the bare `pjm-t1h` at `b518f5fe7d02f961` and register. **Goes FIRST of the three PJM lanes** |
 | 2026-09-06 | **D78-ARM (Q56 execution)** | `claude/capx-d78-arm-sector-gate` | **Opus** | pjm | r#53 — owner ruling Q56 ARM + registration required; act-scoped STOP: no solve/register until D75-R-ARM's row lands |
 | 2026-09-06 | **D76 PHASE 3B** | `claude/capx-d76-p3b-pjm` | **Opus** | pjm | r#53 — the PJM leg phase 3 could not ask; completes the five-of-six card; act-scoped STOP on the solve; DOES NOT recommend |
+
+| 2026-09-07 | **MISO gate-(a) RE-KEY (Q34)** | `claude/miso-gate-a-rekey-q34` | **Fable** | code | r#54 — fifteenth firing; issued as a PROMPT per the owner's instruction, not executed at the desk |
+| 2026-09-07 | **D78-ARM COMPLETION (Q56)** | `claude/pjm-retirement-sector-gate-at0cao` (continue) | **Opus** | pjm | r#54 — items (1)–(6) of the lane's own WIP handoff; COMPLETE, never re-derive; Q56's registration condition |
+| 2026-09-07 | **D76-ARM (Q57 execution)** | `claude/capx-d76-arm-measured-peak` | **Opus** | code → all | r#54 — owner ruling Q57; D50 (b′-1) declared default flip; STOP: do not commit without zero key moves |
+| 2026-09-07 | **D65-B-R COMPLETION-2 (re-emitted)** | `claude/capx-d65br-completion2` | **Opus** | all | r#54 — never dispatched at r#53; leg 7 + FINDING §0/§6 + the `ff-verdicts` question |
+| 2026-09-07 | **D75-R-ARM STEPS 3–4 (re-emitted)** | `claude/capx-d75r-arm-steps34` | **Opus** | pjm | r#54 — never dispatched at r#53; must now declare WHICH bare key its row carries (three vintages in play) |
 
 ## 5. History (compacted)
 
