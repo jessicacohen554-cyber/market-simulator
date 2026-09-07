@@ -14113,7 +14113,7 @@ PASS 0/0, parity gate OK. Pre-registered in
 before the measurement they govern. `FINDING-caiso262-2022-touchpoint-2026-09-07.md`.
 
 **SCORED 2022:** C1 PASS (6/6, free 4/4) · C2 PASS · **C3a FAIL +21.1 %** ·
-**C3b FAIL 0.286** · **C3c PASS — model 580 h vs actual 510 h** · C4 PASS ·
+**C3b FAIL 0.286** · **C3c PASS — model 586 h vs actual 510 h** · C4 PASS ·
 C6 PASS (attested) · C8 PASS · C5a −6.4 %. Held: C1/C2/C4/C6/C8. Degraded:
 C3a, C3b. **Improved: C3c**, the standing CAISO limitation.
 
@@ -14129,7 +14129,7 @@ any repair identified on 2023–2025 first.
 
 **C3c INVERTED and that is evidence:** the model has never made a scarcity tail
 in the calibrated years (23/0/0 vs 47/35/8, the ledgered caveat since
-caiso-184); in a year that genuinely had one it makes 580 against 510 actual.
+caiso-184); in a year that genuinely had one it makes 586 against 510 actual.
 The tail machinery works when the drivers are present.
 
 **PROVENANCE — this is the keeper's MODEL, proved not assumed.** HEAD is 68

@@ -18,7 +18,7 @@ addenda, all pushed before the measurement they govern.
 | C2 system volume | load-bearing | **PASS** | PASS | held |
 | **C3a mean LMP** | load-bearing | **FAIL — +21.1 %** | PASS +4.37/+8.89/+8.25 % | **degraded** |
 | **C3b price duration/shape** | load-bearing | **FAIL — NRMSE 0.286** | PASS 0.083/0.142/0.111 | **degraded** |
-| C3c price tail (RT hourly) | supporting | **PASS** — model 580 h vs actual 510 h | CAVEAT 23/0/0 vs 47/35/8 | **improved** |
+| C3c price tail (RT hourly) | supporting | **PASS** — model 586 h vs actual 510 h | CAVEAT 23/0/0 vs 47/35/8 | **improved** |
 | C4 dispatch correlation | supporting | **PASS** | PASS | held |
 | C6 governance | protective | **PASS** (attested) | PASS | held |
 | C8 forced-energy share | protective | **PASS** | PASS | held |
@@ -69,11 +69,11 @@ repair to be identified on 2023–2025 and only then re-tested on 2022.
 
 ## §3 — The one criterion that IMPROVED, and why it matters
 
-**C3c is the standing CAISO limitation and it PASSES in 2022** — model 580
+**C3c is the standing CAISO limitation and it PASSES in 2022** — model 586
 tail hours vs 510 actual (RT, >$200), against 23/0/0 vs 47/35/8 in the training
 years, where it has been the ledgered caveat since caiso-184. The model has
 never been able to make a scarcity tail in the calibrated years; in a year that
-genuinely had one it makes one, and lands within ~14 % of it.
+genuinely had one it makes one, and lands within ~15 % of it.
 
 That is evidence about the *cause* of the in-sample C3c miss: the tail
 machinery works when the drivers are present, so the training-year shortfall is
@@ -178,6 +178,17 @@ test that passed while the data was missing.
 5. **An eighth silent fallback (S-7, the zonal loss surface) was found only
    because I went looking**; caiso-259 §2 enumerated S-1…S-6 and missed it. I
    have no basis for asserting there is not a ninth.
+6. **I first wrote C3c's model count as 580 h, which was wrong** — that was my
+   own re-computation off `system_2022.parquet` on a zone-demand weighting, and
+   I put it in this document, the calibration-log entry and the commit message
+   in the place where the SCORER's number belongs. The scorer reads **586 h**
+   (`criteria.price_tail.records[0].model`, hub-weighted). Caught by the
+   `calibration-keeper-auditor` agent, not by me. Corrected here and in the log;
+   the commit message is already pushed and stands uncorrected, which is why the
+   correction is recorded rather than quietly applied. It changes no status, no
+   band and no determination — 586 and 580 both sit inside the [0.5×, 2×]
+   tolerance on 510 — but a number in the record should be the scored one, and a
+   habit of substituting my own arithmetic for the scorer's is the actual defect.
 
 ## §8 — QUEUE
 
