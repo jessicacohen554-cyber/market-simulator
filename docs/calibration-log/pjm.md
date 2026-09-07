@@ -4702,3 +4702,69 @@ entry in this log**. This entry records its result so the log is not silent on i
 remains that session's own record.
 
 Next shorthand: **pjm-168.**
+
+
+## pjm-171 — 2026-09-07 — 2021's C3a is the flat-offer-stack defect WITHOUT its offset; no admissible lever closes it (zero LP; keeper untouched)
+
+**Charter:** continue PJM backcast calibration toward bringing 2021 inside the ±10 % C3a band.
+**Answer: it cannot be done by any admissible change, and the reason is structural rather than
+a shortfall of effort.** Keeper UNCHANGED `2026-08-15-pjm-162-inputclock`; nothing promoted,
+nothing registered; PJM headline UNCHANGED **CALIBRATED** (rule 30(c)). **ZERO LP SOLVED** —
+rule 29 `[R-SCREEN]` phase 0 killed the candidate before a screen. Full record:
+`results/calibration/FINDING-pjm171-2021-c3a-is-the-flat-stack-without-its-offset-2026-09-07.md`.
+
+**The decomposition.** Splitting each year's C3a gap ($/MWh) into a TROUGH leg (load deciles
+1–8) and a PEAK leg (d9–10), with the counterfactual C3a if either leg alone were closed:
+
+| year | C3a | trough | peak | if trough fixed | if peak fixed |
+|---|---|---|---|---|---|
+| 2021 (holdout) | **+10.7 %** | +3.56 | +0.57 | **+1.5 %** | +9.2 % |
+| 2022 (holdout) | −10.3 % | +4.24 | −11.87 | **−16.0 %** | +5.7 % |
+| 2023 (train) | +5.7 % | +3.42 | −1.72 | −5.8 % | **+11.5 %** |
+| 2024 (train) | −1.4 % | +2.28 | −2.73 | −8.6 % | +7.2 % |
+| 2025 (train) | −8.1 % | +0.82 | −4.54 | −9.8 % | +1.8 % |
+
+**The trough leg is positive in ALL FIVE YEARS, the three tuned ones included.** The peak leg
+is the year-varying term and it sets C3a's sign. 2021 is the only year whose peak leg is ≈ 0 —
+its decile-10 actual is $56.55/MWh against $172.00 (2022), $48.28 (2023), $62.10 (2024),
+$92.67 (2025) — so nothing offsets the trough surplus and the defect reads at full magnitude.
+**2021 is therefore the cleanest measurement the lane has of a defect it already knows**, not a
+new object.
+
+**The decision-grade result: no single-ended repair survives.** Closing the trough alone sends
+2022 to −16.0 %; closing the peak alone sends **training year 2023 to +11.5 %**. Both are
+outside the ±10 % commercial band, and both hold at split deciles 7/8/9. So the cancellation
+pjm-141 named (*"the annual level being right is a cancellation, not a correct level"*) is
+**load-bearing in the TUNED window too**, which pjm-141 asserted on 2023–2025 and this session
+now measures across the full 2021–2025 span. Any admissible repair must move both ends.
+
+**Year-invariant structural signature (§3).** Bottom-decile implied market heat rate, price ÷
+the model's OWN `_gas_series`: model **8.46 / 7.92 / 8.71 / 9.28 / 9.17** (2021–2025) against
+actual **6.55 / 5.87 / 6.02 / 6.35 / 7.01**. The model's overnight margin is a gas CC at about
+its rated heat rate in every year; PJM's own overnight clears *below any CC's full-load heat
+rate*. This reproduces pjm-141's T6 (within-day offer σ = $0.000000) on the load axis.
+
+**A separate new DOF observation (§4), recorded not levered.** Realized annual-mean bituminous
+passthrough on the keeper's own parameters: **2024 0.81 · 2023 0.92 · 2025 1.06 · 2021 1.12 ·
+2022 1.32** (saturated at the ceiling in 12/12 months). **The training window exercises only the
+sigmoid's lower limb** — the `ceil` and `gas_mid` that set the held-out years' coal offers are
+effectively unidentified by the years they were tuned against (rule 21 `[R-DOF]`). It is not a
+lever here: pjm-170 measured the full 32 % markup removal as worth only **−$0.17/MWh** on the
+annual mean, and the `ceil`-alone cell is **R** (DO-NOT-REDO).
+
+**Nothing re-adjudicated, nothing re-tested.** `diurnal_price_amplitude` **G** (owner-closed,
+no admissible in-model route), `measured_offer_surface` **R**, `ordc_scarcity_overlay` **G**,
+`coal_passthrough_sigmoids` `ceil`-alone **R** — this session's evidence corroborates all four.
+The PJM matrix shard's `diurnal_price_amplitude` evidence is extended with the five-year
+decomposition; the **G** verdict is untouched.
+
+**Rule 22 discipline.** Nothing was tuned, fitted or selected against 2021. Every measurement is
+on the object (offer level, implied heat rate, realized passthrough), never on the residual;
+the touchpoint loop sends any repair to 2023–2025, where §2 shows the same trough defect lives.
+
+**Successor: do NOT open a card to close 2021.** The live card is unchanged — pjm-170 §7 item 2,
+now restated with both faces: PJM's price distribution is compressed at both ends, the ends
+cancel, and the cancellation holds the tuned years inside the band. Re-opening either end is an
+owner decision on rule 1 `[R-STRUCT]` structural grounds, never on the fit.
+
+Next shorthand: **pjm-172.**
