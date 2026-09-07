@@ -184,3 +184,40 @@ GRP hand-download lands untracked; fold it with
 only the aggregate deltas.
 
 Immutable raw source root: never modified in place (repo data contract).
+
+## 2021 Q2 prices fetched (caiso-264, 2026-09-07)
+
+The boundary recorded above was re-measured independently this session and **reproduces to
+the day**: `DAM_LMP_GRP` v12 returns the "No data" envelope for 2021-03-31 / 04-01 / 04-02 /
+04-15 / 04-22 / 04-26 and a 9.85 MB archive for **2021-04-27**; `RTM_LMP_GRP` v3 tracks it
+exactly (04-26 HE01 no data, 04-27 HE01 6.94 MB). Two independent bisections agreeing is the
+strongest form the claim can take — and it still **MOVES**, so re-measure, never hardcode.
+
+Fetched, the full obtainable head of the owner's April–June window:
+
+| market | command | result |
+|---|---|---|
+| DAM | `fetch_caiso_oasis_grp.py --market dam --start 2021-04-27 --end 2021-06-30 --sleep 6` | **65/65 dates, 0 missing, 0 partial**; 0.653 GB, 580 s |
+| RTM | `… --market rtm … --sleep 7` | **65/65 dates, 0 missing, 0 partial**; 1,560 hour-group requests, 10.969 GB, 13,690 s |
+
+Folded to `CAISO_dam_hourly_2021.csv` / `CAISO_rtm_hourly_2021.csv` — 15,600 rows each
+(1,560 h × 10 nodes), **schema and node set identical to the 2022–2026 aggregates**, so
+rule-14 alignment is exact and no reconciliation is engaged. Verified before commit: DAM
+1,560 distinct hours = exactly 65 × 24; RTM 18,720 five-minute intervals = exactly 65 × 288;
+0 zips left behind. Hub means DAM NP15 $42.67 / SP15 $38.37 / ZP26 $36.78, RTM $36.32 /
+$32.04 / $29.81 per MWh (RT under DA at every hub — the ordinary spring DA premium).
+`wecc_intertie_lmp_hourly_CAISO.parquet` 70,080 → 87,600 rows, 2021 carrying exactly 1,560
+finite hours per hub on the dense 8,760 calendar; the 2022–2025 rows are untouched (2022
+MALIN $86.39 / PALOVRDE $82.95 reproduce caiso-261's recorded figures).
+
+**ORDERING TRAP.** `fetch_caiso_intertie_lmp.py --from-grp-windows` reads the in-tree
+`dam_grp_*_*.csv` windows, and `postprocess_oasis_downloads.py --stage-dir` MOVES them out.
+Run the intertie builder **first**, or it silently finds nothing.
+
+**What 2021 can ever contain.** The obtainable span is 2021-04-27..12-31 = 249 d = **5,976 h**
+against `derive_actual_lmp.CAISO_MIN_HOURS = 6500`, and `CAISO_PARTIAL_YEARS` is
+`frozenset({2026})` — so **2021 cannot clear the guard even if every remaining day is
+fetched**, and a 2021 price basis needs an explicit, declared `CAISO_PARTIAL_YEARS`
+amendment (NOT made here). Of that ceiling 1,560 h are in hand and 4,416 h (Jul 1 – Dec 31)
+are still served **today**; the ceiling falls 24 h per day of delay. Full record:
+`docs/handoffs/FINDING-caiso-2021-price-boundary-backfill-2026-09-07.md`.
