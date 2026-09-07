@@ -1701,85 +1701,76 @@ def _neiso_config() -> ISOConfig:
 def _spp_config() -> ISOConfig:
     """Build the Southwest Power Pool (SPP) topology configuration.
 
-    **Three zones** since 2026-09-07 (lane SPP-57 — owner ruling P1's first
-    ranked structural lever, "2 zones now; two ranked levers", SPP desk r#2;
-    the r#5 ranking put the Oklahoma pocket first on FINDING-spp-14 §5's
-    four-group flowgate table; design fixed in
-    ``docs/handoffs/PRECOMMIT-spp-57-2026-09-07.md`` before any limit or
-    price was read):
+    **Two zones**, drawn along the North–South seam the SPP MMU itself names
+    as the footprint's structural price divide (owner ruling P1, SPP desk
+    sitting r#2, 2026-09-06 — "2 zones now; two ranked levers";
+    ``docs/handoffs/spp-desk-ledger-2026-09.md`` §2):
 
     - **SPP-North** — ND, SD, NE, MN, MT, IA, KS, MO plus the 19.5 MW of
       Colorado solar: the coal / nuclear / wind tier (both nuclear units,
-      Wolf Creek KS and Cooper NE, sit here). Unchanged from SPP-20.
-    - **SPP-Oklahoma** — the state of Oklahoma: OG&E, PSO (AEP West's
-      Oklahoma half), GRDA and WFEC. 12,944 MW of wind (the largest single
-      state in the footprint), 5.2 GW of gas CC, 5.4 GW of gas ST, 3.3 GW of
-      coal, against a ~6.1-6.7 GW mean load (EIA-860 2025 ER; sub-BA means).
-      The published ``SPPSOUTH_HUB`` (460 nodes: OKGE 265 + WFEC 105 + CSWS
-      90, FINDING-spp-14 §5.1) sits entirely inside it, and the market's
-      most-binding flowgate group in every year — ``oklahoma_internal``,
-      4,713 / 4,698 / 5,822 binding hours at $262 / $264 / $312 mean
-      |shadow| (FINDING-spp-14 §5.2) — is its footprint.
-    - **SPP-South** (residual) — TX (SPS Panhandle + AEP/SWEPCO east
-      Texas), NM, AR, LA: SPS on the west and SWEPCO / AECC / ETEC on the
-      east. Wyoming is NOT in the footprint — no EIA-860 plant carries
-      balancing authority ``SWPP`` there (``docs/multi-iso/spp-data-audit.md``
-      §2.4).
+      Wolf Creek KS and Cooper NE, sit here).
+    - **SPP-South** — OK, TX (Panhandle + east Texas), NM, AR, LA: the
+      gas-heavy tier (the gas-CC fleet concentrates in OK/TX). Wyoming is
+      NOT in the footprint — no EIA-860 plant carries balancing authority
+      ``SWPP`` there (``docs/multi-iso/spp-data-audit.md`` §2.4).
 
     Fleet partition: the FIPS state map ``zone_assignment._SPP_STATE_ZONES``
-    (the seams run along the KS/OK, MO/AR and OK/TX-NM-AR state lines; every
-    PSO plant is in Oklahoma and every SWEPCO plant in AR/LA/TX, so no state
-    straddles either seam on the plant side; WFEC's New Mexico assets fall
-    South while WFEC's load counts Oklahoma — stated, not patched). Load
-    partition: the EIA-930 sub-BA grouping North = {EDE, INDN, KACY, KCPL,
-    LES, MPS, NPPD, OPPD, SECI, SPRM, WAUE, WR}, Oklahoma = {OKGE, GRDA,
-    WFEC} + w_OK · CSWS, South = {SPS} + (1 − w_OK) · CSWS, where the ONE
-    straddling sub-BA (AEP West = PSO + SWEPCO, reported as one series) is
-    split by the MEASURED EIA-861 retail-sales ratio PSO / (PSO + SWEPCO) —
-    0.5216 (2023) / 0.5383 (2024) / hold-last for 2025 — a rule-14
-    reconciled value, never a free parameter
-    (``scripts/data/curate_zonal_shares._SPP_CSWS_OKLAHOMA_SHARE_BY_YEAR``,
-    ``data/raw/eia-861/``). ``EDE`` (Liberty / Empire District, 1.9 % of
-    system energy) stays NORTH for the SPP-20 reasons (Joplin-centred
-    service territory; fleet and load on one side of the seam).
+    (the seam runs along the KS/OK and MO/AR state lines, so no state
+    straddles it on the plant side). Load partition: the EIA-930 sub-BA
+    grouping North = {EDE, INDN, KACY, KCPL, LES, MPS, NPPD, OPPD, SECI,
+    SPRM, WAUE, WR}, South = {CSWS, GRDA, OKGE, SPS, WFEC} (audit §5 row 5).
+    ``EDE`` (Liberty / Empire District, 1.9 % of system energy) is the one
+    sub-BA that genuinely straddles — it serves MO, KS, OK and AR — and is
+    placed NORTH because its service territory is centred on Joplin,
+    Missouri (a North state under the plant-side map), so its fleet and its
+    load stay on the same side of the seam; moving it South would shift the
+    split by 1.9 points and put a Missouri-centred sub-BA's load in the zone
+    whose fleet holds no Missouri plant.
 
     Load shares are the static fallback used only when the per-zone hourly
     sub-BA demand shapes are absent (SPP-32 curates them); the values are the
-    measured 2023-2025 energy shares of the three groups computed from
+    measured 2023-2025 energy shares of the two sub-BA groups computed from
     ``data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv``
-    with the CSWS split above: North 445.789 TWh / Oklahoma 246.200 TWh /
-    South 177.835 TWh over the three years = 0.5125 / 0.2830 / 0.2045 (per
-    year N 0.5148 / 0.5129 / 0.5099, OK 0.2783 / 0.2835 / 0.2870, S 0.2068 /
-    0.2036 / 0.2031). The North share is byte-identical to SPP-20's 0.5125 —
-    the pocket is carved out of the former South alone.
+    (landed by SPP-11; 17 sub-BAs, 26,297 hours, a complete partition of the
+    BA demand to 0.9995-0.9999): North 447.675 TWh / South 425.770 TWh over
+    the three years = 0.5125 / 0.4875 (per year 0.5149 / 0.5129 / 0.5099).
+    Independent cross-check from a DIFFERENT source: the SPP MMU State of the
+    Market 2025 Fig. 2-8 participant roll-up gives North 50.2 % / South
+    49.6 % of 2025 energy (audit §5 row 6) — within one point, so the two
+    attributions agree.
 
-    Congestion structure — a CHAIN, ``SPP-North ↔ SPP-Oklahoma ↔ SPP-South``,
-    two symmetric ``TransferLink``s and NO direct North↔South link. The
-    SPP-53 North↔South link (3,400 MW) is RETIRED rather than re-rated,
-    because (i) its 3,400 MW was identified on the Nebraska-hub →
-    central-OKLAHOMA-hub pair, i.e. it IS a North↔Oklahoma capability by its
-    own construction; (ii) the only registered SWPP element crossing North
-    to the residual South is the SPS tie (``SPPSPSTIES``, lever SPP-54's
-    object, NDA/CEII-rated — FINDING-spp-13 §4), and the Missouri/Arkansas
-    161 kV ties appear in no flowgate, so a direct link would have no
-    measured constituent set; (iii) the cost — a North→SPS transfer transits
-    the Oklahoma node — is stated at the gate and routed to SPP-54, not
-    absorbed. Both TTCs are SPP-53's FCITC construction (``T*_f = L_f /
-    ψ_f``, binding-hours-weighted median over the identified constituents,
-    nearest 100 MW) on a three-point hub spread; see the citation comments
-    on the links below and ``FINDING-spp-57-2026-09-07.md`` §3.
+    Congestion structure. The single N↔S ``TransferLink`` is the only
+    structure beyond copperplate. Its TTC (3,400 MW) is a **rule-14
+    reconciled figure derived from SPP's own published flowgate limits by
+    lane SPP-53** (owner ruling P13; construction fixed in
+    ``PRECOMMIT-spp-53-2026-09-07.md`` before any limit was read; every
+    number in ``FINDING-spp-53-2026-09-07.md``) — see the citation comment
+    on the link below for the two measured legs, the misalignment statement
+    and the rejected alternatives. It replaced SPP-20's 48,700 MW Tier-3
+    placeholder (the North zone's EIA-860 2025 ER summer capability, an
+    upper bound that could not bind — ``FINDING-spp-20`` §3, §5 R-6). No
+    public document states an SPP North↔South rated interface — SPP-13's
+    row-11 sweep found the ITP Constraint Assessment ratings are NDA / CEII
+    (FINDING-spp-13 §0) — which is why the value is derived from the
+    binding-constraint archive rather than transcribed. The MMU's ">6,000 MW
+    SPP↔MISO AC interties" is a SEAM rating, not the internal corridor, and
+    is deliberately not borrowed. The link is symmetric by construction,
+    which is right: the MMU records the North−South hub spread REVERSING
+    sign for six (DA) to eight (RT) months of 2025 (FINDING-spp-12 §4), and
+    the corridor's South→North-loaded flowgates give 4,206 MW by the same
+    construction (FINDING-spp-53 §4).
 
-    What three zones still cannot represent, said here rather than found in
-    a residual: the ``oklahoma_internal`` group is largely INTRA-Oklahoma —
-    western / south-western Oklahoma wind (Gracemont–Anadarko, Cimarron,
-    Woodward) delivered east into the OKC / Tulsa load — and a bubble that
-    holds the wind and the load on the same side of those elements cannot
-    trap the wind behind them (PRECOMMIT-spp-57 §1 item 1). And the residual
-    South is two physically disjoint pockets (SPS west of Oklahoma, SWEPCO
-    east of it) joined by a copperplate — the split is lever SPP-54's object
-    (PRECOMMIT §1 item 2). The published hubs are node clusters (North ≈
-    Nebraska, South ≈ central Oklahoma), so the hub spread is a two-point
-    spread, not a zonal price (audit §6.1).
+    What two zones cannot represent, said here rather than found in a
+    residual (audit §6.1): seven of the ten highest-valued 2025 constraints
+    are INSIDE Oklahoma (Osage–Webber Tap, Russett–South Brown), and three
+    of the four 2024 Frequently Constrained Areas (OKC, Tulsa, Lubbock) sit
+    inside SPP-South. The SPS / Texas-Panhandle pocket (lever SPP-54) and an
+    Oklahoma pocket (lever SPP-57) are pre-declared structural levers,
+    ranked by the per-flowgate binding-share evidence when the binding-
+    constraint archive lands (FINDING-spp-12 §5). The published hubs are
+    node clusters (North ≈ Nebraska, South ≈ central Oklahoma), so the hub
+    spread is a two-point spread, not a zonal price — SPP-40's PRECOMMIT
+    states this limitation (audit §6.1).
 
     No import node (G7): SPP's seams are represented by the served measured
     EIA-930 ``Total interchange`` schedule (``_SCALAR_INTERCHANGE_ISOS``,
@@ -1797,83 +1788,62 @@ def _spp_config() -> ISOConfig:
     """
     zones = [
         # Static fallback = measured 2023-2025 sub-BA energy shares (EIA-930
-        # sub-BA demand, SPP-11 intake, CSWS split by the EIA-861 PSO/SWEPCO
-        # retail ratio; sum = 1.0000). See the docstring.
+        # sub-BA demand, SPP-11 intake; sum = 1.0000). See the docstring.
         Zone(name="SPP-North", iso="SPP", load_share=0.5125),
-        Zone(name="SPP-Oklahoma", iso="SPP", load_share=0.2830),
-        Zone(name="SPP-South", iso="SPP", load_share=0.2045),
+        Zone(name="SPP-South", iso="SPP", load_share=0.4875),
     ]
-    # BOTH link TTCs are the SPP-53 FCITC construction (PRECOMMIT-spp-53
-    # §2.1, reused verbatim: T*_f = L_f / psi_f per identified constituent,
-    # the binding-hours-weighted 2023-2025 median, nearest 100 MW), applied by
-    # lane SPP-57 to the three-point spread declared BEFORE any limit or
-    # price was read (PRECOMMIT-spp-57-2026-09-07.md §3; every number in
-    # FINDING-spp-57-2026-09-07.md §3 and docs/handoffs/spp57/). Two measured
-    # legs each, no free parameter:
-    #   L_f  = per-constituent 2026 limit-at-bind (median `Real Time Effective
+    # N<->S link TTC = 3,400 MW: the North->South transfer at which the
+    # corridor's limiting flowgate reaches its own effective limit (the
+    # FCITC reading), derived by lane SPP-53 from SPP's OWN published limits
+    # under a construction fixed BEFORE any limit was read
+    # (docs/handoffs/PRECOMMIT-spp-53-2026-09-07.md §2.1; result and every
+    # per-constituent number: FINDING-spp-53-2026-09-07.md §3-§5). Two
+    # measured legs, no free parameter:
+    #   L_f  = per-constituent limit-at-bind, the median `Real Time Effective
     #          Limit` over BINDING/BREACHED intervals of the 2026-03-17 ->
-    #          2026-09-05 daily RTBM files; the corridor constituents keep
-    #          SPP-53's committed values, the Oklahoma / SPS-tie / CSWS
-    #          constituents read the NEW reduced sidecar
-    #          data/raw/spp-binding-constraints/rtbm_bc_oklahoma_limits_2026
-    #          .parquet), else the registry rating when bound < 100 intervals;
-    #   psi_f = the constituent's hub-transfer sensitivity from SPP's own
-    #          price decomposition: hourly RT spread regressed on every
-    #          constraint's hourly mean |shadow price|, 2023-2025 (OLS, HC1;
-    #          identified iff psi > 0, t >= 2, psi <= 1).
-    #
-    # N<->OK = 6,500 MW. Dependent = SPPSOUTH_HUB - SPPNORTH_HUB (SPP-53's own
-    # regression, spp53/psi_all.csv, reused: max |psi diff| 0.0). Constituent
-    # set = n_s_corridor UNION oklahoma_internal, >= 263 pooled binding hours.
-    # 26 constituents identify N->OK-loaded (25,116 h) vs 15 reverse (14,043
-    # h) -> named direction N->OK; weighted median T* = 6,534 -> 6,500.
-    # Reported beside it, never averaged in: corridor-only 3,355 (= SPP-53's
-    # 3,400 by construction; Franklin 161/69 kV), oklahoma_internal-only
-    # 7,164 (Gracemont-Anadarko 138 kV, 6,658 h, L 215.3 MW / psi 0.0300);
-    # weighted p25 / p75 3,355 / 7,164 (2.14x); LOYO 3,681 / 11,478 / 7,767
-    # (drop 2023 / 2024 / 2025); the reverse (OK->N) reading 5,999 -> 6,000.
-    # STATED, not absorbed: the Oklahoma-set constituents that identify
-    # N->OK (Gracemont-Anadarko, Cimarron, Woodward, Cornville-Naples) are
-    # western-Oklahoma delivery elements whose binding makes the OKC hub
-    # dearer for reasons the hub-pair regression cannot separate from a
-    # North->Oklahoma transfer (misalignment iii of SPP-53); the same
-    # elements identify S->OK on the second link. The corridor-only value is
-    # the sensitivity a reader should weigh against this one.
-    # Rule 14 [R-ACCURATE] MISALIGNMENT, stated: (i) 2026 limits on a
-    # 2023-2025 solve; (ii) element-under-contingency ratings reconciled
-    # through psi, never used literally (the N_TO_H case of _ercot_config);
-    # (iii) hub-pair psi, not the bubble-to-bubble PTDF; (iv) the LOYO width
-    # above. Residual-blind bounds: 6,500 < B_plaus 23,300 (North) /
-    # ~11,100 (Oklahoma) < B_hard, so the link CAN bind in either direction.
-    _n_ok_ttc = 6500.0
-    # OK<->S = 6,700 MW. Dependent = p_S - SPPSOUTH_HUB, p_S the residual-
-    # South price built in PRECOMMIT-spp-57 §3.4 (the SPS load-zone SL
-    # `SPS_SPS` and the mean of 28-29 named SWEPCO/AECC settlement locations
-    # in AR/LA/TX, blended by the residual's measured load composition;
-    # data/raw/_validation-source/actual_lmp_hourly_area_SPP.parquet).
-    # Constituent set = oklahoma_internal UNION sps_tie UNION the CSWS-only
-    # `other` rows. 19 constituents identify S->OK-loaded (18,715 h; the
-    # western-Oklahoma / Panhandle delivery set: Gracemont-Anadarko 6,658 h,
-    # Cimarron, Woodward, Cornville-Naples, Crescent-Cottonwood ...) vs 4
-    # OK->S-loaded (6,177 h; the SPS tie itself: Potter County 345/230 kV,
-    # SPSNMTIES, SPPSPSTIES) -> named direction S->OK; weighted median T* =
-    # 6,697 -> 6,700 (oklahoma_internal-only 6,697; the three CSWS-only
-    # constituents 911). Reported beside it: weighted p25 / p75 3,068 / 6,697
-    # (2.18x); LOYO 4,254 / 8,892 / 14,218; the reverse (OK->S) reading over
-    # the SPS-tie set 10,705 -> 10,700 (LOYO 8,395 / 10,490 / 14,796). The
-    # symmetric link carries the named direction's value; the asymmetric
-    # pair is SPP-58's question. Rule 14 MISALIGNMENT, stated: (i)-(iv) as
-    # above, plus (v) p_S blends a load-zone SL with generator-node means and
-    # (vi) the residual bubble is SPS + SWEPCO, two disjoint pockets, so this
-    # one link stands for the OK<->SPS ties AND the PSO<->SWEPCO ties at
-    # once (PRECOMMIT §1 item 2 -> SPP-54). Residual-blind bounds: 6,700 <
-    # max(B_plaus(OK) ~11,100, B_plaus(S) ~3,500) < B_hard, so the link CAN
-    # bind (OK->S on Oklahoma's non-gas surplus; S->OK needs the residual's
-    # gas fleet exporting too, which the two-zone keeper already showed).
-    _ok_s_ttc = 6700.0
+    #          2026-09-05 daily RTBM binding-constraint files (the ERCOT
+    #          derive_ttc_limits.py instrument; reduced sidecar
+    #          data/raw/spp-binding-constraints/rtbm_bc_corridor_limits_2026
+    #          .parquet), else the registry rating (Temp_Flowgate.csv /
+    #          Flowgates.csv) when the element bound < 100 intervals;
+    #   psi_f = the constituent's sensitivity to a North->South hub transfer,
+    #          identified from SPP's own price decomposition: hourly RT
+    #          (SPPSOUTH_HUB - SPPNORTH_HUB) regressed on every constraint's
+    #          hourly mean |shadow price| over 2023-2025 (OLS, HC1; 12 of the
+    #          30 corridor constituents identify with psi > 0, t >= 2).
+    #   TTC  = binding-hours-weighted median of T*_f = L_f / psi_f over the
+    #          identified constituents = 3,355 MW -> 3,400 (nearest 100).
+    # The median falls on the corridor's dominant constituent, the Franklin
+    # 161/69 kV transformer (WR; 4,103 of the 2023-25 corridor's binding
+    # hours; 100 MW registry rating / psi 0.0298); its neighbours read
+    # LEC-LAWH 3,487, Sibley 345/161 kV 4,574, Mullergren-Ellsworth 6,408,
+    # Cooper-St Joe 345 kV 6,437, Nashua 345/161 kV 9,378 MW. The
+    # South->North-loaded set (psi < 0: Viola transformer, Stilwell-Redel,
+    # Spearville-Mullergren, ...) gives 4,206 MW by the same rule, so the
+    # symmetric link is within 25 % of the corridor's own reverse reading.
+    # Rule 14 [R-ACCURATE] MISALIGNMENT, stated: (i) 2026 limits applied to a
+    # 2023-2025 solve (no in-window limit column exists, FINDING-spp-14
+    # §5.4); (ii) a flowgate limit is an element-under-contingency rating,
+    # NOT a corridor capability -- SPP publishes no N<->S interface flowgate
+    # (PRECOMMIT §1.2 census: the only cut-crossing SWPP element is the SPS
+    # tie), so this is the N_TO_H case of _ercot_config, reconciled through
+    # psi rather than used literally (a literal 100 MW element rating would
+    # island two zones whose measured mean |hub spread| is $12-17/MWh);
+    # (iii) psi is the Nebraska-hub -> central-Oklahoma-hub sensitivity, not
+    # the bubble-to-bubble transfer PTDF; (iv) leave-one-year-out re-fits of
+    # psi move the same construction to 2,645 / 3,681 / 11,121 MW (drop 2025
+    # / 2023 / 2024) -- the honest width, reported beside the pooled value.
+    # Residual-blind cross-check (PRECOMMIT §4): 3,400 < B_plaus 23,300 <
+    # B_hard 37,400 MW, so the link CAN bind, unlike the 48,700 MW SPP-20
+    # placeholder it replaces. Vintage 2026 (TRANSMISSION_BASE_STATIC_VINTAGE
+    # ["SPP"]). Never tuned to a price or flow residual -- no SPP residual
+    # exists; rejected alternatives (the literal dominant-flowgate rating,
+    # a simultaneous-transfer sum, the hour-wise minimum) in PRECOMMIT §2.
+    _ns_corridor_ttc = 3400.0
     links = [
-        TransferLink(from_zone="SPP-North", to_zone="SPP-Oklahoma", ttc_mw=_n_ok_ttc),
-        TransferLink(from_zone="SPP-Oklahoma", to_zone="SPP-South", ttc_mw=_ok_s_ttc),
+        TransferLink(
+            from_zone="SPP-North", to_zone="SPP-South", ttc_mw=_ns_corridor_ttc
+        ),
     ]
     # voll = $2,000/MWh (owner ruling P10, desk sitting r#3, 2026-09-06):
     # the FERC Order 831 hard ceiling for COST-VERIFIED incremental energy
