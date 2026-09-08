@@ -54,6 +54,62 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def resolve_hydro_period_hours(iso, dispatch_fleet, hydro_gen_idx, config):
+    """Return the per-plant hydro budget period in hours, or ``UNSET``.
+
+    ONE resolver for BOTH orchestrators -- ``runner.py``'s forecast year loop and
+    ``scripts/run_calibration.py``'s backcast assembly -- so the two cannot drift
+    apart. (They did during nyiso-220's build: wiring only the forecast path left
+    the mechanism silently INERT in every backcast solve, which is the lane the
+    mechanism was built for.)
+
+    Maps :data:`~market_sim.config.constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`
+    onto this year's hydro generators, in the same order as
+    ``hydro_monthly_energy``'s rows (``hydro_gen_idx`` indexes ``dispatch_fleet``,
+    where the hydro units are appended as one contiguous block).
+
+    Returns :data:`~market_sim.pipeline.spec.UNSET` -- which
+    :meth:`DispatchSpec.to_dispatch_kwargs` omits from the mapping entirely --
+    whenever the mechanism is off, the ISO has no registry entry, or no hydro
+    generator matches one. That is what keeps every unarmed run's dispatch-kwargs
+    key set, and therefore its LP, byte-identical.
+
+    Args:
+        iso: ISO code.
+        dispatch_fleet: This year's LP-ready generator list.
+        hydro_gen_idx: Indices of the hydro generators within ``dispatch_fleet``.
+        config: Scenario config carrying the gating flag.
+
+    Returns:
+        An ``(n_hydro,)`` integer array of period lengths in hours, or ``UNSET``.
+    """
+    from market_sim.pipeline.spec import UNSET
+
+    if not getattr(config, "hydro_budget_period_by_instrument", False):
+        return UNSET
+    if hydro_gen_idx is None or not len(hydro_gen_idx):
+        return UNSET
+    from market_sim.data.hydro import hydro_budget_period_hours
+
+    codes = [int(getattr(dispatch_fleet[i], "plant_code", 0)) for i in hydro_gen_idx]
+    periods = hydro_budget_period_hours(iso, codes, config)
+    if periods is None:
+        logger.info(
+            "%s: hydro budget period mechanism armed but INERT — no LP hydro "
+            "plant carries a registry entry (LP hydro plant codes: %s)",
+            iso,
+            codes,
+        )
+        return UNSET
+    logger.info(
+        "%s: hydro budget periods from governing instrument — "
+        "{period_hours: n_plants} = %s",
+        iso,
+        {int(p): int((periods == p).sum()) for p in np.unique(periods)},
+    )
+    return periods
+
+
 def build_base_dispatch_kwargs(
     spec: DispatchSpec,
     *,

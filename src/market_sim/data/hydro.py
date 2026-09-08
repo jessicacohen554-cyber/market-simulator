@@ -182,6 +182,128 @@ def hours_per_month(hours: int = 8760) -> np.ndarray:
     )
 
 
+def hydro_budget_period_hours(
+    iso: str, plant_ids: np.ndarray | list[int], config: object
+) -> np.ndarray | None:
+    """Return each hydro generator's budget period in hours, or ``None``.
+
+    Reads :data:`~market_sim.config.constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`
+    — the per-project registry whose every entry carries the published governing
+    instrument it comes from — and maps it onto a fleet's hydro generators.
+
+    A plant **absent from the registry** is returned as ``0``, the sentinel for
+    "keep the calendar month", so the refinement is strictly opt-in: an ISO with
+    no registry entry, or the flag off, yields ``None`` and the caller builds the
+    unchanged monthly rows. This is what makes the mechanism a byte-identical
+    no-op everywhere it is not explicitly grounded (rule 14 ``[R-ACCURATE]``:
+    never invent an instrument we have not read).
+
+    Args:
+        iso: ISO code, e.g. ``"NYISO"``.
+        plant_ids: EIA plant code of each hydro generator, in fleet order.
+        config: Scenario config; the mechanism is gated on its
+            ``hydro_budget_period_by_instrument`` flag.
+
+    Returns:
+        An ``(n_hydro,)`` integer array of period lengths in hours (``0`` =
+        monthly), or ``None`` when the flag is off, the ISO has no registry
+        entry, or no generator in this fleet matches one — in all of which cases
+        the LP is unchanged.
+    """
+    if not getattr(config, "hydro_budget_period_by_instrument", False):
+        return None
+    from market_sim.config.constants import HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT
+
+    registry = HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT.get(str(iso).upper())
+    if not registry:
+        return None
+    codes = np.asarray(plant_ids, dtype=int)
+    periods = np.array([int(registry.get(int(c), 0)) for c in codes], dtype=int)
+    if not periods.any():
+        return None
+    return periods
+
+
+def allocate_period_energy(
+    monthly_energy: np.ndarray, period_hours: int, hours: int = 8760
+) -> tuple[np.ndarray, np.ndarray]:
+    """Split a monthly energy budget into fixed-length sub-monthly periods.
+
+    A shortened budget period conserves each **month's** measured total — which
+    stays the source of truth — but forbids moving that energy between periods
+    inside the month. Energy is allocated to a period in proportion to how many
+    of the period's hours fall in each month, so a period straddling a month
+    boundary is budgeted correctly and the monthly totals are preserved exactly.
+
+    The allocation within a month is **flat**, and for the projects this is
+    applied to that is the measured-inflow-consistent choice rather than an
+    assumption: nyiso-219 measured Robert Moses Niagara's and St. Lawrence's own
+    basin discharge carrying essentially no day-to-day signal (within-month daily
+    r **0.079** and **0.080**), because both sit on regulated Great-Lakes
+    outflow. **Zero fitted scalars**, and nothing here is pinned to a measured
+    *outcome* — the monthly level is the same measured budget the LP already
+    uses, only re-partitioned in time.
+
+    **Periods are aligned WITHIN months** — the period counter restarts at each
+    month boundary, so the final period of a month may be short (1-7 days for a
+    weekly period). This is deliberate and load-bearing: a period straddling a
+    month boundary would let energy move ACROSS that boundary, which breaks the
+    exact conservation of each month's measured total (measured here at up to
+    82,696 MWh of drift for a 168 h period before the alignment was added). The
+    monthly measured total is the calibration anchor the keeper already matches
+    at month-energy r ~ 1.000, and this mechanism must not disturb it — it
+    constrains *when within a month* energy is used, never *how much*. The cost
+    is that a month-aligned week is not exactly the instrument's calendar week;
+    that is immaterial to a constraint whose content is "no banking beyond about
+    a week", whereas losing the monthly anchor would not be.
+
+    Args:
+        monthly_energy: ``(n_hydro, 12)`` monthly energy caps in MWh.
+        period_hours: Length of each period in hours (e.g. 24 or 168).
+        hours: Length of the hour horizon. Defaults to 8760.
+
+    Returns:
+        Tuple ``(period_energy, period_index)`` where ``period_energy`` has
+        shape ``(n_hydro, n_periods)`` in MWh and ``period_index`` is the
+        ``(T,)`` period of each hour.
+
+    Raises:
+        ValueError: If ``period_hours`` is not a positive number of hours.
+    """
+    if period_hours <= 0:
+        raise ValueError(f"period_hours must be positive, got {period_hours}")
+    from market_sim.data.fleet import _hour_to_month_index
+
+    month_of_hour = np.asarray(_hour_to_month_index(hours), dtype=int)  # (T,)
+    ph = int(period_hours)
+
+    # Month-aligned periods (see docstring): the period counter restarts each
+    # month, so no period straddles a month boundary and monthly totals are
+    # conserved exactly. Built vectorised -- no Python loop over hours (rule 2).
+    hpm = np.bincount(month_of_hour, minlength=_MONTHS_PER_YEAR)  # (12,)
+    first_hour = np.concatenate(([0], np.cumsum(hpm)[:-1]))  # (12,) month start
+    hour_in_month = np.arange(hours, dtype=int) - first_hour[month_of_hour]
+    local_period = hour_in_month // ph  # period within its month
+    periods_per_month = -(-hpm // ph)  # ceil division: periods each month holds
+    month_offset = np.concatenate(([0], np.cumsum(periods_per_month)[:-1]))
+    period_index = month_offset[month_of_hour] + local_period  # (T,)
+    n_periods = int(periods_per_month.sum())
+
+    # (n_periods, 12) count of each period's hours falling in each month, and the
+    # (12,) total hours per month -- both by one vectorised bincount over the
+    # flat (period, month) pair index. No Python loop over hours (rule 2).
+    pair = period_index * _MONTHS_PER_YEAR + month_of_hour
+    counts = np.bincount(pair, minlength=n_periods * _MONTHS_PER_YEAR).reshape(
+        n_periods, _MONTHS_PER_YEAR
+    )
+    hpm = np.bincount(month_of_hour, minlength=_MONTHS_PER_YEAR).astype(float)
+    share = counts / np.where(hpm > 0, hpm, 1.0)  # (n_periods, 12)
+
+    energy = np.asarray(monthly_energy, dtype=float)  # (n_hydro, 12)
+    period_energy = energy @ share.T  # (n_hydro, n_periods)
+    return period_energy, period_index
+
+
 def resolve_hydro_year_multiplier(hydro_year: str) -> float:
     """Return the budget multiplier for a ``hydro_year`` scenario lever.
 

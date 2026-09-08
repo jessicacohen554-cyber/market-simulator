@@ -197,6 +197,7 @@ from market_sim.pipeline import (
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    resolve_hydro_period_hours,
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
@@ -3475,6 +3476,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # Both None (the default) when the ISO has no hydro plants.
                 hydro_gen_idx=hydro_gen_idx,
                 hydro_monthly_energy=hydro_monthly_energy,
+                # Per-plant budget period from the project's own governing
+                # instrument (nyiso-220). UNSET unless the mechanism is armed
+                # AND this ISO has registry entries, so every other run's
+                # dispatch-kwargs key set is unchanged.
+                hydro_period_hours=resolve_hydro_period_hours(
+                    iso, dispatch_fleet, hydro_gen_idx, config
+                ),
                 T=config.hours,
             )
             dispatch_kwargs = build_base_dispatch_kwargs(

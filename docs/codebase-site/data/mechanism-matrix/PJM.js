@@ -210,6 +210,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     vre_registry_cod_date_basis: { cell: "." },
     wtx_curtailment_driver: { cell: "." },
     wtx_curtail_unpooled: { cell: "." },
+    hydro_budget_period_by_instrument: { cell: "U", ev: "n/a for this ISO at HEAD -- constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT carries no entry, so the mechanism is a byte-identical no-op here (the runner returns UNSET and the dispatch-kwargs key set is unchanged). Rule 25 [R-ISO-SCOPE]: NYISO's verdict never fills this cell -- an ISO enters as U and must derive its own periods from its own projects' own governing instruments. nyiso-220" },
     hydro_dispatch_envelope: { cell: "U" },
     hydro_min_flow_floor: { cell: "U" },
     hydro_ror_split: { cell: "U" },

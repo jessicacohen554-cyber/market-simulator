@@ -126,6 +126,7 @@ from market_sim.pipeline import (  # noqa: E402
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
+    resolve_hydro_period_hours,
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
@@ -665,6 +666,7 @@ def run_year(
     ercot_storage_as_endogenous: bool = False,
     ercot_storage_as_duration_gate: bool = False,
     hydro_eia930_monthly: bool = False,
+    hydro_budget_period_by_instrument: bool = False,
     hydro_forecast_budget: bool = False,
     hydro_year: str = "normal",
     interchange_shaping: bool = False,
@@ -970,6 +972,17 @@ def run_year(
         # note). Requires the bridge and excludes the tranche-wide v2 —
         # enforced loud at pipeline.commitment.build_ercot_gas_bridge_p1_preps.
         config = config.with_overrides(ercot_offer_surface_lowcurve_floorscoped=True)
+    if hydro_budget_period_by_instrument:
+        # nyiso-220: shorten the hydro energy-budget period PER PLANT to the
+        # period that project's own governing instrument -- or, where the
+        # instrument states none, its measured pondage -- permits energy to be
+        # reallocated over (registry
+        # constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT; the ScenarioConfig
+        # field docstring carries the full provenance and the rule-19
+        # reconciliation with hydro_dispatch_envelope). A plant absent from the
+        # registry keeps the calendar month, so this is a byte-identical no-op
+        # for every ISO with no entry.
+        config = config.with_overrides(hydro_budget_period_by_instrument=True)
     if wind_ptc_vintage_offers:
         # ERCOT-65 PTC vintage scoping: replace the flat -ira_ptc_wind wind
         # dispatch offer with the per-zone-month measured-vintage blend
@@ -5480,6 +5493,15 @@ def run_year(
         ),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
+        # Per-plant hydro budget period from the project's own governing
+        # instrument (nyiso-220). UNSET unless armed AND this ISO has
+        # registry entries, so every other run's dispatch-kwargs key set --
+        # and therefore its LP -- is unchanged. The BACKCAST orchestrator's
+        # own assembly; runner.py's forecast loop wires the same value
+        # through the same shared resolver.
+        hydro_period_hours=resolve_hydro_period_hours(
+            iso, fleet, hydro_gen_idx, config
+        ),
         oil_monthly_budget=oil_monthly_budget,
         oil_gen_idx=oil_budget_gen_idx,
         oil_month_index=oil_budget_month_index,

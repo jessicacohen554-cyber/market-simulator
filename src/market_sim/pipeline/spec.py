@@ -96,6 +96,12 @@ class DispatchSpec:
     #      they are OMITTED from to_dispatch_kwargs(), so the forecast dict's
     #      key set is unchanged; the backcast passes them explicitly (possibly
     #      None), reproducing its always-present keys. ----
+    # Per-plant hydro budget PERIOD in hours (0 = the calendar month), from each
+    # project's own governing instrument — nyiso-220,
+    # config.hydro_budget_period_by_instrument. UNSET (the default) is omitted
+    # from to_dispatch_kwargs entirely, so every run that does not arm the
+    # mechanism keeps a byte-identical kwargs key set.
+    hydro_period_hours: Any = UNSET
     # RPS ACP ceiling ($/MWh) — prices the ACP escape column that keeps the RPS
     # row feasible and caps its dual. UNSET (backcast, which disables the RPS)
     # is omitted from the kwargs, so the LP key set there is unchanged.
