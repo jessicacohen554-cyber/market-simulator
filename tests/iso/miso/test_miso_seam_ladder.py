@@ -29,30 +29,6 @@ from market_sim.model.transmission import (
 
 T = 48  # trivial clock first — the injector is hour-constant per band
 
-#: The THREE entries where the committed ``MISO_SEAM_LADDER_BY_YEAR`` does NOT
-#: reproduce its own ``derive()`` at HEAD, keyed ``(year, seam, side, band)``
-#: with ``(committed, derived)`` — measured and diagnosed by miso-244
-#: (``results/calibration/_miso244_incumbent_ladder_cent_phase0.json``;
-#: ``FINDING-miso244-the-cent-is-real-drift-and-the-re-derive-is-refused-2026-09-08.md``).
-#:
-#: They are NOT a tolerance.  Each is pinned at BOTH exact values so the known
-#: gap can neither grow, move, nor multiply unseen, and every other entry is
-#: held to the half-cent bar.  Reported first by miso-243 as per-seam maxima
-#: (PJM 2023 / South 2023 / South 2024, each exactly ``NO_WASH_EPS``); located
-#: to the band by miso-244, which REFUSED the re-derive because the cause is
-#: unattributed (rule 23 ``[R-FROZEN-DERIVE]`` requires a cited cause, and
-#: re-deriving first would erase the only evidence of the drift).
-#:
-#: WHEN THE TABLE IS RECONCILED, DELETE these entries (rule 26 ``[R-DELETE]``).
-#: Never widen the tolerance to absorb them.
-_MISO244_KNOWN_LADDER_DIVERGENCES: dict[
-    tuple[int, str, str, int], tuple[float, float]
-] = {
-    (2023, "PJM", "import", 5): (27.86, 27.87),
-    (2023, "South", "export", 4): (27.69, 27.70),
-    (2024, "South", "export", 5): (23.77, 23.76),
-}
-
 
 class TestLadderRegistry(unittest.TestCase):
     """The measured ladder registry is complete, ordered, and wash-free."""
@@ -117,23 +93,27 @@ class TestLadderRegistry(unittest.TestCase):
         (a different object, outside that session's queue item).
 
         WHAT IS PINNED.  All 192 entries reproduce at ``atol=0.005`` — a half
-        cent, the SPP-hourly pin's own bar — EXCEPT the three in
-        :data:`_MISO244_KNOWN_LADDER_DIVERGENCES`, which are pinned HARDER,
-        both sides at their exact 2-dp values.
+        cent, the SPP-hourly pin's own bar — with NO exceptions.
 
-        WHY THE TABLE IS NOT SIMPLY RE-DERIVED.  miso-244 measured the gap and
-        REFUSED the re-derive on governance: it is not a rounding tie
-        (``t_max`` 0.0049998 against a 1e-4 bar) and not a no-wash clamp (none
-        fires in any year), and its CAUSE is unattributed — the three entries
-        are mutually inconsistent under any single quantile convention in
-        numpy's ``h = q(n-1)`` family, so the SAMPLE moved rather than the
-        estimator.  Rule 23 requires a re-derive commit to cite its cause;
-        there is none to cite yet, and re-deriving first would erase the only
-        evidence of the drift.
+        THE TABLE WAS RECONCILED BY miso-245 (2026-09-08).  miso-244 found
+        three entries adrift from their own ``derive()`` by exactly one cent
+        (2023 PJM import 5, 2023 South export 4, 2024 South export 5), pinned
+        them at both values and REFUSED the re-derive: the gap is not a
+        rounding tie (``t_max`` 0.0049998 against a 1e-4 bar) and not a
+        no-wash clamp (none fires in any year), and its cause was
+        unattributed, so rule 23 ``[R-FROZEN-DERIVE]`` had nothing to cite.
+        miso-245 attributed it — each committed value is reached from the
+        HEAD sample by perturbing that entry's own integer duration count by
+        exactly ONE hour of 8,760, with the sign quantile monotonicity
+        requires — and reconciled the three entries to the frozen
+        estimator's output on the current source data (rule 14
+        ``[R-ACCURATE]``, zero free parameters).  The exception list is
+        DELETED rather than zeroed (rule 26 ``[R-DELETE]``).
 
-        WHEN THE TABLE IS RECONCILED, DELETE those entries (rule 26
-        ``[R-DELETE]``).  **Never widen ``atol`` to absorb them** — that
-        rebuilds exactly the blindness this test exists to remove.
+        **Never widen ``atol`` to absorb a future drift, and never re-add an
+        exception list** — that rebuilds exactly the blindness this test
+        exists to remove.  A new divergence is a source-data change to be
+        diagnosed and cited, not a tolerance.
         """
         import importlib.util
 
@@ -155,33 +135,6 @@ class TestLadderRegistry(unittest.TestCase):
                 for side in ("import", "export"):
                     for k, committed in enumerate(sides[side]):
                         got = float(derived[seam][side][k])
-                        known = _MISO244_KNOWN_LADDER_DIVERGENCES.get(
-                            (year, seam, side, k + 1)
-                        )
-                        if known is not None:
-                            self.assertAlmostEqual(
-                                float(committed),
-                                known[0],
-                                places=6,
-                                msg=(
-                                    f"{year} {seam} {side} band {k + 1}: the "
-                                    "committed value moved — a known miso-244 "
-                                    "divergence is pinned at BOTH values"
-                                ),
-                            )
-                            self.assertAlmostEqual(
-                                got,
-                                known[1],
-                                places=6,
-                                msg=(
-                                    f"{year} {seam} {side} band {k + 1}: the "
-                                    "derived value moved. If the table has been "
-                                    "reconciled, DELETE this entry from "
-                                    "_MISO244_KNOWN_LADDER_DIVERGENCES (rule 26) "
-                                    "— never widen the tolerance"
-                                ),
-                            )
-                            continue
                         self.assertAlmostEqual(
                             got,
                             float(committed),

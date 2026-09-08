@@ -1504,7 +1504,7 @@ MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
 MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
     2023: {
         "PJM": {
-            "import": (13.40, 16.25, 19.79, 24.09, 27.86, 32.78, 37.99, 46.55),
+            "import": (13.40, 16.25, 19.79, 24.09, 27.87, 32.78, 37.99, 46.55),
             "export": (12.34, 11.72, 11.72, 11.72, 11.72, 11.72, 11.72, 11.72),
         },
         "SPP": {
@@ -1513,7 +1513,7 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
         },
         "South": {
             "import": (50.99, 63.58, 85.76, 112.47, 204.68, 204.68, 204.68, 204.68),
-            "export": (43.04, 36.49, 31.69, 27.69, 24.74, 22.09, 19.70, 17.34),
+            "export": (43.04, 36.49, 31.69, 27.70, 24.74, 22.09, 19.70, 17.34),
         },
         # Manitoba (MHEB) two-way seam — miso-74; P9 +5.35 vs measured +5.39 TWh.
         "Manitoba": {
@@ -1532,7 +1532,7 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
         },
         "South": {
             "import": (57.86, 82.81, 163.02, 241.36, 260.66, 284.59, 284.59, 284.59),
-            "export": (46.72, 38.67, 32.32, 27.61, 23.77, 20.81, 18.47, 16.00),
+            "export": (46.72, 38.67, 32.32, 27.61, 23.76, 20.81, 18.47, 16.00),
         },
         # Manitoba (MHEB) two-way seam — miso-74; P9 +2.99 vs measured +3.01 TWh.
         "Manitoba": {

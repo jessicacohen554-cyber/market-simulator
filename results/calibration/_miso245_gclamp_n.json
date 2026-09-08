@@ -1,0 +1,115 @@
+{
+ "probe": "miso-245 G-CLAMP-N \u2014 the reaching value must be the UNCLAMPED quantile",
+ "addendum": "results/calibration/ADDENDUM-miso245-the-test-passed-with-low-power-and-one-more-leg-can-still-kill-it-2026-09-08.md \u00a70c",
+ "keeper": "2026-09-07-miso-243-spp-pairing",
+ "zero_lp": true,
+ "read_only": true,
+ "can_only_invalidate": true,
+ "rule": "v_raw(delta) <= lim_seam at the reaching delta and at delta in {-1,0,+1}; a FAIL voids that entry's m_j and WITHDRAWS A-CONFIRMED",
+ "detail": [
+  {
+   "entry": "2023 PJM import band 5",
+   "committed": 27.86,
+   "clamp_lim": 13.389899162,
+   "cheapest_import_band": 13.399899162,
+   "margin_to_clamp_at_reaching_delta": -14.4701014484,
+   "rows": [
+    {
+     "delta": -1,
+     "is_reaching_delta": false,
+     "v_raw": 27.8700008392,
+     "v_after_clamp": 27.8700008392,
+     "rounded": 27.87,
+     "clamped": false
+    },
+    {
+     "delta": 0,
+     "is_reaching_delta": false,
+     "v_raw": 27.8661822587,
+     "v_after_clamp": 27.8661822587,
+     "rounded": 27.87,
+     "clamped": false
+    },
+    {
+     "delta": 1,
+     "is_reaching_delta": true,
+     "v_raw": 27.8600006104,
+     "v_after_clamp": 27.8600006104,
+     "rounded": 27.86,
+     "clamped": false
+    }
+   ],
+   "PASS": true
+  },
+  {
+   "entry": "2023 South export band 4",
+   "committed": 27.69,
+   "clamp_lim": 50.9812138037,
+   "cheapest_import_band": 50.9912138037,
+   "margin_to_clamp_at_reaching_delta": 23.2912132696,
+   "rows": [
+    {
+     "delta": -1,
+     "is_reaching_delta": true,
+     "v_raw": 27.6900005341,
+     "v_after_clamp": 27.6900005341,
+     "rounded": 27.69,
+     "clamped": false
+    },
+    {
+     "delta": 0,
+     "is_reaching_delta": false,
+     "v_raw": 27.6962803582,
+     "v_after_clamp": 27.6962803582,
+     "rounded": 27.7,
+     "clamped": false
+    },
+    {
+     "delta": 1,
+     "is_reaching_delta": false,
+     "v_raw": 27.7000007629,
+     "v_after_clamp": 27.7000007629,
+     "rounded": 27.7,
+     "clamped": false
+    }
+   ],
+   "PASS": true
+  },
+  {
+   "entry": "2024 South export band 5",
+   "committed": 23.77,
+   "clamp_lim": 57.850483406,
+   "cheapest_import_band": 57.860483406,
+   "margin_to_clamp_at_reaching_delta": 34.0774349333,
+   "rows": [
+    {
+     "delta": -1,
+     "is_reaching_delta": false,
+     "v_raw": 23.7565264051,
+     "v_after_clamp": 23.7565264051,
+     "rounded": 23.76,
+     "clamped": false
+    },
+    {
+     "delta": 0,
+     "is_reaching_delta": false,
+     "v_raw": 23.7600002289,
+     "v_after_clamp": 23.7600002289,
+     "rounded": 23.76,
+     "clamped": false
+    },
+    {
+     "delta": 1,
+     "is_reaching_delta": true,
+     "v_raw": 23.7730484727,
+     "v_after_clamp": 23.7730484727,
+     "rounded": 23.77,
+     "clamped": false
+    }
+   ],
+   "PASS": true
+  }
+ ],
+ "PASS": true,
+ "VERDICT_STATUS": "A-CONFIRMED STANDS (this leg removes a way it could be false; it adds no evidence)"
+}
