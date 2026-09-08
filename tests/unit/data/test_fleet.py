@@ -35,7 +35,10 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
-from market_sim.data.floor_mechanisms import MECH_ST_GAS_MUSTRUN_PER_PLANT
+from market_sim.data.floor_mechanisms import (
+    MECH_ST_GAS_MUSTRUN_PER_PLANT,
+    MECH_ST_NETLOAD_DRAG,
+)
 
 
 def _sample_generators() -> list[Generator]:
@@ -750,6 +753,174 @@ class TestNetloadDragLayupWindowMask(unittest.TestCase):
             {(777, "CT_PEAKER"): np.ones(48)},
         )
         np.testing.assert_allclose(fa.min_gen[0], 0.0)
+
+
+class TestNetloadDragMeritAllocation(unittest.TestCase):
+    """ercot-259 merit-order ALLOCATION of the net-load drag mandate.
+
+    The driver curve yields a FLEET capacity factor; the pro-rata applier puts
+    it on every plant's own pmax, asserting that every plant is committed at
+    that fraction in every hour. This mode keeps the SAME hourly mandate over
+    the SAME rows and only redistributes it: commitment blocks before economic
+    tranches, cheapest first. Rule 19 [R-ONE-MECH] — only the level source
+    changes; same mechanism id, still a per-row min_gen, so D-2/D-4 attribution
+    and the C8 forced share stay measurable.
+    """
+
+    @staticmethod
+    def _two_plants():
+        """A cheap plant and an expensive one, each committed + econ + peak."""
+
+        def _p(code, name, hr):
+            shared = dict(
+                name=name,
+                zone="North",
+                fuel_type="gas_st",
+                online_year=1975,
+                plant_group="ST_GAS",
+                plant_code=code,
+            )
+            return [
+                Generator(
+                    unit_id=f"p{code}_committed",
+                    pmax_mw=100.0,
+                    heat_rate=hr,
+                    **shared,
+                ),
+                Generator(
+                    unit_id=f"p{code}_econc00",
+                    pmax_mw=100.0,
+                    heat_rate=hr + 1.0,
+                    **shared,
+                ),
+                Generator(
+                    unit_id=f"p{code}_peak", pmax_mw=50.0, heat_rate=hr + 3.0, **shared
+                ),
+            ]
+
+        return _p(111, "CHEAP", 9.0) + _p(222, "PRICEY", 13.0)
+
+    @staticmethod
+    def _cfg(**kw):
+        return ScenarioConfig(
+            gas_st_netload_drag=True,
+            gas_st_drag_slope_per_gw=0.00906,
+            gas_st_drag_intercept=-0.1376,
+            gas_st_drag_cap=0.34,
+            **kw,
+        )
+
+    def _run(self, merit, net):
+        gens = self._two_plants()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=len(net))
+        apply_gas_st_netload_drag_floor(
+            fa, gens, net, self._cfg(netload_drag_merit_allocation=merit)
+        )
+        return gens, fa
+
+    def test_default_off_is_byte_identical(self):
+        net = np.full(48, 40_000.0)
+        _, fa_off = self._run(False, net)
+        gens = self._two_plants()
+        fa_plain = generators_to_fleet_arrays(gens, ["North"], hours=48)
+        apply_gas_st_netload_drag_floor(fa_plain, gens, net, self._cfg())
+        np.testing.assert_array_equal(fa_off.min_gen, fa_plain.min_gen)
+
+    def test_aggregate_is_preserved_even_when_availability_clips(self):
+        """The clip case: pro-rata drops the shortfall, so must the merit fill.
+
+        Targeting the NOMINAL floor_frac x sum(pmax) instead of the delivered
+        MW would silently raise the class's total forcing (measured +20-40 % on
+        the real ERCOT fleet), folding a level change into an allocation swap.
+        """
+        net = np.full(24, 45_000.0)
+        gens = self._two_plants()
+        outs = []
+        for merit in (False, True):
+            fa = generators_to_fleet_arrays(gens, ["North"], hours=24)
+            # Squeeze availability well below the curve fraction so the
+            # pro-rata path's min() clip binds on every row.
+            fa.availability[:] = 0.05
+            apply_gas_st_netload_drag_floor(
+                fa, gens, net, self._cfg(netload_drag_merit_allocation=merit)
+            )
+            outs.append(fa.min_gen.sum(axis=0))
+        np.testing.assert_allclose(outs[1], outs[0], rtol=1e-9)
+        self.assertGreater(float(outs[0][0]), 0.0)
+
+    def test_the_hourly_aggregate_is_preserved(self):
+        """Same mandated MW per hour — only its distribution changes."""
+        net = np.linspace(20_000.0, 50_000.0, 48)
+        _, fa_u = self._run(False, net)
+        _, fa_m = self._run(True, net)
+        # Sum over the class's rows, hour by hour. The peak tranche carries no
+        # floor in either mode, so the totals are directly comparable.
+        np.testing.assert_allclose(
+            fa_m.min_gen.sum(axis=0), fa_u.min_gen.sum(axis=0), rtol=1e-9
+        )
+
+    def test_the_mandate_lands_on_the_cheap_plant_first(self):
+        net = np.full(48, 40_000.0)
+        gens, fa = self._run(True, net)
+        idx = {g.unit_id: i for i, g in enumerate(gens)}
+        frac = 0.00906 * 40.0 - 0.1376
+        avail = float(fa.availability[idx["p111_committed"], 0])
+        total = frac * (100.0 + 100.0 + 100.0 + 100.0)  # non-peak pmax
+        # The cheap plant's commitment block absorbs the whole mandate ...
+        np.testing.assert_allclose(
+            fa.min_gen[idx["p111_committed"], 0], min(total, avail * 100.0), rtol=1e-6
+        )
+        # ... and the expensive plant is not forced at all.
+        np.testing.assert_allclose(fa.min_gen[idx["p222_committed"]], 0.0)
+        np.testing.assert_allclose(fa.min_gen[idx["p222_econc00"]], 0.0)
+
+    def test_commitment_blocks_fill_before_any_economic_tranche(self):
+        """Both plants commit at min load before either runs above it."""
+        # A high net-load whose mandate exceeds one plant's committed block.
+        net = np.full(24, 52_000.0)
+        gens, fa = self._run(True, net)
+        idx = {g.unit_id: i for i, g in enumerate(gens)}
+        # The PRICEY plant's committed tranche is floored ...
+        self.assertGreater(float(fa.min_gen[idx["p222_committed"], 0]), 0.0)
+        # ... while the CHEAP plant's economic tranche is not yet reached.
+        np.testing.assert_allclose(fa.min_gen[idx["p111_econc00"]], 0.0)
+
+    def test_the_peak_tranche_is_never_floored(self):
+        gens, fa = self._run(True, np.full(24, 52_000.0))
+        idx = {g.unit_id: i for i, g in enumerate(gens)}
+        for uid in ("p111_peak", "p222_peak"):
+            np.testing.assert_allclose(fa.min_gen[idx[uid]], 0.0)
+
+    def test_forcing_stays_attributed_so_c8_cannot_go_blind(self):
+        """The anti-blindness property: every floored cell keeps its mech id."""
+        gens, fa = self._run(True, np.full(24, 45_000.0))
+        self.assertIsNotNone(fa.min_gen_mechanism)
+        forced = fa.min_gen > 0.0
+        self.assertTrue(forced.any(), "the arm must actually force something")
+        self.assertTrue(
+            np.all(fa.min_gen_mechanism[forced] == MECH_ST_NETLOAD_DRAG),
+            "a forced cell with no mechanism id would make D-2/D-4 blind",
+        )
+
+    def test_the_layup_mask_still_bounds_the_fill(self):
+        """A fully laid-up plant carries no floor and the fill moves on."""
+        gens = self._two_plants()
+        fa = generators_to_fleet_arrays(gens, ["North"], hours=24)
+        idx = {g.unit_id: i for i, g in enumerate(gens)}
+        apply_gas_st_netload_drag_floor(
+            fa,
+            gens,
+            np.full(24, 40_000.0),
+            self._cfg(netload_drag_merit_allocation=True),
+            {(111, "ST_GAS"): np.ones(24)},
+        )
+        np.testing.assert_allclose(fa.min_gen[idx["p111_committed"]], 0.0)
+        # The mandate falls through to the next-cheapest commitment block.
+        self.assertGreater(float(fa.min_gen[idx["p222_committed"], 0]), 0.0)
+
+    def test_zero_netload_floor_forces_nothing(self):
+        gens, fa = self._run(True, np.full(24, 10_000.0))  # below the ~15.2 GW crossing
+        np.testing.assert_allclose(fa.min_gen, 0.0)
 
 
 class TestGasStSeasonalDrag(unittest.TestCase):

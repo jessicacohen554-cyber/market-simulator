@@ -1327,6 +1327,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off one cache entry. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "netload_drag_layup_window_mask",
+    "netload_drag_merit_allocation",
     # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
     # dropped from the hash at its False default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path returns before
@@ -2092,6 +2093,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-256 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "netload_drag_layup_window_mask": "False",
+    "netload_drag_merit_allocation": "False",
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
@@ -11174,6 +11176,76 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]) — an ISO with no lay-up extract gets an empty dict and no
     # effect.
     netload_drag_layup_window_mask: bool = False
+
+    # ercot-259 ALLOCATION swap for the same net-load drag mandate (default
+    # off). The drag's driver curve produces ``floor_frac``, a FLEET capacity
+    # factor regressed on net-load (docs/ercot-st-gas-netload-drag-2026-06.md:
+    # the overnight CF of the ST_GAS fleet, "committed every day and every
+    # night, never fully off"). The applier then puts that one fraction on
+    # EVERY non-peak tranche's own pmax, which asserts something the driver
+    # never measured: that every plant is committed at that fraction in every
+    # hour. Physically the level is below any boiler's minimum stable load, and
+    # the fleet is lumpy rather than uniform — real commitment is some plants
+    # synchronized at min load and the rest dark.
+    #
+    # The consequence is measured, and it is IN-SAMPLE. On the ercot-256 keeper's
+    # own committed D-4 per-unit conduct rows, ``st_netload_drag`` is convicted
+    # of flooring a plant whose meter reads zero in EVERY scored year — 3452
+    # Lake Hubbard in 2021/2022/2023, 3491 Handley in 2024/2025 — and the
+    # convicted plant is that year's LEAST-COMMITTED plant, five years for five
+    # (CAMPD online fraction). It is invisible to the rubric in 2023-2025 only
+    # because rule 16's escalation, hence _d4_provenance, fires solely above the
+    # 30 % C8 cap. Magnitude in 2021: the uniform floor holds Lake Hubbard at
+    # 1.22 TWh against 0.36 TWh measured (3.4x OVER) while holding V H Braunig,
+    # the fleet's genuine workhorse, at 1.50 against 3.72 (0.40x UNDER). The
+    # error runs both ways, which is what identifies it as an ALLOCATION defect
+    # rather than a level one — the curve itself is exonerated, sitting inside
+    # the 2023-25 spread at every net-load bin in 2021, a year it was never
+    # fitted on (docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md §2).
+    #
+    # When True the SAME hourly mandate — measured as the MW the pro-rata path
+    # actually DELIVERS, sum_g min(floor_frac, basis_g) x pmax_g, NOT the nominal
+    # floor_frac x sum(pmax) the pro-rata path clips away 20-40 % of — over
+    # exactly the same rows, is FILLED cheapest-first instead of spread pro-rata: every
+    # plant's commitment block (mustrun, then committed) before any economic
+    # tranche, ascending bid heat rate within a rank, each row absorbing up to
+    # its own availability- and lay-up-net eligible capacity and the marginal
+    # row taking the remainder. Rows past the fill point carry NO floor. So the
+    # merit order decides WHICH units are committed, each at a physically
+    # meaningful block, and the expensive least-committed plant stops being
+    # forced. Pre-solve delta: 3452 2021 forced 1.22 -> 0.01 TWh, 3491 2024
+    # 2.00 -> 0.53, 3491 2025 2.02 -> 0.57, Braunig 2021 1.50 -> 2.83.
+    #
+    # Rule 19 [R-ONE-MECH]: no new floor, no membership change, no second
+    # mechanism id — ONLY the level source per row changes, the same swap
+    # ``st_gas_mustrun_level_p25`` already makes on its own floor. The hourly
+    # aggregate is preserved by construction, so the driver's identification is
+    # untouched. Rule 21 [R-DOF]: ZERO free parameters — the block sizes are the
+    # frozen binning artifact's existing tranche capacities and the order is the
+    # fleet's own bid heat rates; nothing is derived, fitted or swept.
+    # Rule 25 [R-ISO-SCOPE]: no per-ISO number exists to transfer; the mechanism
+    # reads each ISO's own fleet.
+    # Rule 13 [R-MEASURED]: forward-native, unlike the lay-up mask above — a
+    # forecast year has heat rates, a net-load and a tranche structure, so the
+    # fill regenerates and responds to changed conditions. It is NOT gated to
+    # backcast mode.
+    # Rule 1 [R-STRUCT]: the floor stays a per-row min_gen under the same mech
+    # id precisely so D-2/D-4 attribution and the C8 forced share stay
+    # measurable. The obvious alternative — one class-level LP constraint per
+    # hour, letting the LP pick the units — was REFUSED BEFORE BUILD for the
+    # opposite reason: ``run_d2`` attributes forced energy from the per-row
+    # min_gen/mechanism arrays, so a class row carries no mech id, ST_GAS forced
+    # share would report ~0 %, and C8 would pass because the diagnostic went
+    # BLIND rather than because the forcing stopped.
+    # KNOWN WEAKNESS, reported and not tuned around: heat rate is an imperfect
+    # commitment proxy. Spearman(heat rate, CAMPD online fraction) over the
+    # ERCOT ST_GAS fleet is -0.714 / -0.833 / -0.690 in 2021/2023/2024 but only
+    # -0.286 (p = 0.49) in 2025, where R W Miller — the most expensive plant in
+    # the fleet — ran 88.0 % of hours. Cost order is right in three of four
+    # years and materially wrong in one; the owner selected it (ruling
+    # 2026-09-08) over a measured pooled online-fraction ordering, which the
+    # same measurement shows is not year-stable either.
+    netload_drag_merit_allocation: bool = False
 
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated). In the missed tail hours the model offers online CT/peaker

@@ -3761,6 +3761,7 @@ def solve_and_persist(
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
+    netload_drag_merit_allocation: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -5150,6 +5151,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 netload_drag_layup_window_mask=netload_drag_layup_window_mask
             )
+        if netload_drag_merit_allocation is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                netload_drag_merit_allocation=netload_drag_merit_allocation
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5602,6 +5607,7 @@ def solve_and_persist(
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             netload_drag_layup_window_mask=netload_drag_layup_window_mask,
+            netload_drag_merit_allocation=netload_drag_merit_allocation,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6560,6 +6566,7 @@ def solve_and_persist(
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
+        "netload_drag_merit_allocation": netload_drag_merit_allocation,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8786,6 +8793,7 @@ def run_replay_bundle(
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
+    netload_drag_merit_allocation: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
@@ -8968,6 +8976,11 @@ def run_replay_bundle(
         # replay path, so the single-field A/B arm is the keeper's recorded
         # recipe plus one flag.
         kwargs["netload_drag_layup_window_mask"] = netload_drag_layup_window_mask
+    if netload_drag_merit_allocation is not None:
+        # ercot-259: the net-load drag's MERIT ALLOCATION rides the same
+        # replay path, so the single-field A/B arm is the keeper's recorded
+        # recipe plus exactly this one flag.
+        kwargs["netload_drag_merit_allocation"] = netload_drag_merit_allocation
     if egrid_family_heat_rates is not None:
         # nyiso-184: the eGRID family heat-rate construction rides the same
         # replay path, so the single-field A/B arm is the keeper's recorded
@@ -11981,6 +11994,29 @@ def main() -> None:
         "postings are a different time/area aggregation under one series name.",
     )
     parser.add_argument(
+        "--netload-drag-merit-allocation",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Fill the net-load reliability-drag mandate CHEAPEST-FIRST instead "
+        "of pro-rata (ScenarioConfig.netload_drag_merit_allocation, ercot-259). "
+        "The driver curve produces a FLEET capacity factor; the applier spreads "
+        "it across every non-peak tranche's own pmax, which asserts that every "
+        "plant is committed at that fraction in every hour — a level below any "
+        "boiler's minimum stable load, and a uniform answer to a lumpy "
+        "question. Measured consequence on the ERCOT keeper's own committed D-4 "
+        "conduct rows: the plant convicted of being floored while its meter "
+        "reads zero is that year's LEAST-committed plant in all five scored "
+        "years, and in 2021 the floor holds Lake Hubbard at 1.22 TWh against "
+        "0.36 TWh measured while holding V H Braunig at 1.50 against 3.72. "
+        "This flag keeps the SAME hourly mandate over the SAME rows and only "
+        "changes its distribution: commitment blocks (mustrun, then committed) "
+        "before any economic tranche, ascending bid heat rate within a rank, "
+        "the marginal row taking the remainder and rows past the fill point "
+        "carrying no floor. Same mechanism id and still a per-row min_gen, so "
+        "D-2/D-4 attribution and the C8 forced share stay measurable. Zero free "
+        "parameters. Forward-native (not backcast-gated).",
+    )
+    parser.add_argument(
         "--netload-drag-layup-window-mask",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13036,6 +13072,7 @@ def main() -> None:
                 else None
             ),
             netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
+            netload_drag_merit_allocation=args.netload_drag_merit_allocation,
             campd_outage_merit_order_guard=(
                 args.campd_outage_merit_order_guard
                 if "--campd-outage-merit-order-guard" in sys.argv
@@ -13447,6 +13484,7 @@ def main() -> None:
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
         netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
+        netload_drag_merit_allocation=args.netload_drag_merit_allocation,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
