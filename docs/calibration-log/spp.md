@@ -664,3 +664,25 @@ solve path regenerated or committed (SPP-46 is solving against keeper-3 in paral
 FINDING: docs/handoffs/FINDING-spp-48-2026-09-07.md
 
 ---
+
+## 2026-09-08 — spp-16: SPP-49 (Fable) — BOTH INPUT-SEAM REPAIRS LANDED REPO-WIDE (owner ruling P19) — the EIA-923 own-month gas-price plausibility screen as a REGISTERED GATE (default ON, 18 armed backcast keys re-key, 0 off-target) and the simple-cycle heat-rate floor as a CONSTRUCTION; zero LP; SPP-46's attribution reproduced pre and post; SPP / MISO / PJM owe re-solves`
+
+- **Lane** SPP-49 · `docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md` (`395c9417`, before either seam file was edited) ·
+  `FINDING-spp-49-2026-09-08.md` · `docs/handoffs/spp49/`. **No solve, no bundle, no registration, no keeper shard,
+  status, bench, sidecar or log touched.**
+- **Adjudication**: seam 1 (`plant_prices.py`) = registered gate `f923_gas_price_plausibility_screen`, default ON via the
+  (b′-1) route, because a desk can legitimately want its raw series (Permian / Waha); seam 2 (`eia860.py`) =
+  construction, because a sub-9.0 non-CHP simple-cycle rate has no reading (CHP plants excluded post-PRECOMMIT, rule 19).
+- **Data**: EIA `N3045<ST>3` for every state + US, 2018–2026 (`data/raw/gas-prices/eia_delivered_gas_electric_power_by_state_monthly_2018-2026.csv`).
+- **Keys**: 18 move ex ante = 18 ex post, all armed backcast configs (six keepers), 0 off-target; seam 2 zero by
+  arithmetic, epoch text routed (R-3).
+- **SPP footprint** (2024): 60 low / 11 negative / 25 high plant-months on 19 plants; Pioneer 3.43 → 9.0. Attribution
+  reproduced: Pioneer +5,013 → +1,650, CT fuel_low +8,963 → +3,223, ST_GAS fuel_low +6,136 → +1,493, clean cohorts put.
+  Realised pooled re-clearing 2024 CT −8.5 / ST −4.1 / CC +5.6 / COAL +6.6 TWh at +4.7 % level; 2025 CT −8.8; 2023 CT −3.6.
+- **Other ISOs**: MISO CT +3.6 / +2.5 / +1.0 TWh at −1.5 / −2.2 / −1.4 % (the HIGH tail, opposite sign); PJM small; CAISO /
+  NEISO / NYISO inert on seam 1 (hub overlay / all in band); ERCOT unreachable and inert. **Re-solves owed: SPP (SPP-50),
+  MISO, PJM; CAISO / NYISO on the letter; NEISO reproduces; ERCOT nothing.**
+- **Cells**: `f923_gas_price_plausibility_screen` row added; SPP **K** (input path), MISO / PJM **U**, CAISO / NEISO /
+  NYISO **I**, ERCOT **·**.
+- **Routed**: R-1 CLI flag, R-2 the `iso_monthly_gas_prices` consumer, R-3 epoch text, R-4 Harrington, R-5 Permian
+  reference, R-6 Pioneer nameplate, R-7 F923 state scope, R-8 MISO high-tail volume census, R-9 PJM pin.

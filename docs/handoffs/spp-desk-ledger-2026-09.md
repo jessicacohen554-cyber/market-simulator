@@ -10,6 +10,56 @@ that finds them (§6).
 
 ## 0. Sittings (newest first)
 
+### 0o. r#14 — sitting #14: SPP-49 LANDED — both input seams repaired REPO-WIDE at zero LP, the key census exact; ALL SEVEN GATES GREEN; SPP-50 issued (2026-09-08, main HEAD `d1b8d1bf`)
+
+- Pin `d1b8d1bf` (the r#13 desk branch is merged; nothing ahead). One lane graded.
+- **SPP-49 LANDED — P19 EXECUTED REPO-WIDE, ZERO LP** (PR #5640, `FINDING-spp-49-2026-09-08.md`).
+  - **The open adjudication, decided per seam with its criterion stated** (which is what it was left open
+    for): **seam 1 is a REGISTERED GATE** — `f923_gas_price_plausibility_screen`, **default ON**, declared
+    at `("2026-09-08", …, "True")` — because a desk can legitimately want its own raw series; **seam 2 is
+    a CONSTRUCTION** (`_apply_simple_cycle_hr_floor`, beside the existing `_apply_egrid_boundary_hr_repairs`
+    CC ceiling), because a sub-9.0 eGRID rate on a non-CHP simple-cycle plant is not a reading anyone would
+    want. The lane took the harder half of each call rather than the convenient one.
+  - **THE CENSUS IS THE LANE'S BEST WORK: ex ante = ex post, exactly.** The PRECOMMIT predicted **18 keys
+    move, 0 off-target**, with `scenarios.py` untouched; the landed tree moved **the identical set and the
+    identical key pairs** (CAISO 2, MISO 1, NEISO 5, NYISO 7, PJM 2, SPP 1 — six of them designated
+    keepers), 0 forecast, 0 hindcast, 0 ERCOT. Live confirmation on real payloads: SPP's and NYISO's keeper
+    configs take new keys; **ERCOT's is byte-identical to the pre-edit tree**. Seam 2 added two names to
+    `constants.py` and moved zero values (`solve_surface_register.py --diff` → "0 moved, 2 added").
+  - **SPP-46's attribution reproduced, pre and post, and it is the proof the repair is the right one.**
+    Pre-repair the lane reproduces SPP-46 **to the GWh** on every named row (Pioneer +5,013; Harrington
+    +6,136; Mustang CC +2,222). Post-repair those rows move **−3,362 / −5,739 / −4,643 GWh** and the
+    **CLEAN cohorts stay put** (ST_GAS clean +6 GWh on −6,062). Same rows, same direction, same order —
+    at 60–75 % of the pre-registered magnitude, with the reason given (at the reference price these plants
+    are still in merit above ~$20/MWh, so the in-merit metric moves less than the cost does). The ST_GAS
+    clean −6.1 TWh is untouched by both seams, exactly as SPP-46 said, and stays SPP-46 R-5.
+  - **One narrowing, made before any number was cited and disclosed as such:** CHP plants are excluded
+    from seam 2. The first rebuild put 81 CAISO CT_CHP rows / 631 MW at 9.9 instead of their 10.3–13.5
+    topping-corrected rates — eGRID's cogen rate is STEAM-CREDITED, so a sub-9 value there is the published
+    convention, not an impossibility, and the model already owns it (`_correct_chp_steam_credit_hr`,
+    `measured_chp_heat_rates`). Clamping first would have pre-empted that chain: **two mechanisms on one
+    row, rule 19**. Pioneer and every plant SPP-46 named are non-CHP and unaffected.
+  - **Who owes a re-solve, in the lane's own line:** **SPP** (→ SPP-50), **MISO** and **PJM** have keepers
+    whose INPUTS moved; **CAISO / NYISO / NEISO** keys move but their keeper inputs are byte-identical or
+    the move is ≤ 167 MW / 3.7 MW of clamped CT — owed on the letter of a moved key, inert in substance,
+    their desks' cadence; **ERCOT owes nothing** (neither seam reaches its keeper, no ERCOT key moved).
+- **GATES at the pin: ALL SEVEN EXIT 0.** `check_gate_a_provenance` is green again — the ERCOT and MISO
+  rows red at r#13 were re-keyed by their own desks, so **R-av is DISCHARGED** without this desk acting,
+  which is what routing is for.
+- **DESK RECORD DUTIES EXECUTED:** plan §5 row + §9 index, `docs/calibration-log/spp.md` **spp-16**
+  appended from the FINDING's own `## Log entry` block (renumbered at the desk — the lane proposed
+  `spp-13`, already taken by SPP-46; **E-12's collision is now a per-sitting certainty, not a surprise**),
+  this ledger, the CHANGELOG. The lane wrote its own matrix row + shard cells (its own files, §8.0 rule 2)
+  and touched no shared record.
+- **NO P15 CANDIDATE** — nothing was solved. Keeper-3 stands, NOT-YET unchanged.
+- **ISSUED: SPP-50** [FABLE] — the batched re-baseline P19b ruled: **ONE** full-span invocation carrying
+  SPP-48's wind repair (its parquets regenerated as the lane's first act) AND both SPP-49 seams, with a
+  four-leg promotion rule pre-declared, the identity leg on the P0 objective and LP input arrays (never a
+  warm-started P1 — E-8), keeper-3's 1.106808 wind identity re-verified, SPP-49 §0.5's attribution deltas
+  as an acceptance leg, and the promotion served to the owner as **P15**, never taken by the lane.
+- Next sitting: grade SPP-50 and serve its P15; route SPP-49 R-1 (the CLI flag) and R-2 (the third,
+  still-unscreened F923 consumer) once the re-baseline is settled; SPP-54b after SPP-50.
+
 ### 0n. r#13 — sitting #13: SPP-46 / 47 / 48 ALL LANDED — **the C1-2024 gas split is a measured-INPUT defect, not a mechanism**; the wind LEVEL rule repaired; P16 executed. Card P19 served (2026-09-08, main HEAD `a667073f`)
 
 - Pin `a667073f` (the r#12 desk branch was merged into `main`; branch fast-forwarded, nothing ahead).
@@ -625,6 +675,8 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | SPP-51 priced seams MISO / AECI / ERCOT | W5 | Fable | spp | **LANDED 2026-09-07 — ARM KILLED AT RULE-29 PHASE 0, NO LP SPENT** (three adjudications made: per-ISO anchor map, the HH+basis flat-HR correction, ERCOT 835 MW on rule 14; the mechanism's own identity *flow follows spread* FAILS on both MISO seams in every year — sign agreement 0.436–0.501 vs a 0.55 bar, corr(spread, import) ≈ 0) | `claude/spp-51-priced-seams-hqgei3` | #5573 | `FINDING-spp-51-2026-09-07.md` |
 | SPP-60 T1-H recipe + forecast intake (Q59) | W6 | Fable | spp | **LANDED 2026-09-07** — T1-H `spp-2021-2025-realized-t1h-spp60` registered (`spp-t1h`: HOLD, FC-3 FAIL — retire 0.744 vs 1.994 GW, additions 0 vs 13.9 GW; I7 + I12 declared); board legs (b)/(c) filled from the measured result; gap table + intake (capacity_actuals_spp, confirmed-retirements Tolk 1/2, the 2020-vintage generators parquet lacked every SWPP row) | `claude/spp-60-t1h-recipe-hindcast-x67gbz` (stem `claude/spp-60-t1h-recipe-w3pd`) | — | `docs/handoffs/FINDING-spp-60-2026-09-07.md` |
 | SPP-53 N↔S TTC derive (P13 — W5 → W3) | W3 | Fable | spp | **LANDED 2026-09-07** — `ttc_mw` 48,700 → **3,400 MW** (FCITC, ex-ante construction); S→N set 4,206 → SPP-58 | `claude/spp-53-ttc-link-limit-67e3yf` (stem `claude/spp-53-ns-ttc-f6dz`) | #5374, #5383, #5393 | `docs/handoffs/FINDING-spp-53-2026-09-07.md` |
+| SPP-49 P19 the two shared input seams | W5 | Fable | shared | **LANDED 2026-09-08 — BOTH SEAMS REPAIRED REPO-WIDE, ZERO LP**; seam 1 a registered gate (`f923_gas_price_plausibility_screen`, default ON), seam 2 a construction; ex-ante key census = ex-post exactly (18 / 0 off-target); SPP-46's attribution reproduced to the GWh pre and moved as predicted post, clean cohorts put; CHP excluded from seam 2 (rule 19); SPP / MISO / PJM owe re-solves, ERCOT none | `claude/spp-49-input-seam-repairs-arx1x2` | #5640 | `FINDING-spp-49-2026-09-08.md` |
+| SPP-50 the batched re-baseline (wind LEVEL + both seams) | W5 | Fable | spp | **ISSUED r#14** · promotion = P15 | — (stem `claude/spp-50-rebaseline-<4>`) | — | — |
 | SPP-46 the C1-2024 gas split (SPP-44 R-17) | W5 | Fable | spp | **LANDED 2026-09-07 — BOTH CANDIDATES KILLED AT PHASE 0, ZERO LP**; the object is a measured-input plausibility defect on three seams (EIA-923 own-month prices / eGRID plant heat rates / Harrington's fuel vintage) plus a self-commitment residual; R-1…R-8 routed | `claude/spp-46-gas-split-object-6i09yn` | #5602 | `FINDING-spp-46-2026-09-07.md` |
 | SPP-47 P16 reference incomplete-fuel swap rule | W5 | Opus | shared | **LANDED 2026-09-07** — one executable line, zero new parameters; 5 specified cells to the digit + a SIXTH (NYISO 2022 oil, required by rule 22's data-vs-score clause); every determination and the whole scorer report byte-identical; no bench part STALE | `claude/spp-47-reference-vintage-rule-3k1xx2` | #5599 | `FINDING-spp-47-2026-09-07.md` |
 | SPP-48 P17 wind-shape per-zone LEVEL rule | W5 | Fable (ran as; re-assigned Opus in-sitting after launch) | spp | **LANDED 2026-09-07** — R-LEVEL in `scripts/lib/wind_shape.py`; `_SAMPLES_PER_ZONE` deleted (net −1 free parameter); partition consistency proved; SPP-54's C-3 STOP dissolved (h8509 still −75 MW, reported); **both SPP's and MISO's keepers owed a re-baseline**; solve-path parquets deliberately not regenerated | `claude/spp-48-wind-level-rule-dn2l1r` | #5592 / #5601 | `FINDING-spp-48-2026-09-07.md` |
@@ -716,10 +768,14 @@ Status vocabulary: CHARTERED · ISSUED · RUNNING · LANDED · KILLED · HELD ·
 | R-as | **SPP-55 R-23/R-24: a LIVE reserve family would need two things this design does not carry** — an intermittent-class MSSC limb (the requirement reads 756–1,320 MW against ~1,480 posted in the MSSC unit's refuelling months, because SPP's MSSC then passes to a wind cluster or an SMCE), and `SPP_BA_CR_REQUIREMENT_RATIO` **by year** from the posted RSG record (0.973 → 0.954 → ~0.90–0.97) rather than one scalar. Immaterial while the family is inert | SPP-56 |
 | R-at | **SPP-55 R-25: the RTBM-OR cleared-reserve archives** (`operating-reserves` 2023.zip / 2024.zip, ~47 MB each) were read to scratch and NOT landed; if SPP-56 wants them as a measured requirement input (the `miso_measured_reserve_requirements` analogue) that is a data-intake row on SPP-14's documented route | SPP-56 / data intake |
 | R-au | **SPP-60 §4: the T1-H's own routed set** — the 2021 wind shape is absent (flat 0.36 fallback; inert for this T1-H, bites any solve-year-weather arm), `demand_growth_vintage` is impossible for SPP (no 2021 / 2023 vintage entry, so *realized* is the only T1-H variant), and two `regenerate_clean.py` curation failures in this container (`lmp` CAISO `KeyError: 'MGHG'`; `emissions-unit-annual` OOM) are **not on the SPP T1-H path** | capx / CAISO / data owners as named in FINDING-spp-60 §4 |
-| R-av | **`check_gate_a_provenance` EXIT 1 at this desk's r#13 pin, on TWO rows and neither is SPP's**: ERCOT cites the superseded `2026-09-05-ercot248-two-config-keeper` (live `2026-09-08-ercot256-drag-layup-mask`); MISO cites `2026-09-07-miso-233-spp-hourly` (live `2026-09-07-miso-243-spp-pairing`) | ERCOT / MISO promoting lanes (Q34 standing re-key duty) or capx | seen at this desk's pin; not this desk's files (rule 25) |
+| R-av | **DISCHARGED r#14** (both rows re-keyed by their own desks; gate EXIT 0). ~~`check_gate_a_provenance` EXIT 1 at this desk's r#13 pin, on TWO rows and neither is SPP's**: ERCOT cites the superseded `2026-09-05-ercot248-two-config-keeper` (live `2026-09-08-ercot256-drag-layup-mask`); MISO cites `2026-09-07-miso-233-spp-hourly` (live `2026-09-07-miso-243-spp-pairing`) | ERCOT / MISO promoting lanes (Q34 standing re-key duty) or capx | seen at this desk's pin; not this desk's files (rule 25) |
 | R-aw | **SPP-48 R-3: MISO's keeper needs a wind re-baseline** on the repaired per-zone LEVEL rule, measured on MISO's own six zones from MISO's own EIA-860 rows (no SPP number crosses). The repaired builder is already on `main`; MISO's solve-path parquets are not regenerated, so nothing has changed for MISO until its desk acts | MISO calibration desk | the delta is measured and in `FINDING-spp-48-2026-09-07.md`, so MISO's desk acts on a number, not a claim |
 | R-ax | **SPP-46 R-4 / R-ad (now doubly evidenced): Harrington 6193's fuel vintage.** Carried as `gas_st` at $1.48 in 2023–24 while CAMPD burns coal on all three boilers (3.54 / 2.51 TWh gross), converting in 2025 — worth +5.8 TWh of "gas" steam in the 2024 model AND 3.44 / 2.23 TWh of coal generation grouped as ST_GAS in the bench | fleet lane (the fuel-switch-date seam is not SPP-only) | SPP's copy of the object is inside card P19's repair lane; the underlying fleet seam is not |
 | R-ay | **SPP-46 R-6 / R-7 / R-8**: the 2023 clean-CT +5.0 TWh over-run on the HIGH-gas side of the same seam (answered by R-1's own census on 2023); every SPP fleet row carries an EMPTY `state`, which would void a state-keyed plausibility screen (so R-1 must key its reference on the F923 frame's `state`); and CO CAMPD extracts are absent, J Lamar Stall 56565 has no CAMPD series | the P19 repair lane (R-6, R-7) / any CAMPD-based SPP derive (R-8) | R-7 is a prerequisite, not a footnote — it is the difference between a screen that works and one that silently does nothing |
+| R-az | **SPP-49 R-1: the CLI flag `--no-f923-gas-price-plausibility-screen`** is not yet threaded into `run_calibration.py` / `run_calibration_full.py` (nor onto `--replay-bundle`), the D76 pattern. Verified at this desk's pin: neither script exposes a generic `--set`, so **the pre-repair posture is currently unreachable from the CLI** | SPP-DESK (a small lane, after SPP-50 settles) | it is a governance gap, not a solve gap: a registered default-ON gate whose `False` branch no runner can select |
+| R-ba | **SPP-49 R-2: the THIRD F923 consumer is still unscreened** — `plant_prices.iso_monthly_gas_prices` / `_iso_monthly_fuel_prices`, the ISO-month volume-weighted series `model/interchange/caiso.py` reads. The same implausible plant-months reach it by a different path | CAISO desk / the interchange lane | the repair is landed at the plant seam only; this is a second seam, not a second version of the same one |
+| R-bb | **SPP-49 R-5: a hub-level reference for Permian-connected plants** (Elk 58835, Mustang 56326 / 55065, Jones 3482 in SPP-South; ERCOT West if it ever arms the seam) — the TX state blend is defined on a different boundary than Waha gas, which is rule 14's declared misalignment exception, so the screen's fallback is coarse exactly where SPP's worst rows are | SPP-DESK (a reconciled reference is better than either extreme) | it does not un-do the repair; it would sharpen the fallback |
+| R-bc | **SPP-49 R-3 (cache-epoch ledger + scoped `SolveEpoch` for seam 2), R-7 (the F923 monthly-cost frame carries no PA / NJ / DE / CT / RI / ME / VT gas rows, so PJM and NEISO price gas from the pool), R-8 (the MISO high-tail cohort — 27 plants in 2024 whose screened months may be fixed-charge averages rather than real winter delivered costs) and R-9 (a capx surface pin advanced inside this lane's cause block)** | audit track / PJM / NEISO / MISO / capx desks as named in `FINDING-spp-49-2026-09-08.md` §6 | each is another desk's file; SPP-49 named them rather than reaching across |
 
 ---
 
@@ -792,7 +848,7 @@ Holds recorded: **r#1 — SPP-21 held** (LIFTED r#2 — writers on the matrix fi
 | r#12 | SPP-46 | `claude/spp-46-gas-split-object-<suffix>` | — | plan §8 W5-r#12 · SPP-46 | issued (SPP-44 R-17; phase 0 before any LP) |
 | r#12 | SPP-47 | `claude/spp-47-reference-vintage-rule-<suffix>` | — | plan §8 W5-r#12 · SPP-47 | issued under owner ruling P16 (repo-wide) |
 | r#13 | SPP-49 | `claude/spp-49-input-seam-repairs-<suffix>` | — | plan §8 W5-r#13 · SPP-49 | issued under owner ruling P19 (repo-wide) |
-| r#13 | SPP-50 | — | — | plan §8 W5-r#13 · SPP-50 | QUEUED under sequencing ruling P19b; issued when SPP-49 lands |
+| r#14 | SPP-50 | `claude/spp-50-rebaseline-<suffix>` | — | plan §8 W5-r#14 · SPP-50 | ISSUED (SPP-49 landed); one full-span invocation carries wind + both seams |
 | r#12 | SPP-48 | `claude/spp-48-wind-level-rule-<suffix>` | — | plan §8 W5-r#12 · SPP-48 | issued under owner ruling P17 (shared repair; landing held behind SPP-46). **Re-assigned FABLE → OPUS in-sitting** on the owner's question: the desk named the construction, so the lane adjudicates nothing |
 
 ---
