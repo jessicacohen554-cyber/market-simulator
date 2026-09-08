@@ -28,6 +28,115 @@ from market_sim.data.fleet.models import FleetArrays, Generator
 logger = logging.getLogger("market_sim.data.fleet")
 
 
+def _netload_drag_tranche_rank(unit_id: str) -> int:
+    """Return a tranche's commitment rank: 0 must-run, 1 committed, 2 economic.
+
+    The fill order for :func:`_netload_drag_merit_targets`. A plant's commitment
+    block is its contracted (``mustrun``) and measured minimum-stable-load
+    (``committed``, including the ``committed1``/``committed2``.. ramp slices)
+    tranches; everything below the excluded ``peak`` band is economic capacity a
+    plant only reaches once it is already synchronized. Ranking the blocks ahead
+    of every economic tranche is what makes the fill a COMMITMENT stack: units
+    are committed cheapest-first at minimum load, and only once the whole class
+    is committed does the mandate push anyone above it.
+    """
+    suffix = unit_id.rpartition("_")[2]
+    if suffix.startswith("mustrun"):
+        return 0
+    if suffix.startswith("committed"):
+        return 1
+    return 2
+
+
+def _netload_drag_merit_targets(
+    rows: list[int],
+    generators: list[Generator],
+    pmax: np.ndarray,
+    basis: dict[int, np.ndarray],
+    floor_frac: np.ndarray,
+) -> dict[int, np.ndarray]:
+    """Fill the class's mandated drag MW cheapest-first instead of pro-rata.
+
+    The ``merit_allocation`` limb of :func:`apply_netload_reliability_floor`
+    (ercot-259). The mandate for hour ``t`` is the MW the pro-rata path actually
+    DELIVERS that hour, ``sum_g min(floor_frac[t], basis[g][t]) x pmax[g]`` over
+    exactly the same ``rows`` — **the hourly aggregate is preserved by
+    construction**, and only its distribution changes. It is deliberately NOT
+    the nominal ``floor_frac[t] x sum(pmax)``: the pro-rata path clips every row
+    at its own eligible capacity and drops the shortfall, so the nominal figure
+    overstates what it puts on the system by 20-40 % on the real ERCOT fleet
+    (2021: 5.7671 TWh delivered against 7.1171 nominal), and targeting it would
+    fold a LEVEL change into an ALLOCATION swap.
+
+    Rows are filled in ``(commitment rank, bid heat rate, unit_id)`` order:
+    every plant's commitment block before any economic tranche
+    (:func:`_netload_drag_tranche_rank`), cheapest plant first within a rank,
+    unit id breaking ties so the order is deterministic. Each row absorbs up to
+    its own eligible capacity ``basis[g] x pmax[g]`` — the availability- and
+    lay-up-net basis the caller already built — and the marginal row takes the
+    remainder. A row past the fill point gets a zero target, i.e. no floor at
+    all, which is the point: the expensive, least-committed plants stop being
+    forced.
+
+    Heat rate is the merit signal because every unit in a reliability-drag class
+    burns the same fuel, so the tranche bid heat rate IS the cost ordering up to
+    a common fuel price. Its measured weakness is recorded rather than tuned
+    around: Spearman(heat rate, CAMPD online fraction) over the ERCOT ST_GAS
+    fleet is -0.714 / -0.833 / -0.690 in 2021/2023/2024 but only -0.286
+    (p = 0.49) in 2025, where R W Miller -- the most expensive plant in the
+    fleet -- ran 88.0 % of hours. Cost order is right in three of four years and
+    materially wrong in one (owner ruling 2026-09-08 selected it over a measured
+    pooled online-fraction ordering, which the same measurement shows is not
+    year-stable either).
+
+    Args:
+        rows: Indices of the class's non-``peak`` tranches, the caller's own
+            row set -- also the denominator of the preserved aggregate.
+        generators: The dispatch fleet, aligned row-for-row with ``pmax``.
+        pmax: Per-row nameplate capacity, shape ``(n_gen,)``.
+        basis: ``{row: (T,) eligible-capacity FRACTION}``, availability net of
+            any measured lay-up share, as built by the caller.
+        floor_frac: The driver curve's per-hour fleet capacity factor, ``(T,)``.
+
+    Returns:
+        ``{row: (T,) min-gen target MW}`` for every filled row. Rows that the
+        fill never reaches are absent (no floor), and an empty dict means the
+        class has no rows at all.
+    """
+    if not rows:
+        return {}
+    # The SAME hourly aggregate the pro-rata path actually DELIVERS (T,).
+    # Not ``floor_frac x sum(pmax)``: the pro-rata path clips each row at its own
+    # eligible capacity (``min(floor_frac, basis_g) x pmax_g``) and simply drops
+    # the shortfall wherever a plant is out or laid up, so the nominal mandate
+    # overstates what it puts on the system by 20-40 % on the real ERCOT fleet
+    # (2021: 5.7671 TWh delivered against a 7.1171 TWh nominal). Targeting the
+    # nominal figure would make this a LEVEL change as well as an allocation
+    # one -- two mechanisms on one gate (rule 19 [R-ONE-MECH]) and an
+    # unfalsifiable A/B. Matching the delivered figure hour by hour makes the
+    # swap provably aggregate-neutral, so the ONLY thing that changes is WHICH
+    # plants carry the mandate -- exactly the diagnosed defect and nothing else.
+    target_mw = np.zeros_like(floor_frac, dtype=float)
+    for g in rows:
+        target_mw += np.minimum(floor_frac, basis[g]) * float(pmax[g])
+    if not float(target_mw.max()) > 0.0:
+        return {}
+    order = sorted(
+        rows,
+        key=lambda g: (
+            _netload_drag_tranche_rank(str(generators[g].unit_id)),
+            float(generators[g].heat_rate),
+            str(generators[g].unit_id),
+        ),
+    )
+    # (n, T) eligible MW per row, then a vectorized cumulative fill: no Python
+    # loop over hours anywhere (rule 2 [R-VECTOR]).
+    block = np.stack([basis[g] * float(pmax[g]) for g in order])
+    filled_below = np.cumsum(block, axis=0) - block
+    take = np.clip(target_mw[np.newaxis, :] - filled_below, 0.0, block)
+    return {g: take[i] for i, g in enumerate(order) if float(take[i].max()) > 0.0}
+
+
 def apply_netload_reliability_floor(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -41,6 +150,7 @@ def apply_netload_reliability_floor(
     exclude_plant_codes: frozenset[int] = frozenset(),
     mech_id: int = MECH_CT_NETLOAD_DRAG,
     layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
+    merit_allocation: bool = False,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -81,6 +191,37 @@ def apply_netload_reliability_floor(
     available to the LP's own economics); only the FORCING is confined. ``None``
     (or a plant with no series) is byte-identical to the un-masked clip.
 
+    ``merit_allocation`` (``config.netload_drag_merit_allocation``, ercot-259)
+    replaces the ALLOCATION of the same mandated MW, and nothing else — same
+    driver curve, same hourly aggregate, same ``mech_id``, no second floor
+    (rule 19 [R-ONE-MECH], the ``st_gas_mustrun_level_p25`` pattern: only the
+    level source changes). ``floor_frac`` is a FLEET capacity factor, so
+    spreading it across every plant's ``pmax`` asserts that every plant is
+    committed at that fraction in every hour — physically it is below any
+    boiler's minimum stable level, and it over-forces the least-committed plant
+    while under-forcing the workhorse. Measured on the ERCOT keeper's own
+    committed D-4 conduct rows, the plant convicted of being floored while its
+    meter reads zero is that year's LEAST-committed plant in all five scored
+    years (3452 in 2021/2022/2023, 3491 in 2024/2025), and in 2021 the uniform
+    floor holds Lake Hubbard at 1.22 TWh against 0.36 TWh measured (3.4x over)
+    while holding V H Braunig at 1.50 against 3.72 (0.40x under). When True the
+    same hourly fleet target ``floor_frac x sum(pmax)`` is instead FILLED
+    cheapest-first across the class's own tranches — commitment blocks
+    (``mustrun``, then ``committed``) before any economic tranche, ascending
+    bid heat rate within a rank — so the merit order decides WHICH units are
+    committed and each carries a physically-meaningful block. The target is the
+    pro-rata path's own DELIVERED MW hour by hour, not the nominal
+    ``floor_frac x sum(pmax)``, so the swap is provably aggregate-neutral and
+    cannot double as a level knob. Zero free
+    parameters: the block sizes are the frozen binning artifact's existing
+    tranche capacities and the order is the fleet's own heat rates (rules
+    21/23). The floor stays a per-row ``min_gen`` under the same mechanism id,
+    so D-2/D-4 attribution and the C8 forced share stay fully measurable — the
+    reason a class-level LP constraint was refused instead (it would carry no
+    per-row mech id, so ST_GAS forced share would report ~0 % and C8 would pass
+    because the diagnostic went blind, not because the forcing stopped).
+    See ``docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md``.
+
     Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
     applied, ``False`` (byte-identical) when the class has no reliability units.
     """
@@ -117,14 +258,15 @@ def apply_netload_reliability_floor(
     mech = ensure_mechanism(fleet_arrays)
     pmax = fleet_arrays.pmax
     avail = fleet_arrays.availability
+    # Never floor above the hour's available capacity, so the LP stays feasible
+    # (the drag can never manufacture unmet demand). Under the measured lay-up
+    # window mask (ercot-256) the eligible-capacity basis is additionally net of
+    # the plant's measured economic-lay-up share, so the floor cannot bind
+    # inside a window the model's own outage pipeline classified as
+    # not-operating (rule 17 [R-FLOOR-WINDOW]).
+    basis: dict[int, np.ndarray] = {}
     for g in rows:
-        # Never floor above the hour's available capacity, so the LP stays
-        # feasible (the drag can never manufacture unmet demand). Under the
-        # measured lay-up window mask (ercot-256) the eligible-capacity basis is
-        # additionally net of the plant's measured economic-lay-up share, so the
-        # floor cannot bind inside a window the model's own outage pipeline
-        # classified as not-operating (rule 17 [R-FLOOR-WINDOW]).
-        basis = avail[g, :]
+        b = avail[g, :]
         if layup_removed:
             lu = layup_removed.get(
                 (
@@ -133,8 +275,19 @@ def apply_netload_reliability_floor(
                 )
             )
             if lu is not None:
-                basis = np.maximum(0.0, basis - np.asarray(lu, dtype=float)[:hours])
-        target = np.minimum(floor_frac * pmax[g], basis * pmax[g])
+                b = np.maximum(0.0, b - np.asarray(lu, dtype=float)[:hours])
+        basis[g] = b
+
+    if merit_allocation:
+        targets = _netload_drag_merit_targets(
+            rows, generators, pmax, basis, np.asarray(floor_frac, dtype=float)
+        )
+    else:
+        targets = {
+            g: np.minimum(floor_frac * pmax[g], basis[g] * pmax[g]) for g in rows
+        }
+
+    for g, target in targets.items():
         raised = fleet_arrays.min_gen[g, :] < target
         fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
         mech[g, raised] = mech_id
@@ -291,6 +444,8 @@ def apply_gas_st_netload_drag_floor(
         exclude_plant_codes=ST_GAS_PEAKER_PLANTS,
         mech_id=MECH_ST_NETLOAD_DRAG,
         layup_removed=layup_removed,
+        # ercot-259: allocation-only swap of the SAME mandated MW (rule 19).
+        merit_allocation=bool(getattr(config, "netload_drag_merit_allocation", False)),
     )
 
 
@@ -356,6 +511,8 @@ def apply_ct_netload_drag_floor(
         ramp_window=(config.ct_drag_ramp_start, config.ct_drag_ramp_end),
         mech_id=MECH_CT_NETLOAD_DRAG,
         layup_removed=layup_removed,
+        # ercot-259: allocation-only swap of the SAME mandated MW (rule 19).
+        merit_allocation=bool(getattr(config, "netload_drag_merit_allocation", False)),
     )
 
 

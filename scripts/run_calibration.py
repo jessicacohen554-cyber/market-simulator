@@ -731,6 +731,7 @@ def run_year(
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
+    netload_drag_merit_allocation: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1644,6 +1645,15 @@ def run_year(
         # _BACKCAST_ONLY_OVERLAY_FIELDS (rule 13 [R-MEASURED]).
         config = config.with_overrides(
             netload_drag_layup_window_mask=netload_drag_layup_window_mask
+        )
+    if netload_drag_merit_allocation is not None:
+        # ercot-259: the net-load drag mandate's MERIT ALLOCATION. Same driver,
+        # same rows, same hourly aggregate and the same mechanism id — only the
+        # distribution across tranches changes (rule 19 [R-ONE-MECH]), so it
+        # rides this same replay path as a single-field A/B arm. Forward-native,
+        # so it is NOT in _BACKCAST_ONLY_OVERLAY_FIELDS.
+        config = config.with_overrides(
+            netload_drag_merit_allocation=netload_drag_merit_allocation
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(
