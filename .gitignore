@@ -1475,3 +1475,5 @@ results/capx-d87-screen/
 # (class_hourly_<year>, system_<year>, reserve_family_<year>) to be committed,
 # exactly as the miso243_sppair_K entry above does it.
 results/calibration/spp50_rebaseline/
+# nyiso-220 screen bundles (rule 29(c): must not reach main; rule 31: NOT deleted)
+results/calibration/nyiso220_screen*/
