@@ -125,6 +125,9 @@ Python 3.11.15, `uv sync` at `uv.lock`, no `-m` filter, no `-n` xdist. `data/raw
 |---|---|
 | **my HEAD `d1b8d1bf`** | **28 failed**, 7156 passed, 56 skipped, 1 xfailed, 539 subtests passed — 1014.02 s |
 | first D89 lane, repaired arm at `4e4ad90d` | 30 failed, 7124 passed |
+| **re-run after this lane's edits** | **28 failed**, 7156 passed, 56 skipped, 1 xfailed, 539 subtests passed — 960.16 s |
+
+The charter's step 5 re-run is the third row: the failed-id set is **byte-identical** to my HEAD measurement (`diff` empty), which is the direct evidence that the comment-only edit is inert. **0 of 28 are D62/D74.**
 
 **Fixed 0, newly broken 0 — there was nothing left to fix.** The 27 were already green when I arrived; I proved they
 are green *for the right reason* rather than assuming it. Of the D62/D74 set, **0 of 27 appear in my failed list.**
