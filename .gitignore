@@ -1478,3 +1478,6 @@ results/calibration/spp50_rebaseline/
 # nyiso-220 screen bundles (rule 29(c): must not reach main; rule 31: NOT deleted)
 results/calibration/nyiso220_screen*/
 results/calibration/nyiso220_arm*/
+
+# ercot-259 screen probes (rule 29(c) keep-out-of-main; rule 31 keep-on-disk)
+results/calibration/ercot259_screen_*/
