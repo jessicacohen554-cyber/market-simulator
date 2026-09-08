@@ -472,6 +472,30 @@ def derive_spp_neighbour_hourly(
     spec = {n.name: n for n in INTERFACE_NEIGHBORS["MISO"]}["SPP"]
     notes: list[str] = []
     work = g.join(load_spp_hub_da(hub), how="left")
+    # CORRECTNESS PIN (miso-243, rule 23 [R-FROZEN-DERIVE]).  ``load_spp_hub_da``
+    # is ``(year, hour)``-MultiIndexed.  A caller that passes ``df.loc[year]``
+    # -- whose index is ``hour`` ALONE -- makes pandas PARTIAL-join on the shared
+    # level, replicating each of the year's 8,760 rows against ALL THREE hub
+    # years, so the Q-Q quantile is drawn from a three-year MIXTURE of the spread
+    # instead of the year's own.  (The flow exceedance TARGETS are unaffected:
+    # replicating a sample three times does not change a share.  Only the
+    # quantile's sample is wrong.)  That defect produced the committed
+    # 2023-2025 table and was invisible to every consistency check, including
+    # this module's own pin test, because they all invoked the same call --
+    # confirmed on three refuting legs plus a PJM no-join control in
+    # ADDENDUM-miso242-the-derive-pairs-across-years-2026-09-07.md, repaired in
+    # PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md.
+    # A left join can never legitimately ADD rows, so this is an invariant of the
+    # operation rather than a tolerance, and it fails loudly from ANY caller.
+    if len(work) != len(g):
+        raise ValueError(
+            f"SPP hub join changed the row count {len(g)} -> {len(work)}: the "
+            f"frame passed in is indexed by {list(g.index.names)} while "
+            f"load_spp_hub_da() is (year, hour)-MultiIndexed, so pandas "
+            f"partial-joined on the shared level and paired this sample against "
+            f"more than one hub year. Pass a frame that still carries the "
+            f"'year' level (df.loc[[year]], not df.loc[year])."
+        )
     work = work.dropna(subset=[hub, "da", spec.name])
     spread = (work["da"] - work[hub]).to_numpy(dtype=float)
     return (
@@ -594,7 +618,10 @@ def main() -> None:
 
     df = load_joined()
     for year in args.years:
-        _print_ladder(str(year), df.loc[year])
+        # df.loc[[year]] -- NOT df.loc[year] -- so the (year, hour) MultiIndex
+        # survives and derive_spp_neighbour_hourly's hub join pairs within the
+        # year (miso-243; the invariant in that function enforces it).
+        _print_ladder(str(year), df.loc[[year]])
     if len(args.years) > 1:
         pooled = df.loc[args.years[0] : args.years[-1]]
         _print_ladder(
