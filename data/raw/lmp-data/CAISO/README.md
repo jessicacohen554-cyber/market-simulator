@@ -132,6 +132,43 @@ all 24 of its hour-groups are on disk, the merge de-dups on
 2021-09-30`. As with DAM, `CAISO_MIN_HOURS = 6500` means no 2021 bench year is
 emitted from a partial file.
 
+**2021 Q4 ADDED 2026-09-08 (session caiso-264) — the quarter above is now
+Q3+Q4 for DAM, and RTM's incremental fill jumped to Q4.** Crawled by the same
+GroupZip route and command, trade dates **2021-10-01 .. 2021-12-31**: 92/92
+dates on BOTH markets, 0 missing, 0 partial — `DAM_LMP_GRP` v12 0.93 GB in
+846 s, `RTM_LMP_GRP` v3 2,208 requests / 16.14 GB in 18,869 s (the sustained-
+rate quota above is real: 144 HTTP 429s, all absorbed by the back-off).
+Q4 contributes **2,209 hours** per market, not 2,208 — 92 x 24 + the
+**2021-11-07 fall-back hour**. Current coverage after the merge (the files'
+own spans remain authoritative):
+
+| file | rows | distinct hours | coverage |
+|---|--:|--:|---|
+| `CAISO_dam_hourly_2021.csv` | 44,170 | 4,417 | Q3 + Q4 complete |
+| `CAISO_rtm_hourly_2021.csv` | 23,530 | 2,353 | 2021-07-01..07-06 + all of Q4 |
+
+So RTM's Q3 fill stopped after 6 trade dates and **2021-07-07 .. 2021-09-30 is
+the remaining RTM hole**; DAM has none in Q3-Q4. Both files stay unscoreable
+by the same `CAISO_MIN_HOURS = 6500` guard (4,417 h and 2,353 h), and 2021
+stays out of `CAISO_PARTIAL_YEARS`.
+
+**The DST hour is the one thing a resumed RTM crawl must get right.** The
+intra-day resume probe was keyed on the REQUEST index while OASIS names zips
+by OPERATING HOUR, so on a DST date requests skipped themselves: this
+quarter's first pass folded 2021-11-07 with 24 of its 25 hours, and it was
+re-fetched on the fixed fetcher (caiso-262's removal of the probe + the
+per-day hour-coverage check). Anyone resuming with a pre-fix checkout will
+silently damage 2021-11-07 again. Audit after any crawl: distinct clock hours
+per trade date must equal that date's true operating-hour count (25 on the
+fall-back date, 23 on spring-forward), not the number of successful requests.
+
+**The three WECC intertie nodes are present in the DAM file for both quarters,
+so `wecc_intertie_lmp_hourly_CAISO.parquet` (still 2022-2025 only) can be
+extended to 2021 without re-crawling** — though `fetch_caiso_intertie_lmp.py
+--from-grp-windows` reads the per-day `dam_grp_*` windows, which are
+gitignored and no longer on disk, so that path needs either a re-crawl or a
+small reader change.
+
 **Consumers of the zips** (all tolerate their absence at tip):
 `scripts/data/fold_caiso_oasis_grp_zips.py` — the standing folder that turns
 restored GRP zips into the hourly aggregates above (the aggregates already
