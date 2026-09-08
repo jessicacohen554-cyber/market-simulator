@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-07T22:30:19",
+  "timestamp": "2026-09-08T17:08:22",
   "git": {
-    "sha": "30647483",
-    "basis_sha": "612f65fccc5297268c1232eeda71c9a9c4d587d0",
-    "branch": "claude/caiso-262-backcast-2022-wnukdb",
+    "sha": "7f5d73b1",
+    "basis_sha": "7486cb9be83f81b3e6e9d382b0d74cd11198cad0",
+    "branch": "claude/caiso-backcast-2022-hvh9xz",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso-262 RUNG: the rule-22 2022 validation touchpoint \u2014 the FROZEN caiso-260 keeper recipe replayed on 2022 under --holdout-authorized, no --set, no flag delta. Rule 30(c): this result never moves the ISO determination.",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -90,7 +90,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "30647483"
+    "git_sha": "7f5d73b1"
   },
   "scenario_config": {
     "weather_year": 2022,
@@ -423,6 +423,7 @@
     "nyiso_gas_bridge_plant_min_run": false,
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
+    "spp_gas_commitment_bridge": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
@@ -649,6 +650,7 @@
     "ct_drag_cap": 0.36,
     "ct_drag_ramp_start": 15,
     "ct_drag_ramp_end": 22,
+    "netload_drag_layup_window_mask": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1069,6 +1071,7 @@
     "pjm_seam_measured_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_ep_gas_basis_monthly": false,
+    "ercot_zonal_spread_ep_referenced": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
     "oil_primary_bin_fuel": false,
@@ -1117,7 +1120,8 @@
     "capacity_adequacy_requirement_published_by_iso": null,
     "capacity_no_default_cap_convention_by_iso": null,
     "capacity_screen_peak_measured_hindcast": false,
-    "pjm_vre_accreditation_vintage": false
+    "pjm_vre_accreditation_vintage": false,
+    "pjm_thermal_accreditation_vintage": false
   },
   "solve_surface": {
     "schema": 1,
@@ -1129,7 +1133,7 @@
       "STATE_CARBON_PRICE_BY_ISO": "c970824c3c583991"
     },
     "epochs": [],
-    "git_sha": "30647483"
+    "git_sha": "7f5d73b1"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1141,7 +1145,14 @@
       "pandas": "3.0.3",
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
-    }
+    },
+    "cache_key_path_roots": [
+      [
+        "<repo>",
+        "/home/user/market-simulator"
+      ]
+    ],
+    "market_sim_data_root": ""
   },
   "resolved_inputs": {
     "schema_version": 1,
@@ -1163,9 +1174,9 @@
     },
     "hydro_plant_modes": {
       "flag_armed": false,
-      "partition_present": true,
-      "classified_plants": 195,
-      "shapeable_plants": 111
+      "partition_present": false,
+      "classified_plants": null,
+      "shapeable_plants": null
     },
     "campd_unit_outages": {
       "armed": true,

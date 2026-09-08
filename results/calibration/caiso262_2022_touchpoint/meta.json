@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T22:30:19",
+  "timestamp": "2026-09-07T17:08:22",
   "iso": "CAISO",
   "years": [
     2022
@@ -270,6 +270,7 @@
   "unit_outage_per_unit_clip": null,
   "campd_per_unit_attribution": null,
   "campd_outage_merit_order_guard": null,
+  "netload_drag_layup_window_mask": null,
   "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -286,6 +287,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "spp_gas_commitment_bridge": null,
   "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
@@ -349,11 +351,10 @@
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
     "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-d75214d7cdc0.parquet",
-    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
-    "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
   },
-  "git_sha": "30647483",
-  "basis_sha": "612f65fccc5297268c1232eeda71c9a9c4d587d0",
+  "git_sha": "7f5d73b1",
+  "basis_sha": "7486cb9be83f81b3e6e9d382b0d74cd11198cad0",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -365,6 +366,13 @@
       "pandas": "3.0.3",
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
-    }
+    },
+    "cache_key_path_roots": [
+      [
+        "<repo>",
+        "/home/user/market-simulator"
+      ]
+    ],
+    "market_sim_data_root": ""
   }
 }
