@@ -1140,6 +1140,59 @@ def reindex(site_dir: Path = REPO) -> int:
     return n
 
 
+def carry_set_overrides(sidecar: dict, summary_path: Path) -> dict:
+    """Carry a ``--set``-constructed leg's overrides into the sidecar meta.
+
+    **SCN-FIX3 item 4**, reported by
+    ``FINDING-scn-ws5a-policy-nyiso-2026-09-07.md`` §9 item 5 and measured on
+    NYISO's ``ces-p60``. ``run_full_horizon`` records the generic
+    ``--set FIELD=VALUE`` overrides it actually applied as the summary's own
+    ``set_overrides`` block, and the solved bundle carries the resolved value in
+    both ``full_horizon_summary.json`` and ``run_config.json`` — but
+    ``register_forecast_baseline.build_sidecar`` copies a fixed list of summary
+    keys into ``meta`` and that block is not among them, so the key never
+    reached the sidecar at all and every reader sees ``None``.
+
+    Nothing was ever mis-registered: such a run is still identified by
+    ``meta.case`` plus its distinct ``cache_key``. What was missing is that a
+    ``--set``-constructed leg was **not self-describing from the dashboard**,
+    which is where a reader looks first. This carries the record the solve
+    already wrote, one hop further.
+
+    Contract:
+
+    * The value is the summary's OWN block — what the solve applied, not a
+      re-parse of anyone's command line.
+    * ``{}`` (the solve recorded overrides and there were none) and ``None``
+      (the summary predates the block, so the bundle cannot answer) are
+      DIFFERENT facts and stay distinguishable, the same discipline
+      ``build_sidecar`` states for its config-describing keys: recorded
+      ``null``, never defaulted.
+    * An explicit ``--extra-meta`` claim already in ``meta`` is never
+      overwritten.
+    * Additive: no committed sidecar is rewritten here. Runs registered before
+      this change simply lack the key, which reads the same as ``None``; a
+      later registration carries it naturally.
+
+    Args:
+        sidecar: The freshly-built sidecar, mutated in place.
+        summary_path: The ``full_horizon_summary.json`` it was built from.
+
+    Returns:
+        ``sidecar``.
+    """
+    meta = sidecar.setdefault("meta", {})
+    if "set_overrides" in meta:  # an explicit --extra-meta claim wins
+        return sidecar
+    try:
+        summary = json.loads(Path(summary_path).read_text())
+    except (OSError, ValueError):
+        summary = {}
+    recorded = summary.get("set_overrides")
+    meta["set_overrides"] = dict(recorded) if isinstance(recorded, dict) else None
+    return sidecar
+
+
 def _stamp_sidecar(sidecar: dict) -> dict:
     """Stamp a FRESHLY-BUILT canonical sidecar with its scoring provenance.
 
@@ -1339,6 +1392,8 @@ def main(argv: list[str] | None = None) -> int:
         sidecar = RB.build_sidecar(
             args.summary, args.label, kind=args.kind, extra_meta=extra
         )
+        # Before the stamp, so the provenance stamp covers the carried block.
+        carry_set_overrides(sidecar, args.summary)
         enforce_invariant_declaration_gate(sidecar)
         _stamp_sidecar(sidecar)
         HINDCAST_DIR.mkdir(parents=True, exist_ok=True)
