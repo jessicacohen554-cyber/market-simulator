@@ -763,6 +763,13 @@ results/calibration/_nyiso218_span_*/
 # it. Ignoring is NOT a licence to delete: these stay on local disk until the
 # OWNER has ruled on promotion.
 results/calibration/pjm172_*/
+# pjm-173 F-A arm bundles (the re-gated A/B of the SAME repair, PRECOMMIT
+# pjm173-seam-measured-gas-regate-2026-09-08). Same standing as pjm172_*:
+# ignored so they can never reach a commit (rule 29 [R-SCREEN] (c)), which
+# is exactly what rule 31 [R-RETAIN] names as the mechanism that discharges
+# that duty. NOT a licence to delete — they stay on local disk until the
+# OWNER has ruled on promotion.
+results/calibration/pjm173_*/
 results/calibration/_diag_*
 results/calibration/caiso_diag_*/
 results/calibration/miso_diag_*
