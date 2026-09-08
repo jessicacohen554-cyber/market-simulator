@@ -65,8 +65,11 @@ def main() -> int:
                     help="assert the live dataclass default is the post-flip value")
     a = ap.parse_args()
     if a.check_live:
+        from dataclasses import fields as _fields
         from market_sim.config.scenarios import ScenarioConfig, cache_key_drop_defaults
-        live = getattr(ScenarioConfig(), FIELD, None)
+        # the DATACLASS default, not an instance's (the coercion resolves a
+        # bare forecast instance to the frozen False by design)
+        live = next(f.default for f in _fields(ScenarioConfig) if f.name == FIELD)
         assert live == POST_FLIP_DEFAULT, f"live default {live!r} != {POST_FLIP_DEFAULT!r}"
         assert cache_key_drop_defaults().get(FIELD) == FROZEN_DROP_VALUE, "frozen drop value moved"
     exceptions = {e["path"] if isinstance(e, dict) else e for e in load_exceptions().get("exceptions", [])} \
