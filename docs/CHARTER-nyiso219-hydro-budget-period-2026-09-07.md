@@ -287,3 +287,63 @@ predictor, and this charter does not assert one.
 **No eighth pending owner ruling is opened.** The seven pending rulings (nyiso-206, -207, -203,
 DECISION-CARD-nyiso193 §5/5.1, -208, -214 §6, -215 §6) are untouched. This charter is the Option C
 deliverable the owner instructed, and it authorizes nothing on its own.
+
+---
+
+## 10. OWNER RULINGS, 2026-09-07 — and what executing them returned
+
+All three §9 questions were answered the same day. **Recorded here as the authoritative record**;
+the measurement that executes them is
+`docs/FINDING-nyiso219-pondage-duration-2026-09-07.md`.
+
+| | ruling | status |
+|---|---|---|
+| **Q1** | **Fund the full intake** — NID storage + licensed operating range + head | **EXECUTED, partially served — 1 of 3 recovered** (§10a) |
+| **Q2** | **Decide the rule-19 posture at phase 0**, on the overlap arithmetic rather than by preference | **STANDING — not yet reachable** (§10c) |
+| **Q3** | **Undecided — measure the shaping horizon**, from licence operating ranges rather than the categorical `Mode` label | **ANSWERED BY MEASUREMENT** (§10b) |
+
+### 10a. Q1 — the intake ran, and returned one of its three targets
+
+`data/raw/nid/` now holds the USACE National Inventory of Dams subset (vintage 2026-08-28, 189 dam
+rows, public domain, provenance and checksum in its README) for the 152 NID ids naming NYISO's
+hydro fleet.
+
+* **Storage — RECOVERED**, `Normal`/`Max` present for **98.4–98.5 %** of fleet MW.
+* **Head — MOSTLY NOT.** NID's `Hydraulic Height` covers only **20.80 %** of scored MW; the
+  remainder falls back to a **labelled dam-height proxy** whose error runs in **both** directions.
+* **Licensed operating range — NOT IN NID AT ALL.** `Normal Storage` is a reservoir volume, not an
+  operating band; recovering it needs the projects' **FERC licence documents**, untouched here.
+
+**§5's "missing" list was right about what was missing, and wrong about how much NID would fix.**
+The charter expected NID to serve storage and leave head open; it served storage, left head *mostly*
+open, and could not address the operating range at all.
+
+### 10b. Q3 — ANSWERED: the fleet does not shape across weeks
+
+Measured as an **upper bound** (full reservoir volume, efficiency 1.0, zero free parameters), so
+that no refinement can rescue the monthly period:
+
+* **72.01 %** of scored fleet MW cannot hold **one day** of its own full output;
+* **97.54 %** cannot hold a week; **98.31 %** cannot hold a month;
+* **Robert Moses Niagara — 51.89 % of fleet MW — holds 0.244 h ≈ fifteen minutes**, from a
+  **71-acre**, 5,350 acre-ft forebay, against the LP's **730-hour** budget period;
+* St. Lawrence (19.48 %) holds **73 h** on the full volume of Lake St. Lawrence — and its licensed
+  band under IJC Plan-2014 is a small fraction of that.
+
+**The charter's premise is confirmed from hydrology, independently of dispatch.** The EHA `Peaking`
+labels §5b reported are not wrong — they describe genuine *diurnal* forebay cycling, exactly what a
+15-minute-to-3-day pondage supports — but they **do not license a month**, which is what Q3 asked
+and what the label alone could not settle. **The object stands.**
+
+### 10c. Q2 — standing, and not yet reachable
+
+The owner ruled the rule-19 posture is decided **at phase 0**, on the overlap between a shortened
+period and `hydro_dispatch_envelope` (armed in the keeper, binding **27–42 %** of hours and carrying
+**32–49 %** of annual hydro energy). That arithmetic needs a **period length**, and a period length
+needs the **licensed operating range** — Q1's unserved half. **So Q2 is blocked behind a FERC-licence
+intake, not behind a solve.** Nothing about it is decided here, and rule 21 `[R-DOF]` case 3 stands
+undisturbed: **a length chosen because it makes a criterion move is forbidden**, and this session
+neither chose nor swept one.
+
+**§6's refusals are unchanged and still bind:** no `NG: WAT` pin, no period sweep against the gates,
+no stacking on the envelope, no per-plant hourly structure invented, no promotion on the residual.
