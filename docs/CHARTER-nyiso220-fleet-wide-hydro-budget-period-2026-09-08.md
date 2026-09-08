@@ -215,3 +215,103 @@ five gates cleared on 2 plants, with a price effect of **−0.226 %** on load-we
 
 **No new pending owner card beyond §9.** The seven unrelated pending rulings (nyiso-206, -207, -203,
 DECISION-CARD-nyiso193 §5/5.1, -208, -214 §6, -215 §6) are untouched.
+
+---
+
+## 11. OWNER RULINGS, 2026-09-08 — and what they change
+
+All five §9 questions were answered the same day. **Recorded here as the authoritative record.**
+
+| | ruling | status |
+|---|---|---|
+| **Q1 + Q5** | **Extend on measured pondage, and charter it as a GENERAL per-ISO mechanism** | **ACCEPTED — blocked behind Q3** |
+| **Q2** | *"Why can't you just set it at a per plant specific? If not then it should be more intervals than 24 168 or 730… should have like 24 48 72 168 336 730 or something"* | **ANSWERED WITH A RECOMMENDATION (§11b); owner confirmation pending** |
+| **Q3** | **Fund a head intake FIRST** | **ACCEPTED — this BLOCKS the build (§11c)** |
+| **Q4** | **The 12 no-pondage plants keep the month** | **ACCEPTED** |
+
+### 11a. Q1/Q5 — general per-ISO, and what that does not mean
+
+The mechanism is chartered as **general**, so other lanes should expect it and the registry becomes a
+derived per-ISO table rather than NYISO-specific. **Rule 25 `[R-ISO-SCOPE]` is untouched**: no
+parameter and no verdict transfers, every ISO enters its matrix cell as `U`, and each derives its own
+periods from its own fleet's own measured storage. "General" describes the *method*, never a number.
+
+### 11b. Q2 — the owner is right, and my bucketing was weakly justified
+
+**Per-plant exact IS structurally feasible**, and the row-count argument I leaned on does not hold.
+Measured over the 163-plant index, month-aligned:
+
+| assignment | LP hydro rows | distinct periods |
+|---|---:|---:|
+| current (monthly, every plant) | 3,097 | 1 |
+| coarse ladder {24, 168, 730} | 43,767 | 3 |
+| owner's fine ladder {24, 48, 72, 168, 336, 730} | 45,001 | 6 |
+| **per-plant EXACT, clamped to [24, 730]** | **46,011** | 37 |
+
+**Per-plant exact costs 5 % more rows than the coarse ladder** — a rounding error against the 22×
+step any sub-monthly period already implies. The LP builder emits one row block per *distinct period*
+and the loop is over families, never over hours, so rule 2 `[R-VECTOR]` is untouched at 37 families
+exactly as at 3. *(For completeness: the owner's fine ladder moves only **16 plants / 155.5 MW =
+3.32 % of fleet MW** against the coarse one, so the ladder refinement is a small correction either
+way.)*
+
+**Recommendation: per-plant EXACT, clamped to [24 h, 730 h].** It is also **lower DOF than any
+ladder** — a ladder's every edge is a chosen threshold, whereas exact has exactly two structural
+bounds and each has a reason that is not about the residual:
+
+* **Floor 24 h.** Below a day the budget period would begin governing the **diurnal** dimension,
+  which is `hydro_dispatch_envelope`'s **declared window**. Going sub-daily is precisely the rule 19
+  `[R-ONE-MECH]` stacking the Q2 phase-0 ruling already refused. (This is the same argument that
+  fixed Niagara at 24 h rather than 1 h: a 1-hour period pins `P[g,t]` outright and destroys the
+  plant's real, treaty-imposed diurnal swing.)
+* **Cap 730 h.** The measured budget the model actually holds is **monthly**, so no period may exceed
+  its own source data. The 7 plants (1.67 % of MW) whose pondage exceeds a month therefore keep the
+  month — not as a concession, but because a longer period would be unsupported by the input.
+
+**The one honest argument that ever favoured a ladder was input RESOLUTION, not LP cost:** exact
+hours derived from a head that is a ±2× proxy for 78.03 % of fleet MW is false precision, and a
+coarse ladder is more honest about what the input can actually resolve. **Q3's ruling removes that
+objection** — with measured head in hand, exact is defensible. Which is why Q2 should be **finalised
+after the head intake lands, not before**, and why nothing is fixed here.
+
+### 11c. Q3 — the head intake BLOCKS the build, and that reorders the work
+
+Funding a head intake first means **the next unit of work is a data intake, not a mechanism.** Stated
+plainly so no session mistakes the order:
+
+* **Nothing is built, armed or screened for the fleet-wide extension until real per-project head
+  lands.** The existing two-plant mechanism (`hydro_budget_period_by_instrument`) stays exactly as it
+  is — default off, screened, unpromoted.
+* **The retrieval problem is known and specific.** FERC licence documents carry head per project, and
+  FERC text is **not retrievable from this container**: `www.ferc.gov` / `cms.ferc.gov` return 403 to
+  a browser User-Agent and to `WebFetch`, and eLibrary's real API base `/eLibraryWebAPI/api/` answers
+  but its `Search` / `Document` / `DocFamily` controllers are absent (nyiso-220 finding §1). So a
+  FERC-sourced head intake needs a browser session, a human, or a different corpus.
+* **Alternative sources are the first thing to scope**, before assuming FERC: ORNL EHA's non-public
+  fields, USGS/NHD reach elevations differenced across the dam, state dam-safety inventories, and the
+  projects' own licence-application exhibits where mirrored outside FERC. **None is verified here** —
+  that scoping is the intake session's first deliverable, and a measured negative closes it cheaply.
+* **Coverage target, stated as a gate rather than a hope:** the intake succeeds to the extent it
+  replaces the dam-height proxy for MW currently on it (**78.03 %**). It should report coverage the
+  way nyiso-219 did — by fleet MW, with the proxy fraction that survives named explicitly.
+
+### 11d. Q4 — the 12 no-pondage plants keep the month
+
+Accepted, and recorded with its cost: this knowingly leaves **1.50 % of fleet MW** with a monthly
+budget the charter argues is wrong, Glen Park among them at a **19.18 %** own-energy swing rate. It
+invents nothing, which is the point. If the Q3 intake happens to resolve dam matches for any of the
+12, they leave this exemption by measurement rather than by assumption.
+
+### 11e. What is now true, and what is still refused
+
+**Settled:** the fleet-wide extension is approved in principle and general in scope; the residual
+defect is quantified (§2); the identification route is measured pondage, validated 2-for-2 against
+the instrument route (§3); the no-pondage default is the month.
+**Blocked:** everything else, behind the head intake.
+**Still refused, unchanged:** no period set at the actual's own measured within-month daily sd; no
+shape pinned to `NG: WAT`; no period **swept** against the gates (rule 21 `[R-DOF]` case 3); no
+stacking on the envelope; and rule 14 `[R-ACCURATE]` still cuts both ways — **if the faithful
+representation makes the price fit worse, it stays.**
+
+**No new pending owner card is opened.** Q2 carries a recommendation awaiting confirmation *after*
+the head intake; the seven unrelated pending rulings are untouched.
