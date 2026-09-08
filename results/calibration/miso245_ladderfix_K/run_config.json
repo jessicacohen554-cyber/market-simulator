@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-07T19:10:44",
+  "timestamp": "2026-09-08T06:19:06",
   "git": {
-    "sha": "710d4dad",
-    "basis_sha": "a1af05a7bc86a7a96ef6bc695ef4d4f56de0f038",
-    "branch": "claude/miso-backcast-calibration-fs6x99",
+    "sha": "d059fcf7",
+    "basis_sha": "19f9a4d4d9f6d712ebc2edb22db6deab4c6543d7",
+    "branch": "claude/miso-backcast-calibration-s6uhiw",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-243 FULL SPAN: SPP hourly ladder cross-year pairing repaired (construction defect; rules 14/23). Screen 2024 cleared all four structural gates.",
+  "model_changes_note": "miso-245: MISO_SEAM_LADDER_BY_YEAR reconciled to its own frozen derive (3 entries; 189 byte-identical). Rule-23 re-derive citing a source-data change, argued on rule 14 and the frozen estimator's own output, never on a residual. Zero free parameters. Screen year 2024 cleared all four structural STOP-only gates.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -226,7 +226,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "710d4dad"
+    "git_sha": "d059fcf7"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -784,6 +784,7 @@
     "ct_drag_cap": 0.4394,
     "ct_drag_ramp_start": 10,
     "ct_drag_ramp_end": 21,
+    "netload_drag_layup_window_mask": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1212,7 +1213,8 @@
     "capacity_adequacy_requirement_published_by_iso": null,
     "capacity_no_default_cap_convention_by_iso": null,
     "capacity_screen_peak_measured_hindcast": false,
-    "pjm_vre_accreditation_vintage": false
+    "pjm_vre_accreditation_vintage": false,
+    "pjm_thermal_accreditation_vintage": false
   },
   "solve_surface": {
     "schema": 1,
@@ -1221,7 +1223,7 @@
     "rows": 208,
     "moved": {},
     "epochs": [],
-    "git_sha": "710d4dad"
+    "git_sha": "d059fcf7"
   },
   "environment": {
     "python_version": "3.11.15",
