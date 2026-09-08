@@ -1,0 +1,155 @@
+{
+  "session": "nyiso-219",
+  "purpose": "retrieval index for the LICENSED OPERATING RANGE (the period length a shortened hydro budget row would need); the ranges themselves are NOT here \u2014 see the module docstring for why FERC text was unreachable",
+  "zero_lp": true,
+  "coverage": {
+    "plants_with_ferc_docket": 152,
+    "pct_fleet_mw_with_docket": 97.82,
+    "distinct_dockets": 111
+  },
+  "retrieval_cost": {
+    "dockets_to_cover_50pct_mw": 1,
+    "dockets_to_cover_75pct_mw": 6,
+    "dockets_to_cover_90pct_mw": 30
+  },
+  "top_projects": [
+    {
+      "plant_id": 2693,
+      "plant_name": "Robert Moses Niagara",
+      "nameplate_mw": 2429.1,
+      "pct_fleet_mw": 51.893,
+      "cum_pct_fleet_mw": 51.893,
+      "ferc_docket": "P-2216",
+      "ferc_licence_issued": "3/15/2007",
+      "ferc_licence_expires": "8/31/2057",
+      "eha_mode": "Run-of-river/Peaking",
+      "water_source": "Niagara River",
+      "pondage_hours_upper_bound": 0.244
+    },
+    {
+      "plant_id": 2694,
+      "plant_name": "Robert Moses - St. Lawrence",
+      "nameplate_mw": 912.0,
+      "pct_fleet_mw": 19.483,
+      "cum_pct_fleet_mw": 71.376,
+      "ferc_docket": "P-2000",
+      "ferc_licence_issued": "10/23/2003",
+      "ferc_licence_expires": "9/30/2053",
+      "eha_mode": "Peaking",
+      "water_source": "St Lawrence River",
+      "pondage_hours_upper_bound": 73.067
+    },
+    {
+      "plant_id": 54580,
+      "plant_name": "Curtis",
+      "nameplate_mw": 59.0,
+      "pct_fleet_mw": 1.26,
+      "cum_pct_fleet_mw": 72.636,
+      "ferc_docket": "P-2609",
+      "ferc_licence_issued": "4/27/2000",
+      "ferc_licence_expires": "4/30/2040",
+      "eha_mode": "Intermediate Peaking",
+      "water_source": "Hudson River",
+      "pondage_hours_upper_bound": 2.024
+    },
+    {
+      "plant_id": 2612,
+      "plant_name": "Spier Falls",
+      "nameplate_mw": 56.0,
+      "pct_fleet_mw": 1.196,
+      "cum_pct_fleet_mw": 73.832,
+      "ferc_docket": "P-2482",
+      "ferc_licence_issued": "9/25/2002",
+      "ferc_licence_expires": "8/31/2042",
+      "eha_mode": "Peaking",
+      "water_source": "Hudson River",
+      "pondage_hours_upper_bound": 82.802
+    },
+    {
+      "plant_id": 54953,
+      "plant_name": "Hudson Falls Hydroelectric Project",
+      "nameplate_mw": 44.0,
+      "pct_fleet_mw": 0.94,
+      "cum_pct_fleet_mw": 74.772,
+      "ferc_docket": "P-5276",
+      "ferc_licence_issued": "12/2/1992",
+      "ferc_licence_expires": "11/30/2042",
+      "eha_mode": "Run-of-river",
+      "water_source": "Hudson River",
+      "pondage_hours_upper_bound": 0.163
+    },
+    {
+      "plant_id": 2641,
+      "plant_name": "Rochester 5",
+      "nameplate_mw": 43.6,
+      "pct_fleet_mw": 0.931,
+      "cum_pct_fleet_mw": 75.703,
+      "ferc_docket": "P-2583",
+      "ferc_licence_issued": "2/22/1996",
+      "ferc_licence_expires": "1/31/2036",
+      "eha_mode": "Run-of-river",
+      "water_source": "Genesee River",
+      "pondage_hours_upper_bound": 0.214
+    },
+    {
+      "plant_id": 2605,
+      "plant_name": "School Street",
+      "nameplate_mw": 38.8,
+      "pct_fleet_mw": 0.829,
+      "cum_pct_fleet_mw": 76.532,
+      "ferc_docket": "P-2539",
+      "ferc_licence_issued": "2/15/2007",
+      "ferc_licence_expires": "1/31/2047",
+      "eha_mode": "Peaking",
+      "water_source": "Mohawk River",
+      "pondage_hours_upper_bound": 0.101
+    },
+    {
+      "plant_id": 2614,
+      "plant_name": "Stewarts Bridge",
+      "nameplate_mw": 38.5,
+      "pct_fleet_mw": 0.822,
+      "cum_pct_fleet_mw": 77.354,
+      "ferc_docket": "P-2047",
+      "ferc_licence_issued": "9/25/2002",
+      "ferc_licence_expires": "8/31/2042",
+      "eha_mode": "Peaking",
+      "water_source": "Sacandaga River",
+      "pondage_hours_upper_bound": 55.93
+    },
+    {
+      "plant_id": 2609,
+      "plant_name": "Sherman Island",
+      "nameplate_mw": 36.3,
+      "pct_fleet_mw": 0.775,
+      "cum_pct_fleet_mw": 78.129,
+      "ferc_docket": "P-2482",
+      "ferc_licence_issued": "9/25/2002",
+      "ferc_licence_expires": "8/31/2042",
+      "eha_mode": "Peaking",
+      "water_source": "Hudson River",
+      "pondage_hours_upper_bound": 20.659
+    },
+    {
+      "plant_id": 2545,
+      "plant_name": "Bennetts Bridge",
+      "nameplate_mw": 36.0,
+      "pct_fleet_mw": 0.769,
+      "cum_pct_fleet_mw": 78.898,
+      "ferc_docket": "P-11408",
+      "ferc_licence_issued": "2/21/1996",
+      "ferc_licence_expires": "1/31/2036",
+      "eha_mode": "nan",
+      "water_source": "Salmon River",
+      "pondage_hours_upper_bound": 66.237
+    }
+  ],
+  "ferc_access": {
+    "www.ferc.gov": "403 to this container, browser User-Agent included",
+    "cms.ferc.gov": "403 (the issued-licences spreadsheet)",
+    "elibrary.ferc.gov": "reachable, but a client-rendered SPA with no public API; candidate REST paths returning 200 are the Angular catch-all serving index.html, confirmed by body diff \u2014 NOT endpoints",
+    "chromium": "cannot reach any host from this container (example.com resets identically), so driving the SPA is unavailable",
+    "session_proxy": "open and healthy (selective:false, no relay failures) \u2014 the 403 is FERC's edge, not ours"
+  },
+  "csv": "results/calibration/_nyiso219_ferc_licence_index.csv"
+}
