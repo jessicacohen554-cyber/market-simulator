@@ -9362,3 +9362,317 @@ push.
 
 DO NOT TOUCH tests/unit/results/test_cache_solve_surface.py -- the concurrent D86 lane owns it.
 ```
+
+---
+
+## r#60 NOTE
+
+Four charters, all issued 2026-09-08 at main `a667073f`, all against ledger §0be. **Three are
+zero-LP; none authorizes an arm.**
+
+* **GATE-(a) RE-KEY** — the Q34 standing duty, seventeenth firing and the **first double**.
+* **D83** — **owner ruling Q60**'s "D83 after", now due: D84 landed and armed.
+* **D89** — **owner ruling Q61**: this desk's own 27 reds, and none of the other 28.
+* **D87/D88 READ** — the two SCN ruling-S19 seams, dispositioned by a READ rather than a repair.
+
+**Collision map.** GATE-(a) touches `program-status.json` alone. **D83 and D89 both sit near
+capacity evolution, so the boundary is named in BOTH prompts**: D83 owns the evolution-ledger writer
+and must not touch D62/D74 code or tests; D89 owns `test_d62_*` / `test_d74_*` and must not touch the
+evolution-ledger writer. D87/D88 READ writes one design doc and edits no `src/`. **NEXT FREE LABEL:
+D90.**
+
+**A CHARTER-WIDE CORRECTION carried into every prompt below (§0be.2(b)).** My D84 charter told the
+lane to run `git diff <keeper git_sha> HEAD` for G-DRIFT. **That command cannot run**: the PJM
+keeper records `git_sha = 457ae04`, dead since the 2026-08-16 history rewrite, and so does every
+keeper older than it. **G-DRIFT's durable basis is the keeper bundle's recorded CACHE KEY**; the sha
+is an optimisation available only for keepers newer than the rewrite.
+
+---
+
+## GATE-(a) RE-KEY — two rows, ERCOT and MISO (Fable, code, zero LP)
+
+```
+You are the capx gate-(a) re-key lane for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. Branch: claude/capx-gate-a-rekey-r60, fresh off origin/main.
+ONE ACT, ZERO LP. No solve, no scoring, no registration, no keeper edit, no marker edit, no
+determination re-computation, no other ISO's row, no other desk's file.
+
+WHY. scripts/check_gate_a_provenance.py is EXIT 1 at main a667073f on TWO ISOs at once -- the
+seventeenth firing of this standing duty and the first double. Both are promoter misses: a lane
+promoted a keeper and did not re-key the ISO's §2.1b gate-(a) row in
+frontend/data/forecast/program-status.json.
+
+  ERCOT: row cites '2026-09-05-ercot248-two-config-keeper'; live keeper is
+         '2026-09-08-ercot256-drag-layup-mask' (the netload_drag_layup_window_mask promotion).
+  MISO:  row cites '2026-09-07-miso-233-spp-hourly'; live keeper is
+         '2026-09-07-miso-243-spp-pairing'.
+
+** DO NOT TRUST EITHER KEEPER ID ABOVE. ** They are this desk's reading at a667073f and keepers in
+this repo have gone stale within hours -- SPP promoted three times in one day, and an r#58 row went
+stale before the session that wrote it had finished. Read EVERY fact LIVE at your own HEAD, from the
+backcast store, and re-key against what you find there, not against what this prompt says. If your
+HEAD disagrees with the ids above, YOUR HEAD IS RIGHT: re-key to it and say so in your record.
+
+METHOD -- and the method is the deliverable, because a bad edit here is worse than the stale row.
+ 1. Read the live facts for EACH ISO, and cite where each came from:
+      - the designated keeper id: frontend/data/backcast/keepers/<ISO>.json
+      - the marker state: BOTH blocks of frontend/data/backcast/calibration-complete.json
+        (complete / final) -- report each as True/False, and note that `final` is EMPTY for every
+        ISO in this repo, so no locked-test claim may appear in any row
+      - the determination and per-year verdicts: the ISO's committed status sidecar
+        (frontend/data/backcast/status/<ISO>.js), NOT a re-score -- this lane computes no verdict
+      - the promotion instrument: the FINDING/PR/commit that promoted the keeper, named as a
+        DOCUMENT, not just a PR number. (§0bc's SPP-45 lane had to add this afterwards because the
+        prior re-key cited a PR and a sha but named no document. Do not repeat that.)
+ 2. Edit by TARGETED STRING EDIT of each row's three leaves only -- the `detail` head, `read_live_at`,
+    and the `gate_a_provenance` block -- scoped by string position.
+    ** NEVER a json.dumps round-trip. ** program-status.json is a hand-maintained COMMITTED seed that
+    build_program_status wraps VERBATIM; a reserialization silently reformats every other desk's row
+    and makes the diff unreviewable.
+ 3. PRESERVE THE PRIOR TEXT. Everything in the row that is not one of those three leaves stays
+    byte-identical. Where the existing detail carries a RE-KEYED provenance sentence, add yours
+    beside it rather than replacing it -- the row is a chain, not a snapshot.
+ 4. Touch ONLY the ERCOT and MISO rows. Do not fix another ISO's row even if you think it is stale;
+    report it instead.
+
+STOP GATES:
+  - If check_gate_a_provenance.py is ALREADY EXIT 0 at your HEAD for an ISO, that ISO's re-key has
+    landed while you were chartered. DO NOT re-key it -- asserting a supersession that did not happen
+    is a false record. Say so and move to the other one. (This exact case happened at §0bc.)
+  - If an ISO's live keeper id disagrees with BOTH the row and this prompt, re-key to the LIVE id and
+    record all three states.
+  - If re-keying would require changing a determination, a marker, a leg status or a grade: STOP.
+    This guard compares IDENTITY ONLY and asserts nothing about either keeper's determination. A
+    determination change is a different lane and an owner-tier question.
+
+EXIT: check_gate_a_provenance.py EXIT 0 on all seven rows; scripts/audit_keepers.py --check still
+PASS; the diff touches exactly the two rows of one file; a short record (append to the ERCOT and MISO
+calibration logs, or a FINDING if you prefer one document) carrying the before/after `detail` head
+for each ISO VERBATIM and the promotion instrument for each. Lead your close with the gate's exit
+code, then the two id transitions. Rule 27 [R-PUSH]: push the exact on-disk bytes and verify the
+pushed blob.
+```
+
+---
+
+## D83 — the missing 2022 adequacy block in the evolution ledger (Opus, pjm)
+
+```
+You are the D83 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: pjm. Branch: claude/capx-d83-evolution-2022-adequacy, fresh off origin/main.
+Authority: OWNER RULING Q60 (2026-09-07, capx ledger §0bd.3(c)) -- "D84 first, D83 after". D84 has
+landed AND been armed by the owner, so this lane is now due.
+This charter authorizes a DIAGNOSIS and, if the cause is a writer defect, its REPAIR. It does not
+authorize a mechanism, an arm, a default change, or a re-registration.
+
+THE OBJECT. evolution_2022.json carries NO adequacy block -- wind_cap_mw / solar_cap_mw /
+renewable_credit_applied / storage_firm_mw are absent -- while evolution_2021.json and
+evolution_2023..2025.json all carry it. Raised as D75 §6 item 3, re-raised as
+FINDING-capx-d75r-2026-09-06.md §6 item 1, and REPRODUCED ON A FRESH SOLVE at HEAD, so it is not a
+stale-bundle artifact. It has forced MANUAL POOL RECONSTRUCTION in two separate lanes -- D75-R's
+phase 0 and its full-window analyzer both had to rebuild what the ledger should have recorded. It is
+unexplained. Read both citations before touching anything.
+
+WHY IT MATTERS MORE THAN IT LOOKS. The adequacy block is how a later reader learns what the capacity
+screen actually tested in that year. A year missing it is a year whose screen is not reproducible
+from its own record -- the same class of defect capx D85/D85-R spent two lanes closing on the cache
+key, and D85-R's repair 2 (recording cache_key_path_roots + market_sim_data_root because "nothing in
+the record said so") is the precedent for how to think about it. A missing record is not cosmetic; it
+is a hole in provenance.
+
+PHASE 0 -- ZERO LP, AND IT MAY ANSWER THE WHOLE CARD.
+ (a) REPRODUCE IT AT YOUR OWN HEAD and say exactly how -- which invocation, which bundle, which file.
+     Confirm the 2021 and 2023-2025 blocks ARE present in the same run, so the comparison is within
+     one artifact family and not across vintages.
+ (b) FIND THE WRITER and read it. Where is the adequacy block emitted, under what condition, and what
+     is different about 2022? Candidates worth ruling in or out by reading, not by guessing: a
+     year-scoped branch; an early return; a delivery-year vs calendar-year mapping that has no 2022
+     entry; a data input absent for 2022 only; an exception swallowed. NAME the line.
+ (c) DECIDE WHICH OF TWO THINGS THIS IS, and say which before you repair anything:
+       (i)  a RECORDING defect -- the screen ran correctly and the writer failed to record it. Repair
+            is to the writer; NO decision changes, NO key moves, and you must demonstrate that.
+       (ii) a SUBSTANTIVE defect -- the screen genuinely had no adequacy operand in 2022, so the
+            year's capacity decisions were taken on a different basis than its neighbours. That is
+            NOT a record repair. STOP, write it up, and serve it as an owner card: it would mean
+            every committed run's 2022 evolution year is on a different footing, which reaches
+            D67/D57/D76 and is far beyond this charter.
+     ** THIS IS THE STOP GATE, and getting it wrong in the (i) direction is the expensive error: **
+     repairing a writer that was faithfully recording a real absence would paper over the substantive
+     defect. Prove (i) affirmatively -- show the operand existed at screen time -- do not infer it
+     from the repair looking small.
+
+IF IT IS (i): repair the writer, and prove the repair is inert where it must be.
+  - ZERO key moves. Run the committed-config key census before and after (the D84-ARM /
+    D76-ARM-B probes under scripts/probes/ are the pattern) and report the count both ways.
+  - No committed bundle is rewritten. Only runs solved after this lands carry the new block -- that
+    is D85-R repair 2's rule and it binds here identically.
+  - A test that fails if a year ever loses the block again. This defect survived two lanes noticing
+    it; the repair is not done until it cannot recur silently.
+
+G-DRIFT, WITH MY OWN CORRECTION: do NOT use `git diff <keeper git_sha> HEAD`. That command is dead --
+the PJM keeper records git_sha = 457ae04, which the 2026-08-16 history rewrite removed, and so does
+every keeper older than the rewrite. Anchor on the keeper bundle's RECORDED CACHE KEY instead, and
+audit the solve-path diff from a commit you can actually resolve. If you cannot establish drift at
+all, say so rather than asserting either way.
+
+RULE 31 [R-RETAIN]: if you solve anything, gitignore the bundle family the moment it is written and
+DO NOT rm it. Ask the promotion question explicitly in your close and state that any bundle is on
+local disk and will not survive the session.
+
+DO NOT TOUCH tests/unit/model/test_d62_published_going_forward_bar.py or
+test_d74_no_default_cap_convention.py, or the D62/D74 mechanism code -- the concurrent D89 lane owns
+those. If your diagnosis reaches them, STOP and report the overlap rather than editing across the
+boundary.
+
+EXIT: docs/handoffs/FINDING-capx-d83-2026-09-07.md leading with (c)'s verdict -- (i) or (ii) -- and
+the named line from (b); the repair with its zero-key-move census if (i); the owner card if (ii); the
+recurrence test either way. Rule 27 [R-PUSH]: edit locally, push on-disk bytes, blob-verify any file
+over 300 lines.
+```
+
+---
+
+## D89 — the 27 reds in this desk's own D62 / D74 test files (Opus, code)
+
+```
+You are the D89 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d89-d62-d74-reds, fresh off origin/main.
+Authority: OWNER RULING Q61 (2026-09-08, capx ledger §0be.3(b)) -- "Charter D89 for capx's own 27;
+fix none of the other 28."
+ZERO LP EXPECTED. If you conclude a solve is required, STOP and say why before spending one.
+
+WHY YOU EXIST. capx D86, chartered to repair two guards, returned an inventory nobody asked for:
+running `tests/unit tests/scoring tests/regression`, 55 tests are RED on main (57 before its repair,
+55 after, 0 newly broken). TWENTY-SEVEN of them are in files named for THIS DESK'S OWN LANES:
+
+  tests/unit/model/test_d62_published_going_forward_bar.py   15
+  tests/unit/model/test_d74_no_default_cap_convention.py     12
+
+D62 (PJM's published gross ACR as the retirement screen's going-forward bar AND the sell-offer cap)
+and D74 (the Manual 18 "NA" no-default-cap price-taker convention) both LANDED at capx r#48, both
+built DEFAULT-OFF, and neither has been touched since. D74 additionally carries a SELF-EXECUTING
+DO-NOT-ARM -- and the evidence for that refusal is precisely these tests.
+
+THE QUESTION, AND IT IS THE WHOLE LANE. Diagnose BEFORE you repair, and say which of these it is:
+
+  (A) FIXTURE ROT. A later change (D67, D75-R, D76, D78, D84, the D79 solve surface, a registry
+      re-derivation, the conftest autouse fixture family) moved something these tests hard-code, and
+      the mechanisms themselves are fine. Repair is to the tests, FORWARD -- assert against the live
+      source of truth, never re-freeze today's literal, which is exactly the stale-label mistake D86
+      repaired in test_cache_solve_surface (see FINDING-capx-d86-2026-09-07.md §2 step 2 for the
+      form: assert against the live registry/ledger, and import rather than copy it).
+
+  (B) A REAL BEHAVIOUR CHANGE. D62's or D74's mechanism no longer does what it did at r#48. This is
+      the serious answer: D74's DO-NOT-ARM rests on measurements those tests encode, so if the
+      behaviour moved, the refusal may rest on a state that no longer exists. STOP at that point,
+      write it up, and serve it as an owner card -- do NOT silently update a test to match changed
+      behaviour, which would erase the evidence for a standing refusal.
+
+  (C) A MIX. Classify EVERY ONE of the 27 individually. "Mostly A" is not an answer; the ledger's
+      standard is ZERO UNCLASSIFIED (capx D85's census is the precedent -- 15 mismatches, all 15
+      derived to their recorded literal, zero unknown).
+
+METHOD:
+ 1. Reproduce the count at your own HEAD first and state the exact command. Numbers drift; D86's 55
+    was measured at ad78cc3e. If your count differs, YOUR count is the one you work from, and say so.
+    (§0be doctrine: A RED INVENTORY IS ONLY AS WIDE AS THE COMMAND THAT PRODUCED IT -- state yours.)
+ 2. Classify all 27 into A / B / C-per-test with the failing assertion and its cause named per row.
+    A table is the deliverable, one row per test.
+ 3. Repair only the A rows, forward. For each, say what live source the assertion now reads.
+ 4. For any B row: STOP the repair for that row, and write the owner card. Report it at full
+    magnitude -- what changed, when (bisect to a merge if you can do it cheaply), and what it does to
+    D74's DO-NOT-ARM and D62's landed state.
+ 5. When you are done, re-run the SAME wide command and report the new total. "Fixed N, newly broken
+    0" is the form D86 used and it is the form expected here.
+
+BOUNDARIES, all binding:
+  - FIX NONE OF THE OTHER 28. They belong to other desks: golden-manifest provenance 7, test_soundness
+    end-to-end 6, results/export 4, FF readiness battery 4, forecast parity 2 (MISO's miso-233 arms
+    three miso_seam_neighbour_* fields with no forecast_parity_registry declaration), caiso_st_gas_peak
+    1 (registry 1.166 vs artifact 1.154), capacity TestGetRPSTarget 1 (SPP now has an RPS floor),
+    registration-marker gate 1, gate-(a) 1, backcast artifacts 1. INVENTORY them in your FINDING with
+    the owning desk named -- reporting is this lane's job, editing is not. An all-55 sweep was offered
+    to the owner and marked NOT RECOMMENDED for exactly this reason (rule 25 [R-ISO-SCOPE], and the
+    §0bd cross-desk collision).
+  - DO NOT ARM D62 OR D74, or move any default. D74's DO-NOT-ARM stands until an owner says otherwise.
+  - DO NOT TOUCH the evolution-ledger writer -- the concurrent D83 lane owns it. If your diagnosis
+    reaches it, STOP and report the overlap.
+  - DO NOT weaken, skip, xfail or delete a test to make it green. That is forbidden outright
+    (CLAUDE.md's PR rules: never skip, disable or quarantine a test to get green). A test you cannot
+    repair is a finding, not a deletion.
+  - Rule 28 [R-MECH-MATRIX]: if any repair changes what a mechanism DOES rather than what a test
+    reads, that is a cell update in all seven shards and probably answer (B) -- see step 4.
+
+EXIT: docs/handoffs/FINDING-capx-d89-2026-09-08.md whose FIRST content is the 27-row classification
+table (test · failing assertion · A/B · cause · action), then the before/after wide-command counts,
+then the 28-row other-desk inventory with owners named. Lead your close with the table and the
+"fixed N, newly broken 0" line. ruff check + ruff format clean. Rule 27 [R-PUSH]: both test files are
+well over 300 lines -- edit locally, push exact on-disk bytes, blob-verify after every push.
+```
+
+---
+
+## D87 / D88 READ — disposition the two SCN ruling-S19 seams (Fable, code, zero LP)
+
+```
+You are the D87/D88 READ lane for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. Branch: claude/capx-d87-d88-s19-read, fresh off origin/main.
+THIS IS A READ, NOT A REPAIR. ZERO LP. You edit NOTHING under src/market_sim/, no test, no config,
+no matrix shard, no registration. You write ONE design document. That is the entire deliverable.
+
+WHY A READ AND NOT A CHARTER. SCN ruling S19 (2026-09-07, scenario-desk-ledger-2026-09.md §3) routed
+two seams to the capx director on the D-9 -> S7 -> capx D77 precedent; the SCN desk charters neither
+("SCN lanes report and stop") and its §4 records that the CCS pricing path and the fleet SoA builder
+"are the capx director's objects". The capx desk ACCEPTED both at §0bd am.1 and reserved the labels
+WITHOUT reading their substance, on its own standing doctrine: READ BEFORE CHARTERING, AND EXPECT THE
+READ TO CLOSE THINGS. The precedent that earned that doctrine is capx D82 -- recommended as the
+highest-value lane available, and one zero-LP read CLOSED it, replacing a solve program. THIS READ IS
+LICENSED TO DO THE SAME. Closing one or both is a fully acceptable outcome and is not a failure.
+
+THE TWO OBJECTS.
+
+  D87 = SCN card D-15, raised by SCN-WS5A-POLICY-NYISO §9 item 1. "The CES target row cannot reach
+  the CCS retrofit screen and the premium can -- a footprint-wide attribute-coverage seam."
+  Anchor: ccs.py around lines 475-476, where the retrofit uplift is priced. This is capacity-evolution
+  STEP 2 (the CCS retrofit screen), which is this desk's own step, and it sits next to capx D77's
+  already-repaired CCS emission-rate seam -- read D77's finding first, because a second seam in the
+  same file may be the same defect or its neighbour.
+
+  D88 = SCN card D-14, raised at SCN r#19 by SCN-RESOLVE-G1-RECHECK. "unit_id is not a key in an
+  evolved fleet." aggregate_fleet re-mints ids of the form {fuel_type}_{...}, so the question SCN
+  poses is: should the fleet builder emit unique ids, or must every consumer qualify by fuel_type?
+  The ask is a uniqueness GUARD plus a NARROW re-mint.
+
+WHAT THE READ MUST ANSWER, per object:
+ 1. IS IT REAL AT HEAD? Reproduce the claim by reading the code, and quote the lines. A seam that has
+    been repaired since SCN raised it is CLOSED -- say so and stop on that object. (D-14 was raised at
+    SCN r#19, which is several days and many merges ago.)
+ 2. WHAT IS ITS BLAST RADIUS? Which committed artifacts, which ISOs, which modes. Specifically for
+    D87: does it reach a BACKCAST at all, or only forecast-mode capacity evolution? (Step 2 is
+    forecast-only, so state whether any keeper can be affected -- if none can, that changes the
+    priority entirely.) For D88: enumerate the consumers that index by unit_id and say which of them
+    can actually collide.
+ 3. IS IT A DEFECT OR A CONVENTION? A re-minted id is not automatically wrong; a consumer that
+    qualifies by fuel_type is a legitimate design. Say which reading the code actually supports.
+ 4. WOULD A REPAIR HAVE ZERO FREE PARAMETERS? (rules 21 [R-DOF] / 24 [R-REGISTRY]). If a repair would
+    need a tuned value, that is an owner card, not a lane.
+ 5. WOULD IT MOVE ANY KEY? Answer from the code path -- does the object sit inside a config the
+    cache key sees, or inside a registry the D79 solve surface sees, or neither?
+ 6. YOUR RECOMMENDATION: CHARTER (with a one-paragraph scope and a model), MERGE THE TWO INTO ONE
+    LANE, or CLOSE, with the reason. Recommend closing if that is what the read supports -- and if
+    the two seams turn out to be one object, say so; merging them is a better outcome than two
+    charters.
+
+STOP GATES:
+  - Do not repair anything, even a one-line fix that looks obvious. A repair inside a read is a
+    change nobody pre-registered.
+  - Do not spend an LP. If you believe a measurement is needed to answer a question above, name the
+    measurement and leave it to the successor charter -- that is a legitimate finding.
+  - If either object turns out to belong to another desk after all (SCN's, the SPP desk's, the audit
+    board's), say so and route it back rather than absorbing it.
+
+EXIT: docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md, one section per object, each answering
+1-6 with code citations, and closing with a single RECOMMENDATION line per object. If you recommend
+chartering, include the scope paragraph the director would paste. Lead your close with the two
+recommendation lines and nothing else first. No src/ edit, no matrix touch, no registration.
+```
