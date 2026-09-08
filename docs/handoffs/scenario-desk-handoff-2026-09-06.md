@@ -1,4 +1,4 @@
-# Scenario Readiness Desk — successor handoff (written at refresh #21, amended at #22, 2026-09-08)
+# Scenario Readiness Desk — successor handoff (written at #21, amended at #22 and #23, 2026-09-08)
 
 Paste the block below whole into a new Fable session. It replaces every earlier version at this
 path (r#18, r#20). One refresh = one commit = one small PR.
@@ -23,7 +23,7 @@ DATA PROFILE: code
    additions are SPP as a SEVENTH ISO, capx D78/Q56's PJM sector gate, capx D76's
    capacity_screen_peak_measured_hindcast defaulting True, and rule 31 [R-RETAIN]);
    docs/handoffs/scenario-desk-ledger-2026-09.md (YOUR ledger — §0 r#21 is the live state and every
-   refresh back to r#1 is beneath it, §1 the scoreboard, §2 the cards and rulings S1–S19 (next is S20), §4 the
+   refresh back to r#1 is beneath it, §1 the scoreboard, §2 the cards and rulings S1–S21 (next is S22), §4 the
    collision register, §5 the issuance record AND THE FULL TEXT OF EVERY LIVE CHARTER: policy
    charter v6 (§5), ERCOT's v6-RESUME (§5.3), the S15 bracketing addendum (§5.4), charter v7 = the
    S16 coordinator/shard split (§5.5), and the four r#21 charters (§5.6) — so you never re-derive a
@@ -67,7 +67,7 @@ DATA PROFILE: code
    decision, present NO card and say so — a manufactured card wastes a sitting.
 
 ══════════════════════════════════════════════════════════════════════════════════════
-1. LIVE STATE AT r#22 (main a667073f when graded; re-pin)
+1. LIVE STATE AT r#23 (main 4a1fa662 when graded; re-pin)
 ══════════════════════════════════════════════════════════════════════════════════════
 STAGE A-LOAD: COMPLETE. 16/16 at its frozen pin, plus SCN-WS5A-RESOLVE 13/13 (+ a later
   RESOLVE-ERCOT 3/3). RESOLVE's headline: the campaign's CO2 levels were overstated by up to 57 %
@@ -75,23 +75,23 @@ STAGE A-LOAD: COMPLETE. 16/16 at its frozen pin, plus SCN-WS5A-RESOLVE 13/13 (+ 
   Re-solved legs live at results/scn-campaign-load-2026-09-06-r2/<ISO>/{REF,LOAD-HI,...}/.
 STAGE A-POLICY: **COMPLETE — 63 REGISTERED LEGS, SIX FINDINGs, ZERO LIVE BRANCHES.**
   MISO 13 · ERCOT 11 · PJM 11 · NEISO 10 · NYISO 10 · CAISO 8. Every ISO carries ces-p60, so ruling
-  S15 executed footprint-wide. Audit EXIT 0 at HEAD (r#22: 177 sidecars / 2,478 records / 217 declared FAILs). PJM's three-refresh registration gap CLOSED in one dedicated session (standing change #8
+  S15 executed footprint-wide. Audit EXIT 0 at HEAD (r#23: 177 sidecars / 2,478 records / 217 declared FAILs — unmoved because no Stage-B leg has registered yet). PJM's three-refresh registration gap CLOSED in one dedicated session (standing change #8
   worked). Committed results tree carries 65 summaries and is RAGGED — NYISO's twelve include its
   own REF and LOAD-HI copies, CAISO's eight do not — and the campaign's REF legs are in the
   scn-campaign-load-2026-09-06-r2 tree, NOT the policy tree.
-IN FLIGHT (four lanes issued r#21, RE-ISSUED r#22 under the SAME stems — silent one refresh, ASKED
-not graded; grade them first, and if silent a SECOND time that is the two-refresh trigger: ask
-again and consider whether the charter itself is the obstacle):
-  SCN-WS5A-POLICY-SYNTH (Opus, zero LP) — the plan §3 WS-5 Stage C memo,
-    docs/handoffs/FINDING-scenario-campaign-2026-09-07.md, plus the campaign's first _rollup
-    (none exists at HEAD). Owns the plan §5.1 rows and §9 line.
-  SCN-WS5B-NEISO / SCN-WS5B-NYISO (Opus) — Stage B under ruling S18, campaign
-    scn-campaign-stageb-2026-09-07. THE PIN bdfb3095 is the CONTROL's sha; the arm runs AT HEAD
-    (rule 29 [R-SCREEN] (b)) — r#22 repaired the r#21 charters' ambiguity here, along with the
-    G-DRIFT size (59 files / ~7,700 insertions, not four items) and the cache key, which capx D79
-    re-based on a per-ISO solve-surface fingerprint AFTER Stage A's pin.
-  SCN-FIX3 (Fable, zero LP) — the campaign YAML records sweep + two recording repairs.
-  All four charters are in ledger §5.6 verbatim, carrying the r#22 repairs.
+STAGE C: LANDED. `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md` is the campaign's headline
+  document and `results/scn-campaign-policy-2026-09-06/_rollup/` its rollup. READ THE MEMO — it is
+  what any further SCN work has to be consistent with, and §3 below is its condensed form.
+  SCN-FIX3 also LANDED (all four items, tests, no `src/`).
+STAGE B: IN FLIGHT, under rulings S18 (grant), S20 (records) and S21 (CARB-HI). Both lanes pushed
+  PRECOMMITs before any solve and both killed CARB-MID at phase 0. NYISO has REF solved
+  (`f1a2ef17634b0467`, 25/25 yr, 116.2 min) and **not registered** — the one gap; its continuation
+  makes registering REF the FIRST commit. NEISO has zero legs solved. Continuations issued at r#23,
+  full text in ledger §5.7. The live case set per ISO is now
+  REF · CAP-STATE-TIGHT · CES-P60 · CES-T80 · **CARB-HI** · ALL-CLEAN.
+  GRADE THEM ON `git ls-tree -r --name-only origin/main frontend/data/hindcast/ | grep -i stageb`.
+  If legs are solved and none registered, that is miss #2 and standing change #8 fires: charter a
+  session for the registration duty ALONE.
 GATE: §2.1b `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM}; MISO alone is outside it; `final` empty.
   **Leg (b), not leg (a), is what binds Stage B**: a T1-F PROMOTE passes for NEISO and NYISO ONLY.
   Leg (c) passes for five (CAISO has never run a T1-X). You only disclose.
@@ -211,6 +211,17 @@ footprint (SCN-CAP's regional-RGGI fallthrough is new evidence for it).
    a drift expectation or a key derivation is RE-VERIFIED against the current diff at every refresh
    it is re-issued. Drift is not a fact about the lane; it is a fact about the gap, and the gap
    grows every refresh the lane does not start.
+15. r#21's Stage-B charters named `results/scn-campaign-stageb-2026-09-07/<ISO>/**` as the lanes'
+   own files without checking `git check-ignore` — and that whole tree was gitignored before either
+   lane started. The lane caught it, followed the later rule-grounded instruction, and routed the
+   decision rather than editing `.gitignore` (ruled S20). Also at r#21 I described S15's bracket as
+   "falsifying the mask in 4 of 5 ISOs"; the Stage-C memo measures VRE entry at **+0.0 MW at every
+   rung including \$60 in four of those five**, so the mask was never the binding constraint there
+   and what builds is cap-bound nuclear. → STANDING CHANGE #11: a path a charter hands a lane is
+   checked against `.gitignore` as well as against the tree (standing change #6 covered existence,
+   not reachability); and a headline the desk repeats across refreshes is re-read against the
+   latest lane evidence before it is repeated again — twice now the desk's summary has been the
+   stalest thing in the campaign.
 STANDING CHANGE #2 (from WS-1b-r2 §3.3): a paired-probe STOP gate asserts a REF-side adequacy
 precondition AND a no-worsening condition — a transition gate cannot see an already-broken REF.
 
