@@ -13224,3 +13224,92 @@ Records: `PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md`,
 `FINDING-miso244-the-cent-is-real-drift-and-the-re-derive-is-refused-2026-09-08.md`; probes
 `scripts/probes/_miso244_incumbent_ladder_cent_phase0.py` and `_miso244_liveness_gate.py` with their
 JSONs.
+
+## miso-245 — 2026-09-08 — **THE DRIFT IS ATTRIBUTED (`M` = 1, at low power, and I say so) AND THE INCUMBENT LADDER IS RECONCILED. KEEPER → `2026-09-08-miso-245-ladderfix`, CALIBRATED**
+
+**Queue item (rule 28(a)): the handoff's RECOMMENDED item** — miso-244 §7.1's named successor, which
+miso-244 was barred from running by its own §2.4 pre-commitment (a drafting defect it recorded
+against interest).
+
+**KEEPER → `2026-09-08-miso-245-ladderfix`** (bundle `results/calibration/miso245_ladderfix_K`).
+**DETERMINATION CALIBRATED**, C3c the single ledgered non-downgrading caveat (rubric v3.6); C1 16/16
+all-class and 12/12 free-class; C2/C3a/C3b/C4/C6/C8 all PASS; grade summary scored 8 / target 7 /
+ledgered 1 / fails 0 — **identical to the miso-243 predecessor in every one of those**. **DOF ledger
+UNCHANGED at 41/2.** Predecessor pruned; MISO carries exactly one registered run (rule 15).
+
+**THE SINGLE DELTA IS NOT A `ScenarioConfig` FIELD.** Three of `MISO_SEAM_LADDER_BY_YEAR`'s 192
+committed entries move to the value `derive()` returns at HEAD — 2023 PJM import band 5
+27.86 → 27.87 (**inert** here: the PJM hourly overlay displaces those rows), 2023 South export band 4
+27.69 → 27.70 (**live**), 2024 South export band 5 23.77 → 23.76 (**live**) — with the other **189
+byte-identical**, checked and not assumed.
+
+**THE TEST, pre-registered in one line before it ran.** *If the committed table came from this
+estimator on a marginally different SAMPLE, each mismatching entry's committed value is reachable by
+perturbing THAT ENTRY'S OWN integer duration count by at most ±1 hour of 8,760, holding estimator,
+price series, row set and every other entry fixed; a single entry needing more REFUTES it.*
+**`A-CONFIRMED`, `M` = 1** on all three (counts **5,415 / 3,259 / 3,044**; signed Δ **+1 / −1 / +1**,
+exactly the sign quantile monotonicity requires). Six gated legs pass (`FAILED_LEGS: []`), two of them
+— `G-QUANT`, `G-COUNT` — able to end the session, plus `G-CLAMP-N`, added by pushed addendum and
+written so it **could only invalidate**: every reaching value is the **unclamped** quantile at
+**23.29 / 34.08 $/MWh** of margin.
+
+**The mechanism is legible, and it is why miso-244 eliminated the estimator family.** At 2024 South
+export band 5 the quantile sits inside a flat run of the sorted DA array **two hours long**
+(`x_lo == x_hi == 23.760000`) whose next distinct value is **23.780001** — the series **skips 23.77**
+there, so no order-statistic convention returns it. One extra hour of export duration moves the
+position onto the `23.76 → 23.78` segment at `frac` 0.6525 and lands at **23.7730485**.
+
+**DISCLOSED AGAINST INTEREST, AND LOAD-BEARING: THE TEST IS LOW POWER.** R-2 — declared
+descriptive-only in the PREREG **before it ran** — reads `min_f_over_matches` = **1**, the 189
+non-drifting entries at **p05 = p25 = p50 = p75 = 1**, and the three drifted entries at ranks
+**4 / 39 / 91** of 192 (`separated: false`). The **median non-drifting entry is also one hour from a
+different cent**, so "reachable at ±1 hour" measures the estimator's sensitivity more than the drift.
+The verdict stands on the pre-registered rule, but the **claim was reduced**: the rule-23 citation was
+**re-worded in a pushed addendum before the reconciliation commit existed**, to rest on the **frozen
+estimator** (`G-RAW` 0.0 on all 192; miso-244 eliminated the `h = q·(n−1)` family arithmetically)
+having moved its output on **current source data**, with `M` = 1 demoted to a magnitude **bound**.
+**Still not identified, and said so:** which hours of which series differ, and when.
+
+**RULE 29 END TO END, INCLUDING A GATE OF MINE THAT FAILED.** Zero-LP phase 0; **G-DRIFT
+`a667073f..HEAD` EMPTY** on the backcast solve path ⇒ no LIVE hunk, no control solve, keeper's
+committed bundle = control (form 4), `surface_stamp` reproducing `8ee657ee4c7c49b0` (disclosed as
+**expected**); one screen year **2024**, by `argmax_year L` on the mechanism's own re-measured
+footprint (`L` 0.00000 / **0.00981735** / 0.00000 on `MISO_external_South`, 86 h), never a residual;
+four structural STOP-only gates declared in a pushed addendum **before** the screen ran. **`S-3(b)`
+FAILED** — unsatisfiable as written, demanding identity between a 3-year bundle's **per-year**
+`run_config` record and a 1-year replay's. Published **first at full magnitude**, with
+`S-1`/`S-2`/`S-3(a)`'s pre-repair values fixed on the record; repaired **stricter, no bar moved**,
+into `S-3(b′)` (two closed, MEASURED classes; any field in neither STOPS the arm), which passes with
+**zero unexplained fields**. A control solve was **available and not spent**, with the reason stated
+and the pre-committed fallback recorded. **Screen: S-1 +0.039378 MW in [0, 40]; S-2 288 hours in 860;
+S-3(a) 0.00 on all 192; S-4 zero collateral flips.** The LP's mean response is **1.1 %** of the
+pre-solve `Δq̂` +3.682 MW — right sign, two orders of magnitude below the size, exactly as miso-244
+predicted from the moving band being the marginal price-setter in 82 of its 86 hours; `max |Δ|` is
+**375.000 MW**, exactly one South band step.
+
+**THE HONEST HEADLINE ON THE FULL SPAN: EVERY SCORED NUMBER IS IDENTICAL TO THE PREDECESSOR'S.**
+245 of 246 verdict numeric leaves byte-equal; the one move is a **reported-only** `co2` record at
+**+0.001 Mt**. **This keeper does not improve the fit and does not claim to** — it is promoted because
+the committed input is now the frozen estimator's own output on current source data (rule 14
+`[R-ACCURATE]`), at zero cost to every gate, with zero free parameters. Legitimacy diagnostics are
+**inherited, not new** (D-1 False / D-2 False / D-4 True; CT_PEAKER forced share 0.4118 / 0.2617 /
+0.2386 identical), so C8 still passes only through rule 18's grounded route.
+
+**THE MISSING RULE-23 PIN IS COMPLETE:** `_MISO244_KNOWN_LADDER_DIVERGENCES` **deleted, not zeroed**
+(rule 26); the pin holds all 192 at `atol=0.005` with **no exceptions**, falsified twice before kept.
+
+**HANDED FORWARD (another lane's object): the cache key does not see this re-derive.**
+`market_sim.model.interchange.spec` is outside the capx-D79 solve-surface phase 1, so `surface_stamp`
+and `cache_key` (`f130587822fbf565`) are byte-identical before and after — a populated
+`results/MISO/<key>/` cache would serve a *pre*-reconciliation solve to a *post*-reconciliation
+config. Verified inert for this run (`results/MISO/` does not exist here).
+
+**OPEN / UNCHANGED:** C3c stays the designated frontier (3/7/11 model tail hours vs 30/37/88); the
+structural item rule 1 names is untouched (the model's SPP seam is 0.70–0.79 spread-correlated against
+a measured +0.0409 / −0.0200 / +0.0502); 2025 C1/C2 remain SKIPPED on the preliminary EIA-923 vintage.
+Rule 22: 2023–2025 only; MISO holds no `complete` marker and none was sought.
+
+Records: `PREREG-miso245-attribute-the-incumbent-ladder-drift-2026-09-08.md`; three addenda;
+`FINDING-miso245-the-drift-is-attributed-and-the-ladder-is-reconciled-2026-09-08.md`; probes
+`_miso245_ladder_drift_attribution_phase0.py`, `_miso245_gclamp_n.py`, `_miso245_screen_gates.py`,
+`_miso245_s3b_prime.py` with their JSONs.
