@@ -476,6 +476,63 @@ def _storage_throughput_mwh(yd: "C.YearData") -> tuple[float | None, float | Non
     return d, c
 
 
+def _policy_duals(yd: "C.YearData") -> tuple[list[float] | None, list[float] | None]:
+    """The clean-tier and mass-cap row duals for one year, or ``None`` each.
+
+    **A RECORDING SEAM ONLY — it reads what the solve already produced and
+    changes nothing about it** (SCN-FIX3 item 3; requested by
+    ``FINDING-scn-ws5a-policy-nyiso-2026-09-07.md`` §9 item 4). Both vectors
+    live on :class:`DispatchResult` and are persisted through the cached year
+    bundle (``results.outputs``), but ``results/<ISO>/<key>/`` is gitignored and
+    under owner ruling **S16** each campaign shard's bundles die with its
+    container — so a policy campaign's duals were unrecoverable from its
+    COMMITTED artifacts, and the dual limbs of gates G4 and G7 were unscorable
+    at the coordinator by construction. The slim summary carried ``rps_dual``
+    alone; these two rows put the other half of the same fact beside it.
+
+    Shapes, passed through RAW exactly as the LP exposes them
+    (``model/lp/model.py``; the per-(fuel, zone) consumer mapping deliberately
+    happens at the runner, which owns the qualifying sets):
+
+    * ``clean_region_duals`` — one clean/carbon-free attribute price ($/MWh)
+      per clean-tier region, in the LP's clean-row order. The runner's log line
+      labels the same vector from ``clean_region_arrays.labels``; the labels
+      need per-year fleet/zone context this reporting path does not carry, so
+      the order is documented rather than resolved here.
+    * ``co2_cap_price`` — one endogenous allowance price ($/tCO2) per active
+      emissions mass-cap program, already sign-corrected to ``-λ >= 0``.
+
+    ``None`` — NEVER ``0.0`` or ``[]`` — whenever the family carried no rows or
+    the year predates the fields: a zero dual (the cap is slack) and an
+    unrecorded dual (nothing was measured) are different facts, and every
+    consumer of ``rps_dual`` already distinguishes them with ``is not None``.
+    Read with ``getattr`` so a summary rebuilt from an older cached bundle,
+    whose restored ``DispatchResult`` may not carry the attribute at all,
+    reports "not measured" instead of raising.
+
+    Args:
+        yd: One solved year's data, carrying its ``DispatchResult``.
+
+    Returns:
+        ``(clean_region_duals, co2_cap_price)``, each a list of floats or
+        ``None``.
+    """
+
+    def _as_list(value: object) -> list[float] | None:
+        if value is None:
+            return None
+        seq = np.asarray(value, dtype=float).ravel()
+        return [float(v) for v in seq] if seq.size else None
+
+    result = getattr(yd, "result", None)
+    if result is None:
+        return None, None
+    return (
+        _as_list(getattr(result, "clean_region_duals", None)),
+        _as_list(getattr(result, "co2_cap_price", None)),
+    )
+
+
 def extract_trajectory(run: "C.Run") -> list[dict]:
     """Per-year headline trajectory metrics for the findings tables.
 
@@ -502,6 +559,16 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
     Every reader must therefore treat an absent new key as backward-compatible,
     the same contract the evolution ledger states for ``confirmed_derates`` /
     ``firm_clean_accredited_mw``.
+
+    **SCN-FIX3 item 3 (2026-09-07) adds the other two policy-row duals** —
+    ``clean_region_duals`` and ``co2_cap_price``, beside the ``rps_dual`` this
+    row already carried — under exactly that contract: purely additive, absent
+    from every summary written before it, and ``None`` rather than ``0.0``
+    where nothing was measured. See :func:`_policy_duals` for why (the cached
+    year bundle is gitignored and dies with its shard under ruling S16, so the
+    duals were unrecoverable from the COMMITTED artifacts and two gates' dual
+    limbs were unscorable at the coordinator). It is a recording seam: no
+    solve, no threshold and no cache key moves.
     """
     rows: list[dict] = []
     for year in run.solved_years:
@@ -521,6 +588,7 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
         # fleet context, which is the honest "not measured".
         gen = C._fuel_gen_mwh(yd)
         storage_dis_mwh, storage_chg_mwh = _storage_throughput_mwh(yd)
+        clean_duals, co2_cap_price = _policy_duals(yd)
         thermal = sum(mw for f, mw in cap.items() if f in C.THERMAL_FUELS)
         firm_clean = sum(mw for f, mw in cap.items() if f in C.FIRM_CLEAN_FUELS)
         vre = cap.get("wind", 0.0) + cap.get("solar", 0.0)
@@ -562,6 +630,13 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
                 "peak_demand_mw": led.get("peak_demand_mw"),
                 "reserve_margin": led.get("reserve_margin"),
                 "rps_dual": led.get("rps_dual"),
+                # The other two policy-row duals, beside `rps_dual` and on
+                # the same null contract (SCN-FIX3 item 3; see
+                # `_policy_duals`). Additive: absent from every summary
+                # written before 2026-09-07, so a consumer treats a missing
+                # key exactly as it treats a `None` value — not measured.
+                "clean_region_duals": clean_duals,
+                "co2_cap_price": co2_cap_price,
                 "thermal_mw": round(thermal, 1),
                 "firm_clean_mw": round(firm_clean, 1),
                 "vre_mw": round(vre, 1),

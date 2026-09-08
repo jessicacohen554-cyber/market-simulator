@@ -19,6 +19,15 @@ list, and the headline trajectory. Legs solve into the DEFAULT ``results/``
 cache (``redirect_cache=False``) so the report and the bundle can assemble every
 leg by its ``cache_key``.
 
+**A policy leg's duals are readable from its summary since SCN-FIX3 (2026-09-07).**
+Each trajectory row carries ``clean_region_duals`` and ``co2_cap_price`` beside
+the ``rps_dual`` it always had (``run_full_horizon._policy_duals``, which owns
+the shapes and the null contract). That matters here because a CES leg's answer
+IS a dual: the cached year bundle those duals used to live in only is gitignored
+and, under ruling S16, dies with its campaign shard's container — so the gates'
+dual limbs were unscorable at the coordinator by construction. Legs solved
+before that date carry neither key, which every reader treats as "not measured".
+
 Two modes:
 
 * ``--case NAME`` — solve that one leg (its own invocation).
