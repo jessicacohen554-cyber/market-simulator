@@ -78,6 +78,24 @@ _CCS_RETROFIT_LEDGER_SCALING_FIELDS: tuple[str, ...] = (
     "vom_adder_per_mwh",
     "old_hr",
     "old_emission_rate",
+    # capx D87: the two ATTRIBUTE prices the screen actually decided on. Same
+    # additive-key discipline and the same reason as the D65-B block above --
+    # the D65 §3d defect class, "a diagnostic blind to its own mechanism": the
+    # screen composes max(legacy eac, premium x credit, CLEAN-TIER DUAL) and
+    # then dropped the answer, so a run's own artifacts could not say which
+    # buyer priced its certificate, or whether the clean-tier leg reached it at
+    # all. With these two the composition is readable from the ledger a run
+    # already writes, which is what makes the D87 screen's identity gate
+    # scorable without replaying a solve.
+    #
+    # DIAGNOSTIC, NOT A DECISION: both are read off the retrofit log AFTER the
+    # screen has chosen and converted, by the writer below, and nothing
+    # downstream consumes them. No ScenarioConfig field bears either name and
+    # neither is a cache-key drop default, so no key moves -- the invariant
+    # ``TestRetrofitLedgerCarriesTheScalingRecord`` already asserts over this
+    # whole tuple.
+    "attr_post_usd_per_mwh",
+    "attr_unabated_usd_per_mwh",
 )
 
 
