@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-08 — Two measured-input seams repaired repo-wide: an EIA-923 gas-price plausibility screen and a simple-cycle heat-rate floor (lane SPP-49)
+
+Owner ruling **P19**, executed at **zero LP**, with all seven ISOs censused before and after. This is the
+repair SPP-46 identified when it killed both gas-split mechanisms at phase 0 and found the defect was in
+the inputs. Record: `docs/handoffs/FINDING-spp-49-2026-09-08.md`; log `spp-16`; desk ledger §0o.
+
+- **Seam 1 — the EIA-923 own-month gas price is now screened for plausibility, as a registered gate.**
+  `f923_gas_price_plausibility_screen` (`ScenarioConfig`, **default ON**, declared at
+  `("2026-09-08", …, "True")`): an own-reported Natural Gas plant-month outside **[0.5, 2.0] ×** the
+  plant's own state's EIA delivered-to-electric-power price (`N3045<ST>3` ÷ 1.037) falls back to that
+  reference. It landed as a *gate* rather than a construction because a desk can legitimately want its
+  own raw series. Reach, measured: SPP 2024 screens 60 low / 11 negative / 25 high plant-months across
+  19 plants — **31.9 %** of the gas fleet by MW; MISO 12–24 %; PJM 4–9 %; NEISO ~2 %; NYISO and ERCOT
+  nothing.
+- **Seam 2 — a simple-cycle heat-rate floor, as a construction.** `_apply_simple_cycle_hr_floor`, beside
+  the eGRID CC ceiling it mirrors: a **non-CHP** plant whose every operating row is a simple-cycle prime
+  mover and whose plant-grain eGRID rate is below the aero floor is reconciled. Pioneer 57881 moves from
+  **3.43 to 9.00** MMBtu/MWh. **CHP is excluded deliberately** — eGRID's cogen rate is steam-credited, so
+  a sub-9 value there is the published convention and the model already owns it
+  (`_correct_chp_steam_credit_hr`); clamping first would have put two mechanisms on one row (rule 19).
+- **The cache-key census predicted the blast radius exactly.** Recorded before either file was edited:
+  **18 keys move, 0 off-target**. The landed tree moved the identical set and the identical key pairs —
+  CAISO 2, MISO 1, NEISO 5, NYISO 7, PJM 2, SPP 1, six of them designated keepers; **0 forecast, 0
+  hindcast, 0 ERCOT**, with ERCOT's keeper key byte-identical to the pre-edit tree.
+- **The repair moves the rows it was supposed to and leaves the rest alone.** Pre-repair the lane
+  reproduces SPP-46's plant-level attribution **to the GWh**; post-repair Pioneer moves −3,362, the CT
+  low-price cohort −5,739 and Harrington's ST_GAS −4,643 GWh, while the **clean** cohorts stay put
+  (ST_GAS clean +6 GWh on −6,062). **SPP, MISO and PJM keepers owe a re-solve; ERCOT owes none.**
+
 ## 2026-09-08 — SPP's C1 gas split is an input defect, not a mechanism; the wind LEVEL rule loses a free parameter (lanes SPP-46 · 47 · 48)
 
 Three SPP lanes, **zero LP spent between them**. No keeper moved, no `ScenarioConfig` field was added, no
