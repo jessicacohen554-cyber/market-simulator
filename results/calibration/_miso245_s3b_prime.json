@@ -1,0 +1,47 @@
+{
+ "probe": "miso-245 S-3(b') \u2014 the repaired clean-A/B gate (STRUCTURAL, STOP-only)",
+ "addendum": "results/calibration/ADDENDUM-miso245-my-own-gate-S3b-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-08.md \u00a72",
+ "keeper": "/home/user/market-simulator/results/calibration/miso243_sppair_K",
+ "arm": "/tmp/claude-0/-home-user-market-simulator/db5feb19-a82e-56da-a252-94c2e4e968ed/scratchpad/miso245_screen2024",
+ "henry_hub_actual": {
+  "2023": 2.54,
+  "2024": 2.19
+ },
+ "n_fields_keeper": 822,
+ "n_fields_arm": 824,
+ "n_differing": 4,
+ "fields": [
+  {
+   "field": "gas_price_override",
+   "keeper": 2.54,
+   "arm": 2.19,
+   "class": "P",
+   "evidence": "backcast_config(2023,'MISO')=2.54 reproduces the keeper's record; backcast_config(2024,'MISO')=2.19 reproduces the arm's"
+  },
+  {
+   "field": "netload_drag_layup_window_mask",
+   "keeper": null,
+   "arm": false,
+   "class": "N",
+   "dataclass_default": false,
+   "evidence": "miso-244 G-DRIFT, MEASURED not classified from its gate: _resolve_drag_layup_shares(keeper_config, 'MISO', y, 8760) returns len 0 in 2023, 2024 and 2025"
+  },
+  {
+   "field": "pjm_thermal_accreditation_vintage",
+   "keeper": null,
+   "arm": false,
+   "class": "N",
+   "dataclass_default": false,
+   "evidence": "miso-244 G-DRIFT: capx D84 PJM thermal-ELCC accreditation, on the capacity-evolution path a mode='backcast' run never enters"
+  },
+  {
+   "field": "weather_year",
+   "keeper": 2023,
+   "arm": 2024,
+   "class": "P",
+   "evidence": "backcast_config(2023,'MISO')=2023 reproduces the keeper's record; backcast_config(2024,'MISO')=2024 reproduces the arm's"
+  }
+ ],
+ "unexplained": [],
+ "PASS": true
+}

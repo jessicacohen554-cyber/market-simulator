@@ -1,0 +1,40 @@
+{
+ "gate": "G-4 no collateral flip (rule 29 screen; STOP-only, never promotes)",
+ "bar": "no non-target load-bearing criterion (fuelmix, sysvol, price_mean, price_shape, governance) flips PASS->FAIL vs the keeper's committed scores; C3c excluded (ledgered caveat, rubric v3.3); every other move reported, not gated",
+ "keeper": "2026-09-07-miso-243-spp-pairing",
+ "arm_bundle": "miso245_screen2024",
+ "arm_scored_as": "2026-09-08-miso245-screen2024",
+ "years": [
+  2024
+ ],
+ "bench": "committed frontend/data/backcast/bench parts (held fixed)",
+ "arm_determination_NOT_A_RESULT": "NOT-YET",
+ "flips": [],
+ "moves": [],
+ "unscorable": [
+  {
+   "criterion": "price_mean",
+   "year": 2024,
+   "key": "da_diagnostic",
+   "keeper_status": "SKIPPED",
+   "arm_status": "SKIPPED",
+   "keeper_magnitude": "+1.0% vs DA (DA\u2212RT premium $+0.84)",
+   "arm_magnitude": "+1.0% vs DA (DA\u2212RT premium $+0.84)",
+   "keeper_gap": 0.35,
+   "arm_gap": 0.35,
+   "direction": "flat",
+   "note": "SKIPPED on both sides"
+  },
+  {
+   "criterion": "governance",
+   "year": null,
+   "key": null,
+   "keeper_status": "PASS",
+   "arm_status": "UNATTESTED",
+   "keeper_magnitude": "miso-243 KEEPER CANDIDATE (2026-09-07): THE PER-YEAR SPP HOURLY LADDER'S CROSS-YEAR PAIRING REPAIRED. Full span 2023+2024+2025 in ONE invocation, years sequential, solved in-session and never on CI (rules 12/16), from the SAME committed miso-233 keeper recipe via replay_keeper -- NO ScenarioConfig field changed, NO new field, NO new gate, NO flag flipped. The ONLY delta is the committed registry table MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR, re-derived by the BYTE-IDENTICAL frozen estimator on a CORRECTLY PAIRED frame. THE DEFECT: derive_spp_neighbour_hourly joined a (year, hour)-MultiIndexed hub series onto a df.loc[year] frame indexed by `hour` ALONE, so pandas partial-joined on the shared level and paired each year's 8,760 MISO rows against ALL THREE hub years -- drawing the Q-Q quantile from a three-year MIXTURE of the spread instead of the year's own. The estimator's flow-exceedance TARGETS were unaffected (replicating a sample three times does not change a share); only the quantile's sample was wrong. Confirmed by miso-242 on three independently refuting legs plus a PJM no-join control, and re-confirmed here from scratch on an independent code path (six provenance legs, all PASS). THE CASE IS RULE 14 [R-ACCURATE] AND RULE 23's OWN CONSTRUCTION, NEVER A RESIDUAL (rule 1 [R-STRUCT]): this is a rule-23 [R-FROZEN-DERIVE] re-derive citing a CONSTRUCTION DEFECT, not a source-data update and not a residual that moved; the pairing was NOT selected by which arm scores better, and both ladders are fully determined by the frozen estimator before any solve runs. Rule 21 [R-DOF]: ZERO free parameters added -- the repair removes an error, it does not add a knob; the ledger is UNCHANGED at 41/2. K, the midpoint-depth grid, the measured flow series, the SPPNORTH_HUB anchor and the no-wash reconciliation are byte-for-byte the incumbent ones, and the no-wash clamp raised no note. The POOLED forward ladder was always correctly paired and is UNTOUCHED, so rule 13's forward story is intact and only the per-year backcast table was implicated. THE FALSIFIABLE EVIDENCE, and it could have failed: the estimator asserts an identity -- on the derive's own spread the dead band captures P(|flow| <= mid_1) by construction. Measured, |Z_derive - Z_target| moves 0.0395/0.0144/0.0089 -> 0.0003/0.0000/0.0001 against a pre-registered bar of 0.005, four times tighter than miso-242's Q-A bar. RULE 29 [R-SCREEN] SATISFIED END TO END: a zero-LP phase 0 ran first; ONE screen year (2024) was named by a footprint rule (argmax F, F = share of derive rows whose SPP band-count vector changes) FIXED IN THE PREREG BEFORE EITHER NUMBER EXISTED, containing zero model output and zero residual -- and it OVERRULED the handoff's expected 2023 (F 0.0910/0.2376/0.1722), which is disclosed against interest; and ALL FOUR pre-registered STRUCTURAL STOP-ONLY gates CLEARED, none of them the target residual: G-1 slack 19,566.915 -> 19,566.915 MWh (delta 1.5e-11), dump 0 -> 0, must-take 0.00%; G-2'(a) displacement ratio 0.9991 against a bar of 4.0 (imports -423,500 MWh replaced almost one-for-one by generation); G-2'(b) served energy -0.00006%; G-3 -48.345 MW with the predicted NEGATIVE sign at 0.449 of the pre-solve prediction, inside its window; G-4 ZERO collateral flips. CONTROL = the miso-233 keeper's COMMITTED bundle (rule 29(b) form 4; NO control solve spent). G-DRIFT e852c85c..HEAD classified hunk-by-hunk ALL INERT over main's SPP-ISO-registration and capx drift, including capx D76 verified inert at the OBJECT level (hindcast=False, __post_init__ coerces the field back to False) and the one genuinely shared data seam (_screen_fuel_spike_columns) MEASURED at 0 repaired cells for MISO in all three years; corroborated by MISO surface_stamp reproducing the keeper's fingerprint 8ee657ee4c7c49b0 with moved:{} and epochs:[]. Rule 22 [R-HOLDOUT]: 2023-2025 only; MISO holds no `complete` marker and no out-of-training year was solved, scored or registered. PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md and its two addenda were each pushed BEFORE the numbers they govern existed.; authorized price tuning declared on offer_curve_by_group = x1.10 on committed/econ_low/econ_high/peak for 11 non-steam fossil classes; ST_GAS and ST_GAS_INTERMEDIATE held byte-identical; phys_* and econ_low_share/pct_peaking untouched in every class",
+   "arm_magnitude": "no governance attestation in bundle",
+   "note": "not scorable at a screen (no attestation)"
+  }
+ ],
+ "verdict": "PASS"
+}
