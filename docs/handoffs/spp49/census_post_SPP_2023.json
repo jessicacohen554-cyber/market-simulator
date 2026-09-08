@@ -1,0 +1,261 @@
+{
+ "summary": {
+  "iso": "SPP",
+  "year": 2023,
+  "seam1_armed": true,
+  "gas_rows": 641,
+  "gas_mw": 32660.494599999998,
+  "mw_plants_with_negative": 0.0,
+  "mw_plants_with_low": 1829.5200000000002,
+  "mw_plants_with_high": 4358.599999999999,
+  "gas_plants": 179,
+  "own_reporting_plants": 55,
+  "plant_months": 648,
+  "pm_in_band": 609,
+  "pm_high": 34,
+  "pm_low": 5,
+  "ref_us_fallback_months": 0,
+  "flagged_plants": 14,
+  "seam1_rows": 66,
+  "seam1_mw": 5864.719999999999,
+  "seam1_mw_share": 0.17956617227713384,
+  "ct_only_plants": 109,
+  "ct_only_below_floor": 9,
+  "ct_only_between_8_and_floor": 5,
+  "ct_only_below_6": 3,
+  "seam2_rows": 14,
+  "seam2_mw": 167.23399999999998,
+  "seam2_mw_share": 0.005120375611213187,
+  "seam2_plants": [
+   {
+    "plant_code": 1137,
+    "heat_rate": 7.928480204,
+    "nameplate": 15.6,
+    "fleet_mw": 13.600000000000001,
+    "fleet_mw_below_floor": 12.5,
+    "vintage": [
+     1946,
+     1969
+    ]
+   },
+   {
+    "plant_code": 52122,
+    "heat_rate": 8.514870806000001,
+    "nameplate": 23.4,
+    "fleet_mw": 5.520000000000001,
+    "fleet_mw_below_floor": 5.520000000000001,
+    "vintage": [
+     1988,
+     1988
+    ]
+   },
+   {
+    "plant_code": 55064,
+    "heat_rate": 4.812011732,
+    "nameplate": 243.9,
+    "fleet_mw": 141.869,
+    "fleet_mw_below_floor": 141.869,
+    "vintage": [
+     1999,
+     2005
+    ]
+   },
+   {
+    "plant_code": 56238,
+    "heat_rate": 8.206454429999999,
+    "nameplate": 216.4,
+    "fleet_mw": 170.00000000000003,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2006,
+     2008
+    ]
+   },
+   {
+    "plant_code": 56478,
+    "heat_rate": 4.958220719,
+    "nameplate": 13.3,
+    "fleet_mw": 7.345000000000001,
+    "fleet_mw_below_floor": 7.345000000000001,
+    "vintage": [
+     2007,
+     2007
+    ]
+   },
+   {
+    "plant_code": 56606,
+    "heat_rate": 8.074018666,
+    "nameplate": 108.2,
+    "fleet_mw": 85.0,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2010,
+     2010
+    ]
+   },
+   {
+    "plant_code": 57881,
+    "heat_rate": 3.429077425,
+    "nameplate": 897.3,
+    "fleet_mw": 762.9999999999994,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2013,
+     2025
+    ]
+   },
+   {
+    "plant_code": 59726,
+    "heat_rate": 8.918915159,
+    "nameplate": 56.099999999999994,
+    "fleet_mw": 56.099999999999994,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2017,
+     2017
+    ]
+   },
+   {
+    "plant_code": 65295,
+    "heat_rate": 8.665853983000002,
+    "nameplate": 69.0,
+    "fleet_mw": 55.2,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2022,
+     2022
+    ]
+   }
+  ]
+ },
+ "by_class": [
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "CC_CHP",
+   "rows": 4,
+   "mw": 271.17999999999995,
+   "rows_touched": 0,
+   "mw_touched": 0.0,
+   "d_mc_capwtd": 0.0,
+   "d_mc_touched_capwtd": 0.0
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "CC_REGULAR",
+   "rows": 85,
+   "mw": 10047.779999999997,
+   "rows_touched": 11,
+   "mw_touched": 868.5999999999999,
+   "d_mc_capwtd": -8.827456263091469e-10,
+   "d_mc_touched_capwtd": -1.027209582971681e-08
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "CT_CHP",
+   "rows": 31,
+   "mw": 240.17644,
+   "rows_touched": 15,
+   "mw_touched": 196.98399999999998,
+   "d_mc_capwtd": 7.463382969206294,
+   "d_mc_touched_capwtd": 9.014913235662343
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "CT_PEAKER",
+   "rows": 383,
+   "mw": 11707.499899999999,
+   "rows_touched": 39,
+   "mw_touched": 2664.6,
+   "d_mc_capwtd": 7.505255365041602e-09,
+   "d_mc_touched_capwtd": 3.128064427697431e-08
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "ST_CHP",
+   "rows": 14,
+   "mw": 113.35826,
+   "rows_touched": 3,
+   "mw_touched": 81.77,
+   "d_mc_capwtd": 6.72612580936375e-08,
+   "d_mc_touched_capwtd": 9.158135177358124e-08
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "klass": "ST_GAS",
+   "rows": 124,
+   "mw": 10280.500000000002,
+   "rows_touched": 12,
+   "mw_touched": 2219.9999999999995,
+   "d_mc_capwtd": -3.30820695527566e-10,
+   "d_mc_touched_capwtd": -2.353356654731762e-09
+  }
+ ],
+ "pred": {
+  "CC_CHP": {
+   "base_twh": 1.9044074201836798,
+   "keeper_twh": 1.882630705833435,
+   "d_twh": 0.003242513606634224
+  },
+  "CC_REGULAR": {
+   "base_twh": 43.24739621937758,
+   "keeper_twh": 41.43363952636719,
+   "d_twh": 0.26556576400072873
+  },
+  "COAL": {
+   "base_twh": 77.57926970359031,
+   "keeper_twh": 70.62306213378906,
+   "d_twh": 0.3055340780066997
+  },
+  "CT_CHP": {
+   "base_twh": 1.2346101721819644,
+   "keeper_twh": 1.270817518234253,
+   "d_twh": -0.740698174165495
+  },
+  "CT_PEAKER": {
+   "base_twh": 14.551567233469251,
+   "keeper_twh": 19.989152908325195,
+   "d_twh": 0.13177115210498125
+  },
+  "ST_CHP": {
+   "base_twh": 0.2922629265805317,
+   "keeper_twh": 0.3692565858364105,
+   "d_twh": 0.002994018380685069
+  },
+  "ST_GAS": {
+   "base_twh": 5.894186472748065,
+   "keeper_twh": 7.526352405548096,
+   "d_twh": 0.03159064806577191
+  },
+  "nuclear": {
+   "base_twh": 16.926974805481912,
+   "keeper_twh": 16.92697525024414,
+   "d_twh": 0.0
+  },
+  "oil": {
+   "base_twh": 0.0,
+   "keeper_twh": 0.0,
+   "d_twh": 0.0
+  },
+  "_thermal_cols": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_LIGNITE",
+   "COAL_PRB",
+   "CT_CHP",
+   "CT_PEAKER",
+   "OTHER",
+   "ST_CHP",
+   "ST_GAS",
+   "biomass",
+   "nuclear",
+   "oil"
+  ],
+  "_lw_price_ratio": 1.0022411804205287
+ }
+}

@@ -1,0 +1,292 @@
+{
+ "summary": {
+  "iso": "NEISO",
+  "year": 2024,
+  "seam1_armed": true,
+  "gas_rows": 421,
+  "gas_mw": 17437.177242792895,
+  "mw_plants_with_negative": 0.0,
+  "mw_plants_with_low": 0.0,
+  "mw_plants_with_high": 372.0731707317072,
+  "gas_plants": 100,
+  "own_reporting_plants": 2,
+  "plant_months": 14,
+  "pm_in_band": 13,
+  "pm_high": 1,
+  "ref_us_fallback_months": 0,
+  "flagged_plants": 1,
+  "seam1_rows": 7,
+  "seam1_mw": 372.0731707317072,
+  "seam1_mw_share": 0.02133792445594896,
+  "ct_only_plants": 27,
+  "ct_only_below_floor": 12,
+  "ct_only_between_8_and_floor": 0,
+  "ct_only_below_6": 7,
+  "seam2_rows": 14,
+  "seam2_mw": 30.090105000000005,
+  "seam2_mw_share": 0.0017256293596738426,
+  "seam2_plants": [
+   {
+    "plant_code": 10108,
+    "heat_rate": 6.07035008,
+    "nameplate": 5.0,
+    "fleet_mw": 1.09098,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2000,
+     2000
+    ]
+   },
+   {
+    "plant_code": 10408,
+    "heat_rate": 5.860818429,
+    "nameplate": 2.0,
+    "fleet_mw": 0.5083,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2013,
+     2013
+    ]
+   },
+   {
+    "plant_code": 50621,
+    "heat_rate": 4.118512568,
+    "nameplate": 9.0,
+    "fleet_mw": 1.8011999999999997,
+    "fleet_mw_below_floor": 1.8011999999999997,
+    "vintage": [
+     2004,
+     2015
+    ]
+   },
+   {
+    "plant_code": 54605,
+    "heat_rate": 5.354093558,
+    "nameplate": 25.8,
+    "fleet_mw": 8.400000000000002,
+    "fleet_mw_below_floor": 8.400000000000002,
+    "vintage": [
+     1992,
+     1992
+    ]
+   },
+   {
+    "plant_code": 54907,
+    "heat_rate": 5.2622910439999995,
+    "nameplate": 43.4,
+    "fleet_mw": 12.389999999999999,
+    "fleet_mw_below_floor": 12.389999999999999,
+    "vintage": [
+     2021,
+     2021
+    ]
+   },
+   {
+    "plant_code": 54937,
+    "heat_rate": 6.594013493,
+    "nameplate": 3.8,
+    "fleet_mw": 1.1874,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2021,
+     2021
+    ]
+   },
+   {
+    "plant_code": 56928,
+    "heat_rate": 6.384543700999999,
+    "nameplate": 4.5,
+    "fleet_mw": 0.6885000000000001,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2007,
+     2007
+    ]
+   },
+   {
+    "plant_code": 58158,
+    "heat_rate": 7.054767398,
+    "nameplate": 2.4,
+    "fleet_mw": 0.504045,
+    "fleet_mw_below_floor": 0.0,
+    "vintage": [
+     2009,
+     2009
+    ]
+   },
+   {
+    "plant_code": 58166,
+    "heat_rate": 5.16581324,
+    "nameplate": 5.3,
+    "fleet_mw": 0.5123249999999999,
+    "fleet_mw_below_floor": 0.5123249999999999,
+    "vintage": [
+     2008,
+     2008
+    ]
+   },
+   {
+    "plant_code": 58184,
+    "heat_rate": 5.139131851,
+    "nameplate": 16.5,
+    "fleet_mw": 4.950000000000002,
+    "fleet_mw_below_floor": 4.950000000000002,
+    "vintage": [
+     2005,
+     2005
+    ]
+   },
+   {
+    "plant_code": 58327,
+    "heat_rate": 6.446502002,
+    "nameplate": 5.8,
+    "fleet_mw": 1.44159,
+    "fleet_mw_below_floor": 1.44159,
+    "vintage": [
+     2002,
+     2010
+    ]
+   },
+   {
+    "plant_code": 60276,
+    "heat_rate": 5.584308663,
+    "nameplate": 4.1,
+    "fleet_mw": 0.5949900000000001,
+    "fleet_mw_below_floor": 0.5949900000000001,
+    "vintage": [
+     2015,
+     2015
+    ]
+   }
+  ]
+ },
+ "by_class": [
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "CC_CHP",
+   "rows": 19,
+   "mw": 320.59905999999995,
+   "rows_touched": 0,
+   "mw_touched": 0.0,
+   "d_mc_capwtd": 0.0,
+   "d_mc_touched_capwtd": 0.0
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "CC_REGULAR",
+   "rows": 230,
+   "mw": 15650.878292792899,
+   "rows_touched": 7,
+   "mw_touched": 372.0731707317072,
+   "d_mc_capwtd": 0.009826099758366798,
+   "d_mc_touched_capwtd": 0.3193415798300958
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "CT_CHP",
+   "rows": 43,
+   "mw": 74.52134,
+   "rows_touched": 14,
+   "mw_touched": 30.090105000000005,
+   "d_mc_capwtd": 4.645771419959363,
+   "d_mc_touched_capwtd": 11.505086903529689
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "CT_PEAKER",
+   "rows": 92,
+   "mw": 1198.574,
+   "rows_touched": 0,
+   "mw_touched": 0.0,
+   "d_mc_capwtd": 0.0,
+   "d_mc_touched_capwtd": 0.0
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "ST_CHP",
+   "rows": 12,
+   "mw": 24.404549999999997,
+   "rows_touched": 0,
+   "mw_touched": 0.0,
+   "d_mc_capwtd": 0.0,
+   "d_mc_touched_capwtd": 0.0
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "klass": "ST_GAS",
+   "rows": 25,
+   "mw": 168.20000000000002,
+   "rows_touched": 0,
+   "mw_touched": 0.0,
+   "d_mc_capwtd": 0.0,
+   "d_mc_touched_capwtd": 0.0
+  }
+ ],
+ "pred": {
+  "CC_CHP": {
+   "base_twh": 1.0924125939707259,
+   "keeper_twh": 0.9735891819000244,
+   "d_twh": 0.0009045339785066899
+  },
+  "CC_REGULAR": {
+   "base_twh": 62.77698856076381,
+   "keeper_twh": 56.87464141845703,
+   "d_twh": 0.06602596763394773
+  },
+  "COAL": {
+   "base_twh": 0.09538715811174224,
+   "keeper_twh": 0.12453893572092056,
+   "d_twh": 4.5906871888189926e-05
+  },
+  "CT_CHP": {
+   "base_twh": 0.45608086510138873,
+   "keeper_twh": 0.4705981910228729,
+   "d_twh": -0.07380921612690465
+  },
+  "CT_PEAKER": {
+   "base_twh": 1.3824661606907456,
+   "keeper_twh": 0.7752398252487183,
+   "d_twh": 0.006801231815876672
+  },
+  "ST_CHP": {
+   "base_twh": 0.1699606957157095,
+   "keeper_twh": 0.17489540576934814,
+   "d_twh": 0.0
+  },
+  "ST_GAS": {
+   "base_twh": 0.0323750990797531,
+   "keeper_twh": 0.051728490740060806,
+   "d_twh": 2.9659359274504822e-05
+  },
+  "nuclear": {
+   "base_twh": 26.481583927141354,
+   "keeper_twh": 26.481584548950195,
+   "d_twh": 0.0
+  },
+  "oil": {
+   "base_twh": 0.00519406588960824,
+   "keeper_twh": 0.2497246414422989,
+   "d_twh": 1.916467410628684e-06
+  },
+  "_thermal_cols": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL_BIT",
+   "CT_CHP",
+   "CT_PEAKER",
+   "OTHER",
+   "ST_CHP",
+   "ST_GAS",
+   "biomass",
+   "nuclear",
+   "oil"
+  ],
+  "_lw_price_ratio": 1.00052503445931
+ }
+}

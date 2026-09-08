@@ -515,13 +515,38 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   bundle. (The same session also added 2022 rows to the CAISO import-tranche
 #   and DSW clean-depth tables, but those live in `model/interchange/spec.py`,
 #   which design §2.3 puts OUT of phase 1 — they move no fingerprint here.)
+# 2026-09-08 — SPP-49 (owner ruling P19): TWO NAMES ADDED to constants.py,
+#   both unprojected (no ISO token), so every ISO's row count rises by two:
+#   `EGRID_CT_HR_PHYSICAL_FLOOR` (an alias of HEAT_RATE_BINS["gas_ct"]["aero"],
+#   the simple-cycle heat-rate floor `data/fleet/eia860.py::
+#   _apply_simple_cycle_hr_floor` clamps to) and
+#   `F923_GAS_PRICE_PLAUSIBILITY_BAND` ((0.5, 2.0), the EIA-923 own-month
+#   plausibility band `data/fuel/plant_prices.py::screen_gas_plant_month_prices`
+#   reads). Both DECLARED at their live hash by `solve_surface_register.py
+#   --declare-missing` in the same commit, so NO VALUE MOVED and no key is
+#   reached by a registry change (`solve_surface_register.py --diff 4e4ad90d`:
+#   "302 names; 0 value(s) moved, 2 added"). The digests advance because the
+#   fingerprint spans every row; the row counts advance by exactly two.
+#   WHAT IT COSTS: nothing through this surface. What the two repairs DO cost
+#   is recorded where each lands: seam 1 is a registered gate whose default
+#   flip re-keys the 18 armed backcast configs by design (scenarios.py flips
+#   ledger, 2026-09-08 entry); seam 2 is a construction — a same-key
+#   invalidation for every ISO whose fleet carries a clamped simple-cycle row
+#   (all seven, PRECOMMIT-spp-49-2026-09-08.md §3.2 / §4), routed to the
+#   cache-epoch ledger.
+#   PJM ALSO CARRIES ONE PRE-EXISTING ROW this block advances with it: at the
+#   base 4e4ad90d PJM's live surface already read 212 rows against the 211
+#   pinned here — `THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO`, a PJM-keyed table
+#   added (and declared, moving no key) between the last pin advance
+#   (b654af81) and the base, whose own pin advance never landed. Named, not
+#   absorbed silently; the +1 is that lane's, the +2 are this one's.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("3fa1fe6b34dba665", 226),
-    "CAISO": ("f4057d6db19fe8d3", 202),
-    "MISO": ("8ee657ee4c7c49b0", 208),
-    "PJM": ("0f749d17202c32d9", 211),
-    "NYISO": ("48353917f7510af3", 206),
-    "NEISO": ("531e4805c9085734", 195),
+    "ERCOT": ("a2607a3b210214ab", 228),
+    "CAISO": ("cba92d202f32f9fd", 204),
+    "MISO": ("9f0845000dc8af6e", 210),
+    "PJM": ("905116f13849914f", 214),
+    "NYISO": ("8569b48ab932ed6d", 208),
+    "NEISO": ("9d35c270c69e9eee", 197),
 }
 
 

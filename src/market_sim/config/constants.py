@@ -266,6 +266,38 @@ EGRID_UNIT_VINTAGE_TOL_YEARS: int = 1
 # gas_cc: this is the one class where the bound is airtight (a CT has no
 # less-efficient sibling technology to bound it against).
 EGRID_CC_HR_PHYSICAL_CEILING: float = HEAT_RATE_BINS["gas_ct"]["older"]
+# Physical FLOOR for a simple-cycle-only plant heat rate — the mirror of the
+# ceiling above on the other side of the physics (SPP-46 R-2; owner ruling P19,
+# 2026-09-08, repo-wide; PRECOMMIT-spp-49-2026-09-08.md §1.1 / §2.2). A plant
+# whose every operating EIA-860 row is a simple-cycle prime mover (GT or IC — no
+# steam cycle anywhere on site, so no heat recovery) cannot convert fuel to net
+# electricity at better than the best bare turbine, HEAT_RATE_BINS["gas_ct"]["aero"]
+# (EIA Table 8 aeroderivative). A plant-grain eGRID PLHTRT below it is arithmetic
+# on mismatched boundaries (Pioneer 57881: 3.43 MMBtu/MWh with EIA-923 net
+# generation ~3x its CEMS gross load), not measured efficiency; the fleet loader
+# clamps such a plant's rows to this floor (data/fleet/eia860.py::
+# _apply_simple_cycle_hr_floor). An alias of an existing cited constant, no new
+# number. Scoped to simple-cycle-only plants: a mixed plant's blend rate is the
+# egrid_family_heat_rates object, never this.
+EGRID_CT_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_ct"]["aero"]
+
+# EIA-923 own-month gas-price plausibility band (SPP-46 R-1; owner ruling P19,
+# 2026-09-08, repo-wide; ScenarioConfig.f923_gas_price_plausibility_screen,
+# data/fuel/plant_prices.py::screen_gas_plant_month_prices). A plant's OWN
+# reported EIA-923 Schedule-5 delivered gas cost for a month is kept only while
+# it sits within [low, high] x the plant's own state's EIA delivered-to-electric-
+# power price that month (series N3045<ST>3, $/Mcf -> $/MMBtu); outside the band
+# it falls back to that reference. Below the band are negative and near-zero
+# prints (Elk Station 58835 $0.16-0.41 every month of 2024; Mustang Station CC
+# negative in seven months) that are not the marginal cost of the next MMBtu;
+# above it are low-burn months whose AVERAGE cost carries a fixed transport /
+# reservation charge over a near-zero denominator (Riverside 4940 Apr-2023
+# $71.66 on 2,750 MMBtu) — an average cost on a different basis than the marginal
+# fuel cost the LP prices (rule 14's misalignment exception). DECLARED, never
+# swept: the band was fixed in PRECOMMIT-spp-46-2026-09-07.md §3(E) before any
+# number existed and re-declared in PRECOMMIT-spp-49 §2.1; rule 1 (c) forbids
+# selecting it on any gate. A structural plausibility threshold, not a tunable.
+F923_GAS_PRICE_PLAUSIBILITY_BAND: tuple[float, float] = (0.5, 2.0)
 
 # Commitment parameters by thermal class.
 # Each entry: (heat_rate_cutoff, {startup_per_mw, min_run_hours, min_down_hours})
