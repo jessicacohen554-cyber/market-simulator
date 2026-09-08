@@ -205,18 +205,42 @@ is no verdict record to flag. Reported here rather than manufactured.
 
 ---
 
-## 7. TWO PRE-EXISTING HEAD FAILURES, NOT THIS LANE'S
+## 7. EIGHTEEN PRE-EXISTING FAILURES ON `main`, NONE OF THEM THIS LANE'S
 
-Both reproduce with D88 **stashed out** of the tree, so neither is caused by this work:
+**Measured both ways after rebasing onto `origin/main` `5e3b6c6a`:**
 
-* `tests/unit/model/test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none`
-* `tests/unit/data/test_caiso_st_gas_peak_measured.py::…::test_registry_value_matches_the_committed_artifact`
-  (asserts `1.154 != 1.166`; it reads the **committed** `data/raw/_validation-source/caiso_offer_curve_measured.json`,
-  which is byte-identical to HEAD here — so it is not container state either.)
+| tree | result |
+|---|---|
+| clean `origin/main` (`src` + `tests` checked out from it, D88 absent) | **18 failed, 3,381 passed** |
+| this branch (D88 + 8 new D88 cases) | **18 failed, 3,389 passed** |
 
-Surfaced for the owning lanes; not repaired here (out of scope).
+**The failing set is identical and the +8 is exactly this lane's new tests.** This branch adds eight
+passing tests and **zero** failures.
 
----
+**Sixteen of the eighteen are cache-key pin tests** — `test_default_cache_key_is_unmoved`,
+`…_is_byte_stable`, `…_unmoved_and_armed_distinct` and kin across `test_capacity.py`,
+`test_scarcity.py`, `test_storage_entry_gates.py`, `test_smr_available_year.py`,
+`test_entry_vre_zone_selection.py`, `test_vre_procurement_ffr5e.py`,
+`test_capacity_screen_scarcity_restoration.py`, `test_storage_whole_class_accreditation.py`,
+`test_ercot219_option_b.py`, `test_caiso_nqc_class_factors.py`,
+`test_cc_committed_offer_margin.py`, `test_miso_intermediate_gas_offer_margin.py`,
+`test_ramp_envelope_basis.py`, and **two inside `test_ccs_retrofit.py` itself**
+(`TestCapexCo2Scaling` / `TestFixedCostCo2Scaling::test_off_is_byte_identical_and_cache_neutral`) —
+the latter two verified failing on clean `origin/main` with this lane's edits checked out, precisely
+because they sit in the file this lane touched. The signature says something landed on `main` that
+**moved the default cache key without re-pinning** it. That is a live registration/pin problem on
+`main` and it is **not repaired here** (out of scope, and it is not this lane's key: D88 moves none).
+
+The remaining two are the ones this lane saw before the rebase and are unrelated to keys:
+`test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none`, and
+`test_caiso_st_gas_peak_measured.py::…::test_registry_value_matches_the_committed_artifact`
+(asserts `1.154 != 1.166`; it reads the **committed**
+`data/raw/_validation-source/caiso_offer_curve_measured.json`, byte-identical to HEAD here, so it is
+not container state either).
+
+**Surfaced for the owning lanes.** Worth treating as stop-the-line for whoever owns the pin: a moved
+`PINNED_DEFAULT_CACHE_KEY` with no epoch/pin entry is the exact class the cache-epoch ledger exists
+to make visible.
 
 ## 8. ROUTED ONWARD
 
