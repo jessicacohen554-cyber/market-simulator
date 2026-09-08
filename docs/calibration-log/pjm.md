@@ -5001,3 +5001,57 @@ Both partial bundle dirs hold no solved output, so rule 31 `[R-RETAIN]` has no a
 **Not a keeper candidate in either direction** — the repair is byte-identical in 2023–2025, so it
 cannot move the keeper's scored years or its determination; it is an input correction to the
 held-out pre-2023 seam. Successor needs a larger-RAM runner and nothing else.
+
+## pjm-173 — 2026-09-08
+
+**F-A re-gated: S1′ and S3′ both PASS at zero LP. S4/S5/S6 still unmeasured — blocked on a
+SANDBOX memory cap, not on RAM.** Keeper `2026-08-15-pjm-162-inputclock` unchanged; PJM stays
+**CALIBRATED** (rule 30(c)); nothing registered, nothing promoted, no LP completed.
+
+The successor card pjm-172 recommended was written and **committed before any solve** (`b8112519`),
+then graded. S1′ pins the seam heat rate to the **declared elastic law** `5.6 + 14.2/gas` instead of
+demanding it be unchanged — the original S1 was unsatisfiable for *any* pre-2023 gas change on PJM,
+so it could not discriminate between a right and a wrong implementation. Measured `|hr − law| = 0.0`
+exactly, on precisely the three `hr_by_year = None` SERC seams, with MISO 12.9 / NYISO 10.4 unmoved.
+S3′ reproduces the corrected 2022 seam baseload mean **61.1448** to 4.8e-05.
+
+**G-DRIFT re-audited** at `f36cee6e → HEAD 22eda76a` (73 files; pjm-172's audited revision no longer
+exists): **zero LIVE hunks**. PJM solve surface 211 → **212 rows with `moved_rows` EMPTY** — one
+*added* row, capx D84's `THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO`, default-off and backcast-coerced.
+PJM's `actual_lmp.json` / `calibration_reference.json` subtrees hash **byte-identical** across the two
+revisions, so the control's committed columns still score. **G-CTRL form 4 valid; no control LP owed.**
+
+**The blocker is diagnosed and the charter's premise is corrected.** Three solve attempts were
+OOM-killed at **13.31 GiB** — the `claude-code-bash` cgroup's `memory.limit_in_bytes` of **13.34 GiB**
+— on a **16.4 GB box with ~15 GB free**, `CONSTRAINT_MEMCG`, never machine exhaustion. The parent
+`process_api` cgroup is unlimited. So the pjm-173 charter's *"REQUIRES ≥32 GB RAM"* is **wrong**: the
+ceiling is a harness sandbox cap and the LP very likely fits under 16 GB. Allocator tuning
+(`MALLOC_ARENA_MAX=2`) moved total-vm 24.56 → 23.90 GB and **anon-rss not at all**; rule-12 per-year
+chaining was adopted and insufficient; moving to the unlimited parent cgroup and `swapon` were both
+permission-refused. **No recipe lever was touched to fit memory** — dropping `pjm_da_virtual_bids`,
+the per-gen reserve co-opt or the zonal loss surface would each have fit the LP and each would have
+voided the A/B.
+
+**F-A is already merged into `main`**, so pjm-172's route (b) has effectively happened: the live
+question is **revert-or-keep**, not merge-or-not. It stays inert by test in 2023–2025 and every
+forecast year, so no keeper can move.
+
+**Parity, sharper than the card stated:** the recipe burns PJM gas at 6.45 (2022) / 3.72 (2021) while
+the seam priced $2.54 — a **−60.6 % / −31.7 %** error. F-A closes 2022 to **−0.5 %** and **overshoots
+2021 to +5.1 %**, an independent mechanism-level reason to expect 2021 to worsen. Reported, gates
+nothing.
+
+**Rubric analysis (charter item 4), zero LP:** C1/C3a/C3b are **one defect, not three** — too much
+gas, too little coal, too little net export, same sign both years (2022 gas +27.35 / coal −12.17 /
+interchange −10.04 TWh; 2021 +37.67 / −30.83 / −14.51). **Interchange is the weakest row on both
+instruments** (r .50/.55 vs .92+ for gas and coal; nrmse .58/.55 vs .14–.21). C3b matches: diurnal
+amplitude is **34 % / 44 %** of measured with phase correct and hod r +0.96/+0.94 — a compressed
+spread, which is what a too-cheap import seam produces. Rule-28 check: the compression may **not** be
+attacked via `diurnal_price_amplitude` or `ordc_scarcity_overlay` (**G**), nor `measured_offer_surface`
+or `temp_dependent_derate` (**R**) — the seam is the open route, which argues for finishing this card
+rather than opening another.
+
+Artifacts: `results/calibration/FINDING-pjm173-seam-measured-gas-regate-2026-09-08.md`,
+`docs/handoffs/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md`. Arm dirs gitignored
+(`2482cc81`, rule 31 `[R-RETAIN]`) and **nothing deleted**; they hold an empty `dispatch/` and no
+solved output.
