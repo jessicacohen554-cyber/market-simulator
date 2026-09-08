@@ -11,6 +11,8 @@ the full pre-split surface; patch semantics are preserved via
 from __future__ import annotations
 
 import logging
+from collections import Counter
+
 import numpy as np
 
 from market_sim.config.constants import (
@@ -3282,6 +3284,41 @@ def generators_to_fleet_arrays(
     each with ``pmin_mw = 0``, so coal's baseload behavior emerges from
     tranche economics rather than a hard minimum.
     """
+    # capx D88 [R-ONE-MECH rule 19 / R-DOF rule 21]: ``unit_id`` IS a key, so
+    # assert it here -- the ONE seam every LP fleet passes through -- rather than
+    # in the five downstream consumers that silently collapse on a duplicate.
+    #
+    # WHY THIS EXISTS. ``retirements.py``'s ``idx_of`` map is last-write-wins, so
+    # two generators sharing an id read the SAME LP dispatch row inside the step-3
+    # exit screen; ``exit_exempt_unit_ids``, the ``retired`` set and
+    # ``_pre_entry_ids_all`` are set memberships with no fuel to qualify by, so one
+    # twin's exemption exempts both and RETIRING ONE TWIN DROPS BOTH from the fleet
+    # (a capacity leak, not bookkeeping); ``loss_years`` shares one exit clock; and
+    # the D57 sell-offer stack double-offers under one id. None of that raises --
+    # it silently mis-decides, which is why the defect ran for eighteen scored
+    # years on the program's only NEISO T3 golden before a census found it.
+    #
+    # Duplicates are an EVOLVED-fleet event only: a base fleet is built from
+    # distinct plant/bin keys, so this is silent on every backcast (which rebuilds
+    # its base fleet yearly and never enters ``evolve_fleet``), every hindcast and
+    # every crossover year -- proved by an on-recipe ``fleet_only`` rebuild of all
+    # seven backcast keepers and the T1-F/T1-H recipes before this landed.
+    # Costs one set build per call; changes no decision.
+    # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.1/§2.4
+    # docs/handoffs/FINDING-capx-d88-2026-09-08.md
+    _unit_ids = [g.unit_id for g in generators]
+    if len(set(_unit_ids)) != len(_unit_ids):
+        _counts = Counter(_unit_ids)
+        _dupes = sorted(uid for uid, n in _counts.items() if n > 1)
+        raise ValueError(
+            "duplicate unit_id in fleet passed to generators_to_fleet_arrays "
+            f"(iso={iso}, year={year}, n_gen={len(_unit_ids)}): "
+            + ", ".join(f"{uid!r}x{_counts[uid]}" for uid in _dupes)
+            + " -- unit_id is a key (retirements.idx_of, exit_exempt_unit_ids, "
+            "the retired/survivor set-diff, loss_years and the D57 sell-offer "
+            "stack all address units by it). See capx D88."
+        )
+
     zone_to_idx = {name: i for i, name in enumerate(zone_names)}
 
     n_gen = len(generators)
@@ -3648,7 +3685,7 @@ def generators_to_fleet_arrays(
         zone_idx=zone_idx,
         fuel_type_idx=fuel_type_idx,
         availability=availability,
-        unit_ids=[g.unit_id for g in generators],
+        unit_ids=_unit_ids,
         efficiency_bin=np.array([g.efficiency_bin for g in generators], dtype=str),
         plant_code=np.array([int(g.plant_code) for g in generators], dtype=int),
         state=np.array([g.state for g in generators], dtype=object),

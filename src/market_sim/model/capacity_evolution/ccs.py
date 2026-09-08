@@ -658,6 +658,50 @@ def apply_ccs_retrofit(
         # docs/handoffs/FINDING-capx-d77-2026-09-06.md
         gen.ccs_capture_fraction = config.ccs_retrofit_capture_rate
         gen.fuel_type = "gas_cc_ccs"
+        # capx D88: RE-MINT a legacy REPRESENTATIVE's id, because after the
+        # line above the id asserts a group the unit no longer belongs to.
+        # ``legacy_bins.aggregate_fleet`` mints ``f"{fuel}_{bin}_{zone}"`` for
+        # the representative of each aggregatable (fuel, bin, zone) group and
+        # runs at the end of EVERY evolution year, so the moment this zone
+        # builds another unabated ``gas_cc`` the builder re-mints THIS unit's
+        # old id for it -- while the converted unit keeps it, ``gas_cc_ccs``
+        # not being aggregatable (passthrough). Two generators then share one
+        # id, and ``unit_id`` is a key: ``retirements.idx_of`` is
+        # last-write-wins, ``exit_exempt_unit_ids`` / the retired set-diff are
+        # set memberships with no fuel to qualify by, and ``loss_years`` is one
+        # counter. Measured on all nine NEISO T3 golden variants (13-18
+        # in-horizon years each, the registered ``neiso-t3`` run included) and
+        # on ERCOT ``ff-t1f-d65br`` 2030.
+        #
+        # THE VINTAGE STAMP IS LOAD-BEARING: ``gas_cc_ccs_{bin}_{zone}`` alone
+        # is insufficient, because the same zone converts a second, third and
+        # fourth representative in later years (T3 ``bau-prera``: 2031/2040/
+        # 2042/2044) and ``gas_cc_ccs`` does not aggregate, so two converted
+        # representatives would collide WITH EACH OTHER. ``_r{year}`` mirrors
+        # ``new_entry``'s ``{tech}_new_{year}_{seq}``: deterministic, order-
+        # independent, and unique by construction once the ``arrays.py`` guard
+        # holds (one id converts at most once per year).
+        #
+        # CAMPD per-plant tranches are UNTOUCHED (``is_campd_bin``): they take
+        # the same passthrough branch but their ids are plant keys, never group
+        # keys, so nothing re-mints them. The exact-match predicate keeps this
+        # to the one id family the builder can re-mint -- every other id passes
+        # through unchanged, so a fleet with no legacy representative is
+        # byte-identical. No config field, no constant (rules 21 [R-DOF] /
+        # 24 [R-REGISTRY]); no cache key moves (ids are not hashed).
+        # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.4
+        if not gen.is_campd_bin and gen.unit_id == (
+            f"gas_cc_{gen.efficiency_bin}_{gen.zone}"
+        ):
+            # Additive: the log row keeps ``unit_id`` (the PRE-retrofit id the
+            # loss tracker and the caller's before/after diff address it by)
+            # and gains ``to_unit_id``, so every consumer can follow the
+            # rename. Absent on a row that was not re-minted, which is what
+            # keeps an unaffected bundle's ledger byte-identical.
+            log_entry["to_unit_id"] = (
+                f"gas_cc_ccs_{gen.efficiency_bin}_{gen.zone}_r{year}"
+            )
+            gen.unit_id = log_entry["to_unit_id"]
         retrofitted_mw += gen.pmax_mw
         retrofit_log.append(log_entry)
 

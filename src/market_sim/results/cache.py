@@ -76,6 +76,87 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-08 — capx D88 / owner ruling Q62: fleet ``unit_id`` uniqueness —
+a guard at the SoA seam and a vintage-stamped re-mint at CCS conversion. A TRUE
+SAME-KEY INVALIDATION: behaviour moves and NOT ONE KEY DOES, which is exactly
+what this ledger exists for.**
+
+**Zero keys move, by both routes.** Ids are not hashed
+(``scenarios.py:18691-18717``) and ``solve_surface.SURFACE_MODULES`` names seven
+``config/`` + ``pipeline/offer_curve_base`` modules, excluding ``data/fleet`` and
+``model/capacity_evolution`` entirely — so the three edited files
+(``data/fleet/arrays.py``, ``model/capacity_evolution/ccs.py``, ``evolve.py``)
+cannot reach the key. No ``ScenarioConfig`` field and no constant was added
+(rules 21 ``[R-DOF]`` / 24 ``[R-REGISTRY]``). VERIFIED, not asserted: the D88
+control bundle's recorded key ``0fc42cb56c24d544`` recomputes byte-identically at
+HEAD + D88 from its own committed ``run_config.json``, with zero unknown config
+keys dropped (the lane's G-DRIFT audit, ``PRECOMMIT-capx-d88-2026-09-08.md`` §3).
+
+**WHAT IS INVALIDATED — the runs whose committed numbers were produced on a
+fleet that addressed two generators as one.** A CCS-retrofitted legacy
+representative kept its ``unit_id`` while its fuel became ``gas_cc_ccs``, so
+``legacy_bins.aggregate_fleet`` re-minted that same id for the next unabated
+``gas_cc`` build in the same zone. On a duplicate: ``retirements.py:3423``'s
+``idx_of`` is last-write-wins (one twin's exit screen reads the other's
+dispatch), one twin's exemption exempts both, retiring one twin drops BOTH from
+the fleet, the ``loss_years`` exit clock is shared, and the D57 sell-offer stack
+double-offers under one id. Measured over all 72 committed evolution bundles
+(zero LP, this lane):
+
+* **The nine NEISO T3 golden variants** — ``bau`` (conversion 2032, colliding
+  2033+), ``bau-d46`` and its four ``fc6`` arms (``base``, ``carbon_plus25``,
+  ``gaspm5``, ``gasup150``), ``bau-d60``, ``bau-d65br`` (conversion 2031,
+  colliding **2037+**, not 2032), and ``bau-prera-2026-08-31`` (which converts
+  the SAME id in 2031, 2040, 2042 and 2044 — four generators named
+  ``gas_cc_h_class_Central`` by 2045). Cache keys ``706e7ba8e6582d42``,
+  ``67678e58b2d0526c``, ``56019f3b0850e9f9``, ``e84079053b581a9e``,
+  ``96984c538320d6d6``, ``f04fd06348e1623d``, ``0fc42cb56c24d544``,
+  ``a4b11ef4aaa1be35``. **``f04fd06348e1623d`` is the bundle the registered
+  ``neiso-t3`` FF-2D verdict is scored on**, including the FC-5 corridor years
+  2035 and 2040 — flagged additively in ``frontend/data/forecast/ff-verdicts.json``
+  under Q62's second half; the re-score is routed to the D63/D65-B batch.
+* **ERCOT ``ff-t1f-d65br``** (``9b9e5a48e3ca5c8e``) — a duplicate in the **2030**
+  solved fleet and its ``FleetContext``. 2030 is that run's terminal year, so no
+  capacity screen reads it in-horizon.
+
+**WHAT IS NOT INVALIDATED.**
+
+* **Every backcast keeper, byte-identical.** A backcast rebuilds its base fleet
+  every year and never enters ``evolve_fleet``. Proved rather than argued: an
+  on-recipe ``run_year(fleet_only=True)`` rebuild of all seven keepers across
+  every solved year (23 keeper-years, CAISO/ERCOT/MISO/NEISO/NYISO/PJM/SPP) fires
+  the guard **zero** times.
+* **Every hindcast and crossover year**: ``apply_ccs_retrofit`` returns before any
+  pricing below ``ccs_retrofit_available_year`` (2028), so the trigger cannot
+  fire; the census found no legacy-form retrofit in any ``results/hindcast/``
+  ledger.
+* **The 14 RENAME-ONLY forecast rows** (NYISO ``d45r``/``d60``/``d65br``, CAISO
+  ``d46``/``d60``/``d65br``, MISO ``s123/verify``, PJM ``s6-pjm/ledger``, ERCOT
+  ``d65br`` 2029, and two later NEISO T3 conversions) convert an id **no later
+  entry collides with**. No decision can move there — and in all 26 census rows
+  the renamed id appears in **no other decision row in any year** (no retirement,
+  no floor retention, no thermal addition), so the only bytes that move are
+  inside the ``ccs_retrofits`` row itself: ``unit_id`` unchanged, plus the
+  additive ``to_unit_id``.
+* **54 of the 72 committed evolution bundles** carry no legacy-form retrofit at
+  all and are untouched by construction.
+
+**Two ``unit_id`` EXACT-TIE tiebreaks are stated rather than left implicit**,
+because a rename can move a unit across a bit-identical tie (both are
+pre-existing properties of HEAD, neither introduced here):
+``retirements.py:2864`` (entry-competition sort, ``(-depth, unit_id)``) and
+``adequacy.py:726`` (the D57 clearing stack, ``(offer, unit_id)``, PJM-armed
+only). ``interchange/miso.py:846`` parses ``int(uid.rsplit("#"))`` but filters on
+``_ref{imp,exp}_`` first, which a renamed id never matches — safe by
+construction; ``legacy_bins.py:599/679`` are coal-only; ``eia860.py:2925`` runs
+at base-fleet build, before any conversion exists.
+
+Evidence: the census and disposition ``DESIGN-capx-d87-d88-s19-read-2026-09-08.md``
+§2; the pre-registered gates and the G-DRIFT audit
+``PRECOMMIT-capx-d88-2026-09-08.md``; the phase-0 guard-silence result, the
+independent re-census and the screen's STOP table
+``FINDING-capx-d88-2026-09-08.md``.
+
 **Epoch 2026-09-08 — capx D87 / SCN ruling S19 (D-15): the CCS RETROFIT screen
 consumes the clean-tier seam. NO KEY MOVES, AND THAT IS THE HAZARD.** No
 ``ScenarioConfig`` field is added, removed, re-defaulted or re-registered — the
@@ -147,6 +228,7 @@ keyed to a target-row run, and committed artifacts are files, not cache lookups.
 Recorded 2026-09-08 by capx D87, the lane that made the change
 (``docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md`` §4, pushed before its screen
 solve). This entry changes no key and no default.
+
 
 **Epoch 2026-09-07 — capx D76-ARM-B / owner ruling Q58: the capacity screens'
 PEAK becomes the hindcast year's OWN MEASURED peak, armed as the default posture
