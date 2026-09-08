@@ -1,0 +1,810 @@
+{
+ "probe": "miso-246 phase 0 \u2014 the MISO backcast lever-queue census",
+ "prereg": "results/calibration/PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md",
+ "keeper": "2026-09-08-miso-245-ladderfix",
+ "zero_lp": true,
+ "read_only": true,
+ "grants_no_marker": true,
+ "price_basis": {
+  "p_bus": "keeper committed P1 price at MISO_external (system_<year>.parquet)",
+  "seam_regressor": "measured Indiana-hub DA (actual_lmp_hourly_MISO.parquet `da`, float32)",
+  "decile_price": "measured Indiana-hub RT (_miso224 actual_zone_price)",
+  "spp_anchor": "measured SPP NORTH hub DA"
+ },
+ "bars": {
+  "shard_cells_miso": 312,
+  "unmapped": 0,
+  "basis_corr_max": 0.6,
+  "rung_tol_usd": 0.01,
+  "rung_share": 0.9,
+  "tmpl_min_samples": 8
+ },
+ "gates": {
+  "G_PARSE_G_ISO": {
+   "iso_census": {
+    "ERCOT": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 61,
+      "U": 55,
+      "I": 17,
+      "R": 15,
+      "G": 7,
+      "O": 16,
+      ".": 142
+     },
+     "n_ou": 71,
+     "N_bc": 55,
+     "n_ou_forecast_only": 16,
+     "n_non_na_backcast": 145,
+     "share_bc": 0.3793
+    },
+    "CAISO": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 69,
+      "U": 60,
+      "I": 17,
+      "R": 13,
+      "G": 5,
+      "O": 6,
+      ".": 143
+     },
+     "n_ou": 66,
+     "N_bc": 49,
+     "n_ou_forecast_only": 17,
+     "n_non_na_backcast": 142,
+     "share_bc": 0.3451
+    },
+    "PJM": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 58,
+      "U": 71,
+      "I": 12,
+      "R": 9,
+      "G": 4,
+      "O": 7,
+      ".": 152
+     },
+     "n_ou": 78,
+     "N_bc": 60,
+     "n_ou_forecast_only": 18,
+     "n_non_na_backcast": 133,
+     "share_bc": 0.4511
+    },
+    "MISO": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 80,
+      "U": 51,
+      "I": 14,
+      "R": 17,
+      "G": 7,
+      "O": 8,
+      ".": 136
+     },
+     "n_ou": 59,
+     "N_bc": 44,
+     "n_ou_forecast_only": 15,
+     "n_non_na_backcast": 147,
+     "share_bc": 0.2993
+    },
+    "NYISO": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 90,
+      "U": 46,
+      "I": 16,
+      "R": 7,
+      "G": 14,
+      "O": 3,
+      ".": 137
+     },
+     "n_ou": 49,
+     "N_bc": 31,
+     "n_ou_forecast_only": 18,
+     "n_non_na_backcast": 148,
+     "share_bc": 0.2095
+    },
+    "NEISO": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 48,
+      "U": 79,
+      "I": 11,
+      "R": 5,
+      "G": 1,
+      "O": 4,
+      ".": 165
+     },
+     "n_ou": 83,
+     "N_bc": 66,
+     "n_ou_forecast_only": 17,
+     "n_non_na_backcast": 120,
+     "share_bc": 0.55
+    },
+    "SPP": {
+     "present": true,
+     "n_cells": 313,
+     "n_unmapped": 0,
+     "unmapped": [],
+     "by_code": {
+      "K": 3,
+      "U": 156,
+      "I": 1,
+      "R": 6,
+      "G": 0,
+      "O": 1,
+      ".": 146
+     },
+     "n_ou": 157,
+     "N_bc": 157,
+     "n_ou_forecast_only": 0,
+     "n_non_na_backcast": 167,
+     "share_bc": 0.9401
+    }
+   },
+   "base_rows": 327,
+   "base_rows_without_mode": 16,
+   "PASS": false
+  },
+  "G_MODE": {
+   "mode_counts_all_rows": {
+    "B": 139,
+    "BF": 109,
+    "F": 63,
+    "null": 16
+   },
+   "silently_defaulted": 0,
+   "note": "rows carrying no `mode` in the committed file are counted, never defaulted: a cell whose base row has no mode is EXCLUDED from N_bc and appears in n_ou but not in N_bc or n_ou_forecast_only",
+   "PASS": true
+  },
+  "S3A_CROSS_ISO": {
+   "N_bc_by_iso": {
+    "ERCOT": 55,
+    "CAISO": 49,
+    "PJM": 60,
+    "MISO": 44,
+    "NYISO": 31,
+    "NEISO": 66,
+    "SPP": 157
+   },
+   "complete_holders": [
+    "ERCOT",
+    "NEISO",
+    "PJM",
+    "CAISO",
+    "NYISO"
+   ],
+   "median_N_bc_over_complete_holders": 55.0,
+   "miso_N_bc": 44,
+   "bar": "MISO N_bc <= median(N_bc) over the five complete-holding ISOs",
+   "PASS": true,
+   "secondary_share_reported_not_gated": {
+    "ERCOT": 0.3793,
+    "CAISO": 0.3451,
+    "PJM": 0.4511,
+    "MISO": 0.2993,
+    "NYISO": 0.2095,
+    "NEISO": 0.55,
+    "SPP": 0.9401
+   }
+  },
+  "G_BASIS": {
+   "corr_da_rt": {
+    "2023": 0.4023,
+    "2024": 0.4237,
+    "2025": 0.5527
+   },
+   "bar_max": 0.6,
+   "PASS": true
+  },
+  "G_BUS": {
+   "years": {
+    "2023": {
+     "zones": [
+      "MISO-East",
+      "MISO-Illinois",
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West",
+      "MISO_external",
+      "MISO_external_South"
+     ],
+     "n_rows_ext": 8760,
+     "south_bus_present": true,
+     "south_bus_distinct": true
+    },
+    "2024": {
+     "zones": [
+      "MISO-East",
+      "MISO-Illinois",
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West",
+      "MISO_external",
+      "MISO_external_South"
+     ],
+     "n_rows_ext": 8760,
+     "south_bus_present": true,
+     "south_bus_distinct": true
+    },
+    "2025": {
+     "zones": [
+      "MISO-East",
+      "MISO-Illinois",
+      "MISO-Indiana",
+      "MISO-Plains",
+      "MISO-South",
+      "MISO-West",
+      "MISO_external",
+      "MISO_external_South"
+     ],
+     "n_rows_ext": 8760,
+     "south_bus_present": true,
+     "south_bus_distinct": true
+    }
+   },
+   "PASS": true
+  },
+  "G_RECON": {
+   "years": {
+    "2023": {
+     "manitoba_incumbent_equals_repaired": true,
+     "harness_note": "build_recons imported from _miso241 (the REPAIRED instrument)"
+    },
+    "2024": {
+     "manitoba_incumbent_equals_repaired": true,
+     "harness_note": "build_recons imported from _miso241 (the REPAIRED instrument)"
+    },
+    "2025": {
+     "manitoba_incumbent_equals_repaired": true,
+     "harness_note": "build_recons imported from _miso241 (the REPAIRED instrument)"
+    }
+   },
+   "PASS": true
+  },
+  "M_A2_RUNG": {
+   "years": {
+    "2023": {
+     "R_rung": 1.0,
+     "R_rung_ladder_only": 0.1522,
+     "R_rung_zone_only": 0.9993,
+     "R_rung_ladder_exclusive": 0.0007,
+     "R_rung_zone_exclusive": 0.8478,
+     "n_candidate_rows": 53,
+     "min_distance_quantiles_usd": {
+      "p50": 0.0,
+      "p90": 0.0,
+      "p99": 0.0,
+      "max": 0.0
+     },
+     "unmatched_hours": 0,
+     "unmatched_p_bus_mean": null,
+     "unmatched_p_bus_max": null
+    },
+    "2024": {
+     "R_rung": 1.0,
+     "R_rung_ladder_only": 0.1508,
+     "R_rung_zone_only": 0.9999,
+     "R_rung_ladder_exclusive": 0.0001,
+     "R_rung_zone_exclusive": 0.8492,
+     "n_candidate_rows": 53,
+     "min_distance_quantiles_usd": {
+      "p50": 0.0,
+      "p90": 0.0,
+      "p99": 0.0,
+      "max": 0.0
+     },
+     "unmatched_hours": 0,
+     "unmatched_p_bus_mean": null,
+     "unmatched_p_bus_max": null
+    },
+    "2025": {
+     "R_rung": 1.0,
+     "R_rung_ladder_only": 0.1242,
+     "R_rung_zone_only": 1.0,
+     "R_rung_ladder_exclusive": 0.0,
+     "R_rung_zone_exclusive": 0.8758,
+     "n_candidate_rows": 53,
+     "min_distance_quantiles_usd": {
+      "p50": 0.0,
+      "p90": 0.0,
+      "p99": 0.0,
+      "max": 0.0
+     },
+     "unmatched_hours": 0,
+     "unmatched_p_bus_mean": null,
+     "unmatched_p_bus_max": null
+    }
+   },
+   "bar": "R_rung >= 0.9 in ALL THREE years",
+   "RUNG_DETERMINED": true
+  },
+  "M_B2_DECOMP": {
+   "years": {
+    "2023": {
+     "tmpl_measured_raw": 0.7466,
+     "tmpl_measured_adj": 0.738,
+     "tmpl_model_raw": 0.6159,
+     "tmpl_model_adj": 0.6029,
+     "ref_miso236_measured_adj": 0.738,
+     "ref_miso236_model_adj": 0.6036,
+     "ceiling_active_share": 0.4281,
+     "ref_miso241_ceiling_share": 0.4279,
+     "subsets": {
+      "ceiling": {
+       "n_hours": 3750,
+       "tmpl_measured_adj": 0.7094,
+       "tmpl_model_adj": 0.8384,
+       "cells_used_measured": 158,
+       "cells_used_model": 158,
+       "Gamma": -0.129
+      },
+      "merit": {
+       "n_hours": 5010,
+       "tmpl_measured_adj": 0.5085,
+       "tmpl_model_adj": 0.3294,
+       "cells_used_measured": 201,
+       "cells_used_model": 201,
+       "Gamma": 0.1791
+      }
+     }
+    },
+    "2024": {
+     "tmpl_measured_raw": 0.7296,
+     "tmpl_measured_adj": 0.7205,
+     "tmpl_model_raw": 0.5381,
+     "tmpl_model_adj": 0.5225,
+     "ref_miso236_measured_adj": 0.7205,
+     "ref_miso236_model_adj": 0.5207,
+     "ceiling_active_share": 0.417,
+     "ref_miso241_ceiling_share": 0.4152,
+     "subsets": {
+      "ceiling": {
+       "n_hours": 3653,
+       "tmpl_measured_adj": 0.3568,
+       "tmpl_model_adj": 0.548,
+       "cells_used_measured": 184,
+       "cells_used_model": 184,
+       "Gamma": -0.1912
+      },
+      "merit": {
+       "n_hours": 5107,
+       "tmpl_measured_adj": 0.7657,
+       "tmpl_model_adj": 0.5791,
+       "cells_used_measured": 225,
+       "cells_used_model": 225,
+       "Gamma": 0.1866
+      }
+     }
+    },
+    "2025": {
+     "tmpl_measured_raw": 0.6706,
+     "tmpl_measured_adj": 0.6594,
+     "tmpl_model_raw": 0.3101,
+     "tmpl_model_adj": 0.2868,
+     "ref_miso236_measured_adj": 0.6594,
+     "ref_miso236_model_adj": 0.2869,
+     "ceiling_active_share": 0.249,
+     "ref_miso241_ceiling_share": 0.2492,
+     "subsets": {
+      "ceiling": {
+       "n_hours": 2181,
+       "tmpl_measured_adj": 0.6734,
+       "tmpl_model_adj": 0.548,
+       "cells_used_measured": 138,
+       "cells_used_model": 138,
+       "Gamma": 0.1254
+      },
+      "merit": {
+       "n_hours": 6578,
+       "tmpl_measured_adj": 0.6858,
+       "tmpl_model_adj": 0.3299,
+       "cells_used_measured": 287,
+       "cells_used_model": 287,
+       "Gamma": 0.3559
+      }
+     }
+    }
+   },
+   "votes": {
+    "merit": 3,
+    "ceiling": 0,
+    "tie_or_insufficient": 0
+   },
+   "VERDICT": "MERIT (same object as item (a))"
+  }
+ },
+ "reported": {
+  "M_A1_sigma": {
+   "2023": {
+    "sigma_p_bus": 6.09,
+    "sigma_da": 12.81,
+    "ratio": 0.4756,
+    "mean_p_bus": 34.34,
+    "mean_da": 32.98,
+    "corr_p_bus_da": 0.6926,
+    "ref_miso242_sigma_p_bus": 6.09,
+    "ref_miso242_sigma_da": 12.81
+   },
+   "2024": {
+    "sigma_p_bus": 16.53,
+    "sigma_da": 19.89,
+    "ratio": 0.8308,
+    "mean_p_bus": 32.2,
+    "mean_da": 31.37,
+    "corr_p_bus_da": 0.5881,
+    "ref_miso242_sigma_p_bus": 16.51,
+    "ref_miso242_sigma_da": 19.89
+   },
+   "2025": {
+    "sigma_p_bus": 15.21,
+    "sigma_da": 26.12,
+    "ratio": 0.5823,
+    "mean_p_bus": 41.24,
+    "mean_da": 43.73,
+    "corr_p_bus_da": 0.7827,
+    "ref_miso242_sigma_p_bus": 15.22,
+    "ref_miso242_sigma_da": 26.12
+   }
+  },
+  "M_C1_cc_shape": {
+   "2023": {
+    "plants_matched": 40,
+    "measured_twh": 144.376,
+    "model_twh": 130.011,
+    "by_price_decile_rt": [
+     {
+      "decile": 1,
+      "mean_price_rt": 15.75,
+      "mean_deficit_mw": 1263.2,
+      "shape_deficit_mw": -96.6,
+      "deficit_pct_of_measured": 9.31
+     },
+     {
+      "decile": 2,
+      "mean_price_rt": 20.25,
+      "mean_deficit_mw": 1540.7,
+      "shape_deficit_mw": 27.5,
+      "deficit_pct_of_measured": 10.11
+     },
+     {
+      "decile": 3,
+      "mean_price_rt": 22.74,
+      "mean_deficit_mw": 1619.1,
+      "shape_deficit_mw": 38.7,
+      "deficit_pct_of_measured": 10.17
+     },
+     {
+      "decile": 4,
+      "mean_price_rt": 24.52,
+      "mean_deficit_mw": 1548.1,
+      "shape_deficit_mw": -60.5,
+      "deficit_pct_of_measured": 9.61
+     },
+     {
+      "decile": 5,
+      "mean_price_rt": 26.19,
+      "mean_deficit_mw": 1521.5,
+      "shape_deficit_mw": -124.6,
+      "deficit_pct_of_measured": 9.27
+     },
+     {
+      "decile": 6,
+      "mean_price_rt": 28.19,
+      "mean_deficit_mw": 1552.2,
+      "shape_deficit_mw": -106.7,
+      "deficit_pct_of_measured": 9.37
+     },
+     {
+      "decile": 7,
+      "mean_price_rt": 30.61,
+      "mean_deficit_mw": 1608.5,
+      "shape_deficit_mw": -80.4,
+      "deficit_pct_of_measured": 9.52
+     },
+     {
+      "decile": 8,
+      "mean_price_rt": 33.81,
+      "mean_deficit_mw": 1875.1,
+      "shape_deficit_mw": 122.3,
+      "deficit_pct_of_measured": 10.57
+     },
+     {
+      "decile": 9,
+      "mean_price_rt": 39.11,
+      "mean_deficit_mw": 1966.0,
+      "shape_deficit_mw": 146.2,
+      "deficit_pct_of_measured": 10.66
+     },
+     {
+      "decile": 10,
+      "mean_price_rt": 76.73,
+      "mean_deficit_mw": 1904.4,
+      "shape_deficit_mw": 134.2,
+      "deficit_pct_of_measured": 10.62
+     }
+    ],
+    "shape_deficit_span_mw": 270.8,
+    "shape_deficit_d1_d10_mw": [
+     -96.6,
+     134.2
+    ],
+    "shape_deficit_by_hod": [
+     -230.0,
+     58.5,
+     180.7,
+     297.4,
+     238.1,
+     6.3,
+     60.0,
+     63.6,
+     -33.1,
+     -123.4,
+     -49.0,
+     -46.9,
+     -25.4,
+     9.4,
+     37.8,
+     38.6,
+     -12.0,
+     18.7,
+     33.2,
+     -55.0,
+     -46.5,
+     -142.5,
+     -56.2,
+     -222.3
+    ],
+    "argmin_hod": 0,
+    "argmax_hod": 3
+   },
+   "2024": {
+    "plants_matched": 40,
+    "measured_twh": 147.393,
+    "model_twh": 139.848,
+    "by_price_decile_rt": [
+     {
+      "decile": 1,
+      "mean_price_rt": 13.55,
+      "mean_deficit_mw": 618.0,
+      "shape_deficit_mw": -63.1,
+      "deficit_pct_of_measured": 4.67
+     },
+     {
+      "decile": 2,
+      "mean_price_rt": 17.73,
+      "mean_deficit_mw": 540.8,
+      "shape_deficit_mw": -248.9,
+      "deficit_pct_of_measured": 3.56
+     },
+     {
+      "decile": 3,
+      "mean_price_rt": 20.15,
+      "mean_deficit_mw": 573.1,
+      "shape_deficit_mw": -239.0,
+      "deficit_pct_of_measured": 3.67
+     },
+     {
+      "decile": 4,
+      "mean_price_rt": 22.08,
+      "mean_deficit_mw": 765.1,
+      "shape_deficit_mw": -73.1,
+      "deficit_pct_of_measured": 4.69
+     },
+     {
+      "decile": 5,
+      "mean_price_rt": 23.77,
+      "mean_deficit_mw": 852.9,
+      "shape_deficit_mw": -19.2,
+      "deficit_pct_of_measured": 5.01
+     },
+     {
+      "decile": 6,
+      "mean_price_rt": 25.58,
+      "mean_deficit_mw": 791.8,
+      "shape_deficit_mw": -103.2,
+      "deficit_pct_of_measured": 4.56
+     },
+     {
+      "decile": 7,
+      "mean_price_rt": 28.11,
+      "mean_deficit_mw": 971.0,
+      "shape_deficit_mw": 54.7,
+      "deficit_pct_of_measured": 5.41
+     },
+     {
+      "decile": 8,
+      "mean_price_rt": 31.6,
+      "mean_deficit_mw": 1043.8,
+      "shape_deficit_mw": 117.0,
+      "deficit_pct_of_measured": 5.73
+     },
+     {
+      "decile": 9,
+      "mean_price_rt": 38.48,
+      "mean_deficit_mw": 1170.8,
+      "shape_deficit_mw": 230.5,
+      "deficit_pct_of_measured": 6.29
+     },
+     {
+      "decile": 10,
+      "mean_price_rt": 86.9,
+      "mean_deficit_mw": 1285.4,
+      "shape_deficit_mw": 344.3,
+      "deficit_pct_of_measured": 6.86
+     }
+    ],
+    "shape_deficit_span_mw": 593.2,
+    "shape_deficit_d1_d10_mw": [
+     -63.1,
+     344.3
+    ],
+    "shape_deficit_by_hod": [
+     -319.1,
+     -140.0,
+     -63.7,
+     13.0,
+     -60.3,
+     -261.5,
+     -242.3,
+     -182.6,
+     -115.5,
+     -23.5,
+     18.2,
+     85.3,
+     93.2,
+     123.8,
+     145.2,
+     152.8,
+     136.8,
+     223.0,
+     266.2,
+     271.7,
+     155.0,
+     14.7,
+     -35.1,
+     -255.1
+    ],
+    "argmin_hod": 0,
+    "argmax_hod": 19
+   },
+   "2025": {
+    "plants_matched": 39,
+    "measured_twh": 134.836,
+    "model_twh": 127.72,
+    "by_price_decile_rt": [
+     {
+      "decile": 1,
+      "mean_price_rt": 19.61,
+      "mean_deficit_mw": -100.5,
+      "shape_deficit_mw": -800.8,
+      "deficit_pct_of_measured": -0.81
+     },
+     {
+      "decile": 2,
+      "mean_price_rt": 24.09,
+      "mean_deficit_mw": 279.4,
+      "shape_deficit_mw": -490.2,
+      "deficit_pct_of_measured": 1.98
+     },
+     {
+      "decile": 3,
+      "mean_price_rt": 26.49,
+      "mean_deficit_mw": 422.3,
+      "shape_deficit_mw": -345.6,
+      "deficit_pct_of_measured": 2.97
+     },
+     {
+      "decile": 4,
+      "mean_price_rt": 28.98,
+      "mean_deficit_mw": 610.5,
+      "shape_deficit_mw": -169.6,
+      "deficit_pct_of_measured": 4.18
+     },
+     {
+      "decile": 5,
+      "mean_price_rt": 31.45,
+      "mean_deficit_mw": 788.7,
+      "shape_deficit_mw": -7.5,
+      "deficit_pct_of_measured": 5.23
+     },
+     {
+      "decile": 6,
+      "mean_price_rt": 34.42,
+      "mean_deficit_mw": 1050.5,
+      "shape_deficit_mw": 253.9,
+      "deficit_pct_of_measured": 6.85
+     },
+     {
+      "decile": 7,
+      "mean_price_rt": 38.28,
+      "mean_deficit_mw": 1093.1,
+      "shape_deficit_mw": 257.6,
+      "deficit_pct_of_measured": 6.8
+     },
+     {
+      "decile": 8,
+      "mean_price_rt": 43.73,
+      "mean_deficit_mw": 1257.5,
+      "shape_deficit_mw": 401.4,
+      "deficit_pct_of_measured": 7.57
+     },
+     {
+      "decile": 9,
+      "mean_price_rt": 53.96,
+      "mean_deficit_mw": 1341.7,
+      "shape_deficit_mw": 444.1,
+      "deficit_pct_of_measured": 7.69
+     },
+     {
+      "decile": 10,
+      "mean_price_rt": 127.59,
+      "mean_deficit_mw": 1378.7,
+      "shape_deficit_mw": 454.0,
+      "deficit_pct_of_measured": 7.67
+     }
+    ],
+    "shape_deficit_span_mw": 1254.8,
+    "shape_deficit_d1_d10_mw": [
+     -800.8,
+     454.0
+    ],
+    "shape_deficit_by_hod": [
+     -399.9,
+     -321.8,
+     -298.0,
+     -212.6,
+     -162.7,
+     -295.5,
+     -336.6,
+     -263.3,
+     -230.1,
+     -162.4,
+     8.0,
+     72.1,
+     110.9,
+     186.8,
+     263.7,
+     299.8,
+     249.4,
+     345.7,
+     407.0,
+     439.5,
+     370.8,
+     182.4,
+     21.8,
+     -274.8
+    ],
+    "argmin_hod": 0,
+    "argmax_hod": 19
+   }
+  }
+ },
+ "FAILED_LEGS": [
+  "G-PARSE: MISO cells 313 != 312"
+ ],
+ "ALL_GATED_LEGS_PASS": false
+}
