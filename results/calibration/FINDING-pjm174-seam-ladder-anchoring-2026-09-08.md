@@ -188,23 +188,108 @@ protective.
 The applied cost on the covered seams is exactly `anchor(t) + offset_k`, and every uncovered seam
 row is exactly the parent's scalar band price — the rule-19 degrade, verified rather than asserted.
 
-### 4b. Gates S4 / S5 — PENDING
+### 4b. Gates S4 / S5 — MEASURED
 
-**NOT YET MEASURED.** The screen solves had not completed when this revision was written; §4b, the
-verdict and the promotion question are filled in by the same session before it ends, or the FINDING
-records explicitly that they were not reached. Nothing in §0–§4a depends on them: the phase-0
-decomposition, the refutation of the chartered hypothesis, readout A and gates S1/S3 are all
-zero-LP results from committed artifacts and are final.
+The A/B: `replay_keeper` on the keeper's own frozen recipe, **both legs at HEAD `5e3b6c6a`**, one
+declared delta. Control `run_config` carries `pjm_seam_neighbour_hourly_ladder = False`, the arm
+`True`, both `mode = backcast` with `pjm_seam_measured_ladder = True`; the arm's solve log carries
+*"NEIGHBOUR-ANCHORED HOURLY overlay armed on the covered seams (bands clear on the measured seam
+SPREAD)"* and the control's does not. The mechanism is not a no-op: P0 objective 10.948e9 → 11.965e9
+(+9.3 %) and P1 11.302e9 → 12.330e9 (+9.1 %), at near-identical simplex counts (99,866 → 100,942).
 
-The pre-registered S4 prediction (PRECOMMIT §6, fixed before any solve) is **+3.591 TWh** of
-band-clearing net export on the keeper's own 2025 price, with the bar stated as **direction +
-order of magnitude on the LP: the rise must lie in [+1.0, +7.0] TWh**.
+| gate | bar (fixed in the PRECOMMIT) | measured | verdict |
+|---|---|---|---|
+| **S4** dispatch response | net export RISES, rise in **[+1.0, +7.0] TWh** | **23.270 → 25.070, +1.800 TWh** | **PASS** |
+| **S5** collateral | no load-bearing criterion flips PASS → FAIL | **0 flips** (`screen_collateral_gate`) | **PASS** |
 
-**Environment cost, recorded honestly.** This container began with an EMPTY `data/clean/` tree and
-an EMPTY `pjm-da-virtuals` corpus (a gitignored corpus whose only recovery route is re-fetch, per
-its README). Both had to be rebuilt before any LP could run: `transfer-interface-limits` and
-`ramp-capability` were regenerated from raw, and the 2025 `hrl_da_incs_decs` corpus was re-fetched
-from PJM DataMiner2 (public subscription key, `scripts/data/fetch_pjm_da_virtuals.py`). Two solve
-attempts aborted at fleet build on those gaps before any simplex iteration, so no LP time was lost
-to them. A third abort was this session's own wiring defect (`run_year` did not accept the new
-kwarg), fixed in `0fb40252`.
+**S4 at full magnitude, including against the arm.** The realised +1.800 TWh is **half** the
+pre-registered +3.591 band-clearing prediction (ratio 0.501). It clears the bar, and the bar was
+written wide *because* §1a had already measured the band arithmetic over-stating the LP — but 2×
+is a larger over-statement than the ~20–25 % §1a records, and that is a fact about the LP's
+application geometry (§1c), not a vindication of the estimator.
+
+**The S5 move that is NOT the mechanism's.** The gate reports one non-load-bearing move,
+`forced_share 2025 ST_GAS PASS → FAIL`. It appears **identically in the CONTROL's own run of the
+same gate against the same keeper**, so it is a replay/HEAD artifact common to both legs and cancels
+in the A/B. This is precisely what the §3 same-HEAD control was spent to establish, and it is the
+reason a form-4 differencing against the committed pjm-169 bundle would have mis-attributed it to
+this card.
+
+### 4c. REPORTED AT FULL MAGNITUDE, GATING NOTHING (rules 1 `[R-STRUCT]` / 29)
+
+| quantity | control | arm | move |
+|---|---|---|---|
+| net export TWh (measured **32.925**) | 23.270 | 25.070 | **+1.800**, miss −9.655 → **−7.855** |
+| **interchange hourly r vs measured** | **+0.587** | **+0.556** | **−0.031 (WORSE)** |
+| load-weighted price $/MWh | 42.352 | 43.001 | +0.648 |
+| C3a `price_mean` vs band | −3.51 | **−2.89** | toward (control replay moves *away*, −3.54) |
+| CT_PEAKER TWh | 27.454 | 28.646 | **+1.192** |
+| ST_GAS TWh | 17.060 | 17.311 | +0.251 |
+| CC_REGULAR TWh | 334.424 | 334.228 | −0.196 |
+| COAL_BIT TWh | 130.726 | 130.771 | +0.045 |
+| VIRTUAL_DEC TWh | −18.596 | −17.767 | +0.829 |
+| nuclear / wind / solar / hydro | — | — | **+0.000 each** |
+
+**The correlation result is stated against the card.** Readout A predicted the arm would improve
+hourly agreement, and on the aggregate net-export series measured against the tie-line meter it does
+the opposite: **+0.587 → +0.556**. The two instruments are not the same object — readout A scores
+each seam's own flow against its own measured series, while this scores the SUMMED net position —
+but the honest reading is that **the seam-level shape repair readout A measures did not survive
+aggregation into the LP's net position in this year**, and this card does not claim it did.
+
+**Where the extra export comes from is a real cost, not a free win.** The +1.800 TWh of export is
+served almost entirely by **CT_PEAKER (+1.192)** and ST_GAS (+0.251), with CC_REGULAR slightly
+*down*. That is the model buying export with peaking gas, and it is the mechanism's honest
+signature: raising the export bands' merit position pulls the marginal unit up the stack, which in
+PJM 2025 is a peaker. Zero-carbon classes are untouched to the third decimal, as a seam-only
+mechanism must leave them.
+
+---
+
+## 5. VERDICT
+
+**The arm CLEARS every pre-registered gate: S1 PASS · S2 PASS · S3 PASS · S4 PASS · S5 PASS.**
+
+Under rule 29 `[R-SCREEN]` that is exactly and only this: **the arm is not killed.** A screen "may
+kill an arm; it may never promote one." Nothing here is a promotion, and this bundle is a
+throwaway diagnostic probe — 2025 only, never registered, and rule 16 `[R-ALLYEARS]` forbids a
+single-year keeper in any case.
+
+**What the session established, in order of confidence:**
+
+1. **The charter's hypothesis is refuted** (zero-LP, unambiguous): the ladder's band prices are
+   right to −0.046 / −0.011 TWh.
+2. **The anchoring defect is real and large**: −5.735 / −12.699 TWh, 57 % / 88 % of each year's
+   miss, with the quantile-map test proving the band prices are not in it.
+3. **The repair is real but PARTIAL**: it recovers +1.800 TWh of a −9.655 TWh miss in 2025 — about
+   19 % — and it does not repair the hourly shape at the aggregate net position.
+4. **The residual is not the ladder's**: −3.890 TWh (2022) of application geometry (§1c) and the
+   price-duration-curve error itself (§1) remain untouched.
+
+---
+
+## 6. THE PROMOTION QUESTION — OWNER-FACING, AND IT IS OPEN (rule 31 `[R-RETAIN]`)
+
+**This session does NOT recommend promoting on this evidence, and the reason is a rule, not a
+judgement about the mechanism:** a keeper needs a full `--year 2023 2024 2025` bundle (rule 16), and
+this is a 2025 screen. The owner's standing ruling — *structural integrity may improve while gates
+regress and it can still be a keeper* (rule 1 `[R-STRUCT]`) — is exactly the right frame for this
+mechanism, but it needs a full-span bundle to be applied to.
+
+**What promotion would cost:** one `--year 2023 2024 2025` invocation on the arm recipe, ~35–70 min
+of LP, plus its control if the owner wants the span differenced rather than scored against the
+registered keeper.
+
+**RETENTION, stated plainly per rule 31.** `results/calibration/pjm174_ctl_2025/` and
+`pjm174_arm_2025/` are on local disk, **gitignored** (`results/calibration/pjm174_*/`, which is what
+discharges rule 29 (c) — they can never reach `main` or turn the parity gate red). **They were NOT
+deleted.** This container is ephemeral, so they will not survive session reclamation; if the owner
+wants the full span, the 2025 legs would be re-solved as part of it anyway.
+
+**Recommended next step (not taken here):** the higher-value lever is upstream. §1 shows the whole
+−5.7 / −12.7 TWh is recoverable by fixing the price duration curve, and the EMAAC CC-availability
+card (`ADDENDUM-pjm171-emaac-availability-census-2026-09-07.md`) is a candidate *source* for that
+error — phantom CC availability would put CC at the overnight margin, which is pjm-171's measured
+trough signature (model overnight implied heat rate 7.9–9.3 vs actual 5.9–7.0). That is a
+hypothesis this session did not test, stated as such.
+
