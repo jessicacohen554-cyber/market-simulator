@@ -1,0 +1,75 @@
+{
+ "probe": "miso-245 rule-29 screen gates S-1/S-2/S-3 (STRUCTURAL, STOP-only)",
+ "addendum": "results/calibration/ADDENDUM-miso245-the-four-screen-gates-2026-09-08.md \u00a71",
+ "control": "results/calibration/miso243_sppair_K (COMMITTED keeper bundle, form 4)",
+ "arm": "/tmp/claude-0/-home-user-market-simulator/db5feb19-a82e-56da-a252-94c2e4e968ed/scratchpad/miso245_screen2024",
+ "screen_year": 2024,
+ "presolve": {
+  "dq_hat_mw": 3.681507,
+  "footprint_hours": 86
+ },
+ "bars": {
+  "S1_lo_mw": 0.0,
+  "S1_hi_mw": 40.0,
+  "S2_max_changed_hours": 860,
+  "S2_mw_eps": 1.0
+ },
+ "gates": {
+  "S1_direction_and_magnitude": {
+   "control_mean_net_import_mw": 3301.476503,
+   "arm_mean_net_import_mw": 3301.515881,
+   "delta_mean_mw": 0.039378,
+   "delta_over_dq_hat": 0.0107,
+   "bar": "0.0 <= delta <= 40.0",
+   "PASS": true
+  },
+  "S2_footprint_confinement": {
+   "hours_changed_gt_1mw": 288,
+   "share_of_year": 0.032877,
+   "presolve_footprint_hours": 86,
+   "bar": "<= 860",
+   "PASS": true
+  },
+  "S3_identity_and_clean_ab": {
+   "a_derive_reproduces_solved_table": {
+    "entries": 192,
+    "max_abs_delta": 0.0,
+    "PASS": true
+   },
+   "b_scenario_config_identical": {
+    "n_fields_keeper": 822,
+    "n_fields_arm": 824,
+    "differing_fields": {
+     "gas_price_override": {
+      "keeper": 2.54,
+      "arm": 2.19
+     },
+     "netload_drag_layup_window_mask": {
+      "keeper": null,
+      "arm": false
+     },
+     "pjm_thermal_accreditation_vintage": {
+      "keeper": null,
+      "arm": false
+     },
+     "weather_year": {
+      "keeper": 2023,
+      "arm": 2024
+     }
+    },
+    "PASS": false
+   },
+   "PASS": false
+  }
+ },
+ "reported_delta_shape": {
+  "max_abs_delta_mw": 375.0,
+  "sum_delta_mwh": 344.951,
+  "hours_positive": 151,
+  "hours_negative": 137
+ },
+ "STOPPED_BY": [
+  "S3_identity_and_clean_ab"
+ ],
+ "S1_S2_S3_ALL_CLEAR": false
+}
