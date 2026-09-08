@@ -686,3 +686,49 @@ FINDING: docs/handoffs/FINDING-spp-48-2026-09-07.md
   NYISO **I**, ERCOT **·**.
 - **Routed**: R-1 CLI flag, R-2 the `iso_monthly_gas_prices` consumer, R-3 epoch text, R-4 Harrington, R-5 Permian
   reference, R-6 Pioneer nameplate, R-7 F923 state scope, R-8 MISO high-tail volume census, R-9 PJM pin.
+
+## 2026-09-08 — spp-17: SPP-50 the batched re-baseline (SPP-48 wind R-LEVEL + SPP-49's two input seams) SOLVED and REGISTERED; recommend promote, served as P15
+Owner sequencing ruling P19b executed: the wind re-baseline and the input re-baseline as ONE full-span
+solve, so the keeper that emerges is identified against the FINAL input surface. Keeper-3's recipe
+re-solved byte for byte -- machine-verified, not asserted: 0 differences across 297 meta.json keys
+outside provenance, 0 across every scenario_config field present in both configs, all 8 shared-input
+fingerprints unmoved; the 5 config differences are all fields that did not EXIST at keeper-3's sha (four
+at default False, each classified INERT in the PRECOMMIT's G-DRIFT audit before the solve; the fifth is
+the declared f923 seam gate at the P19 default True). Three inputs moved and nothing else: R-LEVEL wind
+(North +1.915/+2.304/+2.131 TWh, South equal and opposite, system total 0.000000), seam 1 (fuel_prices on
+484/499/482 rows), seam 2 (heat_rate on 32 rows -- the declared 21 gas CT / 1,141.8 MW plus 11 oil rows /
+25.3 MW at the same IC plants). PROMOTION LEGS: (ii) wind identity MET in all three years, 1.10680 /
+1.10678 / 1.10681 against the 1.106808 construction with LP re-curtailment 0.00058/0.00172/0.00030 % --
+TIGHTER than keeper-3's, so the 3,400 MW seam absorbs the re-split without re-curtailing; (iii)
+attribution reproduces SPP-49 0.5 TO THE GWh on every row (Pioneer -3,362.3, CT fuel_low -5,739.1, ST_GAS
+fuel_low -4,642.8, ST_GAS clean +6.2) and the clean cohorts stay put; (iv) MET as written -- C2/C4/C6/C8
+all PASS->PASS, DOF 3 entries / 0 tuned scalars / authorized_price_tuning NONE, and SPP-48 DELETES one
+free parameter; (i) NOT MET on the letter of its own iff -- 17 of 22 LP input arrays bit-identical with
+the fleet unchanged, but emission_rate moved on exactly the 21 clamped rows as the exact algebraic
+consequence of the heat-rate clamp (ratio identical to 4.4e-16, inert because SPP's carbon price is 0.0).
+Reported as a defect in the lane's declaration, NOT re-cut after the result. DETERMINATION NOT-YET, same
+four criteria and same grade summary as keeper-3. C1 SUBSTANTIALLY REPAIRED: the two targeted 2024 rows
+FIXED (CC_REGULAR -8.60 -> -2.94, CT_PEAKER +9.94 -> +1.91), COAL_PRB -4.80 -> +0.26, summed absolute
+class error 31.69 -> 16.45 TWh in 2024 and 22.91 -> 15.67 in 2023, free-class 10/12 -> 11/12; ONE new
+failing row, ST_GAS-2024 -5.12 -> -8.71, whose root cause is the ALREADY-ROUTED Harrington fuel vintage
+(the screen removes the fake $1.48 gas, not the coal the plant burned). PRICE LEVEL WORSE IN EVERY YEAR
+and reported at full magnitude: C3a +14.1/+7.5/+7.2 -> +15.0/+12.1/+14.2 % (2024 and 2025 flip PASS ->
+FAIL at the year level), C3b 2025 0.189 -> 0.253 PASS -> FAIL, reported C2-2025 gas -12.6 -> -23.5 % and
+coal -1.9 -> +8.1 %. The realised LP response reproduces SPP-49's ZERO-LP pooled prediction on every class
+of every year (2024 CT -8.06 vs -8.46, CC +5.74 vs +5.60, COAL +5.66 vs +6.63). RECOMMENDATION: PROMOTE on
+structural grounds per rule 1 -- two proven measured-input repairs, net -1 free parameter, nothing tuned,
+no mechanism added -- and NOT because a residual moved; keeper-3's better 2024/2025 price level was
+produced by gas at $0.16/MMBtu, which is the unreal mechanism rule 1 forbids reaching a number through.
+Case against stated in full: three per-year load-bearing cells flip PASS -> FAIL, the determination does
+not improve, C1 gains a gated failing row, 2025's reported C2 pair worsens on both legs, and leg (i)
+misses. keepers/SPP.json UNTOUCHED, keeper-3 NOT pruned -- the promotion is card P15. Bundle is on local
+disk, gitignored from the PRECOMMIT commit onward (rule 31: nothing deleted), and will NOT survive this
+ephemeral container.
+FINDING: docs/handoffs/FINDING-spp-50-2026-09-08.md
+OWNER RULING P15 (SPP desk r#15, 2026-09-08), recorded by the desk after the lane closed: **PROMOTION
+DECLINED — keeper-3 stands.** Verbatim: "I think we just open the price level and don't bother promoting."
+SPP-50 remains a REGISTERED, non-promoted run on the dashboard (sidecar + payload committed; its bundle did
+NOT survive the lane's ephemeral container, so no hourly/ sidecars exist and a later promotion would cost a
+full ~13 min re-solve). The repaired wind parquets STAY on main by the same ruling, so keeper-3 is knowingly
+carried as a keeper that does not reproduce from the repository's own wind input — an accepted, recorded
+condition, and the reason rule 29(b) form 4 no longer holds unqualified for SPP (desk note, r#15).
