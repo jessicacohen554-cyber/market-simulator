@@ -84,11 +84,20 @@ COMPLETE_ISOS = ("ERCOT", "NEISO", "PJM", "CAISO", "NYISO")
 GROUP_CC = "CC_REGULAR"
 
 # ---- PREREG bars, fixed ex ante (literals, never read from an artifact) ----
-BAR_SHARD_CELLS_MISO = 312  # G-PARSE
-BAR_UNMAPPED = 0  # G-PARSE / G-ISO
+# G-PARSE' (ADDENDUM 1 section 3): the `== 312` literal is DELETED, not widened
+# (rule 26 [R-DELETE] -- a stale literal that still parses is a re-armable answer
+# key). Its three replacement limbs carry NO hand-copied count: L1 cross-shard
+# identity (rule 28(c)'s own invariant), L2 upper-bound identity per shard, L3 a
+# provenance stamp of the commit and blob shas actually parsed.
+BAR_UNMAPPED = 0  # G-PARSE' / G-ISO
 BAR_BASIS_CORR = 0.60  # G-BASIS: da vs rt must be DISTINCT
 BAR_RUNG_TOL_USD = 0.01  # M-a2 tolerance (NEVER widened)
 BAR_RUNG_SHARE = 0.90  # M-a2 decision rule
+# M-a4 (ADDENDUM 1 section 4), declared before its number existed; it can only
+# REFUSE the reclassification of item (a) and can never rescue anything.
+BAR_A4_EQ_SHARE = 0.99  # |p_bus - p_Midwest| <= $0.01 in >= 99 % of hours
+BAR_A4_SIGMA_USD = 0.05  # |sigma(p_bus) - sigma(p_Midwest)| <= $0.05
+REF_MIDWEST_ZONE = "MISO-Indiana"  # the hub zone the lane's regressor is on
 TMPL_CELLS = 12 * 24
 TMPL_MIN_SAMPLES = 8  # M-b2: drop a subset cell below this, and report the count
 _MONTH_LEN = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -107,6 +116,36 @@ FAILED: list[str] = []
 
 def fail(leg: str, msg: str) -> None:
     FAILED.append(f"{leg}: {msg}")
+
+
+def _git(*args: str) -> str:
+    """One git read, or "" when git is unavailable (the stamp then says so)."""
+    import subprocess
+
+    try:
+        return subprocess.run(
+            ["git", *args], capture_output=True, text=True, cwd=REPO, check=False
+        ).stdout.strip()
+    except OSError:  # pragma: no cover - git absent
+        return ""
+
+
+def provenance() -> dict:
+    """G-PARSE' limb L3: the commit and the blob shas of the files ACTUALLY parsed.
+
+    The failure this limb exists to prevent was a gate literal frozen at one
+    commit and evaluated at another; a stamp makes that visible in the artifact
+    instead of silently changing a hand-copied number.
+    """
+    rel = {"base": "docs/codebase-site/data/mechanism-matrix.js"}
+    for iso in ISOS:
+        rel[iso] = f"docs/codebase-site/data/mechanism-matrix/{iso}.js"
+    return {
+        "head": _git("rev-parse", "HEAD"),
+        "head_short": _git("rev-parse", "--short", "HEAD"),
+        "dirty": bool(_git("status", "--porcelain")),
+        "blob_sha": {k: _git("rev-parse", f"HEAD:{v}") for k, v in rel.items()},
+    }
 
 
 # ----------------------------------------------------------------- E1 parsing
@@ -131,6 +170,12 @@ def parse_base_rows(text: str) -> dict[str, dict]:
             "name": name.group(1) if name else None,
         }
     return rows
+
+
+def count_shard_loose(text: str) -> int:
+    """G-PARSE' limb L2: the same cell-opener with the leading-indent constraint
+    dropped -- an INDEPENDENT upper bound on what the strict parser must recover."""
+    return len(re.findall(r'^\s*[a-z0-9_]+:\s*\{\s*cell:\s*"[KRIGOU.]"', text, re.M))
 
 
 def parse_shard(text: str) -> dict[str, dict]:
@@ -211,7 +256,9 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             "spp_anchor": "measured SPP NORTH hub DA",
         },
         "bars": {
-            "shard_cells_miso": BAR_SHARD_CELLS_MISO,
+            "shard_cell_count": "G-PARSE' L1/L2: identity, no literal (ADDENDUM 1)",
+            "a4_eq_share": BAR_A4_EQ_SHARE,
+            "a4_sigma_usd": BAR_A4_SIGMA_USD,
             "unmapped": BAR_UNMAPPED,
             "basis_corr_max": BAR_BASIS_CORR,
             "rung_tol_usd": BAR_RUNG_TOL_USD,
@@ -223,7 +270,9 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
     }
 
     # ================================================== G-PARSE / G-MODE / G-ISO
+    prov = provenance()
     base = parse_base_rows(MATRIX_BASE.read_text())
+    loose_counts: dict[str, int] = {}
     n_no_mode = sum(1 for r in base.values() if r["mode"] is None)
     iso_census: dict[str, dict] = {}
     for iso in ISOS:
@@ -231,7 +280,9 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
         if not p.exists():
             iso_census[iso] = {"present": False}
             continue
-        cells = parse_shard(p.read_text())
+        txt = p.read_text()
+        cells = parse_shard(txt)
+        loose_counts[iso] = count_shard_loose(txt)
         unmapped = sorted(k for k in cells if k not in base)
         ou = {k: v for k, v in cells.items() if v["cell"] in ("O", "U")}
         bc = {k: v for k, v in ou.items() if base.get(k, {}).get("mode") in ("B", "BF")}
@@ -256,17 +307,34 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             "share_bc": (round(len(bc) / len(non_na_bc), 4) if non_na_bc else None),
         }
     miso_c = iso_census["MISO"]
-    if miso_c.get("n_cells") != BAR_SHARD_CELLS_MISO:
-        fail("G-PARSE", f"MISO cells {miso_c.get('n_cells')} != {BAR_SHARD_CELLS_MISO}")
-    if any(
-        v.get("present") and v["n_unmapped"] > BAR_UNMAPPED for v in iso_census.values()
-    ):
+    present = [i for i in ISOS if iso_census[i].get("present")]
+    # L1 -- cross-shard identity (literal-free; rule 28(c)'s own invariant)
+    counts = {i: iso_census[i]["n_cells"] for i in present}
+    l1 = len(set(counts.values())) == 1
+    if not l1:
+        fail("G-PARSE'", f"L1 cross-shard cell counts differ: {counts}")
+    # L2 -- upper-bound identity, per shard
+    l2_rows = {i: (counts[i], loose_counts[i]) for i in present}
+    l2 = all(a == b for a, b in l2_rows.values())
+    if not l2:
+        fail("G-PARSE'", f"L2 strict != loose in at least one shard: {l2_rows}")
+    if any(iso_census[i]["n_unmapped"] > BAR_UNMAPPED for i in present):
         fail("G-ISO", "at least one shard has cells with no base row")
-    rep["gates"]["G_PARSE_G_ISO"] = {
+    rep["provenance"] = prov
+    rep["gates"]["G_PARSE_PRIME_G_ISO"] = {
         "iso_census": iso_census,
         "base_rows": len(base),
         "base_rows_without_mode": n_no_mode,
-        "PASS": not any(g.startswith(("G-PARSE", "G-ISO")) for g in FAILED),
+        "L1_cross_shard_identity": {"counts": counts, "PASS": l1},
+        "L2_upper_bound_identity": {"strict_vs_loose": l2_rows, "PASS": l2},
+        "L3_provenance": prov,
+        "note": (
+            "the `== 312` literal is DELETED, not widened (ADDENDUM 1 section 3): "
+            "it was frozen at session-start HEAD de837c38 and evaluated after a "
+            "rebase onto a main that had gained a 313th cell "
+            "(hydro_budget_period_by_instrument, U at mode BF in all seven shards)"
+        ),
+        "PASS": bool(l1 and l2 and not any(g.startswith("G-ISO") for g in FAILED)),
     }
     rep["gates"]["G_MODE"] = {
         "mode_counts_all_rows": {
@@ -336,6 +404,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
     grecon: dict[str, dict] = {}
     ma1: dict[str, dict] = {}
     ma2: dict[str, dict] = {}
+    ma4: dict[str, dict] = {}
     mb: dict[str, dict] = {}
     mc: dict[str, dict] = {}
 
@@ -500,6 +569,38 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             ),
         }
 
+        # -------------------------------------------------------------- M-a4
+        # ADDENDUM 1 section 4, declared BEFORE this number existed and written so
+        # it can only REFUSE the reclassification of item (a). It asks one thing:
+        # is p_bus the model's OWN internal Midwest price?
+        p_mid = bus_price[REF_MIDWEST_ZONE]
+        mw_stack = np.vstack([bus_price[z] for z in MIDWEST_ZONES if z in bus_price])
+        eq_share = float((np.abs(pb - p_mid) <= BAR_RUNG_TOL_USD).mean())
+        d_sigma = float(abs(pb.std() - p_mid.std()))
+        corner = {}
+        zexcl = hit_zone & ~hit_ladder
+        for seam in ("PJM", "SPP", "Manitoba"):
+            out_of_merit = (R[seam]["n_i"] == 0) & (R[seam]["n_e_repaired"] == 0)
+            corner[seam] = (
+                round(float(out_of_merit[zexcl].mean()), 4) if zexcl.any() else None
+            )
+        ma4_year = {
+            "reference_zone": REF_MIDWEST_ZONE,
+            "share_pbus_equals_midwest_within_1c": round(eq_share, 4),
+            "sigma_p_bus": round(float(pb.std()), 4),
+            "sigma_p_midwest": round(float(p_mid.std()), 4),
+            "abs_sigma_gap_usd": round(d_sigma, 4),
+            "midwest_copper_plate_max_cross_zone_spread_usd": round(
+                float((mw_stack.max(axis=0) - mw_stack.min(axis=0)).max()), 6
+            ),
+            "L_i_eq_share_PASS": bool(eq_share >= BAR_A4_EQ_SHARE),
+            "L_ii_sigma_PASS": bool(d_sigma <= BAR_A4_SIGMA_USD),
+            "reported_not_gated_out_of_merit_share_in_zone_exclusive_hours": corner,
+        }
+        ma4[str(year)] = ma4_year
+        if not (ma4_year["L_i_eq_share_PASS"] and ma4_year["L_ii_sigma_PASS"]):
+            fail("M-a4", f"{year}: eq_share {eq_share:.4f}, |dsigma| {d_sigma:.4f}")
+
         # -------------------------------------------------------- M-b1 / M-b2
         act = actual_zone_price(year)[ZONE].to_numpy(float)
         ok = np.isfinite(act)
@@ -649,6 +750,15 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
     )
     rep["gates"]["M_B2_DECOMP"] = {"years": mb, "votes": votes, "VERDICT": verdict_b}
 
+    rep["gates"]["M_A4_IS_IT_THE_INTERNAL_PRICE"] = {
+        "years": ma4,
+        "bars": {
+            "eq_share_min": BAR_A4_EQ_SHARE,
+            "abs_sigma_gap_max_usd": BAR_A4_SIGMA_USD,
+        },
+        "declared": "ADDENDUM 1 section 4, before its number existed; can only REFUSE",
+        "PASS": not any(g.startswith("M-a4") for g in FAILED),
+    }
     rep["reported"]["M_A1_sigma"] = ma1
     rep["reported"]["M_C1_cc_shape"] = mc
     rep["FAILED_LEGS"] = FAILED
@@ -658,6 +768,7 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
 
     # ------------------------------------------------------------------ print
     print(f"FAILED_LEGS: {FAILED}")
+    print(f"provenance: HEAD {prov['head_short']} dirty={prov['dirty']}")
     print("\n=== E1 / section 3a — backcast-lane-reachable O/U cells (N_bc) ===")
     for iso in ISOS:
         c = iso_census[iso]
@@ -701,6 +812,23 @@ def main() -> int:  # noqa: PLR0912, PLR0915 - one linear probe, PREREG section 
             f"/{a['min_distance_quantiles_usd']['max']}"
         )
     print(f"  RUNG-DETERMINED (all three >= {BAR_RUNG_SHARE}): {rung_all}")
+
+    print(
+        "\n=== M-a4 (GATED, can only REFUSE) — is p_bus the internal Midwest price? ==="
+    )
+    for y in YEARS:
+        a = ma4[str(y)]
+        print(
+            f"  {y}  share |p_bus - p_{a['reference_zone']}| <= $0.01 : "
+            f"{a['share_pbus_equals_midwest_within_1c']:.4f} (bar >= {BAR_A4_EQ_SHARE})"
+            f"   sigma {a['sigma_p_bus']:.4f} vs {a['sigma_p_midwest']:.4f}"
+            f"  |gap| {a['abs_sigma_gap_usd']:.4f} (bar <= {BAR_A4_SIGMA_USD})"
+            f"   copper-plate max spread ${a['midwest_copper_plate_max_cross_zone_spread_usd']}"
+        )
+        print(
+            f"       reported, not gated — out-of-merit share in zone-exclusive hours: "
+            f"{a['reported_not_gated_out_of_merit_share_in_zone_exclusive_hours']}"
+        )
 
     print("\n=== M-b1 / M-b2 — Manitoba determinism ===")
     for y in YEARS:
