@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-08 — SPP re-baselined on the repaired inputs: the fuel mix is fixed, the price level is not (lane SPP-50)
+
+The batched re-baseline owner ruling P19b called for — SPP-48's wind LEVEL repair and both SPP-49 input
+seams in **one** full-span solve. Registered as `2026-09-08-spp-50-rebaseline`. **Promotion DECLINED by
+owner ruling P15**: keeper-3 `2026-09-07-spp-3-screened-input` stands, and the price level is opened as
+the next lane. Record: `docs/handoffs/FINDING-spp-50-2026-09-08.md`; log `spp-17`; desk ledger §0p.
+
+- **The fuel mix is substantially repaired, in exactly the rows the repairs targeted.** 2024 CC_REGULAR
+  **−8.60 → −2.94 TWh** and CT_PEAKER **+9.94 → +1.91** — both FAIL → PASS; COAL_PRB −4.80 → +0.26;
+  summed absolute 2024 class error **31.69 → 16.45 TWh** (2023: 22.91 → 15.67, every class flat or
+  better). The LP's realised response reproduces SPP-49's **zero-LP** pooled prediction on every class of
+  every year (2024 CT −8.06 against −8.46 predicted; CC +5.74 against +5.60).
+- **The price level moved the wrong way in every year, and that is the honest cost of the repair.** C3a
+  **+14.1 / +7.5 / +7.2 → +15.0 / +12.1 / +14.2 %**. Keeper-3's better 2024/2025 level was being produced
+  by gas priced at $0.16/MMBtu at Elk, negative in seven months at Mustang CC, and $0.32–1.52 at
+  Harrington — prices that held the level down *while putting the merit order in the wrong place*.
+  Removing them fixed the merit order and exposed a level residual that was there all along.
+- **The recipe is keeper-3's, machine-verified rather than asserted:** 0 differences across 297
+  `meta.json` keys outside provenance, 0 across every `scenario_config` field present in both configs,
+  all 8 shared-input fingerprints byte-identical. Three inputs moved: R-LEVEL wind (North
+  **+1.915 / +2.304 / +2.131 TWh**, South equal and opposite, **system total 0.000000**), `fuel_prices`
+  on 484 / 499 / 482 rows, `heat_rate` on 32 rows.
+- **One promotion leg was reported as a miss rather than re-cut after the result.** `emission_rate` moved
+  on exactly the 21 clamped rows as the algebraic consequence of the heat-rate clamp
+  (`ratio_emission ≡ ratio_heat_rate` to 4.4e-16), inert because SPP's carbon price is 0.0 — a defect in
+  the lane's own declaration, put to the owner rather than ruled on by the lane.
+- **A condition now on the record:** with promotion declined and the repaired wind parquets kept, SPP's
+  designated keeper does not reproduce from the repository's own inputs, so rule 29(b) form 4 no longer
+  holds unqualified for SPP — a lane differencing against keeper-3 carries a LIVE input hunk.
+
 ## 2026-09-08 — Two measured-input seams repaired repo-wide: an EIA-923 gas-price plausibility screen and a simple-cycle heat-rate floor (lane SPP-49)
 
 Owner ruling **P19**, executed at **zero LP**, with all seven ISOs censused before and after. This is the

@@ -293,7 +293,8 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-47** P16 — the reference's incomplete-fuel swap rule, repo-wide (issued r#12 under owner ruling P16) — **LANDED 2026-09-07** (`FINDING-spp-47-2026-09-07.md`; PR #5599 — one executable line, zero new parameters; the five specified cells reproduce to the digit and a **SIXTH** was found (NYISO 2022 oil, required by rule 22's data-vs-score clause, not a holdout spend); every ISO's determination and **the whole scorer report byte-identical**, because `calibration_verdict.py` never reads the reference; no bench part went STALE, no desk routed) | OPUS · an enumerated one-line rule change; the SCOPE is ruled, the MEASUREMENT is the lane | shared | `scripts/data/build_calibration_reference.py`, `data/raw/_validation-source/calibration_reference.json`, `bench/SPP/` only if it goes STALE, `FINDING-spp-47` | zero-LP throughout; `calibration_verdict.py --run-id` on committed artifacts, never a solve | `FINDING-spp-47-<date>.md` | the five cells move and nothing else does; per-ISO determination delta reported at full magnitude; all seven gates at their pre-lane exit code or better; no other ISO's bench part touched |
 | **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule — **LANDED 2026-09-07: REPAIRED, PARTITION CONSISTENCY PROVED, SPP-54's C-3 STOP DISSOLVED** (`FINDING-spp-48-2026-09-07.md`; PR #5601/#5592 — `scripts/lib/wind_shape.py` carries the shared rule with no ISO name, no per-ISO constant and no branch; `_SAMPLES_PER_ZONE` DELETED, net −1 free parameter; the six sites covered 13.8–100 % of a zone's capacity, so the level bias was an undeclared per-zone free parameter multiplying the split. **Both keepers need a re-baseline** — SPP's and MISO's. Ran as FABLE despite the in-sitting re-assignment to Opus — the owner had already launched it) (issued r#12 under owner ruling P17; **re-assigned FABLE → OPUS the same sitting**, the desk closing the construction choice rather than leaving it to the lane) | OPUS · `scripts/data/` is Opus territory (r#20 economy rule) and the construction is now NAMED — implement, verify, measure, recommend | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
 | **SPP-49** P19 — the two shared input seams behind the C1 gas split, repo-wide (issued r#13 under owner ruling P19) — **LANDED 2026-09-08: BOTH SEAMS REPAIRED REPO-WIDE, ZERO LP** (`FINDING-spp-49-2026-09-08.md`; PR #5640 — seam 1 as a REGISTERED gate `f923_gas_price_plausibility_screen` default ON, seam 2 as a CONSTRUCTION beside the existing eGRID CC ceiling, each adjudicated with its criterion; **ex-ante key census = ex-post exactly, 18 moves / 0 off-target**; seven ISOs censused before and after; SPP-46's attribution reproduced to the GWh pre-repair and moved by −3,362 / −5,739 / −4,643 GWh post, with the clean cohorts put; one narrowing made before any number was cited — CHP plants excluded from seam 2, rule 19) | FABLE · scope ruled and construction named, but the blast radius is seven ISOs' marginal costs and the construction-vs-registered-gate call is left open | shared | `data/fuel/plant_prices.py`, `data/fleet/eia860.py`, `scenarios.py`/`constants.py` only if a gate lands, `PRECOMMIT-/FINDING-spp-49`, `docs/handoffs/spp49/`, tests | **the ex-ante cache-key census is recorded before either file is edited** (capx (b′-1) pattern); zero-LP throughout | `FINDING-spp-49-<date>.md` | SPP-46's attribution reproduced on the repaired inputs; per-ISO flagged-row and predicted-Δ tables; every ISO owing a re-solve named; no third gate-(a) row; rule-27 blob verify on both ≥300-line files |
-| **SPP-50** the batched SPP re-baseline (**ISSUED r#14**, SPP-49 landed) | FABLE · a keeper determination | spp | keeper-3's recipe re-solved on SPP-48's wind repair + SPP-49's input repairs, full span in ONE invocation | rule 16; identity on the P0 objective + LP input arrays, never P1 (E-8) | `FINDING-spp-50-<date>.md` | one LP span, not two (owner sequencing ruling r#13); promotion served as P15; bundles gitignored, never deleted (rule 31) |
+| **SPP-51b** the C3a/C3b price level the input repairs exposed (issued r#15) | FABLE · phase 0 decides whether the object is a band at all, and reaching rule 1's carve-out is a governance act | spp | `PRECOMMIT-/FINDING-spp-51b`, `docs/handoffs/spp51b/`, `.gitignore`, SPP shard cells, and under (A) only the input file its repair names | **phase 0 is the decision**: decompose the level error by marginal unit and test the fuel leg BEFORE any multiplier; (A) fuel-basis repair / (B) structural object / (C) the carve-out band | `FINDING-spp-51b-<date>.md` | **C3a is NOT the gate** (the channel targets it); gate on the marginal-cost change landing where phase 0 named, at the predicted magnitude, with C1's repaired rows not regressing; keeper-3 is NOT a valid form-4 control any more — the input LIVE hunk earns ONE screen-year control solve |
+| **SPP-50** the batched SPP re-baseline (ISSUED r#14) — **LANDED 2026-09-08: SOLVED, REGISTERED, PROMOTION DECLINED (P15)** (`FINDING-spp-50-2026-09-08.md`; PR #5664; run `2026-09-08-spp-50-rebaseline`. Three of four legs MET and the fourth reported as a miss rather than re-cut: `emission_rate` moved on exactly the 21 clamped rows as the algebraic consequence of the clamp, inert at SPP's 0.0 carbon price. **C1 substantially repaired** — 2024 CC_REGULAR −8.60 → −2.94 and CT_PEAKER +9.94 → +1.91, both now PASS; summed absolute class error 31.69 → 16.45 TWh — and the LP reproduced SPP-49's zero-LP prediction on every class of every year. **The price level moved the wrong way in all three years** (C3a +15.0 / +12.1 / +14.2 %) → SPP-51b) | FABLE · a keeper determination | spp | keeper-3's recipe re-solved on SPP-48's wind repair + SPP-49's input repairs, full span in ONE invocation | rule 16; identity on the P0 objective + LP input arrays, never P1 (E-8) | `FINDING-spp-50-<date>.md` | one LP span, not two (owner sequencing ruling r#13); promotion served as P15; bundles gitignored, never deleted (rule 31) |
 | **SPP-51…57** | per §4 (SPP-51 → **FABLE** since r#6: it carries SPP-33's R2 anchor correction and an ERCOT limit-vs-clip decision, both adjudications; SPP-58 added — see §8 W5) | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -402,6 +403,13 @@ LANDED in its FINDING §0; the desk moves the row.
    number their own routed items per FINDING, so three parallel lanes minted `R-21`…`R-25` in one sitting
    and a bare number is now ambiguous. The desk's own register stays lettered (`R-a`…), so the two
    namespaces never collide.
+
+8. **A lane that may produce a PROMOTABLE run asks the promotion question INSIDE its own session, while
+   the bundle is alive** (r#15, desk error E-13). Rule 31 makes a session gitignore rather than delete —
+   but this container is ephemeral, so an un-ruled bundle dies with the session anyway. SPP-50 obeyed
+   rule 31 exactly and its 119 MB bundle still did not survive to the desk's next refresh. So: ask in
+   session, state the LP cost of reproducing the bundle, and say plainly if the owner has not ruled by
+   the end. The desk's refresh-time P15 is the RECORD of the ruling, never the first time it is asked.
 
 ### W1 — Phase 0/1 (issuable now; the three lanes are parallel)
 
@@ -2624,6 +2632,131 @@ bundle-retention statement (rule 31 — where the bundle is, that it is gitignor
 survive this ephemeral container).
 ```
 
+### W5 issuance r#15 — the price level (SPP-51b)
+
+#### SPP-51b `[FABLE]` — the C3a/C3b level residual the input repairs exposed
+
+```
+You are lane SPP-51b. MODEL: Fable claude-fable-5-1 — this lane may reach rule 1's authorized
+price-tuning carve-out, which is a governance act with five binding conditions, and its phase 0 decides
+whether the object is a band at all. DATA PROFILE: spp. Branch stem: claude/spp-51b-price-level-<4 chars>.
+
+Read CLAUDE.md freshly and in full — rule 1 [R-STRUCT] AND ITS 2026-09-05 CARVE-OUT (a)–(e) WORD BY WORD,
+plus rules 13 [R-MEASURED], 14, 19 [R-ONE-MECH], 21 [R-DOF], 28 [R-MECH-MATRIX], 29 [R-SCREEN], 31.
+Then: docs/handoffs/FINDING-spp-50-2026-09-08.md IN FULL (this lane exists because of its §0.3);
+docs/handoffs/FINDING-spp-price-family-2026-09-07.md IN FULL (the uniform quadruple is `R` for SPP —
+you are NOT re-running it); docs/handoffs/FINDING-spp-46-2026-09-07.md §0.2 (why the band channel was
+REFUSED then) and FINDING-spp-49-2026-09-08.md (what changed since); FINDING-spp-55 (scarcity is INERT
+on SPP's dispatch); docs/codebase-site/data/mechanism-matrix/SPP.js; plan §8.0.
+
+WHY THIS CELL MAY BE RE-OPENED, stated before you touch it (rule 28's DO-NOT-REDO discipline requires
+NEW EVIDENCE, and this is it — do not proceed if you do not find the argument sound, say so instead):
+`offer_curve_by_group` is `R` for SPP as a UNIFORM quadruple, and SPP-46 REFUSED the per-class band on
+its input census — ~100 % of the CT over-run then sat on rows whose own inputs were implausible, so a
+band would have buried a data error inside a multiplier (rule 14). **Those inputs are now repaired**
+(SPP-49, landed repo-wide) and SPP-50 measured the consequence: the merit order is substantially fixed
+(2024 summed absolute class error 31.69 → 16.45 TWh, both failing C1 rows now pass) and a **level**
+residual is left standing in the open. That residual is no longer confounded by the input defect. The
+`R` verdict stands for the object it was minted on; this is a different object on a different surface.
+
+THE OBJECT, measured (SPP-50 §0.2–§0.3): C3a mean LMP **+15.0 / +12.1 / +14.2 %** — the model is
+uniformly ~13 % rich in EVERY year — and C3b duration NRMSE **0.250 / 0.244 / 0.253**. Note the shape of
+the problem before you assume its cause: **the mean is too HIGH while the tail is far too THIN** (C3c
+0 / 3 / 2 hours against 42 / 59 / 68 measured), and SPP-55 already established that scarcity and reserve
+shortage are INERT on this dispatch. A model whose mean is rich and whose tail is missing is one whose
+MIDDLE is too expensive. That is a statement about the marginal unit in ordinary hours, and it may or may
+not be a band problem.
+
+PHASE 0 FIRST — ZERO LP, AND IT DECIDES THE LANE (rule 29 step 0). Pushed in the PRECOMMIT before you
+read any screen result:
+  0.1 **Decompose the level error by marginal unit.** In the rich hours, WHO is setting the price in the
+      model and what is that unit's marginal cost made of (fuel × heat rate + VOM)? Split the +13 % by
+      marginal class and by load band, against the measured LMP distribution. Use SPP-50's registered
+      run — its committed sidecar and payload — plus keeper-3's committed hourlies for the comparison.
+  0.2 **Test the fuel leg against the record before you touch a multiplier.** SPP-49 repaired the
+      implausible tails of the F923 own-month frame; it did NOT establish that the surviving in-band
+      prices, or the state reference the screened months now fall back to, are right for SPP's marginal
+      units. SPP-49 R-5 (desk R-bb) says the TX state blend is defined on a different boundary than Waha
+      gas, which is where SPP-South's marginal gas actually prices. **If the level error is a fuel-basis
+      error, it is a rule-14 input repair and NOT a band** — and that finding would be worth more than a
+      passing C3a.
+  0.3 **Then, and only then, decide the channel.** State which of these the evidence supports, with the
+      number that decides it: (A) a fuel-basis / reference repair (rule 14, zero DOF — preferred if the
+      evidence allows it); (B) a missing structural object in price formation; (C) the rule-1 carve-out
+      band channel. **If phase 0 says the object is (A) or (B), the band is not the answer and you say
+      so** — a lane that ends here with a named input defect is a full result, exactly as SPP-46 was.
+
+IF AND ONLY IF YOU REACH (C), every carve-out condition binds and each is a way to fail:
+  (a) `committed` / `econ_low` / `econ_high` / `peak` ONLY — never `phys_*`, never `econ_low_share`,
+      never `pct_peaking`, never a new adder, offset, haircut or proxy;
+  (b) **ONE config across 2023, 2024 AND 2025** — a per-year value is refused outright;
+  (c) **declared in the PRECOMMIT before the solve and NEVER SWEPT against the gates.** You get ONE
+      declared config. Selecting a multiplier because it made C3a pass is the fitted-mechanism selection
+      rule 1 exists to forbid and it is still forbidden. Derive the value from a stated construction —
+      say what identifies it, not what it achieves;
+  (d) merit-order movement across classes is INTENDED, not a defect;
+  (e) the run declares `authorized_price_tuning` (C6 FAILS without it) and carries every value in the
+      DOF ledger as "price residual, authorized channel (rules 1/13 amendment 2026-09-05)".
+  SPP-46 R-17's warning is the trap to avoid: a per-class set has "far more freedom, correspondingly
+  easier to fit". Differentiate per class ONLY where SPP's own measured class conduct says to, and state
+  that construction before the number exists.
+
+THE CONTROL — READ THIS, IT HAS CHANGED, AND IT IS THE DESK'S DOING NOT YOURS (desk r#15, error E-13).
+Owner ruling P15 DECLINED SPP-50's promotion, so **keeper-3 `2026-09-07-spp-3-screened-input` is still
+SPP's designated keeper** — but `main` now carries SPP-48's repaired wind parquets and SPP-49's two seams,
+so **keeper-3 does NOT reproduce on `main`'s own inputs and rule 29(b) form 4 does NOT hold unqualified
+for SPP.** Do not paper over this:
+  - Run G-DRIFT as always, and classify the wind + seam changes as what they are: **LIVE**, on the input
+    side rather than the code side. That LIVE finding is what earns a control solve under rule 29(b),
+    and it earns exactly ONE — your screen year, no more.
+  - **SPP-50's registered run `2026-09-08-spp-50-rebaseline` is the closer comparator in substance** (it
+    IS the current input surface) but its bundle did not survive its lane, so it has a committed sidecar
+    and payload and **no `hourly/` sidecars**. Say plainly in your PRECOMMIT which control you use for
+    which leg and why, and do not claim a form-4 differencing you cannot actually perform.
+
+THE SCREEN (rule 29(a)) if you reach a solve: ONE year, named in the PRECOMMIT by the mechanism's own
+measured footprint from phase 0 — never by which year's C3a is worst, which would be residual-driven
+selection. Recipe = keeper-3's, plus your one change:
+
+  uv run python scripts/run_calibration_full.py --iso SPP --year <screen year> \
+      --out-dir results/calibration/_spp51b_screen_<year> --hydro-backfill-year 2024 --hydro-eia930-monthly
+
+(add `--offer-curve-json '<your ex-ante JSON>'` only under (C); the flag takes a per-class → per-band
+object or a path, deep-merged onto the defaults and recorded in `run_config.json` — verified against the
+parser at HEAD. Declare ABSOLUTES, not `--offer-curve-delta-json`.) **Ask SPP-DESK before launching any
+solve** (rule 12, ≤ 2 per-plant SPP solves per host).
+
+THE STOP GATE — pre-registered, STRUCTURAL, a STOP gate only, with EX-ANTE DOMINANCE THRESHOLDS on every
+direction leg (desk error E-6). And note the one thing that makes this lane harder than its predecessors:
+**the carve-out authorizes tuning ON PRICE, so C3a cannot be your gate** — gating on the criterion the
+channel targets is the selection rule 1 forbids. Gate instead on the mechanism doing what its own
+arithmetic says: the marginal-cost change lands on the classes and hours phase 0 named, at the magnitude
+predicted; the merit order moves as predicted; C1's repaired rows do NOT regress (that is the load-bearing
+thing this lane can break); C2/C4/C6/C8 hold. Report C3a and C3b at full magnitude as RESULTS, clearly
+marked "not gated on".
+
+RULE 31 [R-RETAIN] — **NEVER `rm` A BUNDLE**, and this desk has now been burned by the container, not by a
+delete: SPP-50 did everything right and its bundle still died with its session. So: gitignore
+`results/calibration/_spp51b_*` the moment the first bundle is written, AND — if your run is promotable —
+**ask the promotion question IN YOUR OWN SESSION while the bundle is alive**, not only in your FINDING.
+State the LP cost of reproducing it. Do not let the question go unasked.
+
+FILES YOU OWN: `docs/handoffs/PRECOMMIT-spp-51b-<date>.md`, `docs/handoffs/FINDING-spp-51b-<date>.md`,
+`docs/handoffs/spp51b/`, `.gitignore` (your line), your SPP shard cell lines, and — only under (A) — the
+input file your repair names, with its census.
+FILES YOU DO NOT TOUCH: the plan, the ledger, `docs/calibration-log/spp.md`, `CHANGELOG.md` (your FINDING
+carries a `## Log entry` block, §8.0 rule 1); `keepers/SPP.json` and the promotion file set (promotion is
+the owner's, served as P15); `frontend/data/forecast/`; any other ISO's anything; `plant_prices.py`,
+`eia860.py` and `scripts/lib/wind_shape.py` (SPP-48/49 own those and they are LANDED — you consume them;
+if you believe one is wrong, STOP and route to SPP-DESK).
+
+OWNER REPORT (FINDING §0, in this order): the phase-0 decomposition — who is marginal in the rich hours
+and what their cost is made of; which channel the evidence chose and the number that decided it; if you
+reached (C), the declared config and its identifying construction, stated before any result; the STOP-gate
+table with declared bars beside realised values; C3a/C3b at full magnitude marked "not gated on"; and, if
+you solved anything promotable, the promotion question asked in-session.
+```
+
 ### W5 — the lever queue (DISPATCHABLE since r#7 — SPP-40 landed; SPP-57 issued r#7 in full below the table)
 
 | Lane | Model | Charter stub (expanded by the desk at issuance) |
@@ -2760,7 +2893,8 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-47 | `docs/handoffs/FINDING-spp-47-2026-09-07.md` | **LANDED** 2026-09-07 (PR #5599) — one line, 6 cells (a sixth found), every determination byte-identical, zero LP |
 | SPP-48 | `docs/handoffs/PRECOMMIT-spp-48-2026-09-07.md` / `FINDING-spp-48-2026-09-07.md` | **LANDED** 2026-09-07 (PRs #5592/#5601) — R-LEVEL in `scripts/lib/wind_shape.py`, partition consistency proved, C-3 STOP dissolved, both keepers owed a re-baseline |
 | SPP-49 | `docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md` / `FINDING-spp-49-2026-09-08.md` | **LANDED** 2026-09-08 (PR #5640) — both seams repaired repo-wide, zero LP; key census ex-ante = ex-post (18/18, 0 off-target); SPP / MISO / PJM keepers owe re-solves, ERCOT owes none |
-| SPP-50 | `docs/handoffs/PRECOMMIT-spp-50-<date>.md` / `FINDING-spp-50-<date>.md` | **ISSUED r#14** — the batched re-baseline (wind LEVEL + both input seams) in one full-span invocation |
+| SPP-50 | `docs/handoffs/PRECOMMIT-spp-50-2026-09-08.md` / `FINDING-spp-50-2026-09-08.md` | **LANDED** 2026-09-08 (PR #5664) — solved, registered as `2026-09-08-spp-50-rebaseline`, **promotion DECLINED by owner ruling P15**; C1 repaired, price level worse |
+| SPP-51b | `docs/handoffs/PRECOMMIT-spp-51b-<date>.md` / `FINDING-spp-51b-<date>.md` | issued r#15 (owner ruling P15: "open the price level") |
 | SPP-46 | `docs/handoffs/PRECOMMIT-spp-46-2026-09-07.md` / `FINDING-spp-46-2026-09-07.md` | **LANDED** 2026-09-07 (PR #5602) — both R-17 candidates killed at phase 0, zero LP; the gas split is an input-plausibility defect, R-1…R-5 routed |
 | SPP-35 | `docs/handoffs/FINDING-spp-35-2026-09-07.md` | **LANDED** 2026-09-07 — S-1/S-2 + O-4/O-6 closed; six items routed (FINDING §5) |
 
