@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T17:08:22",
+  "timestamp": "2026-09-07T18:11:31",
   "iso": "CAISO",
   "years": [
     2022
@@ -351,9 +351,10 @@
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
     "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-d75214d7cdc0.parquet",
-    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
+    "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "7f5d73b1",
+  "git_sha": "9f6b8864",
   "basis_sha": "7486cb9be83f81b3e6e9d382b0d74cd11198cad0",
   "highspy_version": "1.14.0",
   "environment": {
