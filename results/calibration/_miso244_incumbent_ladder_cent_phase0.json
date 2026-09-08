@@ -1,0 +1,406 @@
+{
+ "probe": "miso-244 phase 0 \u2014 diagnose the one-cent gap between MISO_SEAM_LADDER_BY_YEAR and its own derive at HEAD",
+ "prereg": "results/calibration/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md",
+ "keeper": "2026-09-07-miso-243-spp-pairing",
+ "zero_lp": true,
+ "read_only": true,
+ "repairs_nothing": true,
+ "queue_item": "miso-243 handoff RECOMMENDED item (its own \u00a77.1 named successor)",
+ "price_basis": "incumbent ladder anchor = measured Indiana-hub DA (actual_lmp_hourly_MISO.parquet 'da'); SPP anchor where it appears = measured SPP NORTH hub DA; row sets = the derive's own per-seam dropna",
+ "bars": {
+  "tie_bar_t_max": 0.0001,
+  "tol_corr": 0.002,
+  "identity_bar": 0.002,
+  "half_cent": 0.005,
+  "NO_WASH_EPS": 0.01
+ },
+ "gates": {
+  "G_RAW": {
+   "detail": {
+    "2023": {
+     "max_abs_delta": 0.0
+    },
+    "2024": {
+     "max_abs_delta": 0.0
+    },
+    "2025": {
+     "max_abs_delta": 0.0
+    }
+   },
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_P2": {
+   "detail": {
+    "2023": {
+     "measured": {
+      "PJM": 0.01,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "reference": {
+      "PJM": 0.01,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "PASS": true
+    },
+    "2024": {
+     "measured": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "reference": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.01,
+      "Manitoba": 0.0
+     },
+     "PASS": true
+    },
+    "2025": {
+     "measured": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "reference": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "PASS": true
+    }
+   },
+   "PASS": true
+  },
+  "G_SPP": {
+   "detail": {
+    "2023": {
+     "max_abs_delta": 0.0
+    },
+    "2024": {
+     "max_abs_delta": 0.0
+    },
+    "2025": {
+     "max_abs_delta": 0.0
+    }
+   },
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_POOL": {
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_DOC": {
+   "detail": {
+    "2023": {
+     "corr_measured_flow_vs_derive_spread": 0.0409,
+     "reference": 0.041,
+     "abs_delta": 0.0001,
+     "PASS": true
+    },
+    "2024": {
+     "corr_measured_flow_vs_derive_spread": -0.02,
+     "reference": -0.02,
+     "abs_delta": 0.0,
+     "PASS": true
+    },
+    "2025": {
+     "corr_measured_flow_vs_derive_spread": 0.0503,
+     "reference": 0.05,
+     "abs_delta": 0.0003,
+     "PASS": true
+    }
+   },
+   "PASS": true
+  },
+  "G_ROW": {
+   "detail": {
+    "2023": {
+     "rows_in_year": 8760,
+     "rows_after_hub_join": 8760,
+     "n_rows_R_D": 8754,
+     "reference_n_rows_R_D": 8754,
+     "PASS": true
+    },
+    "2024": {
+     "rows_in_year": 8760,
+     "rows_after_hub_join": 8760,
+     "n_rows_R_D": 8757,
+     "reference_n_rows_R_D": 8757,
+     "PASS": true
+    },
+    "2025": {
+     "rows_in_year": 8760,
+     "rows_after_hub_join": 8760,
+     "n_rows_R_D": 8757,
+     "reference_n_rows_R_D": 8757,
+     "PASS": true
+    }
+   },
+   "PASS": true
+  },
+  "I_1_identity": {
+   "detail": {
+    "2023": {
+     "worst_excess_by_seam": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "worst_excess": 0.0,
+     "PASS": true
+    },
+    "2024": {
+     "worst_excess_by_seam": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "worst_excess": 0.0,
+     "PASS": true
+    },
+    "2025": {
+     "worst_excess_by_seam": {
+      "PJM": 0.0,
+      "SPP": 0.0,
+      "South": 0.0,
+      "Manitoba": 0.0
+     },
+     "worst_excess": 0.0,
+     "PASS": true
+    }
+   },
+   "worst_excess": 0.0,
+   "PASS": true
+  },
+  "VERDICT": {
+   "rule": "V-ARTIFACT iff t_max <= 1e-4 (rounding TIE); V-NOT-A-TIE otherwise (PREREG \u00a72.3, fixed before any number existed)",
+   "n_entries_compared": 192,
+   "n_mismatching": 3,
+   "t_max": 0.004999771118,
+   "VERDICT": "V-NOT-A-TIE"
+  }
+ },
+ "reported": {
+  "D6_da_dtype": {
+   "on_disk_dtype": "float32",
+   "rows": 43800,
+   "sample": [
+    25.610000610351562,
+    24.389999389648438,
+    23.239999771118164,
+    23.280000686645508
+   ],
+   "share_exactly_2dp_in_float64": 0.04742
+  },
+  "D3_mismatch_locations": [
+   {
+    "year": 2023,
+    "seam": "PJM",
+    "side": "import",
+    "band": 5,
+    "committed": 27.86,
+    "raw_head": 27.8661822587,
+    "rounded_head": 27.87,
+    "e_raw_minus_committed": 0.006182258684,
+    "abs_e": 0.006182258684,
+    "t_past_half_cent": 0.001182258684,
+    "is_clamped_export": false
+   },
+   {
+    "year": 2023,
+    "seam": "South",
+    "side": "export",
+    "band": 4,
+    "committed": 27.69,
+    "raw_head": 27.6962803582,
+    "rounded_head": 27.7,
+    "e_raw_minus_committed": 0.006280358153,
+    "abs_e": 0.006280358153,
+    "t_past_half_cent": 0.001280358153,
+    "is_clamped_export": false
+   },
+   {
+    "year": 2024,
+    "seam": "South",
+    "side": "export",
+    "band": 5,
+    "committed": 23.77,
+    "raw_head": 23.7600002289,
+    "rounded_head": 23.76,
+    "e_raw_minus_committed": -0.009999771118,
+    "abs_e": 0.009999771118,
+    "t_past_half_cent": 0.004999771118,
+    "is_clamped_export": false
+   }
+  ],
+  "D4_clamp_census": {
+   "2023": {
+    "derive_notes": [],
+    "clamped_export_bands": {
+     "PJM": [],
+     "SPP": [],
+     "South": [],
+     "Manitoba": []
+    },
+    "clamp_lim_by_seam": {
+     "PJM": 13.389899,
+     "SPP": 33.019999,
+     "South": 50.981214,
+     "Manitoba": 27.100001
+    }
+   },
+   "2024": {
+    "derive_notes": [],
+    "clamped_export_bands": {
+     "PJM": [],
+     "SPP": [],
+     "South": [],
+     "Manitoba": []
+    },
+    "clamp_lim_by_seam": {
+     "PJM": 14.0,
+     "SPP": 31.190001,
+     "South": 57.850483,
+     "Manitoba": 26.49
+    }
+   },
+   "2025": {
+    "derive_notes": [],
+    "clamped_export_bands": {
+     "PJM": [],
+     "SPP": [],
+     "South": [],
+     "Manitoba": []
+    },
+    "clamp_lim_by_seam": {
+     "PJM": 21.81,
+     "SPP": 40.084099,
+     "South": 68.45205,
+     "Manitoba": 44.813205
+    }
+   }
+  },
+  "D5_alternative_clamp": [
+   {
+    "year": 2023,
+    "seam": "PJM",
+    "side": "import",
+    "band": 5,
+    "committed": 27.86,
+    "alt_clamp_from_rounded_imports": 13.39,
+    "alt_reproduces_committed": false
+   },
+   {
+    "year": 2023,
+    "seam": "South",
+    "side": "export",
+    "band": 4,
+    "committed": 27.69,
+    "alt_clamp_from_rounded_imports": 50.98,
+    "alt_reproduces_committed": false
+   },
+   {
+    "year": 2024,
+    "seam": "South",
+    "side": "export",
+    "band": 5,
+    "committed": 23.77,
+    "alt_clamp_from_rounded_imports": 57.85,
+    "alt_reproduces_committed": false
+   }
+  ],
+  "D1p_tie_mechanism": [
+   {
+    "year": 2023,
+    "seam": "PJM",
+    "side": "import",
+    "band": 5,
+    "n": 8760,
+    "q": 0.3818493150684932,
+    "lo_index": 3344,
+    "frac": 0.618150685,
+    "x_lo": 27.860000610351562,
+    "x_hi": 27.8700008392334,
+    "value": 27.866182258684344,
+    "cent_fraction_distance_to_half": 0.118225868
+   },
+   {
+    "year": 2023,
+    "seam": "South",
+    "side": "export",
+    "band": 4,
+    "n": 8760,
+    "q": 0.37203196347031964,
+    "lo_index": 3258,
+    "frac": 0.627968037,
+    "x_lo": 27.690000534057617,
+    "x_hi": 27.700000762939453,
+    "value": 27.69628035815339,
+    "cent_fraction_distance_to_half": 0.128035815
+   },
+   {
+    "year": 2024,
+    "seam": "South",
+    "side": "export",
+    "band": 5,
+    "n": 8760,
+    "q": 0.34748858447488584,
+    "lo_index": 3043,
+    "frac": 0.652511416,
+    "x_lo": 23.760000228881836,
+    "x_hi": 23.760000228881836,
+    "value": 23.760000228881836,
+    "cent_fraction_distance_to_half": 0.499977112
+   }
+  ],
+  "D1pp_exact_cent_recompute": {
+   "detail": {
+    "2023": {
+     "max_abs_delta": 0.01
+    },
+    "2024": {
+     "max_abs_delta": 0.01
+    },
+    "2025": {
+     "max_abs_delta": 0.0
+    }
+   },
+   "max_abs_delta": 0.010000000000001563,
+   "reproduces_all_192": false
+  },
+  "F6_liveness_scope": {
+   "keeper_flags": {
+    "miso_seam_measured_ladder": true,
+    "miso_seam_neighbour_anchored_ladder": true,
+    "miso_seam_neighbour_hourly_ladder": true,
+    "miso_seam_neighbour_hourly_spp": true
+   },
+   "incumbent_rows_priced_into_the_LP": [
+    "South",
+    "Manitoba"
+   ],
+   "note": "inject_miso_seam_ladder_prices overlays the PJM hourly then the SPP hourly ladder on top of the incumbent table (alternatives, never stacked), so PJM and SPP incumbent rows are DISPLACED on this keeper",
+   "live_mismatches": [
+    "2023 South export band 4",
+    "2024 South export band 5"
+   ],
+   "inert_mismatches": [
+    "2023 PJM import band 5"
+   ]
+  }
+ },
+ "FAILED_LEGS": [],
+ "ALL_GATED_LEGS_PASS": true
+}
