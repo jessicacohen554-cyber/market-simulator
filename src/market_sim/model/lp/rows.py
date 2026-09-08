@@ -1297,6 +1297,7 @@ def build_constraints(
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
     hydro_monthly_min: np.ndarray | None = None,
+    hydro_period_hours: np.ndarray | None = None,
     oil_monthly_budget: np.ndarray | None = None,
     oil_gen_idx: np.ndarray | None = None,
     oil_month_index: np.ndarray | None = None,
@@ -1819,17 +1820,62 @@ def build_constraints(
         if hydro_month_index is None:
             hydro_month_index = _hour_to_month_index(T)
         if hydro_gen_idx.size:
-            hydro_block, hydro_lower, hydro_upper = _build_hydro_rows(
-                layout,
-                hydro_gen_idx,
-                hydro_monthly_energy,
-                hydro_month_index,
-                hydro_monthly_min,
-            )
-            blocks.append(hydro_block)
-            del hydro_block
-            row_lower = np.concatenate([row_lower, hydro_lower])
-            row_upper = np.concatenate([row_upper, hydro_upper])
+            # Period FAMILIES (nyiso-220, config.hydro_budget_period_by_instrument).
+            # Each hydro generator conserves energy over the period its own
+            # governing instrument (or measured pondage) permits; generators with
+            # no registry entry carry period 0 = the calendar month, which is the
+            # unchanged behaviour. Because _build_hydro_rows already takes an
+            # arbitrary generator SUBSET and an arbitrary period index, families
+            # are emitted as one call each and stacked -- the row builder itself
+            # needs no change, and the loop is over at most a handful of families,
+            # never over hours (rule 2 [R-VECTOR] is untouched).
+            if hydro_period_hours is None:
+                families: list[tuple[int, np.ndarray]] = [
+                    (0, np.arange(hydro_gen_idx.size, dtype=int))
+                ]
+            else:
+                ph_arr = np.asarray(hydro_period_hours, dtype=int)
+                families = [
+                    (int(p), np.flatnonzero(ph_arr == p)) for p in np.unique(ph_arr)
+                ]
+            for period_hours, local in families:
+                if not local.size:
+                    continue
+                if period_hours <= 0:
+                    fam_energy = np.asarray(hydro_monthly_energy)[local]
+                    fam_index = hydro_month_index
+                    fam_min = (
+                        None
+                        if hydro_monthly_min is None
+                        else np.asarray(hydro_monthly_min)[local]
+                    )
+                else:
+                    from market_sim.data.hydro import allocate_period_energy
+
+                    fam_energy, fam_index = allocate_period_energy(
+                        np.asarray(hydro_monthly_energy)[local], period_hours, T
+                    )
+                    if hydro_monthly_min is None:
+                        fam_min = None
+                    else:
+                        # The min-flow floor is re-expressed on the same finer
+                        # grid by the identical allocation, so the two-sided row
+                        # stays feasible (lower <= upper) period by period.
+                        fam_min, _ = allocate_period_energy(
+                            np.asarray(hydro_monthly_min)[local], period_hours, T
+                        )
+                        fam_min = np.minimum(fam_min, fam_energy)
+                hydro_block, hydro_lower, hydro_upper = _build_hydro_rows(
+                    layout,
+                    hydro_gen_idx[local],
+                    fam_energy,
+                    fam_index,
+                    fam_min,
+                )
+                blocks.append(hydro_block)
+                del hydro_block
+                row_lower = np.concatenate([row_lower, hydro_lower])
+                row_upper = np.concatenate([row_upper, hydro_upper])
 
     # Optional oil-burn monthly inventory budget: one row per oil-capable
     # generator and month. When the budget binds, the shadow price is the

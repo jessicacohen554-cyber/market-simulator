@@ -2275,6 +2275,74 @@ HYDRO_ENVELOPE_PERCENTILE: float = 95.0
 # extract; built by data.eia_loader.measured_hydro_min_flow_level.
 HYDRO_MIN_FLOW_PERCENTILE: float = 100.0 - HYDRO_ENVELOPE_PERCENTILE
 
+# --- Hydro budget period, from the project's own governing instrument --------
+# (nyiso-220; charter docs/CHARTER-nyiso219-hydro-budget-period-2026-09-07.md;
+#  evidence docs/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md)
+#
+# The LP's hydro row conserves energy over a PERIOD, and that period defaults to
+# the calendar month — so a plant may bank energy across ~730 hours at zero cost.
+# For some projects that is contradicted by the instrument that actually governs
+# their water. This registry names, per ISO and EIA plant id, the period in HOURS
+# over which the project's OWN governing instrument (or its measured pondage)
+# permits energy to be reallocated. A plant absent from the registry keeps the
+# monthly period, i.e. this is a strict, opt-in refinement of existing behaviour.
+#
+# ZERO FITTED SCALARS, and no value here is selected by, or swept against, any
+# residual (rule 21 [R-DOF] case 3, rule 1 [R-STRUCT]). Each entry's basis:
+#
+#   NYISO 2694  Robert Moses St. Lawrence -> 168 h (one week)
+#     Stated IN WORDS by the governing instrument, so nothing is converted or
+#     assumed. The project's outflow is set by the IJC's 2016-12-08 Supplementary
+#     Order of Approval under Regulation Plan 2014, "normally as specified by the
+#     approved WEEKLY flow regulation plan"; within-week variation is authorised
+#     by the Commission's directive on peaking and ponding (conditions in
+#     Addendum No. 3 to the Operational Guides for Plan 1958-D; IJC letter
+#     1983-10-13, renewed 2016-11-04 and 2021-11-30 for 2021-12-01..2026-11-30,
+#     a term spanning every scored year). The ILOSLRB glossary defines "Ponding"
+#     as "variation in the day-to-day flows over the course of a week", and its
+#     reports state that ponding holds "the total weekly flow the same". This is
+#     a PUBLISHED CATEGORICAL DURATION CLASS — rule 21 [R-DOF] case 2 — and it is
+#     NYISO's own project's own instrument, never NEISO's HDP/HDR/HW taxonomy
+#     (rule 25 [R-ISO-SCOPE]).
+#
+#   NYISO 2693  Robert Moses Niagara -> 24 h (one day)
+#     DERIVED, not chosen, and the derivation is two-sided. Its instruments — the
+#     1950 Niagara Diversion Treaty and the INBC 1993 Directive (rev. 2017) over
+#     the Chippawa-Grass Island Pool — state NO energy or volume conservation
+#     period at all (verified mechanically: the full treaty text contains zero
+#     occurrences of elevation, reservoir, storage, pondage, forebay, pool,
+#     monthly, weekly, accounting or average). What the plant physically has is
+#     0.244 h of forebay pondage (nyiso-219, NID; a generous upper bound at
+#     efficiency 1.0 on full volume), so water not diverted goes over the Falls
+#     and is gone — USE IT OR LOSE IT. The granularity then follows uniquely:
+#       * a 1-hour period would fix P[g,t] exactly and destroy the plant's REAL
+#         diurnal variation, which the treaty itself imposes (Art. IV requires
+#         100,000 cfs over the Falls in tourist-season daytime hours vs 50,000
+#         cfs otherwise, so divertible water swings by ~1,416 m3/s system-wide
+#         against NYPA's measured 2,183 m3/s average diversion);
+#       * a 24-hour period removes exactly what the pondage forbids — banking
+#         across days — while leaving the within-day shape free, which is the
+#         dimension the reconciled hydro_dispatch_envelope already governs
+#         (rule 19 [R-ONE-MECH]: disjoint declared windows, never stacking).
+#     So 24 h is the unique granularity consistent with both the physics and the
+#     treaty, given that within-day shaping must be preserved.
+#
+# The 161 remaining NYISO hydro plants are on domestic rivers whose operating
+# bands live in unretrieved FERC licence articles, so they are DELIBERATELY
+# ABSENT and keep the monthly period: rule 14 [R-ACCURATE] — do not invent an
+# instrument we have not read.
+#
+# Identification: published governing instruments (rule 23 [R-FROZEN-DERIVE] —
+# re-derive only when the instrument itself is reissued, never against a
+# residual). Consumed by data.hydro.hydro_budget_period_hours when
+# ScenarioConfig.hydro_budget_period_by_instrument is on.
+HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT: dict[str, dict[int, int]] = {
+    "NYISO": {
+        2693: 24,  # Robert Moses Niagara — treaty/INBC state no period; 0.244 h pondage
+        2694: 168,  # Robert Moses St. Lawrence — IJC ponding directive, stated in words
+    },
+}
+
 # Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
 # selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
 # A wet or dry water year shifts annual conventional-hydro energy by roughly

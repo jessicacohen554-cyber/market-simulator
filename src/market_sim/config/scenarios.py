@@ -147,6 +147,13 @@ _CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
 # ``8211c72bb1960adc``. Authoritative values + full cause blocks:
 # ``tests/regression/test_persisted_identity.py``.
 _CACHE_KEY_OPTIONAL_FIELDS = (
+    # Hydro budget period from each project's own governing instrument
+    # (nyiso-220, default off): dropped from the hash at its default so every
+    # pre-existing cached run -- every ISO's keepers included -- keeps its key.
+    # The arm is byte-identical off by construction (the runner returns UNSET,
+    # so the dispatch-kwargs key set is unchanged); an armed run carries real
+    # per-plant period rows and so earns a distinct key.
+    "hydro_budget_period_by_instrument",
     "start_year",
     "end_year",
     "hindcast",
@@ -1695,6 +1702,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 # keeping parallel per-ISO lanes on different lines. Leave legacy entries
 # where they are.
 _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
+    "hydro_budget_period_by_instrument": "False",
     "start_year": "None",
     "storage_measured_base_fleet": "True",
     "end_year": "None",
@@ -2825,6 +2833,10 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_online_capacity_envelope_measured": "measured-fleet on-line capacity envelope",
     "ercot_capability_reconciliation": "measured NP6-905 aggregate-capability reconciliation (B-1)",
     "hydro_dispatch_envelope": "measured hydro month x hour-of-day dispatch percentiles",
+    "hydro_budget_period_by_instrument": (
+        "published governing instruments (1950 Niagara Treaty + INBC 1993 Directive; "
+        "IJC 2016 Order + Plan 2014 + peaking/ponding directive) and measured NID pondage"
+    ),
     "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
     "caiso_offer_surface_measured_ungrounded": (
         "measured CAISO bands for the un-grounded CHP/ST_GAS classes"
@@ -3467,6 +3479,52 @@ class ScenarioConfig:
     # year's own measured envelope; a forecast year falls back to the pooled
     # HYDRO_CLIMATOLOGY_YEARS envelope. See
     # results/calibration/FINDING-caiso72-step0-evening-displacement-2026-07-10.md.
+    hydro_budget_period_by_instrument: bool = False  # GATED default off
+    # (nyiso-220). Shorten the hydro energy-budget period, PER PLANT, to the
+    # period the project's OWN governing instrument (or its measured pondage)
+    # permits energy to be reallocated over — the registry
+    # constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT, which carries every entry's
+    # citation. A plant absent from that registry keeps the calendar month, so
+    # this is a strict opt-in refinement and a no-op (byte-identical LP) for
+    # every ISO with no registry entry.
+    #   THE DEFECT IT ADDRESSES. The LP's hydro row conserves energy over a
+    #   MONTH, so a plant may bank ~730 hours of energy at zero cost, and the
+    #   dual of that row — the water value — is a single number identical on
+    #   day 1 and day 28. Any price difference between days of one month is
+    #   therefore pure arbitrage profit with no offsetting cost. nyiso-218
+    #   localised NYISO's entire hydro residual to exactly that dimension
+    #   (within-month day-to-day r 0.207-0.392, amplitude 1.86-2.25x the
+    #   actual's) while month energy r ~ 1.000 and hour-of-day r ~ 0.98.
+    #   nyiso-219 then measured that NO admissible daily driver explains it
+    #   (basin discharge r 0.243, climatology r 0.031) — the model is not
+    #   missing a driver, it has too much freedom.
+    #   DRIVER (rule 17a): the project's governing instrument, or, where that
+    #   instrument states no conservation period, its measured pondage — the
+    #   usable storage that physically bounds how much energy can move between
+    #   days. Robert Moses Niagara holds 0.244 h (NID, generous upper bound) and
+    #   is therefore USE IT OR LOSE IT: water not diverted goes over the Falls.
+    #   WINDOW (rule 17b): all hours of every period. This is not a floor, it
+    #   pins no diurnal shape, and it binds only where the LP would move more
+    #   energy between periods than the instrument or the forebay allows.
+    #   FORWARD STORY (rule 17c): the period is a property of a standing public
+    #   instrument (an IJC Order renewed on 5-year cycles; a treaty in force
+    #   since 1950), so it regenerates for any forecast year without knowing
+    #   that year's weather, while the ENERGY inside the period still comes from
+    #   the existing budget and so still scales with the water year.
+    #   RULE 19 [R-ONE-MECH]: RECONCILED with hydro_dispatch_envelope, never
+    #   stacked. Decided at phase 0 on the overlap arithmetic per the owner's Q2
+    #   ruling (probes/nyiso220_phase0_period_overlap.py): the envelope is a
+    #   fleet-aggregate hourly CEILING on (month x hour-of-day) bounding the
+    #   DIURNAL SHAPE and conserving no energy across days; this row is per-plant
+    #   ENERGY CONSERVATION bounding DAY-TO-DAY reallocation with no view on
+    #   which hours within a day. Disjoint declared windows. The decisive
+    #   measurement: 4.58-7.47 % of annual NYISO hydro energy crosses day
+    #   boundaries in the keeper's OWN dispatch, in which the envelope is
+    #   already armed — energy the envelope demonstrably does not prevent.
+    #   A shorter period is strictly a RESTRICTION of the feasible set (every
+    #   short-period solution is monthly-feasible; the converse is false), so it
+    #   can only remove arbitrage freedom, never add it, and its failure mode is
+    #   predictable: over-constraint, not over-freedom.
     hydro_min_flow_floor: bool = False  # GATED default off (caiso-124). The
     # LOWER half of the same measured two-sided hydro capability envelope
     # hydro_dispatch_envelope caps from above: hold each conventional-hydro
