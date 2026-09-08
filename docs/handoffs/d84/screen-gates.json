@@ -1,0 +1,633 @@
+{
+ "lane": "capx D84 screen gates (pre-registered in PRECOMMIT \u00a77.1)",
+ "control_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d84-control",
+ "arm_bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d84-thermalvintage",
+ "control_key": "f736025631d0d27e",
+ "arm_key": "b9fa47dedb6c3319",
+ "declared_control_key": "f736025631d0d27e",
+ "declared_arm_key": "b9fa47dedb6c3319",
+ "keys_as_declared": true,
+ "legs": {
+  "leg1_identity": true,
+  "leg2_direction_and_magnitude": true,
+  "leg3_confinement_2021_2024": true,
+  "leg4_class_confinement": true,
+  "leg5_no_pass_to_fail": true
+ },
+ "VERDICT": "PASS",
+ "leg1_2_detail": {
+  "entering_fleet_is_shared": true,
+  "per_class": {
+   "biomass": {
+    "nameplate_mw": 1999.4,
+    "delta_rating": 0.0,
+    "predicted_delta_mw": 0.0
+   },
+   "coal": {
+    "nameplate_mw": 40652.396,
+    "delta_rating": 0.0,
+    "predicted_delta_mw": 0.0
+   },
+   "gas_cc": {
+    "nameplate_mw": 57070.961,
+    "delta_rating": 0.04,
+    "predicted_delta_mw": 2282.8384400000023
+   },
+   "gas_ct": {
+    "nameplate_mw": 25791.07,
+    "delta_rating": 0.03,
+    "predicted_delta_mw": 773.7321000000006
+   },
+   "gas_st": {
+    "nameplate_mw": 771.2,
+    "delta_rating": 0.01,
+    "predicted_delta_mw": 7.712000000000008
+   },
+   "nuclear": {
+    "nameplate_mw": 32672.1,
+    "delta_rating": 0.0,
+    "predicted_delta_mw": 0.0
+   },
+   "oil": {
+    "nameplate_mw": 4136.5,
+    "delta_rating": 0.01,
+    "predicted_delta_mw": 41.36500000000004
+   }
+  },
+  "predicted_delta_mw": 3105.647540000003,
+  "measured_delta_screen_entering_firm_mw": 3105.6479999999865,
+  "abs_gap_mw": 0.0004599999833772017,
+  "leg1_identity_holds": true,
+  "leg2_direction_positive": true,
+  "leg2_order_of_magnitude_1e3": true,
+  "leg2_holds": true
+ },
+ "leg3_detail": {
+  "rows": {
+   "2021": {
+    "differing_keys": [],
+    "identical": true
+   },
+   "2022": {
+    "differing_keys": [],
+    "identical": true
+   },
+   "2023": {
+    "differing_keys": [],
+    "identical": true
+   },
+   "2024": {
+    "differing_keys": [],
+    "identical": true
+   }
+  },
+  "leg3_holds": true
+ },
+ "leg4_detail": {
+  "moved": {
+   "gas_cc": 2282.8384400000023,
+   "gas_ct": 773.7321000000006,
+   "gas_st": 7.712000000000008,
+   "oil": 41.36500000000004
+  },
+  "static": {
+   "coal": 0.0,
+   "nuclear": 0.0,
+   "biomass": 0.0
+  },
+  "static_all_zero": true,
+  "movers_all_nonzero": true,
+  "leg4_holds": true
+ },
+ "leg5_detail": {
+  "n_records": 0,
+  "all_flips": {},
+  "pass_to_fail": {},
+  "fail_to_pass_reported_never_a_promotion": {},
+  "leg5_holds": true
+ },
+ "diagnostics_never_a_gate": {
+  "2021": {
+   "screen_entering_firm_mw": [
+    null,
+    null
+   ],
+   "screen_reserve_position": [
+    null,
+    null
+   ],
+   "screen_adequacy_requirement_mw": [
+    null,
+    null
+   ],
+   "clearing": {
+    "census_mw": [
+     null,
+     null
+    ],
+    "census_position": [
+     null,
+     null
+    ],
+    "cleared_mw": [
+     null,
+     null
+    ],
+    "cleared_position": [
+     null,
+     null
+    ],
+    "offered_mw": [
+     null,
+     null
+    ],
+    "price_takers_mw": [
+     null,
+     null
+    ],
+    "price_usd_per_mw_day": [
+     null,
+     null
+    ],
+    "price_per_firm_mw_yr": [
+     null,
+     null
+    ],
+    "requirement_mw": [
+     null,
+     null
+    ],
+    "n_offers": [
+     null,
+     null
+    ],
+    "n_uncleared": [
+     null,
+     null
+    ],
+    "how": [
+     null,
+     null
+    ]
+   },
+   "retirements_mw": [
+    0,
+    0
+   ],
+   "n_retirements": [
+    0,
+    0
+   ],
+   "fleet_by_fuel_after": [
+    {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    },
+    {
+     "biomass": 2007.8,
+     "coal": 45885.521,
+     "gas_cc": 53083.211,
+     "gas_ct": 25791.07,
+     "gas_st": 10297.413333,
+     "nuclear": 32672.1,
+     "oil": 4187.7
+    }
+   ],
+   "entry_decided_mw_by_tech": [
+    null,
+    null
+   ],
+   "floor_retained_n": [
+    0,
+    0
+   ]
+  },
+  "2022": {
+   "screen_entering_firm_mw": [
+    185264.153,
+    185264.153
+   ],
+   "screen_reserve_position": [
+    1.134718,
+    1.134718
+   ],
+   "screen_adequacy_requirement_mw": [
+    163268.9,
+    163268.9
+   ],
+   "clearing": {
+    "census_mw": [
+     181435.072,
+     181435.072
+    ],
+    "census_position": [
+     1.111265,
+     1.111265
+    ],
+    "cleared_mw": [
+     170224.366,
+     170224.366
+    ],
+    "cleared_position": [
+     1.042601,
+     1.042601
+    ],
+    "offered_mw": [
+     158103.444,
+     158103.444
+    ],
+    "price_takers_mw": [
+     23331.628,
+     23331.628
+    ],
+    "price_usd_per_mw_day": [
+     90.411052,
+     90.411052
+    ],
+    "price_per_firm_mw_yr": [
+     33000.034,
+     33000.034
+    ],
+    "requirement_mw": [
+     163268.9,
+     163268.9
+    ],
+    "n_offers": [
+     1399,
+     1399
+    ],
+    "n_uncleared": [
+     133,
+     133
+    ],
+    "how": [
+     "marginal_offer_sets_price",
+     "marginal_offer_sets_price"
+    ]
+   },
+   "retirements_mw": [
+    12171.813333333324,
+    12171.813333333324
+   ],
+   "n_retirements": [
+    147,
+    147
+   ],
+   "fleet_by_fuel_after": [
+    {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 1561.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    {
+     "biomass": 1999.4,
+     "coal": 41902.396,
+     "gas_cc": 55912.636,
+     "gas_ct": 25791.07,
+     "gas_st": 1561.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    }
+   ],
+   "entry_decided_mw_by_tech": [
+    {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    {
+     "solar": 2440.6,
+     "wind": 1500.0
+    }
+   ],
+   "floor_retained_n": [
+    0,
+    0
+   ]
+  },
+  "2023": {
+   "screen_entering_firm_mw": [
+    174958.706,
+    174958.706
+   ],
+   "screen_reserve_position": [
+    1.072273,
+    1.072273
+   ],
+   "screen_adequacy_requirement_mw": [
+    163166.2,
+    163166.2
+   ],
+   "clearing": {
+    "census_mw": [
+     173298.486,
+     173298.486
+    ],
+    "census_position": [
+     1.062098,
+     1.062098
+    ],
+    "cleared_mw": [
+     170432.642,
+     170432.642
+    ],
+    "cleared_position": [
+     1.044534,
+     1.044534
+    ],
+    "offered_mw": [
+     142891.648,
+     142891.648
+    ],
+    "price_takers_mw": [
+     30406.838,
+     30406.838
+    ],
+    "price_usd_per_mw_day": [
+     86.517664,
+     86.517664
+    ],
+    "price_per_firm_mw_yr": [
+     31578.947,
+     31578.947
+    ],
+    "requirement_mw": [
+     163166.2,
+     163166.2
+    ],
+    "n_offers": [
+     861,
+     861
+    ],
+    "n_uncleared": [
+     33,
+     33
+    ],
+    "how": [
+     "marginal_offer_sets_price",
+     "marginal_offer_sets_price"
+    ]
+   },
+   "retirements_mw": [
+    1851.675,
+    1851.675
+   ],
+   "n_retirements": [
+    11,
+    11
+   ],
+   "fleet_by_fuel_after": [
+    {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    {
+     "biomass": 1999.4,
+     "coal": 40896.396,
+     "gas_cc": 57070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    }
+   ],
+   "entry_decided_mw_by_tech": [
+    {
+     "gas_cc": 4000.0,
+     "solar": 2440.6
+    },
+    {
+     "gas_cc": 4000.0,
+     "solar": 2440.6
+    }
+   ],
+   "floor_retained_n": [
+    0,
+    0
+   ]
+  },
+  "2024": {
+   "screen_entering_firm_mw": [
+    174855.39,
+    174855.39
+   ],
+   "screen_reserve_position": [
+    1.065492,
+    1.065492
+   ],
+   "screen_adequacy_requirement_mw": [
+    164107.6,
+    164107.6
+   ],
+   "clearing": {
+    "census_mw": [
+     174630.91,
+     174630.91
+    ],
+    "census_position": [
+     1.064124,
+     1.064124
+    ],
+    "cleared_mw": [
+     168633.262,
+     168633.262
+    ],
+    "cleared_position": [
+     1.027577,
+     1.027577
+    ],
+    "offered_mw": [
+     151993.226,
+     151993.226
+    ],
+    "price_takers_mw": [
+     22637.684,
+     22637.684
+    ],
+    "price_usd_per_mw_day": [
+     165.968925,
+     165.968925
+    ],
+    "price_per_firm_mw_yr": [
+     60578.658,
+     60578.658
+    ],
+    "requirement_mw": [
+     164107.6,
+     164107.6
+    ],
+    "n_offers": [
+     866,
+     866
+    ],
+    "n_uncleared": [
+     26,
+     26
+    ],
+    "how": [
+     "marginal_offer_sets_price",
+     "marginal_offer_sets_price"
+    ]
+   },
+   "retirements_mw": [
+    244.0,
+    244.0
+   ],
+   "n_retirements": [
+    4,
+    4
+   ],
+   "fleet_by_fuel_after": [
+    {
+     "biomass": 1999.4,
+     "coal": 40652.396,
+     "gas_cc": 57070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    {
+     "biomass": 1999.4,
+     "coal": 40652.396,
+     "gas_cc": 57070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    }
+   ],
+   "entry_decided_mw_by_tech": [
+    {
+     "solar": 2440.6,
+     "wind": 1500.0
+    },
+    {
+     "solar": 2440.6,
+     "wind": 1500.0
+    }
+   ],
+   "floor_retained_n": [
+    0,
+    0
+   ]
+  },
+  "2025": {
+   "screen_entering_firm_mw": [
+    146449.63,
+    149555.278
+   ],
+   "screen_reserve_position": [
+    1.013843,
+    1.035343
+   ],
+   "screen_adequacy_requirement_mw": [
+    144450.0,
+    144450.0
+   ],
+   "clearing": {
+    "census_mw": [
+     146165.127,
+     149270.775
+    ],
+    "census_position": [
+     1.011874,
+     1.033373
+    ],
+    "cleared_mw": [
+     146165.127,
+     146646.835
+    ],
+    "cleared_position": [
+     1.011874,
+     1.015208
+    ],
+    "offered_mw": [
+     126530.744,
+     129636.392
+    ],
+    "price_takers_mw": [
+     19634.383,
+     19634.383
+    ],
+    "price_usd_per_mw_day": [
+     213.056369,
+     178.095377
+    ],
+    "price_per_firm_mw_yr": [
+     77765.575,
+     65004.813
+    ],
+    "requirement_mw": [
+     144450.0,
+     144450.0
+    ],
+    "n_offers": [
+     866,
+     866
+    ],
+    "n_uncleared": [
+     0,
+     14
+    ],
+    "how": [
+     "all_offers_clear_curve_sets_price",
+     "marginal_offer_sets_price"
+    ]
+   },
+   "retirements_mw": [
+    1.0,
+    1.0
+   ],
+   "n_retirements": [
+    1,
+    1
+   ],
+   "fleet_by_fuel_after": [
+    {
+     "biomass": 1998.4,
+     "coal": 40310.729333,
+     "gas_cc": 61070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    },
+    {
+     "biomass": 1998.4,
+     "coal": 40310.729333,
+     "gas_cc": 61070.961,
+     "gas_ct": 25791.07,
+     "gas_st": 771.2,
+     "nuclear": 32672.1,
+     "oil": 4136.5
+    }
+   ],
+   "entry_decided_mw_by_tech": [
+    {
+     "solar": 2440.6
+    },
+    {
+     "solar": 2440.6
+    }
+   ],
+   "floor_retained_n": [
+    0,
+    0
+   ]
+  }
+ }
+}

@@ -64,7 +64,18 @@ FIELD = "capacity_adequacy_requirement_published_by_iso"
 #: (``docs/handoffs/d76armb/key-census-variant-b-postflip.json``, the
 #: PRECOMMIT-capx-d76-arm-b §2.6 literal, and the value the inverse test below
 #: is anchored against).
-BARE_PJM_ARMED = "f736025631d0d27e"
+#:
+#: RE-MEASURED AGAIN 2026-09-07 for capx D84-ARM (owner ruling on
+#: ``FINDING-capx-d84-2026-09-07.md`` §8), which arms
+#: ``pjm_thermal_accreditation_vintage`` -- the THERMAL RATING half of the D48
+#: devintage, the counterpart of Q55's VRE half -- through ``_pjm_config``,
+#: so this is back to being a PJM-scoped override rather than a shared flip.
+#: Bare ``f736025631d0d27e`` -> ``b9fa47dedb6c3319``, which is D84's OWN
+#: measured full-window arm key (its control is the pre-arm bare recipe to the
+#: digit), so the arm names the recipe the A/B was measured on. The inverse is
+#: completed below, not re-pinned: 15 of 15 legs restore exactly
+#: (``PRECOMMIT-capx-d84arm-2026-09-07.md`` §3).
+BARE_PJM_ARMED = "b9fa47dedb6c3319"
 
 #: UNCHANGED, and deliberately so: the D67 pre-arm recipe is still reachable and
 #: still keeps its own key. What went stale was the INVOCATION below, not this pin —
@@ -178,7 +189,11 @@ class TestQ52ArmingKeys(unittest.TestCase):
         # THIRD, and the first that is not a ``_pjm_config`` override at all --
         # it is a shared default flip this hindcast recipe resolves -- so it is
         # inverted here for the same reason: without it the key is
-        # ``296d933530c3123f``, a third intermediate posture. BARE_PJM_PRE_ARM
+        # ``296d933530c3123f``, a third intermediate posture. capx D84-ARM
+        # (``pjm_thermal_accreditation_vintage``, the THERMAL RATING half of the
+        # D48 devintage) is the FOURTH, and back to being a ``_pjm_config``
+        # override; without it the key is ``3de34020c139589f``, a fourth
+        # intermediate posture. BARE_PJM_PRE_ARM
         # is deliberately NOT re-pinned; completing the inverse is what holds
         # the (b'-1) property the test exists for.
         self.assertEqual(
@@ -188,6 +203,7 @@ class TestQ52ArmingKeys(unittest.TestCase):
                 pjm_vre_accreditation_vintage=False,
                 retirement_sector_gate=False,
                 capacity_screen_peak_measured_hindcast=False,
+                pjm_thermal_accreditation_vintage=False,
             ),
             BARE_PJM_PRE_ARM,
         )
