@@ -1722,6 +1722,7 @@ class TestCleanTierSeamReachesTheRetrofitScreen(unittest.TestCase):
         self.assertEqual(len(log), 1)
         self.assertAlmostEqual(log[0]["attr_post_usd_per_mwh"], 200.0, places=9)
 
+
 class TestUnitIdUniquenessAtConversion(unittest.TestCase):
     """capx D88 — ``unit_id`` is a key, and a retrofit must not stale it.
 
