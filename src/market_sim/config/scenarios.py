@@ -1630,6 +1630,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "cc_summer_derate_reconciled_basis",
+    # SPP-49: the EIA-923 own-month gas-price plausibility screen (default ON
+    # by owner ruling P19, declared through the (b'-1) route below). Dropped
+    # from the hash at its FROZEN declaration False — the pre-repair posture —
+    # so every config the screen cannot reach keeps its key (see the
+    # __post_init__ coercion) and every config it can reach re-keys by design.
+    # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the field.
+    "f923_gas_price_plausibility_screen",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2207,6 +2215,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_interface_feed_admissibility_gate": "False",
     "gas_offer_margin_anchor_vintage": "False",
     "cc_summer_derate_reconciled_basis": "False",
+    # SPP-49: the F923 plausibility screen, registered at the PRE-REPAIR posture
+    # (False = the raw own-reported series consumed at face value) even though
+    # it ships default ON — the (b'-1) construction: the frozen drop value is
+    # the superseded posture, the flip is declared in the ledger below.
+    "f923_gas_price_plausibility_screen": "False",
 }
 
 
@@ -2447,6 +2460,32 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # nothing. Execution and every pre-declared number:
     # ``docs/handoffs/PRECOMMIT-capx-d76-arm-b-2026-09-07.md``.
     ("2026-09-07", "capacity_screen_peak_measured_hindcast", "True"),
+    #
+    # SPP-49, executing OWNER RULING P19 (SPP desk r#13, 2026-09-08): the
+    # EIA-923 own-month gas-price plausibility screen (SPP-46 R-1) lands
+    # REPO-WIDE and DEFAULT ON, as a registered gate (PRECOMMIT-spp-49-
+    # 2026-09-08.md §1.2). The FIFTH entry in this ledger.
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declaration above
+    # stays "False", so a config that resolves the new default no longer equals
+    # the drop value: it ENTERS the hash and takes its own key. Lands in TWO
+    # halves, exactly as capacity_screen_peak_measured_hindcast did: the flip,
+    # plus a __post_init__ coercion back to the frozen declaration wherever the
+    # seam is UNREACHABLE for the whole run — a non-backcast, non-hindcast
+    # config, or one with gas_plant_monthly_fuel_pricing off — so a config the
+    # screen cannot touch keeps its key. Measured ex ante over all 230
+    # committed run_config.json (docs/handoffs/spp49/key_census.py): 18 keys
+    # move, EVERY ONE a backcast config that arms per-plant gas pricing (CAISO
+    # 2, MISO 1, NEISO 5, NYISO 7, PJM 2, SPP 1 — six of them the designated
+    # keepers), ZERO forecast, ZERO hindcast and ZERO ERCOT moves; the pinned
+    # default and backcast literals in tests/regression/test_persisted_identity.py
+    # are unmoved. Backcast behaviour CHANGES for those 18 configs (that is the
+    # repair); their committed bundles are pre-repair evidence under their own
+    # keys, and each ISO's desk re-solves on its own cadence (SPP-50 for SPP).
+    # An explicit False reaches the pre-repair posture and KEEPS the pre-flip
+    # key (--set f923_gas_price_plausibility_screen=false until the CLI flag
+    # lands). Execution and every number: docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md.
+    ("2026-09-08", "f923_gas_price_plausibility_screen", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -2560,6 +2599,12 @@ def _resolve_declared_default(src: str):
 #: ``__post_init__``.
 _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION = _resolve_declared_default(
     _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["capacity_screen_peak_measured_hindcast"]
+)
+#: SPP-49: the F923 plausibility screen's frozen drop value (False), the value
+#: ``__post_init__`` coerces the field to wherever the seam is unreachable for
+#: the whole run — the same (b'-1) two-half landing as the capacity-screen peak.
+_F923_SCREEN_FROZEN_DECLARATION = _resolve_declared_default(
+    _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["f923_gas_price_plausibility_screen"]
 )
 
 
@@ -15186,6 +15231,34 @@ class ScenarioConfig:
     # Pre-registered: PRECOMMIT-caiso243-f923-fallback-guard-2026-09-04.md.
     nearby_fuel_price_zone_donor_guard: bool = False
 
+    # SPP-49 (owner ruling P19, 2026-09-08, REPO-WIDE, default ON) — the EIA-923
+    # own-month gas-price PLAUSIBILITY SCREEN (SPP-46 R-1) at the
+    # ``apply_plant_monthly_fuel_prices`` seam (data/fuel/plant_prices.py). Under
+    # ``gas_plant_monthly_fuel_pricing`` a plant's own reported Natural Gas
+    # month is read against ITS OWN STATE's EIA delivered-to-electric-power
+    # price that month (N3045<ST>3, data/raw/gas-prices/
+    # eia_delivered_gas_electric_power_by_state_monthly_2018-2026.csv; the
+    # plant's state from the F923 frame, never the fleet row — SPP-46 R-7);
+    # a month outside constants.F923_GAS_PRICE_PLAUSIBILITY_BAND x reference
+    # ([0.5, 2.0]) falls back to that reference, an in-band month is kept
+    # byte-for-byte, and the nearby-plant pool is built from the SCREENED
+    # months. An unpublished state-month falls to N3045US3; a reference <= 0
+    # (a real negative-basis print) has no band and the month stands. THE
+    # OBJECT: the SPP keeper consumed 91 plant-months <= $0.50, 31 NEGATIVE and
+    # 206 >= $10 of 5,707 at face value; ~100 % of its 2024 CT over-run sat on
+    # such rows (FINDING-spp-46 §0.1). A REGISTERED GATE rather than a
+    # construction because a desk CAN legitimately want its raw series: a
+    # plant buying at a hub the state blend misrepresents (Permian / Waha —
+    # SOURCES_spp_gas.md records NM's negative prints as real), so the
+    # measured print stays reachable per ISO, per lane (rule 25); the
+    # adjudication is PRECOMMIT-spp-49-2026-09-08.md §1.2. Default ON by the
+    # ruling, declared through the (b'-1) route (frozen drop value "False" +
+    # a flips-ledger entry) with a __post_init__ coercion back to the frozen
+    # declaration wherever the seam is unreachable for the whole run, so only
+    # a config the screen can touch re-keys (18 committed backcast configs,
+    # 0 off-target — PRECOMMIT §3.1). Zero DOF: a declared band, never swept.
+    f923_gas_price_plausibility_screen: bool = True
+
     # caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD-bin
     # / plant_level_fleet path (``fleet/assembly.py::bins_to_fleet``) never
     # set ``Generator.state``, so ``FleetArrays.state`` was EMPTY on 100 % of
@@ -17996,6 +18069,23 @@ class ScenarioConfig:
                 _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION
             )
 
+        # SPP-49: the F923 own-month plausibility screen is reachable only
+        # where apply_plant_monthly_fuel_prices prices gas from a plant's own
+        # EIA-923 month — mode == "backcast" or a hindcast (the seam's own
+        # mode gate), AND gas_plant_monthly_fuel_pricing on (the seam's own
+        # gas gate). Everywhere else the field is coerced to its FROZEN
+        # declaration (False) so the config is dropped from the hash and keeps
+        # its key: without this half the default flip re-keys every forecast,
+        # hindcast and ERCOT config for behaviour that is byte-identical
+        # (PRECOMMIT-spp-49-2026-09-08.md §3.1: with it 18 move, 0 off-target).
+        # The seam tests set the flag on the RESOLVED config and prove the
+        # screen inert on its own gates; the coercion is asserted separately.
+        if not (
+            (self.mode == "backcast" or self.hindcast)
+            and self.gas_plant_monthly_fuel_pricing
+        ):
+            self.f923_gas_price_plausibility_screen = _F923_SCREEN_FROZEN_DECLARATION
+
         # capx D59: the NYISO locality capacity-curve gate is likewise a
         # forecast-lane mechanism — coerced to the DATACLASS DEFAULT in a plain
         # backcast, kept in a hindcast. Rule 19: it SUPERSEDES the shipped
@@ -19842,6 +19932,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_partial_outage_shaped_derate": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
+    "f923_gas_price_plausibility_screen": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

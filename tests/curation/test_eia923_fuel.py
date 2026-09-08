@@ -126,12 +126,68 @@ class TestApplyPlantMonthlyFuelPrices(unittest.TestCase):
     """
 
     def setUp(self):
+        # SPP-49: the F923 plausibility screen is default ON and reachable on
+        # this armed backcast config; these tests assert the VERBATIM own-month
+        # overwrite (plant 3439 reports $13-34/MMBtu every month of 2024, ~9x
+        # the TX reference, so the screen would replace it), so they pin the
+        # screen off — the pre-repair posture. The screened path is asserted
+        # by ``test_default_on_screen_replaces_out_of_band_months`` below and
+        # by tests/unit/data/test_spp49_input_seams.py.
         self.config = ScenarioConfig(
             iso="ERCOT",
             mode="backcast",
             hours=8760,
             gas_plant_monthly_fuel_pricing=True,
+            f923_gas_price_plausibility_screen=False,
         )
+
+    def test_default_on_screen_replaces_out_of_band_months(self):
+        """SPP-49: under the default-ON screen, plant 3439's out-of-band months
+        read the TX state reference (N3045TX3 / 1.036), not its own print."""
+        from market_sim.data.fuel.plant_prices import (
+            F923_GAS_PRICE_PLAUSIBILITY_BAND,
+            load_state_electric_power_gas_prices,
+            state_reference_gas_price,
+        )
+
+        screened = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            hours=8760,
+            gas_plant_monthly_fuel_pricing=True,
+        )
+        self.assertTrue(screened.f923_gas_price_plausibility_screen)
+        arrays = self._build_two_plant_fleet()
+        fuel_prices = resolve_fuel_prices(screened, arrays, year=2024)
+        costs = load_monthly_fuel_costs()
+        own = plant_month_price_grid(costs, 2024, _GAS_REPORTING_FUEL_GROUP)[
+            _GAS_REPORTING_PLANT
+        ]
+        state = str(
+            costs.loc[costs["plant_id"] == _GAS_REPORTING_PLANT, "state"].iloc[0]
+        )
+        table = load_state_electric_power_gas_prices()
+        self.assertIsNotNone(table)
+        low, high = F923_GAS_PRICE_PLAUSIBILITY_BAND
+        checked = 0
+        for month_idx, reported in enumerate(own):
+            if np.isnan(reported):
+                continue
+            ref, prov = state_reference_gas_price(table, state, 2024, month_idx + 1)
+            if prov == "none" or ref <= 0:
+                continue
+            expected = (
+                ref if (reported < low * ref or reported > high * ref) else reported
+            )
+            hour = (
+                sum((31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[:month_idx]) * 24
+                + 24
+            )
+            self.assertAlmostEqual(
+                float(fuel_prices[0, hour]), float(expected), places=5
+            )
+            checked += 1
+        self.assertGreater(checked, 0)
 
     def _build_two_plant_fleet(self) -> tuple[np.ndarray, object]:
         """Build a two-plant fleet: one with F923 data, one without."""

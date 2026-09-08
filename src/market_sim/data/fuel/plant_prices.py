@@ -16,6 +16,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.config.constants import F923_GAS_PRICE_PLAUSIBILITY_BAND
+from market_sim.config.paths import GAS_PRICES_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.eia923 import (
     EIA923_MONTHLY_COSTS_PATH,
@@ -27,6 +29,7 @@ from market_sim.data.eia923 import (
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays
 
 from ._shared import _month_index, _pkg_ns, logger
+from .basis.ercot import _MCF_TO_MMBTU
 from .hubs import gas_daily_shape_factors
 
 
@@ -278,12 +281,175 @@ def load_oil_burn_budget(
     return oil_gen_idx, monthly_budget_mwh
 
 
+#: EIA delivered-to-electric-power gas price by state, monthly ($/Mcf): series
+#: ``N3045<ST>3`` for every state plus ``N3045US3``, the reference the EIA-923
+#: own-month plausibility screen reads (SPP-46 R-1 / SPP-49; source note
+#: ``data/raw/gas-prices/SOURCES_eia_delivered_gas_electric_power_by_state.md``).
+EIA_STATE_ELECTRIC_POWER_GAS_PATH: Path = (
+    GAS_PRICES_DIR / "eia_delivered_gas_electric_power_by_state_monthly_2018-2026.csv"
+)
+#: EIA's aggregate series key in that table — the documented fallback for a
+#: state-month EIA has not published (many states' 2025 and most pre-2022).
+_STATE_EP_GAS_US: str = "US"
+#: The F923 fuel group the screen applies to. Coal and petroleum are not
+#: screened: P19 names the gas seam, and their delivered costs have no
+#: state-level EIA reference of this kind.
+_SCREENED_FUEL_GROUP: str = "Natural Gas"
+
+_STATE_EP_GAS_CACHE: dict[Path, dict[tuple[str, int, int], float]] = {}
+
+
+def load_state_electric_power_gas_prices(
+    path: str | Path | None = None,
+) -> dict[tuple[str, int, int], float] | None:
+    """Return ``{(state, year, month): $/MMBtu}`` from the EIA N3045 table, or ``None``.
+
+    ``N3045<ST>3`` / ``N3045US3`` ($/Mcf) converted at :data:`_MCF_TO_MMBTU`;
+    unpublished (``NA``) cells are absent from the mapping. ``None`` when the
+    CSV is not on disk — the caller then reports loudly that the screen cannot
+    run and passes the frame through, the same absent-input posture the F923
+    parquet itself has at this seam. Cached per path for the process.
+    """
+    resolved = Path(path) if path is not None else EIA_STATE_ELECTRIC_POWER_GAS_PATH
+    if resolved in _STATE_EP_GAS_CACHE:
+        return _STATE_EP_GAS_CACHE[resolved]
+    if not resolved.exists():
+        return None
+    table = pd.read_csv(resolved, usecols=["state", "year", "month", "price_usd_mcf"])
+    price = pd.to_numeric(table["price_usd_mcf"], errors="coerce")
+    out = {
+        (str(st).strip().upper(), int(y), int(m)): float(v) / _MCF_TO_MMBTU
+        for st, y, m, v in zip(table["state"], table["year"], table["month"], price)
+        if pd.notna(v)
+    }
+    _STATE_EP_GAS_CACHE[resolved] = out
+    return out
+
+
+def state_reference_gas_price(
+    table: dict[tuple[str, int, int], float], state: str, year: int, month: int
+) -> tuple[float, str]:
+    """Return ``(reference $/MMBtu, provenance)`` for one state-month.
+
+    Provenance is ``"state"`` (the plant's own state's series), ``"us"`` (the
+    state-month is unpublished and the US series stands in) or ``"none"``
+    (neither is published: the value is NaN and the month cannot be screened).
+    """
+    v = table.get((state, year, month))
+    if v is not None:
+        return v, "state"
+    v = table.get((_STATE_EP_GAS_US, year, month))
+    if v is not None:
+        return v, "us"
+    return float("nan"), "none"
+
+
+def screen_gas_plant_month_prices(
+    costs: pd.DataFrame,
+    year: int,
+    table: dict[tuple[str, int, int], float],
+    band: tuple[float, float] = F923_GAS_PRICE_PLAUSIBILITY_BAND,
+    plant_ids: "frozenset[int] | set[int] | None" = None,
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Replace implausible own-reported Natural Gas plant-months by the state reference.
+
+    The EIA-923 own-month plausibility screen (SPP-46 R-1; owner ruling P19;
+    ``ScenarioConfig.f923_gas_price_plausibility_screen``). For every
+    ``Natural Gas`` row of ``year`` — restricted to ``plant_ids`` when given,
+    which the seam sets to the current fleet's plants so the log counts are
+    the ISO's own — the reported ``price_per_mmbtu`` is read against the
+    plant's OWN state's EIA delivered-to-electric-power price that month
+    (:func:`state_reference_gas_price`; ``state`` from the F923 frame, never
+    the fleet row — SPP-46 R-7). A price below ``band[0]`` x reference
+    (negative prints included) or above ``band[1]`` x reference is replaced by
+    the reference; every in-band print is kept byte-for-byte. A state-month
+    with no published state series falls to the US series; a month whose
+    reference is ``<= 0`` (a real negative-basis print — NM 2024-08, 2025-10)
+    has no defined band and is left as reported.
+
+    Both consumers of the frame at this seam read the SCREENED copy: the
+    plant's own months (``plant_month_price_grid``) and the nearby-plant pool
+    (:class:`_NearbyFuelPrices`), so a donor's implausible month never seeds a
+    recipient's fill either (R-1: "the pool is built from screened months").
+
+    Rule posture: rule 14's misalignment exception — an own-reported month
+    outside the band is an AVERAGE cost on a different basis than the marginal
+    fuel cost the LP prices (a fixed transport charge over a near-zero
+    denominator, or a print that is not the cost of the next MMBtu), reconciled
+    to a measured delivered price for the same state and month rather than
+    replaced by a guess. Zero free parameters: the band is a declared constant
+    (rule 1 (c): never swept), the reference is measured, and the construction
+    regenerates for any year the two EIA tables cover.
+
+    Returns a copy of ``costs`` (never mutated) and a count report keyed
+    ``in_band`` / ``low`` / ``negative`` / ``high`` / ``ref_us`` /
+    ``unscreened_no_ref`` / ``unscreened_nonpos_ref`` / ``plants_flagged``.
+    """
+    low_mult, high_mult = float(band[0]), float(band[1])
+    report = {
+        "in_band": 0,
+        "low": 0,
+        "negative": 0,
+        "high": 0,
+        "ref_us": 0,
+        "unscreened_no_ref": 0,
+        "unscreened_nonpos_ref": 0,
+        "plants_flagged": 0,
+    }
+    if "state" not in costs.columns:
+        return costs, report
+    sel = (costs["year"] == year) & (costs["fuel_group"] == _SCREENED_FUEL_GROUP)
+    if plant_ids is not None:
+        sel &= costs["plant_id"].isin(plant_ids)
+    idx = np.flatnonzero(sel.to_numpy())
+    if idx.size == 0:
+        return costs, report
+    sub = costs.iloc[idx]
+    states = sub["state"].astype(str).str.strip().str.upper().to_numpy()
+    months = sub["month"].to_numpy(dtype=int)
+    prices = sub["price_per_mmbtu"].to_numpy(dtype=float)
+    plants = sub["plant_id"].to_numpy()
+    new_price = prices.copy()
+    flagged_plants: set[int] = set()
+    for i in range(idx.size):
+        ref, prov = state_reference_gas_price(table, states[i], year, int(months[i]))
+        if prov == "none":
+            report["unscreened_no_ref"] += 1
+            continue
+        if prov == "us":
+            report["ref_us"] += 1
+        if ref <= 0.0:
+            report["unscreened_nonpos_ref"] += 1
+            continue
+        p = prices[i]
+        if p < 0.0:
+            kind = "negative"
+        elif p < low_mult * ref:
+            kind = "low"
+        elif p > high_mult * ref:
+            kind = "high"
+        else:
+            report["in_band"] += 1
+            continue
+        report[kind] += 1
+        new_price[i] = ref
+        flagged_plants.add(int(plants[i]))
+    report["plants_flagged"] = len(flagged_plants)
+    if not flagged_plants:
+        return costs, report
+    out = costs.copy()
+    col = out.columns.get_loc("price_per_mmbtu")
+    out.iloc[idx, col] = new_price
+    return out, report
+
+
 def apply_plant_monthly_fuel_prices(
     fuel_prices: np.ndarray,
     fleet: FleetArrays,
     config: ScenarioConfig,
     year: int,
     monthly_costs_path: str | Path | None = None,
+    state_gas_reference_path: str | Path | None = None,
 ) -> np.ndarray:
     """Overwrite per-generator fuel prices with F923 monthly plant costs.
 
@@ -332,6 +498,18 @@ def apply_plant_monthly_fuel_prices(
     ``state`` — the plant-level CAMPD-bin fleet does so under
     ``config.fleet_state_from_eia860`` (defect D1 of the same finding).
 
+    **Plausibility screen (SPP-49, owner ruling P19, default ON).** Under
+    ``config.f923_gas_price_plausibility_screen`` every own-reported Natural
+    Gas plant-month the seam would consume is first read against the plant's
+    own state's EIA delivered-to-electric-power price (``N3045<ST>3``,
+    :data:`EIA_STATE_ELECTRIC_POWER_GAS_PATH`); a month outside
+    :data:`~market_sim.config.constants.F923_GAS_PRICE_PLAUSIBILITY_BAND` x
+    that reference falls back to the reference, and the nearby-plant pool is
+    built from the screened months — see :func:`screen_gas_plant_month_prices`.
+    Reachable only where this overlay prices gas at all (the gate is coerced
+    off elsewhere so those configs keep their cache keys). A missing reference
+    table is logged as a WARNING and the frame passes through unscreened.
+
     **Backcast-only (mode gate).** Measured F923 delivered costs are a
     historic overlay (CLAUDE.md rule 22, methodology spec §1.7), so this
     function is a no-op unless ``config.mode == "backcast"`` — year
@@ -361,6 +539,8 @@ def apply_plant_monthly_fuel_prices(
             ``coal_plant_monthly_pricing`` and the nearby-fallback knobs.
         year: Calendar year keying the F923 monthly lookup.
         monthly_costs_path: Optional override for the F923 parquet path.
+        state_gas_reference_path: Optional override for the EIA N3045 state
+            reference CSV the plausibility screen reads.
     """
     # G11 / W2-E mode gate (rule 22, spec §1.7): measured plant-monthly
     # delivered costs are a backcast-only overlay. The year-availability
@@ -409,6 +589,54 @@ def apply_plant_monthly_fuel_prices(
         if getattr(config, "gas_daily_shape", False)
         else None
     )
+    # SPP-49 plausibility screen (owner ruling P19): screen the year's own-
+    # reported Natural Gas months against the plant's own state's EIA
+    # reference BEFORE either consumer reads the frame, so the plant's own
+    # month and the pool it donates to see the same screened value. Only
+    # meaningful where gas is priced from F923 at all (the config coerces the
+    # gate off otherwise); coal / oil rows are untouched.
+    gas_from_f923 = bool(getattr(config, "gas_plant_monthly_fuel_pricing", False))
+    if gas_from_f923 and bool(
+        getattr(config, "f923_gas_price_plausibility_screen", False)
+    ):
+        reference = load_state_electric_power_gas_prices(state_gas_reference_path)
+        if reference is None:
+            logger.warning(
+                "F923 gas-price plausibility screen for %d SKIPPED: the EIA "
+                "state reference table is absent (%s) — own-reported plant "
+                "months are consumed unscreened",
+                year,
+                state_gas_reference_path or EIA_STATE_ELECTRIC_POWER_GAS_PATH,
+            )
+        else:
+            iso_gas_plants = frozenset(
+                int(p)
+                for p, f in zip(fleet.plant_code, fleet.fuel_type_idx)
+                if int(p) > 0
+                and _F923_FUEL_GROUP_BY_FUEL.get(_fuel_name(f)) == _SCREENED_FUEL_GROUP
+            )
+            costs, screen_report = screen_gas_plant_month_prices(
+                costs, year, reference, plant_ids=iso_gas_plants
+            )
+            logger.info(
+                "F923 gas-price plausibility screen for %d (%s, band [%s, %s] x "
+                "state N3045 reference): %d plant-months in band, %d low, %d "
+                "negative, %d high -> reference (%d plants); %d months on the "
+                "US fallback reference, %d unscreened (no reference), %d "
+                "unscreened (reference <= 0)",
+                year,
+                config.iso,
+                F923_GAS_PRICE_PLAUSIBILITY_BAND[0],
+                F923_GAS_PRICE_PLAUSIBILITY_BAND[1],
+                screen_report["in_band"],
+                screen_report["low"],
+                screen_report["negative"],
+                screen_report["high"],
+                screen_report["plants_flagged"],
+                screen_report["ref_us"],
+                screen_report["unscreened_no_ref"],
+                screen_report["unscreened_nonpos_ref"],
+            )
     use_nearby = bool(getattr(config, "nearby_fuel_price_fallback", False))
     nearby = _NearbyFuelPrices(costs, year, fleet, config) if use_nearby else None
     states = fleet.state

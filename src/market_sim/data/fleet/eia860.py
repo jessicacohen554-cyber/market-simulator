@@ -21,6 +21,7 @@ from market_sim.config.constants import (
     EFORD,
     EGRID_CC_HR_PHYSICAL_CEILING,
     EGRID_COLOCATION_RADIUS_KM,
+    EGRID_CT_HR_PHYSICAL_FLOOR,
     EGRID_UNIT_VINTAGE_TOL_YEARS,
     FUEL_CO2_FACTOR_PER_MMBTU,
     HEAT_RATE_BINS,
@@ -807,6 +808,112 @@ def _apply_egrid_boundary_hr_repairs(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+#: EIA-860 prime movers with no steam cycle: a simple-cycle gas turbine (``GT``)
+#: and a reciprocating engine (``IC``). A plant whose operating rows are all of
+#: these has no heat recovery anywhere on site, so its annual net heat rate
+#: cannot sit below a bare turbine's — the predicate of
+#: :func:`_apply_simple_cycle_hr_floor`. A combined-cycle part (``CT`` / ``CA``
+#: / ``CS``) or a steam turbine (``ST``) anywhere at the plant makes it MIXED
+#: and out of scope (its plant-blend rate is the ``egrid_family_heat_rates``
+#: object, rule 19).
+_SIMPLE_CYCLE_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
+
+
+def _apply_simple_cycle_hr_floor(df: pd.DataFrame) -> pd.DataFrame:
+    """Clamp a simple-cycle-only plant's eGRID heat rate to the physical floor.
+
+    The mirror of :func:`_apply_egrid_boundary_hr_repairs` on the other side of
+    the physics (SPP-46 R-2; owner ruling P19, 2026-09-08, repo-wide;
+    ``docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md`` §1.1 / §2.2). eGRID's
+    plant-grain ``PLHTRT`` is ``PLHTIAN / PLNGENAN``; a plant whose every
+    operating row is a simple-cycle prime mover (:data:`_SIMPLE_CYCLE_PRIME_MOVERS`)
+    cannot convert fuel to net electricity at better than the best bare
+    turbine, :data:`EGRID_CT_HR_PHYSICAL_FLOOR` (``HEAT_RATE_BINS["gas_ct"]["aero"]``,
+    EIA Table 8). A rate below it is arithmetic on mismatched boundaries —
+    Pioneer 57881 reads **3.43 MMBtu/MWh** on three GTs and twelve engines with
+    EIA-923 net generation ~3x its CEMS gross load, and priced 763 MW of SPP
+    peakers at ~$12/MWh (+5.0 TWh of 2024 CT over-run on one plant, FINDING-spp-46
+    §0.1) — not measured efficiency.
+
+    The reconciled value is the floor itself, ``max(heat_rate, floor)`` on the
+    plant's rows: the smallest repair that resolves the impossibility (the CC
+    ceiling's condition 4, applied at the bound). Treating the value as absent
+    and falling to the vintage bin was considered and refused — it discards the
+    measured information that the plant is efficient (a plausible 8.2 would
+    become 10.5).
+
+    A CONSTRUCTION, not a gate: the raw value has no reading under which it is
+    the plant's efficiency, so no run wants it; the precedent form is the CC
+    ceiling. Frame-level and unconditional, at the same seam as the boundary
+    repair, so every fleet read path picks it up and every measured mechanism
+    downstream keeps its precedence — ``egrid_family_heat_rates`` (frame, next),
+    ``measured_ct_heat_rates`` (row loop) and the CHP measured rates still win
+    over the clamped value where armed. A frame without ``heat_rate`` /
+    ``plant_id`` / ``prime_mover`` columns, or with no flagged plant, is
+    returned unchanged; the input is never mutated.
+
+    **CHP plants are OUT of scope** (the one narrowing made after the
+    PRECOMMIT, before any number was cited — FINDING-spp-49 §5): eGRID's
+    ``PLHTRT`` at a combined-heat-and-power plant is STEAM-CREDITED (the useful
+    thermal output's heat input is netted out of ``PLHTIAN``), so a sub-floor
+    value there is not an impossibility but the published power-only
+    convention, and the model already owns it — ``_correct_chp_steam_credit_hr``
+    (the CAISO / PJM topping factor, which fires below 8.0) and
+    ``measured_chp_heat_rates`` (``CHPCHTI`` added back). Clamping a CHP plant to
+    9.0 first would pre-empt that chain (measured on the CAISO keeper: 81 CT_CHP
+    rows / 631 MW landing at 9.9 instead of their 10.3–13.5 topping-corrected
+    rates) — two mechanisms on one row, rule 19 [R-ONE-MECH]. A plant with any
+    row flagged ``chp`` = ``Y`` is therefore left to that chain; a frame with no
+    ``chp`` column (the raw parquet outside the loader) treats every plant as
+    non-CHP, which every loader read path never does — each stamps ``chp``
+    from ``_chp_by_plant`` before reaching this seam.
+
+    Rule posture: rule 14's misalignment exception (measured data on a different
+    boundary than our representation, reconciled rather than replaced by a
+    guess); zero free parameters (an alias of an existing cited constant; no
+    appeal to any model output, so rules 1 / 13 are not engaged); rule 23
+    forward story: re-evaluated on whichever eGRID join and EIA-860 vintage the
+    frame carries, so a later eGRID release that repairs the boundary makes this
+    a silent no-op.
+    """
+    needed = {"heat_rate", "plant_id", "prime_mover"}
+    if not needed.issubset(df.columns):
+        return df
+    hr = pd.to_numeric(df["heat_rate"], errors="coerce")
+    codes = pd.to_numeric(df["plant_id"], errors="coerce")
+    pm = df["prime_mover"].astype(str).str.strip().str.upper()
+    simple = pm.isin(_SIMPLE_CYCLE_PRIME_MOVERS)
+    # A plant is simple-cycle-only iff EVERY row of it in the frame is.
+    all_simple = simple.groupby(codes).transform("all")
+    if "chp" in df.columns:
+        is_chp = df["chp"].astype(str).str.strip().str.upper().str.startswith("Y")
+        any_chp = is_chp.groupby(codes).transform("any")
+    else:
+        any_chp = pd.Series(False, index=df.index)
+    hit = (
+        all_simple
+        & ~any_chp
+        & codes.notna()
+        & hr.notna()
+        & (hr < EGRID_CT_HR_PHYSICAL_FLOOR)
+    )
+    if not hit.any():
+        return df
+    df = df.copy()
+    for code, grp in df.loc[hit].groupby(codes[hit]):
+        logger.warning(
+            "eGRID plant %d heat rate %.3f MMBtu/MWh is below the simple-cycle "
+            "physical floor %.3f on a plant whose %d operating row(s) are all "
+            "GT/IC — clamped to the floor (SPP-49)",
+            int(code),
+            float(hr[grp.index].iloc[0]),
+            EGRID_CT_HR_PHYSICAL_FLOOR,
+            int(len(grp)),
+        )
+    df.loc[hit, "heat_rate"] = EGRID_CT_HR_PHYSICAL_FLOOR
+    return df
+
+
 #: Plants whose carried pmax the CC guard CLIPPED off the published net-summer
 #: basis onto ``max(nameplate, demonstrated_peak)``, per ISO — rewritten on
 #: every fleet load by :func:`_reconcile_cc_pmax_to_nameplate`.
@@ -1072,6 +1179,13 @@ def _rows_to_generators(
     # CEMS facilities (Riverside 55641). Single seam: every fleet read path — the
     # canonical snapshot, the per-year vintages, the mothball re-carry — lands here.
     df = _apply_egrid_boundary_hr_repairs(df)
+
+    # Simple-cycle physical FLOOR (SPP-49, owner ruling P19): the mirror of the
+    # boundary repair above — a plant whose operating rows are all GT / IC and
+    # whose plant-grain eGRID rate sits below HEAT_RATE_BINS["gas_ct"]["aero"]
+    # is clamped to that floor. Same seam, unconditional, so every read path and
+    # every measured mechanism below keep their precedence.
+    df = _apply_simple_cycle_hr_floor(df)
 
     # eGRID prime-mover-FAMILY heat rates (config.egrid_family_heat_rates,
     # default off, byte-identical off): at a plant hosting two or more
