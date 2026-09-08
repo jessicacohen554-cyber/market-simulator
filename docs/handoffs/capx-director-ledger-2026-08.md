@@ -8,7 +8,8 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-08 (refresh #60) ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-08 (refresh #61) ·
+**r#61 (HEAD `7486cb9b`):** **THE READ I CHARTERED INSTEAD OF PERFORMING CLOSES NOTHING AND OPENS SOMETHING WORSE** (38 commits) · **A ZERO-LP CENSUS OVER 496 COMMITTED EVOLUTION LEDGERS FINDS ALL NINE NEISO T3 GOLDEN VARIANTS CARRYING DUPLICATE `unit_id`s IN-HORIZON, 2032→2050** — a legacy representative is retrofitted to CCS, keeps its id, and the fleet builder re-mints that id for the next economic gas-CC build in the zone; the record shows it happening (**one id retrofitted in 2031, 2040, 2042 AND 2044**, impossible for one unit, so by 2045 the fleet carries **four generators of that name**) · **AND IT REACHES A REGISTERED VERDICT**: `ff-verdicts.json` keys `neiso-t3` to `neiso-2026-2050-t3-golden3-d60` (`f04fd06348e1623d`), which collides for **18 scored years including the FC-5 corridor years 2035 and 2040** · consumers collapse eight ways — `idx_of` **last-write-wins** so a converted unit's exit-screen margin reads its unabated twin's dispatch, shared exemptions, shared exit clock, D57 double-offer, and **retiring one twin drops BOTH: a capacity leak, not bookkeeping** · **the read states plainly what it does NOT know** — the decision delta is unmeasured and no committed artifact can measure it · **Q62 SERVED AND RULED: FIX FIRST, FLAG THE VERDICT NOW** (withdrawal refused as asserting more than is known; guard-only refused as leaving a fleet the guard would REFUSE behind a live verdict) · **THE READ WROTE BOTH DIRECTOR SCOPE PARAGRAPHS AND SPECIFIED THE MECHANISM BETTER THAN I WOULD HAVE** — the obvious re-mint form is INSUFFICIENT because a zone converts a second, third and fourth representative, so the id must carry the conversion vintage; **the fourth sitting running in which a lane supplied the load-bearing detail my charter left implicit** · **GATE-(a) RE-KEY LANDED and all ELEVEN gates are GREEN** — and the lane found **my charter under-counted its own object**: ERCOT's row was stale across **TWO** un-re-keyed promotions, not one · **AGAINST INTEREST: TWO OF MY FOUR CHARTERS WERE NEVER DISPATCHED, AND THEY ARE THE TWO THE OWNER RULED** (Q60's D83, Q61's D89) — charters 2 and 3 of four, the third time this pattern has appeared → doctrine **THE QUEUE'S MIDDLE AND TAIL ARE WHERE LANES GO MISSING**; both re-emitted WHOLE, highest-priority charter now goes FIRST · **RULED: the two seams are NOT merged** (a merged lane could not attribute its screen) and **D88-before-D87 is a STOP ON AN ACT, NOT A SESSION** — D87's phase 0 proceeds now, only its edit waits · no keeper moved, `final` still EMPTY · 4 charters issued, **no diagnosis run at this desk**
 **r#60 (HEAD `a667073f`):** **BOTH r#59 CHARTERS LAND AND D84 IS ARMED THE SAME DAY IT IS MEASURED** (97 commits) · **D84 BUILDS THE PJM THERMAL ELCC VINTAGE AXIS AND LANDS ON ITS IDENTITY TO 0.00046 MW** (+3,105.648 MW accredited in DY 2025/26, **0.000 in every other window year**, 2021–2024 byte-identical across 13 scalars / 14 blocks / 12 clearing keys; coal/nuclear/biomass exactly 0.000), **ZERO scalar fields, ZERO free parameters and — unlike the VRE half — ZERO reconciliations**, as a **SUB-GATE of D48** so the rating axis can never devintage while the basis axis does not · **AND IT FLIPS PJM's CLEARING REGIME WHILE SCORING AS NOTHING**: `all_offers_clear_curve_sets_price` → `marginal_offer_sets_price`, 2,623.94 MW of coal stops clearing, price **$213.056 → $178.095 /MW-day** — and **361 of 362 scored records are BYTE-IDENTICAL**, because **100 % of the newly-uncleared MW is EIA-860 Sector 1**, which Q56's `retirement_sector_gate` partitions out of the exit decision: **a Q56/D57 collision, and the most useful thing the lane found** · all three published comparators move **AWAY** (+481.708 MW on both frames, price gap −56.864 → −91.825) and are reported at full magnitude under rule 14, never smoothed · **THE OWNER ARMED IT IN-SESSION** on the lane's own §8 card — `iso_configs` route, **33 of 227 configs move, all PJM/forecast, ZERO backcast**, ex-ante census reproduced exactly, registered 14/14 invariants PASS **at no LP cost** · **D86 IS THE MODEL OF ITS FORM**: a seven-mutation non-vacuity table every row RED, defect B proved as a MEASUREMENT (same break: **WITH** the opt-out RED, **WITHOUT** it GREEN), defect C repaired forward against the LIVE ledger, a step-4 guard so the marker cannot vanish silently, and an A/B showing **fixed 2, newly broken 0** · **AGAINST INTEREST: my §0bd said the tier was "red on six"; D86's wider command measured FIFTY-FIVE**, and **27 are in THIS DESK'S OWN D62/D74 files** — right count, wrong denominator, repaired forward → doctrine **A RED INVENTORY IS ONLY AS WIDE AS THE COMMAND THAT PRODUCED IT** · **AGAINST INTEREST: my D84 charter named a G-DRIFT command that CANNOT RUN** (`git diff <keeper git_sha> HEAD` — the PJM keeper's `457ae04` died in the 2026-08-16 history rewrite); the lane recorded it and derived the drift from an exact bundle key instead · **RULED: D84 §6's named successor is SUPERSEDED by D82's closure** — `false_retire` still has NO named successor in the E&AS direction, and §6 identifies the symptom, not the operand · **Q61 SERVED AND RULED: capx's own 27, none of the other 28** · gates **10 of 11** — gate (a) RED on **TWO** ISOs, the **SEVENTEENTH firing and the FIRST DOUBLE**, both promoter misses (ERCOT → ercot256-drag-layup-mask, MISO → miso-243-spp-pairing) · `final` still EMPTY · **4 charters issued, and NO diagnosis run at this desk** per the owner's instruction
 **r#59 (HEAD `60f244e3`):** **BOTH r#58 CHARTERS LAND AND ALL ELEVEN GATES GO GREEN** (106 commits, 40 merges) — including the gate (a) red that was **this desk's own row**, closed at `d26652f3` on the **sixteenth** Q34 firing · **D85-R LANDS ALL FOUR REPAIRS**: census **223 / 179 / 29 / 15 — 15 KNOWN, ZERO UNKNOWN**, the 15 SET-EQUAL to D85's; the census script promoted to the standing gate `scripts/check_key_provenance.py` (five gates, **both failure directions demonstrated by test**, and 9 tests passing again under a simulated blobless checkout); the run record now carries `cache_key_path_roots` + `market_sim_data_root`; the golden writer serializes the **RESOLUTION** and **raises rather than falling back**; and both key constructions are in the census — **129 both · 50 at-declaration-only (CAISO 21 · ERCOT 29) · 0 live-only** · **D85-R REPORTED 7 PRE-EXISTING FAST-TIER REDS ON `main` AGAINST ITS OWN INTEREST; I RE-MEASURED 6 AT MY HEAD** and the one that healed was healed by this desk's own charter · **THE SHARPEST FINDING OF THE SITTING IS ON THIS DESK'S OWN MECHANISM: D79 WORKS AND ITS GUARDS ARE DISARMED.** Outside pytest a `DEMAND_GROWTH_RATES["MISO"]` mutation moves the key **`bcaf6043b8bfea74` → `13afdf6f728e5336`**; inside it, `tests/conftest.py`'s autouse `_solve_surface_neutralized` stubs `moved_rows → {}` for every test lacking `@pytest.mark.solve_surface_live`, and the one file whose docstring IS "the addressing half" never got the marker — so the addressing guard is **RED** and the rule 25 `[R-ISO-SCOPE]` isolation guard is **GREEN AND VACUOUS**, passing for the wrong reason since the fixture landed; a third assertion's `moved == {}` is a **STALE LABEL** against ercot-253's ledgered ERCOT `NUCLEAR_MONTHLY_CF_BY_YEAR` move, repaired **forward** → **D86** · four other reds **ROUTED** by name (MISO's three unaccounted seam fields on miso-233, CAISO's 1.166-vs-1.154 registry drift, SPP's now-registered RPS floor) · **Q60 SERVED AND RULED: D84 first, D83 after** — D84 chartered on the D75-R template · **a collision I did not deconflict** (the SPP desk had SPP-45 chartered for the same row; its lane refused to redo it and supplied the promotion citation my charter required) · **am.1: SCN ruling S19 routes TWO new objects to this desk** (D-15 the CCS attribute-coverage seam, D-14 the `unit_id` uniqueness guard) — accepted, labels D87/D88 reserved, **neither chartered unread** · no keeper moved, `final` still EMPTY, 2 charters issued
 **r#58 (HEAD `7b8f3699`):** **ALL THREE Q59 LANES LAND** (74 commits, 30 merges) · **D82 ANSWERS ITS DECISIVE QUESTION AND CLOSES AS A LANE**: every operand of the D57-measured size is a **BACKCAST-ONLY OVERLAY**, inadmissible under rule 13; the forward-admissible streams are disposed of by name — **refuted** (co-opt), **small** (reactive), **unbuilt** (make-whole) — and the record's own CT E&AS in the barred dispatch year is **~$2/kW-yr**; at HEAD the plateau clears in full, re-cleared under the joint unarmed D62+D74 posture it is **7.0 of 22.7 GW on a knife edge at an exact zero**. `false_retire` stays FAIL and now has **NO named successor in the E&AS direction** — the honest state · **D85: BOOKKEEPING, NOT A DEFECT** — 214 configs, 169 reproduce, 30 keyless, the same 15 mismatch, **all 15 derived to their recorded literal, ZERO UNCLASSIFIED** (6 registration lag · 3 pre-ledger flip · 5 flip + **split-root fold** · 1 **request-not-resolution**); step 3 from the code path: a stale key is **unreachable by construction** for every class but the D24 §4.2 collision form, which `cache_config_disagreements` refuses on the serving seam · **AND IT SURFACED 46 MORE KEYS NOBODY ASKED ABOUT** — ERCOT/CAISO solve surfaces off their declarations since 2026-09-07, the D79 designed re-key plus a census BLIND SPOT now reported · **SPP IS ON THE §2.1b BOARD** and the schema answer is durable: `program-status.json` is a hand-maintained COMMITTED seed wrapped VERBATIM, so **no forecast artifact is required for a row**; gate (a) needs two backcast facts and SPP has both · **THE CAPX RECORD COUNTS SEVEN FROM HERE FORWARD** · **AGAINST INTEREST: gate (a) is RED ON THE ROW THIS DESK JUST CHARTERED** — sixteenth Q34 firing and the FIRST that is not a promoter's miss; the lane followed my read-live warning exactly and SPP promoted a THIRD time within hours → doctrine **A ROW YOU WRITE IS A ROW YOU MAINTAIN** · **RULED: the treadmill is the GATE WORKING, not a defect — a derived keeper id would agree with itself and assert nothing; no change proposed** · **AGAINST INTEREST: I served Q59 recommending D82 as the highest-value LANE and the read closed it** — one zero-LP session replaced a solve program, which is the argument for reading first and a caution on my own pre-read weight · gates **9 of 10** · 2 charters issued (§0bc)
@@ -64,6 +65,194 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0bf. Refresh #61 (2026-09-08, main HEAD `7486cb9b`) — the read I chartered instead of performing closes nothing and opens something worse: nine NEISO T3 golden variants carry duplicate `unit_id`s in-horizon, the registered `neiso-t3` verdict is scored on one of them, and a zero-LP census over 496 committed ledgers settles a question a prior lane had marked UNKNOWN; meanwhile two of my four charters — both OWNER-RULED lanes — were never dispatched
+
+**0. FIRST ACT.** Handoff claim (§0be = r#60) **matched** the ledger's top entry, and the r#60
+commit **`7647f058` HAS MERGED** (PR #5627). `git fetch origin --prune`; main
+**`a667073f` → `7486cb9b`**, **38 commits**. **SECOND FETCH BEFORE GRADING DISPATCH**, which is what
+made the NEVER-DISPATCHED call safe to write: one live branch
+(`claude/miso-backcast-calibration-s6uhiw`, another desk's), **no capx branch**, **zero open PRs**.
+
+**The boundary from §0be.0 held again**: I ran the eleven standing gates and **nothing else** — no
+pytest, no repro, no probe. Every question below is a prompt, not a measurement of mine.
+
+---
+
+### 1. GRADED BY CONTENT — 2 of 4 dispatched
+
+**(a) GATE-(a) RE-KEY (r#60, Fable) — LANDED** (`0788f862`, PR #5637). `check_gate_a_provenance.py`
+is **EXIT 0 on all seven rows** at my HEAD, so the seventeenth firing is closed.
+
+* ERCOT `2026-09-05-ercot248-two-config-keeper` → **`2026-09-08-ercot256-drag-layup-mask`**; MISO
+  `2026-09-07-miso-233-spp-hourly` → **`2026-09-07-miso-243-spp-pairing`**.
+* **The lane found the ERCOT case was worse than my charter said: TWO un-re-keyed promotions, not
+  one** — ercot-255 (`614f3691`) *and* ercot-256 (`baa5fe16`, PR #5605). My charter named a single
+  transition; the row had been stale across a promotion I never counted.
+* Both promotion **instruments named as documents**, which is the element §0bc's SPP-45 lane had to
+  add after the fact: `docs/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md` (`fe63e461`) and
+  `results/calibration/ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`.
+* **Every fact re-read LIVE at the lane's own HEAD**, not carried from my charter — keeper ids from
+  the shards, marker state from BOTH blocks (`final` EMPTY for every ISO, so no locked-test claim
+  appears in either row), determinations from the committed status sidecars. **The lane computed no
+  verdict.** Method: targeted string edit at **five uniquely-anchored positions**, never a
+  `json.dumps` round-trip. **Both gate verdicts unmoved** — ERCOT pass before and after, MISO fail
+  before and after (absent from `complete` on both sides, declined at Q49).
+
+**(b) D87/D88 READ (r#60, Fable) — LANDED** (`732229fc`, PR #5638). Zero LP, **no `src/` edit, no
+test, no config, no shard, no registration** — one design document, exactly as chartered.
+**Verdict: CHARTER BOTH, NOT MERGED, D88 FIRST.**
+
+*D88 is the one that matters, and it is not a bookkeeping nit.* A legacy representative
+`gas_cc_h_class_Central` is retrofitted to CCS but **keeps its `unit_id`**, and the fleet builder
+then **re-mints that same id** for the next economic gas-CC build in the same zone. The read's census
+over **496 tracked `evolution_<year>.json` ledgers** — zero LP, one pass — finds 18 bundles
+retrofitting on a legacy-form id and the collision firing in two families:
+
+* **All NINE NEISO T3 golden variants**, colliding **2032 → 2050** (`bau-d65br` from 2037) — **13 to
+  18 in-horizon years, read by every step-3 consumer every year.**
+* **ERCOT `ff-t1f-d65br`**, 2030 only — its terminal year, so no capacity screen reads it.
+
+*The record shows the defect happening.* In `bau-prera-2026-08-31` the same id is logged as
+retrofitted in **2031, 2040, 2042 and 2044** — impossible for one unit, since a retrofit is
+irreversible and a converted unit is never a candidate again (`ccs.py:400`). Each later row is a
+re-minted unabated twin (the 2040 row's `mw` = 3,000.0 = the 2032 + 2034 + 2036 builds collapsed into
+one representative), so **by 2045 that fleet carries four generators named `gas_cc_h_class_Central`**.
+
+*And it reaches a registered verdict.* `ff-verdicts.json:4835-4843` keys **`neiso-t3`** to
+`neiso-2026-2050-t3-golden3-d60`, cache key `f04fd06348e1623d` = `ff-t3-neiso-golden/bau-d60` —
+which collides from 2032, **including the FC-5 corridor years 2035 and 2040 that D77 §8.2 names as
+the ones actually scored.**
+
+*What collapses on a duplicate*, enumerated over `src/` and the scorers and verified at HEAD for the
+decision path: the `idx_of` map is **last-write-wins**, so a converted unit's pro-forma margin reads
+its unabated twin's dispatch inside the step-3 exit screen; one twin's exemption exempts **both**;
+**retiring one twin drops both from the fleet — a capacity leak, not bookkeeping**; the exit clock is
+shared; the D57 sell-offer stack double-offers under one id; and the I5 forecast invariant sees the
+exact false-positive shape of "retire-and-re-enter". **Backcast: never** (a backcast rebuilds its base
+fleet yearly and never enters `evolve_fleet`); **hindcast and crossover cannot fire** (the retrofit
+sits below the 2028 gate).
+
+*What the read is explicit it does NOT know*: the **size and direction of the decision delta are
+unmeasured**, and nothing in the committed record can measure them — only a repaired re-solve can.
+It says so rather than estimating, which is why the card below could be served honestly.
+
+*D87 is real too, and smaller.* The retrofit screen prices each continuation through **one** resolver
+that folds **two** legs — the legacy per-fuel scalar and the exogenous premium — while the CES
+**target row's** dual lives in `clean_attribute_price_by_fuel`, threaded from the prior year's
+`clean_region_duals` into `evolve_fleet`, **which never hands it to the retrofit screen**. Reach: 12
+policy-campaign bundles, **no scored cell**. Unrepaired since SCN raised it (the only commit touching
+those files since is the PJM sector-gate merge, which does not touch the pricing lines).
+
+*Both scope paragraphs were written by the lane, for me to paste*, and both are better specified than
+what I would have written — see §5.
+
+**(c) D83 (Q60's ruled follow-on) and D89 (Q61's ruled lane) — BOTH NEVER DISPATCHED.** No branch, no
+commit, no document, confirmed on the second fetch. **2 of 4**, and the two that went unrun are the
+two the owner had explicitly ruled. Both **re-emitted WHOLE** below under the r#43 relaunch protocol;
+neither is graded LOST and nothing about either is re-derived.
+
+---
+
+### 2. RECORDED AGAINST INTEREST
+
+**(a) TWO OF FOUR CHARTERS WENT UNRUN, AND THEY WERE THE OWNER-RULED ONES.** Q60 ruled D83 and Q61
+ruled D89; both were issued at r#60 and neither started. The two that ran were charters **1 and 4**
+in my close; the two that did not were **2 and 3**. I do not know the cause and will not invent one —
+but the pattern is now on the record for the third time (§0ax: two of four; §0ba: zero of two; here:
+two of four), and it has a shape: **the tail and middle of a four-prompt close are where lanes go
+missing.** What I control is length and ordering, so from this sitting the highest-priority charter
+goes FIRST in the close and I say in one line which it is. Re-emission is cheap; a ruled lane sitting
+unrun for a whole window is not.
+
+**(b) My gate-(a) charter under-counted its own object.** I wrote it as one stale transition per ISO;
+ERCOT's row was stale across **two** promotions. The lane caught it by reading live, exactly as the
+charter told it to — so the instruction worked and my *description* was wrong. Repaired forward: a
+re-key charter states the transition as *"from whatever the row says to whatever the shard says,
+enumerating every promotion in between"*, never as a single arrow.
+
+**(c) No desk act beyond the two files and the eleven gates** (§0bf.0).
+
+---
+
+### 3. RULINGS / DECISIONS
+
+**(a) OWNER-TIER — Q62 SERVED AND RULED: FIX FIRST, FLAG THE VERDICT NOW.** Card and register entry
+at §3 below. D88 is chartered immediately on the read's own scope, and **the same session adds a
+one-line, additive provenance flag** to the `neiso-t3` verdict record saying it is scored on a run
+with known in-horizon id collisions and a re-score is pending. Nothing is withdrawn on an unmeasured
+suspicion; no reader quotes the number unqualified in the meantime. The re-score itself goes to the
+D63/D65-B batch on repaired code, not to D88. I marked two options NOT RECOMMENDED and gave the
+reason for each: **withdrawing** the verdict asserts the defect changed the result when nobody has
+measured whether it did — *a flag states what is known; a withdrawal states more than is known* — and
+**guard-only** would leave a fleet the guard itself would now REFUSE sitting behind a live verdict,
+which is worse than either fixing or flagging.
+
+**(b) DIRECTOR-TIER — the read's refusal to merge the two lanes is ACCEPTED, on its own reason.**
+They share one file and a forecast-only, zero-DOF, key-preserving footprint, which is why they look
+like one card; but D87 is a **pricing-coverage omission** in the screen's inputs and D88 is an
+**identity defect** in the fleet builder, and *a merged lane would screen a pricing change and an
+identity change in one arm and could not say which moved the retrofit set.* **This would read
+identically had the read recommended merging** — the test is attributability of the screen, not the
+count of lanes, and a read that had shown one object moving both hunks would have earned a merge.
+
+**(c) DIRECTOR-TIER — the D88-before-D87 sequence is a STOP ON AN ACT, NOT ON A SESSION.** The read
+sequences D88 first so D87's NYISO screen runs with the guard armed. I am **not** holding D87's
+dispatch: its **phase 0 is zero-LP and proceeds immediately**, and only its **EDIT** to `ccs.py` /
+`evolve.py` and its screen wait for D88 to merge. This desk has twice written a STOP against a
+session and twice forced a lane to guess which act was protected (§0ax); both guessed right, which
+was luck. The charter below says which act.
+
+---
+
+### 4. THE QUEUE
+
+| lane | act | model | profile | collides with |
+|---|---|---|---|---|
+| **D88** (Q62) — fleet ids are keys | guard + vintage-stamped re-mint + the `neiso-t3` flag | Opus | `neiso` + `code` | D87 and D83 — **boundaries named in all three charters** |
+| **D87** — the retrofit screen consumes the clean-tier seam | phase 0 NOW; edit + screen AFTER D88 merges | Opus | `nyiso` + `code` | D88 (`ccs.py`, `evolve.py`) |
+| **D83** (Q60) — the missing 2022 adequacy block | **RE-EMITTED WHOLE**, never dispatched | Opus | `pjm` | D88/D87 — owns the ledger **writer** only |
+| **D89** (Q61) — capx's own 27 reds | **RE-EMITTED WHOLE**, never dispatched | Opus | `code` | nothing; two test files |
+
+**Collision map.** `ccs.py` and `evolve.py` are touched by **three** of the four, so the boundaries
+are stated in each prompt rather than left to inference: **D88** owns `ccs.py`'s conversion block
+(`:590-591`), `arrays.py:3651` and `evolve.py`'s `_retrofitted_ids` / exempt-set lines; **D87** owns
+`ccs.py:475-476` and the `evolve.py:664` threading and touches neither of D88's hunks; **D83** owns
+the evolution-**ledger writer** (the adequacy block) and neither lane's hunks. **D89** is disjoint
+from all three. **NEXT FREE LABEL: D90.**
+
+**Gates at HEAD `7486cb9b`: ELEVEN of ELEVEN GREEN** — `audit_keepers --check` PASS (0/0) ·
+`check_registry_payload_parity` OK (22 runs, 55 bundle dirs) · **`check_gate_a_provenance` OK (7
+rows)** · `check_mechanism_matrix` 0 (2 anchor-digit warnings, another desk's chore) ·
+`check_forecast_staleness` 0 · `check_bench_freshness` 0 · `check_golden_manifest` OK ·
+`check_forecast_invariants --sidecar-dir` OK (177 sidecars, 2478 records) · `check_key_provenance` 0
+· `ruff check` clean · `ruff format --check` 1417 files. **No keeper moved** since the re-key (ERCOT
+`2026-09-08-ercot256-drag-layup-mask` · CAISO caiso-260 · PJM pjm-162 · MISO
+`2026-09-07-miso-243-spp-pairing` · NYISO nyiso-213 · NEISO neiso-106 · SPP spp-3); `complete` =
+{CAISO, ERCOT, NEISO, NYISO, PJM}, **`final` EMPTY**.
+
+---
+
+### 5. DOCTRINE
+
+* **A READ THAT WRITES THE DIRECTOR'S SCOPE PARAGRAPH IS WORTH MORE THAN ONE THAT WRITES A
+  RECOMMENDATION** — and this one specified the mechanism better than I would have. It caught that
+  the obvious re-mint form (`gas_cc_ccs_{bin}_{zone}`) is **INSUFFICIENT**, because the T3 record
+  shows a zone converting a second, third and fourth representative, so two converted representatives
+  would collide *with each other*; the id must carry the conversion vintage
+  (`…_r{year}`, mirroring `new_entry.py:648`). That is the fourth sitting running in which a lane
+  supplied the load-bearing construction detail my charter left implicit. Asking a read for the
+  paragraph is how the desk buys that on purpose instead of by luck.
+* **A CENSUS OVER COMMITTED ARTIFACTS CAN SETTLE WHAT A PRIOR LANE MARKED UNKNOWN.** The SCN G1
+  re-check recorded in-horizon exposure as *"UNKNOWN without the ledgers … none is ruled out"*. The
+  ledgers were committed the whole time — 496 of them — and one zero-LP pass answered it. Before
+  accepting an UNKNOWN, ask which committed artifact would have to be silent for it to be true.
+* **THE QUEUE IS A PROPOSAL, NOT A PLAN — AND ITS MIDDLE AND TAIL ARE WHERE LANES GO MISSING**
+  (§0bf.2(a)). Highest-priority charter first in the close, and say which it is.
+* **A STOP NAMES AN ACT, NOT A SESSION — INCLUDING WHEN THE SEQUENCE COMES FROM A LANE'S OWN READ**
+  (§0bf.3(c)). "Land after D88" is not a charter; "phase 0 now, edit after D88 merges" is.
 
 ---
 
@@ -7764,6 +7953,12 @@ the gap.
 | **D83 (r#60)** | Q60's ruled follow-on: `evolution_2022.json` carries no adequacy block | **CHARTERED** — reserved since r#51, and Q60 ruled it follows D84, which has now landed AND armed. Reproduced on a fresh solve at HEAD; it has forced manual pool reconstruction in **two** lanes (D75, D75-R). Ledger-writer record defect: zero-LP to diagnose, arms nothing, moves no band | `claude/capx-d83-evolution-2022-adequacy` | Opus | pjm | Boundary with D89 named in both charters: D83 owns the evolution-ledger writer, D89 must not touch it. |
 | **D89 (r#60)** | Q61: the 27 reds in this desk's own `test_d62_*` / `test_d74_*` | **CHARTERED** — D62 (15) + D74 (12) of D86's 55-red inventory, both landed at r#48 and untouched since; D74 carries a self-executing DO-NOT-ARM whose evidence is those very tests. Diagnose first, repair second, and say whether the cause is D62/D74's own code or a later change that broke their fixtures — the answers have different consequences | `claude/capx-d89-d62-d74-reds` | Opus | code | Q61 RULED "capx's own 27, fix none of the other 28"; the all-55 sweep was marked NOT RECOMMENDED and refused on the r#59 cross-desk-collision reason. |
 | **D87/D88 READ (r#60)** | Disposition the two SCN ruling-S19 seams | **CHARTERED as a READ, not a repair** — §0bd am.1 accepted both objects and reserved the labels without reading their substance. **D87** = D-15, the CCS attribute-coverage seam (`ccs.py:475-476`: the CES premium reaches the retrofit screen, the CES target row cannot) — capacity-evolution **step 2**, this desk's own step. **D88** = D-14, `unit_id` is not a key in an evolved fleet (`aggregate_fleet` re-mints ids) | `claude/capx-d87-d88-s19-read` | Fable | code | **READ BEFORE CHARTERING, AND EXPECT THE READ TO CLOSE THINGS** — D82 was recommended as the highest-value lane and its read closed it. The read may merge the two, close one, or return two charters. |
+| **GATE-(a) RE-KEY (r#60)** | Q34 standing duty — the first DOUBLE | **LANDED** (`0788f862`, PR #5637). `check_gate_a_provenance` **EXIT 0 on all seven rows**. ERCOT → `2026-09-08-ercot256-drag-layup-mask`, MISO → `2026-09-07-miso-243-spp-pairing`, both promotion instruments **named as documents**. Every fact re-read LIVE; the lane computed no verdict; five uniquely-anchored string edits, no `json.dumps` round-trip; **both gate verdicts unmoved** (ERCOT pass→pass, MISO fail→fail) | `claude/capx-gate-a-rekey-318b42` | Fable | code | **The lane found my charter under-counted its object**: ERCOT's row was stale across **TWO** un-re-keyed promotions (ercot-255 `614f3691` **and** ercot-256 `baa5fe16`), not one. §0bf.2(b). |
+| **D87/D88 READ (r#60)** | Disposition the two SCN ruling-S19 seams | **LANDED** (`732229fc`, PR #5638) — zero LP, no `src/` edit, one design doc. **CHARTER BOTH, NOT MERGED, D88 FIRST.** A zero-LP census over **496 committed evolution ledgers** finds **all NINE NEISO T3 golden variants carrying duplicate `unit_id`s in-horizon, 2032→2050** (ERCOT `d65br` 2030, terminal only) — and **the registered `neiso-t3` verdict is scored on one of them** (`neiso-2026-2050-t3-golden3-d60`, key `f04fd06348e1623d`), **including the FC-5 corridor years 2035 and 2040**. The record shows the defect happening: one id retrofitted in **2031, 2040, 2042 and 2044**, impossible for one unit, so by 2045 the fleet carries **four generators of that name**. Consumers collapse eight ways — `idx_of` **last-write-wins**, shared exemptions, shared exit clock, D57 double-offer, and **retiring one twin drops both: a capacity leak** | `claude/capx-d87-d88-read-eb52a8` | Fable | code | **The read wrote BOTH director scope paragraphs, and specified the mechanism better than I would have** — the obvious re-mint form is INSUFFICIENT (a zone converts a 2nd/3rd/4th representative), so the id must carry the conversion vintage. **States plainly what it does NOT know**: the decision delta is unmeasured and no committed artifact can measure it. → **Q62**. |
+| **D88 (r#61)** | Q62: fleet ids are keys — a uniqueness guard, a vintage-stamped re-mint, and the `neiso-t3` flag | **CHARTERED, FIRST IN THE CLOSE.** (a) `generators_to_fleet_arrays` (`arrays.py:3651`) raises on a duplicate `unit_id`, naming the offenders — phase 0 proves it is silent on every ISO's on-recipe `fleet_only` rebuild before anything else lands. (b) `apply_ccs_retrofit` re-mints a converted non-CAMPD legacy representative as `gas_cc_ccs_{bin}_{zone}_r{year}` with an additive `to_unit_id` on the ledger row. **Zero config, zero constants, no key moves.** Screen = the cheapest colliding horizon (NEISO T3 `bau-d65br`, 2026–2040), control = the committed bundle under G-DRIFT | `claude/capx-d88-fleet-id-uniqueness` | Opus | neiso + code | Q62 RULED **fix first, flag now**. The `neiso-t3` flag is **additive provenance only** — never a verdict letter, never a score. The re-score goes to the D63/D65-B batch, **not** to this lane. |
+| **D87 (r#61)** | The retrofit screen consumes the clean-tier seam | **CHARTERED — phase 0 NOW, edit and screen AFTER D88 MERGES** (§0bf.3(c): the STOP names an act, not a session). Thread `clean_attribute_price_by_fuel` from `evolve_fleet` into `apply_ccs_retrofit` and fold `clean_credit_for_zone` into both `attr_unabated` and `attr_post` through the existing `max()` — the composition `retirements.py:3634` and `new_entry.py:1202` already use. **No new field, no new constant, no RPS leg.** Reach: 12 policy-campaign bundles, **no scored cell**. Screen = ONE year, NYISO 2030, control = the committed `CES-T80` bundle under G-DRIFT | `claude/capx-d87-ccs-clean-tier-seam` | Opus | nyiso + code | Sequenced so the NYISO screen runs with D88's guard armed — if folding the dual grows the retrofit set into a later re-mint, the screen says so instead of a downstream scorer. |
+| **D83 (r#60 → RE-EMITTED r#61)** | Q60's ruled follow-on: the missing 2022 adequacy block | **NEVER DISPATCHED** — no branch, no commit, no doc, on a second fetch. **RE-EMITTED WHOLE**, unchanged in substance, with the D88/D87 file boundary added. Not graded LOST; nothing re-derived | `claude/capx-d83-evolution-2022-adequacy` | Opus | pjm | One of **two owner-ruled lanes that went unrun** in the same window (§0bf.2(a)). |
+| **D89 (r#60 → RE-EMITTED r#61)** | Q61's ruled lane: capx's own 27 reds | **NEVER DISPATCHED** — same census. **RE-EMITTED WHOLE.** Disjoint from every other live lane | `claude/capx-d89-d62-d74-reds` | Opus | code | The other owner-ruled lane that went unrun. |
 | **D2-REMEASURE** | — | **RETIRED unrun** | — | — | Premise refuted at refresh #4. |
 
 ## 2. Backcast-track watch (last seen 2026-09-05 @ `b2bd9fdb`, refresh #42)
@@ -7909,7 +8104,43 @@ the gap.
 **Deconfliction: clean.** D2-B explicitly stopped at a FINDING on the one MISO root cause that
 reaches shared solve machinery (S-1), per its charter.
 
-## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)**, **Q58 r#55 (Q57's route VOID — RULED VARIANT B on the precedent standard)**, **Q59 r#57 (RULED all three: D82 + SPP onboarding + D85)**, **Q60 r#59 (RULED D84 first, D83 after — the empty-queue priority card)**, **Q61 r#60 (RULED capx's own 27 reds, none of the other 28)** (2026-09-08) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-THREE ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+## 3. Owner-tier questions — Q52/Q53 r#47, Q54 r#50, Q55 r#51, **Q56 r#53 (RULED ARM, registration required)**, **Q57 r#54 (RULED ARM via the D50 (b′-1) route)**, **Q58 r#55 (Q57's route VOID — RULED VARIANT B on the precedent standard)**, **Q59 r#57 (RULED all three: D82 + SPP onboarding + D85)**, **Q60 r#59 (RULED D84 first, D83 after — the empty-queue priority card)**, **Q61 r#60 (RULED capx's own 27 reds, none of the other 28)**, **Q62 r#61 (RULED fix first, flag the `neiso-t3` verdict now)** (2026-09-08) added below; **Q56 was RESERVED at r#52 and deliberately NOT served — D78-R3 is at PRECOMMIT with its control-P re-solve owed, and an arming card on a lane that has not produced its derivation asks the owner to rule on an argument that does not yet exist (§0aw.3(b))**; THIRTY-FOUR ANSWERED (Q5/Q6 r#8; Q5 re-ruled r#12; Q7/Q8/Q9 r#13; Q10/Q11/Q12 r#15; Q13/Q14 r#17; Q15 r#18 — all 2026-08-30; Q16/Q17/Q18/Q19 r#22, 2026-08-31; Q20/Q21/Q22/Q23 r#25 + **Q24/Q25/Q26 r#26 + Q27 r#27**, 2026-09-01; **Q28/Q29 r#30 + Q30/Q31 r#31, 2026-09-02**. Q22 carries an r#26 primacy correction — audit ruling R-H ruled the same card first; see §0w.2)
+
+### Q62 (refresh #61) — the registered `neiso-t3` verdict is scored on a fleet with duplicate unit ids
+
+**RULED 2026-09-08: FIX FIRST, FLAG THE VERDICT NOW** (the recommended option).
+
+**The card.** The D87/D88 READ's zero-LP census over 496 committed `evolution_<year>.json` ledgers
+found that **all nine NEISO T3 golden variants carry duplicate `unit_id`s in-horizon**, and that
+`ff-verdicts.json` keys the registered **`neiso-t3`** verdict to `neiso-2026-2050-t3-golden3-d60`
+(cache key `f04fd06348e1623d`), which collides **from 2032 to 2050 — 18 scored years, including the
+FC-5 corridor years 2035 and 2040 that are the ones actually scored.**
+
+The mechanism: a legacy representative `gas_cc_h_class_Central` is retrofitted to CCS but keeps its
+id, and the fleet builder re-mints that id for the next economic gas-CC build in the same zone. The
+record shows it happening — the same id logged as retrofitted in **2031, 2040, 2042 and 2044**, which
+is impossible for one unit — so by 2045 that fleet carries **four generators of that name**. On a
+duplicate the LP dispatch row is **last-write-wins**, one twin's exemption exempts both, the exit
+clock is shared, D57 double-offers under one id, and **retiring one twin drops both: a capacity leak,
+not bookkeeping.**
+
+**Served with the unknown stated, not smoothed:** the **size and direction of the decision delta are
+unmeasured**, and the read is explicit that no committed artifact can measure them — only the
+repaired re-solve can. Backcast is never affected; hindcast and crossover cannot fire (the retrofit
+sits below the 2028 gate); ERCOT `ff-t1f-d65br` collides only in its terminal year, so no screen
+reads it.
+
+**The two refused options, and why.** **Withdrawing the verdict** was marked NOT RECOMMENDED: it is
+the program's only T3 golden verdict, and withdrawal asserts the defect changed the result when
+nobody has measured whether it did — *a flag states what is known; a withdrawal states more than is
+known* — with a reversible flag-plus-suppress offered as the scoped alternative if the owner wanted
+it. **Guard-only** was marked NOT RECOMMENDED for the sharper reason: it would leave a fleet the
+guard **itself would now REFUSE** sitting behind a live verdict, which is a worse state than either
+fixing or flagging.
+
+**Consequence.** D88 chartered first in the close (Opus, `neiso` + `code`), carrying the additive
+provenance flag in the same session — never a verdict letter, never a score. The re-score is routed
+to the D63/D65-B batch on repaired code, explicitly not to D88.
 
 ### Q61 (refresh #60) — 55 reds on `main`, 27 of them in this desk's own files
 
@@ -8414,6 +8645,11 @@ doing: gate (a) is taken as PASS on the literal test throughout.
 | 2026-09-08 | **D83 — 2022 ADEQUACY BLOCK** | `claude/capx-d83-evolution-2022-adequacy` | **Opus** | pjm | r#60 — Q60's ruled follow-on, due now that D84 has landed and armed |
 | 2026-09-08 | **D89 — CAPX'S OWN 27 REDS** | `claude/capx-d89-d62-d74-reds` | **Opus** | code | r#60 — Q61 RULED capx's own 27, none of the other 28 |
 | 2026-09-08 | **D87/D88 READ — the S19 seams** | `claude/capx-d87-d88-s19-read` | **Fable** | code | r#60 — a READ, not a repair; may close one or merge both |
+
+| 2026-09-08 | **D88 — FLEET ID UNIQUENESS + RE-MINT** | `claude/capx-d88-fleet-id-uniqueness` | **Opus** | neiso + code | r#61 — Q62 RULED fix first, flag now; issued FIRST in the close |
+| 2026-09-08 | **D87 — CCS CLEAN-TIER SEAM** | `claude/capx-d87-ccs-clean-tier-seam` | **Opus** | nyiso + code | r#61 — phase 0 now, edit/screen after D88 merges |
+| 2026-09-08 | **D83 — 2022 ADEQUACY BLOCK (re-emit)** | `claude/capx-d83-evolution-2022-adequacy` | **Opus** | pjm | r#61 — RE-EMITTED WHOLE; never dispatched at r#60 |
+| 2026-09-08 | **D89 — CAPX'S OWN 27 REDS (re-emit)** | `claude/capx-d89-d62-d74-reds` | **Opus** | code | r#61 — RE-EMITTED WHOLE; never dispatched at r#60 |
 
 ## 5. History (compacted)
 
