@@ -9676,3 +9676,387 @@ EXIT: docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md, one section per 
 chartering, include the scope paragraph the director would paste. Lead your close with the two
 recommendation lines and nothing else first. No src/ edit, no matrix touch, no registration.
 ```
+
+---
+
+## r#61 NOTE
+
+Four charters, issued 2026-09-08 at main `7486cb9b`, against ledger §0bf. **D88 IS THE ONE TO RUN
+FIRST** — it discharges owner ruling **Q62** and carries a flag on a live registered verdict.
+
+* **D88** (Q62) — the fleet-id uniqueness guard, the vintage-stamped re-mint, and the `neiso-t3`
+  provenance flag. Opus, `neiso` + `code`.
+* **D87** — the CCS clean-tier seam. Opus, `nyiso` + `code`. **Phase 0 NOW; edit and screen AFTER
+  D88 merges** — the STOP names an act, not a session.
+* **D83** — **RE-EMITTED WHOLE**, never dispatched at r#60. Owner ruling Q60. Opus, `pjm`.
+* **D89** — **RE-EMITTED WHOLE**, never dispatched at r#60. Owner ruling Q61. Opus, `code`.
+
+**Collision map — `ccs.py` and `evolve.py` are touched by three of the four, so each prompt states
+its own hunks.** D88 owns `ccs.py`'s conversion block (`:590-591`), `arrays.py:3651`, and
+`evolve.py`'s `_retrofitted_ids` / exempt-set lines. D87 owns `ccs.py:475-476` and the
+`evolve.py:664` threading. D83 owns the evolution-**ledger writer** (the adequacy block) and neither
+lane's hunks. D89 is disjoint from all three. **NEXT FREE LABEL: D90.**
+
+**Carried into every prompt (§0be.2(b)):** G-DRIFT's durable basis is the keeper bundle's recorded
+**cache key**, never `git diff <keeper git_sha> HEAD` — that sha is dead for every keeper predating
+the 2026-08-16 history rewrite.
+
+---
+
+## D88 — fleet ids are keys: a uniqueness guard, a vintage-stamped re-mint, and the `neiso-t3` flag (Opus, neiso + code) — RUN THIS FIRST
+
+```
+You are the D88 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso (for the screen) + code. Branch: claude/capx-d88-fleet-id-uniqueness,
+fresh off origin/main.
+Authority: OWNER RULING Q62 (2026-09-08, capx ledger §0bf.3(a)) -- "Fix first, flag the verdict now."
+Source of the scope: docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2, whose §2.6 scope
+paragraph this charter adopts. READ THAT DOCUMENT FIRST -- it did the census and it is the reason
+this lane exists.
+
+WHY THIS IS URGENT AND NOT BOOKKEEPING. A legacy representative (e.g. gas_cc_h_class_Central) is
+retrofitted to CCS but KEEPS its unit_id, and the fleet builder then RE-MINTS that same id for the
+next economic gas-CC build in the same zone. A census over 496 committed evolution_<year>.json
+ledgers found this firing in ALL NINE NEISO T3 golden variants, colliding 2032->2050 (bau-d65br from
+2037), and in ERCOT ff-t1f-d65br in 2030 (terminal year only, no screen reads it). The record shows
+it happening: in bau-prera-2026-08-31 the SAME id is logged as retrofitted in 2031, 2040, 2042 and
+2044 -- impossible for one unit, since a retrofit is irreversible (ccs.py:400) -- so by 2045 that
+fleet carries FOUR generators named gas_cc_h_class_Central.
+
+On a duplicate: retirements.py:3423's idx_of is LAST-WRITE-WINS, so a converted unit's pro-forma
+margin reads its unabated twin's dispatch inside the step-3 exit screen; one twin's exemption exempts
+both; RETIRING ONE TWIN DROPS BOTH from the fleet (a capacity leak); the loss_years exit clock is
+shared; the D57 sell-offer stack double-offers under one id. Backcast: NEVER (a backcast rebuilds its
+base fleet yearly and never enters evolve_fleet). Hindcast/crossover: cannot fire (the retrofit sits
+below the 2028 gate).
+
+WHAT IS NOT KNOWN, AND YOU MUST NOT PRETEND OTHERWISE: the SIZE AND DIRECTION of the decision delta
+are UNMEASURED. Only your screen can measure them. Do not assert a direction before you have it.
+
+TWO PARTS, ONE LANE, GUARD FIRST.
+
+(a) THE GUARD. In generators_to_fleet_arrays (src/market_sim/data/fleet/arrays.py:3651), raise
+    ValueError NAMING the duplicated ids when len(set(unit_ids)) != len(unit_ids). It changes no
+    decision and costs one set build per year.
+    ** PHASE 0, ZERO LP, BEFORE ANYTHING ELSE LANDS: ** prove the guard is SILENT on every ISO's
+    on-recipe `fleet_only` rebuild -- every backcast keeper and every T1-F / T1-H recipe (~90 s
+    each). If it fires anywhere you did not predict, STOP and report: that is a second population
+    the census did not reach (the read's §4 item 2 names this as an open question), and it changes
+    the lane.
+
+(b) THE RE-MINT. In apply_ccs_retrofit's conversion block (ccs.py:590-591), for a NON-CAMPD legacy
+    representative whose id equals f"gas_cc_{efficiency_bin}_{zone}" exactly, re-mint it as
+    f"gas_cc_ccs_{efficiency_bin}_{zone}_r{year}" and write the new id to the ledger row as an
+    ADDITIVE `to_unit_id` beside the existing `unit_id`. _retrofitted_ids / exit_exempt_unit_ids
+    (evolve.py:685, :757) carry the NEW id.
+    ** THE VINTAGE STAMP IS LOAD-BEARING AND THE OBVIOUS FORM IS WRONG. ** `gas_cc_ccs_{bin}_{zone}`
+    alone is INSUFFICIENT: the T3 record shows the same zone converting a second (2040), third and
+    fourth representative, and gas_cc_ccs is not aggregatable, so two converted representatives would
+    collide WITH EACH OTHER. The `_r{year}` suffix mirrors new_entry.py:648's {tech}_new_{year}_{seq}
+    -- deterministic, order-independent, and unique by construction once the guard holds (one id
+    converts at most once per year). CAMPD per-plant ids are UNTOUCHED (is_campd_bin passthrough).
+    ZERO config fields, ZERO constants (rules 21 [R-DOF] / 24 [R-REGISTRY]).
+
+NOT IN SCOPE, and the read gives the reason for each: adding gas_cc_ccs to _AGGREGATABLE_FUELS (it
+changes the LP column set by merging units with different online_year and ccs_capture_fraction
+provenance -- a behaviour change and a second mechanism in one lane); any consumer refactor; the I5
+forecast invariant's own keying (route it to the forecast desk, with your guard named as the fix).
+
+KEYS: no key moves -- ids are not hashed (scenarios.py:18691-18717) and SURFACE_MODULES excludes
+data/fleet. But BEHAVIOUR moves at UNCHANGED keys on the nine NEISO T3 variants from 2032 and on
+ERCOT d65br's 2030 FleetContext: that is the same-key invalidation class, so this lane OWES a
+cache-epoch entry naming them. Prove byte-identity on one non-colliding bundle at zero LP by
+replaying its ledger (NYISO d65br is the read's suggestion).
+
+SCREEN (rule 29 [R-SCREEN]) -- and ONE YEAR IS THE WRONG INSTRUMENT HERE, deliberately: the object
+only exists ACROSS years, so the screen is the CHEAPEST COLLIDING HORIZON. NEISO T3 bau-d65br recipe,
+2026-2040. CONTROL = the committed bundle under a G-DRIFT audit (rule 29(b) form 4) -- NO CONTROL
+SOLVE. G-DRIFT's basis is the bundle's RECORDED CACHE KEY, not `git diff <git_sha> HEAD`, which is
+dead for anything predating the 2026-08-16 history rewrite.
+STOP GATES, STRUCTURAL ONLY, pre-registered before the screen runs:
+  - the guard is SILENT in every year of the screen;
+  - 2026-2031 ledgers BYTE-IDENTICAL to the control;
+  - from the first colliding year the fleet carries NO duplicate id and the ccs_retrofits rows carry
+    distinct to_unit_ids;
+  - no NON-GAS ledger row moves in any year.
+The gate is STOP-ONLY: it may kill the arm, it may never promote it, and it is never read against a
+residual.
+
+(c) THE FLAG -- Q62's second half, IN THIS SAME SESSION. Add a ONE-LINE ADDITIVE provenance field to
+the neiso-t3 verdict record in frontend/data/forecast/ff-verdicts.json (the record at :4835-4843,
+keyed to neiso-2026-2050-t3-golden3-d60, cache key f04fd06348e1623d) saying the run carries known
+in-horizon unit_id collisions from 2032 and a re-score is pending, citing the design read.
+  ** ADDITIVE ONLY. NEVER a verdict letter, NEVER a score, NEVER a leg status, NEVER a removal. **
+  ff-verdicts.json is the COMMITTED FF-2D snapshot and `register_forecast_run.py --reindex` bakes it
+  into the generated namespace -- CONFIRM your added field survives a --reindex and does not change
+  any generated verdict; if it does not survive, STOP, do not force it, and report where the flag
+  belongs instead. THE RE-SCORE IS NOT YOURS: route it to the D63/D65-B batch on repaired code and
+  say so in the FINDING.
+
+RULE 31 [R-RETAIN]: gitignore the screen bundle family the moment it is written; DO NOT rm any solved
+bundle. Ask the promotion question explicitly in your close and state that the bundles are on local
+disk and will not survive the session.
+
+BOUNDARIES: you own ccs.py's CONVERSION block (:590-591), arrays.py:3651, and evolve.py's
+_retrofitted_ids / exempt-set lines. You do NOT touch ccs.py:475-476 or evolve.py:664 -- the
+concurrent D87 lane owns those. You do NOT touch the evolution-ledger adequacy-block writer -- the
+concurrent D83 lane owns that. If your work reaches either, STOP and report the overlap.
+
+EXIT: the guard + rename; a seam test (a legacy representative retrofitted then re-minted by later
+entry yields two DISTINCT ids and no raise; a CAMPD tranche keeps its id; a fleet with a forced
+duplicate raises); the cache-epoch entry naming the nine NEISO T3 variants and ERCOT d65br; the NEISO
+matrix shard's ccs_retrofit_screen cell (rule 28 [R-MECH-MATRIX] duty b); the ff-verdicts flag; and
+docs/handoffs/FINDING-capx-d88-2026-09-08.md leading with the phase-0 guard-silence result and then
+the screen's STOP table. Rule 27 [R-PUSH]: every file here is well over 300 lines -- edit locally,
+push exact on-disk bytes, blob-verify after every push.
+```
+
+---
+
+## D87 — the retrofit screen consumes the clean-tier seam (Opus, nyiso + code)
+
+```
+You are the D87 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: nyiso (for the screen) + code. Branch: claude/capx-d87-ccs-clean-tier-seam,
+fresh off origin/main.
+Source of the scope: docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §1, whose §1.6 scope
+paragraph this charter adopts. READ IT FIRST. Origin: SCN ruling S19 routed this seam to the capx
+desk; capx §0bd am.1 accepted it and §0bf chartered it.
+
+** THE STOP NAMES AN ACT, NOT A SESSION -- READ THIS BEFORE ANYTHING ELSE. **
+Your PHASE 0 IS ZERO-LP AND STARTS NOW. Only your EDIT to ccs.py / evolve.py and your SCREEN wait
+for the concurrent D88 lane to MERGE. Do not idle waiting for it; do the whole zero-LP half, push
+your PRECOMMIT, and then take the edit when D88 is on main. If D88 has already merged when you open,
+proceed straight through. The reason for the order is not politeness: D88 installs a duplicate-id
+GUARD, and your screen should run with it armed so that if folding the dual grows the NYISO retrofit
+set into a later re-mint, the SCREEN says so instead of a downstream scorer.
+
+THE OBJECT. The CCS retrofit screen prices each continuation's certificate through ONE resolver:
+
+    # ccs.py:472-476
+    attr_unabated = effective_eac_price_for_unit(config, "gas_cc",     old_er, year)
+    attr_post     = effective_eac_price_for_unit(config, "gas_cc_ccs", new_er, year)
+
+and that resolver folds TWO legs only -- the legacy per-fuel scalar and the exogenous premium
+(federal_ces.py:586-590, 627-629). The CES TARGET ROW's dual lives somewhere else entirely:
+clean_attribute_price_by_fuel, threaded from the prior year's clean_region_duals
+(runner.py:2331, :2351, :4724-4738) into evolve_fleet (evolve.py:118) -- and evolve_fleet NEVER hands
+it to the retrofit screen (evolve.py:664-674). So the premium reaches the screen and the target row
+cannot. Real at HEAD and unrepaired since SCN raised it: the only commit touching those files since
+is the PJM sector-gate merge, which does not touch the pricing lines.
+
+THE REPAIR, and it is one seam: thread clean_attribute_price_by_fuel from evolve_fleet
+(evolve.py:664) into apply_ccs_retrofit as a None-DEFAULT keyword, and fold
+clean_credit_for_zone(by_fuel, fuel, zone_idx) into BOTH attr_unabated and attr_post at
+ccs.py:475-476 THROUGH THE EXISTING max() -- the same composition retirements.py:3634 and
+new_entry.py:1202 already use. NO new field, NO new constant, NO RPS leg (rules 21/24). The
+None-default is what makes every family without a clean dual byte-identical: no row => by_fuel has no
+federal entry => max(x, 0) == x.
+
+PHASE 0 -- ZERO LP, STARTS IMMEDIATELY, AND IT MAY CHANGE THE LANE:
+ (i) Reconstruct the pre-solve delta for the NYISO CES-T80 2028-2030 cohort from its COMMITTED
+     duals.json -- dual x 0.95 per MWh into the uplift_window -- and state, per year, what the
+     retrofit set should move by and in which direction, before any solve.
+ (ii) Measure whether the MI clean row's dual is NON-ZERO in 2027-2029 in ANY committed MISO T1-F
+     bundle. The read could not answer this from the artifacts (its §4 item 1). If it IS non-zero,
+     the MISO T1-F family is in the blast radius and your cache-epoch entry must name it.
+ ** PHASE 0 STOP GATE: if the reconstructed delta is ZERO in every year of the target cohort, the
+ seam is INERT on the committed record and the lane ENDS THERE with that measurement as its result.
+ Do not spend an LP to confirm a zero you already computed. **
+
+SCREEN (rule 29): ONE year, NYISO 2030 -- the only ISO with retrofit headroom (campaign §6) and the
+ISO the seam was measured on. Name it in the PRECOMMIT before it runs. CONTROL = the committed
+scn-campaign-policy-2026-09-06/NYISO/CES-T80 bundle under a G-DRIFT audit -- NEVER a control solve.
+G-DRIFT's basis is the bundle's RECORDED CACHE KEY, not `git diff <git_sha> HEAD`, which is dead for
+anything predating the 2026-08-16 history rewrite.
+STOP GATES, STRUCTURAL ONLY:
+  - every CES-P* leg's retrofit ledger BYTE-IDENTICAL (no row => no federal entry => max(x,0) == x);
+  - the target leg's retrofit set moves in the DIRECTION and ORDER the phase-0 delta implies, and
+    stays within the 3 GW/yr/ISO cap;
+  - no non-CCS ledger row moves in 2026-2027;
+  - every backcast keeper and every ff-t1h hindcast byte-identical, BY CONSTRUCTION and BY TEST.
+STOP-ONLY: it may kill the arm, never promote it, and it is never read against a residual.
+
+RULE 31 [R-RETAIN]: gitignore the screen bundle family when written; DO NOT rm any solved bundle; ask
+the promotion question explicitly in your close and say the bundles will not survive the session.
+
+BOUNDARIES: you own ccs.py:475-476 and the evolve.py:664 threading. You do NOT touch ccs.py's
+conversion block (:590-591), arrays.py:3651, or evolve.py's _retrofitted_ids / exempt-set lines --
+D88 owns those. You do NOT touch the evolution-ledger adequacy-block writer -- D83 owns that. Not in
+scope: D77's routed parasitic-uplift item; the level of ccs_retrofit_vom_adder; anything under
+_AGGREGATABLE_FUELS (that is D88's, and it declined it).
+
+EXIT: the fix; a seam test in tests/unit/model/test_ccs_retrofit.py (a target-row config buys
+retrofit where a zero-premium config does not; a None family is byte-identical); the cache-epoch
+entry; the NYISO matrix shard's ccs_retrofit_screen and federal_ces cells (rule 28 duty b); and
+docs/handoffs/FINDING-capx-d87-2026-09-08.md that RE-BASES the campaign's target-row rows and ROUTES
+the six ISO policy FINDINGs' CES-T80 numbers to the SCN desk for re-statement -- route, do not
+re-state them yourself. Lead your close with the phase-0 delta table and the screen verdict. Rule 27
+[R-PUSH]: edit locally, push exact on-disk bytes, blob-verify after every push.
+```
+
+---
+
+## D83 — the missing 2022 adequacy block (Opus, pjm) — RE-EMITTED WHOLE
+
+```
+You are the D83 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: pjm. Branch: claude/capx-d83-evolution-2022-adequacy, fresh off origin/main.
+Authority: OWNER RULING Q60 (2026-09-07, capx ledger §0bd.3(c)) -- "D84 first, D83 after". D84 has
+landed AND been armed by the owner, so this lane is due.
+THIS CHARTER WAS ISSUED AT r#60 AND NEVER DISPATCHED (no branch, no commit, no document, confirmed on
+a second fetch). It is RE-EMITTED WHOLE and nothing about it is re-derived -- start from the top.
+This charter authorizes a DIAGNOSIS and, if the cause is a writer defect, its REPAIR. It does not
+authorize a mechanism, an arm, a default change, or a re-registration.
+
+THE OBJECT. evolution_2022.json carries NO adequacy block -- wind_cap_mw / solar_cap_mw /
+renewable_credit_applied / storage_firm_mw are absent -- while evolution_2021.json and
+evolution_2023..2025.json all carry it. Raised as D75 §6 item 3, re-raised as
+FINDING-capx-d75r-2026-09-06.md §6 item 1, and REPRODUCED ON A FRESH SOLVE at HEAD, so it is not a
+stale-bundle artifact. It has forced MANUAL POOL RECONSTRUCTION in two separate lanes -- D75-R's
+phase 0 and its full-window analyzer both had to rebuild what the ledger should have recorded. It is
+unexplained. Read both citations before touching anything.
+
+WHY IT MATTERS MORE THAN IT LOOKS. The adequacy block is how a later reader learns what the capacity
+screen actually tested in that year. A year missing it is a year whose screen is not reproducible
+from its own record -- the same class of defect capx D85/D85-R spent two lanes closing on the cache
+key, and D85-R's repair 2 (recording cache_key_path_roots + market_sim_data_root because "nothing in
+the record said so") is the precedent for how to think about it. A missing record is not cosmetic; it
+is a hole in provenance.
+
+PHASE 0 -- ZERO LP, AND IT MAY ANSWER THE WHOLE CARD.
+ (a) REPRODUCE IT AT YOUR OWN HEAD and say exactly how -- which invocation, which bundle, which file.
+     Confirm the 2021 and 2023-2025 blocks ARE present in the same run, so the comparison is within
+     one artifact family and not across vintages.
+ (b) FIND THE WRITER and read it. Where is the adequacy block emitted, under what condition, and what
+     is different about 2022? Candidates worth ruling in or out by reading, not by guessing: a
+     year-scoped branch; an early return; a delivery-year vs calendar-year mapping that has no 2022
+     entry; a data input absent for 2022 only; an exception swallowed. NAME the line.
+ (c) DECIDE WHICH OF TWO THINGS THIS IS, and say which before you repair anything:
+       (i)  a RECORDING defect -- the screen ran correctly and the writer failed to record it. Repair
+            is to the writer; NO decision changes, NO key moves, and you must demonstrate that.
+       (ii) a SUBSTANTIVE defect -- the screen genuinely had no adequacy operand in 2022, so the
+            year's capacity decisions were taken on a different basis than its neighbours. That is
+            NOT a record repair. STOP, write it up, and serve it as an owner card: it would mean
+            every committed run's 2022 evolution year is on a different footing, which reaches
+            D67/D57/D76 and is far beyond this charter.
+     ** THIS IS THE STOP GATE, and getting it wrong in the (i) direction is the expensive error: **
+     repairing a writer that was faithfully recording a real absence would paper over the substantive
+     defect. Prove (i) affirmatively -- show the operand existed at screen time -- do not infer it
+     from the repair looking small.
+
+IF IT IS (i): repair the writer, and prove the repair is inert where it must be.
+  - ZERO key moves. Run the committed-config key census before and after (the D84-ARM /
+    D76-ARM-B probes under scripts/probes/ are the pattern) and report the count both ways.
+  - No committed bundle is rewritten. Only runs solved after this lands carry the new block -- that
+    is D85-R repair 2's rule and it binds here identically.
+  - A test that fails if a year ever loses the block again. This defect survived two lanes noticing
+    it; the repair is not done until it cannot recur silently.
+
+G-DRIFT: do NOT use `git diff <keeper git_sha> HEAD`. That command is dead -- the PJM keeper records
+git_sha = 457ae04, which the 2026-08-16 history rewrite removed, and so does every keeper older than
+the rewrite. Anchor on the keeper bundle's RECORDED CACHE KEY instead, and audit the solve-path diff
+from a commit you can actually resolve. If you cannot establish drift at all, say so rather than
+asserting either way.
+
+RULE 31 [R-RETAIN]: if you solve anything, gitignore the bundle family the moment it is written and
+DO NOT rm it. Ask the promotion question explicitly in your close and state that any bundle is on
+local disk and will not survive the session.
+
+BOUNDARIES (three capx lanes are live and all three sit near capacity evolution): you own the
+evolution-LEDGER WRITER -- the adequacy block. You do NOT touch ccs.py's conversion block (:590-591),
+arrays.py:3651 or evolve.py's _retrofitted_ids / exempt-set lines (D88's), and you do NOT touch
+ccs.py:475-476 or evolve.py:664 (D87's). You do NOT touch
+tests/unit/model/test_d62_published_going_forward_bar.py or test_d74_no_default_cap_convention.py or
+the D62/D74 mechanism code (D89's). If your diagnosis reaches any of them, STOP and report the
+overlap rather than editing across the boundary.
+
+EXIT: docs/handoffs/FINDING-capx-d83-2026-09-08.md leading with (c)'s verdict -- (i) or (ii) -- and
+the named line from (b); the repair with its zero-key-move census if (i); the owner card if (ii); the
+recurrence test either way. Rule 27 [R-PUSH]: edit locally, push on-disk bytes, blob-verify any file
+over 300 lines.
+```
+
+---
+
+## D89 — the 27 reds in this desk's own D62 / D74 test files (Opus, code) — RE-EMITTED WHOLE
+
+```
+You are the D89 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d89-d62-d74-reds, fresh off origin/main.
+Authority: OWNER RULING Q61 (2026-09-08, capx ledger §0be.3(b)) -- "Charter D89 for capx's own 27;
+fix none of the other 28."
+THIS CHARTER WAS ISSUED AT r#60 AND NEVER DISPATCHED (no branch, no commit, no document, confirmed on
+a second fetch). It is RE-EMITTED WHOLE -- start from the top.
+ZERO LP EXPECTED. If you conclude a solve is required, STOP and say why before spending one.
+
+WHY YOU EXIST. capx D86, chartered to repair two guards, returned an inventory nobody asked for:
+running `tests/unit tests/scoring tests/regression`, 55 tests are RED on main (57 before its repair,
+55 after, 0 newly broken). TWENTY-SEVEN of them are in files named for THIS DESK'S OWN LANES:
+
+  tests/unit/model/test_d62_published_going_forward_bar.py   15
+  tests/unit/model/test_d74_no_default_cap_convention.py     12
+
+D62 (PJM's published gross ACR as the retirement screen's going-forward bar AND the sell-offer cap)
+and D74 (the Manual 18 "NA" no-default-cap price-taker convention) both LANDED at capx r#48, both
+built DEFAULT-OFF, and neither has been touched since. D74 additionally carries a SELF-EXECUTING
+DO-NOT-ARM -- and the evidence for that refusal is precisely these tests.
+
+THE QUESTION, AND IT IS THE WHOLE LANE. Diagnose BEFORE you repair, and say which of these it is:
+
+  (A) FIXTURE ROT. A later change (D67, D75-R, D76, D78, D84, the D79 solve surface, a registry
+      re-derivation, the conftest autouse fixture family) moved something these tests hard-code, and
+      the mechanisms themselves are fine. Repair is to the tests, FORWARD -- assert against the live
+      source of truth, never re-freeze today's literal, which is exactly the stale-label mistake D86
+      repaired in test_cache_solve_surface (see FINDING-capx-d86-2026-09-07.md §2 step 2 for the
+      form: assert against the live registry/ledger, and import rather than copy it).
+
+  (B) A REAL BEHAVIOUR CHANGE. D62's or D74's mechanism no longer does what it did at r#48. This is
+      the serious answer: D74's DO-NOT-ARM rests on measurements those tests encode, so if the
+      behaviour moved, the refusal may rest on a state that no longer exists. STOP at that point,
+      write it up, and serve it as an owner card -- do NOT silently update a test to match changed
+      behaviour, which would erase the evidence for a standing refusal.
+
+  (C) A MIX. Classify EVERY ONE of the 27 individually. "Mostly A" is not an answer; the ledger's
+      standard is ZERO UNCLASSIFIED (capx D85's census is the precedent -- 15 mismatches, all 15
+      derived to their recorded literal, zero unknown).
+
+METHOD:
+ 1. Reproduce the count at your own HEAD first and state the exact command. Numbers drift; D86's 55
+    was measured at ad78cc3e. If your count differs, YOUR count is the one you work from, and say so.
+    (§0be doctrine: A RED INVENTORY IS ONLY AS WIDE AS THE COMMAND THAT PRODUCED IT -- state yours.)
+ 2. Classify all 27 into A / B / C-per-test with the failing assertion and its cause named per row.
+    A table is the deliverable, one row per test.
+ 3. Repair only the A rows, forward. For each, say what live source the assertion now reads.
+ 4. For any B row: STOP the repair for that row, and write the owner card. Report it at full
+    magnitude -- what changed, when (bisect to a merge if you can do it cheaply), and what it does to
+    D74's DO-NOT-ARM and D62's landed state.
+ 5. When you are done, re-run the SAME wide command and report the new total. "Fixed N, newly broken
+    0" is the form D86 used and it is the form expected here.
+
+BOUNDARIES, all binding:
+  - FIX NONE OF THE OTHER 28. They belong to other desks: golden-manifest provenance 7, test_soundness
+    end-to-end 6, results/export 4, FF readiness battery 4, forecast parity 2 (MISO's miso-233 arms
+    three miso_seam_neighbour_* fields with no forecast_parity_registry declaration), caiso_st_gas_peak
+    1 (registry 1.166 vs artifact 1.154), capacity TestGetRPSTarget 1 (SPP now has an RPS floor),
+    registration-marker gate 1, gate-(a) 1, backcast artifacts 1. INVENTORY them in your FINDING with
+    the owning desk named -- reporting is this lane's job, editing is not. An all-55 sweep was offered
+    to the owner and marked NOT RECOMMENDED for exactly this reason (rule 25 [R-ISO-SCOPE], and the
+    §0bd cross-desk collision). NOTE: the gate-(a) red has since been repaired by another lane, so
+    your count may legitimately be lower -- report what you measure.
+  - DO NOT ARM D62 OR D74, or move any default. D74's DO-NOT-ARM stands until an owner says otherwise.
+  - THREE OTHER CAPX LANES ARE LIVE AND ALL SIT NEAR CAPACITY EVOLUTION. Do not touch ccs.py,
+    evolve.py, data/fleet/arrays.py or the evolution-ledger writer -- D88, D87 and D83 own those
+    hunks respectively. If your diagnosis reaches any of them, STOP and report the overlap.
+  - DO NOT weaken, skip, xfail or delete a test to make it green. That is forbidden outright
+    (CLAUDE.md's PR rules: never skip, disable or quarantine a test to get green). A test you cannot
+    repair is a finding, not a deletion.
+  - Rule 28 [R-MECH-MATRIX]: if any repair changes what a mechanism DOES rather than what a test
+    reads, that is a cell update in all seven shards and probably answer (B) -- see step 4.
+
+EXIT: docs/handoffs/FINDING-capx-d89-2026-09-08.md whose FIRST content is the 27-row classification
+table (test · failing assertion · A/B · cause · action), then the before/after wide-command counts,
+then the other-desk inventory with owners named. Lead your close with the table and the
+"fixed N, newly broken 0" line. ruff check + ruff format clean. Rule 27 [R-PUSH]: both test files are
+well over 300 lines -- edit locally, push exact on-disk bytes, blob-verify after every push.
+```
