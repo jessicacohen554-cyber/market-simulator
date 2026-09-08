@@ -1319,6 +1319,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off one cache entry. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "mustrun_layup_window_mask",
+    # ercot-256 measured lay-up window mask for the NET-LOAD DRAG floors
+    # (GATED default off): dropped from the hash at its default — the off path
+    # never reads the lay-up extract at all, so it is byte-identical by
+    # construction. An armed run masks floor hours (a different min_gen, so a
+    # different dispatch) and hashes distinctly, keeping the control/arm A/B
+    # off one cache entry. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "netload_drag_layup_window_mask",
     # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
     # dropped from the hash at its False default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path returns before
@@ -2073,6 +2081,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
+    # Added by ercot-256 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "netload_drag_layup_window_mask": "False",
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
@@ -2752,6 +2763,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
     "st_gas_mustrun_oom_level": "measured level over out-of-merit hours only",
     "mustrun_layup_window_mask": "measured lay-up windows mask the must-run floor",
+    "netload_drag_layup_window_mask": "measured lay-up windows mask the net-load drag floor",
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
     "chp_export_floor_measured": "measured steam-host export floor",
@@ -11044,6 +11056,78 @@ class ScenarioConfig:
     ct_drag_cap: float = 0.47  # 95th-pct evening CF (hottest ramp hours)
     ct_drag_ramp_start: int = 15  # ramp window start hour (inclusive, local std)
     ct_drag_ramp_end: int = 22  # ramp window end hour (exclusive, local std)
+
+    # MEASURED LAY-UP WINDOW MASK for the NET-LOAD DRAG floors
+    # (gas_st_netload_drag / ct_netload_drag) — ercot-256. The exact analogue
+    # of mustrun_layup_window_mask (miso-173) on the one floor family in this
+    # repo that never received the correction: nyiso-140 fixed the reliability
+    # floor (reliability_floor_plant_exclusions), nyiso-144 the NYISO
+    # commitment bridge, miso-170 the per-plant must-run MEMBERSHIP and
+    # miso-173 its WINDOW — the ERCOT net-load drag was left with none, and it
+    # is the ONLY mechanism forcing ERCOT ST_GAS in any scored year (the
+    # keeper's own D-2 rows).
+    #
+    # The defect it repairs. The drag's driver is the RUC commitment ERCOT
+    # actually makes, measured as a FLEET overnight capacity factor regressed
+    # on net-load (docs/ercot-st-gas-netload-drag-2026-06.md). The floor then
+    # applies that one fraction to EVERY non-peaker tranche's pmax, i.e. it
+    # asserts every gas-steam plant is equally committed. The meter says they
+    # are not, and the model's own outage pipeline already measures where the
+    # driver is ABSENT: the merit-order guard (scripts/lib/outage_detect.py)
+    # reclassifies a detected >= 5-day full stop as ECONOMIC LAY-UP when the
+    # unit's measured SRMC sat above the revealed clearing cost for >= 90 % of
+    # the window, and writes it to campd-unit-outages-layup[-<ISO>].csv ON THE
+    # EXPRESS CHARTER that the window stays OUT of the availability envelope
+    # ("an economically idle unit is AVAILABLE; the LP declines it on its own
+    # economics"). Without this mask the drag CONTRADICTS that adjudication:
+    # it holds the plant at min load inside the very windows the pipeline
+    # classified as not-operating (rule 17 [R-FLOOR-WINDOW] — "a floor binding
+    # in hours its own driver evidence says the class is offline is a bug by
+    # definition, whatever it does to the residual").
+    #
+    # Measured case (ercot-256 phase 0, zero LP): the ERCOT keeper's 2021 rung
+    # floors Lake Hubbard (3452) for 6,026 h and R W Miller (3628) for 6,423 h
+    # while their own meters read median 0.000 MW over those hours (88.8 % /
+    # 57.9 % of them at zero) — the keeper's own D-4 per-unit conduct FAILs,
+    # and the reason its 2021 ST_GAS C8 escalation cannot reach the grounded
+    # pass. Lake Hubbard produced ZERO in Jan/Feb/Mar 2021 (through Uri) and
+    # ran 1,924 of 8,760 h; the lay-up extract carries 272.8 unit-days of its
+    # unit 1 in that year. The same failure is live IN-SAMPLE on the same
+    # mechanism: Handley (3491) in 2024 (21.5 % of the drag's forced energy)
+    # and 2025 (27.0 %), and Cedar Bayou (3460) in 2025 (6.2 %).
+    #
+    # When True each floored plant-hour's clip basis becomes
+    # ``pmax x max(0, availability - layup_share(t))``: the plant-hour lay-up
+    # share from :func:`market_sim.data.outages.unit_layup_removed_fractions`
+    # (the SAME accumulator, unit->plant routing and capacity denominator as
+    # the unit outage overlay, so the two shares are additive by construction)
+    # is subtracted from the floor's eligible capacity. AVAILABILITY IS NOT
+    # TOUCHED — an economically idle unit stays fully available to the LP's own
+    # economics, to reserves and to the scarcity cushion; only the FORCING is
+    # confined to hours outside the plant's own measured lay-up windows. The
+    # curve (slope / intercept / cap, pooled or season-resolved), the class
+    # membership and the ramp window are all untouched; a masked hour loses its
+    # floor exactly as a measured-outage hour already does under the existing
+    # pmax x availability clip.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters — the windows, the per-unit shares
+    # and the 0.90 out-of-merit threshold all live in the frozen derive layer
+    # (rule 23 [R-FROZEN-DERIVE]); the extract is consumed, not re-derived.
+    # Rule 13 [R-MEASURED]: BACKCAST ONLY (mode-gated below and in the engine),
+    # exactly like the CAMPD outage windows the same detector produces; a
+    # FORECAST year keeps the un-masked floor, whose curve already regenerates
+    # from pooled CEMS history as each vintage lands. No outcome pinning: the
+    # mask can only REMOVE forcing the measured record says is spurious, never
+    # add or relocate any, and dispatch above the floor stays free.
+    # Rule 19 [R-ONE-MECH]: no new floor, no membership change and no second
+    # mechanism id — the existing drag's hour-eligibility is refined by the
+    # same measured-conduct family that identifies its window and level, so
+    # D-2/D-4 attribution is unchanged.
+    # Off by default (every existing keeper byte-identical); the extract is
+    # per-ISO by construction, so the mechanism self-scopes (rule 25
+    # [R-ISO-SCOPE]) — an ISO with no lay-up extract gets an empty dict and no
+    # effect.
+    netload_drag_layup_window_mask: bool = False
 
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated). In the missed tail hours the model offers online CT/peaker

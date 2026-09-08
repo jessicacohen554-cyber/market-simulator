@@ -40,6 +40,7 @@ def apply_netload_reliability_floor(
     ramp_window: tuple[int, int] | None = None,
     exclude_plant_codes: frozenset[int] = frozenset(),
     mech_id: int = MECH_CT_NETLOAD_DRAG,
+    layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -68,6 +69,17 @@ def apply_netload_reliability_floor(
     gas-steam boiler). Because both the trigger (net-load) and the magnitude
     (physical min-gen) are forward-derivable and condition-responsive, the
     mechanism is admissible in both backcast and forecast (CLAUDE.md #10/#11).
+
+    ``layup_removed`` (``config.netload_drag_layup_window_mask``, ercot-256) is
+    the measured ECONOMIC-LAY-UP share per ``(plant_code, plant_group)`` and
+    hour from :func:`market_sim.data.outages.unit_layup_removed_fractions`. When
+    supplied, the clip basis becomes ``pmax x max(0, availability -
+    layup_share)`` for a plant that carries a series — the hours the merit-order
+    guard adjudicated as not-operating lose their floor exactly as measured
+    OUTAGE hours already do under the plain ``pmax x availability`` clip.
+    Availability itself is never touched (an economically idle unit stays
+    available to the LP's own economics); only the FORCING is confined. ``None``
+    (or a plant with no series) is byte-identical to the un-masked clip.
 
     Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
     applied, ``False`` (byte-identical) when the class has no reliability units.
@@ -107,8 +119,22 @@ def apply_netload_reliability_floor(
     avail = fleet_arrays.availability
     for g in rows:
         # Never floor above the hour's available capacity, so the LP stays
-        # feasible (the drag can never manufacture unmet demand).
-        target = np.minimum(floor_frac * pmax[g], avail[g, :] * pmax[g])
+        # feasible (the drag can never manufacture unmet demand). Under the
+        # measured lay-up window mask (ercot-256) the eligible-capacity basis is
+        # additionally net of the plant's measured economic-lay-up share, so the
+        # floor cannot bind inside a window the model's own outage pipeline
+        # classified as not-operating (rule 17 [R-FLOOR-WINDOW]).
+        basis = avail[g, :]
+        if layup_removed:
+            lu = layup_removed.get(
+                (
+                    int(getattr(generators[g], "plant_code", 0) or 0),
+                    str(getattr(generators[g], "plant_group", "") or ""),
+                )
+            )
+            if lu is not None:
+                basis = np.maximum(0.0, basis - np.asarray(lu, dtype=float)[:hours])
+        target = np.minimum(floor_frac * pmax[g], basis * pmax[g])
         raised = fleet_arrays.min_gen[g, :] < target
         fleet_arrays.min_gen[g, :] = np.maximum(fleet_arrays.min_gen[g, :], target)
         mech[g, raised] = mech_id
@@ -186,6 +212,7 @@ def apply_gas_st_netload_drag_floor(
     generators: list[Generator],
     net_load_mw: np.ndarray,
     config: ScenarioConfig,
+    layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
 ) -> bool:
     """Impose the net-load-indexed ST_GAS reliability-drag min-gen floor.
 
@@ -263,6 +290,7 @@ def apply_gas_st_netload_drag_floor(
         ramp_window=None,
         exclude_plant_codes=ST_GAS_PEAKER_PLANTS,
         mech_id=MECH_ST_NETLOAD_DRAG,
+        layup_removed=layup_removed,
     )
 
 
@@ -271,6 +299,7 @@ def apply_ct_netload_drag_floor(
     generators: list[Generator],
     net_load_mw: np.ndarray,
     config: ScenarioConfig,
+    layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
 ) -> bool:
     """Impose the net-load-indexed CT_PEAKER reliability-drag min-gen floor.
 
@@ -326,7 +355,73 @@ def apply_ct_netload_drag_floor(
         cap=config.ct_drag_cap,
         ramp_window=(config.ct_drag_ramp_start, config.ct_drag_ramp_end),
         mech_id=MECH_CT_NETLOAD_DRAG,
+        layup_removed=layup_removed,
     )
+
+
+def _resolve_drag_layup_shares(
+    config: ScenarioConfig, iso: str, year: int, hours: int
+) -> dict[tuple[int, str], np.ndarray]:
+    """Measured economic-lay-up shares for the net-load drag floors, or ``{}``.
+
+    Gate for ``ScenarioConfig.netload_drag_layup_window_mask`` (ercot-256): the
+    mask is BACKCAST ONLY (rule 13 [R-MEASURED] — a same-year lay-up window has
+    no forward analogue, exactly like the CAMPD outage windows the same detector
+    produces), so a forecast run and an unarmed run both get an empty dict and
+    the drag floors are byte-identical to their pre-mask behaviour.
+
+    Every basis argument mirrors the availability overlay's own call, because
+    :func:`market_sim.data.outages.unit_layup_removed_fractions` guarantees that
+    a lay-up share and an outage share for the same plant are ADDITIVE only when
+    the two sit on the same unit->plant routing and capacity denominator. An ISO
+    or year with no lay-up extract yields ``{}`` (no effect).
+
+    Args:
+        config: The scenario config supplying the gate and the overlay bases.
+        iso: ISO code — selects ``campd-unit-outages-layup[-<ISO>].csv``.
+        year: The solve year, used when the config pins no ``weather_year``.
+        hours: The fleet's hour count, so the shares align with ``availability``.
+
+    Returns:
+        ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``,
+        empty when the mask is off, the run is not a backcast, or no extract
+        exists for this ISO/year.
+    """
+    if not getattr(config, "netload_drag_layup_window_mask", False):
+        return {}
+    if getattr(config, "mode", "forecast") != "backcast":
+        return {}
+    # Local import: data.outages imports the fleet package, so a module-level
+    # import here would close a cycle (the same reason the must-run seam's
+    # miso-173 mask imports locally).
+    from market_sim.data.outages import unit_layup_removed_fractions
+
+    shares = unit_layup_removed_fractions(
+        int(getattr(config, "weather_year", 0) or year),
+        hours,
+        getattr(config, "campd_bins_path", None) or _default_campd_bins_path(),
+        iso=(iso or "ERCOT").upper(),
+        cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
+        cc_nameplate_basis=getattr(config, "unit_outage_lp_capacity_basis", False),
+        st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
+        per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
+        extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+    )
+    logger.info(
+        "netload_drag_layup_window_mask ARMED (%s %d): %d plant-tranche lay-up "
+        "share series mask the net-load drag floors",
+        iso,
+        year,
+        len(shares),
+    )
+    return shares
+
+
+def _default_campd_bins_path() -> str:
+    """The CAMPD bins CSV the lay-up loader defaults to (no config override)."""
+    from market_sim.data.outages import BINS_CSV_DEFAULT
+
+    return str(BINS_CSV_DEFAULT)
 
 
 def apply_netload_drag_floors(
@@ -367,7 +462,12 @@ def apply_netload_drag_floors(
         - (solar_cap[:, None] * solar_cf).sum(axis=0)
         - (wind_cap[:, None] * wind_cf).sum(axis=0)
     )
-    if apply_gas_st_netload_drag_floor(fleet_arrays, generators, net_load, config):
+    layup_removed = _resolve_drag_layup_shares(
+        config, iso, year, int(fleet_arrays.availability.shape[1])
+    )
+    if apply_gas_st_netload_drag_floor(
+        fleet_arrays, generators, net_load, config, layup_removed
+    ):
         logger.info(
             "%s %d: ST_GAS net-load reliability-drag floor applied "
             "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f); net-load mean %.0f / "
@@ -380,7 +480,9 @@ def apply_netload_drag_floors(
             float(net_load.mean()),
             float(net_load.max()),
         )
-    if apply_ct_netload_drag_floor(fleet_arrays, generators, net_load, config):
+    if apply_ct_netload_drag_floor(
+        fleet_arrays, generators, net_load, config, layup_removed
+    ):
         logger.info(
             "%s %d: CT_PEAKER net-load reliability-drag floor applied "
             "(frac = clip(%.5f*netGW %+0.4f, 0, %.2f) in ramp %dh-%dh)",

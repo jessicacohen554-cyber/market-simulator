@@ -1,6 +1,6 @@
 {
   "iso": "ERCOT",
-  "keeper": "2026-09-07-ercot255-five-year-keeper",
+  "keeper": "2026-09-08-ercot256-drag-layup-mask",
   "standing_note": {
     "declared": "2026-08-26",
     "signature": "X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16) \u2014 card X item X-2, Door C of docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md \u00a73. Reporting surface only: the determination, the rubric constants (LEDGERABLE_CRITERIA, MAX_LEDGERED_CAVEATS, the v3.0 tier guard), the C3c ledger and every scored number are UNTOUCHED, and the misses keep reporting at full magnitude. NOT a signature of R-B's rubric half; Q-B FINAL (DECISION-CARD-ercot189) and R-A (DECISION-CARD-ercot193) are cited and unchanged.",
@@ -25,8 +25,8 @@
       {
         "role": "forward",
         "label": "FORWARD KEEPER (2024-2025) - the config the model uses going forward, forecast lane included; carries the ercot-255 ercot_zonal_spread_ep_referenced repair",
-        "run_id": "2026-09-07-ercot255-five-year-keeper",
-        "bundle": "results/calibration/ercot255_five_year_keeper",
+        "run_id": "2026-09-08-ercot256-drag-layup-mask",
+        "bundle": "results/calibration/ercot256_five_year_keeper",
         "years": [
           2024,
           2025
@@ -41,8 +41,8 @@
       {
         "role": "carveout-2023",
         "label": "2023 CARVE-OUT - the discrete 2023 config for the ECRS-era regime, UNCHANGED. Owner 2026-09-07: \"Leave the 2023 results be as they are under a different config \u2026 23 was an outlier year with weird market design.\" The year block and every hourly sidecar are copied byte-for-byte from ercot248_two_config_keeper (itself ercot236_k33_clip); ercot_zonal_spread_ep_referenced is ABSENT here.",
-        "run_id": "2026-09-07-ercot255-five-year-keeper",
-        "bundle": "results/calibration/ercot255_five_year_keeper",
+        "run_id": "2026-09-08-ercot256-drag-layup-mask",
+        "bundle": "results/calibration/ercot256_five_year_keeper",
         "years": [
           2023
         ],
@@ -56,8 +56,8 @@
       {
         "role": "carveout-validation-2021-2022",
         "label": "VALIDATION RUNGS (2021-2022) - the 2023 carve-out recipe replayed on the two held-out years, carrying the same ercot_zonal_spread_ep_referenced repair as the forward config. Rule 22 VALIDATION tier: iterable model-SELECTION evidence, NEVER a certified out-of-sample skill number.",
-        "run_id": "2026-09-07-ercot255-five-year-keeper",
-        "bundle": "results/calibration/ercot255_five_year_keeper",
+        "run_id": "2026-09-08-ercot256-drag-layup-mask",
+        "bundle": "results/calibration/ercot256_five_year_keeper",
         "years": [
           2021,
           2022
@@ -80,6 +80,16 @@
       "ruling": "Owner instruction 2026-09-07, verbatim: \"Leave the 2023 results be as they are under a different config. Promote the combined result of 2021-22-24-25 along with the 23 config as a single run on the dashboards. 23 was an outlier year with weird market design.\"",
       "mechanism": "ercot_zonal_spread_ep_referenced \u2014 armed in 2021/2022/2024/2025, ABSENT in 2023 per the instruction. Zero new data, zero free parameters, level-neutral to machine zero at its own seam. The 2023 asymmetry is immaterial BY MEASUREMENT: the mechanism's 2023 footprint is 0.0020 $/MMBtu (0.015 $/MWh at CC hr 7.29) because ep_basis(2023) = +0.0045, a property of the measured input rather than of the config.",
       "d5b_reverification": "Rule 22 D-5(b) PASSES: the new keeper re-verifies CALIBRATED on the train tier {2023, 2024, 2025} and on each designated span {2023} and {2024, 2025} \u2014 identical to the ercot-248 incumbent in all three. Committed artifacts only, no solve."
+    },
+    "ercot256_extension": {
+      "declared": "2026-09-08",
+      "ruling": "Owner instruction 2026-09-08, verbatim: \"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.\"",
+      "mechanism": "netload_drag_layup_window_mask, ARMED IN ALL FIVE YEARS. The ercot-255 recipe is otherwise unchanged: every year reproduces the exact config it solved under (2021/2022 the carve-out + EP reference, 2023 the carve-out with the EP reference ABSENT, 2024/2025 the forward config), verified field-by-field against the incumbent's three committed run_configs.",
+      "basis": "Rule 17 [R-FLOOR-WINDOW] and rule 1 [R-STRUCT], not a residual. The incumbent's own D-4 per-unit conduct rows convict st_netload_drag on plants whose meters read a median of 0.000 MW over the hours the floor forces them: Lake Hubbard (3452) and R W Miller (3628) in 2021, Handley (3491) in 2024 and 2025, Cedar Bayou (3460) in 2025. Lake Hubbard generated exactly ZERO in Jan/Feb/Mar 2021 and ran 1,924 of 8,760 h. The model's OWN merit-order guard had already measured the absence (272.8 unit-days of Lake Hubbard unit 1 reclassified as ECONOMIC LAY-UP), so the drag floor contradicted its own pipeline. The mask subtracts that measured share from the floor's clip basis and touches availability not at all. ZERO free parameters; BACKCAST ONLY at two layers.",
+      "effect": "C8 ST_GAS improves in EVERY year: 37.6->33.1 % (2021), 26.0->22.6 (2022), 17.4->13.4 (2023), 15.3->12.7 (2024), 20.1->16.6 (2025). Two of five D-4 conduct convictions CLEAR (3628 in 2021, 3460 in 2025). C3a/C3b improve in 2023 and 2025, are flat in 2024, and move <=0.2 pp / 0.001 on the held-out rungs. C3c is BIT-IDENTICAL in all five years (230/101/180/22/1 h). C1 and C2 all PASS in every year. Slack and dump 0.0000.",
+      "determination": "TRAIN TIER {2023, 2024, 2025} = CALIBRATED, identical to the ercot-255 incumbent it replaces \u2014 rule 22 D-5(b) re-verification PASSES (recomputed from committed artifacts, no solve). The 2022 rung reads CALIBRATED and the 2021 rung NOT-YET, both identical to the incumbent; rule 30(c) governs \u2014 a held-out year is REPORTED and never downgrades the ISO.",
+      "cost_reported": "The mask does NOT clear the 2021 C8 escalation \u2014 registered as prediction P6 in the PRECOMMIT BEFORE the solve and confirmed: ST_GAS stays above the 30 % cap at 33.1 % and plant 3452 stays convicted. The reason is a grain limit of the measured extract (UNIT_OUTAGE_MIN_DAYS = 5) and the split is exact on each plant's sub-5-day off-hour fraction: the two that clear sit at 7.4 % / 8.5 %, the three that do not at 28.5 % / 32.1 % / 41.4 %.",
+      "record": "docs/PRECOMMIT-ercot256-drag-layup-window-mask-2026-09-07.md, docs/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md"
     }
   }
 }

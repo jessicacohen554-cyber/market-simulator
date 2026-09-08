@@ -76,6 +76,18 @@ _IGNORE = {
     # loud non-fatal WARNING; here it must be ignored so build_kwargs (and the
     # --reuse-solved comparator that calls it) does not treat it as unmapped.
     "environment",
+    # Composite per-year recipe overlay (ercot-256). A composite bundle's
+    # meta.json carries ONE config — for ERCOT the forward one — while its
+    # carve-out years solved under a different recipe. This block records the
+    # EXACT per-year key overlay a replay needs, so the two-config provenance
+    # defect that blocked ercot-254 and ercot-255 (replay silently applying the
+    # forward config to a carve-out year) is at least VISIBLE in the artifact
+    # rather than absent from it. Pure provenance here: build_kwargs must not
+    # treat it as a solve_and_persist kwarg, exactly like "environment". A
+    # replay that wants a carve-out year still applies the overlay explicitly
+    # (--set), which is what the ercot-256 promotion did; consuming this block
+    # automatically is the FIX, and it is deliberately not attempted here.
+    "config_partition_overrides",
     "iso",
     "years",
     "hours",

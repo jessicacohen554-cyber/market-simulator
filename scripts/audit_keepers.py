@@ -495,6 +495,9 @@ E11_META_PROVENANCE = {
     "basis_sha",
     "highspy_version",
     "environment",
+    # ercot-256: the composite per-year recipe overlay (see the matching
+    # replay_keeper._IGNORE entry). Provenance, never a solve kwarg.
+    "config_partition_overrides",
     "iso",
     "years",
     "hours",
