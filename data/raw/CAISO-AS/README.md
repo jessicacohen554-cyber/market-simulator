@@ -182,8 +182,9 @@ before going wider.
 | series | 2020 | 2021 | 2022 | 2023–2025 |
 | --- | --- | --- | --- | --- |
 | `asreq` | full year (2019-12-27 → 2021-01-05) | **full year** (365/365) | 2022-01-15 → 2022-03-06 only | complete |
-| `asprc_{ru,rd,sr,nr}` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1** (2021-01-01 → 2021-04-01) | — | complete |
-| `asresults` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1** (2021-01-01 → 2021-04-01) | — | — |
+| `asprc_{ru,rd,sr,nr}` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1+Q2** (2021-01-01 → 2021-07-01) | — | complete |
+| `asresults` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | **Q1+Q2** (2021-01-01 → 2021-07-01) | — | — |
+| `load` (→ `CAISO_tac_load_hourly_<y>.csv`) | **full year, six-area** | **full year, six-area** | five-area | complete |
 
 Nothing in any of these extensions has been solved, folded, derived or scored.
 
@@ -210,7 +211,7 @@ Q1 (2,160 rows added, 0 removed, 0 changed in place), closing part of the caiso-
 — MWD was added to `postprocess_oasis_downloads.CAISO_TACS` on 2026-08-05 but only the
 2023–2025 aggregates were rebuilt, so 2019–2022 still carry five areas and
 `load_zonal_shares` re-apportions MWD's ~126–172 MW pro rata across the other four
-(rule 14 `[R-ACCURATE]`). **2019, 2020 and 2022 remain five-area and are still open.**
+(rule 14 `[R-ACCURATE]`). **2019 and 2022 remain five-area and are still open**; **2020 and 2021 are CLOSED full-year six-area by the Q2-2021 lane (caiso-264)** in the section below, which re-fetched full-year load for both with `--force`.
 
 **No LMPs accompany this intake, and none can.** The GroupZip boundary was
 **re-measured in this session** and is unchanged at **2021-04-27** (`DAM_LMP_GRP` v12:
@@ -221,3 +222,43 @@ per-node `SingleZip` endpoints. Details: `data/raw/lmp-data/CAISO/README.md`.
 Scope note as in the Q2-2020 section: intake only. Nothing here was solved, folded into
 a clean datatype, derived or scored (rule 22 `[R-HOLDOUT]` — what is held out is the
 score, never the data).
+
+## Q2-2021 extension (caiso-264, 2026-09-07)
+
+Fetched 2026-09-07 by `scripts/data/fetch_caiso_oasis.py --datasets asprc_ru asprc_rd
+asprc_sr asprc_nr asresults load --years 2021 --start-date 2021-04-01 --end-date
+2021-07-01`, plus the `--start-date 2021-03-31 --end-date 2021-04-01` head window the DST
+note above requires (2021-04-01 came back HE2–HE24; verified missing, then closed).
+Coverage **verified complete: 2,184 of 2,184 (day, hour) pairs** — 91 days × 24 h — for
+`asresults` and all four `asprc_*` products. `asreq` already carried 2021 in a contiguous
+chain and was not re-fetched.
+
+**Why this quarter, and why the AS reports go wider than the prices.** The owner's card was
+CAISO 2021 April → end of June. The OASIS **GroupZip** LMP boundary is **2021-04-27**
+(§ `data/raw/lmp-data/CAISO/README.md`), so 2021-04-01..04-26 has **no obtainable price** —
+but the AS reports and `SLD_FCST` carry no such window, exactly as the Q2-2020 section
+above found. So the price series starts 04-27 while **AS and load cover the full quarter**:
+the gap is price-only. Backfill scoping for the missing 26 days (all candidates refused or
+dead-ended):
+`docs/handoffs/FINDING-caiso-2021-price-boundary-backfill-2026-09-07.md` §4.
+
+**MWD-TAC seam closed for 2020 AND 2021 (same session).** `CAISO_TACS` gained `MWD-TAC` on
+2026-08-05 (caiso-175, a rule 14 `[R-ACCURATE]` fix — a measured area replacing a pro-rata
+re-apportionment of it), but the committed `CAISO_tac_load_hourly_{2020,2021}.csv` predate
+that change and carried five areas. Re-folding a single quarter would have added MWD **for
+that quarter only** — 2,208 h against the other areas' 8,760 — and `load_zonal_shares`
+NORMALISES the component TACs to 1.0, so a ragged sixth area is a within-year discontinuity
+in the shares, not merely a missing column. Closed by re-fetching **full-year** load for
+both years with `--force` (required: the coverage check reads one reference series, so a
+newly-kept series can never be back-filled without it). Both aggregates are now **uniform
+six-area full-year** (2020: 8,784 h × 6 = 52,704 rows; 2021: 8,760 × 6 = 52,560), and the
+change is a **pure addition** — every pre-existing row byte-identical, 0 mismatches, 0 rows
+dropped, verified against `HEAD` before commit.
+
+**Known inconsistency, left for the owner (not silently resolved).** `postprocess_oasis_
+downloads.py --stage-dir` stages the raw `load_*.csv` windows OUT of the tree by design
+(the aggregate is the kept artifact), but the Q2-2020 intake **committed** its five
+`load_ALL_2020*.csv` windows, so a postprocess run in any lane now shows them as deletions.
+They were restored here rather than deleted in this lane's diff. Either the windows should
+be committed for every year or for none; the `asprc_*` / `asresults_*` windows are a
+different case and are correctly committed, having no aggregate.
