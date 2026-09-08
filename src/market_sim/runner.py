@@ -197,6 +197,7 @@ from market_sim.pipeline import (
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    resolve_hydro_period_hours,
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
@@ -235,48 +236,6 @@ logger = logging.getLogger(__name__)
 # is still evolved across them from the last solved year's drivers so capacity
 # outcomes on the far side are reachable, but no dispatch is produced.
 HINDCAST_BRIDGE_YEARS = frozenset({2022, 2026})
-
-
-def _resolve_hydro_period_hours(
-    iso: str, dispatch_fleet: list, hydro_gen_idx, config: ScenarioConfig
-):
-    """Return the per-plant hydro budget period in hours, or ``UNSET``.
-
-    Maps :data:`~market_sim.config.constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`
-    onto this year's hydro generators, in the same order as
-    ``hydro_monthly_energy``'s rows (``hydro_gen_idx`` indexes ``dispatch_fleet``,
-    where the hydro units are appended as one contiguous block).
-
-    Returns ``UNSET`` -- which :meth:`DispatchSpec.to_dispatch_kwargs` omits from
-    the mapping entirely -- whenever the mechanism is off, the ISO has no
-    registry entry, or no hydro generator matches one. That is what keeps every
-    unarmed run's dispatch-kwargs key set, and therefore its LP, byte-identical.
-
-    Args:
-        iso: ISO code.
-        dispatch_fleet: This year's LP-ready generator list.
-        hydro_gen_idx: Indices of the hydro generators within ``dispatch_fleet``.
-        config: Scenario config carrying the gating flag.
-
-    Returns:
-        An ``(n_hydro,)`` integer array of period lengths in hours, or ``UNSET``.
-    """
-    if not getattr(config, "hydro_budget_period_by_instrument", False):
-        return UNSET
-    if hydro_gen_idx is None or not len(hydro_gen_idx):
-        return UNSET
-    from market_sim.data.hydro import hydro_budget_period_hours
-
-    codes = [int(getattr(dispatch_fleet[i], "plant_code", 0)) for i in hydro_gen_idx]
-    periods = hydro_budget_period_hours(iso, codes, config)
-    if periods is None:
-        return UNSET
-    logger.info(
-        "%s: hydro budget periods from governing instrument — %s",
-        iso,
-        {int(p): int((periods == p).sum()) for p in np.unique(periods)},
-    )
-    return periods
 
 
 def is_hindcast_bridge_year(
@@ -3521,7 +3480,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # instrument (nyiso-220). UNSET unless the mechanism is armed
                 # AND this ISO has registry entries, so every other run's
                 # dispatch-kwargs key set is unchanged.
-                hydro_period_hours=_resolve_hydro_period_hours(
+                hydro_period_hours=resolve_hydro_period_hours(
                     iso, dispatch_fleet, hydro_gen_idx, config
                 ),
                 T=config.hours,

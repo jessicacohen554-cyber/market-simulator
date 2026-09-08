@@ -3707,6 +3707,7 @@ def solve_and_persist(
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
+    hydro_budget_period_by_instrument: bool = False,
     hydro_forecast_budget: bool = False,
     hydro_year: str = "normal",
     interchange_shaping: bool = False,
@@ -4410,6 +4411,15 @@ def solve_and_persist(
             # window-grain nuclear overlay the LP solved with.
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_nuclear_unit_availability=True
+            )
+        if hydro_budget_period_by_instrument:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # instrument-derived hydro budget periods the LP solved with
+            # (nyiso-220). Without this the recorded config says False while the
+            # LP carried the shortened-period rows — a rule 24 [R-REGISTRY]
+            # reproducibility gap, caught during the nyiso-220 screen.
+            recorded_cfg = recorded_cfg.with_overrides(
+                hydro_budget_period_by_instrument=True
             )
         if nuclear_unit_availability:
             # Mirror run_year's with_overrides so run_config.json records the
@@ -5547,6 +5557,7 @@ def solve_and_persist(
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
+            hydro_budget_period_by_instrument=hydro_budget_period_by_instrument,
             hydro_forecast_budget=hydro_forecast_budget,
             hydro_year=hydro_year,
             interchange_shaping=interchange_shaping,
@@ -6495,6 +6506,7 @@ def solve_and_persist(
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
+        "hydro_budget_period_by_instrument": hydro_budget_period_by_instrument,
         "hydro_forecast_budget": hydro_forecast_budget,
         "hydro_year": hydro_year,
         "interchange_shaping": interchange_shaping,
@@ -11108,6 +11120,24 @@ def main() -> None:
         "--hydro-backfill-year, which supplies the per-plant coverage.",
     )
     parser.add_argument(
+        "--hydro-budget-period-by-instrument",
+        action="store_true",
+        help="Shorten the conventional-hydro energy-budget period, PER PLANT, "
+        "to the period that project's own governing instrument -- or, where "
+        "the instrument states none, its measured pondage -- permits energy to "
+        "be reallocated over (registry "
+        "constants.HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT, which carries every "
+        "entry's citation). A plant absent from that registry keeps the "
+        "calendar month, so this is a strict opt-in refinement and a "
+        "byte-identical no-op for every ISO with no entry. NYISO: Robert Moses "
+        "St. Lawrence 168 h (stated in words by the IJC peaking-and-ponding "
+        "directive) and Robert Moses Niagara 24 h (derived -- its instruments "
+        "state no conservation period and its measured pondage is 0.244 h, "
+        "i.e. use it or lose it). Reconciled with --hydro-dispatch-envelope "
+        "on disjoint windows (rule 19), never stacked. Off (default) changes "
+        "no existing run. See nyiso-220.",
+    )
+    parser.add_argument(
         "--hydro-forecast-budget",
         action="store_true",
         help="Forward analogue of --hydro-eia930-monthly: set the "
@@ -13423,6 +13453,7 @@ def main() -> None:
         ),
         hydro_backfill_year=args.hydro_backfill_year,
         hydro_eia930_monthly=args.hydro_eia930_monthly,
+        hydro_budget_period_by_instrument=args.hydro_budget_period_by_instrument,
         hydro_forecast_budget=args.hydro_forecast_budget,
         hydro_year=args.hydro_year,
         interchange_shaping=args.interchange_shaping,

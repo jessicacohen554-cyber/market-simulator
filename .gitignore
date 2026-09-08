@@ -1477,3 +1477,4 @@ results/capx-d87-screen/
 results/calibration/spp50_rebaseline/
 # nyiso-220 screen bundles (rule 29(c): must not reach main; rule 31: NOT deleted)
 results/calibration/nyiso220_screen*/
+results/calibration/nyiso220_arm*/
