@@ -749,6 +749,9 @@ results/calibration/ercot255_keeper_*/
 # what discharges that duty: these stay on local disk until the OWNER has ruled
 # on promotion. Every number the session cites lives in the PRECOMMIT/FINDING.
 results/calibration/pjm174_*/
+# pjm-174/175 full-span promotion candidate. Gitignored per rule 29(c) so it can never
+# reach main; rule 31 [R-RETAIN] forbids deleting it before the owner rules on promotion.
+results/calibration/pjm175_*/
 # nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
 # (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
 # a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
