@@ -217,3 +217,75 @@ post-rewrite commit dated **2026-09-06**, which is the 2026-08-16 history rewrit
 nothing by itself.** It is where an A-REFUTED successor would have started and where a future
 vintage-identification session still starts.
 
+## 7. **THE 2024 SCREEN — one gate FAILED, was published first, was repaired STRICTER, and all four then cleared**
+
+**Screen year 2024**, named by `argmax_year L` on the mechanism's own re-measured footprint (§5),
+never on a residual. Control = the keeper's **committed** bundle (form 4). **The screen is STOP-only:
+it killed nothing, and it promoted nothing.**
+
+### 7a. **`S-3(b)` FAILED, and the failure is mine**
+
+`S-3(b)` demanded the arm's `scenario_config` be *identical to the keeper's on every field*. It failed
+on **four**: `gas_price_override` 2.54 → **2.19**, `weather_year` 2023 → **2024**, and
+`netload_drag_layup_window_mask` / `pjm_thermal_accreditation_vintage` absent → **false**.
+
+**The gate was UNSATISFIABLE as written.** `run_config.json` carries **one** `scenario_config` and
+`pipeline/backcast_config.py::backcast_config` builds it **per year**, so a `--year 2023 2024 2025`
+bundle records **2023's** and a `--years 2024` replay records **2024's**: two of the four fields cannot
+match for **any** arm, including one with no delta at all. The other two are **new-field defaults** —
+the absent behaviour the keeper solved with — both already **MEASURED or classified INERT for MISO
+backcast** by miso-244, and both landed **before** `a667073f`, inside that all-INERT audit.
+
+**`S-1`, `S-2` and `S-3(a)` compared the RIGHT objects and were unaffected** (both bundles' *year-2024
+solve outputs*, and the derive's own table). Published in the pushed addendum **before** the repair's
+numbers existed, so the repair could not launder them:
+
+| gate | bar | **measured** | |
+|---|---|---:|---|
+| **S-1** `Δ mean net import` | `0 ≤ Δ ≤ 40 MW` | **+0.039378 MW** | **PASS** |
+| **S-2** hours changed > 1 MW | ≤ 860 | **288** (3.29 % of the year) | **PASS** |
+| **S-3(a)** derive reproduces the solved table, 192 entries | 0.00 | **0.0** | **PASS** |
+
+**The repair, `S-3(b′)`, declared before its numbers existed and NOT a loosened bar:** every field on
+which the arm differs from the keeper must fall into one of **two closed, MEASURED classes** —
+**(P)** per-year, meaning the keeper's own recipe reproduces *both* recorded values, or **(N)** a
+new-field default that is absent from the keeper, equal to the dataclass default, and on a **closed
+two-field list** each carrying miso-244's own inert finding. **Any field in neither STOPS the arm.**
+It **PASSES with zero unexplained fields**, and class (P) is exact:
+
+| field | keeper | arm | class | measured |
+|---|---:|---:|---|---|
+| `gas_price_override` | 2.54 | 2.19 | **P** | `backcast_config(2023)` = **2.54**, `(2024)` = **2.19** (measured Henry Hub actuals) |
+| `weather_year` | 2023 | 2024 | **P** | `backcast_config(2023)` = **2023**, `(2024)` = **2024** |
+| `netload_drag_layup_window_mask` | *absent* | false | **N** | default `False`; `_resolve_drag_layup_shares(…, "MISO", y, 8760)` **len 0** all years |
+| `pjm_thermal_accreditation_vintage` | *absent* | false | **N** | default `False`; capacity-evolution path a `mode="backcast"` run never enters |
+
+**A CONTROL SOLVE WAS AVAILABLE AND WAS NOT SPENT, and the addendum said so rather than leaving it
+unsaid**: rule 29(b) earns one only on a **LIVE** hunk and this session's G-DRIFT is empty, the two new
+fields are already **measured** inert rather than classified from their gate, and `S-3(b′)` closes the
+enumeration at zero LP. The addendum also fixed, in advance, that **if the enumeration had not closed,
+the control solve was the next step and the arm stopped until it was spent.**
+
+### 7b. `S-4` — **zero collateral flips**
+
+`scripts/screen_collateral_gate.py --years 2024`, bench held fixed at the keeper's committed parts:
+**`[PASS] G-4 no collateral flip (0 flips)`**. Two rows reported and gated in neither direction: the
+`da_diagnostic` `price_mean` is **SKIPPED on both sides**, and **governance is not scorable at a
+screen** (a screen bundle carries no attestation) — reported as such, never as a flip.
+
+### 7c. **WHAT THE SCREEN ACTUALLY MEASURED, and it cost me a prediction**
+
+The LP's mean response is **+0.039 MW against a pre-solve `Δq̂` of +3.682 MW — 1.1 % of it.** The
+**sign is the one the arithmetic requires** and the **size is two orders of magnitude below it**. That
+is exactly what miso-244 §0e predicted when it measured the moving band to be the **marginal
+price-setter in 82 of its 86 hours** (a marginal band that moves takes the price with it, so a
+footprint frozen at the committed price overstates the LP's response). **The screen's lower bound was
+set at `0` rather than at `Δq̂` for precisely this reason, and that looseness was declared in advance
+rather than discovered here.**
+
+Reported beside the gates and gated in neither direction: `max |Δ|` = **375.000 MW**, **exactly one
+South band step** (`3000/8`) — the correction's own quantum and nothing else — spread over **151 hours
+positive / 137 negative** for a net **+344.951 MWh** across the year. **288 changed hours against an
+86-hour pre-solve footprint** is the LP re-optimising around the moved band, well inside the 860 bar,
+and it is reported at full magnitude rather than presented as a match.
+
