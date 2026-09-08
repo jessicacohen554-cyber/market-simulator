@@ -51,7 +51,7 @@ FIELD = "capacity_going_forward_bar_published_by_iso"
 SCREENED_FUELS = tuple(_THERMAL_FOM)
 
 # The raw source the two DATA-TIER classes below ultimately read: PJM's own
-# published Manual 18 §5.4.8.4(B) table, tracked at 2.5 KB. ``requires_raw``
+# published Manual 18 §5.4.8.4(B) table, tracked in the repo. ``requires_raw``
 # marks them ``fulldata`` (so the fast lane deselects them) AND skips them when
 # that CSV is genuinely absent — the repo's standing idiom for a raw dependency
 # (tests/helpers/base.py). The bare ``fulldata`` marker they carried before was
