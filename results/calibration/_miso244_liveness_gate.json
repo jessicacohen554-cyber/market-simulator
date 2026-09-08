@@ -1,0 +1,183 @@
+{
+ "probe": "miso-244 L' \u2014 the pre-registered liveness gate, both external buses",
+ "prereg": "results/calibration/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md \u00a73",
+ "addendum": "results/calibration/ADDENDUM-miso244-the-verdict-is-not-a-tie-and-my-liveness-gate-named-the-wrong-bus-2026-09-08.md \u00a70c",
+ "keeper": "2026-09-07-miso-243-spp-pairing",
+ "zero_lp": true,
+ "read_only": true,
+ "stop_only": true,
+ "basis": "model basis = the keeper's COMMITTED P1 bus price (hourly/system_<year>.parquet); ladders = committed incumbent vs HEAD-derived. Footprint measures only \u2014 zero scored criterion, zero band comparison, zero residual.",
+ "bars": {
+  "L_bar": 0.001,
+  "dq_hat_bar_mw": 5.0,
+  "south_step_mw": 375.0
+ },
+ "gates": {
+  "G_MOVE": {
+   "detail": {
+    "2023": {
+     "moved": [
+      {
+       "side": "export",
+       "band": 4,
+       "committed": 27.69,
+       "head": 27.7
+      }
+     ],
+     "expected": [
+      {
+       "side": "export",
+       "band": 4,
+       "committed": 27.69,
+       "head": 27.7
+      }
+     ],
+     "PASS": true
+    },
+    "2024": {
+     "moved": [
+      {
+       "side": "export",
+       "band": 5,
+       "committed": 23.77,
+       "head": 23.76
+      }
+     ],
+     "expected": [
+      {
+       "side": "export",
+       "band": 5,
+       "committed": 23.77,
+       "head": 23.76
+      }
+     ],
+     "PASS": true
+    },
+    "2025": {
+     "moved": [],
+     "expected": [],
+     "PASS": true
+    }
+   },
+   "PASS": true
+  },
+  "G_BUS": {
+   "detail": {
+    "2023": {
+     "MISO_external_South": {
+      "rows": 8760,
+      "PASS": true
+     },
+     "MISO_external": {
+      "rows": 8760,
+      "PASS": true
+     }
+    },
+    "2024": {
+     "MISO_external_South": {
+      "rows": 8760,
+      "PASS": true
+     },
+     "MISO_external": {
+      "rows": 8760,
+      "PASS": true
+     }
+    },
+    "2025": {
+     "MISO_external_South": {
+      "rows": 8760,
+      "PASS": true
+     },
+     "MISO_external": {
+      "rows": 8760,
+      "PASS": true
+     }
+    }
+   },
+   "PASS": true
+  },
+  "L_prime": {
+   "detail": {
+    "MISO_external_South": {
+     "2023": {
+      "L_share_of_hours_with_changed_band_counts": 0.0,
+      "hours_changed": 0,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": 0.0,
+      "dq_hat_mw": 0.0,
+      "price_min": 19.5425,
+      "price_max": 77.7692,
+      "price_mean": 34.2779
+     },
+     "2024": {
+      "L_share_of_hours_with_changed_band_counts": 0.00981735,
+      "hours_changed": 86,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": -0.00981735,
+      "dq_hat_mw": 3.681507,
+      "price_min": 17.2615,
+      "price_max": 500.0,
+      "price_mean": 33.1839
+     },
+     "2025": {
+      "L_share_of_hours_with_changed_band_counts": 0.0,
+      "hours_changed": 0,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": 0.0,
+      "dq_hat_mw": 0.0,
+      "price_min": 25.9724,
+      "price_max": 480.7999,
+      "price_mean": 43.7058
+     }
+    },
+    "MISO_external": {
+     "2023": {
+      "L_share_of_hours_with_changed_band_counts": 0.00011416,
+      "hours_changed": 1,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": 0.00011416,
+      "dq_hat_mw": -0.042808,
+      "price_min": 15.7182,
+      "price_max": 77.7692,
+      "price_mean": 34.3415
+     },
+     "2024": {
+      "L_share_of_hours_with_changed_band_counts": 0.00422374,
+      "hours_changed": 37,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": -0.00422374,
+      "dq_hat_mw": 1.583904,
+      "price_min": 14.3258,
+      "price_max": 500.0,
+      "price_mean": 32.2033
+     },
+     "2025": {
+      "L_share_of_hours_with_changed_band_counts": 0.0,
+      "hours_changed": 0,
+      "hours": 8760,
+      "d_mean_n_import": 0.0,
+      "d_mean_n_export": 0.0,
+      "dq_hat_mw": 0.0,
+      "price_min": 22.4713,
+      "price_max": 480.7999,
+      "price_mean": 41.2409
+     }
+    }
+   },
+   "max_L": 0.00981735,
+   "max_abs_dq_hat_mw": 3.681507,
+   "INERT": false,
+   "screen_authorized": true,
+   "rule": "INERT (and NO screen solve authorized) iff max_bus max_year L <= 0.001 AND max_bus max_year |dq_hat| <= 5.0 MW (PREREG \u00a73 as repaired by ADDENDUM \u00a70c; bars unchanged, maximum over both buses)",
+   "SCREEN_YEAR": 2024
+  }
+ },
+ "reported": {},
+ "FAILED_LEGS": [],
+ "ALL_GATED_LEGS_PASS": true
+}

@@ -29,6 +29,30 @@ from market_sim.model.transmission import (
 
 T = 48  # trivial clock first — the injector is hour-constant per band
 
+#: The THREE entries where the committed ``MISO_SEAM_LADDER_BY_YEAR`` does NOT
+#: reproduce its own ``derive()`` at HEAD, keyed ``(year, seam, side, band)``
+#: with ``(committed, derived)`` — measured and diagnosed by miso-244
+#: (``results/calibration/_miso244_incumbent_ladder_cent_phase0.json``;
+#: ``FINDING-miso244-the-cent-is-real-drift-and-the-re-derive-is-refused-2026-09-08.md``).
+#:
+#: They are NOT a tolerance.  Each is pinned at BOTH exact values so the known
+#: gap can neither grow, move, nor multiply unseen, and every other entry is
+#: held to the half-cent bar.  Reported first by miso-243 as per-seam maxima
+#: (PJM 2023 / South 2023 / South 2024, each exactly ``NO_WASH_EPS``); located
+#: to the band by miso-244, which REFUSED the re-derive because the cause is
+#: unattributed (rule 23 ``[R-FROZEN-DERIVE]`` requires a cited cause, and
+#: re-deriving first would erase the only evidence of the drift).
+#:
+#: WHEN THE TABLE IS RECONCILED, DELETE these entries (rule 26 ``[R-DELETE]``).
+#: Never widen the tolerance to absorb them.
+_MISO244_KNOWN_LADDER_DIVERGENCES: dict[
+    tuple[int, str, str, int], tuple[float, float]
+] = {
+    (2023, "PJM", "import", 5): (27.86, 27.87),
+    (2023, "South", "export", 4): (27.69, 27.70),
+    (2024, "South", "export", 5): (23.77, 23.76),
+}
+
 
 class TestLadderRegistry(unittest.TestCase):
     """The measured ladder registry is complete, ordered, and wash-free."""
@@ -78,6 +102,95 @@ class TestLadderRegistry(unittest.TestCase):
                     min(sides["import"]),
                     msg=f"{year} {seam} wash ordering violated",
                 )
+
+    def test_incumbent_registry_reproduces_the_frozen_derivation(self):
+        """Rule 23 ``[R-FROZEN-DERIVE]``: the committed per-year ladder IS the
+        output of its own derive, except at three pinned, known entries.
+
+        THE GAP THIS CLOSES (miso-244).  Until 2026-09-08 this table was the
+        only MISO seam ladder with no test that re-ran ``derive()`` and
+        compared — the registry carried shape, monotonicity, no-wash ordering
+        and one spot value, while the reproduce-the-derivation pin beside it
+        covers the SPP HOURLY offsets alone.  A divergence between the
+        committed table and its own estimator could therefore sit unseen, and
+        one did: miso-243 reported it as per-seam maxima and could not fix it
+        (a different object, outside that session's queue item).
+
+        WHAT IS PINNED.  All 192 entries reproduce at ``atol=0.005`` — a half
+        cent, the SPP-hourly pin's own bar — EXCEPT the three in
+        :data:`_MISO244_KNOWN_LADDER_DIVERGENCES`, which are pinned HARDER,
+        both sides at their exact 2-dp values.
+
+        WHY THE TABLE IS NOT SIMPLY RE-DERIVED.  miso-244 measured the gap and
+        REFUSED the re-derive on governance: it is not a rounding tie
+        (``t_max`` 0.0049998 against a 1e-4 bar) and not a no-wash clamp (none
+        fires in any year), and its CAUSE is unattributed — the three entries
+        are mutually inconsistent under any single quantile convention in
+        numpy's ``h = q(n-1)`` family, so the SAMPLE moved rather than the
+        estimator.  Rule 23 requires a re-derive commit to cite its cause;
+        there is none to cite yet, and re-deriving first would erase the only
+        evidence of the drift.
+
+        WHEN THE TABLE IS RECONCILED, DELETE those entries (rule 26
+        ``[R-DELETE]``).  **Never widen ``atol`` to absorb them** — that
+        rebuilds exactly the blindness this test exists to remove.
+        """
+        import importlib.util
+
+        repo = Path(__file__).resolve().parents[3]
+        script = repo / "scripts/data/derive_miso_seam_ladders.py"
+        if not script.exists():
+            self.skipTest("derive script unavailable")
+        spec = importlib.util.spec_from_file_location("_derive_miso_seam", script)
+        dm = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(dm)
+            joined = dm.load_joined()
+        except Exception:  # pragma: no cover - source data not hydrated
+            self.skipTest("measured seam/LMP series not available")
+        for year, ladder in MISO_SEAM_LADDER_BY_YEAR.items():
+            derived, _notes = dm.derive(joined.loc[[year]])
+            self.assertEqual(set(derived), set(ladder), msg=f"{year} seam set")
+            for seam, sides in ladder.items():
+                for side in ("import", "export"):
+                    for k, committed in enumerate(sides[side]):
+                        got = float(derived[seam][side][k])
+                        known = _MISO244_KNOWN_LADDER_DIVERGENCES.get(
+                            (year, seam, side, k + 1)
+                        )
+                        if known is not None:
+                            self.assertAlmostEqual(
+                                float(committed),
+                                known[0],
+                                places=6,
+                                msg=(
+                                    f"{year} {seam} {side} band {k + 1}: the "
+                                    "committed value moved — a known miso-244 "
+                                    "divergence is pinned at BOTH values"
+                                ),
+                            )
+                            self.assertAlmostEqual(
+                                got,
+                                known[1],
+                                places=6,
+                                msg=(
+                                    f"{year} {seam} {side} band {k + 1}: the "
+                                    "derived value moved. If the table has been "
+                                    "reconciled, DELETE this entry from "
+                                    "_MISO244_KNOWN_LADDER_DIVERGENCES (rule 26) "
+                                    "— never widen the tolerance"
+                                ),
+                            )
+                            continue
+                        self.assertAlmostEqual(
+                            got,
+                            float(committed),
+                            delta=0.005,
+                            msg=(
+                                f"{year} {seam} {side} band {k + 1} drifted from "
+                                "its own derivation (rule 23 [R-FROZEN-DERIVE])"
+                            ),
+                        )
 
 
 class TestLadderInjection(unittest.TestCase):

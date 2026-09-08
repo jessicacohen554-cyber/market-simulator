@@ -13175,3 +13175,52 @@ Records: `PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md
 `scripts/probes/_miso243_spp_pairing_repair_phase0.py` and `_miso243_screen_gates.py` with their
 JSON beside them. Rule 28(b): the `seam_neighbour_hourly_ladder` cell evidence and the keeper/gates
 stamp updated in **MISO's shard only** (rule 25), with the `§5.4` stamp.
+
+## miso-244 — 2026-09-08 — **THE CENT IS REAL DRIFT, NOT AN ARTIFACT: `t_max` 0.0049998 vs a 1e-4 tie bar. The re-derive is REFUSED on rule 23's citation requirement, and my own liveness gate did NOT stop it.** ZERO LP
+
+**Keeper UNCHANGED** at `2026-09-07-miso-243-spp-pairing` (CALIBRATED, C3c the single ledgered
+caveat, DOF 41/2). Nothing solved, armed, minted, registered or pruned; MISO still carries exactly
+one registered run (rule 15). Queue item taken (rule 28(a)): the handoff's **RECOMMENDED** item —
+miso-243 §7.1's named successor.
+
+**Diagnosis.** The committed `MISO_SEAM_LADDER_BY_YEAR` differs from its own `derive()` at HEAD at
+**3 of 192** entries, located to the band for the first time: **2023 PJM import 5** (27.86 vs raw
+27.8661823), **2023 South export 4** (27.69 vs 27.6962804), **2024 South export 5** (23.77 vs
+23.7600002), **mixed directions**. On the pre-registered statistic `t = |raw − committed| − 0.005`,
+`t_max` = **0.0049998** against a **1e-4** bar → **`V-NOT-A-TIE`**. The clamp sub-class is
+**refuted** (no clamp fires in any year; the alternative clamp off the rounded imports gives
+13.39/50.98/57.85). **What moved is the sample, not the estimator** — entries 1–2 both require the
+LOWER order statistic and entry 3 refutes it (`x_lo == x_hi == 23.760000`). The incumbent table is
+the **last surviving fingerprint** of that sample vintage; every other ladder on the same series
+reproduces at exactly 0.0.
+
+**Refusal, and it is governance not residual.** Rule 23 `[R-FROZEN-DERIVE]` requires a re-derive
+commit to cite its cause; none can be cited, and re-deriving first would erase the evidence — the
+order the handoff fixed. **Against interest: the pre-registered liveness gate did NOT stop the arm**
+(max `L` 0.00982 > 0.001, 86 h in 2024 on `MISO_external_South`; `|Δq̂|` 3.682 MW inside its bar;
+screen year 2024 authorized and deliberately not spent), so the stop is on a **different ground**
+than the one pre-registered. The PREREG also named the wrong bus (`miso_south_seam_split` hosts the
+South bands on `MISO_external_South`); disclosed and repaired in a pushed addendum to the **maximum
+over both buses**, strictly stricter, before the gate ran.
+
+**Deliverable.** The missing rule-23 reproduction pin —
+`test_incumbent_registry_reproduces_the_frozen_derivation` pins all 192 entries at `atol=0.005`
+except the three known divergences, pinned harder at both exact values and to be **deleted** on
+reconciliation (rule 26), never widened. Falsified twice before it was kept; file 29 passed.
+
+**G-DRIFT** `5b5fb538..HEAD` (the merged equivalent of the keeper's **orphaned** `git.sha
+710d4dad`): every hunk INERT, **both** shared seams MEASURED rather than classified from their gate
+(`floors.py::_resolve_drag_layup_shares` → len 0 for MISO in all three years; the changed
+`wecc_intertie` parquet is CAISO-keyed and no MISO file exists); `surface_stamp("MISO")` reproduces
+`8ee657ee4c7c49b0`, rows 208, `moved: {}`. No LIVE hunk, no control solve.
+
+**Handed forward:** a one-line pre-specifiable attribution test (are the committed values reachable
+by perturbing each entry's own integer duration count by ≤ ±1 h of 8,760 — counts
+**5,415 / 3,259 / 3,044**), which this session was barred from running by its own PREREG §2.4
+pre-commitment against transformation-hunting — a drafting defect recorded against interest.
+
+Records: `PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md`,
+`ADDENDUM-miso244-the-verdict-is-not-a-tie-and-my-liveness-gate-named-the-wrong-bus-2026-09-08.md`,
+`FINDING-miso244-the-cent-is-real-drift-and-the-re-derive-is-refused-2026-09-08.md`; probes
+`scripts/probes/_miso244_incumbent_ladder_cent_phase0.py` and `_miso244_liveness_gate.py` with their
+JSONs.
