@@ -1,10 +1,18 @@
-# CAISO-AS — DAM ancillary-service regional requirements (OASIS AS_REQ) + clearing prices (PRC_AS)
+# CAISO-AS — DAM ancillary services: requirements (AS_REQ), clearing prices (PRC_AS), results (AS_RESULTS)
 
 Fetched 2026-07-10 by `scripts/fetch_caiso_oasis.py --datasets asreq --years 2023 2024 2025`
 (CAISO OASIS `SingleZip?queryname=AS_REQ&market_run_id=DAM&version=1&anc_type=ALL&anc_region=ALL`,
 adaptive ≤25-day windows, resumable). Coverage verified complete: every day 2023-01-01 →
-2025-12-31 (1,096 days), 44 window CSVs. **Train years only** (CLAUDE.md rule 22 — no 2022, no
-H1-2026).
+2025-12-31 (1,096 days), 44 window CSVs, **since extended to 2018-2022 + H1-2026** (15/15/14/15/15
+window files for 2018-2022, 8 for H1-2026; `docs/holdout-data-equivalency-register-2026-07.md`
+§CAISO). `AS_REQ` carries **no** OASIS retention limit, unlike `PRC_LMP`.
+
+*(This paragraph formerly read "**Train years only** (CLAUDE.md rule 22 — no 2022, no H1-2026)".
+That was already false of the files on disk, and it misstates the rule: rule 22 `[R-HOLDOUT]` as
+amended 2026-08-06 holds out the **SCORE, never the DATA** — "an input is either the best measured
+representation of a physical/market quantity or it is not, and if it is, it belongs in **every**
+year". Intake needs no marker and no per-window authorization; what stays gated is solving, scoring
+or registering an out-of-training year.)*
 
 Content: hourly MW ancillary-service requirement per **AS region** and product, DAM. Key
 columns: `ANC_REGION` (`AS_CAISO`, `AS_CAISO_EXP`, `AS_NP26`, `AS_NP26_EXP`, `AS_SP26`,
@@ -118,13 +126,63 @@ Re-running `asreq` at Q3-aligned window boundaries would additionally have writt
 overlapping duplicate files, since the fetch script's skip check keys on the exact
 `{start}_{end}` filename, not on day coverage.
 
+## Q4-2020 extension (caiso-oasis-q4-2020, 2026-09-07)
+
+Fetched 2026-09-07 by `scripts/data/fetch_caiso_oasis.py --datasets asresults asprc_ru asprc_rd
+asprc_sr asprc_nr --years 2020 --start-date 2020-10-01 --end-date 2021-01-01`, 4 windows per
+series. Extends the chain above to **2020-04-01 → 2021-01-01 contiguous** for `asresults` and all
+four `asprc_*` products, closing the year from April.
+
+**The DST head-window case again, and again the chain repairs it — read this before adding files.**
+2020-10-01 comes back HE2–HE24 (23 h) in the Q4 windows alone, exactly as the note above predicts
+for the first trade date of a PDT-month range. **No head window is committed for it**: the Q3
+lane's tail window (`*_ALL_20200914_20201001.csv`) already carries 2020-10-01 **HE1** and a
+complete 2020-09-30, so the hour is present in the chain. Verified per series across the rebase.
+A `--start-date 2020-09-30 --end-date 2020-10-01` head window WAS fetched here before the Q3 lane
+landed, found to be fully contained in that Q3 tail, and **deleted rather than committed** — the
+same call the Q2 lane made on its duplicate `asreq` re-fetch, and for the same reason: overlapping
+windows are duplicate rows the skip check cannot see, because it keys on the exact
+`{start}_{end}` filename rather than on day coverage.
+
+Read together with the Q3 tail, Q4 is **2,209 of 2,209 (day, hour) pairs** — 92 days × 24 h, plus
+the legitimate 25th hour of **2020-11-01, the DST fall-back day**. Read the Q4 files ALONE and
+2020-10-01 is short one hour, so any consumer that globs only the Q4 windows must be checked
+against this, exactly as for Q3. Row counts as fetched: `asresults` 229,632; each `asprc_*`
+13,248; 6 AS regions throughout. The end bound is exclusive and January is PST, so there is no
+spill day past 2020-12-31.
+
+**A verification trap worth recording, because it defeats the obvious check.** Both a total-row
+count and a distinct-(day, hour) count PASS on this range even with 2020-10-01 missing its HE1:
+the short day and the 25-hour November fall-back day cancel EXACTLY, giving 92 × 24 × 104 rows and
+2,208 pairs — both matching a naive expectation. Only a per-day hour-count histogram surfaces the
+gap. **Never verify a CAISO window range by totals alone.** Histogram the hours per day and expect
+25 on the November fall-back day, 23 on the March spring-forward day, and 23 on the first trade
+date of any range opened in a PDT month.
+
+`asreq` and `load` were NOT re-fetched for Q4, for the reasons the Q3 section gives: `asreq`
+already carries the contiguous 2019-12-27 → 2021-01-05 chain, and
+`CAISO_tac_load_hourly_2020.csv` already covers Q4 in full.
+
+**Why there are no 2020 LMPs beside these** — governed by the Q2 section's measurement: the
+`GroupZip` bulk endpoint has its own retention boundary at 2021-04-27, so 2020 hub / DLAP prices
+are unobtainable from OASIS by **any** endpoint. Re-probed independently here at 2020-10-01:
+`PRC_LMP` and `PRC_INTVL_LMP` both return `ERR_CODE 1000`. Note this **contradicts**
+`docs/holdout-data-equivalency-register-2026-07.md` §CAISO N-CA-1, which still advises the
+hand-downloaded GRP bulk zip as the route to aged-out history; that advice predates the
+bulk-endpoint measurement and holds only back to 2021-04-27.
+
+**Size:** `asresults` is ~8.4 MB per 25-day window (~31 MB per quarter) — these raws are committed
+as-is, since `postprocess_oasis_downloads.py` folds only the LMP and TAC-load series into hourly
+aggregates and never touches `CAISO-AS`. Q2+Q3+Q4 2020 together are ~93 MB; extending `asresults`
+across all of 2018-2022 at this grain would add roughly 500 MB, so fold it to an hourly aggregate
+before going wider.
+
 ## Coverage by year
 
 | series | 2020 | 2022 | 2023–2025 |
 | --- | --- | --- | --- |
 | `asreq` | full year (2019-12-27 → 2021-01-05) | 2022-01-15 → 2022-03-06 only | complete |
-| `asprc_{ru,rd,sr,nr}` | **Q2+Q3** (2020-04-01 → 2020-10-01) | — | complete |
-| `asresults` | **Q2+Q3** (2020-04-01 → 2020-10-01) | — | — |
+| `asprc_{ru,rd,sr,nr}` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | — | complete |
+| `asresults` | **Q2+Q3+Q4** (2020-04-01 → 2021-01-01) | — | — |
 
-Nothing in either 2020 extension has been solved, folded, derived or scored.
-
+Nothing in any 2020 extension has been solved, folded, derived or scored.
