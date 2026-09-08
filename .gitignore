@@ -1452,3 +1452,17 @@ results/hindcast/pjm-d83-*/
 # Personal, machine-specific Claude Code overrides (permissions for this runner).
 # Never committed: a sandbox/cgroup grant is specific to one container, not team policy.
 .claude/settings.local.json
+
+# spp-50 the batched re-baseline bundle (SPP-48's wind LEVEL repair + SPP-49's
+# two input seams, keeper-3's recipe otherwise unchanged). Ignored so it can
+# never reach `main` -- the ONLY thing rule 29 [R-SCREEN] (c) requires, and what
+# rule 31 [R-RETAIN] names as the mechanism that discharges that duty. Ignoring
+# is NOT a licence to delete: the bundle stays on local disk until the OWNER has
+# ruled on promotion (the 2026-09-07 ercot-255 incident -- gitignored AND THEN
+# rm -rf'd, and the promotion ruling an hour later cost a full re-solve;
+# genealogy docs/governance/rule-history.md section 16).
+# ON PROMOTION this entry is NARROWED, never the bundle deleted: rule 15
+# [R-DASHBOARD] then requires the slim files + hourly/ sidecars
+# (class_hourly_<year>, system_<year>, reserve_family_<year>) to be committed,
+# exactly as the miso243_sppair_K entry above does it.
+results/calibration/spp50_rebaseline/
