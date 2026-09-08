@@ -795,6 +795,7 @@ def run_year(
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
     pjm_seam_measured_ladder: bool = False,
+    pjm_seam_neighbour_hourly_ladder: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -1826,6 +1827,8 @@ def run_year(
         config = config.with_overrides(pjm_seam_export_limit=True)
     if pjm_seam_measured_ladder:
         config = config.with_overrides(pjm_seam_measured_ladder=True)
+    if pjm_seam_neighbour_hourly_ladder:
+        config = config.with_overrides(pjm_seam_neighbour_hourly_ladder=True)
     if miso_pjm_border_anchor:
         config = config.with_overrides(miso_pjm_border_anchor=True)
     if miso_cc_coal_rebalance and iso.upper() == "MISO":
