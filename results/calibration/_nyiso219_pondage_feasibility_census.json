@@ -1,0 +1,97 @@
+{
+  "session": "nyiso-219",
+  "charter": "docs/CHARTER-nyiso219-hydro-budget-period-2026-09-07.md",
+  "post_hoc": true,
+  "pre_registered": false,
+  "moves_no_gate": true,
+  "zero_lp": true,
+  "fleet": {
+    "n_plants": 163,
+    "nameplate_mw": 4681.0
+  },
+  "a_plant_dam_linkage": {
+    "source": "data/raw/hilarri/HILARRI_v4.csv (ORNL HILARRI v4)",
+    "plants_with_hilarri_row": 163,
+    "pct_fleet_mw_linked": 100.0,
+    "plants_with_nid_dam_id": 152,
+    "pct_fleet_mw_with_nid": 98.53,
+    "plants_with_usgs_gage": 27,
+    "pct_fleet_mw_with_gage": 23.23,
+    "dominant_plants": {
+      "2693": {
+        "dam_name": "ROBERT MOSES - NIAGARA",
+        "nid_id": "NY16253",
+        "project_type": "Conventional hydropower",
+        "usgs_gage": null,
+        "pct_fleet_mw": 51.893
+      },
+      "2694": {
+        "dam_name": "ROBERT MOSES - ST. LAWRENCE",
+        "nid_id": "NY00678",
+        "project_type": "Conventional hydropower",
+        "usgs_gage": "USGS-04264331",
+        "pct_fleet_mw": 19.483
+      }
+    }
+  },
+  "b_operating_modes": {
+    "source": "data/raw/ornl-eha/ORNL_EHAHydroPlant_PublicFY2024.xlsx (Operational)",
+    "plants_matched": 163,
+    "pct_fleet_mw_with_peaking_component": 84.24,
+    "modes": [
+      {
+        "mode": "Run-of-river/Peaking",
+        "mw": 2471.4,
+        "n_plants": 9,
+        "pct_fleet_mw": 52.796
+      },
+      {
+        "mode": "Peaking",
+        "mw": 1180.6,
+        "n_plants": 22,
+        "pct_fleet_mw": 25.221
+      },
+      {
+        "mode": "Run-of-river",
+        "mw": 477.7,
+        "n_plants": 70,
+        "pct_fleet_mw": 10.205
+      },
+      {
+        "mode": "(no Mode)",
+        "mw": 286.8,
+        "n_plants": 43,
+        "pct_fleet_mw": 6.127
+      },
+      {
+        "mode": "Run-of-river/Upstream Peaking",
+        "mw": 151.4,
+        "n_plants": 11,
+        "pct_fleet_mw": 3.234
+      },
+      {
+        "mode": "Intermediate Peaking",
+        "mw": 140.0,
+        "n_plants": 2,
+        "pct_fleet_mw": 2.991
+      },
+      {
+        "mode": "Reregulating",
+        "mw": 17.0,
+        "n_plants": 3,
+        "pct_fleet_mw": 0.363
+      },
+      {
+        "mode": "Canal/Conduit",
+        "mw": 15.1,
+        "n_plants": 3,
+        "pct_fleet_mw": 0.323
+      }
+    ]
+  },
+  "c_missing": {
+    "storage_volume": "NOT in repo \u2014 USACE National Inventory of Dams, joinable on the NID ids above; a bounded data-intake job.",
+    "head": "in none of EHA / HILARRI / NID; FERC licence documents carry it. NID dam height is a PROXY, not head, and must not be substituted silently.",
+    "licensed_operating_range": "OPEN \u2014 NID 'normal storage' is a reservoir volume, not the licensed operating range; using it literally would OVERSTATE pondage (making the mechanism too weak, not too strong)."
+  }
+}
