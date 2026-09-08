@@ -25,6 +25,7 @@ import dataclasses
 
 import pytest
 
+from market_sim.config import paths
 from market_sim.config.capacity_market import (
     resolve_capacity_going_forward_bar_published,
 )
@@ -43,9 +44,24 @@ from market_sim.model.capacity_evolution.retirements import (
     _THERMAL_FOM,
     resolve_going_forward_bar_per_kw_yr,
 )
+from scripts.lib import capacity_market_avoidable_cost_rate as acr
+from tests.helpers.base import requires_raw
 
 FIELD = "capacity_going_forward_bar_published_by_iso"
 SCREENED_FUELS = tuple(_THERMAL_FOM)
+
+# The raw source the two DATA-TIER classes below ultimately read: PJM's own
+# published Manual 18 §5.4.8.4(B) table, tracked at 2.5 KB. ``requires_raw``
+# marks them ``fulldata`` (so the fast lane deselects them) AND skips them when
+# that CSV is genuinely absent — the repo's standing idiom for a raw dependency
+# (tests/helpers/base.py). The bare ``fulldata`` marker they carried before was
+# necessary but not sufficient: it promises ``data/raw``, while the seam reads
+# the DERIVED ``data/clean`` partition nothing in the test tier builds, so with
+# raw fully present the classes still raised ``PublishedBarUnavailable`` on any
+# checkout that had not run the curation script (capx D89). The
+# ``published_acr_clean_dir`` fixture builds that partition from THIS file,
+# through the real intake, into a scratch CLEAN_DIR.
+PUBLISHED_ACR_RAW_CSV = acr.raw_dir_for("PJM", paths.RAW_DIR) / "pjm.csv"
 
 
 def _fc(**kw) -> ScenarioConfig:
@@ -137,12 +153,14 @@ class TestResolutionScope:
             resolve_going_forward_bar_per_kw_yr(cfg, "coal", None)
 
 
-@pytest.mark.fulldata
+@requires_raw(PUBLISHED_ACR_RAW_CSV)
+@pytest.mark.usefixtures("published_acr_clean_dir")
 class TestVintageRuleFromTheData:
     """The vintage rule, asserted from ``pjm.csv`` itself (rule 21).
 
-    Marked ``fulldata``: it reads the curated partition, which is derived from
-    ``data/raw`` and gitignored.
+    DATA TIER: it reads the curated partition, which is derived from
+    ``data/raw`` and gitignored, so ``published_acr_clean_dir`` curates the
+    tracked raw CSV into a scratch CLEAN_DIR first.
     """
 
     # $/MW-day as published, per PRECOMMIT §1.1's table.
@@ -230,7 +248,8 @@ class TestVintageRuleFromTheData:
         ] == pytest.approx(float(off.fixed_om_coal) * 2.0)
 
 
-@pytest.mark.fulldata
+@requires_raw(PUBLISHED_ACR_RAW_CSV)
+@pytest.mark.usefixtures("published_acr_clean_dir")
 class TestReactiveLeg:
     def test_reactive_is_the_published_row(self):
         assert reactive_offset_per_mw_yr("PJM") == pytest.approx(2199.0)

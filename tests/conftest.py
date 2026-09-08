@@ -106,6 +106,52 @@ def tmp_clean_dir(tmp_path, monkeypatch) -> Path:
     return clean
 
 
+@pytest.fixture
+def published_acr_clean_dir(tmp_path, monkeypatch) -> Path:
+    """A tmp ``CLEAN_DIR`` carrying the REAL published avoidable-cost-rate table.
+
+    The capx D62 / D74 gates read PJM's published default gross Avoidable Cost
+    Rate through :mod:`market_sim.data.avoidable_cost_rate`, whose seam reads
+    the ``capacity-market-avoidable-cost-rate`` clean datatype — a DERIVED,
+    gitignored partition that no test fixture ever built. Marking those tests
+    ``fulldata`` was necessary but NOT sufficient: with ``data/raw`` fully
+    present and the clean tree simply unbuilt, every value-returning entry
+    point in that seam raises ``PublishedBarUnavailable`` by design (so an
+    armed gate can never degrade silently), so the tests were red on any
+    checkout that had not happened to run the curation script (capx D89).
+
+    So build it here instead of assuming it: curate the TRACKED raw source
+    through the real intake pipeline into a scratch tree. The assertions then
+    read whatever ``data/raw/capacity-market/avoidable-cost-rate/pjm/pjm.csv``
+    currently says — the live source of truth — rather than whatever some
+    earlier session last curated onto this host, so a stale or absent real
+    ``data/clean`` can neither pass them nor fail them.
+
+    Pair it with :func:`tests.helpers.base.requires_raw` on the raw CSV: that
+    decorator carries the ``fulldata`` marker AND skips when the raw input is
+    genuinely absent, which is the repo's standing idiom for a raw dependency
+    and the half a bare ``fulldata`` marker cannot express.
+    """
+    from market_sim.data import avoidable_cost_rate as acr_seam
+    from scripts.data import curate_capacity_market_avoidable_cost_rate as curate_acr
+    from scripts.lib import capacity_market_avoidable_cost_rate as acr
+
+    clean = tmp_path / "clean"
+    monkeypatch.setattr(paths, "CLEAN_DIR", clean)
+    # ``_read`` is ``lru_cache``d, so a frame read under the real CLEAN_DIR by
+    # an earlier test would survive the redirect. Clear on the way in and on
+    # the way out, so this fixture neither inherits nor leaks a cached frame.
+    acr_seam._read.cache_clear()
+    written = curate_acr.curate(isos=["PJM"])
+    if not written:
+        raise AssertionError(
+            "published avoidable-cost-rate raw source produced no partition; "
+            f"expected {acr.raw_dir_for('PJM', paths.RAW_DIR) / 'pjm.csv'}"
+        )
+    yield clean
+    acr_seam._read.cache_clear()
+
+
 # --------------------------------------------------------------------------- #
 # The SOLVE SURFACE, neutralized by default (capx D79; ercot-253 2026-09-06)
 # --------------------------------------------------------------------------- #

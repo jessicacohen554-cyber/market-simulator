@@ -29,6 +29,7 @@ import dataclasses
 
 import pytest
 
+from market_sim.config import paths
 from market_sim.config.capacity_market import (
     resolve_capacity_going_forward_bar_published,
     resolve_capacity_no_default_cap_convention,
@@ -45,10 +46,17 @@ from market_sim.data.avoidable_cost_rate import (
 )
 from market_sim.model.capacity_evolution.adequacy import clear_capacity_supply_stack
 from market_sim.model.capacity_evolution.retirements import _THERMAL_FOM
+from scripts.lib import capacity_market_avoidable_cost_rate as acr
+from tests.helpers.base import requires_raw
 
 FIELD = "capacity_no_default_cap_convention_by_iso"
 BAR_FIELD = "capacity_going_forward_bar_published_by_iso"
 SCREENED_FUELS = tuple(_THERMAL_FOM)
+
+# The raw source the DATA-TIER class below ultimately reads — the same tracked
+# PJM Manual 18 table its D62 sibling names, for the same reason. See that
+# file's block, and ``published_acr_clean_dir`` in tests/conftest.py.
+PUBLISHED_ACR_RAW_CSV = acr.raw_dir_for("PJM", paths.RAW_DIR) / "pjm.csv"
 
 
 def _fc(**kw) -> ScenarioConfig:
@@ -128,22 +136,27 @@ class TestResolutionScope:
 # DATA TIER, exactly like its D62 sibling. The three tests below are the only
 # ones in this file that READ the published table, which lives in the DERIVED,
 # gitignored clean tree (``data/clean/capacity-market-avoidable-cost-rate``) a
-# ``code``-profile checkout does not build. They belong on the same marker
-# ``test_d62_published_going_forward_bar.py`` already puts its own two
-# table-reading classes on, and for the same reason.
+# ``code``-profile checkout does not build.
 #
-# THIS REPLACES A MODULE-LEVEL ``pytestmark`` SKIPIF that read
-# ``published_bar_per_kw_yr("PJM", "coal", 2022) is None``. That predicate can
-# never be None on an unbuilt checkout: every value-returning entry point in
-# the seam raises ``PublishedBarUnavailable`` instead — deliberately, so an
-# armed gate can never degrade silently (``avoidable_cost_rate`` module
-# docstring). So the guard raised the very error it meant to detect, at IMPORT
-# time, erroring the whole file out of collection in the fast tier. Nothing is
-# loosened: every assertion is unchanged, and the file's four data-free classes
-# now actually run in the fast tier instead of being collected away with it.
-# (``partition_available`` is the seam's non-raising predicate if a future lane
-# wants a skip rather than a tier move.)
-@pytest.mark.fulldata
+# A MODULE-LEVEL ``pytestmark`` SKIPIF reading ``published_bar_per_kw_yr("PJM",
+# "coal", 2022) is None`` was the ORIGINAL guard here. That predicate can never
+# be None on an unbuilt checkout: every value-returning entry point in the seam
+# raises ``PublishedBarUnavailable`` instead — deliberately, so an armed gate
+# can never degrade silently (``avoidable_cost_rate`` module docstring). So the
+# guard raised the very error it meant to detect, at IMPORT time, erroring the
+# whole file out of collection. It was replaced by a bare ``fulldata`` marker,
+# which freed the four data-free classes to run — but left this class red
+# rather than deselected on any checkout that had ``data/raw`` and had simply
+# never run the curation script, because ``fulldata`` promises RAW and the seam
+# reads the DERIVED tree (capx D89).
+#
+# So the guard is now the two halves the dependency actually has:
+# ``requires_raw`` (``fulldata`` + an honest skip when the tracked CSV is
+# absent) and ``published_acr_clean_dir``, which BUILDS the derived partition
+# from that CSV through the real intake into a scratch CLEAN_DIR. Nothing is
+# loosened — every assertion below is unchanged and now actually executes.
+@requires_raw(PUBLISHED_ACR_RAW_CSV)
+@pytest.mark.usefixtures("published_acr_clean_dir")
 class TestThePredicateIsTheData:
     @pytest.mark.parametrize("year", [2022, 2023, 2024, 2025])
     def test_steam_oil_and_gas_has_no_default_through_2025_26(self, year):
