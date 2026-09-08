@@ -1,0 +1,94 @@
+{
+  "session": "nyiso-219",
+  "charter": "docs/CHARTER-nyiso219-hydro-budget-period-2026-09-07.md",
+  "owner_rulings": {
+    "Q1": "fund the full intake",
+    "Q2": "decide the rule-19 posture at phase 0",
+    "Q3": "undecided \u2014 measure the shaping horizon, not the Mode label"
+  },
+  "construction": {
+    "upper_bound": true,
+    "efficiency_assumed": 1.0,
+    "storage_basis": "FULL reservoir volume, NOT the licensed operating range \u2014 the true usable figure is strictly smaller",
+    "mwh_per_acreft_foot": 0.001024505,
+    "free_parameters": 0
+  },
+  "coverage": {
+    "plants_scored": 152,
+    "pct_fleet_mw_scored": 98.53,
+    "pct_scored_mw_on_hydraulic_height": 20.8
+  },
+  "headline_mw_share_under": {
+    "day (24 h)": 72.01,
+    "week (168 h)": 97.54,
+    "month (the LP today) (730 h)": 98.31
+  },
+  "dominant_plants": [
+    {
+      "plant_id": 2693,
+      "pmax_mw": 2429.1,
+      "pct_fleet_mw": 51.89,
+      "normal_storage_acreft": 5350.0,
+      "head_ft": 97.0,
+      "head_basis": "dam_height_PROXY",
+      "pondage_hours_normal": 0.219,
+      "pondage_hours_max": 0.244
+    },
+    {
+      "plant_id": 2694,
+      "pmax_mw": 912.0,
+      "pct_fleet_mw": 19.48,
+      "normal_storage_acreft": 750000.0,
+      "head_ft": 81.0,
+      "head_basis": "hydraulic_height",
+      "pondage_hours_normal": 68.244,
+      "pondage_hours_max": 73.067
+    },
+    {
+      "plant_id": 54580,
+      "pmax_mw": 59.0,
+      "pct_fleet_mw": 1.26,
+      "normal_storage_acreft": 3150.0,
+      "head_ft": 37.0,
+      "head_basis": "dam_height_PROXY",
+      "pondage_hours_normal": 2.024,
+      "pondage_hours_max": 2.024
+    },
+    {
+      "plant_id": 2612,
+      "pmax_mw": 56.0,
+      "pct_fleet_mw": 1.2,
+      "normal_storage_acreft": 31000.0,
+      "head_ft": 146.0,
+      "head_basis": "dam_height_PROXY",
+      "pondage_hours_normal": 82.802,
+      "pondage_hours_max": 82.802
+    },
+    {
+      "plant_id": 54953,
+      "pmax_mw": 44.0,
+      "pct_fleet_mw": 0.94,
+      "normal_storage_acreft": 413.0,
+      "head_ft": 17.0,
+      "head_basis": "dam_height_PROXY",
+      "pondage_hours_normal": 0.163,
+      "pondage_hours_max": 0.163
+    },
+    {
+      "plant_id": 2641,
+      "pmax_mw": 43.6,
+      "pct_fleet_mw": 0.93,
+      "normal_storage_acreft": 414.0,
+      "head_ft": 22.0,
+      "head_basis": "dam_height_PROXY",
+      "pondage_hours_normal": 0.214,
+      "pondage_hours_max": 0.214
+    }
+  ],
+  "distribution_pondage_hours_max": {
+    "mw_weighted_mean": 115.751,
+    "median_plant": 4.422,
+    "p90_plant": 125.582,
+    "max_plant": 24312.513
+  }
+}
