@@ -14184,3 +14184,65 @@ sidecar, the G-26 surface.
 
 **No keeper change, no `ScenarioConfig` field, no offer-curve channel, no matrix
 verdict move, no determination change. Next number: caiso-264.**
+
+## caiso-265 — 2026-09-08
+
+**The "winter gas passthrough regime" hypothesis (`FINDING-caiso262` §8 queue
+item 1, owner-selected this session) is FALSIFIED.** Zero LP; every number from
+committed artifacts. Keeper `2026-09-06-caiso-260-b1-demand` UNCHANGED
+(CALIBRATED, audit 0/0); touchpoint unchanged (NOT-YET); no determination moved.
+Pre-registered in `PRECOMMIT-caiso265-winter-gas-regime-2026-09-08.md`, pushed
+before any measurement. Full record: `FINDING-caiso265-winter-gas-regime-2026-09-08.md`.
+
+**Three independent falsifications.** (a) Jan-2022 and Feb-2022 citygate gas was
+**$4.96 / $4.79**/MMBtu — *below* 2022's $7.63 mean across the other nine months
+— yet they carry the year's two LARGEST errors (+30.7 %, +35.7 %); only December
+was a spike ($30.63 mean, $53.59 max). (b) The training window DOES contain a gas
+spike — **Jan-2023, $16.13 mean / $24.29 max** — and the model's error there is
+**+0.3 %**, its best month of 36. (c) Over the 36 training months
+`corr(err, gas) = −0.337`, slope **−2.69 pp per $/MMBtu**: the error is largest
+where gas is CHEAPEST.
+
+**What the object actually is.** A positive price bias proportionally largest in
+LOW-price months: `corr(err, actual price)` = **−0.575** (train) and **−0.555**
+(2022 excl. December) — measured independently, same relationship. 2023–2025 pass
+C3a only because the load-weighted annual mean is dominated by high-price hours,
+where the model is accurate; in 2022 the monthly error never changes sign, so
+nothing offsets. Excluding December, 2022's `corr(err, gas)` is **−0.619** — the
+training window's sign, not a new regime. **Rule 22 is satisfiable: the defect is
+identifiable in-sample** (2024-May +88.1 %, 2023-May +62.3 %). **Rule 19: work it
+inside the standing caiso-121/131/140 belly lane** — no mechanism was tested here
+and none is proposed. December (36 % of the annual $ gap, IMHR 9.99 vs 7.79) is the
+one place the passthrough story survives; it is one out-of-sample month and rule 22
+forbids identifying against it.
+
+**UNPLANNED DISCOVERY — 2022 is scored on a different benchmark basis than the
+years it is read against.** The committed bench parts carry `rt_lw` (load-weighted)
+for 2023/2024/2025 but **not for 2022**, which therefore fell back to the LEGACY
+equal-hour `rt` = 79.07. Load-weighting raises CAISO's actual by 2.3–5.2 % in every
+training year, so the 2022 rung was scored against a systematically LOW benchmark.
+`rt_lw` was absent only because the retrofit predates the year — caiso-262 landed
+the 2022 hourly parquet on 2026-09-07.
+
+**LANDED (rule 23 source-data citation = that parquet; rule 14 `[R-ACCURATE]`;
+rule 22 inputs-consistent-across-all-years):**
+`derive_actual_lmp.py --lw-retrofit --isos CAISO --years 2022`, the committed
+derive UNMODIFIED. It reproduces the committed 2023/2024/2025 `rt_lw` **exactly**
+(54.17 / 34.65 / 34.42), and yields 2022 **`rt_lw` 84.49 / `da_lw` 92.14**.
+Verified surgical: **1 of 48 ISO-years changed, fields ADDED only, 0 existing
+fields modified**. Re-scored with the scorer's own functions: **C3a +21.1 % →
++13.3 % (−7.8 pp), C3b 0.286 → 0.242**. Both still FAIL — the repair flips nothing
+and is not self-serving; it moves ~a third of the headline 2022 miss out of "model
+error" into "benchmark coverage".
+
+**NOT LANDED — owner decision.** The scorer reads the bench PART, which is
+rewritten only by rendering a run, which needs the FULL bundle; the committed
+touchpoint bundle is slim (rule 15), so propagating this to the dashboard requires
+**re-solving CAISO 2022** (~30–60 min LP) + re-registration. The repair is
+therefore currently **INERT** (verified: keeper still CALIBRATED, touchpoint still
++21.1 %). **Warning for the next reader:** the next CAISO run covering 2022 will
+rewrite that part and 2022's C3a will move to +13.3 % **with no code change in its
+diff** — the NYISO-148 silent-part failure mode.
+
+No keeper change, no `ScenarioConfig` field, no offer-curve channel, no mechanism
+tested (rule 28(b) not engaged). Reproduction: `_caiso265_m1.json`. Next: caiso-266.
