@@ -107,6 +107,53 @@ class TestOffsetRegistry(unittest.TestCase):
                     msg=f"{year} {seam} wash ordering violated",
                 )
 
+    def test_registry_reproduces_the_frozen_derivation(self):
+        """Rule 23 ``[R-FROZEN-DERIVE]``: the table IS the derive's output.
+
+        Recomputes every committed offset with ``derive_neighbour_hourly`` on
+        the same committed measured series and pins it to the registry, so a
+        hand-edited offset — or a silently re-tuned one — fails here rather
+        than reaching a solve.  Also pins the COVERAGE contract in both
+        directions: the derive must produce a row for exactly the seam-years
+        the registry carries, so a seam that silently loses (or gains) its
+        anchor cannot drift the table without failing.
+        """
+        import importlib.util
+        from pathlib import Path as _Path
+
+        repo = _Path(__file__).resolve().parents[3]
+        script = repo / "scripts/data/derive_pjm_seam_ladders.py"
+        if not script.exists():
+            self.skipTest("derive script unavailable")
+        spec = importlib.util.spec_from_file_location("_derive_pjm_seam", script)
+        dm = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(dm)
+        except Exception:  # pragma: no cover - source data not hydrated
+            self.skipTest("derive script not importable")
+        for year, entry in PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR.items():
+            try:
+                joined = dm.load_joined((year,)).loc[year]
+            except Exception:  # pragma: no cover - source data not hydrated
+                self.skipTest(f"measured seam/LMP series unavailable for {year}")
+            derived, _notes = dm.derive_neighbour_hourly(joined, year)
+            self.assertEqual(
+                set(derived),
+                set(entry),
+                msg=(
+                    f"{year}: the derive's covered seams differ from the "
+                    "registry's — the full-coverage-or-omit contract drifted"
+                ),
+            )
+            for seam, sides in entry.items():
+                for side in ("import", "export"):
+                    np.testing.assert_allclose(
+                        np.asarray(sides[side], dtype=float),
+                        np.asarray(derived[seam][side], dtype=float),
+                        atol=0.005,
+                        err_msg=f"{year} {seam} {side} offsets drifted from the derive",
+                    )
+
 
 class TestHourlyInjection(unittest.TestCase):
     """The applied cost is ``anchor(t) + offset_k`` on covered seams only."""
