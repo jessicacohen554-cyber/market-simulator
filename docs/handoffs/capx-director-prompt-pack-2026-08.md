@@ -10060,3 +10060,225 @@ then the other-desk inventory with owners named. Lead your close with the table 
 "fixed N, newly broken 0" line. ruff check + ruff format clean. Rule 27 [R-PUSH]: both test files are
 well over 300 lines -- edit locally, push exact on-disk bytes, blob-verify after every push.
 ```
+
+---
+
+## r#62 NOTE
+
+Two charters, issued 2026-09-08 at main `1393fdd2`, against ledger §0bg. **D90-RESCORE IS THE ONE TO
+RUN FIRST** — it discharges owner ruling **Q63** and replaces a provenance flag on a live registered
+verdict with a real number.
+
+* **D90-RESCORE** (Q63) — re-solve NEISO T3 golden 2026–2050 on repaired code and re-score
+  `neiso-t3`. Opus, `neiso`. **Phase 0 and G-DRIFT NOW; the solve waits for D88 to merge** — an
+  act-STOP, not a session-STOP.
+* **D91** — the sixteen cache-key pin tests red on `main`, surfaced by D88 and not repaired there.
+  Opus, `code`.
+
+**Collision map.** D90-RESCORE solves and scores; it edits **no** `src/`. D91 edits test pins only.
+D88 is in flight on PR #5661 and owns `ccs.py`'s conversion block, `arrays.py:3651` and `evolve.py`'s
+exempt-set lines — neither charter touches them. **NEXT FREE LABEL: D92.**
+
+**TWO CORRECTIONS CARRIED INTO BOTH PROMPTS, both from §0bg:**
+
+1. **G-DRIFT form 4 audits CODE drift and CANNOT see DERIVED-INPUT drift** (§3(c)). `data/clean` is
+   gitignored and rebuilt per container, so a committed bundle is a valid **byte-level** control only
+   if the session's own derived tree reproduces it — a fresh container's does not, by construction. A
+   delta in a year the code says is inert is a derived-input signal; a short **same-container**
+   control solve settles it, and rule 29(b) earns it.
+2. **A gate is written in the units the mechanism's own report uses** (§2(b)). My D88 G6 said "no
+   non-gas ledger row moves" when it meant "no non-gas **decision** moves", and failed on a
+   re-pricing it was designed to permit.
+
+---
+
+## D90-RESCORE — re-solve and re-score `neiso-t3` on repaired code (Opus, neiso) — RUN THIS FIRST
+
+```
+You are the D90-RESCORE lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso. Branch: claude/capx-d90-neiso-t3-rescore, fresh off origin/main.
+Authority: OWNER RULING Q63 (2026-09-08, capx ledger §0bg.3(a)) — "Charter the re-score as its own
+lane now."
+
+** THE STOP NAMES AN ACT, NOT A SESSION. ** Your PHASE 0 and your G-DRIFT audit START NOW. Only the
+SOLVE waits for capx D88 (PR #5661) to merge, because the whole point is to re-solve on repaired
+code. If D88 has already merged when you open, proceed straight through. Do not idle: do the entire
+zero-LP half, push your PRECOMMIT, then take the solve.
+
+WHY YOU EXIST. capx D88 repaired a fleet-identity defect: a legacy representative retrofitted to CCS
+kept its unit_id, and the fleet builder re-minted that id for the next economic gas-CC build in the
+zone. The registered `neiso-t3` verdict is scored on a run that carries the defect. Q62 flagged the
+verdict and routed the re-score to "the D63/D65-B batch"; that batch CLOSED at capx r#55, so until
+now the re-score had no owner. Q63 gave it one: you.
+
+WHAT D88 MEASURED, so you know what you are re-scoring against (its FINDING is
+docs/handoffs/FINDING-capx-d88-2026-09-08.md — READ IT FIRST):
+  - The collision is a TIMING defect, not a level defect. On NEISO T3 `bau-d65br` 2026-2040 the
+    pre-D88 control retires four `gas_cc_ccs` units totalling 955.076 MW in 2040; the repaired arm
+    retires the IDENTICAL four at the IDENTICAL MW in 2038 — two years earlier — then a further
+    1,115.861 MW in 2040. Cumulative through 2040: 962.7 -> 2,078.6 MW, 2.16x.
+  - Mechanism: `retirements.py`'s `idx_of` is last-write-wins and `loss_years` is one shared counter,
+    so while the duplicate existed the converted representative and its unabated twin were addressed
+    as one unit and the exit clock ran on the wrong dispatch.
+  - D88 is STOP-only and DECLINES to claim the repaired path is more accurate. **That claim is what
+    your re-score decides, and you must be equally willing to report that it got worse.**
+
+THE ONE THING THAT WOULD MAKE THIS LANE WORTHLESS: scoring a run and reporting only whether the
+number improved. Rule 1 [R-STRUCT] governs here exactly as it governs an arm — the repair is in
+because duplicate-free identity is structurally correct, and it stays in whatever the re-score says.
+Your job is to produce the honest number and to say what moved, not to vindicate D88.
+
+PHASE 0 — ZERO LP, STARTS IMMEDIATELY:
+ (a) IDENTIFY THE RUN PRECISELY. `ff-verdicts.json` keys `neiso-t3` to `neiso-2026-2050-t3-golden3-d60`,
+     cache key `f04fd06348e1623d` = the `ff-t3-neiso-golden/bau-d60` bundle, colliding from 2032.
+     CONFIRM that at your own HEAD and quote what you find; do not carry these ids from this charter.
+     Note that D88's flag reached FOUR generated sidecars, all on that cache_epoch, and that
+     `neiso-2026-2050-t3-golden3-d65br` is in the colliding set but carries an UNSCORED stamp
+     (`run_id: None`) — so it has no verdict to replace. Say which runs you are and are not re-scoring.
+ (b) RECONSTRUCT THE RECIPE from the committed bundle's own `run_config.json` and state the key you
+     expect the re-solve to realize, BEFORE solving. D88 established ids are not hashed and
+     SURFACE_MODULES excludes `data/fleet` and `model/capacity_evolution`, so the key should NOT move:
+     this is a SAME-KEY invalidation, which is why D88 wrote a cache-epoch entry rather than a re-key.
+     If your predicted key differs from the committed one, STOP and report — that would mean something
+     other than D88 moved, and re-scoring under it would confound two changes.
+ (c) G-DRIFT, and read this carefully because it is the correction D88 earned. The basis is the
+     bundle's RECORDED CACHE KEY, never `git diff <keeper git_sha> HEAD` (dead after the 2026-08-16
+     history rewrite). **AND G-DRIFT FORM 4 AUDITS CODE DRIFT ONLY — IT CANNOT SEE DERIVED-INPUT
+     DRIFT.** `data/clean` is gitignored and rebuilt per container, so the committed bundle is a valid
+     BYTE-LEVEL control only if YOUR container's derived tree reproduces it. D88 found a 2027 delta
+     against the committed bundle in a year its own change is provably inert, and attributed it 100 %
+     to the container's `data/clean` rebuild. **So: before you attribute anything to D88, establish
+     whether your container reproduces the committed bundle at all.** If it does not, a short
+     same-container PRE-D88 control solve is what rule 29(b) earns, and it is the control you grade
+     against — exactly as D88 did.
+ (d) PRE-DECLARE WHAT YOU EXPECT THE RE-SCORE TO DO, per FF-2D leg, with reasons, before solving.
+     D88's measurement says retirements roughly double through 2040; say what that should do to each
+     scored leg and to the FC-5 corridor years 2035 and 2040 that D77 §8.2 names as the ones actually
+     scored. A prediction you get wrong is worth more than no prediction — D87's missed bracket is
+     this desk's current best example.
+
+THE SOLVE (after D88 merges): NEISO T3 golden, FULL HORIZON 2026-2050, the committed recipe unchanged
+but for D88's repair being present in the code. ONE INDIVISIBLE INVOCATION — the evolution chain
+links the years and rule 12 [R-PARALLEL] makes them sequential within a run, so the horizon CANNOT be
+sharded by year. Expect the multi-hour class. Do not shorten the horizon to save time: a T3 golden
+scored on a truncated span is not the same instrument.
+
+THE RE-SCORE: through the FF-2D rubric, the same scorer the standing verdict used. Report EVERY leg
+at full magnitude, both directions, and state plainly whether the corrected trajectory scores better
+or worse. Then REPLACE the Q62 provenance flag: `provenance.known_defect` on the `neiso-t3` record
+was D88's placeholder for exactly this moment. Remove it and register the new verdict, OR — if for
+any reason the re-score cannot complete — leave the flag EXACTLY as it is and say why. Never leave the
+board asserting a defect is pending resolution when it has been resolved, and never remove the flag
+without a verdict to put in its place.
+
+RULE 31 [R-RETAIN] BINDS ABSOLUTELY, AND THIS LANE IS THE CASE IT WAS WRITTEN FOR. Gitignore the
+bundle family the moment it is written; **DO NOT rm ANY solved bundle**, whatever the re-score says.
+The ercot-255 incident cost ~50 minutes of re-solves because a lane deleted results it judged
+not-promotable and the owner then ruled promote — and a 25-year NEISO T3 is far more expensive than
+that was. Your final report MUST ask the promotion question explicitly and state that the bundles are
+on local disk and will not survive the session.
+
+BOUNDARIES: you edit NO file under `src/market_sim/`. This is a solve-and-score lane. D88 owns
+`ccs.py`'s conversion block, `arrays.py:3651` and `evolve.py`'s exempt-set lines; the concurrent D91
+lane owns the cache-key pin tests. If your work reaches any of them, STOP and report the overlap.
+Note that 16 cache-key pin tests are RED on `main` (D88 §7) and are D91's, not yours — if they are
+still red when you run, say so and move on; do not repair them.
+
+EXIT: docs/handoffs/FINDING-capx-d90-rescore-2026-09-08.md leading with (1) the graded prediction from
+phase 0(d), then (2) the per-leg re-score at full magnitude with better/worse stated plainly, then
+(3) what happened to the flag. Lead your close with the verdict transition — old verdict, new verdict,
+and the single sentence that says whether the repair helped, hurt, or neither. Rule 27 [R-PUSH]:
+blob-verify anything over 300 lines.
+```
+
+---
+
+## D91 — the sixteen cache-key pin tests red on `main` (Opus, code)
+
+```
+You are the D91 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d91-cache-key-pins, fresh off origin/main.
+Authority: capx ledger §0bg.4. ZERO LP EXPECTED — if you conclude a solve is required, STOP and say
+why before spending one.
+
+WHY YOU EXIST. capx D88, working on something else entirely, measured `main` both ways after rebasing
+onto `origin/main` 5e3b6c6a: clean `main` is 18 failed / 3,381 passed; its own branch is 18 failed /
+3,389 passed — identical failing set, the +8 being exactly D88's new tests. **SIXTEEN of the eighteen
+are CACHE-KEY PIN tests** — `test_default_cache_key_is_unmoved`, `…_is_byte_stable`,
+`…_unmoved_and_armed_distinct` and kin — across fourteen files: test_capacity.py, test_scarcity.py,
+test_storage_entry_gates.py, test_smr_available_year.py, test_entry_vre_zone_selection.py,
+test_vre_procurement_ffr5e.py, test_capacity_screen_scarcity_restoration.py,
+test_storage_whole_class_accreditation.py, test_ercot219_option_b.py, test_caiso_nqc_class_factors.py,
+test_cc_committed_offer_margin.py, test_miso_intermediate_gas_offer_margin.py,
+test_ramp_envelope_basis.py, and TWO inside test_ccs_retrofit.py itself. D88 verified those last two
+failing on clean `main` with its own edits checked out, i.e. they are not D88's. Its conclusion, which
+it surfaced rather than repaired: **"Something landed on main that moved the default cache key without
+re-pinning it."**
+
+This is THIS DESK'S OWN discipline. The cache key is the address a bundle has; capx D24 (Q20, the
+(b′-1) drop-at-frozen-declaration construction), D79/Q54 (the solve-surface fingerprint) and D85/D85-R
+(the key-provenance census and its standing gate) all exist to make key movement legible. Sixteen
+silent pins is that discipline failing quietly.
+
+THE QUESTION, AND IT IS THE WHOLE LANE. Diagnose BEFORE you repair, and say which of these it is:
+
+  (A) A LEGITIMATE RE-KEY WHOSE PINS WERE NOT ADVANCED. Some lane armed a field, moved a default, or
+      re-derived a registry table the D79 surface sees, the key moved BY DESIGN, and the pins simply
+      were not updated in the same PR. Repair is to advance the pins, with the CAUSE named per pin —
+      never a blanket re-pin. A re-pin with no named cause is an answer key.
+
+  (B) AN ACCIDENTAL KEY MOVE. Something changed the default `ScenarioConfig` key that was not supposed
+      to. **This is the expensive direction**: every committed bundle solved before it is addressed at
+      a key nothing now computes, which is the D24 §4.2 collision class D85 spent two lanes proving
+      unreachable. STOP at that point, write it up, and serve it as an OWNER CARD — do not "fix" it by
+      re-pinning, which would bless the accident and erase the evidence.
+
+  (C) A MIX. Classify EVERY ONE of the sixteen individually. "Mostly A" is not an answer; this
+      ledger's standard is ZERO UNCLASSIFIED (capx D85's census — 15 mismatches, all 15 derived to
+      their recorded literal, zero unknown — is the precedent).
+
+METHOD:
+ 1. Reproduce the count at your own HEAD and STATE THE EXACT COMMAND. D88 measured 18/16 at
+    origin/main 5e3b6c6a; numbers drift and your count is the one you work from. (§0be doctrine: A RED
+    INVENTORY IS ONLY AS WIDE AS THE COMMAND THAT PRODUCED IT — state yours.)
+ 2. FIND WHAT MOVED THE KEY. Bisect over the merges between the last commit where the pins passed and
+    your HEAD if that is cheap; otherwise reason from the payload. The instruments already exist and
+    you should use them rather than building new ones: `scripts/check_key_provenance.py` and
+    `scripts/lib/key_provenance.py` (D85-R's standing tooling), the `_CACHE_KEY_OPTIONAL_FIELDS` /
+    `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` / `_CACHE_KEY_RETIRED_FIELDS` declarations in
+    scenarios.py, and `config/solve_surface_declared.py` with `tests/regression/test_persisted_identity.py`'s
+    LEDGERED_SURFACE_MOVES_BY_ISO. **NAME THE COMMIT AND THE FIELD.** A diagnosis that says "some
+    default moved" is not a diagnosis.
+ 3. Classify all sixteen into A / B per pin, with the failing assertion, the old and new key, and the
+    named cause per row. A table is the deliverable, one row per pin.
+ 4. Repair only the (A) rows, each with its cause named IN the pin's own comment so the next reader
+    knows why the literal changed. For any (B) row: STOP that row and write the owner card, reporting
+    at full magnitude what moved, when, and which committed bundles are addressed at the old key.
+ 5. Re-run the same wide command and report the new total in the form "fixed N, newly broken 0".
+ 6. ANSWER THE GATE QUESTION: `scripts/check_key_provenance.py` is EXIT 0 at HEAD (I ran it this
+    sitting). Say why it is green while sixteen pins are red — the two instruments answer different
+    questions and the difference is worth stating precisely, because if the standing gate CAN be green
+    through a real key defect, that is a finding about the gate and belongs in your FINDING.
+
+BOUNDARIES:
+  - DO NOT arm, disarm, or move any default, and do not touch `config/solve_surface_declared.py`
+    (APPEND-ONLY, rule 26 [R-DELETE]; re-declaring a moved row restores the pre-change key and
+    re-serves the pre-change bundle).
+  - DO NOT rewrite any committed `cache_key`. If a key rewrite is ever the right repair, that is an
+    owner card, not a lane's act — D85 and D85-R both refused it and they were right.
+  - DO NOT weaken, skip, xfail or delete a pin to make it green (CLAUDE.md's PR rules forbid it
+    outright). A pin you cannot repair is a finding.
+  - TWO OTHER CAPX LANES ARE LIVE: D88 (PR #5661) owns `ccs.py`'s conversion block, `arrays.py:3651`
+    and `evolve.py`'s exempt-set lines; D90-RESCORE is solving NEISO T3 and edits no `src/`. Note that
+    two of your sixteen pins sit inside `test_ccs_retrofit.py`, which D88 also touches — coordinate by
+    rebasing onto D88 once it merges, and if your repair would conflict with its edits, STOP and
+    report rather than resolving across the boundary.
+  - The other TWO of D88's eighteen failures are not cache-key pins. Inventory them with their likely
+    owner named; do not repair them.
+
+EXIT: docs/handoffs/FINDING-capx-d91-2026-09-08.md whose FIRST content is the sixteen-row
+classification table (pin · file · old key · new key · A/B · named cause · action), then the
+before/after wide-command counts, then §6's answer about the standing gate. Lead your close with the
+table and the named commit-and-field that moved the key. ruff check + ruff format clean. Rule 27
+[R-PUSH]: blob-verify anything over 300 lines.
+```
