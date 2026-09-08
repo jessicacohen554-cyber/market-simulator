@@ -215,18 +215,23 @@ def evolve_fleet(
         clean_attribute_price_by_fuel: Prior year's clean-tier row duals
             mapped to per-(fuel, zone) credits
             (``policy.clean_tiers.clean_credit_by_fuel``; FFR-7B Arm 3) —
-            composed into the SAME max(eac, rps) attribute doctrine at both
-            screens, never a sum. ``None`` (family off) is byte-identical.
+            composed into the SAME max(eac, rps) attribute doctrine at ALL
+            THREE price-driven screens, never a sum. Retirement (step 3) and
+            new entry (step 5) since FFR-7B Arm 3; the CCS RETROFIT screen
+            (step 2) since capx D87, which threaded it to the one call site
+            that had no parameter for it. ``None`` (family off) is
+            byte-identical at every one of them.
         cumulative: Global cumulative deployment, passed to the new-entry
             screen so candidate capex follows a Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price for the year, passed to
             the new-entry screen to cost gas CC variable fuel.
         carbon_price: Carbon price in $/tCO2 for the year, passed to the
             new-entry screen to cost thermal carbon emissions and to the
-            CCS retrofit screen. (The retrofit screen's attribute revenue
-            is no longer a caller-passed price: it resolves internally via
-            ``policy.federal_ces.effective_eac_price_for_unit`` — one
-            delivery channel, W2-C.)
+            CCS retrofit screen. (The retrofit screen's EXOGENOUS attribute
+            revenue is not a caller-passed price: it resolves internally via
+            ``policy.federal_ces.effective_eac_price_for_unit`` — one delivery
+            channel, W2-C. Its ENDOGENOUS leg is the clean-tier dual above,
+            which IS caller-passed, exactly as at the other two screens.)
         events: Optional dict (see
             :func:`market_sim.results.evolution_ledger.new_events`) populated
             in place with the per-year capacity events — retirements
@@ -671,6 +676,17 @@ def evolve_fleet(
         carbon_price=carbon_price,
         zone_names=screen_zone_names,
         cumulative=cumulative,
+        # capx D87 (SCN ruling S19, D-15): the prior year's clean-tier duals
+        # reach the RETROFIT screen the way they already reach the retirement
+        # and new-entry screens below. Before this they stopped here — this
+        # call site had no parameter for them — so a federal CES target row (or
+        # a state tier admitting ``gas_cc_ccs``) priced the LP's certificates
+        # and both other screens, and bought the retrofit screen nothing. The
+        # docstring's own "composed into the SAME max(eac, rps) attribute
+        # doctrine at BOTH screens" is now true of all THREE. ``None`` (family
+        # off) credits 0.0, so every backcast, hindcast and premium-era
+        # forecast is byte-identical.
+        clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
     )
     # A retrofit is this year's capital decision for the unit: clear its
     # unabated loss history (it re-enters the retirement screen as

@@ -31,6 +31,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator
+from market_sim.policy.clean_tiers import clean_credit_for_zone
 from market_sim.policy.federal_ces import effective_eac_price_for_unit
 from market_sim.policy.ira import ccus_45q_credit_per_mwh
 
@@ -186,6 +187,7 @@ def apply_ccs_retrofit(
     carbon_price: float,
     zone_names: list[str] | None = None,
     cumulative: CumulativeDeployment | None = None,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
 ) -> tuple[list[Generator], list[dict]]:
     """Screen existing gas CC units for CCS retrofit economics (W2-C).
 
@@ -344,6 +346,16 @@ def apply_ccs_retrofit(
             the retrofit capex follows the shared CCS Wright's-Law learning
             curve, and the retrofitted GW is added back to the tracker --
             a retrofit grows the capture-equipment experience base.
+        clean_attribute_price_by_fuel: capx D87 -- the PRIOR year's clean-tier
+            per-(fuel, zone) attribute credits (``policy.clean_tiers.
+            clean_credit_by_fuel``), threaded from ``evolve_fleet``. Folded
+            into BOTH continuations' attribute price below through the same
+            ``max()`` doctrine the retirement (``retirements.py``) and
+            new-entry (``new_entry.py``) screens already use, so a federal CES
+            target row's dual -- or a state clean tier admitting ``gas_cc_ccs``
+            -- reaches the retrofit screen the way it already reaches its two
+            siblings. ``None`` (the family off, or no prior year) credits 0.0
+            and the screen is byte-identical.
 
     Returns:
         Tuple ``(updated_fleet, retrofit_log)`` where ``retrofit_log`` is a
@@ -470,10 +482,67 @@ def apply_ccs_retrofit(
         )
 
         # Per-state attribute (certificate) prices — max(legacy eac_price_*,
-        # premium × state credit fraction); the unabated state's cesa_ci
-        # partial credit is what makes the uplift INCREMENTAL, never gross.
-        attr_unabated = effective_eac_price_for_unit(config, "gas_cc", old_er, year)
-        attr_post = effective_eac_price_for_unit(config, "gas_cc_ccs", new_er, year)
+        # premium × state credit fraction, prior-year CLEAN-TIER dual); the
+        # unabated state's cesa_ci partial credit is what makes the uplift
+        # INCREMENTAL, never gross.
+        #
+        # capx D87 (SCN ruling S19, D-15): the third leg. Before this the
+        # screen folded two of the three buyers of a certificate where its two
+        # sibling screens fold all three — ``retirements.py`` step 3 and
+        # ``new_entry.py`` step 5 both compose ``clean_credit_for_zone`` into
+        # the same ``max()``, and the federal CES row's own docstring says its
+        # dual reaches "the screens" through this seam
+        # (``federal_ces.py``: "mapped to the screens by
+        # ``federal_ces_row_fuel_credit`` through the existing
+        # ``clean_attribute_price_by_fuel`` seam (no new consumer)"). It was
+        # wired in the premium era and never revisited when SCN-WS2a added the
+        # target row, so under a target-row config — which carries a ZERO
+        # premium by construction (``__post_init__`` refuses the two together)
+        # — both continuations priced their certificate at 0 and the model
+        # preferred a NEW-BUILD capture island over retrofitting the same host
+        # by the full value of the certificate. That is a wiring asymmetry, not
+        # a market structure.
+        #
+        # ONE doctrine, not a new one (rule 19 ``[R-ONE-MECH]``): one
+        # certificate, several buyers, ``max()``, never a sum. No new config
+        # field and no new constant (rules 21 ``[R-DOF]`` / 24
+        # ``[R-REGISTRY]``) — the credit fraction is the one
+        # ``federal_ces_row_fuel_credit`` / ``MISO_CLEAN_TIER_REGIONS`` already
+        # declare and the dual is the LP's own. No RPS leg: ``_RPS_ELIGIBLE_
+        # FUELS`` is {wind, solar}, so gas never earns one and a leg that is
+        # zero by construction would be a misleading leg.
+        #
+        # The UNABATED leg folds today to 0.0 on two independent grounds — the
+        # fuel-level crediting map documents unabated ``gas_cc`` as a
+        # conservative 0, and no committed config lists ``gas_cc`` in
+        # ``federal_ces_eligible_fuels`` at all, so no ``gas_cc`` vector is
+        # minted. It is written anyway: leaving it asymmetric "because it is
+        # zero" is the exact shape this seam came from.
+        #
+        # ``clean_attribute_price_by_fuel is None`` (every backcast, every
+        # hindcast, every forecast without a clean row on these fuels) ⇒
+        # ``clean_credit_for_zone`` returns 0.0 ⇒ ``max(x, 0.0) == x`` ⇒ the
+        # screen is byte-identical. Zero cache keys move: this is a runtime
+        # prior-year value, not a config field, and this module is not a
+        # ``solve_surface`` registry.
+        # docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md
+        clean_zone_idx = (
+            zone_names.index(gen.zone)
+            if zone_names and gen.zone in zone_names
+            else None
+        )
+        attr_unabated = max(
+            effective_eac_price_for_unit(config, "gas_cc", old_er, year),
+            clean_credit_for_zone(
+                clean_attribute_price_by_fuel, "gas_cc", clean_zone_idx
+            ),
+        )
+        attr_post = max(
+            effective_eac_price_for_unit(config, "gas_cc_ccs", new_er, year),
+            clean_credit_for_zone(
+                clean_attribute_price_by_fuel, "gas_cc_ccs", clean_zone_idx
+            ),
+        )
         # §45Q stacks on top of the certificate (separate instrument),
         # eligibility-gated at the retrofit year.
         q45_per_mwh = ccus_45q_credit_per_mwh(captured, year, config)

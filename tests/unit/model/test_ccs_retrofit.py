@@ -145,6 +145,7 @@ def _screen(
     carbon_price=0.0,
     zone_names=None,
     cumulative=None,
+    clean_attribute_price_by_fuel=None,
 ):
     """Run the retrofit screen with the fixture defaults."""
     config = config or _fixture_config()
@@ -158,6 +159,7 @@ def _screen(
         carbon_price=carbon_price,
         zone_names=zone_names,
         cumulative=cumulative,
+        clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
     )
 
 
@@ -1492,6 +1494,233 @@ class TestRetrofitLedgerCarriesTheScalingRecord(unittest.TestCase):
             for mode in ("forecast", "backcast")
         }
         self.assertEqual(len(set(keys_now.values())), len(keys_now))
+
+
+class TestCleanTierSeamReachesTheRetrofitScreen(unittest.TestCase):
+    """capx D87: the prior year's clean-tier dual prices the retrofit screen.
+
+    The seam SCN ruling S19 routed here (D-15). Before the repair
+    :func:`apply_ccs_retrofit` folded two of the three buyers of a certificate
+    — the legacy per-fuel scalar and the exogenous premium, both via
+    ``effective_eac_price_for_unit`` — where its two sibling screens
+    (``retirements.py`` step 3, ``new_entry.py`` step 5) fold all three, so a
+    federal CES TARGET row's dual, or a state clean tier admitting
+    ``gas_cc_ccs``, priced the LP's certificates and both other screens and
+    bought the retrofit screen nothing. Under a target-row config the premium
+    is ZERO by construction (``__post_init__`` refuses the two together), so
+    ``attr_post`` collapsed to the ``eac_price_gas_cc_ccs`` default of 0.0.
+
+    One doctrine, not a new one (rule 19 ``[R-ONE-MECH]``): one certificate,
+    several buyers, ``max()``, never a sum.
+
+    Fixture: ``LOW_PRICES`` ($5/MWh, below every state's cost) so the screen
+    is unambiguously OFF without a credit — ``uplift_window`` is then exactly
+    ``-delta_fom`` — which makes the credit the sole cause of any retrofit
+    below.
+    """
+
+    CREDIT = 120.0  # $/MWh — comfortably clears the $5 fixture's cost gap.
+
+    def _fleet(self, zone="Z0"):
+        return [_gas_cc("CC1", zone=zone)]
+
+    def test_none_family_is_byte_identical(self):
+        """``None`` (every backcast, hindcast and premium-era forecast) no-ops.
+
+        ``clean_credit_for_zone(None, ...)`` returns 0.0 and ``max(x, 0.0) ==
+        x`` for the non-negative attribute prices this screen produces, so the
+        whole retrofit log must be identical. Asserted against BOTH other
+        empty spellings a caller can produce — ``{}`` and a dict carrying only
+        fuels this screen never asks about.
+        """
+        base_fleet, base_log = _screen(self._fleet(), HIGH_PRICES)
+        for label, by_fuel in (
+            ("None", None),
+            ("empty dict", {}),
+            ("unrelated fuels", {"wind": np.array([80.0]), "solar": np.array([80.0])}),
+        ):
+            with self.subTest(family=label):
+                fleet, log = _screen(
+                    self._fleet(),
+                    HIGH_PRICES,
+                    zone_names=["Z0"],
+                    clean_attribute_price_by_fuel=by_fuel,
+                )
+                self.assertEqual(log, base_log)
+                self.assertEqual(
+                    [g.fuel_type for g in fleet], [g.fuel_type for g in base_fleet]
+                )
+
+    def test_target_row_credit_buys_a_retrofit_a_zero_premium_config_does_not(self):
+        """The identification: same config, same prices — only the dual differs.
+
+        This is the defect, reproduced and then closed. The control is exactly
+        a ``CES-T80``-shaped config (target row armed ⇒ premium 0.0 ⇒
+        ``eac_price_gas_cc_ccs`` 0.0), which is why its ``attr_post`` is 0.
+        """
+        control_fleet, control_log = _screen(
+            self._fleet(), LOW_PRICES, zone_names=["Z0"]
+        )
+        self.assertEqual(control_log, [])
+        self.assertEqual(control_fleet[0].fuel_type, "gas_cc")
+
+        arm_fleet, arm_log = _screen(
+            self._fleet(),
+            LOW_PRICES,
+            zone_names=["Z0"],
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([self.CREDIT], dtype=float)
+            },
+        )
+        self.assertEqual(len(arm_log), 1)
+        self.assertEqual(arm_fleet[0].fuel_type, "gas_cc_ccs")
+
+    def test_attr_post_is_the_credit_exactly(self):
+        """``attr_post`` IS the dual under a target row — the screen's identity.
+
+        Under a target-row config ``effective_eac_price_for_unit`` returns 0.0
+        for both fuels, so the ``max()`` resolves to the clean leg and the
+        ledger's ``attr_post_usd_per_mwh`` must equal the credit to the cent.
+        This is the same identity the D87 screen's gate G1 reads off a real
+        NYISO bundle (dual x ``federal_ces_ccs_capture_fraction``).
+        """
+        _, log = _screen(
+            self._fleet(),
+            LOW_PRICES,
+            zone_names=["Z0"],
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([self.CREDIT], dtype=float)
+            },
+        )
+        self.assertEqual(len(log), 1)
+        self.assertAlmostEqual(log[0]["attr_post_usd_per_mwh"], self.CREDIT, places=9)
+        # No committed config lists ``gas_cc`` in ``federal_ces_eligible_fuels``
+        # and the fuel-level crediting map documents unabated gas CC as a
+        # conservative 0, so the unabated leg folds to 0 — but it is FOLDED,
+        # not omitted (see the symmetry test below).
+        self.assertAlmostEqual(log[0]["attr_unabated_usd_per_mwh"], 0.0, places=9)
+
+    def test_unabated_leg_folds_its_own_credit_symmetrically(self):
+        """A ``gas_cc`` credit reaches ``attr_unabated``, keeping the uplift incremental.
+
+        No committed config mints a ``gas_cc`` credit, so this is the leg's
+        ONLY coverage — and it is why the leg is WRITTEN rather than left out
+        "because it is zero": leaving it asymmetric is the exact shape this
+        seam came from.
+
+        What the symmetric fold guarantees, asserted here: while both states
+        are in the money, a credit paid EQUALLY to both **cancels out of the
+        uplift exactly**, because the uplift is a DIFFERENCE of the two
+        states' margins. That is the incremental valuation W2-C is built on.
+        It does NOT mean "no retrofit" — §45Q is credited on the captured
+        tonne only and stays asymmetric — which is why the assertion is on the
+        uplift's invariance, not on the decision.
+        """
+        both = {
+            "gas_cc": np.array([self.CREDIT], dtype=float),
+            "gas_cc_ccs": np.array([self.CREDIT], dtype=float),
+        }
+        # HIGH prices: both states are in the money with and without a credit,
+        # so no max(., 0) clipping can mask the cancellation.
+        _, base_log = _screen(self._fleet(), HIGH_PRICES, zone_names=["Z0"])
+        _, both_log = _screen(
+            self._fleet(),
+            HIGH_PRICES,
+            zone_names=["Z0"],
+            clean_attribute_price_by_fuel=both,
+        )
+        self.assertEqual(len(base_log), 1)
+        self.assertEqual(len(both_log), 1)
+        # The leg is genuinely wired — both attribute prices carry the credit …
+        self.assertAlmostEqual(
+            both_log[0]["attr_unabated_usd_per_mwh"], self.CREDIT, places=9
+        )
+        self.assertAlmostEqual(
+            both_log[0]["attr_post_usd_per_mwh"], self.CREDIT, places=9
+        )
+        # … each state's margin rises by the same certificate revenue …
+        self.assertGreater(
+            both_log[0]["margin_unabated_per_mw_yr"],
+            base_log[0]["margin_unabated_per_mw_yr"],
+        )
+        # … and the INCREMENT between them is untouched, to the cent.
+        for key in ("annual_net_savings_per_mw", "uplift_post_window_per_mw_yr"):
+            with self.subTest(field=key):
+                self.assertAlmostEqual(both_log[0][key], base_log[0][key], places=6)
+        # The contrast that shows the fold is load-bearing: crediting the POST
+        # state ALONE moves the same uplift, by the credit's own revenue.
+        _, post_only_log = _screen(
+            self._fleet(),
+            HIGH_PRICES,
+            zone_names=["Z0"],
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([self.CREDIT], dtype=float)
+            },
+        )
+        self.assertGreater(
+            post_only_log[0]["annual_net_savings_per_mw"],
+            base_log[0]["annual_net_savings_per_mw"],
+        )
+
+    def test_the_credit_is_locational_never_the_broadcast_max(self):
+        """A zone outside the row's eligibility mask earns nothing.
+
+        ``clean_credit_for_zone``'s own contract (never the broadcast max —
+        "that would credit MISO-East's dual to an Arkansas unit"), asserted at
+        this consumer: one credited zone, two identical units, only the unit
+        in the credited zone converts.
+        """
+        prices = np.vstack([LOW_PRICES[0], LOW_PRICES[0]])  # 2 zones, same price
+        fleet = [_gas_cc("CC_Z0", zone="Z0"), _gas_cc("CC_Z1", zone="Z1")]
+        out, log = _screen(
+            fleet,
+            prices,
+            zone_names=["Z0", "Z1"],
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([0.0, self.CREDIT], dtype=float)
+            },
+        )
+        self.assertEqual([e["unit_id"] for e in log], ["CC_Z1"])
+        by_id = {g.unit_id: g.fuel_type for g in out}
+        self.assertEqual(by_id["CC_Z0"], "gas_cc")
+        self.assertEqual(by_id["CC_Z1"], "gas_cc_ccs")
+
+    def test_no_zone_context_credits_nothing_fail_closed(self):
+        """A unit the caller cannot place earns 0, never the vector's first row.
+
+        ``zone_names=None`` on a MULTI-row price array is the unmappable case
+        the screen already skips loudly-in-debug; on a single-row array the
+        unit is priced at row 0 but still has no zone index, and the credit
+        must resolve to 0.0 rather than silently indexing the vector.
+        """
+        _, log = _screen(
+            self._fleet(),
+            LOW_PRICES,
+            zone_names=None,
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([self.CREDIT], dtype=float)
+            },
+        )
+        self.assertEqual(log, [])
+
+    def test_the_exogenous_max_still_wins_when_it_is_larger(self):
+        """``max()``, never a sum — the doctrine the repair had to keep.
+
+        A legacy ``eac_price_gas_cc_ccs`` above the dual must dominate it, and
+        the ledger must record the LARGER of the two, not their total.
+        """
+        cfg = _fixture_config(eac_price_gas_cc_ccs=200.0)
+        _, log = _screen(
+            self._fleet(),
+            LOW_PRICES,
+            config=cfg,
+            zone_names=["Z0"],
+            clean_attribute_price_by_fuel={
+                "gas_cc_ccs": np.array([self.CREDIT], dtype=float)
+            },
+        )
+        self.assertEqual(len(log), 1)
+        self.assertAlmostEqual(log[0]["attr_post_usd_per_mwh"], 200.0, places=9)
 
 
 if __name__ == "__main__":
