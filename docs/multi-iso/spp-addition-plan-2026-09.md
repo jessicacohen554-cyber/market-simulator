@@ -289,9 +289,11 @@ is Opus territory by the r#20 economy rule). **Profile** = the `DATA PROFILE:` l
 | **SPP-51** priced seams MISO / AECI / ERCOT (P2's forward mechanism; issued r#9) — **LANDED 2026-09-07: adjudications made, arm KILLED at rule-29 phase 0 on the measured record, no LP spent; cells U → R; topology gap routed R-a** (`docs/handoffs/FINDING-spp-51-2026-09-07.md`) | FABLE · carries SPP-33's R1 anchor map, R2 `HH + basis` correction and the ERCOT 820-vs-±835 clip adjudication | spp | `config/interchange/spec.py` SPP blocks (`hr_by_year`), the neighbour-anchor producer (`derive_neighbor_hr_by_year.py` per-ISO anchor map — SPP-33 R1), tests, SPP shard cell for the seam mechanism, `PRECOMMIT-/FINDING-spp-51` | zero-LP: the offer-array delta of the priced seam vs served; SWPP interchange duration curves by DIBA (SPP-33) as the footprint | `FINDING-spp-51-<date>.md` | A/B served vs `--priced-interchange` on the screen year; STOP gate = modelled interchange duration curve sign/magnitude vs EIA-930; MISO's own seam constants untouched (rule 25); promotion = card P15 |
 | **SPP-60** the SPP T1-H recipe + forecast data intake — **LANDED 2026-09-07** (`docs/handoffs/FINDING-spp-60-2026-09-07.md`; T1-H `spp-2021-2025-realized-t1h-spp60` registered, verdict `spp-t1h` HOLD / FC-3 FAIL at full magnitude; gap table closed: `capacity_actuals_spp.csv` built, `confirmed-retirements/spp.csv` first rows (Tolk 1/2), the 2020-vintage `eia860_generators.parquet` lacked every SWPP row and was extended with the six-BA rows preserved byte-for-byte; `load_forecast/spp.py` already carried a real edition (2025 ITP) — the 2026 ITP vintage is routed) | FABLE · a forecast recipe is a design object; the intake gaps are adjudications | spp | `scripts/lib/load_forecast/spp.py` (a real edition + vintage — manifest row 11), the SPP rows of confirmed-retirement / planned-addition / queue-cap / fuel-trajectory registries, the T1-H hindcast bundle + sidecar via `register_forecast_run.py`, legs (b)/(c) of the SPP board row (after SPP-45), `PRECOMMIT-/FINDING-spp-60` | zero-LP first: the gap table (what T1-H reads vs what SPP has), the load-forecast edition census | `FINDING-spp-60-<date>.md` | backcast keeper untouched; `GOLDEN_ISOS` only if the readiness battery admits it (report, never assert); rule 22: the crossover window is forecast-mode, no measured H1-2026 actuals |
 | **SPP-55** VRL-based scarcity (P5's deferred object; issued r#10 once SPP-44's 28c edit merged) — **LANDED 2026-09-07: KILLED AT ZERO LP** (`FINDING-spp-55-2026-09-07.md` — the object is SPP's published Contingency Reserve Demand Curve $275/$550/$1,100 (not the VRLs), registered as the SPP entry of the shared `energy_reserve_coopt` gate with NO new field; keeper-3's reserve-eligible headroom never falls to the 1.5 GW requirement in any measured shortage hour, so the row cannot bind — INERT, cell U → I; 1/0/0 of the C3c hours coincide with reserve shortage; no solve spent, nothing registered) | FABLE · mechanism design: an in-LP reserve demand curve on SPP's own published VRL steps; kill-grading is adjudication | spp | `config/reserve_config.py` SPP entry (requirements + the VRL step curve, every number cited to SPP-12's Exhibit 4-1 / Planning Criteria), ONE new ISO-exclusive `ScenarioConfig` gate if the reserve machinery needs one (default off, drop value declared) + matrix row + a cell in EVERY shard (28c), tests, `PRECOMMIT-/FINDING-spp-55`, screen bundle (TEMPORARY), `results/calibration/spp55_vrl_B/` if the screen clears, the SPP shard cells it moves | zero-LP: rule-19 enumeration (SPP has NO scarcity mechanism, zero slack/dump — price-family §1.3); the measured target (42 / 59 / 68 h > $200 at ordinary load, 79–93× gas); footprint by year from the `spp-or-mcp` RTBM MCP files (hours the spinning MCP sits at/above the $250 VRL step) → screen year | `FINDING-spp-55-<date>.md` | STOP gate structural (the reserve row binds in the measured shortage hours; the price response has the VRL's own order; no non-target flip); never C3c-gated; control = keeper-3; promotion = card P15 |
-| **SPP-46** the C1-2024 gas split — SPP-44 R-17's two admissible objects (issued r#12) | FABLE · the object choice, the carve-out declaration and the kill-grading are all adjudications | spp | `PRECOMMIT-/FINDING-spp-46`, `docs/handoffs/spp46/`, its own SPP shard cell line(s), and — candidate (A) only — one SPP-exclusive default-off `ScenarioConfig` field with its matrix row + rule-28(c) cells | **rule-29 phase 0 is a kill condition**: the committed-state census + the offer-array delta, both zero-LP, decide the candidate and may end the lane before any solve | `FINDING-spp-46-<date>.md` | screen year named by FOOTPRINT ex ante; STOP gate structural with ex-ante dominance thresholds, identity on the P0 objective + LP input arrays (never P1), NEVER read on C1; control = keeper-3 committed (form 4) + G-DRIFT, no control solve; bundles gitignored, NEVER deleted (rule 31) |
-| **SPP-47** P16 — the reference's incomplete-fuel swap rule, repo-wide (issued r#12 under owner ruling P16) | OPUS · an enumerated one-line rule change; the SCOPE is ruled, the MEASUREMENT is the lane | shared | `scripts/data/build_calibration_reference.py`, `data/raw/_validation-source/calibration_reference.json`, `bench/SPP/` only if it goes STALE, `FINDING-spp-47` | zero-LP throughout; `calibration_verdict.py --run-id` on committed artifacts, never a solve | `FINDING-spp-47-<date>.md` | the five cells move and nothing else does; per-ISO determination delta reported at full magnitude; all seven gates at their pre-lane exit code or better; no other ISO's bench part touched |
-| **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule (issued r#12 under owner ruling P17; **re-assigned FABLE → OPUS the same sitting**, the desk closing the construction choice rather than leaving it to the lane) | OPUS · `scripts/data/` is Opus territory (r#20 economy rule) and the construction is now NAMED — implement, verify, measure, recommend | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
+| **SPP-46** the C1-2024 gas split — SPP-44 R-17's two admissible objects (issued r#12) — **LANDED 2026-09-07: BOTH CANDIDATES KILLED AT RULE-29 PHASE 0, ZERO LP** (`FINDING-spp-46-2026-09-07.md`; PR #5602 — (A) P0-anchored reach ≤ 0.25 of the ST_GAS under-run against a 0.50 bar and the measured-state form fails rule 13's forward test; (B) needs CT ×2.0 and the merit-order derived set moves CT 0.00 TWh, and ~100 % of the CT over-run sits on flagged inputs. **The object is a measured-INPUT plausibility defect**: 91 plant-months ≤ $0.50 / 31 negative / 206 ≥ $10 of 5,707 in the EIA-923 gas frame, a 3.43 eGRID heat rate on simple-cycle GTs, Harrington priced as $1.48 gas while CAMPD burns coal — R-1…R-5 routed) | FABLE · the object choice, the carve-out declaration and the kill-grading are all adjudications | spp | `PRECOMMIT-/FINDING-spp-46`, `docs/handoffs/spp46/`, its own SPP shard cell line(s), and — candidate (A) only — one SPP-exclusive default-off `ScenarioConfig` field with its matrix row + rule-28(c) cells | **rule-29 phase 0 is a kill condition**: the committed-state census + the offer-array delta, both zero-LP, decide the candidate and may end the lane before any solve | `FINDING-spp-46-<date>.md` | screen year named by FOOTPRINT ex ante; STOP gate structural with ex-ante dominance thresholds, identity on the P0 objective + LP input arrays (never P1), NEVER read on C1; control = keeper-3 committed (form 4) + G-DRIFT, no control solve; bundles gitignored, NEVER deleted (rule 31) |
+| **SPP-47** P16 — the reference's incomplete-fuel swap rule, repo-wide (issued r#12 under owner ruling P16) — **LANDED 2026-09-07** (`FINDING-spp-47-2026-09-07.md`; PR #5599 — one executable line, zero new parameters; the five specified cells reproduce to the digit and a **SIXTH** was found (NYISO 2022 oil, required by rule 22's data-vs-score clause, not a holdout spend); every ISO's determination and **the whole scorer report byte-identical**, because `calibration_verdict.py` never reads the reference; no bench part went STALE, no desk routed) | OPUS · an enumerated one-line rule change; the SCOPE is ruled, the MEASUREMENT is the lane | shared | `scripts/data/build_calibration_reference.py`, `data/raw/_validation-source/calibration_reference.json`, `bench/SPP/` only if it goes STALE, `FINDING-spp-47` | zero-LP throughout; `calibration_verdict.py --run-id` on committed artifacts, never a solve | `FINDING-spp-47-<date>.md` | the five cells move and nothing else does; per-ISO determination delta reported at full magnitude; all seven gates at their pre-lane exit code or better; no other ISO's bench part touched |
+| **SPP-48** P17 — the wind-shape builder's per-zone LEVEL rule — **LANDED 2026-09-07: REPAIRED, PARTITION CONSISTENCY PROVED, SPP-54's C-3 STOP DISSOLVED** (`FINDING-spp-48-2026-09-07.md`; PR #5601/#5592 — `scripts/lib/wind_shape.py` carries the shared rule with no ISO name, no per-ISO constant and no branch; `_SAMPLES_PER_ZONE` DELETED, net −1 free parameter; the six sites covered 13.8–100 % of a zone's capacity, so the level bias was an undeclared per-zone free parameter multiplying the split. **Both keepers need a re-baseline** — SPP's and MISO's. Ran as FABLE despite the in-sitting re-assignment to Opus — the owner had already launched it) (issued r#12 under owner ruling P17; **re-assigned FABLE → OPUS the same sitting**, the desk closing the construction choice rather than leaving it to the lane) | OPUS · `scripts/data/` is Opus territory (r#20 economy rule) and the construction is now NAMED — implement, verify, measure, recommend | spp | `build_spp_wind_shape.py` + `build_miso_wind_shape.py` (the shared rule only, never a MISO number), `PRECOMMIT-/FINDING-spp-48`, `docs/handoffs/spp48/`, tests | zero-LP throughout; the identity legs and the h8509 feasibility test are computed, not solved | `FINDING-spp-48-<date>.md` | Σ_z cap·cf = M(t) to machine precision in both ISOs; the h8509 verdict reported either way; the two-zone keeper-3 delta quantified with a re-baseline recommendation; **the solve-path parquets NOT regenerated** (SPP-46's control) |
+| **SPP-49** P19 — the two shared input seams behind the C1 gas split, repo-wide (issued r#13 under owner ruling P19) | FABLE · scope ruled and construction named, but the blast radius is seven ISOs' marginal costs and the construction-vs-registered-gate call is left open | shared | `data/fuel/plant_prices.py`, `data/fleet/eia860.py`, `scenarios.py`/`constants.py` only if a gate lands, `PRECOMMIT-/FINDING-spp-49`, `docs/handoffs/spp49/`, tests | **the ex-ante cache-key census is recorded before either file is edited** (capx (b′-1) pattern); zero-LP throughout | `FINDING-spp-49-<date>.md` | SPP-46's attribution reproduced on the repaired inputs; per-ISO flagged-row and predicted-Δ tables; every ISO owing a re-solve named; no third gate-(a) row; rule-27 blob verify on both ≥300-line files |
+| **SPP-50** the batched SPP re-baseline (QUEUED r#13 — issued when SPP-49 lands) | FABLE · a keeper determination | spp | keeper-3's recipe re-solved on SPP-48's wind repair + SPP-49's input repairs, full span in ONE invocation | rule 16; identity on the P0 objective + LP input arrays, never P1 (E-8) | `FINDING-spp-50-<date>.md` | one LP span, not two (owner sequencing ruling r#13); promotion served as P15; bundles gitignored, never deleted (rule 31) |
 | **SPP-51…57** | per §4 (SPP-51 → **FABLE** since r#6: it carries SPP-33's R2 anchor correction and an ERCOT limit-vs-clip decision, both adjudications; SPP-58 added — see §8 W5) | spp | one lever each | rule-29 screen, keeper = control | `FINDING-spp-5N-<date>.md` | one PR each; shard cell moves in the same PR (rule 28b) |
 | **SPP-60** | FABLE · **capx director charters it** (P8) | spp | `program-status.json` SPP row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens | — | — | routed, never issued by this desk |
 
@@ -2418,6 +2420,112 @@ identity table; the h8509 verdict; the two-zone keeper-3 delta and your re-basel
 MISO delta and the note routing it to MISO's desk.
 ```
 
+### W5 issuance r#13 — the input seams (SPP-49), and the batched re-baseline (SPP-50, queued)
+
+#### SPP-49 `[FABLE]` — P19: the two shared input seams behind SPP's C1 gas split, repo-wide
+
+```
+You are lane SPP-49. MODEL: Fable claude-fable-5-1 — the SCOPE is ruled and the CONSTRUCTION is named, but
+the blast radius is all seven ISOs' marginal costs and ONE governance question is deliberately left open
+for you (below). DATA PROFILE: shared. Branch stem: claude/spp-49-input-seam-repairs-<4 chars>.
+
+Read CLAUDE.md freshly and in full — rules 5 [R-NO-MAGIC], 13 [R-MEASURED], 14 [R-ACCURATE],
+21 [R-DOF], 23 [R-FROZEN-DERIVE], 24 [R-REGISTRY], 25 [R-ISO-SCOPE], 27 [R-PUSH], 29, 31 all bind.
+Then: docs/handoffs/FINDING-spp-46-2026-09-07.md IN FULL — §0.1's plant-level attribution table and §6
+R-1 / R-2 / R-6 / R-7 are your specification; docs/multi-iso/05-backcast-playbook.md §6.2 (fuel prices
+before bands); docs/multi-iso/spp-addition-plan-2026-09.md §8.0.
+
+OWNER RULING P19 (2026-09-08, SPP desk r#13): **repo-wide, both seams, one lane.** Not SPP-only, not a
+default-off arm for SPP alone, not deferred. The scope question is CLOSED — do not re-open it, do not
+narrow it, and do not put an ISO name into either seam (rule 25).
+
+WHY THIS LANE EXISTS. SPP-46 chased the C1-2024 gas split through both mechanisms SPP-44 left admissible
+and killed both at zero LP, because the split is not a mechanism at all. Its plant-level attribution puts
+~100 % of the CT over-run on rows whose OWN measured inputs are implausible, while the clean CT cohort
+(110 plants, 7,080 MW) reproduces to −244 GWh. Repairing the inputs is rule 14 work; closing the residual
+with a band would have been rule 14's forbidden "bury the error back inside an inaccurate input".
+
+SEAM 1 — the EIA-923 own-month gas price (`src/market_sim/data/fuel/plant_prices.py`,
+`apply_plant_monthly_fuel_prices`, line ~281). Today an own-reported plant-month is consumed at face
+value with NO plausibility screen. In the SPP states alone that is **91 plant-months ≤ $0.50/MMBtu, 31
+NEGATIVE and 206 ≥ $10, of 5,707** (Elk Station 58835 at $0.16–0.41 every month of 2024; Mustang CC at
+negative prices in seven months of 2024; Riverside at $71.66 on 2,750 MMBtu). THE SCREEN, as SPP-46 R-1
+specifies it and no wider: a plant-month outside **[0.5, 2.0] ×** the plant's own state's EIA
+delivered-to-electric-power price for that month falls back to that reference. The reference is
+**`N3045<ST>3`, $/Mcf ÷ 1.037**; the plant's state comes from **the F923 frame, never the fleet row** —
+**SPP-46 R-7 is a PREREQUISITE, not a footnote**: every SPP fleet row carries an empty `state`, so a
+state-keyed screen read off the fleet would silently do nothing. Verify the frame's state coverage for
+every ISO before you rely on it, and report any ISO where it is thin.
+
+SEAM 2 — the simple-cycle heat-rate floor (`src/market_sim/data/fleet/eia860.py`, beside
+`_egrid_boundary_hr_repairs` at line ~540, which already implements the CC ceiling — this is its
+mirror). A CT-only plant whose eGRID `PLHTRT` is below `HEAT_RATE_BINS["gas_ct"]["aero"]` (**9.0**,
+`constants.py:214`, EIA Table 8) is reconciled. Pioneer 57881 reads **3.43** on simple-cycle GTs and is
+worth +5,013 GWh of SPP's 2024 CT over-run by itself. SPP-46 also flags that its 763 MW of rows sit
+against a 427 MW nameplate — **that is a SECOND question; report it, do not fix it here** (rule 19).
+
+THE ONE OPEN ADJUDICATION — decide it in the PRECOMMIT, before any measurement, and argue it: **does each
+repair land as a CONSTRUCTION (unconditional at the seam, the form `_egrid_boundary_hr_repairs` already
+uses and the precedent that makes seam 2 easy) or as a REGISTERED `ScenarioConfig` gate (rule 24)?**
+The criterion is not convenience: a construction is right where the repaired value is the only defensible
+reading of the measured record and no run would ever want the unrepaired one; a registered gate is right
+where a desk could legitimately want its ISO's raw series. Say which you chose FOR EACH SEAM and why. If
+you choose a gate, it is **default-ON** — the owner ruled repo-wide — and the `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS`
+declaration discipline applies.
+
+MEASURE BEFORE YOU TOUCH ANYTHING (the capx (b′-1) pattern; this is the bulk of the lane):
+  1. **The ex-ante cache-key census**, recorded in the PRECOMMIT BEFORE either file is edited: exactly
+     which committed run configs re-key, by ISO and by lane (backcast keeper / hindcast / forecast). A
+     seven-ISO marginal-cost change that silently re-keys ten keepers is the failure mode this census
+     exists to catch.
+  2. **The flagged-row census per ISO**: plant-months caught by seam 1 (low / negative / high, each
+     separately) and plants caught by seam 2, as counts, MW and share of that ISO's gas fleet. Every desk
+     must be able to act on ITS number.
+  3. **The predicted marginal-cost delta per ISO**, zero-LP, from the input arrays alone — direction and
+     order of magnitude, stated before anyone solves.
+  4. **Reproduce SPP-46's attribution**: the 2024 CT +5,013 (Pioneer) and +8,121 (six low-price plants),
+     the ST_GAS +6,136 (Harrington) and the clean cohorts' −244 / −5,949, on the repaired inputs. If your
+     repair does not move those specific rows by roughly those amounts, it is not the repair SPP-46
+     identified and you say so.
+
+NO SOLVE. NOT ONE. This lane is inputs and measurement; the re-baseline is **SPP-50**, a separate lane
+the desk issues after you land, and it will carry SPP-48's wind repair in the same span. Do not solve to
+"check", do not register anything, do not touch any keeper shard. NO holdout year (rule 22).
+
+HARRINGTON (SPP-46 R-4) IS **NOT** YOURS. Its fuel-switch date is a fleet-seam question reaching more than
+SPP (desk register R-ax). Report what your two repairs do and do not do to it, and leave it.
+
+GATES before the PR, all seven, and each must be at its pre-lane exit code or better —
+`audit_keepers --check`, `check_registry_payload_parity`, `check_gate_a_provenance` (it is ALREADY EXIT 1
+on ERCOT and MISO at this desk's pin, neither of them yours: confirm you did not add a third),
+`check_bench_freshness`, `check_golden_manifest`, `ci_refactor_guards`, `check_mechanism_matrix`.
+Rule 27: `plant_prices.py` and `eia860.py` are both ≥ 300 lines — edit locally, push the on-disk bytes,
+and fetch-back verify each blob after the push.
+
+FILES YOU OWN: `src/market_sim/data/fuel/plant_prices.py`, `src/market_sim/data/fleet/eia860.py`,
+`config/scenarios.py` + `constants.py` ONLY if your adjudication lands a registered gate (then also its
+matrix row and the rule-28(c) `·` cell line in every shard), `docs/handoffs/PRECOMMIT-spp-49-<date>.md`,
+`docs/handoffs/FINDING-spp-49-<date>.md`, `docs/handoffs/spp49/`, tests.
+FILES YOU DO NOT TOUCH: any keeper shard, status file, bench part, registry sidecar or calibration log —
+**any ISO's, SPP's included**; `frontend/data/forecast/`; the plan; the ledger; `CHANGELOG.md`;
+`docs/calibration-log/spp.md` (put your `## Log entry` block in the FINDING, §8.0 rule 1).
+
+OWNER REPORT (FINDING §0, in this order): the two repairs and your construction-vs-gate adjudication for
+each; the ex-ante key census beside what actually re-keyed; the per-ISO flagged-row table; the per-ISO
+predicted marginal-cost delta; SPP-46's attribution reproduced; and one explicit line naming every ISO
+whose desk now owes a re-solve, so the desk can route it.
+```
+
+#### SPP-50 `[FABLE]` — the batched SPP re-baseline (QUEUED r#13, issued when SPP-49 lands)
+
+Not issuable yet, by owner sequencing ruling (r#13): the wind re-baseline SPP-48 recommends and the input
+re-baseline SPP-49 will force are **one** full-span solve, not two. When SPP-49 lands, this lane re-solves
+keeper-3's recipe over `--year 2023 2024 2025` in one invocation on (a) SPP-48's repaired per-zone wind
+LEVEL rule, with the solve-path parquets regenerated, and (b) SPP-49's repaired input seams — registers it,
+and serves the promotion as **P15** to the owner. Its pre-declared promotion rule, its identity legs (P0
+objective + LP input arrays, never a warm-started P1 objective — desk error E-8) and its bundle-retention
+statement (rule 31: gitignore, never `rm`) are written into the charter at issuance.
+
 ### W5 — the lever queue (DISPATCHABLE since r#7 — SPP-40 landed; SPP-57 issued r#7 in full below the table)
 
 | Lane | Model | Charter stub (expanded by the desk at issuance) |
@@ -2551,9 +2659,11 @@ capx director** after a card (P8). This desk never writes it.
 | SPP-51 | `docs/handoffs/PRECOMMIT-spp-51-2026-09-07.md` · `FINDING-spp-51-2026-09-07.md` | **LANDED** 2026-09-07 — three adjudications made (R1 per-ISO anchor map; R2 HH+basis flat HRs 10.55 / 9.63 / 10.23 / 16.78 with `hr_by_year` armed, MISO split into West/South legs; ERCOT 835 MW measured clip); **arm KILLED at rule-29 phase 0 on the measured record, NO LP spent** (MISO legs 0.42–0.50 sign agreement vs 0.55; corr ≈ 0); cells `priced_interchange` / `reference_price_interface` U → R; topology gap (no SPP `IMPORT_ZONE`; one-bus repair = corridor bypass) designed + routed R-a; NO P15 candidate |
 | SPP-60 | `docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md`, `docs/handoffs/FINDING-spp-60-2026-09-07.md` | **LANDED** 2026-09-07 — gap table + T1-H `spp-2021-2025-realized-t1h-spp60` registered (`spp-t1h`: HOLD, FC-3 FAIL); board legs (b)/(c) filled; six routed items (FINDING §4) |
 | SPP-55 | `docs/handoffs/FINDING-spp-55-2026-09-07.md` (+ `PRECOMMIT-spp-55-2026-09-07.md`, `docs/handoffs/spp55/`) | **LANDED 2026-09-07 — KILLED AT ZERO LP (rule 29 step 0):** the SPP Contingency Reserve family built on SPP's published $275/$550/$1,100 curve and RSG requirement rule (six published constants, one measured share), registered under `energy_reserve_coopt` (no new field); keeper-3's headroom is below the requirement in 0/1/0 hours and in no measured shortage hour → INERT, cell U → I; the C3c tail is a 5-minute RT object (1/0/0 overlap); no candidate for P15; R-21…R-25 routed |
-| SPP-47 | `docs/handoffs/FINDING-spp-47-<date>.md` | issued r#12 (owner ruling P16) |
-| SPP-48 | `docs/handoffs/PRECOMMIT-spp-48-<date>.md` / `FINDING-spp-48-<date>.md` | issued r#12 (owner ruling P17) |
-| SPP-46 | `docs/handoffs/PRECOMMIT-spp-46-<date>.md` / `FINDING-spp-46-<date>.md` | issued r#12 |
+| SPP-47 | `docs/handoffs/FINDING-spp-47-2026-09-07.md` | **LANDED** 2026-09-07 (PR #5599) — one line, 6 cells (a sixth found), every determination byte-identical, zero LP |
+| SPP-48 | `docs/handoffs/PRECOMMIT-spp-48-2026-09-07.md` / `FINDING-spp-48-2026-09-07.md` | **LANDED** 2026-09-07 (PRs #5592/#5601) — R-LEVEL in `scripts/lib/wind_shape.py`, partition consistency proved, C-3 STOP dissolved, both keepers owed a re-baseline |
+| SPP-49 | `docs/handoffs/PRECOMMIT-spp-49-<date>.md` / `FINDING-spp-49-<date>.md` | issued r#13 (owner ruling P19) |
+| SPP-50 | `docs/handoffs/FINDING-spp-50-<date>.md` | QUEUED r#13 — issued when SPP-49 lands |
+| SPP-46 | `docs/handoffs/PRECOMMIT-spp-46-2026-09-07.md` / `FINDING-spp-46-2026-09-07.md` | **LANDED** 2026-09-07 (PR #5602) — both R-17 candidates killed at phase 0, zero LP; the gas split is an input-plausibility defect, R-1…R-5 routed |
 | SPP-35 | `docs/handoffs/FINDING-spp-35-2026-09-07.md` | **LANDED** 2026-09-07 — S-1/S-2 + O-4/O-6 closed; six items routed (FINDING §5) |
 
 ## 10. Ledger

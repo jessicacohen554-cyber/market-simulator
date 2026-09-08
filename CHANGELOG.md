@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-09-08 — SPP's C1 gas split is an input defect, not a mechanism; the wind LEVEL rule loses a free parameter (lanes SPP-46 · 47 · 48)
+
+Three SPP lanes, **zero LP spent between them**. No keeper moved, no `ScenarioConfig` field was added, no
+default flipped. Two of the three changed shared code and both are net **parameter-reducing**. Records:
+`docs/handoffs/FINDING-spp-{46,47,48}-2026-09-07.md`; log `spp-13` / `spp-14` / `spp-15`; desk ledger §0n.
+
+- **SPP-46 — the gas split SPP has chased through three lanes is a measured-INPUT defect.** Both objects
+  SPP-44 left admissible are killed at rule-29 phase 0: the commitment-state input reaches ≤ 25 % of the
+  ST_GAS under-run and its measured-state form fails rule 13's forward test; the per-class band needs
+  CT ×2.0, and ~100 % of the CT over-run sits on rows whose own inputs are already implausible — so a band
+  that closed it would bury the error inside a bad input (rule 14). What the census found instead: across
+  the SPP states the EIA-923 own-month gas frame carries **91 plant-months ≤ $0.50, 31 negative and 206
+  ≥ $10 of 5,707**, consumed at face value with no plausibility screen; one simple-cycle plant carries an
+  eGRID heat rate of **3.43 MMBtu/MWh**; Harrington is priced as $1.48 gas steam while CAMPD has it burning
+  coal. The **clean** CT cohort — 110 plants, 7,080 MW — reproduces to **−244 GWh**.
+- **SPP-47 — the EIA-923 incomplete-vintage swap now covers each ISO's own extra benchmarked fuels.** One
+  executable line, zero new parameters, same threshold and same EIA-930 authority. Six reference cells move
+  (SPP/MISO/NEISO 2025 hydro, NEISO 2025 oil, NYISO 2023 **and 2022** oil — the sixth found by an exhaustive
+  census, and required by rule 22's *what is held out is the score, never the data*). **Every ISO's scorer
+  report is byte-identical**, because `calibration_verdict.py` never reads the reference file: the repair
+  fixes a number two committed artifacts state, and changes no score anywhere.
+- **SPP-48 — the wind-shape builders lose an undeclared free parameter.** The zonal redistribution is
+  invariant to a common rescaling of the shapes but **not** to a per-zone one, so the six-largest-plants
+  subsample — covering 13.8 % to 100 % of a zone's capacity — was a per-zone level bias identified by
+  nothing measured. It is replaced by the definition it approximated: every operable wind plant in the zone,
+  at its own coordinates and hub height, through the unchanged shear law and power curve. `_SAMPLES_PER_ZONE`
+  is deleted, the shared rule lives once in `scripts/lib/wind_shape.py` with no ISO name or branch, and the
+  result is partition-consistent, so re-cutting a zone boundary can no longer move another zone's weight —
+  which is what dissolved SPP-54's three-zone STOP. **Both SPP's and MISO's keepers are now owed a wind
+  re-baseline**; the solve-path parquets are deliberately not regenerated yet, so nothing has changed for
+  either ISO's LP.
+
 ## 2026-09-07 — SPP's W5/W6 batch: six lanes, five killed arms, one T1-H (lanes SPP-45 · 51 · 54 · 55 · 58 · 60)
 
 Six SPP lanes landed together. **Exactly one spent an LP** (SPP-60's T1-H); four of the other five were
