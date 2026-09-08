@@ -573,3 +573,94 @@ declarations; solve surface 0 moved).
   (miso-233 mirrored from SPP's side, or ERCOT-only priced), R-c elasticity keys (R3), R-d ERCOT-side 820 vs 835.
 
 **Next shorthand: spp-13.**
+
+## 2026-09-07 — spp-13: SPP-46 the C1-2024 gas split — BOTH R-17 candidates KILLED at rule-29 PHASE 0, ZERO LP; the object is a measured-input plausibility defect on three seams (EIA-923 own-month prices, plant-level eGRID heat rates, Harrington's fuel vintage) + a self-commitment residual — ROUTED`
+
+- **Lane** SPP-46 (Fable) · `docs/handoffs/PRECOMMIT-spp-46-2026-09-07.md` · `FINDING-spp-46-2026-09-07.md` ·
+  `docs/handoffs/spp46/` · control keeper-3 (`623184f3`, G-DRIFT 7 hunk groups all INERT). **No solve, no bundle, no
+  registration, keeper untouched, no field / constant / parameter added.**
+- **Phase 0.1 (CAMPD census):** the CT over-run is mid/low-load (2024: 6.5 / 3.2 / 1.3 TWh mid / low / top-decile);
+  the ST_GAS committed-state footprint is 2.4 / 0.3 / 1.0 TWh against 8.0 / 5.1 / 7.9 TWh under-runs, ≤ 0.44 TWh of
+  it in never-started hours.
+- **Phase 0.2 (keeper-3's own arrays):** CT and ST_GAS dispatch sit on their own mc (0 ST_GAS hours outside the
+  in-merit band); the 2024 CT over-run sits ~entirely on rows whose OWN input is implausible — Pioneer 57881 eGRID
+  heat rate 3.43 (+5.0 TWh), Elk / Mustang 4 / Mustang CC at $0.11–0.41 and NEGATIVE own-reported gas (+8.1 TWh) —
+  while the 110 clean CT plants reproduce to −0.24 TWh; ST_GAS: Harrington 1,018 MW as $1.48 gas steam while CAMPD
+  burns coal (+5.8), Muskogee / Seminole / Riverside on low-volume $7–72 months (−3.8), the clean OG&E / PSO / SWEPCO
+  steam cohort −5.9. SPP-state EIA-923 gas frame: 91 plant-months ≤ $0.50, 31 negative, 206 ≥ $10 of 5,707; no
+  screen at the seam.
+- **Adjudication:** (A) P0-anchored online-hours leg reach ≤ 0.25 of the gap (over-bound) — KILLED; measured-state
+  form fails rule 13 — INADMISSIBLE. (B) reach needs CT ×2.0 / ST ×0.6 / CC ×0.7 (±6–17 % level; derived set moves CT
+  0.00) and would compensate the input defect — KILLED / REFUSED (rule 14, playbook §6.2). Screen not reached.
+- **Routed:** SPP-46 R-1 (F923 own-month plausibility screen [0.5, 2.0] × N3045 state reference; predicted 2024
+  CC +4.3 / CT −4.2 / COAL +4.0 / ST −4.2 (Harrington) at +3.2 % level), R-2 (CT physical HR floor, Pioneer),
+  R-3 (`egrid_family_heat_rates` for SPP, Northeastern / Earl F Wisdom), R-4 (Harrington fuel vintage, bench too),
+  R-5 (the self-commitment residual, a market-design build, re-measured after R-1…R-4), R-6…R-8 notes.
+- **Cells:** `offer_curve_by_group` R (widened to the volume object), `spp_gas_commitment_bridge` /
+  `gas_commitment_bridge` R (online-hours leg), `gas_plant_monthly_pricing` **U → K** (stale seed; keeper-3 arms it;
+  the seam defect recorded), `egrid_family_heat_rates` / `measured_ct_heat_rates` U (named as the repairs).
+- **P15:** no candidate; recommend R-1…R-4 issued before any further gas-split lever (~7 min LP for the span).
+
+---
+
+## 2026-09-07 — spp-14: SPP-47 EIA-923 incomplete-vintage swap loop extended to each ISO's own extra benchmarked fuels — **LANDED repo-wide, 6 cells, ZERO LP, every determination unchanged**
+
+- **Lane** SPP-47 (Opus) · `docs/handoffs/FINDING-spp-47-2026-09-07.md` · owner ruling **P16** (r#12) on
+  SPP-43 §6 / SPP-57 R-15, both **DISCHARGED**. **No solve, no bundle, no registration, keeper untouched.**
+- **The change:** one executable line in `build_calibration_reference.py::_incomplete_renewable_fuels` —
+  `("wind","solar")` → `("wind","solar") + _EIA923_EXTRA_FUELS_BY_ISO.get(iso, ())`. Same 0.80 threshold,
+  same EIA-930 authority, same per-fuel evaluation, **zero new parameters** (rules 5/21/23 — a construction
+  repair, not a re-derivation). The existing `ref <= 0.0` guard already implements "fuels EIA-930 reports",
+  so MISO oil is skipped and keeps its EIA-923 value; ISOs with no extras (ERCOT/PJM/CAISO) are unreachable.
+- **Cells moved: SIX, not five.** SPP-43 §6's five reproduce to the digit — SPP 2025 hydro 0.0233→**8.8299**
+  (ratio 0.0026), MISO 2025 hydro 0.9697→**9.8768** (0.0982), NEISO 2025 hydro 0.0907→**5.1207** (0.0177),
+  NEISO 2025 oil 0.9092→**1.2411** (0.7326), NYISO 2023 oil 0.4217→**2.1745** (0.1939). The **sixth** is
+  **NYISO 2022 oil 1.8437→4.8854** (0.3774), outside SPP-43's 2023–2025 sweep: a rule-22 validation-tier
+  reference block, where the 2026-08-06 amendment *requires* consistent application (data, not score — no
+  2022 was solved, scored or registered). Nearest non-mover MISO 2024 hydro **0.8420**.
+- **Diff, leaf-by-leaf over 6,890 leaves, three ways:** base rebuild → patched rebuild **6 changed, 0
+  added/removed** (the rule, alone); committed → base rebuild **325 changed, all `CAISO.*.renewables`**
+  (upstream drift from merge `5a910016`, left unbuilt under G9 — routed R-3); committed → what was written
+  **6**. In-place build was `--isos SPP MISO NEISO NYISO`; every ISO block and year key preserved, no
+  `*_renewable_capacity.csv` moved.
+- **Determinations (committed artifacts only, no solve):** all seven keepers **UNCHANGED** and the entire
+  scorer report **byte-identical** — ERCOT/PJM/CAISO/NYISO/NEISO/MISO CALIBRATED, SPP NOT-YET. By
+  construction: `calibration_verdict.py` never reads this file; its live consumers are two solve-time
+  *printed* tables and the gitignored `clean/validation` curation.
+- **Bench freshness 0 STALE before AND after, stdout byte-identical**; `build_calibration_reference.py` is in
+  neither `PAYLOAD_SOURCES` nor `BUILDER_SOURCES` and the edit is outside `src/market_sim/{data,config}`.
+  **`bench/SPP/` NOT touched, no other ISO's part touched, no desk routed on item 4.** All six gates exit 0
+  before and after with byte-identical output. New test `test_calibration_reference_extra_fuel_guard.py`
+  (8 cases, 3 of which correctly FAIL at HEAD); suite run 3× — with the change the failure set equals HEAD's
+  exactly (7, all pre-existing and out of scope); one further first-run failure was a full-suite flake that
+  passed at HEAD, passed on the repeat and passes in isolation both ways.
+- **Routed:** R-1 three swaps land in COMPLETE vintages (NYISO 2022/2023 report *more* than EIA-930 — a
+  dual-fuel attribution disagreement, not incompleteness; gating extras on `eia923_incomplete` is a scope
+  question the ruling did not put to this lane); R-2 the reference and the bench part now disagree on **oil**
+  for NYISO 2022/2023 + NEISO 2025 (bench routes hydro to EIA-930, keeps oil on EIA-923 — nothing scored
+  moves; reconciling means changing a bench builder); R-3 CAISO's 325-leaf renewables re-derivation;
+  R-4 `regenerate_clean.py demand-profile` is a silent precondition for rebuilding this file.
+
+**Next shorthand: spp-14.**
+
+---
+
+## 2026-09-07 — spp-15: SPP-48 the per-zone wind LEVEL rule repaired in the shared builder (SPP-54 R-21); no solve
+Owner ruling P17 executed: R-LEVEL — each zone's wind shape is the capacity-weighted mean over its WHOLE operable
+fleet, replacing the six-largest-plants subsample whose per-zone level bias was an undeclared free parameter
+multiplying the redistribution's split (the six sites covered 13.8 %–100 % of a zone's capacity depending on the
+zone). Shared construction expressed once in scripts/lib/wind_shape.py (no ISO name, no per-ISO constant,
+test-enforced); both builders reduced to ISO wrappers; _SAMPLES_PER_ZONE deleted, not raised (rule 26); net -1 free
+parameter; physics, schema, gates and every ScenarioConfig field unchanged; solve surface 299 -> 299, 0 moved.
+Identity legs PASS on both ISOs, all years (Sum_z cap_z cf_z = M(t) to <= 8.7e-16; 0 lost-overflow hours; system
+total moved 0.000 MW; cap_z/C_z = 1.0 in every zone). Partition consistency is exact under R-LEVEL (0.0 MW) and
+violated by 15 % of annual energy / 4.6 GW in an hour under the retired rule. SPP-54's C-3 STOP DISSOLVED: 0 hours
+newly infeasible, three-zone minus two-zone margin 0.000000 MW in every window hour, h8509 -75 MW in both maps
+(as-built reproduced exactly at -545 / +440). Isolation proof: the retired rule regenerated over the new module is
+byte-identical to the committed parquets. Deltas: SPP two-zone North +1.915 / +2.304 / +2.131 TWh (South equal and
+opposite), up to 9.0 GW in a zone-hour -> keeper-3 needs a re-baseline; MISO Plains +1.4...+1.8 TWh, Illinois
+-7...-8 %, up to 4.6 GW -> routed to MISO's desk. Solve path restored to origin/main's bytes; no parquet on the
+solve path regenerated or committed (SPP-46 is solving against keeper-3 in parallel). Zero LP.
+FINDING: docs/handoffs/FINDING-spp-48-2026-09-07.md
+
+---
