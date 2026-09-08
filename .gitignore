@@ -1443,3 +1443,6 @@ results/scn-campaign-stageb-2026-09-07/
 # capx D83 (rule 31 [R-RETAIN] / rule 29 [R-SCREEN] (c)): diagnostic reproduction
 # bundles for the bridge-year ledger repair. Kept on local disk, never merged.
 results/hindcast/pjm-d83-*/
+# Personal, machine-specific Claude Code overrides (permissions for this runner).
+# Never committed: a sandbox/cgroup grant is specific to one container, not team policy.
+.claude/settings.local.json
