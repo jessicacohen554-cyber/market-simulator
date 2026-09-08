@@ -289,3 +289,113 @@ positive / 137 negative** for a net **+344.951 MWh** across the year. **288 chan
 86-hour pre-solve footprint** is the LP re-optimising around the moved band, well inside the 860 bar,
 and it is reported at full magnitude rather than presented as a match.
 
+## 8. **THE FULL SPAN — and the honest headline is that NOTHING SCORED MOVED**
+
+`replay_keeper.py results/calibration/miso243_sppair_K --years 2023 2024 2025`, **ONE invocation, ONE
+bundle, years sequential** (rules 12 / 16 / 29), solved in-session and never on CI. Per-year LP:
+**707.1 s / 670.6 s / 693.2 s**. The keeper's attestation was carried forward and re-stamped so C6
+does not read `UNATTESTED`.
+
+| | **arm** `2026-09-08-miso-245-ladderfix` | keeper `2026-09-07-miso-243-spp-pairing` |
+|---|---|---|
+| **DETERMINATION** | **CALIBRATED** | CALIBRATED |
+| C1 fuel-mix | PASS — **16/16 all-class, 12/12 free-class** | PASS — 16/16, 12/12 |
+| C2 sysvol · C3a price_mean · C3b price_shape | PASS · PASS · PASS | PASS · PASS · PASS |
+| C3c price_tail | **CAVEAT** (ledgered, non-downgrading, rubric v3.6) | CAVEAT |
+| C4 dispatch_corr · C6 governance · C8 forced_share | PASS · PASS · PASS | PASS · PASS · PASS |
+| grade summary | scored 8 / target 7 / ledgered 1 / **fails 0** | scored 8 / target 7 / ledgered 1 / fails 0 |
+| DOF ledger | **41 / 2** | 41 / 2 |
+
+**MEASURED, NOT ASSERTED: 245 of the 246 numeric leaves of the two verdicts are BYTE-EQUAL.** The
+single move is `reported.co2.records[0].model` **279.417 → 279.418** — a **+0.001 Mt** change on a
+**REPORTED-ONLY** stream the rubric demoted out of the determination at v2.9, contributing no status,
+no caveat budget and no reason line. Three C8 forced-share *magnitude strings* differ in the fourth
+decimal of a TWh (133.0936 → 133.0938, 145.1119 → 145.1117, 3.3283 → 3.3286) and **none changes a
+status**. Every other difference between the two verdicts is the run id, the label, and my own
+attestation text.
+
+**SO THIS KEEPER DOES NOT IMPROVE THE FIT, AND IT DOES NOT CLAIM TO.** It is promoted because the
+committed input is now the frozen estimator's **own output on the current source data** — rule 14
+`[R-ACCURATE]`'s plain instruction — **at zero cost to every gate and with zero free parameters
+added.** Rule 1 `[R-STRUCT]` is the governing sentence in both directions: a structurally-correct
+input goes in whether or not the residual moves, and a residual that did *not* move is not evidence
+for it either.
+
+**Legitimacy diagnostics are INHERITED, not new.** D-1 `False` / D-2 `False` / D-4 `True`, exactly as
+on the predecessor, with **CT_PEAKER forced share 0.4118 / 0.2617 / 0.2386 IDENTICAL** to the
+keeper's — so C8 continues to pass **only** through rule 18's grounded conditional route, unchanged.
+The replay's "legitimacy diagnostics gate FAIL" warning is that same inherited condition and **not a
+regression this session introduced**; it was verified against the predecessor's committed artifact
+rather than assumed.
+
+## 9. Governance, what is handed forward, and the non-claims
+
+**Rule 1** `[R-STRUCT]`: argued on construction and rule 14 throughout; **no criterion, band or
+residual appears in any bar** of the diagnosis, the screen or the decision, in either direction; the
+screen's gates are structural and STOP-only and none is the target residual. **Rule 12**
+`[R-PARALLEL]`: one invocation, years sequential. **Rule 13** `[R-MEASURED]`: no measured *outcome*
+entered anything; the reconciled values are the frozen estimator's output on a measured price and a
+measured flow series, and would regenerate for a forward year. **Rule 14** `[R-ACCURATE]`: **this rule
+is the session's result** — a stale committed value is replaced by the accurate one, and the fact that
+the fit did not move is reported rather than used as an argument. **Rule 15** `[R-DASHBOARD]`: the run
+is registered, the keeper promoted, the predecessor pruned (`--force-uncite`; narrative citations
+dangle by design), MISO carries exactly **one** registered run, and the keeper's `hourly/` sidecars
+are committed. **Rule 16** `[R-ALLYEARS]`: 2023+2024+2025 in one bundle; the 2024 screen bundle is a
+throwaway probe, never registered, and its year was re-solved inside the full bundle. **Rule 17 /
+18 / 19**: no floor, no bridge, no mechanism added. **Rule 21** `[R-DOF]`: **41/2, unchanged** — zero
+free parameters added; the reconciliation is the frozen estimator's own arithmetic. **Rule 22**
+`[R-HOLDOUT]`: 2023–2025 only; MISO holds no `complete` marker, none was sought, and no
+out-of-training year was solved, scored or registered. **Rule 23** `[R-FROZEN-DERIVE]`: the re-derive
+cites a **source-data change**, established from the frozen estimator's output having moved (§1), with
+`M` = 1 as a magnitude bound and its low power disclosed. **Rule 24** `[R-REGISTRY]`: no field, no env
+knob, no CLI flag. **Rule 25** `[R-ISO-SCOPE]`: MISO's shard, section, lane, tests and table only.
+**Rule 26** `[R-DELETE]`: `_MISO244_KNOWN_LADDER_DIVERGENCES` **deleted, not zeroed**. **Rule 27**
+`[R-PUSH]`: on-disk edits only; every pushed blob ≥ 300 lines verified against local after push.
+**Rule 28**: the handoff's recommended item taken; every standing adjudication corroborated or
+untouched, never re-tested; MISO's shard alone updated in-session, with the keeper and gates
+re-stamped on promotion. **Rule 29** `[R-SCREEN]`: satisfied end to end (§5, §7). **Rule 31**
+`[R-RETAIN]`: see the non-claims below.
+
+**HANDED FORWARD:**
+
+1. **THE CACHE KEY DOES NOT SEE A MISO SEAM-LADDER RE-DERIVE** (§0d). `market_sim.model.interchange.spec`
+   is outside the capx-D79 solve-surface fingerprint's phase 1 by explicit design (`solve_surface.py`
+   §2.3), so `surface_stamp` and `cache_key` (`f130587822fbf565`) are **byte-identical before and
+   after** this reconciliation, and a populated `results/MISO/<key>/` cache would serve a
+   *pre*-reconciliation solve to a *post*-reconciliation config. **Verified inert for this run** —
+   `results/MISO/` does not exist in this container — and handed to the solve-surface lane as a
+   concrete cost for a known scope gap. It is **not** MISO's to close.
+2. **THE VINTAGE IS STILL UNIDENTIFIED.** `M` = 1 bounds the magnitude; it does not name *which* hours
+   of which series moved or when. P-1's provenance read (§6) is where a successor starts, and the
+   2026-08-16 history rewrite is why the on-disk record cannot answer it.
+3. **THE STRUCTURAL ITEM RULE 1 NAMES IS UNTOUCHED**: the model's SPP seam is 0.70–0.79
+   spread-correlated while the measured one is +0.0409 / −0.0200 / +0.0502. **The seam being idle is
+   not the anomaly; its being spread-driven is.**
+4. **C3c REMAINS THE DESIGNATED FRONTIER** (model 3 / 7 / 11 h > $200 vs measured 30 / 37 / 88),
+   byte-unchanged. It opens only by a **new admissible measured identification under its own charter
+   plus an owner ruling** — never by an offer adder, ORDC offset, scarcity multiplier or any level
+   tuned to the tail. **None was proposed, computed or armed here.**
+5. **A DRAFTING LESSON, recorded because it cost this session a gate** (§7a): a gate that compares a
+   multi-year bundle's `run_config` against a single-year replay's is unsatisfiable by construction,
+   because `backcast_config` builds that record **per year**. Write such a gate against the *outputs*,
+   or against an enumerated, measured account of the per-year fields.
+
+**NON-CLAIMS:**
+
+1. **No mechanism exists.** No `ScenarioConfig` field created or changed, DOF unchanged at 41/2, no
+   cell verdict moved in either direction — the `seam_flow_envelopes` cell stays **K**.
+2. **Nothing scored improved**, and §8 says so in place rather than presenting an unchanged verdict as
+   a win.
+3. **The attribution is bounded, not identified** (§0a, §1), and the low power of the test that bounds
+   it is disclosed at full magnitude rather than left for a reader to infer.
+4. **Rule 31 `[R-RETAIN]`:** the 2024 **screen** bundle is on local disk **outside the repository**
+   (the session scratchpad), was never committed and never registered, and **will not survive this
+   container** — every number this session will ever cite from it is in §7 and in
+   `_miso245_screen_gates.json` / `_miso245_g4.json`, which are committed. The **predecessor keeper's**
+   bundle was pruned only **after** the owner's explicit promotion instruction, under rule 31's
+   trigger (i), and remains recoverable from git history with its own ASSESSMENT doc.
+5. **No out-of-training year was solved, scored or registered**, and no marker was sought.
+6. **MISO has no failing gate**, this session did not invent one, and nothing here trades a passing
+   gate for anything.
+7. **2025 C1/C2 are SKIPPED on the preliminary EIA-923 vintage** and no 2025 C1 pass is read as
+   evidence anywhere above.
