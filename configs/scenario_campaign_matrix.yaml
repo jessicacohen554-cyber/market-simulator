@@ -284,30 +284,60 @@ cases:
   # overrides it: flipping NEISO to `mid` is a REF-posture question for the
   # desk, never a case override (plan §3.0 — REF is the shipped posture).
   #
-  # THE ERCOT TAIL-REGIME ARITHMETIC (data/datacenter.py add_datacenter_block).
-  # The block is RELOCATED (energy-invariant, flat) while dc_E < E and ADDED
-  # on top once dc_E >= E. With the constants at this commit (DC high 122 GW
-  # by 2030, x0.85 LF, linear from 0 at 2024; growth high 11.5 %/yr from the
-  # 2024 weather base E0 ~= 464 TWh / P0 ~= 85 GW, both inverted from the
-  # committed REF trajectory results/ff-t1f-d50/ercot):
-  #   year   block GW   dc_E/E   E TWh   peak GW   regime
-  #   2026     34.6     0.525     577      84.7    relocate  (REF 546 / 93.7)
-  #   2027     51.9     0.706     643      86.5    relocate  (REF 593 / 99.0)
-  #   2028     69.1     0.844     717      89.6    relocate  (REF 643 / 105.1)
-  #   2029     86.4     0.947     800      94.2    relocate  (REF 698 / 111.9)
-  #   2030    103.7     1.019    1800     266.9    TAIL      (REF 757 / 119.6)
-  # Two consequences, both construction, neither adequacy: (1) in 2026-2029
-  # the flat block is 52-95 % of energy, so ERCOT's PEAK FALLS BELOW REF while
-  # energy rises 6-15 % — every peak-based adequacy reading (I12, reserve
-  # margin) will READ BETTER than REF, an artefact of the relocate rule, and
-  # is not to be quoted as adequacy; (2) 2030 flips to the tail regime and
-  # energy jumps 800 -> 1,800 TWh, peak 94 -> 267 GW, in ONE year. One-pass
-  # evolution with a 12 GW/yr queue cap cannot meet it: 2030 is an
-  # unserved-energy year by construction and its CO2 delta is not an
-  # emissions response. LOAD-HI-ORGANIC stays in the relocate regime through
-  # 2030 (dc_E/E 0.16-0.31; peak 99 -> 144 GW) — it is the SMOOTH high case.
-  # NYISO also flattens (block 35 % of energy by 2030; LOAD-HI peak 29.0 GW vs
-  # ORGANIC 32.4 GW), MISO partly (24 %); the other three do not.
+  # THE ERCOT DC-BLOCK REGIME (data/datacenter.py add_datacenter_block). The
+  # block is RELOCATED (energy-invariant, flat) while dc_E < E and ADDED on top
+  # once dc_E >= E. **RE-DERIVED FROM THE CONSTANTS AT HEAD, 2026-09-07
+  # (SCN-FIX3), AND THE ANSWER REVERSES WHAT THIS BLOCK USED TO SAY.** The old
+  # table stood on `DATACENTER_ADDITIONS_MW["ERCOT"]["high"]` = 122 GW at 2030,
+  # a raw interconnection-queue estimate that constants.py:3153 RETIRED and
+  # replaced with ERCOT's own published TSP-Provided upper forecast, 88,603 MW
+  # (constants.py:3160); the paired `DEMAND_GROWTH_RATES["ERCOT"]["high"]` near
+  # rate is 20.6157 %/yr, not the 11.5 %/yr the old table used. A smaller block
+  # over a larger denominator puts the tail regime out of reach. The TAIL row is
+  # DELETED, not annotated (rule 26 [R-DELETE]).
+  #
+  # Inputs, all read from constants.py at HEAD: DC high {2025: 9,281 -> 2030:
+  # 88,603 MW} piecewise-linear, x0.85 LF; growth high near 20.6157 %/yr
+  # compounded from the 2024 weather base E0 ~= 464 TWh / P0 ~= 84.9 GW
+  # (provenance as this block first recorded it — inverted from the committed
+  # REF trajectory results/ff-t1f-d50/ercot — and the one input neither of the
+  # two moved constants touches):
+  #   year  block GW  dc_E TWh  E TWh  dc_E/E  regime    LOAD-HI peak GW
+  #   2026    21.4      187.2     675   0.277  relocate  110.6 (measured 110.63)
+  #   2027    34.9      305.4     814   0.375  relocate  128.0 (measured 127.90)
+  #   2028    48.3      423.5     982   0.431  relocate  150.5 (measured 150.43)
+  #   2029    61.8      541.6    1185   0.457  relocate  179.5 (measured 179.30)
+  #   2030    75.3      659.7    1429   0.462  relocate  216.0 (measured 215.81)
+  # dc_E/E PEAKS AT 0.462; the tail needs 1.000. The derivation reproduces all
+  # three solved arms (REF, LOAD-HI, LOAD-HI-ORGANIC) to <= 0.09 %, which is
+  # what licenses it as arithmetic rather than a story.
+  #
+  # MEASURED — prediction P-1 is a HIT: ERCOT stays in RELOCATE in all five
+  # years of BOTH arms, the 1,800 TWh / 267 GW one-year discontinuity DOES NOT
+  # REPRODUCE, the arms' energy deltas are identical (2030: 22.978 vs 22.984
+  # TWh, where a tail step would add ~660 TWh), and dc_E/E never approaches 1.0.
+  # 2030 is therefore NOT "an unserved-energy year by construction": ERCOT does
+  # shed 538.9 TWh there, but because HEAD REF is already in deep shortage (REF
+  # alone sheds 127.2 TWh), not because of a tail step — right number, wrong
+  # cause, scored SPLIT. FINDING-scn-ws5a-load-ercot-2026-09-06.md §0, §3, §5.
+  #
+  # (1) THE CONSEQUENCE THAT SURVIVES, COMPARATOR CORRECTED — STILL LOAD-BEARING.
+  # The relocate rule is flat and energy-invariant, so it does depress a high-DC
+  # arm's peak against THE SAME GROWTH PATH CARRYING A SMALLER BLOCK, the only
+  # comparison that holds growth fixed:
+  #   LOAD-HI minus ORGANIC peak, GW:  -7.5  -12.1  -16.7  -21.3  -25.8
+  # What does NOT hold is "vs REF": LOAD-HI's peak is measured ABOVE REF in every
+  # year (110.6 vs 104.1 ... 215.8 vs 161.8 GW) and I12 is uniformly WORSE,
+  # because REF rides the MID growth path and that gap (+6.6 -> +54.3 GW) swamps
+  # the flattening. WS-4b's "peak 9-18 GW below REF, so I12 improves or passes"
+  # is a clean MISS (ERCOT finding §3(b)) — as is the same claim for NYISO, whose
+  # block reaches 11 % of energy, not the 35 % assumed (NYISO finding §3(b)).
+  # THE WARNING ITSELF IS UNCHANGED AND STILL BINDS: a peak-based adequacy
+  # reading (I12, reserve margin) of a high-DC arm understates that arm's stress
+  # relative to its ORGANIC twin, as an artefact of the relocate rule, and is not
+  # to be quoted as adequacy. MISO is the cleanest confirmation of this framing —
+  # LOAD-HI peak 3.91 GW below ORGANIC at 2030 on identical energy, scored HIT
+  # (MISO finding §3(c)). LOAD-HI-ORGANIC remains the SMOOTH high case.
   #
   # THE DC-AXIS COMPANION IS DEGENERATE IN THREE ISOs THROUGH 2030: PJM's high
   # DC curve equals mid until 2030 (30 GW anchors; diverges only to 2040),
