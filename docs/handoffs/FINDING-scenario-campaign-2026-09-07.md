@@ -719,6 +719,13 @@ lanes stamped their own cells; nothing is re-stamped here).
    interest; carried here so it is not lost.
 8. **ERCOT's dump-crediting defect** overstates every credited/escape **volume** on ERCOT by
    ~4.9 TWh/yr (§10.6). Routed by the ERCOT lane; unresolved.
+9. **One §5.1 cell is stale and is outside this lane's regions, so it is routed rather than
+   edited.** The **Load-HI** column's criterion-7 sentence still reads *"ERCOT's three keep their
+   `1cc45bb2` bundles"*. They do not: `ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` re-solved
+   ERCOT's `REF` / `LOAD-HI` / `LOAD-HI-ORGANIC` at THE PIN, and the committed r2 `run_config.json`
+   files carry `basis_sha bdfb3095e9fa`. The same cell's "the campaign sits at two declared pins"
+   is retired by §1.4. This lane edited only the four **policy** columns; the Load-HI column belongs
+   to the LOAD synthesis.
 
 ---
 
