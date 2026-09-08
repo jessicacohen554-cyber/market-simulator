@@ -13211,3 +13211,101 @@ lane's (audit board F-5). The stale-`metrics.json` trap is unchanged and was not
 read the scorer, twice). Still no unit test covers `cc_reserve_duty_split`'s split behaviour; this
 session adds no test at all, because it changed no behaviour — the instrument is the re-checkable
 record and it re-runs in seconds.
+
+## nyiso-220 — 2026-09-08
+
+**Object.** The licensed operating range and the period length it identifies — the FERC-licence half
+of the owner's Q1 that NID could not serve (`CHARTER-nyiso219-hydro-budget-period-2026-09-07.md`
+§10a), and the blocker behind Q2's phase-0 overlap arithmetic. **ZERO LP.** Keeper
+`2026-09-07-nyiso-213-summer-seam` untouched; nothing armed, screened, solved or registered; no
+`ScenarioConfig` field; no `src/market_sim/` change; no marker moved; no matrix cell letter changed;
+**no held-out year spent.** PRECOMMIT `results/calibration/PRECOMMIT-nyiso220-hydro-operating-ranges.md`
+committed and pushed **before any substantive document was read**. Full result:
+`docs/FINDING-nyiso220-hydro-instrument-and-operating-ranges-2026-09-08.md`; instrument
+`scripts/probes/nyiso220_hydro_instrument_index.py` → `_nyiso220_hydro_instrument_index.json`
+(deterministic, byte-identical on re-run).
+
+**Result — the instrument question nyiso-219 left open is SETTLED for 100 % of the fleet, and the
+answer is NOT FERC.** For **both** dominant projects and **both** quantities (water entitlement,
+operating band) the governing instrument is international. **Niagara P-2216 (51.89 % of fleet MW):**
+the 1950 Niagara Diversion Treaty (Art. III–VII — a recurring time-of-day schedule of *instantaneous
+minimum flow rates* over the Falls, not a volumetric budget) plus the **INBC 1993 Directive**
+(rev. 2017) over the Chippawa-Grass Island Pool (operational long-term average **171.16 m / 561.55 ft
+IGLD 1985**, tolerances at the Material Dock gauge, max accumulated deviation **±0.91 meter-months**;
+measured 1973–2023 deviation 0.13). **NEITHER states any energy or volume conservation period** —
+verified *mechanically* against the full treaty text (zero occurrences of *elevation, reservoir,
+storage, pondage, forebay, pool, monthly, weekly, accounting, average*). **St. Lawrence P-2000
+(19.48 %):** the **IJC 2016-12-08 Supplementary Order of Approval** with **Regulation Plan 2014**
+(Bv7) — flows set "normally as specified by the approved **weekly** flow regulation plan"; J limit
+700/1,420 m³/s week-to-week; M limit **weekly mean** Long Sault ≥ **72.60 m**; I limit ≥ **71.8 m** —
+and, for within-week variation, the Commission's **directive on peaking and ponding** (Addendum No. 3
+to the Operational Guides for Plan 1958-D; IJC letter 1983-10-13; renewed 2016-11-04 and 2021-11-30,
+**the current term 2021-12-01…2026-11-30 spanning every scored year**). That directive states its
+conservation periods **in words**: ILOSLRB glossary *"Ponding — variation in the day-to-day flows
+over the course of a week"*, *"Peaking — variations in the hourly flows over the course of a day"*,
+preserving *"the total weekly flow"* and *"the total daily flow"* respectively. **⇒ a 168 h budget
+period for St. Lawrence from a published categorical duration class, ZERO fitted scalars** (rule 21
+`[R-DOF]` case 2 — NYISO's own instrument, **not** NEISO's taxonomy; rule 25 `[R-ISO-SCOPE]` clean).
+**Neither project's governing instrument contains anything resembling the LP's monthly period.**
+Rule 13 `[R-MEASURED]` test applied **in writing** (finding §3): forward-producible from a standing
+instrument, responds to conditions through the existing budget, not outcome-derived, **never swept**
+— rule 21 case 3 and rule 1 `[R-STRUCT]` undisturbed.
+
+**A FERC pull would have returned the wrong document for 71.38 % of fleet MW.** nyiso-219's flagged
+caution is confirmed, and the reachable corpus (`ijc.org` 200 where FERC is 403) is the right one.
+
+**P4, the self-falsification test aimed at the lane's own headline — CONFIRMED, three legs.**
+Lewiston is EIA plant **2692** (HILARRI, mode *Pumped storage*, NID `NY00689`), distinct from Robert
+Moses Niagara **2693** though under the same docket P-2216; the hydro budget excludes it on **both**
+legs (`HYDRO_PRIME_MOVER = "HY"` excludes `PS` by construction; NYISO is in neither
+`EIA930_PS_FOLDED_INTO_WAT` `{MISO, PJM}` nor `EIA930_PS_SPLIT_COMPLETE_FROM` `{NEISO: 2025}`); and
+the model **already carries it separately** as `Upstate_West_eia860_pumped_storage`, **220 MW /
+2,200 MWh = 10.0 h**, in Niagara's own zone. **The charter's 0.244 h headline stands and is
+strengthened** — the 41× separation is the model's own independent corroboration.
+
+**Thresholds reported as written, not restated.** **T1 MET** (both instruments, both quantities,
+both projects, cited). **T2 MISS** — what was recovered is *level constraints*, not a band: a
+long-term-average target (Niagara) and *floors* (St. Lawrence); a floor is not a band. **T3 NOT MET
+AS WRITTEN** — its precondition was T2, which failed; the period was identified by a route T3 did
+not contemplate (categorical, in words), reported as a **separate labelled result**, not a T3 pass.
+**P3 MISS** — derived 168 h > the 73.07 h NID bound, because the prediction **conflated a
+conservation period with a storage bound**; scored as a miss with the diagnosis given and the
+prediction not rescued. P1/P4/P5 confirmed; **P2 — the prediction written to hurt — had its
+mechanism confirmed exactly** (level + flow, no volume, stage–storage unpublished), which is *why*
+T2 missed, and its feared consequence **landed in full for Niagara**. **A gap in my own partition is
+reported rather than relabelled:** O3 said "band retrieved but not convertible"; Niagara is instead
+"the instrument settles it by containing nothing", for which the partition had no cell.
+
+**Traps.** A search for the peaking-and-ponding directive returned the **Lake Superior** Board's
+St. Marys River directive (`/en/lsbc/`), not the St. Lawrence — nyiso-219's wrong-register trap class
+in a new form, caught only because verbatim provisions were demanded. Cross-checks before
+publishing: 71.376 % reconciled against nyiso-219's independent 71.38 %; NID `NY00678` surface area
+37,500 acres ≈ 151.8 km² against the published ~150 km²; treaty silence checked by term scan, not
+summary. Precision noted against my own convenience: the treaty *does* say "each day between the
+hours of…", so the claim made is the narrower "no volumetric accounting period".
+
+**Q2 — still blocked, but NARROWED.** St. Lawrence now has a period (168 h, 19.48 % of MW); **Niagara
+at 51.89 % has none, and none exists in its instruments.** The overlap arithmetic is **not
+attempted** — running it while the dominant plant has no period would produce a number that looks
+like an answer and is not one. The blocker is no longer "FERC is unreachable" (a corpus problem) but
+the narrower **modelling** question of the right representation for a plant whose instruments impose
+no conservation period at all. **No mechanism proposed, designed or costed.**
+
+**Governance/environment.** No mechanism tested ⇒ rule 28 `[R-MECH-MATRIX]` duty (b) **not engaged**;
+no cell letter moves and none invented. **No eighth owner card opened** — the seven pending rulings
+(nyiso-206, -207, -203, DECISION-CARD-nyiso193 §5/5.1, -208, -214 §6, -215 §6) are untouched. Access
+re-measured here: `www.ferc.gov`/`cms.ferc.gov` **403** (also via `WebFetch`, a route nyiso-219 did
+not have), eLibrary shell **200/22,464 B** reproducing nyiso-219's byte size, `example.com` **200**
+(so the 403 is FERC's edge), Chromium **untested** (no `playwright` package; `playwright install`
+forbidden — reported as untested, not failed). **A sharper FERC negative recorded so it is not
+re-spent:** eLibrary's own `assets/config/app-settings.json` declares a real API base
+`/eLibraryWebAPI/api/` with named endpoints, but its `Search`/`Document`/`DocFamily` controllers
+**404** and `Docket`/`File` return ASP.NET scaffold stubs — a *characterized* dead end; and the
+bundle's `"/api/v2/"` is **Datadog RUM telemetry**, not FERC's API. FERC's bot protection was not
+attempted. Fleet instrument validated (`nyiso196_rebuild_checks.py --year 2024` exit 0,
+`git status --porcelain -uno` **EMPTY**). Keeper `cache_key` re-measured at HEAD `7486cb9b` is
+**`95d4d8d167373eb7`** — unchanged. `ruff format --check .` 1,417 files formatted; `ruff check`
+passes; `check_mechanism_matrix.py` exit 0 with the pre-existing anchor warnings. Tests re-measured
+rather than inherited: the five named files give **84 passed, 2 skipped, 0 failed** — **the
+`test_gate_a_provenance::test_live_board_passes` failure the handoff reported at `ad78cc3e` is GONE
+at this HEAD**, repaired by the ERCOT lane; nothing was inherited or "fixed" here.
