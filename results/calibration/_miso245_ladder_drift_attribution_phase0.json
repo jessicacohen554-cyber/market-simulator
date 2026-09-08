@@ -1,0 +1,326 @@
+{
+ "probe": "miso-245 phase 0 \u2014 attribute the drift between MISO_SEAM_LADDER_BY_YEAR and its own derive at HEAD",
+ "prereg": "results/calibration/PREREG-miso245-attribute-the-incumbent-ladder-drift-2026-09-08.md",
+ "keeper": "2026-09-07-miso-243-spp-pairing",
+ "zero_lp": true,
+ "read_only": true,
+ "repairs_nothing": true,
+ "queue_item": "the handoff's RECOMMENDED item (miso-244 \u00a77.1's named successor)",
+ "price_basis": "incumbent ladder anchor = measured Indiana-hub DA (actual_lmp_hourly_MISO.parquet 'da', stored float32); row sets = the derive's own per-seam dropna. No model basis and no residual enters any bar.",
+ "bars": {
+  "attribution_bar_M": 1,
+  "quant_bar": 1e-12,
+  "count_bar": 1e-06,
+  "repro_bar": 1e-09,
+  "NO_WASH_EPS": 0.01
+ },
+ "gates": {
+  "G_RAW": {
+   "max_abs_delta": 0.0,
+   "PASS": true
+  },
+  "G_QUANT": {
+   "max_abs_delta": 0.0,
+   "n_entries": 192,
+   "PASS": true
+  },
+  "G_LOC": {
+   "n_mismatching": 3,
+   "reference": [
+    "2023 PJM import band 5",
+    "2023 South export band 4",
+    "2024 South export band 5"
+   ],
+   "measured": [
+    "2023 PJM import band 5",
+    "2023 South export band 4",
+    "2024 South export band 5"
+   ],
+   "PASS": true
+  },
+  "G_COUNT": {
+   "max_distance_from_integer": 1e-12,
+   "n_entries": 192,
+   "reference_counts": [
+    5415,
+    3259,
+    3044
+   ],
+   "recovered_counts": [
+    5415,
+    3259,
+    3044
+   ],
+   "PASS": true
+  },
+  "G_REPRO": {
+   "detail": [
+    {
+     "entry": "2023 PJM import band 5",
+     "observed": {
+      "n": 8760,
+      "q": 0.381849315068,
+      "lo_index": 3344,
+      "frac": 0.618150684932,
+      "x_lo": 27.860000610352,
+      "x_hi": 27.870000839233,
+      "value": 27.866182258684
+     },
+     "reference": {
+      "n": 8760,
+      "q": 0.3818493150684932,
+      "lo_index": 3344,
+      "frac": 0.618150685,
+      "x_lo": 27.860000610351562,
+      "x_hi": 27.8700008392334,
+      "value": 27.866182258684344,
+      "count": 5415
+     },
+     "PASS": true
+    },
+    {
+     "entry": "2023 South export band 4",
+     "observed": {
+      "n": 8760,
+      "q": 0.37203196347,
+      "lo_index": 3258,
+      "frac": 0.62796803653,
+      "x_lo": 27.690000534058,
+      "x_hi": 27.700000762939,
+      "value": 27.696280358153
+     },
+     "reference": {
+      "n": 8760,
+      "q": 0.37203196347031964,
+      "lo_index": 3258,
+      "frac": 0.627968037,
+      "x_lo": 27.690000534057617,
+      "x_hi": 27.700000762939453,
+      "value": 27.69628035815339,
+      "count": 3259
+     },
+     "PASS": true
+    },
+    {
+     "entry": "2024 South export band 5",
+     "observed": {
+      "n": 8760,
+      "q": 0.347488584475,
+      "lo_index": 3043,
+      "frac": 0.652511415525,
+      "x_lo": 23.760000228882,
+      "x_hi": 23.760000228882,
+      "value": 23.760000228882
+     },
+     "reference": {
+      "n": 8760,
+      "q": 0.34748858447488584,
+      "lo_index": 3043,
+      "frac": 0.652511416,
+      "x_lo": 23.760000228881836,
+      "x_hi": 23.760000228881836,
+      "value": 23.760000228881836,
+      "count": 3044
+     },
+     "PASS": true
+    }
+   ],
+   "PASS": true
+  },
+  "VERDICT": {
+   "rule": "A-CONFIRMED iff M <= 1, where M = max over the mismatching entries of the minimal |delta| in integer duration-count hours that makes the frozen estimator return the committed cent, holding estimator, price series, row set and every other entry fixed (PREREG \u00a72.2, fixed before any number existed). An infeasible m_j counts as +inf.",
+   "n_mismatching": 3,
+   "m_by_entry": [
+    {
+     "entry": "2023 PJM import band 5",
+     "count": 5415,
+     "n": 8760,
+     "m_hours": 1,
+     "signed_delta_hours": 1,
+     "feasible": true
+    },
+    {
+     "entry": "2023 South export band 4",
+     "count": 3259,
+     "n": 8760,
+     "m_hours": 1,
+     "signed_delta_hours": -1,
+     "feasible": true
+    },
+    {
+     "entry": "2024 South export band 5",
+     "count": 3044,
+     "n": 8760,
+     "m_hours": 1,
+     "signed_delta_hours": 1,
+     "feasible": true
+    }
+   ],
+   "M": 1,
+   "bar": 1,
+   "VERDICT": "A-CONFIRMED"
+  },
+  "G_DIR": {
+   "detail": [
+    {
+     "entry": "2023 PJM import band 5",
+     "expected_sign": 1,
+     "observed_signed_delta": 1,
+     "PASS": true
+    },
+    {
+     "entry": "2023 South export band 4",
+     "expected_sign": -1,
+     "observed_signed_delta": -1,
+     "PASS": true
+    },
+    {
+     "entry": "2024 South export band 5",
+     "expected_sign": 1,
+     "observed_signed_delta": 1,
+     "PASS": true
+    }
+   ],
+   "PASS": true
+  }
+ },
+ "reported": {
+  "R1_R5_count_and_price_side": [
+   {
+    "entry": "2023 PJM import band 5",
+    "committed": 27.86,
+    "raw_head": 27.8661822587,
+    "count_c": 5415,
+    "n": 8760,
+    "m_hours_count_side": 1,
+    "signed_delta_hours": 1,
+    "m_share_of_year": 0.000114,
+    "price_side_t_usd_per_mwh_RESTATED_FROM_miso244": 0.001182258684
+   },
+   {
+    "entry": "2023 South export band 4",
+    "committed": 27.69,
+    "raw_head": 27.6962803582,
+    "count_c": 3259,
+    "n": 8760,
+    "m_hours_count_side": 1,
+    "signed_delta_hours": -1,
+    "m_share_of_year": 0.000114,
+    "price_side_t_usd_per_mwh_RESTATED_FROM_miso244": 0.001280358153
+   },
+   {
+    "entry": "2024 South export band 5",
+    "committed": 23.77,
+    "raw_head": 23.7600002289,
+    "count_c": 3044,
+    "n": 8760,
+    "m_hours_count_side": 1,
+    "signed_delta_hours": 1,
+    "m_share_of_year": 0.000114,
+    "price_side_t_usd_per_mwh_RESTATED_FROM_miso244": 0.004999771118
+   }
+  ],
+  "R2_flip_distance": {
+   "definition": "minimal |delta| >= 1 hour of duration count that changes an entry's rounded cent at all; the same construction as m, applied to every entry",
+   "n_entries_with_finite_f": 192,
+   "f_by_mismatch": [
+    {
+     "entry": "2023 PJM import band 5",
+     "f_hours": 1,
+     "rank_among_192": 4
+    },
+    {
+     "entry": "2023 South export band 4",
+     "f_hours": 1,
+     "rank_among_192": 39
+    },
+    {
+     "entry": "2024 South export band 5",
+     "f_hours": 1,
+     "rank_among_192": 91
+    }
+   ],
+   "max_f_over_mismatches": 1,
+   "min_f_over_matches": 1,
+   "separated": false,
+   "f_quantiles_over_matches": {
+    "p05": 1,
+    "p25": 1,
+    "p50": 1,
+    "p75": 1,
+    "p95": 2
+   },
+   "reading": "DESCRIPTIVE ONLY (PREREG \u00a72.4 R-2): it cannot move the verdict in either direction and is never used to argue past the +-1 bar."
+  },
+  "R3_degenerate_run": {
+   "entry": "2024 South export band 5",
+   "x_at_position": 23.760000228881836,
+   "hours_at_exactly_that_price": 2,
+   "run_first_index": 3043,
+   "run_last_index": 3044,
+   "position_index": 3043,
+   "hours_from_position_to_run_end": 1,
+   "next_distinct_value_above": 23.780000686645508
+  },
+  "R4_clamp_under_perturbation": {
+   "clamp_binds_anywhere_in_any_scan": true,
+   "note": "miso-244 D-4 measured ZERO clamp notes in any year at delta = 0; the clamp lim is held at its UNPERTURBED value throughout, per PREREG \u00a72.2"
+  },
+  "P1_source_provenance": {
+   "decision_rule": "NONE \u2014 read of the record; licenses nothing by itself",
+   "interchange": {
+    "path": "data/raw/eia-930-interchange/MISO interchange hourly.parquet",
+    "exists": true,
+    "rows": 241872,
+    "columns": {
+     "diba": "str",
+     "mw": "float64",
+     "local_time": "datetime64[us]"
+    },
+    "years": [],
+    "README.md": {
+     "exists": true,
+     "bytes": 9295
+    },
+    "SHA256SUMS.txt": {
+     "exists": false,
+     "bytes": 0
+    },
+    "git_log_no_merges": [
+     "2289918e 2026-09-06 Merge pull request #5436 from jessicacohen554-cyber/claude/nyiso-backcast-calibration-c7tc79"
+    ]
+   },
+   "lmp": {
+    "path": "data/raw/_validation-source/actual_lmp_hourly_MISO.parquet",
+    "exists": true,
+    "rows": 43800,
+    "columns": {
+     "year": "int16",
+     "hour": "int16",
+     "rt": "float32",
+     "da": "float32"
+    },
+    "years": [
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "README.md": {
+     "exists": true,
+     "bytes": 7607
+    },
+    "SHA256SUMS.txt": {
+     "exists": false,
+     "bytes": 0
+    },
+    "git_log_no_merges": [
+     "2289918e 2026-09-06 Merge pull request #5436 from jessicacohen554-cyber/claude/nyiso-backcast-calibration-c7tc79"
+    ]
+   }
+  }
+ },
+ "FAILED_LEGS": [],
+ "ALL_GATED_LEGS_PASS": true
+}
