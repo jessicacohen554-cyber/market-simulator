@@ -1419,6 +1419,11 @@ results/hindcast/pjm-2021-2025-realized-t1h-d84-*/
 # anything red. They stay until the owner has ruled on promotion (rule 31); the
 # PRECOMMIT/RESULT carry every number this session will ever cite, so git
 # history is the record for the bytes exactly as rule 15 says of pruned runs.
+# They LIVE at <scratchpad>/ercot256_screen_2025_arm and <scratchpad>/ercot256_fullspan,
+# not under results/calibration/, so the parity gate's WORKING-TREE sweep mirrors what CI
+# sees (the miso-243 pattern). Rule 31's premise that '.gitignore is enough' holds only in
+# CI, where the tree IS the committed set; locally the sweep still finds an ignored dir.
+# The ignore rules stay for any future re-solve into these paths.
 results/calibration/ercot256_screen_2025_arm/
 results/calibration/ercot256_fullspan/
 results/calibration/ercot256_rungs/
