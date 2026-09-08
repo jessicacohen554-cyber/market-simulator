@@ -1439,3 +1439,7 @@ results/calibration/ercot256_rungs/
 # kept OUT of the repo, never off local disk. The PRECOMMIT/FINDING carry every
 # number cited; git history is the record for the bytes.
 results/scn-campaign-stageb-2026-09-07/
+
+# capx D83 (rule 31 [R-RETAIN] / rule 29 [R-SCREEN] (c)): diagnostic reproduction
+# bundles for the bridge-year ledger repair. Kept on local disk, never merged.
+results/hindcast/pjm-d83-*/

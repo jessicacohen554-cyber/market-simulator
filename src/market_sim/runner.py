@@ -2522,8 +2522,39 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # data is read, and prior_results / last_solved_year are left pointing
         # at the last solved year. Persist the evolution-only ledger (no
         # dispatch fields) and move on to the next year.
+        #
+        # capx D83: "no dispatch fields" is a statement about the LP, NEVER
+        # about the fleet. ``evolve_fleet`` has already run above, so every
+        # FLEET-STATE / accreditation-trail quantity a solved year records
+        # exists here too -- ``wind_cap`` / ``solar_cap`` were grown IN PLACE by
+        # this year's own renewable additions a few lines up, ``storage_units``
+        # is post-entry, ``fleet`` is post-evolution, and
+        # ``curve_reserve_position`` was computed on the seam peak. Writing this
+        # dict by hand instead of sharing the solved writer's field list
+        # silently dropped EIGHT of them, which made a bridge year the one year
+        # whose capacity screen was not reproducible from its own record: the
+        # screens consumed those pools (they are inside
+        # ``screen_entering_firm_mw`` below) and the ledger did not say so, so
+        # D75-R had to reconstruct them by hand -- twice (D75 §6 item 3,
+        # re-raised as FINDING-capx-d75r §6 item 1). They are restored below
+        # with the IDENTICAL expressions the solved writer uses, and the two key
+        # sets are held equal by
+        # ``tests/unit/results/test_bridge_ledger_field_parity.py`` so neither
+        # writer can gain or lose a field without the other.
+        #
+        # ``peak_demand_mw`` / ``adequacy_requirement_mw`` / ``reserve_margin``
+        # / ``rps_dual`` stay None, and that is FAITHFUL rather than a second
+        # gap: ``peak_demand`` is RE-DERIVED from the LP's own load below this
+        # branch, so a bridge year has no LP peak; the requirement and the
+        # margin are defined on that peak, and the dual is an LP dual. The SEAM
+        # peak the screens actually consumed, and the requirement resolved on
+        # it, are already recorded by ``screen_ledger_fields`` (capx D52) --
+        # which is also why the credits below are resolved at ``peak_demand``,
+        # the seam peak: that is the basis the year's screens really applied.
         if is_bridge:
             _ledger = dict(evo_events)
+            _bridge_wind_pool_mw = float(np.sum(wind_cap))
+            _bridge_solar_pool_mw = float(np.sum(solar_cap))
             _ledger.update(
                 iso=iso,
                 year=year,
@@ -2531,13 +2562,81 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 hindcast=True,
                 bridge=True,
                 peak_demand_mw=None,
-                firm_clean_mw=None,
                 reserve_margin=None,
                 rps_dual=None,
+                adequacy_requirement_mw=None,
+                # The model's dispatched conventional-hydro NAMEPLATE and the
+                # same resources at the ISO's published accreditation -- the
+                # documented companion pair (FFR-3B). Neither is LP-derived,
+                # and neither costs a new read: ``_hydro_firm_mw`` calls
+                # ``modelled_hydro_nameplate_mw`` itself, which is cached per
+                # ``(iso, year)`` and was already invoked for this year by the
+                # screens' own ``accredited_firm_capacity_mw`` call above.
+                firm_clean_mw=round(
+                    float(
+                        modelled_hydro_nameplate_mw(iso, year)
+                        + sum(
+                            g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS
+                        )
+                    ),
+                    3,
+                ),
+                firm_clean_accredited_mw=round(
+                    float(_hydro_firm_mw(fleet, iso, year)), 3
+                ),
+                capacity_reserve_position=(
+                    round(float(curve_reserve_position), 6)
+                    if curve_reserve_position is not None
+                    else None
+                ),
                 # capx D52: the seam quantities the bridge year's screens
                 # consumed (the bridge evolves against the seam peak even
                 # though it never solves).
                 **screen_ledger_fields,
+                # Accreditation trail (CR-3.1), same fields and same resolvers
+                # as the solved writer: pool nameplates, the credit each VRE
+                # class actually earned on this year's basis, and the storage
+                # fleet's power / pre-dilution accredited MW.
+                wind_cap_mw=round(_bridge_wind_pool_mw, 3),
+                solar_cap_mw=round(_bridge_solar_pool_mw, 3),
+                renewable_credit_applied={
+                    fuel: round(credit, 6)
+                    for fuel, credit in renewable_credits_applied(
+                        fleet,
+                        _bridge_wind_pool_mw,
+                        _bridge_solar_pool_mw,
+                        iso,
+                        peak_demand_mw=peak_demand,
+                        elcc_curves_enabled=config.renewable_elcc_curves,
+                        nqc_curves_enabled=config.caiso_nqc_accreditation,
+                        config=config,
+                        accreditation_year=year,
+                    ).items()
+                },
+                storage_power_mw=round(
+                    float(sum(u.power_cap_mw for u in storage_units)), 3
+                ),
+                # The SAME expression the solved writer's ``prior_results``
+                # carries (one storage-accreditation resolver, rule 19); the
+                # bridge cannot read it off ``prior_results``, which is still
+                # pointed at the last SOLVED year by design.
+                storage_firm_mw=round(
+                    float(
+                        sum(
+                            u.power_cap_mw
+                            * storage_accreditation_credit(
+                                u.energy_cap_mwh / u.power_cap_mw
+                                if u.power_cap_mw > 0
+                                else 0.0,
+                                iso,
+                                config,
+                                u.tech_name,
+                            )
+                            for u in storage_units
+                        )
+                    ),
+                    3,
+                ),
                 storage_additions=_storage_additions_since(
                     storage_units, prior_storage_ids, zone_names
                 ),
