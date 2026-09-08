@@ -1,0 +1,17 @@
+{
+  "id": "2026-09-08-ercot256-drag-layup-mask",
+  "label": "ercot256 drag layup mask",
+  "date": "2026-09-08",
+  "shorthand": "ercot256-drag-layup-mask",
+  "definition": "ercot-256: forward config + net-load drag lay-up window mask (2024/2025)",
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-08-ercot256-drag-layup-mask.js",
+  "bundle": "results/calibration/ercot256_five_year_keeper"
+}
