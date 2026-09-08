@@ -157,13 +157,33 @@ legacy-form id is re-minted by a later economic `gas_cc` entry. The arm carries 
 retrofitted ids across 2026-2030 against the control's **33** — i.e. the arm retrofits 20 more
 units and still collides with nothing.
 
-**The structural reason, which is D88's own:** NYISO's retrofit ids are **CAMPD per-plant** form
-(`CC_REGULAR_Capital_Hudson_p55405_econ`), not the legacy `gas_cc_<bin>_<zone>` representative form,
-and CAMPD per-plant tranches never re-mint (`is_campd_bin` passthrough, the G-28 fix). D88's census
-over 496 committed ledgers likewise found no collision in any NYISO bundle. **This is a NYISO-scoped
-result and transfers to no other ISO (rule 25 `[R-ISO-SCOPE]`); D88's guard remains owed** — it
-fires at `generators_to_fleet_arrays` on every future run and on collision sources a ledger cannot
-record, which a post-hoc census cannot replace. Reported to D88
+**The reason it passes is NARROWER than "NYISO uses CAMPD ids", and the correction matters to
+D88.** A unit-grain read of the 2030 ledgers — made before the bundles were lost, and it revised
+this section — shows NYISO is **not** wholly CAMPD per-plant. Both arms carry **two legacy-form
+representative retrofits**, identically:
+
+| year | id | MW | in |
+|---:|---|---:|---|
+| 2028 | `gas_cc_h_class_NYC` | 1.8 | both arms |
+| 2030 | `gas_cc_h_class_Upstate_West` | 1,000.0 | both arms |
+
+and the 2030 one sits in **exactly the D88 trigger sequence**: an economic `gas_cc` entry of
+1,000 MW lands in `Upstate_West` in **2029**, is re-minted to the representative id
+`gas_cc_h_class_Upstate_West` at the next `aggregate_fleet`, and **that** unit is retrofitted in
+2030 while keeping the id. **It does not collide only because 2030 is the last year of this
+horizon** — no later entry exists to be re-minted onto the id the converted unit still holds. This
+is the same shape D88 recorded for ERCOT `ff-t1f-d65br` (*"2030 `gas_cc_h_class_North`; 2030:
+3,000 MW economic `gas_cc`, North … no capacity screen reads it in-horizon — 2030 is the last
+year"*). The other 51 (arm) / 31 (control) ids are CAMPD per-plant and never re-mint
+(`is_campd_bin` passthrough, the G-28 fix).
+
+**Two consequences, stated separately because they point different ways.** (a) **D87 neither
+creates nor worsens the exposure**: the legacy-form pair is byte-identical between arms, so the
++20 extra conversions the repair buys are all CAMPD per-plant. (b) **D88 is owed more sharply than
+a NYISO-clean census would suggest** — on a T3-length NYISO horizon this exact pair would collide,
+and a post-hoc ledger census cannot substitute for a guard at `generators_to_fleet_arrays` that
+fires on every future run and on sources a ledger cannot record. Rule 25 `[R-ISO-SCOPE]`: this is
+NYISO-scoped and transfers nowhere. Reported to D88
 (`claude/capx-d88-fleet-id-uniqueness-x31hi6`) with these ledgers.
 
 **A real observation the census surfaced:** the arm and control retrofit **different tranches of the
@@ -223,12 +243,20 @@ in-ISO CO2 at 2026 rising to 101.6 % at 2030). Displacing a zero-rated import wi
 the in-ISO line whatever the true emissions do. The retrofit heat-rate penalty (+12 %) works the
 same way.
 
-A second observation, stated rather than explained away: at 2030 the arm holds **+1,127.6 MW** more
-`gas_cc_ccs` capacity but generates **exactly the same** `gas_cc_ccs` energy (43.6988 TWh in both).
-The consistent reading is that by 2030 the arm is converting the **marginal, low-CF hosts** the
-control never reached — the best hosts having converted in 2028-2029 under the payback ordering —
-so the extra MW are capacity, not energy. That reading is not independently verified at unit grain
-here and is **routed, not asserted**.
+A second observation, **routed in the first draft and then CLOSED at unit grain** before the
+bundles were lost: at 2030 the arm holds **+1,127.6 MW** more `gas_cc_ccs` capacity but generates
+**exactly the same** `gas_cc_ccs` energy (43.6988 TWh in both). The 2030 ledgers say why. The
+control converts **one** unit (the 1,000 MW `h_class` representative, heat rate 6.300, er 0.3600);
+the arm converts that same unit **plus nine others**, and every one of the nine is small
+(9.3-123.1 MW) and **inefficient** — heat rates **8.558-9.609** against the `h_class` 6.300, and
+emission rates **0.4881-0.7319** against 0.3600. These are low-capacity-factor marginal CCs: the
+efficient hosts converted in 2028-2029 under the payback ordering, so by 2030 the repair is buying
+**capacity, not energy**. The routed reading is therefore confirmed, not merely plausible.
+
+Worth noting for the D50/D65 cost lane rather than this one: those nine hosts show *higher*
+`annual_net_savings_per_mw` (183k-258k $/MW-yr) than the efficient representative (223k), because
+§45Q is credited on the host's own tonnes — the very asymmetry `ccs_retrofit_capex_co2_scaling`
+exists to offset, here visible at unit grain in a live run.
 
 ---
 
