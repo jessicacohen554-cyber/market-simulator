@@ -2150,6 +2150,139 @@ PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 }
 
 
+# pjm-174: the HOURLY NEIGHBOUR-ANCHORED seam ladder — per-band OFFSETS on the
+# seam SPREAD, not prices. The PJM application of the miso-231 form, for the
+# defect pjm-174 measured on PJM's own record.
+#
+# THE DEFECT. PJM_SEAM_LADDER_BY_YEAR above is a FIXED ANNUAL PRICE ladder
+# anchored on PJM's OWN DA hub. That is a Q-Q coupling to the MEASURED price
+# duration curve, but the LP clears it against the MODEL's price duration
+# curve — so the coupling is only as good as the model's ability to reproduce
+# that curve, and the bands leave merit exactly when the model's price is
+# wrong. Measured on the committed pjm-169 2022/2021 touchpoint, zero LP
+# (results/calibration/FINDING-pjm174-seam-ladder-anchoring-2026-09-08.md §2):
+# the incumbent ladder reproduces its OWN basis to -0.046 TWh (2022) and
+# -0.011 TWh (2021) — the band prices are RIGHT — but fed the model's own
+# price it loses -5.735 TWh (2022) and -12.699 TWh (2021) of net export, 57 %
+# and 88 % of each year's total interchange miss. Correcting the model's price
+# duration curve alone, with its hourly ranking untouched, recovers the
+# measured volume exactly (31.732 / 37.805 TWh), which is what proves the band
+# prices are not the defect and the ANCHORING is.
+#
+# THE FORM. Band k's offer becomes hourly, pi_k(t) = neighbour(t) + delta_k,
+# so band k clears iff spread(t) > delta_k (import) / < delta_k (export), with
+# spread = PJM hub DA - neighbour DA (the ISO's own price minus the
+# neighbour's, the same own-minus-neighbour orientation the MISO derivation
+# uses). The offsets are the IDENTICAL Q-Q duration coupling — same
+# midpoint-depth grid on the same SEAM_FLOW_TRANCHES, same measured tie-line
+# flows, same same-seam no-wash reconciliation — read off the SPREAD instead of
+# PJM's own DA. That is the same single degree of freedom the MISO neighbour
+# derivations exercise: which measured series the coupling reads. ZERO fitted
+# parameters (rules 21/24). Derived by
+# scripts/data/derive_pjm_seam_ladders.py --neighbour-hourly (rule 23: it
+# re-derives only when its SOURCE DATA updates, never because a residual moved).
+#
+# THE ANCHOR IS NAMED ON TOPOLOGY, before any ladder was derived (rule 14
+# [R-ACCURATE] misalignment clause, the miso-233 SPP_ANCHOR_HUB pattern) and
+# never chosen by which one scores better:
+#   MISO  -> equal-weight mean of MISO's three PJM-FACING zonal hubs
+#            (MISO-Illinois / MISO-Indiana / MISO-East). The exact MIRROR of
+#            MISO's own construction for this same physical seam, where
+#            PJM_WEST is the equal-weight mean of the three MISO-facing PJM gen
+#            hubs. PJM's MISO ties land on ComEd (Illinois), AEP-Ohio (Indiana)
+#            and ATSI (Michigan/East) — envelopes._PJM_TIE_ZONE.
+#   NYISO -> NYISO's reference DA, the ONLY measured NYISO series held under
+#            data/raw, so there is nothing to select between.
+# The MISO system hub is reported as a sensitivity by the derive and SELECTS
+# NOTHING (2022 corr +0.270 / 2023 +0.323 against the topology anchor's +0.306
+# / +0.425).
+#
+# COVERAGE — a row exists IFF the solve can arm it. Carolinas / TVA / LGEE are
+# absent in every year: SERC publishes no hub or nodal price, the same DATA
+# boundary derive_miso_seam_ladders states for SOCO/TVA, and those seams keep
+# their incumbent own-hub ladder untouched. MISO is absent in 2019 and 2021 (no
+# measured series) and in 2022 (ONE contiguous 525 h outage in the zonal DA,
+# far past the repo-standard limit=3 interpolation) — full coverage or nothing,
+# because _inject_seam_ladder applies one ladder per seam-year and a
+# partially-derived row would be a row the solve never uses. Every omission
+# degrades to the INCUMBENT ladder, never to an unpriced seam (rule 19
+# [R-ONE-MECH]).
+#
+# READOUT A, driven by the MEASURED record and scored on the MEASURED seam flow
+# (hourly corr, incumbent -> this form; volume preserved within 0.02 TWh in
+# every seam-year):
+#   NYISO  2019 -0.387 -> +0.568 | 2021 -0.231 -> +0.620 | 2022 +0.235 -> +0.723
+#          2023 +0.071 -> +0.553 | 2024 +0.201 -> +0.544 | 2025 +0.001 -> +0.514
+#   MISO   2023 +0.419 -> +0.425 | 2024 +0.487 -> +0.393 | 2025 +0.316 -> +0.391
+# A SIGN FLIP on the NYISO seam in three of six years. REPORTED AGAINST IT: the
+# MISO leg is roughly neutral and is WORSE in 2024 (-0.093); the repair is the
+# NYISO leg, and this table claims no more than that.
+PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2019: {
+        "NYISO": {
+            "import": (16.65, 74.19, 94.04, 94.04, 94.04, 94.04, 94.04, 94.04),
+            "export": (9.45, 4.54, 1.2, -1.25, -4.19, -10.9, -38.31, -62.01),
+        },
+    },
+    2021: {
+        "NYISO": {
+            "import": (55.28, 84.29, 84.29, 84.29, 84.29, 84.29, 84.29, 84.29),
+            "export": (20.72, 7.63, 2.4, -1.92, -5.57, -12.28, -28.74, -56.68),
+        },
+    },
+    2022: {
+        "NYISO": {
+            "import": (48.41, 139.39, 180.53, 213.56, 213.56, 213.56, 213.56, 213.56),
+            "export": (22.9, 9.22, 2.24, -2.84, -7.67, -15.32, -35.67, -100.88),
+        },
+    },
+    2023: {
+        "MISO": {
+            "import": (59.9, 141.61, 141.61, 141.61, 141.61, 141.61, 141.61, 141.61),
+            "export": (23.07, 9.65, 3.52, 0.11, -2.22, -4.54, -7.54, -12.71),
+        },
+        "NYISO": {
+            "import": (150.53, 150.53, 150.53, 150.53, 150.53, 150.53, 150.53, 150.53),
+            "export": (28.88, 11.23, 4.46, 1.5, -1.16, -4.31, -9.0, -30.18),
+        },
+    },
+    2024: {
+        "MISO": {
+            "import": (37.59, 73.18, 87.22, 87.22, 87.22, 87.22, 87.22, 87.22),
+            "export": (13.7, 6.03, 1.98, -0.83, -3.08, -6.08, -10.56, -27.87),
+        },
+        "NYISO": {
+            "import": (107.39, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39),
+            "export": (42.96, 19.53, 6.92, 0.94, -3.46, -7.76, -17.93, -85.84),
+        },
+    },
+    2025: {
+        "MISO": {
+            "import": (54.67, 147.14, 191.71, 191.71, 191.71, 191.71, 191.71, 191.71),
+            "export": (19.96, 8.79, 2.58, -1.49, -5.51, -10.37, -20.23, -48.52),
+        },
+        "NYISO": {
+            "import": (155.69, 155.69, 155.69, 155.69, 155.69, 155.69, 155.69, 155.69),
+            "export": (89.74, 32.13, 11.44, 1.76, -4.48, -11.97, -32.81, -74.05),
+        },
+    },
+}
+
+#: The measured neighbour DA series each PJM seam's hourly ladder is anchored
+#: on (pjm-174). ``(parquet stem under data/raw/_validation-source, zonal hubs
+#: to equal-weight mean)``; an empty hub tuple means the file is a single
+#: series. Named on TOPOLOGY — see the table comment above.
+PJM_SEAM_NEIGHBOUR_ANCHOR: dict[str, tuple[str, tuple[str, ...]]] = {
+    "MISO": (
+        "actual_lmp_hourly_zonal_MISO",
+        ("MISO-Illinois", "MISO-Indiana", "MISO-East"),
+    ),
+    "NYISO": ("actual_lmp_hourly_NYISO", ()),
+}
+
+
 @dataclass(frozen=True)
 class CaisoHubNeighbor:
     """One CAISO WECC import corridor priced as a forward reference-price seam."""

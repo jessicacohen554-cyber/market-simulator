@@ -3822,6 +3822,7 @@ def solve_and_persist(
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
     pjm_seam_measured_ladder: bool = False,
+    pjm_seam_neighbour_hourly_ladder: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -4904,6 +4905,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(pjm_seam_export_limit=True)
         if pjm_seam_measured_ladder:
             recorded_cfg = recorded_cfg.with_overrides(pjm_seam_measured_ladder=True)
+        if pjm_seam_neighbour_hourly_ladder:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_seam_neighbour_hourly_ladder=True
+            )
         if ct_intermediate_split:
             recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
         if ct_intermediate_cf_threshold is not None:
@@ -5660,6 +5665,7 @@ def solve_and_persist(
             pjm_seam_flow_percentile=pjm_seam_flow_percentile,
             pjm_seam_export_limit=pjm_seam_export_limit,
             pjm_seam_measured_ladder=pjm_seam_measured_ladder,
+            pjm_seam_neighbour_hourly_ladder=pjm_seam_neighbour_hourly_ladder,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -6616,6 +6622,7 @@ def solve_and_persist(
         "pjm_seam_flow_percentile": pjm_seam_flow_percentile,
         "pjm_seam_export_limit": pjm_seam_export_limit,
         "pjm_seam_measured_ladder": pjm_seam_measured_ladder,
+        "pjm_seam_neighbour_hourly_ladder": pjm_seam_neighbour_hourly_ladder,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "chp_export_floor_measured": chp_export_floor_measured,
         "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
@@ -12430,6 +12437,24 @@ def main() -> None:
         "--reference-price-interface; PJM-only.",
     )
     parser.add_argument(
+        "--pjm-seam-neighbour-hourly-ladder",
+        action="store_true",
+        help="pjm-174. Make the PJM seam ladder HOURLY on the seams a measured "
+        "neighbour price covers: band k's offer becomes neighbour(t) + "
+        "offset_k, so it clears on the seam SPREAD rather than on PJM's "
+        "absolute price level "
+        "(interchange_config.PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR, derived "
+        "by scripts/data/derive_pjm_seam_ladders.py --neighbour-hourly on the "
+        "IDENTICAL Q-Q duration coupling read off the spread; zero fitted "
+        "parameters). A SUB-GATE of --pjm-seam-measured-ladder, refused "
+        "without it; it DISPLACES the parent's scalar band price on the seams "
+        "it covers and degrades to the parent elsewhere (rule 19). Repairs the "
+        "own-hub anchoring pjm-174 measured: the parent reproduces its own "
+        "basis to 0.05 TWh but loses 5.7 (2022) / 12.7 (2021) TWh of net "
+        "export when fed the model's own price. MISO/NYISO only "
+        "(SERC publishes no hub); default off, byte-identical off.",
+    )
+    parser.add_argument(
         "--pjm-measured-interface-limits",
         action="store_true",
         help="Backcast overlay (PJM-only, default off): the internal links "
@@ -13486,6 +13511,7 @@ def main() -> None:
         pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,
         pjm_seam_export_limit=args.pjm_seam_export_limit,
         pjm_seam_measured_ladder=args.pjm_seam_measured_ladder,
+        pjm_seam_neighbour_hourly_ladder=args.pjm_seam_neighbour_hourly_ladder,
         pjm_measured_interface_limits=args.pjm_measured_interface_limits,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,

@@ -4800,14 +4800,26 @@ def run_year(
                 inject_pjm_seam_ladder_prices,
             )
 
-            if inject_pjm_seam_ladder_prices(fleet_arrays, mc_base, iso, year):
+            # pjm-174: the hourly neighbour anchor is a SUB-GATE of this
+            # injector — it can only arm inside the parent measured ladder,
+            # and it displaces the parent's scalar band price per seam.
+            neighbour_hourly = bool(
+                getattr(config, "pjm_seam_neighbour_hourly_ladder", False)
+            )
+            if inject_pjm_seam_ladder_prices(
+                fleet_arrays, mc_base, iso, year, neighbour_hourly=neighbour_hourly
+            ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
                     "ladders (tie-line flow durations x PJM DA system "
                     "quantiles; MISO/NYISO/Carolinas/TVA/LGEE, import + "
-                    "export; no added hurdle; firm-export floor displaced)",
+                    "export; no added hurdle; firm-export floor displaced)%s",
                     iso,
                     year,
+                    "; NEIGHBOUR-ANCHORED HOURLY overlay armed on the covered "
+                    "seams (bands clear on the measured seam SPREAD)"
+                    if neighbour_hourly
+                    else "",
                 )
         # [measured: WECC intertie hub LMP (Malin / Palo Verde, OASIS) per
         #  corridor | forecast substitute: caiso_intertie_reference_price —
