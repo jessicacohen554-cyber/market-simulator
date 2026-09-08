@@ -1,0 +1,128 @@
+{
+  "probe": "nyiso220_fleet_period_evidence",
+  "zero_lp": true,
+  "owner_instruction": "I don't think the other 145 should keep the month that's the problem I think that's way too generous for how flexible hydro is. this deserves a charter to get right",
+  "charter": "docs/CHARTER-nyiso220-fleet-wide-hydro-budget-period-2026-09-08.md",
+  "source_arm": "results/calibration/nyiso220_arm_2025 (gitignored, rule 29(c)/31)",
+  "residual_footprint_decomposition": {
+    "total_hydro_twh": 24.0589,
+    "total_residual_footprint_twh": 1.3216,
+    "constrained": {
+      "plants": 2,
+      "twh": 19.5412,
+      "pct_of_hydro_energy": 81.22,
+      "footprint_twh": 0.5103,
+      "pct_of_residual_footprint": 38.62,
+      "swing_rate_pct_of_own_energy": 2.61
+    },
+    "unconstrained": {
+      "plants": 145,
+      "twh": 4.5177,
+      "pct_of_hydro_energy": 18.78,
+      "footprint_twh": 0.8112,
+      "pct_of_residual_footprint": 61.38,
+      "swing_rate_pct_of_own_energy": 17.96
+    }
+  },
+  "worst_unconstrained": [
+    {
+      "plant": 54580,
+      "twh": 0.299,
+      "pct_own_energy": 15.28
+    },
+    {
+      "plant": 54953,
+      "twh": 0.1921,
+      "pct_own_energy": 17.5
+    },
+    {
+      "plant": 2612,
+      "twh": 0.1676,
+      "pct_own_energy": 17.61
+    },
+    {
+      "plant": 2605,
+      "twh": 0.1457,
+      "pct_own_energy": 19.37
+    },
+    {
+      "plant": 2609,
+      "twh": 0.1595,
+      "pct_own_energy": 16.8
+    },
+    {
+      "plant": 2614,
+      "twh": 0.1211,
+      "pct_own_energy": 21.5
+    },
+    {
+      "plant": 50512,
+      "twh": 0.13,
+      "pct_own_energy": 19.18
+    },
+    {
+      "plant": 2551,
+      "twh": 0.1785,
+      "pct_own_energy": 13.54
+    }
+  ],
+  "pondage_bucket_census": {
+    "daily (<24 h)": {
+      "plants": 115,
+      "mw": 3319.9,
+      "pct_fleet_mw": 70.92
+    },
+    "weekly (24-168 h)": {
+      "plants": 22,
+      "mw": 1166.6,
+      "pct_fleet_mw": 24.92
+    },
+    "no pondage (no NID dam)": {
+      "plants": 12,
+      "mw": 70.1,
+      "pct_fleet_mw": 1.5
+    },
+    "month or longer (>=730 h)": {
+      "plants": 7,
+      "mw": 78.1,
+      "pct_fleet_mw": 1.67
+    },
+    "monthly-ish (168-730 h)": {
+      "plants": 7,
+      "mw": 46.3,
+      "pct_fleet_mw": 0.99
+    }
+  },
+  "head_basis_split": {
+    "dam_height_PROXY": {
+      "plants": 140,
+      "mw": 3652.6,
+      "pct_fleet_mw": 78.03
+    },
+    "hydraulic_height": {
+      "plants": 12,
+      "mw": 959.5,
+      "pct_fleet_mw": 20.5
+    },
+    "none": {
+      "plants": 11,
+      "mw": 68.9,
+      "pct_fleet_mw": 1.47
+    }
+  },
+  "route_validation": {
+    "claim": "where the instrument route and the pondage route both exist they agree, 2 for 2, on 71.4 % of fleet MW",
+    "2693_niagara": {
+      "pondage_h": 0.244,
+      "pondage_bucket": "daily (<24 h)",
+      "instrument_period_h": 24
+    },
+    "2694_st_lawrence": {
+      "pondage_h": 73.067,
+      "pondage_bucket": "weekly (24-168 h)",
+      "instrument_period_h": 168
+    }
+  },
+  "stated_risk": "The bucket depends on HEAD, and 78.03 % of fleet MW rests on a labelled dam-height proxy whose error runs in BOTH directions. Plants near a boundary could move across it under a 2x head correction. Charter \u00a75 R1; this is the most likely way a fleet-wide build is wrong.",
+  "authorizes": "nothing \u2014 evidence for an owner decision on charter \u00a79"
+}
