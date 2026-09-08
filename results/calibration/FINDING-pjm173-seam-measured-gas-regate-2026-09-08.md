@@ -1,6 +1,6 @@
-# FINDING — pjm-173: F-A re-gated and PASSES its pre-solve gates; S4/S5/S6 blocked on a SANDBOX memory cap
+# FINDING — pjm-173: the F-A seam gas repair is **STRUCTURALLY INERT on the PJM keeper** — the measured seam ladder already owns the seam price
 
-**Session** pjm-173 · **ISO** PJM · **Date** 2026-09-08 · **LP spent: NONE (three attempts, all OOM-killed before the first solve completed)**
+**Session** pjm-173 · **ISO** PJM · **Date** 2026-09-08 · **LP spent: 2022 (one year, ~13 min)**
 **Card** `docs/handoffs/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md` (committed `b8112519` BEFORE any solve; not rewritten)
 **Predecessor** `results/calibration/FINDING-pjm172-seam-measured-gas-2026-09-07.md`
 **Keeper** `2026-08-15-pjm-162-inputclock` — **unchanged**. Nothing promoted, nothing registered.
@@ -10,17 +10,22 @@
 
 ## 0. RESULT IN ONE PARAGRAPH
 
-pjm-172 killed F-A at gates S1/S3 that were **mis-specified**, not at a defect. This session
-restated them with the gas-elasticity in them, **committed the restatement to git before running
-anything**, and then measured: **S1′ PASSES and S3′ PASSES**, exactly and at zero LP — the seam
-heat rate moves by *precisely* the declared law `5.6 + 14.2/gas` (error **0.0**, not merely small)
-on exactly the three SERC seams that take that branch, and not at all on MISO/NYISO; the 2022 seam
-baseload mean reproduces **61.1448 $/MWh** to 4.8e-05. The G-DRIFT audit was re-run at this HEAD
-(pjm-172's revision no longer exists) and is **clean — zero LIVE hunks**, so G-CTRL form 4 holds and
-no control LP is owed. **S4, S5 and S6 remain unmeasured**, and the reason is neither the mechanism
-nor the machine: **the LP's peak resident set exceeds the Claude Code bash tool's own cgroup limit
-of 13.34 GiB, on a box with 16.4 GB of RAM and ~15 GB free.** Three independent attempts were
-OOM-killed at 13.31 GiB — the same value to three decimal places each time.
+The 2022 screen ran and the answer is unambiguous: **the arm is byte-identical to the control on
+every scored quantity.** Gas 357.63, coal 155.21, nuclear 272.19, interchange 21.65 TWh, every
+per-fuel correlation, and the load-weighted mean LMP 66.73 $/MWh — **all unchanged to the last
+decimal**, against a seam repricing worth **+31.110 $/MWh** of baseload. The cause is structural and
+it is now proven: **`pjm_seam_measured_ladder` is ARMED on the keeper recipe**, and it *replaces*
+the gas × heat-rate seam price with measured per-seam Q-Q ladders before it reaches the LP
+(`import_nodes.py:1051`, and the solve's own log: *"seam bands repriced to the MEASURED per-seam
+Q-Q ladders … firm-export floor displaced"*). `PJM_SEAM_LADDER_BY_YEAR` covers **2019, 2021, 2022,
+2023, 2024, 2025** — **every year PJM solves**. So the input-parity defect pjm-171 measured is
+**real but unreachable** on this recipe: `neighbor_gas_price` is computed and then overwritten.
+**The arm is dead at S4 by the card's own kill rule, and 2021 was therefore not spent.**
+
+**What this changes.** F-A is not a repair for PJM's rubric failures, because the seam price it
+corrects is not the price the LP sees. The C1 interchange row — PJM's single worst row, −10.04 TWh
+with r 0.498 — is set by the **measured ladder**, so the ladder is where that work belongs. That
+redirection, not the gas level, is this session's most useful output.
 
 ---
 
@@ -28,18 +33,61 @@ OOM-killed at 13.31 GiB — the same value to three decimal places each time.
 
 | # | gate | verdict | measured |
 |---|---|---|---|
-| **S1′** | HR moves ONLY through the declared elastic law, and only on the `hr_by_year = None` seams | **PASS** | `max\|hr − (5.6 + 14.2/gas)\| = 0.0` across both years. Carolinas/TVA/LGEE **11.1906 → 7.8122** (2022) and **→ 9.2320** (2021). MISO **12.9000** and NYISO **10.4000** unchanged in both years. |
-| **S2** | bit-identical for every year ≥ 2023 and every forecast year | **PASS** | Asserted by the 40 committed tests (pjm-172); re-affirmed, not re-litigated. |
-| **S3′** | 2022 seam baseload mean = **61.1448**, per-neighbour as tabled | **PASS** | Mean **61.1448** (err **4.8e-05**, tol 1e-4). MISO **82.8059** ✓ · NYISO **72.4782** ✓ · Carolinas/TVA/LGEE **50.1467** ✓. 2021 mean **41.0197** ✓. |
-| **S4** | footprint — only the 80 seam `mc` rows move | **NOT REACHED** | requires the solve. *(Partial corroboration only, from the arm's own construction log before the kill: `priced import/export node — 40 import tranches (16300 MW), 40 export sinks (16300 MW)` = the 80 rows the gate names. That is the row COUNT, not the movement test, and is **not** a pass.)* |
-| **S5** | direction — 2022 net export rises from 21.65 TWh | **NOT REACHED** | requires the solve. |
-| **S6** | collateral — no non-C3a criterion flips PASS → FAIL | **NOT REACHED** | requires the solve. |
+| **S1′** | HR moves ONLY through the declared elastic law, only on the `hr_by_year = None` seams | **PASS** | `max\|hr − (5.6 + 14.2/gas)\| = 0.0` exactly, both years. Carolinas/TVA/LGEE **11.1906 → 7.8122** (2022), **→ 9.2320** (2021). MISO **12.9000** / NYISO **10.4000** unchanged. |
+| **S2** | bit-identical for every year ≥ 2023 and every forecast year | **PASS** | 40 committed tests (pjm-172). |
+| **S3′** | 2022 seam baseload mean = **61.1448**, per-neighbour as tabled | **PASS** | Mean **61.1448** (err **4.8e-05**). MISO **82.8059** · NYISO **72.4782** · Carolinas/TVA/LGEE **50.1467**. 2021 mean **41.0197**. |
+| **S4** | footprint — only the 80 seam `mc` rows move; **zero seam rows fail to move** | **FAIL — and this is the finding** | **ZERO of the 80 move.** The LP's seam bands are repriced by the measured Q-Q ladder, which displaces the reference price entirely. Not a defect in F-A; a downstream mechanism owns the seam (rule 19 `[R-ONE-MECH]`). |
+| **S5** | 2022 net export RISES from 21.65 TWh | **FAIL (no movement)** | **21.65 → 21.65 TWh, +0.00.** Same cause as S4. Actual 31.69. |
+| **S6** | no non-C3a criterion flips PASS → FAIL | **PASS** | `screen_collateral_gate.py` vs `2026-09-07-pjm-2022-2021-touchpoints`: **0 flips**. (4 records unscorable on both sides: `price_mean` da_diagnostic, `governance` — no attestation at a screen — and `forced_share` ST_GAS / hydro.) |
 
-**S1′/S3′ carry no predictive credit** — the card said so *before* it used them (§3.1). They are
-reproduction gates over quantities pjm-172 had already measured. The gates with predictive force are
-exactly the three that did not run.
+**Kill rule applied as written:** S4 failed ⇒ the arm is dead, **2021 was never spent**, nothing is
+promoted. 2021 is additionally inert *by construction* — the ladder covers it — so the unspent year
+costs no evidence.
+
+**C3a, reported and gating nothing (rules 1/29):** load-weighted mean LMP **66.73 → 66.73 $/MWh,
++0.00**. The card's ex-ante prediction that 2022 would improve is **not confirmed and not refuted** —
+the mechanism never reached the LP, so the prediction was never tested.
 
 ---
+
+## 1a. THE FULL 2022 A/B — every number this session will cite
+
+Model TWh, control (`pjm169_tp2022_2021_f2arm`, committed) vs arm (`pjm173_fa_arm_2022`):
+
+| fuel | control | arm | move | actual | control err | arm err | r ctl→arm |
+|---|---|---|---|---|---|---|---|
+| gas | 357.63 | 357.63 | **+0.00** | 330.28 | +27.35 | +27.35 | 0.922→0.922 |
+| coal | 155.21 | 155.21 | **+0.00** | 167.38 | −12.17 | −12.17 | 0.925→0.925 |
+| nuclear | 272.19 | 272.19 | **+0.00** | 272.46 | −0.27 | −0.27 | 0.759→0.759 |
+| wind | 32.21 | 32.21 | +0.00 | 32.21 | +0.00 | +0.00 | 1.000→1.000 |
+| solar | 7.15 | 7.15 | +0.00 | 7.15 | +0.00 | +0.00 | 1.000→1.000 |
+| **interchange** | 21.65 | 21.65 | **+0.00** | 31.69 | **−10.04** | **−10.04** | 0.498→0.498 |
+| **mean LMP $/MWh** | 66.73 | 66.73 | **+0.00** | — | — | — | — |
+
+Solve: matrix build 27.062 s, P0 436.573 s cold, 421,111 simplex iterations, objective
+17,668,391,326.2485.
+
+---
+
+## 1b. WHY IT IS INERT — proven, not inferred
+
+`model/interchange/import_nodes.py:1051` gates on
+`iso == "PJM" and config.pjm_seam_measured_ladder and year in PJM_SEAM_LADDER_BY_YEAR`. The keeper
+recipe carries **`pjm_seam_measured_ladder = True`** (`meta.json`), and the ladder table covers
+**{2019, 2021, 2022, 2023, 2024, 2025}**. When active it reprices the seam bands from measured
+tie-line flow durations × PJM DA system quantiles and **displaces the firm scheduled-export floor** —
+the code's own comment states the rule-19 intent: *"alternatives, never stacked"*.
+
+So on this recipe the seam price is **measured**, not derived from `gas × heat_rate`. F-A corrects
+the derivation of a number the LP does not use. Two consequences worth stating precisely:
+
+1. **F-A is inert for PJM in every year PJM currently solves** — 2021 through 2025, and 2019. The
+   only PJM years where it could bite are those with no ladder entry (**2020**, and forecast years,
+   where the ladder no-ops by design and the gas trajectory has knots anyway).
+2. **It is NOT inert in general.** The freeze is in shared code, and any ISO arming
+   `reference_price_interface` on a pre-2023 year *without* a measured ladder still hits it. Rule 25
+   `[R-ISO-SCOPE]`: MISO's own exposure is its lane's to verify, not this one's to assert.
+
 
 ## 2. THE MEMORY CEILING — a KNOWN, ALREADY-SOLVED condition, and the LP did NOT grow
 
@@ -243,25 +291,55 @@ another.
 
 ## 8. WHAT IS AND IS NOT ESTABLISHED
 
-**Established.** (1) The restated gates are satisfiable and the implementation **passes them
-exactly**. (2) G-CTRL form 4 holds at this HEAD; no control LP is owed. (3) The seam's pre-2023 gas
-error is −60.6 % / −31.7 % against the ISO's *own* burned gas, and F-A closes 2022 to −0.5 % while
-overshooting 2021 to +5.1 %. (4) PJM's three failing criteria share one signature, whose largest
-term is the interchange row F-A acts on. (5) The runner requirement is a **13.34 GiB tool-sandbox
-cap**, not a 32 GB machine requirement.
+**Established (measured).**
+1. **F-A is structurally inert on the PJM keeper recipe.** A +31.110 $/MWh seam repricing moved
+   **zero** of the LP's 80 seam rows and **zero** of every scored quantity — fuel mix, correlations
+   and mean LMP identical to the last decimal.
+2. **The cause**: `pjm_seam_measured_ladder = True` on the recipe, and `PJM_SEAM_LADDER_BY_YEAR`
+   covers every year PJM solves. The ladder replaces the gas × HR seam price and displaces the firm
+   export floor (rule 19 `[R-ONE-MECH]`, stated in the code's own comment).
+3. **S6 PASS** — zero collateral flips against the committed control.
+4. **S1′ / S3′ PASS exactly** — the HR moves on the declared law with error 0.0, and the seam
+   baseload reproduces 61.1448 to 4.8e-05.
+5. **G-CTRL form 4 holds at this HEAD** — zero LIVE hunks over 73 files, PJM surface `moved_rows`
+   empty, PJM scoring-reference subtrees hash-identical.
+6. **The runner requirement is a 13.34 GiB cgroup cap, cleared by swap** — not the ≥32 GB the
+   charter claimed, and not a change in the LP (§2).
 
-**NOT established — do not quote any of this as measured.** (1) The `mc` footprint (**S4**).
-(2) Whether 2022 net export moves toward 31.64 TWh (**S5**). (3) Any collateral effect on
-C1/C2/C4/C8/C6 (**S6**). (4) **Any C3a movement in either year** — the card recorded ex ante that
-2022 improves and 2021 worsens; **neither was measured and neither may be cited.**
+**NOT established — do not quote any of this as measured.**
+1. **Any C3a movement, in either year.** The card predicted 2022 improves and 2021 worsens.
+   **Neither was tested**: the mechanism never reached the LP, so the prediction is neither
+   confirmed nor refuted.
+2. **2021 was not solved.** Its inertness rests on the ladder covering 2021 — a structural argument
+   plus the 2022 measurement, not a 2021 measurement.
+3. **Whether F-A matters anywhere else.** PJM 2020 (no ladder entry) and MISO's pre-2023 exposure
+   are untested here. Rule 25 `[R-ISO-SCOPE]`: no verdict transfers.
+4. **Whether the ladder itself is right.** This session shows the ladder *owns* the seam price; it
+   does **not** show the ladder is well-calibrated. That is the open question below.
 
 ---
 
-## 9. THE OPEN QUESTIONS FOR THE OWNER
+## 9. FOR THE OWNER — the keeper question, answered, and where the work goes next
 
-1. **Unblock the measurement** — grant one of the three in §2.2. It is ~4 min of LP per year and
-   would close S4/S5/S6, the only gates that carry evidence.
-2. **F-A is already in `main` with its footprint unmeasured** (§4). Keep it pending the
-   measurement, or revert until measured? *(This session's read: keeping it is defensible on rule 14
-   — it is inert in every scored year and the input is measurably right — but that is the owner's
-   call, and it is a live change either way.)*
+**Is F-A a keeper candidate? NO — and not on a gate ground.** A keeper determination is the
+train-tier (2023–2025) verdict (rule 30(c)). F-A is byte-identical in 2023–2025 **and** now measured
+byte-identical in 2022, so it is *incapable* of moving any scored year in either direction. There is
+nothing to promote. The owner's standing principle — *structural integrity improving while gates
+regress can still be a keeper* (rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`) — is correct and is the
+right frame for a **merge** decision, but it needs a mechanism that reaches the LP. This one does
+not.
+
+**Should it stay in `main`?** The owner ruled **keep, pending measurement** (2026-09-08). The
+measurement now exists and **strengthens** that ruling rather than weakening it: F-A is a strictly
+more accurate input (rule 14 — the seam was wrong by −60.6 % / −31.7 % against the ISO's own burned
+gas) that is **provably inert** on every PJM year now solved, so it carries correctness with zero
+behavioural risk. It remains live for PJM 2020 and for any ISO without a measured ladder.
+
+**Where the C1 / C3b work actually goes.** PJM's three failing criteria are one defect — too much
+gas, too little coal, too little export — whose largest and worst-correlated term is
+**interchange (−10.04 TWh, r 0.498, nrmse 0.58)**. This session proves that row is set by the
+**measured Q-Q ladder**, not by the gas level. So the next lever is the ladder itself — its
+construction, its duration mapping, and whether its export bands can clear the ~10 TWh gap — and
+**not** any further work on `neighbor_gas_price`. Rule 28 check: `diurnal_price_amplitude` and
+`ordc_scarcity_overlay` are **G** for PJM, `measured_offer_surface` and `temp_dependent_derate` are
+**R**; the seam ladder is the open, un-adjudicated route.
