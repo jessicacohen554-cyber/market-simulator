@@ -342,14 +342,239 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# pjm-174: the HOURLY neighbour-anchored ladder (offsets on the seam SPREAD)
+# ---------------------------------------------------------------------------
+
+#: The measured neighbour DA series each PJM seam is anchored on, named on
+#: TOPOLOGY before any ladder is derived (rule 14 ``[R-ACCURATE]`` misalignment
+#: clause, the ``miso-233`` ``SPP_ANCHOR_HUB`` pattern) and NEVER chosen by
+#: which one scores better.
+#:
+#: * ``MISO`` — the equal-weight mean of MISO's three PJM-FACING zonal hubs
+#:   (MISO-Illinois / MISO-Indiana / MISO-East).  This is the exact MIRROR of
+#:   MISO's own construction for the same physical seam, where ``PJM_WEST`` is
+#:   the equal-weight mean of the three MISO-facing PJM gen hubs (CHICAGO GEN /
+#:   AEP GEN / ATSI GEN, ``envelopes.measured_miso_pjm_border_prices``).  PJM's
+#:   MISO ties land on ComEd (Illinois), AEP-Ohio (Indiana) and ATSI
+#:   (Michigan/East) — ``envelopes._PJM_TIE_ZONE`` — so those are the three
+#:   MISO zones facing them.
+#: * ``NYISO`` — NYISO's reference DA, the ONLY measured NYISO price series
+#:   held under ``data/raw`` (no zonal file exists), so there is nothing to
+#:   select between.
+#:
+#: ``Carolinas`` / ``TVA`` / ``LGEE`` are absent: SERC publishes no hub or
+#: nodal price, the same DATA boundary
+#: ``derive_miso_seam_ladders.derive_pjm_neighbour`` states for SOCO/TVA.  Those
+#: seams keep the incumbent own-hub anchor, untouched.
+PJM_NEIGHBOUR_ANCHOR: dict[str, tuple[str, tuple[str, ...]]] = {
+    "MISO": (
+        "actual_lmp_hourly_zonal_MISO",
+        ("MISO-Illinois", "MISO-Indiana", "MISO-East"),
+    ),
+    "NYISO": ("actual_lmp_hourly_NYISO", ()),
+}
+
+
+def load_neighbour_da(seam: str, year: int) -> np.ndarray | None:
+    """Return the measured hourly neighbour DA anchor for ``seam``, or ``None``.
+
+    Reads the series named by :data:`PJM_NEIGHBOUR_ANCHOR` off the model's
+    fixed non-leap 8760-hour clock.  A zonal source is reduced to the
+    equal-weight mean of its named PJM-facing hubs; a single-series source is
+    taken as-is.  Isolated gaps are interpolated on the same ``limit=3`` rule
+    :func:`load_joined` applies; hours the source does not cover stay ``NaN``
+    and the caller degrades them to the incumbent anchor (never to an unpriced
+    seam).  ``None`` when the seam has no measured neighbour series or the year
+    is uncovered.
+    """
+    entry = PJM_NEIGHBOUR_ANCHOR.get(seam)
+    if entry is None:
+        return None
+    stem, hubs = entry
+    path = RAW / "_validation-source" / f"{stem}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[frame["year"] == year]
+    if hubs:
+        frame = frame[frame["zone"].astype(str).isin(hubs)]
+    if frame.empty:
+        return None
+    series = frame.groupby("hour")["da"].mean().reindex(range(_HOURS_PER_YEAR))
+    return series.interpolate(limit=3).to_numpy(dtype=float)
+
+
+def derive_neighbour_hourly(g: pd.DataFrame, year: int) -> tuple[dict, list[str]]:
+    """Derive PJM's HOURLY neighbour-anchored seam ladder as OFFSETS.
+
+    The PJM application of ``derive_miso_seam_ladders.derive_pjm_neighbour_hourly``
+    (miso-231), for the defect pjm-174 measured on PJM's own record: the
+    incumbent :data:`~market_sim.config.interchange_config.PJM_SEAM_LADDER_BY_YEAR`
+    is a FIXED annual price ladder anchored on PJM's OWN hub, so it is cleared
+    by the LP against the model's own internal price and the bands leave merit
+    exactly when that price is wrong.  Band ``k``'s offer becomes hourly::
+
+        pi_k(t) = neighbour(t) + delta_k
+
+    so band ``k`` clears in hour ``t`` iff ``spread(t) > delta_k`` for an import
+    band and ``spread(t) < delta_k`` for an export band, with
+    ``spread = PJM hub DA - neighbour DA`` (the ISO's own price minus the
+    neighbour's — the same ``own - neighbour`` orientation the MISO derivation
+    uses).  The returned ladder holds the OFFSETS, not prices; the applied price
+    is assembled at solve time against the measured hourly neighbour series
+    (:func:`market_sim.data.eia930.envelopes.measured_pjm_neighbour_prices`).
+
+    The estimator is byte-for-byte the incumbent one — the same
+    :func:`qq_import` / :func:`qq_export` Q-Q duration coupling, the same
+    midpoint-depth grid on the same ``SEAM_FLOW_TRANCHES``, the same measured
+    seam flows, the same no-wash reconciliation.  The ONLY change is which
+    measured series the coupling reads, the same single degree of freedom the
+    MISO neighbour derivations exercise.  Nothing is fitted.
+
+    The coupling is taken over the hours the neighbour series COVERS, and the
+    duration targets are measured on that same hour set, so the estimator stays
+    internally consistent when a neighbour hub has gaps (MISO's 2022 zonal DA
+    is missing 528 h).  Uncovered hours degrade to the incumbent ladder at
+    solve time.
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+
+    out: dict[str, dict[str, list[float]]] = {}
+    notes: list[str] = []
+    da_all = g["da"].to_numpy(dtype=float)
+    for spec in INTERFACE_NEIGHBORS["PJM"]:
+        anchor = load_neighbour_da(spec.name, year)
+        if anchor is None:
+            continue
+        flow = g[spec.name].to_numpy(dtype=float)
+        ok = np.isfinite(anchor) & np.isfinite(da_all) & np.isfinite(flow)
+        if not ok.all():
+            # FULL COVERAGE OR NOTHING, so a table row exists iff the solve can
+            # arm it: `_inject_seam_ladder` applies ONE ladder per seam-year, so
+            # per-hour degradation inside a seam is not expressible and a
+            # partially-derived row would be a row the solve never uses.
+            # MISO 2022 is the live case — ONE contiguous 525 h source outage in
+            # the zonal DA, far past the repo-standard limit=3 interpolation —
+            # so PJM's MISO seam simply keeps its incumbent own-hub ladder that
+            # year (rule 19 [R-ONE-MECH]: it degrades to the incumbent, never to
+            # an unpriced seam).
+            notes.append(
+                f"{spec.name} {year}: OMITTED — neighbour anchor covers "
+                f"{int(ok.sum())}/{ok.size} h ({100.0 * ok.mean():.1f}%); the "
+                "seam keeps its incumbent own-hub ladder"
+            )
+            continue
+        spread = da_all - anchor
+        out[spec.name] = _derive_one_spread(spread, flow, spec, notes)
+    return out, notes
+
+
+def _derive_one_spread(spread, flow, spec, notes: list[str]) -> dict:
+    """One seam's ``{"import"/"export": [offset per band]}`` on the spread."""
+    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+
+    step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
+    mids = (np.arange(SEAM_FLOW_TRANCHES) + 0.5) * step
+    imp = [qq_import(spread, flow, m) for m in mids]
+    exp = [qq_export(spread, flow, m) for m in mids]
+    lim = min(imp) - NO_WASH_EPS
+    for k, s in enumerate(exp):
+        if s > lim:
+            notes.append(
+                f"{spec.name} export band {k + 1}: offset ${s:.2f} clamped to "
+                f"${lim:.2f} (same-seam no-wash vs cheapest import band)"
+            )
+            exp[k] = lim
+    return {"import": [round(p, 2) for p in imp], "export": [round(p, 2) for p in exp]}
+
+
+def score_neighbour_hourly(g: pd.DataFrame, year: int, ladders: dict) -> dict:
+    """Score the hourly ladder against measured flow, driven by the MEASURED record.
+
+    Readout A of the pjm-174 phase 0: the offline analogue of
+    :func:`offline_score`, with the band test taken on the measured spread
+    rather than on PJM's own DA.  Uncovered hours fall back to the incumbent
+    ladder, exactly as the solve does.
+    """
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        PJM_SEAM_LADDER_BY_YEAR,
+    )
+    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+
+    incumbent = PJM_SEAM_LADDER_BY_YEAR.get(year, {})
+    da_all = g["da"].to_numpy(dtype=float)
+    scores: dict[str, dict[str, float]] = {}
+    for spec in INTERFACE_NEIGHBORS["PJM"]:
+        lad = ladders.get(spec.name)
+        anchor = load_neighbour_da(spec.name, year)
+        if lad is None or anchor is None or spec.name not in incumbent:
+            continue
+        step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
+        act = g[spec.name].to_numpy(dtype=float)
+        base = incumbent[spec.name]
+        inc = sum(step * (da_all > p) for p in base["import"]) - sum(
+            step * (da_all < p) for p in base["export"]
+        )
+        spread = da_all - anchor
+        sim = sum(step * (spread > p) for p in lad["import"]) - sum(
+            step * (spread < p) for p in lad["export"]
+        )
+        ok = np.isfinite(spread) & np.isfinite(act)
+        sim = np.where(ok, sim, inc)
+        scores[spec.name] = {
+            "sim_twh": float(sim[ok].sum() / 1e6),
+            "inc_twh": float(inc[ok].sum() / 1e6),
+            "act_twh": float(act[ok].sum() / 1e6),
+            "corr_sim": float(np.corrcoef(sim[ok], act[ok])[0, 1]),
+            "corr_inc": float(np.corrcoef(inc[ok], act[ok])[0, 1]),
+        }
+    return scores
+
+
+def _print_neighbour_hourly(year: int, g: pd.DataFrame) -> None:
+    """Derive, score and print one year's hourly neighbour-anchored offsets."""
+    ladders, notes = derive_neighbour_hourly(g, year)
+    print(f"\n=== {year} (hourly neighbour-anchored OFFSETS, $/MWh) ===")
+    if not ladders:
+        print("  (no measured neighbour series covers this year)")
+        return
+    print(f"    {year}: {{")
+    for seam, lad in ladders.items():
+        print(f'        "{seam}": {{')
+        print(f'            "import": {tuple(lad["import"])},')
+        print(f'            "export": {tuple(lad["export"])},')
+        print("        },")
+    print("    },")
+    for n in notes:
+        print(f"  note: {n}")
+    for seam, s in score_neighbour_hourly(g, year, ladders).items():
+        print(
+            f"  readout A {seam}: {s['sim_twh']:+.3f} TWh vs {s['inc_twh']:+.3f} "
+            f"incumbent vs {s['act_twh']:+.3f} actual; hourly corr "
+            f"{s['corr_sim']:+.3f} vs incumbent {s['corr_inc']:+.3f}"
+        )
+
+
 def main() -> None:
     """CLI entry point: derive per-year ladders and the pooled forward ladder."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="+", type=int, default=list(YEARS))
+    ap.add_argument(
+        "--neighbour-hourly",
+        action="store_true",
+        help="derive the HOURLY neighbour-anchored OFFSET ladder (pjm-174) "
+        "instead of the incumbent own-hub price ladder",
+    )
     args = ap.parse_args()
 
     years = tuple(sorted(args.years))
     df = load_joined(years)
+    if args.neighbour_hourly:
+        for year in years:
+            _print_neighbour_hourly(year, df.loc[year])
+        return
     for year in years:
         _print_ladder(str(year), df.loc[year])
     if len(years) > 1:

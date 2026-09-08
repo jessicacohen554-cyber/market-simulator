@@ -2819,6 +2819,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # --- measured seam / envelope / dispatch records ---
     "miso_seam_measured_ladder": "measured per-year MISO seam price ladder",
     "pjm_seam_measured_ladder": "measured per-year PJM seam price ladder",
+    "pjm_seam_neighbour_hourly_ladder": "measured hourly neighbour-anchored PJM seam ladder",
     "ercot_online_capacity_envelope_measured": "measured-fleet on-line capacity envelope",
     "ercot_capability_reconciliation": "measured NP6-905 aggregate-capability reconciliation (B-1)",
     "hydro_dispatch_envelope": "measured hydro month x hour-of-day dispatch percentiles",
@@ -15825,6 +15826,41 @@ class ScenarioConfig:
     # --reference-price-interface; PJM-only; no-op for years outside the
     # registry (byte-identical). Default off; opt-in per run.
 
+    # pjm-174 — the HOURLY NEIGHBOUR-ANCHORED form of the ladder above. A
+    # SUB-GATE of pjm_seam_measured_ladder, NOT a mechanism beside it (rule 19
+    # [R-ONE-MECH]): it is refused at the point of use without the parent,
+    # since there is nothing to overlay, and it DISPLACES the parent's scalar
+    # band price on the seams it covers — alternatives, never stacked.
+    #
+    # THE DEFECT. The parent is a FIXED ANNUAL PRICE ladder anchored on PJM's
+    # OWN DA hub, i.e. a Q-Q coupling to the MEASURED price duration curve that
+    # the LP then clears against the MODEL's price duration curve. Measured
+    # zero-LP on the committed pjm-169 touchpoint
+    # (FINDING-pjm174-seam-ladder-anchoring-2026-09-08.md §2): the parent
+    # reproduces its OWN basis to -0.046 TWh (2022) / -0.011 TWh (2021) — the
+    # band prices are RIGHT — but fed the model's own price it loses -5.735 /
+    # -12.699 TWh of net export, 57 % / 88 % of each year's interchange miss,
+    # and correcting the price duration curve alone recovers the measured
+    # volume exactly. So the band prices are not the defect; the ANCHORING is.
+    #
+    # THE FORM. Band k's offer becomes hourly, pi_k(t) = neighbour(t) +
+    # delta_k, so band k clears on the SPREAD rather than on PJM's absolute
+    # price level. The offsets
+    # (interchange_config.PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR, derived by
+    # scripts/data/derive_pjm_seam_ladders.py --neighbour-hourly) are the
+    # IDENTICAL Q-Q duration coupling read off the spread — same depth grid,
+    # same measured tie-line flows, same no-wash reconciliation — so the only
+    # degree of freedom is which measured series the coupling reads, the same
+    # one the MISO neighbour derivations exercise. Zero fitted parameters
+    # (rules 21/24). Anchors named on TOPOLOGY before deriving (rule 14):
+    # MISO -> the equal-weight mean of MISO's three PJM-facing zonal hubs,
+    # NYISO -> NYISO's reference DA. Carolinas/TVA/LGEE have no published SERC
+    # hub and keep the parent's ladder, as does any seam-year whose anchor is
+    # not fully covered (MISO 2019/2021/2022) — it degrades to the incumbent,
+    # never to an unpriced seam. Default off; opt-in per run; byte-identical
+    # off, and byte-identical for every non-PJM ISO and every forecast year.
+    pjm_seam_neighbour_hourly_ladder: bool = False
+
     # Tier 3 (calibration) — ERCOT per-zone gas-hub basis. ERCOT's model zones
     # buy gas off structurally different regional hubs: West/Panhandle on Waha
     # (Permian, a deep takeaway-constrained discount — annual avg ~$0/MMBtu and
@@ -19614,6 +19650,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_seam_flow_percentile": 3,
     "pjm_seam_export_limit": 1,
     "pjm_seam_measured_ladder": 1,
+    "pjm_seam_neighbour_hourly_ladder": 1,
     "miso_pjm_border_anchor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,

@@ -24,6 +24,7 @@ def inject_pjm_seam_ladder_prices(
     mc: np.ndarray,
     iso: str,
     year: int,
+    neighbour_hourly: bool = False,
 ) -> bool:
     """Overwrite PJM's seam band rows of ``mc`` with the measured Q-Q ladders.
 
@@ -50,17 +51,58 @@ def inject_pjm_seam_ladder_prices(
     the same deep-duration structure the ladder prices (alternatives, never
     stacked; rule 19).
 
+    ``neighbour_hourly`` (pjm-174,
+    ``ScenarioConfig.pjm_seam_neighbour_hourly_ladder``) makes a covered seam's
+    ladder HOURLY: its bands are read from
+    :data:`~market_sim.config.interchange_config.PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR`
+    as per-band OFFSETS on the seam SPREAD and the applied cost becomes
+    ``neighbour(t) + offset_k``, assembled against the measured hourly
+    neighbour DA
+    (:func:`market_sim.data.eia930.envelopes.measured_pjm_neighbour_prices`),
+    so band ``k`` clears on the spread rather than on PJM's absolute price
+    level.  It DISPLACES the annual band price on the seams it covers
+    (alternatives, never stacked; rule 19 ``[R-ONE-MECH]``) and DEGRADES to it
+    — never to an unpriced seam — whenever the year, the seam or the measured
+    anchor is unavailable, so an armed run is never silently cheaper than the
+    keeper.  It is a SUB-GATE of this injector, so it cannot arm without the
+    parent measured ladder: there would be nothing to overlay.
+
     Returns ``True`` when at least one band row was repriced, ``False`` when
     ``iso``/``year`` has no ladder entry or the fleet carries no
     reference-price bands (byte-identical no-op — forecast years fall through
     to the gas-elastic reference-price formula, the hr_by_year two-track
     design).
     """
-    from market_sim.config.interchange_config import PJM_SEAM_LADDER_BY_YEAR
+    from market_sim.config.interchange_config import (
+        PJM_SEAM_LADDER_BY_YEAR,
+        PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+    )
+    from market_sim.data.eia930.envelopes import measured_pjm_neighbour_prices
 
     if iso != "PJM":
         return False
-    return _inject_seam_ladder(fleet_arrays, mc, PJM_SEAM_LADDER_BY_YEAR.get(year))
+    ladder = PJM_SEAM_LADDER_BY_YEAR.get(year)
+    if ladder is None:
+        return False
+    anchors: dict[str, np.ndarray] = {}
+    hourly = (
+        PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR.get(year) if neighbour_hourly else None
+    )
+    if hourly:
+        # Per-seam: a seam whose measured anchor is unavailable for this year
+        # keeps the incumbent annual band price, and only the seams that
+        # actually resolve an anchor go hourly (rule 19 — the two forms are
+        # alternatives per seam, never stacked on one).
+        taken = {}
+        for seam, bands in hourly.items():
+            anchor = measured_pjm_neighbour_prices(iso, seam, year, int(mc.shape[1]))
+            if anchor is None:
+                continue
+            taken[seam] = bands
+            anchors[seam] = anchor
+        if taken:
+            ladder = {**ladder, **taken}
+    return _inject_seam_ladder(fleet_arrays, mc, ladder, hourly_anchor=anchors)
 
 
 def build_pjm_external_flow_groups(

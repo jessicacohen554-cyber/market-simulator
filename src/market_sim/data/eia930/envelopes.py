@@ -634,6 +634,56 @@ def measured_miso_pjm_border_prices(
     return price[:hours]
 
 
+def measured_pjm_neighbour_prices(
+    iso: str, seam: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return the measured hourly neighbour DA anchor for one PJM seam (pjm-174).
+
+    The PJM sibling of :func:`measured_miso_pjm_border_prices`, serving
+    :data:`~market_sim.config.interchange_config.PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR`.
+    Reads the series named by
+    :data:`~market_sim.config.interchange_config.PJM_SEAM_NEIGHBOUR_ANCHOR`
+    (``MISO`` -> the equal-weight mean of MISO's three PJM-facing zonal hubs;
+    ``NYISO`` -> NYISO's reference DA), off the model's fixed non-leap
+    8760-hour clock.  Isolated gaps take the repo-standard ``limit=3``
+    interpolation.
+
+    FULL COVERAGE OR ``None``: ``_inject_seam_ladder`` applies one ladder per
+    seam-year, so a partially-covered anchor cannot be used for part of a year
+    — the caller then keeps that seam's incumbent own-hub ladder (rule 19
+    ``[R-ONE-MECH]``: it degrades to the incumbent, never to an unpriced seam).
+    ``None`` also when the ISO is not PJM, the seam has no measured neighbour
+    series (SERC publishes none), or the parquet/year is absent.
+    """
+    if iso.upper() != "PJM":
+        return None
+    from market_sim.config.interchange_config import PJM_SEAM_NEIGHBOUR_ANCHOR
+
+    entry = PJM_SEAM_NEIGHBOUR_ANCHOR.get(seam)
+    if entry is None:
+        return None
+    stem, hubs = entry
+    path = _calibration_dir() / f"{stem}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[frame["year"] == year]
+    if hubs:
+        frame = frame[frame["zone"].astype(str).isin(hubs)]
+    if frame.empty:
+        return None
+    series = (
+        frame.groupby("hour")["da"]
+        .mean()
+        .reindex(range(hours))
+        .interpolate(limit=3)
+        .to_numpy(dtype=float)
+    )
+    if series.shape[0] < hours or not np.all(np.isfinite(series[:hours])):
+        return None
+    return series[:hours]
+
+
 #: SPP trading hub the MISO-SPP seam is anchored on (miso-233). Named on
 #: TOPOLOGY — the seam is one collapsed link hosted on the ``MISO_external``
 #: (Midwest) bus, so its MISO-facing counterparty is SPP North — and fixed

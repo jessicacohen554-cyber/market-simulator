@@ -743,6 +743,12 @@ results/calibration/ercot255_screen_*/
 results/calibration/ercot255_fullspan_*/
 results/calibration/ercot255_2021_retest/
 results/calibration/ercot255_keeper_*/
+# pjm-174 seam neighbour-hourly-ladder screen bundles (2025, the year of the
+# mechanism's largest measured footprint). Rule 29 [R-SCREEN] (c) keeps a screen
+# bundle OUT OF `main`, and rule 31 [R-RETAIN] names gitignoring — never rm — as
+# what discharges that duty: these stay on local disk until the OWNER has ruled
+# on promotion. Every number the session cites lives in the PRECOMMIT/FINDING.
+results/calibration/pjm174_*/
 # nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
 # (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
 # a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
