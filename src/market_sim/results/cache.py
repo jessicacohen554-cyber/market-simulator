@@ -76,6 +76,78 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-08 — capx D87 / SCN ruling S19 (D-15): the CCS RETROFIT screen
+consumes the clean-tier seam. NO KEY MOVES, AND THAT IS THE HAZARD.** No
+``ScenarioConfig`` field is added, removed, re-defaulted or re-registered — the
+repair threads an existing RUNTIME value (``clean_attribute_price_by_fuel``, the
+prior year's clean-row duals) into a screen that had no parameter for it — so
+``cache_key()`` hashes the same bytes before and after. Measured on the same
+tree: the NYISO ``CES-T80`` campaign recipe keys ``eb1b0e1df942db47`` at the
+arm's parent commit and at the arm, and neither ``ccs.py`` nor ``evolve.py`` is
+a ``config.solve_surface`` registry module, so the D79 fingerprint is unmoved
+too. A pre-fix bundle therefore sits at EXACTLY the key a post-fix run computes
+and will be served to it — the same pure same-key class as the 2026-09-06b
+entry below.
+
+What moved: ``capacity_evolution/ccs.py``'s retrofit screen priced each
+continuation's certificate through ``effective_eac_price_for_unit`` alone, which
+folds the legacy per-fuel scalar and the exogenous premium and nothing else. The
+clean-tier dual reaches the OTHER two price-driven screens through
+``clean_attribute_price_by_fuel`` (``retirements.py`` step 3,
+``new_entry.py`` step 5) but ``evolve_fleet`` never handed it to step 2. Since a
+federal CES TARGET row carries a ZERO premium by construction
+(``__post_init__`` refuses the two together), ``attr_post`` collapsed to the
+``eac_price_gas_cc_ccs`` default of 0.0 and the row's dual — the $50/MWh ACP in
+the campaign's own legs — bought the retrofit screen nothing, while pricing the
+LP's certificates and both sibling screens normally. The fix folds
+``clean_credit_for_zone`` into BOTH continuations through the existing ``max()``
+(one certificate, several buyers, never a sum; rule 19 [R-ONE-MECH]), with zero
+new fields and zero free parameters (rules 21 [R-DOF] / 24 [R-REGISTRY]).
+
+**INVALIDATED — purge or re-solve before quoting: TWELVE bundles, named.** Every
+``results/<ISO>/<key>/`` FORECAST-lane bundle whose horizon reaches **2028**
+(``ccs_retrofit_available_year``) AND whose config puts a live clean-row dual on
+``gas_cc_ccs``. At this commit that set is exactly the campaign's target-row
+legs — ``results/scn-campaign-policy-2026-09-06/<ISO>/{CES-T80, ALL-CLEAN}`` for
+CAISO, ERCOT, MISO, NEISO, NYISO and PJM — whose 2028-2030 retrofit sets,
+``gas_cc``/``gas_cc_ccs`` capacity splits and CO2 rows are mis-stated. The
+reconstructed per-year duals and the direction and cap-bounded magnitude of each
+leg's correction are tabulated in
+``docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md`` §2.5; the measured NYISO
+correction is in ``FINDING-capx-d87-2026-09-08.md``. D87 re-solves none of the
+other eleven and re-states none of the six ISO policy FINDINGs' numbers: that
+re-statement is ROUTED to the SCN desk.
+
+**NOT invalidated, each for its own reason:** (a) every BACKCAST bundle in every
+ISO, on three independent gates — ``__post_init__`` refuses a target row in
+``mode="backcast"``, a backcast rebuilds its base fleet each year and never
+enters ``evolve_fleet``, and ``apply_ccs_retrofit`` returns at its first
+statement below ``ccs_retrofit_available_year``; (b) every ``ff-t1h`` hindcast
+(2021-2025) and every crossover horizon ending before 2028, on that same year
+gate; (c) every PREMIUM (``CES-P*``) and VOLUNTARY leg — no clean row credits
+``gas_cc_ccs`` there, so ``by_fuel`` carries no entry and ``max(x, 0.0) == x``
+(the committed voluntary configs all take
+``VOLUNTARY_ELIGIBLE_FUELS_DEFAULT``, which is wind/solar/offshore/geothermal);
+and (d) **THE WHOLE MISO CLEAN-TIER FAMILY, including every ``ff-t1f-*/miso``
+bundle and every ``miso-…-t1h`` hindcast.** (d) is the one a reader would guess
+wrong: MISO's MI row is the only state tier whose ``qualifying_fuels`` admit
+``gas_cc_ccs``, but its first statutory knot is **2035** and
+``policy.clean_tiers._clean_tier_target`` returns 0.0 strictly before a tier's
+first knot, while every committed config with ``miso_clean_tier_rows`` armed
+ends at **2030**. Its dual is structurally zero in every committed year —
+corroborated by ``scn-campaign-policy-2026-09-06/MISO/{CES-T80,ALL-CLEAN}``'s own
+``duals.json``, which print MI at ``-0.0`` in all five years. MN cannot
+substitute: its first knot is 2030 and its qualifying set excludes
+``gas_cc_ccs`` outright. A FUTURE MISO run whose horizon reaches 2035 with the
+tier armed WOULD be in scope; none is committed.
+
+No keeper, sidecar, determination or dashboard row moves — no FF-2D verdict is
+keyed to a target-row run, and committed artifacts are files, not cache lookups.
+
+Recorded 2026-09-08 by capx D87, the lane that made the change
+(``docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md`` §4, pushed before its screen
+solve). This entry changes no key and no default.
+
 **Epoch 2026-09-07 — capx D76-ARM-B / owner ruling Q58: the capacity screens'
 PEAK becomes the hindcast year's OWN MEASURED peak, armed as the default posture
 for every ISO. A KEY ADVANCE, NOT A SAME-KEY INVALIDATION — for HINDCAST

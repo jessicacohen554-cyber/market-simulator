@@ -1449,6 +1449,15 @@ results/scn-campaign-stageb-2026-09-07/
 # capx D83 (rule 31 [R-RETAIN] / rule 29 [R-SCREEN] (c)): diagnostic reproduction
 # bundles for the bridge-year ledger repair. Kept on local disk, never merged.
 results/hindcast/pjm-d83-*/
+# capx D87 (rule 29 [R-SCREEN](c) via rule 31 [R-RETAIN]): the NYISO CES-T80
+# A/B screen bundles -- the ARM and the HEAD CONTROL its one LIVE G-DRIFT hunk
+# earned. Ignoring them discharges "delete before merge" IN FULL: the parity
+# gate only ever sees COMMITTED dirs, so an ignored bundle sits on local disk
+# indefinitely without turning anything red, and rule 31 forbids removing it
+# from disk before the owner has ruled on promotion. Every number the lane will
+# ever cite lives in PRECOMMIT-capx-d87-2026-09-08.md and
+# FINDING-capx-d87-2026-09-08.md; git history is the record for the bytes.
+results/capx-d87-screen/
 # Personal, machine-specific Claude Code overrides (permissions for this runner).
 # Never committed: a sandbox/cgroup grant is specific to one container, not team policy.
 .claude/settings.local.json
