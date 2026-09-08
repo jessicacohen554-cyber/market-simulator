@@ -7,6 +7,13 @@ D83 after"; D84 landed and was armed, so this lane became due). Branch
 **Charter scope:** a diagnosis, and its repair *only if* the cause is a writer defect. No mechanism,
 no arm, no default change, no re-registration — and none is proposed.
 
+> **Independently verified 2026-09-08** — `FINDING-capx-d83-2026-09-08.md`. The (i) verdict
+> holds and is *strengthened*: the affirmative operand proof of §2 is generalized from this one
+> reproduced bundle to the whole committed corpus (10/10 post-D52 bridge ledgers carry a
+> non-`None` screen operand; **0/26 show the failed-guard signature**; the 16 silent ones are a
+> pre-D52 vintage whose *solved* years lack the block too). The recurrence guard and the
+> zero-key-move census were both re-measured at a later HEAD. §7's routed item is still open.
+
 ---
 
 ## 0. The verdict, and the line
