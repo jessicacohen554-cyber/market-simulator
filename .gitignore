@@ -1434,3 +1434,8 @@ results/hindcast/pjm-2021-2025-realized-t1h-d84-*/
 results/calibration/ercot256_screen_2025_arm/
 results/calibration/ercot256_fullspan/
 results/calibration/ercot256_rungs/
+
+# SCN-WS5B Stage-B campaign bundles (rule 29 clause (c) / rule 31 [R-RETAIN]):
+# kept OUT of the repo, never off local disk. The PRECOMMIT/FINDING carry every
+# number cited; git history is the record for the bytes.
+results/scn-campaign-stageb-2026-09-07/
