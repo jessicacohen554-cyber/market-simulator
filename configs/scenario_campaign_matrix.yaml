@@ -18,28 +18,39 @@
 # value the building lane already carried under an "illustrative" label, so
 # the ruling changed the label and not the number, and NO RE-SOLVE IS OWED
 # (SCN-LEVELS 2026-09-06, docs/handoffs/FINDING-scn-levels-2026-09-06.md).
+# **S3 IS NO LONGER THE ONLY RULING.** Four more landed the same day and
+# finished the job: **S9** (D-2(b)) committed the two voluntary sub-levels,
+# **S10** (D-3c) ratified the eligible set as built, **S11** (D-6) ruled
+# counts-toward, and **S12** (D-2(c)) committed the state-cap slope. NOT ONE
+# OF THEM MOVED A NUMBER EITHER. Every level in this file is committed, and
+# NOTHING BELOW IS ILLUSTRATIVE.
 #
-# ── WHERE A LEVEL IS STILL NOT COMMITTED — TWO OPEN, ONE CLOSED ────────────
-# S3 commits the §3.5 TABLE, and the table was silent in three places. Item 3
-# is CLOSED (2026-09-06, SCN-FIX2 — see the carbon block); 1 and 2 are open,
-# neither filled in here, each named at its case:
+# ── WHERE A LEVEL WAS NOT COMMITTED — ALL THREE ARE NOW CLOSED ─────────────
+# S3 commits the §3.5 TABLE, and the table was silent in three places. ALL
+# THREE ARE NOW RULED, so no level in this file is open. Each is named at
+# its case, with the ruling that closed it:
 #   1. `CAP-STATE-TIGHT`'s declining budget — §3.5 writes "declining
 #      mass_cap_tons" with no number, and S3's enumeration names none, so the
 #      slope stayed the OWNER level SCN-WS1a labelled it
-#      (FINDING-scn-ws1a-2026-09-05.md §4.2). **RULED 2026-09-06 — S12 on
+#      (FINDING-scn-ws1a-2026-09-05.md §4.2). **CLOSED 2026-09-06 — S12 on
 #      card D-2(c): "Commit the 80 % slope and build the field."** The case
 #      is LIVE below at WS-1a §4.2's schedule, verbatim (SCN-CAP).
-#   2. The voluntary sub-levels — S3 commits "the memo's box-5 defaults", and
-#      box 5 itself leaves `f_commit` mid and the WTP-ceiling LEVEL owner-set
-#      (voluntary-clean-demand-design-memo-2026-09-05.md box 5). Two cells,
-#      still open under D-2.
+#   2. **CLOSED 2026-09-06 — S9 on card D-2(b).** The voluntary sub-levels:
+#      S3 commits "the memo's box-5 defaults", and box 5 itself left
+#      `f_commit` mid and the WTP-ceiling LEVEL owner-set
+#      (voluntary-clean-demand-design-memo-2026-09-05.md box 5). S9 took both
+#      placeholders AS the committed levels — `f_commit` mid **0.5**, WTP
+#      ceiling **$4.5/MWh** — so the LABEL moved and the NUMBER did not, and
+#      no re-solve is owed. See the voluntary block.
 #   3. **CLOSED 2026-09-06 (SCN-FIX2).** The carbon ladder's FORM: the
 #      committed level was always the RFF path ladder, and the live form was a
 #      reduced additive stand-in the ruling did not bless. SCN-WS1c landed
 #      S2's floor, so the committed form is now the live one. See the carbon
 #      block.
-# Two OTHER cards remain open and are labelled where they bite: **D-3c** (the
-# voluntary eligible set) and **D-6** (attribute netting).
+# The two OTHER cards are ALSO RULED, both 2026-09-06 and both labelled where
+# they bite: **D-3c → S10** — the renewable-only eligible set STANDS AS BUILT
+# — and **D-6 → S11** — a voluntary MWh COUNTS TOWARD the federal standard,
+# with every combined leg reporting both nettings. Neither moved a number.
 #
 # ── WHAT IS COMMENTED OUT, AND WHY ─────────────────────────────────────────
 # A case whose override field does not exist in ScenarioConfig at this commit
@@ -55,12 +66,16 @@
 # / `VOL-HI` / `CES-P20+VOL-HI` / `ALL-CLEAN` ARE LIVE since SCN-WS3b
 # (2026-09-06)** — the one field they waited on, `voluntary_clean_demand_path`,
 # landed with its resolver, its row on the clean-tier family and its
-# forecast-only coercion (docs/handoffs/FINDING-scn-ws3b-2026-09-06.md). LIVE
-# MEANS EXPRESSIBLE, NOT RELEASED: every one of the four is HELD under owner
-# ruling **S5** (Stage A-POLICY, SCN-DESK r#6 am.1) until the capx CCS
-# emission-rate seam is repaired and a paired check confirms `emission_rate`
-# follows the retrofit; nobody solves them until the desk releases A-POLICY,
-# and SCN-WS3c's ERCOT probe is issued separately. **`CES-T80` IS NO LONGER
+# forecast-only coercion (docs/handoffs/FINDING-scn-ws3b-2026-09-06.md). **THE
+# S5 HOLD ON ALL FOUR IS RELEASED.** S5 held them until the capx CCS
+# emission-rate seam was repaired; capx D77 landed that repair, the campaign
+# itself falsified S5's premise (the retrofit screen is armed by the STATE
+# carbon program, not by the CES — SCN-DESK r#10), and ruling **S9** then
+# added the four to the six Stage A-POLICY lanes by ADDENDUM (phase-0 regime
+# test per year; a slack row is killed, never solved; gates G7-G10). They are
+# LIVE AND RELEASED; `CAP-STATE-TIGHT` alone stayed out of that addendum.
+# SCN-WS3c's ERCOT probe is still issued separately.
+# **`CES-T80` IS NO LONGER
 # COMMENTED** — SCN-WS2a landed its two fields and S3 committed its level, so
 # SCN-LEVELS made it live 2026-09-06. That is a case going live because its
 # blockers cleared, not a level moving: the numbers are the ones SCN-WS2a
@@ -171,7 +186,8 @@ cases:
   # the schedule falls through to the published REGIONAL RGGI budget in
   # 2027-2030 — a slack row, not REF (routed to SCN-DESK, FINDING-scn-cap §5).
   # The ERCOT / PJM / MISO policy lanes do not solve this case (r#12 am.1).
-  # HELD under S5 with every other A-POLICY case; solved by the three
+  # The S5 hold on A-POLICY is RELEASED (header), but this case alone stayed
+  # OUT of the S9 addendum; it is solved by the three
   # program-ISO policy lanes under their own PRECOMMIT (precondition P5),
   # killed at phase 0 where the budget is slack in every year (FINDING-scn-cap
   # §3 tabulates the resolved budget against each ISO's REF CO2).
@@ -229,9 +245,9 @@ cases:
     federal_ces_acp_usd_per_mwh: 50.0
 
   # ── Voluntary clean demand → curtailment, entry, CO2 ──────────────────────
-  # LIVE as of SCN-WS3b (2026-09-06) — and HELD under owner ruling S5 (Stage
-  # A-POLICY): expressible here, solved by nobody until the desk releases
-  # A-POLICY after the capx CCS emission-rate seam repair.
+  # LIVE as of SCN-WS3b (2026-09-06), and the S5 hold is RELEASED: the capx
+  # CCS emission-rate seam was repaired (capx D77) and ruling S9 added these
+  # cases to the Stage A-POLICY lanes by addendum — see the header.
   # **Owner card D-3 is RULED YES — S1 (2026-09-06)**: a voluntary clean-demand
   # scenario axis is admissible as a declared, forecast-only, publicly-anchored,
   # default-off axis (ffr-5b §1.4 is held to be about a *fitted driver*, a
@@ -248,18 +264,26 @@ cases:
   # WTP ceiling. Its dual is the voluntary attribute price and reaches the
   # screens through the existing max() seam. `off` (REF) builds no row.
   #
-  # THE SUB-LEVELS ARE ONLY PARTLY COMMITTED (header note 2). S3 commits "the
+  # EVERY SUB-LEVEL IS COMMITTED (header note 2). S3 commits "the
   # WS-3a memo box-5 defaults", built into constants.VOLUNTARY_*: `s_base` mid
   # = the latest NREL national share (2023: 0.08) held flat, low/high = the
   # series' own range (0.06 / 0.08 — the ceiling IS the latest value, so `high`
   # coincides with `mid` on this cell); `f_commit` low 0 / high 1.0; WTP low 2
-  # / high 7 $/MWh, the endpoints of the cited public REC range. TWO cells stay
-  # **owner-set and LABELLED ILLUSTRATIVE** — `f_commit` MID (0.5 placeholder)
-  # and the WTP-ceiling MID level (4.5 placeholder) — so VOL-MID carries two
-  # illustrative cells and VOL-HI none; both are re-presented in
-  # FINDING-scn-ws3b-2026-09-06.md §4. **D-3c** (the eligible set) is STILL
-  # OPEN: both cases run the memo §4.1 RECOMMENDATION (wind, solar, offshore
-  # wind, geothermal — never nuclear/CCS by default).
+  # / high 7 $/MWh, the endpoints of the cited public REC range. THE TWO CELLS
+  # S3 DID NOT REACH ARE COMMITTED BY **OWNER RULING S9** (2026-09-06, card
+  # D-2(b), "the WS-3b placeholders ARE the committed levels") — `f_commit`
+  # MID **0.5** and the WTP-ceiling MID level **$4.5/MWh**. THE LABEL MOVED,
+  # THE NUMBER DID NOT: both are the values SCN-WS3b already built and probed
+  # under an "illustrative" label, so NO RE-SOLVE IS OWED — the same
+  # identification S3 made for the CES knot above. constants.py carries the
+  # same stamp at VOLUNTARY_COMMITTED_DC_FRACTION and
+  # VOLUNTARY_WTP_CEILING_USD_PER_MWH; both cells are re-presented in
+  # FINDING-scn-ws3b-2026-09-06.md §4. Stated plainly for anyone quoting them:
+  # they are what-if LEVELS (rule 1 [R-STRUCT]) exactly like every other level
+  # here, NOT independently sourced measurements. **D-3c IS RULED — S10**: the
+  # eligible set STANDS AS BUILT, so both cases run wind, solar, offshore wind
+  # and geothermal (never nuclear/CCS) as the COMMITTED set — it is no longer
+  # the memo §4.1 recommendation awaiting a decision.
   VOL-MID:
     voluntary_clean_demand_path: mid
   VOL-HI:
@@ -394,26 +418,29 @@ cases:
     datacenter_load_path: high
 
   # ── Attribute double-claim test (owner card D-6) ──────────────────────────
-  # LIVE as of SCN-WS3b (2026-09-06); HELD under S5 with every VOL-* case.
-  # **D-6 IS STILL UNRULED** — S3 did not reach it. The standing recommendation
-  # is "counts toward" with BOTH readings reported; the WS-3a memo §4.3 is its
-  # brief and Addendum A.2 is a dissent the owner should weigh beside it. NO
+  # LIVE as of SCN-WS3b (2026-09-06); the S5 hold is RELEASED (header).
+  # **D-6 IS RULED — S11** (2026-09-06): a voluntary MWh COUNTS TOWARD the
+  # federal standard, and every combined leg REPORTS BOTH NETTINGS. That
+  # ratifies what was already built — the "counts toward" recommendation the
+  # WS-3a memo §4.3 briefed, over the Addendum A.2 dissent — so no code and no
+  # number moved; only the status did. NO
   # NETTING LOGIC IS BUILT: under the CES *premium* (this case) there is no
   # federal row to net against — the premium is a price, and the screens'
   # max() already answers the price question (memo §4.3) — so this case is
   # the price composition of two attribute buyers, one certificate sold to the
   # higher; the dispatch-RHS netting question has content only against the
   # CES *target* row (ALL-CLEAN below), where both nettings are reported at the
-  # REPORT layer (FINDING-scn-ws3b-2026-09-06.md §5 names the hook). Until D-6
-  # is ruled the campaign asserts neither reading as the answer.
+  # REPORT layer (FINDING-scn-ws3b-2026-09-06.md §5 names the hook). Under S11
+  # counts-toward IS the answer, and both nettings are still reported beside
+  # it — the reporting duty is part of the ruling, not a hedge against it.
   CES-P20+VOL-HI:
     federal_ces_enabled: true
     federal_ces_premium_usd_per_mwh: 20.0
     voluntary_clean_demand_path: high
 
   # ── The coherent policy corner under high load ────────────────────────────
-  # LIVE as of SCN-WS3b (2026-09-06) — its last missing field landed; HELD
-  # under S5 (it carries every CES case and every VOL-* case at once). EVERY
+  # LIVE as of SCN-WS3b (2026-09-06) — its last missing field landed; the S5
+  # hold is RELEASED with every VOL-* case (header). EVERY
   # LEVEL BELOW IS COMMITTED, the carbon half included since 2026-09-06: it is
   # CARB-MID's committed RFF path form (SCN-FIX2 switched it from the interim
   # `carbon_price_delta: 25.0` in the same commit as the three CARB-* rows), so
@@ -421,13 +448,14 @@ cases:
   # corner's carbon content is the CES + voluntary rows alone (see the carbon
   # block). `federal_ces_acp_usd_per_mwh:
   # 50.0` is written out because the target row REQUIRES it (> 0). The
-  # voluntary half is VOL-HI's (no illustrative cell); its DC half rides the
-  # `datacenter_load_path: high` block here, so V rises with the load case by
-  # construction (memo §3.4). This is the ONE case where owner card D-6 has
-  # dispatch content — a federal TARGET row and the voluntary row both count a
-  # clean MWh — and it is built as two INDEPENDENT rows (counts-toward, the
-  # FFR-6B §6.4 doctrine, zero code); the "additional" reading is reported
-  # beside it at the report layer, never asserted (D-6 OPEN).
+  # voluntary half is VOL-HI's — every cell of it committed under S9 — and its
+  # DC half rides the `datacenter_load_path: high` block here, so V rises with
+  # the load case by construction (memo §3.4). This is the ONE case where owner
+  # card D-6 has dispatch content — a federal TARGET row and the voluntary row
+  # both count a clean MWh — and it is built as two INDEPENDENT rows
+  # (counts-toward, the FFR-6B §6.4 doctrine, zero code). **S11 RULED D-6 FOR
+  # EXACTLY THAT BUILD**: counts-toward is the answer, and the "additional"
+  # reading is still reported beside it at the report layer.
   ALL-CLEAN:
     carbon_price_path: mid
     federal_ces_enabled: true
