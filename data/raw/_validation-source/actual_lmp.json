@@ -1765,7 +1765,38 @@
         "p99": 416.57,
         "max": 1907.15
       },
-      "src": "CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), load-weighted across TH_NP15/TH_ZP26/TH_SP15"
+      "src": "CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), load-weighted across TH_NP15/TH_ZP26/TH_SP15",
+      "rt_lw": 84.49,
+      "rt_lw_mon": [
+        43.52,
+        38.96,
+        43.56,
+        49.76,
+        58.76,
+        70.77,
+        71.8,
+        96.77,
+        123.41,
+        64.33,
+        82.92,
+        242.2
+      ],
+      "da_lw": 92.14,
+      "da_lw_mon": [
+        52.66,
+        46.61,
+        45.41,
+        61.84,
+        64.98,
+        73.6,
+        77.61,
+        104.6,
+        135.73,
+        67.53,
+        87.06,
+        260.61
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     }
   },
   "NYISO": {
