@@ -1,4 +1,4 @@
-# Scenario Readiness Desk — successor handoff (written at refresh #21, 2026-09-07)
+# Scenario Readiness Desk — successor handoff (written at refresh #21, amended at #22, 2026-09-08)
 
 Paste the block below whole into a new Fable session. It replaces every earlier version at this
 path (r#18, r#20). One refresh = one commit = one small PR.
@@ -23,7 +23,7 @@ DATA PROFILE: code
    additions are SPP as a SEVENTH ISO, capx D78/Q56's PJM sector gate, capx D76's
    capacity_screen_peak_measured_hindcast defaulting True, and rule 31 [R-RETAIN]);
    docs/handoffs/scenario-desk-ledger-2026-09.md (YOUR ledger — §0 r#21 is the live state and every
-   refresh back to r#1 is beneath it, §1 the scoreboard, §2 the cards and rulings S1–S19, §4 the
+   refresh back to r#1 is beneath it, §1 the scoreboard, §2 the cards and rulings S1–S19 (next is S20), §4 the
    collision register, §5 the issuance record AND THE FULL TEXT OF EVERY LIVE CHARTER: policy
    charter v6 (§5), ERCOT's v6-RESUME (§5.3), the S15 bracketing addendum (§5.4), charter v7 = the
    S16 coordinator/shard split (§5.5), and the four r#21 charters (§5.6) — so you never re-derive a
@@ -67,7 +67,7 @@ DATA PROFILE: code
    decision, present NO card and say so — a manufactured card wastes a sitting.
 
 ══════════════════════════════════════════════════════════════════════════════════════
-1. LIVE STATE AT r#21 (main 78173793 when graded; re-pin)
+1. LIVE STATE AT r#22 (main a667073f when graded; re-pin)
 ══════════════════════════════════════════════════════════════════════════════════════
 STAGE A-LOAD: COMPLETE. 16/16 at its frozen pin, plus SCN-WS5A-RESOLVE 13/13 (+ a later
   RESOLVE-ERCOT 3/3). RESOLVE's headline: the campaign's CO2 levels were overstated by up to 57 %
@@ -75,19 +75,23 @@ STAGE A-LOAD: COMPLETE. 16/16 at its frozen pin, plus SCN-WS5A-RESOLVE 13/13 (+ 
   Re-solved legs live at results/scn-campaign-load-2026-09-06-r2/<ISO>/{REF,LOAD-HI,...}/.
 STAGE A-POLICY: **COMPLETE — 63 REGISTERED LEGS, SIX FINDINGs, ZERO LIVE BRANCHES.**
   MISO 13 · ERCOT 11 · PJM 11 · NEISO 10 · NYISO 10 · CAISO 8. Every ISO carries ces-p60, so ruling
-  S15 executed footprint-wide. Audit EXIT 0 at HEAD (176 sidecars / 2,464 records / 217 declared
-  FAILs). PJM's three-refresh registration gap CLOSED in one dedicated session (standing change #8
+  S15 executed footprint-wide. Audit EXIT 0 at HEAD (r#22: 177 sidecars / 2,478 records / 217 declared FAILs). PJM's three-refresh registration gap CLOSED in one dedicated session (standing change #8
   worked). Committed results tree carries 65 summaries and is RAGGED — NYISO's twelve include its
   own REF and LOAD-HI copies, CAISO's eight do not — and the campaign's REF legs are in the
   scn-campaign-load-2026-09-06-r2 tree, NOT the policy tree.
-IN FLIGHT AT THE HANDOFF (four lanes issued at r#21, none graded yet — grade them first):
+IN FLIGHT (four lanes issued r#21, RE-ISSUED r#22 under the SAME stems — silent one refresh, ASKED
+not graded; grade them first, and if silent a SECOND time that is the two-refresh trigger: ask
+again and consider whether the charter itself is the obstacle):
   SCN-WS5A-POLICY-SYNTH (Opus, zero LP) — the plan §3 WS-5 Stage C memo,
     docs/handoffs/FINDING-scenario-campaign-2026-09-07.md, plus the campaign's first _rollup
     (none exists at HEAD). Owns the plan §5.1 rows and §9 line.
   SCN-WS5B-NEISO / SCN-WS5B-NYISO (Opus) — Stage B under ruling S18, campaign
-    scn-campaign-stageb-2026-09-07, holding THE PIN bdfb3095 under a G-DRIFT audit.
+    scn-campaign-stageb-2026-09-07. THE PIN bdfb3095 is the CONTROL's sha; the arm runs AT HEAD
+    (rule 29 [R-SCREEN] (b)) — r#22 repaired the r#21 charters' ambiguity here, along with the
+    G-DRIFT size (59 files / ~7,700 insertions, not four items) and the cache key, which capx D79
+    re-based on a per-ISO solve-surface fingerprint AFTER Stage A's pin.
   SCN-FIX3 (Fable, zero LP) — the campaign YAML records sweep + two recording repairs.
-  All four charters are in ledger §5.6 verbatim.
+  All four charters are in ledger §5.6 verbatim, carrying the r#22 repairs.
 GATE: §2.1b `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM}; MISO alone is outside it; `final` empty.
   **Leg (b), not leg (a), is what binds Stage B**: a T1-F PROMOTE passes for NEISO and NYISO ONLY.
   Leg (c) passes for five (CAISO has never run a T1-X). You only disclose.
@@ -197,6 +201,16 @@ footprint (SCN-CAP's regional-RGGI fallthrough is new evidence for it).
 13. r#21 nearly re-presented D-5 on the handoff's line that five `complete` markers made Stage B
    "far wider than the NEISO-only read". Leg (a) did widen to five; **leg (b) binds and passes for
    two**. → read a gate's state off the leg that BINDS, not the leg that moved. (Same shape as #6.)
+14. r#21's two Stage-B charters said "HOLD THAT PIN", which a lane could read as `git checkout
+   bdfb3095` — 25 years solved on a tree missing every repair since. Rule 29 [R-SCREEN] (b) is
+   explicit: form 4 runs the arm **at HEAD** and answers the code question with the drift audit;
+   the pin is the CONTROL's sha. The same charters said "expect all-INERT" over a four-item list
+   when the surface was 59 files / ~7,700 insertions, and told the lanes to derive cache keys from
+   the mechanism after capx D79 had put a **solve-surface fingerprint** in `cache_key()`. All three
+   repaired at r#22 before either lane started. → STANDING CHANGE #10: a charter that names a pin,
+   a drift expectation or a key derivation is RE-VERIFIED against the current diff at every refresh
+   it is re-issued. Drift is not a fact about the lane; it is a fact about the gap, and the gap
+   grows every refresh the lane does not start.
 STANDING CHANGE #2 (from WS-1b-r2 §3.3): a paired-probe STOP gate asserts a REF-side adequacy
 precondition AND a no-worsening condition — a transition gate cannot see an already-broken REF.
 

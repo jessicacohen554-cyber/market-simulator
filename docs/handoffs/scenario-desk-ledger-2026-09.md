@@ -9,7 +9,109 @@ backcast-calibration work or anything on the capacity-expansion director's queue
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-07 (refresh #21) ·
+**Charter date:** 2026-09-05 · **Last refresh:** 2026-09-08 (refresh #22) ·
+**r#22 (HEAD `a667073f`):** **ALL FOUR r#21 LANES ARE SILENT — NOT GRADED, ASKED.** 117 commits since the r#21 pin and **not one of them is SCN**: zero Stage-B sidecars, no `FINDING-scenario-campaign-2026-09-07.md`, no `_rollup/`, no FIX3 FINDING, and **zero live SCN branches**. This is silent refresh **#1** for all four, so §0.3 binds — the r#4 LOST call was wrong and absence alone is not a verdict. The most likely state is simply that the prompts are in hand and undispatched: they were pasted at the very end of the r#21 message. **The desk's r#21 commit itself merged** (`a06656b7` on `origin/main`).
+
+**THE STAGE-A RECORD IS INTACT AND THE S18 GRANT STILL HOLDS.** 63 registered legs unchanged (MISO 13 · ERCOT 11 · PJM 11 · NEISO 10 · NYISO 10 · CAISO 8); audit **EXIT 0** at HEAD (177 sidecars / 2,478 records / 217 declared FAILs — +1 sidecar / +14 records from capx D84's registration, FAILs unmoved). §2.1b re-read at HEAD: `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM}, `withdrawn` **empty**, `final` empty; and the leg that actually binds — **both `neiso-t1f` and `nyiso-t1f` bare keys read PROMOTE with `caveats: []`**. NYISO's marker has been withdrawn three times in program history and a NYISO lane (nyiso-219) is live, so this was worth re-reading rather than assuming.
+
+**I FOUND A REAL DEFECT IN MY OWN r#21 CHARTERS AND REPAIRED IT BEFORE RE-ISSUING.** Three repairs, all to the two Stage-B prompts (SYNTH and FIX3 are unchanged):
+1. **"HOLD THE PIN" was ambiguous and a lane could have read it as `git checkout bdfb3095`.** Rule 29 [R-SCREEN] (b) is explicit: G-CTRL form 4 differences an arm run **at HEAD** against committed numbers from an older sha, and the "files changed since then" question is answered by a **code-level drift audit**, never by re-solving or by checking out the old tree. The pin is the CONTROL's sha. Both charters now say so in the first line of the section.
+2. **The G-DRIFT surface is 59 files / ~7,700 insertions, not the four-item list I wrote.** The charters now carry the honest size, an **ISO-reachability-first method** (a file that runs only for another ISO, only in `mode="backcast"`, or only under a default-off flag absent from the recipe is INERT without a line-by-line read), and four desk-verified citations the lanes may use instead of re-deriving: `iso_configs.py`'s three hunks are the PJM arms + a wholly NEW `_spp_config()` inserted after `_neiso_config()` + `_ISO_BUILDERS` gaining SPP, with **zero deletions in the NEISO region and no NYISO hunk at all**; `runner.py`'s +28 is exactly two self-gating changes (`resolve_backcast_eia860_vintage` behind a `mode == "backcast"` guard, and `build_spp_gas_bridge_p1_prep`, whose own comment records "None for every non-SPP / gate-off run (byte-identical)"); **capx D84-ARM** is PJM-only through PJM's own `default_scenario_overrides`; and the r#21 list (D76 hindcast-only, D67/D75-R/D78-Q56 PJM-only) still stands.
+3. **THE CACHE KEY MOVED UNDER THE LANES.** Since capx **D79** (ruling Q54, 2026-09-06 — *after* Stage A's pin) `cache_key()` carries a **solve-surface fingerprint** hashing seven registry modules per name and per ISO, and `constants.py` (+218), `capacity_market.py` (+267) and `fuel_trajectories.py` (+61) have all changed since. A lane pre-registering pin-era keys would have failed its own identity gate for a reason that is not a defect. Both charters now require the key be **computed at HEAD**, and name the cheap decisive check: **compare the ISO's `solve_surface.json` stamp at HEAD against the one the Stage-A bundles recorded** — unmoved is the strongest single INERT datum and costs seconds; moved is the fingerprint working, and gets routed.
+
+**NO OWNER CARD THIS REFRESH.** Nothing waits on a decision: the S18 grant is given and intact, the pin question has a rule-governed answer (rule 29(b)) rather than an owner one, and the only real blocker is dispatch. Presenting a card here would spend a sitting on a question the rules already answer.
+
+**DECONFLICTION.** The whole 117-commit window is other tracks — the ERCOT-256 promotion (`netload_drag_layup_window_mask` armed, threaded into `run_year`), MISO-244, NYISO-219 (hydro budget period, chartered not landed), PJM-173, CAISO-264's 2020/2021 OASIS intake, and capx D84. capx r#58's queue is capx-side. Disjoint from every SCN region; the only interaction is that this window IS the G-DRIFT surface the two Stage-B lanes must classify, which is why repair 2 exists.
+
+**ISSUED (4, all RE-ISSUED under the SAME stems — a stem is burned only by a push, and none pushed):** `SCN-WS5A-POLICY-SYNTH` and `SCN-FIX3` verbatim; `SCN-WS5B-NEISO` and `SCN-WS5B-NYISO` carrying the three repairs above (standing change #3: an unlaunched lane's change goes into its charter, never an addendum).
+
+
+## 0. Refresh log (newest first)
+
+### r#22 — 2026-09-08, main HEAD `a667073f`
+
+**NOTHING SCN LANDED, AND THAT IS THE WHOLE FIRST HALF OF THIS REFRESH.** 117 commits since
+`78173793` and not one is an SCN lane. Graded by artifact, per §0.3, with the exact queries:
+`git ls-tree -r --name-only origin/main frontend/data/hindcast/ | grep -i stageb` → **empty**;
+no `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md`; no
+`results/scn-campaign-policy-2026-09-06/_rollup/`; no `FINDING-scn-fix3-*`;
+`git ls-remote --heads origin | grep -iE 'scn|scenario'` → **zero branches**. The desk's own r#21
+commit `a06656b7` IS on `origin/main`, so the ledger and the charters landed; the four lanes did
+not start. **This is silent refresh #1, so the rule is ASK, not grade** — the r#4 LOST call was
+wrong on exactly this evidence, and the prompts were pasted at the very end of the r#21 message,
+which makes "in hand, undispatched" the likeliest state by a wide margin. All four are **re-issued
+under the SAME stems**; a stem is burned only by a push and none pushed.
+
+**THE STANDING RECORD, RE-VERIFIED RATHER THAN CARRIED.** 63 Stage-A legs still registered, split
+unchanged. Audit at HEAD **EXIT 0** — 177 sidecars / 2,478 records / 217 declared FAILs (+1 / +14
+against r#21, from capx D84's own registration; the FAIL count is unmoved, which is the number
+that would have mattered). §2.1b: `complete` = {CAISO, ERCOT, NEISO, NYISO, PJM}, `withdrawn`
+**empty**, `final` empty; **`neiso-t1f` and `nyiso-t1f` both PROMOTE with `caveats: []`**. I
+re-read leg (b) rather than carrying it because it is the leg that BINDS the S18 grant (r#21's own
+lesson), and because NYISO's marker has been withdrawn three times historically with a NYISO lane
+(nyiso-219) live in this very window. **The S18 grant is intact on both ISOs.**
+
+**THE REFRESH'S REAL WORK: THREE DEFECTS IN MY OWN r#21 CHARTERS, FOUND BY LOOKING AT THE DRIFT
+THE LANES WERE ABOUT TO BE HANDED.** All three are in the two Stage-B prompts; SYNTH and FIX3 are
+unchanged and re-issued verbatim.
+
+1. **`"HOLD THAT PIN"` invited a `git checkout bdfb3095`.** That is not what rule 29 [R-SCREEN]
+   clause (b) says and not what any capx lane does: form 4 differences an arm run **at HEAD**
+   against committed numbers from an older sha, and the code question is answered by the drift
+   audit. THE PIN is the CONTROL's sha. A lane that checked out the pin would have solved 25 years
+   on a tree missing every repair since 2026-09-06 and produced a bundle nobody could promote.
+   Both charters now open the section with "You run the LP at HEAD" and "Do NOT `git checkout`".
+2. **I told them to "expect all-INERT" over a four-item list. The surface is 59 files and ~7,700
+   insertions.** `git diff --stat bdfb3095..HEAD -- src/market_sim scripts/lib
+   scripts/run_full_horizon.py scripts/run_ces_leg.py`. An honest hunk-by-hunk audit of that is a
+   session on its own, so the charters now carry the true size plus an **ISO-reachability-first**
+   method — another ISO's branch, a `mode == "backcast"` guard, or a default-off flag absent from
+   the recipe classifies INERT without reading every line — and four citations I verified here so
+   the lanes need not re-derive them:
+   · `iso_configs.py` +369 is three hunks: the PJM arms, a wholly **NEW `_spp_config()`** inserted
+     after `_neiso_config()`, and `_ISO_BUILDERS` gaining SPP. **Zero deletions in the NEISO
+     region; no NYISO hunk at all.** Neither Stage-B ISO's block is touched — checked precisely
+     because a hunk header naming `_neiso_config` reads like a NEISO change and is not one.
+   · `runner.py` +28 is exactly two self-gating changes: `resolve_backcast_eia860_vintage` (a
+     forecast leg reaches it with `None`/`False` behind a `mode == "backcast"` guard) and
+     `build_spp_gas_bridge_p1_prep`, whose own comment records "None for every non-SPP / gate-off
+     run (byte-identical)".
+   · capx **D84-ARM** (this window): `pjm_thermal_accreditation_vintage` armed for **PJM alone**
+     through PJM's `default_scenario_overrides`, 33 of 227 configs moving, all PJM forecast.
+   · The r#21 list stands: **D76** hindcast-only under the LP's own branch predicate;
+     **D67 / D75-R / D78-Q56** PJM-only through the same seam.
+3. **THE CACHE KEY MOVED UNDER THEM, AND MY CHARTER TOLD THEM TO DERIVE IT FROM THE MECHANISM AS
+   IF IT HAD NOT.** capx **D79** (ruling Q54) put a **solve-surface fingerprint** in `cache_key()`
+   on 2026-09-06 — *after* Stage A's pin — hashing seven registry modules per name and per ISO, and
+   `constants.py` (+218), `capacity_market.py` (+267) and `fuel_trajectories.py` (+61) have all
+   moved since. A lane pre-registering pin-era keys would have failed its own identity gate for a
+   reason that is not a defect, and might well have "fixed" it by re-pinning. Both charters now
+   require the key be **computed at HEAD**, and name the cheap decisive test: **compare the ISO's
+   `solve_surface.json` stamp at HEAD against the stamp the Stage-A bundles recorded** — every
+   bundle since D79 writes one beside its `config.yaml`. Unmoved is the single strongest INERT
+   datum available and costs seconds; moved is the fingerprint doing its job and gets routed, not
+   worked around.
+
+**NO CARD.** Nothing waits on an owner decision. S18 is granted and intact; the pin question is
+answered by rule 29(b), not by the owner; the only blocker is dispatch, which is a question, not a
+decision. Per §0.5 a manufactured card wastes a sitting, so this refresh presents none and says so.
+
+**DECONFLICTION.** The window is entirely other tracks: ercot-256's promotion (the measured lay-up
+window mask armed in all five years, threaded through the `solve_and_persist → run_year` seam),
+miso-244, nyiso-219 (the hydro BUDGET PERIOD — chartered, not landed), pjm-173, caiso-264's
+2020/2021 OASIS intake, and capx D84. capx r#58's queue is capx-side. No SCN region is touched.
+The one genuine interaction is that this window **is** the G-DRIFT surface the Stage-B lanes must
+classify — which is what repair 2 exists to make tractable. The `calibration-complete.json` churn
+(322/322 lines) is a whole-file rewrite with **membership unchanged**; not a marker move.
+
+**DISCLOSED, unchanged:** MISO is the ONE ISO outside `complete` and is closed on leg (b) as well;
+ERCOT's adequacy-collapsed REF keeps every ERCOT price delta disclosure-only; SPP now has a full
+`_spp_config()` and registry modules but **still no `configs/scenarios/spp_scenario_base_*.yaml`**,
+so it remains not campaign-capable and no SCN scope moves; D-1(b) and D-1(c) stay open and dormant.
+
+
+### r#21 (live-state header, preserved verbatim when r#22 replaced it)
+
 **r#21 (HEAD `78173793`):** **STAGE A-POLICY IS COMPLETE. THE WHOLE r#20 CRITICAL PATH CLOSED IN ONE WINDOW.** PJM registered all ten of its stranded legs plus the S15 bracket (**11**, ~8.19 h of previously-invisible LP now on the registry), and the four owed FINDINGs all landed — MISO, NYISO, CAISO, PJM — beside NEISO's amended one and ERCOT's. **63 REGISTERED LEGS: MISO 13 · ERCOT 11 · PJM 11 · NEISO 10 · NYISO 10 · CAISO 8**, six of six ISOs carrying `ces-p60`, so ruling **S15 has executed everywhere**. Audit **EXIT 0** at HEAD (176 sidecars / 2,464 records / 217 declared FAILs). **ZERO live SCN branches** — every Stage-A lane is closed and merged.
 
 **THE CAMPAIGN'S HEADLINE FINDING SURVIVED THE EVIDENCE, BUT MY STATEMENT OF IT DID NOT.** The desk carried, from r#18 through the handoff, that the entry fold `attr = max(EAC, rps_credit_for_zone, clean_credit)` applies the RPS leg with **no fuel gate**. **That is wrong**, and two independent lanes corrected it: NEISO §2.6.1 and PJM §5a.1 both measured the RPS leg fuel-gated to `_RENEWABLE_NEW_FUELS` = {wind, solar}. The corrected reading is *sharper*: a campaign level at or under the state ACP is invisible **to a VRE candidate**, and was **fully visible from $10 up** to every other eligible tech, whose RPS leg is 0.0 and whose legacy EAC is $0.00. So the null was never "the CES row is not wired to entry" — it is a **threshold**, and the tech that moves is the one that was never masked. **S15's bracket falsified the alternative in 4 of 5 masked ISOs**: NEISO +500.0 MW nuclear at \$60 · NYISO +156.6 MW solar at \$50 and +500.4 MW nuclear at \$60 (threshold ladder with steps inside (40,50] and (50,60]) · MISO the interval **(30, 50]** · CAISO +1,000 MW nuclear at \$60 displacing 1,031.9 MW of backstop gas CT. PJM's `builds_renew_mw` is **+0.0 MW exactly** in all three ladder arms and all five years while 2030 CO2 falls **−14.3 Mt (−3.1 %)** — the whole response running through the gas-CC → gas-CC-CCS retrofit, cap-bound at \$10 already.
@@ -19,9 +121,6 @@ backcast-calibration work or anything on the capacity-expansion director's queue
 **TWO CARDS RULED, AND THE STAGE-B GRANT IS NARROWER THAN THE MARKER COUNT SUGGESTS.** **S18** grants §2.1b leg (d) for **NEISO + NYISO**, full horizon 2026–2050, on **exactly six cases** (`REF · CAP-STATE-TIGHT · CES-P60 · CES-T80 · CARB-MID · ALL-CLEAN`). **S19** routes **both** seams — D-15 (the CCS attribute-coverage seam) and D-14 (the `unit_id` uniqueness guard + narrow re-mint) — to the capx director as named lanes. **The desk's own handoff was wrong about the width**: it said five `complete` markers made "the Stage-B picture far wider than the NEISO-only read". Leg (a) *did* widen to five, but **leg (b) — a T1-F PROMOTE — passes for only NEISO and NYISO**, and leg (b) is what binds. Stage B is wider by exactly one ISO.
 
 **ISSUED (4):** `SCN-WS5A-POLICY-SYNTH` (the Stage C memo + the campaign's first `_rollup`, zero LP) · `SCN-WS5B-NEISO` and `SCN-WS5B-NYISO` (the S18 Stage-B coordinators, campaign `scn-campaign-stageb-2026-09-07`, holding THE PIN under a G-DRIFT audit) · `SCN-FIX3` (the records sweep + two recording repairs, zero LP). Full text in §5.6.
-
-
-## 0. Refresh log (newest first)
 
 ### r#21 — 2026-09-07, main HEAD `78173793`
 
@@ -1619,10 +1718,10 @@ matrix shards, written by capx re-scores AND by the owner's backcast lanes sever
 | **SCN-CAP** | `mass_cap_tons_by_year` + `CAP-STATE-TIGHT` (S12) + matrix row | **LANDED r#13 — COMPLETE** | `claude/scn-cap-schedule-field-re00nd` (#5154) | **Fable** | Field inert by default, read first; 0 of 143 keys move; binds NYISO + CAISO all years, slack NEISO; PJM falls through to the regional RGGI budget (charter premise false, routed → policy charter v4). `FINDING-scn-cap-2026-09-06.md`. |
 | **SCN-WS5A-POLICY-\<ISO\>** ×6 | **Stage A-POLICY** — the §3.5 policy case set at T1-F 2026–2030, per ISO | **ALL SIX LANDED — STAGE A-POLICY COMPLETE (r#21)** | per-ISO branches, all merged | **Opus** | **63 registered legs: MISO 13 · ERCOT 11 · PJM 11 · NEISO 10 · NYISO 10 · CAISO 8**, every ISO carrying `ces-p60` (ruling S15 executed footprint-wide). Six FINDINGs on main. Audit EXIT 0 at HEAD (176 sidecars / 2,464 records / 217 declared FAILs). PJM's three-refresh registration gap closed in one dedicated session (standing change #8). Two mechanism CORRECTIONS to this desk's own framing landed here: the RPS entry leg **is** fuel-gated to `_RENEWABLE_NEW_FUELS` (NEISO §2.6.1, PJM §5a.1), and `collate_scenario_campaign.py` was never blind to unregistered legs (PJM §0.1). |
 | **SCN-WS5A-RESOLVE** | Ruling S8 as a standalone lane: the 13 contaminated legs re-solved post-D77/D65-B at THE PIN `bdfb3095`; the S5 identity on the campaign REFs; same-id re-registration | **LANDED r#18 — COMPLETE, 13/13, every gate PASS on every leg** | `claude/scn-ws5a-resolve-post-d77-m8m5ft` (PRs #5214, #5221, #5238); `-caiso-0rkx2k` (#5241, PRECOMMIT only); `-miso-0s8zln` (#5244, PRECOMMIT only) | **Opus** | Cache blocker defeated by construction (D65-B re-keys everything); **re-solved into `results/scn-campaign-load-2026-09-06-r2/<ISO>/<CASE>/` per the charter recipe — the r#16 "in place / accepted deviation" note is WITHDRAWN, see §0 r#17.** NYISO 2030 CO2 −46 %; DC-shape axis survives; P-B hit. **PJM: all five gates PASS and the D67-ARM/D81 confound measured INERT** (rate-capped backstop at −16 % margin); 2030 CO2 −7.42 Mt split between D77 and D65-B. Owes PJM 1, CAISO 3, MISO 3, the FINDING, the synthesis addendum + amended cost table. **AMENDED 2026-09-07 by SCN-WS5A-RESOLVE-ERCOT: the lane is 16/16, not 13/13 — ERCOT NOW SITS AT THE PIN TOO.** S8 excluded ERCOT's REF / LOAD-HI / LOAD-HI-ORGANIC as "CCS-clean at `1cc45bb2`" and the parent PRECOMMIT §0.1 item 2 wrote that D77/D65-B "are inert on a fleet that converts nothing". **Both are falsified.** The full resolved-config diff pre-fix → pin is exactly two fields, `ccs_retrofit_vom_adder` 8.0 → 2.95 and `ccs_retrofit_fixed_cost_co2_scaling` False → True, and both are INPUTS TO THE RETROFIT SCREEN — an input is not inert because the screen's pre-change output was zero. Solved: ERCOT REF converts **0 → 5,763.8 MW** by 2030 and 2030 CO2 falls **328.874 → 312.866 Mt (−4.87 %)**; LOAD-HI −16.818, ORGANIC −16.818. G1/G2/G3/G4 PASS on all three; **19.8 min of LP for 15 solve-years (1.32 min/solve-year, confirming the r#18 am.1 shard arithmetic on a fresh container — but `regenerate_clean` cost ~39 min, TWICE the LP)**. **G3 SPLITS AND HALF OF IT CORRECTS THE POLICY FINDING:** at 2028 the pin REF converts NOTHING while every carbon/CES arm converts 2,932–2,996 MW, so **the 2028 conversion is a POLICY RESPONSE**, not the pin's (the A/B at equal load: LOAD-HI 0/2,932/3,000 vs CARB-MID+LOAD-HI 2,996/3,000/3,000; and VOL-HI, which cannot credit CCS, reproduces REF's 0/2,764/3,000 to the tenth of a MW); at 2029–30 REF converts on its own and the contamination reading stands. **The load delta barely moves** (+13.4072 → +12.5978 Mt at 2030, −6.0 %, vs NEISO's −82 % and NYISO's −42 %) because both ERCOT arms convert on the same schedule, and **the DC-shape gap moves by 0.0001 Mt** — the synthesis §1.1 headline is untouched on ERCOT. **TWO ROUTED ITEMS, both cheap and both real:** (1) the eleven committed ERCOT policy legs must be re-differenced against this REF (the policy FINDING's owed ADDENDUM B) — until then no ERCOT policy-vs-REF delta at 2028–30 is quotable from either document; (2) **`unit_id` IS NOT UNIQUE in the ERCOT fleet** (a legacy heat-rate-bin label colliding with new-build capacity), which made this lane's own added G5 identity gate FAIL by grading an unconverted twin — corrected resolution gives max rel dev 0.000e+00 — and **every sibling RESOLVE lane scored its G1 identity keyed on `unit_id`**, where the same defect would produce a false PASS rather than a false FAIL. Evidence: `docs/handoffs/{PRECOMMIT,FINDING}-scn-ws5a-resolve-ercot-2026-09-07.md`. |
-| **SCN-WS5A-POLICY-SYNTH** | The plan §3 WS-5 **Stage C** memo + the campaign's first `_rollup` | **ISSUED r#21** | `claude/scn-ws5a-policy-synth-h4tq` (stem) | **Opus** | Unblocked the moment the sixth FINDING landed. Zero LP. Owns `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md`, `results/scn-campaign-policy-2026-09-06/_rollup/**`, the plan §5.1 rows and its §9 line. Charter §5.6 (1). Headline is the threshold ladder with ERCOT as the unmasked control, never a per-ISO delta table. |
-| **SCN-WS5B-NEISO** | **Stage B** under ruling S18 — six cases at full horizon 2026–2050 | **ISSUED r#21** | `claude/scn-ws5b-neiso-p2mv` (stem) | **Opus** | Campaign `scn-campaign-stageb-2026-09-07`, holding THE PIN `bdfb3095` under a G-DRIFT audit rather than re-pinning. ≈8–9 h of LP, of which `CAP-STATE-TIGHT` alone is ≈6 h as **one indivisible invocation** (a full-horizon leg cannot be sharded by year) — the declared exception to S16's <60 min target. Charter §5.6 (2). |
-| **SCN-WS5B-NYISO** | **Stage B** under ruling S18 — six cases at full horizon 2026–2050 | **ISSUED r#21** | `claude/scn-ws5b-nyiso-k9rd` (stem) | **Opus** | Same campaign and pin. ≈12–15 h of LP, `CAP-STATE-TIGHT` ≈5.4 h indivisible. Carries its own two Stage-A findings forward as binding constraints: the CCS attribute-coverage seam (D-15/S19, report only) and the unrecoverable duals under S16 sharding. Charter §5.6 (3). |
-| **SCN-FIX3** | Records sweep + two recording repairs | **ISSUED r#21** | `claude/scn-fix3-b7wn` (stem) | **Fable** | Zero LP, nothing may move a key or a default. (1) the campaign YAML's ERCOT tail-regime block, derived from the **retired 122 GW** DC anchor against `constants.py:3159`'s 88,603 MW and already falsified by `FINDING-scn-ws5a-load-ercot` P-1; (2) the S9-committed `f_commit` 0.5 / WTP $4.5 still labelled illustrative; (3) `run_ces_leg.py` to record `clean_region_duals` / `co2_cap_price`; (4) `register_forecast_run.py` dropping `meta.set_overrides` to null. Charter §5.6 (4). |
+| **SCN-WS5A-POLICY-SYNTH** | The plan §3 WS-5 **Stage C** memo + the campaign's first `_rollup` | **RE-ISSUED r#22 — silent one refresh, ASKED not graded** | `claude/scn-ws5a-policy-synth-h4tq` (stem, unburned) | **Opus** | Unblocked the moment the sixth FINDING landed. Zero LP. Owns `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md`, `results/scn-campaign-policy-2026-09-06/_rollup/**`, the plan §5.1 rows and its §9 line. Charter §5.6 (1). Headline is the threshold ladder with ERCOT as the unmasked control, never a per-ISO delta table. |
+| **SCN-WS5B-NEISO** | **Stage B** under ruling S18 — six cases at full horizon 2026–2050 | **RE-ISSUED r#22 with three charter repairs (pin semantics · G-DRIFT size+method · cache key at HEAD)** | `claude/scn-ws5b-neiso-p2mv` (stem, unburned) | **Opus** | Campaign `scn-campaign-stageb-2026-09-07`, holding THE PIN `bdfb3095` under a G-DRIFT audit rather than re-pinning. ≈8–9 h of LP, of which `CAP-STATE-TIGHT` alone is ≈6 h as **one indivisible invocation** (a full-horizon leg cannot be sharded by year) — the declared exception to S16's <60 min target. Charter §5.6 (2). |
+| **SCN-WS5B-NYISO** | **Stage B** under ruling S18 — six cases at full horizon 2026–2050 | **RE-ISSUED r#22 with three charter repairs (pin semantics · G-DRIFT size+method · cache key at HEAD)** | `claude/scn-ws5b-nyiso-k9rd` (stem, unburned) | **Opus** | Same campaign and pin. ≈12–15 h of LP, `CAP-STATE-TIGHT` ≈5.4 h indivisible. Carries its own two Stage-A findings forward as binding constraints: the CCS attribute-coverage seam (D-15/S19, report only) and the unrecoverable duals under S16 sharding. Charter §5.6 (3). |
+| **SCN-FIX3** | Records sweep + two recording repairs | **RE-ISSUED r#22 — silent one refresh, ASKED not graded** | `claude/scn-fix3-b7wn` (stem, unburned) | **Fable** | Zero LP, nothing may move a key or a default. (1) the campaign YAML's ERCOT tail-regime block, derived from the **retired 122 GW** DC anchor against `constants.py:3159`'s 88,603 MW and already falsified by `FINDING-scn-ws5a-load-ercot` P-1; (2) the S9-committed `f_commit` 0.5 / WTP $4.5 still labelled illustrative; (3) `run_ces_leg.py` to record `clean_region_duals` / `co2_cap_price`; (4) `register_forecast_run.py` dropping `meta.set_overrides` to null. Charter §5.6 (4). |
 | **Stage B** | Full-horizon legs | **NOT ISSUABLE** | — | — | Needs card D-5 **and** an OPEN §2.1b gate for the named ISO at issuance. At the r#1 pin only NEISO is open. Re-check at issuance, never at planning. |
 
 ---
@@ -2328,18 +2427,55 @@ and the BARE (un-suffixed) neiso-t1f key in frontend/data/forecast/ff-verdicts.j
 first solve, and state the reading in your PRECOMMIT. A preserved -ff2d / -ffr3a2 suffixed key is
 NOT current state.
 
-THE PIN. Stage A solved every leg at bdfb3095e9fa0cd2bec3f4e843f320b42588c72b, and your Stage-B
-legs must be differenceable against them. HOLD THAT PIN. Before you solve, run G-DRIFT
-(CLAUDE.md rule 29 [R-SCREEN] clause (b)) from that sha to HEAD over src/market_sim, scripts/lib,
-scripts/run_calibration*.py, scripts/run_full_horizon.py, scripts/run_ces_leg.py and
-data/raw/reference, and classify EVERY changed hunk on the forecast path as INERT-for-NEISO with
-its reason cited, or LIVE. Expect all-INERT: capx D76 (capacity_screen_peak_measured_hindcast,
-default True since 2026-09-07) is hindcast-only under the LP's own branch predicate and is
-byte-identical on a forecast leg; capx D78/Q56's retirement_sector_gate and D67/D75-R are armed
-for PJM ALONE through PJM's own iso_configs default_scenario_overrides. If a hunk is genuinely
-LIVE for NEISO, STOP — do not silently re-pin, and do not spend a control solve. Route it to
-SCN-DESK. Record the audit in the PRECOMMIT BEFORE the first solve so it cannot be written to fit
-a result.
+THE PIN — AND WHAT "HOLD THE PIN" MEANS, which the r#21 charter left ambiguous and this one
+fixes. **You run the LP at HEAD.** THE PIN `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` is the sha
+your CONTROL was solved at, not a checkout target — rule 29 [R-SCREEN] clause (b) is explicit that
+G-CTRL form 4 differences an arm run at HEAD against committed numbers from an older sha, and that
+the "files changed since then" question is answered by a **code-level drift audit**, not by
+re-solving and not by checking out the old tree. Do NOT `git checkout bdfb3095`.
+
+G-DRIFT, AND IT IS BIGGER THAN THE r#21 CHARTER IMPLIED. Between THE PIN and HEAD the solve-path
+surface moved by **59 files / ~7,700 insertions** (`git diff --stat bdfb3095..HEAD -- src/market_sim
+scripts/lib scripts/run_full_horizon.py scripts/run_ces_leg.py`). Classify every changed hunk on the
+forecast path as INERT-for-NEISO with its reason cited, or LIVE — but classify by
+**ISO-reachability first** and read hunk-by-hunk only what survives that: a file that executes only
+for another ISO, only in `mode="backcast"`, or only under a default-off flag absent from your
+recipe is INERT without a line-by-line read. Four things the desk has already verified for you, and
+you may cite rather than re-derive (verify the citation, not the whole file):
+  · `config/iso_configs.py` +369: three hunks — the PJM arms (D57/D67/D75-R/D78-Q56/**D84**), a
+    wholly NEW `_spp_config()` inserted after `_neiso_config()`, and `_ISO_BUILDERS` gaining SPP.
+    **Zero deletions in the NEISO region and no NYISO hunk at all** — neither Stage-B ISO's block
+    is touched.
+  · `runner.py` +28: exactly two changes, both self-gating — `resolve_backcast_eia860_vintage`,
+    which a forecast leg reaches with `None`/`False` (`config.mode == "backcast"` guard), and
+    `build_spp_gas_bridge_p1_prep`, which its own comment records as "None for every non-SPP /
+    gate-off run (byte-identical)".
+  · capx **D84-ARM** (2026-09-07): `pjm_thermal_accreditation_vintage` armed for **PJM alone**
+    through PJM's own `iso_configs` `default_scenario_overrides` — 33 of 227 configs move, all PJM
+    forecast.
+  · The r#21 list still stands: capx **D76** (`capacity_screen_peak_measured_hindcast`, default
+    True) is hindcast-only under the LP's own branch predicate and byte-identical on a forecast
+    leg; **D67 / D75-R / D78-Q56** are PJM-only through the same override seam.
+The rest — SPP's registry modules, the backcast-lane repairs (ercot-256's lay-up mask, pjm-167's
+860 vintage, the fuel-basis and eia930 work), and the interchange/reserves spec growth — is yours
+to classify. A genuinely LIVE hunk for NEISO is a **STOP and a route to SCN-DESK**: never a silent
+re-pin, and never a control solve, which at 25 years you cannot afford. The audit goes in the
+PRECOMMIT BEFORE the first solve so it cannot be written to fit a result.
+
+THE CACHE KEY MOVED UNDER YOU — derive it at HEAD, never from pin-era arithmetic. Since capx
+**D79** (owner ruling Q54, 2026-09-06) `cache_key()` also carries a **solve-surface fingerprint**:
+`config/solve_surface.py` hashes seven registry modules' module-level values **per name and per
+ISO**, dropped at each name's frozen declaration in `config/solve_surface_declared.py`, so a
+re-derived registry row re-keys exactly the ISOs whose rows moved. `constants.py` (+218),
+`capacity_market.py` (+267) and `fuel_trajectories.py` (+61) have all changed since THE PIN.
+Therefore: compute each leg's expected key **at HEAD with your leg's config**, state it in the
+PRECOMMIT, and — this is the cheap decisive check — **compare NEISO's surface stamp at HEAD against
+the one the Stage-A bundles recorded**. Every bundle since D79 writes `solve_surface.json` beside
+its `config.yaml`. If NEISO's stamp is unmoved, that is your strongest single piece of INERT
+evidence and it costs seconds. If it MOVED, say which rows moved and route it — a moved surface is
+the fingerprint doing its job, not a nuisance to work around. Never copy a key literal from an
+older prompt (desk standing change #5); the pinned default lives in
+`tests/regression/test_persisted_identity.py::PINNED_DEFAULT_CACHE_KEY` and you derive from it.
 
 THE CONTROL is G-CTRL form 4: the committed Stage-A artifacts. Never solve a control.
   Stage-A REF (2026-2030, at THE PIN): results/scn-campaign-load-2026-09-06-r2/NEISO/REF/
@@ -2400,9 +2536,8 @@ this first.
 
 PRECOMMIT (rule 29): docs/handoffs/PRECOMMIT-scn-ws5b-neiso-2026-09-07.md, PUSHED BEFORE THE
 FIRST SOLVE. It carries: the four §2.1b legs verified; the G-DRIFT audit; each leg's expected
-cache_key (cite the mechanism, never a key literal — the pinned default lives in
-tests/regression/test_persisted_identity.py::PINNED_DEFAULT_CACHE_KEY and you derive from it, you
-do not copy a number out of an older prompt); the 2026-2030 sub-trajectory identity gate with its
+cache_key COMPUTED AT HEAD per the solve-surface section above, with NEISO's surface stamp
+compared against the Stage-A bundles'; the 2026-2030 sub-trajectory identity gate with its
 tolerance; the CAP-STATE-TIGHT crossing-year prediction; the shard plan with its LP budget; and
 every prediction you will later score. Rule 29's one-year SCREEN does not apply — these are the
 same configs Stage A already solved, extended in horizon, not a new mechanism — say that
@@ -2470,14 +2605,55 @@ key is a PRESERVED SUPERSEDED baseline, never current state), the registered nyi
 S18 for (d) — and state the reading in your PRECOMMIT. NYISO's `complete` marker has been withdrawn
 and re-declared three times in this program's history; read the live file, not any board prose.
 
-THE PIN: bdfb3095e9fa0cd2bec3f4e843f320b42588c72b — Stage A's, and yours, so your legs are
-differenceable against it. Run G-DRIFT (rule 29 clause (b)) from that sha to HEAD over
-src/market_sim, scripts/lib, scripts/run_full_horizon.py, scripts/run_ces_leg.py,
-scripts/run_calibration*.py and data/raw/reference; classify every changed hunk INERT-for-NYISO
-with a cited reason or LIVE. Expect all-INERT (capx D76 is hindcast-only by its own branch
-predicate; D67 / D75-R / D78-Q56 are armed for PJM alone through PJM's iso_configs
-default_scenario_overrides). A genuinely LIVE hunk is a STOP and a route to SCN-DESK — never a
-silent re-pin, never a control solve. The audit goes in the PRECOMMIT before the first solve.
+THE PIN — AND WHAT "HOLD THE PIN" MEANS, which the r#21 charter left ambiguous and this one
+fixes. **You run the LP at HEAD.** THE PIN `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` is the sha
+your CONTROL was solved at, not a checkout target — rule 29 [R-SCREEN] clause (b) is explicit that
+G-CTRL form 4 differences an arm run at HEAD against committed numbers from an older sha, and that
+the "files changed since then" question is answered by a **code-level drift audit**, not by
+re-solving and not by checking out the old tree. Do NOT `git checkout bdfb3095`.
+
+G-DRIFT, AND IT IS BIGGER THAN THE r#21 CHARTER IMPLIED. Between THE PIN and HEAD the solve-path
+surface moved by **59 files / ~7,700 insertions** (`git diff --stat bdfb3095..HEAD -- src/market_sim
+scripts/lib scripts/run_full_horizon.py scripts/run_ces_leg.py`). Classify every changed hunk on the
+forecast path as INERT-for-NYISO with its reason cited, or LIVE — but classify by
+**ISO-reachability first** and read hunk-by-hunk only what survives that: a file that executes only
+for another ISO, only in `mode="backcast"`, or only under a default-off flag absent from your
+recipe is INERT without a line-by-line read. Four things the desk has already verified for you, and
+you may cite rather than re-derive (verify the citation, not the whole file):
+  · `config/iso_configs.py` +369: three hunks — the PJM arms (D57/D67/D75-R/D78-Q56/**D84**), a
+    wholly NEW `_spp_config()` inserted after `_neiso_config()`, and `_ISO_BUILDERS` gaining SPP.
+    **Zero deletions in the NEISO region and no NYISO hunk at all** — neither Stage-B ISO's block
+    is touched.
+  · `runner.py` +28: exactly two changes, both self-gating — `resolve_backcast_eia860_vintage`,
+    which a forecast leg reaches with `None`/`False` (`config.mode == "backcast"` guard), and
+    `build_spp_gas_bridge_p1_prep`, which its own comment records as "None for every non-SPP /
+    gate-off run (byte-identical)".
+  · capx **D84-ARM** (2026-09-07): `pjm_thermal_accreditation_vintage` armed for **PJM alone**
+    through PJM's own `iso_configs` `default_scenario_overrides` — 33 of 227 configs move, all PJM
+    forecast.
+  · The r#21 list still stands: capx **D76** (`capacity_screen_peak_measured_hindcast`, default
+    True) is hindcast-only under the LP's own branch predicate and byte-identical on a forecast
+    leg; **D67 / D75-R / D78-Q56** are PJM-only through the same override seam.
+The rest — SPP's registry modules, the backcast-lane repairs (ercot-256's lay-up mask, pjm-167's
+860 vintage, the fuel-basis and eia930 work), and the interchange/reserves spec growth — is yours
+to classify. A genuinely LIVE hunk for NYISO is a **STOP and a route to SCN-DESK**: never a silent
+re-pin, and never a control solve, which at 25 years you cannot afford. The audit goes in the
+PRECOMMIT BEFORE the first solve so it cannot be written to fit a result.
+
+THE CACHE KEY MOVED UNDER YOU — derive it at HEAD, never from pin-era arithmetic. Since capx
+**D79** (owner ruling Q54, 2026-09-06) `cache_key()` also carries a **solve-surface fingerprint**:
+`config/solve_surface.py` hashes seven registry modules' module-level values **per name and per
+ISO**, dropped at each name's frozen declaration in `config/solve_surface_declared.py`, so a
+re-derived registry row re-keys exactly the ISOs whose rows moved. `constants.py` (+218),
+`capacity_market.py` (+267) and `fuel_trajectories.py` (+61) have all changed since THE PIN.
+Therefore: compute each leg's expected key **at HEAD with your leg's config**, state it in the
+PRECOMMIT, and — this is the cheap decisive check — **compare NYISO's surface stamp at HEAD against
+the one the Stage-A bundles recorded**. Every bundle since D79 writes `solve_surface.json` beside
+its `config.yaml`. If NYISO's stamp is unmoved, that is your strongest single piece of INERT
+evidence and it costs seconds. If it MOVED, say which rows moved and route it — a moved surface is
+the fingerprint doing its job, not a nuisance to work around. Never copy a key literal from an
+older prompt (desk standing change #5); the pinned default lives in
+`tests/regression/test_persisted_identity.py::PINNED_DEFAULT_CACHE_KEY` and you derive from it.
 
 THE CONTROL is G-CTRL form 4, the committed Stage-A artifacts — never a control solve:
   results/scn-campaign-load-2026-09-06-r2/NYISO/REF/
@@ -2534,8 +2710,8 @@ TWO OF YOUR OWN STAGE-A FINDINGS THAT NOW BIND YOUR STAGE-B READING.
 
 PRECOMMIT (rule 29): docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md, PUSHED BEFORE THE
 FIRST SOLVE — the four §2.1b legs verified, the G-DRIFT audit, each leg's expected cache_key
-derived from its mechanism (cite tests/regression/test_persisted_identity.py::
-PINNED_DEFAULT_CACHE_KEY; never copy a key literal out of an older prompt), the 2026-2030 identity
+COMPUTED AT HEAD per the solve-surface section above, with NYISO's surface stamp compared against
+the Stage-A bundles', the 2026-2030 identity
 gate and tolerance, the CAP-STATE-TIGHT crossing-year prediction, the shard plan with LP budget,
 and every prediction you will later score. Rule 29's one-year screen does not apply — same configs,
 longer horizon, not a new mechanism — state that rather than leaving it inferred.
