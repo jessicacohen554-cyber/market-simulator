@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-08-miso-245-ladderfix",
+  "label": "miso 245 ladderfix",
+  "date": "2026-09-08",
+  "shorthand": "miso-245-ladderfix",
+  "definition": "miso-245: MISO_SEAM_LADDER_BY_YEAR reconciled to its own frozen derive (3 entries; 189 byte-identical). Rule-23 re-derive citing a source-data change, argued on rule 14 and the frozen estimator's own output, never on a residual. Zero free parameters. Screen year 2024 cleared all four structural STOP-only gates.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-08-miso-245-ladderfix.js",
+  "bundle": "results/calibration/miso245_ladderfix_K"
+}
