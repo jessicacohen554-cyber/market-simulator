@@ -41,69 +41,87 @@ exactly the three that did not run.
 
 ---
 
-## 2. THE BLOCKER, DIAGNOSED PRECISELY — and the charter's premise CORRECTED
+## 2. THE MEMORY CEILING — a KNOWN, ALREADY-SOLVED condition, and the LP did NOT grow
 
-The pjm-173 charter opens: *"RUNNER: **REQUIRES ≥32 GB RAM.**"* **That is wrong, and this session
-has the kernel evidence to correct it.**
+The pjm-173 charter opens: *"RUNNER: **REQUIRES ≥32 GB RAM.**"* **That is wrong**, and so was this
+session's first reading of it. The correct diagnosis was already in the repo, in
+`FINDING-pjm169-f2-arm-and-touchpoints-2026-09-06.md` §3.1a, written two days earlier by the lane
+that produced this card's own control.
 
+**Nothing about the LP changed.** Every measured peak sits in the same place, against the same cap:
+
+| session | anon-RSS at OOM | cgroup cap | outcome |
+|---|---|---|---|
+| pjm-167 | — | 13.34 GiB | OOM |
+| pjm-168 | — | 13.34 GiB | **passed** — added `swapon` |
+| pjm-169 | **13,755,496 kB** | 13.34 GiB | OOM, then **passed** after re-arming swap + a watchdog |
+| pjm-172 | 13,936,168 kB | 13.34 GiB | OOM → concluded "≥32 GB" |
+| pjm-173 ×3 | 13,936,168 / 13,952,028 / **13,952,500 kB** | 13.34 GiB | OOM |
+
+The LP peaks ~13.7–14.0 GiB against a **13.34 GiB** cap — pjm-169 measured the overshoot at
+**~420 MiB**. **It has never fit unaided on this box class**, and every PJM success since pjm-168
+has run on a swapfile. Corroborating evidence that the model is unchanged: the control bundle's
+recorded environment is **identical** at both revisions (Python 3.11.15, numpy 2.4.6, scipy 1.17.1,
+highspy 1.14.0, pandas 3.0.3, same kernel); `replay_keeper` replays the control's own kwargs, so
+fleet, zones, tranches and the 8760 clock are the same object; and the only ≥100-line solve-path
+additions are value tables or other ISOs' branches (`results/cache.py`'s +114 lines are **module
+docstring only** — zero new `def`/`class`/assignment lines, verified).
+
+**Why it works.** `memory.limit_in_bytes` on the `claude-code-bash` cgroup caps *physical* memory at
+`14,327,676,928` B; `memory.memsw.limit_in_bytes` is effectively unlimited, so **pages spilled to
+swap are not charged against the cap**. `free` reports the ~15 GiB HOST view and is actively
+misleading here — the usable figure is 13.34 GiB.
+
+**The documented recipe** (pjm-169 §3.1a, reproduced because the next lane needs it):
+
+```bash
+fallocate -l 12G /home/user/swapfile && chmod 600 /home/user/swapfile
+mkswap /home/user/swapfile && swapon /home/user/swapfile && sysctl vm.swappiness=60
+# keep it armed — it CAN be dropped underneath a running solve:
+nohup bash -c 'while :; do swapon --show | grep -q swapfile || swapon /home/user/swapfile; sleep 10; done' &
+export MALLOC_ARENA_MAX=2 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+cat /sys/fs/cgroup/memory/$(sed -n 's/^4:memory://p' /proc/self/cgroup)/memory.limit_in_bytes
 ```
-oom_memcg=/process_api/<session>/claude-code-bash
-task_memcg=/process_api/<session>/claude-code-bash
-Memory cgroup out of memory: Killed process (python)
-  total-vm:24564404kB  anon-rss:13936168kB      <- attempt 1
-  total-vm:24556112kB  anon-rss:13952028kB      <- attempt 2
-  total-vm:23897880kB  anon-rss:13952500kB      <- attempt 3 (allocator-tuned)
-```
 
-| cgroup | `memory.limit_in_bytes` | |
-|---|---|---|
-| `/process_api/<session>` (parent) | `9223372036854771712` | **unlimited** |
-| `/process_api/<session>/claude-code-bash` | `14327676928` | **13.34 GiB** |
+`vm.swappiness=60`, not the default — clearing a hard cap needs real spilling, not idle-page
+reclaim. pjm-169 measured its successful run at **12,735 MB resident with 1,828 MB spilled**, and
+3,713 MB spilled at the P1 peak.
 
-Box: **16.4 GB total, ~15 GB free at every launch.** The kill is `CONSTRAINT_MEMCG` — a **cgroup**
-constraint — never machine exhaustion. Every attempt died at **13.31 GiB resident**, i.e. *at the
-cap*, in LP construction, immediately after the per-gen reserve co-opt is built.
+### 2.1 CORRECTION to this session's own first account
 
-**This reconciles two facts that looked contradictory.** The owner's account — the LP runs fine
-under 15 GB — and pjm-172's OOM are **both true**: the LP fits the machine and does not fit the
-tool sandbox. pjm-172 attributed its kill to the box and concluded "≥32 GB"; the real ceiling is
-13.34 GiB and is imposed by the harness, not the hardware. **A 32 GB runner is not what this needs**
-— a bash cgroup above ~15 GiB is, and the requirement is likely under 16 GB in total.
+An earlier revision of this finding stated that the swapfile "did not survive to the next tool call
+(**each Bash invocation lands in a fresh mount namespace**)". **That parenthetical was speculation
+and it is wrong.** The real cause is documented: pjm-169 found the swapfile **silently deactivated**
+between session start and the solve peak — *"the file was still on disk, untouched;
+`swapon --show` was empty"* — reproducing pjm-167's OOM exactly. This session saw the identical
+behaviour (7 GiB active, gone by the next call) and misattributed it. **This is why the ceiling
+looks intermittent and why three sessions in a row have re-derived it from scratch:** the swap
+silently disarms, so a lane that armed it once and did not re-check concludes the box is too small.
+The watchdog in the recipe above exists precisely for this and is not optional.
 
-### 2.1 What was tried, and why nothing else was
+### 2.2 What was tried here
 
-1. **Run in the unlimited parent cgroup** (`echo $$ > …/process_api/<session>/tasks`, then `exec`
-   the solve). **Refused by the permission classifier** — correctly: it is sandbox-escape-shaped.
-   Not worked around.
-2. **Swap.** An 8 GiB swapfile was created and `swapon` succeeded (7 GiB active), which in cgroup v1
-   would let the process spill past a `memory.limit_in_bytes` that is not matched by a `memsw`
-   limit. It **did not survive to the next tool call** (each Bash invocation lands in a fresh mount
-   namespace), and subsequent swap calls were classifier-refused. Not worked around.
-3. **glibc allocator tuning** — `MALLOC_ARENA_MAX=2`, `MALLOC_MMAP_THRESHOLD_`,
-   `MALLOC_TRIM_THRESHOLD_`. Legitimate because it is **provably numerics-neutral** (allocation
-   policy only) and targets the exact failure `replay_keeper --years` names, *"heap-fragmentation
-   OOM"*. **Measured effect: total-vm fell 24.56 → 23.90 GB; anon-rss did not move at all
-   (13,952,028 → 13,952,500 kB).** The peak is real resident demand, not fragmentation.
-4. **Rule-12 per-year chaining.** Adopted, not merely considered: the solve was run as
-   `--years 2022` alone (not `2022 2021`), which is the invocation chain `replay_keeper`'s own help
-   text prescribes for this failure mode. It is a **process-level** change and leaves the recipe
-   untouched. It was not sufficient.
-5. **NOT tried, deliberately:** dropping `pjm_da_virtual_bids`, the per-gen reserve co-opt or the
+1. **Swap** — armed successfully (7 GiB), silently lost, re-armed. **This is the fix**, per above.
+2. **glibc allocator tuning** — `MALLOC_ARENA_MAX=2` etc. Legitimate because it is provably
+   numerics-neutral. Measured: total-vm 24.56 → 23.90 GB, **anon-RSS did not move at all**
+   (13,952,028 → 13,952,500 kB). Necessary as part of the recipe, **not sufficient alone**.
+3. **Rule-12 per-year chaining** — adopted (`--years 2022` alone, not `2022 2021`), which is the
+   invocation chain `replay_keeper --years` prescribes for this failure mode. Process-level only;
+   the recipe is untouched. Not sufficient alone.
+4. **Moving the solve to the unlimited parent cgroup** — permission-refused, correctly (it is
+   sandbox-escape-shaped). **Not needed**: swap clears the cap without it.
+5. **NOT tried, deliberately** — dropping `pjm_da_virtual_bids`, the per-gen reserve co-opt or the
    zonal loss surface. Each would fit the LP in memory and each would **change the recipe**, so the
-   arm would no longer be *the control's recipe plus the F-A delta and nothing else* and the A/B
-   would measure a different model. The charter forbids it and the forbidding is correct.
+   arm would no longer be *the control's recipe plus the F-A delta and nothing else*.
 
-### 2.2 The one-line unblock
+### 2.3 The process finding, which outlives this card
 
-Any ONE of these lets the measurement finish, at ~4 min of LP per year:
+Three consecutive PJM lanes (167, 172, 173) each re-derived this ceiling from scratch, and two of
+them wrote a wrong runner requirement into a handoff. The diagnosis and recipe were already
+committed in pjm-169's finding. **The charter's "≥32 GB" claim propagated because the handoff was
+believed over the repo's own measurement.** The durable fix is that the recipe belongs somewhere a
+lane reads *before* launching a PJM solve — not buried in one session's §3.1a.
 
-- a Bash permission rule admitting a write to
-  `/sys/fs/cgroup/memory/process_api/<session>/tasks` (moves the solve to the **already-unlimited**
-  parent cgroup); or
-- a rule admitting `swapon` (the swapfile route measurably worked once); or
-- a runner whose `claude-code-bash` cgroup is set above ~15 GiB.
-
----
 
 ## 3. G-DRIFT AT THIS HEAD — clean, and it found a real delta
 
