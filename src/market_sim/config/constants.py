@@ -281,6 +281,25 @@ EGRID_CC_HR_PHYSICAL_CEILING: float = HEAT_RATE_BINS["gas_ct"]["older"]
 # egrid_family_heat_rates object, never this.
 EGRID_CT_HR_PHYSICAL_FLOOR: float = HEAT_RATE_BINS["gas_ct"]["aero"]
 
+# ercot-261. Maximum |disagreement| in $/MMBtu between the two independent
+# measurements of the Texas delivered-to-electric-power gas price -- the EIA
+# N3045TX3 state survey (ERCOT_ELECTRIC_POWER_GAS_PATH) and the EIA-923
+# Schedule-5 quantity-weighted plant receipts (ERCOT_GAS_CORROBORATOR_PATH) --
+# for that month's survey print to be admissible as an HOURLY delivered-gas
+# level under ScenarioConfig.ercot_ep_gas_basis_corroborated.
+#
+# IDENTIFICATION (rule 21 [R-DOF], and it is the only free parameter that gate
+# adds): the observed disagreement distribution of the two series over all 84
+# months 2019-01..2025-12. They agree within $0.85/MMBtu in 82 of those months;
+# the only two outliers are 2021-02 ($13.77) and 2021-12 ($3.47), with NO month
+# in between -- a factor-4.1 empty gap. 1.00 sits inside that gap, above the
+# corroborating mass and 3.5x below the nearest outlier. Set ex ante from the
+# data's own gap structure and NEVER swept against a criterion (rule 1
+# [R-STRUCT]); it selects which MEASURED month is admissible and the measurement
+# it admits carries zero DOF.
+# (docs/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md SS1c, SS6.)
+ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU: float = 1.00
+
 # EIA-923 own-month gas-price plausibility band (SPP-46 R-1; owner ruling P19,
 # 2026-09-08, repo-wide; ScenarioConfig.f923_gas_price_plausibility_screen,
 # data/fuel/plant_prices.py::screen_gas_plant_month_prices). A plant's OWN
