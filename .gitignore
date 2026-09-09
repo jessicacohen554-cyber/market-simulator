@@ -1559,7 +1559,11 @@ results/calibration/_spp52a_heavy/
 # sweep green, since that sweep only ever sees COMMITTED dirs. Shards force-add
 # (git add -f) their own bundle onto a scratch branch to ship results back;
 # nothing here reaches main unless the owner promotes the run.
-results/calibration/ercot261_*/
+results/calibration/ercot261_arm_*/
+results/calibration/ercot261_ctl_*/
+# NOT the composed five-year bundle: the owner ruled it promotable
+# (2026-09-09), so it is a KEEPER and rule 15 [R-DASHBOARD] requires it
+# committed. The slim-bundle rules above still drop its heavy parquet.
 
 # pjm-fuelvintage-1 (gas_electric_power_monthly_level + the 2019-2022 retiree
 # window). Rule 29 [R-SCREEN](c) keeps a screen/control bundle OUT of `main` --
