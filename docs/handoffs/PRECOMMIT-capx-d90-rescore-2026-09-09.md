@@ -311,3 +311,91 @@ pin tests — including the `pjm_seam_neighbour_hourly_ladder` registration gap 
 measured* in §3.1 but does **not** repair. If work reaches any of those, this lane STOPS and reports
 the overlap. The 16 red pin tests are D91's; if still red at solve time they are reported and stepped
 past, not fixed.
+
+---
+
+## ADDENDUM A — three pre-solve results, recorded BEFORE any LP is spent
+
+Written and pushed while `data/clean` rebuilt, ahead of the arm. Nothing here is graded against a
+result, because no result exists yet.
+
+### A.1 The §4 pre-solve STOP check PASSES — the pinned recipe is the scored recipe
+
+Assembling the arm's config exactly as the runner does — `reference_config("NEISO", 2026, 2050,
+cmc=False, golden_posture=True, ccs_retrofit_fixed_cost_co2_scaling=False)`, the
+`ccs_retrofit_vom_adder=8.0` pin, then `apply_iso_scenario_defaults(cfg, "NEISO")` — and comparing
+field-for-field against the committed `config.yaml`:
+
+```
+FIELD DIFFS committed -> pinned CLI                                0     (zero)
+pinned+resolved cache key                           f04fd06348e1623d
+committed recipe key                                f04fd06348e1623d     ← IDENTICAL
+```
+
+**The arm IS the scored recipe.** Under a correct registration it would realize the scored bundle's
+own key; at this HEAD it realizes a different one for the §3.1 reason alone, and it writes to its own
+`--out-dir`, so it can neither cache-hit nor clobber the stale bundle. §3.4's two pins are hereby
+verified to do exactly what they were declared to do, before the solve rather than after.
+
+### A.2 THE SCORER IS VALIDATED — it reproduces the standing verdict byte-for-byte
+
+The control is far stronger than §3.5 assumed: `results/ff-t3-neiso-golden/bau-d60/` commits not only
+the 25 evolution ledgers but **`full_horizon_summary.json` (the full 25-year trajectory),
+`run_config.json`, `dof_ledger.json`, `forecast_attestation.json` and `forecast_verdict.json`**.
+
+Re-running `forecast_verdict.py --tier t3` over those committed artifacts reproduces the committed
+`forecast_verdict.json` **exactly — identical in every category, row, status and detail string, with
+only `provenance` differing.** The re-score is therefore a *controlled swap*: the arm's summary and
+run-config replace d60's, every carried input is held byte-identical, and any verdict movement is
+attributable to the solve alone.
+
+**Which also settles FC-6's scope, on evidence rather than convenience.** Reproduction required
+`bau-d46`'s `fc6/paired_invariants.json` and `fc6/driver-battery-neiso-2026-09-03.json` — i.e. **the
+standing d60 verdict already CARRIES its FC-6 from d46 and never measured it on d60's own solve**
+(the same carry its own notes disclose for FC-5). This lane therefore **carries FC-6 identically**,
+so the input is held fixed on both sides and FC-6 cannot move spuriously. **Consequence, stated
+rather than buried: FC-6 is structurally incapable of moving in this re-score, so no FC-6 reading
+here is evidence about D88** — and the pre-existing staleness (d60's and now the arm's FC-6 paired
+CO2/build rows are d46's numbers) is reported, not absorbed. Re-measuring it is a separate lane's
+work.
+
+### A.3 A PREDICTION MIS-ANCHORING, CORRECTED AGAINST MYSELF BEFORE THE SOLVE
+
+**P6's bracket is mis-anchored and I am recording that now rather than quietly re-basing it later.**
+§5's P6 cites "model 9.5792 vs table 4.4883 (+113.4 %)". That pair is **`bau-d46`'s**, quoted from the
+standing verdict's notes. **`bau-d60`'s own `co2@2040` is 8.559 Mt**, so the control gap this lane is
+actually moving from is **+90.7 %**, not +113.4 % — and the declared bracket "[+80 %, +110 %]"
+straddles the control, which would make it nearly unfalsifiable.
+
+**P6 is therefore graded on DIRECTION ONLY, and strictly:** it HITS iff `co2@2040` **< 8.559 Mt**, and
+MISSES otherwise. The bracket is withdrawn as unfalsifiable rather than retained and claimed as a hit.
+No other prediction is touched.
+
+### A.4 The control trajectory, recorded so the arm is differenced against a fixed record
+
+From the committed `full_horizon_summary.json` (`cache_key f04fd06348e1623d`, `total_wall_s` 402.4,
+`global_peak_rss_mb` 3454.6, 25/25 years). Anchors this lane will difference:
+
+| year | reserve_margin | co2_mt | lw_price | thermal_mw |
+|---|---|---|---|---|
+| 2035 | 0.0404 | 8.912 | 69.35 | 20326.3 |
+| 2038 | 0.0907 | 8.631 | 69.02 | 22137.8 |
+| 2040 | 0.0706 | 8.559 | 70.25 | 21858.2 |
+| 2048 | **0.0360** | 9.798 | 77.05 | 22107.9 |
+| 2050 | **0.0533** | 10.196 | 80.62 | 22320.6 |
+
+**One observation that cuts against my own P1, recorded before the solve.** The control's reserve
+margin is a **sawtooth** — it alternates roughly 0.040–0.048 against 0.070–0.091 through 2042, and
+2048 already sits at **0.0360, BELOW the 0.0375 band floor**, before rebounding to 0.0608 and 0.0533.
+So the terminal RM that FC-2 row2 gates on is a **noisy single-year read** whose neighbours straddle
+the floor. This makes P1 easier to hit for a reason that has nothing to do with D88, and it is a
+weakness of the gate rather than a strength of my prediction. **If P1 hits, it will be reported with
+this caveat attached, not banked as a clean call.**
+
+### A.5 T-REPRO is folded into the arm at zero extra LP
+
+§3.5 pre-registered T-REPRO as a separate 2026–2031 solve. It is instead read off the **first six
+years of the arm itself**, which is the identical object: D88's own PRECOMMIT §3 verified that
+`config.end_year` reaches only the year-loop bound and two warning-message builders in
+`policy/carbon.py`, entering no price, no screen and no decision. Same test, one fewer solve, and no
+second partial bundle to retain. The pass/fail branches of §3.5 are unchanged.
