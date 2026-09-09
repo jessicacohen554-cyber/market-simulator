@@ -13384,3 +13384,57 @@ before either ran); `ADDENDUM-miso246-my-own-gate-G-PARSE-failed-because-main-mo
 `ADDENDUM-miso246-M-a4-failed-and-item-a-is-unresolved-2026-09-08.md`;
 `FINDING-miso246-the-lever-queue-is-not-empty-and-neither-is-any-granted-ISOs-2026-09-09.md`; probes
 `_miso246_lever_queue_census_phase0.py`, `_miso246_census_adjudication.py` with their JSONs.
+
+## miso-249 — 2026-09-09 — **THE MEASURED MONTHLY GAS LEVEL IS PROVABLY INERT ON MISO'S KEEPER (100.000 % of gas cap-hours are print-derived; `mc_base` BYTE-IDENTICAL), AND `FINDING-xiso` §1a's PREMISE IS WRONG FOR MISO — the fleet already pays a measured monthly level.** ZERO LP
+
+Session `miso-fuelvintage-1`, PROMPT 2 of
+`docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`. **No solve was spent, no run was
+registered, no keeper moved, every committed MISO bundle byte-identical.** The rule 29 `[R-SCREEN]`
+clause-(0) gate the launch prompt's ADDITION 1 named fired and killed the arm before an LP.
+
+**Phase 0 (the number asked for first).** `apply_plant_monthly_fuel_prices` writes **100.000 %** of
+MISO gas capacity-hours in **2023, 2024 and 2025** — every one of 1,609 / 1,616 / 1,614 gas rows,
+all 8,760 h, all 12 months. Decomposed: own F923 print **68.53 / 67.81 %**, nearby pool **31.47 /
+32.19 %**, terminal trajectory default **0.000000 %**.
+
+**The decisive gate.** Same-HEAD A/B off the only sanctioned fleet-only reconstruction
+(`run_year_kwargs` + `derived_run_year_inputs`; `run_year_unreachable` = `{}`, so the rebuild is the
+whole recipe), the arm adding only the flag: `mc_base` and `fuel_prices` differ in **0** of
+28,329,840 / 28,303,560 / 28,181,520 cells, max abs 0.0, and a deep diff of the **entire** fleet-only
+state finds **0 differing leaves**. The seam fires correctly on the ISO-level `_gas_series` (2023
+2.8392→3.0187, max month gap 1.0003 Jan; 2024 2.4893→2.5580, gap 1.5513 Jan — reproducing the
+pre-registered §3 table to ~0.0005 $/MMBtu; 2025 byte-identical, the inert-by-coverage STOP check
+confirmed at zero LP) but **every** `_gas_series` consumer is off on the keeper.
+
+**The premise correction.** `FINDING-xiso` §1a's "MISO model monthly CV = 0.094 in every year" is
+computed on `_gas_series`, **which no MISO gas unit pays**. On `fuel_prices` the **paid** cv is
+**0.1388 / 0.2473 / 0.1721** and tracks the measured N3045 blend to **0.04–0.20 $/MMBtu in 23 of 24
+months**, uniformly positive. MISO already carries a measured monthly gas level, by the
+`gas_plant_monthly_fuel_pricing` route `FINDING-xiso` §1's table has no column for. **There is no
+monthly-gas-LEVEL defect to repair in MISO 2023–2025.**
+
+**Successors, adjudicated on measurement — none of the three named survives.** (i) the F923 fallback
+target reaches **0.000 %** of gas cap-hours; (ii) both coal sigmoids are off; (iii) ercot-261's
+corroborator is an *admissibility filter* needing a printed month, so it cannot fill a month
+Louisiana never printed. **But its second instrument refutes ADDITION 4's "not fixable":** EIA-923
+Schedule-5 receipts — already on disk, already read every solve — cover **Louisiana in all 12 months
+of 2019, 2020 and 2021**, every MISO footprint state, footprint coverage **1.000 in every year
+2019–2025**, and price Uri at **Feb-2021 = 13.9023 $/MMBtu** (LA alone 16.10) vs the model's 4.42.
+Three caveats stated with it: a monthly form would reproduce ercot-254 §3b exactly (must be
+**daily**); MISO holds **no `complete` marker** so it may not score 2021; and there is little for it
+to do in 2023–2025.
+
+**Disposition: keep `gas_electric_power_monthly_level` BUILT and DEFAULT-OFF for MISO.** Arming it
+would re-key the bundle while solving a byte-identical LP and record a mechanism that never ran —
+the caiso-157 / caiso-188 provenance-defect class. Matrix cell `gas_electric_power_monthly_level`
+**O → I** in MISO's shard only (rule 28). Gate baselines re-measured on this tree: `pytest
+tests/scoring` **16 failed / 1,532 passed** = exactly ADDENDUM A3's corrected baseline, this branch
+adds none; `check_mechanism_matrix --base origin/main` EXIT 0.
+
+**Two questions put to the owner** (`FINDING-miso249` §9): whether MISO's lane should build the
+EIA-923 Schedule-5 blended level (daily form only), and whether MISO should hold a `complete`
+marker — MISO is the only ISO in this program that cannot touch 2020–2022, so its largest known
+defect is unreachable by construction. **Stated, not acted on:** no `--holdout-authorized`, no
+out-of-training solve, no marker file touched.
+
+Artifacts: `docs/FINDING-miso249-ep-gas-level-inert-2026-09-09.md`.
