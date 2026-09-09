@@ -1,0 +1,578 @@
+{
+  "run_id": "nyiso-2026-2050-scn-campaign-stageb-2026-09-07-ref",
+  "meta": {
+    "kind": "scenario",
+    "label": "scn-campaign-stageb-2026-09-07-ref",
+    "variant": "forecast-baseline",
+    "iso": "NYISO",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2050,
+    "capacity_market_clearing": false,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "f1a2ef17634b0467",
+    "bundle": "/home/user/market-simulator/results/NYISO/f1a2ef17634b0467",
+    "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035,
+      2036,
+      2037,
+      2038,
+      2039,
+      2040,
+      2041,
+      2042,
+      2043,
+      2044,
+      2045,
+      2046,
+      2047,
+      2048,
+      2049,
+      2050
+    ],
+    "n_solved_years": 25,
+    "error": null,
+    "total_wall_s": 6970.1,
+    "global_peak_rss_mb": 3953.4,
+    "per_year_perf": [
+      {
+        "year": 2026,
+        "wall_s": 165.9,
+        "peak_rss_mb": 3109.5
+      },
+      {
+        "year": 2027,
+        "wall_s": 203.5,
+        "peak_rss_mb": 2801.6
+      },
+      {
+        "year": 2028,
+        "wall_s": 241.8,
+        "peak_rss_mb": 3338.5
+      },
+      {
+        "year": 2029,
+        "wall_s": 233.5,
+        "peak_rss_mb": 3286.9
+      },
+      {
+        "year": 2030,
+        "wall_s": 253.8,
+        "peak_rss_mb": 3493.1
+      },
+      {
+        "year": 2031,
+        "wall_s": 322.2,
+        "peak_rss_mb": 3498.7
+      },
+      {
+        "year": 2032,
+        "wall_s": 281.9,
+        "peak_rss_mb": 3503.8
+      },
+      {
+        "year": 2033,
+        "wall_s": 353.5,
+        "peak_rss_mb": 3507.2
+      },
+      {
+        "year": 2034,
+        "wall_s": 358.9,
+        "peak_rss_mb": 3835.0
+      },
+      {
+        "year": 2035,
+        "wall_s": 413.9,
+        "peak_rss_mb": 3812.1
+      },
+      {
+        "year": 2036,
+        "wall_s": 300.1,
+        "peak_rss_mb": 3916.2
+      },
+      {
+        "year": 2037,
+        "wall_s": 292.2,
+        "peak_rss_mb": 3845.5
+      },
+      {
+        "year": 2038,
+        "wall_s": 254.0,
+        "peak_rss_mb": 3844.6
+      },
+      {
+        "year": 2039,
+        "wall_s": 257.1,
+        "peak_rss_mb": 3531.7
+      },
+      {
+        "year": 2040,
+        "wall_s": 235.8,
+        "peak_rss_mb": 3547.8
+      },
+      {
+        "year": 2041,
+        "wall_s": 231.1,
+        "peak_rss_mb": 3523.2
+      },
+      {
+        "year": 2042,
+        "wall_s": 243.6,
+        "peak_rss_mb": 3898.7
+      },
+      {
+        "year": 2043,
+        "wall_s": 219.4,
+        "peak_rss_mb": 3839.1
+      },
+      {
+        "year": 2044,
+        "wall_s": 258.2,
+        "peak_rss_mb": 3447.6
+      },
+      {
+        "year": 2045,
+        "wall_s": 258.5,
+        "peak_rss_mb": 3537.5
+      },
+      {
+        "year": 2046,
+        "wall_s": 280.0,
+        "peak_rss_mb": 3953.4
+      },
+      {
+        "year": 2047,
+        "wall_s": 247.6,
+        "peak_rss_mb": 3900.4
+      },
+      {
+        "year": 2048,
+        "wall_s": 345.3,
+        "peak_rss_mb": 3558.9
+      },
+      {
+        "year": 2049,
+        "wall_s": 274.4,
+        "peak_rss_mb": 3890.7
+      },
+      {
+        "year": 2050,
+        "wall_s": 444.1,
+        "peak_rss_mb": 3554.9
+      }
+    ],
+    "year_summary": [
+      {
+        "year": 2026,
+        "reserve_margin": 0.1851,
+        "lw_price": 50.19,
+        "max_hourly_price": 64.5,
+        "co2_mt": 23.69,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2027,
+        "reserve_margin": 0.1774,
+        "lw_price": 49.18,
+        "max_hourly_price": 63.1,
+        "co2_mt": 24.59,
+        "hours_ge_500": 0,
+        "retire_mw": 27.8,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2028,
+        "reserve_margin": 0.1704,
+        "lw_price": 50.92,
+        "max_hourly_price": 65.7,
+        "co2_mt": 17.16,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2029,
+        "reserve_margin": 0.2083,
+        "lw_price": 49.28,
+        "max_hourly_price": 65.8,
+        "co2_mt": 13.71,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 2843.4,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2030,
+        "reserve_margin": 0.2009,
+        "lw_price": 54.95,
+        "max_hourly_price": 73.0,
+        "co2_mt": 10.9,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2031,
+        "reserve_margin": 0.2273,
+        "lw_price": 56.86,
+        "max_hourly_price": 75.8,
+        "co2_mt": 11.14,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 1000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2032,
+        "reserve_margin": 0.2154,
+        "lw_price": 60.31,
+        "max_hourly_price": 83.8,
+        "co2_mt": 9.61,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2033,
+        "reserve_margin": 0.2169,
+        "lw_price": 60.49,
+        "max_hourly_price": 83.9,
+        "co2_mt": 9.13,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2034,
+        "reserve_margin": 0.205,
+        "lw_price": 60.11,
+        "max_hourly_price": 84.2,
+        "co2_mt": 9.29,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2035,
+        "reserve_margin": 0.2363,
+        "lw_price": 60.46,
+        "max_hourly_price": 84.0,
+        "co2_mt": 9.22,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2036,
+        "reserve_margin": 0.2212,
+        "lw_price": 62.65,
+        "max_hourly_price": 98.0,
+        "co2_mt": 9.52,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2037,
+        "reserve_margin": 0.2191,
+        "lw_price": 64.28,
+        "max_hourly_price": 101.7,
+        "co2_mt": 9.73,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2038,
+        "reserve_margin": 0.2042,
+        "lw_price": 66.08,
+        "max_hourly_price": 165.2,
+        "co2_mt": 10.15,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2039,
+        "reserve_margin": 0.2019,
+        "lw_price": 66.92,
+        "max_hourly_price": 231.7,
+        "co2_mt": 10.5,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2040,
+        "reserve_margin": 0.1872,
+        "lw_price": 69.41,
+        "max_hourly_price": 237.1,
+        "co2_mt": 11.03,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2041,
+        "reserve_margin": 0.1837,
+        "lw_price": 70.86,
+        "max_hourly_price": 240.7,
+        "co2_mt": 11.57,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2042,
+        "reserve_margin": 0.1681,
+        "lw_price": 73.13,
+        "max_hourly_price": 243.9,
+        "co2_mt": 12.26,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2043,
+        "reserve_margin": 0.1645,
+        "lw_price": 73.97,
+        "max_hourly_price": 1198.8,
+        "co2_mt": 12.91,
+        "hours_ge_500": 3,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2044,
+        "reserve_margin": 0.1492,
+        "lw_price": 77.71,
+        "max_hourly_price": 1199.3,
+        "co2_mt": 13.61,
+        "hours_ge_500": 10,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2045,
+        "reserve_margin": 0.1721,
+        "lw_price": 81.14,
+        "max_hourly_price": 1199.9,
+        "co2_mt": 14.34,
+        "hours_ge_500": 23,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2046,
+        "reserve_margin": 0.1567,
+        "lw_price": 87.73,
+        "max_hourly_price": 1201.7,
+        "co2_mt": 15.15,
+        "hours_ge_500": 40,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2047,
+        "reserve_margin": 0.1785,
+        "lw_price": 90.3,
+        "max_hourly_price": 1202.3,
+        "co2_mt": 15.79,
+        "hours_ge_500": 54,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2048,
+        "reserve_margin": 0.163,
+        "lw_price": 96.25,
+        "max_hourly_price": 1212.8,
+        "co2_mt": 16.63,
+        "hours_ge_500": 72,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2049,
+        "reserve_margin": 0.1587,
+        "lw_price": 101.72,
+        "max_hourly_price": 1213.8,
+        "co2_mt": 17.46,
+        "hours_ge_500": 90,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 3000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2050,
+        "reserve_margin": 0.1435,
+        "lw_price": 109.19,
+        "max_hourly_price": 1215.6,
+        "co2_mt": 18.35,
+        "hours_ge_500": 114,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      }
+    ],
+    "started_utc": "2026-09-09T02:13:35Z",
+    "bridged_years": [],
+    "campaign": "scn-campaign-stageb-2026-09-07",
+    "case": "REF",
+    "reference_case": "REF",
+    "set_overrides": {}
+  },
+  "score": null,
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 3.783e-10 MW (year 2026); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "FAIL",
+      "detail": "2043: dump 2.62% of renewable pot.; 2044: dump 2.49% of renewable pot.; 2045: dump 4.89% of renewable pot.; 2046: dump 4.63% of renewable pot.; 2047: slack 0.01% of load (52 h, 30.0 GWh, peak 1,595 MW); 2047: dump 7.67% of renewable pot.; 2048: slack 0.02% of load (69 h, 48.5 GWh, peak 1,841 MW); 2048: dump 7.32% of renewable pot.; 2049: slack 0.04% of load (88 h, 73.2 GWh, peak 2,168 MW); 2049: dump 10.55% of renewable pot.; 2050: slack 0.05% of load (113 h, 104.7 GWh, peak 2,596 MW); 2050: dump 10.16% of renewable pot."
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "PASS",
+      "detail": "held"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "requirement-implied floor [8.2%, 23.2%]; out: 2035:23.6% (band [8.2%, 23.2%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "WARN",
+      "detail": "wind(21); solar(18); gas_cc(7)"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "WARN",
+      "detail": "2048: LW $96.3 outside [0.5×,3.0×] CC MC $31.0; 2049: LW $101.7 outside [0.5×,3.0×] CC MC $31.0; 2050: LW $109.2 outside [0.5×,3.0×] CC MC $31.0"
+    }
+  ],
+  "registered_utc": "2026-09-09T02:13:36Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "solve_surface": null,
+    "scored_at_sha": "ad197380b2c6",
+    "scored_at_date": "2026-09-09T02:13:36Z",
+    "cache_epoch": "f1a2ef17634b0467"
+  }
+}
