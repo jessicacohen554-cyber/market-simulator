@@ -3272,16 +3272,23 @@ re-swept, and the offer-level lane stays closed by its own stop rule.
 `docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md` closes the one cross-ISO discrepancy the
 fuel-vintage program had not resolved. NEISO's 3.24× January-2023 gap between the ISO-NE published
 Algonquin index ($4.73/MMBtu) and the EIA `N3045` MA/CT/RI/ME/NH blend ($15.35) is a
-**respondent-composition artifact in N3045**, falsified **physically**: across 84 months
+**measurement-basis gap** — an average delivered cost including transportation and
+contract (LNG) charges versus the marginal commodity price — falsified **physically** as a marginal
+price: across 84 months
 (2019-01…2025-12) the implied marginal heat rate (monthly mean ISO-NE hub RT LMP ÷ gas price) never
 once falls below **7.99** MMBtu/MWh on the index, while the N3045 blend drives it below NEISO's
 **6.3** CC floor in **13 of 84** months and to **3.29** in Jan-2023 — a ~104 %-efficient heat
 engine. Four corroborations: N3045 prices Jan-2023 and Jan-2025 the same (15.346 vs 15.316) while
 the market priced them $50.51 vs $135.08/MWh and gas ran *harder* in the cheap month (49.3 % vs
 46.8 % share); the Algonquin daily prints read $3.22-4.23 for four weeks of Jan-2023; the entire
-disclosed EIA-923 New England gas-receipt panel that month is **one 58 MW peaker** (plant 1660
-Potter Station 2 — 28,703 MMBtu, 0.09 % of the ~31.4 million MMBtu ISO-NE burned, against 419
-plants nationally); MA/CT dispersion inside one month reaches **4.13×** on the same pipeline.
+MA/CT dispersion inside one month reaches **4.13×** on the same pipeline, which the *commodity*
+cannot do but an **average delivered cost** can (firm-transport charges and Everett LNG, and
+Massachusetts is the state that prints high). **CORRECTED BEFORE PUBLICATION:** an earlier draft
+called this a respondent-composition artifact on the strength of this repository's EIA-923
+*extraction* holding one New England plant that month; the parallel session `neiso-107` measured
+EIA's companion **volume** series `N3045<ST>2` at 1.6 % of the CAMPD-metered burn and refuted it,
+and their metered leg reproduces **exactly** here (29,290,427 MMBtu). The verdict and every other
+line of evidence are unchanged; the *mechanism* is corrected.
 Log-price correlation with realised LMP: index **0.9324**, N3045 **0.8452**. **Consequence:** rule
 14 `[R-ACCURATE]`'s misalignment exception is **earned**, not merely invoked — the hub index keeps
 priority because it is the marginal series — and the 2.303 $/MMBtu "level gap" the cross-ISO table

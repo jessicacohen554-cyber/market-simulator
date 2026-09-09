@@ -1,9 +1,20 @@
-# FINDING — NEISO's 3.2× index-vs-delivered gas gap is a **respondent-composition artifact in EIA N3045**, not a level defect in the keeper
+# FINDING — NEISO's 3.2× index-vs-delivered gas gap is a **measurement-basis gap**, not a level defect in the keeper
 
 **Session:** `neiso-fuelvintage-1`, 2026-09-09. **ZERO LP** — four measured series read against each other.
 **Verdict: the ISO-NE published Algonquin Citygate index is RIGHT and the keeper keeps it.**
 `$15.35/MMBtu` is **not** the New England marginal generator's January-2023 gas cost, and no change to
-NEISO's fuel recipe is warranted. Rule 14 `[R-ACCURATE]`'s misalignment exception is not merely
+NEISO's fuel recipe is warranted. It is the fleet's **average delivered cost including transportation
+and contract (LNG) charges**; the index is the **marginal commodity price**, which is what a
+merit-order offer is built on.
+
+> **⚠ CORRECTION, made in this session before publication.** An earlier draft of this finding
+> called the gap a *respondent-composition artifact* — i.e. that N3045's price is computed over a
+> thin, unrepresentative panel. **That mechanism is WRONG and is withdrawn**; see §3c. The parallel
+> session `neiso-107` measured EIA's **companion volume series** `N3045<ST>2` and found New England's
+> delivered-gas volume matches the CAMPD-metered burn to 1.6 %, so N3045's denominator is
+> substantially the whole fleet's burn. Their metered leg reproduces **exactly** in this session
+> (29,290,427 MMBtu, to the MMBtu — §3c), so the refutation is accepted. **The verdict is unchanged
+> and every other line of evidence stands**; what changes is *why* the two series differ. Rule 14 `[R-ACCURATE]`'s misalignment exception is not merely
 *invoked* here (as `FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §6a did) — it is
 **earned, by a physical falsification**.
 
@@ -26,7 +37,7 @@ The keeper (`neiso106_offerlevel`) prices gas off the **index**, which is why it
 The open question the parent session routed here: *is $15.34 the marginal generator's January gas cost,
 or an artifact?*
 
-**Answer: an artifact — and a bigger one than "small denominator". It is a composition artifact.**
+**Answer: neither series is wrong. They measure different quantities, and only one of them sets the offer.**
 
 ## 2. THE FALSIFICATION — the implied marginal heat rate is thermodynamically impossible
 
@@ -85,32 +96,42 @@ Four weeks at **$3.22–$4.23** and a single month-end cold-snap spike (which co
 02-02 at 28.36). The published monthly index of 4.73 is exactly the average of that shape. There is
 no path from these prints to a $15.35 monthly cost of *spot* gas.
 
-### 3c. The disclosed EIA-923 receipt sample for New England is **one 58 MW peaker**
+### 3c. WITHDRAWN — the "thin panel" reading, and the measurement that refutes it
 
-`data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`, the F923 receipt machinery's own
-source, January 2023, all of MA/CT/RI/ME/NH/VT, fuel group Natural Gas:
+**This section previously argued that N3045's January-2023 New England price rests on a
+one-respondent panel. It does not, and the argument is withdrawn.** It is kept rather than deleted
+because the underlying observation is real and a later reader will otherwise re-derive it and reach
+the same wrong conclusion.
 
-| plants reporting | volume | volume-weighted price |
-|---|---|---|
-| **1** | **28,703 MMBtu** | $15.172/MMBtu |
+**What is true.** This repository's own EIA-923 receipt extraction
+(`data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`, the source the F923 receipt
+machinery reads) holds, for all of MA/CT/RI/ME/NH/VT in January 2023, **exactly one plant**: 1660
+**Potter Station 2**, a 58 MW simple-cycle gas turbine, 28,703 MMBtu at $15.172/MMBtu. Against a
+~29-31 million MMBtu New England burn that is **under 0.1 %**. The national sample the same month is
+419 plants / 490 million MMBtu, so the thinness is regional to this **extraction**.
 
-That plant is **1660 — Potter Station 2**, a **58 MW simple-cycle gas combustion turbine** in
-Massachusetts. Against ISO-NE's actual January-2023 gas burn (4.023 TWh of gas generation ×
-~7.8 MMBtu/MWh ≈ **31.4 million MMBtu**), the entire disclosed New England sample is **0.09 %**.
-The national sample the same month is 419 plants / 490 million MMBtu, so the thinness is regional,
-not a defect of the extraction.
+**What that is NOT evidence of.** The extraction is a *filtered subset*, not EIA's respondent set.
+EIA's published `N3045<ST>3` price has a companion **volume** series, `N3045<ST>2`, and the parallel
+NEISO session `neiso-107` fetched it: New England's delivered-gas volume tracks the CAMPD-metered
+burn to **1.6 %** (28,728 MMcf = 29,762,208 MMBtu against 29,290,427 MMBtu metered), and the implied
+fleet heat rate lands inside a 0.32 MMBtu/MWh band in **36 of 36** months of 2022-2024, with
+January 2023 at the median (7.398).
 
-**This is why "small denominator" understates it.** The sample is not merely small, it is
-**structurally unrepresentative**: a low-capacity-factor peaker buys gas intraday, on the few hours
-it runs, at whatever the balancing market charges — the opposite end of the purchase distribution
-from the baseload CC fleet that actually sets New England's marginal offer. New England is
-merchant-dominated, and merchant generators either withhold cost or fall outside the survey, so the
-respondents that remain are exactly the ones whose purchases are least like the marginal unit's.
+**Their metered leg was re-derived independently here and reproduces to the MMBtu** — summing
+`heatInput` over gas-fired units in `data/raw/campd-unit-level/{MA,CT,RI,NH,ME,VT}_2023.parquet` for
+January gives **29,290,427 MMBtu** exactly (MA 8,475,796 · CT 13,808,264 · RI 3,800,174 ·
+ME 1,609,971 · NH 1,596,222 · VT 0). The volume leg itself could not be re-checked here — the
+`N3045<ST>2` series is not committed to this repository — but an instrument whose checkable half
+reproduces exactly is accepted rather than argued with.
 
-### 3d. Cross-state dispersion inside one month falsifies the series on its own terms
+**So the denominator is essentially the whole fleet's burn, and $15.35 is a real average delivered
+cost.** The gap is therefore a **basis** difference, not a sampling one — which is §4, and which the
+remaining evidence supports at least as strongly.
+
+### 3d. Cross-state dispersion, read correctly
 
 MA, CT and RI sit on the same Algonquin/Tennessee system and buy the same molecule in the same month.
-Their published N3045 prices do not agree:
+Their published N3045 prices differ by a great deal:
 
 | month | MA | CT | RI | MA/CT |
 |---|---|---|---|---|
@@ -118,18 +139,20 @@ Their published N3045 prices do not agree:
 | 2023-05 | 5.61 | 1.82 | 1.69 | **3.07×** |
 | 2024-03 | 7.50 | 1.82 | 1.70 | **4.13×** |
 
-A 4.13× spread between adjacent states on one pipeline in one month is not a price signal. It is the
-composition of who happened to file.
+**Read under §3c's correction this is not panel noise — it is real, and it is the finding's point.**
+A 4.13× spread in the *commodity* between adjacent states on one pipeline in one month is not
+possible; a 4.13× spread in **average delivered cost** is, because the states differ in exactly the
+things a delivered average includes and a spot index excludes: firm-transportation reservation
+charges amortised over whatever volume was actually taken, and **LNG** — Massachusetts is the state
+with the Everett Marine Terminal, whose winter cargo cost tracks global LNG rather than Algonquin,
+and Massachusetts is the state that prints high. The dispersion is therefore **positive evidence for
+the basis reading**, not evidence against the survey.
 
-And the wedge is not even one-signed: the blend sits **below** the spot index in **10 of 84 months**
-(2025 median ratio 1.091, minimum 0.889). A genuine *delivered* cost cannot be systematically below
-the *spot* index it is delivered off — transportation is a positive cost. A series that is 3.24× above
-in one month and 11 % below in another is tracking its respondent panel, not the gas market.
-
-For completeness, the persistent part of the wedge is real and is what a delivered average *should*
-look like: median blend/index **1.228** across 84 months — firm-transportation demand charges and
-retail markup over spot. The finding is not that N3045 is worthless; it is that **its month-to-month
-variation in New England is dominated by panel composition**, which disqualifies it as a monthly level.
+The same applies to the sign of the wedge. Across 84 months the blend sits a median **1.228×** above
+the index — the persistent transport-and-contract component — yet falls **below** it in **10 of 84**
+months. A delivered cost cannot be below the spot index it is delivered off *at the same moment*;
+it can be below a *later* spot price when the volume was bought forward under contract. Both
+directions are what an average-of-contracts series does and neither is what a marginal price does.
 
 ## 4. What both series actually measure, stated plainly
 
@@ -152,8 +175,9 @@ Both are measured. They measure different quantities. The market clears on the f
    `state-average monthly` because the hub index is the marginal series. §6a's reading was right; it
    is now proven.
 3. **The 2.303 $/MMBtu "level gap" in the cross-ISO table is NOT a NEISO defect** and must not be
-   quoted as one. It is the distance between a marginal price and a composition-weighted average of a
-   one-peaker panel. **The cross-ISO table's NEISO rows measure the panel, not the model.**
+   quoted as one. It is the distance between a **marginal** price and an **average delivered** cost —
+   two different quantities — and the model is correctly on the marginal one. **The cross-ISO table's
+   NEISO rows measure the basis difference, not the model.**
 4. **`gas_electric_power_monthly_level` is promoted ON for NEISO anyway** (owner ruling 2026-09-09,
    `xiso-fuelvintage-per-iso-lp-prompts` §A7) and is **provably inert** there — see
    `PRECOMMIT-neiso-fuelvintage-2026-09-09.md` §3. The promotion and this finding are consistent
@@ -161,15 +185,19 @@ Both are measured. They measure different quantities. The market clears on the f
 5. **A corroborator is NOT recommended for NEISO.** `ercot-261` built one
    (`derive_ercot_gas_corroborator.py`) to check one measured series against a second where both are
    plausibly marginal. NEISO's case is different: the second series is **not a candidate at all** —
-   it fails a physical test in 13 of 84 months. Corroborating against it would import panel noise into
-   a series that is already the marginal one. **Recommendation: do not build a NEISO copy.** (Stated
-   as a recommendation, not an action, per the handoff.)
+   not because it is unreliable, but because it measures a **different quantity**, and one that fails
+   a physical test as a marginal price in 13 of 84 months. Blending an average-delivered series into
+   a marginal one would corrupt the series that is already correct. **Recommendation: do not build a
+   NEISO copy.** (Stated as a recommendation, not an action, per the handoff. The parallel session
+   `neiso-107` reached the same recommendation independently.)
 6. **Where MISO's Louisiana hole is concerned this cuts the other way, and is flagged not acted on:**
    MISO's keeper has *no* measured monthly gas level at all, so for MISO a second series is an
    upgrade over a climatological shape. The NEISO result does not transfer (rule 25
    `[R-ISO-SCOPE]`); it only warns that an N3045 state blend must be checked for panel thinness
    before it is trusted as a monthly level. **The implied-heat-rate test in §2 is the cheap,
-   ISO-agnostic instrument for doing that, and it is the transferable part of this finding.**
+   ISO-agnostic instrument for doing that, and it is the transferable part of this finding** — and
+   §3c is the transferable *caution*: check EIA's own companion volume series `N3045<ST>2`, never
+   this repository's filtered EIA-923 extraction, before drawing any conclusion about coverage.
 
 ## 6. Reproduce
 
