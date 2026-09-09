@@ -88,15 +88,6 @@ _IGNORE = {
     # channels --set uses. ercot-256 applied it by hand (--set); consuming it
     # automatically is the FIX, and it IS attempted here.
     "config_partition_overrides",
-    # Free-text description of the model changes a run carried (written by
-    # run_calibration_full's meta writer; ercot-261 is the first keeper whose
-    # meta.json records one). Provenance only — read by the dashboard/report
-    # builders (build_manifest, render_backcast, knob_jacobian,
-    # gen_touchpoint_attestation), never by the solver — so build_kwargs must
-    # skip it exactly like "environment". Without this the ercot-261 keeper is
-    # unreplayable: the unmapped guard hard-exits before the year gate, the
-    # partition overlay and the solve (ercot-262 shard, 2026-09-09).
-    "model_changes_note",
     "iso",
     "years",
     "hours",
