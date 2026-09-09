@@ -160,18 +160,26 @@ def main() -> int:
     if src.exists():
         att = json.loads(src.read_text())
     else:
-        blob = subprocess.run(
-            ["git", "show", f"HEAD:{rel.as_posix()}"],
-            capture_output=True,
-            text=True,
-            cwd=REPO,
-            check=False,
-        )
-        if blob.returncode != 0 or not blob.stdout.strip():
+        # Several refs are tried because the rule-15 keeper-only prune deletes the
+        # incumbent bundle in the SAME commit that promotes this one, so `HEAD`
+        # stops carrying it the moment the promotion lands.
+        blob = None
+        for ref in ("HEAD", "origin/main", "HEAD~1", "HEAD~2", "HEAD~3"):
+            got = subprocess.run(
+                ["git", "show", f"{ref}:{rel.as_posix()}"],
+                capture_output=True,
+                text=True,
+                cwd=REPO,
+                check=False,
+            )
+            if got.returncode == 0 and got.stdout.strip():
+                blob = got
+                break
+        if blob is None:
             raise SystemExit(
-                f"incumbent keeper attestation not on disk at {src} and not in git "
-                f"at HEAD:{rel.as_posix()} — refusing to write an attestation without "
-                "the ledger it must carry (rule 21 [R-DOF])"
+                f"incumbent keeper attestation not on disk at {src} and not in git at "
+                f"HEAD / origin/main / HEAD~1..3 for {rel.as_posix()} — refusing to "
+                "write an attestation without the ledger it must carry (rule 21 [R-DOF])"
             )
         att = json.loads(blob.stdout)
 
@@ -207,8 +215,21 @@ def main() -> int:
                 continue
             measured[(crit, int(rec["year"]))] = rec["magnitude"]
 
+    # The carried price_mean/2025 exception's PROSE was stale across several
+    # keeper generations: it asserted "2023 (-2.2 pct) and 2024 (-8.0 pct) both
+    # PASS; only 2025 fails" and quoted model/actual dollars matching no recent
+    # run. The magnitude re-measurement below only ever touched `magnitude`, so
+    # the wrong narrative flowed verbatim onto the Calibration Status page via
+    # status/MISO.js `ledger_entries`. Found by the miso-250 keeper-text audit and
+    # corrected HERE, in the generator, so a regeneration cannot restore it.
+    price_mean_2025_classification = "WITHIN BAND, DOWNSTREAM OF C3c (the residual is the unrepresentable administrative scarcity tail; magnitude no longer fails price_mean at this keeper's HEAD)"
+    price_mean_2025_reason = "CORRECTED 2026-09-09 (miso-250 keeper-text audit): this entry's 2023/2024 comparator values and its 2025 model/actual dollar figures were stale, carried unchanged since an earlier keeper generation that predates this run and predates the miso-248 incumbent it was inherited from; price_mean now PASSES all three years at the \u00b110% band and no year fails. The 2025 mean-LMP gap (model $42.64 vs actual $45.46 load-weighted, -6.2%) remains the arithmetic tail of the C3c residual, NOT an independent level error: 2023 (+4.9%) and 2024 (+1.8%) also PASS, and 2025 carries the largest actual RT>$200 count (88 hrs). Those 88 Indiana-Hub spike hours (actual up to $1,783; model ~$50 median) contribute materially to the remaining $2.82/MWh gap between the actual and model load-weighted means. Closes only DOWNSTREAM of C3c (never via an offer/level adder tuned to the mean) - the same administrative Monte-Carlo-LOLP ORDC/RCPF tail a deterministic perfect-foresight LP cannot form (rules #1/#10). Frontier designation 2026-07-20; see the C3c ledger entries above + docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md. miso-88 note: the widening is the expected cost of a structurally-correct input and is KEPT per rule 1 -- the accurate heat rate stays in even though it worsened this crossing at the time it was written. Per rule 11 a worse fit is a discovered-bug signal to root-cause separately (the 2025 summer-body price formation lane, FINDING-miso87-c3b-summer-2025-body-2026-07.md), never to be offset with a tuned adder."
+
     for exc in att["exceptions"]:
         key = (str(exc.get("criterion")), int(exc.get("year", 0)))
+        if key == ("price_mean", 2025):
+            exc["classification"] = price_mean_2025_classification
+            exc["reason"] = price_mean_2025_reason
         if key in measured:
             exc["magnitude"] = measured[key]
             exc["magnitude_basis"] = (

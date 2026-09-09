@@ -278,6 +278,19 @@ statuses to the incumbent keeper.**
 - **C3c is the single ledgered caveat** and is non-downgrading under rubric v3.3/v3.6. It is
   reported at full magnitude above and named on the determination basis.
 - **C5a CO2** (reported-only, not gating): −4.0 % / −4.3 % / −0.2 %.
+- **A stale-prose defect the mandatory keeper audit caught in my own bundle, and it was NOT mine
+  to begin with.** The carried `price_mean`/2025 exception's *narrative* asserted "2023 (−2.2 %)
+  and 2024 (−8.0 %) both PASS; only 2025 fails" and quoted model/actual dollars matching no recent
+  run. It had been inherited unchanged across several keeper generations because the
+  re-measurement convention only ever refreshes the `magnitude` field, never the `reason` text —
+  so the wrong narrative flowed verbatim onto the Calibration Status page through
+  `status/MISO.js` `ledger_entries`. This run's actual values are **+4.9 % / +1.8 % / −6.2 %, all
+  three PASS**, with 2025 at model $42.64 vs actual $45.46 (a $2.82/MWh gap). Corrected — and
+  corrected **in `scripts/gen_miso250_attestation.py` itself**, not just in the JSON, so a
+  regeneration cannot restore it. **The class of defect is worth more than the instance**: a
+  carried exception's prose is not re-measured by anything, so it can silently outlive the numbers
+  it describes on every ISO that uses this generator pattern.
+
 - **A rule-21 `[R-DOF]` regression I introduced and then repaired, disclosed rather than hidden:**
   running `scripts/build_dof_ledger.py` on the new bundle rebuilt the ledger from its fixed
   derivation and **silently dropped 16 hand-declared MISO entries** (41 → 25), among them
