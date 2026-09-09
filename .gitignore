@@ -1654,8 +1654,6 @@ results/calibration/pjm_fuelvintage_A/hourly/class_band_hourly_*.parquet
 # NOT deleted -- they stay on local disk until the owner rules on promotion.
 results/pjm_fuelvintage_H1_shard/
 results/calibration/pjm_fuelvintage_H2/
-results/calibration/pjm_fuelvintage_TP/
-results/pjm_fuelvintage_TP/
 # neiso-fuelvintage-1 working bundles: the 2019-2022 retiree-window fleet fix
 # (holdout touchpoints 2020/2021/2022) and the 2023-2025 training-span
 # bit-identity re-solve (charter task 3). Ignored so they can never reach a
@@ -1664,3 +1662,9 @@ results/pjm_fuelvintage_TP/
 # licence to delete: these stay on local disk until the OWNER rules on
 # promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
 results/calibration/neiso107_*/
+results/calibration/pjm_fuelvintage_TP/dispatch/
+results/calibration/pjm_fuelvintage_TP/floors/
+results/calibration/pjm_fuelvintage_TP/*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
