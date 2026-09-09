@@ -1867,42 +1867,84 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_POOLED: dict[str, dict[str, tuple[float, ...]]
 # implicated.  The defect can no longer be reintroduced from any caller: the
 # derive itself now raises if the join changes the row count, and the rule-23 pin
 # test asserts that row count too.
+#
+# CLOCK REPAIR RE-DERIVE (miso-248, 2026-09-09).  The values below are the output
+# of the SAME frozen estimator on the SAME correctly-paired frame, recomputed
+# after the SOURCE SERIES was repaired.  THE CITED DATA CHANGE, which is the
+# rule 23 [R-FROZEN-DERIVE] trigger and the only one:
+#
+#   86e45462 (2026-09-09) "Repair the SPP actual-LMP clock: the sidecar was on
+#   SPP's GMT market interval, the model is on fixed CST"
+#
+# rewrote data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet --
+# THE SERIES load_spp_hub_da() COUPLES AGAINST AND THE SERIES
+# eia_loader.measured_miso_spp_hub_prices() APPLIES AT SOLVE TIME.  Every
+# committed offset below the repair was drawn against a hub series six hours
+# ahead of the clock the model dispatches on, so every quantile moved.
+#
+# WHY IT IS NOT OPTIONAL.  The applied offer is pi_k(t) = spp_hub(t) + delta_k
+# and the ANCHOR is UNGATED DATA -- no ScenarioConfig field, no cache-key entry
+# -- so every solve after 86e45462 carries the repaired anchor whether or not it
+# carries repaired offsets.  Between the repair and this re-derive the applied
+# price was a MIXTURE: repaired-clock anchor, pre-repair-clock offsets.  Measured
+# at zero LP (results/calibration/_miso248_spp_rederive_phase0.json, P-2): the
+# anchor moved in 8,758 / 8,757 / 8,758 of 8,760 hours in 2023 / 2024 / 2025.
+#
+# WHAT IS **NOT** IN SCOPE, measured rather than assumed (P-1): the incumbent
+# MISO_SEAM_LADDER_BY_YEAR reproduces its derivation at 192/192 entries, max
+# abs 0.000000 -- derive() couples the seam flow duration curve to the MISO hub
+# DA and never reads an SPP price, so the repair cannot reach it and it is
+# untouched here.
+#
+# Rule 1 [R-STRUCT] / rule 14 [R-ACCURATE]: the trigger is the source-data
+# repair, NEVER a residual -- no criterion, band or actual appears in the
+# selection of anything below.  Rule 21 [R-DOF]: ZERO free parameters.  K stays
+# at SEAM_FLOW_TRANCHES; the midpoint-depth grid, the measured EIA-930 flow
+# series, the SPPNORTH_HUB anchor and the no-wash reconciliation are byte-for-
+# byte the incumbent ones; the no-wash clamp raised no note.  The miso-243
+# row-count pin holds in all three years (8,760 -> 8,760), so this is a source
+# change and not a recurrence of the cross-year join defect.
+#
+# Pre-registered in PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-
+# repaired-clock-2026-09-09.md; phase 0 and the G-DRIFT audit in
+# ADDENDUM-miso248-phase0-and-G-DRIFT-the-handoffs-table-name-is-corrected-
+# 2026-09-09.md.
 MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR: dict[
     int, dict[str, dict[str, tuple[float, ...]]]
 ] = {
     2023: {
         "SPP": {
-            "import": (13.44, 30.30, 50.82, 83.92, 123.33, 152.94, 152.94, 152.94),
+            "import": (10.62, 25.73, 43.07, 62.47, 83.98, 90.56, 90.56, 90.56),
             "export": (
-                -2.39,
-                -21.49,
-                -41.89,
-                -90.15,
-                -178.51,
-                -212.03,
-                -212.03,
-                -212.03,
+                0.24,
+                -10.16,
+                -25.87,
+                -56.57,
+                -153.04,
+                -166.65,
+                -166.65,
+                -166.65,
             ),
         },
     },
     2024: {
         "SPP": {
-            "import": (17.26, 37.56, 65.15, 139.78, 230.88, 230.88, 230.88, 230.88),
-            "export": (1.44, -12.98, -23.83, -33.09, -43.06, -48.41, -55.24, -66.13),
+            "import": (14.40, 33.33, 56.44, 109.27, 203.29, 203.29, 203.29, 203.29),
+            "export": (2.84, -6.48, -14.46, -20.33, -27.41, -32.26, -36.24, -47.02),
         },
     },
     2025: {
         "SPP": {
-            "import": (18.58, 41.90, 78.87, 152.95, 197.69, 237.84, 271.99, 338.83),
+            "import": (16.86, 37.50, 67.75, 140.17, 182.10, 232.18, 252.79, 290.12),
             "export": (
-                -2.37,
-                -19.00,
-                -31.11,
-                -44.88,
-                -70.49,
-                -122.45,
-                -254.63,
-                -254.63,
+                0.34,
+                -10.42,
+                -18.49,
+                -28.01,
+                -45.96,
+                -69.66,
+                -140.45,
+                -140.45,
             ),
         },
     },
@@ -1916,8 +1958,13 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_POOLED: dict[
     str, dict[str, tuple[float, ...]]
 ] = {
     "SPP": {
-        "import": (16.26, 36.58, 64.00, 133.20, 196.48, 237.83, 271.99, 338.83),
-        "export": (-0.74, -17.19, -31.07, -43.76, -59.56, -82.03, -94.69, -128.06),
+        # miso-248: re-derived on the 86e45462 clock repair, the same rule-23
+        # trigger and the same frozen estimator as the per-year table above.
+        # NO CONSUMER IN src/ -- this table is the rule-13 forward-story record
+        # and reaches no solve -- so it moves nothing; it is re-derived so the
+        # forward story and the backcast table stand on ONE clock.
+        "import": (13.78, 32.17, 56.75, 111.27, 181.99, 232.18, 252.79, 290.12),
+        "export": (1.19, -8.81, -18.30, -27.69, -40.28, -51.92, -68.67, -86.97),
     },
 }
 
