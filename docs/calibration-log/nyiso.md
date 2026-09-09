@@ -13396,3 +13396,71 @@ the charter, not absorbed**.
 container**, and a NYISO solve dies deep in `run_year` on a hard `FileNotFoundError`
 (capacity-deliverability, then `nyiso-interface-flows`) rather than no-opping.
 `scripts/regenerate_clean.py` must precede any solve and took **well over 30 minutes** here.
+
+## nyiso-fuelvintage-1 — 2026-09-09
+
+**BOTH PROMOTED. Keeper `2026-09-07-nyiso-213-summer-seam` → `2026-09-09-nyiso-221-fuelvintage-span`
+(CALIBRATED, C3c the lone ledgered caveat, criterion table BYTE-IDENTICAL to the superseded keeper
+— zero flips in either direction).** Owner ruling 2026-09-09, verbatim: *"these should be promoted
+as keepers on both 860 and gas shape counts regardless of inertness."*
+
+**What is in the keeper that was not before.** ONE registered field —
+`gas_electric_power_monthly_level` False → True, carried through `coal_prb_sigmoid_overrides` (44
+entries → 45, none dropped or re-valued) — plus the 2019–2022 EIA-860 retiree-window artifact,
+which carries no field at all. **ZERO free parameters**; the DOF ledger (13 entries, `n_residual`
+6) is carried verbatim and `scripts/gen_nyiso214_attestation.py` refuses to write the attestation
+if it is not. `authorized_price_tuning` NONE.
+
+**The fleet is the headline, and the measurement is two-sided.** The window restores 31 units /
+3,671.9 MW to NYISO's 2019–2022 fleets (Indian Point 2 + 3 = 2,050.9 MW nuclear; 1,487.0 MW coal).
+Restored coal carries **exactly 0.000000 TWh in 2023, 2024 and 2025** and **0.655400 TWh in 2022**
+(Dunkirk, 0 → 460.7 MW peak, Jan–Apr, displacing 0.5459 TWh of CC_CHP with the system total
+conserved at +0.0073 TWh). A channel demonstrably live where it should be and dead where it should
+be is stronger than "the residual is small". Charter task 3 is discharged at the array level by the
+v3 artifact-swap GATE T3; charter task 4 (the `NUCLEAR_MONTHLY_CF_BY_YEAR['NYISO']` caveat) was
+retired by the v3 run and replaced with its honest successor rather than deleted.
+
+**The gas seam is promoted AND inert, and both halves are the result.** `fuel_prices` and `mc_base`
+are byte-identical with the flag on in 2021, 2022, 2023, 2024 and 2025 — the Transco Z6 hub overlay
+covers 12/12 months of every year and is applied last (`resolve.py` :151 seam → :228 F923 prints →
+:229 hub). What arming buys is a **fallback level** under the rule 19 ordering, not a number, and
+it is claimed as nothing more. Matrix cell `gas_electric_power_monthly_level` **I → K**, with the
+DO-NOT-REDO condition unchanged: only a month the hub index does not cover reopens it.
+
+**Reported at the gate, not absorbed.** The 2022 touchpoint on the corrected fleet is **worse on
+price** — C3a −12.5 % → **−13.8 %**, C3b NRMSE 0.229 → **0.242** — because the restored Dunkirk
+coal pushes model prices further below actual. Rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`: the
+accurate input **stays** and the worse fit is a **discovered root cause** — a fleet missing Dunkirk
+was silently compensating for a NYISO 2022 price level that is too low for another reason. Rule
+30(c): a held-out year never downgrades the ISO, whose determination is the train-tier verdict.
+
+**NYISO's validation ladder is 2022 ALONE, and nothing is spent.** 2020 is data-blocked
+(`eia_generation_profiles.parquet` starts at 2021; NYISO alone of seven reaches that fallback,
+reporting zero utility-scale solar to EIA-930). **2021 is data-blocked too, found by attempting
+it**: `data/raw/NYISO-AS/requirements/` starts at 2022 and `nyiso_dynamic_reserve_requirements`
+fail-closes rather than reverting to the static requirements it replaces. Disarming it for one year
+was **refused** — a per-year recipe variant is not a touchpoint. Neither block is a governance
+state; both authorizations remain real and **unspent**. `final` NOT granted; the locked test
+(2019 / H1-2026) NOT spent.
+
+**No control solve** (rule 29(b)). G-DRIFT was anchored **by content** — the keeper's `git_sha`
+`51f2fc2d` is unreachable (squash-merged branch), so the capx D79 solve-surface fingerprint
+`48353917f7510af3` / 206 rows was recomputed over `main`'s history and reproduces exactly at
+`2084dc8a` and no later state. **Any later NYISO lane should expect the same and use that method.**
+It found two LIVE hunks, so the committed keeper is **not** a valid control for a zero-delta
+dispatch claim; the residual difference is entirely the SPP-49 simple-cycle heat-rate floor (3
+NYISO plants clamped to 9.000 MMBtu/MWh), CT_PEAKER losing 0.0030 / 0.0039 / 0.0139 TWh in
+2023/2024/2025 with the energy reappearing in the gas classes and 2025 hydro annual energy
+identical to six decimals.
+
+**Operational, for every lane.** Cloud solve shards that finish and are archived **without pushing
+lose their bundles** — this session's v3 run lost T1 and T2 that way (~2 h of LP), so v4 re-solved
+everything in its own container. Two contributing gotchas, both fixed here: `data/clean/` is
+gitignored and absent in a fresh container (a NYISO solve hard-fails without it; a full
+`regenerate_clean.py` takes 30+ minutes), and an untracked `results/_shared/` makes the tree dirty,
+which **refuses `--reuse-solved`** on the next shard — now gitignored.
+
+Record: `docs/RESULT-nyiso-fuelvintage-1-2026-09-09.md`,
+`docs/FINDING-nyiso-fuelvintage-1-2026-09-09.md`,
+`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`,
+`docs/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md`.
