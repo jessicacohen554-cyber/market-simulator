@@ -4841,7 +4841,8 @@
    "scored_at_date": "2026-09-06T03:59:42Z",
    "cache_epoch": "f04fd06348e1623d",
    "run_id": "neiso-2026-2050-t3-golden3-d60",
-   "session": "capx-D60-R3"
+   "session": "capx-D60-R3",
+   "known_defect": "capx D88 (owner ruling Q62, 2026-09-08): this run's solved fleet carries KNOWN in-horizon unit_id collisions from 2032 \u2014 a CCS-retrofitted legacy representative keeps its id and the fleet builder re-mints it for the next economic gas-CC build in the same zone, so the step-3 exit screen, the exempt/retired sets and the loss-year clock addressed two generators as one for the scored FC-5 corridor years. The defect is REPAIRED at HEAD (guard + vintage-stamped re-mint); this verdict was scored BEFORE the repair and a re-score on repaired code is PENDING, routed to the D63/D65-B batch. Additive provenance only \u2014 no verdict letter, score or leg status is changed by this field. See docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md \u00a72 and docs/handoffs/FINDING-capx-d88-2026-09-08.md."
   },
   "tier": "t3",
   "iso": "NEISO",

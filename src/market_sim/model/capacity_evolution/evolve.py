@@ -716,12 +716,41 @@ def evolve_fleet(
     # spends the capex. Inert on every backcast, hindcast and crossover year
     # by construction: this set is empty below ``ccs_retrofit_available_year``
     # (2028), so no such year's ledger, decision or cache key moves.
-    _retrofitted_ids = frozenset(entry["unit_id"] for entry in retrofit_log)
-    for _uid in _retrofitted_ids:
-        loss_tracker.pop(_uid, None)
+    # capx D88: the two uses take DIFFERENT ids, because a legacy
+    # representative is re-minted at conversion (``ccs.py``, additive
+    # ``to_unit_id`` on the log row).
+    #   * ``exit_exempt_unit_ids`` is matched against the CURRENT fleet's
+    #     ``g.unit_id`` in the step-3 screen below, which is the POST id;
+    #   * ``loss_tracker`` accumulated the unit's unabated loss years under
+    #     its PRE id, so that is the key to clear.
+    # Addressing both with one id silently mis-targets one of them: the
+    # exempt set would miss the just-retrofitted unit (it could then be
+    # exited in the year it spends the capex), and the loss counter would
+    # survive under a name nothing clears. A row with no ``to_unit_id`` was
+    # not re-minted, so both sets are the old frozenset exactly and every
+    # unaffected run is byte-identical.
+    _retrofit_renames = {
+        entry["unit_id"]: entry["to_unit_id"]
+        for entry in retrofit_log
+        if entry.get("to_unit_id")
+    }
+    _retrofitted_ids = frozenset(
+        _retrofit_renames.get(entry["unit_id"], entry["unit_id"])
+        for entry in retrofit_log
+    )
+    for _entry in retrofit_log:
+        loss_tracker.pop(_entry["unit_id"], None)
     if _rec:
         # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
-        # unit_id, not a new column. Detect by comparing fuel_type before/after.
+        # unit, not a new column. Detect by comparing fuel_type before/after.
+        # capx D88: the unit's id may have been RE-MINTED by the conversion,
+        # so the post-side lookup resolves through ``_retrofit_renames``
+        # first. Without that hop ``uid in _post_ccs`` is False for every
+        # re-minted unit and its ledger row is silently DROPPED — the fleet
+        # would convert MW the ledger never records, breaking the I4
+        # capacity-accounting invariant (which nets from_fuel/to_fuel off
+        # these rows). An un-renamed row resolves to itself, so the mapping
+        # is the identity wherever nothing was re-minted.
         _post_ccs = {g.unit_id: g for g in fleet}
         # capx D65-B-R step 0: carry the screen's own per-host SCALING record
         # onto the ledger row. Before this, ``retrofit_log`` -- which holds the
@@ -738,9 +767,17 @@ def evolve_fleet(
         events["ccs_retrofits"].extend(
             {
                 "unit_id": uid,
-                "mw": float(_post_ccs[uid].pmax_mw),
+                # capx D88: additive, and present ONLY on a re-minted row —
+                # the id the unit carries from this year on, so a consumer
+                # joining across years can follow the rename.
+                **(
+                    {"to_unit_id": _retrofit_renames[uid]}
+                    if uid in _retrofit_renames
+                    else {}
+                ),
+                "mw": float(_post_ccs[_retrofit_renames.get(uid, uid)].pmax_mw),
                 "from_fuel": _pre_ccs[uid],
-                "to_fuel": _post_ccs[uid].fuel_type,
+                "to_fuel": _post_ccs[_retrofit_renames.get(uid, uid)].fuel_type,
                 **{
                     _k: float(_rl_by_uid[uid][_k])
                     for _k in _CCS_RETROFIT_LEDGER_SCALING_FIELDS
@@ -748,7 +785,8 @@ def evolve_fleet(
                 },
             }
             for uid in _pre_ccs
-            if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]
+            if _retrofit_renames.get(uid, uid) in _post_ccs
+            and _post_ccs[_retrofit_renames.get(uid, uid)].fuel_type != _pre_ccs[uid]
         )
 
     # 3. Economic retirements (needs the prior-year dispatch). Units

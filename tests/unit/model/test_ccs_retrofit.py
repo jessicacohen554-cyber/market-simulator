@@ -1723,5 +1723,145 @@ class TestCleanTierSeamReachesTheRetrofitScreen(unittest.TestCase):
         self.assertAlmostEqual(log[0]["attr_post_usd_per_mwh"], 200.0, places=9)
 
 
+class TestUnitIdUniquenessAtConversion(unittest.TestCase):
+    """capx D88 — ``unit_id`` is a key, and a retrofit must not stale it.
+
+    ``legacy_bins.aggregate_fleet`` mints ``f"{fuel}_{bin}_{zone}"`` for every
+    aggregatable group's representative and runs at the end of EVERY evolution
+    year. A retrofit changes the unit's fuel to ``gas_cc_ccs`` (not
+    aggregatable, so it passes through keeping its id) while leaving that id
+    asserting the ``gas_cc`` group it just left — so the next unabated gas-CC
+    build in the same zone gets the SAME id re-minted for it. Measured
+    in-horizon on all nine NEISO T3 golden variants and ERCOT ``ff-t1f-d65br``.
+
+    docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2
+    """
+
+    def _legacy_rep(self, zone="Z0", ebin="h_class", online_year=2015):
+        """A legacy REPRESENTATIVE: the exact id ``aggregate_fleet`` mints."""
+        gen = _gas_cc(f"gas_cc_{ebin}_{zone}", zone=zone, online_year=online_year)
+        gen.efficiency_bin = ebin
+        return gen
+
+    def test_legacy_representative_is_reminted_with_its_vintage(self):
+        """The converted representative leaves the ``gas_cc`` id behind."""
+        rep = self._legacy_rep()
+        fleet, log = _screen([rep], HIGH_PRICES, year=2031)
+        self.assertEqual(len(log), 1, "fixture must retrofit for this to test")
+        self.assertEqual(rep.fuel_type, "gas_cc_ccs")
+        # The id no longer asserts the gas_cc group it left...
+        self.assertEqual(rep.unit_id, "gas_cc_ccs_h_class_Z0_r2031")
+        # ...and the ledger row carries BOTH names, so a cross-year join can
+        # follow the rename (additive: ``unit_id`` still holds the PRE id).
+        self.assertEqual(log[0]["unit_id"], "gas_cc_h_class_Z0")
+        self.assertEqual(log[0]["to_unit_id"], "gas_cc_ccs_h_class_Z0_r2031")
+
+    def test_reminted_id_frees_the_group_key_for_later_entry(self):
+        """The whole point: a later gas-CC build in the zone does not collide.
+
+        This is the defect's actual shape — a legacy representative retrofitted
+        in year Y, then any economic ``gas_cc`` build in the same zone in a
+        year >= Y, which ``aggregate_fleet`` collapses onto the id the
+        converted unit used to hold.
+        """
+        rep = self._legacy_rep()
+        _screen([rep], HIGH_PRICES, year=2031)
+        # What the builder mints for whoever occupies the group next.
+        later_entrant = self._legacy_rep()
+        ids = [rep.unit_id, later_entrant.unit_id]
+        self.assertEqual(len(set(ids)), 2, f"ids collide: {ids}")
+        # And the fleet SoA builder accepts the pair (the guard is silent).
+        fa = generators_to_fleet_arrays([rep, later_entrant], ["Z0"], hours=T)
+        self.assertEqual(sorted(fa.unit_ids), sorted(ids))
+
+    def test_two_conversions_in_one_zone_do_not_collide_with_each_other(self):
+        """Why the vintage stamp is load-bearing, not decoration.
+
+        ``gas_cc_ccs_{bin}_{zone}`` alone is INSUFFICIENT: the T3 record shows
+        the same zone converting a second, third and fourth representative
+        (``bau-prera``: 2031/2040/2042/2044), and ``gas_cc_ccs`` does not
+        aggregate — so two converted representatives would collide with EACH
+        OTHER under an unstamped id.
+        """
+        first = self._legacy_rep()
+        _screen([first], HIGH_PRICES, year=2031)
+        # The re-minted group key, again — carried by whatever entered the
+        # group after the first conversion. The T3 record's own second
+        # conversion is 2040; this fixture uses 2032 because the 24-hour
+        # $60 fixture stops clearing its payback once the §45Q window closes
+        # (2033 on), and the year that matters here is only that it DIFFERS.
+        second = self._legacy_rep()
+        _screen([second], HIGH_PRICES, year=2032)
+        self.assertEqual(first.unit_id, "gas_cc_ccs_h_class_Z0_r2031")
+        self.assertEqual(second.unit_id, "gas_cc_ccs_h_class_Z0_r2032")
+        self.assertNotEqual(first.unit_id, second.unit_id)
+
+    def test_campd_per_plant_tranche_keeps_its_id(self):
+        """A CAMPD tranche id is a PLANT key, not a group key — never re-mint.
+
+        Nothing can re-mint it, so renaming it would only break the cross-year
+        joins that address it (``_plant_codes_from_unit_ids``, the D42/D53
+        exempt sets) for no gain.
+        """
+        gen = _gas_cc("CC_REGULAR_Central_p55048_econ", zone="Z0")
+        gen.efficiency_bin = "h_class"
+        gen.is_campd_bin = True
+        _fleet, log = _screen([gen], HIGH_PRICES, year=2031)
+        self.assertEqual(len(log), 1)
+        self.assertEqual(gen.unit_id, "CC_REGULAR_Central_p55048_econ")
+        self.assertNotIn("to_unit_id", log[0])
+
+    def test_non_legacy_id_is_left_alone(self):
+        """The predicate is an EXACT match on the one re-mintable id family."""
+        gen = _gas_cc("gas_cc_new_2028c2030_2", zone="Z0")
+        gen.efficiency_bin = "h_class"
+        _fleet, log = _screen([gen], HIGH_PRICES, year=2031)
+        self.assertEqual(len(log), 1)
+        self.assertEqual(gen.unit_id, "gas_cc_new_2028c2030_2")
+        self.assertNotIn("to_unit_id", log[0])
+
+
+class TestFleetArraysUnitIdGuard(unittest.TestCase):
+    """capx D88 — the SoA builder refuses a fleet whose ids are not unique.
+
+    One set build per call, no decision change. It fails loudly at the one seam
+    every LP fleet passes through instead of mis-deciding in the five consumers
+    that address units by ``unit_id`` (``retirements.idx_of`` is
+    last-write-wins; ``exit_exempt_unit_ids``, the ``retired`` set-diff and
+    ``_pre_entry_ids_all`` are set memberships with no fuel to qualify by;
+    ``loss_years`` is one counter; the D57 sell-offer stack double-offers).
+    """
+
+    def test_unique_fleet_builds(self):
+        fa = generators_to_fleet_arrays([_gas_cc("a"), _gas_cc("b")], ["Z0"], hours=T)
+        self.assertEqual(list(fa.unit_ids), ["a", "b"])
+
+    def test_duplicate_raises_and_names_the_offending_ids(self):
+        with self.assertRaises(ValueError) as ctx:
+            generators_to_fleet_arrays(
+                [_gas_cc("dup"), _gas_cc("dup"), _gas_cc("ok")],
+                ["Z0"],
+                hours=T,
+                iso="NEISO",
+                year=2037,
+            )
+        msg = str(ctx.exception)
+        self.assertIn("duplicate unit_id", msg)
+        self.assertIn("'dup'x2", msg)  # named, with its multiplicity
+        self.assertNotIn("'ok'", msg)  # and only the offenders
+        self.assertIn("NEISO", msg)
+        self.assertIn("2037", msg)
+
+    def test_guard_is_silent_on_the_uncollided_retrofit_pair(self):
+        """The D88 repair's own output passes its own guard."""
+        rep = _gas_cc("gas_cc_h_class_Z0")
+        rep.efficiency_bin = "h_class"
+        _screen([rep], HIGH_PRICES, year=2031)
+        entrant = _gas_cc("gas_cc_h_class_Z0")  # re-minted for the next build
+        entrant.efficiency_bin = "h_class"
+        fa = generators_to_fleet_arrays([rep, entrant], ["Z0"], hours=T)
+        self.assertEqual(len(set(fa.unit_ids)), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

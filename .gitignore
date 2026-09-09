@@ -1484,3 +1484,9 @@ results/calibration/nyiso220_arm*/
 
 # ercot-259 screen probes (rule 29(c) keep-out-of-main; rule 31 keep-on-disk)
 results/calibration/ercot259_screen_*/
+
+# capx D88 screen bundles (rule 29 [R-SCREEN] (c) + rule 31 [R-RETAIN]): a screen
+# bundle must never reach `main` — gitignoring it discharges that duty in full,
+# and rule 31 forbids deleting it from local disk before the owner rules on
+# promotion. Every number the lane cites lives in the PRECOMMIT/FINDING.
+results/capxd88-screen/
