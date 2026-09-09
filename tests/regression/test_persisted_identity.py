@@ -712,11 +712,39 @@ def _fields_explaining_the_key_move() -> list[str]:
 
     from market_sim.config import scenarios as scen
 
+    # REPAIRED 2026-09-09 by capx D91 (owner ruling Q64). This search only works
+    # if its baseline is byte-identical to the payload ``cache_key`` hashes, and
+    # it had drifted from that payload in TWO places -- EITHER of which alone is
+    # enough to make it silent. Measured on the pre-repair tree, over the four
+    # combinations (docs/handoffs/FINDING-capx-d91-2026-09-09.md section 3):
+    #
+    #     frozen drop  retired re-insert   baseline           culprit found
+    #     no           no                  d3a7d2f0f38c1f73   []
+    #     no           yes                 235aae47427a4422   []
+    #     yes          no                  e8bc053241036d6f   []
+    #     yes          yes                 080aed989d20cbda   ['pjm_seam_neighbour_hourly_ladder']
+    #
+    # Only the last row reproduces the digest the assertion itself reports, and
+    # only it names the field. So on the f2a834de regression this diagnostic
+    # returned [] and the failure printed "No SINGLE field explains the move ...
+    # bisect against the commit that last set the pin" -- a hand-bisect
+    # instruction -- when ONE field did explain it. The guard fired; only its
+    # blame was wrong, and that is why the regression sat on main.
+    #
+    # (1) Registered fields drop at their FROZEN DECLARATION, which is what
+    #     ``cache_key`` drops at since owner ruling Q20 / (b'-1) -- NOT at the
+    #     LIVE default this loop used to read. For an ARMED field the two differ
+    #     (``ccs_retrofit_capex_co2_scaling`` is True live, False frozen), so
+    #     the old loop popped fields ``cache_key`` KEEPS.
+    # (2) ``_CACHE_KEY_RETIRED_FIELDS`` must be re-inserted, as ``cache_key``
+    #     does; the old baseline omitted all of them.
     payload = asdict(ScenarioConfig())
-    defaults = ScenarioConfig()
+    drop_at = scen.cache_key_drop_defaults()
     for name in scen._CACHE_KEY_OPTIONAL_FIELDS:
-        if payload.get(name) == getattr(defaults, name):
+        if name in drop_at and payload.get(name) == drop_at[name]:
             payload.pop(name, None)
+    for name, retired_default in scen._CACHE_KEY_RETIRED_FIELDS.items():
+        payload.setdefault(name, retired_default)
     payload = scen._normalize_cache_key_paths(payload, scen._cache_key_path_roots())
 
     for candidate in sorted(payload):

@@ -22,11 +22,24 @@ A record that reproduces only at declaration is capx **D79**'s DESIGNED re-key
 here and repaired nowhere — re-declaring a moved row belongs to the ISO lane
 that re-solves its frontier on the new table.
 
-**The gates** are :func:`scripts.lib.key_provenance.check_exceptions`'s five;
+**The gates** are :func:`scripts.lib.key_provenance.check_exceptions`'s six;
 read that docstring for what each one means. In short: a SIXTEENTH mismatch
 fails (G1), and so does a listed entry that has started reproducing (G2) —
 a stale exception is its own defect, and this script must never pass quietly
-over one.
+over one — and so does a new UNREGISTERED ``ScenarioConfig`` field (G6).
+
+**WHAT G1–G5 CANNOT SEE, AND WHY G6 EXISTS.** G1–G5 are payload-driven: they
+ask whether today's rules can reproduce a recorded literal from the config that
+record STORED. A field added after a bundle solved is absent from that bundle's
+payload by construction, so it never enters their arithmetic — while
+``ScenarioConfig.cache_key`` hashes ``asdict(self)`` and does materialize it.
+At ``fc927c2f`` that gap let this script report EXIT 0, *"15 known, ZERO
+unknown"*, while 199 of 200 committed records could not be reconstructed to
+their own recorded key because ``pjm_seam_neighbour_hourly_ladder`` landed
+without a registration entry (capx D91, owner ruling Q64,
+``docs/handoffs/FINDING-capx-d91-2026-09-09.md``). **G6 is the leg that would
+have been red the day that field landed.** Read the "ok:" line below as the
+scope it states and nothing wider.
 
 Usage::
 
@@ -54,6 +67,7 @@ from scripts.lib.key_provenance import (  # noqa: E402
     census,
     check_exceptions,
     load_exceptions,
+    unregistered_schema_drift,
 )
 
 
@@ -106,6 +120,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     for name, count in sorted(record["mismatch_by_class"].items()):
         print(f"    class {name:34s} {count}")
+    drift = unregistered_schema_drift(record)
+    exposed = sorted({p for v in drift.values() for p in v})
+    print(
+        f"  G6 unregistered schema drift: {len(drift)} field(s) off the ratchet"
+        f"{' — ' + ', '.join(sorted(drift)) if drift else ''}"
+        f"{f' (exposed by {len(exposed)} record(s))' if drift else ''}"
+    )
     if record["unclassified_unreachable_commit"]:
         print(
             f"  NOTE: {record['unclassified_unreachable_commit']} row(s) could not "
@@ -143,7 +164,10 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 0
         return 1
-    print("\nok: every mismatch is a known, cited, recipe-verified exception")
+    print(
+        "\nok: every mismatch is a known, cited, recipe-verified exception, and "
+        "no unregistered ScenarioConfig field is off the G6 ratchet"
+    )
     return 0
 
 
