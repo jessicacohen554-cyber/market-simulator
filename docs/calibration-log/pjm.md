@@ -5062,3 +5062,110 @@ Artifacts: `results/calibration/FINDING-pjm173-seam-measured-gas-regate-2026-09-
 `docs/handoffs/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md`. Arm bundle
 `pjm173_fa_arm_2022` is gitignored (`2482cc81`, rule 31 `[R-RETAIN]`) and **retained on local disk**,
 not deleted.
+
+---
+
+## pjm-d4-1 — 2026-09-09 — the ST_GAS card resolves to ONE channel; the allocation family is FALSIFIED and the one arm that works must be REFUSED (ZERO LP, keeper untouched)
+
+**Branch** `claude/pjm-d4-1-qa8gwk` · **Keeper UNCHANGED** `2026-09-09-pjm-fuelvintage-ep-level`.
+**No LP solved, nothing promoted, nothing registered, no holdout year touched.** Every number is a
+committed artifact or an on-recipe `run_year(..., fleet_only=True)` build through
+`replay_keeper.run_year_kwargs` (3,789 rows, the keeper's own fleet), armed through the same
+`prb_overrides` bag `replay_keeper --set` uses. Control: G-CTRL form 4 **IMPAIRED** (G-DRIFT still
+not runnable for PJM), bands ±0.25 % / ±2.4 % CT_PEAKER — pre-registered, and it never bound, because
+every arm/control pair was built in one process at one HEAD.
+
+**THE MERIT ORDER IS NOT INVERTED — the card's own premise fails.** Capacity-weighted `mc_base` puts
+ST_GAS **above** CT_PEAKER by **+1.276** (2024) and **+1.835** (2025) $/MWh and within **0.426** of it
+in 2023 (below in 49.6 % of hours, a coin flip); ST_GAS is above CC_REGULAR by **+19.7 / +20.4 /
++25.5** with **0 %** of hours below. The CT_PEAKER displacement needs only **adjacency**, not
+inversion — so there is **ONE channel (the floor), not two**, and the handoff's step-4 discriminator
+resolves negative.
+
+**C8 IS PURELY PROVENANCE AND GATES IN EXACTLY ONE YEAR.** ST_GAS is materiality-SKIPPED in five of
+six years (1.5–1.8 % of ISO load) and material only in **2025** (2.2 %), whose failure text names
+**only** the D-4 per-unit conduct leg (plants 3131/3138/3148/3775/593). **The 30 % cap is not what
+fails PJM** — the grounded-above-budget escalation is available — so the mandate's **LEVEL need not
+move and its MEMBERSHIP must.**
+
+**RULE 19 DISCHARGED FROM THE ARTIFACT**: `st_netload_drag` is the sole mechanism forcing PJM ST_GAS
+in D-2 in all six years and the sole ST_GAS floor in D-4. **RULE 17 CONVICTION**: 41 of 58 metered
+floored plant-years carry a measured median of **0.000 MW over the floor's own binding hours** —
+73.8 % of the rider-covered forced energy — with a **bimodal, no-overlap** split (FAIL zero-share
+0.532–0.986 vs pass 0.000–0.457), against a declared **h0-23** window whose stated justification is
+ERCOT's *"there is no hour the class's own driver evidence says it is offline"*. Handoff option (c)
+is **closed**: for an all-hours window the D-4 `window` check is vacuous by construction, so the old
+12-row form measured nothing here.
+
+**NEW NUMBER — the mandate against the METER, not the model.** Forced ÷ measured class energy =
+**83.1 / 173.7 / 104.1 / 53.6 / 33.8 / 48.4 %** for 2020-2025: in 2021 the floor alone mandates 74 %
+more energy than PJM's entire gas-steam fleet metered that year. And **2024 is the clean rule-1 case**
+— ST_GAS is dead on actual (m/a **1.00**) with **36.6 %** of it forced.
+
+**THE ALLOCATION FAMILY IS FALSIFIED PRE-SOLVE** (rule 29 `[R-SCREEN]` clause (0)). Conduct failures
+on the `{min_gen>0}` basis — a **superset** of `at_floor_mask`, i.e. the more forgiving one:
+
+| year | C | M `merit_allocation` | P `min_run_persistence` | MP both | L `layup_window_mask` |
+|---|---|---|---|---|---|
+| 2023 | 4 | **4** | **4** | **5** | **1** |
+| 2024 | 2 | **2** | **2** | **2** | — |
+| 2025 | 2 | **2** | **2** | **3** | **0** |
+| mandate TWh 2025 | 11.5063 | 11.5063 | 11.5332 | 11.5332 | **7.5974** |
+
+**Not one plant flips FAIL → pass under M, P or MP in any year**, and the composition pjm-177 §5
+item 3 explicitly named as the fix is **strictly worse**, adding the same conviction (plant 3148) in
+both scored years. M's own contract is honoured exactly — aggregate preserved 8.8093 → 8.8093 TWh,
+max hourly |Δ| **0.000000 MW**, 42 of 3,789 rows move all ST_GAS, `mc_base` max |Δ|
+**0.0000000000** — so this falsifies the **object**, not the implementation. **Why it cannot work:**
+the fleet-total mandate hours are supportable by the meter (mandate h ÷ 2 × meter-nonzero h =
+**0.91 / 0.70 / 0.76**) but the **distribution** is wrong — plant 3775 is floored **87 % of the year
+on a unit whose meter reads non-zero in 8 % of it** — and `merit_allocation`'s signal is bid heat
+rate, which is not duty (its own docstring: Spearman vs online fraction only −0.286, p = 0.49, 2025).
+
+**THE LAY-UP MASK CLEARS THE GATE AND IS REFUSED.** `netload_drag_layup_window_mask` (ercot-256)
+takes convictions to **0 (2025) / 1 (2023)** — but by cutting the mandate **~34 % in both years**
+(a LEVEL change, not an allocation one), and it is registered in `_BACKCAST_ONLY_OVERLAY_FIELDS`,
+so under rule 13 `[R-MEASURED]` it has no forward analogue and cannot satisfy rule 17 clause (c).
+**Reported as a diagnostic, refused as a fix — that it is the one arm that works is a reason for
+suspicion, not adoption.** It does quantify the object: **~34 % of PJM's ST_GAS drag mandate sits
+inside measured economic lay-up.** Its own residual failure (plant **3149**, 14.3 % duty in 2023,
+never classified by the lay-up derive) argues for membership over lay-up **independently of rule 13**.
+
+**THE ROOT CAUSE AND THE SUCCESSOR, NOT ARMED HERE.** `data.outages.ST_GAS_PEAKER_PLANTS` already
+exists to keep *"peaker-class ST_GAS plants: patchy/spiky run rate (run only when called)"* out of the
+reliability min-gen floor — its CAISO members admitted on *"online only 0.4–2.5 % of hours"*. **It
+names 6 ERCOT plants, 3 CAISO plants and NO PJM PLANT**, while PJM's plant **3161 runs 2.3 / 4.3 /
+3.0 % of the year on 862 MW and is floored 7,666–7,885 h**. Every PJM ST_GAS plant below ~25 % meter
+duty is convicted in every year it is floored, with **zero passes** (3775 15.4 % duty 6F/0p, 384
+16.4 % 4F/0p, 593 23.6 % 6F/0p). **Stated honestly:** the split is imperfect above that (3138 at
+58.4 % and 3131 at 60.1 % are also convicted), so membership is the **largest** part of the defect,
+not provably all of it.
+
+**CARD 2 RE-MEASURED (committed artifacts).** The fossil surplus is **2–90× larger in the holdout
+years than the training years** (+35.10 / +26.87 / +34.46 for 2020-22 against +7.90 / +0.36 / +19.24
+for 2023-25) and its **composition is not stable** — 2020 is carried by COAL (+21.25), 2021/2022 by
+CC_REGULAR (+27.59 / +24.84) — so one mechanism is unlikely to own both. The DA-virtual phantom-demand
+position is negative in **exactly** the three touchpoint years (−2.62 / −11.16 / −14.03) and ≈0 in the
+training years. ST_GAS is 14–33 % of it, so card 1 could not close it even if fully repaired.
+**Routed to PJM's price-formation frontier (pjm-142), not armed.** Rule 30(c): **none of this
+downgrades PJM.**
+
+**GATES** (baselined on this tree; it changes **no source code** — the diff is two docs, a
+`.gitignore` block and PJM's matrix shard): `check_mechanism_matrix --base origin/main` **integrity
+OK / keeper stamps match / §5.x prose headers match**; `audit_keepers --iso PJM` **PASS 0/0**;
+`build_status --check --iso PJM` **in sync**; `check_cache_key_registration --base origin/main`
+**green** (the `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT` RED the handoff expected is no longer present on
+`main`); `check_registry_payload_parity` fails on the **five pre-existing `ercot262_arm_*`** bundles
+only (ERCOT's, committed on `main` — rule 25, left alone), this tree adds none;
+`pytest tests/scoring` **15 failed / 1,533 passed** — all in `test_golden_manifest_provenance.py` and
+`test_registration_marker_gate.py`, files this diff cannot reach (the handoff's expected baseline was
+16, i.e. `main` moved by one, and this session adds none); the three matrix-shard unit tests **33
+passed**.
+
+**Rule 28 duty discharged**: PJM's shard alone re-stamped, `netload_drag_floors` cell **stays K** with
+both sub-gates now adjudicated **R for PJM**.
+
+Artifacts: `docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md`,
+`docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md`. **No bundle was written** — no LP ran — so
+rule 31 `[R-RETAIN]` has nothing on disk to preserve; the open promotion question is instead whether
+pjm-177's `netload_drag_min_run_persistence` should now be answered **NO** on this evidence.

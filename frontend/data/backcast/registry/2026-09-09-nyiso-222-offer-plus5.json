@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-nyiso-222-offer-plus5",
+  "label": "nyiso 222 offer plus5",
+  "date": "2026-09-09",
+  "shorthand": "nyiso-222-offer-plus5",
+  "definition": "owner-directed +5% on the rule-1 authorized offer-curve bands",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-09-nyiso-222-offer-plus5.js",
+  "bundle": "results/calibration/nyiso222_offer_plus5"
+}
