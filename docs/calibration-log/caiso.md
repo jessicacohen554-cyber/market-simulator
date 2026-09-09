@@ -14246,3 +14246,90 @@ diff** — the NYISO-148 silent-part failure mode.
 
 No keeper change, no `ScenarioConfig` field, no offer-curve channel, no mechanism
 tested (rule 28(b) not engaged). Reproduction: `_caiso265_m1.json`. Next: caiso-266.
+
+## caiso-266 — 2026-09-08 — the shoulder-month object IS the belly object, verified by composition; the renewable-floor family is killed with zero LP; the offer-level door reproduces caiso-229's sign closure on the NEW classifier. ZERO LP, nothing armed, keeper unchanged.
+
+Keeper **`2026-09-06-caiso-260-b1-demand` UNCHANGED — CALIBRATED** (rubric v3.6,
+8 scored, 0 FAILs, one ledgered C3c caveat). No LP built, no solver called, no
+`ScenarioConfig` field, no derive re-run, no bundle, no run registered, no
+determination moved. Marker and freeze untouched; every read inside 2023–2025.
+Pre-registration `PRECOMMIT-caiso266-belly-margin-identity-2026-09-08.md`
+(M11/M12 rules fixed before either was computed; its §0 discloses against
+interest that the M0–M10 reads preceded it). Instrument
+`scripts/probes/_caiso266_belly_margin_identity.py` →
+`_caiso266_belly_margin_identity.json`.
+
+**RULE 19 IDENTITY: CONFIRMED BY MEASUREMENT.** caiso-265 §6 disclosure 4 asked
+for this. The belly-hour bin contributions reproduce caiso-131's `actual < $60`
+term to two decimals (+5.735 vs +5.72, 2023), and the carrying hours' composition
+is the standing over-import / CC-side lane. Same object, seasonal axis.
+
+**M0 — not a denominator artifact.** `corr(ABSOLUTE $/MWh error, actual price)` =
+**−0.572** against the percentage version's −0.575 over the same 36 training
+months. The bias is bigger *in dollars* where prices are lower.
+
+**M1 — the gap is generated below $20 actual** (the `< $20` bins carry
+**146 / 119 / 107 %** of the annual gap) and refunded above $45. The market spends
+**625 / 739 / 723** hours in `[$0, $15)`; the model spends **251 / 259 / 279**.
+
+**M3 — THE FLOOR KILL (new).** Split by the model's own price regime, the hours
+in which it sits at the renewable/dump floor carry **−0.287 / +0.102 / −0.129**
+$/MWh of gaps of +1.331 / +2.352 / +1.728, and the thermal-marginal regime carries
++1.513 / +2.032 / +1.626. **Where the model spills, it prices correctly.** Floor
+depth, a graduated curtailment offer curve and a re-derived
+`renewable_keep_running_value` are all dead for this residual — no LP should be
+spent there.
+
+**The carrying population:** 1,001 / 1,222 / 1,020 h (h6–h15, Mar–Jun weighted),
+model λ $29.28 / $26.04 / $26.45, market $9.40 / $6.81 / $10.39, model **dump
+0.000 MW** in every one.
+
+**M10 — same energy, one third the committed fleet.** On the bench's own 85-plant
+CAMPD panel: measured **online capacity 7,204 / 7,080 / 5,952 MW at 0.349 / 0.373 /
+0.383 loading**, generation 2,511 / 2,641 / 2,278 vs the model's 2,130 / 2,459 /
+2,351 — **+381 / +183 / −72 MW**. The volume is right; the commitment is not. This
+reproduces caiso-229 Door B's closure independently.
+
+**§5.1 CORRECTION AGAINST INTEREST.** Comparing the model's gas to EIA-930
+`NG: NG` reads "the model is 3.6–5.5 GW short of belly gas". **That is wrong** —
+`NG: NG` is the whole CISO BA, not the model's 85-plant panel. Same class of error
+as the caiso-255b storage basis caiso-256 corrected.
+
+**M11 (pre-registered) — CLOSED.** Re-asked under rule 28(a) only because the
+caiso-254/255/257 classifier re-cut is new evidence about the *instrument*.
+0 of 4 pooled CC_REGULAR bands sit below armed: econ_low 1.066 / econ_high 1.072 /
+peak 1.386 are **exactly** the armed values, and `committed` is measured **1.030**
+against an armed 1.000 — a measured-faithful repair moves the belly price **UP**.
+(`econ_low` reads below armed in 2 of 3 per-year values; a per-year multiplier is
+inadmissible under rule 1 condition (b) and choosing between them is selection on
+the residual, refused by condition (c).)
+
+**M12 — my pre-registered bar FAILED (1.62 / 1.69 / 1.88× against a 2× bar) and I
+record that rather than re-cutting it.** The substantive kill is an unregistered
+statistic: in **70.5 / 81.7 / 56.2 %** of the carrying hours the market cleared
+**below the carbon + VOM cost of a CAISO CC burning FREE GAS**
+($16.01 / $16.94 / $13.90 at CARB $33.03 / $35.23 / $28.06 and the measured 7.442
+base HR). CARB alone puts a $12–15/MWh floor under every CA gas offer.
+
+**Three routes that fail, so nobody re-spends them.** (1) Representing the missing
+**local** curtailment (caiso-232) moves this residual the **wrong way** — as a
+derate it raises λ; as sub-zonal topology it is `caiso_fsno_subzonal_topology` = R
+plus caiso-230 DO-NOT-REDO item 2. (2) Relaxing the binding DSW→CA corridor
+(spread +$6.03 / +$11.38 / +$9.78 here) is closed on the **measured volume** — the
+model already over-imports by **+1,627 / +1,715 / +1,608 MW** in these hours and
+**+8.9 / +8.5 / +3.4 TWh** annually, so the over-import is *helping* λ. (3)
+Storage is fenced by caiso-256 on the battery-only basis; what survives is a
+**shape** statement (the model charges its correct annual energy in 2,526 / 2,613 /
+2,781 h vs the meters' 4,754 / 4,790 / 4,392, over-charging the carrying hours by
++412 / +450 / +663 MW) belonging to the unfunded S2 item.
+
+**The honest name for the residual is a conduct limitation** — reality's belly is
+priced by price-taking supply below its own cost floor, which a cost-based LP has
+no admissible mechanism to represent. The one instrument that would turn that
+inference into a measurement is the **thermal side of the committed OASIS
+`PUB_DAM_GRP` corpus** (what CAISO's gas fleet bids at Pmin in the belly); that is
+an owner funding question (gitignored corpus, re-fetch only), not a lever.
+
+Matrix (rule 28(b)): evidence appended to `negative_renewable_offers` and
+`gas_offer_curve_tranches` in the CAISO shard; **no verdict moved**. Next:
+caiso-267.
