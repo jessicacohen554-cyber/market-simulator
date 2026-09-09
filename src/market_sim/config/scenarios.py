@@ -1335,6 +1335,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # nyiso-119 discipline).
     "netload_drag_layup_window_mask",
     "netload_drag_merit_allocation",
+    # pjm-177 MIN-RUN COMMITMENT PERSISTENCE for the ST_GAS net-load drag
+    # (GATED default off): dropped from the hash at its default — the off path
+    # passes no table to the applier and never runs the convolution, so it is
+    # byte-identical by construction. An armed run moves the same mandate into
+    # different hours (a different min_gen, so a different dispatch) and hashes
+    # distinctly, keeping the control/arm A/B off one cache entry. Registered
+    # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "netload_drag_min_run_persistence",
     # miso-180 anchored SPREAD-ONLY dispersion graft (GATED default off):
     # dropped from the hash at its False default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path returns before
@@ -2109,6 +2117,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "netload_drag_layup_window_mask": "False",
     "netload_drag_merit_allocation": "False",
+    # Added by pjm-177 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "netload_drag_min_run_persistence": "False",
     # Added 2026-08-22 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hindcast_verified_announced_exits": "False",
@@ -11314,6 +11325,84 @@ class ScenarioConfig:
     # 2026-09-08) over a measured pooled online-fraction ordering, which the
     # same measurement shows is not year-stable either.
     netload_drag_merit_allocation: bool = False
+
+    # pjm-177 MIN-RUN COMMITMENT PERSISTENCE for the ST_GAS net-load drag
+    # (default off). The drag's HOUR-ELIGIBILITY is replaced — not stacked on,
+    # not re-levelled (rule 19 [R-ONE-MECH]): same rows, same membership, same
+    # (slope, intercept, cap), same mechanism id, same availability clip. Only
+    # WHICH HOURS the same annual mandate lands in changes.
+    #
+    # THE DEFECT, and it is an INTERNAL INCONSISTENCY rather than a residual
+    # observation. ``floor_frac`` is read off the net-load curve hour by hour,
+    # so the floor collapses to zero whenever net-load falls below the curve's
+    # own zero-crossing and returns when it rises — i.e. the mechanism that
+    # represents a gas-steam boiler's COMMITMENT cycles that boiler on the
+    # diurnal net-load wave. ``ST_GAS_COMMITMENT_PARAMS`` (config.constants,
+    # NREL/SR-5500-55433 Kumar et al. 2012) says in this same repository that
+    # such a boiler cannot do that: min-run 24 h for efficient steam and 48 h
+    # for older subcritical, because "a stop-start is dearer than idling at
+    # minimum load over a sustained event". The drag's own binding excursions
+    # on the PJM keeper have a MEDIAN LENGTH OF 7-8 h (pjm-177 T3).
+    #
+    # THE MEASUREMENT, PJM 2023-25, raw CAMPD opTime on the keeper's own
+    # ST_GAS census (rule 14 [R-ACCURATE]; the extraction reproduces the
+    # committed bench series at hourly r = 1.0000):
+    #   * the measured fleet's ONLINE capacity is FLAT across the day —
+    #     hour-of-day max/min 1.19 / 1.07 / 1.05, and hour-of-day explains
+    #     R^2 = 0.003 / 0.001 / 0.001 of it. The drag's mandate has ratio
+    #     3.98 / 3.18 / 2.40 and the model's ST_GAS dispatch 5.15 / 4.60 / 3.23.
+    #   * measured plant-online run lengths are MULTI-DAY — median 25 / 28 /
+    #     57 h, 54 / 57 / 68 % of runs >= 24 h — bracketing the table's own
+    #     24 h / 48 h windows, which is corroboration, NOT the identification.
+    #   * net-load explains only R^2 = 0.34-0.37 of the measured online mask
+    #     (month alone explains 0.45-0.53, so most of that is seasonal
+    #     co-movement), against 0.92-0.95 for the drag's own mandate; WITHIN
+    #     the bottom load decile rho(online, net-load) collapses to
+    #     0.14 / 0.15 / 0.28.
+    # The driver's LEVEL is exonerated and untouched; its HOUR axis is not.
+    #
+    # When True each floored row's ``floor_frac`` becomes a CENTRED CIRCULAR
+    # MOVING AVERAGE over that row's own ``min_run_hours``, re-clipped to
+    # [0, cap]. Circular because the LP's 8760 clock is cyclic (the same
+    # convention the storage SOC boundary uses); centred so the transform is
+    # mean-preserving. The window is resolved per row from the class's frozen
+    # ``*_COMMITMENT_PARAMS`` table by the row's own heat rate — the identical
+    # lookup ``model.commitment._commitment_params`` performs for a legacy
+    # generator. It CANNOT come from ``gen.min_run_hours``: every PJM ST_GAS
+    # row is a CAMPD bin and every one of them carries ``min_run_hours = 0``
+    # (the reason ``class_commitment_overrides`` exists at all), so the table
+    # is the only zero-DOF source.
+    #
+    # Rule 21 [R-DOF] / rule 24 [R-REGISTRY]: ZERO free parameters. The window
+    # is the frozen physics table keyed by the fleet's own heat rates; nothing
+    # is derived, fitted or swept, and no coefficient moves (rule 23
+    # [R-FROZEN-DERIVE] — this is the driver's FORM, never its numbers).
+    # Rule 18 [R-PHYSICS]: eligibility is unit physics (heat rate -> min-run),
+    # never a class name. Structurally inert on a WINDOWED floor: only the
+    # all-hours ST_GAS boiler applier passes a table, so the CT_PEAKER
+    # evening-ramp limb can never be smoothed across its own window (fast-start
+    # peakers genuinely cycle — min-down <= 2 h — so persisting them would be
+    # physically wrong as well as rule-17-[R-FLOOR-WINDOW]-wrong).
+    # Rule 13 [R-MEASURED]: forward-native. A forecast year has a net-load and
+    # heat rates, so the transform regenerates and responds to changed
+    # conditions exactly as the underlying curve does; it is NOT registered in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS.
+    # Rule 25 [R-ISO-SCOPE]: no per-ISO number exists to transfer — the table is
+    # a shared NREL-sourced constant and each ISO reads its own fleet's heat
+    # rates and its own net-load.
+    # Rule 20 [R-FORCED-BUDGET], stated at the gate rather than discovered: the
+    # transform is mean-preserving on the FRACTION but not on the DELIVERED
+    # floor, because the availability clip is applied after it. Measured exactly
+    # on the PJM keeper's own fleet arrays before any solve, the delivered
+    # mandate moves 8.809 -> 8.848 TWh (+0.44 %) in 2023 while 3.332 TWh of it
+    # is reallocated in time, and the load-decile-1 floor moves 4 -> 370 MW
+    # against a measured 528 MW (net) of CEMS trough generation. Forced SHARE is
+    # still expected to rise, because the MW moved into the trough are forced
+    # where the MW removed from the peak were being dispatched economically
+    # anyway; that is the mechanism working, and it is scored on rule 20's
+    # shape-and-provenance escalation (D-1 cv_ratio toward 1.0), never waived.
+    # Evidence: results/calibration/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md
+    netload_drag_min_run_persistence: bool = False
 
     # ERCOT G-22 condition-responsive CT/peaker offer surface (default off,
     # ERCOT-gated). In the missed tail hours the model offers online CT/peaker

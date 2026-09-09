@@ -3763,6 +3763,7 @@ def solve_and_persist(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
@@ -5166,6 +5167,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 netload_drag_merit_allocation=netload_drag_merit_allocation
             )
+        if netload_drag_min_run_persistence is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                netload_drag_min_run_persistence=netload_drag_min_run_persistence
+            )
         if vre_curtailment_oversupply_allocation is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
@@ -5624,6 +5629,7 @@ def solve_and_persist(
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             netload_drag_layup_window_mask=netload_drag_layup_window_mask,
             netload_drag_merit_allocation=netload_drag_merit_allocation,
+            netload_drag_min_run_persistence=netload_drag_min_run_persistence,
             vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
@@ -6585,6 +6591,7 @@ def solve_and_persist(
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
         "netload_drag_merit_allocation": netload_drag_merit_allocation,
+        "netload_drag_min_run_persistence": netload_drag_min_run_persistence,
         "vre_curtailment_oversupply_allocation": vre_curtailment_oversupply_allocation,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
@@ -8813,6 +8820,7 @@ def run_replay_bundle(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
@@ -9008,6 +9016,11 @@ def run_replay_bundle(
         # replay path, so the single-field A/B arm is the keeper's recorded
         # recipe plus exactly this one flag.
         kwargs["netload_drag_merit_allocation"] = netload_drag_merit_allocation
+    if netload_drag_min_run_persistence is not None:
+        # pjm-177: the net-load drag's MIN-RUN HOUR ELIGIBILITY rides the same
+        # replay path, so the single-field A/B arm is the keeper's recorded
+        # recipe plus exactly this one flag.
+        kwargs["netload_drag_min_run_persistence"] = netload_drag_min_run_persistence
     if vre_curtailment_oversupply_allocation is not None:
         # SPP-51c: the curtailment ALLOCATION arm is the keeper's recorded
         # recipe plus exactly this one flag.
@@ -12088,6 +12101,31 @@ def main() -> None:
         "parameters. Forward-native (not backcast-gated).",
     )
     parser.add_argument(
+        "--netload-drag-min-run-persistence",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Persist the net-load reliability-drag mandate across each unit's "
+        "own MINIMUM RUN LENGTH instead of reading it off the curve hour by "
+        "hour (ScenarioConfig.netload_drag_min_run_persistence, pjm-177). The "
+        "drag's floor_frac collapses to zero whenever net-load crosses below "
+        "the curve's own zero-crossing and returns when it rises, so the "
+        "mechanism representing a gas-steam boiler's COMMITMENT cycles that "
+        "boiler on the diurnal net-load wave; ST_GAS_COMMITMENT_PARAMS "
+        "(NREL/SR-5500-55433) says in this same repo that it cannot -- min-run "
+        "24 h efficient / 48 h older-subcritical. Measured on PJM 2023-25 raw "
+        "CAMPD opTime, the fleet's ONLINE capacity is flat across the day "
+        "(hour-of-day max/min 1.19 / 1.07 / 1.05; hour-of-day R^2 "
+        "0.003 / 0.001 / 0.001) with median run lengths of 25 / 28 / 57 h, "
+        "while the drag's binding excursions run a median 7-8 h. This flag "
+        "keeps the SAME rows, coefficients and mechanism id and changes only "
+        "WHICH HOURS the mandate lands in, via a centred circular moving "
+        "average over each row's table min-run (rule 19 [R-ONE-MECH]). Zero "
+        "free parameters (rule 21); the coefficients never move (rule 23); "
+        "forward-native (rule 13); inert on a WINDOWED floor, so the CT "
+        "evening-ramp limb is never persisted. Default off -- every keeper "
+        "replays byte-identical.",
+    )
+    parser.add_argument(
         "--netload-drag-layup-window-mask",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13144,6 +13182,7 @@ def main() -> None:
             ),
             netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
             netload_drag_merit_allocation=args.netload_drag_merit_allocation,
+            netload_drag_min_run_persistence=args.netload_drag_min_run_persistence,
             vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
             campd_outage_merit_order_guard=(
                 args.campd_outage_merit_order_guard
@@ -13558,6 +13597,7 @@ def main() -> None:
         ct_netload_drag=args.ct_netload_drag,
         netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
         netload_drag_merit_allocation=args.netload_drag_merit_allocation,
+        netload_drag_min_run_persistence=args.netload_drag_min_run_persistence,
         vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
