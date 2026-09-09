@@ -14101,5 +14101,71 @@ were pruned. Reasons 1 (HEAD drift) and 3 (first fresh solve on the repaired bas
 deleted — the shard bundles and the two partial bundles from the stopped parent-local solves are all
 on local disk.
 
-**Next shorthand: ercot-265** (ercot-199 and ercot-257 remain unclaimed).
+**Next shorthand: ercot-265** (claimed; ercot-199 and ercot-257 remain unclaimed).
 
+
+## ercot-265 — 2026-09-09
+
+**The daily-gas survey returns EMPTY, and the procurement it blocks is now measured SUFFICIENT.**
+Branch `claude/ercot-uri-february-fuel-baynmi`. **Zero LP, no shard launched, nothing armed,
+nothing registered, nothing deleted.** Keeper `2026-09-09-ercot261-corroborated-gas-level`
+untouched and not re-solved (ercot-264 already certified it reproduces exactly at HEAD). ERCOT
+stays **CALIBRATED** on the train tier (rule 30(c)); the five-year determination stays NOT-YET on
+C3b alone. Record: `docs/RESULT-ercot265-daily-gas-survey-sufficiency-2026-09-09.md`.
+
+**Option (A) chosen** over (B) — which needs an owner decision the handoff itself requires and
+which does not exist — and over (C), the handoff's conditional fallback.
+
+**The survey is EMPTY and the emptiness is STRUCTURAL.** Verified directly: the EIA NGWU daily
+spot table that four ISOs already scrape carries **exactly four rows** (Henry Hub, New York,
+Chicago, Cal. Comp. Avg.) and **no Texas hub in any issue** — the ercot-160/163 free-EIA fence
+re-confirmed, not re-litigated. CME/NYMEX Waha and HSC are delisted on zero open interest
+(ercot-224). ICE/NGI/Platts/Argus are paid and refused by the owner ruling 2026-08-04. **Both
+ercot-224 reopen conditions are still false, so no new screen is owed (28a).** Per the handoff's
+own instruction the survey STOPS there.
+
+**What this session adds, because the owner is being asked to spend money: a SUFFICIENCY number,
+which the lane has never had.** Inverting the keeper's own committed Feb-2021 hourlies for the
+delivered gas path that would make them match actual (ORDC and dispatch held fixed) gives a
+burn-weighted February gas price of **$56.79/MMBtu at the repo's own marginal HR 7.36, against
+the independently measured EIA N3045TX3 Feb-2021 print of $59.73 — a 4.9 % gap**, with the
+measured print **inside the band across HR 6.0–10.0** and landing at −0.9 % at HR 7.0. The
+agreement is informative rather than circular: the monthly mean is a number the inversion never
+saw, so two unrelated measurements of "how expensive was February gas" agree to 5 %. The implied
+storm-day path ($165–240/MMBtu on Feb 13–17) sits **inside** the primary-source Texas hub record
+for those days ($64 Waha … $400 HSC; EIA NGWU 2021-02-18 quoting NGI).
+
+**The alternative hypothesis was tested and rejected on measurement, not assumption.** Prior
+sessions ruled out a scarcity explanation from `slack = 0` / `dump = 0`, which rules out unserved
+energy but not tight reserves. From `reserve_family_2021.parquet`: the deep event IS genuine
+model scarcity (Feb 15–18 ORDC adder $4,659/$2,992/$1,502/$63, model $5,459/$7,898/$8,140/$8,546
+vs actual $6,765/$8,970/$9,002/$8,989), while the **onset** carries ORDC ≈ $0.82/$20.85/$71.87/
+$36.19 on Feb 11–14 against actual $443/$374/$1,907/$2,356 — and is **64.6 %** of the required
+fuel increment. Fuel, not scarcity.
+
+**Henry Hub cannot substitute — now measured, not argued.** `gas_daily_shape` is already armed
+here (cell `K`) and gives February a $10.20/MMBtu mean peaking at $47.90 on Feb 17; HH's Feb-2021
+dynamic range is **8.3×** against the Texas hubs' **~133×**, so any mean-preserving reshape that
+reaches the storm days forces ~$29/MMBtu onto the 23 calm days that never paid it. This is
+ercot-258's refutation, confirmed from the keeper's own array.
+
+**On the basis C3b actually scores** (12 monthly points, load-weighted): February is the **only**
+month the model is UNDER (+$329.91); all eleven others are OVER by $1.89–$63.09. February is
+94.8 % of the SSE; NRMSE 0.546, and February exact ⇒ **0.125, a clean PASS**.
+
+**DECLARED LIMITS, at full magnitude:** first-order / partial equilibrium (ORDC and dispatch held
+fixed — a magnitude check, not a prediction of the solve); one system-wide marginal heat rate,
+which is why a band is reported rather than a point; and **35.4 % of the required increment falls
+in hours whose ORDC adder already exceeds $500**, where fuel cost is partly clipped, so the true
+conversion is below 1:1 and the margin is thinner than 4.9 %.
+
+**THE INVERTED PATH IS A DIAGNOSTIC YARDSTICK AND MUST NEVER BE USED AS AN INPUT** — it is
+derived from the residual it would close, which rule 13 `[R-MEASURED]` forbids absolutely and
+rule 1 `[R-STRUCT]`'s offer-curve carve-out does not reach. Its only job was to answer "would the
+real series be big enough?"; it has done that and is finished.
+
+**Left alone deliberately:** the pre-existing `check_registry_payload_parity` RED on
+`results/calibration/ercot262_arm_{2021..2025}` is not this session's, and rule 31 `[R-RETAIN]`
+forbids deleting it before the owner rules on ercot-262's promotion.
+
+**Next shorthand: ercot-266** (ercot-199 and ercot-257 remain unclaimed).
