@@ -37,6 +37,16 @@ retirement in `planned_retirement_*`, which `cod_ramp.effective_cod` prefers ove
 the plant-collapsed date — so the ST ages out in 2022 while its four CTs keep
 running.
 
+> **UPDATED 2026-09-09 after the rebase onto `main`.** The whole-plant half of
+> Card B is WITHDRAWN — superseded by `7934e92c`, which widened the window to
+> 2019 globally with a multi-vintage reader (see PRECOMMIT Addendum 2). Sections
+> 1-2 and 4-5 below stand as measured; §3's delivery mechanism changed from a new
+> gated `ScenarioConfig` field to a **one-line repair of the whole/partial window
+> mirror that `7934e92c` left broken** (`_PARTIAL_EXIT_WINDOW_START` 2023 -> 2019).
+> The Decker Creek finding is UNAFFECTED and is now the whole of Card B's
+> surviving substance: main's widened parquet still carries **zero** ERCOT 2022
+> rows, so the 405 MW ST is still missing without the partial-plant channel.
+
 ## 3. The scope decision
 
 **Card B arms `partial_plant_exit_carry` for ERCOT**, and
@@ -61,26 +71,45 @@ exercised here, and no other ISO's cell is filled by this verdict.
 
 ## 4. The footprint this adds, declared ex ante
 
-| year | added by the partial channel | units |
-|---|---|---|
-| 2021 | **+27.4 MW** | Sam Rayburn 1 & 2 (11.2 MW CTs), TAMU Central Utility STG04 (5.0 MW CC) |
-| 2022 | **+406.0 MW** | **Decker Creek 2 (405.0 MW gas ST)**, OCI Alamo battery (1.0 MW) |
-| 2023 | **+75.0 MW** | Freeport Energy G-37 (gas CT, retired 2023) |
-| 2024 | **+75.0 MW** | C R Wing Cogen GEN3 (gas CC, retired 2024) |
-| 2025 | 0 | — |
+**RE-MEASURED 2026-09-09 after the rebase**, at the 2019 window the mirror repair
+restores (the numbers in §1–§3 were measured against a 2021 window and are
+superseded here). Units the partial-plant carry adds to ERCOT, by retirement year:
 
-**This is the one place Card B reaches the training years.** 75 MW on a ~70 GW
-system is **0.1 %**, which is consistent with the PRECOMMIT's P6 (2023–2025 move
-near-zero) — but it is **not** byte-identical, and it is declared here rather
-than discovered afterwards. G-1's $0.40/MMBtu gas gate and G-4's no-flip gate
-both still bind on those years.
+| retirement year | units | MW | largest |
+|---|---|---|---|
+| 2019 | 6 | 9.2 | — |
+| **2020** | 1 | **320.0** | **Decker Creek 1** (gas ST, ret 2020-10) |
+| 2021 | 3 | 26.0 | Sam Rayburn 1 & 2 (10.5 MW CTs) |
+| **2022** | 1 | **404.0** | **Decker Creek 2** (gas ST, ret 2022-03) |
+| 2023 | 1 | 59.2 | Freeport Energy G-37 |
+| 2024 | 1 | 70.0 | C R Wing Cogen GEN3 |
+| **total** | **13** | **888.4** | |
 
-Predicted effect, registered: 2022 is the year Card B can actually move (405 MW
-of gas ST re-entering a year the model prices high); 2021 remains immaterial at
-27.4 MW ≈ 0.04 % of peak, exactly as the handoff said. **Card B is included
-because it is correct (rule 14 `[R-ACCURATE]`), not because it moves a residual**
-— and P8 stands: if 2021 moves materially on Card B, that is a surprise to
-report, not a success to claim.
+Measured directly: ERCOT's within-window retiree set goes **38 units / 1,721.2 MW
+→ 51 units / 2,609.6 MW**, a **+888.4 MW** delta.
+
+**This is materially larger than the pre-rebase estimate (+406 MW into 2022), and
+the reason is the window itself.** Restoring the mirror to 2019 surfaces
+**Decker Creek unit 1** — a *second* 320 MW gas ST that retired 2020-10 and was
+hidden by BOTH the old 2023 partial window and the whole-plant filter. The two
+Decker units together are **724 MW**, and each is timed out by its own
+`planned_retirement_*` through `cod_ramp.effective_cod`, so unit 1 is online
+through Oct-2020 and unit 2 through Mar-2022 while the plant's four 51.5 MW CTs
+keep running throughout.
+
+Per-year dispatch reach after COD masking: 2021 sees Decker **2** only (unit 1
+already retired), i.e. **+404 MW plus 26 MW of CTs**; 2022 sees Decker 2 through
+March; 2023 and 2024 gain 59.2 and 70.0 MW respectively. The 2023/2024 rows
+remain the one place this touches the training years — now **59–70 MW**, about
+**0.1 %** of peak, still consistent with the PRECOMMIT's P6.
+
+**P8 is REVISED and the revision is stated rather than buried**: the pre-rebase
+claim that Card B is "immaterial to 2021" was measured at 9.8 MW. At the restored
+window ERCOT's 2021 fleet gains **~430 MW**, which is **not** immaterial. Card B
+is still included because it is correct (rule 14 `[R-ACCURATE]`) and not because
+it moves a residual — but it can no longer be pre-registered as inert, and any
+2021 movement must now be attributed between Card A and Card B rather than
+assigned to Card A by default.
 
 ## 5. Prior art honoured
 

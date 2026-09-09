@@ -16344,7 +16344,6 @@ class ScenarioConfig:
     # .basis.ercot.ercot_electric_power_gas_basis_monthly.
     ercot_ep_gas_basis_corroborated: bool = False
 
-
     # Tier 3 (calibration) — ercot-255. Reference the EIA-923-MEASURED rows of
     # the ERCOT zonal gas table to the SAME statewide series that carries the
     # level, instead of to Henry Hub.

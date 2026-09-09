@@ -291,3 +291,102 @@ fuel series alone, across all seven years, and is registered above the solve.
 
 Rule 15 / 28 / 30: the run registers on the dashboard in this session; a
 touchpoint year is stamped to the keeper rather than carded separately.
+
+---
+
+# ADDENDUM 2 (2026-09-09, after the rebase onto `main`) — **CARD B AS WRITTEN ABOVE IS WITHDRAWN. It was superseded mid-session by better work, and the ten in-flight solves were invalidated and stopped.**
+
+Written the moment the collision was found, **before any re-launch**, so the
+record shows what was abandoned and why rather than quietly re-scoping.
+
+## 1. What landed on `main` while this session was solving
+
+Two commits from the cross-ISO fleet/fuel lane, both authored ~03:33 on
+2026-09-09, i.e. **after** this session's PRECOMMIT and **during** its solves:
+
+| commit | what it does |
+|---|---|
+| `7934e92c` | **Widens the within-window retiree snapshot to 2019**, globally and additively (`RETIREMENT_WINDOW_START` 2023 → 2019) |
+| `7648daa0` | Builds `gas_electric_power_monthly_level`, an **ISO-agnostic measured monthly delivered-gas LEVEL** seam |
+
+## 2. Card B is superseded, and its replacement is better on every axis
+
+`7934e92c` does what §3 above set out to do, and does it better:
+
+| | §3 (this session) | `7934e92c` (main) |
+|---|---|---|
+| window | 2021 | **2019** |
+| source | the current vintage's retired sheet only | **multi-vintage, source-agnostic reader** |
+| scope | ERCOT, config-gated | global, ungated |
+| ERCOT 2021 recovered | 7 units / **9.8 MW** | 9 units / **222.8 MW** |
+| additivity | append-only, verified | append-only, verified, **plus** a shipped-hash STOP test |
+
+It also found something §3 did not: EIA **prunes older retirements from each
+release**, so a bare rebuild loses 161 real units (Indian Point 2+3, Pilgrim,
+Palisades). §3's append-only construction avoided that trap by accident;
+`7934e92c` diagnosed it and pinned it with a test.
+
+**Withdrawn accordingly**: `ScenarioConfig.retiree_window_start_year` and its four
+cache-key registrations, `paths.set_retiree_window_start` /
+`active_retiree_window_start`, the `runner` call site, the
+`--retiree-window-start-year` CLI flag, `process_eia860.append_retired_window_from_parquets`
+and its CLI, the `load_retired_within_window` window filter,
+`tests/unit/data/test_retiree_window_append.py`, the parquet append, and the
+matrix row + seven cells. Main's versions are taken wholesale.
+
+## 3. What SURVIVES from Card B, because main left it open
+
+`7934e92c` widened the **whole-plant** half only.
+`data/fleet/eia860.py::_PARTIAL_EXIT_WINDOW_START` stayed at **2023** even though
+its own comment says it mirrors `RETIREMENT_WINDOW_START` — so after that commit a
+plant's whole-plant exits reach back to 2019 while its **unit-grain** exits are
+stranded at 2023. This session moves it to 2019 and restores the mirror.
+
+That is not a cosmetic tidy: it is exactly what hides **Decker Creek** (plant
+3548, 405 MW gas ST, retired 2022) — **98 % of ERCOT's 2021–2022 affected
+capacity**, invisible to both halves, and still absent from main's widened
+parquet (ERCOT 2022 = 0 rows there). The finding and its declared footprint in
+`docs/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md` stand unamended; only
+the *delivery mechanism* changed, from a new gated field to a one-line mirror
+repair.
+
+## 4. The ten in-flight solves were STOPPED, not harvested
+
+Main's widening is **ungated**, so it changes the ERCOT fleet for every backcast
+year: 2021 goes from this branch's 9.8 MW of retirees to **222.8 MW**, plus
+2019/2020 units the COD ramp masks. Both the arm and the control were therefore
+solving a fleet that does not exist post-rebase, and **neither leg would have
+been valid evidence for a merge-ready branch**.
+
+All ten shard sessions were archived mid-solve (~5 minutes in). No result was
+harvested, none is quoted anywhere, and no bundle survives. One shard did report
+`partial-plant exit fired` before it was stopped, which is consistent with §3 but
+is **not** evidence and is not relied on.
+
+**Nothing was lost that rule 31 `[R-RETAIN]` protects**: no solve completed, so
+there was no result to retain. The rule's cost clause is honoured instead — the
+re-solve cost is stated up front in §5 rather than silently incurred.
+
+## 5. What the re-launch costs, stated before it is spent
+
+Ten shards × ~30–40 min of LP, run in parallel containers ≈ **35–45 min wall
+clock**. The control legs are still earned: the SPP-49 simple-cycle heat-rate
+floor (§4 of the PRECOMMIT) is unchanged on main and still ungated and LIVE for
+ERCOT, so G-CTRL form 4 remains void.
+
+## 6. Card A is UNCHANGED — and a rule-19 relationship is now on the record
+
+`ercot_ep_gas_basis_corroborated` survives the rebase untouched: different seam
+(`data/fuel/basis/ercot.py`, the ERCOT zonal-basis `level_corr`), different
+object (a per-month admissibility test on a measured basis), ERCOT-gated.
+
+**Rule 19 `[R-ONE-MECH]`, declared now rather than discovered later.** Main's
+`gas_electric_power_monthly_level` sets the delivered-gas LEVEL in
+`data/fuel/resolve.py`; ERCOT's `ercot_zonal_gas_basis` adds its own measured
+statewide `level_corr` in `data/fuel/basis/ercot.py`. **Arming BOTH on one ERCOT
+run would carry the statewide level twice** — the identical double-carry defect
+ercot-255 fixed for the zonal SPREAD. They are not stacked in this arm (main's
+flag is brand-new and default-off, and no ERCOT recipe arms it), so nothing is
+wrong today; but the two are alternatives, not complements, and whichever ERCOT
+ends up on, the other must be off. Flagged to the fleet/fuel lane rather than
+resolved unilaterally here, since `gas_electric_power_monthly_level` is theirs.
