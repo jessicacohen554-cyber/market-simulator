@@ -16,7 +16,7 @@
   "rubric_version": 3.6,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail, dispatch_corr"
+    "undocumented out-of-tolerance (FAIL) criteria: dispatch_corr"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -63,7 +64,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -74,8 +77,8 @@
     "scored": 8,
     "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 1,
+    "fails": 1
   },
   "reported": {
     "co2": {
