@@ -2362,7 +2362,20 @@ _RETIRED_CANCELED_PARQUET_NAME = "eia860_generator_retired_and_canceled.parquet"
 _PLANT_PARQUET_NAME = "eia860_plant.parquet"
 # Mirrors process_eia860.RETIREMENT_WINDOW_START (the backcast window start):
 # a unit retired in or after this year operated during the window.
-_PARTIAL_EXIT_WINDOW_START = 2023
+#
+# ercot-261: MOVED 2023 -> 2019 to restore that mirror. The whole-plant half was
+# widened to 2019 by the fleet-vintage charter (process_eia860, charter task 2)
+# and this constant -- which its own comment says mirrors it -- was left at 2023,
+# so a plant's whole-plant exits reached back to 2019 while its UNIT-GRAIN exits
+# stayed stranded at 2023. Measured consequence for ERCOT: Decker Creek (plant
+# 3548), a 405 MW gas ST retired 2022, is 98% of ERCOT's 2021-2022 affected
+# capacity and is invisible to BOTH halves -- the whole-plant filter refuses it
+# by design (four 51.5 MW CTs survive in the operable snapshot, so the
+# plant-keyed COD map would hold the whole plant online and double-count), and
+# this window then hid it from the one channel that can carry it at unit grain.
+# The two halves must move together or the split is incoherent.
+# (docs/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md)
+_PARTIAL_EXIT_WINDOW_START = 2019
 _PARTIAL_EXIT_COLUMN_MAP: dict[str, str] = {
     "Plant Code": "plant_id",
     "Generator ID": "generator_id",
