@@ -704,3 +704,44 @@ handoff alone, so a lane that solves for an hour will be behind by the time it p
 edit disjoint files by rule 25 `[R-ISO-SCOPE]` — each ISO's keeper shard, matrix shard, status
 part and calibration log — so conflicts should be confined to shared surfaces (the mechanism
 matrix base row, the handoff docs). Re-run the full gate list after the rebase, never before.
+
+### A9. THE "plant-356 COD DEFECT" IS A FALSE ALARM — MEASURED, CLOSED, DO NOT RE-LITIGATE
+
+Session `caiso-fuelvintage-1` (v3) stopped with *"plant-356 COD defect blocks 5 parallel
+lanes"* and asked which of three repairs to apply. **The answer is none: there is no defect.**
+
+**The concern was real in shape.** Widening the window to 2019 created injected plants whose
+units retire up to **four years apart** — AES Redondo Beach (356): gen 7 retired **2019-10**,
+gens 5/6/8 **2023-12**. `_load_cod_map` collapses a plant's heterogeneous unit retirements to
+the **latest** one, so a plant-keyed mask would hold gen 7's 480 MW online for three extra
+years. Across the whole artifact that exposure is **19 plants / 31 units / 4,779.2 MW**
+(PJM 3,055.2 · NEISO 614.2 · MISO 495.8 · CAISO 481.8 · NYISO 88.5 · SPP 43.7).
+
+**But the code already prefers the per-unit date, and always has.**
+`cod_ramp.effective_cod` returns `(entry_oy, entry_om, retirement_year, retirement_month)` —
+the plant map supplies the **online** date, the generator's **own** retirement overrides the
+collapsed one whenever the row carries it, and every retiree row carries it by construction.
+Its docstring names this exact case (the Homer City seam, plant 3122).
+
+**Measured, not read** — masks built through the real `_load_cod_map` + `effective_cod` +
+`monthly_online_mask` path:
+
+| plant | unit | actual retirement | online months 2019 → 2024 |
+|---|---|---|---|
+| 356 AES Redondo Beach | gen 7, 480 MW | 2019-10 | **10 · 0 · 0 · 0 · 0 · 0** |
+| 356 | gens 5/6/8 | 2023-12 | 12 · 12 · 12 · 12 · 12 · 0 |
+| 3122 Homer City | gen 3 | 2023-07 | 12 · 12 · 12 · 12 · **7** · 0 |
+| 3122 | gen 1 | 2024-04 | 12 · 12 · 12 · 12 · 12 · **4** |
+| 2866 W H Sammis | gens 1-4, 720 MW | 2020-05 | 12 · **5** · 0 · 0 · 0 · 0 |
+| 2840 Conesville | gens 5/6, 750 MW | 2019-05 | **5** · 0 · 0 · 0 · 0 · 0 |
+
+Every unit ages out on its own month. **The 4,779.2 MW is the exposure the existing code
+already prevents, not a loss anyone is taking.**
+
+**Pinned by test** so a future change to the COD map cannot silently reintroduce it:
+`test_multi_vintage_plants_age_out_PER_UNIT_not_plant_collapsed` (every multi-vintage row in
+the committed artifact, through the real path) and
+`test_a_units_own_retirement_wins_over_a_later_plant_date` (the synthetic form). 13 pass.
+
+**No lane should spend time on this.** If a lane sees a fleet number it cannot explain, the
+per-unit ageing is not the cause — look at `partial_plant_exit_carry` (§A5 item 2) instead.
