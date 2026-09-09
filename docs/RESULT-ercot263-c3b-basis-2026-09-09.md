@@ -63,7 +63,7 @@ The rubric's own v2.4 amendment names the defect and predicts exactly where it b
 > actual on the old basis."*
 
 2021 is ERCOT's most tail-heavy year on record. It is the worst case of a wedge the owner
-deprecated 14 months ago, left in place by an unexecuted retrofit pass.
+deprecated two months ago (2026-07-09), left in place by an unexecuted retrofit pass.
 
 ## 3. The repair
 
